@@ -1,0 +1,57 @@
+#!/bin/sh
+echo `date` $0 $* begin
+echo
+pwd
+echo
+echo env sort before
+env|sort
+echo env sort after
+echo
+pwd
+
+if (( 0 == 1 )); then
+echo before copy init files
+
+echo yyyymmddcc=$yyyymmddcc  
+echo basetmp=$basetmp  
+#nwgescp  `echo $yyyymmddccc | cut -c1-8` $id YES 
+
+ scourcedir=/gpfs/v/mtb/noscrub/wx20dh/TSKH/ThINIT00Ie
+ expdir=$basetmp/nwges/$envir
+ inidir=$basetmp/com/gens/$envir
+#mkdir -p $expdir
+ cd $expdir
+ mmdd=`echo $yyyymmddcc | cut -c1-8`
+ echo mmdd=$mmdd
+ cp -pr $scourcedir/gefs.$mmdd .
+ cd gefs.$mmdd
+ for id in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20
+ do
+
+  if [[ -f gep$id\.t00z.sfcanl ]]; then
+   echo gep$id\.t00z.sfcanl alread exist
+  else
+   echo gep$id\.t00z.sfcanl does not exist, copy from gec00.t00z.sfcanl
+   cp -pr gec00.t00z.sfcanl gep$id\.t00z.sfcanl
+  fi
+
+#  for sub in .cycfs06 .cycfs12 .cycfs18
+#  do
+# if [[ -f gep$id\.t00z.sfcanl$sub ]]; then
+#  echo gep$id\.t00z.sfcanl$sub alread exist
+# else
+#  echo gep$id\.t00z.sfcanl$sub does not exist, copy from gec00.t00z.sfcanl
+#  cp -pr gec00.t00z.sfcanl gep$id\.t00z.sfcanl$sub
+# fi
+#  done
+
+ done
+ mkdir -p $inidir\/gefs.$mmdd\/00/init
+ cp -pr $expdir\/gefs.$mmdd\/*sanl $inidir\/gefs.$mmdd\/00/init
+ cp -pr $expdir\/gefs.$mmdd\/gec00*sfcanl $inidir\/gefs.$mmdd\/00/init
+
+echo after copy init files
+fi
+
+echo
+echo `date` $0 $* end

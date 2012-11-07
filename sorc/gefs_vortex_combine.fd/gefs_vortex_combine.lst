@@ -1,0 +1,1243 @@
+IBM XL Fortran for AIX, V12.1 (5724-U82) Version 12.01.0000.0001 --- /gpfs/s/nco/ops/nwprod/sorc/gefs_vortex_combine.fd/gefs_vortex_combine.f 07/09/09 10:00:09
+ 
+>>>>> OPTIONS SECTION <<<<<
+***   Options In Effect   ***
+  
+         ==  On / Off Options  ==
+         CR              DBG             ESCAPE          FULLPATH
+         I4              INLGLUE         NOLIBESSL       NOLIBPOSIX
+         OBJECT          PROFILE         SOURCE          STRICT
+         SWAPOMP         THREADED        UNWIND          NOZEROSIZE
+  
+         ==  Options Of Integer Type ==
+         ALIAS_SIZE(65536)     FIXED(72)             MAXMEM(-1)
+         OPTIMIZE(2)           SPILLSIZE(10000)      STACKTEMP(0)
+  
+  
+         ==  Options of Integer and Character Type ==
+         SMP(NOAUTO,SCHEDULE(RUNTIME))
+  
+         ==  Options Of Character Type  ==
+         64(LARGETYPE)         ALIAS(STD,INTPTR)     ALIGN(BINDC(POWER),STRUCT(NATURAL))
+         ARCH(PWR6)            AUTODBL(NONE)         DESCRIPTOR(V1)
+         DIRECTIVE(IBM*,IBMT,SMP$,$OMP,IBMP)
+         ENUM()                FLAG(I,I)             FLOAT(RNDSNGL,MAF,FOLD,RNGCHK,SINGLE)
+         FLTTRAP(OVERFLOW,UNDERFLOW,ZERODIVIDE,INVALID,INEXACT)
+         HALT(S)               IEEE(NEAR)            INITAUTO( 0      )
+         INTSIZE(4)            LANGLVL(EXTENDED)     POSITION(APPENDOLD)
+         REALSIZE(8)           SAVE(ALL)             TUNE(PWR6)
+         UNROLL(AUTO)          XFLAG()               XLF2003(NOPOLYMORPHIC,NOBOZLITARGS,NOSTOPEXCEPT,NOVOLATILE,NOAUTOREALLOC,OLDNANINF)
+         XLF77(NOLEADZERO,GEDIT77,NOBLANKPAD,OLDBOZ,INTARG,INTXOR,PERSISTENT,SOFTEOF)
+         XLF90(NOSIGNEDZERO,NOAUTODEALLOC,OLDPAD)
+  
+>>>>> SOURCE SECTION <<<<<
+          1 |C$$$  MAIN PROGRAM DOCUMENTATION BLOCK
+          2 |C
+          3 |C MAIN PROGRAM: GFSENS_VORTEX_COMBINE
+          4 |C   PROGMMR: Richard Wobus    ORG: NP22       DATE: 2005-07-12
+          5 |C
+          6 |C COMBINES ENSEMBLE STORM FILES WITH RESCALED BACKGROUND FIELD
+          7 |C AS PART OF GLOBAL ENSEMBLE RELOCATION OF TROPICAL STORMS
+          8 |C
+          9 |C PROGRAM HISTORY LOG:
+         10 |C 2005-05-10  QINGFU LIU    -- NEW PROGRAM FOR ENSEMBLE
+         11 |C 2005-07-13  RICHARD WOBUS -- RENAME AND UPDATE DOCBLOCK
+         12 |C 2006-07-06  RICHARD WOBUS -- RENAME AND USE SIGIO
+         13 |C
+         14 |C
+         15 |C ATTRIBUTES:
+         16 |C   LANGUAGE: FORTRAN 90
+         17 |C   MACHINE:  IBM-SP
+         18 |C
+         19 |C$$$
+         20 |C
+         21 |C234567890123456789012345678901234567890123456789012345678901234567890
+         22 |C
+         23 |
+         24 |      PROGRAM GEFS_VORTEX_COMBINE
+         25 |      use sigio_module
+         26 |      use sigio_r_module
+         27 |
+         28 |      type(sigio_head):: heado
+         29 |
+         30 |      type(sigio_data):: datao
+         31 |
+         32 |      character ifile*7, kfile*7
+         33 |
+         34 |      REAL(4),ALLOCATABLE :: WORK_3(:),WORK_4(:,:)
+         35 |      REAL,   ALLOCATABLE :: WORK_8(:)
+         36 |      REAL,   ALLOCATABLE :: WK_S1(:,:),WK_S2(:,:),WK_G(:,:,:),
+         37 |     1                       WK_G2(:,:,:)
+         38 |
+         39 |      real,   allocatable :: srlsphc(:)
+         40 |      real,   allocatable :: srlsphcl(:,:)
+         41 |
+         42 |      real,   allocatable :: srlpd(:,:)
+         43 |      real,   allocatable :: srlpi(:,:)
+         44 |      real,   allocatable :: srlpo(:,:)
+         45 |      real,   allocatable :: srlhd(:,:)
+         46 |      real,   allocatable :: srlhi(:,:)
+         47 |      real,   allocatable :: srlho(:,:)
+         48 |      real,   allocatable :: srltd(:,:,:)
+         49 |      real,   allocatable :: srlti(:,:,:)
+         50 |      real,   allocatable :: srlto(:,:,:)
+         51 |      real,   allocatable :: srldd(:,:,:)
+         52 |      real,   allocatable :: srldi(:,:,:)
+         53 |      real,   allocatable :: srldo(:,:,:)
+         54 |      real,   allocatable :: srlzd(:,:,:)
+         55 |      real,   allocatable :: srlzi(:,:,:)
+         56 |      real,   allocatable :: srlzo(:,:,:)
+         57 |      real,   allocatable :: srlqd(:,:,:)
+         58 |      real,   allocatable :: srlqi(:,:,:)
+         59 |      real,   allocatable :: srlqo(:,:,:)
+         60 |
+         61 |      REAL,   ALLOCATABLE :: PS1(:,:),T1(:,:,:),Q1(:,:,:)
+         62 |      REAL,   ALLOCATABLE :: VOR1(:,:,:),DIV1(:,:,:)
+         63 |
+         64 |      REAL(4) FHOUR,DUMMY(245)
+         65 |
+         66 |      CHARACTER*2 MEMBER
+         67 |      CHARACTER*8 LAB(4)
+         68 |      DIMENSION IDATE(4)
+         69 |
+         70 |      CALL W3TAGB('GEFS_VORTEX_COMBINE',2006,0187,0068,'NP20')
+         71 |C
+         72 |      READ(5,*)ITIM,IPAIR,FACT
+         73 |
+         74 |      print*,'ITIM,IPAIR,FACT=',ITIM,IPAIR,FACT
+         75 |
+         76 |      NSEM=1
+         77 |!      IF(IPAIR.EQ.1)NSEM=3
+         78 |!      IF(IPAIR.EQ.2)NSEM=5
+         79 |!      IF(IPAIR.EQ.3)NSEM=7
+         80 |!      IF(IPAIR.EQ.4)NSEM=9
+         81 |!      IF(IPAIR.EQ.5)NSEM=11
+         82 |
+         83 |      IF(IPAIR.GE.1)NSEM=9
+         84 |
+         85 |
+         86 |C
+         87 |      IUNIT = 54
+         88 |      KUNIT = 58
+         89 |      ifile='fort.54'
+         90 |      kfile='fort.58'
+         91 |C
+         92 |      PRINT*,'IUNIT,KUNIT,NSEM= ',IUNIT,KUNIT,NSEM
+         93 |c
+         94 |c     call sigio_sropen(iunit,ifile,iret)
+         95 |c     if (iret.ne.0) print *,'sigio_sropen failed,iret=',iret,ifile,iunit
+         96 |
+         97 |c     call sigio_srhead(iunit,headi,iret)
+         98 |c     if (iret.ne.0) print *,'sigio_srhead failed,iret=',iret,iunit
+         99 |
+        100 |c     call sigio_aldata(headi,datai,iret)
+        101 |c     if (iret.ne.0) print *,'sigio_srdata for datai failed,iret=',iret
+        102 |
+        103 |c     call sigio_srdata(iunit,headi,datao,iret)
+        104 |c     if (iret.ne.0) print *,'sigio_srdata failed,iret=',iret
+        105 |
+        106 |      call sigio_srohdc(iunit,ifile,heado,datao,iret)
+        107 |      if (iret.ne.0) print *,'sigio_srohdc failed,iret=',iret,ifile,iunit
+        108 |
+        109 |c     heado = headi
+        110 |c     datao = datai
+        111 |
+        112 |c     call sigio_swopen(iunit,kfile,iret)
+        113 |c     if (iret.ne.0) print *,'sigio_swopen failed,iret=',iret,kfile,kunit
+        114 |
+        115 |c     call sigio_aldata(iunit,heado,datao,iret)
+        116 |c     if (iret.ne.0) print *,'sigio_srdata for datao failed,iret=',iret
+        117 |
+        118 |           print *,"   after read input"
+        119 |
+        120 |c     READ(IUNIT) LAB
+        121 |c     WRITE(KUNIT) LAB
+        122 |      lab=heado%clabsig
+        123 |       WRITE(10) LAB
+        124 |c23    format(4A8)
+        125 |C
+        126 |c     READ(IUNIT) FHOUR,(IDATE(I),I=1,4),DUMMY
+        127 |      fhour=heado%fhour
+        128 |      idate=heado%idate
+        129 |c     WRITE(KUNIT)FHOUR,(IDATE(I),I=1,4),DUMMY
+        130 |
+        131 |c     MWAVE=DUMMY(202)
+        132 |      mwave=heado%jcap
+        133 |
+        134 |      KMAX=DUMMY(203)
+        135 |      kmax=heado%levs
+        136 |
+        137 |c     IF(MWAVE.LE.250)THEN
+        138 |c       IMAX=384
+        139 |c       JMAX=190
+        140 |c     ELSE
+        141 |c       IMAX=512
+        142 |c       JMAX=256
+        143 |c     END IF
+        144 |
+        145 |c     IMAX=DUMMY(208)
+        146 |      imax=heado%lonb
+        147 |
+        148 |c     JMAX=DUMMY(209)
+        149 |      jmax=heado%latb
+        150 |
+        151 |      ITRAC=DUMMY(214)
+        152 |      itrac=heado%ntrac
+        153 |
+        154 |      IKMAX=(ITRAC-3)*KMAX
+        155 |
+        156 |      PRINT*,'IKMAX=',IKMAX
+        157 |
+        158 |      WRITE(6,210) (IDATE(I),I=1,4),FHOUR
+        159 |c     1    ,(DUMMY(K),K=1,2*KMAX+1)
+        160 |210   FORMAT(5X,' INPUT DATE AND FCST HOUR ',4I5,F7.1/(2X,G13.6))
+        161 |
+        162 |      MAXWV=(MWAVE+1)*(MWAVE+2)/2
+        163 |      MAXWV2=2*MAXWV
+        164 |      MAXWV22=MAXWV2+1
+        165 |
+        166 |           print *,"   after process input"
+        167 |
+        168 |      ALLOCATE ( WORK_3(MAXWV2),WORK_4(MAXWV2,KMAX) )
+        169 |      ALLOCATE ( WORK_8(MAXWV22) )
+        170 |      ALLOCATE ( WK_S1(MAXWV2,KMAX),WK_S2(MAXWV2,KMAX) )
+        171 |      ALLOCATE ( WK_G(IMAX,JMAX,KMAX),WK_G2(IMAX,JMAX,KMAX) )
+        172 |
+        173 |      ALLOCATE (PS1(IMAX,JMAX),T1(IMAX,JMAX,KMAX),Q1(IMAX,JMAX,KMAX))
+        174 |      ALLOCATE (VOR1(IMAX,JMAX,KMAX),DIV1(IMAX,JMAX,KMAX))
+        175 |
+        176 |      allocate (srlsphc(maxwv2))
+        177 |      allocate (srlsphcl(maxwv2,kmax))
+        178 |
+        179 |      allocate (srlhd(imax,jmax))
+        180 |      allocate (srlhi(imax,jmax))
+        181 |      allocate (srlho(imax,jmax))
+        182 |      allocate (srlpd(imax,jmax))
+        183 |      allocate (srlpi(imax,jmax))
+        184 |      allocate (srlpo(imax,jmax))
+        185 |      allocate (srltd(imax,jmax,kmax))
+        186 |      allocate (srlti(imax,jmax,kmax))
+        187 |      allocate (srlto(imax,jmax,kmax))
+        188 |      allocate (srldd(imax,jmax,kmax))
+        189 |      allocate (srldi(imax,jmax,kmax))
+        190 |      allocate (srldo(imax,jmax,kmax))
+        191 |      allocate (srlzd(imax,jmax,kmax))
+        192 |      allocate (srlzi(imax,jmax,kmax))
+        193 |      allocate (srlzo(imax,jmax,kmax))
+        194 |      allocate (srlqd(imax,jmax,kmax))
+        195 |      allocate (srlqi(imax,jmax,kmax))
+        196 |      allocate (srlqo(imax,jmax,kmax))
+        197 |
+        198 |           print *,"   after allocate"
+        199 |
+        200 |           ijmax=imax*jmax
+        201 |           ijkmax=ijmax*kmax
+        202 |
+        203 |c	   print *
+        204 |           do nw=1,maxwv2
+        205 |	     srlsphc(nw)=datao%hs(nw)
+        206 |	   enddo
+        207 |           call sptez(0,mwave,4,imax,jmax,srlsphc,srlhi,1)
+        208 |c           call srangel (srlhi ,ijmax,' hs in  ',0)
+        209 |c	   print *
+        210 |
+        211 |           do nw=1,maxwv2
+        212 |	     srlsphc(nw)=datao%ps(nw)
+        213 |	   enddo
+        214 |           call sptez(0,mwave,4,imax,jmax,srlsphc,srlpi,1)
+        215 |c           Call srangel (srlpi ,ijmax,' ps in  ',0)
+        216 |c	   print *
+        217 |
+        218 |	  do k=1,kmax
+        219 |           do nw=1,maxwv2
+        220 |	     srlsphcl(nw,k)=datao%t(nw,k)
+        221 |	   enddo
+        222 |	  enddo
+        223 |           call sptezm(0,mwave,4,imax,jmax,kmax,srlsphcl,srlti,1)
+        224 |c           Call srangel (srlti  ,ijkmax,' t in  ',0)
+        225 |c	  do k=1,kmax
+        226 |c           call srangel (srlti(1,1,k),ijmax,' t in  ',k)
+        227 |c	  enddo
+        228 |c	   print *
+        229 |
+        230 |	  do k=1,kmax
+        231 |           do nw=1,maxwv2
+        232 |	     srlsphcl(nw,k)=datao%d(nw,k)
+        233 |	   enddo
+        234 |	  enddo
+        235 |           call sptezm(0,mwave,4,imax,jmax,kmax,srlsphcl,srldi,1)
+        236 |c           call srangel (srldi  ,ijkmax,' d in  ',0)
+        237 |c	  do k=1,kmax
+        238 |c           call srangel (srldi(1,1,k),ijmax,' d in  ',k)
+        239 |c	  enddo
+        240 |c	   print *
+        241 |
+        242 |	  do k=1,kmax
+        243 |           do nw=1,maxwv2
+        244 |	     srlsphcl(nw,k)=datao%z(nw,k)
+        245 |	   enddo
+        246 |	  enddo
+        247 |           call sptezm(0,mwave,4,imax,jmax,kmax,srlsphcl,srlzi,1)
+        248 |c           call srangel (srlzi  ,ijkmax,' z in  ',0)
+        249 |c	  do k=1,kmax
+        250 |c           call srangel (srlzi(1,1,k),ijmax,' z in  ',k)
+        251 |c	  enddo
+        252 |c	   print *
+        253 |
+        254 |	  do k=1,kmax
+        255 |           do nw=1,maxwv2
+        256 |	     srlsphcl(nw,k)=datao%q(nw,k,1)
+        257 |	   enddo
+        258 |	  enddo
+        259 |           call sptezm(0,mwave,4,imax,jmax,kmax,srlsphcl,srlqi,1)
+        260 |c           call srangel (srlqi  ,ijkmax,' q in  ',0)
+        261 |c	  do k=1,kmax
+        262 |c           call srangel (srlqi(1,1,k),ijmax,' q in  ',k)
+        263 |c	  enddo
+        264 |c	   print *
+        265 |
+        266 |      CALL GET_STM(PS1,T1,Q1,VOR1,DIV1,IMAX,JMAX,KMAX,NSEM,FACT)
+        267 |
+        268 |           call srangel (ps1,ijmax,' ps1 ',0)
+        269 |           call srangel (t1,ijkmax,' t1 ',0)
+        270 |           call srangel (q1,ijkmax,' q1 ',0)
+        271 |           call srangel (vor1,ijkmax,' vor1 ',0)
+        272 |           call srangel (div1,ijkmax,' div1 ',0)
+        273 |           do k=1,kmax
+        274 |             call srangel (t1(1,1,k),ijmax,' t1 ',k)
+        275 |             call srangel (q1(1,1,k),ijmax,' q1 ',k)
+        276 |             call srangel (vor1(1,1,k),ijmax,' vor1 ',k)
+        277 |             call srangel (div1(1,1,k),ijmax,' div1 ',k)
+        278 |           enddo
+        279 |
+        280 |           print *,"   after get_stm"
+        281 |cc
+        282 |c     READ(IUNIT) (WORK_3(NW),NW=1,MAXWV2)       ! terrain
+        283 |      do nw=1,maxwv2
+        284 |	work_3(nw)=datao%hs(nw)
+        285 |      enddo
+        286 |
+        287 |c     WRITE(KUNIT)(WORK_3(NW),NW=1,MAXWV2)
+        288 |      do nw=1,maxwv2
+        289 |	datao%hs(nw)=work_3(nw)
+        290 |      enddo
+        291 |
+        292 |c     READ(IUNIT) (WORK_3(NW),NW=1,MAXWV2)       ! LOG(PSFC)
+        293 |      do nw=1,maxwv2
+        294 |	work_3(nw)=datao%ps(nw)
+        295 |      enddo
+        296 |
+        297 |      call SPTEZ(0,MWAVE,4,IMAX,JMAX,WORK_8,PS1,-1)
+        298 |
+        299 |      DO NW=1,MAXWV2
+        300 |        WORK_3(NW)=WORK_3(NW)+WORK_8(NW)
+        301 |      END DO
+        302 |
+        303 |c     WRITE(KUNIT) (WORK_3(NW),NW=1,MAXWV2)       ! LOG(PSFC)
+        304 |      do nw=1,maxwv2
+        305 |	datao%ps(nw)=work_3(nw)
+        306 |      enddo
+        307 |
+        308 |C
+        309 |      DO 220 K=1,KMAX
+        310 |c       READ(IUNIT) (WORK_4(NW,K),NW=1,MAXWV2)        ! T
+        311 |        do nw=1,maxwv2
+        312 |	  work_4(nw,k)=datao%t(nw,k)
+        313 |	enddo
+        314 |220   CONTINUE
+        315 |
+        316 |      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,T1,-1)
+        317 |
+        318 |      DO K=1,KMAX
+        319 |        DO NW=1,MAXWV2
+        320 |          WORK_4(NW,K)=WORK_4(NW,K)+WK_S1(NW,K)
+        321 |!          WORK_4(NW,K)=WORK_4(NW,K)
+        322 |          datao%t(nw,k)=work_4(nw,k)
+        323 |        END DO
+        324 |c       WRITE(KUNIT) (WORK_4(NW,K),NW=1,MAXWV2)
+        325 |      END DO
+        326 |
+        327 |	   print *,"   after process t"
+        328 |
+        329 |C
+        330 |      DO K=1,KMAX
+        331 |c       READ(IUNIT) (WORK_4(NW,K),NW=1,MAXWV2)      ! VOR
+        332 |        do nw=1,maxwv2
+        333 |	  work_4(nw,k)=datao%z(nw,k)
+        334 |	enddo
+        335 |      END DO
+        336 |
+        337 |      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,VOR1,-1)
+        338 |
+        339 |      DO K=1,KMAX
+        340 |        DO NW=1,MAXWV2
+        341 |          WORK_4(NW,K)=WORK_4(NW,K)+WK_S1(NW,K)
+        342 |	  datao%z(nw,k)=work_4(nw,k)
+        343 |        END DO
+        344 |c       WRITE(KUNIT) (WORK_4(NW,K),NW=1,MAXWV2)
+        345 |      END DO
+        346 |
+        347 |	   print *,"   after process vor"
+        348 |
+        349 |      DO K=1,KMAX
+        350 |c       READ(IUNIT) (WORK_4(NW,K),NW=1,MAXWV2)      ! DIV
+        351 |        do nw=1,maxwv2
+        352 |	  work_4(nw,k)=datao%d(nw,k)
+        353 |	enddo
+        354 |      END DO
+        355 |
+        356 |      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,DIV1,-1)
+        357 |
+        358 |      DO K=1,KMAX
+        359 |        DO NW=1,MAXWV2
+        360 |          WORK_4(NW,K)=WORK_4(NW,K)+WK_S1(NW,K)
+        361 |	  datao%d(nw,k)=work_4(nw,k)
+        362 |        END DO
+        363 |c       WRITE(KUNIT) (WORK_4(NW,K),NW=1,MAXWV2)
+        364 |      END DO
+        365 |
+        366 |	   print *,"   after process div"
+        367 |
+        368 |c      print*,'test2'
+        369 |
+        370 |      DO 240 K=1,KMAX
+        371 |c       READ(IUNIT) (WORK_4(NW,K),NW=1,MAXWV2)   !  Q
+        372 |        do nw=1,maxwv2
+        373 |	  work_4(nw,k)=datao%q(nw,k,1)
+        374 |	enddo
+        375 |240   CONTINUE
+        376 |
+        377 |      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,Q1,-1)
+        378 |
+        379 |      DO K=1,KMAX
+        380 |        DO NW=1,MAXWV2
+        381 |          WORK_4(NW,K)=WORK_4(NW,K)+WK_S1(NW,K)
+        382 |	  datao%q(nw,k,1)=work_4(nw,k)
+        383 |        END DO
+        384 |c       WRITE(KUNIT) (WORK_4(NW,K),NW=1,MAXWV2)
+        385 |      END DO
+        386 |C
+        387 |	   print *,"   after process q"
+        388 |
+        389 |c  other tracers already copied
+        390 |c     DO 270 K=1,KMAX
+        391 |c     READ(IUNIT) (WORK_3(NW),NW=1,MAXWV2)   ! O3
+        392 |c     WRITE(KUNIT) (WORK_3(NW),NW=1,MAXWV2)   ! O3
+        393 |c270   CONTINUE
+        394 |c
+        395 |!      DO 280 K=1,IKMAX    ! ITRAC should be 3 something wrong in the pert data
+        396 |c     DO 280 K=1,IKMAX+KMAX
+        397 |c     READ(IUNIT) (WORK_3(NW),NW=1,MAXWV2)
+        398 |c     WRITE(KUNIT) (WORK_3(NW),NW=1,MAXWV2)
+        399 |c280   CONTINUE
+        400 |
+        401 |c     call sigio_axdata(datai,iret)
+        402 |c     print *, 'iret for datai from sigio_axdata =', iret
+        403 |
+        404 |c     call sigio_sclose(iunit,iret)
+        405 |c     if (iret.ne.0) print *,'sigio_sclose failed,iret=',iret,iunit
+        406 |
+        407 |c     call sigio_swhead(kunit,heado,iret)
+        408 |c     print *, 'iret from sigio_swhead =', iret,kunit
+        409 |c
+        410 |c add these lines to zero out the vorticity as in the gfs code
+        411 |
+        412 |      DO K=1,KMAX
+        413 |	datao%d(1,K)=0.
+        414 |	datao%z(1,K)=0.
+        415 |      END DO
+        416 |
+        417 |	   print *,"   after zero z and d"
+        418 |
+        419 |           do nw=1,maxwv2
+        420 |	     srlsphc(nw)=datao%hs(nw)
+        421 |	   enddo
+        422 |           call sptez(0,mwave,4,imax,jmax,srlsphc,srlho,1)
+        423 |
+        424 |           do nw=1,maxwv2
+        425 |	     srlsphc(nw)=datao%ps(nw)
+        426 |	   enddo
+        427 |           call sptez(0,mwave,4,imax,jmax,srlsphc,srlpo,1)
+        428 |
+        429 |	  do k=1,kmax
+        430 |           do nw=1,maxwv2
+        431 |	     srlsphcl(nw,k)=datao%t(nw,k)
+        432 |	   enddo
+        433 |	  enddo
+        434 |           call sptezm(0,mwave,4,imax,jmax,kmax,srlsphcl,srlto,1)
+        435 |
+        436 |	  do k=1,kmax
+        437 |           do nw=1,maxwv2
+        438 |	     srlsphcl(nw,k)=datao%d(nw,k)
+        439 |	   enddo
+        440 |	  enddo
+        441 |           call sptezm(0,mwave,4,imax,jmax,kmax,srlsphcl,srldo,1)
+        442 |
+        443 |	  do k=1,kmax
+        444 |           do nw=1,maxwv2
+        445 |	     srlsphcl(nw,k)=datao%z(nw,k)
+        446 |	   enddo
+        447 |	  enddo
+        448 |           call sptezm(0,mwave,4,imax,jmax,kmax,srlsphcl,srlzo,1)
+        449 |
+        450 |	  do k=1,kmax
+        451 |           do nw=1,maxwv2
+        452 |	     srlsphcl(nw,k)=datao%q(nw,k,1)
+        453 |	   enddo
+        454 |	  enddo
+        455 |           call sptezm(0,mwave,4,imax,jmax,kmax,srlsphcl,srlqo,1)
+        456 |
+        457 |	   do j=1,jmax
+        458 |	     do i=1,imax
+        459 |	       srlhd(i,j)=srlho(i,j)-srlhi(i,j)
+        460 |	       srlpd(i,j)=srlpo(i,j)-srlpi(i,j)
+        461 |	     enddo
+        462 |	   enddo
+        463 |
+        464 |	   do k=1,kmax
+        465 |	     do j=1,jmax
+        466 |	       do i=1,imax
+        467 |		 srltd(i,j,k)=srlto(i,j,k)-srlti(i,j,k)
+        468 |		 srldd(i,j,k)=srldo(i,j,k)-srldi(i,j,k)
+        469 |		 srlzd(i,j,k)=srlzo(i,j,k)-srlzi(i,j,k)
+        470 |		 srlqd(i,j,k)=srlqo(i,j,k)-srlqi(i,j,k)
+        471 |	       enddo
+        472 |	     enddo
+        473 |	   enddo
+        474 |
+        475 |	   print *
+        476 |
+        477 |           call srangel (srlhi,ijmax,'hs in   ',0)
+        478 |           call srangel (srlhd,ijmax,'hs diff ',0)
+        479 |           call srangel (srlho,ijmax,'hs out  ',0)
+        480 |	   print *
+        481 |
+        482 |           call srangel (srlpi,ijmax,'ps in   ',0)
+        483 |           call srangel (srlpd,ijmax,'ps diff ',0)
+        484 |           call srangel (srlpo,ijmax,'ps out  ',0)
+        485 |	   print *
+        486 |
+        487 |           call srangel (srlti,ijkmax,'t in   ',0)
+        488 |           call srangel (srltd,ijkmax,'t diff ',0)
+        489 |           call srangel (srlto,ijkmax,'t out  ',0)
+        490 |	  do k=1,kmax
+        491 |	   print *
+        492 |           call srangel (srlti(1,1,k),ijmax,'t in   ',k)
+        493 |           call srangel (srltd(1,1,k),ijmax,'t diff ',k)
+        494 |           call srangel (srlto(1,1,k),ijmax,'t out  ',k)
+        495 |	  enddo
+        496 |	   print *
+        497 |
+        498 |           call srangel (srldi,ijkmax,'d in   ',0)
+        499 |           call srangel (srldd,ijkmax,'d diff ',0)
+        500 |           call srangel (srldo,ijkmax,'d out  ',0)
+        501 |	  do k=1,kmax
+        502 |	   print *
+        503 |           call srangel (srldi(1,1,k),ijmax,'d in   ',k)
+        504 |           call srangel (srldd(1,1,k),ijmax,'d diff ',k)
+        505 |           call srangel (srldo(1,1,k),ijmax,'d out  ',k)
+        506 |	  enddo
+        507 |	   print *
+        508 |
+        509 |           call srangel (srlzi,ijkmax,'z in   ',0)
+        510 |           call srangel (srlzd,ijkmax,'z diff ',0)
+        511 |           call srangel (srlzo,ijkmax,'z out  ',0)
+        512 |	  do k=1,kmax
+        513 |	   print *
+        514 |           call srangel (srlzi(1,1,k),ijmax,'z in   ',k)
+        515 |           call srangel (srlzd(1,1,k),ijmax,'z diff ',k)
+        516 |           call srangel (srlzo(1,1,k),ijmax,'z out  ',k)
+        517 |	  enddo
+        518 |	   print *
+        519 |
+        520 |           call srangel (srlqi,ijkmax,'q in   ',0)
+        521 |           call srangel (srlqd,ijkmax,'q diff ',0)
+        522 |           call srangel (srlqo,ijkmax,'q out  ',0)
+        523 |	  do k=1,kmax
+        524 |	   print *
+        525 |           call srangel (srlqi(1,1,k),ijmax,'q in   ',k)
+        526 |           call srangel (srlqd(1,1,k),ijmax,'q diff ',k)
+        527 |           call srangel (srlqo(1,1,k),ijmax,'q out  ',k)
+        528 |	  enddo
+        529 |	   print *
+        530 |
+        531 |      call sigio_swohdc(kunit, kfile, heado, datao, iret)
+        532 |      print *, 'iret from sigio_swohdc =', iret,kunit
+        533 |
+        534 |c     call sigio_swdata(kunit, heado, datao, iret)
+        535 |c     print *, 'iret from sigio_swdata =', iret,kunit
+        536 |
+        537 |c
+        538 |c     all sigio_axdata(datao,iret)
+        539 |c     print *, 'iret for datao from sigio_axdata =', iret
+        540 |
+        541 |c     call sigio_sclose(kunit,iret)
+        542 |c     if (iret.ne.0) print *,'sigio_sclose failed,iret=',iret,kunit
+        543 |
+        544 |	   print *,"   after write output"
+        545 |c      print*,'test3'
+        546 |
+        547 |      DEALLOCATE ( WORK_8, WK_S1, WK_S2, WK_G )
+        548 |      DEALLOCATE ( WK_G2, WORK_3,WORK_4 )
+        549 |      DEALLOCATE ( PS1,T1,Q1,VOR1,DIV1 )
+        550 |
+        551 |      CALL W3TAGE('GEFS_VORTEX_COMBINE')
+        552 |C
+        553 |      STOP
+        554 |      END
+** gefs_vortex_combine   === End of Compilation 1 ===
+ 
+>>>>> COMPILATION UNIT EPILOGUE SECTION <<<<<
+ 
+ 
+TOTAL   UNRECOVERABLE  SEVERE       ERROR     WARNING    INFORMATIONAL
+               (U)       (S)         (E)        (W)          (I)
+    0           0         0           0          0            0
+ 
+>>>>> OPTIONS SECTION <<<<<
+***   Options In Effect   ***
+  
+         ==  On / Off Options  ==
+         CR              DBG             ESCAPE          FULLPATH
+         I4              INLGLUE         NOLIBESSL       NOLIBPOSIX
+         OBJECT          PROFILE         SOURCE          STRICT
+         SWAPOMP         THREADED        UNWIND          NOZEROSIZE
+  
+         ==  Options Of Integer Type ==
+         ALIAS_SIZE(65536)     FIXED(72)             MAXMEM(-1)
+         OPTIMIZE(2)           SPILLSIZE(10000)      STACKTEMP(0)
+  
+  
+         ==  Options of Integer and Character Type ==
+         SMP(NOAUTO,SCHEDULE(RUNTIME))
+  
+         ==  Options Of Character Type  ==
+         64(LARGETYPE)         ALIAS(STD,INTPTR)     ALIGN(BINDC(POWER),STRUCT(NATURAL))
+         ARCH(PWR6)            AUTODBL(NONE)         DESCRIPTOR(V1)
+         DIRECTIVE(IBM*,IBMT,SMP$,$OMP,IBMP)
+         ENUM()                FLAG(I,I)             FLOAT(RNDSNGL,MAF,FOLD,RNGCHK,SINGLE)
+         FLTTRAP(OVERFLOW,UNDERFLOW,ZERODIVIDE,INVALID,INEXACT)
+         HALT(S)               IEEE(NEAR)            INITAUTO( 0      )
+         INTSIZE(4)            LANGLVL(EXTENDED)     POSITION(APPENDOLD)
+         REALSIZE(8)           SAVE(ALL)             TUNE(PWR6)
+         UNROLL(AUTO)          XFLAG()               XLF2003(NOPOLYMORPHIC,NOBOZLITARGS,NOSTOPEXCEPT,NOVOLATILE,NOAUTOREALLOC,OLDNANINF)
+         XLF77(NOLEADZERO,GEDIT77,NOBLANKPAD,OLDBOZ,INTARG,INTXOR,PERSISTENT,SOFTEOF)
+         XLF90(NOSIGNEDZERO,NOAUTODEALLOC,OLDPAD)
+  
+>>>>> SOURCE SECTION <<<<<
+        555 |
+        556 |! This program only called by one pair member (n1,n2,n3,n4,n5) or (p1,p2,p3,p4,p5)
+        557 |
+        558 |       SUBROUTINE GET_STM(PS1,T1,Q1,VOR1,DIV1,IGU,JGU,KMAX,NSEM,FACT)
+        559 |
+        560 |!        PARAMETER (IGU=384,JGU=190,KMAX=28)
+        561 |        PARAMETER (MSTM=10)
+        562 |c       PARAMETER (FACT=0.05)
+        563 |
+        564 |        CHARACTER STNAME(MSTM,3)*3
+        565 |
+        566 |        DIMENSION PS1(IGU,JGU),T1(IGU,JGU,KMAX),Q1(IGU,JGU,KMAX)
+        567 |        DIMENSION VOR1(IGU,JGU,KMAX),DIV1(IGU,JGU,KMAX)
+        568 |
+        569 |        REAL*4, ALLOCATABLE :: U1(:,:), V1(:,:), U2(:,:), V2(:,:)
+        570 |        REAL*4, ALLOCATABLE :: ZS(:,:),PSL(:,:),TS(:,:)
+        571 |        REAL*4, ALLOCATABLE :: T11(:,:,:,:), T12(:,:,:,:)
+        572 |
+        573 |        DIMENSION TKE_C0(MSTM),TKE_PN(MSTM)
+        574 |        DIMENSION TT1_C0(MSTM),TT1_PN(MSTM),TP1_C0(MSTM),TP1_PN(MSTM)
+        575 |        REAL*4, ALLOCATABLE :: SAVE(:,:,:)
+        576 |
+        577 |        MTV=4*KMAX+1
+        578 |
+        579 |        ALLOCATE ( U1(IGU,JGU),V1(IGU,JGU),U2(IGU,JGU),V2(IGU,JGU) )
+        580 |        ALLOCATE ( ZS(IGU,JGU),PSL(IGU,JGU),TS(IGU,JGU) )
+        581 |        ALLOCATE ( T11(IGU,JGU,KMAX,MSTM),T12(IGU,JGU,KMAX,MSTM) )
+        582 |        ALLOCATE ( SAVE(IGU,JGU,MTV) )
+        583 |
+        584 |           print *,"     get_stm begin"
+        585 |!        NSTM=5
+        586 |
+        587 |!        READ(6,*)NSEM,NSTM
+        588 |
+        589 |        NCT1=71
+        590 |        NCT2=74
+        591 |        NCT3=75
+        592 |
+        593 |!        PRINT*,'NCT=',NCT1,NCT2,NCT3
+        594 |
+        595 |        READ(NCT1)NSTM
+        596 |        READ(NCT2)NSTM
+        597 |        READ(NCT3)NSTM
+        598 |
+        599 |        PRINT*,'NSEM=',NSEM,NSTM,IGU,JGU
+        600 |
+        601 |        TP1_C0=0.
+        602 |        TT1_C0=0.
+        603 |        TKE_C0=0.
+        604 |
+        605 |        DO KST=1,NSTM
+        606 |          READ(NCT1)STNAME(KST,1)
+        607 |          READ(NCT1)IWMIN1,IWMAX1,JWMIN1,JWMAX1
+        608 |          READ(NCT1)               ! ZS
+        609 |          READ(NCT1)               ! PSL
+        610 |
+        611 |            U1=0.
+        612 |          READ(NCT1)((U1(I,J),I=IWMIN1,IWMAX1),J=JWMIN1,JWMAX1)      ! P1
+        613 |            DO J=JWMIN1,JWMAX1
+        614 |            DO I=IWMIN1,IWMAX1
+        615 |              TP1_C0(KST)=TP1_C0(KST)+U1(I,J)**2
+        616 |            END DO
+        617 |            END DO
+        618 |
+        619 |          READ(NCT1)               ! TS
+        620 |          PRINT*,'STORM NAME=',STNAME(KST,1)
+        621 |          PRINT*,'IX1,IX2,IY1,IY2=',IWMIN1,IWMAX1,JWMIN1,JWMAX1
+        622 |
+        623 |            DO K=1,KMAX
+        624 |              U1=0.
+        625 |          READ(NCT1)((U1(I,J),I=IWMIN1,IWMAX1),J=JWMIN1,JWMAX1)    ! T'
+        626 |              DO J=JWMIN1,JWMAX1
+        627 |              DO I=IWMIN1,IWMAX1
+        628 |                TT1_C0(KST)=TT1_C0(KST)+U1(I,J)**2
+        629 |              END DO
+        630 |              END DO
+        631 |            END DO
+        632 |
+        633 |            DO K=1,KMAX
+        634 |              U1=0.
+        635 |              V1=0.
+        636 |          READ(NCT1)((U1(I,J),I=IWMIN1,IWMAX1),J=JWMIN1,JWMAX1)
+        637 |          READ(NCT1)((V1(I,J),I=IWMIN1,IWMAX1),J=JWMIN1,JWMAX1)
+        638 |              DO J=JWMIN1,JWMAX1
+        639 |              DO I=IWMIN1,IWMAX1
+        640 |                TKE_C0(KST)=TKE_C0(KST)+U1(I,J)**2+V1(I,J)**2
+        641 |              END DO
+        642 |              END DO
+        643 |            END DO
+        644 |          DO K=1,KMAX
+        645 |            READ(NCT1)
+        646 |          END DO
+        647 |          PRINT*,'TKE_C0=',TKE_C0(KST)
+        648 |        END DO
+        649 |
+        650 |        TP1_PN=0.
+        651 |        TT1_PN=0.
+        652 |        TKE_PN=0.
+        653 |
+        654 |        T11=0.
+        655 |        T12=0.
+        656 |
+        657 |        DO KST=1,NSTM
+        658 |! read in member n
+        659 |          READ(NCT2)STNAME(KST,2)
+        660 |          READ(NCT2)IWMIN1,IWMAX1,JWMIN1,JWMAX1
+        661 |          READ(NCT2)    ! ZS
+        662 |          READ(NCT2)    ! PSL
+        663 |           U1=0.
+        664 |          READ(NCT2)((U1(I,J),I=IWMIN1,IWMAX1),J=JWMIN1,JWMAX1)  ! P1
+        665 |          READ(NCT2)    ! TS
+        666 |          PRINT*,'STORM NAME=',STNAME(KST,2)
+        667 |          PRINT*,'N IX1,IX2,IY1,IY2=',IWMIN1,IWMAX1,JWMIN1,JWMAX1
+        668 |          READ(NCT2)((T11(I,J,1,KST),I=IWMIN1,IWMAX1),J=JWMIN1,JWMAX1)
+        669 |!          write(99,*)IWMIN1,IWMAX1,JWMIN1,JWMAX1
+        670 |!          WRITE(99,98)((T11(I,J,KST),I=IWMIN1,IWMAX1),J=JWMIN1,JWMAX1)
+        671 |          DO K=2,KMAX
+        672 |            READ(NCT2)((T11(I,J,K,KST),I=IWMIN1,IWMAX1),J=JWMIN1,JWMAX1)
+        673 |          END DO
+        674 |! read in member p
+        675 |          READ(NCT3)STNAME(KST,3)
+        676 |          READ(NCT3)IWMIN2,IWMAX2,JWMIN2,JWMAX2
+        677 |          READ(NCT3)   ! ZS
+        678 |          READ(NCT3)   ! PSL
+        679 |           U2=0.
+        680 |          READ(NCT3)((U2(I,J),I=IWMIN2,IWMAX2),J=JWMIN2,JWMAX2)
+        681 |          READ(NCT3)   ! TS
+        682 |          PRINT*,'STORM NAME=',STNAME(KST,3)
+        683 |          PRINT*,'P IX1,IX2,IY1,IY2=',IWMIN2,IWMAX2,JWMIN2,JWMAX2
+        684 |          READ(NCT3)((T12(I,J,1,KST),I=IWMIN2,IWMAX2),J=JWMIN2,JWMAX2)     !
+        685 |          DO K=2,KMAX
+        686 |            READ(NCT3)((T12(I,J,K,KST),I=IWMIN2,IWMAX2),J=JWMIN2,JWMAX2)
+        687 |          END DO
+        688 |!
+        689 |          IF(STNAME(KST,2).NE.STNAME(KST,3))THEN
+        690 |             PRINT*,'wrong pair'
+        691 |             stop
+        692 |          END IF
+        693 |
+        694 |            DO J=1,JGU
+        695 |            DO I=1,IGU
+        696 |              TP1_PN(KST)=TP1_PN(KST)+
+        697 |     &                    (U2(I,J)-U1(I,J))**2
+        698 |            END DO
+        699 |            END DO
+        700 |          PRINT*,'TP1_PN=',K,TP1_PN(KST)
+        701 |
+        702 |          DO K=1,KMAX
+        703 |            DO J=1,JGU
+        704 |            DO I=1,IGU
+        705 |              TT1_PN(KST)=TT1_PN(KST)+
+        706 |     &                    (T12(I,J,K,KST)-T11(I,J,K,KST))**2
+        707 |            END DO
+        708 |            END DO
+        709 |          END DO
+        710 |          PRINT*,'TT1_PN=',K,TT1_PN(KST)
+        711 |
+        712 |          DO K=1,KMAX
+        713 |            U1=0.
+        714 |            V1=0.
+        715 |            U2=0.
+        716 |            V2=0.
+        717 |            READ(NCT2)((U1(I,J),I=IWMIN1,IWMAX1),J=JWMIN1,JWMAX1)
+        718 |            READ(NCT2)((V1(I,J),I=IWMIN1,IWMAX1),J=JWMIN1,JWMAX1)
+        719 |            READ(NCT3)((U2(I,J),I=IWMIN2,IWMAX2),J=JWMIN2,JWMAX2)
+        720 |            READ(NCT3)((V2(I,J),I=IWMIN2,IWMAX2),J=JWMIN2,JWMAX2)
+        721 |            DO J=1,JGU
+        722 |            DO I=1,IGU
+        723 |              TKE_PN(KST)=TKE_PN(KST)+
+        724 |     &                    (U2(I,J)-U1(I,J))**2+(V2(I,J)-V1(I,J))**2
+        725 |            END DO
+        726 |            END DO
+        727 |          END DO
+        728 |          PRINT*,'TKE_PN=',K,TKE_PN(KST)
+        729 |          DO K=1,KMAX
+        730 |            READ(NCT2)
+        731 |          END DO
+        732 |          DO K=1,KMAX
+        733 |            READ(NCT3)
+        734 |          END DO
+        735 |        END DO
+        736 |
+        737 |          PRINT*,'complete norm'
+        738 |
+        739 |          rewind(NCT2)
+        740 |          rewind(NCT3)
+        741 |
+        742 |        READ(NCT2)NSTM
+        743 |        READ(NCT3)NSTM
+        744 |
+        745 |        SAVE=0.
+        746 |
+        747 |        DO KST=1,NSTM
+        748 |
+        749 |          READ(NCT2)STNAME(KST,2)
+        750 |          READ(NCT2) IWMIN1,IWMAX1,JWMIN1,JWMAX1
+        751 |
+        752 |          READ(NCT3)STNAME(KST,3)
+        753 |          READ(NCT3)IWMIN2,IWMAX2,JWMIN2,JWMAX2
+        754 |!
+        755 |          IF(STNAME(KST,2).NE.STNAME(KST,3))THEN
+        756 |             PRINT*,'wrong pair'
+        757 |             stop
+        758 |          END IF
+        759 |          IF(STNAME(KST,1).NE.STNAME(KST,3))THEN
+        760 |             PRINT*,'wrong control'
+        761 |             stop
+        762 |          END IF
+        763 |
+        764 |          U1=0.
+        765 |          U2=0.
+        766 |          V1=0.
+        767 |          V2=0.
+        768 |
+        769 |!          write(96,*)IWMIN1,IWMAX1,JWMIN1,JWMAX1
+        770 |!          WRITE(96,98)((T11(I,J,1,KST),I=IWMIN1,IWMAX1),J=JWMIN1,JWMAX1)
+        771 |
+        772 |          READ(NCT2)((ZS(I,J),I=1,IGU),J=1,JGU)   ! ZS
+        773 |          READ(NCT2)((PSL(I,J),I=1,IGU),J=1,JGU)     ! PSL
+        774 |          READ(NCT2)((V1(I,J),I=IWMIN1,IWMAX1),J=JWMIN1,JWMAX1)
+        775 |          READ(NCT2)((TS(I,J),I=1,IGU),J=1,JGU)      ! TS
+        776 |
+        777 |!          CALL GET_LOGPS1(IGU,JGU,IWMIN1,IWMAX1,JWMIN1,JWMAX1,
+        778 |!     &          ZS,PSL,V1,TS,T11(1,1,1,KST),U1)
+        779 |
+        780 |!          READ(NCT3)((ZS(I,J),I=1,IGU),J=1,JGU)   ! ZS
+        781 |!          READ(NCT3)((PSL(I,J),I=1,IGU),J=1,JGU)     ! PSL
+        782 |          READ(NCT3)
+        783 |          READ(NCT3)
+        784 |          READ(NCT3)((V2(I,J),I=IWMIN2,IWMAX2),J=JWMIN2,JWMAX2)
+        785 |!          READ(NCT3)((TS(I,J),I=1,IGU),J=1,JGU)      ! TS
+        786 |          READ(NCT3)
+        787 |
+        788 |!          CALL GET_LOGPS1(IGU,JGU,IWMIN2,IWMAX2,JWMIN2,JWMAX2,
+        789 |!     &          ZS,PSL,V2,TS,T12(1,1,KST),U2)
+        790 |
+        791 |            DO J=1,JGU
+        792 |            DO I=1,IGU
+        793 |              PS1(I,J)=FACT*(V2(I,J)-V1(I,J))*
+        794 |     &         SQRT(TP1_C0(KST)/(TP1_PN(KST)+1.E-10))
+        795 |              T1(I,J,1)=FACT*(T12(I,J,1,KST)-T11(I,J,1,KST))*
+        796 |     &         SQRT(TT1_C0(KST)/(TT1_PN(KST)+1.E-10))
+        797 |            END DO
+        798 |            END DO
+        799 |
+        800 |c uncomment next line temporarily
+        801 |           write(97,*)IWMIN1,IWMAX1,JWMIN1,JWMAX1
+        802 |!          WRITE(97,98)((PS1(I,J),I=IWMIN1,IWMAX1),J=JWMIN1,JWMAX1)
+        803 |!          WRITE(99,98)((T1(I,J,1),I=IWMIN1,IWMAX1),J=JWMIN1,JWMAX1)
+        804 | 98       FORMAT(10F15.3)
+        805 |
+        806 |          CALL GET_LOGPS1(IGU,JGU,IWMIN1,IWMAX1,JWMIN1,JWMAX1,
+        807 |     &          ZS,PSL,PS1,TS,T1(1,1,1),U1)
+        808 |
+        809 |          DO J=1,JGU
+        810 |          DO I=1,IGU
+        811 |            SAVE(I,J,1)=SAVE(I,J,1)+U1(I,J)
+        812 |!            SAVE(I,J,1)=U1(I,J)
+        813 |          END DO
+        814 |          END DO
+        815 |
+        816 |          DO K=2,MTV
+        817 |            U1=0.
+        818 |            U2=0.
+        819 |            READ(NCT2)((U1(I,J),I=IWMIN1,IWMAX1),J=JWMIN1,JWMAX1)
+        820 |            READ(NCT3)((U2(I,J),I=IWMIN2,IWMAX2),J=JWMIN2,JWMAX2)
+        821 |            IF(K.LE.KMAX+1)THEN
+        822 |              DO J=1,JGU
+        823 |              DO I=1,IGU
+        824 |                SAVE(I,J,K)=SAVE(I,J,K)+FACT*
+        825 |     &         (U2(I,J)-U1(I,J))*SQRT(TT1_C0(KST)/(TT1_PN(KST)+1.E-10))
+        826 |              END DO
+        827 |              END DO
+        828 |            ELSE IF(K.LE.(3*KMAX+1))THEN
+        829 |              DO J=1,JGU
+        830 |              DO I=1,IGU
+        831 |                SAVE(I,J,K)=SAVE(I,J,K)+FACT*
+        832 |     &         (U2(I,J)-U1(I,J))*SQRT(TKE_C0(KST)/(TKE_PN(KST)+1.E-20))
+        833 |              END DO
+        834 |              END DO
+        835 |            ELSE
+        836 |              DO J=1,JGU
+        837 |              DO I=1,IGU
+        838 |                SAVE(I,J,K)=0.
+        839 |              END DO
+        840 |              END DO
+        841 |            END IF
+        842 |          END DO
+        843 |
+        844 |        END DO
+        845 |
+        846 |        DO J=1,JGU
+        847 |        DO I=1,IGU
+        848 |          PS1(I,J)=SAVE(I,J,1)            ! PS1 is the total log(Ps)
+        849 |        END DO
+        850 |        END DO
+        851 |        DO K=1,KMAX
+        852 |        DO J=1,JGU
+        853 |        DO I=1,IGU
+        854 |          T1(I,J,K)=SAVE(I,J,K+1)
+        855 |          VOR1(I,J,K)=SAVE(I,J,2*K+KMAX)
+        856 |          DIV1(I,J,K)=SAVE(I,J,2*K+KMAX+1)
+        857 |          Q1(I,J,K)=SAVE(I,J,K+3*KMAX+1)
+        858 |        END DO
+        859 |        END DO
+        860 |        END DO
+        861 |
+        862 |        DEALLOCATE ( U1,V1,U2,V2 )
+        863 |        DEALLOCATE ( ZS,PSL,TS )
+        864 |        DEALLOCATE ( T11,T12 )
+        865 |        DEALLOCATE ( SAVE )
+        866 |
+        867 |           print *,"     get_stm end"
+        868 |        END
+** get_stm   === End of Compilation 2 ===
+ 
+>>>>> COMPILATION UNIT EPILOGUE SECTION <<<<<
+ 
+ 
+TOTAL   UNRECOVERABLE  SEVERE       ERROR     WARNING    INFORMATIONAL
+               (U)       (S)         (E)        (W)          (I)
+    0           0         0           0          0            0
+ 
+>>>>> OPTIONS SECTION <<<<<
+***   Options In Effect   ***
+  
+         ==  On / Off Options  ==
+         CR              DBG             ESCAPE          FULLPATH
+         I4              INLGLUE         NOLIBESSL       NOLIBPOSIX
+         OBJECT          PROFILE         SOURCE          STRICT
+         SWAPOMP         THREADED        UNWIND          NOZEROSIZE
+  
+         ==  Options Of Integer Type ==
+         ALIAS_SIZE(65536)     FIXED(72)             MAXMEM(-1)
+         OPTIMIZE(2)           SPILLSIZE(10000)      STACKTEMP(0)
+  
+  
+         ==  Options of Integer and Character Type ==
+         SMP(NOAUTO,SCHEDULE(RUNTIME))
+  
+         ==  Options Of Character Type  ==
+         64(LARGETYPE)         ALIAS(STD,INTPTR)     ALIGN(BINDC(POWER),STRUCT(NATURAL))
+         ARCH(PWR6)            AUTODBL(NONE)         DESCRIPTOR(V1)
+         DIRECTIVE(IBM*,IBMT,SMP$,$OMP,IBMP)
+         ENUM()                FLAG(I,I)             FLOAT(RNDSNGL,MAF,FOLD,RNGCHK,SINGLE)
+         FLTTRAP(OVERFLOW,UNDERFLOW,ZERODIVIDE,INVALID,INEXACT)
+         HALT(S)               IEEE(NEAR)            INITAUTO( 0      )
+         INTSIZE(4)            LANGLVL(EXTENDED)     POSITION(APPENDOLD)
+         REALSIZE(8)           SAVE(ALL)             TUNE(PWR6)
+         UNROLL(AUTO)          XFLAG()               XLF2003(NOPOLYMORPHIC,NOBOZLITARGS,NOSTOPEXCEPT,NOVOLATILE,NOAUTOREALLOC,OLDNANINF)
+         XLF77(NOLEADZERO,GEDIT77,NOBLANKPAD,OLDBOZ,INTARG,INTXOR,PERSISTENT,SOFTEOF)
+         XLF90(NOSIGNEDZERO,NOAUTODEALLOC,OLDPAD)
+  
+>>>>> SOURCE SECTION <<<<<
+        869 |
+        870 |         SUBROUTINE GET_LOGPS(IGU,JGU,IX1,IX2,JX1,JX2,
+        871 |     &          ZS,PSL,TS,U1)
+        872 |
+        873 |      REAL*4 ZS(IGU,JGU),PSL(IGU,JGU)
+        874 |      REAL*4 TS(IGU,JGU)
+        875 |      REAL*4 U1(IGU,JGU)                ! output
+        876 |C
+        877 |C.. MAKE SFC PRESSURE FROM MSLP
+        878 |C
+        879 |      G = 9.8
+        880 |      R = 287.05
+        881 |      GAMMA = 6.7*0.001
+        882 |C
+        883 |! ENV data
+        884 |      DO JH=1,JGU
+        885 |      DO IH=1,IGU
+        886 |      PMSL = ALOG(PSL(IH,JH)*1.0)
+        887 |      A = (GAMMA * ZS(IH,JH)) / TS(IH,JH)
+        888 |c uncomment next line temporarily
+        889 |       PRINT*,'IH,JH,APSL,TS=',IH,JH,A,PSL(IH,JH),TS(IH,JH)
+        890 |      B = ALOG(1+A)
+        891 |      C = (G*B)/(R*GAMMA)
+        892 |      DD = PMSL - C
+        893 |      D1 = EXP(DD)/1000.
+        894 |      U1(IH,JH) = ALOG(D1)
+        895 |
+        896 |      ENDDO
+        897 |      ENDDO
+        898 |
+        899 |      END
+** get_logps   === End of Compilation 3 ===
+ 
+>>>>> COMPILATION UNIT EPILOGUE SECTION <<<<<
+ 
+ 
+TOTAL   UNRECOVERABLE  SEVERE       ERROR     WARNING    INFORMATIONAL
+               (U)       (S)         (E)        (W)          (I)
+    0           0         0           0          0            0
+ 
+>>>>> OPTIONS SECTION <<<<<
+***   Options In Effect   ***
+  
+         ==  On / Off Options  ==
+         CR              DBG             ESCAPE          FULLPATH
+         I4              INLGLUE         NOLIBESSL       NOLIBPOSIX
+         OBJECT          PROFILE         SOURCE          STRICT
+         SWAPOMP         THREADED        UNWIND          NOZEROSIZE
+  
+         ==  Options Of Integer Type ==
+         ALIAS_SIZE(65536)     FIXED(72)             MAXMEM(-1)
+         OPTIMIZE(2)           SPILLSIZE(10000)      STACKTEMP(0)
+  
+  
+         ==  Options of Integer and Character Type ==
+         SMP(NOAUTO,SCHEDULE(RUNTIME))
+  
+         ==  Options Of Character Type  ==
+         64(LARGETYPE)         ALIAS(STD,INTPTR)     ALIGN(BINDC(POWER),STRUCT(NATURAL))
+         ARCH(PWR6)            AUTODBL(NONE)         DESCRIPTOR(V1)
+         DIRECTIVE(IBM*,IBMT,SMP$,$OMP,IBMP)
+         ENUM()                FLAG(I,I)             FLOAT(RNDSNGL,MAF,FOLD,RNGCHK,SINGLE)
+         FLTTRAP(OVERFLOW,UNDERFLOW,ZERODIVIDE,INVALID,INEXACT)
+         HALT(S)               IEEE(NEAR)            INITAUTO( 0      )
+         INTSIZE(4)            LANGLVL(EXTENDED)     POSITION(APPENDOLD)
+         REALSIZE(8)           SAVE(ALL)             TUNE(PWR6)
+         UNROLL(AUTO)          XFLAG()               XLF2003(NOPOLYMORPHIC,NOBOZLITARGS,NOSTOPEXCEPT,NOVOLATILE,NOAUTOREALLOC,OLDNANINF)
+         XLF77(NOLEADZERO,GEDIT77,NOBLANKPAD,OLDBOZ,INTARG,INTXOR,PERSISTENT,SOFTEOF)
+         XLF90(NOSIGNEDZERO,NOAUTODEALLOC,OLDPAD)
+  
+>>>>> SOURCE SECTION <<<<<
+        900 |
+        901 |         SUBROUTINE GET_LOGPS1(IGU,JGU,IX1,IX2,JX1,JX2,
+        902 |     &          ZS,PSL,PS1,TS,T1,U1)
+        903 |
+        904 |      REAL*4  ZS(IGU,JGU),PSL(IGU,JGU)
+        905 |      REAL*4  TS(IGU,JGU)
+        906 |      REAL*4  U1(IGU,JGU)                ! output
+        907 |      DIMENSION PS1(IGU,JGU),T1(IGU,JGU)
+        908 |C
+        909 |C.. MAKE SFC PRESSURE FROM MSLP
+        910 |C
+        911 |      G = 9.8
+        912 |      R = 287.05
+        913 |      GAMMA = 6.7*0.001
+        914 |C
+        915 |      DO JH=1,JGU
+        916 |      DO IH=1,IGU
+        917 |      PMSL = ALOG(PSL(IH,JH)+PS1(IH,JH))
+        918 |      A = (GAMMA * ZS(IH,JH)) / (TS(IH,JH)+T1(IH,JH))
+        919 |!      PRINT*,'IH,JH,A=',IH,JH,A
+        920 |      B = ALOG(1+A)
+        921 |      C = (G*B)/(R*GAMMA)
+        922 |      DD = PMSL - C
+        923 |      D1 = EXP(DD)/1000.
+        924 |      U1(IH,JH) = ALOG(D1)
+        925 |      ENDDO
+        926 |      ENDDO
+        927 |
+        928 |! ENV data
+        929 |      DO JH=1,JGU
+        930 |      DO IH=1,IGU
+        931 |      PMSL = ALOG(PSL(IH,JH)*1.0)
+        932 |      A = (GAMMA * ZS(IH,JH)) / TS(IH,JH)
+        933 |!      PRINT*,'IH,JH,APSL,TS=',IH,JH,A,PSL(IH,JH),TS(IH,JH)
+        934 |      B = ALOG(1+A)
+        935 |      C = (G*B)/(R*GAMMA)
+        936 |      DD = PMSL - C
+        937 |      D1 = EXP(DD)/1000.
+        938 |      U1(IH,JH) = U1(IH,JH)-ALOG(D1)
+        939 |
+        940 |      ENDDO
+        941 |      ENDDO
+        942 |
+        943 |      END
+** get_logps1   === End of Compilation 4 ===
+ 
+>>>>> COMPILATION UNIT EPILOGUE SECTION <<<<<
+ 
+ 
+TOTAL   UNRECOVERABLE  SEVERE       ERROR     WARNING    INFORMATIONAL
+               (U)       (S)         (E)        (W)          (I)
+    0           0         0           0          0            0
+ 
+>>>>> OPTIONS SECTION <<<<<
+***   Options In Effect   ***
+  
+         ==  On / Off Options  ==
+         CR              DBG             ESCAPE          FULLPATH
+         I4              INLGLUE         NOLIBESSL       NOLIBPOSIX
+         OBJECT          PROFILE         SOURCE          STRICT
+         SWAPOMP         THREADED        UNWIND          NOZEROSIZE
+  
+         ==  Options Of Integer Type ==
+         ALIAS_SIZE(65536)     FIXED(72)             MAXMEM(-1)
+         OPTIMIZE(2)           SPILLSIZE(10000)      STACKTEMP(0)
+  
+  
+         ==  Options of Integer and Character Type ==
+         SMP(NOAUTO,SCHEDULE(RUNTIME))
+  
+         ==  Options Of Character Type  ==
+         64(LARGETYPE)         ALIAS(STD,INTPTR)     ALIGN(BINDC(POWER),STRUCT(NATURAL))
+         ARCH(PWR6)            AUTODBL(NONE)         DESCRIPTOR(V1)
+         DIRECTIVE(IBM*,IBMT,SMP$,$OMP,IBMP)
+         ENUM()                FLAG(I,I)             FLOAT(RNDSNGL,MAF,FOLD,RNGCHK,SINGLE)
+         FLTTRAP(OVERFLOW,UNDERFLOW,ZERODIVIDE,INVALID,INEXACT)
+         HALT(S)               IEEE(NEAR)            INITAUTO( 0      )
+         INTSIZE(4)            LANGLVL(EXTENDED)     POSITION(APPENDOLD)
+         REALSIZE(8)           SAVE(ALL)             TUNE(PWR6)
+         UNROLL(AUTO)          XFLAG()               XLF2003(NOPOLYMORPHIC,NOBOZLITARGS,NOSTOPEXCEPT,NOVOLATILE,NOAUTOREALLOC,OLDNANINF)
+         XLF77(NOLEADZERO,GEDIT77,NOBLANKPAD,OLDBOZ,INTARG,INTXOR,PERSISTENT,SOFTEOF)
+         XLF90(NOSIGNEDZERO,NOAUTODEALLOC,OLDPAD)
+  
+>>>>> SOURCE SECTION <<<<<
+        944 |          subroutine srangel(var,n,label,level)
+        945 |c print level, label, range, mean, avg dev, std dev, skew, n of zeroes
+        946 |          dimension var(n)
+        947 |          character*(*) label
+        948 |          ptsn=n
+        949 |          sa=0.0
+        950 |          dmin=1.e40
+        951 |          dmax=-1.e40
+        952 |          nzero=0
+        953 |          do j=1,n
+        954 |            sa=sa+var(j)
+        955 |            dmin=min(dmin,var(j))
+        956 |            dmax=max(dmax,var(j))
+        957 |	    if (var(j) .eq. 0.0) then
+        958 |	      nzero=nzero+1
+        959 |	    endif
+        960 |          enddo
+        961 |          avg=sa/ptsn
+        962 |          sl=0.0
+        963 |          sv=0.0
+        964 |          do j=1,n
+        965 |            sl=sl+abs(var(j)-avg)
+        966 |            sv=sv+(var(j)-avg)**2
+        967 |          enddo
+        968 |          adev=sl/ptsn
+        969 |          sdev=sqrt(sv/(ptsn-1))
+        970 |          if (sdev.gt.0.0) then
+        971 |            ss=0.0
+        972 |            do j=1,n
+        973 |              devn=(var(j)-avg)/sdev
+        974 |              ss=ss+devn**3
+        975 |            enddo
+        976 |            skew=ss/ptsn
+        977 |          else
+        978 |            skew=0.0
+        979 |          endif
+        980 |	  if (level .eq. 0) then
+        981 |	    print *,label,dmin,dmax,avg,adev,sdev,skew,nzero
+        982 |	  else
+        983 |	    print *,level,label,dmin,dmax,avg,adev,sdev,skew,nzero
+        984 |	  endif
+        985 |          return
+        986 |          end
+** srangel   === End of Compilation 5 ===
+ 
+>>>>> COMPILATION UNIT EPILOGUE SECTION <<<<<
+ 
+ 
+TOTAL   UNRECOVERABLE  SEVERE       ERROR     WARNING    INFORMATIONAL
+               (U)       (S)         (E)        (W)          (I)
+    0           0         0           0          0            0
+ 
+>>>>> OPTIONS SECTION <<<<<
+***   Options In Effect   ***
+  
+         ==  On / Off Options  ==
+         CR              DBG             ESCAPE          FULLPATH
+         I4              INLGLUE         NOLIBESSL       NOLIBPOSIX
+         OBJECT          PROFILE         SOURCE          STRICT
+         SWAPOMP         THREADED        UNWIND          NOZEROSIZE
+  
+         ==  Options Of Integer Type ==
+         ALIAS_SIZE(65536)     FIXED(72)             MAXMEM(-1)
+         OPTIMIZE(2)           SPILLSIZE(10000)      STACKTEMP(0)
+  
+  
+         ==  Options of Integer and Character Type ==
+         SMP(NOAUTO,SCHEDULE(RUNTIME))
+  
+         ==  Options Of Character Type  ==
+         64(LARGETYPE)         ALIAS(STD,INTPTR)     ALIGN(BINDC(POWER),STRUCT(NATURAL))
+         ARCH(PWR6)            AUTODBL(NONE)         DESCRIPTOR(V1)
+         DIRECTIVE(IBM*,IBMT,SMP$,$OMP,IBMP)
+         ENUM()                FLAG(I,I)             FLOAT(RNDSNGL,MAF,FOLD,RNGCHK,SINGLE)
+         FLTTRAP(OVERFLOW,UNDERFLOW,ZERODIVIDE,INVALID,INEXACT)
+         HALT(S)               IEEE(NEAR)            INITAUTO( 0      )
+         INTSIZE(4)            LANGLVL(EXTENDED)     POSITION(APPENDOLD)
+         REALSIZE(8)           SAVE(ALL)             TUNE(PWR6)
+         UNROLL(AUTO)          XFLAG()               XLF2003(NOPOLYMORPHIC,NOBOZLITARGS,NOSTOPEXCEPT,NOVOLATILE,NOAUTOREALLOC,OLDNANINF)
+         XLF77(NOLEADZERO,GEDIT77,NOBLANKPAD,OLDBOZ,INTARG,INTXOR,PERSISTENT,SOFTEOF)
+         XLF90(NOSIGNEDZERO,NOAUTODEALLOC,OLDPAD)
+  
+>>>>> SOURCE SECTION <<<<<
+        987 |
+        988 |
+ 
+>>>>> FILE TABLE SECTION <<<<<
+ 
+ 
+                                       FILE CREATION        FROM
+FILE NO   FILENAME                    DATE       TIME       FILE    LINE
+     0    gefs_vortex_combine.f       12/18/08   11:51:13
+ 
+ 
+>>>>> COMPILATION EPILOGUE SECTION <<<<<
+ 
+ 
+FORTRAN Summary of Diagnosed Conditions
+ 
+TOTAL   UNRECOVERABLE  SEVERE       ERROR     WARNING    INFORMATIONAL
+               (U)       (S)         (E)        (W)          (I)
+    0           0         0           0          0            0
+ 
+ 
+    Source records read.......................................     988
+1501-510  Compilation successful for file gefs_vortex_combine.f.
+1501-543  Object file created.

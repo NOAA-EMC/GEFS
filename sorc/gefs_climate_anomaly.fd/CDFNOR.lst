@@ -1,0 +1,456 @@
+IBM XL Fortran for AIX, V12.1 (5724-U82) Version 12.01.0000.0001 --- /gpfs/c/nco/ops/nwprod/sorc/gefs_climate_anomaly.fd/CDFNOR.f90 12/22/08 14:26:52
+ 
+>>>>> OPTIONS SECTION <<<<<
+***   Options In Effect   ***
+  
+         ==  On / Off Options  ==
+         CR              DBG             ESCAPE          FULLPATH
+         I4              INLGLUE         NOLIBESSL       NOLIBPOSIX
+         OBJECT          SOURCE          STRICT          SWAPOMP
+         THREADED        UNWIND          ZEROSIZE
+  
+         ==  Options Of Integer Type ==
+         ALIAS_SIZE(65536)     MAXMEM(-1)            OPTIMIZE(3)
+         SPILLSIZE(512)        STACKTEMP(0)
+  
+         ==  Options Of Character Type  ==
+         64(LARGETYPE)         ALIAS(STD,NOINTPTR)   ALIGN(BINDC(POWER),STRUCT(NATURAL))
+         ARCH(PWR6)            AUTODBL(NONE)         DESCRIPTOR(V1)
+         DIRECTIVE(IBM*,IBMT)  ENUM()                FLAG(I,I)
+         FLOAT(RNDSNGL,MAF,FOLD,RNGCHK,SINGLE)
+         FREE(F90)             HALT(S)               IEEE(NEAR)
+         INTSIZE(4)            LIST()                LANGLVL(90PURE)
+         REALSIZE(4)           TUNE(PWR6)            UNROLL(AUTO)
+         XLF2003(NOPOLYMORPHIC,NOBOZLITARGS,NOSTOPEXCEPT,NOVOLATILE,NOAUTOREALLOC,OLDNANINF)
+         XLF77(LEADZERO,BLANKPAD)
+         XLF90(NOSIGNEDZERO,NOAUTODEALLOC,OLDPAD)
+  
+>>>>> SOURCE SECTION <<<<<
+          1 |!===================================================== CDFNOR.FOR
+          2 |!     DOUBLE PRECISION FUNCTION CDFNOR(X,PARA)
+          3 |FUNCTION CDFNOR(X,PARA)
+          4 |!***********************************************************************
+          5 |!*                                                                     *
+          6 |!*  FORTRAN CODE WRITTEN FOR INCLUSION IN IBM RESEARCH REPORT RC20525, *
+          7 |!*  'FORTRAN ROUTINES FOR USE WITH THE METHOD OF L-MOMENTS, VERSION 3' *
+          8 |!*                                                                     *
+          9 |!*  J. R. M. HOSKING                                                   *
+         10 |!*  IBM RESEARCH DIVISION                                              *
+         11 |!*  T. J. WATSON RESEARCH CENTER                                       *
+         12 |!*  YORKTOWN HEIGHTS                                                   *
+         13 |!*  NEW YORK 10598, U.S.A.                                             *
+         14 |!*                                                                     *
+         15 |!*  VERSION 3            AUGUST 1996                                   *
+         16 |!*                                                                     *
+         17 |!*  Modified by Bo Cui:  Dec 14, 2006                                  *
+         18 |!*     - converted from f77 to f90                                        *
+         19 |!*     - change function name from ERF to ERFF because ERF works for   *
+         20 |!*       f77 but not for f90, the error information is: The intrinsic  *
+         21 |!*       procedure erf (with these arguments) is not permitted by the  *
+         22 |!*       Fortran 90 standard                                           *
+         23 |!*                                                                     *
+         24 |!***********************************************************************
+         25 |!
+         26 |!  DISTRIBUTION FUNCTION OF THE STANDARD NORMAL DISTRIBUTION
+         27 |!
+         28 |!  OTHER ROUTINES USED: DERF
+         29 |!
+         30 |!     IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+         31 |!     DOUBLE PRECISION PARA(2)
+         32 |
+         33 |IMPLICIT NONE
+         34 |
+         35 |REAL    X
+         36 |REAL    HALF
+         37 |REAL    PARA(2)
+         38 |REAL    CDFNOR
+         39 |REAL    RTHALF
+         40 |REAL    ERFF
+         41 |
+         42 |!DATA HALF/0.5D0/,RTHALF/0.70710 67811 86547 524D0/
+         43 |DATA HALF/0.5D0/,RTHALF/0.707106781186547524D0/
+         44 |
+         45 |!CDFNOR=HALF+HALF*DERF((X-PARA(1))/PARA(2)*RTHALF)
+         46 |
+         47 |CDFNOR=HALF+HALF*ERFF((X-PARA(1))/PARA(2)*RTHALF)
+         48 |
+         49 |RETURN
+         50 |END
+** cdfnor   === End of Compilation 1 ===
+ 
+>>>>> OBJECT SECTION <<<<<
+ GPR's set/used:   ssus ssss ssss s---  ---- ---- ---- ---s
+ FPR's set/used:   ssss ssss ssss ss--  ---- ---- ---- ----
+ CCR's set/used:   ss-- -sss
+     | 000000                           PDEF     cdfnor
+    0|                                  PROC      .x,.para,gr3,gr4
+   47| 000000 lfs      C0430000   1     LFS       fp2=x(gr3,0)
+   47| 000004 lfs      C0640000   1     LFS       fp3=para[](gr4,0)
+   47| 000008 fsubs    EC021828   1     SFS       fp0=fp2,fp3,fcr
+    0| 00000C std      FBE1FFF8   1     ST8       #stack(gr1,-8)=gr31
+   47| 000010 lfs      C0240004   1     LFS       fp1=para[](gr4,4)
+    0| 000014 mfspr    7C0802A6   1     LFLR      gr0=lr
+   47| 000018 ld       EBE20008   1     L8        gr31=.+CONSTANT_AREA(gr2,0)
+    0| 00001C ori      60000000   1     NOP       
+    0| 000020 std      F8010010   1     ST8       #stack(gr1,16)=gr0
+    0| 000024 stdu     F821FF81   1     ST8U      gr1,#stack(gr1,-128)=gr1
+   47| 000028 lfs      C05F0008   1     LFS       fp2=+CONSTANT_AREA(gr31,8)
+   47| 00002C fdivs    EC000824  19     DFS       fp0=fp0,fp1,fcr
+   47| 000030 addi     38610070   0     AI        gr3=gr1,112
+    0| 000034 ori      60210000   0     XNOP      
+   47| 000038 fmuls    EC0000B2   4     MFS       fp0=fp0,fp2,fcr
+   47| 00003C stfs     D0010070   0     STFS      T_2(gr1,112)=fp0
+   47| 000040 bl       4BFFFFC1   0     CALL      fp1=erff,1,T_2",gr3,erff",fcr",gr1,cr[01567]",gr0",gr3"-gr12",fp0",fp2"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   47| 000044 ori      60000000   1
+   47| 000048 frsp     FC000818   1     CVLS      fp0=fp1,fcr
+   47| 00004C lfs      C03F000C   1     LFS       fp1=+CONSTANT_AREA(gr31,12)
+   50| 000050 ld       E9810090   1     L8        gr12=#stack(gr1,144)
+   50| 000054 addi     38210080   1     AI        gr1=gr1,128
+   50| 000058 mtspr    7D8803A6   1     LLR       lr=gr12
+   50| 00005C ld       EBE1FFF8   1     L8        gr31=#stack(gr1,-8)
+    0| 000060 ori      60000000   1     NOP       
+   47| 000064 fmadds   EC20087A   1     FMAS      fp1=fp1,fp0,fp1,fcr
+   50| 000068 bclr     4E800020   0     BA        lr
+     |               Tag Table
+     | 00006C        00000000 00012241 80010200 00000000 0000006C 00066364
+     | 000084        666E6F72
+     |               Instruction count           27
+     |               Straight-line exec time      0
+     |               Constant Area
+     | 000000        3F3504F3 3F000000 3F3504F3 3F000000
+
+ 
+ 
+>>>>> COMPILATION UNIT EPILOGUE SECTION <<<<<
+ 
+ 
+TOTAL   UNRECOVERABLE  SEVERE       ERROR     WARNING    INFORMATIONAL
+               (U)       (S)         (E)        (W)          (I)
+    0           0         0           0          0            0
+ 
+>>>>> OPTIONS SECTION <<<<<
+***   Options In Effect   ***
+  
+         ==  On / Off Options  ==
+         CR              DBG             ESCAPE          FULLPATH
+         I4              INLGLUE         NOLIBESSL       NOLIBPOSIX
+         OBJECT          SOURCE          STRICT          SWAPOMP
+         THREADED        UNWIND          ZEROSIZE
+  
+         ==  Options Of Integer Type ==
+         ALIAS_SIZE(65536)     MAXMEM(-1)            OPTIMIZE(3)
+         SPILLSIZE(512)        STACKTEMP(0)
+  
+         ==  Options Of Character Type  ==
+         64(LARGETYPE)         ALIAS(STD,NOINTPTR)   ALIGN(BINDC(POWER),STRUCT(NATURAL))
+         ARCH(PWR6)            AUTODBL(NONE)         DESCRIPTOR(V1)
+         DIRECTIVE(IBM*,IBMT)  ENUM()                FLAG(I,I)
+         FLOAT(RNDSNGL,MAF,FOLD,RNGCHK,SINGLE)
+         FREE(F90)             HALT(S)               IEEE(NEAR)
+         INTSIZE(4)            LIST()                LANGLVL(90PURE)
+         REALSIZE(4)           TUNE(PWR6)            UNROLL(AUTO)
+         XLF2003(NOPOLYMORPHIC,NOBOZLITARGS,NOSTOPEXCEPT,NOVOLATILE,NOAUTOREALLOC,OLDNANINF)
+         XLF77(LEADZERO,BLANKPAD)
+         XLF90(NOSIGNEDZERO,NOAUTODEALLOC,OLDPAD)
+  
+>>>>> SOURCE SECTION <<<<<
+         51 |
+         52 |!===================================================== ERF.FOR
+         53 |!     DOUBLE PRECISION FUNCTION ERF(X)
+         54 |FUNCTION ERFF(X)
+         55 |!***********************************************************************
+         56 |!*                                                                     *
+         57 |!*  FORTRAN CODE WRITTEN FOR INCLUSION IN IBM RESEARCH REPORT RC20525, *
+         58 |!*  'FORTRAN ROUTINES FOR USE WITH THE METHOD OF L-MOMENTS, VERSION 3' *
+         59 |!*                                                                     *
+         60 |!*  J. R. M. HOSKING                                                   *
+         61 |!*  IBM RESEARCH DIVISION                                              *
+         62 |!*  T. J. WATSON RESEARCH CENTER                                       *
+         63 |!*  YORKTOWN HEIGHTS                                                   *
+         64 |!*  NEW YORK 10598, U.S.A.                                             *
+         65 |!*                                                                     *
+         66 |!*  VERSION 3     AUGUST 1996                                          *
+         67 |!*                                                                     *
+         68 |!*  Modified by Bo Cui:  Dec 14, 2006                                  *
+         69 |!*     - converted from f77 to f90                                        *
+         70 |!*     - change function name from ERF to ERFF because ERF works for   *
+         71 |!*       f77 but not for f90, the error information is: The intrinsic  *
+         72 |!*       procedure erf (with these arguments) is not permitted by the  *
+         73 |!*       Fortran 90 standard
+         74 |!*     - define all the arries using REAL                                           *
+         75 |!*                                                                     *
+         76 |!*                                                                     *
+         77 |!***********************************************************************
+         78 |!
+         79 |!  ERROR FUNCTION
+         80 |!
+         81 |!  BASED ON ALGORITHM 5666, J.F.HART ET AL. (1968) 'COMPUTER
+         82 |!  APPROXIMATIONS'
+         83 |!
+         84 |!  ACCURATE TO 15 DECIMAL PLACES
+         85 |!
+         86 |IMPLICIT NONE
+         87 |!IMPLICIT DOUBLE PRECISION (A-H, O-Z)
+         88 |
+         89 |REAL ZERO,ONE,TWO,THREE,FOUR,P65
+         90 |REAL P0,P1,P2,P3,P4,P5,P6,Q0,Q1,Q2,Q3,Q4,Q5,Q6,Q7,C1,C2,BIG
+         91 |REAL XX,EXPNTL,ZZ,ERFF,X,CRIT
+         92 |
+         93 |DATA ZERO/0D0/,ONE/1D0/,TWO/2D0/,THREE/3D0/,FOUR/4D0/,P65/0.65D0/
+         94 |!
+         95 |!         COEFFICIENTS OF RATIONAL-FUNCTION APPROXIMATION
+         96 |!
+         97 |DATA P0,P1,P2,P3,P4,P5,P6/0.2202068679123761D3,0.2212135961699311D3,0.1120792914978709D3,0.3391286607838300D2,0.6373962203531650D1,0.7003830644436881D0,0.3526249659989109D-1/
+         98 |
+         99 |DATA Q0,Q1,Q2,Q3,Q4,Q5,Q6,Q7/0.4404137358247522D3,0.7938265125199484D3,0.6373336333788311D3,0.2965642487796737D3,0.8678073220294608D2,0.1606417757920695D2,0.1755667163182642D1,0.8838834764831844D-1/
+        100 |!
+        101 |!         C1 IS SQRT(2), C2 IS SQRT(2/PI)
+        102 |!         BIG IS THE POINT AT WHICH ERFF=1 TO MACHINE PRECISION
+        103 |!
+        104 |DATA C1/1.414213562373095D0/
+        105 |DATA C2/7.978845608028654D-1/
+        106 |DATA BIG/6.25D0/,CRIT/5D0/
+        107 |!
+        108 |ERFF=ZERO
+        109 |IF(X.EQ.ZERO)RETURN
+        110 |XX=ABS(X)
+        111 |IF(XX.GT.BIG)GOTO 20
+        112 |EXPNTL=EXP(-X*X)
+        113 |ZZ=ABS(X*C1)
+        114 |IF(XX.GT.CRIT)GOTO 10
+        115 |ERFF=EXPNTL*((((((P6*ZZ+P5)*ZZ+P4)*ZZ+P3)*ZZ+P2)*ZZ+P1)*ZZ+P0)/(((((((Q7*ZZ+Q6)*ZZ+Q5)*ZZ+Q4)*ZZ+Q3)*ZZ+Q2)*ZZ+Q1)*ZZ+Q0)
+        116 |IF(X.GT.ZERO)ERFF=ONE-TWO*ERFF
+        117 |IF(X.LT.ZERO)ERFF=TWO*ERFF-ONE
+        118 |RETURN
+        119 |!
+        120 |10 ERFF=EXPNTL*C2/(ZZ+ONE/(ZZ+TWO/(ZZ+THREE/(ZZ+FOUR/(ZZ+P65)))))
+        121 |IF(X.GT.ZERO)ERFF=ONE-ERFF
+        122 |IF(X.LT.ZERO)ERFF=ERFF-ONE
+        123 |RETURN
+        124 |!
+        125 |20 ERFF=ONE
+        126 |IF(X.LT.ZERO)ERFF=-ONE
+        127 |RETURN
+        128 |END
+** erff   === End of Compilation 2 ===
+ 
+>>>>> OBJECT SECTION <<<<<
+ GPR's set/used:   ssus ssss ssss s---  ---- ---- ---- ---s
+ FPR's set/used:   ssss ssss ssss ss--  ---- ---- ---- -sss
+ CCR's set/used:   ss-- ssss
+     | 000000                           PDEF     erff
+    0|                                  PROC      .x,gr3
+    0| 000000 fmr      FC000090   1     LRFL      fp0=fp0
+    0| 000004 stfd     DBE1FFF8   1     STFL      #stack(gr1,-8)=fp31
+    0| 000008 stfd     DBC1FFF0   1     STFL      #stack(gr1,-16)=fp30
+    0| 00000C stfd     DBA1FFE8   1     STFL      #stack(gr1,-24)=fp29
+    0| 000010 stfd     DB81FFE0   1     STFL      #stack(gr1,-32)=fp28
+    0| 000014 std      FBE1FFD8   1     ST8       #stack(gr1,-40)=gr31
+  108| 000018 ld       EBE20008   1     L8        gr31=.+CONSTANT_AREA(gr2,0)
+    0| 00001C mfcr     7D800026   1     LFCR      gr12=cr4,4
+    0| 000020 mfspr    7C0802A6   1     LFLR      gr0=lr
+  109| 000024 lfs      C3E30000   1     LFS       fp31=x(gr3,0)
+  108| 000028 lfs      C03F0064   1     LFS       fp1=+CONSTANT_AREA(gr31,100)
+  110| 00002C fabs     FFC0FA10   1     ABSFL     fp30=fp31
+  109| 000030 fcmpu    FE1F0800   1     CFS       cr4=fp31,fp1
+  109| 000034 fcmpu    FC01F800   1     CFS       cr0=fp1,fp31
+    0| 000038 stw      91810008   1     ST4A      #stack(gr1,8)=gr12
+    0| 00003C std      F8010010   1     ST8       #stack(gr1,16)=gr0
+    0| 000040 stdu     F821FF61   1     ST8U      gr1,#stack(gr1,-160)=gr1
+  111| 000044 lfs      C01F0068   1     LFS       fp0=+CONSTANT_AREA(gr31,104)
+    0| 000048 ori      60210000   1     XNOP      
+  109| 00004C bc       418201F0   0     BT        CL.17,cr0,0x80/feq,taken=40%(40,60)
+  111| 000050 fcmpu    FC00F000   2     CFS       cr0=fp0,fp30
+  111| 000054 bc       41800190   5     BT        CL.3,cr0,0x20/flt,taken=60%(60,40)
+  112| 000058 fmuls    EC1F07F2   2     MFS       fp0=fp31,fp31,fcr
+  112| 00005C fneg     FC200050   4     COMPFL    fp1=fp0
+  112| 000060 bl       4BFFFFA1   0     CALLN     fp1=_exp,1,fp1,_exp,gr1,cr[01567]",gr0",gr3"-gr12",fp0",fp2"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+  112| 000064 ori      60000000   1
+  113| 000068 lfs      C01F006C   1     LFS       fp0=+CONSTANT_AREA(gr31,108)
+  113| 00006C fmuls    EC5F0032   1     MFS       fp2=fp31,fp0,fcr
+  114| 000070 lfs      C07F0070   1     LFS       fp3=+CONSTANT_AREA(gr31,112)
+  114| 000074 fcmpu    FC03F000   1     CFS       cr0=fp3,fp30
+  112| 000078 frsp     FC200818   1     CVLS      fp1=fp1,fcr
+    0| 00007C ori      60210000   1     XNOP      
+  113| 000080 fabs     FC601210   1     ABSFL     fp3=fp2
+    0| 000084 ori      60210000   1     XNOP      
+  114| 000088 bc       418000B0   1     BT        CL.5,cr0,0x20/flt,taken=50%(0,0)
+  115| 00008C lfs      C05F0074   2     LFS       fp2=+CONSTANT_AREA(gr31,116)
+  115| 000090 lfs      C0DF0078   1     LFS       fp6=+CONSTANT_AREA(gr31,120)
+  115| 000094 lfs      C01F0090   1     LFS       fp0=+CONSTANT_AREA(gr31,144)
+  115| 000098 fmadds   EC8311BA   1     FMAS      fp4=fp2,fp3,fp6,fcr
+  115| 00009C lfs      C11F0094   1     LFS       fp8=+CONSTANT_AREA(gr31,148)
+  115| 0000A0 fmadds   ECA3023A   1     FMAS      fp5=fp0,fp3,fp8,fcr
+  115| 0000A4 lfs      C0DF007C   1     LFS       fp6=+CONSTANT_AREA(gr31,124)
+  115| 0000A8 lfs      C0FF0098   1     LFS       fp7=+CONSTANT_AREA(gr31,152)
+  115| 0000AC lfs      C11F0080   1     LFS       fp8=+CONSTANT_AREA(gr31,128)
+  115| 0000B0 lfs      C13F009C   1     LFS       fp9=+CONSTANT_AREA(gr31,156)
+  115| 0000B4 lfs      C15F0084   1     LFS       fp10=+CONSTANT_AREA(gr31,132)
+  115| 0000B8 lfs      C17F00A0   1     LFS       fp11=+CONSTANT_AREA(gr31,160)
+  115| 0000BC lfs      C19F0088   1     LFS       fp12=+CONSTANT_AREA(gr31,136)
+  115| 0000C0 lfs      C1BF00A4   1     LFS       fp13=+CONSTANT_AREA(gr31,164)
+  115| 0000C4 lfs      C3FF008C   1     LFS       fp31=+CONSTANT_AREA(gr31,140)
+  115| 0000C8 lfs      C3DF00A8   1     LFS       fp30=+CONSTANT_AREA(gr31,168)
+  115| 0000CC lfs      C3BF00AC   1     LFS       fp29=+CONSTANT_AREA(gr31,172)
+  116| 0000D0 lfs      C01F00B0   1     LFS       fp0=+CONSTANT_AREA(gr31,176)
+  116| 0000D4 lfs      C05F00B4   1     LFS       fp2=+CONSTANT_AREA(gr31,180)
+  115| 0000D8 fmadds   ECA3397A   1     FMAS      fp5=fp7,fp3,fp5,fcr
+  115| 0000DC fmadds   EC83313A   1     FMAS      fp4=fp6,fp3,fp4,fcr
+  115| 0000E0 fmadds   EC83413A   4     FMAS      fp4=fp8,fp3,fp4,fcr
+  115| 0000E4 fmadds   ECA3497A   1     FMAS      fp5=fp9,fp3,fp5,fcr
+  115| 0000E8 fmadds   ECA3597A   4     FMAS      fp5=fp11,fp3,fp5,fcr
+  115| 0000EC fmadds   EC83513A   1     FMAS      fp4=fp10,fp3,fp4,fcr
+  115| 0000F0 fmadds   EC83613A   4     FMAS      fp4=fp12,fp3,fp4,fcr
+  115| 0000F4 fmadds   ECA3697A   1     FMAS      fp5=fp13,fp3,fp5,fcr
+  115| 0000F8 fmadds   ECA3F17A   4     FMAS      fp5=fp30,fp3,fp5,fcr
+  115| 0000FC fmadds   EC83F93A   1     FMAS      fp4=fp31,fp3,fp4,fcr
+  115| 000100 fmuls    EC210132   4     MFS       fp1=fp1,fp4,fcr
+  115| 000104 fmadds   EC63E97A   1     FMAS      fp3=fp29,fp3,fp5,fcr
+  115| 000108 fdivs    EC211824  22     DFS       fp1=fp1,fp3,fcr
+  116| 00010C bc       4091000C   0     BF        CL.6,cr4,0x40/fgt,taken=50%(0,0)
+  116| 000110 fnmsubs  EC2100BC   4     FNMSS     fp1=fp0-fp2,fcr
+  116| 000114 b        48000100   0     B         CL.7,-1
+  116|                              CL.6:
+  117| 000118 fmr      FC001090   1     LRFL      fp0=fp2
+  117| 00011C lfs      C05F00B0   1     LFS       fp2=+CONSTANT_AREA(gr31,176)
+  117| 000120 bc       409000F4   0     BF        CL.7,cr4,0x20/flt,taken=50%(0,0)
+  128| 000124 ld       E80100B0   2     L8        gr0=#stack(gr1,176)
+  128| 000128 lwa      E98100AA   1     L4A       gr12=#stack(gr1,168)
+  128| 00012C mtspr    7C0803A6   1     LLR       lr=gr0
+  117| 000130 fmsubs   EC211038   1     FMSS      fp1=fp2,fp1,fp0,fcr
+  118| 000134 b        480000EC   0     B         CL.19,-1
+  120|                              CL.5:
+  120| 000138 lfs      C01F00BC   1     LFS       fp0=+CONSTANT_AREA(gr31,188)
+  120| 00013C fadds    EC43002A   1     AFS       fp2=fp3,fp0,fcr
+  120| 000140 lfs      C09F00C0   1     LFS       fp4=+CONSTANT_AREA(gr31,192)
+  120| 000144 lfs      C0BF00C4   1     LFS       fp5=+CONSTANT_AREA(gr31,196)
+  120| 000148 lfs      C0FF00B4   1     LFS       fp7=+CONSTANT_AREA(gr31,180)
+  120| 00014C lfs      C0DF00B8   1     LFS       fp6=+CONSTANT_AREA(gr31,184)
+  120| 000150 lfs      C01F00B0   1     LFS       fp0=+CONSTANT_AREA(gr31,176)
+  120| 000154 fmuls    EC2101B2   1     MFS       fp1=fp1,fp6,fcr
+    0| 000158 ori      60210000   1     XNOP      
+  120| 00015C fdivs    EC441024  19     DFS       fp2=fp4,fp2,fcr
+  120| 000160 fadds    EC43102A   4     AFS       fp2=fp3,fp2,fcr
+  120| 000164 fdivs    EC451024  22     DFS       fp2=fp5,fp2,fcr
+  120| 000168 fadds    EC43102A   4     AFS       fp2=fp3,fp2,fcr
+  120| 00016C fdivs    EC471024  22     DFS       fp2=fp7,fp2,fcr
+  120| 000170 fadds    EC43102A   4     AFS       fp2=fp3,fp2,fcr
+  120| 000174 fdivs    EC401024  22     DFS       fp2=fp0,fp2,fcr
+  120| 000178 fadds    EC43102A   4     AFS       fp2=fp3,fp2,fcr
+    0| 00017C ori      60000000   0     NOP       
+  120| 000180 fdivs    EC211024  22     DFS       fp1=fp1,fp2,fcr
+  121| 000184 bc       40910030   0     BF        CL.8,cr4,0x40/fgt,taken=50%(0,0)
+  128| 000188 ld       E80100B0   0     L8        gr0=#stack(gr1,176)
+  128| 00018C lwa      E98100AA   0     L4A       gr12=#stack(gr1,168)
+  128| 000190 lfd      CBE10098   0     LFL       fp31=#stack(gr1,152)
+  128| 000194 lfd      CBC10090   0     LFL       fp30=#stack(gr1,144)
+  128| 000198 addi     382100A0   0     AI        gr1=gr1,160
+  128| 00019C mtspr    7C0803A6   0     LLR       lr=gr0
+  128| 0001A0 mtcrf    7D808120   0     MTCRF     cr4=gr12
+  128| 0001A4 ld       EBE1FFD8   0     L8        gr31=#stack(gr1,-40)
+    0| 0001A8 ori      60000000   0     NOP       
+  121| 0001AC fsubs    EC200828   4     SFS       fp1=fp0,fp1,fcr
+  128| 0001B0 bclr     4E800020   0     BA        lr
+  121|                              CL.8:
+  122| 0001B4 lfs      C01F00C8   1     LFS       fp0=+CONSTANT_AREA(gr31,200)
+  122| 0001B8 bc       409000A0   0     BF        CL.18,cr4,0x20/flt,taken=50%(0,0)
+  122| 0001BC fadds    EC21002A   2     AFS       fp1=fp1,fp0,fcr
+  128| 0001C0 ld       E80100B0   1     L8        gr0=#stack(gr1,176)
+  128| 0001C4 lwa      E98100AA   1     L4A       gr12=#stack(gr1,168)
+  128| 0001C8 lfd      CBE10098   1     LFL       fp31=#stack(gr1,152)
+  128| 0001CC mtspr    7C0803A6   1     LLR       lr=gr0
+  128| 0001D0 lfd      CBC10090   1     LFL       fp30=#stack(gr1,144)
+  128| 0001D4 addi     382100A0   1     AI        gr1=gr1,160
+  128| 0001D8 mtcrf    7D808120   1     MTCRF     cr4=gr12
+  128| 0001DC ld       EBE1FFD8   1     L8        gr31=#stack(gr1,-40)
+  128| 0001E0 bclr     4E800020   0     BA        lr
+  125|                              CL.3:
+  125| 0001E4 lfs      C03F00B0   1     LFS       fp1=+CONSTANT_AREA(gr31,176)
+  126| 0001E8 bc       40900054   0     BF        CL.17,cr4,0x20/flt,taken=50%(0,0)
+  128| 0001EC lwa      E98100AA   2     L4A       gr12=#stack(gr1,168)
+  126| 0001F0 lfs      C03F00C8   1     LFS       fp1=+CONSTANT_AREA(gr31,200)
+  128| 0001F4 ld       EBE10078   1     L8        gr31=#stack(gr1,120)
+    0| 0001F8 ori      60000000   1     NOP       
+    0| 0001FC ori      60000000   1     NOP       
+  128| 000200 lfd      CBE10098   1     LFL       fp31=#stack(gr1,152)
+  128| 000204 lfd      CBC10090   1     LFL       fp30=#stack(gr1,144)
+  128| 000208 addi     382100A0   1     AI        gr1=gr1,160
+  128| 00020C mtcrf    7D808120   1     MTCRF     cr4=gr12
+  128| 000210 bclr     4E800020   0     BA        lr
+  117|                              CL.7:
+  128|                              CL.11:
+  128| 000214 ld       E80100B0   1     L8        gr0=#stack(gr1,176)
+  128| 000218 lwa      E98100AA   1     L4A       gr12=#stack(gr1,168)
+  128| 00021C mtspr    7C0803A6   1     LLR       lr=gr0
+    0|                              CL.19:
+  128| 000220 lfd      CBE10098   1     LFL       fp31=#stack(gr1,152)
+  128| 000224 lfd      CBC10090   1     LFL       fp30=#stack(gr1,144)
+  128| 000228 lfd      CBA10088   1     LFL       fp29=#stack(gr1,136)
+  128| 00022C addi     382100A0   1     AI        gr1=gr1,160
+  128| 000230 mtcrf    7D808120   1     MTCRF     cr4=gr12
+  128| 000234 ld       EBE1FFD8   1     L8        gr31=#stack(gr1,-40)
+  128| 000238 bclr     4E800020   0     BA        lr
+  109|                              CL.17:
+  128| 00023C ld       EBE10078   1     L8        gr31=#stack(gr1,120)
+  128| 000240 lwa      E98100AA   1     L4A       gr12=#stack(gr1,168)
+  128| 000244 lfd      CBE10098   1     LFL       fp31=#stack(gr1,152)
+  128| 000248 lfd      CBC10090   1     LFL       fp30=#stack(gr1,144)
+  128| 00024C addi     382100A0   1     AI        gr1=gr1,160
+  128| 000250 mtcrf    7D808120   1     MTCRF     cr4=gr12
+  128| 000254 bclr     4E800020   0     BA        lr
+  122|                              CL.18:
+  128| 000258 ld       E80100B0   1     L8        gr0=#stack(gr1,176)
+  128| 00025C lwa      E98100AA   1     L4A       gr12=#stack(gr1,168)
+  128| 000260 lfd      CBE10098   1     LFL       fp31=#stack(gr1,152)
+  128| 000264 lfd      CBC10090   1     LFL       fp30=#stack(gr1,144)
+  128| 000268 addi     382100A0   1     AI        gr1=gr1,160
+  128| 00026C mtspr    7C0803A6   1     LLR       lr=gr0
+  128| 000270 mtcrf    7D808120   1     MTCRF     cr4=gr12
+  128| 000274 ld       EBE1FFD8   1     L8        gr31=#stack(gr1,-40)
+  128| 000278 bclr     4E800020   1     BA        lr
+     |               Tag Table
+     | 00027C        00000000 00012243 84010100 00000000 0000027C 00046572
+     | 000294        6666
+     |               Instruction count          159
+     |               Straight-line exec time      0
+     |               Constant Area
+     | 000000        00000000 40C80000 3FB504F3 40A00000 3D106F68 3F334C4E
+     | 000018        40CBF780 4207A6C6 42E02899 435D36AE 435C34F5 3DB504F3
+     | 000030        3FE0B9B4 41808370 42AD8FBC 43944839 441F555A 444674E6
+     | 000048        43DC34F5 3F800000 40000000 3F4C422A 40400000 40800000
+     | 000060        3F266666 00000000 40C80000 3FB504F3 40A00000 3F334C4E
+     | 000078        3D106F68 40CBF780 4207A6C6 42E02899 435D36AE 435C34F5
+     | 000090        3FE0B9B4 3DB504F3 41808370 42AD8FBC 43944839 441F555A
+     | 0000A8        444674E6 43DC34F5 3F800000 40000000 3F4C422A 3F266666
+     | 0000C0        40800000 40400000 BF800000
+
+ 
+ 
+>>>>> COMPILATION UNIT EPILOGUE SECTION <<<<<
+ 
+ 
+TOTAL   UNRECOVERABLE  SEVERE       ERROR     WARNING    INFORMATIONAL
+               (U)       (S)         (E)        (W)          (I)
+    0           0         0           0          0            0
+ 
+>>>>> FILE TABLE SECTION <<<<<
+ 
+ 
+                                       FILE CREATION        FROM
+FILE NO   FILENAME                    DATE       TIME       FILE    LINE
+     0    CDFNOR.f90                  12/18/08   11:44:08
+ 
+ 
+>>>>> COMPILATION EPILOGUE SECTION <<<<<
+ 
+ 
+FORTRAN Summary of Diagnosed Conditions
+ 
+TOTAL   UNRECOVERABLE  SEVERE       ERROR     WARNING    INFORMATIONAL
+               (U)       (S)         (E)        (W)          (I)
+    0           0         0           0          0            0
+ 
+ 
+    Source records read.......................................     128
+1501-510  Compilation successful for file CDFNOR.f90.
+1501-543  Object file created.

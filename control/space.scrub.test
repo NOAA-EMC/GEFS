@@ -1,0 +1,59 @@
+#!/bin/ksh
+#
+# return the remaining space on /scrub
+#
+print=no
+print=yes
+machl=`uname -n|cut -c1`
+fsname=scrub_${machl}4
+if (( $# > 0 )); then
+  for arg in $*
+  do
+    case $arg in
+      (n)
+	fsname=global_noscrub
+      ;;
+      (s)
+	fsname=global_save
+      ;;
+      (*)
+	print=yes
+      ;;
+    esac
+  done
+fi
+uname=$LOGNAME
+/usr/lpp/mmfs/bin/mmlsquota -j $fsname>/dev/null 2>&1
+rc=$?
+if (( rc != 0 )); then
+  free=131001001
+else
+  stringa=`/usr/lpp/mmfs/bin/mmlsquota -j $fsname 2>&1|tail -1`
+  if [[ $print = yes ]]; then
+    echo fsname=$fsname
+    echo stringa=$stringa
+  fi
+  used=`echo $stringa|cut -f3 -d' '`
+  quota=`echo $stringa|cut -f4 -d' '`
+  doubt=`echo $stringa|cut -f6 -d' '`
+  if [[ $print = yes ]]; then
+    echo used=$used
+    echo quota=$quota
+    echo doubt=$doubt
+  fi
+  if [[ $used = no ]]; then
+    free=121001001
+  else
+    # reduce quota by a small percentage
+    #((quota=quota-(quota/20)))
+    ((quota=quota-(quota/30)))
+    ((free=quota-used-doubt))
+  fi
+  if [[ $print = yes ]]; then
+    echo quota=$quota
+    echo free=$free
+  fi
+  yyyymmdd=`date +%Y%m%d`
+fi
+echo $free
+exit

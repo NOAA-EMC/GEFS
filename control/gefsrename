@@ -1,0 +1,42 @@
+#!/bin/sh
+#
+# rename the output for a particular date of GEFS run
+#
+echo `date` $0 $* begin
+if (( $# == 3 )); then
+  expid=$1
+  yyyymmdd=$2
+  suffix=$3
+  echo expid=$expid yyyymmdd=$yyyymmdd suffix=$suffix
+  if (( yyyymmdd < 23010203 )) && (( yyyymmdd > 18010203 )); then
+    controldir=/global/save/$LOGNAME/s/$expid/nwdev/control
+    cd $controldir
+    rc=$?
+    if (( rc == 0 )); then
+      waitno
+      for dir in \
+	/ptmp/$LOGNAME/o/$expid/com/output/dev/$yyyymmdd \
+	/ptmp/$LOGNAME/o/$expid/com/gens/dev/gefs.$yyyymmdd \
+	/ptmp/$LOGNAME/o/$expid/nwges/dev/gefs.$yyyymmdd \
+	/ptmp/$LOGNAME/o/$expid/tmpnwprd \
+
+      do
+	if [[ -d $dir ]]; then
+	  ls -ald $dir
+	  mv $dir $dir.$suffix
+	  ls -ald $dir.$suffix
+	else
+	  echo dir=$dir DOES NOT EXIST
+	fi
+      done
+    else
+      echo cd $controldir FAILED rc=$rc
+    fi
+  else
+    echo yyyymmdd=$yyyymmdd is out of range
+  fi
+else
+  echo 3 arguments required: expid YYYYMMDD suffix
+fi
+echo `date` $0 $* end
+
