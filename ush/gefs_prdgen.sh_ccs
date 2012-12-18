@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/sh
 #####################################################################
 echo "-----------------------------------------------------"
 echo " Script: gefs_prdgen.sh" 
@@ -20,25 +20,14 @@ anlflag=$anlflag
 ffhr=$ffhr
 fhr=$fhr
 
-#export WGRIB=/nwprod/util/exec/wgrib
-#export GRBIDX=/nwprod/util/exec/grbindex
-#export ENSADD=$USHGLOBAL/global_ensadd.sh
-#export CNVGRIB=/nwprod/util/exec/cnvgrib
-#DHOU 03/22/2012 For ZEUS, copy from exgefs_nceppost.sh.sms
-export WGRIB=${WGRIB:-${EXECUTIL}/wgrib}
-export GRBIDX=${GRBIDX:-${EXECUTIL}/grbindex}
-#export ENSADD=${ENSADD:-$USHGLOBAL/global_ensadd.sh}
-#export POSTGPSH=${POSTGPSH:-$USHGLOBAL/global_nceppost.sh}
-#DHOU 03/22/2012 For ZEUS, these two are not used in ceppost.sh.sms
-export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
-export POSTGPSH=${POSTGPSH:-$USHglobal/global_nceppost.sh}
+export WGRIB=/nwprod/util/exec/wgrib
+export GRBIDX=/nwprod/util/exec/grbindex
+export ENSADD=$USHGLOBAL/global_ensadd.sh
+export CNVGRIB=/nwprod/util/exec/cnvgrib
 ################################################## RLW 20110722 CNVGRIB TEMPORARY
 export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib
 ################################################## RLW 20110722 CNVGRIB TEMPORARY
-#export COPYGB=/nwprod/util/exec/copygb
-#export WGRIB2=/nwprod/util/exec/wgrib2
-#DHOU 03/22/2012 For ZEUS, these two are not used in ceppost.sh.sms
-export COPYGB=$HOMEglobal/util/exec/copygb
+export COPYGB=/nwprod/util/exec/copygb
 export WGRIB2=/nwprod/util/exec/wgrib2
 
 R1=`echo $RUN|cut -c1-3`
@@ -186,8 +175,6 @@ else
 fi
 echo `date` pgrba 1x1 sendcom $ffhr completed
 
-if (( 0 == 1 )); then
-#DHOU 03/23/2012, skip grib2 files for ZEUS
 ######################################
 # Step II: Create GRIB2A files
 #####################################
@@ -303,7 +290,6 @@ else
    fi
 fi
 
-fi #(0=1 foe ZEUS, skip grib2 files)
 ########################################################
 echo `date` $sname $member $partltr $cfsuffix $fsuffix 1x1 GRIB end on machine=`uname -n`
 msg='ENDED NORMALLY.'

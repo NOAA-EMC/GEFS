@@ -1,13 +1,6 @@
-#!/bin/ksh
+#!/usr/bin/ksh
 ################# lines between these markers have been modified for dev begin
 ################# lines between these markers have been modified for dev end
-
-#d6ago_ymdh=` /nwprod/util/exec/ndate -6 ${PDY}${CYL}`
-#DHOU 04/06/2012 added 4 line for ZEUS to define directories
-NDATE=$HOMEglobal/util/exec/ndate
-VITCOM=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/comzeus
-export archsyndir=${archsyndir:-$VITCOM/com/arch/prod/syndat}
-homesyndir=$HOMEglobal/util
 
 export PS4=' + extrkr.sh line $LINENO: '
 
@@ -124,22 +117,16 @@ if [ ! -d $DATA ]
 then
    mkdir -p $DATA
    cd $DATA
-#  /nwprod/util/ush/setup.sh
-#DHOU 04/06/2012 For ZEUS
-ksh $utilscript/setup.sh
+   /nwprod/util/ush/setup.sh
 fi
 cd $DATA
 
 if [ ${PARAFLAG} = 'YES' ]
 then 
   /nwprod/util/ush/setup.sh
-  #DHOU 04/06/2012 For ZEUS
-  ksh $utilscript/setup.sh
 else
 #TM take out this else part for operations.....
-# /nwprod/util/ush/setup.sh
-#DHOU 04/06/2012 For ZEUS
-ksh $utilscript/setup.sh
+  /nwprod/util/ush/setup.sh
 fi
 
 if [ ${#PDY} -eq 0 -o ${#CYL} -eq 0 -o ${#cmodel} -eq 0 ]
@@ -189,9 +176,7 @@ export exectrkdir=${exectrkdir:-${homesyndir}/exec}
 export ushtrkdir=${ushtrkdir:-${homesyndir}/ush}
 export archsyndir=${archsyndir:-/com/arch/prod/syndat}
 
-#cp /com/date/t${CYL}z ncepdate
-#DHOU 04/06/2012 for ZEUS
-cp $VITCOM/com/date/t${CYL}z ncepdate
+cp /com/date/t${CYL}z ncepdate
 export CENT=` cut -c7-8 ncepdate `
 
 if [ -s /nwprod/util/exec/wgrib ]
@@ -205,8 +190,6 @@ else
   set -x
   err_exit " FAILED ${jobid} -- line= $LINENO IN TRACKER SCRIPT - ABNORMAL EXIT"
 fi
-#DHOU 04/11/2012 Add this line for ZEUS
-  wgrib=$HOMEglobal/util/exec/wgrib
 
 wgrib_parmlist=" HGT:850 HGT:700 UGRD:850 UGRD:700 UGRD:500 VGRD:850 VGRD:700 VGRD:500 SurfaceU SurfaceV ABSV:850 ABSV:700 PRMSL:MSL "
 wgrib_egrep_parmlist="HGT:850|HGT:700|UGRD:850|UGRD:700|UGRD:500|VGRD:850|VGRD:700|VGRD:500|UGRD:10 m |VGRD:10 m |ABSV:850|ABSV:700|PRMSL:MSL"
@@ -475,14 +458,12 @@ case ${cmodel} in
        ensdir=/com/gens/prod/gefs.${PDY}/$cyc/pgrba     ;
        ensgfile=ge${pert}.t${CYL}z.pgrbaf               ;
        ensifile=ge${pert}.t${CYL}z.pgrbaif              ;
-#      COM=${COM:-/com/gens/${envir}/gefs.${PDY}/$cyc/track} ;
-#DHOU 04/12/2012 this line is changed as COM is alreday defined outside this script
-       COM=/com/gens/${envir}/gefs.${PDY}/$cyc/track                ;
+       COM=${COM:-/com/gens/${envir}/gefs.${PDY}/$cyc/track} ;
 ################# lines between these markers have been modified for dev begin
        if   [[ $envir = dev ]]; then
 	 ensdir=/com/gens/$envir/gefs.${PDY}/$cyc/pgrba     ;
 	 ensdir=$baseoutput$ensdir
-  	 COM=$baseoutput$COM
+	 COM=$baseoutput$COM
        fi
 ################# lines between these markers have been modified for dev end
        [[ ! -d $COM ]] && mkdir -p $COM                 ;
@@ -768,15 +749,13 @@ esac
 # deal; this script will exit just a little further down once it
 # realizes there are not any storms to process.
 
-#d6ago_ymdh=` /nwprod/util/exec/ndate -6 ${PDY}${CYL}`
-d6ago_ymdh=` $NDATE -6 ${PDY}${CYL}`
+d6ago_ymdh=` /nwprod/util/exec/ndate -6 ${PDY}${CYL}`
 d6ago_4ymd=` echo ${d6ago_ymdh} | cut -c1-8`
 d6ago_ymd=` echo ${d6ago_ymdh} | cut -c3-8`
 d6ago_hh=`  echo ${d6ago_ymdh} | cut -c9-10`
 d6ago_str="${d6ago_ymd} ${d6ago_hh}00"
 
-#d6ahead_ymdh=` /nwprod/util/exec/ndate 6 ${PDY}${CYL}`
-d6ahead_ymdh=` $NDATE 6 ${PDY}${CYL}`
+d6ahead_ymdh=` /nwprod/util/exec/ndate 6 ${PDY}${CYL}`
 d6ahead_4ymd=` echo ${d6ahead_ymdh} | cut -c1-8`
 d6ahead_ymd=` echo ${d6ahead_ymdh} | cut -c3-8`
 d6ahead_hh=`  echo ${d6ahead_ymdh} | cut -c9-10`
@@ -848,24 +827,14 @@ fi
 #   vitals such as "91L NAMELESS" or "89E NAMELESS", since TPC 
 #   does not want tracks for such storms.
 
-#grep "${d6ago_str}" ${archsyndir}/syndat_tcvitals.${CENT}${syy}   | \
-#      grep -v TEST | nawk 'substr($0,6,1) !~ /[8]/ {print $0}' \
-#      >${DATA}/tmprawvit.${atcfout}.${PDY}${CYL}
-#grep "${dnow_str}"  ${archsyndir}/syndat_tcvitals.${CENT}${syy}   | \
-#      grep -v TEST | nawk 'substr($0,6,1) !~ /[8]/ {print $0}' \
-#      >>${DATA}/tmprawvit.${atcfout}.${PDY}${CYL}
-#grep "${d6ahead_str}" ${archsyndir}/syndat_tcvitals.${CENT}${syy} | \
-#      grep -v TEST | nawk 'substr($0,6,1) !~ /[8]/ {print $0}' \
-#      >>${DATA}/tmprawvit.${atcfout}.${PDY}${CYL}
-#DHOU 04/06/2012, nawk is not available on Zeus, chnage it awk
 grep "${d6ago_str}" ${archsyndir}/syndat_tcvitals.${CENT}${syy}   | \
-      grep -v TEST | awk 'substr($0,6,1) !~ /[8]/ {print $0}' \
+      grep -v TEST | nawk 'substr($0,6,1) !~ /[8]/ {print $0}' \
       >${DATA}/tmprawvit.${atcfout}.${PDY}${CYL}
 grep "${dnow_str}"  ${archsyndir}/syndat_tcvitals.${CENT}${syy}   | \
-      grep -v TEST | awk 'substr($0,6,1) !~ /[8]/ {print $0}' \
+      grep -v TEST | nawk 'substr($0,6,1) !~ /[8]/ {print $0}' \
       >>${DATA}/tmprawvit.${atcfout}.${PDY}${CYL}
 grep "${d6ahead_str}" ${archsyndir}/syndat_tcvitals.${CENT}${syy} | \
-      grep -v TEST | awk 'substr($0,6,1) !~ /[8]/ {print $0}' \
+      grep -v TEST | nawk 'substr($0,6,1) !~ /[8]/ {print $0}' \
       >>${DATA}/tmprawvit.${atcfout}.${PDY}${CYL}
 
 #PRODTEST#
@@ -917,16 +886,14 @@ fi
 # tracking program.
 #--------------------------------------------------------------#
 
-#ymdh6ago=` /nwprod/util/exec/ndate -6 ${PDY}${CYL}`
-ymdh6ago=` $NDATE -6 ${PDY}${CYL}`
+ymdh6ago=` /nwprod/util/exec/ndate -6 ${PDY}${CYL}`
 syy6=`echo ${ymdh6ago} | cut -c3-4`
 smm6=`echo ${ymdh6ago} | cut -c5-6`
 sdd6=`echo ${ymdh6ago} | cut -c7-8`
 shh6=`echo ${ymdh6ago} | cut -c9-10`
 symd6=${syy6}${smm6}${sdd6}
 
-#ymdh6ahead=` /nwprod/util/exec/ndate 6 ${PDY}${CYL}`
-ymdh6ahead=` $NDATE 6 ${PDY}${CYL}`
+ymdh6ahead=` /nwprod/util/exec/ndate 6 ${PDY}${CYL}`
 syyp6=`echo ${ymdh6ahead} | cut -c3-4`
 smmp6=`echo ${ymdh6ahead} | cut -c5-6`
 sddp6=`echo ${ymdh6ahead} | cut -c7-8`
@@ -997,9 +964,6 @@ export pgm=supvit
 
 export XLFUNIT_31=${DATA}/vitals.${atcfout}.${PDY}${CYL}       
 export XLFUNIT_51=${DATA}/vitals.upd.${atcfout}.${PDY}${CYL}  
-#DHOU 04/11/2012 Added for ZEUS 2 lines
-export FORT31=${DATA}/vitals.${atcfout}.${PDY}${CYL}       
-export FORT51=${DATA}/vitals.upd.${atcfout}.${PDY}${CYL}  
 
 msg="$pgm start for $atcfout at ${CYL}z"
 postmsg "$jlogfile" "$msg"
@@ -1107,9 +1071,6 @@ set -x
 
 gix=/nwprod/util/exec/grbindex
 cgb=/nwprod/util/exec/copygb
-#DHOU 04/05/2012 for ZEUS
-gix=$GRBINDEX
-cpb=$EXECUTIL/copygb
 
 regflag=`grep NHC ${DATA}/vitals.upd.${atcfout}.${PDY}${CYL} | wc -l`
 
@@ -1467,8 +1428,7 @@ then
 
     let fhr=ict*12
     echo "fhr= $fhr"
-#   fmmddhh=` /nwprod/util/exec/ndate ${fhr} ${PDY}${CYL} | cut -c5- `
-    fmmddhh=` $NDATE ${fhr} ${PDY}${CYL} | cut -c5- `
+    fmmddhh=` /nwprod/util/exec/ndate ${fhr} ${PDY}${CYL} | cut -c5- `
     ec_hires_orig=ecens_DCD${immddhh}00${fmmddhh}001
       
     if [ ! -s ${ecmwfdir}/${ec_hires_orig} ]

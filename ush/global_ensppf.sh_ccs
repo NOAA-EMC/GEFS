@@ -27,9 +27,7 @@ export pgm=global_ensppf
 . prep_step
 
 startmsg
-#eval $EXECGLOBAL/global_ensppf <<EOF 2>/dev/null
-#DHOU 03/26/2012 for Zeus
-eval $EXECgefs/global_ensppf <<EOF 2>/dev/null
+eval $EXECGLOBAL/global_ensppf <<EOF 2>/dev/null
  &namin
  cpgb='$1',cpgi='$2',cpge='$3' /
 EOF
