@@ -3,10 +3,8 @@
 ###################################################################
 
 #This will be used in JGEFS_FORECAST script
-export GFS_VERSION=gefs_prod
-export GFS_VERSION=gfs_prod
-#DHOU 03/07/2012
 export GFS_VERSION=gefs_fcst
+export GFS_VERSION=gfs_prod
 
 ##############################################
 # Number of pairs to run (normally 10 pairs)
@@ -32,8 +30,8 @@ export fhmaxh=$fhmax
 # For Extended forecast from 384-840 hours
 export fhmax_ext=840
 
-export fhrp=06
 export fhrp=24
+export fhrp=06
 #
 # 3-hourly output: fhmax3 must be less than fhmaxh
 if (( fhmaxh > 126 )); then
@@ -78,16 +76,14 @@ export RUN_CONCURRENT=yes
 # ENS_NUM,MEMBER_NAMES to be calculated later based on npair and RUN_CONCURRENT
 
 # if multiple forecasts are to be run concurrently, ENS_SPS controls whether stochastic forcing is used
-#export ENS_SPS=true  #DHOU 20120403, added the two dots to unify script and code requirement
-export ENS_SPS=.true.
-export ENS_SPS=.false.
+export ENS_SPS=false
+export ENS_SPS=true
+
 
 ################################################################################
 # number of threads to use in the job JGEFS_SIGCHGRS
 ################################################################################
-#NTHREADS_SIGCHGRS=8
-#DHOU 03/20/2012 chgres can not run multi-thread
-NTHREADS_SIGCHGRS=1
+NTHREADS_SIGCHGRS=8
 
 ################################################################################
 # USESUBDIR controls whether to use sub dir in the forecast working directory
@@ -144,9 +140,6 @@ export addgrb1id=yes
 export makegrb1i=yes
 export makegrb2i=yes
 export makepgrb2a=yes
-#DHOU 03/26/2012 For ZEUS
-export makegrb2i=no
-export makepgrb2a=no
 
 # DHOU, 09/09/2008, added variable HOUTSPS.
 # HOUTSPS=12: output after SPS 12 hours before fhmaxh, so that digital filtering can be applied after
@@ -177,9 +170,6 @@ if [[ $envir = dev ]]; then
 
   export fhmax=384
   export fhmaxh=192
-#DHOU 03/26/2012 test for Zeus
-# export fhmax=96
-# export fhmaxh=48
   export fhmaxhres=`expr $fhmaxh - $HOUTSPS`
 
   echo `date` $0 test section begin
@@ -187,7 +177,7 @@ if [[ $envir = dev ]]; then
   # for test, NOT USED FOR PRODUCTION
 
   # specify a cycle at which to pause
-  export pausecycle="2011082400"
+  export pausecycle="3011111912"
 
   export ncpumax=50
   export ncpumin=30
@@ -195,21 +185,16 @@ if [[ $envir = dev ]]; then
   export srefboundary=no
   export fhmax00=384     # 00Z fcst only
 
-  export fhmax00=384
-  export fhmax06=384
-  export fhmax12=384
-  export fhmax18=384
   # cycling forecasts only
   export fhmax00=06
   export fhmax06=06
   export fhmax12=06
   export fhmax18=06
-  # 00Z long forecasts only
-  export fhmax00=384
-  export fhmax06=06
-  export fhmax12=06
-  export fhmax18=06
 
+  export fhmax00=384
+  export fhmax06=384
+  export fhmax12=384
+  export fhmax18=384
  
 #DHOU 08/05/2010, add this block to modify these realed variables
 #RLW 2011010t reenable 3-hourly forecast output
@@ -255,8 +240,8 @@ if [[ $envir = dev ]]; then
   fi
 
   export gfssource=dev
-  export gfssource=prod
   export gfssource=para
+  export gfssource=prod
 
   # new variables to specify locations of scripts and codes
   #
@@ -271,22 +256,18 @@ if [[ $envir = dev ]]; then
   export locsighdrexec=/global/save/wx23sm/gsm/f2007/global_sighdr.fd/global_sighdr
   export locsighdrexec=para
   export locsighdrexec=prod
-#DHOU 03/29/2012 Add this for ZEUS
-  export locsighdrexec=zeus
 
   export locchgresush=test
   export locchgresush=local
   export locchgresush=/nwprod/ush/global_chgres.sh
   export locchgresush=para
   export locchgresush=prod
-  export locchgresush=zeus
 
   export locchgresexec=test
   export locchgresexec=local
   export locchgresexec=/global/save/wx23sm/2jif/f2007_oct/global_chgres.fd/global_chgres
   export locchgresexec=para
   export locchgresexec=prod
-  export locchgresexec=zeus
 
   export locfcstconchome=local
   export locfcstconchome=para
@@ -314,9 +295,8 @@ if [[ $envir = dev ]]; then
   export locfcstscript=test
   export locfcstscript=/global/save/wx23sm/para_exp/gfs_para/scripts/exglobal_fcst.sh.sms_co2
   export locfcstscript=home
-  export locfcstscript=prod
-#DHOU 03/07/2012 switched the 2 line for ZEUS
   export locfcstscript=local
+  export locfcstscript=prod
 
   export locfcstexec=para
   export locfcstexec=test
@@ -378,8 +358,8 @@ if [[ $envir = dev ]]; then
   # run the gfs prdgen job or not
   # test means run only if the gfs master post files exist
   export rungfsprdgen=yes
-  export rungfsprdgen=test
   export rungfsprdgen=no
+  export rungfsprdgen=test
 
   # archive and cleanup if cyc ne 0
   export runarchcyc=1
@@ -392,8 +372,8 @@ if [[ $envir = dev ]]; then
   export runcleancyc=1
 
   # run cycling forecasts or not
-  export runcyclingf=yes
   export runcyclingf=no
+  export runcyclingf=yes
 
   # set all the following "make" and "save" flags to "yes" to simulate production
   export makepgrba=yes
