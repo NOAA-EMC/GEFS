@@ -3030,13 +3030,14 @@
 !
       logical first
       integer   NUM_THREADS
+      integer gnum_parthds
       data first /.true./
       save NUM_THREADS, first
 !
       integer LEN_THREAD_M, LEN_THREAD, I1_T, I2_T
 !
       if (first) then
-         NUM_THREADS    = NUM_PARTHDS()
+         NUM_THREADS    = GNUM_PARTHDS()
          first = .false.
       endif
 !
@@ -4644,13 +4645,14 @@
      &                     QSTCL(LSOIL), QSTCS(LSOIL)
       logical first
       integer   NUM_THREADS
+      integer gnum_parthds
       data first /.true./
       save NUM_THREADS, first
 !
       integer LEN_THREAD_M, I1_T, I2_T, IT
 !
       if (first) then
-         NUM_THREADS    = NUM_PARTHDS()
+         NUM_THREADS    = GNUM_PARTHDS()
          first = .false.
       endif
 !
@@ -5314,13 +5316,14 @@
 !
       logical first
       integer   NUM_THREADS
+      integer gnum_parthds
       data first /.true./
       save NUM_THREADS, first
 !
       integer LEN_THREAD_M, I1_T, I2_T, IT
 !
       if (first) then
-         NUM_THREADS    = NUM_PARTHDS()
+         NUM_THREADS    = GNUM_PARTHDS()
          first = .false.
       endif
 !
@@ -6055,7 +6058,7 @@
 !
       if (kgds1 .eq. 4) then         ! grib file on Gaussian grid
         KSPLA=4
-        CALL SPLAT(KSPLA, JMAX, A, W)
+        CALL SPLATx(KSPLA, JMAX, A, W)
 !
         RADI = 180.0 / (4.*ATAN(1.))
         DO  J=1,JMAX
@@ -6520,13 +6523,14 @@
 !
       logical first
       integer   NUM_THREADS
+       integer gnum_parthds
       data first /.true./
       save NUM_THREADS, first
 !
       integer LEN_THREAD_M, J1_T, J2_T, IT
 !
       if (first) then
-         NUM_THREADS    = NUM_PARTHDS()
+         NUM_THREADS    = GNUM_PARTHDS()
          first = .false.
       endif
 !
@@ -6539,7 +6543,7 @@ cjfe      CALL GAULAT(GAUL,JMXIN)
 cjfe
 !
           KSPLA=4
-          CALL SPLAT(KSPLA, JMXIN, A, W)
+          CALL SPLATx(KSPLA, JMXIN, A, W)
 !
           RADI = 180.0 / (4.*ATAN(1.))
           DO  N=1,JMXIN
@@ -6766,7 +6770,7 @@ cjfe
       REAL (KIND=KIND_IO8) radi
       REAL (KIND=KIND_IO8) A(K), W(K), GAUL(K)
 !
-      CALL SPLAT(4, K, A, W)
+      CALL SPLATx(4, K, A, W)
 !
       RADI = 180.0 / (4.*ATAN(1.))
       DO  N=1,K
@@ -8421,3 +8425,11 @@ C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       ENDDO
       RETURN
       END
+!gwvjh       function gnum_parthds()
+!gwvjh       use omp_lib
+!gwvjh!$OMP PARALLEL
+!gwvjh        gnum_parthds=omp_get_num_threads()
+!gwvjh!$OMP END PARALLEL
+!gwvjh         return
+!gwvjh          end 
+ 

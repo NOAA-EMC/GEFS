@@ -6,12 +6,13 @@
      x                   lats_node,ipt_lats_node,lon_dims,dimg,
      x                   lons_lat,londi,latl)
 cc
-#include "f_hpm.h"
+!gwvport#include "f_hpm.h"
 cc
       use resol_def
       use layout1
       use mpi_def
       implicit none
+         integer gnum_parthds
 cc
       integer lat1s(0:jcap),latl2
 cc
@@ -96,7 +97,7 @@ cc
       call countperf(0,8,0.)
 cc
       call f_hpmstart(34,"000_sumder2_sum2eo")
-      num_threads=NUM_PARTHDS()
+      num_threads=GNUM_PARTHDS()
       nvar_thread_max=(nvars+num_threads-1)/num_threads
       kpts   = 0
 cc
@@ -331,6 +332,7 @@ cc
       use layout1
       use mpi_def
       implicit none
+         integer gnum_parthds
       integer lat1s(0:jcap),latl2
       real(kind=kind_evod) flnev(len_trie_ls,2*nvars)
       real(kind=kind_evod) flnod(len_trio_ls,2*nvars)
@@ -375,7 +377,7 @@ cc
       real(kind=kind_evod) cons1     !constant
       cons0 = 0.d0     !constant
       cons1 = 1.d0     !constant
-      num_threads=num_parthds()
+      num_threads=gnum_parthds()
       nvar_thread_max=(nvars+num_threads-1)/num_threads
       kpts   = 0
       do j = 1, ls_max_node   ! start of do j loop #####################
@@ -529,7 +531,7 @@ c
      x                   lats_node,ipt_lats_node,lon_dims,dimg,
      x                   lons_lat,londi,latl)
 cc
-#include "f_hpm.h"
+!gwvport#include "f_hpm.h"
 cc
       use resol_def
       use layout1
@@ -537,6 +539,7 @@ cc
       implicit none
 cc
       integer lat1s(0:jcap),latl2
+        integer gnum_parthds
 cc
       integer              nvars
       real(kind=kind_evod) flnev(len_trie_ls,2,nvars)
@@ -619,7 +622,7 @@ cc
       call countperf(0,8,0.)
 cc
       call f_hpmstart(34,"000_sumder2_sum2eo")
-      num_threads=NUM_PARTHDS()
+      num_threads=GNUM_PARTHDS()
       nvar_thread_max=(nvars+num_threads-1)/num_threads
       kpts   = 0
 cc
@@ -855,6 +858,7 @@ c
       use layout1
       use mpi_def
       implicit none
+        integer gnum_parthds
       integer lat1s(0:jcap),latl2
       real(kind=kind_evod) flnev(len_trie_ls,2*nvars)
       real(kind=kind_evod) flnod(len_trio_ls,2*nvars)
@@ -899,7 +903,7 @@ c
       real(kind=kind_evod) cons1     !constant
       cons0 = 0.d0     !constant
       cons1 = 1.d0     !constant
-      num_threads=num_parthds()
+      num_threads=gnum_parthds()
       nvar_thread_max=(nvars+num_threads-1)/num_threads
       kpts   = 0
       do j = 1, ls_max_node   ! start of do j loop #####################

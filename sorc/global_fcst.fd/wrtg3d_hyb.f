@@ -35,6 +35,7 @@
       integer nv,il1,il2,j,i,k,itop,ibot,k4,l,nog3d
       integer ilpds,iyr,imo,ida,ihr,ifhr,ithr,lg,ierr
       real (kind=kind_io8) colat1,cl1,secswr,zhour,fhour,rtime,rtimsw
+        integer iens(5)
 
       real (kind=kind_io8)   glolal(lonr,lats_node_r)
       real (kind=kind_io8)   buffo(lonr,lats_node_r)

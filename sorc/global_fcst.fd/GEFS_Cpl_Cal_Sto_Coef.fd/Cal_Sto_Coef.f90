@@ -74,7 +74,7 @@ do t=t1+1,t2,1
  iseed0=yyc+mmc+ddc+hhc+1
 !iseed0=year+mm+dd+hh+1
  iseed1=iseed0
- call random_seed(generator=2)
+!gwv call random_seed(generator=2)
  call random_seed(put=iseed1(1:ksize))
 !call random_seed(get=iseed3(1:ksize))
  call random_number(x)

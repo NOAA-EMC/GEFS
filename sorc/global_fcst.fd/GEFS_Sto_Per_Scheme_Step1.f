@@ -18,14 +18,13 @@
 
  USE ESMF_Mod
  USE GEFS_Cpl_InternalState_ESMFMod
-
+ INTEGER                                                             :: TRIEO_LSTOT_SIZ4
+ INTEGER                                                             :: Total_member
  REAL(KIND=KIND_EVOD), DIMENSION(TRIEO_LSTOT_SIZ4, Total_member)     :: work_ini
  REAL(KIND=KIND_EVOD), DIMENSION(TRIEO_LSTOT_SIZ4, Total_member)     :: work 
  REAL(KIND=KIND_EVOD), DIMENSION(TRIEO_LSTOT_SIZ4, Total_member)     :: w_step1
 !REAL(KIND=KIND_EVOD), DIMENSION(TRIEO_LSTOT_SIZ4, Total_member - 1) :: w_step1
  REAL(KIND=KIND_EVOD), DIMENSION(Total_member - 1, Total_member - 1) :: Sto_Coef
- INTEGER                                                             :: TRIEO_LSTOT_SIZ4
- INTEGER                                                             :: Total_member
  INTEGER                                                             :: Cpl_Run_Calling_Number
  INTEGER,              DIMENSION(Total_member - 1)                   :: jp
  REAL(KIND=KIND_EVOD), DIMENSION(Total_member - 1)                   :: rp
@@ -149,10 +148,10 @@ ENDIF
  USE ESMF_Mod
  USE GEFS_Cpl_InternalState_ESMFMod
 
- REAL(KIND=KIND_EVOD), DIMENSION(TRIEO_LSTOT_SIZ4, Total_member)     :: work 
- REAL(KIND=KIND_EVOD), DIMENSION(TRIEO_LSTOT_SIZ4, Total_member)     :: w_step1
  INTEGER                                                             :: TRIEO_LSTOT_SIZ4
  INTEGER                                                             :: Total_member
+ REAL(KIND=KIND_EVOD), DIMENSION(TRIEO_LSTOT_SIZ4, Total_member)     :: work 
+ REAL(KIND=KIND_EVOD), DIMENSION(TRIEO_LSTOT_SIZ4, Total_member)     :: w_step1
  INTEGER                                                             :: Cpl_Run_Calling_Number
 
  REAL(KIND=KIND_EVOD)                                                :: RS_GLOBAL

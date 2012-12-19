@@ -19,6 +19,7 @@
       INTEGER              THREAD
       INTEGER              lot_thread
       INTEGER              indbeg
+        integer num_parthds
 !________________________________________________________
       NUM_THREADS=min(NUM_PARTHDS(),lot)
  
@@ -125,6 +126,7 @@
       INTEGER              lot_thread
       INTEGER              indbeg
 !________________________________________________________
+         integer num_parthds
       NUM_THREADS=min(NUM_PARTHDS(),lot)
  
       NVAR_THREAD_MAX=(lot+NUM_THREADS-1)/NUM_THREADS

@@ -6,12 +6,13 @@
      x                    flnev,flnod,
      x                    plnev,plnod,ls_node)
 cc
-#include "f_hpm.h"
+!gwvport#include "f_hpm.h"
 cc
       use resol_def
       use layout1
       use mpi_def
       implicit none
+       integer num_parthds
 cc
       integer              nvarsdim,latl2,latl
       integer              nvars

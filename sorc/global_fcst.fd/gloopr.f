@@ -19,7 +19,7 @@ Clu [+1L]: extract snow-free albedo (SFALB)
      &     TSFLW,FLUXR ,       phy_f3d,slag,sdec,cdec,NBLCK,KDT,
      &     global_times_r)
 cc
-#include "f_hpm.h"
+!gwvport#include "f_hpm.h"
 !
       USE MACHINE              ,     ONLY : kind_phys
       USE FUNCPHYS             ,     ONLY : fpkap

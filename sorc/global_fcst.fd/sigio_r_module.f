@@ -272,9 +272,9 @@ module sigio_r_module
 !   baopenr           Byte-addressable open for reading
 !   baopenw           Byte-addressable open for writing
 !   baclose           Byte-addressable close
-!   bafrindexl        Byte-addressable Fortran record index
-!   bafrreadl         Byte-addressable Fortran record read
-!   bafrwritel        Byte-addressable Fortran record write
+!   bafrindex         Byte-addressable Fortran record index
+!   bafrread          Byte-addressable Fortran record read
+!   bafrwrite         Byte-addressable Fortran record write
 !
 ! Remarks:
 !   (1) The sigma file format follows:
@@ -457,20 +457,29 @@ contains
     type(sigio_head2):: head2
     type(sigio_head1a):: head1a
     type(sigio_head3a):: head3a
-    integer(8):: iskip,iread,nread
+    integer:: iskip,iread,nread
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     iret=-2
     iskip=0
     iread=sigio_lhead1
-    call bafrreadl(lu,iskip,iread,nread,head1a)
+    call bafrread(lu,iskip,iread,nread,head1a)
     if(nread.lt.iread) return
+!LLF+PM--
+    call byteswap(head1a%ivs,sigio_intkind,6)
+!LLF+PM==
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if(head1a%clab8.eq.'GFS SIG ') then  ! modern sigma file
       head%ivs=head1a%ivs
-      call bafrindexl(lu,iskip+nread,nread,iskip)
+      call bafrindex(lu,iskip+nread,nread,iskip)
       iread=200
-      call bafrreadl(lu,iskip,iread,nread,head3a)
+      call bafrread(lu,iskip,iread,nread,head3a)
       if(nread.lt.iread) return
+!LLF+PM--
+      call byteswap(head3a%fhour,sigio_realkind,1)
+      call byteswap(head3a%idate,sigio_intkind,28)
+      call byteswap(head3a%pdryini,sigio_realkind,1)
+      call byteswap(head3a%ncldt,sigio_intkind,20)
+!LLF+PM==
       head%fhour=head3a%fhour
       head%idate=head3a%idate
       head%jcap=head3a%jcap
@@ -502,23 +511,28 @@ contains
       call sigio_alhead(head,iret)
       iskip=iskip+nread
       iread=4*size(head%vcoord)
-      call bafrreadl(lu,iskip,iread,nread,head%vcoord)
+      call bafrread(lu,iskip,iread,nread,head%vcoord)
       if(nread.lt.iread) return
+!LLF+PM--
+      call byteswap(head%vcoord,sigio_realkind,iread/4)
+!LLF+PM==
       iskip=iskip+nread
       iread=size(head%cfvars)
-      call bafrreadl(lu,iskip,iread,nread,head%cfvars)
+      call bafrread(lu,iskip,iread,nread,head%cfvars)
       if(nread.lt.iread) return
 !
       if (mod(head%idvm/10,10) == 3) then
         iskip=iskip+nread
         iread=4*size(head%cpi)
-        call bafrreadl(lu,iskip,iread,nread,head%cpi)
-        if(nread.lt.iread) return
+        call bafrread(lu,iskip,iread,nread,head%cpi)
+        call byteswap(head%cpi,sigio_realkind,iread/4)
         iskip=iskip+nread
         iread=4*size(head%ri)
-        call bafrreadl(lu,iskip,iread,nread,head%ri)
+        call bafrread(lu,iskip,iread,nread,head%ri)
         if(nread.lt.iread) return
+        call byteswap(head%ri,sigio_realkind,iread/4)
       endif
+!
       head%clabsig=' '
       head%si=sigio_realfill
       head%sl=sigio_realfill
@@ -529,12 +543,17 @@ contains
     else
       iskip=0
       iread=sigio_lhead1
-      call bafrreadl(lu,iskip,iread,nread,head%clabsig)
+      call bafrread(lu,iskip,iread,nread,head%clabsig)
       if(nread.lt.iread) return
       iskip=iskip+nread
       iread=1000
-      call bafrreadl(lu,iskip,iread,nread,head2)
+      call bafrread(lu,iskip,iread,nread,head2)
       if(nread.lt.iread) return
+!LLF+PM--
+      call byteswap(head2%fhour,sigio_realkind,1)
+      call byteswap(head2%idate,sigio_intkind,4)
+      call byteswap(head2%sisl,sigio_realkind,245)
+!LLF+PM==
       iret=0
       head%fhour=head2%fhour
       head%idate=head2%idate
@@ -599,7 +618,7 @@ contains
     type(sigio_head1a):: head1a
     integer,allocatable:: head2a(:)
     type(sigio_head3a):: head3a
-    integer(8):: iskip,iwrite,nwrite
+    integer:: iskip,iwrite,nwrite
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     iret=-2
     call sigio_adhead(head)
@@ -611,14 +630,23 @@ contains
       head1a%reserved=0
       iskip=0
       iwrite=head%lhead(1)
-      call bafrwritel(lu,iskip,iwrite,nwrite,head1a)
+!LLF+PM--
+      call byteswap(head1a%ivs,sigio_intkind,6)
+!LLF+PM==
+      call bafrwrite(lu,iskip,iwrite,nwrite,head1a)
       if(nwrite.lt.iwrite) return
+!LLF+PM--
+      call byteswap(head1a%ivs,sigio_intkind,6)
+!LLF+PM==
       allocate(head2a(head%nhead+head%ndata))
       head2a(:head%nhead)=head%lhead
       head2a(head%nhead+1:)=head%ldata
       iskip=iskip+nwrite
       iwrite=head%lhead(2)
-      call bafrwritel(lu,iskip,iwrite,nwrite,head2a)
+!LLF+PM--
+      call byteswap(head2a,sigio_intkind,iwrite/sigio_intkind)
+!LLF+PM==
+      call bafrwrite(lu,iskip,iwrite,nwrite,head2a)
       deallocate(head2a)
       if(nwrite.lt.iwrite) return
       head3a%fhour=head%fhour
@@ -652,32 +680,53 @@ contains
       head3a%reserved=0
       iskip=iskip+nwrite
       iwrite=head%lhead(3)
-      call bafrwritel(lu,iskip,iwrite,nwrite,head3a)
+!LLF+PM--
+      call byteswap(head3a%fhour,sigio_realkind,1)
+      call byteswap(head3a%idate,sigio_intkind,28)
+      call byteswap(head3a%pdryini,sigio_realkind,1)
+      call byteswap(head3a%ncldt,sigio_intkind,20)
+!LLF+PM==
+      call bafrwrite(lu,iskip,iwrite,nwrite,head3a)
       if(nwrite.lt.iwrite) return
+!LLF+PM--
+      call byteswap(head3a%fhour,sigio_realkind,1)
+      call byteswap(head3a%idate,sigio_intkind,28)
+      call byteswap(head3a%pdryini,sigio_realkind,1)
+      call byteswap(head3a%ncldt,sigio_intkind,20)
+!LLF+PM==
       iskip=iskip+nwrite
       iwrite=head%lhead(4)
-      call bafrwritel(lu,iskip,iwrite,nwrite,head%vcoord)
+!LLF+PM--
+      call byteswap(head%vcoord,sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
+      call bafrwrite(lu,iskip,iwrite,nwrite,head%vcoord)
       if(nwrite.lt.iwrite) return
+!LLF+PM--
+      call byteswap(head%vcoord,sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
       iskip=iskip+nwrite
       iwrite=head%lhead(5)
-      call bafrwritel(lu,iskip,iwrite,nwrite,head%cfvars)
+      call bafrwrite(lu,iskip,iwrite,nwrite,head%cfvars)
       if(nwrite.lt.iwrite) return
 !
       if (mod(head%idvm/10,10) == 3) then
         iskip=iskip+nwrite
         iwrite=head%lhead(7)
-        call bafrwritel(lu,iskip,iwrite,nwrite,head%cpi)
+        call byteswap(head%cpi,sigio_realkind,iwrite/sigio_realkind)
+        call bafrwrite(lu,iskip,iwrite,nwrite,head%cpi)
         if(nwrite.lt.iwrite) return
         iskip=iskip+nwrite
         iwrite=head%lhead(7)
-        call bafrwritel(lu,iskip,iwrite,nwrite,head%ri)
+        call byteswap(head%ri,sigio_realkind,iwrite/sigio_realkind)
+        call bafrwrite(lu,iskip,iwrite,nwrite,head%ri)
         if(nwrite.lt.iwrite) return
       endif
+!
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     else
       iskip=0
       iwrite=sigio_lhead1
-      call bafrwritel(lu,iskip,iwrite,nwrite,head%clabsig)
+      call bafrwrite(lu,iskip,iwrite,nwrite,head%clabsig)
       if(nwrite.lt.iwrite) return
       head2%fhour=head%fhour 
       head2%idate=head%idate 
@@ -728,8 +777,18 @@ contains
       head2%ext(26:44)=0
       iskip=iskip+nwrite
       iwrite=1000
-      call bafrwritel(lu,iskip,iwrite,nwrite,head2)
+!LLF+PM--
+      call byteswap(head2%fhour,sigio_realkind,1)
+      call byteswap(head2%idate,sigio_intkind,4)
+      call byteswap(head2%sisl,sigio_realkind,245)
+!LLF+PM==
+      call bafrwrite(lu,iskip,iwrite,nwrite,head2)
       if(nwrite.lt.iwrite) return
+!LLF+PM--
+      call byteswap(head2%fhour,sigio_realkind,1)
+      call byteswap(head2%idate,sigio_intkind,4)
+      call byteswap(head2%sisl,sigio_realkind,245)
+!LLF+PM==
     endif
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     iret=0
@@ -834,7 +893,7 @@ contains
     integer(sigio_intkind),intent(out):: iret
     integer:: i,k,n
     integer:: nc,mdim1,mdim2,mdim3q
-    integer(8):: iskip,iread,nread
+    integer:: iskip,iread,nread
     type(sigio_dbta):: dbta
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     mdim1=min(size(data%hs,1),size(data%ps,1),&
@@ -853,58 +912,82 @@ contains
     if(head%irealf.ne.2) then
       iskip=0
       do i=1,head%nhead
-        call bafrindexl(0,iskip,int(head%lhead(i),8),iskip)
+        call bafrindex(0,iskip,head%lhead(i),iskip)
       enddo
       i=1
       iread=head%ldata(i)
-      call bafrreadl(lu,iskip,iread,nread,data%hs)
+      call bafrread(lu,iskip,iread,nread,data%hs)
       if(nread.lt.iread) return
+!LLF+PM--
+      call byteswap(data%hs,sigio_realkind,iread/sigio_realkind)
+!LLF+PM==
       i=i+1
       iskip=iskip+nread
       iread=head%ldata(i)
-      call bafrreadl(lu,iskip,iread,nread,data%ps)
+      call bafrread(lu,iskip,iread,nread,data%ps)
       if(nread.lt.iread) return
+!LLF+PM--
+      call byteswap(data%ps,sigio_realkind,iread/sigio_realkind)
+!LLF+PM==
       do k=1,head%levs
         i=i+1
         iskip=iskip+nread
         iread=head%ldata(i)
-        call bafrreadl(lu,iskip,iread,nread,data%t(1,k))
+        call bafrread(lu,iskip,iread,nread,data%t(1,k))
         if(nread.lt.iread) return
+!LLF+PM--
+        call byteswap(data%t(1,k),sigio_realkind,iread/sigio_realkind)
+!LLF+PM==
       enddo
       do k=1,head%levs
         i=i+1
         iskip=iskip+nread
         iread=head%ldata(i)
-        call bafrreadl(lu,iskip,iread,nread,data%d(1,k))
+        call bafrread(lu,iskip,iread,nread,data%d(1,k))
         if(nread.lt.iread) return
+!LLF+PM--
+        call byteswap(data%d(1,k),sigio_realkind,iread/sigio_realkind)
+!LLF+PM==
         i=i+1
         iskip=iskip+nread
         iread=head%ldata(i)
-        call bafrreadl(lu,iskip,iread,nread,data%z(1,k))
+        call bafrread(lu,iskip,iread,nread,data%z(1,k))
         if(nread.lt.iread) return
+!LLF+PM--
+        call byteswap(data%z(1,k),sigio_realkind,iread/sigio_realkind)
+!LLF+PM==
       enddo
       do n=1,head%ntrac
         do k=1,head%levs
           i=i+1
           iskip=iskip+nread
           iread=head%ldata(i)
-          call bafrreadl(lu,iskip,iread,nread,data%q(1,k,n))
+          call bafrread(lu,iskip,iread,nread,data%q(1,k,n))
           if(nread.lt.iread) return
+!LLF+PM--
+        call byteswap(data%q(1,k,n),sigio_realkind,iread/sigio_realkind)
+!LLF+PM==
         enddo
       enddo
       do n=1,head%nxgr
         i=i+1
         iskip=iskip+nread
         iread=head%ldata(i)
-        call bafrreadl(lu,iskip,iread,nread,data%xgr(1,1,n))
+        call bafrread(lu,iskip,iread,nread,data%xgr(1,1,n))
         if(nread.lt.iread) return
+!LLF+PM--
+        call byteswap(data%xgr(1,1,n),sigio_realkind,iread/sigio_realkind)
+!LLF+PM==
       enddo
       if(head%nxss.gt.0) then
         i=i+1
         iskip=iskip+nread
         iread=head%ldata(i)
-        call bafrreadl(lu,iskip,iread,nread,data%xss)
+        call bafrread(lu,iskip,iread,nread,data%xss)
         if(nread.lt.iread) return
+!LLF+PM--
+        call byteswap(data%xss,sigio_realkind,iread/sigio_realkind)
+!LLF+PM==
       endif
     else
       call sigio_aldbta(head,dbta,iret)
@@ -934,7 +1017,7 @@ contains
     integer(sigio_intkind),intent(out):: iret
     integer:: i,k,n
     integer:: nc,mdim1,mdim2,mdim3q
-    integer(8):: iskip,iwrite,nwrite
+    integer:: iskip,iwrite,nwrite
     type(sigio_dbta):: dbta
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     mdim1=min(size(data%hs,1),size(data%ps,1),&
@@ -953,58 +1036,106 @@ contains
     if(head%irealf.ne.2) then
       iskip=0
       do i=1,head%nhead
-        call bafrindexl(0,iskip,int(head%lhead(i),8),iskip)
+        call bafrindex(0,iskip,head%lhead(i),iskip)
       enddo
       i=1
       iwrite=head%ldata(i)
-      call bafrwritel(lu,iskip,iwrite,nwrite,data%hs)
+!LLF+PM--
+      call byteswap(data%hs,sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
+      call bafrwrite(lu,iskip,iwrite,nwrite,data%hs)
       if(nwrite.lt.iwrite) return
+!LLF+PM--
+      call byteswap(data%hs,sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
       i=i+1
       iskip=iskip+nwrite
       iwrite=head%ldata(i)
-      call bafrwritel(lu,iskip,iwrite,nwrite,data%ps)
+!LLF+PM--
+      call byteswap(data%ps,sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
+      call bafrwrite(lu,iskip,iwrite,nwrite,data%ps)
       if(nwrite.lt.iwrite) return
+!LLF+PM--
+      call byteswap(data%ps,sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
       do k=1,head%levs
         i=i+1
         iskip=iskip+nwrite
         iwrite=head%ldata(i)
-        call bafrwritel(lu,iskip,iwrite,nwrite,data%t(1,k))
+!LLF+PM--
+        call byteswap(data%t(1,k),sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
+        call bafrwrite(lu,iskip,iwrite,nwrite,data%t(1,k))
         if(nwrite.lt.iwrite) return
+!LLF+PM--
+        call byteswap(data%t(1,k),sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
       enddo
       do k=1,head%levs
         i=i+1
         iskip=iskip+nwrite
         iwrite=head%ldata(i)
-        call bafrwritel(lu,iskip,iwrite,nwrite,data%d(1,k))
+!LLF+PM--
+        call byteswap(data%d(1,k),sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
+        call bafrwrite(lu,iskip,iwrite,nwrite,data%d(1,k))
         if(nwrite.lt.iwrite) return
+!LLF+PM--
+        call byteswap(data%d(1,k),sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
         i=i+1
         iskip=iskip+nwrite
         iwrite=head%ldata(i)
-        call bafrwritel(lu,iskip,iwrite,nwrite,data%z(1,k))
+!LLF+PM--
+        call byteswap(data%z(1,k),sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
+        call bafrwrite(lu,iskip,iwrite,nwrite,data%z(1,k))
         if(nwrite.lt.iwrite) return
+!LLF+PM--
+        call byteswap(data%z(1,k),sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
       enddo
       do n=1,head%ntrac
         do k=1,head%levs
           i=i+1
           iskip=iskip+nwrite
           iwrite=head%ldata(i)
-          call bafrwritel(lu,iskip,iwrite,nwrite,data%q(1,k,n))
+!LLF+PM--
+          call byteswap(data%q(1,k,n),sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
+          call bafrwrite(lu,iskip,iwrite,nwrite,data%q(1,k,n))
           if(nwrite.lt.iwrite) return
+!LLF+PM--
+          call byteswap(data%q(1,k,n),sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
         enddo
       enddo
       do n=1,head%nxgr
         i=i+1
         iskip=iskip+nwrite
         iwrite=head%ldata(i)
-        call bafrwritel(lu,iskip,iwrite,nwrite,data%xgr(1,1,n))
+!LLF+PM--
+        call byteswap(data%xgr(1,1,n),sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
+        call bafrwrite(lu,iskip,iwrite,nwrite,data%xgr(1,1,n))
         if(nwrite.lt.iwrite) return
+!LLF+PM--
+        call byteswap(data%xgr(1,1,n),sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
       enddo
       if(head%nxss.gt.0) then
         i=i+1
         iskip=iskip+nwrite
         iwrite=head%ldata(i)
-        call bafrwritel(lu,iskip,iwrite,nwrite,data%xss)
+!LLF+PM--
+        call byteswap(data%xss,sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
+        call bafrwrite(lu,iskip,iwrite,nwrite,data%xss)
         if(nwrite.lt.iwrite) return
+!LLF+PM--
+        call byteswap(data%xss,sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
       endif
     else
       call sigio_aldbta(head,dbta,iret)
@@ -1081,7 +1212,7 @@ contains
     integer(sigio_intkind),intent(out):: iret
     integer:: i
     integer:: nc,mdim1
-    integer(8):: iskip,iread,nread
+    integer:: iskip,iread,nread
     type(sigio_dbts):: dbts
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     mdim1=min(size(dats%hs,1),size(dats%ps,1))
@@ -1093,17 +1224,23 @@ contains
     if(head%irealf.ne.2) then
       iskip=0
       do i=1,head%nhead
-        call bafrindexl(0,iskip,int(head%lhead(i),8),iskip)
+        call bafrindex(0,iskip,head%lhead(i),iskip)
       enddo
       i=1
       iread=head%ldata(i)
-      call bafrreadl(lu,iskip,iread,nread,dats%hs)
+      call bafrread(lu,iskip,iread,nread,dats%hs)
       if(nread.lt.iread) return
+!LLF+PM--
+      call byteswap(dats%hs,sigio_realkind,iread/sigio_realkind)
+!LLF+PM==
       i=i+1
       iskip=iskip+nread
       iread=head%ldata(i)
-      call bafrreadl(lu,iskip,iread,nread,dats%ps)
+      call bafrread(lu,iskip,iread,nread,dats%ps)
       if(nread.lt.iread) return
+!LLF+PM--
+      call byteswap(dats%ps,sigio_realkind,iread/sigio_realkind)
+!LLF+PM==
     else
       call sigio_aldbts(head,dbts,iret)
       if(iret.ne.0) return
@@ -1125,7 +1262,7 @@ contains
     integer(sigio_intkind),intent(out):: iret
     integer:: i
     integer:: nc,mdim1
-    integer(8):: iskip,iwrite,nwrite
+    integer:: iskip,iwrite,nwrite
     type(sigio_dbts):: dbts
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     mdim1=min(size(dats%hs,1),size(dats%ps,1))
@@ -1137,17 +1274,29 @@ contains
     if(head%irealf.ne.2) then
       iskip=0
       do i=1,head%nhead
-        call bafrindexl(0,iskip,int(head%lhead(i),8),iskip)
+        call bafrindex(0,iskip,head%lhead(i),iskip)
       enddo
       i=1
       iwrite=head%ldata(i)
-      call bafrwritel(lu,iskip,iwrite,nwrite,dats%hs)
+!LLF+PM--
+      call byteswap(dats%hs,sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
+      call bafrwrite(lu,iskip,iwrite,nwrite,dats%hs)
       if(nwrite.lt.iwrite) return
+!LLF+PM--
+      call byteswap(dats%hs,sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
       i=i+1
       iskip=iskip+nwrite
       iwrite=head%ldata(i)
-      call bafrwritel(lu,iskip,iwrite,nwrite,dats%ps)
+!LLF+PM--
+      call byteswap(dats%ps,sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
+      call bafrwrite(lu,iskip,iwrite,nwrite,dats%ps)
       if(nwrite.lt.iwrite) return
+!LLF+PM--
+      call byteswap(dats%ps,sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
     else
       call sigio_aldbts(head,dbts,iret)
       if(iret.ne.0) return
@@ -1169,7 +1318,7 @@ contains
     integer(sigio_intkind),intent(out):: iret
     integer:: i,k,n
     integer:: nc,k1,k2,mdim1,ldim2,udim2,mdim3q
-    integer(8):: iskip,iread,nread
+    integer:: iskip,iread,nread
     type(sigio_dbtm):: dbtm
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     k1=datm%k1
@@ -1192,38 +1341,47 @@ contains
     if(head%irealf.ne.2) then
       iskip=0
       do i=1,head%nhead
-        call bafrindexl(0,iskip,int(head%lhead(i),8),iskip)
+        call bafrindex(0,iskip,head%lhead(i),iskip)
       enddo
       i=1
-      call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+      call bafrindex(0,iskip,head%ldata(i),iskip)
       i=i+1
-      call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+      call bafrindex(0,iskip,head%ldata(i),iskip)
       do k=1,head%levs
         if(k.lt.k1.or.k.gt.k2) then
           i=i+1
-          call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+          call bafrindex(0,iskip,head%ldata(i),iskip)
         else
           i=i+1
           iread=head%ldata(i)
-          call bafrreadl(lu,iskip,iread,nread,datm%t(1,k))
+          call bafrread(lu,iskip,iread,nread,datm%t(1,k))
           if(nread.lt.iread) return
+!LLF+PM--
+          call byteswap(datm%t(1,k),sigio_realkind,iread/sigio_realkind)
+!LLF+PM==
           iskip=iskip+nread
         endif
       enddo
       do k=1,head%levs
         if(k.lt.k1.or.k.gt.k2) then
           i=i+1
-          call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+          call bafrindex(0,iskip,head%ldata(i),iskip)
           i=i+1
-          call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+          call bafrindex(0,iskip,head%ldata(i),iskip)
         else
           iread=head%ldata(i)
-          call bafrreadl(lu,iskip,iread,nread,datm%d(1,k))
+          call bafrread(lu,iskip,iread,nread,datm%d(1,k))
           if(nread.lt.iread) return
+!LLF+PM--
+          call byteswap(datm%d(1,k),sigio_realkind,iread/sigio_realkind)
+!LLF+PM==
           iskip=iskip+nread
           iread=head%ldata(i)
-          call bafrreadl(lu,iskip,iread,nread,datm%z(1,k))
+          call bafrread(lu,iskip,iread,nread,datm%z(1,k))
           if(nread.lt.iread) return
+!LLF+PM--
+          call byteswap(datm%z(1,k),sigio_realkind,iread/sigio_realkind)
+!LLF+PM==
           iskip=iskip+nread
         endif
       enddo
@@ -1231,12 +1389,15 @@ contains
         do k=1,head%levs
           if(k.lt.k1.or.k.gt.k2) then
             i=i+1
-            call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+            call bafrindex(0,iskip,head%ldata(i),iskip)
           else
             i=i+1
             iread=head%ldata(i)
-            call bafrreadl(lu,iskip,iread,nread,datm%q(1,k,n))
+            call bafrread(lu,iskip,iread,nread,datm%q(1,k,n))
             if(nread.lt.iread) return
+!LLF+PM--
+            call byteswap(datm%q(1,k,n),sigio_realkind,iread/sigio_realkind)
+!LLF+PM==
             iskip=iskip+nread
           endif
         enddo
@@ -1264,7 +1425,7 @@ contains
     integer(sigio_intkind),intent(out):: iret
     integer:: i,k,n
     integer:: nc,k1,k2,mdim1,ldim2,udim2,mdim3q
-    integer(8):: iskip,iwrite,nwrite
+    integer:: iskip,iwrite,nwrite
     type(sigio_dbtm):: dbtm
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     k1=datm%k1
@@ -1287,38 +1448,56 @@ contains
     if(head%irealf.ne.2) then
       iskip=0
       do i=1,head%nhead
-        call bafrindexl(0,iskip,int(head%lhead(i),8),iskip)
+        call bafrindex(0,iskip,head%lhead(i),iskip)
       enddo
       i=1
-      call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+      call bafrindex(0,iskip,head%ldata(i),iskip)
       i=i+1
-      call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+      call bafrindex(0,iskip,head%ldata(i),iskip)
       do k=1,head%levs
         if(k.lt.k1.or.k.gt.k2) then
           i=i+1
-          call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+          call bafrindex(0,iskip,head%ldata(i),iskip)
         else
           i=i+1
           iwrite=head%ldata(i)
-          call bafrwritel(lu,iskip,iwrite,nwrite,datm%t(1,k))
+!LLF+PM--
+          call byteswap(datm%t(1,k),sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM==
+          call bafrwrite(lu,iskip,iwrite,nwrite,datm%t(1,k))
           if(nwrite.lt.iwrite) return
+!LLF+PM-- 
+          call byteswap(datm%t(1,k),sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM== 
           iskip=iskip+nwrite
         endif
       enddo
       do k=1,head%levs
         if(k.lt.k1.or.k.gt.k2) then
           i=i+1
-          call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+          call bafrindex(0,iskip,head%ldata(i),iskip)
           i=i+1
-          call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+          call bafrindex(0,iskip,head%ldata(i),iskip)
         else
           iwrite=head%ldata(i)
-          call bafrwritel(lu,iskip,iwrite,nwrite,datm%d(1,k))
+!LLF+PM-- 
+          call byteswap(datm%d(1,k),sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM== 
+          call bafrwrite(lu,iskip,iwrite,nwrite,datm%d(1,k))
           if(nwrite.lt.iwrite) return
+!LLF+PM-- 
+          call byteswap(datm%d(1,k),sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM== 
           iskip=iskip+nwrite
           iwrite=head%ldata(i)
-          call bafrwritel(lu,iskip,iwrite,nwrite,datm%z(1,k))
+!LLF+PM-- 
+          call byteswap(datm%z(1,k),sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM== 
+          call bafrwrite(lu,iskip,iwrite,nwrite,datm%z(1,k))
           if(nwrite.lt.iwrite) return
+!LLF+PM-- 
+          call byteswap(datm%z(1,k),sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM== 
           iskip=iskip+nwrite
         endif
       enddo
@@ -1326,12 +1505,18 @@ contains
         do k=1,head%levs
           if(k.lt.k1.or.k.gt.k2) then
             i=i+1
-            call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+            call bafrindex(0,iskip,head%ldata(i),iskip)
           else
             i=i+1
             iwrite=head%ldata(i)
-            call bafrwritel(lu,iskip,iwrite,nwrite,datm%q(1,k,n))
+!LLF+PM-- 
+            call byteswap(datm%q(1,k,n),sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM== 
+            call bafrwrite(lu,iskip,iwrite,nwrite,datm%q(1,k,n))
             if(nwrite.lt.iwrite) return
+!LLF+PM-- 
+            call byteswap(datm%q(1,k,n),sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM== 
             iskip=iskip+nwrite
           endif
         enddo
@@ -1360,7 +1545,7 @@ contains
     integer:: i,k,n
     integer:: mdim1
     integer:: mlen
-    integer(8):: iskip,iread,nread
+    integer:: iskip,iread,nread
     type(sigio_dbti):: dbti
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     i=dati%i
@@ -1374,15 +1559,18 @@ contains
     if(head%irealf.ne.2) then
       iskip=0
       do i=1,head%nhead
-        call bafrindexl(0,iskip,int(head%lhead(i),8),iskip)
+        call bafrindex(0,iskip,head%lhead(i),iskip)
       enddo
       do i=1,dati%i-1
-        call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+        call bafrindex(0,iskip,head%ldata(i),iskip)
       enddo
       i=dati%i
       iread=head%ldata(i)
-      call bafrreadl(lu,iskip,iread,nread,dati%f)
+      call bafrread(lu,iskip,iread,nread,dati%f)
       if(nread.lt.iread) return
+!LLF+PM--
+      call byteswap(dati%f,sigio_realkind,iread/sigio_realkind)
+!LLF+PM==
     else
       i=dati%i
       call sigio_aldbti(head,i,dbti,iret)
@@ -1405,7 +1593,7 @@ contains
     integer:: i,k,n
     integer:: mdim1
     integer:: mlen
-    integer(8):: iskip,iwrite,nwrite
+    integer:: iskip,iwrite,nwrite
     type(sigio_dbti):: dbti
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     i=dati%i
@@ -1419,15 +1607,21 @@ contains
     if(head%irealf.ne.2) then
       iskip=0
       do i=1,head%nhead
-        call bafrindexl(0,iskip,int(head%lhead(i),8),iskip)
+        call bafrindex(0,iskip,head%lhead(i),iskip)
       enddo
       do i=1,dati%i-1
-        call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+        call bafrindex(0,iskip,head%ldata(i),iskip)
       enddo
       i=dati%i
       iwrite=head%ldata(i)
-      call bafrwritel(lu,iskip,iwrite,nwrite,dati%f)
+!LLF+PM-- 
+      call byteswap(dati%f,sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM== 
+      call bafrwrite(lu,iskip,iwrite,nwrite,dati%f)
       if(nwrite.lt.iwrite) return
+!LLF+PM-- 
+      call byteswap(dati%f,sigio_realkind,iwrite/sigio_realkind)
+!LLF+PM== 
       iret=0
     else
       i=dati%i
@@ -1540,7 +1734,7 @@ contains
     integer(sigio_intkind),intent(out):: iret
     integer:: i,k,n
     integer:: nc,mdim1,mdim2,mdim3q
-    integer(8):: iskip,iread,nread
+    integer:: iskip,iread,nread
     type(sigio_data):: data
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     mdim1=min(size(dbta%hs,1),size(dbta%ps,1),&
@@ -1559,58 +1753,82 @@ contains
     if(head%irealf.eq.2) then
       iskip=0
       do i=1,head%nhead
-        call bafrindexl(0,iskip,int(head%lhead(i),8),iskip)
+        call bafrindex(0,iskip,head%lhead(i),iskip)
       enddo
       i=1
       iread=head%ldata(i)
-      call bafrreadl(lu,iskip,iread,nread,dbta%hs)
+      call bafrread(lu,iskip,iread,nread,dbta%hs)
       if(nread.lt.iread) return
+!LLF+PM--
+      call byteswap(dbta%hs,sigio_dblekind,iread/sigio_dblekind)
+!LLF+PM==
       i=i+1
       iskip=iskip+nread
       iread=head%ldata(i)
-      call bafrreadl(lu,iskip,iread,nread,dbta%ps)
+      call bafrread(lu,iskip,iread,nread,dbta%ps)
       if(nread.lt.iread) return
+!LLF+PM--
+      call byteswap(dbta%ps,sigio_dblekind,iread/sigio_dblekind)
+!LLF+PM==
       do k=1,head%levs
         i=i+1
         iskip=iskip+nread
         iread=head%ldata(i)
-        call bafrreadl(lu,iskip,iread,nread,dbta%t(1,k))
+        call bafrread(lu,iskip,iread,nread,dbta%t(1,k))
         if(nread.lt.iread) return
+!LLF+PM--
+        call byteswap(dbta%t(1,k),sigio_dblekind,iread/sigio_dblekind)
+!LLF+PM==
       enddo
       do k=1,head%levs
         i=i+1
         iskip=iskip+nread
         iread=head%ldata(i)
-        call bafrreadl(lu,iskip,iread,nread,dbta%d(1,k))
+        call bafrread(lu,iskip,iread,nread,dbta%d(1,k))
         if(nread.lt.iread) return
+!LLF+PM--
+        call byteswap(dbta%d(1,k),sigio_dblekind,iread/sigio_dblekind)
+!LLF+PM==
         i=i+1
         iskip=iskip+nread
         iread=head%ldata(i)
-        call bafrreadl(lu,iskip,iread,nread,dbta%z(1,k))
+        call bafrread(lu,iskip,iread,nread,dbta%z(1,k))
         if(nread.lt.iread) return
+!LLF+PM--
+        call byteswap(dbta%z(1,k),sigio_dblekind,iread/sigio_dblekind)
+!LLF+PM==
       enddo
       do n=1,head%ntrac
         do k=1,head%levs
           i=i+1
           iskip=iskip+nread
           iread=head%ldata(i)
-          call bafrreadl(lu,iskip,iread,nread,dbta%q(1,k,n))
+          call bafrread(lu,iskip,iread,nread,dbta%q(1,k,n))
           if(nread.lt.iread) return
+!LLF+PM--
+          call byteswap(dbta%q(1,k,n),sigio_dblekind,iread/sigio_dblekind)
+!LLF+PM==
         enddo
       enddo
       do n=1,head%nxgr
         i=i+1
         iskip=iskip+nread
         iread=head%ldata(i)
-        call bafrreadl(lu,iskip,iread,nread,dbta%xgr(1,1,n))
+        call bafrread(lu,iskip,iread,nread,dbta%xgr(1,1,n))
         if(nread.lt.iread) return
+!LLF+PM--
+        call byteswap(dbta%xgr(1,1,n),sigio_dblekind,iread/sigio_dblekind)
+!LLF+PM==
       enddo
       if(head%nxss.gt.0) then
         i=i+1
         iskip=iskip+nread
         iread=head%ldata(i)
-        call bafrreadl(lu,iskip,iread,nread,dbta%xss)
+        call bafrread(lu,iskip,iread,nread,dbta%xss)
         if(nread.lt.iread) return
+!LLF+PM--
+        call byteswap(dbta%xss,sigio_dblekind,iread/sigio_dblekind)
+!LLF+PM==
       endif
     else
       call sigio_aldata(head,data,iret)
@@ -1640,7 +1858,7 @@ contains
     integer(sigio_intkind),intent(out):: iret
     integer:: i,k,n
     integer:: nc,mdim1,mdim2,mdim3q
-    integer(8):: iskip,iwrite,nwrite
+    integer:: iskip,iwrite,nwrite
     type(sigio_data):: data
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     mdim1=min(size(dbta%hs,1),size(dbta%ps,1),&
@@ -1659,58 +1877,106 @@ contains
     if(head%irealf.eq.2) then
       iskip=0
       do i=1,head%nhead
-        call bafrindexl(0,iskip,int(head%lhead(i),8),iskip)
+        call bafrindex(0,iskip,head%lhead(i),iskip)
       enddo
       i=1
       iwrite=head%ldata(i)
-      call bafrwritel(lu,iskip,iwrite,nwrite,dbta%hs)
+!LLF+PM--
+      call byteswap(dbta%hs,sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
+      call bafrwrite(lu,iskip,iwrite,nwrite,dbta%hs)
       if(nwrite.lt.iwrite) return
+!LLF+PM--
+      call byteswap(dbta%hs,sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
       i=i+1
       iskip=iskip+nwrite
       iwrite=head%ldata(i)
-      call bafrwritel(lu,iskip,iwrite,nwrite,dbta%ps)
+!LLF+PM--
+      call byteswap(dbta%ps,sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
+      call bafrwrite(lu,iskip,iwrite,nwrite,dbta%ps)
       if(nwrite.lt.iwrite) return
+!LLF+PM--
+      call byteswap(dbta%ps,sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
       do k=1,head%levs
         i=i+1
         iskip=iskip+nwrite
         iwrite=head%ldata(i)
-        call bafrwritel(lu,iskip,iwrite,nwrite,dbta%t(1,k))
+!LLF+PM--
+        call byteswap(dbta%t(1,k),sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
+        call bafrwrite(lu,iskip,iwrite,nwrite,dbta%t(1,k))
         if(nwrite.lt.iwrite) return
+!LLF+PM--
+        call byteswap(dbta%t(1,k),sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
       enddo
       do k=1,head%levs
         i=i+1
         iskip=iskip+nwrite
         iwrite=head%ldata(i)
-        call bafrwritel(lu,iskip,iwrite,nwrite,dbta%d(1,k))
+!LLF+PM--
+        call byteswap(dbta%d(1,k),sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
+        call bafrwrite(lu,iskip,iwrite,nwrite,dbta%d(1,k))
         if(nwrite.lt.iwrite) return
+!LLF+PM--
+        call byteswap(dbta%d(1,k),sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
         i=i+1
         iskip=iskip+nwrite
         iwrite=head%ldata(i)
-        call bafrwritel(lu,iskip,iwrite,nwrite,dbta%z(1,k))
+!LLF+PM--
+        call byteswap(dbta%z(1,k),sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
+        call bafrwrite(lu,iskip,iwrite,nwrite,dbta%z(1,k))
         if(nwrite.lt.iwrite) return
+!LLF+PM--
+        call byteswap(dbta%z(1,k),sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
       enddo
       do n=1,head%ntrac
         do k=1,head%levs
           i=i+1
           iskip=iskip+nwrite
           iwrite=head%ldata(i)
-          call bafrwritel(lu,iskip,iwrite,nwrite,dbta%q(1,k,n))
+!LLF+PM--
+          call byteswap(dbta%q(1,k,n),sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
+          call bafrwrite(lu,iskip,iwrite,nwrite,dbta%q(1,k,n))
           if(nwrite.lt.iwrite) return
+!LLF+PM--
+          call byteswap(dbta%q(1,k,n),sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
         enddo
       enddo
       do n=1,head%nxgr
         i=i+1
         iskip=iskip+nwrite
         iwrite=head%ldata(i)
-        call bafrwritel(lu,iskip,iwrite,nwrite,dbta%xgr(1,1,n))
+!LLF+PM--
+        call byteswap(dbta%xgr(1,1,n),sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
+        call bafrwrite(lu,iskip,iwrite,nwrite,dbta%xgr(1,1,n))
         if(nwrite.lt.iwrite) return
+!LLF+PM--
+        call byteswap(dbta%xgr(1,1,n),sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
       enddo
       if(head%nxss.gt.0) then
         i=i+1
         iskip=iskip+nwrite
         iwrite=head%ldata(i)
-        call bafrwritel(lu,iskip,iwrite,nwrite,dbta%xss)
+!LLF+PM--
+        call byteswap(dbta%xss,sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
+        call bafrwrite(lu,iskip,iwrite,nwrite,dbta%xss)
         if(nwrite.lt.iwrite) return
+!LLF+PM--
+        call byteswap(dbta%xss,sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
       endif
     else
       call sigio_aldata(head,data,iret)
@@ -1787,7 +2053,7 @@ contains
     integer(sigio_intkind),intent(out):: iret
     integer:: i
     integer:: nc,mdim1
-    integer(8):: iskip,iread,nread
+    integer:: iskip,iread,nread
     type(sigio_dats):: dats
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     mdim1=min(size(dbts%hs,1),size(dbts%ps,1))
@@ -1799,17 +2065,23 @@ contains
     if(head%irealf.eq.2) then
       iskip=0
       do i=1,head%nhead
-        call bafrindexl(0,iskip,int(head%lhead(i),8),iskip)
+        call bafrindex(0,iskip,head%lhead(i),iskip)
       enddo
       i=1
       iread=head%ldata(i)
-      call bafrreadl(lu,iskip,iread,nread,dbts%hs)
+      call bafrread(lu,iskip,iread,nread,dbts%hs)
       if(nread.lt.iread) return
+!LLF+PM--
+      call byteswap(dbts%hs,sigio_dblekind,iread/sigio_dblekind)
+!LLF+PM==
       i=i+1
       iskip=iskip+nread
       iread=head%ldata(i)
-      call bafrreadl(lu,iskip,iread,nread,dbts%ps)
+      call bafrread(lu,iskip,iread,nread,dbts%ps)
       if(nread.lt.iread) return
+!LLF+PM--
+      call byteswap(dbts%ps,sigio_dblekind,iread/sigio_dblekind)
+!LLF+PM==
     else
       call sigio_aldats(head,dats,iret)
       if(iret.ne.0) return
@@ -1831,7 +2103,7 @@ contains
     integer(sigio_intkind),intent(out):: iret
     integer:: i
     integer:: nc,mdim1
-    integer(8):: iskip,iwrite,nwrite
+    integer:: iskip,iwrite,nwrite
     type(sigio_dats):: dats
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     mdim1=min(size(dbts%hs,1),size(dbts%ps,1))
@@ -1843,17 +2115,29 @@ contains
     if(head%irealf.eq.2) then
       iskip=0
       do i=1,head%nhead
-        call bafrindexl(0,iskip,int(head%lhead(i),8),iskip)
+        call bafrindex(0,iskip,head%lhead(i),iskip)
       enddo
       i=1
       iwrite=head%ldata(i)
-      call bafrwritel(lu,iskip,iwrite,nwrite,dbts%hs)
+!LLF+PM--
+      call byteswap(dbts%hs,sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
+      call bafrwrite(lu,iskip,iwrite,nwrite,dbts%hs)
       if(nwrite.lt.iwrite) return
+!LLF+PM--
+      call byteswap(dbts%hs,sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
       i=i+1
       iskip=iskip+nwrite
       iwrite=head%ldata(i)
-      call bafrwritel(lu,iskip,iwrite,nwrite,dbts%ps)
+!LLF+PM--
+      call byteswap(dbts%ps,sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
+      call bafrwrite(lu,iskip,iwrite,nwrite,dbts%ps)
       if(nwrite.lt.iwrite) return
+!LLF+PM--
+      call byteswap(dbts%ps,sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
     else
       call sigio_aldats(head,dats,iret)
       if(iret.ne.0) return
@@ -1875,7 +2159,7 @@ contains
     integer(sigio_intkind),intent(out):: iret
     integer:: i,k,n
     integer:: nc,k1,k2,mdim1,ldim2,udim2,mdim3q
-    integer(8):: iskip,iread,nread
+    integer:: iskip,iread,nread
     type(sigio_datm):: datm
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     k1=dbtm%k1
@@ -1898,38 +2182,47 @@ contains
     if(head%irealf.eq.2) then
       iskip=0
       do i=1,head%nhead
-        call bafrindexl(0,iskip,int(head%lhead(i),8),iskip)
+        call bafrindex(0,iskip,head%lhead(i),iskip)
       enddo
       i=1
-      call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+      call bafrindex(0,iskip,head%ldata(i),iskip)
       i=i+1
-      call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+      call bafrindex(0,iskip,head%ldata(i),iskip)
       do k=1,head%levs
         if(k.lt.k1.or.k.gt.k2) then
           i=i+1
-          call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+          call bafrindex(0,iskip,head%ldata(i),iskip)
         else
           i=i+1
           iread=head%ldata(i)
-          call bafrreadl(lu,iskip,iread,nread,dbtm%t(1,k))
+          call bafrread(lu,iskip,iread,nread,dbtm%t(1,k))
           if(nread.lt.iread) return
+!LLF+PM--
+          call byteswap(dbtm%t(1,k),sigio_dblekind,iread/sigio_dblekind)
+!LLF+PM==
           iskip=iskip+nread
         endif
       enddo
       do k=1,head%levs
         if(k.lt.k1.or.k.gt.k2) then
           i=i+1
-          call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+          call bafrindex(0,iskip,head%ldata(i),iskip)
           i=i+1
-          call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+          call bafrindex(0,iskip,head%ldata(i),iskip)
         else
           iread=head%ldata(i)
-          call bafrreadl(lu,iskip,iread,nread,dbtm%d(1,k))
+          call bafrread(lu,iskip,iread,nread,dbtm%d(1,k))
           if(nread.lt.iread) return
+!LLF+PM--
+          call byteswap(dbtm%d(1,k),sigio_dblekind,iread/sigio_dblekind)
+!LLF+PM==
           iskip=iskip+nread
           iread=head%ldata(i)
-          call bafrreadl(lu,iskip,iread,nread,dbtm%z(1,k))
+          call bafrread(lu,iskip,iread,nread,dbtm%z(1,k))
           if(nread.lt.iread) return
+!LLF+PM--
+          call byteswap(dbtm%z(1,k),sigio_dblekind,iread/sigio_dblekind)
+!LLF+PM==
           iskip=iskip+nread
         endif
       enddo
@@ -1937,12 +2230,15 @@ contains
         do k=1,head%levs
           if(k.lt.k1.or.k.gt.k2) then
             i=i+1
-            call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+            call bafrindex(0,iskip,head%ldata(i),iskip)
           else
             i=i+1
             iread=head%ldata(i)
-            call bafrreadl(lu,iskip,iread,nread,dbtm%q(1,k,n))
+            call bafrread(lu,iskip,iread,nread,dbtm%q(1,k,n))
             if(nread.lt.iread) return
+!LLF+PM--
+            call byteswap(dbtm%q(1,k,n),sigio_dblekind,iread/sigio_dblekind)
+!LLF+PM==
             iskip=iskip+nread
           endif
         enddo
@@ -1970,7 +2266,7 @@ contains
     integer(sigio_intkind),intent(out):: iret
     integer:: i,k,n
     integer:: nc,k1,k2,mdim1,ldim2,udim2,mdim3q
-    integer(8):: iskip,iwrite,nwrite
+    integer:: iskip,iwrite,nwrite
     type(sigio_datm):: datm
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     k1=dbtm%k1
@@ -1993,38 +2289,56 @@ contains
     if(head%irealf.eq.2) then
       iskip=0
       do i=1,head%nhead
-        call bafrindexl(0,iskip,int(head%lhead(i),8),iskip)
+        call bafrindex(0,iskip,head%lhead(i),iskip)
       enddo
       i=1
-      call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+      call bafrindex(0,iskip,head%ldata(i),iskip)
       i=i+1
-      call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+      call bafrindex(0,iskip,head%ldata(i),iskip)
       do k=1,head%levs
         if(k.lt.k1.or.k.gt.k2) then
           i=i+1
-          call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+          call bafrindex(0,iskip,head%ldata(i),iskip)
         else
           i=i+1
           iwrite=head%ldata(i)
-          call bafrwritel(lu,iskip,iwrite,nwrite,dbtm%t(1,k))
+!LLF+PM--
+          call byteswap(dbtm%t(1,k),sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
+          call bafrwrite(lu,iskip,iwrite,nwrite,dbtm%t(1,k))
           if(nwrite.lt.iwrite) return
+!LLF+PM--
+          call byteswap(dbtm%t(1,k),sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
           iskip=iskip+nwrite
         endif
       enddo
       do k=1,head%levs
         if(k.lt.k1.or.k.gt.k2) then
           i=i+1
-          call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+          call bafrindex(0,iskip,head%ldata(i),iskip)
           i=i+1
-          call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+          call bafrindex(0,iskip,head%ldata(i),iskip)
         else
           iwrite=head%ldata(i)
-          call bafrwritel(lu,iskip,iwrite,nwrite,dbtm%d(1,k))
+!LLF+PM-- 
+          call byteswap(dbtm%d(1,k),sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM== 
+          call bafrwrite(lu,iskip,iwrite,nwrite,dbtm%d(1,k))
           if(nwrite.lt.iwrite) return
+!LLF+PM-- 
+          call byteswap(dbtm%d(1,k),sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM== 
           iskip=iskip+nwrite
           iwrite=head%ldata(i)
-          call bafrwritel(lu,iskip,iwrite,nwrite,dbtm%z(1,k))
+!LLF+PM-- 
+          call byteswap(dbtm%z(1,k),sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM== 
+          call bafrwrite(lu,iskip,iwrite,nwrite,dbtm%z(1,k))
           if(nwrite.lt.iwrite) return
+!LLF+PM-- 
+          call byteswap(dbtm%z(1,k),sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM== 
           iskip=iskip+nwrite
         endif
       enddo
@@ -2032,12 +2346,18 @@ contains
         do k=1,head%levs
           if(k.lt.k1.or.k.gt.k2) then
             i=i+1
-            call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+            call bafrindex(0,iskip,head%ldata(i),iskip)
           else
             i=i+1
             iwrite=head%ldata(i)
-            call bafrwritel(lu,iskip,iwrite,nwrite,dbtm%q(1,k,n))
+!LLF+PM-- 
+            call byteswap(dbtm%q(1,k,n),sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM== 
+            call bafrwrite(lu,iskip,iwrite,nwrite,dbtm%q(1,k,n))
             if(nwrite.lt.iwrite) return
+!LLF+PM-- 
+            call byteswap(dbtm%q(1,k,n),sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM== 
             iskip=iskip+nwrite
           endif
         enddo
@@ -2066,7 +2386,7 @@ contains
     integer:: i,k,n
     integer:: mdim1
     integer:: mlen
-    integer(8):: iskip,iread,nread
+    integer:: iskip,iread,nread
     type(sigio_dati):: dati
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     i=dbti%i
@@ -2080,15 +2400,18 @@ contains
     if(head%irealf.eq.2) then
       iskip=0
       do i=1,head%nhead
-        call bafrindexl(0,iskip,int(head%lhead(i),8),iskip)
+        call bafrindex(0,iskip,head%lhead(i),iskip)
       enddo
       do i=1,dbti%i-1
-        call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+        call bafrindex(0,iskip,head%ldata(i),iskip)
       enddo
       i=dbti%i
       iread=head%ldata(i)
-      call bafrreadl(lu,iskip,iread,nread,dbti%f)
+      call bafrread(lu,iskip,iread,nread,dbti%f)
       if(nread.lt.iread) return
+!LLF+PM--
+      call byteswap(dbti%f,sigio_dblekind,iread/sigio_dblekind)
+!LLF+PM==
     else
       i=dbti%i
       call sigio_aldati(head,i,dati,iret)
@@ -2111,7 +2434,7 @@ contains
     integer:: i,k,n
     integer:: mdim1
     integer:: mlen
-    integer(8):: iskip,iwrite,nwrite
+    integer:: iskip,iwrite,nwrite
     type(sigio_dati):: dati
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     i=dbti%i
@@ -2125,15 +2448,21 @@ contains
     if(head%irealf.eq.2) then
       iskip=0
       do i=1,head%nhead
-        call bafrindexl(0,iskip,int(head%lhead(i),8),iskip)
+        call bafrindex(0,iskip,head%lhead(i),iskip)
       enddo
       do i=1,dbti%i-1
-        call bafrindexl(0,iskip,int(head%ldata(i),8),iskip)
+        call bafrindex(0,iskip,head%ldata(i),iskip)
       enddo
       i=dbti%i
       iwrite=head%ldata(i)
-      call bafrwritel(lu,iskip,iwrite,nwrite,dbti%f)
+!LLF+PM--
+      call byteswap(dbti%f,sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
+      call bafrwrite(lu,iskip,iwrite,nwrite,dbti%f)
       if(nwrite.lt.iwrite) return
+!LLF+PM--
+      call byteswap(dbti%f,sigio_dblekind,iwrite/sigio_dblekind)
+!LLF+PM==
     else
       i=dbti%i
       call sigio_aldati(head,i,dati,iret)

@@ -11,11 +11,12 @@
      x                  me, MC_COMP)
      
       USE machine,  ONLY: kind_evod
+      implicit none
       INCLUDE 'mpif.h'
 cc
 cc
-      implicit none
 cc
+         integer num_parthds
       integer lat1s(0:jcap),latl2
 cc
       integer              nvars

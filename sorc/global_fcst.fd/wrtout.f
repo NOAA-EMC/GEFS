@@ -2607,7 +2607,7 @@ Cwei: addition of 30 records ends here -------------------------------
 !        > ngrids_flx+1  which cause the address error or arry over-run
 !
 !hchuang code change [+2]  when callng sub  uninterprez, array glolal is assign
-to
+!gwv contto
         glolal=flx_fld%goro*rtime
         CALL uninterprez(2,kmsk,buffo,glolal,global_lats_r,lonsperlar)
 !     if(ierr.ne.0)print*,'wrtsfc gribit ierr=',ierr,'  ',
@@ -2755,6 +2755,7 @@ csela..................................................................
       real (kind=kind_io4)   buff1l(lonr*latr)
 csela..................................................................
 !     real (kind=kind_io8)  FLUXR(nfxr,LONR,LATS_NODE_R)
+       integer iens(5)
       REAL (KIND=KIND_IO8) SLMSK (LONR,LATS_NODE_R)
 csela..................................................................
       integer kmsk(lonr,lats_node_r),kmsk0(lonr,lats_node_r)

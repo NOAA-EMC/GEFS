@@ -6,7 +6,7 @@
      x                  lats_node,ipt_lats_node,lon_dims,dimg,
      x                  lons_lat,londi,latl)
 cc
-#include "f_hpm.h"
+!gwvport#include "f_hpm.h"
 cc
       use resol_def
       use layout1
@@ -14,6 +14,7 @@ cc
       implicit none
 cc
       integer lat1s(0:jcap),latl2
+         integer num_parthds
 cc
       integer              nvars
       real(kind=kind_evod) flnev(len_trie_ls,2,nvars)
@@ -332,6 +333,7 @@ cc
       use layout1
       use mpi_def
       implicit none
+         integer num_parthds
       integer lat1s(0:jcap),latl2
       real(kind=kind_evod) flnev(len_trie_ls,2*nvars)
       real(kind=kind_evod) flnod(len_trio_ls,2*nvars)
@@ -530,12 +532,13 @@ c
      x                  lats_node,ipt_lats_node,lon_dims,dimg,
      x                  lons_lat,londi,latl)
 cc
-#include "f_hpm.h"
+!gwvport#include "f_hpm.h"
 cc
       use resol_def
       use layout1
       use mpi_def
       implicit none
+        integer num_parthds
 cc
       integer lat1s(0:jcap),latl2
 cc
@@ -857,6 +860,7 @@ c
       use layout1
       use mpi_def
       implicit none
+        integer num_parthds
       integer lat1s(0:jcap),latl2
       real(kind=kind_evod) flnev(len_trie_ls,2*nvars)
       real(kind=kind_evod) flnod(len_trio_ls,2*nvars)

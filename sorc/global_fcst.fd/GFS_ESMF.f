@@ -37,7 +37,7 @@
 
 ! This is some information required by the ESMF Log error utility.
 !-----------------------------------------------------------------
-#include "ESMF_LogMacros.inc"
+!gwv#include "ESMF_LogMacros.inc"
 
  IMPLICIT none
 
@@ -84,6 +84,9 @@
  CHARACTER(ESMF_MAXSTR), DIMENSION(:), ALLOCATABLE :: GridCompName
 
  character*20                                      :: PELAB
+
+!DHOU 05/14/2012 add this line to support GV's change
+ INTEGER                                           :: k
 
 !
 
@@ -368,6 +371,9 @@
 !
 !!INITIALIZE THE GFS COUPLER GRID COMPONENT:
 !
+!WEIYU????????????????????????????????????????????????
+print*, 'in MAIN, Ens_sps, hh_increase,hh_start,hh_final=',Ens_sps, hh_increase,hh_start,hh_final
+
  IF (Ens_sps) THEN
    CALL ESMF_LogWrite("Calling the GFS COUPLER Initialize",    &
                        ESMF_LOG_INFO, rc = rc)
@@ -413,6 +419,8 @@
                                  rc          = rc)
 
      CALL ERR_MSG3(rc, 'Run the GFS COupler RUN', rcfinal)
+!DHOU 05/15/2012 add this for better synchronization 
+   CALL ESMF_VMBarrier(vm, rc = rc)
 !
      IF (i <= Number_final) THEN
        PRINT*, 'Complete Ensemble GFS Run Cycle = ', i
@@ -426,21 +434,6 @@
    CALL GFS_Run      (gcGFS, impGFS, expGFS, clock, Total_member, Member_Id, rc)
    CALL ERR_MSG3(rc,'Run the GFS RUN',rcfinal)
  ENDIF
-
-!
-!! FINALIZE THE GFS GRID COMPONENT
-!
- CALL ESMF_LogWrite("Calling the GFS Finalize",  &
-                    ESMF_LOG_INFO, rc = rc)
-
-!**************************************************************
-!CALL MPI_Finalize(rcfinal)        ! Temporary fix to ESMF bug in CFS mode
-!stop
-!**************************************************************
-
- CALL GFS_Finalize (gcGFS, impGFS, expGFS, clock, Total_member, Member_Id, rc)
-
- CALL ERR_MSG3(rc, 'Run the GFS Finalize', rcfinal)
 
 !
 !!AFTER RUNNING, FINALIZE THE COUPLER COMPONENT:
@@ -459,6 +452,26 @@
                                 rc          = rc)
     CALL ERR_MSG3(rc, 'Run the GFS Coupler Finalize', rcfinal)
  ENDIF
+
+!
+!! FINALIZE THE GFS GRID COMPONENT
+!
+ CALL ESMF_LogWrite("Calling the GFS Finalize",  &
+                    ESMF_LOG_INFO, rc = rc)
+
+!**************************************************************
+!CALL MPI_Finalize(rcfinal)        ! Temporary fix to ESMF bug in CFS mode
+!stop
+!**************************************************************
+!05/14/2012, Following GV's change in GFS_Run, added the following 5 lines
+!GWVX   AVOID ESMF TERMINATION PROBLEMS AND JUST QUIT  NOW.
+  print  *,'  GWVX EXITING FROM GFS WITHOUT CALLING ESMF FINALIZE ROUTINES WITH THEIR SEGFAULT RISK'
+       call mpi_finalize(k)
+       stop
+
+ CALL GFS_Finalize (gcGFS, impGFS, expGFS, clock, Total_member, Member_Id, rc)
+
+ CALL ERR_MSG3(rc, 'Run the GFS Finalize', rcfinal)
 
 !  Finalize the ESMF System.
 !---------------------------

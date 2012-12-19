@@ -14,9 +14,11 @@
      x                         nodes,        me,         MC_COMP)
 
       USE machine,  ONLY: kind_evod
+      IMPLICIT none
       INCLUDE 'mpif.h'
 
-      IMPLICIT none
+!      IMPLICIT none
+       integer num_parthds
 cc
       integer              nvarsdim,latl2,latl
       integer              nvars

@@ -32,13 +32,13 @@
      &        ' lan=',i4,
      &        ' me=',i3)
 !!
-      call rffti(lons_lat,table)
 !!
       do n=1,lot
          syn_gr_a_2(1,n)=syn_gr_a_1(1,n)
          do i=3,lons_lat+1
             syn_gr_a_2(i-1,n)=syn_gr_a_1(i,n)
          enddo
+      call rffti(lons_lat,table)
          call rfftb(lons_lat,syn_gr_a_2(1,n),table)
       enddo
 !!

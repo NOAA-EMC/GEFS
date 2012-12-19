@@ -13,7 +13,7 @@
      &     phy_f3d, phy_f2d,xlat,nblck,kdt,
      &     global_times_b)
 !!
-#include "f_hpm.h"
+!gwvport#include "f_hpm.h"
 !!
       use resol_def
       use layout1
@@ -30,8 +30,8 @@
       use Sfc_Flx_ESMFMod
       use Nsstm_ESMFMod
       use mersenne_twister
-      include 'mpif.h'
       implicit none
+      include 'mpif.h'
 !
       TYPE(Sfc_Var_Data)        :: sfc_fld
       TYPE(Flx_Var_Data)        :: flx_fld

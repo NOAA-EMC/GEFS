@@ -23,11 +23,12 @@
  USE mpi_def
  USE GFS_InternalState_ESMFMod
 
+ IMPLICIT none
  REAL(KIND = kind_evod), DIMENSION(:), POINTER   :: work1a, work1b, work1c, work1d
  INTEGER,                DIMENSION(:), POINTER   :: work3
  TYPE(ESMF_LOGICAL)                              :: lslag_1
 
- IMPLICIT none
+! IMPLICIT none
 
  CONTAINS
 

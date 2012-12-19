@@ -74,6 +74,7 @@ c
             y(i+1,j)=y(i,j)
           ENDDO
           y(2,j)=0.
+          y(n+2,j)=0.
         ENDDO
       ENDIF
  
@@ -1007,3 +1008,13 @@ C
   144 CONTINUE
       RETURN
       END
+       subroutine scrft()
+          print  *,' GWVX FAKE SCRFT ACTUALLY CALLED, STOPPING.',
+     1 ' FIND A REAL VALID WORKING SCRFT'
+          stop
+                end
+       subroutine srcft()
+          print  *,' GWVX FAKE SRCFT ACTUALLY CALLED, STOPPING.',
+     1 ' FIND A REAL VALID WORKING SRCFT'
+          stop
+                end

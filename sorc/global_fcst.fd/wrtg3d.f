@@ -32,6 +32,7 @@
       LOGICAL(1) LBM(LONR*LATR)
       CHARACTER G(200+LONR*LATR*(16+1)/8)
       INTEGER     IDATE(4), IDS(255)
+        integer iens(5)
       integer nv,il1,il2,j,i,k,itop,ibot,k4,l,nog3d
       integer ilpds,iyr,imo,ida,ihr,ifhr,ithr,lg,ierr
       real (kind=kind_io8) colat1,cl1,secswr,zhour,fhour,rtime,rtimsw

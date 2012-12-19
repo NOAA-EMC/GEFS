@@ -89,7 +89,7 @@ CC
 c$$$      REAL(KIND=KIND_IO4) Z(lnt2)
       real(kind=kind_io8) buffo(lonr,lats_node_r)
       real(kind=kind_io4) buff2(lonr,latr)
-      integer idvm
+!gwv      integer idvm
 !!
 c$$$      common /z00_com/z
 !!

@@ -65,6 +65,7 @@
       character g(200+lonr*latr*(16+1)/8)
       integer     idate(4), ids(255)
 !     integer     idate(4), ids(255),iens(5)
+      integer     iens(5)
       integer nv,il1,il2,j,i,k,itop,ibot,k4,l,no3d
        integer ilpds,iyr,imo,ida,ihr,ifhr,ithr,lg,ierr
        real (kind=kind_io8) rtime,rtimsw,rtimlw

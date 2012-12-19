@@ -191,6 +191,8 @@ cc
       use mpi_def
       use physcons, rk => con_rocp
       implicit none
+        integer iens,irealf,idpp,idusr,idrun ,ncldt
+        dimension iens(2)
 !!
       real (kind=kind_phys), parameter :: rk1 = rk + 1.0, rkr = 1.0/rk
      &,                                   p0=100000.0, p0i=1.0/p0

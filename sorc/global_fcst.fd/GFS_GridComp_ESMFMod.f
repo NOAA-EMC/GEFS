@@ -31,7 +31,7 @@
 
  IMPLICIT none
 
-#include "ESMF_LogMacros.inc"
+!#include "ESMF_LogMacros.inc"
 
 
  PRIVATE   ! By default data is private to this module

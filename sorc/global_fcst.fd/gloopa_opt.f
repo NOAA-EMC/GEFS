@@ -11,7 +11,6 @@
 
 c
 !include "f_hpm.h" !  jjt include file for hpm
-#include "f_hpm.h"
 !
       use resol_def
       use layout1

@@ -64,7 +64,7 @@
  INTEGER :: i,j,k
  real (kind=kind_io4) blatc4
  real (kind=kind_io4), allocatable :: pl_lat4(:), pl_pres4(:), pl_time4(:)
-
+ integer num_parthds
 ! Set up parameters of MPI communications.
 ! Use ESMF utility to get PE identification and total number of PEs.
 !-------------------------------------------------------------------
@@ -711,7 +711,7 @@
 !!
 ! Modified by Weiyu.
 !-------------------
-      if (.NOT.LIOPE.or.icolor.ne.2) then
+!     if (.NOT.LIOPE.or.icolor.ne.2) then
 !!
       CALL countperf(0,15,0.)
       ALLOCATE (   gis%TRIE_LS(LEN_TRIE_LS,2,11*LEVS+3*LEVH+6) )
@@ -734,7 +734,7 @@
       ALLOCATE (   gis%ANL_GR_A_1(LONFX*gis%LOTA,LATS_DIM_EXT) )
       ALLOCATE (   gis%ANL_GR_A_2(LONFX*gis%LOTA,LATS_DIM_EXT) )
 !!
-      endif !(.NOT.LIOPE.or.icolor.ne.2)
+!     endif !(.NOT.LIOPE.or.icolor.ne.2)
 !!
       if (me == 0) then
         PRINT*, ' LATS_DIM_A=', LATS_DIM_A, ' LATS_NODE_A=', LATS_NODE_A

@@ -66,6 +66,7 @@
       CHARACTER G(200+LONR*LATR*(16+1)/8)
       INTEGER     IDATE(4), IDS(255)
 !     INTEGER     IDATE(4), IDS(255),IENS(5)
+         integer iens(5)
       integer nv,il1,il2,j,i,k,itop,ibot,k4,l,no3d
        integer ilpds,iyr,imo,ida,ihr,ifhr,ithr,lg,ierr
        REAL (kind=kind_io8) rtime,rtimsw,rtimlw

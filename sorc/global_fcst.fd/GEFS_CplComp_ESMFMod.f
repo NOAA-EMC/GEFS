@@ -29,7 +29,7 @@
 
  IMPLICIT none
 
-#include "ESMF_LogMacros.inc"
+!#include "ESMF_LogMacros.inc"
 
 
  PRIVATE   ! By default data is private to this module
@@ -407,7 +407,9 @@ endif
 !DHOU, 09/25/2007 set up the Gaussian latitude (sin of it) slat_work and wlat_work  array
  ALLOCATE(Cpl_Int_State%slat_work(Cpl_Int_State%latmax))
  ALLOCATE(Cpl_Int_State%wlat_work(Cpl_Int_State%latmax))
- CALL SPLAT(4,Cpl_Int_State%latmax,Cpl_Int_State%slat_work, Cpl_Int_State%wlat_work)
+!CALL SPLAT(4,Cpl_Int_State%latmax,Cpl_Int_State%slat_work, Cpl_Int_State%wlat_work)
+!DHOU 04/16/2012 foe ZEUS, following GV
+ CALL SPLATx(4,Cpl_Int_State%latmax,Cpl_Int_State%slat_work, Cpl_Int_State%wlat_work)
 
 !DHOU, 11/13/2007 assignement of latnode (Number of Gaussian latitudes per cpu) from other variables 
  Cpl_Int_State%latnode = Cpl_Int_State%latmax / (Cpl_Int_State%nodes / Cpl_Int_State%Total_member) + 1

@@ -2520,8 +2520,10 @@ contains
         DO JS=1,JHO
           BWORK(JS)=-D1/(4*(JS-1)**2-1)
         ENDDO
-        CALL DGEF(AWORK,JHE,JHO,IPVT)
-        CALL DGES(AWORK,JHE,JHO,IPVT,BWORK,J0)
+!       CALL DGEF(AWORK,JHE,JHO,IPVT)
+        call ludcmp(awork,jho,jhe,ipvt)
+!       CALL DGES(AWORK,JHE,JHO,IPVT,BWORK,J0)
+        call lubksb(awork,jho,jhe,ipvt,bwork)
         WLAT(1)=0.
         DO J=1,JHO
           WLAT(J+1)=BWORK(J)
@@ -2554,8 +2556,10 @@ contains
         DO JS=1,JHO
           BWORK(JS)=-D1/(4*(JS-1)**2-1)
         ENDDO
-        CALL DGEF(AWORK,JHE,JHO,IPVT)
-        CALL DGES(AWORK,JHE,JHO,IPVT,BWORK,J0)
+!       CALL DGEF(AWORK,JHE,JHO,IPVT)
+        call ludcmp(awork,jho,jhe,ipvt)
+!       CALL DGES(AWORK,JHE,JHO,IPVT,BWORK,J0)
+        call lubksb(awork,jho,jhe,ipvt,bwork)
         WLAT(1)=0.
         DO J=1,JHO
           WLAT(J)=BWORK(J)
@@ -2668,8 +2672,10 @@ contains
         DO JS=1,JHO
           BWORK(JS)=-D1/(4*(JS-1)**2-1)
         ENDDO
-        CALL DGEF(AWORK,JHE,JHO,IPVT)
-        CALL DGES(AWORK,JHE,JHO,IPVT,BWORK,J0)
+!       CALL DGEF(AWORK,JHE,JHO,IPVT)
+        call ludcmp(awork,jho,jhe,ipvt)
+!       CALL DGES(AWORK,JHE,JHO,IPVT,BWORK,J0)
+        call lubksb(awork,jho,jhe,ipvt,bwork)
         WLAT(1)=0.
         DO J=1,JHO
           WLAT(J+1)=BWORK(J)
@@ -2702,8 +2708,10 @@ contains
         DO JS=1,JHO
           BWORK(JS)=-D1/(4*(JS-1)**2-1)
         ENDDO
-        CALL DGEF(AWORK,JHE,JHO,IPVT)
-        CALL DGES(AWORK,JHE,JHO,IPVT,BWORK,J0)
+!       CALL DGEF(AWORK,JHE,JHO,IPVT)
+        call ludcmp(awork,jho,jhe,ipvt)
+!       CALL DGES(AWORK,JHE,JHO,IPVT,BWORK,J0)
+        call lubksb(awork,jho,jhe,ipvt,bwork)
         WLAT(1)=0.
         DO J=1,JHO
           WLAT(J)=BWORK(J)

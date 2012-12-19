@@ -29,9 +29,9 @@
  USE machine,  ONLY: kind_evod, kind_phys, kind_rad
  use physcons, only : pi => con_pi, FV => con_fvirt, rerth => con_rerth
 
- INCLUDE 'mpif.h'
-
+!DHOU 04/16/2012 moved this line for ZEUS (following gw?) 
  IMPLICIT none
+ INCLUDE 'mpif.h'
 
  TYPE(GEFS_Cpl_InternalState), INTENT(inout) :: Int_State
  INTEGER,                      INTENT(out)   :: rc

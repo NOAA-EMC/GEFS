@@ -24,7 +24,7 @@
      &                 phy_f3d,  phy_f2d, NBLCK,
      &                 ZHOUR,N1,N4,LSOUT,COLAT1,CFHOUR1,SPS)
 !!
-#include "f_hpm.h"
+!gwvport#include "f_hpm.h"
       use resol_def
       use layout1
       use gg_def

@@ -10,8 +10,8 @@
       integer              itrun
 !     integer              igen
 !
-      integer lonb, latb, iens(5), idpp, idvt, idrun
-     &,       idusr, ncldt, irealf, iorder
+!gwv      integer lonb, latb, iens(5), idpp, idvt, idrun
+!gwv     &,       idusr, ncldt, irealf, iorder
 !!
 !     real(kind=kind_evod) runid
 !     real(kind=kind_evod) usrid

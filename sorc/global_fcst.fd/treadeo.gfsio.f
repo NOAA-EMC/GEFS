@@ -50,6 +50,7 @@
 !cmr  ls_node(1,1) ... ls_node(ls_max_node,1) : values of L
 !cmr  ls_node(1,2) ... ls_node(ls_max_node,2) : values of jbasev
 !cmr  ls_node(1,3) ... ls_node(ls_max_node,3) : values of jbasod
+      integer latb,lonb,iens(5),iorder,irealf,idpp,idrun,idusr,ncldt ! gwv add
 !
       INTEGER              LS_NODES(LS_DIM,NODES)
       INTEGER              MAX_LS_NODES(NODES)

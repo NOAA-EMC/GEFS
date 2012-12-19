@@ -1,22 +1,5 @@
 C-----------------------------------------------------------------------
       SUBROUTINE BAFRINDEX(LU,IB,LX,IX)
-!
-      IMPLICIT NONE
-      INTEGER,INTENT(IN):: LU,IB
-      INTEGER,INTENT(INOUT):: LX
-      INTEGER,INTENT(OUT):: IX
-      integer(kind=8) :: LONG_IB,LONG_LX ,LONG_IX
-!
-      LONG_IB=IB
-      LONG_LX=LX
-      call BAFRINDEXL(LU,LONG_IB,LONG_LX,LONG_IX)
-      LX=LONG_LX
-      IX=LONG_IX
-
-      return
-      end SUBROUTINE BAFRINDEX
-C-----------------------------------------------------------------------
-      SUBROUTINE BAFRINDEXL(LU,IB,LX,IX)
 C$$$  SUBPROGRAM DOCUMENTATION BLOCK
 C
 C SUBPROGRAM: BAFRINDEX      BYTE-ADDRESSABLE FORTRAN RECORD INDEX
@@ -53,21 +36,26 @@ C   LANGUAGE: FORTRAN 90
 C
 C$$$
       IMPLICIT NONE
-      INTEGER,INTENT(IN):: LU
-      INTEGER(KIND=8),INTENT(IN):: IB
-      INTEGER(KIND=8),INTENT(INOUT):: LX
-      INTEGER(KIND=8),INTENT(OUT):: IX
-      INTEGER(KIND=8),PARAMETER:: LBCW=4
-      INTEGER(KIND=LBCW):: BCW1,BCW2
-      INTEGER(KIND=8):: KR
+      INTEGER,INTENT(IN):: LU,IB
+      INTEGER,INTENT(INOUT):: LX
+      INTEGER,INTENT(OUT):: IX
+      INTEGER,PARAMETER:: LBCW=4
+      INTEGER(LBCW):: BCW1,BCW2
+      INTEGER:: KR
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  COMPARE FIRST BLOCK CONTROL WORD AND TRAILING BLOCK CONTROL WORD
       IF(LU.GT.0) THEN
-        CALL BAREADL(LU,IB,LBCW,KR,BCW1)
+        CALL BAREAD(LU,IB,LBCW,KR,BCW1)
+!LLF+MP--
+        CALL BYTESWAP(BCW1,LBCW,1)
+!LLF+MP==
         IF(KR.NE.LBCW) THEN
           LX=-1
         ELSE
-          CALL BAREADL(LU,IB+LBCW+BCW1,LBCW,KR,BCW2)
+          CALL BAREAD(LU,IB+LBCW+BCW1,LBCW,KR,BCW2)
+!LLF+MP--
+          CALL BYTESWAP(BCW2,LBCW,1)
+!LLF+MP==
           IF(KR.NE.LBCW.OR.BCW1.NE.BCW2) THEN
             LX=-2
           ELSE
@@ -79,29 +67,9 @@ C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  COMPUTE START BYTE FOR THE NEXT FORTRAN RECORD
       IF(LX.GE.0) IX=IB+LBCW+LX+LBCW
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      END SUBROUTINE BAFRINDEXL
+      END
 C-----------------------------------------------------------------------
       SUBROUTINE BAFRREAD(LU,IB,NB,KA,A)
-!
-      IMPLICIT NONE
-      INTEGER,INTENT(IN):: LU,IB,NB
-      INTEGER,INTENT(OUT):: KA
-      CHARACTER,INTENT(OUT):: A(NB)
-      INTEGER(KIND=8) :: LONG_IB,LONG_NB,LONG_KA
-!
-        if(IB<0 .or. NB<0 ) THEN
-          print *,'WRONG: in BAFRREAD starting postion IB or read '//    &
-     & 'data size NB < 0, STOP! Consider use bafreadl and long integer'
-          KA=0
-          return
-        ENDIF
-        LONG_IB=IB
-        LONG_NB=NB
-        CALL BAFRREADL(LU,LONG_IB,LONG_NB,LONG_KA,A)
-        KA=LONG_KA
-      END SUBROUTINE BAFRREAD
-C-----------------------------------------------------------------------
-      SUBROUTINE BAFRREADL(LU,IB,NB,KA,A)
 C$$$  SUBPROGRAM DOCUMENTATION BLOCK
 C
 C SUBPROGRAM: BAFRREAD       BYTE-ADDRESSABLE FORTRAN RECORD READ
@@ -137,16 +105,15 @@ C   LANGUAGE: FORTRAN 90
 C
 C$$$
       IMPLICIT NONE
-      INTEGER,INTENT(IN):: LU
-      INTEGER(kind=8),INTENT(IN):: IB,NB
-      INTEGER(kind=8),INTENT(OUT):: KA
+      INTEGER,INTENT(IN):: LU,IB,NB
+      INTEGER,INTENT(OUT):: KA
       CHARACTER,INTENT(OUT):: A(NB)
-      INTEGER(kind=8),PARAMETER:: LBCW=4
-      INTEGER(kind=8):: LX,IX
-      INTEGER(kind=8):: KR
+      INTEGER,PARAMETER:: LBCW=4
+      INTEGER:: LX,IX
+      INTEGER:: KR
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  VALIDATE FORTRAN RECORD
-      CALL BAFRINDEXL(LU,IB,LX,IX)
+      CALL BAFRINDEX(LU,IB,LX,IX)
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  READ IF VALID
       IF(LX.LT.0) THEN
@@ -154,7 +121,7 @@ C  READ IF VALID
       ELSEIF(LX.LT.NB) THEN
         KA=-3
       ELSE
-        CALL BAREADL(LU,IB+LBCW,NB,KR,A)
+        CALL BAREAD(LU,IB+LBCW,NB,KR,A)
         IF(KR.NE.NB) THEN
           KA=-1
         ELSE
@@ -162,31 +129,9 @@ C  READ IF VALID
         ENDIF
       ENDIF
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      END SUBROUTINE BAFRREADL
+      END
 C-----------------------------------------------------------------------
       SUBROUTINE BAFRWRITE(LU,IB,NB,KA,A)
-!
-      IMPLICIT NONE
-      INTEGER,INTENT(IN):: LU,IB,NB
-      INTEGER,INTENT(OUT):: KA
-      CHARACTER,INTENT(OUT):: A(NB)
-      INTEGER(KIND=8) :: LONG_IB,LONG_NB,LONG_KA
-!
-        if(IB<0 .or. NB<0 ) THEN
-          print *,'WRONG: in BAFRREAD starting postion IB or read '//    &
-     &   'data size NB <0, STOP! ' //                                    &
-     &   'Consider use bafrrwritel and long integer'
-          KA=0
-          return
-        ENDIF
-        LONG_IB=IB
-        LONG_NB=NB
-        CALL BAFRWRITEL(LU,LONG_IB,LONG_NB,LONG_KA,A)
-        KA=LONG_KA
-!
-      END SUBROUTINE BAFRWRITE
-C-----------------------------------------------------------------------
-      SUBROUTINE BAFRWRITEL(LU,IB,NB,KA,A)
 C$$$  SUBPROGRAM DOCUMENTATION BLOCK
 C
 C SUBPROGRAM: BAFRWRITE      BYTE-ADDRESSABLE FORTRAN RECORD WRITE
@@ -219,25 +164,40 @@ C   LANGUAGE: FORTRAN 90
 C
 C$$$
       IMPLICIT NONE
-      INTEGER,INTENT(IN):: LU
-      INTEGER(KIND=8),INTENT(IN):: IB,NB
-      INTEGER(kind=8),INTENT(OUT):: KA
+      INTEGER,INTENT(IN):: LU,IB,NB
+      INTEGER,INTENT(OUT):: KA
       CHARACTER,INTENT(IN):: A(NB)
-      INTEGER(kind=8),PARAMETER:: LBCW=4
-      INTEGER(kind=LBCW):: BCW
-      INTEGER(kind=8):: KR
+      INTEGER,PARAMETER:: LBCW=4
+      INTEGER(LBCW):: BCW
+      INTEGER:: KR
+!LLF+MP--
+      INTEGER(LBCW)::BCW2
+!LLF+MP==
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 C  WRITE DATA BRACKETED BY BLOCK CONTROL WORDS
       BCW=NB
-      CALL BAWRITEL(LU,IB,LBCW,KR,BCW)
+!LLF+MP--
+      CALL BYTESWAP(BCW,LBCW,1)
+!LLF+MP==
+      CALL BAWRITE(LU,IB,LBCW,KR,BCW)
+!LLF+MP--
+      CALL BYTESWAP(BCW,LBCW,1)
+!LLF+MP==
       IF(KR.NE.LBCW) THEN
         KA=-1
       ELSE
-        CALL BAWRITEL(LU,IB+LBCW,NB,KR,A)
+        CALL BAWRITE(LU,IB+LBCW,NB,KR,A)
         IF(KR.NE.NB) THEN
           KA=-1
         ELSE
-          CALL BAWRITEL(LU,IB+LBCW+BCW,LBCW,KR,BCW)
+!LLF+MP--
+          BCW2=BCW
+          CALL BYTESWAP(BCW,LBCW,1)
+!LLF+MP==
+          CALL BAWRITE(LU,IB+LBCW+BCW2,LBCW,KR,BCW)
+!LLF+MP--
+          CALL BYTESWAP(BCW,LBCW,1)
+!LLF+MP==
           IF(KR.NE.LBCW) THEN
             KA=-1
           ELSE
@@ -246,4 +206,4 @@ C  WRITE DATA BRACKETED BY BLOCK CONTROL WORDS
         ENDIF
       ENDIF
 C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      END SUBROUTINE  BAFRWRITEL
+      END

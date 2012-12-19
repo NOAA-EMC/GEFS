@@ -138,6 +138,7 @@
       real (kind=kind_io8)   buffo(lonr,LATS_NODE_R)
       real (kind=kind_io4)   buff1(lonr,latr)
       real (kind=kind_io4)   buff1l(lonr*latr)
+         integer iens(5)
 !sela..................................................................
       real (kind=kind_io8)  FLUXR(nfxr,LONR,LATS_NODE_R)
 !sela..................................................................
