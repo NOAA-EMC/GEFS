@@ -226,8 +226,8 @@ C
 C$$$
       logical ld
       dimension ld(n),d(n)
-      dmin=1.e30
-      dmax=-1.e30
+      dmin=1.e40
+      dmax=-1.e40
       do i=1,n
         if(ld(i)) then
           dmin=min(dmin,d(i))
