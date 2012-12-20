@@ -51,7 +51,8 @@ echo jobscript= $jobscript
 ################# lines between these markers have been modified for dev end
   export fcstscript=$HOMEGLOBAL/scripts/exglobal_fcst.sh.sms
   export FCSTEXEC=$EXECGLOBAL/global_fcst
-  export FNVETC=$FIXgefs/gefs_global_vegtype.1x1.grb
+#  export FNVETC=$FIXgefs/gefs_global_vegtype.1x1.grb
+  export FNVETC=$FIXgefs/global_vegtype.1x1.grb
   export FCSTCONCEXEC=$EXECgefs/gefs_fcst_conc
   export fcstconcscript=$SCRIPTSgefs/exgefs_fcst_conc.sh.sms
 
