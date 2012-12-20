@@ -83,7 +83,6 @@ MODULE VARIABLE_DEFINE
   INTEGER :: ierr,mype,npes,npe_x,npe_y
   INTEGER :: icontxt,myrow,mycol
   INTEGER :: nd3,nd3local,nens,nenslocal
-  INTEGER :: nd1,nd1local  !kate
 
   INTEGER :: levsp,levs,lrec,nrec,nlath,nmt
   INTEGER :: jcaps,ilats,ilons,lrecs,nsp,nrec1
@@ -107,7 +106,6 @@ MODULE VARIABLE_DEFINE
   INTEGER,dimension(:),allocatable ::nens_group_rank
   real*8,dimension(:,:,:,:),allocatable ::gfcstlocal
   real*8,dimension(:,:),allocatable ::gf1,gC,gf1_fullrecord
-
   real*8,dimension(:,:,:),allocatable ::gridm,gridmlocal
 
   real,dimension(:,:,:),allocatable ::tge,wge,keflocal,kef
@@ -124,8 +122,8 @@ END MODULE VARIABLE_DEFINE
 program gefs_init_et_para
   USE sigio_module
   USE variable_define
-  implicit none
   include "mpif.h"
+  implicit none
 
   INTEGER :: i,i1,i2,i3,k,nn,n
   type(sigio_head) :: heada
@@ -206,7 +204,6 @@ program gefs_init_et_para
      nsp=2*npair1
      nens=4*nsp
      nd3=ilon*ilat*nrec1
-     nd1=ilon*ilat   !kate
 !--------------- print numbers
   if (mype == 0) then
      print *, 'nens, npes, nd3 = ',   nens, npes, nd3 
@@ -237,7 +234,6 @@ program gefs_init_et_para
      endif
 
      nd3local = nd3/npe_x
-     nd1local = nd1/npe_x  !kate
      nenslocal= nens/npe_y
 
 
@@ -301,7 +297,6 @@ program gefs_init_et_para
 
         DO i = 1,nenslocal
            print *,'--------Start read_fcst for mype',mype,' record #',i,'-----------'
-           write(*,*)enlocal(i),i
            call sigio_sropen(91,enlocal(i),iret)
            if (iret.ne.0) print *,'Processor #',mype,'en number',i,'sigio_sropen failed,iret=',iret
            call read_fcst(jcap,lrec,nrec1,levs,nlath,ilat,ilon,&
@@ -390,39 +385,36 @@ program gefs_init_et_para
 !!$  print *,'sum of gC',sum(gC)
 !-----------------------------------------------------------
 
-!     if (Decompose1D_OPT) then
-!        DO i=1, nenslocal
-!           nn = 0
-!           do i3 = 1, nrec1
-!              do i2 = 1, ilat
-!                 do i1 = 1, ilon
-!                    nn = nn + 1  
-!                    gfcstlocal(i1,i2,i3,i) = gC(nn,i)
-!                 enddo
-!              enddo
-!           enddo
-!        ENDDO
-!     else
-!        if (myrow == 0) then  !kate
-!           allocate(gf1_fullrecord(nd3,nenslocal)) !kate
-!           gf1_fullrecord = 0.  !kate
-!         endif !kate
-!        CALL MPI_GATHER(gC,nd3local,MPI_DOUBLE_PRECISION,gf1_fullrecord,nd3local,MPI_DOUBLE_PRECISION,0,MPI_COMM_col_group,ierr)
-!        if (myrow == 0) then
-!           DO i=1, nenslocal
-!              nn = 0
-!              do i3 = 1, nrec1
-!                 do i2 = 1, ilat
-!                    do i1 = 1, ilon
-!                       nn = nn + 1  
-!                       gfcstlocal(i1,i2,i3,i) = gf1_fullrecord(nn,i)
-!                    enddo
-!                 enddo
-!              enddo
-!           ENDDO
-!           DEALLOCATE(gf1_fullrecord)
-!        endif
-!     endif
+     if (Decompose1D_OPT) then
+        DO i=1, nenslocal
+           nn = 0
+           do i3 = 1, nrec1
+              do i2 = 1, ilat
+                 do i1 = 1, ilon
+                    nn = nn + 1  
+                    gfcstlocal(i1,i2,i3,i) = gC(nn,i)
+                 enddo
+              enddo
+           enddo
+        ENDDO
+     else
+        if (myrow == 0) gf1_fullrecord = 0. 
+        CALL MPI_GATHER(gC,nd3local,MPI_DOUBLE_PRECISION,gf1_fullrecord,nd3local,MPI_DOUBLE_PRECISION,0,MPI_COMM_col_group,ierr)
+        if (myrow == 0) then
+           DO i=1, nenslocal
+              nn = 0
+              do i3 = 1, nrec1
+                 do i2 = 1, ilat
+                    do i1 = 1, ilon
+                       nn = nn + 1  
+                       gfcstlocal(i1,i2,i3,i) = gf1_fullrecord(nn,i)
+                    enddo
+                 enddo
+              enddo
+           ENDDO
+           DEALLOCATE(gf1_fullrecord)
+        endif
+     endif
 
      DEALLOCATE( gf1, gC)
 
@@ -430,7 +422,7 @@ program gefs_init_et_para
 
      ftt = 0.8
      if (mype == 0) then
-        call factor_t(nlevmask,ftt,nrec1,ilon,ilat,gfcstlocal(:,:,:,1),scf)
+        call factor_t(ftt,nrec1,ilon,ilat,gfcstlocal(:,:,:,1),scf)
         print*,'scf',scf
      endif
      CALL MPI_BCAST(scf,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
@@ -479,7 +471,7 @@ subroutine Generate_vec
 
   Use variable_define
   implicit none
-  integer :: i,j,n,k,info
+  integer :: i,j,n,k
   real :: dummy
 
   allocate (ss(nsp-1,nsp),gmask(ilon,ilat))
@@ -512,11 +504,8 @@ subroutine Generate_vec
      print *, ' mask file 48 is opened  '
 
 
-!ibm     allocate (rhz(nmt,nens),eig(nens),aux2(nmt+2*nens))
-!ibm     allocate (vec2(nens,nens),vec3(nens,nens),vec(nens,nens))
-     allocate (rhz(nmt,nens),eig(nens),aux2(nmt+3*nens))
-     allocate (vec2(nens,nens),vec3(nens,nens), vec(nens,nens))
-
+     allocate (rhz(nmt,nens),eig(nens),aux2(nmt+2*nens))
+     allocate (vec2(nens,nens),vec3(nens,nens),vec(nens,nens))
      
      rhz = 0
      do k = 1, nens
@@ -526,23 +515,19 @@ subroutine Generate_vec
               n = n + 1
               rhz(n, k) = dble(kef(i,j,k))/(dsqrt(dble(nens-1))* &
                    dble(abs(gmask(i,j))))
-    write(78,*)rhz(n,k),n,k
            enddo
         enddo
      enddo
+
 !  using SVD subroutine on rhz, singular values are in eig2,
 !  original rhz will be destroyed !!!
 
      eig = 0.0
      vec2 = 0.0
-!ibm     call dgesvf(11,rhz,nmt,dummy,1,0,eig,nmt,nens,aux2,nmt+2*nens) 
-    call DGESVD( 'N', 'O', nmt, nens, rhz, nmt, eig, dummy, 1, dummy, 1, aux2, nmt+3*nens, info )
-
+     call dgesvf(11,rhz,nmt,dummy,1,0,eig,nmt,nens,aux2,nmt+2*nens) 
      do k = 1, nens
         eig(k) = eig(k)*eig(k)
-!ibm        vec2(1:nens, k) = rhz(1:nens, k)
-       vec2(1:nens, k) = rhz(k, 1:nens) ! dgesvd returns V**T, not V
-
+        vec2(1:nens, k) = rhz(1:nens, k)
      enddo
 
 !  write(99,*) 'eigvalues(r8,SVD) eig = ', eig
@@ -561,18 +546,13 @@ subroutine Generate_vec
      do k = 1, nens
         vec3(:, k) = vec2(:, k)/dsqrt(eig(k))
      enddo
-     print *, 'vec3(10:20,10) = ', vec3(10:20,10)
-     
+
 
 !  mutiply the T(nens, nens) by C^T(nens, nens), use T C^T
 !  vec(nens, nens)
 
      vec = 0.0
-!ibm     call dgemul(vec3,nens,'N',vec2,nens,'T',vec,nens,nens,nens,nens)
-     call dgemm('N','T', nens, nens, nens, 1.0d0, vec3, nens, vec2, nens, 1.0d0, vec, nens)
-!    print *, 'vec = ', vec
-    print *, 'vec (10:20,10)= ',vec(10:20,10)
-
+     call dgemul(vec3,nens,'N',vec2,nens,'T',vec,nens,nens,nens,nens)
 
 !   impose simplex transfer onto nsp(=14) perts only at different cycles
 
@@ -638,7 +618,7 @@ subroutine Generate_vec
   !       write(99,*) 'updated T by 14-simplex, ve! = ', vec
   !       te= rtc( )
   !       te = te - tb
-         print *, 'time do 14 simplex trans = ', te
+  !       print *, 'time do 14 simplex trans = ', te
 
      DEALLOCATE (ss,gmask,kef,rhz,eig,aux2,vec3,vec2)
 
@@ -651,9 +631,9 @@ subroutine Compute_gC
 !********************************************************
 
   Use variable_define
-  implicit none
   include "mpif.h"
-  integer :: i,i1,i2,i3,nn,k   
+  implicit none
+  integer :: i,i1,i2,i3,nn,k
   integer :: mb, nb, nbrhs
   integer :: DESC_gf1(9),DESC_vec(9),DESC_gC(9)
   integer,external :: NUMROC
@@ -674,14 +654,13 @@ subroutine Compute_gC
 !! local arraysize gf1local(MAXLDA,MAXLDB) * veclocal(MAXLDB,MAXSDB) = gC(MAXLDA,MAXSDB) 
 
 
-!kate   mb = nd3local; nb = nenslocal; nbrhs = nenslocal
-     mb = nd1local; nb = nenslocal; nbrhs = nenslocal
+     mb = nd3local; nb = nenslocal; nbrhs = nenslocal
 !  MAXLDA=nd3local; MAXSDA=nenslocal; MAXSDB=nenslocal
-!kate     MAXLDA=max(1,NUMROC(nd3,mb,myrow,0,npe_x))
-     MAXLDA=max(1,NUMROC(nd1,mb,myrow,0,npe_x))  !kate
+     MAXLDA=max(1,NUMROC(nd3,mb,myrow,0,npe_x))
      MAXSDA=max(1,NUMROC(nens,nb,mycol,0,npe_y))
      MAXLDB=max(1,NUMROC(nens,nb,myrow,0,npe_x))
      MAXSDB=max(1,NUMROC(nens,nbrhs,mycol,0,npe_y))
+
 !------------------ Distribute global matrix Vec and gf1 to processors, generating Veclocal and gf1local 
 !*********** First, scatter vec in PE0 to all other processors
      allocate(veclocal(MAXLDB,MAXSDB))
@@ -699,52 +678,43 @@ subroutine Compute_gC
      endif
 
 !************ Second, if 2D-Decomposition is true, scatter gf1(nd3,nenslocal) from PEs(myrow=0) to the rest of colum groups
-!kate     allocate(gC(nd3local,nenslocal),gf1(nd3local,nenslocal))
-     allocate(gC(nd1local,nenslocal))
-     allocate(gf1(nd1local,nenslocal))
-     if (myrow == 0 )then !kate
-           allocate(gf1_fullrecord(nd1,nenslocal)) !kate
-     endif   !kate
-  do i3 = 1 , nrec1   !kate
+     allocate(gC(nd3local,nenslocal),gf1(nd3local,nenslocal))
      if (Decompose1D_OPT) then
         do i=1, nenslocal
            nn = 0
-!kate           do i3 = 1, nrec1
+           do i3 = 1, nrec1
               do i2 = 1, ilat
                  do i1 = 1, ilon
                     nn = nn + 1  
                     gf1(nn, i) = gfcstlocal(i1, i2, i3, i)
                  enddo
               enddo
-!kate           enddo
+           enddo
         enddo
      else    ! 2D-Decomposition, in which nenslocal=1
         if (myrow == 0) then
-!kate           allocate(gf1_fullrecord(nd3,nenslocal))
+           allocate(gf1_fullrecord(nd3,nenslocal))
            do i=1, nenslocal
               nn = 0
-!              do i3 = 1, nrec1   !kate
+              do i3 = 1, nrec1
                  do i2 = 1, ilat
                     do i1 = 1, ilon
                        nn = nn + 1  
                        gf1_fullrecord(nn, i) = gfcstlocal(i1, i2, i3, i)
                     enddo
                  enddo
-!              enddo       !kate
+              enddo
            enddo
         endif
-! kate        CALL MPI_SCATTER(gf1_fullrecord,nd3local,MPI_DOUBLE_PRECISION,gf1,nd3local,MPI_DOUBLE_PRECISION,0,MPI_COMM_col_group,ierr)
-        CALL MPI_SCATTER(gf1_fullrecord,nd1local,MPI_DOUBLE_PRECISION,gf1,nd1local,MPI_DOUBLE_PRECISION,0,MPI_COMM_col_group,ierr)    !kate
+        CALL MPI_SCATTER(gf1_fullrecord,nd3local,MPI_DOUBLE_PRECISION,gf1,nd3local,MPI_DOUBLE_PRECISION,0,MPI_COMM_col_group,ierr)
      endif
-print*,'gf1',mype,size(gf1,1),size(gf1,2),'numbers',gf1(1:4,1),gf1(size(gf1,2)/2+1:size(gf1,2)/2+4,1)
+!print*,'gf1',mype,size(gf1,1),size(gf1,2),'numbers',gf1(1:4,1),gf1(size(gf1,2)/2+1:size(gf1,2)/2+4,1)
 
 
 ! define the "desc" parameter for arrays A, B, and C
-!kate     call desc_setup(DESC_gf1,nd3, nens,mb, nb,icontxt,MAXLDA) 
-     call desc_setup(DESC_gf1,nd1, nens,mb, nb,icontxt,MAXLDA)  !kate
-     call desc_setup(DESC_vec,nens,nens,nb,nbrhs,icontxt,MAXLDB) 
-!kate     call desc_setup(DESC_gC,nd1,nens,mb,nbrhs,icontxt,MAXLDA) 
-     call desc_setup(DESC_gC,nd1,nens,mb,nbrhs,icontxt,MAXLDA)  !kate
+     call desc_setup(DESC_gf1,nd3, nens,mb, nb,icontxt,MAXLDA)
+     call desc_setup(DESC_vec,nens,nens,nb,nbrhs,icontxt,MAXLDB)
+     call desc_setup(DESC_gC,nd3,nens,mb,nbrhs,icontxt,MAXLDA)
 
 !!$     DESC_gf1(1) = 1              ! DTYPE : descriptor type
 !!$     DESC_gf1(2) = icontxt        ! output of the BLACS_GRIDINIT call
@@ -777,38 +747,7 @@ print*,'gf1',mype,size(gf1,1),size(gf1,2),'numbers',gf1(1:4,1),gf1(size(gf1,2)/2
 !!$     DESC_gC(9) = max(1,NUMROC(DESC_gC(3),DESC_gC(5),myrow,DESC_gC(7),nprow))
    
 
-!  kate   CALL PDGEMM('N','N',nd3,nens,nens,1.0d0,gf1,1,1,DESC_gf1,veclocal,1,1,DESC_vec,0.0d0,gC,1,1,DESC_gC) !kate
-     CALL PDGEMM('N','N',nd1,nens,nens,1.0d0,gf1,1,1,DESC_gf1,veclocal,1,1,DESC_vec,0.0d0,gC,1,1,DESC_gC) !kate
-! move from main program to here by Kate
-     if (myrow == 0 )gf1_fullrecord=0.
-        CALL MPI_GATHER(gC,nd1local,MPI_DOUBLE_PRECISION,gf1_fullrecord,nd1local,MPI_DOUBLE_PRECISION,0,MPI_COMM_col_group,ierr)
-     if (Decompose1D_OPT) then
-        DO i=1, nenslocal
-           nn = 0
-              do i2 = 1, ilat
-                 do i1 = 1, ilon
-                    nn = nn + 1  
-                    gfcstlocal(i1,i2,i3,i) = gC(nn,i)
-                 enddo
-              enddo
-        enddo
-     else
-        if (myrow == 0 ) then
-           do i=1, nenslocal                           !kate
-                nn=0
-                   do i2=1,ilat 
-                        do i1=1,ilon 
-                            nn=nn+1                       
-                               gfcstlocal(i1,i2,i3,i)=gf1_fullrecord(nn,i)         !kate
-                        enddo
-                    enddo
-           enddo
-        endif
-     endif
- enddo
-     if (myrow == 0 )then !kate
-           DEALLOCATE(gf1_fullrecord) !kate
-     endif  !kate
+     CALL PDGEMM('N','N',nd3,nens,nens,1.0d0,gf1,1,1,DESC_gf1,veclocal,1,1,DESC_vec,0.0d0,gC,1,1,DESC_gC)
 
    END subroutine Compute_gC
 
@@ -1097,10 +1036,10 @@ subroutine read_fcst(jcap,lrec,nrec1,levs,nlath,ilat,ilon,ir,grid,levsp)
   !
 !  write(6,1001) fhour,idate
 1001 format(5x,'fhour and idata= ',f10.1,2x,4i5)
-!          print *, ' levs, ntrac = ', levs, ntrac
+  !        print *, ' levs, ntrac = ', levs, ntrac
   levs=head%levs
   ntrac=head%ntrac
-  print *, ' levs, ntrac from head in read_fcst= ', levs, ntrac
+  print *, ' levs, ntrac from head = ', levs, ntrac
   print *, ' lrec = ', lrec
   cofo = 0.0
   grid1 = 0.0
@@ -1120,7 +1059,6 @@ subroutine read_fcst(jcap,lrec,nrec1,levs,nlath,ilat,ilon,ir,grid,levsp)
      cofo(:lrec) = data%t(:lrec, k)
      call sptez(0,jcap,4,ilon,ilat,cofo,grid1,+1)
      grid(:,:,k+1) = dble(grid1(:,:))
-         print *, 'FCST temp(read_fcst)at k ',k, grid1(100:110,100)
   enddo
   ! div and vor
   do k = 1, levs
@@ -1765,7 +1703,7 @@ endif
 end subroutine mask_pert
 
 ! --------------------------------------------------------------------
-subroutine factor_t(nlevmask,ftt,nrec1,ilon,ilat,grida,scf)
+subroutine factor_t(ftt,nrec1,ilon,ilat,grida,scf)
 
 !   by Mozheng Wei, 2004-10-15
 !  compute rescaling factor scf  -> output
@@ -1777,12 +1715,11 @@ subroutine factor_t(nlevmask,ftt,nrec1,ilon,ilat,grida,scf)
   real*8 ftt,scf,trms
 !  real grid(ilon,ilat)
   
-  nt = nlevmask
+  nt = 14
   print *, ' in gefs_init_et, starting factor_t.exe '
 !  grid = 0.0
   trms = 0.0
 !  grid(:,:) = grida(:,:,nt)
-print *,'TEMP after ET at lev=',nt,grida(100:110,100,nt)
   do j = 1, ilat
      do  i = 1, ilon
         trms = trms + grida(i,j,nt)*grida(i,j,nt)
@@ -2293,8 +2230,8 @@ subroutine srange2(var,nlat,dmin,dmax,avg,adev,sdev,skew)
   !    produces range, mean, avg dev, std dev, skew
   ptsn=nlat
   sa=0.0
-  dmin=1.e30
-  dmax=-1.e30
+  dmin=1.e40
+  dmax=-1.e40
   do j=1,nlat
      sa=sa+var(j)
      dmin=min(dmin,var(j))
@@ -2337,8 +2274,8 @@ subroutine srange(var,nlat)
 ! produces range, mean, avg dev, std dev, skew
   ptsn=nlat
   sa=0.0
-  dmin=1.e30
-  dmax=-1.e30
+  dmin=1.e40
+  dmax=-1.e40
   do j=1,nlat
      sa=sa+var(j)
      dmin=min(dmin,var(j))
