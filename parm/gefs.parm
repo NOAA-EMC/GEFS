@@ -418,4 +418,5 @@ if [[ $envir = dev ]]; then
 
 fi
 
+export submit_post_together=yes
 echo `date` $0 end
