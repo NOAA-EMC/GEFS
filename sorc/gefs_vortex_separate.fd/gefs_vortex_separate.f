@@ -472,7 +472,7 @@ C
       END DO
 
       NCNT = NCNT + 1
-      READ(IUNIT) (WORK_4(NW,NCNT),NW=1,MAXWV2)
+!      READ(IUNIT) (WORK_4(NW,NCNT),NW=1,MAXWV2)
 
       DO NW=1,MAXWV2
 	work_4(nw,ncnt) = datao%z(nw,k)
