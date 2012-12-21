@@ -1,4 +1,5 @@
-#!/bin/ksh
+#!/bin/sh
+
 #
 # set up and start a parallel GEFS job
 #
@@ -84,7 +85,6 @@ fi
 cyct=99
 typeset -RZ3 jjjb
 typeset -RZ3 jjjc
-
 if [[ $goodargs = yes ]]; then
   goodargs=no
   if (( $# > 0 )); then
@@ -208,9 +208,6 @@ if [[ $LOGNAME = glopara ]]; then
 else
   # ldir=/ptmp/$LOGNAME/temp.gefs.run
   ldir=/ptmp/$LOGNAME/o/$expid/runlog
-#The next two lines for Zeus
-  ZPTM=/scratch2/portfolios/NCEPDEV
-  ldir=$ZPTM/ptmp/$LOGNAME/o/$expid/runlog
 fi
 echo ldir=$ldir lname=$lname
 mkdir -p $ldir
@@ -280,8 +277,6 @@ echo cwd=$cwd
 
 . $cwd/setbase
 
-echo END of SETBASE !!!!!!!
-
 echo basesource=$basesource
 echo baseoutput=$baseoutput
 echo baseinitarch=$baseinitarch
@@ -326,7 +321,6 @@ echo
 echo fhmax=$fhmax
 echo cyct=$cyct
 
-
 case $cyct in
   (00) fhmax=$fhmax00 ;;
   (06) fhmax=$fhmax06 ;;
@@ -344,13 +338,6 @@ esac
 
 echo fhmax=$fhmax
 export fhmax
-
-#ZEUSTEST
-#export yyyymmddcc=$yyyymmddccb
-#export envir=$envir
-#  $basesource/nwdev/control/control.r000
-#exit
-#ZEUSTEST
 
 # set the number of forecast segments that will be run
 
@@ -763,9 +750,7 @@ if [[ $nextflag = yes ]]; then
   else 
     case $jjjc in
 
-#     (000) jjjb=012 ;;
-#DHOU 03/26/2012 skip ET and gfs for Zeus
-      (000) jjjb=100 ;;
+      (000) jjjb=012 ;;
       (012) jjjb=013 ;;
       (013) jjjb=014 ;;
 
@@ -817,15 +802,10 @@ if [[ $nextflag = yes ]]; then
 	fi
       ;;
       ($jjjz00) jjjb=$jjjf00l ;;
-      #($jjjf00l) jjjb=$jjjp00l ;;
-      #                                       when skipping re-start copy
-      ($jjjf00l) (( jjjb=jjjp00l + 1 )) ;;
-      #        
+      ($jjjf00l) jjjb=$jjjp00l ;;
       ($jjje00l) jjjb=$jjjs00l ;;
       ($jjjs00l) jjjb=$jjjo00 ;;
       ($jjjo00) jjjb=$jjjt00 ;;
-#  DHOU 03/27/2012  use next line to skip track and track-average jobs ZEUS 
-#     ($jjjo00) jjjb=900 ;;
       ($jjjt00) jjjb=$jjja00 ;;
 
       ($jjja00) 
@@ -1230,7 +1210,6 @@ wall_clock_limit_fcst_long="00:15:00"
 wall_clock_limit_fcst_short="00:10:00"
 wall_clock_limit_fcst_short="00:30:00"
 wall_clock_limit_fcst_long="02:30:00"
-wall_clock_limit_fcst_long="01:30:00"
 
 echo wall_clock_limit_fcst_long=$wall_clock_limit_fcst_long
 echo wall_clock_limit_fcst_short=$wall_clock_limit_fcst_short
@@ -1302,10 +1281,8 @@ case $taskname in
     job_name=jd000
     during_previous_job=no
     job_type=serial
-#   wall_clock_limit="00:19:00"
-#   resources="ConsumableCpus(1) ConsumableMemory(1650 MB)" #droped for Zeus
-    wall_clock_limit="00:10:00"
-    resources="1650M"
+    wall_clock_limit="00:19:00"
+    resources="ConsumableCpus(1) ConsumableMemory(1650 MB)"
   ;;
   (init.separate)
     ################################# production variables
@@ -1332,8 +1309,6 @@ case $taskname in
     task_affinity="core(1)"
     node=2   #DHOU 08/20 for T254L42
     total_tasks=40
-#DHOU 04/04/2012 for ZEUS, T254L42
-    node=4   #DHOU 04/04/2012 for ZEUS, T254L42
   ;;
   (init.et)
     ################################# production variables
@@ -1365,8 +1340,6 @@ case $taskname in
     task_affinity="core(1)"
     total_tasks=80
     node=3
-#DHOU 04/04/2012 for ZEUS, T254L42
-    node=7
 
   ;;
   (init.combine)
@@ -1396,8 +1369,6 @@ case $taskname in
     task_affinity="core(1)"
     node=2   #DHOU 08/20 for T254L42
     total_tasks=40
-#DHOU 04/04/2012 for ZEUS, T254L42
-    node=4   
   ;;
   (forecast_hr)
     FORECAST_SEGMENT=hr
@@ -1479,19 +1450,6 @@ case $taskname in
        task_affinity="core(1)"
        taskspernode=32
      fi
-
-#DHOU add this for ZEUS
-  machl=`uname -n | cut -c1`
-  if [[ $machl = r ]]; then                       
-       machl=f
-  fi
-  if [[ $machl = f ]]; then                       
-       (( taskspermem = 40 ))
-       parallel_threads=1
-       task_affinity="core(1)"
-       taskspernode=12
-  fi
-
      if [[ $RUN_CONCURRENT = yes ]]; then
        if [[ $cyc = $cyc_fcst ]]; then
          (( total_tasks = taskspermem * (npert + 1) ))
@@ -1575,18 +1533,6 @@ case $taskname in
      parallel_threads=2
      task_affinity="core(1)"
      taskspernode=32
-#DHOU  03/26/2012 add this for ZEUS
-  machl=`uname -n | cut -c1`
-  if [[ $machl = r ]]; then                       
-       machl=f
-  fi
-  if [[ $machl = f ]]; then                       
-       (( taskspermem = 40 ))
-       parallel_threads=1
-       task_affinity="core(1)"
-       taskspernode=12
-  fi
-
      if [[ $RUN_CONCURRENT = yes ]]; then
        if [[ $cyc = $cyc_fcst ]]; then
          (( total_tasks = taskspermem * (npert + 1) ))
@@ -1619,15 +1565,7 @@ case $taskname in
       during_previous_job=yes
     fi
     ################################# production variables modified
-#   total_tasks=$(( NTHREADS_SIGCHGRS * 2 ))
-#DHOU 03/29/2012   chgres is a non-mpi program
-    job_type=serial
-    resources="1000M"
-    total_tasks=1 
-#   job_type=parallel
-#   total_tasks=8
-    node=1
-      wall_clock_limit="00:20:00"
+    total_tasks=$(( NTHREADS_SIGCHGRS * 2 ))
   ;;
   (restart_copy_hr)
     FORECAST_SEGMENT=hr
@@ -1647,9 +1585,8 @@ case $taskname in
     task_affinity="core(1)"
     task_affinity="cpu(1)"
     total_tasks=1
-#   node=1
-#   resources="ConsumableMemory(1000 MB)"
-    resources="1000 M"
+    node=1
+    resources="ConsumableMemory(1000 MB)"
     network_MPI="sn_all,shared,us"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
@@ -1683,8 +1620,7 @@ case $taskname in
     task_affinity="cpu(1)"
     total_tasks=1
     node=1
-#   resources="ConsumableMemory(1000 MB)"
-    resources="1000M"
+    resources="ConsumableMemory(1000 MB)"
     network_MPI="sn_all,shared,us"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
@@ -1716,7 +1652,7 @@ case $taskname in
     total_tasks=4
     node=1
     network_MPI="sn_all,shared,us"
-#   resources="ConsumableMemory(1000 MB)"  # droped for ZEUS
+    resources="ConsumableMemory(1000 MB)"
     parallel_threads=2
     task_affinity="core(1)"
     MP_SHARED_MEMORY=yes
@@ -1750,7 +1686,7 @@ case $taskname in
     total_tasks=4
     node=1
     network_MPI="sn_all,shared,us"
-#   resources="ConsumableMemory(1000 MB)"
+    resources="ConsumableMemory(1000 MB)"
     parallel_threads=2
     task_affinity="core(1)"
     MP_SHARED_MEMORY=yes
@@ -1780,14 +1716,11 @@ case $taskname in
       wall_clock_limit="01:30:00"
       job=gefs_${mem}_prdgen_cf${cyc_fcst}_${cyc}
     fi
-#   job_type=parallel
-#   total_tasks=8
-    job_type=serial
+    job_type=parallel
     total_tasks=1
     node=1
     network_MPI="sn_all,shared,us"
-#   resources="ConsumableMemory(800 MB)"
-    resources="800M"
+    resources="ConsumableMemory(800 MB)"
     task_affinity="core(2)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
@@ -1815,14 +1748,11 @@ case $taskname in
       wall_clock_limit="01:30:00"
       job=gefs_${mem}_prdgen_cf${cyc_fcst}_${cyc}
     fi
-#   job_type=parallel
-#   total_tasks=8
-    job_type=serial
+    job_type=parallel
     total_tasks=1
     node=1
     network_MPI="sn_all,shared,us"
-#   resources="ConsumableMemory(800 MB)"
-    resources="800M"
+    resources="ConsumableMemory(800 MB)"
     task_affinity="core(2)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
@@ -1863,8 +1793,7 @@ case $taskname in
     jobscript=JGEFS_ENSSTAT.sms.$envir
     job_type=serial
     wall_clock_limit="01:30:00"
-#   resources="ConsumableMemory(500 MB)"
-    resources="800M"
+    resources="ConsumableMemory(500 MB)"
     task_affinity="cpu(1)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
@@ -1881,9 +1810,6 @@ case $taskname in
     else
       wall_clock_limit="$wall_clock_limit_fcst_short"
     fi
-#DHOU 04/19/2012 ZEUS
-#   job_type=parallel
-#   total_tasks=8
   ;;
   (ensstat_lr)
     FORECAST_SEGMENT=lr
@@ -1891,8 +1817,7 @@ case $taskname in
     jobscript=JGEFS_ENSSTAT.sms.$envir
     job_type=serial
     wall_clock_limit="01:30:00"
-#   resources="ConsumableMemory(500 MB)"
-    resources="800M"
+    resources="ConsumableMemory(500 MB)"
     task_affinity="cpu(1)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
@@ -1909,17 +1834,13 @@ case $taskname in
     else
       wall_clock_limit="$wall_clock_limit_fcst_short"
     fi
-#DHOU 04/19/2012 ZEUS
-#   job_type=parallel
-#   total_tasks=8
   ;;
   (enspost)
     ################################# production variables
     jobscript=JGEFS_ENSPOST.sms.$envir
     job_type=serial
     wall_clock_limit="01:30:00"
-#   resources="ConsumableMemory(500 MB)"
-    resources="800M"
+    resources="ConsumableMemory(500 MB)"
     task_affinity="cpu(1)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
@@ -1955,8 +1876,7 @@ case $taskname in
     node_usage=not_shared
     tasks_per_node=1
     node=1
-#   resources="ConsumableMemory(500 MB)"
-    resources="1200M"
+    resources="ConsumableMemory(500 MB)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
     ################################# development variables
@@ -1978,8 +1898,7 @@ case $taskname in
       job=gefs_post_track_cf${cyc_fcst}_${cyc}
     fi
     job_type=serial
-##  resources="ConsumableMemory(500 MB)"
-    resources="500M"
+    resources="ConsumableMemory(500 MB)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
     ################################# development variables
@@ -2008,10 +1927,8 @@ case $taskname in
     job_name=
     during_previous_job=no
     job_type=serial
-#   wall_clock_limit="00:49:00"
-#   resources="ConsumableCpus(1) ConsumableMemory(1650 MB)"
-    wall_clock_limit="00:29:00"
-    resources="1650M"
+    wall_clock_limit="00:49:00"
+    resources="ConsumableCpus(1) ConsumableMemory(1650 MB)"
   ;;
   (r999)
     ################################# development variables
@@ -2021,8 +1938,7 @@ case $taskname in
     during_previous_job=no
     job_type=serial
     wall_clock_limit="00:19:00"
-#   resources="ConsumableCpus(1) ConsumableMemory(1650 MB)"
-    resources="1650M"
+    resources="ConsumableCpus(1) ConsumableMemory(1650 MB)"
   ;;
   (*)
     echo
@@ -2037,17 +1953,14 @@ esac
 echo
 echo `date` before prod check during_previous_job=$during_previous_job
 machl=`uname -n | cut -c1`
-#DHOU 03/23/2012 fix machl for ZEUS. (for interactive it is f. in batch jobs it will be r)
-machl=f
-#prodl=`cat /etc/prod | cut -c1`
+prodl=`cat /etc/prod | cut -c1`
 echo prodl=$prodl machl=$machl
-echo PRODUCTION TEST DISABLED
-#if [[ x$prodl = x$machl ]]; then
-#  echo we are running on the production machine, so run one job at a time
-#  during_previous_job=no
-#else
-#  echo we are not running on the production machine
-#fi
+if [[ x$prodl = x$machl ]]; then
+  echo we are running on the production machine, so run one job at a time
+  during_previous_job=no
+else
+  echo we are not running on the production machine
+fi
 echo `date` after prod check during_previous_job=$during_previous_job
 
 echo
@@ -2335,10 +2248,16 @@ else
     filelist=
     filelist="$filelist gfs.$cycle.sanl"
     filelist="$filelist gfs.$cycle.sfcanl"
-    filelist="$filelist avn.$cycle.cyclone.trackatcfunix"
     filelist="$filelist gfs.$cycle.syndata.tcvitals.tm00"
+    filelist="$filelist gfs.$cycle.master.grbf00"
+    filelist="$filelist gfs.$cycle.master.grbif00"
+    filelist="$filelist avn.$cycle.cyclone.trackatcfunix"
+    (( ifilen = 0 ))
+    (( filesmissing = 0 ))
     for file in $filelist
     do
+      (( ifilen = ifilen + 1 ))
+      filemissing=0
       dirfile=$plcomgfs/$file
       comfile=$clcomgfs/$file
       if [[ -f $dirfile ]]; then
@@ -2352,14 +2271,25 @@ else
 	    echo copy succeeded
 	  else
 	    echo cp $comfile $dirfile FAILED rc=$rc
-	    tflag=yes
+	    filemissing=1
 	  fi
 	else
 	  echo file=$file NOT FOUND
-	  waitflag=yes
+	  filemissing=1
 	fi
       fi
+      if (( filemissing == 1 )); then
+	case $ifilen in
+	  (4) (( filesmissing = filesmissing + 1 )) ;;
+	  (5) (( filesmissing = filesmissing + 1 )) ;;
+	  (6) (( filesmissing = filesmissing + 2 )) ;;
+	  (*) (( filesmissing = filesmissing + 3 )) ;;
+	esac
+      fi
     done
+    if (( filesmissing > 2 )); then
+      waitflag=yes
+    fi
   fi
 
   ############## if task is forecast, check for initial conditions begin ################
@@ -2532,11 +2462,6 @@ else
   echo `date` $0 $*                                                       check for space 
   echo
 
-#echo $waitflag =waitflag
-#echo $testflag $basebin
-#echo DHOUTEST
-#exit
-
   if [[ $testflag = yes ]]; then
     echo DO NOT REALLY CALL $basebin/$space.scrub
     space=500400300200100
@@ -2607,12 +2532,6 @@ else
   echo `date` $0 $*                                              check for number of jobs
   echo
 
-  if [[ $machl = r ]]; then                       
-       machl=f
-  fi
-  if [[ $machl != f ]]; then                       
-# Put this block in "if  fi" statement to skip it for ZEUS
-  
   jobllq=-9
   jobtotllq=-99
   if [[ $waitflag = no ]]; then
@@ -2657,8 +2576,7 @@ else
     esac
     if [[ $during_previous_job = no ]]; then
       jobtest1=$id$PDY$cyc
-#DH   pdycycprev=`/nwprod/util/exec/ndate -$fhrp $PDY$cyc`
-      pdycycprev=`ndate -$fhrp $PDY$cyc`
+      pdycycprev=`/nwprod/util/exec/ndate -$fhrp $PDY$cyc`
       jobtest2=$id$pdycycprev
       echo jobtest1=$jobtest1 pdycycprev=$pdycycprev jobtest2=$jobtest2 miwait=$miwait waitflag=$waitflag before
       numcurrent=`echo "$llqstring" | grep -c -e $jobtest1 -e $jobtest2`
@@ -2669,12 +2587,6 @@ else
       echo during_previous_job=$during_previous_job numcurrent=$numcurrent miwait=$miwait waitflag=$waitflag after
     fi
   fi
-
-#DHOU  added "if fi" block to skip th
-  fi
-#echo DHOUTEST now
-#echo $class $testflag $waitflag
-#exit
 
   ######################## if testing do not wait ########### begin
   if [[ $testflag = yes ]]; then
@@ -2728,9 +2640,6 @@ else
   echo waitflag=$waitflag
   echo jobcontrol=$jobcontrol
 
-#echo $testflag $machl
-#echo DHOUTEST
-#exit
   if [[ $waitflag = no ]]; then
 
     echo `date` $0 $* write job cards for run begin
@@ -2739,190 +2648,6 @@ echo
 echo `date`                                                               setup job cards
 echo
 #########################################################################################
-
-  if [[ $machl = f ]]; then                       # job card for ZEUS 
-
-    cat <<eofCAT >$jobcontrol
-#!/bin/ksh -l
-#
-#PBS -N $jobname
-#PBS -A $account
-#PBS -l walltime=$wall_clock_limit
-#PBS -q $class 
-#PBS -d $tmpdir 
-#PBS -j oe
-#PBS -o $plcomout/$jobname.$yymmddhhmmss.o
-#
-#
-eofCAT
-#    if [[ -n $resources ]]; then
-#      echo include resources=$resources
-#      cat <<eofCAT >>$jobcontrol
-##PBS -l mem=$resources 
-#eofCAT
-#    fi
-    if [[ ${job_type} = serial ]] ; then
-      echo include statements for serial jobs
-      if [[ -n $resources ]]; then
-	echo include resources=$resources
-	cat <<eofCAT >>$jobcontrol
-#PBS -l mem=$resources
-eofCAT
-      fi
-    fi
-    if [[ ${job_type} = parallel ]] ; then
-      echo include statements for parallel jobs
-      if [[ -n $total_tasks ]]; then
-	echo include total_tasks=$total_tasks
-	cat <<eofCAT >>$jobcontrol
-#PBS -l procs=$total_tasks
-eofCAT
-      fi
-#      if [[ -n $node ]]; then
-#	echo include node=$node
-#	cat <<eofCAT >>$jobcontrol
-##PBS -l nodes=$node:ppn=$tasks_per_node
-#eofCAT
-#      fi
-    fi
-    cat <<eofCAT >>$jobcontrol
-module load intel
-module load mpt
-module load adaptive
-
-echo \`date\` $jobdir/$jobscript begin
-echo \`date\` env sort begin
-env | sort
-echo \`date\` env sort end
-
-export envir=$envir
-export cyc=$cyc
-export cyc_fcst=$cyc_fcst
-export job=$jobname
-#DHOU 03/07/2012 1 line
-#export jobscript=$jobscript
-eofCAT
-    if [[ -n $RUN ]]; then
-      echo RUN=$RUN
-      cat <<eofCAT >>$jobcontrol
-export RUN=$RUN
-eofCAT
-    fi
-    if [[ -n $FORECAST_SEGMENT ]]; then
-      echo FORECAST_SEGMENT=$FORECAST_SEGMENT
-      cat <<eofCAT >>$jobcontrol
-export FORECAST_SEGMENT=$FORECAST_SEGMENT
-eofCAT
-    fi
-#DHOU 03/20/2012
-    if [[ $jobscript = JGEFS_SIGCHGRS.sms.dev ]]; then
-      cat <<eofCAT >>$jobcontrol
-export OMP_NUM_THREADS=1
-eofCAT
-    fi
-    if [[ $jobscript = JGEFS_NCEPPOST.sms.dev ]]; then
-      cat <<eofCAT >>$jobcontrol
-export OMP_NUM_THREADS=1
-eofCAT
-    fi
-    cat <<eofCAT >>$jobcontrol
-# export for development runs only begin
-. $controldir/setbase
-. $parmdir/gefs.parm
-export RUN_ENVIR=$envir
-export jjj=$jjj
-export jjje=$jjje
-export yyyymmddcc=$yyyymmddcc
-export yyyymmddcce=$yyyymmddcce
-export yyyymmddccjjj=$yyyymmddccjjj
-export yyyymmddccjjje=$yyyymmddccjjje
-# export yyyymmddccc  #DHOU, 09/09/2010 ad this to facilitate job 000
-# RLW disabled since the copy of initial conditions is moved into this script
-#if (( jjj == 000 )); then
-#  export yyyymmddccc=$yyyymmddccc
-#fi
-export PDYp2=$PDYp2
-export PDYp1=$PDYp1
-export PDY=$PDY
-export PDYm1=$PDYm1
-export PDYm2=$PDYm2
-export PDYm3=$PDYm3
-export PDYm4=$PDYm4
-export PDYm5=$PDYm5
-export id=$id
-export expid=$expid
-export basesource=$basesource
-export baseoutput=$baseoutput
-export baseinitarch=$baseinitarch
-export basetmp=$basetmp
-export baseptmp=$baseptmp
-export basebin=$basebin
-export baselog=$baselog
-export basedgfs=$basedgfs
-export basedgens=$basedgens
-echo \`date\` env sort begin
-env | sort
-echo \`date\` env sort end
-# export for development runs only end
-
-pwdsave=\`pwd\`
-
-echo \`date\` $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje next submit for dev before begin
-
-cd $controldir
-$0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore 2>&1
-rc=\$?
-echo \`date\` $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore rc=\$rc
-cd \$pwdsave
-echo \`date\` $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje next submit for dev before end
-
-echo \`date\` $jobdir/$jobscript run before
-
-echo
-ls -al $jobdir/$jobscript
-echo
-
-# CALL executable job script here
-$jobdir/$jobscript
-
-echo
-ls -al $jobdir/$jobscript
-echo
-
-echo \`date\` $jobdir/$jobscript run after
-
-echo \`date\` $0  $yyyymmddccb$jjjb $yyyymmddcce$jjje next submit for dev after begin
-
-cd $controldir
-$0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextafter 2>&1
-rc=\$?
-echo \`date\` $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextafter rc=\$rc
-
-cd \$pwdsave
-echo \`date\` $0  $yyyymmddccb$jjjb $yyyymmddcce$jjje next submit for dev after end
-
-echo \`date\` $jobdir/$jobscript end
-echo \`date\` test output files begin
-cd $plcomout
-cd ..
-pwd
-#echo TEST TESTS output check disabled TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST
-#rc=0
-#DHOU 03/09/2012
-#/global/save/wx20rw/h/bin/hpss.put.output.day >/dev/null 2>&1
-rc=\$?
-if (( rc == 0 )); then
-  echo do not reset waitflag because rc=\$rc
-else
-  echo reset waitflag because rc=\$rc
-  echo waitflag=\`cat $controldir/waitfile.$machl\` before
-  echo yes>$controldir/waitfile.$machl
-  echo waitflag=\`cat $controldir/waitfile.$machl\` after
-fi
-echo \`date\` test output files end
-eofCAT
-
-else
 
     cat <<eofCAT >$jobcontrol
 #@ job_name=$jobname.\$(jobid)
@@ -3117,110 +2842,9 @@ eofCAT
 
     echo `date` $0 $* write job cards for run end
 
-fi  #(machl=f? )
-
   else
 
     echo `date` $0 $* write job cards for wait begin
-
-  if [[ $machl = f ]]; then                       # job card for ZEUS 
-
-        cat <<eofCAT >>$jobcontrol
-#!/bin/ksh -l
-#
-#PBS -N $jobname\.w
-#PBS -A $account
-#PBS -l walltime=00:15:00
-#PBS -q $classs
-#PBS -d $basesource/nwdev/control
-#PBS -j oe
-#PBS -o $plcomout/$jobname.$yymmddhhmmss.ow
-#PBS -l procs=1
-#PBS -l mem=500M
-echo \`date\` $0 $* $jobdir/$jobscript wait begin
-echo \`date\` env sort begin
-env | sort
-echo \`date\` env sort end
-
-export envir=$envir
-export cyc=$cyc
-export cyc_fcst=$cyc_fcst
-export job=$jobname
-eofCAT
-    if [[ -n $RUN ]]; then
-      echo RUN=$RUN
-      cat <<eofCAT >>$jobcontrol
-export RUN=$RUN
-eofCAT
-    fi
-    if [[ -n $FORECAST_SEGMENT ]]; then
-      echo FORECAST_SEGMENT=$FORECAST_SEGMENT
-      cat <<eofCAT >>$jobcontrol
-export FORECAST_SEGMENT=$FORECAST_SEGMENT
-eofCAT
-    fi
-    cat <<eofCAT >>$jobcontrol
-# export for development runs only begin
-. $controldir/setbase
-. $parmdir/gefs.parm
-export jjj=$jjj
-export jjje=$jjje
-export yyyymmddcc=$yyyymmddcc
-export yyyymmddcce=$yyyymmddcce
-export yyyymmddccjjj=$yyyymmddccjjj
-export yyyymmddccjjje=$yyyymmddccjjje
-export PDYp2=$PDYp2
-export PDYp1=$PDYp1
-export PDY=$PDY
-export PDYm1=$PDYm1
-export PDYm2=$PDYm2
-export PDYm3=$PDYm3
-export PDYm4=$PDYm4
-export PDYm5=$PDYm5
-export id=$id
-export expid=$expid
-export basesource=$basesource
-export baseoutput=$baseoutput
-export baseinitarch=$baseinitarch
-export basetmp=$basetmp
-export baseptmp=$baseptmp
-export basebin=$basebin
-export baselog=$baselog
-export basedgfs=$basedgfs
-export basedgens=$basedgens
-echo \`date\` env sort begin
-env | sort
-echo \`date\` env sort end
-# export for development runs only end
-# CALL executable job script here
-echo \`date\` this is the wait job for $jobdir/$jobscript
-
-echo \`date\` $0 $* resubmit before
-$0 $*
-rc=\$?
-echo \`date\` $0 $* rc=\$?
-echo \`date\` $0 $* resubmit after
-echo \`date\` $0 $* $jobdir/$jobscript wait end
-echo \`date\` test output files begin
-cd $plcomout
-cd ..
-pwd
-echo TEST TESTS output check disabled TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST
-rc=0
-#/global/save/wx20rw/h/bin/hpss.put.output.day >/dev/null 2>&1
-#rc=\$?
-if (( rc == 0 )); then
-  echo do not reset waitflag because rc=\$rc
-else
-  echo reset waitflag because rc=\$rc
-  echo waitflag=\`cat $controldir/waitfile.$machl\` before
-  echo yes>$controldir/waitfile.$machl
-  echo waitflag=\`cat $controldir/waitfile.$machl\` after
-fi
-echo \`date\` test output files end
-eofCAT
-
- else # (CCS follows)
 
     cat <<eofCAT >$jobcontrol
 #@ job_name=$jobname.\$(jobid)w
@@ -3321,8 +2945,6 @@ fi
 echo \`date\` test output files end
 eofCAT
 
- fi #(machl)
-
     echo `date` $0 $* write job cards for wait end
 
   fi
@@ -3385,14 +3007,7 @@ eofCAT
     echo jobllq=$jobllq does not exceed jobmax=$jobmax
   fi
   ###### extra submit test end ##########################################################
-#echo DHOUTEST
-#echo $testflag $machl
- echo $jobcontrol
-#exit
-# llsubmit $jobcontrol
-
-# msub $jobcontrol
-  qsub $jobcontrol
+  llsubmit $jobcontrol
   rc=$?
   if (( rc != 0 )); then
     echo llsubmit $jobcontrol FAILED rc=$rc
