@@ -1,0 +1,51 @@
+
+SHELL = /bin/sh
+
+SRCS=	gefs_vortex_combine.f
+
+OBJS=	gefs_vortex_combine.o
+
+INCMODS=/nwprod/lib/incmod/sigio_4
+INCMODS=/scratch2/portfolios/NCEPDEV/stmp/Xiaqiong.Zhou/incmod
+INCMOD1=/scratch2/portfolios/NCEPDEV/global/save/Shrinivas.Moorthi/para/lib/incmod/sigio_4
+#CF =    xlf_r
+#FC =    ncepxlf
+CF =    ifort
+FC =    ifort
+LDFLAGS =
+#LIBS  = -L/nwprod/lib -lsp_d -lw3_d -lbufr_d_64
+#LIBS  = -L/nwprod/lib -lsp_d -lw3_d -lbufr_d_64 -L . -lsigio_4
+LIBS = -L/scratch2/portfolios/NCEPDEV/global/save/Shrinivas.Moorthi/para/lib -lw3lib-1.9_4 -lsp_d -lsigio_4 -lbufr_d_64 -lw3_d
+#LIBS  = -L/nwprod/lib -lsp_d -lw3_d -lbufr_d_64 -lsigio_4
+
+CMD =   gefs_vortex_combine
+#PROFLIB =   -lessl    -lprof
+#PROFLIB =   -lessl
+PROFLIB =   
+
+#FFLAGS= -qsmp=noauto -p -O -NS10000 -qintsize=4 -qrealsize=8 -qmaxmem=-1 -qinitauto -qsource -qflttrap
+#FFLAGS= -qsmp=noauto -p -O -NS10000 -qintsize=4 -qrealsize=8 -qmaxmem=-1 -qinitauto -qsource -qflttrap -I $(INCMODS)
+#LDFLAGS=-l essl
+FFLAGS= -g -O2 -traceback -r8  -convert big_endian -assume byterecl -I $(INCMODS)
+FFLAGS= -openmp -p  -xHOST -r8 -O0 -i4  -traceback -assume byterecl  -I $(INCMODS)
+
+LDFLAGS=
+
+all:  $(CMD)
+
+$(CMD): $(OBJS)
+	$(CF) $(FFLAGS) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
+
+# Make the profiled version of the command and call it a.out.prof
+#
+$(CMD).prof:    $(OBJS)
+	$(CF) $(LDFLAGS) -o $(@) $(OBJS) $(PROFLIB) $(LIBS)
+
+clean:
+	-rm -f $(OBJS)
+
+clobber:        clean
+	-rm -f $(CMD) $(CMD).prof
+
+void:   clobber
+	-rm -f $(SRCS) makefile
