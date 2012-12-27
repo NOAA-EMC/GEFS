@@ -7,7 +7,7 @@ OBJS=	gefs_vortex_combine.o
 
 INCMODS=/nwprod/lib/incmod/sigio_4
 INCMODS=/scratch2/portfolios/NCEPDEV/stmp/Xiaqiong.Zhou/incmod
-INCMOD1=/scratch2/portfolios/NCEPDEV/global/save/Shrinivas.Moorthi/para/lib/incmod/sigio_4
+INCMODS=/scratch2/portfolios/NCEPDEV/global/save/Shrinivas.Moorthi/para/lib/incmod/sigio_4
 #CF =    xlf_r
 #FC =    ncepxlf
 CF =    ifort
