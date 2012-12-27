@@ -1365,7 +1365,7 @@ case $taskname in
 #    total_tasks=80
     node=3
 ##  Kate 07/12/2012 not defining total_task above
-    node=80
+    node=40
     tasks_per_node=6
 
   ;;
@@ -1822,7 +1822,7 @@ case $taskname in
     node=1
     network_MPI="sn_all,shared,us"
 #   resources="ConsumableMemory(800 MB)"
-#    resources="2000M"
+    resources="4000M"
     task_affinity="core(2)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
@@ -1956,7 +1956,7 @@ case $taskname in
     tasks_per_node=1
     node=1
 #   resources="ConsumableMemory(500 MB)"
-    resources="1200M"
+#    resources="1200M"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
     ################################# development variables
@@ -2786,7 +2786,7 @@ eofCAT
       if [[ -n $resources ]]; then
 	echo include resources=$resources
 	cat <<eofCAT >>$jobcontrol
-#PBS -l mem=$resources
+#PBS -l vmem=$resources
 #PBS -l procs=1
 eofCAT
       fi
