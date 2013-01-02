@@ -197,7 +197,7 @@ c$$$      common /z00_com/z
           bkl(k) = (bk5(k+1)+bk5(k))*0.5
           ck(k)  = ak5(k+1)*bk5(k)-ak5(k)*bk5(k+1)
           if(me.eq.0)print 200,k,dbk(k),ck(k)
-200       format('k=',i3,'  dbk=',f9.6,'  ck=',e13.5)
+200       format('k=',i3,'  dbk=',f8.6,'  ck=',e13.5)
         enddo
 !
 ! hmhj give an estimated si and sl for dynamics
@@ -219,7 +219,7 @@ c$$$      common /z00_com/z
           sl(k)    = slk(k) ** rkapi
 !         sl(k)    = ((sikp1(k)-sikp1(k+1))/tem)**rkapi
           if (me .eq. 0) print 250, k, si(k), sl(k)
-250       format('k=',i2,'  si=',f9.6,'  sl=',e13.5)
+250       format('k=',i2,'  si=',f8.6,'  sl=',e13.5)
         enddo
       else
         print *,' Non compatible Initial state IDVC=',head%idvc
@@ -493,7 +493,7 @@ csela print*,' levh=',levh
 !        sI(K)=XI(K)
 !     END DO
 !Moor PRINT 100,(XI(K),K=1,LEVP1)
-100   FORMAT(1H0, 12   (E10.3))
+100   FORMAT(1H0, 12   (E9.3))
 !Moor PRINT 101,NFT,FHOUR,IDATE,Z00
 101   FORMAT (1H0, 'IF ABOVE TWO ROWS NOT ZERO,INCONSISTENCY IN SIG.DEF'
      1,'ON NFT=',I2,2X,F6.1,2X,4(I4),'Z00=',E12.4)

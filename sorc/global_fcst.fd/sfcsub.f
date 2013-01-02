@@ -3539,8 +3539,8 @@
         ENDDO
 !
       WRITE(6,100) K,FMAX,IIMAX,FMIN,IIMIN
-  100 FORMAT(2X,'LEVEL=',I2,' MAX=',E10.4,' AT I=',I5,
-     &                      ' MIN=',E10.4,' AT I=',I5)
+  100 FORMAT(2X,'LEVEL=',I2,' MAX=',E11.4,' AT I=',I5,
+     &                      ' MIN=',E11.4,' AT I=',I5)
 !
       ENDDO
 !
@@ -5049,8 +5049,8 @@
             PRINT *,'INCONSISTENCY IN SLIFCS OR SLIANL'
             PRINT 910,RLA(I),RLO(I),SLIFCS(I),SLIANL(I),
      &                TSFFCS(I),TSFANL(I)
-  910       FORMAT(2X,'AT LAT=',F5.1,' LON=',F5.1,' SLIFCS=',F3.1,
-     &          ' SLIMSK=',F3.1,' TSFFCS=',F5.1,' SET TO TSFANL=',F5.1)
+  910       FORMAT(2X,'AT LAT=',F5.1,' LON=',F5.1,' SLIFCS=',F4.1,
+     &          ' SLIMSK=',F4.1,' TSFFCS=',F5.1,' SET TO TSFANL=',F5.1)
             CALL ABORT
           ENDIF
 !
@@ -5376,7 +5376,7 @@
               IJ = IWK(I)
               PRINT 8001,RLA(IJ),RLO(IJ),FLD(IJ),FLDLMN
  8001         FORMAT(' Bare land min. check. LAT=',F5.1,
-     &             ' LON=',F6.1,' FLD=',E12.6, ' to ',E12.6)
+     &             ' LON=',F6.1,' FLD=',E13.6, ' to ',E13.6)
             ENDDO
           endif
           IF (MODE .EQ. 1) THEN
@@ -5402,7 +5402,7 @@
               IJ = IWK(I)
               PRINT 8002,RLA(IJ),RLO(IJ),FLD(IJ),FLDLMX
  8002         FORMAT(' Bare land max. check. LAT=',F5.1,
-     &             ' LON=',F6.1,' FLD=',E12.6, ' to ',E12.6)
+     &             ' LON=',F6.1,' FLD=',E13.6, ' to ',E13.6)
             ENDDO
           endif
           IF (MODE .EQ. 1) THEN
@@ -5428,7 +5428,7 @@
               IJ = IWK(I)
               PRINT 8003,RLA(IJ),RLO(IJ),FLD(IJ),FLDSMN
  8003         FORMAT(' Sno covrd land min. check. LAT=',F5.1,
-     &             ' LON=',F6.1,' FLD=',E10.4, ' to ',E10.4)
+     &             ' LON=',F6.1,' FLD=',E11.4, ' to ',E11.4)
             ENDDO
           endif
           IF (MODE .EQ. 1) THEN
@@ -5454,7 +5454,7 @@
               IJ = IWK(I)
               PRINT 8004,RLA(IJ),RLO(IJ),FLD(IJ),FLDSMX
  8004         FORMAT(' Snow land max. check. LAT=',F5.1,
-     &             ' LON=',F6.1,' FLD=',E10.4, ' to ',E10.4)
+     &             ' LON=',F6.1,' FLD=',E11.4, ' to ',E11.4)
             ENDDO
           endif
           IF (MODE .EQ. 1) THEN
@@ -5480,7 +5480,7 @@
               IJ = IWK(I)
               PRINT 8005,RLA(IJ),RLO(IJ),FLD(IJ),FLDOMN
  8005         FORMAT(' Open ocean min. check. LAT=',F5.1,
-     &             ' LON=',F6.1,' FLD=',E10.4,' to ',E10.4)
+     &             ' LON=',F6.1,' FLD=',E11.4,' to ',E11.4)
             ENDDO
           endif
           IF (MODE .EQ. 1) THEN
@@ -5506,7 +5506,7 @@
               IJ = IWK(I)
               PRINT 8006,RLA(IJ),RLO(IJ),FLD(IJ),FLDOMX
  8006         FORMAT(' Open ocean max. check. LAT=',F5.1,
-     &             ' LON=',F6.1,' FLD=',E10.4, ' to ',E10.4)
+     &             ' LON=',F6.1,' FLD=',E11.4, ' to ',E11.4)
             ENDDO
           endif
           IF (MODE .EQ. 1) THEN
@@ -5532,7 +5532,7 @@
               IJ = IWK(I)
               PRINT 8007,RLA(IJ),RLO(IJ),FLD(IJ),FLDIMN
  8007         FORMAT(' Seaice no snow min. check LAT=',F5.1,
-     &             ' LON=',F6.1,' FLD=',E10.4, ' to ',E10.4)
+     &             ' LON=',F6.1,' FLD=',E11.4, ' to ',E11.4)
             ENDDO
           endif
           IF (MODE .EQ. 1) THEN
@@ -5559,7 +5559,7 @@
               IJ = IWK(I)
               PRINT 8008,RLA(IJ),RLO(IJ),FLD(IJ),FLDIMX
  8008         FORMAT(' Seaice no snow max. check LAT=',F5.1,
-     &             ' LON=',F6.1,' FLD=',E10.4, ' to ',E10.4)
+     &             ' LON=',F6.1,' FLD=',E11.4, ' to ',E11.4)
             ENDDO
           endif
           IF (MODE .EQ. 1) THEN
@@ -5585,7 +5585,7 @@
               IJ = IWK(I)
               PRINT 8009,RLA(IJ),RLO(IJ),FLD(IJ),FLDJMN
  8009         FORMAT(' Sea ice snow min. check LAT=',F5.1,
-     &             ' LON=',F6.1,' FLD=',E10.4, ' to ',E10.4)
+     &             ' LON=',F6.1,' FLD=',E11.4, ' to ',E11.4)
             ENDDO
           endif
           IF (MODE .EQ. 1) THEN
@@ -5612,7 +5612,7 @@
               IJ = IWK(I)
               PRINT 8010,RLA(IJ),RLO(IJ),FLD(IJ),FLDJMX
  8010         FORMAT(' Seaice snow max check LAT=',F5.1,
-     &             ' LON=',F6.1,' FLD=',E10.4, ' to ',E10.4)
+     &             ' LON=',F6.1,' FLD=',E11.4, ' to ',E11.4)
             ENDDO
           endif
           IF (MODE .EQ. 1) THEN

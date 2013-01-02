@@ -200,7 +200,7 @@
           bkl(k) = (bk5(k+1)+bk5(k))*0.5
           ck(k)  = ak5(k+1)*bk5(k)-ak5(k)*bk5(k+1)
           if(me.eq.0)print 200,k,dbk(k),ck(k)
-200       format('k=',i3,'  dbk=',f8.6,'  ck=',e13.5)
+200       format('k=',i3,'  dbk=',f9.6,'  ck=',e13.5)
         enddo
 !
 ! hmhj give an estimated si and sl for dynamics
@@ -221,7 +221,7 @@
           sl(k)    = slk(k) ** rkapi
 !         sl(k)    = ((sikp1(k)-sikp1(k+1))/tem)**rkapi
           if (me .eq. 0) print 250, k, si(k), sl(k)
-250       format('k=',i2,'  si=',f8.6,'  sl=',e13.5)
+250       format('k=',i2,'  si=',f9.6,'  sl=',e13.5)
         enddo
       else
         print *,' Non compatible Initial state IDVC=',idvc
