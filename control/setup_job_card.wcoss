@@ -1,0 +1,373 @@
+  rm $jobcontrol
+  if [[ $waitflag = no ]]; then
+
+    echo `date` $0 $* write job cards for run begin
+#########################################################################################
+echo
+echo `date`                                                               setup job cards
+echo
+#########################################################################################
+
+    cat <<eofCAT >$jobcontrol
+#!/bin/ksh -l
+#
+#BSUB -J $jobname.$yymmddhhmmss
+#BSUB -a poe
+#BSUB -o $plcomout/$jobname.$yymmddhhmmss.o
+#BSUB -e $plcomout/$jobname.$yymmddhhmmss.o
+#BSUB -W $wall_clock_limit
+#BSUB -q "hpc_ibm" 
+##BSUB -d $tmpdir 
+#
+#
+eofCAT
+    if [[ ${job_type} = serial ]] ; then
+      if [[ -n $resources ]]; then
+	echo include resources=$resources
+	cat <<eofCAT >>$jobcontrol
+##BSUB -l mem=$resources
+eofCAT
+      fi
+    fi
+    if [[ ${job_type} = parallel ]] ; then
+      if [[ -n $total_tasks ]]; then
+	echo include total_tasks=$total_tasks
+	cat <<eofCAT >>$jobcontrol
+#BSUB -n $total_tasks
+#BSUB -R span[ptile=16]
+#BSUB -x  
+export total_tasks=$total_tasks
+
+export OMP_NUM_THREADS=1
+export MP_SHARED_MEMORY=no
+export MEMORY_AFFINITY=core:$OMP_NUM_THREADS 
+eofCAT
+      fi
+#      if [[ -n $node ]]; then
+#	echo include node=$node
+#	cat <<eofCAT >>$jobcontrol
+##PBS -l nodes=$node:ppn=$tasks_per_node
+#eofCAT
+#      fi
+    fi
+    cat <<eofCAT >>$jobcontrol
+module load ics
+module load ibmpe
+#module load mpt
+#module load adaptive
+
+echo \`date\` $jobdir/$jobscript begin
+echo \`date\` env sort begin
+env | sort
+echo \`date\` env sort end
+
+export envir=$envir
+export cyc=$cyc
+export cyc_fcst=$cyc_fcst
+export job=$jobname
+#DHOU 03/07/2012 1 line
+#export jobscript=$jobscript
+eofCAT
+    if [[ -n $RUN ]]; then
+      echo RUN=$RUN
+      cat <<eofCAT >>$jobcontrol
+export RUN=$RUN
+eofCAT
+    fi
+    if [[ -n $FORECAST_SEGMENT ]]; then
+      echo FORECAST_SEGMENT=$FORECAST_SEGMENT
+      cat <<eofCAT >>$jobcontrol
+export FORECAST_SEGMENT=$FORECAST_SEGMENT
+eofCAT
+    fi
+#DHOU 03/20/2012
+    if [[ $jobscript = JGEFS_SIGCHGRS.sms.dev ]]; then
+      cat <<eofCAT >>$jobcontrol
+export OMP_NUM_THREADS=1
+eofCAT
+    fi
+    if [[ $jobscript = JGEFS_NCEPPOST.sms.dev ]]; then
+      cat <<eofCAT >>$jobcontrol
+export OMP_NUM_THREADS=1
+eofCAT
+    fi
+    cat <<eofCAT >>$jobcontrol
+# export for development runs only begin
+pwdsave=\$(pwd)
+echo \$pwdsave
+cd $controldir
+. $controldir/setbase
+. $parmdir/gefs.parm
+cd $pwdsave
+export RUN_ENVIR=$envir
+export jjj=$jjj
+export jjje=$jjje
+export yyyymmddcc=$yyyymmddcc
+export yyyymmddcce=$yyyymmddcce
+export yyyymmddccjjj=$yyyymmddccjjj
+export yyyymmddccjjje=$yyyymmddccjjje
+# export yyyymmddccc  #DHOU, 09/09/2010 ad this to facilitate job 000
+# RLW disabled since the copy of initial conditions is moved into this script
+#if (( jjj == 000 )); then
+#  export yyyymmddccc=$yyyymmddccc
+#fi
+export PDYp2=$PDYp2
+export PDYp1=$PDYp1
+export PDY=$PDY
+export PDYm1=$PDYm1
+export PDYm2=$PDYm2
+export PDYm3=$PDYm3
+export PDYm4=$PDYm4
+export PDYm5=$PDYm5
+export id=$id
+export expid=$expid
+export basesource=$basesource
+export baseoutput=$baseoutput
+export baseinitarch=$baseinitarch
+export basetmp=$basetmp
+export baseptmp=$baseptmp
+export basebin=$basebin
+export baselog=$baselog
+export basedgfs=$basedgfs
+export basedgens=$basedgens
+echo \`date\` env sort begin
+env | sort
+echo \`date\` env sort end
+# export for development runs only end
+
+pwdsave=\`pwd\`
+
+echo \`date\` $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje next submit for dev before begin
+
+cd $controldir
+$0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore 2>&1
+rc=\$?
+echo \`date\` $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore rc=\$rc
+cd \$pwdsave
+echo \`date\` $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje next submit for dev before end
+
+echo \`date\` $jobdir/$jobscript run before
+
+echo
+ls -al $jobdir/$jobscript
+echo
+
+# CALL executable job script here
+$jobdir/$jobscript
+
+echo
+ls -al $jobdir/$jobscript
+echo
+
+echo \`date\` $jobdir/$jobscript run after
+
+echo \`date\` $0  $yyyymmddccb$jjjb $yyyymmddcce$jjje next submit for dev after begin
+
+cd $controldir
+$0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextafter 2>&1
+rc=\$?
+echo \`date\` $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextafter rc=\$rc
+
+cd \$pwdsave
+echo \`date\` $0  $yyyymmddccb$jjjb $yyyymmddcce$jjje next submit for dev after end
+
+echo \`date\` $jobdir/$jobscript end
+echo \`date\` test output files begin
+cd $plcomout
+cd ..
+pwd
+#echo TEST TESTS output check disabled TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST
+#rc=0
+#DHOU 03/09/2012
+#/global/save/wx20rw/h/bin/hpss.put.output.day >/dev/null 2>&1
+rc=\$?
+if (( rc == 0 )); then
+  echo do not reset waitflag because rc=\$rc
+else
+  echo reset waitflag because rc=\$rc
+  echo waitflag=\`cat $controldir/waitfile.$machl\` before
+  echo yes>$controldir/waitfile.$machl
+  echo waitflag=\`cat $controldir/waitfile.$machl\` after
+fi
+echo \`date\` test output files end
+eofCAT
+
+    echo `date` $0 $* write job cards for run end
+
+  else
+
+    echo `date` $0 $* write job cards for wait begin
+
+        cat <<eofCAT >>$jobcontrol
+#!/bin/ksh -l
+#
+#BSUB -J $jobname\.w
+#BSUB -W 0:15
+#BSUB -o $plcomout/$jobname.$yymmddhhmmss.ow
+#BSUB -e $plcomout/$jobname.$yymmddhhmmss.ow
+#BSUB -n 1
+#BSUB -q "hpc_ibm" 
+#BSUB -x  
+##BSUB -l mem=500M
+export MP_SHARED_MEMORY=yes
+export MEMORY_AFFINITY=MCM
+
+echo \`date\` $0 $* $jobdir/$jobscript wait begin
+echo \`date\` env sort begin
+env | sort
+echo \`date\` env sort end
+
+export envir=$envir
+export cyc=$cyc
+export cyc_fcst=$cyc_fcst
+export job=$jobname
+eofCAT
+    if [[ -n $RUN ]]; then
+      echo RUN=$RUN
+      cat <<eofCAT >>$jobcontrol
+export RUN=$RUN
+eofCAT
+    fi
+    if [[ -n $FORECAST_SEGMENT ]]; then
+      echo FORECAST_SEGMENT=$FORECAST_SEGMENT
+      cat <<eofCAT >>$jobcontrol
+export FORECAST_SEGMENT=$FORECAST_SEGMENT
+eofCAT
+    fi
+    cat <<eofCAT >>$jobcontrol
+# export for development runs only begin
+pwdsave=\`$(pwd)\`
+echo $pwdsave
+cd $controldir
+. $controldir/setbase
+. $parmdir/gefs.parm
+cd $pwdsave
+export jjj=$jjj
+export jjje=$jjje
+export yyyymmddcc=$yyyymmddcc
+export yyyymmddcce=$yyyymmddcce
+export yyyymmddccjjj=$yyyymmddccjjj
+export yyyymmddccjjje=$yyyymmddccjjje
+export PDYp2=$PDYp2
+export PDYp1=$PDYp1
+export PDY=$PDY
+export PDYm1=$PDYm1
+export PDYm2=$PDYm2
+export PDYm3=$PDYm3
+export PDYm4=$PDYm4
+export PDYm5=$PDYm5
+export id=$id
+export expid=$expid
+export basesource=$basesource
+export baseoutput=$baseoutput
+export baseinitarch=$baseinitarch
+export basetmp=$basetmp
+export baseptmp=$baseptmp
+export basebin=$basebin
+export baselog=$baselog
+export basedgfs=$basedgfs
+export basedgens=$basedgens
+echo \`date\` env sort begin
+env | sort
+echo \`date\` env sort end
+# export for development runs only end
+# CALL executable job script here
+echo \`date\` this is the wait job for $jobdir/$jobscript
+
+echo \`date\` $0 $* resubmit before
+$0 $*
+rc=\$?
+echo \`date\` $0 $* rc=\$?
+echo \`date\` $0 $* resubmit after
+echo \`date\` $0 $* $jobdir/$jobscript wait end
+echo \`date\` test output files begin
+cd $plcomout
+cd ..
+pwd
+echo TEST TESTS output check disabled TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST
+rc=0
+#/global/save/wx20rw/h/bin/hpss.put.output.day >/dev/null 2>&1
+#rc=\$?
+if (( rc == 0 )); then
+  echo do not reset waitflag because rc=\$rc
+else
+  echo reset waitflag because rc=\$rc
+  echo waitflag=\`cat $controldir/waitfile.$machl\` before
+  echo yes>$controldir/waitfile.$machl
+  echo waitflag=\`cat $controldir/waitfile.$machl\` after
+fi
+echo \`date\` test output files end
+eofCAT
+
+    echo `date` $0 $* write job cards for wait end
+
+  fi
+
+
+  echo
+  echo `date` job cards begin
+  echo
+  cat $jobcontrol
+  echo 
+  echo `date` job cards end
+  echo
+
+  cd $plcontrolt
+  rc=$?
+  if (( rc != 0 )); then
+    echo cd plcontrolt=$plcontrolt FAILED rc=$rc
+    echo
+    echo `date` $0 $* EXIT ABORT $rc
+    echo
+    exit $rc
+  fi
+
+  echo
+  echo `date` $0 environment before submit
+  echo
+  env|sort
+
+  echo
+  ls -al $jobcontrol
+
+  ################################################################ tcdsflag section begin
+
+  if [[ $tcdsflag = yes ]]; then
+    echo `date` $0 $* tcdsflag test statement inserted here
+    echo `date` $0 $* $0 before
+    pwd
+    cd $nldir
+    pwd
+    sleep 3
+    echo  $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje tcdsnext
+    nohup $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje tcdsnext >/dev/null 2>&1 &
+    sleep 1 
+    echo `date` $0 $* $0 after
+  else
+
+  ################################################################## tcdsflag section end
+
+  echo
+  echo `date` $0 $*                                                    submit $jobcontrol
+  echo
+  ####### extra submit test begin #######################################################
+  if (( jobllq > jobmax )); then
+    echo jobllq=$jobllq exceeds jobmax=$jobmax WHICH IS TOO MANY LL JOBS
+    echo
+    echo `date` $0 $* EXIT ABORT $jobllq
+    echo
+    exit $jobllq
+  else
+    echo jobllq=$jobllq does not exceed jobmax=$jobmax
+  fi
+  ###### extra submit test end ##########################################################
+  bsub  < $jobcontrol
+  rc=$?
+  if (( rc != 0 )); then
+    echo llsubmit $jobcontrol FAILED rc=$rc
+    echo `date` $0 $* cat llqstring before
+    cat $llqstring
+    echo `date` $0 $* cat llqstring after
+  fi
+
+fi
