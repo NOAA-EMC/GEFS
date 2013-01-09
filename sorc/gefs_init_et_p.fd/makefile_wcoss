@@ -1,34 +1,14 @@
-SHELL=/bin/bash
-#INCMOD1=/scratch1/portfolios/NCEPDEV/ensemble/noscrub/Xiaqiong.Zhou/stmp/incmod
-INCMOD1=/nwprod/lib/incmod/sigio_4
-INCS= -I/nwprod/lib/incmod/sigio_4
-#INCMOD1=/lfs1/projects/globpsd/whitaker/EXP-hybens/nwprod/pgi/incmod
-#F77     = ifort  -lmpi -fp-model strict  
-#F77     = ifort  -mkl=sequential  -lmpi   
-#F77     = ifort   -lmpi  -fp-model strict 
-#F77     = ifort   -lmpi  -fp-model strict -mkl
-F77     = mpfort   -lmpi  -fp-model strict -mkl
-FC     = mpfort   -lmpi  -fp-model strict -mkl
-#F77     = ifort    -lmpi   
-#OPTS     = -g -O2 -traceback -r8  -convert big_endian -assume byterecl    
-#OPTS     = -g -O0 -traceback   -check all -fpe0 -ftrapuv  -convert big_endian -assume byterecl 
-FFLAGS     = -g -O0 -traceback -list -convert big_endian -assume byterecl -list
-#LIBS = -L/lfs0/projects/fim/bates/ncepgfs/lib -lw3_4 -lsp_4 -lsigio_4
-#LIBS =   -L/home/George.Vandenberghe/w/nwprod/libintel -lw3-2.0_d   -lsp_4 -lsigio_4
-#LIBS = -L/scratch2/portfolios/NCEPDEV/stmp/Xiaqiong.Zhou/lib -lw3lib-1.9_4 -lsp_4 -lsigio_4
-#LIBS = -L/scratch2/portfolios/NCEPDEV/global/save/Shrinivas.Moorthi/para/lib -lw3lib-1.9_4 -lsp_4 -lsigio_4
-LIBS = -L/nwprod/lib -lsp_4 -lsigio_4 -lw3nco_4
+INCS   = -I$(MKLROOT)/include -I/nwprod/lib/incmod/sigio_4
+FC     = mpfort
+FFLAGS = -openmp -convert big_endian -assume byterecl -g -traceback -list
+LIBS   = -L/nwprod/lib -lsp_4 -lsigio_4 -lw3nco_4 \
+         -L$(MKLROOT)/lib/intel64 -lmkl_scalapack_lp64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lmkl_blacs_intelmpi_lp64 -lpthread -lm
 
-CMD=   gefs_init_et_p
-SRCS=   gefs_init_et_p.f90
-OBJS=   $(SRCS:.f90=.o)
+CMD    = gefs_init_et_p
+SRCS   = gefs_init_et_p.f90
+OBJS   = $(SRCS:.f90=.o)
 
-#LDFLAGS = -L/apps/intel/2012.0.032/mkl/lib/intel64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core  -lpthread   -lmkl_blacs_intelmpi_lp64 -lmkl_scalapack_lp64
-
-#LDFLAGS =
-#LDFLAGS = -L/apps/intel/11.1.072/mkl/lib/emt64 -lmkl_intel_lp64  -lmkl_core -lmkl_blacs_intelmpi_lp64 -lmkl_scalapack_lp64
-#LDFLAGS = -L$(MKLROOT) -lmkl_scalapack_lp64 -lmkl_blacs_sgimpt_lp64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core
-LDFLAGS = -L/usrx/local/intel/12.1/composerxe/mkl/lib/intel64 -lmkl_scalapack_lp64 -lmkl_blacs_sgimpt_lp64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core
+LDFLAGS =
 
 # Lines from here on down should not need to be changed.  They are the
 # actual rules which make uses to build a.out.
@@ -46,7 +26,7 @@ $(OBJS):        makefile
 allclean:       clean all
 
 clean:
-	-rm -f $(OBJS)
+	-rm -f $(OBJS) *.mod *.lst
 
 clobber:        clean
 	-rm -f $(CMD)
