@@ -11,9 +11,9 @@ export GFS_VERSION=gefs_fcst
 ##############################################
 # Number of pairs to run (normally 10 pairs)
 ##############################################
-export npair=3
-export npair=6
-export npair=2
+#export npair=3
+#export npair=6
+#export npair=2
 export npair=10
 export nhrpair=$npair
 
@@ -79,15 +79,19 @@ export RUN_CONCURRENT=yes
 
 # if multiple forecasts are to be run concurrently, ENS_SPS controls whether stochastic forcing is used
 #export ENS_SPS=true  #DHOU 20120403, added the two dots to unify script and code requirement
-export ENS_SPS=.true.
 export ENS_SPS=.false.
+export ENS_SPS=.true.
 
 ################################################################################
 # number of threads to use in the job JGEFS_SIGCHGRS
 ################################################################################
-#NTHREADS_SIGCHGRS=8
+ NTHREADS_SIGCHGRS=8
 #DHOU 03/20/2012 chgres can not run multi-thread
-NTHREADS_SIGCHGRS=1
+#NTHREADS_SIGCHGRS=1
+#DHOU 01/10/2013  for WCOSS and bug-fix
+ NTHREADS_SIGCHGRS=4
+#NTHREADS_SIGCHGRS=1
+ export NTHREADS_SIGCHGRS
 
 ################################################################################
 # USESUBDIR controls whether to use sub dir in the forecast working directory
