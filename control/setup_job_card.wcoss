@@ -34,13 +34,16 @@ eofCAT
 	echo include total_tasks=$total_tasks
 	cat <<eofCAT >>$jobcontrol
 #BSUB -n $total_tasks
-#BSUB -R span[ptile=16]
+#BSUB -R span[ptile=$taskspernode]
 #BSUB -x  
-export total_tasks=$total_tasks
 
-export OMP_NUM_THREADS=1
+export OMP_NUM_THREADS=$OMP_NUM_THREADS
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:$OMP_NUM_THREADS 
+
+export total_tasks=$total_tasks
 eofCAT
       fi
 #      if [[ -n $node ]]; then
@@ -81,11 +84,6 @@ export FORECAST_SEGMENT=$FORECAST_SEGMENT
 eofCAT
     fi
 #DHOU 03/20/2012
-    if [[ $jobscript = JGEFS_SIGCHGRS.sms.dev ]]; then
-      cat <<eofCAT >>$jobcontrol
-export OMP_NUM_THREADS=1
-eofCAT
-    fi
     if [[ $jobscript = JGEFS_NCEPPOST.sms.dev ]]; then
       cat <<eofCAT >>$jobcontrol
 export OMP_NUM_THREADS=1

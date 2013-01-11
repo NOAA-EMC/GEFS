@@ -193,14 +193,14 @@ expid=$nlddbdir
 id=`echo $expid|cut -c3-4`
 echo expid=$expid id=$id
 
-#DHOU, 01/03/2013 add this block to generate the machine name related variables
+#DHOU, 01/03/2013 add this block to generate the gefsmachine name related variables
   machl=`uname -n | cut -c1`
   case $machl in
-   (c) machine=ccs ;;
-   (s) machine=ccs ;;
-   (r) machine=zeus ;;
-   (f) machine=zeus ;;
-   (t) machine=wcoss ;;
+   (c) gefsmachine=ccs ;;
+   (s) gefsmachine=ccs ;;
+   (r) gefsmachine=zeus ;;
+   (f) gefsmachine=zeus ;;
+   (t) gefsmachine=wcoss ;;
   esac 
   if [[ $machl = r ]]; then                       
        machl=f
@@ -223,7 +223,7 @@ else
   # ldir=/ptmp/$LOGNAME/temp.gefs.run
   ldir=/ptmp/$LOGNAME/o/$expid/runlog
 #The next two lines for Zeus
-  if [[ $machl = f ]]; then                       
+  if [[ $gefsmachine = zeus ]]; then                       
   ZPTM=/scratch2/portfolios/NCEPDEV
   ldir=$ZPTM/ptmp/$LOGNAME/o/$expid/runlog
   fi
@@ -1501,17 +1501,19 @@ case $taskname in
 # if [[ $machl = r ]]; then                       
 #      machl=f
 # fi
-  if [[ $machl = f ]]; then                       
+  if [[ $gefsmachine = zeus ]]; then                       
        (( taskspermem = 40 ))
        parallel_threads=1
        task_affinity="core(1)"
        taskspernode=12
   fi
-  if [[ $machl = t ]]; then                       
+  if [[ $gefsmachine = wcoss ]]; then                       
        (( taskspermem = 40 ))
-       parallel_threads=1
+       parallel_threads=2
        task_affinity="core(1)"
-       taskspernode=16
+       (( taskspernode = 16 / parallel_threads ))
+       export taskspernode=$taskspernode
+       export OMP_NUM_THREADS=$parallel_threads
   fi
 
      if [[ $RUN_CONCURRENT = yes ]]; then
@@ -1602,17 +1604,19 @@ case $taskname in
 # if [[ $machl = r ]]; then                       
 #      machl=f
 # fi
-  if [[ $machl = f ]]; then                       
+  if [[ $gefsmachine = zeus ]]; then                       
        (( taskspermem = 40 ))
        parallel_threads=1
        task_affinity="core(1)"
        taskspernode=12
   fi
-  if [[ $machl = t ]]; then                       
+  if [[ $gefsmachine = wcoss ]]; then                       
        (( taskspermem = 40 ))
-       parallel_threads=1
+       parallel_threads=2
        task_affinity="core(1)"
-       taskspernode=16
+       (( taskspernode = 16 / parallel_threads ))
+       export taskspernode=$taskspernode
+       export OMP_NUM_THREADS=$parallel_threads
   fi
 
      if [[ $RUN_CONCURRENT = yes ]]; then
@@ -1647,29 +1651,28 @@ case $taskname in
       during_previous_job=yes
     fi
     ################################# production variables modified
-  if [[ $machl = c ]]; then                       
+  if [[ $gefsmachine = ccs ]]; then                       
     total_tasks=$(( NTHREADS_SIGCHGRS * 2 ))
   fi  
-  if [[ $machl = f ]]; then
+  if [[ $gefsmachine = zeus ]]; then                       
 #DHOU 03/29/2012   chgres is a non-mpi program
     job_type=serial
     resources="1000M"
+    resources="4000M"
     total_tasks=1 
 #   job_type=parallel
 #   total_tasks=8
     node=1
       wall_clock_limit="00:20:00"
   fi    
-  if [[ $machl = t ]]; then
+  if [[ $gefsmachine = wcoss ]]; then                       
 #DHOU 03/29/2012   chgres is a non-mpi program
-#   job_type=serial
     job_type=parallel
-#   resources="1000M"
-#   total_tasks=1 
-#   total_tasks=8
-    total_tasks=$(( NTHREADS_SIGCHGRS * 2 ))
-    node=1
-      wall_clock_limit="00:20:00"
+    total_tasks=1 
+    (( taskspernode = 16 / NTHREADS_SIGCHGRS ))
+    export taskspernode=$taskspernode
+    export OMP_NUM_THREADS=$NTHREADS_SIGCHGRS
+    wall_clock_limit="00:20"
    fi
   ;;
   (restart_copy_hr)
@@ -2653,8 +2656,8 @@ else
   if [[ $machl = r ]]; then                       
        machl=f
   fi
-  if [[ $machl = c ]]; then                       
-# Put this block in "if  fi" statement to skip it for ZEUS
+  if [[ $gefsmachine = css ]]; then                       
+# Put this block in "if  fi" statement to skip it for ZEUS/WCOSS
   
   jobllq=-9
   jobtotllq=-99
@@ -2713,7 +2716,7 @@ else
     fi
   fi
 
-#DHOU  added "if ... fi" to skip the block for ZEUS
+#DHOU  added "if ... fi" to skip the block for ZEUS/WCOSS
   fi
 #echo DHOUTEST now
 #echo $class $testflag $waitflag
@@ -2773,8 +2776,9 @@ else
 
 #DHOU, 01/03/2013 slplit the script section of setting up job card to separate files for each particular machine (setupr_job_card.$mach).
 echo $cwd
-echo $machine
+
 . $cwd/setup_job_card.$machine
+
 #DHOU 01/03/2013 end of changed section
 
   echo
@@ -2785,7 +2789,6 @@ echo $machine
   echo `date` job cards end
   echo
 
-exit
   cd $plcontrolt
   rc=$?
   if (( rc != 0 )); then
@@ -2838,14 +2841,14 @@ exit
 #echo DHOUTEST
 #echo $testflag $machl
  echo $jobcontrol
-#exit
+ exit
 # llsubmit $jobcontrol
 
 # msub $jobcontrol
-  qsub $jobcontrol
-  rc=$?
-  if (( rc != 0 )); then
-    echo llsubmit $jobcontrol FAILED rc=$rc
+qsub $jobcontrol
+rc=$?
+if (( rc != 0 )); then
+  echo llsubmit $jobcontrol FAILED rc=$rc
     echo `date` $0 $* cat llqstring before
     cat $llqstring
     echo `date` $0 $* cat llqstring after
