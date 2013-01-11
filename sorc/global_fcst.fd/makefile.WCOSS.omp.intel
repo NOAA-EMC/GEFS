@@ -37,7 +37,8 @@
 ##The above bolck is from SM, 
 
 ####   make with mpxlf_r (threading) 
-EXEC    =  f.applic.omp.x   
+#EXEC    =  f.applic.omp.x   
+EXEC    =  gefs_global_fcst   
 #F77     = ifort -lmpi -fp-model strict # zeus
 #F90     = ifort -lmpi -fp-model strict # zeus
 F77     = mpfort -compiler ifort
@@ -59,7 +60,7 @@ OMPP=-openmp
 ARCHM=
 #OPTS     = -g -O2 -traceback -r8  -convert big_endian $(OMPP) -assume byterecl    $(ARCH)
 #OPTS_SER     = -g -O2 -traceback -r8  -convert big_endian -assume byterecl    $(ARCH)
-OPTSB    = -O3 -convert big_endian -fp-model precise -xAVX -heap-arrays -xHost
+OPTSB    = -O3 -convert big_endian -fp-model precise -xAVX -heap-arrays -xHost -g -traceback
 OPTS_SER = $(OPTSB) -r8 $(ARCHM)
 OPTS = $(OPTSB) -r8 -openmp 
 OPTSIO = $(OPTSB) -r8

@@ -98,8 +98,8 @@ if [ $machine = gaea -o $machine = zeus -o $machine = wcoss ] ; then
 
 #export OPTSB="-g -O3 -convert big_endian -fp-model strict -heap-arrays -xHost" # -check all -ftrapuv" # -fp-stack-check -fstack-protector"  #raghu.reddy
 
-#export OPTSBT="$OPTSB -traceback"
- export OPTSBT=$OPTSB
+ export OPTSBT="$OPTSB -g -traceback"
+#export OPTSBT=$OPTSB
 #export OPTSM="$OPTSBT -r8"       # -openmp"    # raghu.reddy
  export OPTSIOM="$OPTSBT -r8 "
  export OPTSM="$OPTSBT -r8 -openmp"
