@@ -2777,7 +2777,7 @@ else
 #DHOU, 01/03/2013 slplit the script section of setting up job card to separate files for each particular machine (setupr_job_card.$mach).
 echo $cwd
 
-. $cwd/setup_job_card.$machine
+. $cwd/setup_job_card.$gefsmachine
 
 #DHOU 01/03/2013 end of changed section
 
