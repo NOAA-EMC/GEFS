@@ -1320,7 +1320,7 @@ case $taskname in
     job_type=serial
 #   wall_clock_limit="00:19:00"
 #   resources="ConsumableCpus(1) ConsumableMemory(1650 MB)" #droped for Zeus
-    wall_clock_limit="00:10:00"
+    wall_clock_limit="00:10"
     resources="1650M"
   ;;
   (init.separate)
@@ -2838,14 +2838,18 @@ echo $cwd
     echo jobllq=$jobllq does not exceed jobmax=$jobmax
   fi
   ###### extra submit test end ##########################################################
-#echo DHOUTEST
+ echo DHOUTEST
 #echo $testflag $machl
  echo $jobcontrol
  exit
 # llsubmit $jobcontrol
 
 # msub $jobcontrol
-qsub $jobcontrol
+if [[ $job_type = parallel ]]; then
+ qsub $jobcontrol
+else
+ bsub  < $jobcontrol
+fi
 rc=$?
 if (( rc != 0 )); then
   echo llsubmit $jobcontrol FAILED rc=$rc

@@ -12,7 +12,6 @@ echo
 #!/bin/ksh -l
 #
 #BSUB -J $jobname.$yymmddhhmmss
-#BSUB -a poe
 #BSUB -o $plcomout/$jobname.$yymmddhhmmss.o
 #BSUB -e $plcomout/$jobname.$yymmddhhmmss.o
 #BSUB -W $wall_clock_limit
@@ -32,7 +31,8 @@ eofCAT
     if [[ ${job_type} = parallel ]] ; then
       if [[ -n $total_tasks ]]; then
 	echo include total_tasks=$total_tasks
-	cat <<eofCAT >>$jobcontrol
+  	cat <<eofCAT >>$jobcontrol
+#BSUB -a poe
 #BSUB -n $total_tasks
 #BSUB -R span[ptile=$taskspernode]
 #BSUB -x  
@@ -55,9 +55,14 @@ eofCAT
     fi
     cat <<eofCAT >>$jobcontrol
 module load ics
+eofCAT
+    if [[ ${job_type} = parallel ]] ; then
+     cat <<eofCAT >>$jobcontrol
 module load ibmpe
 #module load mpt
 #module load adaptive
+eofCAT
+    fi
 
 echo \`date\` $jobdir/$jobscript begin
 echo \`date\` env sort begin
