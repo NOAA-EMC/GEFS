@@ -1246,7 +1246,10 @@ wall_clock_limit_fcst_long="00:15:00"
 wall_clock_limit_fcst_short="00:10:00"
 wall_clock_limit_fcst_short="00:30:00"
 wall_clock_limit_fcst_long="02:30:00"
+  if [[ $gefsmachine = wcoss ]]; then                       
 wall_clock_limit_fcst_long="1:30"
+wall_clock_limit_fcst_short="00:10"
+  fi
 
 echo wall_clock_limit_fcst_long=$wall_clock_limit_fcst_long
 echo wall_clock_limit_fcst_short=$wall_clock_limit_fcst_short
@@ -2841,15 +2844,12 @@ echo $cwd
  echo DHOUTEST
 #echo $testflag $machl
  echo $jobcontrol
- exit
+ echo $job_type
+#exit
 # llsubmit $jobcontrol
 
 # msub $jobcontrol
-if [[ $job_type = parallel ]]; then
- qsub $jobcontrol
-else
- bsub  < $jobcontrol
-fi
+  bsub  < $jobcontrol
 rc=$?
 if (( rc != 0 )); then
   echo llsubmit $jobcontrol FAILED rc=$rc
