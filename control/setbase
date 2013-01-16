@@ -115,10 +115,13 @@ fi
 
 #For WCOSS 
 if [[ $machl = t ]]; then
-  export basesource=/ensemble/save/$LOGNAME/WCOSS/$expid
+  group=ensemble
+  group=`pwd|cut -d'/' -f2`
+  export basesource=/$group/save/$LOGNAME/WCOSS/$expid
   export baseoutput=/ptmp/$LOGNAME/o/$expid
   export basetmp=/ptmp/$LOGNAME/o/$expid
   export baseptmp=/ptmp/$LOGNAME/o/$expid
+  export basedgfs=/$group/noscrub/$LOGNAME/o
 
 # temperary settings  
   export TMPCOM=/com_canned
