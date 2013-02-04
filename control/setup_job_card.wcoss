@@ -15,8 +15,8 @@ echo
 #BSUB -o $plcomout/$jobname.$yymmddhhmmss.o
 #BSUB -e $plcomout/$jobname.$yymmddhhmmss.o
 #BSUB -W $wall_clock_limit
-#BSUB -q "hpc_ibm" 
-##BSUB -d $tmpdir 
+##BSUB -q "hpc_ibm" 
+#BSUB -q "dev" 
 #
 #
 eofCAT
@@ -75,7 +75,6 @@ export cyc_fcst=$cyc_fcst
 export job=$jobname
 #DHOU 03/07/2012 1 line
 #export jobscript=$jobscript
-eofCAT
     if [[ -n $RUN ]]; then
       echo RUN=$RUN
       cat <<eofCAT >>$jobcontrol
@@ -103,6 +102,8 @@ cd $controldir
 . $parmdir/gefs.parm
 cd $pwdsave
 export RUN_ENVIR=$envir
+export gefsmachine=$gefsmachine
+export gefsmpexec=$gefsmpexec
 export jjj=$jjj
 export jjje=$jjje
 export yyyymmddcc=$yyyymmddcc
@@ -209,7 +210,8 @@ eofCAT
 #BSUB -o $plcomout/$jobname.$yymmddhhmmss.ow
 #BSUB -e $plcomout/$jobname.$yymmddhhmmss.ow
 #BSUB -n 1
-#BSUB -q "hpc_ibm" 
+##BSUB -q "hpc_ibm" 
+#BSUB -q "dev" 
 #BSUB -x  
 ##BSUB -l mem=500M
 export MP_SHARED_MEMORY=yes

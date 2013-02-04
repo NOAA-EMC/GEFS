@@ -121,9 +121,15 @@ if [[ $machl = t ]]; then
   export baseoutput=/ptmp/$LOGNAME/o/$expid
   export basetmp=/ptmp/$LOGNAME/o/$expid
   export baseptmp=/ptmp/$LOGNAME/o/$expid
+<<<<<<< .mine
   export basedgfs=/$group/noscrub/$LOGNAME/o
+  export basedgfs=
+# export basedgfs=/ensemble/noscrub/$LOGNAME  #Use this line as alternative when gfs data is missing from /com_p6/
+# MISSINGGFS!!! see above line
+=======
+  export basedgfs=/$group/noscrub/$LOGNAME/o
+>>>>>>> .r25261
 
-# temperary settings  
   export TMPCOM=/com_canned
 # export TMPCOM=/com_p6
 # export TMPCOM=/com

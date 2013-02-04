@@ -16,15 +16,19 @@ echo yyyymmddcc=$yyyymmddcc
 echo basetmp=$basetmp  
 #nwgescp  `echo $yyyymmddccc | cut -c1-8` $id YES 
 
- scourcedir=/gpfs/v/mtb/noscrub/wx20dh/TSKH/ThINIT00Ie
+#scourcedir=/gpfs/v/mtb/noscrub/wx20dh/TSKH/ThINIT00Ie
+ scourcedir=/nwges_p6/prod
  expdir=$basetmp/nwges/$envir
  inidir=$basetmp/com/gens/$envir
-#mkdir -p $expdir
+ mkdir -p $expdir
  cd $expdir
  mmdd=`echo $yyyymmddcc | cut -c1-8`
  echo mmdd=$mmdd
- cp -pr $scourcedir/gefs.$mmdd .
+#cp -pr $scourcedir/gefs.$mmdd .
+ mkdir gefs.$mmdd
  cd gefs.$mmdd
+ cp -pr $scourcedir/gefs.$mmdd/*t00z*anl* .
+#cd gefs.$mmdd
  for id in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20
  do
 
@@ -35,15 +39,15 @@ echo basetmp=$basetmp
    cp -pr gec00.t00z.sfcanl gep$id\.t00z.sfcanl
   fi
 
-#  for sub in .cycfs06 .cycfs12 .cycfs18
-#  do
-# if [[ -f gep$id\.t00z.sfcanl$sub ]]; then
-#  echo gep$id\.t00z.sfcanl$sub alread exist
-# else
-#  echo gep$id\.t00z.sfcanl$sub does not exist, copy from gec00.t00z.sfcanl
-#  cp -pr gec00.t00z.sfcanl gep$id\.t00z.sfcanl$sub
-# fi
-#  done
+  for sub in .cycfs06 .cycfs12 .cycfs18
+  do
+  if [[ -f gep$id\.t00z.sfcanl$sub ]]; then
+   echo gep$id\.t00z.sfcanl$sub alread exist
+  else
+   echo gep$id\.t00z.sfcanl$sub does not exist, copy from gec00.t00z.sfcanl
+   cp -pr gec00.t00z.sfcanl gep$id\.t00z.sfcanl$sub
+  fi
+  done
 
  done
  mkdir -p $inidir\/gefs.$mmdd\/00/init
