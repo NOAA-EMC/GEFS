@@ -29,6 +29,7 @@ export pgm=global_ensadd
 . prep_step
 
 startmsg
+#DHOU, 01/21/2013 , For prod, EXECGLOBAL=EXECgefs, should be no problem
 #eval $EXECGLOBAL/global_ensadd <<EOF >> $pgmout 2> errfile
 eval $EXECgefs/global_ensadd <<EOF >> $pgmout 2> errfile
  &namin

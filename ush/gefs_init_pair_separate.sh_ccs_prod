@@ -1,4 +1,3 @@
-#!/bin/ksh -l
 ###testb
 # lines between ###testb and ###teste not needed for production
 ###teste
@@ -526,14 +525,7 @@ else
   ln -sf /dev/null sig_zvdo
 fi
 echo ifinn$ipair > sig_zvdl
-
-## kate 04/26/2012
-if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 $EXECGLOBAL/global_sigzvd
-else
-$basesource/nw${envir}/exec/global_sigzvd
-fi
-
 ret_sigzvd=$?
 
 ln -sf finp sig_zvdi
@@ -543,31 +535,15 @@ else
   ln -sf /dev/null sig_zvdo
 fi
 echo ifinp$ipair > sig_zvdl
-
-## kate 04/26/2012
-if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 $EXECGLOBAL/global_sigzvd
-else
-$basesource/nw${envir}/exec/global_sigzvd
-fi
-
 ret_sigzvd=$?
 
 #
 #  Separate the storm and environment forecast fields
 #
 echo `date` relocflag=$relocflag relocpertflag=$relocpertflag
-###testb
-if [[ $envir = prod ]]; then
-###teste
-execseparate=$EXECGLOBAL/gefs_vortex_separate
-###testb
-elif [[ $envir = para ]] || [[ $envir = test ]]; then
-execseparate=/nw$envir/exec/gefs_vortex_separate
-else
-execseparate=$basesource/nw$envir/exec/gefs_vortex_separate
-fi
-###teste
+execseparate=${execseparate:-$EXECgefs/gefs_vortex_separate}
+
 if (( relocpertflag == 1 )); then
   echo `date` Separate the storm and environment forecast fields for n$ipair begin
 
@@ -662,12 +638,7 @@ else
   ln -sf /dev/null sig_zvdo
 fi
 echo sfinn$ipair > sig_zvdl
-## kate 04/26/2012
-if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 $EXECGLOBAL/global_sigzvd
-else
-$basesource/nw${envir}/exec/global_sigzvd
-fi
 ret_sigzvd=$?
 
 ln -sf finp sig_zvdi
@@ -677,12 +648,7 @@ else
   ln -sf /dev/null sig_zvdo
 fi
 echo sfinp$ipair > sig_zvdl
-## kate 04/26/2012
-if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 $EXECGLOBAL/global_sigzvd
-else
-$basesource/nw${envir}/exec/global_sigzvd
-fi
 ret_sigzvd=$?
 
 if (( ipair > nhrpair )); then
@@ -720,17 +686,7 @@ do
   if (( IDVC == 2 )); then
     export SIGLEVEL=$FIXGLOBAL/global_hyblev.l${LEVS}.txt
   fi
-###testb
-if [[ $envir = prod ]]; then
-###teste
-  export SIGINP=$FIXGLOBAL/gefs.pertback.$cycle_fcst.${meml}${ipair}
-###testb
-elif [[ $envir = para ]] || [[ $envir = test ]]; then
-  export SIGINP=/nw${envir}/fix/gefs.pertback.$cycle_fcst.${meml}${ipair}
-else
-  export SIGINP=$basesource/nw${envir}/fix/gefs.pertback.$cycle_fcst.${meml}${ipair}
-fi
-###teste
+  export SIGINP=$FIXgefs/gefs.pertback.$cycle_fcst.${meml}${ipair}
   export SFCINP=NULL
   export SIGOUT=$DATALOCAL/gefs.pertback.$cycle_fcst.${meml}${ipair}
   export SFCOUT=sfcout

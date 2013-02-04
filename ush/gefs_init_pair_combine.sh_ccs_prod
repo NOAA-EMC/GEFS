@@ -1,4 +1,3 @@
-#!/bin/ksh  -l
 ###testb
 # lines between ###testb and ###teste not needed for production
 ###teste
@@ -253,17 +252,7 @@ ret_sigzvd=$?
 #
 echo relocflag=$relocflag relocpertflag=$relocpertflag
 echo relocfact=$relocfact
-###testb
-if [[ $envir = prod ]]; then
-###teste
-execcombine=$EXECGLOBAL/gefs_vortex_combine
-###testb
-elif [[ $envir = para ]] || [[ $envir = test ]]; then
-execcombine=/nw$envir/exec/gefs_vortex_combine
-else
-execcombine=$basesource/nw$envir/exec/gefs_vortex_combine
-fi
-###teste
+execcombine=${execcombine:-$EXECgefs/gefs_vortex_combine}
 if (( relocpertflag == 1 )); then
   echo Combine the storm and environment forecast fields for pair $ipair begin
 
