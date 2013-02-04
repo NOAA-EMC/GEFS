@@ -1336,13 +1336,9 @@ case $taskname in
     job_type=serial
 #   wall_clock_limit="00:19:00"
 #   resources="ConsumableCpus(1) ConsumableMemory(1650 MB)" #droped for Zeus
-<<<<<<< .mine
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="00:10"
   fi  
-=======
-    wall_clock_limit="00:10"
->>>>>>> .r25261
     resources="1650M"
   ;;
   (init.separate)
