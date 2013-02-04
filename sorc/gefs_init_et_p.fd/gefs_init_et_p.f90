@@ -736,7 +736,7 @@ subroutine Compute_gC
 ! kate        CALL MPI_SCATTER(gf1_fullrecord,nd3local,MPI_DOUBLE_PRECISION,gf1,nd3local,MPI_DOUBLE_PRECISION,0,MPI_COMM_col_group,ierr)
         CALL MPI_SCATTER(gf1_fullrecord,nd1local,MPI_DOUBLE_PRECISION,gf1,nd1local,MPI_DOUBLE_PRECISION,0,MPI_COMM_col_group,ierr)    !kate
      endif
-print*,'gf1',mype,size(gf1,1),size(gf1,2),'numbers',gf1(1:4,1),gf1(size(gf1,2)/2+1:size(gf1,2)/2+4,1)
+!print*,'gf1',mype,size(gf1,1),size(gf1,2),'numbers',gf1(1:4,1),gf1(size(gf1,2)/2+1:size(gf1,2)/2+4,1)
 
 
 ! define the "desc" parameter for arrays A, B, and C
@@ -1777,7 +1777,8 @@ subroutine factor_t(nlevmask,ftt,nrec1,ilon,ilat,grida,scf)
   real*8 ftt,scf,trms
 !  real grid(ilon,ilat)
   
-  nt = nlevmask
+!  nt = nlevmask
+  nt = 14
   print *, ' in gefs_init_et, starting factor_t.exe '
 !  grid = 0.0
   trms = 0.0
@@ -2662,7 +2663,7 @@ subroutine smooth(cofi,cofo,iord,sizeofsm,jcap)
   allocatable funct(:)
   allocate(funct(jcap+1))
   xsize=sizeofsm
-  print'('' xsize='',e12.6,i5)',xsize,iord
+  print'('' xsize='',e13.6,i5)',xsize,iord
   do i=1,jcap+1
      funct(i)=0.0
   enddo
