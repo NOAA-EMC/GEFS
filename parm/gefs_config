@@ -18,12 +18,16 @@ then
 
 # export HOMEglobal=/climate/save/wx22yz/gefs/nwdev
 ################# lines between these markers have been modified for dev begin
-# export HOMEglobal=/nwprod
+  export HOMEglobal=/nwprod
 #DHOU 20120306 FOR ZEUS
+   if [[ $gefsmachine = zeus ]]; then
 # export HOMEglobal=/scratch2/portfolios/NCEPDEV/global/save/Shrinivas.Moorthi/para
   export HOMEglobal=/scratch1/portfolios/NCEPDEV/ensemble/save/Dingchen.Hou/nwzeus
+   fi 
 #DHOU 20130110 FOR WCOSS
+   if [[ $gefsmachine = wcoss ]]; then
   export HOMEglobal=/ensemble/noscrub/Dingchen.Hou/nwprod
+   fi
 ################# lines between these markers have been modified for dev end
   export EXECglobal=$HOMEglobal/exec
   export FIXglobal=$HOMEglobal/fix
@@ -32,7 +36,6 @@ then
   export SCRIPTSglobal=$HOMEglobal/scripts
 
   export HOMEGLOBAL=/nwprod
-#DHOU 20120306 FOR ZEUS
   export EXECGLOBAL=$HOMEGLOBAL/exec
   export FIXGLOBAL=$HOMEGLOBAL/fix
   export PARMGLOBAL=$HOMEGLOBAL/parm

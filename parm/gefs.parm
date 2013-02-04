@@ -3,9 +3,9 @@
 ###################################################################
 
 #This will be used in JGEFS_FORECAST script
-export GFS_VERSION=gefs_prod
 export GFS_VERSION=gfs_prod
-#DHOU 03/07/2012
+export GFS_VERSION=gefs_prod
+export GFS_VERSION=gfs_fcst
 export GFS_VERSION=gefs_fcst
 
 ##############################################
@@ -32,8 +32,8 @@ export fhmaxh=$fhmax
 # For Extended forecast from 384-840 hours
 export fhmax_ext=840
 
-export fhrp=06
 export fhrp=24
+export fhrp=06
 #
 # 3-hourly output: fhmax3 must be less than fhmaxh
 if (( fhmaxh > 126 )); then
@@ -203,16 +203,16 @@ if [[ $envir = dev ]]; then
   export fhmax06=384
   export fhmax12=384
   export fhmax18=384
-  # cycling forecasts only
-  export fhmax00=06
-  export fhmax06=06
-  export fhmax12=06
-  export fhmax18=06
-  # 00Z long forecasts only
-  export fhmax00=384
-  export fhmax06=06
-  export fhmax12=06
-  export fhmax18=06
+# # cycling forecasts only
+# export fhmax00=06
+# export fhmax06=06
+# export fhmax12=06
+# export fhmax18=06
+# # 00Z long forecasts only
+# export fhmax00=384
+# export fhmax06=06
+# export fhmax12=06
+# export fhmax18=06
 
  
 #DHOU 08/05/2010, add this block to modify these realed variables
@@ -259,8 +259,8 @@ if [[ $envir = dev ]]; then
   fi
 
   export gfssource=dev
-  export gfssource=prod
   export gfssource=para
+  export gfssource=prod
 
   # new variables to specify locations of scripts and codes
   #
@@ -277,20 +277,24 @@ if [[ $envir = dev ]]; then
   export locsighdrexec=prod
 #DHOU 03/29/2012 Add this for ZEUS
   export locsighdrexec=zeus
+#DHOU 01/18/2013 Add this for WCOSS
+  export locsighdrexec=wcoss
 
   export locchgresush=test
   export locchgresush=local
   export locchgresush=/nwprod/ush/global_chgres.sh
   export locchgresush=para
-  export locchgresush=prod
   export locchgresush=zeus
+  export locchgresush=prod
+  export locchgresush=wcoss
 
   export locchgresexec=test
   export locchgresexec=local
   export locchgresexec=/global/save/wx23sm/2jif/f2007_oct/global_chgres.fd/global_chgres
   export locchgresexec=para
-  export locchgresexec=prod
   export locchgresexec=zeus
+  export locchgresexec=prod
+  export locchgresexec=wcoss
 
   export locfcstconchome=local
   export locfcstconchome=para
@@ -382,8 +386,8 @@ if [[ $envir = dev ]]; then
   # run the gfs prdgen job or not
   # test means run only if the gfs master post files exist
   export rungfsprdgen=yes
-  export rungfsprdgen=test
   export rungfsprdgen=no
+  export rungfsprdgen=test
 
   # archive and cleanup if cyc ne 0
   export runarchcyc=1
@@ -396,8 +400,8 @@ if [[ $envir = dev ]]; then
   export runcleancyc=1
 
   # run cycling forecasts or not
-  export runcyclingf=yes
   export runcyclingf=no
+  export runcyclingf=yes
 
   # set all the following "make" and "save" flags to "yes" to simulate production
   export makepgrba=yes
