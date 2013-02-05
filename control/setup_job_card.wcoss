@@ -15,8 +15,8 @@ echo
 #BSUB -o $plcomout/$jobname.$yymmddhhmmss.o
 #BSUB -e $plcomout/$jobname.$yymmddhhmmss.o
 #BSUB -W $wall_clock_limit
-##BSUB -q "hpc_ibm" 
-#BSUB -q "dev" 
+#BSUB -q "hpc_ibm" 
+##BSUB -q "dev" 
 #
 #
 eofCAT
