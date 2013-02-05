@@ -193,5 +193,5 @@ else
 fi
 echo $F77M
 ##make -f Makefile
-##make -f makefile.TIDE.omp.intel_v2
  make -f makefile.WCOSS.omp.intel
+ mv gefs_global_fcst $sorc_dir/../../exec
