@@ -9,7 +9,7 @@ echo
 #########################################################################################
 
     cat <<eofCAT >$jobcontrol
-#!/bin/ksh -l
+#!/bin/ksh
 #
 #BSUB -J $jobname.$yymmddhhmmss
 #BSUB -o $plcomout/$jobname.$yymmddhhmmss.o
@@ -17,6 +17,7 @@ echo
 #BSUB -W $wall_clock_limit
 #BSUB -q "hpc_ibm" 
 ##BSUB -q "dev" 
+#BSUB -L /bin/ksh
 #
 #
 eofCAT
@@ -64,6 +65,7 @@ module load ibmpe
 eofCAT
     fi
 
+     cat <<eofCAT >>$jobcontrol
 echo \`date\` $jobdir/$jobscript begin
 echo \`date\` env sort begin
 env | sort
@@ -73,6 +75,7 @@ export envir=$envir
 export cyc=$cyc
 export cyc_fcst=$cyc_fcst
 export job=$jobname
+eofCAT
 #DHOU 03/07/2012 1 line
 #export jobscript=$jobscript
     if [[ -n $RUN ]]; then
@@ -203,7 +206,7 @@ eofCAT
     echo `date` $0 $* write job cards for wait begin
 
         cat <<eofCAT >>$jobcontrol
-#!/bin/ksh -l
+#!/bin/ksh
 #
 #BSUB -J $jobname\.w
 #BSUB -W 0:15
@@ -212,6 +215,7 @@ eofCAT
 #BSUB -n 1
 ##BSUB -q "hpc_ibm" 
 #BSUB -q "dev" 
+#BSUB -L /bin/ksh
 #BSUB -x  
 ##BSUB -l mem=500M
 export MP_SHARED_MEMORY=yes
