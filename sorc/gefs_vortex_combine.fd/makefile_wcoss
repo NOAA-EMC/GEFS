@@ -61,7 +61,7 @@ $(CMD): $(OBJS)
 $(OBJS):        $(SRCS)
 	$(FC) $(FFLAGS) $(INCS) -c $(SRCS)
 
-$(OBJS):        makefile
+$(OBJS):        makefile_wcoss
 
 allclean:       clean all
 

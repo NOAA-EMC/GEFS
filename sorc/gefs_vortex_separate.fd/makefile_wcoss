@@ -47,7 +47,7 @@ $(CMD): $(OBJS)
 .f.o:
 	$(FC) $(FFLAGS) $(INCS) -c $<
 
-$(OBJS):        makefile
+$(OBJS):        makefile_wcoss
 
 allclean:       clean all
 
