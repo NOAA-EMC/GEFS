@@ -346,7 +346,7 @@ c read a field
 	    endif
 
             call srange(kf,lb,f,fp,dmin,dmax,dmean,adev,sdev,skew)
-            print '(i3,i3,2i5,4i3,i4,4i2,i4,i6,6g10.4)',
+            print '(i3,i3,2i5,4i3,i4,4i2,i4,i6,6g11.4)',
      &        n,(kpds(i),i=5,11),kpds(14),(kens(i),i=1,5),kf,dmin,
      &        dmax,dmean,adev,sdev,skew
 
@@ -419,21 +419,21 @@ c calculate the ensemble mean and spread
 	  print *,'number of members'
 	  call srange(kf,lb,ecnt(1),fp,dmin,dmax,dmean,
      &      adev, sdev,skew)
-	  print '(i3,i3,2i5,4i3,i4,4i2,i4,i6,6g10.4)',
+	  print '(i3,i3,2i5,4i3,i4,4i2,i4,i6,6g11.4)',
      &      n,(kpds(i),i=5,11),kpds(14),(kens(i),i=1,5),kf,dmin,
      &       dmax,dmean,adev,sdev,skew
 	  print *
 	  print *,'ensemble totals'
 	  call srange(kf,lb,eatot(1),fp,dmin,dmax,dmean,
      &      adev, sdev,skew)
-	  print '(i3,i3,2i5,4i3,i4,4i2,i4,i6,6g10.4)',
+	  print '(i3,i3,2i5,4i3,i4,4i2,i4,i6,6g11.4)',
      &      n,(kpds(i),i=5,11),kpds(14),(kens(i),i=1,5),kf,dmin,
      &       dmax,dmean,adev,sdev,skew
 	  print *
 	  print *,'ensemble square totals'
 	  call srange(kf,lb,evtot(1),fp,dmin,dmax,dmean,
      &      adev, sdev,skew)
-	  print '(i3,i3,2i5,4i3,i4,4i2,i4,i6,6g10.4)',
+	  print '(i3,i3,2i5,4i3,i4,4i2,i4,i6,6g11.4)',
      &      n,(kpds(i),i=5,11),kpds(14),(kens(i),i=1,5),kf,dmin,
      &       dmax,dmean,adev,sdev,skew
 	  do ii=1,kf
@@ -462,21 +462,21 @@ c in the variance calculation
           print *,'ensemble mean'
           call srange(kf,lb,eavg(1),fp,dmin,dmax,dmean,
      &      adev, sdev,skew)
-          print '(i3,i3,2i5,4i3,i4,4i2,i4,i6,6g10.4)',
+          print '(i3,i3,2i5,4i3,i4,4i2,i4,i6,6g11.4)',
      &      n,(kpds(i),i=5,11),kpds(14),(kens(i),i=1,5),kf,dmin,
      &       dmax,dmean,adev,sdev,skew
           print *
           print *,'ensemble variance'
           call srange(kf,lb,evar(1),fp,dmin,dmax,dmean,
      &      adev, sdev,skew)
-          print '(i3,i3,2i5,4i3,i4,4i2,i4,i6,6g10.4)',
+          print '(i3,i3,2i5,4i3,i4,4i2,i4,i6,6g11.4)',
      &      n,(kpds(i),i=5,11),kpds(14),(kens(i),i=1,5),kf,dmin,
      &       dmax,dmean,adev,sdev,skew
           print *
           print *,'ensemble standard deviation'
           call srange(kf,lb,estd(1),fp,dmin,dmax,dmean,
      &      adev, sdev,skew)
-          print '(i3,i3,2i5,4i3,i4,4i2,i4,i6,6g10.4)',
+          print '(i3,i3,2i5,4i3,i4,4i2,i4,i6,6g11.4)',
      &      n,(kpds(i),i=5,11),kpds(14),(kens(i),i=1,5),kf,dmin,
      &       dmax,dmean,adev,sdev,skew
           print *
@@ -707,8 +707,8 @@ C$$$
       logical*1 ld
       logical fprint
       dimension ld(n),d(n)
-      dmin=1.e40
-      dmax=-1.e40
+      dmin=1.e30
+      dmax=-1.e30
       sa=0.0
       ptsn=0.0
       do i=1,n
