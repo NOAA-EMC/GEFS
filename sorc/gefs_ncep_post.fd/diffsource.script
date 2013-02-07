@@ -1,0 +1,10 @@
+#
+for i in `ls *.f`
+do
+diff $i /global/save/Hui-Ya.Chuang/nceppost/WCOSS_transition/src/$i  >  $i.diff
+done
+
+for i in `ls *.F`
+do
+diff $i /global/save/Hui-Ya.Chuang/nceppost/WCOSS_transition/src/$i  >  $i.diff
+done
