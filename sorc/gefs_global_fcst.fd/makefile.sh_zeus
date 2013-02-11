@@ -1,4 +1,0 @@
-#!/bin/ksh
- make -f makefile.zeus.omp.intel
-cp f.applic.omp.x ../exec/global_fcst
-cp f.applic.omp.x $HOME/t/nwprod/exec/global_fcst
