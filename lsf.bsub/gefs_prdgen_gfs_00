@@ -1,0 +1,122 @@
+#!/bin/ksh
+#
+#BSUB -J Jc2012102100092.130212154701
+#BSUB -o /ptmp/Dingchen.Hou/o/tdJc/com/output/dev/20121021/Jc2012102100092.130212154701.o
+#BSUB -e /ptmp/Dingchen.Hou/o/tdJc/com/output/dev/20121021/Jc2012102100092.130212154701.o
+#BSUB -W 1:30
+#BSUB -q "hpc_ibm" 
+##BSUB -q "dev" 
+#BSUB -L /bin/ksh
+#
+#
+##BSUB -l mem=ConsumableMemory(500 MB)
+module load ics
+echo `date` /ensemble/save/Dingchen.Hou/WCOSS/tdJc/nwdev/jobs/JGEFS_PRDGEN_GFS.sms.dev begin
+echo `date` env sort begin
+env | sort
+echo `date` env sort end
+
+export envir=dev
+export cyc=00
+export cyc_fcst=00
+export job=Jc2012102100092
+# export for development runs only begin
+pwdsave=$(pwd)
+echo $pwdsave
+cd /ensemble/save/Dingchen.Hou/WCOSS/tdJc/nwdev/control
+. /ensemble/save/Dingchen.Hou/WCOSS/tdJc/nwdev/control/setbase
+. /ensemble/save/Dingchen.Hou/WCOSS/tdJc/nwdev/parm/gefs.parm
+cd 
+export RUN_ENVIR=dev
+export gefsmachine=wcoss
+export gefsmpexec=mpirun.lsf
+export jjj=092
+export jjje=999
+export yyyymmddcc=2012102100
+export yyyymmddcce=2012102318
+export yyyymmddccjjj=2012102100092
+export yyyymmddccjjje=2012102318999
+# export yyyymmddccc  #DHOU, 09/09/2010 ad this to facilitate job 000
+# RLW disabled since the copy of initial conditions is moved into this script
+#if (( jjj == 000 )); then
+#  export yyyymmddccc=
+#fi
+export PDYp2=20121023
+export PDYp1=20121022
+export PDY=20121021
+export PDYm1=20121020
+export PDYm2=20121019
+export PDYm3=20121018
+export PDYm4=20121017
+export PDYm5=20121016
+export id=Jc
+export expid=tdJc
+export basesource=/ensemble/save/Dingchen.Hou/WCOSS/tdJc
+export baseoutput=/ptmp/Dingchen.Hou/o/tdJc
+export baseinitarch=/global/mirror/Dingchen.Hou/o/tdJc
+export basetmp=/ptmp/Dingchen.Hou/o/tdJc
+export baseptmp=/ptmp/Dingchen.Hou/o/tdJc
+export basebin=/global/save/Dingchen.Hou/s/tdJc/nwdev/control
+export baselog=/ptmp/Dingchen.Hou/o/tdJc
+export basedgfs=
+export basedgens=/ptmp/Dingchen.Hou/o
+echo `date` env sort begin
+env | sort
+echo `date` env sort end
+# export for development runs only end
+
+pwdsave=`pwd`
+
+echo `date` ./gefsrun 2012102100092 2012102318999 next submit for dev before begin
+
+cd /ensemble/save/Dingchen.Hou/WCOSS/tdJc/nwdev/control
+./gefsrun 2012102100092 2012102318999 nextbefore 2>&1
+rc=$?
+echo `date` ./gefsrun 2012102100092 2012102318999 nextbefore rc=$rc
+cd $pwdsave
+echo `date` ./gefsrun 2012102100092 2012102318999 next submit for dev before end
+
+echo `date` /ensemble/save/Dingchen.Hou/WCOSS/tdJc/nwdev/jobs/JGEFS_PRDGEN_GFS.sms.dev run before
+
+echo
+ls -al /ensemble/save/Dingchen.Hou/WCOSS/tdJc/nwdev/jobs/JGEFS_PRDGEN_GFS.sms.dev
+echo
+
+# CALL executable job script here
+/ensemble/save/Dingchen.Hou/WCOSS/tdJc/nwdev/jobs/JGEFS_PRDGEN_GFS.sms.dev
+
+echo
+ls -al /ensemble/save/Dingchen.Hou/WCOSS/tdJc/nwdev/jobs/JGEFS_PRDGEN_GFS.sms.dev
+echo
+
+echo `date` /ensemble/save/Dingchen.Hou/WCOSS/tdJc/nwdev/jobs/JGEFS_PRDGEN_GFS.sms.dev run after
+
+echo `date` ./gefsrun  2012102100092 2012102318999 next submit for dev after begin
+
+cd /ensemble/save/Dingchen.Hou/WCOSS/tdJc/nwdev/control
+./gefsrun 2012102100092 2012102318999 nextafter 2>&1
+rc=$?
+echo `date` ./gefsrun 2012102100092 2012102318999 nextafter rc=$rc
+
+cd $pwdsave
+echo `date` ./gefsrun  2012102100092 2012102318999 next submit for dev after end
+
+echo `date` /ensemble/save/Dingchen.Hou/WCOSS/tdJc/nwdev/jobs/JGEFS_PRDGEN_GFS.sms.dev end
+echo `date` test output files begin
+cd /ptmp/Dingchen.Hou/o/tdJc/com/output/dev/20121021
+cd ..
+pwd
+#echo TEST TESTS output check disabled TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST
+#rc=0
+#DHOU 03/09/2012
+#/global/save/wx20rw/h/bin/hpss.put.output.day >/dev/null 2>&1
+rc=$?
+if (( rc == 0 )); then
+  echo do not reset waitflag because rc=$rc
+else
+  echo reset waitflag because rc=$rc
+  echo waitflag=`cat /ensemble/save/Dingchen.Hou/WCOSS/tdJc/nwdev/control/waitfile.t` before
+  echo yes>/ensemble/save/Dingchen.Hou/WCOSS/tdJc/nwdev/control/waitfile.t
+  echo waitflag=`cat /ensemble/save/Dingchen.Hou/WCOSS/tdJc/nwdev/control/waitfile.t` after
+fi
+echo `date` test output files end
