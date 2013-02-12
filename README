@@ -28,6 +28,11 @@ issue the command
 make -f makefile_wcoss
 and mv the executable to util/exec
 
+NOTE:  warning messages are normally given by 
+ens_trak_ave, about misalignment, as on the CCS
+gefs_global_forecast
+gefs_ncep_post
+
 To run as prod or para, 
 
 create jobcards for ecflow based on the files in the subdirectory lsf.bjob
