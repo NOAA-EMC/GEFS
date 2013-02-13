@@ -56,8 +56,7 @@ Create job cards for ecflow based on the files in the subdirectory job_cards
 
 Set job dependencies corresponding to those used in GEFS on the CCS
 
-Use the *.dev versions of the j-job scripts.  ccs versions are
-included for reference if necessary.
+Use the *.dev versions of the j-job scripts
 
 When the j-jobs are renamed, the job cards will need to be edited to
 point to them.
