@@ -1,38 +1,38 @@
-To run on WCOSS:
+To set up on WCOSS:
 
-Create your directory
+cd to your base directory
 /nw(envir)
+(to run as production)
 or
-........../nw{envir}
-
-cd to this directory
+[your directory]/[4 character identifier]/nwdev
+(to run as development)
 
 Check out 
 svnemc.ncep.noaa.gov/projects/gefs/tags/gefs_10.1.0_wcoss_production
 or the tag for a later update
 
-NOTE:  
-the "control" subdirectory contains the scripts and files used to run 
-this system as a development user.  It is not needed for production.
-The "sms.prod.20110518" subdirectory contains SMS job scripts from CCS
-production.  These are available for reference.
+NOTE:  the "control" subdirectory contains the scripts and files used to 
+run this system as a development user.  It is not needed for production.
 
-create the exec and util/exec subdirectories
+NOTE:  The "sms.prod.20110518" subdirectory contains SMS job scripts from 
+CCS production.  These are available for reference.
 
-In the source directories:
+Create the exec and util/exec subdirectories.
 
-in sorc/gefs_global_fcst.fd
-execute the script 
-makefile_wcoss.sh
+Make the executables in the subdirectories of sorc and util/sorc:
 
-in other source directories, issue the command
-make -f makefile_wcoss
-and mv the executable to the exec subdirectory
-
-in util/sorc/gefs_trak_ave.fd
+In util/sorc/gefs_trak_ave.fd
 issue the command
 make -f makefile_wcoss
 and mv the executable to util/exec
+
+In sorc/gefs_global_fcst.fd
+execute the script 
+makefile_wcoss.sh
+
+In other source directories, issue the command
+make -f makefile_wcoss
+and mv the executable to the exec subdirectory
 
 NOTE:  warning messages are normally given during the compilation of the
 following codes:
@@ -45,12 +45,16 @@ does not affect the products:  it is only included to facilitate mirroring
 of restart files from the production to the development machine.  We will
 submit an update when this job is ready.
 
+NOTE:  the CPQF job is not yet ready for production yet;  the codes are 
+included but not the scripts
 
-To run as prod or para, 
 
-create job cards for ecflow based on the files in the subdirectory job_cards
+To run GEFS as prod or para, 
 
-set job dependencies corresponding to those used in GEFS on the CCS
+
+Create job cards for ecflow based on the files in the subdirectory job_cards
+
+Set job dependencies corresponding to those used in GEFS on the CCS
 
 Use the *.dev versions of the j-job scripts.  ccs versions are
 included for reference if necessary.
@@ -61,7 +65,9 @@ point to them.
 If the ex scripts are renamed, the j-jobs will need to be edited to
 point to them.
 
-GEFS can be started running in either of these ways:
+
+GEFS can be started running by either of these methods:
+
 
 1.  If sfcsig (at least the sf06 files) and tracks are available for
 the previous cycle, start with the gefs_init_separate job.
@@ -76,6 +82,6 @@ and gefs_forecast_high jobs.
 
 
 
-To run as a development user, follow the directions as written for the 
+To run GEFS as a development user, follow the directions as written for the 
 CCS in README.CCS
 
