@@ -28,21 +28,42 @@ issue the command
 make -f makefile_wcoss
 and mv the executable to util/exec
 
-NOTE:  warning messages are normally given by 
+
+NOTE:  warning messages are normally given during the compilation of the
+following codes:
 ens_trak_ave, about misalignment, as on the CCS
 gefs_global_forecast
 gefs_ncep_post
 
+NOTE:  the restart_copy job is not ready for production yet.  This job 
+does not affect the products:  it is only included to facilitate mirroring 
+of restart files from the production to the development machine.  We will
+submit an update when this job is ready.
+
+
 To run as prod or para, 
 
-create jobcards for ecflow based on the files in the subdirectory lsf.bjob
+create job cards for ecflow based on the files in the subdirectory job_cards
 
 set job dependencies corresponding to those used in GEFS on the CCS
+
+Use the *.dev versions of the j-job scripts.  ccs versions are
+included for reference if necessary.
+
+When the j-jobs are renamed, the job cards will need to be edited to
+point to them.
+
+If the ex scripts are renamed, the j-jobs will need to be edited to
+point to them.
 
 GEFS can be started running in either of these ways:
 
 1.  If sfcsig (at least the sf06 files) and tracks are available for
 the previous cycle, start with the gefs_init_separate job.
+
+In testing with com_canned, we copied these directories for 2012102100 
+and started running GEFS with initialization for 2012102106 .
+
 
 2.  If the initial conditions are available in /nwges and in the
 init subdirectory for the current cycle, start with the gefs_gfs_prdgen
@@ -50,6 +71,6 @@ and gefs_forecast_high jobs.
 
 
 
-To run as a development user, follow the directions 
-as written for the CCS in readme.ccs
+To run as a development user, follow the directions as written for the 
+CCS in README.CCS
 
