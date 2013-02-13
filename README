@@ -8,12 +8,18 @@ or
 cd to this directory
 
 Check out 
-svnemc.ncep.noaa.gov/projects/gefs/branches/wcoss_production_initial
-or the appropriate tag on this branch
+svnemc.ncep.noaa.gov/projects/gefs/tags/gefs_10.1.0_wcoss_production
+or the tag for a later update
+
+NOTE:  
+the "control" subdirectory contains the scripts and files used to run 
+this system as a development user.  It is not needed for production.
+The "sms.prod.20110518" subdirectory contains SMS job scripts from CCS
+production.  These are available for reference.
 
 create the exec and util/exec subdirectories
 
-In the source direcctories:
+In the source directories:
 
 in sorc/gefs_global_fcst.fd
 execute the script 
@@ -27,7 +33,6 @@ in util/sorc/gefs_trak_ave.fd
 issue the command
 make -f makefile_wcoss
 and mv the executable to util/exec
-
 
 NOTE:  warning messages are normally given during the compilation of the
 following codes:
