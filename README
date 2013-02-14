@@ -1,4 +1,4 @@
-To set up on WCOSS:
+To set up GEFS on WCOSS:
 
 cd to your base directory
 /nw(envir)
@@ -14,8 +14,8 @@ or the tag for a later update
 NOTE:  the "control" subdirectory contains the scripts and files used to 
 run this system as a development user.  It is not needed for production.
 
-NOTE:  The "sms.prod.20110518" subdirectory contains SMS job scripts from 
-CCS production.  These are available for reference.
+NOTE:  The "sms.prod.20110518" subdirectory contains SMS job card 
+scripts from CCS production.  These are available for reference.
 
 Create the exec and util/exec subdirectories.
 
@@ -28,7 +28,7 @@ and mv the executable to util/exec
 
 In sorc/gefs_global_fcst.fd
 execute the script 
-makefile_wcoss.sh
+makefile.sh_wcoss
 
 In other source directories, issue the command
 make -f makefile_wcoss
@@ -41,12 +41,12 @@ gefs_global_forecast
 gefs_ncep_post
 
 NOTE:  the restart_copy job is not ready for production yet.  This job 
-does not affect the products:  it is only included to facilitate mirroring 
-of restart files from the production to the development machine.  We will
+does not affect the products:  it is only run to facilitate mirroring of 
+restart files from the production to the development machine.  We will
 submit an update when this job is ready.
 
-NOTE:  the CPQF job is not yet ready for production yet;  the codes are 
-included but not the scripts
+NOTE:  the CPQF job is not yet ready for production yet.  We will submit
+an update when this job and its codes are ready.
 
 
 To run GEFS as prod or para, 
