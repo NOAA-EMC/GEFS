@@ -6,7 +6,7 @@
 #######################################################
 if [ $RUN_ENVIR = dev ]
 then
-  export HOMEgefs=/climate/save/wx22yz/gefs/nwdev
+# export HOMEgefs=/climate/save/wx22yz/gefs/nwdev
 ################# lines between these markers have been modified for dev begin
   export HOMEgefs=$basesource/nwdev
 ################# lines between these markers have been modified for dev end
@@ -16,9 +16,18 @@ then
   export USHgefs=$HOMEgefs/ush
   export SCRIPTSgefs=$HOMEgefs/scripts
 
-  export HOMEglobal=/climate/save/wx22yz/gefs/nwdev
+# export HOMEglobal=/climate/save/wx22yz/gefs/nwdev
 ################# lines between these markers have been modified for dev begin
   export HOMEglobal=/nwprod
+#DHOU 20120306 FOR ZEUS
+   if [[ $gefsmachine = zeus ]]; then
+# export HOMEglobal=/scratch2/portfolios/NCEPDEV/global/save/Shrinivas.Moorthi/para
+  export HOMEglobal=/scratch1/portfolios/NCEPDEV/ensemble/save/Dingchen.Hou/nwzeus
+   fi 
+#DHOU 20130110 FOR WCOSS
+   if [[ $gefsmachine = wcoss ]]; then
+  export HOMEglobal=/ensemble/noscrub/Dingchen.Hou/nwprod
+   fi
 ################# lines between these markers have been modified for dev end
   export EXECglobal=$HOMEglobal/exec
   export FIXglobal=$HOMEglobal/fix
@@ -34,16 +43,22 @@ then
   export SCRIPTSGLOBAL=$HOMEGLOBAL/scripts
 
 ################# lines between these markers have been modified for dev begin
+#DHOU 03/09/2012, jobscript is not defined, NEED attention but it may be used for special function
+#DHOU 03/20/2012, the fist if block is used to pointing to the fix file in /nwprod/
+echo jobscript= $jobscript
+#DHOU 01/07/2013, temporally remove this if bloc for WCOSS run
   if [[ $jobscript != exgefs_init_et.sms.sh ]]; then
     export FIXgefs=$FIXGLOBAL
   fi
   if [[ $jobscript = exgefs_fcst_conc.sms.sh ]]; then
     export USHgefs=$USHGLOBAL
   fi
+# This is the temporary remedy DHOU 03/09/2012
 ################# lines between these markers have been modified for dev end
   export fcstscript=$HOMEGLOBAL/scripts/exglobal_fcst.sh.sms
   export FCSTEXEC=$EXECGLOBAL/global_fcst
-  export FNVETC=$FIXgefs/gefs_global_vegtype.1x1.grb
+#  export FNVETC=$FIXgefs/gefs_global_vegtype.1x1.grb
+#  export FNVETC=$FIXgefs/global_vegtype.1x1.grb
   export FCSTCONCEXEC=$EXECgefs/gefs_fcst_conc
   export fcstconcscript=$SCRIPTSgefs/exgefs_fcst_conc.sh.sms
 

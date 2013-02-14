@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ksh
 #
 # set up base variables
 # execute with dot
@@ -11,13 +11,22 @@ echo
 echo `date` $0 set environment and experiment id
 echo
 
-#envir=$(basename $(dirname $(pwd) ) | cut -c3-)
+#DHOU, 01/03/2013 add this block to generate the machine name related variables
+  machl=`uname -n | cut -c1`
+  if [[ $machl = r ]]; then
+      machl=f
+  fi
+
+envir=$(basename $(dirname $(pwd) ) | cut -c3-)
 echo envir=$envir
 
-#expid=$(basename $(dirname $(dirname $(pwd) ) ) )
-#id=`echo $expid|cut -c3-4`
+expid=$(basename $(dirname $(dirname $(pwd) ) ) )
+id=`echo $expid|cut -c3-4`
 echo expid=$expid
 echo id=$id
+
+#echo $LOGNAME
+#exit
 
 echo
 echo `date` $0 set directory tree locations
@@ -53,6 +62,8 @@ else
 
   export basesource=/global/save/$LOGNAME/s/$expid
   export baseoutput=/ptmp/$LOGNAME/o/$expid
+  export basetmp=/ptmp/$LOGNAME/o/$expid
+  export baseptmp=/ptmp/$LOGNAME/o/$expid
 
 # For VAPOR
 # PTMP=/ptmp/$LOGNAME/tskh
@@ -63,8 +74,6 @@ else
 # export baseoutput=$PTMP/o/$expid
 # For VAPOR end
 
-  export basetmp=/ptmp/$LOGNAME/o/$expid
-  export baseptmp=/ptmp/$LOGNAME/o/$expid
 # For VAPOR
 # export basetmp=$PTMP/o/$expid
 # export baseptmp=$PTMP/o/$expid
@@ -82,12 +91,53 @@ else
 # export basedgens=$PTMP/o
 # For VAPOR end
 
+#For ZEUS
+if [[ $machl = f ]]; then
+  ZENS=/scratch1/portfolios/NCEPDEV/ensemble
+  ZPTP=/scratch2/portfolios/NCEPDEV/ptmp
+  ZGFS=$ZENS/noscrub
+  export basenwges=$ZGFS/$LOGNAME/NWGES
+
+  export basesource=$ZENS/save/$LOGNAME/GEFS/$expid
+  export baseoutput=$ZPTP/$LOGNAME/o/$expid
+  export basebin=$basesource/nw$envir/control
+  PTMP=$ZPTP/$LOGNAME
+  PGFS=$ZGFS/$LOGNAME/GEFS/GFS
+
+  export basetmp=$PTMP/o/$expid
+  export baseptmp=$PTMP/o/$expid
+
+  export baselog=$PTMP/o/$expid
+  export basedgfs=$PGFS/o
+  export basedgens=$PTMP/o
+fi
+#For ZEUS end
+
+#For WCOSS 
+if [[ $machl = t ]]; then
+  group=ensemble
+  group=`pwd|cut -d'/' -f2`
+  export basesource=/$group/save/$LOGNAME/WCOSS/$expid
+  export baseoutput=/ptmp/$LOGNAME/o/$expid
+  export basetmp=/ptmp/$LOGNAME/o/$expid
+  export baseptmp=/ptmp/$LOGNAME/o/$expid
+  export basedgfs=/$group/noscrub/$LOGNAME/o
+  export basedgfs=
+# export basedgfs=/ensemble/noscrub/$LOGNAME  #Use this line as alternative when gfs data is missing from /com_p6/
+# MISSINGGFS!!! see above line
+
+  export TMPCOM=/com_canned
+# export TMPCOM=/com_p6
+# export TMPCOM=/com
+fi
+#For WCOSS end
+
   export account=GEN-T2O
   export group=g01
   export group=devonprod
   export classs=1
-  export classp=dev
   export classp=devhigh
+  export classp=dev
 # For VAPOR
 # export account=MTB001-RES
 # export group=mtb
@@ -95,6 +145,28 @@ else
 # export classp=mtb
 # export classp=mtb
 # For VAPOR end
+
+if [[ $machl = f ]]; then
+# For ZEUS
+  export account=gefs
+  export group=ensemble
+  export classs=batch
+  export classp=batch
+  export classp=batch
+  export NWPROD=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/nwzeus
+# For ZEUS end
+fi  
+
+if [[ $machl = t ]]; then
+# For WCOSS
+  export account=gefs
+  export group=ensemble
+  export classs=batch
+  export classp=batch
+  export classp=batch
+# For WCOSS end
+fi  
+
 fi
 
 echo basesource=$basesource

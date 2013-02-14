@@ -1,0 +1,16 @@
+SHELL=  /bin/sh
+ISIZE = 4
+RSIZE = 4
+COMP=   ncepxlf
+LIBS=   
+#LDFLAGS= -bloadmap:loadmap -bnoquiet
+LDFLAGS= 
+#FFLAGS= -O -qcheck -qextchk -qarch=auto -qflttrap=ov:zero:inv:enable -qintsize=$(ISIZE) -qrealsize=$(RSIZE)
+#FFLAGS= -g -O0 -qcheck -qextchk -qarch=auto -qflttrap=ov:zero:inv:enable
+FFLAGS= -O -qcheck -qextchk -qarch=auto -qflttrap=ov:zero:inv:enable
+
+ens_trak_ave:      ens_trak_ave.f
+	@echo " "
+	@echo "  Compiling the ensemble track averaging program....."
+	$(COMP) $(FFLAGS) $(LDFLAGS) ens_trak_ave.f $(LIBS) -o ens_trak_ave
+	@echo " "

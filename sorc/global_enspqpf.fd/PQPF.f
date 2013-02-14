@@ -58,11 +58,16 @@ c     parameter(jf=15000,len=64,mem=11,ijd=10512)
       dimension kpds(25),kgds(22),kens(5)
       dimension kens2(mem),kens3(mem)
       logical   lb(jf)
-      character*80 cpgb,cpgi,cpge
-      character*80 crain,craini,craino
-      character*80 cfrzr,cfrzri,cfrzro
-      character*80 cicep,cicepi,cicepo
-      character*80 csnow,csnowi,csnowo
+C     character*80 cpgb,cpgi,cpge
+C     character*80 crain,craini,craino
+C     character*80 cfrzr,cfrzri,cfrzro
+C     character*80 cicep,cicepi,cicepo
+C     character*80 csnow,csnowi,csnowo
+      character*120 cpgb,cpgi,cpge
+      character*120 crain,craini,craino
+      character*120 cfrzr,cfrzri,cfrzro
+      character*120 cicep,cicepi,cicepo
+      character*120 csnow,csnowi,csnowo
       namelist /namin/icyc,cpgb,cpgi,cpge,                   
      2               crain,craini,craino,
      3               cfrzr,cfrzri,cfrzro,
@@ -339,8 +344,10 @@ C
 C$$$
       logical ld
       dimension ld(n),d(n)
-      dmin=1.e40
-      dmax=-1.e40
+C     dmin=1.e40
+C     dmax=-1.e40
+      dmin=1.e30
+      dmax=-1.e30
       do i=1,n
        if(ld(i)) then
         dmin=min(dmin,d(i))

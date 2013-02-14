@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ksh
 #####################################################################
 echo "-----------------------------------------------------"
 echo " Script: gefs_prdgen.sh" 
@@ -20,15 +20,74 @@ anlflag=$anlflag
 ffhr=$ffhr
 fhr=$fhr
 
+export WGRIB=${WGRIB:-/nwprod/util/exec/wgrib}
+export GRBIDX=${GRBIDX:-/nwprod/util/exec/grbindex}
+export ENSADD=${ENSADD:-$USHGLOBAL/global_ensadd.sh}
+export CNVGRIB=${CNVGRIB:-/nwprod/util/exec/cnvgrib}
+export COPYGB=${COPYGB:-/nwprod/util/exec/copygb}
+export WGRIB2=${WGRIB2:-/nwprod/util/exec/wgrib2}
+
+#DHOU 2/1/2013, replace block with the ccs-prod version (above)
+#export WGRIB=/nwprod/util/exec/wgrib
+#export GRBIDX=/nwprod/util/exec/grbindex
+#export ENSADD=$USHGLOBAL/global_ensadd.sh
+#export CNVGRIB=/nwprod/util/exec/cnvgrib
+##RLW 20110722 CNVGRIB TEMPORARY
+#export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib
+################################################### RLW 20110722 CNVGRIB TEMPORARY
+#export COPYGB=/nwprod/util/exec/copygb
+#export WGRIB2=/nwprod/util/exec/wgrib2
+
+if [[ $envir = dev ]]; then
+  case $gefsmachine in
+    (wcoss)
 export WGRIB=/nwprod/util/exec/wgrib
 export GRBIDX=/nwprod/util/exec/grbindex
-export ENSADD=$USHGLOBAL/global_ensadd.sh
+#export ENSADD=$USHglobal/global_ensadd.sh
+export ENSADD=$USHgefs/global_ensadd.sh
 export CNVGRIB=/nwprod/util/exec/cnvgrib
+    ;;
+    (zeus)
+#DHOU 03/22/2012 For ZEUS, copy from exgefs_nceppost.sh.sms
+export WGRIB=${WGRIB:-${EXECUTIL}/wgrib}
+export GRBIDX=${GRBIDX:-${EXECUTIL}/grbindex}
+    ;;
+  esac
+#export ENSADD=${ENSADD:-$USHGLOBAL/global_ensadd.sh}
+#export POSTGPSH=${POSTGPSH:-$USHGLOBAL/global_nceppost.sh}
+#DHOU 03/22/2012 For ZEUS, these two are not used in ceppost.sh.sms
 ################################################## RLW 20110722 CNVGRIB TEMPORARY
+  case $gefsmachine in
+    (wcoss)
+export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
+    ;;
+    (zeus)
+export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
 export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib
+    ;;
+  esac
+fi  
 ################################################## RLW 20110722 CNVGRIB TEMPORARY
-export COPYGB=/nwprod/util/exec/copygb
 export WGRIB2=/nwprod/util/exec/wgrib2
+if [[ $envir = dev ]]; then
+  case $gefsmachine in
+    (wcoss)
+export COPYGB=/nwprod/util/exec/copygb
+    ;;
+    (zeus)
+#DHOU 03/22/2012 For ZEUS, these two are not used in ceppost.sh.sms
+export COPYGB=$HOMEglobal/util/exec/copygb
+    ;;
+  esac
+fi  
+echo settings in $0 gefsmachine=$gefsmachine
+echo settings in $0 WGRIB=$WGRIB
+echo settings in $0 GRBIDX=$GRBIDX
+echo settings in $0 ENSADD=$ENSADD
+echo settings in $0 COPYGB=$COPYGB
+echo settings in $0 CNVGRIB=$CNVGRIB
+echo settings in $0 WGRIB2=$WGRIB2
+
 
 R1=`echo $RUN|cut -c1-3`
 R2=`echo $RUN|cut -c4-5`
@@ -156,17 +215,17 @@ else
       # Send DBNet alerts for PGBB and PGBB2 at 6 hour increments for up to 84 hours
       # Do for 00Z and 12Z only
       ###############################################################################
-      if test "$SENDDBN" = 'YES' -a "$NET" = 'gens' -a ` expr $cyc % 12 ` -eq 0
-      then
-	if test `echo $RUN | cut -c1-2` = "ge"
-	then
-	  MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-	  if [[ $fhr -ge 0 && $fhr -le 84 && ` expr $fhr % 6 ` -eq 0 && ! -n "$cfsuffix" ]]
-	  then
-	    $DBNROOT/bin/dbn_alert MODEL ENS_PGBB_$MEMBER $job $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbb$ffhr$cfsuffix
-	  fi
-	fi
-      fi
+      #if test "$SENDDBN" = 'YES' -a "$NET" = 'gens' -a ` expr $cyc % 12 ` -eq 0
+      #then
+        #if test `echo $RUN | cut -c1-2` = "ge"
+	#then
+	# MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
+	# if [[ $fhr -ge 0 && $fhr -le 84 && ` expr $fhr % 6 ` -eq 0 && ! -n "$cfsuffix" ]]
+	# then
+	#   $DBNROOT/bin/dbn_alert MODEL ENS_PGBB_$MEMBER $job $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbb$ffhr$cfsuffix
+	# fi
+      #fi
+     #fi
 
       ###############################################################################
       # Do Not send DBNet alerts for the PGBD files at this time
@@ -175,6 +234,16 @@ else
 fi
 echo `date` pgrba 1x1 sendcom $ffhr completed
 
+  case $gefsmachine in
+    (wcoss)
+      fmakegb2=1
+    ;;
+    (zeus)
+      fmakegb2=0
+    ;;
+  esac
+if (( fmakegb2 == 1 )); then
+#DHOU 03/23/2012, skip grib2 files for ZEUS
 ######################################
 # Step II: Create GRIB2A files
 #####################################
@@ -290,6 +359,7 @@ else
    fi
 fi
 
+fi #(0=1 foe ZEUS, skip grib2 files)
 ########################################################
 echo `date` $sname $member $partltr $cfsuffix $fsuffix 1x1 GRIB end on machine=`uname -n`
 msg='ENDED NORMALLY.'

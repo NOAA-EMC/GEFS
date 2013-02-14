@@ -1,4 +1,4 @@
-#!/usr/bin/ksh
+#!/bin/ksh
 
 export PS4=' + ens_trak_ave.sh line $LINENO: '
 
@@ -56,7 +56,10 @@ ymd=${yy}${mm}${dd}
 yyyymmdd=${cent}${yy}${mm}${dd}
 export cyc=${hh}
 
-ndate=/nwprod/util/exec/ndate
+#ndate=/nwprod/util/exec/ndate
+#DHOU 04/13/2012  for ZEUS/WCOSS portability
+export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
+ndate=$HOMEGLOBAL/util/exec/ndate
 
 export exectrkdir=${exectrkdir:-/nwprod/util/exec}
 export gltrkdir=${gltrkdir:-/com/hur/${envir}/global}
@@ -64,7 +67,10 @@ export ATCFdir=${ATCFdir:-/com/tpc/prod/atcf}
 
 cd $DATA
 
-/nwprod/util/ush/setup.sh
+#/nwprod/util/ush/setup.sh
+#DHOU 04/13/2012   changed for ZEUS/WCOSS and portability
+export utilscript=${utilscript:-/nwprod/util/exec}
+ksh $utilscript/setup.sh
 
 case ${cmodel} in
 

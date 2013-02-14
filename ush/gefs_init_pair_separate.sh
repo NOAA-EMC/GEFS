@@ -1,3 +1,4 @@
+#!/bin/ksh -l
 ###testb
 # lines between ###testb and ###teste not needed for production
 ###teste
@@ -525,7 +526,14 @@ else
   ln -sf /dev/null sig_zvdo
 fi
 echo ifinn$ipair > sig_zvdl
+
+## kate 04/26/2012
+if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 $EXECGLOBAL/global_sigzvd
+else
+$basesource/nw${envir}/exec/global_sigzvd
+fi
+
 ret_sigzvd=$?
 
 ln -sf finp sig_zvdi
@@ -535,7 +543,14 @@ else
   ln -sf /dev/null sig_zvdo
 fi
 echo ifinp$ipair > sig_zvdl
+
+## kate 04/26/2012
+if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 $EXECGLOBAL/global_sigzvd
+else
+$basesource/nw${envir}/exec/global_sigzvd
+fi
+
 ret_sigzvd=$?
 
 #
@@ -647,7 +662,12 @@ else
   ln -sf /dev/null sig_zvdo
 fi
 echo sfinn$ipair > sig_zvdl
+## kate 04/26/2012
+if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 $EXECGLOBAL/global_sigzvd
+else
+$basesource/nw${envir}/exec/global_sigzvd
+fi
 ret_sigzvd=$?
 
 ln -sf finp sig_zvdi
@@ -657,7 +677,12 @@ else
   ln -sf /dev/null sig_zvdo
 fi
 echo sfinp$ipair > sig_zvdl
+## kate 04/26/2012
+if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 $EXECGLOBAL/global_sigzvd
+else
+$basesource/nw${envir}/exec/global_sigzvd
+fi
 ret_sigzvd=$?
 
 if (( ipair > nhrpair )); then
