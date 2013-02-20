@@ -3,7 +3,8 @@ CMD=	global_enscvt24h
 #FC=     ncepxlf
 FC=     ifort
 #FOPTS=  -qsmp=noauto
-FFLAGS=  -list -traceback
+#FFLAGS=  -list -traceback -convert big_endian -assume byterecl
+FFLAGS=  -list -traceback 
 LDFLAGS=
 INCS=
 SRCS=	CVT24H.f          
