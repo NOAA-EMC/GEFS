@@ -4,7 +4,8 @@ CMD=	global_enspvrfy
 FC=     ifort
 #FOPTS=  -qsmp=noauto
 #FOPTS=  -traceback -g -DUNDERSCORE
-FFLAGS=  -traceback -list
+FFLAGS=  -traceback -list 
+FFLAGS=  -traceback -list -g -convert big_endian -assume byterecl
 LDFLAGS=  -openmp
 INCS=
 SRCS=	PVRFY.f VRFY.f ANNATV.f GRANGE.f
