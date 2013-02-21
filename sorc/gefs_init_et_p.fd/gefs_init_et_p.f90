@@ -526,7 +526,7 @@ subroutine Generate_vec
               n = n + 1
               rhz(n, k) = dble(kef(i,j,k))/(dsqrt(dble(nens-1))* &
                    dble(abs(gmask(i,j))))
-    write(78,*)rhz(n,k),n,k
+!    write(78,*)rhz(n,k),n,k
            enddo
         enddo
      enddo
