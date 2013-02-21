@@ -3,7 +3,7 @@ CMD=	global_enscvprcp
 #FC=     ncepxlf
 FC=     ifort
 #FOPTS=  -qsmp=noauto
-FFLAGS=  -list -traceback
+FFLAGS=  -list -traceback -convert big_endian -assume byterecl
 LDFLAGS=
 INCS=
 SRCS=	CVPRCP.f            
