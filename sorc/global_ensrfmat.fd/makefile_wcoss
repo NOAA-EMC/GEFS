@@ -3,7 +3,7 @@ CMD=	global_ensrfmat
 #FC=     ncepxlf
 FC=     ifort
 #FOPTS=  -qsmp=noauto
-FFLAGS=  -traceback -list
+FFLAGS=  -traceback -list -convert big_endian -assume byterecl
 LDFLAGS=
 INCS=
 SRCS=	REFORMAT.f      
