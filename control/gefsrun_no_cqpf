@@ -474,7 +474,6 @@ typeset -RZ3 jjjt12=$(( jjjf12 + jjjot ))
 typeset -RZ3 jjjt18=$(( jjjf18 + jjjot ))
 
 typeset -RZ3 jjja00=$(( jjjf00l + jjjoa ))
-typeset -RZ3 jjja01=$(( jjja00 + 1 ))
 
 typeset -RZ3 jjjc18=$(( jjjf18 + jjjoc ))
 
@@ -858,9 +857,7 @@ if [[ $nextflag = yes ]]; then
 #     ($jjjo00) jjjb=900 ;;
       ($jjjt00) jjjb=$jjja00 ;;
 
-      ($jjja00) jjjb=$jjja01;;
-       
-      ($jjja01) 
+      ($jjja00) 
 	if [[ $runcyclingf = no ]]; then
 	  jjjb=900 
 	else
@@ -1081,11 +1078,6 @@ else
     ;;
     ($jjja00) 
       taskname=track.ave
-      cyc_os=0
-      fcstjoblength=long
-    ;;
-    ($jjja01) 
-      taskname=post.cqpf
       cyc_os=0
       fcstjoblength=long
     ;;
@@ -2121,34 +2113,6 @@ case $taskname in
     wall_clock_limit="01:10"
   fi  
   ;;
- (post.cqpf)
-    ################################# production variables
-    jobscript=JGEFS_CQPF.sms.$envir
-    job_type=serial
-    wall_clock_limit="00:30:00"
-#   resources="ConsumableMemory(500 MB)"
-    resources="800M"
-    task_affinity="cpu(1)"
-    MP_SHARED_MEMORY=yes
-    MEMORY_AFFINITY=MCM
-    MP_INFOLEVEL=2
-    job=gefs_cqpf_${cyc}
-    # insert modifications to production resources here
-    ################################# development variables
-    during_previous_job=yes
-    splim=301001001
-    fcstjoblength=long
-    ################################# production variables modified
-    if [[ $fcstjoblength = long ]]; then
-      wall_clock_limit="$wall_clock_limit_fcst_long"
-    else
-      wall_clock_limit="$wall_clock_limit_fcst_short"
-    fi
-  if [[ $gefsmachine = wcoss ]]; then
-      total_tasks=1
-  fi
-  ;;
-
   (post.cleanup)
     ################################# production variables
     jobscript=JGEFS_POST_CLEANUP.sms.$envir
