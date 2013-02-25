@@ -36,8 +36,8 @@ export fhrp=24
 export fhrp=06
 #
 # 3-hourly output: fhmax3 must be less than fhmaxh
-if (( fhmaxh > 144 )); then
-  fhmax3=144 
+if (( fhmaxh > 126 )); then
+  fhmax3=126
 else
   (( fhmax3 = fhmaxh - 6 ))
 fi
@@ -105,10 +105,12 @@ export USESUBDIR=YES
 # Restart frequncy for the first fhmax3 hours
 export fhrestart3=18
 export fhrestart3=36
+export fhrestart3=42
 
 # Restart frequncy for hour after fhmax3
 export fhrestart=18
 export fhrestart=36
+export fhrestart=42
 
 #######################################
 # This section defines the resolution
@@ -373,6 +375,7 @@ if [[ $envir = dev ]]; then
     # test whether this is needed for concurrent
     fhrestart=18
     fhrestart=36
+    fhrestart=42
   fi
 
   # copy initial state from another run
