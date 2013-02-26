@@ -834,10 +834,10 @@ if [[ $nextflag = yes ]]; then
       ;;
 
       ($jjjg00) jjjb=$jjjf00 ;;
-      #($jjjf00) jjjb=$jjjp00 ;;
+      ($jjjf00) jjjb=$jjjp00 ;;
       #                                     when running 6-hour cycling only
       #                                     use next line to skip the restart copy job
-      ($jjjf00) (( jjjb=jjjp00 + 1 )) ;;
+      #($jjjf00) (( jjjb=jjjp00 + 1 )) ;;
       ($jjje00) jjjb=$jjjs00 ;;
       ($jjjs00)
 	if (( fcst_segments == 2 )); then
@@ -847,9 +847,9 @@ if [[ $nextflag = yes ]]; then
 	fi
       ;;
       ($jjjz00) jjjb=$jjjf00l ;;
-      #($jjjf00l) jjjb=$jjjp00l ;;
+      ($jjjf00l) jjjb=$jjjp00l ;;
       #                                       when skipping re-start copy
-      ($jjjf00l) (( jjjb=jjjp00l + 1 )) ;;
+      #($jjjf00l) (( jjjb=jjjp00l + 1 )) ;;
       #        
       ($jjje00l) jjjb=$jjjs00l ;;
       ($jjjs00l) jjjb=$jjjo00 ;;
