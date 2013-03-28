@@ -127,6 +127,7 @@ fi
 if (( ipair < 10 )); then
   ipair=0$ipair
 fi
+
 echo ipair=$ipair
 echo cyc_fcst=$cyc_fcst
 echo cyc=$cyc
@@ -162,6 +163,18 @@ if (( inflag > 3 )) || (( outflag > 3 )); then
   fi
   echo two digit ipairn=$ipairn ipairp=$ipairp 
 fi
+### YOTA 12/21/2012 for EnKF inputs begin
+if (( inflag == 6 )); then
+  (( ipairip = 2 * ipairi ))
+  (( ipairin = ipairip - 1 ))
+  if (( ipairip < 10 )); then
+    ipairip=0$ipairip
+  fi
+  if (( ipairin < 10 )); then
+    ipairin=0$ipairin
+  fi
+fi
+### YOTA 12/21/2012 for EnKF inputs end
 
 # cfsuffix identifies long forecast cycle 
 # associated with this breeding job
@@ -274,7 +287,7 @@ do
     echo fhr=$fhr cyc=$cyc cycstart=$cycstart cyclestart=$cyclestart datein=$datein
     echo cfsuffixstart=$cfsuffixstart
     found=false
-    if (( inflagt == 1 )) || (( inflagt == 2 )) || (( inflagt == 3 )) || (( inflagt == 4 )) || (( inflagt == 5 )) ; then
+    if (( inflagt == 1 )) || (( inflagt == 2 )) || (( inflagt == 3 )) || (( inflagt == 4 )) || (( inflagt == 5 )) || ((inflagt == 6 )); then
       found=true
     fi
 #   check for existence and correct headers of input files
@@ -284,6 +297,9 @@ do
       fcstinn=$comfcstin/$cycstart/sfcsig/gen${ipairn}.$cyclestart.sf$fhr$cfsuffixstart
     elif (( inflagt == 5 )); then
       fcstinn=$comfcstin/$cycstart/sfcsig/gep${ipairn}.$cyclestart.sf$fhr$cfsuffixstart
+    elif (( inflagt == 6 )); then
+     fcstinn=${ENKFCOMIN}${pdyp}/$cycp/sfg_${pdyp}${cycp}_fhr${fhr}_mem0${ipairin}
+
     else
       fcstinn=$comfcstin/$cycstart/sfcsig/gec00.$cyclestart.sf$fhr$cfsuffixstart
     fi
@@ -324,6 +340,8 @@ do
       fcstinp=$comfcstin/$cycstart/sfcsig/gen${ipairp}.$cyclestart.sf$fhr$cfsuffixstart
     elif (( inflagt == 5 )); then
       fcstinp=$comfcstin/$cycstart/sfcsig/gep${ipairp}.$cyclestart.sf$fhr$cfsuffixstart
+    elif (( inflagt == 6 )); then
+     fcstinp=${ENKFCOMIN}${pdyp}/$cycp/sfg_${pdyp}${cycp}_fhr${fhr}_mem0${ipairip}
     else
       fcstinp=$comfcstin/$cycstart/sfcsig/gec00.$cyclestart.sf$fhr$cfsuffixstart
     fi
@@ -361,11 +379,11 @@ do
     if [[ $found = true ]]; then
       ifhruse=$fhr
       echo all forecasts found for ifhruse=$ifhruse
-      if (( inflagt == 1 )) || (( inflagt == 3 )) || (( inflagt == 4 )) || (( inflagt == 5 )); then
+      if (( inflagt == 1 )) || (( inflagt == 3 )) || (( inflagt == 4 )) || (( inflagt == 5 )) || (( inflagt == 6 )) ; then
 	fcstinnuse=$fcstinn
 	comfcstinuse=$comfcstin
       fi
-      if (( inflagt == 2 )) || (( inflagt == 3 )) || (( inflagt == 4 )) || (( inflagt == 5 )); then
+      if (( inflagt == 2 )) || (( inflagt == 3 )) || (( inflagt == 4 )) || (( inflagt == 5 )) || (( inflagt == 6 )) ; then
 	fcstinpuse=$fcstinp
 	comfcstinuse=$comfcstin
       fi
