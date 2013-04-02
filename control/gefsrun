@@ -331,6 +331,8 @@ NET=gens
 
 #. $cwd/../parm/gefs.parm
 . $parmdir/gefs.parm
+. $parmdir/gefs_init.parm
+echo inflag=$inflag
 
 (( npert = npair * 2 ))
 echo npert=$npert
@@ -791,9 +793,14 @@ if [[ $nextflag = yes ]]; then
   else 
     case $jjjc in
 
-      (000) jjjb=012 ;;
 #DHOU 03/26/2012 skip ET and gfs for Zeus
 #     (000) jjjb=100 ;;
+      (000) if (inflag == 6);then
+            jjjb=010
+            else
+            jjjb=012
+            fi  ;;
+      (010) jjjb=012 ;;
       (012) jjjb=013 ;;
       (013) jjjb=014 ;;
 
@@ -1055,6 +1062,7 @@ elif (( jjj >= jjjf18 )) && (( jjj <= jjje18 )); then
 else 
   case $jjj in
     (000) taskname=r000 ;;
+    (010) taskname=enkf.track ;;
     (012) taskname=init.separate ;;
     (013) taskname=init.et ;;
     (014) taskname=init.combine ;;
@@ -1349,6 +1357,39 @@ case $taskname in
   fi  
     resources="1650M"
   ;;
+  (enkf.track)
+    ################################# production variables
+    jobscript=JGEFS_ENKF_TRACK.sms.$envir
+    job_name=jgefs_enkf_track_$cyc
+    job_type=parallel
+    total_tasks=40
+    node=1
+    wall_clock_limit="01:50:00"
+    resources="ConsumableMemory(1500 MB)"
+    task_affinity="cpu(1)"
+    MP_SHARED_MEMORY=yes
+    MEMORY_AFFINITY=MCM
+    job=gefs_enkf_track_$cyc
+    ################################# development variables
+    during_previous_job=no
+    splim=301001001
+    ################################# production variables modified
+    resources="ConsumableMemory(3500 MB)"  
+    network_MPI="sn_all,shared,us"
+    resources=
+    node_usage=not_shared
+    node_resources="ConsumableMemory(110 GB)"
+    task_affinity="core(1)"
+    total_tasks=40
+  if [[ $gefsmachine = zeus ]]; then                       
+    node=4   
+  fi  
+  if [[ $gefsmachine = wcoss ]]; then                       
+    wall_clock_limit="01:50"
+    taskspernode=16
+    OMP_NUM_THREADS=1
+  fi  
+  ;;
   (init.separate)
     ################################# production variables
     jobscript=JGEFS_INIT_SEPARATE.sms.$envir
@@ -1412,7 +1453,7 @@ case $taskname in
     node_resources="ConsumableMemory(110 GB)"
     network_MPI="sn_all,shared,us"
     task_affinity="core(1)"
-    total_tasks=240
+    total_tasks=160
     node=3
   if [[ $gefsmachine = zeus ]]; then                       
     node=7   #DHOU 04/04/2012 for ZEUS, T254L42
