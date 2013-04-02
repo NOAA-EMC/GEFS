@@ -690,6 +690,29 @@ case ${cmodel} in
        SENDTRACKER=NO                                   ;
        SENDDBN=YES                                       ;
        model=20                                        ;;
+### YOTA 12/21/2012 EnKF option begin
+  enkf) set +x                                          ;
+       echo " "                                         ;
+       echo " ++ EnKF 6hr fcst (relocation) ensemble member ${pert} chosen";
+       pert=` echo ${pert} | tr '[A-Z]' '[a-z]'`        ;
+       PERT=` echo ${pert} | tr '[a-z]' '[A-Z]'`        ;
+       echo " "                                         ;
+       set -x                                           ;
+       COM=${COM:-/com/gens/${envir}/gefs.${PDY}/$cyc/track}                                ;
+       fcstlen=6                                        ;
+       fcsthrs=' 00 06 99 99 99 99 99 99 99 99 99 99 99 99 
+                 99 99 99 99 99 99 99 99 99 99 99 99 99 99 
+                 99 99 99 99 99 99 99 99 99 99 99 99 99 99 
+                 99 99 99 99 99 99 99 99 99 99 99 99 99 99 
+                 99 99 99 99 99 99 99 99 99'            ;
+       atcfnum=72                                       ;
+       atcfname=${pert}                                 ;
+       atcfout=${pert}                                  ;
+       modtyp='global'                                  ;
+       SENDTRACKER=NO                                   ;
+       SENDDBN=NO                                       ;
+       model=21                                        ;;
+### YOTA 12/21/2012 EnKF option end
 
   *) set +x; echo " "; echo " !!! Model selected is not recognized."             ;
      echo " Model= ---> ${cmodel} <--- ..... Please submit the script again...."  ;
@@ -2436,6 +2459,10 @@ echo "      ${fh[57]},${fh[58]},${fh[59]},"                    >>${namelist}
 echo "      ${fh[60]},${fh[61]},${fh[62]},"                    >>${namelist}
 echo "      ${fh[63]},${fh[64]},${fh[65]}/"                    >>${namelist}
 echo "&atcfinfo atcfnum=${atcfnum},atcfname='${ATCFNAME}'/"    >>${namelist}
+### YOTA 12/21/2012 sigma file option begin
+echo "${SIGVAL}"                                               >>${namelist}
+### YOTA 12/21/2012 sigma file option end
+
 
 export pgm=gettrk
 . prep_step
