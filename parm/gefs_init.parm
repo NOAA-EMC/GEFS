@@ -8,10 +8,9 @@ export relocfact=0.05
 export relocflag=0
 export relocflag=1
 
-# control pairing
-export inflag=5
+# control pairing,inflag=6 means inputs from EnKF 6 h FCST
+export inflag=6
 export outflag=5
-
 # old versions for old code
 export contopet=1.666667
 export globampletr=1.10
@@ -84,4 +83,6 @@ if [[ $envir != prod ]]; then
   echo `date` $0 test section end
 
 fi
+# a flag to determine if run ET
+export etflag=no
 echo `date` $0 end
