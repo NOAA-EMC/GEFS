@@ -1,0 +1,41 @@
+SHELL = /bin/bash
+
+INCS= -I/nwprod/lib/incmod/sigio_4
+INCS1= -I/nwprod/lib/incmod/sfcio_4
+
+SRCS=	gettrk_main.f  gettrk_modules.f  sig2p.f90
+
+OBJS=   $(SRCS:.f=.o)
+
+FC =    ifort
+
+LIBS  = -L/nwprod/lib -lsigio_4 -lsfcio_4 -lip_4 -lsp_4 -lbufr_4_64 -lbacio_4 -lw3nco_4
+
+CMD = gettrk_main 
+FFLAGS= -mkl -openmp -p  -xHOST -r8 -O0 -i4 -traceback -assume byterecl -list
+LDFLAGS =
+
+# Lines from here on down should not need to be changed.  They are the
+# actual rules which make uses to build a.out.
+#
+all:    $(CMD)
+
+$(CMD): $(OBJS)
+	$(FC) $(LDFLAGS) $(FFLAGS) -o $(@) $(OBJS) $(LIBS)
+
+#$(OBJS):        $(SRCS)
+#	$(FC) $(FFLAGS) $(INCS) -c $(SRCS)
+.f.o:
+	$(FC) $(FFLAGS) $(INCS) $(INCS1) -c $<
+.f90.o:
+	$(FC) $(FFLAGS) $(INCS) $(INCS1) -c $<
+
+$(OBJS):        makefile_wcoss
+
+allclean:       clean all
+
+clean:
+	-rm -f $(OBJS)
+
+clobber:        clean
+	-rm -f $(CMD)
