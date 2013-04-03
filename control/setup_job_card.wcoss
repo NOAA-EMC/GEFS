@@ -15,53 +15,72 @@ echo
 #BSUB -o $plcomout/$jobname.$yymmddhhmmss.o
 #BSUB -e $plcomout/$jobname.$yymmddhhmmss.o
 #BSUB -W $wall_clock_limit
-#BSUB -q "hpc_ibm" 
-##BSUB -q "dev" 
 #BSUB -L /bin/ksh
 #
 #
 eofCAT
-    if [[ ${job_type} = serial ]] ; then
-      if [[ -n $resources ]]; then
-	echo include resources=$resources
-	cat <<eofCAT >>$jobcontrol
-##BSUB -l mem=$resources
-eofCAT
+
+    if [[ ${MP_SHARED_MEMORY} = yes ]] ; then
+        AFFINITY="core"
+      if [[ ${job_type} = parallel ]] ; then
+        AFFINITY="core(1)"
       fi
+    cat <<eofCAT >>$jobcontrol
+#BSUB -q "shared" 
+#BSUB -R "rusage[mem=$resources]"
+#BSUB -R affinity[${AFFINITY}]
+eofCAT
     fi
+
+    if [[ ${MP_SHARED_MEMORY} = no ]] ; then
+    cat <<eofCAT >>$jobcontrol
+#BSUB -q "dev" 
+#BSUB -x  
+eofCAT
+    fi
+
+#echo ${job_type} DHOU TTT    
     if [[ ${job_type} = parallel ]] ; then
-      if [[ -n $total_tasks ]]; then
-	echo include total_tasks=$total_tasks
-  	cat <<eofCAT >>$jobcontrol
+    cat <<eofCAT >>$jobcontrol
 #BSUB -a poe
 #BSUB -n $total_tasks
 #BSUB -R span[ptile=$taskspernode]
-#BSUB -x  
 
 export OMP_NUM_THREADS=$OMP_NUM_THREADS
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
-export MP_SHARED_MEMORY=no
+export MP_SHARED_MEMORY=${MP_SHARED_MEMORY}
 export MEMORY_AFFINITY=core:$OMP_NUM_THREADS 
 
 export total_tasks=$total_tasks
 eofCAT
-      fi
-#      if [[ -n $node ]]; then
-#	echo include node=$node
-#	cat <<eofCAT >>$jobcontrol
-##PBS -l nodes=$node:ppn=$tasks_per_node
-#eofCAT
-#      fi
     fi
+
+#03/29/2013, add the following block following George, for fcst jobs
+task_type=`echo ${taskname} | cut -c1-8`
+#echo $task_type ${taskname} 
+   if [[ ${task_type} = forecast ]] ; then
+    cat <<eofCAT >>$jobcontrol
+export OMP_STACKSIZE=256000
+#env >envv
+export MP_EAGER_LIMIT=65535
+export MP_EUIDEVELOP=min
+export MP_MPILIB=mpich2
+export MP_USE_BULK_XFER=yes
+export MP_TASK_AFFINITY=core:1
+#export MPICH_ALLTOALL_THROTTLE=0
+#export MP_COLLECTIVE_OFFLOAD=yes
+#export KMP_STACKSIZE=1024m
+#export MEMORY_AFFINITY=core:1
+eofCAT
+    fi
+
     cat <<eofCAT >>$jobcontrol
 module load ics
 eofCAT
     if [[ ${job_type} = parallel ]] ; then
      cat <<eofCAT >>$jobcontrol
 module load ibmpe
-#module load mpt
-#module load adaptive
 eofCAT
     fi
 
@@ -160,7 +179,8 @@ ls -al $jobdir/$jobscript
 echo
 
 # CALL executable job script here
-$jobdir/$jobscript
+#$jobdir/$jobscript
+ /usrx/local/bin/getrusage -rss $jobdir/$jobscript
 
 echo
 ls -al $jobdir/$jobscript

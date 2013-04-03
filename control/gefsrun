@@ -1343,11 +1343,13 @@ case $taskname in
     during_previous_job=no
     job_type=serial
 #   wall_clock_limit="00:19:00"
-#   resources="ConsumableCpus(1) ConsumableMemory(1650 MB)" #droped for Zeus
+    resources="ConsumableCpus(1) ConsumableMemory(1650 MB)" # ccs, droped for Zeus
+#   resources="1650M"    # zeus
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="00:10"
+    resources="1650"
+    MP_SHARED_MEMORY=yes
   fi  
-    resources="1650M"
   ;;
   (init.separate)
     ################################# production variables
@@ -1382,6 +1384,7 @@ case $taskname in
     wall_clock_limit="01:50"
     taskspernode=10
     OMP_NUM_THREADS=1
+    MP_SHARED_MEMORY=no
   fi  
   ;;
   (init.et)
@@ -1421,6 +1424,7 @@ case $taskname in
     wall_clock_limit="01:50"
     taskspernode=10
     OMP_NUM_THREADS=1
+    MP_SHARED_MEMORY=no
   fi  
 
   ;;
@@ -1457,6 +1461,7 @@ case $taskname in
     wall_clock_limit="01:50"
     taskspernode=10
     OMP_NUM_THREADS=1
+    MP_SHARED_MEMORY=no
   fi  
   ;;
   (forecast_hr)
@@ -1553,16 +1558,33 @@ case $taskname in
   fi
   if [[ $gefsmachine = wcoss ]]; then                       
      if [[ $fcstjoblength = long ]]; then
+#      (( taskspermem = 100 ))
+       (( taskspermem = 64 ))
+#      (( taskspermem = 32 ))
+#      (( taskspermem = 16 ))
+#      (( taskspermem = 20 ))
+#      (( taskspermem = 80 ))
+#      (( taskspermem = 40 ))
+#      (( taskspermem = 20 ))
 #      (( taskspermem = 96 ))
-       (( taskspermem = 100 ))
+#      (( taskspermem = 48 ))
+#      (( taskspermem = 24 ))
+#      (( taskspermem = 12 ))
+#      (( taskspermem = 112 ))
      else  
        (( taskspermem = 32 ))
      fi  
-       parallel_threads=1
+#      parallel_threads=1
+       parallel_threads=2
+#      parallel_threads=3
+#      parallel_threads=4
+#      parallel_threads=8
        task_affinity="core(1)"
-       (( taskspernode = 16 / parallel_threads ))
+#      (( taskspernode = 16 / parallel_threads ))
+       (( taskspernode = 32 / parallel_threads ))
        export taskspernode=$taskspernode
        export OMP_NUM_THREADS=$parallel_threads
+    MP_SHARED_MEMORY=no
   fi
 
      if [[ $RUN_CONCURRENT = yes ]]; then
@@ -1660,12 +1682,16 @@ case $taskname in
        taskspernode=12
   fi
   if [[ $gefsmachine = wcoss ]]; then                       
-       (( taskspermem = 48 ))
-       parallel_threads=1
+#      (( taskspermem = 48 ))
+       (( taskspermem = 32 ))
+#      parallel_threads=1
+       parallel_threads=2
        task_affinity="core(1)"
-       (( taskspernode = 16 / parallel_threads ))
+#      (( taskspernode = 16 / parallel_threads ))
+       (( taskspernode = 32 / parallel_threads ))
        export taskspernode=$taskspernode
        export OMP_NUM_THREADS=$parallel_threads
+    MP_SHARED_MEMORY=no
   fi
 
      if [[ $RUN_CONCURRENT = yes ]]; then
@@ -1721,7 +1747,9 @@ case $taskname in
     (( taskspernode = 16 / NTHREADS_SIGCHGRS ))
     export taskspernode=$taskspernode
     export OMP_NUM_THREADS=$NTHREADS_SIGCHGRS
+    resources="1000"
     wall_clock_limit="00:20"
+    MP_SHARED_MEMORY=yes
    fi
   ;;
   (restart_copy_hr)
@@ -1838,10 +1866,15 @@ case $taskname in
     else
       wall_clock_limit="$wall_clock_limit_fcst_short"
     fi
-    total_tasks=8
+#   total_tasks=8 !org
+    total_tasks=5
     case $gefsmachine in
       (wcoss)
-        taskspernode=$total_tasks
+       #taskspernode=$total_tasks
+        taskspernode=16
+    OMP_NUM_THREADS=1
+    MP_SHARED_MEMORY=yes
+    resources="2000"
       ;;
     esac
   ;;
@@ -1877,10 +1910,15 @@ case $taskname in
     else
       wall_clock_limit="$wall_clock_limit_fcst_short"
     fi
-    total_tasks=8
+#   total_tasks=8
+    total_tasks=5
     case $gefsmachine in
       (wcoss)
-        taskspernode=$total_tasks
+       #taskspernode=$total_tasks
+        taskspernode=16
+    OMP_NUM_THREADS=1
+    MP_SHARED_MEMORY=yes
+    resources="1000"
       ;;
     esac
   ;;
@@ -1918,6 +1956,12 @@ case $taskname in
     else
       wall_clock_limit="$wall_clock_limit_fcst_short"
     fi
+    case $gefsmachine in
+      (wcoss)
+    MP_SHARED_MEMORY=yes
+    resources="200"
+      ;;
+    esac
   ;;
   (post.prdgen_lr)
     FORECAST_SEGMENT=lr
@@ -1953,6 +1997,12 @@ case $taskname in
     else
       wall_clock_limit="$wall_clock_limit_fcst_short"
     fi
+    case $gefsmachine in
+      (wcoss)
+    MP_SHARED_MEMORY=yes
+    resources="200"
+      ;;
+    esac
   ;;
   (prdgen.gfs)
     ################################# production variables
@@ -1973,6 +2023,12 @@ case $taskname in
     else
       wall_clock_limit="$wall_clock_limit_fcst_short"
     fi
+    case $gefsmachine in
+      (wcoss)
+    MP_SHARED_MEMORY=yes
+    resources="200"
+      ;;
+    esac
   ;;
   (ensstat_hr)
     FORECAST_SEGMENT=hr
@@ -2001,8 +2057,10 @@ case $taskname in
 #DHOU 04/19/2012 ZEUS
 #   job_type=parallel
 #   total_tasks=8
+    total_tasks=1
   if [[ $gefsmachine = wcoss ]]; then                       
-      total_tasks=1
+    MP_SHARED_MEMORY=yes
+    resources="100"
   fi
   ;;
   (ensstat_lr)
@@ -2032,8 +2090,10 @@ case $taskname in
 #DHOU 04/19/2012 ZEUS
 #   job_type=parallel
 #   total_tasks=8
+    total_tasks=1
   if [[ $gefsmachine = wcoss ]]; then                       
-      total_tasks=1
+    MP_SHARED_MEMORY=yes
+    resources="100"
   fi
   ;;
   (enspost)
@@ -2059,8 +2119,10 @@ case $taskname in
     else
       wall_clock_limit="$wall_clock_limit_fcst_short"
     fi
+    total_tasks=1
   if [[ $gefsmachine = wcoss ]]; then                       
-      total_tasks=1
+    MP_SHARED_MEMORY=yes
+    resources="100"
   fi
   ;;
   (post.track)
@@ -2092,6 +2154,7 @@ case $taskname in
     wall_clock_limit="01:30"
     taskspernode=1
     OMP_NUM_THREADS=1
+    MP_SHARED_MEMORY=no
     total_tasks=1
   fi  
   ;;
@@ -2119,6 +2182,8 @@ case $taskname in
     ################################# production variables modified
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="01:10"
+    MP_SHARED_MEMORY=yes
+    resources="100"
   fi  
   ;;
  (post.cqpf)
@@ -2139,13 +2204,10 @@ case $taskname in
     splim=301001001
     fcstjoblength=long
     ################################# production variables modified
-    if [[ $fcstjoblength = long ]]; then
-      wall_clock_limit="$wall_clock_limit_fcst_long"
-    else
-      wall_clock_limit="$wall_clock_limit_fcst_short"
-    fi
   if [[ $gefsmachine = wcoss ]]; then
-      total_tasks=1
+    wall_clock_limit="00:10"
+    MP_SHARED_MEMORY=yes
+    resources="100"
   fi
   ;;
 
@@ -2165,6 +2227,8 @@ case $taskname in
     ################################# production variables modified
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="01:10"
+    MP_SHARED_MEMORY=yes
+    resources="1000"
   fi  
   ;;
   (r900)
@@ -2180,6 +2244,8 @@ case $taskname in
     resources="1650M"
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="00:10"
+    MP_SHARED_MEMORY=yes
+    resources="1000"
   fi  
   ;;
   (r999)
@@ -2194,6 +2260,8 @@ case $taskname in
     resources="1650M"
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="00:10"
+    MP_SHARED_MEMORY=yes
+    resources="1650"
   fi  
   ;;
   (*)
@@ -2903,7 +2971,9 @@ else
 #DHOU, 01/03/2013 slplit the script section of setting up job card to separate files for each particular machine (setupr_job_card.$mach).
 echo $cwd
 
+#echo $job_type TTT
 . $cwd/setup_job_card.$gefsmachine
+#exit
 
 #DHOU 01/03/2013 end of changed section
 
@@ -3000,6 +3070,7 @@ echo `date` $0 $*                                       end of logged execution 
 echo
 
 ) 2>&1 | tee -a $ldir/$lname
+
 echo $ldir
 ls -ablprt $ldir | tail -7
 
