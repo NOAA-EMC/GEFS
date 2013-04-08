@@ -802,6 +802,7 @@
 
 !  ---  calculate cloud optical properties
 
+!$omp critical
         call cldprop                                                    &
 !  ---  inputs:
      &     ( cldfrac, cwp1, cip1, rew1, rei1, cda1, cda2, cda3, cda4,   &
@@ -809,6 +810,7 @@
 !  ---  output:
      &       taucloud                                                   &
      &     )
+!$omp end critical
 
 !     if (lprnt) then
 !     print *,' after cldprop'
