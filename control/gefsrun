@@ -795,7 +795,8 @@ if [[ $nextflag = yes ]]; then
 
 #DHOU 03/26/2012 skip ET and gfs for Zeus
 #     (000) jjjb=100 ;;
-      (000) if (inflag == 6);then
+      (000) jjjb=005 ;;
+      (005) if (($inflag == 6));then
             jjjb=010
             else
             jjjb=012
@@ -1062,6 +1063,7 @@ elif (( jjj >= jjjf18 )) && (( jjj <= jjje18 )); then
 else 
   case $jjj in
     (000) taskname=r000 ;;
+    (005) taskname=init.mask ;;
     (010) taskname=enkf.track ;;
     (012) taskname=init.separate ;;
     (013) taskname=init.et ;;
@@ -1357,6 +1359,39 @@ case $taskname in
   fi  
     resources="1650M"
   ;;
+  (init.mask)
+    ################################# production variables
+    jobscript=JGEFS_INIT_MASK.sms.$envir
+    job_name=jgefs_init_mask_$cyc
+    job_type=parallel
+    total_tasks=80
+    node=1
+    wall_clock_limit="01:50:00"
+    resources="ConsumableMemory(1500 MB)"
+    task_affinity="cpu(1)"
+    MP_SHARED_MEMORY=yes
+    MEMORY_AFFINITY=MCM
+    job=gefs_init_mask_$cyc
+    ################################# development variables
+    during_previous_job=no
+    splim=301001001
+    ################################# production variables modified
+    resources="ConsumableMemory(3500 MB)"  
+    network_MPI="sn_all,shared,us"
+    resources=
+    node_usage=not_shared
+    node_resources="ConsumableMemory(110 GB)"
+    task_affinity="core(1)"
+    total_tasks=80
+  if [[ $gefsmachine = zeus ]]; then                       
+    node=8   
+  fi  
+  if [[ $gefsmachine = wcoss ]]; then                       
+    wall_clock_limit="01:50"
+    taskspernode=16
+    OMP_NUM_THREADS=1
+  fi  
+  ;;
   (enkf.track)
     ################################# production variables
     jobscript=JGEFS_ENKF_TRACK.sms.$envir
@@ -1395,33 +1430,23 @@ case $taskname in
     jobscript=JGEFS_INIT_SEPARATE.sms.$envir
     job_name=jgefs_init_separate_$cyc
     job_type=parallel
-    total_tasks=40
-    node=1
     wall_clock_limit="01:50:00"
-    resources="ConsumableMemory(1500 MB)"
-    task_affinity="cpu(1)"
-    MP_SHARED_MEMORY=yes
-    MEMORY_AFFINITY=MCM
     job=gefs_init_separate_$cyc
-    ################################# development variables
     during_previous_job=no
     splim=301001001
-    ################################# production variables modified
-    resources="ConsumableMemory(3500 MB)"  #DHOU 08/20 for T254L42
     network_MPI="sn_all,shared,us"
     resources=
     node_usage=not_shared
     node_resources="ConsumableMemory(110 GB)"
     task_affinity="core(1)"
-    node=2   #DHOU 08/20 for T254L42
+    node=2   
     total_tasks=40
-#DHOU 04/04/2012 for ZEUS, T254L42
   if [[ $gefsmachine = zeus ]]; then                       
-    node=4   #DHOU 04/04/2012 for ZEUS, T254L42
+    node=4   
   fi  
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="01:50"
-    taskspernode=10
+    taskspernode=15
     OMP_NUM_THREADS=1
   fi  
   ;;
