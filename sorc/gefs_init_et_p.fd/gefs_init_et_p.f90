@@ -89,20 +89,22 @@ MODULE VARIABLE_DEFINE
   INTEGER :: jcaps,ilats,ilons,lrecs,nsp,nrec1
   INTEGER :: npair,irec,iret,nlevrs,mxlev,nlevmask,itopres 
   INTEGER :: npair1,jcap,ilat,ilon,ntrac,inflag,icyc
-
+  INTEGER :: netflag,mskflag
   INTEGER :: nens_group_newid
   INTEGER :: MPI_Comm_nens_group,MPI_COMM_col_group,original_group,nens_group
   INTEGER :: MAXLDA, MAXSDA,MAXLDB,MAXSDB
 
   real :: globamplr,globamplg,contop,smax,b1,b2,b3
   namelist/namens/npair1,jcap,ilat,ilon,levs,ntrac,inflag,icyc,&
-  globamplr,globamplg,itopres,contop,nlevrs,mxlev,nlevmask,smax,b1,b2,b3
+  globamplr,globamplg,itopres,contop,nlevrs,mxlev,nlevmask,smax,b1,b2,b3,&
+  netflag,mskflag
 
   real*8 :: gam,gam1,scf,ftt,aa
   real*8 :: rtc, tb, te, tbb, tee, ttb, tte
 
   real*8,dimension(:),allocatable ::eig,aux2
   real*8,dimension(:,:),allocatable ::ss,rhz,vec2,vec3,vec,veclocal
+  real, dimension(:),allocatable::recnt,recntlocal
 
   INTEGER,dimension(:),allocatable ::nens_group_rank
   real*8,dimension(:,:,:,:),allocatable ::gfcstlocal
@@ -178,6 +180,8 @@ program gefs_init_et_para
      CALL MPI_Bcast(globamplg,1,MPI_real,0,MPI_COMM_WORLD,ierr)
      CALL MPI_Bcast(contop,1,MPI_real,0,MPI_COMM_WORLD,ierr)
      CALL MPI_Bcast(smax,1,MPI_real,0,MPI_COMM_WORLD,ierr)
+     CALL MPI_Bcast(netflag,1,MPI_integer,0,MPI_COMM_WORLD,ierr)
+     CALL MPI_Bcast(mskflag,1,MPI_integer,0,MPI_COMM_WORLD,ierr)
      CALL MPI_Barrier(MPI_COMM_WORLD,ierr)
 
      !
@@ -279,15 +283,42 @@ program gefs_init_et_para
 
      !------ Readin data file names nenslocal*character(12)
      if (mype == 0) read(*,DATNAMES)
-     
-
-     allocate(enlocal(nenslocal),ennlocal(nenslocal))
+ !! Select different nsp members for recentering when ET is off 
+     if (mype == 0 )then
+      allocate (recnt(nens))
+      recnt=0.
+     if (netflag .eq. 0 ) then 
+         if ( icyc  .eq. 0 ) then
+            do i1 = 1, nsp
+                  recnt(i1) = float(nens)/float(nsp)
+            enddo
+        else if ( icyc  .eq. 6 ) then
+            do i1 = 1, nsp
+                 recnt(i1+nsp) = float(nens)/float(nsp)
+            enddo
+        else if ( icyc  .eq. 12 ) then
+            do i1 = 1, nsp
+                 recnt(i1+2*nsp) = float(nens)/float(nsp)
+            enddo
+        else
+            do i1 = 1, nsp
+                 recnt(i1+3*nsp) = float(nens)/float(nsp)
+            enddo
+        endif
+      else
+        recnt=1.
+      endif
+     print *,'recnt=',recnt                                      
+    endif
+     allocate(enlocal(nenslocal),ennlocal(nenslocal),recntlocal(nenslocal))
      if (Decompose1D_OPT) then
         CALL MPI_SCATTER(en,12*nenslocal,MPI_character,enlocal,12*nenslocal,MPI_character,0,MPI_COMM_WORLD,ierr)
         CALL MPI_SCATTER(enn,12*nenslocal,MPI_character,ennlocal,12*nenslocal,MPI_character,0,MPI_COMM_WORLD,ierr)
+        CALL MPI_SCATTER(recnt,nenslocal,MPI_real,recntlocal,nenslocal,MPI_real,0,MPI_COMM_WORLD,ierr)
      else
         if (myrow==0) CALL MPI_SCATTER(en,12*nenslocal,MPI_character,enlocal,12*nenslocal,MPI_character,0,MPI_COMM_nens_group,ierr)
         if (myrow==0) CALL MPI_SCATTER(enn,12*nenslocal,MPI_character,ennlocal,12*nenslocal,MPI_character,0,MPI_COMM_nens_GROUP,ierr)
+        if (myrow==0) CALL MPI_SCATTER(recnt,nenslocal,MPI_real,recntlocal,nenslocal,MPI_real,0,MPI_COMM_nens_GROUP,ierr)
      endif
      call MPI_barrier(MPI_COMM_WORLD,ierr)
 
@@ -310,8 +341,8 @@ program gefs_init_et_para
            if (iret.ne.0) print *,'Processor #',mype,'en number',i,'sigio_sclose failed,iret=',iret
            print *,'--------Complet read_fcst for mype',mype,' record #',i,'-----------'
 
-           gridmlocal(:,:,:) = gridmlocal(:,:,:) + gfcstlocal(:,:,:,i)/dble(nens)        
-
+           gridmlocal(:,:,:) = gridmlocal(:,:,:) + gfcstlocal(:,:,:,i)/dble(nens)*recntlocal(i)        
+           print *, recntlocal(i),enlocal,'recntlocal(i)'
            tge = 0.0
            wge = 0.0
            print *,'--------Start write_ke for mype',mype,' record #',i,'-----------'
@@ -354,12 +385,14 @@ program gefs_init_et_para
      !************** Generate vec(nens,nens) on PE0 from kef 
 
      if (mype == 0 ) then
+      if (netflag.eq.1) then
         print *,'--------Start Generate_vec--------------'
         print *,'sum of kef',sum(kef)
         print *,'kef',kef(1,3,:)
         CALL Generate_vec
         print *,'sum of vec',sum(vec)
         print *,'--------End Generate_vec--------------'
+      endif
      endif
 
 
@@ -378,6 +411,7 @@ program gefs_init_et_para
      ! Parallel version of matrix-matrix multiplication
      ! gf1(i.e., gfcst)(ilon*ilat*nrec1,nens) * vec(nens,nens) = gC (ilon*ilat*nrec1,nens)
 
+      if (netflag.eq.1) then
      print *,'--------Start Compute_gC--------------'
      CALL Compute_gC
      print *,'--------Complete Compute_gC--------------'
@@ -426,11 +460,16 @@ program gefs_init_et_para
 
      DEALLOCATE( gf1, gC)
 
+      endif
      !  use one inflation factor scf to inflate the initial perts
 
      ftt = 0.8
      if (mype == 0) then
+       if(netflag.eq.1) then
         call factor_t(nlevmask,ftt,nrec1,ilon,ilat,gfcstlocal(:,:,:,1),scf)
+       else
+       scf=1.
+       endif
         print*,'scf',scf
      endif
      CALL MPI_BCAST(scf,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
@@ -445,9 +484,11 @@ program gefs_init_et_para
            call sigio_sropen(90,'sanl.in',iret)
            print *, 'iret from sigio_sropen =', iret
            if (iret.ne.0) print *,'sigio_sropen failed,iret=',iret
-     call mask_pert(90,jcap,lrec,nrec1,irec,levs,nlath,ilon,ilat,&
+     if(mskflag.eq.1)then
+         call mask_pert(90,jcap,lrec,nrec1,irec,levs,nlath,ilon,ilat,&
           gfcstlocal(:,:,:,i),globamplr,globamplg,itopres,contop,&
           nlevrs,mxlev,nlevmask,smax,b1,b2,b3)
+     endif
            call sigio_sclose(90,iret)
            call sigio_swopen(92,ennlocal(i),iret)
            print *, 'iret from sigio_swopen =', iret
@@ -458,7 +499,8 @@ program gefs_init_et_para
         ENDDO
      endif
 
-     deallocate( g_ana,cofo_1,veclocal,enlocal,ennlocal)
+!     deallocate( g_ana,cofo_1,veclocal,enlocal,ennlocal)
+     deallocate( g_ana,cofo_1,enlocal,ennlocal)
      if (myrow==0) deallocate(gfcstlocal)
 
      print *, '  ---------- end of gefs_init_et  -------------'
@@ -809,6 +851,7 @@ subroutine Compute_gC
      if (myrow == 0 )then !kate
            DEALLOCATE(gf1_fullrecord) !kate
      endif  !kate
+     deallocate (veclocal)
 
    END subroutine Compute_gC
 
