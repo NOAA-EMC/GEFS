@@ -4,9 +4,10 @@
       real,dimension(:,:,:),allocatable:: te,teda,tesm
       real ,dimension(:),allocatable::teda_vert,stra,str
        real ,dimension(:,:),allocatable::tek,tesmk
+       real ,dimension(:,:),allocatable::ps,psa,psm
        namelist /namemsk/jcap,nlons,nlats,nlevs,smx,wx
        read(*,namemsk)
-!!!!!!!!!!!!!!!!!decaying average!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!TE decaying average!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         allocate(te(nlons,nlats,nlevs),teda(nlons,nlats,nlevs))
         allocate(tesm(nlons,nlats,nlevs))
       
@@ -21,7 +22,16 @@
         enddo
         close(12)
         teda(1:nlons,1:nlats,1:nlevs)=(1-wx)*teda(1:nlons,1:nlats,1:nlevs)+wx*te(1:nlons,1:nlats,1:nlevs)
-!!!!!!!!!!!!!!!!!!vertical profile!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!      
+!!!!!!!!!!!!!!!!!PS decaying average!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        allocate(ps(nlons,nlats),psa(nlons,nlats))
+        open(21,file='PS_SPRD_ave.grd',FORM="UNFORMATTED")
+         read(21) ((psa(i,j),i=1,nlons),j=1,nlats)
+        close(21)
+        open(22,file='PS_SPRD.grd',FORM="UNFORMATTED")
+        read(22) ((ps(i,j),i=1,nlons),j=1,nlats)
+        close(22)
+        psa(1:nlons,1:nlats)=(1-wx)*psa(1:nlons,1:nlats)+wx*ps(1:nlons,1:nlats)
+!!!!!!!!!!!!!!!!!!smooth!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!      
         deallocate(te)
         allocate(tek(nlons,nlats),tesmk(nlons,nlats))
         lrec=(jcap+1)*(jcap+2)
@@ -40,6 +50,16 @@
             write(26) ((tesm(i,j,k),i=1,nlons),j=1,nlats)
            enddo
            close(26)
+!!!!!!!!!!!!!!!!!!smooth!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!      
+       
+            call sptez(0,jcap,4,nlons,nlats,stra,psa,-1)
+            str=0.0
+            allocate (psm(nlons,nlats))
+            call smooth(stra,str,1,smx,jcap)
+            call sptez(0,jcap,4,nlons,nlats,str,psm,1)
+           open(36,file='PS_SPRD_ave_updated.grd',FORM="UNFORMATTED")
+            write(36) ((psm(i,j),i=1,nlons),j=1,nlats)
+           close(36)
 
        end
 
