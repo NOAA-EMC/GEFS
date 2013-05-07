@@ -31,6 +31,8 @@ export b1_et=1.0e3
 export b2_et=1.0e1
 export b3_et=1.0e19
 export smax_et=1.2    #Parameter used to inflate lower level Pert. M Wei, Aug. 2011
+export smx_msk=0.087    #Parameter used to smooth mask  X. Zhou
+export w_msk=0.2    #Weighting coefficient for  mask  X. Zhou
 if (( LEVSHR == 64 )); then
   export nlevmask_et=25
   export nlevrs_et=36
@@ -53,6 +55,7 @@ fi
 
 # task and node assignments
 export initseparatetasks=40
+export initmasktasks=80
 #export initseparatenodes=1
 export initcombinetasks=40
 #export initcombinenodes=1
@@ -85,4 +88,8 @@ if [[ $envir != prod ]]; then
 fi
 # a flag to determine if run ET
 export etflag=no
+# if mskflag=0 no rescaling
+# if mskflag=1 2D climatological mask
+# if mskflag=2 3D EnKF-based mask
+export mskflag_et=1
 echo `date` $0 end
