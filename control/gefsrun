@@ -795,7 +795,7 @@ if [[ $nextflag = yes ]]; then
 
 #DHOU 03/26/2012 skip ET and gfs for Zeus
 #     (000) jjjb=100 ;;
-      (000) if($inflag ==6); then 
+      (000) if (($inflag ==6)); then 
             jjjb=005 
             else
             jjjb=012
