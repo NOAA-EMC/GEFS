@@ -140,7 +140,8 @@ else
 
    excludestring='180-192hr'
 
-   (parmlist=$PARMgefs/gefs_pgrba_f${hsuffix}.parm
+   # begin block removed from background
+   parmlist=$PARMgefs/gefs_pgrba_f${hsuffix}.parm
    $WGRIB -s pgbfile.$ffhr$cfsuffix | \
        grep -F -f $parmlist | \
        grep -v -F $excludestring | \
@@ -153,16 +154,20 @@ else
 	fi
       done
    fi
-   $GRBIDX pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix) &
+   $GRBIDX pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix
+   # end block removed from background
 
-   (parmlist=$PARMgefs/gefs_pgrbb_f${hsuffix}.parm
+   # begin block removed from background
+   parmlist=$PARMgefs/gefs_pgrbb_f${hsuffix}.parm
    $WGRIB -s pgbfile.$ffhr$cfsuffix | \
        grep -F -f $parmlist | \
        grep -v -F $excludestring | \
        $WGRIB pgbfile.$ffhr$cfsuffix -s -grib -i -o pgbbfile.$ffhr$cfsuffix
-   $GRBIDX pgbbfile.$ffhr$cfsuffix pgbbifile.$ffhr$cfsuffix)&
+   $GRBIDX pgbbfile.$ffhr$cfsuffix pgbbifile.$ffhr$cfsuffix
+   # end block removed from background
 
-   (parmlista=$PARMgefs/gefs_pgrba_f${hsuffix}.parm
+   # begin block removed from background
+   parmlista=$PARMgefs/gefs_pgrba_f${hsuffix}.parm
    parmlistb=$PARMgefs/gefs_pgrbb_f${hsuffix}.parm
    $WGRIB -s pgbfile.$ffhr$cfsuffix | \
        grep -v -F -f $parmlista | \
@@ -176,10 +181,11 @@ else
        grep -F -f $parmlistb | \
        grep -F $excludestring | \
        $WGRIB pgbfile.$ffhr$cfsuffix -s -grib -i -append -o pgbdfile.$ffhr$cfsuffix
-   $GRBIDX pgbdfile.$ffhr$cfsuffix pgbdifile.$ffhr$cfsuffix)&
+   $GRBIDX pgbdfile.$ffhr$cfsuffix pgbdifile.$ffhr$cfsuffix
+   # end block removed from background
    set -x
 
-   wait
+   #wait
 
    if test "$SENDCOM" = 'YES'
    then
