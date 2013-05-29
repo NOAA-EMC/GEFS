@@ -6,7 +6,7 @@
 export GFS_VERSION=gfs_prod
 export GFS_VERSION=gefs_prod
 export GFS_VERSION=gfs_fcst
-export GFS_VERSION=gefs_fcst
+#export GFS_VERSION=gefs_fcst
 
 ##############################################
 # Number of pairs to run (normally 10 pairs)
@@ -21,7 +21,8 @@ export nhrpair=$npair
 # Forecast Hour: fhmax and fhmaxh and fhmax_ext
 #################################################
 export fhmax=384
-export fhmaxh=192
+#export fhmaxh=192
+export fhmaxh=384
 
 export fhmax00=384
 export fhmax06=384
@@ -131,6 +132,33 @@ export LEVSHR=42
 export LONBHR=768
 export LATBHR=384
 export NTRACHR=3
+
+export JCAPHR=382
+export LEVSHR=42
+export LONBHR=1152
+export LATBHR=576
+export NTRACHR=3
+export MTNRSL=382
+export SEMILG=.false.
+
+#For T574L64/42 Euler
+export JCAPHR=574
+export LEVSHR=64
+export LONBHR=1760
+export LATBHR=880
+export NTRACHR=3
+export MTNRSL=574
+export SEMILG=.false.
+
+#For T574L64/42 Semi-Lagrangian
+export JCAPHR=574
+export LEVSHR=64
+#export LEVSHR=42
+export LONBHR=1152
+export LATBHR=576
+export NTRACHR=3
+export MTNRSL=574.1152.576
+export SEMILG=.true.
 
 export JCAPLR=190
 export LEVSLR=42
