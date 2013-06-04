@@ -500,6 +500,11 @@ program gefs_init_et_para
           gfcstlocal(:,:,:,i),globamplr,globamplg,itopres,contop,&
           nlevrs,mxlev,nlevmask,smax,b1,b2,b3)
      endif
+     if(mskflag.eq.2)then
+         call mask_pert_3D(90,jcap,lrec,nrec1,irec,levs,nlath,ilon,ilat,&
+          gfcstlocal(:,:,:,i),globamplr,globamplg,itopres,contop,&
+          nlevrs,mxlev,nlevmask,smax,b1,b2,b3)
+     endif
            call sigio_sclose(90,iret)
            call sigio_swopen(92,ennlocal(i),iret)
            print *, 'iret from sigio_swopen =', iret
@@ -1280,7 +1285,7 @@ subroutine write_ke(jcap,lrec,nrec1,levs,ilon,ilat,gridd,tge,wge,mskflag)
   do k = 1, nuv
      do j = 1, ilat
         do i = 1, ilon
-         if(maskflag.eq.2)then
+         if(mskflag.eq.2)then
            wge(i, j, k) = sqrt(0.5*(ug(i,j,k)**2+vg(i,j,k)**2+4.0*tge(i,j,k)**2))
          else
            wge(i, j, k) = sqrt(ug(i,j,k)*ug(i,j,k) + vg(i,j,k)*vg(i,j,k))
@@ -2960,9 +2965,9 @@ b1,b2,b3,mmype)
 !         read(90) (cofi(J),J=1,lrec)
 !         close(90)
 
-         open(61,file="real.grd",form="unformatted")
-         open(62,file="mask.grd",form="unformatted")
-         open(63,file="ratio.grd",form="unformatted")
+!         open(61,file="real.grd",form="unformatted")
+!         open(62,file="mask.grd",form="unformatted")
+!         open(63,file="ratio.grd",form="unformatted")
        do  k = 1,  levs
         cofo1 = 0.0
         grid1(:,:)=real(grida(:,:,2*k+levs))
@@ -3002,7 +3007,7 @@ b1,b2,b3,mmype)
           enddo
 !          print *, '**************',flat(j)
          enddo
-           print *,'***', k, gresc(300:310,260:270)
+           print *,'***', k, gresc(300:310,260:260)
           
          do j = 1, ilat
           do i = 1, ilon
@@ -3012,14 +3017,14 @@ b1,b2,b3,mmype)
           endif
            gresc0(i,j)=geogr0(i,j)/abs(grida(i,j,1))*globamplr*flat(j)
            if(gresc0(i,j).gt.1.0)  gresc0(i,j)=1.0
-          if (i.eq.100.and.j.eq.260)  print *, "1+",gresc0(i,j)
+!          if (i.eq.100.and.j.eq.260)  print *, "1+",gresc0(i,j)
             grida(i,j,1) =grida(i,j,1)*dble(gresc0(i,j))
 ! ps
 !          if (grida(i,j,1).ge.0) then
 !            grida(i,j,1) =exp(grida(i,j,1))*10*dble(gresc(i,j))
-          if (i.eq.100.and.j.eq.260) then
-          print *, "2",grida(i,j,1)
-          endif
+!          if (i.eq.100.and.j.eq.260) then
+!          print *, "2",grida(i,j,1)
+!          endif
 !            grida(i,j,1) =log((grida(i,j,1))/10.0)
 !          endif
 !          if (grida(i,j,1).lt.0) then
@@ -3045,11 +3050,11 @@ b1,b2,b3,mmype)
            grida(i,j,k+5*levs+1)=grida(i,j,k+5*levs+1)*dble(gresc(i,j))
           enddo
          enddo
-         if (mmype==0) then
-         write(61) ((grid2(i,j),i=1,ilon),j=1,ilat)
-         write(62) ((geogr(i,j,k),i=1,ilon),j=1,ilat)
-         write(63) ((gresc(i,j),i=1,ilon),j=1,ilat)
-         endif
+!         if (mmype==0) then
+!         write(61) ((grid2(i,j),i=1,ilon),j=1,ilat)
+!         write(62) ((geogr(i,j,k),i=1,ilon),j=1,ilat)
+!         write(63) ((gresc(i,j),i=1,ilon),j=1,ilat)
+!         endif
 
         enddo  
 
