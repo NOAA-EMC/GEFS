@@ -90,6 +90,7 @@ C
       kfile='fort.58'
 C
       PRINT*,'IUNIT,KUNIT,NSEM= ',IUNIT,KUNIT,NSEM 
+      PRINT*,'iunit,kunit,nsem= ',iunit,kunit,nsem 
 c
 c     call sigio_sropen(iunit,ifile,iret)
 c     if (iret.ne.0) print *,'sigio_sropen failed,iret=',iret,ifile,iunit

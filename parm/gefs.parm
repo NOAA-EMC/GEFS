@@ -21,8 +21,8 @@ export nhrpair=$npair
 # Forecast Hour: fhmax and fhmaxh and fhmax_ext
 #################################################
 export fhmax=384
-#export fhmaxh=192
-export fhmaxh=384
+export fhmaxh=192
+export fhmaxh=$fhmax
 
 export fhmax00=384
 export fhmax06=384
@@ -80,7 +80,7 @@ export RUN_CONCURRENT=yes
 # if multiple forecasts are to be run concurrently, ENS_SPS controls whether stochastic forcing is used
 #export ENS_SPS=true  #DHOU 20120403, added the two dots to unify script and code requirement
 export ENS_SPS=.false.
-export ENS_SPS=.true.
+#export ENS_SPS=.true.
 
 ################################################################################
 # number of threads to use in the job JGEFS_SIGCHGRS

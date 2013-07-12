@@ -1,0 +1,24 @@
+Dingchen.Hou@g14a2$ pwd
+/ensemble/save/Dingchen.Hou/WCOSS/tdJ3/nwdev/sorc/global_fcst.fd_25669
+Dingchen.Hou@g14a2$ svn status
+?       run.fcst.lagrange
+?       run.fcst.settls
+?       GEFS_Cpl_Run_ESMFMod.f_org
+?       run.t1148.slg
+?       run.fcst.lagrange.settls
+?       run.fcst
+?       makefile.my.abeles.settings
+M       GEFS_Cpl_Run_ESMFMod.f
+Dingchen.Hou@g14a2$ svn info
+Path: .
+URL: https://svnemc.ncep.noaa.gov/projects/gfs/trunk/para/sorc/global_fcst.fd
+Repository Root: https://svnemc.ncep.noaa.gov/projects
+Repository UUID: 281fb692-3a18-0410-826d-9e847983f365
+Revision: 25880
+Node Kind: directory
+Schedule: normal
+Last Changed Author: nicole.mckee@noaa.gov
+Last Changed Rev: 25669
+Last Changed Date: 2013-02-13 13:58:34 +0000 (Wed, 13 Feb 2013)
+
+

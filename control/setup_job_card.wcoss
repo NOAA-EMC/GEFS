@@ -179,8 +179,8 @@ ls -al $jobdir/$jobscript
 echo
 
 # CALL executable job script here
-#$jobdir/$jobscript
- /usrx/local/bin/getrusage -rss $jobdir/$jobscript
+ $jobdir/$jobscript
+#/usrx/local/bin/getrusage -rss $jobdir/$jobscript
 
 echo
 ls -al $jobdir/$jobscript

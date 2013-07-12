@@ -1,0 +1,5 @@
+The global_fcst.fd directory used is from the gfs subversion
+We have tested two versions and currently using r27399, whose svn info is in the file r27399.txt
+Use the svn info, you can check out a work copy from gfs repository.
+
+The only file we modified is GEFS_Cpl_Run_ESMFMod.f, please re4place the original file by this one.

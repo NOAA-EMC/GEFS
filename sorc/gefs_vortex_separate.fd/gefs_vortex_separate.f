@@ -844,11 +844,22 @@ C
 C
 C.. Using interpolated MSLP, Make surface pressure
 C
+c!OMP PARALLEL DO DEFAULT (SHARED)
+c!OMP+ PRIVATE (I,J,TID)
+
       DO I=1,IRX
       DO J=1,JRX
       PSN(I,J) = ALOG(PSN(I,J))
       ENDDO
       ENDDO
+c      TID = OMP_GET_THREAD_NUM()
+c      IF (TID .EQ. 0) THEN
+c        NTHREADS = OMP_GET_NUM_THREADS()
+c        PRINT *, 'Number of threads =', NTHREADS
+c      END IF
+c      PRINT *, 'Thread',TID,' starting...'
+c!OMP END PARALLEL DO
+C
 C
       DO I=1,IRX 
       DO J=1,JRX
@@ -1383,7 +1394,11 @@ c decrement date and time by icycx for test
       idat(2)=(idatez-10000*idat(1))/100
       idat(3)=idatez-10000*idat(1)-100*idat(2)
       idat(4)=0.0
+       if(iutcz.ge.100) then
+      idat(5)=iutcz/100
+      else
       idat(5)=iutcz
+      endif
       idat(6:8)=0.0
       call w3movdat(rinc,idat,jdat)
       idatezm=10000*jdat(1)+100*jdat(2)+jdat(3)
@@ -1450,16 +1465,17 @@ c rlw end replacement for cycle length
 
       REWIND 30
 
-      DO I=1,KSTM
-        DO K=1,K1STM
-          IF(STMNAME(K).EQ.ST_NAME(I))THEN
-            CLON_N(I)=STMCX(K)
-            CLAT_N(I)=STMCY(K)
-            PRINT*, ' CT STORM OBS. CENTER at ',
-     &               STMNAME(K),CLON_N(I),CLAT_N(I)
-          END IF
-        END DO
-      END DO
+C      DO I=1,KSTM
+C       DO K=1,K1STM
+C         print*,ST_NAME(i),stmname(k),'STNAME and stmname'
+C         IF(STMNAME(K).EQ.ST_NAME(I))THEN
+C           CLON_N(I)=STMCX(K)
+C           CLAT_N(I)=STMCY(K)
+C           PRINT*, ' CT STORM OBS. CENTER at ',
+C    &               STMNAME(K),CLON_N(I),CLAT_N(I)
+C         END IF
+C       END DO
+C     END DO
 
 
       DO 900 I=1,KSTM
@@ -1740,6 +1756,9 @@ c      COMMON /TR/ZDATG,GLON,GLAT,ING,JNG,IB
  
       DIMENSION vcrd(KMAX+1,nvcd)
 
+      character tmmem*3
+      character NS_MEM*3
+      character stmb*2
 cc
       REAL(4),ALLOCATABLE :: WORK_3(:)
       REAL,   ALLOCATABLE :: WK_S1(:,:),WK_S2(:,:),WK_G(:,:,:)
@@ -1815,7 +1834,8 @@ c 233  FORMAT(2x,I5)
 
       WRITE(*,244) KSTM
  244  FORMAT('NUMBER OF STORMS: ',I5)
-
+      idatezm=idate(4)*10000+idate(2)*100+idate(3)
+      iutczm=idate(1)
       K1STM=0
       I=0
 c rlw replace this read (for 24h cycle) with atcf read 
@@ -1843,20 +1863,49 @@ c rlw replace this read (for 24h cycle) with atcf read
         read(40,4433,end=436)
      &    stmb1,stmb2,stmnum,stmymd,stmh,stmx,stmmem,stmfh,
      &    ismcy,ismcyl,ismcx,ismcxl
-        IF(stmmem.EQ.ENS_MEM)THEN
-         if (stmymd.eq.idatez) then
-         if (stmh.eq.IUTCZ) then
+          
+        tmmem=stmmem(2:4)
+        ns_mem=ens_mem(2:4)
+        IF(tmmem.EQ.NS_MEM)THEN
+c        IF(stmmem.EQ.ENS_MEM)THEN
+         if (stmymd.eq.idatezm) then
+         if (stmh.eq.IUTCZM) then
          if (stmfh.eq.icycx) then
           I=I+1
           IF(ismcxl.eq.'W')then
-            STMCX=360.-ISMCX*0.1
+            STMCX(I)=360.-ISMCX*0.1
           ELSE
-            STMCX=ISMCX*0.1
+            STMCX(I)=ISMCX*0.1
           END IF
           STMCY(I)=ISMCY*0.1
           STMNAME(I)=stmnum(1:2)//stmb1(1:1)
+          stmb=stmb1(1:1)//stmb2(1:1)  
+           write(*,*)stmb
+          if(stmb.eq.'AL') STMNAME(I)=stmnum(1:2)//'L'
+          if(stmb.eq.'IO')then
+            if(stmcx(i).le.75) then
+c    Arabain Sea
+            STMNAME(I)=stmnum(1:2)//'A'
+            else
+c   Bay of Bengal
+            STMNAME(I)=stmnum(1:2)//'B'
+            endif
+           endif
+           if(stmb.eq.'SH')then
+c South IO
+             if(stmcx(i).le.135.and.stmcx(i).ge.20) then
+                  STMNAME(I)=stmnum(1:2)//'S'
+             elseif(stmcx(i).gt.135.and.stmcx(i).le.300)then
+c South Pacific
+                 STMNAME(I)=stmnum(1:2)//'P'
+             else
+c South Atlantic
+                 STMNAME(I)=stmnum(1:2)//'Q'
+             endif
+           endif
+
           K1STM=K1STM+1
-          PRINT*,' CT STORM Model CENTER at ',
+          PRINT*,' CT STORM Model CENTER n HURR_REL at ',
      &          STMNAME(I),STMCX(I),STMCY(I)
           print*,k1stm,stmb1,stmb2,stmnum,stmymd,stmh,stmx,stmmem,
      &    stmfh,ismcx,ismcxl,ismcy,ismcyl
@@ -2105,7 +2154,8 @@ c      CALL FIND_NEWCT1(UD,VD)
         CLON_NEW=CLON_TIM
         CLAT_NEW=CLAT_TIM
       ELSE
-        PRINT*,'GFDL CENTER= ',CLON_NEW,CLAT_NEW
+        PRINT*,'GFDL CENTER= ',CLON_NEW,CLAT_NEW,
+     &stmname(i),st_name(kst)
         IF(NSEM.LT.1)THEN
           CLON_NEW=CLON_NHC
           CLAT_NEW=CLAT_NHC

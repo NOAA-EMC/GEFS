@@ -969,11 +969,12 @@ subroutine read_ana(ir,jcap,lrec,nrec1,levs,levsp,ilat,ilon,cofo_1,g_ana,head)
          if (k .eq. 1) then
          print *, 'Ana temp(read_ana)at k=1 ', grid(1:5,1:5)
          endif
-         if (k .eq. 13) then
-         print *, 'Ana temp(read_ana)at k=13 ', grid(1:5,1:5)
+!        if (k .eq. 13) then
+         if (k .eq. nlevmask) then
+         print *, 'Ana temp(read_ana)at k=', k, grid(1:5,1:5)
          endif
          if (k .eq. levs) then
-         print *, 'Ana temp(read_ana)at k=28 ', grid(1:5,1:5)
+         print *, 'Ana temp(read_ana)at k=', k, grid(1:5,1:5)
          endif
 
   enddo
@@ -1717,6 +1718,8 @@ b1,b2,b3)
 ! extra rescaling for levels from  nlevmask (1.0) to bottom (smax) 
 !
 !  smax = 1.2
+
+ if (smax .gt. 1.0) then
   resv = 1.0
 
   do k = 1, nlevmask
@@ -1737,6 +1740,7 @@ b1,b2,b3)
   enddo
   print *,"in mask_pert, levs, nlevmask,  = ", levs,nlevmask
   print *,"in mask_pert, resv(:)= ", resv
+ endif 
 !
 !  if (itopres .eq. 0) then do the extra rescaling on top levels
 !  do rescaling on the top levels -------------------
@@ -1848,7 +1852,8 @@ subroutine factor_t(nlevmask,ftt,nrec1,ilon,ilat,grida,scf)
 !  real grid(ilon,ilat)
   
 !  nt = nlevmask
-  nt = 14
+   nt = nlevmask + 1
+! nt = 14
   print *, ' in gefs_init_et, starting factor_t.exe '
 !  grid = 0.0
   trms = 0.0
