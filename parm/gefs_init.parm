@@ -42,6 +42,7 @@ export w_msk=0.2    #Weighting coefficient for  mask  X. Zhou
 #DHOU, 06/28/2013, Redefined these LEVS-related parameters
 # export globamplr_et=1.10    #tdLb
   export globamplr_et=0.88    #tdLc
+  export globamplr_et=1.00
 if (( LEVSHR == 64 )); then
   export nlevmask_et=25
   export nlevrs_et=37

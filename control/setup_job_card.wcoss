@@ -7,13 +7,37 @@ echo
 echo `date`                                                               setup job cards
 echo
 #########################################################################################
+### kate 11/21/2013
+        jjjps=$jjjp00
+         jjjpe=$jjje00
+if [[ $submit_post_together = yes ]]; then
+   if (( jjj == $jjjf00 )); then
+         jjjps=$jjjp00
+         jjjpe=$jjje00
+   elif (( jjj == $jjjf00l )); then
+         jjjps=$jjjp00l
+         jjjpe=$jjje00l
+   elif (( jjj == $jjjf06 )); then
+         jjjps=$jjjp06
+         jjjpe=$jjje06
+   elif (( jjj == $jjjf12 )); then
+         jjjps=$jjjp12
+         jjjpe=$jjje12
+   elif (( jjj == $jjjf18 )); then
+         jjjps=$jjjp18
+         jjjpe=$jjje18
+   fi
+fi
 
+#########################################################################################
     cat <<eofCAT >$jobcontrol
 #!/bin/ksh
 #
 #BSUB -J $jobname.$yymmddhhmmss
+#BSUB -P $account
 #BSUB -o $plcomout/$jobname.$yymmddhhmmss.o
 #BSUB -e $plcomout/$jobname.$yymmddhhmmss.o
+#BSUB -cwd $basetmp/tmpnwprd
 #BSUB -W $wall_clock_limit
 #BSUB -L /bin/ksh
 #
@@ -26,7 +50,7 @@ eofCAT
         AFFINITY="core(1)"
       fi
     cat <<eofCAT >>$jobcontrol
-#BSUB -q "shared" 
+#BSUB -q "dev_shared" 
 #BSUB -R "rusage[mem=$resources]"
 #BSUB -R affinity[${AFFINITY}]
 eofCAT
@@ -34,8 +58,11 @@ eofCAT
 
     if [[ ${MP_SHARED_MEMORY} = no ]] ; then
     cat <<eofCAT >>$jobcontrol
+##BSUB -q "prod_class1" 
 #BSUB -q "dev" 
 #BSUB -x  
+##BSUB -R affinity[${AFFINITY}]
+#BSUB -R affinity[core(${OMP_NUM_THREADS})]
 eofCAT
     fi
 
@@ -50,6 +77,7 @@ export OMP_NUM_THREADS=$OMP_NUM_THREADS
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
 export MP_SHARED_MEMORY=${MP_SHARED_MEMORY}
+#export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:$OMP_NUM_THREADS 
 
 export total_tasks=$total_tasks
@@ -67,6 +95,7 @@ export MP_EAGER_LIMIT=65535
 export MP_EUIDEVELOP=min
 export MP_MPILIB=mpich2
 export MP_USE_BULK_XFER=yes
+# 20131202 RLW check this affinity setting for the forecast job
 export MP_TASK_AFFINITY=core:1
 #export MPICH_ALLTOALL_THROTTLE=0
 #export MP_COLLECTIVE_OFFLOAD=yes
@@ -76,6 +105,7 @@ eofCAT
     fi
 
     cat <<eofCAT >>$jobcontrol
+. /usrx/local/Modules/3.2.9/init/ksh
 module load ics
 eofCAT
     if [[ ${job_type} = parallel ]] ; then
@@ -122,7 +152,7 @@ echo \$pwdsave
 cd $controldir
 . $controldir/setbase
 . $parmdir/gefs.parm
-cd $pwdsave
+cd \$pwdsave
 export RUN_ENVIR=$envir
 export gefsmachine=$gefsmachine
 export gefsmpexec=$gefsmpexec
@@ -165,8 +195,34 @@ pwdsave=\`pwd\`
 
 echo \`date\` $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje next submit for dev before begin
 
+################################################
+### kate 11/21/2014
+export submit_post_together=$submit_post_together
 cd $controldir
+if [[ $submit_post_together = yes ]]; then
+   if (( $jjj == $jjjf00  || $jjj == $jjjf00l || $jjj == $jjjf06 || $jjj == $jjjf12 || $jjj == $jjjf18 )); then
+        (( iii = $jjjps  ))
+             while (( iii >= $jjjps && iii <= $jjjpe - 2 ));do
+                    if (( iii == $jjjpe- 2 )); then
+                     $0 $yyyymmddccb\$iii $yyyymmddcce$jjje nextbefore 2>&1
+                    else
+                    ((  iiie = iii + 2  ))
+                     $0 $yyyymmddccb\$iii $yyyymmddccb\$iiie nextbefore 2>&1
+                    fi
+                    (( iii = iii + 4 ))
+            done
+   else
+   $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore 2>&1
+   fi
+else
+
 $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore 2>&1
+fi
+
+
+#cd $controldir
+#$0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore 2>&1
+################################################
 rc=\$?
 echo \`date\` $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore rc=\$rc
 cd \$pwdsave
@@ -179,8 +235,8 @@ ls -al $jobdir/$jobscript
 echo
 
 # CALL executable job script here
- $jobdir/$jobscript
-#/usrx/local/bin/getrusage -rss $jobdir/$jobscript
+#$jobdir/$jobscript
+ /usrx/local/bin/getrusage -rss $jobdir/$jobscript
 
 echo
 ls -al $jobdir/$jobscript
@@ -190,8 +246,35 @@ echo \`date\` $jobdir/$jobscript run after
 
 echo \`date\` $0  $yyyymmddccb$jjjb $yyyymmddcce$jjje next submit for dev after begin
 
+###################################################
+# Kate 11/21/2013
 cd $controldir
-$0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextafter 2>&1
+if [[ $submit_post_together = yes ]]; then
+    if (( $jjj == $jjjs00  && $fcst_segments == 2 ));  then
+
+                     $0 $yyyymmddccb$jjjs00 $yyyymmddccb$jjjr00 nextafter 2>&1
+
+                   (( iii = $jjjr00  ))
+             while (( iii >= $jjjr00 && iii <= $jjjz00 -1 ));do
+                    if (( iii == $jjjz00 - 1 )); then
+                     $0 $yyyymmddccb\$iii $yyyymmddcce\$jjje nextbefore 2>&1
+                    else
+
+                    (( iiie = iii + 1 ))
+                     $0 $yyyymmddccb\$iii $yyyymmddccb\$iiie nextbefore 2>&1
+                    fi
+                    (( iii = iii + 1 ))
+             done
+   else
+    $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextafter 2>&1
+   fi
+else
+       $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextafter 2>&1
+fi
+
+#cd $controldir
+#$0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextafter 2>&1
+###################################################
 rc=\$?
 echo \`date\` $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextafter rc=\$rc
 
@@ -204,7 +287,7 @@ cd $plcomout
 cd ..
 pwd
 #echo TEST TESTS output check disabled TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST
-#rc=0
+rc=0
 #DHOU 03/09/2012
 #/global/save/wx20rw/h/bin/hpss.put.output.day >/dev/null 2>&1
 rc=\$?
@@ -228,15 +311,21 @@ eofCAT
         cat <<eofCAT >>$jobcontrol
 #!/bin/ksh
 #
-#BSUB -J $jobname\.w
+#BSUB -J $jobname.${yymmddhhmmss}w
+#BSUB -P $account
 #BSUB -W 0:15
 #BSUB -o $plcomout/$jobname.$yymmddhhmmss.ow
 #BSUB -e $plcomout/$jobname.$yymmddhhmmss.ow
+#BSUB -cwd $basetmp/tmpnwprd
 #BSUB -n 1
 ##BSUB -q "hpc_ibm" 
-#BSUB -q "dev" 
+##BSUB -q "dev" 
+#BSUB -q "dev_shared"
+#BSUB -R "rusage[mem=250]"
+#BSUB -R affinity[core]
 #BSUB -L /bin/ksh
-#BSUB -x  
+#BSUB -b $startdate
+##BSUB -x  
 ##BSUB -l mem=500M
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=MCM
@@ -266,11 +355,11 @@ eofCAT
     cat <<eofCAT >>$jobcontrol
 # export for development runs only begin
 pwdsave=\`$(pwd)\`
-echo $pwdsave
+echo \$pwdsave
 cd $controldir
 . $controldir/setbase
 . $parmdir/gefs.parm
-cd $pwdsave
+cd \$pwdsave
 export jjj=$jjj
 export jjje=$jjje
 export yyyymmddcc=$yyyymmddcc
@@ -304,8 +393,10 @@ echo \`date\` env sort end
 echo \`date\` this is the wait job for $jobdir/$jobscript
 
 echo \`date\` $0 $* resubmit before
+cd $controldir
 $0 $*
 rc=\$?
+cd \$pwdsave
 echo \`date\` $0 $* rc=\$?
 echo \`date\` $0 $* resubmit after
 echo \`date\` $0 $* $jobdir/$jobscript wait end

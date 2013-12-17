@@ -8,7 +8,7 @@ env|sort
 echo env sort after
 echo
 echo `date` touch crontask before
-dircrontask=/ptmp/$LOGNAME/crontask/new
+dircrontask=/ptmp/$LOGNAME/cron/task/new
 echo dircrontask=$dircrontask
 if [[ -d $dircrontask ]]; then
   echo list crontasks before begin
@@ -24,12 +24,36 @@ if [[ -d $dircrontask ]]; then
     yyyymmddp=`echo $dtgprev | cut -c1-8`
     hhp=`echo $dtgprev | cut -c9-10`
     echo yyyymmddp=$yyyymmddp hhp=$hhp
-    if (( hhp == 0 )); then
-      dirlist="nwges/dev/gefs.$yyyymmddp com/gens/dev/gefs.$yyyymmddp/$hhp/ensstat com/gens/dev/gefs.$yyyymmddp/$hhp/pgrba com/gens/dev/gefs.$yyyymmddp/$hhp/track"
-    else
-      dirlist="com/gens/dev/gefs.$yyyymmddp/$hhp/pgrba"
-    fi
-    dirlist=
+    case $expid in
+      (xxxx)
+	if (( hhp == 0 )); then
+	  dirlist="nwges/dev/gefs.$yyyymmddp com/gens/dev/gefs.$yyyymmddp/$hhp/ensstat com/gens/dev/gefs.$yyyymmddp/$hhp/pgrba com/gens/dev/gefs.$yyyymmddp/$hhp/track"
+	else
+	  dirlist="com/gens/dev/gefs.$yyyymmddp/$hhp/pgrba"
+	fi
+      ;;
+      (rwco)
+	if (( hhp == 0 )); then
+	  dirlist="nwges/dev/gefs.$yyyymmddp"
+	else
+	  dirlist=
+	fi
+      ;;
+      (rwcp)
+	if (( hhp == 0 )); then
+	  dirlist="nwges/dev/gefs.$yyyymmddp"
+	else
+	  dirlist=
+	fi
+      ;;
+      (*)
+	if (( hhp == 0 )); then
+	  dirlist="nwges/dev/gefs.$yyyymmddp"
+	else
+	  dirlist=
+	fi
+      ;;
+    esac
     rcm=0
     for dir in $dirlist
     do
@@ -39,7 +63,7 @@ if [[ -d $dircrontask ]]; then
 	cd $dirs
 	rc=$?
 	if (( rc == 0 )); then
-	  dird=/global/noscrub/$LOGNAME/o/$expid/$dir
+	  dird=/ensemble/noscrub/$LOGNAME/o/$expid/$dir
 	  echo dird=$dird
 	  mkdir -p $dird
 	  rc=$?

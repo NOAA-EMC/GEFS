@@ -152,8 +152,8 @@ export SEMILG=.false.
 
 #For T574L64/42 Semi-Lagrangian
 export JCAPHR=574
-export LEVSHR=64
-#export LEVSHR=42
+#export LEVSHR=64
+export LEVSHR=42
 export LONBHR=1152
 export LATBHR=576
 export NTRACHR=3
@@ -212,6 +212,8 @@ if [[ $envir = dev ]]; then
 
   export fhmax=384
   export fhmaxh=192
+#RLW 20130904 full length high resolution
+  export fhmaxhh=384
 #DHOU 03/26/2012 test for Zeus
 # export fhmax=96
 # export fhmaxh=48
@@ -221,8 +223,9 @@ if [[ $envir = dev ]]; then
 
   # for test, NOT USED FOR PRODUCTION
 
-  # specify a cycle at which to pause
-  export pausecycle="2011082400"
+# 20131203 RLW replace pausecycle with pausecyclelist
+  # specify a list of cycles at which to pause
+  export pausecyclelist="1012050300"
 
   export ncpumax=50
   export ncpumin=30
@@ -235,10 +238,10 @@ if [[ $envir = dev ]]; then
   export fhmax12=384
   export fhmax18=384
 # # cycling forecasts only
-# export fhmax00=06
-# export fhmax06=06
-# export fhmax12=06
-# export fhmax18=06
+  export fhmax00=06
+  export fhmax06=06
+  export fhmax12=06
+  export fhmax18=06
 # # 00Z long forecasts only
 # export fhmax00=384
 # export fhmax06=06
@@ -431,6 +434,7 @@ if [[ $envir = dev ]]; then
   # cycles to delay the cleanup
   export runcleancyc=0
   export runcleancyc=1
+  export runcleancyc=4
 
   # run cycling forecasts or not
   export runcyclingf=no

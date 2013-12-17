@@ -1,3 +1,10 @@
+12/13/2013 Dingchen Hou:
+The global_fcst.fd directory used is from the gfs subversion
+We have tested two versions and currently using r33862, whose svn info is in the file r33862.txt
+This version has both STTP and LIOPE options updated, and can be used without modification.
+There are also many other model upgrades during the last 5 months.
+
+07/12/2013 Dingchen Hou:
 The global_fcst.fd directory used is from the gfs subversion
 We have tested two versions and currently using r27399, whose svn info is in the file r27399.txt
 Use the svn info, you can check out a work copy from gfs repository.

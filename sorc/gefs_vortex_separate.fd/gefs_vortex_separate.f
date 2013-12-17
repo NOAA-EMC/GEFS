@@ -90,12 +90,22 @@ C                                 ! NST is the max storm num
 
       REAL,   ALLOCATABLE :: ZG(:,:),PSFC(:,:),PSLB(:,:)
 
-      REAL,   ALLOCATABLE :: HDAT(:,:,:,:),HDATA(:,:,:),PDAT(:,:,:)
+!      REAL,   ALLOCATABLE :: HDAT(:,:,:,:),HDATA(:,:,:),PDAT(:,:,:)
+       REAL,   ALLOCATABLE :: HDAT(:,:,:,:),PDAT(:,:,:)
+       REAL(4),ALLOCATABLE :: HDATA(:,:,:)
+
+
 
       REAL(4),ALLOCATABLE :: WORK_4(:,:)
       REAL,   ALLOCATABLE :: WORK_8(:)
-      REAL,   ALLOCATABLE :: WK_S1(:,:),WK_S2(:,:),WK_G(:,:,:),
-     1                       WK_G2(:,:,:),WK_G3(:,:,:),WK_G4(:,:,:)
+!      REAL,   ALLOCATABLE :: WK_S1(:,:),WK_S2(:,:),WK_G(:,:,:),
+!     1                       WK_G2(:,:,:),WK_G3(:,:,:),WK_G4(:,:,:)
+       REAL,   ALLOCATABLE :: WK_S1(:,:),WK_G1(:,:,:)
+       REAL(4),ALLOCATABLE :: WK_G(:,:,:),WK_G2(:,:,:)
+       REAL,   ALLOCATABLE :: WR_S1(:),WR_S2(:)
+       REAL,   ALLOCATABLE :: WR_G1(:,:),WR_G2(:,:)
+       REAL,   ALLOCATABLE :: U8501(:,:),V8501(:,:)
+
 
       REAL(4),ALLOCATABLE :: SLREF(:),VCRD(:,:)
 
@@ -137,6 +147,8 @@ C                                 ! NST is the max storm num
 !      COMMON /COEF1/LAB
       COMMON /COEF2/IDATE
 !      COMMON /COEF3/FHOUR,DUMMY
+! 20131126 rlw restore coef3 to pass fhour
+      common /coef3/fhour
       COMMON /COEF5/NCNT,NCNT2
 
       CALL W3TAGB('GEFS_VORTEX_SEPARATE',2000,0202,0068,'NP22')
@@ -284,9 +296,18 @@ c     1    ,(DUMMY(K),K=1,2*KMAX+1)
       ALLOCATE ( ZG(IMAX,JMAX),PSFC(IMAX,JMAX),PSLB(IMAX,JMAX) )
       ALLOCATE ( WORK_4(MAXWV2,MTV1+IKMAX) )
       ALLOCATE ( WORK_8(MAXWV22) )
-      ALLOCATE ( WK_S1(MAXWV2,KMAX),WK_S2(MAXWV2,KMAX) )
+!      ALLOCATE ( WK_S1(MAXWV2,KMAX),WK_S2(MAXWV2,KMAX) )
       ALLOCATE ( WK_G(IMAX,JMAX,KMAX),WK_G2(IMAX,JMAX,KMAX) )
-      ALLOCATE ( WK_G3(IMAX,JMAX,KMAX),WK_G4(IMAX,JMAX,KMAX) )
+!      ALLOCATE ( WK_G3(IMAX,JMAX,KMAX),WK_G4(IMAX,JMAX,KMAX) )
+       ALLOCATE ( WK_S1(MAXWV2,KMAX) )
+       ALLOCATE ( WK_G1(IMAX,JMAX,KMAX) )
+       ALLOCATE ( WR_S1(MAXWV2),WR_S2(MAXWV2) )
+       ALLOCATE ( WR_G1(IMAX,JMAX),WR_G2(IMAX,JMAX) )
+       ALLOCATE ( U8501(IMAX,JMAX),V8501(IMAX,JMAX) )
+ 
+
+
+
       ALLOCATE ( SLREF(KMAX) )
 
       ALLOCATE ( HDAT(IRX,JRX,MTV2,NST) )
@@ -296,24 +317,24 @@ c     1    ,(DUMMY(K),K=1,2*KMAX+1)
       allocate (srlsphc(maxwv2))
       allocate (srlsphcl(maxwv2,kmax))
 
-      allocate (srlhd(imax,jmax))
+!      allocate (srlhd(imax,jmax))
       allocate (srlhi(imax,jmax))
-      allocate (srlho(imax,jmax))
-      allocate (srlpd(imax,jmax))
+!      allocate (srlho(imax,jmax))
+!      allocate (srlpd(imax,jmax))
       allocate (srlpi(imax,jmax))
-      allocate (srlpo(imax,jmax))
-      allocate (srltd(imax,jmax,kmax))
+!      allocate (srlpo(imax,jmax))
+!      allocate (srltd(imax,jmax,kmax))
       allocate (srlti(imax,jmax,kmax))
-      allocate (srlto(imax,jmax,kmax))
-      allocate (srldd(imax,jmax,kmax))
+!      allocate (srlto(imax,jmax,kmax))
+!      allocate (srldd(imax,jmax,kmax))
       allocate (srldi(imax,jmax,kmax))
-      allocate (srldo(imax,jmax,kmax))
-      allocate (srlzd(imax,jmax,kmax))
+!      allocate (srldo(imax,jmax,kmax))
+!      allocate (srlzd(imax,jmax,kmax))
       allocate (srlzi(imax,jmax,kmax))
-      allocate (srlzo(imax,jmax,kmax))
-      allocate (srlqd(imax,jmax,kmax))
+!      allocate (srlzo(imax,jmax,kmax))
+!      allocate (srlqd(imax,jmax,kmax))
       allocate (srlqi(imax,jmax,kmax))
-      allocate (srlqo(imax,jmax,kmax))
+!      allocate (srlqo(imax,jmax,kmax))
 
            print *,"   after allocate"
 
@@ -422,10 +443,13 @@ cc
         WORK_8(NW) = WORK_4(NW,NCNT)
       END DO
 
-      call SPTEZ(0,MWAVE,4,IMAX,JMAX,WORK_8,WK_G(1,1,1),+1)
+!      call SPTEZ(0,MWAVE,4,IMAX,JMAX,WORK_8,WK_G(1,1,1),+1)
+      call SPTEZ(0,MWAVE,4,IMAX,JMAX,WORK_8,WK_G1(1,1,1),+1)
 
+!      CALL SPC2G(IMAX,JMAX,GLON,GLAT,ZG,PSFC,PSLB,
+!     1         MTV,MTV2,HDAT,HDATA,WK_G(1,1,1),1)
       CALL SPC2G(IMAX,JMAX,GLON,GLAT,ZG,PSFC,PSLB,
-     1         MTV,MTV2,HDAT,HDATA,WK_G(1,1,1),1)
+     1         MTV,MTV2,HDAT,HDATA,WK_G1(1,1,1),1)
 
 c      WRITE(10) (WORK_4(NW,NCNT),NW=1,MAXWV2)
 C
@@ -438,9 +462,12 @@ C     READ(IUNIT) ( Q(NW),NW=1,MAXWV2)
         WORK_8(NW) = WORK_4(NW,NCNT)
       END DO
 
-      call SPTEZ(0,MWAVE,4,IMAX,JMAX,WORK_8,WK_G(1,1,1),+1)
+!      call SPTEZ(0,MWAVE,4,IMAX,JMAX,WORK_8,WK_G(1,1,1),+1)
+      call SPTEZ(0,MWAVE,4,IMAX,JMAX,WORK_8,WK_G1(1,1,1),+1)
+!      CALL SPC2G(IMAX,JMAX,GLON,GLAT,ZG,PSFC,PSLB,
+!     1         MTV,MTV2,HDAT,HDATA,WK_G(1,1,1),2)
       CALL SPC2G(IMAX,JMAX,GLON,GLAT,ZG,PSFC,PSLB,
-     1         MTV,MTV2,HDAT,HDATA,WK_G(1,1,1),2)
+     1         MTV,MTV2,HDAT,HDATA,WK_G1(1,1,1),2)
 C
       DO 220 K=1,KMAX
 C     READ(IUNIT) (TE(NW),NW=1,MAXWV2)
@@ -453,16 +480,20 @@ C     READ(IUNIT) (TE(NW),NW=1,MAXWV2)
       END DO
 220   CONTINUE
 
-      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,WK_G,+1)
+!      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,WK_G,+1)
+      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,WK_G1,+1)
 
       DO 222 K=1,KMAX
       IDX=10
       IF(K.EQ.1)IDX=3
+!      CALL SPC2G(IMAX,JMAX,GLON,GLAT,ZG,PSFC,PSLB,
+!     1         MTV,MTV2,HDAT,HDATA,WK_G(1,1,K),IDX)
       CALL SPC2G(IMAX,JMAX,GLON,GLAT,ZG,PSFC,PSLB,
-     1         MTV,MTV2,HDAT,HDATA,WK_G(1,1,K),IDX)
+     1         MTV,MTV2,HDAT,HDATA,WK_G1(1,1,K),IDX)
 222   CONTINUE
 C
-      DO 230 K=1,KMAX
+!      DO 230 K=1,KMAX
+      DO  K=1,KMAX
       NCNT = NCNT + 1
 !      READ(IUNIT) (WORK_4(NW,NCNT),NW=1,MAXWV2)
 
@@ -470,37 +501,88 @@ C
 	work_4(nw,ncnt) = datao%d(nw,k)
         WK_S1(NW,K) = WORK_4(NW,NCNT)
       END DO
+      END DO
 
+      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,WK_G1,+1) 
+      WK_G(:,:,:)=WK_G1(:,:,:)
+
+      DO  K=1,KMAX
       NCNT = NCNT + 1
 !      READ(IUNIT) (WORK_4(NW,NCNT),NW=1,MAXWV2)
 
       DO NW=1,MAXWV2
 	work_4(nw,ncnt) = datao%z(nw,k)
-        WK_S2(NW,K) = WORK_4(NW,NCNT)
+        WK_S1(NW,K) = WORK_4(NW,NCNT)
+      END DO
       END DO
 
-230   CONTINUE
+      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,WK_G1,+1) 
+      WK_G2(:,:,:)=WK_G1(:,:,:)
 
-      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,WK_G,+1) 
-      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S2,WK_G2,+1) 
-      CALL SPTEZMV(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,WK_S2,
-     &             WK_G3,WK_G4,+1)      
+!230   CONTINUE
+
+C.. CALCULATE U, V at ~850 mb
+
+!      K850=3+KMAX+(KMAX/4)*4+1
+      K8501=1
+      DIST2=ABS(SLREF(1)-0.85)
+      DO K=1,KMAX
+        DIST1=ABS(SLREF(K)-0.85)
+        IF(DIST1.LT.DIST2)THEN
+          K8501=K
+          DIST2=DIST1
+        END IF
+      END DO
+
+      print*,'K8501=',K8501
+
+      K=K8501
+      DO NW=1,MAXWV2
+        WR_S1(NW) = datao%d(NW,K)
+        WR_S2(NW) = datao%z(NW,K)
+      END DO
+
+
+!      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,WK_G,+1) 
+!      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S2,WK_G2,+1) 
+!      CALL SPTEZMV(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,WK_S2,
+!     &             WK_G3,WK_G4,+1)      
+      CALL SPTEZV(0,MWAVE,4,IMAX,JMAX,WR_S1,WR_S2,
+     &             U8501,V8501,+1)      
+
+       deallocate(work_8,wk_s1,wk_g1)
+       deallocate(wr_s1,wr_s2)
+
 
       IDX=10
       DO 232 K=1,KMAX
+         WR_G1(:,:)=WK_G(:,:,K)
+         WR_G2(:,:)=WK_G2(:,:,K)
+!      CALL SPC2G(IMAX,JMAX,GLON,GLAT,ZG,PSFC,PSLB,
+!     1         MTV,MTV2,HDAT,HDATA,WK_G(1,1,K),IDX)
+!      CALL SPC2G(IMAX,JMAX,GLON,GLAT,ZG,PSFC,PSLB,
+!     1         MTV,MTV2,HDAT,HDATA,WK_G2(1,1,K),IDX)
       CALL SPC2G(IMAX,JMAX,GLON,GLAT,ZG,PSFC,PSLB,
-     1         MTV,MTV2,HDAT,HDATA,WK_G(1,1,K),IDX)
+     1         MTV,MTV2,HDAT,HDATA,WR_G1(1,1),IDX)
       CALL SPC2G(IMAX,JMAX,GLON,GLAT,ZG,PSFC,PSLB,
-     1         MTV,MTV2,HDAT,HDATA,WK_G2(1,1,K),IDX)
+     1         MTV,MTV2,HDAT,HDATA,WR_G2(1,1),IDX)
 C
 C.. CONVERT DI, ZE TO U,V and U,V TO DI ZE again for confirm
 C
+!      CALL SPC2G(IMAX,JMAX,GLON,GLAT,ZG,PSFC,PSLB,
+!     1         MTV,MTV2,HDAT,HDATA,WK_G3(1,1,K),100)
+!      CALL SPC2G(IMAX,JMAX,GLON,GLAT,ZG,PSFC,PSLB,
+!     1         MTV,MTV2,HDAT,HDATA,WK_G4(1,1,K),101)
       CALL SPC2G(IMAX,JMAX,GLON,GLAT,ZG,PSFC,PSLB,
-     1         MTV,MTV2,HDAT,HDATA,WK_G3(1,1,K),100)
+     1         MTV,MTV2,HDAT,HDATA,U8501(1,1),100)
       CALL SPC2G(IMAX,JMAX,GLON,GLAT,ZG,PSFC,PSLB,
-     1         MTV,MTV2,HDAT,HDATA,WK_G4(1,1,K),101)
+     1         MTV,MTV2,HDAT,HDATA,V8501(1,1),101)
 232   CONTINUE
 C
+      deallocate(wk_g,wk_g2,WR_G1,WR_G2,U8501,V8501)
+       ALLOCATE ( WK_S1(MAXWV2,KMAX) )
+       ALLOCATE ( WK_G1(IMAX,JMAX,KMAX) )
+
       DO 240 K=1,KMAX
 C     READ(IUNIT) (RQ(NW),NW=1,MAXWV2)
       NCNT = NCNT + 1
@@ -511,12 +593,15 @@ C     READ(IUNIT) (RQ(NW),NW=1,MAXWV2)
       END DO
 240   CONTINUE
 
-      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,WK_G,+1)
+!      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,WK_G,+1)
+      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,WK_G1,+1)
  
       IDX = 10
       DO 242 K=1,KMAX
+!      CALL SPC2G(IMAX,JMAX,GLON,GLAT,ZG,PSFC,PSLB,
+!     1         MTV,MTV2,HDAT,HDATA,WK_G(1,1,K),IDX)
       CALL SPC2G(IMAX,JMAX,GLON,GLAT,ZG,PSFC,PSLB,
-     1         MTV,MTV2,HDAT,HDATA,WK_G(1,1,K),IDX)
+     1         MTV,MTV2,HDAT,HDATA,WK_G1(1,1,K),IDX)
 242   CONTINUE
 C
       IDX = 10
@@ -544,8 +629,10 @@ c      if(NCNT.ne.(212+IKMAX))print*,'Wrong Data Read In'
 
       DEALLOCATE ( COLRAD, WGT, WGTCS, RCS2 )
       DEALLOCATE ( ZG, PSFC )
-      DEALLOCATE ( WORK_8, WK_S1, WK_S2, WK_G )
-      DEALLOCATE ( WK_G2, WK_G3, WK_G4 )
+!      DEALLOCATE ( WORK_8, WK_S1, WK_S2, WK_G )
+!      DEALLOCATE ( WK_G2, WK_G3, WK_G4 )
+      DEALLOCATE ( WK_S1,WK_G1 )
+
 
       CALL HURR_REL(NSEM,MWAVE,IMAX,JMAX,KMAX,IKMAX,MAXWV2,
      1                 JHF,MTV,MTV1,MTV2,MTV3,
@@ -561,6 +648,20 @@ c     2                 HDAT,HDATA,PDAT,WORK_4,PSLB)
         datao%d(1,K)=0.
         datao%z(1,K)=0.
       END DO
+      deallocate(HDAT,HDATA,PDAT,WORK_4,PSLB,SLREF)
+      allocate (srlhd(imax,jmax))
+      allocate (srlho(imax,jmax))
+      allocate (srlpd(imax,jmax))
+      allocate (srlpo(imax,jmax))
+      allocate (srltd(imax,jmax,kmax))
+      allocate (srlto(imax,jmax,kmax))
+      allocate (srldd(imax,jmax,kmax))
+      allocate (srldo(imax,jmax,kmax))
+      allocate (srlzd(imax,jmax,kmax))
+      allocate (srlzo(imax,jmax,kmax))
+      allocate (srlqd(imax,jmax,kmax))
+      allocate (srlqo(imax,jmax,kmax))
+
 
            print *,"   after zero z and d"
 
@@ -846,7 +947,7 @@ C.. Using interpolated MSLP, Make surface pressure
 C
 c!OMP PARALLEL DO DEFAULT (SHARED)
 c!OMP+ PRIVATE (I,J,TID)
-
+c
       DO I=1,IRX
       DO J=1,JRX
       PSN(I,J) = ALOG(PSN(I,J))
@@ -914,7 +1015,10 @@ C
       COMMON/CNT/ SLON,SLAT
       COMMON /CHEN/KUNIT,ITIM
 C
-      REAL HDAT(IRX,JRX,MTV2,NST),HDATA(IMAX,JMAX,MTV)
+!      REAL HDAT(IRX,JRX,MTV2,NST),HDATA(IMAX,JMAX,MTV)
+       REAL HDAT(IRX,JRX,MTV2,NST)
+       REAL(4) HDATA(IMAX,JMAX,MTV)
+
       REAL DUM(IMAX,JMAX)
 
       COMMON /HDAT1/NWRT1,NRED1,NWT1
@@ -1437,6 +1541,10 @@ c       IF(stmmem.EQ.ENS_MEM)THEN
             STMCX(I)=ISMCX*0.1
           END IF
           STMCY(I)=ISMCY*0.1
+c rlw 20131125 add test on S to set latitude negative for SH storms
+          if(ismcyl.eq.'S')then
+            STMCY(I)=-STMCY(I)
+          endif
           STMNAME(I)=stmnum(1:2)//stmb1(1:1)
           K1STM=K1STM+1
           PRINT*,' CT STORM Model CENTER at ',
@@ -1654,7 +1762,9 @@ c      PRINT*,'READ1 COUNT = ',NRED1
       END
 
       SUBROUTINE WRIT2(IMAX,JMAX,NWRT2,MTV,DIN,HDATA)
-      REAL DIN(IMAX,JMAX),HDATA(IMAX,JMAX,MTV)
+!      REAL DIN(IMAX,JMAX),HDATA(IMAX,JMAX,MTV)
+       REAL DIN(IMAX,JMAX)
+       REAL(4) HDATA(IMAX,JMAX,MTV)
       NWRT2=NWRT2+1
 c      PRINT*,'WRIT2 COUNT = ',NWRT2
 c      call maxmin(DIN,IMAX*JMAX,1,1,1,'DIN in gbl')
@@ -1666,7 +1776,10 @@ c      call maxmin(DIN,IMAX*JMAX,1,1,1,'DIN in gbl')
       END
 
       SUBROUTINE READ2(IMAX,JMAX,NRED2,MTV,DOUT,HDATA)
-      REAL DOUT(IMAX,JMAX),HDATA(IMAX,JMAX,MTV)
+!      REAL DOUT(IMAX,JMAX),HDATA(IMAX,JMAX,MTV)
+      REAL DOUT(IMAX,JMAX)
+      REAL(4) HDATA(IMAX,JMAX,MTV)
+
       NRED2=NRED2+1
 c      PRINT*,'READ2 COUNT = ',NRED2
       DO J=1,JMAX
@@ -1736,7 +1849,9 @@ c      COMMON /TR/ZDATG,GLON,GLAT,ING,JNG,IB
       COMMON /HDAT3/NWRT2,NRED2
       REAL PSLB(IMAX,JMAX)
       REAL(4) SL(KMAX)
-      REAL HDAT(IX,JX,MTV2,NST),HDATA(IMAX,JMAX,MTV)
+!      REAL HDAT(IX,JX,MTV2,NST),HDATA(IMAX,JMAX,MTV)
+      REAL HDAT(IX,JX,MTV2,NST)
+      REAL(4) HDATA(IMAX,JMAX,MTV)
       REAL PDAT(IX,JX,MTV3)
       REAL HSIG(IX,JX,KMAX),HP(IX,JX,2*KMAX+1)
 
@@ -1748,6 +1863,8 @@ c      COMMON /TR/ZDATG,GLON,GLAT,ING,JNG,IB
       COMMON /CHEN/KUNIT,ITIM
 
 !      REAL(4) FHOUR,DUMMY(245)
+! 20131124 RLW define undefined variable FHOUR
+      REAL(4) FHOUR
       REAL(4) SKIP2(MAXWV2,MTV1+IKMAX)
 !      CHARACTER*8 LAB(4)
       DIMENSION IDATE(4)
@@ -1761,18 +1878,23 @@ c      COMMON /TR/ZDATG,GLON,GLAT,ING,JNG,IB
       character stmb*2
 cc
       REAL(4),ALLOCATABLE :: WORK_3(:)
-      REAL,   ALLOCATABLE :: WK_S1(:,:),WK_S2(:,:),WK_G(:,:,:)
+!      REAL,   ALLOCATABLE :: WK_S1(:,:),WK_S2(:,:),WK_G(:,:,:)
+      REAL,   ALLOCATABLE :: WK_S1(:,:),WK_G1(:,:,:)
       
 !      COMMON /COEF1/LAB
       COMMON /COEF2/IDATE
 !      COMMON /COEF3/FHOUR,DUMMY
+! 20131126 rlw restore coef3 to pass fhour
+      common /coef3/fhour
       COMMON /COEF5/NCNT,NCNT2
 C
       DATA M/2,3,4,2,5,6,7,2,8,9,2/
 C
       ALLOCATE ( WORK_3(MAXWV2) )
-      ALLOCATE ( WK_S1(MAXWV2,KMAX),WK_S2(MAXWV2,KMAX) )
-      ALLOCATE ( WK_G(IMAX,JMAX,KMAX) )
+!      ALLOCATE ( WK_S1(MAXWV2,KMAX),WK_S2(MAXWV2,KMAX) )
+!      ALLOCATE ( WK_G(IMAX,JMAX,KMAX) )
+      ALLOCATE ( WK_S1(MAXWV2,KMAX) )
+      ALLOCATE ( WK_G1(IMAX,JMAX,KMAX) )
 
       NCNT2 = 0
 
@@ -1808,6 +1930,9 @@ cql      READ(20)LAB
 c      WRITE(6,124) LAB
 124   FORMAT(4A8)
 !!      WRITE(KUNIT) LAB
+! 20131124 RLW define undefined variable FHOUR
+! 20131126 RLW disabled in favor of common block
+!      FHOUR=11.1
       WRITE(6,210) (IDATE(I),I=1,4),FHOUR
 c     1            ,(DUMMY(K),K=1,2*KMAX+1)
 210   FORMAT(5X,' INPUT DATE AND FCST HOUR ',4I5,F7.1/(2X,G13.6))
@@ -1874,17 +1999,29 @@ c        IF(stmmem.EQ.ENS_MEM)THEN
           I=I+1
           IF(ismcxl.eq.'W')then
             STMCX(I)=360.-ISMCX*0.1
+c rlw 20131126 add missing definitions for file 52
+            istmcx1(i)=3600-ismcx
           ELSE
             STMCX(I)=ISMCX*0.1
+c rlw 20131126 add missing definitions for file 52
+            istmcx1(i)=ismcx
           END IF
           STMCY(I)=ISMCY*0.1
+c rlw 20131126 add missing definitions for file 52
+          istmcy1(i)=ismcy
+c rlw 20131125 add test on S to set latitude negative for SH storms
+          if(ismcyl.eq.'S')then
+            STMCY(I)=-STMCY(I)
+c rlw 20131126 add missing definitions for file 52
+            istmcy1(i)=-istmcy1(i)
+          endif
           STMNAME(I)=stmnum(1:2)//stmb1(1:1)
           stmb=stmb1(1:1)//stmb2(1:1)  
            write(*,*)stmb
           if(stmb.eq.'AL') STMNAME(I)=stmnum(1:2)//'L'
           if(stmb.eq.'IO')then
             if(stmcx(i).le.75) then
-c    Arabain Sea
+c    Arabian Sea
             STMNAME(I)=stmnum(1:2)//'A'
             else
 c   Bay of Bengal
@@ -2481,9 +2618,18 @@ c     1          IG,IFLAG,PSLB)
  781  CONTINUE
 
  788  CONTINUE
+        DO K=1,KMAX
+         DO J=1,JMAX
+           DO I=1,IMAX
+             WK_G1(I,J,K) = HDATA(I,J,2+K)
+           END DO
+          END DO
+         END DO
+
 
       CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,
-     &            HDATA(1,1,3),-1) 
+!     &            HDATA(1,1,3),-1) 
+     &            WK_G1,-1) 
 
       DO K=1,KMAX
         NCNT2 = NCNT2 + 1
@@ -2497,41 +2643,61 @@ c     1          IG,IFLAG,PSLB)
       DO K=1,KMAX
       DO J=1,JMAX
       DO I=1,IMAX
-        WK_G(I,J,K)=HDATA(I,J,KMAX+1+2*K)
+        WK_G1(I,J,K)=HDATA(I,J,KMAX+1+2*K)
+!        WK_G(I,J,K)=HDATA(I,J,KMAX+1+2*K)
       END DO
       END DO
       END DO
 
       CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,
-     &            WK_G,-1)
+!     &            WK_G,-1)
+     &            WK_G1,-1)
+      DO K=1,KMAX
+        DO I=1,MAXWV2
+	  datao%d(i,k)=WK_S1(i,k)
+        END DO
+       END DO
 
       DO K=1,KMAX
       DO J=1,JMAX
       DO I=1,IMAX
-        WK_G(I,J,K)=HDATA(I,J,KMAX+2+2*K)
+!        WK_G(I,J,K)=HDATA(I,J,KMAX+2+2*K)
+        WK_G1(I,J,K)=HDATA(I,J,KMAX+2+2*K)
       END DO
       END DO
       END DO
 
-      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S2,
-     &            WK_G,-1)
+!      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S2,
+!     &            WK_G,-1)
+      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,
+     &            WK_G1,-1)
 
+!      DO K=1,KMAX
+!        DO I=1,MAXWV2
+!          WORK_3(I)=WK_S1(I,K)
+!	  datao%d(i,k)=work_3(i)
+!        END DO
+!        WRITE(KUNIT) (WORK_3(NW),NW=1,MAXWV2)
       DO K=1,KMAX
         DO I=1,MAXWV2
           WORK_3(I)=WK_S1(I,K)
-	  datao%d(i,k)=work_3(i)
-        END DO
-!        WRITE(KUNIT) (WORK_3(NW),NW=1,MAXWV2)
-        DO I=1,MAXWV2
-          WORK_3(I)=WK_S2(I,K)
 	  datao%z(i,k)=work_3(i)
         END DO
+       END DO
+       DO K=1,KMAX
+         DO J=1,JMAX
+           DO I=1,IMAX
+             WK_G1(I,J,K) = HDATA(I,J,3*KMAX+2+K)
+           END DO
+         END DO
+        END DO
+
 !        WRITE(KUNIT) (WORK_3(NW),NW=1,MAXWV2)
 cc        CALL G2SPC(HDATA(1,1,86+K))
-      END DO
 
       CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,
-     &            HDATA(1,1,3+3*KMAX),-1)
+!     &            HDATA(1,1,3+3*KMAX),-1)
+     &            WK_G1,-1)
 
       DO K=1,KMAX
         DO I=1,MAXWV2
@@ -2576,7 +2742,8 @@ cql        WRITE(KUNIT)(OZ(NW),NW=1,MAXWV2)
       END DO
 
       DEALLOCATE ( WORK_3 )
-      DEALLOCATE ( WK_S1, WK_S2, WK_G )
+!      DEALLOCATE ( WK_S1, WK_S2, WK_G )
+      DEALLOCATE ( WK_S1, WK_G1 )
 
 C
       RETURN
@@ -2693,6 +2860,10 @@ C
 c      COMMON /CT/SLON,SLAT,CLON,CLAT,RAD
 c      COMMON /GA/CLON_NEW,CLAT_NEW,R0
 C
+! 20131125 RLW add bounds checks for indices
+      iprint=1
+      jprint=1
+      kprint=0
       DO J=1,IR
       DO I=1,IT
 C.. DETERMINE LAT, LON AREOUND CIRCLE
@@ -2708,6 +2879,25 @@ C.. INTERPOLATION U, V AT TLON,TLAT AND CLACULATE TANGENTIAL WIND
       DXX  = TLON - IFIX(TLON)
       DYY  = TLAT - IFIX(TLAT)
 C
+! 20131125 RLW add bounds checks for indices
+      if ( (idx.lt.1) .or. (idy.lt.1) .or.
+     &     (idx.gt.40) .or. (idy.gt.40) ) then
+        if ( iprint .eq. jprint ) then
+          print *,'twind db1',tlon,tlat,ir,it,j,i,dr,dd,dlon,dlat
+          print *,'twind db2',tlon,tlat,clon_new,clat_new,slon,slat
+          print *,'twind db3',tlon,tlat,idx,idy,dxx,dyy
+          iprint=jprint+kprint
+          kprint=jprint
+          jprint=iprint
+          iprint=0
+        endif
+        iprint=iprint+1
+        idx=max(idx,1)
+        idy=max(idy,1)
+        idx=min(idx,40)
+        idy=min(idy,40)
+      endif
+
       X1 = UD(IDX  ,IDY+1)*DYY + UD(IDX  ,IDY)*(1-DYY)
       X2 = UD(IDX+1,IDY+1)*DYY + UD(IDX+1,IDY)*(1-DYY)
       Y1 = UD(IDX+1,IDY  )*DXX + UD(IDX,IDY  )*(1-DXX)
@@ -2877,7 +3067,9 @@ C
       DO 100 I=1,IT
       IS = IST(I)
 C
-      DO 30 K=IS,IR 
+! 20131126 rlw change loop termination to avoid error
+!      DO 30 K=IS,IR
+      DO 30 K=IS,IR-1 
       IF(TW(I,K).GE.6..OR.TW(I,K).LT.3.) GO TO 30
       DXX = 10000.
       DV = TW(I,K) - TW(I,K+1)
@@ -2955,7 +3147,8 @@ c      COMMON /GA/CLON_NEW,CLAT_NEW,R0
 c      COMMON /TR/ZDATG,GLON,GLAT,ING,JNG,IB
 
       COMMON /HDAT3/NWRT2,NRED2
-      REAL HDATA(IGU,JGU,MTV)
+!      REAL HDATA(IGU,JGU,MTV)
+      REAL(4)  HDATA(IGU,JGU,MTV)
       REAL PSLB(IGU,JGU)
       COMMON /CHEN/KUNIT,ITIM
 

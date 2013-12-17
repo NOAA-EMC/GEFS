@@ -3,13 +3,25 @@
 # rename the output for a particular date of GEFS run
 #
 echo `date` $0 $* begin
-if (( $# == 3 )); then
+if (( $# >= 3 )); then
   expid=$1
-  yyyymmdd=$2
   dtg=$2
   suffix=$3
-  echo expid=$expid yyyymmdd=$yyyymmdd suffix=$suffix
+  saveges=no
+  if (( $# >= 4 )); then
+    case $4 in
+      (saveges)
+        saveges=yes
+      ;;
+      (*)
+        echo UNKNOWN 4TH ARGUMENT $4
+      ;;
+    esac
+  fi
+  echo expid=$expid dtg=$dtg suffix=$suffix saveges=$saveges
   if (( dtg < 23010203 )) && (( dtg > 18010203 )); then
+    yyyymmdd=$dtg
+    echo yyyymmdd=$yyyymmdd
     controldir=/ensemble/save/$LOGNAME/s/$expid/nwdev/control
     cd $controldir
     rc=$?
@@ -20,6 +32,7 @@ if (( $# == 3 )); then
 	/ptmp/$LOGNAME/o/$expid/nwdev/control/$yyyymmdd \
 	/ptmp/$LOGNAME/o/$expid/nwges/dev/gefs.$yyyymmdd \
 	/ptmp/$LOGNAME/o/$expid/tmpnwprd \
+	/stmpd2/$LOGNAME/o/$expid/tmpnwprd \
       "
 
       suffixused=no
@@ -37,7 +50,25 @@ if (( $# == 3 )); then
 	do
 	  if [[ -d $dir ]]; then
 	    ls -ald $dir
-	    mv $dir $dir.$suffix
+	    dirb=`basename $dir`
+	    if [[ $dirb = tmpnwprd ]]; then
+	      mkdir -p $dir.$suffix
+	      rc=$?
+	      if (( rc == 0 )); then
+		for dird in $dir/*${yyyymmdd}*
+		do
+		  if [[ -d $dird ]]; then
+		    mv $dird $dir.$suffix
+		  else
+		    echo dird=$dird DOES NOT EXIST AS A DIRECTORY
+		  fi
+		done
+	      else
+	        echo mkdir -p $dir.$suffix FAILED rc=$rc
+	      fi
+	    else
+	      mv $dir $dir.$suffix
+	    fi
 	    ls -ald $dir.$suffix
 	  else
 	    echo dir=$dir DOES NOT EXIST
@@ -62,6 +93,7 @@ if (( $# == 3 )); then
 	/ptmp/$LOGNAME/o/$expid/nwdev/control/$yyyymmdd \
 	/ptmp/$LOGNAME/o/$expid/nwges/dev/gefs.$yyyymmdd \
 	/ptmp/$LOGNAME/o/$expid/tmpnwprd \
+	/stmpd2/$LOGNAME/o/$expid/tmpnwprd \
       "
 
       suffixused=no
@@ -79,77 +111,96 @@ if (( $# == 3 )); then
 	do
 	  if [[ -d $dir ]]; then
 	    ls -ald $dir
-            dirz=`dirname $dir`
-            diry=`dirname $dirz`
-            dirx=`basename $diry`
-	    diro=$dir.$suffix
-            echo dirx=$dirx $diro=$diro
-            case $dirx in
-	      (output)
-	        mkdir -p $diro
-		rc=$?
-		if (( rc == 0 )); then
-		  for file in $dir/??$yyyymmdd${hh}???.*.o
-		  do
-		    if [[ -f $file ]]; then
-		      mv $file $diro
-		    else
-		      echo file=$file DOES NOT EXIST AS A FILE IN $dir
-		    fi
-		  done
-		else
-		  echo mkdir -p $diro FAILED rc=$rc
-		fi
-	      ;;
-	      (gens)
-	        mkdir -p $diro
-		rc=$?
-		if (( rc == 0 )); then
-		  if [[ -d $dir/$hh ]]; then
-		    mv $dir/$hh $diro/$hh
+	    dirb=`basename $dir`
+	    if [[ $dirb = tmpnwprd ]]; then
+	      mkdir -p $dir.$suffix
+	      rc=$?
+	      if (( rc == 0 )); then
+		for dird in $dir/*${yyyymmdd}${hh}*
+		do
+		  if [[ -d $dird ]]; then
+		    mv $dird $dir.$suffix
 		  else
-		    echo hh=$hh DOES NOT EXIST AS A DIRECTORY IN $dir
+		    echo dird=$dird DOES NOT EXIST AS A DIRECTORY
 		  fi
-		else
-		  echo mkdir -p $diro FAILED rc=$rc
-		fi
-	      ;;
-	      (nwdev)
-	        mkdir -p $diro
-		rc=$?
-		if (( rc == 0 )); then
-		  if [[ -d $dir/$hh ]]; then
-		    mv $dir/$hh $diro/$hh
+		done
+	      else
+	        echo mkdir -p $dir.$suffix FAILED rc=$rc
+	      fi
+	    else
+	      dirz=`dirname $dir`
+	      diry=`dirname $dirz`
+	      dirx=`basename $diry`
+	      echo dirz=$dirz diry=$diry dirx=$dirx
+	      diro=$dir.$suffix
+	      echo dirx=$dirx $diro=$diro
+	      case $dirx in
+		(output)
+		  mkdir -p $diro
+		  rc=$?
+		  if (( rc == 0 )); then
+		    for file in $dir/??$yyyymmdd${hh}???.*.o
+		    do
+		      if [[ -f $file ]]; then
+			mv $file $diro
+		      else
+			echo file=$file DOES NOT EXIST AS A FILE IN $dir
+		      fi
+		    done
 		  else
-		    echo hh=$hh DOES NOT EXIST AS A DIRECTORY IN $dir
+		    echo mkdir -p $diro FAILED rc=$rc
 		  fi
-		else
-		  echo mkdir -p $diro FAILED rc=$rc
-		fi
-	      ;;
-	      (nwges)
-	        mkdir -p $diro
-		rc=$?
-		if (( rc == 0 )); then
-		  for file in $dir/*.t${hh}z.*
-		  do
-		    if [[ -f $file ]]; then
-		      mv $file $diro
+		;;
+		(gens)
+		  mkdir -p $diro
+		  rc=$?
+		  if (( rc == 0 )); then
+		    if [[ -d $dir/$hh ]]; then
+		      mv $dir/$hh $diro/$hh
 		    else
-		      echo file=$file DOES NOT EXIST AS A FILE IN $dir
+		      echo hh=$hh DOES NOT EXIST AS A DIRECTORY IN $dir
 		    fi
-		  done
-		else
-		  echo mkdir -p $diro FAILED rc=$rc
-		fi
-	      ;;
-	      (o)
-	        mv $dir $diro
-	      ;;
-	      (*)
-	        echo THERE IS NO COPY PROCESS DEFINED FOR dirx=$dirx dir=$dir
-	      ;;
-            esac
+		  else
+		    echo mkdir -p $diro FAILED rc=$rc
+		  fi
+		;;
+		(nwdev)
+		  mkdir -p $diro
+		  rc=$?
+		  if (( rc == 0 )); then
+		    if [[ -d $dir/$hh ]]; then
+		      mv $dir/$hh $diro/$hh
+		    else
+		      echo hh=$hh DOES NOT EXIST AS A DIRECTORY IN $dir
+		    fi
+		  else
+		    echo mkdir -p $diro FAILED rc=$rc
+		  fi
+		;;
+		(nwges)
+		  mkdir -p $diro
+		  rc=$?
+		  if (( rc == 0 )); then
+		    for file in $dir/*.t${hh}z.*
+		    do
+		      if [[ -f $file ]]; then
+			mv $file $diro
+		      else
+			echo file=$file DOES NOT EXIST AS A FILE IN $dir
+		      fi
+		    done
+		  else
+		    echo mkdir -p $diro FAILED rc=$rc
+		  fi
+		;;
+		(o)
+		  mv $dir $diro
+		;;
+		(*)
+		  echo THERE IS NO COPY PROCESS DEFINED FOR dirx=$dirx dir=$dir
+		;;
+	      esac
+	    fi
 	    ls -ald $dir $diro
 	  else
 	    echo dir=$dir DOES NOT EXIST

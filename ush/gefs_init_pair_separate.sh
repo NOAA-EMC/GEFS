@@ -624,7 +624,7 @@ if (( relocpertflag == 1 )); then
       fi
     fi
   else
-    echo filtrccn=$filtrccn
+    echo SEPARATION FAILED FOR nipair=n$ipair pipairn=p$ipairn filtrccn=$filtrccn
   fi
 
   echo `date` Separate the storm and environment forecast fields for n$ipair end
@@ -661,7 +661,7 @@ if (( relocpertflag == 1 )); then
       fi
     fi
   else
-    echo filtrccp=$filtrccp
+    echo SEPARATION FAILED FOR pipair=p$ipair pipairp=p$ipairp filtrccp=$filtrccp
   fi
 
 

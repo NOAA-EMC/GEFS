@@ -169,10 +169,9 @@
 #     EMISDIR       Input earth's surface emissivity data directory
 #                   defaults to ${FIX_RAD} - export IEMS=1 to activate
 #     SOLCDIR       11 year cycle Solar constat data directory
-#                   defaults to ${FIX_RAD} - export ISOL=1 to activate
+#                   defaults to ${FIX_RAD} - export ISOL=1,2,3,4, or 10 to activate
 #     VOLCDIR       Volcanic aerosol  data directory
-#                   defaults to ${FIX_RAD} - export IAER=11 or 12 to activate
-#                   IAER=11 uses opac aero_volc; IAER=12 uses gocart+volc
+#                   defaults to ${FIX_RAD} - export IAER=100,101, or 110 to activate
 #     CO2DIR        Historical CO2 data directory
 #                   defaults to ${FIX_RAD} - export ICO2=1 or 2 to activate
 #                   ICO2=1 gives annual mean and ICO2=2 uses monthly 2D data
@@ -209,10 +208,10 @@
 #                   defaults to 24
 #     FHZER         Zeroing frequency in hours
 #                   defaults to 6
-#     FHLWR         Longwave radiation frequency in hours
-#                   defaults to 3
-#     FHSWR         Shortwave radiation frequency in hours
-#                   defaults to 1
+#     FHLWR         Longwave radiation frequency in seconds
+#                   defaults to 3600
+#     FHSWR         Shortwave radiation frequency in seconds
+#                   defaults to 3600
 #     FHROT         Forecast hour to Read One Time level
 #                   defaults to 0
 #     FHDFI         Half number of hours of digital filter initialization
@@ -363,7 +362,7 @@ if [[ $VERBOSE = YES ]] ; then
    echo $(date) EXECUTING $0 $* >&2
    set -x
 fi
-export machine=${machine:-IBMP6}
+export machine=${machine:-WCOSS}
 export machine=$(echo $machine|tr '[a-z]' '[A-Z]')
 if [ $machine = IBMP6 ] ; then
   export MP_BINDPROC=${MP_BINDPROC:-yes}
@@ -543,8 +542,8 @@ export DELTIM=${DELTIM:-$((3600/(JCAP/20)))}
 
 export FHRES=${FHRES:-24}
 export FHZER=${FHZER:-6}
-export FHLWR=${FHLWR:-3}
-export FHSWR=${FHSWR:-1}
+export FHLWR=${FHLWR:-3600}
+export FHSWR=${FHSWR:-3600}
 export FHROT=${FHROT:-0}
 export FHDFI=${FHDFI:-0}
 export FHCYC=${FHCYC:-0}
@@ -679,10 +678,13 @@ if [ $IEMS -gt 0 ] ; then
 #export FCSTVARS="IEMS=$IEMS,$FCSTVARS"
 fi
 if [ $ISOL -gt 0 ] ; then
- ${NCP:-cp} $SOLCDIR/*solarconstantdata.txt solarconstantdata.txt
+ cd $SOLCDIR
+ for file in `ls | grep solarconstant` ; do
+  ${NCP:-cp} $file $DATA/$(echo $file |sed -e "s/global_//g")
+ done
 #export FCSTVARS="ISOL=$ISOL,$FCSTVARS"
 fi
-if [ $IAER -gt 0 ] ; then
+if [ $IAER -ge 100 ] ; then
  cd $VOLCDIR
  for file in `ls | grep volcanic_aerosols` ; do
   ${NCP:-cp} $file $DATA/$(echo $file |sed -e "s/global_//g")
@@ -756,7 +758,7 @@ else
     if [ ${USESUBDIR:-NO} = YES ] ; then
      if [ $IMN -eq $ENS_NUM ] ; then LOCD=/c00 ; else LOCD=/p$IMN ; fi
     fi
-    mkdir -p `eval echo \$COMENS`
+#   mkdir -p `eval echo \$COMENS`
 
 
 #      This is just faking the ensemble ICs.
@@ -831,16 +833,16 @@ else
 #   ln -fs ${SFCR}${MN}  SFCR${MN}
 #   ln -fs ${NSTR}${MN}  NSTR${MN}
 
-    eval ln -fs ${SIGR1}_${IMN} SIGR1_${IMN}
-    eval ln -fs ${SIGR2}_${IMN} SIGR2_${IMN}
-    eval ln -fs ${SFCR}_{IMN}   SFCR_${IMN}
-    eval ln -fs ${NSTR}_${IMN}  NSTR_${IMN}
+    eval ln -fs ${SIGR1} SIGR1_${IMN}
+    eval ln -fs ${SIGR2} SIGR2_${IMN}
+    eval ln -fs ${SFCR}   SFCR_${IMN}
+    eval ln -fs ${NSTR}   NSTR_${IMN}
 # 02/29/2008 DHOU,  added new files for the re-start-files after SP
     if [ $ENS_NUM -gt 2 ] ; then
-      eval ln -fs ${SIGS1}_${IMN} SIGS1_${IMN}
-      eval ln -fs ${SIGS2}_${IMN} SIGS2_${IMN}
-      eval ln -fs ${SFCS}_${IMN}  SFCS_${IMN}
-      eval ln -fs ${NSTS}_${IMN}  NSTS_${IMN}
+      eval ln -fs ${SIGS1} SIGS1_${IMN}
+      eval ln -fs ${SIGS2} SIGS2_${IMN}
+      eval ln -fs ${SFCS}  SFCS_${IMN}
+      eval ln -fs ${NSTS}  NSTS_${IMN}
     fi
   done
 fi
@@ -885,6 +887,7 @@ PE_MEMBER18:             $PE18
 PE_MEMBER19:             $PE19
 PE_MEMBER20:             $PE20
 PE_MEMBER21:             $PE21
+LIOPE:                   $LIOPE
 
 # For stachastic purturbed runs -  added by dhou and wyang
 HH_INCREASE:             $FH_INC
@@ -1067,10 +1070,6 @@ cat  > gfs_namelist <<EOF
 
   $CYCLVARS /
 EOF
-
-echo "Printing environment again"
-env
-#module list
 
 
 eval $PGM $REDOUT$PGMOUT $REDERR$PGMERR

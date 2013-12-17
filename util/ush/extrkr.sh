@@ -317,7 +317,8 @@ case ${cmodel} in
        echo " "; echo " ++ operational high-res ECMWF chosen"    ;
        echo " "                                         ;
        set -x                                           ;
-       ecmwfdir=/dcom_canned/us007003/${PDY}/wgrbbul/ecmwf     ;
+       #ecmwfdir=/dcom_canned/us007003/${PDY}/wgrbbul/ecmwf     ;
+       ecmwfdir=/dcom/us007003/${PDY}/wgrbbul/ecmwf     ;
        ecmwfgfile=                                      ;
        ecmwfifile=                                      ;
        COM=/com_p6/mrf/${envir}/ecmwf.${PDY}               ;
@@ -534,7 +535,8 @@ case ${cmodel} in
        echo " "; echo " ++ operational Canadian global model chosen"   ;
        echo " "                                         ;
        set -x                                           ;
-       cmcdir=/dcom_canned/us007003/${PDY}/wgrbbul/cmc         ;
+       #cmcdir=/dcom_canned/us007003/${PDY}/wgrbbul/cmc         ;
+       cmcdir=/dcom/us007003/${PDY}/wgrbbul/cmc         ;
        cmcgfile=cmc_${PDY}${CYL}f                       ;
        cmcifile=nonexistant                             ;
        COM=/com/gens/prod/cmce.${PDY}/${CYL}/track      ;
@@ -768,12 +770,18 @@ then
   #FAF  synvit6ago_file=gfs.t${d6ago_hh}z.syndata.tcvitals.tm00
   #FAF  synvit6ahead_dir=/com/gfs/prod/gfs.${d6ahead_4ymd}
   #FAF  synvit6ahead_file=gfs.t${d6ahead_hh}z.syndata.tcvitals.tm00
-  synvitdir=/com_p6/gfs/prod/gfs.${PDY}
-  synvitdir=/com_canned/gfs/prod/gfs.${PDY}
+  #RLW synvitdir=/com_p6/gfs/prod/gfs.${PDY}
+  #RLW synvitdir=/com_canned/gfs/prod/gfs.${PDY}
+  #RLW synvitdir=/com/gfs/prod/gfs.${PDY}
+  synvitdir=$basedgfs/com/gfs/prod/gfs.${PDY}
   synvitfile=gfs.t${CYL}z.syndata.tcvitals.tm00
-  synvit6ago_dir=/com_canned/gfs/prod/gfs.${d6ago_4ymd}
+  #RLW synvit6ago_dir=/com_canned/gfs/prod/gfs.${d6ago_4ymd}
+  #RLW synvit6ago_dir=/com/gfs/prod/gfs.${d6ago_4ymd}
+  synvit6ago_dir=$basedgfs/com/gfs/prod/gfs.${d6ago_4ymd}
   synvit6ago_file=gfs.t${d6ago_hh}z.syndata.tcvitals.tm00
-  synvit6ahead_dir=/com_canned/gfs/prod/gfs.${d6ahead_4ymd}
+  #RLW synvit6ahead_dir=/com_canned/gfs/prod/gfs.${d6ahead_4ymd}
+  #RLW synvit6ahead_dir=/com/gfs/prod/gfs.${d6ahead_4ymd}
+  synvit6ahead_dir=$basedgfs/com/gfs/prod/gfs.${d6ahead_4ymd}
   synvit6ahead_file=gfs.t${d6ahead_hh}z.syndata.tcvitals.tm00
 
 else
@@ -784,11 +792,14 @@ else
   #FAF synvit6ago_file=nam.t${d6ago_hh}z.syndata.tcvitals.tm00
   #FAF synvit6ahead_dir=/com/nam/prod/nam.${d6ahead_4ymd}
   #FAF synvit6ahead_file=nam.t${d6ahead_hh}z.syndata.tcvitals.tm00
-  synvitdir=/com_p6/nam/prod/nam.${PDY}
+  #RLW synvitdir=/com_p6/nam/prod/nam.${PDY}
+  synvitdir=/com/nam/prod/nam.${PDY}
   synvitfile=nam.t${CYL}z.syndata.tcvitals.tm00
-  synvit6ago_dir=/com_p6/nam/prod/nam.${d6ago_4ymd}
+  #RLW synvit6ago_dir=/com_p6/nam/prod/nam.${d6ago_4ymd}
+  synvit6ago_dir=/com/nam/prod/nam.${d6ago_4ymd}
   synvit6ago_file=nam.t${d6ago_hh}z.syndata.tcvitals.tm00
-  synvit6ahead_dir=/com_p6/nam/prod/nam.${d6ahead_4ymd}
+  #RLW synvit6ahead_dir=/com_p6/nam/prod/nam.${d6ahead_4ymd}
+  synvit6ahead_dir=/com/nam/prod/nam.${d6ahead_4ymd}
   synvit6ahead_file=nam.t${d6ahead_hh}z.syndata.tcvitals.tm00
 
 fi

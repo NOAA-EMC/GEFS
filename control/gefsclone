@@ -65,6 +65,8 @@ if [[ $nlbdir = $controldir ]] && \
        echo the existing file will not be overwritten
      else
        echo basedest=$basedest does not exist yet
+	   #       echo QUIT BEFORE DOING ANYTHING
+	   #       exit
        mkdir -p $basedest
        rc=$?
        if (( rc == 0 )); then
@@ -82,13 +84,13 @@ if [[ $nlbdir = $controldir ]] && \
 		 (control)
 		   if (( rctot == 0 )); then
 		     echo this is the $dir directory, copy it
-		     cp -prh $basesource/$dir $basedest/$dir
+		     cp -prP $basesource/$dir $basedest/$dir
 		     rc=$?
 		     if (( rc == 0 )); then
 		       ls -ald $basesource/$dir $basedest/$dir
 		     else
 		       echo
-		       echo cp -prh $basesource/$dir $basedest/$dir FAILED rc=$rc
+		       echo cp -prP $basesource/$dir $basedest/$dir FAILED rc=$rc
 		       (( rctot = rctot + rc ))
 		     fi
 		   else
@@ -99,13 +101,13 @@ if [[ $nlbdir = $controldir ]] && \
 		 (parm)
 		   if (( rctot == 0 )); then
 		     echo this is the $dir directory, copy it
-		     cp -prh $basesource/$dir $basedest/$dir
+		     cp -prP $basesource/$dir $basedest/$dir
 		     rc=$?
 		     if (( rc == 0 )); then
 		       ls -ald $basesource/$dir $basedest/$dir
 		     else
 		       echo
-		       echo cp -prh $basesource/$dir $basedest/$dir FAILED rc=$rc
+		       echo cp -prP $basesource/$dir $basedest/$dir FAILED rc=$rc
 		       (( rctot = rctot + rc ))
 		     fi
 		   else
@@ -117,13 +119,13 @@ if [[ $nlbdir = $controldir ]] && \
 		   if (( rctot == 0 )); then
 		     if [[ -L $dir ]]; then
 		       (( ncopy = ncopy + 1 ))
-		       cp -h $basesource/$dir $basedest/$dir
+		       cp -P $basesource/$dir $basedest/$dir
 		       rc=$?
 		       if (( rc == 0 )); then
 			 ls -ald $basesource/$dir $basedest/$dir
 		       else
 			 echo
-			 echo cp -h $basesource/$dir $basedest/$dir FAILED rc=$rc
+			 echo cp -P $basesource/$dir $basedest/$dir FAILED rc=$rc
 			 (( rctot = rctot + rc ))
 		       fi
 		     else
@@ -203,7 +205,7 @@ if [[ $success != yes ]]; then
   echo expid must be 4 characters long and will be created in a directory
   echo analogous to the location of the parent of the current working directory
   echo
-  echo the current working directory should be control submdirectory of either
+  echo the current working directory should be control subdirectory of either
   echo 1:  a GEFS directory tree
   echo 2:  a clone of a GEFS directory tree as created by this script
   echo
