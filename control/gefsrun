@@ -9,6 +9,20 @@ echo
 echo `date` $0 $*                                                         check arguments
 echo
 
+#DHOU, 01/03/2013 add this block to generate the machine name related variables
+  machl=`uname -n | cut -c1`
+  if [[ $machl = r ]]; then
+   machl=f
+  fi
+
+#DHOU, 12/17/2013, define PTMP to pointing to /ptmp or /ptmpd2
+  PTMP=ptmp
+  STMP=stmp
+#if [[ $machl = t ]] || [[ $machl = g ]]; then
+# PTMP=ptmpd2
+# STMP=stmpd2
+#fi
+
 goodargs=yes
 nextflag=no
 tseqflag=no
@@ -228,15 +242,15 @@ echo
 
 lname=$callstring.$expid.$dtg.$mach.$pid
 if [[ $LOGNAME = glopara ]]; then
-  # ldir=/ptmpd2/$LOGNAME/para_gefs/temp.gefs.run
-  ldir=/ptmpd2/$LOGNAME/para_gefs/o/$expid/runlog
+  # ldir=/$PTMP/$LOGNAME/para_gefs/temp.gefs.run
+  ldir=/$PTMP/$LOGNAME/para_gefs/o/$expid/runlog
 else
-  # ldir=/ptmpd2/$LOGNAME/temp.gefs.run
-  ldir=/ptmpd2/$LOGNAME/o/$expid/runlog
+  # ldir=/$PTMP/$LOGNAME/temp.gefs.run
+  ldir=/$PTMP/$LOGNAME/o/$expid/runlog
 #The next two lines for Zeus
   if [[ $gefsmachine = zeus ]]; then                       
   ZPTM=/scratch2/portfolios/NCEPDEV
-  ldir=$ZPTM/ptmp/$LOGNAME/o/$expid/runlog
+  ldir=$ZPTM/$PTMP/$LOGNAME/o/$expid/runlog
   fi
 fi
 echo ldir=$ldir lname=$lname

@@ -16,9 +16,6 @@ echo
   if [[ $machl = r ]]; then
       machl=f
   fi
-# if [[ $machl = g ]]; then
-#     machl=t
-# fi
 
 envir=$(basename $(dirname $(pwd) ) | cut -c3-)
 echo envir=$envir
@@ -34,6 +31,14 @@ echo id=$id
 echo
 echo `date` $0 set directory tree locations
 echo
+
+#DHOU, 12/17/2013, define PTMP to pointing to /ptmp or /ptmpd2
+if [[ $machl = t ]] || [[ $machl = g ]]; then
+  PTMP=ptmp 
+  STMP=stmp
+# PTMP=ptmpd2    
+# STMP=stmpd2
+fi  
 
 if [[ $LOGNAME = glopara ]]; then
   echo
@@ -64,9 +69,9 @@ else
   echo
 
   export basesource=/global/save/$LOGNAME/s/$expid
-  export baseoutput=/ptmpd2/$LOGNAME/o/$expid
-  export basetmp=/stmpd2/$LOGNAME/o/$expid
-  export baseptmp=/ptmpd2/$LOGNAME/o/$expid
+  export baseoutput=/$PTMP/$LOGNAME/o/$expid
+  export basetmp=/$STMP/$LOGNAME/o/$expid
+  export baseptmp=/$PTMP/$LOGNAME/o/$expid
 
 # For VAPOR
 # PTMP=/ptmp/$LOGNAME/tskh
@@ -83,9 +88,9 @@ else
 # For VAPOR end
   export basebin=$basesource/nw$envir/control
 
-  export baselog=/ptmpd2/$LOGNAME/o/$expid
+  export baselog=/$PTMP/$LOGNAME/o/$expid
   export basedgfs=/global/noscrub/$LOGNAME/o
-  export basedgens=/ptmpd2/$LOGNAME/o
+  export basedgens=/$PTMP/$LOGNAME/o
   export baseinitarch=/global/mirror/$LOGNAME/o/$expid
 
 # For VAPOR
@@ -125,9 +130,9 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
 # export basesource=/$group/save/$LOGNAME/GEFS14/$expid
   export basesource=/$group/save/$LOGNAME/s/$expid
   export basebin=$basesource/nw$envir/control
-  export baseoutput=/ptmpd2/$LOGNAME/o/$expid
-  export basetmp=/stmpd2/$LOGNAME/o/$expid
-  export baseptmp=/ptmpd2/$LOGNAME/o/$expid
+  export baseoutput=/$PTMP/$LOGNAME/o/$expid
+  export basetmp=/$STMP/$LOGNAME/o/$expid
+  export baseptmp=/$PTMP/$LOGNAME/o/$expid
 # export basedgfs=        #for prod/para
 # export basedgfs=/$group/noscrub/$LOGNAME/o
 # export basedgfs=/ensemble/noscrub/$LOGNAME  #Use this line as alternative when gfs data is missing from /com_p6/
