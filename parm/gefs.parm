@@ -72,8 +72,11 @@ export FH_INC=6
 export ADVANCECOUNT_SETUP=0
 
 # RUN_CONCURRENT controls concurrent execution of forecasts
-export RUN_CONCURRENT=no
-export RUN_CONCURRENT=yes
+if (( npair < 1 )); then
+ export RUN_CONCURRENT=no
+else
+ export RUN_CONCURRENT=yes
+fi
 
 # ENS_NUM,MEMBER_NAMES to be calculated later based on npair and RUN_CONCURRENT
 
