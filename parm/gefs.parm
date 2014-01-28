@@ -22,6 +22,7 @@ export nhrpair=$npair
 #################################################
 export fhmax=384
 export fhmaxh=192
+export fhmaxh=168
 export fhmaxh=$fhmax
 
 export fhmax00=384
@@ -82,8 +83,8 @@ fi
 
 # if multiple forecasts are to be run concurrently, ENS_SPS controls whether stochastic forcing is used
 #export ENS_SPS=true  #DHOU 20120403, added the two dots to unify script and code requirement
-export ENS_SPS=.false.
-#export ENS_SPS=.true.
+#export ENS_SPS=.false.
+ export ENS_SPS=.true.
 
 ################################################################################
 # number of threads to use in the job JGEFS_SIGCHGRS
@@ -92,7 +93,7 @@ export ENS_SPS=.false.
 #DHOU 03/20/2012 chgres can not run multi-thread
 #NTHREADS_SIGCHGRS=1
 #DHOU 01/10/2013  for WCOSS and bug-fix
- NTHREADS_SIGCHGRS=4
+#NTHREADS_SIGCHGRS=4
 #NTHREADS_SIGCHGRS=1
  export NTHREADS_SIGCHGRS
 
@@ -155,19 +156,33 @@ export SEMILG=.false.
 
 #For T574L64/42 Semi-Lagrangian
 export JCAPHR=574
-#export LEVSHR=64
-export LEVSHR=42
+export LEVSHR=64
+#export LEVSHR=42
 export LONBHR=1152
 export LATBHR=576
 export NTRACHR=3
 export MTNRSL=574.1152.576
 export SEMILG=.true.
 
+#Lower resolution part
+#For T190L42 Eulerian
 export JCAPLR=190
 export LEVSLR=42
 export LONBLR=576
 export LATBLR=288
 export NTRACLR=3
+export MTNRSLLR=190
+export SEMILGLR=.false.
+
+#For T382L64/42 Semi-Lagrangian
+export JCAPLR=382
+export LEVSLR=64
+#export LEVSLR=42
+export LONBLR=768
+export LATBLR=384
+export NTRACLR=3
+export MTNRSLLR=382.768.384
+export SEMILGLR=.true.
 
 export IDVC=2
 
@@ -207,6 +222,7 @@ export SPS_PARM1="0.005 10.0 0.005 10.0 0.0 0.0 0.0 0.0 0.0 0.0"
 export SPS_PARM2="0.105 0.03 0.12 42.0 0.0 0.0 0.0 0.0 0.0 0.0"
 #export SPS_PARM2="0.100 0.01 0.11 42.0 0.0 0.0 0.0 0.0 0.0 0.0"
 export SPS_PARM3="0.2 0.34 -0.34 3.0 0.0 0.0 0.0 0.0 0.0 0.0"
+#export SPS_PARM3="0.2 0.34 -0.34 3.0 0.0 1.0 0.3 0.4 0.3 0.0"
 
 #############################################################################
 # This section is some parameter setup for for development testing only
@@ -215,8 +231,9 @@ if [[ $envir = dev ]]; then
 
   export fhmax=384
   export fhmaxh=192
+  export fhmaxh=168
 #RLW 20130904 full length high resolution
-  export fhmaxhh=384
+# export fhmaxhh=384
 #DHOU 03/26/2012 test for Zeus
 # export fhmax=96
 # export fhmaxh=48

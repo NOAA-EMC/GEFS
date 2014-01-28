@@ -1756,6 +1756,8 @@ case $taskname in
   if [[ $gefsmachine = wcoss ]]; then                       
 #      (( taskspermem = 48 ))
        (( taskspermem = 32 ))
+       (( taskspermem = 40 ))
+       (( taskspermem = 80 ))
 #      parallel_threads=1
        parallel_threads=2
        task_affinity="core(1)"
