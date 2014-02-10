@@ -125,8 +125,9 @@
 #                   defaults to ${FIXGLOBAL}/global_sstclim.2x2.grb
 #     FNSNOC        Input snow climatology GRIB file
 #                   defaults to ${FIXGLOBAL}/global_snoclim.1.875.grb
-#     FNZORC        Input roughness climatology GRIB file
-#                   defaults to ${FIXGLOBAL}/global_zorclim.1x1.grb
+#     FNZORC        Input roughness climatology
+#                   defaults to 'sib' (From sib vegetation-based lookup table.
+#                   FNVETC must be set to sib file: ${FIXGLOBAL}/global_vegtype.1x1.grb)
 #     FNALBC        Input albedo climatology GRIB file
 #                   defaults to ${FIXGLOBAL}/global_albedo4.1x1.grb
 #     FNAISC        Input sea ice climatology GRIB file
@@ -140,7 +141,7 @@
 #     FNSOTC        Input soil type climatology GRIB file
 #                   defaults to ${FIXGLOBAL}/global_soiltype.1x1.grb
 #     FNSMCC        Input soil moisture climatology GRIB file
-#                   defaults to ${FIXGLOBAL}/global_soilmcpc.1x1.grb
+#                   defaults to ${FIXGLOBAL}/global_soilmgldas.t${JCAP}.${LONR}.${LATR}.grb
 #     FNVMNC        Input min veg frac climatology GRIB file    
 #                   defaults to ${FIXGLOBAL}/global_shdmin.0.144x0.144.grb
 #     FNVMXC        Input max veg frac climatology GRIB file    
@@ -153,6 +154,8 @@
 #                   defaults to ${FIXGLOBAL}/global_orography.t$JCAP.grb
 #     OROGRAPHY_UF  Input unfiltered orography GRIB file (resolution dependent)
 #                   defaults to ${FIXGLOBAL}/global_orography_uf.t$JCAP.grb
+#     LONSPERLAT    Input txt file containing reduced grid information
+#                   defaults to ${FIXGLOBAL}/global_lonsperlat.t$MTNRSL.txt}
 #     FNMSKH        Input high resolution land mask GRIB file
 #                   defaults to ${FIXGLOBAL}/seaice_newland.grb
 #     FNTSFA        Input SST analysis GRIB file
@@ -237,6 +240,9 @@
 #                   defaults to 99999
 #     FSICL         Scale in days to relax to sea ice to climatology
 #                   defaults to 99999
+#     FZORL         Scale in days to relax to roughness climatology.
+#                   defaults to 99999 because the 'sib' option sets
+#                   roughness from a lookup table and is static.
 #     CYCLEVARS     Other namelist inputs to the surface cycling
 #                   defaults to none set
 #     NTHREADS      Number of threads
@@ -304,6 +310,7 @@
 #                  $FNMSKH
 #                  $OROGRAPHY
 #                  $OROGRAPHY_UF
+#                  $LONSPERLAT
 #
 #     output data: $3 or $SIGO
 #                  $4 or $FLXO
@@ -384,11 +391,20 @@ elif [ $machine = GAEA ] ; then
   export MPICH_PTL_OTHER_EVENTS=${MPICH_PTL_OTHER_EVENTS:-100000}
   export MPMD_PROC=${MPMD_PROC:-NO}
 elif [ $machine = WCOSS ] ; then
+  if [ ${LOADICS:-YES} = YES ] ; then
+    . /usrx/local/Modules/3.2.9/init/ksh
+    module unload ics
+    export ICS_VERSION=${ICS_VERSION:-13.1.1}
+    module load ics/$ICS_VERSION
+    export MKL_CBWR=${MKL_CBWR:-AVX}          # Needed for bit reproducibility with mkl
+    export MKL_NUM_THREADS=${MKL_NUM_THREADS:-1}
+  fi
   export MP_EUIDEVICE=${MP_EUIDEVICE:-min}
   export MP_EUILIB=${MP_EUILIB:-us}
-  export MP_TASK_AFFINITY=${MP_TASK_AFFINITY:-"cpu:$NTHREADS"}
+# export MP_TASK_AFFINITY=${MP_TASK_AFFINITY:-"cpu:$NTHREADS"}
   export MPICH_ALLTOALL_THROTTLE=${MPICH_ALLTOALL_THROTTLE:-0}
   export MP_SINGLE_THREAD=${MP_SINGLE_THREAD:-yes}
+  export VPROF_PROFILE=${VPROF_PROFILE:-no}
 fi
 #  Command line arguments.
 export APRUN=${APRUN:-""}
@@ -472,14 +488,14 @@ export FNGLAC=${FNGLAC:-${FIXGLOBAL}/global_glacier.2x2.grb}
 export FNMXIC=${FNMXIC:-${FIXGLOBAL}/global_maxice.2x2.grb}
 export FNTSFC=${FNTSFC:-${FIXGLOBAL}/cfs_oi2sst1x1monclim19822001.grb}
 export FNSNOC=${FNSNOC:-${FIXGLOBAL}/global_snoclim.1.875.grb}
-export FNZORC=${FNZORC:-${FIXGLOBAL}/global_zorclim.1x1.grb}
+export FNZORC=${FNZORC:-sib}
 export FNALBC=${FNALBC:-${FIXGLOBAL}/global_albedo4.1x1.grb}
 export FNAISC=${FNAISC:-${FIXGLOBAL}/cfs_ice1x1monclim19822001.grb}
 export FNTG3C=${FNTG3C:-${FIXGLOBAL}/global_tg3clim.2.6x1.5.grb}
 export FNVEGC=${FNVEGC:-${FIXGLOBAL}/global_vegfrac.0.144.decpercent.grb}
 export FNVETC=${FNVETC:-${FIXGLOBAL}/global_vegtype.1x1.grb}
 export FNSOTC=${FNSOTC:-${FIXGLOBAL}/global_soiltype.1x1.grb}
-export FNSMCC=${FNSMCC:-${FIXGLOBAL}/global_soilmcpc.1x1.grb}
+export FNSMCC=${FNSMCC:-${FIXGLOBAL}/global_soilmgldas.t${JCAP}.${LONR}.${LATR}.grb}
 export FNVMNC=${FNVMNC:-${FIXGLOBAL}/global_shdmin.0.144x0.144.grb}
 export FNVMXC=${FNVMXC:-${FIXGLOBAL}/global_shdmax.0.144x0.144.grb}
 export FNSLPC=${FNSLPC:-${FIXGLOBAL}/global_slope.1x1.grb}
@@ -487,6 +503,7 @@ export FNABSC=${FNABSC:-${FIXGLOBAL}/global_snoalb.1x1.grb}
 export FNMSKH=${FNMSKH:-${FIXGLOBAL}/seaice_newland.grb}
 export OROGRAPHY=${OROGRAPHY:-${FIXGLOBAL}/global_orography.t$MTNRSL.grb}
 export OROGRAPHY_UF=${OROGRAPHY_UF:-${FIXGLOBAL}/global_orography_uf.t$MTNRSLUF.grb}
+export LONSPERLAT=${LONSPERLAT:-${FIXGLOBAL}/global_lonsperlat.t$MTNRSL.txt}
 export FNTSFA=${FNTSFA}
 export FNACNA=${FNACNA}
 export FNSNOA=${FNSNOA}
@@ -672,6 +689,7 @@ ln -fs $AERODIR/$AEROSOL_FILE     aerosol.dat
 ln -fs $EMISDIR/$EMMISSIVITY_FILE sfc_emissivity_idx.txt
 ln -fs $OROGRAPHY                 orography
 ln -fs $OROGRAPHY_UF              orography_uf
+ln -fs $LONSPERLAT                lonsperlat.dat
 if [ $IEMS -gt 0 ] ; then
  EMMISSIVITY_FILE=${EMMISSIVITY_FILE:-global_sfc_emissivity_idx.txt}
  ln -fs $EMISDIR/$EMMISSIVITY_FILE sfc_emissivity_idx.txt
@@ -1067,6 +1085,7 @@ cat  > gfs_namelist <<EOF
   FABSL=99999,
   FSNOS=99999,
   FSICS=99999,
+  FZORL=99999,
 
   $CYCLVARS /
 EOF
@@ -1102,6 +1121,7 @@ rm -f fort.11 fort.12 fort.14
 rm -f fort.15 fort.24 fort.27 fort.28 fort.29 fort.43 fort.48
 rm -f orography
 rm -f orography_uf
+rm -f lonsperlat.dat
 rm -f fort.51 fort.52 fort.53
 #rm -f SIG.F* SFC.F* FLX.F* LOG.F* D3D.F* G3D.F*
 ##rm -f sigr1 sigr2 sfcr nstr
