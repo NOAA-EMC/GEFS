@@ -32,12 +32,12 @@ echo
 echo `date` $0 set directory tree locations
 echo
 
-#DHOU, 12/17/2013, define PTMP to pointing to /ptmp or /ptmpd2
-if [[ $machl = t ]] || [[ $machl = g ]]; then
   PTMP=ptmp 
   STMP=stmp
-# PTMP=ptmpd2    
-# STMP=stmpd2
+#DHOU, 12/17/2013, define PTMP to pointing to /ptmp or /ptmpd2
+if [[ $machl = t ]] || [[ $machl = g ]]; then
+  PTMP=ptmpd2    
+  STMP=stmpd2
 fi  
 
 if [[ $LOGNAME = glopara ]]; then
@@ -70,7 +70,7 @@ else
 
   export basesource=/global/save/$LOGNAME/s/$expid
   export baseoutput=/$PTMP/$LOGNAME/o/$expid
-  export basetmp=/$STMP/$LOGNAME/o/$expid
+  export basetmp=/$PTMP/$LOGNAME/o/$expid
   export baseptmp=/$PTMP/$LOGNAME/o/$expid
 
 # For VAPOR

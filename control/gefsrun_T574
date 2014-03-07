@@ -9,6 +9,14 @@ echo
 echo `date` $0 $*                                                         check arguments
 echo
 
+#DHOU, 12/17/2013, define PTMP to pointing to /ptmp or /ptmpd2
+ PTMP=ptmp
+ STMP=stmp
+ if [[ $machl = t ]] || [[ $machl = g ]]; then
+   PTMP=ptmpd2
+   STMP=stmpd2
+ fi
+
 goodargs=yes
 nextflag=no
 tseqflag=no
@@ -231,8 +239,8 @@ if [[ $LOGNAME = glopara ]]; then
   # ldir=/ptmp/$LOGNAME/para_gefs/temp.gefs.run
   ldir=/ptmp/$LOGNAME/para_gefs/o/$expid/runlog
 else
-  # ldir=/ptmp/$LOGNAME/temp.gefs.run
-  ldir=/ptmp/$LOGNAME/o/$expid/runlog
+  # ldir=/$PTMP/$LOGNAME/temp.gefs.run
+  ldir=/$PTMP/$LOGNAME/o/$expid/runlog
 #The next two lines for Zeus
   if [[ $gefsmachine = zeus ]]; then                       
   ZPTM=/scratch2/portfolios/NCEPDEV
@@ -1616,10 +1624,8 @@ case $taskname in
   fi
   if [[ $gefsmachine = wcoss ]]; then                       
      if [[ $fcstjoblength = long ]]; then
-#      (( taskspermem = 64 ))
-#      (( taskspermem = 32 ))
-       (( taskspermem = 96 ))
-#      (( taskspermem = 48 ))
+#      (( taskspermem = 96 ))
+       (( taskspermem = 48 ))
 #      (( taskspermem = 24 ))
      else  
        (( taskspermem = 32 ))
@@ -1732,13 +1738,13 @@ case $taskname in
        taskspernode=12
   fi
   if [[ $gefsmachine = wcoss ]]; then                       
-#      (( taskspermem = 48 ))
-       (( taskspermem = 32 ))
+       (( taskspermem = 40 ))
+#      (( taskspermem = 80 ))
 #      parallel_threads=1
        parallel_threads=2
        task_affinity="core(1)"
-#      (( taskspernode = 16 / parallel_threads ))
-       (( taskspernode = 32 / parallel_threads ))
+       (( taskspernode = 16 / parallel_threads ))
+#      (( taskspernode = 32 / parallel_threads ))
        export taskspernode=$taskspernode
        export OMP_NUM_THREADS=$parallel_threads
     MP_SHARED_MEMORY=no
@@ -1795,9 +1801,13 @@ case $taskname in
     job_type=parallel
     total_tasks=1 
     (( taskspernode = 16 / NTHREADS_SIGCHGRS ))
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
     export taskspernode=$taskspernode
-    export OMP_NUM_THREADS=$NTHREADS_SIGCHGRS
+    export OMP_NUM_THREADS_CH=$NTHREADS_SIGCHGRS
     resources="1000"
+    resources="4000"
     wall_clock_limit="00:20"
     MP_SHARED_MEMORY=yes
    fi
@@ -1962,15 +1972,17 @@ case $taskname in
     else
       wall_clock_limit="$wall_clock_limit_fcst_short"
     fi
-#   total_tasks=8
-    total_tasks=5
+#   total_tasks=5
+    total_tasks=16
     case $gefsmachine in
       (wcoss)
        #taskspernode=$total_tasks
         taskspernode=16
     OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=yes
+    MP_SHARED_MEMORY=no
     resources="1000"
+    resources="5000"
       ;;
     esac
   ;;
@@ -2054,6 +2066,7 @@ case $taskname in
       (wcoss)
     MP_SHARED_MEMORY=yes
     resources="200"
+    resources="1000"
       ;;
     esac
   ;;
@@ -3129,7 +3142,7 @@ echo
 ) 2>&1 | tee -a $ldir/$lname
 
 echo $ldir
-#ls -ablprt $ldir | tail -7
+ls -ablprt $ldir | tail -7
 
 echo
 echo `date` $0 $*                                                                     end

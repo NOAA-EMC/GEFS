@@ -484,4 +484,7 @@ if [[ $envir = dev ]]; then
 fi
 
 export submit_post_together=yes
+if (( npair < 1 )); then
+ export submit_post_together=no
+fi
 echo `date` $0 end

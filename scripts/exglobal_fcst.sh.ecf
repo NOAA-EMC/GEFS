@@ -380,8 +380,8 @@ if [ $machine = IBMP6 ] ; then
 elif [ $machine = ZEUS ] ; then
 # module load intel
 # module load mpt
-  export MPI_BUFS_PER_PROC=${MPI_BUFS_PER_PROC:-256}
-  export MPI_BUFS_PER_HOST=${MPI_BUFS_PER_HOST:-256}
+  export MPI_BUFS_PER_PROC=${MPI_BUFS_PER_PROC:-1024}
+  export MPI_BUFS_PER_HOST=${MPI_BUFS_PER_HOST:-1024}
   export MKL_NUM_THREADS=${MKL_NUM_THREADS:-1}
 elif [ $machine = GAEA ] ; then
   export MPICH_FAST_MEMCPY=${MPICH_FAST_MEMCPY:-"ENABLE"}
@@ -394,7 +394,7 @@ elif [ $machine = WCOSS ] ; then
   if [ ${LOADICS:-YES} = YES ] ; then
     . /usrx/local/Modules/3.2.9/init/ksh
     module unload ics
-    export ICS_VERSION=${ICS_VERSION:-13.1.1}
+    export ICS_VERSION=${ICS_VERSION:-14.0.1}
     module load ics/$ICS_VERSION
     export MKL_CBWR=${MKL_CBWR:-AVX}          # Needed for bit reproducibility with mkl
     export MKL_NUM_THREADS=${MKL_NUM_THREADS:-1}

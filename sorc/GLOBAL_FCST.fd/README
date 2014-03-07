@@ -1,3 +1,8 @@
+03/06/2014 Dingchen Hou:
+The gfs forecast code version described in the 02/10 note (below) is now the sunversion trunk head: r37713
+the full trunk directory can be found in /global/save/emc.glopara/svn/gfs/trunk/para/sorc/global_fcst.fd
+A selected version is in /ensemble/save/Dingchen.Hou/SVN/GFS_TRUNK_37713/sorc/global_fcst.fd
+
 02/10/2014 Dingchen Hou:
 I am currently running a new version of the model following Russ and moorthi.
 The code is in /global/noscrub/Shrinivas.Moorthi/test/global_fcst.fd_Jan17/global_fcst.fd_Dec11
@@ -6,7 +11,7 @@ The corresponding executable is /ensemble/save/Dingchen.Hou/GEFS14/tfEg/nwdev/ex
 02/10/2014 Dingchen Hou:
 The global_fcst.fd directory used is from the gfs subversion
 We have tested Three versions and currently using r36153, whose svn info is in the file r36153.txt
-You can copy it from GYRE:/ensemble/save/Dingchen.Hou/SVN/GFS_TRUNK_20140129/sorc/global_fcst.fd
+You can copy it from GYRE:/ensemble/save/Dingchen.Hou/SVN/GFS_TRUNK_37713/sorc/global_fcst.fd
 There has been many model upgrades during the last 2.5 months.
 I havn't modify the script for STTP Ps perturbations. If You want to remove the STTP perturbation of Ps, You need to modify the code. Please consult Dingchen Hou
 

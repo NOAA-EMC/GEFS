@@ -1,0 +1,44 @@
+03/06/2014 Dingchen Hou:
+From now on, we should use the modified version kf the global_chgres code and ush script
+
+The global_chgres code version ed now is version 37713.
+the full trunk directory can be found in /global/save/emc.glopara/svn/gfs/trunk/para/sorc/global_chgres.fd
+The corresponding ush script is ~ush/global_chgre.sh
+A selected version is in /ensemble/save/Dingchen.Hou/SVN/GFS_TRUNK_37713/sorc/global_fcst.fd
+and /ensemble/save/Dingchen.Hou/SVN/GFS_TRUNK_20140306/ush/global_chgres.sh
+Note that the executable is /ensemble/save/Dingchen.Hou/SVN/GFS_TRUNK_37713/exec/global_fcst
+
+When global_chgres is used, just use the above mentioed script and executable by defining:
+ export chgresush=/ensemble/save/Dingchen.Hou/SVN/GFS_TRUNK_37713/ush/global_chgres.sh
+ export CHGRESEXEC=/ensemble/save/Dingchen.Hou/SVN/GFS_TRUNK_37713/exec/global_chgres
+
+Some fix files must be specified  and An example of usng global_chgres is the jobs/JGEFS_SIGCHGRS.sh script, in which please pay attentio to the following section:
+
+# chgres Fix Fields
+#
+# DHOU 03/04/2014 Adding new file names and variables for the global_chgres upgrade (gfs 2014 implementation)
+export LONSPERLAT=$FIXGLOBAL/global_lonsperlat.t$MTNRSLLR.txt
+export OROGRAPHY=$FIXGLOBAL/global_orography.t$MTNRSLLR.grb
+export OROGRAPHY_UF=$FIXGLOBAL/global_orography_uf.t$MTNRSLLR.grb
+export    SLMASK=$FIXGLOBAL/global_slmask.t$MTNRSLLR.grb
+#   The SST and SEA_ICE Climate fix file:
+#export FNTSFC=$FIXGLOBAL/cfs_oi2sst1x1monclim19822001.grb # Using default untill 2014 gfs implementation
+#export FNAISC=$FIXGLOBAL/cfs_ice1x1monclim19822001.grba   # Using default untill 2014 gfs implementation
+export FNTSFC=$FIXGLOBAL/RTGSST.1982.2012.monthly.clim.grb  # New for gfs 2014 implementation
+export FNAISC=$FIXGLOBAL/CFSR.SEAICE.1982.2012.monthly.clim.grb  # New for gfs 2014 implementation
+#  The VEGTYPE fix file, use the default
+#export FNVETC=$FIXgefs/global_vegtype.1x1.grb
+#export FNVETC=$FIXGLOBAL/global_vegtype.1x1.grb
+#export O3CLIM=$FIXGLOBAL/global_o3clim.txt
+#
+# chgres parameters
+#
+  export FIXSUBDA=fix
+  export use_ufo=.true.
+  export IDSL=1
+  export IDVM=0
+  export IDVT=21
+  export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,idsl=$IDSL,idvc=$IDVC,idvm=$IDVM,idvt=$IDVT,use_ufo=$use_ufo"
+
+
+
