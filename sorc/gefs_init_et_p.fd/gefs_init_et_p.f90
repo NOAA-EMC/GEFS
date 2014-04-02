@@ -3064,7 +3064,7 @@ end subroutine read_mask_ps_monthly
 !
 subroutine mask_pert_3D(ir,jcap,lrec,nrec1,irec,levs,nlath,ilon,ilat, &
 grida,globamplr,globamplg,itopres,contop,nlevrs,mxlev,nlevmask,smax, &
-b1,b2,b3,mmype,mskflag)
+b1,b2,b3,mskflag)
 !  
 !   Mozheng Wei, 2004-10-15
 !   Mozheng Wei, 2006-05-18, modified to read head using sigio_module
@@ -3087,7 +3087,7 @@ b1,b2,b3,mmype,mskflag)
 !  
   character*8 label(4)
   dimension idate(4)
-  integer mmype
+!  integer mmype
   real factor(2), ext(44)
   real*8 grida(ilon,ilat,nrec1)
 
