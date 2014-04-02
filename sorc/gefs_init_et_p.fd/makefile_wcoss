@@ -1,6 +1,6 @@
 INCS   = -I$(MKLROOT)/include -I/nwprod/lib/incmod/sigio_4
 FC     = mpfort
-FFLAGS = -openmp -convert big_endian -assume byterecl -g -traceback -list
+FFLAGS = -openmp -convert big_endian  -g -traceback -list
 LIBS   = -L/nwprod/lib -lsp_4 -lsigio_4 -lw3nco_4 \
          -L$(MKLROOT)/lib/intel64 -lmkl_scalapack_lp64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lmkl_blacs_intelmpi_lp64 -lpthread -lm
 
