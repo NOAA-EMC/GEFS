@@ -118,6 +118,7 @@ if [[ $machl = f ]]; then
   export baselog=$PTMP/o/$expid
   export basedgfs=$PGFS/o
   export basedgens=$PTMP/o
+  export TMPCOM=$basedgfs/com
 fi
 #For ZEUS end
 
@@ -142,11 +143,11 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
 # MISSINGGFS!!! see above line
 
 # export TMPCOM=/com_canned
-# export TMPCOM=/com_p6
-# export TMPCOM=/com
+# export TMPCOM=/com_pu
+  export TMPCOM=/com
 # export TMPCOM=/gpfs/td1/emc/ensemble/noscrub/Dingchen.Hou/com
 # export TMPCOM=/ensemble/noscrub/Dingchen.Hou/com
-  export TMPCOM=/ensemble/noscrub/Richard.Wobus/o/com
+# export TMPCOM=/ensemble/noscrub/Richard.Wobus/o/com
 # basedgfs and TMPCOM are combined to define the directory of the gfs files
 fi
 #For WCOSS end
@@ -167,7 +168,7 @@ fi
 
 if [[ $machl = f ]]; then
 # For ZEUS
-  export account=gefs
+  export account=glbss
   export group=ensemble
   export classs=batch
   export classp=batch

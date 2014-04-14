@@ -3087,7 +3087,7 @@ b1,b2,b3,mskflag)
 !  
   character*8 label(4)
   dimension idate(4)
-!  integer mmype
+! integer mmype
   real factor(2), ext(44)
   real*8 grida(ilon,ilat,nrec1)
 
@@ -3289,11 +3289,11 @@ b1,b2,b3,mskflag)
            grida(i,j,k+5*levs+1)=grida(i,j,k+5*levs+1)*dble(gresc(i,j))
           enddo
          enddo
-!         if (mmype==0) then
+!        if (mmype==0) then
 !         write(61) ((grid2(i,j),i=1,ilon),j=1,ilat)
 !         write(62) ((geogr(i,j,k),i=1,ilon),j=1,ilat)
 !         write(63) ((gresc(i,j),i=1,ilon),j=1,ilat)
-!         endif
+!        endif
 
         enddo  
 

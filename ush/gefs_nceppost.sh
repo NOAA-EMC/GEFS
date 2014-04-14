@@ -354,7 +354,8 @@ ln -sf ./gfs_cntrl.parm fort.14
 ln -sf griddef.out fort.110
 cp ${PARMGLOBAL}/nam_micro_lookup.dat ./eta_micro_lookup.dat
 
-mpirun.lsf $POSTGPEXEC < itag > outpost_gfs_${VDATE}
+#mpirun.lsf $POSTGPEXEC < itag > outpost_gfs_${VDATE}
+$gefsmpexec $POSTGPEXEC < itag > outpost_gfs_${VDATE}
 
 export ERR=$?
 export err=$ERR

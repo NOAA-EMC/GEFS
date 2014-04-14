@@ -805,7 +805,7 @@ if [[ $nextflag = yes ]]; then
             jjjb=005 
             else
             jjjb=012
-#           jjjb=100 ;;      #use this line to skip INIT and gfs for testing
+#           jjjb=100         #use this line to skip INIT and gfs for testing
             fi ;;
       (005) jjjb=010 ;;
       (010) jjjb=012 ;;
@@ -1353,7 +1353,9 @@ case $taskname in
     job_type=serial
 #   wall_clock_limit="00:19:00"
     resources="ConsumableCpus(1) ConsumableMemory(1650 MB)" # ccs, droped for Zeus
-#   resources="1650M"    # zeus
+  if [[ $gefsmachine = zeus ]]; then
+    resources="1650M"    # zeus
+  fi
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="00:10"
     resources="1650"
@@ -1386,6 +1388,8 @@ case $taskname in
     total_tasks=80
   if [[ $gefsmachine = zeus ]]; then                       
     node=8   
+    taskspernode=10
+    (( total_tasks =node*taskspernode))
   fi  
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="01:50"
@@ -1419,6 +1423,8 @@ case $taskname in
     total_tasks=40
   if [[ $gefsmachine = zeus ]]; then                       
     node=4   
+    taskspernode=10
+    ((total_tasks =taskspernode*node))
   fi  
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="01:50"
@@ -1444,7 +1450,10 @@ case $taskname in
     node=2   
     total_tasks=40
   if [[ $gefsmachine = zeus ]]; then                       
-    node=4   
+    node=10
+    taskspernode=4
+    OMP_NUM_THREADS=3
+    ((total_tasks =taskspernode*node))
   fi  
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="02:50"
@@ -1486,6 +1495,9 @@ case $taskname in
     node=3
   if [[ $gefsmachine = zeus ]]; then                       
     node=7   #DHOU 04/04/2012 for ZEUS, T254L42
+    node=60  #X. ZHOU 04/11/2014 for ZEUS, T574L64
+    taskspernode=4
+    (( total_tasks = node*taskspernode ))
   fi  
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="01:50"
@@ -1523,8 +1535,13 @@ case $taskname in
     task_affinity="core(1)"
     node=2   #DHOU 08/20 for T254L42
     total_tasks=40
-#DHOU 04/04/2012 for ZEUS, T254L42
-    node=4   
+  if [[ $gefsmachine = zeus ]]; then
+    node=4   #DHOU 04/04/2012 for ZEUS, T254L42
+    node=8   #X. ZHOU 04/11/2014 for ZEUS T574L64
+    taskspernode=5
+ ((    total_tasks = node * taskspernode ))
+  fi
+
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="01:50"
 #   taskspernode=10
@@ -1617,10 +1634,12 @@ case $taskname in
 
 #DHOU add this for ZEUS
   if [[ $gefsmachine = zeus ]]; then                       
-       (( taskspermem = 40 ))
-       parallel_threads=1
+       (( taskspermem = 48 ))
+       parallel_threads=3
        task_affinity="core(1)"
-       taskspernode=12
+       (( taskspernode = 12 / parallel_threads ))
+       export taskspernode=$taskspernode
+       export OMP_NUM_THREADS=$parallel_threads
   fi
   if [[ $gefsmachine = wcoss ]]; then                       
      if [[ $fcstjoblength = long ]]; then
@@ -1732,10 +1751,12 @@ case $taskname in
 #      machl=f
 # fi
   if [[ $gefsmachine = zeus ]]; then                       
-       (( taskspermem = 40 ))
-       parallel_threads=1
+       (( taskspermem = 32 ))
+       parallel_threads=3
        task_affinity="core(1)"
-       taskspernode=12
+       (( taskspernode = 12 / parallel_threads ))
+       export taskspernode=$taskspernode
+       export OMP_NUM_THREADS=$parallel_threads
   fi
   if [[ $gefsmachine = wcoss ]]; then                       
        (( taskspermem = 40 ))
@@ -1795,6 +1816,13 @@ case $taskname in
 #   total_tasks=8
     node=1
       wall_clock_limit="00:20:00"
+#   (( taskspernode = 12 / NTHREADS_SIGCHGRS ))
+#   if (( taskspernode > total_tasks )); then
+#    taskspernode=$total_tasks
+#   fi
+#   export taskspernode=$taskspernode
+#   export OMP_NUM_THREADS_CH=$NTHREADS_SIGCHGRS
+    export OMP_NUM_THREADS_CH=1
   fi    
   if [[ $gefsmachine = wcoss ]]; then                       
 #DHOU 03/29/2012   chgres is a non-mpi program
@@ -1930,13 +1958,17 @@ case $taskname in
     total_tasks=16    #T574
     case $gefsmachine in
       (wcoss)
-       #taskspernode=$total_tasks
-        taskspernode=16
+    #taskspernode=$total_tasks
+    taskspernode=16
     OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=yes
     MP_SHARED_MEMORY=no
     resources="2000"
     resources="5000"   #T574
+      ;;
+      (zeus)
+    total_tasks=12    #T574
+    taskspernode=12
       ;;
     esac
   ;;
@@ -1984,6 +2016,9 @@ case $taskname in
     resources="1000"
     resources="5000"
       ;;
+      (zeus)
+    taskspernode=8
+      ;;
     esac
   ;;
   (post.prdgen_hr)
@@ -2006,7 +2041,7 @@ case $taskname in
     node=1
     network_MPI="sn_all,shared,us"
 #   resources="ConsumableMemory(800 MB)"
-    resources="800M"
+    resources="8000M"
     task_affinity="core(2)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
@@ -2048,7 +2083,7 @@ case $taskname in
     node=1
     network_MPI="sn_all,shared,us"
 #   resources="ConsumableMemory(800 MB)"
-    resources="800M"
+    resources="8000M"
     task_affinity="core(2)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
@@ -2103,7 +2138,7 @@ case $taskname in
     job_type=serial
     wall_clock_limit="01:30:00"
 #   resources="ConsumableMemory(500 MB)"
-    resources="800M"
+    resources="8000M"
     task_affinity="cpu(1)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
@@ -2137,7 +2172,7 @@ case $taskname in
     job_type=serial
     wall_clock_limit="01:30:00"
 #   resources="ConsumableMemory(500 MB)"
-    resources="800M"
+    resources="8000M"
     task_affinity="cpu(1)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
@@ -2169,7 +2204,7 @@ case $taskname in
     job_type=serial
     wall_clock_limit="01:30:00"
 #   resources="ConsumableMemory(500 MB)"
-    resources="800M"
+    resources="8000M"
     task_affinity="cpu(1)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
@@ -2209,8 +2244,9 @@ case $taskname in
     fi
     job_type=parallel
     node_usage=not_shared
-    tasks_per_node=1
-    node=1
+    taskspernode=1
+    node=2
+    total_tasks=2
 #   resources="ConsumableMemory(500 MB)"
     resources="1200M"
     MP_SHARED_MEMORY=yes
@@ -2242,7 +2278,7 @@ case $taskname in
     fi
     job_type=serial
 ##  resources="ConsumableMemory(500 MB)"
-    resources="500M"
+    resources="5000M"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
     ################################# development variables
@@ -3112,7 +3148,12 @@ echo $cwd
 # llsubmit $jobcontrol
 
 # msub $jobcontrol
+ if [[ $gefsmachine = zeus ]]; then
+  qsub  < $jobcontrol
+ else
+ #   $jobcontrol
   bsub  < $jobcontrol
+ fi
 rc=$?
 if (( rc != 0 )); then
   echo llsubmit $jobcontrol FAILED rc=$rc

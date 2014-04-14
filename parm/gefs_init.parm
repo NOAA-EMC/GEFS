@@ -9,6 +9,7 @@ export relocflag=0
 export relocflag=1
 
 # control pairing,inflag=6 means inputs from EnKF 6h FCST
+export inflag=6
 export inflag=5
 export outflag=5
 
@@ -106,5 +107,7 @@ export etflag=yes
 # if mskflag=0 no rescaling
 # if mskflag=1 2D climatological mask
 # if mskflag=2 3D EnKF-based mask
+# if mskflag=3 3D EnKF-based  Monthly mean mask
+export mskflag_et=3
 export mskflag_et=1
 echo `date` $0 end

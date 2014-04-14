@@ -36,6 +36,9 @@ then
   export SCRIPTSglobal=$HOMEglobal/scripts
 
   export HOMEGLOBAL=/nwprod
+   if [[ $gefsmachine = zeus ]]; then
+  export HOMEGLOBAL=$NCEPNWPROD
+   fi
   export EXECGLOBAL=$HOMEGLOBAL/exec
   export FIXGLOBAL=$HOMEGLOBAL/fix
   export PARMGLOBAL=$HOMEGLOBAL/parm

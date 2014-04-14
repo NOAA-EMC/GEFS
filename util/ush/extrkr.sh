@@ -115,16 +115,18 @@ if [ ! -d $DATA ]
 then
    mkdir -p $DATA
    cd $DATA
-   /nwprod/util/ush/setup.sh
+#  /nwprod/util/ush/setup.sh
+   $utilscript/setup.sh
 fi
 cd $DATA
 
 if [ ${PARAFLAG} = 'YES' ]
 then 
-  /nwprod/util/ush/setup.sh
+  $utilscript/setup.sh
 else
 #TM take out this else part for operations.....
-  /nwprod/util/ush/setup.sh
+#  /nwprod/util/ush/setup.sh
+   $utilscript/setup.sh
 fi
 
 if [ ${#PDY} -eq 0 -o ${#CYL} -eq 0 -o ${#cmodel} -eq 0 ]
@@ -169,12 +171,16 @@ export exectrkdir=${exectrkdir:-${homesyndir}/exec}
 export ushtrkdir=${ushtrkdir:-${homesyndir}/ush}
 export archsyndir=${archsyndir:-/com/arch/prod/syndat}
 
-cp /com/date/t${CYL}z ncepdate
-export CENT=` cut -c7-8 ncepdate `
+#cp /com/date/t${CYL}z ncepdate
+#export CENT=` cut -c7-8 ncepdate `
+export CENT=20
 
 if [ -s /nwprod/util/exec/wgrib ]
 then
   wgrib=/nwprod/util/exec/wgrib
+elif [ -s $EXECUTIL/wgrib ]
+then
+  wgrib=$EXECUTIL/wgrib
 else
   set +x
   echo " "
@@ -749,13 +755,13 @@ esac
 # deal; this script will exit just a little further down once it
 # realizes there are not any storms to process.
 
-d6ago_ymdh=` /nwprod/util/exec/ndate -6 ${PDY}${CYL}`
+d6ago_ymdh=` $EXECUTIL/ndate -6 ${PDY}${CYL}`
 d6ago_4ymd=` echo ${d6ago_ymdh} | cut -c1-8`
 d6ago_ymd=` echo ${d6ago_ymdh} | cut -c3-8`
 d6ago_hh=`  echo ${d6ago_ymdh} | cut -c9-10`
 d6ago_str="${d6ago_ymd} ${d6ago_hh}00"
 
-d6ahead_ymdh=` /nwprod/util/exec/ndate 6 ${PDY}${CYL}`
+d6ahead_ymdh=` $EXECUTIL/ndate 6 ${PDY}${CYL}`
 d6ahead_4ymd=` echo ${d6ahead_ymdh} | cut -c1-8`
 d6ahead_ymd=` echo ${d6ahead_ymdh} | cut -c3-8`
 d6ahead_hh=`  echo ${d6ahead_ymdh} | cut -c9-10`
@@ -773,6 +779,7 @@ then
   #RLW synvitdir=/com_p6/gfs/prod/gfs.${PDY}
   #RLW synvitdir=/com_canned/gfs/prod/gfs.${PDY}
   #RLW synvitdir=/com/gfs/prod/gfs.${PDY}
+  homesyndir=${homesyndir:-/nwprod/util}
   synvitdir=$basedgfs/com/gfs/prod/gfs.${PDY}
   synvitfile=gfs.t${CYL}z.syndata.tcvitals.tm00
   #RLW synvit6ago_dir=/com_canned/gfs/prod/gfs.${d6ago_4ymd}
@@ -909,14 +916,14 @@ fi
 # tracking program.
 #--------------------------------------------------------------#
 
-ymdh6ago=` /nwprod/util/exec/ndate -6 ${PDY}${CYL}`
+ymdh6ago=` $EXECUTIL/ndate -6 ${PDY}${CYL}`
 syy6=`echo ${ymdh6ago} | cut -c3-4`
 smm6=`echo ${ymdh6ago} | cut -c5-6`
 sdd6=`echo ${ymdh6ago} | cut -c7-8`
 shh6=`echo ${ymdh6ago} | cut -c9-10`
 symd6=${syy6}${smm6}${sdd6}
 
-ymdh6ahead=` /nwprod/util/exec/ndate 6 ${PDY}${CYL}`
+ymdh6ahead=` $EXECUTIL/ndate 6 ${PDY}${CYL}`
 syyp6=`echo ${ymdh6ahead} | cut -c3-4`
 smmp6=`echo ${ymdh6ahead} | cut -c5-6`
 sddp6=`echo ${ymdh6ahead} | cut -c7-8`
@@ -1092,8 +1099,10 @@ echo " -----------------------------------------"
 echo " "
 set -x
 
-gix=/nwprod/util/exec/grbindex
-cgb=/nwprod/util/exec/copygb
+#gix=/nwprod/util/exec/grbindex
+#cgb=/nwprod/util/exec/copygb
+gix=$EXECUTIL/grbindex
+cgb=$EXECUTIL/copygb
 
 regflag=`grep NHC ${DATA}/vitals.upd.${atcfout}.${PDY}${CYL} | wc -l`
 
@@ -1451,7 +1460,7 @@ then
 
     let fhr=ict*6
     echo "fhr= $fhr"
-    fmmddhh=` /nwprod/util/exec/ndate ${fhr} ${PDY}${CYL} | cut -c5- `
+    fmmddhh=` $EXECUTIL/ndate ${fhr} ${PDY}${CYL} | cut -c5- `
     ec_hires_orig=ecens_DCD${immddhh}00${fmmddhh}001
       
     if [ ! -s ${ecmwfdir}/${ec_hires_orig} ]

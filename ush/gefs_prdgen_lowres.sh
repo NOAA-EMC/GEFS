@@ -20,7 +20,7 @@ anlflag=$anlflag
 ffhr=$ffhr
 fhr=$fhr
 
-gefsmachine=wcoss  # WCOSS Temporary
+#gefsmachine=wcoss  # WCOSS Temporary
 
 export WGRIB=/nwprod/util/exec/wgrib
 export GRBIDX=/nwprod/util/exec/grbindex

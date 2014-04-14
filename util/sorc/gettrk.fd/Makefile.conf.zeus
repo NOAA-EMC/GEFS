@@ -58,7 +58,7 @@ INCsfcio = $(COREINC)/sfcio_4
   LD            = $(CF)
 
 #--- Normal mode options
-  LIBS_N        = -L$(CORELIB) -lsigio_4 -lsfcio_4 -lip_4 -lsp_4 -lbufr_4_64 -lbacio_4 -lw3lib-2.0_4
+  LIBS_N        = -L$(CORELIB) -lsigio_4 -lsfcio_4 -lip_4 -lsp_4 -lbufr_4_64 -lbacio_4 -lw3lib-2.0_d
 
   LDFLAGS_N     =
 
