@@ -1,3 +1,10 @@
+04/14/2014 Dingchen Hou:
+The gfs chgres code version is updated to r38753, which can be found in
+/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_38753
+You can point the script and executable to the corresponding files in this directory
+
+In the JGEFS_SIGCHGRES.sh and JGEFS_INIT_SEPARATE.sh files, the script and executable for global_chgres are hard-wired with this version and the directory name. This is the start of the move towards vertical structure.
+
 03/06/2014 Dingchen Hou:
 From now on, we should use the modified version kf the global_chgres code and ush script
 

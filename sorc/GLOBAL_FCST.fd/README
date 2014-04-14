@@ -1,3 +1,8 @@
+04/14/2014 Dingchen Hou:
+The gfs forecast code version is updated to r38753, which can be found in
+/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_38753
+You can point the script and executable to the corresponding files in this directory
+
 03/06/2014 Dingchen Hou:
 The gfs forecast code version described in the 02/10 note (below) is now the sunversion trunk head: r37713
 the full trunk directory can be found in /global/save/emc.glopara/svn/gfs/trunk/para/sorc/global_fcst.fd
