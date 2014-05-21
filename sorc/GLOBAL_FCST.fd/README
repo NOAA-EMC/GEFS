@@ -1,3 +1,10 @@
+05/21/2014 Dingchen Hou:
+The gfs forecast code version is pulled back to r37800, which can be found in
+ZEUS: /scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800
+TIDE: /ensemble/save/Dingchen.Hou/SVN/GFS_TRUNK_37800
+The code in this directory is modified to re-formulate the STTP rescaling factors
+The executable ~exec/global_fcst is compiled after the modification
+
 04/14/2014 Dingchen Hou:
 The gfs forecast code version is updated to r38753, which can be found in
 /scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_38753

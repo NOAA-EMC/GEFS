@@ -22,7 +22,7 @@ export nhrpair=$npair
 #################################################
 export fhmax=384
 export fhmaxh=192
-export fhmaxh=168
+#export fhmaxh=168
 export fhmaxh=$fhmax
 
 export fhmax00=384
@@ -219,7 +219,8 @@ fi
 
 #RLW 20110228 add SPS_PARM variables here
 export SPS_PARM1="0.005 10.0 0.005 10.0 0.0 0.0 0.0 0.0 0.0 0.0"
-export SPS_PARM2="0.105 0.03 0.12 42.0 0.0 0.0 0.0 0.0 0.0 0.0"
+export SPS_PARM2="0.105 0.06 0.12 42.0 0.0 0.0 0.0 0.0 0.0 0.0"
+#export SPS_PARM2="0.105 0.03 0.12 42.0 0.0 0.0 0.0 0.0 0.0 0.0"
 #export SPS_PARM2="0.100 0.01 0.11 42.0 0.0 0.0 0.0 0.0 0.0 0.0"
 export SPS_PARM3="0.2 0.34 -0.34 3.0 0.0 0.0 0.0 0.0 0.0 0.0"
 #export SPS_PARM3="0.2 0.34 -0.34 3.0 0.0 1.0 0.3 0.4 0.3 0.0"
@@ -231,7 +232,7 @@ if [[ $envir = dev ]]; then
 
   export fhmax=384
   export fhmaxh=192
-  export fhmaxh=168
+# export fhmaxh=168
 #RLW 20130904 full length high resolution
 # export fhmaxhh=384
 #DHOU 03/26/2012 test for Zeus
