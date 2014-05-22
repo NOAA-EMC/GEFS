@@ -44,8 +44,8 @@ export CNVGRIB=/nwprod/util/exec/cnvgrib
 #echo ZEUSTEST-prdgen-lowres
 #echo $WGRIB $ENSADD $GRBIDX ${EXECUTIL} $USHglobal
 #DHOU 03/22/2012 For ZEUS, copy from exgefs_nceppost.sh.sms
-export WGRIB=${WGRIB:-${EXECUTIL}/wgrib}
-export GRBIDX=${GRBIDX:-${EXECUTIL}/grbindex}
+export WGRIB=${EXECUTIL}/wgrib
+export GRBIDX=${EXECUTIL}/grbindex
     ;;
   esac
 #export ENSADD=${ENSADD:-$USHGLOBAL/global_ensadd.sh}
@@ -58,7 +58,7 @@ export GRBIDX=${GRBIDX:-${EXECUTIL}/grbindex}
 export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
     ;;
     (zeus)
-export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
+export ENSADD=$USHgefs/global_ensadd.sh
 export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib
     ;;
   esac
@@ -222,7 +222,6 @@ fi
     ;;
     (zeus)
       fmakegb=0
-    ll
   esac
 if (( fmakegb == 1 )); then
 #DHOU 03/23/2012, skip grib2 files for ZEUS

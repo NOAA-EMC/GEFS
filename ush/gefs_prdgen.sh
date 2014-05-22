@@ -62,7 +62,7 @@ export GRBIDX=${GRBIDX:-${EXECUTIL}/grbindex}
 export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
     ;;
     (zeus)
-export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
+export ENSADD=$USHgefs/global_ensadd.sh
 export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib
     ;;
   esac
