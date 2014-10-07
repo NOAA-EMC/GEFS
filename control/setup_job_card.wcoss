@@ -12,56 +12,79 @@ echo
 #!/bin/ksh
 #
 #BSUB -J $jobname.$yymmddhhmmss
+#BSUB -P $account
 #BSUB -o $plcomout/$jobname.$yymmddhhmmss.o
 #BSUB -e $plcomout/$jobname.$yymmddhhmmss.o
+#BSUB -cwd $basetmp/tmpnwprd
 #BSUB -W $wall_clock_limit
-#BSUB -q "hpc_ibm" 
-##BSUB -q "dev" 
 #BSUB -L /bin/ksh
 #
 #
 eofCAT
-    if [[ ${job_type} = serial ]] ; then
-      if [[ -n $resources ]]; then
-	echo include resources=$resources
-	cat <<eofCAT >>$jobcontrol
-##BSUB -l mem=$resources
-eofCAT
+
+    if [[ ${MP_SHARED_MEMORY} = yes ]] ; then
+        AFFINITY="core"
+      if [[ ${job_type} = parallel ]] ; then
+        AFFINITY="core(1)"
       fi
+    cat <<eofCAT >>$jobcontrol
+##BSUB -q "dev_shared" 
+#BSUB -q "$class"
+#BSUB -R "rusage[mem=$resources]"
+#BSUB -R affinity[${AFFINITY}]
+eofCAT
     fi
+
+    if [[ ${MP_SHARED_MEMORY} = no ]] ; then
+    cat <<eofCAT >>$jobcontrol
+##BSUB -q "dev" 
+#BSUB -q "$class"
+#BSUB -x  
+eofCAT
+    fi
+
+#echo ${job_type} DHOU TTT    
     if [[ ${job_type} = parallel ]] ; then
-      if [[ -n $total_tasks ]]; then
-	echo include total_tasks=$total_tasks
-  	cat <<eofCAT >>$jobcontrol
+    cat <<eofCAT >>$jobcontrol
 #BSUB -a poe
 #BSUB -n $total_tasks
 #BSUB -R span[ptile=$taskspernode]
-#BSUB -x  
 
 export OMP_NUM_THREADS=$OMP_NUM_THREADS
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
-export MP_SHARED_MEMORY=no
+export MP_SHARED_MEMORY=${MP_SHARED_MEMORY}
 export MEMORY_AFFINITY=core:$OMP_NUM_THREADS 
 
 export total_tasks=$total_tasks
 eofCAT
-      fi
-#      if [[ -n $node ]]; then
-#	echo include node=$node
-#	cat <<eofCAT >>$jobcontrol
-##PBS -l nodes=$node:ppn=$tasks_per_node
-#eofCAT
-#      fi
     fi
+
+#03/29/2013, add the following block following George, for fcst jobs
+task_type=`echo ${taskname} | cut -c1-8`
+#echo $task_type ${taskname} 
+   if [[ ${task_type} = forecast ]] ; then
+    cat <<eofCAT >>$jobcontrol
+export OMP_STACKSIZE=256000
+#env >envv
+export MP_EAGER_LIMIT=65535
+export MP_EUIDEVELOP=min
+export MP_MPILIB=mpich2
+export MP_USE_BULK_XFER=yes
+export MP_TASK_AFFINITY=core:1
+#export MPICH_ALLTOALL_THROTTLE=0
+#export MP_COLLECTIVE_OFFLOAD=yes
+#export KMP_STACKSIZE=1024m
+#export MEMORY_AFFINITY=core:1
+eofCAT
+    fi
+
     cat <<eofCAT >>$jobcontrol
 module load ics
 eofCAT
     if [[ ${job_type} = parallel ]] ; then
      cat <<eofCAT >>$jobcontrol
 module load ibmpe
-#module load mpt
-#module load adaptive
 eofCAT
     fi
 
@@ -160,7 +183,8 @@ ls -al $jobdir/$jobscript
 echo
 
 # CALL executable job script here
-$jobdir/$jobscript
+ $jobdir/$jobscript
+#/usrx/local/bin/getrusage -rss $jobdir/$jobscript
 
 echo
 ls -al $jobdir/$jobscript
@@ -184,7 +208,7 @@ cd $plcomout
 cd ..
 pwd
 #echo TEST TESTS output check disabled TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST
-#rc=0
+rc=0
 #DHOU 03/09/2012
 #/global/save/wx20rw/h/bin/hpss.put.output.day >/dev/null 2>&1
 rc=\$?
@@ -208,15 +232,21 @@ eofCAT
         cat <<eofCAT >>$jobcontrol
 #!/bin/ksh
 #
-#BSUB -J $jobname\.w
+#BSUB -J $jobname.${yymmddhhmmss}w
+#BSUB -P $account
 #BSUB -W 0:15
 #BSUB -o $plcomout/$jobname.$yymmddhhmmss.ow
 #BSUB -e $plcomout/$jobname.$yymmddhhmmss.ow
+#BSUB -cwd $basetmp/tmpnwprd
 #BSUB -n 1
 ##BSUB -q "hpc_ibm" 
-#BSUB -q "dev" 
+##BSUB -q "dev" 
+#BSUB -q "dev_shared"
+#BSUB -R "rusage[mem=250]"
+#BSUB -R affinity[core]
 #BSUB -L /bin/ksh
-#BSUB -x  
+#BSUB -b $startdate
+##BSUB -x  
 ##BSUB -l mem=500M
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=MCM
@@ -250,7 +280,7 @@ echo $pwdsave
 cd $controldir
 . $controldir/setbase
 . $parmdir/gefs.parm
-cd $pwdsave
+cd \$pwdsave
 export jjj=$jjj
 export jjje=$jjje
 export yyyymmddcc=$yyyymmddcc
@@ -284,8 +314,10 @@ echo \`date\` env sort end
 echo \`date\` this is the wait job for $jobdir/$jobscript
 
 echo \`date\` $0 $* resubmit before
+cd $controldir
 $0 $*
 rc=\$?
+cd \$pwdsave
 echo \`date\` $0 $* rc=\$?
 echo \`date\` $0 $* resubmit after
 echo \`date\` $0 $* $jobdir/$jobscript wait end

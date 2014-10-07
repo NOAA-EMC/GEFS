@@ -16,6 +16,13 @@ echo
   if [[ $machl = r ]]; then
       machl=f
   fi
+#DHOU, 12/17/2013, define PTMP to pointing to /ptmp or /ptmpd2
+if [[ $machl = t ]] || [[ $machl = g ]]; then
+# PTMP=ptmp
+# STMP=stmp
+  PTMP=ptmpd2
+  STMP=stmpd2
+fi
 
 envir=$(basename $(dirname $(pwd) ) | cut -c3-)
 echo envir=$envir
@@ -37,17 +44,19 @@ if [[ $LOGNAME = glopara ]]; then
   echo directory locations for running in glopara account
   echo using codes and scripts in $LOGNAME account
   echo
+  export PTMP=/ptmpd2
+  export STMP=/stmpd2
 
   export basesource=/global/save/wx20rw/s/$expid
-  export baseoutput=/ptmp/$LOGNAME/para_gefs/o/$expid
+  export baseoutput=$PTMP/$LOGNAME/para_gefs/o/$expid
 
-  export basetmp=/ptmp/$LOGNAME/para_gefs/o/$expid
-  export baseptmp=/ptmp/$LOGNAME/para_gefs/o/$expid
+  export basetmp=$STMP/$LOGNAME/para_gefs/o/$expid
+  export baseptmp=$PTMP/$LOGNAME/para_gefs/o/$expid
   export basebin=$basesource/nw$envir/control
 
   export baselog=/global/noscrub/$LOGNAME/para_gefs/o/$expid
   export basedgfs=/global/noscrub/$LOGNAME/para_gefs/o/$expid
-  export basedgens=/ptmp/$LOGNAME/para_gefs/o
+  export basedgens=$PTMP/$LOGNAME/para_gefs/o
   export baseinitarch=/global/mirror/$LOGNAME/para_gefs/o/$expid
 
   export account=GEN-T2O
@@ -114,21 +123,24 @@ fi
 #For ZEUS end
 
 #For WCOSS 
-if [[ $machl = t ]]; then
+if [[ $machl = t ]] || [[ $machl = g ]]; then
+  export PTMP=/ptmpd2
+  export STMP=/stmpd2
   group=ensemble
   group=`pwd|cut -d'/' -f2`
   export basesource=/$group/save/$LOGNAME/WCOSS/$expid
-  export baseoutput=/ptmp/$LOGNAME/o/$expid
-  export basetmp=/ptmp/$LOGNAME/o/$expid
-  export baseptmp=/ptmp/$LOGNAME/o/$expid
+  export baseoutput=$PTMP/$LOGNAME/o/$expid
+  export basetmp=$STMP/$LOGNAME/o/$expid
+  export baseptmp=$PTMP/$LOGNAME/o/$expid
+  export baselog=$PTMP/$LOGNAME/o/$expid
 # export basedgfs=/$group/noscrub/$LOGNAME/o
-  export basedgfs=
-# export basedgfs=/ensemble/noscrub/$LOGNAME  #Use this line as alternative when gfs data is missing from /com_p6/
+# export basedgfs=
+  export basedgfs=/ensemble/noscrub/$LOGNAME  #Use this line as alternative when gfs data is missing from /com_p6/
 # MISSINGGFS!!! see above line
 
-  export TMPCOM=/com_canned
+# export TMPCOM=/com_canned
 # export TMPCOM=/com_p6
-# export TMPCOM=/com
+  export TMPCOM=/com
 fi
 #For WCOSS end
 
@@ -157,16 +169,33 @@ if [[ $machl = f ]]; then
 # For ZEUS end
 fi  
 
-if [[ $machl = t ]]; then
+if [[ $machl = t ]] || [[ $machl = g ]]; then
 # For WCOSS
   export account=gefs
   export group=ensemble
   export classs=batch
   export classp=batch
   export classp=batch
+  export classs=dev_shared
+  export classp=dev
 # For WCOSS end
 fi  
 
+fi
+
+# RLW 20140903 modify selected settings for emc.enspara on WCOSS
+if [[ "$LOGNAME" = "emc.enspara" ]]; then
+  userin="Richard.Wobus"
+  export basesource=/$group/save/$userin/s/$expid
+  export basebin=$basesource/nw$envir/control
+  userout="emc.enspara"
+  export baseoutput=/$PTMP/$userout/o/$expid
+  export basetmp=/$STMP/$userout/o/$expid
+  export baseptmp=/$PTMP/$userout/o/$expid
+  usergfs="Richard.Wobus"
+  export basedgfs=/$group/noscrub/$usergfs/o
+  export classs=devhigh_shared
+  export classp=devhigh
 fi
 
 echo basesource=$basesource

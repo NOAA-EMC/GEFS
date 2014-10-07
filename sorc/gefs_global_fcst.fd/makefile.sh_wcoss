@@ -21,7 +21,8 @@ elif [ $mac = z -o $mac = h -o $mac = f ] ; then
 elif [ $mac = t -o $mac = e -o $mac = g ] ; then
  machine=wcoss
 #BASEDIR=/global/save/wx23sm
- ptmp="/ptmp/$LOGNAME"
+ PTMP=ptmpd2
+ ptmp="/$PTMP/$LOGNAME"
  export LIBDIR=/nwprod/lib
 #ptmp=/global/noscrub/ptmp/$LOGNAME
 #export LIBDIR=/home/wx15gv/base/base/para/lib

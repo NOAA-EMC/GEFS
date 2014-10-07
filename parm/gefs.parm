@@ -58,10 +58,10 @@ echo fhdfilores=$fhdfilores
 # cold start at 12Z on the first and 15th of each month
 ####################################################################
 export coldstartcycles="......0112 ......1512"
-# one cold start
-export coldstartcycles="2007110112"
 # no cold starts
 export coldstartcycles="0001010101"
+# one cold start
+export coldstartcycles="2014100412"
 export sigzvd=yes
 
 #########################################################################################
@@ -207,16 +207,16 @@ if [[ $envir = dev ]]; then
   export fhmax06=384
   export fhmax12=384
   export fhmax18=384
-# # cycling forecasts only
-# export fhmax00=06
-# export fhmax06=06
-# export fhmax12=06
-# export fhmax18=06
 # # 00Z long forecasts only
 # export fhmax00=384
 # export fhmax06=06
 # export fhmax12=06
 # export fhmax18=06
+# # cycling forecasts only
+  export fhmax00=06
+  export fhmax06=06
+  export fhmax12=06
+  export fhmax18=06
 
  
 #DHOU 08/05/2010, add this block to modify these realed variables
@@ -412,6 +412,7 @@ if [[ $envir = dev ]]; then
   # set all the following "make" and "save" flags to "yes" to simulate production
   export makepgrba=yes
   export makepgrbb=yes
+  export makepgrb2a=yes
   export makepgrb2b=yes
   export saveflux=yes
   export savesfcsig=yes
