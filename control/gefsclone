@@ -20,6 +20,8 @@ nldddbdir=`basename $nlddddir`
 nldddddir=`dirname $nlddddir`
 nlddddbdir=`basename $nldddddir`
 nlddddddir=`dirname $nldddddir`
+nldddddbdir=`basename $nlddddddir`
+nldddddddir=`dirname $nlddddddir`
 echo nldir=$nldir
 echo nlbdir=$nlbdir
 echo nlddir=$nlddir
@@ -31,6 +33,8 @@ echo nldddbdir=$nldddbdir
 echo nldddddir=$nldddddir
 echo nlddddbdir=$nlddddbdir
 echo nlddddddir=$nlddddddir
+echo nldddddbdir=$nldddddbdir
+echo nldddddddir=$nldddddddir
 
 controldir=control
 envdir=nwdev
@@ -42,20 +46,22 @@ echo basedirstring=$basedirstring
 success=no
 
 if [[ $nlbdir = $controldir ]] && \
-   [[ $nldbdir = $envdir ]] && \
-   [[ $nldddbdir = $basedirstring ]] ; then
-   expidsource=$nlddbdir
-   useridsource=$nlddddbdir
+   [[ $nlddbdir = $envdir ]] && \
+   [[ $nlddddbdir = $basedirstring ]] ; then
+   expidsource=$nldddbdir
+   useridsource=$nldddddbdir
+   versionsource=$nldbdir
    echo expidsource=$expidsource
    echo useridsource=$useridsource
    if [[ $# == 1 ]]; then
      expiddest=$1
      useriddest=$LOGNAME
+     echo versionsource=$versionsource
      echo expiddest=$expiddest
      echo useriddest=$useriddest
      basesource=$nlddir
      echo basesource=$basesource
-     basedest=$nlddddddir/$useriddest/$basedirstring/$expiddest/$envdir
+     basedest=$nldddddddir/$useriddest/$basedirstring/$expiddest/$envdir/$versionsource
      echo basedest=$basedest
      if [[ -d $basedest ]]; then
        echo basedest=$basedest ALREADY EXISTS

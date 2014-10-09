@@ -42,6 +42,12 @@ else
   (( fhmax3 = fhmaxh - 6 ))
 fi
 
+####################################################################
+# Control whether to use old (GRIB1) or new (GRIB2) GFS output
+####################################################################
+export gfsgribedition=1
+export gfsgribedition=2
+
 #########################################################################################
 # Parameters to control the digital filter at the beginning of the forecast
 # and after the resolution change
@@ -263,8 +269,16 @@ if [[ $envir = dev ]]; then
   fi
 
   export gfssource=dev
-  export gfssource=para
   export gfssource=prod
+  export gfssource=para
+  case $gfsgribedition in
+    (1)
+      export gfssource=prod
+    ;;
+    (2)
+      export gfssource=para
+    ;;
+  esac
 
   # new variables to specify locations of scripts and codes
   #

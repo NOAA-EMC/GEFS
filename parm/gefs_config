@@ -8,6 +8,7 @@ if [ $RUN_ENVIR = dev ]
 then
 # export HOMEgefs=/climate/save/wx22yz/gefs/nwdev
 ################# lines between these markers have been modified for dev begin
+# RLW 20141008 modify to obtain and user version for vertical structure
   export HOMEgefs=$basesource/nwdev/gefs.${model_ver}
 ################# lines between these markers have been modified for dev end
   export EXECgefs=$HOMEgefs/exec
@@ -29,6 +30,9 @@ then
   export HOMEglobal=/ensemble/noscrub/Dingchen.Hou/nwprod
    fi
 ################# lines between these markers have been modified for dev end
+   if [[ $gefsmachine = wcoss ]]; then
+  export HOMEglobal=/ensemble/noscrub/Dingchen.Hou/nwprod
+   fi
   export EXECglobal=$HOMEglobal/exec
   export FIXglobal=$HOMEglobal/fix
   export PARMglobal=$HOMEglobal/parm
@@ -113,7 +117,8 @@ echo jobscript= $jobscript
 
 elif [ $RUN_ENVIR = prod ]
 then
-  export HOMEgefs=/nwprod
+# RLW 20141008 modify to obtain and user version for vertical structure
+  export HOMEgefs=/nwprod/gefs.${model_ver}
   export EXECgefs=$HOMEgefs/exec
   export FIXgefs=$HOMEgefs/fix
   export PARMgefs=$HOMEgefs/parm
