@@ -180,6 +180,8 @@ nlddir=`dirname $nldir`
 nldbdir=`basename $nlddir`
 nldddir=`dirname $nlddir`
 nlddbdir=`basename $nldddir`
+nlddddir=`dirname $nldddir`
+nldddbdir=`basename $nlddddir`
 echo nldir=$nldir 
 echo nlddir=$nlddir 
 echo nldbdir=$nldbdir 
@@ -187,10 +189,10 @@ echo nldddir=$nldddir
 echo nlddbdir=$nlddbdir
 
 callstring=`echo $*|tr " " "."`.`basename $0`
-envir=`echo $nldbdir|cut -c3-`
+envir=`echo $nlddbdir|cut -c3-`
 echo callstring=$callstring envir=$envir 
 
-expid=$nlddbdir
+expid=$nldddbdir
 id=`echo $expid|cut -c3-4`
 echo expid=$expid id=$id
 
@@ -315,13 +317,13 @@ echo baseoutput=$baseoutput
 echo baseinitarch=$baseinitarch
 echo basetmp=$basetmp
 
-jobdir=$basesource/nw$envir/jobs
+jobdir=$basesource/nw$envir/gefs.${model_ver}/jobs
 echo jobdir=$jobdir
 
-controldir=$basesource/nw$envir/control
+controldir=$basesource/nw$envir/gefs.${model_ver}/control
 echo controldir=$controldir
 
-parmdir=$basesource/nw$envir/parm
+parmdir=$basesource/nw$envir/gefs.${model_ver}/parm
 echo parmdir=$parmdir
 
 echo
@@ -2478,6 +2480,8 @@ d="$d $pllogdir"
 tmpdir=$basetmp
 d="$d $tmpdir"
 
+d="$d $basewait"
+
 for dir in $d
 do
   if [[ -d $dir ]]; then
@@ -2567,11 +2571,11 @@ else
   cycle=t${cyc}z
 
   waitflag=no
-  if [[ -s $controldir/waitfile.$machl ]]; then
-    waitflag=`tail -1 $controldir/waitfile.$machl`
-    echo control directory waitfile.$machl file used to set waitflag=$waitflag
+  if [[ -s $basewait/waitfile.$machl ]]; then
+    waitflag=`tail -1 $basewait/waitfile.$machl`
+    echo basewait directory waitfile.$machl file used to set waitflag=$waitflag
   else
-    echo control directory does not contain the waitfile.$machl file
+    echo basewait directory does not contain the waitfile.$machl file
   fi
 
   ############### if task is init.separate, then check for gfs analysis
@@ -2963,7 +2967,7 @@ else
     mo=`echo $yyyymmddhh|cut -c5-6`
     dd=`echo $yyyymmddhh|cut -c7-8`
     hh=`echo $yyyymmddhh|cut -c9-10`
-    startdate="$mo/$dd/$yyyy ${hh}:${mi}"
+    startdate="${mo}:$dd:${hh}:${mi}"
     echo
     echo startdate=$startdate
     echo
@@ -3048,9 +3052,11 @@ echo $cwd
 rc=$?
 if (( rc != 0 )); then
   echo llsubmit $jobcontrol FAILED rc=$rc
+  if [[ $gefsmachine = ccs ]]; then
     echo `date` $0 $* cat llqstring before
     cat $llqstring
     echo `date` $0 $* cat llqstring after
+  fi
   fi
 
 fi

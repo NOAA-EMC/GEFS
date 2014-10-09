@@ -216,9 +216,9 @@ if (( rc == 0 )); then
   echo do not reset waitflag because rc=\$rc
 else
   echo reset waitflag because rc=\$rc
-  echo waitflag=\`cat $controldir/waitfile.$machl\` before
-  echo yes>$controldir/waitfile.$machl
-  echo waitflag=\`cat $controldir/waitfile.$machl\` after
+  echo waitflag=\`cat $basewait/waitfile.$machl\` before
+  echo yes>$basewait/waitfile.$machl
+  echo waitflag=\`cat $basewait/waitfile.$machl\` after
 fi
 echo \`date\` test output files end
 eofCAT
@@ -333,9 +333,9 @@ if (( rc == 0 )); then
   echo do not reset waitflag because rc=\$rc
 else
   echo reset waitflag because rc=\$rc
-  echo waitflag=\`cat $controldir/waitfile.$machl\` before
+  echo waitflag=\`cat $basewait/waitfile.$machl\` before
   echo yes>$controldir/waitfile.$machl
-  echo waitflag=\`cat $controldir/waitfile.$machl\` after
+  echo waitflag=\`cat $basewait/waitfile.$machl\` after
 fi
 echo \`date\` test output files end
 eofCAT

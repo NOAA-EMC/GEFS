@@ -531,7 +531,8 @@ echo ifinn$ipair > sig_zvdl
 if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 $EXECGLOBAL/global_sigzvd
 else
-$basesource/nw${envir}/exec/global_sigzvd
+# RLW 20141008 modify to obtain and user version for vertical structure
+$basesource/nw${envir}/gefs.${model_ver}/exec/global_sigzvd
 fi
 
 ret_sigzvd=$?
@@ -548,7 +549,8 @@ echo ifinp$ipair > sig_zvdl
 if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 $EXECGLOBAL/global_sigzvd
 else
-$basesource/nw${envir}/exec/global_sigzvd
+# RLW 20141008 modify to obtain and user version for vertical structure
+$basesource/nw${envir}/gefs.${model_ver}/exec/global_sigzvd
 fi
 
 ret_sigzvd=$?
@@ -563,9 +565,11 @@ if [[ $envir = prod ]]; then
 execseparate=$EXECGLOBAL/gefs_vortex_separate
 ###testb
 elif [[ $envir = para ]] || [[ $envir = test ]]; then
-execseparate=/nw$envir/exec/gefs_vortex_separate
+# RLW 20141008 modify to obtain and user version for vertical structure
+execseparate=/nw$envir/gefs.${model_ver}/exec/gefs_vortex_separate
 else
-execseparate=$basesource/nw$envir/exec/gefs_vortex_separate
+# RLW 20141008 modify to obtain and user version for vertical structure
+execseparate=$basesource/nw$envir/gefs.${model_ver}/exec/gefs_vortex_separate
 fi
 ###teste
 if (( relocpertflag == 1 )); then
@@ -654,7 +658,6 @@ echo `date` relocflag=$relocflag relocpertflag=$relocpertflag
 #
 # end relocation splitting section
 #
-
 ln -sf finn sig_zvdi
 if [[ "$sigzvd" = "yes" ]]; then
   ln -sf finn sig_zvdo
@@ -666,7 +669,8 @@ echo sfinn$ipair > sig_zvdl
 if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 $EXECGLOBAL/global_sigzvd
 else
-$basesource/nw${envir}/exec/global_sigzvd
+# RLW 20141008 modify to obtain and user version for vertical structure
+$basesource/nw${envir}/gefs.${model_ver}/exec/global_sigzvd
 fi
 ret_sigzvd=$?
 
@@ -681,7 +685,8 @@ echo sfinp$ipair > sig_zvdl
 if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 $EXECGLOBAL/global_sigzvd
 else
-$basesource/nw${envir}/exec/global_sigzvd
+# RLW 20141008 modify to obtain and user version for vertical structure
+$basesource/nw${envir}/gefs.${model_ver}/exec/global_sigzvd
 fi
 ret_sigzvd=$?
 

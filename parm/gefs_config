@@ -8,7 +8,7 @@ if [ $RUN_ENVIR = dev ]
 then
 # export HOMEgefs=/climate/save/wx22yz/gefs/nwdev
 ################# lines between these markers have been modified for dev begin
-  export HOMEgefs=$basesource/nwdev
+  export HOMEgefs=$basesource/nwdev/gefs.${model_ver}
 ################# lines between these markers have been modified for dev end
   export EXECgefs=$HOMEgefs/exec
   export FIXgefs=$HOMEgefs/fix

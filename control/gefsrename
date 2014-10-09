@@ -11,6 +11,10 @@ else
   owner=$LOGNAME
 fi
 echo owner=$owner
+group=ensemble
+echo group=$group
+envir=dev
+echo envir=$envir
 if (( $# >= 3 )); then
   expid=$1
   dtg=$2
@@ -30,7 +34,9 @@ if (( $# >= 3 )); then
   if (( dtg < 23010203 )) && (( dtg > 18010203 )); then
     yyyymmdd=$dtg
     echo yyyymmdd=$yyyymmdd
-    controldir=/ensemble/save/$owner/s/$expid/nwdev/control
+    # 20141008 RLW modify to obtain and user version for vertical structure
+    . /$group/save/$owner/s/$expid/nw$envir/gefs.v*/versions/gefs.ver
+    controldir=/ensemble/save/$owner/s/$expid/nwdev/gefs.${model_ver}/control
     cd $controldir
     rc=$?
     if (( rc == 0 )); then
@@ -91,7 +97,9 @@ if (( $# >= 3 )); then
   elif (( dtg < 2301020318 )) && (( dtg > 1801020300 )); then
     yyyymmdd=`echo $dtg|cut -c1-8`
     hh=`echo $dtg|cut -c9-10`
-    controldir=/ensemble/save/$owner/s/$expid/nwdev/control
+    # 20141008 RLW modify to obtain and user version for vertical structure
+    . /$group/save/$owner/s/$expid/nw$envir/*/versions/gefs.ver
+    controldir=/ensemble/save/$owner/s/$expid/nwdev/gefs.${model_ver}/control
     cd $controldir
     rc=$?
     if (( rc == 0 )); then

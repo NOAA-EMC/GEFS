@@ -20,14 +20,14 @@ echo
 if [[ $machl = t ]] || [[ $machl = g ]]; then
 # PTMP=ptmp
 # STMP=stmp
-  PTMP=ptmpd2
-  STMP=stmpd2
+  PTMP=/ptmpd2
+  STMP=/stmpd2
 fi
 
-envir=$(basename $(dirname $(pwd) ) | cut -c3-)
+envir=$(basename $(dirname $(dirname $(pwd) ) ) | cut -c3-)
 echo envir=$envir
 
-expid=$(basename $(dirname $(dirname $(pwd) ) ) )
+expid=$(basename $(dirname $(dirname $(dirname $(pwd) ) ) ) )
 id=`echo $expid|cut -c3-4`
 echo expid=$expid
 echo id=$id
@@ -173,29 +173,33 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
 # For WCOSS
   export account=gefs
   export group=ensemble
-  export classs=batch
-  export classp=batch
-  export classp=batch
-  export classs=dev_shared
-  export classp=dev
+  # RLW 20140903 modify selected settings for emc.enspara on WCOSS
+  if [[ "$LOGNAME" = "emc.enspara" ]]; then
+    userin="Richard.Wobus"
+    userout="emc.enspara"
+    usergfs="Richard.Wobus"
+    export classs=devhigh_shared
+    export classp=devhigh
+  else
+    userin=$LOGNAME
+    userout=$LOGNAME
+    usergfs="Richard.Wobus"
+    export classs=dev_shared
+    export classp=dev
+  fi
+  # RLW 20141008 modify to obtain and user version for vertical structure
+  . /$group/save/$userin/s/$expid/nw$envir/gefs.v*/versions/gefs.ver
+  echo model_ver=${model_ver}
+  export basesource=/$group/save/$userin/s/$expid
+  export basebin=$basesource/nw$envir/gefs.${model_ver}/control
+  export baseoutput=$PTMP/$userout/o/$expid
+  export basetmp=$STMP/$userout/o/$expid
+  export baseptmp=$PTMP/$userout/o/$expid
+  export basedgfs=/$group/noscrub/$usergfs/o
+  export basewait=$baseoutput/wait
 # For WCOSS end
 fi  
 
-fi
-
-# RLW 20140903 modify selected settings for emc.enspara on WCOSS
-if [[ "$LOGNAME" = "emc.enspara" ]]; then
-  userin="Richard.Wobus"
-  export basesource=/$group/save/$userin/s/$expid
-  export basebin=$basesource/nw$envir/control
-  userout="emc.enspara"
-  export baseoutput=/$PTMP/$userout/o/$expid
-  export basetmp=/$STMP/$userout/o/$expid
-  export baseptmp=/$PTMP/$userout/o/$expid
-  usergfs="Richard.Wobus"
-  export basedgfs=/$group/noscrub/$usergfs/o
-  export classs=devhigh_shared
-  export classp=devhigh
 fi
 
 echo basesource=$basesource

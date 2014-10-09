@@ -4,13 +4,17 @@
 #
 echo `date` $0 $* begin
 
+bindir=`dirname $0`
+. $bindir/setbase
+mkdir -p $basewait
+
 machl=`uname -n|cut -c1`
 
-echo waitfile.$machl before
-cat waitfile.$machl
-echo no>waitfile.$machl
-echo waitfile.$machl after
-cat waitfile.$machl
+echo $basewait/waitfile.$machl before
+cat $basewait/waitfile.$machl
+echo no>$basewait/waitfile.$machl
+echo $basewait/waitfile.$machl after
+cat $basewait/waitfile.$machl
 
 echo `date` $0 $* end
 
