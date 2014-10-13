@@ -1,0 +1,280 @@
+#!/bin/ksh
+#####################################################################
+echo "-----------------------------------------------------"
+echo " exgefs_restart_copy.sh.sms" 
+echo " Sep 11 - Wobus - restart copy job"
+echo "-----------------------------------------------------"
+#####################################################################
+
+set -x
+na=`basename $0`
+export PS4=' + $SECONDS $RUN $na $LINENO: '
+
+msg="HAS BEGUN on `hostname`"
+postmsg "$jlogfile" "$msg"
+
+export MP_LABELIO=YES
+
+############################################################
+#  Define Variables:
+#  -----------------
+#  SLEEP_TIME   is the number of seconds to sleep before exiting with error.
+#  SLEEP_INT    is the number of seconds to sleep between restrt file checks.
+#  SLEEP_TIME_FINAL  is the time to wait for the last cycle to finish
+#  fhrini       is the initial forecast hour
+#  fhrint       is the restart file write interval
+#  fhrlim       is the last forecast hour
+#  fhour        is the forecast hour read from the restart file header
+#  fhr          is the current forecast hour
+###########################################################
+SLEEP_TIME=1800
+SLEEP_TIME_FINAL=90
+SLEEP_INT=10
+echo SLEEP_TIME=$SLEEP_TIME
+echo SLEEP_TIME_FINAL=$SLEEP_TIME_FINAL
+echo SLEEP_INT=$SLEEP_INT
+SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
+SLEEP_LOOP_LIM=`expr $SLEEP_TIME_FINAL / $SLEEP_INT`
+echo SLEEP_LOOP_MAX=$SLEEP_LOOP_MAX
+echo SLEEP_LOOP_LIM=$SLEEP_LOOP_LIM
+###############################################################
+#  NOTE:  SLEEP_INT is used after each member, so
+#  SLEEP_INT * (number of members) 
+#  is the total wait time during the processing of all the 
+#  members which must be less than the wall clock interval 
+#  between restart file writes
+###############################################################
+
+export pgm="restartcopy"
+
+echo fhrini=$fhrini
+echo fhrint=$fhrint
+echo fhrlim=$fhrlim
+
+ic=0
+(( fhri = fhrini ))
+if test $fhri -lt 10
+then
+  fhri="0$fhri"
+fi
+echo fhri=$fhri
+(( fhr = fhri - fhrint ))
+
+dira=$COMOUT/$cyc/restarta
+echo dira=$dira
+dirb=$COMOUT/$cyc/restartb
+echo dirb=$dirb
+
+echo fhmax3=$fhmax3
+
+nmemt=0
+for mem in $memberlist
+do
+  (( nmemt = nmemt + 1 ))
+done
+echo nmemt=$nmemt
+
+doneall=no
+
+fhrmax=0
+
+nfback=0
+nfnohead=0
+
+sizer1=0
+sizes1=0
+sizer2=0
+sizes2=0
+sizers=0
+sizess=0
+
+nsizer1=0
+nsizes1=0
+nsizer2=0
+nsizes2=0
+nsizers=0
+nsizess=0
+
+echo `date` loop until done
+echo fhrmirrorlist="$fhrmirrorlist"
+while [ $ic -le $SLEEP_LOOP_MAX ] && [[ $doneall = no ]]
+do
+  ncpmv=0
+  for file in sigr1 sigs1 sigr2 sigs2 sfcr sfcs
+  do
+    case $file in
+      (sigr1)
+	hdrprogram=global_sighdr
+	size=$sizer1
+	nsize=$nsizer1
+      ;;
+      (sigs1)
+	hdrprogram=global_sighdr
+	size=$sizes1
+	nsize=$nsizes1
+      ;;
+      (sigr2)
+	hdrprogram=global_sighdr
+	size=$sizer2
+	nsize=$nsizer2
+      ;;
+      (sigs2)
+	hdrprogram=global_sighdr
+	size=$sizes2
+	nsize=$nsizes2
+      ;;
+      (sfcr)
+	hdrprogram=global_sfchdr
+	size=$sizers
+	nsize=$nsizers
+      ;;
+      (sfcs)
+	hdrprogram=global_sfchdr
+	size=$sizess
+	nsize=$nsizess
+      ;;
+    esac
+    echo `date` loop to serarch for file=$file
+#   for mem in $memberlist
+#   do
+#     dirfilea=$dira/ge$mem.$cycle.$file
+    for dirfilea in $dira/*$file
+    do
+      echo `date` dirfilea=$dirfilea
+      if [[ -f $dirfilea ]]; then
+#       if [[ -s $dirfilea ]]; then
+	  fhour=`$EXECGLOBAL/$hdrprogram $dirfilea fhour`
+	  rc=$?
+	  echo `date` rc=$rc
+	  if (( rc == 0 )); then
+	    echo `date` fhour=$fhour
+	    fhr=`echo $fhour | sed -e "s/\.00//"`
+	    if [[ $fhrmax -lt $fhr ]]; then
+	      fhrmax=$fhr
+	    fi
+	    if test $fhr -lt 10
+	    then
+	      export fhr="0$fhr"
+	    fi
+	    echo `date` fhr=$fhr
+	    imv=0
+	    for fhrtest in $fhrmirrorlist
+	    do
+	      if [[ $fhr -eq $fhrtest ]]; then
+	        imv=1
+	      fi
+	    done
+	    if (( imv == 1 )); then
+	      dirfilem=${dirfilea}f$fhr
+	      if [[ -f $dirfilem ]]; then
+	        echo `date` dirfilem=$dirfilem already exists
+	      else
+		fileb=`basename $dirfilem`
+		dirfileb=$dirb/$fileb
+	        if [[ -f $dirfileb ]]; then
+		  echo `date` dirfileb=$dirfileb already exists
+		else
+		  ls -al $dirfilea
+		  echo `date` before start process $dirfilea to $dirfileb
+		  (
+		    export PS4=' + $SECONDS $RUN $na $fileb $LINENO: '
+		    touch $dirfilem
+		    ls -al $dirfilea
+		    echo `date` before sleep
+		    sleep 10
+		    echo `date` after sleep
+		    ls -al $dirfilea
+		    echo `date` before fsync
+		    /u/Jun.Du/bin/fsync $dirfilea
+		    echo `date` after fsync
+		    ls -al $dirfilea
+		    echo `date` before cp $dirfilea $dirfilem
+		    cp $dirfilea $dirfilem
+		    echo `date` after cp $dirfilea $dirfilem
+		    ls -al $dirfilea $dirfilem
+		    echo `date` before fsync
+		    /u/Jun.Du/bin/fsync $dirfilem
+		    echo `date` after fsync
+		    ls -al $dirfilea $dirfilem
+		    echo `date` before mv $dirfilem $dirfileb
+		    mv $dirfilem $dirfileb
+		    echo `date` after mv $dirfilem $dirfileb
+		    ls -al $dirfilea $dirfileb
+		  ) &
+		  echo `date` after start process $dirfilea to $dirfileb
+		  (( ncpmv = ncpmv + 1 ))
+		  ic=0
+		fi
+	      fi
+	    fi
+	  else
+	    echo `date` no header was read from file $dirfilea
+	    (( nfnohead = nfnohead + 1 ))
+	  fi
+#	fi
+      fi
+    done
+    ps -elf | grep cp
+    case $file in
+      (sigr1)
+	sizer1=$size
+	nsizer1=n$size
+      ;;
+      (sigs1)
+	sizes1=$size
+	nsizes1=$nsize
+      ;;
+      (sigr2)
+	sizer2=$size
+	nsizer2=$nsize
+      ;;
+      (sigs2)
+	sizes2=$size
+	nsizes2=$nsize
+      ;;
+      (sfcr)
+	sizers=$size
+	nsizers=$nsize
+      ;;
+      (sfcs)
+	sizess=$size
+	nsizess=$nsize
+      ;;
+    esac
+  done
+  if (( ncpmv == 0 )); then
+    nfa=`ls -al $dira | grep ge | wc -l`
+    if (( ic > SLEEP_LOOP_LIM )) && (( fhrmax + fhrint > fhrlim )); then
+      echo `date` terminate for ic=$ic fhrint=$fhrint fhrlim=$fhrlim fhrmax=$fhrmax
+      doneall=yes
+    else
+      echo `date` do not terminate for ic=$ic fhrint=$fhrint fhrlim=$fhrlim fhrmax=$fhrmax
+      (( ic = ic + 1 ))
+      sleep $SLEEP_INT
+      echo `date` ic=$ic sleep $SLEEP_INT
+    fi
+  fi
+done
+echo `date` terminated when ic=$ic fhr=$fhr
+echo `date` before wait
+wait
+echo `date` after wait
+echo
+echo nfback=$nfback
+echo nfnohead=$nfnohead
+echo
+echo `date` list restarta
+echo
+ls -al $dira
+echo
+echo `date` list restartb
+echo
+ls -al $dirb
+echo
+echo `date` list end
+
+########################################################
+msg='ENDED NORMALLY.'
+postmsg "$jlogfile" "$msg"
+
+################## END OF SCRIPT #######################
