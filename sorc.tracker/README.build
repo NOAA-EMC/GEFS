@@ -1,0 +1,17 @@
+Library variables are defined in setlibs.rc.
+
+To build codes one at a time:
+  In sh-like shell:
+     source setlibs.rc
+  This adds the library variables to the current shell environment.
+  Then proceed to each directory:
+     make clean
+     make
+
+To build all codes:
+  sh build.sh
+
+To install all builds (creating exec dir if necessary):
+  sh install.sh
+
+Can use load_libs.rc in place of setlibs.rc when library modules are available.
