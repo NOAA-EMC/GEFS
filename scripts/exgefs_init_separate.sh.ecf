@@ -428,7 +428,9 @@ if (( relocpertflag == 1 )); then
 	  export loopnum=1
 	  export ymdh=${PDY}${cyc}
 	  outdir=$DATA
-	  sh $extrkrsh2 $loopnum $cmodel $ymdh $npert $outdir >${outdir}/trkr.$ymdh.out 2>&1
+	  echo `date` $extrkrsh2 before
+	  echo $extrkrsh2 $loopnum $cmodel $ymdh $npert $outdir >${outdir}/trkr.$ymdh.out 2>&1
+	  echo `date` $extrkrsh2 after
 	done
         echo analysis tracking for gfsgribedition=$gfsgribedition end
       else

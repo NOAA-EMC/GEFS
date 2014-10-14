@@ -24,7 +24,7 @@ export WGRIB=${EXECUTIL}/wgrib
 export COPYGB=$EXECUTIL/copygb
 export CNVGRIB=${EXECUTIL}/cnvgrib
 ################################################## RLW 20110722 CNVGRIB TEMPORARY
-export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib
+#export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib
 ################################################## RLW 20110722 CNVGRIB TEMPORARY
 export GRBIDX=${EXECUTIL}/grbindex
 export GRB2INDEX=${EXECUTIL}/grb2index

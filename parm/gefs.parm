@@ -150,7 +150,7 @@ export IDVC=2
 ####################################################################
 export gfsgribedition=1
 export gfsgribedition=2
-export gfsfhmaxh=140
+export gfsfhmaxh=240
 export gfshoroglist=252
 
 ########################################
@@ -210,11 +210,6 @@ if [[ $envir = dev ]]; then
   export srefboundary=yes
   export srefboundary=no
   export fhmax00=384     # 00Z fcst only
-
-  export fhmax00=384
-  export fhmax06=384
-  export fhmax12=384
-  export fhmax18=384
 # # 00Z long forecasts only
 # export fhmax00=384
 # export fhmax06=06
@@ -225,6 +220,11 @@ if [[ $envir = dev ]]; then
   export fhmax06=06
   export fhmax12=06
   export fhmax18=06
+
+  export fhmax00=384
+  export fhmax06=384
+  export fhmax12=384
+  export fhmax18=384
 
  
 #DHOU 08/05/2010, add this block to modify these realed variables
