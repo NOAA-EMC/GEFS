@@ -196,6 +196,8 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
   export basetmp=$STMP/$userout/o/$expid
   export baseptmp=$PTMP/$userout/o/$expid
   export basedgfs=/$group/noscrub/$usergfs/o
+# RLW 20141010 use NCO parallel/prod for gfs testing
+  export basedgfs=
   export basewait=$baseoutput/wait
 # For WCOSS end
 fi  

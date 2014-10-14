@@ -42,12 +42,6 @@ else
   (( fhmax3 = fhmaxh - 6 ))
 fi
 
-####################################################################
-# Control whether to use old (GRIB1) or new (GRIB2) GFS output
-####################################################################
-export gfsgribedition=1
-export gfsgribedition=2
-
 #########################################################################################
 # Parameters to control the digital filter at the beginning of the forecast
 # and after the resolution change
@@ -150,6 +144,14 @@ export IDVC=2
 # for new vertical coordinate
 # export IDVC=3
 # export IDVM=32
+
+####################################################################
+# Control whether to use old (GRIB1) or new (GRIB2) GFS output
+####################################################################
+export gfsgribedition=1
+export gfsgribedition=2
+export gfsfhmaxh=140
+export gfshoroglist=252
 
 ########################################
 # This section defines the output flags

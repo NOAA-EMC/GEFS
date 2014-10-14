@@ -2027,7 +2027,7 @@ case $taskname in
     case $gefsmachine in
       (wcoss)
 	MP_SHARED_MEMORY=yes
-	resources="200"
+	resources="1000"
       ;;
     esac
   ;;

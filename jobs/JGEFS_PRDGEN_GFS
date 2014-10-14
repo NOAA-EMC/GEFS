@@ -31,14 +31,9 @@ then
   . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
 ################# lines between these markers have been modified for dev begin
  else
-   # RLW 20141008 modify to obtain and user version for vertical structure
-   . $basesource/nw$envir/*/versions/gefs.ver
-   . $basesource/nw$envir/gefs.${model_ver}/parm/gefs_config
+  . $basesource/nwdev/parm/gefs_config
  fi
 ################# lines between these markers have been modified for dev end
-else
-  # RLW 20141008 modify to obtain and user version for vertical structure
-  . /nwprod/versions/gefs.ver
 fi
 
 # #### 02/06/06 ###############################
@@ -147,8 +142,7 @@ else                             ### For Operations
   export FIXGLOBAL=$HOMEGLOBAL/fix
   export PARMGLOBAL=$HOMEGLOBAL/parm
 
-  # RLW 20141008 modify to obtain and user version for vertical structure
-  export HOMEgefs=/nw${envir}/gefs.${model_ver}
+  export HOMEgefs=/nw${envir}
   export EXECgefs=$HOMEgefs/exec
   export USHgefs=$HOMEgefs/ush
   export FIXgefs=$HOMEgefs/fix
@@ -231,6 +225,7 @@ then
   export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
 
   export COMIN=$COM_IN/gfs.${PDY}
+  export COMIN=/com/gfs/para/gfs.${PDY}
   export COMOUT=$COM_OUT/gefs.${PDY}
   export ENS_COM=$COMOUT
 else                              ### For Operations
@@ -288,10 +283,13 @@ export HDMAX=00
 # Specify Forecast Hour Range
 ####################################
 export SHOUR=00
-export FHOUR_HIGH=$fhmax
+#export FHOUR_HIGH=$fhmax
+export FHOUR_HIGH=$gfsfhmaxh
+export fhoroglist=$gfsfhoroglist
 export FHOUR_LOW=$fhmax
 export FHINC_HIGH=6
-export FHINC_LOW=6
+#export FHINC_LOW=6
+export FHINC_LOW=12
 
 export DO_HD_PGRB=NO
 export HDMAX=00
@@ -313,7 +311,11 @@ then
    export FHINC=$FHINC_HIGH
    export FHOUR=$FHOUR_HIGH
    export DO_LOW_RES=YES 
-   $HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf
+   if (( $gfsgribedition == 1 )); then 
+    $HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf
+   elif (( $gfsgribedition == 2 )); then 
+    $HOMEgefs/scripts/exgefs_prdgen_gfs_grb2.sh.ecf
+   fi  
    export SHOUR=`expr $FHOUR_HIGH + $FHINC_LOW`
 fi
 #################################
@@ -323,9 +325,13 @@ if test $SHOUR -lt $FHOUR_LOW
 then
    export FHINC=$FHINC_LOW
    export FHOUR=$FHOUR_LOW
-   export DO_LOW_RES=NO 
+   export DO_LOW_RES=YES 
    export POSTGPVARS_HIGH=$POSTGPVARS_LOW
-   $HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf
+   if (( gfsgribedition == 1 )); then 
+    $HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf
+   elif (( gfsgribedition == 2 )); then 
+    $HOMEgefs/scripts/exgefs_prdgen_gfs_grb2.sh.ecf
+   fi  
 fi
 
 msg="$job completed normally"
