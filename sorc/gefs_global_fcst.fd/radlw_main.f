@@ -766,11 +766,17 @@
 
         endif                       ! if_iflip
 
+        tem1 = 1.80
+        tem2 = 1.50
         do j = 1, NBANDS
           if (j==1 .or. j==4 .or. j==10) then
             secdiff(j) = 1.66
           else
-            secdiff(j) = a0(j) + a1(j) * exp( a2(j)*pwvcm )
+!            secdiff(j) = a0(j) + a1(j) * exp( a2(j)*pwvcm )
+            secdiff(j) = min( tem1, max( tem2,
+     &                   a0(j)+a1(j)*exp(a2(j)*pwvcm) ))
+
+
           endif
         enddo
         if (pwvcm < 1.0) secdiff(6) = 1.80
