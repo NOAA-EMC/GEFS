@@ -1,0 +1,136 @@
+#!/bin/sh
+#
+# copy sf06 and track files from another experiment or from production
+#
+rc=0
+if (( $# == 3 )); then
+  source=$1
+  dest=$2
+  yyyymmddhh=$3
+  echo source=$source dest=$dest yyyymmddhh=$yyyymmddhh
+  yyyymmdd=`echo $yyyymmddhh|cut -c1-8`
+  hh=`echo $yyyymmddhh|cut -c9-10`
+  goodhh=no
+  case $hh in
+    (00) goodhh=yes ;;
+    (06) goodhh=yes ;;
+    (12) goodhh=yes ;;
+    (18) goodhh=yes ;;
+    (*) echo hh=$hh IS INVALID ; rc=2 ;;
+  esac
+  local=no
+  if [[ $goodhh = yes ]]; then
+    case $source in
+      (prod)
+	dirsource=/com/gens/prod/gefs.$yyyymmdd/$hh
+      ;;
+      (para)
+	dirsource=/com/gens/para/gefs.$yyyymmdd/$hh
+      ;;
+      (test)
+	dirsource=/com/gens/test/gefs.$yyyymmdd/$hh
+      ;;
+      (*)
+	dirsource=/ptmp/$LOGNAME/o/$source/com/gens/dev/gefs.$yyyymmdd/$hh
+	local=yes
+      ;;
+    esac
+    if [[ -d $dirsource/sfcsig && -d $dirsource/track ]]; then
+      dirdest=/ptmp/$LOGNAME/o/$dest/com/gens/dev/gefs.$yyyymmdd/$hh
+      if [[ -d $dirdest ]]; then
+	echo dirdest=$dirdest already exists
+      else
+	mkdir -p $dirdest
+	ls -ald $dirdest
+      fi
+      if [[ -d $dirdest/sfcsig || -d $dirdest/track ]]; then
+	echo $dirdest/sfcsig or $dirdest/track ALREADY EXIST
+	rc=4
+      else
+	mkdir $dirdest/track
+	rc=$?
+	if (( rc == 0 )); then
+	  cd $dirsource/track
+	  rc=$?
+	  if (( rc == 0 )); then
+	    pwd
+	    for file in *
+	    do
+	      if [[ -f $file ]]; then
+		ls -al $file
+		if [[ $local = yes ]]; then
+		  ln $file $dirdest/track/$file
+		  rc=$?
+		  if (( rc != 0 )); then
+		    cp $file $dirdest/track/$file
+		    rc=$?
+		  fi
+		else
+		  cp $file $dirdest/track/$file
+		  rc=$?
+		fi
+		if (( rc == 0 )); then
+		  ls -al $dirdest/track/$file
+		else
+		  echo cp $file $dirdest/track/$file FAILED rc=$rc
+		fi
+	      else
+		echo file=$file DOES NOT EXIST
+		rc=5
+	      fi
+	    done
+	  else
+	    echo cd $dirsource/track FAILED rc=$rc
+	  fi
+	else
+	  echo mkdir $dirdest/track FAILED rc=$rc
+	fi
+	mkdir $dirdest/sfcsig
+	rc=$?
+	if (( rc == 0 )); then
+	  cd $dirsource/sfcsig
+	  rc=$?
+	  if (( rc == 0 )); then
+	    pwd
+	    for file in *sf06*
+	    do
+	      if [[ -f $file ]]; then
+		ls -al $file
+		if [[ $local = yes ]]; then
+		  ln $file $dirdest/sfcsig/$file
+		  rc=$?
+		  if (( rc != 0 )); then
+		    cp $file $dirdest/sfcsig/$file
+		    rc=$?
+		  fi
+		else
+		  cp $file $dirdest/sfcsig/$file
+		  rc=$?
+		fi
+		if (( rc == 0 )); then
+		  ls -al $dirdest/sfcsig/$file
+		else
+		  echo cp $file $dirdest/sfcsig/$file FAILED rc=$rc
+		fi
+	      else
+		echo file=$file DOES NOT EXIST
+		rc=5
+	      fi
+	    done
+	  else
+	    echo cd $dirsource/sfcsig FAILED rc=$rc
+	  fi
+	else
+	  echo mkdir $dirdest/$sfcsig FAILED rc=$rc
+	fi
+      fi
+    else
+      echo  $dirsource/sfcsig and  $dirsource/track DO NOT BOTH EXIST
+      rc=3
+    fi
+  fi
+else
+  echo three arguments required source dest yyyymmddhh
+  rc=1
+fi
+exit $rc

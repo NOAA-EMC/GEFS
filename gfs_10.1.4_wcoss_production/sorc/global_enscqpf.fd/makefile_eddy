@@ -1,0 +1,16 @@
+SHELL=  /bin/ksh
+CMD=	global_enscqpf   
+#FC=     ncepxlf
+FC=     ifort
+#FOPTS=  -qsmp=noauto
+FOPTS=  -list -traceback
+LOPTS=
+INCS=
+SRCS=	CQPF.f \
+        QTPINT.f
+#LIBS    = -l essl -L/nwprod/lib -lbacio_4 -lw3_4 -lip_4 -lsp_4 
+LIBS    = -L/nwprod/lib -lbacio_4 -lw3_4
+$(CMD): $(SRCS)
+	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o $(CMD)
+#global_enscqpf: $(SRCS)
+#	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o cqpf

@@ -1,0 +1,15 @@
+SHELL=  /bin/ksh
+CMD=	global_enssrbias 
+#FC=     ncepxlf
+FC=     ifort
+#FOPTS=  -qsmp=noauto
+FOPTS=  -list -traceback
+LOPTS=
+INCS=
+SRCS=	STAT_RM_BIAS_30D.f
+#LIBS    = -l essl -L/nwprod/lib -lbacio_4 -lw3_4 -lip_4 -lsp_4 
+LIBS    =
+$(CMD): $(SRCS)
+	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o $(CMD)
+#global_enssrbias: $(SRCS)
+#	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o srbias

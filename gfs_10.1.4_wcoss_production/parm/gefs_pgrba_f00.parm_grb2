@@ -1,0 +1,77 @@
+############################# naefs variables before 2008
+CAPE:180-0 mb above ground
+CIN:180-0 mb above ground
+HGT:1000 mb
+HGT:200 mb
+HGT:250 mb
+HGT:500 mb
+HGT:700 mb
+HGT:850 mb
+HGT:925 mb
+HGT:surface
+PRES:surface
+PRMSL:mean sea level
+PWAT:entire atmosphere
+RH:1000 mb
+RH:2 m above ground
+RH:200 mb
+RH:250 mb
+RH:500 mb
+RH:700 mb
+RH:850 mb
+RH:925 mb
+TCDC:entire atmosphere
+TMP:1000 mb
+TMP:2 m above ground
+TMP:200 mb
+TMP:250 mb
+TMP:500 mb
+TMP:700 mb
+TMP:850 mb
+TMP:925 mb
+UGRD:10 m above ground
+UGRD:1000 mb
+UGRD:200 mb
+UGRD:250 mb
+UGRD:500 mb
+UGRD:700 mb
+UGRD:850 mb
+UGRD:925 mb
+VGRD:10 m above ground
+VGRD:1000 mb
+VGRD:200 mb
+VGRD:250 mb
+VGRD:500 mb
+VGRD:700 mb
+VGRD:850 mb
+VGRD:925 mb
+################# variables moved from pgrbb 2008
+DLWRF:surface
+DSWRF:surface
+HGT:10 mb
+HGT:100 mb
+HGT:50 mb
+LHTFL:surface
+RH:100 mb
+SHTFL:surface
+SOILW:0-0.1 m below
+TSOIL:0-0.1 m below
+TMP:10 mb
+TMP:100 mb
+TMP:50 mb
+UGRD:10 mb
+UGRD:100 mb
+UGRD:50 mb
+ULWRF:top of atmosphere
+ULWRF:surface
+USWRF:surface
+VGRD:10 mb
+VGRD:100 mb
+VGRD:50 mb
+VVEL:850 mb
+WEASD:surface
+################# variables moved from pgrbd 2008
+RH:10 mb
+RH:50 mb
+SNOD:surface
+############################# do not leave a blank line here

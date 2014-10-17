@@ -1,0 +1,20 @@
+#!/bin/ksh
+#
+# set waitfile file to no
+#
+echo `date` $0 $* begin
+
+bindir=`dirname $0`
+. $bindir/setbase
+mkdir -p $basewait
+
+machl=`uname -n|cut -c1`
+
+echo $basewait/waitfile.$machl before
+cat $basewait/waitfile.$machl
+echo yes>$basewait/waitfile.$machl
+echo $basewait/waitfile.$machl after
+cat $basewait/waitfile.$machl
+
+echo `date` $0 $* end
+

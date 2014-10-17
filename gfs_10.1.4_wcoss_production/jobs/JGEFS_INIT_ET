@@ -1,0 +1,366 @@
+#!/bin/ksh 
+################# lines between these markers have been modified for dev begin
+################# lines between these markers have been modified for dev end
+###testb
+# lines between ###testb and ###teste not needed for production
+###teste
+
+$SMSBIN/smsinit $LOADL_STEP_ID 
+echo `date` $0 `date -u` begin
+
+set -xa
+####################################
+
+# 01/28/2013 New variables added for WCOSS and cross-machine unfication
+export gefsmachine=${gefsmachine:-wcoss}
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+
+# #### 05/05/99 ###############################
+# SETUP ENS INITIALIZATION PROCESSING VARIABLES
+# #############################################
+
+####################################
+# obtain unique process id (pid) and identify working directory
+####################################
+export pid=$$
+
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+export DATA=/tmpnwprd/gefs_init_$cyc.$envir.save
+###testb
+else
+  echo basenfs=$basenfs
+  echo baseptmp=$baseptmp
+  echo basetmp=$basetmp
+  export DATA=$basetmp/$envir/tmpnwprd/gefs_init_$PDY$cyc.$envir.save
+################# lines between these markers have been modified for dev begin
+  export DATA=$basetmp/tmpnwprd/gefs_init_$PDY$cyc.$envir.save
+################# lines between these markers have been modified for dev end
+echo DATA=$DATA
+fi
+###teste
+cd $DATA
+
+export cycle=t${cyc}z
+export cycle_fcst=t${cyc_fcst}z
+
+echo cyc=$cyc cyc_fcst=$cyc_fcst
+echo cycle=$cycle cycle_fcst=$cycle_fcst
+
+if (( cyc == cyc_fcst )); then
+  export cycsuffix=false
+  export fcstlong=true
+else
+  export fcstlong=false
+  export cycsuffix=true
+fi
+
+echo fcstlong=$fcstlong
+echo cycsuffix=$cycsuffix
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=gens
+export RUN=enstr
+
+####################################
+# File To Log Msgs
+####################################
+###testb
+if [[ $envir = prod ]]; then
+###teste
+export jlogfile=/com/logs/jlogfile
+###testb
+elif [[ $envir = para ]] || \
+     [[ $envir = test ]]; then
+  export jlogfile=/com/logs/test/jlogfile
+else
+  #export jlogfile=$baseptmp/com/logs/jlogfile
+################# lines between these markers have been modified for dev begin
+ if (( 0 == 1 )); then
+################# lines between these markers have been modified for dev end
+  export jlogfile=$baselog/nw$envir/logs/jlogfile
+################# lines between these markers have been modified for dev begin
+ else
+  export jlogfile=$baselog/com/logs/jlogfile
+ fi
+################# lines between these markers have been modified for dev end
+fi
+###teste
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# SAVEGES  - Copy Files From TMPDIR to $GESdir
+# RMGES    - Clean Files in $GESdir
+# SENDSMS  - Flag Events on SMS
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# RERUN    - Rerun posts from beginning (default no)
+# VERBOSE  - Specify Verbose Output in global_postgp.sh
+####################################
+export SAVEGES=YES
+export SENDSMS=YES
+export SENDCOM=YES
+export RERUN=NO
+export VERBOSE=YES
+
+###testb
+if [[ $envir = prod ]]; then
+###teste
+if [ $cyc -eq 00 -o $cyc -eq 12 ]
+then
+   export SENDDBN=YES
+else
+   export SENDDBN=YES
+fi
+###testb
+else
+   export SENDDBN=YES
+fi
+###teste
+
+ 
+####################################
+# Specify Execution Areas
+####################################
+###testb
+if [[ $envir = prod ]]; then
+###teste
+  # RLW 20141008 modify to obtain and user version for vertical structure
+  . /nw$envir/versions/gefs.ver
+export HOMEGLOBAL=/nw${envir}/gefs.${model_ver}
+###testb
+elif [[ $envir = para ]] || [[ $envir = test ]]; then
+  # RLW 20141008 modify to obtain and user version for vertical structure
+  . /nw$envir/versions/gefs.ver
+  export HOMEGLOBAL=/nwprod/gefs.${model_ver}
+fi
+###teste
+################# lines between these markers have been modified for dev begin
+if [[ $envir = dev ]]; then
+  # RLW 20141008 modify to obtain and user version for vertical structure
+  . $basesource/nw$envir/*/versions/gefs.ver
+  export HOMEGLOBAL=$basesource/nw$envir/gefs.${model_ver}
+fi
+################# lines between these markers have been modified for dev end
+export EXECGLOBAL=$HOMEGLOBAL/exec
+export FIXGLOBAL=$HOMEGLOBAL/fix
+export PARMGLOBAL=$HOMEGLOBAL/parm
+export USHGLOBAL=$HOMEGLOBAL/ush
+################# lines between these markers have been modified for dev begin
+if [[ $envir = dev ]]; then
+  export FIXGLOBAL=/nwprod/fix
+fi
+################# lines between these markers have been modified for dev end
+
+export ERRSCRIPT=err_chk
+export LOGSCRIPT=startmsg
+export REDOUT='1>>'
+export REDERR='2>'
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+
+###testb
+if [[ $envir = prod ]]; then
+###teste
+. $PARMGLOBAL/gefs.parm
+. $PARMGLOBAL/gefs_init.parm
+###testb
+elif [[ $envir = para ]] || \
+     [[ $envir = test ]]; then
+  # RLW 20141008 modify to obtain and user version for vertical structure
+. /nw$envir/gefs.${model_ver}/parm/gefs.parm
+. /nw$envir/gefs.${model_ver}/parm/gefs_init.parm
+else
+  # RLW 20141008 modify to obtain and user version for vertical structure
+. $basesource/nw$envir/gefs.${model_ver}/parm/gefs.parm
+. $basesource/nw$envir/gefs.${model_ver}/parm/gefs_init.parm
+fi
+###teste
+
+echo
+env | sort
+echo
+
+##############################
+# Set up the UTILITIES
+##############################
+export utilscript=/nwprod/util/ush
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+sh $utilscript/setup.sh
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+sh $utilscript/setpdy.sh
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+. PDY
+###testb
+else
+  echo PDY=$PDY is already set
+fi
+###teste
+
+##############################################
+# for global_chgres.sh
+##############################################
+export SLMASK=/dev/null
+
+##############################################
+# Define COM directories
+##############################################
+###testb
+if [[ $envir = prod ]] ; then
+###teste
+export GFSCOMIN=/com/gfs/${envir}/gfs.$PDY
+###testb
+elif [[ $envir = para ]] || \
+     [[ $envir = test ]]; then
+  if [[ "$gfssource" = para ]]; then
+    export GFSCOMIN=/com/gfs/para/gfs.$PDY
+  else
+    export GFSCOMIN=/com/gfs/prod/gfs.$PDY
+  fi
+else
+  if [[ "$gfssource" = para ]]; then
+    export GFSCOMIN=/com/gfs/para/gfs.$PDY
+  elif [[ "$gfssource" = prod ]]; then
+    export GFSCOMIN=/com/gfs/prod/gfs.$PDY
+  else
+    export GFSCOMIN=$baseptmp/com/gfs/${envir}/gfs.$PDY
+  fi
+fi
+###teste
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+export COMIN=/com/${NET}/${envir}/gefs.${PDY}
+export COM=/com/${NET}/${envir}
+export COMINm1=/com/${NET}/${envir}/gefs.${PDYm1}
+export COMINm2=/com/${NET}/${envir}/gefs.${PDYm2}
+export COMINm3=/com/${NET}/${envir}/gefs.${PDYm3}
+export COMINm4=/com/${NET}/${envir}/gefs.${PDYm4}
+###testb
+else
+export COMIN=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
+export COM=$baseoutput/com/${NET}/${envir}
+export COMINm1=$baseoutput/com/${NET}/${envir}/gefs.${PDYm1}
+export COMINm2=$baseoutput/com/${NET}/${envir}/gefs.${PDYm2}
+export COMINm3=$baseoutput/com/${NET}/${envir}/gefs.${PDYm3}
+export COMINm4=$baseoutput/com/${NET}/${envir}/gefs.${PDYm4}
+fi
+###teste
+
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+###testb
+else
+export COMOUT=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
+fi
+###teste
+mkdir -m 775 -p $COMOUT/$cyc/init
+mkdir -m 775 -p $COMOUT/$cyc/sflux
+
+##############################################
+# Define GES directories
+##############################################
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+gespath=/nwges/${envir}
+###testb
+else
+gespath=$baseoutput/nwges/${envir}
+fi
+###teste
+export GESdir=$gespath/gefs.${PDY}
+mkdir -m 775 -p $GESdir
+
+##############################################
+echo list environment before running script
+##############################################
+
+echo
+env | sort
+echo
+
+#############################################################
+# Execute the script
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+  # RLW 20141008 modify to obtain and user version for vertical structure
+/nw${envir}/scripts/gefs.${model_ver}/exgefs_init_et.sh.ecf
+#/nwprod/scripts/exgefs_init_et.sh.ecf
+###testb
+else
+  # RLW 20141008 modify to obtain and user version for vertical structure
+$basesource/nw${envir}/gefs.${model_ver}/scripts/exgefs_init_et.sh.ecf
+#/nwprod/scripts/exgefs_init_et.sh.ecf
+fi
+###teste
+#############################################################
+
+cat $pgmout
+
+msg="JOB COMPLETED NORMALLY"
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Save the working directory
+# for the COMBINE job
+##############################
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+cd /tmpnwprd
+###testb
+else
+  echo skip cleanup for testing
+fi
+###teste
+
+echo `date` $0 `date -u` end
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+$SMSBIN/endt
+###testb
+else
+  echo skip endt for testing
+fi
+###teste

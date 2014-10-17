@@ -1,0 +1,525 @@
+#!/bin/ksh 
+set -x
+################# lines between these markers have been modified for dev begin
+################# lines between these markers have been modified for dev end
+
+#####################################################################
+# 9/20/2009, Julia Zhu   Scripts are modified to be sharable
+#                        between EMC and NCO
+#         Please note that variable "RUN_ENVIR" is set and used
+#         in the development enviroment only.
+######################################################################
+
+$SMSBIN/smsinit $LOADL_STEP_ID 
+echo `date` $0 `date -u` begin
+
+set -xa
+export PS4='$SECONDS + '
+####################################
+
+# 01/28/2013 New variables added for WCOSS and cross-machine unfication
+export gefsmachine=${gefsmachine:-wcoss}
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+if [ "$RUN_ENVIR" = dev ]      ### For Developers
+then
+################# lines between these markers have been modified for dev begin
+ if (( 0 == 1 )); then
+################# lines between these markers have been modified for dev end
+  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
+################# lines between these markers have been modified for dev begin
+ else
+   # RLW 20141008 modify to obtain and user version for vertical structure
+   . $basesource/nw$envir/*/versions/gefs.ver
+   . $basesource/nw$envir/gefs.${model_ver}/parm/gefs_config
+ fi
+################# lines between these markers have been modified for dev end
+else
+  # RLW 20141008 modify to obtain and user version for vertical structure
+  . /nwprod/versions/gefs.ver
+
+fi
+
+####################################
+# obtain unique process id (pid) and make temp directory
+####################################
+export pid=$$
+if [ "$RUN_ENVIR" = dev ]    ### For Developers
+then
+################# lines between these markers have been modified for dev begin
+ if (( 0 == 1 )); then
+################# lines between these markers have been modified for dev end
+   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd}
+################# lines between these markers have been modified for dev begin
+ else
+   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
+ fi
+################# lines between these markers have been modified for dev end
+else                       ### For Operations
+   export DATA_IN=/tmpnwprd
+fi
+
+export DATA=$DATA_IN/${job}.${pid}
+
+mkdir -p $DATA
+cd $DATA
+
+######################################
+# Set up the cycle variable
+######################################
+export cycle=t${cyc}z
+export cycle_fcst=t${cyc_fcst}z
+
+if (( cyc == cyc_fcst )); then
+  export cycsuffix=false
+  export fcstlong=true
+else
+  export fcstlong=false
+  export cycsuffix=true
+fi
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=gens
+
+####################################
+# File To Log Msgs
+####################################
+if [ "$RUN_ENVIR" = dev ]     ### For Developers
+then
+################# lines between these markers have been modified for dev begin
+ if (( 0 == 1 )); then
+################# lines between these markers have been modified for dev end
+   export jlogfile=${jlogfile:-$DATA_IN/jlogfile}
+################# lines between these markers have been modified for dev begin
+ else
+   export jlogfile=$baselog/com/logs/jlogfile
+ fi
+################# lines between these markers have been modified for dev end
+else                        ### For Operations
+   export jlogfile=/com/logs/jlogfile
+fi
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# SAVEGES  - Copy Files From TMPDIR to $GESdir
+# RMGES    - Clean Files in $GESdir
+# SENDSMS  - Flag Events on SMS
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# RERUN    - Rerun posts from beginning (default no)
+# VERBOSE  - Specify Verbose Output in global_postgp.sh
+####################################
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
+  export SAVEGES=${SAVEGES:-YES}
+  export SENDCOM=${SENDCOM:-YES}
+  export SENDDBN=${SENDDBN:-YES}
+  export SENDSMS=${SENDSMS:-YES}
+  export VERBOSE=${VERBOSE:-NO}
+  export RERUN=${RERUN:-NO}
+  export RERUN=YES
+
+  # Specify Execution Areas
+# export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
+  case $gefsmachine in
+    (zeus)
+  export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
+  export EXECGLOBAL=${EXECGLOBAL:-$HOMEGLOBAL/exec}
+  export USHGLOBAL=${USHGLOBAL:-$HOMEGLOBAL/ush}
+  export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
+  export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
+    ;;
+    (wcoss)
+  export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
+  export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
+    ;;
+  esac
+
+  # RLW 20141008 modify to obtain and user version for vertical structure
+  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs.${model_ver}
+  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+  export USHgefs=${USHgefs:-$HOMEgefs/ush}
+  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
+  export HOMEglobal=${HOMEglobal:-/nw${envir}}
+  export EXECglobal=${EXECglobal:-$HOMEglobal/exec}
+  export USHglobal=${USHglobal:-$HOMEglobal/ush}
+  export FIXglobal=${FIXglobal:-$HOMEglobal/fix}
+  export PARMglobal=${PARMglobal:-$HOMEglobal/parm}
+else                             ### For Operations
+  export SAVEGES=YES
+  export SENDCOM=YES
+  export SENDDBN=YES
+  export SENDSMS=YES
+  export VERBOSE=NO
+  export RERUN=NO
+
+  # Specify Execution Areas
+  export HOMEGLOBAL=/nwprod
+  export EXECGLOBAL=$HOMEGLOBAL/exec
+  export USHGLOBAL=$HOMEGLOBAL/ush
+  export FIXGLOBAL=$HOMEGLOBAL/fix
+  export PARMGLOBAL=$HOMEGLOBAL/parm
+
+  export HOMEgefs=/nw${envir}
+  export EXECgefs=$HOMEgefs/exec
+  export USHgefs=$HOMEgefs/ush
+  export FIXgefs=$HOMEgefs/fix
+  export PARMgefs=$HOMEgefs/parm
+fi
+
+###############################################################
+# Specify locations of the following scripts and executables
+###############################################################
+#export CHGRESTHREAD=2
+export CHGRESTHREAD=1
+#export OVERPARMEXEC=$EXECGLOBAL/overparm_grib
+#DHOU 03/21/2012 for ZEUS
+case $gefsmachine in
+  (zeus)
+export OVERPARMEXEC=$EXECglobal/overparm_grib
+  ;;
+  (wcoss)
+export OVERPARMEXEC=$EXECGLOBAL/overparm_grib
+  ;;
+esac
+
+#export CHGRESSH=$USHGLOBAL/global_chgres.sh
+#export CHGRESEXEC=$EXECGLOBAL/global_chgres_thread
+#DHOU 03/14/2012 for ZEUS
+case $gefsmachine in
+  (zeus)
+export CHGRESSH=$USHglobal/global_chgres.sh
+export CHGRESEXEC=$EXECglobal/global_chgres
+  ;;
+  (wcoss)
+export CHGRESSH=$USHGLOBAL/global_chgres.sh
+export CHGRESEXEC=$EXECGLOBAL/global_chgres
+  ;;
+esac
+
+#export POSTGPSH=$USHGLOBAL/global_nceppost.sh
+#export POSTGPEXEC=/nwprod/exec/ncep_post
+#DHOU 03/14/2012 for ZEUS
+case $gefsmachine in
+  (zeus)
+export POSTGPSH=$USHglobal/global_nceppost.sh
+export POSTGPEXEC=$HOMEglobal/exec/ncep_post
+  ;;
+  (wcoss)
+#export POSTGPSH=$USHglobal/global_nceppost.sh
+#export POSTGPEXEC=$HOMEglobal/exec/ncep_post
+#RLW local versions, to protect against gfs upgrades
+#export POSTGPSH=$USHglobal/gefs_nceppost.sh
+#export POSTGPEXEC=$HOMEglobal/exec/gefs_ncep_post
+#DHOU  test to use HOMEgefs
+export POSTGPSH=$USHgefs/gefs_nceppost.sh
+export POSTGPEXEC=$HOMEgefs/exec/gefs_ncep_post
+  ;;
+esac
+echo in $0: POSTGPSH=$POSTGPSH
+echo in $0: POSTGPEXEC=$POSTGPEXEC
+
+#export HOMEUTIL=/nwprod/util
+#DHOU 03/21/2012 for ZEUS
+case $gefsmachine in
+  (zeus)
+export HOMEUTIL=$HOMEglobal/util
+export EXECUTIL=$HOMEUTIL/exec
+export FIXUTIL=$HOMEUTIL/fix
+  ;;
+  (wcoss)
+export HOMEUTIL=$HOMEGLOBAL/util
+export EXECUTIL=$HOMEUTIL/exec
+export FIXUTIL=$HOMEUTIL/fix
+  ;;
+esac
+
+#export GRBINDEX=/nwprod/util/exec/grbindex
+#DHOU 03/22/2012
+case $gefsmachine in
+  (zeus)
+export GRBINDEX=$HOMEglobal/util/exec/grbindex
+  ;;
+  (wcoss)
+export GRBINDEX=$HOMEGLOBAL/util/exec/grbindex
+  ;;
+esac
+
+export ERRSCRIPT=err_chk
+export LOGSCRIPT=startmsg
+export REDOUT='1>>'
+export REDERR='2>'
+
+##############################
+# Set up the UTILITIES
+##############################
+#DHOU 03/14/2012 for ZEUS
+case $gefsmachine in
+  (zeus)
+export utilscript=$HOMEglobal/util/ush
+  ;;
+  (*)
+export utilscript=/nwprod/util/ush
+  ;;
+esac
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+ksh $utilscript/setup.sh
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+sh $utilscript/setpdy.sh
+
+. PDY
+
+##############################################
+# Define COM and GES directories
+##############################################
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
+  export COM_IN=${COM_IN:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
+  export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
+  export gespath=${gespath:-/global/noscrub/$LOGBAME/nwges/${envir}}
+
+  export COMIN=$COM_IN/gefs.${PDY}
+  export COMOUT=$COM_OUT/gefs.${PDY}
+  export ENS_COM=$COMOUT
+
+  mkdir -m 775 -p $COMOUT/$cyc/stats
+
+else                              ### Fir Operations
+  export COMIN=/com/${NET}/${envir}/gefs.${PDY}
+  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+  export gespath=/nwges/${envir}
+  export ENS_COM=$COMOUT
+fi
+
+export GESdir=$gespath/gefs.${PDY}
+
+mkdir -m 775 -p $COMOUT $GESdir
+mkdir -m 775 -p $COMOUT/$cyc/master
+mkdir -m 775 -p $COMOUT/$cyc/misc
+
+############################################
+# Run gefs.parm to get input variables
+############################################
+ . $PARMgefs/gefs.parm
+
+case $cyc in
+  00) export fhmax=$fhmax00;;
+  06) export fhmax=$fhmax06;;
+  12) export fhmax=$fhmax12;;
+  18) export fhmax=$fhmax18;;
+esac
+
+####################################
+# Specify Process ID for the products
+####################################
+export IGEN_ANL=107
+export IGEN_FCST=107
+
+export POSTGPVARS_HIGH="KPO=47,PO=1000.,975.,950.,925.,900.,875.,850.,825.,800.,775.,750.,725.,700.,675.,650.,625.,600.,575.,550.,525.,500.,475.,450.,425.,400.,375.,350.,325.,300.,275.,250.,225.,200.,175.,150.,125.,100.,70.,50.,30.,20.,10.,7.,5.,3.,2.,1.,"
+export POSTGPVARS_LOW=$POSTGPVARS_HIGH
+
+####################################
+# Specify Restart File Name to Key Off
+####################################
+if [[ $fcstlong = true ]]; then
+  restart_file=$COMIN/$cyc/misc/${RUN}.t${cyc}z.logf
+else
+  restart_file=$COMIN/$cyc/misc/${RUN}.t${cyc}z.logf
+fi
+
+####################################
+# Specify Timeout Behavior of Post
+#
+# SLEEP_TIME - Amount of time to wait for
+#              a restart file before exiting
+# SLEEP_INT  - Amount of time to wait between
+#              checking for restart files
+####################################
+export SLEEP_TIME=900
+export SLEEP_TIME=1800
+export SLEEP_INT=5
+
+####################################
+# Specify Forecast Hour Range
+####################################
+
+export FHINC_HIGH=6
+export FHINC_LOW=6
+
+##### RLW 20110704 note that only _HIGH is currently used
+case $FORECAST_SEGMENT in
+  (hr)
+    # high resolution segment
+    export SHOUR=00
+    if [[ $fcstlong = true ]]; then
+      export FHOUR_HIGH=$fhmaxh
+      export FHOUR_LOW=$fhmax
+    else
+      export FHOUR_HIGH=6
+      export FHOUR_LOW=6
+    fi
+  ;;
+  (lr)
+    # low resolution segment
+    export SHOUR=$(( $fhmaxh + $FHINC_HIGH ))
+    if (( SHOUR < 10 )); then
+      SHOUR=0$SHOUR
+    fi
+    if [[ $fcstlong = true ]]; then
+      export FHOUR_HIGH=$fhmax
+      export FHOUR_LOW=$fhmax
+    else
+      export FHOUR_HIGH=6
+      export FHOUR_LOW=6
+    fi
+  ;;
+  (*)
+    # whole forecast
+    export SHOUR=00
+    if [[ $fcstlong = true ]]; then
+      export FHOUR_HIGH=$fhmax
+      export FHOUR_LOW=$fhmax
+    else
+      export FHOUR_HIGH=6
+      export FHOUR_LOW=6
+    fi
+  ;;
+esac
+
+echo FORECAST_SEGMENT=$FORECAST_SEGMENT
+echo FHINC_HIGH=$FHINC_HIGH
+echo FHINC_LOW=$FHINC_LOW
+echo SHOUR=$SHOUR
+echo FHOUR_HIGH=$FHOUR_HIGH
+echo FHOUR_LOW=$FHOUR_LOW
+
+export DO_HD_PGRB=NO
+export HDMAX=00
+
+####################################
+# Check if this is a restart
+####################################
+if [[ $cycsuffix = false ]]; then
+  if test -f $COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control
+  then
+     modelrecvy=`cat < $COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control`
+     recvy_pdy=`echo $modelrecvy | cut -c1-8`
+     recvy_cyc=`echo $modelrecvy | cut -c9-10`
+     recvy_shour=`echo $modelrecvy | cut -c11-13`
+
+     if test $RERUN = "NO"
+     then
+	if test $recvy_shour -ge $FHOUR_HIGH
+	then
+	   msg="Forecast Post Already Completed to $recvy_shour"
+	   postmsg "$jlogfile" "$msg"
+	   SHOUR=$recvy_shour
+	else
+	   if test $recvy_shour -ge $FHOUR_HIGH
+	   then
+	      SHOUR=`expr $recvy_shour + $FHINC_LOW`
+	   else
+	      SHOUR=`expr $recvy_shour + $FHINC_HIGH`
+	   fi
+	   msg="Starting: PDY=$PDY cycle=t${recvy_cyc}z SHOUR=$SHOUR	."
+	   postmsg "$jlogfile" "$msg"
+	fi
+     fi
+  fi
+else
+  if test -f $COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control.cycfs$cyc_fcst
+  then
+     modelrecvy=`cat < $COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control.cycfs$cyc_fcst`
+     recvy_pdy=`echo $modelrecvy | cut -c1-8`
+     recvy_cyc=`echo $modelrecvy | cut -c9-10`
+     recvy_shour=`echo $modelrecvy | cut -c11-13`
+
+     if test $RERUN = "NO"
+     then
+	if test $recvy_shour -ge $FHOUR_HIGH
+	then
+	   msg="Forecast Post Already Completed to $recvy_shour"
+	   postmsg "$jlogfile" "$msg"
+	   SHOUR=$recvy_shour
+	else
+	   if test $recvy_shour -ge $FHOUR_HIGH
+	   then
+	      SHOUR=`expr $recvy_shour + $FHINC_LOW`
+	   else
+	      SHOUR=`expr $recvy_shour + $FHINC_HIGH`
+	   fi
+	   msg="Starting: PDY=$PDY cycle=t${recvy_cyc}z SHOUR=$SHOUR	."
+	   postmsg "$jlogfile" "$msg"
+	fi
+     fi
+  fi
+fi
+
+echo
+env | sort
+echo
+
+#################################
+# Run High Res Post if Needed
+#################################
+if test $SHOUR -le $FHOUR_HIGH
+then
+   export FHINC=$FHINC_HIGH
+   export FHOUR=$FHOUR_HIGH
+   export DO_LOW_RES=YES 
+
+   $HOMEgefs/scripts/exgefs_nceppost.sh.ecf
+
+   export SHOUR=`expr $FHOUR_HIGH + $FHINC_HIGH`
+fi
+
+###################################################
+# Run Low Res Post if Needed
+###################################################
+#if test $SHOUR -lt $FHOUR_LOW
+#then
+#   export FHINC=$FHINC_LOW
+#   export FHOUR=$FHOUR_LOW
+#   export DO_LOW_RES=NO 
+#   export POSTGPVARS_HIGH=$POSTGPVARS_LOW
+#   $HOMEgefs/scripts/exgefs_nceppost.sh.ecf
+#fi
+###################################################
+
+################# lines between these markers have been modified for dev begin
+echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN
+echo DATA=$DATA
+ls -al $DATA
+echo `date` TEST LISTING OF WORKING DIRECTORY END
+################# lines between these markers have been modified for dev end
+
+msg="$job completed normally"
+postmsg "$jlogfile" "$msg"
+
+if [[ $envir != dev ]]; then
+  cd $DATA_IN
+  rm -rf $DATA
+fi
+
+echo `date` $0 `date -u` end
+$SMSBIN/endt

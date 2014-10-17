@@ -1,0 +1,448 @@
+#!/bin/ksh 
+################# lines between these markers have been modified for dev begin
+################# lines between these markers have been modified for dev end
+
+#####################################################################
+# 9/20/2009, Julia Zhu   Scripts are modified to be sharable
+#                        between EMC and NCO
+#         Please note that variable "RUN_ENVIR" is set and used
+#         in the development enviroment only.
+######################################################################
+
+$SMSBIN/smsinit $LOADL_STEP_ID 
+echo `date` $0 `date -u` begin
+
+set -xa
+export PS4='$SECONDS + '
+####################################
+
+# 01/28/2013 New variables added for WCOSS and cross-machine unfication
+export gefsmachine=${gefsmachine:-wcoss}
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+if [ "$RUN_ENVIR" = dev ]      ### For Developers
+then
+################# lines between these markers have been modified for dev begin
+ if (( 0 == 1 )); then
+################# lines between these markers have been modified for dev end
+  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
+################# lines between these markers have been modified for dev begin
+ else
+  . $basesource/nwdev/parm/gefs_config
+ fi
+################# lines between these markers have been modified for dev end
+fi
+
+####################################
+# obtain unique process id (pid) and make temp directory
+####################################
+export pid=$$
+if [ "$RUN_ENVIR" = dev ]    ### For Developers
+then
+################# lines between these markers have been modified for dev begin
+ if (( 0 == 1 )); then
+################# lines between these markers have been modified for dev end
+   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd}
+################# lines between these markers have been modified for dev begin
+ else
+   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
+################# lines between these markers have been modified for dev begin
+ fi
+################# lines between these markers have been modified for dev end
+else                       ### For Operations
+   export DATA_IN=/tmpnwprd
+fi
+
+export DATA=$DATA_IN/${job}.${pid}
+
+mkdir -p $DATA
+cd $DATA
+
+######################################
+# Set up the cycle variable
+######################################
+export cycle=t${cyc}z
+export cycle_fcst=t${cyc_fcst}z
+
+if (( cyc == cyc_fcst )); then
+  export fcstlong=true
+  export cfsuffix=""
+  export cycsuffix=false
+else
+  export fcstlong=false
+  export cfsuffix=".cycfs$cyc_fcst"
+  export cycsuffix=true
+fi
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=gens
+
+####################################
+# File To Log Msgs
+####################################
+if [ "$RUN_ENVIR" = dev ]     ### For Developers
+then
+################# lines between these markers have been modified for dev begin
+ if (( 0 == 1 )); then
+################# lines between these markers have been modified for dev end
+   export jlogfile=${jlogfile:-$DATA_IN/jlogfile}
+################# lines between these markers have been modified for dev begin
+ else
+   export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
+ fi
+################# lines between these markers have been modified for dev end
+else                        ### For Operations
+   export jlogfile=/com/logs/jlogfile
+fi
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# SENDSMS  - Flag Events on SMS
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+####################################
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
+  export SENDCOM=${SENDCOM:-YES}
+  export SENDDBN=${SENDDBN:-YES}
+  export SENDSMS=${SENDSMS:-YES}
+  export CREATE_TIGGE=${CREATE_TIGGE:-YES}
+  export RERUN=${RERUN:-NO}
+  export RERUN=YES
+
+  # Specify Execution Areas
+  export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
+  export EXECGLOBAL=${EXECGLOBAL:-$HOMEGLOBAL/exec}
+  export USHGLOBAL=${USHGLOBAL:-$HOMEGLOBAL/ush}
+  export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
+  export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
+
+  export HOMEgefs=${HOMEgefs:-/nw${envir}}
+  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+  export USHgefs=${USHgefs:-$HOMEgefs/ush}
+  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
+  export HOMEglobal=${HOMEglobal:-/nw${envir}}
+  export EXECglobal=${EXECglobal:-$HOMEglobal/exec}
+  export USHglobal=${USHglobal:-$HOMEglobal/ush}
+  export FIXglobal=${FIXglobal:-$HOMEglobal/fix}
+  export PARMglobal=${PARMglobal:-$HOMEglobal/parm}
+else                             ### For Operations
+  export SENDCOM=YES
+  export SENDDBN=YES
+  export SENDSMS=YES
+  export CREATE_TIGGE=YES
+  export RERUN=NO
+
+  # Specify Execution Areas
+  export HOMEGLOBAL=/nwprod
+  export EXECGLOBAL=$HOMEGLOBAL/exec
+  export USHGLOBAL=$HOMEGLOBAL/ush
+  export FIXGLOBAL=$HOMEGLOBAL/fix
+  export PARMGLOBAL=$HOMEGLOBAL/parm
+
+  export HOMEgefs=/nw${envir}
+  export EXECgefs=$HOMEgefs/exec
+  export USHgefs=$HOMEgefs/ush
+  export FIXgefs=$HOMEgefs/fix
+  export PARMgefs=$HOMEgefs/parm
+fi
+
+####################################
+# Set up the Execution Areas 
+####################################
+export GRBINDEX=/nwprod/util/exec/grbindex
+
+export HOMEUTIL=/nwprod/util
+export EXECUTIL=$HOMEUTIL/exec
+export FIXUTIL=$HOMEUTIL/fix
+
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
+#DHOU 03/22/2012 for ZEUS/WCOSS
+  case $gefsmachine in
+    (zeus)
+export GRBINDEX=$HOMEglobal/util/exec/grbindex
+    ;;
+  esac
+
+  case $gefsmachine in
+    (zeus)
+export HOMEUTIL=$HOMEglobal/util
+export EXECUTIL=$HOMEUTIL/exec
+export FIXUTIL=$HOMEUTIL/fix
+    ;;
+    (wcoss)
+export HOMEUTIL=$HOMEGLOBAL/util
+export EXECUTIL=$HOMEUTIL/exec
+export FIXUTIL=$HOMEUTIL/fix
+    ;;
+  esac
+fi
+
+####################################
+# Set up the UTILITIES
+####################################
+export utilscript=/nwprod/util/ush
+#DHOU 03/22/2012 for ZEUS/WCOSS
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
+  case $gefsmachine in
+    (zeus)
+ export utilscript=$HOMEglobal/util/ush
+    ;;
+    (wcoss)
+ export utilscript=$HOMEGLOBAL/util/ush
+    ;;
+  esac
+fi
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+. $PARMgefs/gefs.parm
+
+export NTHREADS=1
+
+case $cyc in
+  00) export fhmax=$fhmax00;;
+  06) export fhmax=$fhmax06;;
+  12) export fhmax=$fhmax12;;
+  18) export fhmax=$fhmax18;;
+esac
+
+##############################
+# Set up the UTILITIES
+##############################
+export utilscript=/nwprod/util/ush
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
+#DHOU 03/22/2012 for ZEUS
+  case $gefsmachine in
+    (zeus)
+ export utilscript=$HOMEglobal/util/ush
+    ;;
+    (wcoss)
+ export utilscript=$HOMEGLOBAL/util/ush
+    ;;
+  esac
+fi  
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+ksh $utilscript/setup.sh
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+sh $utilscript/setpdy.sh
+
+. PDY
+
+####################################
+# Create member list
+####################################
+
+if [[ $fcstlong = true ]]; then
+  memberlist="c00"
+  kmem=1
+else
+  memberlist=""
+  kmem=0
+fi
+
+##############################################
+# Define COM directories
+##############################################
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
+  export COM_IN=${COM_IN:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
+  export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
+  export gespath=${gespath:-/global/noscrub/$LOGBAME/nwges/${envir}}
+
+  export COMIN=$COM_IN/gefs.${PDY}
+  export COMOUT=$COM_OUT/gefs.${PDY}
+else                              ### Fir Operations
+  export COMIN=/com/${NET}/${envir}/gefs.${PDY}
+  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+  export gespath=/nwges/${envir}
+fi
+
+export overwrite=no
+
+mkdir -m 775 -p $COMOUT/$cyc/pgrba
+mkdir -m 775 -p $COMOUT/$cyc/pgrbalr
+mkdir -m 775 -p $COMOUT/$cyc/pgrbb
+mkdir -m 775 -p $COMOUT/$cyc/pgrbblr
+mkdir -m 775 -p $COMOUT/$cyc/pgrbd
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2b
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2a
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2alr
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2b
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2blr
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2c
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2d
+mkdir -m 775 -p $COMOUT/$cyc/track
+
+####################################
+# Specify Timeout Behavior of Post
+#
+# SLEEP_TIME - Amount of time to wait for
+#              a restart file before exiting
+# SLEEP_INT  - Amount of time to wait between
+#              checking for restart files
+####################################
+export SLEEP_TIME=900
+export SLEEP_TIME=1800
+export SLEEP_INT=5
+
+echo
+env | sort
+echo
+
+########################################################
+# Execute the GRIB script for each member.
+########################################################
+
+####################################
+# Start GRIB processing
+####################################
+
+####################################
+# Specify Process ID
+####################################
+export IGEN_ANL=107
+export IGEN_FCST=107
+
+####################################
+# Specify Forecast Hour Range
+####################################
+export FHINC=06
+
+case $FORECAST_SEGMENT in
+  (hr)
+    # high resolution segment
+    export SHOUR=00
+    if [[ $fcstlong = true ]]; then
+      export FHOUR=$fhmaxh
+    else
+      export FHOUR=06
+    fi
+  ;;
+  (lr)
+    # low resolution segment
+    export SHOUR=$(( $fhmaxh + FHINC ))
+    if [[ $fcstlong = true ]]; then
+      export FHOUR=$fhmax
+    else
+      export FHOUR=06
+    fi
+  ;;
+  (*)
+    # whole forecast period
+    export SHOUR=00
+    if [[ $fcstlong = true ]]; then
+      export FHOUR=$fhmax
+    else
+      export FHOUR=06
+    fi
+  ;;
+esac
+
+echo FORECAST_SEGMENT=$FORECAST_SEGMENT
+echo FHINC=$FHINC
+echo SHOUR=$SHOUR
+echo FHOUR=$FHOUR
+
+export DO_HD_PGRB=NO
+export HDMAX=00
+
+####################################
+# Check if this is a restart
+####################################
+if [[ $cycsuffix = false ]]; then
+  if test -f $COMOUT/$cyc/misc/$RUN.t${cyc}z.prdgen.control
+  then
+      modelrecvy=`cat < $COMOUT/$cyc/misc/$RUN.t${cyc}z.prdgen.control`
+      recvy_pdy=`echo $modelrecvy | cut -c1-8`
+      recvy_cyc=`echo $modelrecvy | cut -c9-10`
+      recvy_shour=`echo $modelrecvy | cut -c11-13`
+
+      if test $RERUN = "NO"
+      then
+         if test $recvy_shour -ge $FHOUR
+         then
+            msg="$RUN Forecast Post Already Completed to $recvy_shour"
+            postmsg "$jlogfile" "$msg"
+	    SHOUR=$recvy_shour
+	 else
+	    SHOUR=`expr $recvy_shour + $FHINC`
+	    msg="$RUN Starting: PDY=$PDY cycle=t${recvy_cyc}z SHOUR=$SHOUR    ."
+	    postmsg "$jlogfile" "$msg"
+	 fi
+      fi
+  fi
+else
+  if test -f $COMOUT/$cyc/misc/$RUN.t${cyc}z.prdgen.control.cycfs$cyc_fcst
+  then
+     modelrecvy=`cat < $COMOUT/$cyc/misc/$RUN.t${cyc}z.prdgen.control.cycfs$cyc_fcst`
+     recvy_pdy=`echo $modelrecvy | cut -c1-8`
+     recvy_cyc=`echo $modelrecvy | cut -c9-10`
+     recvy_shour=`echo $modelrecvy | cut -c11-13`
+
+     if test $RERUN = "NO"
+     then
+       if test $recvy_shour -ge $FHOUR
+       then
+         msg="$RUN Forecast Post Already Completed to $recvy_shour"
+         postmsg "$jlogfile" "$msg"
+         SHOUR=$recvy_shour
+       fi
+     fi
+  fi
+fi
+
+#################################
+# Run Post if Needed
+#################################
+if test $SHOUR -le $FHOUR
+then
+  export FHINC=$FHINC
+  export FHOUR=$FHOUR
+  export DO_LOW_RES=YES
+  $HOMEgefs/scripts/exgefs_prdgen.sh.ecf
+  export SHOUR=`expr $FHOUR + $FHINC`
+fi
+
+msg="$job completed normally"
+postmsg "$jlogfile" "$msg"
+
+################# lines between these markers have been modified for dev begin
+echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN
+echo DATA=$DATA
+ls -al $DATA
+echo `date` TEST LISTING OF WORKING DIRECTORY END
+################# lines between these markers have been modified for dev end
+echo `date` $job completed
+
+if [[ $envir != dev ]]; then
+  cd $DATA_IN
+  rm -rf $DATA
+fi
+
+$SMSBIN/smscomplete
+

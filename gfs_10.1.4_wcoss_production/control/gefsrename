@@ -1,0 +1,238 @@
+#!/bin/sh
+#
+# rename the output for a particular date of GEFS run
+#
+echo `date` $0 $* begin
+PTMP=/ptmpd2
+STMP=/stmpd2
+if [[ $LOGNAME = emc.enspara ]]; then
+  owner=$SUDO_USER
+else
+  owner=$LOGNAME
+fi
+echo owner=$owner
+group=ensemble
+echo group=$group
+envir=dev
+echo envir=$envir
+if (( $# >= 3 )); then
+  expid=$1
+  dtg=$2
+  suffix=$3
+  saveges=no
+  if (( $# >= 4 )); then
+    case $4 in
+      (saveges)
+        saveges=yes
+      ;;
+      (*)
+        echo UNKNOWN 4TH ARGUMENT $4
+      ;;
+    esac
+  fi
+  echo expid=$expid dtg=$dtg suffix=$suffix saveges=$saveges
+  if (( dtg < 23010203 )) && (( dtg > 18010203 )); then
+    yyyymmdd=$dtg
+    echo yyyymmdd=$yyyymmdd
+    # 20141008 RLW modify to obtain and user version for vertical structure
+    . /$group/save/$owner/s/$expid/nw$envir/gefs.v*/versions/gefs.ver
+    controldir=/ensemble/save/$owner/s/$expid/nwdev/gefs.${model_ver}/control
+    cd $controldir
+    rc=$?
+    if (( rc == 0 )); then
+      dirlist="
+	$PTMP/$LOGNAME/o/$expid/com/output/dev/$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/com/gens/dev/gefs.$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/nwdev/control/$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/nwges/dev/gefs.$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/tmpnwprd \
+	$STMP/$LOGNAME/o/$expid/tmpnwprd \
+      "
+
+      suffixused=no
+      for dir in $dirlist
+      do
+        if [[ -d $dir.$suffix ]]; then
+          suffixused=yes
+          ls -ald $dir.$suffix
+        fi
+      done
+
+      if [[ $suffixused = no ]]; then
+	waitno
+	for dir in $dirlist
+	do
+	  if [[ -d $dir ]]; then
+	    ls -ald $dir
+	    dirb=`basename $dir`
+	    if [[ $dirb = tmpnwprd ]]; then
+	      mkdir -p $dir.$suffix
+	      rc=$?
+	      if (( rc == 0 )); then
+		for dird in $dir/*${yyyymmdd}*
+		do
+		  if [[ -d $dird ]]; then
+		    mv $dird $dir.$suffix
+		  else
+		    echo dird=$dird DOES NOT EXIST AS A DIRECTORY
+		  fi
+		done
+	      else
+	        echo mkdir -p $dir.$suffix FAILED rc=$rc
+	      fi
+	    else
+	      mv $dir $dir.$suffix
+	    fi
+	    ls -ald $dir.$suffix
+	  else
+	    echo dir=$dir DOES NOT EXIST
+	  fi
+	done
+      else
+        echo suffix $suffix IS ALREADY IN USE
+      fi
+    else
+      echo cd $controldir FAILED rc=$rc
+    fi
+  elif (( dtg < 2301020318 )) && (( dtg > 1801020300 )); then
+    yyyymmdd=`echo $dtg|cut -c1-8`
+    hh=`echo $dtg|cut -c9-10`
+    # 20141008 RLW modify to obtain and user version for vertical structure
+    . /$group/save/$owner/s/$expid/nw$envir/*/versions/gefs.ver
+    controldir=/ensemble/save/$owner/s/$expid/nwdev/gefs.${model_ver}/control
+    cd $controldir
+    rc=$?
+    if (( rc == 0 )); then
+      dirlist="
+	$PTMP/$LOGNAME/o/$expid/com/output/dev/$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/com/gens/dev/gefs.$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/nwdev/control/$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/nwges/dev/gefs.$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/tmpnwprd \
+	$STMP/$LOGNAME/o/$expid/tmpnwprd \
+      "
+
+      suffixused=no
+      for dir in $dirlist
+      do
+        if [[ -d $dir.$suffix ]]; then
+          suffixused=yes
+          ls -ald $dir.$suffix
+        fi
+      done
+
+      if [[ $suffixused = no ]]; then
+	waitno
+	for dir in $dirlist
+	do
+	  if [[ -d $dir ]]; then
+	    ls -ald $dir
+	    dirb=`basename $dir`
+	    if [[ $dirb = tmpnwprd ]]; then
+	      mkdir -p $dir.$suffix
+	      rc=$?
+	      if (( rc == 0 )); then
+		for dird in $dir/*${yyyymmdd}${hh}*
+		do
+		  if [[ -d $dird ]]; then
+		    mv $dird $dir.$suffix
+		  else
+		    echo dird=$dird DOES NOT EXIST AS A DIRECTORY
+		  fi
+		done
+	      else
+	        echo mkdir -p $dir.$suffix FAILED rc=$rc
+	      fi
+	    else
+	      dirz=`dirname $dir`
+	      diry=`dirname $dirz`
+	      dirx=`basename $diry`
+	      echo dirz=$dirz diry=$diry dirx=$dirx
+	      diro=$dir.$suffix
+	      echo dirx=$dirx $diro=$diro
+	      case $dirx in
+		(output)
+		  mkdir -p $diro
+		  rc=$?
+		  if (( rc == 0 )); then
+		    for file in $dir/??$yyyymmdd${hh}???.*.o $dir/??$yyyymmdd${hh}???.*.ow
+		    do
+		      if [[ -f $file ]]; then
+			mv $file $diro
+		      else
+			echo file=$file DOES NOT EXIST AS A FILE IN $dir
+		      fi
+		    done
+		  else
+		    echo mkdir -p $diro FAILED rc=$rc
+		  fi
+		;;
+		(gens)
+		  mkdir -p $diro
+		  rc=$?
+		  if (( rc == 0 )); then
+		    if [[ -d $dir/$hh ]]; then
+		      mv $dir/$hh $diro/$hh
+		    else
+		      echo hh=$hh DOES NOT EXIST AS A DIRECTORY IN $dir
+		    fi
+		  else
+		    echo mkdir -p $diro FAILED rc=$rc
+		  fi
+		;;
+		(nwdev)
+		  mkdir -p $diro
+		  rc=$?
+		  if (( rc == 0 )); then
+		    if [[ -d $dir/$hh ]]; then
+		      mv $dir/$hh $diro/$hh
+		    else
+		      echo hh=$hh DOES NOT EXIST AS A DIRECTORY IN $dir
+		    fi
+		  else
+		    echo mkdir -p $diro FAILED rc=$rc
+		  fi
+		;;
+		(nwges)
+		  mkdir -p $diro
+		  rc=$?
+		  if (( rc == 0 )); then
+		    for file in $dir/*.t${hh}z.*
+		    do
+		      if [[ -f $file ]]; then
+			mv $file $diro
+		      else
+			echo file=$file DOES NOT EXIST AS A FILE IN $dir
+		      fi
+		    done
+		  else
+		    echo mkdir -p $diro FAILED rc=$rc
+		  fi
+		;;
+		(o)
+		  mv $dir $diro
+		;;
+		(*)
+		  echo THERE IS NO COPY PROCESS DEFINED FOR dirx=$dirx dir=$dir
+		;;
+	      esac
+	    fi
+	    ls -ald $dir $diro
+	  else
+	    echo dir=$dir DOES NOT EXIST
+	  fi
+	done
+      else
+        echo suffix $suffix IS ALREADY IN USE
+      fi
+    else
+      echo cd $controldir FAILED rc=$rc
+    fi
+  else
+    echo dtg=$dtg IS OUT OF RANGE
+  fi
+else
+  echo 3 arguments required: expid YYYYMMDD suffix
+fi
+echo `date` $0 $* end
+

@@ -1,0 +1,15 @@
+SHELL=  /bin/ksh
+CMD=	global_ensrfmat  
+#FC=     ncepxlf
+FC=     ifort
+#FOPTS=  -qsmp=noauto
+FOPTS=  -traceback -list
+LOPTS=
+INCS=
+SRCS=	REFORMAT.f      
+LIBS    = -L/nwprod/lib -lbacio_4 -lw3_4 -lip_4 -lsp_4 
+LIBS    =
+$(CMD): $(SRCS)
+	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o $(CMD)
+#global_ensrfmat: $(SRCS)
+#	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o rfmat

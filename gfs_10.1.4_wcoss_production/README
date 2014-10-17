@@ -1,0 +1,86 @@
+To set up GEFS on WCOSS:
+
+cd to your base directory
+/nw(envir)
+(to run as production)
+or
+[your directory]/[4 character identifier]/nwdev
+(to run as development)
+
+Check out 
+svnemc.ncep.noaa.gov/projects/gefs/tags/gefs_10.1.0_wcoss_production
+or the tag for a later update
+
+NOTE:  the "control" subdirectory contains the scripts and files used to 
+run this system as a development user.  It is not needed for production.
+
+NOTE:  The "sms.prod.20110518" subdirectory contains SMS job card 
+scripts from CCS production.  These are available for reference.
+
+Create the exec and util/exec subdirectories.
+
+Make the executables in the subdirectories of sorc and util/sorc:
+
+In util/sorc/gefs_trak_ave.fd
+issue the command
+make -f makefile_wcoss
+and mv the executable to util/exec
+
+In sorc/gefs_global_fcst.fd
+execute the script 
+makefile.sh_wcoss
+
+In other source directories, issue the command
+make -f makefile_wcoss
+and mv the executable to the exec subdirectory
+
+NOTE:  warning messages are normally given during the compilation of the
+following codes:
+ens_trak_ave, about misalignment, as on the CCS
+gefs_global_forecast
+gefs_ncep_post
+
+NOTE:  the restart_copy job is not ready for production yet.  This job 
+does not affect the products:  it is only run to facilitate mirroring of 
+restart files from the production to the development machine.  We will
+submit an update when this job is ready.
+
+NOTE:  the CPQF job is not yet ready for production yet.  We will submit
+an update when this job and its codes are ready.
+
+
+To run GEFS as prod or para, 
+
+
+Create job cards for ecflow based on the files in the subdirectory job_cards
+
+Set job dependencies corresponding to those used in GEFS on the CCS
+
+Use the *.dev versions of the j-job scripts
+
+When the j-jobs are renamed, the job cards will need to be edited to
+point to them.
+
+If the ex scripts are renamed, the j-jobs will need to be edited to
+point to them.
+
+
+GEFS can be started running by either of these methods:
+
+
+1.  If sfcsig (at least the sf06 files) and tracks are available for
+the previous cycle, start with the gefs_init_separate job.
+
+In testing with com_canned, we copied these directories for 2012102100 
+and started running GEFS with initialization for 2012102106 .
+
+
+2.  If the initial conditions are available in /nwges and in the
+init subdirectory for the current cycle, start with the gefs_gfs_prdgen
+and gefs_forecast_high jobs.
+
+
+
+To run GEFS as a development user, follow the directions as written for the 
+CCS in README.CCS
+

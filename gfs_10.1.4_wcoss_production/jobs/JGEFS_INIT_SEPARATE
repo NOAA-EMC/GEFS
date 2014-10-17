@@ -1,0 +1,516 @@
+#!/bin/ksh 
+
+#################################################################
+#
+# In case of problems with this job or its output:
+#
+# To force a cold start, modify the variable coldstartcycles
+# in the file parm/gefs.parm
+#
+#################################################################
+
+################# lines between these markers have been modified for dev end
+###testb
+# lines between ###testb and ###teste not needed for production
+###teste
+
+$SMSBIN/smsinit $LOADL_STEP_ID 
+echo `date` $0 `date -u` begin
+
+set -xa
+####################################
+
+# 01/28/2013 New variables added for WCOSS and cross-machine unfication
+export gefsmachine=${gefsmachine:-wcoss}
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+#DHOU 03/09/2012 temporal setting
+#RERUN=YES
+if [ "$RUN_ENVIR" = dev ]   ### For Developers
+then
+################# lines between these markers have been modified for dev begin
+ if (( 0 == 1 )); then
+################# lines between these markers have been modified for dev end
+  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
+################# lines between these markers have been modified for dev begin
+ else
+# echo $jobscript =jobscript #DHOU 03/07/2012
+  # RLW 20141008 modify to obtain and user version for vertical structure
+  . $basesource/nw$envir/*/versions/gefs.ver
+  . $basesource/nw$envir/gefs.${model_ver}/parm/gefs_config
+ fi
+################# lines between these markers have been modified for dev end
+else
+  # RLW 20141008 modify to obtain and user version for vertical structure
+  . /nwprod/versions/gefs.ver
+fi
+
+# #### 05/05/99 ###############################
+# SETUP ENS INITIALIZATION PROCESSING VARIABLES
+# #############################################
+export PS4='$SECONDS + '
+
+####################################
+# obtain unique process id (pid) and make working directory
+####################################
+export pid=$$
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+export DATA=/tmpnwprd/gefs_init_$cyc.$envir.save
+###testb
+else
+  echo basenfs=$basenfs
+  echo baseptmp=$baseptmp
+  echo basetmp=$basetmp
+  export DATA=$basetmp/$envir/tmpnwprd/gefs_init_$PDY$cyc.$envir.save
+################# lines between these markers have been modified for dev begin
+  export DATA=$basetmp/tmpnwprd/gefs_init_$PDY$cyc.$envir.save
+################# lines between these markers have been modified for dev end
+echo DATA=$DATA
+fi
+###teste
+if [[ -d $DATA ]]; then
+  rm -rf $DATA
+fi
+mkdir -p $DATA
+cd $DATA
+
+export cycle=t${cyc}z
+export cycle_fcst=t${cyc_fcst}z
+
+echo cyc=$cyc cyc_fcst=$cyc_fcst
+echo cycle=$cycle cycle_fcst=$cycle_fcst
+
+if (( cyc == cyc_fcst )); then
+  export cycsuffix=false
+  export fcstlong=true
+else
+  export fcstlong=false
+  export cycsuffix=true
+fi
+
+echo fcstlong=$fcstlong
+echo cycsuffix=$cycsuffix
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=gens
+export RUN=enstr
+
+####################################
+# File To Log Msgs
+####################################
+###testb
+if [[ $envir = prod ]]; then
+###teste
+export jlogfile=/com/logs/jlogfile
+###testb
+elif [[ $envir = para ]] || \
+     [[ $envir = test ]]; then
+  export jlogfile=/com/logs/para/jlogfile
+else
+  #export jlogfile=$baseptmp/com/logs/jlogfile
+################# lines between these markers have been modified for dev begin
+ if (( 0 == 1 )); then
+################# lines between these markers have been modified for dev end
+  export jlogfile=$baselog/nw$envir/logs/jlogfile
+################# lines between these markers have been modified for dev begin
+ else
+  export jlogfile=$baselog/com/logs/jlogfile
+ fi
+################# lines between these markers have been modified for dev end
+fi
+###teste
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# SAVEGES  - Copy Files From TMPDIR to $GESdir
+# RMGES    - Clean Files in $GESdir
+# SENDSMS  - Flag Events on SMS
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# RERUN    - Rerun posts from beginning (default no)
+# VERBOSE  - Specify Verbose Output in global_postgp.sh
+####################################
+export SAVEGES=YES
+export SENDSMS=YES
+export SENDCOM=YES
+export RERUN=NO
+export VERBOSE=YES
+
+###testb
+if [[ $envir = prod ]]; then
+###teste
+if [ $cyc -eq 00 -o $cyc -eq 12 ]
+then
+   export SENDDBN=YES
+else
+   export SENDDBN=YES
+fi
+###testb
+else
+   export SENDDBN=NO
+fi
+###teste
+
+ 
+####################################
+# Specify Execution Areas
+####################################
+###testb
+# DHOU 03/29/2012 For Zeus, make the HOMEGLOBAL definition more general
+if [[ $envir = prod ]]; then
+###teste
+#export HOMEGLOBAL=/nw${envir}
+# RLW 20141008 modify to obtain and user version for vertical structure
+export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}/gefs.${model_ver}}
+###testb
+else
+#  export HOMEGLOBAL=/nwprod
+  # RLW 20141008 modify to obtain and user version for vertical structure
+  export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod/gefs.${model_ver}}
+fi
+###teste
+#DHOU 03/29/2012 commented out  the following 3 blocks for ZEUS
+################# lines between these markers have been modified for dev begin
+#if [[ $envir = dev ]]; then
+#  export HOMEGLOBAL=$basesource/nw$envir
+#fi
+################# lines between these markers have been modified for dev end
+#export EXECGLOBAL=$HOMEGLOBAL/exec
+#export FIXGLOBAL=$HOMEGLOBAL/fix
+#export PARMGLOBAL=$HOMEGLOBAL/parm
+#export USHGLOBAL=$HOMEGLOBAL/ush
+################# lines between these markers have been modified for dev begin
+#if [[ $envir = dev ]]; then
+#  export FIXGLOBAL=/nwprod/fix
+#fi
+################# lines between these markers have been modified for dev end
+if [[ $envir = dev ]]; then
+#DHOU 03/29/2012 added the following block for ZEUS
+ if [[ $gefsmachine = zeus ]]; then
+export EXECGLOBAL=$HOMEgefs/exec
+export FIXGLOBAL=$HOMEGLOBAL/fix
+export PARMGLOBAL=$HOMEgefs/parm
+export USHGLOBAL=$HOMEgefs/ush
+ fi
+
+#DHOU 01/18/2013 added the following block for WCOSS (temporary)
+ if [[ $gefsmachine = wcoss ]]; then
+ export EXECGLOBAL=$HOMEgefs/exec
+#export FIXGLOBAL=$HOMEGLOBAL/fix
+#export FIXGLOBAL=$HOMEglobal/fix
+export FIXGLOBAL=$HOMEgefs/fix
+export PARMGLOBAL=$HOMEgefs/parm
+export USHGLOBAL=$HOMEgefs/ush
+ fi
+fi
+
+export ERRSCRIPT=err_chk
+export LOGSCRIPT=startmsg
+export REDOUT='1>>'
+export REDERR='2>'
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+
+
+###testb
+if [[ $envir = prod ]]; then
+###teste
+. $PARMGLOBAL/gefs.parm
+. $PARMGLOBAL/gefs_init.parm
+###testb
+elif [[ $envir = para ]] || \
+     [[ $envir = test ]]; then
+  # RLW 20141008 modify to obtain and user version for vertical structure
+. /nw$envir/gefs.${model_ver}/parm/gefs.parm
+. /nw$envir/gefs.${model_ver}/parm/gefs_init.parm
+else
+  # RLW 20141008 modify to obtain and user version for vertical structure
+. $basesource/nw$envir/gefs.${model_ver}/parm/gefs.parm
+. $basesource/nw$envir/gefs.${model_ver}/parm/gefs_init.parm
+###added for zeus (kate)
+#. $basesource/nw$envir/parm/gefs_config
+fi
+###teste
+
+echo
+env | sort
+echo
+
+##############################
+# Set up the UTILITIES
+##############################
+export utilscript=/nwprod/util/ush
+#DHOU 03/29/2012 added the following line for ZEUS
+export utilscript=$HOMEGLOBAL/util/ush
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+ksh $utilscript/setup.sh
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+sh $utilscript/setpdy.sh
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+. PDY
+###testb
+else
+  echo PDY=$PDY is already set
+fi
+###teste
+
+##############################################
+# for global_chgres.sh
+##############################################
+export SLMASK=/dev/null
+
+##############################################
+# Define COM directories
+##############################################
+###testb
+if [[ $envir = prod ]] ; then
+###teste
+export GFSCOMIN=/com/gfs/${envir}/gfs.$PDY
+###testb
+elif [[ $envir = para ]] || \
+     [[ $envir = test ]]; then
+  if [[ "$gfssource" = para ]]; then
+    export GFSCOMIN=/com/gfs/para/gfs.$PDY
+  else
+    export GFSCOMIN=/com/gfs/prod/gfs.$PDY
+  fi
+else
+  if [[ "$gfssource" = para ]]; then
+    export GFSCOMIN=/com/gfs/para/gfs.$PDY
+  elif [[ "$gfssource" = prod ]]; then
+#   export GFSCOMIN=/com/gfs/prod/gfs.$PDY
+#   export GFSCOMIN=/com_p6/gfs/prod/gfs.$PDY #WCOSS transition
+    export GFSCOMIN=$TMPCOM/gfs/prod/gfs.$PDY #WCOSS transition
+  else
+    export GFSCOMIN=$baseptmp/com/gfs/${envir}/gfs.$PDY
+################# lines between these markers have been modified for dev begin
+    export GFSCOMIN=$basedgfs/com/gfs/prod/gfs.$PDY
+################# lines between these markers have been modified for dev end
+  fi
+fi
+###teste
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+export COMIN=/com/${NET}/${envir}/gefs.${PDY}
+export COM=/com/${NET}/${envir}
+export COMINm1=/com/${NET}/${envir}/gefs.${PDYm1}
+export COMINm2=/com/${NET}/${envir}/gefs.${PDYm2}
+export COMINm3=/com/${NET}/${envir}/gefs.${PDYm3}
+export COMINm4=/com/${NET}/${envir}/gefs.${PDYm4}
+###testb
+else
+export COMIN=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
+export COM=$baseoutput/com/${NET}/${envir}
+export COMINm1=$baseoutput/com/${NET}/${envir}/gefs.${PDYm1}
+export COMINm2=$baseoutput/com/${NET}/${envir}/gefs.${PDYm2}
+export COMINm3=$baseoutput/com/${NET}/${envir}/gefs.${PDYm3}
+export COMINm4=$baseoutput/com/${NET}/${envir}/gefs.${PDYm4}
+fi
+###teste
+
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+###testb
+else
+export COMOUT=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
+fi
+###teste
+mkdir -m 775 -p $COMOUT/$cyc/init
+mkdir -m 775 -p $COMOUT/$cyc/sflux
+
+##############################################
+# Define GES directories
+##############################################
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+gespath=/nwges/${envir}
+###testb
+else
+gespath=$baseoutput/nwges/${envir}
+fi
+###teste
+export GESdir=$gespath/gefs.${PDY}
+mkdir -m 775 -p $GESdir
+
+##############################################
+echo locations of scripts and executables
+##############################################
+
+echo location of sighdr executable
+###testb
+if [[ $envir = prod ]]; then
+###teste
+sighdrexec=$EXECGLOBAL/global_sighdr
+###testb
+else
+  echo locsighdrexec=$locsighdrexec
+  case $locsighdrexec in
+    (prod)  export sighdrexec=/nwprod/exec/global_sighdr ;;
+    (para)  export sighdrexec=/nwpara/exec/global_sighdr ;;
+    (test)  export sighdrexec=/nwpara/exec/global_sighdr ;;
+    (zeus)  export sighdrexec=$EXECglobal/global_sighdr ;;
+    # 20140416 RLW switch to production version of global_sighdr
+    #(wcoss)  export sighdrexec=/global/noscrub/Shrinivas.Moorthi/para/exec/global_sighdr ;;
+    (wcoss)  export sighdrexec=/nwprod/exec/global_sighdr ;;
+    (local)  case $envir in
+               (prod)  export sighdrexec=/nw$envir/exec/global_sighdr ;;
+               (para)  export sighdrexec=/nw$envir/exec/global_sighdr ;;
+               (test)  export sighdrexec=/nw$envir/exec/global_sighdr ;;
+               (zeus)  export sighdrexec=$EXECglobal/global_sighdr ;;
+               (*)  export sighdrexec=$basesource/nw$envir/exec/global_sighdr ;;
+             esac ;;
+    (*)  export sighdrexec=$locsighdrexec ;;
+  esac
+fi
+###teste
+echo sighdrexec=$sighdrexec
+
+echo location of chgres script and executable
+###testb
+if [[ $envir = prod ]]; then
+###teste
+export chgresush=$USHGLOBAL/global_chgres.sh
+export CHGRESEXEC=/nwprod/exec/global_chgres_thread
+###testb
+else
+  echo locchgresush=$locchgresush
+  case $locchgresush in
+    (prod)  export chgresush=/nwprod/ush/global_chgres.sh ;;
+    (para)  export chgresush=/nwpara/ush/global_chgres.sh ;;
+    (test)  export chgresush=/nwpara/ush/global_chgres.sh ;;
+    (zeus)  export chgresush=$USHglobal/global_chgres.sh ;;
+    # 20140416 RLW switch to production version of global_chgres.sh
+    #(wcoss)  export chgresush=/global/noscrub/Shrinivas.Moorthi/para/ush/global_chgres.sh ;;
+    (wcoss)  export chgresush=/nwprod/ush/global_chgres.sh ;;
+#   (zeus)  export chgresush=$basesource/nw$envir/ush/global_chgres.sh ;;
+    (local)  case $envir in
+               (prod)  export chgresush=/nw$envir/ush/global_chgres.sh ;;
+               (para)  export chgresush=/nw$envir/ush/global_chgres.sh ;;
+               (test)  export chgresush=/nw$envir/ush/global_chgres.sh ;;
+#               (zeus)  export chgresush=$USHglobal/global_chgres.sh ;;
+               (zeus)  export chgresush=$basesource/nw$envir/ush/global_chgres.sh ;;
+               (*)  export chgresush=$basesource/nw$envir/ush/global_chgres.sh ;;
+             esac ;;
+    (*)  chgresush=$locchgresush ;;
+  esac
+  echo locchgresexec=$locchgresexec
+  case $locchgresexec in
+    (prod)  export CHGRESEXEC=/nwprod/exec/global_chgres ;;
+#   (prod)  export CHGRESEXEC=/nwprod/exec/global_chgres_thread ;;
+    (para)  export CHGRESEXEC=/nwpara/exec/global_chgres_thread ;;
+    (test)  export CHGRESEXEC=/nwpara/exec/global_chgres_thread ;;
+    (zeus)  export CHGRESEXEC=$EXECglobal/global_chgres ;;
+    # 20140416 RLW switch to production version of global_chgresh
+    #(wcoss)  export CHGRESEXEC=/global/noscrub/Shrinivas.Moorthi/para/exec/global_chgres ;;
+    (wcoss)  export CHGRESEXEC=/nwprod/exec/global_chgres ;;
+#               (zeus)  export CHGRESEXEC=$basesource/nw$envir/exec/global_chgres ;;
+    (local)  case $envir in
+               (prod)  export CHGRESEXEC=/nw$envir/exec/global_chgres_thread ;;
+               (para)  export CHGRESEXEC=/nw$envir/exec/global_chgres_thread ;;
+               (test)  export CHGRESEXEC=/nw$envir/exec/global_chgres_thread ;;
+               (zeus)  export CHGRESEXEC=$EXECglobal/global_chgres ;;
+               (*)  export CHGRESEXEC=$basesource/nw$envir/exec/global_chgres_thread ;;
+             esac ;;
+    (*)  export CHGRESEXEC=$locchgresexec ;;
+  esac
+fi
+###teste
+echo chgresush=$chgresush
+echo CHGRESEXEC=$CHGRESEXEC
+
+##############################################
+echo list environment before running script
+##############################################
+
+echo
+env | sort
+echo
+
+#############################################################
+# Execute the script
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+# RLW 20141008 modify to obtain and user version for vertical structure
+/nw${envir}/gefs.${model_ver}/scripts/exgefs_init_separate.sh.ecf
+###testb
+else
+# RLW 20141008 modify to obtain and user version for vertical structure
+$basesource/nw${envir}/gefs.${model_ver}/scripts/exgefs_init_separate.sh.ecf
+fi
+###teste
+#############################################################
+
+cat $pgmout
+
+msg="JOB COMPLETED NORMALLY"
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Save the working directory
+# for the ET and COMBINE jobs
+##############################
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+cd /tmpnwprd
+###testb
+else
+  echo skip cleanup for testing
+fi
+###teste
+
+echo `date` $0 `date -u` end
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+$SMSBIN/endt
+###testb
+else
+  echo skip endt for testing
+fi
+###teste
