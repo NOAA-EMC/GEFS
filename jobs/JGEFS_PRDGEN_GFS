@@ -231,7 +231,14 @@ then
   export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
 
   export COMIN=$COM_IN/gfs.${PDY}
-  export COMIN=/com/gfs/para/gfs.${PDY}
+  case $gfssource in
+    (prod)
+      export COMIN=/com/gfs/prod/gfs.${PDY}
+    ;;
+    (para)
+      export COMIN=/com/gfs/para/gfs.${PDY}
+    ;;
+  esac
   export COMOUT=$COM_OUT/gefs.${PDY}
   export ENS_COM=$COMOUT
 else                              ### For Operations
@@ -260,8 +267,17 @@ export POSTGPVARS_LOW="IDRTC=0,IOC=144,JOC=73,IDRT=0,IO=144,JO=73,MOO=48,MOW=12,
 ####################################
 # Specify Restart File Names to Key Off
 ####################################
-restart_file_a=$COMIN/${RUN}.t${cyc}z.pgrbf
-restart_file_b=$COMIN/${RUN}.t${cyc}z.pgrbif
+case $gfsgribedition in
+  (1)
+    restart_file_a=$COMIN/${RUN}.t${cyc}z.pgrbf
+    restart_file_b=$COMIN/${RUN}.t${cyc}z.pgrbif
+  ;;
+  (2)
+    restart_file_a=$COMIN/${RUN}.t${cyc}z.pgrb2.0p25.f
+    restart_file_b=$COMIN/${RUN}.t${cyc}z.pgrb2.0p50.f
+  ;;
+esac
+
 
 ####################################
 # Specify Timeout Behavior of Post

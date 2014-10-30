@@ -196,16 +196,20 @@ do
 
     while [ $ic -le $SLEEP_LOOP_MAX ]
     do
-       if [[ -s $restart_file_a$fhr ]] && [[ -s $restart_file_b$fhr ]]; then
+       ffhr=$fhr
+       if (( fhr < 100 )); then
+         ffhr=0$fhr
+       fi
+       if [[ -s $restart_file_a$ffhr ]] && [[ -s $restart_file_b$ffhr ]]; then
 	  found=yes
           break
        else
           ic=`expr $ic + 1`
           sleep $SLEEP_INT
        fi
-       if (( fhr > 180 )) && (( fhr % 12 == 6 )); then
+       if (( ffhr > $gfsfhmaxh )) && (( ffhr % 12 == 6 )); then
 	 if (( ic > 2 )) && (( ic < SLEEP_LOOP_MAX )); then
-	   echo fhr=$fhr not expected
+	   echo ffhr=$ffhr not expected
 	   found=no
 	   break
 	 fi

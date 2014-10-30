@@ -151,7 +151,7 @@ export IDVC=2
 export gfsgribedition=1
 export gfsgribedition=2
 export gfsfhmaxh=240
-export gfshoroglist=252
+export gfsfhoroglist=252
 
 ########################################
 # This section defines the output flags
@@ -161,8 +161,8 @@ export makegrb1i=yes
 export makegrb2i=yes
 export makepgrb2a=yes
 #DHOU 03/26/2012 For ZEUS
-export makegrb2i=no
-export makepgrb2a=no
+#export makegrb2i=no
+#export makepgrb2a=no
 
 # DHOU, 09/09/2008, added variable HOUTSPS.
 # HOUTSPS=12: output after SPS 12 hours before fhmaxh, so that digital filtering can be applied after
