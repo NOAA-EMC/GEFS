@@ -726,16 +726,17 @@ do
     export SIGLEVEL=$FIXGLOBAL/global_hyblev.l${LEVS}.txt
   fi
 ###testb
-if [[ $envir = prod ]]; then
+#if [[ $envir = prod ]]; then
+####teste
+#  export SIGINP=$FIXGLOBAL/gefs.pertback.$cycle_fcst.${meml}${ipair}
+####testb
+#elif [[ $envir = para ]] || [[ $envir = test ]]; then
+#  export SIGINP=/nw${envir}/fix/gefs.pertback.$cycle_fcst.${meml}${ipair}
+#else
+#  export SIGINP=$basesource/nw${envir}/fix/gefs.pertback.$cycle_fcst.${meml}${ipair}
+#fi
 ###teste
-  export SIGINP=$FIXGLOBAL/gefs.pertback.$cycle_fcst.${meml}${ipair}
-###testb
-elif [[ $envir = para ]] || [[ $envir = test ]]; then
-  export SIGINP=/nw${envir}/fix/gefs.pertback.$cycle_fcst.${meml}${ipair}
-else
-  export SIGINP=$basesource/nw${envir}/fix/gefs.pertback.$cycle_fcst.${meml}${ipair}
-fi
-###teste
+  export SIGINP=$FIXgefs/gefs.pertback.$cycle_fcst.${meml}${ipair}
   export SFCINP=NULL
   export SIGOUT=$DATALOCAL/gefs.pertback.$cycle_fcst.${meml}${ipair}
   export SFCOUT=sfcout
