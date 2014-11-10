@@ -12,10 +12,11 @@ echo
 #DHOU, 12/17/2013, define PTMP to pointing to /ptmp or /ptmpd2
  PTMP=ptmp
  STMP=stmp
- if [[ $machl = t ]] || [[ $machl = g ]]; then
-   PTMP=ptmpd2
-   STMP=stmpd2
- fi
+machl=`uname -n | cut -c1`
+if [[ $machl = t ]] || [[ $machl = g ]]; then
+ PTMP=ptmpd2
+ STMP=stmpd2
+fi
 
 goodargs=yes
 nextflag=no
@@ -804,8 +805,8 @@ if [[ $nextflag = yes ]]; then
       (000) if (($inflag ==6)); then 
             jjjb=005 
             else
-            jjjb=012
-#           jjjb=100         #use this line to skip INIT and gfs for testing
+#           jjjb=012
+            jjjb=100         #use this line to skip INIT and gfs for testing
             fi ;;
       (005) jjjb=010 ;;
       (010) jjjb=012 ;;

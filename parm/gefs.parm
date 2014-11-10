@@ -15,6 +15,7 @@ export GFS_VERSION=gfs_fcst
 #export npair=6
 #export npair=2
 export npair=10
+#export npair=0
 export nhrpair=$npair
 
 #################################################
@@ -22,7 +23,6 @@ export nhrpair=$npair
 #################################################
 export fhmax=384
 export fhmaxh=192
-#export fhmaxh=168
 export fhmaxh=$fhmax
 
 export fhmax00=384
@@ -33,15 +33,16 @@ export fhmax18=384
 #For Extended forecast from 384-840 hours
 export fhmax_ext=840
 
-export fhrp=24
 export fhrp=06
+export fhrp=24
 #
 # 3-hourly output: fhmax3 must be less than fhmaxh
-if (( fhmaxh > 126 )); then
-  fhmax3=126
-else
-  (( fhmax3 = fhmaxh - 6 ))
-fi
+fhmax3=$fhmaxh
+#if (( fhmaxh > 126 )); then
+#  fhmax3=126
+#else
+#  (( fhmax3 = fhmaxh - 6 ))
+#fi
 
 #########################################################################################
 # Parameters to control the digital filter at the beginning of the forecast
@@ -109,12 +110,12 @@ export USESUBDIR=YES
 # Restart frequncy for the first fhmax3 hours
 export fhrestart3=18
 export fhrestart3=36
-export fhrestart3=42
+export fhrestart3=1420
 
 # Restart frequncy for hour after fhmax3
 export fhrestart=18
 export fhrestart=36
-export fhrestart=42
+export fhrestart=1420
 
 #######################################
 # This section defines the resolution
@@ -264,15 +265,10 @@ if [[ $envir = dev ]]; then
   export fhmax12=06
   export fhmax18=06
 # # 00Z long forecasts only
-# export fhmax00=384
+  export fhmax00=384
 # export fhmax06=06
 # export fhmax12=06
 # export fhmax18=06
-
- 
-#DHOU 08/05/2010, add this block to modify these realed variables
-#RLW 2011010t reenable 3-hourly forecast output
-  #export fhmax3=0
 
 #RLW move fhmax arithmetic from gefsrun begin
 
@@ -426,7 +422,7 @@ if [[ $envir = dev ]]; then
     # test whether this is needed for concurrent
     fhrestart=18
     fhrestart=36
-    fhrestart=42
+    fhrestart=1420
   fi
 
   # copy initial state from another run

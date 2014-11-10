@@ -132,7 +132,7 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
   export basesource=/$group/save/$LOGNAME/s/$expid
   export basebin=$basesource/nw$envir/control
   export baseoutput=/$PTMP/$LOGNAME/o/$expid
-  export basetmp=/$STMP/$LOGNAME/o/$expid
+  export basetmp=/$PTMP/$LOGNAME/o/$expid
   export baseptmp=/$PTMP/$LOGNAME/o/$expid
 # export basedgfs=        #for prod/para
 # export basedgfs=/$group/noscrub/$LOGNAME/o
@@ -180,6 +180,7 @@ fi
 if [[ $machl = t ]] || [[ $machl = g ]]; then
 # For WCOSS
   export account=GEN-T2O
+  export account=gefs
   export group=ensemble
   export classs=batch
   export classp=batch

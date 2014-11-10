@@ -73,12 +73,12 @@ eofCAT
 #BSUB -n $total_tasks
 #BSUB -R span[ptile=$taskspernode]
 
-export OMP_NUM_THREADS=$OMP_NUM_THREADS
+#export OMP_NUM_THREADS=$OMP_NUM_THREADS
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
-export MP_SHARED_MEMORY=${MP_SHARED_MEMORY}
-#export MP_SHARED_MEMORY=yes
-export MEMORY_AFFINITY=core:$OMP_NUM_THREADS 
+#export MP_SHARED_MEMORY=${MP_SHARED_MEMORY}
+export MP_SHARED_MEMORY=yes
+#export MEMORY_AFFINITY=core:$OMP_NUM_THREADS 
 
 export total_tasks=$total_tasks
 eofCAT
@@ -94,9 +94,10 @@ export OMP_STACKSIZE=256000
 export MP_EAGER_LIMIT=65535
 export MP_EUIDEVELOP=min
 export MP_MPILIB=mpich2
-export MP_USE_BULK_XFER=yes
+export MP_USE_BULK_XFER=no
 # 20131202 RLW check this affinity setting for the forecast job
-export MP_TASK_AFFINITY=core:1
+# 20131202 RLW check this affinity setting for the forecast job, DHOU removed it 08/21/2014
+#export MP_TASK_AFFINITY=core:1
 #export MPICH_ALLTOALL_THROTTLE=0
 #export MP_COLLECTIVE_OFFLOAD=yes
 #export KMP_STACKSIZE=1024m
@@ -152,7 +153,7 @@ echo \$pwdsave
 cd $controldir
 . $controldir/setbase
 . $parmdir/gefs.parm
-cd \$pwdsave
+cd $pwdsave
 export RUN_ENVIR=$envir
 export gefsmachine=$gefsmachine
 export gefsmpexec=$gefsmpexec
@@ -355,11 +356,11 @@ eofCAT
     cat <<eofCAT >>$jobcontrol
 # export for development runs only begin
 pwdsave=\`$(pwd)\`
-echo \$pwdsave
+echo $pwdsave
 cd $controldir
 . $controldir/setbase
 . $parmdir/gefs.parm
-cd \$pwdsave
+cd $pwdsave
 export jjj=$jjj
 export jjje=$jjje
 export yyyymmddcc=$yyyymmddcc

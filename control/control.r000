@@ -9,7 +9,8 @@ echo env sort after
 echo
 pwd
 
-if (( 0 == 1 )); then
+#DHOU, 08/21/2014. PLEASE eddit this if block to copu int files if INIT jobs are not running
+if (( 0 == 0 )); then
 echo before copy init files
 
 echo yyyymmddcc=$yyyymmddcc  
@@ -17,7 +18,8 @@ echo basetmp=$basetmp
 #nwgescp  `echo $yyyymmddccc | cut -c1-8` $id YES 
 
 #scourcedir=/gpfs/v/mtb/noscrub/wx20dh/TSKH/ThINIT00Ie
- scourcedir=/nwges_p6/prod
+#scourcedir=/nwges_p6/prod
+ scourcedir=/ensemble/noscrub/GEFS.2015/NWGES/prh14wCTL    # source of init files
  expdir=$basetmp/nwges/$envir
  inidir=$basetmp/com/gens/$envir
  mkdir -p $expdir
@@ -27,8 +29,9 @@ echo basetmp=$basetmp
 #cp -pr $scourcedir/gefs.$mmdd .
  mkdir gefs.$mmdd
  cd gefs.$mmdd
- cp -pr $scourcedir/gefs.$mmdd/*t00z*anl* .
-#cd gefs.$mmdd
+#cp -pr $scourcedir/gefs.$mmdd/*t00z*anl* .
+#cp -pr $scourcedir/gefs.$mmdd/*t00z*anl .
+ cp -pr $scourcedir/gefs.$mmdd/00/init/*t00z*anl .
  for id in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20
  do
 
@@ -39,15 +42,15 @@ echo basetmp=$basetmp
    cp -pr gec00.t00z.sfcanl gep$id\.t00z.sfcanl
   fi
 
-  for sub in .cycfs06 .cycfs12 .cycfs18
-  do
-  if [[ -f gep$id\.t00z.sfcanl$sub ]]; then
-   echo gep$id\.t00z.sfcanl$sub alread exist
-  else
-   echo gep$id\.t00z.sfcanl$sub does not exist, copy from gec00.t00z.sfcanl
-   cp -pr gec00.t00z.sfcanl gep$id\.t00z.sfcanl$sub
-  fi
-  done
+# for sub in .cycfs06 .cycfs12 .cycfs18
+# do
+# if [[ -f gep$id\.t00z.sfcanl$sub ]]; then
+#  echo gep$id\.t00z.sfcanl$sub alread exist
+# else
+#  echo gep$id\.t00z.sfcanl$sub does not exist, copy from gec00.t00z.sfcanl
+#  cp -pr gec00.t00z.sfcanl gep$id\.t00z.sfcanl$sub
+# fi
+# done
 
  done
  mkdir -p $inidir\/gefs.$mmdd\/00/init
