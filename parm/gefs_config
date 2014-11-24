@@ -65,8 +65,8 @@ echo jobscript= $jobscript
   export FCSTCONCEXEC=$EXECgefs/gefs_fcst_conc
   export fcstconcscript=$SCRIPTSgefs/exgefs_fcst_conc.sh.sms
 
-  export POSTGPEXEC=$EXECGLOBAL/ncep_post
-  export POSTGPSH=$USHGLOBAL/global_nceppost.sh
+# export POSTGPEXEC=$EXECGLOBAL/ncep_post
+# export POSTGPSH=$USHGLOBAL/global_nceppost.sh
 
   export SENDCOM=YES
   export SENDDBN=NO

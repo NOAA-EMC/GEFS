@@ -4,8 +4,10 @@ echo `date` $0 begin
 
 export lfmhr=66000
 export lfmlr=11000
+export lfmp5=264000
 export nensposthr=0
 export nenspostlr=17
+export nenspostp5=0
 export statskiplist="gfs c00"
 export statoutfhlist="0 6 384"
 
@@ -96,6 +98,24 @@ export epvarhr
 export eplvthr
 export eplevhr
 
+epnamp5=
+epvarp5=
+eplvtp5=
+eplevp5=
+iepp5=0
+while (( iepp5 < nenspostp5 ))
+do
+  (( iepp5 = iepp5 + 1 ))
+  epnamp5="$epnamp5 ${enspostnamp5[$iepp5]}"
+  epvarp5="$epvarp5 ${enspostvarp5[$iepp5]}"
+  eplvtp5="$eplvtp5 ${enspostlvtp5[$iepp5]}"
+  eplevp5="$eplevp5 ${enspostlevp5[$iepp5]}"
+done
+export epnamp5
+export epvarp5
+export eplvtp5
+export eplevp5
+
 epnamlr=
 epvarlr=
 eplvtlr=
@@ -114,4 +134,7 @@ export epvarlr
 export eplvtlr
 export eplevlr
 
+# For grib2 version
+postvarlist='z500 z1000 t850 t2m u10m v10m u250 v250 u850 v850 rh700 prcp snow rain icep frzr prmsl'
+export postvarlist
 echo `date` $0 end

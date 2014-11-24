@@ -110,12 +110,12 @@ export USESUBDIR=YES
 # Restart frequncy for the first fhmax3 hours
 export fhrestart3=18
 export fhrestart3=36
-export fhrestart3=1420
+export fhrestart3=420
 
 # Restart frequncy for hour after fhmax3
 export fhrestart=18
 export fhrestart=36
-export fhrestart=1420
+export fhrestart=420
 
 #######################################
 # This section defines the resolution
@@ -194,6 +194,12 @@ export IDVC=2
 ########################################
 # This section defines the output flags
 ########################################
+export gefsgribedition=2
+
+export gfsgribedition=2
+export gfsfhmaxh=240
+export gfsfhoroglist=252
+
 export addgrb1id=yes
 export makegrb1i=yes
 export makegrb2i=yes
@@ -201,6 +207,13 @@ export makepgrb2a=yes
 #DHOU 03/26/2012 For ZEUS
 #export makegrb2i=no
 #export makepgrb2a=no
+
+########################################
+# This section defines the product output grid  definitions (for grib2 format, used in prdgen(_gfs))
+########################################
+export grid1p0="0 6 0 0 0 0 0 0 360 181 0 0 90000000 0 48 -90000000 359000000 1000000 1000000 0"
+export gridp5="0 6 0 0 0 0 0 0 720 361 0 0 90000000 0 48 -90000000 359500000 500000 500000 0"
+export grid2p5="0 6 0 0 0 0 0 0 144 73 0 0 90000000 0 48 -90000000 357500000 2500000 2500000 0"
 
 # DHOU, 09/09/2008, added variable HOUTSPS.
 # HOUTSPS=12: output after SPS 12 hours before fhmaxh, so that digital filtering can be applied after
@@ -422,7 +435,7 @@ if [[ $envir = dev ]]; then
     # test whether this is needed for concurrent
     fhrestart=18
     fhrestart=36
-    fhrestart=1420
+    fhrestart=420
   fi
 
   # copy initial state from another run
@@ -454,8 +467,8 @@ if [[ $envir = dev ]]; then
   export runcleancyc=4
 
   # run cycling forecasts or not
-  export runcyclingf=no
   export runcyclingf=yes
+  export runcyclingf=no
 
   # set all the following "make" and "save" flags to "yes" to simulate production
   export makepgrba=yes
@@ -481,7 +494,9 @@ if [[ $envir = dev ]]; then
 fi
 
 export submit_post_together=yes
+export submit_chgres_together=yes
 if (( npair < 1 )); then
  export submit_post_together=no
+ export submit_chgres_together=no
 fi
 echo `date` $0 end

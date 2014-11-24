@@ -34,7 +34,7 @@ export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
 grid1p0="0 6 0 0 0 0 0 0 360 181 0 0 90000000 0 48 -90000000 359000000 1000000 1000000 0"
 gridp5="0 6 0 0 0 0 0 0 720 361 0 0 90000000 0 48 -90000000 359500000 500000 500000 0"
 grid2p5="0 6 0 0 0 0 0 0 144 73 0 0 90000000 0 48 -90000000 357500000 2500000 2500000 0"
-grid=$grid1p0
+grid=$gridp5
 
 #DHOU 2/1/2013, replace block with the ccs-prod version (above)
 #export WGRIB=/nwprod/util/exec/wgrib
@@ -134,10 +134,10 @@ else
 #      $GRBIDX pgbfile.$ffhr$cfsuffix pgbifile.$ffhr$cfsuffix
 #    fi
 #  fi
-   echo `date` pgrb2a 1x1 grbfile $ffhr completed
+   echo `date` pgrb2ap5 1x1 grbfile $ffhr completed
 
    ######################################################
-   # Split the pgb2file into pgrb2a, pgrb2b and pgrb2d parts
+   # Split the pgb2file into pgrb2ap5, pgrb2bp5 and pgrb2dp5 parts
    ######################################################
    if (( fhr == 0 ))
    then
@@ -181,30 +181,24 @@ else
 #  $GRB2IDX pgb2bfile.$ffhr$cfsuffix pgb2bfile.$ffhr$cfsuffix.idx
    # end block removed from background
 
-   if test "$CREATE_TIGGE" = 'YES'
-   then
-      if (( fhr == 0 )); then
-#       parmlist=${PARMgefs}/gefs_pgrbc_f00.parm
-        parmlist=${PARMgefs}/gefs_pgrb2c_f00.parm
-      else
-#       parmlist=${PARMgefs}/gefs_pgrbc_fhh.parm
-        parmlist=${PARMgefs}/gefs_pgrb2c_fhh.parm
-      fi
-#     set +x
-      $WGRIB2 pgb2bfile.$ffhr$cfsuffix | \
-        grep -F -f $parmlist | \
-        $WGRIB2 pgb2bfile.$ffhr$cfsuffix -i -grib pgb2cfile.$ffhr$cfsuffix 
-        if test "$SENDCOM" = 'YES'
-        then
-         mv pgb2cfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2c/${RUN}.${cycle}.pgrb2c$ffhr$cfsuffix
-	fi
-#     set -x
+#  if test "$CREATE_TIGGE" = 'YES'
+#  then
+#     if (( fhr == 0 )); then
+#       parmlist=${PARMgefs}/gefs_pgrb2c_f00.parm
+#     else
+#       parmlist=${PARMgefs}/gefs_pgrb2c_fhh.parm
+#     fi
+##    set +x
+#     $WGRIB2 pgb2bfile.$ffhr$cfsuffix | \
+#       grep -F -f $parmlist | \
+#       $WGRIB2 pgb2bfile.$ffhr$cfsuffix -i -grib pgb2cfile.$ffhr$cfsuffix 
+##    set -x
    fi
 
    # begin block removed from background
 #  parmlista=$PARMgefs/gefs_pgrba_f${hsuffix}.parm
 #  parmlistb=$PARMgefs/gefs_pgrbb_f${hsuffix}.parm
-#  parmlist2=$PARMgefs/gefs_pgrb2ab_f${hsuffix}.parm
+   parmlist2=$PARMgefs/gefs_pgrb2ab_f${hsuffix}.parm
    $WGRIB2 -s pgb2file.$ffhr$cfsuffix | \
        grep -v -F -f $parmlist2 | \
        $WGRIB2 pgb2file.$ffhr$cfsuffix -s -i -grib pgb2dfile.$ffhr$cfsuffix
@@ -228,13 +222,13 @@ else
       #
       # Save Pressure GRIB/Index files
       #
-      mv pgb2afile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix
-      mv pgb2bfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
-#     mv pgb2cfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2c/${RUN}.${cycle}.pgrb2c$ffhr$cfsuffix
-      mv pgb2dfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2d/${RUN}.${cycle}.pgrb2d$ffhr$cfsuffix
+      mv pgb2afile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2ap5/${RUN}.${cycle}.pgrb2ap5$ffhr$cfsuffix
+      mv pgb2bfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2bp5/${RUN}.${cycle}.pgrb2bp5$ffhr$cfsuffix
+      mv pgb2cfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2cp5/${RUN}.${cycle}.pgrb2cp5$ffhr$cfsuffix
+      mv pgb2dfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2dp5/${RUN}.${cycle}.pgrb2dp5$ffhr$cfsuffix
       if [[ "$makegrb1i" = "yes" ]]; then
-	mv pgb2afile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix.idx
-	mv pgb2bfile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix.idx
+	mv pgb2afile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2ap5/${RUN}.${cycle}.pgrb2ap5$ffhr$cfsuffix.idx
+	mv pgb2bfile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2bp5/${RUN}.${cycle}.pgrb2bp5$ffhr$cfsuffix.idx
       fi
 
       ###############################################################################
@@ -248,8 +242,8 @@ else
 	  MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
 	  if [[ $fhr -ge 0 && $fhr -le $fhmax && ` expr $fhr % 6 ` -eq 0 && ! -n "$cfsuffix" ]]
 	  then
-	    $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_$MEMBER $job $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix
-	    $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_${MEMBER}_WIDX $job $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix.idx
+	    $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_$MEMBER $job $COMOUT/$cyc/pgrb2ap5/${RUN}.${cycle}.pgrb2ap5$ffhr$cfsuffix
+	    $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_${MEMBER}_WIDX $job $COMOUT/$cyc/pgrb2ap5/${RUN}.${cycle}.pgrb2ap5$ffhr$cfsuffix.idx
 	  fi
 	fi
       fi
@@ -265,8 +259,8 @@ else
 	  MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
 	# if [[ $fhr -ge 0 && $fhr -le 84 && ` expr $fhr % 6 ` -eq 0 && ! -n "$cfsuffix" ]]
 	# then
-	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_$MEMBER $job $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
-	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_${MEMBER}_WIDX $job $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix.idx
+	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_$MEMBER $job $COMOUT/$cyc/pgrb2bp5/${RUN}.${cycle}.pgrb2bp5$ffhr$cfsuffix
+	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_${MEMBER}_WIDX $job $COMOUT/$cyc/pgrb2bp5/${RUN}.${cycle}.pgrb2bp5$ffhr$cfsuffix.idx
 	# fi
          fi
 
@@ -275,8 +269,8 @@ else
       ###############################################################################
        fi
    fi
-echo `date` pgrb2a 1x1 sendcom $ffhr completed
-fi
+echo `date` pgrb2ap5 0.5x0.5 sendcom $ffhr completed
+#fi
 
   case $gefsmachine in
     (wcoss)
@@ -286,26 +280,26 @@ fi
       fmakegb1=0
     ;;
   esac
-if (( fmakegb1 == 1 )); then
+ if (( fmakegb1 == 1 )); then
 ######################################
 # Step II: Create GRIBA files
 #####################################
-if [[ -s $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrba$ffhr$cfsuffix ]] && \
-   [[ -s $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrbai$ffhr$cfsuffix ]] && \
+if [[ -s $COMOUT/$cyc/pgrbap5/${RUN}.${cycle}.pgrbap5$ffhr$cfsuffix ]] && \
+   [[ -s $COMOUT/$cyc/pgrbap5/${RUN}.${cycle}.pgrbap5i$ffhr$cfsuffix ]] && \
    [[ $overwrite = no ]]; then
-   echo `date` 1x1 pgrba processing skipped for $RUN $ffhr
+   echo `date` 1x1 pgrbap5 processing skipped for $RUN $ffhr
 else
-   FILEA=$COMIN/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix
+   FILEA=$COMIN/$cyc/pgrb2ap5/${RUN}.${cycle}.pgrb2ap5$ffhr$cfsuffix
    $CNVGRIB -g21 $FILEA pgbafile.$ffhr$cfsuffix
    $GRBIDX pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix
 #  $WGRIB -s pgbafile.$ffhr$cfsuffix > pgbaifile.${ffhr}${cfsuffix}.idx
    $ENSADD $e1 $e2 pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix epgbafile.$ffhr$cfsuffix
-#  echo after ADDING 1p0
-#  ls -lt pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix epgbafile.$ffhr$cfsuffix
+#  echo after ADDING
+#  ls -lt  pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix epgbafile.$ffhr$cfsuffix
    if [[ "$addgrb1id" = "yes" ]]; then
      mv epgbafile.$ffhr$cfsuffix pgbafile.$ffhr$cfsuffix
-#  echo after MVING 1p0
-#  ls -lt pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix epgbafile.$ffhr$cfsuffix
+#  echo after MVING
+#  ls -lt  pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix epgbafile.$ffhr$cfsuffix
      if [[ "$makegrb1i" = "yes" ]]; then
        $GRBIDX pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix
      fi
@@ -315,8 +309,8 @@ else
      #
      # Save Pressure GRIB/Index files
      #
-     mv pgbafile.$ffhr$cfsuffix $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrba$ffhr$cfsuffix
-     mv pgbaifile.${ffhr}${cfsuffix} $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrbai${ffhr}${cfsuffix}
+     mv pgbafile.$ffhr$cfsuffix $COMOUT/$cyc/pgrbap5/${RUN}.${cycle}.pgrbap5$ffhr$cfsuffix
+     mv pgbaifile.${ffhr}${cfsuffix} $COMOUT/$cyc/pgrbap5/${RUN}.${cycle}.pgrbap5i${ffhr}${cfsuffix}
 
      if test "$SENDDBN" = 'YES'
      then
@@ -325,8 +319,8 @@ else
          if test `echo $RUN | cut -c1-2` = "ge" -a ! -n "$cfsuffix"
          then
            MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-           $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_$MEMBER $job $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrba$ffhr$cfsuffix
-             $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrbai${ffhr}${cfsuffix}
+           $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_$MEMBER $job $COMOUT/$cyc/pgrbap5/${RUN}.${cycle}.pgrbap5$ffhr$cfsuffix
+             $COMOUT/$cyc/pgrbap5/${RUN}.${cycle}.pgrbap5i${ffhr}${cfsuffix}
          fi
        fi
      fi
@@ -337,12 +331,12 @@ fi
 ###########################################
 # STEP III: Create GRIBB files
 ###########################################
-if [[ -s $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbb$ffhr$cfsuffix ]] && \
-   [[ -s $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbbi$ffhr$cfsuffix ]] && \
+if [[ -s $COMOUT/$cyc/pgrbbp5/${RUN}.${cycle}.pgrbbp5$ffhr$cfsuffix ]] && \
+   [[ -s $COMOUT/$cyc/pgrbbp5/${RUN}.${cycle}.pgrbbp5i$ffhr$cfsuffix ]] && \
    [[ $overwrite = no ]]; then
-   echo `date` 1x1 pgrbb processing skipped for $RUN $ffhr
+   echo `date` 1x1 pgrbbp5 processing skipped for $RUN $ffhr
 else
-   FILEB=$COMIN/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
+   FILEB=$COMIN/$cyc/pgrb2bp5/${RUN}.${cycle}.pgrb2bp5$ffhr$cfsuffix
    $CNVGRIB -g21 $FILEB pgbbfile.$ffhr$cfsuffix
    $GRBIDX pgbbfile.$ffhr$cfsuffix pgbbifile.$ffhr$cfsuffix
 #  $WGRIB -s pgbbfile.$ffhr$cfsuffix > pgbbfile.${ffhr}${cfsuffix}.idx
@@ -358,8 +352,8 @@ else
       #
       # Save Pressure GRIB/Index files
       #
-      mv pgbbfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbb$ffhr$cfsuffix
-      mv pgbbifile.${ffhr}${cfsuffix} $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbbi${ffhr}${cfsuffix}
+      mv pgbbfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrbbp5/${RUN}.${cycle}.pgrbbp5$ffhr$cfsuffix
+      mv pgbbfile.${ffhr}${cfsuffix}.idx $COMOUT/$cyc/pgrbbp5/${RUN}.${cycle}.pgrbbp5i${ffhr}${cfsuffix}
 
       #if test "$SENDDBN" = 'YES'
       #then
@@ -368,13 +362,13 @@ else
           #if test `echo $RUN | cut -c1-2` = "ge" -a ! -n "$cfsuffix"
           #then
             #MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-            #$DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_$MEMBER $job $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
+            #$DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_$MEMBER $job $COMOUT/$cyc/pgrb2bp5/${RUN}.${cycle}.pgrb2bp5$ffhr$cfsuffix
             #$DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_${MEMBER}_WIDX $job \
-            #       $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbbi$ffhr${cfsuffix}
+            #       $COMOUT/$cyc/pgrbbp5/${RUN}.${cycle}.pgrbbp5i$ffhr${cfsuffix}
             
             #if test "$CREATE_TIGGE" = 'YES'
             #then
-            #  $DBNROOT/bin/dbn_alert MODEL ENS_PGB2C_$MEMBER $job $COMOUT/$cyc/pgrb2c/${RUN}.${cycle}.pgrb2c$ffhr$cfsuffix
+            #  $DBNROOT/bin/dbn_alert MODEL ENS_PGB2C_$MEMBER $job $COMOUT/$cyc/pgrb2cp5/${RUN}.${cycle}.pgrb2cp5$ffhr$cfsuffix
             #fi
           #fi
         #fi
@@ -386,13 +380,13 @@ fi
 ###############################
 # STEP IV: Create GRIBD files
 ###############################
-if [[ -f $COMOUT/$cyc/pgrbd/${RUN}.${cycle}.pgrbd$ffhr$cfsuffix ]] && \
-   [[ -f $COMOUT/$cyc/pgrbd/${RUN}.${cycle}.pgrbdi$ffhr$cfsuffix ]] && \
+if [[ -f $COMOUT/$cyc/pgrbdp5/${RUN}.${cycle}.pgrbdp5$ffhr$cfsuffix ]] && \
+   [[ -f $COMOUT/$cyc/pgrbdp5/${RUN}.${cycle}.pgrbdp5i$ffhr$cfsuffix ]] && \
    [[ $overwrite = no ]]; then
-   echo `date` 1x1 pgrbd processing skipped for $RUN $ffhr
+   echo `date` 1x1 pgrbdp5 processing skipped for $RUN $ffhr
 else
 
-   FILED=$COMIN/$cyc/pgrb2d/${RUN}.${cycle}.pgrb2d$ffhr$cfsuffix
+   FILED=$COMIN/$cyc/pgrb2dp5/${RUN}.${cycle}.pgrb2dp5$ffhr$cfsuffix
 
    $CNVGRIB -g21 $FILED pgbdfile.$ffhr$cfsuffix
 
@@ -401,11 +395,11 @@ else
       #
       # Save Pressure GRIB/Index files
       #
-      mv pgbdfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrbd/${RUN}.${cycle}.pgrbd$ffhr$cfsuffix
+      mv pgbdfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrbdp5/${RUN}.${cycle}.pgrbdp5$ffhr$cfsuffix
    fi
 fi
 
-fi #(0=1 for ZEUS, skip grib2 files)
+ fi #(0=1 for ZEUS, skip grib2 files)
 ########################################################
 echo `date` $sname $member $partltr $cfsuffix $fsuffix 1x1 GRIB end on machine=`uname -n`
 msg='ENDED NORMALLY.'

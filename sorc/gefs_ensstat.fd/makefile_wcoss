@@ -1,30 +1,29 @@
-SHELL=  /bin/bash
-CMD=	gefs_ensstat
-FC=     ifort
-FFLAGS=  -traceback  -list
+SHELL= 	/bin/bash
+INC=     /nwprod/lib/incmod/g2_4
+LIBS=    -L/nwprod/lib -lg2_4 -lw3nco_4 -lbacio_4 \
+	 -ljasper -lpng -lz
+SRCSf90= gefs_ensstat.f90 init_parm.f90 printinfr.f90 gtbits.f90 isrchne.f90
+SRCSf=   EPDF.f SORTMM.f
+SRCS=    $(SRCSf90) $(SRCSf)
+OBJS=    $(SRCSf:.f=.o) $(SRCSf90:.f90=.o)
+CMD=   	gefs_ensstat
+FC= 	ifort
+FFLAGS = -O3 -g -convert big_endian -I $(INC)
 LDFLAGS=
-INCS=
-SRCS=	gefs_ensstat.f 
-OBJS=   $(SRCS:.f=.o)
-#LIBS    = -L/scratch2/portfolios/NCEPDEV/global/save/Shrinivas.Moorthi/para/lib -lbacio_4 -lw3lib-2.0_4 -lip_4 -lsp_4
-LIBS    = -L/nwprod/lib -lbacio_4 -lw3nco_4
-
-
-#$(CMD): $(SRCS)
-#	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o $(CMD)
 
 # Lines from here on down should not need to be changed.  They are the
 # actual rules which make uses to build a.out.
 #
 all:    $(CMD)
 
-$(CMD): $(OBJS)
-	$(FC) $(LDFLAGS) $(FFLAGS) -o $(@) $(OBJS) $(LIBS)
+$(CMD):		$(OBJS)
+	$(FC) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
+	rm -f $(OBJS)
 
 $(OBJS):        $(SRCS)
-	$(FC) $(FFLAGS) $(INCS) -c $(SRCS)
+	$(FC) $(FFLAGS) -c $(SRCS)
 
-#$(OBJS):        makefile_wcoss
+$(OBJS):        makefile_wcoss
 
 allclean:       clean all
 

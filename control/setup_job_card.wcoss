@@ -45,14 +45,23 @@ fi
 eofCAT
 
     if [[ ${MP_SHARED_MEMORY} = yes ]] ; then
-        AFFINITY="core"
       if [[ ${job_type} = parallel ]] ; then
         AFFINITY="core(1)"
       fi
+      if [[ ${taskname} = post.prdgen_hr ]] ; then
+        AFFINITY="core(${OMP_NUM_THREADS}):distribute=pack"
+      elif [[ ${taskname} = post.prdgen_lr ]] ; then
+        AFFINITY="core(${OMP_NUM_THREADS}):distribute=pack"
+      else	
+        AFFINITY="core(1)"
+      fi
+##BSUB -R affinity[core(${OMP_NUM_THREADS})]
+##BSUB -R affinity[core(${OMP_NUM_THREADS}):distribute=pack]
     cat <<eofCAT >>$jobcontrol
 #BSUB -q "dev_shared" 
 #BSUB -R "rusage[mem=$resources]"
-#BSUB -R affinity[${AFFINITY}]
+#BSUB -R "affinity[$AFFINITY]"
+export OMP_NUM_THREADS=1
 eofCAT
     fi
 
@@ -60,6 +69,7 @@ eofCAT
     cat <<eofCAT >>$jobcontrol
 ##BSUB -q "prod_class1" 
 #BSUB -q "dev" 
+##BSUB -q "debug" 
 #BSUB -x  
 ##BSUB -R affinity[${AFFINITY}]
 #BSUB -R affinity[core(${OMP_NUM_THREADS})]
@@ -73,7 +83,7 @@ eofCAT
 #BSUB -n $total_tasks
 #BSUB -R span[ptile=$taskspernode]
 
-#export OMP_NUM_THREADS=$OMP_NUM_THREADS
+export OMP_NUM_THREADS=$OMP_NUM_THREADS
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
 #export MP_SHARED_MEMORY=${MP_SHARED_MEMORY}
@@ -106,7 +116,8 @@ eofCAT
     fi
 
     cat <<eofCAT >>$jobcontrol
-. /usrx/local/Modules/3.2.9/init/ksh
+#. /usrx/local/Modules/3.2.9/init/ksh
+. /usrx/local/Modules/default/init/ksh
 module load ics
 eofCAT
     if [[ ${job_type} = parallel ]] ; then
@@ -195,32 +206,51 @@ echo \`date\` env sort end
 pwdsave=\`pwd\`
 
 echo \`date\` $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje next submit for dev before begin
+eofCAT
+
 
 ################################################
 ### kate 11/21/2014
 export submit_post_together=$submit_post_together
 cd $controldir
-if [[ $submit_post_together = yes ]]; then
+#if [[ $submit_post_together = yes ]]; then
+if [[ $submit_post_together = yes ]] && (( $jjje > $jjj + 1 )); then
    if (( $jjj == $jjjf00  || $jjj == $jjjf00l || $jjj == $jjjf06 || $jjj == $jjjf12 || $jjj == $jjjf18 )); then
         (( iii = $jjjps  ))
-             while (( iii >= $jjjps && iii <= $jjjpe - 2 ));do
-                    if (( iii == $jjjpe- 2 )); then
-                     $0 $yyyymmddccb\$iii $yyyymmddcce$jjje nextbefore 2>&1
+#       (( iii = $jjj + 2  ))
+	 echo $iii $iiie $jjjps $jjjpe
+             while (( iii >= $jjjps && iii <= $jjjpe - $nprdgen - 1 ));do
+                    (( iiie = $iii + $nprdgen + 1 ))
+                    if (( iii == $jjjpe - $nprdgen - 1 && jjje >= $iiie )); then
+      cat <<eofCAT >>$jobcontrol
+                     cd $controldir
+                     $0 $yyyymmddccb$iii $yyyymmddcce$jjje nextbefore 2>&1
+eofCAT
                     else
-                    ((  iiie = iii + 2  ))
-                     $0 $yyyymmddccb\$iii $yyyymmddccb\$iiie nextbefore 2>&1
+		     echo $iii $iiie
+      cat <<eofCAT >>$jobcontrol
+                     cd $controldir
+                     $0 $yyyymmddccb$iii $yyyymmddccb$iiie nextbefore 2>&1
+eofCAT
                     fi
                     (( iii = iii + 4 ))
             done
    else
+      cat <<eofCAT >>$jobcontrol
+   cd $controldir
    $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore 2>&1
+eofCAT
    fi
 else
 
+      cat <<eofCAT >>$jobcontrol
+cd $controldir
 $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore 2>&1
+eofCAT
 fi
 
 
+      cat <<eofCAT >>$jobcontrol
 #cd $controldir
 #$0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore 2>&1
 ################################################
@@ -236,6 +266,8 @@ ls -al $jobdir/$jobscript
 echo
 
 # CALL executable job script here
+ export jobgrid=$jobgrid
+ export jobhour=$jobhour
  $jobdir/$jobscript
 #/usrx/local/bin/getrusage -rss $jobdir/$jobscript
 
@@ -250,8 +282,8 @@ echo \`date\` $0  $yyyymmddccb$jjjb $yyyymmddcce$jjje next submit for dev after 
 ###################################################
 # Kate 11/21/2013
 cd $controldir
-if [[ $submit_post_together = yes ]]; then
-    if (( $jjj == $jjjs00  && $fcst_segments == 2 ));  then
+if [[ $submit_chgres_together = yes ]] && (( $jjje > $jjjs00 )); then
+    if (( $jjj == $jjjs00  &&  $jjje > $jjjs00 &&  $fcst_segments == 2 ));  then
 
                      $0 $yyyymmddccb$jjjs00 $yyyymmddccb$jjjr00 nextafter 2>&1
 
