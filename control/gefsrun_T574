@@ -9,10 +9,15 @@ echo
 echo `date` $0 $*                                                         check arguments
 echo
 
+#DHOU, 01/03/2013 add this block to generate the machine name related variables
+  machl=`uname -n | cut -c1`
+  if [[ $machl = r ]]; then
+   machl=f
+  fi
+
 #DHOU, 12/17/2013, define PTMP to pointing to /ptmp or /ptmpd2
  PTMP=ptmp
  STMP=stmp
-machl=`uname -n | cut -c1`
 if [[ $machl = t ]] || [[ $machl = g ]]; then
  PTMP=ptmpd2
  STMP=stmpd2
@@ -453,9 +458,9 @@ jjjf18=800
 (( jjjoa = 97 ))
 (( jjjoc = 99 ))
 
-(( jjjpe = jjjpo + npert * 4 + 2 ))
+#(( jjjpe = jjjpo + npert * 4 + 2 ))
+(( jjjpe = jjjpo + npert * 4 + 4 ))
 (( jjjpec = jjjpo + npert * 4 - 2 ))
-
 (( jjjre = jjjro + npert ))
 
 typeset -RZ3 jjjg00=$(( jjjog ))
@@ -467,7 +472,8 @@ typeset -RZ3 jjjp12=$(( jjjf12 + jjjpo ))
 typeset -RZ3 jjjp18=$(( jjjf18 + jjjpo ))
 
 typeset -RZ3 jjje00=$(( jjjf00 + jjjpe ))
-typeset -RZ3 jjje00l=$(( jjjf00l + jjjpe ))
+typeset -RZ3 jjje00l=$(( jjjf00l + jjjpe - 1 ))
+#typeset -RZ3 jjje00l=$(( jjjf00l + jjjpe ))
 typeset -RZ3 jjje06=$(( jjjf06 + jjjpec ))
 typeset -RZ3 jjje12=$(( jjjf12 + jjjpec ))
 typeset -RZ3 jjje18=$(( jjjf18 + jjjpec ))
@@ -580,6 +586,9 @@ do
   (( jjj = jjj + 1 ))
   echo $jjj prdgen job for $pert
   (( jjj = jjj + 1 ))
+  echo $jjj prdgen job for $pert, NEW for grid p5, hours 0,6,12,...
+  (( jjj = jjj + 1 ))
+  echo $jjj prdgen job for $pert, NEW for grid p5, hours 3,9,15,...
 done
 echo
 echo $jjjg00 gefs gfs job
@@ -623,6 +632,8 @@ do
   echo $jjj low resolution post job for $pert
   (( jjj = jjj + 1 ))
   echo $jjj low resolution prdgen job for $pert
+  (( jjj = jjj + 1 ))
+  echo $jjj prdgen job for $pert, NEW for grid p5, hours 0,6,12,...
   (( jjj = jjj + 1 ))
 done
 echo
@@ -760,18 +771,22 @@ if [[ $nextflag = yes ]]; then
   if   (( jjjc >= jjjp00 )) && (( jjjc < jjje00 )); then
     (( jjjd = jjjc - jjjf00 ))
     (( jjjm = ( jjjd / 4 ) * 4 ))
-    if (( jjjd - jjjm == 3 )) && [[ $RUN_CONCURRENT = yes ]]; then
-      jjjb=$(( jjjc + 3 ))
-    else
+#   if (( jjjd - jjjm == 3 )) && [[ $RUN_CONCURRENT = yes ]]; then
+#     jjjb=$(( jjjc + 3 ))
+##  if (( jjjd - jjjm == 0 )) && (( jjjc > jjjp00 )) && [[ $RUN_CONCURRENT = yes ]]; then
+##    jjjb=$(( jjjc + 2 ))
+##  else
       jjjb=$(( jjjc + 1 ))
-    fi
+##  fi
   elif (( jjjc >= jjjr00 )) && (( jjjc < jjjz00 )); then
     jjjb=$(( jjjc + 1 ))
   elif (( jjjc >= jjjp00l )) && (( jjjc < jjje00l )); then
     (( jjjd = jjjc - jjjf00l ))
     (( jjjm = ( jjjd / 4 ) * 4 ))
-    if (( jjjd - jjjm == 3 )) && [[ $RUN_CONCURRENT = yes ]]; then
-      jjjb=$(( jjjc + 3 ))
+#   if (( jjjd - jjjm == 3 )) && [[ $RUN_CONCURRENT = yes ]]; then
+#     jjjb=$(( jjjc + 3 ))
+    if (( jjjd - jjjm == 0 )) && (( jjjc > jjjp00l )) && [[ $RUN_CONCURRENT = yes ]]; then
+      jjjb=$(( jjjc + 2 ))
     else
       jjjb=$(( jjjc + 1 ))
     fi
@@ -802,12 +817,19 @@ if [[ $nextflag = yes ]]; then
   else 
     case $jjjc in
 
-      (000) if (($inflag ==6)); then 
+      (000) 
+          if (($npair == 0)); then
+ 	    jjjb=002
+#           jjjb=100
+	  else  
+            if (($inflag == 6)); then 
             jjjb=005 
             else
 #           jjjb=012
             jjjb=100         #use this line to skip INIT and gfs for testing
-            fi ;;
+            fi 
+          fi ;;
+      (002) jjjb=100 ;;
       (005) jjjb=010 ;;
       (010) jjjb=012 ;;
 #     (010) jjjb=100 ;;      #use this line to skip INIT and gfs for testing
@@ -853,7 +875,14 @@ if [[ $nextflag = yes ]]; then
       ($jjjg00) jjjb=$jjjf00 ;;
 #     ($jjjf00) jjjb=$jjjp00 ;;
       ($jjjf00) (( jjjb=jjjp00 + 1 )) ;; #to skip the restart copy job, e.g. in cycling only tests
-      ($jjje00) jjjb=$jjjs00 ;;
+#     ($jjje00) jjjb=$jjjs00 ;;
+      ($jjje00) 
+	if (( npair > 0 )); then
+	  jjjb=$jjjs00
+	else
+	  jjjb=$jjjr00  #skip 194 jobs for SINGLE fcst  run
+	fi
+      ;;
       ($jjjs00)
 	if (( fcst_segments == 2 )); then
 	  jjjb=$jjjr00
@@ -864,11 +893,33 @@ if [[ $nextflag = yes ]]; then
       ($jjjz00) jjjb=$jjjf00l ;;
 #     ($jjjf00l) jjjb=$jjjp00l ;;
       ($jjjf00l) (( jjjb=jjjp00l + 1 )) ;; #skipping re-start copy
-      ($jjje00l) jjjb=$jjjs00l ;;
+#     ($jjje00l) jjjb=$jjjs00l ;;
+      ($jjje00l) 
+	if (( npair > 0 )); then
+	  jjjb=$jjjs00l
+#	  jjjb=$jjjo00   #skip 394
+	else
+#	  jjjb=$jjjo00   #skip 394 job for SINGLE fcst  run
+#	  jjjb=$jjjt00   #skip 394+395 jobs for SINGLE fcst  run
+#	  #skip 394+395+396+397+398 jobs, and recycle jobs, for SINGLE fcst run, 
+	if [[ $runcyclingf = no ]]; then
+	  jjjb=900 
+	else
+	  jjjb=$jjjf06 
+	fi
+	fi
+      ;;
       ($jjjs00l) jjjb=$jjjo00 ;;
       ($jjjo00) jjjb=$jjjt00 ;;
 #     ($jjjo00) jjjb=900 ;;  #  to skip track and track-average jobs ZEUS 
-      ($jjjt00) jjjb=$jjja00 ;;
+#     ($jjjt00) jjjb=$jjja00 ;;
+      ($jjjt00) 
+	if (( npair > 0 )); then
+	  jjjb=$jjja00
+	else
+	  jjjb=900  #skip 397 (track average) and 398 (prcp) jobs for SINGLE fcst  run
+	fi
+      ;;
 
       ($jjja00) jjjb=$jjja01;;
        
@@ -911,6 +962,9 @@ if [[ $nextflag = yes ]]; then
   echo
 fi
 yyyymmddccjjjb=$yyyymmddccb$jjjb
+echo $jjjc $jjjb
+echo HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+#exit
 
 echo 
 echo `date` $0 $*                                   updated date and job number variables
@@ -1067,6 +1121,7 @@ elif (( jjj >= jjjf18 )) && (( jjj <= jjje18 )); then
 else 
   case $jjj in
     (000) taskname=r000 ;;
+    (002) taskname=anlchgres ;;
     (005) taskname=init.mask ;;
     (010) taskname=enkf.track ;;
     (012) taskname=init.separate ;;
@@ -1146,6 +1201,20 @@ case $jobtype in
     echo jjjp=$jjjp
     (( memn = ( jjj + 4 - jjjp ) / 4 ))
     (( jobn = ( jjj + 4 - jjjp ) - 4 * memn ))
+    jobgrid=
+    jobhour=
+    if (( jjj > jjjp )) && (( jobn == 0 )); then
+        (( memn = memn - 1 ))
+	(( jobn = 4 ))
+	jobgrid=_p5
+	jobhour=0612
+    fi	
+    if (( jjj > jjjp + 1 )) && (( jobn == 1 )); then
+        (( memn = memn - 1 ))
+	(( jobn = 5 ))
+	jobgrid=_p5
+	jobhour=3915
+    fi	
     if (( memn > npert )); then
       memn=00
       mem=c00
@@ -1154,6 +1223,7 @@ case $jobtype in
     fi
     echo memn=$memn
     echo jobn=$jobn
+    echo jobgrid=$jobgrid
     case $jobn in
       (0)
 	taskname=forecast_$forecast_segment
@@ -1171,6 +1241,12 @@ case $jobtype in
       (3)
 	taskname=post.prdgen_$forecast_segment
       ;;
+      (4)
+	taskname=post.prdgen_$forecast_segment
+      ;;
+      (5)
+	taskname=post.prdgen_$forecast_segment
+      ;;
     esac
   ;;
   (chgres)
@@ -1183,6 +1259,9 @@ case $jobtype in
       mem=p$memn
     fi
     taskname=chgres
+  ;;
+  (anlchgres)
+    taskname=anlchgres
   ;;
   (none)
     echo taskname=$taskname has already been selected
@@ -1278,7 +1357,8 @@ echo
 wall_clock_limit_fcst_short="00:30:00"
 wall_clock_limit_fcst_long="02:30:00"
   if [[ $gefsmachine = wcoss ]]; then                       
-wall_clock_limit_fcst_long="2:59"
+wall_clock_limit_fcst_long="3:59"
+#wall_clock_limit_fcst_long="0:15"
 wall_clock_limit_fcst_short="00:20"
   fi
 
@@ -1784,6 +1864,63 @@ case $taskname in
      fi
      (( node = ( total_tasks + taskspernode - 1 ) / taskspernode ))
   ;;
+  (anlchgres)
+    ################################# production variables
+    jobscript=JGEFS_ANLCHGRS.sms.dev
+    job_type=parallel
+    total_tasks=8
+    node=1
+    parallel_threads=2
+    resources="ConsumableMemory(1000 MB)"
+    network_MPI="sn_all,shared,us"
+    MP_SHARED_MEMORY=yes
+    MEMORY_AFFINITY=MCM
+    RUN=ge$mem
+    task_affinity="core(1)"
+    ################################# development variables
+    if (( jjjb == jjjr00 )); then
+      during_previous_job=no
+    else
+      during_previous_job=yes
+    fi
+    ################################# production variables modified
+  if [[ $gefsmachine = ccs ]]; then                       
+    total_tasks=$(( NTHREADS_SIGCHGRS * 2 ))
+  fi  
+  if [[ $gefsmachine = zeus ]]; then                       
+#DHOU 03/29/2012   chgres is a non-mpi program
+    job_type=serial
+    resources="1000M"
+    resources="4000M"
+    total_tasks=1 
+#   job_type=parallel
+#   total_tasks=8
+    node=1
+      wall_clock_limit="00:20:00"
+#   (( taskspernode = 12 / NTHREADS_SIGCHGRS ))
+#   if (( taskspernode > total_tasks )); then
+#    taskspernode=$total_tasks
+#   fi
+#   export taskspernode=$taskspernode
+#   export OMP_NUM_THREADS_CH=$NTHREADS_SIGCHGRS
+    export OMP_NUM_THREADS_CH=1
+  fi    
+  if [[ $gefsmachine = wcoss ]]; then                       
+#DHOU 03/29/2012   chgres is a non-mpi program
+    job_type=parallel
+    total_tasks=1 
+    (( taskspernode = 16 / NTHREADS_SIGCHGRS ))
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
+    export taskspernode=$taskspernode
+    export OMP_NUM_THREADS_CH=$NTHREADS_SIGCHGRS
+    resources="1000"
+    resources="4000"
+    wall_clock_limit="00:20"
+    MP_SHARED_MEMORY=yes
+   fi
+  ;;
   (chgres)
     ################################# production variables
     jobscript=JGEFS_SIGCHGRS.sms.dev
@@ -1927,6 +2064,7 @@ case $taskname in
     ################################# production variables
     FORECAST_SEGMENT=hr
     jobscript=JGEFS_NCEPPOST.sms.$envir
+#   jobscript=JGEFS_NCEPPOST_GRB1.sms.$envir
     if [[ $fcstjoblength = long ]]; then
       job_name=jgefs_${mem}_post_${cyc}
       wall_clock_limit="01:30:00"
@@ -1977,6 +2115,7 @@ case $taskname in
     ################################# production variables
     FORECAST_SEGMENT=lr
     jobscript=JGEFS_NCEPPOST.sms.$envir
+#   jobscript=JGEFS_NCEPPOST_GRB1.sms.$envir
     if [[ $fcstjoblength = long ]]; then
       job_name=jgefs_${mem}_post_${cyc}
       wall_clock_limit="01:30:00"
@@ -2059,8 +2198,12 @@ case $taskname in
     case $gefsmachine in
       (wcoss)
     MP_SHARED_MEMORY=yes
+    OMP_NUM_THREADS=4
     resources="200"
-    resources="1000"     #T574
+    resources="1000"     #T574SL
+    resources="5000"     #T574SL grib2
+    resources="3456"     #T574SL grib2 for core(2)
+    resources="6912"     #T574SL grib2 for core(4)
       ;;
     esac
   ;;
@@ -2101,8 +2244,12 @@ case $taskname in
     case $gefsmachine in
       (wcoss)
     MP_SHARED_MEMORY=yes
+    OMP_NUM_THREADS=2
     resources="200"
     resources="1000"
+    resources="5000"     #T574SL grib2
+    resources="1728"     #T574SL grib2 for core(1)
+    resources="3456"     #T574SL grib2 for core(2)
       ;;
     esac
   ;;
@@ -2128,7 +2275,12 @@ case $taskname in
     case $gefsmachine in
       (wcoss)
     MP_SHARED_MEMORY=yes
+    OMP_NUM_THREADS=4
     resources="200"
+    resources="1000"     #T574SL
+    resources="5000"     #T574SL grib2
+    resources="3456"     #T574SL grib2 for core(2)
+    resources="6912"     #T574SL grib2 for core(4)
       ;;
     esac
   ;;
@@ -2162,8 +2314,11 @@ case $taskname in
     total_tasks=1
   if [[ $gefsmachine = wcoss ]]; then                       
     MP_SHARED_MEMORY=yes
+    OMP_NUM_THREADS=2
     resources="100"
     resources="500"    # T574
+    resources="1500"    # T574, include grid p5
+    resources="3456"     #T574SL grib2 for core(2)
   fi
   ;;
   (ensstat_lr)
@@ -2196,7 +2351,9 @@ case $taskname in
     total_tasks=1
   if [[ $gefsmachine = wcoss ]]; then                       
     MP_SHARED_MEMORY=yes
+    OMP_NUM_THREADS=2
     resources="100"
+    resources="3456"    # T574, include grid p5
   fi
   ;;
   (enspost)
@@ -2214,6 +2371,7 @@ case $taskname in
     # insert modifications to production resources here
     ################################# development variables
     during_previous_job=yes
+    during_previous_job=no
     splim=301001001
     fcstjoblength=long
     ################################# production variables modified
@@ -2227,6 +2385,7 @@ case $taskname in
     MP_SHARED_MEMORY=yes
     resources="100"
     resources="500"    # T574
+    resources="1000"    # T574
   fi
   ;;
   (post.track)
@@ -3078,9 +3237,18 @@ else
 #DHOU, 01/03/2013 slplit the script section of setting up job card to separate files for each particular machine (setupr_job_card.$mach).
 echo $cwd
 
-#echo $job_type TTT
+if (( $jjj == $jjjf00 )); then   nprdgen=3; fi
+if (( $jjj == $jjjf00l )); then  nprdgen=2; fi
+if (( $jjj == $jjjf06 )); then   nprdgen=1; fi
+if (( $jjj == $jjjf12 )); then   nprdgen=1; fi
+if (( $jjj == $jjjf18 )); then   nprdgen=1; fi
+
+ echo $job_type TTT
+echo line 3228 
+echo $jjj
+echo $jjjb
+echo $nprdgen
 . $cwd/setup_job_card.$gefsmachine
-#exit
 
 #DHOU 01/03/2013 end of changed section
 
@@ -3145,7 +3313,6 @@ echo $cwd
 #echo $testflag $machl
  echo $jobcontrol
  echo $job_type
-#exit
 # llsubmit $jobcontrol
 
 # msub $jobcontrol
