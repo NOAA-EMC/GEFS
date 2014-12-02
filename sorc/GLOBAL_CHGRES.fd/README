@@ -1,3 +1,7 @@
+12/01/2014 Dingchen Hou:
+The gfs chgres code version is updated to v12.0.0, which can be found in
+/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0/     (WCOSS)
+results reproduces r38753
 04/14/2014 Dingchen Hou:
 The gfs chgres code version is updated to r38753, which can be found in
 /scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_38753

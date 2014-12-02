@@ -26,8 +26,9 @@
 #                                 other upgrades related to model changes
 # 2012        Shrinivas moorthi : Added Unfiltered orography
 #                                 Ported to gaea, zeus and wcoss
+# 2014        Fanglin Yang:    removed DTBTHE and G3D, updated for T1534 implementation.
 #
-# Usage:  global_forecast.sh SIGI SFCI SIGO FLXO FHOUT FHMAX IGEN NSTI NSTO D3DO G3DO FHOUT_HF FHMAX_HF
+# Usage:  global_forecast.sh SIGI SFCI SIGO FLXO FHOUT FHMAX IGEN NSTI NSTO D3DO FHOUT_HF FHMAX_HF
 #
 #   Input script positional parameters:
 #     1             Input sigma file 1
@@ -48,10 +49,8 @@
 #                   defaults to $D3DO, then to ${COMOUT}/d3df'${FH}'$SUFOUT
 #     9             Input NST file
 #     10            Output NST file
-#     11            output 3d file for GOCART
-#                   defaults to $G3DO, then to ${COMOUT}/g3df'${FH}'$SUFOUT
-#     12            High frequency output interval ; default 1 hour
-#     13            Maximum hour of high frequecny output
+#     11            High frequency output interval ; default 1 hour
+#     12            Maximum hour of high frequecny output
 #
 #   Imported Shell Variables:
 #     SIGI          Input sigma file
@@ -66,8 +65,6 @@
 #                   overridden by $4; defaults to ${COMOUT}/d3df'${FH}'$SUFOUT
 #     NSTO         Output nst file with embedded forecast hour '${FH}'
 #                   overridden by $4; defaults to ${COMOUT}/nstf'${FH}'$SUFOUT
-#     G3DO          Output g3d file with embedded forecast hour '${FH}'
-#                   overridden by $4; defaults to ${COMOUT}/g3df'${FH}'$SUFOUT
 #     FHOUT         Output frequency in hours
 #                   overridden by $5; defaults to 3
 #     FHMAX         Length of forecast in hours
@@ -75,9 +72,9 @@
 #     IGEN          Output generating code
 #                   overridden by $7; defaults to 0
 #     FIXGLOBAL     Directory for global fixed files
-#                   defaults to /nwprod/fix
+#                   defaults to /nwprod/gsm.v12.0.0/fix/fix_am
 #     EXECGLOBAL    Directory for global executables
-#                   defaults to /nwprod/exec
+#                   defaults to /nwprod/gsm.v12.0.0/exec
 #     DATA          working directory
 #                   (if nonexistent will be made, used and deleted)
 #                   defaults to current working directory
@@ -109,10 +106,6 @@
 #                   defaults to ${FIXGLOBAL}/global_co2con.l${LEVS}.f77
 #     MTNVAR        Input mountain variance (horizontal resolution dependent)
 #                   defaults to ${FIXGLOBAL}/global_mtnvar.t${JCAP}.f77
-#     CLTUNE        Input cloud tuning file
-#                   defaults to ${FIXGLOBAL}/global_cldtune.f77
-#     DTBTHE        Input equivalent potential temperature file
-#                   defaults to ${FIXGLOBAL}/global_tbthe.f77
 #     O3FORC        Input ozone forcing (production/loss) climatology
 #                   defaults to ${FIXGLOBAL}/global_o3prdlos.f77
 #     O3CLIM        Input ozone climatology
@@ -287,8 +280,6 @@
 #
 #     fixed data : $CO2CON
 #                  $MTNVAR
-#                  $CLTUNE
-#                  $DTBTHE
 #                  $O3FORC
 #                  $O3CLIM
 #                  $FNGLAC
@@ -328,10 +319,8 @@
 #                  ${DATA}/fort.14
 #                  ${DATA}/fort.15
 #                  ${DATA}/fort.24
-#                  ${DATA}/fort.27
 #                  ${DATA}/fort.28
 #                  ${DATA}/fort.29
-#                  ${DATA}/fort.43
 #                  ${DATA}/fort.48
 #                  ${DATA}/fort.51
 #                  ${DATA}/fort.52
@@ -392,7 +381,7 @@ elif [ $machine = GAEA ] ; then
   export MPMD_PROC=${MPMD_PROC:-NO}
 elif [ $machine = WCOSS ] ; then
   if [ ${LOADICS:-YES} = YES ] ; then
-    . /usrx/local/Modules/3.2.9/init/ksh
+    . /usrx/local/Modules/3.2.10/init/ksh
     module unload ics
     export ICS_VERSION=${ICS_VERSION:-14.0.1}
     module load ics/$ICS_VERSION
@@ -420,9 +409,8 @@ export IGEN=${7:-${IGEN:-0}}
 export D3DO=${8:-${D3DO}}
 export NSTI=${9:-${NSTI:-?}}
 export NSTO=${10:-${NSTO}}
-export G3DO=${11:-${G3DO}}
-export FHOUT_HF=${12:-${FHOUT_HF:-1}}
-export FHMAX_HF=${13:-${FHMAX_HF:-0}}
+export FHOUT_HF=${11:-${FHOUT_HF:-1}}
+export FHMAX_HF=${12:-${FHMAX_HF:-0}}
 
 # DHOU 02/28/2008 Modified for general case
 # DHOU 01/07/2008 Added two input for the GEFS_Cpl module
@@ -443,16 +431,16 @@ if [ $ENS_SPS = .false. ] ; then export FH_INC=$FHMAX ; fi
 #
 #  Directories.
 #
+export gsm_ver=${gsm_ver:-v12.0.0}
 export HOMEDIR=${HOMEDIR:-/nwprod}
 export NWPROD=${NWPROD:-$HOMEDIR}
 export FIXSUBDA=${FIXSUBDA:-fix/fix_am}
-export FIXGLOBAL=${FIXGLOBAL:-$NWPROD/$FIXSUBDA}
+export FIXGLOBAL=${FIXGLOBAL:-$NWPROD/gsm.$gsm_ver/$FIXSUBDA}
 export FIX_RAD=${FIX_RAD:-$FIXGLOBAL}
 export EXECGLOBAL=${EXECGLOBAL:-$NWPROD/exec}
 export DATA=${DATA:-$(pwd)}
 export COMOUT=${COMOUT:-$(pwd)}
 #  Filenames.
-#MN=c00                  ; # Commented by Moorthi
 MN=${MN:-""}
 export XC=${XC}
 export SUFOUT=${SUFOUT}
@@ -480,17 +468,17 @@ export MTNRSLUF=${MTNRSLUF:-$MTNRSL}
 export SIGI2=${SIGI2:-NULL}
 export CO2CON=${CO2CON:-${FIXGLOBAL}/global_co2con.l$LEVS.f77}
 export MTNVAR=${MTNVAR:-${FIXGLOBAL}/global_mtnvar.t$MTNRSL.f77}
-export CLTUNE=${CLTUNE:-${FIXGLOBAL}/global_cldtune.f77}
-export DTBTHE=${DTBTHE:-${FIXGLOBAL}/global_tbthe.f77}
 export O3FORC=${O3FORC:-${FIXGLOBAL}/global_o3prdlos.f77}
 export O3CLIM=${O3CLIM:-${FIXGLOBAL}/global_o3clim.txt}
 export FNGLAC=${FNGLAC:-${FIXGLOBAL}/global_glacier.2x2.grb}
 export FNMXIC=${FNMXIC:-${FIXGLOBAL}/global_maxice.2x2.grb}
-export FNTSFC=${FNTSFC:-${FIXGLOBAL}/cfs_oi2sst1x1monclim19822001.grb}
+#export FNTSFC=${FNTSFC:-${FIXGLOBAL}/cfs_oi2sst1x1monclim19822001.grb}
+export FNTSFC=${FNTSFC:-${FIXGLOBAL}/RTGSST.1982.2012.monthly.clim.grb}
 export FNSNOC=${FNSNOC:-${FIXGLOBAL}/global_snoclim.1.875.grb}
 export FNZORC=${FNZORC:-sib}
 export FNALBC=${FNALBC:-${FIXGLOBAL}/global_albedo4.1x1.grb}
-export FNAISC=${FNAISC:-${FIXGLOBAL}/cfs_ice1x1monclim19822001.grb}
+#export FNAISC=${FNAISC:-${FIXGLOBAL}/cfs_ice1x1monclim19822001.grb}
+export FNAISC=${FNAISC:-${FIXGLOBAL}/CFSR.SEAICE.1982.2012.monthly.clim.grb}
 export FNTG3C=${FNTG3C:-${FIXGLOBAL}/global_tg3clim.2.6x1.5.grb}
 export FNVEGC=${FNVEGC:-${FIXGLOBAL}/global_vegfrac.0.144.decpercent.grb}
 export FNVETC=${FNVETC:-${FIXGLOBAL}/global_vegtype.1x1.grb}
@@ -538,7 +526,6 @@ export FLXO=${FLXO:-${COMENS}/flxf'${FH}''${MN}'$SUFOUT}
 export LOGO=${LOGO:-${COMENS}/logf'${FH}''${MN}'$SUFOUT}
 export D3DO=${D3DO:-${COMENS}/d3df'${FH}''${MN}'$SUFOUT}
 export NSTO=${NSTO:-${COMENS}/nstf'${FH}''${MN}'$SUFOUT}
-export G3DO=${G3DO:-${COMENS}/g3df'${FH}''${MN}'$SUFOUT}
 export INISCRIPT=${INISCRIPT}
 export ERRSCRIPT=${ERRSCRIPT:-'eval [[ $err = 0 ]]'}
 export LOGSCRIPT=${LOGSCRIPT}
@@ -623,16 +610,8 @@ fi
 cd $DATA||exit 99
 [[ -d $COMOUT ]]||mkdir -p $COMOUT
 ################################################################################
-#if [[ $HOUTASPS -gt 10000 ]] ; then
-#   (( HOUTA = HOUTASPS - 10000 ))
-#   NMSUB=${NMSUB:-'.new'}
-#else
-#   HOUTA=-1
-#   NMSUB=""
-#fi
-# DHOU, 09/11/2010 commented out previous block and adaedd the follwing block
  if [[ $HOUTASPS -lt 10000 ]] ; then
-    (( HOUTA = FHROT + FHMAX - HOUTASPS ))  # DHOU, 09/11/2010
+    (( HOUTA = FHROT + FHMAX - HOUTASPS ))  
     NMSUB=${NMSUB}
  fi
 
@@ -671,9 +650,7 @@ done
 if [[ $FILESTYLE = "L" ]] ; then
    ln -fs $CO2CON fort.15
    ln -fs $MTNVAR fort.24
-   ln -fs $DTBTHE fort.27
    ln -fs $O3FORC fort.28
-   ln -fs $CLTUNE fort.43
    ln -fs $O3CLIM fort.48
 else
   echo 'FILESTYLE' $FILESTYLE 'NOT SUPPORTED'
@@ -752,7 +729,6 @@ if [[ $ENS_NUM -le 1 ]] ; then
     eval ln -fs ${LOGO}$FNSUB LOG.F${FH}
     eval ln -fs ${D3DO}$FNSUB D3D.F${FH}
     eval ln -fs ${NSTO}$FNSUB NST.F${FH}
-    eval ln -fs ${G3DO}$FNSUB G3D.F${FH}
 
     if [ $FHOUT_HF -ne $FHOUT -a $FH -lt $FHMAX_HF ] ; then
      ((FH=10#$FH+10#$FHOUT_HF))
@@ -816,7 +792,6 @@ else
 #     eval ln -fs $LOGO LOG.F${FH}${MN}
 #     eval ln -fs $D3DO D3D.F${FH}${MN}
 #     eval ln -fs $NSTO NST.F${FH}${MN}
-#     eval ln -fs $G3DO G3D.F${FH}${MN}
 
       eval ln -fs $SIGO$FNSUB SIG.F${FH}_${IMN}
       eval ln -fs $SFCO$FNSUB SFC.F${FH}_${IMN}
@@ -824,7 +799,6 @@ else
       eval ln -fs $LOGO$FNSUB LOG.F${FH}_${IMN}
       eval ln -fs $D3DO$FNSUB D3D.F${FH}_${IMN}
       eval ln -fs $NSTO$FNSUB NST.F${FH}_${IMN}
-      eval ln -fs $G3DO$FNSUB G3D.F${FH}_${IMN}
 
       if [ $FHOUT_HF -ne $FHOUT -a 10#$FH -lt $FHMAX_HF ] ; then
        ((FH=10#$FH+10#$FHOUT_HF))
@@ -1032,6 +1006,7 @@ EOF
 #totalview poe -a $PGM <<EOF $REDOUT$PGMOUT $REDERR$PGMERR
 #
 #eval $PGM <<EOF $REDOUT$PGMOUT $REDERR$PGMERR
+
 cat  > gfs_namelist <<EOF
  &nam_mrf
   FHOUT=$FHOUT, FHMAX=$FHM_FST, IGEN=$IGEN, DELTIM=$DELTIM,
@@ -1093,24 +1068,6 @@ EOF
 
 eval $PGM $REDOUT$PGMOUT $REDERR$PGMERR
 
-#if [ $machine = IBMP6 ] ; then
-# eval $PGM $REDOUT$PGMOUT $REDERR$PGMERR
-#totalview poe -a $PGM $REDOUT$PGMOUT $REDERR$PGMERR
-#else
-# export OMP_NUM_THREADS=${OMP_NUM_THREADS:-1}
-# export npe_node=${npe_node:-24}
-# export pe_node=${pe_node:-$npe_node}
-# export mpi_tasks=$(((size/npe_node)*pe_node/OMP_NUM_THREADS))
-# if [ $size -lt $mpi_tasks ] ; then export mpi_tasks=$size ; fi
-# if [ $OMP_NUM_THREADS -eq 1 ] ; then
-#   echo aprun -n$mpi_tasks -N$pe_node $PGM  >o_fcst_$FHINI 2>e_fcst_$FHINI
-#   aprun -n$mpi_tasks -N$pe_node $PGM  >o_fcst_$FHINI 2>e_fcst_$FHINI
-# else
-#   echo aprun -n$mpi_tasks -N$pe_node -d$OMP_NUM_THREADS $PGM  >o_fcst_$FHINI 2>e_fcst_$FHINI
-#   aprun -n$mpi_tasks -N$pe_node -d$OMP_NUM_THREADS $PGM  >o_fcst$FHINI 2>e_fcst$FHINI
-# fi
-#fi
-
 export ERR=$?
 export err=$ERR
 $ERRSCRIPT||exit 2
@@ -1118,12 +1075,12 @@ $ERRSCRIPT||exit 2
 
 rm -f NULL
 rm -f fort.11 fort.12 fort.14
-rm -f fort.15 fort.24 fort.27 fort.28 fort.29 fort.43 fort.48
+rm -f fort.15 fort.24  fort.28 fort.29  fort.48
 rm -f orography
 rm -f orography_uf
 rm -f lonsperlat.dat
 rm -f fort.51 fort.52 fort.53
-#rm -f SIG.F* SFC.F* FLX.F* LOG.F* D3D.F* G3D.F*
+#rm -f SIG.F* SFC.F* FLX.F* LOG.F* D3D.F*
 ##rm -f sigr1 sigr2 sfcr nstr
 ################################################################################
 #  Postprocessing

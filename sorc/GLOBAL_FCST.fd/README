@@ -1,3 +1,11 @@
+12/01/2014 Dingchen Hou:
+The gfs forecast code version has been forwarded to v12.0.0, which is stored in
+/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0/
+This directory is checked out from SVN on Nov. 26, 2014, and about the same as the /nwpara/gfs.v12.0.0 
+The previous modification on *Step2.f (turnning off Ps pert) and *Cpl_run*  is included 
+New changes are added in the *Step2.f file to reduce tropical sacling factors 
+The executable and the corresponding scripts/exglobal_fcst.sh.sms (and .ecf) are copied to the GEFS exec/script directory
+
 07/07/2014 Dingchen Hou:
 The gfs forecast code version is hed forward to r42459 (committed July 2, 2014), which can be found in
 ZEUS: /scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_42459
