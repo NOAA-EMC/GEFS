@@ -1,0 +1,511 @@
+#!/bin/ksh 
+################# lines between these markers have been modified for dev begin
+################# lines between these markers have been modified for dev end
+####################################
+# lines between ###testb and ###teste not needed for production
+####################################
+na=`basename $0`
+export PS4=' + $SECONDS $na $LINENO: '
+
+$SMSBIN/smsinit $LOADL_STEP_ID 
+echo `date` $0 `date -u` begin
+
+set -xa
+####################################
+
+# 01/28/2013 New variables added for WCOSS and cross-machine unfication
+export gefsmachine=${gefsmachine:-wcoss}
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+
+#DHOU 04/06/2012 Added this block for ZEUS to run gefs_config similar to other jobs
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+if [ "$RUN_ENVIR" = dev ]      ### For Developers
+then
+################# lines between these markers have been modified for dev begin
+ if (( 0 == 1 )); then
+################# lines between these markers have been modified for dev end
+  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
+################# lines between these markers have been modified for dev begin
+ else
+  . $basesource/nwdev/parm/gefs_config
+ fi
+################# lines between these markers have been modified for dev end
+fi
+
+# #### 05/05/99 ###############################
+# SETUP ENS POST PROCESSING VARIABLES
+# #############################################
+
+####################################
+# obtain unique process id (pid) and make temp directory
+####################################
+export pid=$$
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+export DATA=/tmpnwprd/${job}.${pid}
+###testb
+else
+  echo baseptmp=$baseptmp
+  echo basetmp=$basetmp
+  export DATA=$basetmp/$envir/tmpnwprd/${job}.${pid}.$PDY$cyc$rrr
+################# lines between these markers have been modified for dev begin
+  export DATA=$basetmp/tmpnwprd/${job}.${pid}
+################# lines between these markers have been modified for dev end
+echo DATA=$DATA
+fi
+###teste
+mkdir -p $DATA
+cd $DATA
+
+export cycle=t${cyc}z
+export cycle_fcst=t${cyc_fcst}z
+
+echo cyc=$cyc cyc_fcst=$cyc_fcst
+echo cycle=$cycle cycle_fcst=$cycle_fcst
+
+if (( cyc == cyc_fcst )); then
+  export fcstlong=true
+  export cfsuffix=""
+  export cycsuffix=false
+else
+  export fcstlong=false
+  export cfsuffix=".cycfs$cyc_fcst"
+  export cycsuffix=true
+fi
+
+export fcstlong
+echo fcstlong=$fcstlong
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=gens
+
+####################################
+# File To Log Msgs
+####################################
+###testb
+if [[ $envir = prod ]]; then
+###teste
+export jlogfile=/com/logs/jlogfile
+###testb
+elif [[ $envir = para ]] || \
+     [[ $envir = test ]]; then
+  export jlogfile=/com/logs/para/jlogfile
+else
+################# lines between these markers have been modified for dev begin
+ if (( 0 == 1 )); then
+################# lines between these markers have been modified for dev end
+  export jlogfile=$baseptmp/com/logs/jlogfile
+################# lines between these markers have been modified for dev begin
+ else
+  export jlogfile=$baselog/com/logs/jlogfile
+ fi
+################# lines between these markers have been modified for dev end
+fi
+###teste
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# SENDSMS  - Flag Events on SMS
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+####################################
+export SENDSMS=YES
+export SENDCOM=YES
+###testb
+if [[ $envir = prod ]]; then
+###teste
+export SENDDBN=YES
+###testb
+elif [[ $envir = para ]]; then
+ export SENDDBN=YES
+elif [[ $envir = test ]]; then
+ export SENDDBN=YES
+else
+export SENDDBN=YES
+################# lines between these markers have been modified for dev begin
+export SENDDBN=NO
+################# lines between these markers have been modified for dev end
+fi
+###teste
+
+####################################
+# Specify Execution Areas
+####################################
+export GRBINDEX=/nwprod/util/exec/grbindex
+#DHOU 04/05/2012 for Zeus
+ if [[ $gefsmachine = zeus ]]; then
+export GRBINDEX=$HOMEglobal/util/exec/grbindex
+ fi
+
+export HOMEUTIL=/nwprod/util
+export EXECUTIL=$HOMEUTIL/exec
+#DHOU 04/05/2012 for ZEUS
+ if [[ $gefsmachine = zeus ]]; then
+export HOMEUTIL=$HOMEglobal/util
+export EXECUTIL=$HOMEUTIL/exec
+export FIXUTIL=$HOMEUTIL/fix
+ fi
+
+###testb
+if [[ $envir = prod ]]; then
+###teste
+export HOMEGLOBAL=/nw${envir}
+###testb
+else
+  export HOMEGLOBAL=/nwprod
+fi
+###teste
+export USHGLOBAL=$HOMEGLOBAL/ush
+export EXECGLOBAL=$HOMEGLOBAL/exec
+#DHOU 04/05/2012 for Zeus added the next 2 lines
+ if [[ $gefsmachine = zeus ]]; then
+    export USHGLOBAL=$HOMEglobal/ush
+    export EXECGLOBAL=$HOMEglobal/exec
+ fi
+export FIXGLOBAL=$HOMEGLOBAL/fix
+###testb
+if [[ $envir = prod ]]; then
+###teste
+export PARMGLOBAL=$HOMEGLOBAL/parm
+###testb
+# set PARMGLOBAL for test runs
+elif [[ $envir = para ]] || \
+     [[ $envir = test ]]; then
+  PARMGLOBAL=/nw$envir/parm
+else
+  PARMGLOBAL=$basesource/nw$envir/parm
+fi
+###teste
+
+export TRAKHOME=/ensemble/save/Dingchen.Hou/SVN/ENSTRAK_20140925
+export TRAKUSH=$TRAKHOME/util/ush
+export TRAKEXEC=$TRAKHOME/util/exec
+export exectrkdir=$TRAKEXEC
+export TRAKFIX=$TRAKHOME/fix
+export rundir=$TRAKFIX
+
+##############################
+# Set up the UTILITIES
+##############################
+export utilscript=/nwprod/util/ush
+#DHOU 04/05/2012 for ZEUS
+ if [[ $gefsmachine = zeus ]]; then
+   export utilscript=$HOMEglobal/util/ush
+ fi
+ if [[ $gefsmachine = wcoss ]]; then
+   export utilscript=$HOMEgefs/util/ush
+ fi
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+ksh $utilscript/setup.sh
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+sh $utilscript/setpdy.sh
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+. PDY
+###testb
+else
+  echo PDY=$PDY is already set
+fi
+###teste
+
+##############################################
+# Define COM directories
+##############################################
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+export COMIN=/com/${NET}/${envir}/gefs.${PDY}
+###testb
+else
+export COMIN=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
+fi
+###teste
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+###testb
+else
+export COMOUT=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
+#export ensdir=$COMOUT/$cyc/pgrba
+export ensdir=$COMOUT/$cyc/pgrb2ap5
+#export ensdir=$COMOUT/$cyc/pgrb2a
+export COM=$COMOUT/$cyc/track
+fi
+###teste
+mkdir -m 775 -p $COMOUT/$cyc/track
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+
+###testb
+if [[ $envir = prod ]]; then
+###teste
+. $PARMGLOBAL/gefs.parm
+###testb
+elif [[ $envir = para ]] || \
+     [[ $envir = test ]]; then
+. /nw$envir/parm/gefs.parm
+else
+. $basesource/nw$envir/parm/gefs.parm
+  if (( cyc == 00 )); then
+  export fhmax=$fhmax00
+  elif (( cyc == 06 )); then
+  export fhmax=$fhmax06
+  elif (( cyc == 12 )); then
+  export fhmax=$fhmax12
+  elif (( cyc == 18 )); then
+  export fhmax=$fhmax18
+  fi
+fi
+###teste
+
+####################################
+# Create member list
+####################################
+
+if [[ $fcstlong = true ]]; then
+  memberlist="c00"
+else
+  memberlist=""
+fi
+
+(( imem = 0 ))
+while (( imem < npair * 2 ))
+do
+  (( imem = imem + 1 ))
+  if (( imem < 10 )); then
+    imem=0$imem
+  fi
+  memberlist="$memberlist p$imem"
+done
+echo memberlist=$memberlist
+
+DATAHOLD=$DATA
+
+#DHOU 01/24/2013, Temprary for WCOSS transition
+  if [[ $envir = dev ]]; then
+   if [[ $gefsmachine = wcoss ]]; then
+export archsyndir=$TMPCOM/arch/prod/syndat
+   fi
+   if [[ $gefsmachine = zeus ]]; then
+export archsyndir=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/comzeus/com/arch/prod/syndat
+export homesyndir=$basesource/nw$envir/util
+   fi
+
+  fi
+
+echo
+env | sort
+echo
+
+########################################################
+# Execute the tracking script.
+ for member in $memberlist
+#for member in c00 p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 p11 p12 p13 p14 p15 
+#for member in c00 
+do
+
+  ####################################
+  # Specify the Ensemble Member
+  ####################################
+  export RUN=ge${member}
+
+  export PS4=' + $SECONDS $na $RUN T $LINENO: '
+
+  ####################################
+  # Start extrkr processing
+  ####################################
+  (
+
+  ####################################
+  # identify temp directory
+  ####################################
+  ###testb
+  if [[ $envir = prod ]] || \
+     [[ $envir = para ]] || \
+     [[ $envir = test ]]; then
+  ###teste
+     export DATA=/tmpnwprd/gefs_post_${RUN}${cyc}_${cyc_fcst}.${envir}
+  ###testb
+  else
+    echo baseptmp=$baseptmp
+    echo basetmp=$basetmp
+    export DATA=$basetmp/$envir/tmpnwprd/gefs_post_${RUN}_${PDY}${cyc}_${cyc_fcst}.${envir}.save
+################# lines between these markers have been modified for dev begin
+    export DATA=$basetmp/tmpnwprd/gefs_post_track_${RUN}_${PDY}${cyc}_${cyc_fcst}.${envir}
+################# lines between these markers have been modified for dev end
+  echo DATA=$DATA
+  fi
+  ###teste
+################# lines between these markers have been modified for dev begin
+# Correction, may require a correction to PRODUCTION
+  if [[ -d $DATA ]]; then
+    echo `date` ERROR DATA=$DATA UNEXPECTEDLY EXISTS
+  else
+    mkdir -p $DATA
+  fi
+################# lines between these markers have been modified for dev end
+  cd $DATA
+# cp -pr /ensemble/save/Dingchen.Hou/SVN/ENSTRAK_20140925/scripts/*txt .
+
+  ###################################
+  # Run the tropical cyclone tracker
+  ###################################
+  if [ $cyc -eq 06 -o $cyc -eq 18 ]
+  then
+     #export SENDDBN=YES
+      export SENDDBN=YES
+################# lines between these markers have been modified for dev begin
+      export SENDDBN=NO
+################# lines between these markers have been modified for dev end
+  fi
+
+  export pert=`echo ${RUN} | cut -c3-5`
+  if [ $fcstlong = true ]
+  then
+    export cmodel=ens
+    export loopnum=1
+    ymdh=$PDY$cyc
+#   pert=4
+#   DATA=5
+    echo DHCHECK $cmodel $loopnum $ymdh $pert
+    echo DHCHECK $DATA
+  ###testb
+  if   [[ $envir = prod ]]; then
+  ###teste
+    sh ${utilscript}/extrkr.sh
+  ###testb
+  elif [[ $envir = para ]] || \
+       [[ $envir = test ]]; then
+  sh /nw$envir/util/ush/extrkr.sh
+  else
+#    sh $basesource/nw$envir/util/ush/extrkr.sh
+#DHOU 01/19/2013, replace the line above with the following if-block for machine-specfic choice of ush script
+   if [[ $gefsmachine = zeus ]]; then
+#   ls -lt $basesource/nw$envir/util/ush/extrkr.sh
+#   echo DHOU ZEUSCHECK
+    sh $basesource/nw$envir/util/ush/extrkr.sh
+#   ls -lt $basesource/nw$envir/util/ush/extrkr.sh
+   elif [[ $gefsmachine = wcoss ]]; then
+    if (( $gefsgribedition == 1 )); then
+     sh ${utilscript}/extrkr.sh
+    elif (( $gefsgribedition == 2 )); then
+     sh ${TRAKUSH}/extrkr.sh
+    fi 
+#   sh /nwprod/util/ush/extrkr.sh
+#  #sh $basesource/nw$envir/util/ush/extrkr.sh
+   else
+    sh $basesource/nw$envir/util/ush/extrkr.sh
+   fi
+  fi
+  ###teste
+  fi
+
+  # For the vortex relocation part
+if (( 1 == 0 )); then  
+  export cmodel=gfs_enr
+  ###testb
+  if   [[ $envir = prod ]]; then
+  ###teste
+  sh ${utilscript}/extrkr.sh
+#   sh ${TRAKUSH}/extrkr.sh
+  ###testb
+  elif [[ $envir = para ]] || \
+       [[ $envir = test ]]; then
+  sh /nw$envir/util/ush/extrkr.sh
+  else
+    # sh $basesource/nw$envir/util/ush/extrkr.sh
+    if [[ $gefsmachine = wcoss ]]; then
+#    /nwprod/util/ush/extrkr.sh
+#    sh ${utilscript}/extrkr.sh
+#    sh ${TRAKUSH}/extrkr.sh
+     echo SKIP relocation part
+    else
+     $basesource/nw$envir/util/ush/extrkr.sh
+    fi
+  fi
+  ###teste
+fi  
+  ) >$DATAHOLD/${member}.out  2>&1 &
+
+done
+########################################################
+
+export PS4=' + $SECONDS $na $LINENO: '
+
+echo `date` before wait for background processes
+wait
+echo `date` after wait for background processes
+
+cd $DATAHOLD
+
+set +x
+for member in $memberlist
+do
+   echo "######################################"
+   echo "  $member.out "
+   echo "######################################"
+   cat $member.out
+done
+set -x
+
+cd $DATAHOLD
+export DATA=$DATAHOLD
+
+##############################
+# Remove the Temporary working directory
+##############################
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+cd /tmpnwprd
+rm -rf $DATA
+###testb
+else
+  echo skip cleanup for testing
+fi
+###teste
+
+echo `date` $0 `date -u` end
+###testb
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+###teste
+$SMSBIN/endt
+###testb
+else
+  echo skip endt for testing
+fi
+###teste

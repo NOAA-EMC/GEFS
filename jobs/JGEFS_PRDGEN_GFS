@@ -1,0 +1,351 @@
+#!/bin/ksh
+################# lines between these markers have been modified for dev begin
+################# lines between these markers have been modified for dev end
+
+#####################################################################
+# 9/20/2009, Julia Zhu   Scripts are modified to be sharable
+#                        between EMC and NCO
+#         Please note that variable "RUN_ENVIR" is set and used
+#         in the development enviroment only.
+######################################################################
+
+$SMSBIN/smsinit $LOADL_STEP_ID 
+echo `date` $0 begin
+
+set -xa
+
+export PS4='$SECONDS + '
+
+# 01/28/2013 New variables added for WCOSS and cross-machine unfication
+export gefsmachine=${gefsmachine:-wcoss}
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+if [ "$RUN_ENVIR" = dev ]      ### For Developers
+then
+################# lines between these markers have been modified for dev begin
+ if (( 0 == 1 )); then
+################# lines between these markers have been modified for dev end
+  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
+################# lines between these markers have been modified for dev begin
+ else
+  . $basesource/nwdev/parm/gefs_config
+ fi
+################# lines between these markers have been modified for dev end
+fi
+
+# #### 02/06/06 ###############################
+# GET GEFS POST PROCESSING VARIABLES
+# FROM GFS RUN
+# #############################################
+
+####################################
+# obtain unique process id (pid) and make temp directory
+####################################
+export pid=$$
+if [ "$RUN_ENVIR" = dev ]    ### For Developers
+then
+################# lines between these markers have been modified for dev begin
+  if (( 0 == 1 )); then
+################# lines between these markers have been modified for dev end
+   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd}
+################# lines between these markers have been modified for dev begin
+  else
+   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
+  fi
+################# lines between these markers have been modified for dev end
+else                       ### For Operations
+   export DATA_IN=/tmpnwprd
+fi
+export DATA=$DATA_IN/${job}.${pid}
+
+mkdir -p $DATA
+cd $DATA
+
+export cycle=t${cyc}z
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=gens
+export RUN=gfs
+
+####################################
+# File To Log Msgs
+####################################
+if [ "$RUN_ENVIR" = dev ]     ### For Developers
+then
+################# lines between these markers have been modified for dev begin
+  if (( 0 == 1 )); then
+################# lines between these markers have been modified for dev end
+   export jlogfile=${jlogfile:-$DATA_IN/jlogfile}
+################# lines between these markers have been modified for dev begin
+  else
+   export jlogfile=$baselog/com/logs/jlogfile
+  fi
+################# lines between these markers have been modified for dev end
+else                        ### For Operations
+   export jlogfile=/com/logs/jlogfile
+fi
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# SENDSMS  - Flag Events on SMS
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# RERUN    - Rerun posts from beginning (default no)
+# VERBOSE  - Specify Verbose Output in global_postgp.sh
+####################################
+
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
+  export SENDCOM=${SENDCOM:-YES}
+  export SENDDBN=${SENDDBN:-YES}
+  export SENDSMS=${SENDSMS:-YES}
+  export VERBOSE=${VERBOSE:-NO}
+  export SENDDBN_GB2=${SENDDBN_GB2:-NO}
+  export RERUN=${RERUN:-NO}
+
+  # Specify Execution Areas
+  export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
+  export EXECGLOBAL=${EXECGLOBAL:-$HOMEGLOBAL/exec}
+  export USHGLOBAL=${USHGLOBAL:-$HOMEGLOBAL/ush}
+  export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
+  export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
+
+  export HOMEgefs=${HOMEgefs:-/nw${envir}}
+  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+  export USHgefs=${USHgefs:-$HOMEgefs/ush}
+  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+else                             ### For Operations
+  export SENDCOM=YES
+  export SENDDBN=YES
+  export SENDDBN_GB2=YES
+  export SENDSMS=YES
+  export VERBOSE=NO
+  export RERUN=NO
+
+  # Specify Execution Areas
+  export HOMEGLOBAL=/nwprod
+  export EXECGLOBAL=$HOMEGLOBAL/exec
+  export USHGLOBAL=$HOMEGLOBAL/ush
+  export FIXGLOBAL=$HOMEGLOBAL/fix
+  export PARMGLOBAL=$HOMEGLOBAL/parm
+
+  export HOMEgefs=/nw${envir}
+  export EXECgefs=$HOMEgefs/exec
+  export USHgefs=$HOMEgefs/ush
+  export FIXgefs=$HOMEgefs/fix
+  export PARMgefs=$HOMEgefs/parm
+fi
+
+####################################
+# Specify Execution Areas
+####################################
+export GRBINDEX=/nwprod/util/exec/grbindex
+
+export HOMEUTIL=/nwprod/util
+export EXECUTIL=$HOMEUTIL/exec
+export FIXUTIL=$HOMEUTIL/fix
+
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
+#DHOU 03/22/201 for ZEUS/WCOSS
+  case $gefsmachine in
+    (zeus)
+export GRBINDEX=$HOMEglobal/util/exec/grbindex
+    ;;
+  esac
+
+  case $gefsmachine in
+    (zeus)
+export HOMEUTIL=$HOMEglobal/util
+export EXECUTIL=$HOMEUTIL/exec
+export FIXUTIL=$HOMEUTIL/fix
+    ;;
+    (wcoss)
+export HOMEUTIL=$HOMEGLOBAL/util
+export EXECUTIL=$HOMEUTIL/exec
+export FIXUTIL=$HOMEUTIL/fix
+    ;;
+  esac
+fi
+
+export ERRSCRIPT=err_chk
+export LOGSCRIPT=startmsg
+export REDOUT='1>>'
+export REDERR='2>'
+
+##############################
+# Set up the UTILITIES
+##############################
+export utilscript=/nwprod/util/ush
+#DHOU 03/22/2012 for ZEUS/WCOSS
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
+   case $gefsmachine in
+    (zeus)
+  export utilscript=$HOMEglobal/util/ush
+    ;;
+    (wcoss)
+  export utilscript=$HOMEGLOBAL/util/ush
+    ;;
+   esac
+fi
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+sh $utilscript/setup.sh
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+sh $utilscript/setpdy.sh
+. PDY
+
+##############################################
+# Define COM directories
+##############################################
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
+# export COM_IN=/com/gfs/prod
+  export COM_IN=$TMPCOM/gfs/prod   #DHOU 01/25/2013 for WCOSS transition
+  export COM_IN=${COM_IN:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
+  export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
+
+  export COMIN=$COM_IN/gfs.${PDY}
+  export COMIN=/com/gfs/para/gfs.${PDY}    #Temporary for para test
+  export COMOUT=$COM_OUT/gefs.${PDY}
+  export ENS_COM=$COMOUT
+else                              ### For Operations
+  export COMIN=/com/gfs/prod/gfs.${PDY}
+  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+  export ENS_COM=$COMOUT
+fi
+
+mkdir -m 775 -p $COMOUT/$cyc/pgrba
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2a
+mkdir -m 775 -p $COMOUT/$cyc/pgrbalr
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2alr
+mkdir -m 775 -p $COMOUT/$cyc/misc
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+
+ . $PARMgefs/gefs.parm
+
+export NTHREADS=1
+
+export POSTGPVARS_HIGH="IDRTC=0,IOC=360,JOC=181,IDRT=0,IO=360,JO=181,MOO=120,MOW=30,MOOA=120,MOWA=30,"
+export POSTGPVARS_LOW="IDRTC=0,IOC=144,JOC=73,IDRT=0,IO=144,JO=73,MOO=48,MOW=12,MOOA=48,MOWA=12,"
+
+####################################
+# Specify Restart File Names to Key Off
+####################################
+restart_file_a=$COMIN/${RUN}.t${cyc}z.pgrbf
+restart_file_b=$COMIN/${RUN}.t${cyc}z.pgrbif
+
+####################################
+# Specify Timeout Behavior of Post
+#
+# SLEEP_TIME - Amount of time to wait for
+#              a restart file before exiting
+# SLEEP_INT  - Amount of time to wait between
+#              checking for restart files
+####################################
+export SLEEP_TIME=900
+export SLEEP_INT=5
+
+####################################
+# Specify Forecast Hour Range
+####################################
+export FHOUR_HIGH=$fhmax
+export FHOUR_LOW=$fhmax
+export FHINC_HIGH=6
+export FHINC_LOW=6
+
+export DO_HD_PGRB=NO
+export HDMAX=00
+
+####################################
+# Specify Forecast Hour Range
+####################################
+export SHOUR=00
+#export FHOUR_HIGH=$fhmax
+export FHOUR_HIGH=$gfsfhmaxh
+export fhoroglist=$gfsfhoroglist
+export FHOUR_LOW=$fhmax
+export FHINC_HIGH=6
+#export FHINC_LOW=6
+export FHINC_LOW=12
+
+export DO_HD_PGRB=NO
+export HDMAX=00
+
+#
+# DLM - Added to Try and Debug Comm Subsystem Errors
+# Problems in ENP5P On 20030730/12 UTC
+# Problems in ENP4P On 20030731/12 UTC
+#
+export MP_INFOLEVEL=6
+
+env | sort
+
+#   jobgrid=$grid1p0
+#   dogrid2p5=YES
+    jobgrid=$gridp5
+    dogrid2p5=NO
+#################################
+# Run High Res Prdgen if Needed
+#################################
+if test $SHOUR -le $FHOUR_HIGH
+then
+   export FHINC=$FHINC_HIGH
+   export FHOUR=$FHOUR_HIGH
+   export DO_LOW_RES=YES 
+   if (( $gfsgribedition == 1 )); then
+    $HOMEgefs/scripts/exgefs_prdgen_gfs_grb1.sh.sms
+   elif (( gfsgribedition == 2 )); then
+    $HOMEgefs/scripts/exgefs_prdgen_gfs.sh.sms
+   fi
+   export SHOUR=`expr $FHOUR_HIGH + $FHINC_LOW`
+fi
+#################################
+# Run Low Res Prdgen if Needed
+#################################
+if test $SHOUR -lt $FHOUR_LOW
+then
+   export FHINC=$FHINC_LOW
+   export FHOUR=$FHOUR_LOW
+   export DO_LOW_RES=YES 
+   export POSTGPVARS_HIGH=$POSTGPVARS_LOW
+   if (( gfsgribedition == 1 )); then
+    $HOMEgefs/scripts/exgefs_prdgen_gfs_grb1.sh.sms
+   elif (( gfsgribedition == 2 )); then
+    $HOMEgefs/scripts/exgefs_prdgen_gfs.sh.sms
+   fi
+fi
+
+msg="$job completed normally"
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATA_IN
+rm -rf $DATA
+
+echo `date` $0 end
+$SMSBIN/endt

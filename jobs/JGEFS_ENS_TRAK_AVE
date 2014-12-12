@@ -1,0 +1,254 @@
+#!/bin/ksh 
+################# lines between these markers have been modified for dev begin
+################# lines between these markers have been modified for dev end
+
+$SMSBIN/smsinit $LOADL_STEP_ID 
+
+set -xa
+####################################
+
+# 01/28/2013 New variables added for WCOSS and cross-machine unfication
+export gefsmachine=${gefsmachine:-wcoss}
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+
+# #### 08/28/2006 #############################
+# THIS GEFS ENSEMBLE POST JOB IS SPECIFICALLY
+# FOR CALCULATING THE MEAN TROPICAL CYCLONE 
+# TRACK FORECASTS FROM THE TRACK FORECASTS OF
+# THE VARIOUS ENSEMBLE PERTURBED MEMBERS.  
+# ##############################################
+
+#DHOU 04/06/2012 Added this block for ZEUS to run gefs_config similar to other jobs
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+if [ "$RUN_ENVIR" = dev ]      ### For Developers
+then
+################# lines between these markers have been modified for dev begin
+ if (( 0 == 1 )); then
+################# lines between these markers have been modified for dev end
+  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
+################# lines between these markers have been modified for dev begin
+ else
+  . $basesource/nwdev/parm/gefs_config
+ fi
+################ lines between these markers have been modified for dev end
+fi
+
+# #############################################
+# SETUP ENS POST PROCESSING VARIABLES
+# #############################################
+
+####################################
+# obtain unique process id (pid) and make temp directory
+####################################
+export pid=$$
+export DATA=/tmpnwprd/${job}.${pid}
+################# lines between these markers have been modified for dev begin
+if [[ $envir = dev ]]; then
+  #export DATA=$basetmp/tmpnwprd/${job}.${pid}.$PDY$cyc$jjj
+  export DATA=$basetmp/tmpnwprd/${job}.${pid}
+fi
+################# lines between these markers have been modified for dev end
+mkdir -p $DATA
+cd $DATA
+
+export cycle=t${cyc}z
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=gens
+export RUN=trakave
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=/com/logs/jlogfile
+################# lines between these markers have been modified for dev begin
+if [[ $envir = dev ]]; then
+  export jlogfile=$baselog/com/logs/jlogfile
+fi
+################# lines between these markers have been modified for dev end
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# SENDSMS  - Flag Events on SMS
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+####################################
+export SENDSMS=YES
+export SENDCOM=YES
+export SENDDBN=YES
+################# lines between these markers have been modified for dev begin
+if [[ $envir = dev ]]; then
+  export SENDDBN=NO
+fi
+
+################# lines between these markers have been modified for dev end
+
+####################################
+# Specify Execution Areas
+####################################
+export HOMEGLOBAL=/nw${envir}
+if [[ $envir = dev ]]; then
+#DHOU 04/13/2012, 01/20/2013 Added cwthis block1  for ZEUS/WCOSS
+ if [[ $gefsmachine = zeus ]]; then
+export HOMEGLOBAL=$HOMEglobal
+ fi
+fi
+export EXECGLOBAL=$HOMEGLOBAL/exec
+export USHGLOBAL=$HOMEGLOBAL/ush
+export FIXGLOBAL=$HOMEGLOBAL/fix
+export PARMGLOBAL=$HOMEGLOBAL/parm
+################# lines between these markers have been modified for dev begin
+if [[ $envir = dev ]]; then
+# export HOMEGLOBAL=$basesource/nw${envir}
+# export PARMGLOBAL=$HOMEGLOBAL/parm
+  export PARMGLOBAL=$basesource/nw${envir}/parm
+  if [[ $gefsmachine = wcoss ]]; then
+  #export FIXGLOBAL=$HOMEglobal/fix
+   export FIXGLOBAL=$basesource/nw${envir}/fix
+  fi
+fi
+################# lines between these markers have been modified for dev end
+
+export ERRSCRIPT=err_chk
+export LOGSCRIPT=startmsg
+export REDOUT='1>>'
+export REDERR='2>'
+
+##############################
+# Set up the UTILITIES
+##############################
+export HOMEUTIL=/nwprod/util
+if [[ $envir = dev ]]; then
+ if [[ $gefsmachine = zeus ]]; then
+export HOMEUTIL=$HOMEglobal/util
+ fi
+fi
+export utilscript=$HOMEUTIL/ush
+export EXECUTIL=$HOMEUTIL/exec
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+ksh $utilscript/setup.sh
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+ksh $utilscript/setpdy.sh
+. PDY
+
+##############################################
+# Define COM directories
+##############################################
+export GFSCOMIN=/com/gfs/prod/gfs.$PDY
+export MRFCOMIN=/com/${NET}/prod/mrf.${PDY}
+export COMIN=/com/${NET}/${envir}/gefs.${PDY}
+export COMINm1=/com/${NET}/${envir}/gefs.${PDYm1}
+################# lines between these markers have been modified for dev begin
+if [[ $envir = dev ]]; then
+  export COMIN=$baseoutput$COMIN
+  export COMINm1=$baseoutput$COMINm1
+fi
+################# lines between these markers have been modified for dev end
+mkdir -m 775 -p $COMIN/$cyc/pgrba
+mkdir -m 775 -p $COMIN/$cyc/pgrbalr
+mkdir -m 775 -p $COMIN/$cyc/track
+#############################################################
+export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+################# lines between these markers have been modified for dev begin
+if [[ $envir = dev ]]; then
+export COMOUT=$baseoutput/$COMOUT
+fi
+################# lines between these markers have been modified for dev end
+mkdir -m 775 -p $COMOUT/$cyc/ensstat
+mkdir -m 775 -p $COMOUT/$cyc/pgrba
+mkdir -m 775 -p $COMOUT/$cyc/pgrbalr
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2a
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2alr
+mkdir -m 775 -p $COMOUT/$cyc/track
+
+msg="HAS BEGUN on `hostname`"
+postmsg "$jlogfile" "$msg"
+
+####################################
+# Specify Timeout Behavior of Post
+#
+# SLEEP_TIME - Amount of time to wait for
+#              a restart file before exiting
+# SLEEP_INT  - Amount of time to wait between
+#              checking for restart files
+####################################
+export SLEEP_TIME=900
+export SLEEP_INT=5
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+
+. $PARMGLOBAL/gefs.parm
+
+####################################
+# Specify Forecast Hour Range
+####################################
+export SHOUR=00
+export FHINC=06
+export FHOUR=$fhmax
+
+env | sort
+
+#############################################################
+# Execute the script to compute the ensemble 
+# mean tropical cyclone track
+export cmodel=ens
+################# lines between these markers have been modified for dev begin
+export TRAKHOME=/ensemble/save/Dingchen.Hou/SVN/ENSTRAK_20140925
+export TRAKUSH=$TRAKHOME/util/ush
+export TRAKEXEC=$TRAKHOME/util/exec
+
+if [[ $envir = dev ]]; then
+  export COM=$COMOUT/$cyc/track
+#DHOU 04/13/2012 Added 1 line for ZEUS
+ if [[ $gefsmachine = zeus ]]; then
+     exectrkdir=$HOMEglobal/util/exec
+    $basesource/nw$envir/util/ush/ens_trak_ave.sh
+ elif  [[ $gefsmachine = wcoss ]]; then
+  if (( $gefsgribedition == 1 )); then
+     exectrkdir=$basesource/nw$envir/util/exec
+  elif (( $gefsgribedition == 2 )); then   
+     exectrkdir=$TRAKEXEC
+  fi   
+    $basesource/nw$envir/util/ush/ens_trak_ave.sh
+ else
+  ${utilscript}/ens_trak_ave.sh
+ fi
+else
+################# lines between these markers have been modified for dev end
+${utilscript}/ens_trak_ave.sh
+################# lines between these markers have been modified for dev begin
+fi
+################# lines between these markers have been modified for dev end
+#############################################################
+
+echo "`hostname`--`date`" >$COMOUT/${cyc}/track/where_gefs_tracker_${cycle}_ran
+
+msg="JOB COMPLETED NORMALLY"
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Remove the Temporary working directory
+##############################
+cd /tmpnwprd
+rm -rf $DATA
+
+$SMSBIN/endt

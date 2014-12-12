@@ -1,0 +1,457 @@
+#!/bin/ksh 
+#####################################################################
+# 12/3/2014, Dingchen Hou  Scripts are modified to be vertical structre and cleanned 
+#####################################################################
+# 9/20/2009, Julia Zhu   Scripts are modified to be sharable
+#                        between EMC and NCO
+#         Please note that variable "RUN_ENVIR" is set and used
+#         in the development enviroment only.
+######################################################################
+
+$SMSBIN/smsinit $LOADL_STEP_ID 
+echo `date` $0 `date -u` begin
+
+set -xa
+####################################
+
+# 01/28/2013 New variables added for WCOSS and cross-machine unfication
+export gefsmachine=${gefsmachine:-wcoss}
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export machine=${gefsmachine:-wcoss}
+export APRUN=${gefsmpexec:-mpirun.lsf}
+
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+if [ "$RUN_ENVIR" = dev ]   ### For Developers
+then
+# . $basesource/nw${envir}/versions/gefs.ver
+  . $basesource/nw${envir}/parm/gefs_config
+else
+  VERSION_FILE=/nw{$envir}/versions/gefs.ver
+  if [-f $VERSION_FILE]; then
+   . $VERSION_FILE
+  else
+   ecflow_client --abort
+   exit
+  fi 
+fi
+export HOMEGEFS=${HOMEGEFS}
+export HOMEGSM=${HOMEGSM}
+export HOMEUTIL=${HOMEUTIL:-/nwprod/util}
+
+# ###################################
+# SET SHELL PROCESSING VARIABLES
+# ###################################
+export PS4='$SECONDS + '
+date
+
+####################################
+# obtain unique process id (pid) and make temp directory
+####################################
+export pid=$$
+if [ "$RUN_ENVIR" = dev ]    ### For Developers
+then
+   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
+else                         ### For Operations
+   export DATA_IN=/tmpnwprd
+fi
+export DATA=$DATA_IN/${job}.${pid}
+
+mkdir -p $DATA
+cd $DATA
+
+############################
+# Set up cycle varaible
+############################
+#echo $cyc       #DHTEST
+export cycle=t${cyc}z
+export cycle_fcst=t${cyc_fcst}z
+export NTHREADS=$NTHREADS_SIGCHGRS
+export MP_LABELIO=YES
+
+echo $cyc_fcst  $cyc  #DHTEST
+if (( cyc == cyc_fcst )); then
+  export cycsuffix=false
+  export fcstlong=true
+else
+  export fcstlong=false
+  export cycsuffix=true
+fi
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=gens
+
+####################################
+# File To Log Msgs
+####################################
+if [ "$RUN_ENVIR" = dev ]     ### For Developers
+then
+   export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
+else                        ### For Operations
+   export jlogfile=/com/logs/jlogfile
+fi
+
+CHGRES_ALL=yes
+CHGRES_ALL=no
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+if [[ $RUN_CONCURRENT = yes ]]; then
+  export PGMOUT=FCOUT.o$pid
+  export PGMERR=
+  export REDOUT=' | tee -a '
+  export REDERR=' 2>&1 '
+fi
+
+####################################
+# SENDSMS  - Flag Events on SMS
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# RERUN    - Rerun fcst from beginning (default no)
+# VERBOSE  - Specify Verbose Output in exglobal_fcst.sh.sms
+####################################
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
+  export SENDCOM=${SENDCOM:-YES}
+  export SENDSMS=${SENDSMS:-YES}
+  export VERBOSE=${VERBOSE:-NO}
+  export RERUN=${RERUN:-NO}
+
+  # Specify Execution Areas
+  export HOMEGSM=${HOMEGSM:-/nw${envir}}
+  export EXECGSM=${EXECGSM:-$HOMEGSM/exec}
+  export USHGSM=${USHGSM:-$HOMEGSM/ush}
+  export FIXGSM=${FIXGSM:-$HOMEGSM/fix/fix_am}
+  export PARMGSM=${PARMGSM:-$HOMEGSM/parm}
+
+# export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
+  export HOMEGLOBAL=${HOMEGSM:-/nwprod}
+  export EXECGLOBAL=${EXECGSM:-$HOMEGSM/exec}
+  export USHGLOBAL=${USHGSM:-$HOMEGSM/ush}
+  export FIXGLOBAL=${FIXGSM:-$HOMEGSM/fix/fix_am}
+
+  export HOMEGEFS=${HOMEGEFS:-/nw${envir}}
+  export EXECGEFS=${EXECGEFS:-$HOMEGEFS/exec}
+  export USHGEFS=${USHGEFS:-$HOMEGEFS/ush}
+  export FIXGEFS=${FIXGEFS:-$HOMEGEFS/fix}
+  export PARMGEFS=${PARMGEFS:-$HOMEGEFS/parm}
+
+  export HOMEUTIL=${HOMEUTIL:-/nwprod/util}
+else                             ### For Operations
+  export SENDCOM=YES
+  export SENDSMS=YES
+  export VERBOSE=NO
+  export RERUN=NO
+
+  # Specify Execution Areas
+  export HOMEGSM=/nw${envir}
+  export EXECGSM=$HOMEGSM/exec
+  export USHGSM=$HOMEGSM/ush
+  export FIXGSM=$HOMEGSM/fix/fix_am
+  export PARMGSM=$HOMEGSM/parm
+
+  export HOMEGLOBAL=/nwprod
+  export EXECGSM=$HOMESM/exec
+  export USHGSM=$HOMEGSM/ush
+  export FIXGSM=$HOMEGSM/fix
+  export PARMGSM=$HOMEGSM/parm
+
+  export HOMEGEFS=/nw${envir}
+  export EXECGEFS=$HOMEGEFS/exec
+  export USHGEFS=$HOMEGEFS/ush
+  export FIXGEFS=$HOMEGEFS/fix
+  export PARMGEFS=$HOMEGEFS/parm
+
+  export HOMEUTIL=${HOMEUTIL:-/nwprod/util}
+fi
+
+export ERRSCRIPT=err_chk
+export LOGSCRIPT=startmsg
+
+##############################
+# Set up the UTILITIES
+##############################
+export utilscript=$HOMEUTIL/ush
+export EXECUTIL=$HOMEUTIL/exec
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+sh $utilscript/setup.sh
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+sh $utilscript/setpdy.sh
+. PDY
+
+# hour_lr_ni will be used to define the IC files of the lower resolution part (if not restart) 
+# this variable is used to define the input/output files 
+(( hour_lr_ini = fhmaxh - HOUTSPS ))
+(( HOUTASPS = hour_lr_ini ))
+
+##############################################
+# Define COM and GES directories
+##############################################
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
+  export GFS_IN=${GFS_IN:-/com/gfs/prod/}
+  export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
+  export gespath=${gespath:-/global/noscrub/$LOGBAME/nwges/${envir}}
+
+  export COMGFS=$GFS_IN/gfs.${PDY}
+  export COMOUT=$COM_OUT/gefs.${PDY}
+else                              ### Fir Operations
+  export COMGFS=/com/gfs/prod/gfs.${PDY}
+  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+  export gespath=/nwges/${envir}
+fi
+
+#mkdir -m 775 -p $COMOUT/$cyc/sfcsig
+#mkdir -m 775 -p $COMOUT/$cyc/sflux
+#mkdir -m 775 -p $COMOUT/$cyc/misc
+
+export ENS_COM=$COMOUT
+
+export GESdir=$gespath/gefs.${PDY}
+mkdir -m 775 -p $GESdir
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+. $PARMGEFS/gefs.parm
+
+###############################################################
+# Specify locations of the following scripts and executables
+###############################################################
+export CHGRESTHREAD=$NTHREADS_SIGCHGRS
+export OVERPARMEXEC=$EXECGLOBAL/overparm_grib
+
+# Change Resolution script and executable
+   export chgresush=$USHGLOBAL/global_chgres.sh
+   export CHGRESEXEC=$EXECGLOBAL/global_chgres
+
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
+case $gefsmachine in
+ (ccs)
+   export chgresush=$USHGLOBAL/global_chgres.sh
+   export CHGRESEXEC=$EXECGLOBAL/global_chgres_thread
+ ;;
+ (zeus)
+   export chgresush=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/ush/global_chgres.sh
+   export CHGRESEXEC=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/exec/global_chgres
+ ;;
+ (wcoss)
+   export chgresush=/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0/ush/global_chgres.sh
+   export CHGRESEXEC=/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0/exec/global_chgres
+ ;;
+esac
+fi
+
+#export HOMEUTIL=$HOMEUTIL
+export HOMEUTIL=/nwprod/util
+export EXECUTIL=$HOMEUTIL/exec
+export FIXUTIL=$HOMEUTIL/fix
+
+####################################
+# Create member list
+####################################
+
+if [[ $CHGRES_ALL = yes ]]; then
+   #Concurrent run, multi member
+   memberlist=""
+   (( imem = 0 ))
+   while (( imem < npair * 2 ))
+   do
+     (( imem = imem + 1 ))
+     if (( imem < 10 )); then
+      imem=0$imem
+     fi
+     memberlist="$memberlist p$imem"
+   done
+   if (( cyc == cyc_fcst )) ; then
+     memberlist="$memberlist c00"
+     (( imem = imem + 1 ))
+   fi
+   (( ENS_NUM = imem ))
+   export ENS_NUM
+   echo ENS_NUM=$ENS_NUM
+   export RUM=ge'${MN}'
+   echo RUM=$RUM
+else
+  #single member
+  echo RUN=$RUN
+  memberlist=`echo $RUN|cut -c3-5`
+  export ENS_NUM=1
+  echo ENS_NUM=$ENS_NUM
+fi
+memberlist=`echo $memberlist`
+MEMBER_NAMES=$memberlist
+
+#
+# Forecast Fix Fields
+#
+#export CLTUNE=$FIXGLOBAL/global_cldtune.f77
+#export DTBTHE=$FIXGLOBAL/global_tbthe.f77
+#export O3PROD=$FIXGLOBAL/global_o3prod.f77
+#export O3LOSS=$FIXGLOBAL/global_o3loss.f77
+
+#### DHOU, 09/10/2010 added this block for  truncation of forecast files to prepair for lower res.      
+     #######################################################
+     # variables for low-resolution forecast third part
+     # from FH=fhmaxh-fhmax, 6-hourly output
+     #######################################################
+
+     # Interpolate restart Files for the third part
+
+     export JCAP=$JCAPLR
+     export LEVS=$LEVSLR
+     export LONB=$LONBLR
+     export LATB=$LATBLR
+
+     export NTRAC=$NTRACLR
+     export MTNRSL=$MTNRSLLR
+     export IDVC=$IDVC
+     export NVCOORD=$IDVC
+     if (( IDVC == 1 )); then
+       export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
+     fi
+     if (( IDVC == 2 )); then
+       export SIGLEVEL=$FIXGLOBAL/global_hyblev.l${LEVS}.txt
+     fi
+
+#
+# chgres Fix Fields
+#
+# DHOU 03/04/2014 Adding new file names and variables for the global_chgres upgrade (gfs 2014 implementation)
+export LONSPERLAT=$FIXGLOBAL/global_lonsperlat.t$MTNRSLLR.txt
+#export LONSPERLAT=/ensemble/save/Dingchen.Hou/SVN/tfFv/nwdev/fix/global_lonsperlat.t382.768.384.txt
+export OROGRAPHY=$FIXGLOBAL/global_orography.t$MTNRSLLR.grb
+export OROGRAPHY_UF=$FIXGLOBAL/global_orography_uf.t$MTNRSLLR.grb
+export    SLMASK=$FIXGLOBAL/global_slmask.t$MTNRSLLR.grb
+#   The SST and SEA_ICE Climate fix file:
+#export FNTSFC=$FIXGLOBAL/cfs_oi2sst1x1monclim19822001.grb # Using default untill 2014 gfs implementation
+#export FNAISC=$FIXGLOBAL/cfs_ice1x1monclim19822001.grba   # Using default untill 2014 gfs implementation
+export FNTSFC=$FIXGLOBAL/RTGSST.1982.2012.monthly.clim.grb  # New for gfs 2014 implementation
+export FNAISC=$FIXGLOBAL/CFSR.SEAICE.1982.2012.monthly.clim.grb  # New for gfs 2014 implementation
+#  The VEGTYPE fix file and the O3 Climate file, use the default
+#export FNVETC=$FIXGLOBAL/global_vegtype.1x1.grb
+#export O3CLIM=$FIXGLOBAL/global_o3clim.txt
+#
+# chgres parameters
+#
+   export FIXSUBDA=fix
+   export use_ufo=.true.
+   export IDSL=1
+   export IDVM=0
+   export IDVT=21
+   export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,idsl=$IDSL,idvc=$IDVC,idvm=$IDVM,idvt=$IDVT,use_ufo=$use_ufo"
+
+# Change resolution of the high-res forecast files
+# Write the resulted files in $GESdir and make a copy in $DATA 
+ if  [[ $CHGRES_ALL = YES ]] ; then
+   for MN in $MEMBER_NAMES
+   do
+     eval export SIGOUT=$GESdir/${RUM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
+     eval export SFCOUT=$GESdir/${RUM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+     if [[ $cycsuffix = false ]]; then
+      if [[ $ENS_SPS = .true. ]]; then
+       eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.ss${HOUTASPS}
+       eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.bs${HOUTASPS}
+      else
+       eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.sf${HOUTASPS}
+       eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.bf${HOUTASPS}
+      fi
+     else
+      if [[ $ENS_SPS = .true. ]]; then
+       eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
+       eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
+      else
+       eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
+       eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
+      fi
+     fi
+
+     echo `date` timing lr chgres $MN before
+         $chgresush >>$pgmout
+     echo `date` timing lr $MN chgres after
+   done  #MN
+ else
+     export SIGOUT=$GESdir/${RUN}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
+     export SFCOUT=$GESdir/${RUN}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+     if [[ $cycsuffix = false ]]; then
+      if [[ $ENS_SPS = .true. ]]; then
+       export SIGINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.ss${HOUTASPS}
+       export SFCINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.bs${HOUTASPS}
+      else
+       export SIGINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.sf${HOUTASPS}
+       export SFCINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.bf${HOUTASPS}
+      fi
+     else
+      if [[ $ENS_SPS = .true. ]]; then
+       export SIGINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
+       export SFCINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
+      else
+       export SIGINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
+       export SFCINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
+      fi
+     fi
+     echo `date` timing lr chgres before
+         $chgresush >>$pgmout
+     echo `date` timing lr chgres after
+ fi
+
+# End of resolution change
+
+# remove the corresponding restart files from restarta
+
+for MN in $MEMBER_NAMES
+do
+  for file in sigr1 sigr2 sfcr sigs1 sigs2 sfcs
+  do
+    dirfile=$COMOUT/$cyc/restarta/ge$MN.t${cyc}z.$file
+    if [[ -f $dirfile ]]; then
+      ls -al $dirfile
+      rm $dirfile
+    fi
+  done
+done
+
+#### DHOU, 09/10/2010 added this block for lower res. forecast
+
+cat $pgmout
+echo
+if [[ $CHGRES_ALL = yes ]]; then
+  echo
+  echo `date` sorted forecast output begin
+  echo
+  cat $PGMOUT | sort -n -k1
+  echo
+  echo `date` sorted forecast output end
+  echo
+fi
+
+echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN
+echo DATA=$DATA
+ls -al $DATA
+echo `date` TEST LISTING OF WORKING DIRECTORY END
+
+msg="ENDED NORMALLY."
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATA_IN
+#rm -rf $DATA
+
+echo `date` $0 `date -u` end
+$SMSBIN/endt
