@@ -1,0 +1,245 @@
+
+export VERBOSE=yes
+sname=`basename $0`
+echo `date` $sname $member begin
+#####################################################################
+echo "-----------------------------------------------------"
+echo " exgefs_prdgen.sh.sms" 
+echo " based on exglobal_post.sh.sms and exglobal_post_pgrb2.sh.sms" 
+echo " interpolate master post files (GRIB2) and convert to GRIB1"
+echo " Sep 07 - Wobus - reorganized script"
+echo " Aug 10 - Wobus - added test for control file from post"
+echo " Jun 11 - Wobus - moved master post files to /com"
+echo " Jun 14 - Hou   - adopted to grb2 version master files as input"
+echo "-----------------------------------------------------"
+#####################################################################
+export PS4='+ $SECONDS $sname $member $LINENO: '
+
+set -xa
+na=`basename $0`
+
+cd $DATA
+
+$utilscript/setup.sh
+
+msg="HAS BEGUN on `hostname`"
+postmsg "$jlogfile" "$msg"
+
+export MP_LABELIO=YES
+
+if [[ "$cycsuffix" = "true" ]]; then
+  export cfsuffix=".cycfs$cyc_fcst"
+else
+  export cfsuffix=""
+fi
+echo cyc=$cyc cyc_fcst=$cyc_fcst
+echo cycle=$cycle cycle_fcst=$cycle_fcst
+echo fcstlong=$fcstlong
+echo cycsuffix=$cycsuffix
+echo cfsuffix=$cfsuffix
+
+#export WGRIB=${EXECUTIL}/wgrib
+#export GRBIDX=${EXECUTIL}/grbindex
+
+############################################################
+# clean up missing markers from previous run
+############################################################
+cd $COMOUT/$cyc/misc
+rc=$?
+if (( rc == 0 )); then
+  for file in $RUN.*.missing
+  do
+    if [[ -f $file ]]; then
+      echo `date` removing $COMOUT/$cyc/misc/$file
+      rm -f $COMOUT/$cyc/misc/$file
+    fi
+  done
+fi
+cd $DATA
+
+############################################################
+#  Define Variables:
+#  -----------------
+#  SHOUR        is the starting forecast hour. normally 0 except for restarts.
+#  FHOUR        is the ending forecast hour.
+#  FHINC        is the increment hour for each forecast steps.
+#  FH           is the current forecast hour.
+#  SLEEP_TIME   is the number of seconds to sleep before exiting with error.
+#  SLEEP_INT    is the number of seconds to sleep between restrt file checks.
+#  restart_file is the name of the file to key off of to kick off post.
+############################################################
+
+SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
+
+############################################################
+# Post Analysis Files before starting the Forecast Post 
+############################################################ 
+# wait for master post to be finished
+############################################################
+if (( SHOUR == 0 )); then
+  export ffhr=anl
+  export fhr=00
+  export anlflag=yes
+
+  ic=1
+  while [ $ic -le $SLEEP_LOOP_MAX ]
+  do
+     #20100730 change test to use master control file
+     mcfile=$COMOUT/$cyc/misc/$RUN.$cycle.master.control.anl$cfsuffix
+     testfhr=-1
+     if [[ -f $mcfile ]]; then
+       teststring=`cat $mcfile|head -1`
+       if [[ $teststring != '' ]]; then
+	 if [[ -f $COMOUT/$cyc/master/$RUN.$cycle.master.grb2ianl$cfsuffix ]] then
+	   testfhr=`echo $teststring | cut -c11-13`
+	 fi
+       fi
+     fi
+     echo testfhr=$testfhr fhr=$fhr
+     if (( testfhr >= fhr )); then
+	break
+     else
+	ic=`expr $ic + 1`
+	sleep $SLEEP_INT
+     fi
+     ###############################
+     # If we reach this point assume
+     # fcst job never reached restart 
+     # period and write file to
+     # indicate missing data
+     ###############################
+     if [ $ic -eq $SLEEP_LOOP_MAX ]
+     then
+	date >$COMOUT/$cyc/misc/$RUN.$ffhr.missing
+	echo `date` $sname $member end
+	msg="$member MISSING DATA for hour $ffhr"
+	postmsg "$jlogfile" "$msg"
+	export err=1; err_chk
+     fi
+  done
+
+  #######################################################
+  # control the inclusion of perturbation identifiers
+  # in the GRIB1 ensemble PDS header extension
+  #######################################################
+  export addgrb1id=yes
+  export makegrb1i=yes
+
+  # Making the 1-degree grib files
+  $USHGEFS/gefs_prdgen.sh
+
+fi
+
+############################################################
+# Initialize Loop Through the Post Forecast Files 
+############################################################
+
+(( fhr=SHOUR))
+
+if test $fhr -lt 10
+then
+   fhr="0$fhr"
+fi
+export fhr
+
+export anlflag=no
+
+############################################################
+# Loop Through the Post Forecast Files 
+############################################################
+while test $fhr -le $FHOUR
+do
+    ffhr=f$fhr
+
+    ###############################
+    # Start Looping for the 
+    # existence of the restart files
+    ###############################
+    export pgm="postcheck"
+    ic=1
+
+    while [ $ic -le $SLEEP_LOOP_MAX ]
+    do
+       #20100730 change test to use master control file
+       mcfile=$COMOUT/$cyc/misc/$RUN.$cycle.master.control$cfsuffix
+       testfhr=-1
+       if [[ -f $mcfile ]]; then
+	 teststring=`cat $mcfile|head -1`
+	 if [[ $teststring != '' ]]; then
+	   if [[ -f $COMOUT/$cyc/master/$RUN.$cycle.master.grb2i$ffhr$cfsuffix ]] then
+	     testfhr=`echo $teststring | cut -c11-13`
+	   fi
+	 fi
+       fi
+       echo testfhr=$testfhr fhr=$fhr
+       if (( testfhr >= fhr )); then
+          break
+       else
+          ic=`expr $ic + 1`
+          sleep $SLEEP_INT
+       fi
+       ###############################
+       # If we reach this point assume
+       # fcst job never reached restart 
+       # period and error exit
+       ###############################
+       if [ $ic -eq $SLEEP_LOOP_MAX ]
+       then
+	  date >$COMOUT/$cyc/misc/$RUN.$ffhr.missing
+	  echo `date` $sname $member end
+	  msg="$member MISSING DATA"
+	  postmsg "$jlogfile" "$msg"
+	  export err=1; err_chk
+       fi
+    done
+
+   msg="Starting post for fhr=$fhr"
+   postmsg "$jlogfile" "$msg"
+
+
+  #################################### 
+  # control the inclusion of perturbation identifiers
+  # in the GRIB1 ensemble PDS header extension
+  ####################################
+  export addgrb1id=yes
+  export makegrb1i=yes
+
+  # Making the 2.5x2.5 degree GRIB files in background
+  if [[ "$DO_LOW_RES" = 'YES' ]] && [[ `expr $fhr % 6 ` -eq 0 ]] 
+  then
+    ($USHGEFS/gefs_prdgen_lowres.sh)&
+    #$USHGEFS/gefs_prdgen_lowres.sh
+  fi
+
+  # Making the 1x1 degree GRIB file
+  $USHGEFS/gefs_prdgen.sh
+
+   wait
+
+  ####################################
+  # send control files to misc
+  ####################################
+  if test $SENDCOM = "YES"
+  then
+    if test $fhr -lt 100
+    then
+      pad="0"
+    else
+      pad=""
+    fi
+    echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/${RUN}.t${cyc}z.prdgen.control$cfsuffix
+  fi
+
+  export fhr=`expr $fhr + $FHINC`
+  if test $fhr -lt 10
+  then
+     export fhr="0$fhr"
+  fi
+done
+########################################################
+
+
+msg='ENDED NORMALLY.'
+postmsg "$jlogfile" "$msg"
+
+################## END OF SCRIPT #######################

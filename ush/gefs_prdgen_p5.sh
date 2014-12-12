@@ -20,75 +20,19 @@ set -xa
 anlflag=$anlflag
 ffhr=$ffhr
 fhr=$fhr
-
-export WGRIB=${WGRIB:-/nwprod/util/exec/wgrib}
-export GRBIDX=${GRBIDX:-/nwprod/util/exec/grbindex}
-export COPYGB=${COPYGB:-/nwprod/util/exec/copygb}
-export WGRIB2=${WGRIB2:-/nwprod/util/exec/wgrib2}
-export GRB2IDX=${GRB2IDX:-/nwprod/util/exec/grb2index}
-export COPYGB2=${COPYGB2:-/nwprod/util/exec/copygb2}
-#export CNVGRIB=${CNVGRIB:-/nwprod/util/exec/cnvgrib}
-export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
-
-export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
-grid1p0="0 6 0 0 0 0 0 0 360 181 0 0 90000000 0 48 -90000000 359000000 1000000 1000000 0"
-gridp5="0 6 0 0 0 0 0 0 720 361 0 0 90000000 0 48 -90000000 359500000 500000 500000 0"
-grid2p5="0 6 0 0 0 0 0 0 144 73 0 0 90000000 0 48 -90000000 357500000 2500000 2500000 0"
 grid=$gridp5
 
-#DHOU 2/1/2013, replace block with the ccs-prod version (above)
-#export WGRIB=/nwprod/util/exec/wgrib
-#export GRBIDX=/nwprod/util/exec/grbindex
-#export ENSADD=$USHGLOBAL/global_ensadd.sh
-#export CNVGRIB=/nwprod/util/exec/cnvgrib
-##RLW 20110722 CNVGRIB TEMPORARY
-#export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib
-################################################### RLW 20110722 CNVGRIB TEMPORARY
-#export COPYGB=/nwprod/util/exec/copygb
-#export WGRIB2=/nwprod/util/exec/wgrib2
+export WGRIB=${WGRIB:-$EXECUTIL/wgrib}
+export GRBIDX=${GRBIDX:-$EXECUTIL/grbindex}
+export COPYGB=${COPYGB:-$EXECUTIL/copygb}
+export WGRIB2=${WGRIB2:-$EXECUTIL/wgrib2}
+export GRB2IDX=${GRB2IDX:-$EXECUTIL/grb2index}
+export COPYGB2=${COPYGB2:-$EXECUTIL/copygb2}
+export CNVGRIB=${CNVGRIB:-$EXECUTIL/cnvgrib21}
+#export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
 
-if [[ $envir = dev ]]; then
-  case $gefsmachine in
-    (Twcoss)
-export WGRIB=/nwprod/util/exec/wgrib
-export GRBIDX=/nwprod/util/exec/grbindex
-export ENSADD=$USHgefs/global_ensadd.sh
-export CNVGRIB=/nwprod/util/exec/cnvgrib
-    ;;
-    (zeus)
-#DHOU 03/22/2012 For ZEUS, copy from exgefs_nceppost.sh.sms
-export WGRIB=${WGRIB:-${EXECUTIL}/wgrib}
-export GRBIDX=${GRBIDX:-${EXECUTIL}/grbindex}
-    ;;
-  esac
-#export ENSADD=${ENSADD:-$USHGLOBAL/global_ensadd.sh}
-#export POSTGPSH=${POSTGPSH:-$USHGLOBAL/global_nceppost.sh}
-#DHOU 03/22/2012 For ZEUS, these two are not used in ceppost.sh.sms
-################################################## RLW 20110722 CNVGRIB TEMPORARY
-  case $gefsmachine in
-    (Twcoss)
-export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
-    ;;
-    (zeus)
-export ENSADD=$USHgefs/global_ensadd.sh
-export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib
-    ;;
-  esac
-fi  
-################################################## RLW 20110722 CNVGRIB TEMPORARY
-if [[ $envir = dev ]]; then
-  case $gefsmachine in
-    (Twcoss)
-export COPYGB=/nwprod/util/exec/copygb
-export COPYGB2=/nwprod/util/exec/copygb2
-    ;;
-    (zeus)
-#DHOU 03/22/2012 For ZEUS, these two are not used in ceppost.sh.sms
-export COPYGB=$HOMEglobal/util/exec/copygb
-export COPYGB2=$HOMEglobal/util/exec/copygb2
-    ;;
-  esac
-fi  
+export ENSADD=${ENSADD:-$USHGEFS/global_ensadd.sh}
+
 echo settings in $0 gefsmachine=$gefsmachine
 echo settings in $0 WGRIB=$WGRIB
 echo settings in $0 WGRIB2=$WGRIB2
@@ -127,13 +71,6 @@ if [[ -s $DATA/pgrb2$ffhr$cfsuffix ]] && \
    echo `date` 1x1 pgrb2 processing skipped for $RUN $ffhr
 else
    $COPYGB2 -g "${grid}" -i0 -x $COMIN/$cyc/master/$RUN.$cycle.master.grb2$ffhr$cfsuffix pgb2file.$ffhr$cfsuffix
-#  $ENSADD $e1 $e2 pgbfile.$ffhr$cfsuffix pgbifile.$ffhr$cfsuffix epgbfile.$ffhr$cfsuffix
-#  if [[ "$addgrb1id" = "yes" ]]; then
-#    mv epgbfile.$ffhr$cfsuffix pgbfile.$ffhr$cfsuffix
-#    if [[ "$makegrb1i" = "yes" ]]; then
-#      $GRBIDX pgbfile.$ffhr$cfsuffix pgbifile.$ffhr$cfsuffix
-#    fi
-#  fi
    echo `date` pgrb2ap5 1x1 grbfile $ffhr completed
 
    ######################################################
@@ -151,8 +88,8 @@ else
    excludestring='180-192hr'
 
    # begin block removed from background
-#  parmlist=$PARMgefs/gefs_pgrba_f${hsuffix}.parm
-   parmlist=$PARMgefs/gefs_pgrb2a_f${hsuffix}.parm
+#  parmlist=$PARMGEFS/gefs_pgrba_f${hsuffix}.parm
+   parmlist=$PARMGEFS/gefs_pgrb2a_f${hsuffix}.parm
    $WGRIB2 -s pgb2file.$ffhr$cfsuffix | \
        grep -F -f $parmlist | \
        grep -v -F $excludestring | \
@@ -170,8 +107,8 @@ else
    # end block removed from background
 
    # begin block removed from background
-#  parmlist=$PARMgefs/gefs_pgrbb_f${hsuffix}.parm
-   parmlist2=$PARMgefs/gefs_pgrb2ab_f${hsuffix}.parm
+#  parmlist=$PARMGEFS/gefs_pgrbb_f${hsuffix}.parm
+   parmlist2=$PARMGEFS/gefs_pgrb2ab_f${hsuffix}.parm
    $WGRIB2 -s pgb2file.$ffhr$cfsuffix | \
        grep -F -f $parmlist2 | \
        grep -v -F -f $parmlist | \
@@ -184,9 +121,9 @@ else
 #  if test "$CREATE_TIGGE" = 'YES'
 #  then
 #     if (( fhr == 0 )); then
-#       parmlist=${PARMgefs}/gefs_pgrb2c_f00.parm
+#       parmlist=${PARMGEFS}/gefs_pgrb2c_f00.parm
 #     else
-#       parmlist=${PARMgefs}/gefs_pgrb2c_fhh.parm
+#       parmlist=${PARMGEFS}/gefs_pgrb2c_fhh.parm
 #     fi
 ##    set +x
 #     $WGRIB2 pgb2bfile.$ffhr$cfsuffix | \
@@ -196,9 +133,6 @@ else
    fi
 
    # begin block removed from background
-#  parmlista=$PARMgefs/gefs_pgrba_f${hsuffix}.parm
-#  parmlistb=$PARMgefs/gefs_pgrbb_f${hsuffix}.parm
-   parmlist2=$PARMgefs/gefs_pgrb2ab_f${hsuffix}.parm
    $WGRIB2 -s pgb2file.$ffhr$cfsuffix | \
        grep -v -F -f $parmlist2 | \
        $WGRIB2 pgb2file.$ffhr$cfsuffix -s -i -grib pgb2dfile.$ffhr$cfsuffix
@@ -206,12 +140,6 @@ else
        grep -F -f $parmlist2 | \
        grep -F $excludestring | \
        $WGRIB2 pgb2file.$ffhr$cfsuffix -s -i -append -grib pgb2dfile.$ffhr$cfsuffix
-#  $WGRIB2 -s pgb2file.$ffhr$cfsuffix | \
-#      grep -F -f $parmlist2 | \
-#      grep -F $excludestring | \
-#      $WGRIB2 pgb2file.$ffhr$cfsuffix -s -i -append -grib pgb2dfile.$ffhr$cfsuffix
-#  $WGRIB2 -s pgb2dfile.$ffhr$cfsuffix > pgb2dfile.${ffhr}${cfsuffix}.idx
-#  $GRB2IDX pgb2dfile.$ffhr$cfsuffix pgb2difile.$ffhr$cfsuffix
    # end block removed from background
 #  set -x
 
@@ -224,7 +152,7 @@ else
       #
       mv pgb2afile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2ap5/${RUN}.${cycle}.pgrb2ap5$ffhr$cfsuffix
       mv pgb2bfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2bp5/${RUN}.${cycle}.pgrb2bp5$ffhr$cfsuffix
-      mv pgb2cfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2cp5/${RUN}.${cycle}.pgrb2cp5$ffhr$cfsuffix
+#     mv pgb2cfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2cp5/${RUN}.${cycle}.pgrb2cp5$ffhr$cfsuffix
       mv pgb2dfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2dp5/${RUN}.${cycle}.pgrb2dp5$ffhr$cfsuffix
       if [[ "$makegrb1i" = "yes" ]]; then
 	mv pgb2afile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2ap5/${RUN}.${cycle}.pgrb2ap5$ffhr$cfsuffix.idx

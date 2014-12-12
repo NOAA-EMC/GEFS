@@ -20,65 +20,18 @@ set -xa
 anlflag=$anlflag
 ffhr=$ffhr
 fhr=$fhr
-
-export WGRIB=${WGRIB:-/nwprod/util/exec/wgrib}
-export GRBIDX=${GRBIDX:-/nwprod/util/exec/grbindex}
-export COPYGB=${COPYGB:-/nwprod/util/exec/copygb}
-export WGRIB2=${WGRIB2:-/nwprod/util/exec/wgrib2}
-export GRB2IDX=${GRB2IDX:-/nwprod/util/exec/grb2index}
-export COPYGB2=${COPYGB2:-/nwprod/util/exec/copygb2}
-#export CNVGRIB=${CNVGRIB:-/nwprod/util/exec/cnvgrib}
-export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
-
-export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
-grid1p0="0 6 0 0 0 0 0 0 360 181 0 0 90000000 0 48 -90000000 359000000 1000000 1000000 0"
-gridp5="0 6 0 0 0 0 0 0 720 361 0 0 90000000 0 48 -90000000 359500000 500000 500000 0"
-grid2p5="0 6 0 0 0 0 0 0 144 73 0 0 90000000 0 48 -90000000 357500000 2500000 2500000 0"
 grid=$grid2p5
 
-################################################## RLW 20110722 CNVGRIB TEMPORARY
-if [[ $envir = dev ]]; then
-  case $gefsmachine in
-    (Twcoss)
-export WGRIB=/nwprod/util/exec/wgrib
-export GRBIDX=/nwprod/util/exec/grbindex
-export ENSADD=$USHgefs/global_ensadd.sh
-export CNVGRIB=/nwprod/util/exec/cnvgrib
-    ;;
-    (zeus)
-#DHOU 03/22/2012 For ZEUS, copy from exgefs_nceppost.sh.sms
-export WGRIB=${EXECUTIL}/wgrib
-export GRBIDX=${EXECUTIL}/grbindex
-    ;;
-  esac
-#export ENSADD=${ENSADD:-$USHGLOBAL/global_ensadd.sh}
-#export POSTGPSH=${POSTGPSH:-$USHGLOBAL/global_nceppost.sh}
-#DHOU 03/22/2012 For ZEUS, these two are not used in ceppost.sh.sms
-################################################## RLW 20110722 CNVGRIB TEMPORARY
-  case $gefsmachine in
-    (wcoss)
-export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
-    ;;
-    (zeus)
-export ENSADD=$USHgefs/global_ensadd.sh
-export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib
-    ;;
-  esac
-fi  
-################################################## RLW 20110722 CNVGRIB TEMPORARY
-if [[ $envir = dev ]]; then
-  case $gefsmachine in
-    (Twcoss)
-export COPYGB=/nwprod/util/exec/copygb
-export COPYGB2=/nwprod/util/exec/copygb2
-    ;;
-    (zeus)
-#DHOU 03/22/2012 For ZEUS, these two are not used in ceppost.sh.sms
-export COPYGB=$HOMEglobal/util/exec/copygb
-export COPYGB2=$HOMEglobal/util/exec/copygb2
-    ;;
-  esac
-fi  
+export WGRIB=${WGRIB:-$EXECUTIL/wgrib}
+export GRBIDX=${GRBIDX:-$EXECUTIL/grbindex}
+export COPYGB=${COPYGB:-$EXECUTIL/copygb}
+export WGRIB2=${WGRIB2:-$EXECUTIL/wgrib2}
+export GRB2IDX=${GRB2IDX:-$EXECUTIL/grb2index}
+export COPYGB2=${COPYGB2:-$EXECUTIL/copygb2}
+export CNVGRIB=${CNVGRIB:-$EXECUTIL/cnvgrib21}
+
+export ENSADD=${ENSADD:-$USHGEFS/global_ensadd.sh}
+
 echo settings in $0 gefsmachine=$gefsmachine
 echo settings in $0 WGRIB=$WGRIB
 echo settings in $0 WGRIB2=$WGRIB2
@@ -113,13 +66,6 @@ postmsg "$jlogfile" "$msg"
 ####################################
 
 $COPYGB2 -g  "${grid}" -i0 -x $COMIN/$cyc/master/$RUN.$cycle.master.grb2$ffhr$cfsuffix pgb2file.$ffhr.2$cfsuffix
-#$ENSADD $e1 $e2 pgbfile.$ffhr.2$cfsuffix pgbifile.$ffhr.2$cfsuffix epgbfile.$ffhr.2$cfsuffix
-#if [[ "$addgrb1id" = "yes" ]]; then
-#  mv epgbfile.$ffhr.2$cfsuffix pgbfile.$ffhr.2$cfsuffix
-#   if [[ "$makegrb1i" = "yes" ]]; then
-#       $GRBIDX pgbfile.$ffhr.2$cfsuffix pgbifile.$ffhr.2$cfsuffix
-#   fi
-#fi
 echo `date` pgrba 2.5x2.5 grbindex $ffhr completed
 
 if  (( fhr == 0 ))
@@ -139,7 +85,7 @@ if [[ -s $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix ]] && \
    [[ $overwrite = no ]]; then
      echo `date` 2.5x2.5 pgrb2a processing skipped for $RUN $ffhr
 else
-   parmlist=$PARMgefs/gefs_pgrb2a_f${hsuffix}.parm
+   parmlist=$PARMGEFS/gefs_pgrb2a_f${hsuffix}.parm
    set +x
    $WGRIB2 -s pgb2file.$ffhr.2$cfsuffix | \
        grep -F -f $parmlist | \
@@ -166,7 +112,7 @@ if [[ -s $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix ]] && \
    [[ $overwrite = no ]]; then
      echo `date` 2.5x2.5 pgrb2b processing skipped for $RUN $ffhr
 else
-   parmlist2=$PARMgefs/gefs_pgrb2ab_f${hsuffix}.parm
+   parmlist2=$PARMGEFS/gefs_pgrb2ab_f${hsuffix}.parm
    set +x
    $WGRIB2 -s pgb2file.$ffhr.2$cfsuffix | \
        grep -F -f $parmlist2 | \
@@ -336,7 +282,7 @@ echo `date` sf and bf copied to nwges $ffhr completed
 #  if [[ $envir != para ]]; then
 #    if [[ $envir != test ]]; then
 #      sigfilename=${RUN}.t${cyc}z.s$ffhr$cfsuffix
-#      $EXECgefs/sigstat $COMIN/$cyc/sfcsig/$sigfilename >$COMOUT/$cyc/stats/sigstat.$sigfilename
+#      $EXECGEFS/sigstat $COMIN/$cyc/sfcsig/$sigfilename >$COMOUT/$cyc/stats/sigstat.$sigfilename
 #    fi
 #  fi
 #fi

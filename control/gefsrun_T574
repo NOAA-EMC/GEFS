@@ -1445,7 +1445,8 @@ case $taskname in
   ;;
   (init.mask)
     ################################# production variables
-    jobscript=JGEFS_INIT_MASK.sms.$envir
+    jobscript=JGEFS_INIT_MASK
+#   jobscript=JGEFS_INIT_MASK.sms.$envir
     job_name=jgefs_init_mask_$cyc
     job_type=parallel
     total_tasks=80
@@ -1480,7 +1481,8 @@ case $taskname in
   ;;
   (enkf.track)
     ################################# production variables
-    jobscript=JGEFS_ENKF_TRACK.sms.$envir
+    jobscript=JGEFS_ENKF_TRACK
+#   jobscript=JGEFS_ENKF_TRACK.sms.$envir
     job_name=jgefs_enkf_track_$cyc
     job_type=parallel
     total_tasks=40
@@ -1516,7 +1518,8 @@ case $taskname in
   ;;
   (init.separate)
     ################################# production variables
-    jobscript=JGEFS_INIT_SEPARATE.sms.$envir
+    jobscript=JGEFS_INIT_SEPARATE
+#   jobscript=JGEFS_INIT_SEPARATE.sms.$envir
     job_name=jgefs_init_separate_$cyc
     job_type=parallel
     wall_clock_limit="01:50:00"
@@ -1546,7 +1549,8 @@ case $taskname in
   ;;
   (init.et)
     ################################# production variables
-    jobscript=JGEFS_INIT_ET.sms.$envir
+    jobscript=JGEFS_INIT_ET
+#   jobscript=JGEFS_INIT_ET.sms.$envir
     job_name=tgefs_init_et_$cyc
     job_type=parallel
     total_tasks=10
@@ -1591,7 +1595,8 @@ case $taskname in
   ;;
   (init.combine)
     ################################# production variables
-    jobscript=JGEFS_INIT_COMBINE.sms.$envir
+    jobscript=JGEFS_INIT_COMBINE
+#   jobscript=JGEFS_INIT_COMBINE.sms.$envir
     job_name=tgefs_init_combine_$cyc
     job_type=parallel
     total_tasks=40
@@ -1635,7 +1640,8 @@ case $taskname in
   (forecast_hr)
     FORECAST_SEGMENT=hr
     ################################# production variables
-    jobscript=JGEFS_FORECAST.sms.$envir
+    jobscript=JGEFS_FORECAST
+#   jobscript=JGEFS_FORECAST.sms.$envir
     if [[ $fcstjoblength = long ]]; then
       job_name=jgefs_forecast_${cyc}
       wall_clock_limit="00:60:00"
@@ -1671,7 +1677,7 @@ case $taskname in
     # this node formula reproduces production for npert=20 and parallel_threads=2
     (( node = ( total_tasks + 31 ) / 32 ))
 ##DHOU, 08/20/2010 modified J-job script for option of old/new gfs
-    jobscript=JGEFS_FORECAST.sms.$envir
+#   jobscript=JGEFS_FORECAST.sms.$envir
 
    ############ DHOU, 08/20/2010, suggested resources for T254L42 on VAPOR dev mode
    ###### This section should be modified based on RESOLUTION and parallel_threads
@@ -1758,7 +1764,8 @@ case $taskname in
   (forecast_lr)
     FORECAST_SEGMENT=lr
     ################################# production variables
-    jobscript=JGEFS_FORECAST.sms.$envir
+    jobscript=JGEFS_FORECAST
+#   jobscript=JGEFS_FORECAST.sms.$envir
     if [[ $fcstjoblength = long ]]; then
       job_name=jgefs_forecast_${cyc}
       wall_clock_limit="00:60:00"
@@ -1794,7 +1801,7 @@ case $taskname in
     # this node formula reproduces production for npert=20 and parallel_threads=2
     (( node = ( total_tasks + 31 ) / 32 ))
 ##DHOU, 08/20/2010 modified J-job script for option of old/new gfs
-    jobscript=JGEFS_FORECAST.sms.$envir
+#   jobscript=JGEFS_FORECAST.sms.$envir
 
    ############ DHOU, 08/20/2010, suggested resources for T254L42 on VAPOR dev mode
    ###### This section should be modified based on RESOLUTION and parallel_threads
@@ -1866,7 +1873,8 @@ case $taskname in
   ;;
   (anlchgres)
     ################################# production variables
-    jobscript=JGEFS_ANLCHGRS.sms.dev
+    jobscript=JGEFS_ANLCHGRS
+#   jobscript=JGEFS_ANLCHGRS.sms.dev
     job_type=parallel
     total_tasks=8
     node=1
@@ -1923,7 +1931,8 @@ case $taskname in
   ;;
   (chgres)
     ################################# production variables
-    jobscript=JGEFS_SIGCHGRS.sms.dev
+    jobscript=JGEFS_SIGCHGRS
+#   jobscript=JGEFS_SIGCHGRS.sms.dev
     job_type=parallel
     total_tasks=8
     node=1
@@ -1981,7 +1990,8 @@ case $taskname in
   (restart_copy_hr)
     FORECAST_SEGMENT=hr
     ################################# production variables
-    jobscript=JGEFS_RESTART_COPY.sms.dev
+    jobscript=JGEFS_RESTART_COPY
+#   jobscript=JGEFS_RESTART_COPY.sms.dev
     if [[ $fcstjoblength = long ]]; then
       job_name=jgefs_restart_copy_${mem}_${cyc}
       wall_clock_limit="01:30:00"
@@ -2022,7 +2032,8 @@ case $taskname in
   (restart_copy_lr)
     FORECAST_SEGMENT=lr
     ################################# production variables
-    jobscript=JGEFS_RESTART_COPY.sms.dev
+    jobscript=JGEFS_RESTART_COPY
+#   jobscript=JGEFS_RESTART_COPY.sms.dev
     if [[ $fcstjoblength = long ]]; then
       job_name=jgefs_restart_copy_${mem}_${cyc}
       wall_clock_limit="01:30:00"
@@ -2063,7 +2074,8 @@ case $taskname in
   (nceppost_hr)
     ################################# production variables
     FORECAST_SEGMENT=hr
-    jobscript=JGEFS_NCEPPOST.sms.$envir
+    jobscript=JGEFS_NCEPPOST
+#   jobscript=JGEFS_NCEPPOST.sms.$envir
 #   jobscript=JGEFS_NCEPPOST_GRB1.sms.$envir
     if [[ $fcstjoblength = long ]]; then
       job_name=jgefs_${mem}_post_${cyc}
@@ -2114,7 +2126,8 @@ case $taskname in
   (nceppost_lr)
     ################################# production variables
     FORECAST_SEGMENT=lr
-    jobscript=JGEFS_NCEPPOST.sms.$envir
+    jobscript=JGEFS_NCEPPOST
+#   jobscript=JGEFS_NCEPPOST.sms.$envir
 #   jobscript=JGEFS_NCEPPOST_GRB1.sms.$envir
     if [[ $fcstjoblength = long ]]; then
       job_name=jgefs_${mem}_post_${cyc}
@@ -2164,7 +2177,8 @@ case $taskname in
   (post.prdgen_hr)
     FORECAST_SEGMENT=hr
     ################################# production variables
-    jobscript=JGEFS_PRDGEN.sms.$envir
+    jobscript=JGEFS_PRDGEN
+#   jobscript=JGEFS_PRDGEN.sms.$envir
     if [[ $fcstjoblength = long ]]; then
       job_name=jgefs_${mem}_prdgen_${cyc}
       wall_clock_limit="01:30:00"
@@ -2210,7 +2224,8 @@ case $taskname in
   (post.prdgen_lr)
     FORECAST_SEGMENT=lr
     ################################# production variables
-    jobscript=JGEFS_PRDGEN.sms.$envir
+    jobscript=JGEFS_PRDGEN
+#   jobscript=JGEFS_PRDGEN.sms.$envir
     if [[ $fcstjoblength = long ]]; then
       job_name=jgefs_${mem}_prdgen_${cyc}
       wall_clock_limit="01:30:00"
@@ -2255,7 +2270,8 @@ case $taskname in
   ;;
   (prdgen.gfs)
     ################################# production variables
-    jobscript=JGEFS_PRDGEN_GFS.sms.$envir
+    jobscript=JGEFS_PRDGEN_GFS
+#   jobscript=JGEFS_PRDGEN_GFS.sms.$envir
     job_name=jgefs_prdgen_gfs_$cyc
     job_type=serial
     resources="ConsumableMemory(500 MB)"
@@ -2287,7 +2303,8 @@ case $taskname in
   (ensstat_hr)
     FORECAST_SEGMENT=hr
     ################################# production variables
-    jobscript=JGEFS_ENSSTAT.sms.$envir
+    jobscript=JGEFS_ENSSTAT
+#   jobscript=JGEFS_ENSSTAT.sms.$envir
     job_type=serial
     wall_clock_limit="01:30:00"
 #   resources="ConsumableMemory(500 MB)"
@@ -2324,7 +2341,8 @@ case $taskname in
   (ensstat_lr)
     FORECAST_SEGMENT=lr
     ################################# production variables
-    jobscript=JGEFS_ENSSTAT.sms.$envir
+    jobscript=JGEFS_ENSSTAT
+#   jobscript=JGEFS_ENSSTAT.sms.$envir
     job_type=serial
     wall_clock_limit="01:30:00"
 #   resources="ConsumableMemory(500 MB)"
@@ -2358,7 +2376,8 @@ case $taskname in
   ;;
   (enspost)
     ################################# production variables
-    jobscript=JGEFS_ENSPOST.sms.$envir
+    jobscript=JGEFS_ENSPOST
+#   jobscript=JGEFS_ENSPOST.sms.$envir
     job_type=serial
     wall_clock_limit="01:30:00"
 #   resources="ConsumableMemory(500 MB)"
@@ -2390,7 +2409,8 @@ case $taskname in
   ;;
   (post.track)
     ################################# production variables
-    jobscript=JGEFS_POST_TRACK.sms.$envir
+    jobscript=JGEFS_POST_TRACK
+#   jobscript=JGEFS_POST_TRACK.sms.$envir
     if [[ $fcstjoblength = long ]]; then
       job_name=jgefs_post_track_${cyc}
       wall_clock_limit="01:00:00"
@@ -2424,7 +2444,8 @@ case $taskname in
   ;;
   (track.ave)
     ################################# production variables
-    jobscript=JGEFS_ENS_TRAK_AVE.sms.$envir
+    jobscript=JGEFS_ENS_TRAK_AVE
+#   jobscript=JGEFS_ENS_TRAK_AVE.sms.$envir
     if [[ $fcstjoblength = long ]]; then
       job_name=jgefs_trak_ave_${cyc}
       wall_clock_limit="01:10:00"
@@ -2453,7 +2474,8 @@ case $taskname in
   ;;
  (post.cqpf)
     ################################# production variables
-    jobscript=JGEFS_CQPF.sms.$envir
+    jobscript=JGEFS_CQPF
+#   jobscript=JGEFS_CQPF.sms.$envir
     job_type=serial
     wall_clock_limit="00:30:00"
 #   resources="ConsumableMemory(500 MB)"
@@ -2479,7 +2501,8 @@ case $taskname in
 
   (post.cleanup)
     ################################# production variables
-    jobscript=JGEFS_POST_CLEANUP.sms.$envir
+    jobscript=JGEFS_POST_CLEANUP
+#   jobscript=JGEFS_POST_CLEANUP.sms.$envir
     job_name=jgefs_post_cleanup_${cyc}
     job_type=serial
     wall_clock_limit="00:30:00"

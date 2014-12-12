@@ -129,7 +129,8 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
   echo group=$group
 # export basesource=/$group/save/$LOGNAME/WCOSS/$expid
 # export basesource=/$group/save/$LOGNAME/GEFS14/$expid
-  export basesource=/$group/save/$LOGNAME/s/$expid
+# export basesource=/$group/save/$LOGNAME/s/$expid
+  export basesource=/$group/save/$LOGNAME/SVN/$expid
   export basebin=$basesource/nw$envir/control
   export baseoutput=/$PTMP/$LOGNAME/o/$expid
   export basetmp=/$PTMP/$LOGNAME/o/$expid
