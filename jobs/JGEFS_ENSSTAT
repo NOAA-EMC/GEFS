@@ -34,7 +34,8 @@ then
   . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
 ################# lines between these markers have been modified for dev begin
  else
-  . $basesource/nwdev/parm/gefs_config
+# . $basesource/nwdev/parm/gefs_config
+  . $basesource/nwdev/parm/gefs_config_old
  fi
 ################# lines between these markers have been modified for dev end
 fi
