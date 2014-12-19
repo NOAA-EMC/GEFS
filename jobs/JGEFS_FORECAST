@@ -181,7 +181,7 @@ export LOGSCRIPT=startmsg
 # Set up the UTILITIES
 ##############################
 export utilscript=$HOMEUTIL/ush
-export EXECUTIL=$HOMEUTIL/exe
+export EXECUTIL=$HOMEUTIL/exec
 
 ##############################
 # Run setup to initialize working directory and utility scripts

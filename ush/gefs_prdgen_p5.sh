@@ -31,7 +31,7 @@ export COPYGB2=${COPYGB2:-$EXECUTIL/copygb2}
 export CNVGRIB=${CNVGRIB:-$EXECUTIL/cnvgrib21}
 #export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
 
-export ENSADD=${ENSADD:-$USHGEFS/global_ensadd.sh}
+#export ENSADD=${ENSADD:-$USHGEFS/global_ensadd.sh}
 
 echo settings in $0 gefsmachine=$gefsmachine
 echo settings in $0 WGRIB=$WGRIB
@@ -41,7 +41,7 @@ echo settings in $0 GRB2IDX=$GRB2IDX
 echo settings in $0 COPYGB=$COPYGB
 echo settings in $0 COPYGB2=$COPYGB2
 echo settings in $0 CNVGRIB=$CNVGRIB
-echo settings in $0 ENSADD=$ENSADD
+#echo settings in $0 ENSADD=$ENSADD
 
 R1=`echo $RUN|cut -c1-3`
 R2=`echo $RUN|cut -c4-5`
@@ -221,7 +221,7 @@ else
    $CNVGRIB -g21 $FILEA pgbafile.$ffhr$cfsuffix
    $GRBIDX pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix
 #  $WGRIB -s pgbafile.$ffhr$cfsuffix > pgbaifile.${ffhr}${cfsuffix}.idx
-   $ENSADD $e1 $e2 pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix epgbafile.$ffhr$cfsuffix
+#  $ENSADD $e1 $e2 pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix epgbafile.$ffhr$cfsuffix
 #  echo after ADDING
 #  ls -lt  pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix epgbafile.$ffhr$cfsuffix
    if [[ "$addgrb1id" = "yes" ]]; then
@@ -268,7 +268,7 @@ else
    $CNVGRIB -g21 $FILEB pgbbfile.$ffhr$cfsuffix
    $GRBIDX pgbbfile.$ffhr$cfsuffix pgbbifile.$ffhr$cfsuffix
 #  $WGRIB -s pgbbfile.$ffhr$cfsuffix > pgbbfile.${ffhr}${cfsuffix}.idx
-   $ENSADD $e1 $e2 pgbbfile.$ffhr$cfsuffix pgbbifile.$ffhr$cfsuffix epgbbfile.$ffhr$cfsuffix
+#  $ENSADD $e1 $e2 pgbbfile.$ffhr$cfsuffix pgbbifile.$ffhr$cfsuffix epgbbfile.$ffhr$cfsuffix
    if [[ "$addgrb1id" = "yes" ]]; then
      mv epgbbfile.$ffhr$cfsuffix pgbbfile.$ffhr$cfsuffix
      if [[ "$makegrb1i" = "yes" ]]; then

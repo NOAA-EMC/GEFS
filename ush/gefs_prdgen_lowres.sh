@@ -30,7 +30,7 @@ export GRB2IDX=${GRB2IDX:-$EXECUTIL/grb2index}
 export COPYGB2=${COPYGB2:-$EXECUTIL/copygb2}
 export CNVGRIB=${CNVGRIB:-$EXECUTIL/cnvgrib21}
 
-export ENSADD=${ENSADD:-$USHGEFS/global_ensadd.sh}
+#export ENSADD=${ENSADD:-$USHGEFS/global_ensadd.sh}
 
 echo settings in $0 gefsmachine=$gefsmachine
 echo settings in $0 WGRIB=$WGRIB
@@ -40,7 +40,7 @@ echo settings in $0 GRB2IDX=$GRB2IDX
 echo settings in $0 COPYGB=$COPYGB
 echo settings in $0 COPYGB2=$COPYGB2
 echo settings in $0 CNVGRIB=$CNVGRIB
-echo settings in $0 ENSADD=$ENSADD
+#echo settings in $0 ENSADD=$ENSADD
 
 R1=`echo $RUN|cut -c1-3`
 R2=`echo $RUN|cut -c4-5`
@@ -193,7 +193,7 @@ else
   $CNVGRIB -g21 $FILEALR pgba.$ffhr.2$cfsuffix
   $GRBIDX pgba.$ffhr.2$cfsuffix pgbai.$ffhr.2$cfsuffix
 # $WGRIB -s pgba.$ffhr.2$cfsuffix >pgba.$ffhr.2${cfsuffix}.idx
-  $ENSADD $e1 $e2 pgba.$ffhr.2$cfsuffix pgbai.$ffhr.2$cfsuffix epgba.$ffhr.2$cfsuffix
+# $ENSADD $e1 $e2 pgba.$ffhr.2$cfsuffix pgbai.$ffhr.2$cfsuffix epgba.$ffhr.2$cfsuffix
   if [[ "$addgrb1id" = "yes" ]]; then
     mv epgba.$ffhr.2$cfsuffix pgba.$ffhr.2$cfsuffix
     if [[ "$makegrb1i" = "yes" ]]; then
