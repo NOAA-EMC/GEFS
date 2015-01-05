@@ -2110,8 +2110,9 @@ case $taskname in
     case $gefsmachine in
       (wcoss)
     #taskspernode=$total_tasks
-    taskspernode=16
+#   taskspernode=16
     OMP_NUM_THREADS=1
+    (( taskspernode = 16 / OMP_NUM_THREADS ))
     MP_SHARED_MEMORY=yes
     MP_SHARED_MEMORY=no
     resources="2000"
@@ -2492,10 +2493,11 @@ case $taskname in
     fcstjoblength=long
     ################################# production variables modified
   if [[ $gefsmachine = wcoss ]]; then
-    wall_clock_limit="00:10"
+    wall_clock_limit="01:10"
     MP_SHARED_MEMORY=yes
 #   resources="100"
     resources="500"    # T574
+    resources="1000"    # T574, grib2
   fi
   ;;
 

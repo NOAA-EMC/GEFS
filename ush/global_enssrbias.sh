@@ -16,7 +16,7 @@ RID=$1
 IYMDP1=`$NDATE +24 $OBSYMD\00 | cut -c1-8`
 
 
-set -x
+#set -x
 
 if [ -s STAT_RM_BIAS_$RID.dat ]; then
    cp STAT_RM_BIAS_$RID.dat OLD_STAT.dat
@@ -51,7 +51,7 @@ if [ $inew -eq 1 ]; then
 
  startmsg
 
- $EXECGLOBAL/global_enssrbias <input_stat >stat_output.$RID
+ $EXECgefs/global_enssrbias <input_stat >stat_output.$RID
  export err=$?;err_chk
 
  cat stat_output.$RID >> $pgmout

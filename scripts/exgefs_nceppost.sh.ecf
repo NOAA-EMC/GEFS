@@ -37,6 +37,7 @@ export WGRIB2=${WGRIB2:-${EXECUTIL}/wgrib2}
 export GRBIDX=${GRBIDX:-${EXECUTIL}/grbindex}
 export GRB2IDX=${GRB2IDX:-${EXECUTIL}/grb2index}
 export POSTGPSH=${POSTGPSH:-$USHPOST/global_nceppost.sh}
+export SIGHDR=${SIGHDR:-$EXECgsm/global_sighdr}
 
 R1=`echo $RUN|cut -c1-3`
 R2=`echo $RUN|cut -c4-5`

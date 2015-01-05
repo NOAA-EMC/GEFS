@@ -4,8 +4,6 @@ echo "Ensemble CQPF -> global_enspvrfysh              "
 echo "------------------------------------------------"
 echo "History: Feb 2004 - First implementation of this new script."
 echo "AUTHOR: Yuejian Zhu (wx20yz)"
-echo "History: Nov 2014 - Grib2 code conversion"
-echo "AUTHOR: Yan Luo (wx22lu)"
 
 echo "         ######################################### "
 echo "         ####  RUN PRECIPTATION VERIFICATION  #### "
@@ -15,8 +13,8 @@ echo "         ######################################### "
 
 set -x
 
-export CVT24H=$USHgefs/global_enscvt24h.sh
-export WGREP=$USHgefs/global_enswgrp.sh
+export CVT24H=$USHGLOBAL/global_enscvt24h.sh
+export WGREP=$USHGLOBAL/global_enswgrp.sh
 
 INITIME=0
 
@@ -58,7 +56,7 @@ do
 
 cat <<nameEOF >input_runv
 model_info_file
-$FIXgefs/pcpmask                                
+$FIXGLOBAL/pcpmask                                
 $DATA                   
 $PRECIP_ANALYSIS_FILE
 $PRECIP_DATA_FILE
@@ -99,7 +97,7 @@ modelEOF
 
  startmsg
 
- $EXECgefs/global_enspvrfy  <input_runv   >> $pgmout 2>errfile
+ $EXECGLOBAL/global_enspvrfy  <input_runv   >> $pgmout 2>errfile
  #export err=$?;err_chk
 
  cat  stat.out 

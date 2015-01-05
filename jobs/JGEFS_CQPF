@@ -1,7 +1,4 @@
 #!/bin/ksh 
-################# lines between these markers have been modified for dev begin
-################# lines between these markers have been modified for dev end
-
 #####################################################################
 # 9/20/2009, Julia Zhu   Scripts are modified to be sharable
 #                        between EMC and NCO
@@ -9,37 +6,38 @@
 #         in the development enviroment only.
 ######################################################################
 
-$SMSBIN/smsinit $LOADL_STEP_ID 
+#$SMSBIN/smsinit $LOADL_STEP_ID 
 echo `date` $0 `date -u` begin
 
 set -xa
 export PS4='$SECONDS + '
-####################################
 
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export machine=${gefsmachine:-wcoss}
+
+export GRIBVERSION=${GRIBVERSION:-grib2}
 
 ###########################################
 # Run gefs_config to get input parameters
 ###########################################
 if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
-################# lines between these markers have been modified for dev begin
- else
-# . $basesource/nwdev/parm/gefs_config
-  . $basesource/nwdev/parm/gefs_config_old
- fi
-################# lines between these markers have been modified for dev end
+  . $basesource/nwdev/parm/gefs_config
+# . $basesource/nwdev/parm/gefs_config_old
+else
+  VERSION_FILE=/nw{$envir}/versions/gefs.ver
+  if [-f $VERSION_FILE]; then
+     . $VERSION_FILE
+  else
+     ecflow_client --abort
+     exit
+  fi
 fi
 
-# #### 05/05/99 ###############################
-# SETUP ENS POST PROCESSING VARIABLES
-# #############################################
+export HOMEgefs=${HOMEGEFS}
+export HOMEutil=${HOMEUTIL:-/nwprod/util}
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -47,18 +45,11 @@ fi
 export pid=$$
 if [ "$RUN_ENVIR" = dev ]    ### For Developers
 then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd}
-################# lines between these markers have been modified for dev begin
- else
    export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
- fi
-################# lines between these markers have been modified for dev end
 else                       ### For Operations
    export DATA_IN=/tmpnwprd
 fi
+
 export DATA=$DATA_IN/cqpd.${pid}
 
 mkdir -p $DATA
@@ -77,15 +68,7 @@ export RUN=stat
 ####################################
 if [ "$RUN_ENVIR" = dev ]     ### For Developers
 then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-   export jlogfile=${jlogfile:-$DATA_IN/jlogfile}
-################# lines between these markers have been modified for dev begin
- else
    export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
- fi
-################# lines between these markers have been modified for dev end
 else                        ### For Operations
    export jlogfile=/com/logs/para/jlogfile
 fi
@@ -109,8 +92,9 @@ then
   export SENDDBN=${SENDDBN:-NO}
   export SENDSMS=${SENDSMS:-YES}
   export SENDDBN_GB2=${SENDDBN_GB2:-NO}
+
   # Specify Execution Areas
-  export HOMEGLOBAL=$basesource/nw${envir}
+# export HOMEGLOBAL=$basesource/nw${envir}
 else                             ### For Operations
   export SENDCOM=YES
   export SENDDBN=YES
@@ -118,12 +102,14 @@ else                             ### For Operations
   export SENDDBN_GB2=YES
 
   # Specify Execution Areas
-  export HOMEGLOBAL=/nwprod
+# export HOMEGLOBAL=/nwprod
 fi
-  export EXECGLOBAL=$HOMEGLOBAL/exec
-  export USHGLOBAL=$HOMEGLOBAL/ush
-  export FIXGLOBAL=$HOMEGLOBAL/fix
-  export PARMGLOBAL=$HOMEGLOBAL/parm
+
+  export HOMEgefs=$HOMEGEFS
+  export EXECgefs=$HOMEgefs/exec
+  export USHgefs=$HOMEgefs/ush
+  export FIXgefs=$HOMEgefs/fix
+  export PARMgefs=$HOMEgefs/parm
 
 
 export ERRSCRIPT=err_chk
@@ -134,21 +120,11 @@ export REDERR='2>'
 ##############################
 # Set up the UTILITIES
 ##############################
-export HOMEUTIL=/nwprod/util
-export utilscript=$HOMEUTIL/ush
-export EXECUTIL=$HOMEUTIL/exec
-export FIXUTIL=$HOMEUTIL/fix
-export GRBINDEX=/nwprod/util/exec/grbindex
+export utilscript=$HOMEutil/ush
+export EXECutil=$HOMEutil/exec
+export FIXutil=$HOMEutil/fix
+#export GRBINDEX=/nwprod/util/exec/grbindex
 
- if [[ $gefsmachine = zeus ]]; then
-#DHOU 03/26/2012 for ZEUS
-export HOMEUTIL=$HOMEglobal/util
-export utilscript=$HOMEglobal/util/ush
-export GRBINDEX=$HOMEglobal/util/exec/grbindex
- fi
-# if [[ $gefsmachine = wcoss ]]; then
-# Add somthing if needed 
-# fi
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
@@ -164,39 +140,45 @@ sh $utilscript/setpdy.sh
 # Define COM directories
 ##############################################
 export COMINGEST=$TMPCOM/ingest/prod
+export COMINGEST=/ensemble/noscrub/Yan.Luo/com-ingest-prod
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
   export COM_IN=${COM_IN:-${baseoutput}/com/${NET}/${envir}}
   export COM_OUT=${COM_OUT:-${baseoutput}/com/${NET}/${envir}}
+  export COM_IN=/ensemble/noscrub/emc.enspara/xz/T574L64SL/EK0
+# export COM_OUT=${COM_OUT:-/ptmpp1/${LOGNAME}/com/${NET}/${RUN_ENVIR}}
 
   export COMIN=$COM_IN
   export COMOUT=$COM_OUT/gefs.${PDY}/${cyc}/ensstat
 else                              ### For Operations
-  export COMIN=$TMPCOM/${NET}/${envir}
-  export COMOUT=$TMPCOM/${NET}/${envir}/gefs.${PDY}/${cyc}/ensstat
-
+  export COMIN=/com/${NET}/${envir}
+  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}/${cyc}/ensstat
 fi
-
 
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
-
 
 env
 
 #############################################################
 # Execute the script
-if [[ $envir = prod ]] || \
-   [[ $envir = para ]] || \
-   [[ $envir = test ]]; then
-/nw${envir}/scripts/exglobal_enscqpf.sh.sms
-else
 if (( cyc == 00 )); then
-$basesource/nw${envir}/scripts/exglobal_enscqpf.sh.sms
+ $HOMEgefs/scripts/exglobal_enscqpf.sh.ecf
 else
-echo skip cqpf processing in development for cyc=$cyc
+ echo skip cqpf processing in development for cyc=$cyc
 fi
-fi
+
+#if [[ $envir = prod ]] || \
+#   [[ $envir = para ]] || \
+#   [[ $envir = test ]]; then
+#/nw${envir}/scripts/exglobal_enscqpf.sh.sms
+#else
+#if (( cyc == 00 )); then
+#$basesource/nw${envir}/scripts/exglobal_enscqpf.sh.sms
+#else
+#echo skip cqpf processing in development for cyc=$cyc
+#fi
+#fi
 
 #############################################################
 

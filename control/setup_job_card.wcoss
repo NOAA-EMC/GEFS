@@ -52,6 +52,8 @@ eofCAT
         AFFINITY="core(${OMP_NUM_THREADS}):distribute=pack"
       elif [[ ${taskname} = post.prdgen_lr ]] ; then
         AFFINITY="core(${OMP_NUM_THREADS}):distribute=pack"
+      elif [[ ${taskname} = post.iCQPF ]] ; then
+        AFFINITY="core(${OMP_NUM_THREADS}):distribute=pack"
       else	
         AFFINITY="core(1)"
       fi

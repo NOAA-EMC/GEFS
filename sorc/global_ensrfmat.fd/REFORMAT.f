@@ -9,12 +9,13 @@ C   03-03-12  YUEJIAN ZHUL
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 c
 c     parameter (len=9824)                  
-      parameter (len=51485)                  
-      dimension lat(len),lon(len)
-      dimension rlat(len),rlon(len)
-      dimension prcp (20000)
-      character*8 gageid(20000)
-      character*8 statid(len),cymd
+c     parameter (len=51485)
+      parameter (ntab=80000,nrec=40000)                  
+      dimension lat(ntab),lon(ntab)
+      dimension rlat(ntab),rlon(ntab)
+      dimension prcp (nrec)
+      character*8 gageid(nrec)
+      character*8 statid(ntab),cymd
       character*80 fname1,fname2,fname3
       namelist /namin/iymd,fname1,fname2,fname3
 cccccc
@@ -25,10 +26,6 @@ C     write (cymd,1004) iymd
       iunit=10
       junit=11
       kunit=51
-      jndex=0
-      index=0
-      icnt=0
-      jcnt=0
 C     fname1='/nfsuser/g01/wx20yz/jif_cqpf/data/ingest_nwsli.uniq'
 C     fname2(1:21)='/com/ingest/prod/shf.'
 C     fname3(1:29)='/ptmp/wx20yz/cvt/usa-dlyprcp-'
@@ -48,21 +45,35 @@ C     fname3(30:37)=cymd
       if(ios10.ne.0) print *, 'failure to open file =', fname1
       if(ios11.ne.0) print *, 'failure to open file =', fname2
       if(ios51.ne.0) print *, 'failure to open file =', fname3
+      if (ios10.ne.0) stop 101
+      if (ios11.ne.0) stop 102
+      if (ios51.ne.0) stop 103
 
-      do iii = 1, len 
-      read(iunit,1001,err=102,end=101) statid(iii),rlat(iii),rlon(iii)                  
+      iii=0
+  100 continue
+c     do iii = 1, len 
+      iii=iii+1
+      if ( iii .gt. ntab ) go to 904
+      read(iunit,1001,err=901,end=101) statid(iii),rlat(iii),rlon(iii)                  
 C     print *, rlat(iii),rlon(iii),statid(iii)
-      enddo
+      go to 100
+c     enddo
   101 continue
+      len=iii-1
+      print *,"total stations in directory  ",len
+      icnt=0
  1000 continue
       icnt = icnt + 1
-      read(junit,1002,err=103,end=104) gageid(icnt),prcp(icnt)
+      if (icnt .gt. nrec) go to 905
+      read(junit,1002,err=902,end=104) gageid(icnt),prcp(icnt)
 C     print *, gageid(icnt),prcp(icnt)
       goto 1000
   104 continue
+      icnt=icnt-1
       print *, "total record read in  ",icnt
       write (51,1005) iymd
       call sort(prcp,gageid,icnt)
+      jcnt=0
       ijk=1200
       do iii = icnt, 1, -1
        do jjj = 1, len
@@ -70,7 +81,8 @@ C     print *, gageid(icnt),prcp(icnt)
 c        rlat(jjj) = float(lat(jjj))/100.00
 c        rlon(jjj) = float(lon(jjj))/100.00
          jcnt = jcnt + 1
-         write (51,1003) rlat(jjj),rlon(jjj),prcp(iii),gageid(iii),ijk
+         write (kunit,1003,err=903) 
+     &     rlat(jjj),rlon(jjj),prcp(iii),gageid(iii),ijk
          goto 105
         endif
        enddo
@@ -84,9 +96,21 @@ C1002 format(17x,a8,4x,f8.2)
  1003 format(f6.2,f8.2,f7.2,1x,a8,i6)
  1004 format(i8)
  1005 format(' 24-hr precip reports ending 12Z on ',i8)
- 102  print *, ' error to read file ',iunit
- 103  print *, ' error to read file ',junit
- 106  stop
+ 901  continue
+      print *, ' error reading file ',iunit
+      stop 101
+ 902  continue
+      print *, ' error reading file ',junit
+      stop 102
+ 903  continue
+      print *, ' error writing file ',kunit
+      stop 103
+ 904  continue
+      print *, ' too many records in file ',iunit
+      stop 104
+ 905  continue
+      print *, ' too many records in file ',junit
+      stop 105
       end
 C===================================================== SORT.FOR
       SUBROUTINE SORT(X,C,N)
