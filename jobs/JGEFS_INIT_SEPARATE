@@ -1,9 +1,4 @@
 #!/bin/ksh 
-################# lines between these markers have been modified for dev begin
-################# lines between these markers have been modified for dev end
-###testb
-# lines between ###testb and ###teste not needed for production
-###teste
 
 $SMSBIN/smsinit $LOADL_STEP_ID 
 echo `date` $0 `date -u` begin
@@ -15,24 +10,33 @@ set -xa
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 
+if [[ $gefsmachine = zeus ]]; then
+   export  gefspoe="$gefsmpexec $basesource/nw$envir/exec/zeus-poe"
+ else
+     export gefspoe=$gefsmpexec
+ fi
+
+
 ###########################################
 # Run gefs_config to get input parameters
 ###########################################
-#DHOU 03/09/2012 temporal setting
-#RERUN=YES
 if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
 ################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
-################# lines between these markers have been modified for dev begin
- else
-# echo $jobscript =jobscript #DHOU 03/07/2012
   . $basesource/nwdev/parm/gefs_config
- fi
-################# lines between these markers have been modified for dev end
+else
+   VERSION_FILE=/nw{$envir}/versions/gefs.ver
+   if [-f $VERSION_FILE]; then
+    . $VERSION_FILE
+   else
+    ecflow_client --abort
+    exit
+   fi
 fi
+
+export HOMEGEFS=${HOMEGEFS}
+export HOMEGSM=${HOMEGSM}
+export HOMEUTIL=${HOMEUTIL:-/nwprod/util}
 
 # #### 05/05/99 ###############################
 # SETUP ENS INITIALIZATION PROCESSING VARIABLES
@@ -43,24 +47,16 @@ export PS4='$SECONDS + '
 # obtain unique process id (pid) and make working directory
 ####################################
 export pid=$$
-###testb
-if [[ $envir = prod ]] || \
-   [[ $envir = para ]] || \
-   [[ $envir = test ]]; then
-###teste
-export DATA=/tmpnwprd/gefs_init_$cyc.$envir.save
-###testb
+if [ "$RUN_ENVIR" = dev ]    ### For Developers
+then
+  export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
 else
-  echo basenfs=$basenfs
-  echo baseptmp=$baseptmp
-  echo basetmp=$basetmp
-  export DATA=$basetmp/$envir/tmpnwprd/gefs_init_$PDY$cyc.$envir.save
-################# lines between these markers have been modified for dev begin
-  export DATA=$basetmp/tmpnwprd/gefs_init_$PDY$cyc.$envir.save
-################# lines between these markers have been modified for dev end
-echo DATA=$DATA
+  export DATA_IN=/tmpnwprd
 fi
-###teste
+
+  export DATA=$DATA_IN/gefs_init_$PDY$cyc.$envir.save
+
+echo DATA=$DATA
 if [[ -d $DATA ]]; then
   rm -rf $DATA
 fi
@@ -93,27 +89,12 @@ export RUN=enstr
 ####################################
 # File To Log Msgs
 ####################################
-###testb
-if [[ $envir = prod ]]; then
-###teste
-export jlogfile=/com/logs/jlogfile
-###testb
-elif [[ $envir = para ]] || \
-     [[ $envir = test ]]; then
-  export jlogfile=/com/logs/para/jlogfile
+if [ "$RUN_ENVIR" = dev ]     ### For Developers
+then
+  export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
 else
-  #export jlogfile=$baseptmp/com/logs/jlogfile
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-  export jlogfile=$baselog/nw$envir/logs/jlogfile
-################# lines between these markers have been modified for dev begin
- else
-  export jlogfile=$baselog/com/logs/jlogfile
- fi
-################# lines between these markers have been modified for dev end
+  export jlogfile=/com/logs/para/jlogfile
 fi
-###teste
 
 ####################################
 # Determine Job Output Name on System
@@ -157,59 +138,51 @@ fi
 ####################################
 # Specify Execution Areas
 ####################################
-###testb
-# DHOU 03/29/2012 For Zeus, make the HOMEGLOBAL definition more general
-if [[ $envir = prod ]]; then
-###teste
-#export HOMEGLOBAL=/nw${envir}
-export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
-###testb
-else
-#  export HOMEGLOBAL=/nwprod
-  export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
-fi
-###teste
-#DHOU 03/29/2012 commented out  the following 3 blocks for ZEUS
-################# lines between these markers have been modified for dev begin
-#if [[ $envir = dev ]]; then
-#  export HOMEGLOBAL=$basesource/nw$envir
-#fi
-################# lines between these markers have been modified for dev end
-#export EXECGLOBAL=$HOMEGLOBAL/exec
-#export FIXGLOBAL=$HOMEGLOBAL/fix
-#export PARMGLOBAL=$HOMEGLOBAL/parm
-#export USHGLOBAL=$HOMEGLOBAL/ush
-################# lines between these markers have been modified for dev begin
-#if [[ $envir = dev ]]; then
-#  export FIXGLOBAL=/nwprod/fix
-#fi
-################# lines between these markers have been modified for dev end
-if [[ $envir = dev ]]; then
-#DHOU 03/29/2012 added the following block for ZEUS
- if [[ $gefsmachine = zeus ]]; then
-export EXECGLOBAL=$HOMEgefs/exec
-#export FIXGLOBAL=$HOMEGLOBAL/fix
-export FIXGLOBAL=$HOMEgefs/fix
-export PARMGLOBAL=$HOMEgefs/parm
-export USHGLOBAL=$HOMEgefs/ush
- fi
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
+  export HOMEGSM=${HOMEGSM:-/nw${envir}}
+  export EXECGSM=${EXECGSM:-$HOMEGSM/exec}
+  export USHGSM=${USHGSM:-$HOMEGSM/ush}
+  export FIXGSM=${FIXGSM:-$HOMEGSM/fix/fix_am}
+  export PARMGSM=${PARMGSM:-$HOMEGSM/parm}
 
-#DHOU 01/18/2013 added the following block for WCOSS (temporary)
- if [[ $gefsmachine = wcoss ]]; then
- export EXECGLOBAL=$HOMEgefs/exec
-#export FIXGLOBAL=$HOMEGLOBAL/fix
-#export FIXGLOBAL=$HOMEglobal/fix
-export FIXGLOBAL=$HOMEgefs/fix
-export PARMGLOBAL=$HOMEgefs/parm
-export USHGLOBAL=$HOMEgefs/ush
- fi
+  export EXECGLOBAL=${EXECGSM:-$HOMEGSM/exec}
+  export USHGLOBAL=${USHGSM:-$HOMEGSM/ush}
+  export FIXGLOBAL=${FIXGSM:-$HOMEGSM/fix/fix_am}
+
+# export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
+# export EXECGLOBAL=${EXECGSM:-$HOMEGSM/exec}
+# export USHGLOBAL=${USHGSM:-$HOMEGSM/ush}
+# export FIXGLOBAL=${FIXGSM:-$HOMEGSM/fix/fix_am}
+
+  export HOMEGEFS=${HOMEGEFS:-/nw${envir}}
+  export EXECGEFS=${EXECGEFS:-$HOMEGEFS/exec}
+  export USHGEFS=${USHGEFS:-$HOMEGEFS/ush}
+  export FIXGEFS=${FIXGEFS:-$HOMEGEFS/fix}
+  export PARMGEFS=${PARMGEFS:-$HOMEGEFS/parm}
+  export USHGLOBAL=$USHGEFS
+
+else                             ### For Operations
+
+  export HOMEGSM=/nw${envir}
+  export EXECGSM=$HOMEGSM/exec
+  export USHGSM=$HOMEGSM/ush
+  export FIXGSM=$HOMEGSM/fix/fix_am
+  export PARMGSM=$HOMEGSM/parm
+
+  export HOMEGLOBAL=/nwprod
+  export EXECGLOBAL=$HOMEGSM/exec
+  export USHGLOBAL=$HOMEGSM/ush
+  export FIXGLOBAL=$HOMEGSM/fix/fix_am
+  export PARMGLOBAL=$HOMEGSM/parm
+
+  export HOMEGEFS=/nw${envir}
+  export EXECGEFS=$HOMEGEFS/exec
+  export USHGEFS=$HOMEGEFS/ush
+  export FIXGEFS=$HOMEGEFS/fix
+  export PARMGEFS=$HOMEGEFS/parm
 fi
 
- export HOMEUTIL=/nwprod/util
- if [[ $gefsmachine = zeus ]]; then
-  export HOMEUTIL=$HOMEglobal/util
- fi
- export EXECUTIL=$HOMEUTIL/exec
 
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
@@ -219,25 +192,8 @@ export REDERR='2>'
 ##############################################
 echo set parameters using gefs.parm
 ##############################################
-
-
-###testb
-if [[ $envir = prod ]]; then
-###teste
-. $PARMGLOBAL/gefs.parm
-. $PARMGLOBAL/gefs_init.parm
-###testb
-elif [[ $envir = para ]] || \
-     [[ $envir = test ]]; then
-. /nw$envir/parm/gefs.parm
-. /nw$envir/parm/gefs_init.parm
-else
-. $basesource/nw$envir/parm/gefs.parm
-. $basesource/nw$envir/parm/gefs_init.parm
-###added for zeus (kate)
-#. $basesource/nw$envir/parm/gefs_config
-fi
-###teste
+. $PARMGEFS/gefs.parm
+. $PARMGEFS/gefs_init.parm
 
 echo
 env | sort
@@ -246,12 +202,8 @@ echo
 ##############################
 # Set up the UTILITIES
 ##############################
-export utilscript=/nwprod/util/ush
-#DHOU 03/29/2012 added the following line for ZEUS
-export utilscript=$HOMEGLOBAL/util/ush
- if [[ $gefsmachine = zeus ]]; then
-     export utilscript=$HOMEglobal/util/ush
- fi
+export utilscript=$HOMEUTIL/ush
+export EXECUTIL=$HOMEUTIL/exec
 
 ##############################
 # Run setup to initialize working directory and utility scripts
@@ -262,17 +214,7 @@ ksh $utilscript/setup.sh
 # Run setpdy and initialize PDY variables
 ##############################
 sh $utilscript/setpdy.sh
-###testb
-if [[ $envir = prod ]] || \
-   [[ $envir = para ]] || \
-   [[ $envir = test ]]; then
-###teste
 . PDY
-###testb
-else
-  echo PDY=$PDY is already set
-fi
-###teste
 
 ##############################################
 # for global_chgres.sh
@@ -282,70 +224,53 @@ fi
 ##############################################
 # Define COM directories
 ##############################################
-###testb
-if [[ $envir = prod ]] ; then
-###teste
-export GFSCOMIN=/com/gfs/${envir}/gfs.$PDY
-###testb
-elif [[ $envir = para ]] || \
-     [[ $envir = test ]]; then
-  if [[ "$gfssource" = para ]]; then
-    export GFSCOMIN=/com/gfs/para/gfs.$PDY
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
+ if [[ "$gfssource" = para ]]; then
+    export GFSCOMIN=$TMPCOM/gfs/para/gfs.$PDY
+    export ENKFCOMIN=$TMPCOM/gfs/para/enkf.
+  elif [[ "$gfssource" = prod ]]; then
+    export GFSCOMIN=$TMPCOM/gfs/prod/gfs.$PDY
+    export ENKFCOMIN=$TMPCOM/gfs/prod/enkf.
   else
     export GFSCOMIN=/com/gfs/prod/gfs.$PDY
+    export ENKFCOMIN=/com/gfs/prod/enkf.
   fi
 else
   if [[ "$gfssource" = para ]]; then
     export GFSCOMIN=/com/gfs/para/gfs.$PDY
-    export GFSCOMIN=$TMPCOM/gfs/para/gfs.$PDY #WCOSS transition
-    export ENKFCOMIN=$TMPCOM/gfs/para/enkf. #WCOSS transition
+    export ENKFCOMIN=/com/gfs/para/enkf.
   elif [[ "$gfssource" = prod ]]; then
-#   export GFSCOMIN=/com/gfs/prod/gfs.$PDY
-#   export GFSCOMIN=/com_p6/gfs/prod/gfs.$PDY #WCOSS transition
-    export GFSCOMIN=$TMPCOM/gfs/prod/gfs.$PDY #WCOSS transition
-    export ENKFCOMIN=$TMPCOM/gfs/prod/enkf. #WCOSS transition
-
+    export GFSCOMIN=/com/gfs/prod/gfs.$PDY
+    export ENKFCOMIN=/com/gfs/prod/enkf.
   else
     export GFSCOMIN=$baseptmp/com/gfs/${envir}/gfs.$PDY
-################# lines between these markers have been modified for dev begin
-    export GFSCOMIN=$basedgfs$TMPCOM/gfs/prod/gfs.$PDY
-    export ENKFCOMIN=$basedgfs$TMPCOM/gfs/prod/enkf.    # to be tested, Kate 
-################# lines between these markers have been modified for dev end
-  fi
+    export GFSCOMIN=$baseptmp/com/gfs/${envir}/gfs.$PDY
+   fi
 fi
-###teste
-###testb
-if [[ $envir = prod ]] || \
-   [[ $envir = para ]] || \
-   [[ $envir = test ]]; then
-###teste
-export COMIN=/com/${NET}/${envir}/gefs.${PDY}
-export COM=/com/${NET}/${envir}
-export COMINm1=/com/${NET}/${envir}/gefs.${PDYm1}
-export COMINm2=/com/${NET}/${envir}/gefs.${PDYm2}
-export COMINm3=/com/${NET}/${envir}/gefs.${PDYm3}
-export COMINm4=/com/${NET}/${envir}/gefs.${PDYm4}
-###testb
-else
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
 export COMIN=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
 export COM=$baseoutput/com/${NET}/${envir}
 export COMINm1=$baseoutput/com/${NET}/${envir}/gefs.${PDYm1}
 export COMINm2=$baseoutput/com/${NET}/${envir}/gefs.${PDYm2}
 export COMINm3=$baseoutput/com/${NET}/${envir}/gefs.${PDYm3}
 export COMINm4=$baseoutput/com/${NET}/${envir}/gefs.${PDYm4}
-fi
-###teste
 
-###testb
-if [[ $envir = prod ]] || \
-   [[ $envir = para ]] || \
-   [[ $envir = test ]]; then
-###teste
-export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
-###testb
-else
 export COMOUT=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
+
+else
+
+export COMIN=/com/${NET}/${envir}/gefs.${PDY}
+export COM=/com/${NET}/${envir}
+export COMINm1=/com/${NET}/${envir}/gefs.${PDYm1}
+export COMINm2=/com/${NET}/${envir}/gefs.${PDYm2}
+export COMINm3=/com/${NET}/${envir}/gefs.${PDYm3}
+export COMINm4=/com/${NET}/${envir}/gefs.${PDYm4}
+
+export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
 fi
+
 #export pdycycp=`/nwprod/util/exec/ndate -$fhrp $PDY$cyc`
 export pdycycp=`$EXECUTIL/ndate -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
@@ -353,7 +278,7 @@ export cycp=`echo $pdycycp|cut -c9-10`
 
 echo pdycycp=$pdycycp pdyp=$pdyp cycp=$cycp
 
-  if (($inflag == 6)); then
+  if (($inflag == 6)) ; then
   export COMSFCSIGP=$COM/gefs.$pdyp/$cycp/sfcsig_enkf
   export COMTRACKP=$COM/gefs.$pdyp/$cycp/track_enkf
   else
@@ -368,17 +293,12 @@ mkdir -m 775 -p $COMOUT/$cyc/sflux
 ##############################################
 # Define GES directories
 ##############################################
-###testb
-if [[ $envir = prod ]] || \
-   [[ $envir = para ]] || \
-   [[ $envir = test ]]; then
-###teste
-gespath=/nwges/${envir}
-###testb
-else
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
 gespath=$baseoutput/nwges/${envir}
+else
+gespath=/nwges/${envir}
 fi
-###teste
 export GESdir=$gespath/gefs.${PDY}
 mkdir -m 775 -p $GESdir
 
@@ -387,82 +307,36 @@ echo locations of scripts and executables
 ##############################################
 
 echo location of sighdr executable
-###testb
-if [[ $envir = prod ]]; then
-###teste
+
 sighdrexec=$EXECGLOBAL/global_sighdr
-###testb
-else
-  echo locsighdrexec=$locsighdrexec
-  case $locsighdrexec in
-    (prod)  export sighdrexec=/nwprod/exec/global_sighdr ;;
-    (para)  export sighdrexec=/nwpara/exec/global_sighdr ;;
-    (test)  export sighdrexec=/nwpara/exec/global_sighdr ;;
-    (zeus)  export sighdrexec=$EXECglobal/global_sighdr ;;
-    (wcoss)  export sighdrexec=/global/noscrub/Shrinivas.Moorthi/para/exec/global_sighdr ;;
-    (local)  case $envir in
-               (prod)  export sighdrexec=/nw$envir/exec/global_sighdr ;;
-               (para)  export sighdrexec=/nw$envir/exec/global_sighdr ;;
-               (test)  export sighdrexec=/nw$envir/exec/global_sighdr ;;
-               (zeus)  export sighdrexec=$EXECglobal/global_sighdr ;;
-               (*)  export sighdrexec=$basesource/nw$envir/exec/global_sighdr ;;
-             esac ;;
-    (*)  export sighdrexec=$locsighdrexec ;;
-  esac
-fi
-###teste
+
 echo sighdrexec=$sighdrexec
 
 echo location of chgres script and executable
-###testb
-if [[ $envir = prod ]]; then
-###teste
-export chgresush=$USHGLOBAL/global_chgres.sh
-export CHGRESEXEC=/nwprod/exec/global_chgres_thread
-###testb
-else
-  echo locchgresush=$locchgresush
-  case $locchgresush in
-    (prod)  export chgresush=/nwprod/ush/global_chgres.sh ;;
-    (para)  export chgresush=/nwpara/ush/global_chgres.sh ;;
-    (test)  export chgresush=/nwpara/ush/global_chgres.sh ;;
-#   (zeus)  export chgresush=$USHglobal/global_chgres.sh ;;
-    (zeus)  export chgresush=$basesource/nw$envir/ush/global_chgres.sh ;;
-#   (wcoss)  export chgresush=/ensemble/save/Dingchen.Hou/SVN/GFS_TRUNK_38753/ush/global_chgres.sh;;
-    (wcoss)  export chgresush=/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0/ush/global_chgres.sh;;
-    (local)  case $envir in
-               (prod)  export chgresush=/nw$envir/ush/global_chgres.sh ;;
-               (para)  export chgresush=/nw$envir/ush/global_chgres.sh ;;
-               (test)  export chgresush=/nw$envir/ush/global_chgres.sh ;;
-#               (zeus)  export chgresush=$USHglobal/global_chgres.sh ;;
-               (zeus)  export chgresush=$basesource/nw$envir/ush/global_chgres.sh ;;
-               (*)  export chgresush=$basesource/nw$envir/ush/global_chgres.sh ;;
-             esac ;;
-    (*)  chgresush=$locchgresush ;;
-  esac
-  echo locchgresexec=$locchgresexec
-  case $locchgresexec in
-    (prod)  export CHGRESEXEC=/nwprod/exec/global_chgres ;;
-#   (prod)  export CHGRESEXEC=/nwprod/exec/global_chgres_thread ;;
-    (para)  export CHGRESEXEC=/nwpara/exec/global_chgres_thread ;;
-    (test)  export CHGRESEXEC=/nwpara/exec/global_chgres_thread ;;
-#   (zeus)  export CHGRESEXEC=$EXECglobal/global_chgres ;;
-    (zeus)  export CHGRESEXEC=$basesource/nw$envir/exec/global_chgres ;;
-#   (wcoss)  export CHGRESEXEC=/ensemble/save/Dingchen.Hou/SVN/GFS_TRUNK_38753/exec/global_chgres ;;
-    (wcoss)  export CHGRESEXEC=/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0/exec/global_chgres ;;
-#               (zeus)  export CHGRESEXEC=$basesource/nw$envir/exec/global_chgres ;;
-    (local)  case $envir in
-               (prod)  export CHGRESEXEC=/nw$envir/exec/global_chgres_thread ;;
-               (para)  export CHGRESEXEC=/nw$envir/exec/global_chgres_thread ;;
-               (test)  export CHGRESEXEC=/nw$envir/exec/global_chgres_thread ;;
-#              (zeus)  export CHGRESEXEC=$EXECglobal/global_chgres ;;
-               (zeus)  export CHGRESEXEC=$basesource/nw$envir/exec/global_chgres;;
-               (*)  export CHGRESEXEC=$basesource/nw$envir/exec/global_chgres_thread ;;
-             esac ;;
-    (*)  export CHGRESEXEC=$locchgresexec ;;
-  esac
+export CHGRESTHREAD=$NTHREADS_SIGCHGRS
+# Change Resolution script and executable
+
+   export chgresush=$USHGLOBAL/global_chgres.sh
+   export CHGRESEXEC=$EXECGLOBAL/global_chgres
+
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
+case $gefsmachine in
+ (ccs)
+   export chgresush=$USHGLOBAL/global_chgres.sh
+   export CHGRESEXEC=$EXECGLOBAL/global_chgres_thread
+ ;;
+ (zeus)
+   export chgresush=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/ush/global_chgres.sh
+   export CHGRESEXEC=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/exec/global_chgres
+ ;;
+ (wcoss)
+   export chgresush=/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0/ush/global_chgres.sh
+   export CHGRESEXEC=/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0/exec/global_chgres
+ ;;
+esac
 fi
-###teste
+
 echo chgresush=$chgresush
 echo CHGRESEXEC=$CHGRESEXEC
 
@@ -476,17 +350,7 @@ echo
 
 #############################################################
 # Execute the script
-###testb
-if [[ $envir = prod ]] || \
-   [[ $envir = para ]] || \
-   [[ $envir = test ]]; then
-###teste
-/nw${envir}/scripts/exgefs_init_separate.sh.sms
-###testb
-else
-$basesource/nw${envir}/scripts/exgefs_init_separate.sh.sms
-fi
-###teste
+$HOMEGEFS/scripts/exgefs_init_separate.sh.sms
 #############################################################
 
 cat $pgmout
@@ -498,27 +362,12 @@ postmsg "$jlogfile" "$msg"
 # Save the working directory
 # for the ET and COMBINE jobs
 ##############################
-###testb
-if [[ $envir = prod ]] || \
-   [[ $envir = para ]] || \
-   [[ $envir = test ]]; then
-###teste
 cd /tmpnwprd
-###testb
-else
-  echo skip cleanup for testing
-fi
-###teste
 
 echo `date` $0 `date -u` end
-###testb
-if [[ $envir = prod ]] || \
-   [[ $envir = para ]] || \
-   [[ $envir = test ]]; then
-###teste
-$SMSBIN/endt
-###testb
-else
+if [ "$RUN_ENVIR" = dev ]      ### For Developers
+then
   echo skip endt for testing
+else
+$SMSBIN/endt
 fi
-###teste

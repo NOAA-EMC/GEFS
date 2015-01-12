@@ -33,8 +33,9 @@ C
 
       REAL(4),ALLOCATABLE :: WORK_3(:),WORK_4(:,:)
       REAL,   ALLOCATABLE :: WORK_8(:)
-      REAL,   ALLOCATABLE :: WK_S1(:,:),WK_S2(:,:),WK_G(:,:,:),
-     1                       WK_G2(:,:,:)
+!      REAL,   ALLOCATABLE :: WK_S1(:,:),WK_S2(:,:),WK_G(:,:,:),
+!     1                       WK_G2(:,:,:)
+      REAL,   ALLOCATABLE :: WK_S1(:,:)
 
       real,   allocatable :: srlsphc(:)
       real,   allocatable :: srlsphcl(:,:)
@@ -168,8 +169,9 @@ c     1    ,(DUMMY(K),K=1,2*KMAX+1)
 
       ALLOCATE ( WORK_3(MAXWV2),WORK_4(MAXWV2,KMAX) )
       ALLOCATE ( WORK_8(MAXWV22) )
-      ALLOCATE ( WK_S1(MAXWV2,KMAX),WK_S2(MAXWV2,KMAX) )
-      ALLOCATE ( WK_G(IMAX,JMAX,KMAX),WK_G2(IMAX,JMAX,KMAX) )
+!      ALLOCATE ( WK_S1(MAXWV2,KMAX),WK_S2(MAXWV2,KMAX) )
+!      ALLOCATE ( WK_G(IMAX,JMAX,KMAX),WK_G2(IMAX,JMAX,KMAX) )
+      ALLOCATE ( WK_S1(MAXWV2,KMAX) )
 
       ALLOCATE (PS1(IMAX,JMAX),T1(IMAX,JMAX,KMAX),Q1(IMAX,JMAX,KMAX))
       ALLOCATE (VOR1(IMAX,JMAX,KMAX),DIV1(IMAX,JMAX,KMAX))
@@ -177,24 +179,24 @@ c     1    ,(DUMMY(K),K=1,2*KMAX+1)
       allocate (srlsphc(maxwv2))
       allocate (srlsphcl(maxwv2,kmax))
 
-      allocate (srlhd(imax,jmax))
+!      allocate (srlhd(imax,jmax))
       allocate (srlhi(imax,jmax))
-      allocate (srlho(imax,jmax))
-      allocate (srlpd(imax,jmax))
+!      allocate (srlho(imax,jmax))
+!      allocate (srlpd(imax,jmax))
       allocate (srlpi(imax,jmax))
-      allocate (srlpo(imax,jmax))
-      allocate (srltd(imax,jmax,kmax))
+!      allocate (srlpo(imax,jmax))
+!      allocate (srltd(imax,jmax,kmax))
       allocate (srlti(imax,jmax,kmax))
-      allocate (srlto(imax,jmax,kmax))
-      allocate (srldd(imax,jmax,kmax))
+!      allocate (srlto(imax,jmax,kmax))
+!      allocate (srldd(imax,jmax,kmax))
       allocate (srldi(imax,jmax,kmax))
-      allocate (srldo(imax,jmax,kmax))
-      allocate (srlzd(imax,jmax,kmax))
+!      allocate (srldo(imax,jmax,kmax))
+!      allocate (srlzd(imax,jmax,kmax))
       allocate (srlzi(imax,jmax,kmax))
-      allocate (srlzo(imax,jmax,kmax))
-      allocate (srlqd(imax,jmax,kmax))
+!      allocate (srlzo(imax,jmax,kmax))
+!      allocate (srlqd(imax,jmax,kmax))
       allocate (srlqi(imax,jmax,kmax))
-      allocate (srlqo(imax,jmax,kmax))
+!      allocate (srlqo(imax,jmax,kmax))
 
            print *,"   after allocate"
 
@@ -416,6 +418,21 @@ c add these lines to zero out the vorticity as in the gfs code
       END DO
 
 	   print *,"   after zero z and d"
+      DEALLOCATE ( WORK_8, WK_S1 )
+      DEALLOCATE ( WORK_3,WORK_4 )
+      DEALLOCATE ( PS1,T1,Q1,VOR1,DIV1 )
+      allocate (srlhd(imax,jmax))
+      allocate (srlho(imax,jmax))
+      allocate (srlpd(imax,jmax))
+      allocate (srlpo(imax,jmax))
+      allocate (srltd(imax,jmax,kmax))
+      allocate (srlto(imax,jmax,kmax))
+      allocate (srldd(imax,jmax,kmax))
+      allocate (srldo(imax,jmax,kmax))
+      allocate (srlzd(imax,jmax,kmax))
+      allocate (srlzo(imax,jmax,kmax))
+      allocate (srlqd(imax,jmax,kmax))
+      allocate (srlqo(imax,jmax,kmax))
 
            do nw=1,maxwv2
 	     srlsphc(nw)=datao%hs(nw)
@@ -545,9 +562,9 @@ c     if (iret.ne.0) print *,'sigio_sclose failed,iret=',iret,kunit
 	   print *,"   after write output"
 c      print*,'test3'
 
-      DEALLOCATE ( WORK_8, WK_S1, WK_S2, WK_G )
-      DEALLOCATE ( WK_G2, WORK_3,WORK_4 )
-      DEALLOCATE ( PS1,T1,Q1,VOR1,DIV1 )
+c      DEALLOCATE ( WORK_8, WK_S1, WK_S2, WK_G )
+c      DEALLOCATE ( WK_G2, WORK_3,WORK_4 )
+c      DEALLOCATE ( PS1,T1,Q1,VOR1,DIV1 )
 
       CALL W3TAGE('GEFS_VORTEX_COMBINE')
 C

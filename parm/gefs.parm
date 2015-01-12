@@ -34,7 +34,7 @@ export fhmax18=384
 export fhmax_ext=840
 
 export fhrp=06
-export fhrp=24
+#export fhrp=24
 #
 # 3-hourly output: fhmax3 must be less than fhmaxh
 fhmax3=$fhmaxh

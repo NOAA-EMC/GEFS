@@ -6,7 +6,7 @@
 #######################################################
 if [ $RUN_ENVIR = dev ]
 then
-  export HOMEGEFS=/nwprod}/gefs.v11.0.0
+  export HOMEGEFS=/nwprod/gefs.v11.0.0
   export HOMEGEFS=/nw${env}/gefs.v11.0.0
   export HOMEGEFS=/ensemble/save/Dingchen.Hou/SVN/GEFS_wcoss_unify_dev-48295
   export HOMEGEFS=$basesource/nwdev

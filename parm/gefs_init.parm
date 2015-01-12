@@ -10,7 +10,6 @@ export relocflag=1
 
 # control pairing,inflag=6 means inputs from EnKF 6h FCST
 export inflag=6
-export inflag=5
 export outflag=5
 
 # old versions for old code
@@ -102,12 +101,12 @@ if [[ $envir != prod ]]; then
 
 fi
 # a flag to determine if run ET
-#export etflag=no
 export etflag=yes
+export etflag=no
 # if mskflag=0 no rescaling
 # if mskflag=1 2D climatological mask
 # if mskflag=2 3D EnKF-based mask
 # if mskflag=3 3D EnKF-based  Monthly mean mask
 export mskflag_et=3
-export mskflag_et=1
+export mskflag_et=0
 echo `date` $0 end
