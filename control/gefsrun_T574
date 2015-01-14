@@ -464,6 +464,8 @@ jjjf18=800
 (( jjjre = jjjro + npert ))
 
 typeset -RZ3 jjjg00=$(( jjjog ))
+typeset -RZ3 jjjg01=$(( jjjog + 1 ))
+typeset -RZ3 jjjg02=$(( jjjog + 2 ))
 
 typeset -RZ3 jjjp00=$(( jjjf00 + jjjpo ))
 typeset -RZ3 jjjp00l=$(( jjjf00l + jjjpo ))
@@ -592,6 +594,8 @@ do
 done
 echo
 echo $jjjg00 gefs gfs job
+echo $jjjg01 gefs gfs-track job
+echo $jjjg02 gefs gfs-genesis job
 echo $jjjs00 ensstat job
 echo
 echo "   " chgres jobs $jjjr00 to $jjjz00
@@ -1131,6 +1135,14 @@ else
       taskname=prdgen.gfs 
       fcstjoblength=long
     ;;
+    ($jjjg01) 
+      taskname=track.gfs 
+      fcstjoblength=long
+    ;;
+    ($jjjg02) 
+      taskname=genesis.gfs 
+      fcstjoblength=long
+    ;;
     ($jjjs00) 
       taskname=ensstat_hr
       fcstjoblength=long
@@ -1149,7 +1161,8 @@ else
       fcstjoblength=long
     ;;
     ($jjja00) 
-      taskname=track.ave
+#     taskname=track.ave
+      taskname=post.genesis
       cyc_os=0
       fcstjoblength=long
     ;;
@@ -2107,13 +2120,14 @@ case $taskname in
     fi
     total_tasks=5     #T254
     total_tasks=16    #T574
+    total_tasks=8    #T574 test
     case $gefsmachine in
       (wcoss)
     #taskspernode=$total_tasks
 #   taskspernode=16
-    OMP_NUM_THREADS=1
+    OMP_NUM_THREADS=2
     (( taskspernode = 16 / OMP_NUM_THREADS ))
-    MP_SHARED_MEMORY=yes
+#   MP_SHARED_MEMORY=yes
     MP_SHARED_MEMORY=no
     resources="2000"
     resources="5000"   #T574
@@ -2301,6 +2315,54 @@ case $taskname in
       ;;
     esac
   ;;
+  (track.gfs)
+    ################################# production variables
+    jobscript=JGEFS_POST_TRACK_GFS
+    job_name=jgefs_post_track_gfs_$cyc
+    job_type=serial
+    resources="ConsumableMemory(500 MB)"
+    MP_SHARED_MEMORY=yes
+    MEMORY_AFFINITY=MCM
+    job=gefs_prdgen_gfs_${cyc}
+    during_previous_job=yes
+    fcstjoblength=long
+    if [[ $fcstjoblength = long ]]; then
+      wall_clock_limit="$wall_clock_limit_fcst_long"
+    else
+      wall_clock_limit="$wall_clock_limit_fcst_short"
+    fi
+    case $gefsmachine in
+      (wcoss)
+    MP_SHARED_MEMORY=yes
+    OMP_NUM_THREADS=1
+    resources="1728"     #for core(1)
+      ;;
+    esac
+  ;;
+  (genesis.gfs)
+    ################################# production variables
+    jobscript=JGEFS_POST_GENESIS_GFS
+    job_name=jgefs_post_track_gfs_$cyc
+    job_type=serial
+    resources="ConsumableMemory(500 MB)"
+    MP_SHARED_MEMORY=yes
+    MEMORY_AFFINITY=MCM
+    job=gefs_prdgen_gfs_${cyc}
+    during_previous_job=yes
+    fcstjoblength=long
+    if [[ $fcstjoblength = long ]]; then
+      wall_clock_limit="$wall_clock_limit_fcst_long"
+    else
+      wall_clock_limit="$wall_clock_limit_fcst_short"
+    fi
+    case $gefsmachine in
+      (wcoss)
+    MP_SHARED_MEMORY=yes
+    OMP_NUM_THREADS=1
+    resources="1728"     #for core(1)
+      ;;
+    esac
+  ;;
   (ensstat_hr)
     FORECAST_SEGMENT=hr
     ################################# production variables
@@ -2436,11 +2498,40 @@ case $taskname in
     during_previous_job=no
     ################################# production variables modified
   if [[ $gefsmachine = wcoss ]]; then                       
-    wall_clock_limit="01:30"
-    taskspernode=1
+    wall_clock_limit="00:30"
+    taskspernode=16
     OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=no
-    total_tasks=1
+    total_tasks=21
+  fi  
+  ;;
+  (post.genesis)
+    ################################# production variables
+    jobscript=JGEFS_POST_GENESIS
+    if [[ $fcstjoblength = long ]]; then
+      job_name=jgefs_post_genesis_${cyc}
+      wall_clock_limit="01:00:00"
+      task_affinity="cpu(2)"
+      job=gefs_post_track_${cyc}
+    else
+      job_name=jgefs_post_genesis_cf${cyc_fcst}_${cyc}
+      wall_clock_limit="01:30:00"
+      task_affinity="cpu(2)"
+      job=gefs_post_genesis_cf${cyc_fcst}_${cyc}
+    fi
+    job_type=parallel
+    node_usage=not_shared
+    MP_SHARED_MEMORY=yes
+    MEMORY_AFFINITY=MCM
+    ################################# development variables
+    during_previous_job=no
+    ################################# production variables modified
+  if [[ $gefsmachine = wcoss ]]; then                       
+    wall_clock_limit="01:30"
+    taskspernode=16
+    OMP_NUM_THREADS=1
+    MP_SHARED_MEMORY=no
+    total_tasks=21
   fi  
   ;;
   (track.ave)

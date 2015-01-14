@@ -1,6 +1,6 @@
 #!/bin/ksh 
 #####################################################################
-# 1/7/2014, Jiayi Peng and Dingchen Hou   Scripts are modified to be vertical structure 
+# 1/13/2015, Creadted by Jiayi Peng and Dingchen Hou for GFS genesis, following JGEFS_POST_GENESIS 
 ####################################################################
 
 #$SMSBIN/smsinit $LOADL_STEP_ID 
@@ -34,6 +34,7 @@ fi
 
 export HOMEgefs=${HOMEGEFS}
 export HOMEtrak=${HOMETRAK}
+export HOMEgene=${HOMEGENE}
 export HOMEutil=${HOMEUTIL:-/nwprod/util}
 
 # #### 05/05/99 ###############################
@@ -52,6 +53,7 @@ then
    export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
 else                         ### For Operations
    export DATA_IN=/tmpnwprd
+   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
 fi
 export DATA=$DATA_IN/${job}.${pid}
 
@@ -122,16 +124,16 @@ fi
 ####################################
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
-  export HOMEtrak=${HOMETRAK:-/nw${envir}}
-  export EXECens_tracker=${EXECtrak:-$HOMETRAK/exec}
-  export USHens_tracker=${USHtrak:-$HOMETRAK/ush}
-  export FIXens_tracker=${FIXtrak:-$HOMETRAK/fix}
+  export HOMEgene=${HOMEGENE:-/nw${envir}}
+  export EXECens_genesis=${EXECgene:-$HOMEGENE/exec}
+  export USHens_genesis=${USHgene:-$HOMEGENE/ush}
+  export FIXens_genesis=${FIXgene:-$HOMEGENE/fix}
   export PARMgefs=$HOMEgefs/parm
 else  
-  export HOMEens_tracker=${HOMETRAK:-/nw${envir}}
-  export EXECens_tracker=$HOMEtrak/exec
-  export USHens_tracker=$HOMEtrak/ush
-  export FIXens_tracker=$HOMEtrak/fix/fix_am
+  export HOMEgene=${HOMEGENE:-/nw${envir}}
+  export EXECens_genesis=$HOMEgene/exec
+  export USHens_genesis=$HOMEgene/ush
+  export FIXens_genesis=$HOMEgene/fix/fix_am
   export HOMEgefs=${HOMEGEFS:-/nw${envir}}
   export PARMgefs=$HOMEgefs/parm
 fi
@@ -155,125 +157,117 @@ sh $utilscript/setpdy.sh
 . PDY
 
 ##############################################
+# Define GENVITDIR directory. The PATH do be determined
+##############################################
+export JYYYY=`echo ${PDY} | cut -c1-4`
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
+  export genvitdir=$baseoutput/com/${NET}/${envir}/genesis_vital_${JYYYY}
+else                              ### For Operations
+  export genvitdir=/com/${NET}/${envir}/genesis_vital_${JYYYY}
+  export genvitdir=$baseoutput/com/${NET}/${envir}/genesis_vital_${JYYYY}
+fi
+mkdir -p ${genvitdir}
+
+##############################################
 # Define COM directories
 ##############################################
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
-  export COMIN=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
+  export COMIN=$basedgfs/com/gfs/${envir}/gfs.${PDY}
   export COMOUT=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
+  export COMIN=/com/gfs/prod/gfs.${PDY}
 else                              ### For Operations
-  export COMIN=/com/${NET}/${envir}/${RUN}.${PDY}
+  export COMIN=/com/gfs/${envir}/gfs.${PDY}
   export COMOUT=/com/${NET}/${envir}/${RUN}.${PDY}
 fi
-export ensdir=$COMIN/$cyc/pgrb2ap5
-#export ensdir=/ensemble/noscrub/GEFS.2015/PGRB2/tfGb_20130912/pgrb2ap5
-export COM=$COMOUT/$cyc/track
+export gfsdir=${COMIN:-/com/gfs/prod/gfs.${PDY}}
+export COM=$COMOUT/$cyc/genesis
 mkdir -m 775 -p $COM
 
 ##############################################
-echo set parameters using gefs.parm
+#?echo set parameters using gefs.parm
 ##############################################
-. $PARMgefs/gefs.parm
-
-if [[ $envir = dev ]]; then
-  export fhmax=$fhmax00
-  elif (( cyc == 06 )); then
-  export fhmax=$fhmax06
-  elif (( cyc == 12 )); then
-  export fhmax=$fhmax12
-  elif (( cyc == 18 )); then
-  export fhmax=$fhmax18
-  fi
-fi
-
-####################################
-# Create member list
-####################################
-
-if [[ $fcstlong = true ]]; then
-  memberlist="c00"
-else
-  memberlist=""
-fi
-
-(( imem = 0 ))
-while (( imem < npair * 2 ))
-do
-  (( imem = imem + 1 ))
-  if (( imem < 10 )); then
-    imem=0$imem
-  fi
-  memberlist="$memberlist p$imem"
-done
-echo memberlist=$memberlist
+#?. $PARMgefs/gefs.parm
+#fhmax=120
 
 #export homesyndir=$basesource/nw$envir/util
-export homesyndir=$HOMEtrak
-
-#DHOU 01/24/2013, Temprary for WCOSS transition
-# if [[ $envir = dev ]]; then
-#  if [[ $gefsmachine = wcoss ]]; then
-#export archsyndir=$TMPCOM/arch/prod/syndat
-#  fi
-#  if [[ $gefsmachine = zeus ]]; then
-#export archsyndir=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/comzeus/com/arch/prod/syndat
-#export homesyndir=$basesource/nw$envir/util
-#  fi
-# fi
+export homesyndir=$HOMEgene
 
 echo
 env | sort
 echo
 
 ########################################################
-# Execute the tracking script.
-export cmodel=ens
+# Execute the genesis script.
+export cmodel=gfs
 export loopnum=1
 export ymdh=${PDY}${cyc}
+export pert=${cmodel}
+export pert=gfs
 
-export exectrkdir=${EXECens_tracker}
-export rundir=${FIXens_tracker}
+export exectrkdir=${EXECens_genesis}
+export rundir=${FIXens_genesis}
 
 export CYL=${cyc}
 
-mkdir ${DATA}/${cmodel}
-cd ${DATA}/${cmodel}
+#---- first run to get GFS genesis vital at time=00 06 12 18Z -----------
+export trkrtype=tcgen
+export trkrebd=350.0
+export trkrwbd=105.0
+export trkrnbd=30.0
+export trkrsbd=5.0
+export mslpthresh=0.0015
+export v850thresh=1.5000
+export regtype=altg
 
->trkr.cmdfile
-for pert in ${memberlist}; do
-    pertdir=${DATA}/${cmodel}/${pert}
-    if [ ! -d ${pertdir} ]; then 
-     mkdir -p ${pertdir}
-    fi
-    outfile=${pertdir}/trkr.${cmodel}.${pert}.${ymdh}.out
-    echo "${USHens_tracker}/extrkr_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
-done
- 
-cat trkr.cmdfile
-chmod 775 trkr.cmdfile
-export MP_PGMMODEL=mpmd
-export MP_CMDFILE=${DATA}/${cmodel}/trkr.cmdfile
+export pertdir=${DATA}/${cmodel}
+#export pertdir=${DATA}/${cmodel}/${pert}
+if [ ! -d ${pertdir} ]; then 
+  mkdir -p ${pertdir}
+fi
 
-#mpirun.lsf
-$APRUN
+outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
+${USHens_genesis}/extrkr_tcv_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile} 
+#rm -rf ${DATA}/*
 
-for pert in ${memberlist}; do
-  pertdir=${DATA}/${cmodel}/${pert}
-  cp ${pertdir}/trak.a${pert}.atcfunix.${PDY}${CYL} ${COM}/a${pert}.t${CYL}z.cyclone.trackatcfunix
-done
-rm -rf ${DATA}/*
+#### NCEP/GFS genesis tcvitals  ###########################
+num_gen_vits=`cat ${genvitdir}/genesis.vitals.gfs.gfso.${JYYYY} | wc -l`
+if [ ${num_gen_vits} -gt 0 ]
+then
+  ln -s -f ${genvitdir}/genesis.vitals.gfs.gfso.${JYYYY} fort.41
+  ln -s -f ${genvitdir}/gen_tc.vitals.gfs.gfso.${JYYYY} fort.42
+  ${EXECens_genesis}/tcvital_ch_gfs
+  cat ${genvitdir}/gen_tc.vitals.gfs.gfso.${JYYYY} >> ${genvitdir}/all.vitals.gfs.gfso.${JYYYY}
+  rm -f ${genvitdir}/gen_tc.vitals.gfs.gfso.${JYYYY}
+else
+  touch ${genvitdir}/all.vitals.gfs.gfso.${JYYYY}
+fi
 
-sh ${USHens_tracker}/ens_trak_ave.sh
-cp ${DATA}/aemn.trkprob.* ${COM}
-cp ${DATA}/trak.aemn.atcfunix.* ${COM}/aemn.t${CYL}z.cyclone.trackatcfunix
-cp ${DATA}/trak.aemn.mode.* ${COM}/aemn.t${CYL}z.cyclone.trackmode
-cp ${DATA}/trak.aemn.spread.* ${COM}/aemn.t${CYL}z.cyclone.trackspread
-rm -rf ${DATA}/*
+#---- second run genesis ---------------------------------------
+export pertdir=${DATA}/${cmodel}/${pert}
+if [ ! -d ${pertdir} ]; then mkdir -p ${pertdir}; fi
 
-cd ${DATA}
-export COMOUT1=${COM}
-export COMOUT2=${COM}
-${USHens_tracker}/atcf_2_cxml.sh ${cmodel} ${ymdh} ${DATA}
+outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
+${USHens_genesis}/extrkr_gen_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}
+
+export atcfout=gfso
+export TRKDATA=${pertdir}
+${USHens_genesis}/sort_tracks.gen.sh  >${pertdir}/sort.${regtype}.${atcfout}.${ymdh}.out
+
+cp ${pertdir}/trak.gfso.atcfunix.altg.${ymdh} ${COM}/.
+cp ${pertdir}/storms.gfso.atcf_gen.altg.${ymdh}  ${COM}/.
+rm -f ${DATA}/*
+
+#### filtering weak storms for TC genesis #####
+infile=${COM}/storms.gfso.atcf_gen.altg.${ymdh}
+outf42=${COM}/storms.gfso.atcf_gen.${ymdh}
+outf43=${COM}/trak.gfso.atcfunix.${ymdh}
+
+ln -s -f ${infile} fort.41
+ln -s -f ${outf42} fort.42
+ln -s -f ${outf43} fort.43
+${EXECens_genesis}/filter_gen_gfs
 
 ################################
  msg="JOB COMPLETED NORMALLY"

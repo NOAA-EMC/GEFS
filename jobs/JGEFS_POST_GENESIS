@@ -1,6 +1,6 @@
 #!/bin/ksh 
 #####################################################################
-# 1/7/2014, Jiayi Peng and Dingchen Hou   Scripts are modified to be vertical structure 
+# 1/12/2015, Creadted by Jiayi Peng foolowing JGEFS_POST_TRACK,  Scripts in vertical structure 
 ####################################################################
 
 #$SMSBIN/smsinit $LOADL_STEP_ID 
@@ -34,6 +34,7 @@ fi
 
 export HOMEgefs=${HOMEGEFS}
 export HOMEtrak=${HOMETRAK}
+export HOMEgene=${HOMEGENE}
 export HOMEutil=${HOMEUTIL:-/nwprod/util}
 
 # #### 05/05/99 ###############################
@@ -122,16 +123,16 @@ fi
 ####################################
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
-  export HOMEtrak=${HOMETRAK:-/nw${envir}}
-  export EXECens_tracker=${EXECtrak:-$HOMETRAK/exec}
-  export USHens_tracker=${USHtrak:-$HOMETRAK/ush}
-  export FIXens_tracker=${FIXtrak:-$HOMETRAK/fix}
+  export HOMEgene=${HOMEGENE:-/nw${envir}}
+  export EXECens_genesis=${EXECgene:-$HOMEGENE/exec}
+  export USHens_genesis=${USHgene:-$HOMEGENE/ush}
+  export FIXens_genesis=${FIXgene:-$HOMEGENE/fix}
   export PARMgefs=$HOMEgefs/parm
 else  
-  export HOMEens_tracker=${HOMETRAK:-/nw${envir}}
-  export EXECens_tracker=$HOMEtrak/exec
-  export USHens_tracker=$HOMEtrak/ush
-  export FIXens_tracker=$HOMEtrak/fix/fix_am
+  export HOMEgene=${HOMEGENE:-/nw${envir}}
+  export EXECens_genesis=$HOMEgene/exec
+  export USHens_genesis=$HOMEgene/ush
+  export FIXens_genesis=$HOMEgene/fix/fix_am
   export HOMEgefs=${HOMEGEFS:-/nw${envir}}
   export PARMgefs=$HOMEgefs/parm
 fi
@@ -155,6 +156,17 @@ sh $utilscript/setpdy.sh
 . PDY
 
 ##############################################
+# Define GENVITDIR directory. The PATH do be determined
+##############################################
+export JYYYY=`echo ${PDY} | cut -c1-4`
+if [ "$RUN_ENVIR" = dev ]         ### For Developers
+  export genvitdir=$baseoutput/com/${NET}/${envir}/genesis_vital_${JYYYY}
+else                              ### For Operations
+  export genvitdir=/com/${NET}/${envir}/genesis_vital_${JYYYY}
+fi
+mkdir -p ${genvitdir}
+
+##############################################
 # Define COM directories
 ##############################################
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
@@ -167,7 +179,7 @@ else                              ### For Operations
 fi
 export ensdir=$COMIN/$cyc/pgrb2ap5
 #export ensdir=/ensemble/noscrub/GEFS.2015/PGRB2/tfGb_20130912/pgrb2ap5
-export COM=$COMOUT/$cyc/track
+export COM=$COMOUT/$cyc/genesis
 mkdir -m 775 -p $COM
 
 ##############################################
@@ -176,6 +188,7 @@ echo set parameters using gefs.parm
 . $PARMgefs/gefs.parm
 
 if [[ $envir = dev ]]; then
+  if (( cyc == 00 )); then
   export fhmax=$fhmax00
   elif (( cyc == 06 )); then
   export fhmax=$fhmax06
@@ -208,7 +221,7 @@ done
 echo memberlist=$memberlist
 
 #export homesyndir=$basesource/nw$envir/util
-export homesyndir=$HOMEtrak
+export homesyndir=$HOMEgene
 
 #DHOU 01/24/2013, Temprary for WCOSS transition
 # if [[ $envir = dev ]]; then
@@ -226,15 +239,24 @@ env | sort
 echo
 
 ########################################################
-# Execute the tracking script.
+# Execute the genesis script.
 export cmodel=ens
 export loopnum=1
 export ymdh=${PDY}${cyc}
 
-export exectrkdir=${EXECens_tracker}
-export rundir=${FIXens_tracker}
+export exectrkdir=${EXECens_genesis}
+export rundir=${FIXens_genesis}
 
 export CYL=${cyc}
+
+export trkrtype=tcgen
+export trkrebd=350.0
+export trkrwbd=105.0
+export trkrnbd=30.0
+export trkrsbd=5.0
+export mslpthresh=0.0015
+export v850thresh=1.5000
+export regtype=altg
 
 mkdir ${DATA}/${cmodel}
 cd ${DATA}/${cmodel}
@@ -245,8 +267,8 @@ for pert in ${memberlist}; do
     if [ ! -d ${pertdir} ]; then 
      mkdir -p ${pertdir}
     fi
-    outfile=${pertdir}/trkr.${cmodel}.${pert}.${ymdh}.out
-    echo "${USHens_tracker}/extrkr_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
+    outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
+    echo "${USHens_genesis}/extrkr_gen_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
 done
  
 cat trkr.cmdfile
@@ -258,22 +280,47 @@ export MP_CMDFILE=${DATA}/${cmodel}/trkr.cmdfile
 $APRUN
 
 for pert in ${memberlist}; do
-  pertdir=${DATA}/${cmodel}/${pert}
-  cp ${pertdir}/trak.a${pert}.atcfunix.${PDY}${CYL} ${COM}/a${pert}.t${CYL}z.cyclone.trackatcfunix
+  export TRKDATA=${DATA}/${cmodel}/${pert}
+  export pertdir=${DATA}/${cmodel}/${pert}
+  export atcfout="a${pert}"
+# pert_posneg=` echo "${pert}" | cut -c1-1`
+# pert_num=`    echo "${pert}" | cut -c2-3`
+# export atcfout="a${pert_posneg}${pert_num}"
+  ${USHens_genesis}/sort_tracks.gen.sh  >${pertdir}/sort.${regtype}.${atcfout}.${ymdh}.out
+  cp ${pertdir}/trak.a*.atcfunix.altg.${ymdh} ${COM}/.
+  cp ${pertdir}/storms.a*.atcf_gen.altg.${ymdh} ${COM}/.
 done
 rm -rf ${DATA}/*
 
-sh ${USHens_tracker}/ens_trak_ave.sh
-cp ${DATA}/aemn.trkprob.* ${COM}
-cp ${DATA}/trak.aemn.atcfunix.* ${COM}/aemn.t${CYL}z.cyclone.trackatcfunix
-cp ${DATA}/trak.aemn.mode.* ${COM}/aemn.t${CYL}z.cyclone.trackmode
-cp ${DATA}/trak.aemn.spread.* ${COM}/aemn.t${CYL}z.cyclone.trackspread
-rm -rf ${DATA}/*
+for pert in ${memberlist}; do
+  cd ${DATA}
+  cp ${COM}/storms.a${pert}.atcf_gen.altg.${ymdh} .
 
-cd ${DATA}
-export COMOUT1=${COM}
-export COMOUT2=${COM}
-${USHens_tracker}/atcf_2_cxml.sh ${cmodel} ${ymdh} ${DATA}
+  infile=storms.a${pert}.atcf_gen.altg.${ymdh}
+  outf42=storms.a${pert}.atcf_gen.${ymdh}
+  outf43=trak.a${pert}.atcfunix.${ymdh}
+  ln -s -f ${infile} fort.41
+  ln -s -f ${outf42} fort.42
+  ln -s -f ${outf43} fort.43
+  ${EXECens_genesis}/filter_gen_gfs
+  cp storms.a${pert}.atcf_gen.${ymdh} ${COM}/.
+  cp trak.a${pert}.atcfunix.${ymdh} ${COM}/.
+  rm -rf ${DATA}/*
+done
+
+##### ensemble mean calculation ##########################
+${USHens_genesis}/ens_trak_ave_2d.sh
+cp ${DATA}/trak.aemn.* ${COM}/.
+cp ${DATA}/aemn.trkprob.* ${COM}/.
+rm -f ${DATA}/*
+
+#export DATA=${DATA}/5d
+#mkdir -p ${DATA}
+mkdir -p ${COM}/5d
+${USHens_genesis}/ens_trak_ave_5d.sh
+cp ${DATA}/trak.aemn.* ${COM}/5d
+cp ${DATA}/aemn.trkprob.* ${COM}/5d
+rm -f ${DATA}/*
 
 ################################
  msg="JOB COMPLETED NORMALLY"

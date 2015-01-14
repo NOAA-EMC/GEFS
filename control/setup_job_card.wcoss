@@ -46,13 +46,13 @@ eofCAT
 
     if [[ ${MP_SHARED_MEMORY} = yes ]] ; then
       if [[ ${job_type} = parallel ]] ; then
-        AFFINITY="core(1)"
+        AFFINITY="core"
       fi
       if [[ ${taskname} = post.prdgen_hr ]] ; then
         AFFINITY="core(${OMP_NUM_THREADS}):distribute=pack"
       elif [[ ${taskname} = post.prdgen_lr ]] ; then
         AFFINITY="core(${OMP_NUM_THREADS}):distribute=pack"
-      elif [[ ${taskname} = post.iCQPF ]] ; then
+      elif [[ ${taskname} = post.CQPF ]] ; then
         AFFINITY="core(${OMP_NUM_THREADS}):distribute=pack"
       else	
         AFFINITY="core(1)"
@@ -88,9 +88,9 @@ eofCAT
 export OMP_NUM_THREADS=$OMP_NUM_THREADS
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
-#export MP_SHARED_MEMORY=${MP_SHARED_MEMORY}
-export MP_SHARED_MEMORY=yes
-#export MEMORY_AFFINITY=core:$OMP_NUM_THREADS 
+export MP_SHARED_MEMORY=${MP_SHARED_MEMORY}
+#export MP_SHARED_MEMORY=yes
+export MEMORY_AFFINITY=core:$OMP_NUM_THREADS 
 
 export total_tasks=$total_tasks
 eofCAT

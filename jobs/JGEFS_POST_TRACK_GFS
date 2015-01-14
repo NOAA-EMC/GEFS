@@ -1,6 +1,6 @@
 #!/bin/ksh 
 #####################################################################
-# 1/7/2014, Jiayi Peng and Dingchen Hou   Scripts are modified to be vertical structure 
+#1/13/2015, Jiayi Peng and Dingchen Hou, created following JGEFS_POST_TRACK, for GFS tracks (up to 240hrs forecasts)
 ####################################################################
 
 #$SMSBIN/smsinit $LOADL_STEP_ID 
@@ -52,6 +52,7 @@ then
    export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
 else                         ### For Operations
    export DATA_IN=/tmpnwprd
+   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
 fi
 export DATA=$DATA_IN/${job}.${pid}
 
@@ -159,67 +160,25 @@ sh $utilscript/setpdy.sh
 ##############################################
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
-  export COMIN=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
+  export COMIN=$basedgfs/com/gfs/${envir}/gfs.${PDY}
   export COMOUT=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
+  export COMIN=/com/gfs/prod/gfs.${PDY}
 else                              ### For Operations
-  export COMIN=/com/${NET}/${envir}/${RUN}.${PDY}
+  export COMIN=/com/gfs/${envir}/gfs.${PDY}
   export COMOUT=/com/${NET}/${envir}/${RUN}.${PDY}
 fi
-export ensdir=$COMIN/$cyc/pgrb2ap5
-#export ensdir=/ensemble/noscrub/GEFS.2015/PGRB2/tfGb_20130912/pgrb2ap5
+export gfsdir=${COMIN:-/com/gfs/prod/gfs.${PDY}}
 export COM=$COMOUT/$cyc/track
 mkdir -m 775 -p $COM
 
 ##############################################
-echo set parameters using gefs.parm
+#?echo set parameters using gefs.parm
 ##############################################
-. $PARMgefs/gefs.parm
-
-if [[ $envir = dev ]]; then
-  export fhmax=$fhmax00
-  elif (( cyc == 06 )); then
-  export fhmax=$fhmax06
-  elif (( cyc == 12 )); then
-  export fhmax=$fhmax12
-  elif (( cyc == 18 )); then
-  export fhmax=$fhmax18
-  fi
-fi
-
-####################################
-# Create member list
-####################################
-
-if [[ $fcstlong = true ]]; then
-  memberlist="c00"
-else
-  memberlist=""
-fi
-
-(( imem = 0 ))
-while (( imem < npair * 2 ))
-do
-  (( imem = imem + 1 ))
-  if (( imem < 10 )); then
-    imem=0$imem
-  fi
-  memberlist="$memberlist p$imem"
-done
-echo memberlist=$memberlist
+#?. $PARMgefs/gefs.parm
+#fhmax=240
 
 #export homesyndir=$basesource/nw$envir/util
 export homesyndir=$HOMEtrak
-
-#DHOU 01/24/2013, Temprary for WCOSS transition
-# if [[ $envir = dev ]]; then
-#  if [[ $gefsmachine = wcoss ]]; then
-#export archsyndir=$TMPCOM/arch/prod/syndat
-#  fi
-#  if [[ $gefsmachine = zeus ]]; then
-#export archsyndir=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/comzeus/com/arch/prod/syndat
-#export homesyndir=$basesource/nw$envir/util
-#  fi
-# fi
 
 echo
 env | sort
@@ -227,48 +186,28 @@ echo
 
 ########################################################
 # Execute the tracking script.
-export cmodel=ens
+export cmodel=gfs
 export loopnum=1
 export ymdh=${PDY}${cyc}
+export pert=${cmodel}
+export pert=gfs
 
 export exectrkdir=${EXECens_tracker}
 export rundir=${FIXens_tracker}
 
 export CYL=${cyc}
 
-mkdir ${DATA}/${cmodel}
-cd ${DATA}/${cmodel}
+export pertdir=${DATA}/${cmodel}
+if [ ! -d ${pertdir} ]; then 
+  mkdir -p ${pertdir}
+fi
 
->trkr.cmdfile
-for pert in ${memberlist}; do
-    pertdir=${DATA}/${cmodel}/${pert}
-    if [ ! -d ${pertdir} ]; then 
-     mkdir -p ${pertdir}
-    fi
-    outfile=${pertdir}/trkr.${cmodel}.${pert}.${ymdh}.out
-    echo "${USHens_tracker}/extrkr_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
-done
+outfile=${pertdir}/trkr.${cmodel}.${ymdh}.out
+${USHens_tracker}/extrkr_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}
  
-cat trkr.cmdfile
-chmod 775 trkr.cmdfile
-export MP_PGMMODEL=mpmd
-export MP_CMDFILE=${DATA}/${cmodel}/trkr.cmdfile
-
-#mpirun.lsf
-$APRUN
-
-for pert in ${memberlist}; do
-  pertdir=${DATA}/${cmodel}/${pert}
-  cp ${pertdir}/trak.a${pert}.atcfunix.${PDY}${CYL} ${COM}/a${pert}.t${CYL}z.cyclone.trackatcfunix
-done
-rm -rf ${DATA}/*
-
-sh ${USHens_tracker}/ens_trak_ave.sh
-cp ${DATA}/aemn.trkprob.* ${COM}
-cp ${DATA}/trak.aemn.atcfunix.* ${COM}/aemn.t${CYL}z.cyclone.trackatcfunix
-cp ${DATA}/trak.aemn.mode.* ${COM}/aemn.t${CYL}z.cyclone.trackmode
-cp ${DATA}/trak.aemn.spread.* ${COM}/aemn.t${CYL}z.cyclone.trackspread
-rm -rf ${DATA}/*
+cp ${pertdir}/trak.gfso.atcfunix.${PDY}${CYL} ${COM}/gfso.t${CYL}z.cyclone.trackatcfunix
+cp ${pertdir}/vitals.upd.gfso.${PDY}${CYL} ${COM}/.
+#rm -rf ${DATA}/*
 
 cd ${DATA}
 export COMOUT1=${COM}

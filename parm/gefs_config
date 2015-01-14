@@ -22,6 +22,8 @@ then
   export HOMETRAK=/nwprod/ens_track.v1.0.0
   export HOMETRAK=/nw${env}/ens_track.v1.0.0
   export HOMETRAK=/ensemble/save/Dingchen.Hou/SVN/ENSTRAK_20140925
+  export HOMETRAK=/ensemble/save/Jiayi.Peng/ens_tracker.v1.0.0
+  export HOMEGENE=/ensemble/save/Jiayi.Peng/ens_genesis.v1.0.0
 
   export HOMEUTIL=/nwprod/util
 
