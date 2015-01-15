@@ -2334,8 +2334,9 @@ case $taskname in
     case $gefsmachine in
       (wcoss)
     MP_SHARED_MEMORY=yes
-    OMP_NUM_THREADS=1
-    resources="1728"     #for core(1)
+    OMP_NUM_THREADS=4
+    resources="6912"     #for core(4)
+    total_tasks=1
       ;;
     esac
   ;;
@@ -2358,8 +2359,9 @@ case $taskname in
     case $gefsmachine in
       (wcoss)
     MP_SHARED_MEMORY=yes
-    OMP_NUM_THREADS=1
-    resources="1728"     #for core(1)
+    OMP_NUM_THREADS=4
+    resources="6912"     #for core(4)
+    total_tasks=1
       ;;
     esac
   ;;
