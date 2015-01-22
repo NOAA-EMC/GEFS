@@ -32,10 +32,10 @@ else
   fi
 fi
 
-export HOMEgefs=${HOMEGEFS}
-export HOMEtrak=${HOMETRAK}
-export HOMEgene=${HOMEGENE}
-export HOMEutil=${HOMEUTIL:-/nwprod/util}
+export HOMEgefs=${HOMEGgefs}
+export HOMEtrak=${HOMEtrak}
+export HOMEgene=${HOMEgene}
+export HOMEutil=${HOMEutil:-/nwprod/util}
 
 # #### 05/05/99 ###############################
 # SETUP ENS POST PROCESSING VARIABLES
@@ -133,16 +133,17 @@ else
   export EXECens_genesis=$HOMEgene/exec
   export USHens_genesis=$HOMEgene/ush
   export FIXens_genesis=$HOMEgene/fix/fix_am
-  export HOMEgefs=${HOMEGEFS:-/nw${envir}}
+  export HOMEgefs=${HOMEgefs:-/nw${envir}}
   export PARMgefs=$HOMEgefs/parm
 fi
-export GRBINDEX=EXECutil/grbindex}
 
 ##############################
 # Set up the UTILITIES
 ##############################
-export utilscript=$HOMEutil/ush
-export EXECUTIL=$HOMEutil/exec
+export USHutil=$HOMEutil/ush
+export EXECutil=$HOMEutil/exec
+export utilscript=$USHutil
+export GRBINDEX=EXECutil/grbindex}
 
 ##############################
 # Run setup to initialize working directory and utility scripts

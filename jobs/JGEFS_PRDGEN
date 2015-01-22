@@ -36,9 +36,9 @@ else
   fi
 fi
 
-export HOMEGEFS=${HOMEGEFS}
-export HOMEGSM=${HOMEGSM}
-export HOMEUTIL=${HOMEUTIL:-/nwprod/util}
+export HOMEgefs=${HOMEgefs}
+export HOMEgsm=${HOMEgsm}
+export HOMEutil=${HOMEutil:-/nwprod/util}
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -112,13 +112,13 @@ then
   export RERUN=YES
 
   # Specify Execution Areas
-  export EXECGEFS=${EXECGEFS:-$HOMEGEFS/exec}
-  export USHGEFS=${USHGEFS:-$HOMEGEFS/ush}
-  export FIXGEFS=${FIXGEFS:-$HOMEGEFS/fix}
-  export PARMGEFS=${PARMGEFS:-$HOMEGEFS/parm}
+  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+  export USHgefs=${USHgefs:-$HOMEgefs/ush}
+  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
-  export FIXGSM=${FIXGSM:-$HOMEGSM/fix/fix_am}
-  export PARMGSM=${PARMGSM:-$HOMEGSM/parm}
+  export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
+  export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 else                             ### For Operations
   export SENDCOM=YES
   export SENDDBN=YES
@@ -140,9 +140,10 @@ fi
 ####################################
 # Set up the UTILITIES
 ####################################
-export EXECUTIL=$HOMEUTIL/exec
-export FIXUTIL=$HOMEUTIL/fix
-export utilscript=${HOMEUTIL}/ush
+export EXECutil=$HOMEutil/exec
+export FIXutil=$HOMEutil/fix
+export USHutil=$HOMEutil/ush
+export utilscript=$USHutil
 # Setup temporalreplacement of utilities 
 export CNVGRIB=/nco/sib/gribdev/util/exec/cnvgrib21_gfs
 #export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
@@ -150,7 +151,7 @@ export CNVGRIB=/nco/sib/gribdev/util/exec/cnvgrib21_gfs
 ##############################################
 echo set parameters using gefs.parm
 ##############################################
-. $PARMGEFS/gefs.parm
+. $PARMgefs/gefs.parm
 
 export NTHREADS=1
 
@@ -374,9 +375,9 @@ then
   export DO_LOW_RES=NO
  fi 
  if [[ $GRIBVERSION == grib2 ]]; then
-  $HOMEGEFS/scripts/exgefs_prdgen$jobgrid.sh.ecf
+  $HOMEgefs/scripts/exgefs_prdgen$jobgrid.sh.ecf
  else 
-  $HOMEGEFS/scripts/exgefs_prdgen_grb1.sh.sms
+  $HOMEgefs/scripts/exgefs_prdgen_grb1.sh.sms
  fi
   export SHOUR=`expr $FHOUR + $FHINC`
 fi

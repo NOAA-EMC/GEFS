@@ -38,9 +38,6 @@ echo fcstlong=$fcstlong
 echo cycsuffix=$cycsuffix
 echo cfsuffix=$cfsuffix
 
-#export WGRIB=${EXECUTIL}/wgrib
-#export GRBIDX=${EXECUTIL}/grbindex
-
 ############################################################
 # clean up missing markers from previous run
 ############################################################
@@ -126,7 +123,7 @@ if (( SHOUR == 0 )); then
   export makegrb1i=yes
 
   # Making the 1-degree grib files
-  $USHGEFS/gefs_prdgen.sh
+  $USHgefs/gefs_prdgen.sh
 
 fi
 
@@ -207,12 +204,12 @@ do
   # Making the 2.5x2.5 degree GRIB files in background
   if [[ "$DO_LOW_RES" = 'YES' ]] && [[ `expr $fhr % 6 ` -eq 0 ]] 
   then
-    ($USHGEFS/gefs_prdgen_lowres.sh)&
-    #$USHGEFS/gefs_prdgen_lowres.sh
+    ($USHgefs/gefs_prdgen_lowres.sh)&
+    #$USHgefs/gefs_prdgen_lowres.sh
   fi
 
   # Making the 1x1 degree GRIB file
-  $USHGEFS/gefs_prdgen.sh
+  $USHgefs/gefs_prdgen.sh
 
    wait
 

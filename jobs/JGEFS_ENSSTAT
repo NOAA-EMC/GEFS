@@ -1,7 +1,4 @@
 #!/bin/ksh 
-################# lines between these markers have been modified for dev begin
-################# lines between these markers have been modified for dev end
-
 #####################################################################
 # 9/20/2009, Julia Zhu   Scripts are modified to be sharable
 #                        between EMC and NCO
@@ -14,35 +11,34 @@ echo `date` $0 `date -u` begin
 
 set -xa
 export PS4='$SECONDS + '
-####################################
 
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 export GRIBVERSION=${GRIBVERSION:-grib2}
 
-export CNVGRIB=/nco/sib/gribdev/util/exec/cnvgrib21_gfs
-export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
 ###########################################
 # Run gefs_config to get input parameters
 ###########################################
 if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
-################# lines between these markers have been modified for dev begin
- else
-# . $basesource/nwdev/parm/gefs_config
-  . $basesource/nwdev/parm/gefs_config_old
- fi
-################# lines between these markers have been modified for dev end
+# . $basesource/nw${envir}/versions/gefs.ver
+  . $basesource/nwdev/parm/gefs_config
+else
+  VERSION_FILE=/nw{$envir}/versions/gefs.ver
+  if [-f $VERSION_FILE]; then
+   . $VERSION_FILE
+  else
+   ecflow_client --abort
+   exit
+  fi
 fi
 
-# #### 05/05/99 ###############################
-# SETUP ENS POST PROCESSING VARIABLES
-# #############################################
+export HOMEgefs=${HOMEgefs}
+export HOMEutil=${HOMEutil:-/nwprod/util}
+
+# Setup temporalreplacement of utilities
+export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -50,23 +46,19 @@ fi
 export pid=$$
 if [ "$RUN_ENVIR" = dev ]    ### For Developers
 then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd}
-################# lines between these markers have been modified for dev begin
- else
    export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
- fi
-################# lines between these markers have been modified for dev end
 else                       ### For Operations
    export DATA_IN=/tmpnwprd
 fi
+
 export DATA=$DATA_IN/${job}.${pid}
 
 mkdir -p $DATA
 cd $DATA
 
+######################################
+# Set up the cycle variable
+######################################
 export cycle=t${cyc}z
 
 ####################################
@@ -80,17 +72,9 @@ export RUN=stat
 ####################################
 if [ "$RUN_ENVIR" = dev ]     ### For Developers
 then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-   export jlogfile=${jlogfile:-$DATA_IN/jlogfile}
-################# lines between these markers have been modified for dev begin
- else
    export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
- fi
-################# lines between these markers have been modified for dev end
 else                        ### For Operations
-   export jlogfile=/com/logs/para/jlogfile
+   export jlogfile=/com/logs/jlogfile
 fi
 
 ####################################
@@ -114,28 +98,10 @@ then
   export SENDDBN_GB2=${SENDDBN_GB2:-NO}
 
   # Specify Execution Areas
-  export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
-  export EXECGLOBAL=${EXECGLOBAL:-$HOMEGLOBAL/exec}
-  export USHGLOBAL=${USHGLOBAL:-$HOMEGLOBAL/ush}
-  export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
-  export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
-
-  export HOMEgefs=${HOMEgefs:-/nw${envir}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
-
- if [[ $gefsmachine = zeus ]]; then
-  export HOMEglobal=${HOMEglobal:-/nw${envir}}
-  export EXECglobal=${EXECglobal:-$HOMEglobal/exec}
-  export USHglobal=${USHglobal:-$HOMEglobal/ush}
-  export FIXglobal=${FIXglobal:-$HOMEglobal/fix}
-  export PARMglobal=${PARMglobal:-$HOMEglobal/parm}
- fi 
- if [[ $gefsmachine = wcoss ]]; then
-  export FIXglobal=${FIXglobal:-$HOMEglobal/fix}
- fi 
 else                             ### For Operations
   export SENDCOM=YES
   export SENDDBN=YES
@@ -143,17 +109,10 @@ else                             ### For Operations
   export SENDDBN_GB2=YES
 
   # Specify Execution Areas
-  export HOMEGLOBAL=/nwprod
-  export EXECGLOBAL=$HOMEGLOBAL/exec
-  export USHGLOBAL=$HOMEGLOBAL/ush
-  export FIXGLOBAL=$HOMEGLOBAL/fix
-  export PARMGLOBAL=$HOMEGLOBAL/parm
-
-  export HOMEgefs=/nw${envir}
-  export EXECgefs=$HOMEgefs/exec
-  export USHgefs=$HOMEgefs/ush
-  export FIXgefs=$HOMEgefs/fix
-  export PARMgefs=$HOMEgefs/parm
+  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+  export USHgefs=${USHgefs:-$HOMEgefs/ush}
+  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 fi
 
 export ERRSCRIPT=err_chk
@@ -164,22 +123,19 @@ export REDERR='2>'
 ##############################
 # Set up the UTILITIES
 ##############################
-export HOMEUTIL=/nwprod/util
-export utilscript=$HOMEUTIL/ush
-export EXECUTIL=$HOMEUTIL/exec
-export FIXUTIL=$HOMEUTIL/fix
-export GRBINDEX=/nwprod/util/exec/grbindex
+export EXECutil=$HOMEutil/exec
+export FIXutil=$HOMEutil/fix
+export utilscript=${HOMEutil}/ush
 
- if [[ $gefsmachine = zeus ]]; then
-#DHOU 03/26/2012 for ZEUS
-export HOMEUTIL=$HOMEglobal/util
-export utilscript=$HOMEglobal/util/ush
-#export GRBINDEX=$HOMEglobal/util/exec/grbindex
-export EXECUTIL=$HOMEUTIL/exec
- fi
-# if [[ $gefsmachine = wcoss ]]; then
-# Add somthing if needed 
-# fi
+export CNVGRIB=${CNVGRIB:-/$EXECutil/cnvgrib21_gfs}
+export GRBINDEX=${GRBINDEX:-/nwprod/util/exec/grbindex
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+. $PARMgefs/gefs.parm
+. $PARMgefs/gefs_ensstat.parm
+
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
@@ -215,6 +171,7 @@ mkdir -m 775 -p $COMOUT/$cyc/pgrba
 mkdir -m 775 -p $COMOUT/$cyc/pgrbalr
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2a
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2alr
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
 
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
@@ -229,13 +186,6 @@ postmsg "$jlogfile" "$msg"
 ####################################
 export SLEEP_TIME=900
 export SLEEP_INT=5
-
-##############################################
-echo set parameters using gefs.parm
-##############################################
-
-. $PARMgefs/gefs.parm
-. $PARMgefs/gefs_ensstat.parm
 
 export NTHREADS=1
 ####################################
@@ -270,18 +220,15 @@ export FHINC=03
     export SHOUR=00
     if [[ $fcstlong = true ]]; then
       export FHOUR=$fhmaxh
-#     export FHOUR=06
     else
       export FHOUR=06
     fi
   ;;
   (lr)
     # low resolution segment
-export FHINC=06
     export SHOUR=$(( $fhmaxh + FHINC ))
     if [[ $fcstlong = true ]]; then
       export FHOUR=$fhmax
-#     export FHOUR=216
     else
       export FHOUR=06
     fi
@@ -298,7 +245,7 @@ export FHINC=06
 esac
 
 echo FORECAST_SEGMENT=$FORECAST_SEGMENT
-echo FHINC=$FHINC
+echo FHINC=$FHINC      
 echo SHOUR=$SHOUR
 echo FHOUR=$FHOUR
 
@@ -309,9 +256,9 @@ env | sort
 
 export ext_h=""
 if [[ $GRIBVERSION == grib2 ]]; then
- $HOMEgefs/scripts/exgefs_ensstat.sh.sms
+ $HOMEgefs/scripts/exgefs_ensstat.sh.ecf
 else
- $HOMEgefs/scripts/exgefs_ensstat_grb1.sh.sms
+ $HOMEgefs/scripts/exgefs_ensstat_grb1.sh.ecf
 fi
 
 msg="JOB COMPLETED NORMALLY"

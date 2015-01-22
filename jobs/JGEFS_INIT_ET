@@ -30,6 +30,9 @@ else
    fi
 fi
 
+export HOMEgefs=${HOMEgefs}
+export HOMEgsm=${HOMEgsm}
+export HOMEutil=${HOMEutil:-/nwprod/util}
 
 ####################################
 # obtain unique process id (pid) and identify working directory
@@ -140,12 +143,12 @@ then
 # export USHGLOBAL=${USHGSM:-$HOMEGSM/ush}
 # export FIXGLOBAL=${FIXGSM:-$HOMEGSM/fix/fix_am}
 
-  export HOMEGEFS=${HOMEGEFS:-/nw${envir}}
-  export EXECGEFS=${EXECGEFS:-$HOMEGEFS/exec}
-  export USHGEFS=${USHGEFS:-$HOMEGEFS/ush}
-  export FIXGEFS=${FIXGEFS:-$HOMEGEFS/fix}
-  export PARMGEFS=${PARMGEFS:-$HOMEGEFS/parm}
-  export USHGLOBAL=$USHGEFS
+  export HOMEGgefs=${HOMEgefs:-/nw${envir}}
+  export EXECgefs=${EXECgefs:-$HOMEGgefs/exec}
+  export USHgefs=${USHgefs:-$HOMEgefs/ush}
+  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+  export USHGLOBAL=$USHgefs
   export EXECGLOBAL=/nwprod/exec
   export XC=.x
 
@@ -181,8 +184,8 @@ export REDERR='2>'
 echo set parameters using gefs.parm
 ##############################################
 
-. $PARMGEFS/gefs.parm
-. $PARMGEFS/gefs_init.parm
+. $PARMgefs/gefs.parm
+. $PARMgefs/gefs_init.parm
 
 echo
 env | sort
@@ -191,8 +194,8 @@ echo
 ##############################
 # Set up the UTILITIES
 ##############################
-export utilscript=$HOMEUTIL/ush
-export EXECUTIL=$HOMEUTIL/exec
+export utilscript=$HOMEutil/ush
+export EXECutil=$HOMEutil/exec
 
 ##############################
 # Run setup to initialize working directory and utility scripts
@@ -261,7 +264,7 @@ echo
 #############################################################
 # Execute the script
 #############################################################
-$HOMEGEFS/scripts/exgefs_init_et.sh.sms
+$HOMEgefs/scripts/exgefs_init_et.sh.ecf
 
 cat $pgmout
 

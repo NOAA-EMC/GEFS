@@ -34,9 +34,9 @@ else
    fi
 fi
 
-export HOMEGEFS=${HOMEGEFS}
-export HOMEGSM=${HOMEGSM}
-export HOMEUTIL=${HOMEUTIL:-/nwprod/util}
+export HOMEgefs=${HOMEgefs}
+export HOMEgsm=${HOMEgsm}
+export HOMEutil=${HOMEutil:-/nwprod/util}
 
 
 # #############################################
@@ -123,26 +123,22 @@ then
   export RERUN=${RERUN:-NO}
 
   # Specify Execution Areas
-  export HOMEGSM=${HOMEGSM:-/nw${envir}}
-  export EXECGSM=${EXECGSM:-$HOMEGSM/exec}
-  export USHGSM=${USHGSM:-$HOMEGSM/ush}
-  export FIXGSM=${FIXGSM:-$HOMEGSM/fix/fix_am}
-  export PARMGSM=${PARMGSM:-$HOMEGSM/parm}
+  export HOMEgsm=${HOMEgsm:-/nw${envir}}
+  export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
+  export USHgsm=${USHgsm:-$HOMEgsm/ush}
+  export FIXgsm=${FIXgsm:-$HOMEgsm/fix}
 
-  export EXECGLOBAL=${EXECGSM:-$HOMEGSM/exec}
-  export USHGLOBAL=${USHGSM:-$HOMEGSM/ush}
-  export FIXGLOBAL=${FIXGSM:-$HOMEGSM/fix/fix_am}
+# THese GLOBAL env varaibles will be used in ecf and ush scripts
+# Those scripts could be modified later to remove these GLOBAL cwvariables
+  export EXECGLOBAL=${EXECgsm:-$HOMEgsm/exec}
+  export USHGLOBAL=${USHgsm:-$HOMEgsm/ush}
+  export FIXGLOBAL=${FIXgsm:-$HOMEgsm/fix/fix_am}
 
-# export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
-# export EXECGLOBAL=${EXECGSM:-$HOMEGSM/exec}
-# export USHGLOBAL=${USHGSM:-$HOMEGSM/ush}
-# export FIXGLOBAL=${FIXGSM:-$HOMEGSM/fix/fix_am}
-
-  export HOMEGEFS=${HOMEGEFS:-/nw${envir}}
-  export EXECGEFS=${EXECGEFS:-$HOMEGEFS/exec}
-  export USHGEFS=${USHGEFS:-$HOMEGEFS/ush}
-  export FIXGEFS=${FIXGEFS:-$HOMEGEFS/fix}
-  export PARMGEFS=${PARMGEFS:-$HOMEGEFS/parm}
+  export HOMEgefs=${HOMEgefs:-/nw${envir}}
+  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+  export USHgefs=${USHgefs:-$HOMEgefs/ush}
+  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 else                             ### For Operations
   export SENDCOM=YES
@@ -180,8 +176,8 @@ export REDERR='2>'
 ##############################################
 echo set parameters using gefs.parm
 ##############################################
-. $PARMGEFS/gefs.parm
-. $PARMGEFS/gefs_init.parm
+. $PARMgefs/gefs.parm
+. $PARMgefs/gefs_init.parm
 
 echo
 env | sort
@@ -190,8 +186,9 @@ echo
 ##############################
 # Set up the UTILITIES
 ##############################
-export EXECUTIL=$HOMEUTIL/exec
-export utilscript=/nwprod/util/ush
+export EXECutil=$HOMEutil/exec
+export USHutil=$HOMEutil/ush
+export utilscript=$USHutil
 
 ##############################
 # Run setup to initialize working directory and utility scripts
@@ -240,7 +237,7 @@ fi
 
 ###
 #export pdycycp=`/nwprod/util/exec/ndate -$fhrp $PDY$cyc`
-export pdycycp=`$EXECUTIL/ndate -$fhrp $PDY$cyc`
+export pdycycp=`$EXECutil/ndate -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
 export cycp=`echo $pdycycp|cut -c9-10`
 echo pdycycp=$pdycycp pdyp=$pdyp cycp=$cycp
@@ -258,32 +255,14 @@ fi
 mkdir -m 775 -p $COMP
 echo location of chgres script and executable
 # Change Resolution script and executable
-   export chgresush=$USHGLOBAL/global_chgres.sh
-   export CHGRESEXEC=$EXECGLOBAL/global_chgres
-
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-case $gefsmachine in
- (ccs)
-   export chgresush=$USHGLOBAL/global_chgres.sh
-   export CHGRESEXEC=$EXECGLOBAL/global_chgres_thread
- ;;
- (zeus)
-   export chgresush=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/ush/global_chgres.sh
-   export CHGRESEXEC=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/exec/global_chgres
- ;;
- (wcoss)
-   export chgresush=/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0/ush/global_chgres.sh
-   export CHGRESEXEC=/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0/exec/global_chgres
- ;;
-esac
-fi
+   export chgresush=$USHgsm/global_chgres.sh
+   export CHGRESEXEC=$EXECgsm/global_chgres
 
 echo chgresush=$chgresush
 echo CHGRESEXEC=$CHGRESEXEC
 
 echo location of sighdr executable
-sighdrexec=$EXECGLOBAL/global_sighdr
+sighdrexec=$EXECgsm/global_sighdr
 
 echo sighdrexec=$sighdrexec
 
@@ -309,9 +288,7 @@ echo list environment before running script
 echo
 env | sort
 echo
-$HOMEGEFS/scripts/exgefs_enkf_track.sh.sms
-
-
+$HOMEgefs/scripts/exgefs_enkf_track.sh.ecf
 
 #############################################################
 

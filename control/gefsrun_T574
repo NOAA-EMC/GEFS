@@ -463,9 +463,10 @@ jjjf18=800
 (( jjjpec = jjjpo + npert * 4 - 2 ))
 (( jjjre = jjjro + npert ))
 
-typeset -RZ3 jjjg00=$(( jjjog ))
-typeset -RZ3 jjjg01=$(( jjjog + 1 ))
-typeset -RZ3 jjjg02=$(( jjjog + 2 ))
+typeset -RZ3 jjjg00=$(( jjjog ))         #092, prdgen_gfs 1 degree grid
+typeset -RZ3 jjjg01=$(( jjjog + 1 ))     #093, prdgen_gfs job, 0.5 degree
+typeset -RZ3 jjjg04=$(( jjjog + 4 ))     #096 track_gfs
+typeset -RZ3 jjjg05=$(( jjjog + 5 ))     #097 genesis_gfs
 
 typeset -RZ3 jjjp00=$(( jjjf00 + jjjpo ))
 typeset -RZ3 jjjp00l=$(( jjjf00l + jjjpo ))
@@ -594,8 +595,9 @@ do
 done
 echo
 echo $jjjg00 gefs gfs job
-echo $jjjg01 gefs gfs-track job
-echo $jjjg02 gefs gfs-genesis job
+echo $jjjg01 gefs gfs job, 0.5 degree grid
+echo $jjjg04 gefs gfs-track job
+echo $jjjg05 gefs gfs-genesis job
 echo $jjjs00 ensstat job
 echo
 echo "   " chgres jobs $jjjr00 to $jjjz00
@@ -1134,12 +1136,20 @@ else
     ($jjjg00) 
       taskname=prdgen.gfs 
       fcstjoblength=long
+      jobgrid=
+      jobhour=0612
     ;;
     ($jjjg01) 
+      taskname=prdgen.gfs 
+      fcstjoblength=long
+      jobgrid=_p5
+      jobhour=0369
+    ;;
+    ($jjjg04) 
       taskname=track.gfs 
       fcstjoblength=long
     ;;
-    ($jjjg02) 
+    ($jjjg05) 
       taskname=genesis.gfs 
       fcstjoblength=long
     ;;

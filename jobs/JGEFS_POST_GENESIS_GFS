@@ -32,10 +32,9 @@ else
   fi
 fi
 
-export HOMEgefs=${HOMEGEFS}
-export HOMEtrak=${HOMETRAK}
-export HOMEgene=${HOMEGENE}
-export HOMEutil=${HOMEUTIL:-/nwprod/util}
+export HOMEgefs=${HOMEgefs}
+export HOMEgene=${HOMEgene}
+export HOMEutil=${HOMEutil:-/nwprod/util}
 
 # #### 05/05/99 ###############################
 # SETUP ENS POST PROCESSING VARIABLES
@@ -124,26 +123,27 @@ fi
 ####################################
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
-  export HOMEgene=${HOMEGENE:-/nw${envir}}
-  export EXECens_genesis=${EXECgene:-$HOMEGENE/exec}
-  export USHens_genesis=${USHgene:-$HOMEGENE/ush}
-  export FIXens_genesis=${FIXgene:-$HOMEGENE/fix}
+  export HOMEgene=${HOMEgene:-/nw${envir}}
+  export EXECens_genesis=${EXECgene:-$HOMEgene/exec}
+  export USHens_genesis=${USHgene:-$HOMEgene/ush}
+  export FIXens_genesis=${FIXgene:-$HOMEgene/fix}
   export PARMgefs=$HOMEgefs/parm
 else  
-  export HOMEgene=${HOMEGENE:-/nw${envir}}
+  export HOMEgene=${HOMEgene:-/nw${envir}}
   export EXECens_genesis=$HOMEgene/exec
   export USHens_genesis=$HOMEgene/ush
   export FIXens_genesis=$HOMEgene/fix/fix_am
-  export HOMEgefs=${HOMEGEFS:-/nw${envir}}
+  export HOMEgefs=${HOMEgefs:-/nw${envir}}
   export PARMgefs=$HOMEgefs/parm
 fi
-export GRBINDEX=EXECutil/grbindex}
+export GRBINDEX=$EXECutil/grbindex}
 
 ##############################
 # Set up the UTILITIES
 ##############################
-export utilscript=$HOMEutil/ush
-export EXECUTIL=$HOMEutil/exec
+export EXECutil=$HOMEutil/exec
+export USHutil=$HOMEutil/ush
+export utilscript=$USHutil
 
 ##############################
 # Run setup to initialize working directory and utility scripts

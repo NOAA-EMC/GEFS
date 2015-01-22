@@ -22,16 +22,16 @@ ffhr=$ffhr
 fhr=$fhr
 grid=$gridp5
 
-export WGRIB=${WGRIB:-$EXECUTIL/wgrib}
-export GRBIDX=${GRBIDX:-$EXECUTIL/grbindex}
-export COPYGB=${COPYGB:-$EXECUTIL/copygb}
-export WGRIB2=${WGRIB2:-$EXECUTIL/wgrib2}
-export GRB2IDX=${GRB2IDX:-$EXECUTIL/grb2index}
-export COPYGB2=${COPYGB2:-$EXECUTIL/copygb2}
-export CNVGRIB=${CNVGRIB:-$EXECUTIL/cnvgrib21}
+export WGRIB=${WGRIB:-$EXECutil/wgrib}
+export GRBIDX=${GRBIDX:-$EXECutil/grbindex}
+export COPYGB=${COPYGB:-$EXECutil/copygb}
+export WGRIB2=${WGRIB2:-$EXECutil/wgrib2}
+export GRB2IDX=${GRB2IDX:-$EXECutil/grb2index}
+export COPYGB2=${COPYGB2:-$EXECutil/copygb2}
+export CNVGRIB=${CNVGRIB:-$EXECutil/cnvgrib21}
 #export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
 
-#export ENSADD=${ENSADD:-$USHGEFS/global_ensadd.sh}
+#export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
 
 echo settings in $0 gefsmachine=$gefsmachine
 echo settings in $0 WGRIB=$WGRIB
@@ -88,8 +88,8 @@ else
    excludestring='180-192hr'
 
    # begin block removed from background
-#  parmlist=$PARMGEFS/gefs_pgrba_f${hsuffix}.parm
-   parmlist=$PARMGEFS/gefs_pgrb2a_f${hsuffix}.parm
+#  parmlist=$PARMgefs/gefs_pgrba_f${hsuffix}.parm
+   parmlist=$PARMgefs/gefs_pgrb2a_f${hsuffix}.parm
    $WGRIB2 -s pgb2file.$ffhr$cfsuffix | \
        grep -F -f $parmlist | \
        grep -v -F $excludestring | \
@@ -107,8 +107,8 @@ else
    # end block removed from background
 
    # begin block removed from background
-#  parmlist=$PARMGEFS/gefs_pgrbb_f${hsuffix}.parm
-   parmlist2=$PARMGEFS/gefs_pgrb2ab_f${hsuffix}.parm
+#  parmlist=$PARMgefs/gefs_pgrbb_f${hsuffix}.parm
+   parmlist2=$PARMgefs/gefs_pgrb2ab_f${hsuffix}.parm
    $WGRIB2 -s pgb2file.$ffhr$cfsuffix | \
        grep -F -f $parmlist2 | \
        grep -v -F -f $parmlist | \
@@ -121,9 +121,9 @@ else
 #  if test "$CREATE_TIGGE" = 'YES'
 #  then
 #     if (( fhr == 0 )); then
-#       parmlist=${PARMGEFS}/gefs_pgrb2c_f00.parm
+#       parmlist=${PARMgefs}/gefs_pgrb2c_f00.parm
 #     else
-#       parmlist=${PARMGEFS}/gefs_pgrb2c_fhh.parm
+#       parmlist=${PARMgefs}/gefs_pgrb2c_fhh.parm
 #     fi
 ##    set +x
 #     $WGRIB2 pgb2bfile.$ffhr$cfsuffix | \

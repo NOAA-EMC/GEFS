@@ -34,9 +34,9 @@ else
    fi
 fi
 
-export HOMEGEFS=${HOMEGEFS}
-export HOMEGSM=${HOMEGSM}
-export HOMEUTIL=${HOMEUTIL:-/nwprod/util}
+export HOMEgefs=${HOMEgefs}
+export HOMEgsm=${HOMEgsm}
+export HOMEutil=${HOMEutil:-/nwprod/util}
 
 # #### 05/05/99 ###############################
 # SETUP ENS INITIALIZATION PROCESSING VARIABLES
@@ -155,12 +155,12 @@ then
 # export USHGLOBAL=${USHGSM:-$HOMEGSM/ush}
 # export FIXGLOBAL=${FIXGSM:-$HOMEGSM/fix/fix_am}
 
-  export HOMEGEFS=${HOMEGEFS:-/nw${envir}}
-  export EXECGEFS=${EXECGEFS:-$HOMEGEFS/exec}
-  export USHGEFS=${USHGEFS:-$HOMEGEFS/ush}
-  export FIXGEFS=${FIXGEFS:-$HOMEGEFS/fix}
-  export PARMGEFS=${PARMGEFS:-$HOMEGEFS/parm}
-  export USHGLOBAL=$USHGEFS
+  export HOMEgefs=${HOMEgefs:-/nw${envir}}
+  export EXECgefs=${EXECgefs:-$HOMEGEFS/exec}
+  export USHGgefs=${USHgefs:-$HOMEGEFS/ush}
+  export FIXgefs=${FIXgefs:-$HOMEGEFS/fix}
+  export PARMgefs=${PARMgefs:-$HOMEGEFS/parm}
+  export USHGLOBAL=$USHgefs
 
 else                             ### For Operations
 
@@ -202,8 +202,8 @@ echo
 ##############################
 # Set up the UTILITIES
 ##############################
-export utilscript=$HOMEUTIL/ush
-export EXECUTIL=$HOMEUTIL/exec
+export utilscript=$HOMEutil/ush
+export EXECutil=$HOMEutil/exec
 
 ##############################
 # Run setup to initialize working directory and utility scripts
@@ -272,7 +272,7 @@ export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
 fi
 
 #export pdycycp=`/nwprod/util/exec/ndate -$fhrp $PDY$cyc`
-export pdycycp=`$EXECUTIL/ndate -$fhrp $PDY$cyc`
+export pdycycp=`$EXECutil/ndate -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
 export cycp=`echo $pdycycp|cut -c9-10`
 
@@ -350,7 +350,7 @@ echo
 
 #############################################################
 # Execute the script
-$HOMEGEFS/scripts/exgefs_init_separate.sh.sms
+$HOMEGEFS/scripts/exgefs_init_separate.sh.ecf
 #############################################################
 
 cat $pgmout

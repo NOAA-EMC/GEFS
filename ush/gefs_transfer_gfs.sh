@@ -17,18 +17,22 @@ echo "-----------------------------------------------------"
 #####################################################################
 set -xa
  
+PGRBA=$1
+PGRB2A=$2
+echo $PGRBA $PGRB2A
+
 if test "$SENDCOM" = "YES"
 then
    #
    # Save Pressure GRIB/GRIB Index files
    #
-   cp pgbafile $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaf$fhr
+   cp pgbafile $COMOUT/$cyc/$PGRBA/ge${RUN}.${cycle}.$PGRBA\f$fhr
    if [[ "$makegrb1i" = "yes" ]]; then
-     cp pgbaifile $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaif$fhr
+     cp pgbaifile $COMOUT/$cyc/$PGRBA/ge${RUN}.${cycle}.$PGRBA\if$fhr
    fi
-   cp pgb2afile $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2af$fhr
+   cp pgb2afile $COMOUT/$cyc/$PGRB2A/ge${RUN}.${cycle}.$PGRB2A\f$fhr
    if [[ "$makegrb2i" = "yes" ]]; then
-     cp pgb2aifile $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2aif$fhr
+     cp pgb2aifile $COMOUT/$cyc/$PGRB2A/ge${RUN}.${cycle}.$PGRB2A\if$fhr
    fi
  
    # Save lowres files if we are supposed to
@@ -60,13 +64,13 @@ then
     MEMBER=$RUN | tr '[a-z]' '[A-Z]'
     if [[ $fhr -ge 0 && $fhr -le 84 && ` expr $fhr % 6 ` -eq 0 ]]
     then
-      $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_$MEMBER $job $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaf$fhr
+      $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_$MEMBER $job $COMOUT/$cyc/$PGRBA/ge${RUN}.${cycle}.$PGRBA\f$fhr
       if [[ "$makegrb1i" = "yes" ]]; then
-	$DBNROOT/bin/dbn_alert MODEL ENS_PGBAI_$MEMBER $job $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaif$fhr
+	$DBNROOT/bin/dbn_alert MODEL ENS_PGBAI_$MEMBER $job $COMOUT/$cyc/$PGRBA/ge${RUN}.${cycle}.$PGRBA\if$fhr
       fi
-      $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_$MEMBER $job $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2af$fhr
+      $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_$MEMBER $job $COMOUT/$cyc/$PGRB2A/ge${RUN}.${cycle}.$PGRB2A\f$fhr
       if [[ "$makegrb2i" = "yes" ]]; then
-	$DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI_$MEMBER $job $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2aif$fhr
+	$DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI_$MEMBER $job $COMOUT/$cyc/$PGRB2A/ge${RUN}.${cycle}.$PGRB2A\if$fhr
       fi
     fi
     if test "$DO_LOW_RES" = 'YES' -a ` expr $fhr % 12 ` -eq 0 -a $fhr -ge 96
@@ -82,13 +86,13 @@ then
     fi
     if [[ $fhr -ge 192 && ` expr $fhr % 12 ` -eq 0 ]]
     then
-      $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_$MEMBER $job $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaf$fhr
+      $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_$MEMBER $job $COMOUT/$cyc/$PGRBA/ge${RUN}.${cycle}.$PGRBA\f$fhr
       if [[ "$makegrb1i" = "yes" ]]; then
-	$DBNROOT/bin/dbn_alert MODEL ENS_PGBAI_$MEMBER $job $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaif$fhr
+	$DBNROOT/bin/dbn_alert MODEL ENS_PGBAI_$MEMBER $job $COMOUT/$cyc/$PGRBA/ge${RUN}.${cycle}.$PGRBA\if$fhr
       fi
-      $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_$MEMBER $job $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2af$fhr
+      $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_$MEMBER $job $COMOUT/$cyc/$PGRB2A/ge${RUN}.${cycle}.$PGRB2A\f$fhr
       if [[ "$makegrb2i" = "yes" ]]; then
-	$DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI_$MEMBER $job $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2aif$fhr
+	$DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI_$MEMBER $job $COMOUT/$cyc/$PGRB2A/ge${RUN}.${cycle}.$PGRB2A\if$fhr
       fi
     fi
 fi

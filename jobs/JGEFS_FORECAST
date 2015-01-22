@@ -38,9 +38,9 @@ else
    fi
 fi
 
-export HOMEGEFS=${HOMEGEFS}
-export HOMEGSM=${HOMEGSM}
-export HOMEUTIL=${HOMEUTIL:-/nwprod/util}
+export HOMEgefs=${HOMEgefs:-/nw${envir}}
+export HOMEgsm=${HOMEgsm}
+export HOMEutil=${HOMEutil:-/nwprod/util}
 
 # ###################################
 # SET SHELL PROCESSING VARIABLES
@@ -128,26 +128,19 @@ then
   export RERUN=${RERUN:-NO}
 
   # Specify Execution Areas
-  export HOMEGSM=${HOMEGSM:-/nw${envir}}
-  export EXECGSM=${EXECGSM:-$HOMEGSM/exec}
-  export USHGSM=${USHGSM:-$HOMEGSM/ush}
-  export FIXGSM=${FIXGSM:-$HOMEGSM/fix/fix_am}
-  export PARMGSM=${PARMGSM:-$HOMEGSM/parm}
+  export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
+  export USHgsm=${USHgsm:-$HOMEgsm/ush}
+  export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
+  export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 
-  export EXECGLOBAL=${EXECGSM:-$HOMEGSM/exec}
-  export USHGLOBAL=${USHGSM:-$HOMEGSM/ush}
-  export FIXGLOBAL=${FIXGSM:-$HOMEGSM/fix/fix_am}
+  export EXECGLOBAL=${EXECgsm:-$HOMEgsm/exec}
+  export USHGLOBAL=${USHgsm:-$HOMEgsm/ush}
+  export FIXGLOBAL=${FIXgsm:-$HOMEgsm/fix/fix_am}
   
-# export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
-# export EXECGLOBAL=${EXECGSM:-$HOMEGSM/exec}
-# export USHGLOBAL=${USHGSM:-$HOMEGSM/ush}
-# export FIXGLOBAL=${FIXGSM:-$HOMEGSM/fix/fix_am}
-
-  export HOMEGEFS=${HOMEGEFS:-/nw${envir}}
-  export EXECGEFS=${EXECGEFS:-$HOMEGEFS/exec}
-  export USHGEFS=${USHGEFS:-$HOMEGEFS/ush}
-  export FIXGEFS=${FIXGEFS:-$HOMEGEFS/fix}
-  export PARMGEFS=${PARMGEFS:-$HOMEGEFS/parm}
+  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+  export USHgefs=${USHgefs:-$HOMEgefs/ush}
+  export FIXGgefs=${FIXgefs:-$HOMEgefs/fix}
+  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 else                             ### For Operations
   export SENDCOM=YES
   export SENDSMS=YES
@@ -180,8 +173,8 @@ export LOGSCRIPT=startmsg
 ##############################
 # Set up the UTILITIES
 ##############################
-export utilscript=$HOMEUTIL/ush
-export EXECUTIL=$HOMEUTIL/exec
+export utilscript=$HOMEutil/ush
+export EXECutil=$HOMEutil/exec
 
 ##############################
 # Run setup to initialize working directory and utility scripts
@@ -272,7 +265,7 @@ mkdir -m 775 -p $GESdir
 ##############################################
 echo set parameters using gefs.parm
 ##############################################
-. $PARMGEFS/gefs.parm
+. $PARMgefs/gefs.parm
 
 case $cyc in
   00) export fhmax=$fhmax00;;
@@ -285,15 +278,15 @@ esac
 # Specify locations of the following scripts and executables
 ###############################################################
 export CHGRESTHREAD=4
-export OVERPARMEXEC=$EXECUTIL/overparm_grib
+export OVERPARMEXEC=$EXECutil/overparm_grib
 
 # Change Resolution script and executable
-export chgresush=$USHGSM/global_chgres.sh
-export CHGRESEXEC=$EXECGSM/global_chgres
+export chgresush=$USHgsm/global_chgres.sh
+export CHGRESEXEC=$EXECgsm/global_chgres
 
 # forecast script  and executable
-  export fcstscript=$HOMEGSM/scripts/exglobal_fcst.sh.ecf
-  export FCSTEXEC=$HOMEGSM/exec/global_fcst
+  export fcstscript=$HOMEgsm/scripts/exglobal_fcst.sh.ecf
+  export FCSTEXEC=$HOMEgsm/exec/global_fcst
 
 #RLW 20110803 reinstate local control of the gefs executable and script
 #DHOU 20130203 nolified it
@@ -316,11 +309,11 @@ export FNVETC=$FIXgefs/global_vegtype.1x1.grb
 export FNTSFC=${FNTSFC:-${FIXGLOBAL}/RTGSST.1982.2012.monthly.clim.grb}
 export FNAISC=${FNAISC:-${FIXGLOBAL}/CFSR.SEAICE.1982.2012.monthly.clim.grb}
 
-#export EXECUTIL=$HOMEUTIL/exec
-#export FIXUTIL=$HOMEUTIL/fix
+#export EXECutil=$HOMEUutil/exec
+#export FIXutil=$HOMEutil/fix
 
-export SIGHDR=${EXECGSM}/global_sighdr
-export SFCHDR=${EXECGSM}/global_sfchdr
+export SIGHDR=${EXECgsm}/global_sighdr
+export SFCHDR=${EXECgsm}/global_sfchdr
 ####################################
 # Create member list
 ####################################

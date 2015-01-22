@@ -6,33 +6,33 @@
 #######################################################
 if [ $RUN_ENVIR = dev ]
 then
-  export HOMEGEFS=/nwprod/gefs.v11.0.0
-  export HOMEGEFS=/nw${env}/gefs.v11.0.0
-  export HOMEGEFS=/ensemble/save/Dingchen.Hou/SVN/GEFS_wcoss_unify_dev-48295
-  export HOMEGEFS=$basesource/nwdev
+  export HOMEgefs=/nwprod/gefs.v11.0.0
+  export HOMEgefs=/nw${env}/gefs.v11.0.0
+  export HOMEgefs=/ensemble/save/Dingchen.Hou/SVN/GEFS_wcoss_unify_dev-48295
+  export HOMEgefs=$basesource/nwdev
 
-  export HOMEGSM=/nwprod/gfs.v12.0.0
-  export HOMEGSM=/nw${env}/gfs.v12.0.0
-  export HOMEGSM=/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0
+  export HOMEgsm=/nwprod/gfs.v12.0.0
+  export HOMEgsm=/nw${env}/gfs.v12.0.0
+  export HOMEgsm=/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0
 
-  export HOMEPOST=/nwprod/gfs.v12.0.0
-  export HOMEPOST=/nw${env}/gfs.v12.0.0
-  export HOMEPOST=/ensemble/save/Dingchen.Hou/SVN/post_upgrade_gfs_EXP-gefs-45733
+  export HOMEpost=/nwprod/gfs.v12.0.0
+  export HOMEpost=/nw${env}/gfs.v12.0.0
+  export HOMEpost=/ensemble/save/Dingchen.Hou/SVN/post_upgrade_gfs_EXP-gefs-45733
 
-  export HOMETRAK=/nwprod/ens_track.v1.0.0
-  export HOMETRAK=/nw${env}/ens_track.v1.0.0
-  export HOMETRAK=/ensemble/save/Dingchen.Hou/SVN/ENSTRAK_20140925
-  export HOMETRAK=/ensemble/save/Jiayi.Peng/ens_tracker.v1.0.0
-  export HOMEGENE=/ensemble/save/Jiayi.Peng/ens_genesis.v1.0.0
+  export HOMEtrak=/nwprod/ens_track.v1.0.0
+  export HOMEtrak=/nw${env}/ens_track.v1.0.0
+  export HOMEtrak=/ensemble/save/Dingchen.Hou/SVN/ENSTRAK_20140925
+  export HOMEtrak=/ensemble/save/Jiayi.Peng/ens_tracker.v1.0.0
+  export HOMEgene=/ensemble/save/Jiayi.Peng/ens_genesis.v1.0.0
 
   export HOMEUTIL=/nwprod/util
 
 # We should define these variables in the J-job scripts
-# export EXECGEFS=$HOMEGEFS/exec
-# export FIXGEFS=$HOMEGEFS/fix
-# export PARMGEFS=$HOMEGEFS/parm
-# export USHGEFS=$HOMEGEFS/ush
-# export SCRIPTSGEFS=$HOMEGEFS/scripts
+# export EXECgefs=$HOMEgefs/exec
+# export FIXgefs=$HOMEgefs/fix
+# export PARMgefs=$HOMEgefs/parm
+# export USHgefs=$HOMEgefs/ush
+# export SCRIPTSgefs=$HOMEgefs/scripts
 
 ################# lines between these markers have been modified for dev end
 #  export fcstscript=$HOMEGSM/scripts/exglobal_fcst.sh.ecf

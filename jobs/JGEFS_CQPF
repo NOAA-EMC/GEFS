@@ -36,8 +36,8 @@ else
   fi
 fi
 
-export HOMEgefs=${HOMEGEFS}
-export HOMEutil=${HOMEUTIL:-/nwprod/util}
+export HOMEgefs=${HOMEgefs}
+export HOMEutil=${HOMEutil:-/nwprod/util}
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -105,7 +105,7 @@ else                             ### For Operations
 # export HOMEGLOBAL=/nwprod
 fi
 
-  export HOMEgefs=$HOMEGEFS
+  export HOMEgefs=$HOMEgefs
   export EXECgefs=$HOMEgefs/exec
   export USHgefs=$HOMEgefs/ush
   export FIXgefs=$HOMEgefs/fix

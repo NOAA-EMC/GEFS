@@ -36,9 +36,9 @@ else
    exit
   fi 
 fi
-export HOMEGEFS=${HOMEGEFS}
-export HOMEGSM=${HOMEGSM}
-export HOMEUTIL=${HOMEUTIL:-/nwprod/util}
+export HOMEgefs=${HOMEgefs}
+export HOMEgsm=${HOMEgsm}
+export HOMEutil=${HOMEutil:-/nwprod/util}
 
 # ###################################
 # SET SHELL PROCESSING VARIABLES
@@ -125,25 +125,25 @@ then
   export RERUN=${RERUN:-NO}
 
   # Specify Execution Areas
-  export HOMEGSM=${HOMEGSM:-/nw${envir}}
-  export EXECGSM=${EXECGSM:-$HOMEGSM/exec}
-  export USHGSM=${USHGSM:-$HOMEGSM/ush}
-  export FIXGSM=${FIXGSM:-$HOMEGSM/fix/fix_am}
-  export PARMGSM=${PARMGSM:-$HOMEGSM/parm}
+  export HOMEgsm=${HOMEgsm:-/nw${envir}}
+  export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
+  export USHgsm=${USHgsm:-$HOMEgsm/ush}
+  export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
+  export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 
 # export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
-  export HOMEGLOBAL=${HOMEGSM:-/nwprod}
-  export EXECGLOBAL=${EXECGSM:-$HOMEGSM/exec}
-  export USHGLOBAL=${USHGSM:-$HOMEGSM/ush}
-  export FIXGLOBAL=${FIXGSM:-$HOMEGSM/fix/fix_am}
+  export HOMEGLOBAL=${HOMEgsm:-/nwprod}
+  export EXECGLOBAL=${EXECgsm:-$HOMEgsm/exec}
+  export USHGLOBAL=${USHgsm:-$HOMEgsm/ush}
+  export FIXGLOBAL=${FIXgsm:-$HOMEgsm/fix/fix_am}
 
-  export HOMEGEFS=${HOMEGEFS:-/nw${envir}}
-  export EXECGEFS=${EXECGEFS:-$HOMEGEFS/exec}
-  export USHGEFS=${USHGEFS:-$HOMEGEFS/ush}
-  export FIXGEFS=${FIXGEFS:-$HOMEGEFS/fix}
-  export PARMGEFS=${PARMGEFS:-$HOMEGEFS/parm}
+  export HOMEgefs=${HOMEgefs:-/nw${envir}}
+  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+  export USHgefs=${USHgefs:-$HOMEgefs/ush}
+  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
-  export HOMEUTIL=${HOMEUTIL:-/nwprod/util}
+  export HOMEutil=${HOMEutil:-/nwprod/util}
 else                             ### For Operations
   export SENDCOM=YES
   export SENDSMS=YES
@@ -178,8 +178,9 @@ export LOGSCRIPT=startmsg
 ##############################
 # Set up the UTILITIES
 ##############################
-export utilscript=$HOMEUTIL/ush
-export EXECUTIL=$HOMEUTIL/exec
+export EXECutil=$HOMEutil/exec
+export USHutil=$HOMEutil/USH
+export utilscript=$USHutil
 
 ##############################
 # Run setup to initialize working directory and utility scripts
@@ -238,28 +239,27 @@ export OVERPARMEXEC=$EXECGLOBAL/overparm_grib
    export chgresush=$USHGLOBAL/global_chgres.sh
    export CHGRESEXEC=$EXECGLOBAL/global_chgres
 
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-case $gefsmachine in
- (ccs)
-   export chgresush=$USHGLOBAL/global_chgres.sh
-   export CHGRESEXEC=$EXECGLOBAL/global_chgres_thread
- ;;
- (zeus)
-   export chgresush=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/ush/global_chgres.sh
-   export CHGRESEXEC=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/exec/global_chgres
- ;;
- (wcoss)
-   export chgresush=/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0/ush/global_chgres.sh
-   export CHGRESEXEC=/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0/exec/global_chgres
- ;;
-esac
-fi
+#if [ "$RUN_ENVIR" = dev ]         ### For Developers
+#then
+#case $gefsmachine in
+# (ccs)
+#   export chgresush=$USHGLOBAL/global_chgres.sh
+#   export CHGRESEXEC=$EXECGLOBAL/global_chgres_thread
+# ;;
+# (zeus)
+#   export chgresush=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/ush/global_chgres.sh
+#   export CHGRESEXEC=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/exec/global_chgres
+# ;;
+# (wcoss)
+#   export chgresush=/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0/ush/global_chgres.sh
+#   export CHGRESEXEC=/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0/exec/global_chgres
+# ;;
+#esac
+#fi
 
-#export HOMEUTIL=$HOMEUTIL
-export HOMEUTIL=/nwprod/util
-export EXECUTIL=$HOMEUTIL/exec
-export FIXUTIL=$HOMEUTIL/fix
+#export HOMEutil=${HOMEutil:-/nwprod/util}
+#export EXECutil=$HOMEutil/exec
+#export FIXutil=$HOMEutil/fix
 
 ####################################
 # Create member list

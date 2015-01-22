@@ -78,9 +78,9 @@
 #    GENPSICHIEXE   Optional, specify where executable is for generating
 #                   psi and chi.
 ########################################################################       
-#     EXECUTIL      Directory for utility executables
+#     EXECutil      Directory for utility executables
 #                   defaults to /nwprod/util/exec
-#     USHUTIL       Directory for utility scripts
+#     USHutil       Directory for utility scripts
 #                   defaults to /nwprod/util/ush
 #     EXECGLOBAL    Directory for global executables
 #                   defaults to /nwprod/exec
@@ -96,7 +96,7 @@
 #     POSTGPEXEC    Global post executable
 #                   defaults to ${EXECGLOBAL}/ncep_post
 #     GRBINDEX      GRIB index maker
-#                   defaults to ${EXECUTIL}/grbindex$XC
+#                   defaults to ${EXECutil}/grbindex$XC
 #     ANOMCATSH     Global anomaly GRIB script
 #                   defaults to ${USHGLOBAL}/global_anomcat.sh
 #     POSTGPLIST    File containing further namelist inputs
@@ -196,8 +196,8 @@ export IO=${6:-${IO:-0}}
 export JO=${7:-${JO:-0}}
 export IGEN=${8:-${IGEN:-0}}
 #  Directories.
-export EXECUTIL=${EXECUTIL:-/nwprod/util/exec}
-export USHUTIL=${USHUTIL:-/nwprod/util/ush}
+export EXECutil=${EXECutil:-/nwprod/util/exec}
+export USHutil=${USHutil:-/nwprod/util/ush}
 export EXECGLOBAL=${EXECGLOBAL:-/nwprod/exec}
 export USHGLOBAL=${USHGLOBAL:-/nwprod/ush}
 export DATA=${DATA:-$(pwd)}
@@ -206,7 +206,7 @@ export MP=${MP:-$([[ $LOADL_STEP_TYPE = PARALLEL ]]&&echo "p"||echo "s")}
 export XC=${XC}
 export POSTGPEXEC=${POSTGPEXEC:-${EXECGLOBAL}/ncep_post}
 export OVERPARMEXEC=${OVERPARMEXEC:-${EXECGLOBAL}/overparm_grib}
-export GRBINDEX=${GRBINDEX:-${EXECUTIL}/grbindex$XC}
+export GRBINDEX=${GRBINDEX:-${EXECutil}/grbindex$XC}
 export ANOMCATSH=${ANOMCATSH:-${USHGLOBAL}/global_anomcat.sh}
 export CHGRESSH=${CHGRESSH:-${USHGLOBAL}/global_chgres.sh}
 export POSTGPLIST=${POSTGPLIST:-/dev/null}
@@ -366,7 +366,7 @@ if [ $FILTER = "1" ] ; then
 # Filter SLP and 500 mb height using copygb, change GRIB ID, and then
 # cat the filtered fields to the pressure GRIB file, from Iredell
 
-copygb=${COPYGB:-${EXECUTIL}/copygb}
+copygb=${COPYGB:-${EXECutil}/copygb}
 
 $copygb -x -i'4,0,80' -k'4*-1,1,102' $PGBOUT tfile
 ln -s -f tfile fort.11

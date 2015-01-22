@@ -32,9 +32,9 @@ else
   fi
 fi
 
-export HOMEgefs=${HOMEGEFS}
-export HOMEtrak=${HOMETRAK}
-export HOMEutil=${HOMEUTIL:-/nwprod/util}
+export HOMEgefs=${HOMEgefs}
+export HOMEtrak=${HOMEtrak}
+export HOMEutil=${HOMEutil:-/nwprod/util}
 
 # #### 05/05/99 ###############################
 # SETUP ENS POST PROCESSING VARIABLES
@@ -123,26 +123,27 @@ fi
 ####################################
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
-  export HOMEtrak=${HOMETRAK:-/nw${envir}}
-  export EXECens_tracker=${EXECtrak:-$HOMETRAK/exec}
-  export USHens_tracker=${USHtrak:-$HOMETRAK/ush}
-  export FIXens_tracker=${FIXtrak:-$HOMETRAK/fix}
+  export HOMEtrak=${HOMEtrak:-/nw${envir}}
+  export EXECens_tracker=${EXECtrak:-$HOMEtrak/exec}
+  export USHens_tracker=${USHtrak:-$HOMEtrak/ush}
+  export FIXens_tracker=${FIXtrak:-$HOMEtrak/fix}
   export PARMgefs=$HOMEgefs/parm
 else  
-  export HOMEens_tracker=${HOMETRAK:-/nw${envir}}
+  export HOMEens_tracker=${HOMEtrak:-/nw${envir}}
   export EXECens_tracker=$HOMEtrak/exec
   export USHens_tracker=$HOMEtrak/ush
   export FIXens_tracker=$HOMEtrak/fix/fix_am
-  export HOMEgefs=${HOMEGEFS:-/nw${envir}}
+  export HOMEgefs=${HOMEgefs:-/nw${envir}}
   export PARMgefs=$HOMEgefs/parm
 fi
-export GRBINDEX=EXECutil/grbindex}
+export GRBINDEX=$EXECutil/grbindex}
 
 ##############################
 # Set up the UTILITIES
 ##############################
-export utilscript=$HOMEutil/ush
-export EXECUTIL=$HOMEutil/exec
+export EXECutil=$HOMEutil/exec
+export USHutil=$HOMEutil/ush
+export utilscript=$USHutil
 
 ##############################
 # Run setup to initialize working directory and utility scripts

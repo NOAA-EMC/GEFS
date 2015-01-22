@@ -21,10 +21,31 @@ if [[ $gefsmachine = zeus ]]; then
      export gefspoe=$gefsmpexec
  fi
 ###############
+#if [ "$RUN_ENVIR" = dev ]   ### For Developers
+#then
+#  . $basesource/nwdev/parm/gefs_config
+#fi
+###########################################
+# Run gefs_config to get input parameters
+###########################################
 if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
+################# lines between these markers have been modified for dev begin
   . $basesource/nwdev/parm/gefs_config
+else
+  VERSION_FILE=/nw{$envir}/versions/gefs.ver
+  if [-f $VERSION_FILE]; then
+    . $VERSION_FILE
+  else
+    ecflow_client --abort
+    exit
+  fi
 fi
+
+export HOMEgefs=${HOMEgefs}
+export HOMEgsm=${HOMEgsm}
+export HOMEutil=${HOMEutil:-/nwprod/util}
+
 # #### 05/05/99 ###############################
 # SETUP ENS INITIALIZATION PROCESSING VARIABLES
 # #############################################
@@ -138,13 +159,13 @@ then
 # export USHGLOBAL=${USHGSM:-$HOMEGSM/ush}
 # export FIXGLOBAL=${FIXGSM:-$HOMEGSM/fix/fix_am}
 
-  export HOMEGEFS=${HOMEGEFS:-/nw${envir}}
-  export EXECGEFS=${EXECGEFS:-$HOMEGEFS/exec}
-  export USHGEFS=${USHGEFS:-$HOMEGEFS/ush}
-  export FIXGEFS=${FIXGEFS:-$HOMEGEFS/fix}
-  export PARMGEFS=${PARMGEFS:-$HOMEGEFS/parm}
-  export USHGLOBAL=$USHGEFS
-  export EXECGLOBAL=$EXECGEFS
+  export HOMEgefs=${HOMEgefs:-/nw${envir}}
+  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+  export USHgefs=${USHgefs:-$HOMEgefs/ush}
+  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+  export USHGLOBAL=$USHgefs
+  export EXECGLOBAL=$EXECGgefs
 
 else                             ### For Operations
 
@@ -180,8 +201,8 @@ export REDERR='2>'
 echo set parameters using gefs.parm
 ##############################################
 
-. $PARMGEFS/gefs.parm
-. $PARMGEFS/gefs_init.parm
+. $PARMgefs/gefs.parm
+. $PARMgefs/gefs_init.parm
 
 echo
 env | sort
@@ -190,8 +211,8 @@ echo
 ##############################
 # Set up the UTILITIES
 ##############################
-export utilscript=$HOMEUTIL/ush
-export EXECUTIL=$HOMEUTIL/exec
+export utilscript=$HOMEutil/ush
+export EXECutil=$HOMEutil/exec
 
 
 ##############################
@@ -261,7 +282,7 @@ echo
 
 #############################################################
 # Execute the script
-$HOMEGEFS/scripts/exgefs_init_combine.sh.sms
+$HOMEgefs/scripts/exgefs_init_combine.sh.ecf
 #############################################################
 
 cat $pgmout

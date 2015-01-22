@@ -22,15 +22,13 @@ ffhr=$ffhr
 fhr=$fhr
 grid=$grid2p5
 
-export WGRIB=${WGRIB:-$EXECUTIL/wgrib}
-export GRBIDX=${GRBIDX:-$EXECUTIL/grbindex}
-export COPYGB=${COPYGB:-$EXECUTIL/copygb}
-export WGRIB2=${WGRIB2:-$EXECUTIL/wgrib2}
-export GRB2IDX=${GRB2IDX:-$EXECUTIL/grb2index}
-export COPYGB2=${COPYGB2:-$EXECUTIL/copygb2}
-export CNVGRIB=${CNVGRIB:-$EXECUTIL/cnvgrib21}
-
-#export ENSADD=${ENSADD:-$USHGEFS/global_ensadd.sh}
+export WGRIB=${WGRIB:-$EXECutil/wgrib}
+export GRBIDX=${GRBIDX:-$EXECutil/grbindex}
+export COPYGB=${COPYGB:-$EXECutil/copygb}
+export WGRIB2=${WGRIB2:-$EXECutil/wgrib2}
+export GRB2IDX=${GRB2IDX:-$EXECutil/grb2index}
+export COPYGB2=${COPYGB2:-$EXECutil/copygb2}
+export CNVGRIB=${CNVGRIB:-$EXECutil/cnvgrib21}
 
 echo settings in $0 gefsmachine=$gefsmachine
 echo settings in $0 WGRIB=$WGRIB
@@ -85,7 +83,7 @@ if [[ -s $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix ]] && \
    [[ $overwrite = no ]]; then
      echo `date` 2.5x2.5 pgrb2a processing skipped for $RUN $ffhr
 else
-   parmlist=$PARMGEFS/gefs_pgrb2a_f${hsuffix}.parm
+   parmlist=$PARMgefs/gefs_pgrb2a_f${hsuffix}.parm
    set +x
    $WGRIB2 -s pgb2file.$ffhr.2$cfsuffix | \
        grep -F -f $parmlist | \
@@ -112,7 +110,7 @@ if [[ -s $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix ]] && \
    [[ $overwrite = no ]]; then
      echo `date` 2.5x2.5 pgrb2b processing skipped for $RUN $ffhr
 else
-   parmlist2=$PARMGEFS/gefs_pgrb2ab_f${hsuffix}.parm
+   parmlist2=$PARMgefs/gefs_pgrb2ab_f${hsuffix}.parm
    set +x
    $WGRIB2 -s pgb2file.$ffhr.2$cfsuffix | \
        grep -F -f $parmlist2 | \
@@ -282,7 +280,7 @@ echo `date` sf and bf copied to nwges $ffhr completed
 #  if [[ $envir != para ]]; then
 #    if [[ $envir != test ]]; then
 #      sigfilename=${RUN}.t${cyc}z.s$ffhr$cfsuffix
-#      $EXECGEFS/sigstat $COMIN/$cyc/sfcsig/$sigfilename >$COMOUT/$cyc/stats/sigstat.$sigfilename
+#      $EXECgefs/sigstat $COMIN/$cyc/sfcsig/$sigfilename >$COMOUT/$cyc/stats/sigstat.$sigfilename
 #    fi
 #  fi
 #fi
