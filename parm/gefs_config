@@ -3,7 +3,7 @@
 # GEFS model run
 #######################################################
  
-export RUN_ENVIR=${$RUN_ENVIR:-dev}
+export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 HOMEDIR=/ensemble/save/Dingchen.Hou/SVN
 

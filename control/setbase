@@ -32,17 +32,19 @@ echo
 echo `date` $0 set directory tree locations
 echo
 
+export JOBQUEUE=dev
+export JOBQUEUE=dev2
   PTMP=ptmp 
   STMP=stmp
 if [[ $machl = t ]] || [[ $machl = g ]]; then
  if [[ $JOBQUEUE = dev ]]; then
   PTMP=ptmpd2
   STMP=stmpd2
- elif [[ $JOBQUEUE = dev ]]; then
+ elif [[ $JOBQUEUE = dev2 ]]; then
   PTMP=ptmpp2
   STMP=stmpp2
  else
-  echo Invalid option of JOBQUEUE $JOBQUEUE
+  echo Invalid option of JOBQUEUE in setbase $JOBQUEUE
   exit
  fi
 fi

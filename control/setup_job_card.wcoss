@@ -57,10 +57,13 @@ eofCAT
       else	
         AFFINITY="core(1)"
       fi
+        export JOBQUEUE=$JOBQUEUE
+        JOBQUEUESHARED=$JOBQUEUE\_shared
+#       JOBQUEUESHARED=$JOBQUEUE\_shared
 ##BSUB -R affinity[core(${OMP_NUM_THREADS})]
 ##BSUB -R affinity[core(${OMP_NUM_THREADS}):distribute=pack]
     cat <<eofCAT >>$jobcontrol
-#BSUB -q "$JOBQUEUE\_shared" 
+#BSUB -q "$JOBQUEUESHARED" 
 #BSUB -R "rusage[mem=$resources]"
 #BSUB -R "affinity[$AFFINITY]"
 export OMP_NUM_THREADS=1

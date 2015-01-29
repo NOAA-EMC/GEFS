@@ -9,8 +9,8 @@ echo
 echo `date` $0 $*                                                         check arguments
 echo
 
-JOBQUEUE=dev
-JOBQUEUE=dev2
+export JOBQUEUE=dev
+export JOBQUEUE=dev2
 
 #DHOU, 01/03/2013 add this block to generate the machine name related variables
   machl=`uname -n | cut -c1`
@@ -25,11 +25,11 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
  if [[ $JOBQUEUE = dev ]]; then
   PTMP=ptmpd2
   STMP=stmpd2
- elif [[ $JOBQUEUE = dev ]]; then
+ elif [[ $JOBQUEUE = dev2 ]]; then
   PTMP=ptmpp2
   STMP=stmpp2
  else
-  echo Invalid option of JOBQUEUE $JOBQUEUE
+  echo Invalid option of JOBQUEUE in gefsrun $JOBQUEUE
   exit
  fi
 fi
