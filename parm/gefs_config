@@ -1,56 +1,33 @@
-################# lines between these markers have been modified for dev begin
-################# lines between these markers have been modified for dev end
 #######################################################
 # This file defines the various input varibles for the
 # GEFS model run
 #######################################################
+ 
+export RUN_ENVIR=${$RUN_ENVIR:-dev}
+
+HOMEDIR=/ensemble/save/Dingchen.Hou/SVN
+
 if [ $RUN_ENVIR = dev ]
 then
-  export HOMEgefs=/nwprod/gefs.v11.0.0
-  export HOMEgefs=/nw${env}/gefs.v11.0.0
-  export HOMEgefs=/ensemble/save/Dingchen.Hou/SVN/GEFS_wcoss_unify_dev-48295
+  export HOMEgefs=$HOMEDIR/GEFS_wcoss_unify_dev-48295
   export HOMEgefs=$basesource/nwdev
 
-  export HOMEgsm=/nwprod/gfs.v12.0.0
-  export HOMEgsm=/nw${env}/gfs.v12.0.0
-  export HOMEgsm=/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0
-
-  export HOMEpost=/nwprod/gfs.v12.0.0
-  export HOMEpost=/nw${env}/gfs.v12.0.0
-  export HOMEpost=/ensemble/save/Dingchen.Hou/SVN/post_upgrade_gfs_EXP-gefs-45733
-
-  export HOMEtrak=/nwprod/ens_track.v1.0.0
-  export HOMEtrak=/nw${env}/ens_track.v1.0.0
-  export HOMEtrak=/ensemble/save/Dingchen.Hou/SVN/ENSTRAK_20140925
-  export HOMEtrak=/ensemble/save/Jiayi.Peng/ens_tracker.v1.0.0
-  export HOMEgene=/ensemble/save/Jiayi.Peng/ens_genesis.v1.0.0
+  export HOMEgsm=$HOMEDIR/GSM_V12.0.0
+  export HOMEpost=$HOMEDIR/post_upgrade_gfs_EXP-gefs-45733
+  export HOMEtrak=$HOMEDIR/ens_tracker.v1.0.0
+  export HOMEtrak=$HOMEDIR/ens_genesis.v1.0.0
 
   export HOMEUTIL=/nwprod/util
-
-# We should define these variables in the J-job scripts
-# export EXECgefs=$HOMEgefs/exec
-# export FIXgefs=$HOMEgefs/fix
-# export PARMgefs=$HOMEgefs/parm
-# export USHgefs=$HOMEgefs/ush
-# export SCRIPTSgefs=$HOMEgefs/scripts
-
-################# lines between these markers have been modified for dev end
-#  export fcstscript=$HOMEGSM/scripts/exglobal_fcst.sh.ecf
-#  export FCSTEXEC=$EXECGSM/global_fcst
-#  export FNVETC=$FIXgefs/gefs_global_vegtype.1x1.grb
-#  export FNVETC=$FIXgefs/global_vegtype.1x1.grb
-
-# export POSTGPEXEC=$EXECGLOBAL/ncep_post
-# export POSTGPSH=$USHGLOBAL/global_nceppost.sh
+  export UTILROOT=/nwprod/util
 
   export SENDCOM=YES
   export SENDDBN=NO
   export SENDDBN_GB2=NO
   export SENDSMS=YES
-################# lines between these markers have been modified for dev begin
   export SENDSMS=NO
-################# lines between these markers have been modified for dev end
 
+#NCO required variable
+# export 
   export DATA_IN=/ptmp/${LOGNAME}/tmpnwprd
   export DATA_IN=$basetmp/tmpnwprd
   export jlogfile=$DATA_IN/jlogfile
@@ -77,91 +54,4 @@ then
   export pcom_in=/ptmp/$LOGNAME/pcom
   export pcom_in=$baseoutput/pcom
 
-elif [ $RUN_ENVIR = prod ]
-then
-  export HOMEgefs=/nwprod
-  export EXECgefs=$HOMEgefs/exec
-  export FIXgefs=$HOMEgefs/fix
-  export PARMgefs=$HOMEgefs/parm
-  export USHgefs=$HOMEgefs/ush
-
-  export HOMEglobal=/nwprod
-  export EXECglobal=$HOMEglobal/exec
-  export FIXglobal=$HOMEglobal/fix
-  export PARMglobal=HOMEglobal/parm
-  export USHglobal=$HOMEglobal/ush
-
-  export HOMEGLOBAL=/nwprod
-  export EXECGLOBAL=$HOMEGLOBAL/exec
-  export FIXGLOBAL=$HOMEGLOBAL/fix
-  export PARMGLOBAL=$HOMEGLOBAL/parm
-  export USHGLOBAL=$HOMEGLOBAL/ush
-  export SCRIPTSGLOBAL=$HOMEGLOBAL/scripts
-
-  export fcstscript=$HOMEGLOBAL/scripts/exglobal_fcst.sh.sms
-  export FCSTEXEC=$EXECGLOBAL/global_fcst
-  export FNVETC=$FIXgefs/gefs_global_vegtype.1x1.grb
-  export FCSTCONCEXEC=$EXECgefs/gefs_fcst_conc
-  export fcstconcscript=$SCRIPTSgefs/exgefs_fcst_conc.sh.sms
-
-  export POSTGPEXEC=$EXECGLOBAL/ncep_post
-  export POSTGPSH=$USHGLOBAL/global_nceppost.sh
-
-  export SENDCOM=YES
-  export SENDDBN=YES
-  export SENDSMS=YES
-
-  export DATA_IN=/tmpnwprd
-  export jlogfile=/com/logs/jlogfile
-
-  export com=/com/gens/${envir}
-  export COM=/com/gens/${envir}
-  export COM_IN=/com/gens/${envir}
-  export COM_OUT=/com/gens/${envir}
-  export gespath=/nwges/${envir}
-  export COMGFS=/com/gfs/prod
-
-elif [ $RUN_ENVIR = para -o $RUN_ENVIR = test ]
-then
-  export HOMEgefs=/nw${envir}
-  export EXECgefs=$HOMEgefs/exec
-  export FIXgefs=$HOMEgefs/fix
-  export PARMgefs=$HOMEgefs/parm
-  export USHgefs=$HOMEgefs/ush
-
-  export HOMEGLOBAL=/nwprod
-  export EXECGLOBAL=$HOMEGLOBAL/exec
-  export FIXGLOBAL=$HOMEGLOBAL/fix
-  export PARMGLOBAL=$HOMEGLOBAL/parm
-  export USHGLOBAL=$HOMEGLOBAL/ush
-
-  export HOMEglobal=/nw${envir}
-  export EXECglobal=$HOMEglobal/exec
-  export FIXglobal=$HOMEglobal/fix
-  export PARMglobal=HOMEglobal/parm
-  export USHglobal=$HOMEglobal/ush
-
-  export fcstscript=$HOMEGLOBAL/scripts/exglobal_fcst.sh.sms
-  export FCSTEXEC=$EXECGLOBAL/global_fcst
-  export FNVETC=$FIXgefs/gefs_global_vegtype.1x1.grb
-  export FCSTCONCEXEC=$EXECgefs/gefs_fcst_conc
-  export fcstconcscript=$SCRIPTSgefs/exgefs_fcst_conc.sh.sms
-
-  export POSTGPEXEC=$EXECGLOBAL/ncep_post
-  export POSTGPSH=$USHGLOBAL/global_nceppost.sh
-
-  export SENDCOM=YES
-  export SENDDBN=NO
-  export SENDSMS=YES
-  export SENDDBN_GB2=NO
-
-  export DATA_IN=/tmpnwprd
-  export jlogfile=/com/logs/${envir}/jlogfile
-
-  export com=/com/gens/${envir}
-  export COM=/com/gens/${envir}
-  export COM_IN=/com/gens/${envir}
-  export COM_OUT=/com/gens/${envir}
-  export gespath=/nwges/${envir}
-  export COMGFS=/com/gfs/prod
 fi

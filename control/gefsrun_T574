@@ -9,6 +9,9 @@ echo
 echo `date` $0 $*                                                         check arguments
 echo
 
+JOBQUEUE=dev
+JOBQUEUE=dev2
+
 #DHOU, 01/03/2013 add this block to generate the machine name related variables
   machl=`uname -n | cut -c1`
   if [[ $machl = r ]]; then
@@ -19,8 +22,16 @@ echo
  PTMP=ptmp
  STMP=stmp
 if [[ $machl = t ]] || [[ $machl = g ]]; then
- PTMP=ptmpd2
- STMP=stmpd2
+ if [[ $JOBQUEUE = dev ]]; then
+  PTMP=ptmpd2
+  STMP=stmpd2
+ elif [[ $JOBQUEUE = dev ]]; then
+  PTMP=ptmpp2
+  STMP=stmpp2
+ else
+  echo Invalid option of JOBQUEUE $JOBQUEUE
+  exit
+ fi
 fi
 
 goodargs=yes
@@ -1753,19 +1764,29 @@ case $taskname in
   fi
   if [[ $gefsmachine = wcoss ]]; then                       
      if [[ $fcstjoblength = long ]]; then
-#      (( taskspermem = 96 ))
-       (( taskspermem = 48 ))
+#      (( taskspermem = 48 ))
+#      (( taskspermem = 72 ))
+#      (( taskspermem = 108 ))
+#      (( taskspermem = 120 ))
+       (( taskspermem = 60 ))
+#      (( taskspermem = 54 ))
+#      (( taskspermem = 48 ))
+#      (( taskspermem = 64 ))
 #      (( taskspermem = 24 ))
+#      (( taskspermem = 32 ))
+#      (( taskspermem = 96 ))
      else  
        (( taskspermem = 32 ))
      fi  
 #      parallel_threads=1
-       parallel_threads=2
+#      parallel_threads=2
 #      parallel_threads=3
-#      parallel_threads=4
+       parallel_threads=4
 #      parallel_threads=8
+#      parallel_threads=6
        task_affinity="core(1)"
-       (( taskspernode = 16 / parallel_threads )) # for T574SL test June 2013
+       (( taskspernode = 24 / parallel_threads )) # for T574SL P2
+#      (( taskspernode = 16 / parallel_threads )) # for T574SL test June 2013
 #      (( taskspernode = 32 / parallel_threads )) # for WCOSS prod April 2013
        export taskspernode=$taskspernode
        export OMP_NUM_THREADS=$parallel_threads
@@ -1870,12 +1891,16 @@ case $taskname in
        export OMP_NUM_THREADS=$parallel_threads
   fi
   if [[ $gefsmachine = wcoss ]]; then                       
-       (( taskspermem = 40 ))
+#      (( taskspermem = 36 ))
+#      (( taskspermem = 40 ))
 #      (( taskspermem = 80 ))
+       (( taskspermem = 30 ))
 #      parallel_threads=1
-       parallel_threads=2
+#      parallel_threads=2
+       parallel_threads=4
        task_affinity="core(1)"
-       (( taskspernode = 16 / parallel_threads ))
+       (( taskspernode = 24 / parallel_threads )) # for T574SL P2
+#      (( taskspernode = 16 / parallel_threads ))
 #      (( taskspernode = 32 / parallel_threads ))
        export taskspernode=$taskspernode
        export OMP_NUM_THREADS=$parallel_threads
@@ -2131,12 +2156,14 @@ case $taskname in
     total_tasks=5     #T254
     total_tasks=16    #T574
     total_tasks=8    #T574 test
+    total_tasks=12    #T574 test
     case $gefsmachine in
       (wcoss)
     #taskspernode=$total_tasks
 #   taskspernode=16
     OMP_NUM_THREADS=2
-    (( taskspernode = 16 / OMP_NUM_THREADS ))
+#   (( taskspernode = 16 / OMP_NUM_THREADS ))
+    (( taskspernode = 24 / OMP_NUM_THREADS ))
 #   MP_SHARED_MEMORY=yes
     MP_SHARED_MEMORY=no
     resources="2000"
@@ -2183,12 +2210,14 @@ case $taskname in
       wall_clock_limit="$wall_clock_limit_fcst_short"
     fi
 #   total_tasks=5
-    total_tasks=16
+#   total_tasks=16
+    total_tasks=12
     case $gefsmachine in
       (wcoss)
        #taskspernode=$total_tasks
-        taskspernode=16
-    OMP_NUM_THREADS=1
+       #taskspernode=16
+    OMP_NUM_THREADS=2
+    (( taskspernode = 24 / OMP_NUM_THREADS ))
     MP_SHARED_MEMORY=yes
     MP_SHARED_MEMORY=no
     resources="1000"

@@ -60,7 +60,7 @@ eofCAT
 ##BSUB -R affinity[core(${OMP_NUM_THREADS})]
 ##BSUB -R affinity[core(${OMP_NUM_THREADS}):distribute=pack]
     cat <<eofCAT >>$jobcontrol
-#BSUB -q "dev_shared" 
+#BSUB -q "$JOBQUEUE\_shared" 
 #BSUB -R "rusage[mem=$resources]"
 #BSUB -R "affinity[$AFFINITY]"
 export OMP_NUM_THREADS=1
@@ -70,7 +70,7 @@ eofCAT
     if [[ ${MP_SHARED_MEMORY} = no ]] ; then
     cat <<eofCAT >>$jobcontrol
 ##BSUB -q "prod_class1" 
-#BSUB -q "dev" 
+#BSUB -q "$JOBQUEUE" 
 ##BSUB -q "debug" 
 #BSUB -x  
 ##BSUB -R affinity[${AFFINITY}]

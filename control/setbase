@@ -34,11 +34,18 @@ echo
 
   PTMP=ptmp 
   STMP=stmp
-#DHOU, 12/17/2013, define PTMP to pointing to /ptmp or /ptmpd2
 if [[ $machl = t ]] || [[ $machl = g ]]; then
-  PTMP=ptmpd2    
+ if [[ $JOBQUEUE = dev ]]; then
+  PTMP=ptmpd2
   STMP=stmpd2
-fi  
+ elif [[ $JOBQUEUE = dev ]]; then
+  PTMP=ptmpp2
+  STMP=stmpp2
+ else
+  echo Invalid option of JOBQUEUE $JOBQUEUE
+  exit
+ fi
+fi
 
 if [[ $LOGNAME = glopara ]]; then
   echo

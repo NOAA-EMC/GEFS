@@ -128,7 +128,7 @@ export FIXutil=$HOMEutil/fix
 export utilscript=${HOMEutil}/ush
 
 export CNVGRIB=${CNVGRIB:-/$EXECutil/cnvgrib21_gfs}
-export GRBINDEX=${GRBINDEX:-/nwprod/util/exec/grbindex
+export GRBINDEX=${GRBINDEX:-/nwprod/util/exec/grbindex}
 
 ##############################################
 echo set parameters using gefs.parm

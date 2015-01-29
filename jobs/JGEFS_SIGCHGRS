@@ -179,7 +179,7 @@ export LOGSCRIPT=startmsg
 # Set up the UTILITIES
 ##############################
 export EXECutil=$HOMEutil/exec
-export USHutil=$HOMEutil/USH
+export USHutil=$HOMEutil/ush
 export utilscript=$USHutil
 
 ##############################
@@ -227,7 +227,7 @@ mkdir -m 775 -p $GESdir
 ##############################################
 echo set parameters using gefs.parm
 ##############################################
-. $PARMGEFS/gefs.parm
+. $PARMgefs/gefs.parm
 
 ###############################################################
 # Specify locations of the following scripts and executables
