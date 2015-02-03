@@ -144,15 +144,15 @@ fi
 ####################################
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
-  export HOMEGSM=${HOMEGSM:-/nw${envir}}
-  export EXECGSM=${EXECGSM:-$HOMEGSM/exec}
-  export USHGSM=${USHGSM:-$HOMEGSM/ush}
-  export FIXGSM=${FIXGSM:-$HOMEGSM/fix/fix_am}
-  export PARMGSM=${PARMGSM:-$HOMEGSM/parm}
+  export HOMEgsm=${HOMEgsm:-/nw${envir}}
+  export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
+  export USHgsm=${USHgsm:-$HOMEgsm/ush}
+  export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
+  export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 
-  export EXECGLOBAL=${EXECGSM:-$HOMEGSM/exec}
-  export USHGLOBAL=${USHGSM:-$HOMEGSM/ush}
-  export FIXGLOBAL=${FIXGSM:-$HOMEGSM/fix/fix_am}
+  export EXECGLOBAL=${EXECgsm:-$HOMEgsm/exec}
+  export USHGLOBAL=${USHgsm:-$HOMEgsm/ush}
+  export FIXGLOBAL=${FIXgsm:-$HOMEgsm/fix/fix_am}
 
 # export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
 # export EXECGLOBAL=${EXECGSM:-$HOMEGSM/exec}
@@ -169,23 +169,23 @@ then
 
 else                             ### For Operations
 
-  export HOMEGSM=/nw${envir}
-  export EXECGSM=$HOMEGSM/exec
-  export USHGSM=$HOMEGSM/ush
-  export FIXGSM=$HOMEGSM/fix/fix_am
-  export PARMGSM=$HOMEGSM/parm
+  export HOMEgsm=/nw${envir}
+  export EXECgsm=$HOMEgsm/exec
+  export USHgsm=$HOMEgsm/ush
+  export FIXgsm=$HOMEgsm/fix/fix_am
+  export PARMgsm=$HOMEgs/parm
 
   export HOMEGLOBAL=/nwprod
-  export EXECGLOBAL=$HOMEGSM/exec
-  export USHGLOBAL=$HOMEGSM/ush
-  export FIXGLOBAL=$HOMEGSM/fix/fix_am
-  export PARMGLOBAL=$HOMEGSM/parm
+  export EXECGLOBAL=$HOMEgs/exec
+  export USHGLOBAL=$HOMEgsm/ush
+  export FIXGLOBAL=$HOMEgsm/fix/fix_am
+  export PARMGLOBAL=$HOMEgsm/parm
 
-  export HOMEGEFS=/nw${envir}
-  export EXECGEFS=$HOMEGEFS/exec
-  export USHGEFS=$HOMEGEFS/ush
-  export FIXGEFS=$HOMEGEFS/fix
-  export PARMGEFS=$HOMEGEFS/parm
+  export HOMEgefs=/nw${envir}
+  export EXECgefs=$HOMEgefs/exec
+  export USHgef=$HOMEgefs/ush
+  export FIXgefs=$HOMEgefs/fix
+  export PARMgefs=$HOMEgefs/parm
 fi
 
 
