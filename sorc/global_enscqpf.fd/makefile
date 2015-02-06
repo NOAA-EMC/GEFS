@@ -1,11 +1,11 @@
 SHELL=	/bin/bash
-INC= /nwprod/lib/incmod/g2_4
-LIBS= -L/nwprod/lib -lg2_4 -lw3nco_4 -lbacio_4 \
+#INC= /nwprod/lib/incmod/g2_4
+#LIBS= -L/nwprod/lib -lg2_4 -lw3nco_4 -lbacio_4 \
       -ljasper -lpng -lz
 SRCS=	CQPF.f90 QTPINT.f90 INIT_PARM.f90 PRINTINFR.f90 
 OBJS=   $(SRCS:.f90=.o)
 CMD=	global_enscqpf    
-FC=	ifort
+#FC=	ifort
 #FFLAGS=	-O3 -qsuffix=f=f90 -qlist -qsource -qlanglvl=90PURE -bnoquiet 
 #FFLAGS=	-O3 -qsuffix=f=f90 -qlist -qsource -bnoquiet 
 #FFLAGS=	-O3 -list -traceback
@@ -36,3 +36,7 @@ clean:
 
 clobber:        clean
 	-rm -f $(CMD)
+install:
+	        mv $(CMD) ../../exec/$(CMD)
+
+

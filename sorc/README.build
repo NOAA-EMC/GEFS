@@ -1,0 +1,12 @@
+Library are defined in Module_storm_reloc_v5.0.0
+
+To build codes:
+
+    cd /XXXX/tropcy_qc_reloc.v5.0.0/sorc
+     1) bash
+     2) module purge
+     3) module use .
+     4) module load Module_storm_reloc_v5.0.0
+     5) ./build.sh
+     6) ./install.sh
+

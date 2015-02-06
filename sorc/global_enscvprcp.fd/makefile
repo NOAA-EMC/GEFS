@@ -1,6 +1,6 @@
 SHELL=	/bin/bash
-INC= /nwprod/lib/incmod/g2_4
-LIBS= -L/nwprod/lib -lg2_4 -lw3nco_4 -lbacio_4 \
+#INC= /nwprod/lib/incmod/g2_4
+#LIBS= -L/nwprod/lib -lg2_4 -lw3nco_4 -lbacio_4 \
 	-ljasper -lpng -lz
 SRCS=	CVPRCP.f90 INIT_PARM.f90 PRINTINFR.f90
 OBJS=   $(SRCS:.f90=.o)
@@ -36,3 +36,7 @@ clean:
 
 clobber:        clean
 	-rm -f $(CMD)
+install:
+	        mv $(CMD) ../../exec/$(CMD)
+
+
