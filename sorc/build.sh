@@ -46,12 +46,12 @@ for dir in gefs_vortex_separate.fd gefs_vortex_combine.fd global_sigzvd.fd  glob
 #for dir in global_enspvrfy.fd ;do
  cd $dir
  make clean
-# make -f makefile
+ make -f makefile
  cd ..
 done
 for dir in ../util/sorc/gettrk.fd; do
  cd $dir
  make clean 
-# make -f Makefile
+ make -f Makefile
  cd ../../../sorc
 done
