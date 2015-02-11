@@ -17,7 +17,7 @@ if [ $mac = t -o $mac = e -o $mac = g ] ; then # For WCOSS
  export FC=ifort
 
  export LIBS_INIT="${SP_LIBd} ${SIGIO_LIB4} ${W3NCO_LIBd}"
- export LIBS_GTRK="${BACIO_LIB4} ${SIGIO_LIB4} ${IP_LIBd} ${SP_LIBd} ${SFCIO_LIB4} ${BUFR_LIB4} ${W3EMC_LIB4} ${W3NCO_LIB4} "
+ export LIBS_GTRK="${BACIO_LIB4} ${SIGIO_LIB4} ${IP_LIB4} ${SP_LIB4} ${SFCIO_LIB4} ${BUFR_LIB4} ${W3EMC_LIB4} ${W3NCO_LIB4} "
 
  export FFLAGS="-O3 -g -convert big_endian -I ${G2_INC4}"
  export FFLAGS_d="-O3 -g -r8 -convert big_endian -auto -mkl -I ${G2_INCd}"
@@ -43,7 +43,7 @@ elif [ $mac = z -o $mac = h -o $mac = f ] ; then # For ZEUS
 fi
 #---------------------------------------------------------
 for dir in gefs_vortex_separate.fd gefs_vortex_combine.fd global_sigzvd.fd  global_ensadd.fd  global_enspqpf.fd  gefs_ensstat.fd  global_ensppf.fd global_enscvprcp.fd  global_enspvrfy.fd  global_enssrbias.fd global_enscqpf.fd  global_enscvt24h.fd  global_ensrfmat.fd ; do
-#for dir in global_enspvrfy.fd ;do
+for dir in global_enspvrfy.fd ;do
  cd $dir
  make clean
  make -f makefile
