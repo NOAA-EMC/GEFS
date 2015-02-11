@@ -83,7 +83,8 @@ fi
 ############################################################ 
 # wait for master post to be finished
 ############################################################
-if (( SHOUR == 0 )); then
+#if (( SHOUR = 0 )); then
+if [[ $DOANALYSIS = YES ]]; then
   export ffhr=anl
   export fhr=00
   export anlflag=yes
@@ -135,13 +136,26 @@ if (( SHOUR == 0 )); then
   # Making the 0.5-degree grib files
   $USHgefs/gefs_prdgen_p5.sh
 
+  ####################################
+  # send control files to misc
+  ####################################
+  if test $SENDCOM = "YES"
+  then
+    if test $fhr -lt 100
+    then
+      pad="0"
+    else
+      pad=""
+    fi
+    echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/${RUN}.t${cyc}z.prdgen_p5.control_anl$cfsuffix
+  fi
 fi
 
 ############################################################
 # Initialize Loop Through the Post Forecast Files 
 ############################################################
 
-(( fhr=SHOUR))
+(( fhr = SHOUR ))
 
 if test $fhr -lt 10
 then
@@ -168,7 +182,7 @@ do
     while [ $ic -le $SLEEP_LOOP_MAX ]
     do
        #20100730 change test to use master control file
-       mcfile=$COMOUT/$cyc/misc/$RUN.$cycle.master.control$cfsuffix
+       mcfile=$COMOUT/$cyc/misc/$RUN.$cycle.master.control.$fhr$cfsuffix
        testfhr=-1
        if [[ -f $mcfile ]]; then
 	 teststring=`cat $mcfile|head -1`
@@ -234,7 +248,7 @@ do
     else
       pad=""
     fi
-    echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/${RUN}.t${cyc}z.prdgen.control$cfsuffix
+    echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/${RUN}.t${cyc}z.prdgen_p5.control_$fhr$cfsuffix
   fi
 
   export fhr=`expr $fhr + $FHINC`

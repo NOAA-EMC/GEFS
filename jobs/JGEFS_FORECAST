@@ -1,14 +1,14 @@
 #!/bin/ksh 
-#####################################################################
-# 12/2/2014, Dingchen Hou   Scripts are modified to be vertica; structure ready 
 ######################################################################
 # 9/20/2009, Julia Zhu   Scripts are modified to be sharable
 #                        between EMC and NCO
 #         Please note that variable "RUN_ENVIR" is set and used
 #         in the development enviroment only.
+# 12/2/2014, Dingchen Hou   Scripts are modified to be vertical structure ready 
+# 1/29/2015, Dingchen Hou   Scripts cleaning following NCO requirements 
 ######################################################################
 
-$SMSBIN/smsinit $LOADL_STEP_ID 
+#$SMSBIN/smsinit $LOADL_STEP_ID 
 echo `date` $0 `date -u` begin
 
 set -xa
@@ -19,7 +19,6 @@ export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 export machine=${gefsmachine:-wcoss}
 export APRUN=${gefsmpexec:-mpirun.lsf}
-
 
 ###########################################
 # Run gefs_config to get input parameters
@@ -40,7 +39,7 @@ fi
 
 export HOMEgefs=${HOMEgefs:-/nw${envir}}
 export HOMEgsm=${HOMEgsm}
-export HOMEutil=${HOMEutil:-/nwprod/util}
+export HOMEutil=${UTILROOT:-/nwprod/util}
 
 # ###################################
 # SET SHELL PROCESSING VARIABLES
@@ -52,13 +51,8 @@ date
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-if [ "$RUN_ENVIR" = dev ]    ### For Developers
-then
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
-else                         ### For Operations
-   export DATA_IN=/tmpnwprd
-fi
-export DATA=$DATA_IN/${job}.${pid}
+export DATA=$DATAROOT/${job}.${pid}
+#export DATA=$DATA_IN/${job}.${pid}
 
 mkdir -p $DATA
 cd $DATA
@@ -72,7 +66,6 @@ export cycle_fcst=t${cyc_fcst}z
 export NTHREADS=2
 export MP_LABELIO=YES
 
-#echo $cyc_fcst  $cyc  #DHTEST
 if (( cyc == cyc_fcst )); then
   export cycsuffix=false
   export fcstlong=true
@@ -87,17 +80,12 @@ fi
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=gens
+export NET=${NET:-gens}
 
 ####################################
 # File To Log Msgs
 ####################################
-if [ "$RUN_ENVIR" = dev ]     ### For Developers
-then
-   export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
-else                        ### For Operations
-   export jlogfile=/com/logs/jlogfile
-fi
+export jlogfile=${jlogfile:-/com/logs/jlogfile}
 
 ####################################
 # Determine Job Output Name on System
@@ -120,10 +108,13 @@ fi
 # RERUN    - Rerun fcst from beginning (default no)
 # VERBOSE  - Specify Verbose Output in exglobal_fcst.sh.sms
 ####################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
   export SENDCOM=${SENDCOM:-YES}
-  export SENDSMS=${SENDSMS:-YES}
+  export SENDECF=${SENDECF:-YES}
+  export SENDDBN=${SENDDBN:-YES}
+  export SENDDBN_NTC=${SENDDBN_NTC:-YES}
+
+  export SENDSMS=${SENDSMS:-NO}
+
   export VERBOSE=${VERBOSE:-NO}
   export RERUN=${RERUN:-NO}
 
@@ -141,31 +132,6 @@ then
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXGgefs=${FIXgefs:-$HOMEgefs/fix}
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
-else                             ### For Operations
-  export SENDCOM=YES
-  export SENDSMS=YES
-  export VERBOSE=NO
-  export RERUN=NO
-
-  # Specify Execution Areas
-  export HOMEGSM=/nw${envir}
-  export EXECGSM=$HOMEGSM/exec
-  export USHGSM=$HOMEGSM/ush
-  export FIXGSM=$HOMEGSM/fix/fix_am
-  export PARMGSM=$HOMEGSM/parm
-
-  export HOMEGLOBAL=/nwprod
-  export EXECGLOBAL=$HOMEGSM/exec
-  export USHGLOBAL=$HOMEGSM/ush
-  export FIXGLOBAL=$HOMEGSM/fix/fix_am
-  export PARMGLOBAL=$HOMEGSM/parm
-
-  export HOMEGEFS=/nw${envir}
-  export EXECGEFS=$HOMEGEFS/exec
-  export USHGEFS=$HOMEGEFS/ush
-  export FIXGEFS=$HOMEGEFS/fix
-  export PARMGEFS=$HOMEGEFS/parm
-fi
 
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
@@ -173,18 +139,19 @@ export LOGSCRIPT=startmsg
 ##############################
 # Set up the UTILITIES
 ##############################
-export utilscript=$HOMEutil/ush
-export EXECutil=$HOMEutil/exec
+#export utilscript=$UTILROOT/ush   # will be removed
+export USHutil=$UTILROOT/ush
+export EXECutil=$UTILROOT/exec
 
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-ksh $utilscript/setup.sh
+ksh $USHutil/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $utilscript/setpdy.sh
+sh $USHutil/setpdy.sh
 . PDY
 
 # hour_lr_ni will be used to define the IC files of the lower resolution part (if not restart) 
@@ -212,7 +179,6 @@ else
     err_chk
 fi
 
-#DHOU 20120403, changed true to .ture. for the value of ENS_SPS, 9 places
 echo FORECAST_SEGMENT = $FORECAST_SEGMENT
 echo fhresini=$fhresini
 echo ENS_SPS = $ENS_SPS
@@ -234,30 +200,34 @@ fi
 ##############################################
 # Define COM and GES directories
 ##############################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-  export GFS_IN=${GFS_IN:-/com/gfs/prod/}
-  export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
-  export gespath=${gespath:-/global/noscrub/$LOGBAME/nwges/${envir}}
+  export gespath=$GESROOT/${envir}
+  export COMGFS=$COMROOT/com/gfs/prod/gfs.${PDY}
+  export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
 
-  export COMGFS=$GFS_IN/gfs.${PDY}
-  export COMOUT=$COM_OUT/gefs.${PDY}
-else                              ### Fir Operations
-  export COMGFS=/com/gfs/prod/gfs.${PDY}
-  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
-  export gespath=/nwges/${envir}
-fi
+#if [ "$RUN_ENVIR" = dev ]         ### For Developers
+#then
+#  export GFS_IN=${GFS_IN:-/com/gfs/prod/}
+#  export COM_OUT=${COM_OUT:-/global/noscrub/$LOGNAME/com/${NET}/${envir}}
+#  export gespath=${gespath:-/global/noscrub/$LOGNAME/nwges/${envir}}
+#
+#  export COMGFS=$GFS_IN/gfs.${PDY}
+#  export COMOUT=$COM_OUT/gefs.${PDY}
+#else                              ### Fir Operations
+#  export COMGFS=/com/gfs/prod/gfs.${PDY}
+#  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+#  export gespath=/nwges/${envir}
+#fi
 
 mkdir -m 775 -p $COMOUT/$cyc/sfcsig
 mkdir -m 775 -p $COMOUT/$cyc/sflux
 mkdir -m 775 -p $COMOUT/$cyc/misc
 
-RESTARTA=$COMOUT/$cyc/restarta
-RESTARTB=$COMOUT/$cyc/restartb
-mkdir -m 775 -p $RESTARTA
-mkdir -m 775 -p $RESTARTB
+#RESTARTA=$COMOUT/$cyc/restarta
+#RESTARTB=$COMOUT/$cyc/restartb
+#mkdir -m 775 -p $RESTARTA
+#mkdir -m 775 -p $RESTARTB
 
-export ENS_COM=$COMOUT
+#export ENS_COM=$COMOUT
 
 export GESdir=$gespath/gefs.${PDY}
 mkdir -m 775 -p $GESdir
@@ -290,27 +260,21 @@ export CHGRESEXEC=$EXECgsm/global_chgres
 
 #RLW 20110803 reinstate local control of the gefs executable and script
 #DHOU 20130203 nolified it
-if [[ "$RUN_ENVIR" = deV ]]; then
-  if [[ $locfcstscript = local ]]; then
-    export fcstscript=$basesource/nw$envir/scripts/exglobal_fcst.sh.sms
-    export fcstscript=$basesource/nw$envir/scripts/exglobal_fcst.sh.sms
-  fi
-  if [[ $locfcstexec = local ]]; then
-    export FCSTEXEC=$basesource/nw$envir/exec/global_fcst
-    export FCSTEXEC=$basesource/nw$envir/exec/global_fcst
-  fi
-fi
+#if [[ "$RUN_ENVIR" = deV ]]; then
+#  if [[ $locfcstscript = local ]]; then
+#    export fcstscript=$basesource/nw$envir/scripts/exglobal_fcst.sh.sms
+#    export fcstscript=$basesource/nw$envir/scripts/exglobal_fcst.sh.sms
+#  fi
+#  if [[ $locfcstexec = local ]]; then
+#    export FCSTEXEC=$basesource/nw$envir/exec/global_fcst
+#    export FCSTEXEC=$basesource/nw$envir/exec/global_fcst
+#  fi
+#fi
 
 #  The VEGTYPE fix file:
-# DHOU 01/07/2013 comment out this 
- if [[ $gefsmachine != wcoss ]]; then
-export FNVETC=$FIXgefs/global_vegtype.1x1.grb
- fi
+export FNVETC=${FNVETC:-${FIXGLOBAL}/global_vegtype.1x1.grb}
 export FNTSFC=${FNTSFC:-${FIXGLOBAL}/RTGSST.1982.2012.monthly.clim.grb}
 export FNAISC=${FNAISC:-${FIXGLOBAL}/CFSR.SEAICE.1982.2012.monthly.clim.grb}
-
-#export EXECutil=$HOMEUutil/exec
-#export FIXutil=$HOMEutil/fix
 
 export SIGHDR=${EXECgsm}/global_sighdr
 export SFCHDR=${EXECgsm}/global_sfchdr
@@ -341,8 +305,9 @@ if [[ $RUN_CONCURRENT = yes ]]; then
    echo RUM=$RUM
 else
   #single member
-  echo RUN=$RUN
-  memberlist=`echo $RUN|cut -c3-5`
+# echo RUN=$RUN
+  echo RUNMEM=$RUNMEM
+  memberlist=`echo $RUNMEM|cut -c3-5`
   export ENS_NUM=1
   echo ENS_NUM=$ENS_NUM
 fi
@@ -353,10 +318,12 @@ MEMBER_NAMES=$memberlist
 # Forecast Input Variables
 #
 export SEMILG=$SEMILG
-export DELTIM=900
-export DTPHYS=450
+export DELTIM=$DELTIM
+export DTPHYS=$DTPHYS
       if [[ $FORECAST_SEGMENT = lr ]]; then
 export SEMILG=$SEMILGLR
+export DELTIM=$DELTIMLR
+export DTPHYS=$DTPHYSLR
 export DELTIM=1200
 export DTPHYS=600
       fi
@@ -450,10 +417,10 @@ if [[ $RUN_CONCURRENT = yes ]]; then
   export SFBS=$COMOUT/$cyc/sfcsig/${RUM}.${cycle}.bs'${FH}'$cfsuffix
   export FLXS=$COMOUT/$cyc/sflux/${RUM}.${cycle}.ssluxgrbs'${FH}'$cfsuffix
 else
-  export SIGO=$COMOUT/$cyc/sfcsig/${RUN}.${cycle}.sf'${FH}'$cfsuffix
-  export SFCO=$COMOUT/$cyc/sfcsig/${RUN}.${cycle}.bf'${FH}'$cfsuffix
-  export FLXO=$COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbf'${FH}'$cfsuffix
-  export LOGO=$COMOUT/$cyc/misc/${RUN}.${cycle}.logf'${FH}'$cfsuffix
+  export SIGO=$COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf'${FH}'$cfsuffix
+  export SFCO=$COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf'${FH}'$cfsuffix
+  export FLXO=$COMOUT/$cyc/sflux/${RUNMEM}.${cycle}.sfluxgrbf'${FH}'$cfsuffix
+  export LOGO=$COMOUT/$cyc/misc/${RUNMEM}.${cycle}.logf'${FH}'$cfsuffix
 fi
 #
 # Restart File Names
@@ -493,17 +460,17 @@ if [[ $RUN_CONCURRENT = yes ]]; then
   fi
 else
   # for model output
-  export SIGR1=$RESTARTA/$GESdir/${RUN}.${cycle}.sigr1$cfsuffix
-  export SIGR2=$RESTARTA/$GESdir/${RUN}.${cycle}.sigr2$cfsuffix
-  export SFCR=$RESTARTA/$GESdir/${RUN}.${cycle}.sfcr$cfsuffix
+  export SIGR1=$RESTARTA/$GESdir/${RUNMEM}.${cycle}.sigr1$cfsuffix
+  export SIGR2=$RESTARTA/$GESdir/${RUNMEM}.${cycle}.sigr2$cfsuffix
+  export SFCR=$RESTARTA/$GESdir/${RUNMEM}.${cycle}.sfcr$cfsuffix
   # for restart processing
-  export SIGX1=$RESTARTA/$GESdir/${RUN}.${cycle}.sigr1$cfsuffix
-  export SIGX2=$RESTARTA/$GESdir/${RUN}.${cycle}.sigr2$cfsuffix
-  export SFCX=$RESTARTA/$GESdir/${RUN}.${cycle}.sfcr$cfsuffix
+  export SIGX1=$RESTARTA/$GESdir/${RUNMEM}.${cycle}.sigr1$cfsuffix
+  export SIGX2=$RESTARTA/$GESdir/${RUNMEM}.${cycle}.sigr2$cfsuffix
+  export SFCX=$RESTARTA/$GESdir/${RUNMEM}.${cycle}.sfcr$cfsuffix
   # Restart files in COMOUT area
-  export SIGX1_P=$RESTARTB/${RUN}.${cycle}.sigr1f
-  export SIGX2_P=$RESTARTB/${RUN}.${cycle}.sigr2f
-  export SFCX_P=$RESTARTB/${RUN}.${cycle}.sfcrf
+  export SIGX1_P=$RESTARTB/${RUNMEM}.${cycle}.sigr1f
+  export SIGX2_P=$RESTARTB/${RUNMEM}.${cycle}.sigr2f
+  export SFCX_P=$RESTARTB/${RUNMEM}.${cycle}.sfcrf
 fi
 
 #
@@ -820,19 +787,18 @@ if [[ $RERUN = YES ]]; then
       fi
     done
 
-  else      #RUN_CONCURRENT
-
+  else      # NON RUN_CONCURRENT
     if [[ $cycsuffix = false ]]; then
       if [[ $FORECAST_SEGMENT = lr ]]; then
-	export SIGI=$GESdir/${RUN}.t${cyc}z.sig${hour_lr_ini}_T$JCAPLR\L$LEVSLR
-	export SFCI=$GESdir/${RUN}.t${cyc}z.sfc${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+	export SIGI=$GESdir/${RUNMEM}.t${cyc}z.sig${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+	export SFCI=$GESdir/${RUNMEM}.t${cyc}z.sfc${hour_lr_ini}_T$JCAPLR\L$LEVSLR
       else
-	export SIGI=$GESdir/${RUN}.t${cyc}z.sanl
-	export SFCI=$GESdir/${RUN}.t${cyc}z.sfcanl
+	export SIGI=$GESdir/${RUNMEM}.t${cyc}z.sanl
+	export SFCI=$GESdir/${RUNMEM}.t${cyc}z.sfcanl
       fi
     else
-      export SIGI=$GESdir/${RUN}.t${cyc}z.sanl.cycfs$cyc_fcst
-      export SFCI=$GESdir/${RUN}.t${cyc}z.sfcanl.cycfs$cyc_fcst
+      export SIGI=$GESdir/${RUNMEM}.t${cyc}z.sanl.cycfs$cyc_fcst
+      export SFCI=$GESdir/${RUNMEM}.t${cyc}z.sfcanl.cycfs$cyc_fcst
     fi
 
     if test -f $SIGI -a -f $SFCI
@@ -1223,8 +1189,8 @@ then
       done
    else
       if [[ $cycsuffix = false ]]; then
-         cp -pr $COMOUT/$cyc/sfcsig/${RUN}.${cycle}.sf${HOUTASPS} $GESdir/.
-         cp -pr $COMOUT/$cyc/sfcsig/${RUN}.${cycle}.bf${HOUTASPS} $GESdir/.
+         cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf${HOUTASPS} $GESdir/.
+         cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf${HOUTASPS} $GESdir/.
       fi
    fi
    ### End of saving the HOUTASPS-hour sf and bf files for the LOW-RES run:
@@ -1300,25 +1266,25 @@ if  [[ $FORECAST_SEGMENT = hl ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh 
      eval cp -pr $SFCOUT $DATA
    done  #MN
  else
-     export SIGOUT=$GESdir/${RUN}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
-     export SFCOUT=$GESdir/${RUN}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+     export SIGOUT=$GESdir/${RUNMEM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
+     export SFCOUT=$GESdir/${RUNMEM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
      if [[ $cycsuffix = false ]]; then
 #     if [[ $ENS_SPS = true ]]; then
       if [[ $ENS_SPS = .true. ]]; then
-       export SIGINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.ss${HOUTASPS}
-       export SFCINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.bs${HOUTASPS}
+       export SIGINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ss${HOUTASPS}
+       export SFCINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bs${HOUTASPS}
       else
-       export SIGINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.sf${HOUTASPS}
-       export SFCINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.bf${HOUTASPS}
+       export SIGINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf${HOUTASPS}
+       export SFCINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf${HOUTASPS}
       fi
      else
 #     if [[ $ENS_SPS = true ]]; then
       if [[ $ENS_SPS = .true. ]]; then
-       export SIGINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
-       export SFCINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
+       export SIGINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
+       export SFCINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
       else
-       export SIGINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
-       export SFCINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
+       export SIGINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
+       export SFCINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
       fi
      fi
      echo `date` timing lr chgres before
@@ -1449,8 +1415,8 @@ if [[ $RUN_CONCURRENT = yes ]]; then
    done
 else
    if [[ $cycsuffix = false ]]; then
-      cp -pr $COMOUT/$cyc/sfcsig/${RUN}.${cycle}.sf${HOUTASPS} $GESdir/.
-      cp -pr $COMOUT/$cyc/sfcsig/${RUN}.${cycle}.bf${HOUTASPS} $GESdir/.
+      cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf${HOUTASPS} $GESdir/.
+      cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf${HOUTASPS} $GESdir/.
    fi
 fi
 

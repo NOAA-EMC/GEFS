@@ -9,10 +9,11 @@ echo
 echo `date` $0 $*                                                         check arguments
 echo
 
-export JOBQUEUE=dev
+#export JOBQUEUE=dev
 export JOBQUEUE=dev2
 
-#DHOU, 01/03/2013 add this block to generate the machine name related variables
+UBJOB= 
+
   machl=`uname -n | cut -c1`
   if [[ $machl = r ]]; then
    machl=f
@@ -25,9 +26,11 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
  if [[ $JOBQUEUE = dev ]]; then
   PTMP=ptmpd2
   STMP=stmpd2
+  COREPERNODE=16
  elif [[ $JOBQUEUE = dev2 ]]; then
   PTMP=ptmpp2
   STMP=stmpp2
+  COREPERNODE=24
  else
   echo Invalid option of JOBQUEUE in gefsrun $JOBQUEUE
   exit
@@ -470,7 +473,8 @@ jjjf18=800
 (( jjjoc = 99 ))
 
 #(( jjjpe = jjjpo + npert * 4 + 2 ))
-(( jjjpe = jjjpo + npert * 4 + 4 ))
+#(( jjjpe = jjjpo + npert * 4 + 4 ))
+(( jjjpe = jjjpo + npert * 4 + 3 ))
 (( jjjpec = jjjpo + npert * 4 - 2 ))
 (( jjjre = jjjro + npert ))
 
@@ -486,8 +490,9 @@ typeset -RZ3 jjjp12=$(( jjjf12 + jjjpo ))
 typeset -RZ3 jjjp18=$(( jjjf18 + jjjpo ))
 
 typeset -RZ3 jjje00=$(( jjjf00 + jjjpe ))
-typeset -RZ3 jjje00l=$(( jjjf00l + jjjpe - 1 ))
-#typeset -RZ3 jjje00l=$(( jjjf00l + jjjpe ))
+
+#typeset -RZ3 jjje00l=$(( jjjf00l + jjjpe - 1 ))
+typeset -RZ3 jjje00l=$(( jjjf00l + jjjpe ))
 typeset -RZ3 jjje06=$(( jjjf06 + jjjpec ))
 typeset -RZ3 jjje12=$(( jjjf12 + jjjpec ))
 typeset -RZ3 jjje18=$(( jjjf18 + jjjpec ))
@@ -600,9 +605,9 @@ do
   (( jjj = jjj + 1 ))
   echo $jjj prdgen job for $pert
   (( jjj = jjj + 1 ))
-  echo $jjj prdgen job for $pert, NEW for grid p5, hours 0,6,12,...
-  (( jjj = jjj + 1 ))
-  echo $jjj prdgen job for $pert, NEW for grid p5, hours 3,9,15,...
+  echo $jjj prdgen job for $pert, NEW for grid p5, 
+# (( jjj = jjj + 1 ))
+# echo $jjj 2nd prdgen job for $pert, NEW for grid p5, 
 done
 echo
 echo $jjjg00 gefs gfs job
@@ -788,13 +793,16 @@ if [[ $nextflag = yes ]]; then
   if   (( jjjc >= jjjp00 )) && (( jjjc < jjje00 )); then
     (( jjjd = jjjc - jjjf00 ))
     (( jjjm = ( jjjd / 4 ) * 4 ))
+# Please check prdgen to make sure it matches with here    
+#if nprdgen=1, the next 2 lines should be de-commended     
 #   if (( jjjd - jjjm == 3 )) && [[ $RUN_CONCURRENT = yes ]]; then
 #     jjjb=$(( jjjc + 3 ))
-##  if (( jjjd - jjjm == 0 )) && (( jjjc > jjjp00 )) && [[ $RUN_CONCURRENT = yes ]]; then
-##    jjjb=$(( jjjc + 2 ))
-##  else
+#if nprdgen=3, the next 2 lines should be commended out    
+    if (( jjjd - jjjm == 0 )) && (( jjjc > jjjp00 )) && [[ $RUN_CONCURRENT = yes ]]; then
+     jjjb=$(( jjjc + 2 ))
+    else
       jjjb=$(( jjjc + 1 ))
-##  fi
+    fi
   elif (( jjjc >= jjjr00 )) && (( jjjc < jjjz00 )); then
     jjjb=$(( jjjc + 1 ))
   elif (( jjjc >= jjjp00l )) && (( jjjc < jjje00l )); then
@@ -889,7 +897,8 @@ if [[ $nextflag = yes ]]; then
         echo after the last prdgen job jjjb=$jjjb
       ;;
 
-      ($jjjg00) jjjb=$jjjf00 ;;
+      ($jjjg00) jjjb=$jjjg01 ;;
+      ($jjjg01) jjjb=$jjjf00 ;;
 #     ($jjjf00) jjjb=$jjjp00 ;;
       ($jjjf00) (( jjjb=jjjp00 + 1 )) ;; #to skip the restart copy job, e.g. in cycling only tests
 #     ($jjje00) jjjb=$jjjs00 ;;
@@ -1764,33 +1773,19 @@ case $taskname in
   fi
   if [[ $gefsmachine = wcoss ]]; then                       
      if [[ $fcstjoblength = long ]]; then
-#      (( taskspermem = 48 ))
-#      (( taskspermem = 72 ))
-#      (( taskspermem = 108 ))
-#      (( taskspermem = 120 ))
-       (( taskspermem = 60 ))
-#      (( taskspermem = 54 ))
-#      (( taskspermem = 48 ))
-#      (( taskspermem = 64 ))
-#      (( taskspermem = 24 ))
-#      (( taskspermem = 32 ))
-#      (( taskspermem = 96 ))
+#      (( taskspermem = 30 ))
+#      (( taskspermem = 60 ))
+       (( taskspermem = 72 ))
      else  
        (( taskspermem = 32 ))
      fi  
-#      parallel_threads=1
-#      parallel_threads=2
-#      parallel_threads=3
        parallel_threads=4
-#      parallel_threads=8
-#      parallel_threads=6
        task_affinity="core(1)"
-       (( taskspernode = 24 / parallel_threads )) # for T574SL P2
-#      (( taskspernode = 16 / parallel_threads )) # for T574SL test June 2013
+       (( taskspernode = COREPERNODE / parallel_threads )) # for T574SL P2/P1
 #      (( taskspernode = 32 / parallel_threads )) # for WCOSS prod April 2013
        export taskspernode=$taskspernode
        export OMP_NUM_THREADS=$parallel_threads
-    MP_SHARED_MEMORY=no
+    MP_SHARED_MEMORY=yes
   fi
 
      if [[ $RUN_CONCURRENT = yes ]]; then
@@ -1801,7 +1796,8 @@ case $taskname in
        fi
      else
        (( total_tasks = taskspermem ))
-       RUN=ge$mem
+#      RUN=ge$mem
+       RUNMEM=ge$mem
      fi
      (( node = ( total_tasks + taskspernode - 1 ) / taskspernode ))
   ;;
@@ -1891,20 +1887,15 @@ case $taskname in
        export OMP_NUM_THREADS=$parallel_threads
   fi
   if [[ $gefsmachine = wcoss ]]; then                       
-#      (( taskspermem = 36 ))
-#      (( taskspermem = 40 ))
-#      (( taskspermem = 80 ))
-       (( taskspermem = 30 ))
-#      parallel_threads=1
+#      (( taskspermem = 30 ))
+       (( taskspermem = 36 ))
 #      parallel_threads=2
        parallel_threads=4
        task_affinity="core(1)"
-       (( taskspernode = 24 / parallel_threads )) # for T574SL P2
-#      (( taskspernode = 16 / parallel_threads ))
-#      (( taskspernode = 32 / parallel_threads ))
+       (( taskspernode = COREPERNODE / parallel_threads )) # for T574SL P2/P1
        export taskspernode=$taskspernode
        export OMP_NUM_THREADS=$parallel_threads
-    MP_SHARED_MEMORY=no
+    MP_SHARED_MEMORY=yes
   fi
 
      if [[ $RUN_CONCURRENT = yes ]]; then
@@ -1915,7 +1906,8 @@ case $taskname in
        fi
      else
        (( total_tasks = taskspermem ))
-       RUN=ge$mem
+#      RUN=ge$mem
+       RUNMEM=ge$mem
      fi
      (( node = ( total_tasks + taskspernode - 1 ) / taskspernode ))
   ;;
@@ -1932,6 +1924,7 @@ case $taskname in
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
     RUN=ge$mem
+#   RUNMEM=ge$mem
     task_affinity="core(1)"
     ################################# development variables
     if (( jjjb == jjjr00 )); then
@@ -1961,6 +1954,7 @@ case $taskname in
 #   export OMP_NUM_THREADS_CH=$NTHREADS_SIGCHGRS
     export OMP_NUM_THREADS_CH=1
   fi    
+    SUBJOB=   
   if [[ $gefsmachine = wcoss ]]; then                       
 #DHOU 03/29/2012   chgres is a non-mpi program
     job_type=parallel
@@ -1990,6 +1984,7 @@ case $taskname in
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
     RUN=ge$mem
+#   RUNMEM=ge$mem
     task_affinity="core(1)"
     ################################# development variables
     if (( jjjb == jjjr00 )); then
@@ -1998,6 +1993,7 @@ case $taskname in
       during_previous_job=yes
     fi
     ################################# production variables modified
+    SUBJOB=   
   if [[ $gefsmachine = ccs ]]; then                       
     total_tasks=$(( NTHREADS_SIGCHGRS * 2 ))
   fi  
@@ -2068,6 +2064,7 @@ case $taskname in
     MEMORY_AFFINITY=MCM
     if [[ $RUN_CONCURRENT != yes ]]; then
       RUN=ge$mem
+#   RUNMEM=ge$mem
     fi
     ################################# development variables
     during_previous_job=yes
@@ -2110,6 +2107,7 @@ case $taskname in
     MEMORY_AFFINITY=MCM
     if [[ $RUN_CONCURRENT != yes ]]; then
       RUN=ge$mem
+#   RUNMEM=ge$mem
     fi
     ################################# development variables
     during_previous_job=yes
@@ -2123,7 +2121,6 @@ case $taskname in
     ################################# production variables
     FORECAST_SEGMENT=hr
     jobscript=JGEFS_NCEPPOST
-#   jobscript=JGEFS_NCEPPOST.sms.$envir
 #   jobscript=JGEFS_NCEPPOST_GRB1.sms.$envir
     if [[ $fcstjoblength = long ]]; then
       job_name=jgefs_${mem}_post_${cyc}
@@ -2144,6 +2141,7 @@ case $taskname in
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
     RUN=ge$mem
+#   RUNMEM=ge$mem
     ################################# development variables
     during_previous_job=yes
     splim=301001001
@@ -2154,18 +2152,19 @@ case $taskname in
       wall_clock_limit="$wall_clock_limit_fcst_short"
     fi
     total_tasks=5     #T254
-    total_tasks=16    #T574
-    total_tasks=8    #T574 test
-    total_tasks=12    #T574 test
     case $gefsmachine in
       (wcoss)
-    #taskspernode=$total_tasks
-#   taskspernode=16
-    OMP_NUM_THREADS=2
-#   (( taskspernode = 16 / OMP_NUM_THREADS ))
-    (( taskspernode = 24 / OMP_NUM_THREADS ))
-#   MP_SHARED_MEMORY=yes
     MP_SHARED_MEMORY=no
+#If you jsut want to run only 1 enspost job, use the following 3 lines    
+#   SUBJOB=   
+#   nodes=2
+#   OMP_NUM_THREADS=4
+#If you  want to run  2 or 3  enspost jobs per members, use the following 3 lines with SUBJOB=B/C    
+    SUBJOB=C      # SUBJOB=A,B,or C
+    nodes=1
+    OMP_NUM_THREADS=2
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( total_tasks = taskspernode * nodes ))
     resources="2000"
     resources="5000"   #T574
       ;;
@@ -2200,6 +2199,7 @@ case $taskname in
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
     RUN=ge$mem
+#   RUNMEM=ge$mem
     ################################# development variables
     during_previous_job=yes
     splim=301001001
@@ -2211,15 +2211,14 @@ case $taskname in
     fi
 #   total_tasks=5
 #   total_tasks=16
-    total_tasks=12
+    SUBJOB=   
     case $gefsmachine in
       (wcoss)
-       #taskspernode=$total_tasks
-       #taskspernode=16
-    OMP_NUM_THREADS=2
-    (( taskspernode = 24 / OMP_NUM_THREADS ))
-    MP_SHARED_MEMORY=yes
     MP_SHARED_MEMORY=no
+    nodes=1
+    OMP_NUM_THREADS=2
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( total_tasks = taskspernode * nodes ))
     resources="1000"
     resources="5000"
       ;;
@@ -2254,6 +2253,7 @@ case $taskname in
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
     RUN=ge$mem
+#   RUNMEM=ge$mem
     ################################# development variables
     during_previous_job=yes
     splim=301001001
@@ -2266,12 +2266,17 @@ case $taskname in
     case $gefsmachine in
       (wcoss)
     MP_SHARED_MEMORY=yes
-    OMP_NUM_THREADS=4
-    resources="200"
-    resources="1000"     #T574SL
-    resources="5000"     #T574SL grib2
-    resources="3456"     #T574SL grib2 for core(2)
-    resources="6912"     #T574SL grib2 for core(4)
+    OMP_NUM_THREADS=6
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( resources =  27648 / COREPERNODE * OMP_NUM_THREADS ))   
+    SUBJOB=       # 1 prdgen job only for 1.0d/2.5d each membery
+    DO_LOW_RES=YES
+    if [[ $jobgrid = _p5 ]]; then
+     SUBJOB=C      # 3 prdgen jobs for each member, forecast_hr, p5 grid
+     DO_LOW_RES=NO
+    fi
+#   resources="200"
+#   resources="6912"     #T574SL grib2 for core(4)
       ;;
     esac
   ;;
@@ -2301,6 +2306,7 @@ case $taskname in
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
     RUN=ge$mem
+#   RUNMEM=ge$mem
     ################################# development variables
     during_previous_job=yes
     splim=301001001
@@ -2313,12 +2319,15 @@ case $taskname in
     case $gefsmachine in
       (wcoss)
     MP_SHARED_MEMORY=yes
-    OMP_NUM_THREADS=2
-    resources="200"
-    resources="1000"
-    resources="5000"     #T574SL grib2
-    resources="1728"     #T574SL grib2 for core(1)
-    resources="3456"     #T574SL grib2 for core(2)
+    OMP_NUM_THREADS=4
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( resources =  27648 / COREPERNODE * OMP_NUM_THREADS ))   
+    SUBJOB=       # 1 prdgen job only for each membery, 1d and 2.5d grid
+    if [[ $jobgrid = _p5 ]]; then
+     SUBJOB=B      # 2 prdgen jobs for each member, forecast_lr, p5 grid
+    fi
+#   resources="200"
+#   resources="3456"     #T574SL grib2 for core(2)
       ;;
     esac
   ;;
@@ -2346,11 +2355,17 @@ case $taskname in
       (wcoss)
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=4
-    resources="200"
-    resources="1000"     #T574SL
-    resources="5000"     #T574SL grib2
-    resources="3456"     #T574SL grib2 for core(2)
-    resources="6912"     #T574SL grib2 for core(4)
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( resources =  27648 / COREPERNODE * OMP_NUM_THREAD ))   
+    SUBJOB=       # 1 prdgen job only for each membery
+#   if [[ $jobgrid = _p5 ]]; then
+#    SUBJOB=C      # 3 prdgen jobs for each member, forecast_hr, p5 grid
+#   fi
+#   resources="200"
+#   resources="1000"     #T574SL
+#   resources="5000"     #T574SL grib2
+#   resources="3456"     #T574SL grib2 for core(2)
+#   resources="6912"     #T574SL grib2 for core(4)
       ;;
     esac
   ;;
@@ -2374,7 +2389,9 @@ case $taskname in
       (wcoss)
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=4
-    resources="6912"     #for core(4)
+    (( resources =  27648 / COREPERNODE * OMP_NUM_THREAD ))   
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+#   resources="6912"     #for core(4)
     total_tasks=1
       ;;
     esac
@@ -2399,7 +2416,9 @@ case $taskname in
       (wcoss)
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=4
-    resources="6912"     #for core(4)
+    (( resources =  27648 / COREPERNODE * OMP_NUM_THREAD ))   
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+#   resources="6912"     #for core(4)
     total_tasks=1
       ;;
     esac
@@ -2433,13 +2452,14 @@ case $taskname in
 #   job_type=parallel
 #   total_tasks=8
     total_tasks=1
+    SUBJOB=B       # 2 ensstat jobs for hr (1.0d+lr) and [p5]
   if [[ $gefsmachine = wcoss ]]; then                       
     MP_SHARED_MEMORY=yes
-    OMP_NUM_THREADS=2
-    resources="100"
-    resources="500"    # T574
-    resources="1500"    # T574, include grid p5
-    resources="3456"     #T574SL grib2 for core(2)
+    OMP_NUM_THREADS=4
+    (( resources =  27648 / COREPERNODE * OMP_NUM_THREAD ))   
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+#   resources="100"
+#   resources="3456"     #T574SL grib2 for core(2)
   fi
   ;;
   (ensstat_lr)
@@ -2471,11 +2491,14 @@ case $taskname in
 #   job_type=parallel
 #   total_tasks=8
     total_tasks=1
+    SUBJOB=B       # 2 ensstat jobs for hr (1.0d+lr) and [p5]
   if [[ $gefsmachine = wcoss ]]; then                       
     MP_SHARED_MEMORY=yes
-    OMP_NUM_THREADS=2
-    resources="100"
-    resources="3456"    # T574, include grid p5
+    OMP_NUM_THREADS=4
+    (( resources =  27648 / COREPERNODE * OMP_NUM_THREAD ))   
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+#   resources="100"
+#   resources="3456"    # T574, include grid p5
   fi
   ;;
   (enspost)
@@ -2504,11 +2527,15 @@ case $taskname in
       wall_clock_limit="$wall_clock_limit_fcst_short"
     fi
     total_tasks=1
+    SUBJOB=   
   if [[ $gefsmachine = wcoss ]]; then                       
     MP_SHARED_MEMORY=yes
-    resources="100"
-    resources="500"    # T574
-    resources="1000"    # T574
+    OMP_NUM_THREADS=4
+    (( resources =  27648 / COREPERNODE * OMP_NUM_THREAD ))   
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+#   resources="100"
+#   resources="500"    # T574
+#   resources="1000"    # T574
   fi
   ;;
   (post.track)
@@ -2538,12 +2565,13 @@ case $taskname in
     ################################# development variables
     during_previous_job=no
     ################################# production variables modified
+    SUBJOB=   
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="00:30"
-    taskspernode=16
-    OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=no
-    total_tasks=21
+    OMP_NUM_THREADS=1
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    total_tasks=24
   fi  
   ;;
   (post.genesis)
@@ -2567,12 +2595,13 @@ case $taskname in
     ################################# development variables
     during_previous_job=no
     ################################# production variables modified
+    SUBJOB=   
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="01:30"
-    taskspernode=16
-    OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=no
-    total_tasks=21
+    OMP_NUM_THREADS=1
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    total_tasks=24
   fi  
   ;;
   (track.ave)
@@ -2624,6 +2653,7 @@ case $taskname in
     splim=301001001
     fcstjoblength=long
     ################################# production variables modified
+    SUBJOB=   
   if [[ $gefsmachine = wcoss ]]; then
     wall_clock_limit="01:10"
     MP_SHARED_MEMORY=yes
@@ -2648,6 +2678,7 @@ case $taskname in
     ################################# development variables
     during_previous_job=no
     ################################# production variables modified
+    SUBJOB=   
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="01:10"
     MP_SHARED_MEMORY=yes
@@ -2722,6 +2753,9 @@ if [[ -n $cyc_fcst ]]; then
 fi
 if [[ -n $job_name ]]; then
    echo job_name=$job_name
+fi
+if [[ -n $RUNMEM ]]; then
+   echo RUNMEM=$RUNMEM
 fi
 if [[ -n $RUN ]]; then
    echo RUN=$RUN
@@ -2837,6 +2871,7 @@ echo MEMORY_AFFINITY=$MEMORY_AFFINITY
 echo MP_INFOLEVEL=$MP_INFOLEVEL
 echo MP_SHARED_MEMORY=$MP_SHARED_MEMORY
 echo FORECAST_SEGMENT=$FORECAST_SEGMENT
+echo RUNMEM=$RUNMEM
 echo RUN=$RUN
 echo cyc=$cyc
 echo cyc_fcst=$cyc_fcst
@@ -3394,19 +3429,31 @@ else
 #DHOU, 01/03/2013 slplit the script section of setting up job card to separate files for each particular machine (setupr_job_card.$mach).
 echo $cwd
 
-if (( $jjj == $jjjf00 )); then   nprdgen=3; fi
+#if (( $jjj == $jjjf00 )); then   nprdgen=3; fi
+if (( $jjj == $jjjf00 )); then   nprdgen=2; fi
 if (( $jjj == $jjjf00l )); then  nprdgen=2; fi
 if (( $jjj == $jjjf06 )); then   nprdgen=1; fi
 if (( $jjj == $jjjf12 )); then   nprdgen=1; fi
 if (( $jjj == $jjjf18 )); then   nprdgen=1; fi
 
  echo $job_type TTT
-echo line 3228 
 echo $jjj
 echo $jjjb
 echo $nprdgen
+echo $SUBJOB
+
 . $cwd/setup_job_card.$gefsmachine
 
+  if [[ $SUBJOB = C ]]; then
+   SUBJOB=B
+. $cwd/setup_job_card.$gefsmachine
+  fi 
+  if [[ $SUBJOB = B ]]; then
+   SUBJOB=A
+. $cwd/setup_job_card.$gefsmachine
+  fi 
+
+ exit
 #DHOU 01/03/2013 end of changed section
 
   echo
@@ -3477,7 +3524,7 @@ echo $nprdgen
   qsub  < $jobcontrol
  else
  #   $jobcontrol
-  bsub  < $jobcontrol
+  bsub  < $jobcontrol$SUBJOB
  fi
 rc=$?
 if (( rc != 0 )); then
@@ -3486,6 +3533,15 @@ if (( rc != 0 )); then
     cat $llqstring
     echo `date` $0 $* cat llqstring after
   fi
+#Submit  Multiple sub-jobs if necessarry   
+  if [[ $SUBJOB = A ]]; then
+   SUBJOB=B
+   bsub  < $jobcontrol$SUBJOB
+  fi 
+  if [[ $SUBJOB = B ]]; then
+   SUBJOB=C
+   bsub  < $jobcontrol$SUBJOB
+  fi 
 
 fi
 

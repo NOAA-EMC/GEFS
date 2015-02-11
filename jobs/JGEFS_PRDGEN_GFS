@@ -4,9 +4,15 @@
 #                        between EMC and NCO
 #         Please note that variable "RUN_ENVIR" is set and used
 #         in the development enviroment only.
+# October 2014, Dingchen Hou   Scripts are modified to generate grib2 master files
+# February 2015, Dingchin Hou   Scripts changed to vertical structure and cleaned following NCO requirements
 ######################################################################
 
-$SMSBIN/smsinit $LOADL_STEP_ID 
+# #### 02/06/06 ###############################
+# GET GEFS POST PROCESSING VARIABLES
+# FROM GFS RUN
+# #############################################
+
 echo `date` $0 begin
 
 set -xa
@@ -16,8 +22,6 @@ export PS4='$SECONDS + '
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 export machine=${gefsmachine:-wcoss}
-
-export GRIBVERSION=${GRIBVERSION:-grib2}
 
 ###########################################
 # Run gefs_config to get input parameters
@@ -38,25 +42,17 @@ fi
 
 export HOMEgefs=${HOMEgefs}
 export HOMEgsm=${HOMEgsm}
-export HOMEutil=${HOMEutil:-/nwprod/util}
+export HOMEutil=${UTILROOT:-/nwprod/util}
+#export HOMEutil=${HOMEutil:-/nwprod/util}
 
-# #### 02/06/06 ###############################
-# GET GEFS POST PROCESSING VARIABLES
-# FROM GFS RUN
-# #############################################
+date
 
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-if [ "$RUN_ENVIR" = dev ]    ### For Developers
-then
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
-else                       ### For Operations
-   export DATA_IN=/tmpnwprd
-fi
+export DATA=$DATAROOT/${job}.${pid}
 
-export DATA=$DATA_IN/${job}.${pid}
 jobgrid=$jobgrid
 
 mkdir -p $DATA
@@ -67,18 +63,13 @@ export cycle=t${cyc}z
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=gens
+export NET=${NET:-gens}
 export RUN=gfs
 
 ####################################
 # File To Log Msgs
 ####################################
-if [ "$RUN_ENVIR" = dev ]     ### For Developers
-then
-   export jlogfile=$baselog/com/logs/jlogfile
-else                        ### For Operations
-   export jlogfile=/com/logs/jlogfile
-fi
+export jlogfile=${jlogfile:-/com/logs/jlogfile}
 
 ####################################
 # Determine Job Output Name on System
@@ -95,14 +86,12 @@ export pgmerr=errfile
 # RERUN    - Rerun posts from beginning (default no)
 # VERBOSE  - Specify Verbose Output in global_postgp.sh
 ####################################
-
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
   export SENDCOM=${SENDCOM:-YES}
   export SENDDBN=${SENDDBN:-YES}
   export SENDSMS=${SENDSMS:-YES}
-  export VERBOSE=${VERBOSE:-NO}
+  export SENDECF=${SENDECF:-YES}
   export SENDDBN_GB2=${SENDDBN_GB2:-NO}
+  export VERBOSE=${VERBOSE:-NO}
   export RERUN=${RERUN:-NO}
 
   # Specify Execution Areas
@@ -110,34 +99,16 @@ then
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
-else                             ### For Operations
-  export SENDCOM=YES
-  export SENDDBN=YES
-  export SENDDBN_GB2=YES
-  export SENDSMS=YES
-  export VERBOSE=NO
-  export RERUN=NO
-
-  # Specify Execution Areas
-  export EXECgefs=$HOMEgefs/exec
-  export USHgefs=$HOMEgefs/ush
-  export FIXgefs=$HOMEgefs/fix
-  export PARMgefs=$HOMEgefs/parm
-fi
-
-####################################
-# Specify Execution Areas
-####################################
 
 ##############################
 # Set up the UTILITIES
 ##############################
 export EXECutil=$HOMEutil/exec
-export EXECutil=$HOMEutil/exec
 export FIXutil=$HOMEutil/fix
 export USHutil=$HOMEutil/ush
-export utilscript=${USHutil:-/nwprod/util/ush}
-export CNVGRIB=/nco/sib/gribdev/util/exec/cnvgrib21_gfs
+export utilscript=$USHutil
+export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
+export CNVGRIB=${CNVGRIB:-/$EXECutil/cnvgrib21_gfs}
 
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
@@ -147,37 +118,26 @@ export REDERR='2>'
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-sh $utilscript/setup.sh
+sh $USHutil/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $utilscript/setpdy.sh
+sh $USHutil/setpdy.sh
 . PDY
 
 ##############################################
 # Define COM directories
 ##############################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-  export COM_IN=${COM_IN:-/global/noscrub/$LOGBAME/com/${RUN}/${envir}}
-  export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
-
-  export COMIN=$COM_IN/gfs.${PDY}
-  export COMIN=/com/gfs/prod/gfs.${PDY}
-  export COMOUT=$COM_OUT/gefs.${PDY}
-  export ENS_COM=$COMOUT
-else                              ### For Operations
-  export COMIN=/com/gfs/prod/gfs.${PDY}
-  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
-  export ENS_COM=$COMOUT
-fi
+export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
+#export COMGFS=$COMROOT/com/gfs/prod/gfs.${PDY}
+export COMIN=$COMGFS/gfs.${PDY}
+export ENS_COM=$COMOUT
 
 mkdir -m 775 -p $COMOUT/$cyc/pgrba
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2a
 mkdir -m 775 -p $COMOUT/$cyc/pgrbalr
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2alr
-mkdir -m 775 -p $COMOUT/$cyc/pgrbap5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
 mkdir -m 775 -p $COMOUT/$cyc/misc
 
@@ -195,8 +155,8 @@ export POSTGPVARS_LOW="IDRTC=0,IOC=144,JOC=73,IDRT=0,IO=144,JO=73,MOO=48,MOW=12,
 ####################################
 # Specify Restart File Names to Key Off
 ####################################
-restart_file_a=$COMIN/${RUN}.t${cyc}z.pgrbf
-restart_file_b=$COMIN/${RUN}.t${cyc}z.pgrbif
+#restart_file_a=$COMIN/${RUN}.t${cyc}z.pgrbf
+#restart_file_b=$COMIN/${RUN}.t${cyc}z.pgrbif
 
 ####################################
 # Specify Timeout Behavior of Post
@@ -209,20 +169,7 @@ restart_file_b=$COMIN/${RUN}.t${cyc}z.pgrbif
 export SLEEP_TIME=900
 export SLEEP_INT=5
 
-####################################
-# Specify Forecast Hour Range
-####################################
-export FHOUR_HIGH=$fhmax
-export FHOUR_LOW=$fhmax
-export FHINC_HIGH=6
-export FHINC_LOW=12
-export dogrid2p5=YES
 
-export jobgrid=$jobgrid
-if [[ $jobgrid == _p5 ]]; then
-  export FHINC_HIGH=3
-  export dogrid2p5=NO
-fi
 ####################################
 # Specify Forecast Hour Range
 ####################################
@@ -230,10 +177,18 @@ export SHOUR=00
 export FHOUR_HIGH=$gfsfhmaxh
 export fhoroglist=$gfsfhoroglist
 export FHOUR_LOW=$fhmax
+export FHINC_HIGH=6
+export FHINC_LOW=12
 
 export DO_HD_PGRB=NO
 export HDMAX=00
 
+export dogrid2p5=YES
+export jobgrid=$jobgrid
+if [[ $jobgrid == _p5 ]]; then
+  export FHINC_HIGH=3
+  export dogrid2p5=NO
+fi
 #
 # DLM - Added to Try and Debug Comm Subsystem Errors
 # Problems in ENP5P On 20030730/12 UTC

@@ -12,10 +12,11 @@ echo "                 exgefs_prdgen_gfs.sh.sms but for grib2 input files"
 echo " Jan 15 _ Hou -  renamed exgefs_prdgen_gfs.sh.ecf"      
 echo "-----------------------------------------------------"
 #####################################################################
+export PS4='+ $SECONDS $sname $member $LINENO: '
 
 echo `date` $0 begin
 
-set -x
+set -xa
 na=`basename $0`
 
 cd $DATA
@@ -54,7 +55,7 @@ dogrid2p5=${dogrid2p5:-YES}
 filsuf=
 if [[ $jobgrid == _p5 ]]; then
    grid=${gridp5}  
-   dogrid2p5=${dogrid2p5:-NO}  
+   dogrid2p5=NO
    filsuf=p5
 fi
 
@@ -116,8 +117,6 @@ then
 	fi
       fi
 
-#################################### CHECK DBN ALERTS ###########
-#################################### CHECK DBN ALERTS ###########
 #################################### CHECK DBN ALERTS ###########
       if test "$SENDDBN" = 'YES'
       then
@@ -269,7 +268,6 @@ do
 
     fi
     
-#   $USHGLOBAL/gefs_transfer_gfs.sh
     $TRANSG pgrba$filsuf pgrb2a$filsuf
 #if [[ $jobgrid == _p5 ]]; then
 #   $TRANSG pgrba$filsuf pgrb2a$filsuf
@@ -285,12 +283,15 @@ do
        else
 	pad=""
        fi
-       echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/ge${RUN}.t${cyc}z.control$jobgrid
+       echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/ge${RUN}.t${cyc}z.control.$fhr$jobgrid
     fi
 
   fi
 # if not found, come here to increment
 
+ if [[ $jobgrid == _p5 ]] && [[ $fhr == $fhmaxh ]]; then
+  FHINC=6
+ fi 
   export fhr=`expr $fhr + $FHINC`
   if test $fhr -lt 10
   then

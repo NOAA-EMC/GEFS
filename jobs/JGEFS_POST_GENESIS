@@ -161,6 +161,7 @@ sh $utilscript/setpdy.sh
 ##############################################
 export JYYYY=`echo ${PDY} | cut -c1-4`
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
+then
   export genvitdir=$baseoutput/com/${NET}/${envir}/genesis_vital_${JYYYY}
 else                              ### For Operations
   export genvitdir=/com/${NET}/${envir}/genesis_vital_${JYYYY}

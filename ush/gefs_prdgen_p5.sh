@@ -22,6 +22,8 @@ ffhr=$ffhr
 fhr=$fhr
 grid=$gridp5
 
+makegrib1=NO
+
 export WGRIB=${WGRIB:-$EXECutil/wgrib}
 export GRBIDX=${GRBIDX:-$EXECutil/grbindex}
 export COPYGB=${COPYGB:-$EXECutil/copygb}
@@ -212,6 +214,8 @@ echo `date` pgrb2ap5 0.5x0.5 sendcom $ffhr completed
 ######################################
 # Step II: Create GRIBA files
 #####################################
+if [[ $makegrib1 = YES ]]; then
+
 if [[ -s $COMOUT/$cyc/pgrbap5/${RUN}.${cycle}.pgrbap5$ffhr$cfsuffix ]] && \
    [[ -s $COMOUT/$cyc/pgrbap5/${RUN}.${cycle}.pgrbap5i$ffhr$cfsuffix ]] && \
    [[ $overwrite = no ]]; then
@@ -326,6 +330,8 @@ else
       mv pgbdfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrbdp5/${RUN}.${cycle}.pgrbdp5$ffhr$cfsuffix
    fi
 fi
+
+fi   # makegrib1
 
  fi #(0=1 for ZEUS, skip grib2 files)
 ########################################################

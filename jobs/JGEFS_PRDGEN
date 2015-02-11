@@ -4,9 +4,11 @@
 #                        between EMC and NCO
 #         Please note that variable "RUN_ENVIR" is set and used
 #         in the development enviroment only.
+# September 2014, Dingchen Hou   Scripts are modified to generate grib2 master files
+# February 2015, Dingchin Hou   Scripts changed to vertical structure and cleaned following NCO requirements
 ######################################################################
 
-$SMSBIN/smsinit $LOADL_STEP_ID 
+#$SMSBIN/smsinit $LOADL_STEP_ID 
 echo `date` $0 `date -u` begin
 
 set -xa
@@ -38,21 +40,22 @@ fi
 
 export HOMEgefs=${HOMEgefs}
 export HOMEgsm=${HOMEgsm}
-export HOMEutil=${HOMEutil:-/nwprod/util}
+export HOMEutil=${UTILROOT:-/nwprod/util}
+#export HOMEutil=${HOMEutil:-/nwprod/util}
+
+export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
+
+date
 
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-if [ "$RUN_ENVIR" = dev ]    ### For Developers
-then
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
-else                       ### For Operations
-   export DATA_IN=/tmpnwprd
-fi
+export DATA=$DATAROOT/${job}.${pid}
+#export DATA=$DATA_IN/${job}.${pid}
 
-export DATA=$DATA_IN/${job}.${pid}
 export jobgrid=$jobgrid
+export jobhour=$jobhour
 
 mkdir -p $DATA
 cd $DATA
@@ -76,17 +79,12 @@ fi
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=gens
+export NET=${NET:-gens}
 
 ####################################
 # File To Log Msgs
 ####################################
-if [ "$RUN_ENVIR" = dev ]     ### For Developers
-then
-   export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
-else                        ### For Operations
-   export jlogfile=/com/logs/jlogfile
-fi
+export jlogfile=${jlogfile:-/com/logs/jlogfile}
 
 ####################################
 # Determine Job Output Name on System
@@ -101,15 +99,13 @@ export pgmerr=errfile
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 ####################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
   export SENDCOM=${SENDCOM:-YES}
   export SENDDBN=${SENDDBN:-YES}
   export SENDSMS=${SENDSMS:-YES}
-# export CREATE_TIGGE=${CREATE_TIGGE:-YES}
+  export SENDECF=${SENDECF:-YES}
   export CREATE_TIGGE=${CREATE_TIGGE:-NO}
   export RERUN=${RERUN:-NO}
-  export RERUN=YES
+# export RERUN=YES
 
   # Specify Execution Areas
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
@@ -119,23 +115,6 @@ then
 
   export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
   export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
-else                             ### For Operations
-  export SENDCOM=YES
-  export SENDDBN=YES
-  export SENDSMS=YES
-# export CREATE_TIGGE=YES
-  export CREATE_TIGGE=NO
-  export RERUN=NO
-
-  # Specify Execution Areas
-  export EXECGEFS=${EXECGEFS:-$HOMEGEFS/exec}
-  export USHGEFS=${USHGEFS:-$HOMEGEFS/ush}
-  export FIXGEFS=${FIXGEFS:-$HOMEGEFS/fix}
-  export PARMGEFS=${PARMGEFS:-$HOMEGEFS/parm}
-
-  export FIXGSM=${FIXGSM:-$HOMEGSM/fix/fix_am}
-  export PARMGSM=${PARMGSM:-$HOMEGSM/parm}
-fi
 
 ####################################
 # Set up the UTILITIES
@@ -144,9 +123,10 @@ export EXECutil=$HOMEutil/exec
 export FIXutil=$HOMEutil/fix
 export USHutil=$HOMEutil/ush
 export utilscript=$USHutil
+
 # Setup temporalreplacement of utilities 
 export CNVGRIB=/nco/sib/gribdev/util/exec/cnvgrib21_gfs
-#export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
+export CNVGRIB=${CNVGRIB:-/$EXECutil/cnvgrib21_gfs}
 
 ##############################################
 echo set parameters using gefs.parm
@@ -165,12 +145,12 @@ esac
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-ksh $utilscript/setup.sh
+ksh $USHutil/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $utilscript/setpdy.sh
+sh $USHutil/setpdy.sh
 
 . PDY
 
@@ -189,19 +169,11 @@ fi
 ##############################################
 # Define COM directories
 ##############################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-  export COM_IN=${COM_IN:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
-  export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
-  export gespath=${gespath:-/global/noscrub/$LOGBAME/nwges/${envir}}
-
-  export COMIN=$COM_IN/gefs.${PDY}
-  export COMOUT=$COM_OUT/gefs.${PDY}
-else                              ### Fir Operations
-  export COMIN=/com/${NET}/${envir}/gefs.${PDY}
-  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
-  export gespath=/nwges/${envir}
-fi
+export gespath=$GESROOT/${envir}
+export GESdir=$gespath/gefs.${PDY}
+export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
+export COMIN=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
+export COMGFS=$COMROOT/com/gfs/prod/gfs.${PDY}
 
 export overwrite=no
 
@@ -217,9 +189,9 @@ mkdir -m 775 -p $COMOUT/$cyc/pgrb2b
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2blr
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2d
 
-mkdir -m 775 -p $COMOUT/$cyc/pgrbap5
-mkdir -m 775 -p $COMOUT/$cyc/pgrbbp5
-mkdir -m 775 -p $COMOUT/$cyc/pgrbdp5
+#mkdir -m 775 -p $COMOUT/$cyc/pgrbap5
+#mkdir -m 775 -p $COMOUT/$cyc/pgrbbp5
+#mkdir -m 775 -p $COMOUT/$cyc/pgrbdp5
 
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2bp5
@@ -228,7 +200,7 @@ mkdir -m 775 -p $COMOUT/$cyc/pgrb2dp5
 if test "$CREATE_TIGGE" = 'YES'
 then
  mkdir -m 775 -p $COMOUT/$cyc/pgrb2c
- mkdir -m 775 -p $COMOUT/$cyc/pgrbcp5
+#mkdir -m 775 -p $COMOUT/$cyc/pgrbcp5
  mkdir -m 775 -p $COMOUT/$cyc/pgrb2cp5
 fi
 
@@ -243,7 +215,6 @@ mkdir -m 775 -p $COMOUT/$cyc/track
 #              checking for restart files
 ####################################
 export SLEEP_TIME=900
-export SLEEP_TIME=1800
 export SLEEP_INT=5
 
 echo
@@ -272,16 +243,29 @@ export FHINC=06
 case $FORECAST_SEGMENT in
   (hr)
     # high resolution segment
-    export SHOUR=00
-    export FHINC=03
-    if [[ $jobhour = 3915 ]]; then
-    export SHOUR=03
-    export FHINC=06
-    fi
-    if [[ $jobhour = 0612 ]]; then
+    export DOANALYSIS=YES;
     export SHOUR=00
     export FHINC=06
-    fi
+   if [[ $jobgrid = _p5 ]]; then
+    case $SUBJOB in
+     (A) 
+       export DOANALYSIS=YES;
+       export SHOUR=06;
+       export FHINC=09;;
+     (B) 
+       export DOANALYSIS=NO;
+       export SHOUR=00;
+       export FHINC=09;;
+     (C) 
+       export DOANALYSIS=NO;
+       export SHOUR=03;
+       export FHINC=09;;
+     (*) 
+       export DOANALYSIS=YES;
+       export SHOUR=00;
+       export FHINC=06;;
+    esac  
+   fi
     if [[ $fcstlong = true ]]; then
       export FHOUR=$fhmaxh
     else
@@ -290,8 +274,21 @@ case $FORECAST_SEGMENT in
   ;;
   (lr)
     # low resolution segment
-    export SHOUR=$(( $fhmaxh + FHINC ))
+    export DOANALYSIS=NO;
     export FHINC=06
+    export SHOUR=$(( $fhmaxh + FHINC ))
+   if [[ $jobgrid = _p5 ]]; then
+    case $SUBJOB in
+     (A)
+      export SHOUR=$SHOUR;
+      export FHINC=12;;
+     (B) 
+      export SHOUR=$(( $SHOUR + FHINC ));
+      export FHINC=12;;
+     (*)
+      export FHINC=06;;
+    esac  
+   fi 
     if [[ $fcstlong = true ]]; then
       export FHOUR=$fhmax
     else
@@ -320,6 +317,7 @@ export HDMAX=00
 ####################################
 # Check if this is a restart
 ####################################
+if [[ true  = false ]]; then
 if [[ $cycsuffix = false ]]; then
   if test -f $COMOUT/$cyc/misc/$RUN.t${cyc}z.prdgen.control
   then
@@ -361,19 +359,27 @@ else
      fi
   fi
 fi
+fi #(true = false)
 
 #################################
 # Run Post if Needed
 #################################
- grbversion=grb2 
 if test $SHOUR -le $FHOUR
 then
   export FHINC=$FHINC
   export FHOUR=$FHOUR
   export DO_LOW_RES=YES
+#if [[ $SUBJOB == B ]] && [[ $FORECAST_SEGMENT == hr ]]; then
+# export DO_LOW_RES=YES
+# export DO_THIS_RES=NO
+#fi
+#if [[ $jobgrid == _p5 ]] && [[ $FORECAST_SEGMENT == hr ]]; then
  if [[ $jobgrid == _p5 ]]; then
   export DO_LOW_RES=NO
  fi 
+#if [[ $jobgrid != _p5 ]] && [[ $FORECAST_SEGMENT == lr ]]; then
+# export DO_LOW_RES=YES
+#fi 
  if [[ $GRIBVERSION == grib2 ]]; then
   $HOMEgefs/scripts/exgefs_prdgen$jobgrid.sh.ecf
  else 

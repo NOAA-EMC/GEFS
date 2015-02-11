@@ -1,14 +1,14 @@
 #!/bin/ksh 
 #####################################################################
-# 12/3/2014, Dingchen Hou  Scripts are modified to be vertical structre and cleanned 
-#####################################################################
 # 9/20/2009, Julia Zhu   Scripts are modified to be sharable
 #                        between EMC and NCO
 #         Please note that variable "RUN_ENVIR" is set and used
 #         in the development enviroment only.
+# December 2011, Dingchen Hou new script adopted from Forecast J-job 
+# 12/3/2014, Dingchen Hou  Scripts are modified to be vertical structre and cleanned 
 ######################################################################
 
-$SMSBIN/smsinit $LOADL_STEP_ID 
+#$SMSBIN/smsinit $LOADL_STEP_ID 
 echo `date` $0 `date -u` begin
 
 set -xa
@@ -36,9 +36,10 @@ else
    exit
   fi 
 fi
+
 export HOMEgefs=${HOMEgefs}
 export HOMEgsm=${HOMEgsm}
-export HOMEutil=${HOMEutil:-/nwprod/util}
+export HOMEutil=${UTILROOT:-/nwprod/util}
 
 # ###################################
 # SET SHELL PROCESSING VARIABLES
@@ -50,13 +51,8 @@ date
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-if [ "$RUN_ENVIR" = dev ]    ### For Developers
-then
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
-else                         ### For Operations
-   export DATA_IN=/tmpnwprd
-fi
-export DATA=$DATA_IN/${job}.${pid}
+export DATA=$DATAROOT/${job}.${pid}
+#export DATA=$DATA_IN/${job}.${pid}
 
 mkdir -p $DATA
 cd $DATA
@@ -70,7 +66,6 @@ export cycle_fcst=t${cyc_fcst}z
 export NTHREADS=$NTHREADS_SIGCHGRS
 export MP_LABELIO=YES
 
-echo $cyc_fcst  $cyc  #DHTEST
 if (( cyc == cyc_fcst )); then
   export cycsuffix=false
   export fcstlong=true
@@ -82,17 +77,12 @@ fi
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=gens
+export NET=${NET:-gens}
 
 ####################################
 # File To Log Msgs
 ####################################
-if [ "$RUN_ENVIR" = dev ]     ### For Developers
-then
-   export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
-else                        ### For Operations
-   export jlogfile=/com/logs/jlogfile
-fi
+export jlogfile=${jlogfile:-/com/logs/jlogfile}
 
 CHGRES_ALL=yes
 CHGRES_ALL=no
@@ -120,56 +110,25 @@ fi
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
   export SENDCOM=${SENDCOM:-YES}
-  export SENDSMS=${SENDSMS:-YES}
+  export SENDECF=${SENDECF:-YES}
   export VERBOSE=${VERBOSE:-NO}
   export RERUN=${RERUN:-NO}
 
   # Specify Execution Areas
-  export HOMEgsm=${HOMEgsm:-/nw${envir}}
   export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
   export USHgsm=${USHgsm:-$HOMEgsm/ush}
   export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
   export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 
-# export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
   export HOMEGLOBAL=${HOMEgsm:-/nwprod}
   export EXECGLOBAL=${EXECgsm:-$HOMEgsm/exec}
   export USHGLOBAL=${USHgsm:-$HOMEgsm/ush}
   export FIXGLOBAL=${FIXgsm:-$HOMEgsm/fix/fix_am}
 
-  export HOMEgefs=${HOMEgefs:-/nw${envir}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
-
-  export HOMEutil=${HOMEutil:-/nwprod/util}
-else                             ### For Operations
-  export SENDCOM=YES
-  export SENDSMS=YES
-  export VERBOSE=NO
-  export RERUN=NO
-
-  # Specify Execution Areas
-  export HOMEGSM=/nw${envir}
-  export EXECGSM=$HOMEGSM/exec
-  export USHGSM=$HOMEGSM/ush
-  export FIXGSM=$HOMEGSM/fix/fix_am
-  export PARMGSM=$HOMEGSM/parm
-
-  export HOMEGLOBAL=/nwprod
-  export EXECGSM=$HOMESM/exec
-  export USHGSM=$HOMEGSM/ush
-  export FIXGSM=$HOMEGSM/fix
-  export PARMGSM=$HOMEGSM/parm
-
-  export HOMEGEFS=/nw${envir}
-  export EXECGEFS=$HOMEGEFS/exec
-  export USHGEFS=$HOMEGEFS/ush
-  export FIXGEFS=$HOMEGEFS/fix
-  export PARMGEFS=$HOMEGEFS/parm
-
-  export HOMEUTIL=${HOMEUTIL:-/nwprod/util}
 fi
 
 export ERRSCRIPT=err_chk
@@ -178,19 +137,19 @@ export LOGSCRIPT=startmsg
 ##############################
 # Set up the UTILITIES
 ##############################
-export EXECutil=$HOMEutil/exec
-export USHutil=$HOMEutil/ush
-export utilscript=$USHutil
+#export utilscript=$UTILROOT/ush   # will be removed
+export USHutil=$UTILROOT/ush
+export EXECutil=$UTILROOT/exec
 
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-sh $utilscript/setup.sh
+sh $USHutil/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $utilscript/setpdy.sh
+sh $USHutil/setpdy.sh
 . PDY
 
 # hour_lr_ni will be used to define the IC files of the lower resolution part (if not restart) 
@@ -201,25 +160,29 @@ sh $utilscript/setpdy.sh
 ##############################################
 # Define COM and GES directories
 ##############################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-  export GFS_IN=${GFS_IN:-/com/gfs/prod/}
-  export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
-  export gespath=${gespath:-/global/noscrub/$LOGBAME/nwges/${envir}}
+  export gespath=$GESROOT/${envir}
+  export COMGFS=$COMROOT/com/gfs/prod/gfs.${PDY}
+  export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
 
-  export COMGFS=$GFS_IN/gfs.${PDY}
-  export COMOUT=$COM_OUT/gefs.${PDY}
-else                              ### Fir Operations
-  export COMGFS=/com/gfs/prod/gfs.${PDY}
-  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
-  export gespath=/nwges/${envir}
-fi
+#if [ "$RUN_ENVIR" = dev ]         ### For Developers
+#then
+#  export GFS_IN=${GFS_IN:-/com/gfs/prod/}
+#  export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
+#  export gespath=${gespath:-/global/noscrub/$LOGBAME/nwges/${envir}}
+#
+#  export COMGFS=$GFS_IN/gfs.${PDY}
+#  export COMOUT=$COM_OUT/gefs.${PDY}
+#else                              ### Fir Operations
+#  export COMGFS=/com/gfs/prod/gfs.${PDY}
+#  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+#  export gespath=/nwges/${envir}
+#fi
 
 #mkdir -m 775 -p $COMOUT/$cyc/sfcsig
 #mkdir -m 775 -p $COMOUT/$cyc/sflux
 #mkdir -m 775 -p $COMOUT/$cyc/misc
 
-export ENS_COM=$COMOUT
+#export ENS_COM=$COMOUT
 
 export GESdir=$gespath/gefs.${PDY}
 mkdir -m 775 -p $GESdir
@@ -238,28 +201,6 @@ export OVERPARMEXEC=$EXECGLOBAL/overparm_grib
 # Change Resolution script and executable
    export chgresush=$USHGLOBAL/global_chgres.sh
    export CHGRESEXEC=$EXECGLOBAL/global_chgres
-
-#if [ "$RUN_ENVIR" = dev ]         ### For Developers
-#then
-#case $gefsmachine in
-# (ccs)
-#   export chgresush=$USHGLOBAL/global_chgres.sh
-#   export CHGRESEXEC=$EXECGLOBAL/global_chgres_thread
-# ;;
-# (zeus)
-#   export chgresush=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/ush/global_chgres.sh
-#   export CHGRESEXEC=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/exec/global_chgres
-# ;;
-# (wcoss)
-#   export chgresush=/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0/ush/global_chgres.sh
-#   export CHGRESEXEC=/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0/exec/global_chgres
-# ;;
-#esac
-#fi
-
-#export HOMEutil=${HOMEutil:-/nwprod/util}
-#export EXECutil=$HOMEutil/exec
-#export FIXutil=$HOMEutil/fix
 
 ####################################
 # Create member list
@@ -331,17 +272,18 @@ MEMBER_NAMES=$memberlist
 #
 # chgres Fix Fields
 #
-# DHOU 03/04/2014 Adding new file names and variables for the global_chgres upgrade (gfs 2014 implementation)
+# DHOU 03/04/2014 Adding new file names and variables for the global_chgres upgrade 
 export LONSPERLAT=$FIXGLOBAL/global_lonsperlat.t$MTNRSLLR.txt
-#export LONSPERLAT=/ensemble/save/Dingchen.Hou/SVN/tfFv/nwdev/fix/global_lonsperlat.t382.768.384.txt
 export OROGRAPHY=$FIXGLOBAL/global_orography.t$MTNRSLLR.grb
 export OROGRAPHY_UF=$FIXGLOBAL/global_orography_uf.t$MTNRSLLR.grb
 export    SLMASK=$FIXGLOBAL/global_slmask.t$MTNRSLLR.grb
+
 #   The SST and SEA_ICE Climate fix file:
-#export FNTSFC=$FIXGLOBAL/cfs_oi2sst1x1monclim19822001.grb # Using default untill 2014 gfs implementation
-#export FNAISC=$FIXGLOBAL/cfs_ice1x1monclim19822001.grba   # Using default untill 2014 gfs implementation
+#export FNTSFC=$FIXGLOBAL/cfs_oi2sst1x1monclim19822001.grb # Using default untill 2015 gfs implementation
+#export FNAISC=$FIXGLOBAL/cfs_ice1x1monclim19822001.grba   # Using default untill 2015 gfs implementation
 export FNTSFC=$FIXGLOBAL/RTGSST.1982.2012.monthly.clim.grb  # New for gfs 2014 implementation
 export FNAISC=$FIXGLOBAL/CFSR.SEAICE.1982.2012.monthly.clim.grb  # New for gfs 2014 implementation
+
 #  The VEGTYPE fix file and the O3 Climate file, use the default
 #export FNVETC=$FIXGLOBAL/global_vegtype.1x1.grb
 #export O3CLIM=$FIXGLOBAL/global_o3clim.txt
@@ -454,4 +396,4 @@ cd $DATA_IN
 #rm -rf $DATA
 
 echo `date` $0 `date -u` end
-$SMSBIN/endt
+#$SMSBIN/endt

@@ -4,6 +4,8 @@
 #                        between EMC and NCO
 #         Please note that variable "RUN_ENVIR" is set and used
 #         in the development enviroment only.
+# September 2014, Dingchen Hou   Scripts are modified to process grib2 pgrb files
+# February 2015, Dingchin Hou   Scripts changed to vertical structure and cleaned following NCO requirements
 ######################################################################
 
 $SMSBIN/smsinit $LOADL_STEP_ID 
@@ -15,6 +17,8 @@ export PS4='$SECONDS + '
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export machine=${gefsmachine:-wcoss}
+
 export GRIBVERSION=${GRIBVERSION:-grib2}
 
 ###########################################
@@ -35,23 +39,17 @@ else
 fi
 
 export HOMEgefs=${HOMEgefs}
-export HOMEutil=${HOMEutil:-/nwprod/util}
+export HOMEutil=${UTILROOT:-/nwprod/util}
+#export HOMEutil=${HOMEutil:-/nwprod/util}
 
-# Setup temporalreplacement of utilities
-export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
+date
 
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-if [ "$RUN_ENVIR" = dev ]    ### For Developers
-then
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
-else                       ### For Operations
-   export DATA_IN=/tmpnwprd
-fi
-
-export DATA=$DATA_IN/${job}.${pid}
+export DATA=$DATAROOT/${job}.${pid}
+#export DATA=$DATA_IN/${job}.${pid}
 
 mkdir -p $DATA
 cd $DATA
@@ -64,18 +62,13 @@ export cycle=t${cyc}z
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=gens
+export NET=${NET:-gens}
 export RUN=stat
 
 ####################################
 # File To Log Msgs
 ####################################
-if [ "$RUN_ENVIR" = dev ]     ### For Developers
-then
-   export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
-else                        ### For Operations
-   export jlogfile=/com/logs/jlogfile
-fi
+export jlogfile=${jlogfile:-/com/logs/jlogfile}
 
 ####################################
 # Determine Job Output Name on System
@@ -90,30 +83,18 @@ export pgmerr=errfile
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 ####################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
   export SENDCOM=${SENDCOM:-YES}
   export SENDDBN=${SENDDBN:-NO}
   export SENDSMS=${SENDSMS:-YES}
+  export SENDECF=${SENDECF:-YES}
   export SENDDBN_GB2=${SENDDBN_GB2:-NO}
+  export RERUN=${RERUN:-NO}
 
   # Specify Execution Areas
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
-else                             ### For Operations
-  export SENDCOM=YES
-  export SENDDBN=YES
-  export SENDSMS=YES
-  export SENDDBN_GB2=YES
-
-  # Specify Execution Areas
-  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
-  export USHgefs=${USHgefs:-$HOMEgefs/ush}
-  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
-  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
-fi
 
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
@@ -125,10 +106,11 @@ export REDERR='2>'
 ##############################
 export EXECutil=$HOMEutil/exec
 export FIXutil=$HOMEutil/fix
-export utilscript=${HOMEutil}/ush
+export USHutil=$HOMEutil/ush
+export utilscript=${USHutil}
 
+#export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
 export CNVGRIB=${CNVGRIB:-/$EXECutil/cnvgrib21_gfs}
-export GRBINDEX=${GRBINDEX:-/nwprod/util/exec/grbindex}
 
 ##############################################
 echo set parameters using gefs.parm
@@ -139,33 +121,26 @@ echo set parameters using gefs.parm
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-sh $utilscript/setup.sh
+sh $USHutil/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $utilscript/setpdy.sh
+sh $USHutil/setpdy.sh
 . PDY
 
 ##############################################
 # Define COM directories
 ##############################################
-export GFSCOMIN=/com/gfs/prod/gfs.${PDY}
-export MRFCOMIN=/com/${NET}/prod/mrf.${PDY}
+#export GFSCOMIN=/com/gfs/prod/gfs.${PDY}
+#export MRFCOMIN=/com/${NET}/prod/mrf.${PDY}
+export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
+export COMIN=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
+export COMINm1=$COMROOT/com/${NET}/${envir}/gefs.${PDYm1}
 
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-  export COM_IN=${COM_IN:-/global/noscrub/$LOGNAME/com/${NET}/${envir}}
-  export COM_OUT=${COM_OUT:-/global/noscrub/$LOGNAME/com/${NET}/${envir}}
-
-  export COMIN=$COM_IN/gefs.${PDY}
-  export COMINm1=$COM_IN/gefs.${PDYm1}
-  export COMOUT=$COM_OUT/gefs.${PDY}
-else                              ### For Operations
-  export COMIN=/com/${NET}/${envir}/gefs.${PDY}
-  export COMINm1=/com/${NET}/${envir}/gefs.${PDYm1}
-  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
-fi
+#export COMOUT=$COMROOT/gefs.${PDY}
+#export COMIN=$COMROOT/gefs.${PDY}
+#export COMINm1=$COMROOT/gefs.${PDYm1}
 
 mkdir -m 775 -p $COMOUT/$cyc/pgrba
 mkdir -m 775 -p $COMOUT/$cyc/pgrbalr
@@ -185,6 +160,7 @@ postmsg "$jlogfile" "$msg"
 #              checking for restart files
 ####################################
 export SLEEP_TIME=900
+#export SLEEP_TIME=90
 export SLEEP_INT=5
 
 export NTHREADS=1
@@ -243,6 +219,16 @@ export FHINC=03
     fi
   ;;
 esac
+case $SUBJOB in
+  (A)
+    export gridlist="hr lr";
+    export FHINC=06;;     
+  (B)
+    export gridlist="p5";
+    export makepgrba="no";;
+  (*)
+    export gridlist="hr p5 lr";;
+esac    
 
 echo FORECAST_SEGMENT=$FORECAST_SEGMENT
 echo FHINC=$FHINC      
@@ -270,4 +256,4 @@ postmsg "$jlogfile" "$msg"
 cd $DATA_IN
 rm -rf $DATA
 
-$SMSBIN/endt
+#$SMSBIN/endt

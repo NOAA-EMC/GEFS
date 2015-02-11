@@ -26,6 +26,8 @@ msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
 
 export MP_LABELIO=YES
+export DO_LOW_RES=$DO_LOW_RES
+export DO_THIS_RES=${DO_THIS_RES:-YES}
 
 if [[ "$cycsuffix" = "true" ]]; then
   export cfsuffix=".cycfs$cyc_fcst"
@@ -125,6 +127,19 @@ if (( SHOUR == 0 )); then
   # Making the 1-degree grib files
   $USHgefs/gefs_prdgen.sh
 
+  ####################################
+  # send control files to misc
+  ####################################
+  if test $SENDCOM = "YES"
+  then
+    if test $fhr -lt 100
+    then
+      pad="0"
+    else
+      pad=""
+    fi
+    echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/${RUN}.t${cyc}z.prdgen.control_anl $cfsuffix
+  fi
 fi
 
 ############################################################
@@ -158,7 +173,7 @@ do
     while [ $ic -le $SLEEP_LOOP_MAX ]
     do
        #20100730 change test to use master control file
-       mcfile=$COMOUT/$cyc/misc/$RUN.$cycle.master.control$cfsuffix
+       mcfile=$COMOUT/$cyc/misc/$RUN.$cycle.master.control.$fhr$cfsuffix
        testfhr=-1
        if [[ -f $mcfile ]]; then
 	 teststring=`cat $mcfile|head -1`
@@ -208,8 +223,11 @@ do
     #$USHgefs/gefs_prdgen_lowres.sh
   fi
 
-  # Making the 1x1 degree GRIB file
-  $USHgefs/gefs_prdgen.sh
+  if [[ "$DO_THIS_RES" != 'NO' ]] 
+  then
+    # Making the 1x1 degree GRIB file
+    $USHgefs/gefs_prdgen.sh
+  fi  
 
    wait
 
@@ -224,7 +242,7 @@ do
     else
       pad=""
     fi
-    echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/${RUN}.t${cyc}z.prdgen.control$cfsuffix
+    echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/${RUN}.t${cyc}z.prdgen.control_$fhr $cfsuffix
   fi
 
   export fhr=`expr $fhr + $FHINC`

@@ -50,7 +50,7 @@ export COPYGB=${COPYGB:-$EXECutil/copygb}
 export WGRIB2=${WGRIB2:-$EXECutil/wgrib2}
 export GRB2IDX=${GRB2IDX:-$EXECutil/grb2index}
 export COPYGB2=${COPYGB2:-$EXECutil/copygb2}
-export CNVGRIB=${CNVGRIB:-$EXECutil/cnvgrib21-gfs}
+export CNVGRIB=${CNVGRIB:-$EXECutil/cnvgrib21_gfs}
 
 export ENSPPF=$USHgefs/global_ensppf.sh
 export ENSSTAT=$EXECgefs/gefs_ensstat
@@ -83,18 +83,19 @@ SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 export fh=$SHOUR
 if test $fh -lt 10 -a $fh -gt 0
 then
-   export fhr="0$fh"
+   export fh="0$fh"
 fi
 ############################################################
 # Loop Through the Post Forecast Files
 ############################################################
+export gridlist=$gridlist
 (( nfilesprev = 9999 ))
 foundgfs=no
 while test $fh -le $FHOUR
 do
   if test ` expr $fh % 6 ` -eq 0 
   then
-   reslist="hr p5 lr"
+   reslist=$gridlist
   else 
    reslist="p5"
   fi
@@ -103,6 +104,11 @@ do
   #  which the pgrb files are produced by the post
   for res in $reslist 
   do
+    if [[ $res = p5 ]]; then
+     makepgrba="no"
+     makegrb1i="no"
+    fi 
+
 #   if [[ $res = lr ]]; then
 #     EXT=".2"
 #     lr=lr
@@ -371,7 +377,7 @@ do
         fi
       done
     fi
-  done
+  done #res (grid hr, lr or p5)
 
   echo "`date` send pgrba output end"
 
@@ -381,7 +387,7 @@ do
     export fh="0$fh"
   fi
 
-done
+done    #fhr
 
 
 echo ###############################`date` cat $pgmout begin

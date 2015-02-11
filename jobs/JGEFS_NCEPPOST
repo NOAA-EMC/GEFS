@@ -1,25 +1,25 @@
 set -x
-################# lines between these markers have been modified for dev begin
-################# lines between these markers have been modified for dev end
-
 #####################################################################
 # 9/20/2009, Julia Zhu   Scripts are modified to be sharable
 #                        between EMC and NCO
 #         Please note that variable "RUN_ENVIR" is set and used
 #         in the development enviroment only.
+# September 2014, Dingchen Hou   Scripts are modified to generate grib2 master files
+# january 2015, Dingchin Hou   Scripts changed to vertical structure and cleaned following NCO requirements
 ######################################################################
 
-$SMSBIN/smsinit $LOADL_STEP_ID 
+#$SMSBIN/smsinit $LOADL_STEP_ID 
 echo `date` $0 `date -u` begin
 
 set -xa
-export PS4='$SECONDS + '
 ####################################
 
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export machine=${gefsmachine:-wcoss}
 export APRUN=${gefsmpexec:-mpirun.lsf}
+
 export GRIBVERSION=${GRIBVERSION:-grib2}
 #export MASTERRES=p5        # default is Gaussian, could be p125/p25/p5 
 export res=$MASTERRES
@@ -43,21 +43,21 @@ else
     exit
   fi
 fi
+
 export HOMEgefs=${HOMEgefs}
 export HOMEgsm=${HOMEgsm}
 export HOMEpost=${HOMEpost}
-export HOMEutil=${HOMEutil:-/nwprod/util}
+export HOMEutil=${UTILROOT:-/nwprod/util}
+#export HOMEutil=${HOMEutil:-/nwprod/util}
+
+export PS4='$SECONDS + '
+date
 
 ####################################
 # obtain unique process id (pid) and make temp directory
-####################################
+###################################
 export pid=$$
-if [ "$RUN_ENVIR" = dev ]    ### For Developers
-then
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
-else                       ### For Operations
-   export DATA_IN=/tmpnwprd
-fi
+export DATA=$DATAROOT/${job}.${pid}
 export DATA=$DATA_IN/${job}.${pid}
 
 mkdir -p $DATA
@@ -80,17 +80,12 @@ fi
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=gens
+export NET=${NET:-gens}
 
 ####################################
 # File To Log Msgs
 ####################################
-if [ "$RUN_ENVIR" = dev ]     ### For Developers
-then
-   export jlogfile=$baselog/com/logs/jlogfile
-else                        ### For Operations
-   export jlogfile=/com/logs/jlogfile
-fi
+export jlogfile=${jlogfile:-/com/logs/jlogfile}
 
 ####################################
 # Determine Job Output Name on System
@@ -109,52 +104,24 @@ export pgmerr=errfile
 # RERUN    - Rerun posts from beginning (default no)
 # VERBOSE  - Specify Verbose Output in global_postgp.sh
 ####################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
   export SAVEGES=${SAVEGES:-YES}
   export SENDCOM=${SENDCOM:-YES}
   export SENDDBN=${SENDDBN:-YES}
   export SENDSMS=${SENDSMS:-YES}
+  export SENDECF=${SENDECF:-YES}
   export VERBOSE=${VERBOSE:-NO}
   export RERUN=${RERUN:-NO}
-# export RERUN=YES
 
   # Specify Execution Areas
-  export HOMEpost=${HOMEpost:-/nw${envir}}
   export USHpost=${HOMEpost}/ush
   export EXECpost=${HOMEpost}/exec
   export FIXpost=${HOMEpost}/fix
   export PARMpost=${HOMEpost}/parm
 
-  export HOMEgsm=${HOMEgsm:-/nw${envir}}
   export USHgsm=$HOMEgsm/ush
   export EXECgsm=$HOMEgsm/exec
 
-  export HOMEGgefs=${HOMEGgefs:-/nw${envir}}
   export PARMgefs=$HOMEgefs/parm
- 
-  export HOMEutil=${HOMEutil:-/nwprod/util}
-else                             ### For Operations
-  export SAVEGES=YES
-  export SENDCOM=YES
-  export SENDDBN=YES
-  export SENDSMS=YES
-  export VERBOSE=NO
-  export RERUN=NO
-
-  # Specify Execution Areas
-  export HOMEPOST=${HOMEPOST:-/nw${envir}}
-  export USHPOST=${HOMEPOST}/ush
-  export EXECPOST=${HOMEPOST}/exec
-  export FIXPOST=${HOMEPOST}/fix
-  export PARMPOST=${HOMEPOST}/parm
-  export PARMGLOBAL=${PARMPOST}
-
-  export HOMEGEFS=${HOMEGEFS:-/nw${envir}}
-  export PARMGEFS=$HOMEGEFS/parm
-
-  export HOMEUTIL=${HOMEUTIL:-/nwprod/util}
-fi
 
 ###############################################################
 # Specify locations of the following scripts and executables
@@ -168,8 +135,8 @@ export OVERPARMEXEC=$EXECpost/overparm_grib
 export CHGRESSH=$USHgsm/global_chgres.sh
 export CHGRESEXEC=$EXECgsm/global_chgres
 
-export POSTGPSH=$USHpost/global_nceppost.sh
-export POSTGPEXEC=$EXECpost/ncep_post
+export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
+export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
 #DHOU 20141119 the next 2 lines need to be removed when DaNa's post is finalized.
 export POSTGPSH=$USHpost/global_nceppost.sh_test
 export POSTGPEXEC=$EXECpost/ncep_post_DaNa-3
@@ -182,14 +149,15 @@ export POSTGPEXEC=$EXECpost/ncep_post_DaNa-3
 ##############################
 export EXECutil=$HOMEutil/exec
 export USHutil=$HOMEutil/ush
-export utilscript=$USHutil
 
-export EXECUTIL=$EXECutil
-export USHUTIL=$USHutil
+#export utilscript=$USHutil
+#export EXECUTIL=$EXECutil
+#export USHUTIL=$USHutil
 
+export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
+export CNVGRIB=${CNVGRIB:-/$EXECutil/cnvgrib21_gfs}
 export GRBINDEX=$EXECutil/grbindex
 export GRBINDEX2=$EXECutil/grb2index
-export utilscript=/nwprod/util/ush
 
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
@@ -199,38 +167,43 @@ export REDERR='2>'
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-ksh $utilscript/setup.sh
+ksh $USHutil/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $utilscript/setpdy.sh
+sh $USHutil/setpdy.sh
 
 . PDY
 
 ##############################################
 # Define COM and GES directories
 ##############################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-  export COM_IN=${COM_IN:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
-  export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
-  export gespath=${gespath:-/global/noscrub/$LOGBAME/nwges/${envir}}
+  export gespath=$GESROOT/${envir}
+  export COMGFS=$COMROOT/com/gfs/prod/gfs.${PDY}
+  export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
+  export COMIN=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
+  export GESdir=$gespath/gefs.${PDY}
 
-  export COMIN=$COM_IN/gefs.${PDY}
-  export COMOUT=$COM_OUT/gefs.${PDY}
-  export ENS_COM=$COMOUT
 
-  mkdir -m 775 -p $COMOUT/$cyc/stats
-
-else                              ### Fir Operations
-  export COMIN=/com/${NET}/${envir}/gefs.${PDY}
-  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
-  export gespath=/nwges/${envir}
-  export ENS_COM=$COMOUT
-fi
-
-export GESdir=$gespath/gefs.${PDY}
+#if [ "$RUN_ENVIR" = dev ]         ### For Developers
+#then
+#  export COM_IN=${COM_IN:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
+#  export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
+#  export gespath=${gespath:-/global/noscrub/$LOGBAME/nwges/${envir}}
+#
+#  export COMIN=$COM_IN/gefs.${PDY}
+#  export COMOUT=$COM_OUT/gefs.${PDY}
+#  export ENS_COM=$COMOUT
+#
+#  mkdir -m 775 -p $COMOUT/$cyc/stats
+#
+#else                              ### Fir Operations
+#  export COMIN=/com/${NET}/${envir}/gefs.${PDY}
+#  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+#  export gespath=/nwges/${envir}
+#  export ENS_COM=$COMOUT
+#fi
 
 mkdir -m 775 -p $COMOUT $GESdir
 mkdir -m 775 -p $COMOUT/$cyc/master
@@ -288,7 +261,7 @@ fi
 #              checking for restart files
 ####################################
 export SLEEP_TIME=900
-export SLEEP_TIME=1800
+#export SLEEP_TIME=1800
 export SLEEP_INT=5
 
 ####################################
@@ -310,6 +283,24 @@ case $FORECAST_SEGMENT in
       export FHOUR_HIGH=6
       export FHOUR_LOW=6
     fi
+    case $SUBJOB in
+     (A)  
+       export DOANALYSIS=YES;
+       export SHOUR=06;
+       export FHINC_HIGH=9;;
+     (B)  
+       export DOANALYSIS=NO;
+       export SHOUR=00;
+       export FHINC_HIGH=9;;
+     (C)  
+       export DOANALYSIS=NO;
+       export SHOUR=03;
+       export FHINC_HIGH=9;;
+     (*) 
+       export DOANALYSIS=YES;
+       export SHOUR=00;
+       export FHINC_HIGH=3;;
+    esac   
   ;;
   (lr)
     # low resolution segment
@@ -325,6 +316,7 @@ case $FORECAST_SEGMENT in
       export FHOUR_HIGH=6
       export FHOUR_LOW=6
     fi
+    export DOANALYSIS=NO
   ;;
   (*)
     # whole forecast
@@ -340,6 +332,8 @@ case $FORECAST_SEGMENT in
 esac
 
 echo FORECAST_SEGMENT=$FORECAST_SEGMENT
+echo POSTJOBTYPE=$POSTJOBTYPE
+echo DOANALYSIS=$DOANALYSIS
 echo FHINC_HIGH=$FHINC_HIGH
 echo FHINC_LOW=$FHINC_LOW
 echo SHOUR=$SHOUR
@@ -352,10 +346,13 @@ export HDMAX=00
 ####################################
 # Check if this is a restart
 ####################################
+  miscfile=$COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control_$POSTJOBTYPE
 if [[ $cycsuffix = false ]]; then
-  if test -f $COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control
+# if test -f $COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control
+  if test -f $miscfile
   then
-     modelrecvy=`cat < $COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control`
+#    modelrecvy=`cat < $COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control`
+     modelrecvy=`cat < $miscfile`
      recvy_pdy=`echo $modelrecvy | cut -c1-8`
      recvy_cyc=`echo $modelrecvy | cut -c9-10`
      recvy_shour=`echo $modelrecvy | cut -c11-13`
@@ -380,9 +377,11 @@ if [[ $cycsuffix = false ]]; then
      fi
   fi
 else
-  if test -f $COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control.cycfs$cyc_fcst
+# if test -f $COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control.cycfs$cyc_fcst
+  if test -f $miscfile
   then
-     modelrecvy=`cat < $COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control.cycfs$cyc_fcst`
+#    modelrecvy=`cat < $COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control.cycfs$cyc_fcst`
+     modelrecvy=`cat < $miscfile`
      recvy_pdy=`echo $modelrecvy | cut -c1-8`
      recvy_cyc=`echo $modelrecvy | cut -c9-10`
      recvy_shour=`echo $modelrecvy | cut -c11-13`

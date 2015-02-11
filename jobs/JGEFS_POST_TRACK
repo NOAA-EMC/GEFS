@@ -1,4 +1,4 @@
-utilbin/ksh 
+#!bin/ksh 
 #####################################################################
 # 1/7/2014, Jiayi Peng and Dingchen Hou   Scripts are modified to be vertical structure 
 ####################################################################

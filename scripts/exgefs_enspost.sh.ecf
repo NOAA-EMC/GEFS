@@ -50,7 +50,7 @@ export COPYGB=${COPYGB:-$EXECutil/copygb}
 export WGRIB2=${WGRIB2:-$EXECutil/wgrib2}
 export GRB2IDX=${GRB2IDX:-$EXECutil/grb2index}
 export COPYGB2=${COPYGB2:-$EXECutil/copygb2}
-export CNVGRIB=${CNVGRIB:-$EXECutil/cnvgrib21-gfs}
+export CNVGRIB=${CNVGRIB:-$EXECutil/cnvgrib21_gfs}
 
 export ENSPPF=$USHgefs/global_ensppf.sh
 export ENSSTAT=$EXECgefs/gefs_ensstat

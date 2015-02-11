@@ -4,6 +4,7 @@
 #######################################################
  
 export RUN_ENVIR=${RUN_ENVIR:-dev}
+export envir=${envir:-dev}
 
 HOMEDIR=/ensemble/save/Dingchen.Hou/SVN
 
@@ -17,17 +18,38 @@ then
   export HOMEtrak=$HOMEDIR/ens_tracker.v1.0.0
   export HOMEtrak=$HOMEDIR/ens_genesis.v1.0.0
 
-  export HOMEUTIL=/nwprod/util
-  export UTILROOT=/nwprod/util
-
   export SENDCOM=YES
   export SENDDBN=NO
   export SENDDBN_GB2=NO
-  export SENDSMS=YES
+  export SENDDBN_NTC=NO
+  export SENDECF=NO
   export SENDSMS=NO
 
 #NCO required variable
-# export 
+  export UTILROOT=/nwprod/util
+  export HOMEutil=$UTILROOT
+
+  export NWROOT=/nw$envir 
+  export NET=gens
+# export RUN=$envir
+  export RUN=$RUN
+  export RUNMEM=$RUNMEM
+
+  export DATAROOT=$basetmp/tmpnwprd
+  export DATA=
+  export DCOMROOT=
+  export PCOMROOT=
+  export COMROOT=$baseoutput
+  export COM=$COMROOT/com/gens/dev
+  export GESROOT=$baseoutput/nwges
+  export DBNROOT=
+  export jlogfile=$COMROOT/com/logs/jlogfile
+
+  export DBNROOT=
+  export DBNROOT=
+  export DBNROOT=
+
+#Our variable, may be modified to use the above NOC requested
   export DATA_IN=/ptmp/${LOGNAME}/tmpnwprd
   export DATA_IN=$basetmp/tmpnwprd
   export jlogfile=$DATA_IN/jlogfile
@@ -47,9 +69,10 @@ then
 
   export gespath=/ptmp/$LOGNAME/nwges/dev
   export gespath=$baseoutput/nwges/dev
+  export gespath=$GESROOT/dev
 
   export COMGFS=/com/gfs/prod
-  export COMGFS=$basedgfs/com/gfs/prod
+# export COMGFS=$basedgfs/com/gfs/prod
 
   export pcom_in=/ptmp/$LOGNAME/pcom
   export pcom_in=$baseoutput/pcom

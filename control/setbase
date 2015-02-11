@@ -32,7 +32,7 @@ echo
 echo `date` $0 set directory tree locations
 echo
 
-export JOBQUEUE=dev
+#export JOBQUEUE=dev
 export JOBQUEUE=dev2
   PTMP=ptmp 
   STMP=stmp
