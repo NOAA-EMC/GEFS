@@ -16,7 +16,8 @@ then
   export HOMEgsm=$HOMEDIR/GSM_V12.0.0
   export HOMEpost=$HOMEDIR/post_upgrade_gfs_EXP-gefs-45733
   export HOMEtrak=$HOMEDIR/ens_tracker.v1.0.0
-  export HOMEtrak=$HOMEDIR/ens_genesis.v1.0.0
+  export HOMEgene=$HOMEDIR/ens_genesis.v1.0.0
+  export HOMEenkf=/nwprod/enkf.v2.0.1
 
   export SENDCOM=YES
   export SENDDBN=NO
