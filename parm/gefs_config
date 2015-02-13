@@ -8,6 +8,7 @@ export envir=${envir:-dev}
 
 HOMEDIR=/ensemble/save/Dingchen.Hou/SVN
 
+export gefsmachine=${gefsmachine:-wcoss}
 if [ $RUN_ENVIR = dev ]
 then
   export HOMEgefs=$HOMEDIR/GEFS_wcoss_unify_dev-48295

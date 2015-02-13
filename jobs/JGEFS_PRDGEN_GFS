@@ -183,11 +183,13 @@ export FHINC_LOW=12
 export DO_HD_PGRB=NO
 export HDMAX=00
 
-export dogrid2p5=YES
+#export dogrid2p5=YES
 export jobgrid=$jobgrid
+export DO_LOW_RES=YES 
 if [[ $jobgrid == _p5 ]]; then
   export FHINC_HIGH=3
-  export dogrid2p5=NO
+# export dogrid2p5=NO
+  export DO_LOW_RES=NO 
 fi
 #
 # DLM - Added to Try and Debug Comm Subsystem Errors
@@ -205,7 +207,7 @@ if test $SHOUR -le $FHOUR_HIGH
 then
    export FHINC=$FHINC_HIGH
    export FHOUR=$FHOUR_HIGH
-   export DO_LOW_RES=YES 
+#  export DO_LOW_RES=YES 
    if (( $gfsgribedition == 1 )); then
     $HOMEgefs/scripts/exgefs_prdgen_gfs_grb1.sh.sms
    elif (( gfsgribedition == 2 )); then

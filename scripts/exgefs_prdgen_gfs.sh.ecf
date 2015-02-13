@@ -244,10 +244,10 @@ do
     if test "$DO_LOW_RES" = 'YES' -a `expr $fhr % 6 ` -eq 0
     then
       $WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile.2
-      if [ $fhr -gt 0 ]
-      then
-       $WGRIB2 -s master_grb2file |grep -F -f $parmlistC |grep ave |$WGRIB2 master_grb2file -i -append -grib tmpfile.2 
-      fi
+#     if [ $fhr -gt 0 ]
+#     then
+#      $WGRIB2 -s master_grb2file |grep -F -f $parmlistC |grep ave |$WGRIB2 master_grb2file -i -append -grib tmpfile.2 
+#     fi
       if [[ x$fhoroglist != x ]]; then
 	for fhorog in $fhoroglist
 	do
@@ -257,14 +257,14 @@ do
 	done
       fi
 
-     if [[ $dogrid2p5 = "YES" ]]; then
+#    if [[ $dogrid2p5 = "YES" ]]; then
      $COPYGB2 -g "${grid2p5}" -i0 -x tmpfile.2 pgb2afile.2
      $GRB2INDEX pgb2afile.2 pgb2aifile.2
      $ENSADD $e1 $e2 pgb2afile.2 epgbafile.2
-     mv epgbafile pgb2afile
+     mv epgbafile.2 pgb2afile.2
      $CNVGRIB -g21 pgb2afile.2 pgbafile.2
      $GRBINDEX pgbafile.2 pgbaifile.2
-     fi
+#    fi
 
     fi
     
