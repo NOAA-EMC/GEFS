@@ -52,11 +52,18 @@ echo ENSADD=$ENSADD
 
 grid=${grid1p0}  
 dogrid2p5=${dogrid2p5:-YES}  
+parm00=$PARMgefs/gefs_pgrb2a_f00.parm
+parmhh=$PARMgefs/gefs_pgrb2a_fhh.parm
+parmlow00=$PARMgefs/gefs_pgrb2a_f00.parm
+parmlowhh=$PARMgefs/gefs_pgrb2a_f00.parm
+
 filsuf=
 if [[ $jobgrid == _p5 ]]; then
    grid=${gridp5}  
    dogrid2p5=NO
    filsuf=p5
+   parm00=$PARMgefs/gefs_pgrb2a_0p50_f00.parm
+   parmhh=$PARMgefs/gefs_pgrb2a_0p50_fhh.parm
 fi
 
 export makegrb2i=no
@@ -89,7 +96,8 @@ then
    rm -f pgbafile pgbaifile
    rm -f pgb2afile pgb2aifile
 
-   parmlist=$PARMgefs/gefs_pgrb2a_f00.parm
+#  parmlist=$PARMgefs/gefs_pgrb2a_f00.parm
+   parmlist=$parm00 
    ln -s $COMIN/${RUN}.t${cyc}z.master.grb2anl master_grb2file
    $WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile
    $COPYGB2 -g "${grid}" -i0 -x tmpfile pgb2afile
@@ -212,9 +220,11 @@ do
 
     if [ $fhr -eq 0 ]
     then
-      parmlist=$PARMgefs/gefs_pgrb2a_f00.parm
+#     parmlist=$PARMgefs/gefs_pgrb2a_f00.parm
+      parmlist=$parm00 
     else
-      parmlist=$PARMgefs/gefs_pgrb2a_fhh.parm
+#     parmlist=$PARMgefs/gefs_pgrb2a_fhh.parm
+      parmlist=$parmhh 
     fi
 
     ln -s $COMIN/${RUN}.t${cyc}z.master.grb2f${fhr} master_grb2file
@@ -243,11 +253,15 @@ do
 
     if test "$DO_LOW_RES" = 'YES' -a `expr $fhr % 6 ` -eq 0
     then
+
+     if [ $fhr -eq 0 ]
+     then
+       parmlist=$parmlow00 
+     else
+       parmlist=$parmlowhh 
+     fi
+
       $WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile.2
-#     if [ $fhr -gt 0 ]
-#     then
-#      $WGRIB2 -s master_grb2file |grep -F -f $parmlistC |grep ave |$WGRIB2 master_grb2file -i -append -grib tmpfile.2 
-#     fi
       if [[ x$fhoroglist != x ]]; then
 	for fhorog in $fhoroglist
 	do

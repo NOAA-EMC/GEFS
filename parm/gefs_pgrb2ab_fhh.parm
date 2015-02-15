@@ -102,6 +102,12 @@
 :HGT:tropopause:
 :HPBL:surface:
 :ICEC:surface:
+:ICIP:300 mb:
+:ICIP:400 mb:
+:ICIP:500 mb:
+:ICIP:600 mb:
+:ICIP:700 mb:
+:ICIP:800 mb:
 :LAND:surface:
 :LFTX:surface:
 :LHTFL:surface:

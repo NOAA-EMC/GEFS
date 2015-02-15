@@ -91,7 +91,8 @@ else
 
    # begin block removed from background
 #  parmlist=$PARMgefs/gefs_pgrba_f${hsuffix}.parm
-   parmlist=$PARMgefs/gefs_pgrb2a_f${hsuffix}.parm
+#  parmlist=$PARMgefs/gefs_pgrb2a_f${hsuffix}.parm
+   parmlist=$PARMgefs/gefs_pgrb2a_0p50_f${hsuffix}.parm
    $WGRIB2 -s pgb2file.$ffhr$cfsuffix | \
        grep -F -f $parmlist | \
        grep -v -F $excludestring | \
