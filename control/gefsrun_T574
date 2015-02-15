@@ -3453,7 +3453,7 @@ echo $SUBJOB
 . $cwd/setup_job_card.$gefsmachine
   fi 
 
- exit
+#exit
 #DHOU 01/03/2013 end of changed section
 
   echo
