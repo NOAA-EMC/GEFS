@@ -2571,7 +2571,10 @@ case $taskname in
     MP_SHARED_MEMORY=no
     OMP_NUM_THREADS=1
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
-    total_tasks=24
+    total_tasks=21
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
   fi  
   ;;
   (post.genesis)
@@ -2601,7 +2604,10 @@ case $taskname in
     MP_SHARED_MEMORY=no
     OMP_NUM_THREADS=1
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
-    total_tasks=24
+    total_tasks=21
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
   fi  
   ;;
   (track.ave)

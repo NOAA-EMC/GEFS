@@ -40,45 +40,65 @@ fi
 #BSUB -cwd $basetmp/tmpnwprd
 #BSUB -W $wall_clock_limit
 #BSUB -L /bin/ksh
-#
-#
 eofCAT
 
+        AFFINITY="core(1)"
     if [[ ${MP_SHARED_MEMORY} = yes ]] ; then
       if [[ ${job_type} = parallel ]] ; then
-#       AFFINITY="core"
-        AFFINITY="core(${OMP_NUM_THREADS}):distribute=balance]"
+        AFFINITY="core(${OMP_NUM_THREADS}):distribute=balance"
+      fi
+    fi
+      if [[ ${taskname} = nceppost_hr ]] ; then
+        AFFINITY="core(${OMP_NUM_THREADS})"
+      fi
+      if [[ ${taskname} = nceppost_lr ]] ; then
+        AFFINITY="core(${OMP_NUM_THREADS})"
+      fi
+      if [[ ${taskname} = ensstat_hr ]] ; then
+        AFFINITY="core(${OMP_NUM_THREADS})"
+      fi
+      if [[ ${taskname} = ensstat_lr ]] ; then
+        AFFINITY="core(${OMP_NUM_THREADS})"
+      fi
+      if [[ ${taskname} = enspost ]] ; then
+        AFFINITY="core(${OMP_NUM_THREADS})"
+      fi
+      if [[ ${taskname} = post.track ]] ; then
+        AFFINITY="core(${OMP_NUM_THREADS})"
+      fi
+      if [[ ${taskname} = post.genesis ]] ; then
+        AFFINITY="core(${OMP_NUM_THREADS})"
+      fi
+      if [[ ${taskname} = post.cqpf ]] ; then
+        AFFINITY="core(${OMP_NUM_THREADS})"
       fi
       if [[ ${taskname} = post.prdgen_hr ]] ; then
         AFFINITY="core(${OMP_NUM_THREADS}):distribute=pack"
       elif [[ ${taskname} = post.prdgen_lr ]] ; then
         AFFINITY="core(${OMP_NUM_THREADS}):distribute=pack"
-      elif [[ ${taskname} = post.CQPF ]] ; then
-        AFFINITY="core(${OMP_NUM_THREADS}):distribute=pack"
-      else	
-        AFFINITY="core(1)"
+#     else	
+#       AFFINITY="core(1)"
       fi
-        export JOBQUEUE=$JOBQUEUE
-        JOBQUEUESHARED=$JOBQUEUE\_shared
-#       JOBQUEUESHARED=$JOBQUEUE\_shared
-##BSUB -R affinity[core(${OMP_NUM_THREADS})]
-##BSUB -R affinity[core(${OMP_NUM_THREADS}):distribute=pack]
+
+    export JOBQUEUE=$JOBQUEUE
+    JOBQUEUESHARED=$JOBQUEUE\_shared
+
+    if [[ ${job_type} = serial ]] ; then
     cat <<eofCAT >>$jobcontrol$SUBJOB
+##BSUB -q "dev_shared"
 #BSUB -q "$JOBQUEUESHARED" 
 #BSUB -R "rusage[mem=$resources]"
 #BSUB -R "affinity[$AFFINITY]"
-export OMP_NUM_THREADS=1
+#export OMP_NUM_THREADS=1
 eofCAT
     fi
 
-    if [[ ${MP_SHARED_MEMORY} = no ]] ; then
+#   if [[ ${MP_SHARED_MEMORY} = no ]] ; then
+    if [[ ${job_type} = parallel ]] ; then
     cat <<eofCAT >>$jobcontrol$SUBJOB
-##BSUB -q "prod_class1" 
 #BSUB -q "$JOBQUEUE" 
-##BSUB -q "debug" 
 #BSUB -x  
-##BSUB -R affinity[${AFFINITY}]
-#BSUB -R affinity[core(${OMP_NUM_THREADS})]
+#BSUB -R affinity[${AFFINITY}]
 eofCAT
     fi
 
@@ -88,15 +108,6 @@ eofCAT
 #BSUB -a poe
 #BSUB -n $total_tasks
 #BSUB -R span[ptile=$taskspernode]
-
-export OMP_NUM_THREADS=$OMP_NUM_THREADS
-export MP_EUIDEVICE=sn_all
-export MP_EUILIB=us
-#export MP_SHARED_MEMORY=${MP_SHARED_MEMORY}
-export MP_SHARED_MEMORY=yes
-#export MEMORY_AFFINITY=core:$OMP_NUM_THREADS 
-
-export total_tasks=$total_tasks
 eofCAT
     fi
 
@@ -105,12 +116,18 @@ task_type=`echo ${taskname} | cut -c1-8`
 #echo $task_type ${taskname} 
    if [[ ${task_type} = forecast ]] ; then
     cat <<eofCAT >>$jobcontrol$SUBJOB
-export OMP_STACKSIZE=256000
-#env >envv
 export MP_EAGER_LIMIT=65535
-export MP_EUIDEVELOP=min
+export MP_USE_BULK_XFER=yes
 export MP_MPILIB=mpich2
-export MP_USE_BULK_XFER=no
+export MP_EUIDEVELOP=min
+export MP_SINGLE_THREAD=yes
+export MP_LABELIO=yes
+export MP_SHARED_MEMORY=yes
+export MP_USE_TOKEN_FLOW_CONTROL=yes
+export MP_INSTANCES=2
+#export MP_USE_BULK_XFER=no
+export OMP_STACKSIZE=256000
+eofCAT
 # 20131202 RLW check this affinity setting for the forecast job
 # 20131202 RLW check this affinity setting for the forecast job, DHOU removed it 08/21/2014
 #export MP_TASK_AFFINITY=core:1
@@ -118,6 +135,19 @@ export MP_USE_BULK_XFER=no
 #export MP_COLLECTIVE_OFFLOAD=yes
 #export KMP_STACKSIZE=1024m
 #export MEMORY_AFFINITY=core:1
+    fi
+
+#echo ${job_type} DHOU TTT
+    if [[ ${job_type} = parallel ]] ; then
+    cat <<eofCAT >>$jobcontrol$SUBJOB
+export OMP_NUM_THREADS=$OMP_NUM_THREADS
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+export MP_SHARED_MEMORY=${MP_SHARED_MEMORY}
+#export MP_SHARED_MEMORY=yes
+export MEMORY_AFFINITY=core:$OMP_NUM_THREADS 
+
+export total_tasks=$total_tasks
 eofCAT
     fi
 
@@ -293,6 +323,7 @@ echo
 # CALL executable job script here
  export jobgrid=$jobgrid
  export jobhour=$jobhour
+ echo HOUPATH=$PATH
  $jobdir/$jobscript
 #/usrx/local/bin/getrusage -rss $jobdir/$jobscript
 
@@ -384,7 +415,7 @@ eofCAT
 
     echo `date` $0 $* write job cards for run end
 
-  else
+  else       # WAIT job card is written
 
     echo `date` $0 $* write job cards for wait begin
 

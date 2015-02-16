@@ -8,7 +8,7 @@
 # February 2015, Dingchin Hou   Scripts changed to vertical structure and cleaned following NCO requirements
 ######################################################################
 
-$SMSBIN/smsinit $LOADL_STEP_ID 
+#$SMSBIN/smsinit $LOADL_STEP_ID 
 echo `date` $0 `date -u` begin
 
 set -xa
@@ -18,8 +18,8 @@ export PS4='$SECONDS + '
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 export machine=${gefsmachine:-wcoss}
-
 export GRIBVERSION=${GRIBVERSION:-grib2}
+export gefsgribedition=${gefsgribedition:-2}
 
 ###########################################
 # Run gefs_config to get input parameters
@@ -41,8 +41,6 @@ fi
 export HOMEgefs=${HOMEgefs}
 export HOMEutil=${UTILROOT:-/nwprod/util}
 #export HOMEutil=${HOMEutil:-/nwprod/util}
-
-date
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -185,7 +183,7 @@ fi
 if (( fhmaxh > fhmax )); then
   fhmaxh=$fhmax
 fi
-################# lines between these markers have been modified for dev end
+
 export FHINC=06
 
 fcstlong=true
@@ -237,7 +235,6 @@ echo FHOUR=$FHOUR
 
 env | sort
 
-#############################################################
 # Execute the script
 
 export ext_h=""

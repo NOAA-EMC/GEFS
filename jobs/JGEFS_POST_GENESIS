@@ -32,7 +32,7 @@ else
   fi
 fi
 
-export HOMEgefs=${HOMEGgefs}
+export HOMEgefs=${HOMEgefs}
 export HOMEtrak=${HOMEtrak}
 export HOMEgene=${HOMEgene}
 export HOMEutil=${HOMEutil:-/nwprod/util}
@@ -121,21 +121,10 @@ fi
 ####################################
 # Specify Execution Areas
 ####################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-  export HOMEgene=${HOMEGENE:-/nw${envir}}
-  export EXECens_genesis=${EXECgene:-$HOMEGENE/exec}
-  export USHens_genesis=${USHgene:-$HOMEGENE/ush}
-  export FIXens_genesis=${FIXgene:-$HOMEGENE/fix}
+  export EXECens_genesis=${EXECgene:-$HOMEgene/exec}
+  export USHens_genesis=${USHgene:-$HOMEgene/ush}
+  export FIXens_genesis=${FIXgene:-$HOMEgene/fix}
   export PARMgefs=$HOMEgefs/parm
-else  
-  export HOMEgene=${HOMEGENE:-/nw${envir}}
-  export EXECens_genesis=$HOMEgene/exec
-  export USHens_genesis=$HOMEgene/ush
-  export FIXens_genesis=$HOMEgene/fix/fix_am
-  export HOMEgefs=${HOMEgefs:-/nw${envir}}
-  export PARMgefs=$HOMEgefs/parm
-fi
 
 ##############################
 # Set up the UTILITIES
@@ -143,7 +132,7 @@ fi
 export USHutil=$HOMEutil/ush
 export EXECutil=$HOMEutil/exec
 export utilscript=$USHutil
-export GRBINDEX=EXECutil/grbindex}
+export GRBINDEX=EXECutil/grbindex
 
 ##############################
 # Run setup to initialize working directory and utility scripts

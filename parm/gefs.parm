@@ -201,6 +201,7 @@ export IDVC=2
 # This section defines the output flags
 ########################################
 export gefsgribedition=2
+export GRIBVERSION=grib2
 
 export gfsgribedition=2
 export gfsfhmaxh=240

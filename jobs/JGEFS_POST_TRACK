@@ -1,4 +1,4 @@
-#!bin/ksh 
+#!/bin/ksh 
 #####################################################################
 # 1/7/2014, Jiayi Peng and Dingchen Hou   Scripts are modified to be vertical structure 
 ####################################################################
@@ -184,7 +184,6 @@ if [[ $envir = dev ]]; then
   export fhmax=$fhmax12
   elif (( cyc == 18 )); then
   export fhmax=$fhmax18
-  fi
 fi
 
 ####################################

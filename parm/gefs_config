@@ -18,6 +18,8 @@ then
   export HOMEpost=$HOMEDIR/post_upgrade_gfs_EXP-gefs-45733
   export HOMEtrak=$HOMEDIR/ens_tracker.v1.0.0
   export HOMEgene=$HOMEDIR/ens_genesis.v1.0.0
+  export HOMEtrak=/ensemble/save/Jiayi.Peng/ens_tracker.v1.0.0
+  export HOMEgene=/ensemble/save/Jiayi.Peng/ens_genesis.v1.0.0
   export HOMEenkf=/nwprod/enkf.v2.0.1
 
   export SENDCOM=YES
@@ -33,7 +35,6 @@ then
 
   export NWROOT=/nw$envir 
   export NET=gens
-# export RUN=$envir
   export RUN=$RUN
   export RUNMEM=$RUNMEM
 
@@ -43,16 +44,12 @@ then
   export PCOMROOT=
   export COMROOT=$baseoutput
   export COM=$COMROOT/com/gens/dev
-  export GESROOT=$baseoutput/nwges
-  export DBNROOT=
+  export GESROOT=$COMROOT/nwges
   export jlogfile=$COMROOT/com/logs/jlogfile
 
   export DBNROOT=
-  export DBNROOT=
-  export DBNROOT=
 
 #Our variable, may be modified to use the above NOC requested
-  export DATA_IN=/ptmp/${LOGNAME}/tmpnwprd
   export DATA_IN=$basetmp/tmpnwprd
   export jlogfile=$DATA_IN/jlogfile
   export jlogfile=$baselog/com/logs/jlogfile
@@ -79,4 +76,12 @@ then
   export pcom_in=/ptmp/$LOGNAME/pcom
   export pcom_in=$baseoutput/pcom
 
+#Temperary setting of some variables, please check here against J-jobs carefully
+# The cnvgrib utility executable, we used a temporay version cwin developmentn
+# It is implemented in nwprod in Jan. 2015
+  export CNVGRIB=/nco/sib/gribdev/util/exec/cnvgrib21_gfs
+  export CNVGRIB=/nwprod/util/exec/cnvgrib21_gfs
+# For JGEFS_CQPF
+  export COMINGEST=${COMINGEST:-/ensemble/noscrub/Yan.Luo/com-ingest-prod}
+# export COM_IN=/ensemble/noscrub/emc.enspara/xz/T574L64SL/EK0
 fi

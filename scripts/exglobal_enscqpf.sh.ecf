@@ -100,7 +100,7 @@ export WGRIB=${WGRIB:-${EXECutil}/wgrib}
 export WGRIB2=${WGRIB2:-${EXECutil}/wgrib2}
 export GRBIDX=${GRBIDX:-${EXECutil}/grbindex}
 export GRB2IDX=${GRB2IDX:-${EXECutil}/grb2index}
-export CNVGRIB=${CNVGRIB:-/nwpara/util/exec/cnvgrib21_gfs}
+export CNVGRIB=${CNVGRIB:-${EXECutil/cnvgrib21_gfs}
 
 export CDATE=${PDY}${cyc}
 export YMDH=$CDATE  
