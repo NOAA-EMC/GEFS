@@ -138,8 +138,8 @@ export CHGRESEXEC=$EXECgsm/global_chgres
 export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
 export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
 #DHOU 20141119 the next 2 lines need to be removed when DaNa's post is finalized.
-export POSTGPSH=$USHpost/global_nceppost.sh_test
-export POSTGPEXEC=$EXECpost/ncep_post_DaNa-3
+#export POSTGPSH=$USHpost/global_nceppost.sh_test
+#export POSTGPEXEC=$EXECpost/ncep_post_DaNa-3
 
 #echo in $0: POSTGPSH=$POSTGPSH
 #echo in $0: POSTGPEXEC=$POSTGPEXEC
