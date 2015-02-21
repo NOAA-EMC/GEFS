@@ -16,9 +16,9 @@ then
 
   export HOMEgsm=$HOMEDIR/GSM_V12.0.0
 # export HOMEpost=$HOMEDIR/post_upgrade_gfs_EXP-gefs-45733
-  export HOMEpost=$HOMEDIR/post_upgrade_gfs_EXP-gefs-45733-DHOU
-  export HOMEtrak=$HOMEDIR/ens_tracker.v1.0.0
-  export HOMEgene=$HOMEDIR/ens_genesis.v1.0.0
+  export HOMEpost=$HOMEDIR/post_upgrade_gfs_EXP-gefs-51809
+# export HOMEtrak=$HOMEDIR/ens_tracker.v1.0.0
+# export HOMEgene=$HOMEDIR/ens_genesis.v1.0.0
   export HOMEtrak=/ensemble/save/Jiayi.Peng/ens_tracker.v1.0.0
   export HOMEgene=/ensemble/save/Jiayi.Peng/ens_genesis.v1.0.0
   export HOMEenkf=/nwprod/enkf.v2.0.1

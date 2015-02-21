@@ -93,7 +93,7 @@ else
       for fhorog in $fhoroglist
       do
 	if (( fhr == fhorog )); then
-	  $WGRIB2 -s pgb2file.$ffhr.2$cfsuffix | grep 'HGT:sfc' | $WGRIB2 pgb2file.$ffhr.2$cfsuffix -i -append -grib pgb2afile.$ffhr.2$cfsuffix
+	  $WGRIB2 -s pgb2file.$ffhr.2$cfsuffix | grep 'HGT:surface' | $WGRIB2 pgb2file.$ffhr.2$cfsuffix -i -append -grib pgb2afile.$ffhr.2$cfsuffix
 	fi
       done
    fi

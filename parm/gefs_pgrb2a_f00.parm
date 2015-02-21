@@ -1,7 +1,4 @@
 ############################# sorted pgrb2a 201408
-:ABSV:500 mb:
-:ABSV:700 mb:
-:ABSV:850 mb:
 :CAPE:180-0 mb above ground:
 :CIN:180-0 mb above ground:
 :DLWRF:surface:
@@ -36,7 +33,6 @@
 :SHTFL:surface:
 :SNOD:surface:
 :SOILW:0-0.1 m below ground:
-:TCDC:entire atmosphere:
 :TMP:10 mb:
 :TMP:100 mb:
 :TMP:1000 mb:

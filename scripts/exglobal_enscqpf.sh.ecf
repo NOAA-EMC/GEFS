@@ -325,8 +325,8 @@ fi
 #####################################################################
 # GOOD RUN
 set +x
-echo "**************JOB ENS_CQPF_00 COMPLETED NORMALLY"
-echo "**************JOB ENS_CQPF_00 COMPLETED NORMALLY"
+ echo " **************JOB ENS_CQPF_00 COMPLETED NORMALLY "
+ echo " **************JOB ENS_CQPF_00 COMPLETED NORMALLY "
 set -x
 #####################################################################
 

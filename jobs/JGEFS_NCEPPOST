@@ -233,11 +233,10 @@ if [ $GRIBVERSION = grib2 ]; then
  export POSTGRB2TBL=/nwprod/lib/sorc/g2tmpl/params_grib2_tbl_new
  export CTLFILEGFSANL=${CTLFILEGFSANL:-$PARMpost/postcntrl_gefs_anl.xml}
  export CTLFILEGFSF00=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
-#export CTLFILEGFS=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml}
- export CTLFILEGFS=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml_short}
+ export CTLFILEGFS=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml}
  export CTLFILEGFSANL1=${CTLFILEGFSANL:-$PARMpost/postcntrl_gefs_anl.xml}
  export CTLFILEGFSF001=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
- export CTLFILEGFS1=${CTLFILEGFS1:-$PARMpost/postcntrl_gefs.xml_short}
+ export CTLFILEGFS1=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml}
 fi
 
 export POSTGPVARS_HIGH="KPO=47,PO=1000.,975.,950.,925.,900.,875.,850.,825.,800.,775.,750.,725.,700.,675.,650.,625.,600.,575.,550.,525.,500.,475.,450.,425.,400.,375.,350.,325.,300.,275.,250.,225.,200.,175.,150.,125.,100.,70.,50.,30.,20.,10.,7.,5.,3.,2.,1.,"

@@ -1,7 +1,4 @@
 ############################# sorted pgrb2a 201408
-:ABSV:500 mb:
-:ABSV:700 mb:
-:ABSV:850 mb:
 :CAPE:180-0 mb above ground:
 :CIN:180-0 mb above ground:
 :HGT:1000 mb:
@@ -17,7 +14,6 @@
 :RH:2 m above ground:
 :RH:850 mb:
 :RH:925 mb:
-:TCDC:entire atmosphere:
 :TMP:1000 mb:
 :TMP:2 m above ground:
 :TMP:850 mb:

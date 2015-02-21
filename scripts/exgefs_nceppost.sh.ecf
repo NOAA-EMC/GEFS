@@ -322,13 +322,13 @@ miscfile=$COMOUT/$cyc/misc/${RUN}.t${cyc}z.master.control.$fhr$cfsuffix
   else
     if test $fhr -eq 0
     then
-     export CTLFILE=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs.xml}
+     export CTLFILE=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
     else
      if test $fhr -le 96
      then
-      export CTLFILE=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml}
+      export CTLFILE=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml_long}
      else
-      export CTLFILE=${CTLFILEGFS1:-$PARMpost/postcntrl_gefs.xml_short}
+      export CTLFILE=${CTLFILEGFS1:-$PARMpost/postcntrl_gefs.xml}
      fi
     fi
   fi

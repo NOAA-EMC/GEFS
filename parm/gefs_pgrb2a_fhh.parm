@@ -1,7 +1,4 @@
 ############################# sorted pgrb2a 201408
-:ABSV:500 mb:
-:ABSV:700 mb:
-:ABSV:850 mb:
 :APCP:surface:
 :CAPE:180-0 mb above ground:
 :CFRZR:surface:

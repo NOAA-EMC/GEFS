@@ -55,7 +55,7 @@ dogrid2p5=${dogrid2p5:-YES}
 parm00=$PARMgefs/gefs_pgrb2a_f00.parm
 parmhh=$PARMgefs/gefs_pgrb2a_fhh.parm
 parmlow00=$PARMgefs/gefs_pgrb2a_f00.parm
-parmlowhh=$PARMgefs/gefs_pgrb2a_f00.parm
+parmlowhh=$PARMgefs/gefs_pgrb2a_fhh.parm
 
 filsuf=
 if [[ $jobgrid == _p5 ]]; then

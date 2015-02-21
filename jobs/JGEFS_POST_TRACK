@@ -34,7 +34,7 @@ fi
 
 export HOMEgefs=${HOMEgefs}
 export HOMEtrak=${HOMEtrak}
-export HOMEutil=${HOMEutil:-/nwprod/util}
+export HOMEutil=${UTILROOT:-/nwprod/util}
 
 # #### 05/05/99 ###############################
 # SETUP ENS POST PROCESSING VARIABLES
@@ -47,13 +47,7 @@ date
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-if [ "$RUN_ENVIR" = dev ]    ### For Developers
-then
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
-else                         ### For Operations
-   export DATA_IN=/tmpnwprd
-fi
-export DATA=$DATA_IN/${job}.${pid}
+export DATA=$DATAROOT/${job}.${pid}
 
 mkdir -p $DATA
 cd $DATA
@@ -83,17 +77,13 @@ echo fcstlong=$fcstlong
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=gens
+export NET=${NET:-gens}
+export RUN=gefs
 
 ####################################
 # File To Log Msgs
 ####################################
-if [ "$RUN_ENVIR" = dev ]     ### For Developers
-then
-   export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
-else                        ### For Operations
-   export jlogfile=/com/logs/jlogfile
-fi
+export jlogfile=${jlogfile:-/com/logs/jlogfile}
 
 ####################################
 # Determine Job Output Name on System
@@ -108,34 +98,19 @@ export pgmerr=errfile
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 ####################################
-export SENDECF=NO
-export SENDCOM=NO
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
- export SENDDBN=NO
-else                              ## For production
- export SENDDBN=YES
-fi
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-NO}
+export SENDSMS=${SENDSMS:-YES}
+export SENDECF=${SENDECF:-YES}
 
 ####################################
 # Specify Execution Areas
 ####################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-  export HOMEtrak=${HOMEtrak:-/nw${envir}}
-  export EXECens_tracker=${EXECtrak:-$HOMEtrak/exec}
-  export USHens_tracker=${USHtrak:-$HOMEtrak/ush}
-  export FIXens_tracker=${FIXtrak:-$HOMEtrak/fix}
-  export PARMgefs=$HOMEgefs/parm
-else  
-  export HOMEens_tracker=${HOMEtrak:-/nw${envir}}
-  export EXECens_tracker=$HOMEtrak/exec
-  export USHens_tracker=$HOMEtrak/ush
-  export FIXens_tracker=$HOMEtrak/fix/fix_am
-  export HOMEgefs=${HOMEgefs:-/nw${envir}}
-  export PARMgefs=$HOMEgefs/parm
-fi
-export GRBINDEX=EXECutil/grbindex}
+export HOMEens_tracker=${HOMEtrak:-/nw${envir}/ens_tracker.v1.0.0}
+export EXECens_tracker=$HOMEens_tracker/exec
+export USHens_tracker=$HOMEens_tracker/ush
+export FIXens_tracker=$HOMEens_tracker/fix
+export PARMgefs=$HOMEgefs/parm
 
 ##############################
 # Set up the UTILITIES
@@ -147,25 +122,20 @@ export utilscript=$USHutil
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-ksh $utilscript/setup.sh
+ksh $USHutil/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $utilscript/setpdy.sh
+sh $USHutil/setpdy.sh
 . PDY
 
 ##############################################
 # Define COM directories
 ##############################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-  export COMIN=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
-  export COMOUT=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
-else                              ### For Operations
-  export COMIN=/com/${NET}/${envir}/${RUN}.${PDY}
-  export COMOUT=/com/${NET}/${envir}/${RUN}.${PDY}
-fi
+export COMIN=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
+export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
+
 export ensdir=$COMIN/$cyc/pgrb2ap5
 #export ensdir=/ensemble/noscrub/GEFS.2015/PGRB2/tfGb_20130912/pgrb2ap5
 export COM=$COMOUT/$cyc/track

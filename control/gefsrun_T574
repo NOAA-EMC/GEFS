@@ -1775,7 +1775,8 @@ case $taskname in
      if [[ $fcstjoblength = long ]]; then
 #      (( taskspermem = 30 ))
 #      (( taskspermem = 60 ))
-       (( taskspermem = 72 ))
+#      (( taskspermem = 72 ))
+       (( taskspermem = 66 ))
      else  
        (( taskspermem = 32 ))
      fi  
