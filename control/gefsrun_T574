@@ -1157,13 +1157,11 @@ else
       taskname=prdgen.gfs 
       fcstjoblength=long
       jobgrid=
-      jobhour=0612
     ;;
     ($jjjg01) 
       taskname=prdgen.gfs 
       fcstjoblength=long
       jobgrid=_p5
-      jobhour=0369
     ;;
     ($jjjg04) 
       taskname=track.gfs 
@@ -1245,19 +1243,16 @@ case $jobtype in
     (( memn = ( jjj + 4 - jjjp ) / 4 ))
     (( jobn = ( jjj + 4 - jjjp ) - 4 * memn ))
     jobgrid=
-    jobhour=
     if (( jjj > jjjp )) && (( jobn == 0 )); then
         (( memn = memn - 1 ))
 	(( jobn = 4 ))
 	jobgrid=_p5
-	jobhour=0612
     fi	
-    if (( jjj > jjjp + 1 )) && (( jobn == 1 )); then
-        (( memn = memn - 1 ))
-	(( jobn = 5 ))
-	jobgrid=_p5
-	jobhour=3915
-    fi	
+#   if (( jjj > jjjp + 1 )) && (( jobn == 1 )); then
+#       (( memn = memn - 1 ))
+#       (( jobn = 5 ))
+#       jobgrid=_p5
+#   fi	
     if (( memn > npert )); then
       memn=00
       mem=c00

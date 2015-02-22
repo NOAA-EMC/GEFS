@@ -55,7 +55,6 @@ export DATA=$DATAROOT/${job}.${pid}
 #export DATA=$DATA_IN/${job}.${pid}
 
 export jobgrid=$jobgrid
-export jobhour=$jobhour
 
 mkdir -p $DATA
 cd $DATA
@@ -373,13 +372,9 @@ then
 # export DO_LOW_RES=YES
 # export DO_THIS_RES=NO
 #fi
-#if [[ $jobgrid == _p5 ]] && [[ $FORECAST_SEGMENT == hr ]]; then
  if [[ $jobgrid == _p5 ]]; then
   export DO_LOW_RES=NO
  fi 
-#if [[ $jobgrid != _p5 ]] && [[ $FORECAST_SEGMENT == lr ]]; then
-# export DO_LOW_RES=YES
-#fi 
  if [[ $GRIBVERSION == grib2 ]]; then
   $HOMEgefs/scripts/exgefs_prdgen$jobgrid.sh.ecf
  else 

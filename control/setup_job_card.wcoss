@@ -111,6 +111,17 @@ eofCAT
 eofCAT
     fi
 
+    cat <<eofCAT >>$jobcontrol$SUBJOB
+#. /usrx/local/Modules/3.2.9/init/ksh
+. /usrx/local/Modules/default/init/ksh
+module load ics
+eofCAT
+    if [[ ${job_type} = parallel ]] ; then
+     cat <<eofCAT >>$jobcontrol$SUBJOB
+module load ibmpe
+eofCAT
+    fi
+
 #03/29/2013, add the following block following George, for fcst jobs
 task_type=`echo ${taskname} | cut -c1-8`
 #echo $task_type ${taskname} 
@@ -148,17 +159,6 @@ export MP_SHARED_MEMORY=${MP_SHARED_MEMORY}
 export MEMORY_AFFINITY=core:$OMP_NUM_THREADS 
 
 export total_tasks=$total_tasks
-eofCAT
-    fi
-
-    cat <<eofCAT >>$jobcontrol$SUBJOB
-#. /usrx/local/Modules/3.2.9/init/ksh
-. /usrx/local/Modules/default/init/ksh
-module load ics
-eofCAT
-    if [[ ${job_type} = parallel ]] ; then
-     cat <<eofCAT >>$jobcontrol$SUBJOB
-module load ibmpe
 eofCAT
     fi
 
@@ -322,8 +322,6 @@ echo
 
 # CALL executable job script here
  export jobgrid=$jobgrid
- export jobhour=$jobhour
- echo HOUPATH=$PATH
  $jobdir/$jobscript
 #/usrx/local/bin/getrusage -rss $jobdir/$jobscript
 

@@ -51,7 +51,6 @@ echo GRB2INDEX=$GRB2INDEX
 echo ENSADD=$ENSADD
 
 grid=${grid1p0}  
-dogrid2p5=${dogrid2p5:-YES}  
 parm00=$PARMgefs/gefs_pgrb2a_f00.parm
 parmhh=$PARMgefs/gefs_pgrb2a_fhh.parm
 parmlow00=$PARMgefs/gefs_pgrb2a_f00.parm
@@ -60,7 +59,6 @@ parmlowhh=$PARMgefs/gefs_pgrb2a_fhh.parm
 filsuf=
 if [[ $jobgrid == _p5 ]]; then
    grid=${gridp5}  
-   dogrid2p5=NO
    filsuf=p5
    parm00=$PARMgefs/gefs_pgrb2a_0p50_f00.parm
    parmhh=$PARMgefs/gefs_pgrb2a_0p50_fhh.parm
@@ -271,14 +269,12 @@ do
 	done
       fi
 
-#    if [[ $dogrid2p5 = "YES" ]]; then
      $COPYGB2 -g "${grid2p5}" -i0 -x tmpfile.2 pgb2afile.2
      $GRB2INDEX pgb2afile.2 pgb2aifile.2
      $ENSADD $e1 $e2 pgb2afile.2 epgbafile.2
      mv epgbafile.2 pgb2afile.2
      $CNVGRIB -g21 pgb2afile.2 pgbafile.2
      $GRBINDEX pgbafile.2 pgbaifile.2
-#    fi
 
     fi
     

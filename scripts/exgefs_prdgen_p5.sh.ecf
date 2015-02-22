@@ -68,16 +68,6 @@ cd $DATA
 
 SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
-if [[ $jobhour = 3915 ]]; then
-  ic=1
-# while [ $ic -le $SLEEP_LOOP_MAX ]
-  while [ $ic -le 120 ]
-  do
-	ic=`expr $ic + 1`
-	sleep $SLEEP_INT
-  done	
-fi
-	    
 ############################################################
 # Post Analysis Files before starting the Forecast Post 
 ############################################################ 
