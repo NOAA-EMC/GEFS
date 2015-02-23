@@ -423,10 +423,10 @@ if [[ $haveinput = yes ]]; then
     export NVCOORD=$IDVC
     export CHGRESVARS="NTRAC=$NTRAC,NVCOORD=$NVCOORD"
     if (( IDVC == 1 )); then
-      export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
+      export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
     fi
     if (( IDVC == 2 )); then
-      export SIGLEVEL=$FIXGLOBAL/global_hyblev.l${LEVS}.txt
+      export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
     fi
     export SIGINP=$fcstinnuse
     export SFCINP=NULL
@@ -477,10 +477,10 @@ echo
     export NVCOORD=$IDVC
     export CHGRESVARS="NTRAC=$NTRAC,NVCOORD=$NVCOORD"
     if (( IDVC == 1 )); then
-      export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
+      export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
     fi
     if (( IDVC == 2 )); then
-      export SIGLEVEL=$FIXGLOBAL/global_hyblev.l${LEVS}.txt
+      export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
     fi
     export SIGINP=$fcstinpuse
     export SFCINP=NULL
@@ -546,11 +546,7 @@ fi
 echo ifinn$ipair > sig_zvdl
 
 ## kate 04/26/2012
-if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
-$EXECGLOBAL/global_sigzvd
-else
-$basesource/nw${envir}/exec/global_sigzvd
-fi
+$EXECgefs/global_sigzvd
 
 ret_sigzvd=$?
 
@@ -563,11 +559,7 @@ fi
 echo ifinp$ipair > sig_zvdl
 
 ## kate 04/26/2012
-if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
-$EXECGLOBAL/global_sigzvd
-else
-$basesource/nw${envir}/exec/global_sigzvd
-fi
+$EXECgefs/global_sigzvd
 
 ret_sigzvd=$?
 
@@ -575,17 +567,7 @@ ret_sigzvd=$?
 #  Separate the storm and environment forecast fields
 #
 echo `date` relocflag=$relocflag relocpertflag=$relocpertflag
-###testb
-if [[ $envir = prod ]]; then
-###teste
-execseparate=$EXECGLOBAL/gefs_vortex_separate
-###testb
-elif [[ $envir = para ]] || [[ $envir = test ]]; then
-execseparate=/nw$envir/exec/gefs_vortex_separate
-else
-execseparate=$basesource/nw$envir/exec/gefs_vortex_separate
-fi
-###teste
+execseparate=$EXECgefs/gefs_vortex_separate
 if (( relocpertflag == 1 )); then
   echo `date` Separate the storm and environment forecast fields for n$ipair begin
 
@@ -596,7 +578,7 @@ if (( relocpertflag == 1 )); then
 
   ln -s -f ../tcvitals.as fort.11
 
-  ln -s -f $FIXGLOBAL/global_slmask.t126.grb    fort.12
+  ln -s -f $FIXgsm/global_slmask.t126.grb    fort.12
 
 
   ln -s -f ../tracks.atcfunix.$cyc_fcst      fort.40
@@ -634,7 +616,7 @@ if (( relocpertflag == 1 )); then
 
   ln -s -f ../tcvitals.as fort.11
 
-  ln -s -f $FIXGLOBAL/global_slmask.t126.grb    fort.12
+  ln -s -f $FIXgsm/global_slmask.t126.grb    fort.12
 
   ln -s -f ../tracks.atcfunix.$cyc_fcst      fort.40
   ln -s -f finp               fort.24
@@ -681,11 +663,8 @@ else
 fi
 echo sfinn$ipair > sig_zvdl
 ## kate 04/26/2012
-if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
-$EXECGLOBAL/global_sigzvd
-else
-$basesource/nw${envir}/exec/global_sigzvd
-fi
+$EXECgefs/global_sigzvd
+
 ret_sigzvd=$?
 
 ln -sf finp sig_zvdi
@@ -696,11 +675,8 @@ else
 fi
 echo sfinp$ipair > sig_zvdl
 ## kate 04/26/2012
-if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
-$EXECGLOBAL/global_sigzvd
-else
-$basesource/nw${envir}/exec/global_sigzvd
-fi
+$EXECgefs/global_sigzvd
+
 ret_sigzvd=$?
 
 if (( ipair > nhrpair )); then
@@ -733,22 +709,14 @@ do
   export NVCOORD=$IDVC
   export CHGRESVARS="NTRAC=$NTRAC,NVCOORD=$NVCOORD"
   if (( IDVC == 1 )); then
-    export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
+    export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
   fi
   if (( IDVC == 2 )); then
-    export SIGLEVEL=$FIXGLOBAL/global_hyblev.l${LEVS}.txt
+    export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
   fi
-###testb
-if [[ $envir = prod ]]; then
-###teste
-  export SIGINP=$FIXGLOBAL/gefs.pertback.$cycle_fcst.${meml}${ipair}
-###testb
-elif [[ $envir = para ]] || [[ $envir = test ]]; then
-  export SIGINP=/nw${envir}/fix/gefs.pertback.$cycle_fcst.${meml}${ipair}
-else
-  export SIGINP=$basesource/nw${envir}/fix/gefs.pertback.$cycle_fcst.${meml}${ipair}
-fi
-###teste
+
+  export SIGINP=$FIXgefs/gefs.pertback.$cycle_fcst.${meml}${ipair}
+
   export SFCINP=NULL
   export SIGOUT=$DATALOCAL/gefs.pertback.$cycle_fcst.${meml}${ipair}
   export SFCOUT=sfcout

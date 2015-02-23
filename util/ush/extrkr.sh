@@ -178,9 +178,9 @@ export CENT=20
 if [ -s /nwprod/util/exec/wgrib ]
 then
   wgrib=/nwprod/util/exec/wgrib
-elif [ -s $EXECUTIL/wgrib ]
+elif [ -s $EXECutil/wgrib ]
 then
-  wgrib=$EXECUTIL/wgrib
+  wgrib=$EXECutil/wgrib
 else
   set +x
   echo " "
@@ -755,13 +755,13 @@ esac
 # deal; this script will exit just a little further down once it
 # realizes there are not any storms to process.
 
-d6ago_ymdh=` $EXECUTIL/ndate -6 ${PDY}${CYL}`
+d6ago_ymdh=` $EXECutil/ndate -6 ${PDY}${CYL}`
 d6ago_4ymd=` echo ${d6ago_ymdh} | cut -c1-8`
 d6ago_ymd=` echo ${d6ago_ymdh} | cut -c3-8`
 d6ago_hh=`  echo ${d6ago_ymdh} | cut -c9-10`
 d6ago_str="${d6ago_ymd} ${d6ago_hh}00"
 
-d6ahead_ymdh=` $EXECUTIL/ndate 6 ${PDY}${CYL}`
+d6ahead_ymdh=` $EXECutil/ndate 6 ${PDY}${CYL}`
 d6ahead_4ymd=` echo ${d6ahead_ymdh} | cut -c1-8`
 d6ahead_ymd=` echo ${d6ahead_ymdh} | cut -c3-8`
 d6ahead_hh=`  echo ${d6ahead_ymdh} | cut -c9-10`
@@ -916,14 +916,14 @@ fi
 # tracking program.
 #--------------------------------------------------------------#
 
-ymdh6ago=` $EXECUTIL/ndate -6 ${PDY}${CYL}`
+ymdh6ago=` $EXECutil/ndate -6 ${PDY}${CYL}`
 syy6=`echo ${ymdh6ago} | cut -c3-4`
 smm6=`echo ${ymdh6ago} | cut -c5-6`
 sdd6=`echo ${ymdh6ago} | cut -c7-8`
 shh6=`echo ${ymdh6ago} | cut -c9-10`
 symd6=${syy6}${smm6}${sdd6}
 
-ymdh6ahead=` $EXECUTIL/ndate 6 ${PDY}${CYL}`
+ymdh6ahead=` $EXECutil/ndate 6 ${PDY}${CYL}`
 syyp6=`echo ${ymdh6ahead} | cut -c3-4`
 smmp6=`echo ${ymdh6ahead} | cut -c5-6`
 sddp6=`echo ${ymdh6ahead} | cut -c7-8`
@@ -998,7 +998,7 @@ export FORT51=${DATA}/vitals.upd.${atcfout}.${PDY}${CYL}
 msg="$pgm start for $atcfout at ${CYL}z"
 postmsg "$jlogfile" "$msg"
 
-${exectrkdir}/supvit <${DATA}/suv_input.${atcfout}.${PDY}${CYL}
+${EXECutil}/supvit <${DATA}/suv_input.${atcfout}.${PDY}${CYL}
 suvrcc=$?
 
 if [ ${suvrcc} -eq 0 ]
@@ -1101,8 +1101,8 @@ set -x
 
 #gix=/nwprod/util/exec/grbindex
 #cgb=/nwprod/util/exec/copygb
-gix=$EXECUTIL/grbindex
-cgb=$EXECUTIL/copygb
+gix=$EXECutil/grbindex
+cgb=$EXECutil/copygb
 
 regflag=`grep NHC ${DATA}/vitals.upd.${atcfout}.${PDY}${CYL} | wc -l`
 
@@ -1460,7 +1460,7 @@ then
 
     let fhr=ict*6
     echo "fhr= $fhr"
-    fmmddhh=` $EXECUTIL/ndate ${fhr} ${PDY}${CYL} | cut -c5- `
+    fmmddhh=` $EXECutil/ndate ${fhr} ${PDY}${CYL} | cut -c5- `
     ec_hires_orig=ecens_DCD${immddhh}00${fmmddhh}001
       
     if [ ! -s ${ecmwfdir}/${ec_hires_orig} ]

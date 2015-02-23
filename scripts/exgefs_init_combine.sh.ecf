@@ -178,35 +178,12 @@ do
     (( ipairh = ipair - 3 * npair ))
   fi
   echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh begin">>poescript.$itask
-###testb
-if [[ $envir = prod ]]; then
-###teste
   if (( ipairh > nhrpair )); then
-    echo "$USHGLOBAL/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>poescript.$itask
+    echo "$USHgefs/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>poescript.$itask
   else
-    echo "$USHGLOBAL/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>poescript.$itask
+    echo "$USHgefs/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>poescript.$itask
   fi
 ###testb
-elif [[ $envir = para ]] || [[ $envir = test ]]; then
-  if (( ipairh > nhrpair )); then
-    echo "/nw$envir/ush/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>poescript.$itask
-  else
-    echo "/nw$envir/ush/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>poescript.$itask
-  fi
-else
-  if (( ipairh > nhrpair )); then
-    echo "$basesource/nw$envir/ush/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>poescript.$itask
-################################ kate 05/01/2012
-    echo "$basesource/nw$envir/ush/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>cmdfile
-#################################305/01/2012
-  else
-    echo "$basesource/nw$envir/ush/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>poescript.$itask
-################################# kate 05/01/2012
-    echo "$basesource/nw$envir/ush/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>cmdfile
-####################################05/01/2012
-  fi
-fi
-###teste
   echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh end">>poescript.$itask
 
   (( itask = itask + 1 ))
@@ -233,9 +210,7 @@ done
 echo
 chmod 755 poescript
 ls -al poescript
-################################## kate 05/01/2012
-chmod 755 cmdfile
-################################# 05/01/2012
+cp -pr poescript cmdfile
 echo
 cat poescript
 echo

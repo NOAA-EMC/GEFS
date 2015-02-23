@@ -73,8 +73,8 @@ cd $DATA
 ################################################################################
 # To run EnKF recentering
 export XC=${XC}
-export GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-${EXECGLOBAL}/getsigensmean_smooth$XC}
-export RECENATMPEXEC=${RECENATMPEXEC:-${EXECGLOBAL}/recentersigp$XC}
+export GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-${HOMEenkf}/exec/getsigensmeanp_smooth$XC}
+export RECENATMPEXEC=${RECENATMPEXEC:-${HOMEenkf}/exec/recentersigp$XC}
 echo cyc=$cyc cyc_fcst=$cyc_fcst
 echo cycle=$cycle cycle_fcst=$cycle_fcst
 
@@ -275,14 +275,7 @@ ls -al | grep -e finn -e finp
 # run et with a mask
 
 ###testb
-if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
-###teste
-export exe_dir=/nw${envir}/exec
-###testb
-else
-  export exe_dir=$basesource/nw${envir}/exec
-fi
-###teste
+export exe_dir=EXECgefs/exec
 if [[ $parallelinit = no ]]; then
   execet=$exe_dir/gefs_init_et
 else
@@ -294,35 +287,13 @@ cp -f $COMINm1/$cyc/track_enkf/TE_SPRD_ave.grd fort.48
 cp -f $COMINm1/$cyc/track_enkf/PS_SPRD_ave.grd fort.49
 echo using 3D mask of $COMINm1/$cyc/track_enkf/TE_SPRD_ave.grd and PS_SPRD_ave.grd
 elif ((mskflag ==3 )); then
-  if [[ $envir = prod ]] ; then
-       ln -s   $FIXGLOBAL/enkf.geogr.monthly  fort.48
-       ln -s   $FIXGLOBAL/enkf.geogr.monthly.ps  fort.49
-        echo using mask of $FIXGLOBAL/enkf.geogr.monthly
-  elif [[ $envir = para ]] || [[ $envir = test ]]; then
-        ln -s  -f  /nw${envir}/fix/enkf.geogr.monthly  fort.48
-        ln -s  -f  /nw${envir}/fix/enkf.geogr.monthly.ps  fort.49
-         echo using mask of /nw${envir}/fix/enkf.geogr.monthly
-  else
-      ln -s  -f  $basesource/nw${envir}/fix/enkf.geogr.monthly  fort.48
-      ln -s  -f  $basesource/nw${envir}/fix/enkf.geogr.monthly.ps  fort.49
-      echo using mask of $basesource/nw${envir}/fix/enkf.geogr.monthly
-  fi
+       ln -s   $FIXgefs/enkf.geogr.monthly  fort.48
+       ln -s   $FIXgefs/enkf.geogr.monthly.ps  fort.49
+        echo using mask of $FIXgefs/enkf.geogr.monthly
 else
-###testb
-if [[ $envir = prod ]] ; then
-###teste
-cp -f  $FIXGLOBAL/gefs.geogr.monthly  fort.48
-echo using mask of $FIXGLOBAL/gefs.geogr.monthly
-###testb
-elif [[ $envir = para ]] || [[ $envir = test ]]; then
-cp -f  /nw${envir}/fix/gefs.geogr.monthly  fort.48
-echo using mask of /nw${envir}/fix/gefs.geogr.monthly
-else
-cp -f  $basesource/nw${envir}/fix/gefs.geogr.monthly  fort.48
-echo using mask of $basesource/nw${envir}/fix/gefs.geogr.monthly
+cp -f  $FIXgefs/gefs.geogr.monthly  fort.48
+echo using mask of $FIXgefs/gefs.geogr.monthly
 fi
-fi
-###teste
 # set env variables for running paralell version of ET code
 export TARGET_CPU_LIST=-1
 export MPI_DSM_DISTRIBUTE
@@ -368,7 +339,7 @@ if [[ $netflag == 0 && $mskflag == 0 ]]; then
          cp -pr   finp.pair${ipair}  sanlgm${ipair}p
      fi
   done
-  $GETATMENSMEANEXEC ./ fin_ensmean fin $recentmem 6 | tee -a $pgmout
+  $gefsmpexec $GETATMENSMEANEXEC ./ fin_ensmean fin $recentmem 6 | tee -a $pgmout
   $gefsmpexec $RECENATMPEXEC fin fin_ensmean sanl.in.pair01 sanlgm $recentmem | tee -a $pgmout
 
    for ipair in $nlist

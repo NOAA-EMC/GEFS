@@ -14,6 +14,8 @@ set -xa
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export machine=${gefsmachine:-wcoss}
+export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ###########################################
 if [ "$RUN_ENVIR" = dev ]   ### For Developers
@@ -30,23 +32,15 @@ else
    fi
 fi
 
-export HOMEgefs=${HOMEgefs}
+export HOMEgefs=${HOMEgefs:-/nw${envir}}
 export HOMEgsm=${HOMEgsm}
-export HOMEutil=${HOMEutil:-/nwprod/util}
+export HOMEutil=${UTILROOT:-/nwprod/util}
 
 ####################################
 # obtain unique process id (pid) and identify working directory
 ####################################
 export pid=$$
-
-if [ "$RUN_ENVIR" = dev ]    ### For Developers
-then
-  export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
-else
-  export DATA_IN=/tmpnwprd
-fi
-
-  export DATA=$DATA_IN/gefs_init_$PDY$cyc.$envir.save
+export DATA=$DATAROOT/gefs_init_$PDY$cyc.$envir.save
 
 echo DATA=$DATA
 cd $DATA
@@ -77,12 +71,7 @@ export RUN=enstr
 ####################################
 # File To Log Msgs
 ####################################
-if [ "$RUN_ENVIR" = dev ]     ### For Developers
-then
   export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
-else
-  export jlogfile=/com/logs/para/jlogfile
-fi
 
 ####################################
 # Determine Job Output Name on System
@@ -126,9 +115,6 @@ fi
 ####################################
 # Specify Execution Areas
 ####################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-  export HOMEgsm=${HOMEgsm:-/nw${envir}}
   export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
   export USHgsm=${USHgsm:-$HOMEgsm/ush}
   export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
@@ -143,34 +129,15 @@ then
 # export USHGLOBAL=${USHGSM:-$HOMEGSM/ush}
 # export FIXGLOBAL=${FIXGSM:-$HOMEGSM/fix/fix_am}
 
-  export HOMEGgefs=${HOMEgefs:-/nw${envir}}
   export EXECgefs=${EXECgefs:-$HOMEGgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
-  export USHGLOBAL=$USHgefs
-  export EXECGLOBAL=/nwprod/exec
+
+#  export USHGLOBAL=$USHgefs
+#  export EXECGLOBAL=/nwprod/exec
   export XC=.x
 
-else                             ### For Operations
-
-  export HOMEgsm=/nw${envir}
-  export EXECgsm=$HOMEgsm/exec
-  export USHgsm=$HOMEgsm/ush
-  export FIXgsm=$HOMEgsm/fix/fix_am
-  export PARMgsm=$HOMEgsm/parm
-
-  export HOMEGLOBAL=/nwprod
-  export EXECGLOBAL=$HOMEgsm/exec
-  export USHGLOBAL=$HOMEgsm/ush
-  export FIXGLOBAL=$HOMEgs/fix/fix_am
-
-  export HOMEgefs=/nw${envir}
-  export EXECgefs=$HOMEgefs/exec
-  export USHgefs=$HOMEgefs/ush
-  export FIXgefs=$HOMEgefs/fix
-  export PARMgefs=$HOMEgefs/parm
-fi
 
 
 ################# lines between these markers have been modified for dev end
@@ -216,41 +183,23 @@ export SLMASK=/dev/null
 ##############################################
 # Define COM directories
 ##############################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-export COMIN=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
-export COM=$baseoutput/com/${NET}/${envir}
-export COMINm1=$baseoutput/com/${NET}/${envir}/gefs.${PDYm1}
-export COMINm2=$baseoutput/com/${NET}/${envir}/gefs.${PDYm2}
-export COMINm3=$baseoutput/com/${NET}/${envir}/gefs.${PDYm3}
-export COMINm4=$baseoutput/com/${NET}/${envir}/gefs.${PDYm4}
+export COMIN=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
+export COM=$COMROOT/com/${NET}/${envir}
+export COMINm1=$COMROOT/com/${NET}/${envir}/gefs.${PDYm1}
+export COMINm2=$COMROOT/com/${NET}/${envir}/gefs.${PDYm2}
+export COMINm3=$COMROOT/com/${NET}/${envir}/gefs.${PDYm3}
+export COMINm4=$COMROOT/com/${NET}/${envir}/gefs.${PDYm4}
 
-export COMOUT=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
+export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
 
-else
-
-export COMIN=/com/${NET}/${envir}/gefs.${PDY}
-export COM=/com/${NET}/${envir}
-export COMINm1=/com/${NET}/${envir}/gefs.${PDYm1}
-export COMINm2=/com/${NET}/${envir}/gefs.${PDYm2}
-export COMINm3=/com/${NET}/${envir}/gefs.${PDYm3}
-export COMINm4=/com/${NET}/${envir}/gefs.${PDYm4}
-
-export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
-fi
 
 
 ##############################################
 # Define GES directories
 ##############################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-gespath=$baseoutput/nwges/${envir}
-else
-gespath=/nwges/${envir}
-fi
-export GESdir=$gespath/gefs.${PDY}
-mkdir -m 775 -p $GESdir
+
+#export GESdir=$gespath/gefs.${PDY}
+#mkdir -m 775 -p $GESdir
 
 
 ##############################################

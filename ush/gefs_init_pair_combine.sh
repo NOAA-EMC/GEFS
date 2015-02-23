@@ -53,7 +53,7 @@ echo "          processing info for this execution"
 echo " Home directory is ............................ $HOMEGLOBAL"
 echo " Processing directory for files.. ............. $DATA"
 echo "  "
-echo " Executable file directory is ................. $EXECGLOBAL"
+echo " Executable file directory is ................. $EXECgefs"
 echo " Fixed field directory is ..................... $FIXGLOBAL"
 echo " Unix control language file is ................ $USHGLOBAL"
 echo "  "
@@ -235,7 +235,7 @@ else
   ln -sf /dev/null sig_zvdo
 fi
 echo rsann$ipair > sig_zvdl
-$EXECGLOBAL/global_sigzvd
+$EXECgefs/global_sigzvd
 ret_sigzvd=$?
 
 ln -sf sanlgm${ipair}p sig_zvdi
@@ -245,7 +245,7 @@ else
   ln -sf /dev/null sig_zvdo
 fi
 echo rsanp$ipair > sig_zvdl
-$EXECGLOBAL/global_sigzvd
+$EXECgefs/global_sigzvd
 ret_sigzvd=$?
 
 #
@@ -253,17 +253,9 @@ ret_sigzvd=$?
 #
 echo relocflag=$relocflag relocpertflag=$relocpertflag
 echo relocfact=$relocfact
-###testb
-if [[ $envir = prod ]]; then
-###teste
-execcombine=$EXECGLOBAL/gefs_vortex_combine
-###testb
-elif [[ $envir = para ]] || [[ $envir = test ]]; then
-execcombine=/nw$envir/exec/gefs_vortex_combine
-else
-execcombine=$basesource/nw$envir/exec/gefs_vortex_combine
-fi
-###teste
+
+execcombine=$EXECgefs/gefs_vortex_combine
+
 if (( relocpertflag == 1 )); then
   echo Combine the storm and environment forecast fields for pair $ipair begin
 
@@ -346,7 +338,7 @@ else
   ln -sf /dev/null sig_zvdo
 fi
 echo csann$ipair > sig_zvdl
-$EXECGLOBAL/global_sigzvd
+$EXECgefs/global_sigzvd
 ret_sigzvd=$?
 
 ln -sf sanlgm${ipair}p sig_zvdi
@@ -356,7 +348,7 @@ else
   ln -sf /dev/null sig_zvdo
 fi
 echo csanp$ipair > sig_zvdl
-$EXECGLOBAL/global_sigzvd
+$EXECgefs/global_sigzvd
 ret_sigzvd=$?
 
 # guess copies moved here from scripts/exenstr.sh.sms

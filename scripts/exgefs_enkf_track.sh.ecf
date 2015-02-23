@@ -56,7 +56,7 @@ echo " Home directory is ............................ $HOMEGLOBAL"
 echo " Processing directory for files.. ............. $DATA"
 echo "  "
 echo " Executable file directory is ................. $EXECGLOBAL"
-echo " Fixed field directory is ..................... $FIXGLOBAL"
+echo " Fixed field directory is ..................... $FIXgsm"
 echo " Parameter directory is ....................... $PARMGLOBAL"
 echo " Unix control language file is ................ $USHGLOBAL"
 echo "  "
@@ -157,18 +157,8 @@ if (( trackflag == 1 )); then
     export SIGVAL="&siginfo sigpath=\"${DATA}/sigf_${pert}_fhr\", ddeg=1.0, reslch=0 0 /"
     ln -sf $ENKFCOMIN/sfg_${pdycycp}_fhr${fhrp}_ensmean ${DATA}/sigf_${pert}_fhr00
     ln -sf $ENKFCOMIN/sfg_${pdycycp}_fhr${fhrp}_ensmean ${DATA}/sigf_${pert}_fhr06
-###testb
-    if [[ $envir = prod ]]; then
-###teste
-    sh ${utilscript}/extrkr.sh
-###testb
-    elif [[ $envir = para ]] || \
-	 [[ $envir = test ]]; then
-      sh /nw$envir/util/ush/extrkr.sh
-    else
-      sh $basesource/nw$envir/util/ush/extrkr.sh
-      execpoe=$basesource/nw$envir/exec/zeus-poe
-    fi
+      sh $UTILgefs/ush/extrkr.sh
+
     atcfout=''
     case $cycp in
       (00) atcfout='wc00' ;;
@@ -226,10 +216,10 @@ if (( trackflag == 1 )); then
     export NVCOORD=$IDVC
     export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0"
     if (( IDVC == 1 )); then
-      export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
+      export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
     fi
     if (( IDVC == 2 )); then
-      export SIGLEVEL=$FIXGLOBAL/global_hyblev.l${LEVS}.txt
+      export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
     fi
     $chgresush >>$pgmout
   else
@@ -300,12 +290,12 @@ export pert=${suf}${pmemh}
 export SIGVAL="&siginfo sigpath=\"\${DATA}/sigf_\${pert}_fhr\", ddeg=1.0, reslch=0 0 /"
 ln -sf $ENKFCOMIN/siganl_${pdycycp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr00
 ln -sf $ENKFCOMIN/sfg_${pdycycp}_fhr${fhrp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr06
-$HOMEgefs/util/ush/extrkr.sh > ushout.track.$ipair 2>&1
+$UTILgefs/ush/extrkr.sh > ushout.track.$ipair 2>&1
 export pert=${suf}${mmemh}
 export SIGVAL="&siginfo sigpath=\"\${DATA}/sigf_\${pert}_fhr\", ddeg=1.0, reslch=0 0 /"
 ln -sf $ENKFCOMIN/siganl_${pdycycp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr00
 ln -sf $ENKFCOMIN/sfg_${pdycycp}_fhr${fhrp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr06
-$HOMEgefs/util/ush/extrkr.sh >> ushout.track.$ipair 2>&1
+$UTILgefs/ush/extrkr.sh >> ushout.track.$ipair 2>&1
 EOF
   echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh end">>poescript.$itask
 

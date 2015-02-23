@@ -161,10 +161,10 @@ if (( nhrpair < npair )); then
   export NVCOORD=$IDVC
   export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0"
   if (( IDVC == 1 )); then
-    export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
+    export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
   fi
   if (( IDVC == 2 )); then
-    export SIGLEVEL=$FIXGLOBAL/global_hyblev.l${LEVS}.txt
+    export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
   fi
 
 ###testb
@@ -232,13 +232,13 @@ if (( nhrpair < npair )); then
 #   export OROGRAPHY_UF=${OROGRAPHY_UF:-${FIXGLOBAL}/global_orography_uf.t${JCAP}.grb}
 #   export SLMASK=${SLMASK:-${FIXGLOBAL}/global_slmask.t${JCAP}.grb}
 #   export LONSPERLAT=${LONSPERLAT:-${FIXGLOBAL}/global_lonsperlat.t${JCAP}.txt}
-    export OROGRAPHY=${OROGRAPHY:-${FIXGLOBAL}/global_orography.t${JCAP}.$LONB.$LATB.grb}
-    export OROGRAPHY_UF=${OROGRAPHY_UF:-${FIXGLOBAL}/global_orography_uf.t${JCAP}.$LONB.$LATB.grb}
-    export SLMASK=${SLMASK:-${FIXGLOBAL}/global_slmask.t${JCAP}.$LONB.$LATB.grb}
-    export LONSPERLAT=${LONSPERLAT:-${FIXGLOBAL}/global_lonsperlat.t${JCAP}.$LONB.$LATB.txt}
+    export OROGRAPHY=${OROGRAPHY:-${FIXgsm}/global_orography.t${JCAP}.$LONB.$LATB.grb}
+    export OROGRAPHY_UF=${OROGRAPHY_UF:-${FIXgsm}/global_orography_uf.t${JCAP}.$LONB.$LATB.grb}
+    export SLMASK=${SLMASK:-${FIXgsm}/global_slmask.t${JCAP}.$LONB.$LATB.grb}
+    export LONSPERLAT=${LONSPERLAT:-${FIXgsm}/global_lonsperlat.t${JCAP}.$LONB.$LATB.txt}
 # The SST and SEA_ICE Climate fix file:
-    export FNTSFC=${FNTSFC:-$FIXGLOBAL/RTGSST.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
-    export FNAISC=${FNAISC:-$FIXGLOBAL/CFSR.SEAICE.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
+    export FNTSFC=${FNTSFC:-$FIXgsm/RTGSST.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
+    export FNAISC=${FNAISC:-$FIXgsm/CFSR.SEAICE.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
     $chgresush >>$pgmout
     echo `date` timing lr chgres after
   else
@@ -266,10 +266,10 @@ if (( nhrpair > 0 )); then
   export NVCOORD=$IDVC
   export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0"
   if (( IDVC == 1 )); then
-    export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
+    export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
   fi
   if (( IDVC == 2 )); then
-    export SIGLEVEL=$FIXGLOBAL/global_hyblev.l${LEVS}.txt
+    export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
   fi
 
 ###testb
@@ -344,13 +344,13 @@ if (( nhrpair > 0 )); then
 #   export OROGRAPHY_UF=${OROGRAPHY_UF:-${FIXGLOBAL}/global_orography_uf.t${JCAP}.grb}
 #   export SLMASK=${SLMASK:-${FIXGLOBAL}/global_slmask.t${JCAP}.grb}
 #   export LONSPERLAT=${LONSPERLAT:-${FIXGLOBAL}/global_lonsperlat.t${JCAP}.txt}
-    export OROGRAPHY=${OROGRAPHY:-${FIXGLOBAL}/global_orography.t${JCAP}.$LONB.$LATB.grb}
-    export OROGRAPHY_UF=${OROGRAPHY_UF:-${FIXGLOBAL}/global_orography_uf.t${JCAP}.$LONB.$LATB.grb}
-    export SLMASK=${SLMASK:-${FIXGLOBAL}/global_slmask.t${JCAP}.$LONB.$LATB.grb}
-    export LONSPERLAT=${LONSPERLAT:-${FIXGLOBAL}/global_lonsperlat.t${JCAP}.$LONB.$LATB.txt}
+    export OROGRAPHY=${OROGRAPHY:-${FIXgsm}/global_orography.t${JCAP}.$LONB.$LATB.grb}
+    export OROGRAPHY_UF=${OROGRAPHY_UF:-${FIXgsm}/global_orography_uf.t${JCAP}.$LONB.$LATB.grb}
+    export SLMASK=${SLMASK:-${FIXgsm}/global_slmask.t${JCAP}.$LONB.$LATB.grb}
+    export LONSPERLAT=${LONSPERLAT:-${FIXgsm}/global_lonsperlat.t${JCAP}.$LONB.$LATB.txt}
 # The SST and SEA_ICE Climate fix file:
-    export FNTSFC=${FNTSFC:-$FIXGLOBAL/RTGSST.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
-    export FNAISC=${FNAISC:-$FIXGLOBAL/CFSR.SEAICE.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
+    export FNTSFC=${FNTSFC:-$FIXgsm/RTGSST.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
+    export FNAISC=${FNAISC:-$FIXgsm/CFSR.SEAICE.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
     $chgresush >>$pgmout
     echo `date` timing hr chgres after
   else
@@ -397,11 +397,7 @@ if (( relocpertflag == 1 )); then
 
 # RLW 20131003 modify to point to experimental data
   #if [[ -s /com/gfs/prod/gfs.$PDY/gfs.$cycle.pgrbf00 ]]; then
-  if [[ $envir = dev ]]; then
-    export gfsdir=$basedgfs/com/gfs/prod/gfs.$PDY
-  else
-    export gfsdir=/com/gfs/prod/gfs.$PDY
-  fi
+    export gfsdir=$GFSCOMIN
   testfile=gfs.$cycle.master.grbf00
   if [[ -s $gfsdir/$testfile ]]; then
   # f00 gfs tracking for relocation
@@ -457,8 +453,8 @@ if (( relocpertflag == 1 )); then
   fi
 
 #DHOU XZHOU changed, production OK?, DH changed it back
-  $USHGLOBAL/syndataxtrack.sh $PDY $cyc tcvitals.in trackatcfunix.in tcvitals.as
-# $USHgefs/syndataxtrack.sh $PDY $cyc tcvitals.in trackatcfunix.in tcvitals.as #ZEUS
+#  $USHgsm/syndataxtrack.sh $PDY $cyc tcvitals.in trackatcfunix.in tcvitals.as
+ $USHgefs/syndataxtrack.sh $PDY $cyc tcvitals.in trackatcfunix.in tcvitals.as #ZEUS
 
   cp -f $COMSFCSIGP/gec00.t${cycp}z.sf$fhrp gec00_presep
 
@@ -507,14 +503,7 @@ fi
 echo HHH TEST 2
 
 #DHOU, XZHOU added this if block
-if [[ $envir = prod ]]; then
-execseparate=$EXECGLOBAL/gefs_vortex_separate
-elif [[ $envir = para ]] || [[ $envir = test ]]; then
-  execseparate=/nw$envir/exec/gefs_vortex_separate
-else
-  execseparate=$basesource/nw$envir/exec/gefs_vortex_separate
- execpoe=$basesource/nw$envir/exec/zeus-poe
-fi
+execseparate=$EXECgefs/gefs_vortex_separate
 
 if (( relocpertflag == 1 )); then
   echo Separate the storm and environment forecast fields for c00 begin
@@ -522,7 +511,7 @@ if (( relocpertflag == 1 )); then
   ln -s -f tcvitals.as fort.11
 
 # ln -s -f $FIXGLOBAL/global_slmask.t$JCAPHR.grb    fort.12
-  ln -s -f $FIXGLOBAL/global_slmask.t$JCAPHR.$LONB.$LATB.grb    fort.12
+  ln -s -f $FIXgsm/global_slmask.t$JCAPHR.$LONB.$LATB.grb    fort.12
 
   ln -s -f tracks.atcfunix.$cycp      fort.40
   ln -s -f gec00_presep              fort.21
@@ -589,35 +578,12 @@ do
   fi
   echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh begin">>poescript.$itask
 ###testb
-if [[ $envir = prod ]]; then
 ###teste
   if (( ipairh > nhrpair )); then
-    echo "$USHGLOBAL/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $relocfact >ushout.separate.$ipair 2>&1" >>poescript.$itask
+    echo "$USHgefs/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $relocfact >ushout.separate.$ipair 2>&1" >>poescript.$itask
   else
-    echo "$USHGLOBAL/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag $relocfact >ushout.separate.$ipair 2>&1" >>poescript.$itask
+    echo "$USHgefs/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag $relocfact >ushout.separate.$ipair 2>&1" >>poescript.$itask
   fi
-###testb
-elif [[ $envir = para ]] || [[ $envir = test ]]; then
-  if (( ipairh > nhrpair )); then
-    echo "/nw$envir/ush/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $relocfact >ushout.separate.$ipair 2>&1" >>poescript.$itask
-  else
-    echo "/nw$envir/ush/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag $relocfact >ushout.separate.$ipair 2>&1" >>poescript.$itask
-  fi
-else
-  if (( ipairh > nhrpair )); then
-    echo "$basesource/nw$envir/ush/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $ushout.separate.$ipair 2>&1 $relocfact" >>poescript.$itask
-## kate 04/24/2012
-    echo "$basesource/nw$envir/ush/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $ushout.separate.$ipair 2>&1 $relocfact" >>cmdfile
-## ################kate 04/24/2012
-  else
-    echo "$basesource/nw$envir/ush/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag >ushout.separate.$ipair 2>&1 $relocfact" >>poescript.$itask
-
-## kate 04/24/2012
-    echo "$basesource/nw$envir/ush/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag >ushout.separate.$ipair 2>&1 $relocfact" >>cmdfile
-## ################kate 04/24/2012
-  fi
-fi
-###teste
   echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh end">>poescript.$itask
 
   (( itask = itask + 1 ))
@@ -647,6 +613,7 @@ ls -al $poescript
 echo
 cat poescript
 echo
+cp -pr poescript cmdfile
 
 export MP_HOLDTIME=1000
 

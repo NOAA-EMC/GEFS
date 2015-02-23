@@ -13,6 +13,9 @@ set -xa
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export machine=${gefsmachine:-wcoss}
+export APRUN=${gefsmpexec:-mpirun.lsf}
+
 
 ###########################################
 # Run gefs_config to get input parameters
@@ -23,7 +26,7 @@ if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
 ################# lines between these markers have been modified for dev begin
 # echo $jobscript =jobscript #DHOU 03/07/2012
-  . $basesource/nwdev/parm/gefs_config
+  . $basesource/nw${envir}/parm/gefs_config
 else
    VERSION_FILE=/nw{$envir}/versions/gefs.ver
    if [-f $VERSION_FILE]; then
@@ -34,9 +37,9 @@ else
    fi
 fi
 
-export HOMEgefs=${HOMEgefs}
+export HOMEgefs=${HOMEgefs:-/nw${envir}}
 export HOMEgsm=${HOMEgsm}
-export HOMEutil=${HOMEutil:-/nwprod/util}
+export HOMEutil=${HOMEROOT:-/nwprod/util}
 
 
 # #############################################
@@ -48,13 +51,7 @@ export PS4='$SECONDS + '
 # obtain unique process id (pid) and make working directory
 ####################################
 export pid=$$
-if [ "$RUN_ENVIR" = dev ]    ### For Developers
-then
-  export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
-else
-  export DATA_IN=/tmpnwprd
-fi
-export DATA=$DATA_IN/gefs_enkf_track_$PDY$cyc.$envir.save
+export DATA=$DATAROOT/gefs_enkf_track_$PDY$cyc.$envir.save
 
 if [[ -d $DATA ]]; then
   rm -rf $DATA
@@ -85,18 +82,13 @@ echo cycsuffix=$cycsuffix
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=gens
+export NET=${NET:-gens}
 export RUN=enstr
 
 ####################################
 # File To Log Msgs
 ####################################
-if [ "$RUN_ENVIR" = dev ]     ### For Developers
-then
   export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
-else
-  export jlogfile=/com/logs/para/jlogfile
-fi
 
 ####################################
 # Determine Job Output Name on System
@@ -115,56 +107,30 @@ export pgmerr=errfile
 # RERUN    - Rerun posts from beginning (default no)
 # VERBOSE  - Specify Verbose Output in global_postgp.sh
 ####################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
   export SENDCOM=${SENDCOM:-YES}
-  export SENDSMS=${SENDSMS:-YES}
+  export SENDECF=${SENDECF:-YES}
+  export SENDDBN=${SENDDBN:-YES}
+  export SENDDBN_NTC=${SENDDBN_NTC:-YES}
+
+  export SENDSMS=${SENDSMS:-NO}
+
   export VERBOSE=${VERBOSE:-NO}
   export RERUN=${RERUN:-NO}
 
+
   # Specify Execution Areas
-  export HOMEgsm=${HOMEgsm:-/nw${envir}}
   export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
   export USHgsm=${USHgsm:-$HOMEgsm/ush}
   export FIXgsm=${FIXgsm:-$HOMEgsm/fix}
+  export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 
-# THese GLOBAL env varaibles will be used in ecf and ush scripts
-# Those scripts could be modified later to remove these GLOBAL cwvariables
-  export EXECGLOBAL=${EXECgsm:-$HOMEgsm/exec}
-  export USHGLOBAL=${USHgsm:-$HOMEgsm/ush}
-  export FIXGLOBAL=${FIXgsm:-$HOMEgsm/fix/fix_am}
 
-  export HOMEgefs=${HOMEgefs:-/nw${envir}}
+
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
+  export UTILgefs=${UTILgefs:-$HOMEgefs/util}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
-
-else                             ### For Operations
-  export SENDCOM=YES
-  export SENDSMS=YES
-  export VERBOSE=NO
-  export RERUN=NO
-
-  # Specify Execution Areas
-  export HOMEgsm=/nw${envir}
-  export EXECgsm=$HOMEgsm/exec
-  export USHgsm=$HOMEgsm/ush
-  export FIXgsm=$HOMEgsm/fix/fix_am
-  export PARMgsm=$HOMEgsm/parm
-
-  export HOMEGLOBAL=/nwprod
-  export EXECGLOBAL=$HOMEgsm/exec
-  export USHGLOBAL=$HOMEgsm/ush
-  export FIXGLOBAL=$HOMEgsm/fix/fix_am
-  export PARMGLOBAL=$HOMEgsm/parm
-
-  export HOMEgefs=/nw${envir}
-  export EXECgefs=$HOMEgefs/exec
-  export USHgefs=$HOMEgefs/ush
-  export FIXgefs=$HOMEgefs/fix
-  export PARMgefs=$HOMEgefs/parm
-fi
 
 
 export ERRSCRIPT=err_chk
@@ -193,12 +159,12 @@ export utilscript=$USHutil
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-ksh $utilscript/setup.sh
+ksh $USHutil/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $utilscript/setpdy.sh
+sh $USHutil/setpdy.sh
 . PDY
 
 ##############################################
@@ -209,31 +175,17 @@ export SLMASK=/dev/null
 ##############################################
 # Define COM directories
 ##############################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
 
  if [[ "$gfssource" = para ]]; then
-    export GFSCOMIN=$TMPCOM/gfs/para/gfs.$PDY 
-    export ENKFCOMIN=$TMPCOM/gfs/para/enkf. 
+    export GFSCOMIN=$COMROOT/gfs/para/gfs.$PDY 
+    export ENKFCOMIN=$COMROOT/gfs/para/enkf. 
   elif [[ "$gfssource" = prod ]]; then
-    export GFSCOMIN=$TMPCOM/gfs/prod/gfs.$PDY 
-    export ENKFCOMIN=$TMPCOM/gfs/prod/enkf. 
+    export GFSCOMIN=$COMROOT/gfs/prod/gfs.$PDY 
+    export ENKFCOMIN=$COMROOT/gfs/prod/enkf. 
   else
-    export GFSCOMIN=/com/gfs/prod/gfs.$PDY
-    export ENKFCOMIN=/com/gfs/prod/enkf. 
+    export GFSCOMIN=$COMROOT/gfs/prod/gfs.$PDY
+    export ENKFCOMIN=$COMROOT/gfs/prod/enkf. 
   fi
-else
-  if [[ "$gfssource" = para ]]; then
-    export GFSCOMIN=/com/gfs/para/gfs.$PDY
-    export ENKFCOMIN=/com/gfs/para/enkf. 
-  elif [[ "$gfssource" = prod ]]; then
-    export GFSCOMIN=/com/gfs/prod/gfs.$PDY
-    export ENKFCOMIN=/com/gfs/prod/enkf. 
-  else
-    export GFSCOMIN=$baseptmp/com/gfs/${envir}/gfs.$PDY
-    export GFSCOMIN=$baseptmp/com/gfs/${envir}/gfs.$PDY
-   fi
-fi
 
 ###
 #export pdycycp=`/nwprod/util/exec/ndate -$fhrp $PDY$cyc`
@@ -242,15 +194,9 @@ export pdyp=`echo $pdycycp|cut -c1-8`
 export cycp=`echo $pdycycp|cut -c9-10`
 echo pdycycp=$pdycycp pdyp=$pdyp cycp=$cycp
 ###
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
 
-export COMOUT=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
-export COMP=$baseoutput/com/${NET}/${envir}/gefs.${pdyp}/$cycp
-else
-export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
-export COMP=/com/${NET}/${envir}/gefs.${pdyp}/$cycp
-fi
+export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
+export COMP=$COMROOT/com/${NET}/${envir}/gefs.${pdyp}/$cycp
 
 mkdir -m 775 -p $COMP
 echo location of chgres script and executable
@@ -266,13 +212,10 @@ sighdrexec=$EXECgsm/global_sighdr
 
 echo sighdrexec=$sighdrexec
 
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then 
    if [[ $gefsmachine = zeus ]]; then
 export archsyndir=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/comzeus/com/arch/prod/syndat
 export homesyndir=$basesource/nw$envir/util
    fi
- fi
 
 ##
  if [[ $gefsmachine = zeus ]]; then
@@ -299,7 +242,7 @@ postmsg "$jlogfile" "$msg"
 #Remove the Temporary working directory
 ##############################
 cd $DATA_IN
-rm -rf $DATA
+#rm -rf $DATA
 
 echo `date` $0 `date -u` end
 $SMSBIN/endt
