@@ -6,22 +6,19 @@
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export envir=${envir:-dev}
 
-HOMEDIR=/ensemble/save/Dingchen.Hou/SVN
+HOMEDIR=/ensemble/save/Dingchen.Hou/RFC
 
 export gefsmachine=${gefsmachine:-wcoss}
 if [ $RUN_ENVIR = dev ]
 then
-  export HOMEgefs=$HOMEDIR/GEFS_wcoss_unify_dev-48295
+  export HOMEgefs=$HOMEDIR/gefs_v11.0.x
   export HOMEgefs=$basesource/nwdev
 
-  export HOMEgsm=$HOMEDIR/GSM_V12.0.0
-# export HOMEpost=$HOMEDIR/post_upgrade_gfs_EXP-gefs-45733
-  export HOMEpost=$HOMEDIR/post_upgrade_gfs_EXP-gefs-51809
-# export HOMEtrak=$HOMEDIR/ens_tracker.v1.0.0
-# export HOMEgene=$HOMEDIR/ens_genesis.v1.0.0
-  export HOMEtrak=/ensemble/save/Jiayi.Peng/ens_tracker.v1.0.0
-  export HOMEgene=/ensemble/save/Jiayi.Peng/ens_genesis.v1.0.0
-  export HOMEenkf=/nwprod/enkf.v2.0.1
+  export HOMEgsm=$HOMEDIR/gsm_v12.0.x
+  export HOMEpost=$HOMEDIR/ncep_post_v5.0.x
+  export HOMEenkf=$HOMEDIR/enkf.v2.0.1
+  export HOMEtrak=$HOMEDIR/ens_tracker.v1.0.0
+  export HOMEgene=$HOMEDIR/ens_genesis.v1.0.0
 
   export SENDCOM=YES
   export SENDDBN=NO
