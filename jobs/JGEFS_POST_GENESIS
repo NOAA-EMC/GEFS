@@ -33,7 +33,6 @@ else
 fi
 
 export HOMEgefs=${HOMEgefs}
-export HOMEtrak=${HOMEtrak}
 export HOMEgene=${HOMEgene}
 export HOMEutil=${HOMEutil:-/nwprod/util}
 
@@ -48,13 +47,7 @@ date
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-if [ "$RUN_ENVIR" = dev ]    ### For Developers
-then
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
-else                         ### For Operations
-   export DATA_IN=/tmpnwprd
-fi
-export DATA=$DATA_IN/${job}.${pid}
+export DATA=$DATAROOT/${job}.${pid}
 
 mkdir -p $DATA
 cd $DATA
@@ -85,16 +78,12 @@ echo fcstlong=$fcstlong
 # Specify NET and RUN Name and model
 ####################################
 export NET=gens
+export RUN=gefs
 
 ####################################
 # File To Log Msgs
 ####################################
-if [ "$RUN_ENVIR" = dev ]     ### For Developers
-then
-   export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
-else                        ### For Operations
-   export jlogfile=/com/logs/jlogfile
-fi
+export jlogfile=${jlogfile:-/com/logs/jlogfile}
 
 ####################################
 # Determine Job Output Name on System
@@ -109,14 +98,10 @@ export pgmerr=errfile
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 ####################################
-export SENDECF=NO
-export SENDCOM=NO
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
- export SENDDBN=NO
-else                              ## For production
- export SENDDBN=YES
-fi
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-NO}
+export SENDSMS=${SENDSMS:-YES}
+export SENDECF=${SENDECF:-YES}
 
 ####################################
 # Specify Execution Areas
@@ -131,43 +116,32 @@ fi
 ##############################
 export USHutil=$HOMEutil/ush
 export EXECutil=$HOMEutil/exec
-export utilscript=$USHutil
-export GRBINDEX=EXECutil/grbindex
 
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-ksh $utilscript/setup.sh
+ksh $USHutil/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $utilscript/setpdy.sh
+sh $USHutil/setpdy.sh
 . PDY
 
 ##############################################
 # Define GENVITDIR directory. The PATH do be determined
 ##############################################
 export JYYYY=`echo ${PDY} | cut -c1-4`
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-  export genvitdir=$baseoutput/com/${NET}/${envir}/genesis_vital_${JYYYY}
-else                              ### For Operations
-  export genvitdir=/com/${NET}/${envir}/genesis_vital_${JYYYY}
-fi
+export genvitdir=$baseoutput/com/${NET}/${envir}/genesis_vital_${JYYYY}
+
 mkdir -p ${genvitdir}
 
 ##############################################
 # Define COM directories
 ##############################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-  export COMIN=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
-  export COMOUT=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
-else                              ### For Operations
-  export COMIN=/com/${NET}/${envir}/${RUN}.${PDY}
-  export COMOUT=/com/${NET}/${envir}/${RUN}.${PDY}
-fi
+export COMIN=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
+export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
+
 export ensdir=$COMIN/$cyc/pgrb2ap5
 #export ensdir=/ensemble/noscrub/GEFS.2015/PGRB2/tfGb_20130912/pgrb2ap5
 export COM=$COMOUT/$cyc/genesis
@@ -254,12 +228,12 @@ cd ${DATA}/${cmodel}
 
 >trkr.cmdfile
 for pert in ${memberlist}; do
-    pertdir=${DATA}/${cmodel}/${pert}
-    if [ ! -d ${pertdir} ]; then 
-     mkdir -p ${pertdir}
-    fi
-    outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
-    echo "${USHens_genesis}/extrkr_gen_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
+  pertdir=${DATA}/${cmodel}/${pert}
+  if [ ! -d ${pertdir} ]; then 
+   mkdir -p ${pertdir}
+  fi
+  outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
+  echo "${USHens_genesis}/extrkr_gen_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
 done
  
 cat trkr.cmdfile
@@ -274,9 +248,6 @@ for pert in ${memberlist}; do
   export TRKDATA=${DATA}/${cmodel}/${pert}
   export pertdir=${DATA}/${cmodel}/${pert}
   export atcfout="a${pert}"
-# pert_posneg=` echo "${pert}" | cut -c1-1`
-# pert_num=`    echo "${pert}" | cut -c2-3`
-# export atcfout="a${pert_posneg}${pert_num}"
   ${USHens_genesis}/sort_tracks.gen.sh  >${pertdir}/sort.${regtype}.${atcfout}.${ymdh}.out
   cp ${pertdir}/trak.a*.atcfunix.altg.${ymdh} ${COM}/.
   cp ${pertdir}/storms.a*.atcf_gen.altg.${ymdh} ${COM}/.
@@ -305,12 +276,29 @@ cp ${DATA}/trak.aemn.* ${COM}/.
 cp ${DATA}/aemn.trkprob.* ${COM}/.
 rm -f ${DATA}/*
 
-#export DATA=${DATA}/5d
-#mkdir -p ${DATA}
-mkdir -p ${COM}/5d
-${USHens_genesis}/ens_trak_ave_5d.sh
-cp ${DATA}/trak.aemn.* ${COM}/5d
-cp ${DATA}/aemn.trkprob.* ${COM}/5d
+#mkdir -p ${COM}/5d
+#${USHens_genesis}/ens_trak_ave_5d.sh
+#cp ${DATA}/trak.aemn.* ${COM}/5d
+#cp ${DATA}/aemn.trkprob.* ${COM}/5d
+#rm -f ${DATA}/*
+
+cd ${DATA}
+cp ${COMOUT}/genesis/aemn.trkprob.*.65nm.${ymdh}.indiv.ieee ${DATA}
+export hurrlist="AL90 AL91 AL92 AL93 AL94 AL95 AL96 AL97 AL98 AL99 \
+                 EP90 EP91 EP92 EP93 EP94 EP95 EP96 EP97 EP98 EP99 \
+	         WP90 WP91 WP92 WP93 WP94 WP95 WP96 WP97 WP98 WP99 \
+	         HC01 HC02 HC03 HC04 HC05 HC06 HC07 HC08 HC09 HC10"
+
+for hurr in $hurrlist; do
+  if [ -s aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.ieee ]; then
+    rm -f *.nlist
+    namelist=input.${ymdh}.nlist
+    echo "&datain0 kymdh0='aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.ieee'/" >${namelist}
+    echo "&datain1 kymdh1='aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.data'/" >>${namelist}
+    ${EXECens_genesis}/readprob <${namelist}
+  fi
+done
+cp *.indiv.data ${COMOUT}/genesis
 rm -f ${DATA}/*
 
 ################################
@@ -323,7 +311,7 @@ rm -f ${DATA}/*
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-  cd /tmpnwprd
+  cd $DATAROOT
   rm -rf $DATA
 else
   echo skip cleanup for testing

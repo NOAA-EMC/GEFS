@@ -47,14 +47,7 @@ date
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-if [ "$RUN_ENVIR" = dev ]    ### For Developers
-then
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
-else                         ### For Operations
-   export DATA_IN=/tmpnwprd
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
-fi
-export DATA=$DATA_IN/${job}.${pid}
+export DATA=$DATAROOT/${job}.${pid}
 
 mkdir -p $DATA
 cd $DATA
@@ -85,16 +78,12 @@ echo fcstlong=$fcstlong
 # Specify NET and RUN Name and model
 ####################################
 export NET=gens
+export RUN=gefs
 
 ####################################
 # File To Log Msgs
 ####################################
-if [ "$RUN_ENVIR" = dev ]     ### For Developers
-then
-   export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
-else                        ### For Operations
-   export jlogfile=/com/logs/jlogfile
-fi
+export jlogfile=${jlogfile:-/com/logs/jlogfile}
 
 ####################################
 # Determine Job Output Name on System
@@ -109,65 +98,42 @@ export pgmerr=errfile
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 ####################################
-export SENDECF=NO
-export SENDCOM=NO
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
- export SENDDBN=NO
-else                              ## For production
- export SENDDBN=YES
-fi
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-NO}
+export SENDSMS=${SENDSMS:-YES}
+export SENDECF=${SENDECF:-YES}
 
 ####################################
 # Specify Execution Areas
 ####################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-  export HOMEtrak=${HOMEtrak:-/nw${envir}}
-  export EXECens_tracker=${EXECtrak:-$HOMEtrak/exec}
-  export USHens_tracker=${USHtrak:-$HOMEtrak/ush}
-  export FIXens_tracker=${FIXtrak:-$HOMEtrak/fix}
-  export PARMgefs=$HOMEgefs/parm
-else  
-  export HOMEens_tracker=${HOMEtrak:-/nw${envir}}
-  export EXECens_tracker=$HOMEtrak/exec
-  export USHens_tracker=$HOMEtrak/ush
-  export FIXens_tracker=$HOMEtrak/fix/fix_am
-  export HOMEgefs=${HOMEgefs:-/nw${envir}}
-  export PARMgefs=$HOMEgefs/parm
-fi
-export GRBINDEX=$EXECutil/grbindex}
+export EXECens_tracker=${EXECtrak:-$HOMEtrak/exec}
+export USHens_tracker=${USHtrak:-$HOMEtrak/ush}
+export FIXens_tracker=${FIXtrak:-$HOMEtrak/fix}
+export PARMgefs=$HOMEgefs/parm
 
 ##############################
 # Set up the UTILITIES
 ##############################
 export EXECutil=$HOMEutil/exec
 export USHutil=$HOMEutil/ush
-export utilscript=$USHutil
 
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-ksh $utilscript/setup.sh
+ksh $USHutil/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $utilscript/setpdy.sh
+sh $USHutil/setpdy.sh
 . PDY
 
 ##############################################
 # Define COM directories
 ##############################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-  export COMIN=$basedgfs/com/gfs/${envir}/gfs.${PDY}
-  export COMOUT=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
-  export COMIN=/com/gfs/prod/gfs.${PDY}
-else                              ### For Operations
-  export COMIN=/com/gfs/${envir}/gfs.${PDY}
-  export COMOUT=/com/${NET}/${envir}/${RUN}.${PDY}
-fi
+export COMIN=/com/gfs/prod/gfs.${PDY}
+export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
+
 export gfsdir=${COMIN:-/com/gfs/prod/gfs.${PDY}}
 export COM=$COMOUT/$cyc/track
 mkdir -m 775 -p $COM
@@ -208,7 +174,16 @@ ${USHens_tracker}/extrkr_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2
  
 cp ${pertdir}/trak.gfso.atcfunix.${PDY}${CYL} ${COM}/gfso.t${CYL}z.cyclone.trackatcfunix
 cp ${pertdir}/vitals.upd.gfso.${PDY}${CYL} ${COM}/.
-#rm -rf ${DATA}/*
+
+cp ${pertdir}/vitals.upd.gfso.${PDY}${CYL} ${COM}/vitals.upd.avn.${PDY}${CYL}
+cp ${pertdir}/trak.gfso.atcfunix.${PDY}${CYL} ${COM}/trak.avn.atcfunix.${PDY}${CYL}
+
+cat ${COM}/trak.avn.atcfunix.${PDY}${CYL} | \
+    sed s:GFSO:AVNO:g \
+ > ${COM}/avn.t${CYL}z.cyclone.trackatcfunix
+rm -f ${COM}/trak.avn.atcfunix.${PDY}${CYL}
+
+rm -rf ${DATA}/*
 
 cd ${DATA}
 export COMOUT1=${COM}
@@ -225,7 +200,7 @@ ${USHens_tracker}/atcf_2_cxml.sh ${cmodel} ${ymdh} ${DATA}
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-  cd /tmpnwprd
+  cd $DATAROOT
   rm -rf $DATA
 else
   echo skip cleanup for testing

@@ -47,14 +47,7 @@ date
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-if [ "$RUN_ENVIR" = dev ]    ### For Developers
-then
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
-else                         ### For Operations
-   export DATA_IN=/tmpnwprd
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
-fi
-export DATA=$DATA_IN/${job}.${pid}
+export DATA=$DATAROOT/${job}.${pid}
 
 mkdir -p $DATA
 cd $DATA
@@ -85,16 +78,12 @@ echo fcstlong=$fcstlong
 # Specify NET and RUN Name and model
 ####################################
 export NET=gens
+export RUN=gefs
 
 ####################################
 # File To Log Msgs
 ####################################
-if [ "$RUN_ENVIR" = dev ]     ### For Developers
-then
-   export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
-else                        ### For Operations
-   export jlogfile=/com/logs/jlogfile
-fi
+export jlogfile=${jlogfile:-/com/logs/jlogfile}
 
 ####################################
 # Determine Job Output Name on System
@@ -109,78 +98,50 @@ export pgmerr=errfile
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 ####################################
-export SENDECF=NO
-export SENDCOM=NO
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
- export SENDDBN=NO
-else                              ## For production
- export SENDDBN=YES
-fi
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-NO}
+export SENDSMS=${SENDSMS:-YES}
+export SENDECF=${SENDECF:-YES}
 
 ####################################
 # Specify Execution Areas
 ####################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-  export HOMEgene=${HOMEgene:-/nw${envir}}
-  export EXECens_genesis=${EXECgene:-$HOMEgene/exec}
-  export USHens_genesis=${USHgene:-$HOMEgene/ush}
-  export FIXens_genesis=${FIXgene:-$HOMEgene/fix}
-  export PARMgefs=$HOMEgefs/parm
-else  
-  export HOMEgene=${HOMEgene:-/nw${envir}}
-  export EXECens_genesis=$HOMEgene/exec
-  export USHens_genesis=$HOMEgene/ush
-  export FIXens_genesis=$HOMEgene/fix/fix_am
-  export HOMEgefs=${HOMEgefs:-/nw${envir}}
-  export PARMgefs=$HOMEgefs/parm
-fi
-export GRBINDEX=$EXECutil/grbindex}
+export EXECens_genesis=${EXECgene:-$HOMEgene/exec}
+export USHens_genesis=${USHgene:-$HOMEgene/ush}
+export FIXens_genesis=${FIXgene:-$HOMEgene/fix}
+export PARMgefs=$HOMEgefs/parm
 
 ##############################
 # Set up the UTILITIES
 ##############################
 export EXECutil=$HOMEutil/exec
 export USHutil=$HOMEutil/ush
-export utilscript=$USHutil
 
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-ksh $utilscript/setup.sh
+ksh $USHutil/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $utilscript/setpdy.sh
+sh $USHutil/setpdy.sh
 . PDY
 
 ##############################################
 # Define GENVITDIR directory. The PATH do be determined
 ##############################################
 export JYYYY=`echo ${PDY} | cut -c1-4`
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-  export genvitdir=$baseoutput/com/${NET}/${envir}/genesis_vital_${JYYYY}
-else                              ### For Operations
-  export genvitdir=/com/${NET}/${envir}/genesis_vital_${JYYYY}
-  export genvitdir=$baseoutput/com/${NET}/${envir}/genesis_vital_${JYYYY}
-fi
+export genvitdir=$baseoutput/com/${NET}/${envir}/genesis_vital_${JYYYY}
+
 mkdir -p ${genvitdir}
 
 ##############################################
 # Define COM directories
 ##############################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-  export COMIN=$basedgfs/com/gfs/${envir}/gfs.${PDY}
-  export COMOUT=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
-  export COMIN=/com/gfs/prod/gfs.${PDY}
-else                              ### For Operations
-  export COMIN=/com/gfs/${envir}/gfs.${PDY}
-  export COMOUT=/com/${NET}/${envir}/${RUN}.${PDY}
-fi
+export COMIN=/com/gfs/prod/gfs.${PDY}
+export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
+
 export gfsdir=${COMIN:-/com/gfs/prod/gfs.${PDY}}
 export COM=$COMOUT/$cyc/genesis
 mkdir -m 775 -p $COM
@@ -203,7 +164,6 @@ echo
 export cmodel=gfs
 export loopnum=1
 export ymdh=${PDY}${cyc}
-export pert=${cmodel}
 export pert=gfs
 
 export exectrkdir=${EXECens_genesis}
@@ -222,14 +182,13 @@ export v850thresh=1.5000
 export regtype=altg
 
 export pertdir=${DATA}/${cmodel}
-#export pertdir=${DATA}/${cmodel}/${pert}
 if [ ! -d ${pertdir} ]; then 
   mkdir -p ${pertdir}
 fi
 
 outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
 ${USHens_genesis}/extrkr_tcv_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile} 
-#rm -rf ${DATA}/*
+rm -rf ${DATA}/*
 
 #### NCEP/GFS genesis tcvitals  ###########################
 num_gen_vits=`cat ${genvitdir}/genesis.vitals.gfs.gfso.${JYYYY} | wc -l`
@@ -270,8 +229,8 @@ ln -s -f ${outf43} fort.43
 ${EXECens_genesis}/filter_gen_gfs
 
 ################################
- msg="JOB COMPLETED NORMALLY"
- postmsg "$jlogfile" "$msg"
+msg="JOB COMPLETED NORMALLY"
+postmsg "$jlogfile" "$msg"
 
 ##############################
 # Remove the Temporary working directory
@@ -279,7 +238,7 @@ ${EXECens_genesis}/filter_gen_gfs
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-  cd /tmpnwprd
+  cd $DATAROOT
   rm -rf $DATA
 else
   echo skip cleanup for testing

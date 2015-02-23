@@ -106,10 +106,9 @@ export SENDECF=${SENDECF:-YES}
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMEens_tracker=${HOMEtrak:-/nw${envir}/ens_tracker.v1.0.0}
-export EXECens_tracker=$HOMEens_tracker/exec
-export USHens_tracker=$HOMEens_tracker/ush
-export FIXens_tracker=$HOMEens_tracker/fix
+export EXECens_tracker=${EXECtrak:-$HOMEtrak/exec}
+export USHens_tracker=${USHtrak:-$HOMEtrak/ush}
+export FIXens_tracker=${FIXtrak:-$HOMEtrak/fix}
 export PARMgefs=$HOMEgefs/parm
 
 ##############################
@@ -117,7 +116,6 @@ export PARMgefs=$HOMEgefs/parm
 ##############################
 export EXECutil=$HOMEutil/exec
 export USHutil=$HOMEutil/ush
-export utilscript=$USHutil
 
 ##############################
 # Run setup to initialize working directory and utility scripts
@@ -255,7 +253,7 @@ ${USHens_tracker}/atcf_2_cxml.sh ${cmodel} ${ymdh} ${DATA}
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-  cd /tmpnwprd
+  cd $DATAROOT
   rm -rf $DATA
 else
   echo skip cleanup for testing
