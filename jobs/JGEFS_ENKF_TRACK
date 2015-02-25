@@ -39,7 +39,7 @@ fi
 
 export HOMEgefs=${HOMEgefs:-/nw${envir}}
 export HOMEgsm=${HOMEgsm}
-export HOMEutil=${HOMEROOT:-/nwprod/util}
+export HOMEutil=${UTILROOT:-/nwprod/util}
 
 
 # #############################################

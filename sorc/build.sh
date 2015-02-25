@@ -43,7 +43,7 @@ elif [ $mac = z -o $mac = h -o $mac = f ] ; then # For ZEUS
 fi
 #---------------------------------------------------------
 for dir in gefs_vortex_separate.fd gefs_vortex_combine.fd global_sigzvd.fd  global_ensadd.fd  global_enspqpf.fd  gefs_ensstat.fd  global_ensppf.fd global_enscvprcp.fd  global_enspvrfy.fd  global_enssrbias.fd global_enscqpf.fd  global_enscvt24h.fd  global_ensrfmat.fd ; do
-for dir in global_enspvrfy.fd ;do
+#for dir in global_enspvrfy.fd ;do
  cd $dir
  make clean
  make -f makefile
