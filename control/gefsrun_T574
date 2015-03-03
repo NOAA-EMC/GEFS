@@ -1614,7 +1614,7 @@ case $taskname in
     node_resources="ConsumableMemory(110 GB)"
     network_MPI="sn_all,shared,us"
     task_affinity="core(1)"
-    total_tasks=160
+    total_tasks=20
     node=3
   if [[ $gefsmachine = zeus ]]; then                       
     node=7   #DHOU 04/04/2012 for ZEUS, T254L42
