@@ -8,8 +8,8 @@ if [ $RUN_ENVIR = dev ]
 then
 # export HOMEgefs=/climate/save/wx22yz/gefs/nwdev
 ################# lines between these markers have been modified for dev begin
-# RLW 20141008 modify to obtain and user version for vertical structure
-  export HOMEgefs=$basesource/nwdev/gefs.${model_ver}
+# RLW 20141008 modify to obtain and use version for vertical structure
+  export HOMEgefs=$basesource/nwdev/gefs.${gefs_ver}
 ################# lines between these markers have been modified for dev end
   export EXECgefs=$HOMEgefs/exec
   export FIXgefs=$HOMEgefs/fix
@@ -117,8 +117,8 @@ echo jobscript= $jobscript
 
 elif [ $RUN_ENVIR = prod ]
 then
-# RLW 20141008 modify to obtain and user version for vertical structure
-  export HOMEgefs=/nwprod/gefs.${model_ver}
+# RLW 20141008 modify to obtain and use version for vertical structure
+  export HOMEgefs=/nwprod/gefs.${gefs_ver}
   export EXECgefs=$HOMEgefs/exec
   export FIXgefs=$HOMEgefs/fix
   export PARMgefs=$HOMEgefs/parm
@@ -162,7 +162,7 @@ then
 
 elif [ $RUN_ENVIR = para -o $RUN_ENVIR = test ]
 then
-  export HOMEgefs=/nw${envir}
+  export HOMEgefs=/nw${envir}/gefs.${gefs_ver}
   export EXECgefs=$HOMEgefs/exec
   export FIXgefs=$HOMEgefs/fix
   export PARMgefs=$HOMEgefs/parm

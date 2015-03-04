@@ -137,21 +137,21 @@ fi
 ###testb
 if [[ $envir = prod ]]; then
 ###teste
-  # RLW 20141008 modify to obtain and user version for vertical structure
+  # RLW 20141008 modify to obtain and use version for vertical structure
   . /nw$envir/versions/gefs.ver
-export HOMEGLOBAL=/nw${envir}/gefs.${model_ver}
+export HOMEGLOBAL=/nw${envir}/gefs.${gefs_ver}
 ###testb
 elif [[ $envir = para ]] || [[ $envir = test ]]; then
-  # RLW 20141008 modify to obtain and user version for vertical structure
+  # RLW 20141008 modify to obtain and use version for vertical structure
   . /nw$envir/versions/gefs.ver
-  export HOMEGLOBAL=/nwprod/gefs.${model_ver}
+  export HOMEGLOBAL=/nwprod/gefs.${gefs_ver}
 fi
 ###teste
 ################# lines between these markers have been modified for dev begin
 if [[ $envir = dev ]]; then
-  # RLW 20141008 modify to obtain and user version for vertical structure
+  # RLW 20141008 modify to obtain and use version for vertical structure
   . $basesource/nw$envir/*/versions/gefs.ver
-  export HOMEGLOBAL=$basesource/nw$envir/gefs.${model_ver}
+  export HOMEGLOBAL=$basesource/nw$envir/gefs.${gefs_ver}
 fi
 ################# lines between these markers have been modified for dev end
 export EXECGLOBAL=$HOMEGLOBAL/exec
@@ -181,13 +181,13 @@ if [[ $envir = prod ]]; then
 ###testb
 elif [[ $envir = para ]] || \
      [[ $envir = test ]]; then
-  # RLW 20141008 modify to obtain and user version for vertical structure
-. /nw$envir/gefs.${model_ver}/parm/gefs.parm
-. /nw$envir/gefs.${model_ver}/parm/gefs_init.parm
+  # RLW 20141008 modify to obtain and use version for vertical structure
+. /nw$envir/gefs.${gefs_ver}/parm/gefs.parm
+. /nw$envir/gefs.${gefs_ver}/parm/gefs_init.parm
 else
-  # RLW 20141008 modify to obtain and user version for vertical structure
-. $basesource/nw$envir/gefs.${model_ver}/parm/gefs.parm
-. $basesource/nw$envir/gefs.${model_ver}/parm/gefs_init.parm
+  # RLW 20141008 modify to obtain and use version for vertical structure
+. $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs.parm
+. $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_init.parm
 fi
 ###teste
 
@@ -319,13 +319,13 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
 ###teste
-  # RLW 20141008 modify to obtain and user version for vertical structure
-/nw${envir}/scripts/gefs.${model_ver}/exgefs_init_et.sh.ecf
+  # RLW 20141008 modify to obtain and use version for vertical structure
+/nw${envir}/scripts/gefs.${gefs_ver}/exgefs_init_et.sh.ecf
 #/nwprod/scripts/exgefs_init_et.sh.ecf
 ###testb
 else
-  # RLW 20141008 modify to obtain and user version for vertical structure
-$basesource/nw${envir}/gefs.${model_ver}/scripts/exgefs_init_et.sh.ecf
+  # RLW 20141008 modify to obtain and use version for vertical structure
+$basesource/nw${envir}/gefs.${gefs_ver}/scripts/exgefs_init_et.sh.ecf
 #/nwprod/scripts/exgefs_init_et.sh.ecf
 fi
 ###teste

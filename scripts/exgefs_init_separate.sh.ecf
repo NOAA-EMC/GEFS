@@ -512,11 +512,11 @@ if (( relocpertflag == 1 )); then
   if [[ $envir = prod ]]; then
   execseparate=$EXECGLOBAL/gefs_vortex_separate
   elif [[ $envir = para ]] || [[ $envir = test ]]; then
-    # RLW 20141008 modify to obtain and user version for vertical structure
-    execseparate=/nw$envir/gefs.${model_ver}/exec/gefs_vortex_separate
+    # RLW 20141008 modify to obtain and use version for vertical structure
+    execseparate=/nw$envir/gefs.${gefs_ver}/exec/gefs_vortex_separate
   else
-  # RLW 20141008 modify to obtain and user version for vertical structure
-  execseparate=$basesource/nw$envir/gefs.${model_ver}/exec/gefs_vortex_separate
+  # RLW 20141008 modify to obtain and use version for vertical structure
+  execseparate=$basesource/nw$envir/gefs.${gefs_ver}/exec/gefs_vortex_separate
   execpoe=$basesource/nw$envir/exec/zeus-poe
 fi
 
@@ -597,27 +597,27 @@ if [[ $envir = prod ]]; then
 ###testb
 elif [[ $envir = para ]] || [[ $envir = test ]]; then
   if (( ipairh > nhrpair )); then
-    # RLW 20141008 modify to obtain and user version for vertical structure
-    echo "/nw$envir/gefs.${model_ver}/ush/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $relocfact >ushout.separate.$ipair 2>&1" >>poescript.$itask
+    # RLW 20141008 modify to obtain and use version for vertical structure
+    echo "/nw$envir/gefs.${gefs_ver}/ush/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $relocfact >ushout.separate.$ipair 2>&1" >>poescript.$itask
   else
-    # RLW 20141008 modify to obtain and user version for vertical structure
-    echo "/nw$envir/gefs.${model_ver}/ush/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag $relocfact >ushout.separate.$ipair 2>&1" >>poescript.$itask
+    # RLW 20141008 modify to obtain and use version for vertical structure
+    echo "/nw$envir/gefs.${gefs_ver}/ush/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag $relocfact >ushout.separate.$ipair 2>&1" >>poescript.$itask
   fi
 else
   if (( ipairh > nhrpair )); then
-    # RLW 20141008 modify to obtain and user version for vertical structure
-    echo "$basesource/nw$envir/gefs.${model_ver}/ush/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $ushout.separate.$ipair 2>&1 $relocfact" >>poescript.$itask
+    # RLW 20141008 modify to obtain and use version for vertical structure
+    echo "$basesource/nw$envir/gefs.${gefs_ver}/ush/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $ushout.separate.$ipair 2>&1 $relocfact" >>poescript.$itask
 ## kate 04/24/2012
-    # RLW 20141008 modify to obtain and user version for vertical structure
-    echo "$basesource/nw$envir/gefs.${model_ver}/ush/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $ushout.separate.$ipair 2>&1 $relocfact" >>cmdfile
+    # RLW 20141008 modify to obtain and use version for vertical structure
+    echo "$basesource/nw$envir/gefs.${gefs_ver}/ush/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $ushout.separate.$ipair 2>&1 $relocfact" >>cmdfile
 ## ################kate 04/24/2012
   else
-    # RLW 20141008 modify to obtain and user version for vertical structure
-    echo "$basesource/nw$envir/gefs.${model_ver}/ush/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag >ushout.separate.$ipair 2>&1 $relocfact" >>poescript.$itask
+    # RLW 20141008 modify to obtain and use version for vertical structure
+    echo "$basesource/nw$envir/gefs.${gefs_ver}/ush/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag >ushout.separate.$ipair 2>&1 $relocfact" >>poescript.$itask
 
 ## kate 04/24/2012
-    # RLW 20141008 modify to obtain and user version for vertical structure
-    echo "$basesource/nw$envir/gefs.${model_ver}/ush/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag >ushout.separate.$ipair 2>&1 $relocfact" >>cmdfile
+    # RLW 20141008 modify to obtain and use version for vertical structure
+    echo "$basesource/nw$envir/gefs.${gefs_ver}/ush/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag >ushout.separate.$ipair 2>&1 $relocfact" >>cmdfile
 ## ################kate 04/24/2012
   fi
 fi

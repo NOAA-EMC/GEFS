@@ -34,9 +34,9 @@ if (( $# >= 3 )); then
   if (( dtg < 23010203 )) && (( dtg > 18010203 )); then
     yyyymmdd=$dtg
     echo yyyymmdd=$yyyymmdd
-    # 20141008 RLW modify to obtain and user version for vertical structure
+    # 20141008 RLW modify to obtain and use version for vertical structure
     . /$group/save/$owner/s/$expid/nw$envir/gefs.v*/versions/gefs.ver
-    controldir=/ensemble/save/$owner/s/$expid/nwdev/gefs.${model_ver}/control
+    controldir=/ensemble/save/$owner/s/$expid/nwdev/gefs.${gefs_ver}/control
     cd $controldir
     rc=$?
     if (( rc == 0 )); then
@@ -97,9 +97,9 @@ if (( $# >= 3 )); then
   elif (( dtg < 2301020318 )) && (( dtg > 1801020300 )); then
     yyyymmdd=`echo $dtg|cut -c1-8`
     hh=`echo $dtg|cut -c9-10`
-    # 20141008 RLW modify to obtain and user version for vertical structure
+    # 20141008 RLW modify to obtain and use version for vertical structure
     . /$group/save/$owner/s/$expid/nw$envir/*/versions/gefs.ver
-    controldir=/ensemble/save/$owner/s/$expid/nwdev/gefs.${model_ver}/control
+    controldir=/ensemble/save/$owner/s/$expid/nwdev/gefs.${gefs_ver}/control
     cd $controldir
     rc=$?
     if (( rc == 0 )); then

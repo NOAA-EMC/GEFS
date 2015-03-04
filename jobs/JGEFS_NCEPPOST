@@ -32,13 +32,13 @@ then
   . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
 ################# lines between these markers have been modified for dev begin
  else
-   # RLW 20141008 modify to obtain and user version for vertical structure
+   # RLW 20141008 modify to obtain and use version for vertical structure
    . $basesource/nw$envir/*/versions/gefs.ver
-   . $basesource/nw$envir/gefs.${model_ver}/parm/gefs_config
+   . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
  fi
 ################# lines between these markers have been modified for dev end
 else
-  # RLW 20141008 modify to obtain and user version for vertical structure
+  # RLW 20141008 modify to obtain and use version for vertical structure
   . /nwprod/versions/gefs.ver
 
 fi
@@ -147,8 +147,8 @@ then
     ;;
   esac
 
-  # RLW 20141008 modify to obtain and user version for vertical structure
-  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs.${model_ver}
+  # RLW 20141008 modify to obtain and use version for vertical structure
+  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs.${gefs_ver}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}

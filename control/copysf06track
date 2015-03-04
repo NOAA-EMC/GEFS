@@ -3,6 +3,7 @@
 # copy sf06 and track files from another experiment or from production
 #
 rc=0
+PTMP=/ptmpd2
 if (( $# == 3 )); then
   source=$1
   dest=$2
@@ -31,12 +32,12 @@ if (( $# == 3 )); then
 	dirsource=/com/gens/test/gefs.$yyyymmdd/$hh
       ;;
       (*)
-	dirsource=/ptmp/$LOGNAME/o/$source/com/gens/dev/gefs.$yyyymmdd/$hh
+	dirsource=$PTMP/$LOGNAME/o/$source/com/gens/dev/gefs.$yyyymmdd/$hh
 	local=yes
       ;;
     esac
     if [[ -d $dirsource/sfcsig && -d $dirsource/track ]]; then
-      dirdest=/ptmp/$LOGNAME/o/$dest/com/gens/dev/gefs.$yyyymmdd/$hh
+      dirdest=$PTMP/$LOGNAME/o/$dest/com/gens/dev/gefs.$yyyymmdd/$hh
       if [[ -d $dirdest ]]; then
 	echo dirdest=$dirdest already exists
       else

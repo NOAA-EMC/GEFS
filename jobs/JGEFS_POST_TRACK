@@ -17,21 +17,18 @@ set -xa
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 
-#DHOU 04/06/2012 Added this block for ZEUS to run gefs_config similar to other jobs
 ###########################################
 # Run gefs_config to get input parameters
 ###########################################
 if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
+  # RLW 20141008 modify to obtain and use version for vertical structure
+  . $basesource/nw$envir/*/versions/gefs.ver
+  . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
 ################# lines between these markers have been modified for dev end
-  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
-################# lines between these markers have been modified for dev begin
- else
-  . $basesource/nwdev/parm/gefs_config
- fi
-################# lines between these markers have been modified for dev end
+else
+  # RLW 20141008 modify to obtain and use version for vertical structure
+  . /nwprod/versions/gefs.ver
 fi
 
 # #### 05/05/99 ###############################
@@ -184,16 +181,16 @@ export PARMGLOBAL=$HOMEGLOBAL/parm
 # set PARMGLOBAL for test runs
 elif [[ $envir = para ]] || \
      [[ $envir = test ]]; then
-  PARMGLOBAL=/nw$envir/parm
+  PARMGLOBAL=/nw$envir/gefs.${gefs_ver}/parm
 else
-  PARMGLOBAL=$basesource/nw$envir/parm
+  PARMGLOBAL=$basesource/nw$envir/gefs.${gefs_ver}/parm
 fi
 ###teste
-
 
 ##############################
 # Set up the UTILITIES
 ##############################
+export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs.${gefs_ver}}
 export utilscript=/nwprod/util/ush
 #DHOU 04/05/2012 for ZEUS
  if [[ $gefsmachine = zeus ]]; then
@@ -260,13 +257,17 @@ echo set parameters using gefs.parm
 ###testb
 if [[ $envir = prod ]]; then
 ###teste
-. $PARMGLOBAL/gefs.parm
+  #. $PARMGLOBAL/gefs.parm
+  # RLW 20141008 modify to obtain and use version for vertical structure
+  . /nw$envir/gefs.${gefs_ver}/parm/gefs.parm
 ###testb
 elif [[ $envir = para ]] || \
      [[ $envir = test ]]; then
-. /nw$envir/parm/gefs.parm
+  # RLW 20141008 modify to obtain and use version for vertical structure
+  . /nw$envir/gefs.${gefs_ver}/parm/gefs.parm
 else
-. $basesource/nw$envir/parm/gefs.parm
+  # RLW 20141008 modify to obtain and use version for vertical structure
+  . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs.parm
   if (( cyc == 00 )); then
   export fhmax=$fhmax00
   elif (( cyc == 06 )); then
@@ -383,21 +384,24 @@ do
   ###testb
   elif [[ $envir = para ]] || \
        [[ $envir = test ]]; then
-  sh /nw$envir/util/ush/extrkr.sh
+  # RLW 20141008 modify to obtain and use version for vertical structure
+  sh /nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
   else
-#    sh $basesource/nw$envir/util/ush/extrkr.sh
+#    sh $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
 #DHOU 01/19/2013, replace the line above with the following if-block for machine-specfic choice of ush script
    if [[ $gefsmachine = zeus ]]; then
-#   ls -lt $basesource/nw$envir/util/ush/extrkr.sh
+#   ls -lt $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
 #   echo DHOU ZEUSCHECK
-    sh $basesource/nw$envir/util/ush/extrkr.sh
-#   ls -lt $basesource/nw$envir/util/ush/extrkr.sh
+    # RLW 20141008 modify to obtain and use version for vertical structure
+    sh $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
+#   ls -lt $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
    elif [[ $gefsmachine = wcoss ]]; then
     sh ${utilscript}/extrkr.sh
 #   sh /nwprod/util/ush/extrkr.sh
-#  #sh $basesource/nw$envir/util/ush/extrkr.sh
+#  #sh $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
    else
-    sh $basesource/nw$envir/util/ush/extrkr.sh
+    # RLW 20141008 modify to obtain and use version for vertical structure
+    sh $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
    fi
   fi
   ###teste
@@ -414,12 +418,13 @@ do
        [[ $envir = test ]]; then
   sh /nw$envir/util/ush/extrkr.sh
   else
-    # sh $basesource/nw$envir/util/ush/extrkr.sh
+    # sh $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
     if [[ $gefsmachine = wcoss ]]; then
 #    /nwprod/util/ush/extrkr.sh
      sh ${utilscript}/extrkr.sh
     else
-     $basesource/nw$envir/util/ush/extrkr.sh
+      # RLW 20141008 modify to obtain and use version for vertical structure
+      $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
     fi
   fi
   ###teste

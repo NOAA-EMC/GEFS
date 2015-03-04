@@ -24,9 +24,27 @@ export fhmax=384
 export fhmaxh=384
 
 export fhmax00=384
-export fhmax06=384
-export fhmax12=384
-export fhmax18=384
+export fhmax06=06
+export fhmax12=06
+export fhmax18=06
+#RLW 20150204 remove abort if cycle is not yet defined
+case $cyc in
+  (00) fhmax=$fhmax00 ;;
+  (06) fhmax=$fhmax06 ;;
+  (12) fhmax=$fhmax12 ;;
+  (18) fhmax=$fhmax18 ;;
+  (*)
+    echo
+    echo UNDEFINED CYCLE cyc=$cyc
+    echo
+    #echo `date` $0 $* ABORT EXIT 6
+    #echo
+    #exit 6
+    echo unmodified fhmax=$fhmax
+  ;;
+esac
+export fhmax
+
 
 export fhmaxh=$fhmax
 # For Extended forecast from 384-840 hours
@@ -210,21 +228,22 @@ if [[ $envir = dev ]]; then
   export srefboundary=yes
   export srefboundary=no
   export fhmax00=384     # 00Z fcst only
-# # 00Z long forecasts only
-# export fhmax00=384
-# export fhmax06=06
-# export fhmax12=06
-# export fhmax18=06
 # # cycling forecasts only
   export fhmax00=06
   export fhmax06=06
   export fhmax12=06
   export fhmax18=06
+# long forecasts for all cycles
 
   export fhmax00=384
   export fhmax06=384
   export fhmax12=384
   export fhmax18=384
+# # 00Z long forecasts only
+  export fhmax00=384
+  export fhmax06=06
+  export fhmax12=06
+  export fhmax18=06
 
  
 #DHOU 08/05/2010, add this block to modify these realed variables
@@ -271,14 +290,15 @@ if [[ $envir = dev ]]; then
   fi
 
   export gfssource=dev
-  export gfssource=prod
   export gfssource=para
+  export gfssource=prod
   case $gfsgribedition in
     (1)
       export gfssource=prod
     ;;
     (2)
       export gfssource=para
+      export gfssource=prod
     ;;
   esac
 

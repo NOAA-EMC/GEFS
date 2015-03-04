@@ -18,21 +18,18 @@ export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 # THE VARIOUS ENSEMBLE PERTURBED MEMBERS.  
 # ##############################################
 
-#DHOU 04/06/2012 Added this block for ZEUS to run gefs_config similar to other jobs
 ###########################################
 # Run gefs_config to get input parameters
 ###########################################
 if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
+  # RLW 20141008 modify to obtain and use version for vertical structure
+  . $basesource/nw$envir/*/versions/gefs.ver
+  . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
 ################# lines between these markers have been modified for dev end
-  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
-################# lines between these markers have been modified for dev begin
- else
-  . $basesource/nwdev/parm/gefs_config
- fi
-################ lines between these markers have been modified for dev end
+else
+  # RLW 20141008 modify to obtain and use version for vertical structure
+  . /nwprod/versions/gefs.ver
 fi
 
 # #############################################
@@ -97,13 +94,16 @@ fi
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMEGLOBAL=/nw${envir}
+export HOMEGLOBAL=/nw${envir}/
+export HOMEgefs=/nw${envir}/gefs.${gefs_ver}/
 if [[ $envir = dev ]]; then
 #DHOU 04/13/2012, 01/20/2013 Added cwthis block1  for ZEUS/WCOSS
- if [[ $gefsmachine = zeus ]]; then
-export HOMEGLOBAL=$HOMEglobal
- fi
+  if [[ $gefsmachine = zeus ]]; then
+    export HOMEGLOBAL=$HOMEglobal
+  fi
+  HOMEgefs=$basesource/$HOMEgefs
 fi
+export PARMgefs=$HOMEgefs/parm
 export EXECGLOBAL=$HOMEGLOBAL/exec
 export USHGLOBAL=$HOMEGLOBAL/ush
 export FIXGLOBAL=$HOMEGLOBAL/fix
@@ -114,8 +114,9 @@ if [[ $envir = dev ]]; then
 # export PARMGLOBAL=$HOMEGLOBAL/parm
   export PARMGLOBAL=$basesource/nw${envir}/parm
   if [[ $gefsmachine = wcoss ]]; then
-  #export FIXGLOBAL=$HOMEglobal/fix
-   export FIXGLOBAL=$basesource/nw${envir}/fix
+    #export FIXGLOBAL=$HOMEglobal/fix
+    # RLW 20141008 modify to obtain and use version for vertical structure
+    export FIXGLOBAL=$basesource/nw${envir}/gefs.${gefs_ver}/fix
   fi
 fi
 ################# lines between these markers have been modified for dev end
@@ -196,7 +197,7 @@ export SLEEP_INT=5
 echo set parameters using gefs.parm
 ##############################################
 
-. $PARMGLOBAL/gefs.parm
+. $PARMgefs/gefs.parm
 
 ####################################
 # Specify Forecast Hour Range
@@ -217,10 +218,10 @@ if [[ $envir = dev ]]; then
 #DHOU 04/13/2012 Added 1 line for ZEUS
  if [[ $gefsmachine = zeus ]]; then
      exectrkdir=$HOMEglobal/util/exec
-    $basesource/nw$envir/util/ush/ens_trak_ave.sh
+    $basesource/nw$envir/gefs.${gefs_ver}/util/ush/ens_trak_ave.sh
  elif  [[ $gefsmachine = wcoss ]]; then
-     exectrkdir=$basesource/nw$envir/util/exec
-    $basesource/nw$envir/util/ush/ens_trak_ave.sh
+     exectrkdir=$basesource/nw$envir/gefs.${gefs_ver}/util/exec
+    $basesource/nw$envir/gefs.${gefs_ver}/util/ush/ens_trak_ave.sh
  else
   ${utilscript}/ens_trak_ave.sh
  fi

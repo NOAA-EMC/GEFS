@@ -317,13 +317,13 @@ echo baseoutput=$baseoutput
 echo baseinitarch=$baseinitarch
 echo basetmp=$basetmp
 
-jobdir=$basesource/nw$envir/gefs.${model_ver}/jobs
+jobdir=$basesource/nw$envir/gefs.${gefs_ver}/jobs
 echo jobdir=$jobdir
 
-controldir=$basesource/nw$envir/gefs.${model_ver}/control
+controldir=$basesource/nw$envir/gefs.${gefs_ver}/control
 echo controldir=$controldir
 
-parmdir=$basesource/nw$envir/gefs.${model_ver}/parm
+parmdir=$basesource/nw$envir/gefs.${gefs_ver}/parm
 echo parmdir=$parmdir
 
 echo
@@ -1562,7 +1562,8 @@ case $taskname in
   if [[ $gefsmachine = wcoss ]]; then                       
      if [[ $fcstjoblength = long ]]; then
 #      (( taskspermem = 96 ))
-       (( taskspermem = 100 ))
+#      (( taskspermem = 100 ))
+       (( taskspermem = 80 ))
      else  
        (( taskspermem = 32 ))
      fi  
@@ -1669,7 +1670,8 @@ case $taskname in
        taskspernode=12
   fi
   if [[ $gefsmachine = wcoss ]]; then                       
-       (( taskspermem = 48 ))
+#      (( taskspermem = 48 ))
+       (( taskspermem = 32 ))
        parallel_threads=1
        task_affinity="core(1)"
        (( taskspernode = 16 / parallel_threads ))

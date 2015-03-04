@@ -24,8 +24,8 @@ export WGRIB=${EXECUTIL}/wgrib
 export WGRIB2=${EXECUTIL}/wgrib2
 export COPYGB=$EXECUTIL/copygb
 export COPYGB2=$EXECUTIL/copygb2
-#export CNVGRIB=${EXECUTIL}/cnvgrib
-export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
+#XXW export CNVGRIB=${EXECUTIL}/cnvgrib21_gfs
+export CNVGRIB=/nwpara/util/exec/cnvgrib21_gfs
 ################################################## RLW 20110722 CNVGRIB TEMPORARY
 #export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib
 ################################################## RLW 20110722 CNVGRIB TEMPORARY
@@ -110,7 +110,7 @@ then
 
    $ENSADD $e1 $e2 pgbafile pgbaifile epgbafile
    mv epgbafile pgbafile
-   $CNVGRIB -g12 -p40 pgbafile pgbafile-grb2
+   $CNVGRIB -g12 -p40 -nv pgbafile pgbafile-grb2
    mv pgbafile-grb2 pgb2afile
 
    #
@@ -281,7 +281,7 @@ do
  
    $ENSADD $e1 $e2 pgbafile pgbaifile epgbafile
    mv epgbafile pgbafile
-   $CNVGRIB -g12 -p40 pgbafile pgbafile-grb2
+   $CNVGRIB -g12 -p40 -nv pgbafile pgbafile-grb2
    mv pgbafile-grb2 pgb2afile
 
     if [[ "$addgrb1id" = "yes" ]]; then
@@ -330,7 +330,7 @@ do
 
    $ENSADD $e1 $e2 pgbafile.2 pgbaifile.2 epgbafile.2
    mv epgbafile.2 pgbafile.2
-   $CNVGRIB -g12 -p40 pgbafile.2 pgbafile-grb2
+   $CNVGRIB -g12 -p40 -nv pgbafile.2 pgbafile-grb2
    mv pgbafile-grb2 pgb2afile.2
 
       if [[ "$addgrb1id" = "yes" ]]; then

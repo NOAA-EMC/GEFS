@@ -262,12 +262,12 @@ ls -al | grep -e finn -e finp
 ###testb
 if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 ###teste
-# RLW 20141008 modify to obtain and user version for vertical structure
-export exe_dir=/nw${envir}/gefs.${model_ver}/exec
+# RLW 20141008 modify to obtain and use version for vertical structure
+export exe_dir=/nw${envir}/gefs.${gefs_ver}/exec
 ###testb
 else
-  # RLW 20141008 modify to obtain and user version for vertical structure
-  export exe_dir=$basesource/nw${envir}/gefs.${model_ver}/exec
+  # RLW 20141008 modify to obtain and use version for vertical structure
+  export exe_dir=$basesource/nw${envir}/gefs.${gefs_ver}/exec
 fi
 ###teste
 if [[ $parallelinit = no ]]; then
@@ -283,13 +283,13 @@ cp -f  $FIXGLOBAL/gefs.geogr.monthly  fort.48
 echo using mask of $FIXGLOBAL/gefs.geogr.monthly
 ###testb
 elif [[ $envir = para ]] || [[ $envir = test ]]; then
-# RLW 20141008 modify to obtain and user version for vertical structure
-cp -f  /nw${envir}/gefs.${model_ver}/fix/gefs.geogr.monthly  fort.48
-echo using mask of /nw${envir}/gefs.${model_ver}/fix/gefs.geogr.monthly
+# RLW 20141008 modify to obtain and use version for vertical structure
+cp -f  /nw${envir}/gefs.${gefs_ver}/fix/gefs.geogr.monthly  fort.48
+echo using mask of /nw${envir}/gefs.${gefs_ver}/fix/gefs.geogr.monthly
 else
-# RLW 20141008 modify to obtain and user version for vertical structure
-cp -f  $basesource/nw${envir}/gefs.${model_ver}/fix/gefs.geogr.monthly  fort.48
-echo using mask of $basesource/$nw${envir}/gefs.${model_ver}/fix/gefs.geogr.monthly
+# RLW 20141008 modify to obtain and use version for vertical structure
+cp -f  $basesource/nw${envir}/gefs.${gefs_ver}/fix/gefs.geogr.monthly  fort.48
+echo using mask of $basesource/$nw${envir}/gefs.${gefs_ver}/fix/gefs.geogr.monthly
 fi
 ###teste
 # set env variables for running paralell version of ET code

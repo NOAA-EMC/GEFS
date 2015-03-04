@@ -38,13 +38,13 @@ then
 ################# lines between these markers have been modified for dev begin
  else
 # echo $jobscript =jobscript #DHOU 03/07/2012
-  # RLW 20141008 modify to obtain and user version for vertical structure
+  # RLW 20141008 modify to obtain and use version for vertical structure
   . $basesource/nw$envir/*/versions/gefs.ver
-  . $basesource/nw$envir/gefs.${model_ver}/parm/gefs_config
+  . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
  fi
 ################# lines between these markers have been modified for dev end
 else
-  # RLW 20141008 modify to obtain and user version for vertical structure
+  # RLW 20141008 modify to obtain and use version for vertical structure
   . /nwprod/versions/gefs.ver
 fi
 
@@ -176,13 +176,13 @@ fi
 if [[ $envir = prod ]]; then
 ###teste
 #export HOMEGLOBAL=/nw${envir}
-# RLW 20141008 modify to obtain and user version for vertical structure
-export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}/gefs.${model_ver}}
+# RLW 20141008 modify to obtain and use version for vertical structure
+export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}/gefs.${gefs_ver}}
 ###testb
 else
 #  export HOMEGLOBAL=/nwprod
-  # RLW 20141008 modify to obtain and user version for vertical structure
-  export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod/gefs.${model_ver}}
+  # RLW 20141008 modify to obtain and use version for vertical structure
+  export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod/gefs.${gefs_ver}}
 fi
 ###teste
 #DHOU 03/29/2012 commented out  the following 3 blocks for ZEUS
@@ -238,13 +238,13 @@ if [[ $envir = prod ]]; then
 ###testb
 elif [[ $envir = para ]] || \
      [[ $envir = test ]]; then
-  # RLW 20141008 modify to obtain and user version for vertical structure
-. /nw$envir/gefs.${model_ver}/parm/gefs.parm
-. /nw$envir/gefs.${model_ver}/parm/gefs_init.parm
+  # RLW 20141008 modify to obtain and use version for vertical structure
+. /nw$envir/gefs.${gefs_ver}/parm/gefs.parm
+. /nw$envir/gefs.${gefs_ver}/parm/gefs_init.parm
 else
-  # RLW 20141008 modify to obtain and user version for vertical structure
-. $basesource/nw$envir/gefs.${model_ver}/parm/gefs.parm
-. $basesource/nw$envir/gefs.${model_ver}/parm/gefs_init.parm
+  # RLW 20141008 modify to obtain and use version for vertical structure
+. $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs.parm
+. $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_init.parm
 ###added for zeus (kate)
 #. $basesource/nw$envir/parm/gefs_config
 fi
@@ -471,12 +471,12 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
 ###teste
-# RLW 20141008 modify to obtain and user version for vertical structure
-/nw${envir}/gefs.${model_ver}/scripts/exgefs_init_separate.sh.ecf
+# RLW 20141008 modify to obtain and use version for vertical structure
+/nw${envir}/gefs.${gefs_ver}/scripts/exgefs_init_separate.sh.ecf
 ###testb
 else
-# RLW 20141008 modify to obtain and user version for vertical structure
-$basesource/nw${envir}/gefs.${model_ver}/scripts/exgefs_init_separate.sh.ecf
+# RLW 20141008 modify to obtain and use version for vertical structure
+$basesource/nw${envir}/gefs.${gefs_ver}/scripts/exgefs_init_separate.sh.ecf
 fi
 ###teste
 #############################################################

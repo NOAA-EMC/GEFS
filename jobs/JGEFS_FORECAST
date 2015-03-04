@@ -33,13 +33,13 @@ then
 ################# lines between these markers have been modified for dev begin
  else
 # echo $jobscript =jobscript #DHOU 03/07/2012
-   # RLW 20141008 modify to obtain and user version for vertical structure
+   # RLW 20141008 modify to obtain and use version for vertical structure
    . $basesource/nw$envir/*/versions/gefs.ver
-   . $basesource/nw$envir/gefs.${model_ver}/parm/gefs_config
+   . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
  fi
 ################# lines between these markers have been modified for dev end
 else
-  # RLW 20141008 modify to obtain and user version for vertical structure
+  # RLW 20141008 modify to obtain and use version for vertical structure
   . /nwprod/versions/gefs.ver
 fi
 
@@ -174,8 +174,8 @@ else                             ### For Operations
   export FIXGLOBAL=$HOMEGLOBAL/fix
   export PARMGLOBAL=$HOMEGLOBAL/parm
 
-  # RLW 20141008 modify to obtain and user version for vertical structure
-  export HOMEgefs=/nw${envir}/gefs.${model_ver}}
+  # RLW 20141008 modify to obtain and use version for vertical structure
+  export HOMEgefs=/nw${envir}/gefs.${gefs_ver}}
   export EXECgefs=$HOMEgefs/exec
   export USHgefs=$HOMEgefs/ush
   export FIXgefs=$HOMEgefs/fix
@@ -332,12 +332,12 @@ fi
 #DHOU 20130203 nolified it
 if [[ "$RUN_ENVIR" = dev_V ]]; then
   if [[ $locfcstscript = local ]]; then
-    # RLW 20141008 modify to obtain and user version for vertical structure
-    export fcstscript=$basesource/gefs.${model_ver}/nw$envir/scripts/exglobal_fcst.sh.ecf
+    # RLW 20141008 modify to obtain and use version for vertical structure
+    export fcstscript=$basesource/gefs.${gefs_ver}/nw$envir/scripts/exglobal_fcst.sh.ecf
   fi
   if [[ $locfcstexec = local ]]; then
-    # RLW 20141008 modify to obtain and user version for vertical structure
-    export FCSTEXEC=$basesource/nw$envir/gefs.${model_ver}/exec/global_fcst
+    # RLW 20141008 modify to obtain and use version for vertical structure
+    export FCSTEXEC=$basesource/nw$envir/gefs.${gefs_ver}/exec/global_fcst
   fi
 fi
 
