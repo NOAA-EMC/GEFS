@@ -861,9 +861,10 @@ if [[ $nextflag = yes ]]; then
 #     ($jjjo00) jjjb=900 ;;
       ($jjjt00) jjjb=$jjja00 ;;
 
-      ($jjja00) jjjb=$jjja01;;
+# RLW 20150228 disable cqpf job
+      ($jjja01) jjjb=$jjja01;;
        
-      ($jjja01) 
+      ($jjja00) 
 	if [[ $runcyclingf = no ]]; then
 	  jjjb=900 
 	else
@@ -2532,7 +2533,7 @@ else
 
   d=
 
-  plnwges=$baseoutput/nwges/$envir/gefs.$PDY
+  plnwges=$baseoutput/nwges/$envir/gefs_legacy.$PDY
   d="$d $plnwges"
 
   if [[ $gfssource = para ]]; then
@@ -2544,7 +2545,7 @@ else
   fi
 # d="$d $plcomgfs"
 #DHOU 01/28/2013, remove this temporally 
-  plcomgens=$baseoutput/com/$NET/$envir/gefs.$PDY
+  plcomgens=$baseoutput/com/$NET/$envir/gefs_legacy.$PDY
   d="$d $plcomgens"
 
   for dir in $d

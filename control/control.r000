@@ -50,9 +50,9 @@ echo basetmp=$basetmp
   done
 
  done
- mkdir -p $inidir\/gefs.$mmdd\/00/init
- cp -pr $expdir\/gefs.$mmdd\/*sanl $inidir\/gefs.$mmdd\/00/init
- cp -pr $expdir\/gefs.$mmdd\/gec00*sfcanl $inidir\/gefs.$mmdd\/00/init
+ mkdir -p $inidir\/gefs_legacy.$mmdd\/00/init
+ cp -pr $expdir\/gefs.$mmdd\/*sanl $inidir\/gefs_legacy.$mmdd\/00/init
+ cp -pr $expdir\/gefs.$mmdd\/gec00*sfcanl $inidir\/gefs_legacy.$mmdd\/00/init
 
 echo after copy init files
 fi

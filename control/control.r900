@@ -25,9 +25,9 @@ if [[ -d $dircrontask ]]; then
     hhp=`echo $dtgprev | cut -c9-10`
     echo yyyymmddp=$yyyymmddp hhp=$hhp
     if (( hhp == 0 )); then
-      dirlist="nwges/dev/gefs.$yyyymmddp com/gens/dev/gefs.$yyyymmddp/$hhp/ensstat com/gens/dev/gefs.$yyyymmddp/$hhp/pgrba com/gens/dev/gefs.$yyyymmddp/$hhp/track"
+      dirlist="nwges/dev/gefs_legacy.$yyyymmddp com/gens/dev/gefs_legacy.$yyyymmddp/$hhp/ensstat com/gens/dev/gefs_legacy.$yyyymmddp/$hhp/pgrba com/gens/dev/gefs_legacy.$yyyymmddp/$hhp/track"
     else
-      dirlist="com/gens/dev/gefs.$yyyymmddp/$hhp/pgrba"
+      dirlist="com/gens/dev/gefs_legacy.$yyyymmddp/$hhp/pgrba"
     fi
     dirlist=
     rcm=0

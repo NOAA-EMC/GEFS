@@ -37,7 +37,7 @@ if (( $# == 3 )); then
       ;;
     esac
     if [[ -d $dirsource/sfcsig && -d $dirsource/track ]]; then
-      dirdest=$PTMP/$LOGNAME/o/$dest/com/gens/dev/gefs_legacy.$yyyymmdd/$hh
+      dirdest=$PTMP/$LOGNAME/o/$dest/com/gens/dev/gefs.$yyyymmdd/$hh
       if [[ -d $dirdest ]]; then
 	echo dirdest=$dirdest already exists
       else

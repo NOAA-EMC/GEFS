@@ -42,9 +42,9 @@ if (( $# >= 3 )); then
     if (( rc == 0 )); then
       dirlist="
 	$PTMP/$LOGNAME/o/$expid/com/output/dev/$yyyymmdd \
-	$PTMP/$LOGNAME/o/$expid/com/gens/dev/gefs_legacy.$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/com/gens/dev/gefs.$yyyymmdd \
 	$PTMP/$LOGNAME/o/$expid/nwdev/control/$yyyymmdd \
-	$PTMP/$LOGNAME/o/$expid/nwges/dev/gefs_legacy.$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/nwges/dev/gefs.$yyyymmdd \
 	$PTMP/$LOGNAME/o/$expid/tmpnwprd \
 	$STMP/$LOGNAME/o/$expid/tmpnwprd \
       "
@@ -105,9 +105,9 @@ if (( $# >= 3 )); then
     if (( rc == 0 )); then
       dirlist="
 	$PTMP/$LOGNAME/o/$expid/com/output/dev/$yyyymmdd \
-	$PTMP/$LOGNAME/o/$expid/com/gens/dev/gefs_legacy.$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/com/gens/dev/gefs.$yyyymmdd \
 	$PTMP/$LOGNAME/o/$expid/nwdev/control/$yyyymmdd \
-	$PTMP/$LOGNAME/o/$expid/nwges/dev/gefs_legacy.$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/nwges/dev/gefs.$yyyymmdd \
 	$PTMP/$LOGNAME/o/$expid/tmpnwprd \
 	$STMP/$LOGNAME/o/$expid/tmpnwprd \
       "
