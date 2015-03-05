@@ -897,8 +897,10 @@ if [[ $nextflag = yes ]]; then
         echo after the last prdgen job jjjb=$jjjb
       ;;
 
-      ($jjjg00) jjjb=$jjjg01 ;;
-      ($jjjg01) jjjb=$jjjf00 ;;
+      ($jjjg00) jjjb=$jjjg01 ;;     #job 92, go to 93
+      ($jjjg01) jjjb=$jjjg04 ;;     #job 93, go to 96
+      ($jjjg04) jjjb=$jjjg05 ;;     #job 96, go to 97
+      ($jjjg05) jjjb=$jjjf00 ;;     #job 97, go to 100
 #     ($jjjf00) jjjb=$jjjp00 ;;
       ($jjjf00) (( jjjb=jjjp00 + 1 )) ;; #to skip the restart copy job, e.g. in cycling only tests
 #     ($jjje00) jjjb=$jjjs00 ;;

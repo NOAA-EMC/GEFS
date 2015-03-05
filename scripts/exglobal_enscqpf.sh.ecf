@@ -95,12 +95,13 @@ set -x
 ###
 
 export EXECutil=${EXECutil}
+export EXECgrib=${EXECgrib}
 export NDATE=${NDATE:-${EXECutil}/ndate}
-export WGRIB=${WGRIB:-${EXECutil}/wgrib}
-export WGRIB2=${WGRIB2:-${EXECutil}/wgrib2}
-export GRBIDX=${GRBIDX:-${EXECutil}/grbindex}
-export GRB2IDX=${GRB2IDX:-${EXECutil}/grb2index}
-export CNVGRIB=${CNVGRIB:-${EXECutil/cnvgrib21_gfs}
+export WGRIB=${WGRIB:-${EXECgrib}/wgrib}
+export WGRIB2=${WGRIB2:-${EXECgrib}/wgrib2}
+export GRBINDEX=${GRBINDEX:-${EXECgrib}/grbindex}
+export GRB2INDEX=${GRB2INDEX:-${EXECgrib}/grb2index}
+export CNVGRIB=${CNVGRIB:-${EXECgrib/cnvgrib21_gfs}
 
 export CDATE=${PDY}${cyc}
 export YMDH=$CDATE  
@@ -277,8 +278,8 @@ $WGRIB precip_bf_pqpf.$YMDH -s > precip_bf_pqpfi.$YMDH
 if [ "$SENDCOM" = "YES" ]
 then
 
-   $GRB2IDX precip_bf.$YMDH.grib2      precip_bf.$YMDH.grib2.idx
-   $GRB2IDX precip_bf_pqpf.$YMDH.grib2 precip_bf_pqpf.$YMDH.grib2.idx
+   $GRB2INDEX precip_bf.$YMDH.grib2      precip_bf.$YMDH.grib2.idx
+   $GRB2INDEX precip_bf_pqpf.$YMDH.grib2 precip_bf_pqpf.$YMDH.grib2.idx
 #  $GBINDX precip_bf.$YMDH      precip_bfi.$YMDH
 #  $GBINDX precip_bf_pqpf.$YMDH precip_bf_pqpfi.$YMDH
    cp precip_bf.$YMDH           $COMOUT/enspost.${cycle}.prcp_24hbc

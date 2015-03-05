@@ -211,6 +211,7 @@ export addgrb1id=yes
 export makegrb1i=yes
 export makegrb2i=yes
 export makepgrb2a=yes
+export makepgrb2d=no
 #DHOU 03/26/2012 For ZEUS
 #export makegrb2i=no
 #export makepgrb2a=no

@@ -34,7 +34,8 @@ fi
 
 export HOMEgefs=${HOMEgefs}
 export HOMEgene=${HOMEgene}
-export HOMEutil=${HOMEutil:-/nwprod/util}
+export HOMEutil=${UTILROOT:-/nwprod2/util}
+export HOMEgrib=${GRIBROOT:-/nwprod2/util}
 
 # #### 05/05/99 ###############################
 # SETUP ENS POST PROCESSING VARIABLES
@@ -143,6 +144,7 @@ export COMIN=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
 export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
 
 export ensdir=$COMIN/$cyc/pgrb2ap5
+export ensdirb=$COMIN/$cyc/pgrb2bp5
 #export ensdir=/ensemble/noscrub/GEFS.2015/PGRB2/tfGb_20130912/pgrb2ap5
 export COM=$COMOUT/$cyc/genesis
 mkdir -m 775 -p $COM

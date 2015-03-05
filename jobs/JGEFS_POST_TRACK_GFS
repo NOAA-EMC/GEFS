@@ -34,7 +34,8 @@ fi
 
 export HOMEgefs=${HOMEgefs}
 export HOMEtrak=${HOMEtrak}
-export HOMEutil=${HOMEutil:-/nwprod/util}
+export HOMEutil=${HOMEROOT:-/nwprod2/util}
+export HOMEgrib=${GRIBROOT:-/nwprod2/util}
 
 # #### 05/05/99 ###############################
 # SETUP ENS POST PROCESSING VARIABLES

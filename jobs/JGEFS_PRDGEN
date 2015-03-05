@@ -12,7 +12,6 @@
 echo `date` $0 `date -u` begin
 
 set -xa
-export PS4='$SECONDS + '
 
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
 export gefsmachine=${gefsmachine:-wcoss}
@@ -40,11 +39,13 @@ fi
 
 export HOMEgefs=${HOMEgefs}
 export HOMEgsm=${HOMEgsm}
-export HOMEutil=${UTILROOT:-/nwprod/util}
-#export HOMEutil=${HOMEutil:-/nwprod/util}
+export HOMEutil=${UTILROOT:-/nwprod2/util}
+export HOMEgrib=${GRIBROOT:-/nwprod2/util}
 
-export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
+#export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
+export CNVGRIB=${CNVGRIB:-/nwprod2/util/exec/cnvgrib21_gfs}
 
+export PS4='$SECONDS + '
 date
 
 ####################################
@@ -119,13 +120,12 @@ export pgmerr=errfile
 # Set up the UTILITIES
 ####################################
 export EXECutil=$HOMEutil/exec
-export FIXutil=$HOMEutil/fix
 export USHutil=$HOMEutil/ush
-export utilscript=$USHutil
+export EXECgrib=$HOMEgrib/exec
 
 # Setup temporalreplacement of utilities 
-export CNVGRIB=/nco/sib/gribdev/util/exec/cnvgrib21_gfs
-export CNVGRIB=${CNVGRIB:-/$EXECutil/cnvgrib21_gfs}
+#export CNVGRIB=${CNVGRIB:-/$EXECgrib/cnvgrib21_gfs}
+export CNVGRIB=${CNVGRIB:-/nwprod2/util/exec/cnvgrib21_gfs}
 
 ##############################################
 echo set parameters using gefs.parm
@@ -180,13 +180,11 @@ mkdir -m 775 -p $COMOUT/$cyc/pgrba
 mkdir -m 775 -p $COMOUT/$cyc/pgrbalr
 mkdir -m 775 -p $COMOUT/$cyc/pgrbb
 mkdir -m 775 -p $COMOUT/$cyc/pgrbblr
-mkdir -m 775 -p $COMOUT/$cyc/pgrbd
 
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2a
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2alr
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2b
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2blr
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2d
 
 #mkdir -m 775 -p $COMOUT/$cyc/pgrbap5
 #mkdir -m 775 -p $COMOUT/$cyc/pgrbbp5
@@ -194,13 +192,17 @@ mkdir -m 775 -p $COMOUT/$cyc/pgrb2d
 
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2bp5
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2dp5
 
 if test "$CREATE_TIGGE" = 'YES'
 then
  mkdir -m 775 -p $COMOUT/$cyc/pgrb2c
-#mkdir -m 775 -p $COMOUT/$cyc/pgrbcp5
- mkdir -m 775 -p $COMOUT/$cyc/pgrb2cp5
+fi
+
+if test "$makepgrb2d" = 'yes'
+then
+ mkdir -m 775 -p $COMOUT/$cyc/pgrbd
+ mkdir -m 775 -p $COMOUT/$cyc/pgrb2d
+ mkdir -m 775 -p $COMOUT/$cyc/pgrb2dp5
 fi
 
 mkdir -m 775 -p $COMOUT/$cyc/track
@@ -262,7 +264,7 @@ case $FORECAST_SEGMENT in
      (*) 
        export DOANALYSIS=YES;
        export SHOUR=00;
-       export FHINC=06;;
+       export FHINC=03;;
     esac  
    fi
     if [[ $fcstlong = true ]]; then

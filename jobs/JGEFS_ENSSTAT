@@ -19,7 +19,6 @@ export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 export machine=${gefsmachine:-wcoss}
 export GRIBVERSION=${GRIBVERSION:-grib2}
-export gefsgribedition=${gefsgribedition:-2}
 
 ###########################################
 # Run gefs_config to get input parameters
@@ -39,9 +38,11 @@ else
 fi
 
 export HOMEgefs=${HOMEgefs}
-export HOMEutil=${UTILROOT:-/nwprod/util}
-#export HOMEutil=${HOMEutil:-/nwprod/util}
+export HOMEutil=${UTILROOT:-/nwprod2/util}
+export HOMEgrib=${GRIBROOT:-/nwprod2/util}
 
+#export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
+export CNVGRIB=${CNVGRIB:-/nwprod2/util/exec/cnvgrib21_gfs}
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
@@ -103,12 +104,11 @@ export REDERR='2>'
 # Set up the UTILITIES
 ##############################
 export EXECutil=$HOMEutil/exec
-export FIXutil=$HOMEutil/fix
 export USHutil=$HOMEutil/ush
-export utilscript=${USHutil}
+export EXECgrib=$HOMEgrib/exec
 
 #export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
-export CNVGRIB=${CNVGRIB:-/$EXECutil/cnvgrib21_gfs}
+export CNVGRIB=${CNVGRIB:-/nwprod2/util/exec/cnvgrib21_gfs}
 
 ##############################################
 echo set parameters using gefs.parm

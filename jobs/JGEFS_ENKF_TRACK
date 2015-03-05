@@ -177,14 +177,14 @@ export SLMASK=/dev/null
 ##############################################
 
  if [[ "$gfssource" = para ]]; then
-    export GFSCOMIN=$COMROOT/com/gfs/para/gfs.$PDY 
-    export ENKFCOMIN=$COMROOT/com/gfs/para/enkf. 
+    export GFSCOMIN=$COMROOT/gfs/para/gfs.$PDY 
+    export ENKFCOMIN=$COMROOT/gfs/para/enkf. 
   elif [[ "$gfssource" = prod ]]; then
-    export GFSCOMIN=$COMROOT/com/gfs/prod/gfs.$PDY 
-    export ENKFCOMIN=$COMROOT/com/gfs/prod/enkf. 
+    export GFSCOMIN=$COMROOT/gfs/prod/gfs.$PDY 
+    export ENKFCOMIN=$COMROOT/gfs/prod/enkf. 
   else
-    export GFSCOMIN=$COMROOT/com/gfs/prod/gfs.$PDY
-    export ENKFCOMIN=$COMROOT/com/gfs/prod/enkf. 
+    export GFSCOMIN=$COMROOT/gfs/prod/gfs.$PDY
+    export ENKFCOMIN=$COMROOT/gfs/prod/enkf. 
   fi
 
 ###

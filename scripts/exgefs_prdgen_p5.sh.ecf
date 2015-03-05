@@ -1,4 +1,3 @@
-
 export VERBOSE=yes
 sname=`basename $0`
 echo `date` $sname $member begin
@@ -20,7 +19,7 @@ na=`basename $0`
 
 cd $DATA
 
-$utilscript/setup.sh
+$USHutil/setup.sh
 
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"

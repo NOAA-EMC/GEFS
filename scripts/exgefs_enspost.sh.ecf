@@ -20,6 +20,7 @@ echo "Modified by: Richard Wobus to add more variables ---- MARCH 2004"
 echo "Modified by: Richard Wobus to add 192hr zsfc  ---- August 2004"
 echo "Modified by: Richard Wobus reorganize by hour  ---- March 2006"
 echo "Modified by: Richard Wobus separate enspost from avg/spr ---- June 2011"
+echo "Modified by: Bo Cui and Dingchen Hou change to grib2 operations  ---- Nov. 2014":w
 
 ### need pass the values of CYC, YMD, DATA, COMIN and COMOUT
 
@@ -44,13 +45,13 @@ export iens_msg=1
 # Define Script/Exec Variables
 #####################################
 
-export WGRIB=${WGRIB:-$EXECutil/wgrib}
-export GRBIDX=${GRBIDX:-$EXECutil/grbindex}
-export COPYGB=${COPYGB:-$EXECutil/copygb}
-export WGRIB2=${WGRIB2:-$EXECutil/wgrib2}
-export GRB2IDX=${GRB2IDX:-$EXECutil/grb2index}
-export COPYGB2=${COPYGB2:-$EXECutil/copygb2}
-export CNVGRIB=${CNVGRIB:-$EXECutil/cnvgrib21_gfs}
+export WGRIB=${WGRIB:-$EXECgrib/wgrib}
+export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
+export COPYGB=${COPYGB:-$EXECgrib/copygb}
+export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
+export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
+export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
+export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
 
 export ENSPPF=$USHgefs/global_ensppf.sh
 export ENSSTAT=$EXECgefs/gefs_ensstat
@@ -111,10 +112,15 @@ echo
 SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
 export fh=$SHOUR
+#export  (( fh = SHOUR ))
 if test $fh -lt 10 -a $fh -gt 0
 then
    export fhr="0$fh"
 fi
+#if test $fh -lt 100 -a $fh -gt 0
+#then
+#   export fhr="0$fh"
+#fi
 
 ############################################################
 # Loop Through the Post Forecast Files
@@ -403,8 +409,8 @@ do
   $WGRIB2 ensstat_grb2${ext_h}.$cycle.${file} -s > ensstat_grb2${ext_h}.$cycle.${file}.idx
   $CNVGRIB -g21 enspost_grb2${ext_h}.$cycle.${file} enspost${ext_h}.$cycle.${file}
   $CNVGRIB -g21 ensstat_grb2${ext_h}.$cycle.${file} ensstat${ext_h}.$cycle.${file}
-  $GRBIDX enspost${ext_h}.$cycle.${file}   enspost${ext_h}.$cycle.${file}i
-  $GRBIDX ensstat${ext_h}.$cycle.${file}   ensstat${ext_h}.$cycle.${file}i
+  $GRBINDEX enspost${ext_h}.$cycle.${file}   enspost${ext_h}.$cycle.${file}i
+  $GRBINDEX ensstat${ext_h}.$cycle.${file}   ensstat${ext_h}.$cycle.${file}i
 
   if [ "$SENDCOM" = "YES" ]
   then
@@ -449,7 +455,7 @@ then
    $CNVGRIB -g21 ensppf${ext_h}.$PDY$cyc.grib2 ensppf${ext_h}.$PDY$cyc
    ls -lt ensppf${ext_h}.$PDY$cyc.grib2 ensppf${ext_h}.$PDY$cyc
    $WGRIB2 -s ensppf${ext_h}.$PDY$cyc.grib2
-   $GRBIDX ensppf${ext_h}.$PDY$cyc ensppf${ext_h}i.$PDY$cyc
+   $GRBINDEX ensppf${ext_h}.$PDY$cyc ensppf${ext_h}i.$PDY$cyc
 
   # check for missing or zero-length output files
 
@@ -492,7 +498,7 @@ for file in pqpf pqrf pqff pqsf pqif
 do
    $CNVGRIB -g21 $DATA/$file $DATA/$file\_grb1
    $WGRIB2 $DATA/$file -s >$DATA/$file\.idx
-   $GRBIDX $DATA/$file\_grb1 $DATA/${file}i_grb1
+   $GRBINDEX $DATA/$file\_grb1 $DATA/${file}i_grb1
    if [ $SENDCOM = "YES" ]
    then
      mv $DATA/${file} $COMOUT/$cyc/ensstat/ensstat_grb2${ext_h}.$cycle.$file

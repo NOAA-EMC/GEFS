@@ -23,18 +23,18 @@ fhr=$fhr
 grid=$grid2p5
 
 export WGRIB=${WGRIB:-$EXECutil/wgrib}
-export GRBIDX=${GRBIDX:-$EXECutil/grbindex}
+export GRBINDEX=${GRBINDEX:-$EXECutil/grbindex}
 export COPYGB=${COPYGB:-$EXECutil/copygb}
 export WGRIB2=${WGRIB2:-$EXECutil/wgrib2}
-export GRB2IDX=${GRB2IDX:-$EXECutil/grb2index}
+export GRB2INDEX=${GRB2INDEX:-$EXECutil/grb2index}
 export COPYGB2=${COPYGB2:-$EXECutil/copygb2}
 export CNVGRIB=${CNVGRIB:-$EXECutil/cnvgrib21}
 
 echo settings in $0 gefsmachine=$gefsmachine
 echo settings in $0 WGRIB=$WGRIB
 echo settings in $0 WGRIB2=$WGRIB2
-echo settings in $0 GRBIDX=$GRBIDX
-echo settings in $0 GRB2IDX=$GRB2IDX
+echo settings in $0 GRBINDEX=$GRBINDEX
+echo settings in $0 GRB2INDEX=$GRB2INDEX
 echo settings in $0 COPYGB=$COPYGB
 echo settings in $0 COPYGB2=$COPYGB2
 echo settings in $0 CNVGRIB=$CNVGRIB
@@ -99,7 +99,6 @@ else
    fi
    set -x
 $WGRIB2 -s pgb2afile.$ffhr.2$cfsuffix > pgb2afile.$ffhr.2${cfsuffix}.idx
-#$GRB2IDX pgb2afile.$ffhr.2$cfsuffix pgb2afile.$ffhr.2$cfsuffix.idx
 fi
 
 #######################################
@@ -117,7 +116,6 @@ else
        grep -v -F -f $parmlist | \
        grep -v -F $excludestring | \
        $WGRIB2 pgb2file.$ffhr.2$cfsuffix -s -i -grib pgb2bfile.$ffhr.2$cfsuffix
-#  $GRB2IDX pgbbfile.$ffhr.2$cfsuffix pgbbifile.$ffhr.2$cfsuffix
    $WGRIB2 -s pgb2bfile.$ffhr.2$cfsuffix > pgb2bfile.$ffhr.2${cfsuffix}.idx
    set -x
 fi
@@ -189,13 +187,13 @@ else
   FILEALR=$COMIN/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix
 
   $CNVGRIB -g21 $FILEALR pgba.$ffhr.2$cfsuffix
-  $GRBIDX pgba.$ffhr.2$cfsuffix pgbai.$ffhr.2$cfsuffix
+  $GRBINDEX pgba.$ffhr.2$cfsuffix pgbai.$ffhr.2$cfsuffix
 # $WGRIB -s pgba.$ffhr.2$cfsuffix >pgba.$ffhr.2${cfsuffix}.idx
 # $ENSADD $e1 $e2 pgba.$ffhr.2$cfsuffix pgbai.$ffhr.2$cfsuffix epgba.$ffhr.2$cfsuffix
   if [[ "$addgrb1id" = "yes" ]]; then
     mv epgba.$ffhr.2$cfsuffix pgba.$ffhr.2$cfsuffix
     if [[ "$makegrb1i" = "yes" ]]; then
-      $GRBIDX pgbafile.$ffhr.2$cfsuffix pgbai.$ffhr.2$cfsuffix
+      $GRBINDEX pgbafile.$ffhr.2$cfsuffix pgbai.$ffhr.2$cfsuffix
     fi
   fi  
 
@@ -233,7 +231,7 @@ else
   FILEBLR=$COMIN/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix
 
   $CNVGRIB -g21 $FILEBLR pgbbfile.$ffhr.2$cfsuffix
-  $GRBIDX pgbbfile.$ffhr.2$cfsuffix pgbbi.$ffhr.2$cfsuffix
+  $GRBINDEX pgbbfile.$ffhr.2$cfsuffix pgbbi.$ffhr.2$cfsuffix
 
   if test "$SENDCOM" = 'YES'
   then

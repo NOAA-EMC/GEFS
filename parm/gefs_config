@@ -14,8 +14,13 @@ then
   export HOMEgefs=$HOMEDIR/gefs.v11.0.x
   export HOMEgefs=$basesource/nwdev
 
-  export HOMEgsm=$HOMEDIR/gsm.v12.0.x
-  export HOMEpost=$HOMEDIR/ncep_post.v5.0.x
+# export HOMEgsm=$HOMEDIR/gsm.v12.0.x
+  export HOMEgsm=$HOMEDIR/gsm.v12.0.2
+# export HOMEpost=$HOMEDIR/ncep_post.v5.0.x
+# export HOMEpost=$HOMEDIR/ncep_post.v5.0.y
+# export HOMEpost=$HOMEDIR/ncep_post.v5.0.z
+# export HOMEpost=$HOMEDIR/ncep_post.v5.0.u
+  export HOMEpost=$HOMEDIR/ncep_post.v5.1.0
   export HOMEenkf=$HOMEDIR/enkf.v2.0.1
   export HOMEtrak=$HOMEDIR/ens_tracker.v1.0.0
   export HOMEgene=$HOMEDIR/ens_genesis.v1.0.0
@@ -29,6 +34,7 @@ then
 
 #NCO required variable
   export UTILROOT=/nwprod/util
+  export GRIBROOT=/nwprod/util  
   export HOMEutil=$UTILROOT
 
   export NWROOT=/nw$envir 

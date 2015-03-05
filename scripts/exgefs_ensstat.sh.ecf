@@ -20,6 +20,7 @@ echo "Modified by: Richard Wobus to add more variables ---- MARCH 2004"
 echo "Modified by: Richard Wobus to add 192hr zsfc  ---- August 2004"
 echo "Modified by: Richard Wobus reorganize by hour  ---- March 2006"
 echo "Modified by: Richard Wobus separate avg/spr from ensstat job  ---- June 2011"
+echo "Modified by: Bo Cui and Dingchen Hou change to grib2 operations  ---- Nov. 2014"
 
 ### need pass the values of CYC, YMD, DATA, COMIN and COMOUT
 
@@ -44,13 +45,13 @@ export iens_msg=1
 # Define Script/Exec Variables
 #####################################
 
-export WGRIB=${WGRIB:-$EXECutil/wgrib}
-export GRBIDX=${GRBIDX:-$EXECutil/grbindex}
-export COPYGB=${COPYGB:-$EXECutil/copygb}
-export WGRIB2=${WGRIB2:-$EXECutil/wgrib2}
-export GRB2IDX=${GRB2IDX:-$EXECutil/grb2index}
-export COPYGB2=${COPYGB2:-$EXECutil/copygb2}
-export CNVGRIB=${CNVGRIB:-$EXECutil/cnvgrib21_gfs}
+export WGRIB=${WGRIB:-$EXECgrib/wgrib}
+export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
+export COPYGB=${COPYGB:-$EXECgrib/copygb}
+export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
+export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
+export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
+export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
 
 export ENSPPF=$USHgefs/global_ensppf.sh
 export ENSSTAT=$EXECgefs/gefs_ensstat
@@ -81,6 +82,7 @@ echo
 SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
 export fh=$SHOUR
+#export (( fh = SHOUR ))
 if test $fh -lt 10 -a $fh -gt 0
 then
    export fh="0$fh"
@@ -107,41 +109,35 @@ do
     if [[ $res = p5 ]]; then
      makepgrba="no"
      makegrb1i="no"
+     if test $fh -lt 100 
+     then
+      export fh="0$fh"
+     fi
     fi 
 
-#   if [[ $res = lr ]]; then
-#     EXT=".2"
-#     lr=lr
-#     nenspost=0
-#     lfm=$lfmlr
-#   else
-#     EXT=
-#     lr=
-#     nenspost=0
-#     lfm=$lfmhr
-#   fi
-    
     nenspost=0
     case $res in
-      lr)
+      lr)    #2.5 degree grid
         EXT=".2"
         FXT=
         lr=lr
         lfm=$lfmlr
        ;;
-      hr)
+      hr)    #1.0 degree grid
         EXT=
         FXT=
         lr=
         lfm=$lfmhr
        ;;
-      p5)
+      p5)   #0.5 degree gid
         EXT=
-        FXT="p5"
+        FXT=.0$res\0.       #".0p50."
         lr=p5
         lfm=$lfmp5
       ;;
     esac
+# Note: These variables, combined together, determins names of pgrb2 directories and the files    
+# Example: file=$COMIN/$cyc/pgrb2a$lr/ge${mem}.${cycle}.pgrb2a$FXT\f$fh$EXT$cfsuffix
 
     ###############################
     # Start Looping for the
@@ -332,7 +328,7 @@ do
            $WGRIB2 -s ${run}.${cycle}.pgrb2a$FXT\f$fh$EXT$cfsuffix >${run}.${cycle}.pgrb2a$FXT\f$fh$EXT${cfsuffix}.idx
         fi
 	if [[ "$makegrb1i" = "yes" ]]; then
-	  $GRBIDX ${run}.${cycle}.pgrba$FXT\f$fh$EXT$cfsuffix ${run}.${cycle}.pgrba$FXT\if$fh$EXT$cfsuffix
+	  $GRBINDEX ${run}.${cycle}.pgrba$FXT\f$fh$EXT$cfsuffix ${run}.${cycle}.pgrba$FXT\if$fh$EXT$cfsuffix
 	fi
 	if [[ -s ${run}.${cycle}.pgrba$FXT\f$fh$EXT$cfsuffix ]]; then
 	  mv ${run}.${cycle}.pgrba$FXT\f$fh$EXT$cfsuffix $COMOUT/$cyc/pgrba$lr
@@ -386,6 +382,12 @@ do
   then
     export fh="0$fh"
   fi
+#   if [[ $res = p5 ]]; then
+# if test $fh -lt 100 
+# then
+#   export fh="0$fh"
+# fi
+#   fi
 
 done    #fhr
 

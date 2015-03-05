@@ -12,7 +12,6 @@ set -x
 echo `date` $0 `date -u` begin
 
 set -xa
-####################################
 
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
 export gefsmachine=${gefsmachine:-wcoss}
@@ -48,7 +47,7 @@ export HOMEgefs=${HOMEgefs}
 export HOMEgsm=${HOMEgsm}
 export HOMEpost=${HOMEpost}
 export HOMEutil=${UTILROOT:-/nwprod/util}
-#export HOMEutil=${HOMEutil:-/nwprod/util}
+export HOMEgrib=${GRIBROOT:-/nwprod/util}
 
 export PS4='$SECONDS + '
 date
@@ -117,6 +116,8 @@ export pgmerr=errfile
   export EXECpost=${HOMEpost}/exec
   export FIXpost=${HOMEpost}/fix
   export PARMpost=${HOMEpost}/parm
+# PARMPOST (instaead of PARMpost) is used in the post ush script  
+  export PARMPOST=${PARMpost}
 
   export USHgsm=$HOMEgsm/ush
   export EXECgsm=$HOMEgsm/exec
@@ -128,18 +129,12 @@ export pgmerr=errfile
 ###############################################################
 #export CHGRESTHREAD=2
 export CHGRESTHREAD=1
-#export OVERPARMEXEC=$EXECGLOBAL/overparm_grib
-#export CHGRESSH=$USHGLOBAL/global_chgres.sh
-#export CHGRESEXEC=$EXECGLOBAL/global_chgres
 export OVERPARMEXEC=$EXECpost/overparm_grib
 export CHGRESSH=$USHgsm/global_chgres.sh
 export CHGRESEXEC=$EXECgsm/global_chgres
 
 export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
 export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
-#DHOU 20141119 the next 2 lines need to be removed when DaNa's post is finalized.
-#export POSTGPSH=$USHpost/global_nceppost.sh_test
-#export POSTGPEXEC=$EXECpost/ncep_post_DaNa-3
 
 #echo in $0: POSTGPSH=$POSTGPSH
 #echo in $0: POSTGPEXEC=$POSTGPEXEC
@@ -149,15 +144,10 @@ export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
 ##############################
 export EXECutil=$HOMEutil/exec
 export USHutil=$HOMEutil/ush
+export EXECgrib=$HOMEgrib/exec
 
-#export utilscript=$USHutil
-#export EXECUTIL=$EXECutil
-#export USHUTIL=$USHutil
-
-export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
-export CNVGRIB=${CNVGRIB:-/$EXECutil/cnvgrib21_gfs}
-export GRBINDEX=$EXECutil/grbindex
-export GRBINDEX2=$EXECutil/grb2index
+#export CNVGRIB=${CNVGRIB:-/$EXECgrib/cnvgrib21_gfs}
+export CNVGRIB=${CNVGRIB:-/nwprod2/util/exec/cnvgrib21_gfs}
 
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
@@ -331,7 +321,6 @@ case $FORECAST_SEGMENT in
 esac
 
 echo FORECAST_SEGMENT=$FORECAST_SEGMENT
-echo POSTJOBTYPE=$POSTJOBTYPE
 echo DOANALYSIS=$DOANALYSIS
 echo FHINC_HIGH=$FHINC_HIGH
 echo FHINC_LOW=$FHINC_LOW
@@ -345,9 +334,8 @@ export HDMAX=00
 ####################################
 # Check if this is a restart
 ####################################
-  miscfile=$COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control_$POSTJOBTYPE
+  miscfile=$COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control
 if [[ $cycsuffix = false ]]; then
-# if test -f $COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control
   if test -f $miscfile
   then
 #    modelrecvy=`cat < $COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control`
@@ -376,7 +364,7 @@ if [[ $cycsuffix = false ]]; then
      fi
   fi
 else
-# if test -f $COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control.cycfs$cyc_fcst
+  miscfile=$COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control.cycfs$cyc_fcst
   if test -f $miscfile
   then
 #    modelrecvy=`cat < $COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control.cycfs$cyc_fcst`

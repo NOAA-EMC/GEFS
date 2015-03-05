@@ -22,26 +22,22 @@ ffhr=$ffhr
 fhr=$fhr
 grid=$grid1p0
 
-export WGRIB=${WGRIB:-$EXECutil/wgrib}
-export GRBIDX=${GRBIDX:-$EXECutil/grbindex}
-export COPYGB=${COPYGB:-$EXECutil/copygb}
-export WGRIB2=${WGRIB2:-$EXECutil/wgrib2}
-export GRB2IDX=${GRB2IDX:-$EXECutil/grb2index}
-export COPYGB2=${COPYGB2:-$EXECutil/copygb2}
-export CNVGRIB=${CNVGRIB:-$EXECutil/cnvgrib21}
-#export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
-
-#export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
+export WGRIB=${WGRIB:-$EXECgrib/wgrib}
+export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
+export COPYGB=${COPYGB:-$EXECgrib/copygb}
+export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
+export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
+export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
+export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
 
 echo settings in $0 gefsmachine=$gefsmachine
 echo settings in $0 WGRIB=$WGRIB
 echo settings in $0 WGRIB2=$WGRIB2
-echo settings in $0 GRBIDX=$GRBIDX
-echo settings in $0 GRB2IDX=$GRB2IDX
+echo settings in $0 GRBINDEX=$GRBINDEX
+echo settings in $0 GRB2INDEX=$GRB2INDEX
 echo settings in $0 COPYGB=$COPYGB
 echo settings in $0 COPYGB2=$COPYGB2
 echo settings in $0 CNVGRIB=$CNVGRIB
-#echo settings in $0 ENSADD=$ENSADD
 
 R1=`echo $RUN|cut -c1-3`
 R2=`echo $RUN|cut -c4-5`
@@ -103,7 +99,7 @@ else
       done
    fi
    $WGRIB2 -s pgb2afile.$ffhr$cfsuffix > pgb2afile.${ffhr}${cfsuffix}.idx
-#  $GRB2IDX pgb2afile.$ffhr$cfsuffix pgb2afile.$ffhr$cfsuffix.idx
+#  $GRB2INDEX pgb2afile.$ffhr$cfsuffix pgb2afile.$ffhr$cfsuffix.idx
    # end block removed from background
 
    # begin block removed from background
@@ -115,7 +111,7 @@ else
        grep -v -F $excludestring | \
        $WGRIB2 pgb2file.$ffhr$cfsuffix -s -i -grib pgb2bfile.$ffhr$cfsuffix
    $WGRIB2 -s pgb2bfile.$ffhr$cfsuffix > pgb2bfile.${ffhr}${cfsuffix}.idx
-#  $GRB2IDX pgb2bfile.$ffhr$cfsuffix pgb2bfile.$ffhr$cfsuffix.idx
+#  $GRB2INDEX pgb2bfile.$ffhr$cfsuffix pgb2bfile.$ffhr$cfsuffix.idx
    # end block removed from background
 
    if test "$CREATE_TIGGE" = 'YES'
@@ -138,7 +134,8 @@ else
 #     set -x
    fi
 
-   # begin block removed from background
+if test "$makepgrb2d" = 'yes'
+then
    $WGRIB2 -s pgb2file.$ffhr$cfsuffix | \
        grep -v -F -f $parmlist2 | \
        $WGRIB2 pgb2file.$ffhr$cfsuffix -s -i -grib pgb2dfile.$ffhr$cfsuffix
@@ -146,10 +143,8 @@ else
        grep -F -f $parmlist2 | \
        grep -F $excludestring | \
        $WGRIB2 pgb2file.$ffhr$cfsuffix -s -i -append -grib pgb2dfile.$ffhr$cfsuffix
-   # end block removed from background
+fi   
 #  set -x
-
-   #wait
 
    if test "$SENDCOM" = 'YES'
    then
@@ -159,7 +154,10 @@ else
       mv pgb2afile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix
       mv pgb2bfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
 #     mv pgb2cfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2c/${RUN}.${cycle}.pgrb2c$ffhr$cfsuffix
-      mv pgb2dfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2d/${RUN}.${cycle}.pgrb2d$ffhr$cfsuffix
+      if test "$makepgrb2d" = 'yes'
+      then
+       mv pgb2dfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2d/${RUN}.${cycle}.pgrb2d$ffhr$cfsuffix
+      fi
       if [[ "$makegrb1i" = "yes" ]]; then
 	mv pgb2afile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix.idx
 	mv pgb2bfile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix.idx
@@ -225,7 +223,7 @@ if [[ -s $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrba$ffhr$cfsuffix ]] && \
 else
    FILEA=$COMIN/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix
    $CNVGRIB -g21 $FILEA pgbafile.$ffhr$cfsuffix
-   $GRBIDX pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix
+   $GRBINDEX pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix
 #  $WGRIB -s pgbafile.$ffhr$cfsuffix > pgbaifile.${ffhr}${cfsuffix}.idx
 #  $ENSADD $e1 $e2 pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix epgbafile.$ffhr$cfsuffix
 #  echo after ADDING 1p0
@@ -235,7 +233,7 @@ else
 #  echo after MVING 1p0
 #  ls -lt pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix epgbafile.$ffhr$cfsuffix
      if [[ "$makegrb1i" = "yes" ]]; then
-       $GRBIDX pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix
+       $GRBINDEX pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix
      fi
 
    if test "$SENDCOM" = 'YES'
@@ -272,13 +270,13 @@ if [[ -s $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbb$ffhr$cfsuffix ]] && \
 else
    FILEB=$COMIN/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
    $CNVGRIB -g21 $FILEB pgbbfile.$ffhr$cfsuffix
-   $GRBIDX pgbbfile.$ffhr$cfsuffix pgbbifile.$ffhr$cfsuffix
+   $GRBINDEX pgbbfile.$ffhr$cfsuffix pgbbifile.$ffhr$cfsuffix
 #  $WGRIB -s pgbbfile.$ffhr$cfsuffix > pgbbfile.${ffhr}${cfsuffix}.idx
 #  $ENSADD $e1 $e2 pgbbfile.$ffhr$cfsuffix pgbbifile.$ffhr$cfsuffix epgbbfile.$ffhr$cfsuffix
    if [[ "$addgrb1id" = "yes" ]]; then
      mv epgbbfile.$ffhr$cfsuffix pgbbfile.$ffhr$cfsuffix
      if [[ "$makegrb1i" = "yes" ]]; then
-       $GRBIDX pgbbfile.$ffhr$cfsuffix pgbbifile.$ffhr$cfsuffix
+       $GRBINDEX pgbbfile.$ffhr$cfsuffix pgbbifile.$ffhr$cfsuffix
      fi
 
    if test "$SENDCOM" = 'YES'
@@ -314,6 +312,8 @@ fi
 ###############################
 # STEP IV: Create GRIBD files
 ###############################
+if test "$makepgrb2d" = 'yes'
+then
 if [[ -f $COMOUT/$cyc/pgrbd/${RUN}.${cycle}.pgrbd$ffhr$cfsuffix ]] && \
    [[ -f $COMOUT/$cyc/pgrbd/${RUN}.${cycle}.pgrbdi$ffhr$cfsuffix ]] && \
    [[ $overwrite = no ]]; then
@@ -331,6 +331,7 @@ else
       #
       mv pgbdfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrbd/${RUN}.${cycle}.pgrbd$ffhr$cfsuffix
    fi
+fi
 fi
 
 fi #(0=1 for ZEUS, skip grib2 files)
