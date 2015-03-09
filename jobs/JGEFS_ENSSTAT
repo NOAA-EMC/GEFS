@@ -225,7 +225,7 @@ case $SUBJOB in
     export gridlist="p5";
     export makepgrba="no";;
   (*)
-    export gridlist="hr p5 lr";;
+    export gridlist="hr lr p5";;
 esac    
 
 echo FORECAST_SEGMENT=$FORECAST_SEGMENT
