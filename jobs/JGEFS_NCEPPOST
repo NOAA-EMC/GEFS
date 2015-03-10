@@ -147,7 +147,7 @@ export USHutil=$HOMEutil/ush
 export EXECgrib=$HOMEgrib/exec
 
 #export CNVGRIB=${CNVGRIB:-/$EXECgrib/cnvgrib21_gfs}
-export CNVGRIB=${CNVGRIB:-/nwprod2/util/exec/cnvgrib21_gfs}
+#export CNVGRIB=${CNVGRIB:-/nwprod/util/exec/cnvgrib21_gfs}
 
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg

@@ -1,4 +1,4 @@
-  #SUBJOB=
+  SUBJOB=
   rm $jobcontrol$SUBJOB
   if [[ $waitflag = no ]]; then
 

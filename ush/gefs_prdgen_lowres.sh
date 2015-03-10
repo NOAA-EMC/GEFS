@@ -22,13 +22,13 @@ ffhr=$ffhr
 fhr=$fhr
 grid=$grid2p5
 
-export WGRIB=${WGRIB:-$EXECutil/wgrib}
-export GRBINDEX=${GRBINDEX:-$EXECutil/grbindex}
-export COPYGB=${COPYGB:-$EXECutil/copygb}
-export WGRIB2=${WGRIB2:-$EXECutil/wgrib2}
-export GRB2INDEX=${GRB2INDEX:-$EXECutil/grb2index}
-export COPYGB2=${COPYGB2:-$EXECutil/copygb2}
-export CNVGRIB=${CNVGRIB:-$EXECutil/cnvgrib21}
+export WGRIB=${WGRIB:-$EXECgrib/wgrib}
+export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
+export COPYGB=${COPYGB:-$EXECgrib/copygb}
+export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
+export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
+export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
+export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21}
 
 echo settings in $0 gefsmachine=$gefsmachine
 echo settings in $0 WGRIB=$WGRIB

@@ -38,11 +38,11 @@ else
 fi
 
 export HOMEgefs=${HOMEgefs}
-export HOMEutil=${UTILROOT:-/nwprod2/util}
-export HOMEgrib=${GRIBROOT:-/nwprod2/util}
+export HOMEutil=${UTILROOT:-/nwprod/util}
+export HOMEgrib=${GRIBROOT:-/nwprod/util}
 
 #export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
-export CNVGRIB=${CNVGRIB:-/nwprod2/util/exec/cnvgrib21_gfs}
+#export CNVGRIB=${CNVGRIB:-/nwprod/util/exec/cnvgrib21_gfs}
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
@@ -108,7 +108,7 @@ export USHutil=$HOMEutil/ush
 export EXECgrib=$HOMEgrib/exec
 
 #export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
-export CNVGRIB=${CNVGRIB:-/nwprod2/util/exec/cnvgrib21_gfs}
+#export CNVGRIB=${CNVGRIB:-/nwprod/util/exec/cnvgrib21_gfs}
 
 ##############################################
 echo set parameters using gefs.parm

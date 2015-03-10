@@ -39,11 +39,11 @@ fi
 
 export HOMEgefs=${HOMEgefs}
 export HOMEgsm=${HOMEgsm}
-export HOMEutil=${UTILROOT:-/nwprod2/util}
-export HOMEgrib=${GRIBROOT:-/nwprod2/util}
+export HOMEutil=${UTILROOT:-/nwprod/util}
+export HOMEgrib=${GRIBROOT:-/nwprod/util}
 
 #export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
-export CNVGRIB=${CNVGRIB:-/nwprod2/util/exec/cnvgrib21_gfs}
+#export CNVGRIB=${CNVGRIB:-/nwprod/util/exec/cnvgrib21_gfs}
 
 export PS4='$SECONDS + '
 date
@@ -125,7 +125,7 @@ export EXECgrib=$HOMEgrib/exec
 
 # Setup temporalreplacement of utilities 
 #export CNVGRIB=${CNVGRIB:-/$EXECgrib/cnvgrib21_gfs}
-export CNVGRIB=${CNVGRIB:-/nwprod2/util/exec/cnvgrib21_gfs}
+#export CNVGRIB=${CNVGRIB:-/nwprod/util/exec/cnvgrib21_gfs}
 
 ##############################################
 echo set parameters using gefs.parm

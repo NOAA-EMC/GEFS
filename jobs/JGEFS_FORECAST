@@ -40,6 +40,7 @@ fi
 export HOMEgefs=${HOMEgefs:-/nw${envir}}
 export HOMEgsm=${HOMEgsm}
 export HOMEutil=${UTILROOT:-/nwprod/util}
+export HOMEgrib=${GRIBROOT:-/nwprod/util}
 
 # ###################################
 # SET SHELL PROCESSING VARIABLES
