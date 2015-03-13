@@ -34,7 +34,7 @@ C$$$
       integer      jpds(200),jgds(200),kpds(200),kgds(200),kens(200)
       integer      ienst,iensi                                        
       real         f(jf)
-      character*80 cpgb,cpgi,cpge
+      character*255 cpgb,cpgi,cpge
       logical*1      lb(jf)
       namelist     /namin/ ienst,iensi,cpgb,cpgi,cpge      
 c

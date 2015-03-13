@@ -48,7 +48,8 @@ c     parameter(jf=10512,len=60,mem=11)
       dimension kpds(200),kgds(200),kens(200)
       dimension kens2(mem),kens3(mem)
       logical lb(jf)
-      character*80 cpgb,cpgi,cpge
+c rlw 20150313 accommodate longer file names
+      character*255 cpgb,cpgi,cpge
       namelist /namin/ cpgb,cpgi,cpge
 c     data kens2/1,2,3,2,3,2,3,2,3,2,3/
 c     data kens3/2,1,1,2,2,3,3,4,4,5,5/
