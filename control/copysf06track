@@ -19,116 +19,122 @@ if (( $# == 3 )); then
     (18) goodhh=yes ;;
     (*) echo hh=$hh IS INVALID ; rc=2 ;;
   esac
+  echo yyyymmdd=$yyyymmdd hh=$hh
   local=no
   if [[ $goodhh = yes ]]; then
     case $source in
       (prod)
-	dirsource=/com/gens/prod/gefs.$yyyymmdd/$hh
+	dirsourcelist=/com/gens/prod/gefs.$yyyymmdd/$hh
       ;;
       (para)
-	dirsource=/com/gens/para/gefs.$yyyymmdd/$hh
+	dirsourcelist=/com/gens/para/gefs.$yyyymmdd/$hh
       ;;
       (test)
-	dirsource=/com/gens/test/gefs.$yyyymmdd/$hh
+	dirsourcelist=/com/gens/test/gefs.$yyyymmdd/$hh
       ;;
       (*)
-	dirsource=$PTMP/$LOGNAME/o/$source/com/gens/dev/gefs.$yyyymmdd/$hh
+	dirsourcelist="$PTMP/$LOGNAME/o/$source/com/gens/dev/gefs.$yyyymmdd/$hh $PTMP/$LOGNAME/o/$source/com/gens/dev/gefs_legacy.$yyyymmdd/$hh"
 	local=yes
       ;;
     esac
-    if [[ -d $dirsource/sfcsig && -d $dirsource/track ]]; then
-      dirdest=$PTMP/$LOGNAME/o/$dest/com/gens/dev/gefs_legacy.$yyyymmdd/$hh
-      if [[ -d $dirdest ]]; then
-	echo dirdest=$dirdest already exists
-      else
-	mkdir -p $dirdest
-	ls -ald $dirdest
-      fi
-      if [[ -d $dirdest/sfcsig || -d $dirdest/track ]]; then
-	echo $dirdest/sfcsig or $dirdest/track ALREADY EXIST
-	rc=4
-      else
-	mkdir $dirdest/track
-	rc=$?
-	if (( rc == 0 )); then
-	  cd $dirsource/track
+    echo dirsourcelist=$dirsourcelist
+    for dirsource in $dirsourcelist
+    do
+      echo dirsource=$dirsource
+      if [[ -d $dirsource/sfcsig && -d $dirsource/track ]]; then
+	dirdest=$PTMP/$LOGNAME/o/$dest/com/gens/dev/gefs_legacy.$yyyymmdd/$hh
+	if [[ -d $dirdest ]]; then
+	  echo dirdest=$dirdest already exists
+	else
+	  mkdir -p $dirdest
+	  ls -ald $dirdest
+	fi
+	if [[ -d $dirdest/sfcsig || -d $dirdest/track ]]; then
+	  echo $dirdest/sfcsig or $dirdest/track ALREADY EXIST
+	  rc=4
+	else
+	  mkdir $dirdest/track
 	  rc=$?
 	  if (( rc == 0 )); then
-	    pwd
-	    for file in *
-	    do
-	      if [[ -f $file ]]; then
-		ls -al $file
-		if [[ $local = yes ]]; then
-		  ln $file $dirdest/track/$file
-		  rc=$?
-		  if (( rc != 0 )); then
+	    cd $dirsource/track
+	    rc=$?
+	    if (( rc == 0 )); then
+	      pwd
+	      for file in *
+	      do
+		if [[ -f $file ]]; then
+		  ls -al $file
+		  if [[ $local = yes ]]; then
+		    ln $file $dirdest/track/$file
+		    rc=$?
+		    if (( rc != 0 )); then
+		      cp $file $dirdest/track/$file
+		      rc=$?
+		    fi
+		  else
 		    cp $file $dirdest/track/$file
 		    rc=$?
 		  fi
+		  if (( rc == 0 )); then
+		    ls -al $dirdest/track/$file
+		  else
+		    echo cp $file $dirdest/track/$file FAILED rc=$rc
+		  fi
 		else
-		  cp $file $dirdest/track/$file
-		  rc=$?
+		  echo file=$file DOES NOT EXIST
+		  rc=5
 		fi
-		if (( rc == 0 )); then
-		  ls -al $dirdest/track/$file
-		else
-		  echo cp $file $dirdest/track/$file FAILED rc=$rc
-		fi
-	      else
-		echo file=$file DOES NOT EXIST
-		rc=5
-	      fi
-	    done
+	      done
+	    else
+	      echo cd $dirsource/track FAILED rc=$rc
+	    fi
 	  else
-	    echo cd $dirsource/track FAILED rc=$rc
+	    echo mkdir $dirdest/track FAILED rc=$rc
 	  fi
-	else
-	  echo mkdir $dirdest/track FAILED rc=$rc
-	fi
-	mkdir $dirdest/sfcsig
-	rc=$?
-	if (( rc == 0 )); then
-	  cd $dirsource/sfcsig
+	  mkdir $dirdest/sfcsig
 	  rc=$?
 	  if (( rc == 0 )); then
-	    pwd
-	    for file in *sf06*
-	    do
-	      if [[ -f $file ]]; then
-		ls -al $file
-		if [[ $local = yes ]]; then
-		  ln $file $dirdest/sfcsig/$file
-		  rc=$?
-		  if (( rc != 0 )); then
+	    cd $dirsource/sfcsig
+	    rc=$?
+	    if (( rc == 0 )); then
+	      pwd
+	      for file in *sf06*
+	      do
+		if [[ -f $file ]]; then
+		  ls -al $file
+		  if [[ $local = yes ]]; then
+		    ln $file $dirdest/sfcsig/$file
+		    rc=$?
+		    if (( rc != 0 )); then
+		      cp $file $dirdest/sfcsig/$file
+		      rc=$?
+		    fi
+		  else
 		    cp $file $dirdest/sfcsig/$file
 		    rc=$?
 		  fi
+		  if (( rc == 0 )); then
+		    ls -al $dirdest/sfcsig/$file
+		  else
+		    echo cp $file $dirdest/sfcsig/$file FAILED rc=$rc
+		  fi
 		else
-		  cp $file $dirdest/sfcsig/$file
-		  rc=$?
+		  echo file=$file DOES NOT EXIST
+		  rc=5
 		fi
-		if (( rc == 0 )); then
-		  ls -al $dirdest/sfcsig/$file
-		else
-		  echo cp $file $dirdest/sfcsig/$file FAILED rc=$rc
-		fi
-	      else
-		echo file=$file DOES NOT EXIST
-		rc=5
-	      fi
-	    done
+	      done
+	    else
+	      echo cd $dirsource/sfcsig FAILED rc=$rc
+	    fi
 	  else
-	    echo cd $dirsource/sfcsig FAILED rc=$rc
+	    echo mkdir $dirdest/$sfcsig FAILED rc=$rc
 	  fi
-	else
-	  echo mkdir $dirdest/$sfcsig FAILED rc=$rc
 	fi
+      else
+	echo  $dirsource/sfcsig and  $dirsource/track DO NOT BOTH EXIST
+	rc=3
       fi
-    else
-      echo  $dirsource/sfcsig and  $dirsource/track DO NOT BOTH EXIST
-      rc=3
-    fi
+    done
   fi
 else
   echo three arguments required source dest yyyymmddhh

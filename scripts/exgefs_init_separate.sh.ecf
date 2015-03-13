@@ -158,7 +158,7 @@ if (( nhrpair < npair )); then
   export NTRAC=$NTRACLR
   export IDVC=$IDVC
   export NVCOORD=$IDVC
-  export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0"
+  export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,use_ufo=.true.,IALB=0,idvc=2,idvt=21,idsl=1,IDVM=0"
   if (( IDVC == 1 )); then
     export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
   fi
@@ -228,7 +228,9 @@ if (( nhrpair < npair )); then
 #     fi
 #   fi
     echo `date` timing lr chgres before
+    export FIXGLOBAL=$HOMEgsm/fix/fix_am
     $chgresush >>$pgmout
+    export FIXGLOBAL=/nwprod/fix
     echo `date` timing lr chgres after
   else
     cp -fp $SIGINP $SIGOUT
@@ -253,7 +255,7 @@ if (( nhrpair > 0 )); then
   export NTRAC=$NTRACHR
   export IDVC=$IDVC
   export NVCOORD=$IDVC
-  export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0"
+  export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,use_ufo=.true.,IALB=0,idvc=2,idvt=21,idsl=1,IDVM=0"
   if (( IDVC == 1 )); then
     export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
   fi
@@ -324,7 +326,9 @@ if (( nhrpair > 0 )); then
 #     fi
 #   fi
     echo `date` timing hr chgres before
+    export FIXGLOBAL=$HOMEgsm/fix/fix_am
     $chgresush >>$pgmout
+    export FIXGLOBAL=/nwprod/fix
     echo `date` timing hr chgres after
   else
     cp -fp $SIGINP $SIGOUT
@@ -346,7 +350,7 @@ export relocpertflag
 
 if (( relocpertflag == 1 )); then
   # test for files necessary for relocation
-  if [[ ! -e $COM/gefs.$pdyp/$cycp/sfcsig/gec00.t${cycp}z.sf$fhrp ]]; then
+  if [[ ! -e $COM/gefs_legacy.$pdyp/$cycp/sfcsig/gec00.t${cycp}z.sf$fhrp ]]; then
     export relocpertflag=0
   fi
   if [[ ! -e $GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
@@ -467,7 +471,7 @@ if (( relocpertflag == 1 )); then
     $USHGLOBAL/syndataxtrack.sh $PDY $cyc tcvitals.in trackatcfunix.in tcvitals.as
   # $USHgefs/syndataxtrack.sh $PDY $cyc tcvitals.in trackatcfunix.in tcvitals.as #ZEUS
 
-    cp -f $COM/gefs.$pdyp/$cycp/sfcsig/gec00.t${cycp}z.sf$fhrp gec00_presep
+    cp -f $COM/gefs_legacy.$pdyp/$cycp/sfcsig/gec00.t${cycp}z.sf$fhrp gec00_presep
 
     for tauprefix in w x y z
     do
@@ -482,7 +486,7 @@ if (( relocpertflag == 1 )); then
       else
 	cyc_fcst_t=cyc_fcst
       fi
-      for file in $COM/gefs.$pdyp/$cycp/track/${tauprefix}[pc]??.t${cycp}z.cyclone.trackatcfunix
+      for file in $COM/gefs_legacy.$pdyp/$cycp/track/${tauprefix}[pc]??.t${cycp}z.cyclone.trackatcfunix
       do
 	if [[ -s $file ]]; then
 	  cat $file >>tracks.atcfunix.$cyc_fcst_t
@@ -491,7 +495,7 @@ if (( relocpertflag == 1 )); then
       done
       if [[ "$taufound" = "no" ]]; then
 	if (( cyc_fcst == cycp )); then
-	  for file in $COM/gefs.$pdyp/$cycp/track/a[pc]??.t${cycp}z.cyclone.trackatcfunix
+	  for file in $COM/gefs_legacy.$pdyp/$cycp/track/a[pc]??.t${cycp}z.cyclone.trackatcfunix
 	  do
 	    if [[ -s $file ]]; then
 	      cat $file >>tracks.atcfunix.$cyc_fcst_t

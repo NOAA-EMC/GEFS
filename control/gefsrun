@@ -15,8 +15,8 @@ nextflag=no
 tseqflag=no
 tcdsflag=no
 tjobflag=no
-testflag=no
 testflag=yes
+testflag=no
 joblistflag=no
 whenrun=neither
 # special section for testing only
@@ -1273,7 +1273,7 @@ wall_clock_limit_fcst_short="00:30:00"
 wall_clock_limit_fcst_long="02:30:00"
   if [[ $gefsmachine = wcoss ]]; then                       
 wall_clock_limit_fcst_long="1:30"
-wall_clock_limit_fcst_short="00:10"
+wall_clock_limit_fcst_short="00:15"
   fi
 
 echo wall_clock_limit_fcst_long=$wall_clock_limit_fcst_long

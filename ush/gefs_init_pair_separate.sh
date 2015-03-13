@@ -403,7 +403,7 @@ if [[ $haveinput = yes ]]; then
     export NTRAC=$ntrac
     export IDVC=$IDVC
     export NVCOORD=$IDVC
-    export CHGRESVARS="NTRAC=$NTRAC,NVCOORD=$NVCOORD"
+    export CHGRESVARS="NTRAC=$NTRAC,NVCOORD=$NVCOORD,use_ufo=.true.,IALB=0,idvc=2,idvt=21,idsl=1,IDVM=0"
     if (( IDVC == 1 )); then
       export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
     fi
@@ -438,7 +438,9 @@ env | sort
 echo `date` env before chgres end
 echo
 ###teste
+      export FIXGLOBAL=$HOMEgsm/fix/fix_am
       $chgresush >>$pgmout
+      export FIXGLOBAL=/nwprod/fix
     else
       cp -fp $SIGINP $SIGOUT
     fi
@@ -457,7 +459,7 @@ echo
     export NTRAC=$ntrac
     export IDVC=$IDVC
     export NVCOORD=$IDVC
-    export CHGRESVARS="NTRAC=$NTRAC,NVCOORD=$NVCOORD"
+    export CHGRESVARS="NTRAC=$NTRAC,NVCOORD=$NVCOORD,use_ufo=.true.,IALB=0,idvc=2,idvt=21,idsl=1,IDVM=0"
     if (( IDVC == 1 )); then
       export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
     fi
@@ -492,7 +494,9 @@ env | sort
 echo `date` env before chgres end
 echo
 ###teste
+      export FIXGLOBAL=$HOMEgsm/fix/fix_am
       $chgresush >>$pgmout
+      export FIXGLOBAL=/nwprod/fix
     else
       cp -fp $SIGINP $SIGOUT
     fi
@@ -718,7 +722,7 @@ do
   export NTRAC=$ntrac
   export IDVC=$IDVC
   export NVCOORD=$IDVC
-  export CHGRESVARS="NTRAC=$NTRAC,NVCOORD=$NVCOORD"
+  export CHGRESVARS="NTRAC=$NTRAC,NVCOORD=$NVCOORD,use_ufo=.true.,IALB=0,idvc=2,idvt=21,idsl=1,IDVM=0"
   if (( IDVC == 1 )); then
     export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
   fi
@@ -726,18 +730,19 @@ do
     export SIGLEVEL=$FIXGLOBAL/global_hyblev.l${LEVS}.txt
   fi
 ###testb
-if [[ $envir = prod ]]; then
+#if [[ $envir = prod ]]; then
+####teste
+#  export SIGINP=$FIXGLOBAL/gefs.pertback.$cycle_fcst.${meml}${ipair}
+####testb
+#elif [[ $envir = para ]] || [[ $envir = test ]]; then
+#  # RLW 20150225 modify to obtain and use version for vertical structure
+#  export SIGINP=/nw${envir}/gefs.${gefs_ver}/fix/gefs.pertback.$cycle_fcst.${meml}${ipair}
+#else
+#  # RLW 20150225 modify to obtain and use version for vertical structure
+#  export SIGINP=$basesource/nw${envir}/gefs.${gefs_ver}/fix/gefs.pertback.$cycle_fcst.${meml}${ipair}
+#fi
 ###teste
-  export SIGINP=$FIXGLOBAL/gefs.pertback.$cycle_fcst.${meml}${ipair}
-###testb
-elif [[ $envir = para ]] || [[ $envir = test ]]; then
-  # RLW 20150225 modify to obtain and use version for vertical structure
-  export SIGINP=/nw${envir}/gefs.${gefs_ver}/fix/gefs.pertback.$cycle_fcst.${meml}${ipair}
-else
-  # RLW 20150225 modify to obtain and use version for vertical structure
-  export SIGINP=$basesource/nw${envir}/gefs.${gefs_ver}/fix/gefs.pertback.$cycle_fcst.${meml}${ipair}
-fi
-###teste
+  export SIGINP=$FIXgefs/gefs.pertback.$cycle_fcst.${meml}${ipair}
   export SFCINP=NULL
   export SIGOUT=$DATALOCAL/gefs.pertback.$cycle_fcst.${meml}${ipair}
   export SFCOUT=sfcout
@@ -769,7 +774,9 @@ env | sort
 echo `date` env before chgres end
 echo
 ###teste
+    export FIXGLOBAL=$HOMEgsm/fix/fix_am
     $chgresush >>$pgmout
+    export FIXGLOBAL=/nwprod/fix
   else
     cp -fp $SIGINP $SIGOUT
   fi
@@ -788,7 +795,7 @@ do
   fils=../$file.pair$ipairi
   echo file=$file fils=$fils
   if [[ -f $file ]]; then
-    s -al $file
+    ls -al $file
     mv -f $file $fils
     ls -al $fils
   else
