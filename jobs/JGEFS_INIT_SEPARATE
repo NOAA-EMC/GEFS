@@ -62,15 +62,15 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
 ###teste
-export DATA=/tmpnwprd/gefs_init_$cyc.$envir.save
+export DATA=/tmpnwprd/gefs_legacy_init_$cyc.$envir.save
 ###testb
 else
   echo basenfs=$basenfs
   echo baseptmp=$baseptmp
   echo basetmp=$basetmp
-  export DATA=$basetmp/$envir/tmpnwprd/gefs_init_$PDY$cyc.$envir.save
+  export DATA=$basetmp/$envir/tmpnwprd/gefs_legacy_init_$PDY$cyc.$envir.save
 ################# lines between these markers have been modified for dev begin
-  export DATA=$basetmp/tmpnwprd/gefs_init_$PDY$cyc.$envir.save
+  export DATA=$basetmp/tmpnwprd/gefs_legacy_init_$PDY$cyc.$envir.save
 ################# lines between these markers have been modified for dev end
 echo DATA=$DATA
 fi
@@ -220,6 +220,9 @@ export USHGLOBAL=$HOMEgefs/ush
  fi
 fi
 
+export HOMEgsm=${HOMEgsm:-/nwprod/gsm.${gsm_ver}}
+export HOMEgsm=${HOMEgsm:-/nw${envir}/gsm.${gsm_ver}}
+
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
 export REDOUT='1>>'
@@ -322,20 +325,20 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
 ###teste
-export COMIN=/com/${NET}/${envir}/gefs.${PDY}
+export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
 export COM=/com/${NET}/${envir}
-export COMINm1=/com/${NET}/${envir}/gefs.${PDYm1}
-export COMINm2=/com/${NET}/${envir}/gefs.${PDYm2}
-export COMINm3=/com/${NET}/${envir}/gefs.${PDYm3}
-export COMINm4=/com/${NET}/${envir}/gefs.${PDYm4}
+export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
+export COMINm2=/com/${NET}/${envir}/gefs_legacy.${PDYm2}
+export COMINm3=/com/${NET}/${envir}/gefs_legacy.${PDYm3}
+export COMINm4=/com/${NET}/${envir}/gefs_legacy.${PDYm4}
 ###testb
 else
-export COMIN=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
+export COMIN=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
 export COM=$baseoutput/com/${NET}/${envir}
-export COMINm1=$baseoutput/com/${NET}/${envir}/gefs.${PDYm1}
-export COMINm2=$baseoutput/com/${NET}/${envir}/gefs.${PDYm2}
-export COMINm3=$baseoutput/com/${NET}/${envir}/gefs.${PDYm3}
-export COMINm4=$baseoutput/com/${NET}/${envir}/gefs.${PDYm4}
+export COMINm1=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm1}
+export COMINm2=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm2}
+export COMINm3=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm3}
+export COMINm4=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm4}
 fi
 ###teste
 
@@ -344,10 +347,10 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
 ###teste
-export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
 ###testb
 else
-export COMOUT=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
+export COMOUT=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
 fi
 ###teste
 mkdir -m 775 -p $COMOUT/$cyc/init
@@ -367,7 +370,7 @@ else
 gespath=$baseoutput/nwges/${envir}
 fi
 ###teste
-export GESdir=$gespath/gefs.${PDY}
+export GESdir=$gespath/gefs_legacy.${PDY}
 mkdir -m 775 -p $GESdir
 
 ##############################################
@@ -399,6 +402,8 @@ else
              esac ;;
     (*)  export sighdrexec=$locsighdrexec ;;
   esac
+  # RLW 20150310 hardwire the test location as in current production
+  export sighdrexec=$HOMEgsm/exec/global_sighdr
 fi
 ###teste
 echo sighdrexec=$sighdrexec
@@ -431,6 +436,8 @@ else
              esac ;;
     (*)  chgresush=$locchgresush ;;
   esac
+  # RLW 20150310 hardwire the test location as in current production
+  export chgresush=$HOMEgsm/ush/global_chgres.sh
   echo locchgresexec=$locchgresexec
   case $locchgresexec in
     (prod)  export CHGRESEXEC=/nwprod/exec/global_chgres ;;
@@ -451,6 +458,8 @@ else
              esac ;;
     (*)  export CHGRESEXEC=$locchgresexec ;;
   esac
+  # RLW 20150310 hardwire the test location as in current production
+  export CHGRESEXEC=$HOMEgsm/exec/global_chgres
 fi
 ###teste
 echo chgresush=$chgresush

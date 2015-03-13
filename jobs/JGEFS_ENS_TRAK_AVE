@@ -154,8 +154,8 @@ ksh $utilscript/setpdy.sh
 ##############################################
 export GFSCOMIN=/com/gfs/prod/gfs.$PDY
 export MRFCOMIN=/com/${NET}/prod/mrf.${PDY}
-export COMIN=/com/${NET}/${envir}/gefs.${PDY}
-export COMINm1=/com/${NET}/${envir}/gefs.${PDYm1}
+export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
+export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
 ################# lines between these markers have been modified for dev begin
 if [[ $envir = dev ]]; then
   export COMIN=$baseoutput$COMIN
@@ -166,7 +166,7 @@ mkdir -m 775 -p $COMIN/$cyc/pgrba
 mkdir -m 775 -p $COMIN/$cyc/pgrbalr
 mkdir -m 775 -p $COMIN/$cyc/track
 #############################################################
-export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
 ################# lines between these markers have been modified for dev begin
 if [[ $envir = dev ]]; then
 export COMOUT=$baseoutput/$COMOUT

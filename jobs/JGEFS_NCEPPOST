@@ -298,20 +298,20 @@ then
   export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
   export gespath=${gespath:-/global/noscrub/$LOGBAME/nwges/${envir}}
 
-  export COMIN=$COM_IN/gefs.${PDY}
-  export COMOUT=$COM_OUT/gefs.${PDY}
+  export COMIN=$COM_IN/gefs_legacy.${PDY}
+  export COMOUT=$COM_OUT/gefs_legacy.${PDY}
   export ENS_COM=$COMOUT
 
   mkdir -m 775 -p $COMOUT/$cyc/stats
 
 else                              ### Fir Operations
-  export COMIN=/com/${NET}/${envir}/gefs.${PDY}
-  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+  export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
   export gespath=/nwges/${envir}
   export ENS_COM=$COMOUT
 fi
 
-export GESdir=$gespath/gefs.${PDY}
+export GESdir=$gespath/gefs_legacy.${PDY}
 
 mkdir -m 775 -p $COMOUT $GESdir
 mkdir -m 775 -p $COMOUT/$cyc/master

@@ -25,15 +25,12 @@ export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 ###########################################
 if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
-################# lines between these markers have been modified for dev begin
- else
-  . $basesource/nwdev/parm/gefs_config
- fi
-################# lines between these markers have been modified for dev end
+  # RLW 20141008 modify to obtain and use version for vertical structure
+  . $basesource/nw$envir/*/versions/gefs.ver
+  . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
+else
+  # RLW 20141008 modify to obtain and use version for vertical structure
+  . /nwprod/versions/gefs.ver
 fi
 
 # #### 05/05/99 ###############################
@@ -197,13 +194,13 @@ then
   export COM_IN=${COM_IN:-/global/noscrub/$LOGNAME/com/${NET}/${envir}}
   export COM_OUT=${COM_OUT:-/global/noscrub/$LOGNAME/com/${NET}/${envir}}
 
-  export COMIN=$COM_IN/gefs.${PDY}
-  export COMINm1=$COM_IN/gefs.${PDYm1}
-  export COMOUT=$COM_OUT/gefs.${PDY}
+  export COMIN=$COM_IN/gefs_legacy.${PDY}
+  export COMINm1=$COM_IN/gefs_legacy.${PDYm1}
+  export COMOUT=$COM_OUT/gefs_legacy.${PDY}
 else                              ### For Operations
-  export COMIN=/com/${NET}/${envir}/gefs.${PDY}
-  export COMINm1=/com/${NET}/${envir}/gefs.${PDYm1}
-  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+  export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
+  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
 fi
 
 mkdir -m 775 -p $COMOUT/$cyc/pgrba

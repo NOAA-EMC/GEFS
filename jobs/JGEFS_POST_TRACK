@@ -190,6 +190,8 @@ fi
 ##############################
 # Set up the UTILITIES
 ##############################
+export HOMEgefs=/nwprod
+export HOMEgefs=${HOMEgefs:-/nwprod}
 export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs.${gefs_ver}}
 export utilscript=/nwprod/util/ush
 #DHOU 04/05/2012 for ZEUS
@@ -229,10 +231,10 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
 ###teste
-export COMIN=/com/${NET}/${envir}/gefs.${PDY}
+export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
 ###testb
 else
-export COMIN=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
+export COMIN=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
 fi
 ###teste
 ###testb
@@ -240,10 +242,10 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
 ###teste
-export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
 ###testb
 else
-export COMOUT=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
+export COMOUT=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
 export ensdir=$COMOUT/$cyc/pgrba
 export COM=$COMOUT/$cyc/track
 fi

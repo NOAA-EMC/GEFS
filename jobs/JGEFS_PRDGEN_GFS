@@ -239,11 +239,11 @@ then
       export COMIN=/com/gfs/para/gfs.${PDY}
     ;;
   esac
-  export COMOUT=$COM_OUT/gefs.${PDY}
+  export COMOUT=$COM_OUT/gefs_legacy.${PDY}
   export ENS_COM=$COMOUT
 else                              ### For Operations
   export COMIN=/com/gfs/prod/gfs.${PDY}
-  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
   export ENS_COM=$COMOUT
 fi
 

@@ -256,10 +256,10 @@ then
   export gespath=${gespath:-/global/noscrub/$LOGBAME/nwges/${envir}}
 
   export COMGFS=$GFS_IN/gfs.${PDY}
-  export COMOUT=$COM_OUT/gefs.${PDY}
+  export COMOUT=$COM_OUT/gefs_legacy.${PDY}
 else                              ### Fir Operations
   export COMGFS=/com/gfs/prod/gfs.${PDY}
-  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
   export gespath=/nwges/${envir}
 fi
 
@@ -274,7 +274,7 @@ mkdir -m 775 -p $RESTARTB
 
 export ENS_COM=$COMOUT
 
-export GESdir=$gespath/gefs.${PDY}
+export GESdir=$gespath/gefs_legacy.${PDY}
 mkdir -m 775 -p $GESdir
 
 ##############################################
