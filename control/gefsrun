@@ -1273,7 +1273,9 @@ wall_clock_limit_fcst_short="00:30:00"
 wall_clock_limit_fcst_long="02:30:00"
   if [[ $gefsmachine = wcoss ]]; then                       
 wall_clock_limit_fcst_long="1:30"
+wall_clock_limit_fcst_short="00:10"
 wall_clock_limit_fcst_short="00:15"
+wall_clock_limit_fcst_short="00:20"
   fi
 
 echo wall_clock_limit_fcst_long=$wall_clock_limit_fcst_long
@@ -3082,7 +3084,7 @@ echo
 
 ) 2>&1 | tee -a $ldir/$lname
 echo $ldir
-ls -ablprt $ldir | tail -7
+echo RLW 20150316 DISABLED TO PREVENT TIMEOUTSr:"   ls -ablprt $ldir | tail -7"
 
 echo
 echo `date` $0 $*                                                                     end
