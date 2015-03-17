@@ -107,7 +107,7 @@ export pgmerr=errfile
 # RERUN    - Rerun posts from beginning (default no)
 # VERBOSE  - Specify Verbose Output in global_postgp.sh
 ####################################
-  export SENDCOM=${SENDCOM:-YES}
+  export SENDCOM=${SENDCOM:-NO}
   export SENDECF=${SENDECF:-YES}
   export SENDDBN=${SENDDBN:-YES}
   export SENDDBN_NTC=${SENDDBN_NTC:-YES}
@@ -177,14 +177,14 @@ export SLMASK=/dev/null
 ##############################################
 
  if [[ "$gfssource" = para ]]; then
-    export GFSCOMIN=$COMROOT/gfs/para/gfs.$PDY 
-    export ENKFCOMIN=$COMROOT/gfs/para/enkf. 
+    export GFSCOMIN=$COMROOT/com/gfs/para/gfs.$PDY 
+    export ENKFCOMIN=$COMROOT/com/gfs/para/enkf. 
   elif [[ "$gfssource" = prod ]]; then
-    export GFSCOMIN=$COMROOT/gfs/prod/gfs.$PDY 
-    export ENKFCOMIN=$COMROOT/gfs/prod/enkf. 
+    export GFSCOMIN=$COMROOT/com/gfs/prod/gfs.$PDY 
+    export ENKFCOMIN=$COMROOT/com/gfs/prod/enkf. 
   else
-    export GFSCOMIN=$COMROOT/gfs/prod/gfs.$PDY
-    export ENKFCOMIN=$COMROOT/gfs/prod/enkf. 
+    export GFSCOMIN=$COMROOT/com/gfs/prod/gfs.$PDY
+    export ENKFCOMIN=$COMROOT/com/gfs/prod/enkf. 
   fi
 
 ###
