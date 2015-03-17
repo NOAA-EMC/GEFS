@@ -237,7 +237,7 @@ inflaguse=0
 inflagt=$inflag
 
 (( fhr = fhrp ))
-while (( fhr <= 96 ))
+while (( fhr <= 48 ))
 do
   if (( fhr < 10 )); then
     fhr=0$fhr
@@ -268,6 +268,12 @@ do
       pdyinm2=$pdyinm3
       pdyinm3=$pdyinm4
       pdyinm4=00000000
+
+      pdycycp0=`$EXECutil/ndate -$fhr $PDY$cyc`
+      pdyp0=`echo $pdycycp0|cut -c1-8`
+      cycp0=`echo $pdycycp0|cut -c9-10`
+
+
     done
     if (( cycstart < 10 )); then
       cycstart="0$cycstart"
@@ -298,7 +304,7 @@ do
     elif (( inflagt == 5 )); then
       fcstinn=$comfcstin/$cycstart/sfcsig/gep${ipairn}.$cyclestart.sf$fhr$cfsuffixstart
     elif (( inflagt == 6 )); then
-     fcstinn=${ENKFCOMIN}${pdyp}/$cycp/sfg_${pdyp}${cycp}_fhr${fhr}_mem0${ipairin}
+     fcstinn=${ENKFCOMIN}${pdyp0}/$cycp0/sfg_${pdyp0}${cycp0}_fhr${fhr}_mem0${ipairin}
 
     else
       fcstinn=$comfcstin/$cycstart/sfcsig/gec00.$cyclestart.sf$fhr$cfsuffixstart
@@ -309,7 +315,7 @@ do
       rc=$?
       echo rc=$rc onifhr=$onifhr
       if (( rc == 0 )); then
-	if (( onifhr == fhr )); then
+	if (( onifhr == fhrp )); then
 	  onidate=`$sighdrexec $fcstinn idate`
 	  rc=$?
 	  echo rc=$rc onidate=$onidate
@@ -341,7 +347,7 @@ do
     elif (( inflagt == 5 )); then
       fcstinp=$comfcstin/$cycstart/sfcsig/gep${ipairp}.$cyclestart.sf$fhr$cfsuffixstart
     elif (( inflagt == 6 )); then
-     fcstinp=${ENKFCOMIN}${pdyp}/$cycp/sfg_${pdyp}${cycp}_fhr${fhr}_mem0${ipairip}
+     fcstinp=${ENKFCOMIN}${pdyp0}/$cycp0/sfg_${pdyp0}${cycp0}_fhr${fhr}_mem0${ipairip}
     else
       fcstinp=$comfcstin/$cycstart/sfcsig/gec00.$cyclestart.sf$fhr$cfsuffixstart
     fi
@@ -351,7 +357,7 @@ do
       rc=$?
       echo opifhr=$opifhr
       if (( rc == 0 )); then
-	if (( opifhr == fhr )); then
+	if (( opifhr == fhrp )); then
 	  opidate=`$sighdrexec $fcstinp idate`
 	  rc=$?
 	  echo rc=$rc opidate=$opidate
