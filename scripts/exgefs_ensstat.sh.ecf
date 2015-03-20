@@ -45,13 +45,13 @@ export iens_msg=1
 # Define Script/Exec Variables
 #####################################
 
-export WGRIB=${WGRIB:-$EXECgrib/wgrib}
-export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
-export COPYGB=${COPYGB:-$EXECgrib/copygb}
-export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
-export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
-export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
-export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
+#export WGRIB=${WGRIB:-$EXECgrib/wgrib}
+#export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
+#export COPYGB=${COPYGB:-$EXECgrib/copygb}
+#export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
+#export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
+#export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
+#export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
 
 export ENSPPF=$USHgefs/global_ensppf.sh
 export ENSSTAT=$EXECgefs/gefs_ensstat
@@ -107,7 +107,7 @@ do
   for res in $reslist 
   do
     if [[ $res = p5 ]]; then
-     makepgrba="no"
+     makepgrb1="no"
      makegrb1i="no"
      if test $fh -lt 100 
      then
@@ -321,7 +321,7 @@ do
     if [ $SENDCOM = "YES" ]; then
       for run in geavg gespr
       do
-        if [[ "$makepgrba" = "yes" ]]; then
+        if [[ "$makepgrb1" = "yes" ]]; then
            $CNVGRIB -g21 ${run}.${cycle}.pgrb2a$FXT\f$fh$EXT$cfsuffix ${run}.${cycle}.pgrba$FXT\f$fh$EXT$cfsuffix
         fi
 	if [[ "$makegrb2i" = "yes" ]]; then

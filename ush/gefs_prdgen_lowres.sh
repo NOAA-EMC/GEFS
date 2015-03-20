@@ -22,13 +22,13 @@ ffhr=$ffhr
 fhr=$fhr
 grid=$grid2p5
 
-export WGRIB=${WGRIB:-$EXECgrib/wgrib}
-export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
-export COPYGB=${COPYGB:-$EXECgrib/copygb}
-export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
-export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
-export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
-export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21}
+#export WGRIB=${WGRIB:-$EXECgrib/wgrib}
+#export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
+#export COPYGB=${COPYGB:-$EXECgrib/copygb}
+#export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
+#export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
+#export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
+#export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21}
 
 echo settings in $0 gefsmachine=$gefsmachine
 echo settings in $0 WGRIB=$WGRIB
@@ -38,7 +38,6 @@ echo settings in $0 GRB2INDEX=$GRB2INDEX
 echo settings in $0 COPYGB=$COPYGB
 echo settings in $0 COPYGB2=$COPYGB2
 echo settings in $0 CNVGRIB=$CNVGRIB
-#echo settings in $0 ENSADD=$ENSADD
 
 R1=`echo $RUN|cut -c1-3`
 R2=`echo $RUN|cut -c4-5`
@@ -127,7 +126,7 @@ then
   #
   mv pgb2afile.$ffhr.2$cfsuffix $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix
   mv pgb2bfile.$ffhr.2$cfsuffix $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix
-  if [[ "$makegrb1i" = "yes" ]]; then
+  if [[ "$makegrb2i" = "yes" ]]; then
      mv pgb2afile.$ffhr.2$cfsuffix.idx $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix.idx
      mv pgb2bfile.$ffhr.2$cfsuffix.idx $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix.idx
   fi
@@ -167,14 +166,7 @@ then
   fi
 fi
 
-  case $gefsmachine in
-    (wcoss)
-      fmakegb1=1
-    ;;
-    (zeus)
-      fmakegb1=0
-  esac
-if (( fmakegb1 == 1 )); then
+if [[ "$makepgrb1" = "yes" ]]; then
 #DHOU 03/23/2012, skip grib2 files for ZEUS
 #########################################
 # Step IV: Create the 2.5x2.5 GRIB files

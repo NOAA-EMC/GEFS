@@ -8,16 +8,15 @@
 # 12/3/2014, Dingchen Hou  Scripts are modified to be vertical structre and cleanned 
 ######################################################################
 
-#$SMSBIN/smsinit $LOADL_STEP_ID 
 echo `date` $0 `date -u` begin
 
 set -xa
-####################################
+export PS4='$SECONDS + '
+date
 
-# 01/28/2013 New variables added for WCOSS and cross-machine unfication
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-export machine=${gefsmachine:-wcoss}
+
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ###########################################
@@ -27,44 +26,22 @@ if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nw${envir}/parm/gefs_config
-else
-  VERSION_FILE=/nw{$envir}/versions/gefs.ver
-  if [-f $VERSION_FILE]; then
-   . $VERSION_FILE
-  else
-   ecflow_client --abort
-   exit
-  fi 
 fi
-
-export HOMEgefs=${HOMEgefs}
-export HOMEgsm=${HOMEgsm}
-export HOMEutil=${UTILROOT:-/nwprod/util}
-
-# ###################################
-# SET SHELL PROCESSING VARIABLES
-# ###################################
-export PS4='$SECONDS + '
-date
 
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-export DATA=$DATAROOT/${job}.${pid}
-#export DATA=$DATA_IN/${job}.${pid}
-
+export DATAROOT=${DATAROOT:-/tmpnwprd_p2}
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
 
 ############################
 # Set up cycle varaible
 ############################
-#echo $cyc       #DHTEST
 export cycle=t${cyc}z
 export cycle_fcst=t${cyc_fcst}z
-export NTHREADS=$NTHREADS_SIGCHGRS
-export MP_LABELIO=YES
 
 if (( cyc == cyc_fcst )); then
   export cycsuffix=false
@@ -78,14 +55,15 @@ fi
 # Specify NET and RUN Name and model
 ####################################
 export NET=${NET:-gens}
+export NTHREADS=$NTHREADS_SIGCHGRS
+export MP_LABELIO=YES
+CHGRES_ALL=no
 
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-/com/logs/jlogfile}
+export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
 
-CHGRES_ALL=yes
-CHGRES_ALL=no
 ####################################
 # Determine Job Output Name on System
 ####################################
@@ -93,6 +71,7 @@ export outid="LL$job"
 export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
+
 if [[ $RUN_CONCURRENT = yes ]]; then
   export PGMOUT=FCOUT.o$pid
   export PGMERR=
@@ -101,20 +80,21 @@ if [[ $RUN_CONCURRENT = yes ]]; then
 fi
 
 ####################################
-# SENDSMS  - Flag Events on SMS
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 # RERUN    - Rerun fcst from beginning (default no)
 # VERBOSE  - Specify Verbose Output in exglobal_fcst.sh.sms
 ####################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
   export SENDCOM=${SENDCOM:-YES}
+  export SENDDBN=${SENDDBN:-YES}
   export SENDECF=${SENDECF:-YES}
   export VERBOSE=${VERBOSE:-NO}
   export RERUN=${RERUN:-NO}
 
   # Specify Execution Areas
+  export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+  export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
+
   export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
   export USHgsm=${USHgsm:-$HOMEgsm/ush}
   export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
@@ -129,27 +109,16 @@ then
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
-fi
-
-export ERRSCRIPT=err_chk
-export LOGSCRIPT=startmsg
-
-##############################
-# Set up the UTILITIES
-##############################
-#export utilscript=$UTILROOT/ush   # will be removed
-export USHutil=$UTILROOT/ush
-export EXECutil=$UTILROOT/exec
 
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-sh $USHutil/setup.sh
+#sh setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $USHutil/setpdy.sh
+setpdy.sh
 . PDY
 
 # hour_lr_ni will be used to define the IC files of the lower resolution part (if not restart) 
@@ -161,31 +130,10 @@ sh $USHutil/setpdy.sh
 # Define COM and GES directories
 ##############################################
   export gespath=$GESROOT/${envir}
-  export COMGFS=$COMROOT/com/gfs/prod/gfs.${PDY}
-  export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
+  export GESdir=$gespath/gefs.${PDY}
+  export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
 
-#if [ "$RUN_ENVIR" = dev ]         ### For Developers
-#then
-#  export GFS_IN=${GFS_IN:-/com/gfs/prod/}
-#  export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
-#  export gespath=${gespath:-/global/noscrub/$LOGBAME/nwges/${envir}}
-#
-#  export COMGFS=$GFS_IN/gfs.${PDY}
-#  export COMOUT=$COM_OUT/gefs.${PDY}
-#else                              ### Fir Operations
-#  export COMGFS=/com/gfs/prod/gfs.${PDY}
-#  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
-#  export gespath=/nwges/${envir}
-#fi
-
-#mkdir -m 775 -p $COMOUT/$cyc/sfcsig
-#mkdir -m 775 -p $COMOUT/$cyc/sflux
-#mkdir -m 775 -p $COMOUT/$cyc/misc
-
-#export ENS_COM=$COMOUT
-
-export GESdir=$gespath/gefs.${PDY}
-mkdir -m 775 -p $GESdir
+  mkdir -m 775 -p $GESdir
 
 ##############################################
 echo set parameters using gefs.parm
@@ -237,15 +185,7 @@ fi
 memberlist=`echo $memberlist`
 MEMBER_NAMES=$memberlist
 
-#
-# Forecast Fix Fields
-#
-#export CLTUNE=$FIXGLOBAL/global_cldtune.f77
-#export DTBTHE=$FIXGLOBAL/global_tbthe.f77
-#export O3PROD=$FIXGLOBAL/global_o3prod.f77
-#export O3LOSS=$FIXGLOBAL/global_o3loss.f77
-
-#### DHOU, 09/10/2010 added this block for  truncation of forecast files to prepair for lower res.      
+#### DHOU, 09/10/2010 this  block is for  truncation of forecast files to prepair for lower res.      
      #######################################################
      # variables for low-resolution forecast third part
      # from FH=fhmaxh-fhmax, 6-hourly output
@@ -278,15 +218,10 @@ export OROGRAPHY=$FIXGLOBAL/global_orography.t$MTNRSLLR.grb
 export OROGRAPHY_UF=$FIXGLOBAL/global_orography_uf.t$MTNRSLLR.grb
 export    SLMASK=$FIXGLOBAL/global_slmask.t$MTNRSLLR.grb
 
-#   The SST and SEA_ICE Climate fix file:
-#export FNTSFC=$FIXGLOBAL/cfs_oi2sst1x1monclim19822001.grb # Using default untill 2015 gfs implementation
-#export FNAISC=$FIXGLOBAL/cfs_ice1x1monclim19822001.grba   # Using default untill 2015 gfs implementation
+#  The SST and SEA_ICE Climate fix file:
 export FNTSFC=$FIXGLOBAL/RTGSST.1982.2012.monthly.clim.grb  # New for gfs 2014 implementation
 export FNAISC=$FIXGLOBAL/CFSR.SEAICE.1982.2012.monthly.clim.grb  # New for gfs 2014 implementation
 
-#  The VEGTYPE fix file and the O3 Climate file, use the default
-#export FNVETC=$FIXGLOBAL/global_vegtype.1x1.grb
-#export O3CLIM=$FIXGLOBAL/global_o3clim.txt
 #
 # chgres parameters
 #
@@ -392,8 +327,9 @@ postmsg "$jlogfile" "$msg"
 ##############################
 # Remove the Temporary working directory
 ##############################
-cd $DATA_IN
-#rm -rf $DATA
+if [[ $KEEPDATA != "YES" ]]; then
+ cd $DATA_IN
+ rm -rf $DATA
+fi 
 
 echo `date` $0 `date -u` end
-#$SMSBIN/endt

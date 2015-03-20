@@ -3,13 +3,74 @@
 # GEFS model run
 #######################################################
  
+export KEEPDATA="YES"
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export envir=${envir:-dev}
+export SENDDBN=${SENDDBN:-%SENDDBN:NO%}
+export SENDDBN_NTC=${SENDDBN_NTC:-%SENDDBN_NTC:NO%}
+export SENDCOM=YES
+export SENDECF=NO
+export SENDSMS=NO
+
+export COMROOT=$baseoutput/com
+export GESROOT=$baseoutput/nwges
+export DATAROOT=$baseoutput/tmpnwprd
+export DCOMROOT=${DCOMROOT:-/dcom}
+
+export COMROOTp1=/com
+export GESROOTp1=/nwges
+export DBNROOT=
+
+export NWROOT=/nwprod2
+export NWROOTprod=/nwprod2
+export NWROOTp1=/nwprod
+export PCOMROOT=${PCOMROOT:-/pcom2/${envir}}
+
+export SENDECF=${SENDECF:-NO}
+export SENDCOM=${SENDCOM:-YES}
+export KEEPDATA=${KEEPDATA:-%KEEPDATA:NO%}
 
 HOMEDIR=/ensemble/save/Dingchen.Hou/RFC
-
 export gefsmachine=${gefsmachine:-wcoss}
-if [ $RUN_ENVIR = dev ]
+
+  export HOMEgefs=$HOMEDIR/gefs.v11.0.x
+  export HOMEgefs=$basesource/nwdev
+
+  export HOMEgsm=$HOMEDIR/gsm.v12.0.2
+  export HOMEpost=$HOMEDIR/ncep_post.v5.1.1
+  export HOMEenkf=$HOMEDIR/enkf.v2.0.1
+  export HOMEtrak=$HOMEDIR/ens_tracker.v1.0.0
+  export HOMEgene=$HOMEDIR/ens_genesis.v1.0.0
+
+# export UTILROOT=/nwprod2/prod_util.v1.0.0  
+# export GRIBROOT=/nwprod2/grib_util.v1.0.1
+  . /usrx/local/Modules/default/init/ksh
+  module use /nwprod2/modulefiles
+  module load prod_util/v1.0.1
+  module load util_shared/v1.0.0
+  module load grib_util/v1.0.1
+
+  export EXECutil=$UTILROOT/exec
+  export USHutil=$UTILROOT/ush
+  export EXECgrib=$GRIBROOT/exec
+
+  export NDATE=${NDATE:-$USHutil/ndate}
+
+  export WGRIB=${WGRIB:-$EXECgrib/wgrib}
+  export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
+  export COPYGB=${COPYGB:-$EXECgrib/copygb}
+  export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
+  export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
+  export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
+  export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
+  export CNVGRIB21_GFS=${CNVGRIB21_GFS:-$EXECgrib/cnvgrib21_gfs}
+  export CNVGRIB=$CNVGRIB21_GFS
+
+  export NET=gens
+  export RUN=$RUN
+  export RUNMEM=$RUNMEM
+
+if [ $RUN_ENVIR = xxx ]
 then
   export HOMEgefs=$HOMEDIR/gefs.v11.0.x
   export HOMEgefs=$basesource/nwdev
@@ -20,12 +81,6 @@ then
   export HOMEtrak=$HOMEDIR/ens_tracker.v1.0.0
   export HOMEgene=$HOMEDIR/ens_genesis.v1.0.0
 
-  export SENDCOM=YES
-  export SENDDBN=NO
-  export SENDDBN_GB2=NO
-  export SENDDBN_NTC=NO
-  export SENDECF=NO
-  export SENDSMS=NO
 
 #NCO required variable
   export UTILROOT=/nwprod/util

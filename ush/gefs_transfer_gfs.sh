@@ -31,9 +31,11 @@ then
    # Save Pressure GRIB/GRIB Index files
    #
   if [[ $jobgrid == "" ]]; then
+   if [[ "$makepgrb1" = "yes" ]]; then
    cp pgbafile $COMOUT/$cyc/$GRBDIR/ge${RUN}.${cycle}.$GRBFIL\f$pgfhr
-   if [[ "$makegrb1i" = "yes" ]]; then
+    if [[ "$makegrb1i" = "yes" ]]; then
      cp pgbaifile $COMOUT/$cyc/$GRBDIR/ge${RUN}.${cycle}.$GRBFIL\if$pgfhr
+    fi
    fi
   fi 
    cp pgb2afile $COMOUT/$cyc/$GRBDIR2/ge${RUN}.${cycle}.$GRBFIL2\f$pgfhr
@@ -45,9 +47,11 @@ then
    #
    if test "$DO_LOW_RES" = 'YES' -a `expr $fhr % 6` -eq 0
    then
+     if [[ "$makepgrb1" = "yes" ]]; then
      cp pgbafile.2 $COMOUT/$cyc/pgrbalr/ge${RUN}.${cycle}.pgrbaf$pgfhr.2
-     if [[ "$makegrb1i" = "yes" ]]; then
+      if [[ "$makegrb1i" = "yes" ]]; then
        cp pgbaifile.2 $COMOUT/$cyc/pgrbalr/ge${RUN}.${cycle}.pgrbaif$pgfhr.2
+      fi
      fi
      cp pgb2afile.2 $COMOUT/$cyc/pgrb2alr/ge${RUN}.${cycle}.pgrb2af$pgfhr.2
      if [[ "$makegrb2i" = "yes" ]]; then

@@ -208,13 +208,14 @@ export gfsfhmaxh=240
 export gfsfhoroglist=252
 
 export addgrb1id=yes
-export makegrb1i=yes
-export makegrb2i=yes
 export makepgrb2a=yes
 export makepgrb2d=no
-#DHOU 03/26/2012 For ZEUS
-#export makegrb2i=no
-#export makepgrb2a=no
+#DHOU 3/15/2015 for prdgen
+export makepgrb2d=no
+export makepgrb2=yes
+export makepgrb1=no
+export makegrb2i=yes
+export makegrb1i=no
 
 ########################################
 # This section defines the product output grid  definitions (for grib2 format, used in prdgen(_gfs))

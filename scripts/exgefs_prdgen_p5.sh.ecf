@@ -120,7 +120,6 @@ if [[ $DOANALYSIS = YES ]]; then
   # in the GRIB1 ensemble PDS header extension
   #######################################################
   export addgrb1id=yes
-  export makegrb1i=yes
 
   # Making the 0.5-degree grib files
   $USHgefs/gefs_prdgen_p5.sh
@@ -212,7 +211,6 @@ do
   # in the GRIB1 ensemble PDS header extension
   ####################################
   export addgrb1id=yes
-  export makegrb1i=yes
 
   # Making the 2.5x2.5 degree GRIB files in background
   if [[ "$DO_LOW_RES" = 'YES' ]] && [[ `expr $fhr % 6 ` -eq 0 ]] 

@@ -8,23 +8,16 @@ set -x
 # january 2015, Dingchin Hou   Scripts changed to vertical structure and cleaned following NCO requirements
 ######################################################################
 
-#$SMSBIN/smsinit $LOADL_STEP_ID 
 echo `date` $0 `date -u` begin
 
 set -xa
+export PS4='$SECONDS + '
+date
 
-# 01/28/2013 New variables added for WCOSS and cross-machine unfication
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-export machine=${gefsmachine:-wcoss}
-export APRUN=${gefsmpexec:-mpirun.lsf}
 
 export GRIBVERSION=${GRIBVERSION:-grib2}
-#export MASTERRES=p5        # default is Gaussian, could be p125/p25/p5 
-export res=$MASTERRES
-
-#DHOU 07/25/2014, temporally set to /nwprod/parm, used to find the eta_micro_lookup.dat used in the nceppost code
-#gfs parallel set it to the gfs/parms/parm_am
 
 ###########################################
 # Run gefs_config to get input parameters
@@ -33,34 +26,21 @@ if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nw${envir}/parm/gefs_config
-else
-  VERSION_FILE=/nw{$envir}/versions/gefs.ver
-  if [-f $VERSION_FILE]; then
-    . $VERSION_FILE
-  else
-    ecflow_client --abort
-    exit
-  fi
 fi
-
-export HOMEgefs=${HOMEgefs}
-export HOMEgsm=${HOMEgsm}
-export HOMEpost=${HOMEpost}
-export HOMEutil=${UTILROOT:-/nwprod/util}
-export HOMEgrib=${GRIBROOT:-/nwprod/util}
-
-export PS4='$SECONDS + '
-date
 
 ####################################
 # obtain unique process id (pid) and make temp directory
 ###################################
 export pid=$$
-export DATA=$DATAROOT/${job}.${pid}
-export DATA=$DATA_IN/${job}.${pid}
-
+export DATAROOT=${DATAROOT:-/tmpnwprd_p2}
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
+
+# Define MASTERRES for master file grid, default being Gaussian with alternatives of  p125/p25/p5 
+export MASTERRES=        
+export res=$MASTERRES
+export SUBJOB=$SUBJOB
 
 ######################################
 # Set up the cycle variable
@@ -84,7 +64,7 @@ export NET=${NET:-gens}
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-/com/logs/jlogfile}
+export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -95,23 +75,22 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 ####################################
-# SAVEGES  - Copy Files From TMPDIR to $GESdir
-# RMGES    - Clean Files in $GESdir
-# SENDSMS  - Flag Events on SMS
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 # RERUN    - Rerun posts from beginning (default no)
 # VERBOSE  - Specify Verbose Output in global_postgp.sh
 ####################################
-  export SAVEGES=${SAVEGES:-YES}
   export SENDCOM=${SENDCOM:-YES}
   export SENDDBN=${SENDDBN:-YES}
-  export SENDSMS=${SENDSMS:-YES}
   export SENDECF=${SENDECF:-YES}
   export VERBOSE=${VERBOSE:-NO}
   export RERUN=${RERUN:-NO}
 
   # Specify Execution Areas
+  export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+  export HOMEpost=${HOMEpost:-${NWROOT}/gsm.${ncep_post_ver}}
+  export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
+
   export USHpost=${HOMEpost}/ush
   export EXECpost=${HOMEpost}/exec
   export FIXpost=${HOMEpost}/fix
@@ -127,9 +106,8 @@ export pgmerr=errfile
 ###############################################################
 # Specify locations of the following scripts and executables
 ###############################################################
-#export CHGRESTHREAD=2
 export CHGRESTHREAD=1
-export OVERPARMEXEC=$EXECpost/overparm_grib
+export OVERPARMEXEC=                        #Optional input in the post ush script
 export CHGRESSH=$USHgsm/global_chgres.sh
 export CHGRESEXEC=$EXECgsm/global_chgres
 
@@ -139,16 +117,6 @@ export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
 #echo in $0: POSTGPSH=$POSTGPSH
 #echo in $0: POSTGPEXEC=$POSTGPEXEC
 
-##############################
-# Set up the UTILITIES
-##############################
-export EXECutil=$HOMEutil/exec
-export USHutil=$HOMEutil/ush
-export EXECgrib=$HOMEgrib/exec
-
-#export CNVGRIB=${CNVGRIB:-/$EXECgrib/cnvgrib21_gfs}
-#export CNVGRIB=${CNVGRIB:-/nwprod/util/exec/cnvgrib21_gfs}
-
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
 export REDOUT='1>>'
@@ -157,45 +125,21 @@ export REDERR='2>'
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-ksh $USHutil/setup.sh
+#ksh setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $USHutil/setpdy.sh
+setpdy.sh
 
 . PDY
 
 ##############################################
 # Define COM and GES directories
 ##############################################
-  export gespath=$GESROOT/${envir}
-  export COMGFS=$COMROOT/com/gfs/prod/gfs.${PDY}
-  export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
-  export COMIN=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
-  export GESdir=$gespath/gefs.${PDY}
+  export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
+  export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
 
-
-#if [ "$RUN_ENVIR" = dev ]         ### For Developers
-#then
-#  export COM_IN=${COM_IN:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
-#  export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
-#  export gespath=${gespath:-/global/noscrub/$LOGBAME/nwges/${envir}}
-#
-#  export COMIN=$COM_IN/gefs.${PDY}
-#  export COMOUT=$COM_OUT/gefs.${PDY}
-#  export ENS_COM=$COMOUT
-#
-#  mkdir -m 775 -p $COMOUT/$cyc/stats
-#
-#else                              ### Fir Operations
-#  export COMIN=/com/${NET}/${envir}/gefs.${PDY}
-#  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
-#  export gespath=/nwges/${envir}
-#  export ENS_COM=$COMOUT
-#fi
-
-mkdir -m 775 -p $COMOUT $GESdir
 mkdir -m 775 -p $COMOUT/$cyc/master
 mkdir -m 775 -p $COMOUT/$cyc/misc
 
@@ -250,7 +194,6 @@ fi
 #              checking for restart files
 ####################################
 export SLEEP_TIME=900
-#export SLEEP_TIME=1800
 export SLEEP_INT=5
 
 ####################################
@@ -436,10 +379,10 @@ echo `date` TEST LISTING OF WORKING DIRECTORY END
 msg="$job completed normally"
 postmsg "$jlogfile" "$msg"
 
-if [[ $envir != dev ]]; then
-  cd $DATA_IN
+if [[ $KEEPDATA != "YES" ]]; then
+  cd $DATAROOT
   rm -rf $DATA
 fi
 
-echo `date` $0 `date -u` end
-$SMSBIN/endt
+ech
+`date` $0 `date -u` end

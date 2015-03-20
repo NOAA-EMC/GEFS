@@ -45,18 +45,18 @@ export iens_msg=1
 # Define Script/Exec Variables
 #####################################
 
-export WGRIB=${WGRIB:-$EXECgrib/wgrib}
-export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
-export COPYGB=${COPYGB:-$EXECgrib/copygb}
-export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
-export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
-export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
-export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
+#export WGRIB=${WGRIB:-$EXECgrib/wgrib}
+#export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
+#export COPYGB=${COPYGB:-$EXECgrib/copygb}
+#export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
+#export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
+#export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
+#export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
 
 export ENSPPF=$USHgefs/global_ensppf.sh
 export ENSSTAT=$EXECgefs/gefs_ensstat
 export ENSPQPF=$USHgefs/global_enspqpf.sh
-#
+ 
 #####################################
 # START TO DUMP DATA FOR $cycle CYCLE
 # START TO DUMP DATA FROM PGB FORECAST FILES

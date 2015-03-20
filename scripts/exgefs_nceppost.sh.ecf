@@ -32,13 +32,14 @@ echo fcstlong=$fcstlong
 echo cycsuffix=$cycsuffix
 echo cfsuffix=$cfsuffix
 
-export WGRIB2=${WGRIB2:-${EXECgrib}/wgrib2}
-export COPYGB2=${COPYGB2:-${EXECgrib}/copygb2}
-export GRBINDEX=${GRBINDEX:-${EXECgrib}/grbindex}
-export GRBINDEX2=${GRB2INDEX:-${EXECgrib}/grb2index}
-export NDATE=${NDATE:-${EXECutil}/ndate}
-export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
-export SIGHDR=${SIGHDR:-$EXECgsm/global_sighdr}
+#export WGRIB2=${WGRIB2:-${EXECgrib}/wgrib2}
+#export COPYGB2=${COPYGB2:-${EXECgrib}/copygb2}
+#export GRBINDEX=${GRBINDEX:-${EXECgrib}/grbindex}
+#export GRBINDEX2=${GRB2INDEX:-${EXECgrib}/grb2index}
+#export NDATE=${NDATE:-${EXECutil}/ndate}
+#
+ export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
+ export SIGHDR=${SIGHDR:-$EXECgsm/global_sighdr}
 
 R1=`echo $RUN|cut -c1-3`
 R2=`echo $RUN|cut -c4-5`
@@ -47,18 +48,14 @@ case $R1 in
   (gec) if (( R2 == 0 )); then 
            (( e1 = 1 ))
 	   (( e2 = R2 ))
-#	   ens_pert_type='unperturbed_low_res_cntrl_fcst'
            ens_pert_type='unpert_lo_res_ctrl_fcst'
-
         else   
 	 echo unrecognized RUN=$RUN R1=$R1 R2=$R2 
 	fi;;
   (gen) (( e1 = 2 ))
 	ens_pert_type='negatively_pert_fcst'
-
 	(( e2 = R2 ));;
   (gep) (( e1 = 3 ))
-	ens_pert_type='positively_pert_fcst'
         ens_pert_type='pos_pert_fcst'
 	(( e2 = R2 ));;
   (*)   (( e1 = 0 ))

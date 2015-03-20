@@ -1,0 +1,75 @@
+#
+# Forecast Input Variables
+#
+export SEMILG=$SEMILG
+export DELTIM=$DELTIM
+export DTPHYS=$DTPHYS
+      if [[ $FORECAST_SEGMENT = lr ]]; then
+export SEMILG=$SEMILGLR
+export DELTIM=$DELTIMLR
+export DTPHYS=$DTPHYSLR
+export DELTIM=1200
+export DTPHYS=600
+      fi
+export LIOPE=.true.
+export NGPTC=30
+
+#This block is copied from GFS J-job file
+export FHLWR=3600      # LW radiation calling interval (hrs)
+export FHSWR=3600      # SW radiation calling interval (hrs)
+export IEMS=1          # 0-blackbody ground emission; 1-climatology on one-deg map
+export ISOL=2          # 0--fixed solar constant; 1--changing solar constant
+export IAER=111        # 111--with stratospheric aerosol, tropospheric aerosol LW, troposphere aerosol SW.
+export ICO2=1          # 0--fixed CO2 constant; 1--time varying global mean CO2; 2--changing CO2
+
+# Variables for GOCART Output
+export FHGOC3D=0       # Forecast Output Length for G3D files for GOCART
+export LGOC3D=.false.  # Control Variable to output the G3D files for GOCART
+
+# Variables for input to the Namelist
+export ialb=0          # 0: climatology sw albedo based on surface veg types;
+                       # 1: MODIS based land surface albedo
+export IOVR_SW=1       # 0--random cloud overlap for SW; 1--maximum-random cloud overlap for SW
+
+#  Other parameters input to the model
+
+export IOVR_LW=1       # 0--random cloud overlap for SW; 1--maximum-random cloud overlap for SW
+ISOL=2               # 0--fixed solar constant; 1--changing solar constant
+ICO2=2               # 0--fixed CO2 constant; 1--time varying global mean CO2; 2--changing CO2
+IAER_MDL=0           # choosing different aerosol models, such as OPAC-monthly-climatology,
+ ISUBC_LW=2           # 0--OPS/standard LW clouds.. no MCICA; 1--prescribed MCICA seeds; 2--random MCICA seeds
+ ISUBC_SW=2           # 0--OPS/standard SW clouds.. no MCICA; 1--prescribed MCICA seeds; 2--random MCICA seeds
+nsout=0              # 1: write out every time step, default=0
+use_ufo=.true.
+RUN_ENTHALPY=.false.
+settls_dep3ds=.true.; settls_dep3dg=.true.; #SETTLS departure-point scheme
+#ncw='20,120'        # Russ
+ncw='50,150'         # gefs
+flgmin='0.180,0.220'
+#crtrh='0.90,0.90,0.90'   #Russ
+crtrh='0.85,0.85,0.85'    #gefs
+ctei_rm='10.0,10.0'    
+ccwf='1.0,1.0'; dlqf='0.0,0.0';
+ictm=1
+cal_pre=.true.
+bkgd_vdif_m=1.0; bkgd_vdif_h=1.0; bkgd_vdif_s=1.0; random_clds=.false. 
+ psautco='4.0e-4,4.0e-4'; prautco='1.0e-4,1.0e-4'  
+evpco=2.0e-5; wminco='1.0e-5,1.0e-5'  
+ cdmbgwd=0.25,2.0 
+ref_temp=350.0
+sl_epsln=0.05
+ndsl=.false.
+ redrag=.true. 
+
+levwgt=24,30
+fixtrc=.false.,.true.
+
+FCSTVARS="ras=.false.,zhao_mic=.true.,newsas=.true.,lingg_a=.true.,lingg_b=.true.,settls_dep3ds=$settls_dep3ds,settls_dep3dg=$settls_dep3dg,semilag=$SEMILG,sl_epsln=$sl_epsln,herm_x=.true.,herm_y=.true.,herm_z=.true.,lin_xyz=.false.,wgt_cub_lin_xyz=.false.,quamon=.false.,ialb=$ialb,random_clds=.false.,sashal=.true.,old_monin=.false.,iovr_lw=$IOVR_LW,iovr_sw=$IOVR_SW,zflxtvd=.false.,ISOL=$ISOL,ICO2=$ICO2,IAER=$IAER,IAER_MDL=$IAER_MDL,ISUBC_LW=$ISUBC_LW,ISUBC_SW=$ISUBC_SW,FHLWR=$FHLWR,FHSWR=$FHSWR,nsout=$nsout,use_ufo=$use_ufo,RUN_ENTHALPY=$RUN_ENTHALPY,ncw=$ncw,crtrh=$crtrh,flgmin=$flgmin,ctei_rm=$ctei_rm,mstrat=.false.,ictm=$ictm,cal_pre=$cal_pre,bkgd_vdif_m=$bkgd_vdif_m,bkgd_vdif_h=$bkgd_vdif_h,bkgd_vdif_s=$bkgd_vdif_s,psautco=$psautco,prautco=$prautco,evpco=$evpco,wminco=$wminco,CCWF=$ccwf,dlqf=$dlqf,cdmbgwd=$cdmbgwd,ref_temp=$ref_temp,ndsl=$ndsl,dtphys=$DTPHYS,redrag=$redrag,pdfcld=$pdfcld,shcnvcw=$shcnvcw,levwgt=$levwgt,fixtrc=$fixtrc"
+
+FCSTVARS="$FCSTVARS,gg_tracers=.false.,lsm=1,tfiltc=0.85,liope=$LIOPE,IALB=$ialb,ccnorm=.false.,LDIAG3D=.false.,MOM4ICE=.false.,cnvgwd=.true.,shuff_lats_a=.false.,shuff_lats_r=.true."
+FCSTVARS="$FCSTVARS,hybedmf=.true.,dspheat=.true.,cgwf=0.5,0.05"      #Ag,Ah Suru and Jongil
+
+if [ $LGOC3D = .true. ] ; then
+  export FCSTVARS="LGOC3D=$LGOC3D,FHGOC3D=$FHGOC3D,$FCSTVARS"
+fi
+

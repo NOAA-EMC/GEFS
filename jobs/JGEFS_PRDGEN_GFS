@@ -9,18 +9,15 @@
 ######################################################################
 
 # #### 02/06/06 ###############################
-# GET GEFS POST PROCESSING VARIABLES
-# FROM GFS RUN
+# GET GEFS POST PROCESSING VARIABLES  FROM GFS RUN
 # #############################################
 
-echo `date` $0 begin
-
 set -xa
+echo `date` $0 begin
+date
 
-# 01/28/2013 New variables added for WCOSS and cross-machine unfication
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-export machine=${gefsmachine:-wcoss}
 
 export GRIBVERSION=${GRIBVERSION:-grib2}
 
@@ -31,38 +28,22 @@ if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nwdev/parm/gefs_config
-else
-  VERSION_FILE=/nw{$envir}/versions/gefs.ver
-  if [-f $VERSION_FILE]; then
-   . $VERSION_FILE
-  else
-   ecflow_client --abort
-   exit
-  fi
 fi
-
-export HOMEgefs=${HOMEgefs}
-export HOMEgsm=${HOMEgsm}
-export HOMEutil=${UTILROOT:-/nwprod/util}
-export HOMEgrib=${GRIBROOT:-/nwprod/util}
-
-#export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
-#export CNVGRIB=${CNVGRIB:-/nwprod/util/exec/cnvgrib21_gfs}
-
-export PS4='$SECONDS + '
-date
 
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-export DATA=$DATAROOT/${job}.${pid}
-
-jobgrid=$jobgrid
-
+export DATAROOT=${DATAROOT:-/tmpnwprd_p2}
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
 
+jobgrid=$jobgrid
+
+######################################
+# Set up the cycle variable
+######################################
 export cycle=t${cyc}z
 
 ####################################
@@ -74,7 +55,7 @@ export RUN=gfs
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-/com/logs/jlogfile}
+export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -85,7 +66,6 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 ####################################
-# SENDSMS  - Flag Events on SMS
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 # RERUN    - Rerun posts from beginning (default no)
@@ -93,55 +73,45 @@ export pgmerr=errfile
 ####################################
   export SENDCOM=${SENDCOM:-YES}
   export SENDDBN=${SENDDBN:-YES}
-  export SENDSMS=${SENDSMS:-YES}
   export SENDECF=${SENDECF:-YES}
-  export SENDDBN_GB2=${SENDDBN_GB2:-NO}
   export VERBOSE=${VERBOSE:-NO}
   export RERUN=${RERUN:-NO}
 
   # Specify Execution Areas
+  export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+  export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
+
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
-##############################
-# Set up the UTILITIES
-##############################
-export EXECutil=$HOMEutil/exec
-export USHutil=$HOMEutil/ush
-export EXECgrib=$HOMEgrib/exec
-
-export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
-export CNVGRIB=${CNVGRIB:-/$EXECutil/cnvgrib21_gfs}
-
-export ERRSCRIPT=err_chk
-export LOGSCRIPT=startmsg
 export REDOUT='1>>'
 export REDERR='2>'
 
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-sh $USHutil/setup.sh
+#sh setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $USHutil/setpdy.sh
+setpdy.sh
 . PDY
 
 ##############################################
 # Define COM directories
 ##############################################
-export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
-#export COMGFS=$COMROOT/com/gfs/prod/gfs.${PDY}
-export COMIN=$COMGFS/gfs.${PDY}
-export ENS_COM=$COMOUT
+export COMINgfs=${COMINgfs:-$COMROOTp1/gfs/prod/gfs.${PDY}}
+export COMIN=$COMINgfs
+export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
 
+if [[ "$makepgrb1" = "yes" ]]; then
 mkdir -m 775 -p $COMOUT/$cyc/pgrba
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2a
 mkdir -m 775 -p $COMOUT/$cyc/pgrbalr
+fi
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2a
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2alr
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
 mkdir -m 775 -p $COMOUT/$cyc/misc
@@ -196,11 +166,7 @@ if [[ $jobgrid == _p5 ]]; then
 # export dogrid2p5=NO
   export DO_LOW_RES=NO 
 fi
-#
-# DLM - Added to Try and Debug Comm Subsystem Errors
-# Problems in ENP5P On 20030730/12 UTC
-# Problems in ENP4P On 20030731/12 UTC
-#
+ 
 export MP_INFOLEVEL=6
 
 env | sort
@@ -242,8 +208,9 @@ postmsg "$jlogfile" "$msg"
 ##############################
 # Remove the Temporary working directory
 ##############################
-cd $DATA_IN
-rm -rf $DATA
+if [[ $KEEPDATA != "YES" ]]; then
+ cd $DATA_IN
+ rm -rf $DATA
+fi
 
 echo `date` $0 end
-$SMSBIN/endt

@@ -22,15 +22,13 @@ ffhr=$ffhr
 fhr=$fhr
 grid=$gridp5
 
-makegrib1=NO
-
-export WGRIB=${WGRIB:-$EXECgrib/wgrib}
-export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
-export COPYGB=${COPYGB:-$EXECgrib/copygb}
-export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
-export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
-export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
-export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
+#export WGRIB=${WGRIB:-$EXECgrib/wgrib}
+#export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
+#export COPYGB=${COPYGB:-$EXECgrib/copygb}
+#export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
+#export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
+#export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
+#export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
 
 echo settings in $0 gefsmachine=$gefsmachine
 echo settings in $0 WGRIB=$WGRIB
@@ -40,7 +38,6 @@ echo settings in $0 GRB2INDEX=$GRB2INDEX
 echo settings in $0 COPYGB=$COPYGB
 echo settings in $0 COPYGB2=$COPYGB2
 echo settings in $0 CNVGRIB=$CNVGRIB
-#echo settings in $0 ENSADD=$ENSADD
 
 R1=`echo $RUN|cut -c1-3`
 R2=`echo $RUN|cut -c4-5`
@@ -150,7 +147,7 @@ fi
       then
        mv pgb2dfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2dp5/${RUN}.${cycle}.pgrb2d.0p50.$pgffhr$cfsuffix
       fi
-      if [[ "$makegrb1i" = "yes" ]]; then
+      if [[ "$makegrb2i" = "yes" ]]; then
 	mv pgb2afile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2ap5/${RUN}.${cycle}.pgrb2a.0p50.$pgffhr$cfsuffix.idx
 	mv pgb2bfile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2bp5/${RUN}.${cycle}.pgrb2b.0p50.$pgffhr$cfsuffix.idx
       fi
@@ -196,19 +193,10 @@ fi
 echo `date` pgrb2ap5 0.5x0.5 sendcom $ffhr completed
 fi
 
-  case $gefsmachine in
-    (wcoss)
-      fmakegb1=1
-    ;;
-    (zeus)
-      fmakegb1=0
-    ;;
-  esac
- if (( fmakegb1 == 1 )); then
+ if [[ "$makepgrb1" = "yes" ]]; then
 ######################################
 # Step II: Create GRIBA files
 #####################################
-if [[ $makegrib1 = YES ]]; then
 
 if [[ -s $COMOUT/$cyc/pgrbap5/${RUN}.${cycle}.pgrbap5$pgffhr$cfsuffix ]] && \
    [[ -s $COMOUT/$cyc/pgrbap5/${RUN}.${cycle}.pgrbap5i$pgffhr$cfsuffix ]] && \
@@ -316,8 +304,6 @@ else
    fi
 fi
 fi
-
-fi   # makegrib1
 
  fi #(0=1 for ZEUS, skip grib2 files)
 ########################################################

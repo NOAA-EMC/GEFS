@@ -22,13 +22,13 @@ ffhr=$ffhr
 fhr=$fhr
 grid=$grid1p0
 
-export WGRIB=${WGRIB:-$EXECgrib/wgrib}
-export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
-export COPYGB=${COPYGB:-$EXECgrib/copygb}
-export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
-export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
-export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
-export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
+#export WGRIB=${WGRIB:-$EXECgrib/wgrib}
+#export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
+#export COPYGB=${COPYGB:-$EXECgrib/copygb}
+#export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
+#export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
+#export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
+#export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
 
 echo settings in $0 gefsmachine=$gefsmachine
 echo settings in $0 WGRIB=$WGRIB
@@ -158,7 +158,7 @@ fi
       then
        mv pgb2dfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2d/${RUN}.${cycle}.pgrb2d$ffhr$cfsuffix
       fi
-      if [[ "$makegrb1i" = "yes" ]]; then
+      if [[ "$makegrb2i" = "yes" ]]; then
 	mv pgb2afile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix.idx
 	mv pgb2bfile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix.idx
       fi
@@ -204,15 +204,7 @@ fi
 echo `date` pgrb2a 1x1 sendcom $ffhr completed
 fi
 
-  case $gefsmachine in
-    (wcoss)
-      fmakegb1=1
-    ;;
-    (zeus)
-      fmakegb1=0
-    ;;
-  esac
-if (( fmakegb1 == 1 )); then
+if [[ "$makepgrb1" = "yes" ]]; then
 ######################################
 # Step II: Create GRIBA files
 #####################################

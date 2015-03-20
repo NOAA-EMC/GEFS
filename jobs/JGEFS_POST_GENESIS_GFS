@@ -2,17 +2,14 @@
 #####################################################################
 # 1/13/2015, Creadted by Jiayi Peng and Dingchen Hou for GFS genesis, following JGEFS_POST_GENESIS 
 ####################################################################
-
-#$SMSBIN/smsinit $LOADL_STEP_ID 
 echo `date` $0 `date -u` begin
-
 set -xa
-####################################
+export PS4='$SECONDS + '
+date
 
-# 01/28/2013 New variables added for WCOSS and cross-machine unfication
+####################################
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-export machine=${gefsmachine:-wcoss}
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ###########################################
@@ -22,34 +19,14 @@ if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nw${envir}/parm/gefs_config
-else
-  VERSION_FILE=/nw{$envir}/versions/gefs.ver
-  if [-f $VERSION_FILE]; then
-   . $VERSION_FILE
-  else
-   ecflow_client --abort
-   exit
-  fi
 fi
-
-export HOMEgefs=${HOMEgefs}
-export HOMEgene=${HOMEgene}
-export HOMEutil=${UTILROOT:-/nwprod/util}
-export HOMEgrib=${GRIBROOT:-/nwprod/util}
-
-# #### 05/05/99 ###############################
-# SETUP ENS POST PROCESSING VARIABLES
-# #############################################
-na=`basename $0`
-export PS4=' + $SECONDS $na $LINENO: '
-date
 
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-export DATA=$DATAROOT/${job}.${pid}
-
+export DATAROOT=${DATAROOT:-/tmpnwprd_p2}
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
 
@@ -57,34 +34,17 @@ cd $DATA
 # Set up cycle varaible
 ############################
 export cycle=t${cyc}z
-export cycle_fcst=t${cyc_fcst}z
-
-echo cyc=$cyc cyc_fcst=$cyc_fcst
-echo cycle=$cycle cycle_fcst=$cycle_fcst
-
-if (( cyc == cyc_fcst )); then
-  export fcstlong=true
-  export cfsuffix=""
-  export cycsuffix=false
-else
-  export fcstlong=false
-  export cfsuffix=".cycfs$cyc_fcst"
-  export cycsuffix=true
-fi
-
-export fcstlong
-echo fcstlong=$fcstlong
 
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=gens
-export RUN=gefs
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
 
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-/com/logs/jlogfile}
+export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -95,66 +55,44 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 ####################################
-# SENDSMS  - Flag Events on SMS
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 ####################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDDBN=${SENDDBN:-NO}
-export SENDSMS=${SENDSMS:-YES}
 export SENDECF=${SENDECF:-YES}
 
 ####################################
 # Specify Execution Areas
 ####################################
+export HOMEgene=${HOMEgene:-${NWROOT}/ens_genesis.${genesis_ver}}
 export EXECens_genesis=${EXECgene:-$HOMEgene/exec}
 export USHens_genesis=${USHgene:-$HOMEgene/ush}
 export FIXens_genesis=${FIXgene:-$HOMEgene/fix}
-export PARMgefs=$HOMEgefs/parm
-
-##############################
-# Set up the UTILITIES
-##############################
-export EXECutil=$HOMEutil/exec
-export USHutil=$HOMEutil/ush
-
-##############################
-# Run setup to initialize working directory and utility scripts
-##############################
-ksh $USHutil/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $USHutil/setpdy.sh
+setpdy.sh
 . PDY
 
 ##############################################
 # Define GENVITDIR directory. The PATH do be determined
 ##############################################
 export JYYYY=`echo ${PDY} | cut -c1-4`
-export genvitdir=$baseoutput/com/${NET}/${envir}/genesis_vital_${JYYYY}
+export genvitdir=${genvitdir:-${COMROOT}/${NET}/${envir}/genesis_vital_${JYYYY}}
 
 mkdir -p ${genvitdir}
 
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=/com/gfs/prod/gfs.${PDY}
-export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
-
-export gfsdir=${COMIN:-/com/gfs/prod/gfs.${PDY}}
+export COMINgfs=${COMINgfs:-$COMROOTp1/gfs/prod/gfs.${PDY}}
+export COMIN=$COMINgfs
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
+export gfsdir=${COMIN:-${COMROOTp1}/gfs/prod/gfs.${PDY}}
 export COM=$COMOUT/$cyc/genesis
 mkdir -m 775 -p $COM
-
-##############################################
-#?echo set parameters using gefs.parm
-##############################################
-#?. $PARMgefs/gefs.parm
-#fhmax=120
-
-#export homesyndir=$basesource/nw$envir/util
-export homesyndir=$HOMEgene
 
 echo
 env | sort
@@ -236,21 +174,9 @@ postmsg "$jlogfile" "$msg"
 ##############################
 # Remove the Temporary working directory
 ##############################
-if [[ $envir = prod ]] || \
-   [[ $envir = para ]] || \
-   [[ $envir = test ]]; then
+if [[ $KEEPDATA != "YES" ]]; then
   cd $DATAROOT
   rm -rf $DATA
-else
-  echo skip cleanup for testing
 fi
 
- date
-
-if [[ $envir = prod ]] || \
-   [[ $envir = para ]] || \
-   [[ $envir = test ]]; then
-  $SMSBIN/endt
-else
-  echo skip endt for testing
-fi
+date

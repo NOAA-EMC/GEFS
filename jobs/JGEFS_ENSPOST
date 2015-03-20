@@ -8,16 +8,15 @@
 # February 2015, Dingchin Hou   Scripts changed to vertical structure and cleaned following NCO requirements
 ######################################################################
 
-#$SMSBIN/smsinit $LOADL_STEP_ID 
 echo `date` $0 `date -u` begin
 
 set -xa
 export PS4='$SECONDS + '
+date
 
-# 01/28/2013 New variables added for WCOSS and cross-machine unfication
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-export machine=${gefsmachine:-wcoss}
+
 export GRIBVERSION=${GRIBVERSION:-grib2}
 
 ###########################################
@@ -27,29 +26,14 @@ if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nwdev/parm/gefs_config
-else
-  VERSION_FILE=/nw{$envir}/versions/gefs.ver
-  if [-f $VERSION_FILE]; then
-   . $VERSION_FILE
-  else
-   ecflow_client --abort
-   exit
-  fi
 fi
 
-export HOMEgefs=${HOMEgefs}
-export HOMEutil=${UTILROOT:-/nwprod/util}
-export HOMEgrib=${GRIBROOT:-/nwprod/util}
-
-#export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
-#export CNVGRIB=${CNVGRIB:-/nwprod/util/exec/cnvgrib21_gfs}
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-export DATA=$DATAROOT/${job}.${pid}
-#export DATA=$DATA_IN/${job}.${pid}
-
+export DATAROOT=${DATAROOT:-/tmpnwprd_p2}
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
 
@@ -67,7 +51,7 @@ export RUN=post
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-/com/logs/jlogfile}
+export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -84,31 +68,19 @@ export pgmerr=errfile
 ####################################
   export SENDCOM=${SENDCOM:-YES}
   export SENDDBN=${SENDDBN:-NO}
-  export SENDSMS=${SENDSMS:-YES}
   export SENDECF=${SENDECF:-YES}
-  export SENDDBN_GB2=${SENDDBN_GB2:-NO}
   export RERUN=${RERUN:-NO}
 
   # Specify Execution Areas
+  export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
-export ERRSCRIPT=err_chk
-export LOGSCRIPT=startmsg
 export REDOUT='1>>'
 export REDERR='2>'
-
-##############################
-# Set up the UTILITIES
-##############################
-export EXECutil=$HOMEutil/exec
-export USHutil=$HOMEutil/ush
-export EXECgrib=$HOMEgrib/exec
-
-#export CNVGRIB=${CNVGRIB:-/nco/sib/gribdev/util/exec/cnvgrib21_gfs}
-#export CNVGRIB=${CNVGRIB:-/nwprod/util/exec/cnvgrib21_gfs}
 
 ##############################################
 echo set parameters using gefs.parm
@@ -119,26 +91,20 @@ echo set parameters using gefs.parm
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-sh $USHutil/setup.sh
+#sh setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $USHutil/setpdy.sh
+setpdy.sh
 . PDY
 
 ##############################################
 # Define COM directories
 ##############################################
-#export GFSCOMIN=/com/gfs/prod/gfs.${PDY}
-#export MRFCOMIN=/com/${NET}/prod/mrf.${PDY}
-export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
-export COMIN=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
-export COMINm1=$COMROOT/com/${NET}/${envir}/gefs.${PDYm1}
-
-#export COMOUT=$COMROOT/gefs.${PDY}
-#export COMIN=$COMROOT/gefs.${PDY}
-#export COMINm1=$COMROOT/gefs.${PDYm1}
+export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
+export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
+export COMINm1=$COMROOT/${NET}/${envir}/gefs.${PDYm1}
 
 mkdir -m 775 -p $COMOUT/$cyc/ensstat
 
@@ -160,7 +126,6 @@ export NTHREADS=1
 ####################################
 # Specify Forecast Hour Range
 ####################################
-################# lines between these markers have been modified for dev begin
 # allow different forecast lengths in different cycles
 if [[ $envir = dev ]]; then
   case $cyc in
@@ -197,7 +162,7 @@ postmsg "$jlogfile" "$msg"
 ##############################
 # Remove the Temporary working directory
 ##############################
-cd $DATA_IN
-rm -rf $DATA
-
-#$SMSBIN/endt
+if [[ $KEEPDATA != "YES" ]]; then
+  cd $DATAROOT
+  rm -rf $DATA
+fi
