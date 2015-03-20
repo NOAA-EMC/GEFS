@@ -41,6 +41,8 @@ export gefsmachine=${gefsmachine:-wcoss}
   export HOMEenkf=$HOMEDIR/enkf.v2.0.1
   export HOMEtrak=$HOMEDIR/ens_tracker.v1.0.0
   export HOMEgene=$HOMEDIR/ens_genesis.v1.0.0
+  export HOMEtrak=$HOMEDIR/ens_tracker.v1.0.0_new
+  export HOMEgene=$HOMEDIR/ens_genesis.v1.0.0_new
 
 # export UTILROOT=/nwprod2/prod_util.v1.0.0  
 # export GRIBROOT=/nwprod2/grib_util.v1.0.1
