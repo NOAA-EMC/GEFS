@@ -129,7 +129,7 @@ echo cycsuffix=$cycsuffix
 echo cfsuffix=$cfsuffix
 echo ensshort=$ensshort
 
-export pdycycp=`$EXECutil/ndate -$fhrp $PDY$cyc`
+export pdycycp=`$NDATE -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
 export cycp=`echo $pdycycp|cut -c9-10`
 
@@ -375,7 +375,7 @@ else
   #poe hpmcount /usrx/local/mpi_trace/utils/launch.x $execet  < et_namens
   #poe hpmcount $execet  < et_namens
 #  poe $execet  < et_namens
-$gefsmpexec $execet < et_namens
+$APRUN $execet < et_namens
   export err=$?
   err_chk
   echo `date` $execet  MPI ET after
@@ -436,16 +436,15 @@ fi
 # -------end of testing ET, start removing part b, test ET,  M. Wei, 2005.11.10
 #
 
-###testb
-if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
+#if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 ###teste
 msg='ENDED NORMALLY.'
 postmsg "$jlogfile" "$msg"
 
 ################# END OF SCRIPT #######################
 ###testb
-else
-  echo skip delete for now
-fi
+#else
+#  echo skip delete for now
+#fi
 ###teste
 echo `date` $0 end
