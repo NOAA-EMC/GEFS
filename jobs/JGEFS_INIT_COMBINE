@@ -5,7 +5,6 @@
 # lines between ###testb and ###teste not needed for production
 ###teste
 
-$SMSBIN/smsinit $LOADL_STEP_ID 
 echo `date` $0 `date -u` begin
 
 set -xa
@@ -220,84 +219,9 @@ postmsg "$jlogfile" "$msg"
 ##############################
 # Remove the working directory
 ##############################
-#if [[ $KEEPDATA != "YES" ]]; then
-#  cd $DATAROOT
-#  rm -rf $DATA
-#fi
-
-###testb
-if [[ $envir = prod ]]; then
-###teste
-cd /tmpnwprd
-rm -rf $DATA
-###testb
-elif [[ $envir = para ]] || \
-     [[ $envir = test ]]; then
-cd /tmpnwprd
-rm -rf $DATA
-else
-  echo skip cleanup for testing
-################# lines between these markers have been modified for dev begin
-  echo `date` special copy begin
-  if [[ $envir = dev ]]; then
-    ##################################### parameter controlled copy to mirror
-    if [[ x$initarchlist != x ]]; then
-      iafound=no
-      for cyctest in $initarchlist
-      do
-        if (( cyc == cyctest )); then
-          diro=$baseinitarch/nwges/$envir/gefs.$PDY
-          diri=$baseoutput/nwges/$envir/gefs.$PDY
-          if [[ -d $diri ]]; then
-            cd $diri
-            rc=$?
-            if (( rc == 0 )); then
-              rctot=0
-              mkdir -p $diro
-              if [[ -d $diro ]]; then
-                for file in *.t${cyc}z.sanl* gec00.t${cyc}z.sfcanl
-                do
-                  if [[ -f $file ]]; then
-                    ls -al $file
-                    cp -p $file $diro/$file
-                    rc=$?
-                    if (( rc == 0 )); then
-                      ls -al $diro/$file
-                    else
-                      (( rctot = rctot + rc ))
-                      echo cp -p $file $diro/$file FAILED rc=$rc
-                    fi
-                  else
-                    echo file=$file DOES NOT EXIST AS A FILE IN $diro
-                    (( rctot = rctot + 10000 ))
-                  fi
-                done
-                if (( rctot != 0 )); then
-                  echo special copy guess files FAILED rctot=$rctot
-                fi
-                found=yes
-              else
-                echo diro=$diro DOES NOT EXIST AS A DIRECTORY
-              fi
-            else
-              echo cd $diri FAILED rc=$rc
-            fi
-          else
-            echo diri=$diri DOES NOT EXIST AS A DIRECOTRY
-          fi
-        fi
-      done
-      if [[ iafound = no ]]; then
-        echo special copy not done because cyc=$cyc is not in initarchlist=$initarchlist
-      fi
-    else
-      echo special copy not done because initarchlist=$initarchlist is not defined
-    fi
-  else
-    echo special copy not done because envir=$envir
-  fi
-  echo `date` special copy tests end
-################# lines between these markers have been modified for dev end
+if [[ $KEEPDATA != "YES" ]]; then
+  cd $DATAROOT
+  rm -rf $DATA
 fi
 
 echo `date` $0 `date -u` end

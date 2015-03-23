@@ -236,5 +236,4 @@ fi
 
 
 echo `date` $0 `date -u` end
-$SMSBIN/endt
 

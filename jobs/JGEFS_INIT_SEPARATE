@@ -1,6 +1,5 @@
 #!/bin/ksh 
 
-$SMSBIN/smsinit $LOADL_STEP_ID 
 echo `date` $0 `date -u` begin
 
 set -xa
