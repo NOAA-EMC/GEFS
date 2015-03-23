@@ -108,7 +108,7 @@ export envir=${envir:-test}
 export SENDCOM=${SENDCOM:-NO}
 export PARAFLAG=${PARAFLAG:-NO}
 export TRKDATA=${TRKDATA:-$DATA}
-export ATCFdir=${ATCFdir:-/com/tpc/prod/atcf}
+export ATCFdir=${ATCFdir:-$COMROOT/tpc/prod/atcf}
 
 export DATA=${DATA:-/ptmp/wx20tm/trakout}
 if [ ! -d $DATA ]
@@ -116,18 +116,18 @@ then
    mkdir -p $DATA
    cd $DATA
 #  /nwprod/util/ush/setup.sh
-   $utilscript/setup.sh
+#   $utilscript/setup.sh
 fi
 cd $DATA
 
-if [ ${PARAFLAG} = 'YES' ]
-then 
-  $utilscript/setup.sh
-else
+#if [ ${PARAFLAG} = 'YES' ]
+#then 
+#  $utilscript/setup.sh
+#else
 #TM take out this else part for operations.....
 #  /nwprod/util/ush/setup.sh
-   $utilscript/setup.sh
-fi
+#   $utilscript/setup.sh
+#fi
 
 if [ ${#PDY} -eq 0 -o ${#CYL} -eq 0 -o ${#cmodel} -eq 0 ]
 then
@@ -162,33 +162,34 @@ shh=${CYL}
 symd=`echo ${PDY} | cut -c3-8`
 syyyy=`echo ${PDY} | cut -c1-4`
 
-export gfsvitdir=${gfsvitdir:-/com/gfs/prod/gfs.$PDY}
-export namvitdir=${namvitdir:-/com/nam/prod/nam.$PDY}
-export gltrkdir=${gltrkdir:-/com/hur/${envir}/global}
+export gfsvitdir=${gfsvitdir:-/$COMROOT/gfs/prod/gfs.$PDY}
+export namvitdir=${namvitdir:-/$COMROOT/nam/prod/nam.$PDY}
+export gltrkdir=${gltrkdir:-/$COMROOT/hur/${envir}/global}
 
-export homesyndir=${homesyndir:-/nwprod/util}
+export homesyndir=${homesyndir:-$NWROOT/util}
 export exectrkdir=${exectrkdir:-${homesyndir}/exec}
 export ushtrkdir=${ushtrkdir:-${homesyndir}/ush}
-export archsyndir=${archsyndir:-/com/arch/prod/syndat}
+export archsyndir=${archsyndir:-$COMROOT/arch/prod/syndat}
 
 #cp /com/date/t${CYL}z ncepdate
 #export CENT=` cut -c7-8 ncepdate `
 export CENT=20
 
-if [ -s /nwprod/util/exec/wgrib ]
-then
-  wgrib=/nwprod/util/exec/wgrib
-elif [ -s $EXECutil/wgrib ]
-then
-  wgrib=$EXECutil/wgrib
-else
-  set +x
-  echo " "
-  echo "!!! ERROR: wgrib is not available, script will crash.  Exiting...."
-  echo " "
-  set -x
-  err_exit " FAILED ${jobid} -- line= $LINENO IN TRACKER SCRIPT - ABNORMAL EXIT"
-fi
+#if [ -s /nwprod/util/exec/wgrib ]
+#then
+#  wgrib=/nwprod/util/exec/wgrib
+#elif [ -s $EXECutil/wgrib ]
+#then
+#  wgrib=$EXECutil/wgrib
+#else
+#  set +x
+#  echo " "
+#  echo "!!! ERROR: wgrib is not available, script will crash.  Exiting...."
+#  echo " "
+#  set -x
+#  err_exit " FAILED ${jobid} -- line= $LINENO IN TRACKER SCRIPT - ABNORMAL EXIT"
+#fi
+  wgrib=$WGRIB
 
 wgrib_parmlist=" HGT:850 HGT:700 UGRD:850 UGRD:700 UGRD:500 VGRD:850 VGRD:700 VGRD:500 SurfaceU SurfaceV ABSV:850 ABSV:700 PRMSL:MSL "
 wgrib_egrep_parmlist="HGT:850|HGT:700|UGRD:850|UGRD:700|UGRD:500|VGRD:850|VGRD:700|VGRD:500|UGRD:10 m |VGRD:10 m |ABSV:850|ABSV:700|PRMSL:MSL"
@@ -238,10 +239,10 @@ case ${cmodel} in
        echo " "; echo " ++ operational GFS chosen"  ;
        echo " "                                     ;
        set -x                                       ;
-       gfsdir=${gfsdir:-/com/gfs/prod/gfs.${PDY}}   ;
+       gfsdir=${gfsdir:-$COMROOT/gfs/prod/gfs.${PDY}}   ;
        gfsgfile=gfs.t${CYL}z.master.grbf            ;
        gfsifile=gfs.t${CYL}z.master.grbif           ;
-       COM=${COM:-/com/gfs/${envir}/gfs.${PDY}}     ;
+       COM=${COM:-$COMROOT/gfs/${envir}/gfs.${PDY}}     ;
        fcstlen=180                                  ;
        fcsthrs=' 00 06 12 18 24 30 36 42 48 54 60 66 72 78 
                  84 90 96 102 108 114 120 126 132 138 144  
@@ -259,10 +260,10 @@ case ${cmodel} in
        echo " "; echo " ++ operational GFS chosen"  ;
        echo " "                                     ;
        set -x                                       ;
-       gfsdir=${gfsdir:-/com/gfs/prod/gfs.${PDY}}   ;
+       gfsdir=${gfsdir:-$COMROOT/gfs/prod/gfs.${PDY}}   ;
        gfsgfile=gfs.t${CYL}z.master.grbf            ;
        gfsifile=gfs.t${CYL}z.master.grbif           ;
-       COM=${COM:-/com/gens/${envir}/gefs.${PDY}/$cyc/init}    ;
+       COM=${COM:-$COMROOT/gens/${envir}/gefs.${PDY}/$cyc/init}    ;
        [[ ! -d $COM ]] && mkdir -p $COM                 ;
        fcstlen=00                                   ;
        fcsthrs=' 00 99 99 99 99 99 99 99 99 99 99 99 99 99
@@ -283,10 +284,10 @@ case ${cmodel} in
        set -x                                       ;
        # Operational MRF is now defunct, but leave this in 
        # here in case we need to do historical MRF cases.
-       mrfdir=/com/mrf/prod/mrf.${PDY}              ;
+       mrfdir=$COMROOT/mrf/prod/mrf.${PDY}              ;
        mrfgfile=drfmr.t${CYL}z.pgrbf                ;
        mrfifile=drfmr.t${CYL}z.pgrbif               ;
-       COM=/com/mrf/${envir}/mrf.${PDY}             ;
+       COM=$COMROOT/mrf/${envir}/mrf.${PDY}             ;
        fcstlen=168                                  ;
        fcsthrs=' 00 12 24 36 48 60 72 84 96 108 120 132 144  
                  156 168 99 99 99 99 99 99 99 99 99 99 99 99 
@@ -303,10 +304,10 @@ case ${cmodel} in
        echo " "; echo " ++ operational UKMET chosen"    ;
        echo " "                                         ;
        set -x                                           ;
-       ukmetdir=/com/mrf/prod/ukmet.${PDY}              ;
+       ukmetdir=$COMROOT/mrf/prod/ukmet.${PDY}              ;
        ukmetgfile=ukmet.t${CYL}z.ukmet                  ;
        ukmetifile=ukmet.t${CYL}z.ukmeti                 ;
-       COM=/com/mrf/${envir}/ukmet.${PDY}               ;
+       COM=$COMROOT/mrf/${envir}/ukmet.${PDY}               ;
        fcstlen=72                                       ;
        fcsthrs=' 00 12 24 36 48 60 72 99 99 99 99 99 99 
                  99 99 99 99 99 99 99 99 99 99 99 99 99 
@@ -324,7 +325,7 @@ case ${cmodel} in
        echo " "                                         ;
        set -x                                           ;
        #ecmwfdir=/dcom_canned/us007003/${PDY}/wgrbbul/ecmwf     ;
-       ecmwfdir=/dcom/us007003/${PDY}/wgrbbul/ecmwf     ;
+       ecmwfdir=$DCOMROOT/us007003/${PDY}/wgrbbul/ecmwf     ;
        ecmwfgfile=                                      ;
        ecmwfifile=                                      ;
        COM=/com_p6/mrf/${envir}/ecmwf.${PDY}               ;
@@ -348,10 +349,10 @@ case ${cmodel} in
        echo " "; echo " ++ operational NGM chosen"  ;
        echo " "                                     ;
        set -x                                       ;
-       ngmdir=/com/ngm/prod/ngm.${PDY}              ;
+       ngmdir=$COMROOT/ngm/prod/ngm.${PDY}              ;
        ngmgfile=ngm.${CYCLE}.pgrb.f                 ;
        ngmifile=ngm.${CYCLE}.pgrbif                 ;
-       COM=/com/ngm/${envir}/ngm.${PDY}             ;
+       COM=$COMROOT/ngm/${envir}/ngm.${PDY}             ;
        fcstlen=48                                   ;
        fcsthrs=' 00 06 12 18 24 30 36 42 48 99 99 99 99 99 
                  99 99 99 99 99 99 99 99 99 99 99 99 99 99 
@@ -368,10 +369,10 @@ case ${cmodel} in
        echo " "; echo " ++ operational Early NAM chosen"  ;
        echo " "                                           ;
        set -x                                             ;
-       namdir=/com/nam/prod/nam.${PDY}                    ;
+       namdir=$COMROOT/nam/prod/nam.${PDY}                    ;
        namgfile=nam.t${CYL}z.awip32                       ;
        namifile=nam.t${CYL}z.awip32i                      ;
-       COM=/com/nam/${envir}/nam.${PDY}                   ;
+       COM=$COMROOT/nam/${envir}/nam.${PDY}                   ;
        fcstlen=84
        fcsthrs=' 00 06 12 18 24 30 36 42 48 54 60 66 72 78 
                  84 99 99 99 99 99 99 99 99 99 99 99 99 99 
@@ -388,10 +389,10 @@ case ${cmodel} in
        echo " "; echo " ++ operational NOGAPS chosen"   ;
        echo " "                                         ;
        set -x                                           ;
-       ngpsdir=/com/fnmoc/${envir}/nogaps.${PDY}        ;
+       ngpsdir=$COMROOT/fnmoc/${envir}/nogaps.${PDY}        ;
        ngpsgfile=nogaps_${PDY}${CYL}f                   ;
        ngpsifile=                                       ;
-       COM=/com/fnmoc/${envir}/nogaps.${PDY}            ;
+       COM=$COMROOT/fnmoc/${envir}/nogaps.${PDY}            ;
        fcstlen=144                                      ;
        fcsthrs=' 00 12 24 36 48 60 72 84 96 108 120 132 144 
                  99 99 99 99 99 99 99 99 99 99 99 99 99 99  
@@ -408,10 +409,10 @@ case ${cmodel} in
        echo " "; echo " ++ operational GDAS chosen"     ;
        echo " "                                         ;
        set -x                                           ;
-       gdasdir=/com/gfs/prod/gdas.${PDY}                ;
+       gdasdir=$COMROOT/gfs/prod/gdas.${PDY}                ;
        gdasgfile=gdas1.t${CYL}z.pgrbf                   ;
        gdasifile=gdas1.t${CYL}z.pgrbif                  ;
-       COM=/com/gfs/${envir}/gdas.${PDY}                ;
+       COM=$COMROOT/gfs/${envir}/gdas.${PDY}                ;
        fcstlen=9                                        ;
        fcsthrs=' 00 03 06 09 99 99 99 99 99 99 99 99 99 99 
                  99 99 99 99 99 99 99 99 99 99 99 99 99 99 
@@ -428,10 +429,10 @@ case ${cmodel} in
        echo " "; echo " ++ operational GFDL chosen"     ;
        echo " "                                         ;
        set -x                                           ;
-       gfdldir=${gfdldir:-/com/hur/prod/hur.${PDY}${CYL}}  ;
+       gfdldir=${gfdldir:-$COMROOT/hur/prod/hur.${PDY}${CYL}}  ;
        gfdlgfile=${stormenv}.${PDY}${CYL}.grib6th.f     ;
        gfdlifile=${stormenv}.${PDY}${CYL}.grib6th.if    ;
-       COM=/com/hur/${envir}/hur.${PDY}${CYL}           ;
+       COM=$COMROOT/hur/${envir}/hur.${PDY}${CYL}           ;
        fcstlen=126                                      ;
        fcsthrs=' 00 06 12 18 24 30 36 42 48 54 60 66 72 78 
                  84 90 96 102 108 114 120 126 99 99 99 99  
@@ -451,10 +452,10 @@ case ${cmodel} in
        PERT=` echo ${pert} | tr '[a-z]' '[A-Z]'`        ;
        echo " "                                         ;
        set -x                                           ;
-       ensdir=${ensdir:-/com/gens/prod/gefs.${PDY}/$cyc/pgrba}     ;
+       ensdir=${ensdir:-$COMROOT/gens/prod/gefs.${PDY}/$cyc/pgrba}     ;
        ensgfile=ge${pert}.t${CYL}z.pgrbaf               ;
        ensifile=ge${pert}.t${CYL}z.pgrbaif              ;
-       COM=${COM:-/com/gens/${envir}/gefs.${PDY}/$cyc/track} ;
+       COM=${COM:-$COMROOT/gens/${envir}/gefs.${PDY}/$cyc/track} ;
        [[ ! -d $COM ]] && mkdir -p $COM                 ;
        fcstlen=240                                      ;
        fcsthrs=' 00 06 12 18 24 30 36 42 48 54 60 66 72 78
@@ -485,10 +486,10 @@ case ${cmodel} in
        sdd=`echo ${PDY} | cut -c7-8`                    ;
        shh=${CYL}                                       ;
        symd=`echo ${PDY} | cut -c3-8`                   ;
-       ecedir=/com/mrf/prod/wsr.${PDY}                  ;
+       ecedir=$COMROOT/mrf/prod/wsr.${PDY}                  ;
        ecegfile=                                        ;
        eceifile=                                        ;
-       COM=/com/mrf/${envir}/wsr.${PDY}                 ;
+       COM=$COMROOT/mrf/${envir}/wsr.${PDY}                 ;
        fcstlen=240                                      ;
        fcsthrs=' 00 12 24 36 48 60 72 84 96 108 120 132 144   
                  156 168 180 192 204 216 228 240 99 99 99 99  
@@ -519,10 +520,10 @@ case ${cmodel} in
        echo " mean fields has been chosen...."          ;
        echo " "                                         ;
        set -x                                           ;
-       ensmdir=/com/mrf/prod/ens.${PDY}                 ;
+       ensmdir=$COMROOT/mrf/prod/ens.${PDY}                 ;
        ensmgfile=ensstat.t${CYL}z.                      ;
        ensmifile=ensstat.t${CYL}z.                      ;
-       COM=/com/mrf/${envir}/ens.${PDY}                 ;
+       COM=$COMROOT/mrf/${envir}/ens.${PDY}                 ;
        fcstlen=180                                      ;
        fcsthrs=' 00 06 12 18 24 30 36 42 48 54 60 66 72 78 
                  84 90 96 102 108 114 120 126 132 138 144  
@@ -542,10 +543,10 @@ case ${cmodel} in
        echo " "                                         ;
        set -x                                           ;
        #cmcdir=/dcom_canned/us007003/${PDY}/wgrbbul/cmc         ;
-       cmcdir=/dcom/us007003/${PDY}/wgrbbul/cmc         ;
+       cmcdir=$DCOMROOT/us007003/${PDY}/wgrbbul/cmc         ;
        cmcgfile=cmc_${PDY}${CYL}f                       ;
        cmcifile=nonexistant                             ;
-       COM=/com/gens/prod/cmce.${PDY}/${CYL}/track      ;
+       COM=$COMROOT/gens/prod/cmce.${PDY}/${CYL}/track      ;
        [[ ! -d $COM ]] && mkdir -p $COM                 ;
        fcstlen=144                                      ;
        fcsthrs=' 00 06 12 18 24 30 36 42 48 54 60 66 72 78 
@@ -567,10 +568,10 @@ case ${cmodel} in
        PERT=` echo ${pert} | tr '[a-z]' '[A-Z]'`        ;
        echo " "                                         ;
        set -x                                           ;
-       ccedir=/com/gens/${envir}/cmce.${PDY}/${CYL}/pgrba  ;
+       ccedir=$COMROOT/gens/${envir}/cmce.${PDY}/${CYL}/pgrba  ;
        ccegfile=cmc_ge${pert}.t${CYL}z.pgrbaf           ;
        cceifile=does_not_exist                          ;
-       COM=/com/gens/prod/cmce.${PDY}/${CYL}/track      ;
+       COM=$COMROOT/gens/prod/cmce.${PDY}/${CYL}/track      ;
        [[ ! -d $COM ]] && mkdir -p $COM                 ;
        fcstlen=240                                      ;
        fcsthrs=' 00 06 12 18 24 30 36 42 48 54 60 66 72 78
@@ -596,7 +597,7 @@ case ${cmodel} in
        hwrfdir=/ptmp/wx20tm/wrfdat/${PDY}${CYL}           ;
        hwrfgfile=wrf.latlon.${PDY}${CYL}                  ;
        hwrfifile=wrf.latlon.${PDY}${CYL}.i                ;
-       COM=/com/hwrf/${envir}/hwrf.${PDY}                 ;
+       COM=$COMROOT/hwrf/${envir}/hwrf.${PDY}                 ;
        fcstlen=120                                        ;
        fcsthrs=' 00 06 12 18 24 30 36 42 48 54 60 66 72 78  
                  84 90 96 102 108 114 120 99 99 99 99 99 99 
@@ -640,10 +641,10 @@ case ${cmodel} in
        echo " "; echo " ++ operational HDAS chosen"     ;
        echo " "                                         ;
        set -x                                           ;
-       hdasdir=/com/gfs/prod/gdas.${PDY}                ;
+       hdasdir=$COMROOT/gfs/prod/gdas.${PDY}                ;
        hdasgfile=gdas1.t${CYL}z.pgrbf                   ;
        hdasifile=gdas1.t${CYL}z.pgrbif                  ;
-       COM=/com/gfs/${envir}/gdas.${PDY}                ;
+       COM=$COMROOT/gfs/${envir}/gdas.${PDY}                ;
        fcstlen=9                                        ;
        fcsthrs=' 00 03 06 09 99 99 99 99 99 99 99 99 99 99 
                  99 99 99 99 99 99 99 99 99 99 99 99 99 99 
@@ -663,7 +664,7 @@ case ${cmodel} in
        PERT=` echo ${pert} | tr '[a-z]' '[A-Z]'`        ;
        echo " "                                         ;
        set -x                                           ;
-       ensrdir=${ensdir:-/com/gens/prod/gefs.${PDY}/$cyc/pgrba}  ;
+       ensrdir=${ensdir:-$COMROOT/gens/prod/gefs.${PDY}/$cyc/pgrba}  ;
        ensrgfile=ge${pert}.t${CYL}z.pgrbaf              ;
        ensrifile=ge${pert}.t${CYL}z.pgrbaif             ;
        if [[ "$cyc" = "$cyc_fcst" ]]; then
@@ -671,7 +672,7 @@ case ${cmodel} in
        else
          ensrgsuffix=.cycfs${cyc_fcst}                     ;
        fi
-       COM=${COM:-/com/gens/${envir}/gefs.${PDY}/$cyc/track} ;                
+       COM=${COM:-$COMROOT/gens/${envir}/gefs.${PDY}/$cyc/track} ;                
        fcstlen=6                                        ;
        fcsthrs=' 00 06 99 99 99 99 99 99 99 99 99 99 99 99 
                  99 99 99 99 99 99 99 99 99 99 99 99 99 99 
@@ -706,7 +707,7 @@ case ${cmodel} in
        PERT=` echo ${pert} | tr '[a-z]' '[A-Z]'`        ;
        echo " "                                         ;
        set -x                                           ;
-       COM=${COM:-/com/gens/${envir}/gefs.${PDY}/$cyc/track}                                ;
+       COM=${COM:-$COMROOT/gens/${envir}/gefs.${PDY}/$cyc/track}                                ;
        fcstlen=6                                        ;
        fcsthrs=' 00 06 99 99 99 99 99 99 99 99 99 99 99 99 
                  99 99 99 99 99 99 99 99 99 99 99 99 99 99 
@@ -755,13 +756,13 @@ esac
 # deal; this script will exit just a little further down once it
 # realizes there are not any storms to process.
 
-d6ago_ymdh=` $EXECutil/ndate -6 ${PDY}${CYL}`
+d6ago_ymdh=` $NDATE -6 ${PDY}${CYL}`
 d6ago_4ymd=` echo ${d6ago_ymdh} | cut -c1-8`
 d6ago_ymd=` echo ${d6ago_ymdh} | cut -c3-8`
 d6ago_hh=`  echo ${d6ago_ymdh} | cut -c9-10`
 d6ago_str="${d6ago_ymd} ${d6ago_hh}00"
 
-d6ahead_ymdh=` $EXECutil/ndate 6 ${PDY}${CYL}`
+d6ahead_ymdh=` $NDATE 6 ${PDY}${CYL}`
 d6ahead_4ymd=` echo ${d6ahead_ymdh} | cut -c1-8`
 d6ahead_ymd=` echo ${d6ahead_ymdh} | cut -c3-8`
 d6ahead_hh=`  echo ${d6ahead_ymdh} | cut -c9-10`
@@ -779,7 +780,7 @@ then
   #RLW synvitdir=/com_p6/gfs/prod/gfs.${PDY}
   #RLW synvitdir=/com_canned/gfs/prod/gfs.${PDY}
   #RLW synvitdir=/com/gfs/prod/gfs.${PDY}
-  homesyndir=${homesyndir:-/nwprod/util}
+  homesyndir=${homesyndir:-$NWROOT/util}
   synvitdir=$basedgfs/com/gfs/prod/gfs.${PDY}
   synvitfile=gfs.t${CYL}z.syndata.tcvitals.tm00
   #RLW synvit6ago_dir=/com_canned/gfs/prod/gfs.${d6ago_4ymd}
@@ -800,13 +801,13 @@ else
   #FAF synvit6ahead_dir=/com/nam/prod/nam.${d6ahead_4ymd}
   #FAF synvit6ahead_file=nam.t${d6ahead_hh}z.syndata.tcvitals.tm00
   #RLW synvitdir=/com_p6/nam/prod/nam.${PDY}
-  synvitdir=/com/nam/prod/nam.${PDY}
+  synvitdir=$COMROOT/nam/prod/nam.${PDY}
   synvitfile=nam.t${CYL}z.syndata.tcvitals.tm00
   #RLW synvit6ago_dir=/com_p6/nam/prod/nam.${d6ago_4ymd}
-  synvit6ago_dir=/com/nam/prod/nam.${d6ago_4ymd}
+  synvit6ago_dir=$COMROOT/nam/prod/nam.${d6ago_4ymd}
   synvit6ago_file=nam.t${d6ago_hh}z.syndata.tcvitals.tm00
   #RLW synvit6ahead_dir=/com_p6/nam/prod/nam.${d6ahead_4ymd}
-  synvit6ahead_dir=/com/nam/prod/nam.${d6ahead_4ymd}
+  synvit6ahead_dir=$COMROOT/nam/prod/nam.${d6ahead_4ymd}
   synvit6ahead_file=nam.t${d6ahead_hh}z.syndata.tcvitals.tm00
 
 fi
@@ -916,14 +917,14 @@ fi
 # tracking program.
 #--------------------------------------------------------------#
 
-ymdh6ago=` $EXECutil/ndate -6 ${PDY}${CYL}`
+ymdh6ago=` $NDATE -6 ${PDY}${CYL}`
 syy6=`echo ${ymdh6ago} | cut -c3-4`
 smm6=`echo ${ymdh6ago} | cut -c5-6`
 sdd6=`echo ${ymdh6ago} | cut -c7-8`
 shh6=`echo ${ymdh6ago} | cut -c9-10`
 symd6=${syy6}${smm6}${sdd6}
 
-ymdh6ahead=` $EXECutil/ndate 6 ${PDY}${CYL}`
+ymdh6ahead=` $NDATE 6 ${PDY}${CYL}`
 syyp6=`echo ${ymdh6ahead} | cut -c3-4`
 smmp6=`echo ${ymdh6ahead} | cut -c5-6`
 sddp6=`echo ${ymdh6ahead} | cut -c7-8`
@@ -998,7 +999,7 @@ export FORT51=${DATA}/vitals.upd.${atcfout}.${PDY}${CYL}
 msg="$pgm start for $atcfout at ${CYL}z"
 postmsg "$jlogfile" "$msg"
 
-${EXECutil}/supvit <${DATA}/suv_input.${atcfout}.${PDY}${CYL}
+$SUPVIT <${DATA}/suv_input.${atcfout}.${PDY}${CYL}
 suvrcc=$?
 
 if [ ${suvrcc} -eq 0 ]
@@ -1101,8 +1102,8 @@ set -x
 
 #gix=/nwprod/util/exec/grbindex
 #cgb=/nwprod/util/exec/copygb
-gix=$EXECutil/grbindex
-cgb=$EXECutil/copygb
+gix=$GRBINDEX
+cgb=$COPYGB
 
 regflag=`grep NHC ${DATA}/vitals.upd.${atcfout}.${PDY}${CYL} | wc -l`
 
@@ -1460,7 +1461,7 @@ then
 
     let fhr=ict*6
     echo "fhr= $fhr"
-    fmmddhh=` $EXECutil/ndate ${fhr} ${PDY}${CYL} | cut -c5- `
+    fmmddhh=` $NDATE ${fhr} ${PDY}${CYL} | cut -c5- `
     ec_hires_orig=ecens_DCD${immddhh}00${fmmddhh}001
       
     if [ ! -s ${ecmwfdir}/${ec_hires_orig} ]
