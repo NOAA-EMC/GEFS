@@ -4,20 +4,20 @@ $SMSBIN/smsinit $LOADL_STEP_ID
 echo `date` $0 `date -u` begin
 
 set -xa
+export PS4='$SECONDS + '
+date
 ####################################
 
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-export machine=${gefsmachine:-wcoss}
+
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
 
 if [[ $gefsmachine = zeus ]]; then
-   export  gefspoe="$gefsmpexec $basesource/nw$envir/exec/zeus-poe"
- else
-     export gefspoe=$gefsmpexec
- fi
+   export  APRUN="$gefsmpexec $basesource/nw$envir/exec/zeus-poe"
+fi
 
 
 ###########################################
@@ -25,25 +25,9 @@ if [[ $gefsmachine = zeus ]]; then
 ###########################################
 if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
-################# lines between these markers have been modified for dev begin
+# . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nwdev/parm/gefs_config
-else
-   VERSION_FILE=/nw{$envir}/versions/gefs.ver
-   if [-f $VERSION_FILE]; then
-    . $VERSION_FILE
-   else
-    ecflow_client --abort
-    exit
-   fi
 fi
-export HOMEgefs=${HOMEgefs:-/nw${envir}}
-export HOMEgsm=${HOMEgsm}
-export HOMEutil=${UTILROOT:-/nwprod/util}
-
-# #### 05/05/99 ###############################
-# SETUP ENS INITIALIZATION PROCESSING VARIABLES
-# #############################################
-export PS4='$SECONDS + '
 
 ####################################
 # obtain unique process id (pid) and make working directory
@@ -79,7 +63,7 @@ echo cycsuffix=$cycsuffix
 # Specify NET and RUN Name and model
 ####################################
 export NET=${NET:-gens}
-export RUN=enstr
+export RUN=${RUN:-gefs}
 
 ####################################
 # File To Log Msgs
@@ -103,11 +87,11 @@ export pgmerr=errfile
 # RERUN    - Rerun posts from beginning (default no)
 # VERBOSE  - Specify Verbose Output in global_postgp.sh
 ####################################
-export SAVEGES=YES
-export SENDSMS=YES
-export SENDCOM=YES
-export RERUN=NO
-export VERBOSE=YES
+  export SENDCOM=${SENDCOM:-YES}
+  export SENDECF=${SENDECF:-YES}
+  export RERUN=${RERUN:-NO}
+  export SAVEGES=${SAVEGES:-YES}
+  export VERBOSE=${VERBOSE:-YES}
 
 ###testb
 if [[ $envir = prod ]]; then
@@ -128,6 +112,10 @@ fi
 ####################################
 # Specify Execution Areas
 ####################################
+export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
+export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
+export HOMEenkf=${HOMEenkf:-$NWROOTp1/enkf.${enkf_ver}}
+
   export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
   export USHgsm=${USHgsm:-$HOMEgsm/ush}
   export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
@@ -156,21 +144,14 @@ env | sort
 echo
 
 ##############################
-# Set up the UTILITIES
-##############################
-export USHutil=$HOMEutil/ush
-export EXECutil=$HOMEutil/exec
-export utilscript=$USHutil
-
-##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-ksh $USHutil/setup.sh
+#ksh $USHutil/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $USHutil/setpdy.sh
+setpdy.sh
 . PDY
 
 ##############################################
@@ -182,30 +163,30 @@ sh $USHutil/setpdy.sh
 # Define COM directories
 ##############################################
  if [[ "$gfssource" = para ]]; then
-    export GFSCOMIN=$COMROOT/com/gfs/para/gfs.$PDY
-    export ENKFCOMIN=$COMROOT/com/gfs/para/enkf.
+    export GFSCOMIN=$COMROOT/gfs/para/gfs.$PDY
+    export ENKFCOMIN=$COMROOT/gfs/para/enkf.
   elif [[ "$gfssource" = prod ]]; then
-    export GFSCOMIN=$COMROOT/com/gfs/prod/gfs.$PDY
-    export ENKFCOMIN=$COMROOT/com/gfs/prod/enkf.
+    export GFSCOMIN=$COMROOT/gfs/prod/gfs.$PDY
+    export ENKFCOMIN=$COMROOT/gfs/prod/enkf.
   else
-    export GFSCOMIN=$COMROOT/com/gfs/prod/gfs.$PDY
-    export ENKFCOMIN=$COMROOT/com/gfs/prod/enkf.
+    export GFSCOMIN=$COMROOT/gfs/prod/gfs.$PDY
+    export ENKFCOMIN=$COMROOT/gfs/prod/enkf.
   fi
 
-export COMIN=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
-export COM=$COMROOT/com/${NET}/${envir}
-export COMINm1=$COMROOT/com/${NET}/${envir}/gefs.${PDYm1}
-export COMINm2=$COMROOT/com/${NET}/${envir}/gefs.${PDYm2}
-export COMINm3=$COMROOT/com/${NET}/${envir}/gefs.${PDYm3}
-export COMINm4=$COMROOT/com/${NET}/${envir}/gefs.${PDYm4}
+export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
+export COM=$COMROOT/${NET}/${envir}
+export COMINm1=$COMROOT/${NET}/${envir}/gefs.${PDYm1}
+export COMINm2=$COMROOT/${NET}/${envir}/gefs.${PDYm2}
+export COMINm3=$COMROOT/${NET}/${envir}/gefs.${PDYm3}
+export COMINm4=$COMROOT/${NET}/${envir}/gefs.${PDYm4}
 
-export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}
+export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
 
 export gespath=$GESROOT/${envir}
 
 
 #export pdycycp=`/nwprod/util/exec/ndate -$fhrp $PDY$cyc`
-export pdycycp=`$EXECutil/ndate -$fhrp $PDY$cyc`
+export pdycycp=`$NDATE -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
 export cycp=`echo $pdycycp|cut -c9-10`
 
@@ -281,9 +262,3 @@ postmsg "$jlogfile" "$msg"
 ##############################
 
 echo `date` $0 `date -u` end
-if [ "$RUN_ENVIR" = dev ]      ### For Developers
-then
-  echo skip endt for testing
-else
-$SMSBIN/endt
-fi
