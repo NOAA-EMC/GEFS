@@ -214,7 +214,7 @@ echo DATALOCAL=$DATALOCAL
 echo DATA=$DATA
 echo DATAPARENT=$DATAPARENT
 
-sh $utilscript/setup.sh
+#sh $utilscript/setup.sh
 
 # check for cold start
 coldstartflag=0
@@ -243,6 +243,9 @@ do
     fhr=0$fhr
   fi
   echo begin loop for nflagt=$inflagt fhr=$fhr
+      pdycycp0=`$NDATE -$fhr $PDY$cyc`
+      pdyp0=`echo $pdycycp0|cut -c1-8`
+      cycp0=`echo $pdycycp0|cut -c9-10`
   if [[ $haveinput = no ]]; then
     (( cycstart = cyc - fhr ))
     comfcstin=$COMIN
@@ -268,12 +271,6 @@ do
       pdyinm2=$pdyinm3
       pdyinm3=$pdyinm4
       pdyinm4=00000000
-
-      pdycycp0=`$EXECutil/ndate -$fhr $PDY$cyc`
-      pdyp0=`echo $pdycycp0|cut -c1-8`
-      cycp0=`echo $pdycycp0|cut -c9-10`
-
-
     done
     if (( cycstart < 10 )); then
       cycstart="0$cycstart"

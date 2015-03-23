@@ -201,7 +201,7 @@ echo DATALOCAL=$DATALOCAL
 echo DATA=$DATA
 echo DATAPARENT=$DATAPARENT
 
-sh $utilscript/setup.sh
+#sh $utilscript/setup.sh
 
 echo
 echo `date` restore from 2nd to 3rd ush script begin
