@@ -107,7 +107,7 @@ echo cycsuffix=$cycsuffix
 echo cfsuffix=$cfsuffix
 echo ensshort=$ensshort
 
-export pdycycp=`ndate -$fhrp $PDY$cyc`
+export pdycycp=`$NDATE -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
 export cycp=`echo $pdycycp|cut -c9-10`
 
@@ -352,8 +352,8 @@ else
 cp poescript cmdfile
 #mpiexec_mpt -np $initseparatetasks $execpoe
 #$gefsmpexec
-echo gefspoe=$gefspoe
-$gefspoe
+echo APRUN=$APRUN
+$APRUN
 fi
 #### kate 4/24/2012 ##############
 
@@ -380,15 +380,15 @@ echo
 
 
 ###testb
-if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
+#if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 ###teste
 msg='ENDED NORMALLY.'
 postmsg "$jlogfile" "$msg"
 
 ################# END OF SCRIPT #######################
 ###testb
-else
-  echo skip delete for now
-fi
+#else
+#  echo skip delete for now
+#fi
 ###teste
 echo `date` $0 end

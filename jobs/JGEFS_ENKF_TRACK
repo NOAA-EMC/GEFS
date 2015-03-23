@@ -17,6 +17,11 @@ export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
 
+##
+ if [[ $gefsmachine = zeus ]]; then
+   export  APRUN="$gefsmpexec $basesource/nw$envir/exec/zeus-poe"
+ fi
+
 ###########################################
 # Run gefs_config to get input parameters
 ###########################################
@@ -206,10 +211,6 @@ export archsyndir=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/comzeus/com/
 export homesyndir=$basesource/nw$envir/util
    fi
 
-##
- if [[ $gefsmachine = zeus ]]; then
-   export  APRUN="$gefsmpexec $basesource/nw$envir/exec/zeus-poe"
- fi
 
 ##############################################
 echo list environment before running script
