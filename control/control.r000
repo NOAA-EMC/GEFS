@@ -22,7 +22,9 @@ echo basetmp=$basetmp
  scourcedir=/ensemble/noscrub/GEFS.2015/NWGES/prh14wCTL    # source of init files
  expdir=$basetmp/nwges/$envir
  inidir=$basetmp/com/gens/$envir
+ logdir=$basetmp/com/logs/jlogfiles
  mkdir -p $expdir
+ mkdir -p $logdir
  cd $expdir
  mmdd=`echo $yyyymmddcc | cut -c1-8`
  echo mmdd=$mmdd

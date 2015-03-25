@@ -95,8 +95,10 @@ export pgmerr=errfile
   export EXECpost=${HOMEpost}/exec
   export FIXpost=${HOMEpost}/fix
   export PARMpost=${HOMEpost}/parm
-# PARMPOST (instaead of PARMpost) is used in the post ush script  
+# PARMPOST (instead of PARMpost) is used in the post ush script
   export PARMPOST=${PARMpost}
+# GRBINDEX2 (instead of GRB2INDEX) is used in the post ush script
+  export GRBINDEX2=${GRB2INDEX}
 
   export USHgsm=$HOMEgsm/ush
   export EXECgsm=$HOMEgsm/exec
@@ -384,5 +386,4 @@ if [[ $KEEPDATA != "YES" ]]; then
   rm -rf $DATA
 fi
 
-ech
 `date` $0 `date -u` end

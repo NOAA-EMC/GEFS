@@ -3,14 +3,19 @@
 # GEFS model run
 #######################################################
  
-export KEEPDATA="YES"
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export envir=${envir:-dev}
 export SENDDBN=${SENDDBN:-%SENDDBN:NO%}
 export SENDDBN_NTC=${SENDDBN_NTC:-%SENDDBN_NTC:NO%}
+
+export KEEPDATA=YES
 export SENDCOM=YES
 export SENDECF=NO
-export SENDSMS=NO
+
+export PARAFLAG=${PARAFLAG:-YES}
+export SENDECF=${SENDECF:-NO}
+export SENDCOM=${SENDCOM:-YES}
+export KEEPDATA=${KEEPDATA:-%KEEPDATA:NO%}
 
 export COMROOT=$baseoutput/com
 export GESROOT=$baseoutput/nwges
@@ -25,10 +30,6 @@ export NWROOT=/nwprod2
 export NWROOTprod=/nwprod2
 export NWROOTp1=/nwprod
 export PCOMROOT=${PCOMROOT:-/pcom2/${envir}}
-
-export SENDECF=${SENDECF:-NO}
-export SENDCOM=${SENDCOM:-YES}
-export KEEPDATA=${KEEPDATA:-%KEEPDATA:NO%}
 
 HOMEDIR=/ensemble/save/Dingchen.Hou/RFC
 export gefsmachine=${gefsmachine:-wcoss}
