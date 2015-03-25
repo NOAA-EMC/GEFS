@@ -171,6 +171,8 @@ fi
   export gespath=$GESROOT/${envir}
   export GESdir=$gespath/gefs.${PDY}
   export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
+  # RLW 20150320 update restart procedure, use sfcsig files instead of restart files
+  SFCSIG=$COMOUT/$cyc/sfcsig
 
 mkdir -m 775 -p $COMOUT/$cyc/sfcsig
 mkdir -m 775 -p $COMOUT/$cyc/sflux
@@ -270,54 +272,27 @@ else
   export LOGO=$COMOUT/$cyc/misc/${RUNMEM}.${cycle}.logf'${FH}'$cfsuffix
 fi
 #
+# RLW 20150320 update restart procedure, use sfcsig files instead of restart files
 # Restart File Names
 # Names ending in _P are prefixes requiring forecast hour and cfsuffix
 #
 if [[ $RUN_CONCURRENT = yes ]]; then
   if [[ $ENS_SPS = .true. ]]; then
-  # for model output
-    export SIGR1=$RESTARTA/${RUM}.${cycle}.sigr1$cfsuffix
-    export SIGR2=$RESTARTA/${RUM}.${cycle}.sigr2$cfsuffix
-    export SFCR=$RESTARTA/${RUM}.${cycle}.sfcr$cfsuffix
-    # 02/29/2008 DHOU,  added new files for the output after SP
-    export SIGS1=$RESTARTA/${RUM}.${cycle}.sigs1$cfsuffix
-    export SIGS2=$RESTARTA/${RUM}.${cycle}.sigs2$cfsuffix
-    export SFCS=$RESTARTA/${RUM}.${cycle}.sfcs$cfsuffix
-    # for restart processing
-    export SIGX1=$RESTARTA/${RUM}.${cycle}.sigs1$cfsuffix
-    export SIGX2=$RESTARTA/${RUM}.${cycle}.sigs2$cfsuffix
-    export SFCX=$RESTARTA/${RUM}.${cycle}.sfcs$cfsuffix
     # Restart files in COMOUT area
-    export SIGX1_P=$RESTARTB/${RUM}.${cycle}.sigs1f
-    export SIGX2_P=$RESTARTB/${RUM}.${cycle}.sigs2f
-    export SFCX_P=$RESTARTB/${RUM}.${cycle}.sfcsf
+    export SIGS_P=$SFCSIG/${RUM}.${cycle}.ss
+    export SFCS_P=$SFCSIG/${RUM}.${cycle}.bs
+    # Restart files in COMOUT area
+    export SIGX_P=$SFCSIG/${RUM}.${cycle}.sf
+    export SFCX_P=$SFCSIG/${RUM}.${cycle}.bf
   else
-  # for model output
-    export SIGR1=$RESTARTA/${RUM}.${cycle}.sigr1$cfsuffix
-    export SIGR2=$RESTARTA/${RUM}.${cycle}.sigr2$cfsuffix
-    export SFCR=$RESTARTA/${RUM}.${cycle}.sfcr$cfsuffix
-    # for restart processing
-    export SIGX1=$RESTARTA/${RUM}.${cycle}.sigr1$cfsuffix
-    export SIGX2=$RESTARTA/${RUM}.${cycle}.sigr2$cfsuffix
-    export SFCX=$RESTARTA/${RUM}.${cycle}.sfcr$cfsuffix
     # Restart files in COMOUT area
-    export SIGX1_P=$RESTARTB/${RUM}.${cycle}.sigr1f
-    export SIGX2_P=$RESTARTB/${RUM}.${cycle}.sigr2f
-    export SFCX_P=$RESTARTB/${RUM}.${cycle}.sfcrf
+    export SIGX_P=$SFCSIG/${RUM}.${cycle}.sf
+    export SFCX_P=$SFCSIG/${RUM}.${cycle}.bf
   fi
 else
-  # for model output
-  export SIGR1=$RESTARTA/$GESdir/${RUNMEM}.${cycle}.sigr1$cfsuffix
-  export SIGR2=$RESTARTA/$GESdir/${RUNMEM}.${cycle}.sigr2$cfsuffix
-  export SFCR=$RESTARTA/$GESdir/${RUNMEM}.${cycle}.sfcr$cfsuffix
-  # for restart processing
-  export SIGX1=$RESTARTA/$GESdir/${RUNMEM}.${cycle}.sigr1$cfsuffix
-  export SIGX2=$RESTARTA/$GESdir/${RUNMEM}.${cycle}.sigr2$cfsuffix
-  export SFCX=$RESTARTA/$GESdir/${RUNMEM}.${cycle}.sfcr$cfsuffix
   # Restart files in COMOUT area
-  export SIGX1_P=$RESTARTB/${RUNMEM}.${cycle}.sigr1f
-  export SIGX2_P=$RESTARTB/${RUNMEM}.${cycle}.sigr2f
-  export SFCX_P=$RESTARTB/${RUNMEM}.${cycle}.sfcrf
+  export SIGX_P=$SFCSIG/${RUNMEM}.${cycle}.sf
+  export SFCX_P=$SFCSIG/${RUNMEM}.${cycle}.bf
 fi
 
 #
@@ -339,258 +314,133 @@ postmsg "$jlogfile" "$msg"
 # and Copy these file to the work directory ($DATA)
 ####################################
 
+# RLW 20150320 update restart procedure, use sfcsig files instead of restart files
 CONC_INI=`echo $MEMBER_NAMES|cut -c1-3`
 if test $RERUN = "NO"
 then
-  goodrestart=yes
-  echo check for restart files in $RESTARTA
+  goodrestart=no
+  echo check for restart files in $SFCSIG
   MN=$CONC_INI
-  SIGX1t=$SIGX1
-  SIGX2t=$SIGX2
-  SFCXt=$SFCX
-  if eval test -f $SIGX1t -a -f $SIGX2t -a -f $SFCXt
-  then
-    export JCAPt=$(eval $SIGHDR $SIGX1t jcap)
-    rcj=$?
-    export LEVSt=$(eval $SIGHDR $SIGX1t levs)
-    rcl=$?
-    export LONBt=$(eval $SIGHDR $SIGX1t lonb)
-    rcn=$?
-    export LATBt=$(eval $SIGHDR $SIGX1t latb)
-    rct=$?
-    export HOURt=$(eval $SIGHDR $SIGX1t fhour)
-    rch=$?
-    if (( rcj + rcl + rcn + rct + rch == 0 )); then
-      fsize_sigr1t=`eval ls -l $SIGX1t |awk -F" " '{print $5}'`
-      fsize_sigr2t=`eval ls -l $SIGX2t |awk -F" " '{print $5}'`
-      fsize_sfcrt=`eval ls -l $SFCXt |awk -F" " '{print $5}'`
-      if (( HOURt > fhresini )); then
-	for MN in $MEMBER_NAMES
-	do
-	  SIGX1m=$SIGX1
-	  SIGX2m=$SIGX2
-	  SFCXm=$SFCX
-	  if eval test -f $SIGX1m -a -f $SIGX2m -a -f $SFCXm
-	  then
-	    export JCAPm=$(eval $SIGHDR $SIGX1m jcap)
-	    rcj=$?
-	    export LEVSm=$(eval $SIGHDR $SIGX1m levs)
-	    rcl=$?
-	    export LONBm=$(eval $SIGHDR $SIGX1m lonb)
-	    rcn=$?
-	    export LATBm=$(eval $SIGHDR $SIGX1m latb)
-	    rct=$?
-	    export HOURm=$(eval $SIGHDR $SIGX1m fhour)
-	    rch=$?
-	    export HOURg=$(eval $SIGHDR $SIGX2m fhour)
-	    rcg=$?
-	    export HOURf=$(eval $SFCHDR $SFCXm fhour)
-	    rcf=$?
-	    if (( rcj + rcl + rcn + rct + rch + rcg + rcf == 0 )); then
-	      fsize_sigr1m=`eval ls -l $SIGX1m |awk -F" " '{print $5}'`
-	      fsize_sigr2m=`eval ls -l $SIGX2m |awk -F" " '{print $5}'`
-	      fsize_sfcrm=`eval ls -l $SFCXm |awk -F" " '{print $5}'`
-	      if (( HOURt != HOURm )); then
-		echo for $MN sig1 restart file forecast hour $HOURm does not match $HOURt
-		goodrestart=no
-	      elif (( HOURt != HOURg )); then
-		echo for $MN sig2 restart file forecast hour $HOURg does not match $HOURt
-		goodrestart=no
-	      elif (( HOURt != HOURf )); then
-		echo for $MN sfc restart file forecast hour $HOURf does not match $HOURt
-		goodrestart=no
-	      elif (( fsize_sigr1t != fsize_sigr1m )); then
-		echo for $MN restart file size sigr1 $fsize_sigr1m does not match $fsize_sigr1t
-		goodrestart=no
-	      elif (( fsize_sigr2t != fsize_sigr2m )); then
-		echo for $MN restart file size sigr2 $fsize_sigr2m does not match $fsize_sigr2t
-		goodrestart=no
-	      elif (( fsize_sfcrt != fsize_sfcrm )); then
-		echo for $MN restart file size sfcr $fsize_sfcrm does not match $fsize_sfcrt
-		goodrestart=no
-	      elif (( JCAPt != JCAPm )); then
-		echo for $MN restart file JCAP $JCAPm does not match $JCAPt
-		goodrestart=no
-	      elif (( LEVSt != LEVSm )); then
-		echo for $MN restart file LEVS $LEVSm does not match $LEVSt
-		goodrestart=no
-	      elif (( LONBt != LONBm )); then
-		echo for $MN restart file LONB $LONBm does not match $LONBt
-		goodrestart=no
-	      elif (( LATBt != LATBm )); then
-		echo for $MN restart file LATB $LATBm does not match $LATBt
-		goodrestart=no
-	      fi
-	    else                                  #rc
-	      echo Restart files $SIGX1m $SIGX2m $SFCXm for Member $MN cannot be processed
-	      goodrestart=no
-	    fi                                    #rc
-	  else                                    #-f
-	    echo Restart file $SIGX1m for Member $MN is NOT available
-	    goodrestart=no
-	  fi                                      #-f
-	done                                      #MN
-      else                                        #HOURt
-	echo restart file $SIGX1t hour $HOURtest not later than initial hour $fhresini
-	goodrestart=no
-      fi                                          #HOURt
-    else                                          #rc
-      echo Restart file $SIGX1t for Member $MN cannot be processed
+  for SIGXtest in `eval ls -1t ${SIGX_P}*`
+  do
+    echo SIGXtest=$SIGXtest
+    if [[ -f $SIGXtest ]]; then
+      if [[ $goodrestart = no ]]; then
+        goodrestart=yes
+        export HOURtest=$(eval $SIGHDR $SIGXtest fhour | sed -e "s/\.00//")
+        rch=$?
+        if (( rch == 0 )); then
+          if (( HOURtest > fhresini )); then
+            SIGXt=$SIGX_P$HOURtest$cfsuffix
+            SFCXt=$SFCX_P$HOURtest$cfsuffix
+            if eval test -f $SIGXt -a -f $SFCXt
+            then
+              export JCAPt=$(eval $SIGHDR $SIGXt jcap)
+              rcj=$?
+              export LEVSt=$(eval $SIGHDR $SIGXt levs)
+              rcl=$?
+              export LONBt=$(eval $SIGHDR $SIGXt lonb)
+              rcn=$?
+              export LATBt=$(eval $SIGHDR $SIGXt latb)
+              rct=$?
+              export HOURt=$(eval $SIGHDR $SIGXt fhour)
+              rch=$?
+              if (( rcj + rcl + rcn + rct + rch == 0 )); then
+                fsize_sigrt=`eval ls -l $SIGXt |awk -F" " '{print $5}'`
+                fsize_sfcrt=`eval ls -l $SFCXt |awk -F" " '{print $5}'`
+                if (( HOURt > fhresini )); then
+                  for MN in $MEMBER_NAMES
+                  do
+                    SIGXm=$SIGX_P$HOURtest$cfsuffix
+                    SFCXm=$SFCX_P$HOURtest$cfsuffix
+                    if eval test -f $SIGXm -a -f $SFCXm
+                    then
+                      export JCAPm=$(eval $SIGHDR $SIGXm jcap)
+                      rcj=$?
+                      export LEVSm=$(eval $SIGHDR $SIGXm levs)
+                      rcl=$?
+                      export LONBm=$(eval $SIGHDR $SIGXm lonb)
+                      rcn=$?
+                      export LATBm=$(eval $SIGHDR $SIGXm latb)
+                      rct=$?
+                      export HOURm=$(eval $SIGHDR $SIGXm fhour)
+                      rch=$?
+                      export HOURf=$(eval $SFCHDR $SFCXm fhour)
+                      rcf=$?
+                      if (( rcj + rcl + rcn + rct + rch +  rcf == 0 )); then
+                        fsize_sigrm=`eval ls -l $SIGXm |awk -F" " '{print $5}'`
+                        fsize_sfcrm=`eval ls -l $SFCXm |awk -F" " '{print $5}'`
+                        if (( HOURt != HOURm )); then
+                          echo for $MN restart file forecast hour $HOURm does not match $HOURt
+                          goodrestart=no
+                        elif (( HOURt != HOURf )); then
+                          echo for $MN sfc restart file forecast hour $HOURf does not match $HOURt
+                          goodrestart=no
+                        elif (( fsize_sigrt != fsize_sigrm )); then
+                          echo for $MN restart file size sigr $fsize_sigrm does not match $fsize_sigrt
+                          goodrestart=no
+                        elif (( fsize_sfcrt != fsize_sfcrm )); then
+                          echo for $MN restart file size sfcr $fsize_sfcrm does not match $fsize_sfcrt
+                          goodrestart=no
+                        elif (( JCAPt != JCAPm )); then
+                          echo for $MN restart file JCAP $JCAPm does not match $JCAPt
+                          goodrestart=no
+                        elif (( LEVSt != LEVSm )); then
+                          echo for $MN restart file LEVS $LEVSm does not match $LEVSt
+                          goodrestart=no
+                        elif (( LONBt != LONBm )); then
+                          echo for $MN restart file LONB $LONBm does not match $LONBt
+                          goodrestart=no
+                        elif (( LATBt != LATBm )); then
+                          echo for $MN restart file LATB $LATBm does not match $LATBt
+                          goodrestart=no
+                        fi
+                      else                        #rc
+                        echo Restart file $SIGXm for Member $MN cannot be processed
+                        goodrestart=no
+                      fi                          #rc
+                    else                          #-f
+                      echo Restart file $SIGXm for Member $MN is NOT available
+                      goodrestart=no
+                    fi                            #-f
+                  done                            #MN
+                else                              #HOURt
+                  echo restart file $SIGXt hour $HOURt not later than initial hour $fhresini
+                  goodrestart=no
+                fi                                #HOURt
+              else                                #rc
+                echo Restart file $SIGXt for Member $MN cannot be processed
+                goodrestart=no
+              fi                                  #rc
+            else                                  #-f
+              echo Restart file $SIGXt for Member $MN is NOT available
+              goodrestart=no
+            fi                                    #-f
+          else                                    #HOURtest
+            echo restart file $SIGXtest hour $HOURtest not later than initial hour $fhresini
+            goodrestart=no
+          fi                                      #HOURtest
+        else                                      #rch
+          echo Restart file $SIGXtest for Member $MN cannot be processed
+          goodrestart=no
+        fi                                        #rch
+        if [[ $goodrestart = yes ]]; then
+          for MN in $MEMBER_NAMES
+          do
+            SIGXm=$SIGX_P$HOURtest
+            SFCXm=$SFCX_P$HOURtest
+            eval cp $SIGXm $DATA/${RUM}.sigr
+            eval cp $SFCXm $DATA/${RUM}.sfcr
+          done                                    #MN
+          SIGI=$DATA/${RUM}.sigr
+          SFCI=$DATA/${RUM}.sfcr
+        fi                                        #goodrestart
+      fi                                          #goodrestart
+    else                                          #-f
+      echo Restart file $SIGXtest for Member $MN is not available
       goodrestart=no
-    fi                                            #rc
-  else                                            #-f
-    echo Restart file $SIGX1t for Member $MN is NOT available 
-    goodrestart=no
-  fi                                              #-f
-  if [[ $goodrestart = yes ]]; then
-    for MN in $MEMBER_NAMES
-    do
-      eval cp $SIGX1 $DATA/${RUM}.sigr1
-      eval cp $SIGX2 $DATA/${RUM}.sigr2
-      eval cp $SFCX $DATA/${RUM}.sfcr
-    done                                          #MN
-    SIGI=$DATA/${RUM}.sigr1
-    SIGI2=$DATA/${RUM}.sigr2
-    SFCI=$DATA/${RUM}.sfcr
-  else                                            #goodrestart
-    echo check for restart files in $RESTARTB
-    MN=$CONC_INI
-    for SIGX1test in `eval ls -1t ${SIGX1_P}*`
-    do
-      echo SIGX1test=$SIGX1test
-      if [[ -f $SIGX1test ]]; then
-	if [[ $goodrestart = no ]]; then
-	  goodrestart=yes
-	  export HOURtest=$(eval $SIGHDR $SIGX1test fhour | sed -e "s/\.00//")
-	  rch=$?
-	  if (( rch == 0 )); then
-	    if (( HOURtest > fhresini )); then
-	      SIGX1t=$SIGX1_P$HOURtest$cfsuffix
-	      SIGX2t=$SIGX2_P$HOURtest$cfsuffix
-	      SFCXt=$SFCX_P$HOURtest$cfsuffix
-	      if eval test -f $SIGX1t -a -f $SIGX2t -a -f $SFCXt
-	      then
-		export JCAPt=$(eval $SIGHDR $SIGX1t jcap)
-		rcj=$?
-		export LEVSt=$(eval $SIGHDR $SIGX1t levs)
-		rcl=$?
-		export LONBt=$(eval $SIGHDR $SIGX1t lonb)
-		rcn=$?
-		export LATBt=$(eval $SIGHDR $SIGX1t latb)
-		rct=$?
-		export HOURt=$(eval $SIGHDR $SIGX1t fhour)
-		rch=$?
-		if (( rcj + rcl + rcn + rct + rch == 0 )); then
-		  fsize_sigr1t=`eval ls -l $SIGX1t |awk -F" " '{print $5}'`
-		  fsize_sigr2t=`eval ls -l $SIGX2t |awk -F" " '{print $5}'`
-		  fsize_sfcrt=`eval ls -l $SFCXt |awk -F" " '{print $5}'`
-		  if (( HOURt > fhresini )); then
-		    for MN in $MEMBER_NAMES
-		    do
-		      SIGX1m=$SIGX1_P$HOURtest$cfsuffix
-		      SIGX2m=$SIGX2_P$HOURtest$cfsuffix
-		      SFCXm=$SFCX_P$HOURtest$cfsuffix
-		      if eval test -f $SIGX1m -a -f $SIGX2m -a -f $SFCXm
-		      then
-			export JCAPm=$(eval $SIGHDR $SIGX1m jcap)
-			rcj=$?
-			export LEVSm=$(eval $SIGHDR $SIGX1m levs)
-			rcl=$?
-			export LONBm=$(eval $SIGHDR $SIGX1m lonb)
-			rcn=$?
-			export LATBm=$(eval $SIGHDR $SIGX1m latb)
-			rct=$?
-			export HOURm=$(eval $SIGHDR $SIGX1m fhour)
-			rch=$?
-			export HOURg=$(eval $SIGHDR $SIGX2m fhour)
-			rcg=$?
-			export HOURf=$(eval $SFCHDR $SFCXm fhour)
-			rcf=$?
-			if (( rcj + rcl + rcn + rct + rch + rcg + rcf == 0 )); then
-			  fsize_sigr1m=`eval ls -l $SIGX1m |awk -F" " '{print $5}'`
-			  fsize_sigr2m=`eval ls -l $SIGX2m |awk -F" " '{print $5}'`
-			  fsize_sfcrm=`eval ls -l $SFCXm |awk -F" " '{print $5}'`
-			  if (( HOURt != HOURm )); then
-			    echo for $MN restart file forecast hour $HOURm does not match $HOURt
-			    goodrestart=no
-			  elif (( HOURt != HOURg )); then
-			    echo for $MN sig2 restart file forecast hour $HOURg does not match $HOURt
-			    goodrestart=no
-			  elif (( HOURt != HOURf )); then
-			    echo for $MN sfc restart file forecast hour $HOURf does not match $HOURt
-			    goodrestart=no
-			  elif (( fsize_sigr1t != fsize_sigr1m )); then
-			    echo for $MN restart file size sigr1 $fsize_sigr1m does not match $fsize_sigr1t
-			    goodrestart=no
-			  elif (( fsize_sigr2t != fsize_sigr2m )); then
-			    echo for $MN restart file size sigr2 $fsize_sigr2m does not match $fsize_sigr2t
-			    goodrestart=no
-			  elif (( fsize_sfcrt != fsize_sfcrm )); then
-			    echo for $MN restart file size sfcr $fsize_sfcrm does not match $fsize_sfcrt
-			    goodrestart=no
-			  elif (( JCAPt != JCAPm )); then
-			    echo for $MN restart file JCAP $JCAPm does not match $JCAPt
-			    goodrestart=no
-			  elif (( LEVSt != LEVSm )); then
-			    echo for $MN restart file LEVS $LEVSm does not match $LEVSt
-			    goodrestart=no
-			  elif (( LONBt != LONBm )); then
-			    echo for $MN restart file LONB $LONBm does not match $LONBt
-			    goodrestart=no
-			  elif (( LATBt != LATBm )); then
-			    echo for $MN restart file LATB $LATBm does not match $LATBt
-			    goodrestart=no
-			  fi 
-			else                        #rc
-			  echo Restart file $SIGX1mfor Member $MN cannot be processed
-			  goodrestart=no
-			fi                          #rc
-		      else                          #-f
-			echo Restart file $SIGX1mfor Member $MN is NOT available
-			goodrestart=no
-		      fi                            #-f
-		    done                            #MN
-		  else                              #HOURt
-		    echo restart file $SIGX1t hour $HOURt not later than initial hour $fhresini
-		    goodrestart=no
-		  fi                                #HOURt
-		else                                #rc
-		  echo Restart file $SIGX1t for Member $MN cannot be processed
-		  goodrestart=no
-		fi                                  #rc
-	      else                                  #-f
-		echo Restart file $SIGX1t for Member $MN is NOT available 
-		goodrestart=no
-	      fi                                    #-f
-	    else                                    #HOURtest
-	      echo restart file $SIGX1test hour $HOURtest not later than initial hour $fhresini
-	      goodrestart=no
-	    fi                                      #HOURtest
-	  else                                      #rch
-	    echo Restart file $SIGX1test for Member $MN cannot be processed
-	    goodrestart=no
-	  fi                                        #rch
-	  if [[ $goodrestart = yes ]]; then
-	    for MN in $MEMBER_NAMES
-	    do
-	      SIGX1m=$SIGX1_P$HOURtest
-	      SIGX2m=$SIGX2_P$HOURtest
-	      SFCXm=$SFCX_P$HOURtest
-	      eval cp $SIGX1m $DATA/${RUM}.sigr1
-	      eval cp $SIGX2m $DATA/${RUM}.sigr2
-	      eval cp $SFCXm $DATA/${RUM}.sfcr
-	    done                                    #MN
-	    SIGI=$DATA/${RUM}.sigr1
-	    SIGI2=$DATA/${RUM}.sigr2
-	    SFCI=$DATA/${RUM}.sfcr
-	  fi                                        #goodrestart
-	fi                                          #goodrestart
-      else                                        #-f
-	echo Restart file $SIGX1test for Member $MN is not available
-	goodrestart=no
-      fi                                          #-f
-    done                                          #SIGX1test
-  fi                                              #goodrestart
+    fi                                            #-f
+  done                                            #SIGXtest
 fi                                                #RERUN
 
 if [[ $goodrestart = no ]]; then
