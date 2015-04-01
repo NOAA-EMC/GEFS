@@ -3,13 +3,14 @@
 # 1/13/2015, Creadted by Jiayi Peng and Dingchen Hou for GFS genesis, following JGEFS_POST_GENESIS 
 ####################################################################
 echo `date` $0 `date -u` begin
+
 set -xa
 export PS4='$SECONDS + '
 date
 
-####################################
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ###########################################
@@ -34,6 +35,23 @@ cd $DATA
 # Set up cycle varaible
 ############################
 export cycle=t${cyc}z
+export cycle_fcst=t${cyc_fcst}z
+
+echo cyc=$cyc cyc_fcst=$cyc_fcst
+echo cycle=$cycle cycle_fcst=$cycle_fcst
+
+if (( cyc == cyc_fcst )); then
+  export fcstlong=true
+  export cfsuffix=""
+  export cycsuffix=false
+else
+  export fcstlong=false
+  export cfsuffix=".cycfs$cyc_fcst"
+  export cycsuffix=true
+fi
+
+export fcstlong
+echo fcstlong=$fcstlong
 
 ####################################
 # Specify NET and RUN Name and model
@@ -59,16 +77,25 @@ export pgmerr=errfile
 # SENDDBN  - Issue DBNet Client Calls
 ####################################
 export SENDCOM=${SENDCOM:-YES}
-export SENDDBN=${SENDDBN:-NO}
+export SENDDBN=${SENDDBN:-YES}
 export SENDECF=${SENDECF:-YES}
 
 ####################################
 # Specify Execution Areas
 ####################################
 export HOMEgene=${HOMEgene:-${NWROOT}/ens_genesis.${genesis_ver}}
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+
 export EXECens_genesis=${EXECgene:-$HOMEgene/exec}
 export USHens_genesis=${USHgene:-$HOMEgene/ush}
 export FIXens_genesis=${FIXgene:-$HOMEgene/fix}
+
+export PARMgefs=$HOMEgefs/parm
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+#ksh setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
@@ -89,10 +116,18 @@ mkdir -p ${genvitdir}
 ##############################################
 export COMINgfs=${COMINgfs:-$COMROOTp1/gfs/prod/gfs.${PDY}}
 export COMIN=$COMINgfs
+
 export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
-export gfsdir=${COMIN:-${COMROOTp1}/gfs/prod/gfs.${PDY}}
+export gfsdir=${COMIN}
 export COM=$COMOUT/$cyc/genesis
 mkdir -m 775 -p $COM
+
+##############################################
+#echo set parameters using gefs.parm if needed
+##############################################
+# . $PARMgefs/gefs.parm
+
+export homesyndir=$HOMEgene
 
 echo
 env | sort
@@ -179,4 +214,4 @@ if [[ $KEEPDATA != "YES" ]]; then
   rm -rf $DATA
 fi
 
-date
+`date` $0 `date -u` end

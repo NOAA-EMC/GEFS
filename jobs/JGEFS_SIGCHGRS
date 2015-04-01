@@ -1,23 +1,10 @@
 #!/bin/ksh 
-#####################################################################
-# 9/20/2009, Julia Zhu   Scripts are modified to be sharable
-#                        between EMC and NCO
-#         Please note that variable "RUN_ENVIR" is set and used
-#         in the development enviroment only.
-# December 2011, Dingchen Hou new script adopted from Forecast J-job 
-# 12/3/2014, Dingchen Hou  Scripts are modified to be vertical structre and cleanned 
-######################################################################
 
 echo `date` $0 `date -u` begin
 
 set -xa
 export PS4='$SECONDS + '
 date
-
-export gefsmachine=${gefsmachine:-wcoss}
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-
-export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ###########################################
 # Run gefs_config to get input parameters
@@ -26,14 +13,16 @@ if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nw${envir}/parm/gefs_config
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
+
+export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-export DATAROOT=${DATAROOT:-/tmpnwprd_p2}
-export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
 
@@ -55,8 +44,8 @@ fi
 # Specify NET and RUN Name and model
 ####################################
 export NET=${NET:-gens}
-export NTHREADS=$NTHREADS_SIGCHGRS
-export MP_LABELIO=YES
+#export NTHREADS=$NTHREADS_SIGCHGRS
+#export MP_LABELIO=YES
 CHGRES_ALL=no
 
 ####################################
@@ -71,25 +60,6 @@ export outid="LL$job"
 export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
-
-if [[ $RUN_CONCURRENT = yes ]]; then
-  export PGMOUT=FCOUT.o$pid
-  export PGMERR=
-  export REDOUT=' | tee -a '
-  export REDERR=' 2>&1 '
-fi
-
-####################################
-# SENDCOM  - Copy Files From TMPDIR to $COMOUT
-# SENDDBN  - Issue DBNet Client Calls
-# RERUN    - Rerun fcst from beginning (default no)
-# VERBOSE  - Specify Verbose Output in exglobal_fcst.sh.sms
-####################################
-  export SENDCOM=${SENDCOM:-YES}
-  export SENDDBN=${SENDDBN:-YES}
-  export SENDECF=${SENDECF:-YES}
-  export VERBOSE=${VERBOSE:-NO}
-  export RERUN=${RERUN:-NO}
 
   # Specify Execution Areas
   export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
@@ -111,11 +81,6 @@ fi
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 ##############################
-# Run setup to initialize working directory and utility scripts
-##############################
-#sh setup.sh
-
-##############################
 # Run setpdy and initialize PDY variables
 ##############################
 setpdy.sh
@@ -127,13 +92,13 @@ setpdy.sh
 (( HOUTASPS = hour_lr_ini ))
 
 ##############################################
-# Define COM and GES directories
+# Define  COM and GES directories
 ##############################################
-  export gespath=$GESROOT/${envir}
-  export GESdir=$gespath/gefs.${PDY}
-  export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
+  export GESIN=$GESROOT/${envir}/gefs.${PDY}
+  export GESOUT=$GESROOT/${envir}/gefs.${PDY}
+  export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
 
-  mkdir -m 775 -p $GESdir
+  mkdir -m 775 -p $GESOUT
 
 ##############################################
 echo set parameters using gefs.parm
@@ -233,27 +198,27 @@ export FNAISC=$FIXGLOBAL/CFSR.SEAICE.1982.2012.monthly.clim.grb  # New for gfs 2
    export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,idsl=$IDSL,idvc=$IDVC,idvm=$IDVM,idvt=$IDVT,use_ufo=$use_ufo"
 
 # Change resolution of the high-res forecast files
-# Write the resulted files in $GESdir and make a copy in $DATA 
+# Write the resulted files in $GESOUT and make a copy in $DATA 
  if  [[ $CHGRES_ALL = YES ]] ; then
    for MN in $MEMBER_NAMES
    do
-     eval export SIGOUT=$GESdir/${RUM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
-     eval export SFCOUT=$GESdir/${RUM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+     eval export SIGOUT=$GESOUT/${RUM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
+     eval export SFCOUT=$GESOUT/${RUM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
      if [[ $cycsuffix = false ]]; then
       if [[ $ENS_SPS = .true. ]]; then
-       eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.ss${HOUTASPS}
-       eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.bs${HOUTASPS}
+       eval export SIGINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.ss${HOUTASPS}
+       eval export SFCINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.bs${HOUTASPS}
       else
-       eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.sf${HOUTASPS}
-       eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.bf${HOUTASPS}
+       eval export SIGINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.sf${HOUTASPS}
+       eval export SFCINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.bf${HOUTASPS}
       fi
      else
       if [[ $ENS_SPS = .true. ]]; then
-       eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
-       eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
+       eval export SIGINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
+       eval export SFCINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
       else
-       eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
-       eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
+       eval export SIGINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
+       eval export SFCINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
       fi
      fi
 
@@ -262,23 +227,23 @@ export FNAISC=$FIXGLOBAL/CFSR.SEAICE.1982.2012.monthly.clim.grb  # New for gfs 2
      echo `date` timing lr $MN chgres after
    done  #MN
  else
-     export SIGOUT=$GESdir/${RUN}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
-     export SFCOUT=$GESdir/${RUN}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+     export SIGOUT=$GESOUT/${RUN}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
+     export SFCOUT=$GESOUT/${RUN}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
      if [[ $cycsuffix = false ]]; then
       if [[ $ENS_SPS = .true. ]]; then
-       export SIGINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.ss${HOUTASPS}
-       export SFCINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.bs${HOUTASPS}
+       export SIGINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.ss${HOUTASPS}
+       export SFCINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.bs${HOUTASPS}
       else
-       export SIGINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.sf${HOUTASPS}
-       export SFCINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.bf${HOUTASPS}
+       export SIGINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.sf${HOUTASPS}
+       export SFCINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.bf${HOUTASPS}
       fi
      else
       if [[ $ENS_SPS = .true. ]]; then
-       export SIGINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
-       export SFCINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
+       export SIGINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
+       export SFCINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
       else
-       export SIGINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
-       export SFCINP=$COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
+       export SIGINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
+       export SFCINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
       fi
      fi
      echo `date` timing lr chgres before
@@ -287,22 +252,6 @@ export FNAISC=$FIXGLOBAL/CFSR.SEAICE.1982.2012.monthly.clim.grb  # New for gfs 2
  fi
 
 # End of resolution change
-
-# remove the corresponding restart files from restarta
-
-for MN in $MEMBER_NAMES
-do
-  for file in sigr1 sigr2 sfcr sigs1 sigs2 sfcs
-  do
-    dirfile=$COMOUT/$cyc/restarta/ge$MN.t${cyc}z.$file
-    if [[ -f $dirfile ]]; then
-      ls -al $dirfile
-      rm $dirfile
-    fi
-  done
-done
-
-#### DHOU, 09/10/2010 added this block for lower res. forecast
 
 cat $pgmout
 echo
@@ -328,7 +277,7 @@ postmsg "$jlogfile" "$msg"
 # Remove the Temporary working directory
 ##############################
 if [[ $KEEPDATA != "YES" ]]; then
- cd $DATA_IN
+ cd $DATAROOT
  rm -rf $DATA
 fi 
 

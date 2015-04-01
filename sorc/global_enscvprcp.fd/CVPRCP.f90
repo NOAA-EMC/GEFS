@@ -101,7 +101,7 @@
       
 !  READ IN PRECIP FORECAST ( GRIB FORMAT )
 
-      do jj = 2, iensem ! total ensemble members
+      do jj = 1, iensem ! total ensemble members
        jpds15=0
        do ii = 1, 31   ! need to set up
         print *, "jj=",jj,",ii=",ii
@@ -112,46 +112,15 @@
         f =0.0
         ip2m1=0
         do n = 1, 100
-      iids=-9999;ipdt=-9999; igdt=-9999
-      idisc=-1;  ipdtn=-1;   igdtn=-1
-      ipdt(1)=ipd1
-      ipdt(2)=ipd2
-      ipdt(10)=ipd10
-      ipdt(11)=ipd11
-      ipdt(12)=ipd12
-      ipdt(16)=e16(jj)
-      ipdt(17)=e17(jj)
-         if (jj.eq.1) then
-          if (n.eq.1) then
-           if (ii.le.15) then
-            ipdt(9)=(ii-1)*12
-            ipdt(30)=6
-            jpds13=1
-           elseif (ii.gt.15.and.ii.le.21) then
-            ipdt(9)=(ii-1)*12
-            ipdt(30)=12
-            jpds13=1
-           else
-            ipdt(9)=(ii-1)
-            ipdt(30)=1
-            jpds13=12
-           endif
-          else
-           if (jpds15.lt.180) then
-            ipdt(9)=jpds15
-            ipdt(30)=6
-            jpds13=1
-           elseif (jpds15.ge.180.and.jpds15.lt.252) then
-            ipdt(9)=jpds15
-            ipdt(30)=12
-            jpds13=1
-           else
-            ipdt(9)=jpds15/12
-            ipdt(30)=1
-            jpds13=12
-           endif
-          endif
-         else
+         iids=-9999;ipdt=-9999; igdt=-9999
+         idisc=-1;  ipdtn=-1;   igdtn=-1
+         ipdt(1)=ipd1
+         ipdt(2)=ipd2
+         ipdt(10)=ipd10
+         ipdt(11)=ipd11
+         ipdt(12)=ipd12
+         ipdt(16)=e16(jj)
+         ipdt(17)=e17(jj)
           if (n.eq.1) then
             ipdt(9)=(ii-1)*12
             ipdt(30)=6
@@ -161,7 +130,6 @@
             ipdt(30)=6
             jpds13=1
           endif
-         endif
       ipdtn=11; igdtn=-1
       call init_parm(ipdtn,ipdt,igdtn,igdt,idisc,iids)
       call getgb2(11,0,jskp,jdisc,jids,jpdtn,jpdt,jgdtn,jgdt,&

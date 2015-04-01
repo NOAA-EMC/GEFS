@@ -27,7 +27,10 @@ INITIME=0
 ### gfs_2000101000_24_36
 ### above two file verified to 2000101012-2000101112(usa-dlyprcp-20001011)
 
-for fhour in 00 36 60 84 108 132 156 180 204 228 252 276 300 324 348 372
+export hourlist="00 36 60 84 108 132 156 180 204 228 252 276 300 324 348 372" 
+
+>cvt24h.cmdfile 
+for fhour in $hourlist
 do
  
  if [ $fhour -eq 00 ]; then
@@ -36,11 +39,21 @@ do
   CYMDH=`$NDATE -$fhour $OBSYMD\12`
  fi
 
- $CVT24H $CYMDH 
+ echo "$CVT24H $CYMDH" >>cvt24h.cmdfile
 
+done
+
+cat cvt24h.cmdfile
+chmod 775 cvt24h.cmdfile
+export MP_PGMMODEL=mpmd
+export MP_CMDFILE=$DATA/cvt24h.cmdfile
+
+mpirun.lsf
+
+for fhour in $hourlist
+do
  $WGREP $OBSYMDH $fhour 1 gfs    
- $WGREP $OBSYMDH $fhour 1 ctl       
-
+ $WGREP $OBSYMDH $fhour 1 ctl
 done
 
 for RUNID in gfs ctl                 

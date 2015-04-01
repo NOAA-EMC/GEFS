@@ -8,47 +8,32 @@
 # February 2015, Dingchin Hou   Scripts changed to vertical structure and cleaned following NCO requirements
 ######################################################################
 
-#$SMSBIN/smsinit $LOADL_STEP_ID 
 echo `date` $0 `date -u` begin
 
 set -xa
 export PS4='$SECONDS + '
+date
 
-# 01/28/2013 New variables added for WCOSS and cross-machine unfication
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-export machine=${gefsmachine:-wcoss}
+
 export GRIBVERSION=${GRIBVERSION:-grib2}
-export gefsgribedition=${gefsgribedition:-2}
 
 ###########################################
 # Run gefs_config to get input parameters
 ###########################################
 if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
+# . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nwdev/parm/gefs_config
-# . $basesource/nwdev/parm/gefs_config_old
-else
-  VERSION_FILE=/nw{$envir}/versions/gefs.ver
-  if [-f $VERSION_FILE]; then
-     . $VERSION_FILE
-  else
-     ecflow_client --abort
-     exit
-  fi
 fi
-
-export HOMEgefs=${HOMEgefs}
-export HOMEutil=${HOMEROOT:-/nwprod/util}
-export HOMEgrib=${GRIBROOT:-/nwprod/util}
 
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-export DATA=$DATAROOT/${job}.${pid}
-#export DATA=$DATA_IN/cqpd.${pid}
-
+export DATAROOT=${DATAROOT:-/tmpnwprd_p2}
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
 
@@ -61,12 +46,12 @@ export cycle=t${cyc}z
 # Specify NET and RUN Name and model
 ####################################
 export NET=${NET:-gens}
-export RUN=stat
+export RUN=cqpf
 
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-/com/logs/jlogfile}
+export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -77,18 +62,17 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 ####################################
-# SENDSMS  - Flag Events on SMS
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 ####################################
   export SENDCOM=${SENDCOM:-YES}
-  export SENDDBN=${SENDDBN:-NO}
-  export SENDSMS=${SENDSMS:-YES}
+  export SENDDBN=${SENDDBN:-YES}
   export SENDECF=${SENDECF:-YES}
-  export SENDDBN_GB2=${SENDDBN_GB2:-NO}
   export RERUN=${RERUN:-NO}
 
   # Specify Execution Areas
+  export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
@@ -100,19 +84,9 @@ export REDOUT='1>>'
 export REDERR='2>'
 
 ##############################
-# Set up the UTILITIES
-##############################
-export EXECutil=$HOMEutil/exec
-export FIXutil=$HOMEutil/fix
-export USHutil=$HOMEutil/ush
-export utilscript=${USHutil}
-
-export CNVGRIB=${CNVGRIB:-/$EXECutil/cnvgrib21_gfs}
-
-##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-sh $USHutil/setup.sh
+#sh setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
@@ -123,15 +97,17 @@ sh $USHutil/setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMINGEST=$TMPCOM/ingest/prod
-export COMINGEST=${COMINGEST:-/ensemble/noscrub/Yan.Luo/com-ingest-prod}
-export COMIN=${COM_IN:-${COMROOT}/com/${NET}/${envir}}
-export COMOUT=$COMROOT/com/${NET}/${envir}/gefs.${PDY}/${cyc}/ensstat
+export COMINGEST=${COMINGEST:-/ensemble/noscrub/Yan.Luo/com-ingest-prod}  #temporary for testing
+export COMINGEST=${COMINGEST:-/$COMROOTp1/injest/prod}
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}}
+export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}/${cyc}/ensstat
+
+mkdir -m 775 -p $COMOUT
 
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
 
-env
+env | sort
 
 #############################################################
 # Execute the script
@@ -148,7 +124,7 @@ postmsg "$jlogfile" "$msg"
 ##############################
 # Remove the Temporary working directory
 ##############################
-#cd $DATA_IN
-#rm -rf $DATA
-
-#$SMSBIN/endt
+if [[ $KEEPDATA != "YES" ]]; then
+  cd $DATAROOT
+  rm -rf $DATA
+fi

@@ -1,23 +1,10 @@
 #!/bin/ksh 
-######################################################################
-# 9/20/2009, Julia Zhu   Scripts are modified to be sharable
-#                        between EMC and NCO
-#         Please note that variable "RUN_ENVIR" is set and used
-#         in the development enviroment only.
-# 12/2/2014, Dingchen Hou   Scripts are modified to be vertical structure ready 
-# 1/29/2015, Dingchen Hou   Scripts cleaning following NCO requirements 
-######################################################################
 
 echo `date` $0 `date -u` begin
 
 set -xa
 export PS4='$SECONDS + '
 date
-
-export gefsmachine=${gefsmachine:-wcoss}
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-
-export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ###########################################
 # Run gefs_config to get input parameters
@@ -26,13 +13,15 @@ if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nw${envir}/parm/gefs_config
+  export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
+
+export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-export DATAROOT=${DATAROOT:-/tmpnwprd_p2}
 export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
@@ -58,8 +47,7 @@ fi
 # Specify NET and RUN Name and model
 ####################################
 export NET=${NET:-gens}
-export NTHREADS=2
-export MP_LABELIO=YES
+#export NTHREADS=1
 
 ####################################
 # File To Log Msgs
@@ -82,15 +70,8 @@ if [[ $RUN_CONCURRENT = yes ]]; then
 fi
 
 ####################################
-# SENDCOM  - Copy Files From TMPDIR to $COMOUT
-# SENDDBN  - Issue DBNet Client Calls
-# RERUN    - Rerun fcst from beginning (default no)
-# VERBOSE  - Specify Verbose Output in exglobal_fcst.sh.sms
+# Define RERUN Parrmeter: default to NO
 ####################################
-  export SENDCOM=${SENDCOM:-YES}
-  export SENDDBN=${SENDDBN:-YES}
-  export SENDECF=${SENDECF:-YES}
-  export VERBOSE=${VERBOSE:-NO}
   export RERUN=${RERUN:-NO}
 
   # Specify Execution Areas
@@ -111,12 +92,6 @@ fi
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
-##############################
-# Run setup to initialize working directory and utility scripts
-##############################
-# ksh setup.sh
-
-##############################
 # Run setpdy and initialize PDY variables
 ##############################
 setpdy.sh
@@ -168,8 +143,8 @@ fi
 ##############################################
 # Define COM and GES directories
 ##############################################
-  export gespath=$GESROOT/${envir}
-  export GESdir=$gespath/gefs.${PDY}
+  export GESIN=$GESROOT/${envir}/gefs.${PDY}
+  export GESOUT=$GESROOT/${envir}/gefs.${PDY}
   export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
   # RLW 20150320 update restart procedure, use sfcsig files instead of restart files
   SFCSIG=$COMOUT/$cyc/sfcsig
@@ -177,8 +152,6 @@ fi
 mkdir -m 775 -p $COMOUT/$cyc/sfcsig
 mkdir -m 775 -p $COMOUT/$cyc/sflux
 mkdir -m 775 -p $COMOUT/$cyc/misc
-
-mkdir -m 775 -p $GESdir
 
 ##############################################
 echo set parameters using gefs.parm
@@ -458,15 +431,15 @@ if [[ $RERUN = YES ]]; then
 
     if [[ $cycsuffix = false ]]; then
       if [[ $FORECAST_SEGMENT = lr ]]; then
-	export SIGI=$GESdir/${RUM}.t${cyc}z.sig${hour_lr_ini}_T$JCAPLR\L$LEVSLR
-	export SFCI=$GESdir/${RUM}.t${cyc}z.sfc${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+	export SIGI=$GESIN/${RUM}.t${cyc}z.sig${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+	export SFCI=$GESIN/${RUM}.t${cyc}z.sfc${hour_lr_ini}_T$JCAPLR\L$LEVSLR
       else
-	export SIGI=$GESdir/${RUM}.t${cyc}z.sanl
-	export SFCI=$GESdir/${RUM}.t${cyc}z.sfcanl
+	export SIGI=$GESIN/${RUM}.t${cyc}z.sanl
+	export SFCI=$GESIN/${RUM}.t${cyc}z.sfcanl
       fi
     else
-      export SIGI=$GESdir/${RUM}.t${cyc}z.sanl.cycfs$cyc_fcst
-      export SFCI=$GESdir/${RUM}.t${cyc}z.sfcanl.cycfs$cyc_fcst
+      export SIGI=$GESIN/${RUM}.t${cyc}z.sanl.cycfs$cyc_fcst
+      export SFCI=$GESIN/${RUM}.t${cyc}z.sfcanl.cycfs$cyc_fcst
     fi
 
     for MN in $MEMBER_NAMES
@@ -487,15 +460,15 @@ if [[ $RERUN = YES ]]; then
   else      # NON RUN_CONCURRENT
     if [[ $cycsuffix = false ]]; then
       if [[ $FORECAST_SEGMENT = lr ]]; then
-	export SIGI=$GESdir/${RUNMEM}.t${cyc}z.sig${hour_lr_ini}_T$JCAPLR\L$LEVSLR
-	export SFCI=$GESdir/${RUNMEM}.t${cyc}z.sfc${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+	export SIGI=$GESIN/${RUNMEM}.t${cyc}z.sig${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+	export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfc${hour_lr_ini}_T$JCAPLR\L$LEVSLR
       else
-	export SIGI=$GESdir/${RUNMEM}.t${cyc}z.sanl
-	export SFCI=$GESdir/${RUNMEM}.t${cyc}z.sfcanl
+	export SIGI=$GESIN/${RUNMEM}.t${cyc}z.sanl
+	export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfcanl
       fi
     else
-      export SIGI=$GESdir/${RUNMEM}.t${cyc}z.sanl.cycfs$cyc_fcst
-      export SFCI=$GESdir/${RUNMEM}.t${cyc}z.sfcanl.cycfs$cyc_fcst
+      export SIGI=$GESIN/${RUNMEM}.t${cyc}z.sanl.cycfs$cyc_fcst
+      export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfcanl.cycfs$cyc_fcst
     fi
 
     if test -f $SIGI -a -f $SFCI
@@ -511,7 +484,7 @@ if [[ $RERUN = YES ]]; then
 
     fi
   fi        #RUN_CONCURRENT
-fi          #RERUN
+fi          #RERUN  
 
 ####################################
 # Specify Special Fcst Vars
@@ -860,18 +833,18 @@ then
       for MN in $MEMBER_NAMES
       do
         if [[ $cycsuffix = false ]]; then
-          eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.sf${HOUTASPS} $GESdir/.
-          eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.bf${HOUTASPS} $GESdir/.
+          eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.sf${HOUTASPS} $GESOUT/.
+          eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.bf${HOUTASPS} $GESOUT/.
           if [[ $ENS_SPS = .true. ]]; then
-            eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.ss${HOUTASPS} $GESdir/.
-            eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.bs${HOUTASPS} $GESdir/.
+            eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.ss${HOUTASPS} $GESOUT/.
+            eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.bs${HOUTASPS} $GESOUT/.
           fi
         fi
       done
    else
       if [[ $cycsuffix = false ]]; then
-         cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf${HOUTASPS} $GESdir/.
-         cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf${HOUTASPS} $GESdir/.
+         cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf${HOUTASPS} $GESOUT/.
+         cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf${HOUTASPS} $GESOUT/.
       fi
    fi
    ### End of saving the HOUTASPS-hour sf and bf files for the LOW-RES run:
@@ -911,15 +884,15 @@ if  [[ $FORECAST_SEGMENT != hr ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh
 fi
 
 # Change resolution of the high-res forecast files
-# Write the resuled files in $GESdir and make a copy in $DATA 
+# Write the resuled files in $GESOUT and make a copy in $DATA 
 if  [[ $FORECAST_SEGMENT = hl ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh )) ; then
  if  [[ $RUN_CONCURRENT = YES ]] ; then
    for MN in $MEMBER_NAMES
    do
 #    eval export SIGOUT=$DATA/${RUM}.siganl
 #    eval export SFCOUT=$DATA/${RUM}.sfcanl
-     eval export SIGOUT=$GESdir/${RUM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
-     eval export SFCOUT=$GESdir/${RUM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+     eval export SIGOUT=$GESOUT/${RUM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
+     eval export SFCOUT=$GESOUT/${RUM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
      if [[ $cycsuffix = false ]]; then
 #     if [[ $ENS_SPS = true ]]; then
       if [[ $ENS_SPS = .true. ]]; then
@@ -947,8 +920,8 @@ if  [[ $FORECAST_SEGMENT = hl ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh 
      eval cp -pr $SFCOUT $DATA
    done  #MN
  else
-     export SIGOUT=$GESdir/${RUNMEM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
-     export SFCOUT=$GESdir/${RUNMEM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+     export SIGOUT=$GESOUT/${RUNMEM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
+     export SFCOUT=$GESOUT/${RUNMEM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
      if [[ $cycsuffix = false ]]; then
 #     if [[ $ENS_SPS = true ]]; then
       if [[ $ENS_SPS = .true. ]]; then
@@ -1069,19 +1042,19 @@ if [[ $RUN_CONCURRENT = yes ]]; then
    for MN in $MEMBER_NAMES
    do
      if [[ $cycsuffix = false ]]; then
-       eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.sf${HOUTASPS} $GESdir/.
-       eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.bf${HOUTASPS} $GESdir/.
+       eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.sf${HOUTASPS} $GESOUT/.
+       eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.bf${HOUTASPS} $GESOUT/.
 #      if [[ $ENS_SPS = true ]]; then
        if [[ $ENS_SPS = .true. ]]; then
-         eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.ss${HOUTASPS} $GESdir/.
-         eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.bs${HOUTASPS} $GESdir/.
+         eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.ss${HOUTASPS} $GESOUT/.
+         eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.bs${HOUTASPS} $GESOUT/.
        fi
      fi
    done
 else
    if [[ $cycsuffix = false ]]; then
-      cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf${HOUTASPS} $GESdir/.
-      cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf${HOUTASPS} $GESdir/.
+      cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf${HOUTASPS} $GESOUT/.
+      cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf${HOUTASPS} $GESOUT/.
    fi
 fi
 
@@ -1115,7 +1088,7 @@ postmsg "$jlogfile" "$msg"
 # Remove the Temporary working directory
 ##############################
 if [[ $KEEPDATA != "YES" ]]; then
- cd $DATA_IN
+ cd $DATAROOT
  rm -rf $DATA
 fi
 

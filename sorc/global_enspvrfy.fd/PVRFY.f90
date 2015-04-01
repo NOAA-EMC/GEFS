@@ -64,6 +64,9 @@
 !   GF_FREE          FREE UP MEMORY FOR GRIB2  
 !   INIT_PARM        DEFINE GRID DEFINITION AND PRODUCT DEFINITION 
 !   PRINTINFR        PRINT GRIB2 DATA INFORMATION 
+!   MAKGDS           MAKE OR BREAK A GRID DESCRIPTION SECTION   
+!   ANNATV           DO A BOX AVERAGE ANALYSIS TO THE GRID DEFINED BY KGDS
+!   IPOLATES         INTERPOLATE SCALAR FIELDS FROM ANY GRID TO ANY GRID
 !   VRFY             PERFORM PRECIP VERIFICATION 
 ! 
 ! ATTRIBUTES: 
@@ -219,7 +222,6 @@
       if (iret.eq.0) then      
       call printinfr(gfld,1)
       maxgrd=gfld%ngrdpts  
-!      print *, 'maxgrd= ', maxgrd 
      allocate (fgrid(maxgrd),fci(maxgrd),ana(maxgrd)) 
      allocate (lfci(maxgrd),lana(maxgrd)) 
 
@@ -532,7 +534,6 @@
 !
 !  if we've found enough fcst precip to match the obs acc period...
 !
-!          IF (gfldo%ipdtmpl(9).ge.252) IFACC=12*gfldo%ipdtmpl(30) 
           WRITE (6,*) 'IFACC,IACC=',IFACC,IACC
           IF (IFACC.EQ.IACC) THEN
            IF (LPCPDA) THEN

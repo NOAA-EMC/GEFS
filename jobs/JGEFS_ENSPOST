@@ -62,12 +62,11 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 ####################################
-# SENDSMS  - Flag Events on SMS
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 ####################################
   export SENDCOM=${SENDCOM:-YES}
-  export SENDDBN=${SENDDBN:-NO}
+  export SENDDBN=${SENDDBN:-YES}
   export SENDECF=${SENDECF:-YES}
   export RERUN=${RERUN:-NO}
 

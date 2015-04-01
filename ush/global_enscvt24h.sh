@@ -16,7 +16,7 @@ IYMDM1=`$NDATE -24 $IYMDH | cut -c1-8`
 
 if [ -s $COMIN/gefs.$IYMD/00/ensstat/enspost_grb2.t00z.prcp ]; then
  cat $COMIN/gefs.$IYMD/00/ensstat/enspost_grb2.t00z.prcp    >precip.$IYMDH
- $USHgefs/global_enscvprcp.sh precip.$IYMDH precipt.$IYMDH 
+ $USHgefs/global_enscvprcp.sh precip.$IYMDH precipt.$IYMDH $IYMDH
  mv precipt.$IYMDH precip.$IYMDH
 else
  echo " No either $COMIN/gefs.$IYMD/00/ensstat/enspost.t00z.prcp"
@@ -29,7 +29,7 @@ echo "         **** We start to make 24 hour acc prcip** "
 echo "         ****        Please  wait !!!!!!!      *** "
 echo "         ######################################### "
 
-cat <<namEOF >input_c24h
+cat <<namEOF >input_c24h_$IYMDH
 &namin
 cpgb='precip.$IYMDH',
 pgb71='qpf_gfs.$IYMDH',
@@ -42,6 +42,6 @@ export pgm=global_enscvt24h
 
 startmsg
 
-$EXECgefs/global_enscvt24h <input_c24h >> $pgmout 2>errfile
+$EXECgefs/global_enscvt24h <input_c24h_$IYMDH >> $pgmout 2>errfile
 #export err=$?;err_chk
 

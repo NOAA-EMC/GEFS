@@ -2,14 +2,16 @@
 #####################################################################
 # 1/7/2014, Jiayi Peng and Dingchen Hou   Scripts are modified to be vertical structure 
 ####################################################################
+
 echo `date` $0 `date -u` begin
+
 set -xa
-export PS4='$SECONDS + '
+export PS4=' + $SECONDS $na $LINENO: '
 date
 
-####################################
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ###########################################
@@ -34,6 +36,23 @@ cd $DATA
 # Set up cycle varaible
 ############################
 export cycle=t${cyc}z
+export cycle_fcst=t${cyc_fcst}z
+
+echo cyc=$cyc cyc_fcst=$cyc_fcst
+echo cycle=$cycle cycle_fcst=$cycle_fcst
+
+if (( cyc == cyc_fcst )); then
+  export fcstlong=true
+  export cfsuffix=""
+  export cycsuffix=false
+else
+  export fcstlong=false
+  export cfsuffix=".cycfs$cyc_fcst"
+  export cycsuffix=true
+fi
+
+export fcstlong
+echo fcstlong=$fcstlong
 
 ####################################
 # Specify NET and RUN Name and model
@@ -59,17 +78,26 @@ export pgmerr=errfile
 # SENDDBN  - Issue DBNet Client Calls
 ####################################
 export SENDCOM=${SENDCOM:-YES}
-export SENDDBN=${SENDDBN:-NO}
+export SENDDBN=${SENDDBN:-YES}
 export SENDECF=${SENDECF:-YES}
 
 ####################################
 # Specify Execution Areas
 ####################################
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
 export HOMEtrak=${HOMEtrak:-${NWROOT}/ens_tracker.${tracker_ver}}
+
 export EXECens_tracker=${EXECtrak:-$HOMEtrak/exec}
 export USHens_tracker=${USHtrak:-$HOMEtrak/ush}
 export FIXens_tracker=${FIXtrak:-$HOMEtrak/fix}
 export SCRIPTSens_tracker=${SCRIPTSens_tracker:-$HOMEtrak/scripts}
+
+export PARMgefs=$HOMEgefs/parm
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+#ksh setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
@@ -80,12 +108,29 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/gefs.${PDY}}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/gefs.${PDY}}
+
 export ensdir=$COMIN/$cyc/pgrb2ap5
 export ensdirb=$COMIN/$cyc/pgrb2bp5
+
 export COM=$COMOUT/$cyc/track
 mkdir -m 775 -p $COM
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+. $PARMgefs/gefs.parm
+
+if [[ $envir = dev ]]; then
+  export fhmax=$fhmax00
+elif (( cyc == 06 )); then
+  export fhmax=$fhmax06
+elif (( cyc == 12 )); then
+  export fhmax=$fhmax12
+elif (( cyc == 18 )); then
+  export fhmax=$fhmax18
+fi
 
 ####################################
 # Create member list
@@ -107,6 +152,8 @@ do
   memberlist="$memberlist p$imem"
 done
 echo memberlist=$memberlist
+
+export homesyndir=$HOMEtrak
 
 echo
 env | sort
@@ -145,7 +192,6 @@ chmod 775 trkr.cmdfile
 export MP_PGMMODEL=mpmd
 export MP_CMDFILE=${DATA}/${cmodel}/trkr.cmdfile
 
-#mpirun.lsf
 $APRUN
 
 for pert in ${memberlist}; do
@@ -178,4 +224,4 @@ if [[ $KEEPDATA != "YES" ]]; then
   rm -rf $DATA
 fi  
 
-date
+echo `date` $job completed

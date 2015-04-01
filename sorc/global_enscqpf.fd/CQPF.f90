@@ -77,8 +77,8 @@ use params
       data ipd10/1/ 
       data ipd11/0/ 
       data ipd12/0/ 
-      data e16/0,1,3,3,3,3,3,3,3,3,3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3/ 
-      data e17/0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20/ 
+      data e16/0,1,3,3,3,3,3,3,3,3,3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3/
+      data e17/0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20/
       data ee16/1,3,3,3,3,3,3,3,3,3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3/
       data ee17/0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20/
 
@@ -118,7 +118,7 @@ use params
 
        kctl = 0
       if (n.le.15) then
-       jensem=iensem-1
+       jensem=iensem
       else
        jensem=iensem-1
       endif
@@ -140,8 +140,8 @@ use params
          ipdt(29) = 12
          ipdt(30) = 2
          if (n.le.15) then
-          ipdt(16)=ee16(m)
-          ipdt(17)=ee17(m)
+          ipdt(16)=e16(m)
+          ipdt(17)=e17(m)
          else
           ipdt(16)=ee16(m)
           ipdt(17)=ee17(m)     
@@ -153,9 +153,9 @@ use params
          ipdt(29) = 12
          ipdt(30) = 2
          if (n.le.15) then 
-          ipdt(16)=ee16(m)
-          ipdt(17)=ee17(m)
-         else         
+          ipdt(16)=e16(m)
+          ipdt(17)=e17(m)
+         else 
           ipdt(16)=ee16(m)
           ipdt(17)=ee17(m)
          endif 
@@ -185,7 +185,7 @@ use params
           print *,' n=',n,' iret=',iret
          endif
         endif  ! if (iret.eq.0)
-       enddo   ! for m = 1, jensem jensem = # of ensemble ( default = 16 )
+       enddo   ! for m = 1, jensem jensem = # of ensemble ( default = 23 )
 
 !cc
 !cc    Step 2: get statistical coefficents and multiply by it
@@ -272,15 +272,15 @@ use params
          if (aaa.eq.0.0) then
           ff(ii,jj) = 0.0
          else
-!          if (jj.eq.1) then
+          if (jj.eq.1.and.n.le.15) then
 !           call stpint(rti_r,rmrf_r,9,2,aaa,bbb,1,aux,naux)
-!           call qtpint(rti_r,rmrf_r,9,2,aaa,bbb,1)
-!           ff(ii,jj) = aaa*bbb
-!          else
+           call qtpint(rti_r,rmrf_r,9,2,aaa,bbb,1)
+           ff(ii,jj) = aaa*bbb
+          else
 !           call stpint(rti_r,rctl_r,9,2,aaa,bbb,1,aux,naux)
            call qtpint(rti_r,rctl_r,9,2,aaa,bbb,1)
            ff(ii,jj) = aaa*bbb
-!          endif
+          endif
          endif
         enddo
 
@@ -304,11 +304,11 @@ use params
          if (jj.eq.1) jjj=jj
         else
          print *, "ICYC=",icyc," is not acceptable! program will stop!"
-         stop 16  
+         stop 
         endif
         if (n.le.15) then
-          gfldo%ipdtmpl(16) = ee16(jj)
-          gfldo%ipdtmpl(17) = ee17(jj)
+          gfldo%ipdtmpl(16) = e16(jj)
+          gfldo%ipdtmpl(17) = e17(jj)
         else
           gfldo%ipdtmpl(16) = ee16(jj)
           gfldo%ipdtmpl(17) = ee17(jj)
@@ -394,12 +394,12 @@ use params
         if (icyc.eq.0) then 
          gfldo%idsect(9) = 00 
          gfldo%ipdtmpl(8) =  12 
-         gfldo%ipdtmpl(9) = n - 1
+         gfldo%ipdtmpl(9) = n - 1 
          gfldo%ipdtmpl(34) = 2 
         else 
          gfldo%idsect(9) = 12 
          gfldo%ipdtmpl(8) =  12 
-         gfldo%ipdtmpl(9) = n - 1
+         gfldo%ipdtmpl(9) = n - 1 
          gfldo%ipdtmpl(34) = 2 
         endif 
 
@@ -409,8 +409,8 @@ use params
 !cccc to exclude GFS/AVN high resolution forecast 
 !cccc    do jj = 1, iensem 
         if (n.le.15) then
-         istart=1
-         iend=iensem-1
+         istart=2
+         iend=iensem
         else
          istart=1
          iend=iensem-1
@@ -420,7 +420,7 @@ use params
            f(ii) = f(ii) + 1.0 
           endif 
          enddo 
-!cccc    f(ii) = f(ii)*100.00/float(iensem) 
+!cccc    f(ii) = f(ii)*100.00/float(jensem) 
          f(ii) = f(ii)*100.00/float(iend-istart+1) 
          if (f(ii).ge.99.0) then 
           f(ii) = 100.0 
@@ -434,8 +434,6 @@ use params
       gfldo%fld(1:jpoint)=f(1:jpoint)
 
       call putgb2(52,gfldo,iret)
-!      call printinfr(gfldo,k)
-
        enddo    ! for k = 1, istd
       call gf_free(gfldo)
       enddo     ! for n loop

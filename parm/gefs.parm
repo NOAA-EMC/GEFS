@@ -2,20 +2,10 @@
 # This parm file defines the control variables for the GEFS model
 ###################################################################
 
-#This will be used in JGEFS_FORECAST script
-export GFS_VERSION=gfs_prod
-export GFS_VERSION=gefs_prod
-export GFS_VERSION=gfs_fcst
-#export GFS_VERSION=gefs_fcst
-
 ##############################################
 # Number of pairs to run (normally 10 pairs)
 ##############################################
-#export npair=3
-#export npair=6
-#export npair=2
 export npair=10
-#export npair=0
 export nhrpair=$npair
 
 #################################################
@@ -23,7 +13,6 @@ export nhrpair=$npair
 #################################################
 export fhmax=384
 export fhmaxh=192
-export fhmaxh=$fhmax
 
 export fhmax00=384
 export fhmax06=384
@@ -38,11 +27,6 @@ export fhrp=06
 #
 # 3-hourly output: fhmax3 must be less than fhmaxh
 fhmax3=$fhmaxh
-#if (( fhmaxh > 126 )); then
-#  fhmax3=126
-#else
-#  (( fhmax3 = fhmaxh - 6 ))
-#fi
 
 #########################################################################################
 # Parameters to control the digital filter at the beginning of the forecast
@@ -83,8 +67,6 @@ fi
 # ENS_NUM,MEMBER_NAMES to be calculated later based on npair and RUN_CONCURRENT
 
 # if multiple forecasts are to be run concurrently, ENS_SPS controls whether stochastic forcing is used
-#export ENS_SPS=true  #DHOU 20120403, added the two dots to unify script and code requirement
-#export ENS_SPS=.false.
  export ENS_SPS=.true.
  if (( npair < 1 )); then
   export ENS_SPS=.false.
@@ -94,11 +76,6 @@ fi
 # number of threads to use in the job JGEFS_SIGCHGRS
 ################################################################################
  NTHREADS_SIGCHGRS=8
-#DHOU 03/20/2012 chgres can not run multi-thread
-#NTHREADS_SIGCHGRS=1
-#DHOU 01/10/2013  for WCOSS and bug-fix
-#NTHREADS_SIGCHGRS=4
-#NTHREADS_SIGCHGRS=1
  export NTHREADS_SIGCHGRS
 
 ################################################################################
@@ -111,57 +88,52 @@ export USESUBDIR=YES
 # Forecast Restart Frequency
 ##################################
 # Restart frequncy for the first fhmax3 hours
-export fhrestart3=18
-export fhrestart3=36
 export fhrestart3=420
 
 # Restart frequncy for hour after fhmax3
-export fhrestart=18
-export fhrestart=36
 export fhrestart=420
 
 #######################################
 # This section defines the resolution
 #######################################
-export JCAPHR=190
-export LEVSHR=28
-export LONBHR=576
-export LATBHR=288
-export NTRACHR=3
+#export JCAPHR=190
+#export LEVSHR=28
+#export LONBHR=576
+#export LATBHR=288
+#export NTRACHR=3
 
-export JCAPLR=126
-export LEVSLR=28
-export LONBLR=384
-export LATBLR=190
-export NTRACLR=3
+#export JCAPLR=126
+#export LEVSLR=28
+#export LONBLR=384
+#export LATBLR=190
+#export NTRACLR=3
 
-export JCAPHR=254
-export LEVSHR=42
-export LONBHR=768
-export LATBHR=384
-export NTRACHR=3
+#export JCAPHR=254
+#export LEVSHR=42
+#export LONBHR=768
+#export LATBHR=384
+#export NTRACHR=3
 
-export JCAPHR=382
-export LEVSHR=42
-export LONBHR=1152
-export LATBHR=576
-export NTRACHR=3
-export MTNRSL=382
-export SEMILG=.false.
+#export JCAPHR=382
+#export LEVSHR=42
+#export LONBHR=1152
+#export LATBHR=576
+#export NTRACHR=3
+#export MTNRSL=382
+#export SEMILG=.false.
 
 #For T574L64/42 Euler
-export JCAPHR=574
-export LEVSHR=64
-export LONBHR=1760
-export LATBHR=880
-export NTRACHR=3
-export MTNRSL=574
-export SEMILG=.false.
+#export JCAPHR=574
+#export LEVSHR=64
+#export LONBHR=1760
+#export LATBHR=880
+#export NTRACHR=3
+#export MTNRSL=574
+#export SEMILG=.false.
 
-#For T574L64/42 Semi-Lagrangian
+#For T574L64/42 Semi-Lagrangian, 2015 Implementation
 export JCAPHR=574
 export LEVSHR=64
-#export LEVSHR=42
 export LONBHR=1152
 export LATBHR=576
 export NTRACHR=3
@@ -172,15 +144,15 @@ export DTPHYS=450
 
 #Lower resolution part
 #For T190L42 Eulerian
-export JCAPLR=190
-export LEVSLR=42
-export LONBLR=576
-export LATBLR=288
-export NTRACLR=3
-export MTNRSLLR=190
-export SEMILGLR=.false.
+#export JCAPLR=190
+#export LEVSLR=42
+#export LONBLR=576
+#export LATBLR=288
+#export NTRACLR=3
+#export MTNRSLLR=190
+#export SEMILGLR=.false.
 
-#For T382L64 Semi-Lagrangian
+#For T382L64 Semi-Lagrangian, 2015 Implementation
 export JCAPLR=382
 export LEVSLR=64
 export LONBLR=768
@@ -191,10 +163,9 @@ export SEMILGLR=.true.
 export DELTIMLR=1200
 export DTPHYSLR=600
 
-export IDVC=2
-
 # for new vertical coordinate
 # export IDVC=3
+export IDVC=2
 # export IDVM=32
 
 ########################################
@@ -209,7 +180,6 @@ export gfsfhoroglist=252
 
 export addgrb1id=yes
 export makepgrb2a=yes
-export makepgrb2d=no
 #DHOU 3/15/2015 for prdgen
 export makepgrb2d=no
 export makepgrb2=yes
@@ -243,11 +213,7 @@ fi
 #RLW 20110228 add SPS_PARM variables here
 export SPS_PARM1="0.005 10.0 0.005 10.0 0.0 0.0 0.0 0.0 0.0 0.0"
 export SPS_PARM2="0.105 0.06 0.12 42.0 0.0 0.0 0.0 0.0 0.0 0.0"
-#export SPS_PARM2="0.105 0.03 0.12 42.0 0.0 0.0 0.0 0.0 0.0 0.0"
-#export SPS_PARM2="0.100 0.01 0.11 42.0 0.0 0.0 0.0 0.0 0.0 0.0"
-export SPS_PARM3="0.2 0.34 -0.34 3.0 0.0 -1.0 -0.34 0.34 0.8 0.9"  #para since 12/01/2014 test
-#export SPS_PARM3="0.2 0.34 -0.34 3.0 0.0 0.0 0.0 0.0 0.0 0.0" para up to 12/01/2014
-#export SPS_PARM3="0.2 0.34 -0.34 3.0 0.0 1.0 0.3 0.4 0.3 0.0"
+export SPS_PARM3="0.2 0.34 -0.34 3.0 0.0 -1.0 -0.34 0.34 0.8 0.9"  
 
 #############################################################################
 # This section is some parameter setup for for development testing only
@@ -256,12 +222,6 @@ if [[ $envir = dev ]]; then
 
   export fhmax=384
   export fhmaxh=192
-# export fhmaxh=168
-#RLW 20130904 full length high resolution
-# export fhmaxhh=384
-#DHOU 03/26/2012 test for Zeus
-# export fhmax=96
-# export fhmaxh=48
   export fhmaxhres=`expr $fhmaxh - $HOUTSPS`
 
   echo `date` $0 test section begin
@@ -343,87 +303,6 @@ if [[ $envir = dev ]]; then
   # and the config file
   #
   # until this interaction is resolved, check to be sure which setting is used
-
-  export locsighdrexec=test
-  export locsighdrexec=local
-  export locsighdrexec=/global/save/wx23sm/gsm/f2007/global_sighdr.fd/global_sighdr
-  export locsighdrexec=para
-  export locsighdrexec=prod
-#DHOU 03/29/2012 Add this for ZEUS
-  export locsighdrexec=zeus
-#DHOU 01/18/2013 Add this for WCOSS
-  export locsighdrexec=wcoss
-
-  export locchgresush=test
-  export locchgresush=local
-  export locchgresush=/nwprod/ush/global_chgres.sh
-  export locchgresush=para
-  export locchgresush=zeus
-  export locchgresush=prod
-  export locchgresush=wcoss
-
-  export locchgresexec=test
-  export locchgresexec=local
-  export locchgresexec=/global/save/wx23sm/2jif/f2007_oct/global_chgres.fd/global_chgres
-  export locchgresexec=para
-  export locchgresexec=zeus
-  export locchgresexec=prod
-  export locchgresexec=wcoss
-
-  export locfcstconchome=local
-  export locfcstconchome=para
-  export locfcstconchome=test
-  export locfcstconchome=prod
-
-  export locfcstconcscript=para
-  export locfcstconcscript=test
-  export locfcstconcscript=home
-  export locfcstconcscript=prod
-  export locfcstconcscript=local
-
-  export locfcstconcexec=para
-  export locfcstconcexec=test
-  export locfcstconcexec=home
-  export locfcstconcexec=prod
-  export locfcstconcexec=local
-
-  export locfcsthome=local
-  export locfcsthome=para
-  export locfcsthome=test
-  export locfcsthome=prod
-
-  export locfcstscript=para
-  export locfcstscript=test
-  export locfcstscript=/global/save/wx23sm/para_exp/gfs_para/scripts/exglobal_fcst.sh.sms_co2
-  export locfcstscript=home
-  export locfcstscript=prod
-#DHOU 03/07/2012 switched the 2 line for ZEUS
-  export locfcstscript=local
-
-  export locfcstexec=para
-  export locfcstexec=test
-  export locfcstexec=/global/save/wx23sm/2jif/f2008/global_fcst.fd/global_fcst
-  export locfcstexec=home
-  export locfcstexec=prod
-  export locfcstexec=local
-
-  export locfcstvegtype=para
-  export locfcstvegtype=test
-  export locfcstvegtype=prod
-  export locfcstvegtype=local
-  export locfcstvegtype=home
-
-  export locpostush=test
-  export locpostush=/meso/save/wx20hc/nceppost/scripts/global_nceppost.sh
-  export locpostush=para
-  export locpostush=local
-  export locpostush=prod
-
-  export locpostexec=test
-  export locpostexec=/global/save/wx23sm/gsm/f2007/global_postgp.fd/global_postgp
-  export locpostexec=para
-  export locpostexec=local
-  export locpostexec=prod
 
 ################################################################################
 # restrict certain jobs to run during certain hours of the day

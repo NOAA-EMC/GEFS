@@ -1,84 +1,52 @@
 #!/bin/ksh 
-################# lines between these markers have been modified for dev begin
-################# lines between these markers have been modified for dev end
 #####################################################################
 # 9/20/2009, Julia Zhu   Scripts are modified to be sharable
 #                        between EMC and NCO
 #         Please note that variable "RUN_ENVIR" is set and used
 #         in the development enviroment only.
+# 3/27/2015 Dingchen Hou, Vertical structure and WCOSS phase 2 statndard
 ######################################################################
-na=`basename $0`
-export PS4=' + $SECONDS $na $LINENO: '
 
-$SMSBIN/smsinit $LOADL_STEP_ID 
 echo `date` $0 `date -u` begin
 
 set -xa
+na=`basename $0`
+export PS4=' + $SECONDS $na $LINENO: '
+date
 
 ###########################################
 # Run gefs_config to get input parameters
 ###########################################
 if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
-  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_setbase
-################# lines between these markers have been modified for dev begin
- else
+# . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nwdev/parm/gefs_config
- fi
-################# lines between these markers have been modified for dev end
 fi
 
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-if [ "$RUN_ENVIR" = dev ]    ### For Developers
-then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd}
-################# lines between these markers have been modified for dev begin
- else
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
- fi
-################# lines between these markers have been modified for dev end
-else                         ### For Operations
-   export DATA_IN=/tmpnwprd
-fi
-export DATA=$DATA_IN/${job}.${pid}
-
+export DATAROOT=${DATAROOT:-/tmpnwprd_p2}
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
 
+######################################
+# Set up the cycle variable
+######################################
 export cycle=t${cyc}z
 
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=gens
+export NET=${NET:-gens}
+export RUN=gefs
 
 ####################################
 # File To Log Msgs
 ####################################
-if [ "$RUN_ENVIR" = dev ]     ### For Developers
-then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-   export jlogfile=${jlogfile:-$DATA_IN/jlogfile}
-################# lines between these markers have been modified for dev begin
- else
-   export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
- fi
-################# lines between these markers have been modified for dev end
-else                          ### For Operations
-   export jlogfile=/com/logs/jlogfile
-fi
+export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -89,86 +57,28 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 ####################################
-# SENDSMS  - Flag Events on SMS
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 ####################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
   export SENDCOM=${SENDCOM:-YES}
-  export SENDDBN=${SENDDBN:-NO}
-  export SENDSMS=${SENDSMS:-YES}
-
-  # Specify Execution Areas
-  export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
-  export EXECGLOBAL=${EXECGLOBAL:-$HOMEGLOBAL/exec}
-  export USHGLOBAL=${USHGLOBAL:-$HOMEGLOBAL/ush}
-  export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
-  export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
-
-  export HOMEgefs=${HOMEgefs:-/nw${envir}}
-  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
-  export USHgefs=${USHgefs:-$HOMEgefs/ush}
-  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
-  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
-else                             ### For Operations
-  export SENDCOM=YES
-  export SENDDBN=NO
-  export SENDSMS=YES
-
-  # Specify Execution Areas
-  export HOMEGLOBAL=/nwprod
-  export EXECGLOBAL=$HOMEGLOBAL/exec
-  export USHGLOBAL=$HOMEGLOBAL/ush
-  export FIXGLOBAL=$HOMEGLOBAL/fix
-  export PARMGLOBAL=$HOMEGLOBAL/parm
-
-  export HOMEgefs=/nw${envir}
-  export EXECgefs=$HOMEgefs/exec
-  export USHgefs=$HOMEgefs/ush
-  export FIXgefs=$HOMEgefs/fix
-  export PARMgefs=$HOMEgefs/parm
-fi
-
-####################################
-# Specify Execution Areas
-####################################
-export GRBINDEX=/nwprod/util/exec/grbindex
-
-export HOMEUTIL=/nwprod/util
-export EXECUTIL=$HOMEUTIL/exec
-export FIXUTIL=$HOMEUTIL/fix
-
-##############################
-# Set up the UTILITIES
-##############################
-export utilscript=/nwprod/util/ush
+  export SENDDBN=${SENDDBN:-YES}
 
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-sh $utilscript/setup.sh
+#sh setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $utilscript/setpdy.sh
+sh setpdy.sh
 . PDY
 
 ##############################################
 # Define COM directories
 ##############################################
-if [ "$RUN_ENVIR" = dev ]         ### For Developers
-then
-  export COM_IN=${COM_IN:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
-  export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
-
-  export COMIN=$COM_IN/gefs.${PDY}
-  export COMOUT=$COM_OUT/gefs.${PDY}
-else                              ### For Operations
-  export COMIN=/com/${NET}/${envir}/gefs.${PDY}
-  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
-fi
+export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
+export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
 
 ##############################################
 echo set parameters using gefs.parm
@@ -242,18 +152,14 @@ do
     filelist="\
       $COMIN/$cyc/master/ge$member.$cycle.master.grbanl$cfsuffix \
       $COMIN/$cyc/master/ge$member.$cycle.master.grbianl$cfsuffix \
-      $COMIN/$cyc/pgrba/ge$member.$cycle.pgrbaanl$cfsuffix \
-      $COMIN/$cyc/pgrba/ge$member.$cycle.pgrbaianl$cfsuffix \
-      $COMIN/$cyc/pgrbb/ge$member.$cycle.pgrbbanl$cfsuffix \
-      $COMIN/$cyc/pgrbb/ge$member.$cycle.pgrbbianl$cfsuffix \
-      $COMIN/$cyc/pgrbd/ge$member.$cycle.pgrbdanl$cfsuffix \
-      $COMIN/$cyc/pgrbd/ge$member.$cycle.pgrbdianl$cfsuffix \
       $COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2aanl$cfsuffix \
       $COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2aanl$cfsuffix.idx \
+      $COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.anl$cfsuffix \
+      $COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.anl$cfsuffix.idx \
       $COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2banl$cfsuffix \
       $COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2banl$cfsuffix.idx \
-      $COMIN/$cyc/pgrb2c/ge$member.$cycle.pgrb2canl$cfsuffix \
-      $COMIN/$cyc/pgrb2d/ge$member.$cycle.pgrb2danl$cfsuffix \
+      $COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.anl$cfsuffix \
+      $COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.anl$cfsuffix.idx \
     "
     for file in $filelist
     do
@@ -279,20 +185,14 @@ do
       filelist="\
 	$COMIN/$cyc/master/ge$member.$cycle.master.grbf$FH$cfsuffix \
 	$COMIN/$cyc/master/ge$member.$cycle.master.grbif$FH$cfsuffix \
-	$COMIN/$cyc/pgrba/ge$member.$cycle.pgrbaf$FH$cfsuffix \
-	$COMIN/$cyc/pgrba/ge$member.$cycle.pgrbaif$FH$cfsuffix \
-	$COMIN/$cyc/pgrbb/ge$member.$cycle.pgrbbf$FH$cfsuffix \
-	$COMIN/$cyc/pgrbb/ge$member.$cycle.pgrbbif$FH$cfsuffix \
-	$COMIN/$cyc/pgrbd/ge$member.$cycle.pgrbdf$FH$cfsuffix \
-	$COMIN/$cyc/pgrbd/ge$member.$cycle.pgrbdif$FH$cfsuffix \
 	$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2af$FH$cfsuffix \
 	$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2af$FH$cfsuffix.idx \
+	$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FH$cfsuffix \
+	$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FH$cfsuffix.idx \
 	$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2bf$FH$cfsuffix \
 	$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2bf$FH$cfsuffix.idx \
-	$COMIN/$cyc/pgrb2c/ge$member.$cycle.pgrb2cf$FH$cfsuffix \
-	$COMIN/$cyc/pgrb2d/ge$member.$cycle.pgrb2df$FH$cfsuffix \
-	$COMIN/$cyc/pgrbalr/ge$member.$cycle.pgrbaf$FH.2$cfsuffix \
-	$COMIN/$cyc/pgrbblr/ge$member.$cycle.pgrbbf$FH.2$cfsuffix \
+	$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.f$FH$cfsuffix \
+	$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.f$FH$cfsuffix.idx \
 	$COMIN/$cyc/pgrb2alr/ge$member.$cycle.pgrb2af$FH.2$cfsuffix \
 	$COMIN/$cyc/pgrb2alr/ge$member.$cycle.pgrb2af$FH.2$cfsuffix.idx \
 	$COMIN/$cyc/pgrb2blr/ge$member.$cycle.pgrb2bf$FH.2$cfsuffix \
@@ -301,8 +201,9 @@ do
 	$COMIN/$cyc/sfcsig/ge$member.$cycle.sf$FH$cfsuffix \
 	$COMIN/$cyc/sflux/ge$member.$cycle.sfluxgrbf$FH$cfsuffix \
       "
-      if (( FH > 0 )) && (( FH <= fhmax3 )); then
+      if (( FH > 0 )) && (( FH <= fhmaxh )); then
 	(( FP = FH - 3 ))
+#Note by Dingchen, need to consider pgrb2a/2b files at 3, 9, 15 .. hours
 	if (( FP < 10 )); then
 	  FP=0$FP
 	fi
@@ -395,13 +296,6 @@ else
   echo `date` before master cleanup
   rm -rf $COMIN/$cyc/master
   echo `date` after master cleanup
-  ########################################################
-  # remove restart subdirectories
-  ########################################################
-  echo `date` before restart cleanup
-  rm -rf $COMIN/$cyc/restarta
-  rm -rf $COMIN/$cyc/restartb
-  echo `date` after restart cleanup
 fi
 ########################################################
 export PS4=' + $SECONDS $na $LINENO: '
@@ -409,8 +303,7 @@ export PS4=' + $SECONDS $na $LINENO: '
 ##############################
 # Remove the Temporary working directory
 ##############################
-cd $DATA_IN
+cd $DATAROOT
 rm -rf $DATA
 
 echo `date` $0 `date -u` end
-$SMSBIN/endt

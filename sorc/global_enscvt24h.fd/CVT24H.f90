@@ -71,7 +71,7 @@
 !     do n=1,len  
       do n=2,len  
 !     do m=1,iem
-      do m=2,2  
+      do m=1,2  
       iids=-9999;ipdt=-9999; igdt=-9999
       idisc=-1;  ipdtn=-1;   igdtn=-1
       ipdt(1)=ipd1
@@ -117,26 +117,24 @@
         do ii = 1, jf
 !        trf(ii) = (ff(ii,1)+pp(ii,1))/3600.00/24.00
 !        ctl(ii) = (ff(ii,2)+pp(ii,2))/3600.00/24.00
-!         trf(ii) = ff(ii,1)/3600.00/24.00
+         trf(ii) = ff(ii,1)/3600.00/24.00
          ctl(ii) = ff(ii,2)/3600.00/24.00
         enddo
         print *, '==== To write out the precip. of gfs run'
-!        gfldo%ipdtmpl(16) = e16(1)
-!        gfldo%ipdtmpl(17) = e17(1)
-!        gfldo%fld(1:jf)=trf(1:jf)
-!        call putgb2(71,gfldo,iret)
-!        call printinfr(gfldo,n)
+        gfldo%ipdtmpl(16) = e16(1)
+        gfldo%ipdtmpl(17) = e17(1)
+        gfldo%fld(1:jf)=trf(1:jf)
+        call putgb2(71,gfldo,iret)
         print *, '==== To write out the precip. of ctl run'
         gfldo%ipdtmpl(16) = e16(2)
         gfldo%ipdtmpl(17) = e17(2)
         gfldo%fld(1:jf)=ctl(1:jf)
         call putgb2(72,gfldo,iret)
-!        call printinfr(gfldo,n)
  
        endif          ! if (n.ge.4.and.mod(n,2).eq.0)
 
        do ii = 1, jf
-        do k = 2, iem
+        do k = 1, iem
          pp(ii,k) = ff(ii,k)
         enddo
        enddo

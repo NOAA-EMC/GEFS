@@ -94,15 +94,6 @@ set -x
 ###                     ens.20021002/ensstat.t00z.prcp_bf
 ###
 
-export EXECutil=${EXECutil}
-export EXECgrib=${EXECgrib}
-export NDATE=${NDATE:-${EXECutil}/ndate}
-export WGRIB=${WGRIB:-${EXECgrib}/wgrib}
-export WGRIB2=${WGRIB2:-${EXECgrib}/wgrib2}
-export GRBINDEX=${GRBINDEX:-${EXECgrib}/grbindex}
-export GRB2INDEX=${GRB2INDEX:-${EXECgrib}/grb2index}
-export CNVGRIB=${CNVGRIB:-${EXECgrib/cnvgrib21_gfs}
-
 export CDATE=${PDY}${cyc}
 export YMDH=$CDATE  
 export YMD=`echo $CDATE | cut -c1-8`
@@ -206,7 +197,7 @@ fi
 if [ -s $COMIN/gefs.$YMD/00/ensstat/enspost_grb2.${cycle}.prcp ]; then
  echo " $COMIN/gefs.$YMD/00/ensstat/enspost_grb2.${cycle}.prcp is available "
  cp $COMIN/gefs.$YMD/00/ensstat/enspost_grb2.${cycle}.prcp $DATA/precip.${YMD}${cyc}
- $USHgefs/global_enscvprcp.sh $DATA/precip.${YMD}${cyc} $DATA/precipt.${YMD}${cyc}
+ $USHgefs/global_enscvprcp.sh $DATA/precip.${YMD}${cyc} $DATA/precipt.${YMD}${cyc} $YMD
  mv $DATA/precipt.${YMD}${cyc} $DATA/precip.${YMD}${cyc}
 #$GBINDX $DATA/precip.${YMD}${cyc} $DATA/precipi.${YMD}${cyc}
 else
@@ -326,8 +317,8 @@ fi
 #####################################################################
 # GOOD RUN
 set +x
- echo " **************JOB ENS_CQPF_00 COMPLETED NORMALLY "
- echo " **************JOB ENS_CQPF_00 COMPLETED NORMALLY "
+echo "**************JOB ENS_CQPF_00 COMPLETED NORMALLY"
+echo "**************JOB ENS_CQPF_00 COMPLETED NORMALLY"
 set -x
 #####################################################################
 

@@ -3,13 +3,14 @@
 #1/13/2015, Jiayi Peng and Dingchen Hou, created following JGEFS_POST_TRACK, for GFS tracks (up to 240hrs forecasts)
 ####################################################################
 echo `date` $0 `date -u` begin
+
 set -xa
 export PS4='$SECONDS + '
 date
 
-####################################
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ###########################################
@@ -34,12 +35,29 @@ cd $DATA
 # Set up cycle varaible
 ############################
 export cycle=t${cyc}z
+export cycle_fcst=t${cyc_fcst}z
+
+echo cyc=$cyc cyc_fcst=$cyc_fcst
+echo cycle=$cycle cycle_fcst=$cycle_fcst
+
+if (( cyc == cyc_fcst )); then
+  export fcstlong=true
+  export cfsuffix=""
+  export cycsuffix=false
+else
+  export fcstlong=false
+  export cfsuffix=".cycfs$cyc_fcst"
+  export cycsuffix=true
+fi
+
+export fcstlong
+echo fcstlong=$fcstlong
 
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=${NET:-gens}
-export RUN=${RUN:-gefs}
+export NET=gens
+export RUN=gefs
 
 ####################################
 # File To Log Msgs
@@ -59,17 +77,26 @@ export pgmerr=errfile
 # SENDDBN  - Issue DBNet Client Calls
 ####################################
 export SENDCOM=${SENDCOM:-YES}
-export SENDDBN=${SENDDBN:-NO}
+export SENDDBN=${SENDDBN:-YES}
 export SENDECF=${SENDECF:-YES}
 
 ####################################
 # Specify Execution Areas
 ####################################
 export HOMEtrak=${HOMEtrak:-${NWROOT}/ens_tracker.${tracker_ver}}
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+
 export EXECens_tracker=${EXECtrak:-$HOMEtrak/exec}
 export USHens_tracker=${USHtrak:-$HOMEtrak/ush}
 export FIXens_tracker=${FIXtrak:-$HOMEtrak/fix}
 export SCRIPTSens_tracker=${SCRIPTSens_tracker:-$HOMEtrak/scripts}
+
+export PARMgefs=$HOMEgefs/parm
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+#ksh setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
@@ -80,13 +107,20 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=${COMINgfs:-$COMROOTp1/gfs/prod/gfs.${PDY}}
+export COMINgfs=${COMINgfs:-$COMROOTp1/gfs/${envir}/gfs.${PDY}}
 export COMIN=$COMINgfs
 export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
 
-export gfsdir=${COMIN:-${COMROOTp1}/gfs/prod/gfs.${PDY}}
+export gfsdir=${COMIN}
 export COM=$COMOUT/$cyc/track
 mkdir -m 775 -p $COM
+
+##############################################
+#echo set parameters using gefs.parm, if needed
+##############################################
+#. $PARMgefs/gefs.parm
+
+export homesyndir=$HOMEtrak
 
 echo
 env | sort
@@ -98,6 +132,7 @@ export cmodel=gfs
 export loopnum=1
 export ymdh=${PDY}${cyc}
 export pert=${cmodel}
+export pert=gfs
 
 export exectrkdir=${EXECens_tracker}
 export rundir=${FIXens_tracker}
@@ -117,9 +152,10 @@ outfile=${pertdir}/trkr.${cmodel}.${ymdh}.out
 ${USHens_tracker}/extrkr_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}
  
 cp ${pertdir}/trak.gfso.atcfunix.${PDY}${CYL} ${COM}/gfso.t${CYL}z.cyclone.trackatcfunix
-cp ${pertdir}/vitals.upd.gfso.${PDY}${CYL} ${COM}/.
 
+cp ${pertdir}/vitals.upd.gfso.${PDY}${CYL} ${COM}/.
 cp ${pertdir}/vitals.upd.gfso.${PDY}${CYL} ${COM}/vitals.upd.avn.${PDY}${CYL}
+
 cp ${pertdir}/trak.gfso.atcfunix.${PDY}${CYL} ${COM}/trak.avn.atcfunix.${PDY}${CYL}
 
 cat ${COM}/trak.avn.atcfunix.${PDY}${CYL} | \
@@ -146,4 +182,4 @@ if [[ $KEEPDATA != "YES" ]]; then
   rm -rf $DATA
 fi
 
-date
+`date` $0 `date -u` end
