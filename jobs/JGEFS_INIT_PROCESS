@@ -1,16 +1,14 @@
 #!/bin/ksh 
-################# lines between these markers have been modified for dev begin
-################# lines between these markers have been modified for dev end
-###testb
-# lines between ###testb and ###teste not needed for production
-###teste
 
 echo `date` $0 `date -u` begin
 
 set -xa
 export PS4='$SECONDS + '
 date
-####################################
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+
 if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
   . $basesource/nwdev/parm/gefs_config
@@ -56,7 +54,7 @@ export RUN=${RUN:-gefs}
 ####################################
 # File To Log Msgs
 ####################################
-  export jlogfile=${jlogfile:-$COMROOT/logs/jlogfile/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${COMROOT}/logs/jlogfiles/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -83,18 +81,11 @@ export HOMEenkf=${HOMEenkf:-$NWROOTp1/enkf.${enkf_ver}}
   export USHGLOBAL=${USHgsm:-$HOMEgsm/ush}
   export FIXGLOBAL=${FIXgsm:-$HOMEgsm/fix/fix_am}
 
-# export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
-# export EXECGLOBAL=${EXECGSM:-$HOMEGSM/exec}
-# export USHGLOBAL=${USHGSM:-$HOMEGSM/ush}
-# export FIXGLOBAL=${FIXGSM:-$HOMEGSM/fix/fix_am}
-
   export EXECgefs=${EXECgefs:-$HOMEGgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
-#  export USHGLOBAL=$USHgefs
-#  export EXECGLOBAL=/nwprod/exec
 
 ##############################################
 echo set parameters using gefs.parm
@@ -139,7 +130,7 @@ env | sort
 #############################################################
 # Execute the script
 #############################################################
-$HOMEgefs/scripts/exgefs_init_et.sh.ecf
+$HOMEgefs/scripts/exgefs_init_process.sh.ecf
 
 cat $pgmout
 

@@ -58,7 +58,7 @@ export RUN=${RUN:-gefs}
 ####################################
 # File To Log Msgs
 ####################################
-  export jlogfile=${jlogfile:-${COMROOT}/logs/jlogfile/jlogfile.${job}.${pid}}
+  export jlogfile=${jlogfile:-${COMROOT}/logs/jlogfiles/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -103,7 +103,7 @@ env | sort
 # Define COM directories
 ##############################################
 export COMINgfs=$COMROOTp1/gfs/prod/gfs.$PDY
-export COMINenkf=$COMROOTp1/gfs/prod/enkf.sss
+export COMINenkf=$COMROOTp1/gfs/prod/enkf.
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
@@ -111,10 +111,10 @@ export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
 export COMIN=${COMIN:-${COM_IN}/${RUN}.${PDY}}
 export COMOUT=${COMOUT:-${COM_OUT}/${RUN}.${PDY}}
 
-export COMINm1=${COMIN:-${COM_IN}/${RUN}.${PDYm1}}
-export COMINm2=${COMIN:-${COM_IN}/${RUN}.${PDYm2}}
-export COMINm3=${COMIN:-${COM_IN}/${RUN}.${PDYm3}}
-export COMINm4=${COMIN:-${COM_IN}/${RUN}.${PDYm4}}
+export COMINm1=${COMINm1:-${COM_IN}/${RUN}.${PDYm1}}
+export COMINm2=${COMINm2:-${COM_IN}/${RUN}.${PDYm2}}
+export COMINm3=${COMINm3:-${COM_IN}/${RUN}.${PDYm3}}
+export COMINm4=${COMINm4:-${COM_IN}/${RUN}.${PDYm4}}
 
 
 

@@ -1,10 +1,4 @@
 #!/bin/ksh 
-################# lines between these markers have been modified for dev begin
-################# lines between these markers have been modified for dev end
-###testb
-# lines between ###testb and ###teste not needed for production
-###teste
-
 echo `date` $0 `date -u` begin
 
 set -xa

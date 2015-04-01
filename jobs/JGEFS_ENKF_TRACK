@@ -1,6 +1,5 @@
 #!/bin/ksh 
 ####################################
-# 12/22/2014 Kate Crated the script
 # This is a new job to process the EnKF 6hr fcst by calculate the tracks
 ####################################
 
@@ -24,7 +23,6 @@ export APRUN=${gefsmpexec:-mpirun.lsf}
 # obtain unique process id (pid) and make working directory
 ####################################
 export pid=$$
-export DATAROOT=${DATAROOT:-/tmpnwprd_p2}
 export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
@@ -168,12 +166,7 @@ postmsg "$jlogfile" "$msg"
 ##############################
 # Remove the Temporary working directory
 ##############################
-#if [[ $KEEPDATA != "YES" ]]; then
-# cd $DATA_IN
-# rm -rf $DATA
-#fi
-
-cd $DATA
+cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
 echo `date` $0 `date -u` end
