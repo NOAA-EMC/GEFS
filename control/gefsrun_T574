@@ -1589,7 +1589,7 @@ case $taskname in
   ;;
   (init.et)
     ################################# production variables
-    jobscript=JGEFS_INIT_ET
+    jobscript=JGEFS_INIT_PROCESS
 #   jobscript=JGEFS_INIT_ET.sms.$envir
     job_name=tgefs_init_et_$cyc
     job_type=parallel
