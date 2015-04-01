@@ -167,24 +167,14 @@ if (( nhrpair < npair )); then
     export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
   fi
 
-###testb
-  if [[ $envir = prod ]]; then
-###teste
-  export SIGINP=$GFSCOMIN/gfs.$cycle.sanl
-  export SFCINP=$GFSCOMIN/gfs.$cycle.sfcanl
-###testb
-  else
-    if [[ -f $GFSCOMIN/gfs.$cycle.sanl && -f $GFSCOMIN/gfs.$cycle.sfcanl ]]; then
-      export SIGINP=$GFSCOMIN/gfs.$cycle.sanl
-      export SFCINP=$GFSCOMIN/gfs.$cycle.sfcanl
-    elif [[ -f $basedgfs$GFSCOMIN/gfs.$cycle.sanl && -f $basedgfs$GFSCOMIN/gfs.$cycle.sfcanl ]]; then
-      export SIGINP=$basedgfs$GFSCOMIN/gfs.$cycle.sanl
-      export SFCINP=$basedgfs$GFSCOMIN/gfs.$cycle.sfcanl
+    if [[ -f $COMINgfs/gfs.$cycle.sanl && -f $COMINgfs/gfs.$cycle.sfcanl ]]; then
+      export SIGINP=$COMINgfs/gfs.$cycle.sanl
+      export SFCINP=$COMINgfs/gfs.$cycle.sfcanl
     else
-      echo $basedgfs$GFSCOMIN/gfs.$cycle.sanl and $basedgfs$GFSCOMIN/gfs.$cycle.sfcanl CANNOT BE FOUND
+      echo !!!! FATAL ERROR !!!!
+      echo $COMINgfs/gfs.$cycle.sanl and $COMINgfs/gfs.$cycle.sfcanl CANNOT BE FOUND
       exit
     fi
-  fi
 ###teste
 
   # check for missing or zero-length analysis files
@@ -272,31 +262,14 @@ if (( nhrpair > 0 )); then
     export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
   fi
 
-###testb
-  if [[ $envir = prod ]]; then
-###teste
-  export SIGINP=$GFSCOMIN/gfs.$cycle.sanl
-  export SFCINP=$GFSCOMIN/gfs.$cycle.sfcanl
-###testb
-  else
-#   export basedgft=/ensemble/noscrub/Dingchen.Hou2yy
-#   echo $basedgft DHOU-BASEGFS for occational back-up of $basedgfs data
-    if [[ -f $GFSCOMIN/gfs.$cycle.sanl && -f $GFSCOMIN/gfs.$cycle.sfcanl ]]; then
-      export SIGINP=$GFSCOMIN/gfs.$cycle.sanl
-      export SFCINP=$GFSCOMIN/gfs.$cycle.sfcanl
-    elif [[ -f $basedgfs$GFSCOMIN/gfs.$cycle.sanl && -f $basedgfs$GFSCOMIN/gfs.$cycle.sfcanl ]]; then
-      export SIGINP=$basedgfs$GFSCOMIN/gfs.$cycle.sanl
-      export SFCINP=$basedgfs$GFSCOMIN/gfs.$cycle.sfcanl
-    elif [[ -f $basedgft$GFSCOMIN/gfs.$cycle.sanl && -f $basedgft$GFSCOMIN/gfs.$cycle.sfcanl ]]; then
-
-      export SIGINP=$basedgft$GFSCOMIN/gfs.$cycle.sanl
-      export SFCINP=$basedgft$GFSCOMIN/gfs.$cycle.sfcanl
+    if [[ -f $COMINgfs/gfs.$cycle.sanl && -f $COMINgfs/gfs.$cycle.sfcanl ]]; then
+      export SIGINP=$COMINgfs/gfs.$cycle.sanl
+      export SFCINP=$COMINgfs/gfs.$cycle.sfcanl
     else
-      echo $basedgfs$GFSCOMIN/gfs.$cycle.sanl and $basedgfs$GFSCOMIN/gfs.$cycle.sfcanl CANNOT BE FOUND
+      echo !!!! FATAL ERROR !!!!
+      echo $COMINgfs/gfs.$cycle.sanl and $COMINgfs/gfs.$cycle.sfcanl CANNOT BE FOUND
       exit
     fi
-  fi
-###teste
 
   # check for missing or zero-length analysis files
 
@@ -376,15 +349,9 @@ if (( relocpertflag == 1 )); then
   if [[ ! -e $COMSFCSIGP/gec00.t${cycp}z.sf$fhrp ]]; then
     export relocpertflag=0
   fi
-  if [[ ! -e $GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
-    if [[ $envir = prod  ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
+  if [[ ! -e $COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
     export relocpertflag=0
-    else
-      echo production $GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 does not exist
-      if [[ ! -e $basedgfs$GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
-	export relocpertflag=0
-      fi
-    fi
+      echo $COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 does not exist
   fi
 fi
 
@@ -397,7 +364,7 @@ if (( relocpertflag == 1 )); then
 
 # RLW 20131003 modify to point to experimental data
   #if [[ -s /com/gfs/prod/gfs.$PDY/gfs.$cycle.pgrbf00 ]]; then
-    export gfsdir=$GFSCOMIN
+    export gfsdir=$COMINgfs
   testfile=gfs.$cycle.master.grbf00
   if [[ -s $gfsdir/$testfile ]]; then
   # f00 gfs tracking for relocation
@@ -408,49 +375,25 @@ if (( relocpertflag == 1 )); then
     sh ${extrkrsh:-$HOMEgefs/util/ush/extrkr.sh}
     echo `date` extrkr.sh after
     COM=$COM_HOLD
-#DHOU 01/31/2013,  changed this block back to the ccs version, instead of kate's zeus version 
-#   if [[ $envir = prod ]]; then
-#   sh ${utilscript}/extrkr.sh
-#   elif [[ $envir = para ]] || \
-# [[ $envir = test ]]; then
-#     sh /nw$envir/util/ush/extrkr.sh
-#   else
-#     sh $basesource/nw$envir/util/ush/extrkr.sh
-#   fi
     cat $COMIN/$cyc/init/zgfs.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
-#DCHOU, bring this line baxk on 06/05/2013    
   else
     # replaced by f00 gfs tracking above but retained for retrospective runs
-    if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
-    if [[ -e $GFSCOMIN/avn.${cycle}.cyclone.trackatcfunix ]]; then
-      cat $GFSCOMIN/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
-    fi
+    if [[ -e $COMINgfs/avn.${cycle}.cyclone.trackatcfunix ]]; then
+      cat $COMINgfs/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
     else
-      if [[ -e $GFSCOMIN/avn.${cycle}.cyclone.trackatcfunix ]]; then
-	cat $GFSCOMIN/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
-      elif [[ -e $basedgfs$GFSCOMIN/avn.${cycle}.cyclone.trackatcfunix ]]; then
-	cat $basedgfs$GFSCOMIN/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
-      else 
-	echo $basedgfs$GFSCOMIN/avn.${cycle}.cyclone.trackatcfunix DOES NOT EXIST
+	echo $COMINgfs/avn.${cycle}.cyclone.trackatcfunix DOES NOT EXIST
 	touch trackatcfunix.in
-      fi
     fi
   fi
   ls -al trackatcfunix.in
 
-  if   [[ $envir = prod ]]; then
-  cp -f $GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 tcvitals.in
-  else
-    if [[ -f $GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
-      cp -f $GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 tcvitals.in
-    elif [[ -f $basedgfs$GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
-      cp -f $basedgfs$GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 tcvitals.in
+    if [[ -f $COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
+      cp -f $COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 tcvitals.in
       else
-      echo $basedgfs$GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 DOES NOT EXIST
+      echo $COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 DOES NOT EXIST
       touch tcvitals.in
     fi
     ls -al tcvitals.in
-  fi
 
 #DHOU XZHOU changed, production OK?, DH changed it back
 #  $USHgsm/syndataxtrack.sh $PDY $cyc tcvitals.in trackatcfunix.in tcvitals.as

@@ -5,29 +5,37 @@ echo `date` $0 `date -u` begin
 set -xa
 export PS4='$SECONDS + '
 date
-####################################
-
-# 01/28/2013 New variables added for WCOSS and cross-machine unfication
-export gefsmachine=${gefsmachine:-wcoss}
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-
-export APRUN=${gefsmpexec:-mpirun.lsf}
-
-
-if [[ $gefsmachine = zeus ]]; then
-   export  APRUN="$gefsmpexec $basesource/nw$envir/exec/zeus-poe"
-fi
-
-
 ###########################################
 # Run gefs_config to get input parameters
 ###########################################
 if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
-# . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nwdev/parm/gefs_config
 fi
+export APRUN=${gefsmpexec:-mpirun.lsf}
 
+############################
+# Set up cycle varaible
+############################
+export cycle=t${cyc}z
+export cycle_fcst=t${cyc_fcst}z
+
+
+if (( cyc == cyc_fcst )); then
+  export cycsuffix=false
+  export fcstlong=true
+else
+  export fcstlong=false
+  export cycsuffix=true
+fi
+
+
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
 ####################################
 # obtain unique process id (pid) and make working directory
 ####################################
@@ -41,23 +49,6 @@ fi
 mkdir -p $DATA
 cd $DATA
 
-export cycle=t${cyc}z
-export cycle_fcst=t${cyc_fcst}z
-
-echo cyc=$cyc cyc_fcst=$cyc_fcst
-echo cycle=$cycle cycle_fcst=$cycle_fcst
-
-if (( cyc == cyc_fcst )); then
-  export cycsuffix=false
-  export fcstlong=true
-else
-  export fcstlong=false
-  export cycsuffix=true
-fi
-
-echo fcstlong=$fcstlong
-echo cycsuffix=$cycsuffix
-
 ####################################
 # Specify NET and RUN Name and model
 ####################################
@@ -67,7 +58,7 @@ export RUN=${RUN:-gefs}
 ####################################
 # File To Log Msgs
 ####################################
-  export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
+  export jlogfile=${jlogfile:-${COMROOT}/logs/jlogfile/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -76,36 +67,6 @@ export outid="LL$job"
 export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
-
-####################################
-# SAVEGES  - Copy Files From TMPDIR to $GESdir
-# RMGES    - Clean Files in $GESdir
-# SENDSMS  - Flag Events on SMS
-# SENDCOM  - Copy Files From TMPDIR to $COMOUT
-# SENDDBN  - Issue DBNet Client Calls
-# RERUN    - Rerun posts from beginning (default no)
-# VERBOSE  - Specify Verbose Output in global_postgp.sh
-####################################
-  export SENDCOM=${SENDCOM:-YES}
-  export SENDECF=${SENDECF:-YES}
-  export RERUN=${RERUN:-NO}
-  export SAVEGES=${SAVEGES:-YES}
-  export VERBOSE=${VERBOSE:-YES}
-
-###testb
-if [[ $envir = prod ]]; then
-###teste
-if [ $cyc -eq 00 -o $cyc -eq 12 ]
-then
-   export SENDDBN=YES
-else
-   export SENDDBN=YES
-fi
-###testb
-else
-   export SENDDBN=NO
-fi
-###teste
 
  
 ####################################
@@ -127,10 +88,6 @@ export HOMEenkf=${HOMEenkf:-$NWROOTp1/enkf.${enkf_ver}}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
-export ERRSCRIPT=err_chk
-export LOGSCRIPT=startmsg
-export REDOUT='1>>'
-export REDERR='2>'
 
 ##############################################
 echo set parameters using gefs.parm
@@ -138,67 +95,42 @@ echo set parameters using gefs.parm
 . $PARMgefs/gefs.parm
 . $PARMgefs/gefs_init.parm
 
-echo
 env | sort
-echo
 
-##############################
-# Run setup to initialize working directory and utility scripts
-##############################
-#ksh $USHutil/setup.sh
 
-##############################
-# Run setpdy and initialize PDY variables
-##############################
-setpdy.sh
-. PDY
-
-##############################################
-# for global_chgres.sh
-##############################################
-#export SLMASK=/dev/null
 
 ##############################################
 # Define COM directories
 ##############################################
- if [[ "$gfssource" = para ]]; then
-    export GFSCOMIN=$COMROOT/gfs/para/gfs.$PDY
-    export ENKFCOMIN=$COMROOT/gfs/para/enkf.
-  elif [[ "$gfssource" = prod ]]; then
-    export GFSCOMIN=$COMROOT/gfs/prod/gfs.$PDY
-    export ENKFCOMIN=$COMROOT/gfs/prod/enkf.
-  else
-    export GFSCOMIN=$COMROOT/gfs/prod/gfs.$PDY
-    export ENKFCOMIN=$COMROOT/gfs/prod/enkf.
-  fi
+export COMINgfs=$COMROOTp1/gfs/prod/gfs.$PDY
+export COMINenkf=$COMROOTp1/gfs/prod/enkf.sss
 
-export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
-export COM=$COMROOT/${NET}/${envir}
-export COMINm1=$COMROOT/${NET}/${envir}/gefs.${PDYm1}
-export COMINm2=$COMROOT/${NET}/${envir}/gefs.${PDYm2}
-export COMINm3=$COMROOT/${NET}/${envir}/gefs.${PDYm3}
-export COMINm4=$COMROOT/${NET}/${envir}/gefs.${PDYm4}
+export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
+export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
 
-export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
+export COMIN=${COMIN:-${COM_IN}/${RUN}.${PDY}}
+export COMOUT=${COMOUT:-${COM_OUT}/${RUN}.${PDY}}
 
-export gespath=$GESROOT/${envir}
+export COMINm1=${COMIN:-${COM_IN}/${RUN}.${PDYm1}}
+export COMINm2=${COMIN:-${COM_IN}/${RUN}.${PDYm2}}
+export COMINm3=${COMIN:-${COM_IN}/${RUN}.${PDYm3}}
+export COMINm4=${COMIN:-${COM_IN}/${RUN}.${PDYm4}}
 
 
-#export pdycycp=`/nwprod/util/exec/ndate -$fhrp $PDY$cyc`
+
+
 export pdycycp=`$NDATE -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
 export cycp=`echo $pdycycp|cut -c9-10`
 
-echo pdycycp=$pdycycp pdyp=$pdyp cycp=$cycp
 
   if (($inflag == 6)) ; then
-  export COMSFCSIGP=$COM/gefs.$pdyp/$cycp/sfcsig_enkf
-  export COMTRACKP=$COM/gefs.$pdyp/$cycp/track_enkf
+  export COMSFCSIGP=$COM_IN/${RUN}.$pdyp/$cycp/sfcsig_enkf
+  export COMTRACKP=$COM_IN/${RUN}.$pdyp/$cycp/track_enkf
   else
-  export COMSFCSIGP=$COM/gefs.$pdyp/$cycp/sfcsig
-  export COMTRACKP=$COM/gefs.$pdyp/$cycp/track
+  export COMSFCSIGP=$COM_IN/${RUN}.$pdyp/$cycp/sfcsig
+  export COMTRACKP=$COM_IN/${RUN}.$pdyp/$cycp/track
   fi
-
 ###teste
 mkdir -m 775 -p $COMOUT/$cyc/init
 mkdir -m 775 -p $COMOUT/$cyc/sflux
@@ -206,9 +138,9 @@ mkdir -m 775 -p $COMOUT/$cyc/sflux
 ##############################################
 # Define GES directories
 ##############################################
-
-export GESdir=$gespath/gefs.${PDY}
-mkdir -m 775 -p $GESdir
+export GESOUT=${GESOUT:-$GESROOT/${envir}}
+export GESOUT=$GESOUT/gefs.${PDY}
+mkdir -m 775 -p $GESOUT
 
 ##############################################
 echo locations of scripts and executables
@@ -216,9 +148,8 @@ echo locations of scripts and executables
 
 echo location of sighdr executable
 
-sighdrexec=$EXECgsm/global_sighdr
+export sighdrexec=$EXECgsm/global_sighdr
 
-echo sighdrexec=$sighdrexec
 
 echo location of chgres script and executable
 export CHGRESTHREAD=$NTHREADS_SIGCHGRS
@@ -227,23 +158,19 @@ export CHGRESTHREAD=$NTHREADS_SIGCHGRS
    export chgresush=$USHgsm/global_chgres.sh
    export CHGRESEXEC=$EXECgsm/global_chgres
 
-case $gefsmachine in
- (zeus)
-   export chgresush=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/ush/global_chgres.sh
-   export CHGRESEXEC=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/exec/global_chgres
- ;;
-esac
+#case $gefsmachine in
+# (zeus)
+#   export chgresush=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/ush/global_chgres.sh
+#   export CHGRESEXEC=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/exec/global_chgres
+# ;;
+#esac
 
-echo chgresush=$chgresush
-echo CHGRESEXEC=$CHGRESEXEC
 
 ##############################################
 echo list environment before running script
 ##############################################
 
-echo
 env | sort
-echo
 
 #############################################################
 # Execute the script

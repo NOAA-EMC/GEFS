@@ -339,8 +339,15 @@ if [[ $netflag == 0 && $mskflag == 0 ]]; then
          cp -pr   finp.pair${ipair}  sanlgm${ipair}p
      fi
   done
-  $gefsmpexec $GETATMENSMEANEXEC ./ fin_ensmean fin $recentmem 6 | tee -a $pgmout
-  $gefsmpexec $RECENATMPEXEC fin fin_ensmean sanl.in.pair01 sanlgm $recentmem | tee -a $pgmout
+  $APRUN $GETATMENSMEANEXEC ./ fin_ensmean fin $recentmem 6 | tee -a $pgmout
+  export err=$?
+  err_chk
+  echo `date` $GETATMENSMEANEXEC after
+
+  $APRUN $RECENATMPEXEC fin fin_ensmean sanl.in.pair01 sanlgm $recentmem | tee -a $pgmout
+  export err=$?
+  err_chk
+  echo `date` $RECENATMPEXEC after
 
    for ipair in $nlist
    do

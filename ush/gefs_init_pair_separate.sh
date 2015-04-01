@@ -301,7 +301,7 @@ do
     elif (( inflagt == 5 )); then
       fcstinn=$comfcstin/$cycstart/sfcsig/gep${ipairn}.$cyclestart.sf$fhr$cfsuffixstart
     elif (( inflagt == 6 )); then
-     fcstinn=${ENKFCOMIN}${pdyp0}/$cycp0/sfg_${pdyp0}${cycp0}_fhr${fhr}_mem0${ipairin}
+     fcstinn=${COMINenkf}${pdyp0}/$cycp0/sfg_${pdyp0}${cycp0}_fhr${fhrp}_mem0${ipairin}
 
     else
       fcstinn=$comfcstin/$cycstart/sfcsig/gec00.$cyclestart.sf$fhr$cfsuffixstart
@@ -344,7 +344,7 @@ do
     elif (( inflagt == 5 )); then
       fcstinp=$comfcstin/$cycstart/sfcsig/gep${ipairp}.$cyclestart.sf$fhr$cfsuffixstart
     elif (( inflagt == 6 )); then
-     fcstinp=${ENKFCOMIN}${pdyp0}/$cycp0/sfg_${pdyp0}${cycp0}_fhr${fhr}_mem0${ipairip}
+     fcstinp=${COMINenkf}${pdyp0}/$cycp0/sfg_${pdyp0}${cycp0}_fhr${fhrp}_mem0${ipairip}
     else
       fcstinp=$comfcstin/$cycstart/sfcsig/gec00.$cyclestart.sf$fhr$cfsuffixstart
     fi

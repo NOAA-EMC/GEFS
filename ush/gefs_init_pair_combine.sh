@@ -385,54 +385,54 @@ fi
 
 if (( ipair == 1 )) && (( cyc == cyc_fcst )); then
   if [[ -s sanl.c0 ]]; then
-    mv -f sanl.c0 $GESdir/gec00.${cycle}.sanl$cfsuffix
-    cp -f sfcanl.in $GESdir/gec00.${cycle}.sfcanl$cfsuffix
+    mv -f sanl.c0 $GESOUT/gec00.${cycle}.sanl$cfsuffix
+    cp -f sfcanl.in $GESOUT/gec00.${cycle}.sfcanl$cfsuffix
   else
     (( missingcount = missingcount + 1 ))
   fi
 fi
 if (( outflag == 1 )); then
   if [[ -s sanlgm${ipair}n ]]; then
-    mv -f sanlgm${ipair}n $GESdir/gen${ipair}.${cycle}.sanl$cfsuffix
-    mv -f sfcanl.in $GESdir/gen${ipair}.${cycle}.sfcanl$cfsuffix
+    mv -f sanlgm${ipair}n $GESOUT/gen${ipair}.${cycle}.sanl$cfsuffix
+    mv -f sfcanl.in $GESOUT/gen${ipair}.${cycle}.sfcanl$cfsuffix
   else
     (( missingcount = missingcount + 1 ))
   fi
 fi
 if (( outflag == 2 )); then
   if [[ -s sanlgm${ipair}p ]]; then
-    mv -f sanlgm${ipair}p $GESdir/gep${ipair}.${cycle}.sanl$cfsuffix
-    mv -f sfcanl.in $GESdir/gep${ipair}.${cycle}.sfcanl$cfsuffix
+    mv -f sanlgm${ipair}p $GESOUT/gep${ipair}.${cycle}.sanl$cfsuffix
+    mv -f sfcanl.in $GESOUT/gep${ipair}.${cycle}.sfcanl$cfsuffix
   else
     (( missingcount = missingcount + 1 ))
   fi
 fi
 if (( outflag == 3 )); then
   if [[ -s sanlgm${ipair}n && -s sanlgm${ipair}p ]]; then
-    mv -f sanlgm${ipair}n $GESdir/gen${ipair}.${cycle}.sanl$cfsuffix
-    cp -f sfcanl.in $GESdir/gen${ipair}.${cycle}.sfcanl$cfsuffix
-    mv -f sanlgm${ipair}p $GESdir/gep${ipair}.${cycle}.sanl$cfsuffix
-    mv -f sfcanl.in $GESdir/gep${ipair}.${cycle}.sfcanl$cfsuffix
+    mv -f sanlgm${ipair}n $GESOUT/gen${ipair}.${cycle}.sanl$cfsuffix
+    cp -f sfcanl.in $GESOUT/gen${ipair}.${cycle}.sfcanl$cfsuffix
+    mv -f sanlgm${ipair}p $GESOUT/gep${ipair}.${cycle}.sanl$cfsuffix
+    mv -f sfcanl.in $GESOUT/gep${ipair}.${cycle}.sfcanl$cfsuffix
   else
     (( missingcount = missingcount + 1 ))
   fi
 fi
 if (( outflag == 4 )); then
   if [[ -s sanlgm${ipair}n && -s sanlgm${ipair}p ]]; then
-    mv -f sanlgm${ipair}n $GESdir/gen${ipairn}.${cycle}.sanl$cfsuffix
-    cp -f sfcanl.in $GESdir/gen${ipairn}.${cycle}.sfcanl$cfsuffix
-    mv -f sanlgm${ipair}p $GESdir/gen${ipairp}.${cycle}.sanl$cfsuffix
-    mv -f sfcanl.in $GESdir/gen${ipairp}.${cycle}.sfcanl$cfsuffix
+    mv -f sanlgm${ipair}n $GESOUT/gen${ipairn}.${cycle}.sanl$cfsuffix
+    cp -f sfcanl.in $GESOUT/gen${ipairn}.${cycle}.sfcanl$cfsuffix
+    mv -f sanlgm${ipair}p $GEOUT/gen${ipairp}.${cycle}.sanl$cfsuffix
+    mv -f sfcanl.in $GESOUT/gen${ipairp}.${cycle}.sfcanl$cfsuffix
   else
     (( missingcount = missingcount + 1 ))
   fi
 fi
 if (( outflag == 5 )); then
   if [[ -s sanlgm${ipair}n && -s sanlgm${ipair}p ]]; then
-    mv -f sanlgm${ipair}n $GESdir/gep${ipairn}.${cycle}.sanl$cfsuffix
-    cp -f sfcanl.in $GESdir/gep${ipairn}.${cycle}.sfcanl$cfsuffix
-    mv -f sanlgm${ipair}p $GESdir/gep${ipairp}.${cycle}.sanl$cfsuffix
-    mv -f sfcanl.in $GESdir/gep${ipairp}.${cycle}.sfcanl$cfsuffix
+    mv -f sanlgm${ipair}n $GESOUT/gep${ipairn}.${cycle}.sanl$cfsuffix
+    cp -f sfcanl.in $GESOUT/gep${ipairn}.${cycle}.sfcanl$cfsuffix
+    mv -f sanlgm${ipair}p $GESOUT/gep${ipairp}.${cycle}.sanl$cfsuffix
+    mv -f sfcanl.in $GESOUT/gep${ipairp}.${cycle}.sfcanl$cfsuffix
   else
     (( missingcount = missingcount + 1 ))
   fi

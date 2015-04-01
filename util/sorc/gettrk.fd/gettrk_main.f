@@ -154,7 +154,7 @@ c
      &                   ,slonfg,slatfg,iret)
 
       if (iret /= 0) then
-        print '(/,a50,i4,/)','!!! ERROR: in read_tcv_card, rc= ',iret
+        print '(/,a50,i4,/)','!!! WARNING: in read_tcv_card, rc= ',iret
         goto 890
       endif
 
@@ -163,7 +163,7 @@ c
         call init_sig2p(lugb,sigfile,ddeg,500.0e+2,iret)
         if (iret /= 0) then
            print '(/,a60,i4,/)',
-     & '!!! ERROR: in init_sig2p, try p-grib file instead. rc= ',iret
+     & '!!! WARNING: in init_sig2p, try p-grib file instead. rc= ',iret
         else
            imax = nllon
            jmax = nllat
@@ -175,14 +175,14 @@ c
         call open_grib_files (lugb,lugi,iret)
 
         if (iret /= 0) then
-          print '(/,a50,i4,/)','!!! ERROR: in open_grib_files, rc= ',
+          print '(/,a50,i4,/)','!!! WARNING: in open_grib_files, rc= ',
      &       iret
           goto 890
         endif
 
         call getgridinfo (imax,jmax,grdspc,igetpds,igetgds,iggret)
         if (iggret /= 0) then 
-          print '(/,a50,i4,/)','!!! ERROR: in getgridinfo, rc= ',iggret
+          print '(/,a50,i4,/)','!!! WARNING: in getgridinfo, rc= ',iggret
           goto 890
         endif
       end if
@@ -362,7 +362,7 @@ c     First, allocate the working data arrays....
       if (iza /= 0 .or. iua /= 0 .or. iha /= 0 .or. 
      &    iva /= 0 .or. isa /= 0) then
         print *,' '
-        print *,'!!! ERROR in sub tracker allocating arrays.'
+        print *,'!!! WARNING in sub tracker allocating arrays.'
         print *,'!!! iza = ',iza,' iua= ',iua,' iha= ',iha
         print *,'!!! iva = ',iva,' isa= ',isa
         itret = 94
@@ -460,7 +460,7 @@ c       winds, which are used in estimating surface winds near the storm
 
         if (idum == 0) then
           print *,' '
-          print *,'!!! ERROR in subroutine  tracker'
+          print *,'!!! WARNING in subroutine  tracker'
           print *,'!!! Not enough tracked parms read in from getdata.'
           print *,'!!! Check for a problem with the input GRIB file.'
           print *,'!!! Model identifier = ',inp%model
@@ -784,7 +784,7 @@ c             flag will have a value of 'U', for "undetermined".
 
                 if (isiret1 /= 0 .or. isiret2 /= 0) then 
                   print *,' '
-                  print *,'!!! ERROR: One or both of the calls to '
+                  print *,'!!! WARNING: One or both of the calls to '
                   print *,'!!! is_it_a_storm produced an error.'
                   print *,'!!! Chances are this is from a call to '
                   print *,'!!! get_ij_bounds, meaning we are too close'
@@ -1082,7 +1082,7 @@ C     iret     The return code from this subroutine
 
       if (igoret /= 0 .or. iioret /= 0) then
         print *,' '
-        print *,'!!! ERROR in sub open_grib_files opening grib file'
+        print *,'!!! WARNING in sub open_grib_files opening grib file'
         print *,'!!! or grib index file.  baopen return codes:'
         print *,'!!! grib  file return code = igoret = ',igoret
         print *,'!!! index file return code = iioret = ',iioret
@@ -1185,7 +1185,7 @@ c     the search.
 
       if (igiret /= 0) then
         print *,' '
-        print *,'!!! ERROR in is_it_a_storm from call to get_ij_bounds,'
+        print *,'!!WARNING in is_it_a_storm from call to get_ij_bounds,'
         print *,'!!! stopping processing for storm number ',ist
         isiret = 92
         return
@@ -1629,7 +1629,7 @@ c     from 0 - 360, increasing westward.
      &           ,intlat(7),intlon(7),storm(ist)%tcv_storm_id
             else
               print *,' '
-              print *,'!!! ERROR in subroutine  output_all. '
+              print *,'!!! WARNING in subroutine  output_all. '
               print *,'!!! Model name is not identified.'
               print *,'!!! Model name = ',atcfname
               print *,'!!! ist = ',ist,' Model number = ',atcfnum
@@ -1811,7 +1811,7 @@ c     from 0 - 360, increasing westward.
      &           ,basinid,inp%byy
             else
               print *,' '
-              print *,'!!! ERROR in subroutine  output_atcf. '
+              print *,'!!! WARNING in subroutine  output_atcf. '
               print *,'!!! Model name is not identified.'
               print *,'!!! Model name = ',atcfname
               print *,'!!! ist = ',ist,' Model number = ',atcfnum
@@ -2170,7 +2170,7 @@ c     subroutine for further details.
 
       if (igiret /= 0) then
         print *,' '
-        print *,'!!! ERROR in get_next_ges from call to get_ij_bounds,'
+        print *,'!!!WARNING in get_next_ges from call to get_ij_bounds,'
         print *,'!!! stopping processing for storm number ',ist
         ignret = 92
         return
@@ -2312,7 +2312,7 @@ c     linear extrapolation and the  barnes analysis methods.
         ignret = 0
       else
         print *,' '
-        print *,'!!! ERROR in get_next_ges, new position guess not'
+        print *,'!!! WARNING in get_next_ges, new position guess not'
         print *,'!!! made.  Could not get guess using either barnes'
         print *,'!!! method or extrapolation method.'
         print *,'!!! extrap_flag = ',extrap_flag
@@ -2468,7 +2468,7 @@ c     that we are sure radmax is within those points.
       if (ibeg > imax .or. jbeg > jmax .or. ibeg < 1 .or. jbeg < 1 .or.
      &    iend < 1 .or. jend < 1) then
         print *,' '
-        print *,'ERROR in getradii calculating ibeg, iend, jbeg or'
+        print *,'WARNING in getradii calculating ibeg, iend, jbeg or'
         print *,'jend.  ibeg= ',ibeg,' iend= ',iend,' jbeg= ',jbeg
         print *,'jend= ',jend
         print *,'Wind radii will not be calculated for this time.'
@@ -2504,7 +2504,7 @@ c     -----------------------------------------------------------
 
       if (iqa /= 0) then
         print *,' '
-        print *,'!!! ERROR in sub getradii allocating quadinfo array.'
+        print *,'!!! WARNING in sub getradii allocating quadinfo array.'
         print *,'!!! iqa = ',iqa
         igrret = 94
         return
@@ -2613,7 +2613,7 @@ c     through that array to find the various thresholds.
         allocate (iwork(quadct(k)),stat=iwa)
         if (iisa /= 0 .or. idta /= 0 .or. iwa /= 0) then
           print *,' '
-          print *,'!!! ERROR in getradii allocating isortix or dtemp'
+          print *,'!!! WARNING in getradii allocating isortix or dtemp'
           print *,'!!! array for quadrant= ',k,' iisa = ',iisa
           print *,'!!! idta= ',idta,' iwa= ',iwa
           itret = 94
@@ -2832,7 +2832,7 @@ c     that we are sure radmaxwind is within those points.
       if (ibeg > imax .or. jbeg > jmax .or. ibeg < 1 .or. jbeg < 1 .or.
      &    iend < 1 .or. jend < 1) then
         print *,' '
-        print *,'ERROR in get_max_wind calculating ibeg, iend, jbeg or'
+       print *,'WARNING in get_max_wind calculating ibeg, iend, jbeg or'
         print *,'jend.  ibeg= ',ibeg,' iend= ',iend,' jbeg= ',jbeg
         print *,'jend= ',jend
         print *,'Value of vmax will be set to 0 for this time.'
@@ -3236,7 +3236,7 @@ c       the first-guess mean position
         endif
         if (iaret /= 0 .or. isret /= 0) then
           print *,' '
-          print *,'!!! ERROR IN FIXCENTER -- Error occurred in either'
+          print *,'!!! WARNING IN FIXCENTER -- Error occurred in either'
           print *,'!!! avgcalc or stdevcalc.  Storm number = ',ist
           print *,'!!! RCC from avgcalc = ',iaret
           print *,'!!! RCC from stdevcalc = ',isret
@@ -3329,7 +3329,7 @@ c
             enddo
           else
             print *,' '
-            print *,'!!! ERROR IN FIXCENTER, stderr_close not > 0'
+            print *,'!!! WARNING IN FIXCENTER, stderr_close not > 0'
             print *,'!!! stderr_close = ',stderr_close
             print *,'!!! The probable cause is that no calcparms were'
             print *,'!!! valid for this storm at this forecast hour.'
@@ -3345,7 +3345,7 @@ c
           call wtavrg (temp_clat,wtpos,kprm,fixlat(ist,ifh),iwtret2)
           if (iwtret1 > 0 .or. iwtret2 > 0) then
             print *,' '
-            print *,'!!! ERROR IN FIXCENTER in call to wtavrg.'
+            print *,'!!! WARNING IN FIXCENTER in call to wtavrg.'
             print *,'!!! Return Codes from wtavrg calls follow: '
             print *,'!!!   RCC from wtavrg for long fix: ',iwtret1
             print *,'!!!   RCC from wtavrg for lat  fix: ',iwtret2
@@ -3366,7 +3366,7 @@ c
           endif
         else
           print *,' '
-          print *,'!!! ERROR IN FIXCENTER, kprm NOT > 0'
+          print *,'!!! WARNING IN FIXCENTER, kprm NOT > 0'
           print *,'!!! This means that, for whatever reason, the '
           print *,'!!! calcparm logical flag was set to .FALSE. for'
           print *,'!!! all of the parameters.  Thus, a center position'
@@ -3381,7 +3381,7 @@ c
 
       else
         print *,' '
-        print *,'!!! ERROR IN FIXCENTER, No storms are within errmax OR'
+        print *,'!!WARNING IN FIXCENTER, No storms are within errmax OR'
         print *,'!!! the calcparm logical flag was set to .FALSE. for'
         print *,'!!! all of the parameters.  Thus, a center position'
         print *,'!!! could not be obtained for this storm'
@@ -3405,7 +3405,7 @@ c     time.
      &                 ,stderr(ist,ifh),isret)
         if (isret /= 0) then
           print *,' '
-          print *,'!!! ERROR in FIXCENTER calculating std deviation '
+          print *,'!!! WARNING in FIXCENTER calculating std deviation '
           print *,'!!! for use in next forecast hours errmax.'
           print *,'!!! ist= ',ist,' ifh= ',ifh,' itot4next= ',itot4next
           ifret = 95
@@ -3443,7 +3443,7 @@ c
         xavg = xsum / float(ict)
       else
         print *,' '
-        print *,'!!! ERROR in avgcalc, ict NOT > 0'
+        print *,'!!! WARNING in avgcalc, ict NOT > 0'
         xavg = xdat(1)
         iaret = 95
       endif
@@ -3476,7 +3476,7 @@ c
         xwtavg = xwtavg / wtot
       else
         print *,' '
-        print *,'!!! ERROR in wtavrg, wtot NOT > 0'
+        print *,'!!! WARNING in wtavrg, wtot NOT > 0'
         iwtret = 95
       endif
 c
@@ -3517,7 +3517,7 @@ c         out to exactly equidistant for 3 points is not that good.
         endif
       else
         print *,' '
-        print *,'!!! ERROR in stdevcalc, ict NOT > 0'
+        print *,'!!! WARNING in stdevcalc, ict NOT > 0'
         isret = 95
       endif
 c
@@ -3581,7 +3581,7 @@ c
 
       if (igiret /= 0) then
         print *,' '
-        print *,'!!! ERROR in get_uv_center from call to get_ij_bounds,'
+        print *,'! WARNING in get_uv_center from call to get_ij_bounds,'
         print *,'!!! stopping processing for storm number ',ist
         igucret = 92
         return
@@ -3744,13 +3744,13 @@ c
       else
         igucret = ifmret
         print *,' '
-        print *,'!!! ERROR in get_uv_center in call to find_maxmin'
+        print *,'!!! WARNING in get_uv_center in call to find_maxmin'
         print *,'!!! storm num = ',ist,' igucret = ',igucret
         goto 998
       endif
 c
   970 print *,' '
-      print *,'!!! ERROR ALLOCATING either uold, vold,'
+      print *,'!!! WARNING ALLOCATING either uold, vold,'
       print *,'!!! rlonold or rlatold in get_uv_center'
       print *,'!!! Storm number = ',ist
       print *,'!!! intnum= ',intnum
@@ -3762,7 +3762,7 @@ c
       goto 998
 c
   971 print *,' '
-      print *,'!!! ERROR ALLOCATING either unew, vnew,'
+      print *,'!!! WARNING ALLOCATING either unew, vnew,'
       print *,'!!! rlonnew or rlatnew in get_uv_center'
       print *,'!!! Storm number = ',ist
       print *,'!!! intnum= ',intnum
@@ -3774,7 +3774,7 @@ c
       goto 998
 c
   972 print *,' '
-      print *,'!!! ERROR ALLOCATING either vmag or lbi in '
+      print *,'!!! WARNING ALLOCATING either vmag or lbi in '
       print *,'!!! subroutine get_uv_center'
       print *,'!!! Storm number = ',ist
       print *,'!!! imxnew= ',imxnew,' jmxnew= ',jmxnew
@@ -3885,7 +3885,7 @@ c
         igugret = 0
       else
         print *,' '
-        print *,'!!! ERROR in get_uv_guess, ict not > 0, ict= ',ict
+        print *,'!!! WARNING in get_uv_guess, ict not > 0, ict= ',ict
         print *,'!!! vmag center will not be calculated for this storm'
         print *,'!!! -- at least not at this level'
         print *,'!!! Storm number = ',ist
@@ -4176,7 +4176,7 @@ c
 
         if (igiret /= 0) then
           print *,' '
-          print *,'!!! ERROR in find_maxmin from call to get_ij_bounds,'
+          print *,'! WARNING in find_maxmin from call to get_ij_bounds,'
           print *,'!!! stopping processing for storm number ',ist
           ifmret = 92
           return
@@ -4374,7 +4374,7 @@ c
 
       if (igiret /= 0) then
         print *,' '
-        print *,'!!! ERROR in find_maxmin from call to get_ij_bounds'
+        print *,'!!! WARNING in find_maxmin from call to get_ij_bounds'
         print *,'!!! just before nhalf loop.  Stopping processing'
         print *,'!!! for storm number ',ist
         ifmret = 92
@@ -4728,13 +4728,13 @@ c
       jbeg = jlatfix - jbmaxlatpts
       jend = jlatfix + jbmaxlatpts
       if (jbeg > jmax ) then
-        print *,'!!! ERROR in get_ij_bounds, jbeg > jmax'
+        print *,'!!! WARNING in get_ij_bounds, jbeg > jmax'
         print *,'!!! jbeg = ',jbeg,' jmax= ',jmax
         igiret = igiret + 1
         return
       endif
       if (jend < 1) then
-        print *,'!!! ERROR in get_ij_bounds, jend < 1, jend = ',jend
+        print *,'!!! WARNING in get_ij_bounds, jend < 1, jend = ',jend
         igiret = igiret + 1
         return
       endif
@@ -4790,13 +4790,13 @@ c
       ibeg = ilonfix - ibmaxlonpts
       iend = ilonfix + ibmaxlonpts
       if (ibeg > imax ) then
-        print *,'!!! ERROR in get_ij_bounds, ibeg > imax'
+        print *,'!!! WARNING in get_ij_bounds, ibeg > imax'
         print *,'!!! ibeg = ',ibeg,' imax= ',imax
         igiret = igiret + 1
         return
       endif
       if (iend < 1) then
-        print *,'!!! ERROR in get_ij_bounds, iend < 1, iend = ',iend
+        print *,'!!! WARNING in get_ij_bounds, iend < 1, iend = ',iend
         igiret = igiret + 1
         return
       endif
@@ -5135,7 +5135,7 @@ c
             case ('mslp')
               call conv1d2d_real (imax,jmax,f,slp,kgds(11))
             case default
-              print *,'!!! ERROR: BAD CHPARM IN GETDATA = ',chparm(ip)
+              print *,'!!! WARNING: BAD CHPARM IN GETDATA = ',chparm(ip)
           end select
 c
         else
@@ -5451,14 +5451,14 @@ c
         return
       else
         print *,' '
-        print *,'!!! ERROR in read_tcv_card, num storms to be processed'
+        print *,'!!WARNING in read_tcv_card, num storms to be processed'
         print *,'!!! is not greater than 0.  Check to see that you have'
         print *,'!!! the Fortran unit assigned right in your script.'
         iret = 99
         return
       endif
 c
-  891 print *,'!!! ERROR in read_tcv_card reading unit ',lucard
+  891 print *,'!!! WARNING in read_tcv_card reading unit ',lucard
       iret = 98
 c
       return
@@ -5494,7 +5494,7 @@ c
       allocate (lb(jf),stat=ila); allocate (f(jf),stat=ifa)
       if (ila /= 0 .or. ifa /= 0) then
         print *,' '
-        print *,'!!! ERROR in getgridinfo allocating either lb or f'
+        print *,'!!! WARNING in getgridinfo allocating either lb or f'
         print *,'!!! ila = ',ila,' ifa= ',ifa
         iggret = 97
         return
@@ -5510,7 +5510,7 @@ c
 c
       if (iret.ne.0) then
         print *,' '
-        print *,'!!! ERROR in getgridinfo calling getgb'
+        print *,'!!! WARNING in getgridinfo calling getgb'
         print *,'!!! Return code from getgb = iret = ',iret
         iggret = iret
       else
@@ -5587,7 +5587,7 @@ c
       allocate (glat(jmax),stat=ija); allocate (glon(imax),stat=iia)
       if (ija /= 0 .or. iia /= 0) then
         print *,' '
-        print *,'!!! ERROR in getgridinfo allocating glon or glat'
+        print *,'!!! WARNING in getgridinfo allocating glon or glat'
         print *,'!!! ija = ',ija,' iia= ',iia
         iggret = 96
         return
