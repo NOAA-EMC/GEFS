@@ -97,9 +97,6 @@ fi
 setpdy.sh
 . PDY
 
-# hour_lr_ni will be used to define the IC files of the lower resolution part (if not restart) 
-(( hour_lr_ini = fhmaxh - HOUTSPS ))
-
 ##############################################
 # CHECK and ensure CONSISTENCY  among ENS related parameters
 ##############################################
@@ -157,6 +154,9 @@ mkdir -m 775 -p $COMOUT/$cyc/misc
 echo set parameters using gefs.parm
 ##############################################
 . $PARMgefs/gefs.parm
+
+# hour_lr_ni will be used to define the IC files of the lower resolution part (if not restart) 
+(( hour_lr_ini = fhmaxh - HOUTSPS ))
 
 case $cyc in
   00) export fhmax=$fhmax00;;
