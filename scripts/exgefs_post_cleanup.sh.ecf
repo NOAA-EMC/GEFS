@@ -1,0 +1,89 @@
+#####################################################################
+echo "-----------------------------------------------------"
+echo " exgefs_post_cleanup.sh.sms" 
+echo " based on exglobal_post.sh.sms" 
+echo " Apr 99 - Michaud - Generated to post global forecast"
+echo " Mar 03 - Zhu - Add post for 0.5x0.5 degree"
+echo " Jul 05 - Wobus - 6-hour breeding, ensemble only"
+echo " Jul 07 - Wobus - interpolate master post file"
+echo " Jul 07 - Wobus - separate cleanup from rest of job"
+echo " Jul 11 - Wobus - unified cleanup job"
+echo "-----------------------------------------------------"
+#####################################################################
+
+set -x
+na=`basename $0`
+export PS4=' + $SECONDS $RUN $na $LINENO: '
+
+msg="HAS BEGUN on `hostname`"
+postmsg "$jlogfile" "$msg"
+
+export MP_LABELIO=YES
+
+############################################################
+#  Define Variables:
+#  -----------------
+#  SHOUR        is the starting forecast hour. normally 0 except for restarts.
+#  FHOUR        is the ending forecast hour.
+#  FHINC        is the increment hour for each forecast steps.
+#  FH           is the current forecast hour.
+#  SLEEP_TIME   is the number of seconds to sleep before exiting with error.
+#  SLEEP_INT    is the number of seconds to sleep between restrt file checks.
+############################################################
+
+fhr=$SHOUR
+export fhr
+
+############################################################
+# Loop Through the Post Forecast Files 
+############################################################
+while test $fhr -le $FHOUR
+do
+  echo `date` f$fhr begin
+
+  if test "$SENDCOM" = "YES"
+  then
+     #
+     # Save Pressure and SFLUX GRIB/GRIB Index files
+     #
+
+     ####################################
+     # Remove sigma and sfc fcst and sflux files
+     ####################################
+
+     if [[ $fhr -gt $fhmax3 ]]
+     then
+       if [[ $fhr -gt 126 ]]
+       then
+	 rm $COMOUT/$cyc/sfcsig/${RUN}.${cycle}.sf$fhr$cfsuffix
+	 rm $COMOUT/$cyc/sfcsig/${RUN}.${cycle}.bf$fhr$cfsuffix
+       fi
+       rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbf$fhr$cfsuffix
+       rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhr$cfsuffix
+     else
+       if [[ $cycsuffix = true ]]
+       then
+	  rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbf$fhr$cfsuffix
+	  rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhr$cfsuffix
+	  # remove the 3-hourly files as well
+	  fhrm3=$((fhr-3))
+	  if [ $fhrm3 -lt 10 ]; then fhrm3=0$fhrm3; fi
+	  rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbf$fhrm3$cfsuffix
+	  rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhrm3$cfsuffix
+       fi
+     fi
+  fi
+  echo `date` save or remove sf, bf, and sflux files f$fhr completed
+
+  export fhr=`expr $fhr + $FHINC`
+  if test $fhr -lt 10
+  then
+     export fhr="0$fhr"
+  fi
+done
+
+########################################################
+msg='ENDED NORMALLY.'
+postmsg "$jlogfile" "$msg"
+
+################## END OF SCRIPT #######################

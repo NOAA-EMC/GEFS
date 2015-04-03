@@ -27,7 +27,6 @@ fi
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-export DATAROOT=${DATAROOT:-/tmpnwprd_p2}
 export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
@@ -63,10 +62,9 @@ export pgmerr=errfile
   export SENDCOM=${SENDCOM:-YES}
   export SENDDBN=${SENDDBN:-YES}
 
-##############################
-# Run setup to initialize working directory and utility scripts
-##############################
-#sh setup.sh
+  # Specify Execution Areas
+  export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 ##############################
 # Run setpdy and initialize PDY variables
@@ -182,17 +180,20 @@ do
     FH=$SHOUR
     while (( FH <= FHOUR ))
     do
+      if (( FH < 100 )); then
+	FHP5=0$FH
+      fi
       filelist="\
 	$COMIN/$cyc/master/ge$member.$cycle.master.grbf$FH$cfsuffix \
 	$COMIN/$cyc/master/ge$member.$cycle.master.grbif$FH$cfsuffix \
 	$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2af$FH$cfsuffix \
 	$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2af$FH$cfsuffix.idx \
-	$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FH$cfsuffix \
-	$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FH$cfsuffix.idx \
+	$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FHP5$cfsuffix \
+	$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FHP5$cfsuffix.idx \
 	$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2bf$FH$cfsuffix \
 	$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2bf$FH$cfsuffix.idx \
-	$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.f$FH$cfsuffix \
-	$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.f$FH$cfsuffix.idx \
+	$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.f$FHP5$cfsuffix \
+	$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.f$FHP5$cfsuffix.idx \
 	$COMIN/$cyc/pgrb2alr/ge$member.$cycle.pgrb2af$FH.2$cfsuffix \
 	$COMIN/$cyc/pgrb2alr/ge$member.$cycle.pgrb2af$FH.2$cfsuffix.idx \
 	$COMIN/$cyc/pgrb2blr/ge$member.$cycle.pgrb2bf$FH.2$cfsuffix \
@@ -203,14 +204,18 @@ do
       "
       if (( FH > 0 )) && (( FH <= fhmaxh )); then
 	(( FP = FH - 3 ))
-#Note by Dingchen, need to consider pgrb2a/2b files at 3, 9, 15 .. hours
 	if (( FP < 10 )); then
 	  FP=0$FP
+	fi
+	if (( FP < 100 )); then
+	  FPP5=0$FP
 	fi
 	filelist="$filelist
 	  $COMIN/$cyc/sfcsig/ge$member.$cycle.bf$FP$cfsuffix \
 	  $COMIN/$cyc/sfcsig/ge$member.$cycle.sf$FP$cfsuffix \
 	  $COMIN/$cyc/sflux/ge$member.$cycle.sfluxgrbf$FP$cfsuffix \
+	  $COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FPP5$cfsuffix \
+	  $COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FPP5$cfsuffix.idx \
 	"
       fi
       for file in $filelist
