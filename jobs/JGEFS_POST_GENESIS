@@ -84,12 +84,12 @@ export SENDECF=${SENDECF:-YES}
 ####################################
 # Specify Execution Areas
 ####################################
-  export HOMEgene=${HOMEgene:-${NWROOT}/ens_genesis.${genesis_ver}}
+  export HOMEtrak=${HOMEtrak:-${NWROOT}/ens_tracker.${tracker_ver}}
   export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
 
-  export EXECens_genesis=${EXECgene:-$HOMEgene/exec}
-  export USHens_genesis=${USHgene:-$HOMEgene/ush}
-  export FIXens_genesis=${FIXgene:-$HOMEgene/fix}
+  export EXECens_tracker=${EXECtrak:-$HOMEtrak/exec}
+  export USHens_tracker=${USHtrak:-$HOMEtrak/ush}
+  export FIXens_tracker=${FIXtrak:-$HOMEtrak/fix}
 
   export PARMgefs=$HOMEgefs/parm
 
@@ -161,7 +161,7 @@ do
 done
 echo memberlist=$memberlist
 
-export homesyndir=$HOMEgene
+export homesyndir=$HOMEtrak
 
 echo
 env | sort
@@ -173,8 +173,8 @@ export cmodel=ens
 export loopnum=1
 export ymdh=${PDY}${cyc}
 
-export exectrkdir=${EXECens_genesis}
-export rundir=${FIXens_genesis}
+export exectrkdir=${EXECens_tracker}
+export rundir=${FIXens_tracker}
 
 export CYL=${cyc}
 
@@ -197,7 +197,7 @@ for pert in ${memberlist}; do
    mkdir -p ${pertdir}
   fi
   outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
-  echo "${USHens_genesis}/extrkr_gen_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
+  echo "${USHens_tracker}/extrkr_gen_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
 done
  
 cat trkr.cmdfile
@@ -211,9 +211,9 @@ for pert in ${memberlist}; do
   export TRKDATA=${DATA}/${cmodel}/${pert}
   export pertdir=${DATA}/${cmodel}/${pert}
   export atcfout="a${pert}"
-  ${USHens_genesis}/sort_tracks.gen.sh  >${pertdir}/sort.${regtype}.${atcfout}.${ymdh}.out
-  cp ${pertdir}/trak.a*.atcfunix.altg.${ymdh} ${COM}/.
-  cp ${pertdir}/storms.a*.atcf_gen.altg.${ymdh} ${COM}/.
+  ${USHens_tracker}/sort_tracks.gen.sh  >${pertdir}/sort.${regtype}.${atcfout}.${ymdh}.out
+# cp ${pertdir}/trak.a*.atcfunix.altg.${ymdh} ${COM}/.
+# cp ${pertdir}/storms.a*.atcf_gen.altg.${ymdh} ${COM}/.
 done
 rm -rf ${DATA}/*
 
@@ -227,20 +227,20 @@ for pert in ${memberlist}; do
   ln -s -f ${infile} fort.41
   ln -s -f ${outf42} fort.42
   ln -s -f ${outf43} fort.43
-  ${EXECens_genesis}/filter_gen_gfs
+  ${EXECens_tracker}/filter_gen_gfs
   cp storms.a${pert}.atcf_gen.${ymdh} ${COM}/.
   cp trak.a${pert}.atcfunix.${ymdh} ${COM}/.
   rm -rf ${DATA}/*
 done
 
 ##### ensemble mean calculation ##########################
-${USHens_genesis}/ens_trak_ave_2d.sh
-cp ${DATA}/trak.aemn.* ${COM}/.
-cp ${DATA}/aemn.trkprob.* ${COM}/.
+${USHens_tracker}/ens_trak_ave_2d.sh
+#cp ${DATA}/trak.aemn.* ${COM}/.
+#cp ${DATA}/aemn.trkprob.* ${COM}/.
 rm -f ${DATA}/*
 
 #mkdir -p ${COM}/5d
-#${USHens_genesis}/ens_trak_ave_5d.sh
+#${USHens_tracker}/ens_trak_ave_5d.sh
 #cp ${DATA}/trak.aemn.* ${COM}/5d
 #cp ${DATA}/aemn.trkprob.* ${COM}/5d
 #rm -f ${DATA}/*
@@ -258,7 +258,7 @@ for hurr in $hurrlist; do
     namelist=input.${ymdh}.nlist
     echo "&datain0 kymdh0='aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.ieee'/" >${namelist}
     echo "&datain1 kymdh1='aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.data'/" >>${namelist}
-    ${EXECens_genesis}/readprob <${namelist}
+    ${EXECens_tracker}/readprob <${namelist}
   fi
 done
 cp *.indiv.data ${COMOUT}/genesis

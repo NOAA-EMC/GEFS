@@ -82,7 +82,7 @@ use params
       data ee16/1,3,3,3,3,3,3,3,3,3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3/
       data ee17/0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20/
 
-      character*80 cindx,cpgrb,clmrf,clctl,copts,coptm
+      character*100 cindx,cpgrb,clmrf,clctl,copts,coptm
       character*80 fnobs(20)                        
       character*10 names(nsites+1)
       namelist /namin/cindx,cpgrb,clmrf,clctl,copts,coptm,icyc

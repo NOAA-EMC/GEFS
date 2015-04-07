@@ -97,7 +97,6 @@ sh $USHutil/setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMINGEST=${COMINGEST:-/ensemble/noscrub/Yan.Luo/com-ingest-prod}  #temporary for testing
 export COMINGEST=${COMINGEST:-/$COMROOTp1/injest/prod}
 export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}}
 export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}/${cyc}/ensstat

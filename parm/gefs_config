@@ -22,6 +22,8 @@ export GESROOT=$baseoutput/nwges
 export DATAROOT=$baseoutput/tmpnwprd
 export DCOMROOT=${DCOMROOT:-/dcom}
 
+  mkdir -p  $COMROOT/logs/jlogfiles
+
 export COMROOTp1=/com
 export GESROOTp1=/nwges
 export DBNROOT=
@@ -40,22 +42,20 @@ export gefsmachine=${gefsmachine:-wcoss}
   export HOMEgsm=$HOMEDIR/gsm.v12.0.2
   export HOMEpost=$HOMEDIR/ncep_post.v5.1.1
   export HOMEenkf=$HOMEDIR/enkf.v2.0.1
-  export HOMEtrak=$HOMEDIR/ens_tracker.v1.0.0
-  export HOMEgene=$HOMEDIR/ens_genesis.v1.0.0
-  export HOMEtrak=$HOMEDIR/ens_tracker.v1.0.0_new
-  export HOMEgene=$HOMEDIR/ens_genesis.v1.0.0_new
+  export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.0
 
+# This section is optional, using path to define utility files
 # export UTILROOT=/nwprod2/prod_util.v1.0.0  
 # export GRIBROOT=/nwprod2/grib_util.v1.0.1
+# export EXECutil=$UTILROOT/exec
+# export USHutil=$UTILROOT/ush
+# export EXECgrib=$GRIBROOT/exec
+
   . /usrx/local/Modules/default/init/ksh
   module use /nwprod2/modulefiles
   module load prod_util/v1.0.1
   module load util_shared/v1.0.0
   module load grib_util/v1.0.1
-
-  export EXECutil=$UTILROOT/exec
-  export USHutil=$UTILROOT/ush
-  export EXECgrib=$GRIBROOT/exec
 
   export NDATE=${NDATE:-$USHutil/ndate}
 
@@ -70,78 +70,9 @@ export gefsmachine=${gefsmachine:-wcoss}
   export CNVGRIB=$CNVGRIB21_GFS
 
   export NET=gens
-  export RUN=$RUN
-  export RUNMEM=$RUNMEM
+# export RUN=$RUN
+# export RUNMEM=$RUNMEM
 
-if [ $RUN_ENVIR = xxx ]
-then
-  export HOMEgefs=$HOMEDIR/gefs.v11.0.x
-  export HOMEgefs=$basesource/nwdev
-
-  export HOMEgsm=$HOMEDIR/gsm.v12.0.2
-  export HOMEpost=$HOMEDIR/ncep_post.v5.1.0
-  export HOMEenkf=$HOMEDIR/enkf.v2.0.1
-  export HOMEtrak=$HOMEDIR/ens_tracker.v1.0.0
-  export HOMEgene=$HOMEDIR/ens_genesis.v1.0.0
-
-
-#NCO required variable
-  export UTILROOT=/nwprod/util
-  export GRIBROOT=/nwprod/util  
-  export UTILROOT=/nwprod2/prod_util.v1.0.0  
-  export GRIBROOT=/nwprod2/grib_util.v1.0.1
-  export HOMEutil=$UTILROOT
-  export HOMEgrib=$GRIBROOT
-
-  export NWROOT=/nw$envir 
-  export NET=gens
-  export RUN=$RUN
-  export RUNMEM=$RUNMEM
-
-  export DATAROOT=$basetmp/tmpnwprd
-  export DATA=
-  export DCOMROOT=
-  export PCOMROOT=
-  export COMROOT=$baseoutput
-  export COM=$COMROOT/com/gens/dev
-  export GESROOT=$COMROOT/nwges
-  export jlogfile=$COMROOT/com/logs/jlogfile
-
-  export DBNROOT=
-
-#Our variable, may be modified to use the above NOC requested
-  export DATA_IN=$basetmp/tmpnwprd
-  export jlogfile=$DATA_IN/jlogfile
-  export jlogfile=$baselog/com/logs/jlogfile
-
-  export com=/ptmp/$LOGNAME/com/gens/dev
-  export com=$baseoutput/com/gens/dev
-
-  export COM=/ptmp/$LOGNAME/com/gens/dev
-  export COM=$baseoutput/com/gens/dev
-
-  export COM_IN=/ptmp/$LOGNAME/com/gens/dev
-  export COM_IN=$baseoutput/com/gens/dev
-
-  export COM_OUT=/ptmp/$LOGNAME/com/gens/dev
-  export COM_OUT=$baseoutput/com/gens/dev
-
-  export gespath=/ptmp/$LOGNAME/nwges/dev
-  export gespath=$baseoutput/nwges/dev
-  export gespath=$GESROOT/dev
-
-  export COMGFS=/com/gfs/prod
-# export COMGFS=$basedgfs/com/gfs/prod
-
-  export pcom_in=/ptmp/$LOGNAME/pcom
-  export pcom_in=$baseoutput/pcom
-
-#Temperary setting of some variables, please check here against J-jobs carefully
-# The cnvgrib utility executable, we used a temporay version cwin developmentn
-# It is implemented in nwprod in Jan. 2015
-  export CNVGRIB=/nco/sib/gribdev/util/exec/cnvgrib21_gfs
-  export CNVGRIB=/nwprod/util/exec/cnvgrib21_gfs
-# For JGEFS_CQPF
-  export COMINGEST=${COMINGEST:-/ensemble/noscrub/Yan.Luo/com-ingest-prod}
-# export COM_IN=/ensemble/noscrub/emc.enspara/xz/T574L64SL/EK0
-fi
+# Temperay setting for testing some special jobs
+  export COMINGEST=/ensemble/noscrub/Yan.Luo/com-ingest-prod  #temporary testing of CQPF job
+  export COMIN=/ensemble/noscrub/emc.enspara/xz/T574L64SL/EK0 #temporary testing of CQPF job

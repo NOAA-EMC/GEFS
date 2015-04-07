@@ -194,17 +194,17 @@ export MP_CMDFILE=${DATA}/${cmodel}/trkr.cmdfile
 
 $APRUN
 
-for pert in ${memberlist}; do
-  pertdir=${DATA}/${cmodel}/${pert}
-  cp ${pertdir}/trak.a${pert}.atcfunix.${PDY}${CYL} ${COM}/a${pert}.t${CYL}z.cyclone.trackatcfunix
-done
+#for pert in ${memberlist}; do
+#  pertdir=${DATA}/${cmodel}/${pert}
+#  cp ${pertdir}/trak.a${pert}.atcfunix.${PDY}${CYL} ${COM}/a${pert}.t${CYL}z.cyclone.trackatcfunix
+#done
 rm -rf ${DATA}/*
 
 sh ${USHens_tracker}/ens_trak_ave.sh
-cp ${DATA}/aemn.trkprob.* ${COM}
-cp ${DATA}/trak.aemn.atcfunix.* ${COM}/aemn.t${CYL}z.cyclone.trackatcfunix
-cp ${DATA}/trak.aemn.mode.* ${COM}/aemn.t${CYL}z.cyclone.trackmode
-cp ${DATA}/trak.aemn.spread.* ${COM}/aemn.t${CYL}z.cyclone.trackspread
+#cp ${DATA}/aemn.trkprob.* ${COM}
+#cp ${DATA}/trak.aemn.atcfunix.* ${COM}/aemn.t${CYL}z.cyclone.trackatcfunix
+#cp ${DATA}/trak.aemn.mode.* ${COM}/aemn.t${CYL}z.cyclone.trackmode
+#cp ${DATA}/trak.aemn.spread.* ${COM}/aemn.t${CYL}z.cyclone.trackspread
 rm -rf ${DATA}/*
 
 cd ${DATA}

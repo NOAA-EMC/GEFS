@@ -178,9 +178,9 @@ export gfsgribedition=2
 export gfsfhmaxh=240
 export gfsfhoroglist=252
 
+#DHOU 3/15/2015 for prdgen
 export addgrb1id=yes
 export makepgrb2a=yes
-#DHOU 3/15/2015 for prdgen
 export makepgrb2d=no
 export makepgrb2=yes
 export makepgrb1=no
@@ -200,6 +200,11 @@ export grid2p5="0 6 0 0 0 0 0 0 144 73 0 0 90000000 0 48 -90000000 357500000 250
 export HOUTSPS=12
 
 export fhmaxhres=`expr $fhmaxh - $HOUTSPS`
+ 
+#RLW 20110228 add SPS_PARM variables here
+export SPS_PARM1="0.005 10.0 0.005 10.0 0.0 0.0 0.0 0.0 0.0 0.0"
+export SPS_PARM2="0.105 0.06 0.12 42.0 0.0 0.0 0.0 0.0 0.0 0.0"
+export SPS_PARM3="0.2 0.34 -0.34 3.0 0.0 -1.0 -0.34 0.34 0.8 0.9"  
 
 # RLW 20110720 add fhoroglist
 # fhoroglist is the list of additional hours at which surface height should be included in pgrba
@@ -209,11 +214,6 @@ if (( fhmaxh < fhmax )); then
 else
   export fhoroglist=
 fi
-
-#RLW 20110228 add SPS_PARM variables here
-export SPS_PARM1="0.005 10.0 0.005 10.0 0.0 0.0 0.0 0.0 0.0 0.0"
-export SPS_PARM2="0.105 0.06 0.12 42.0 0.0 0.0 0.0 0.0 0.0 0.0"
-export SPS_PARM3="0.2 0.34 -0.34 3.0 0.0 -1.0 -0.34 0.34 0.8 0.9"  
 
 #############################################################################
 # This section is some parameter setup for for development testing only

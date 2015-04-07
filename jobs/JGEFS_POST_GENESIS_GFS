@@ -83,12 +83,12 @@ export SENDECF=${SENDECF:-YES}
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMEgene=${HOMEgene:-${NWROOT}/ens_genesis.${genesis_ver}}
+export HOMEtrak=${HOMEtrak:-${NWROOT}/ens_tracker.${tracker_ver}}
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
 
-export EXECens_genesis=${EXECgene:-$HOMEgene/exec}
-export USHens_genesis=${USHgene:-$HOMEgene/ush}
-export FIXens_genesis=${FIXgene:-$HOMEgene/fix}
+export EXECens_tracker=${EXECtrak:-$HOMEtrak/exec}
+export USHens_tracker=${USHtrak:-$HOMEtrak/ush}
+export FIXens_tracker=${FIXtrak:-$HOMEtrak/fix}
 
 export PARMgefs=$HOMEgefs/parm
 
@@ -127,7 +127,7 @@ mkdir -m 775 -p $COM
 ##############################################
 # . $PARMgefs/gefs.parm
 
-export homesyndir=$HOMEgene
+export homesyndir=$HOMEtrak
 
 echo
 env | sort
@@ -140,8 +140,8 @@ export loopnum=1
 export ymdh=${PDY}${cyc}
 export pert=gfs
 
-export exectrkdir=${EXECens_genesis}
-export rundir=${FIXens_genesis}
+export exectrkdir=${EXECens_tracker}
+export rundir=${FIXens_tracker}
 
 export CYL=${cyc}
 
@@ -161,7 +161,7 @@ if [ ! -d ${pertdir} ]; then
 fi
 
 outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
-${USHens_genesis}/extrkr_tcv_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile} 
+${USHens_tracker}/extrkr_tcv_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile} 
 rm -rf ${DATA}/*
 
 #### NCEP/GFS genesis tcvitals  ###########################
@@ -170,7 +170,7 @@ if [ ${num_gen_vits} -gt 0 ]
 then
   ln -s -f ${genvitdir}/genesis.vitals.gfs.gfso.${JYYYY} fort.41
   ln -s -f ${genvitdir}/gen_tc.vitals.gfs.gfso.${JYYYY} fort.42
-  ${EXECens_genesis}/tcvital_ch_gfs
+  ${EXECens_tracker}/tcvital_ch_gfs
   cat ${genvitdir}/gen_tc.vitals.gfs.gfso.${JYYYY} >> ${genvitdir}/all.vitals.gfs.gfso.${JYYYY}
   rm -f ${genvitdir}/gen_tc.vitals.gfs.gfso.${JYYYY}
 else
@@ -182,14 +182,14 @@ export pertdir=${DATA}/${cmodel}/${pert}
 if [ ! -d ${pertdir} ]; then mkdir -p ${pertdir}; fi
 
 outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
-${USHens_genesis}/extrkr_gen_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}
+${USHens_tracker}/extrkr_gen_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}
 
 export atcfout=gfso
 export TRKDATA=${pertdir}
-${USHens_genesis}/sort_tracks.gen.sh  >${pertdir}/sort.${regtype}.${atcfout}.${ymdh}.out
+${USHens_tracker}/sort_tracks.gen.sh  >${pertdir}/sort.${regtype}.${atcfout}.${ymdh}.out
 
-cp ${pertdir}/trak.gfso.atcfunix.altg.${ymdh} ${COM}/.
-cp ${pertdir}/storms.gfso.atcf_gen.altg.${ymdh}  ${COM}/.
+#cp ${pertdir}/trak.gfso.atcfunix.altg.${ymdh} ${COM}/.
+#cp ${pertdir}/storms.gfso.atcf_gen.altg.${ymdh}  ${COM}/.
 rm -f ${DATA}/*
 
 #### filtering weak storms for TC genesis #####
@@ -200,7 +200,7 @@ outf43=${COM}/trak.gfso.atcfunix.${ymdh}
 ln -s -f ${infile} fort.41
 ln -s -f ${outf42} fort.42
 ln -s -f ${outf43} fort.43
-${EXECens_genesis}/filter_gen_gfs
+${EXECens_tracker}/filter_gen_gfs
 
 ################################
 msg="JOB COMPLETED NORMALLY"

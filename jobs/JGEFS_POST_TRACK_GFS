@@ -107,7 +107,7 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=${COMINgfs:-$COMROOTp1/gfs/${envir}/gfs.${PDY}}
+export COMINgfs=${COMINgfs:-$COMROOTp1/gfs/prod/gfs.${PDY}}
 export COMIN=$COMINgfs
 export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
 
@@ -151,7 +151,7 @@ ${SCRIPTSens_tracker}/data_check.sh
 outfile=${pertdir}/trkr.${cmodel}.${ymdh}.out
 ${USHens_tracker}/extrkr_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}
  
-cp ${pertdir}/trak.gfso.atcfunix.${PDY}${CYL} ${COM}/gfso.t${CYL}z.cyclone.trackatcfunix
+#cp ${pertdir}/trak.gfso.atcfunix.${PDY}${CYL} ${COM}/gfso.t${CYL}z.cyclone.trackatcfunix
 
 cp ${pertdir}/vitals.upd.gfso.${PDY}${CYL} ${COM}/.
 cp ${pertdir}/vitals.upd.gfso.${PDY}${CYL} ${COM}/vitals.upd.avn.${PDY}${CYL}
