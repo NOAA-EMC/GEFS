@@ -848,7 +848,7 @@ if [[ $nextflag = yes ]]; then
 #           jjjb=100
 	  else  
             if (($inflag == 6)); then 
-            jjjb=005 
+            jjjb=010 
             else
 #           jjjb=012
             jjjb=100         #use this line to skip INIT and gfs for testing
@@ -1583,7 +1583,7 @@ case $taskname in
     wall_clock_limit="02:50"
 #   taskspernode=15
     taskspernode=4
-    OMP_NUM_THREADS=1
+    OMP_NUM_THREADS=6
     MP_SHARED_MEMORY=no
   fi  
   ;;
