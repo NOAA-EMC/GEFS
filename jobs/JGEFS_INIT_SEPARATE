@@ -95,6 +95,11 @@ echo set parameters using gefs.parm
 . $PARMgefs/gefs.parm
 . $PARMgefs/gefs_init.parm
 
+### echo Looking  the earlier EnKF  
+#cycles from fhrpstart back to fhrpend  (hr)
+export fhrpstart=$fhrp
+export fhrpend=96
+ 
 env | sort
 
 

@@ -47,6 +47,12 @@ fi
 ####################################
 export NET=${NET:-gens}
 export RUN=${RUN:-gefs}
+###################################
+# Load the GRIB Utilities module
+####################################
+ . /usrx/local/Modules/default/init/ksh
+ module load grib_util
+ module load util_shared/v1.0.0
 
 ####################################
 # File To Log Msgs

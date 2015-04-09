@@ -207,7 +207,7 @@ echo
 echo `date` restore from 2nd to 3rd ush script begin
 echo
 
-for file in finn finp finn_env finp_env finn_strm finp_strm finn_presep finp_presep gefs.pertback.$cycle_fcst.n${ipair} gefs.pertback.$cycle_fcst.p${ipair} sanl.in sfcanl.in save.relocpertflag save.inflaguse sanlgm${ipair}n sanlgm${ipair}p sanl.c0 save.ifhruse
+for file in finn finp finn_env finp_env finn_strm finp_strm finn_presep finp_presep  sanl.in sfcanl.in save.relocpertflag save.inflaguse sanlgm${ipair}n sanlgm${ipair}p sanl.c0 save.ifhruse
 do
   fils=../$file.pair$ipairi
   echo file=$file fils=$fils
@@ -219,6 +219,20 @@ do
     echo file=$file DOES NOT EXIST
   fi
 done
+for file in gefs.pertback.$cycle_fcst.n${ipair} gefs.pertback.$cycle_fcst.p${ipair}
+do
+  fils=../$file.pair$ipairi
+  echo file=$file fils=$fils
+  if [[ -f $fils ]]; then
+    ls -al $fils
+    mv -f $fils $file
+    ln -s  $file $file.pair$ipairi
+    ls -al $file
+  else
+    echo file=$file DOES NOT EXIST
+  fi
+done
+
 export relocpertflag=`cat save.relocpertflag`
 export inflaguse=`cat save.inflaguse`
 export ifhruse=`cat save.ifhruse`

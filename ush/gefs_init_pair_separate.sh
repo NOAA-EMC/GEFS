@@ -236,8 +236,8 @@ inflaguse=0
 
 inflagt=$inflag
 
-(( fhr = fhrp ))
-while (( fhr <= 48 ))
+(( fhr = $fhrpstart ))
+while (( fhr <= $fhrpend ))
 do
   if (( fhr < 10 )); then
     fhr=0$fhr

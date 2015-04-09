@@ -300,6 +300,13 @@ c     1    ,(DUMMY(K),K=1,2*KMAX+1)
       ALLOCATE ( WK_G(IMAX,JMAX,KMAX),WK_G2(IMAX,JMAX,KMAX) )
 !      ALLOCATE ( WK_G3(IMAX,JMAX,KMAX),WK_G4(IMAX,JMAX,KMAX) )
        ALLOCATE ( WK_S1(MAXWV2,KMAX) )
+c$omp parallel do
+      do k=1,kmax
+      do i=1,maxwv2
+      wk_s1(i,k)=0.0
+      enddo
+      enddo
+
        ALLOCATE ( WK_G1(IMAX,JMAX,KMAX) )
        ALLOCATE ( WR_S1(MAXWV2),WR_S2(MAXWV2) )
        ALLOCATE ( WR_G1(IMAX,JMAX),WR_G2(IMAX,JMAX) )
@@ -581,6 +588,13 @@ C
 C
       deallocate(wk_g,wk_g2,WR_G1,WR_G2,U8501,V8501)
        ALLOCATE ( WK_S1(MAXWV2,KMAX) )
+c$omp parallel do
+      do k=1,kmax
+      do i=1,maxwv2
+      wk_s1(i,k)=0.0
+      enddo
+      enddo
+
        ALLOCATE ( WK_G1(IMAX,JMAX,KMAX) )
 
       DO 240 K=1,KMAX
@@ -1894,6 +1908,13 @@ C
 !      ALLOCATE ( WK_S1(MAXWV2,KMAX),WK_S2(MAXWV2,KMAX) )
 !      ALLOCATE ( WK_G(IMAX,JMAX,KMAX) )
       ALLOCATE ( WK_S1(MAXWV2,KMAX) )
+c$omp parallel do
+      do k=1,kmax
+      do i=1,maxwv2
+      wk_s1(i,k)=0.0
+      enddo
+      enddo
+
       ALLOCATE ( WK_G1(IMAX,JMAX,KMAX) )
 
       NCNT2 = 0
