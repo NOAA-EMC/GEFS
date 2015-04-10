@@ -2266,7 +2266,7 @@ case $taskname in
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=6
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
-    (( resources =  27648 / COREPERNODE * OMP_NUM_THREADS ))   
+    (( resources =  27648 / taskspernode ))
     SUBJOB=       # 1 prdgen job only for 1.0d/2.5d each membery
     DO_LOW_RES=YES
     if [[ $jobgrid = _p5 ]]; then
@@ -2319,7 +2319,7 @@ case $taskname in
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=4
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
-    (( resources =  27648 / COREPERNODE * OMP_NUM_THREADS ))   
+    (( resources =  27648 / taskspernode ))
     SUBJOB=       # 1 prdgen job only for each membery, 1d and 2.5d grid
     if [[ $jobgrid = _p5 ]]; then
      SUBJOB=B      # 2 prdgen jobs for each member, forecast_lr, p5 grid
@@ -2354,7 +2354,7 @@ case $taskname in
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=4
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
-    (( resources =  27648 / COREPERNODE * OMP_NUM_THREAD ))   
+    (( resources =  27648 / taskspernode ))
     SUBJOB=       # 1 prdgen job only for each membery
 #   if [[ $jobgrid = _p5 ]]; then
 #    SUBJOB=C      # 3 prdgen jobs for each member, forecast_hr, p5 grid
@@ -2387,8 +2387,8 @@ case $taskname in
       (wcoss)
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=4
-    (( resources =  27648 / COREPERNODE * OMP_NUM_THREAD ))   
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( resources =  27648 / taskspernode ))
 #   resources="6912"     #for core(4)
     total_tasks=1
       ;;
@@ -2414,8 +2414,8 @@ case $taskname in
       (wcoss)
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=4
-    (( resources =  27648 / COREPERNODE * OMP_NUM_THREAD ))   
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( resources =  27648 / taskspernode ))
 #   resources="6912"     #for core(4)
     total_tasks=1
       ;;
@@ -2454,8 +2454,8 @@ case $taskname in
   if [[ $gefsmachine = wcoss ]]; then                       
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=4
-    (( resources =  27648 / COREPERNODE * OMP_NUM_THREAD ))   
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( resources =  27648 / taskspernode ))
 #   resources="100"
 #   resources="3456"     #T574SL grib2 for core(2)
   fi
@@ -2493,8 +2493,8 @@ case $taskname in
   if [[ $gefsmachine = wcoss ]]; then                       
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=4
-    (( resources =  27648 / COREPERNODE * OMP_NUM_THREAD ))   
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( resources =  27648 / taskspernode ))
 #   resources="100"
 #   resources="3456"    # T574, include grid p5
   fi
@@ -2529,8 +2529,8 @@ case $taskname in
   if [[ $gefsmachine = wcoss ]]; then                       
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=4
-    (( resources =  27648 / COREPERNODE * OMP_NUM_THREAD ))   
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( resources =  27648 / taskspernode ))
 #   resources="100"
 #   resources="500"    # T574
 #   resources="1000"    # T574

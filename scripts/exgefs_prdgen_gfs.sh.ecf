@@ -1,0 +1,86 @@
+export VERBOSE=yes
+sname=`basename $0`
+echo `date` $sname $member begin
+#####################################################################
+#echo "-----------------------------------------------------"
+#echo " exglobal_post_gfs.sh.sms"
+#echo " Feb 06 - Wobus - new script to convert gfs to pgrba"
+#echo " Jul 11 - Wobus - rename to exgefs_prdgen_gfs.sh.sms"
+#echo " Oct 14 - Hou -  Createded exgefs_prdgen_gfs_grb2.sh.sms following"
+#echo "                 exgefs_prdgen_gfs.sh.sms but for grib2 input files"
+#echo " Jan 15 _ Hou -  renamed exgefs_prdgen_gfs.sh.ecf"
+#echo " April 10 - Hou - The PRDGEN_GFS job is reorganized with the major " 
+#echo "                 function of this ex script renamed ush/exgefs_prdgen_gfs.sh"
+#echo "                 and the Principal J-job function moved into this ex script."
+#echo "                 This reorganization enables running the ush scripts multiple"
+#echo "                 times for different grid (1.0 and 0.5 degree, for example)"
+#echo "-----------------------------------------------------"
+######################################################################
+export PS4='+ $SECONDS $sname $member $LINENO: '
+
+echo `date` $0 begin
+
+set -xa
+na=`basename $0`
+
+cd $DATA
+
+msg="HAS BEGUN on `hostname`"
+postmsg "$jlogfile" "$msg"
+
+echo cyc=$cyc
+echo cycle=$cycle
+
+if [[ $jobgrid == '' ]]; then
+  export FHINC_HIGH=$FHINC_HIGH
+  export DO_LOW_RES=YES 
+fi
+
+if [[ $jobgrid == _p5 ]]; then
+  export FHINC_HIGH=$FHINC_HIGHP5
+  export DO_LOW_RES=NO 
+fi
+ 
+#################################
+# Run High Res Prdgen if Needed
+#################################
+if test $SHOUR -le $FHOUR_HIGH
+then
+   export FHINC=$FHINC_HIGH
+   export FHOUR=$FHOUR_HIGH
+#  export DO_LOW_RES=YES 
+   if (( $gfsgribedition == 1 )); then
+    $HOMEgefs/ush/gefs_prdgen_gfs_grb1.sh.sms
+   elif (( gfsgribedition == 2 )); then
+    $HOMEgefs/ush/gefs_prdgen_gfs.sh
+   fi
+   export SHOUR=`expr $FHOUR_HIGH + $FHINC_LOW`
+fi
+#################################
+# Run Low Res Prdgen if Needed
+#################################
+if test $SHOUR -lt $FHOUR_LOW
+then
+   export FHINC=$FHINC_LOW
+   export FHOUR=$FHOUR_LOW
+#  export DO_LOW_RES=YES 
+   export POSTGPVARS_HIGH=$POSTGPVARS_LOW
+   if (( gfsgribedition == 1 )); then
+    $HOMEgefs/ush/gefs_prdgen_gfs_grb1.sh.sms
+   elif (( gfsgribedition == 2 )); then
+    $HOMEgefs/ush/gefs_prdgen_gfs.sh
+   fi
+fi
+
+msg="$job completed normally"
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Remove the Temporary working directory
+##############################
+if [[ $KEEPDATA != "YES" ]]; then
+ cd $DATA_IN
+ rm -rf $DATA
+fi
+
+echo `date` $0 end

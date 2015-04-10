@@ -114,7 +114,7 @@ fi
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2a
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2alr
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
-mkdir -m 775 -p $COMOUT/$cyc/misc
+mkdir -m 775 -p $COMOUT/$cyc/misc/gfs
 
 ##############################################
 echo set parameters using gefs.parm
@@ -128,12 +128,6 @@ export POSTGPVARS_HIGH="IDRTC=0,IOC=360,JOC=181,IDRT=0,IO=360,JO=181,MOO=120,MOW
 export POSTGPVARS_LOW="IDRTC=0,IOC=144,JOC=73,IDRT=0,IO=144,JO=73,MOO=48,MOW=12,MOOA=48,MOWA=12,"
 
 ####################################
-# Specify Restart File Names to Key Off
-####################################
-#restart_file_a=$COMIN/${RUN}.t${cyc}z.pgrbf
-#restart_file_b=$COMIN/${RUN}.t${cyc}z.pgrbif
-
-####################################
 # Specify Timeout Behavior of Post
 #
 # SLEEP_TIME - Amount of time to wait for
@@ -144,7 +138,6 @@ export POSTGPVARS_LOW="IDRTC=0,IOC=144,JOC=73,IDRT=0,IO=144,JO=73,MOO=48,MOW=12,
 export SLEEP_TIME=900
 export SLEEP_INT=5
 
-
 ####################################
 # Specify Forecast Hour Range
 ####################################
@@ -153,54 +146,27 @@ export FHOUR_HIGH=$gfsfhmaxh
 export fhoroglist=$gfsfhoroglist
 export FHOUR_LOW=$fhmax
 export FHINC_HIGH=6
+export FHINC_HIGHP5=3
 export FHINC_LOW=12
 
 export DO_HD_PGRB=NO
 export HDMAX=00
 
-#export dogrid2p5=YES
-export jobgrid=$jobgrid
-export DO_LOW_RES=YES 
-if [[ $jobgrid == _p5 ]]; then
-  export FHINC_HIGH=3
-# export dogrid2p5=NO
-  export DO_LOW_RES=NO 
-fi
- 
 export MP_INFOLEVEL=6
 
 env | sort
 
-#################################
-# Run High Res Prdgen if Needed
-#################################
-if test $SHOUR -le $FHOUR_HIGH
-then
-   export FHINC=$FHINC_HIGH
-   export FHOUR=$FHOUR_HIGH
-#  export DO_LOW_RES=YES 
-   if (( $gfsgribedition == 1 )); then
-    $HOMEgefs/scripts/exgefs_prdgen_gfs_grb1.sh.sms
-   elif (( gfsgribedition == 2 )); then
-    $HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf
-   fi
-   export SHOUR=`expr $FHOUR_HIGH + $FHINC_LOW`
-fi
-#################################
-# Run Low Res Prdgen if Needed
-#################################
-if test $SHOUR -lt $FHOUR_LOW
-then
-   export FHINC=$FHINC_LOW
-   export FHOUR=$FHOUR_LOW
-   export DO_LOW_RES=YES 
-   export POSTGPVARS_HIGH=$POSTGPVARS_LOW
-   if (( gfsgribedition == 1 )); then
-    $HOMEgefs/scripts/exgefs_prdgen_gfs_grb1.sh.sms
-   elif (( gfsgribedition == 2 )); then
-    $HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf
-   fi
-fi
+####################################
+# Generating pgr2b files for 1.0d/2.5d grid
+####################################
+export jobgrid=
+$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf
+
+####################################
+# Generating pgr2b files for 0.5d grid
+####################################
+export jobgrid=_p5
+$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf
 
 msg="$job completed normally"
 postmsg "$jlogfile" "$msg"
@@ -209,7 +175,7 @@ postmsg "$jlogfile" "$msg"
 # Remove the Temporary working directory
 ##############################
 if [[ $KEEPDATA != "YES" ]]; then
- cd $DATA_IN
+ cd $DATAROOT
  rm -rf $DATA
 fi
 
