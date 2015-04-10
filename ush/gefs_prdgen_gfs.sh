@@ -1,33 +1,19 @@
-export VERBOSE=yes
-sname=`basename $0`
-echo `date` $sname $member begin
+#!/bin/ksh
 #####################################################################
 echo "-----------------------------------------------------"
-echo " exglobal_post_gfs.sh.sms" 
+echo " gefs_prdgen_gfs.sh"
+echo " originally named exglobal_post_gfs.sh.sms"
+echo " and then exgefs_prdgen_gfs.sh.sms"
 echo " Feb 06 - Wobus - new script to convert gfs to pgrba"
 echo " Jul 11 - Wobus - rename to exgefs_prdgen_gfs.sh.sms"
-echo " Oct 14 - Hou -  Createded exgefs_prdgen_gfs_grb2.sh.sms following" 
+echo " Oct 14 - Hou -  Createded exgefs_prdgen_gfs_grb2.sh.sms following"
 echo "                 exgefs_prdgen_gfs.sh.sms but for grib2 input files"
-echo " Jan 15 _ Hou -  renamed exgefs_prdgen_gfs.sh.ecf"      
+echo " Jan 15 - Hou -  renamed exgefs_prdgen_gfs.sh.ecf"
+echo " April 10 - Hou - moved to ush and renamed gefs_prdgen_gfs.sh"
 echo "-----------------------------------------------------"
 #####################################################################
-export PS4='+ $SECONDS $sname $member $LINENO: '
-
-echo `date` $0 begin
 
 set -xa
-na=`basename $0`
-
-cd $DATA
-
-msg="HAS BEGUN on `hostname`"
-postmsg "$jlogfile" "$msg"
-
-export MP_LABELIO=YES
-#poe hostname
-
-echo cyc=$cyc
-echo cycle=$cycle
 
 #export WGRIB=${WGRIB:-$EXECgrib/wgrib}
 #export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
@@ -294,16 +280,11 @@ do
       pgfhr=$fhr
     fi
  else
-#For the 1.0 and 2.5 degree grid pgrb files, name them with 2 digit (00-00)or  3-digit fcst hours 
+#For the 1.0 and 2.5 degree grid pgrb files, name them with 2 digit (00-99)or  3-digit fcst hours 
      pgfhr=$fhr
  fi
 
     $TRANSG pgrba$dirsuf pgrb2a$dirsuf pgrba$filsuf pgrb2a$filsuf
-#if [[ $jobgrid == _p5 ]]; then
-#   $TRANSG pgrba$filsuf pgrb2a$filsuf
-#else   
-#   $TRANSG pgrba pgrb2a
-#fi
 
     if test $SENDCOM = "YES"
     then
@@ -313,7 +294,7 @@ do
        else
 	pad=""
        fi
-       echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/ge${RUN}.t${cyc}z.control.$fhr$jobgrid
+       echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/gfs/ge${RUN}.t${cyc}z.control.$fhr$jobgrid
     fi
 
   fi
