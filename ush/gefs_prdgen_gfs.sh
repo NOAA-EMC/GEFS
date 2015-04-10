@@ -72,7 +72,7 @@ export makegrb2i=no
 ############################################################
 # Post Analysis Files before starting the Forecast Post
 ############################################################
-if test -f $COMIN/${RUN}.t${cyc}z.master.grb2anl -a ${SHOUR} -eq 0
+if test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2anl -a ${SHOUR} -eq 0
 then
 
    # RLW 20110725 more complete cleanup of temporary files
@@ -83,7 +83,7 @@ then
 
 #  parmlist=$PARMgefs/gefs_pgrb2a_f00.parm
    parmlist=$parm00 
-   ln -s $COMIN/${RUN}.t${cyc}z.master.grb2anl master_grb2file
+   ln -s $COMINgfs/${RUN}.t${cyc}z.master.grb2anl master_grb2file
    $WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile
    $COPYGB2 -g "${grid}" -i0 -x tmpfile pgb2afile
    $GRB2INDEX pgb2afile pgb2aifile
@@ -166,7 +166,7 @@ do
     while [ $ic -le $SLEEP_LOOP_MAX ]
     do
 #      if [[ -s $restart_file_a$fhr ]] && [[ -s $restart_file_b$fhr ]]; then
-       if test -f $COMIN/${RUN}.t${cyc}z.master.grb2f$fhr
+       if test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2f$fhr
        then
 	  found=yes
           break
@@ -214,7 +214,7 @@ do
       parmlist=$parmhh 
     fi
 
-    ln -s $COMIN/${RUN}.t${cyc}z.master.grb2f${fhr} master_grb2file
+    ln -s $COMINgfs/${RUN}.t${cyc}z.master.grb2f${fhr} master_grb2file
 
     $WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile
     if [[ x$fhoroglist != x ]]; then

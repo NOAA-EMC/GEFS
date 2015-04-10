@@ -72,15 +72,4 @@ then
    fi
 fi
 
-msg="$job completed normally"
-postmsg "$jlogfile" "$msg"
-
-##############################
-# Remove the Temporary working directory
-##############################
-if [[ $KEEPDATA != "YES" ]]; then
- cd $DATA_IN
- rm -rf $DATA
-fi
-
 echo `date` $0 end

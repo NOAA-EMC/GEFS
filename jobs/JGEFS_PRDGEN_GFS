@@ -1,25 +1,10 @@
 #!/bin/ksh
-#####################################################################
-# 9/20/2009, Julia Zhu   Scripts are modified to be sharable
-#                        between EMC and NCO
-#         Please note that variable "RUN_ENVIR" is set and used
-#         in the development enviroment only.
-# October 2014, Dingchen Hou   Scripts are modified to generate grib2 master files
-# February 2015, Dingchin Hou   Scripts changed to vertical structure and cleaned following NCO requirements
-######################################################################
 
-# #### 02/06/06 ###############################
-# GET GEFS POST PROCESSING VARIABLES  FROM GFS RUN
-# #############################################
+echo `date` $0 `date -u` begin
 
 set -xa
 echo `date` $0 begin
 date
-
-export gefsmachine=${gefsmachine:-wcoss}
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-
-export GRIBVERSION=${GRIBVERSION:-grib2}
 
 ###########################################
 # Run gefs_config to get input parameters
@@ -28,14 +13,22 @@ if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nwdev/parm/gefs_config
+  export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
+
+###################################
+# Load the GRIB Utilities module
+####################################
+. /usrx/local/Modules/default/init/ksh
+module load grib_util/v1.0.1
+export CNVGRIB=$CNVGRIB21_GFS
 
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-export DATAROOT=${DATAROOT:-/tmpnwprd_p2}
-export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
+
 mkdir -p $DATA
 cd $DATA
 
@@ -66,33 +59,18 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 ####################################
-# SENDCOM  - Copy Files From TMPDIR to $COMOUT
-# SENDDBN  - Issue DBNet Client Calls
-# RERUN    - Rerun posts from beginning (default no)
-# VERBOSE  - Specify Verbose Output in global_postgp.sh
+# Specify Execution Areas
 ####################################
-  export SENDCOM=${SENDCOM:-YES}
-  export SENDDBN=${SENDDBN:-YES}
-  export SENDECF=${SENDECF:-YES}
-  export VERBOSE=${VERBOSE:-NO}
-  export RERUN=${RERUN:-NO}
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
 
-  # Specify Execution Areas
-  export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
-  export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
-
-  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
-  export USHgefs=${USHgefs:-$HOMEgefs/ush}
-  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
-  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 export REDOUT='1>>'
 export REDERR='2>'
-
-##############################
-# Run setup to initialize working directory and utility scripts
-##############################
-#sh setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
@@ -104,13 +82,13 @@ setpdy.sh
 # Define COM directories
 ##############################################
 export COMINgfs=${COMINgfs:-$COMROOTp1/gfs/prod/gfs.${PDY}}
-export COMIN=$COMINgfs
 export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
 
 if [[ "$makepgrb1" = "yes" ]]; then
 mkdir -m 775 -p $COMOUT/$cyc/pgrba
 mkdir -m 775 -p $COMOUT/$cyc/pgrbalr
 fi
+
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2a
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2alr
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
@@ -174,9 +152,7 @@ postmsg "$jlogfile" "$msg"
 ##############################
 # Remove the Temporary working directory
 ##############################
-if [[ $KEEPDATA != "YES" ]]; then
- cd $DATAROOT
- rm -rf $DATA
-fi
+cd $DATAROOT
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-echo `date` $0 end
+echo `date` $0 `date -u` end
