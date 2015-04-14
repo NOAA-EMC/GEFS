@@ -13,7 +13,7 @@ if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nw${envir}/parm/gefs_config
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+  export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
 
 export APRUN=${gefsmpexec:-mpirun.lsf}

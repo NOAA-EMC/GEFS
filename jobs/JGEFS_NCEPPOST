@@ -14,9 +14,6 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export gefsmachine=${gefsmachine:-wcoss}
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-
 export GRIBVERSION=${GRIBVERSION:-grib2}
 
 ###########################################
@@ -26,14 +23,14 @@ if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nw${envir}/parm/gefs_config
+  export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
 
 ####################################
 # obtain unique process id (pid) and make temp directory
 ###################################
 export pid=$$
-export DATAROOT=${DATAROOT:-/tmpnwprd_p2}
-export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
 
