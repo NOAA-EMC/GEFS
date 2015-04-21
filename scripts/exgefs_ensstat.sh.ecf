@@ -1,3 +1,4 @@
+#!/bin/ksh
 ########################### EXENSSTAT ################################
 echo "------------------------------------------------"
 echo "Ensemble Postprocessing"
@@ -24,13 +25,21 @@ echo "Modified by: Bo Cui and Dingchen Hou change to grib2 operations  ---- Nov.
 
 ### need pass the values of CYC, YMD, DATA, COMIN and COMOUT
 
+export gridlist=$1
+export FHINC=$2
+export subdata=$3
+
+makepgrb1="no"
+makegrb1i="no"
+
 if [[ ! -d $DATA ]]; then
   mkdir -p $DATA
 fi
 
 set -x
 
-cd $DATA
+#cd $DATA
+cd $subdata
 
 #####################################
 # Define ensemble message switch
@@ -91,16 +100,18 @@ fi
 # Loop Through the Post Forecast Files
 ############################################################
 export gridlist=$gridlist
+reslist=$gridlist
+
 (( nfilesprev = 9999 ))
 foundgfs=no
 while test $fh -le $FHOUR
 do
-  if test ` expr $fh % 6 ` -eq 0 
-  then
-   reslist=$gridlist
-  else 
-   reslist="p5"
-  fi
+# if test ` expr $fh % 6 ` -eq 0 
+# then
+#  reslist=$gridlist
+# else 
+#  reslist="p5"
+# fi
 
   #  the order here should correspond to the order in
   #  which the pgrb files are produced by the post

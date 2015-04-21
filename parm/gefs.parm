@@ -360,8 +360,8 @@ if [[ $envir = dev ]]; then
   export runcyclingf=no
 
   # set all the following "make" and "save" flags to "yes" to simulate production
-  export makepgrba=yes
-  export makepgrbb=yes
+  export makepgrba=no
+  export makepgrbb=no
   export makepgrb2b=yes
   export saveflux=yes
   export savesfcsig=yes

@@ -44,17 +44,17 @@ o	GEFS_NCEPPOST :
 o	GEFS_PRDGEN: 
 ▪	GEFS_PRDGEN_hr
 ●	One job for each member in production, 1 task, 30 minute per job.
-●	Four jobs are needed for each member, 1 for the 1/0/2.0d grid, and 3 for the 0.5 degree grid.  1/6 node, about 30 minutes per job.  (we are working to combine them jobs to reduce number of jobs)
-●	14 nodes are needed,  compared with  2 in production
+●	One 5-task mpmd job for each member. Task 1 for 1.0d, 2 for 2.5d grid, and 3-5 for 0.5d.  5/6 node, about 30 minutes per job.
+●	18 nodes are needed,  compared with  2 in production
 ▪	GEFS_PRDGEN_lr
 ●	One job for each member in production, 1 task, 30 minute per job.
-●	two jobs are needed for each member, 1 for the 1/0/2.0d grid, and the other  for the 0.5 degree grid.  1/6 node, about 30 minutes per job.  (we are working to combine them jobs to reduce number of jobs)
-●	7 nodes are needed,  compared with  2 in production
+●	One 4-task mpmd job for each member. task 1 for 1.0d, 2 for 2.5d grid, and 3-4 for 0.5d.  2/3 node, about 30 minutes.
+●	14 nodes are needed,  compared with  2 in production
 o	GEFS_PRDGEN_GFS: 
-▪	 1/4 node, about 25 minutes.  Similar to production
+●	One 2-task mpmd job. task 1 for 1.0d/2.5d grid, and 2 for 0.5d.  1/3 node, about 20 minutes. Similar to production
 o	GEFS_ENSSTAT: 
-▪	GEFS_ENSSTAT _hr, 2 jobs for hr and lr; 1 task, about 30 minutes per task
-▪	GEFS_ENSSTAT_lr,  2 jobs for hr and lr; 1 task, about 30 minutes per task.
+▪	GEFS_ENSSTAT_hr, a 2-task mpmd job; 1/3 node, about 30 minutes.
+▪	GEFS_ENSSTAT_lr, a 2-task mpmd job; 1/3 node, about 30 minutes.
 o	GEFS_ENSPOST: 
 ▪	1 task, about 30 minutes
 o	GEFS_CQPF: 

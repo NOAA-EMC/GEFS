@@ -472,9 +472,11 @@ jjjf18=800
 (( jjjoa = 97 ))
 (( jjjoc = 99 ))
 
+nprdgen=1    # Number of prdgen jobs, 1,2, or3, default is 1
 #(( jjjpe = jjjpo + npert * 4 + 2 ))
 #(( jjjpe = jjjpo + npert * 4 + 4 ))
-(( jjjpe = jjjpo + npert * 4 + 3 ))
+#(( jjjpe = jjjpo + npert * 4 + 3 ))
+(( jjjpe = jjjpo + npert * 4 + 1 + nprdgen ))
 (( jjjpec = jjjpo + npert * 4 - 2 ))
 (( jjjre = jjjro + npert ))
 
@@ -787,34 +789,57 @@ echo `date` $0 $*                                        find next job number if
 echo
 
 echo nextflag=$nextflag
+#nprdgen is defined earlier    # Number of prdgen jobs, 1,2, or3, default is 1
 if [[ $nextflag = yes ]]; then
   yyyymmddccb=$yyyymmddccc
   echo jjjc=$jjjc
   if   (( jjjc >= jjjp00 )) && (( jjjc < jjje00 )); then
     (( jjjd = jjjc - jjjf00 ))
     (( jjjm = ( jjjd / 4 ) * 4 ))
-# Please check prdgen to make sure it matches with here    
+    (( leap = 4 - nprdgen  ))
+    (( jeap = leap )) 
+    if (( jeap == 2 )) ; then
+     jeap=0 
+    fi 
+    if (( ( jjjd - jjjm ) == jeap )) && (( jjjc > jjjp00 )) && [[ $RUN_CONCURRENT = yes ]]; then
+     jjjb=$(( jjjc + leap ))
+    else
+     jjjb=$(( jjjc + 1 ))
+    fi
+    echo $jeap $leap  $jjjd $jjjb
+ Please check prdgen to make sure it matches with here    
 #if nprdgen=1, the next 2 lines should be de-commended     
 #   if (( jjjd - jjjm == 3 )) && [[ $RUN_CONCURRENT = yes ]]; then
-#     jjjb=$(( jjjc + 3 ))
+#     jjjb=$(( jjjc + 3 ))  #nprdgen=1   (103 -> 106 )
 #if nprdgen=3, the next 2 lines should be commended out    
-    if (( jjjd - jjjm == 0 )) && (( jjjc > jjjp00 )) && [[ $RUN_CONCURRENT = yes ]]; then
-     jjjb=$(( jjjc + 2 ))
-    else
-      jjjb=$(( jjjc + 1 ))
-    fi
+#   if (( jjjd - jjjm == 0 )) && (( jjjc > jjjp00 )) && [[ $RUN_CONCURRENT = yes ]]; then
+#    jjjb=$(( jjjc + 2 ))   #nprdgen=2   (104 -> 106 )
+#   else
+#     jjjb=$(( jjjc + 1 ))  #nprdgen=3   (105-> 106 )
+#   fi
   elif (( jjjc >= jjjr00 )) && (( jjjc < jjjz00 )); then
     jjjb=$(( jjjc + 1 ))
   elif (( jjjc >= jjjp00l )) && (( jjjc < jjje00l )); then
     (( jjjd = jjjc - jjjf00l ))
     (( jjjm = ( jjjd / 4 ) * 4 ))
+    (( leap = 4 - nprdgen  ))
+    (( jeap = leap )) 
+    if (( jeap == 2 )) ; then
+     jeap=0 
+    fi 
+    if (( ( jjjd - jjjm ) == jeap )) && (( jjjc > jjjp00 )) && [[ $RUN_CONCURRENT = yes ]]; then
+     jjjb=$(( jjjc + leap ))
+    else
+     jjjb=$(( jjjc + 1 ))
+    fi
+    echo $jeap $leap  $jjjd $jjjb
 #   if (( jjjd - jjjm == 3 )) && [[ $RUN_CONCURRENT = yes ]]; then
 #     jjjb=$(( jjjc + 3 ))
-    if (( jjjd - jjjm == 0 )) && (( jjjc > jjjp00l )) && [[ $RUN_CONCURRENT = yes ]]; then
-      jjjb=$(( jjjc + 2 ))
-    else
-      jjjb=$(( jjjc + 1 ))
-    fi
+#   if (( jjjd - jjjm == 0 )) && (( jjjc > jjjp00l )) && [[ $RUN_CONCURRENT = yes ]]; then
+#     jjjb=$(( jjjc + 2 ))
+#   else
+#     jjjb=$(( jjjc + 1 ))
+#   fi
   elif (( jjjc >= jjjp06 )) && (( jjjc < jjje06 )); then
     (( jjjd = jjjc - jjjf06 ))
     (( jjjm = ( jjjd / 4 ) * 4 ))
@@ -2264,9 +2289,17 @@ case $taskname in
     case $gefsmachine in
       (wcoss)
     MP_SHARED_MEMORY=yes
-    OMP_NUM_THREADS=6
+    OMP_NUM_THREADS=4
+#mpmd 04-15    
+    job_type=parallel 
+    total_tasks=5
+    MP_SHARED_MEMORY=no
+#mpmd 04-15    
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
     (( resources =  27648 / taskspernode ))
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
     SUBJOB=       # 1 prdgen job only for 1.0d/2.5d each membery
     DO_LOW_RES=YES
     if [[ $jobgrid = _p5 ]]; then
@@ -2318,11 +2351,21 @@ case $taskname in
       (wcoss)
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=4
+#mpmd 04-15    
+    job_type=parallel 
+    total_tasks=4
+#mpmd 04-15    
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
     (( resources =  27648 / taskspernode ))
     SUBJOB=       # 1 prdgen job only for each membery, 1d and 2.5d grid
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
     if [[ $jobgrid = _p5 ]]; then
-     SUBJOB=B      # 2 prdgen jobs for each member, forecast_lr, p5 grid
+     SUBJOB=B      # 2 prdgen jobs for each member, hr and lr, p5 grid
     fi
 #   resources="200"
 #   resources="3456"     #T574SL grib2 for core(2)
@@ -2351,10 +2394,17 @@ case $taskname in
     fi
     case $gefsmachine in
       (wcoss)
-    MP_SHARED_MEMORY=yes
+#mpmd 04-20    
+    job_type=parallel 
+    total_tasks=2
+    MP_SHARED_MEMORY=no
     OMP_NUM_THREADS=4
+#mpmd 04-20    
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
     (( resources =  27648 / taskspernode ))
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
     SUBJOB=       # 1 prdgen job only for each membery
 #   if [[ $jobgrid = _p5 ]]; then
 #    SUBJOB=C      # 3 prdgen jobs for each member, forecast_hr, p5 grid
@@ -2446,16 +2496,21 @@ case $taskname in
     else
       wall_clock_limit="$wall_clock_limit_fcst_short"
     fi
-#DHOU 04/19/2012 ZEUS
-#   job_type=parallel
+#DHOU 04/19/2012 ZEUS, serial job
+#mpmd 04-15    
+   job_type=parallel
 #   total_tasks=8
-    total_tasks=1
-    SUBJOB=B       # 2 ensstat jobs for hr (1.0d+lr) and [p5]
+   total_tasks=2
+   #SUBJOB=B       # 2 ensstat jobs for hr (1.0d+lr) and [p5]
+    SUBJOB=       # 1 ensstat jobs for hr (1.0d+lr) and [p5]
   if [[ $gefsmachine = wcoss ]]; then                       
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=4
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
     (( resources =  27648 / taskspernode ))
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
 #   resources="100"
 #   resources="3456"     #T574SL grib2 for core(2)
   fi
@@ -2485,16 +2540,21 @@ case $taskname in
     else
       wall_clock_limit="$wall_clock_limit_fcst_short"
     fi
-#DHOU 04/19/2012 ZEUS
-#   job_type=parallel
+#DHOU 04/19/2012 ZEUS, serial job
+#mpmd 04-15    
+    job_type=parallel
 #   total_tasks=8
-    total_tasks=1
+    total_tasks=2
     SUBJOB=B       # 2 ensstat jobs for hr (1.0d+lr) and [p5]
+    SUBJOB=       # 1 ensstat jobs for hr (1.0d+lr) and [p5]
   if [[ $gefsmachine = wcoss ]]; then                       
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=4
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
     (( resources =  27648 / taskspernode ))
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
 #   resources="100"
 #   resources="3456"    # T574, include grid p5
   fi

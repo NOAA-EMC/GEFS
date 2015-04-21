@@ -1,3 +1,4 @@
+#!/bin/ksh
 export VERBOSE=yes
 sname=`basename $0`
 echo `date` $sname $member begin
@@ -19,7 +20,8 @@ na=`basename $0`
 
 cd $DATA
 
-$USHutil/setup.sh
+#$USHutil/setup.sh
+#setup.sh
 
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
@@ -37,21 +39,37 @@ echo fcstlong=$fcstlong
 echo cycsuffix=$cycsuffix
 echo cfsuffix=$cfsuffix
 
+export SHOUR=$1
+export FHOUR=$2
+export FHINC=$3
+export DO_LOW_RES=$4
+export DOANALYSIS=$5
+export jobdir=$6
+
+export DO_THIS_RES=YES
+submc=prd0p5
+if [[ "$DO_LOW_RES" = "YES" ]]; then
+ export DO_THIS_RES=NO
+ submc=prd2p5
+fi
+
 ############################################################
 # clean up missing markers from previous run
 ############################################################
-cd $COMOUT/$cyc/misc
+mkdir -m 775 -p $COMOUT/$cyc/misc/$submc/$submc
+cd $COMOUT/$cyc/misc/$submc/$submc
 rc=$?
 if (( rc == 0 )); then
   for file in $RUN.*.missing
   do
     if [[ -f $file ]]; then
-      echo `date` removing $COMOUT/$cyc/misc/$file
-      rm -f $COMOUT/$cyc/misc/$file
+      echo `date` removing $COMOUT/$cyc/misc/$submc/$file
+      rm -f $COMOUT/$cyc/misc/$submc/$file
     fi
   done
 fi
-cd $DATA
+#cd $DATA
+cd $jobdir
 
 ############################################################
 #  Define Variables:
@@ -87,9 +105,15 @@ if [[ $DOANALYSIS = YES ]]; then
      if [[ -f $mcfile ]]; then
        teststring=`cat $mcfile|head -1`
        if [[ $teststring != '' ]]; then
-	 if [[ -f $COMOUT/$cyc/master/$RUN.$cycle.master.grb2ianl$cfsuffix ]] then
+	 if [[ -f $COMOUT/$cyc/master/$RUN.$cycle.master.grb2ianl$cfsuffix ]]; then
 	   testfhr=`echo $teststring | cut -c11-13`
 	 fi
+#        if (( testfhr < 100 )); then
+#   testfhr=`echo $testfhr | cut -c2-3`
+#         if (( testfhr < 10 )); then
+#   testfhr=`echo $testfhr | cut -c2-2`
+#  fi  
+# fi  
        fi
      fi
      echo testfhr=$testfhr fhr=$fhr
@@ -107,7 +131,7 @@ if [[ $DOANALYSIS = YES ]]; then
      ###############################
      if [ $ic -eq $SLEEP_LOOP_MAX ]
      then
-	date >$COMOUT/$cyc/misc/$RUN.$ffhr.missing
+	date >$COMOUT/$cyc/misc/$submc/$RUN.$ffhr.missing
 	echo `date` $sname $member end
 	msg="$member MISSING DATA for hour $ffhr"
 	postmsg "$jlogfile" "$msg"
@@ -135,7 +159,7 @@ if [[ $DOANALYSIS = YES ]]; then
     else
       pad=""
     fi
-    echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/${RUN}.t${cyc}z.prdgen_p5.control_anl$cfsuffix
+    echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen_p5.control_anl$cfsuffix
   fi
 fi
 
@@ -175,9 +199,15 @@ do
        if [[ -f $mcfile ]]; then
 	 teststring=`cat $mcfile|head -1`
 	 if [[ $teststring != '' ]]; then
-	   if [[ -f $COMOUT/$cyc/master/$RUN.$cycle.master.grb2i$ffhr$cfsuffix ]] then
+	   if [[ -f $COMOUT/$cyc/master/$RUN.$cycle.master.grb2i$ffhr$cfsuffix ]]; then
 	     testfhr=`echo $teststring | cut -c11-13`
 	   fi
+#          if (( testfhr < 100 )); then
+#   testfhr=`echo $testfhr | cut -c2-3`
+#           if (( testfhr < 10 )); then
+#     testfhr=`echo $testfhr | cut -c2-2`
+#    fi  
+#   fi  
 	 fi
        fi
        echo testfhr=$testfhr fhr=$fhr
@@ -194,7 +224,7 @@ do
        ###############################
        if [ $ic -eq $SLEEP_LOOP_MAX ]
        then
-	  date >$COMOUT/$cyc/misc/$RUN.$ffhr.missing
+	  date >$COMOUT/$cyc/misc/$submc/$RUN.$ffhr.missing
 	  echo `date` $sname $member end
 	  msg="$member MISSING DATA"
 	  postmsg "$jlogfile" "$msg"
@@ -212,17 +242,17 @@ do
   ####################################
   export addgrb1id=yes
 
-  # Making the 2.5x2.5 degree GRIB files in background
+  # Making the 2.5x2.5 degree GRIB files in background   - canceled 
   if [[ "$DO_LOW_RES" = 'YES' ]] && [[ `expr $fhr % 6 ` -eq 0 ]] 
   then
-    ($USHgefs/gefs_prdgen_lowres.sh)&
-    #$USHgefs/gefs_prdgen_lowres.sh
+   #($USHgefs/gefs_prdgen_lowres.sh)&
+     $USHgefs/gefs_prdgen_lowres.sh
   fi
 
   # Making the 0.5x0.5 degree GRIB file
   $USHgefs/gefs_prdgen_p5.sh
 
-   wait
+#  wait
 
   ####################################
   # send control files to misc
@@ -235,7 +265,7 @@ do
     else
       pad=""
     fi
-    echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/${RUN}.t${cyc}z.prdgen_p5.control_$fhr$cfsuffix
+    echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen_p5.control_$fhr$cfsuffix
   fi
 
   export fhr=`expr $fhr + $FHINC`

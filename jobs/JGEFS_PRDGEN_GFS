@@ -16,6 +16,8 @@ then
   export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
 
+export APRUN=${gefsmpexec:-mpirun.lsf}
+
 ###################################
 # Load the GRIB Utilities module
 ####################################
@@ -97,8 +99,7 @@ mkdir -m 775 -p $COMOUT/$cyc/misc/gfs
 ##############################################
 echo set parameters using gefs.parm
 ##############################################
-
- . $PARMgefs/gefs.parm
+. $PARMgefs/gefs.parm
 
 export NTHREADS=1
 
@@ -134,17 +135,42 @@ export MP_INFOLEVEL=6
 
 env | sort
 
+#mpmd job with 2 tasks, 1 for 1d/2.5d, 2 for 0.5d
+
+#task 1, 1.0d/2.5d grid
+export jobgrid_1=hr_lr
+
+#task 2, 0.5d grid
+export jobgrid_2=_p5
+
+subdata=${DATA}/${jobgrid_1}
+if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+  outfile=${subdata}/${jobgrid_1}.out
+  echo "$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf $jobgrid_1 ${subdata} 2>&1 >${outfile}" >>prdgen_gfs.cmdfile
+
+subdata=${DATA}/${jobgrid_2}
+if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+  outfile=${subdata}/${jobgrid_2}.out
+  echo "$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf $jobgrid_2 ${subdata} 2>&1 >${outfile}" >>prdgen_gfs.cmdfile
+
+cat prdgen_gfs.cmdfile
+chmod 775 prdgen_gfs.cmdfile
+export MP_PGMMODEL=mpmd
+export MP_CMDFILE=${DATA}/prdgen_gfs.cmdfile
+
+$APRUN
+
 ####################################
 # Generating pgr2b files for 1.0d/2.5d grid
 ####################################
-export jobgrid=
-$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf
+#export jobgrid=
+#$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf
 
 ####################################
 # Generating pgr2b files for 0.5d grid
 ####################################
-export jobgrid=_p5
-$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf
+#export jobgrid=_p5
+#$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf
 
 msg="$job completed normally"
 postmsg "$jlogfile" "$msg"

@@ -1,23 +1,10 @@
 #!/bin/ksh 
-#####################################################################
-# 9/20/2009, Julia Zhu   Scripts are modified to be sharable
-#                        between EMC and NCO
-#         Please note that variable "RUN_ENVIR" is set and used
-#         in the development enviroment only.
-# September 2014, Dingchen Hou   Scripts are modified to process grib2 pgrb files
-# February 2015, Dingchin Hou   Scripts changed to vertical structure and cleaned following NCO requirements
-######################################################################
 
 echo `date` $0 `date -u` begin
 
 set -xa
 export PS4='$SECONDS + '
 date
-
-export gefsmachine=${gefsmachine:-wcoss}
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-
-export GRIBVERSION=${GRIBVERSION:-grib2}
 
 ###########################################
 # Run gefs_config to get input parameters
@@ -26,18 +13,26 @@ if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nwdev/parm/gefs_config
+  export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
+
+export APRUN=${gefsmpexec:-mpirun.lsf}
+
+####################################
+# Load the grib module
+####################################
+. /usrx/local/Modules/default/init/ksh
+module load grib_util/v1.0.1
+export CNVGRIB=$CNVGRIB21_GFS
 
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-export DATAROOT=${DATAROOT:-/tmpnwprd_p2}
-export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
+
 mkdir -p $DATA
 cd $DATA
-
-export SUBJOB=$SUBJOB
 
 ######################################
 # Set up the cycle variable
@@ -63,17 +58,10 @@ export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
-####################################
-# SENDSMS  - Flag Events on SMS
-# SENDCOM  - Copy Files From TMPDIR to $COMOUT
-# SENDDBN  - Issue DBNet Client Calls
-####################################
-  export SENDCOM=${SENDCOM:-YES}
-  export SENDDBN=${SENDDBN:-NO}
-  export SENDECF=${SENDECF:-YES}
-  export RERUN=${RERUN:-NO}
 
-  # Specify Execution Areas
+####################################
+# Specify Execution Areas
+####################################
   export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
 
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
@@ -84,22 +72,17 @@ export pgmerr=errfile
 export REDOUT='1>>'
 export REDERR='2>'
 
-##############################################
-echo set parameters using gefs.parm
-##############################################
-. $PARMgefs/gefs.parm
-. $PARMgefs/gefs_ensstat.parm
-
-##############################
-# Run setup to initialize working directory and utility scripts
-##############################
-#sh setup.sh
-
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
 setpdy.sh
 . PDY
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+. $PARMgefs/gefs.parm
+. $PARMgefs/gefs_ensstat.parm
 
 ##############################################
 # Define COM directories
@@ -127,6 +110,7 @@ export SLEEP_TIME=900
 export SLEEP_INT=5
 
 export NTHREADS=1
+
 ####################################
 # Specify Forecast Hour Range
 ####################################
@@ -154,7 +138,7 @@ fcstlong=true
 case $FORECAST_SEGMENT in
   (hr)
     # high resolution segment
-    export FHINC=03
+    export FHINCP5=03
     export SHOUR=00
     if [[ $fcstlong = true ]]; then
       export FHOUR=$fhmaxh
@@ -164,6 +148,7 @@ case $FORECAST_SEGMENT in
   ;;
   (lr)
     # low resolution segment
+    export FHINCP5=06
     export SHOUR=$(( $fhmaxh + FHINC ))
     if [[ $fcstlong = true ]]; then
       export FHOUR=$fhmax
@@ -173,6 +158,7 @@ case $FORECAST_SEGMENT in
   ;;
   (*)
     # whole forecast period
+    export FHINCP5=03
     export SHOUR=00
     if [[ $fcstlong = true ]]; then
       export FHOUR=$fhmax
@@ -184,29 +170,66 @@ esac
 case $SUBJOB in
   (A)
     export gridlist="hr lr";
-    export FHINC=06;;     
   (B)
-    export gridlist="p5";
-    export makepgrba="no";;
+    export gridlist="p5";;
   (*)
     export gridlist="hr lr p5";;
 esac    
 
 echo FORECAST_SEGMENT=$FORECAST_SEGMENT
+echo makepgrba=$makepgrba
 echo FHINC=$FHINC      
+echo FHINCP5=$FHINCP5      
 echo SHOUR=$SHOUR
 echo FHOUR=$FHOUR
+echo $gridlist
+echo $makepgrba
 
 env | sort
 
 # Execute the script
 
+#mpmd job with 2 tasks, 1 for 1d and.5d; 2 for 0.5d grid
+
+#task 1, 1.0d grid
+export gridlist_1="hr lr"
+export FHINC_1=$FHINC     
+
+#task 2, 2.5d grid
+export gridlist_2="p5"
+export FHINC_2=$FHINCP5     
+
+#task 3, 0.5d grid
+#export gridlist_3="p5"
+#export FHINC_3=$FHINCP5     
+
 export ext_h=""
-if [[ $GRIBVERSION == grib2 ]]; then
- $HOMEgefs/scripts/exgefs_ensstat.sh.ecf
-else
- $HOMEgefs/scripts/exgefs_ensstat_grb1.sh.ecf
-fi
+
+subdata=${DATA}/${gridlist_1}
+subdata=${DATA}/hr_lr
+if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+# outfile=${subdata}/${gridlist_1}.out
+  outfile=${subdata}/hr_lr.out
+  echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf '$gridlist_1' $FHINC_1 ${subdata} 2>&1 >${outfile}" >>ensstat.cmdfile
+
+subdata=${DATA}/${gridlist_2}
+if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+  outfile=${subdata}/${gridlist_2}.out
+    echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_2 $FHINC_2 ${subdata} 2>&1 >${outfile}" >>ensstat.cmdfile
+
+#subdata=${DATA}/${gridlist_3}
+#if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+#  outfile=${subdata}/${gridlist_3}.out
+#    echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_3 $FHINC_3 ${subdata} 2>&1 >${outfile}" >>ensstat.cmdfile
+
+#$HOMEgefs/scripts/exgefs_ensstat.sh.ecf
+
+cat ensstat.cmdfile
+chmod 775 ensstat.cmdfile
+export MP_PGMMODEL=mpmd
+export MP_CMDFILE=${DATA}/ensstat.cmdfile
+
+$APRUN
 
 msg="JOB COMPLETED NORMALLY"
 postmsg "$jlogfile" "$msg"
@@ -214,7 +237,5 @@ postmsg "$jlogfile" "$msg"
 ##############################
 # Remove the Temporary working directory
 ##############################
-if [[ $KEEPDATA != "YES" ]]; then
-  cd $DATAROOT
-  rm -rf $DATA
-fi
+cd $DATAROOT
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi

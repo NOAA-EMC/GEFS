@@ -73,6 +73,6 @@ export gefsmachine=${gefsmachine:-wcoss}
 # export RUN=$RUN
 # export RUNMEM=$RUNMEM
 
-# Temperay setting for testing some special jobs
+# Temperay setting for testing some special jobs, comment them out for real time dev test
   export COMINGEST=/ensemble/noscrub/Yan.Luo/com-ingest-prod  #temporary testing of CQPF job
   export COMIN=/ensemble/noscrub/emc.enspara/xz/T574L64SL/EK0 #temporary testing of CQPF job

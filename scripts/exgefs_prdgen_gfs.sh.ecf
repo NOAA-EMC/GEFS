@@ -1,3 +1,4 @@
+#!/bin/ksh
 export VERBOSE=yes
 sname=`basename $0`
 echo `date` $sname $member begin
@@ -23,7 +24,13 @@ echo `date` $0 begin
 set -xa
 na=`basename $0`
 
+export jobgrid=$1
+export subdata=$2
+if [[ $jobgrid == hr_lr ]]; then
+  export jobgrid=
+fi
 cd $DATA
+cd $subdata
 
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
@@ -48,12 +55,7 @@ if test $SHOUR -le $FHOUR_HIGH
 then
    export FHINC=$FHINC_HIGH
    export FHOUR=$FHOUR_HIGH
-#  export DO_LOW_RES=YES 
-   if (( $gfsgribedition == 1 )); then
-    $HOMEgefs/ush/gefs_prdgen_gfs_grb1.sh.sms
-   elif (( gfsgribedition == 2 )); then
-    $HOMEgefs/ush/gefs_prdgen_gfs.sh
-   fi
+   $USHgefs/gefs_prdgen_gfs.sh
    export SHOUR=`expr $FHOUR_HIGH + $FHINC_LOW`
 fi
 #################################
@@ -63,13 +65,8 @@ if test $SHOUR -lt $FHOUR_LOW
 then
    export FHINC=$FHINC_LOW
    export FHOUR=$FHOUR_LOW
-#  export DO_LOW_RES=YES 
    export POSTGPVARS_HIGH=$POSTGPVARS_LOW
-   if (( gfsgribedition == 1 )); then
-    $HOMEgefs/ush/gefs_prdgen_gfs_grb1.sh.sms
-   elif (( gfsgribedition == 2 )); then
-    $HOMEgefs/ush/gefs_prdgen_gfs.sh
-   fi
+   $USHgefs/gefs_prdgen_gfs.sh
 fi
 
 echo `date` $0 end

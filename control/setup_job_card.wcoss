@@ -1,4 +1,4 @@
-  SUBJOB=
+# SUBJOB=
   rm $jobcontrol$SUBJOB
   if [[ $waitflag = no ]]; then
 
@@ -76,6 +76,8 @@ eofCAT
       if [[ ${taskname} = post.prdgen_hr ]] ; then
         AFFINITY="core(${OMP_NUM_THREADS}):distribute=pack"
       elif [[ ${taskname} = post.prdgen_lr ]] ; then
+        AFFINITY="core(${OMP_NUM_THREADS}):distribute=pack"
+      elif [[ ${taskname} = prdgen.gfs ]] ; then
         AFFINITY="core(${OMP_NUM_THREADS}):distribute=pack"
 #     else	
 #       AFFINITY="core(1)"
