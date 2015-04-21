@@ -2,7 +2,7 @@
 # Script: ensadd_g2.sh
 # ABSTRACT:  This scripts inserts ensemble PDS extensions for grib2 data 
 ########################################################################
-cd $DATA
+#cd $DATA
 
 set +x
 echo " "

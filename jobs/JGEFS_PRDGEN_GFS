@@ -131,7 +131,7 @@ export FHINC_LOW=12
 export DO_HD_PGRB=NO
 export HDMAX=00
 
-export MP_INFOLEVEL=6
+#export MP_INFOLEVEL=6
 
 env | sort
 
