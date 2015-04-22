@@ -58,7 +58,6 @@ export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
-
 ####################################
 # Specify Execution Areas
 ####################################
@@ -110,7 +109,6 @@ export SLEEP_TIME=900
 export SLEEP_INT=5
 
 export NTHREADS=1
-
 ####################################
 # Specify Forecast Hour Range
 ####################################

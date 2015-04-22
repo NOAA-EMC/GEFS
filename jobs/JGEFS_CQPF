@@ -1,23 +1,10 @@
 #!/bin/ksh 
-#####################################################################
-# 9/20/2009, Julia Zhu   Scripts are modified to be sharable
-#                        between EMC and NCO
-#         Please note that variable "RUN_ENVIR" is set and used
-#         in the development enviroment only.
-# November 2014, Dingchen Hou   Scripts are modified to process grib2 pgrb files
-# February 2015, Dingchin Hou   Scripts changed to vertical structure and cleaned following NCO requirements
-######################################################################
 
 echo `date` $0 `date -u` begin
 
 set -xa
 export PS4='$SECONDS + '
 date
-
-export gefsmachine=${gefsmachine:-wcoss}
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-
-export GRIBVERSION=${GRIBVERSION:-grib2}
 
 ###########################################
 # Run gefs_config to get input parameters
@@ -26,14 +13,24 @@ if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nwdev/parm/gefs_config
+  export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
+
+export APRUN=${gefsmpexec:-mpirun.lsf}
+
+####################################
+# Load the grib module
+####################################
+. /usrx/local/Modules/default/init/ksh
+module load grib_util/v1.0.1
+export CNVGRIB=$CNVGRIB21_GFS
 
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-export DATAROOT=${DATAROOT:-/tmpnwprd_p2}
-export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
+
 mkdir -p $DATA
 cd $DATA
 
@@ -62,15 +59,8 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 ####################################
-# SENDCOM  - Copy Files From TMPDIR to $COMOUT
-# SENDDBN  - Issue DBNet Client Calls
+# Specify Execution Areas
 ####################################
-  export SENDCOM=${SENDCOM:-YES}
-  export SENDDBN=${SENDDBN:-YES}
-  export SENDECF=${SENDECF:-YES}
-  export RERUN=${RERUN:-NO}
-
-  # Specify Execution Areas
   export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
 
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
@@ -84,11 +74,6 @@ export REDOUT='1>>'
 export REDERR='2>'
 
 ##############################
-# Run setup to initialize working directory and utility scripts
-##############################
-#sh setup.sh
-
-##############################
 # Run setpdy and initialize PDY variables
 ##############################
 sh $USHutil/setpdy.sh
@@ -97,9 +82,9 @@ sh $USHutil/setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
+export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
+export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
 export COMINGEST=${COMINGEST:-/$COMROOTp1/injest/prod}
-export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}}
-export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}/${cyc}/ensstat
 
 mkdir -m 775 -p $COMOUT
 
@@ -123,7 +108,4 @@ postmsg "$jlogfile" "$msg"
 ##############################
 # Remove the Temporary working directory
 ##############################
-if [[ $KEEPDATA != "YES" ]]; then
-  cd $DATAROOT
-  rm -rf $DATA
-fi
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
