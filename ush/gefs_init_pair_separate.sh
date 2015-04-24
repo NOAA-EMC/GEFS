@@ -703,6 +703,7 @@ unset SFCOUT
 
 for meml in n p
 do
+     if [[ ! -s fin${meml}  ]]; then
   export JCAP=$jcap
   export LEVS=$levs
   export LONB=$lonb
@@ -721,7 +722,8 @@ do
   export SIGINP=$FIXgefs/gefs.pertback.$cycle_fcst.${meml}${ipair}
 
   export SFCINP=NULL
-  export SIGOUT=$DATALOCAL/gefs.pertback.$cycle_fcst.${meml}${ipair}
+#  export SIGOUT=$DATALOCAL/gefs.pertback.$cycle_fcst.${meml}${ipair}
+  export SIGOUT=$DATALOCAL/fin${meml}
   export SFCOUT=sfcout
   ojcap=`$sighdrexec $SIGINP jcap` 
   olevs=`$sighdrexec $SIGINP levs` 
@@ -755,6 +757,7 @@ echo
   else
     cp -fp $SIGINP $SIGOUT
   fi
+fi
 done
 
 wait
