@@ -1,33 +1,25 @@
-#BSUB -J %E%gefs_p06_sigchgres_%CYC%
-#BSUB -o /%COM%/output/%ENVIR%/today/gefs_p06_sigchgres_%CYC%.o%J
-#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_p06_sigchgres_%CYC%.o%J
+#BSUB -J %E%gefs_post_cleanup_%CYC%
+#BSUB -o /%COM%/output/%ENVIR%/today/gefs_post_cleanup_%CYC%.o%J
+#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_post_cleanup_%CYC%.o%J
 #BSUB -cwd /tmpnwprd
-#BSUB -q %QUEUE%
-#BSUB -n 1
-#BSUB -R span[ptile=1]
-#BSUB -R affinity[core(4):distribute=balance]
-#BSUB -W  00:15
+#BSUB -q %QUEUE%_serv2
+#BSUB -W  01:30
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%
-#BSUB -x
-#BSUB -a poe
+#BSUB -R rusage[mem=2000]
+#BSUB -R affinity[core]
 
 %include <head.h>
 %include <envir-p2.h>
 
+
 # EXPORT list here
 set -x
-
-export OMP_NUM_THREADS=4
-export MP_EUIDEVICE=sn_all
-export MP_EUILIB=us
-# JY export MP_SHARED_MEMORY=no  
-export MEMORY_AFFINITY=core:4
 
 export envir=%ENVIR%
 export cyc=%CYC%
 export cyc_fcst=%CYC%
-export RUN=gep06
+
 
 # CALL executable job script here
 VERSION_FILE=$NWROOT/versions/gefs.ver
@@ -39,7 +31,7 @@ else
   exit
 fi
 
-$NWROOT/gefs.${gefs_ver}/jobs/JGEFS_SIGCHGRS
+$NWROOT/gefs.${gefs_ver}/jobs/JGEFS_POST_CLEANUP
 
 %include <tail.h>
 %manual

@@ -816,17 +816,6 @@ then
 
      # Execute the forecast script 
    $fcstscript
-#    if [[ $RUN_CONCURRENT = yes ]]; then
-#      if [[ $GFS_VERSION = gefs_prod ]]; then
-# $HOMEgefs/scripts/exgefs_fcst_conc.sh.sms
-#      elif [[ $GFS_VERSION = gfs_prod ]]; then
-# $HOMEgefs/scripts/exglobal_fcst.sh.sms
-#      else
-# echo Invalid value GFS_VERSION=$GFS_VERSION
-#      fi
-#    else
-#      $HOMEgefs/scripts/exglobal_fcst.sh.sms
-#    fi
 
    ### Save the HOUTASPS-hour sf and bf files for the LOW-RES run:
    if [[ $RUN_CONCURRENT = yes ]]; then

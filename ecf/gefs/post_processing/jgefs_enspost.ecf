@@ -1,33 +1,26 @@
-#BSUB -J %E%gefs_p09_sigchgres_%CYC%
-#BSUB -o /%COM%/output/%ENVIR%/today/gefs_p09_sigchgres_%CYC%.o%J
-#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_p09_sigchgres_%CYC%.o%J
+#BSUB -J %E%gefs_enspost_%CYC%
+#BSUB -o /%COM%/output/%ENVIR%/today/gefs_enspost_%CYC%.o%J
+#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_enspost_%CYC%.o%J
+##BSUB -q %QUEUE%ser
+#BSUB -q %QUEUE%_shared
 #BSUB -cwd /tmpnwprd
-#BSUB -q %QUEUE%
-#BSUB -n 1
-#BSUB -R span[ptile=1]
-#BSUB -R affinity[core(4):distribute=balance]
-#BSUB -W  00:15
 #BSUB -L /bin/sh
+#BSUB -W 02:50
 #BSUB -P %PROJ%
-#BSUB -x
-#BSUB -a poe
+#BSUB -R rusage[mem=1000]
+#BSUB -R affinity[core(2)]
 
 %include <head.h>
 %include <envir-p2.h>
 
+
 # EXPORT list here
 set -x
-
-export OMP_NUM_THREADS=4
-export MP_EUIDEVICE=sn_all
-export MP_EUILIB=us
-# JY export MP_SHARED_MEMORY=no  
-export MEMORY_AFFINITY=core:4
 
 export envir=%ENVIR%
 export cyc=%CYC%
 export cyc_fcst=%CYC%
-export RUN=gep09
+
 
 # CALL executable job script here
 VERSION_FILE=$NWROOT/versions/gefs.ver
@@ -39,12 +32,12 @@ else
   exit
 fi
 
-$NWROOT/gefs.${gefs_ver}/jobs/JGEFS_SIGCHGRS
+$NWROOT/gefs.${gefs_ver}/jobs/JGEFS_ENSPOST
 
 %include <tail.h>
 %manual
 ######################################################################
-# Purpose: post-process GEFS to generate pgrb.
+# Purpose: cleanup gefs post working directory
 #
 #
 ######################################################################

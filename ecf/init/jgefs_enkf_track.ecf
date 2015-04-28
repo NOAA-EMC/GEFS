@@ -1,33 +1,34 @@
-#BSUB -J %E%gefs_p10_sigchgres_%CYC%
-#BSUB -o /%COM%/output/%ENVIR%/today/gefs_p10_sigchgres_%CYC%.o%J
-#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_p10_sigchgres_%CYC%.o%J
+#BSUB -J %E%gefs_enkf_track_%CYC%
+#BSUB -o /%COM%/output/%ENVIR%/today/gefs_enkf_track_%CYC%.o%J
+#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_enkf_track_%CYC%.o%J
 #BSUB -cwd /tmpnwprd
+#BSUB -R span[ptile=16]
+#BSUB -R affinity[core(1)]
+#BSUB -n 40
+#BSUB -x
 #BSUB -q %QUEUE%
-#BSUB -n 1
-#BSUB -R span[ptile=1]
-#BSUB -R affinity[core(4):distribute=balance]
-#BSUB -W  00:15
+#BSUB -W 00:15
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%
-#BSUB -x
 #BSUB -a poe
 
 %include <head.h>
 %include <envir-p2.h>
 
+
 # EXPORT list here
 set -x
-
-export OMP_NUM_THREADS=4
+export OMP_NUM_THREADS=1
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
-# JY export MP_SHARED_MEMORY=no  
-export MEMORY_AFFINITY=core:4
+export MP_SHARED_MEMORY=no
+export MEMORY_AFFINITY=core:1
+
+# JY export total_tasks=40
 
 export envir=%ENVIR%
 export cyc=%CYC%
 export cyc_fcst=%CYC%
-export RUN=gep10
 
 # CALL executable job script here
 VERSION_FILE=$NWROOT/versions/gefs.ver
@@ -39,12 +40,13 @@ else
   exit
 fi
 
-$NWROOT/gefs.${gefs_ver}/jobs/JGEFS_SIGCHGRS
+$NWROOT/gefs.${gefs_ver}/jobs/JGEFS_ENKF_TRACK
 
 %include <tail.h>
 %manual
 ######################################################################
-# Purpose: post-process GEFS to generate pgrb.
+# Purpose: process global ensemble init system (GEFS) enkf
+#          model
 #
 #
 ######################################################################

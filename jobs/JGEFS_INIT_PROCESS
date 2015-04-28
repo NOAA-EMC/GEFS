@@ -5,6 +5,7 @@ echo `date` $0 `date -u` begin
 set -xa
 export PS4='$SECONDS + '
 date
+
 ###########################################
 # Run gefs_config to get input parameters
 ###########################################
@@ -13,6 +14,7 @@ if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
   . $basesource/nwdev/parm/gefs_config
 fi
+
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ############################
@@ -43,8 +45,6 @@ export pid=$$
 export DATA=$DATAROOT/gefs_init_$PDY$cyc.$envir.save
 cd $DATA
 
-
-
 ####################################
 # Specify NET and RUN Name and model
 ####################################
@@ -72,20 +72,19 @@ export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
 export HOMEenkf=${HOMEenkf:-$NWROOTp1/enkf.${enkf_ver}}
 
-  export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
-  export USHgsm=${USHgsm:-$HOMEgsm/ush}
-  export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
-  export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
+export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
+export USHgsm=${USHgsm:-$HOMEgsm/ush}
+export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
+export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 
-  export EXECGLOBAL=${EXECgsm:-$HOMEgsm/exec}
-  export USHGLOBAL=${USHgsm:-$HOMEgsm/ush}
-  export FIXGLOBAL=${FIXgsm:-$HOMEgsm/fix/fix_am}
+export EXECGLOBAL=${EXECgsm:-$HOMEgsm/exec}
+export USHGLOBAL=${USHgsm:-$HOMEgsm/ush}
+export FIXGLOBAL=${FIXgsm:-$HOMEgsm/fix/fix_am}
 
-  export EXECgefs=${EXECgefs:-$HOMEGgefs/exec}
-  export USHgefs=${USHgefs:-$HOMEgefs/ush}
-  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
-  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
-
+export EXECgefs=${EXECgefs:-$HOMEGgefs/exec}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 ##############################################
 echo set parameters using gefs.parm
@@ -95,12 +94,6 @@ echo set parameters using gefs.parm
 . $PARMgefs/gefs_init.parm
 
 env | sort
-
-##############################
-# Run setpdy and initialize PDY variables
-##############################
-setpdy.sh
-. PDY
 
 ##############################################
 # for global_chgres.sh

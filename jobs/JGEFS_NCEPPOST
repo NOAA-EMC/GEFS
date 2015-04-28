@@ -1,20 +1,10 @@
-set -x
-#####################################################################
-# 9/20/2009, Julia Zhu   Scripts are modified to be sharable
-#                        between EMC and NCO
-#         Please note that variable "RUN_ENVIR" is set and used
-#         in the development enviroment only.
-# September 2014, Dingchen Hou   Scripts are modified to generate grib2 master files
-# january 2015, Dingchin Hou   Scripts changed to vertical structure and cleaned following NCO requirements
-######################################################################
+#!/bin/ksh
 
 echo `date` $0 `date -u` begin
 
 set -xa
 export PS4='$SECONDS + '
 date
-
-export GRIBVERSION=${GRIBVERSION:-grib2}
 
 ###########################################
 # Run gefs_config to get input parameters
@@ -25,6 +15,10 @@ then
   . $basesource/nw${envir}/parm/gefs_config
   export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
+
+export APRUN=${gefsmpexec:-mpirun.lsf}
+
+xport GRIBVERSION=${GRIBVERSION:-grib2}
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -85,7 +79,7 @@ export pgmerr=errfile
 
   # Specify Execution Areas
   export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
-  export HOMEpost=${HOMEpost:-${NWROOT}/gsm.${ncep_post_ver}}
+  export HOMEpost=${HOMEpost:-${NWROOT}/ncep_post.${post_ver}}
   export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
 
   export USHpost=${HOMEpost}/ush
@@ -383,4 +377,4 @@ if [[ $KEEPDATA != "YES" ]]; then
   rm -rf $DATA
 fi
 
-`date` $0 `date -u` end
+echo `date` $0 `date -u` end

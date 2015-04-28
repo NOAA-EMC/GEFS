@@ -807,7 +807,7 @@ if [[ $nextflag = yes ]]; then
      jjjb=$(( jjjc + 1 ))
     fi
     echo $jeap $leap  $jjjd $jjjb
- Please check prdgen to make sure it matches with here    
+#Please check prdgen to make sure it matches with here    
 #if nprdgen=1, the next 2 lines should be de-commended     
 #   if (( jjjd - jjjm == 3 )) && [[ $RUN_CONCURRENT = yes ]]; then
 #     jjjb=$(( jjjc + 3 ))  #nprdgen=1   (103 -> 106 )
@@ -3506,8 +3506,8 @@ else
 echo $cwd
 
 #if (( $jjj == $jjjf00 )); then   nprdgen=3; fi
-if (( $jjj == $jjjf00 )); then   nprdgen=2; fi
-if (( $jjj == $jjjf00l )); then  nprdgen=2; fi
+if (( $jjj == $jjjf00 )); then   nprdgen=1; fi
+if (( $jjj == $jjjf00l )); then  nprdgen=1; fi
 if (( $jjj == $jjjf06 )); then   nprdgen=1; fi
 if (( $jjj == $jjjf12 )); then   nprdgen=1; fi
 if (( $jjj == $jjjf18 )); then   nprdgen=1; fi

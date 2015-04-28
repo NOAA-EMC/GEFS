@@ -1,33 +1,38 @@
-#BSUB -J %E%gefs_p01_sigchgres_%CYC%
-#BSUB -o /%COM%/output/%ENVIR%/today/gefs_p01_sigchgres_%CYC%.o%J
-#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_p01_sigchgres_%CYC%.o%J
+#BSUB -J %E%gefs_init_separate_%CYC%
+#BSUB -o /%COM%/output/%ENVIR%/today/gefs_init_separate_%CYC%.o%J
+#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_init_separate_%CYC%.o%J
 #BSUB -cwd /tmpnwprd
+#BSUB -R span[ptile=4]
+#BSUB -R affinity[core(6)]
+#BSUB -n 40
+#BSUB -x
 #BSUB -q %QUEUE%
-#BSUB -n 1
-#BSUB -R span[ptile=1]
-#BSUB -R affinity[core(4):distribute=balance]
-#BSUB -W  00:15
+#BSUB -W 00:30
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%
-#BSUB -x
 #BSUB -a poe
 
 %include <head.h>
 %include <envir-p2.h>
 
+
 # EXPORT list here
 set -x
 
-export OMP_NUM_THREADS=4
-export MP_EUIDEVICE=sn_all
-export MP_EUILIB=us
-# JY export MP_SHARED_MEMORY=no  
-export MEMORY_AFFINITY=core:4
+export OMP_NUM_THREADS=6
+export MP_TASK_AFFINITY=cpu:6
+export MP_USE_BULK_XFER=yes
+export MP_STDOUTMODE=unordered
+export MPICH_ALLTOALL_THROTTLE=0
+export MP_COREFILE_FORMAT=core.txt
+export OMP_STACKSIZE=3G
+export MP_COMPILER=intel
+export KMP_AFFINITY=granularity=fine,scatter
 
 export envir=%ENVIR%
 export cyc=%CYC%
 export cyc_fcst=%CYC%
-export RUN=gep01
+
 
 # CALL executable job script here
 VERSION_FILE=$NWROOT/versions/gefs.ver
@@ -39,12 +44,13 @@ else
   exit
 fi
 
-$NWROOT/gefs.${gefs_ver}/jobs/JGEFS_SIGCHGRS
+$NWROOT/gefs.${gefs_ver}/jobs/JGEFS_INIT_SEPARATE
 
 %include <tail.h>
 %manual
 ######################################################################
-# Purpose: post-process GEFS to generate pgrb.
+# Purpose: process global ensemble init system (GEFS) init
+#          model
 #
 #
 ######################################################################

@@ -1,33 +1,36 @@
-#BSUB -J %E%gefs_p18_sigchgres_%CYC%
-#BSUB -o /%COM%/output/%ENVIR%/today/gefs_p18_sigchgres_%CYC%.o%J
-#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_p18_sigchgres_%CYC%.o%J
+#BSUB -J %E%gefs_c00_post_high_%CYC%
+#BSUB -o /%COM%/output/%ENVIR%/today/gefs_c00_post_high_%CYC%.o%J
+#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_c00_post_high_%CYC%.o%J
 #BSUB -cwd /tmpnwprd
-#BSUB -q %QUEUE%
-#BSUB -n 1
-#BSUB -R span[ptile=1]
-#BSUB -R affinity[core(4):distribute=balance]
-#BSUB -W  00:15
+#BSUB -n 12
+#BSUB -R span[ptile=12]
+#BSUB -q %QUEUE% 
+#BSUB -x
+#BSUB -W  01:30
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%
-#BSUB -x
+#BSUB -R affinity[core(2)]
 #BSUB -a poe
 
 %include <head.h>
 %include <envir-p2.h>
 
+
 # EXPORT list here
 set -x
 
-export OMP_NUM_THREADS=4
+export OMP_NUM_THREADS=2
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
-# JY export MP_SHARED_MEMORY=no  
-export MEMORY_AFFINITY=core:4
+export MP_SHARED_MEMORY=no 
+export MEMORY_AFFINITY=core:2
 
 export envir=%ENVIR%
 export cyc=%CYC%
 export cyc_fcst=%CYC%
-export RUN=gep18
+export RUN=gec00
+export FORECAST_SEGMENT=hr
+
 
 # CALL executable job script here
 VERSION_FILE=$NWROOT/versions/gefs.ver
@@ -39,7 +42,7 @@ else
   exit
 fi
 
-$NWROOT/gefs.${gefs_ver}/jobs/JGEFS_SIGCHGRS
+$NWROOT/gefs.${gefs_ver}/jobs/JGEFS_NCEPPOST
 
 %include <tail.h>
 %manual
