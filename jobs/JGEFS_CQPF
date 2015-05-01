@@ -76,15 +76,15 @@ export REDERR='2>'
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $USHutil/setpdy.sh
+setpdy.sh
 . PDY
 
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
-export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
-export COMINGEST=${COMINGEST:-/$COMROOTp1/injest/prod}
+export COMIN=$COMROOT/${NET}/${envir}
+export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}/${cyc}/ensstat
+export COMINGEST=${COMINGEST:-$COMROOTp1/ingest/prod}
 
 mkdir -m 775 -p $COMOUT
 

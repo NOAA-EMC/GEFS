@@ -7,10 +7,10 @@
 #BSUB -W  02:00
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%
-#BSUB -R affinity[core(2):distribute=pack]
+#BSUB -R affinity[core(4):distribute=pack]
 #BSUB -a poe
 #BSUB -R span[ptile=5]
-#BSUB -R rusage[mem=2000]"
+#BSUB -R rusage[mem=4608]"
 
 %include <head.h>
 %include <envir-p2.h>
@@ -18,6 +18,8 @@
 
 # EXPORT list here
 set -x
+
+export OMP_NUM_THREADS=1
 
 export envir=%ENVIR%
 export cyc=%CYC%

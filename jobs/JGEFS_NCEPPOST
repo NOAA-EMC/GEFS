@@ -18,7 +18,7 @@ fi
 
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
-xport GRIBVERSION=${GRIBVERSION:-grib2}
+export GRIBVERSION=${GRIBVERSION:-grib2}
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -330,6 +330,8 @@ else
   fi
 fi
 
+export post_log=$DATA/post.$FORECAST_SEGMENT.log$SUBJOB\_${RUN}$cfsuffix
+
 echo
 env | sort
 echo
@@ -361,6 +363,8 @@ fi
 #   $HOMEgefs/scripts/exgefs_nceppost.sh.sms
 #fi
 ###################################################
+
+mv $post_log $COMOUT/$cyc/misc
 
 ################# lines between these markers have been modified for dev begin
 echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN

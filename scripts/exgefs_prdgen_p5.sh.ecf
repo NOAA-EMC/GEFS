@@ -56,7 +56,7 @@ fi
 ############################################################
 # clean up missing markers from previous run
 ############################################################
-mkdir -m 775 -p $COMOUT/$cyc/misc/$submc/$submc
+mkdir -m 775 -p $COMOUT/$cyc/misc/$submc
 cd $COMOUT/$cyc/misc/$submc/$submc
 rc=$?
 if (( rc == 0 )); then
@@ -267,6 +267,11 @@ do
     fi
     echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen_p5.control_$fhr$cfsuffix
   fi
+
+#DHOU, 05/01/2015, added this block for gefs_post_track trigger 
+# if [ $fhr -eq 240]; then
+#   ecflow_client --event prdgen_240_ready
+# fi
 
   export fhr=`expr $fhr + $FHINC`
   if test $fhr -lt 10
