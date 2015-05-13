@@ -220,10 +220,10 @@ if [ $DOANALYSIS = YES ]; then
       echo
       ls -al $PGBOUT $PGBIOUT
       echo
-      echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/${RUN}.t${cyc}z.master.control.anl$cfsuffix
+      echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/post/${RUN}.t${cyc}z.master.control.anl$cfsuffix
       echo
-      ls -al  $COMOUT/$cyc/misc/${RUN}.t${cyc}z.master.control.anl$cfsuffix
-      cat  $COMOUT/$cyc/misc/${RUN}.t${cyc}z.master.control.anl$cfsuffix
+      ls -al  $COMOUT/$cyc/misc/post/${RUN}.t${cyc}z.master.control.anl$cfsuffix
+      cat  $COMOUT/$cyc/misc/post/${RUN}.t${cyc}z.master.control.anl$cfsuffix
       echo "anl_done" >> $post_log
       ecflow_client --label info "`cat $post_log`"
       echo
@@ -245,7 +245,7 @@ export fhr
 while (( fhr <= FHOUR )) 
 do
 
-miscfile=$COMOUT/$cyc/misc/${RUN}.t${cyc}z.master.control.$fhr$cfsuffix
+miscfile=$COMOUT/$cyc/misc/post/${RUN}.t${cyc}z.master.control.$fhr$cfsuffix
 
   ###############################
   # Start Looping for the 

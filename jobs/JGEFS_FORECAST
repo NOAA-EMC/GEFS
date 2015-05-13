@@ -70,9 +70,21 @@ if [[ $RUN_CONCURRENT = yes ]]; then
 fi
 
 ####################################
-# Define RERUN Parrmeter: default to NO
+# Define RERUN Parameter: default to RESTART if not previously set
+#
+# Set RERUN=RESTART to find the last set of complete SFCSIG files and restart the forecast at that point
+# (corresponds to previous setting RERUN=NO)
+# Set RERUN=YES to remove all forecast products and log files, if any, and start over from the conditions
+#
+# In case of FORECAST failure, set RERUN=RESTART if necessary in FORECAST, NCEPPOST, and PRDGEN jobs
+# In case of NCEPPOST failure, set RERUN=RESTART if necessary in NCEPPOST, and PRDGEN jobs
+# In case of PRDGEN   failure, set RERUN=RESTART if necessary in PRDGEN jobs
 ####################################
-  export RERUN=${RERUN:-NO}
+  echo input setting RERUN=$RERUN
+  export RERUN=${RERUN:-RESTART}
+# export RERUN=RESTART
+# export RERUN=YES
+  echo current setting RERUN=$RERUN
 
   # Specify Execution Areas
   export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
@@ -148,7 +160,7 @@ fi
 
 mkdir -m 775 -p $COMOUT/$cyc/sfcsig
 mkdir -m 775 -p $COMOUT/$cyc/sflux
-mkdir -m 775 -p $COMOUT/$cyc/misc
+mkdir -m 775 -p $COMOUT/$cyc/misc/fcst
 
 ##############################################
 echo set parameters using gefs.parm
@@ -233,7 +245,7 @@ if [[ $RUN_CONCURRENT = yes ]]; then
   export SIGO=$COMOUT/$cyc/sfcsig/${RUM}.${cycle}.sf'${FH}'$cfsuffix
   export SFCO=$COMOUT/$cyc/sfcsig/${RUM}.${cycle}.bf'${FH}'$cfsuffix
   export FLXO=$COMOUT/$cyc/sflux/${RUM}.${cycle}.sfluxgrbf'${FH}'$cfsuffix
-  export LOGO=$COMOUT/$cyc/misc/${RUM}.${cycle}.logf'${FH}'$cfsuffix
+  export LOGO=$COMOUT/$cyc/misc/fcst/${RUM}.${cycle}.logf'${FH}'$cfsuffix
   # 02/29/2008 DHOU,  added new files for the output after STTP
   export SIGS=$COMOUT/$cyc/sfcsig/${RUM}.${cycle}.ss'${FH}'$cfsuffix
   export SFBS=$COMOUT/$cyc/sfcsig/${RUM}.${cycle}.bs'${FH}'$cfsuffix
@@ -242,7 +254,7 @@ else
   export SIGO=$COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf'${FH}'$cfsuffix
   export SFCO=$COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf'${FH}'$cfsuffix
   export FLXO=$COMOUT/$cyc/sflux/${RUNMEM}.${cycle}.sfluxgrbf'${FH}'$cfsuffix
-  export LOGO=$COMOUT/$cyc/misc/${RUNMEM}.${cycle}.logf'${FH}'$cfsuffix
+  export LOGO=$COMOUT/$cyc/misc/fcst/${RUNMEM}.${cycle}.logf'${FH}'$cfsuffix
 fi
 #
 # RLW 20150320 update restart procedure, use sfcsig files instead of restart files
@@ -289,7 +301,7 @@ postmsg "$jlogfile" "$msg"
 
 # RLW 20150320 update restart procedure, use sfcsig files instead of restart files
 CONC_INI=`echo $MEMBER_NAMES|cut -c1-3`
-if test $RERUN = "NO"
+if test $RERUN = "RESTART"
 then
   goodrestart=no
   echo check for restart files in $SFCSIG
@@ -746,7 +758,7 @@ then
      #
      # Forecast hour to Read One Time level
      #
-  if test $RERUN = "NO"
+  if test $RERUN = "RESTART"
   then
      export FHROT=$hourin
   else
@@ -969,7 +981,7 @@ if  [[ $FORECAST_SEGMENT != hr ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh
      #
      # Forecast hour to Read One Time level
      #
-  if test $RERUN = "NO"
+  if test $RERUN = "RESTART"
   then
      export FHROT=$hourin
   else

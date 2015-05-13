@@ -71,7 +71,22 @@ export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
-export RERUN=${RERUN:-NO}
+####################################
+# Define RERUN Parameter: default to RESTART if not previously set
+#
+# Set RERUN=RESTART to find the last set of complete SFCSIG files and restart the forecast at that point
+# (corresponds to previous setting RERUN=NO)
+# Set RERUN=YES to remove all forecast products and log files, if any, and start over from the conditions
+#
+# In case of FORECAST failure, set RERUN=RESTART if necessary in FORECAST, NCEPPOST, and PRDGEN jobs
+# In case of NCEPPOST failure, set RERUN=RESTART if necessary in NCEPPOST, and PRDGEN jobs
+# In case of PRDGEN   failure, set RERUN=RESTART if necessary in PRDGEN jobs
+####################################
+  echo input setting RERUN=$RERUN
+  export RERUN=${RERUN:-RESTART}
+# export RERUN=RESTART
+# export RERUN=YES
+  echo current setting RERUN=$RERUN
 
 ####################################
 # Specify Execution Areas
@@ -225,15 +240,17 @@ export HDMAX=00
 # Check if this is a restart
 ####################################
 if [[ true = false ]]; then
+for submc in prd1p0 prd2p5
+do
 if [[ $cycsuffix = false ]]; then
-  if test -f $COMOUT/$cyc/misc/$RUN.t${cyc}z.prdgen.control
+  if test -f $COMOUT/$cyc/misc/$submc/$RUN.t${cyc}z.prdgen.control
   then
-      modelrecvy=`cat < $COMOUT/$cyc/misc/$RUN.t${cyc}z.prdgen.control`
+      modelrecvy=`cat < $COMOUT/$cyc/misc/$submc/$RUN.t${cyc}z.prdgen.control`
       recvy_pdy=`echo $modelrecvy | cut -c1-8`
       recvy_cyc=`echo $modelrecvy | cut -c9-10`
       recvy_shour=`echo $modelrecvy | cut -c11-13`
 
-      if test $RERUN = "NO"
+      if test $RERUN = "RESTART"
       then
          if test $recvy_shour -ge $FHOUR
          then
@@ -248,14 +265,14 @@ if [[ $cycsuffix = false ]]; then
       fi
   fi
 else
-  if test -f $COMOUT/$cyc/misc/$RUN.t${cyc}z.prdgen.control.cycfs$cyc_fcst
+  if test -f $COMOUT/$cyc/misc/$submc/$RUN.t${cyc}z.prdgen.control.cycfs$cyc_fcst
   then
-     modelrecvy=`cat < $COMOUT/$cyc/misc/$RUN.t${cyc}z.prdgen.control.cycfs$cyc_fcst`
+     modelrecvy=`cat < $COMOUT/$cyc/misc/$submc/$RUN.t${cyc}z.prdgen.control.cycfs$cyc_fcst`
      recvy_pdy=`echo $modelrecvy | cut -c1-8`
      recvy_cyc=`echo $modelrecvy | cut -c9-10`
      recvy_shour=`echo $modelrecvy | cut -c11-13`
 
-     if test $RERUN = "NO"
+     if test $RERUN = "RESTART"
      then
        if test $recvy_shour -ge $FHOUR
        then
@@ -266,6 +283,7 @@ else
      fi
   fi
 fi
+done
 fi #(true = false)
 
 FHINC34=$FHINCP5 

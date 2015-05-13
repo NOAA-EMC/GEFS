@@ -68,14 +68,29 @@ export pgmerr=errfile
 ####################################
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
-# RERUN    - Rerun posts from beginning (default no)
 # VERBOSE  - Specify Verbose Output in global_postgp.sh
 ####################################
   export SENDCOM=${SENDCOM:-YES}
   export SENDDBN=${SENDDBN:-YES}
   export SENDECF=${SENDECF:-YES}
   export VERBOSE=${VERBOSE:-NO}
-  export RERUN=${RERUN:-NO}
+
+####################################
+# Define RERUN Parameter: default to RESTART if not previously set
+#
+# Set RERUN=RESTART to find the last set of complete SFCSIG files and restart the forecast at that point
+# (corresponds to previous setting RERUN=NO)
+# Set RERUN=YES to remove all forecast products and log files, if any, and start over from the conditions
+#
+# In case of FORECAST failure, set RERUN=RESTART if necessary in FORECAST, NCEPPOST, and PRDGEN jobs
+# In case of NCEPPOST failure, set RERUN=RESTART if necessary in NCEPPOST, and PRDGEN jobs
+# In case of PRDGEN   failure, set RERUN=RESTART if necessary in PRDGEN jobs
+####################################
+  echo input setting RERUN=$RERUN
+  export RERUN=${RERUN:-RESTART}
+# export RERUN=RESTART
+# export RERUN=YES
+  echo current setting RERUN=$RERUN
 
   # Specify Execution Areas
   export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
@@ -134,7 +149,7 @@ setpdy.sh
   export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
 
 mkdir -m 775 -p $COMOUT/$cyc/master
-mkdir -m 775 -p $COMOUT/$cyc/misc
+mkdir -m 775 -p $COMOUT/$cyc/misc/post
 
 ############################################
 # Run gefs.parm to get input variables
@@ -173,9 +188,9 @@ export POSTGPVARS_LOW=$POSTGPVARS_HIGH
 # Specify Restart File Name to Key Off
 ####################################
 if [[ $fcstlong = true ]]; then
-  restart_file=$COMIN/$cyc/misc/${RUN}.t${cyc}z.logf
+  restart_file=$COMIN/$cyc/misc/fcst/${RUN}.t${cyc}z.logf
 else
-  restart_file=$COMIN/$cyc/misc/${RUN}.t${cyc}z.logf
+  restart_file=$COMIN/$cyc/misc/fcst/${RUN}.t${cyc}z.logf
 fi
 
 ####################################
@@ -270,17 +285,17 @@ export HDMAX=00
 ####################################
 # Check if this is a restart
 ####################################
-  miscfile=$COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control
+  miscfile=$COMOUT/$cyc/misc/post/$RUN.t${cyc}z.master.control
 if [[ $cycsuffix = false ]]; then
   if test -f $miscfile
   then
-#    modelrecvy=`cat < $COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control`
+#    modelrecvy=`cat < $COMOUT/$cyc/misc/post/$RUN.t${cyc}z.master.control`
      modelrecvy=`cat < $miscfile`
      recvy_pdy=`echo $modelrecvy | cut -c1-8`
      recvy_cyc=`echo $modelrecvy | cut -c9-10`
      recvy_shour=`echo $modelrecvy | cut -c11-13`
 
-     if test $RERUN = "NO"
+     if test $RERUN = "RESTART"
      then
 	if test $recvy_shour -ge $FHOUR_HIGH
 	then
@@ -300,16 +315,16 @@ if [[ $cycsuffix = false ]]; then
      fi
   fi
 else
-  miscfile=$COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control.cycfs$cyc_fcst
+  miscfile=$COMOUT/$cyc/misc/$post/RUN.t${cyc}z.master.control.cycfs$cyc_fcst
   if test -f $miscfile
   then
-#    modelrecvy=`cat < $COMOUT/$cyc/misc/$RUN.t${cyc}z.master.control.cycfs$cyc_fcst`
+#    modelrecvy=`cat < $COMOUT/$cyc/misc/post/$RUN.t${cyc}z.master.control.cycfs$cyc_fcst`
      modelrecvy=`cat < $miscfile`
      recvy_pdy=`echo $modelrecvy | cut -c1-8`
      recvy_cyc=`echo $modelrecvy | cut -c9-10`
      recvy_shour=`echo $modelrecvy | cut -c11-13`
 
-     if test $RERUN = "NO"
+     if test $RERUN = "RESTART"
      then
 	if test $recvy_shour -ge $FHOUR_HIGH
 	then
@@ -364,7 +379,7 @@ fi
 #fi
 ###################################################
 
-mv $post_log $COMOUT/$cyc/misc
+mv $post_log $COMOUT/$cyc/misc/post
 
 ################# lines between these markers have been modified for dev begin
 echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN

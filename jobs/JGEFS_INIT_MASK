@@ -18,8 +18,6 @@ export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 ###########################################
 # Run gefs_config to get input parameters
 ###########################################
-#DHOU 03/09/2012 temporal setting
-#RERUN=YES
 if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
 ################# lines between these markers have been modified for dev begin
@@ -129,13 +127,11 @@ export pgmerr=errfile
 # SENDSMS  - Flag Events on SMS
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
-# RERUN    - Rerun posts from beginning (default no)
 # VERBOSE  - Specify Verbose Output in global_postgp.sh
 ####################################
 export SAVEGES=YES
 export SENDSMS=YES
 export SENDCOM=YES
-export RERUN=NO
 export VERBOSE=YES
 
 ###testb

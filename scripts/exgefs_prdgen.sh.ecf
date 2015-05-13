@@ -96,7 +96,7 @@ if (( SHOUR == 0 )); then
   while [ $ic -le $SLEEP_LOOP_MAX ]
   do
      #20100730 change test to use master control file
-     mcfile=$COMOUT/$cyc/misc/$RUN.$cycle.master.control.anl$cfsuffix
+     mcfile=$COMOUT/$cyc/misc/post/$RUN.$cycle.master.control.anl$cfsuffix
      testfhr=-1
      if [[ -f $mcfile ]]; then
        teststring=`cat $mcfile|head -1`
@@ -185,7 +185,7 @@ do
     while [ $ic -le $SLEEP_LOOP_MAX ]
     do
        #20100730 change test to use master control file
-       mcfile=$COMOUT/$cyc/misc/$RUN.$cycle.master.control.$fhr$cfsuffix
+       mcfile=$COMOUT/$cyc/misc/post/$RUN.$cycle.master.control.$fhr$cfsuffix
        testfhr=-1
        if [[ -f $mcfile ]]; then
 	 teststring=`cat $mcfile|head -1`
