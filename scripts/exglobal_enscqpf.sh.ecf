@@ -291,20 +291,10 @@ then
 
    if [ "$SENDDBN" = "YES" ]
    then
-     $DBNROOT/bin/dbn_alert MODEL ENS_POST $job $COMOUT/enspost.${cycle}.prcp_24hbc
-#     $DBNROOT/bin/dbn_alert MODEL ENS_POST $job $COMOUT/enspost.${cycle}.prcpi_24hbc
-     $DBNROOT/bin/dbn_alert MODEL ENS_POST $job $COMOUT/ensstat.${cycle}.pqpf_24hbc
-#     $DBNROOT/bin/dbn_alert MODEL ENS_POST $job $COMOUT/ensstat.${cycle}.pqpfi_24hbc
-
-      if [ $SENDDBN_GB2 = YES ]
-      then
-
       $DBNROOT/bin/dbn_alert MODEL ENS_POST_GB2 $job $COMOUT/enspost.${cycle}.prcp_24hbc.grib2
       $DBNROOT/bin/dbn_alert MODEL ENS_POST_GB2 $job $COMOUT/ensstat.${cycle}.pqpf_24hbc.grib2
       $DBNROOT/bin/dbn_alert MODEL ENS_POST_GB2_WIDX $job $COMOUT/ensstat.${cycle}.pqpf_24hbc.grib2.idx
       $DBNROOT/bin/dbn_alert MODEL ENS_POST_GB2_WIDX $job $COMOUT/enspost.${cycle}.prcp_24hbc.grib2.idx
-      
-      fi
    fi
 
 fi

@@ -391,41 +391,6 @@ do
 
 done
 
-#for file in $epnamhr $epnamlr
-for file in $postvarlist 
-do
-
-  # check for missing or zero-length output files
-
-  if [[ -s enspost_grb2${ext_h}.$cycle.${file} ]]; then
-    ls -al enspost_grb2${ext_h}.$cycle.${file}
-  else
-    echo output file enspost_grb2${ext_h}.$cycle.${file} IS MISSING
-    export err=9
-    err_chk
-  fi
-
-  $WGRIB2 enspost_grb2${ext_h}.$cycle.${file} -s > enspost_grb2${ext_h}.$cycle.${file}.idx
-  $WGRIB2 ensstat_grb2${ext_h}.$cycle.${file} -s > ensstat_grb2${ext_h}.$cycle.${file}.idx
-  $CNVGRIB -g21 enspost_grb2${ext_h}.$cycle.${file} enspost${ext_h}.$cycle.${file}
-  $CNVGRIB -g21 ensstat_grb2${ext_h}.$cycle.${file} ensstat${ext_h}.$cycle.${file}
-  $GRBINDEX enspost${ext_h}.$cycle.${file}   enspost${ext_h}.$cycle.${file}i
-  $GRBINDEX ensstat${ext_h}.$cycle.${file}   ensstat${ext_h}.$cycle.${file}i
-
-  if [ "$SENDCOM" = "YES" ]
-  then
-     mv enspost_grb2${ext_h}.$cycle.${file}  $COMOUT/$cyc/ensstat/enspost_grb2${ext_h}.${cycle}.${file}
-     mv enspost_grb2${ext_h}.$cycle.${file}.idx $COMOUT/$cyc/ensstat/enspost_grb2${ext_h}.${cycle}.${file}.idx
-     mv ensstat_grb2${ext_h}.$cycle.${file}  $COMOUT/$cyc/ensstat/ensstat_grb2${ext_h}.${cycle}.${file}
-     mv ensstat_grb2${ext_h}.$cycle.${file}.idx $COMOUT/$cyc/ensstat/ensstat_grb2${ext_h}.${cycle}.${file}.idx
-     mv enspost${ext_h}.$cycle.${file}  $COMOUT/$cyc/ensstat/enspost${ext_h}.${cycle}.${file}
-     mv enspost${ext_h}.$cycle.${file}i $COMOUT/$cyc/ensstat/enspost${ext_h}.${cycle}.${file}i
-     mv ensstat${ext_h}.$cycle.${file}  $COMOUT/$cyc/ensstat/ensstat${ext_h}.${cycle}.${file}
-     mv ensstat${ext_h}.$cycle.${file}i $COMOUT/$cyc/ensstat/ensstat${ext_h}.${cycle}.${file}i
-  fi
-
-done
-
 echo ###############################`date` cat $pgmout begin
 cat $pgmout
 echo ###############################`date` cat $pgmout end
@@ -434,8 +399,35 @@ echo
 echo "`date`  ==== END  OF  HOURLY PROCESSING OF PGB FORECAST FILES ====="
 echo
 
+# check for missing or zero-length output files
+
+for file in $postvarlist 
+do
+  if [[ -s enspost_grb2${ext_h}.$cycle.${file} ]]; then
+    ls -al enspost_grb2${ext_h}.$cycle.${file}
+  else
+    echo output file enspost_grb2${ext_h}.$cycle.${file} IS MISSING
+    export err=9
+    err_chk
+  fi
+done
+
+# Moving  output files to /com directory
+
+if [ "$SENDCOM" = "YES" ]
+then
+  for file in $postvarlist 
+  do
+     mv enspost_grb2${ext_h}.$cycle.${file}  $COMOUT/$cyc/ensstat/enspost_grb2${ext_h}.${cycle}.${file}
+     mv ensstat_grb2${ext_h}.$cycle.${file}  $COMOUT/$cyc/ensstat/ensstat_grb2${ext_h}.${cycle}.${file}
+  done  
+fi
+
+#DHOU, 05/13/2015, added this block for gefs_cqpf trigger
+  ecflow_client --event enspost_grb2_ready
+
 #
-# create ensemble statistics files
+# create pqpf 24h and probabilistic precip forecast files
 #
 
 ## part (1a): calculate PQPF (named ensppf ) for each 24 hours period,
@@ -477,16 +469,8 @@ then
    fi
    if [ "$SENDDBN" = "YES" ]
    then
-     $DBNROOT/bin/dbn_alert MODEL ENS_STAT $job $COMOUT/$cyc/ensstat/ensstat${ext_h}.${cycle}.pqpf_24h
-
-     if [ $SENDDBN_GB2 = YES ]
-     then
-
      $DBNROOT/bin/dbn_alert MODEL ENS_STAT_GB2 $job $COMOUT/$cyc/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2
      $DBNROOT/bin/dbn_alert MODEL ENS_STAT_GB2_WIDX $job $COMOUT/$cyc/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2.idx
-
-     fi
-
    fi
 fi
 
@@ -511,6 +495,37 @@ done
 ############################################################################
 ###########  ADD DBN ALERTS FOR PPF AND PQPF FILES IF NEEDED  ##############
 ############################################################################
+
+############################################################################
+#   The following block is added in 2015 upgrade (when grib2 version is adopted) 
+#   Generate (extra) grib1 version of output files and move them to /com 
+############################################################################
+
+for file in $postvarlist 
+do
+  ln -s $COMOUT/$cyc/ensstat/enspost_grb2${ext_h}.${cycle}.${file} enspost_grb2${ext_h}.$cycle.${file}
+  ln -s $COMOUT/$cyc/ensstat/ensstat_grb2${ext_h}.${cycle}.${file} ensstat_grb2${ext_h}.$cycle.${file}
+
+  $WGRIB2 enspost_grb2${ext_h}.$cycle.${file} -s > enspost_grb2${ext_h}.$cycle.${file}.idx
+  $WGRIB2 ensstat_grb2${ext_h}.$cycle.${file} -s > ensstat_grb2${ext_h}.$cycle.${file}.idx
+  $CNVGRIB -g21 enspost_grb2${ext_h}.$cycle.${file} enspost${ext_h}.$cycle.${file}
+  $CNVGRIB -g21 ensstat_grb2${ext_h}.$cycle.${file} ensstat${ext_h}.$cycle.${file}
+  $GRBINDEX enspost${ext_h}.$cycle.${file}   enspost${ext_h}.$cycle.${file}i
+  $GRBINDEX ensstat${ext_h}.$cycle.${file}   ensstat${ext_h}.$cycle.${file}i
+
+  if [ "$SENDCOM" = "YES" ]
+  then
+#    mv enspost_grb2${ext_h}.$cycle.${file}  $COMOUT/$cyc/ensstat/enspost_grb2${ext_h}.${cycle}.${file}
+     mv enspost_grb2${ext_h}.$cycle.${file}.idx $COMOUT/$cyc/ensstat/enspost_grb2${ext_h}.${cycle}.${file}.idx
+#    mv ensstat_grb2${ext_h}.$cycle.${file}  $COMOUT/$cyc/ensstat/ensstat_grb2${ext_h}.${cycle}.${file}
+     mv ensstat_grb2${ext_h}.$cycle.${file}.idx $COMOUT/$cyc/ensstat/ensstat_grb2${ext_h}.${cycle}.${file}.idx
+     mv enspost${ext_h}.$cycle.${file}  $COMOUT/$cyc/ensstat/enspost${ext_h}.${cycle}.${file}
+     mv enspost${ext_h}.$cycle.${file}i $COMOUT/$cyc/ensstat/enspost${ext_h}.${cycle}.${file}i
+     mv ensstat${ext_h}.$cycle.${file}  $COMOUT/$cyc/ensstat/ensstat${ext_h}.${cycle}.${file}
+     mv ensstat${ext_h}.$cycle.${file}i $COMOUT/$cyc/ensstat/ensstat${ext_h}.${cycle}.${file}i
+  fi
+
+done
 
 msg="HAS COMPLETED NORMALLY!"
 postmsg "$jlogfile" "$msg"
