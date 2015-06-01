@@ -3,6 +3,14 @@
 # rename the output for a particular date of GEFS run
 #
 echo `date` $0 $* begin
+PTMP=/ptmpd2
+STMP=/stmpd2
+if [[ $LOGNAME = emc.enspara ]]; then
+  owner=$SUDO_USER
+else
+  owner=$LOGNAME
+fi
+echo owner=$owner
 if (( $# >= 3 )); then
   expid=$1
   dtg=$2
@@ -22,17 +30,17 @@ if (( $# >= 3 )); then
   if (( dtg < 23010203 )) && (( dtg > 18010203 )); then
     yyyymmdd=$dtg
     echo yyyymmdd=$yyyymmdd
-    controldir=/ensemble/save/$LOGNAME/s/$expid/nwdev/control
+    controldir=/ensemble/save/$owner/s/$expid/nwdev/control
     cd $controldir
     rc=$?
     if (( rc == 0 )); then
       dirlist="
-	/ptmp/$LOGNAME/o/$expid/com/output/dev/$yyyymmdd \
-	/ptmp/$LOGNAME/o/$expid/com/gens/dev/gefs.$yyyymmdd \
-	/ptmp/$LOGNAME/o/$expid/nwdev/control/$yyyymmdd \
-	/ptmp/$LOGNAME/o/$expid/nwges/dev/gefs.$yyyymmdd \
-	/ptmp/$LOGNAME/o/$expid/tmpnwprd \
-	/stmpd2/$LOGNAME/o/$expid/tmpnwprd \
+	$PTMP/$LOGNAME/o/$expid/com/output/dev/$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/com/gens/dev/gefs.$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/nwdev/control/$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/nwges/dev/gefs.$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/tmpnwprd \
+	$STMP/$LOGNAME/o/$expid/tmpnwprd \
       "
 
       suffixused=no
@@ -83,17 +91,17 @@ if (( $# >= 3 )); then
   elif (( dtg < 2301020318 )) && (( dtg > 1801020300 )); then
     yyyymmdd=`echo $dtg|cut -c1-8`
     hh=`echo $dtg|cut -c9-10`
-    controldir=/ensemble/save/$LOGNAME/s/$expid/nwdev/control
+    controldir=/ensemble/save/$owner/s/$expid/nwdev/control
     cd $controldir
     rc=$?
     if (( rc == 0 )); then
       dirlist="
-	/ptmp/$LOGNAME/o/$expid/com/output/dev/$yyyymmdd \
-	/ptmp/$LOGNAME/o/$expid/com/gens/dev/gefs.$yyyymmdd \
-	/ptmp/$LOGNAME/o/$expid/nwdev/control/$yyyymmdd \
-	/ptmp/$LOGNAME/o/$expid/nwges/dev/gefs.$yyyymmdd \
-	/ptmp/$LOGNAME/o/$expid/tmpnwprd \
-	/stmpd2/$LOGNAME/o/$expid/tmpnwprd \
+	$PTMP/$LOGNAME/o/$expid/com/output/dev/$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/com/gens/dev/gefs.$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/nwdev/control/$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/nwges/dev/gefs.$yyyymmdd \
+	$PTMP/$LOGNAME/o/$expid/tmpnwprd \
+	$STMP/$LOGNAME/o/$expid/tmpnwprd \
       "
 
       suffixused=no
@@ -139,7 +147,7 @@ if (( $# >= 3 )); then
 		  mkdir -p $diro
 		  rc=$?
 		  if (( rc == 0 )); then
-		    for file in $dir/??$yyyymmdd${hh}???.*.o
+		    for file in $dir/??$yyyymmdd${hh}???.*.o $dir/??$yyyymmdd${hh}???.*.ow
 		    do
 		      if [[ -f $file ]]; then
 			mv $file $diro
