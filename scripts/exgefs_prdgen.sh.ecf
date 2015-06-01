@@ -123,8 +123,8 @@ if (( SHOUR == 0 )); then
      if [ $ic -eq $SLEEP_LOOP_MAX ]
      then
 	date >$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.anl.missing $cfsuffix
-	echo `date` $sname $member end
-	msg="$member MISSING DATA for analysis"
+	echo `date` $sname $member post data missing for analysis
+	msg="$member MISSING POST DATA for analysis"
 	postmsg "$jlogfile" "$msg"
 	export err=1; err_chk
      fi
@@ -210,8 +210,8 @@ do
        if [ $ic -eq $SLEEP_LOOP_MAX ]
        then
 	  date >$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.$ffhr.missing $cfsuffix
-	  echo `date` $sname $member end
-	  msg="$member MISSING DATA"
+	  echo `date` $sname $member missing post data for hour $fhr
+	  msg="$member MISSING POST DATA for hour $fhr"
 	  postmsg "$jlogfile" "$msg"
 	  export err=1; err_chk
        fi

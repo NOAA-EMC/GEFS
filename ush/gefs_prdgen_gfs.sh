@@ -101,14 +101,46 @@ then
       #
       if [[ "$makepgrb1" = "yes" ]]; then
        mv pgbafile $COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\anl
+	  testfile=$COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\anl
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
        if [[ "$makegrb1i" = "yes" ]]; then
 	mv pgbaifile $COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\ianl
+	    testfile=$COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\ianl
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
        fi
       fi
       if [[ "$makepgrb2" = "yes" ]]; then
        mv pgb2afile $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl
+	   testfile=$COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
        if [[ "$makegrb2i" = "yes" ]]; then
 	  mv pgb2aifile $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\ianl
+	       testfile=$COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\ianl
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
        fi
       fi
 

@@ -130,6 +130,14 @@ else
         if test "$SENDCOM" = 'YES'
         then
          mv pgb2cfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2c/${RUN}.${cycle}.pgrb2c$ffhr$cfsuffix
+			    testfile=$COMOUT/$cyc/pgrb2c/${RUN}.${cycle}.pgrb2c$ffhr$cfsuffix
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
 	fi
 #     set -x
    fi
@@ -152,15 +160,52 @@ fi
       # Save Pressure GRIB/Index files
       #
       mv pgb2afile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix
+			 testfile=$COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
       mv pgb2bfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
+			testfilef=$COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
 #     mv pgb2cfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2c/${RUN}.${cycle}.pgrb2c$ffhr$cfsuffix
       if test "$makepgrb2d" = 'yes'
       then
        mv pgb2dfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2d/${RUN}.${cycle}.pgrb2d$ffhr$cfsuffix
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
       fi
       if [[ "$makegrb2i" = "yes" ]]; then
 	mv pgb2afile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix.idx
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
 	mv pgb2bfile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix.idx
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
       fi
 
       ###############################################################################
@@ -234,8 +279,23 @@ else
      # Save Pressure GRIB/Index files
      #
      mv pgbafile.$ffhr$cfsuffix $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrba$ffhr$cfsuffix
+		       testfile=$COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrba$ffhr$cfsuffix
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
      mv pgbaifile.${ffhr}${cfsuffix} $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrbai${ffhr}${cfsuffix}
-
+			    testfile=$COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrbai${ffhr}${cfsuffix}
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
      if test "$SENDDBN" = 'YES'
      then
        if test "$NET" = 'gens'
@@ -277,8 +337,23 @@ else
       # Save Pressure GRIB/Index files
       #
       mv pgbbfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbb$ffhr$cfsuffix
+			testfile=$COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbb$ffhr$cfsuffix
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
       mv pgbbifile.${ffhr}${cfsuffix} $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbbi${ffhr}${cfsuffix}
-
+			     testfile=$COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbbi${ffhr}${cfsuffix}
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
       #if test "$SENDDBN" = 'YES'
       #then
         #if test "$NET" = 'gens'
@@ -322,6 +397,14 @@ else
       # Save Pressure GRIB/Index files
       #
       mv pgbdfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrbd/${RUN}.${cycle}.pgrbd$ffhr$cfsuffix
+			testfile=$COMOUT/$cyc/pgrbd/${RUN}.${cycle}.pgrbd$ffhr$cfsuffix
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
    fi
 fi
 fi

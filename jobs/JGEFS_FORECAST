@@ -122,9 +122,9 @@ elif [[ $FORECAST_SEGMENT = hl ]] ; then
     echo Integrate the model for both high and low resolution segments, including chgres
     fhresini=0
 else
-    echo Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT
+    msg="FATAL ERROR:  Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
+    echo "`date`   $msg"
     echo The Forecast job will be aborted!!!!
-    msg="Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
     postmsg "$jlogfile" "$msg"
     export pgm=JENS_FCST
     export err=911
@@ -292,11 +292,13 @@ msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
 
 ####################################
+#
 # Check if this is a restart
 #
 # Define Initialization File Names
 #
 # and Copy these file to the work directory ($DATA)
+#
 ####################################
 
 # RLW 20150320 update restart procedure, use sfcsig files instead of restart files
@@ -305,6 +307,11 @@ if test $RERUN = "RESTART"
 then
   goodrestart=no
   echo check for restart files in $SFCSIG
+  if [[ $FORECAST_SEGMENT = lr ]]; then
+    JCAP=$JCAPLR
+  else
+    JCAP=$JCAPHR
+  fi
   MN=$CONC_INI
   for SIGXtest in `eval ls -1t ${SIGX_P}*`
   do
@@ -331,68 +338,73 @@ then
               export HOURt=$(eval $SIGHDR $SIGXt fhour)
               rch=$?
               if (( rcj + rcl + rcn + rct + rch == 0 )); then
-                fsize_sigrt=`eval ls -l $SIGXt |awk -F" " '{print $5}'`
-                fsize_sfcrt=`eval ls -l $SFCXt |awk -F" " '{print $5}'`
-                if (( HOURt > fhresini )); then
-                  for MN in $MEMBER_NAMES
-                  do
-                    SIGXm=$SIGX_P$HOURtest$cfsuffix
-                    SFCXm=$SFCX_P$HOURtest$cfsuffix
-                    if eval test -f $SIGXm -a -f $SFCXm
-                    then
-                      export JCAPm=$(eval $SIGHDR $SIGXm jcap)
-                      rcj=$?
-                      export LEVSm=$(eval $SIGHDR $SIGXm levs)
-                      rcl=$?
-                      export LONBm=$(eval $SIGHDR $SIGXm lonb)
-                      rcn=$?
-                      export LATBm=$(eval $SIGHDR $SIGXm latb)
-                      rct=$?
-                      export HOURm=$(eval $SIGHDR $SIGXm fhour)
-                      rch=$?
-                      export HOURf=$(eval $SFCHDR $SFCXm fhour)
-                      rcf=$?
-                      if (( rcj + rcl + rcn + rct + rch +  rcf == 0 )); then
-                        fsize_sigrm=`eval ls -l $SIGXm |awk -F" " '{print $5}'`
-                        fsize_sfcrm=`eval ls -l $SFCXm |awk -F" " '{print $5}'`
-                        if (( HOURt != HOURm )); then
-                          echo for $MN restart file forecast hour $HOURm does not match $HOURt
-                          goodrestart=no
-                        elif (( HOURt != HOURf )); then
-                          echo for $MN sfc restart file forecast hour $HOURf does not match $HOURt
-                          goodrestart=no
-                        elif (( fsize_sigrt != fsize_sigrm )); then
-                          echo for $MN restart file size sigr $fsize_sigrm does not match $fsize_sigrt
-                          goodrestart=no
-                        elif (( fsize_sfcrt != fsize_sfcrm )); then
-                          echo for $MN restart file size sfcr $fsize_sfcrm does not match $fsize_sfcrt
-                          goodrestart=no
-                        elif (( JCAPt != JCAPm )); then
-                          echo for $MN restart file JCAP $JCAPm does not match $JCAPt
-                          goodrestart=no
-                        elif (( LEVSt != LEVSm )); then
-                          echo for $MN restart file LEVS $LEVSm does not match $LEVSt
-                          goodrestart=no
-                        elif (( LONBt != LONBm )); then
-                          echo for $MN restart file LONB $LONBm does not match $LONBt
-                          goodrestart=no
-                        elif (( LATBt != LATBm )); then
-                          echo for $MN restart file LATB $LATBm does not match $LATBt
-                          goodrestart=no
-                        fi
-                      else                        #rc
-                        echo Restart file $SIGXm for Member $MN cannot be processed
-                        goodrestart=no
-                      fi                          #rc
-                    else                          #-f
-                      echo Restart file $SIGXm for Member $MN is NOT available
-                      goodrestart=no
-                    fi                            #-f
-                  done                            #MN
-                else                              #HOURt
-                  echo restart file $SIGXt hour $HOURt not later than initial hour $fhresini
-                  goodrestart=no
-                fi                                #HOURt
+	        if (( JCAPt == JCAP )); then
+		  fsize_sigrt=`eval ls -l $SIGXt |awk -F" " '{print $5}'`
+		  fsize_sfcrt=`eval ls -l $SFCXt |awk -F" " '{print $5}'`
+		  if (( HOURt > fhresini )); then
+		    for MN in $MEMBER_NAMES
+		    do
+		      SIGXm=$SIGX_P$HOURtest$cfsuffix
+		      SFCXm=$SFCX_P$HOURtest$cfsuffix
+		      if eval test -f $SIGXm -a -f $SFCXm
+		      then
+			export JCAPm=$(eval $SIGHDR $SIGXm jcap)
+			rcj=$?
+			export LEVSm=$(eval $SIGHDR $SIGXm levs)
+			rcl=$?
+			export LONBm=$(eval $SIGHDR $SIGXm lonb)
+			rcn=$?
+			export LATBm=$(eval $SIGHDR $SIGXm latb)
+			rct=$?
+			export HOURm=$(eval $SIGHDR $SIGXm fhour)
+			rch=$?
+			export HOURf=$(eval $SFCHDR $SFCXm fhour)
+			rcf=$?
+			if (( rcj + rcl + rcn + rct + rch +  rcf == 0 )); then
+			  fsize_sigrm=`eval ls -l $SIGXm |awk -F" " '{print $5}'`
+			  fsize_sfcrm=`eval ls -l $SFCXm |awk -F" " '{print $5}'`
+			  if (( HOURt != HOURm )); then
+			    echo for $MN restart file forecast hour $HOURm does not match $HOURt
+			    goodrestart=no
+			  elif (( HOURt != HOURf )); then
+			    echo for $MN sfc restart file forecast hour $HOURf does not match $HOURt
+			    goodrestart=no
+			  elif (( fsize_sigrt != fsize_sigrm )); then
+			    echo for $MN restart file size sigr $fsize_sigrm does not match $fsize_sigrt
+			    goodrestart=no
+			  elif (( fsize_sfcrt != fsize_sfcrm )); then
+			    echo for $MN restart file size sfcr $fsize_sfcrm does not match $fsize_sfcrt
+			    goodrestart=no
+			  elif (( JCAPt != JCAPm )); then
+			    echo for $MN restart file JCAP $JCAPm does not match $JCAPt
+			    goodrestart=no
+			  elif (( LEVSt != LEVSm )); then
+			    echo for $MN restart file LEVS $LEVSm does not match $LEVSt
+			    goodrestart=no
+			  elif (( LONBt != LONBm )); then
+			    echo for $MN restart file LONB $LONBm does not match $LONBt
+			    goodrestart=no
+			  elif (( LATBt != LATBm )); then
+			    echo for $MN restart file LATB $LATBm does not match $LATBt
+			    goodrestart=no
+			  fi
+			else                        #rc
+			  echo Restart file $SIGXm for Member $MN cannot be processed
+			  goodrestart=no
+			fi                          #rc
+		      else                          #-f
+			echo Restart file $SIGXm for Member $MN is NOT available
+			goodrestart=no
+		      fi                            #-f
+		    done                            #MN
+		  else                              #HOURt
+		    echo restart file $SIGXt hour $HOURt not later than initial hour $fhresini
+		    goodrestart=no
+		  fi                                #HOURt
+		else
+		  echo for $MN restart JCAP $JCAPt does not match $JCAP
+		  goodrestart=no
+		fi
               else                                #rc
                 echo Restart file $SIGXt for Member $MN cannot be processed
                 goodrestart=no
@@ -433,10 +445,38 @@ if [[ $goodrestart = no ]]; then
   echo Restart files not available, starting with initial conditions
 fi
 
+####################################
+#
+# If this is a rerun, remove all log and control files
+#
+# If this is a restart, remove log and control files after the restart hour
+#
+####################################
+
+if [[ $RERUN = YES ]]; then
+  $USHgefs/gefs_restart_cleanup.sh 00 $FHMAX fcst post prd0p5 prd1p0 prd2p5
+else
+  if [[ $goodrestart = yes ]]; then
+    (( HOURclean = HOURtest + FH_INC ))
+    $USHgefs/gefs_restart_cleanup.sh $HOURclean $FHMAX fcst post prd0p5 prd1p0 prd2p5
+  fi
+fi
+
+####################################
+#
+# If this is not a restart
+#
+# Define Initialization File Names
+#
+# and Copy these file to the work directory ($DATA)
+#
+####################################
+
 echo after restart file tests
 echo goodrestart=$goodrestart
 echo RERUN=$RERUN
 echo RUN_CONCURRENT=$RUN_CONCURRENT
+
 
 if [[ $RERUN = YES ]]; then
   if [[ $RUN_CONCURRENT = yes ]]; then
@@ -459,9 +499,11 @@ if [[ $RERUN = YES ]]; then
       if eval test -f $SIGI -a -f $SFCI
       then
 	 msg="Forecast Starting with Initial Guess Fields, member $MN"
+	 echo "`date`   $msg"
 	 postmsg "$jlogfile" "$msg"
       else
-	 msg="Initial Guess Fields (member $MN) Not Available/Rerun JENS_INIT"
+	 msg="FATAL ERROR:  Initial Guess Fields (member $MN) Not Available/Rerun JENS_INIT"
+	 echo "`date`   $msg"
 	 postmsg "$jlogfile" "$msg"
 	 export pgm=JENS_FCST
 	 export err=911
@@ -486,9 +528,11 @@ if [[ $RERUN = YES ]]; then
     if test -f $SIGI -a -f $SFCI
     then
       msg="Forecast Starting with Initial Guess Fields"
+      echo "`date`   $msg"
       postmsg "$jlogfile" "$msg"
     else
-      msg="Initial Guess Fields Not Available/Rerun JENS_INIT"
+      msg="FATAL ERROR: Initial Guess Fields Not Available/Rerun JENS_INIT"
+      echo "`date`   $msg"
       postmsg "$jlogfile" "$msg"
       export pgm=JENS_FCST
       export err=911
@@ -533,10 +577,9 @@ if [[ $RUN_CONCURRENT = yes ]]; then
     export JCAP=$(eval $SIGHDR $SIGI jcap)
     export HOUR=$(eval $SIGHDR $SIGI fhour)
     if [[ $jcapin != $JCAP ]] || [[ $hourin != $HOUR ]] ; then
-      echo Initial file for membera $MN has JCAP and HOUR values $JCAP $HOUR
-      echo different from member $CONC_INI
       echo Forecast jobs is aborted
-      msg="Initial file JCAP=$JCAP for member $MN does not match member $CONC_INI"
+      msg="FATAL ERROR:  Initial file JCAP=$JCAP for member $MN does not match member $CONC_INI"
+      echo "`date`   $msg"
       postmsg "$jlogfile" "$msg"
       export pgm=JENS_FCST
       export err=911
@@ -550,10 +593,9 @@ if [[ $FORECAST_SEGMENT = lr ]] ; then
   echo Initial files are consistent with the required resolution $FORECAST_SEGMENT
   echo Forecast proceed with T$jcapin\L$levsin 
  else
-  echo Initial files are not consistent with the required resolution $FORECAST_SEGMENT
-  echo $jcapin $levsin 
   echo Forecast job failed. Please check the initial files
-  msg="Initial files with $jcapin $levsin are not consistent with $FORECAST_SEGMENT"
+  msg="FATAL ERROR:  Initial files with $jcapin $levsin are not consistent with $FORECAST_SEGMENT"
+  echo "`date`   $msg"
   postmsg "$jlogfile" "$msg"
   export pgm=JENS_FCST
   export err=911
@@ -706,8 +748,8 @@ then
 	     eval cp $SIGX2 $DATA/${RUM}.sigr2
 	     eval cp $SFCX $DATA/${RUM}.sfcr
 	   else
-	      echo Restart file for Member $MN is not available
-	      msg="Restart file for Member $MN is not available"
+	      msg="FATAL ERROR:  Restart file for Member $MN is not available"
+	      echo "`date`   $msg"
 	      postmsg "$jlogfile" "$msg"
 	      export pgm=JENS_FCST
 	      export err=911
@@ -721,8 +763,8 @@ then
 	       eval cp $SIGX2 $DATA/${RUM}.sigr2
 	       eval cp $SFCX $DATA/${RUM}.sfcr
 	     else
-	      echo Restart file for Member $MN is not available
-	      msg="Restart file for Member $MN is not available"
+	      msg="FATAL ERROR:  Restart file for Member $MN is not available"
+	      echo "`date`   $msg"
 	      postmsg "$jlogfile" "$msg"
 	      export pgm=JENS_FCST
 	      export err=911

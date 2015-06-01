@@ -237,6 +237,13 @@ export DO_HD_PGRB=NO
 export HDMAX=00
 
 ####################################
+# If this is a rerun, remove all control files
+####################################
+if [[ $RERUN = YES ]]; then
+  $USHgefs/gefs_restart_cleanup.sh 00 $FHMAX prd0p5 prd1p0 prd2p5
+fi
+
+####################################
 # Check if this is a restart
 ####################################
 if [[ true = false ]]; then
