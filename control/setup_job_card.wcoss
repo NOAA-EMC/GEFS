@@ -296,14 +296,12 @@ if [[ $submit_post_together = yes ]] && (( $jjje > $jjj + 1 )); then
                     if (( iii == $jjjpe - $nprdgen - 1 && jjje >= $iiie )); then
       cat <<eofCAT >>$jobcontrol$SUBJOB
                      cd $controldir
-                     echo rlw test before first $0 $yyyymmddccb$iii $yyyymmddcce$jjje nextbefore 2>&1
                      $0 $yyyymmddccb$iii $yyyymmddcce$jjje nextbefore 2>&1
 eofCAT
                     else
 		     echo $iii $iiie
       cat <<eofCAT >>$jobcontrol$SUBJOB
                      cd $controldir
-                     echo rlw test before second $0 $yyyymmddccb$iii $yyyymmddccb$iiie nextbefore 2>&1
                      $0 $yyyymmddccb$iii $yyyymmddccb$iiie nextbefore 2>&1
 eofCAT
                     fi
@@ -312,7 +310,6 @@ eofCAT
    else
       cat <<eofCAT >>$jobcontrol$SUBJOB
    cd $controldir
-   echo rlw test before third $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore 2>&1
    $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore 2>&1
 eofCAT
    fi
@@ -320,7 +317,6 @@ else
 
       cat <<eofCAT >>$jobcontrol$SUBJOB
 cd $controldir
-echo rlw test before fourth $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore 2>&1
 $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore 2>&1
 eofCAT
 fi
@@ -361,12 +357,10 @@ echo \`date\` $0  $yyyymmddccb$jjjb $yyyymmddcce$jjje next submit for dev after 
 ###################################################
 # Kate 11/21/2013
 cd $controldir
-if [[ $submit_chgres_together = yes ]] && (( $jjje > $jjjs00 )); then
-    if (( $jjj == $jjjs00  &&  $jjje > $jjjs00 &&  $fcst_segments == 2 ));  then
+if [[ $submit_chgres_together = yes ]] && (( $jjj == $jjjs00 )) && (( $fcst_segments == 2 )); then    
 
       cat <<eofCAT >>$jobcontrol$SUBJOB
                      cd $controldir
-                     echo rlw test before fifth $0 $yyyymmddccb$jjjs00 $yyyymmddccb$jjjr00 nextafter 2>&1
                      $0 $yyyymmddccb$jjjs00 $yyyymmddccb$jjjr00 nextafter 2>&1
 eofCAT
 
@@ -375,33 +369,21 @@ eofCAT
                     if (( iii == $jjjz00 - 1 )); then
       cat <<eofCAT >>$jobcontrol$SUBJOB
                      cd $controldir
-                     echo rlw test before sixth $0 $yyyymmddccb$iii $yyyymmddcce$jjje nextbefore 2>&1
                      $0 $yyyymmddccb$iii $yyyymmddcce$jjje nextbefore 2>&1
 eofCAT
                     else
 
                     (( iiie = iii + 1 ))
-                     echo rlw test before seventh $0 $yyyymmddccb\$iii $yyyymmddccb\$iiie nextbefore 2>&1
-                     echo rlw DISABLE THIS CALL BECAUSE IT IS NOT SET UP TO FUNCTION AND MAY BE REDUNDANT $0 $yyyymmddccb\$iii $yyyymmddccb\$iiie nextbefore 2>&1
       cat <<eofCAT >>$jobcontrol$SUBJOB
                      cd $controldir
-                     echo rlw test before eighth $0 $yyyymmddccb$iii $yyyymmddcce$iiie nextbefore 2>&1
-                     $0 $yyyymmddccb$iii $yyyymmddcce$iiie nextbefore 2>&1
+                     $0 $yyyymmddccb$iii $yyyymmddccb$iiie nextbefore 2>&1
 eofCAT
                     fi
                     (( iii = iii + 1 ))
              done
-   else
-      cat <<eofCAT >>$jobcontrol$SUBJOB
-                     cd $controldir
-    echo rlw test before ninth $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextafter 2>&1
-    $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextafter 2>&1
-eofCAT
-   fi
 else
       cat <<eofCAT >>$jobcontrol$SUBJOB
                      cd $controldir
-       echo rlw test before tenth $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextafter 2>&1
        $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextafter 2>&1
 eofCAT
 fi

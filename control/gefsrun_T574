@@ -870,14 +870,13 @@ if [[ $nextflag = yes ]]; then
       (000) 
           if (($npair == 0)); then
  	    jjjb=002
-#           jjjb=100
 	  else  
             if (($inflag == 6)); then 
             jjjb=010 
             else
-#           jjjb=012
-            jjjb=100         #use this line to skip INIT and gfs for testing
+            jjjb=012
             fi 
+#           jjjb=100         #use this line to skip INIT and gfs for testing
           fi ;;
       (002) jjjb=100 ;;
       (005) jjjb=010 ;;

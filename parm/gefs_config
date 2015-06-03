@@ -39,7 +39,7 @@ export gefsmachine=${gefsmachine:-wcoss}
   export HOMEgefs=$HOMEDIR/gefs.v11.0.x
   export HOMEgefs=$basesource/nwdev
 
-  export HOMEgsm=$HOMEDIR/gsm.v12.0.2
+  export HOMEgsm=$HOMEDIR/gsm.v12.1.0
   export HOMEpost=$HOMEDIR/ncep_post.v5.1.1
   export HOMEenkf=$HOMEDIR/enkf.v2.0.1
   export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.0
@@ -74,5 +74,5 @@ export gefsmachine=${gefsmachine:-wcoss}
 # export RUNMEM=$RUNMEM
 
 # Temperay setting for testing some special jobs, comment them out for real time dev test
-  export COMINGEST=/ensemble/noscrub/Yan.Luo/com-ingest-prod  #temporary testing of CQPF job
-  export COMIN=/ensemble/noscrub/emc.enspara/xz/T574L64SL/EK0 #temporary testing of CQPF job
+# export COMINGEST=/ensemble/noscrub/Yan.Luo/com-ingest-prod  #temporary testing of CQPF job
+# export COMIN=/ensemble/noscrub/emc.enspara/xz/T574L64SL/EK0 #temporary testing of CQPF job
