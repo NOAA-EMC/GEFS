@@ -24,7 +24,7 @@ o	Added new products (or replace existing products) of tropical storm track fore
 o	GEFS_ENKF_TRACK, A new job, 3 nodes, 4.7 -5.0 minutes
 o	GEFS_INIT_SEPARATE, 10 nodes, 12-15 minutes
 o	GEFS_INIT_PROCESS (formerly GEFS_INIT_ET), 5 nodes, 2 minute
-o	GEFS_INIT_COMBINE, 5 nodes, 8 minutes
+o	GEFS_INIT_COMBINE, 20 nodes, 5 minutes
 o	GEFS_FORECAST:
 ▪	GEFS_FORECAST_hr:  231 nodes, about 30 minutes. Doubled node usage compared with current production.
 ▪	GEFS_FORECAST_lr:  84 nodes, about 30 minutes.  Doubled node usage compared with current production.
@@ -34,21 +34,21 @@ o	GEFS_SIGCHGRS:
 ▪	21 nodes between the two forecast jobs and thus not a resource issue.
 o	GEFS_NCEPPOST : 
 ▪	GEFS_NCEPPOST_hr, 
-●	One job for each member in production,  ¼ node, 30 minute per job.
-●	3 jobs for each member. 1 node, about 30 minutes per job. (we are gtrying to combine the 3 jobs into 1)
+●	Prod: One job for each member in production,  ¼ node, 30 minute per job.
+●	NEW: 3 jobs for each member. 1 node, about 30 minutes per job. 
 ●	63 nodes are needed,  compared with  5.25 in production
 ▪	GEFS_NCEPPOST_lr, 
-●	One job for each member in production,  ¼ node, 30 minute per job.
-●	one jobs for each member. 1 node, about 30 minutes per job. 
+●	Prod: One job for each member in production,  ¼ node, 30 minute per job.
+●	NEW: one job for each member. 1 node, about 30 minutes per job. 
 ●	21 nodes are needed,  compared with  5.25 in production
 o	GEFS_PRDGEN: 
 ▪	GEFS_PRDGEN_hr
-●	One job for each member in production, 1 task, 30 minute per job.
-●	One 5-task mpmd job for each member. Task 1 for 1.0d, 2 for 2.5d grid, and 3-5 for 0.5d.  5/6 node, about 30 minutes per job.
+●	Prod: One job for each member in production, 1 task, 30 minute per job.
+●	NEW: One 5-task mpmd job for each member. Task 1 for 1.0d, 2 for 2.5d grid, and 3-5 for 0.5d.  5/6 node, about 30 minutes per job.
 ●	18 nodes are needed,  compared with  2 in production
 ▪	GEFS_PRDGEN_lr
-●	One job for each member in production, 1 task, 30 minute per job.
-●	One 4-task mpmd job for each member. task 1 for 1.0d, 2 for 2.5d grid, and 3-4 for 0.5d.  2/3 node, about 30 minutes.
+●	Prod: One job for each member in production, 1 task, 30 minute per job.
+●	NEW: One 4-task mpmd job for each member. task 1 for 1.0d, 2 for 2.5d grid, and 3-4 for 0.5d.  2/3 node, about 30 minutes.
 ●	14 nodes are needed,  compared with  2 in production
 o	GEFS_PRDGEN_GFS: 
 ●	One 2-task mpmd job. task 1 for 1.0d/2.5d grid, and 2 for 0.5d.  1/3 node, about 20 minutes. Similar to production

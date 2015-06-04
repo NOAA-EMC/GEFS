@@ -1,0 +1,31 @@
+Additional Notes on running GEFS v11
+This note shold be use in addition to that in the readme file.
+
+
+This note shold be use in addition to that in the readme file.
+
+1. Added ecf sub directory
+   The files in this new sub directory is the ecflow scripts used in production.
+   The job cards genetaed bt the control/setup_job_card.wcoss should be functionally identical  to these ecflow scripts, especially in the resources requirement.
+
+2. Setting up the package
+   After  copying this directory to "(your file location)/[expid]/nwdev" (see step 1 in readme file), you need to do the following:
+   (1) see parm/gefs_config to make sure the following modules and  tags are available:
+       /nwprod2/modulefiles
+       prod_util/v1.0.1
+       util_shared/v1.0.0
+       grib_util/v1.0.1
+
+       HOMEgsm=$HOMEDIR/gsm.v12.1.0
+       HOMEpost=$HOMEDIR/ncep_post.v5.1.1
+       HOMEenkf=$HOMEDIR/enkf.v2.0.1
+       HOMEtrak=$HOMEDIR/ens_tracker.v1.1.0
+   (2) build the  executables of GEFS
+       go to the sorc sub-directory, following the instructions in README.build file, all the executables will be generated and saved in the exec sub-directory. 
+
+3. Starting your dev run, on wcoss 
+    Please check and modify (if it is necessaray) the control/setbase scrip, to make sure the paths of the source and output files are correct.
+    Many dev users run GEFS in such a way: one fixed cycle per day (e.g. 00Z),  using pre-generated init files, ignoring gfs deterministic fcst products. In this situation, one needs to modify the following scripts:
+    (1) control/gefsrun_T574, uncomment line 879 (jjjb=100)
+    (2) control/control.r000, change the if condition in line 13 from ( 1 == 0 ) to ( 0 == 0), and modify line 23 and 37 to specify the path of your init files
+    (3) parm/gefs.parm, uncomment line 26 to make sure fhrp=24    
