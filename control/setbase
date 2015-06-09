@@ -171,7 +171,7 @@ fi
 
 if [[ $machl = t ]] || [[ $machl = g ]]; then
 # For WCOSS
-  export account=gefs
+  export account=GEN-T2O
   export group=ensemble
   # RLW 20140903 modify selected settings for emc.enspara on WCOSS
   if [[ "$LOGNAME" = "emc.enspara" ]]; then
