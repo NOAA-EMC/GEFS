@@ -36,7 +36,7 @@ export PCOMROOT=${PCOMROOT:-/pcom2/${envir}}
 HOMEDIR=/ensemble/save/Dingchen.Hou/RFC
 export gefsmachine=${gefsmachine:-wcoss}
 
-  export HOMEgefs=$HOMEDIR/gefs.v11.0.x
+  export HOMEgefs=$HOMEDIR/gefs.v11.0.0
   export HOMEgefs=$basesource/nwdev
 
   export HOMEgsm=$HOMEDIR/gsm.v12.1.0
