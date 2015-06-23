@@ -873,6 +873,8 @@ if [[ $nextflag = yes ]]; then
 	  else  
             if (($inflag == 6)); then 
             jjjb=010 
+	    # RLW 20150326 skip 005 job
+	    jjjb=010
             else
             jjjb=012
             fi 
@@ -1422,6 +1424,8 @@ wall_clock_limit_fcst_short="00:30:00"
 wall_clock_limit_fcst_long="02:30:00"
   if [[ $gefsmachine = wcoss ]]; then                       
 wall_clock_limit_fcst_long="3:59"
+# RLW 20150511 ############################################################################ set lower limit to kill runaway jobs
+wall_clock_limit_fcst_long="1:29"
 #wall_clock_limit_fcst_long="0:15"
 wall_clock_limit_fcst_short="00:20"
   fi
@@ -1745,7 +1749,7 @@ case $taskname in
 
    ############ DHOU, 08/20/2010, suggested resources for T254L42 on VAPOR dev mode
    ###### This section should be modified based on RESOLUTION and parallel_threads
-     export RERUN=YES
+     echo export RERUN=YES ................................................ 20150615 RLW disabled for restart testing
      node_usage=not_shared
      task_affinity="cpu(1)"     # DHOU, core(1) not run for thread=1
      parallel_threads=1         # DHOU, to get enough memory with less tasks
@@ -1867,7 +1871,7 @@ case $taskname in
 
    ############ DHOU, 08/20/2010, suggested resources for T254L42 on VAPOR dev mode
    ###### This section should be modified based on RESOLUTION and parallel_threads
-     export RERUN=YES
+     echo export RERUN=YES ................................................ 20150615 RLW disabled for restart testing
      node_usage=not_shared
      task_affinity="cpu(1)"     # DHOU, core(1) not run for thread=1
      parallel_threads=1         # DHOU, to get enough memory with less tasks
@@ -3639,7 +3643,7 @@ echo
 ) 2>&1 | tee -a $ldir/$lname
 
 echo $ldir
-ls -ablprt $ldir | tail -7
+echo DISABLED ls -ablprt $ldir | tail -7
 
 echo
 echo `date` $0 $*                                                                     end

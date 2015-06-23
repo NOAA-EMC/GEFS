@@ -340,8 +340,8 @@ if [[ $envir = dev ]]; then
 
   # run the gfs prdgen job or not
   # test means run only if the gfs master post files exist
-  export rungfsprdgen=yes
   export rungfsprdgen=no
+  export rungfsprdgen=yes
   export rungfsprdgen=test
 
   # archive and cleanup if cyc ne 0
@@ -383,7 +383,11 @@ if [[ $envir = dev ]]; then
 fi
 
 export submit_post_together=yes
+export submit_post_together=no
+
+export submit_chgres_together=no
 export submit_chgres_together=yes
+
 if (( npair < 1 )); then
  export submit_post_together=no
  export submit_chgres_together=no

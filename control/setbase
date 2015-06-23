@@ -200,6 +200,40 @@ fi
 
 fi
 
+# RLW 20140903 modify selected settings for emc.enspara on WCOSS
+# RLW 20150603 this block copied and modified from rweh
+if [[ "$LOGNAME" = "emc.enspara" ]]; then
+  userin="Richard.Wobus"
+  export basesource=/$group/save/$userin/s/$expid
+  export basebin=$basesource/nw$envir/control
+  userout="emc.enspara"
+  export baseoutput=/$PTMP/$userout/o/$expid
+  export basetmp=/$STMP/$userout/o/$expid
+  export baseptmp=/$PTMP/$userout/o/$expid
+  usergfs="Richard.Wobus"
+  export basedgfs=/$group/noscrub/$usergfs/o
+  dh=`date +%H`
+  if (( dh >= 12 )) && (( dh < 23 )); then
+    if [[ $JOBQUEUE = dev2 ]]; then
+      export classs=devhigh2_shared
+      export classp=devhigh2
+      export JOBQUEUE=devhigh2
+    else
+      export classs=devhigh_shared
+      export classp=devhigh
+      export JOBQUEUE=devhigh
+    fi
+  else
+    if [[ $JOBQUEUE = dev2 ]]; then
+      export classs=dev2_shared
+      export classp=dev2
+    else
+      export classs=dev_shared
+      export classp=dev
+    fi
+  fi
+fi
+
 echo basesource=$basesource
 echo baseoutput=$baseoutput
 echo

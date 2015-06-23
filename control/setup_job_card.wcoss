@@ -439,7 +439,8 @@ eofCAT
 #BSUB -n 1
 ##BSUB -q "hpc_ibm" 
 ##BSUB -q "dev" 
-#BSUB -q "dev_shared"
+##BSUB -q "dev_shared"
+#BSUB -q "$JOBQUEUE"
 #BSUB -R "rusage[mem=250]"
 #BSUB -R affinity[core]
 #BSUB -L /bin/ksh
