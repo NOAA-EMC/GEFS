@@ -125,7 +125,9 @@ fi
 export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
 export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
 
-export overwrite=no
+# 20150622 RLW change to "yes" to remake prdgen when post is remade
+#export overwrite=no
+export overwrite=yes
 
 if [[ "$makepgrb1" = "yes" ]]; then
 mkdir -m 775 -p $COMOUT/$cyc/pgrba
@@ -242,56 +244,6 @@ export HDMAX=00
 if [[ $RERUN = YES ]]; then
   $USHgefs/gefs_restart_cleanup.sh 00 $FHMAX prd0p5 prd1p0 prd2p5
 fi
-
-####################################
-# Check if this is a restart
-####################################
-if [[ true = false ]]; then
-for submc in prd1p0 prd2p5
-do
-if [[ $cycsuffix = false ]]; then
-  if test -f $COMOUT/$cyc/misc/$submc/$RUN.t${cyc}z.prdgen.control
-  then
-      modelrecvy=`cat < $COMOUT/$cyc/misc/$submc/$RUN.t${cyc}z.prdgen.control`
-      recvy_pdy=`echo $modelrecvy | cut -c1-8`
-      recvy_cyc=`echo $modelrecvy | cut -c9-10`
-      recvy_shour=`echo $modelrecvy | cut -c11-13`
-
-      if test $RERUN = "RESTART"
-      then
-         if test $recvy_shour -ge $FHOUR
-         then
-            msg="$RUN Forecast Post Already Completed to $recvy_shour"
-            postmsg "$jlogfile" "$msg"
-	    SHOUR=$recvy_shour
-	 else
-	    SHOUR=`expr $recvy_shour + $FHINC`
-	    msg="$RUN Starting: PDY=$PDY cycle=t${recvy_cyc}z SHOUR=$SHOUR    ."
-	    postmsg "$jlogfile" "$msg"
-	 fi
-      fi
-  fi
-else
-  if test -f $COMOUT/$cyc/misc/$submc/$RUN.t${cyc}z.prdgen.control.cycfs$cyc_fcst
-  then
-     modelrecvy=`cat < $COMOUT/$cyc/misc/$submc/$RUN.t${cyc}z.prdgen.control.cycfs$cyc_fcst`
-     recvy_pdy=`echo $modelrecvy | cut -c1-8`
-     recvy_cyc=`echo $modelrecvy | cut -c9-10`
-     recvy_shour=`echo $modelrecvy | cut -c11-13`
-
-     if test $RERUN = "RESTART"
-     then
-       if test $recvy_shour -ge $FHOUR
-       then
-         msg="$RUN Forecast Post Already Completed to $recvy_shour"
-         postmsg "$jlogfile" "$msg"
-         SHOUR=$recvy_shour
-       fi
-     fi
-  fi
-fi
-done
-fi #(true = false)
 
 FHINC34=$FHINCP5 
 

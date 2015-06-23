@@ -45,9 +45,19 @@ export MP_LABELIO=YES
 export DO_LOW_RES=$DO_LOW_RES
 export DO_THIS_RES=YES
 submc=prd1p0
+pgad=pgrb2a
+pgbd=pgrb2b
+pgapre=pgrb2a
+pgbpre=pgrb2b
+pgasuf=
 if [[ "$DO_LOW_RES" = "YES" ]]; then
- export DO_THIS_RES=NO
- submc=prd2p5
+  export DO_THIS_RES=NO
+  submc=prd2p5
+  pgad=pgrb2alr
+  pgbd=pgrb2blr
+  pgapre=pgrb2a
+  pgbpre=pgrb2b
+  pgasuf=.2
 fi
 
 ############################################################
@@ -85,9 +95,12 @@ SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 ############################################################
 # Post Analysis Files before starting the Forecast Post 
 ############################################################ 
+if [[ $DOANALYSIS = YES ]]; then
+############################################################ 
 # wait for master post to be finished
 ############################################################
 if (( SHOUR == 0 )); then
+
   export ffhr=anl
   export fhr=00
   export anlflag=yes
@@ -122,7 +135,7 @@ if (( SHOUR == 0 )); then
      ###############################
      if [ $ic -eq $SLEEP_LOOP_MAX ]
      then
-	date >$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.anl.missing $cfsuffix
+	date >$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.anl$cfsuffix.missing
 	echo `date` $sname $member post data missing for analysis
 	msg="$member MISSING POST DATA for analysis"
 	postmsg "$jlogfile" "$msg"
@@ -136,23 +149,51 @@ if (( SHOUR == 0 )); then
   #######################################################
   export addgrb1id=yes
 
-  # Making the 1-degree grib files
-  $USHgefs/gefs_prdgen.sh
-
-  ####################################
-  # send control files to misc
-  ####################################
-  if test $SENDCOM = "YES"
-  then
-    if test $fhr -lt 100
-    then
-      pad="0"
-    else
-      pad=""
+  pcfile=$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.anl$cfsuffix
+  fileaout=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}anl$pgasuf$cfsuffix
+  fileaouti=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}anl$pgasuf$cfsuffix.idx
+  filebout=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}anl$pgasuf$cfsuffix
+  filebouti=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}anl$pgasuf$cfsuffix.idx
+  if [[ -s $pcfile ]]; then
+    nmissing=0
+    for file in $fileaout $fileaouti $filebout $filebouti
+    do
+      if [[ ! -s $file ]]; then
+        echo file=$file IS MISSING
+	(( nmissing = nmissing + 1 ))
+      fi
+    done
+    if (( nmissing > 0 )); then
+      rm $pcfile
     fi
-    echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control_anl $cfsuffix
+  else
+    nmissing=1
   fi
+
+  if [[ ! -s $pcfile ]]; then
+
+    # Making the 1-degree grib files
+    $USHgefs/gefs_prdgen.sh
+
+    ####################################
+    # send control files to misc
+    ####################################
+    if test $SENDCOM = "YES"
+    then
+      if test $fhr -lt 100
+      then
+	pad="0"
+      else
+	pad=""
+      fi
+      echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.anl$cfsuffix
+    fi
+
+  fi
+
 fi
+
+fi # DOANALYSIS
 
 ############################################################
 # Initialize Loop Through the Post Forecast Files 
@@ -185,7 +226,7 @@ do
     while [ $ic -le $SLEEP_LOOP_MAX ]
     do
        #20100730 change test to use master control file
-       mcfile=$COMOUT/$cyc/misc/post/$RUN.$cycle.master.control.$fhr$cfsuffix
+       mcfile=$COMOUT/$cyc/misc/post/$RUN.$cycle.master.control.f$fhr$cfsuffix
        testfhr=-1
        if [[ -f $mcfile ]]; then
 	 teststring=`cat $mcfile|head -1`
@@ -209,7 +250,7 @@ do
        ###############################
        if [ $ic -eq $SLEEP_LOOP_MAX ]
        then
-	  date >$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.$ffhr.missing $cfsuffix
+	  date >$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.f$ffhr$cfsuffix.missing
 	  echo `date` $sname $member missing post data for hour $fhr
 	  msg="$member MISSING POST DATA for hour $fhr"
 	  postmsg "$jlogfile" "$msg"
@@ -227,33 +268,56 @@ do
   ####################################
   export addgrb1id=yes
 
-  # Making the 2.5x2.5 degree GRIB files in background -canceled
-  if [[ "$DO_LOW_RES" = 'YES' ]] && [[ `expr $fhr % 6 ` -eq 0 ]] 
-  then
-    #($USHgefs/gefs_prdgen_lowres.sh)&
-     $USHgefs/gefs_prdgen_lowres.sh
+  pcfile=$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.f${fhr}$cfsuffix
+  fileaout=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}f${fhr}$pgasuf$cfsuffix
+  fileaouti=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}f${fhr}$pgasuf$cfsuffix.idx
+  filebout=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}f${fhr}$pgasuf$cfsuffix
+  filebouti=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}f${fhr}$pgasuf$cfsuffix.idx
+  if [[ -s $pcfile ]]; then
+    nmissing=0
+    for file in $fileaout $fileaouti $filebout $filebouti
+    do
+      if [[ ! -s $file ]]; then
+        echo file=$file IS MISSING
+	(( nmissing = nmissing + 1 ))
+      fi
+    done
+    if (( nmissing > 0 )); then
+      rm $pcfile
+    fi
+  else
+    nmissing=1
   fi
 
-  if [[ "$DO_THIS_RES" != 'NO' ]] 
-  then
-    # Making the 1x1 degree GRIB file
-    $USHgefs/gefs_prdgen.sh
-  fi  
+  if [[ ! -s $pcfile ]]; then
 
-#  wait
-
-  ####################################
-  # send control files to misc
-  ####################################
-  if test $SENDCOM = "YES"
-  then
-    if test $fhr -lt 100
+    # Making the 2.5x2.5 degree GRIB files in background -canceled
+    if [[ "$DO_LOW_RES" = 'YES' ]] && [[ `expr $fhr % 6 ` -eq 0 ]] 
     then
-      pad="0"
-    else
-      pad=""
+      #($USHgefs/gefs_prdgen_lowres.sh)&
+       $USHgefs/gefs_prdgen_lowres.sh
     fi
-    echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control_$fhr $cfsuffix
+
+    if [[ "$DO_THIS_RES" != 'NO' ]] 
+    then
+      # Making the 1x1 degree GRIB file
+      $USHgefs/gefs_prdgen.sh
+    fi  
+
+    ####################################
+    # send control files to misc
+    ####################################
+    if test $SENDCOM = "YES"
+    then
+      if test $fhr -lt 100
+      then
+	pad="0"
+      else
+	pad=""
+      fi
+      echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.f$fhr$cfsuffix
+    fi
+
   fi
 
   export fhr=`expr $fhr + $FHINC`

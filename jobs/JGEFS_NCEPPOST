@@ -121,7 +121,10 @@ export CHGRESSH=$USHgsm/global_chgres.sh
 export CHGRESEXEC=$EXECgsm/global_chgres
 
 export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
+# RLW 20150622 test new version of post executable
 export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
+#export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post-mod}
+#export POSTGPEXEC=${$EXECpost/ncep_post-mod}
 
 #echo in $0: POSTGPSH=$POSTGPSH
 #echo in $0: POSTGPEXEC=$POSTGPEXEC
@@ -290,15 +293,16 @@ echo FHOUR_LOW=$FHOUR_LOW
 export DO_HD_PGRB=NO
 export HDMAX=00
 
+if (( 0 == 1 )) ; then
 ####################################
 # Check if this is a restart
 ####################################
-  miscfile=$COMOUT/$cyc/misc/post/$RUN.t${cyc}z.master.control
+  mcfile=$COMOUT/$cyc/misc/post/$RUN.t${cyc}z.master.control
 if [[ $cycsuffix = false ]]; then
-  if test -f $miscfile
+  if test -f $mcfile
   then
 #    modelrecvy=`cat < $COMOUT/$cyc/misc/post/$RUN.t${cyc}z.master.control`
-     modelrecvy=`cat < $miscfile`
+     modelrecvy=`cat < $mcfile`
      recvy_pdy=`echo $modelrecvy | cut -c1-8`
      recvy_cyc=`echo $modelrecvy | cut -c9-10`
      recvy_shour=`echo $modelrecvy | cut -c11-13`
@@ -323,11 +327,11 @@ if [[ $cycsuffix = false ]]; then
      fi
   fi
 else
-  miscfile=$COMOUT/$cyc/misc/$post/RUN.t${cyc}z.master.control.cycfs$cyc_fcst
-  if test -f $miscfile
+  mcfile=$COMOUT/$cyc/misc/$post/RUN.t${cyc}z.master.control.cycfs$cyc_fcst
+  if test -f $mcfile
   then
 #    modelrecvy=`cat < $COMOUT/$cyc/misc/post/$RUN.t${cyc}z.master.control.cycfs$cyc_fcst`
-     modelrecvy=`cat < $miscfile`
+     modelrecvy=`cat < $mcfile`
      recvy_pdy=`echo $modelrecvy | cut -c1-8`
      recvy_cyc=`echo $modelrecvy | cut -c9-10`
      recvy_shour=`echo $modelrecvy | cut -c11-13`
@@ -352,6 +356,7 @@ else
      fi
   fi
 fi
+fi # (( 0 == 1 ))
 
 export post_log=$DATA/post.$FORECAST_SEGMENT.log$SUBJOB\_${RUN}$cfsuffix
 

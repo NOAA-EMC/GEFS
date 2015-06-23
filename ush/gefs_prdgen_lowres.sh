@@ -78,7 +78,7 @@ excludestring='180-192hr'
 # Step II: Create 2.5x2.5 PGRB2A files
 #######################################
 if [[ -s $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix ]] && \
-   [[ -s $COMOUT/$cyc/pgrba2lr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix.idx ]] && \
+   [[ -s $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix.idx ]] && \
    [[ $overwrite = no ]]; then
      echo `date` 2.5x2.5 pgrb2a processing skipped for $RUN $ffhr
 else

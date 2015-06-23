@@ -48,16 +48,27 @@ export jobdir=$6
 
 export DO_THIS_RES=YES
 submc=prd0p5
+pgad=pgrb2ap5
+pgbd=pgrb2bp5
+pgapre=pgrb2a.0p50.
+pgbpre=pgrb2b.0p50.
+pgasuf=
 if [[ "$DO_LOW_RES" = "YES" ]]; then
- export DO_THIS_RES=NO
- submc=prd2p5
+  export DO_THIS_RES=NO
+  submc=prd2p5
+  pgad=pgrb2alr
+  pgbd=pgrb2blr
+  pgapre=pgrb2a
+  pgbpre=pgrb2b
+  pgasuf=.2
+
 fi
 
 ############################################################
 # clean up missing markers from previous run
 ############################################################
 mkdir -m 775 -p $COMOUT/$cyc/misc/$submc
-cd $COMOUT/$cyc/misc/$submc/$submc
+cd $COMOUT/$cyc/misc/$submc
 rc=$?
 if (( rc == 0 )); then
   for file in $RUN.*.missing
@@ -131,7 +142,7 @@ if [[ $DOANALYSIS = YES ]]; then
      ###############################
      if [ $ic -eq $SLEEP_LOOP_MAX ]
      then
-	date >$COMOUT/$cyc/misc/$submc/$RUN.$ffhr.missing
+	date >$COMOUT/$cyc/misc/$submc/$RUN.$ffhr$cfsuffix.missing
 	echo `date` $sname $member end
 	msg="$member MISSING DATA for hour $ffhr"
 	postmsg "$jlogfile" "$msg"
@@ -144,23 +155,51 @@ if [[ $DOANALYSIS = YES ]]; then
   # in the GRIB1 ensemble PDS header extension
   #######################################################
   export addgrb1id=yes
+  export addgrb1id=yes
 
-  # Making the 0.5-degree grib files
-  $USHgefs/gefs_prdgen_p5.sh
+  pcfile=$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.anl$cfsuffix
+  fileaout=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}anl$pgasuf$cfsuffix
+  fileaouti=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}anl$pgasuf$cfsuffix.idx
+  filebout=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}anl$pgasuf$cfsuffix
+  filebouti=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}anl$pgasuf$cfsuffix.idx
 
-  ####################################
-  # send control files to misc
-  ####################################
-  if test $SENDCOM = "YES"
-  then
-    if test $fhr -lt 100
-    then
-      pad="0"
-    else
-      pad=""
+  if [[ -s $pcfile ]]; then
+    nmissing=0
+    for file in $fileaout $fileaouti $filebout $filebouti
+    do
+      if [[ ! -s $file ]]; then
+        echo file=$file IS MISSING
+        (( nmissing = nmissing + 1 ))
+      fi
+    done
+    if (( nmissing > 0 )); then
+      rm $pcfile
     fi
-    echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen_p5.control_anl$cfsuffix
+  else
+    nmissing=1
   fi
+
+  if [[ ! -s $pcfile ]]; then
+
+    # Making the 0.5-degree grib files
+    $USHgefs/gefs_prdgen_p5.sh
+
+    ####################################
+    # send control files to misc
+    ####################################
+    if test $SENDCOM = "YES"
+    then
+      if test $fhr -lt 100
+      then
+	pad="0"
+      else
+	pad=""
+      fi
+      echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.anl$cfsuffix
+    fi
+
+  fi
+
 fi
 
 ############################################################
@@ -194,7 +233,7 @@ do
     while [ $ic -le $SLEEP_LOOP_MAX ]
     do
        #20100730 change test to use master control file
-       mcfile=$COMOUT/$cyc/misc/post/$RUN.$cycle.master.control.$fhr$cfsuffix
+       mcfile=$COMOUT/$cyc/misc/post/$RUN.$cycle.master.control.f$fhr$cfsuffix
        testfhr=-1
        if [[ -f $mcfile ]]; then
 	 teststring=`cat $mcfile|head -1`
@@ -224,7 +263,7 @@ do
        ###############################
        if [ $ic -eq $SLEEP_LOOP_MAX ]
        then
-	  date >$COMOUT/$cyc/misc/$submc/$RUN.$ffhr.missing
+	  date >$COMOUT/$cyc/misc/$submc/$RUN.f$ffhr$cfsuffix.missing
 	  echo `date` $sname $member end
 	  msg="$member MISSING DATA"
 	  postmsg "$jlogfile" "$msg"
@@ -242,30 +281,59 @@ do
   ####################################
   export addgrb1id=yes
 
-  # Making the 2.5x2.5 degree GRIB files in background   - canceled 
-  if [[ "$DO_LOW_RES" = 'YES' ]] && [[ `expr $fhr % 6 ` -eq 0 ]] 
+  pcfile=$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.f${fhr}$cfsuffix
+  if test $fhr -lt 100
   then
-   #($USHgefs/gefs_prdgen_lowres.sh)&
-     $USHgefs/gefs_prdgen_lowres.sh
+    pad="0"
+  else
+    pad=""
+  fi
+  fileaout=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}f$pad${fhr}$pgasuf$cfsuffix
+  fileaouti=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}f$pad${fhr}$pgasuf$cfsuffix.idx
+  filebout=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}f$pad${fhr}$pgasuf$cfsuffix
+  filebouti=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}f$pad${fhr}$pgasuf$cfsuffix.idx
+  if [[ -s $pcfile ]]; then
+    nmissing=0
+    for file in $fileaout $fileaouti $filebout $filebouti
+    do
+      if [[ ! -s $file ]]; then
+        echo file=$file IS MISSING
+        (( nmissing = nmissing + 1 ))
+      fi
+    done
+    if (( nmissing > 0 )); then
+      rm $pcfile
+    fi
+  else
+    nmissing=1
   fi
 
-  # Making the 0.5x0.5 degree GRIB file
-  $USHgefs/gefs_prdgen_p5.sh
+  if [[ ! -s $pcfile ]]; then
 
-#  wait
-
-  ####################################
-  # send control files to misc
-  ####################################
-  if test $SENDCOM = "YES"
-  then
-    if test $fhr -lt 100
+    # Making the 2.5x2.5 degree GRIB files in background   - canceled 
+    if [[ "$DO_LOW_RES" = 'YES' ]] && [[ `expr $fhr % 6 ` -eq 0 ]] 
     then
-      pad="0"
-    else
-      pad=""
+     #($USHgefs/gefs_prdgen_lowres.sh)&
+       $USHgefs/gefs_prdgen_lowres.sh
     fi
-    echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen_p5.control_$fhr$cfsuffix
+
+    # Making the 0.5x0.5 degree GRIB file
+    $USHgefs/gefs_prdgen_p5.sh
+
+    ####################################
+    # send control files to misc
+    ####################################
+    if test $SENDCOM = "YES"
+    then
+      if test $fhr -lt 100
+      then
+	pad="0"
+      else
+	pad=""
+      fi
+      echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.f$fhr$cfsuffix
+    fi
+
   fi
 
 #DHOU, 05/01/2015, added this block for gefs_post_track trigger 
