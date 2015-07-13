@@ -238,10 +238,6 @@ if [[ $envir = dev ]]; then
   export srefboundary=no
   export fhmax00=384     # 00Z fcst only
 
-  export fhmax00=384
-  export fhmax06=384
-  export fhmax12=384
-  export fhmax18=384
 # # cycling forecasts only
   export fhmax00=06
   export fhmax06=06
@@ -252,6 +248,12 @@ if [[ $envir = dev ]]; then
 # export fhmax06=06
   export fhmax12=384
 # export fhmax18=06
+
+# long forecasts in all cycles
+  export fhmax00=384
+  export fhmax06=384
+  export fhmax12=384
+  export fhmax18=384
 
 #RLW move fhmax arithmetic from gefsrun begin
 
@@ -365,6 +367,7 @@ if [[ $envir = dev ]]; then
   export makepgrb2b=yes
   export saveflux=yes
   export savesfcsig=yes
+  export savesfcsig=no
 
   # specify generation and retention of grads control files
   # these are not currently implemented

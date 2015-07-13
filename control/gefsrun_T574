@@ -924,7 +924,8 @@ if [[ $nextflag = yes ]]; then
       ;;
 
       ($jjjg00) jjjb=$jjjg01 ;;     #job 92, go to 93
-      ($jjjg01) jjjb=$jjjg04 ;;     #job 93, go to 96
+#     ($jjjg01) jjjb=$jjjg04 ;;     #job 93, go to 96
+      ($jjjg01) jjjb=$jjjf00 ;;     #job 93, go to 100     # RLW 20150709 temporary modification to skip gfs tracking jobs
       ($jjjg04) jjjb=$jjjg05 ;;     #job 96, go to 97
       ($jjjg05) jjjb=$jjjf00 ;;     #job 97, go to 100
 #     ($jjjf00) jjjb=$jjjp00 ;;
@@ -964,7 +965,9 @@ if [[ $nextflag = yes ]]; then
 	fi
       ;;
       ($jjjs00l) jjjb=$jjjo00 ;;
-      ($jjjo00) jjjb=$jjjt00 ;;
+#     ($jjjo00) jjjb=$jjjt00 ;;
+#     ($jjjo00) jjjb=900 ;;  # RLW 20150708 skip track and track-average jobs for production since they are in a different package
+      ($jjjo00) jjjb=$jjjc18 ;;  # RLW 20150708 skip track and track-average jobs for production since they are in a different package
 #     ($jjjo00) jjjb=900 ;;  #  to skip track and track-average jobs ZEUS 
 #     ($jjjt00) jjjb=$jjja00 ;;
       ($jjjt00) 
@@ -1509,6 +1512,7 @@ case $taskname in
     wall_clock_limit="00:10"
     resources="1650"
     MP_SHARED_MEMORY=yes
+    RUN=
   fi  
   ;;
   (init.mask)
@@ -1536,6 +1540,7 @@ case $taskname in
     node_resources="ConsumableMemory(110 GB)"
     task_affinity="core(1)"
     total_tasks=80
+    RUN=
   if [[ $gefsmachine = zeus ]]; then                       
     node=8   
     taskspernode=10
@@ -1572,6 +1577,7 @@ case $taskname in
     node_resources="ConsumableMemory(110 GB)"
     task_affinity="core(1)"
     total_tasks=40
+    RUN=
   if [[ $gefsmachine = zeus ]]; then                       
     node=4   
     taskspernode=10
@@ -1601,6 +1607,7 @@ case $taskname in
     task_affinity="core(1)"
     node=2   
     total_tasks=40
+    RUN=
   if [[ $gefsmachine = zeus ]]; then                       
     node=10
     taskspernode=4
@@ -1629,6 +1636,7 @@ case $taskname in
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
     job=GEFS_init_ET_$cyc
+    RUN=
     ################################# development variables
     during_previous_job=no
     splim=301001001
@@ -1674,7 +1682,8 @@ case $taskname in
     task_affinity="cpu(1)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
-    job=gefs_init_combine_$cyc
+    gefs_init_combine_$cyc
+    RUN=
     ################################# development variables
     during_previous_job=no
     splim=301001001
@@ -1696,14 +1705,14 @@ case $taskname in
  ((    total_tasks = node * taskspernode ))
   fi
 
-  if [[ $gefsmachine = wcoss ]]; then                       
+  if [[ $gefsmachine = wcoss ]]; then
     wall_clock_limit="01:50"
 #   taskspernode=10
 #   taskspernode=4
     taskspernode=2
     OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=no
-  fi  
+  fi
   ;;
   (forecast_hr)
     FORECAST_SEGMENT=hr
@@ -1788,7 +1797,7 @@ case $taskname in
      fi
 
 #DHOU add this for ZEUS
-  if [[ $gefsmachine = zeus ]]; then                       
+  if [[ $gefsmachine = zeus ]]; then
        (( taskspermem = 48 ))
        parallel_threads=3
        task_affinity="core(1)"
@@ -1796,15 +1805,15 @@ case $taskname in
        export taskspernode=$taskspernode
        export OMP_NUM_THREADS=$parallel_threads
   fi
-  if [[ $gefsmachine = wcoss ]]; then                       
+  if [[ $gefsmachine = wcoss ]]; then
      if [[ $fcstjoblength = long ]]; then
 #      (( taskspermem = 30 ))
 #      (( taskspermem = 60 ))
 #      (( taskspermem = 72 ))
        (( taskspermem = 66 ))
-     else  
+     else
        (( taskspermem = 32 ))
-     fi  
+     fi
        parallel_threads=4
        task_affinity="core(1)"
        (( taskspernode = COREPERNODE / parallel_threads )) # for T574SL P2/P1
@@ -1814,6 +1823,7 @@ case $taskname in
     MP_SHARED_MEMORY=yes
   fi
 
+     RUN=
      if [[ $RUN_CONCURRENT = yes ]]; then
        if [[ $cyc = $cyc_fcst ]]; then
          (( total_tasks = taskspermem * (npert + 1) ))
@@ -1924,6 +1934,7 @@ case $taskname in
     MP_SHARED_MEMORY=yes
   fi
 
+     RUN=
      if [[ $RUN_CONCURRENT = yes ]]; then
        if [[ $cyc = $cyc_fcst ]]; then
          (( total_tasks = taskspermem * (npert + 1) ))
@@ -2091,6 +2102,8 @@ case $taskname in
     if [[ $RUN_CONCURRENT != yes ]]; then
       RUN=ge$mem
 #   RUNMEM=ge$mem
+    else
+      RUN=
     fi
     ################################# development variables
     during_previous_job=yes
@@ -2134,6 +2147,8 @@ case $taskname in
     if [[ $RUN_CONCURRENT != yes ]]; then
       RUN=ge$mem
 #   RUNMEM=ge$mem
+    else
+      RUN=
     fi
     ################################# development variables
     during_previous_job=yes
@@ -2386,6 +2401,7 @@ case $taskname in
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
     job=gefs_prdgen_gfs_${cyc}
+    RUN=
     ################################# development variables
     during_previous_job=yes
     fcstjoblength=long
@@ -2440,6 +2456,7 @@ case $taskname in
       (wcoss)
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=4
+    RUN=
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
     (( resources =  27648 / taskspernode ))
 #   resources="6912"     #for core(4)
@@ -2467,6 +2484,7 @@ case $taskname in
       (wcoss)
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=4
+    RUN=
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
     (( resources =  27648 / taskspernode ))
 #   resources="6912"     #for core(4)
@@ -2691,6 +2709,7 @@ case $taskname in
     resources="5000M"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
+    RUN=
     ################################# development variables
     during_previous_job=no
     ################################# production variables modified
@@ -2715,6 +2734,7 @@ case $taskname in
     MP_INFOLEVEL=2
     job=gefs_cqpf_${cyc}
     # insert modifications to production resources here
+    RUN=
     ################################# development variables
     during_previous_job=yes
     splim=301001001
@@ -2758,6 +2778,7 @@ case $taskname in
     during_previous_job=no
     ################################# production variables modified
     SUBJOB=   
+    RUN=
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="01:10"
     MP_SHARED_MEMORY=yes
@@ -2775,6 +2796,7 @@ case $taskname in
 #   resources="ConsumableCpus(1) ConsumableMemory(1650 MB)"
     wall_clock_limit="00:29:00"
     resources="1650M"
+    RUN=
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="00:10"
     MP_SHARED_MEMORY=yes
@@ -2791,6 +2813,7 @@ case $taskname in
     wall_clock_limit="00:19:00"
 #   resources="ConsumableCpus(1) ConsumableMemory(1650 MB)"
     resources="1650M"
+    RUN=
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="00:10"
     MP_SHARED_MEMORY=yes
