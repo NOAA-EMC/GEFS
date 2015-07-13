@@ -123,8 +123,6 @@ export CHGRESEXEC=$EXECgsm/global_chgres
 export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
 # RLW 20150622 test new version of post executable
 export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
-#export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post-mod}
-#export POSTGPEXEC=${$EXECpost/ncep_post-mod}
 
 #echo in $0: POSTGPSH=$POSTGPSH
 #echo in $0: POSTGPEXEC=$POSTGPEXEC

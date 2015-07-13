@@ -2595,8 +2595,8 @@ case $taskname in
     job=gefs_enspost_${cyc}
     # insert modifications to production resources here
     ################################# development variables
-    during_previous_job=yes
     during_previous_job=no
+    during_previous_job=yes
     splim=301001001
     fcstjoblength=long
     ################################# production variables modified
