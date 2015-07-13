@@ -323,96 +323,103 @@ then
         rch=$?
         if (( rch == 0 )); then
           if (( HOURtest > fhresini )); then
-            SIGXt=$SIGX_P$HOURtest$cfsuffix
-            SFCXt=$SFCX_P$HOURtest$cfsuffix
-            if eval test -f $SIGXt -a -f $SFCXt
-            then
-              export JCAPt=$(eval $SIGHDR $SIGXt jcap)
-              rcj=$?
-              export LEVSt=$(eval $SIGHDR $SIGXt levs)
-              rcl=$?
-              export LONBt=$(eval $SIGHDR $SIGXt lonb)
-              rcn=$?
-              export LATBt=$(eval $SIGHDR $SIGXt latb)
-              rct=$?
-              export HOURt=$(eval $SIGHDR $SIGXt fhour)
-              rch=$?
-              if (( rcj + rcl + rcn + rct + rch == 0 )); then
-	        if (( JCAPt == JCAP )); then
-		  fsize_sigrt=`eval ls -l $SIGXt |awk -F" " '{print $5}'`
-		  fsize_sfcrt=`eval ls -l $SFCXt |awk -F" " '{print $5}'`
-		  if (( HOURt > fhresini )); then
-		    for MN in $MEMBER_NAMES
-		    do
-		      SIGXm=$SIGX_P$HOURtest$cfsuffix
-		      SFCXm=$SFCX_P$HOURtest$cfsuffix
-		      if eval test -f $SIGXm -a -f $SFCXm
-		      then
-			export JCAPm=$(eval $SIGHDR $SIGXm jcap)
-			rcj=$?
-			export LEVSm=$(eval $SIGHDR $SIGXm levs)
-			rcl=$?
-			export LONBm=$(eval $SIGHDR $SIGXm lonb)
-			rcn=$?
-			export LATBm=$(eval $SIGHDR $SIGXm latb)
-			rct=$?
-			export HOURm=$(eval $SIGHDR $SIGXm fhour)
-			rch=$?
-			export HOURf=$(eval $SFCHDR $SFCXm fhour)
-			rcf=$?
-			if (( rcj + rcl + rcn + rct + rch +  rcf == 0 )); then
-			  fsize_sigrm=`eval ls -l $SIGXm |awk -F" " '{print $5}'`
-			  fsize_sfcrm=`eval ls -l $SFCXm |awk -F" " '{print $5}'`
-			  if (( HOURt != HOURm )); then
-			    echo for $MN restart file forecast hour $HOURm does not match $HOURt
+	    # only accept forecast hours that are a multiple of 6
+	    (( HOURtest6 = ( HOURtest / 6 ) * 6 ))
+	    if (( HOURtest6 == HOURtest )); then
+	      SIGXt=$SIGX_P$HOURtest$cfsuffix
+	      SFCXt=$SFCX_P$HOURtest$cfsuffix
+	      if eval test -f $SIGXt -a -f $SFCXt
+	      then
+		export JCAPt=$(eval $SIGHDR $SIGXt jcap)
+		rcj=$?
+		export LEVSt=$(eval $SIGHDR $SIGXt levs)
+		rcl=$?
+		export LONBt=$(eval $SIGHDR $SIGXt lonb)
+		rcn=$?
+		export LATBt=$(eval $SIGHDR $SIGXt latb)
+		rct=$?
+		export HOURt=$(eval $SIGHDR $SIGXt fhour)
+		rch=$?
+		if (( rcj + rcl + rcn + rct + rch == 0 )); then
+		  if (( JCAPt == JCAP )); then
+		    fsize_sigrt=`eval ls -l $SIGXt |awk -F" " '{print $5}'`
+		    fsize_sfcrt=`eval ls -l $SFCXt |awk -F" " '{print $5}'`
+		    if (( HOURt > fhresini )); then
+		      for MN in $MEMBER_NAMES
+		      do
+			SIGXm=$SIGX_P$HOURtest$cfsuffix
+			SFCXm=$SFCX_P$HOURtest$cfsuffix
+			if eval test -f $SIGXm -a -f $SFCXm
+			then
+			  export JCAPm=$(eval $SIGHDR $SIGXm jcap)
+			  rcj=$?
+			  export LEVSm=$(eval $SIGHDR $SIGXm levs)
+			  rcl=$?
+			  export LONBm=$(eval $SIGHDR $SIGXm lonb)
+			  rcn=$?
+			  export LATBm=$(eval $SIGHDR $SIGXm latb)
+			  rct=$?
+			  export HOURm=$(eval $SIGHDR $SIGXm fhour)
+			  rch=$?
+			  export HOURf=$(eval $SFCHDR $SFCXm fhour)
+			  rcf=$?
+			  if (( rcj + rcl + rcn + rct + rch +  rcf == 0 )); then
+			    fsize_sigrm=`eval ls -l $SIGXm |awk -F" " '{print $5}'`
+			    fsize_sfcrm=`eval ls -l $SFCXm |awk -F" " '{print $5}'`
+			    if (( HOURt != HOURm )); then
+			      echo for $MN restart file forecast hour $HOURm does not match $HOURt
+			      goodrestart=no
+			    elif (( HOURt != HOURf )); then
+			      echo for $MN sfc restart file forecast hour $HOURf does not match $HOURt
+			      goodrestart=no
+			    elif (( fsize_sigrt != fsize_sigrm )); then
+			      echo for $MN restart file size sigr $fsize_sigrm does not match $fsize_sigrt
+			      goodrestart=no
+			    elif (( fsize_sfcrt != fsize_sfcrm )); then
+			      echo for $MN restart file size sfcr $fsize_sfcrm does not match $fsize_sfcrt
+			      goodrestart=no
+			    elif (( JCAPt != JCAPm )); then
+			      echo for $MN restart file JCAP $JCAPm does not match $JCAPt
+			      goodrestart=no
+			    elif (( LEVSt != LEVSm )); then
+			      echo for $MN restart file LEVS $LEVSm does not match $LEVSt
+			      goodrestart=no
+			    elif (( LONBt != LONBm )); then
+			      echo for $MN restart file LONB $LONBm does not match $LONBt
+			      goodrestart=no
+			    elif (( LATBt != LATBm )); then
+			      echo for $MN restart file LATB $LATBm does not match $LATBt
+			      goodrestart=no
+			    fi
+			  else                        #rc
+			    echo Restart file $SIGXm for Member $MN cannot be processed
 			    goodrestart=no
-			  elif (( HOURt != HOURf )); then
-			    echo for $MN sfc restart file forecast hour $HOURf does not match $HOURt
-			    goodrestart=no
-			  elif (( fsize_sigrt != fsize_sigrm )); then
-			    echo for $MN restart file size sigr $fsize_sigrm does not match $fsize_sigrt
-			    goodrestart=no
-			  elif (( fsize_sfcrt != fsize_sfcrm )); then
-			    echo for $MN restart file size sfcr $fsize_sfcrm does not match $fsize_sfcrt
-			    goodrestart=no
-			  elif (( JCAPt != JCAPm )); then
-			    echo for $MN restart file JCAP $JCAPm does not match $JCAPt
-			    goodrestart=no
-			  elif (( LEVSt != LEVSm )); then
-			    echo for $MN restart file LEVS $LEVSm does not match $LEVSt
-			    goodrestart=no
-			  elif (( LONBt != LONBm )); then
-			    echo for $MN restart file LONB $LONBm does not match $LONBt
-			    goodrestart=no
-			  elif (( LATBt != LATBm )); then
-			    echo for $MN restart file LATB $LATBm does not match $LATBt
-			    goodrestart=no
-			  fi
-			else                        #rc
-			  echo Restart file $SIGXm for Member $MN cannot be processed
+			  fi                          #rc
+			else                          #-f
+			  echo Restart file $SIGXm for Member $MN is NOT available
 			  goodrestart=no
-			fi                          #rc
-		      else                          #-f
-			echo Restart file $SIGXm for Member $MN is NOT available
-			goodrestart=no
-		      fi                            #-f
-		    done                            #MN
-		  else                              #HOURt
-		    echo restart file $SIGXt hour $HOURt not later than initial hour $fhresini
+			fi                            #-f
+		      done                            #MN
+		    else                              #HOURt
+		      echo restart file $SIGXt hour $HOURt not later than initial hour $fhresini
+		      goodrestart=no
+		    fi                                #HOURt
+		  else
+		    echo for $MN restart JCAP $JCAPt does not match $JCAP
 		    goodrestart=no
-		  fi                                #HOURt
-		else
-		  echo for $MN restart JCAP $JCAPt does not match $JCAP
+		  fi
+		else                                #rc
+		  echo Restart file $SIGXt for Member $MN cannot be processed
 		  goodrestart=no
-		fi
-              else                                #rc
-                echo Restart file $SIGXt for Member $MN cannot be processed
-                goodrestart=no
-              fi                                  #rc
-            else                                  #-f
-              echo Restart file $SIGXt for Member $MN is NOT available
-              goodrestart=no
-            fi                                    #-f
+		fi                                  #rc
+	      else                                  #-f
+		echo Restart file $SIGXt for Member $MN is NOT available
+		goodrestart=no
+	      fi                                    #-f
+	    else
+	      echo HOURtest=$HOURtest is not a multiple of 6 hours
+	      goodrestart=no
+	    fi
           else                                    #HOURtest
             echo restart file $SIGXtest hour $HOURtest not later than initial hour $fhresini
             goodrestart=no
