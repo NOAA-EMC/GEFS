@@ -967,7 +967,14 @@ if [[ $nextflag = yes ]]; then
       ($jjjs00l) jjjb=$jjjo00 ;;
 #     ($jjjo00) jjjb=$jjjt00 ;;
 #     ($jjjo00) jjjb=900 ;;  # RLW 20150708 skip track and track-average jobs for production since they are in a different package
-      ($jjjo00) jjjb=$jjjc18 ;;  # RLW 20150708 skip track and track-average jobs for production since they are in a different package
+#     ($jjjo00) jjjb=$jjjc18 ;;  # RLW 20150708 skip track and track-average jobs for production since they are in a different package
+      ($jjjo00)
+	if (( cyct == 00 )); then
+	  jjjb=$jjja01
+	else
+	  jjjb=$jjjc18
+	fi
+      ;; # RLW 20150713 restore the cqpf job in the 00Z cycle only
 #     ($jjjo00) jjjb=900 ;;  #  to skip track and track-average jobs ZEUS 
 #     ($jjjt00) jjjb=$jjja00 ;;
       ($jjjt00) 

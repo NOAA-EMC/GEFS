@@ -24,7 +24,10 @@ export DCOMROOT=${DCOMROOT:-/dcom}
 
   mkdir -p  $COMROOT/logs/jlogfiles
 
-export COMROOTp1=/com
+#export COMROOTp1=/com
+#export COMROOTp1=/ensemble2/noscrub/Dingchen.Hou/GEFS15/PARA20150708/com
+export COMROOTp1=/ensemble/noscrub/Richard.Wobus/o/com
+export archsyndir=/com/arch/prod/syndat
 export GESROOTp1=/nwges
 export DBNROOT=
 

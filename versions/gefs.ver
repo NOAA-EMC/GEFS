@@ -1,4 +1,4 @@
-export gefs_ver=v11.0.1
+export gefs_ver=v11.0.2
 export gsm_ver=v12.1.0.1
 export post_ver=v5.1.1
 export enkf_ver=`cat $NWROOTp1/versions/gfs.ver |grep enkf_ver |awk -F"=" '{print $2}'`

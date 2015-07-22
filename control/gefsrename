@@ -3,8 +3,8 @@
 # rename the output for a particular date of GEFS run
 #
 echo `date` $0 $* begin
-PTMP=/ptmpd2
-STMP=/stmpd2
+PTMP=/ptmpp2
+STMP=/stmpp2
 if [[ $LOGNAME = emc.enspara ]]; then
   owner=$SUDO_USER
 else
@@ -147,7 +147,7 @@ if (( $# >= 3 )); then
 		  mkdir -p $diro
 		  rc=$?
 		  if (( rc == 0 )); then
-		    for file in $dir/??$yyyymmdd${hh}???.*.o $dir/??$yyyymmdd${hh}???.*.ow
+		    for file in $dir/??$yyyymmdd${hh}???.*.o $dir/??$yyyymmdd${hh}???.*.ow $dir/??$yyyymmdd${hh}????.*.o $dir/??$yyyymmdd${hh}????.*.ow
 		    do
 		      if [[ -f $file ]]; then
 			mv $file $diro
