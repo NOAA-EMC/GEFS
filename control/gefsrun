@@ -2588,10 +2588,12 @@ else
     filelist=
     filelist="$filelist gfs.$cycle.sanl"
     filelist="$filelist gfs.$cycle.sfcanl"
-    filelist="$filelist avn.$cycle.cyclone.trackatcfunix"
     filelist="$filelist gfs.$cycle.syndata.tcvitals.tm00"
+    filelist="$filelist avn.$cycle.cyclone.trackatcfunix"
+    ifa=0
     for file in $filelist
     do
+      ((ifa=ifa+1))
       dirfile=$plcomgfs/$file
       comfile=$clcomgfs/$file
       if [[ -f $dirfile ]]; then
@@ -2609,7 +2611,11 @@ else
 	  fi
 	else
 	  echo file=$file NOT FOUND
-	  waitflag=yes
+	  if (( ifa < 4 )); then
+	    waitflag=yes
+	  else
+	    touch $dirfile
+	  fi
 	fi
       fi
     done
