@@ -3,6 +3,13 @@
 # make all of the GEFS codes
 #
 echo "`date`   `pwd`   $0 $*   begin"
+logfile=`basename $0`.log
+if [[ -f $logfile ]]; then
+  dtg=`date +%Y%m%d%H%M%S`
+  mv $logfile $logfile.$dtg
+fi
+(
+echo "`date`   `pwd`   $0 $*   begin log"
 pwd
 dirsaved=`pwd`
 mkdir -p ../../exec
@@ -50,6 +57,14 @@ if [[ -d ../../exec ]]; then
     cd $dirsaved
     pwd
   done
+  pwd
+  cd ../sorc.tracker
+  pwd
+  sh build.sh
+  sh install.sh
+  pwd
+  cd $dirsaved
+  pwd
   echo
   ls -ald ../exec
   ls -al ../exec
@@ -60,4 +75,6 @@ if [[ -d ../../exec ]]; then
 else
   echo dir=`pwd`/../../exec DOES NOT EXIST AS A DIRECTORY
 fi
+echo "`date`   `pwd`   $0 $*   end of log"
+) 2>&1 | tee $logfile
 echo "`date`   `pwd`   $0 $*   end"
