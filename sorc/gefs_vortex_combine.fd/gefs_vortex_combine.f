@@ -852,8 +852,8 @@ c uncomment next line temporarily
         DO J=1,JGU
         DO I=1,IGU
           T1(I,J,K)=SAVE(I,J,K+1)
-          VOR1(I,J,K)=SAVE(I,J,2*K+KMAX)
-          DIV1(I,J,K)=SAVE(I,J,2*K+KMAX+1)
+          DIV1(I,J,K)=SAVE(I,J,2*K+KMAX)
+          VOR1(I,J,K)=SAVE(I,J,2*K+KMAX+1)
           Q1(I,J,K)=SAVE(I,J,K+3*KMAX+1)
         END DO
         END DO
