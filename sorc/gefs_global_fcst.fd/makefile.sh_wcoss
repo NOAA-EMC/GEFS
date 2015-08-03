@@ -54,7 +54,7 @@ mkdir -p $exec_dir
 export LIBDIR=${LIBDIR:-../../lib}
 #
 make_dir=$ptmp/branch/sorc/$(basename $sorc_dir)
-if [[ -d $makedir ]]; then
+if [[ -d $make_dir ]]; then
   dtg=`date +%Y%m%d%H%M%S`
   mv $make_dir ${make_dir}.$dtg
 fi
