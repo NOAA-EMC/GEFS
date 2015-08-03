@@ -199,4 +199,5 @@ fi
 echo $F77M
 ##make -f Makefile
  make -f makefile.WCOSS.omp.intel
- mv gefs_global_fcst $sorc_dir/../../exec
+ #mv gefs_global_fcst $sorc_dir/../../exec
+ mv gefs_global_fcst $sorc_dir
