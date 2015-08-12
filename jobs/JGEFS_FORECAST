@@ -219,9 +219,9 @@ elif [[ $FORECAST_SEGMENT = hl ]] ; then
     echo Integrate the model for both high and low resolution segments, including chgres
     fhresini=0
 else
-    echo Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT
+    msg="FATAL ERROR:  Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
+    echo "`date`   $msg"
     echo The Forecast job will be aborted!!!!
-    msg="Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
     postmsg "$jlogfile" "$msg"
     export pgm=JENS_FCST
     export err=911
@@ -792,11 +792,12 @@ if [[ $RERUN = YES ]]; then
 	 msg="Forecast Starting with Initial Guess Fields, member $MN"
 	 postmsg "$jlogfile" "$msg"
       else
-	 msg="Initial Guess Fields (member $MN) Not Available/Rerun JENS_INIT"
-	 postmsg "$jlogfile" "$msg"
-	 export pgm=JENS_FCST
-	 export err=911
-	 err_chk
+         msg="FATAL ERROR:  Initial Guess Fields (member $MN) Not Available/Rerun JENS_INIT"
+         echo "`date`   $msg"
+         postmsg "$jlogfile" "$msg"
+         export pgm=JENS_FCST
+         export err=911
+         err_chk
       fi
     done
 
@@ -818,9 +819,11 @@ if [[ $RERUN = YES ]]; then
     if test -f $SIGI -a -f $SFCI
     then
       msg="Forecast Starting with Initial Guess Fields"
+      echo "`date`   $msg"
       postmsg "$jlogfile" "$msg"
     else
-      msg="Initial Guess Fields Not Available/Rerun JENS_INIT"
+      msg="FATAL ERROR: Initial Guess Fields Not Available/Rerun JENS_INIT"
+      echo "`date`   $msg"
       postmsg "$jlogfile" "$msg"
       export pgm=JENS_FCST
       export err=911
@@ -865,10 +868,9 @@ if [[ $RUN_CONCURRENT = yes ]]; then
     export JCAP=$(eval $SIGHDR $SIGI jcap)
     export HOUR=$(eval $SIGHDR $SIGI fhour)
     if [[ $jcapin != $JCAP ]] || [[ $hourin != $HOUR ]] ; then
-      echo Initial file for membera $MN has JCAP and HOUR values $JCAP $HOUR
-      echo different from member $CONC_INI
       echo Forecast jobs is aborted
-      msg="Initial file JCAP=$JCAP for member $MN does not match member $CONC_INI"
+      msg="FATAL ERROR:  Initial file JCAP=$JCAP for member $MN does not match member $CONC_INI"
+      echo "`date`   $msg"
       postmsg "$jlogfile" "$msg"
       export pgm=JENS_FCST
       export err=911
@@ -896,10 +898,9 @@ else
   echo Initial files are consistent with the required resolution: $FORECAST_SEGMENT
   echo Forecast proceed with T$jcapin\L$levsin 
  else
-  echo Initial files are not consitent with the required resolution: $FORECAST_SEGMENT
-  echo $jcapin $levsin 
   echo Forecast job failed. Please check the initial files
-  msg="Initial files with $jcapin $levsin are not consistent with $FORECAST_SEGMENT"
+  msg="FATAL ERROR:  Initial files with $jcapin $levsin are not consistent with $FORECAST_SEGMENT"
+  echo "`date`   $msg"
   postmsg "$jlogfile" "$msg"
   export pgm=JENS_FCST
   export err=911
@@ -1041,12 +1042,12 @@ then
 	     eval cp $SIGX2 $DATA/${RUM}.sigr2
 	     eval cp $SFCX $DATA/${RUM}.sfcr
 	   else
-	      echo Restart file for Member $MN is not available
-	      msg="Restart file for Member $MN is not available"
-	      postmsg "$jlogfile" "$msg"
-	      export pgm=JENS_FCST
-	      export err=911
-	      err_chk
+              msg="FATAL ERROR:  Restart file for Member $MN is not available"
+              echo "`date`   $msg"
+              postmsg "$jlogfile" "$msg"
+              export pgm=JENS_FCST
+              export err=911
+              err_chk
 	   fi
 	  else
             echo TTTT SIGR
@@ -1056,12 +1057,12 @@ then
 	       eval cp $SIGX2 $DATA/${RUM}.sigr2
 	       eval cp $SFCX $DATA/${RUM}.sfcr
 	     else
-	      echo Restart file for Member $MN is not available
-	      msg="Restart file for Member $MN is not available"
-	      postmsg "$jlogfile" "$msg"
-	      export pgm=JENS_FCST
-	      export err=911
-	      err_chk
+              msg="FATAL ERROR:  Restart file for Member $MN is not available"
+              echo "`date`   $msg"
+              postmsg "$jlogfile" "$msg"
+              export pgm=JENS_FCST
+              export err=911
+              err_chk
 	     fi
 	  fi
 	 done

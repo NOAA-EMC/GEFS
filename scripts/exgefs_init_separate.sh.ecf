@@ -169,8 +169,14 @@ if (( nhrpair < npair )); then
 ###testb
   if [[ $envir = prod ]]; then
 ###teste
-  export SIGINP=$GFSCOMIN/gfs.$cycle.sanl
-  export SFCINP=$GFSCOMIN/gfs.$cycle.sfcanl
+    if [[ -f $GFSCOMIN/gfs.$cycle.sanl && -f $GFSCOMIN/gfs.$cycle.sfcanl ]]; then
+      export SIGINP=$GFSCOMIN/gfs.$cycle.sanl
+      export SFCINP=$GFSCOMIN/gfs.$cycle.sfcanl
+    else
+      echo !!!! FATAL ERROR !!!!
+      echo $GFSCOMIN/gfs.$cycle.sanl and $GFSCOMIN/gfs.$cycle.sfcanl CANNOT BE FOUND
+      exit
+    fi
 ###testb
   else
     export basedgft=/ensemble/noscrub/Dingchen.Hou
@@ -266,8 +272,14 @@ if (( nhrpair > 0 )); then
 ###testb
   if [[ $envir = prod ]]; then
 ###teste
-  export SIGINP=$GFSCOMIN/gfs.$cycle.sanl
-  export SFCINP=$GFSCOMIN/gfs.$cycle.sfcanl
+    if [[ -f $GFSCOMIN/gfs.$cycle.sanl && -f $GFSCOMIN/gfs.$cycle.sfcanl ]]; then
+      export SIGINP=$GFSCOMIN/gfs.$cycle.sanl
+      export SFCINP=$GFSCOMIN/gfs.$cycle.sfcanl
+    else
+      echo !!!! FATAL ERROR !!!!
+      echo $GFSCOMIN/gfs.$cycle.sanl and $GFSCOMIN/gfs.$cycle.sfcanl CANNOT BE FOUND
+      exit
+    fi
 ###testb
   else
     export basedgft=/ensemble/noscrub/Dingchen.Hou2yy

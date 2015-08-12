@@ -23,12 +23,44 @@ then
    # Save Pressure GRIB/GRIB Index files
    #
    cp pgbafile $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaf$fhr
+      testfile=$COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaf$fhr
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
    if [[ "$makegrb1i" = "yes" ]]; then
      cp pgbaifile $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaif$fhr
+	 testfile=$COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaif$fhr
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
    fi
    cp pgb2afile $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2af$fhr
+       testfile=$COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2af$fhr
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
    if [[ "$makegrb2i" = "yes" ]]; then
      cp pgb2aifile $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2aif$fhr
+	  testfile=$COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2aif$fhr
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
    fi
  
    # Save lowres files if we are supposed to
@@ -36,12 +68,44 @@ then
    if test "$DO_LOW_RES" = 'YES' -a `expr $fhr % 6` -eq 0
    then
      cp pgbafile.2 $COMOUT/$cyc/pgrbalr/ge${RUN}.${cycle}.pgrbaf$fhr.2
+	  testfile=$COMOUT/$cyc/pgrbalr/ge${RUN}.${cycle}.pgrbaf$fhr.2
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
      if [[ "$makegrb1i" = "yes" ]]; then
        cp pgbaifile.2 $COMOUT/$cyc/pgrbalr/ge${RUN}.${cycle}.pgrbaif$fhr.2
+	     testfile=$COMOUT/$cyc/pgrbalr/ge${RUN}.${cycle}.pgrbaif$fhr.2
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
      fi
      cp pgb2afile.2 $COMOUT/$cyc/pgrb2alr/ge${RUN}.${cycle}.pgrb2af$fhr.2
+	   testfile=$COMOUT/$cyc/pgrb2alr/ge${RUN}.${cycle}.pgrb2af$fhr.2
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
      if [[ "$makegrb2i" = "yes" ]]; then
        cp pgb2aifile.2 $COMOUT/$cyc/pgrb2alr/ge${RUN}.${cycle}.pgrb2aif$fhr.2
+	      testfile=$COMOUT/$cyc/pgrb2alr/ge${RUN}.${cycle}.pgrb2aif$fhr.2
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
      fi
    fi
 fi

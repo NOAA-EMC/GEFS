@@ -89,8 +89,11 @@ if (( SHOUR == 0 )); then
     ###############################
     if [ $ic -eq $SLEEP_LOOP_MAX ]
     then
-    export err=9
-    err_chk
+      msg="FATAL ERROR: $RUN FORECAST MISSING for hour anl"
+      echo "`date`    $msg"
+      postmsg "$jlogfile" "$msg"
+      export err=9
+      err_chk
     fi
   done
 
@@ -151,9 +154,31 @@ if (( SHOUR == 0 )); then
     if (( rc == 0 )); then
       echo pgm=$pgm completed successfully
     else
+      msg="FATAL ERROR: $pgm FAILED for member $RUN hour anl"
+      echo "`date`    $msg"
+      postmsg "$jlogfile" "$msg"
       export err=$rc
       err_chk
     fi
+
+    pgbfoutd=`readlink -n pgbfout`
+    if [[ ! -s $pgbfoutd ]]; then
+      msg="FATAL ERROR: $pgbfoutd WAS NOT WRITTEN"
+      echo "`date`    $msg"
+      postmsg "$jlogfile" "$msg"
+      export err=1
+      err_chk
+    fi
+
+    pgbifoutd=`readlink -n pgbifout`
+    if [[ ! -s $pgbifoutd ]]; then
+      msg="FATAL ERROR: $pgbifoutd WAS NOT WRITTEN"
+      echo "`date`    $msg"
+      postmsg "$jlogfile" "$msg"
+      export err=1
+      err_chk
+    fi
+
 
   # 20100730 create a separate log file for the analysis for use by prdgen job
     if test $SENDCOM = "YES"
@@ -213,6 +238,9 @@ do
     ###############################
     if [ $ic -eq $SLEEP_LOOP_MAX ]
     then
+      echo `date` forecast $RUN missing for hour $fhr
+      msg="$RUN FORECAST MISSING for hour $fhr"
+      postmsg "$jlogfile" "$msg"
       export err=9
       err_chk
     fi
@@ -301,7 +329,27 @@ do
   if (( rc == 0 )); then
     echo pgm=$pgm completed successfully
   else
+    msg="FATAL ERROR: $pgm FAILED for member $RUN hour $fhr"
+    echo "`date`    $msg"
+    postmsg "$jlogfile" "$msg"
     export err=$rc
+    err_chk
+  fi
+
+  pgbfoutd=`readlink -n pgbfout`
+  if [[ ! -s $pgbfoutd ]]; then
+    msg="FATAL ERROR: $pgbfoutd WAS NOT WRITTEN"
+    echo "`date`    $msg"
+    postmsg "$jlogfile" "$msg"
+    export err=1
+    err_chk
+  fi
+  pgbifoutd=`readlink -n pgbifout`
+  if [[ ! -s $pgbifoutd ]]; then
+    msg="FATAL ERROR: $pgbifoutd WAS NOT WRITTEN"
+    echo "`date`    $msg"
+    postmsg "$jlogfile" "$msg"
+    export err=1
     err_chk
   fi
 
