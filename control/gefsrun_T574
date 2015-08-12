@@ -513,6 +513,7 @@ typeset -RZ3 jjjt18=$(( jjjf18 + jjjot ))
 
 typeset -RZ3 jjja00=$(( jjjf00l + jjjoa ))
 typeset -RZ3 jjja01=$(( jjja00 + 1 ))
+typeset -RZ3 jjja02=$(( jjja00 + 2 ))
 
 typeset -RZ3 jjjc18=$(( jjjf18 + jjjoc ))
 
@@ -1234,6 +1235,11 @@ else
     ;;
     ($jjja01) 
       taskname=post.cqpf
+      cyc_os=0
+      fcstjoblength=long
+    ;;
+    ($jjja02) 
+      taskname=gefs.wafs
       cyc_os=0
       fcstjoblength=long
     ;;
@@ -2470,6 +2476,29 @@ case $taskname in
     total_tasks=1
       ;;
     esac
+  ;;
+  (gefs.wafs)
+    jobscript=JGEFS_WAFS
+    job_name=jgefs_wafs$cyc
+    job_type=parallel 
+    total_tasks=4
+    MP_SHARED_MEMORY=yes
+    MEMORY_AFFINITY=MCM
+    job=gefs_prdgen_gfs_${cyc}
+    during_previous_job=yes
+    if [[ $fcstjoblength = long ]]; then
+      wall_clock_limit="$wall_clock_limit_fcst_long"
+    else
+      wall_clock_limit="$wall_clock_limit_fcst_short"
+    fi
+  # MP_SHARED_MEMORY=yes
+    OMP_NUM_THREADS=2
+  # RUN=
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( resources =  27648 / taskspernode ))
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
   ;;
   (genesis.gfs)
     ################################# production variables

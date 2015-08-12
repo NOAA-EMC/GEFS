@@ -8,5 +8,6 @@ To build codes:
      3) module use .
      4) module load Module_gefs_v11.0.2
      5) ./build.sh
-     6) ./install.sh
+     6) ./buld_overenstr.sh  
+     7) ./install.sh
 
