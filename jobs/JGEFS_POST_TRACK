@@ -111,7 +111,7 @@ export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/gefs.${PDY}}
 export ensdir=$COMIN/$cyc/pgrb2ap5
 export ensdirb=$COMIN/$cyc/pgrb2bp5
 
-export COM=$COMOUT/$cyc/track
+export COM=$COMOUT/$cyc/tctrack
 mkdir -m 775 -p $COM
 
 ##############################################

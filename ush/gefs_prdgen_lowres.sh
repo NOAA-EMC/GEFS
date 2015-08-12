@@ -164,7 +164,7 @@ then
   fi
 
   ######################################################################################
-  # Send DBNet alerts for PGBA and PGBA2 at 6 hour increments for all forecast hours
+  # Send DBNet alerts for PGBA2 at 6 hour increments for all forecast hours
   # Do for 00, 06, 12, and 18Z cycles.
   ######################################################################################
   if test "$SENDDBN" = 'YES' -a "$NET" = 'gens' -a ` expr $cyc % 6 ` -eq 0
@@ -175,12 +175,15 @@ then
       if test "$DO_LOW_RES" = 'YES' -a ` expr $fhr % 6 ` -eq 0 -a ! -n "$cfsuffix"
       then
         $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A2_$MEMBER $job $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix
+        if [[ "$makegrb2i" = "yes" ]]; then
+        $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A2_${MEMBER}_WIDX $job $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2${cfsuffix}.idx
+	fi
       fi
     fi
   fi
 
   ######################################################################################
-  # Send DBNet alerts for PGBB at 6 hour increments for forecast hours 0 - 84 and
+  # Send DBNet alerts for PGB2B at 6 hour increments for forecast hours 0 - 84 and
   # for PGBB2 at 6 hour increments for forecast hours 90 through 384.
   # Do for 00 and 12Z cycles.
   ######################################################################################
@@ -193,6 +196,9 @@ then
       if test "$DO_LOW_RES" = 'YES' -a ` expr $fhr % 6 ` -eq 0 -a $fhr -ge 90 -a ! -n "$cfsuffix"
       then
         $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B2_$MEMBER $job $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix
+        if [[ "$makegrb2i" = "yes" ]]; then
+        $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B2_${MEMBER}_WIDX $job $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix.idx
+	fi
       fi
     fi
   fi

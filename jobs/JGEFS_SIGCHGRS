@@ -70,7 +70,7 @@ export pgmerr=errfile
   export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
   export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 
-  export HOMEGLOBAL=${HOMEgsm:-/nwprod}
+  export HOMEGLOBAL=${HOMEgsm:-${NWROOTp1}}
   export EXECGLOBAL=${EXECgsm:-$HOMEgsm/exec}
   export USHGLOBAL=${USHgsm:-$HOMEgsm/ush}
   export FIXGLOBAL=${FIXgsm:-$HOMEgsm/fix/fix_am}

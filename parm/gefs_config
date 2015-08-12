@@ -57,8 +57,9 @@ export gefsmachine=${gefsmachine:-wcoss}
   . /usrx/local/Modules/default/init/ksh
   module use /nwprod2/modulefiles
   module load prod_util/v1.0.1
-  module load util_shared/v1.0.0
   module load grib_util/v1.0.1
+  module use /nwpara2/modulefiles
+  module load util_shared/v1.0.1
 
   export NDATE=${NDATE:-$USHutil/ndate}
 

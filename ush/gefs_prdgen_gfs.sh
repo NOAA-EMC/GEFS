@@ -43,10 +43,12 @@ parmlowhh=$PARMgefs/gefs_pgrb2a_fhh.parm
 
 dirsuf=
 filsuf=
+GRID=
 if [[ $jobgrid == _p5 ]]; then
    grid=${gridp5}  
    dirsuf=p5
    filsuf=.0p50.
+   GRID=_0P5
    parm00=$PARMgefs/gefs_pgrb2a_0p50_f00.parm
    parmhh=$PARMgefs/gefs_pgrb2a_0p50_fhh.parm
 fi
@@ -151,16 +153,16 @@ then
          then
 	   MEMBER=GFS
 	   if [[ "$makepgrb1" = "yes" ]]; then
-	   $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_$MEMBER $job $COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\anl
+	   $DBNROOT/bin/dbn_alert MODEL ENS_PGBA${GRID}_$MEMBER $job $COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\anl
 	   fi
 	   if [[ "$makegrb1i" = "yes" ]]; then
-	     $DBNROOT/bin/dbn_alert MODEL ENS_PGBAI_$MEMBER $job $COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\ianl
+	     $DBNROOT/bin/dbn_alert MODEL ENS_PGBAI${GRID}_$MEMBER $job $COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\ianl
 	   fi
 	   if [[ "$makepgrb2" = "yes" ]]; then
-	     $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_$MEMBER $job $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl
+	     $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_$MEMBER $job $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl
 	   fi
 	   if [[ "$makegrb2i" = "yes" ]]; then
-	       $DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI_$MEMBER $job $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\ianl
+	       $DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI${GRID}_$MEMBER $job $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\ianl
 	   fi
          fi
       fi

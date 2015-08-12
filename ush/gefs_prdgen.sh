@@ -209,7 +209,7 @@ fi
       fi
 
       ###############################################################################
-      # Send DBNet alerts for PGBA and PGBA2 at 6 hour increments for all forecast hours
+      # Send DBNet alerts for PGB2A at 6 hour increments for all forecast hours
       # Do for 00, 06, 12, and 18Z cycles.
       ###############################################################################
       if test "$SENDDBN" = 'YES' -a "$NET" = 'gens' -a ` expr $cyc % 6 ` -eq 0
@@ -219,14 +219,14 @@ fi
 	  MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
 	  if [[ $fhr -ge 0 && $fhr -le $fhmax && ` expr $fhr % 6 ` -eq 0 && ! -n "$cfsuffix" ]]
 	  then
-	    $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_$MEMBER $job $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix
-	    $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_${MEMBER}_WIDX $job $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix.idx
+	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_$MEMBER $job $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix
+	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_${MEMBER}_WIDX $job $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix.idx
 	  fi
 	fi
       fi
 
       ###############################################################################
-      # Send DBNet alerts for PGBB and PGB2B at 6 hour increments for up to 84 hours
+      # Send DBNet alerts for PGB2B at 6 hour increments for up to 84 hours
       # Do for 00Z and 12Z only
       ###############################################################################
        if test "$SENDDBN" = 'YES' -a "$NET" = 'gens' -a "$NET" = 'gens'
@@ -239,6 +239,15 @@ fi
 	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_$MEMBER $job $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
 	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_${MEMBER}_WIDX $job $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix.idx
 	# fi
+         fi
+
+      ###############################################################################
+      # Send DBNet alerts for PGB2C at 6 hour increments 
+      ###############################################################################
+         if test "$CREATE_TIGGE" = 'YES'
+         then
+          MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
+          $DBNROOT/bin/dbn_alert MODEL ENS_PGB2C_$MEMBER $job $COMOUT/$cyc/pgrb2c/${RUN}.${cycle}.pgrb2c$ffhr$cfsuffix
          fi
 
       ###############################################################################
@@ -304,7 +313,7 @@ else
          then
            MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
            $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_$MEMBER $job $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrba$ffhr$cfsuffix
-             $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrbai${ffhr}${cfsuffix}
+           $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_$MEMBER_WIDX $job $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrbai${ffhr}${cfsuffix}
          fi
        fi
      fi
@@ -354,24 +363,20 @@ else
             export err=1
             err_chk
           fi
-      #if test "$SENDDBN" = 'YES'
-      #then
-        #if test "$NET" = 'gens'
-        #then
-          #if test `echo $RUN | cut -c1-2` = "ge" -a ! -n "$cfsuffix"
-          #then
-            #MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-            #$DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_$MEMBER $job $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
-            #$DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_${MEMBER}_WIDX $job \
-            #       $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbbi$ffhr${cfsuffix}
+      if test "$SENDDBN" = 'YES'
+      then
+        if test "$NET" = 'gens'
+        then
+          if test `echo $RUN | cut -c1-2` = "ge" -a ! -n "$cfsuffix"
+          then
+            MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
+            $DBNROOT/bin/dbn_alert MODEL ENS_PGBB_$MEMBER $job $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbb$ffhr$cfsuffix
+            $DBNROOT/bin/dbn_alert MODEL ENS_PGBB_${MEMBER}_WIDX $job \
+                   $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbbi$ffhr${cfsuffix}
             
-            #if test "$CREATE_TIGGE" = 'YES'
-            #then
-            #  $DBNROOT/bin/dbn_alert MODEL ENS_PGB2C_$MEMBER $job $COMOUT/$cyc/pgrb2c/${RUN}.${cycle}.pgrb2c$ffhr$cfsuffix
-            #fi
-          #fi
-        #fi
-      #fi
+          fi
+        fi
+      fi
    fi
    fi
 fi

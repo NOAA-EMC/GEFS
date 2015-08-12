@@ -109,7 +109,7 @@ export COMIN=$COMINgfs
 export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
 
 export gfsdir=${COMIN}
-export COM=$COMOUT/$cyc/track
+export COM=$COMOUT/$cyc/tctrack
 mkdir -m 775 -p $COM
 
 ##############################################

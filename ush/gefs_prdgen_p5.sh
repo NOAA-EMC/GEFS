@@ -194,7 +194,7 @@ fi
       fi
 
       ###############################################################################
-      # Send DBNet alerts for PGBA and PGBA2 at 6 hour increments for all forecast hours
+      # Send DBNet alerts for  PGB2A at 3 hour increments for all forecast hours
       # Do for 00, 06, 12, and 18Z cycles.
       ###############################################################################
       if test "$SENDDBN" = 'YES' -a "$NET" = 'gens' -a ` expr $cyc % 6 ` -eq 0
@@ -202,16 +202,16 @@ fi
 	if test `echo $RUN | cut -c1-2` = "ge"
 	then
 	  MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-	  if [[ $fhr -ge 0 && $fhr -le $fhmax && ` expr $fhr % 6 ` -eq 0 && ! -n "$cfsuffix" ]]
+	  if [[ $fhr -ge 0 && $fhr -le $fhmax && ` expr $fhr % $FHINCP5 ` -eq 0 && ! -n "$cfsuffix" ]]
 	  then
-	    $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_$MEMBER $job $COMOUT/$cyc/pgrb2ap5/${RUN}.${cycle}.pgrb2a.0p50.$pgffhr$cfsuffix
-	    $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_${MEMBER}_WIDX $job $COMOUT/$cyc/pgrb2ap5/${RUN}.${cycle}.pgrb2a.0p50.$pgffhr$cfsuffix.idx
+	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_0P5_$MEMBER $job $COMOUT/$cyc/pgrb2ap5/${RUN}.${cycle}.pgrb2a.0p50.$pgffhr$cfsuffix
+	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_0P5_${MEMBER}_WIDX $job $COMOUT/$cyc/pgrb2ap5/${RUN}.${cycle}.pgrb2a.0p50.$pgffhr$cfsuffix.idx
 	  fi
 	fi
       fi
 
       ###############################################################################
-      # Send DBNet alerts for PGBB and PGB2B at 6 hour increments for up to 84 hours
+      # Send DBNet alerts for PGB2B at 3 hour increments for up to 84 hours
       # Do for 00Z and 12Z only
       ###############################################################################
        if test "$SENDDBN" = 'YES' -a "$NET" = 'gens' -a "$NET" = 'gens'
@@ -219,10 +219,10 @@ fi
          if test `echo $RUN | cut -c1-2` = "ge" -a ! -n "$cfsuffix"
 	 then
 	  MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-	# if [[ $fhr -ge 0 && $fhr -le 84 && ` expr $fhr % 6 ` -eq 0 && ! -n "$cfsuffix" ]]
+	# if [[ $fhr -ge 0 && $fhr -le 84 && ` expr $fhr % $FHINCP5 ` -eq 0 && ! -n "$cfsuffix" ]]
 	# then
-	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_$MEMBER $job $COMOUT/$cyc/pgrb2bp5/${RUN}.${cycle}.pgrb2b.0p50.$pgffhr$cfsuffix
-	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_${MEMBER}_WIDX $job $COMOUT/$cyc/pgrb2bp5/${RUN}.${cycle}.pgrb2b.0p50.$pgffhr$cfsuffix.idx
+	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_0P5_$MEMBER $job $COMOUT/$cyc/pgrb2bp5/${RUN}.${cycle}.pgrb2b.0p50.$pgffhr$cfsuffix
+	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_0P5_${MEMBER}_WIDX $job $COMOUT/$cyc/pgrb2bp5/${RUN}.${cycle}.pgrb2b.0p50.$pgffhr$cfsuffix.idx
 	# fi
          fi
 
@@ -283,7 +283,7 @@ else
          if test `echo $RUN | cut -c1-2` = "ge" -a ! -n "$cfsuffix"
          then
            MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-           $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_$MEMBER $job $COMOUT/$cyc/pgrbap5/${RUN}.${cycle}.pgrbap5$pgffhr$cfsuffix
+           $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_0P5_$MEMBER $job $COMOUT/$cyc/pgrbap5/${RUN}.${cycle}.pgrbap5$pgffhr$cfsuffix
              $COMOUT/$cyc/pgrbap5/${RUN}.${cycle}.pgrbap5i${pgffhr}${cfsuffix}
          fi
        fi
@@ -338,13 +338,13 @@ else
           #if test `echo $RUN | cut -c1-2` = "ge" -a ! -n "$cfsuffix"
           #then
             #MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-            #$DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_$MEMBER $job $COMOUT/$cyc/pgrb2bp5/${RUN}.${cycle}.pgrb2bp5$pgffhr$cfsuffix
-            #$DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_${MEMBER}_WIDX $job \
+            #$DBNROOT/bin/dbn_alert MODEL ENS_PGBB_0P5_$MEMBER $job $COMOUT/$cyc/pgrbbp5/${RUN}.${cycle}.pgrbbp5$pgffhr$cfsuffix
+            #$DBNROOT/bin/dbn_alert MODEL ENS_PGBB_0P5_${MEMBER}_WIDX $job \
             #       $COMOUT/$cyc/pgrbbp5/${RUN}.${cycle}.pgrbbp5i$.pgffhr${cfsuffix}
             
             #if test "$CREATE_TIGGE" = 'YES'
             #then
-            #  $DBNROOT/bin/dbn_alert MODEL ENS_PGB2C_$MEMBER $job $COMOUT/$cyc/pgrb2cp5/${RUN}.${cycle}.pgrb2cp5$pgffhr$cfsuffix
+            #  $DBNROOT/bin/dbn_alert MODEL ENS_PGB2C_0P5_$MEMBER $job $COMOUT/$cyc/pgrb2cp5/${RUN}.${cycle}.pgrb2cp5$pgffhr$cfsuffix
             #fi
           #fi
         #fi

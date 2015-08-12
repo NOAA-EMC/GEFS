@@ -155,8 +155,8 @@ then
  mkdir -m 775 -p $COMOUT/$cyc/pgrb2dp5
 fi
 
-mkdir -m 775 -p $COMOUT/$cyc/track
-mkdir -m 775 -p $COMOUT/$cyc/genesis
+#mkdir -m 775 -p $COMOUT/$cyc/tctrack
+#mkdir -m 775 -p $COMOUT/$cyc/genesis
 
 ##############################################
 echo set parameters using gefs.parm

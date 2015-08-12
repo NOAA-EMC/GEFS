@@ -133,18 +133,21 @@ do
         FXT=
         lr=lr
         lfm=$lfmlr
+	GRID=2
        ;;
       hr)    #1.0 degree grid
         EXT=
         FXT=
         lr=
         lfm=$lfmhr
+	GRID= 
        ;;
       p5)   #0.5 degree gid
         EXT=
         FXT=.0$res\0.       #".0p50."
         lr=p5
         lfm=$lfmp5
+	GRID=_0P5 
       ;;
     esac
 # Note: These variables, combined together, determins names of pgrb2 directories and the files    
@@ -372,11 +375,13 @@ do
            then
               if [[ "$run" = "geavg" ]]
               then
-                 $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A2_AVG $job ${COMOUT}/${cyc}/pgrb2alr/geavg.${cycle}.pgrb2af${fh}${cfsuffix}.2
+                #$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG $job ${COMOUT}/${cyc}/pgrb2alr/geavg.${cycle}.pgrb2af${fh}${cfsuffix}.2
+                 $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG $job ${COMOUT}/${cyc}/pgrb2a$lr/geavg.${cycle}.pgrb2a$FXT\f${fh}$EXT${cfsuffix}
               fi
               if [[ "$run" = "gespr" ]]
               then
-                 $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A2_SPR $job ${COMOUT}/${cyc}/pgrb2alr/gespr.${cycle}.pgrb2af${fh}${cfsuffix}.2
+                #$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR $job ${COMOUT}/${cyc}/pgrb2alr/gespr.${cycle}.pgrb2af${fh}${cfsuffix}.2
+                 $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR $job ${COMOUT}/${cyc}/pgrb2a$lr/gespr.${cycle}.pgrb2a$FXT\f${fh}$EXT${cfsuffix}
               fi
            fi
         fi
