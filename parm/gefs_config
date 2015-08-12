@@ -21,6 +21,7 @@ export COMROOT=$baseoutput/com
 export GESROOT=$baseoutput/nwges
 export DATAROOT=$baseoutput/tmpnwprd
 export DCOMROOT=${DCOMROOT:-/dcom}
+export PCOMROOT=$baseoutput/pcom
 
   mkdir -p  $COMROOT/logs/jlogfiles
 
@@ -34,7 +35,6 @@ export DBNROOT=
 export NWROOT=/nwprod2
 export NWROOTprod=/nwprod2
 export NWROOTp1=/nwprod
-export PCOMROOT=${PCOMROOT:-/pcom2/${envir}}
 
 HOMEDIR=/ensemble/save/Dingchen.Hou/RFC
 export gefsmachine=${gefsmachine:-wcoss}
