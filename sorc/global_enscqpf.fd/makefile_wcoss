@@ -10,7 +10,7 @@ SRCS=	CQPF.f \
         QTPINT.f
 OBJS=    $(SRCS:.f=.o)
 #LIBS    = -l essl -L/nwprod/lib -lbacio_4 -lw3_4 -lip_4 -lsp_4 
-LIBS    = -L/nwprod/lib -lbacio_4 -lw3nco_4
+LIBS    = -L/nwprod/lib -lbacio_v2.0.1_4 -lw3nco_v2.0.6_4
 #$(CMD): $(SRCS)
 #	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o $(CMD)
 #global_enscqpf: $(SRCS)

@@ -1,0 +1,14 @@
+In all codes other than gefs_global_fcst,
+gefs_ncep_post, and the codes in sorc.tracker,
+the default libraries have been replaced with the
+following versioned libraries:
+
+bacio_v2.0.1_4
+g2_v2.5.0_4
+ip_v2.0.0_4
+sigio_v2.0.1_4
+sp_v2.0.2_4
+sp_v2.0.2_d
+w3nco_v2.0.6_4
+w3nco_v2.0.6_d
+

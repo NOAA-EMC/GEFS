@@ -7,7 +7,7 @@ OBJS=   $(SRCS:.f=.o)
 
 #INCMODS=/scratch2/portfolios/NCEPDEV/stmp/Xiaqiong.Zhou/incmod
 #INCMODS=/nwprod/lib/incmod/sigio_4
-INCS= -I/nwprod/lib/incmod/sigio_4
+INCS= -I/nwprod/lib/incmod/sigio_v2.0.1_4
 
 #CF =    xlf_r
 #FC =    ncepxlf
@@ -19,7 +19,7 @@ LDFLAGS =
 #LIBS = -L/scratch2/portfolios/NCEPDEV/stmp/Xiaqiong.Zhou/lib -lw3lib-1.9_4 -lsp_d -lsigio_4 -lbufr_d_64 -lw3_d
 #LIBS  = -L/nwprod/lib -lsp_d -lw3_d -lbufr_d_64 -lsigio_4
 #LIBS  = -L/nwprod/lib -lsp_d -lw3_d -lbufr_v10.1.0_d_64 -lsigio_4
-LIBS  = -L/nwprod/lib -lsp_d -lsigio_4 -lw3nco_d
+LIBS  = -L/nwprod/lib -lsp_v2.0.2_d -lsigio_v2.0.1_4 -lw3nco_v2.0.6_d
 
 CMD =   gefs_vortex_combine
 #PROFLIB =   -lessl    -lprof

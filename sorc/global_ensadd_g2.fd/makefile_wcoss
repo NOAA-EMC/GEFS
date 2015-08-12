@@ -1,6 +1,6 @@
 SHELL= 	/bin/bash
-INC=     /nwprod/lib/incmod/g2_4
-LIBS=    -L/nwprod/lib -lg2_4 -lw3nco_4 -lbacio_4 \
+INC=     /nwprod/lib/incmod/g2_v2.5.0_4
+LIBS=    -L/nwprod/lib -lg2_v2.5.0_4 -lw3nco_v2.0.6_4 -lbacio_v2.0.1_4 \
 	 -ljasper -lpng -lz
 SRCSf90= ENSADD_G2.f90 printinfr.f90 
 SRCS=    $(SRCSf90) 

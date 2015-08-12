@@ -2,7 +2,7 @@ SHELL = /bin/bash
 
 #LIBSIGIO=/scratch2/portfolios/NCEPDEV/global/save/Shrinivas.Moorthi/para/lib/incmod/sigio_4
 #LIBSIGIO=/nwprod/lib/incmod/sigio_4
-INCS= -I/nwprod/lib/incmod/sigio_4
+INCS= -I/nwprod/lib/incmod/sigio_v2.0.1_4
 
 SRCS=	modules.f gefs_vortex_separate.f BOUND.f fft99.f sig_p_convt1.f\
 	SEPAR.f WNLIT.f FDUMP.f H12.f I1MACH.f J4SAVE.f XGETUA.f\
@@ -20,7 +20,7 @@ FC =    ifort
 #LIBS  = -L/nwprod/lib -lsp_d -lw3_d -lbufr_d_64 -lsigio_4 -lbacio_4
 #LIBS    = -L/scratch2/portfolios/NCEPDEV/global/save/Shrinivas.Moorthi/para/lib -lbacio_4 -lw3lib-2.0_4 -lip_4 -lsp_d -lsigio_4
 #LIBS  = -L/nwprod/lib -lsp_d -lw3_d -lbufr_v10.1.0_d_64 -lsigio_4 -lbacio_4
-LIBS  = -L/nwprod/lib -lsp_d -lsigio_4 -lw3nco_d
+LIBS  = -L/nwprod/lib -lsp_v2.0.2_d -lsigio_v2.0.1_4 -lw3nco_v2.0.6_d
 
 CMD =   gefs_vortex_separate
 #PROFLIB =   -lessl    -lprof
