@@ -1,14 +1,22 @@
 Additional Notes on running GEFS v11
-This note shold be use in addition to that in the readme file.
+This note should be used in addition to that in the readme file.
 
 
-This note shold be use in addition to that in the readme file.
+This note should be used in addition to that in the readme file.
 
 1. Added ecf sub directory
    The files in this new sub directory is the ecflow scripts used in production.
    The job cards genetaed bt the control/setup_job_card.wcoss should be functionally identical  to these ecflow scripts, especially in the resources requirement.
 
-2. Setting up the package
+2. Added gempak sub directory to support the GEMPAK jobs
+
+3. Added  parm/gefs_awip sub-sub directory to support GEFS_WAFS job
+
+4. Added GEMPAK (5) jobs, 5 J-job scripts and 4 exgefs*.ecf scripts
+
+5. Added JGEFS_WAFS job, 1 J-job, 1 exgefs*ecf script and 2 ush scripts
+
+6. Setting up the package
    After  copying this directory to "(your file location)/[expid]/nwdev" (see step 1 in readme file), you need to do the following:
    (1) see parm/gefs_config to make sure the following modules and  tags are available:
        /nwprod2/modulefiles

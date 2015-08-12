@@ -1,0 +1,314 @@
+#!/bin/sh
+#
+# Metafile Script : gefs_meta_nam_spag.sh_comb
+#
+# Log :
+# J. Carr/HPC	3/10/2003	Moved script from prodsp to hdtb1/dtb.
+# F. Achorn/NCO	05/18/2006	modify script to run for more than one garea.
+# F. Achorn/OPC 06/03/2008	Changed the gdfile for members 11-20 and cntrl 
+#                               (previous run) from pXX_06 to pXX_6
+# C. Magee/NCO  10/06/2008      Changed to use COMINs and COMIN for input file
+#                               locations (to make testing easier).
+#
+# Set Up Local Variables
+#
+set -x
+export PS4='gefs_nam_spag:$SECONDS + '
+mkdir $DATA/gefs_meta_nam_spag
+cd $DATA/gefs_meta_nam_spag
+sh $utilscript/setup.sh
+cp $FIXgempak/datatype.tbl datatype.tbl
+
+mdl=gefs
+MDL=GEFS
+
+#ddate=`echo $PDY | cut -c3-8`
+#ddatem1=`echo $PDYm1 | cut -c3-8`
+
+fcsthrs="012 024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204"
+
+# SET VARIOUS TIME/DATE PARAMETERS
+case $cyc in
+   00)cyc_6=18
+      PDY_6=$PDYm1
+      ECM_cyc=12
+      ECM_PDY=$PDYm1
+      ECM_fcsthrs=12
+#      CMC_cyc=00
+#      CMC_fcsthrs=00
+   ;;
+   06)cyc_6=00
+      PDY_6=$PDY
+      ECM_cyc=12
+      ECM_PDY=$PDYm1
+      ECM_fcsthrs=18
+#      CMC_cyc=00
+#      CMC_fcsthrs=06
+   ;;
+   12)cyc_6=06
+      PDY_6=$PDY
+      ECM_cyc=00
+      ECM_PDY=$PDY
+      ECM_fcsthrs=12
+#      CMC_cyc=12
+#      CMC_fcsthrs=00
+      fcsthrs="012 024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204 216 228"
+   ;;
+   18)cyc_6=12
+      PDY_6=$PDY
+      ECM_cyc=00
+      ECM_PDY=$PDY
+      ECM_fcsthrs=18
+#      CMC_cyc=12
+#      CMC_fcsthrs=06
+   ;;
+esac
+
+#grab month for season defined levels
+month=`echo $PDY | cut -c5-6`
+
+# for the winter months
+if [ ${month} -eq 12 -o ${month} -le 2 ]; then
+#   echo "winter"
+   levels="522 528 534 540 546 552 558 564"
+fi
+# spring months
+if [ ${month} -gt 2 -a ${month} -le 5 ]; then
+#   echo "spring"
+#   levels="546"
+   levels="528 540 546 552 558 564 570 582"
+fi
+# summer months
+if [ ${month} -gt 5 -a ${month} -le 8 ]; then
+#   echo "summer"
+   levels="522 528 534 540 546 552 558 564 570 576 582 588"
+fi
+# fall months
+if [ ${month} -gt 8 -a ${month} -le 11 ]; then
+   levels="528 540 546 552 558 564 570 582"
+fi
+
+metaname="gefs_${PDY}_${cyc}_spag"
+device="nc|$metaname"
+
+garea="nam"
+proj=" "
+name="NAM"
+
+##############################################################
+# for testing only, restrict to one lvl and fcsthr. will comment these out 
+# when implementing.
+#fcsthrs="024 048"
+#levels="546 552"
+##############################################################
+
+# START PRODUCTION OF METAFILE
+
+for level in ${levels}
+do
+    echo $level
+    for fcsthr in ${fcsthrs}
+    do
+        fcsthr_6=`expr ${fcsthr} + 6`
+        fcsthr_ecm=`expr ${fcsthr} + $ECM_fcsthrs`
+#        fcsthr_cmc=`expr ${fcsthr} + $CMC_fcsthrs`
+        if [ ${fcsthr_6} -lt 10 ]; then
+            fcsthr_6="00${fcsthr_6}"
+        elif [ ${fcsthr_6} -lt 100 ]; then
+            fcsthr_6="0${fcsthr_6}"
+        fi
+        if [ ${fcsthr_ecm} -lt 10 ]; then
+            fcsthr_ecm="00${fcsthr_ecm}"
+        elif [ ${fcsthr_ecm} -lt 100 ]; then
+            fcsthr_ecm="0${fcsthr_ecm}"
+        fi
+        
+        rm -rf gefs_avg gefs_avg_6 gfs gfs_6 ecmwf ukmet dgex
+        rm -rf p0* p1* p2* c00*
+#        rm -rf gefs_avg gefs_avg_6 gfs gfs_6 ecmwf ukmet cmc nogaps dgex
+
+        grids="p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 c00"
+        for fn in `echo $grids`
+        do
+           rm -rf $fn ${fn}_6
+
+           if [ -r $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} ]
+           then
+              ln -s $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} $fn
+           fi
+           if [ -r $COMINs/gefs.${PDY_6}/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ]
+           then
+              ln -s $COMINs/gefs.${PDY_6}/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}_6
+           fi
+        done
+
+        if [ -r $COMIN/geavg_${PDY}${cyc}f${fcsthr} ]
+        then
+           ln -s $COMIN/geavg_${PDY}${cyc}f${fcsthr} gefs_avg
+        fi
+
+        if [ -r $COMINs/gefs.${PDY_6}/geavg_${PDY_6}${cyc_6}f${fcsthr_6} ]
+        then
+           ln -s $COMINs/gefs.${PDY_6}/geavg_${PDY_6}${cyc_6}f${fcsthr_6} gefs_avg_6
+        fi
+
+        if [ -r $COMINs_p1/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} ]
+        then
+           ln -s $COMINs_p1/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} gfs
+        fi
+
+        if [ -r $COMINs_p1/gfs.${PDY_6}/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ]
+        then
+           ln -s $COMINs_p1/gfs.${PDY_6}/gfs_${PDY_6}${cyc_6}f${fcsthr_6} gfs_6
+        fi
+
+        if [ -r $COMINs_p1/ecmwf.${ECM_PDY}/ecmwf_glob_${ECM_PDY}${ECM_cyc} ]
+        then
+           ln -s $COMINs_p1/ecmwf.${ECM_PDY}/ecmwf_glob_${ECM_PDY}${ECM_cyc} ecmwf
+        fi
+
+        if [ -r $COMINs_p1/ukmet.${ECM_PDY}/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ]
+        then
+           ln -s $COMINs_p1/ukmet.${ECM_PDY}/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ukmet
+        fi
+
+#        if [ -r $COMINs_p1/cmc.${PDY}/cmc${PDY}${CMC_cyc}f${fcsthr_cmc} ]
+#        then
+#           ln -s $COMINs_p1/cmc.${PDY}/cmc${PDY}${CMC_cyc}f${fcsthr_cmc} cmc
+#        fi
+#
+#        if [ -r $COMINs_p1/nogaps.${PDY}/nogaps${PDY}${CMC_cyc}f${fcsthr_cmc} ]
+#        then
+#           ln -s $COMINs_p1/nogaps.${PDY}/nogaps${PDY}${CMC_cyc}f${fcsthr_cmc} nogaps
+#        fi
+
+        if [ -r $COMINs_p1/dgex.${PDY}/dgex_${PDY}${cyc}f${fcsthr} ]
+        then
+           ln -s $COMINs_p1/dgex.${PDY}/dgex_${PDY}${cyc}f${fcsthr} dgex
+        fi
+
+
+cat > cmdfilenam  << EOF
+GDATTIM	= F${fcsthr}
+DEVICE	= ${device}
+PANEL	= 0
+TEXT	= s/22/1/1/hw
+CONTUR	= 2
+MAP	= 1
+CLEAR	= yes
+GAREA   = ${garea}
+PROJ    = ${proj}
+LATLON  = 1/10/1/2/10;10 ! 0
+
+GLEVEL  = 500 
+GVCORD  = pres 
+SKIP    = 0 
+SCALE   = -1 
+GDPFUN  = sm5s(hght)
+TYPE    = c
+CINT    = ${level}
+FINT    =
+FLINE   =
+HILO    = 0
+HLSYM   = 0
+CLRBAR  = 0
+WIND    = 0
+REFVEC  =
+
+GDFILE  = gfs
+LINE    = 22/2/2/0
+TITLE   = 22/-2/~ ? GFS ${cyc}Z (DASHED) |~${name} ${level} DM
+GDATTIM = F${fcsthr}
+run
+
+MAP     = 0
+LATLON  = 0
+CLEAR   = no
+
+GDFILE  = gfs_6
+LINE    = 21/2/2/0
+TITLE   = 21/-1/~ ? GFS ${cyc_6}Z (DASHED) |~${name} ${level} DM
+GDATTIM = F${fcsthr_6}
+run
+
+GDFILE  = p01_6 ! p02_6 ! p03_6 ! p04_6 ! p05_6 ! p06_6 ! p07_6 ! p08_6 ! p09_6 ! p10_6
+LINE    = 25/1/1/0
+TITLE   = 25/+1/~ ? ${cyc_6}Z ENS MEMBERS|~${name} ${level} DM
+GDATTIM = F${fcsthr_6}
+run
+
+GDFILE  = p11_6 ! p12_6 ! p13_6 ! p14_6 ! p15_6 ! p16_6 ! p17_6 ! p18_6 ! p19_6 ! p20_6 ! c00_6
+run
+
+EOF
+
+       grids="C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20"
+       line_count=2
+       color_number=9
+       for grid in ${grids}
+       do
+       gridl=`echo $grid | tr [A-Z] [a-z]`
+
+cat >> cmdfilenam  << EOF
+!GDFILE  = \$COMIN/ge${gridl}_${PDY}${cyc}f${fcsthr}
+GDFILE  = $gridl
+LINE    = ${color_number}/1/1/0
+TITLE   = ${color_number}/+${line_count}/~ ? ${cyc}Z ${grid}|~${name} ${level} DM
+GDATTIM = F${fcsthr}
+run
+
+EOF
+          let line_count=$line_count+1
+          let color_number=$color_number+1
+        done
+
+cat >> cmdfilenam  << EOF
+
+GDFILE  = ukmet
+LINE    = 7/2/2/0
+GDATTIM = F${fcsthr_ecm}
+TITLE   = 7/-4/~ ? UKMET ${ECM_cyc}Z (DASHED)|~${name} ${level} DM
+run
+
+GDFILE  = ecmwf
+LINE    = 6/2/2/0
+GDATTIM = F${fcsthr_ecm}
+TITLE   = 6/-3/~ ? ECMWF ${ECM_cyc}Z (DASHED)|~${name} ${level} DM
+run
+
+GDFILE  = gefs_avg
+LINE    = 1/2/2/0
+TITLE   = 1/-6/~ ? ENSMEAN ${cyc}Z       |~${name} ${level} DM
+GDATTIM = F${fcsthr}
+run
+
+GDFILE  = gefs_avg_6
+LINE    = 31/2/3/0
+TITLE   = 31/-5/~ ? ENSMEAN ${cyc_6}Z (DASHED)|~${name} ${level} DM
+GDATTIM = F${fcsthr_6}
+run
+
+GDFILE  = dgex 
+LINE    = 13/2/2/0
+GDATTIM = F${fcsthr}
+TITLE   = 13/-7/~ ? ${cyc}Z DGEX|~${name} ${level} DM
+run
+
+EOF
+    echo cdmfile
+    gdplot2_nc < cmdfilenam
+
+    done
+done
+
+if [ $SENDCOM = "YES" ] ; then
+    mv ${metaname} ${COMOUT}/$metaname
+    if [ $SENDDBN = "YES" ] ; then
+        $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job ${COMOUT}/$metaname
+    fi
+fi
+
+gpend
+rm gemglb.nts last.nts
+
+exit
