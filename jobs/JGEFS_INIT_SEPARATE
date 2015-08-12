@@ -14,7 +14,8 @@
 # lines between ###testb and ###teste not needed for production
 ###teste
 
-$SMSBIN/smsinit $LOADL_STEP_ID 
+export RUN_ENVIR=${RUN_ENVIR:-prod}
+
 echo `date` $0 `date -u` begin
 
 set -xa
@@ -62,15 +63,15 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
 ###teste
-export DATA=/tmpnwprd/gefs_legacy_init_$cyc.$envir.save
+export DATA=/tmpnwprd1/gefs_legacy_init_$cyc.$envir.save
 ###testb
 else
   echo basenfs=$basenfs
   echo baseptmp=$baseptmp
   echo basetmp=$basetmp
-  export DATA=$basetmp/$envir/tmpnwprd/gefs_legacy_init_$PDY$cyc.$envir.save
+  export DATA=$basetmp/$envir/tmpnwprd1/gefs_legacy_init_$PDY$cyc.$envir.save
 ################# lines between these markers have been modified for dev begin
-  export DATA=$basetmp/tmpnwprd/gefs_legacy_init_$PDY$cyc.$envir.save
+  export DATA=$basetmp/tmpnwprd1/gefs_legacy_init_$PDY$cyc.$envir.save
 ################# lines between these markers have been modified for dev end
 echo DATA=$DATA
 fi
@@ -110,11 +111,11 @@ export RUN=enstr
 ###testb
 if [[ $envir = prod ]]; then
 ###teste
-export jlogfile=/com/logs/jlogfile
+export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.${pid}}
 ###testb
 elif [[ $envir = para ]] || \
      [[ $envir = test ]]; then
-  export jlogfile=/com/logs/para/jlogfile
+  export jlogfile=/com/logs/${envir}/jlogfile
 else
   #export jlogfile=$baseptmp/com/logs/jlogfile
 ################# lines between these markers have been modified for dev begin
@@ -140,33 +141,27 @@ export pgmerr=errfile
 ####################################
 # SAVEGES  - Copy Files From TMPDIR to $GESdir
 # RMGES    - Clean Files in $GESdir
-# SENDSMS  - Flag Events on SMS
+# SENDECF  - Flag Events on ECF
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 # RERUN    - Rerun posts from beginning (default no)
 # VERBOSE  - Specify Verbose Output in global_postgp.sh
 ####################################
 export SAVEGES=YES
-export SENDSMS=YES
+export SENDECF=YES
 export SENDCOM=YES
 export RERUN=NO
 export VERBOSE=YES
 
-###testb
-if [[ $envir = prod ]]; then
-###teste
-if [ $cyc -eq 00 -o $cyc -eq 12 ]
-then
-   export SENDDBN=YES
+if [ $cyc -eq 00 ]; then
+  if [[ $envir = prod ]]; then
+    export SENDDBN=YES
+  else
+    export SENDDBN=YES
+  fi
 else
-   export SENDDBN=YES
+  export SENDDBN=NO
 fi
-###testb
-else
-   export SENDDBN=NO
-fi
-###teste
-
  
 ####################################
 # Specify Execution Areas
@@ -504,7 +499,7 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
 ###teste
-cd /tmpnwprd
+cd /tmpnwprd1
 ###testb
 else
   echo skip cleanup for testing
@@ -512,14 +507,3 @@ fi
 ###teste
 
 echo `date` $0 `date -u` end
-###testb
-if [[ $envir = prod ]] || \
-   [[ $envir = para ]] || \
-   [[ $envir = test ]]; then
-###teste
-$SMSBIN/endt
-###testb
-else
-  echo skip endt for testing
-fi
-###teste

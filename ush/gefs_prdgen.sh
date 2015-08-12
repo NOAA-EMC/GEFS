@@ -162,6 +162,7 @@ else
        $WGRIB pgbfile.$ffhr$cfsuffix -s -grib -i -o pgbbfile.$ffhr$cfsuffix
    $GRBIDX pgbbfile.$ffhr$cfsuffix pgbbifile.$ffhr$cfsuffix)&
 
+   if [[ $CREATE_PGRBD = YES ]]; then
    (parmlista=$PARMgefs/gefs_pgrba_f${hsuffix}.parm
    parmlistb=$PARMgefs/gefs_pgrbb_f${hsuffix}.parm
    $WGRIB -s pgbfile.$ffhr$cfsuffix | \
@@ -177,6 +178,7 @@ else
        grep -F $excludestring | \
        $WGRIB pgbfile.$ffhr$cfsuffix -s -grib -i -append -o pgbdfile.$ffhr$cfsuffix
    $GRBIDX pgbdfile.$ffhr$cfsuffix pgbdifile.$ffhr$cfsuffix)&
+   fi
    set -x
 
    wait
@@ -205,6 +207,7 @@ else
             err_chk
           fi
 
+   if [[ $CREATE_PGRBD = YES ]]; then
       mv pgbdfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrbd/${RUN}.${cycle}.pgrbd$ffhr$cfsuffix
                         testfile=$COMOUT/$cyc/pgrbd/${RUN}.${cycle}.pgrbd$ffhr$cfsuffix
           if [[ ! -s $testfile ]]; then
@@ -214,6 +217,7 @@ else
             export err=1
             err_chk
           fi
+   fi
       if [[ "$makegrb1i" = "yes" ]]; then
 	mv pgbaifile.$ffhr$cfsuffix $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrbai$ffhr$cfsuffix
                            testfile=$COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrbai$ffhr$cfsuffix
@@ -233,7 +237,9 @@ else
             export err=1
             err_chk
           fi
+   if [[ $CREATE_PGRBD = YES ]]; then
 	mv pgbdifile.$ffhr$cfsuffix $COMOUT/$cyc/pgrbd/${RUN}.${cycle}.pgrbdi$ffhr$cfsuffix
+   fi
       fi
 
       ###############################################################################
@@ -419,6 +425,7 @@ else
     fi
 fi
 
+   if [[ $CREATE_PGRBD = YES ]]; then
 ###############################
 # STEP IV: Create GRIB2D files
 ###############################
@@ -448,6 +455,7 @@ else
           fi
    fi
 fi
+   fi
 
 fi #(0=1 foe ZEUS, skip grib2 files)
 ########################################################

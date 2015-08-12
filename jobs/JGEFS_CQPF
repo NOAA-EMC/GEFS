@@ -9,7 +9,8 @@
 #         in the development enviroment only.
 ######################################################################
 
-$SMSBIN/smsinit $LOADL_STEP_ID 
+export RUN_ENVIR=${RUN_ENVIR:-prod}
+
 echo `date` $0 `date -u` begin
 
 set -xa
@@ -49,14 +50,14 @@ then
 ################# lines between these markers have been modified for dev begin
  if (( 0 == 1 )); then
 ################# lines between these markers have been modified for dev end
-   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd}
+   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd1}
 ################# lines between these markers have been modified for dev begin
  else
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
+   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd1}
  fi
 ################# lines between these markers have been modified for dev end
 else                       ### For Operations
-   export DATA_IN=/tmpnwprd
+   export DATA_IN=/tmpnwprd1
 fi
 export DATA=$DATA_IN/cqpd.${pid}
 
@@ -86,7 +87,7 @@ then
  fi
 ################# lines between these markers have been modified for dev end
 else                        ### For Operations
-   export jlogfile=/com/logs/para/jlogfile
+   export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.$$}
 fi
 
 ####################################
@@ -98,7 +99,7 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 ####################################
-# SENDSMS  - Flag Events on SMS
+# SENDECF  - Flag Events on ECF
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 ####################################
@@ -106,14 +107,14 @@ if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
   export SENDCOM=${SENDCOM:-YES}
   export SENDDBN=${SENDDBN:-NO}
-  export SENDSMS=${SENDSMS:-YES}
+  export SENDECF=${SENDECF:-YES}
   export SENDDBN_GB2=${SENDDBN_GB2:-NO}
   # Specify Execution Areas
   export HOMEGLOBAL=$basesource/nw${envir}
 else                             ### For Operations
   export SENDCOM=YES
   export SENDDBN=YES
-  export SENDSMS=YES
+  export SENDECF=YES
   export SENDDBN_GB2=YES
 
   # Specify Execution Areas
@@ -162,7 +163,7 @@ sh $utilscript/setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMINGEST=$TMPCOM/ingest/prod
+export COMINGEST=/com/ingest/prod
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
   export COM_IN=${COM_IN:-${baseoutput}/com/${NET}/${envir}}
@@ -171,8 +172,8 @@ then
   export COMIN=$COM_IN
   export COMOUT=$COM_OUT/gefs.${PDY}/${cyc}/ensstat
 else                              ### For Operations
-  export COMIN=$TMPCOM/${NET}/${envir}
-  export COMOUT=$TMPCOM/${NET}/${envir}/gefs.${PDY}/${cyc}/ensstat
+  export COMIN=/com/${NET}/${envir}
+  export COMOUT=/com/${NET}/${envir}/gefs.${PDY}/${cyc}/ensstat
 
 fi
 
@@ -206,7 +207,6 @@ postmsg "$jlogfile" "$msg"
 ##############################
 # Remove the Temporary working directory
 ##############################
-#cd $DATA_IN
-#rm -rf $DATA
+cd $DATA_IN
+rm -rf $DATA
 
-$SMSBIN/endt

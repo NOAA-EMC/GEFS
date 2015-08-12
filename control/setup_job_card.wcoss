@@ -15,7 +15,7 @@ echo
 #BSUB -P $account
 #BSUB -o $plcomout/$jobname.$yymmddhhmmss.o
 #BSUB -e $plcomout/$jobname.$yymmddhhmmss.o
-#BSUB -cwd $basetmp/tmpnwprd
+#BSUB -cwd $basetmp/tmpnwprd1
 #BSUB -W $wall_clock_limit
 #BSUB -L /bin/ksh
 #
@@ -237,7 +237,7 @@ eofCAT
 #BSUB -W 0:15
 #BSUB -o $plcomout/$jobname.$yymmddhhmmss.ow
 #BSUB -e $plcomout/$jobname.$yymmddhhmmss.ow
-#BSUB -cwd $basetmp/tmpnwprd
+#BSUB -cwd $basetmp/tmpnwprd1
 #BSUB -n 1
 ##BSUB -q "hpc_ibm" 
 ##BSUB -q "dev" 

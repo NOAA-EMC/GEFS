@@ -10,7 +10,8 @@
 na=`basename $0`
 export PS4=' + $SECONDS $na $LINENO: '
 
-$SMSBIN/smsinit $LOADL_STEP_ID 
+export RUN_ENVIR=${RUN_ENVIR:-prod}
+
 echo `date` $0 `date -u` begin
 
 set -xa
@@ -41,14 +42,14 @@ then
 ################# lines between these markers have been modified for dev begin
  if (( 0 == 1 )); then
 ################# lines between these markers have been modified for dev end
-   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd}
+   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd1}
 ################# lines between these markers have been modified for dev begin
  else
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
+   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd1}
  fi
 ################# lines between these markers have been modified for dev end
 else                         ### For Operations
-   export DATA_IN=/tmpnwprd
+   export DATA_IN=/tmpnwprd1
 fi
 export DATA=$DATA_IN/${job}.${pid}
 
@@ -77,7 +78,7 @@ then
  fi
 ################# lines between these markers have been modified for dev end
 else                          ### For Operations
-   export jlogfile=/com/logs/jlogfile
+   export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.$$
 fi
 
 ####################################
@@ -89,7 +90,7 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 ####################################
-# SENDSMS  - Flag Events on SMS
+# SENDECF  - Flag Events on ECF
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 ####################################
@@ -97,7 +98,7 @@ if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
   export SENDCOM=${SENDCOM:-YES}
   export SENDDBN=${SENDDBN:-NO}
-  export SENDSMS=${SENDSMS:-YES}
+  export SENDECF=${SENDECF:-YES}
 
   # Specify Execution Areas
   export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
@@ -114,7 +115,7 @@ then
 else                             ### For Operations
   export SENDCOM=YES
   export SENDDBN=NO
-  export SENDSMS=YES
+  export SENDECF=YES
 
   # Specify Execution Areas
   export HOMEGLOBAL=/nwprod
@@ -246,14 +247,10 @@ do
       $COMIN/$cyc/pgrba/ge$member.$cycle.pgrbaianl$cfsuffix \
       $COMIN/$cyc/pgrbb/ge$member.$cycle.pgrbbanl$cfsuffix \
       $COMIN/$cyc/pgrbb/ge$member.$cycle.pgrbbianl$cfsuffix \
-      $COMIN/$cyc/pgrbd/ge$member.$cycle.pgrbdanl$cfsuffix \
-      $COMIN/$cyc/pgrbd/ge$member.$cycle.pgrbdianl$cfsuffix \
       $COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2aanl$cfsuffix \
       $COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2aanl$cfsuffix.idx \
       $COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2banl$cfsuffix \
       $COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2banl$cfsuffix.idx \
-      $COMIN/$cyc/pgrb2c/ge$member.$cycle.pgrb2canl$cfsuffix \
-      $COMIN/$cyc/pgrb2d/ge$member.$cycle.pgrb2danl$cfsuffix \
     "
     for file in $filelist
     do
@@ -283,14 +280,10 @@ do
 	$COMIN/$cyc/pgrba/ge$member.$cycle.pgrbaif$FH$cfsuffix \
 	$COMIN/$cyc/pgrbb/ge$member.$cycle.pgrbbf$FH$cfsuffix \
 	$COMIN/$cyc/pgrbb/ge$member.$cycle.pgrbbif$FH$cfsuffix \
-	$COMIN/$cyc/pgrbd/ge$member.$cycle.pgrbdf$FH$cfsuffix \
-	$COMIN/$cyc/pgrbd/ge$member.$cycle.pgrbdif$FH$cfsuffix \
 	$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2af$FH$cfsuffix \
 	$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2af$FH$cfsuffix.idx \
 	$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2bf$FH$cfsuffix \
 	$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2bf$FH$cfsuffix.idx \
-	$COMIN/$cyc/pgrb2c/ge$member.$cycle.pgrb2cf$FH$cfsuffix \
-	$COMIN/$cyc/pgrb2d/ge$member.$cycle.pgrb2df$FH$cfsuffix \
 	$COMIN/$cyc/pgrbalr/ge$member.$cycle.pgrbaf$FH.2$cfsuffix \
 	$COMIN/$cyc/pgrbblr/ge$member.$cycle.pgrbbf$FH.2$cfsuffix \
 	$COMIN/$cyc/pgrb2alr/ge$member.$cycle.pgrb2af$FH.2$cfsuffix \
@@ -420,4 +413,3 @@ cd $DATA_IN
 rm -rf $DATA
 
 echo `date` $0 `date -u` end
-$SMSBIN/endt

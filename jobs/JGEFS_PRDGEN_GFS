@@ -9,7 +9,8 @@
 #         in the development enviroment only.
 ######################################################################
 
-$SMSBIN/smsinit $LOADL_STEP_ID 
+export RUN_ENVIR=${RUN_ENVIR:-prod}
+
 echo `date` $0 begin
 
 set -xa
@@ -55,14 +56,14 @@ then
 ################# lines between these markers have been modified for dev begin
   if (( 0 == 1 )); then
 ################# lines between these markers have been modified for dev end
-   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd}
+   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd1}
 ################# lines between these markers have been modified for dev begin
   else
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
+   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd1}
   fi
 ################# lines between these markers have been modified for dev end
 else                       ### For Operations
-   export DATA_IN=/tmpnwprd
+   export DATA_IN=/tmpnwprd1
 fi
 export DATA=$DATA_IN/${job}.${pid}
 
@@ -92,7 +93,7 @@ then
   fi
 ################# lines between these markers have been modified for dev end
 else                        ### For Operations
-   export jlogfile=/com/logs/jlogfile
+   export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.${pid}}
 fi
 
 ####################################
@@ -104,7 +105,7 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 ####################################
-# SENDSMS  - Flag Events on SMS
+# SENDECF  - Flag Events on ECF
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 # RERUN    - Rerun posts from beginning (default no)
@@ -114,8 +115,8 @@ export pgmerr=errfile
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
   export SENDCOM=${SENDCOM:-YES}
-  export SENDDBN=${SENDDBN:-YES}
-  export SENDSMS=${SENDSMS:-YES}
+  export SENDDBN=${SENDDBN:-NO}
+  export SENDECF=${SENDECF:-YES}
   export VERBOSE=${VERBOSE:-NO}
   export SENDDBN_GB2=${SENDDBN_GB2:-NO}
   export RERUN=${RERUN:-NO}
@@ -135,9 +136,14 @@ then
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 else                             ### For Operations
   export SENDCOM=YES
-  export SENDDBN=YES
-  export SENDDBN_GB2=YES
-  export SENDSMS=YES
+  if [[ $cyc = 00 ]]; then
+    export SENDDBN=YES
+    export SENDDBN_GB2=YES
+  else
+    export SENDDBN=NO
+    export SENDDBN_GB2=NO
+  fi
+  export SENDECF=YES
   export VERBOSE=NO
   export RERUN=NO
 
@@ -366,4 +372,3 @@ cd $DATA_IN
 rm -rf $DATA
 
 echo `date` $0 end
-$SMSBIN/endt

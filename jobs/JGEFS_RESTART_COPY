@@ -10,7 +10,8 @@
 na=`basename $0`
 export PS4=' + $SECONDS $na $LINENO: '
 
-$SMSBIN/smsinit $LOADL_STEP_ID 
+export RUN_ENVIR=${RUN_ENVIR:-prod}
+
 echo `date` $0 `date -u` begin
 
 set -xa
@@ -52,14 +53,14 @@ then
 ################# lines between these markers have been modified for dev begin
  if (( 0 == 1 )); then
 ################# lines between these markers have been modified for dev end
-   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd}
+   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd1}
 ################# lines between these markers have been modified for dev begin
  else
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
+   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd1}
  fi
 ################# lines between these markers have been modified for dev end
 else                         ### For Operations
-   export DATA_IN=/tmpnwprd
+   export DATA_IN=/tmpnwprd1
 fi
 export DATA=$DATA_IN/${job}.${pid}
 
@@ -88,7 +89,7 @@ then
  fi
 ################# lines between these markers have been modified for dev end
 else                          ### For Operations
-   export jlogfile=/com/logs/jlogfile
+   export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.$$
 fi
 
 ####################################
@@ -100,7 +101,7 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 ####################################
-# SENDSMS  - Flag Events on SMS
+# SENDECF  - Flag Events on ECF
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 ####################################
@@ -108,7 +109,7 @@ if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
   export SENDCOM=${SENDCOM:-YES}
   export SENDDBN=${SENDDBN:-NO}
-  export SENDSMS=${SENDSMS:-YES}
+  export SENDECF=${SENDECF:-YES}
 
   # Specify Execution Areas
   export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
@@ -126,7 +127,7 @@ then
 else                             ### For Operations
   export SENDCOM=YES
   export SENDDBN=NO
-  export SENDSMS=YES
+  export SENDECF=YES
 
   # Specify Execution Areas
   export HOMEGLOBAL=/nwprod
@@ -302,4 +303,3 @@ cd $DATA_IN
 rm -rf $DATA
 
 echo `date` $0 `date -u` end
-$SMSBIN/endt

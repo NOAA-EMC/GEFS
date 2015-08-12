@@ -9,7 +9,8 @@
 #         in the development enviroment only.
 ######################################################################
 
-$SMSBIN/smsinit $LOADL_STEP_ID 
+export RUN_ENVIR=${RUN_ENVIR:-prod}
+
 echo `date` $0 `date -u` begin
 
 set -xa
@@ -60,14 +61,14 @@ then
 ################# lines between these markers have been modified for dev begin
   if (( 0 == 1 )); then
 ################# lines between these markers have been modified for dev end
-   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd}
+   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd1}
 ################# lines between these markers have been modified for dev begin
   else
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd}
+   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd1}
   fi
 ################# lines between these markers have been modified for dev end
 else                         ### For Operations
-   export DATA_IN=/tmpnwprd
+   export DATA_IN=/tmpnwprd1
 fi
 export DATA=$DATA_IN/${job}.${pid}
 
@@ -110,7 +111,7 @@ then
    export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
 ################# lines between these markers have been modified for dev end
 else                        ### For Operations
-   export jlogfile=/com/logs/jlogfile
+   export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.$$
 fi
 
 #DHOU, Please modify this block
@@ -136,7 +137,7 @@ if [[ $RUN_CONCURRENT = yes ]]; then
 fi
 
 ####################################
-# SENDSMS  - Flag Events on SMS
+# SENDECF  - Flag Events on ECF
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 # RERUN    - Rerun fcst from beginning (default no)
@@ -145,7 +146,7 @@ fi
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
   export SENDCOM=${SENDCOM:-YES}
-  export SENDSMS=${SENDSMS:-YES}
+  export SENDECF=${SENDECF:-YES}
   export VERBOSE=${VERBOSE:-NO}
   export RERUN=${RERUN:-NO}
 
@@ -171,19 +172,11 @@ then
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
-#DHOU 03/08/2012 added this line for ZEUS
-  if [[ $gefsmachine = zeus ]]; then
-    export FIXGLOBAL=/NCEPPROD/nwprod/fix
-  fi
-#DHOU 01/11/2013 added this line for WCOSS
-  if [[ $gefsmachine = wcoss ]]; then
-#   export FIXGLOBAL=$HOMEglobal/fix
-    export FIXGLOBAL=$HOMEgefs/fix
-  fi
+  export FIXGLOBAL=$HOMEgefs/fix
 
 else                             ### For Operations
   export SENDCOM=YES
-  export SENDSMS=YES
+  export SENDECF=YES
   export VERBOSE=NO
   export RERUN=NO
 
@@ -209,7 +202,6 @@ export LOGSCRIPT=startmsg
 # Set up the UTILITIES
 ##############################
 export utilscript=/nwprod/util/ush
-#DHOU 03/20/2012 Change may be need here for ZEUS
 
 ##############################
 # Run setup to initialize working directory and utility scripts
@@ -281,8 +273,6 @@ case $gefsmachine in
    export CHGRESEXEC=$EXECglobal/global_chgres
  ;;
  (wcoss)
-   #export chgresush=/global/noscrub/Shrinivas.Moorthi/para/ush/global_chgres.sh
-   #export CHGRESEXEC=/global/save/Shrinivas.Moorthi/GFS/global_chgres.fd_n2/global_chgres
    export chgresush=$USHGLOBAL/global_chgres.sh
    export CHGRESEXEC=$EXECGLOBAL/global_chgres
  ;;
@@ -480,7 +470,6 @@ postmsg "$jlogfile" "$msg"
 # Remove the Temporary working directory
 ##############################
 cd $DATA_IN
-#rm -rf $DATA
+rm -rf $DATA
 
 echo `date` $0 `date -u` end
-$SMSBIN/endt

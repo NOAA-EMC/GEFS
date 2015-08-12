@@ -1697,7 +1697,7 @@ case $taskname in
   ;;
   (chgres)
     ################################# production variables
-    jobscript=JGEFS_SIGCHGRS
+    jobscript=JGEFS_SIGCHGRES
     job_type=parallel
     total_tasks=8
     node=1

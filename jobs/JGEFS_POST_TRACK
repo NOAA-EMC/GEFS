@@ -7,7 +7,8 @@
 na=`basename $0`
 export PS4=' + $SECONDS $na $LINENO: '
 
-$SMSBIN/smsinit $LOADL_STEP_ID 
+export RUN_ENVIR=${RUN_ENVIR:-prod}
+
 echo `date` $0 `date -u` begin
 
 set -xa
@@ -44,14 +45,14 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
 ###teste
-export DATA=/tmpnwprd/${job}.${pid}
+export DATA=/tmpnwprd1/${job}.${pid}
 ###testb
 else
   echo baseptmp=$baseptmp
   echo basetmp=$basetmp
-  export DATA=$basetmp/$envir/tmpnwprd/${job}.${pid}.$PDY$cyc$rrr
+  export DATA=$basetmp/$envir/tmpnwprd1/${job}.${pid}.$PDY$cyc$rrr
 ################# lines between these markers have been modified for dev begin
-  export DATA=$basetmp/tmpnwprd/${job}.${pid}
+  export DATA=$basetmp/tmpnwprd1/${job}.${pid}
 ################# lines between these markers have been modified for dev end
 echo DATA=$DATA
 fi
@@ -89,11 +90,11 @@ export NET=gens
 ###testb
 if [[ $envir = prod ]]; then
 ###teste
-export jlogfile=/com/logs/jlogfile
+export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.$$
 ###testb
 elif [[ $envir = para ]] || \
      [[ $envir = test ]]; then
-  export jlogfile=/com/logs/para/jlogfile
+  export jlogfile=/com/logs/$envir/jlogfile
 else
 ################# lines between these markers have been modified for dev begin
  if (( 0 == 1 )); then
@@ -116,28 +117,24 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 ####################################
-# SENDSMS  - Flag Events on SMS
+# SENDECF  - Flag Events on ECF
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 ####################################
-export SENDSMS=YES
+export SENDECF=YES
 export SENDCOM=YES
-###testb
-if [[ $envir = prod ]]; then
-###teste
-export SENDDBN=YES
-###testb
-elif [[ $envir = para ]]; then
- export SENDDBN=YES
-elif [[ $envir = test ]]; then
- export SENDDBN=YES
+
+if [[ $cyc = 00 ]]; then
+  if [[ $envir = prod ]]; then
+    export SENDDBN=YES
+  elif [[ $envir = para ]]; then
+    export SENDDBN=YES
+  elif [[ $envir = test ]]; then
+    export SENDDBN=YES
+  fi
 else
-export SENDDBN=YES
-################# lines between these markers have been modified for dev begin
-export SENDDBN=NO
-################# lines between these markers have been modified for dev end
+  export SENDDBN=NO
 fi
-###teste
 
 ####################################
 # Specify Execution Areas
@@ -341,14 +338,14 @@ do
      [[ $envir = para ]] || \
      [[ $envir = test ]]; then
   ###teste
-     export DATA=/tmpnwprd/gefs_post_${RUN}${cyc}_${cyc_fcst}.${envir}
+     export DATA=/tmpnwprd1/gefs_post_${RUN}${cyc}_${cyc_fcst}.${envir}
   ###testb
   else
     echo baseptmp=$baseptmp
     echo basetmp=$basetmp
-    export DATA=$basetmp/$envir/tmpnwprd/gefs_post_${RUN}_${PDY}${cyc}_${cyc_fcst}.${envir}.save
+    export DATA=$basetmp/$envir/tmpnwprd1/gefs_post_${RUN}_${PDY}${cyc}_${cyc_fcst}.${envir}.save
 ################# lines between these markers have been modified for dev begin
-    export DATA=$basetmp/tmpnwprd/gefs_post_track_${RUN}_${PDY}${cyc}_${cyc_fcst}.${envir}
+    export DATA=$basetmp/tmpnwprd1/gefs_post_track_${RUN}_${PDY}${cyc}_${cyc_fcst}.${envir}
 ################# lines between these markers have been modified for dev end
   echo DATA=$DATA
   fi
@@ -368,11 +365,7 @@ do
   ###################################
   if [ $cyc -eq 06 -o $cyc -eq 18 ]
   then
-     #export SENDDBN=YES
-      export SENDDBN=YES
-################# lines between these markers have been modified for dev begin
       export SENDDBN=NO
-################# lines between these markers have been modified for dev end
   fi
 
   export pert=`echo ${RUN} | cut -c3-5`
@@ -464,7 +457,7 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
 ###teste
-cd /tmpnwprd
+cd /tmpnwprd1
 rm -rf $DATA
 ###testb
 else
@@ -473,14 +466,3 @@ fi
 ###teste
 
 echo `date` $0 `date -u` end
-###testb
-if [[ $envir = prod ]] || \
-   [[ $envir = para ]] || \
-   [[ $envir = test ]]; then
-###teste
-$SMSBIN/endt
-###testb
-else
-  echo skip endt for testing
-fi
-###teste

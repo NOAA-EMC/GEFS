@@ -47,6 +47,8 @@ if (( $# >= 3 )); then
 	$PTMP/$LOGNAME/o/$expid/nwges/dev/gefs_legacy.$yyyymmdd \
 	$PTMP/$LOGNAME/o/$expid/tmpnwprd \
 	$STMP/$LOGNAME/o/$expid/tmpnwprd \
+	$PTMP/$LOGNAME/o/$expid/tmpnwprd1 \
+	$STMP/$LOGNAME/o/$expid/tmpnwprd1 \
       "
 
       suffixused=no
@@ -66,6 +68,21 @@ if (( $# >= 3 )); then
 	    ls -ald $dir
 	    dirb=`basename $dir`
 	    if [[ $dirb = tmpnwprd ]]; then
+	      mkdir -p $dir.$suffix
+	      rc=$?
+	      if (( rc == 0 )); then
+		for dird in $dir/*${yyyymmdd}*
+		do
+		  if [[ -d $dird ]]; then
+		    mv $dird $dir.$suffix
+		  else
+		    echo dird=$dird DOES NOT EXIST AS A DIRECTORY
+		  fi
+		done
+	      else
+	        echo mkdir -p $dir.$suffix FAILED rc=$rc
+	      fi
+	    elif [[ $dirb = tmpnwprd1 ]]; then
 	      mkdir -p $dir.$suffix
 	      rc=$?
 	      if (( rc == 0 )); then
@@ -110,6 +127,8 @@ if (( $# >= 3 )); then
 	$PTMP/$LOGNAME/o/$expid/nwges/dev/gefs_legacy.$yyyymmdd \
 	$PTMP/$LOGNAME/o/$expid/tmpnwprd \
 	$STMP/$LOGNAME/o/$expid/tmpnwprd \
+	$PTMP/$LOGNAME/o/$expid/tmpnwprd1 \
+	$STMP/$LOGNAME/o/$expid/tmpnwprd1 \
       "
 
       suffixused=no
@@ -129,6 +148,21 @@ if (( $# >= 3 )); then
 	    ls -ald $dir
 	    dirb=`basename $dir`
 	    if [[ $dirb = tmpnwprd ]]; then
+	      mkdir -p $dir.$suffix
+	      rc=$?
+	      if (( rc == 0 )); then
+		for dird in $dir/*${yyyymmdd}${hh}*
+		do
+		  if [[ -d $dird ]]; then
+		    mv $dird $dir.$suffix
+		  else
+		    echo dird=$dird DOES NOT EXIST AS A DIRECTORY
+		  fi
+		done
+	      else
+	        echo mkdir -p $dir.$suffix FAILED rc=$rc
+	      fi
+	    elif [[ $dirb = tmpnwprd1 ]]; then
 	      mkdir -p $dir.$suffix
 	      rc=$?
 	      if (( rc == 0 )); then
