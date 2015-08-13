@@ -85,7 +85,7 @@ do
       err=$?;export err ;err_chk
       echo " error from tocgrib2=",$err
 
-      if [ $? �-ne 0 ]; then
+      if [ $err -ne 0 ]; then
          msg="WARNING: WMO header not added to $FORT11"
          postmsg $jlogfile "$msg"
          echo "$msg"
