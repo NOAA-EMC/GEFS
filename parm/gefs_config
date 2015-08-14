@@ -21,7 +21,7 @@ export COMROOT=$baseoutput/com
 export GESROOT=$baseoutput/nwges
 export DATAROOT=$baseoutput/tmpnwprd
 export DCOMROOT=${DCOMROOT:-/dcom}
-export PCOMROOT=$baseoutput/pcom
+export PCOMROOT=$baseoutput/pcom/$envir
 
   mkdir -p  $COMROOT/logs/jlogfiles
 
