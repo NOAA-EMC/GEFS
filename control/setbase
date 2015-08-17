@@ -188,7 +188,7 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
     export classp=dev
   fi
   # RLW 20141008 modify to obtain and use version for vertical structure
-  . /$group/save/$userin/s/$expid/nw$envir/gefs.v*/versions/gefs.ver
+  . /$group/save/$userin/s/$expid/nw$envir/gefs.v*/versions/gefs_legacy.ver
   echo gefs_ver=${gefs_ver}
   export basesource=/$group/save/$userin/s/$expid
   export basebin=$basesource/nw$envir/gefs.${gefs_ver}/control

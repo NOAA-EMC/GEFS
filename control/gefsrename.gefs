@@ -35,7 +35,7 @@ if (( $# >= 3 )); then
     yyyymmdd=$dtg
     echo yyyymmdd=$yyyymmdd
     # 20141008 RLW modify to obtain and use version for vertical structure
-    . /$group/save/$owner/s/$expid/nw$envir/gefs.v*/versions/gefs.ver
+    . /$group/save/$owner/s/$expid/nw$envir/gefs.v*/versions/gefs_legacy.ver
     controldir=/ensemble/save/$owner/s/$expid/nwdev/gefs.${gefs_ver}/control
     cd $controldir
     rc=$?
@@ -115,7 +115,7 @@ if (( $# >= 3 )); then
     yyyymmdd=`echo $dtg|cut -c1-8`
     hh=`echo $dtg|cut -c9-10`
     # 20141008 RLW modify to obtain and use version for vertical structure
-    . /$group/save/$owner/s/$expid/nw$envir/*/versions/gefs.ver
+    . /$group/save/$owner/s/$expid/nw$envir/*/versions/gefs_legacy.ver
     controldir=/ensemble/save/$owner/s/$expid/nwdev/gefs.${gefs_ver}/control
     cd $controldir
     rc=$?

@@ -27,11 +27,11 @@ export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
   # RLW 20141008 modify to obtain and use version for vertical structure
-  . $basesource/nw$envir/*/versions/gefs.ver
+  . $basesource/nw$envir/*/versions/gefs_legacy.ver
   . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
 else
   # RLW 20141008 modify to obtain and use version for vertical structure
-  . /nwprod/versions/gefs.ver
+  . /nwprod/versions/gefs_legacy.ver
 fi
 
 ####################################

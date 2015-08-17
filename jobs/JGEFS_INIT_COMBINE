@@ -133,19 +133,19 @@ fi
 if [[ $envir = prod ]]; then
 ###teste
   # RLW 20141008 modify to obtain and use version for vertical structure
-  . /nw$envir/versions/gefs.ver
+  . /nw$envir/versions/gefs_legacy.ver
   export HOMEGLOBAL=/nw${envir}/gefs.${gefs_ver}
 ###testb
 elif [[ $envir = para ]] || [[ $envir = test ]]; then
   # RLW 20141008 modify to obtain and use version for vertical structure
-  . /nw$envir/versions/gefs.ver
+  . /nw$envir/versions/gefs_legacy.ver
   export HOMEGLOBAL=/nwprod/gefs.${gefs_ver}
 fi
 ###teste
 ################# lines between these markers have been modified for dev begin
 if [[ $envir = dev ]]; then
 # RLW 20141008 modify to obtain and use version for vertical structure
-  . $basesource/nw$envir/*/versions/gefs.ver
+  . $basesource/nw$envir/*/versions/gefs_legacy.ver
   export HOMEGLOBAL=$basesource/nw$envir/gefs.${gefs_ver}
 fi
 ################# lines between these markers have been modified for dev end
