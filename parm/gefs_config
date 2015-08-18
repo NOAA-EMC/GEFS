@@ -33,6 +33,9 @@ then
    if [[ $gefsmachine = wcoss ]]; then
   export HOMEglobal=/ensemble/noscrub/Dingchen.Hou/nwprod
    fi
+   if [[ $gefsmachine = wcoss ]]; then
+  export HOMEglobal=/nwprod
+   fi
   export EXECglobal=$HOMEglobal/exec
   export FIXglobal=$HOMEglobal/fix
   export PARMglobal=$HOMEglobal/parm

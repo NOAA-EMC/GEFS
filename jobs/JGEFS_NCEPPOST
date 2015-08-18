@@ -173,17 +173,17 @@ else                             ### For Operations
   export RERUN=NO
 
   # Specify Execution Areas
-  export HOMEGLOBAL=/nwprod
-  export EXECGLOBAL=$HOMEGLOBAL/exec
-  export USHGLOBAL=$HOMEGLOBAL/ush
-  export FIXGLOBAL=$HOMEGLOBAL/fix
-  export PARMGLOBAL=$HOMEGLOBAL/parm
+  export HOMEglobal=${HOMEglobal:-/nwprod}
+  export EXECglobal=${EXECglobal:-$HOMEglobal/exec}
+  export USHglobal=${USHglobal:-$HOMEglobal/ush}
+  export FIXglobal=${FIXglobal:-$HOMEglobal/fix}
+  export PARMglobal=${PARMglobal:-$HOMEglobal/parm}
 
-  export HOMEgefs=/nw${envir}
-  export EXECgefs=$HOMEgefs/exec
-  export USHgefs=$HOMEgefs/ush
-  export FIXgefs=$HOMEgefs/fix
-  export PARMgefs=$HOMEgefs/parm
+  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs.${gefs_ver}}
+  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+  export USHgefs=${USHgefs:-$HOMEgefs/ush}
+  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 fi
 
 ###############################################################
@@ -233,10 +233,12 @@ export POSTGPEXEC=$HOMEglobal/exec/ncep_post
 #DHOU  test to use HOMEgefs
 export POSTGPSH=$USHgefs/gefs_nceppost.sh
 export POSTGPEXEC=$HOMEgefs/exec/gefs_ncep_post
+export ENSADD=$USHgefs/global_ensadd.sh
   ;;
 esac
 echo in $0: POSTGPSH=$POSTGPSH
 echo in $0: POSTGPEXEC=$POSTGPEXEC
+echo in $0: ENSADD=$ENSADD
 
 #export HOMEUTIL=/nwprod/util
 #DHOU 03/21/2012 for ZEUS

@@ -22,64 +22,11 @@ fhr=$fhr
 
 export WGRIB=${WGRIB:-/nwprod/util/exec/wgrib}
 export GRBIDX=${GRBIDX:-/nwprod/util/exec/grbindex}
-export ENSADD=${ENSADD:-$USHGLOBAL/global_ensadd.sh}
+export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
 export CNVGRIB=${CNVGRIB:-/nwprod/util/exec/cnvgrib}
 export COPYGB=${COPYGB:-/nwprod/util/exec/copygb}
 export WGRIB2=${WGRIB2:-/nwprod/util/exec/wgrib2}
 
-#DHOU 2/1/2013, replace block with the ccs-prod version (above)
-#export WGRIB=/nwprod/util/exec/wgrib
-#export GRBIDX=/nwprod/util/exec/grbindex
-#export ENSADD=$USHGLOBAL/global_ensadd.sh
-#export CNVGRIB=/nwprod/util/exec/cnvgrib
-##RLW 20110722 CNVGRIB TEMPORARY
-#export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib
-################################################### RLW 20110722 CNVGRIB TEMPORARY
-#export COPYGB=/nwprod/util/exec/copygb
-#export WGRIB2=/nwprod/util/exec/wgrib2
-
-if [[ $envir = dev ]]; then
-  case $gefsmachine in
-    (wcoss)
-export WGRIB=/nwprod/util/exec/wgrib
-export GRBIDX=/nwprod/util/exec/grbindex
-#export ENSADD=$USHglobal/global_ensadd.sh
-export ENSADD=$USHgefs/global_ensadd.sh
-export CNVGRIB=/nwprod/util/exec/cnvgrib
-    ;;
-    (zeus)
-#DHOU 03/22/2012 For ZEUS, copy from exgefs_nceppost.sh.sms
-export WGRIB=${WGRIB:-${EXECUTIL}/wgrib}
-export GRBIDX=${GRBIDX:-${EXECUTIL}/grbindex}
-    ;;
-  esac
-#export ENSADD=${ENSADD:-$USHGLOBAL/global_ensadd.sh}
-#export POSTGPSH=${POSTGPSH:-$USHGLOBAL/global_nceppost.sh}
-#DHOU 03/22/2012 For ZEUS, these two are not used in ceppost.sh.sms
-################################################## RLW 20110722 CNVGRIB TEMPORARY
-  case $gefsmachine in
-    (wcoss)
-export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
-    ;;
-    (zeus)
-export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
-export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib
-    ;;
-  esac
-fi  
-################################################## RLW 20110722 CNVGRIB TEMPORARY
-export WGRIB2=/nwprod/util/exec/wgrib2
-if [[ $envir = dev ]]; then
-  case $gefsmachine in
-    (wcoss)
-export COPYGB=/nwprod/util/exec/copygb
-    ;;
-    (zeus)
-#DHOU 03/22/2012 For ZEUS, these two are not used in ceppost.sh.sms
-export COPYGB=$HOMEglobal/util/exec/copygb
-    ;;
-  esac
-fi  
 echo settings in $0 gefsmachine=$gefsmachine
 echo settings in $0 WGRIB=$WGRIB
 echo settings in $0 GRBIDX=$GRBIDX

@@ -114,7 +114,7 @@ then
   export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
   export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
 
-  export HOMEgefs=${HOMEgefs:-/nw${envir}}
+  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs.${gefs_ver}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
@@ -133,17 +133,17 @@ else                             ### For Operations
   fi
 
   # Specify Execution Areas
-  export HOMEGLOBAL=/nwprod
-  export EXECGLOBAL=$HOMEGLOBAL/exec
-  export USHGLOBAL=$HOMEGLOBAL/ush
-  export FIXGLOBAL=$HOMEGLOBAL/fix
-  export PARMGLOBAL=$HOMEGLOBAL/parm
+  export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
+  export EXECGLOBAL=${EXECGLOBAL:-$HOMEGLOBAL/exec}
+  export USHGLOBAL=${USHGLOBAL:-$HOMEGLOBAL/ush}
+  export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
+  export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
 
-  export HOMEgefs=/nw${envir}
-  export EXECgefs=$HOMEgefs/exec
-  export USHgefs=$HOMEgefs/ush
-  export FIXgefs=$HOMEgefs/fix
-  export PARMgefs=$HOMEgefs/parm
+  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs.${gefs_ver}}
+  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+  export USHgefs=${USHgefs:-$HOMEgefs/ush}
+  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 fi
 
 export ERRSCRIPT=err_chk

@@ -218,11 +218,11 @@ if [[ $envir = dev ]]; then
      exectrkdir=$basesource/nw$envir/gefs.${gefs_ver}/util/exec
     $basesource/nw$envir/gefs.${gefs_ver}/util/ush/ens_trak_ave.sh
  else
-  ${utilscript}/ens_trak_ave.sh
+  $HOMEgefs/util/ush/ens_trak_ave.sh
  fi
 else
 ################# lines between these markers have been modified for dev end
-${utilscript}/ens_trak_ave.sh
+  $HOMEgefs/util/ush/ens_trak_ave.sh
 ################# lines between these markers have been modified for dev begin
 fi
 ################# lines between these markers have been modified for dev end

@@ -24,57 +24,12 @@ gefsmachine=wcoss  # WCOSS Temporary
 
 export WGRIB=/nwprod/util/exec/wgrib
 export GRBIDX=/nwprod/util/exec/grbindex
-export ENSADD=$USHGLOBAL/global_ensadd.sh
-export CNVGRIB=/nwprod/util/exec/cnvgrib
-#RLW 20110722 CNVGRIB TEMPORARY
-export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib
-################################################## RLW 20110722 CNVGRIB TEMPORARY
 export COPYGB=/nwprod/util/exec/copygb
 export WGRIB2=/nwprod/util/exec/wgrib2
 
-  case $gefsmachine in
-    (wcoss)
-export WGRIB=/nwprod/util/exec/wgrib
-export GRBIDX=/nwprod/util/exec/grbindex
-export ENSADD=$USHglobal/global_ensadd.sh
 export ENSADD=$USHgefs/global_ensadd.sh
 export CNVGRIB=/nwprod/util/exec/cnvgrib
-    ;;
-    (zeus)
-#echo ZEUSTEST-prdgen-lowres
-#echo $WGRIB $ENSADD $GRBIDX ${EXECUTIL} $USHglobal
-#DHOU 03/22/2012 For ZEUS, copy from exgefs_nceppost.sh.sms
-export WGRIB=${WGRIB:-${EXECUTIL}/wgrib}
-export GRBIDX=${GRBIDX:-${EXECUTIL}/grbindex}
-    ;;
-  esac
-#export ENSADD=${ENSADD:-$USHGLOBAL/global_ensadd.sh}
-#export POSTGPSH=${POSTGPSH:-$USHGLOBAL/global_nceppost.sh}
-#DHOU 03/22/2012 For ZEUS, these two are not used in ceppost.sh.sms
-#export POSTGPSH=${POSTGPSH:-$USHglobal/global_nceppost.sh}
-################################################## RLW 20110722 CNVGRIB TEMPORARY
-  case $gefsmachine in
-    (wcoss)
-export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
-    ;;
-    (zeus)
-export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
-export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib
-    ;;
-  esac
-################################################## RLW 20110722 CNVGRIB TEMPORARY
-export WGRIB2=/nwprod/util/exec/wgrib2
-  case $gefsmachine in
-    (wcoss)
-export COPYGB=/nwprod/util/exec/copygb
-    ;;
-    (zeus)
-#DHOU 03/22/2012 For ZEUS, these two are not used in ceppost.sh.sms
-export COPYGB=$HOMEglobal/util/exec/copygb
-echo $WGRIB $ENSADD $GRBIDX ${EXECUTIL} $USHglobal
-echo ZEUSTEST-prdgen-lowres
-    ;;
-  esac
+
 echo settings in $0 gefsmachine=$gefsmachine
 echo settings in $0 WGRIB=$WGRIB
 echo settings in $0 GRBIDX=$GRBIDX

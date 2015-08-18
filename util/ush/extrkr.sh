@@ -2504,6 +2504,8 @@ if [ ${gettrk_rcc} -eq 0 ]; then
     glradarch=${glradarch:-${gltrkdir}/tracks.radii.${syy}}
     tmradarch=${tmradarch:-/nfsuser/g01/wx20tm/trak/prod/tracks.radii.${syy}}
 
+       # disable arghive for legacy run
+       if (( 0 == 1 )); then
     cat ${DATA}/trak.${atcfout}.all.${PDY}${CYL}   >>${gltrakarch}
     #cat ${DATA}/trak.${atcfout}.all.${PDY}${CYL}   >>${tmtrakarch}
 
@@ -2515,6 +2517,8 @@ if [ ${gettrk_rcc} -eq 0 ]; then
 
     cat ${DATA}/trak.${atcfout}.radii.${PDY}${CYL} >>${glradarch}
     #cat ${DATA}/trak.${atcfout}.radii.${PDY}${CYL} >>${tmradarch}
+       # disable arghive for legacy run
+       fi
 
 
     if [ ${PARAFLAG} = 'YES' ]
@@ -2537,6 +2541,8 @@ if [ ${gettrk_rcc} -eq 0 ]; then
       #tmtrakstat=${tmscrdir}/tracker.prod.status
       #echo "${atcfout} tracker completed okay for ${PDY}${CYL}" >>${tmtrakstat}
 
+       # disable alerts for legacy run
+       if (( 0 == 1 )); then
       export SENDDBN=${SENDDBN:-YES}
       export SENDTRACKER=${SENDTRACKER:-NO}
       if [ ${SENDDBN} = 'YES' -o ${SENDTRACKER} = 'YES' ]
@@ -2550,6 +2556,8 @@ if [ ${gettrk_rcc} -eq 0 ]; then
           fi
         fi
       fi
+       # disable alerts for legacy run
+       fi
 
       # ------------------------------------------
       # Cat atcfunix files to storm trackers files
@@ -2569,6 +2577,8 @@ if [ ${gettrk_rcc} -eq 0 ]; then
       # out in a separate script.
 
 
+       # disable arghive for legacy run
+       if (( 0 == 1 )); then
       if [ $cmodel != 'ece' -a $cmodel != 'cens' -a $cmodel != gfs_enr ]; then
 
         if [ ${cmodel} = 'gfdl' ]
@@ -2619,6 +2629,8 @@ if [ ${gettrk_rcc} -eq 0 ]; then
         fi
 
       fi
+       # disable arghive for legacy run
+       fi
 
     fi
 

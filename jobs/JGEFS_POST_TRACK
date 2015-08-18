@@ -153,42 +153,21 @@ export EXECUTIL=$HOMEUTIL/exec
 export FIXUTIL=$HOMEUTIL/fix
  fi
 
-###testb
-if [[ $envir = prod ]]; then
+export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
 ###teste
-export HOMEGLOBAL=/nw${envir}
-###testb
-else
-  export HOMEGLOBAL=/nwprod
-fi
-###teste
-export USHGLOBAL=$HOMEGLOBAL/ush
-export EXECGLOBAL=$HOMEGLOBAL/exec
+export USHGLOBAL=${USHGLOBAL:-$HOMEGLOBAL/ush}
+export EXECGLOBAL=${EXECGLOBAL:-$HOMEGLOBAL/exec}
 #DHOU 04/05/2012 for Zeus added the next 2 lines
  if [[ $gefsmachine = zeus ]]; then
     export USHGLOBAL=$HOMEglobal/ush
     export EXECGLOBAL=$HOMEglobal/exec
  fi
-export FIXGLOBAL=$HOMEGLOBAL/fix
-###testb
-if [[ $envir = prod ]]; then
-###teste
-export PARMGLOBAL=$HOMEGLOBAL/parm
-###testb
-# set PARMGLOBAL for test runs
-elif [[ $envir = para ]] || \
-     [[ $envir = test ]]; then
-  PARMGLOBAL=/nw$envir/gefs.${gefs_ver}/parm
-else
-  PARMGLOBAL=$basesource/nw$envir/gefs.${gefs_ver}/parm
-fi
-###teste
+export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
+export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
 
 ##############################
 # Set up the UTILITIES
 ##############################
-export HOMEgefs=/nwprod
-export HOMEgefs=${HOMEgefs:-/nwprod}
 export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs.${gefs_ver}}
 export utilscript=/nwprod/util/ush
 #DHOU 04/05/2012 for ZEUS
@@ -196,7 +175,7 @@ export utilscript=/nwprod/util/ush
    export utilscript=$HOMEglobal/util/ush
  fi
  if [[ $gefsmachine = wcoss ]]; then
-   export utilscript=$HOMEgefs/util/ush
+   export utilscript=$HOMEglobal/util/ush
  fi
 
 ##############################
@@ -375,7 +354,7 @@ do
   ###testb
   if   [[ $envir = prod ]]; then
   ###teste
-    sh ${utilscript}/extrkr.sh
+    sh $HOMEgefs/util/ush/extrkr.sh
   ###testb
   elif [[ $envir = para ]] || \
        [[ $envir = test ]]; then
@@ -391,7 +370,7 @@ do
     sh $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
 #   ls -lt $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
    elif [[ $gefsmachine = wcoss ]]; then
-    sh ${utilscript}/extrkr.sh
+    sh $HOMEgefs/util/ush/extrkr.sh
 #   sh /nwprod/util/ush/extrkr.sh
 #  #sh $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
    else
@@ -407,16 +386,16 @@ do
   ###testb
   if   [[ $envir = prod ]]; then
   ###teste
-  sh ${utilscript}/extrkr.sh
+    sh $HOMEgefs/util/ush/extrkr.sh
   ###testb
   elif [[ $envir = para ]] || \
        [[ $envir = test ]]; then
-  sh /nw$envir/util/ush/extrkr.sh
+    sh $HOMEgefs/util/ush/extrkr.sh
   else
     # sh $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
     if [[ $gefsmachine = wcoss ]]; then
 #    /nwprod/util/ush/extrkr.sh
-     sh ${utilscript}/extrkr.sh
+      sh $HOMEgefs/util/ush/extrkr.sh
     else
       # RLW 20141008 modify to obtain and use version for vertical structure
       $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
