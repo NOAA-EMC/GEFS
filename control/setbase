@@ -178,8 +178,28 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
     userin="Richard.Wobus"
     userout="emc.enspara"
     usergfs="Richard.Wobus"
-    export classs=devhigh_shared
-    export classp=devhigh
+    zq_setbase_hh=`date +%H`
+    echo zq_setbase_hh=$zq_setbase_hh
+    zq_setbase_runhigh=no
+    if (( zq_setbase_hh > 20 )) || (( zq_setbase_hh < 12 )) ; then
+      zq_setbase_runhigh=yes
+      zq_setbase_testc=`date +%Y%m%d`
+      echo zq_setbase_testc=$zq_setbase_testc
+      zq_setbase_testj=`echo $LSB_JOBNAME | cut -c3-10`
+      echo zq_setbase_testj=$zq_setbase_testj
+      if [[ "$zq_setbase_testc" = "$zq_setbase_testj" ]]; then
+        zq_setbase_runhigh=no
+        zq_setbase_runhigh=yes
+      fi
+    fi
+    echo zq_setbase_runhigh=$zq_setbase_runhigh
+    if [[ "$zq_setbase_runhigh" =  "yes" ]]; then
+      export classs=devhigh_shared
+      export classp=devhigh
+    else
+      export classs=dev_shared
+      export classp=dev
+    fi
   else
     userin=$LOGNAME
     userout=$LOGNAME
@@ -204,6 +224,7 @@ fi
 
 fi
 
+echo
 echo basesource=$basesource
 echo baseoutput=$baseoutput
 echo
@@ -216,6 +237,7 @@ echo basedgens=$basedgens
 echo
 echo account=$account
 echo group=$group
+echo
 echo classs=$classs
 echo classp=$classp
 echo
