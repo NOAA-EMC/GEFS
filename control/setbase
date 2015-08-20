@@ -184,7 +184,7 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
     if (( zq_setbase_hh > 20 )) || (( zq_setbase_hh < 12 )) ; then
       zq_setbase_runhigh=yes
       zq_setbase_testc=`date +%Y%m%d`
-      zq_setbase_testc=`/nwprod/util/exec/ndate -18`
+      zq_setbase_testc=`/nwprod/util/exec/ndate -24`
       echo zq_setbase_testc=$zq_setbase_testc
       zq_setbase_testj=`echo ${LSB_JOBNAME}333333333333 | cut -c3-12`
       echo zq_setbase_testj=$zq_setbase_testj
