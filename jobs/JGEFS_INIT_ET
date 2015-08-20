@@ -252,20 +252,20 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
 ###teste
-export COMIN=/com/${NET}/${envir}/gefs.${PDY}
+export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
 export COM=/com/${NET}/${envir}
-export COMINm1=/com/${NET}/${envir}/gefs.${PDYm1}
-export COMINm2=/com/${NET}/${envir}/gefs.${PDYm2}
-export COMINm3=/com/${NET}/${envir}/gefs.${PDYm3}
-export COMINm4=/com/${NET}/${envir}/gefs.${PDYm4}
+export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
+export COMINm2=/com/${NET}/${envir}/gefs_legacy.${PDYm2}
+export COMINm3=/com/${NET}/${envir}/gefs_legacy.${PDYm3}
+export COMINm4=/com/${NET}/${envir}/gefs_legacy.${PDYm4}
 ###testb
 else
-export COMIN=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
+export COMIN=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
 export COM=$baseoutput/com/${NET}/${envir}
-export COMINm1=$baseoutput/com/${NET}/${envir}/gefs.${PDYm1}
-export COMINm2=$baseoutput/com/${NET}/${envir}/gefs.${PDYm2}
-export COMINm3=$baseoutput/com/${NET}/${envir}/gefs.${PDYm3}
-export COMINm4=$baseoutput/com/${NET}/${envir}/gefs.${PDYm4}
+export COMINm1=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm1}
+export COMINm2=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm2}
+export COMINm3=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm3}
+export COMINm4=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm4}
 fi
 ###teste
 
