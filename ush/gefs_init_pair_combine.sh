@@ -671,22 +671,22 @@ fi
 
 if [[ $SENDDBN = YES ]];then
   #if (( ipair == 1 )) && (( cyc == cyc_fcst )); then
-  #  $DBNROOT/bin/dbn_alert MODEL ENS_SA_C0 $job $COMOUT/$cyc/init/gec00.${cycle}.sanl$cfsuffix
-  #  $DBNROOT/bin/dbn_alert MODEL ENS_MSC_C0 $job $COMOUT/$cyc/init/gec00.${cycle}.sfcanl$cfsuffix
+  #  $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_SA_C0 $job $COMOUT/$cyc/init/gec00.${cycle}.sanl$cfsuffix
+  #  $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_MSC_C0 $job $COMOUT/$cyc/init/gec00.${cycle}.sfcanl$cfsuffix
   #fi
   if (( outflag == 1 )) || (( outflag == 3 )); then
-    $DBNROOT/bin/dbn_alert MODEL ENS_SA_N${ipair} $job $COMOUT/$cyc/init/gen${ipair}.${cycle}.sanl$cfsuffix
+    $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_SA_N${ipair} $job $COMOUT/$cyc/init/gen${ipair}.${cycle}.sanl$cfsuffix
   fi
   #if (( outflag == 2 )) || (( outflag == 3 )); then
-  #  $DBNROOT/bin/dbn_alert MODEL ENS_SA_P${ipair} $job $COMOUT/$cyc/init/gep${ipair}.${cycle}.sanl$cfsuffix
+  #  $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_SA_P${ipair} $job $COMOUT/$cyc/init/gep${ipair}.${cycle}.sanl$cfsuffix
   #fi
   if (( outflag == 4 )); then
-    $DBNROOT/bin/dbn_alert MODEL ENS_SA_N${ipairn} $job $COMOUT/$cyc/init/gen${ipairn}.${cycle}.sanl$cfsuffix
-    $DBNROOT/bin/dbn_alert MODEL ENS_SA_N${ipairp} $job $COMOUT/$cyc/init/gen${ipairp}.${cycle}.sanl$cfsuffix
+    $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_SA_N${ipairn} $job $COMOUT/$cyc/init/gen${ipairn}.${cycle}.sanl$cfsuffix
+    $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_SA_N${ipairp} $job $COMOUT/$cyc/init/gen${ipairp}.${cycle}.sanl$cfsuffix
   fi
   #if (( outflag == 5 )); then
-  #  $DBNROOT/bin/dbn_alert MODEL ENS_SA_P${ipairn} $job $COMOUT/$cyc/init/gep${ipairn}.${cycle}.sanl$cfsuffix
-  #  $DBNROOT/bin/dbn_alert MODEL ENS_SA_P${ipairp} $job $COMOUT/$cyc/init/gep${ipairp}.${cycle}.sanl$cfsuffix
+  #  $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_SA_P${ipairn} $job $COMOUT/$cyc/init/gep${ipairn}.${cycle}.sanl$cfsuffix
+  #  $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_SA_P${ipairp} $job $COMOUT/$cyc/init/gep${ipairp}.${cycle}.sanl$cfsuffix
   #fi
 fi
 echo

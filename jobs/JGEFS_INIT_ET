@@ -118,12 +118,12 @@ export VERBOSE=YES
 
 if [ $cyc -eq 00 ]; then
   if [[ $envir = prod ]]; then
-    export SENDDBN=YES
+    export SENDDBN=NO
   else
-    export SENDDBN=YES
+    export SENDDBN=NO
   fi
 else
-  export SENDDBN=YES
+  export SENDDBN=NO
 fi
 
  

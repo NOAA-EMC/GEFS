@@ -114,8 +114,10 @@ export pgmerr=errfile
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
   export SENDCOM=${SENDCOM:-YES}
-  export SENDDBN=${SENDDBN:-NO}
   export SENDECF=${SENDECF:-YES}
+  export SENDDBN=${SENDDBN:-NO}
+  export SENDDBN_GB2=${SENDDBN_GB2:-NO}
+  export SENDDBN_GB2_IDX=${SENDDBN_GB2_IDX:-NO}
   export CREATE_TIGGE=${CREATE_TIGGE:-NO}
   export CREATE_PGRBD=${CREATE_PGRBD:-NO}
   export RERUN=${RERUN:-NO}
@@ -142,12 +144,16 @@ then
   export PARMglobal=${PARMglobal:-$HOMEglobal/parm}
 else                             ### For Operations
   export SENDCOM=YES
+  export SENDECF=YES
   if [[ $cyc = 00 ]]; then
-    export SENDDBN=YES
+    export SENDDBN=NO
+    export SENDDBN_GB2=YES
+    export SENDDBN_GB2_IDX=NO
   else
     export SENDDBN=NO
+    export SENDDBN_GB2=NO
+    export SENDDBN_GB2_IDX=NO
   fi
-  export SENDECF=YES
   export CREATE_TIGGE=NO
   export CREATE_PGRBD=NO
   export RERUN=NO

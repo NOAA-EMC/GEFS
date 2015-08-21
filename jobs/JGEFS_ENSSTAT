@@ -103,9 +103,10 @@ export pgmerr=errfile
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
   export SENDCOM=${SENDCOM:-YES}
-  export SENDDBN=${SENDDBN:-NO}
   export SENDECF=${SENDECF:-YES}
+  export SENDDBN=${SENDDBN:-NO}
   export SENDDBN_GB2=${SENDDBN_GB2:-NO}
+  export SENDDBN_GB2_IDX=${SENDDBN_GB2_IDX:-NO}
 
   # Specify Execution Areas
   export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
@@ -134,11 +135,13 @@ else                             ### For Operations
   export SENDCOM=YES
   export SENDECF=YES
   if [[ $cyc = 00 ]]; then
-    export SENDDBN=YES
+    export SENDDBN=NO
     export SENDDBN_GB2=YES
+    export SENDDBN_GB2_IDX=NO
   else
     export SENDDBN=NO
     export SENDDBN_GB2=NO
+    export SENDDBN_GB2_IDX=NO
   fi
 
   # Specify Execution Areas

@@ -125,16 +125,16 @@ then
          if test "$NET" = 'gens'
          then
 	   MEMBER=GFS
-	   $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_$MEMBER $job $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaanl
+	   $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGBA_$MEMBER $job $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaanl
 	   if [[ "$makegrb1i" = "yes" ]]; then
-	     $DBNROOT/bin/dbn_alert MODEL ENS_PGBAI_$MEMBER $job $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaianl
+	     $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGBAI_$MEMBER $job $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaianl
 	   fi
 	   if [[ "$makepgrb2a" = "yes" ]]; then
-	     $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_$MEMBER $job $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2aanl
+	     $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2A_$MEMBER $job $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2aanl
 	   fi
 	   if [[ "$makegrb2i" = "yes" ]]; then
 	     if [[ "$makepgrb2a" = "yes" ]]; then
-	       $DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI_$MEMBER $job $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2aianl
+	       $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2AI_$MEMBER $job $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2aianl
 	     fi
 	   fi
          fi

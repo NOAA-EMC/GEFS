@@ -106,11 +106,11 @@ then
     MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
     if [[ $fhr -ge 0 && $fhr -le $fhmax && ` expr $fhr % 6 ` -eq 0 && ! -n "$cfsuffix" ]]
     then
-      ($DBNROOT/bin/dbn_alert MODEL ENS_PGBA_$MEMBER $job $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrbaf$fhr$cfsuffix)&
+      ($DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGBA_$MEMBER $job $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrbaf$fhr$cfsuffix)&
     fi
     if test "$DO_LOW_RES" = 'YES' -a ` expr $fhr % 6 ` -eq 0 -a ! -n "$cfsuffix"
     then
-      ($DBNROOT/bin/dbn_alert MODEL ENS_PGBA2_$MEMBER $job $ENS_COM/$cyc/pgrbalr/${RUN}.${cycle}.pgrbaf$fhr.2$cfsuffix)&
+      ($DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGBA2_$MEMBER $job $ENS_COM/$cyc/pgrbalr/${RUN}.${cycle}.pgrbaf$fhr.2$cfsuffix)&
     fi
 
   fi
@@ -128,11 +128,11 @@ then
     MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
     if [[ $fhr -ge 0 && $fhr -le 84 && ` expr $fhr % 6 ` -eq 0 && ! -n "$cfsuffix" ]]
     then
-      ($DBNROOT/bin/dbn_alert MODEL ENS_PGBB_$MEMBER $job $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbbf$fhr$cfsuffix)&
+      ($DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGBB_$MEMBER $job $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbbf$fhr$cfsuffix)&
     fi
     if test "$DO_LOW_RES" = 'YES' -a ` expr $fhr % 6 ` -eq 0 -a $fhr -ge 90 -a ! -n "$cfsuffix"
     then
-      ($DBNROOT/bin/dbn_alert MODEL ENS_PGBB2_$MEMBER $job $ENS_COM/$cyc/pgrbblr/${RUN}.${cycle}.pgrbbf$fhr.2$cfsuffix)&
+      ($DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGBB2_$MEMBER $job $ENS_COM/$cyc/pgrbblr/${RUN}.${cycle}.pgrbbf$fhr.2$cfsuffix)&
     fi
   fi
 
