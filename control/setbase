@@ -180,9 +180,11 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
     usergfs="Richard.Wobus"
     zq_setbase_hh=`date +%H`
     echo zq_setbase_hh=$zq_setbase_hh
-    zq_setbase_runhigh=no
-    if (( zq_setbase_hh > 20 )) || (( zq_setbase_hh < 12 )) ; then
-      zq_setbase_runhigh=yes
+    zq_setbase_runhigh=yes
+    zq_setbase_runhigh=no      # default
+    if (( zq_setbase_hh > 23 )) || (( zq_setbase_hh < 10 )) ; then
+      zq_setbase_runhigh=no
+      zq_setbase_runhigh=yes   # default
       zq_setbase_testc=`date +%Y%m%d`
       zq_setbase_testc=`/nwprod/util/exec/ndate -24`
       echo zq_setbase_testc=$zq_setbase_testc
@@ -190,7 +192,7 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
       echo zq_setbase_testj=$zq_setbase_testj
       if [[ "$zq_setbase_testj" > "$zq_setbase_testc" ]]; then
         zq_setbase_runhigh=yes
-        zq_setbase_runhigh=no
+        zq_setbase_runhigh=no  # default
       fi
     fi
     echo zq_setbase_runhigh=$zq_setbase_runhigh
