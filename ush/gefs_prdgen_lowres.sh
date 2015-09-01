@@ -179,7 +179,7 @@ then
       MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
       if test "$DO_LOW_RES" = 'YES' -a ` expr $fhr % 6 ` -eq 0 -a ! -n "$cfsuffix"
       then
-        $DBNROOT/bin/dbn_alert MODEL ENS_PGBA2_$MEMBER $job $COMOUT/$cyc/pgrbalr/${RUN}.${cycle}.pgrba$ffhr.2$cfsuffix
+        $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGBA2_$MEMBER $job $COMOUT/$cyc/pgrbalr/${RUN}.${cycle}.pgrba$ffhr.2$cfsuffix
       fi
     fi
   fi
@@ -197,7 +197,7 @@ then
       MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
       if test "$DO_LOW_RES" = 'YES' -a ` expr $fhr % 6 ` -eq 0 -a $fhr -ge 90 -a ! -n "$cfsuffix"
       then
-        $DBNROOT/bin/dbn_alert MODEL ENS_PGBB2_$MEMBER $job $COMOUT/$cyc/pgrbblr/${RUN}.${cycle}.pgrbb$ffhr.2$cfsuffix
+        $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGBB2_$MEMBER $job $COMOUT/$cyc/pgrbblr/${RUN}.${cycle}.pgrbb$ffhr.2$cfsuffix
       fi
     fi
   fi
@@ -257,9 +257,12 @@ else
         if test `echo $RUN | cut -c1-2` = "ge" -a ! -n "$cfsuffix"
         then
           MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-          $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A2_$MEMBER $job $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix
-          $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A2_${MEMBER}_WIDX $job \
-                $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2${cfsuffix}.idx
+          $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2A2_$MEMBER $job $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix
+	  if test "$SENDDBN_GB2_IDX" = 'YES'
+	  then
+	    $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2A2_${MEMBER}_WIDX $job \
+		$COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2${cfsuffix}.idx
+	  fi
         fi
       fi
     fi
@@ -302,16 +305,19 @@ else
             err_chk
           fi
 
-    if test "$SENDDBN" = 'YES'
+    if test "$SENDDBN_GB2" = 'YES'
     then
       if test "$NET" = 'gens'
       then
 	if test `echo $RUN | cut -c1-2` = "ge" -a ! -n "$cfsuffix"
 	then
 	  MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-	  $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B2_$MEMBER $job $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix
-	  $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B2_${MEMBER}_WIDX $job \
-             $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2${cfsuffix}.idx
+	  $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2B2_$MEMBER $job $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix
+	  if test "$SENDDBN_GB2_IDX" = 'YES'
+	  then
+	    $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2B2_${MEMBER}_WIDX $job \
+	       $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2${cfsuffix}.idx
+	  fi
 	fi
       fi
     fi

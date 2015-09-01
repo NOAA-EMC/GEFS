@@ -126,11 +126,11 @@ export SENDCOM=YES
 
 if [[ $cyc = 00 ]]; then
   if [[ $envir = prod ]]; then
-    export SENDDBN=YES
+    export SENDDBN=NO
   elif [[ $envir = para ]]; then
-    export SENDDBN=YES
+    export SENDDBN=NO
   elif [[ $envir = test ]]; then
-    export SENDDBN=YES
+    export SENDDBN=NO
   fi
 else
   export SENDDBN=NO

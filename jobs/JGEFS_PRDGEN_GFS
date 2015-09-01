@@ -137,8 +137,8 @@ then
 else                             ### For Operations
   export SENDCOM=YES
   if [[ $cyc = 00 ]]; then
-    export SENDDBN=YES
-    export SENDDBN_GB2=YES
+    export SENDDBN=NO
+    export SENDDBN_GB2=NO
   else
     export SENDDBN=NO
     export SENDDBN_GB2=NO

@@ -164,7 +164,7 @@ else                             ### For Operations
   export SAVEGES=YES
   export SENDCOM=YES
   if [[ $cyc = 00 ]]; then
-    export SENDDBN=YES
+    export SENDDBN=NO
   else
     export SENDDBN=NO
   fi

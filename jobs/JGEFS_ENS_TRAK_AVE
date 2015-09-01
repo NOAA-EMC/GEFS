@@ -83,7 +83,7 @@ export pgmerr=errfile
 ####################################
 export SENDECF=YES
 export SENDCOM=YES
-export SENDDBN=YES
+export SENDDBN=NO
 ################# lines between these markers have been modified for dev begin
 if [[ $envir = dev ]]; then
   export SENDDBN=NO
