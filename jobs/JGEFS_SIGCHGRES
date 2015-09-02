@@ -68,7 +68,7 @@ then
   fi
 ################# lines between these markers have been modified for dev end
 else                         ### For Operations
-   export DATA_IN=/tmpnwprd1
+   export DATA_IN=$DATAROOT
 fi
 export DATA=$DATA_IN/${job}.${pid}
 

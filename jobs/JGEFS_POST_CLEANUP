@@ -21,16 +21,8 @@ set -xa
 ###########################################
 if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
-  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_setbase
-################# lines between these markers have been modified for dev begin
- else
-  . $basesource/nwdev/parm/gefs_config
- fi
-################# lines between these markers have been modified for dev end
+  . $basesource/nw$envir/*/versions/gefs_legacy.ver
+  . $basesource/nwdev/gefs.${gefs_ver}/parm/gefs_config
 fi
 
 ####################################
@@ -49,7 +41,7 @@ then
  fi
 ################# lines between these markers have been modified for dev end
 else                         ### For Operations
-   export DATA_IN=/tmpnwprd1
+   export DATA_IN=$DATAROOT
 fi
 export DATA=$DATA_IN/${job}.${pid}
 
@@ -68,6 +60,10 @@ export NET=gens
 ####################################
 if [ "$RUN_ENVIR" = dev ]     ### For Developers
 then
+  # RLW 20141008 modify to obtain and use version for vertical structure
+  . $basesource/nw$envir/*/versions/gefs_legacy.ver
+  . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
+
 ################# lines between these markers have been modified for dev begin
  if (( 0 == 1 )); then
 ################# lines between these markers have been modified for dev end
@@ -327,10 +323,10 @@ if (( nmissing > 0 )); then
   exit 99
 else
 # RLW 20130215 disable cleanup for testing
-      if [[ ${envir} = dev ]]; then
-         echo `date` "RLW 20130215 disable cleanup for testing"
+#     if [[ ${envir} = dev ]]; then
+#        echo `date` "RLW 20130215 disable cleanup for testing"
 # RLW 20130215 disable cleanup for testing
-      else
+#     else
   echo `date` sfcsig sflux cleanup end
   for cyc_check in 00 06 12 18
   do
@@ -401,7 +397,7 @@ else
   rm -rf $COMIN/$cyc/restartb
   echo `date` after restart cleanup
 # RLW 20130215 disable cleanup for testing
-      fi
+#     fi
 fi
 ########################################################
 export PS4=' + $SECONDS $na $LINENO: '

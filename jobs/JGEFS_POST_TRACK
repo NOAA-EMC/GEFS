@@ -27,9 +27,6 @@ then
   . $basesource/nw$envir/*/versions/gefs_legacy.ver
   . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
 ################# lines between these markers have been modified for dev end
-else
-  # RLW 20141008 modify to obtain and use version for vertical structure
-  . /nwprod/versions/gefs_legacy.ver
 fi
 
 # #### 05/05/99 ###############################
@@ -45,7 +42,7 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
 ###teste
-export DATA=/tmpnwprd1/${job}.${pid}
+export DATA=$DATAROOT/${job}.${pid}
 ###testb
 else
   echo baseptmp=$baseptmp
@@ -174,9 +171,9 @@ export utilscript=/nwprod/util/ush
  if [[ $gefsmachine = zeus ]]; then
    export utilscript=$HOMEglobal/util/ush
  fi
- if [[ $gefsmachine = wcoss ]]; then
-   export utilscript=$HOMEglobal/util/ush
- fi
+# JY if [[ $gefsmachine = wcoss ]]; then
+# JY   export utilscript=$HOMEglobal/util/ush
+# JY  fi
 
 ##############################
 # Run setup to initialize working directory and utility scripts
@@ -317,7 +314,7 @@ do
      [[ $envir = para ]] || \
      [[ $envir = test ]]; then
   ###teste
-     export DATA=/tmpnwprd1/gefs_post_${RUN}${cyc}_${cyc_fcst}.${envir}
+     export DATA=$DATAROOT/gefs_post_${RUN}${cyc}_${cyc_fcst}.${envir}
   ###testb
   else
     echo baseptmp=$baseptmp

@@ -30,7 +30,7 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
 ###teste
-export DATA=/tmpnwprd1/gefs_legacy_init_$cyc.$envir.save
+export DATA=$DATAROOT/gefs_legacy_init_$cyc.$envir.save
 ###testb
 else
   echo basenfs=$basenfs
@@ -131,16 +131,8 @@ fi
 # Specify Execution Areas
 ####################################
 ###testb
-if [[ $envir = prod ]]; then
-###teste
-  # RLW 20141008 modify to obtain and use version for vertical structure
-  . /nw$envir/versions/gefs_legacy.ver
+if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 export HOMEGLOBAL=/nw${envir}/gefs.${gefs_ver}
-###testb
-elif [[ $envir = para ]] || [[ $envir = test ]]; then
-  # RLW 20141008 modify to obtain and use version for vertical structure
-  . /nw$envir/versions/gefs_legacy.ver
-  export HOMEGLOBAL=/nwprod/gefs.${gefs_ver}
 fi
 ###teste
 ################# lines between these markers have been modified for dev begin
@@ -226,12 +218,8 @@ export SLMASK=/dev/null
 # Define COM directories
 ##############################################
 ###testb
-if [[ $envir = prod ]] ; then
-###teste
-export GFSCOMIN=/com/gfs/${envir}/gfs.$PDY
-###testb
-elif [[ $envir = para ]] || \
-     [[ $envir = test ]]; then
+if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
+  gfssource=prod
   if [[ "$gfssource" = para ]]; then
     export GFSCOMIN=/com/gfs/para/gfs.$PDY
   else
@@ -316,7 +304,7 @@ if [[ $envir = prod ]] || \
    [[ $envir = test ]]; then
 ###teste
   # RLW 20141008 modify to obtain and use version for vertical structure
-/nw${envir}/scripts/gefs.${gefs_ver}/exgefs_init_et.sh.ecf
+/nw${envir}/gefs.${gefs_ver}/scripts/exgefs_init_et.sh.ecf
 #/nwprod/scripts/exgefs_init_et.sh.ecf
 ###testb
 else
@@ -341,7 +329,7 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
 ###teste
-cd /tmpnwprd1
+cd $DATAROOT
 ###testb
 else
   echo skip cleanup for testing

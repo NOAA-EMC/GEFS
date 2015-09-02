@@ -38,9 +38,6 @@ then
    . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
  fi
 ################# lines between these markers have been modified for dev end
-else
-  # RLW 20141008 modify to obtain and use version for vertical structure
-  . /nwprod/versions/gefs_legacy.ver
 
 fi
 
@@ -60,7 +57,7 @@ then
  fi
 ################# lines between these markers have been modified for dev end
 else                       ### For Operations
-   export DATA_IN=/tmpnwprd1
+   export DATA_IN=$DATAROOT
 fi
 
 export DATA=$DATA_IN/${job}.${pid}
@@ -178,6 +175,13 @@ else                             ### For Operations
   export USHglobal=${USHglobal:-$HOMEglobal/ush}
   export FIXglobal=${FIXglobal:-$HOMEglobal/fix}
   export PARMglobal=${PARMglobal:-$HOMEglobal/parm}
+
+  # added by JY
+  export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
+  export EXECGLOBAL=${EXECglobal:-$HOMEglobal/exec}
+  export USHGLOBAL=${USHglobal:-$HOMEglobal/ush}
+  export FIXGLOBAL=${FIXglobal:-$HOMEglobal/fix}
+  export PARMGLOBAL=${PARMglobal:-$HOMEglobal/parm}
 
   export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs.${gefs_ver}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}

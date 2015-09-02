@@ -29,9 +29,6 @@ then
   # RLW 20141008 modify to obtain and use version for vertical structure
   . $basesource/nw$envir/*/versions/gefs_legacy.ver
   . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
-else
-  # RLW 20141008 modify to obtain and use version for vertical structure
-  . /nwprod/versions/gefs_legacy.ver
 fi
 
 # #### 05/05/99 ###############################
@@ -54,7 +51,7 @@ then
  fi
 ################# lines between these markers have been modified for dev end
 else                       ### For Operations
-   export DATA_IN=/tmpnwprd1
+   export DATA_IN=$DATAROOT
 fi
 export DATA=$DATA_IN/${job}.${pid}
 

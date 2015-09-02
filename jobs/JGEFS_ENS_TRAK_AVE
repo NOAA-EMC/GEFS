@@ -27,9 +27,6 @@ then
   . $basesource/nw$envir/*/versions/gefs_legacy.ver
   . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
 ################# lines between these markers have been modified for dev end
-else
-  # RLW 20141008 modify to obtain and use version for vertical structure
-  . /nwprod/versions/gefs_legacy.ver
 fi
 
 # #############################################
@@ -40,7 +37,7 @@ fi
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-export DATA=/tmpnwprd1/${job}.${pid}
+export DATA=$DATAROOT/${job}.${pid}
 ################# lines between these markers have been modified for dev begin
 if [[ $envir = dev ]]; then
   #export DATA=$basetmp/tmpnwprd1/${job}.${pid}.$PDY$cyc$jjj

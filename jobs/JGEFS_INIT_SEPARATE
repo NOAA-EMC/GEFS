@@ -44,9 +44,6 @@ then
   . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
  fi
 ################# lines between these markers have been modified for dev end
-else
-  # RLW 20141008 modify to obtain and use version for vertical structure
-  . /nwprod/versions/gefs_legacy.ver
 fi
 
 # #### 05/05/99 ###############################
@@ -63,7 +60,7 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
 ###teste
-export DATA=/tmpnwprd1/gefs_legacy_init_$cyc.$envir.save
+export DATA=$DATAROOT/gefs_legacy_init_$cyc.$envir.save
 ###testb
 else
   echo basenfs=$basenfs
@@ -166,34 +163,11 @@ fi
 ####################################
 # Specify Execution Areas
 ####################################
-###testb
-# DHOU 03/29/2012 For Zeus, make the HOMEGLOBAL definition more general
-if [[ $envir = prod ]]; then
-###teste
-#export HOMEGLOBAL=/nw${envir}
-# RLW 20141008 modify to obtain and use version for vertical structure
 export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}/gefs.${gefs_ver}}
-###testb
-else
-#  export HOMEGLOBAL=/nwprod
-  # RLW 20141008 modify to obtain and use version for vertical structure
-  export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod/gefs.${gefs_ver}}
-fi
-###teste
-#DHOU 03/29/2012 commented out  the following 3 blocks for ZEUS
-################# lines between these markers have been modified for dev begin
-#if [[ $envir = dev ]]; then
-#  export HOMEGLOBAL=$basesource/nw$envir
-#fi
-################# lines between these markers have been modified for dev end
-#export EXECGLOBAL=$HOMEGLOBAL/exec
-#export FIXGLOBAL=$HOMEGLOBAL/fix
-#export PARMGLOBAL=$HOMEGLOBAL/parm
-#export USHGLOBAL=$HOMEGLOBAL/ush
-################# lines between these markers have been modified for dev begin
-#if [[ $envir = dev ]]; then
-#  export FIXGLOBAL=/nwprod/fix
-#fi
+export EXECGLOBAL=$HOMEGLOBAL/exec
+export FIXGLOBAL=$HOMEGLOBAL/fix
+export PARMGLOBAL=$HOMEGLOBAL/parm
+export USHGLOBAL=$HOMEGLOBAL/ush
 ################# lines between these markers have been modified for dev end
 if [[ $envir = dev ]]; then
 #DHOU 03/29/2012 added the following block for ZEUS
@@ -213,6 +187,13 @@ export FIXGLOBAL=$HOMEgefs/fix
 export PARMGLOBAL=$HOMEgefs/parm
 export USHGLOBAL=$HOMEgefs/ush
  fi
+
+else
+  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs.${gefs_ver}}
+  export EXECgefs=$HOMEgefs/exec
+  export FIXgefs=$HOMEgefs/fix
+  export PARMgefs=$HOMEgefs/parm
+  export USHgefs=$HOMEgefs/ush
 fi
 
 export HOMEgsm=${HOMEgsm:-/nwprod/gsm.${gsm_ver}}
@@ -256,8 +237,6 @@ echo
 # Set up the UTILITIES
 ##############################
 export utilscript=/nwprod/util/ush
-#DHOU 03/29/2012 added the following line for ZEUS
-export utilscript=$HOMEGLOBAL/util/ush
 
 ##############################
 # Run setup to initialize working directory and utility scripts

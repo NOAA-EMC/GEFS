@@ -21,7 +21,7 @@ export nhrpair=$npair
 # Forecast Hour: fhmax and fhmaxh and fhmax_ext
 #################################################
 export fhmax=384
-export fhmaxh=384
+export fhmaxh=192
 
 export fhmax00=384
 export fhmax06=06
