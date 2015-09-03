@@ -53,23 +53,34 @@ do
 
      if [[ $fhr -gt $fhmax3 ]]
      then
-       if [[ $fhr -gt 126 ]]
+       if [[ $fhr -lt 100 ]]; then
+         fthr=0$fhr
+       else
+         fthr=$fhr
+       fi
+       if [[ $fthr -gt 126 ]]
        then
 	 rm $COMOUT/$cyc/sfcsig/${RUN}.${cycle}.sf$fhr$cfsuffix
 	 rm $COMOUT/$cyc/sfcsig/${RUN}.${cycle}.bf$fhr$cfsuffix
        fi
        rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbf$fhr$cfsuffix
-       rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhr$cfsuffix
+       if [[ -f $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhr$cfsuffix ]]; then
+	 rm     $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhr$cfsuffix
+       fi
      else
        if [[ $cycsuffix = true ]]
        then
 	  rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbf$fhr$cfsuffix
-	  rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhr$cfsuffix
+	  if [[ -f $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhr$cfsuffix ]]; then
+	    rm     $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhr$cfsuffix
+	  fi
 	  # remove the 3-hourly files as well
 	  fhrm3=$((fhr-3))
 	  if [ $fhrm3 -lt 10 ]; then fhrm3=0$fhrm3; fi
 	  rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbf$fhrm3$cfsuffix
-	  rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhrm3$cfsuffix
+	  if [[ -f $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhrm3$cfsuffix ]]; then
+	    rm     $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhrm3$cfsuffix
+	  fi
        fi
      fi
   fi
