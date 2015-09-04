@@ -1,0 +1,64 @@
+Release Note: GEFS v.10.3.2 (legacy)
+
+v10.0.0 . released Feb 1, 2012
+. Implementation on CCS
+
+v10.1.0 . released July 25, 2013
+. Modified model to run on WCOSS
+
+v10.2.0 . released Oct 16, 2014 (The first version in EE structure, but contains only part of the
+package: GEFS_INIT jobs and GEFS_PRDGEN_GFS)
+. Modified initialization to run downstream of GFS implementation
+
+v10.2.1 . released Jan 1, 2015
+. As implemented with GFS implementation Jan 14, 2015
+
+v10.3.0 -- released August 12, 2015
+. Legacy GEFS to continue uncalibrated GEFS v10 products for users who calibrate them using
+the GEFS V10 reforecasts
+. Minimal changes from current production, including the following:
+. Remaining GEFS jobs have been converted to vertical structure
+. Bug fixes that change the products slightly:
+. Forecast model bug (that caused crashes in 201410 and 201506) is fixed
+. Relocation code bugs discovered during V11 development are fixed
+. /COM and /NWGES directories are renamed to gefs_legacy
+. Version file is renamed to gefs_legacy.ver to avoid name collision with gefs.ver
+. pgrb2c, pgrbd, and pgrb2d products and their DBN alerts are turned off
+. CQPF job has been removed because it provides calibrated products
+. forecasts for 06Z, 12Z, and 18Z are shortened to 6 hours
+. all dbn alerts for these forecasts are turned off
+. the only known downstream user of these forecasts is the wave ensemble
+. ENSPOST and ENSSTAT jobs do not need to be run for these cycles
+. error checking developed for V11 has been added to the INIT, POST, and
+PRDGEN jobs
+. resources and runtimes are unchanged except for the shortened 06Z, 12Z, and 18Z forecasts
+. the RESTART_COPY job is optional; it only needs to be done if crashed forecasts need to be
+rerun from the latest restart files instead of being rerun from the beginning
+. To implement:
+. check out into /nw$envir/gefs.v10.3.0
+. in sorc subdirectory (to build and install codes in sorc, sorc.tracker, and util/sorc):
+. sh build.sh
+. sh install.sh
+. copy the version file to the directory /nw$envir/versions
+. There is a test run for comparison:
+. source: /ensemble/save/Richard.Wobus/s/rwik/nwdev/gefs.v10.3.0
+. products: /ptmpd2/emc.enspara/o/rwik/com/gens/dev
+. To run identically to this test run, copy the sfcsig and track subdirectories from
+one cycle and start running the next cycle.
+
+v10.3.1 released August 18, 2015
+. Correct directories used for scripts and codes
+. Turn off transmission of hurricane tracks to archives
+. Implementation instructions are unchanged from v10.3.0
+. The new test run for comparison is:
+. source: /ensemble/save/Richard.Wobus/s/rwio/nwdev/gefs.v10.3.0
+. products: /ptmpd2/emc.enspara/o/rwio/com/gens/dev
+
+v10.3.2 released September 4, 2015
+. merge changes from v10.2.1 as run in production
+. remove obsolete options from j-jobs
+. turn off unneeded DBN alerts and track archives
+. Implementation instructions are unchanged from v10.3.0
+. The new test run for comparison is:
+. source: /ensemble/save/Richard.Wobus/s/rwir/nwdev/gefs.v10.3.2
+. products: /ptmpd2/emc.enspara/o/rwir/com/gens/dev
