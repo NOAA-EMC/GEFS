@@ -1,48 +1,33 @@
 #!/bin/ksh 
-################# lines between these markers have been modified for dev begin
-################# lines between these markers have been modified for dev end
-###testb
-# lines between ###testb and ###teste not needed for production
-###teste
-
-export RUN_ENVIR=${RUN_ENVIR:-prod}
-
-echo `date` $0 `date -u` begin
 
 set -xa
+echo `date` $0 `date -u` begin
+export PS4='$SECONDS + '
+
 ####################################
 
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
 export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 
-# #### 05/05/99 ###############################
-# SETUP ENS INITIALIZATION PROCESSING VARIABLES
-# #############################################
-
 ####################################
 # obtain unique process id (pid) and identify working directory
 ####################################
+
 export pid=$$
 
-###testb
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-###teste
 export DATA=$DATAROOT/gefs_legacy_init_$cyc.$envir.save
-###testb
 else
   echo basenfs=$basenfs
   echo baseptmp=$baseptmp
   echo basetmp=$basetmp
   export DATA=$basetmp/$envir/tmpnwprd1/gefs_legacy_init_$PDY$cyc.$envir.save
-################# lines between these markers have been modified for dev begin
   export DATA=$basetmp/tmpnwprd1/gefs_legacy_init_$PDY$cyc.$envir.save
-################# lines between these markers have been modified for dev end
 echo DATA=$DATA
 fi
-###teste
 cd $DATA
 
 export cycle=t${cyc}z
@@ -65,37 +50,27 @@ echo cycsuffix=$cycsuffix
 ####################################
 # Specify NET and RUN Name and model
 ####################################
+
 export NET=gens
 export RUN=enstr
 
 ####################################
 # File To Log Msgs
 ####################################
-###testb
+
 if [[ $envir = prod ]]; then
-###teste
-export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.${pid}}
-###testb
+  export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.${pid}}
 elif [[ $envir = para ]] || \
      [[ $envir = test ]]; then
   export jlogfile=/com/logs/${envir}/jlogfile
 else
-  #export jlogfile=$baseptmp/com/logs/jlogfile
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-  export jlogfile=$baselog/nw$envir/logs/jlogfile
-################# lines between these markers have been modified for dev begin
- else
   export jlogfile=$baselog/com/logs/jlogfile
- fi
-################# lines between these markers have been modified for dev end
 fi
-###teste
 
 ####################################
 # Determine Job Output Name on System
 ####################################
+
 export outid="LL$job"
 export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
@@ -110,6 +85,7 @@ export pgmerr=errfile
 # RERUN    - Rerun posts from beginning (default no)
 # VERBOSE  - Specify Verbose Output in global_postgp.sh
 ####################################
+
 export SAVEGES=YES
 export SENDECF=YES
 export SENDCOM=YES
@@ -129,29 +105,25 @@ fi
 ####################################
 # Specify Execution Areas
 ####################################
-###testb
+
 if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
-###teste
   # RLW 20141008 modify to obtain and use version for vertical structure
   export HOMEGLOBAL=/nw${envir}/gefs.${gefs_ver}
 fi
-###teste
-################# lines between these markers have been modified for dev begin
 if [[ $envir = dev ]]; then
 # RLW 20141008 modify to obtain and use version for vertical structure
   . $basesource/nw$envir/*/versions/gefs_legacy.ver
   export HOMEGLOBAL=$basesource/nw$envir/gefs.${gefs_ver}
 fi
-################# lines between these markers have been modified for dev end
+
 export EXECGLOBAL=$HOMEGLOBAL/exec
 export FIXGLOBAL=$HOMEGLOBAL/fix
 export PARMGLOBAL=$HOMEGLOBAL/parm
 export USHGLOBAL=$HOMEGLOBAL/ush
-################# lines between these markers have been modified for dev begin
+
 if [[ $envir = dev ]]; then
   export FIXGLOBAL=/nwprod/fix
 fi
-################# lines between these markers have been modified for dev end
 
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
@@ -162,23 +134,18 @@ export REDERR='2>'
 echo set parameters using gefs.parm
 ##############################################
 
-###testb
 if [[ $envir = prod ]]; then
-###teste
-. $PARMGLOBAL/gefs.parm
-. $PARMGLOBAL/gefs_init.parm
-###testb
+  . $PARMGLOBAL/gefs.parm
+  . $PARMGLOBAL/gefs_init.parm
 elif [[ $envir = para ]] || \
      [[ $envir = test ]]; then
-  # RLW 20141008 modify to obtain and use version for vertical structure
-. /nw$envir/gefs.${gefs_ver}/parm/gefs.parm
-. /nw$envir/gefs.${gefs_ver}/parm/gefs_init.parm
+  . $PARMGLOBAL/gefs.parm
+  . $PARMGLOBAL/gefs_init.parm
 else
   # RLW 20141008 modify to obtain and use version for vertical structure
-. $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs.parm
-. $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_init.parm
+  . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs.parm
+  . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_init.parm
 fi
-###teste
 
 echo
 env | sort
@@ -187,44 +154,43 @@ echo
 ##############################
 # Set up the UTILITIES
 ##############################
+
 export utilscript=/nwprod/util/ush
 
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
+
 sh $utilscript/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
 sh $utilscript/setpdy.sh
-###testb
+
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-###teste
-. PDY
-###testb
+  . PDY
 else
   echo PDY=$PDY is already set
 fi
-###teste
 
 ##############################################
 # for global_chgres.sh
 ##############################################
+
 export SLMASK=/dev/null
 
 ##############################################
 # Define COM directories
 ##############################################
-###testb
+
 if [[ $envir = prod ]] ; then
-###teste
-export GFSCOMIN=/com/gfs/${envir}/gfs.$PDY
-###testb
+  export GFSCOMIN=/com/gfs/${envir}/gfs.$PDY
 elif [[ $envir = para ]] || \
      [[ $envir = test ]]; then
+  gfssource=prod
   if [[ "$gfssource" = para ]]; then
     export GFSCOMIN=/com/gfs/para/gfs.$PDY
   else
@@ -239,55 +205,46 @@ else
     export GFSCOMIN=$baseptmp/com/gfs/${envir}/gfs.$PDY
   fi
 fi
-###teste
-###testb
-if [[ $envir = prod ]] || \
-   [[ $envir = para ]] || \
-   [[ $envir = test ]]; then
-###teste
-export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
-export COM=/com/${NET}/${envir}
-export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
-export COMINm2=/com/${NET}/${envir}/gefs_legacy.${PDYm2}
-export COMINm3=/com/${NET}/${envir}/gefs_legacy.${PDYm3}
-export COMINm4=/com/${NET}/${envir}/gefs_legacy.${PDYm4}
-###testb
-else
-export COMIN=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
-export COM=$baseoutput/com/${NET}/${envir}
-export COMINm1=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm1}
-export COMINm2=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm2}
-export COMINm3=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm3}
-export COMINm4=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm4}
-fi
-###teste
 
-###testb
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-###teste
-export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
-###testb
+  export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COM=/com/${NET}/${envir}
+  export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
+  export COMINm2=/com/${NET}/${envir}/gefs_legacy.${PDYm2}
+  export COMINm3=/com/${NET}/${envir}/gefs_legacy.${PDYm3}
+  export COMINm4=/com/${NET}/${envir}/gefs_legacy.${PDYm4}
 else
-export COMOUT=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMIN=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COM=$baseoutput/com/${NET}/${envir}
+  export COMINm1=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm1}
+  export COMINm2=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm2}
+  export COMINm3=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm3}
+  export COMINm4=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm4}
 fi
-###teste
+
+if [[ $envir = prod ]] || \
+   [[ $envir = para ]] || \
+   [[ $envir = test ]]; then
+  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+else
+  export COMOUT=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
+fi
+
 mkdir -m 775 -p $COMOUT/$cyc/init
 mkdir -m 775 -p $COMOUT/$cyc/sflux
 
 ##############################################
 # Define GES directories
 ##############################################
-###testb
+
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-###teste
-gespath=/nwges/${envir}
-###testb
+  gespath=/nwges/${envir}
 else
-gespath=$baseoutput/nwges/${envir}
+  gespath=$baseoutput/nwges/${envir}
 fi
 ###teste
 export GESdir=$gespath/gefs_legacy.${PDY}
@@ -302,20 +259,18 @@ env | sort
 echo
 
 #############################################################
+
 # Execute the script
-###testb
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-###teste
   # RLW 20141008 modify to obtain and use version for vertical structure
-/nw${envir}/gefs.${gefs_ver}/scripts/exgefs_init_combine.sh.ecf
-###testb
+  /nw${envir}/gefs.${gefs_ver}/scripts/exgefs_init_combine.sh.ecf
 else
   # RLW 20141008 modify to obtain and use version for vertical structure
-$basesource/nw${envir}/gefs.${gefs_ver}/scripts/exgefs_init_combine.sh.ecf
+  $basesource/nw${envir}/gefs.${gefs_ver}/scripts/exgefs_init_combine.sh.ecf
 fi
-###teste
+
 #############################################################
 
 cat $pgmout
@@ -326,80 +281,16 @@ postmsg "$jlogfile" "$msg"
 ##############################
 # Remove the working directory
 ##############################
-###testb
+
 if [[ $envir = prod ]]; then
-###teste
-cd $DATAROOT
-rm -rf $DATA
-###testb
+  cd $DATAROOT
+  rm -rf $DATA
 elif [[ $envir = para ]] || \
      [[ $envir = test ]]; then
-cd $DATAROOT
-#rm -rf $DATA
+  cd $DATAROOT
+  #rm -rf $DATA
 else
   echo skip cleanup for testing
-################# lines between these markers have been modified for dev begin
-  echo `date` special copy begin
-  if [[ $envir = dev ]]; then
-    ##################################### parameter controlled copy to mirror
-    if [[ x$initarchlist != x ]]; then
-      iafound=no
-      for cyctest in $initarchlist
-      do
-        if (( cyc == cyctest )); then
-          diro=$baseinitarch/nwges/$envir/gefs.$PDY
-          diri=$baseoutput/nwges/$envir/gefs.$PDY
-          if [[ -d $diri ]]; then
-            cd $diri
-            rc=$?
-            if (( rc == 0 )); then
-              rctot=0
-              mkdir -p $diro
-              if [[ -d $diro ]]; then
-                for file in *.t${cyc}z.sanl* gec00.t${cyc}z.sfcanl
-                do
-                  if [[ -f $file ]]; then
-                    ls -al $file
-                    cp -p $file $diro/$file
-                    rc=$?
-                    if (( rc == 0 )); then
-                      ls -al $diro/$file
-                    else
-                      (( rctot = rctot + rc ))
-                      echo cp -p $file $diro/$file FAILED rc=$rc
-                    fi
-                  else
-                    echo file=$file DOES NOT EXIST AS A FILE IN $diro
-                    (( rctot = rctot + 10000 ))
-                  fi
-                done
-                if (( rctot != 0 )); then
-                  echo special copy guess files FAILED rctot=$rctot
-                fi
-                found=yes
-              else
-                echo diro=$diro DOES NOT EXIST AS A DIRECTORY
-              fi
-            else
-              echo cd $diri FAILED rc=$rc
-            fi
-          else
-            echo diri=$diri DOES NOT EXIST AS A DIRECOTRY
-          fi
-        fi
-      done
-      if [[ iafound = no ]]; then
-        echo special copy not done because cyc=$cyc is not in initarchlist=$initarchlist
-      fi
-    else
-      echo special copy not done because initarchlist=$initarchlist is not defined
-    fi
-  else
-    echo special copy not done because envir=$envir
-  fi
-  echo `date` special copy tests end
-################# lines between these markers have been modified for dev end
 fi
-###teste
 
 echo `date` $0 `date -u` end

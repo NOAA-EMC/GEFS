@@ -1,7 +1,5 @@
 #!/bin/ksh 
 set -x
-################# lines between these markers have been modified for dev begin
-################# lines between these markers have been modified for dev end
 
 #####################################################################
 # 9/20/2009, Julia Zhu   Scripts are modified to be sharable
@@ -27,17 +25,9 @@ export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 ###########################################
 if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
-################# lines between these markers have been modified for dev begin
- else
    # RLW 20141008 modify to obtain and use version for vertical structure
    . $basesource/nw$envir/*/versions/gefs_legacy.ver
    . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
- fi
-################# lines between these markers have been modified for dev end
 
 fi
 
@@ -47,15 +37,7 @@ fi
 export pid=$$
 if [ "$RUN_ENVIR" = dev ]    ### For Developers
 then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd1}
-################# lines between these markers have been modified for dev begin
- else
    export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd1}
- fi
-################# lines between these markers have been modified for dev end
 else                       ### For Operations
    export DATA_IN=$DATAROOT
 fi
@@ -89,17 +71,13 @@ export NET=gens
 ####################################
 if [ "$RUN_ENVIR" = dev ]     ### For Developers
 then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-   export jlogfile=${jlogfile:-$DATA_IN/jlogfile}
-################# lines between these markers have been modified for dev begin
- else
    export jlogfile=$baselog/com/logs/jlogfile
- fi
-################# lines between these markers have been modified for dev end
 else                        ### For Operations
-   export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.$$
+ if [[ $envir = "prod" ]]; then
+   export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.$$}
+ else
+   export jlogfile=/com/logs/${envir}/jlogfile
+ fi
 fi
 
 ####################################
@@ -517,12 +495,10 @@ fi
 #fi
 ###################################################
 
-################# lines between these markers have been modified for dev begin
 echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN
 echo DATA=$DATA
 ls -al $DATA
 echo `date` TEST LISTING OF WORKING DIRECTORY END
-################# lines between these markers have been modified for dev end
 
 msg="$job completed normally"
 postmsg "$jlogfile" "$msg"

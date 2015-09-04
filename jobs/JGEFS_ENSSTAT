@@ -1,6 +1,4 @@
 #!/bin/ksh 
-################# lines between these markers have been modified for dev begin
-################# lines between these markers have been modified for dev end
 
 #####################################################################
 # 9/20/2009, Julia Zhu   Scripts are modified to be sharable
@@ -41,15 +39,7 @@ fi
 export pid=$$
 if [ "$RUN_ENVIR" = dev ]    ### For Developers
 then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd1}
-################# lines between these markers have been modified for dev begin
- else
    export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd1}
- fi
-################# lines between these markers have been modified for dev end
 else                       ### For Operations
    export DATA_IN=$DATAROOT
 fi
@@ -71,17 +61,13 @@ export RUN=stat
 ####################################
 if [ "$RUN_ENVIR" = dev ]     ### For Developers
 then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-   export jlogfile=${jlogfile:-$DATA_IN/jlogfile}
-################# lines between these markers have been modified for dev begin
- else
    export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
- fi
-################# lines between these markers have been modified for dev end
 else                        ### For Operations
+ if [[ $envir = "prod" ]]; then
    export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.$$}
+ else
+   export jlogfile=/com/logs/${envir}/jlogfile
+ fi
 fi
 
 ####################################
@@ -238,7 +224,6 @@ export NTHREADS=1
 ####################################
 # Specify Forecast Hour Range
 ####################################
-################# lines between these markers have been modified for dev begin
 # allow different forecast lengths in different cycles
 if [[ $envir = dev ]]; then
   case $cyc in
@@ -256,7 +241,6 @@ fi
 if (( fhmaxh > fhmax )); then
   fhmaxh=$fhmax
 fi
-################# lines between these markers have been modified for dev end
 export FHINC=06
 
 fcstlong=true

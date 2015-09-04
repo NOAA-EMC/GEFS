@@ -1,10 +1,6 @@
 #!/bin/ksh 
-################# lines between these markers have been modified for dev begin
-################# lines between these markers have been modified for dev end
-####################################
-# lines between ###testb and ###teste not needed for production
-####################################
 na=`basename $0`
+
 export PS4=' + $SECONDS $na $LINENO: '
 
 export RUN_ENVIR=${RUN_ENVIR:-prod}
@@ -26,7 +22,6 @@ then
   # RLW 20141008 modify to obtain and use version for vertical structure
   . $basesource/nw$envir/*/versions/gefs_legacy.ver
   . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
-################# lines between these markers have been modified for dev end
 fi
 
 # #### 05/05/99 ###############################
@@ -37,23 +32,17 @@ fi
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-###testb
+
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-###teste
-export DATA=$DATAROOT/${job}.${pid}
-###testb
+  export DATA=$DATAROOT/${job}.${pid}
 else
   echo baseptmp=$baseptmp
   echo basetmp=$basetmp
-  export DATA=$basetmp/$envir/tmpnwprd1/${job}.${pid}.$PDY$cyc$rrr
-################# lines between these markers have been modified for dev begin
   export DATA=$basetmp/tmpnwprd1/${job}.${pid}
-################# lines between these markers have been modified for dev end
-echo DATA=$DATA
+  echo DATA=$DATA
 fi
-###teste
 mkdir -p $DATA
 cd $DATA
 
@@ -84,24 +73,13 @@ export NET=gens
 ####################################
 # File To Log Msgs
 ####################################
-###testb
 if [[ $envir = prod ]]; then
-###teste
-export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.$$
-###testb
+  export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.$$
 elif [[ $envir = para ]] || \
      [[ $envir = test ]]; then
   export jlogfile=/com/logs/$envir/jlogfile
 else
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-  export jlogfile=$baseptmp/com/logs/jlogfile
-################# lines between these markers have been modified for dev begin
- else
   export jlogfile=$baselog/com/logs/jlogfile
- fi
-################# lines between these markers have been modified for dev end
 fi
 ###teste
 
@@ -184,58 +162,44 @@ ksh $utilscript/setup.sh
 # Run setpdy and initialize PDY variables
 ##############################
 sh $utilscript/setpdy.sh
-###testb
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-###teste
-. PDY
-###testb
+  . PDY
 else
   echo PDY=$PDY is already set
 fi
-###teste
 
 ##############################################
 # Define COM directories
 ##############################################
-###testb
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-###teste
-export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
-###testb
+  export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
 else
-export COMIN=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMIN=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
 fi
-###teste
-###testb
+
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-###teste
-export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
-###testb
+  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
 else
-export COMOUT=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
-export ensdir=$COMOUT/$cyc/pgrba
-export COM=$COMOUT/$cyc/track
+  export COMOUT=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export ensdir=$COMOUT/$cyc/pgrba
+  export COM=$COMOUT/$cyc/track
 fi
-###teste
 mkdir -m 775 -p $COMOUT/$cyc/track
 
 ##############################################
 echo set parameters using gefs.parm
 ##############################################
 
-###testb
 if [[ $envir = prod ]]; then
-###teste
   #. $PARMGLOBAL/gefs.parm
   # RLW 20141008 modify to obtain and use version for vertical structure
   . /nw$envir/gefs.${gefs_ver}/parm/gefs.parm
-###testb
 elif [[ $envir = para ]] || \
      [[ $envir = test ]]; then
   # RLW 20141008 modify to obtain and use version for vertical structure
@@ -244,16 +208,15 @@ else
   # RLW 20141008 modify to obtain and use version for vertical structure
   . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs.parm
   if (( cyc == 00 )); then
-  export fhmax=$fhmax00
+    export fhmax=$fhmax00
   elif (( cyc == 06 )); then
-  export fhmax=$fhmax06
+    export fhmax=$fhmax06
   elif (( cyc == 12 )); then
-  export fhmax=$fhmax12
+    export fhmax=$fhmax12
   elif (( cyc == 18 )); then
-  export fhmax=$fhmax18
+    export fhmax=$fhmax18
   fi
 fi
-###teste
 
 ####################################
 # Create member list
@@ -279,11 +242,11 @@ echo memberlist=$memberlist
 DATAHOLD=$DATA
 
 #DHOU 01/24/2013, Temprary for WCOSS transition
-  if [[ $envir = dev ]]; then
-   if [[ $gefsmachine = wcoss ]]; then
-export archsyndir=$TMPCOM/arch/prod/syndat
-   fi
+if [[ $envir = dev ]]; then
+  if [[ $gefsmachine = wcoss ]]; then
+    export archsyndir=$TMPCOM/arch/prod/syndat
   fi
+fi
 
 echo
 env | sort
@@ -309,31 +272,23 @@ do
   ####################################
   # identify temp directory
   ####################################
-  ###testb
   if [[ $envir = prod ]] || \
      [[ $envir = para ]] || \
      [[ $envir = test ]]; then
-  ###teste
-     export DATA=$DATAROOT/gefs_post_${RUN}${cyc}_${cyc_fcst}.${envir}
-  ###testb
+       export DATA=$DATAROOT/gefs_post_${RUN}${cyc}_${cyc_fcst}.${envir}
   else
     echo baseptmp=$baseptmp
     echo basetmp=$basetmp
-    export DATA=$basetmp/$envir/tmpnwprd1/gefs_post_${RUN}_${PDY}${cyc}_${cyc_fcst}.${envir}.save
-################# lines between these markers have been modified for dev begin
     export DATA=$basetmp/tmpnwprd1/gefs_post_track_${RUN}_${PDY}${cyc}_${cyc_fcst}.${envir}
-################# lines between these markers have been modified for dev end
-  echo DATA=$DATA
+    echo DATA=$DATA
   fi
-  ###teste
-################# lines between these markers have been modified for dev begin
+
 # Correction, may require a correction to PRODUCTION
   if [[ -d $DATA ]]; then
     echo `date` ERROR DATA=$DATA UNEXPECTEDLY EXISTS
   else
     mkdir -p $DATA
   fi
-################# lines between these markers have been modified for dev end
   cd $DATA
 
   ###################################
@@ -348,57 +303,43 @@ do
   if [ $fcstlong = true ]
   then
     export cmodel=ens
-  ###testb
-  if   [[ $envir = prod ]]; then
-  ###teste
-    sh $HOMEgefs/util/ush/extrkr.sh
-  ###testb
-  elif [[ $envir = para ]] || \
-       [[ $envir = test ]]; then
-  # RLW 20141008 modify to obtain and use version for vertical structure
-  sh /nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
-  else
-#    sh $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
-#DHOU 01/19/2013, replace the line above with the following if-block for machine-specfic choice of ush script
-   if [[ $gefsmachine = zeus ]]; then
-#   ls -lt $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
-#   echo DHOU ZEUSCHECK
-    # RLW 20141008 modify to obtain and use version for vertical structure
-    sh $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
-#   ls -lt $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
-   elif [[ $gefsmachine = wcoss ]]; then
-    sh $HOMEgefs/util/ush/extrkr.sh
-#   sh /nwprod/util/ush/extrkr.sh
-#  #sh $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
-   else
-    # RLW 20141008 modify to obtain and use version for vertical structure
-    sh $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
-   fi
-  fi
+    if   [[ $envir = prod ]]; then
+      sh $HOMEgefs/util/ush/extrkr.sh
+    elif [[ $envir = para ]] || \
+	 [[ $envir = test ]]; then
+      # RLW 20141008 modify to obtain and use version for vertical structure
+      sh /nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
+    else
+     #DHOU 01/19/2013, replace the line above with the following if-block for machine-specfic choice of ush script
+     if [[ $gefsmachine = zeus ]]; then
+      # RLW 20141008 modify to obtain and use version for vertical structure
+      sh $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
+     elif [[ $gefsmachine = wcoss ]]; then
+      sh $HOMEgefs/util/ush/extrkr.sh
+     else
+      # RLW 20141008 modify to obtain and use version for vertical structure
+      sh $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
+     fi
+    fi
   ###teste
   fi
 
   # For the vortex relocation part
   export cmodel=gfs_enr
-  ###testb
   if   [[ $envir = prod ]]; then
-  ###teste
     sh $HOMEgefs/util/ush/extrkr.sh
-  ###testb
   elif [[ $envir = para ]] || \
        [[ $envir = test ]]; then
     sh $HOMEgefs/util/ush/extrkr.sh
   else
     # sh $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
     if [[ $gefsmachine = wcoss ]]; then
-#    /nwprod/util/ush/extrkr.sh
       sh $HOMEgefs/util/ush/extrkr.sh
     else
       # RLW 20141008 modify to obtain and use version for vertical structure
       $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
     fi
   fi
-  ###teste
   ) >$DATAHOLD/${member}.out  2>&1 &
 
 done
@@ -428,17 +369,13 @@ export DATA=$DATAHOLD
 ##############################
 # Remove the Temporary working directory
 ##############################
-###testb
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-###teste
-cd /tmpnwprd1
-rm -rf $DATA
-###testb
+  cd /tmpnwprd1
+  rm -rf $DATA
 else
   echo skip cleanup for testing
 fi
-###teste
 
 echo `date` $0 `date -u` end

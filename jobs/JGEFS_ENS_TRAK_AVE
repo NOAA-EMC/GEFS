@@ -1,8 +1,4 @@
 #!/bin/ksh 
-################# lines between these markers have been modified for dev begin
-################# lines between these markers have been modified for dev end
-
-export RUN_ENVIR=${RUN_ENVIR:-prod}
 
 set -xa
 ####################################
@@ -26,7 +22,6 @@ then
   # RLW 20141008 modify to obtain and use version for vertical structure
   . $basesource/nw$envir/*/versions/gefs_legacy.ver
   . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
-################# lines between these markers have been modified for dev end
 fi
 
 # #############################################
@@ -38,12 +33,10 @@ fi
 ####################################
 export pid=$$
 export DATA=$DATAROOT/${job}.${pid}
-################# lines between these markers have been modified for dev begin
 if [[ $envir = dev ]]; then
   #export DATA=$basetmp/tmpnwprd1/${job}.${pid}.$PDY$cyc$jjj
   export DATA=$basetmp/tmpnwprd1/${job}.${pid}
 fi
-################# lines between these markers have been modified for dev end
 mkdir -p $DATA
 cd $DATA
 
@@ -58,12 +51,15 @@ export RUN=trakave
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.$$
-################# lines between these markers have been modified for dev begin
-if [[ $envir = dev ]]; then
+if [[ "$RUN_ENVIR" = dev ]]; then
   export jlogfile=$baselog/com/logs/jlogfile
+else
+ if [[ $envir = "prod" ]]; then
+   export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.$$}
+ else
+   export jlogfile=/com/logs/${envir}/jlogfile
+ fi
 fi
-################# lines between these markers have been modified for dev end
 
 ####################################
 # Determine Job Output Name on System
@@ -81,12 +77,9 @@ export pgmerr=errfile
 export SENDECF=YES
 export SENDCOM=YES
 export SENDDBN=NO
-################# lines between these markers have been modified for dev begin
 if [[ $envir = dev ]]; then
   export SENDDBN=NO
 fi
-
-################# lines between these markers have been modified for dev end
 
 ####################################
 # Specify Execution Areas
@@ -101,7 +94,7 @@ export EXECGLOBAL=$HOMEGLOBAL/exec
 export USHGLOBAL=$HOMEGLOBAL/ush
 export FIXGLOBAL=$HOMEGLOBAL/fix
 export PARMGLOBAL=$HOMEGLOBAL/parm
-################# lines between these markers have been modified for dev begin
+
 if [[ $envir = dev ]]; then
 # export HOMEGLOBAL=$basesource/nw${envir}
 # export PARMGLOBAL=$HOMEGLOBAL/parm
@@ -112,7 +105,6 @@ if [[ $envir = dev ]]; then
     export FIXGLOBAL=$basesource/nw${envir}/gefs.${gefs_ver}/fix
   fi
 fi
-################# lines between these markers have been modified for dev end
 
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
@@ -148,22 +140,24 @@ ksh $utilscript/setpdy.sh
 export GFSCOMIN=/com/gfs/prod/gfs.$PDY
 export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
 export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
-################# lines between these markers have been modified for dev begin
+
 if [[ $envir = dev ]]; then
   export COMIN=$baseoutput$COMIN
   export COMINm1=$baseoutput$COMINm1
 fi
-################# lines between these markers have been modified for dev end
+
 mkdir -m 775 -p $COMIN/$cyc/pgrba
 mkdir -m 775 -p $COMIN/$cyc/pgrbalr
 mkdir -m 775 -p $COMIN/$cyc/track
+
 #############################################################
+
 export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
-################# lines between these markers have been modified for dev begin
+
 if [[ $envir = dev ]]; then
 export COMOUT=$baseoutput/$COMOUT
 fi
-################# lines between these markers have been modified for dev end
+
 mkdir -m 775 -p $COMOUT/$cyc/ensstat
 mkdir -m 775 -p $COMOUT/$cyc/pgrba
 mkdir -m 775 -p $COMOUT/$cyc/pgrbalr
@@ -204,7 +198,6 @@ env | sort
 # Execute the script to compute the ensemble 
 # mean tropical cyclone track
 export cmodel=ens
-################# lines between these markers have been modified for dev begin
 if [[ $envir = dev ]]; then
   export COM=$COMOUT/$cyc/track
 #DHOU 04/13/2012 Added 1 line for ZEUS
@@ -218,11 +211,8 @@ if [[ $envir = dev ]]; then
   $HOMEgefs/util/ush/ens_trak_ave.sh
  fi
 else
-################# lines between these markers have been modified for dev end
   $HOMEgefs/util/ush/ens_trak_ave.sh
-################# lines between these markers have been modified for dev begin
 fi
-################# lines between these markers have been modified for dev end
 #############################################################
 
 echo "`hostname`--`date`" >$COMOUT/${cyc}/track/where_gefs_tracker_${cycle}_ran

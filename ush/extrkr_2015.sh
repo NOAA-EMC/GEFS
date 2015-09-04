@@ -212,7 +212,8 @@ case ${cmodel} in
        echo " "                                     ;
        set -x                                       ;
 # RLW 20141010 modify gfsdir to generalize
-       gfsdir=/com/gfs/$envir/gfs.${PDY}              ;
+       #gfsdir=/com/gfs/$envir/gfs.${PDY}              ;
+       gfsdir=/com/gfs/prod/gfs.${PDY}              ;
 #       gfsgfile=gfs.t${CYL}z.master.grbf            ;
 #       gfsifile=gfs.t${CYL}z.master.grbif           ;
 
@@ -230,14 +231,18 @@ case ${cmodel} in
 #                  99  99  99  99  99  99  99  99  99  99
 #                  99  99  99  99  99  99  99  99  99  99
 #                  99  99  99  99  99  99  99  99  99  99' ;
-fcsthrs=' 000 006 012 018 024 030 036 042 048 054 060 066 072 078
-          084 090 096 102 108 114 120 126 132 138 144 150 156 162
-	  168 174 180 186 192 198 204 210 216 222 228 234 240';
+#csthrs=' 000 006 012 018 024 030 036 042 048 054 060 066 072 078
+#         084 090 096 102 108 114 120 126 132 138 144 150 156 162
+#	  168 174 180 186 192 198 204 210 216 222 228 234 240';
+fcsthrs=' 000  99  99  99  99  99  99  99  99  99  99  99  99  99
+           99  99  99  99  99  99  99  99  99  99  99  99  99  99
+           99  99  99  99  99  99  99  99  99  99  99  99  99';
 # RLW 20141010 adjust fcsthrs to match fcstlen using fcstint
           fcstint=${TRACKFCSTINT:-6}
 	  (( cutlength = 4 + ( fcstlen * 4 ) / fcstint )) ;
 	  fcsthrs=`echo "$fcsthrs"|cut -c1-$cutlength`;
         atcfnum=15                                   ;
+	 COM=${COM:-/com/gens/${envir}/gefs.${PDY}/$cyc/track} ;
 # RLW 20141010 modify atcf names to generalize
         atcfname="${ATCFNAMEIN:-gfso}"                              ;
         atcfout="${ATCFNAMEIN:-gfso}"                                ;
@@ -1458,8 +1463,11 @@ if [ ${gettrk_rcc} -eq 0 ]; then
     glatuxarch=${glatuxarch:-${gltrkdir}/tracks.atcfunix.${syy}}
     tmatuxarch=${tmatuxarch:-/gpfs/gd2/emc/hwrf/save/${userid}/trak/prod/tracks.atcfunix.${syy}}
 
+       # disable arghive for legacy run
+       if (( 0 == 1 )); then
     cat ${DATA}/trak.${atcfout}.atcfunix.${PDY}${CYL}  >>${glatuxarch}
     cat ${DATA}/trak.${atcfout}.atcfunix.${PDY}${CYL}  >>${tmatuxarch}
+       fi
 
     if [ ${PARAFLAG} = 'YES' ]
     then
@@ -1473,6 +1481,8 @@ if [ ${gettrk_rcc} -eq 0 ]; then
         cp ${DATA}/trak.${atcfout}.atcfunix.${PDY}${CYL} ${COM}/${atcfout}.t${CYL}z.cyclone.trackatcfunix
       fi
 
+       # disable arghive for legacy run
+       if (( 0 == 1 )); then
       tmscrdir=/gpfs/gd2/emc/hwrf/save/${userid}/trak/prod
 
       tmtrakstat=${tmscrdir}/tracker.prod.status
@@ -1547,6 +1557,7 @@ if [ ${gettrk_rcc} -eq 0 ]; then
           fi
         done
       fi
+       fi
 
     fi
 

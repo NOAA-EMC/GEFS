@@ -1,6 +1,4 @@
 #!/bin/ksh
-################# lines between these markers have been modified for dev begin
-################# lines between these markers have been modified for dev end
 
 #####################################################################
 # 9/20/2009, Julia Zhu   Scripts are modified to be sharable
@@ -9,12 +7,8 @@
 #         in the development enviroment only.
 ######################################################################
 
-export RUN_ENVIR=${RUN_ENVIR:-prod}
-
 echo `date` $0 begin
-
 set -xa
-
 export PS4='$SECONDS + '
 
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
@@ -26,43 +20,22 @@ export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 ###########################################
 if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
-################# lines between these markers have been modified for dev begin
- if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
-################# lines between these markers have been modified for dev begin
- else
    # RLW 20141008 modify to obtain and use version for vertical structure
    . $basesource/nw$envir/*/versions/gefs_legacy.ver
    . $basesource/nwdev/gefs.${gefs_ver}/parm/gefs_config
- fi
-################# lines between these markers have been modified for dev end
 fi
 
-# #### 02/06/06 ###############################
-# GET GEFS POST PROCESSING VARIABLES
-# FROM GFS RUN
-# #############################################
-
 ####################################
-# obtain unique process id (pid) and make temp directory
+# obtain unique process id (pid) and make working directory
 ####################################
 export pid=$$
 if [ "$RUN_ENVIR" = dev ]    ### For Developers
 then
-################# lines between these markers have been modified for dev begin
-  if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-   export DATA_IN=${DATA_IN:-/ptmp/$LOGNAME/tmpnwprd1}
-################# lines between these markers have been modified for dev begin
-  else
-   export DATA_IN=${DATA_IN:-$basetmp/tmpnwprd1}
-  fi
-################# lines between these markers have been modified for dev end
+   export TMPhome=${TMPhome:-$basetmp/tmpnwprd1}
 else                       ### For Operations
-   export DATA_IN=$DATAROOT
+   export TMPhome=$DATAROOT
 fi
-export DATA=$DATA_IN/${job}.${pid}
+export DATA=$TMPhome/${job}.${pid}
 
 mkdir -p $DATA
 cd $DATA
@@ -78,19 +51,18 @@ export RUN=gfs
 ####################################
 # File To Log Msgs
 ####################################
-if [ "$RUN_ENVIR" = dev ]     ### For Developers
+if [ "${envir}" = 'prod' ] || [ "${envir}" = 'para' ] || [ "${envir}" = 'test' ]
 then
-################# lines between these markers have been modified for dev begin
-  if (( 0 == 1 )); then
-################# lines between these markers have been modified for dev end
-   export jlogfile=${jlogfile:-$DATA_IN/jlogfile}
-################# lines between these markers have been modified for dev begin
-  else
-   export jlogfile=$baselog/com/logs/jlogfile
-  fi
-################# lines between these markers have been modified for dev end
-else                        ### For Operations
-   export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.${pid}}
+   # NCO
+   if [ ${envir} = "prod" ]
+   then
+     export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.${pid}}
+   else
+     export jlogfile=/com/logs/${envir}/jlogfile
+   fi
+else
+   # DEV
+   export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
 fi
 
 ####################################
@@ -337,9 +309,9 @@ then
    export FHOUR=$FHOUR_HIGH
    export DO_LOW_RES=YES 
    if (( $gfsgribedition == 1 )); then 
-    $HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf
+      $HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf
    elif (( $gfsgribedition == 2 )); then 
-    $HOMEgefs/scripts/exgefs_prdgen_gfs_grb2.sh.ecf
+      $HOMEgefs/scripts/exgefs_prdgen_gfs_grb2.sh.ecf
    fi  
    export SHOUR=`expr $FHOUR_HIGH + $FHINC_LOW`
 fi
@@ -353,9 +325,9 @@ then
    export DO_LOW_RES=YES 
    export POSTGPVARS_HIGH=$POSTGPVARS_LOW
    if (( gfsgribedition == 1 )); then 
-    $HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf
+      $HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf
    elif (( gfsgribedition == 2 )); then 
-    $HOMEgefs/scripts/exgefs_prdgen_gfs_grb2.sh.ecf
+      $HOMEgefs/scripts/exgefs_prdgen_gfs_grb2.sh.ecf
    fi  
 fi
 
@@ -365,7 +337,7 @@ postmsg "$jlogfile" "$msg"
 ##############################
 # Remove the Temporary working directory
 ##############################
-cd $DATA_IN
+cd $TMPhome
 rm -rf $DATA
 
 echo `date` $0 end

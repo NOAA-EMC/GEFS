@@ -404,7 +404,7 @@ if (( relocpertflag == 1 )); then
 #   else
 #     sh $basesource/nw$envir/util/ush/extrkr.sh
 #   fi
-#   cat $COMIN/$cyc/init/zgfs.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
+        cat $COMIN/$cyc/init/zgfs.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
         echo analysis tracking for gfsgribedition=$gfsgribedition end
       else
         echo search for existiong track file for $gfsgribedition begin
@@ -441,13 +441,18 @@ if (( relocpertflag == 1 )); then
 	  export TRACK_OUT=$COMIN/$cyc/track
 	  extrkrsh2=$HOMEgefs/ush/extrkr_2015.sh
 	  export homesyndir=`dirname $extrkrsh2`
+	  export homesyndir=`dirname $homesyndir`
 	  export loopnum=1
 	  export ymdh=${PDY}${cyc}
 	  outdir=$DATA
+	  COM_HOLD=$COM
+	  export COM=$COMOUT/$cyc/init
 	  echo `date` $extrkrsh2 before
-	  echo $extrkrsh2 $loopnum $cmodel $ymdh $npert $outdir >${outdir}/trkr.$ymdh.out 2>&1
+	  $extrkrsh2 $loopnum $cmodel $ymdh $npert $outdir >${outdir}/trkr.$ymdh.out 2>&1
 	  echo `date` $extrkrsh2 after
+	  COM=$COM_HOLD
 	done
+        cat $COMIN/$cyc/init/gfso.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
         echo analysis tracking for gfsgribedition=$gfsgribedition end
       else
         echo search for existiong track file for $gfsgribedition begin
