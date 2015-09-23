@@ -45,8 +45,10 @@ case $cyc in
 esac
 export fhmax
 
+if (( fhmax <= fhmaxh )); then
+  export fhmaxh=$fhmax
+fi
 
-export fhmaxh=$fhmax
 # For Extended forecast from 384-840 hours
 export fhmax_ext=840
 

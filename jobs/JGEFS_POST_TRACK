@@ -187,9 +187,11 @@ if [[ $envir = prod ]] || \
   export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
 else
   export COMOUT=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
-  export ensdir=$COMOUT/$cyc/pgrba
-  export COM=$COMOUT/$cyc/track
 fi
+
+export ensdir=$COMOUT/$cyc/pgrba
+export COM=$COMOUT/$cyc/track
+
 mkdir -m 775 -p $COMOUT/$cyc/track
 
 ##############################################
@@ -272,14 +274,15 @@ do
   ####################################
   # identify temp directory
   ####################################
+  # 20150909 include process ID in the member working directory name
   if [[ $envir = prod ]] || \
      [[ $envir = para ]] || \
      [[ $envir = test ]]; then
-       export DATA=$DATAROOT/gefs_post_${RUN}${cyc}_${cyc_fcst}.${envir}
+       export DATA=$DATAROOT/gefs_post_${RUN}${cyc}_${cyc_fcst}.${envir}.${pid}
   else
     echo baseptmp=$baseptmp
     echo basetmp=$basetmp
-    export DATA=$basetmp/tmpnwprd1/gefs_post_track_${RUN}_${PDY}${cyc}_${cyc_fcst}.${envir}
+    export DATA=$basetmp/tmpnwprd1/gefs_post_track_${RUN}_${PDY}${cyc}_${cyc_fcst}.${envir}.${pid}
     echo DATA=$DATA
   fi
 
@@ -291,6 +294,8 @@ do
   fi
   cd $DATA
 
+  ksh $utilscript/setup.sh
+
   ###################################
   # Run the tropical cyclone tracker
   ###################################
@@ -300,7 +305,8 @@ do
   fi
 
   export pert=`echo ${RUN} | cut -c3-5`
-  if [ $fcstlong = true ]
+  # 20150909 add test to skip long tracker for for 6-hour long forecasts
+  if [[ $fcstlong = true ]] && (( fhmax > 06 ))
   then
     export cmodel=ens
     if   [[ $envir = prod ]]; then
@@ -340,6 +346,13 @@ do
       $basesource/nw$envir/gefs.${gefs_ver}/util/ush/extrkr.sh
     fi
   fi
+
+  # 20150909 remove working directory if the tracker was successful
+  rc=$?
+  if (( rc == 0 )); then
+    rm -rf $DATA
+  fi
+
   ) >$DATAHOLD/${member}.out  2>&1 &
 
 done

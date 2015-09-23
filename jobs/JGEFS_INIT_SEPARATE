@@ -288,7 +288,7 @@ echo locations of scripts and executables
 ##############################################
 
 echo location of sighdr executable
-if [[ $envir = prod ]]; then
+if [[ $envir = prod || $envir = para || $envir = test ]]; then
   sighdrexec=$HOMEgsm/exec/global_sighdr
 else
   echo locsighdrexec=$locsighdrexec
@@ -311,7 +311,7 @@ fi
 echo sighdrexec=$sighdrexec
 
 echo location of chgres script and executable
-if [[ $envir = prod ]]; then
+if [[ $envir = prod || $envir = para || $envir = test ]]; then
   export chgresush=$HOMEgsm/ush/global_chgres.sh
   export CHGRESEXEC=$HOMEgsm/exec/global_chgres
 else

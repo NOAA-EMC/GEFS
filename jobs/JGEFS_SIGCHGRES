@@ -187,6 +187,11 @@ sh $utilscript/setup.sh
 sh $utilscript/setpdy.sh
 . PDY
 
+##############################################
+echo set parameters using gefs.parm
+##############################################
+. $PARMgefs/gefs.parm
+
 # hour_lr_ni will be used to define the IC files of the lower resolution part (if not restart) 
 # this variable is used to define the input/output files 
 (( hour_lr_ini = fhmaxh - HOUTSPS ))
@@ -218,11 +223,6 @@ export ENS_COM=$COMOUT
 
 export GESdir=$gespath/gefs_legacy.${PDY}
 mkdir -m 775 -p $GESdir
-
-##############################################
-echo set parameters using gefs.parm
-##############################################
-. $PARMgefs/gefs.parm
 
 ###############################################################
 # Specify locations of the following scripts and executables

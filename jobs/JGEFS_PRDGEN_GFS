@@ -123,7 +123,7 @@ else                             ### For Operations
   export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
   export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
 
-  export HOMEgefs=${HOMEgefs:-/nw${envir}.gefs.${gefs_ver}}
+  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs.${gefs_ver}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}

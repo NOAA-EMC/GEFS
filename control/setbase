@@ -180,8 +180,8 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
     usergfs="Richard.Wobus"
     zq_setbase_hh=`date +%H`
     echo zq_setbase_hh=$zq_setbase_hh
-    zq_setbase_runhigh=yes
     zq_setbase_runhigh=no      # default
+    zq_setbase_runhigh=yes
     if (( zq_setbase_hh > 23 )) || (( zq_setbase_hh < 10 )) ; then
       zq_setbase_runhigh=no
       zq_setbase_runhigh=yes   # default
@@ -191,8 +191,8 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
       zq_setbase_testj=`echo ${LSB_JOBNAME}333333333333 | cut -c3-12`
       echo zq_setbase_testj=$zq_setbase_testj
       if [[ "$zq_setbase_testj" > "$zq_setbase_testc" ]]; then
-        zq_setbase_runhigh=yes
         zq_setbase_runhigh=no  # default
+        zq_setbase_runhigh=yes
       fi
     fi
     echo zq_setbase_runhigh=$zq_setbase_runhigh
