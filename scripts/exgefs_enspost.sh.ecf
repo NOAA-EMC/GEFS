@@ -403,13 +403,13 @@ then
    fi
    if [ "$SENDDBN" = "YES" ]
    then
-     $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_STAT $job $COMOUT/$cyc/ensstat/ensstat${ext_h}.${cycle}.pqpf_24h
+     $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $COMOUT/$cyc/ensstat/ensstat${ext_h}.${cycle}.pqpf_24h
 
      if [ $SENDDBN_GB2 = YES ]
      then
 
-     $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_STAT_GB2 $job $COMOUT/$cyc/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2
-     $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_STAT_GB2_WIDX $job $COMOUT/$cyc/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2.idx
+     $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $COMOUT/$cyc/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2
+     $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $COMOUT/$cyc/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2.idx
 
      fi
 

@@ -200,7 +200,7 @@ else
 	  MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
 	  if [[ $fhr -ge 0 && $fhr -le $fhmax && ` expr $fhr % 6 ` -eq 0 && ! -n "$cfsuffix" ]]
 	  then
-	    $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGBA_$MEMBER $job $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrba$ffhr$cfsuffix
+	    $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrba$ffhr$cfsuffix
 	  fi
 	fi
       fi
@@ -216,7 +216,7 @@ else
 	# MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
 	# if [[ $fhr -ge 0 && $fhr -le 84 && ` expr $fhr % 6 ` -eq 0 && ! -n "$cfsuffix" ]]
 	# then
-	#   $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGBB_$MEMBER $job $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbb$ffhr$cfsuffix
+	#   $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbb$ffhr$cfsuffix
 	# fi
       #fi
      #fi
@@ -281,10 +281,10 @@ else
          if test `echo $RUN | cut -c1-2` = "ge" -a ! -n "$cfsuffix"
          then
            MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-           $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2A_$MEMBER $job $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix
+           $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix
 	   if test "$SENDDBN_GB2_IDX" = 'YES'
 	   then
-	     $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2A_${MEMBER}_WIDX $job \
+	     $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job \
 	       $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a${ffhr}${cfsuffix}.idx
 	   fi
          fi
@@ -361,16 +361,16 @@ else
           if test `echo $RUN | cut -c1-2` = "ge" -a ! -n "$cfsuffix"
           then
             MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-            $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2B_$MEMBER $job $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
+            $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
 	    if test "$SENDDBN_GB2_IDX" = 'YES'
 	    then
-	      $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2B_${MEMBER}_WIDX $job \
+	      $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job \
                    $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr${cfsuffix}.idx
 	    fi
             
             if test "$CREATE_TIGGE" = 'YES'
             then
-              $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2C_$MEMBER $job $COMOUT/$cyc/pgrb2c/${RUN}.${cycle}.pgrb2c$ffhr$cfsuffix
+              $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $COMOUT/$cyc/pgrb2c/${RUN}.${cycle}.pgrb2c$ffhr$cfsuffix
             fi
           fi
         fi

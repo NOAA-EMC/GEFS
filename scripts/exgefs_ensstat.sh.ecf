@@ -316,11 +316,11 @@ do
            then
               if [[ "$run" = "geavg" ]]
               then
-                 $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGBA_AVG $job ${COMOUT}/${cyc}/pgrba/geavg.${cycle}.pgrbaf${fh}${cfsuffix}
+                 $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job ${COMOUT}/${cyc}/pgrba/geavg.${cycle}.pgrbaf${fh}${cfsuffix}
               fi
               if [[ "$run" = "gespr" ]]
               then
-                 $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGBA_SPR $job ${COMOUT}/${cyc}/pgrba/gespr.${cycle}.pgrbaf${fh}${cfsuffix}
+                 $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job ${COMOUT}/${cyc}/pgrba/gespr.${cycle}.pgrbaf${fh}${cfsuffix}
               fi
            fi
         fi
@@ -330,19 +330,19 @@ do
            then
               if [[ "$run" = "geavg" ]]
               then
-                 $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2A_AVG $job ${COMOUT}/${cyc}/pgrb2a/geavg.${cycle}.pgrb2af${fh}${cfsuffix}
+                 $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job ${COMOUT}/${cyc}/pgrb2a/geavg.${cycle}.pgrb2af${fh}${cfsuffix}
 		 if test "$SENDDBN_GB2_IDX" = 'YES'
 		 then
-		   $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2A_AVG_WIDX $job \
+		   $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job \
                          ${COMOUT}/${cyc}/pgrb2a/geavg.${cycle}.pgrb2af${fh}${cfsuffix}.idx
 		 fi
               fi
               if [[ "$run" = "gespr" ]]
               then
-                 $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2A_SPR $job ${COMOUT}/${cyc}/pgrb2a/gespr.${cycle}.pgrb2af${fh}${cfsuffix}
+                 $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job ${COMOUT}/${cyc}/pgrb2a/gespr.${cycle}.pgrb2af${fh}${cfsuffix}
 		 if test "$SENDDBN_GB2_IDX" = 'YES'
 		 then
-		   $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2A_SPR_WIDX $job \
+		   $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job \
                           ${COMOUT}/${cyc}/pgrb2a/gespr.${cycle}.pgrb2af${fh}${cfsuffix}.idx
 		 fi
               fi
@@ -351,11 +351,11 @@ do
            then
               if [[ "$run" = "geavg" ]]
               then
-                 $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2A2_AVG $job ${COMOUT}/${cyc}/pgrb2alr/geavg.${cycle}.pgrb2af${fh}${cfsuffix}.2
+                 $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job ${COMOUT}/${cyc}/pgrb2alr/geavg.${cycle}.pgrb2af${fh}${cfsuffix}.2
               fi
               if [[ "$run" = "gespr" ]]
               then
-                 $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2A2_SPR $job ${COMOUT}/${cyc}/pgrb2alr/gespr.${cycle}.pgrb2af${fh}${cfsuffix}.2
+                 $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job ${COMOUT}/${cyc}/pgrb2alr/gespr.${cycle}.pgrb2af${fh}${cfsuffix}.2
               fi
            fi
         fi

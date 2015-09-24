@@ -124,35 +124,35 @@ then
     MEMBER=$RUN | tr '[a-z]' '[A-Z]'
     if [[ $fhr -ge 0 && $fhr -le 84 && ` expr $fhr % 6 ` -eq 0 ]]
     then
-      $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGBA_$MEMBER $job $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaf$fhr
+      $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaf$fhr
       if [[ "$makegrb1i" = "yes" ]]; then
-	$DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGBAI_$MEMBER $job $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaif$fhr
+	$DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaif$fhr
       fi
-      $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2A_$MEMBER $job $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2af$fhr
+      $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2af$fhr
       if [[ "$makegrb2i" = "yes" ]]; then
-	$DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2AI_$MEMBER $job $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2aif$fhr
+	$DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2aif$fhr
       fi
     fi
     if test "$DO_LOW_RES" = 'YES' -a ` expr $fhr % 12 ` -eq 0 -a $fhr -ge 96
     then
-      $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGBA2_$MEMBER $job $ENS_COM/$cyc/pgrbalr/ge${RUN}.${cycle}.pgrbaf$fhr.2
+      $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $ENS_COM/$cyc/pgrbalr/ge${RUN}.${cycle}.pgrbaf$fhr.2
       if [[ "$makegrb1i" = "yes" ]]; then
-	$DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGBAI2_$MEMBER $job $ENS_COM/$cyc/pgrbalr/ge${RUN}.${cycle}.pgrbaif$fhr.2
+	$DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $ENS_COM/$cyc/pgrbalr/ge${RUN}.${cycle}.pgrbaif$fhr.2
       fi
-      $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2A2_$MEMBER $job $ENS_COM/$cyc/pgrb2alr/ge${RUN}.${cycle}.pgrb2af$fhr.2
+      $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $ENS_COM/$cyc/pgrb2alr/ge${RUN}.${cycle}.pgrb2af$fhr.2
       if [[ "$makegrb2i" = "yes" ]]; then
-	$DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2AI2_$MEMBER $job $ENS_COM/$cyc/pgrb2alr/ge${RUN}.${cycle}.pgrb2aif$fhr.2
+	$DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $ENS_COM/$cyc/pgrb2alr/ge${RUN}.${cycle}.pgrb2aif$fhr.2
       fi
     fi
     if [[ $fhr -ge 192 && ` expr $fhr % 12 ` -eq 0 ]]
     then
-      $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGBA_$MEMBER $job $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaf$fhr
+      $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaf$fhr
       if [[ "$makegrb1i" = "yes" ]]; then
-	$DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGBAI_$MEMBER $job $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaif$fhr
+	$DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $COMOUT/$cyc/pgrba/ge${RUN}.${cycle}.pgrbaif$fhr
       fi
-      $DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2A_$MEMBER $job $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2af$fhr
+      $DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2af$fhr
       if [[ "$makegrb2i" = "yes" ]]; then
-	$DBNROOT/bin/dbn_alert MODEL ENS_LEGACY_PGB2AI_$MEMBER $job $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2aif$fhr
+	$DBNROOT/bin/dbn_alert MODEL GEFS_LEGACY $job $COMOUT/$cyc/pgrb2a/ge${RUN}.${cycle}.pgrb2aif$fhr
       fi
     fi
 fi
