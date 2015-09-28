@@ -1,4 +1,4 @@
-export gefs_ver=v10.3.2
+export gefs_ver=v10.3.3
 if [[ -f /nw${envir}/versions/gfs.ver ]]; then
   export gsm_ver=`cat /nw${envir}/versions/gfs.ver|grep gsm_ver|awk -F"=" '{print $2}'`
 fi

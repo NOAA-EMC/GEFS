@@ -260,10 +260,10 @@ execcombine=$EXECGLOBAL/gefs_vortex_combine
 ###testb
 elif [[ $envir = para ]] || [[ $envir = test ]]; then
 # RLW 20141008 modify to obtain and use version for vertical structure
-execcombine=/nw$envir/gefs.${gefs_ver}/exec/gefs_vortex_combine
+execcombine=/nw$envir/gefs_legacy.${gefs_ver}/exec/gefs_vortex_combine
 else
 # RLW 20141008 modify to obtain and use version for vertical structure
-execcombine=$basesource/nw$envir/gefs.${gefs_ver}/exec/gefs_vortex_combine
+execcombine=$basesource/nw$envir/gefs_legacy.${gefs_ver}/exec/gefs_vortex_combine
 fi
 ###teste
 if (( relocpertflag == 1 )); then

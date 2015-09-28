@@ -28,7 +28,7 @@ if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
   # RLW 20141008 modify to obtain and use version for vertical structure
   . $basesource/nw$envir/*/versions/gefs_legacy.ver
-  . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
+  . $basesource/nw$envir/gefs_legacy.${gefs_ver}/parm/gefs_config
 fi
 
 ####################################
@@ -125,7 +125,7 @@ fi
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}/gefs.${gefs_ver}}
+export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}/gefs_legacy.${gefs_ver}}
 export EXECGLOBAL=$HOMEGLOBAL/exec
 export FIXGLOBAL=$HOMEGLOBAL/fix
 export PARMGLOBAL=$HOMEGLOBAL/parm
@@ -151,7 +151,7 @@ if [[ $envir = dev ]]; then
 
 else
 
-  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs.${gefs_ver}}
+  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_ver}}
   export EXECgefs=$HOMEgefs/exec
   export FIXgefs=$HOMEgefs/fix
   export PARMgefs=$HOMEgefs/parm
@@ -181,8 +181,8 @@ elif [[ $envir = para ]] || \
 . $PARMGLOBAL/gefs_init.parm
 else
   # RLW 20141008 modify to obtain and use version for vertical structure
-. $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs.parm
-. $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_init.parm
+. $basesource/nw$envir/gefs_legacy.${gefs_ver}/parm/gefs.parm
+. $basesource/nw$envir/gefs_legacy.${gefs_ver}/parm/gefs_init.parm
 fi
 
 echo
@@ -370,10 +370,10 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
   # RLW 20141008 modify to obtain and use version for vertical structure
-  /nw${envir}/gefs.${gefs_ver}/scripts/exgefs_init_separate.sh.ecf
+  /nw${envir}/gefs_legacy.${gefs_ver}/scripts/exgefs_init_separate.sh.ecf
 else
   # RLW 20141008 modify to obtain and use version for vertical structure
-  $basesource/nw${envir}/gefs.${gefs_ver}/scripts/exgefs_init_separate.sh.ecf
+  $basesource/nw${envir}/gefs_legacy.${gefs_ver}/scripts/exgefs_init_separate.sh.ecf
 fi
 
 #############################################################

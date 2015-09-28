@@ -536,7 +536,7 @@ if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 $EXECGLOBAL/global_sigzvd
 else
 # RLW 20141008 modify to obtain and use version for vertical structure
-$basesource/nw${envir}/gefs.${gefs_ver}/exec/global_sigzvd
+$basesource/nw${envir}/gefs_legacy.${gefs_ver}/exec/global_sigzvd
 fi
 
 ret_sigzvd=$?
@@ -554,7 +554,7 @@ if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 $EXECGLOBAL/global_sigzvd
 else
 # RLW 20141008 modify to obtain and use version for vertical structure
-$basesource/nw${envir}/gefs.${gefs_ver}/exec/global_sigzvd
+$basesource/nw${envir}/gefs_legacy.${gefs_ver}/exec/global_sigzvd
 fi
 
 ret_sigzvd=$?
@@ -570,10 +570,10 @@ execseparate=$EXECGLOBAL/gefs_vortex_separate
 ###testb
 elif [[ $envir = para ]] || [[ $envir = test ]]; then
 # RLW 20141008 modify to obtain and use version for vertical structure
-execseparate=/nw$envir/gefs.${gefs_ver}/exec/gefs_vortex_separate
+execseparate=/nw$envir/gefs_legacy.${gefs_ver}/exec/gefs_vortex_separate
 else
 # RLW 20141008 modify to obtain and use version for vertical structure
-execseparate=$basesource/nw$envir/gefs.${gefs_ver}/exec/gefs_vortex_separate
+execseparate=$basesource/nw$envir/gefs_legacy.${gefs_ver}/exec/gefs_vortex_separate
 fi
 ###teste
 if (( relocpertflag == 1 )); then
@@ -674,7 +674,7 @@ if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 $EXECGLOBAL/global_sigzvd
 else
 # RLW 20141008 modify to obtain and use version for vertical structure
-$basesource/nw${envir}/gefs.${gefs_ver}/exec/global_sigzvd
+$basesource/nw${envir}/gefs_legacy.${gefs_ver}/exec/global_sigzvd
 fi
 ret_sigzvd=$?
 
@@ -690,7 +690,7 @@ if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 $EXECGLOBAL/global_sigzvd
 else
 # RLW 20141008 modify to obtain and use version for vertical structure
-$basesource/nw${envir}/gefs.${gefs_ver}/exec/global_sigzvd
+$basesource/nw${envir}/gefs_legacy.${gefs_ver}/exec/global_sigzvd
 fi
 ret_sigzvd=$?
 
@@ -736,10 +736,10 @@ do
 ####testb
 #elif [[ $envir = para ]] || [[ $envir = test ]]; then
 #  # RLW 20150225 modify to obtain and use version for vertical structure
-#  export SIGINP=/nw${envir}/gefs.${gefs_ver}/fix/gefs.pertback.$cycle_fcst.${meml}${ipair}
+#  export SIGINP=/nw${envir}/gefs_legacy.${gefs_ver}/fix/gefs.pertback.$cycle_fcst.${meml}${ipair}
 #else
 #  # RLW 20150225 modify to obtain and use version for vertical structure
-#  export SIGINP=$basesource/nw${envir}/gefs.${gefs_ver}/fix/gefs.pertback.$cycle_fcst.${meml}${ipair}
+#  export SIGINP=$basesource/nw${envir}/gefs_legacy.${gefs_ver}/fix/gefs.pertback.$cycle_fcst.${meml}${ipair}
 #fi
 ###teste
   export SIGINP=$FIXgefs/gefs.pertback.$cycle_fcst.${meml}${ipair}

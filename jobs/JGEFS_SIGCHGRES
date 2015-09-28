@@ -25,7 +25,7 @@ if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
    # RLW 20141008 modify to obtain and use version for vertical structure
    . $basesource/nw$envir/*/versions/gefs_legacy.ver
-   . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
+   . $basesource/nw$envir/gefs_legacy.${gefs_ver}/parm/gefs_config
 fi
 
 # ###################################
@@ -139,7 +139,7 @@ then
   export PARMglobal=${PARMglobal:-$HOMEglobal/parm}
 
   # RLW 20141008 modify to obtain and use version for vertical structure
-  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs.${gefs_ver}}
+  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_ver}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
@@ -161,7 +161,7 @@ else                             ### For Operations
   export PARMGLOBAL=$HOMEGLOBAL/parm
 
   # RLW 20141008 modify to obtain and use version for vertical structure
-  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs.${gefs_ver}}
+  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_ver}}
   export EXECgefs=$HOMEgefs/exec
   export USHgefs=$HOMEgefs/ush
   export FIXgefs=$HOMEgefs/fix

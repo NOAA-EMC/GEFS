@@ -26,7 +26,7 @@ if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
   # RLW 20141008 modify to obtain and use version for vertical structure
   . $basesource/nw$envir/*/versions/gefs_legacy.ver
-  . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
+  . $basesource/nw$envir/gefs_legacy.${gefs_ver}/parm/gefs_config
 fi
 
 # #### 05/05/99 ###############################
@@ -98,7 +98,7 @@ then
   export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
   export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
 
-  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs.${gefs_ver}}
+  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_ver}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
@@ -134,7 +134,7 @@ else                             ### For Operations
   export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
   export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
 
-  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs.${gefs_ver}}
+  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_ver}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}

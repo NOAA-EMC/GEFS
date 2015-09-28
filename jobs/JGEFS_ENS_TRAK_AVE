@@ -21,7 +21,7 @@ if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
   # RLW 20141008 modify to obtain and use version for vertical structure
   . $basesource/nw$envir/*/versions/gefs_legacy.ver
-  . $basesource/nw$envir/gefs.${gefs_ver}/parm/gefs_config
+  . $basesource/nw$envir/gefs_legacy.${gefs_ver}/parm/gefs_config
 fi
 
 # #############################################
@@ -85,7 +85,7 @@ fi
 # Specify Execution Areas
 ####################################
 export HOMEGLOBAL=/nw${envir}
-export HOMEgefs=/nw${envir}/gefs.${gefs_ver}
+export HOMEgefs=/nw${envir}/gefs_legacy.${gefs_ver}
 if [[ $envir = dev ]]; then
   HOMEgefs=$basesource/$HOMEgefs
 fi
@@ -102,7 +102,7 @@ if [[ $envir = dev ]]; then
   if [[ $gefsmachine = wcoss ]]; then
     #export FIXGLOBAL=$HOMEglobal/fix
     # RLW 20141008 modify to obtain and use version for vertical structure
-    export FIXGLOBAL=$basesource/nw${envir}/gefs.${gefs_ver}/fix
+    export FIXGLOBAL=$basesource/nw${envir}/gefs_legacy.${gefs_ver}/fix
   fi
 fi
 
@@ -203,10 +203,10 @@ if [[ $envir = dev ]]; then
 #DHOU 04/13/2012 Added 1 line for ZEUS
  if [[ $gefsmachine = zeus ]]; then
      exectrkdir=$HOMEglobal/util/exec
-    $basesource/nw$envir/gefs.${gefs_ver}/util/ush/ens_trak_ave.sh
+    $basesource/nw$envir/gefs_legacy.${gefs_ver}/util/ush/ens_trak_ave.sh
  elif  [[ $gefsmachine = wcoss ]]; then
-     exectrkdir=$basesource/nw$envir/gefs.${gefs_ver}/util/exec
-    $basesource/nw$envir/gefs.${gefs_ver}/util/ush/ens_trak_ave.sh
+     exectrkdir=$basesource/nw$envir/gefs_legacy.${gefs_ver}/util/exec
+    $basesource/nw$envir/gefs_legacy.${gefs_ver}/util/ush/ens_trak_ave.sh
  else
   $HOMEgefs/util/ush/ens_trak_ave.sh
  fi
