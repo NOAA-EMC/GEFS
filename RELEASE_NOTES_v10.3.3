@@ -1,13 +1,18 @@
-Release Note: GEFS v.10.3.0 (legacy)
+Release Note: GEFS LEGACY v.10.3.3
+
 v10.0.0 . released Feb 1, 2012
 . Implementation on CCS
+
 v10.1.0 . released July 25, 2013
 . Modified model to run on WCOSS
+
 v10.2.0 . released Oct 16, 2014 (The first version in EE structure, but contains only part of the
 package: GEFS_INIT jobs and GEFS_PRDGEN_GFS)
 . Modified initialization to run downstream of GFS implementation
+
 v10.2.1 . released Jan 1, 2015
 . As implemented with GFS implementation Jan 14, 2015
+
 v10.3.0 -- released August 12, 2015
 . Legacy GEFS to continue uncalibrated GEFS v10 products for users who calibrate them using
 the GEFS V10 reforecasts
@@ -39,4 +44,34 @@ rerun from the latest restart files instead of being rerun from the beginning
 . source: /ensemble/save/Richard.Wobus/s/rwik/nwdev/gefs.v10.3.0
 . products: /ptmpd2/emc.enspara/o/rwik/com/gens/dev
 . To run identically to this test run, copy the sfcsig and track subdirectories from
-one cycle and start running the next cycle
+one cycle and start running the next cycle.
+
+v10.3.1 released August 18, 2015
+. Correct directories used for scripts and codes
+. Turn off transmission of hurricane tracks to archives
+. Implementation instructions are unchanged from v10.3.0
+. The new test run for comparison is:
+. source: /ensemble/save/Richard.Wobus/s/rwio/nwdev/gefs.v10.3.0
+. products: /ptmpd2/emc.enspara/o/rwio/com/gens/dev
+
+v10.3.2 released September 4, 2015
+. merge changes from v10.2.1 as run in production
+. remove obsolete options from j-jobs
+. turn off unneeded DBN alerts and track archives
+. Implementation instructions are unchanged from v10.3.0
+. The new test run for comparison is:
+. source: /ensemble/save/Richard.Wobus/s/rwir/nwdev/gefs.v10.3.2
+. products: /ptmpd2/emc.enspara/o/rwir/com/gens/dev
+
+v10.3.3 released September 27, 2015
+. disable long track products a*trackatcfunix for 06Z, 12Z, and 18Z cycles
+. modify all DBN alerts to a standard model name for the GEFS Legacy system
+. modify file location specifications to run under gefs_legacy.v10.3.* instead of gefs.v10.3.*
+. To implement:
+. check out into /nw$envir/gefs_legacy.v10.3.3
+. remaining instructions are unchanged from gefs.v10.3.0
+. There is a test run on gyre for comparison:
+. source: /ensemble/save/Richard.Wobus/s/rwiu/nwdev/gefs_legacy.v10.3.3
+. products: /ptmpd2/emc.enspara/o/rwiu/com/gens/dev
+. To run identically to this test run, copy the sfcsig and track subdirectories from
+one cycle and start running the next cycle.
