@@ -323,7 +323,7 @@ else
 	###########################################################
 	# remove sigma, surface, and flux files
 	###########################################################
-	$HOMEgefs/scripts/exgefs_post_cleanup.sh.sms
+	$HOMEgefs/scripts/exgefs_post_cleanup.sh.ecf
       done
 
     else
