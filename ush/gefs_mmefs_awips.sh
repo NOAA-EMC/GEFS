@@ -134,13 +134,13 @@ do
             ##############################
             # Post Files to PCOM
             ##############################
-            cpfs grib2_naefs_gefs_${id}.t${cyc}z.${type} $PCOMOUT/grib2_naefs_gefs_${id}.t${cyc}z.${type}
+            cpfs grib2_naefs_gefs_${id}.t${cyc}z.${type} $PCOM/grib2_naefs_gefs_${id}.t${cyc}z.${type}
 
             if [ "$SENDDBN" = YES ]; then
                ##########################
                # Distribute Data to NCF
                #########################
-               $DBNROOT/bin/dbn_alert NTC_LOW $NET $job $PCOMOUT/grib2_naefs_gefs_${id}.t${cyc}z.${type}
+               $DBNROOT/bin/dbn_alert NTC_LOW $NET $job $PCOM/grib2_naefs_gefs_${id}.t${cyc}z.${type}
             fi
           fi
       else

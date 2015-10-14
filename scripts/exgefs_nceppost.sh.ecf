@@ -359,7 +359,8 @@ if [ $DOANALYSIS = YES ]; then
 	ls -al  $mcfile
 	cat  $mcfile
 	echo "anl_done" >> $post_log
-	ecflow_client --event info "`cat $post_log`"
+	# ecflow_client --label info "`cat $post_log`"
+	  ecflow_client --event anl_done
 	echo
       fi
     fi
@@ -559,7 +560,8 @@ do
       ls -al  $mcfile
       cat  $mcfile
       echo "f${fhr}_done" >> $post_log
-      ecflow_client --event info "`cat $post_log`"
+      # ecflow_client --label info "`cat $post_log`"
+      ecflow_client --event f${fhr}_done
       echo
     fi
 

@@ -53,7 +53,7 @@ if [[ $jobgrid == _p5 ]]; then
    parmhh=$PARMgefs/gefs_pgrb2a_0p50_fhh.parm
 fi
 
-export makegrb2i=no
+export makegrb2i=yes
 
 # set variables for ensemble PDS header
 (( e1 = 0 ))
@@ -134,8 +134,8 @@ then
             err_chk
           fi
        if [[ "$makegrb2i" = "yes" ]]; then
-	  mv pgb2aifile $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\ianl
-	       testfile=$COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\ianl
+	  mv pgb2aifile $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl.idx
+	       testfile=$COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl.idx
           if [[ ! -s $testfile ]]; then
             msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
             echo "`date`    $msg"
@@ -161,9 +161,9 @@ then
 	   if [[ "$makepgrb2" = "yes" ]]; then
 	     $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_$MEMBER $job $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl
 	   fi
-	   if [[ "$makegrb2i" = "yes" ]]; then
-	       $DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI${GRID}_$MEMBER $job $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\ianl
-	   fi
+	   #if [[ "$makegrb2i" = "yes" ]]; then
+	   #    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI${GRID}_$MEMBER $job $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\ianl
+	   #fi
          fi
       fi
    fi

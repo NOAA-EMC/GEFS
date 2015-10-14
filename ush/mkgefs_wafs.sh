@@ -102,7 +102,7 @@ do
          cpfs wafs${grid}.${cycle}.ens${hr}.grib2.idx $COMOUT/wafs${grid}.${cycle}.ens${hr}.grib2.idx
          if [[ "$grid" = "38" || "$grid" = "39" || "$grid" = "40" ]]
          then
-	    cpfs wafs${grid}.${cycle}.ens${hr} $PCOMOUT/wafs${grid}.${cycle}.ens${hr}
+	    cpfs wafs${grid}.${cycle}.ens${hr} $PCOM/wafs${grid}.${cycle}.ens${hr}
          fi
       fi
    done
@@ -128,7 +128,7 @@ then
 
         if [[ "$grid" = "38" || "$grid" = "39" || "$grid" = "40" ]]
         then
-           $DBNROOT/bin/dbn_alert GRIB_LOW ENS_XWAFS $job $PCOMOUT/wafs${grid}.${cycle}.ens${hr}
+           $DBNROOT/bin/dbn_alert GRIB_LOW ENS_XWAFS $job $PCOM/wafs${grid}.${cycle}.ens${hr}
         fi
       done
    done 

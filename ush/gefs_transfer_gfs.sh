@@ -40,7 +40,7 @@ then
 # fi 
    cp pgb2afile $COMOUT/$cyc/$GRBDIR2/ge${RUN}.${cycle}.$GRBFIL2\f$pgfhr
    if [[ "$makegrb2i" = "yes" ]]; then
-     cp pgb2aifile $COMOUT/$cyc/$GRBDIR2/ge${RUN}.${cycle}.$GRBFIL2\if$pgfhr
+     cp pgb2aifile $COMOUT/$cyc/$GRBDIR2/ge${RUN}.${cycle}.$GRBFIL2\f${pgfhr}.idx
    fi
  
    # Save lowres files if we are supposed to
@@ -55,7 +55,7 @@ then
      fi
      cp pgb2afile.2 $COMOUT/$cyc/pgrb2alr/ge${RUN}.${cycle}.pgrb2af$pgfhr.2
      if [[ "$makegrb2i" = "yes" ]]; then
-       cp pgb2aifile.2 $COMOUT/$cyc/pgrb2alr/ge${RUN}.${cycle}.pgrb2aif$pgfhr.2
+       cp pgb2aifile.2 $COMOUT/$cyc/pgrb2alr/ge${RUN}.${cycle}.pgrb2af$pgfhr.2.idx
      fi
    fi
 fi
@@ -90,9 +90,9 @@ then
       fi
       fi
       $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_$MEMBER $job $COMOUT/$cyc/$GRBDIR2/ge${RUN}.${cycle}.$GRBFIL2\f$pgfhr
-      if [[ "$makegrb2i" = "yes" ]]; then
-	$DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI${GRID}_$MEMBER $job $COMOUT/$cyc/$GRBDIR2/ge${RUN}.${cycle}.$GRBFIL2\f$pgfhr.idx
-      fi
+      #if [[ "$makegrb2i" = "yes" ]]; then
+      #	$DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI${GRID}_$MEMBER $job $COMOUT/$cyc/$GRBDIR2/ge${RUN}.${cycle}.$GRBFIL2\f$pgfhr.idx
+      #fi
     fi
 
     if test "$DO_LOW_RES" = 'YES' -a ` expr $fhr % 12 ` -eq 0 -a $fhr -ge 96
@@ -104,9 +104,9 @@ then
       fi
       fi
       $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A2_$MEMBER $job $COMOUT/$cyc/pgrb2alr/ge${RUN}.${cycle}.pgrb2af$pgfhr.2
-      if [[ "$makegrb2i" = "yes" ]]; then
-	$DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI2_$MEMBER $job $COMOUT/$cyc/pgrb2alr/ge${RUN}.${cycle}.pgrb2af$pgfhr.2.idx
-      fi
+      #if [[ "$makegrb2i" = "yes" ]]; then
+      #	$DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI2_$MEMBER $job $COMOUT/$cyc/pgrb2alr/ge${RUN}.${cycle}.pgrb2af$pgfhr.2.idx
+      #fi
     fi
 
     if [[ $fhr -ge 240 && ` expr $fhr % 12 ` -eq 0 ]]
@@ -118,8 +118,8 @@ then
       fi
       fi
       $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_$MEMBER $job $COMOUT/$cyc/$GRBDIR2/ge${RUN}.${cycle}.$GRBFIL2\f$pgfhr
-      if [[ "$makegrb2i" = "yes" ]]; then
-	$DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI${GRID}_$MEMBER $job $COMOUT/$cyc/$GRBDIR2/ge${RUN}.${cycle}.$GRBFIL2\f$pgfhr.idx
-      fi
+      #if [[ "$makegrb2i" = "yes" ]]; then
+      #	$DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI${GRID}_$MEMBER $job $COMOUT/$cyc/$GRBDIR2/ge${RUN}.${cycle}.$GRBFIL2\f$pgfhr.idx
+      #fi
     fi
 fi

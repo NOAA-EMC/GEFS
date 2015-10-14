@@ -336,10 +336,10 @@ do
 
   fi
 
-#DHOU, 05/01/2015, added this block for gefs_post_track trigger 
-# if [ $fhr -eq 240]; then
-#   ecflow_client --event prdgen_240_ready
-# fi
+#DHOU, 09/17/2015, added this block for global wave ensemble trigger 
+if [ $fhr -eq 240 ]; then
+  ecflow_client --event pgrb2ap5_f240_ready
+fi
 
   export fhr=`expr $fhr + $FHINC`
   if test $fhr -lt 10

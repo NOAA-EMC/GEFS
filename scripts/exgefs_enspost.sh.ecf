@@ -188,7 +188,7 @@ do
       do
 	(( nmem = nmem + 1 ))
 #       testfile=$COMIN/$cyc/pgrba$lr/ge${mem}.${cycle}.pgrbaif$fh$EXT$cfsuffix
-        testfile=$COMIN/$cyc/pgrb2a$lr/ge${mem}.${cycle}.pgrb2a$FXT\f$fh$EXT$cfsuffix
+        testfile=$COMIN/$cyc/pgrb2a$lr/ge${mem}.${cycle}.pgrb2a$FXT\f$fh$EXT${cfsuffix}.idx
         if test -f $testfile
         then
 	  echo testfile=$testfile found

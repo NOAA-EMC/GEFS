@@ -169,7 +169,7 @@ fi
             err_chk
           fi
       mv pgb2bfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
-			testfilef=$COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
+			testfile=$COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
           if [[ ! -s $testfile ]]; then
             msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
             echo "`date`    $msg"
@@ -181,6 +181,7 @@ fi
       if test "$makepgrb2d" = 'yes'
       then
        mv pgb2dfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2d/${RUN}.${cycle}.pgrb2d$ffhr$cfsuffix
+       testfile=$COMOUT/$cyc/pgrb2d/${RUN}.${cycle}.pgrb2d$ffhr$cfsuffix
           if [[ ! -s $testfile ]]; then
             msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
             echo "`date`    $msg"
@@ -191,6 +192,7 @@ fi
       fi
       if [[ "$makegrb2i" = "yes" ]]; then
 	mv pgb2afile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix.idx
+	  testfile=$COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr${cfsuffix}.idx
           if [[ ! -s $testfile ]]; then
             msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
             echo "`date`    $msg"
@@ -199,6 +201,7 @@ fi
             err_chk
           fi
 	mv pgb2bfile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix.idx
+	  testfile=$COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix.idx
           if [[ ! -s $testfile ]]; then
             msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
             echo "`date`    $msg"
@@ -414,7 +417,7 @@ else
 fi
 fi
 
-fi #(0=1 for ZEUS, skip grib2 files)
+fi # ("$makepgrb1" = "yes")
 ########################################################
 echo `date` $sname $member $partltr $cfsuffix $fsuffix 1x1 GRIB end on machine=`uname -n`
 msg='ENDED NORMALLY.'
