@@ -39,7 +39,7 @@ export NWROOTp1=/nwprod
 HOMEDIR=/ensemble/save/Dingchen.Hou/RFC
 export gefsmachine=${gefsmachine:-wcoss}
 
-  export HOMEgefs=$HOMEDIR/gefs.v11.0.0
+  export HOMEgefs=$HOMEDIR/gefs.v11.0.6
   export HOMEgefs=$basesource/nwdev
 
   export HOMEgsm=$HOMEDIR/gsm.v12.1.0
