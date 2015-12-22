@@ -212,9 +212,9 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
   fi
   # RLW 20141008 modify to obtain and use version for vertical structure
   . /$group/save/$userin/s/$expid/nw$envir/gefs_legacy.v*/versions/gefs_legacy.ver
-  echo gefs_ver=${gefs_ver}
+  echo gefs_legacy_ver=${gefs_legacy_ver}
   export basesource=/$group/save/$userin/s/$expid
-  export basebin=$basesource/nw$envir/gefs_legacy.${gefs_ver}/control
+  export basebin=$basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/control
   export baseoutput=$PTMP/$userout/o/$expid
   export basetmp=$STMP/$userout/o/$expid
   export baseptmp=$PTMP/$userout/o/$expid

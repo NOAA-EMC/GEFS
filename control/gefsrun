@@ -317,13 +317,13 @@ echo baseoutput=$baseoutput
 echo baseinitarch=$baseinitarch
 echo basetmp=$basetmp
 
-jobdir=$basesource/nw$envir/gefs_legacy.${gefs_ver}/jobs
+jobdir=$basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/jobs
 echo jobdir=$jobdir
 
-controldir=$basesource/nw$envir/gefs_legacy.${gefs_ver}/control
+controldir=$basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/control
 echo controldir=$controldir
 
-parmdir=$basesource/nw$envir/gefs_legacy.${gefs_ver}/parm
+parmdir=$basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/parm
 echo parmdir=$parmdir
 
 echo

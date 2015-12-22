@@ -43,6 +43,10 @@ do
 
   if test "$SENDCOM" = "YES"
   then
+    ######################################################################
+    #  20120424 RLW modified to keep all sfcsig and sflux files for 00Z  #
+    #######################################################################
+    if (( cyc != 00 )); then
      #
      # Save Pressure and SFLUX GRIB/GRIB Index files
      #
@@ -83,6 +87,7 @@ do
 	  fi
        fi
      fi
+    fi
   fi
   echo `date` save or remove sf, bf, and sflux files f$fhr completed
 

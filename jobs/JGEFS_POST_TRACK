@@ -21,7 +21,7 @@ if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
   # RLW 20141008 modify to obtain and use version for vertical structure
   . $basesource/nw$envir/*/versions/gefs_legacy.ver
-  . $basesource/nw$envir/gefs_legacy.${gefs_ver}/parm/gefs_config
+  . $basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/parm/gefs_config
 fi
 
 # #### 05/05/99 ###############################
@@ -143,7 +143,7 @@ export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
 ##############################
 # Set up the UTILITIES
 ##############################
-export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_ver}}
+export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
 export utilscript=/nwprod/util/ush
 #DHOU 04/05/2012 for ZEUS
  if [[ $gefsmachine = zeus ]]; then
@@ -201,14 +201,14 @@ echo set parameters using gefs.parm
 if [[ $envir = prod ]]; then
   #. $PARMGLOBAL/gefs.parm
   # RLW 20141008 modify to obtain and use version for vertical structure
-  . /nw$envir/gefs_legacy.${gefs_ver}/parm/gefs.parm
+  . /nw$envir/gefs_legacy.${gefs_legacy_ver}/parm/gefs.parm
 elif [[ $envir = para ]] || \
      [[ $envir = test ]]; then
   # RLW 20141008 modify to obtain and use version for vertical structure
-  . /nw$envir/gefs_legacy.${gefs_ver}/parm/gefs.parm
+  . /nw$envir/gefs_legacy.${gefs_legacy_ver}/parm/gefs.parm
 else
   # RLW 20141008 modify to obtain and use version for vertical structure
-  . $basesource/nw$envir/gefs_legacy.${gefs_ver}/parm/gefs.parm
+  . $basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/parm/gefs.parm
   if (( cyc == 00 )); then
     export fhmax=$fhmax00
   elif (( cyc == 06 )); then
@@ -314,17 +314,17 @@ do
     elif [[ $envir = para ]] || \
 	 [[ $envir = test ]]; then
       # RLW 20141008 modify to obtain and use version for vertical structure
-      sh /nw$envir/gefs_legacy.${gefs_ver}/util/ush/extrkr.sh
+      sh /nw$envir/gefs_legacy.${gefs_legacy_ver}/util/ush/extrkr.sh
     else
      #DHOU 01/19/2013, replace the line above with the following if-block for machine-specfic choice of ush script
      if [[ $gefsmachine = zeus ]]; then
       # RLW 20141008 modify to obtain and use version for vertical structure
-      sh $basesource/nw$envir/gefs_legacy.${gefs_ver}/util/ush/extrkr.sh
+      sh $basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/util/ush/extrkr.sh
      elif [[ $gefsmachine = wcoss ]]; then
       sh $HOMEgefs/util/ush/extrkr.sh
      else
       # RLW 20141008 modify to obtain and use version for vertical structure
-      sh $basesource/nw$envir/gefs_legacy.${gefs_ver}/util/ush/extrkr.sh
+      sh $basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/util/ush/extrkr.sh
      fi
     fi
   ###teste
@@ -338,12 +338,12 @@ do
        [[ $envir = test ]]; then
     sh $HOMEgefs/util/ush/extrkr.sh
   else
-    # sh $basesource/nw$envir/gefs_legacy.${gefs_ver}/util/ush/extrkr.sh
+    # sh $basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/util/ush/extrkr.sh
     if [[ $gefsmachine = wcoss ]]; then
       sh $HOMEgefs/util/ush/extrkr.sh
     else
       # RLW 20141008 modify to obtain and use version for vertical structure
-      $basesource/nw$envir/gefs_legacy.${gefs_ver}/util/ush/extrkr.sh
+      $basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/util/ush/extrkr.sh
     fi
   fi
 

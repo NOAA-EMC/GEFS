@@ -102,12 +102,12 @@ fi
 ####################################
 
 if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
-  export HOMEGLOBAL=/nw${envir}/gefs_legacy.${gefs_ver}
+  export HOMEGLOBAL=/nw${envir}/gefs_legacy.${gefs_legacy_ver}
 fi
 if [[ $envir = dev ]]; then
   # RLW 20141008 modify to obtain and use version for vertical structure
   . $basesource/nw$envir/*/versions/gefs_legacy.ver
-  export HOMEGLOBAL=$basesource/nw$envir/gefs_legacy.${gefs_ver}
+  export HOMEGLOBAL=$basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}
 fi
 export EXECGLOBAL=$HOMEGLOBAL/exec
 export FIXGLOBAL=$HOMEGLOBAL/fix
@@ -135,8 +135,8 @@ elif [[ $envir = para ]] || \
 . $PARMGLOBAL/gefs_init.parm
 else
   # RLW 20141008 modify to obtain and use version for vertical structure
-. $basesource/nw$envir/gefs_legacy.${gefs_ver}/parm/gefs.parm
-. $basesource/nw$envir/gefs_legacy.${gefs_ver}/parm/gefs_init.parm
+. $basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/parm/gefs.parm
+. $basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/parm/gefs_init.parm
 fi
 
 echo
@@ -248,10 +248,10 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
   # RLW 20141008 modify to obtain and use version for vertical structure
-  /nw${envir}/gefs_legacy.${gefs_ver}/scripts/exgefs_init_et.sh.ecf
+  /nw${envir}/gefs_legacy.${gefs_legacy_ver}/scripts/exgefs_init_et.sh.ecf
 else
   # RLW 20141008 modify to obtain and use version for vertical structure
-  $basesource/nw${envir}/gefs_legacy.${gefs_ver}/scripts/exgefs_init_et.sh.ecf
+  $basesource/nw${envir}/gefs_legacy.${gefs_legacy_ver}/scripts/exgefs_init_et.sh.ecf
 fi
 #############################################################
 

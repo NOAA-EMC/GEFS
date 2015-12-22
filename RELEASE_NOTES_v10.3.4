@@ -1,4 +1,4 @@
-Release Note: GEFS LEGACY v.10.3.3
+Release Note: GEFS LEGACY v.10.3.4
 
 v10.0.0 . released Feb 1, 2012
 . Implementation on CCS
@@ -75,3 +75,20 @@ v10.3.3 released September 27, 2015
 . products: /ptmpd2/emc.enspara/o/rwiu/com/gens/dev
 . To run identically to this test run, copy the sfcsig and track subdirectories from
 one cycle and start running the next cycle.
+
+v10.3.4 released December 21, 2015
+. modify post cleanup job to save all 00Z sfcsig and sflux files
+. mirror these files for downstream applications
+. implementation instructions:
+. use new tag: https://svnemc.ncep.noaa.gov/projects/gefs/tags/gefs_legacy.v10.3.4
+. check out into /nw$envir/gefs_legacy.v10.3.4
+. add 00Z sfcsig and sflux files to the mirror to theia
+. add 378h sfcsig and sflux files to the mirror to the dev machine
+. remaining instructions are unchanged from gefs.v10.3.0
+. There will be a test run on gyre for comparison:
+. source: /ensemble/save/Richard.Wobus/s/rwja/nwdev/gefs_legacy.v10.3.4
+. products:
+/ptmpd2/Richard.Wobus/o/rwja/com/gens/dev/gefs.v20151218/12
+. To run identically to this test run, copy the sfcsig and track subdirectories from
+the previous cycle of the test run or the production legacy GEFS and then run
+the test cycle

@@ -250,7 +250,8 @@ else
             err_chk
           fi
 
-    if test "$SENDDBN" = 'YES'
+    # JY if test "$SENDDBN" = 'YES'
+    if test "$SENDDBN_GB2" = 'YES'
     then
       if test "$NET" = 'gens'
       then
