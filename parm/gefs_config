@@ -42,7 +42,9 @@ export gefsmachine=${gefsmachine:-wcoss}
   export HOMEgefs=$HOMEDIR/gefs.v11.0.6
   export HOMEgefs=$basesource/nwdev
 
-  export HOMEgsm=$HOMEDIR/gsm.v12.1.0
+  export HOMEgsm=$HOMEDIR/gsm.v12.1.1
+  export HOMEgsm=/ensemble/save/Richard.Wobus/RFC/gsm.v12.1.1
+
   export HOMEpost=$HOMEDIR/ncep_post.v5.1.1
   export HOMEenkf=$HOMEDIR/enkf.v2.0.1
   export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.0
