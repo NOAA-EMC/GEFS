@@ -40,6 +40,8 @@ export SENDDBN=${SENDDBN:-YES}
 
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export GEMPAKgefs=${GEMPAKgefs:-$HOMEgefs/gempak}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
 #
 # Set up model and cycle specific variables
 #

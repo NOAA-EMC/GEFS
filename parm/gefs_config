@@ -21,7 +21,6 @@ export COMROOT=$baseoutput/com
 export GESROOT=$baseoutput/nwges
 export DATAROOT=$baseoutput/tmpnwprd
 export DCOMROOT=${DCOMROOT:-/dcom}
-export PCOMROOT=$baseoutput/pcom/$envir
 
   mkdir -p  $COMROOT/logs/jlogfiles
 
@@ -35,6 +34,8 @@ export DBNROOT=
 export NWROOT=/nwprod2
 export NWROOTprod=/nwprod2
 export NWROOTp1=/nwprod
+#export PCOMROOT=$baseoutput/pcom/$envir
+export PCOMROOT=${PCOMROOT:-/pcom2/${envir}}
 
 HOMEDIR=/ensemble/save/Dingchen.Hou/RFC
 export gefsmachine=${gefsmachine:-wcoss}
@@ -59,10 +60,12 @@ export gefsmachine=${gefsmachine:-wcoss}
   . /usrx/local/Modules/default/init/ksh
   module use /nwprod2/modulefiles
   module load prod_util/v1.0.1
+#WC for 11.0.3  module load util_shared/v1.0.0
   module load grib_util/v1.0.1
+#WC for 11.0.3: add these two lines
   module use /nwpara2/modulefiles
   module load util_shared/v1.0.1
-
+#
   export NDATE=${NDATE:-$USHutil/ndate}
 
   export WGRIB=${WGRIB:-$EXECgrib/wgrib}
