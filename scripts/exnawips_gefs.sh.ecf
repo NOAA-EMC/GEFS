@@ -148,7 +148,7 @@ while [ $fhcnt -le $fend ] ; do
   done
 
   case $RUN in
-    ge*)  if test "$model" = "bc" -o "$model" = "me" -o "$model" = "an" -o "$model" = "wt" -o "$model" = "glbanl" -o "$model" = "ndgd" -o "$model" = "ensemble" -o "$model" = "anv"
+    ge*)  if test "$model" = "bc" -o "$model" = "me" -o "$model" = "an" -o "$model" = "wt" -o "$model" = "glbanl" -o "$model" = "ndgd" -o "$model" = "anv"
           then
              cp $GRIBIN grib$fhr
           else
@@ -156,10 +156,11 @@ while [ $fhcnt -le $fend ] ; do
              then
                # pgrb2bp5/gep10.t00z.pgrb2b.0p50.f384
                GRIBIN_B=$COMIN_B_P5/${RUN}.${cycle}.pgrb2b.0p50.f${fhr}
+	         /nwprod/util/exec/wgrib2 -s $GRIBIN_B | grep -f ${PARMgefs}/gefs_gempak_0p50_b.parm | /nwprod/util/exec/wgrib2 -i -grib temp $GRIBIN_B
              else
                GRIBIN_B=$COMIN_B/${RUN}.${cycle}.pgrb2bf${fhr}
+	         /nwprod/util/exec/wgrib2 -s $GRIBIN_B | grep "HGT:300 mb" | /nwprod/util/exec/wgrib2 -i -grib temp $GRIBIN_B
              fi
-             /nwprod/util/exec/wgrib2 -s $GRIBIN_B | grep "HGT:300 mb" | /nwprod/util/exec/wgrib2 -i -grib temp $GRIBIN_B
              cat $GRIBIN temp > grib$fhr
           fi
      ;;

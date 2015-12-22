@@ -1,4 +1,4 @@
-Library are defined in Module_gefs_v11.0.2
+Library are defined in Module_gefs_v11.0.4
 
 To build codes:
 
@@ -6,7 +6,7 @@ To build codes:
      1) bash
      2) module purge
      3) module use .
-     4) module load Module_gefs_v11.0.3
+     4) module load Module_gefs_v11.0.4
      5) ./build.sh
      6) ./buld_overenstr.sh  
      7) ./install.sh
