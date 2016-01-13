@@ -1,0 +1,51 @@
+#BSUB -J %E%gefs_prob_avgspr_%CYC%
+#BSUB -o /%COM%/output/%ENVIR%/today/gefs_prob_avgspr_%CYC%.o%J
+#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_prob_avgspr_%CYC%.o%J
+#BSUB -cwd /tmpnwprd
+#BSUB -n 3
+#BSUB -R span[ptile=3]
+#BSUB -q %QUEUE%
+#BSUB -L /bin/sh
+#BSUB -W 01:30
+#BSUB -P %PROJ%
+#BSUB -a poe
+#BSUB -x
+
+%include <head.h>
+%include <envir-p2.h>
+
+
+# EXPORT list here
+set -x
+
+export cyc=%CYC%
+
+
+# CALL executable job script here
+# versions file for naefs sets $gefs_ver and $code_ver
+VERSION_FILE=$NWROOT/versions/naefs.ver
+if [ -f $VERSION_FILE ]; then
+   . $VERSION_FILE
+else
+   ecflow_client --msg="***JOB ${SMSNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+   ecflow_client --abort
+   exit
+fi
+
+$NWROOT/naefs.${naefs_ver}/jobs/JGEFS_PROB_AVGSPR
+
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose: Calculate ensemble probability forecast, mean and spread
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end

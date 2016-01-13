@@ -1,0 +1,58 @@
+#BSUB -J %E%gefs_p16_prdgen_high_%CYC%
+#BSUB -o /%COM%/output/%ENVIR%/today/gefs_p16_prdgen_high_%CYC%.o%J
+#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_p16_prdgen_high_%CYC%.o%J
+#BSUB -cwd /tmpnwprd
+#BSUB -n 5
+#BSUB -q %QUEUE%_shared
+#BSUB -W  02:00
+#BSUB -L /bin/sh
+#BSUB -P %PROJ%
+#BSUB -R affinity[core(4):distribute=pack]
+#BSUB -a poe
+#BSUB -R span[ptile=5]
+#BSUB -R rusage[mem=4608]"
+
+%include <head.h>
+%include <envir-p2.h>
+
+
+# EXPORT list here
+set -x
+
+export OMP_NUM_THREADS=1
+
+export cyc=%CYC%
+export cyc_fcst=%CYC%
+export RUN=gep16
+export FORECAST_SEGMENT=hr
+
+export total_tasks=5
+
+# CALL executable job script here
+VERSION_FILE=$NWROOT/versions/gefs.ver
+if [ -f $VERSION_FILE ]; then
+  . $VERSION_FILE
+else
+  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+  ecflow_client --abort
+  exit
+fi
+
+$NWROOT/gefs.${gefs_ver}/jobs/JGEFS_PRDGEN
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose: post-process GEFS to generate pgrb.
+#
+#
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end
