@@ -12,6 +12,7 @@ echo " "
 echo " History - "
 echo "    Wobus   - 8/28/07 - New "
 echo "    Wobus   - 7/30/10 - exclude 180-192hr products"
+echo "    Hou     - 7/31/14 - adopted for grib2 based processing"
 echo "-----------------------------------------------------"
 #####################################################################
 set -xa
@@ -19,69 +20,24 @@ set -xa
 anlflag=$anlflag
 ffhr=$ffhr
 fhr=$fhr
+grid=$grid2p5
 
-gefsmachine=wcoss  # WCOSS Temporary
+#export WGRIB=${WGRIB:-$EXECgrib/wgrib}
+#export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
+#export COPYGB=${COPYGB:-$EXECgrib/copygb}
+#export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
+#export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
+#export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
+#export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21}
 
-export WGRIB=/nwprod/util/exec/wgrib
-export GRBIDX=/nwprod/util/exec/grbindex
-export ENSADD=$USHGLOBAL/global_ensadd.sh
-export CNVGRIB=/nwprod/util/exec/cnvgrib
-#RLW 20110722 CNVGRIB TEMPORARY
-export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib
-################################################## RLW 20110722 CNVGRIB TEMPORARY
-export COPYGB=/nwprod/util/exec/copygb
-export WGRIB2=/nwprod/util/exec/wgrib2
-
-  case $gefsmachine in
-    (wcoss)
-export WGRIB=/nwprod/util/exec/wgrib
-export GRBIDX=/nwprod/util/exec/grbindex
-export ENSADD=$USHglobal/global_ensadd.sh
-export ENSADD=$USHgefs/global_ensadd.sh
-export CNVGRIB=/nwprod/util/exec/cnvgrib
-    ;;
-    (zeus)
-#echo ZEUSTEST-prdgen-lowres
-#echo $WGRIB $ENSADD $GRBIDX ${EXECUTIL} $USHglobal
-#DHOU 03/22/2012 For ZEUS, copy from exgefs_nceppost.sh.sms
-export WGRIB=${WGRIB:-${EXECUTIL}/wgrib}
-export GRBIDX=${GRBIDX:-${EXECUTIL}/grbindex}
-    ;;
-  esac
-#export ENSADD=${ENSADD:-$USHGLOBAL/global_ensadd.sh}
-#export POSTGPSH=${POSTGPSH:-$USHGLOBAL/global_nceppost.sh}
-#DHOU 03/22/2012 For ZEUS, these two are not used in ceppost.sh.sms
-#export POSTGPSH=${POSTGPSH:-$USHglobal/global_nceppost.sh}
-################################################## RLW 20110722 CNVGRIB TEMPORARY
-  case $gefsmachine in
-    (wcoss)
-export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
-    ;;
-    (zeus)
-export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
-export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib
-    ;;
-  esac
-################################################## RLW 20110722 CNVGRIB TEMPORARY
-export WGRIB2=/nwprod/util/exec/wgrib2
-  case $gefsmachine in
-    (wcoss)
-export COPYGB=/nwprod/util/exec/copygb
-    ;;
-    (zeus)
-#DHOU 03/22/2012 For ZEUS, these two are not used in ceppost.sh.sms
-export COPYGB=$HOMEglobal/util/exec/copygb
-echo $WGRIB $ENSADD $GRBIDX ${EXECUTIL} $USHglobal
-echo ZEUSTEST-prdgen-lowres
-    ;;
-  esac
 echo settings in $0 gefsmachine=$gefsmachine
 echo settings in $0 WGRIB=$WGRIB
-echo settings in $0 GRBIDX=$GRBIDX
-echo settings in $0 ENSADD=$ENSADD
-echo settings in $0 COPYGB=$COPYGB
-echo settings in $0 CNVGRIB=$CNVGRIB
 echo settings in $0 WGRIB2=$WGRIB2
+echo settings in $0 GRBINDEX=$GRBINDEX
+echo settings in $0 GRB2INDEX=$GRB2INDEX
+echo settings in $0 COPYGB=$COPYGB
+echo settings in $0 COPYGB2=$COPYGB2
+echo settings in $0 CNVGRIB=$CNVGRIB
 
 R1=`echo $RUN|cut -c1-3`
 R2=`echo $RUN|cut -c4-5`
@@ -103,17 +59,10 @@ msg="Starting post for member=$member ffhr=$ffhr"
 postmsg "$jlogfile" "$msg"
 
 ####################################
-# Step I: create 2.5 x 2.5 pgrb
+# Step I: create 2.5 x 2.5 pgrb2
 ####################################
 
-$COPYGB -g2 -i0 -x $COMIN/$cyc/master/$RUN.$cycle.master.grb$ffhr$cfsuffix pgbfile.$ffhr.2$cfsuffix
-$ENSADD $e1 $e2 pgbfile.$ffhr.2$cfsuffix pgbifile.$ffhr.2$cfsuffix epgbfile.$ffhr.2$cfsuffix
-if [[ "$addgrb1id" = "yes" ]]; then
-   mv epgbfile.$ffhr.2$cfsuffix pgbfile.$ffhr.2$cfsuffix
-   if [[ "$makegrb1i" = "yes" ]]; then
-       $GRBIDX pgbfile.$ffhr.2$cfsuffix pgbifile.$ffhr.2$cfsuffix
-   fi
-fi
+$COPYGB2 -g  "${grid}" -i0 -x $COMIN/$cyc/master/$RUN.$cycle.master.grb2$ffhr$cfsuffix pgb2file.$ffhr.2$cfsuffix
 echo `date` pgrba 2.5x2.5 grbindex $ffhr completed
 
 if  (( fhr == 0 ))
@@ -126,46 +75,47 @@ fi
 excludestring='180-192hr'
 
 #######################################
-# Step II: Create 2.5x2.5 PGRBA files
+# Step II: Create 2.5x2.5 PGRB2A files
 #######################################
-if [[ -s $COMOUT/$cyc/pgrbalr/${RUN}.${cycle}.pgrba$ffhr.2$cfsuffix ]] && \
-   [[ -s $COMOUT/$cyc/pgrbalr/${RUN}.${cycle}.pgrbai$ffhr.2$cfsuffix ]] && \
+if [[ -s $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix ]] && \
+   [[ -s $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix.idx ]] && \
    [[ $overwrite = no ]]; then
-     echo `date` 2.5x2.5 pgrbb processing skipped for $RUN $ffhr
+     echo `date` 2.5x2.5 pgrb2a processing skipped for $RUN $ffhr
 else
-   parmlist=$PARMgefs/gefs_pgrba_f${hsuffix}.parm
+   parmlist=$PARMgefs/gefs_pgrb2a_f${hsuffix}.parm
    set +x
-   $WGRIB -s pgbfile.$ffhr.2$cfsuffix | \
+   $WGRIB2 -s pgb2file.$ffhr.2$cfsuffix | \
        grep -F -f $parmlist | \
        grep -v -F $excludestring | \
-       $WGRIB pgbfile.$ffhr.2$cfsuffix -s -grib -i -o pgbafile.$ffhr.2$cfsuffix
+       $WGRIB2 pgb2file.$ffhr.2$cfsuffix -s -i -grib pgb2afile.$ffhr.2$cfsuffix
    if [[ x$fhoroglist != x ]]; then
       for fhorog in $fhoroglist
       do
 	if (( fhr == fhorog )); then
-	  $WGRIB -s pgbfile.$ffhr.2$cfsuffix | grep 'HGT:sfc' | $WGRIB pgbfile.$ffhr.2$cfsuffix -i -grib -append -o pgbafile.$ffhr.2$cfsuffix
+	  $WGRIB2 -s pgb2file.$ffhr.2$cfsuffix | grep 'HGT:surface' | $WGRIB2 pgb2file.$ffhr.2$cfsuffix -i -append -grib pgb2afile.$ffhr.2$cfsuffix
 	fi
       done
    fi
    set -x
-$GRBIDX pgbafile.$ffhr.2$cfsuffix pgbaifile.$ffhr.2$cfsuffix
+$WGRIB2 -s pgb2afile.$ffhr.2$cfsuffix > pgb2afile.$ffhr.2${cfsuffix}.idx
 fi
 
 #######################################
-# Step III: Create 2.5x2.5 PGRBB files
+# Step III: Create 2.5x2.5 PGRB2B files
 #######################################
-if [[ -s $COMOUT/$cyc/pgrbblr/${RUN}.${cycle}.pgrbb$ffhr.2$cfsuffix ]] && \
-   [[ -s $COMOUT/$cyc/pgrbblr/${RUN}.${cycle}.pgrbbi$ffhr.2$cfsuffix ]] && \
+if [[ -s $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix ]] && \
+   [[ -s $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix.idx ]] && \
    [[ $overwrite = no ]]; then
-     echo `date` 2.5x2.5 pgrbb processing skipped for $RUN $ffhr
+     echo `date` 2.5x2.5 pgrb2b processing skipped for $RUN $ffhr
 else
-   parmlist=$PARMgefs/gefs_pgrbb_f${hsuffix}.parm
+   parmlist2=$PARMgefs/gefs_pgrb2ab_f${hsuffix}.parm
    set +x
-   $WGRIB -s pgbfile.$ffhr.2$cfsuffix | \
-       grep -F -f $parmlist | \
+   $WGRIB2 -s pgb2file.$ffhr.2$cfsuffix | \
+       grep -F -f $parmlist2 | \
+       grep -v -F -f $parmlist | \
        grep -v -F $excludestring | \
-       $WGRIB pgbfile.$ffhr.2$cfsuffix -s -grib -i -o pgbbfile.$ffhr.2$cfsuffix
-   $GRBIDX pgbbfile.$ffhr.2$cfsuffix pgbbifile.$ffhr.2$cfsuffix
+       $WGRIB2 pgb2file.$ffhr.2$cfsuffix -s -i -grib pgb2bfile.$ffhr.2$cfsuffix
+   $WGRIB2 -s pgb2bfile.$ffhr.2$cfsuffix > pgb2bfile.$ffhr.2${cfsuffix}.idx
    set -x
 fi
 
@@ -174,15 +124,47 @@ then
   #
   # Save Pressure GRIB/Index files
   #
-  mv pgbafile.$ffhr.2$cfsuffix $COMOUT/$cyc/pgrbalr/${RUN}.${cycle}.pgrba$ffhr.2$cfsuffix
-  mv pgbbfile.$ffhr.2$cfsuffix $COMOUT/$cyc/pgrbblr/${RUN}.${cycle}.pgrbb$ffhr.2$cfsuffix
-  if [[ "$makegrb1i" = "yes" ]]; then
-     mv pgbaifile.$ffhr.2$cfsuffix $COMOUT/$cyc/pgrbalr/${RUN}.${cycle}.pgrbai$ffhr.2$cfsuffix
-     mv pgbbifile.$ffhr.2$cfsuffix $COMOUT/$cyc/pgrbblr/${RUN}.${cycle}.pgrbbi$ffhr.2$cfsuffix
+  mv pgb2afile.$ffhr.2$cfsuffix $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix
+		       testfile=$COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
+  mv pgb2bfile.$ffhr.2$cfsuffix $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix
+		       testfile=$COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
+  if [[ "$makegrb2i" = "yes" ]]; then
+     mv pgb2afile.$ffhr.2$cfsuffix.idx $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix.idx
+			      testfile=$COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix.idx
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
+     mv pgb2bfile.$ffhr.2$cfsuffix.idx $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix.idx
+			      testfile=$COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix.idx
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
   fi
 
   ######################################################################################
-  # Send DBNet alerts for PGBA and PGBA2 at 6 hour increments for all forecast hours
+  # Send DBNet alerts for PGBA2 at 6 hour increments for all forecast hours
   # Do for 00, 06, 12, and 18Z cycles.
   ######################################################################################
   if test "$SENDDBN" = 'YES' -a "$NET" = 'gens' -a ` expr $cyc % 6 ` -eq 0
@@ -192,13 +174,16 @@ then
       MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
       if test "$DO_LOW_RES" = 'YES' -a ` expr $fhr % 6 ` -eq 0 -a ! -n "$cfsuffix"
       then
-        $DBNROOT/bin/dbn_alert MODEL ENS_PGBA2_$MEMBER $job $COMOUT/$cyc/pgrbalr/${RUN}.${cycle}.pgrba$ffhr.2$cfsuffix
+        $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A2_$MEMBER $job $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix
+        if [[ "$makegrb2i" = "yes" ]]; then
+        $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A2_${MEMBER}_WIDX $job $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2${cfsuffix}.idx
+	fi
       fi
     fi
   fi
 
   ######################################################################################
-  # Send DBNet alerts for PGBB at 6 hour increments for forecast hours 0 - 84 and
+  # Send DBNet alerts for PGB2B at 6 hour increments for forecast hours 0 - 84 and
   # for PGBB2 at 6 hour increments for forecast hours 90 through 384.
   # Do for 00 and 12Z cycles.
   ######################################################################################
@@ -210,42 +195,61 @@ then
       MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
       if test "$DO_LOW_RES" = 'YES' -a ` expr $fhr % 6 ` -eq 0 -a $fhr -ge 90 -a ! -n "$cfsuffix"
       then
-        $DBNROOT/bin/dbn_alert MODEL ENS_PGBB2_$MEMBER $job $COMOUT/$cyc/pgrbblr/${RUN}.${cycle}.pgrbb$ffhr.2$cfsuffix
+        $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B2_$MEMBER $job $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix
+        if [[ "$makegrb2i" = "yes" ]]; then
+        $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B2_${MEMBER}_WIDX $job $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix.idx
+	fi
       fi
     fi
   fi
 fi
 
-  case $gefsmachine in
-    (wcoss)
-      fmakegb=1
-    ;;
-    (zeus)
-      fmakegb=0
-    ll
-  esac
-if (( fmakegb == 1 )); then
+if [[ "$makepgrb1" = "yes" ]]; then
 #DHOU 03/23/2012, skip grib2 files for ZEUS
 #########################################
-# Step IV: Create the 2.5x2.5 GRIB2 files
+# Step IV: Create the 2.5x2.5 GRIB files
 ########################################
-if [[ -s $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix ]] && \
-   [[ -s $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2ai$ffhr.2$cfsuffix ]] && \
+if [[ -s $COMOUT/$cyc/pgrbalr/${RUN}.${cycle}.pgrba$ffhr.2$cfsuffix ]] && \
+   [[ -s $COMOUT/$cyc/pgrbalr/${RUN}.${cycle}.pgrbai$ffhr.2$cfsuffix ]] && \
    [[ $overwrite = no ]]; then
-   echo `date` 2.5x2.5 pgrb2a processing skipped for $RUN $ffhr
+   echo `date` 2.5x2.5 pgrba processing skipped for $RUN $ffhr
 else
-  FILEALR=$COMIN/$cyc/pgrbalr/${RUN}.${cycle}.pgrba$ffhr.2$cfsuffix
+  FILEALR=$COMIN/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix
 
-  $CNVGRIB -g12 -p40 $FILEALR pgb2a.$ffhr.2$cfsuffix
-  $WGRIB2 -s pgb2a.$ffhr.2$cfsuffix >pgb2a.$ffhr.2${cfsuffix}.idx
+  $CNVGRIB -g21 $FILEALR pgba.$ffhr.2$cfsuffix
+  $GRBINDEX pgba.$ffhr.2$cfsuffix pgbai.$ffhr.2$cfsuffix
+# $WGRIB -s pgba.$ffhr.2$cfsuffix >pgba.$ffhr.2${cfsuffix}.idx
+# $ENSADD $e1 $e2 pgba.$ffhr.2$cfsuffix pgbai.$ffhr.2$cfsuffix epgba.$ffhr.2$cfsuffix
+  if [[ "$addgrb1id" = "yes" ]]; then
+    mv epgba.$ffhr.2$cfsuffix pgba.$ffhr.2$cfsuffix
+    if [[ "$makegrb1i" = "yes" ]]; then
+      $GRBINDEX pgbafile.$ffhr.2$cfsuffix pgbai.$ffhr.2$cfsuffix
+    fi
+  fi  
 
   if test "$SENDCOM" = 'YES'
   then
     #
     # Save Pressure GRIB/Index files
     #
-    mv pgb2a.$ffhr.2$cfsuffix $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix
-    mv pgb2a.$ffhr.2${cfsuffix}.idx $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2${cfsuffix}.idx
+    mv pgba.$ffhr.2$cfsuffix $COMOUT/$cyc/pgrbalr/${RUN}.${cycle}.pgrba$ffhr.2$cfsuffix
+		    testfile=$COMOUT/$cyc/pgrbalr/${RUN}.${cycle}.pgrba$ffhr.2$cfsuffix
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
+    mv pgbai.$ffhr.2${cfsuffix} $COMOUT/$cyc/pgrbalr/${RUN}.${cycle}.pgrbai$ffhr.2${cfsuffix}
+		       testfile=$COMOUT/$cyc/pgrbalr/${RUN}.${cycle}.pgrbai$ffhr.2${cfsuffix}
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
 
     if test "$SENDDBN" = 'YES'
     then
@@ -254,9 +258,9 @@ else
         if test `echo $RUN | cut -c1-2` = "ge" -a ! -n "$cfsuffix"
         then
           MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-          $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A2_$MEMBER $job $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2$cfsuffix
-          $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A2_${MEMBER}_WIDX $job \
-                $COMOUT/$cyc/pgrb2alr/${RUN}.${cycle}.pgrb2a$ffhr.2${cfsuffix}.idx
+          $DBNROOT/bin/dbn_alert MODEL ENS_PGBA2_$MEMBER $job $COMOUT/$cyc/pgrbalr/${RUN}.${cycle}.pgrba$ffhr.2$cfsuffix
+          $DBNROOT/bin/dbn_alert MODEL ENS_PGBA2_${MEMBER}_WIDX $job \
+                $COMOUT/$cyc/pgrbalr/${RUN}.${cycle}.pgrbai$ffhr.2${cfsuffix}
         fi
       fi
     fi
@@ -264,24 +268,40 @@ else
 fi
 
 
-if [[ -s $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix ]] && \
-   [[ -s $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2bi$ffhr.2$cfsuffix ]] && \
+if [[ -s $COMOUT/$cyc/pgrbblr/${RUN}.${cycle}.pgrbb$ffhr.2$cfsuffix ]] && \
+   [[ -s $COMOUT/$cyc/pgrbblr/${RUN}.${cycle}.pgrbbi$ffhr.2$cfsuffix ]] && \
    [[ $overwrite = no ]]; then
-   echo `date` 2.5x2.5 pgrb2b processing skipped for $RUN $ffhr
+   echo `date` 2.5x2.5 pgrbb processing skipped for $RUN $ffhr
 else
 
-  FILEBLR=$COMIN/$cyc/pgrbblr/${RUN}.${cycle}.pgrbb$ffhr.2$cfsuffix
+  FILEBLR=$COMIN/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix
 
-  $CNVGRIB -g12 -p40 $FILEBLR pgb2bfile.$ffhr.2$cfsuffix
-  $WGRIB2 -s pgb2bfile.$ffhr.2$cfsuffix >pgb2bfile.$ffhr.2${cfsuffix}.idx
+  $CNVGRIB -g21 $FILEBLR pgbbfile.$ffhr.2$cfsuffix
+  $GRBINDEX pgbbfile.$ffhr.2$cfsuffix pgbbi.$ffhr.2$cfsuffix
 
   if test "$SENDCOM" = 'YES'
   then
     #
     # Save Pressure GRIB/Index files
     #
-    mv pgb2bfile.$ffhr.2$cfsuffix $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix
-    mv pgb2bfile.$ffhr.2${cfsuffix}.idx $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2${cfsuffix}.idx
+    mv pgbbfile.$ffhr.2$cfsuffix $COMOUT/$cyc/pgrbblr/${RUN}.${cycle}.pgrbb$ffhr.2$cfsuffix
+			testfile=$COMOUT/$cyc/pgrbblr/${RUN}.${cycle}.pgrbb$ffhr.2$cfsuffix
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
+    mv pgbbifile.$ffhr.2${cfsuffix} $COMOUT/$cyc/pgrbblr/${RUN}.${cycle}.pgrbbi$ffhr.2${cfsuffix}
+			   testfile=$COMOUT/$cyc/pgrbblr/${RUN}.${cycle}.pgrbbi$ffhr.2${cfsuffix}
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
 
     if test "$SENDDBN" = 'YES'
     then
@@ -290,9 +310,9 @@ else
 	if test `echo $RUN | cut -c1-2` = "ge" -a ! -n "$cfsuffix"
 	then
 	  MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-	  $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B2_$MEMBER $job $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2$cfsuffix
-	  $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B2_${MEMBER}_WIDX $job \
-             $COMOUT/$cyc/pgrb2blr/${RUN}.${cycle}.pgrb2b$ffhr.2${cfsuffix}.idx
+	  $DBNROOT/bin/dbn_alert MODEL ENS_PGBB2_$MEMBER $job $COMOUT/$cyc/pgrbblr/${RUN}.${cycle}.pgrbb$ffhr.2$cfsuffix
+	  $DBNROOT/bin/dbn_alert MODEL ENS_PGBB2_${MEMBER}_WIDX $job \
+             $COMOUT/$cyc/pgrbblr/${RUN}.${cycle}.pgrbbi$ffhr.2${cfsuffix}
 	fi
       fi
     fi
@@ -306,7 +326,23 @@ fi #(0=1 foe ZEUS, skip grib2 files)
 if test "$SAVEGES" = "YES" -a $fhr -le 15
 then
    cp $COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.s$ffhr$cfsuffix $GESdir/${RUN}.${cycle}.s$ffhr$cfsuffix
+						 testfile=$GESdir/${RUN}.${cycle}.s$ffhr$cfsuffix
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
    cp $COMOUT/$cyc/sfcsig/${RUN}.t${cyc}z.b$ffhr$cfsuffix $GESdir/${RUN}.${cycle}.b$ffhr$cfsuffix
+						 testfile=$GESdir/${RUN}.${cycle}.b$ffhr$cfsuffix
+          if [[ ! -s $testfile ]]; then
+            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            echo "`date`    $msg"
+            postmsg "$jlogfile" "$msg"
+            export err=1
+            err_chk
+          fi
    msg="Guess files for fcst hour $fhr copied to $GESdir"
    postmsg "$jlogfile" "$msg"
 fi

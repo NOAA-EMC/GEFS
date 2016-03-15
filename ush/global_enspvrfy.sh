@@ -4,6 +4,8 @@ echo "Ensemble CQPF -> global_enspvrfysh              "
 echo "------------------------------------------------"
 echo "History: Feb 2004 - First implementation of this new script."
 echo "AUTHOR: Yuejian Zhu (wx20yz)"
+echo "History: Nov 2014 - Grib2 code conversion"
+echo "AUTHOR: Yan Luo (wx22lu)"
 
 echo "         ######################################### "
 echo "         ####  RUN PRECIPTATION VERIFICATION  #### "
@@ -13,8 +15,8 @@ echo "         ######################################### "
 
 set -x
 
-export CVT24H=$USHGLOBAL/global_enscvt24h.sh
-export WGREP=$USHGLOBAL/global_enswgrp.sh
+export CVT24H=$USHgefs/global_enscvt24h.sh
+export WGREP=$USHgefs/global_enswgrp.sh
 
 INITIME=0
 
@@ -25,7 +27,10 @@ INITIME=0
 ### gfs_2000101000_24_36
 ### above two file verified to 2000101012-2000101112(usa-dlyprcp-20001011)
 
-for fhour in 00 36 60 84 108 132 156 180 204 228 252 276 300 324 348 372
+export hourlist="00 36 60 84 108 132 156 180 204 228 252 276 300 324 348 372" 
+
+>cvt24h.cmdfile 
+for fhour in $hourlist
 do
  
  if [ $fhour -eq 00 ]; then
@@ -34,11 +39,21 @@ do
   CYMDH=`$NDATE -$fhour $OBSYMD\12`
  fi
 
- $CVT24H $CYMDH 
+ echo "$CVT24H $CYMDH" >>cvt24h.cmdfile
 
+done
+
+cat cvt24h.cmdfile
+chmod 775 cvt24h.cmdfile
+export MP_PGMMODEL=mpmd
+export MP_CMDFILE=$DATA/cvt24h.cmdfile
+
+mpirun.lsf
+
+for fhour in $hourlist
+do
  $WGREP $OBSYMDH $fhour 1 gfs    
- $WGREP $OBSYMDH $fhour 1 ctl       
-
+ $WGREP $OBSYMDH $fhour 1 ctl
 done
 
 for RUNID in gfs ctl                 
@@ -56,7 +71,7 @@ do
 
 cat <<nameEOF >input_runv
 model_info_file
-$FIXGLOBAL/pcpmask                                
+$FIXgefs/pcpmask                                
 $DATA                   
 $PRECIP_ANALYSIS_FILE
 $PRECIP_DATA_FILE
@@ -97,7 +112,7 @@ modelEOF
 
  startmsg
 
- $EXECGLOBAL/global_enspvrfy  <input_runv   >> $pgmout 2>errfile
+ $EXECgefs/global_enspvrfy  <input_runv   >> $pgmout 2>errfile
  #export err=$?;err_chk
 
  cat  stat.out 

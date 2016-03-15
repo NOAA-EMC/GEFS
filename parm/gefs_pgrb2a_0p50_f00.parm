@@ -1,0 +1,37 @@
+############################# sorted pgrb2a 201408
+:CAPE:180-0 mb above ground:
+:CIN:180-0 mb above ground:
+:HGT:1000 mb:
+:HGT:700 mb:
+:HGT:850 mb:
+:HGT:925 mb:
+:HGT:surface:
+:PRES:surface:
+:PRMSL:mean sea level:
+:PWAT:entire atmosphere (considered as a single layer):
+:RH:1000 mb:
+:RH:2 m above ground:
+:RH:850 mb:
+:RH:925 mb:
+:TMP:1000 mb:
+:TMP:2 m above ground:
+:TMP:850 mb:
+:TMP:925 mb:
+:UGRD:10 m above ground:
+:UGRD:1000 mb:
+:UGRD:300 mb:
+:UGRD:400 mb:
+:UGRD:500 mb:
+:UGRD:700 mb:
+:UGRD:850 mb:
+:UGRD:925 mb:
+:VGRD:10 m above ground:
+:VGRD:1000 mb:
+:VGRD:300 mb:
+:VGRD:400 mb:
+:VGRD:500 mb:
+:VGRD:700 mb:
+:VGRD:850 mb:
+:VGRD:925 mb:
+:VVEL:850 mb:
+;############################ do not leave a blank line at the end

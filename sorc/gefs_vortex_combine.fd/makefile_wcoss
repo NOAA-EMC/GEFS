@@ -30,7 +30,7 @@ PROFLIB =
 #FFLAGS= -qsmp=noauto -p -O -NS10000 -qintsize=4 -qrealsize=8 -qmaxmem=-1 -qinitauto -qsource -qflttrap -I $(INCMODS)
 #LDFLAGS=-l essl
 #FFLAGS= -g -O2 -traceback -r8  -convert big_endian -assume byterecl -I $(INCMODS)
-FFLAGS= -openmp -p  -xHOST -r8 -O0 -i4  -traceback -assume byterecl  -I $(INCMODS) -list
+FFLAGS= -openmp -p   -r8 -O0 -i4  -traceback -assume byterecl  -I $(INCMODS) -list
 
 LDFLAGS=
 

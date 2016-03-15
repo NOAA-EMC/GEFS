@@ -22,7 +22,7 @@ fi
 
 cd $DATA
 
-$GRBIDX $1 $2
+$GRBINDEX $1 $2
 
 export pgm=global_prcpcv
 . prep_step

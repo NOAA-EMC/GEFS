@@ -14,14 +14,13 @@ set -x
 
 cd $DATA
 
-if [[ $# != 3 ]]
+if [[ $# != 2 ]]
 then
-   echo "Usage: $0 gribin indexin gribout"
-   echo "       inserts ensemble PDS extensions in GRIB file"
+   echo "Usage: $0 gribin gribout"
    exit 1
 fi
 
-$GRBIDX $1 $2
+#$GRBIDX $1 $2
 
 export pgm=global_ensppf
 . prep_step
@@ -31,7 +30,7 @@ startmsg
 #DHOU 03/26/2012 for Zeus
 eval $EXECgefs/global_ensppf <<EOF 2>/dev/null
  &namin
- cpgb='$1',cpgi='$2',cpge='$3' /
+ cpgb='$1',cpge='$2' /
 EOF
 export err=$?; err_chk
 

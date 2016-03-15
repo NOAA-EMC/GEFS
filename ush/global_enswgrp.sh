@@ -4,6 +4,8 @@ echo "Ensemble CQPF -> global_enspvrfy.sh -> global_enswgrpsh    "
 echo "------------------------------------------------"
 echo "History: Feb 2004 - First implementation of this new script."
 echo "AUTHOR: Yuejian Zhu (wx20yz)"
+echo "History: Nov 2014 - Grib2 code conversion"
+echo "AUTHOR: Yan Luo (wx22lu)"
 
 set -x
 
@@ -14,8 +16,7 @@ RUNID=$4
 
  if [ $FHOUR -eq 00 ]; then
   FLUX=$DATA/qpf_$RUNID.$IYMD\00                   
-  $WGRIB -s $FLUX | grep "12-36hr" | $WGRIB $FLUX -s -grib -i -o precip.$RUNID
-  $GBINDX precip.$RUNID precip.$RUNID.index
+  $WGRIB2 -match "12-36 hour"  $FLUX -grib precip.$RUNID
  else
   IYMD1=`$NDATE -$FHOUR $IYMD\12 | cut -c1-8`
   case $FHOUR in
@@ -29,17 +30,16 @@ RUNID=$4
   204) outime=180_204;grptime=180-204;;
   228) outime=204_228;grptime=204-228;;
   252) outime=228_252;grptime=228-252;;
-  276) outime=252_276;grptime=252-20;;
-  300) outime=276_300;grptime=20-44;;
-  324) outime=300_324;grptime=44-68;;
-  348) outime=324_348;grptime=68-92;;
-  372) outime=348_372;grptime=92-116;;
+  276) outime=252_276;grptime=252-276;;
+  300) outime=276_300;grptime=276-300;;
+  324) outime=300_324;grptime=300-324;;
+  348) outime=324_348;grptime=324-348;;
+  372) outime=348_372;grptime=348-372;;
   esac
 
   FLUX=$DATA/qpf_$RUNID.$IYMD1\00                   
   PTMP=$DATA/$RUNID\_$IYMD1\00_$outime
-  $WGRIB -s $FLUX | grep "${grptime}hr" | $WGRIB $FLUX -s -grib -i -o $PTMP
-  $GBINDX $PTMP $PTMP.index
+  $WGRIB2 -match "${grptime} hour" $FLUX -grib $PTMP
  fi
 
 

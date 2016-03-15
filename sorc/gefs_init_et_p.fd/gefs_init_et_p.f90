@@ -89,20 +89,22 @@ MODULE VARIABLE_DEFINE
   INTEGER :: jcaps,ilats,ilons,lrecs,nsp,nrec1
   INTEGER :: npair,irec,iret,nlevrs,mxlev,nlevmask,itopres 
   INTEGER :: npair1,jcap,ilat,ilon,ntrac,inflag,icyc
-
+  INTEGER :: netflag,mskflag
   INTEGER :: nens_group_newid
   INTEGER :: MPI_Comm_nens_group,MPI_COMM_col_group,original_group,nens_group
   INTEGER :: MAXLDA, MAXSDA,MAXLDB,MAXSDB
 
   real :: globamplr,globamplg,contop,smax,b1,b2,b3
   namelist/namens/npair1,jcap,ilat,ilon,levs,ntrac,inflag,icyc,&
-  globamplr,globamplg,itopres,contop,nlevrs,mxlev,nlevmask,smax,b1,b2,b3
+  globamplr,globamplg,itopres,contop,nlevrs,mxlev,nlevmask,smax,b1,b2,b3,&
+  netflag,mskflag
 
-  real*8 :: gam,gam1,scf,ftt,aa
+  real*8 :: gam,gam1,scf,ftt,aa,ftt0
   real*8 :: rtc, tb, te, tbb, tee, ttb, tte
 
   real*8,dimension(:),allocatable ::eig,aux2
   real*8,dimension(:,:),allocatable ::ss,rhz,vec2,vec3,vec,veclocal
+  real, dimension(:),allocatable::recnt,recntlocal
 
   INTEGER,dimension(:),allocatable ::nens_group_rank
   real*8,dimension(:,:,:,:),allocatable ::gfcstlocal
@@ -110,7 +112,9 @@ MODULE VARIABLE_DEFINE
 
   real*8,dimension(:,:,:),allocatable ::gridm,gridmlocal
 
-  real,dimension(:,:,:),allocatable ::tge,wge,keflocal,kef
+  real,dimension(:,:,:),allocatable ::keflocal,kef
+  real,dimension(:,:),allocatable ::tge,wge
+  !real,dimension(:,:,:),allocatable ::tge,wge,keflocal,kef
   real,dimension(:,:),allocatable ::gmask,kem,kemlocal
 
   dimension idate(4),ext1(44)
@@ -124,6 +128,7 @@ END MODULE VARIABLE_DEFINE
 program gefs_init_et_para
   USE sigio_module
   USE variable_define
+  USE omp_lib
   implicit none
   include "mpif.h"
 
@@ -133,16 +138,26 @@ program gefs_init_et_para
   real*8 :: starttime,endtime,temp
 
 
+  integer  :: THREAD_RANK, THREAD_COUNT
   !--------------- Initialize MPI
   call MPI_Init(ierr)
   starttime = MPI_Wtime()
-
   if (ierr.ne.0) stop "ERROR: can't initialize mpi" 
   call MPI_Comm_Size(MPI_COMM_WORLD,npes,ierr)
   call MPI_Comm_Rank(MPI_COMM_WORLD,mype,ierr)
 
 
   !  npair1=7,jcap=126,ilat=190,ilon=384,levs=28,ntrac=3,inflag=3
+
+!$OMP PARALLEL PRIVATE (THREAD_RANK)
+!$OMP MASTER
+       THREAD_COUNT = OMP_GET_NUM_THREADS ()
+!$OMP END MASTER
+!$OMP BARRIER
+       THREAD_RANK = OMP_GET_THREAD_NUM ()
+        PRINT *, 'Hello, world!  This is OpenMP thread', &
+                THREAD_RANK, 'of', THREAD_COUNT, '.'
+!$OMP END PARALLEL
 
   if (mype == 0) then
      call w3tagb ('gefs_init_et',2006,0120,0084,'Global Ensemble')
@@ -178,6 +193,8 @@ program gefs_init_et_para
      CALL MPI_Bcast(globamplg,1,MPI_real,0,MPI_COMM_WORLD,ierr)
      CALL MPI_Bcast(contop,1,MPI_real,0,MPI_COMM_WORLD,ierr)
      CALL MPI_Bcast(smax,1,MPI_real,0,MPI_COMM_WORLD,ierr)
+     CALL MPI_Bcast(netflag,1,MPI_integer,0,MPI_COMM_WORLD,ierr)
+     CALL MPI_Bcast(mskflag,1,MPI_integer,0,MPI_COMM_WORLD,ierr)
      CALL MPI_Barrier(MPI_COMM_WORLD,ierr)
 
      !
@@ -279,21 +296,49 @@ program gefs_init_et_para
 
      !------ Readin data file names nenslocal*character(12)
      if (mype == 0) read(*,DATNAMES)
-     
-
-     allocate(enlocal(nenslocal),ennlocal(nenslocal))
+ !! Select different nsp members for recentering when ET is off 
+     if (mype == 0 )then
+      allocate (recnt(nens))
+      recnt=0.
+     if (netflag .eq. 0 ) then 
+         if ( icyc  .eq. 0 ) then
+            do i1 = 1, nsp
+                  recnt(i1) = float(nens)/float(nsp)
+            enddo
+        else if ( icyc  .eq. 6 ) then
+            do i1 = 1, nsp
+                 recnt(i1+nsp) = float(nens)/float(nsp)
+            enddo
+        else if ( icyc  .eq. 12 ) then
+            do i1 = 1, nsp
+                 recnt(i1+2*nsp) = float(nens)/float(nsp)
+            enddo
+        else
+            do i1 = 1, nsp
+                 recnt(i1+3*nsp) = float(nens)/float(nsp)
+            enddo
+        endif
+      else
+        recnt=1.
+      endif
+     print *,'recnt=',recnt                                      
+    endif
+     allocate(enlocal(nenslocal),ennlocal(nenslocal),recntlocal(nenslocal))
      if (Decompose1D_OPT) then
         CALL MPI_SCATTER(en,12*nenslocal,MPI_character,enlocal,12*nenslocal,MPI_character,0,MPI_COMM_WORLD,ierr)
         CALL MPI_SCATTER(enn,12*nenslocal,MPI_character,ennlocal,12*nenslocal,MPI_character,0,MPI_COMM_WORLD,ierr)
+        CALL MPI_SCATTER(recnt,nenslocal,MPI_real,recntlocal,nenslocal,MPI_real,0,MPI_COMM_WORLD,ierr)
      else
         if (myrow==0) CALL MPI_SCATTER(en,12*nenslocal,MPI_character,enlocal,12*nenslocal,MPI_character,0,MPI_COMM_nens_group,ierr)
         if (myrow==0) CALL MPI_SCATTER(enn,12*nenslocal,MPI_character,ennlocal,12*nenslocal,MPI_character,0,MPI_COMM_nens_GROUP,ierr)
+        if (myrow==0) CALL MPI_SCATTER(recnt,nenslocal,MPI_real,recntlocal,nenslocal,MPI_real,0,MPI_COMM_nens_GROUP,ierr)
      endif
      call MPI_barrier(MPI_COMM_WORLD,ierr)
 
      if (myrow == 0) then
         allocate(gridm(ilon,ilat,nrec1),gridmlocal(ilon,ilat,nrec1))
-        allocate(gfcstlocal(ilon,ilat,nrec1,nenslocal),tge(ilon,ilat,levs),wge(ilon,ilat,levs))
+ !       allocate(gfcstlocal(ilon,ilat,nrec1,nenslocal),tge(ilon,ilat,levs),wge(ilon,ilat,levs))
+        allocate(gfcstlocal(ilon,ilat,nrec1,nenslocal),tge(ilon,ilat),wge(ilon,ilat))
         allocate(kemlocal(ilon,ilat),kem(ilon,ilat),keflocal(ilon,ilat,nenslocal))
         gfcstlocal = 0.0
         gridmlocal = 0.0
@@ -310,15 +355,17 @@ program gefs_init_et_para
            if (iret.ne.0) print *,'Processor #',mype,'en number',i,'sigio_sclose failed,iret=',iret
            print *,'--------Complet read_fcst for mype',mype,' record #',i,'-----------'
 
-           gridmlocal(:,:,:) = gridmlocal(:,:,:) + gfcstlocal(:,:,:,i)/dble(nens)        
-
+           gridmlocal(:,:,:) = gridmlocal(:,:,:) + gfcstlocal(:,:,:,i)/dble(nens)*recntlocal(i)        
+           print *, recntlocal(i),enlocal,'recntlocal(i)'
            tge = 0.0
            wge = 0.0
            print *,'--------Start write_ke for mype',mype,' record #',i,'-----------'
-           call write_ke(jcap,lrec,nrec1,levs,ilon,ilat,gfcstlocal(:,:,:,i),tge,wge)
+           call write_ke(jcap,lrec,nrec1,levs,ilon,ilat,gfcstlocal(:,:,:,i),tge,wge,nlevmask,mskflag)
            print *,'--------Complet write_ke for mype',mype,' record #',i,'-----------'
-           keflocal(:,:,i) = wge(:,:,nlevmask)
-           kemlocal(:,:) = kemlocal(:,:) + wge(:,:,nlevmask)/dble(nens)   
+!           keflocal(:,:,i) = wge(:,:,nlevmask)
+!           kemlocal(:,:) = kemlocal(:,:) + wge(:,:,nlevmask)/dble(nens)   
+           keflocal(:,:,i) = wge(:,:)
+           kemlocal(:,:) = kemlocal(:,:) + wge(:,:)/dble(nens)
         ENDDO
      endif
 
@@ -350,16 +397,23 @@ program gefs_init_et_para
         if (myrow==0) CALL MPI_GATHER(keflocal,nmt*nenslocal,MPI_real,kef,nmt*nenslocal,MPI_real,0,MPI_COMM_nens_group,ierr)
      endif
      if (myrow == 0) DEALLOCATE(gridmlocal,kemlocal,kem,gridm,keflocal)
+! calculate orignial te at nlevmask 
+     if (mype == 0) then
+        call factor_te(nlevmask,levs,jcap,lrec,ftt0,nrec1,ilon,ilat,gfcstlocal(:,:,:,1))
+     endif
+
 
      !************** Generate vec(nens,nens) on PE0 from kef 
 
      if (mype == 0 ) then
+      if (netflag.eq.1) then
         print *,'--------Start Generate_vec--------------'
         print *,'sum of kef',sum(kef)
         print *,'kef',kef(1,3,:)
         CALL Generate_vec
         print *,'sum of vec',sum(vec)
         print *,'--------End Generate_vec--------------'
+      endif
      endif
 
 
@@ -378,6 +432,7 @@ program gefs_init_et_para
      ! Parallel version of matrix-matrix multiplication
      ! gf1(i.e., gfcst)(ilon*ilat*nrec1,nens) * vec(nens,nens) = gC (ilon*ilat*nrec1,nens)
 
+      if (netflag.eq.1) then
      print *,'--------Start Compute_gC--------------'
      CALL Compute_gC
      print *,'--------Complete Compute_gC--------------'
@@ -426,11 +481,21 @@ program gefs_init_et_para
 
      DEALLOCATE( gf1, gC)
 
+      endif
      !  use one inflation factor scf to inflate the initial perts
 
-     ftt = 0.8
      if (mype == 0) then
-        call factor_t(nlevmask,ftt,nrec1,ilon,ilat,gfcstlocal(:,:,:,1),scf)
+       if(netflag.eq.1) then
+          if (mskflag.eq.2.or.mskflag.eq.3) then
+             call factor_te(nlevmask,levs,jcap,lrec,ftt,nrec1,ilon,ilat,gfcstlocal(:,:,:,1))
+             scf=ftt0/ftt
+          else
+             ftt = 0.8
+             call factor_t(nlevmask,ftt,nrec1,ilon,ilat,gfcstlocal(:,:,:,1),scf)
+          endif
+        else
+          scf=1.
+        endif
         print*,'scf',scf
      endif
      CALL MPI_BCAST(scf,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
@@ -445,9 +510,16 @@ program gefs_init_et_para
            call sigio_sropen(90,'sanl.in',iret)
            print *, 'iret from sigio_sropen =', iret
            if (iret.ne.0) print *,'sigio_sropen failed,iret=',iret
-     call mask_pert(90,jcap,lrec,nrec1,irec,levs,nlath,ilon,ilat,&
+     if(mskflag.eq.1)then
+         call mask_pert(90,jcap,lrec,nrec1,irec,levs,nlath,ilon,ilat,&
           gfcstlocal(:,:,:,i),globamplr,globamplg,itopres,contop,&
           nlevrs,mxlev,nlevmask,smax,b1,b2,b3)
+     endif
+     if(mskflag.eq.2.or.mskflag.eq.3)then
+         call mask_pert_3D(90,jcap,lrec,nrec1,irec,levs,nlath,ilon,ilat,&
+          gfcstlocal(:,:,:,i),globamplr,globamplg,itopres,contop,&
+          nlevrs,mxlev,nlevmask,smax,b1,b2,b3,mskflag)
+     endif
            call sigio_sclose(90,iret)
            call sigio_swopen(92,ennlocal(i),iret)
            print *, 'iret from sigio_swopen =', iret
@@ -458,7 +530,8 @@ program gefs_init_et_para
         ENDDO
      endif
 
-     deallocate( g_ana,cofo_1,veclocal,enlocal,ennlocal)
+!     deallocate( g_ana,cofo_1,veclocal,enlocal,ennlocal)
+     deallocate( g_ana,cofo_1,enlocal,ennlocal)
      if (myrow==0) deallocate(gfcstlocal)
 
      print *, '  ---------- end of gefs_init_et  -------------'
@@ -481,6 +554,7 @@ subroutine Generate_vec
   implicit none
   integer :: i,j,n,k,info
   real :: dummy
+  real ::geogr(ilon,ilat,levs)
 
   allocate (ss(nsp-1,nsp),gmask(ilon,ilat))
 
@@ -499,9 +573,21 @@ subroutine Generate_vec
      
 !   Read in gmask in PE 0
      gmask = 0.0
+     geogr=0.0
      open(90, file='sanl.in',form='unformatted')
+     if (mskflag.eq.2) then
+     open(48,err=544,form='unformatted')
+     call read_mask_3D(48,jcap,lrec,levs,ilon,ilat,geogr)
+     gmask(:,:)=geogr(:,:,nlevmask)
+     else if (mskflag.eq.3) then
+     open(48,err=544,access='direct',recl=ilon*ilat,form='unformatted')
+     call read_mask_3D_monthly(90,48,jcap,lrec,levs,ilon,ilat,geogr)
+     gmask(:,:)=geogr(:,:,nlevmask)
+      write(*,*)'gmask',gmask(100:110,100)
+     else
      open(48,err=544,form='unformatted')
      call read_mask(90,48,jcap,lrec,levs,ilon,ilat,gmask)
+     endif
 !     gmask(:,:) = globamplm*gmask(:,:)
      close(90)
      close(48)
@@ -526,7 +612,7 @@ subroutine Generate_vec
               n = n + 1
               rhz(n, k) = dble(kef(i,j,k))/(dsqrt(dble(nens-1))* &
                    dble(abs(gmask(i,j))))
-    write(78,*)rhz(n,k),n,k
+!    write(78,*)rhz(n,k),n,k
            enddo
         enddo
      enddo
@@ -809,6 +895,7 @@ subroutine Compute_gC
      if (myrow == 0 )then !kate
            DEALLOCATE(gf1_fullrecord) !kate
      endif  !kate
+     deallocate (veclocal)
 
    END subroutine Compute_gC
 
@@ -903,11 +990,12 @@ subroutine read_ana(ir,jcap,lrec,nrec1,levs,levsp,ilat,ilon,cofo_1,g_ana,head)
          if (k .eq. 1) then
          print *, 'Ana temp(read_ana)at k=1 ', grid(1:5,1:5)
          endif
-         if (k .eq. 13) then
-         print *, 'Ana temp(read_ana)at k=13 ', grid(1:5,1:5)
+!        if (k .eq. 13) then
+         if (k .eq. nlevmask) then
+         print *, 'Ana temp(read_ana)at k=', k, grid(1:5,1:5)
          endif
          if (k .eq. levs) then
-         print *, 'Ana temp(read_ana)at k=28 ', grid(1:5,1:5)
+         print *, 'Ana temp(read_ana)at k=', k, grid(1:5,1:5)
          endif
 
   enddo
@@ -1154,7 +1242,7 @@ END subroutine read_fcst
 
 !-----------------------------------------------------------------------
 
-subroutine write_ke(jcap,lrec,nrec1,levs,ilon,ilat,gridd,tge,wge)
+subroutine write_ke(jcap,lrec,nrec1,levs,ilon,ilat,gridd,tge,wge,nlevmask,mskflag)
 
   !   by Mozheng Wei, 2004-10-15
   !
@@ -1162,10 +1250,13 @@ subroutine write_ke(jcap,lrec,nrec1,levs,ilon,ilat,gridd,tge,wge)
 !-----------------------------------------------------------------------
 
   real*8 gridd(ilon,ilat,nrec1)
-  real tge(ilon,ilat,levs),wge(ilon,ilat,levs),grid(ilon,ilat),grid2(ilon,ilat)
+  real tge(ilon,ilat),wge(ilon,ilat),grid(ilon,ilat),grid2(ilon,ilat)
+!  real tge(ilon,ilat,levs),wge(ilon,ilat,levs),grid(ilon,ilat),grid2(ilon,ilat)
   
-  real cofo(lrec),cofo2(lrec),coft(lrec,nrec1+1) 
-  real ug(ilon,ilat,levs),vg(ilon,ilat,levs) 
+!  real cofo(lrec),cofo2(lrec),coft(lrec,nrec1+1) 
+!  real ug(ilon,ilat,levs),vg(ilon,ilat,levs) 
+  real cofo(lrec),cofo2(lrec)
+  real ug(ilon,ilat),vg(ilon,ilat)
   
   !        real,dimension(:,:),allocatable ::grid3
   !        nrec = nrec1+1
@@ -1173,13 +1264,14 @@ subroutine write_ke(jcap,lrec,nrec1,levs,ilon,ilat,gridd,tge,wge)
   
 !  print *, '  starting write_ke.exe --'
   
-  coft = 0.0
-  do nr = 1, nrec1
-     grid(:,:) = real(gridd(:,:,nr))
-     cofo = 0.0
-     call sptez(0,jcap,4,ilon,ilat,cofo,grid,-1)
-     coft(:, nr+1)=cofo(:)
-  enddo
+!  coft = 0.0
+!  do nr = 1, nrec1
+!!  do nr = 1, nrec1
+!     grid(:,:) = real(gridd(:,:,nr))
+!     cofo = 0.0
+!     call sptez(0,jcap,4,ilon,ilat,cofo,grid,-1)
+!     coft(:, nr+1)=cofo(:)
+!  enddo
   
   !       allocate( cofts(lrecs,nrec1+1), cofo2(lrecs)  )
   !  reduce resolution to T62
@@ -1194,35 +1286,51 @@ subroutine write_ke(jcap,lrec,nrec1,levs,ilon,ilat,gridd,tge,wge)
   cofo = 0.0
   grid = 0.0
   ! levs levels of temperature
-  do  nr = 3, levs+2
-     do j=1, lrec
-        cofo(j)=coft(j, nr)
-     enddo
-     call sptez(0,jcap,4,ilon,ilat,cofo,grid,+1)
-     tge(1:ilon,1:ilat,nr-2) = grid(1:ilon,1:ilat)
-  enddo
+!  do  nr = 3, levs+2
+!     do j=1, lrec
+!        cofo(j)=coft(j, nr)
+!     enddo
+!     call sptez(0,jcap,4,ilon,ilat,cofo,grid,+1)
+     tge(1:ilon,1:ilat) = gridd(1:ilon,1:ilat,nlevmmax+1)
+!  enddo
   
   ! levs levels of divergence and vorticity
   
-  nuv = 0
-  do  nr = levs+3, 3*levs+1, 2
-     do j = 1, lrec
-        cofo(j)=coft(j, nr)
-        cofo2(j)=coft(j, nr+1)
-     enddo
-     call sptezv(0,jcap,4,ilon,ilat,cofo,cofo2,grid,grid2,+1)
-     nuv = nuv + 1
-     ug(:,:,nuv) = grid(:,:)
-     vg(:,:,nuv) = grid2(:,:)
-  enddo
+!  nuv = 0
+!  do  nr = levs+3, 3*levs+1, 2
+!     do j = 1, lrec
+!        cofo(j)=coft(j, nr)
+!        cofo2(j)=coft(j, nr+1)
+!     enddo
+!     call sptezv(0,jcap,4,ilon,ilat,cofo,cofo2,grid,grid2,+1)
+!     nuv = nuv + 1
+!     ug(:,:,nuv) = grid(:,:)
+!     vg(:,:,nuv) = grid2(:,:)
+!  enddo
+         k=nlevmask
+       cofo = 0.0
+        ug(:,:)=real(gridd(:,:,2*k+levs))
+        call sptez(0,jcap,4,ilon,ilat,cofo,ug,-1)
+
+        cofo2 = 0.0
+        vg(:,:) = real(gridd(:,:,2*k+levs+1))
+        call sptez(0,jcap,4,ilon,ilat,cofo2,vg,-1)
+!   compute u, v
+        call sptezv(0,jcap,4,ilon,ilat,cofo,cofo2,ug,vg,+1)
   
-  do k = 1, nuv
+!  do k = 1, nuv
      do j = 1, ilat
         do i = 1, ilon
-           wge(i, j, k) = sqrt(ug(i,j,k)*ug(i,j,k) + vg(i,j,k)*vg(i,j,k))
+         if(mskflag.eq.2.or.mskflag.eq.3)then
+           wge(i, j) = sqrt(0.5*(ug(i,j)**2+vg(i,j)**2+4.0*tge(i,j)**2))
+!           wge(i, j, k) = sqrt(0.5*(ug(i,j,k)**2+vg(i,j,k)**2+4.0*tge(i,j,k)**2))
+         else
+           wge(i, j) = sqrt(ug(i,j)*ug(i,j) + vg(i,j)*vg(i,j))
+!           wge(i, j, k) = sqrt(ug(i,j,k)*ug(i,j,k) + vg(i,j,k)*vg(i,j,k))
+         endif
         enddo
      enddo
-  enddo
+!  enddo
 !  print *, '  ---- end of write_ke.exe -------'
   return
 END subroutine write_ke
@@ -1362,6 +1470,7 @@ b1,b2,b3)
 ! -----------------------------------------------------------------
 
   use sigio_module
+  include "mpif.h"
   type(sigio_head):: head
   type(sigio_data):: data
 !      PARAMETER(smx=0.15,globampl=1.45)
@@ -1373,6 +1482,7 @@ b1,b2,b3)
   real factor(2), ext(44)
   real geoglr(192,94), geogr1(192,94),geogr2(192,94)
   real*8 grida(ilon,ilat,nrec1)
+  real*8 :: starttime
 !
 !       real,dimension(:),allocatable ::sigi,sigl,dummy,zgeogr,zgrid
 !       real,dimension(:,:),allocatable ::grid,gridk,grida2,gu,gv,
@@ -1492,13 +1602,15 @@ b1,b2,b3)
      call range(geoglr,192,94)
   endif
 !-------------------------------Get latitudinal average of geogr
+!$OMP PARALLEL DO DEFAULT (SHARED) &
+!$OMP PRIVATE (ila,ilo)
   do ila=1,ilat
      zgeogr(ila)=0.0
      do ilo=1,ilon
         zgeogr(ila)=zgeogr(ila)+(geogr(ilo,ila)*globamplr)/float(ilon)
      enddo
   enddo
-
+!$OMP END PARALLEL DO  
   
   idirect = 0
   if(idirect.eq.0) then
@@ -1510,10 +1622,10 @@ b1,b2,b3)
 
      call sigio_aldata(head,data,iret)
      print *, 'iret from sigio_aldata =', iret
-     if (iret.ne.0) print *,'sigio_aldata failed,iret=',iret
+     if (iret.ne.0) print *,'sigio_aldata failed in reading orgraphy ,iret=',iret
      call sigio_srdata(ir,head,data,iret)
-     print *, 'iret from sigio_srdata =', iret
-     if (iret.ne.0) print *,'sigio_srdata failed,iret=',iret
+     print *, 'iret from sigio_srdata  in reading orgraphy =', iret
+     if (iret.ne.0) print *,'sigio_srdata failed in reading orgraphy ,iret=',iret
 
 !         open(90, file='sanl.in', form='unformatted')
 !         rewind(90)
@@ -1532,7 +1644,8 @@ b1,b2,b3)
      enddo
      
      grid = 0.0
-     do nr = 1, nrec1
+!     do nr = 1, nrec1
+     do nr = irec-2, irec
         grid(:,:) = real(grida(:,:,nr))
         call sptez(0,jcap,4,ilon,ilat,cofi,grid,-1)
         coft(:, nr+1) = cofi(:)
@@ -1561,40 +1674,55 @@ b1,b2,b3)
 
 !--------------------------------- get Latitudinal average
 
+!$OMP PARALLEL DO DEFAULT (SHARED) &
+!$OMP PRIVATE (ila,ilo)
      do j = 1,ilat
         zgrid(j)=0.0
         do i = 1,ilon
            zgrid(j) = zgrid(j)+grida2(i,j)/float(ilon)
         enddo
      enddo
-     
+!$OMP END PARALLEL DO
+
+!$OMP PARALLEL DO DEFAULT (SHARED) &
+!$OMP PRIVATE (ila,ilo)
      do ila=1,ilat
         do ilo=1,ilon
            geogr(ilo,ila)=geogr(ilo,ila)*globamplr
            gresc(ilo,ila)=geogr(ilo,ila)/grida2(ilo,ila)
         enddo
      enddo
+!$OMP END PARALLEL DO
+!$OMP PARALLEL DO DEFAULT (SHARED) &
+!$OMP PRIVATE (ila,ilo)
      do ila=1,ilat
         do ilo=1,ilon
            if(gresc(ilo,ila).gt.1.0) gresc(ilo,ila)=1.0
            geogl(ilo,ila)=gresc(ilo,ila)*grida2(ilo,ila)
         enddo
      enddo
+!$OMP END PARALLEL DO     
      print *,' in mask_pert, range of gresc: scaling factors'
      call range(gresc,ilon,ilat)
 
+!$OMP PARALLEL DO DEFAULT (SHARED) &
+!$OMP PRIVATE (ila,ilo)
      do ila=1,ilat
         do ilo=1,ilon
            gridk(ilo,ila)=grida2(ilo,ila)/geogl(ilo,ila)
         enddo
      enddo
+!$OMP END PARALLEL DO     
      print *,' in mask_pert initial smoothed energy ratio '
      call range(gridk,ilon,ilat)
+!$OMP PARALLEL DO DEFAULT (SHARED) &
+!$OMP PRIVATE (ila,ilo)
      do ila=1,ilat
         do ilo=1,ilon
            gridk(ilo,ila)=grida2(ilo,ila)/geogr(ilo,ila)
         enddo
      enddo
+!$OMP END PARALLEL DO     
      print *,' in mask_pert initial smoothed energy ratio'
      call range(gridk,ilon,ilat)
      print *,' in mask_pert end pre ed range of geogr*globampl: global'
@@ -1605,23 +1733,29 @@ b1,b2,b3)
   endif
 
   iexpi = 0
-  do nr=1,nrec
-     cofi(:) = coft(:, nr) 
-     call sptez(0,jcap,4,ilon,ilat,cofi,grid,+1)
+!  do nr=1,nrec
+  do nr=2,nrec
+!     cofi(:) = coft(:, nr) 
+!     call sptez(0,jcap,4,ilon,ilat,cofi,grid,+1)
      if(nr.eq.2) then
         if(iexpi.eq.1) then
            do  j=1,ilat
               do i=1,ilon
-                 grid(i,j)=exp(grid(i,j))*10.0
+!                 grid(i,j)=exp(grid(i,j))*10.0
+                  grid(i,j)=exp(grida(i,j,nr-1))*10.0
               enddo
            enddo
         endif
      endif
+!$OMP PARALLEL DO DEFAULT (SHARED) &
+!$OMP PRIVATE (ila,ilo)
      do j=1,ilat
         do i=1,ilon
-           grid(i,j)=grid(i,j)*gresc(i,j)*globamplg
+!           grid(i,j)=grid(i,j)*gresc(i,j)*globamplg
+                grid(i,j)=exp(grida(i,j,nr-1))*10.0
         enddo
      enddo
+!$OMP END PARALLEL DO     
      
      if(nr.eq.irec) then 
         print *,' in mask_pert, rescaled 500 hPa vorticity:'
@@ -1647,8 +1781,12 @@ b1,b2,b3)
 ! extra rescaling for levels from  nlevmask (1.0) to bottom (smax) 
 !
 !  smax = 1.2
+
+ if (smax .gt. 1.0) then
   resv = 1.0
 
+!$OMP PARALLEL DO DEFAULT (SHARED) &
+!$OMP PRIVATE (ila,ilo,k)
   do k = 1, nlevmask
      resv(k) = smax + (float(k-1)*(1.0-smax))/float(nlevmask-1)
      do j = 1, ilat
@@ -1665,8 +1803,10 @@ b1,b2,b3)
       enddo
     enddo
   enddo
+!$OMP END PARALLEL DO  
   print *,"in mask_pert, levs, nlevmask,  = ", levs,nlevmask
   print *,"in mask_pert, resv(:)= ", resv
+ endif 
 !
 !  if (itopres .eq. 0) then do the extra rescaling on top levels
 !  do rescaling on the top levels -------------------
@@ -1713,22 +1853,30 @@ b1,b2,b3)
         print *,"in mask_pert, grid values of sqt of KE at level 28"
         call range(grid2,ilon,ilat)
 !
+!$OMP PARALLEL DO DEFAULT (SHARED) &
+!$OMP PRIVATE (ila,ilo)
         do ila=1,ilat
            do ilo=1,ilon
                gresc(ilo,ila)=contop/grid2(ilo,ila)
 	   enddo
         enddo
+!$OMP END PARALLEL DO
 !
+!$OMP PARALLEL DO DEFAULT (SHARED) &
+!$OMP PRIVATE (ila,ilo)
         do ila=1,ilat
            do ilo=1,ilon
               if(gresc(ilo,ila).gt.1.0)  gresc(ilo,ila)=1.0
            enddo
         enddo
+!$OMP END PARALLEL DO        
         print *,' in mask_pert, for top levels: scaling factors'
 	call range(gresc,ilon,ilat)
 !
 ! rescaling for levels from levs to nlevrs which has rescaling 1.0
 !
+!$OMP PARALLEL DO DEFAULT (SHARED) &
+!$OMP PRIVATE (ila,ilo,k)
         do k = nlevrs, levs
            res = 0.0
            do j = 1, ilat
@@ -1751,6 +1899,7 @@ b1,b2,b3)
               enddo
            enddo
         enddo
+!$OMP END PARALLEL DO
 !
 !
 endif
@@ -1778,7 +1927,8 @@ subroutine factor_t(nlevmask,ftt,nrec1,ilon,ilat,grida,scf)
 !  real grid(ilon,ilat)
   
 !  nt = nlevmask
-  nt = 14
+   nt = nlevmask + 1
+! nt = 14
   print *, ' in gefs_init_et, starting factor_t.exe '
 !  grid = 0.0
   trms = 0.0
@@ -2733,3 +2883,502 @@ subroutine fillf(cofi,cofo,jcapi,jcapo)
 
 end subroutine fillf
 
+subroutine read_mask_3D(ig,jcap,lrec,levs,ilon,ilat,geogr)
+
+  !   Mozheng Wei, 2004-10-15
+  !   Mozheng Wei, 2006-05-18, modified to read head using sigio_module
+  !                prepared for hybrid GFS files 
+  !   Xiaqiong Zhou and Juhui Ma, 2013, modified to read 3-dimensional mask with
+  !   the same resolution as the forecast  
+!---------------------------------------------------------
+
+
+  real, intent(out) :: geogr(ilon,ilat,levs)
+  print *,' in gefs_init_et, read_mask_3D.exe starts'
+  
+  write(6,688) jcap,ilat,ilon
+688 format(1x,'scale truncation, lat, lon' ,3i5)
+689 format(1x,'scale ir, iw',2i10)
+    
+  
+  rewind(ig)
+  do k=1,levs
+   read(ig) ((geogr(i,j,k),i=1,ilon),j=1,ilat)
+  enddo
+       close(ig)
+  print *,' in gefs_init_et, read_mask_3D.exe ends'
+  
+544 continue
+  RETURN
+end subroutine read_mask_3D
+!
+subroutine read_mask_3D_monthly(ir,ig,jcap,lrec,levs,ilon,ilat,geogr)
+
+  !   Added by Xiaqiong Zhou Nov. 2013, to read monthly mean 3-dimensional mask with
+  !   the same resolution as the forecast
+!---------------------------------------------------------
+
+  use sigio_module
+  type(sigio_head):: head
+  character*8 label(4)
+  dimension idate(4)
+  real,dimension(:,:,:),allocatable:: geogr1
+  real, intent(out) :: geogr(ilon,ilat,levs)
+
+
+!----------------------CHECK FOR DATE
+  !   use sigio_module to read
+
+  print *,'starting read_mask_3D_monthly'
+  call sigio_srhead(ir,head,iret)
+  idate=head%idate
+  print *,'starting read_mask_3D_monthly',ir
+!  print *, 'sl from head in read_mask = ', head%sl
+  print *, 'idvc from head in read_mask 3D monthly= ', head%idvc
+  print *, 'jcap from head in read_mask3D monthly = ', head%jcap
+
+  m1=idate(2)
+  jday=idate(3)
+  print *, 'm1, jday = ', m1, jday
+
+  if(jday.le.15)then
+     m2=m1-1
+     if(m2.eq.0)then
+        m2=12
+     endif
+  endif
+
+  if(jday.gt.15)then
+     m2=m1+1
+     if(m2.gt.12)then
+        m2=1
+     endif
+  endif
+  print *, 'm1, m2 = ', m1,m2
+
+  wfac2=abs(float(jday)-15.0)/30.0
+!---------------------------------------------------------
+
+
+
+  write(6,688) jcap,ilat,ilon
+688 format(1x,'scale truncation, lat, lon' ,3i5)
+689 format(1x,'scale ir, iw',2i10)
+   allocate (geogr1(ilon,ilat,levs))
+   write(*,*)'Monthly 3D mask is from month ',m1,m2,'with weight',1-wfac2,wfac2
+   irecd=(m1-1)*levs+1
+   write(*,*)'Monthly 3D mask ilon,ilat,levs',ilon,ilat,levs,irecd
+   do k=1,levs
+    write(*,*)'reading 3d monthly mask',irecd
+     read(ig,rec=irecd) ((geogr(i,j,k),i=1,ilon),j=1,ilat)
+    irecd=irecd+1
+  enddo
+   irecd=(m2-1)*levs+1
+  do k=1,levs
+    write(*,*)'reading 3d monthly mask',irecd
+   read(ig,rec=irecd) ((geogr1(i,j,k),i=1,ilon),j=1,ilat)
+    irecd=irecd+1
+
+  enddo
+
+   do k=1,levs
+     do i=1,ilon
+       do j=1,ilat
+          geogr(i,j,k)=geogr(i,j,k)*(1-wfac2)+geogr1(i,j,k)*wfac2
+       enddo
+     enddo
+   enddo
+       close(ig)
+    deallocate (geogr1)
+  print *,' in gefs_init_et, read_mask_3D_monthly.exe ends'
+
+544 continue
+  RETURN
+end subroutine read_mask_3D_monthly
+!
+subroutine read_mask_ps_monthly(ir,ig,jcap,lrec,levs,ilon,ilat,geogr,m1,jday)
+
+  !   Added by Xiaqiong Zhou Nov. 2013, to read monthly mean 3-dimensional mask with
+  !   the same resolution as the forecast
+!---------------------------------------------------------
+
+  real,dimension(:,:,:),allocatable:: geogr1
+  real, intent(out) :: geogr(ilon,ilat,levs)
+
+
+!----------------------CHECK FOR DATE
+  !   use sigio_module to read
+
+  print *,'starting read_mask_ps_monthly'
+
+  print *, 'read_mask_ps_monthly m1, jday = ', m1, jday
+
+  if(jday.le.15)then
+     m2=m1-1
+     if(m2.eq.0)then
+        m2=12
+     endif
+  endif
+
+  if(jday.gt.15)then
+     m2=m1+1
+     if(m2.gt.12)then
+        m2=1
+     endif
+  endif
+  print *, 'm1, m2 = ', m1,m2
+
+  wfac2=abs(float(jday)-15.0)/30.0
+!---------------------------------------------------------
+
+
+
+  write(6,688) jcap,ilat,ilon
+688 format(1x,'scale truncation, lat, lon' ,3i5)
+689 format(1x,'scale ir, iw',2i10)
+   allocate (geogr1(ilon,ilat,levs))
+   write(*,*)'Monthly 3D mask is from month ',m1,m2,'with weight',1-wfac2,wfac2
+   do k=1,levs
+     read(ig,rec=m1) ((geogr(i,j,k),i=1,ilon),j=1,ilat)
+   enddo
+
+  do k=1,levs
+   read(ig,rec=m2) ((geogr1(i,j,k),i=1,ilon),j=1,ilat)
+  enddo
+
+   do k=1,levs
+     do i=1,ilon
+       do j=1,ilat
+          geogr(i,j,k)=geogr(i,j,k)*(1-wfac2)+geogr1(i,j,k)*wfac2
+       enddo
+     enddo
+   enddo
+       close(ig)
+    deallocate (geogr1)
+  print *,' in gefs_init_et, read_mask_ps_monthly.exe ends'
+
+544 continue
+  RETURN
+end subroutine read_mask_ps_monthly
+! -----------------------------------------------------------------
+!
+subroutine mask_pert_3D(ir,jcap,lrec,nrec1,irec,levs,nlath,ilon,ilat, &
+grida,globamplr,globamplg,itopres,contop,nlevrs,mxlev,nlevmask,smax, &
+b1,b2,b3,mskflag)
+!  
+!   Mozheng Wei, 2004-10-15
+!   Mozheng Wei, 2006-05-18, modified to read head using sigio_module
+!                prepared for hybrid GFS files 
+! -----------------------------------------------------------------
+
+  use sigio_module
+  type(sigio_head):: head
+  type(sigio_data):: data
+!      PARAMETER(smx=0.15,globampl=1.45)
+  PARAMETER(smx=0.15)
+
+!#################################################################
+!  parameter(fgeogrn=0.75,fgeogrs=0.6,fgeogrt=2.0,idrt=4)
+  parameter(fgeogrn=1,fgeogrs=1,fgeogrt=2.0,idrt=4)
+  dimension slat(ilat),wlat(ilat),clat(ilat),rlat(ilat),flat(ilat)
+  real dlat,d2r
+!#################################################################
+
+!  
+  character*8 label(4)
+  dimension idate(4)
+! integer mmype
+  real factor(2), ext(44)
+  real*8 grida(ilon,ilat,nrec1)
+
+!
+!       real,dimension(:),allocatable ::sigi,sigl,dummy,zgeogr,zgrid
+!       real,dimension(:,:),allocatable ::grid,gridk,grida2,gu,gv,
+!     & geogr,gresc,geogl
+!       complex,dimension(:),allocatable::cofi,str,stra
+!       complex,dimension(:,:),allocatable::coft
+!       real,dimension(:),allocatable::cofi,str,stra
+!       real,dimension(:,:),allocatable::coft
+
+  real sigi(levs+1),sigl(levs),dummy(200),&
+       str(lrec),stra(lrec),grid(ilon,ilat),&
+       grid1(ilon,ilat),grid2(ilon,ilat),cofo1(lrec),cofo2(lrec), &
+       gu(ilon,ilat),gv(ilon,ilat),geogr(ilon,ilat,levs),geogr0(ilon,ilat), &
+       gresc(ilon,ilat),gresc0(ilon,ilat),geogl(ilon,ilat), &
+       q1(ilon,ilat),q2(ilon,ilat),q3(ilon,ilat),tem(ilon,ilat) 
+  levsp=levs+1
+  nrec = nrec1+1
+  print *,' starting mask_pert_3D.exe'
+  write(6,688) jcap,ilat,ilon
+688 format(1x,'scale truncation, latitude, longjcude' ,3i5)
+    
+!---------------------------------CHECK FOR DATE
+  !
+  !       open(90, file='sanl.in', form='unformatted')
+  !       rewind(90)
+  !       read(90)label
+  !       read(90)fhr,idate
+  !       close(90)
+  !
+  !   use sigio_module to read
+  call sigio_srhead(ir,head,iret)
+  print *, 'iret from sigio_srhead =', iret
+  if (iret.ne.0) print *,'sigio_srhead failed,iret=',iret
+  fhr=head%fhour
+  idate=head%idate
+!  print *, 'sl from head in mask_pert = ', head%sl
+  print *, 'idvc from head in mask_pert = ', head%idvc
+  print *, 'jcap from head in mask_pert = ', head%jcap
+  write(6,1001) fhr,idate
+!       label=head%clabsig
+!       sigi=head%si
+!       sigl=head%sl
+!       print *, 'label from head=', label
+!       print *, 'label,sigi,sigl from head=', label,sigi,sigl
+1001 format(5x,'ir ',f10.1,2x,4i5)
+  
+  m1=idate(2)
+  jday=idate(3)
+  
+  if (mskflag.eq.2)then
+  open(48,err=544,form='unformatted')
+  call read_mask_3D(48,jcap,lrec,levs,ilon,ilat,geogr)
+  else
+     open(48,err=544,access='direct',recl=ilon*ilat,form='unformatted')
+  call read_mask_3D_monthly(ir,48,jcap,lrec,levs,ilon,ilat,geogr)
+  endif
+  close (48)
+  
+  if (mskflag.eq.2)then
+  open(49,err=544,form='unformatted')
+   read(49) ((geogr0(i,j),i=1,ilon),j=1,ilat)
+  else
+     open(49,err=544,access='direct',recl=ilon*ilat,form='unformatted')
+  call read_mask_ps_monthly(ir,49,jcap,lrec,1,ilon,ilat,geogr0,m1,jday)
+  endif
+    write(*,*)'mask_ps',geogr0(500:510,500)
+  close(49)
+!######################Jessie 10/25/2012########################
+             call splat(idrt,ilat,slat,wlat)
+             d2r=3.1415926535/180.0
+             do j=1,ilat
+               rlat(j)=asin(slat(j))
+               dlat=rlat(j)/d2r
+               if (dlat.ge.30.0) then
+                 flat(j)=fgeogrn
+               elseif (dlat.le.-30.0) then
+                 flat(j)=fgeogrs
+               else
+                 flat(j)=exp((0.5*(log(fgeogrn)+log(fgeogrs))   &
+                 +0.5*(log(fgeogrn)-log(fgeogrs))*sin(3.0*dlat*d2r) &
+                 +0.5*log(fgeogrt)*(1.0+cos(6.0*dlat*d2r))))
+               endif
+!              print *,'flat=',flat(j)
+             enddo
+!###############################################################
+
+
+  
+  idirect = 0
+  if(idirect.eq.0) then
+     print *,' in mask_pert: reading ana orgraphy'
+
+!   use sigio_module to read
+!         call sigio_srohdc(ir,'sanl.in',head,data,iret)
+!         call sigio_sropen(ir,'sanl.in',iret)
+
+     call sigio_aldata(head,data,iret)
+     print *, 'iret from sigio_aldata =', iret
+     if (iret.ne.0) print *,'sigio_aldata failed when read anal in mask_pert,iret=',iret
+     call sigio_srdata(ir,head,data,iret)
+     print *, 'iret from sigio_srdata =', iret
+     if (iret.ne.0) print *,'sigio_srdata failed when read anal in mask_pert,iret=',iret
+
+!         open(90, file='sanl.in', form='unformatted')
+!         rewind(90)
+!         read(90) label
+!         read(90) fhr, (idate(i),i=1,4),
+!     &   (sigi(k),k=1,levsp),(sigl(k),k=1,levs),dummy,(ext(n),n=1,44)
+
+!  use the analysis orgraphy
+!         read(90) (cofi(J),J=1,lrec)
+!         close(90)
+
+!         open(61,file="real.grd",form="unformatted")
+!         open(62,file="mask.grd",form="unformatted")
+!         open(63,file="ratio.grd",form="unformatted")
+       do  k = 1,  levs
+        cofo1 = 0.0
+        grid1(:,:)=real(grida(:,:,2*k+levs))
+        call sptez(0,jcap,4,ilon,ilat,cofo1,grid1,-1)
+
+        cofo2 = 0.0
+        grid2(:,:) = real(grida(:,:,2*k+levs+1))
+        call sptez(0,jcap,4,ilon,ilat,cofo2,grid2,-1)
+!   compute u, v
+        call sptezv(0,jcap,4,ilon,ilat,cofo1,cofo2,grid1,grid2,+1)
+!       grid1, grid2 --> grid point values of u, v, 
+        tem(:,:)=real(grida(:,:,k+1))
+        q1(:,:)=real(grida(:,:,k+3*levs+1))
+        q2(:,:)=real(grida(:,:,k+4*levs+1))
+        q3(:,:)=real(grida(:,:,k+5*levs+1))
+        b1=.0
+        b2=.0
+        b3=.0
+        call tendist(grid1,grid2,tem,q1,q2,q3,b1,b2,b3,ilon,ilat,grid,dx)
+!       grid --> sqt of total energy over grids
+        print *,"in mask_pert,ave TE over all grids at level k= ",k, dx
+!       total energy based geographical rescaling
+      
+        cofo1 = 0.0
+        call sptez(0,jcap,4,ilon,ilat,cofo1,grid,-1)
+        cofo2 = 0.0
+        grid2 = 0.0
+        call smooth(cofo1,cofo2,1,smx,jcap)
+        call sptez(0,jcap,4,ilon,ilat,cofo2,grid2,+1)
+        call range(grid2,ilon,ilat)
+
+
+         do j=1,ilat
+          do i=1,ilon
+           gresc(i,j)=geogr(i,j,k)/grid2(i,j)*globamplr*flat(j)
+           if(gresc(i,j).gt.1.0)  gresc(i,j)=1.0
+          enddo
+!          print *, '**************',flat(j)
+         enddo
+           print *,'***', k, gresc(300:310,260:260)
+          
+         do j = 1, ilat
+          do i = 1, ilon
+           if (k.eq.1) then
+          if (i.eq.100.and.j.eq.260) then
+          print *, "1",grida(i,j,1)
+          endif
+           gresc0(i,j)=geogr0(i,j)/abs(grida(i,j,1))*globamplr*flat(j)
+           if(gresc0(i,j).gt.1.0)  gresc0(i,j)=1.0
+!          if (i.eq.100.and.j.eq.260)  print *, "1+",gresc0(i,j)
+            grida(i,j,1) =grida(i,j,1)*dble(gresc0(i,j))
+! ps
+!          if (grida(i,j,1).ge.0) then
+!            grida(i,j,1) =exp(grida(i,j,1))*10*dble(gresc(i,j))
+!          if (i.eq.100.and.j.eq.260) then
+!          print *, "2",grida(i,j,1)
+!          endif
+!            grida(i,j,1) =log((grida(i,j,1))/10.0)
+!          endif
+!          if (grida(i,j,1).lt.0) then
+!            grida(i,j,1) =exp(-1.0*grida(i,j,1))*10*dble(gresc(i,j))
+!          if (i.eq.100.and.j.eq.260) then
+!          print *, "2",grida(i,j,1)
+!          endif
+!            grida(i,j,1) =-1.0*log((grida(i,j,1))/10.0)
+!          endif
+
+!          if (i.eq.100.and.j.eq.260) then
+!          print *, "3",grida(i,j,1)
+!          endif
+           endif
+! temp       
+           grida(i,j,k+1) =grida(i,j,k+1)*dble(gresc(i,j))
+! div and vor
+           grida(i,j,2*k+levs)=grida(i,j,2*k+levs)*dble(gresc(i,j))
+           grida(i,j,2*k+levs+1)=grida(i,j,2*k+levs+1)*dble(gresc(i,j))
+! ntrac tracers
+           grida(i,j,k+3*levs+1)=grida(i,j,k+3*levs+1)*dble(gresc(i,j))
+           grida(i,j,k+4*levs+1)=grida(i,j,k+4*levs+1)*dble(gresc(i,j))
+           grida(i,j,k+5*levs+1)=grida(i,j,k+5*levs+1)*dble(gresc(i,j))
+          enddo
+         enddo
+!        if (mmype==0) then
+!         write(61) ((grid2(i,j),i=1,ilon),j=1,ilat)
+!         write(62) ((geogr(i,j,k),i=1,ilon),j=1,ilat)
+!         write(63) ((gresc(i,j),i=1,ilon),j=1,ilat)
+!        endif
+
+        enddo  
+
+         close(61)
+         close(62)
+         close(63)
+         
+
+  else
+     factor(1)=dnh
+     factor(2)=dsh
+  endif
+
+  
+!
+!
+544 continue
+  close(48)
+  call sigio_axdata(data,iret)
+  !       deallocate(dummy,cofi,str,stra,grid,gridk,grida2,gu,gv,geogr,
+  !     & gresc,geogl,zgeogr,zgrid,coft)
+  RETURN
+end subroutine mask_pert_3D
+subroutine factor_te(nlevmask,levs,jcap,lrec,ftt,nrec1,ilon,ilat,grida)
+
+!   by Mozheng Wei, 2004-10-15
+!  compute rescaling factor scf  -> output
+!  get the temp at lowest level nr=3-1=2 and get the scaling factor
+!  nr= 15-1 = 14 for Temp at 500mb
+!
+!  2012-09-10 scf is from TE /mask TE at level=nlevmask
+! --------------------------------------------------------------------
+
+  real*8 grida(ilon,ilat,nrec1)
+  real*8 ftt,scf,terms
+  real*8 te500(ilon,ilat)
+  real geogr(ilon,ilat,levs),grid1(ilon,ilat),grid2(ilon,ilat),grid(ilon,ilat)
+  real tem(ilon,ilat),q1(ilon,ilat),q2(ilon,ilat),q3(ilon,ilat)
+  real cofo1(lrec),cofo2(lrec)
+  real terms0
+  integer k
+
+!  real grid(ilon,ilat)
+  
+!  nt = nlevmask+1
+  print *, ' in gefs_init_et, starting factor_t.exe '
+!just for test
+!  nt = 14
+! get TE mask at lev=nlevmask
+!     open(90, file='sanl.in',form='unformatted')
+!  open(48,err=544,form='unformatted')
+!     call read_mask(90,48,jcap,lrec,levs,ilon,ilat,geogr)
+!     te500(:,:) = geogr(:,:,nt)
+
+! get TE  at lev=nlevmask after ET
+         k=nlevmask
+       cofo1 = 0.0
+        grid1(:,:)=real(grida(:,:,2*k+levs))
+        call sptez(0,jcap,4,ilon,ilat,cofo1,grid1,-1)
+
+        cofo2 = 0.0
+        grid2(:,:) = real(grida(:,:,2*k+levs+1))
+        call sptez(0,jcap,4,ilon,ilat,cofo2,grid2,-1)
+!   compute u, v
+        call sptezv(0,jcap,4,ilon,ilat,cofo1,cofo2,grid1,grid2,+1)
+!       grid1, grid2 --> grid point values of u, v, 
+        tem(:,:)=real(grida(:,:,k+1))
+        q1(:,:)=real(grida(:,:,k+3*levs+1))
+        q2(:,:)=real(grida(:,:,k+4*levs+1))
+        q3(:,:)=real(grida(:,:,k+5*levs+1))
+        b1=.0
+        b2=.0
+        b3=.0
+        call tendist(grid1,grid2,tem,q1,q2,q3,b1,b2,b3,ilon,ilat,grid,dx)
+
+!  grid = 0.0
+  trms = 0.0
+!  grid(:,:) = grida(:,:,nt)
+!print *,'TEMP after ET at lev=',nt,grida(100:110,100,nt)
+  do j = 1, ilat
+     do  i = 1, ilon
+        trms = trms + grid(i,j)
+!        terms = trms + te500(i,j)
+     enddo
+  enddo
+  trms = trms/(ilat*ilon)
+  ftt=trms
+end subroutine factor_te

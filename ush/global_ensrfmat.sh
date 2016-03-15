@@ -15,8 +15,8 @@ echo "         ######################################### "
 cat <<namEOF >input_reformat 
 &namin
 iymd=$OBSYMD,
-fname1='$FIXGLOBAL/ingest_nwsli.uniq',
-fname2='$COMINGEST/shf.$OBSYMD/rfc24-uniq-early',
+fname1='$FIXgefs/ingest_nwsli.uniq',
+fname2='$DATA/rfc24-uniq-early',
 fname3='$DATA/usa-dlyprcp-$OBSYMD',
 /
 namEOF
@@ -29,6 +29,6 @@ export pgm=global_ensrfmat
 . prep_step
 
 startmsg
-$EXECGLOBAL/global_ensrfmat <input_reformat >> $pgmout 2>errfile
+$EXECgefs/global_ensrfmat <input_reformat >> $pgmout 2>errfile
 export err=$?;err_chk
 

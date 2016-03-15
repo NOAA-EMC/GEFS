@@ -1,0 +1,60 @@
+12/01/2014 Dingchen Hou:
+The gfs forecast code version has been forwarded to v12.0.0, which is stored in
+/ensemble/save/Dingchen.Hou/SVN/GSM_V12.0.0/
+This directory is checked out from SVN on Nov. 26, 2014, and about the same as the /nwpara/gfs.v12.0.0 
+The previous modification on *Step2.f (turnning off Ps pert) and *Cpl_run*  is included 
+New changes are added in the *Step2.f file to reduce tropical sacling factors 
+The executable and the corresponding scripts/exglobal_fcst.sh.sms (and .ecf) are copied to the GEFS exec/script directory
+
+07/07/2014 Dingchen Hou:
+The gfs forecast code version is hed forward to r42459 (committed July 2, 2014), which can be found in
+ZEUS: /scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_42459
+TIDE: /ensemble/save/Dingchen.Hou/SVN/GFS_TRUNK_42459
+The code in this directory is modified to re-formulate the STTP rescaling factors:
+GEFS_Cpl_Run_ESMFMod.f
+GEFS_Sto_Per_Scheme_Step2.f
+These two files are modified and their corresponding original (trunk) files are saved as *_org
+The executable ~exec/global_fcst is compiled after the modification
+The svn info is in the file r42459.txt
+
+05/21/2014 Dingchen Hou:
+The gfs forecast code version is pulled back to r37800, which can be found in
+ZEUS: /scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800
+TIDE: /ensemble/save/Dingchen.Hou/SVN/GFS_TRUNK_37800
+The code in this directory is modified to re-formulate the STTP rescaling factors
+The executable ~exec/global_fcst is compiled after the modification
+
+04/14/2014 Dingchen Hou:
+The gfs forecast code version is updated to r38753, which can be found in
+/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_38753
+You can point the script and executable to the corresponding files in this directory
+
+03/06/2014 Dingchen Hou:
+The gfs forecast code version described in the 02/10 note (below) is now the sunversion trunk head: r37713
+the full trunk directory can be found in /global/save/emc.glopara/svn/gfs/trunk/para/sorc/global_fcst.fd
+A selected version is in /ensemble/save/Dingchen.Hou/SVN/GFS_TRUNK_37713/sorc/global_fcst.fd
+
+02/10/2014 Dingchen Hou:
+I am currently running a new version of the model following Russ and moorthi.
+The code is in /global/noscrub/Shrinivas.Moorthi/test/global_fcst.fd_Jan17/global_fcst.fd_Dec11
+The corresponding executable is /ensemble/save/Dingchen.Hou/GEFS14/tfEg/nwdev/exec/global_fcst_Russ-0207
+
+02/10/2014 Dingchen Hou:
+The global_fcst.fd directory used is from the gfs subversion
+We have tested Three versions and currently using r36153, whose svn info is in the file r36153.txt
+You can copy it from GYRE:/ensemble/save/Dingchen.Hou/SVN/GFS_TRUNK_37713/sorc/global_fcst.fd
+There has been many model upgrades during the last 2.5 months.
+I havn't modify the script for STTP Ps perturbations. If You want to remove the STTP perturbation of Ps, You need to modify the code. Please consult Dingchen Hou
+
+12/13/2013 Dingchen Hou:
+The global_fcst.fd directory used is from the gfs subversion
+We have tested two versions and currently using r33862, whose svn info is in the file r33862.txt
+This version has both STTP and LIOPE options updated, and can be used without modification.
+There are also many other model upgrades during the last 5 months.
+
+07/12/2013 Dingchen Hou:
+The global_fcst.fd directory used is from the gfs subversion
+We have tested two versions and currently using r27399, whose svn info is in the file r27399.txt
+Use the svn info, you can check out a work copy from gfs repository.
+
+The only file we modified is GEFS_Cpl_Run_ESMFMod.f, please re4place the original file by this one.

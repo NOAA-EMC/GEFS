@@ -17,7 +17,7 @@ CF =    ncepxlf
 LDFLAGS =
 LIBS  = -L/nwprod/lib -lsp_d -lw3_d -lbufr_d_64 -lsigio_4 -lbacio_4
 
-CMD =   gefs_vortex_separate
+CMD =   ../../exec/gefs_vortex_separate
 PROFLIB =   -lessl    -lprof
 
 #FFLAGS= -qsmp=noauto -p -O -NS10000 -qintsize=4 -qrealsize=8 -qmaxmem=-1 -qinitauto -qsource -qflttrap

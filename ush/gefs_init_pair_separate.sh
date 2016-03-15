@@ -127,6 +127,7 @@ fi
 if (( ipair < 10 )); then
   ipair=0$ipair
 fi
+
 echo ipair=$ipair
 echo cyc_fcst=$cyc_fcst
 echo cyc=$cyc
@@ -162,6 +163,18 @@ if (( inflag > 3 )) || (( outflag > 3 )); then
   fi
   echo two digit ipairn=$ipairn ipairp=$ipairp 
 fi
+### YOTA 12/21/2012 for EnKF inputs begin
+if (( inflag == 6 )); then
+  (( ipairip = 2 * ipairi ))
+  (( ipairin = ipairip - 1 ))
+  if (( ipairip < 10 )); then
+    ipairip=0$ipairip
+  fi
+  if (( ipairin < 10 )); then
+    ipairin=0$ipairin
+  fi
+fi
+### YOTA 12/21/2012 for EnKF inputs end
 
 # cfsuffix identifies long forecast cycle 
 # associated with this breeding job
@@ -201,7 +214,7 @@ echo DATALOCAL=$DATALOCAL
 echo DATA=$DATA
 echo DATAPARENT=$DATAPARENT
 
-sh $utilscript/setup.sh
+#sh $utilscript/setup.sh
 
 # check for cold start
 coldstartflag=0
@@ -223,13 +236,16 @@ inflaguse=0
 
 inflagt=$inflag
 
-(( fhr = fhrp ))
-while (( fhr <= 96 ))
+(( fhr = $fhrpstart ))
+while (( fhr <= $fhrpend ))
 do
   if (( fhr < 10 )); then
     fhr=0$fhr
   fi
   echo begin loop for nflagt=$inflagt fhr=$fhr
+      pdycycp0=`$NDATE -$fhr $PDY$cyc`
+      pdyp0=`echo $pdycycp0|cut -c1-8`
+      cycp0=`echo $pdycycp0|cut -c9-10`
   if [[ $haveinput = no ]]; then
     (( cycstart = cyc - fhr ))
     comfcstin=$COMIN
@@ -274,7 +290,7 @@ do
     echo fhr=$fhr cyc=$cyc cycstart=$cycstart cyclestart=$cyclestart datein=$datein
     echo cfsuffixstart=$cfsuffixstart
     found=false
-    if (( inflagt == 1 )) || (( inflagt == 2 )) || (( inflagt == 3 )) || (( inflagt == 4 )) || (( inflagt == 5 )) ; then
+    if (( inflagt == 1 )) || (( inflagt == 2 )) || (( inflagt == 3 )) || (( inflagt == 4 )) || (( inflagt == 5 )) || ((inflagt == 6 )); then
       found=true
     fi
 #   check for existence and correct headers of input files
@@ -284,6 +300,9 @@ do
       fcstinn=$comfcstin/$cycstart/sfcsig/gen${ipairn}.$cyclestart.sf$fhr$cfsuffixstart
     elif (( inflagt == 5 )); then
       fcstinn=$comfcstin/$cycstart/sfcsig/gep${ipairn}.$cyclestart.sf$fhr$cfsuffixstart
+    elif (( inflagt == 6 )); then
+     fcstinn=${COMINenkf}${pdyp0}/$cycp0/sfg_${pdyp0}${cycp0}_fhr${fhrp}_mem0${ipairin}
+
     else
       fcstinn=$comfcstin/$cycstart/sfcsig/gec00.$cyclestart.sf$fhr$cfsuffixstart
     fi
@@ -293,7 +312,7 @@ do
       rc=$?
       echo rc=$rc onifhr=$onifhr
       if (( rc == 0 )); then
-	if (( onifhr == fhr )); then
+	if (( onifhr == fhrp )); then
 	  onidate=`$sighdrexec $fcstinn idate`
 	  rc=$?
 	  echo rc=$rc onidate=$onidate
@@ -324,6 +343,8 @@ do
       fcstinp=$comfcstin/$cycstart/sfcsig/gen${ipairp}.$cyclestart.sf$fhr$cfsuffixstart
     elif (( inflagt == 5 )); then
       fcstinp=$comfcstin/$cycstart/sfcsig/gep${ipairp}.$cyclestart.sf$fhr$cfsuffixstart
+    elif (( inflagt == 6 )); then
+     fcstinp=${COMINenkf}${pdyp0}/$cycp0/sfg_${pdyp0}${cycp0}_fhr${fhrp}_mem0${ipairip}
     else
       fcstinp=$comfcstin/$cycstart/sfcsig/gec00.$cyclestart.sf$fhr$cfsuffixstart
     fi
@@ -333,7 +354,7 @@ do
       rc=$?
       echo opifhr=$opifhr
       if (( rc == 0 )); then
-	if (( opifhr == fhr )); then
+	if (( opifhr == fhrp )); then
 	  opidate=`$sighdrexec $fcstinp idate`
 	  rc=$?
 	  echo rc=$rc opidate=$opidate
@@ -361,11 +382,11 @@ do
     if [[ $found = true ]]; then
       ifhruse=$fhr
       echo all forecasts found for ifhruse=$ifhruse
-      if (( inflagt == 1 )) || (( inflagt == 3 )) || (( inflagt == 4 )) || (( inflagt == 5 )); then
+      if (( inflagt == 1 )) || (( inflagt == 3 )) || (( inflagt == 4 )) || (( inflagt == 5 )) || (( inflagt == 6 )) ; then
 	fcstinnuse=$fcstinn
 	comfcstinuse=$comfcstin
       fi
-      if (( inflagt == 2 )) || (( inflagt == 3 )) || (( inflagt == 4 )) || (( inflagt == 5 )); then
+      if (( inflagt == 2 )) || (( inflagt == 3 )) || (( inflagt == 4 )) || (( inflagt == 5 )) || (( inflagt == 6 )) ; then
 	fcstinpuse=$fcstinp
 	comfcstinuse=$comfcstin
       fi
@@ -405,10 +426,10 @@ if [[ $haveinput = yes ]]; then
     export NVCOORD=$IDVC
     export CHGRESVARS="NTRAC=$NTRAC,NVCOORD=$NVCOORD"
     if (( IDVC == 1 )); then
-      export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
+      export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
     fi
     if (( IDVC == 2 )); then
-      export SIGLEVEL=$FIXGLOBAL/global_hyblev.l${LEVS}.txt
+      export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
     fi
     export SIGINP=$fcstinnuse
     export SFCINP=NULL
@@ -459,10 +480,10 @@ echo
     export NVCOORD=$IDVC
     export CHGRESVARS="NTRAC=$NTRAC,NVCOORD=$NVCOORD"
     if (( IDVC == 1 )); then
-      export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
+      export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
     fi
     if (( IDVC == 2 )); then
-      export SIGLEVEL=$FIXGLOBAL/global_hyblev.l${LEVS}.txt
+      export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
     fi
     export SIGINP=$fcstinpuse
     export SFCINP=NULL
@@ -528,11 +549,7 @@ fi
 echo ifinn$ipair > sig_zvdl
 
 ## kate 04/26/2012
-if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
-$EXECGLOBAL/global_sigzvd
-else
-$basesource/nw${envir}/exec/global_sigzvd
-fi
+$EXECgefs/global_sigzvd
 
 ret_sigzvd=$?
 
@@ -545,11 +562,7 @@ fi
 echo ifinp$ipair > sig_zvdl
 
 ## kate 04/26/2012
-if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
-$EXECGLOBAL/global_sigzvd
-else
-$basesource/nw${envir}/exec/global_sigzvd
-fi
+$EXECgefs/global_sigzvd
 
 ret_sigzvd=$?
 
@@ -557,17 +570,7 @@ ret_sigzvd=$?
 #  Separate the storm and environment forecast fields
 #
 echo `date` relocflag=$relocflag relocpertflag=$relocpertflag
-###testb
-if [[ $envir = prod ]]; then
-###teste
-execseparate=$EXECGLOBAL/gefs_vortex_separate
-###testb
-elif [[ $envir = para ]] || [[ $envir = test ]]; then
-execseparate=/nw$envir/exec/gefs_vortex_separate
-else
-execseparate=$basesource/nw$envir/exec/gefs_vortex_separate
-fi
-###teste
+execseparate=$EXECgefs/gefs_vortex_separate
 if (( relocpertflag == 1 )); then
   echo `date` Separate the storm and environment forecast fields for n$ipair begin
 
@@ -578,7 +581,7 @@ if (( relocpertflag == 1 )); then
 
   ln -s -f ../tcvitals.as fort.11
 
-  ln -s -f $FIXGLOBAL/global_slmask.t126.grb    fort.12
+  ln -s -f $FIXgsm/global_slmask.t126.grb    fort.12
 
 
   ln -s -f ../tracks.atcfunix.$cyc_fcst      fort.40
@@ -606,7 +609,7 @@ if (( relocpertflag == 1 )); then
       fi
     fi
   else
-    echo filtrccn=$filtrccn
+    echo SEPARATION FAILED FOR nipair=n$ipair pipairn=p$ipairn filtrccn=$filtrccn
   fi
 
   echo `date` Separate the storm and environment forecast fields for n$ipair end
@@ -616,7 +619,7 @@ if (( relocpertflag == 1 )); then
 
   ln -s -f ../tcvitals.as fort.11
 
-  ln -s -f $FIXGLOBAL/global_slmask.t126.grb    fort.12
+  ln -s -f $FIXgsm/global_slmask.t126.grb    fort.12
 
   ln -s -f ../tracks.atcfunix.$cyc_fcst      fort.40
   ln -s -f finp               fort.24
@@ -643,7 +646,7 @@ if (( relocpertflag == 1 )); then
       fi
     fi
   else
-    echo filtrccp=$filtrccp
+    echo SEPARATION FAILED FOR pipair=p$ipair pipairp=p$ipairp filtrccp=$filtrccp
   fi
 
 
@@ -663,11 +666,8 @@ else
 fi
 echo sfinn$ipair > sig_zvdl
 ## kate 04/26/2012
-if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
-$EXECGLOBAL/global_sigzvd
-else
-$basesource/nw${envir}/exec/global_sigzvd
-fi
+$EXECgefs/global_sigzvd
+
 ret_sigzvd=$?
 
 ln -sf finp sig_zvdi
@@ -678,11 +678,8 @@ else
 fi
 echo sfinp$ipair > sig_zvdl
 ## kate 04/26/2012
-if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
-$EXECGLOBAL/global_sigzvd
-else
-$basesource/nw${envir}/exec/global_sigzvd
-fi
+$EXECgefs/global_sigzvd
+
 ret_sigzvd=$?
 
 if (( ipair > nhrpair )); then
@@ -706,6 +703,7 @@ unset SFCOUT
 
 for meml in n p
 do
+     if [[ ! -s fin${meml}  ]]; then
   export JCAP=$jcap
   export LEVS=$levs
   export LONB=$lonb
@@ -715,24 +713,17 @@ do
   export NVCOORD=$IDVC
   export CHGRESVARS="NTRAC=$NTRAC,NVCOORD=$NVCOORD"
   if (( IDVC == 1 )); then
-    export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
+    export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
   fi
   if (( IDVC == 2 )); then
-    export SIGLEVEL=$FIXGLOBAL/global_hyblev.l${LEVS}.txt
+    export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
   fi
-###testb
-if [[ $envir = prod ]]; then
-###teste
-  export SIGINP=$FIXGLOBAL/gefs.pertback.$cycle_fcst.${meml}${ipair}
-###testb
-elif [[ $envir = para ]] || [[ $envir = test ]]; then
-  export SIGINP=/nw${envir}/fix/gefs.pertback.$cycle_fcst.${meml}${ipair}
-else
-  export SIGINP=$basesource/nw${envir}/fix/gefs.pertback.$cycle_fcst.${meml}${ipair}
-fi
-###teste
+
+  export SIGINP=$FIXgefs/gefs.pertback.$cycle_fcst.${meml}${ipair}
+
   export SFCINP=NULL
-  export SIGOUT=$DATALOCAL/gefs.pertback.$cycle_fcst.${meml}${ipair}
+#  export SIGOUT=$DATALOCAL/gefs.pertback.$cycle_fcst.${meml}${ipair}
+  export SIGOUT=$DATALOCAL/fin${meml}
   export SFCOUT=sfcout
   ojcap=`$sighdrexec $SIGINP jcap` 
   olevs=`$sighdrexec $SIGINP levs` 
@@ -766,6 +757,7 @@ echo
   else
     cp -fp $SIGINP $SIGOUT
   fi
+fi
 done
 
 wait

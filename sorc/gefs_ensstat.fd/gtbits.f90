@@ -1,0 +1,98 @@
+      SUBROUTINE GTBITS(IBM,IDS,LEN,MG,G,GMIN,GMAX,NBIT)
+!$$$  SUBPROGRAM DOCUMENTATION BLOCK
+!
+! SUBPROGRAM:    GTBITS      COMPUTE NUMBER OF BITS AND ROUND FIELD.
+!   PRGMMR: IREDELL          ORG: W/NMC23    DATE: 92-10-31
+!
+! ABSTRACT: THE NUMBER OF BITS REQUIRED TO PACK A GIVEN FIELD
+!   AT A PARTICULAR DECIMAL SCALING IS COMPUTED USING THE FIELD RANGE.
+!   THE FIELD IS ROUNDED OFF TO THE DECIMAL SCALING FOR PACKING.
+!   THE MINIMUM AND MAXIMUM ROUNDED FIELD VALUES ARE ALSO RETURNED.
+!   GRIB BITMAP MASKING FOR VALID DATA IS OPTIONALLY USED.
+!
+! PROGRAM HISTORY LOG:
+!   92-10-31  IREDELL
+!
+! USAGE:    CALL GTBITS(IBM,IDS,LEN,MG,G,GMIN,GMAX,NBIT)
+!   INPUT ARGUMENT LIST:
+!     IBM      - INTEGER BITMAP FLAG (=0 FOR NO BITMAP)
+!     IDS      - INTEGER DECIMAL SCALING
+!                (E.G. IDS=3 TO ROUND FIELD TO NEAREST MILLI-VALUE)
+!     LEN      - INTEGER LENGTH OF THE FIELD AND BITMAP
+!     MG       - INTEGER (LEN) BITMAP IF IBM=1 (0 TO SKIP, 1 TO KEEP)
+!     G        - REAL (LEN) FIELD
+!
+!   OUTPUT ARGUMENT LIST:
+!     GROUND   - REAL (LEN) FIELD ROUNDED TO DECIMAL SCALING
+!                (SET TO ZERO WHERE BITMAP IS 0 IF IBM=1)
+!     GMIN     - REAL MINIMUM VALID ROUNDED FIELD VALUE
+!     GMAX     - REAL MAXIMUM VALID ROUNDED FIELD VALUE
+!     NBIT     - INTEGER NUMBER OF BITS TO PACK
+!
+! SUBPROGRAMS CALLED:
+!   ISRCHNE  - FIND FIRST VALUE IN AN ARRAY NOT EQUAL TO TARGET VALUE
+!
+! ATTRIBUTES:
+!   LANGUAGE: CRAY FORTRAN
+!
+!$$$
+!     DIMENSION MG(LEN),G(LEN),GROUND(LEN)
+
+!     implicit none
+
+      INTEGER MG(LEN),IBM,IDS,LEN,NBIT
+      INTEGER I,I1
+      REAL    G(LEN),GROUND(LEN),GMAX,GMIN,DS
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!  ROUND FIELD AND DETERMINE EXTREMES WHERE BITMAP IS ON
+      DS=10.**IDS
+      IF(IBM.EQ.0) THEN
+        GROUND(1)=NINT(G(1)*DS)/DS
+        GMAX=GROUND(1)
+        GMIN=GROUND(1)
+        DO I=2,LEN
+!         print *, ' I G(I)=',G(I)
+          GROUND(I)=NINT(G(I)*DS)/DS
+!         print *, ' I GROUND(I) =',GROUND(I)
+          GMAX=MAX(GMAX,GROUND(I))
+!         print *, ' I GMAX=',GMAX
+          GMIN=MIN(GMIN,GROUND(I))
+!         print *, ' I GMIN=',GMIN
+!         print *, ' I ground,gmin,gmax=',I,GROUND(I),GMAX,GMIN
+        ENDDO
+      ELSE
+        I1=ISRCHNE(LEN,MG,1,0)
+        IF(I1.GT.0.AND.I1.LE.LEN) THEN
+          DO I=1,I1-1
+            GROUND(I)=0.
+          ENDDO
+          GROUND(I1)=NINT(G(I1)*DS)/DS
+          GMAX=GROUND(I1)
+          GMIN=GROUND(I1)
+          DO I=I1+1,LEN
+            IF(MG(I).NE.0) THEN
+              GROUND(I)=NINT(G(I)*DS)/DS
+              GMAX=MAX(GMAX,GROUND(I))
+              GMIN=MIN(GMIN,GROUND(I))
+            ELSE
+              GROUND(I)=0.
+            ENDIF
+          ENDDO
+        ELSE
+          DO I=1,LEN
+            GROUND(I)=0.
+          ENDDO
+          GMAX=0.
+          GMIN=0.
+        ENDIF
+      ENDIF
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!  COMPUTE NUMBER OF BITS
+      NBIT=LOG((GMAX-GMIN)*DS+0.9)/LOG(2.)+1.
+!
+! GET REAL FIELD ROUNDED TO DECIMAL SCALING
+
+!     G(1:LEN)=GROUND(1:LEN)
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      RETURN
+      END

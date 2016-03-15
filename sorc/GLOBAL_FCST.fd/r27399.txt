@@ -1,0 +1,13 @@
+Dingchen.Hou@g14a2$ cd ../*27399
+Dingchen.Hou@g14a2$ svn info
+Path: .
+URL: https://svnemc.ncep.noaa.gov/projects/gfs/trunk/para/sorc/global_fcst.fd
+Repository Root: https://svnemc.ncep.noaa.gov/projects
+Repository UUID: 281fb692-3a18-0410-826d-9e847983f365
+Revision: 27713
+Node Kind: directory
+Schedule: normal
+Last Changed Author: nicole.mckee@noaa.gov
+Last Changed Rev: 27399
+Last Changed Date: 2013-04-03 12:54:41 +0000 (Wed, 03 Apr 2013)
+

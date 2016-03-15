@@ -6,8 +6,30 @@ echo
 echo `date`                                                               setup job cards
 echo
 #########################################################################################
+#
+         jjjps=$jjjp00
+         jjjpe=$jjje00
+if [[ $submit_post_together = yes ]]; then
+   if (( jjj == $jjjf00 )); then
+         jjjps=$jjjp00
+         jjjpe=$jjje00
+   elif (( jjj == $jjjf00l )); then
+         jjjps=$jjjp00l
+         jjjpe=$jjje00l
+   elif (( jjj == $jjjf06 )); then
+         jjjps=$jjjp06
+         jjjpe=$jjje06
+   elif (( jjj == $jjjf12 )); then
+         jjjps=$jjjp12
+         jjjpe=$jjje12
+   elif (( jjj == $jjjf18 )); then
+         jjjps=$jjjp18
+         jjjpe=$jjje18
+   fi
+fi
 
     cat <<eofCAT >$jobcontrol
+
 #!/bin/ksh -l
 #
 #PBS -N $jobname
@@ -24,7 +46,8 @@ eofCAT
       if [[ -n $resources ]]; then
 	echo include resources=$resources
 	cat <<eofCAT >>$jobcontrol
-#PBS -l mem=$resources
+#PBS -l vmem=$resources
+#PBS -l procs=1
 eofCAT
       fi
     fi
@@ -32,21 +55,35 @@ eofCAT
       if [[ -n $total_tasks ]]; then
 	echo include total_tasks=$total_tasks
 	cat <<eofCAT >>$jobcontrol
-#PBS -l procs=$total_tasks
+###PBS -l procs=$total_tasks
+#export total_tasks=$total_tasks
+eofCAT
+      fi
+      if [[ -n $node ]]; then
+	echo include node=$node
+	cat <<eofCAT >>$jobcontrol
+#PBS -l nodes=$node:ppn=$taskspernode
 export total_tasks=$total_tasks
 eofCAT
       fi
-#      if [[ -n $node ]]; then
-#	echo include node=$node
-#	cat <<eofCAT >>$jobcontrol
-##PBS -l nodes=$node:ppn=$tasks_per_node
-#eofCAT
-#      fi
     fi
+
+#03/19/2014, add the following block following  Fanglin's run
+task_type=`echo ${taskname} | cut -c1-8`
+#echo $task_type ${taskname}
+   if [[ ${task_type} = forecast ]] ; then
+       cat <<eofCAT >>$jobcontrol
+export MPI_BUFS_PER_PROC=4096
+export MPI_BUFS_PER_HOST=4096
+export KMP_STACKSIZE=2048m
+eofCAT
+   fi
+
     cat <<eofCAT >>$jobcontrol
 module load intel
 module load mpt
 module load adaptive
+module load ncep
 
 echo \`date\` $jobdir/$jobscript begin
 echo \`date\` env sort begin
@@ -57,6 +94,8 @@ export envir=$envir
 export cyc=$cyc
 export cyc_fcst=$cyc_fcst
 export job=$jobname
+export gefsmachine=$gefsmachine
+export gefsmpexec="$gefsmpexec "
 #DHOU 03/07/2012 1 line
 #export jobscript=$jobscript
 eofCAT
@@ -76,6 +115,7 @@ eofCAT
     if [[ $jobscript = JGEFS_SIGCHGRS.sms.dev ]]; then
       cat <<eofCAT >>$jobcontrol
 export OMP_NUM_THREADS=1
+#export OMP_NUM_THREADS=$OMP_NUM_THREADS_CH
 eofCAT
     fi
     if [[ $jobscript = JGEFS_NCEPPOST.sms.dev ]]; then
@@ -83,8 +123,14 @@ eofCAT
 export OMP_NUM_THREADS=1
 eofCAT
     fi
+    if [[ $jobscript = JGEFS_FORECAST.sms.dev ]]; then
+      cat <<eofCAT >>$jobcontrol
+export gefsmpexec="$gefsmpexec omplace -nt $OMP_NUM_THREADS"
+eofCAT
+    fi
     cat <<eofCAT >>$jobcontrol
 # export for development runs only begin
+cd $controldir
 . $controldir/setbase
 . $parmdir/gefs.parm
 export RUN_ENVIR=$envir
@@ -126,9 +172,30 @@ echo \`date\` env sort end
 pwdsave=\`pwd\`
 
 echo \`date\` $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje next submit for dev before begin
-
+export submit_post_together=$submit_post_together
 cd $controldir
+if [[ $submit_post_together = yes ]]; then
+   if (( $jjj == $jjjf00  || $jjj == $jjjf00l || $jjj == $jjjf06 || $jjj == $jjjf12 || $jjj == $jjjf18 )); then
+        (( iii = $jjjps  ))
+             while (( iii >= $jjjps && iii <= $jjjpe - 2 ));do
+                    if (( iii == $jjjpe- 2 )); then
+                     $0 $yyyymmddccb\$iii $yyyymmddcce$jjje nextbefore 2>&1
+                    else
+                    ((  iiie = iii + 2  ))
+                     $0 $yyyymmddccb\$iii $yyyymmddccb\$iiie nextbefore 2>&1
+                    fi
+                    (( iii = iii + 4 ))
+            done
+   else
+   $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore 2>&1
+   fi
+else
+
 $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore 2>&1
+fi
+
+#cd $controldir
+#$0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore 2>&1
 rc=\$?
 echo \`date\` $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextbefore rc=\$rc
 cd \$pwdsave
@@ -150,9 +217,32 @@ echo
 echo \`date\` $jobdir/$jobscript run after
 
 echo \`date\` $0  $yyyymmddccb$jjjb $yyyymmddcce$jjje next submit for dev after begin
-
 cd $controldir
-$0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextafter 2>&1
+if [[ $submit_post_together = yes ]]; then
+    if (( $jjj == $jjjs00  && $fcst_segments == 2 ));  then
+
+                     $0 $yyyymmddccb$jjjs00 $yyyymmddccb$jjjr00 nextafter 2>&1
+
+                   (( iii = $jjjr00  ))
+             while (( iii >= $jjjr00 && iii <= $jjjz00 -1 ));do
+                    if (( iii == $jjjz00 - 1 )); then
+                     $0 $yyyymmddccb\$iii $yyyymmddcce\$jjje nextbefore 2>&1
+                    else
+
+                    (( iiie = iii + 1 ))
+                     $0 $yyyymmddccb\$iii $yyyymmddccb\$iiie nextbefore 2>&1
+                    fi
+                    (( iii = iii + 1 ))
+             done
+   else
+    $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextafter 2>&1
+   fi
+else
+       $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextafter 2>&1
+fi
+
+#cd $controldir
+#$0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextafter 2>&1
 rc=\$?
 echo \`date\` $0 $yyyymmddccb$jjjb $yyyymmddcce$jjje nextafter rc=\$rc
 

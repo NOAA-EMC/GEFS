@@ -9,13 +9,27 @@ echo
 echo `date` $0 $*                                                         check arguments
 echo
 
+#DHOU, 01/03/2013 add this block to generate the machine name related variables
+  machl=`uname -n | cut -c1`
+  if [[ $machl = r ]]; then
+   machl=f
+  fi
+
+#DHOU, 12/17/2013, define PTMP to pointing to /ptmp or /ptmpd2
+  PTMP=ptmp
+  STMP=stmp
+#if [[ $machl = t ]] || [[ $machl = g ]]; then
+# PTMP=ptmpd2
+# STMP=stmpd2
+#fi
+
 goodargs=yes
 nextflag=no
 tseqflag=no
 tcdsflag=no
 tjobflag=no
-testflag=no
 testflag=yes
+testflag=no
 joblistflag=no
 whenrun=neither
 # special section for testing only
@@ -228,15 +242,15 @@ echo
 
 lname=$callstring.$expid.$dtg.$mach.$pid
 if [[ $LOGNAME = glopara ]]; then
-  # ldir=/ptmp/$LOGNAME/para_gefs/temp.gefs.run
-  ldir=/ptmp/$LOGNAME/para_gefs/o/$expid/runlog
+  # ldir=/$PTMP/$LOGNAME/para_gefs/temp.gefs.run
+  ldir=/$PTMP/$LOGNAME/para_gefs/o/$expid/runlog
 else
-  # ldir=/ptmp/$LOGNAME/temp.gefs.run
-  ldir=/ptmp/$LOGNAME/o/$expid/runlog
+  # ldir=/$PTMP/$LOGNAME/temp.gefs.run
+  ldir=/$PTMP/$LOGNAME/o/$expid/runlog
 #The next two lines for Zeus
   if [[ $gefsmachine = zeus ]]; then                       
   ZPTM=/scratch2/portfolios/NCEPDEV
-  ldir=$ZPTM/ptmp/$LOGNAME/o/$expid/runlog
+  ldir=$ZPTM/$PTMP/$LOGNAME/o/$expid/runlog
   fi
 fi
 echo ldir=$ldir lname=$lname
@@ -331,6 +345,8 @@ NET=gens
 
 #. $cwd/../parm/gefs.parm
 . $parmdir/gefs.parm
+. $parmdir/gefs_init.parm
+echo inflag=$inflag
 
 (( npert = npair * 2 ))
 echo npert=$npert
@@ -791,9 +807,15 @@ if [[ $nextflag = yes ]]; then
   else 
     case $jjjc in
 
-      (000) jjjb=012 ;;
-#DHOU 03/26/2012 skip ET and gfs for Zeus
-#     (000) jjjb=100 ;;
+      (000) if (($inflag ==6)); then 
+            jjjb=005 
+            else
+            jjjb=012
+#           jjjb=100 ;;      #use this line to skip INIT and gfs for testing
+            fi ;;
+      (005) jjjb=010 ;;
+      (010) jjjb=012 ;;
+#     (010) jjjb=100 ;;      #use this line to skip INIT and gfs for testing
       (012) jjjb=013 ;;
       (013) jjjb=014 ;;
 
@@ -834,10 +856,8 @@ if [[ $nextflag = yes ]]; then
       ;;
 
       ($jjjg00) jjjb=$jjjf00 ;;
-      ($jjjf00) jjjb=$jjjp00 ;;
-      #                                     when running 6-hour cycling only
-      #                                     use next line to skip the restart copy job
-      #($jjjf00) (( jjjb=jjjp00 + 1 )) ;;
+#     ($jjjf00) jjjb=$jjjp00 ;;
+      ($jjjf00) (( jjjb=jjjp00 + 1 )) ;; #to skip the restart copy job, e.g. in cycling only tests
       ($jjje00) jjjb=$jjjs00 ;;
       ($jjjs00)
 	if (( fcst_segments == 2 )); then
@@ -847,15 +867,12 @@ if [[ $nextflag = yes ]]; then
 	fi
       ;;
       ($jjjz00) jjjb=$jjjf00l ;;
-      ($jjjf00l) jjjb=$jjjp00l ;;
-      #                                       when skipping re-start copy
-      #($jjjf00l) (( jjjb=jjjp00l + 1 )) ;;
-      #        
+#     ($jjjf00l) jjjb=$jjjp00l ;;
+      ($jjjf00l) (( jjjb=jjjp00l + 1 )) ;; #skipping re-start copy
       ($jjje00l) jjjb=$jjjs00l ;;
       ($jjjs00l) jjjb=$jjjo00 ;;
       ($jjjo00) jjjb=$jjjt00 ;;
-#  DHOU 03/27/2012  use next line to skip track and track-average jobs ZEUS 
-#     ($jjjo00) jjjb=900 ;;
+#     ($jjjo00) jjjb=900 ;;  #  to skip track and track-average jobs ZEUS 
       ($jjjt00) jjjb=$jjja00 ;;
 
       ($jjja00) jjjb=$jjja01;;
@@ -1055,6 +1072,8 @@ elif (( jjj >= jjjf18 )) && (( jjj <= jjje18 )); then
 else 
   case $jjj in
     (000) taskname=r000 ;;
+    (005) taskname=init.mask ;;
+    (010) taskname=enkf.track ;;
     (012) taskname=init.separate ;;
     (013) taskname=init.et ;;
     (014) taskname=init.combine ;;
@@ -1261,15 +1280,11 @@ echo
 # forecast, post, prdgen, prdgen.gfs, ensstat 
 #
 
-wall_clock_limit_fcst_long="00:60:00"
-wall_clock_limit_fcst_long="03:30:00"
-wall_clock_limit_fcst_long="00:15:00"
-wall_clock_limit_fcst_short="00:10:00"
 wall_clock_limit_fcst_short="00:30:00"
 wall_clock_limit_fcst_long="02:30:00"
   if [[ $gefsmachine = wcoss ]]; then                       
-wall_clock_limit_fcst_long="1:30"
-wall_clock_limit_fcst_short="00:10"
+wall_clock_limit_fcst_long="2:59"
+wall_clock_limit_fcst_short="00:30"
   fi
 
 echo wall_clock_limit_fcst_long=$wall_clock_limit_fcst_long
@@ -1295,11 +1310,13 @@ splim=101001001
 # coordinate these settings with other runs
 
 joblim=60        #
-joblim=60        #
+joblim=5         #
+joblim=10        #
+joblim=130       #
 joblimdev=54     #
-joblimdev=54     #
+joblimdev=120    #
 joblimdevhigh=20 #
-joblimdevhigh=44 #
+joblimdevhigh=40 #
 
 (( miwait = 15 ))
 (( miwait = 5  ))  #DHOU, 08/06/2010 to reduce wait time
@@ -1313,6 +1330,7 @@ joblimdevhigh=44 #
 #
 
 jobmax=80
+jobmax=260
 
 #
 # maximum total number of jobs to be allowed in loadleveler
@@ -1320,6 +1338,7 @@ jobmax=80
 #
 
 jobtotlim=700
+jobtotlim=3000
 
 echo default splim=$splim
 echo joblim=$joblim
@@ -1351,10 +1370,43 @@ case $taskname in
     MP_SHARED_MEMORY=yes
   fi  
   ;;
-  (init.separate)
+  (init.mask)
     ################################# production variables
-    jobscript=JGEFS_INIT_SEPARATE.sms.$envir
-    job_name=jgefs_init_separate_$cyc
+    jobscript=JGEFS_INIT_MASK.sms.$envir
+    job_name=jgefs_init_mask_$cyc
+    job_type=parallel
+    total_tasks=80
+    node=1
+    wall_clock_limit="01:50:00"
+    resources="ConsumableMemory(1500 MB)"
+    task_affinity="cpu(1)"
+    MP_SHARED_MEMORY=yes
+    MEMORY_AFFINITY=MCM
+    job=gefs_init_mask_$cyc
+    ################################# development variables
+    during_previous_job=no
+    splim=301001001
+    ################################# production variables modified
+    resources="ConsumableMemory(3500 MB)"  
+    network_MPI="sn_all,shared,us"
+    resources=
+    node_usage=not_shared
+    node_resources="ConsumableMemory(110 GB)"
+    task_affinity="core(1)"
+    total_tasks=80
+  if [[ $gefsmachine = zeus ]]; then                       
+    node=8   
+  fi  
+  if [[ $gefsmachine = wcoss ]]; then                       
+    wall_clock_limit="01:50"
+    taskspernode=16
+    OMP_NUM_THREADS=1
+  fi  
+  ;;
+  (enkf.track)
+    ################################# production variables
+    jobscript=JGEFS_ENKF_TRACK.sms.$envir
+    job_name=jgefs_enkf_track_$cyc
     job_type=parallel
     total_tasks=40
     node=1
@@ -1363,26 +1415,54 @@ case $taskname in
     task_affinity="cpu(1)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
-    job=gefs_init_separate_$cyc
+    job=gefs_enkf_track_$cyc
     ################################# development variables
     during_previous_job=no
     splim=301001001
     ################################# production variables modified
-    resources="ConsumableMemory(3500 MB)"  #DHOU 08/20 for T254L42
+    resources="ConsumableMemory(3500 MB)"  
     network_MPI="sn_all,shared,us"
     resources=
     node_usage=not_shared
     node_resources="ConsumableMemory(110 GB)"
     task_affinity="core(1)"
-    node=2   #DHOU 08/20 for T254L42
     total_tasks=40
-#DHOU 04/04/2012 for ZEUS, T254L42
   if [[ $gefsmachine = zeus ]]; then                       
-    node=4   #DHOU 04/04/2012 for ZEUS, T254L42
+    node=4   
   fi  
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="01:50"
-    taskspernode=10
+    taskspernode=16
+    OMP_NUM_THREADS=1
+    MP_SHARED_MEMORY=no
+  fi  
+  ;;
+  (init.separate)
+    ################################# production variables
+    jobscript=JGEFS_INIT_SEPARATE.sms.$envir
+    job_name=jgefs_init_separate_$cyc
+    job_type=parallel
+    wall_clock_limit="01:50:00"
+    job=gefs_init_separate_$cyc
+    during_previous_job=no
+    splim=301001001
+    network_MPI="sn_all,shared,us"
+    resources=
+    node_usage=not_shared
+    node_resources="ConsumableMemory(110 GB)"
+    task_affinity="core(1)"
+    node=2   
+    total_tasks=40
+  if [[ $gefsmachine = zeus ]]; then                       
+    node=4   
+  fi  
+  if [[ $gefsmachine = wcoss ]]; then                       
+    wall_clock_limit="02:59"
+#   taskspernode=15
+    taskspernode=4
+#   taskspernode=3
+#   taskspernode=2
+#   taskspernode=1
     OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=no
   fi  
@@ -1415,14 +1495,15 @@ case $taskname in
     node_resources="ConsumableMemory(110 GB)"
     network_MPI="sn_all,shared,us"
     task_affinity="core(1)"
-    total_tasks=240
+    total_tasks=160
     node=3
   if [[ $gefsmachine = zeus ]]; then                       
     node=7   #DHOU 04/04/2012 for ZEUS, T254L42
   fi  
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="01:50"
-    taskspernode=10
+#   taskspernode=10
+    taskspernode=4
     OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=no
   fi  
@@ -1459,7 +1540,9 @@ case $taskname in
     node=4   
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="01:50"
-    taskspernode=10
+#   taskspernode=10
+#   taskspernode=4
+    taskspernode=2
     OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=no
   fi  
@@ -1546,10 +1629,6 @@ case $taskname in
      fi
 
 #DHOU add this for ZEUS
-# machl=`uname -n | cut -c1`
-# if [[ $machl = r ]]; then                       
-#      machl=f
-# fi
   if [[ $gefsmachine = zeus ]]; then                       
        (( taskspermem = 40 ))
        parallel_threads=1
@@ -1558,21 +1637,14 @@ case $taskname in
   fi
   if [[ $gefsmachine = wcoss ]]; then                       
      if [[ $fcstjoblength = long ]]; then
-#      (( taskspermem = 100 ))
-       (( taskspermem = 64 ))
+#      (( taskspermem = 64 ))
 #      (( taskspermem = 32 ))
-#      (( taskspermem = 16 ))
-#      (( taskspermem = 20 ))
-#      (( taskspermem = 80 ))
-#      (( taskspermem = 40 ))
-#      (( taskspermem = 20 ))
 #      (( taskspermem = 96 ))
 #      (( taskspermem = 48 ))
-#      (( taskspermem = 24 ))
-#      (( taskspermem = 12 ))
-#      (( taskspermem = 112 ))
+       (( taskspermem = 16 ))
      else  
-       (( taskspermem = 32 ))
+#      (( taskspermem = 32 ))
+       (( taskspermem = 16 ))
      fi  
 #      parallel_threads=1
        parallel_threads=2
@@ -1580,8 +1652,8 @@ case $taskname in
 #      parallel_threads=4
 #      parallel_threads=8
        task_affinity="core(1)"
-#      (( taskspernode = 16 / parallel_threads ))
-       (( taskspernode = 32 / parallel_threads ))
+       (( taskspernode = 16 / parallel_threads )) # for T574SL test June 2013
+#      (( taskspernode = 32 / parallel_threads )) # for WCOSS prod April 2013
        export taskspernode=$taskspernode
        export OMP_NUM_THREADS=$parallel_threads
     MP_SHARED_MEMORY=no
@@ -1684,6 +1756,8 @@ case $taskname in
   if [[ $gefsmachine = wcoss ]]; then                       
 #      (( taskspermem = 48 ))
        (( taskspermem = 32 ))
+       (( taskspermem = 40 ))
+       (( taskspermem = 80 ))
 #      parallel_threads=1
        parallel_threads=2
        task_affinity="core(1)"
@@ -1866,15 +1940,17 @@ case $taskname in
     else
       wall_clock_limit="$wall_clock_limit_fcst_short"
     fi
-#   total_tasks=8 !org
-    total_tasks=5
+    total_tasks=5     #T254
+    total_tasks=16    #T574
     case $gefsmachine in
       (wcoss)
        #taskspernode=$total_tasks
         taskspernode=16
     OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=yes
+    MP_SHARED_MEMORY=no
     resources="2000"
+    resources="5000"   #T574
       ;;
     esac
   ;;
@@ -1960,6 +2036,7 @@ case $taskname in
       (wcoss)
     MP_SHARED_MEMORY=yes
     resources="200"
+    resources="1000"     #T574
       ;;
     esac
   ;;
@@ -2061,6 +2138,7 @@ case $taskname in
   if [[ $gefsmachine = wcoss ]]; then                       
     MP_SHARED_MEMORY=yes
     resources="100"
+    resources="500"    # T574
   fi
   ;;
   (ensstat_lr)
@@ -2123,6 +2201,7 @@ case $taskname in
   if [[ $gefsmachine = wcoss ]]; then                       
     MP_SHARED_MEMORY=yes
     resources="100"
+    resources="500"    # T574
   fi
   ;;
   (post.track)
@@ -2184,6 +2263,7 @@ case $taskname in
     wall_clock_limit="01:10"
     MP_SHARED_MEMORY=yes
     resources="100"
+    resources="500"    # T574
   fi  
   ;;
  (post.cqpf)
@@ -2207,7 +2287,8 @@ case $taskname in
   if [[ $gefsmachine = wcoss ]]; then
     wall_clock_limit="00:10"
     MP_SHARED_MEMORY=yes
-    resources="100"
+#   resources="100"
+    resources="500"    # T574
   fi
   ;;
 
@@ -2243,7 +2324,7 @@ case $taskname in
     wall_clock_limit="00:29:00"
     resources="1650M"
   if [[ $gefsmachine = wcoss ]]; then                       
-    wall_clock_limit="00:10"
+    wall_clock_limit="00:30"
     MP_SHARED_MEMORY=yes
     resources="1000"
   fi  
@@ -2575,7 +2656,7 @@ else
     filelist=
     filelist="$filelist gfs.$cycle.sanl"
     filelist="$filelist gfs.$cycle.sfcanl"
-    filelist="$filelist avn.$cycle.cyclone.trackatcfunix"
+   #filelist="$filelist avn.$cycle.cyclone.trackatcfunix"
     filelist="$filelist gfs.$cycle.syndata.tcvitals.tm00"
     for file in $filelist
     do
@@ -2782,6 +2863,8 @@ else
     space=500400300200100
     echo FOR TESTING ONLY space=$space 
   else
+    #echo DO NOT CALL space=`$basebin/space.scrub`
+    #space=999999999
     space=`$basebin/space.scrub`
   fi
   if (( space < splim )); then
@@ -2834,13 +2917,17 @@ else
   echo `date` $0 $*                                                  check for pausecycle
   echo
 
+# 20131203 RLW replace pausecycle with pausecyclelist
   if [[ $waitflag = no ]]; then
-    if [[ $PDY$cyc = $pausecycle ]]; then
-      waitflag=yes
-      echo waitflag=$waitflag because pausecycle=$pausecycle matches current cycle $PDY$cyc
-    else
-      echo pausecycle=$pausecycle does not match current cycle $PDY$cyc
-    fi
+    for pausecycle in $pausecyclelist
+    do
+      if [[ $PDY$cyc = $pausecycle ]]; then
+	waitflag=yes
+	echo waitflag=$waitflag because pausecycle=$pausecycle matches current cycle $PDY$cyc
+      else
+	echo pausecycle=$pausecycle does not match current cycle $PDY$cyc
+      fi
+    done
   fi
 
   echo
@@ -2912,6 +2999,74 @@ else
 
 #DHOU  added "if ... fi" to skip the block for ZEUS/WCOSS
   fi
+# 20131006 RLW add job limit controls for WCOSS
+  if [[ $gefsmachine = wcoss ]]; then                       
+  
+  jobllq=-9
+  jobtotllq=-99
+  if [[ $waitflag = no ]]; then
+    sleep 10
+    echo "`date` llqstring before"
+    llqstring="`bjobs -Wu all`"
+    rc=$?
+    echo "`date` llqstring after   rc=$rc   length = "`echo "$llqstring" | wc   `      
+
+    jobllq=`echo "$llqstring" | grep -c " $LOGNAME "`
+    echo jobllq=$jobllq
+
+    jobtotllq=`echo "$llqstring" | grep -c -e " PEND " -e " RUN "`
+    echo jobtotllq=$jobtotllq
+
+    if (( jobtotllq > jobtotlim )); then
+      echo jobtotllq=$jobtotllq exceeds jobtotlim=$jobtotlim SO WAIT FOR SOME JOBS TO FINISH
+      waitflag=yes
+    else
+      echo jobtotllq=$jobtotllq does not exceed jobtotlim=$jobtotlim so the next job can be submitted
+    fi
+    case $class in
+      (devhigh)
+	jobllqdevhigh=`echo $"$llqstring" | grep ' devhigh ' | grep -c $LOGNAME`
+	if (( jobllqdevhigh > joblimdevhigh )); then
+	  echo jobllqdevhigh=$jobllqdevhigh exceeds joblimdevhigh=$joblimdevhigh SO WAIT FOR SOME JOBS TO FINISH
+	  waitflag=yes
+	else
+	  echo jobllqdevhigh=$jobllqdevhigh does not exceed joblimdevhigh=$joblimdevhigh so the next job can be submitted
+	fi
+      ;;
+      (dev)
+	jobllqdev=`echo "$llqstring" | grep -e ' dev ' -e ' devhigh ' | grep -c $LOGNAME`
+	if (( jobllqdev > joblimdev )); then
+	  echo jobllqdev=$jobllqdev exceeds joblimdev=$joblimdev SO WAIT FOR SOME JOBS TO FINISH
+	  waitflag=yes
+	else
+	  echo jobllqdev=$jobllqdev does not exceed joblimdev=$joblimdev so the next job can be submitted
+	fi
+      ;;
+      (*)
+	if (( jobllq > joblim )); then
+	  echo jobllq=$jobllq exceeds joblim=$joblim SO WAIT FOR SOME JOBS TO FINISH
+	  waitflag=yes
+	else
+	  echo jobllq=$jobllq does not exceed joblim=$joblim so the next job can be submitted
+	fi
+      ;;
+    esac
+    if [[ $during_previous_job = no ]]; then
+      jobtest1=$id$PDY$cyc
+#DH   pdycycprev=`/nwprod/util/exec/ndate -$fhrp $PDY$cyc`
+      pdycycprev=`ndate -$fhrp $PDY$cyc`
+      jobtest2=$id$pdycycprev
+      echo jobtest1=$jobtest1 pdycycprev=$pdycycprev jobtest2=$jobtest2 miwait=$miwait waitflag=$waitflag before
+      numcurrent=`echo "$llqstring" | grep -c -e $jobtest1 -e $jobtest2`
+      if (( numcurrent > 1 )); then
+	waitflag=yes
+	miwait=2
+      fi
+      echo during_previous_job=$during_previous_job numcurrent=$numcurrent miwait=$miwait waitflag=$waitflag after
+    fi
+  fi
+
+  fi
 #echo DHOUTEST now
 #echo $class $testflag $waitflag
 #exit
@@ -2960,6 +3115,9 @@ else
     dd=`echo $yyyymmddhh|cut -c7-8`
     hh=`echo $yyyymmddhh|cut -c9-10`
     startdate="$mo/$dd/$yyyy ${hh}:${mi}"
+    if [[ $gefsmachine = wcoss ]]; then
+      startdate="${yyyy}:${mo}:${dd}:${hh}:${mi}"
+    fi
     echo
     echo startdate=$startdate
     echo
@@ -3072,7 +3230,7 @@ echo
 ) 2>&1 | tee -a $ldir/$lname
 
 echo $ldir
-ls -ablprt $ldir | tail -7
+#ls -ablprt $ldir | tail -7
 
 echo
 echo `date` $0 $*                                                                     end
