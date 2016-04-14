@@ -120,6 +120,8 @@ eofCAT
 module purge
 module load ics
 module load lsf
+module load grib_util/v1.0.1
+module load util_shared/v1.0.0
 eofCAT
     if [[ ${job_type} = parallel ]] ; then
      cat <<eofCAT >>$jobcontrol$SUBJOB

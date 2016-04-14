@@ -36,13 +36,13 @@ export NWROOT=/nwprod2
 export NWROOTprod=/nwprod2
 export NWROOTp1=/nwprod
 
-HOMEDIR=/ensemble/save/Dingchen.Hou/RFC
+HOMEDIR=/ensemble/save/Wen.Meng/gefs/RFC
 export gefsmachine=${gefsmachine:-wcoss}
 
   export HOMEgefs=$HOMEDIR/gefs.v11.0.0
   export HOMEgefs=$basesource/nwdev
 
-  export HOMEgsm=$HOMEDIR/gsm.v12.1.0
+  export HOMEgsm=$HOMEDIR/para
   export HOMEpost=$HOMEDIR/ncep_post.v5.1.1
   export HOMEenkf=$HOMEDIR/enkf.v2.0.1
   export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.0
