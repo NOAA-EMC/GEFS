@@ -550,7 +550,6 @@ echo jjjs00l=$jjjs00l
 echo jjjo00=$jjjo00
 echo jjjt00=$jjjt00
 echo jjja00=$jjja00
-echo jjja01=$jjja01
 echo
 echo jjjf06=$jjjf06
 echo jjjp06=$jjjp06
@@ -972,8 +971,7 @@ if [[ $nextflag = yes ]]; then
 #     ($jjjo00) jjjb=$jjjc18 ;;  # RLW 20150708 skip track and track-average jobs for production since they are in a different package
       ($jjjo00)
 	if (( cyct == 00 )); then
-#	  jjjb=$jjja01 #skip track and track-average job
-          jjjb=$jjjt00 #restore track job
+	  jjjb=$jjja01
 	else
 	  jjjb=$jjjc18
 	fi
