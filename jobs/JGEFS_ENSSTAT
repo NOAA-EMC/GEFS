@@ -188,45 +188,48 @@ export dataset_3=b
 export ext_h=""
 
 # Some systems require the number of processors to be specified at the beginning of each line of MPMD script
-MPMD_PRELINE=${MPMD_PRELINE:-}
+# MPMD_PRELINE=${MPMD_PRELINE:-}
 
 #subdata=${DATA}/${gridlist_1}${dataset_1}
 subdata_1=${DATA}/hr_lr
 if [ ! -d ${subdata_1} ]; then mkdir -p ${subdata_1}; fi
-echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_ensstat.sh.ecf '$gridlist_1' $FHINC_1 ${subdata_1} $dataset_1  2>&1 >${outfile}" >>ensstat.cmdfile
+# echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_ensstat.sh.ecf '$gridlist_1' $FHINC_1 ${subdata_1} $dataset_1  2>&1 >${outfile}" >>ensstat.cmdfile
+echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf '$gridlist_1' $FHINC_1 ${subdata_1} $dataset_1  2>&1 >${outfile}" >>ensstat.cmdfile
 
 subdata_2=${DATA}/${gridlist_2}${dataset_2}
 if [ ! -d ${subdata_2} ]; then mkdir -p ${subdata_2}; fi
 outfile=${subdata_2}/${gridlist_2}.out
-echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_2 $FHINC_2 ${subdata_2} $dataset_2 2>&1 >${outfile}" >>ensstat.cmdfile
+# echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_2 $FHINC_2 ${subdata_2} $dataset_2 2>&1 >${outfile}" >>ensstat.cmdfile
+echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_2 $FHINC_2 ${subdata_2} $dataset_2 2>&1 >${outfile}" >>ensstat.cmdfile
 
 subdata_3=${DATA}/${gridlist_3}${dataset_3}
 if [ ! -d ${subdata_3} ]; then mkdir -p ${subdata_3}; fi
 outfile=${subdata_3}/${gridlist_3}.out
-echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_3 $FHINC_3 ${subdata_3} $dataset_3 2>&1 >${outfile}" >>ensstat.cmdfile
+# echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_3 $FHINC_3 ${subdata_3} $dataset_3 2>&1 >${outfile}" >>ensstat.cmdfile
+echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_3 $FHINC_3 ${subdata_3} $dataset_3 2>&1 >${outfile}" >>ensstat.cmdfile
 
 cat ensstat.cmdfile
 chmod 775 ensstat.cmdfile
 export MP_CMDFILE=${DATA}/ensstat.cmdfile
 
-case $gefsmachine in
-	(theia)
-		. $moduleInit
-		# $APRUN -configfile $MP_CMDFILE
-		# WCK - impi is currently bugged running copygb2 for some reason, temporarily load mvapich2
-		module load mvapich2
-		# WCK - The -configfile option for MPMD does work properly with quoted arguments on Theia, so join MP_CMDFILE into a colon-delimited string to run as single long argument.
-		$APRUN `sed '{:q;N;s/\n/ : /g;t q}' $MP_CMDFILE`
-		module load impi
-		;;
-	(wcoss)
+# case $gefsmachine in
+# 	(theia)
+# 		. $moduleInit
+# 		# $APRUN -configfile $MP_CMDFILE
+# 		# WCK - impi is currently bugged running copygb2 for some reason, temporarily load mvapich2
+# 		module load mvapich2
+# 		# WCK - The -configfile option for MPMD does work properly with quoted arguments on Theia, so join MP_CMDFILE into a colon-delimited string to run as single long argument.
+# 		$APRUN `sed '{:q;N;s/\n/ : /g;t q}' $MP_CMDFILE`
+# 		module load impi
+# 		;;
+# 	(wcoss)
 		export MP_PGMMODEL=mpmd
 		$APRUN
-		;;
-	(*)
-		echo "gefsmachine=$gefsmachine not implemented in $0 yet"
-		;;
-esac # $gefsmachine
+# 		;;
+# 	(*)
+# 		echo "gefsmachine=$gefsmachine not implemented in $0 yet"
+# 		;;
+# esac # $gefsmachine
 
 msg="JOB COMPLETED NORMALLY"
 postmsg "$jlogfile" "$msg"

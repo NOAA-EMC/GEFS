@@ -509,7 +509,7 @@ for ipair in $nlist; do
 done # for ipair in $nlist
 
 # Some systems require the number of processors to be specified at the beginning of each line of MPMD script
-MPMD_PRELINE=${MPMD_PRELINE:-}
+# MPMD_PRELINE=${MPMD_PRELINE:-}
 
 (( itask = 0 ))
 while (( itask < initseparatetasks )); do
@@ -520,7 +520,8 @@ while (( itask < initseparatetasks )); do
 	echo
 	cat poescript.$itask
 	echo
-	echo "${MPMD_PRELINE}poescript.$itask" >>poescript
+	# echo "${MPMD_PRELINE}poescript.$itask" >>poescript
+	echo "poescript.$itask" >>poescript
 	(( itask = itask + 1 ))
 done # while (( itask < initseparatetasks ))
 
@@ -545,27 +546,27 @@ echo "APRUN=$APRUN"
 export MP_CMDFILE=poescript
 		
 # Execute the script.
-case $gefsmachine in
-	(theia)
-		. $moduleInit
-		# $APRUN -configfile $MP_CMDFILE
-		# WCK - impi is currently bugged running copygb2 for some reason, temporarily load mvapich2
-		module load mvapich2
-		# WCK - The -configfile option for MPMD does work properly with quoted arguments on Theia, so join MP_CMDFILE into a colon-delimited string to run as single long argument.
-		$APRUN `sed '{:q;N;s/\n/ : /g;t q}' $MP_CMDFILE`
-		module load impi
-		;;
-	(wcoss)
+# case $gefsmachine in
+# 	(theia)
+# 		. $moduleInit
+# 		# $APRUN -configfile $MP_CMDFILE
+# 		# WCK - impi is currently bugged running copygb2 for some reason, temporarily load mvapich2
+# 		module load mvapich2
+# 		# WCK - The -configfile option for MPMD does work properly with quoted arguments on Theia, so join MP_CMDFILE into a colon-delimited string to run as single long argument.
+# 		$APRUN `sed '{:q;N;s/\n/ : /g;t q}' $MP_CMDFILE`
+# 		module load impi
+# 		;;
+# 	(wcoss)
 		export MP_PGMMODEL=mpmd
 		export MP_LABELIO=yes
 		export MP_INFOLEVEL=3
 		export MP_STDOUTMODE=unordered
 		$APRUN
-		;;
-	(*)
-		echo "gefsmachine=$gefsmachine not implemented in $0 yet"
-		;;
-esac # $gefsmachine
+# 		;;
+# 	(*)
+# 		echo "gefsmachine=$gefsmachine not implemented in $0 yet"
+# 		;;
+# esac # $gefsmachine
 
 echo DATA=$DATA after poe
 pwd
