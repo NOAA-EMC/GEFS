@@ -6,15 +6,6 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-###########################################
-# Run gefs_config to get input parameters
-###########################################
-
-if [ "$RUN_ENVIR" = dev ]   ### For Developers
-then
-  . $basesource/nwdev/parm/gefs_config
-fi
-
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ############################
@@ -25,11 +16,11 @@ export cycle=t${cyc}z
 export cycle_fcst=t${cyc_fcst}z
 
 if (( cyc == cyc_fcst )); then
-  export cycsuffix=false
-  export fcstlong=true
+	export cycsuffix=false
+	export fcstlong=true
 else
-  export fcstlong=false
-  export cycsuffix=true
+	export fcstlong=false
+	export cycsuffix=true
 fi
 
 ##############################
@@ -109,7 +100,7 @@ export COMIN=${COMIN:-${COM_IN}/${RUN}.${PDY}}
 export COMOUT=${COMOUT:-${COM_OUT}/${RUN}.${PDY}}
 
 #####
-  export XC=.x
+export XC=.x
 export GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-${HOMEenkf}/exec/getsigensmeanp_smooth$XC}
 export RECENATMPEXEC=${RECENATMPEXEC:-${HOMEenkf}/exec/recentersigp$XC}
 

@@ -75,11 +75,11 @@ real, allocatable :: ff(:,:),pp(:,:),ss(:,:),aa(:)
 
 real      rk(10,5)
 
-character*120 cpgb,cpge
-character*120 crain,craino
-character*120 cfrzr,cfrzro
-character*120 cicep,cicepo
-character*120 csnow,csnowo
+character*255 cpgb,cpge
+character*255 crain,craino
+character*255 cfrzr,cfrzro
+character*255 cicep,cicepo
+character*255 csnow,csnowo
 
 namelist /namin/icyc,cpgb,cpge,crain,craino,cfrzr,cfrzro,  &
                      cicep,cicepo,csnow,csnowo

@@ -6,23 +6,9 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-###########################################
-# Run gefs_config to get input parameters
-###########################################
-if [ "$RUN_ENVIR" = dev ]      ### For Developers
-then
-# . $basesource/nw${envir}/versions/gefs.ver
-  . $basesource/nwdev/parm/gefs_config
-    export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-fi
-
 export APRUN=${gefsmpexec:-mpirun.lsf}
+gefsmachine=${gefsmachine:-wcoss}
 
-####################################
-#  Load the GRIB Utilities module
-####################################
-#. /usrx/local/Modules/default/init/ksh
-#module load grib_util/v1.0.1
 export CNVGRIB=$CNVGRIB21_GFS
 
 ####################################
@@ -43,14 +29,14 @@ export cycle=t${cyc}z
 export cycle_fcst=t${cyc_fcst}z
 
 if (( cyc == cyc_fcst )); then
-  export fcstlong=true
-  export cfsuffix=""
-  export cycsuffix=false
+	export fcstlong=true
+	export cfsuffix=""
+	export cycsuffix=false
 else
-  export fcstlong=false
-  export cfsuffix=".cycfs$cyc_fcst"
-  export cycsuffix=true
-fi
+	export fcstlong=false
+	export cfsuffix=".cycfs$cyc_fcst"
+	export cycsuffix=true
+fi # (( cyc == cyc_fcst ))
 
 ####################################
 # Specify NET and RUN Name and model
@@ -82,11 +68,9 @@ export pgmerr=errfile
 # In case of NCEPPOST failure, set RERUN=RESTART if necessary in NCEPPOST, and PRDGEN jobs
 # In case of PRDGEN   failure, set RERUN=RESTART if necessary in PRDGEN jobs
 ####################################
-  echo input setting RERUN=$RERUN
-  export RERUN=${RERUN:-RESTART}
-# export RERUN=RESTART
-# export RERUN=YES
-  echo current setting RERUN=$RERUN
+echo input setting RERUN=$RERUN
+export RERUN=${RERUN:-RESTART}
+echo current setting RERUN=$RERUN
 
 ####################################
 # Specify Execution Areas
@@ -112,11 +96,11 @@ setpdy.sh
 # Create member list
 ####################################
 if [[ $fcstlong = true ]]; then
-  memberlist="c00"
-  kmem=1
+	memberlist="c00"
+	kmem=1
 else
-  memberlist=""
-  kmem=0
+	memberlist=""
+	kmem=0
 fi
 
 ##############################################
@@ -130,10 +114,12 @@ export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
 export overwrite=yes
 
 if [[ "$makepgrb1" = "yes" ]]; then
-mkdir -m 775 -p $COMOUT/$cyc/pgrba
-mkdir -m 775 -p $COMOUT/$cyc/pgrbalr
-mkdir -m 775 -p $COMOUT/$cyc/pgrbb
-mkdir -m 775 -p $COMOUT/$cyc/pgrbblr
+	mkdir -m 775 -p $COMOUT/$cyc/pgrba
+	mkdir -m 775 -p $COMOUT/$cyc/pgrbalr
+	mkdir -m 775 -p $COMOUT/$cyc/pgrbb
+	mkdir -m 775 -p $COMOUT/$cyc/pgrbblr
+	mkdir -m 775 -p $COMOUT/$cyc/pgrbap5
+	mkdir -m 775 -p $COMOUT/$cyc/pgrbbp5
 fi
 
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2a
@@ -143,16 +129,14 @@ mkdir -m 775 -p $COMOUT/$cyc/pgrb2blr
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2bp5
 
-if test "$CREATE_TIGGE" = 'YES'
-then
- mkdir -m 775 -p $COMOUT/$cyc/pgrb2c
+if test "$CREATE_TIGGE" = 'YES'; then
+	mkdir -m 775 -p $COMOUT/$cyc/pgrb2c
 fi
 
-if test "$makepgrb2d" = 'yes'
-then
- mkdir -m 775 -p $COMOUT/$cyc/pgrbd
- mkdir -m 775 -p $COMOUT/$cyc/pgrb2d
- mkdir -m 775 -p $COMOUT/$cyc/pgrb2dp5
+if test "$makepgrb2d" = 'yes'; then
+	mkdir -m 775 -p $COMOUT/$cyc/pgrbd
+	mkdir -m 775 -p $COMOUT/$cyc/pgrb2d
+	mkdir -m 775 -p $COMOUT/$cyc/pgrb2dp5
 fi
 
 #mkdir -m 775 -p $COMOUT/$cyc/tctrack
@@ -191,43 +175,40 @@ export IGEN_FCST=107
 ####################################
 
 case $FORECAST_SEGMENT in
-  (hr)
-    # high resolution segment
-    export DOANALYSIS=YES;
-    export SHOUR=00
-    export FHINC=06
-    export FHINCP5=03
-    if [[ $fcstlong = true ]]; then
-      export FHOUR=$fhmaxh
-    else
-      export FHOUR=06
-    fi
-  ;;
-  (lr)
-    # low resolution segment
-    export DOANALYSIS=NO;
-    export FHINC=06
-    export FHINCP5=06
-    export SHOUR=$(( $fhmaxh + FHINC ))
-    if [[ $fcstlong = true ]]; then
-      export FHOUR=$fhmax
-    else
-      export FHOUR=06
-    fi
-  ;;
-  (*)
-    # whole forecast period
-    export DOANALYSIS=YES;
-    export SHOUR=00
-    export FHINC=06
-    export FHINCP5=03
-    if [[ $fcstlong = true ]]; then
-      export FHOUR=$fhmax
-    else
-      export FHOUR=06
-    fi
-  ;;
-esac
+	(hr) # high resolution segment
+		export DOANALYSIS=YES;
+		export SHOUR=00
+		export FHINC=06
+		export FHINCP5=03
+		if [[ $fcstlong = true ]]; then
+			export FHOUR=$fhmaxh
+		else
+			export FHOUR=06
+		fi
+		;;
+	(lr) # low resolution segment
+		export DOANALYSIS=NO;
+		export FHINC=06
+		export FHINCP5=06
+		export SHOUR=$(( $fhmaxh + FHINC ))
+		if [[ $fcstlong = true ]]; then
+			export FHOUR=$fhmax
+		else
+			export FHOUR=06
+		fi
+		;;
+	(*) # whole forecast period
+		export DOANALYSIS=YES;
+		export SHOUR=00
+		export FHINC=06
+		export FHINCP5=03
+		if [[ $fcstlong = true ]]; then
+			export FHOUR=$fhmax
+		else
+			export FHOUR=06
+		fi
+		;;
+esac # $FORECAST_SEGMENT
 
 echo FORECAST_SEGMENT=$FORECAST_SEGMENT
 echo FHINC=$FHINC
@@ -242,28 +223,24 @@ export HDMAX=00
 # If this is a rerun, remove all control files
 ####################################
 if [[ $RERUN = YES ]]; then
-  $USHgefs/gefs_restart_cleanup.sh 00 $FHMAX prd0p5 prd1p0 prd2p5
+	$USHgefs/gefs_restart_cleanup.sh 00 $FHMAX prd0p5 prd1p0 prd2p5
 fi
 
-FHINC34=$FHINCP5 
-
+FHINC34=$FHINCP5
 SHOUR_1=$SHOUR 
 SHOUR_2=$SHOUR 
 SHOUR_3=$SHOUR 
 
-if test $total_tasks -ge 4 
-then
-  SHOUR_4=$(( $SHOUR_3 + FHINCP5 ))
-  FHINC34=$(( $FHINC34 + FHINCP5 ))
+if test $total_tasks -ge 4; then
+	SHOUR_4=$(( $SHOUR_3 + FHINCP5 ))
+	FHINC34=$(( $FHINC34 + FHINCP5 ))
 fi
-if test $total_tasks -ge 5 
-then
-  SHOUR_5=$(( $SHOUR_4 + FHINCP5 ))
-  FHINC34=$(( $FHINC34 + FHINCP5 ))
+if test $total_tasks -ge 5; then
+	SHOUR_5=$(( $SHOUR_4 + FHINCP5 ))
+	FHINC34=$(( $FHINC34 + FHINCP5 ))
 fi
-if test $FHINC34 -le 9 
-then
- FHINC34=0$FHINC34
+if test $FHINC34 -le 9; then
+	FHINC34=0$FHINC34
 fi
 
 #mpmd job with 5 tasks, 1 for 1d, 2 for 2.5d; 3-5 for 0.5d grid
@@ -293,9 +270,8 @@ export FHINC_3=$FHINC34
 export SHOUR_3=$SHOUR_3
 export FHOUR_3=$FHOUR
 
-if test $total_tasks -eq 3 
-then
-  export DOANALYSIS_3=$DOANALYSIS
+if test $total_tasks -eq 3; then
+	export DOANALYSIS_3=$DOANALYSIS
 fi
 
 #task 4, 0.5d grid
@@ -306,9 +282,8 @@ export FHINC_4=$FHINC34
 export SHOUR_4=$SHOUR_4
 export FHOUR_4=$FHOUR
 
-if test $total_tasks -eq 4 
-then
-  export DOANALYSIS_4=$DOANALYSIS
+if test $total_tasks -eq 4; then
+	export DOANALYSIS_4=$DOANALYSIS
 fi
 
 #task 5, 0.5d grid
@@ -319,67 +294,77 @@ export FHINC_5=$FHINC34
 export SHOUR_5=$SHOUR_5
 export FHOUR_5=$FHOUR
 
-if test $SHOUR_4 -le 9 
-then
- SHOUR_4=0$SHOUR_4
+if test $SHOUR_4 -le 9; then
+	SHOUR_4=0$SHOUR_4
 fi
-if test $SHOUR_5 -le 9 
-then
- SHOUR_5=0$SHOUR_5
+if test $SHOUR_5 -le 9; then
+	SHOUR_5=0$SHOUR_5
 fi
 #################################
 # Run Post if Needed
 #################################
-if test $SHOUR -le $FHOUR
-then
+if test $SHOUR -le $FHOUR; then
 
-subdata=${DATA}/${SHOUR_1}.${FHOUR_1}.${FHINC_1}${jobgrid_1}
-if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-  outfile=${subdata}/${SHOUR_1}.${FHOUR_1}.${FHINC_1}${jobgrid_1}.out
-  echo "$HOMEgefs/scripts/exgefs_prdgen$jobgrid_1.sh.ecf ${SHOUR_1} ${FHOUR_1} ${FHINC_1} $DO_LOW_RES_1 $DOANALYSIS_1 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
-      
-#Note, task 2 is for the 2.5d grid, which shares the ex-script with 1.0d grid, but subdata should be different      
-subdata=${DATA}/${SHOUR_2}.${FHOUR_2}.${FHINC_2}\_2p5
-if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-  outfile=${subdata}/${SHOUR_2}.${FHOUR_2}.${FHINC_2}\_2p5.out
-  echo "$HOMEgefs/scripts/exgefs_prdgen$jobgrid_2.sh.ecf ${SHOUR_2} ${FHOUR_2} ${FHINC_2} $DO_LOW_RES_2 $DOANALYSIS_2 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
-	      
-if test $total_tasks -ge 3 
-then
-subdata=${DATA}/${SHOUR_3}.${FHOUR_3}.${FHINC_3}${jobgrid_3}
-  if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-  outfile=${subdata}/${SHOUR_3}.${FHOUR_3}.${FHINC_3}${jobgrid_3}.out
-  echo "$HOMEgefs/scripts/exgefs_prdgen$jobgrid_3.sh.ecf ${SHOUR_3} ${FHOUR_3} ${FHINC_3} $DO_LOW_RES_3 $DOANALYSIS_3 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
-fi
-		      
-if test $total_tasks -ge 4 
-then
-subdata=${DATA}/${SHOUR_4}.${FHOUR_4}.${FHINC_4}${jobgrid_4}
-if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-  outfile=${subdata}/${SHOUR_4}.${FHOUR_4}.${FHINC_4}${jobgrid_4}.out
-  echo "$HOMEgefs/scripts/exgefs_prdgen$jobgrid_4.sh.ecf ${SHOUR_4} ${FHOUR_4} ${FHINC_4} $DO_LOW_RES_4 $DOANALYSIS_4 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
-fi
-			      
-if test $total_tasks -ge 5 
-then
-subdata=${DATA}/${SHOUR_5}.${FHOUR_5}.${FHINC_5}${jobgrid_5}
-if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-  outfile=${subdata}/${SHOUR_5}.${FHOUR_5}.${FHINC_5}${jobgrid_5}.out
-  echo "$HOMEgefs/scripts/exgefs_prdgen$jobgrid_5.sh.ecf ${SHOUR_5} ${FHOUR_5} ${FHINC_5} $DO_LOW_RES_5 $DOANALYSIS_5 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
-fi
-			      
-cat prdgen.cmdfile
-chmod 775 prdgen.cmdfile
-export MP_PGMMODEL=mpmd
-export MP_CMDFILE=${DATA}/prdgen.cmdfile
+	# Some systems require the number of processors to be specified at the beginning of each line of MPMD script
+	MPMD_PRELINE=${MPMD_PRELINE:-}
 
-$APRUN
-				      
-# $HOMEgefs/scripts/exgefs_prdgen$jobgrid.sh.ecf
+	subdata=${DATA}/${SHOUR_1}.${FHOUR_1}.${FHINC_1}${jobgrid_1}
+	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+	outfile=${subdata}/${SHOUR_1}.${FHOUR_1}.${FHINC_1}${jobgrid_1}.out
+	echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_prdgen$jobgrid_1.sh.ecf ${SHOUR_1} ${FHOUR_1} ${FHINC_1} $DO_LOW_RES_1 $DOANALYSIS_1 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
 
-export SHOUR=`expr $FHOUR + $FHINC`
+	#Note, task 2 is for the 2.5d grid, which shares the ex-script with 1.0d grid, but subdata should be different
+	subdata=${DATA}/${SHOUR_2}.${FHOUR_2}.${FHINC_2}\_2p5
+	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+	outfile=${subdata}/${SHOUR_2}.${FHOUR_2}.${FHINC_2}\_2p5.out
+	echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_prdgen$jobgrid_2.sh.ecf ${SHOUR_2} ${FHOUR_2} ${FHINC_2} $DO_LOW_RES_2 $DOANALYSIS_2 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
 
-fi   #test $SHOUR
+	if test $total_tasks -ge 3; then
+		subdata=${DATA}/${SHOUR_3}.${FHOUR_3}.${FHINC_3}${jobgrid_3}
+		if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+		outfile=${subdata}/${SHOUR_3}.${FHOUR_3}.${FHINC_3}${jobgrid_3}.out
+		echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_prdgen$jobgrid_3.sh.ecf ${SHOUR_3} ${FHOUR_3} ${FHINC_3} $DO_LOW_RES_3 $DOANALYSIS_3 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
+	fi # test $total_tasks -ge 3
+
+	if test $total_tasks -ge 4; then
+		subdata=${DATA}/${SHOUR_4}.${FHOUR_4}.${FHINC_4}${jobgrid_4}
+		if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+		outfile=${subdata}/${SHOUR_4}.${FHOUR_4}.${FHINC_4}${jobgrid_4}.out
+		echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_prdgen$jobgrid_4.sh.ecf ${SHOUR_4} ${FHOUR_4} ${FHINC_4} $DO_LOW_RES_4 $DOANALYSIS_4 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
+	fi # test $total_tasks -ge 4
+
+	if test $total_tasks -ge 5; then
+		subdata=${DATA}/${SHOUR_5}.${FHOUR_5}.${FHINC_5}${jobgrid_5}
+		if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+		outfile=${subdata}/${SHOUR_5}.${FHOUR_5}.${FHINC_5}${jobgrid_5}.out
+		echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_prdgen$jobgrid_5.sh.ecf ${SHOUR_5} ${FHOUR_5} ${FHINC_5} $DO_LOW_RES_5 $DOANALYSIS_5 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
+	fi # test $total_tasks -ge 5
+
+	cat prdgen.cmdfile
+	chmod 775 prdgen.cmdfile
+	export MP_CMDFILE=${DATA}/prdgen.cmdfile
+
+	case $gefsmachine in
+		(theia)
+			. $moduleInit
+			# $APRUN -configfile $MP_CMDFILE
+			# WCK - impi is currently bugged running copygb2 for some reason, temporarily load mvapich2
+			module load mvapich2
+			# WCK - The -configfile option for MPMD does work properly with quoted arguments on Theia, so join MP_CMDFILE into a colon-delimited string to run as single long argument.
+			$APRUN `sed '{:q;N;s/\n/ : /g;t q}' $MP_CMDFILE`
+			module load impi
+			;;
+		(wcoss)
+			export MP_PGMMODEL=mpmd
+			$APRUN
+			;;
+		(*)
+			echo "gefsmachine=$gefsmachine not implemented in $0 yet"
+			;;
+	esac # $gefsmachine
+
+	export SHOUR=`expr $FHOUR + $FHINC`
+fi # test $SHOUR -le $FHOUR
 
 msg="$job completed normally"
 postmsg "$jlogfile" "$msg"

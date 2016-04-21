@@ -45,13 +45,13 @@ dirsuf=
 filsuf=
 GRID=
 if [[ $jobgrid == _p5 ]]; then
-   grid=${gridp5}  
-   dirsuf=p5
-   filsuf=.0p50.
-   GRID=_0P5
-   parm00=$PARMgefs/gefs_pgrb2a_0p50_f00.parm
-   parmhh=$PARMgefs/gefs_pgrb2a_0p50_fhh.parm
-fi
+	grid=${gridp5}
+	dirsuf=p5
+	filsuf=.0p50.
+	GRID=_0P5
+	parm00=$PARMgefs/gefs_pgrb2a_0p50_f00.parm
+	parmhh=$PARMgefs/gefs_pgrb2a_0p50_fhh.parm
+fi # [[ $jobgrid == _p5 ]]
 
 export makegrb2i=yes
 
@@ -74,275 +74,251 @@ export makegrb2i=yes
 ############################################################
 # Post Analysis Files before starting the Forecast Post
 ############################################################
-if test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2anl -a ${SHOUR} -eq 0
-then
+if test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2anl -a ${SHOUR} -eq 0; then
 
-   # RLW 20110725 more complete cleanup of temporary files
-   rm -f master_grb2file
-   rm -f tmpfile
-   rm -f pgbafile pgbaifile
-   rm -f pgb2afile pgb2aifile
+	# RLW 20110725 more complete cleanup of temporary files
+	rm -f master_grb2file
+	rm -f tmpfile
+	rm -f pgbafile pgbaifile
+	rm -f pgb2afile pgb2aifile
 
-#  parmlist=$PARMgefs/gefs_pgrb2a_f00.parm
-   parmlist=$parm00 
-   ln -s $COMINgfs/${RUN}.t${cyc}z.master.grb2anl master_grb2file
-   $WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile
-   $COPYGB2 -g "${grid}" -i0 -x tmpfile pgb2afile
-   $GRB2INDEX pgb2afile pgb2aifile
-   $ENSADD $e1 $e2 pgb2afile epgbafile
-   mv epgbafile pgb2afile
-      if [[ "$makepgrb1" = "yes" ]]; then
-   $CNVGRIB -g21 pgb2afile pgbafile
-   $GRBINDEX pgbafile pgbaifile
-      fi
+	#  parmlist=$PARMgefs/gefs_pgrb2a_f00.parm
+	parmlist=$parm00 
+	ln -s $COMINgfs/${RUN}.t${cyc}z.master.grb2anl master_grb2file
+	$WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile
+	$COPYGB2 -g "${grid}" -i0 -x tmpfile pgb2afile
+	$GRB2INDEX pgb2afile pgb2aifile
+	$ENSADD $e1 $e2 pgb2afile epgbafile
+	mv epgbafile pgb2afile
+	if [[ "$makepgrb1" = "yes" ]]; then
+		$CNVGRIB -g21 pgb2afile pgbafile
+		$GRBINDEX pgbafile pgbaifile
+	fi # [[ "$makepgrb1" = "yes" ]]
 
-   if test "$SENDCOM" = 'YES'
-   then
-      #
-      # Save Pressure GRIB/Index files
-      #
-      if [[ "$makepgrb1" = "yes" ]]; then
-       mv pgbafile $COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\anl
-	  testfile=$COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\anl
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-       if [[ "$makegrb1i" = "yes" ]]; then
-	mv pgbaifile $COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\ianl
-	    testfile=$COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\ianl
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-       fi
-      fi
-      if [[ "$makepgrb2" = "yes" ]]; then
-       mv pgb2afile $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl
-	   testfile=$COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-       if [[ "$makegrb2i" = "yes" ]]; then
-	  mv pgb2aifile $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl.idx
-	       testfile=$COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl.idx
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-       fi
-      fi
-
-#################################### CHECK DBN ALERTS ###########
-      if test "$SENDDBN" = 'YES'
-      then
-         if test "$NET" = 'gens'
-         then
-	   MEMBER=GFS
-	   if [[ "$makepgrb1" = "yes" ]]; then
-	   $DBNROOT/bin/dbn_alert MODEL ENS_PGBA${GRID}_$MEMBER $job $COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\anl
-	   fi
-	   if [[ "$makegrb1i" = "yes" ]]; then
-	     $DBNROOT/bin/dbn_alert MODEL ENS_PGBAI${GRID}_$MEMBER $job $COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\ianl
-	   fi
-	   if [[ "$makepgrb2" = "yes" ]]; then
-	     $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_$MEMBER $job $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl
-	   fi
-	   #if [[ "$makegrb2i" = "yes" ]]; then
-	   #    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI${GRID}_$MEMBER $job $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\ianl
-	   #fi
-         fi
-      fi
-   fi
-fi
+	if test "$SENDCOM" = 'YES'; then
+		#
+		# Save Pressure GRIB/Index files
+		#
+		if [[ "$makepgrb1" = "yes" ]]; then
+			mv pgbafile $COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\anl
+			testfile=$COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\anl
+			if [[ ! -s $testfile ]]; then
+				msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+				echo "`date`    $msg"
+				postmsg "$jlogfile" "$msg"
+				export err=1
+				err_chk
+			fi # [[ ! -s $testfile ]]
+			if [[ "$makegrb1i" = "yes" ]]; then
+				mv pgbaifile $COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\ianl
+				testfile=$COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\ianl
+				if [[ ! -s $testfile ]]; then
+					msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+					echo "`date`    $msg"
+					postmsg "$jlogfile" "$msg"
+					export err=1
+					err_chk
+				fi # [[ ! -s $testfile ]]
+			fi # [[ "$makegrb1i" = "yes" ]]
+		fi # [[ "$makepgrb1" = "yes" ]]
+		if [[ "$makepgrb2" = "yes" ]]; then
+			mv pgb2afile $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl
+			testfile=$COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl
+			if [[ ! -s $testfile ]]; then
+				msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+				echo "`date`    $msg"
+				postmsg "$jlogfile" "$msg"
+				export err=1
+				err_chk
+			fi # [[ ! -s $testfile ]]
+			if [[ "$makegrb2i" = "yes" ]]; then
+				mv pgb2aifile $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl.idx
+				testfile=$COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl.idx
+				if [[ ! -s $testfile ]]; then
+					msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+					echo "`date`    $msg"
+					postmsg "$jlogfile" "$msg"
+					export err=1
+					err_chk
+				fi # [[ ! -s $testfile ]]
+			fi # [[ "$makegrb2i" = "yes" ]]
+		fi # [[ "$makepgrb2" = "yes" ]]
+		#################################### CHECK DBN ALERTS ###########
+		if test "$SENDDBN" = 'YES'; then
+			if test "$NET" = 'gens'; then
+				MEMBER=GFS
+				if [[ "$makepgrb1" = "yes" ]]; then
+					$DBNROOT/bin/dbn_alert MODEL ENS_PGBA${GRID}_$MEMBER $job $COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\anl
+				fi
+				if [[ "$makegrb1i" = "yes" ]]; then
+					$DBNROOT/bin/dbn_alert MODEL ENS_PGBAI${GRID}_$MEMBER $job $COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\ianl
+				fi
+				if [[ "$makepgrb2" = "yes" ]]; then
+					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_$MEMBER $job $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl
+				fi
+				#if [[ "$makegrb2i" = "yes" ]]; then
+				#    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI${GRID}_$MEMBER $job $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\ianl
+				#fi
+			fi # test "$NET" = 'gens'
+		fi # test "$SENDDBN" = 'YES'
+	fi # test "$SENDCOM" = 'YES'
+fi # test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2anl -a ${SHOUR} -eq 0
 
 SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
 (( fhr=SHOUR))
 if (( fhr == 0 )); then
-  fhr=00
+	fhr=00
 fi
 export fhr
 
-if test $fhr -lt 10 -a $fhr -gt 0
-then
-   export fhr="0$fhr"
+if test $fhr -lt 10 -a $fhr -gt 0; then
+	export fhr="0$fhr"
 fi
 
 ############################################################
 # Loop Through the Post Forecast Files 
 ############################################################
-while test $fhr -le $FHOUR
-do
+while test $fhr -le $FHOUR; do
+	###############################
+	# Start Looping for the 
+	# existence of the restart files
+	###############################
+	#set +x
+	set -x
+	export pgm="postcheck"
+	ic=1
 
-    ###############################
-    # Start Looping for the 
-    # existence of the restart files
-    ###############################
-    #set +x
-    set -x
-    export pgm="postcheck"
-    ic=1
+	while [ $ic -le $SLEEP_LOOP_MAX ]; do
+		#      if [[ -s $restart_file_a$fhr ]] && [[ -s $restart_file_b$fhr ]]; then
+		if test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2f$fhr; then
+			found=yes
+			break
+		else
+			ic=`expr $ic + 1`
+			sleep $SLEEP_INT
+		fi # test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2f$fhr
+		if (( fhr > 180 )) && (( fhr % 12 == 6 )); then
+			if (( ic > 2 )) && (( ic < SLEEP_LOOP_MAX )); then
+				echo fhr=$fhr not expected
+				found=no
+				break
+			fi # (( ic > 2 )) && (( ic < SLEEP_LOOP_MAX ))
+		fi # (( fhr > 180 )) && (( fhr % 12 == 6 ))
+		###############################
+		# If we reach this point assume
+		# fcst job never reached restart 
+		# period and error exit
+		###############################
+		if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+			export err=9
+			err_chk
+		fi # [ $ic -eq $SLEEP_LOOP_MAX ]
+	done # while [ $ic -le $SLEEP_LOOP_MAX ]
+	#set -x
 
-    while [ $ic -le $SLEEP_LOOP_MAX ]
-    do
-#      if [[ -s $restart_file_a$fhr ]] && [[ -s $restart_file_b$fhr ]]; then
-       if test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2f$fhr
-       then
-	  found=yes
-          break
-       else
-          ic=`expr $ic + 1`
-          sleep $SLEEP_INT
-       fi
-       if (( fhr > 180 )) && (( fhr % 12 == 6 )); then
-	 if (( ic > 2 )) && (( ic < SLEEP_LOOP_MAX )); then
-	   echo fhr=$fhr not expected
-	   found=no
-	   break
-	 fi
-       fi
-       ###############################
-       # If we reach this point assume
-       # fcst job never reached restart 
-       # period and error exit
-       ###############################
-       if [ $ic -eq $SLEEP_LOOP_MAX ]
-       then
-          export err=9
-          err_chk
-       fi
-    done
-    #set -x
+	if [[ "$found" = yes ]]; then
+		# RLW 20110725 more complete cleanup of temporary files
+		rm -f master_grb2file
+		rm -f tmpfile
+		rm -f pgbafile pgbaifile
+		rm -f pgb2afile pgb2aifile
 
-  if [[ "$found" = yes ]]; then
+		msg="Starting prdgen for fhr=$fhr"
+		postmsg "$jlogfile" "$msg"
 
-    # RLW 20110725 more complete cleanup of temporary files
-    rm -f master_grb2file
-    rm -f tmpfile
-    rm -f pgbafile pgbaifile
-    rm -f pgb2afile pgb2aifile
+		if [ $fhr -eq 0 ]; then
+			#     parmlist=$PARMgefs/gefs_pgrb2a_f00.parm
+			parmlist=$parm00 
+		else
+			#     parmlist=$PARMgefs/gefs_pgrb2a_fhh.parm
+			parmlist=$parmhh 
+		fi # [ $fhr -eq 0 ]
 
-    msg="Starting prdgen for fhr=$fhr"
-    postmsg "$jlogfile" "$msg"
+		ln -s $COMINgfs/${RUN}.t${cyc}z.master.grb2f${fhr} master_grb2file
 
-    if [ $fhr -eq 0 ]
-    then
-#     parmlist=$PARMgefs/gefs_pgrb2a_f00.parm
-      parmlist=$parm00 
-    else
-#     parmlist=$PARMgefs/gefs_pgrb2a_fhh.parm
-      parmlist=$parmhh 
-    fi
+		$WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile
+		if [[ x$fhoroglist != x ]]; then
+			for fhorog in $fhoroglist; do
+				if (( fhr == fhorog )); then
+					$WGRIB2 -s master_grb2file |grep 'HGT:surface' |$WGRIB2 master_grb2file -i -append -grib tmpfile 
+				fi
+			done # for fhorog in $fhoroglist
+		fi # [[ x$fhoroglist != x ]]
 
-    ln -s $COMINgfs/${RUN}.t${cyc}z.master.grb2f${fhr} master_grb2file
+		$COPYGB2 -g "${grid}" -i0 -x tmpfile pgb2afile
+		$GRB2INDEX pgb2afile pgb2aifile
+		$ENSADD $e1 $e2 pgb2afile epgbafile
+		mv epgbafile pgb2afile
+		if [[ "$makepgrb1" = "yes" ]]; then
+			$CNVGRIB -g21 pgb2afile pgbafile
+			$GRBINDEX pgbafile pgbaifile
+		fi
 
-    $WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile
-    if [[ x$fhoroglist != x ]]; then
-      for fhorog in $fhoroglist
-      do
-	if (( fhr == fhorog )); then
-	  $WGRIB2 -s master_grb2file |grep 'HGT:surface' |$WGRIB2 master_grb2file -i -append -grib tmpfile 
+		# RLW 20110725 more complete cleanup of temporary files
+		rm -f tmpfile.2
+		rm -f pgbafile.2 pgbaifile.2
+		rm -f pgb2afile.2 pgb2aifile.2
+
+		if test "$DO_LOW_RES" = 'YES' -a `expr $fhr % 6 ` -eq 0; then
+			if [ $fhr -eq 0 ]; then
+				parmlist=$parmlow00 
+			else
+				parmlist=$parmlowhh 
+			fi
+
+			$WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile.2
+			if [[ x$fhoroglist != x ]]; then
+				for fhorog in $fhoroglist; do
+					if (( fhr == fhorog )); then
+						$WGRIB2 -s master_grb2file |grep 'HGT:surface' |$WGRIB2 master_grb2file -i -append -grib tmpfile.2 
+					fi
+				done # for fhorog in $fhoroglist
+			fi # [[ x$fhoroglist != x ]]
+
+			$COPYGB2 -g "${grid2p5}" -i0 -x tmpfile.2 pgb2afile.2
+			$GRB2INDEX pgb2afile.2 pgb2aifile.2
+			$ENSADD $e1 $e2 pgb2afile.2 epgbafile.2
+			mv epgbafile.2 pgb2afile.2
+			if [[ "$makepgrb1" = "yes" ]]; then
+				$CNVGRIB -g21 pgb2afile.2 pgbafile.2
+				$GRBINDEX pgbafile.2 pgbaifile.2
+			fi # [[ "$makepgrb1" = "yes" ]]
+		fi # test "$DO_LOW_RES" = 'YES' -a `expr $fhr % 6 ` -eq 0
+
+		if [[ $jobgrid == _p5 ]]; then
+			#For the 0.5 degree grid pgrb files, name them with 3-digit (0-999) fcst hours 
+			if test $fhr -lt 100; then
+				pgfhr=0$fhr
+			else  
+				pgfhr=$fhr
+			fi # test $fhr -lt 100
+		else
+			#For the 1.0 and 2.5 degree grid pgrb files, name them with 2 digit (00-99)or  3-digit fcst hours 
+			pgfhr=$fhr
+		fi # [[ $jobgrid == _p5 ]]
+
+		$TRANSG pgrba$dirsuf pgrb2a$dirsuf pgrba$filsuf pgrb2a$filsuf
+
+		if test $SENDCOM = "YES"; then
+			if test $fhr -lt 100; then
+				pad="0"
+			else
+				pad=""
+			fi
+			echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/gfs/ge${RUN}.t${cyc}z.control.$fhr$jobgrid
+		fi # test $SENDCOM = "YES"
+	fi # [[ "$found" = yes ]]
+	# if not found, come here to increment
+
+	if [[ $jobgrid == _p5 ]] && [[ $fhr == $fhmaxh ]]; then
+		FHINC=6
+	fi 
+	export fhr=`expr $fhr + $FHINC`
+	if test $fhr -lt 10; then
+		export fhr="0$fhr"
 	fi
-      done
-    fi
-
-    $COPYGB2 -g "${grid}" -i0 -x tmpfile pgb2afile
-    $GRB2INDEX pgb2afile pgb2aifile
-    $ENSADD $e1 $e2 pgb2afile epgbafile
-    mv epgbafile pgb2afile
-      if [[ "$makepgrb1" = "yes" ]]; then
-    $CNVGRIB -g21 pgb2afile pgbafile
-    $GRBINDEX pgbafile pgbaifile
-      fi
- 
-    # RLW 20110725 more complete cleanup of temporary files
-    rm -f tmpfile.2
-    rm -f pgbafile.2 pgbaifile.2
-    rm -f pgb2afile.2 pgb2aifile.2
-
-    if test "$DO_LOW_RES" = 'YES' -a `expr $fhr % 6 ` -eq 0
-    then
-
-     if [ $fhr -eq 0 ]
-     then
-       parmlist=$parmlow00 
-     else
-       parmlist=$parmlowhh 
-     fi
-
-      $WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile.2
-      if [[ x$fhoroglist != x ]]; then
-	for fhorog in $fhoroglist
-	do
-	  if (( fhr == fhorog )); then
-	    $WGRIB2 -s master_grb2file |grep 'HGT:surface' |$WGRIB2 master_grb2file -i -append -grib tmpfile.2 
-	  fi
-	done
-      fi
-
-     $COPYGB2 -g "${grid2p5}" -i0 -x tmpfile.2 pgb2afile.2
-     $GRB2INDEX pgb2afile.2 pgb2aifile.2
-     $ENSADD $e1 $e2 pgb2afile.2 epgbafile.2
-     mv epgbafile.2 pgb2afile.2
-      if [[ "$makepgrb1" = "yes" ]]; then
-     $CNVGRIB -g21 pgb2afile.2 pgbafile.2
-     $GRBINDEX pgbafile.2 pgbaifile.2
-      fi
-
-    fi
-    
- if [[ $jobgrid == _p5 ]]; then
-#For the 0.5 degree grid pgrb files, name them with 3-digit (0-999) fcst hours 
-    if test $fhr -lt 100
-    then
-      pgfhr=0$fhr
-    else  
-      pgfhr=$fhr
-    fi
- else
-#For the 1.0 and 2.5 degree grid pgrb files, name them with 2 digit (00-99)or  3-digit fcst hours 
-     pgfhr=$fhr
- fi
-
-    $TRANSG pgrba$dirsuf pgrb2a$dirsuf pgrba$filsuf pgrb2a$filsuf
-
-    if test $SENDCOM = "YES"
-    then
-       if test $fhr -lt 100
-       then
-          pad="0"
-       else
-	pad=""
-       fi
-       echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/gfs/ge${RUN}.t${cyc}z.control.$fhr$jobgrid
-    fi
-
-  fi
-# if not found, come here to increment
-
- if [[ $jobgrid == _p5 ]] && [[ $fhr == $fhmaxh ]]; then
-  FHINC=6
- fi 
-  export fhr=`expr $fhr + $FHINC`
-  if test $fhr -lt 10
-  then
-     export fhr="0$fhr"
-  fi
-done
+done # while test $fhr -le $FHOUR
 
 cat $pgmout
 

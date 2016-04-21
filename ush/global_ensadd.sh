@@ -15,20 +15,20 @@ echo " "
 set -x
 
 if [[ $# != 4 ]];then
-  echo "Usage: $0 ienst iensi gribin gribout"
-  echo " inserts ensemble PDS extensions in GRIB2 file"
-  exit 1
-fi
+	echo "Usage: $0 ienst iensi gribin gribout"
+	echo " inserts ensemble PDS extensions in GRIB2 file"
+	exit 1
+fi # [[ $# != 4 ]]
 
 export pgm=global_ensadd
 . prep_step
 
 startmsg
 
-eval $EXECgefs/$pgm <<EOF >> $pgmout 2> errfile
- &namin
- ienst=$1,iensi=$2,cpgb='$3',cpge='$4' /
-EOF
+eval $EXECgefs/$pgm <<-EOF >> $pgmout 2> errfile
+	&namin
+	ienst=$1,iensi=$2,cpgb='$3',cpge='$4' /
+	EOF
 export err=$?; err_chk
 
 set +x

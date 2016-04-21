@@ -6,16 +6,7 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-###########################################
-# Run gefs_config to get input parameters
-###########################################
-if [ "$RUN_ENVIR" = dev ]   ### For Developers
-then
-# . $basesource/nw${envir}/versions/gefs.ver
-  . $basesource/nw${envir}/parm/gefs_config
-  export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-fi
-
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ####################################
@@ -33,11 +24,11 @@ export cycle=t${cyc}z
 export cycle_fcst=t${cyc_fcst}z
 
 if (( cyc == cyc_fcst )); then
-  export cycsuffix=false
-  export fcstlong=true
+	export cycsuffix=false
+	export fcstlong=true
 else
-  export fcstlong=false
-  export cycsuffix=true
+	export fcstlong=false
+	export cycsuffix=true
 fi
 
 ####################################
@@ -61,24 +52,24 @@ export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
-  # Specify Execution Areas
-  export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
-  export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
+# Specify Execution Areas
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
 
-  export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
-  export USHgsm=${USHgsm:-$HOMEgsm/ush}
-  export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
-  export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
+export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
+export USHgsm=${USHgsm:-$HOMEgsm/ush}
+export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
+export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 
-  export HOMEGLOBAL=${HOMEgsm:-${NWROOTp1}}
-  export EXECGLOBAL=${EXECgsm:-$HOMEgsm/exec}
-  export USHGLOBAL=${USHgsm:-$HOMEgsm/ush}
-  export FIXGLOBAL=${FIXgsm:-$HOMEgsm/fix/fix_am}
+export HOMEGLOBAL=${HOMEgsm:-${NWROOTp1}}
+export EXECGLOBAL=${EXECgsm:-$HOMEgsm/exec}
+export USHGLOBAL=${USHgsm:-$HOMEgsm/ush}
+export FIXGLOBAL=${FIXgsm:-$HOMEgsm/fix/fix_am}
 
-  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
-  export USHgefs=${USHgefs:-$HOMEgefs/ush}
-  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
-  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 ##############################
 # Run setpdy and initialize PDY variables
@@ -89,11 +80,11 @@ setpdy.sh
 ##############################################
 # Define  COM and GES directories
 ##############################################
-  export GESIN=$GESROOT/${envir}/gefs.${PDY}
-  export GESOUT=$GESROOT/${envir}/gefs.${PDY}
-  export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
+export GESIN=$GESROOT/${envir}/gefs.${PDY}
+export GESOUT=$GESROOT/${envir}/gefs.${PDY}
+export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
 
-  mkdir -m 775 -p $GESOUT
+mkdir -m 775 -p $GESOUT
 
 ##############################################
 echo set parameters using gefs.parm
@@ -112,67 +103,66 @@ export CHGRESTHREAD=$NTHREADS_SIGCHGRS
 export OVERPARMEXEC=$EXECGLOBAL/overparm_grib
 
 # Change Resolution script and executable
-   export chgresush=$USHGLOBAL/global_chgres.sh
-   export CHGRESEXEC=$EXECGLOBAL/global_chgres
+export chgresush=$USHGLOBAL/global_chgres.sh
+export CHGRESEXEC=$EXECGLOBAL/global_chgres
 
 ####################################
 # Create member list
 ####################################
 
 if [[ $CHGRES_ALL = yes ]]; then
-   #Concurrent run, multi member
-   memberlist=""
-   (( imem = 0 ))
-   while (( imem < npair * 2 ))
-   do
-     (( imem = imem + 1 ))
-     if (( imem < 10 )); then
-      imem=0$imem
-     fi
-     memberlist="$memberlist p$imem"
-   done
-   if (( cyc == cyc_fcst )) ; then
-     memberlist="$memberlist c00"
-     (( imem = imem + 1 ))
-   fi
-   (( ENS_NUM = imem ))
-   export ENS_NUM
-   echo ENS_NUM=$ENS_NUM
-   export RUM=ge'${MN}'
-   echo RUM=$RUM
+	#Concurrent run, multi member
+	memberlist=""
+	(( imem = 0 ))
+	while (( imem < npair * 2 )); do
+		(( imem = imem + 1 ))
+		if (( imem < 10 )); then
+			imem=0$imem
+		fi
+		memberlist="$memberlist p$imem"
+	done # (( imem < npair * 2 ))
+	if (( cyc == cyc_fcst )) ; then
+		memberlist="$memberlist c00"
+		(( imem = imem + 1 ))
+	fi
+	(( ENS_NUM = imem ))
+	export ENS_NUM
+	echo ENS_NUM=$ENS_NUM
+	export RUM=ge'${MN}'
+	echo RUM=$RUM
 else
-  #single member
-  echo RUN=$RUN
-  memberlist=`echo $RUN|cut -c3-5`
-  export ENS_NUM=1
-  echo ENS_NUM=$ENS_NUM
-fi
+	#single member
+	echo RUN=$RUN
+	memberlist=`echo $RUN|cut -c3-5`
+	export ENS_NUM=1
+	echo ENS_NUM=$ENS_NUM
+fi # [[ $CHGRES_ALL = yes ]]
 memberlist=`echo $memberlist`
 MEMBER_NAMES=$memberlist
 
 #### DHOU, 09/10/2010 this  block is for  truncation of forecast files to prepair for lower res.      
-     #######################################################
-     # variables for low-resolution forecast third part
-     # from FH=fhmaxh-fhmax, 6-hourly output
-     #######################################################
+#######################################################
+# variables for low-resolution forecast third part
+# from FH=fhmaxh-fhmax, 6-hourly output
+#######################################################
 
-     # Interpolate restart Files for the third part
+# Interpolate restart Files for the third part
 
-     export JCAP=$JCAPLR
-     export LEVS=$LEVSLR
-     export LONB=$LONBLR
-     export LATB=$LATBLR
+export JCAP=$JCAPLR
+export LEVS=$LEVSLR
+export LONB=$LONBLR
+export LATB=$LATBLR
 
-     export NTRAC=$NTRACLR
-     export MTNRSL=$MTNRSLLR
-     export IDVC=$IDVC
-     export NVCOORD=$IDVC
-     if (( IDVC == 1 )); then
-       export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
-     fi
-     if (( IDVC == 2 )); then
-       export SIGLEVEL=$FIXGLOBAL/global_hyblev.l${LEVS}.txt
-     fi
+export NTRAC=$NTRACLR
+export MTNRSL=$MTNRSLLR
+export IDVC=$IDVC
+export NVCOORD=$IDVC
+if (( IDVC == 1 )); then
+	export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
+fi
+if (( IDVC == 2 )); then
+	export SIGLEVEL=$FIXGLOBAL/global_hyblev.l${LEVS}.txt
+fi
 
 #
 # chgres Fix Fields
@@ -181,7 +171,7 @@ MEMBER_NAMES=$memberlist
 export LONSPERLAT=$FIXGLOBAL/global_lonsperlat.t$MTNRSLLR.txt
 export OROGRAPHY=$FIXGLOBAL/global_orography.t$MTNRSLLR.grb
 export OROGRAPHY_UF=$FIXGLOBAL/global_orography_uf.t$MTNRSLLR.grb
-export    SLMASK=$FIXGLOBAL/global_slmask.t$MTNRSLLR.grb
+export SLMASK=$FIXGLOBAL/global_slmask.t$MTNRSLLR.grb
 
 #  The SST and SEA_ICE Climate fix file:
 export FNTSFC=$FIXGLOBAL/RTGSST.1982.2012.monthly.clim.grb  # New for gfs 2014 implementation
@@ -190,80 +180,79 @@ export FNAISC=$FIXGLOBAL/CFSR.SEAICE.1982.2012.monthly.clim.grb  # New for gfs 2
 #
 # chgres parameters
 #
-   export FIXSUBDA=fix
-   export use_ufo=.true.
-   export IDSL=1
-   export IDVM=0
-   export IDVT=21
-   export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,idsl=$IDSL,idvc=$IDVC,idvm=$IDVM,idvt=$IDVT,use_ufo=$use_ufo"
+export FIXSUBDA=fix
+export use_ufo=.true.
+export IDSL=1
+export IDVM=0
+export IDVT=21
+export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,idsl=$IDSL,idvc=$IDVC,idvm=$IDVM,idvt=$IDVT,use_ufo=$use_ufo"
 
 # Change resolution of the high-res forecast files
 # Write the resulted files in $GESOUT and make a copy in $DATA 
- if  [[ $CHGRES_ALL = YES ]] ; then
-   for MN in $MEMBER_NAMES
-   do
-     eval export SIGOUT=$GESOUT/${RUM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
-     eval export SFCOUT=$GESOUT/${RUM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
-     if [[ $cycsuffix = false ]]; then
-      if [[ $ENS_SPS = .true. ]]; then
-       eval export SIGINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.ss${HOUTASPS}
-       eval export SFCINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.bs${HOUTASPS}
-      else
-       eval export SIGINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.sf${HOUTASPS}
-       eval export SFCINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.bf${HOUTASPS}
-      fi
-     else
-      if [[ $ENS_SPS = .true. ]]; then
-       eval export SIGINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
-       eval export SFCINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
-      else
-       eval export SIGINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
-       eval export SFCINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
-      fi
-     fi
+if [[ $CHGRES_ALL = YES ]] ; then
+	for MN in $MEMBER_NAMES; do
+		eval export SIGOUT=$GESOUT/${RUM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
+		eval export SFCOUT=$GESOUT/${RUM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+		if [[ $cycsuffix = false ]]; then
+			if [[ $ENS_SPS = .true. ]]; then
+				eval export SIGINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.ss${HOUTASPS}
+				eval export SFCINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.bs${HOUTASPS}
+			else
+				eval export SIGINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.sf${HOUTASPS}
+				eval export SFCINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.bf${HOUTASPS}
+			fi # [[ $ENS_SPS = .true. ]]
+		else
+			if [[ $ENS_SPS = .true. ]]; then
+				eval export SIGINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
+				eval export SFCINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
+			else
+				eval export SIGINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
+				eval export SFCINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
+			fi # [[ $ENS_SPS = .true. ]]
+		fi # [[ $cycsuffix = false ]]
 
-     echo `date` timing lr chgres $MN before
-         $chgresush >>$pgmout
-     echo `date` timing lr $MN chgres after
-   done  #MN
- else
-     export SIGOUT=$GESOUT/${RUN}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
-     export SFCOUT=$GESOUT/${RUN}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
-     if [[ $cycsuffix = false ]]; then
-      if [[ $ENS_SPS = .true. ]]; then
-       export SIGINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.ss${HOUTASPS}
-       export SFCINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.bs${HOUTASPS}
-      else
-       export SIGINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.sf${HOUTASPS}
-       export SFCINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.bf${HOUTASPS}
-      fi
-     else
-      if [[ $ENS_SPS = .true. ]]; then
-       export SIGINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
-       export SFCINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
-      else
-       export SIGINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
-       export SFCINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
-      fi
-     fi
-     echo `date` timing lr chgres before
-         $chgresush >>$pgmout
-     echo `date` timing lr chgres after
- fi
+		echo `date` timing lr chgres $MN before
+		$chgresush >>$pgmout
+		echo `date` timing lr $MN chgres after
+	done # MN in $MEMBER_NAMES
+else
+	export SIGOUT=$GESOUT/${RUN}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
+	export SFCOUT=$GESOUT/${RUN}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+	if [[ $cycsuffix = false ]]; then
+		if [[ $ENS_SPS = .true. ]]; then
+			export SIGINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.ss${HOUTASPS}
+			export SFCINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.bs${HOUTASPS}
+		else
+			export SIGINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.sf${HOUTASPS}
+			export SFCINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.bf${HOUTASPS}
+		fi # [[ $ENS_SPS = .true. ]]
+	else
+		if [[ $ENS_SPS = .true. ]]; then
+			export SIGINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
+			export SFCINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
+		else
+			export SIGINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
+			export SFCINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
+		fi # [[ $ENS_SPS = .true. ]]
+	fi # [[ $cycsuffix = false ]]
+	echo `date` timing lr chgres before
+	$chgresush >>$pgmout
+	echo `date` timing lr chgres after
+fi # [[ $CHGRES_ALL = YES ]]
 
 # End of resolution change
 
 cat $pgmout
 echo
 if [[ $CHGRES_ALL = yes ]]; then
-  echo
-  echo `date` sorted forecast output begin
-  echo
-  cat $PGMOUT | sort -n -k1
-  echo
-  echo `date` sorted forecast output end
-  echo
-fi
+	echo
+	echo `date` sorted forecast output begin
+	echo
+	cat $PGMOUT | sort -n -k1
+	echo
+	echo `date` sorted forecast output end
+	echo
+fi # [[ $CHGRES_ALL = yes ]]
 
 echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN
 echo DATA=$DATA
@@ -277,8 +266,8 @@ postmsg "$jlogfile" "$msg"
 # Remove the Temporary working directory
 ##############################
 if [[ $KEEPDATA != "YES" ]]; then
- cd $DATAROOT
- rm -rf $DATA
+	cd $DATAROOT
+	rm -rf $DATA
 fi 
 
 echo `date` $0 `date -u` end

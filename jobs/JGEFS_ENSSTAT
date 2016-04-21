@@ -6,23 +6,9 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-###########################################
-# Run gefs_config to get input parameters
-###########################################
-if [ "$RUN_ENVIR" = dev ]      ### For Developers
-then
-# . $basesource/nw${envir}/versions/gefs.ver
-  . $basesource/nwdev/parm/gefs_config
-  export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-fi
-
 export APRUN=${gefsmpexec:-mpirun.lsf}
+gefsmachine=${gefsmachine:-wcoss}
 
-####################################
-# Load the grib module
-####################################
-#. /usrx/local/Modules/default/init/ksh
-#module load grib_util/v1.0.1
 export CNVGRIB=$CNVGRIB21_GFS
 
 ####################################
@@ -61,12 +47,12 @@ export pgmerr=errfile
 ####################################
 # Specify Execution Areas
 ####################################
-  export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
 
-  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
-  export USHgefs=${USHgefs:-$HOMEgefs/ush}
-  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
-  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 export REDOUT='1>>'
 export REDERR='2>'
@@ -105,8 +91,10 @@ postmsg "$jlogfile" "$msg"
 # SLEEP_INT  - Amount of time to wait between
 #              checking for restart files
 ####################################
-export SLEEP_TIME=900
-export SLEEP_INT=5
+# export SLEEP_TIME=900
+# export SLEEP_INT=5
+export SLEEP_TIME=9000 #WCK
+export SLEEP_INT=25 #WCK
 
 export NTHREADS=1
 ####################################
@@ -114,18 +102,18 @@ export NTHREADS=1
 ####################################
 # allow different forecast lengths in different cycles
 if [[ $envir = dev ]]; then
-  case $cyc in
-    (00)  fhmax=$fhmax00 ;;
-    (06)  fhmax=$fhmax06 ;;
-    (12)  fhmax=$fhmax12 ;;
-    (18)  fhmax=$fhmax18 ;;
-    (*)
-      echo cyc=$cyc IS UNDEFINED 
-      export pgm=JGEFS_ENSSTAT
-      export err=111
-    ;;
-  esac
-fi
+	case $cyc in
+		(00) fhmax=$fhmax00 ;;
+		(06) fhmax=$fhmax06 ;;
+		(12) fhmax=$fhmax12 ;;
+		(18) fhmax=$fhmax18 ;;
+		(*)
+			echo cyc=$cyc IS UNDEFINED 
+			export pgm=JGEFS_ENSSTAT
+			export err=111
+			;;
+	esac
+fi # [[ $envir = dev ]]
 if (( fhmaxh > fhmax )); then
   fhmaxh=$fhmax
 fi
@@ -134,45 +122,37 @@ export FHINC=06
 
 fcstlong=true
 case $FORECAST_SEGMENT in
-  (hr)
-    # high resolution segment
-    export FHINCP5=03
-    export SHOUR=00
-    if [[ $fcstlong = true ]]; then
-      export FHOUR=$fhmaxh
-    else
-      export FHOUR=06
-    fi
-  ;;
-  (lr)
-    # low resolution segment
-    export FHINCP5=06
-    export SHOUR=$(( $fhmaxh + FHINC ))
-    if [[ $fcstlong = true ]]; then
-      export FHOUR=$fhmax
-    else
-      export FHOUR=06
-    fi
-  ;;
-  (*)
-    # whole forecast period
-    export FHINCP5=03
-    export SHOUR=00
-    if [[ $fcstlong = true ]]; then
-      export FHOUR=$fhmax
-    else
-      export FHOUR=06
-    fi
-  ;;
-esac
-case $SUBJOB in
-  (A)
-    export gridlist="hr lr";
-  (B)
-    export gridlist="p5";;
-  (*)
-    export gridlist="hr lr p5";;
-esac    
+	(hr)
+		# high resolution segment
+		export FHINCP5=03
+		export SHOUR=00
+		if [[ $fcstlong = true ]]; then
+			export FHOUR=$fhmaxh
+		else
+			export FHOUR=06
+		fi
+		;;
+	(lr)
+		# low resolution segment
+		export FHINCP5=06
+		export SHOUR=$(( $fhmaxh + FHINC ))
+		if [[ $fcstlong = true ]]; then
+			export FHOUR=$fhmax
+		else
+			export FHOUR=06
+		fi
+		;;
+	(*)
+		# whole forecast period
+		export FHINCP5=03
+		export SHOUR=00
+		if [[ $fcstlong = true ]]; then
+			export FHOUR=$fhmax
+		else
+			export FHOUR=06
+		fi
+		;;
+esac # $FORECAST_SEGMENT
 
 echo FORECAST_SEGMENT=$FORECAST_SEGMENT
 echo makepgrba=$makepgrba
@@ -180,57 +160,73 @@ echo FHINC=$FHINC
 echo FHINCP5=$FHINCP5      
 echo SHOUR=$SHOUR
 echo FHOUR=$FHOUR
-echo $gridlist
 echo $makepgrba
 
 env | sort
 
 # Execute the script
 
-#mpmd job with 2 tasks, 1 for 1d and.5d; 2 for 0.5d grid
+#mpmd job with 2 tasks, 1 for 1d and 2.5d; 2 for 0.5d grid
+
 
 #task 1, 1.0d and 2.5d, grid, dataset=a
-export gridlist_1="hr lr"
-export FHINC_1=$FHINC     
+export gridlist_1="hr,lr"
+export FHINC_1=$FHINC
 export dataset_1=a
 
 #task 2, 0.5d grid, dataset=a
 export gridlist_2="p5"
-export FHINC_2=$FHINCP5     
+export FHINC_2=$FHINCP5
+export dataset_2=a
 export dataset_2=a
 
 #task 3, 0.5d grid, dataset=b
 export gridlist_3="p5"
-export FHINC_3=$FHINCP5     
+export FHINC_3=$FHINCP5
 export dataset_3=b
 
 export ext_h=""
 
+# Some systems require the number of processors to be specified at the beginning of each line of MPMD script
+MPMD_PRELINE=${MPMD_PRELINE:-}
+
 #subdata=${DATA}/${gridlist_1}${dataset_1}
 subdata_1=${DATA}/hr_lr
 if [ ! -d ${subdata_1} ]; then mkdir -p ${subdata_1}; fi
-# outfile=${subdata}/${gridlist_1}.out
-  outfile=${subdata}/hr_lr.out
-  echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf '$gridlist_1' $FHINC_1 ${subdata_1} $dataset_1  2>&1 >${outfile}" >>ensstat.cmdfile
+echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_ensstat.sh.ecf '$gridlist_1' $FHINC_1 ${subdata_1} $dataset_1  2>&1 >${outfile}" >>ensstat.cmdfile
 
 subdata_2=${DATA}/${gridlist_2}${dataset_2}
 if [ ! -d ${subdata_2} ]; then mkdir -p ${subdata_2}; fi
-  outfile=${subdata_2}/${gridlist_2}.out
-    echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_2 $FHINC_2 ${subdata_2} $dataset_2 2>&1 >${outfile}" >>ensstat.cmdfile
+outfile=${subdata_2}/${gridlist_2}.out
+echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_2 $FHINC_2 ${subdata_2} $dataset_2 2>&1 >${outfile}" >>ensstat.cmdfile
 
 subdata_3=${DATA}/${gridlist_3}${dataset_3}
 if [ ! -d ${subdata_3} ]; then mkdir -p ${subdata_3}; fi
-  outfile=${subdata_3}/${gridlist_3}.out
-    echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_3 $FHINC_3 ${subdata_3} $dataset_3 2>&1 >${outfile}" >>ensstat.cmdfile
-
-#$HOMEgefs/scripts/exgefs_ensstat.sh.ecf
+outfile=${subdata_3}/${gridlist_3}.out
+echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_3 $FHINC_3 ${subdata_3} $dataset_3 2>&1 >${outfile}" >>ensstat.cmdfile
 
 cat ensstat.cmdfile
 chmod 775 ensstat.cmdfile
-export MP_PGMMODEL=mpmd
 export MP_CMDFILE=${DATA}/ensstat.cmdfile
 
-$APRUN
+case $gefsmachine in
+	(theia)
+		. $moduleInit
+		# $APRUN -configfile $MP_CMDFILE
+		# WCK - impi is currently bugged running copygb2 for some reason, temporarily load mvapich2
+		module load mvapich2
+		# WCK - The -configfile option for MPMD does work properly with quoted arguments on Theia, so join MP_CMDFILE into a colon-delimited string to run as single long argument.
+		$APRUN `sed '{:q;N;s/\n/ : /g;t q}' $MP_CMDFILE`
+		module load impi
+		;;
+	(wcoss)
+		export MP_PGMMODEL=mpmd
+		$APRUN
+		;;
+	(*)
+		echo "gefsmachine=$gefsmachine not implemented in $0 yet"
+		;;
+esac # $gefsmachine
 
 msg="JOB COMPLETED NORMALLY"
 postmsg "$jlogfile" "$msg"

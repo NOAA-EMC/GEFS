@@ -48,8 +48,8 @@ use params
       dimension rti_r(9),rmrf_r(9),rctl_r(9)
       dimension fhri(2),fhro(2)
       dimension rinc(5),rains(800)
-      dimension ipds(25),igds(22),iens(5)             
-      dimension jpds(25),jgds(22),jens(5)             
+      dimension ipds(25),igds(22),iens(5)
+      dimension jpds(25),jgds(22),jens(5)
       dimension kpds(25),kgds(22),kens(5)
       dimension xprob(2),imembr(80),iprob(2),iclust(16)
       dimension kens2(iensem),kens3(iensem)
@@ -82,7 +82,7 @@ use params
       data ee16/1,3,3,3,3,3,3,3,3,3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3/
       data ee17/0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20/
 
-      character*100 cindx,cpgrb,clmrf,clctl,copts,coptm
+      character*255 cindx,cpgrb,clmrf,clctl,copts,coptm
       character*80 fnobs(20)                        
       character*10 names(nsites+1)
       namelist /namin/cindx,cpgrb,clmrf,clctl,copts,coptm,icyc

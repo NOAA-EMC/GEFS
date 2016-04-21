@@ -64,8 +64,8 @@ integer     nfiles,nenspost,iskip(nmemd),tfiles,ifile
 integer     lfopg1,lfopg2
 integer     icfopg1,icfopg2
 
-character*200 cfipg(nmemd)
-character*150 cfopg1,cfopg2
+character*255 cfipg(nmemd)
+character*255 cfopg1,cfopg2
 
 real    gmin,gmax
 integer nbit
@@ -232,7 +232,7 @@ do
   ! end of imem loop, calculate ensemble mean and spread
 
   print *, '   '; print *,' variable has member',inum; print *, '   '
-  if(inum.le.10) goto 200
+  if(inum.le.1) goto 200
 
   print *, '   '; print *,  ' Combined Ensemble Data Example at Point 8601 '
   write (*,'(10f8.1)') (fgrid(8601,i),i=1,inum)

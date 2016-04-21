@@ -27,7 +27,7 @@ na=`basename $0`
 export jobgrid=$1
 export subdata=$2
 if [[ $jobgrid == hr_lr ]]; then
-  export jobgrid=
+	export jobgrid=
 fi
 cd $DATA
 cd $subdata
@@ -39,34 +39,32 @@ echo cyc=$cyc
 echo cycle=$cycle
 
 if [[ $jobgrid == '' ]]; then
-  export FHINC_HIGH=$FHINC_HIGH
-  export DO_LOW_RES=YES 
+	export FHINC_HIGH=$FHINC_HIGH
+	export DO_LOW_RES=YES
 fi
 
 if [[ $jobgrid == _p5 ]]; then
-  export FHINC_HIGH=$FHINC_HIGHP5
-  export DO_LOW_RES=NO 
+	export FHINC_HIGH=$FHINC_HIGHP5
+	export DO_LOW_RES=NO
 fi
- 
+
 #################################
 # Run High Res Prdgen if Needed
 #################################
-if test $SHOUR -le $FHOUR_HIGH
-then
-   export FHINC=$FHINC_HIGH
-   export FHOUR=$FHOUR_HIGH
-   $USHgefs/gefs_prdgen_gfs.sh
-   export SHOUR=`expr $FHOUR_HIGH + $FHINC_LOW`
-fi
+if test $SHOUR -le $FHOUR_HIGH; then
+	export FHINC=$FHINC_HIGH
+	export FHOUR=$FHOUR_HIGH
+	$USHgefs/gefs_prdgen_gfs.sh
+	export SHOUR=`expr $FHOUR_HIGH + $FHINC_LOW`
+fi # test $SHOUR -le $FHOUR_HIGH
 #################################
 # Run Low Res Prdgen if Needed
 #################################
-if test $SHOUR -lt $FHOUR_LOW
-then
-   export FHINC=$FHINC_LOW
-   export FHOUR=$FHOUR_LOW
-   export POSTGPVARS_HIGH=$POSTGPVARS_LOW
-   $USHgefs/gefs_prdgen_gfs.sh
-fi
+if test $SHOUR -lt $FHOUR_LOW; then
+	export FHINC=$FHINC_LOW
+	export FHOUR=$FHOUR_LOW
+	export POSTGPVARS_HIGH=$POSTGPVARS_LOW
+	$USHgefs/gefs_prdgen_gfs.sh
+fi # test $SHOUR -lt $FHOUR_LOW
 
 echo `date` $0 end

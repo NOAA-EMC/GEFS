@@ -8,16 +8,7 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-###########################################
-# Run gefs_config to get input parameters
-###########################################
-if [ "$RUN_ENVIR" = dev ]   ### For Developers
-then
-# . $basesource/nw${envir}/versions/gefs.ver
-  . $basesource/nw${envir}/parm/gefs_config
-  export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-fi
-
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ####################################
@@ -38,14 +29,14 @@ echo cyc=$cyc cyc_fcst=$cyc_fcst
 echo cycle=$cycle cycle_fcst=$cycle_fcst
 
 if (( cyc == cyc_fcst )); then
-  export fcstlong=true
-  export cfsuffix=""
-  export cycsuffix=false
+	export fcstlong=true
+	export cfsuffix=""
+	export cycsuffix=false
 else
-  export fcstlong=false
-  export cfsuffix=".cycfs$cyc_fcst"
-  export cycsuffix=true
-fi
+	export fcstlong=false
+	export cfsuffix=".cycfs$cyc_fcst"
+	export cycsuffix=true
+fi # (( cyc == cyc_fcst ))
 
 export fcstlong
 echo fcstlong=$fcstlong
@@ -138,7 +129,7 @@ export CYL=${cyc}
 
 export pertdir=${DATA}/${cmodel}
 if [ ! -d ${pertdir} ]; then 
-  mkdir -p ${pertdir}
+	mkdir -p ${pertdir}
 fi
 
 #-----------input data checking -----------------
@@ -147,7 +138,7 @@ ${SCRIPTSens_tracker}/data_check.sh
 
 outfile=${pertdir}/trkr.${cmodel}.${ymdh}.out
 ${USHens_tracker}/extrkr_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}
- 
+
 #cp ${pertdir}/trak.gfso.atcfunix.${PDY}${CYL} ${COM}/gfso.t${CYL}z.cyclone.trackatcfunix
 
 cp ${pertdir}/vitals.upd.gfso.${PDY}${CYL} ${COM}/.
@@ -156,8 +147,8 @@ cp ${pertdir}/vitals.upd.gfso.${PDY}${CYL} ${COM}/vitals.upd.avn.${PDY}${CYL}
 cp ${pertdir}/trak.gfso.atcfunix.${PDY}${CYL} ${COM}/trak.avn.atcfunix.${PDY}${CYL}
 
 cat ${COM}/trak.avn.atcfunix.${PDY}${CYL} | \
-    sed s:GFSO:AVNO:g \
- > ${COM}/avn.t${CYL}z.cyclone.trackatcfunix
+sed s:GFSO:AVNO:g \
+> ${COM}/avn.t${CYL}z.cyclone.trackatcfunix
 rm -f ${COM}/trak.avn.atcfunix.${PDY}${CYL}
 
 rm -rf ${DATA}/*
@@ -168,15 +159,15 @@ export COMOUT2=${COM}
 ${USHens_tracker}/atcf_2_cxml.sh ${cmodel} ${ymdh} ${DATA}
 
 ################################
- msg="JOB COMPLETED NORMALLY"
- postmsg "$jlogfile" "$msg"
+msg="JOB COMPLETED NORMALLY"
+postmsg "$jlogfile" "$msg"
 
 ##############################
 # Remove the Temporary working directory
 ##############################
 if [[ $KEEPDATA != "YES" ]]; then
-  cd $DATAROOT
-  rm -rf $DATA
+	cd $DATAROOT
+	rm -rf $DATA
 fi
 
 `date` $0 `date -u` end

@@ -9,16 +9,6 @@ set -xa
 export PS4=' + $SECONDS $na $LINENO: '
 date
 
-###########################################
-# Run gefs_config to get input parameters
-###########################################
-if [ "$RUN_ENVIR" = dev ]   ### For Developers
-then
-# . $basesource/nw${envir}/versions/gefs.ver
-  . $basesource/nw${envir}/parm/gefs_config
-  export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-fi
-
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ####################################
@@ -39,14 +29,14 @@ echo cyc=$cyc cyc_fcst=$cyc_fcst
 echo cycle=$cycle cycle_fcst=$cycle_fcst
 
 if (( cyc == cyc_fcst )); then
-  export fcstlong=true
-  export cfsuffix=""
-  export cycsuffix=false
+	export fcstlong=true
+	export cfsuffix=""
+	export cycsuffix=false
 else
-  export fcstlong=false
-  export cfsuffix=".cycfs$cyc_fcst"
-  export cycsuffix=true
-fi
+	export fcstlong=false
+	export cfsuffix=".cycfs$cyc_fcst"
+	export cycsuffix=true
+fi # (( cyc == cyc_fcst ))
 
 export fcstlong
 echo fcstlong=$fcstlong
@@ -81,14 +71,14 @@ export SENDECF=${SENDECF:-YES}
 ####################################
 # Specify Execution Areas
 ####################################
-  export HOMEtrak=${HOMEtrak:-${NWROOT}/ens_tracker.${tracker_ver}}
-  export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export HOMEtrak=${HOMEtrak:-${NWROOT}/ens_tracker.${tracker_ver}}
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
 
-  export EXECens_tracker=${EXECtrak:-$HOMEtrak/exec}
-  export USHens_tracker=${USHtrak:-$HOMEtrak/ush}
-  export FIXens_tracker=${FIXtrak:-$HOMEtrak/fix}
+export EXECens_tracker=${EXECtrak:-$HOMEtrak/exec}
+export USHens_tracker=${USHtrak:-$HOMEtrak/ush}
+export FIXens_tracker=${FIXtrak:-$HOMEtrak/fix}
 
-  export PARMgefs=$HOMEgefs/parm
+export PARMgefs=$HOMEgefs/parm
 
 ##############################
 # Run setup to initialize working directory and utility scripts
@@ -126,36 +116,35 @@ echo set parameters using gefs.parm
 . $PARMgefs/gefs.parm
 
 if [[ $envir = dev ]]; then
-  if (( cyc == 00 )); then
-  export fhmax=$fhmax00
-  elif (( cyc == 06 )); then
-  export fhmax=$fhmax06
-  elif (( cyc == 12 )); then
-  export fhmax=$fhmax12
-  elif (( cyc == 18 )); then
-  export fhmax=$fhmax18
-  fi
-fi
+	if (( cyc == 00 )); then
+		export fhmax=$fhmax00
+	elif (( cyc == 06 )); then
+		export fhmax=$fhmax06
+	elif (( cyc == 12 )); then
+		export fhmax=$fhmax12
+	elif (( cyc == 18 )); then
+		export fhmax=$fhmax18
+	fi # (( cyc == 00 ))
+fi # [[ $envir = dev ]]
 
 ####################################
 # Create member list
 ####################################
 
 if [[ $fcstlong = true ]]; then
-  memberlist="c00"
+	memberlist="c00"
 else
-  memberlist=""
+	memberlist=""
 fi
 
 (( imem = 0 ))
-while (( imem < npair * 2 ))
-do
-  (( imem = imem + 1 ))
-  if (( imem < 10 )); then
-    imem=0$imem
-  fi
-  memberlist="$memberlist p$imem"
-done
+while (( imem < npair * 2 )); do
+	(( imem = imem + 1 ))
+	if (( imem < 10 )); then
+		imem=0$imem
+	fi
+	memberlist="$memberlist p$imem"
+done # (( imem < npair * 2 ))
 echo memberlist=$memberlist
 
 export homesyndir=$HOMEtrak
@@ -187,48 +176,66 @@ export regtype=altg
 mkdir ${DATA}/${cmodel}
 cd ${DATA}/${cmodel}
 
+MPMD_PRELINE=${MPMD_PRELINE:-}
+
 >trkr.cmdfile
 for pert in ${memberlist}; do
-  pertdir=${DATA}/${cmodel}/${pert}
-  if [ ! -d ${pertdir} ]; then 
-   mkdir -p ${pertdir}
-  fi
-  outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
-  echo "${USHens_tracker}/extrkr_gen_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
-done
- 
+	pertdir=${DATA}/${cmodel}/${pert}
+	if [ ! -d ${pertdir} ]; then 
+		mkdir -p ${pertdir}
+	fi
+	outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
+	echo "${MPMD_PRELINE}${USHens_tracker}/extrkr_gen_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
+done # for pert in ${memberlist}
+
 cat trkr.cmdfile
 chmod 775 trkr.cmdfile
-export MP_PGMMODEL=mpmd
 export MP_CMDFILE=${DATA}/${cmodel}/trkr.cmdfile
 
-$APRUN
+case $gefsmachine in
+	(theia)
+		. $moduleInit
+		# $APRUN -configfile $MP_CMDFILE
+		# WCK - impi is currently bugged running copygb2 for some reason, temporarily load mvapich2
+		module load mvapich2
+		# WCK - The -configfile option for MPMD does work properly with quoted arguments on Theia, so join MP_CMDFILE into a colon-delimited string to run as single long argument.
+		$APRUN `sed '{:q;N;s/\n/ : /g;t q}' $MP_CMDFILE`
+		module load impi
+		;;
+	(wcoss)
+		export MP_PGMMODEL=mpmd
+		$APRUN
+		;;
+	(*)
+		echo "gefsmachine=$gefsmachine not implemented in $0 yet"
+		;;
+esac # $gefsmachine
 
 for pert in ${memberlist}; do
-  export TRKDATA=${DATA}/${cmodel}/${pert}
-  export pertdir=${DATA}/${cmodel}/${pert}
-  export atcfout="a${pert}"
-  ${USHens_tracker}/sort_tracks.gen.sh  >${pertdir}/sort.${regtype}.${atcfout}.${ymdh}.out
-# cp ${pertdir}/trak.a*.atcfunix.altg.${ymdh} ${COM}/.
-# cp ${pertdir}/storms.a*.atcf_gen.altg.${ymdh} ${COM}/.
-done
+	export TRKDATA=${DATA}/${cmodel}/${pert}
+	export pertdir=${DATA}/${cmodel}/${pert}
+	export atcfout="a${pert}"
+	${USHens_tracker}/sort_tracks.gen.sh  >${pertdir}/sort.${regtype}.${atcfout}.${ymdh}.out
+	# cp ${pertdir}/trak.a*.atcfunix.altg.${ymdh} ${COM}/.
+	# cp ${pertdir}/storms.a*.atcf_gen.altg.${ymdh} ${COM}/.
+done # for pert in ${memberlist}
 rm -rf ${DATA}/*
 
 for pert in ${memberlist}; do
-  cd ${DATA}
-  cp ${COM}/storms.a${pert}.atcf_gen.altg.${ymdh} .
+	cd ${DATA}
+	cp ${COM}/storms.a${pert}.atcf_gen.altg.${ymdh} .
 
-  infile=storms.a${pert}.atcf_gen.altg.${ymdh}
-  outf42=storms.a${pert}.atcf_gen.${ymdh}
-  outf43=trak.a${pert}.atcfunix.${ymdh}
-  ln -s -f ${infile} fort.41
-  ln -s -f ${outf42} fort.42
-  ln -s -f ${outf43} fort.43
-  ${EXECens_tracker}/filter_gen_gfs
-  cp storms.a${pert}.atcf_gen.${ymdh} ${COM}/.
-  cp trak.a${pert}.atcfunix.${ymdh} ${COM}/.
-  rm -rf ${DATA}/*
-done
+	infile=storms.a${pert}.atcf_gen.altg.${ymdh}
+	outf42=storms.a${pert}.atcf_gen.${ymdh}
+	outf43=trak.a${pert}.atcfunix.${ymdh}
+	ln -s -f ${infile} fort.41
+	ln -s -f ${outf42} fort.42
+	ln -s -f ${outf43} fort.43
+	${EXECens_tracker}/filter_gen_gfs
+	cp storms.a${pert}.atcf_gen.${ymdh} ${COM}/.
+	cp trak.a${pert}.atcfunix.${ymdh} ${COM}/.
+	rm -rf ${DATA}/*
+done # for pert in ${memberlist}
 
 ##### ensemble mean calculation ##########################
 ${USHens_tracker}/ens_trak_ave_2d.sh
@@ -245,32 +252,32 @@ rm -f ${DATA}/*
 cd ${DATA}
 cp ${COMOUT}/genesis/aemn.trkprob.*.65nm.${ymdh}.indiv.ieee ${DATA}
 export hurrlist="AL90 AL91 AL92 AL93 AL94 AL95 AL96 AL97 AL98 AL99 \
-                 EP90 EP91 EP92 EP93 EP94 EP95 EP96 EP97 EP98 EP99 \
-	         WP90 WP91 WP92 WP93 WP94 WP95 WP96 WP97 WP98 WP99 \
-	         HC01 HC02 HC03 HC04 HC05 HC06 HC07 HC08 HC09 HC10"
+EP90 EP91 EP92 EP93 EP94 EP95 EP96 EP97 EP98 EP99 \
+WP90 WP91 WP92 WP93 WP94 WP95 WP96 WP97 WP98 WP99 \
+HC01 HC02 HC03 HC04 HC05 HC06 HC07 HC08 HC09 HC10"
 
 for hurr in $hurrlist; do
-  if [ -s aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.ieee ]; then
-    rm -f *.nlist
-    namelist=input.${ymdh}.nlist
-    echo "&datain0 kymdh0='aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.ieee'/" >${namelist}
-    echo "&datain1 kymdh1='aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.data'/" >>${namelist}
-    ${EXECens_tracker}/readprob <${namelist}
-  fi
-done
+	if [ -s aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.ieee ]; then
+		rm -f *.nlist
+		namelist=input.${ymdh}.nlist
+		echo "&datain0 kymdh0='aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.ieee'/" >${namelist}
+		echo "&datain1 kymdh1='aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.data'/" >>${namelist}
+		${EXECens_tracker}/readprob <${namelist}
+	fi # [ -s aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.ieee ]
+done # for hurr in $hurrlist
 cp *.indiv.data ${COMOUT}/genesis
 rm -f ${DATA}/*
 
 ################################
- msg="JOB COMPLETED NORMALLY"
- postmsg "$jlogfile" "$msg"
+msg="JOB COMPLETED NORMALLY"
+postmsg "$jlogfile" "$msg"
 
 ##############################
 # Remove the Temporary working directory
 ##############################
 if [[ $KEEPDATA != "YES" ]]; then
-  cd $DATAROOT
-  rm -rf $DATA
+	cd $DATAROOT
+	rm -rf $DATA
 fi
 
 echo `date` $job completed
