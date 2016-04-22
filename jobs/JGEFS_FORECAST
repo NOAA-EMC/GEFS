@@ -6,6 +6,14 @@ set -xa
 export PS4='$SECONDS + '
 date
 
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+if [ "$RUN_ENVIR" = dev ]; then ### For Developers
+# . $basesource/nw${envir}/versions/gefs.ver
+	. $basesource/nwdev/parm/gefs_config
+fi
+
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ####################################
@@ -198,14 +206,13 @@ if [[ $RUN_CONCURRENT = yes ]]; then
 	#Concurrent run, multi member
 	memberlist=""
 	(( imem = 0 ))
-	while (( imem < npair * 2 ))
-	do
+	while (( imem < npair * 2 )); do
 		(( imem = imem + 1 ))
 		if (( imem < 10 )); then
 			imem=0$imem
 		fi
-			memberlist="$memberlist p$imem"
-	done
+		memberlist="$memberlist p$imem"
+	done # while (( imem < npair * 2 ))
 	if (( cyc == cyc_fcst )) ; then
 		memberlist="$memberlist c00"
 		(( imem = imem + 1 ))
@@ -618,11 +625,11 @@ echo
 export CO2CON=${CO2CON:-$FIXGLOBAL/global_co2con.l${LEVS}.f77}
 #export CO2DIR=${CO2DIR:-$FIXGLOBAL/fix_co2_proj}
 yyyy=`echo $PDY|cut -c1-4`
- if (( $yyyy >= 2008 )); then
-     export CO2DIR=${CO2DIR:-$FIXGLOBAL/fix_co2_proj}
- else
-    export CO2DIR=${CO2DIR:-$FIXGLOBAL}
- fi
+if (( $yyyy >= 2008 )); then
+	export CO2DIR=${CO2DIR:-$FIXGLOBAL/fix_co2_proj}
+else
+	export CO2DIR=${CO2DIR:-$FIXGLOBAL}
+fi
 
 export CO2_seasonal_cycle=${CO2_seasonal_cycle:-$FIXGLOBAL/global_co2monthlycyc1976_2006.txt}
 # end of GFS block

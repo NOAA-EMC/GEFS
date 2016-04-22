@@ -72,7 +72,7 @@ cd $DATA
 
 ################################################################################
 
-gefsmachine=${gefsmachine:-wcoss}
+# gefsmachine=${gefsmachine:-wcoss}
 
 relocfact=$relocfact relocflag=$relocflag
 

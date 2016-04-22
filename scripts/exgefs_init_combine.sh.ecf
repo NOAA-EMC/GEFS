@@ -74,7 +74,7 @@ cd $DATA
 
 echo relocfact=$relocfact relocflag=$relocflag
 
-gefsmachine=${gefsmachine:-wcoss}
+# gefsmachine=${gefsmachine:-wcoss}
 
 (( npairt = npair * 4 ))
 nlist=

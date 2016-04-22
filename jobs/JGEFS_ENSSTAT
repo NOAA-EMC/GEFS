@@ -6,8 +6,16 @@ set -xa
 export PS4='$SECONDS + '
 date
 
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+if [ "$RUN_ENVIR" = dev ]; then ### For Developers
+# . $basesource/nw${envir}/versions/gefs.ver
+	. $basesource/nwdev/parm/gefs_config
+fi
+
 export APRUN=${gefsmpexec:-mpirun.lsf}
-gefsmachine=${gefsmachine:-wcoss}
+# gefsmachine=${gefsmachine:-wcoss}
 
 export CNVGRIB=$CNVGRIB21_GFS
 
@@ -91,10 +99,8 @@ postmsg "$jlogfile" "$msg"
 # SLEEP_INT  - Amount of time to wait between
 #              checking for restart files
 ####################################
-# export SLEEP_TIME=900
-# export SLEEP_INT=5
-export SLEEP_TIME=9000 #WCK
-export SLEEP_INT=25 #WCK
+export SLEEP_TIME=900
+export SLEEP_INT=5
 
 export NTHREADS=1
 ####################################

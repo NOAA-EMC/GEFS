@@ -80,10 +80,10 @@ case $dataset in
  b) memberlist="c00";;
 esac
 
-# Skip gfs for "dev" jobs
-if [[ $envir = dev ]]; then
-	memberlist="c00"
-fi
+# # Skip gfs for "dev" jobs
+# if [[ $envir = dev ]]; then
+# 	memberlist="c00"
+# fi
 
 (( imem = 0 ))
 while (( imem < npair * 2 )); do

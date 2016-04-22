@@ -8,6 +8,14 @@ set -xa
 export PS4='$SECONDS + '
 date
 
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+if [ "$RUN_ENVIR" = dev ]; then ### For Developers
+# . $basesource/nw${envir}/versions/gefs.ver
+	. $basesource/nwdev/parm/gefs_config
+fi
+
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ####################################
