@@ -18,7 +18,6 @@ if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 fi
 
 export APRUN=${gefsmpexec:-mpirun.lsf}
-# gefsmachine=${gefsmachine:-wcoss}
 
 ####################################
 # obtain unique process id (pid) and make working directory

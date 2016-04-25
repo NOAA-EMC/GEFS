@@ -15,7 +15,6 @@ if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 fi
 
 export APRUN=${gefsmpexec:-mpirun.lsf}
-# gefsmachine=${gefsmachine:-wcoss}
 
 export CNVGRIB=$CNVGRIB21_GFS
 
@@ -313,27 +312,21 @@ fi
 #################################
 if test $SHOUR -le $FHOUR; then
 
-	# Some systems require the number of processors to be specified at the beginning of each line of MPMD script
-	# MPMD_PRELINE=${MPMD_PRELINE:-}
-
 	subdata=${DATA}/${SHOUR_1}.${FHOUR_1}.${FHINC_1}${jobgrid_1}
 	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
 	outfile=${subdata}/${SHOUR_1}.${FHOUR_1}.${FHINC_1}${jobgrid_1}.out
-	# echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_prdgen$jobgrid_1.sh.ecf ${SHOUR_1} ${FHOUR_1} ${FHINC_1} $DO_LOW_RES_1 $DOANALYSIS_1 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
 	echo "$HOMEgefs/scripts/exgefs_prdgen$jobgrid_1.sh.ecf ${SHOUR_1} ${FHOUR_1} ${FHINC_1} $DO_LOW_RES_1 $DOANALYSIS_1 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
 
 	#Note, task 2 is for the 2.5d grid, which shares the ex-script with 1.0d grid, but subdata should be different
 	subdata=${DATA}/${SHOUR_2}.${FHOUR_2}.${FHINC_2}\_2p5
 	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
 	outfile=${subdata}/${SHOUR_2}.${FHOUR_2}.${FHINC_2}\_2p5.out
-	# echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_prdgen$jobgrid_2.sh.ecf ${SHOUR_2} ${FHOUR_2} ${FHINC_2} $DO_LOW_RES_2 $DOANALYSIS_2 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
 	echo "$HOMEgefs/scripts/exgefs_prdgen$jobgrid_2.sh.ecf ${SHOUR_2} ${FHOUR_2} ${FHINC_2} $DO_LOW_RES_2 $DOANALYSIS_2 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
 
 	if test $total_tasks -ge 3; then
 		subdata=${DATA}/${SHOUR_3}.${FHOUR_3}.${FHINC_3}${jobgrid_3}
 		if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
 		outfile=${subdata}/${SHOUR_3}.${FHOUR_3}.${FHINC_3}${jobgrid_3}.out
-		# echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_prdgen$jobgrid_3.sh.ecf ${SHOUR_3} ${FHOUR_3} ${FHINC_3} $DO_LOW_RES_3 $DOANALYSIS_3 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
 		echo "$HOMEgefs/scripts/exgefs_prdgen$jobgrid_3.sh.ecf ${SHOUR_3} ${FHOUR_3} ${FHINC_3} $DO_LOW_RES_3 $DOANALYSIS_3 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
 	fi # test $total_tasks -ge 3
 
@@ -341,7 +334,6 @@ if test $SHOUR -le $FHOUR; then
 		subdata=${DATA}/${SHOUR_4}.${FHOUR_4}.${FHINC_4}${jobgrid_4}
 		if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
 		outfile=${subdata}/${SHOUR_4}.${FHOUR_4}.${FHINC_4}${jobgrid_4}.out
-		# echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_prdgen$jobgrid_4.sh.ecf ${SHOUR_4} ${FHOUR_4} ${FHINC_4} $DO_LOW_RES_4 $DOANALYSIS_4 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
 		echo "$HOMEgefs/scripts/exgefs_prdgen$jobgrid_4.sh.ecf ${SHOUR_4} ${FHOUR_4} ${FHINC_4} $DO_LOW_RES_4 $DOANALYSIS_4 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
 	fi # test $total_tasks -ge 4
 
@@ -349,32 +341,14 @@ if test $SHOUR -le $FHOUR; then
 		subdata=${DATA}/${SHOUR_5}.${FHOUR_5}.${FHINC_5}${jobgrid_5}
 		if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
 		outfile=${subdata}/${SHOUR_5}.${FHOUR_5}.${FHINC_5}${jobgrid_5}.out
-		# echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_prdgen$jobgrid_5.sh.ecf ${SHOUR_5} ${FHOUR_5} ${FHINC_5} $DO_LOW_RES_5 $DOANALYSIS_5 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
 		echo "$HOMEgefs/scripts/exgefs_prdgen$jobgrid_5.sh.ecf ${SHOUR_5} ${FHOUR_5} ${FHINC_5} $DO_LOW_RES_5 $DOANALYSIS_5 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
 	fi # test $total_tasks -ge 5
 
 	cat prdgen.cmdfile
 	chmod 775 prdgen.cmdfile
 	export MP_CMDFILE=${DATA}/prdgen.cmdfile
-
-	# case $gefsmachine in
-	# 	(theia)
-	# 		. $moduleInit
-	# 		# $APRUN -configfile $MP_CMDFILE
-	# 		# WCK - impi is currently bugged running copygb2 for some reason, temporarily load mvapich2
-	# 		module load mvapich2
-	# 		# WCK - The -configfile option for MPMD does work properly with quoted arguments on Theia, so join MP_CMDFILE into a colon-delimited string to run as single long argument.
-	# 		$APRUN `sed '{:q;N;s/\n/ : /g;t q}' $MP_CMDFILE`
-	# 		module load impi
-	# 		;;
-	# 	(wcoss)
-			export MP_PGMMODEL=mpmd
-			$APRUN
-	# 		;;
-	# 	(*)
-	# 		echo "gefsmachine=$gefsmachine not implemented in $0 yet"
-	# 		;;
-	# esac # $gefsmachine
+	export MP_PGMMODEL=mpmd
+	$APRUN
 
 	export SHOUR=`expr $FHOUR + $FHINC`
 fi # test $SHOUR -le $FHOUR

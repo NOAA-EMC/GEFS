@@ -136,43 +136,21 @@ export jobgrid_1=hr_lr
 #task 2, 0.5d grid
 export jobgrid_2=_p5
 
-# Some systems require the number of processors to be specified at the beginning of each line of MPMD script
-# MPMD_PRELINE=${MPMD_PRELINE:-}
-
 subdata=${DATA}/${jobgrid_1}
 if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
 outfile=${subdata}/${jobgrid_1}.out
-# echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf $jobgrid_1 ${subdata} 2>&1 >${outfile}" >>prdgen_gfs.cmdfile
 echo "$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf $jobgrid_1 ${subdata} 2>&1 >${outfile}" >>prdgen_gfs.cmdfile
 
 subdata=${DATA}/${jobgrid_2}
 if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
 outfile=${subdata}/${jobgrid_2}.out
-# echo "${MPMD_PRELINE}$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf $jobgrid_2 ${subdata} 2>&1 >${outfile}" >>prdgen_gfs.cmdfile
 echo "$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf $jobgrid_2 ${subdata} 2>&1 >${outfile}" >>prdgen_gfs.cmdfile
 
 cat prdgen_gfs.cmdfile
 chmod 775 prdgen_gfs.cmdfile
 export MP_CMDFILE=${DATA}/prdgen_gfs.cmdfile
-
-# case $gefsmachine in
-# 	(theia)
-# 		. $moduleInit
-# 		# $APRUN -configfile $MP_CMDFILE
-# 		# WCK - impi is currently bugged running copygb2 for some reason, temporarily load mvapich2
-# 		module load mvapich2
-# 		# WCK - The -configfile option for MPMD does work properly with quoted arguments on Theia, so join MP_CMDFILE into a colon-delimited string to run as single long argument.
-# 		$APRUN `sed '{:q;N;s/\n/ : /g;t q}' $MP_CMDFILE`
-# 		module load impi
-# 		;;
-# 	(wcoss)
-		export MP_PGMMODEL=mpmd
-		$APRUN
-# 		;;
-# 	(*)
-# 		echo "gefsmachine=$gefsmachine not implemented in $0 yet"
-# 		;;
-# esac # $gefsmachine
+export MP_PGMMODEL=mpmd
+$APRUN
 
 ####################################
 # Generating pgr2b files for 1.0d/2.5d grid

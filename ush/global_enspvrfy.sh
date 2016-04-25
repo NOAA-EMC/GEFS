@@ -29,9 +29,6 @@ export APRUN=${gefsmpexec:-mpirun.lsf}
 ### gfs_2000101000_24_36
 ### above two file verified to 2000101012-2000101112(usa-dlyprcp-20001011)
 
-# Some systems require the number of processors to be specified at the beginning of each line of MPMD script
-# MPMD_PRELINE=${MPMD_PRELINE:-}
-
 export hourlist="00 36 60 84 108 132 156 180 204 228 252 276 300 324 348 372"
 
 >cvt24h.cmdfile
@@ -41,32 +38,14 @@ for fhour in $hourlist; do
 	else
 		CYMDH=`$NDATE -$fhour $OBSYMD\12`
 	fi
-	# echo "${MPMD_PRELINE}$CVT24H $CYMDH" >>cvt24h.cmdfile
 	echo "$CVT24H $CYMDH" >>cvt24h.cmdfile
 done # for fhour in $hourlist
 
 cat cvt24h.cmdfile
 chmod 775 cvt24h.cmdfile
 export MP_CMDFILE=$DATA/cvt24h.cmdfile
-
-# case $gefsmachine in
-# 	(theia)
-# 		. $moduleInit
-# 		# $APRUN -configfile $MP_CMDFILE
-# 		# WCK - impi is currently bugged running copygb2 for some reason, temporarily load mvapich2
-# 		module load mvapich2
-# 		# WCK - The -configfile option for MPMD does work properly with quoted arguments on Theia, so join MP_CMDFILE into a colon-delimited string to run as single long argument.
-# 		$APRUN `sed '{:q;N;s/\n/ : /g;t q}' $MP_CMDFILE`
-# 		module load impi
-# 		;;
-# 	(wcoss)
-		export MP_PGMMODEL=mpmd
-		$APRUN
-# 		;;
-# 	(*)
-# 		echo "gefsmachine=$gefsmachine not implemented in $0 yet"
-# 		;;
-# esac # $gefsmachine
+export MP_PGMMODEL=mpmd
+$APRUN
 
 for fhour in $hourlist; do
 	$WGREP $OBSYMDH $fhour 1 gfs    

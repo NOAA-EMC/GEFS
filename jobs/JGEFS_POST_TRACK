@@ -171,8 +171,6 @@ ${SCRIPTSens_tracker}/data_check.sh
 mkdir ${DATA}/${cmodel}
 cd ${DATA}/${cmodel}
 
-# MPMD_PRELINE=${MPMD_PRELINE:-}
-
 >trkr.cmdfile
 for pert in ${memberlist}; do
 	pertdir=${DATA}/${cmodel}/${pert}
@@ -180,32 +178,14 @@ for pert in ${memberlist}; do
 		mkdir -p ${pertdir}
 	fi
 	outfile=${pertdir}/trkr.${cmodel}.${pert}.${ymdh}.out
-	# echo "${MPMD_PRELINE}${USHens_tracker}/extrkr_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
 	echo "${USHens_tracker}/extrkr_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
 done # for pert in ${memberlist}
 
 cat trkr.cmdfile
 chmod 775 trkr.cmdfile
 export MP_CMDFILE=${DATA}/${cmodel}/trkr.cmdfile
-
-# case $gefsmachine in
-# 	(theia)
-# 		. $moduleInit
-# 		# $APRUN -configfile $MP_CMDFILE
-# 		# WCK - impi is currently bugged running copygb2 for some reason, temporarily load mvapich2
-# 		module load mvapich2
-# 		# WCK - The -configfile option for MPMD does work properly with quoted arguments on Theia, so join MP_CMDFILE into a colon-delimited string to run as single long argument.
-# 		$APRUN `sed '{:q;N;s/\n/ : /g;t q}' $MP_CMDFILE`
-# 		module load impi
-# 		;;
-# 	(wcoss)
-		export MP_PGMMODEL=mpmd
-		$APRUN
-# 		;;
-# 	(*)
-# 		echo "gefsmachine=$gefsmachine not implemented in $0 yet"
-# 		;;
-# esac # $gefsmachine
+export MP_PGMMODEL=mpmd
+$APRUN
 
 #for pert in ${memberlist}; do
 #  pertdir=${DATA}/${cmodel}/${pert}

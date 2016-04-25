@@ -15,7 +15,6 @@ if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 fi
 
 export APRUN=${gefsmpexec:-mpirun.lsf}
-# gefsmachine=${gefsmachine:-wcoss}
 
 export CNVGRIB=$CNVGRIB21_GFS
 

@@ -229,9 +229,6 @@ if (( trackflag == 1 )); then
 fi # (( trackflag == 1 ))
 echo
 
-# Some systems require the number of processors to be specified at the beginning of each line of MPMD script
-# MPMD_PRELINE=${MPMD_PRELINE:-}
-
 if (( trackflag == 1 )); then
 	echo `date` $0 poe EnKF_track begin
 	echo
@@ -314,7 +311,6 @@ if (( trackflag == 1 )); then
 		echo
 		cat poescript.$itask
 		echo
-		# echo "${MPMD_PRELINE}sh poescript.$itask" >>poescript
 		echo "sh poescript.$itask" >>poescript
 		(( itask = itask + 1 ))
 	done # while (( itask < initseparatetasks ))
@@ -345,25 +341,8 @@ if (( trackflag == 1 )); then
 	echo trackflag=$trackflag
 	cp poescript cmdfile
 	echo APRUN=$APRUN
-
-	# case $gefsmachine in
-	# 	(theia)
-	# 		. $moduleInit
-	# 		# $APRUN -configfile $MP_CMDFILE
-	# 		# WCK - impi is currently bugged running copygb2 for some reason, temporarily load mvapich2
-	# 		module load mvapich2
-	# 		# WCK - The -configfile option for MPMD does work properly with quoted arguments on Theia, so join MP_CMDFILE into a colon-delimited string to run as single long argument.
-	# 		$APRUN `sed '{:q;N;s/\n/ : /g;t q}' $MP_CMDFILE`
-	# 		module load impi
-	# 		;;
-	# 	(wcoss)
-			export MP_PGMMODEL=mpmd
-			$APRUN
-	# 		;;
-	# 	(*)
-	# 		echo "gefsmachine=$gefsmachine not implemented in $0 yet"
-	# 		;;
-	# esac # $gefsmachine
+	export MP_PGMMODEL=mpmd
+	$APRUN
 
 else # (( trackflag == 1 ))
 	echo WARNING: EnKF tracking is off
