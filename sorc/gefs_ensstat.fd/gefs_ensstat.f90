@@ -232,7 +232,7 @@ do
   ! end of imem loop, calculate ensemble mean and spread
 
   print *, '   '; print *,' variable has member',inum; print *, '   '
-  if(inum.le.1) goto 200
+  if(inum.le.10) goto 200
 
   print *, '   '; print *,  ' Combined Ensemble Data Example at Point 8601 '
   write (*,'(10f8.1)') (fgrid(8601,i),i=1,inum)
