@@ -9,20 +9,14 @@ date
 ###########################################
 # Run gefs_config to get input parameters
 ###########################################
-if [ "$RUN_ENVIR" = dev ]      ### For Developers
-then
+if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 # . $basesource/nw${envir}/versions/gefs.ver
-  . $basesource/nwdev/parm/gefs_config
-  export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+	. $basesource/nwdev/parm/gefs_config
+	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
 
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
-####################################
-# Load the grib module
-####################################
-#. /usrx/local/Modules/default/init/ksh
-#module load grib_util/v1.0.1
 export CNVGRIB=$CNVGRIB21_GFS
 
 ####################################
@@ -61,12 +55,12 @@ export pgmerr=errfile
 ####################################
 # Specify Execution Areas
 ####################################
-  export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
 
-  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
-  export USHgefs=${USHgefs:-$HOMEgefs/ush}
-  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
-  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 export REDOUT='1>>'
 export REDERR='2>'
@@ -112,18 +106,18 @@ export NTHREADS=1
 ####################################
 # allow different forecast lengths in different cycles
 if [[ $envir = dev ]]; then
-  case $cyc in
-    (00)  FHOUR=$fhmax00 ;;
-    (06)  FHOUR=$fhmax06 ;;
-    (12)  FHOUR=$fhmax12 ;;
-    (18)  FHOUR=$fhmax18 ;;
-    (*)
-      echo cyc=$cyc IS UNDEFINED 
-      export pgm=JGEFS_ENSSTAT
-      export err=111
-    ;;
-  esac
-fi
+	case $cyc in
+		(00) FHOUR=$fhmax00 ;;
+		(06) FHOUR=$fhmax06 ;;
+		(12) FHOUR=$fhmax12 ;;
+		(18) FHOUR=$fhmax18 ;;
+		(*)
+			echo cyc=$cyc IS UNDEFINED 
+			export pgm=JGEFS_ENSSTAT
+			export err=111
+			;;
+	esac # $cyc
+fi # [[ $envir = dev ]]
 
 export SHOUR=00
 export FHINC=06

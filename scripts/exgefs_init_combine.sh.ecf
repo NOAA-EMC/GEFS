@@ -69,7 +69,7 @@ echo " ------------------------------------------------------------"
 set -xa
 
 cd $DATA
-  
+
 ################################################################################
 
 echo relocfact=$relocfact relocflag=$relocflag
@@ -77,14 +77,13 @@ echo relocfact=$relocfact relocflag=$relocflag
 (( npairt = npair * 4 ))
 nlist=
 ipair=0
-while (( ipair < npairt ))
-do
-  (( ipair = ipair + 1 ))
-  if (( ipair < 10 )); then
-    ipair=0$ipair
-  fi
-  nlist="$nlist $ipair"
-done
+while (( ipair < npairt )); do
+	(( ipair = ipair + 1 ))
+	if (( ipair < 10 )); then
+		ipair=0$ipair
+	fi
+	nlist="$nlist $ipair"
+done # while (( ipair < npairt ))
 echo nlist=$nlist
 
 # explicit jcap specification replaced by specifications in parm file
@@ -107,12 +106,12 @@ echo nlist=$nlist
 # associated with this breeding job
 
 if [[ "$cycsuffix" = "true" ]]; then
-  export cfsuffix=".cycfs$cyc_fcst"
-  export ensshort=yes
+	export cfsuffix=".cycfs$cyc_fcst"
+	export ensshort=yes
 else
-  export cfsuffix=""
-  export ensshort=no
-fi
+	export cfsuffix=""
+	export ensshort=no
+fi # [[ "$cycsuffix" = "true" ]]
 
 echo cyc=$cyc cyc_fcst=$cyc_fcst
 echo cycle=$cycle cycle_fcst=$cycle_fcst
@@ -133,12 +132,12 @@ echo pdycycp=$pdycycp pdyp=$pdyp cycp=$cycp
 # from which tracking information will be used
 
 if (( cycp != cyc_fcst )); then
-  export cfsuffixp=".cycfs$cyc_fcst"
-  export ensshortp=yes
+	export cfsuffixp=".cycfs$cyc_fcst"
+	export ensshortp=yes
 else
-  export cfsuffixp=""
-  export ensshortp=no
-fi
+	export cfsuffixp=""
+	export ensshortp=no
+fi # (( cycp != cyc_fcst ))
 
 echo cfsuffixp=$cfsuffixp
 echo ensshortp=$ensshortp
@@ -157,55 +156,51 @@ rm -rf cmdfile
 ############# 05/01/2012
 
 (( itask = 0 ))
-while (( itask < initcombinetasks ))
-do
-  echo 'echo `date` ############ poescript'" $itask begin">>poescript.$itask
-  (( itask = itask + 1 ))
-done
+while (( itask < initcombinetasks )); do
+	echo 'echo `date` ############ poescript'" $itask begin">>poescript.$itask
+	(( itask = itask + 1 ))
+done # while (( itask < initcombinetasks ))
 
 
 (( itask = 0 ))
-for ipair in $nlist
-do
-  echo npair=$npair
-  if (( ipair <= npair )); then
-    (( ipairh = ipair ))
-  elif (( ipair <= 2 * npair )); then
-    (( ipairh = ipair - npair ))
-  elif (( ipair <= 3 * npair )); then
-    (( ipairh = ipair - 2 * npair ))
-  else
-    (( ipairh = ipair - 3 * npair ))
-  fi
-  echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh begin">>poescript.$itask
-  if (( ipairh > nhrpair )); then
-    echo "$USHgefs/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>poescript.$itask
-  else
-    echo "$USHgefs/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>poescript.$itask
-  fi
-###testb
-  echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh end">>poescript.$itask
+for ipair in $nlist; do
+	echo npair=$npair
+	if (( ipair <= npair )); then
+		(( ipairh = ipair ))
+	elif (( ipair <= 2 * npair )); then
+		(( ipairh = ipair - npair ))
+	elif (( ipair <= 3 * npair )); then
+		(( ipairh = ipair - 2 * npair ))
+	else
+		(( ipairh = ipair - 3 * npair ))
+	fi # (( ipair <= npair ))
+	echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh begin">>poescript.$itask
+	if (( ipairh > nhrpair )); then
+		echo "$USHgefs/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>poescript.$itask
+	else
+		echo "$USHgefs/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>poescript.$itask
+	fi # (( ipairh > nhrpair ))
+	###testb
+	echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh end">>poescript.$itask
 
-  (( itask = itask + 1 ))
-  if (( itask == initcombinetasks )); then
-    (( itask = 0 ))
-  fi
-
-done
+	(( itask = itask + 1 ))
+	if (( itask == initcombinetasks )); then
+		(( itask = 0 ))
+	fi
+done # for ipair in $nlist
 
 (( itask = 0 ))
-while (( itask < initcombinetasks ))
-do
-  echo 'echo `date` ############ poescript'" $itask end">>poescript.$itask
-  echo
-  chmod 755 poescript.$itask
-  ls -al poescript.$itask
-  echo
-  cat poescript.$itask
-  echo
-  echo "poescript.$itask" >>poescript
-  (( itask = itask + 1 ))
-done
+while (( itask < initcombinetasks )); do
+	echo 'echo `date` ############ poescript'" $itask end">>poescript.$itask
+	echo
+	chmod 755 poescript.$itask
+	ls -al poescript.$itask
+	echo
+	cat poescript.$itask
+	echo
+	echo "poescript.$itask" >>poescript
+	(( itask = itask + 1 ))
+done # while (( itask < initcombinetasks ))
 
 echo
 chmod 755 poescript
@@ -217,11 +212,7 @@ echo
 
 #export MP_HOLDTIME=1000
 
-export MP_PGMMODEL=mpmd
 export MP_CMDFILE=poescript
-export MP_LABELIO=yes
-export MP_INFOLEVEL=3
-export MP_STDOUTMODE=unordered
 
 echo
 echo before ls before poe
@@ -232,22 +223,13 @@ ls -ablp
 echo
 echo DATA=$DATA before poe
 
-###############################################kate  05/01/2012
-#poe
-#execpoe=$basesource/nw$envir/exec/zeus-poe
-#if [[ $envir = prod ]]; then
-#poe
-#elif [[ $envir = para ]] || [[ $envir = test ]]; then
-#poe
-#else
-#mpiexec_mpt -np $initcombinetasks $execpoe
-#fi
-#echo "gefsmpexec=$gefsmpexec"
-#$gefsmpexec
-echo "APRUN=$APRUNe"
- $APRUN
-###############################################kate  05/01/2012
-
+echo "APRUN=$APRUN"
+export MP_CMDFILE=poescript
+export MP_PGMMODEL=mpmd
+export MP_LABELIO=yes
+export MP_INFOLEVEL=3
+export MP_STDOUTMODE=unordered
+$APRUN
 
 echo DATA=$DATA after poe
 pwd
@@ -257,14 +239,13 @@ echo
 echo after ls after poe
 echo
 
-for ipair in $nlist
-do
-  file=ushout.combine.$ipair
-  echo "############################### file=$file begin #######################"
-  cat $file
-  echo "############################### file=$file end ##########################"
-  echo
-done
+for ipair in $nlist; do
+	file=ushout.combine.$ipair
+	echo "############################### file=$file begin #######################"
+	cat $file
+	echo "############################### file=$file end ##########################"
+	echo
+done # for ipair in $nlist
 
 echo
 echo `date` $0 poe combine  loop end
@@ -274,18 +255,17 @@ echo
 # combine output
 #
 
-for ipair in $nlist
-do
-  cat break >>$pgmout
-  echo ipair=$ipair begin >>$pgmout
-  cat break >>$pgmout >>$pgmout
-  cat pair.$ipair/$pgmout >>$pgmout
-  cat break >>$pgmout
-  echo ipair=$ipair end >>$pgmout
-  cat break >>$pgmout
-  cat pair.$ipair/errfile >>$pgmout
-  cat break >>$pgmout
-done
+for ipair in $nlist; do
+	cat break >>$pgmout
+	echo ipair=$ipair begin >>$pgmout
+	cat break >>$pgmout >>$pgmout
+	cat pair.$ipair/$pgmout >>$pgmout
+	cat break >>$pgmout
+	echo ipair=$ipair end >>$pgmout
+	cat break >>$pgmout
+	cat pair.$ipair/errfile >>$pgmout
+	cat break >>$pgmout
+done # for ipair in $nlist
 
 #
 echo

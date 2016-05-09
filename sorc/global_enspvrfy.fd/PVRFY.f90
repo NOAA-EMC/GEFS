@@ -126,7 +126,7 @@
       character gdso(400),FNAME*80,fnamei*80,MDLNAM*10,FMASK(numreg)*4
       character datestr*15,month(12)*3,mdlverf*10
       character datcmd*18,fname2*80,fname2i*80
-      CHARACTER*80 CPGBA,CPGBF,CPGIF,PCPDA,CMASK,DMASK,CTMPD
+      CHARACTER*255 CPGBA,CPGBF,CPGIF,PCPDA,CMASK,DMASK,CTMPD
 
       data thresh/0.2,2.,5.,10.,15.,25.,35.,50.,75./
 !     data thresh/.1,.25,1.,2.5,5.,10.,20.,25.,30.,40.,50.,75./

@@ -81,15 +81,15 @@ echo " ------------------------------------------------------------"
 set -xa
 
 cd $DATA
-  
+
 ################################################################################
 
 echo
 echo `date` combine begin ipair=$1
 echo
 if (( $# < 12 )); then
-  echo $0 needs 12 arguments
-  exit
+	echo $0 needs 12 arguments
+	exit
 fi
 
 ipairi=$1
@@ -111,21 +111,21 @@ echo
 (( npairc = npairi / 4 ))
 echo npairc=$npairc
 if (( ipairi <= npairc )); then
-  ipair=ipairi
-  cyc_fcst=00
+	ipair=ipairi
+	cyc_fcst=00
 elif (( ipairi <= 2 * npairc )); then
-  (( ipair = ipairi - npairc ))
-  cyc_fcst=06
+	(( ipair = ipairi - npairc ))
+	cyc_fcst=06
 elif (( ipairi <= 3 * npairc )); then
-  (( ipair = ipairi - 2 * npairc ))
-  cyc_fcst=12
+	(( ipair = ipairi - 2 * npairc ))
+	cyc_fcst=12
 else
-  (( ipair = ipairi - 3 * npairc ))
-  cyc_fcst=18
-fi
+	(( ipair = ipairi - 3 * npairc ))
+	cyc_fcst=18
+fi # (( ipairi <= npairc ))
 (( ipair = ipair + 0 ))
 if (( ipair < 10 )); then
-  ipair=0$ipair
+	ipair=0$ipair
 fi
 echo ipair=$ipair
 echo cyc_fcst=$cyc_fcst
@@ -135,14 +135,14 @@ export cycle_fcst=t${cyc_fcst}z
 echo cycle_fcst=$cycle_fcst
 
 if (( cyc == cyc_fcst )); then
-  export cycsuffix=false
-  export fcstlong=true
-  export cfsuffix=""
+	export cycsuffix=false
+	export fcstlong=true
+	export cfsuffix=""
 else
-  export cycsuffix=true
-  export fcstlong=false
-  export cfsuffix=".cycfs$cyc_fcst"
-fi
+	export cycsuffix=true
+	export fcstlong=false
+	export cfsuffix=".cycfs$cyc_fcst"
+fi # (( cyc == cyc_fcst ))
 echo cycsuffix=$cycsuffix
 echo fcstlong=$fcstlong
 echo cfsuffix=$cfsuffix
@@ -152,16 +152,16 @@ echo two digit ipair=$ipair
 #echo one digit ipai=$ipai
 echo inflag=$inflag outflag=$outflag
 if (( inflag > 3 )) || (( outflag > 3 )); then
-  (( ipairp = 2 * ipair ))
-  (( ipairn = ipairp - 1 ))
-  if (( ipairp < 10 )); then
-    ipairp=0$ipairp
-  fi
-  if (( ipairn < 10 )); then
-    ipairn=0$ipairn
-  fi
-  echo two digit ipairn=$ipairn ipairp=$ipairp 
-fi
+	(( ipairp = 2 * ipair ))
+	(( ipairn = ipairp - 1 ))
+	if (( ipairp < 10 )); then
+		ipairp=0$ipairp
+	fi
+	if (( ipairn < 10 )); then
+		ipairn=0$ipairn
+	fi
+	echo two digit ipairn=$ipairn ipairp=$ipairp 
+fi # (( inflag > 3 )) || (( outflag > 3 ))
 
 # cfsuffix identifies long forecast cycle 
 # associated with this breeding job
@@ -207,31 +207,29 @@ echo
 echo `date` restore from 2nd to 3rd ush script begin
 echo
 
-for file in finn finp finn_env finp_env finn_strm finp_strm finn_presep finp_presep  sanl.in sfcanl.in save.relocpertflag save.inflaguse sanlgm${ipair}n sanlgm${ipair}p sanl.c0 save.ifhruse
-do
-  fils=../$file.pair$ipairi
-  echo file=$file fils=$fils
-  if [[ -f $fils ]]; then
-    ls -al $fils
-    mv -f $fils $file
-    ls -al $file
-  else
-    echo file=$file DOES NOT EXIST
-  fi
-done
-for file in gefs.pertback.$cycle_fcst.n${ipair} gefs.pertback.$cycle_fcst.p${ipair}
-do
-  fils=../$file.pair$ipairi
-  echo file=$file fils=$fils
-  if [[ -f $fils ]]; then
-    ls -al $fils
-    mv -f $fils $file
-    ln -s  $file $file.pair$ipairi
-    ls -al $file
-  else
-    echo file=$file DOES NOT EXIST
-  fi
-done
+for file in finn finp finn_env finp_env finn_strm finp_strm finn_presep finp_presep sanl.in sfcanl.in save.relocpertflag save.inflaguse sanlgm${ipair}n sanlgm${ipair}p sanl.c0 save.ifhruse; do
+	fils=../$file.pair$ipairi
+	echo file=$file fils=$fils
+	if [[ -f $fils ]]; then
+		ls -al $fils
+		mv -f $fils $file
+		ls -al $file
+	else
+		echo file=$file DOES NOT EXIST
+	fi # [[ -f $fils ]]
+done # file in finn finp finn_env finp_env finn_strm finp_strm finn_presep finp_presep sanl.in sfcanl.in save.relocpertflag save.inflaguse sanlgm${ipair}n sanlgm${ipair}p sanl.c0 save.ifhruse
+for file in gefs.pertback.$cycle_fcst.n${ipair} gefs.pertback.$cycle_fcst.p${ipair}; do
+	fils=../$file.pair$ipairi
+	echo file=$file fils=$fils
+	if [[ -f $fils ]]; then
+		ls -al $fils
+		mv -f $fils $file
+		ln -s  $file $file.pair$ipairi
+		ls -al $file
+	else
+		echo file=$file DOES NOT EXIST
+	fi # [[ -f $fils ]]
+done # file in gefs.pertback.$cycle_fcst.n${ipair} gefs.pertback.$cycle_fcst.p${ipair}
 
 export relocpertflag=`cat save.relocpertflag`
 export inflaguse=`cat save.inflaguse`
@@ -244,9 +242,9 @@ rm fort.??
 
 ln -sf sanlgm${ipair}n sig_zvdi
 if [[ "$sigzvd" = "yes" ]]; then
-  ln -sf sanlgm${ipair}n sig_zvdo
+	ln -sf sanlgm${ipair}n sig_zvdo
 else
-  ln -sf /dev/null sig_zvdo
+	ln -sf /dev/null sig_zvdo
 fi
 echo rsann$ipair > sig_zvdl
 $EXECgefs/global_sigzvd
@@ -254,9 +252,9 @@ ret_sigzvd=$?
 
 ln -sf sanlgm${ipair}p sig_zvdi
 if [[ "$sigzvd" = "yes" ]]; then
-  ln -sf sanlgm${ipair}p sig_zvdo
+	ln -sf sanlgm${ipair}p sig_zvdo
 else
-  ln -sf /dev/null sig_zvdo
+	ln -sf /dev/null sig_zvdo
 fi
 echo rsanp$ipair > sig_zvdl
 $EXECgefs/global_sigzvd
@@ -271,75 +269,75 @@ echo relocfact=$relocfact
 execcombine=$EXECgefs/gefs_vortex_combine
 
 if (( relocpertflag == 1 )); then
-  echo Combine the storm and environment forecast fields for pair $ipair begin
+	echo "Combine the storm and environment forecast fields for pair $ipair begin"
 
-# need to have already processed c0 member
+	# need to have already processed c0 member
 
-  ln -s -f sanlgm${ipair}n  fort.54
-# ln -s -f ../gec00_strm  fort.71
-# cp -f ../gec00_strm  fort.71
-  ln -s -f ../gec00_strm.c2  fort.71
+	ln -s -f sanlgm${ipair}n  fort.54
+	# ln -s -f ../gec00_strm  fort.71
+	# cp -f ../gec00_strm  fort.71
+	ln -s -f ../gec00_strm.c2  fort.71
 
-# ln -s -f finp_strm  fort.75
-  ln -s -f ../gec00_strm  fort.75
-  ln -s -f finn_strm  fort.74
+	# ln -s -f finp_strm  fort.75
+	ln -s -f ../gec00_strm  fort.75
+	ln -s -f finn_strm  fort.74
 
-  ln -s -f sanlgm${ipair}n_add fort.58
+	ln -s -f sanlgm${ipair}n_add fort.58
 
-  export gesfhr=$ifhruse
-  export ensm=$ipair
+	export gesfhr=$ifhruse
+	export ensm=$ipair
 
-  echo `date` $execcombine before
-  echo $gesfhr $ensm $relocfact | $execcombine
-  filtrccan=$?
-  echo `date` $execcombine after
+	echo `date` $execcombine before
+	echo $gesfhr $ensm $relocfact | $execcombine
+	filtrccan=$?
+	echo `date` $execcombine after
 
-  ln -s -f sanlgm${ipair}p  fort.54
-# ln -s -f ../gec00_strm  fort.71
-# cp -f ../gec00_strm  fort.71
-  ln -s -f ../gec00_strm.c2  fort.71
+	ln -s -f sanlgm${ipair}p  fort.54
+	# ln -s -f ../gec00_strm  fort.71
+	# cp -f ../gec00_strm  fort.71
+	ln -s -f ../gec00_strm.c2  fort.71
 
-# ln -s -f finn_strm  fort.75
-  ln -s -f ../gec00_strm  fort.75
-  ln -s -f finp_strm  fort.74
+	# ln -s -f finn_strm  fort.75
+	ln -s -f ../gec00_strm  fort.75
+	ln -s -f finp_strm  fort.74
 
-  ln -s -f sanlgm${ipair}p_add fort.58
+	ln -s -f sanlgm${ipair}p_add fort.58
 
-  export gesfhr=$ifhruse
-  export ensm=$ipair
+	export gesfhr=$ifhruse
+	export ensm=$ipair
 
-  echo `date` $execcombine before
-  echo $gesfhr $ensm $relocfact | $execcombine
-  filtrccap=$?
-  echo `date` $execcombine after
+	echo `date` $execcombine before
+	echo $gesfhr $ensm $relocfact | $execcombine
+	filtrccap=$?
+	echo `date` $execcombine after
 
-# check for success
-  echo before move
-  ls -al sanlgm${ipair}*
-  echo
-  if (( filtrccan == 0 )); then
-    if (( filtrccap == 0 )); then
-      if [[ -s sanlgm${ipair}n_add ]]; then
-	if [[ -s sanlgm${ipair}p_add ]]; then
-	  echo gefs_vortex_combine succeeded
-	  mv -f sanlgm${ipair}n sanlgm${ipair}n_env
-	  mv -f sanlgm${ipair}p sanlgm${ipair}p_env
-	  mv -f sanlgm${ipair}n_add sanlgm${ipair}n
-	  mv -f sanlgm${ipair}p_add sanlgm${ipair}p
-	fi
-      fi
-    else
-      echo filtrccap=$filtrccap
-    fi
-  else
-    echo filtrccan=$filtrccan
-  fi
-  echo after move
-  ls -al sanlgm${ipair}*
-  echo
+	# check for success
+	echo before move
+	ls -al sanlgm${ipair}*
+	echo
+	if (( filtrccan == 0 )); then
+		if (( filtrccap == 0 )); then
+			if [[ -s sanlgm${ipair}n_add ]]; then
+				if [[ -s sanlgm${ipair}p_add ]]; then
+					echo gefs_vortex_combine succeeded
+					mv -f sanlgm${ipair}n sanlgm${ipair}n_env
+					mv -f sanlgm${ipair}p sanlgm${ipair}p_env
+					mv -f sanlgm${ipair}n_add sanlgm${ipair}n
+					mv -f sanlgm${ipair}p_add sanlgm${ipair}p
+				fi # [[ -s sanlgm${ipair}p_add ]]
+			fi # [[ -s sanlgm${ipair}n_add ]]
+		else
+			echo filtrccap=$filtrccap
+		fi # (( filtrccap == 0 ))
+	else
+		echo filtrccan=$filtrccan
+	fi # (( filtrccan == 0 ))
+	echo after move
+	ls -al sanlgm${ipair}*
+	echo
 
-  echo Combine the storm and environment forecast fields for pair $ipair end
-fi
+	echo Combine the storm and environment forecast fields for pair $ipair end
+fi # (( relocpertflag == 1 ))
 echo relocflag=$relocflag relocpertflag=$relocpertflag
 #
 # end relocation combining section
@@ -347,9 +345,9 @@ echo relocflag=$relocflag relocpertflag=$relocpertflag
 
 ln -sf sanlgm${ipair}n sig_zvdi
 if [[ "$sigzvd" = "yes" ]]; then
-  ln -sf sanlgm${ipair}n sig_zvdo
+	ln -sf sanlgm${ipair}n sig_zvdo
 else
-  ln -sf /dev/null sig_zvdo
+	ln -sf /dev/null sig_zvdo
 fi
 echo csann$ipair > sig_zvdl
 $EXECgefs/global_sigzvd
@@ -357,9 +355,9 @@ ret_sigzvd=$?
 
 ln -sf sanlgm${ipair}p sig_zvdi
 if [[ "$sigzvd" = "yes" ]]; then
-  ln -sf sanlgm${ipair}p sig_zvdo
+	ln -sf sanlgm${ipair}p sig_zvdo
 else
-  ln -sf /dev/null sig_zvdo
+	ln -sf /dev/null sig_zvdo
 fi
 echo csanp$ipair > sig_zvdl
 $EXECgefs/global_sigzvd
@@ -370,91 +368,89 @@ ret_sigzvd=$?
 #  Put output files.
 
 if [[ $SENDCOM = YES ]];then
-
-  if (( ipair == 1 )) && (( cyc == cyc_fcst )); then
-    cp -f sfcanl.in $COMOUT/$cyc/init/gec00.${cycle}.sfcanl$cfsuffix
-	   testfile=$COMOUT/$cyc/init/gec00.${cycle}.sfcanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-    cp -f sanl.c0 $COMOUT/$cyc/init/gec00.${cycle}.sanl$cfsuffix
-	 testfile=$COMOUT/$cyc/init/gec00.${cycle}.sanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-  fi
-  if (( outflag == 1 )) || (( outflag == 3 )); then
-    cp -f sanlgm${ipair}n $COMOUT/$cyc/init/gen${ipair}.${cycle}.sanl$cfsuffix
-		 testfile=$COMOUT/$cyc/init/gen${ipair}.${cycle}.sanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-  fi
-  if (( outflag == 2 )) || (( outflag == 3 )); then
-    cp -f sanlgm${ipair}p $COMOUT/$cyc/init/gep${ipair}.${cycle}.sanl$cfsuffix
-		 testfile=$COMOUT/$cyc/init/gep${ipair}.${cycle}.sanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-  fi
-  if (( outflag == 4 )); then
-    cp -f sanlgm${ipair}n $COMOUT/$cyc/init/gen${ipairn}.${cycle}.sanl$cfsuffix
-		 testfile=$COMOUT/$cyc/init/gen${ipairn}.${cycle}.sanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-    cp -f sanlgm${ipair}p $COMOUT/$cyc/init/gen${ipairp}.${cycle}.sanl$cfsuffix
-		 testfile=$COMOUT/$cyc/init/gen${ipairp}.${cycle}.sanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-  fi
-  if (( outflag == 5 )); then
-    cp -f sanlgm${ipair}n $COMOUT/$cyc/init/gep${ipairn}.${cycle}.sanl$cfsuffix
-		 testfile=$COMOUT/$cyc/init/gep${ipairn}.${cycle}.sanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-    cp -f sanlgm${ipair}p $COMOUT/$cyc/init/gep${ipairp}.${cycle}.sanl$cfsuffix
-		 testfile=$COMOUT/$cyc/init/gep${ipairp}.${cycle}.sanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-  fi
-
-fi
+	if (( ipair == 1 )) && (( cyc == cyc_fcst )); then
+		cp -f sfcanl.in $COMOUT/$cyc/init/gec00.${cycle}.sfcanl$cfsuffix
+		testfile=$COMOUT/$cyc/init/gec00.${cycle}.sfcanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		cp -f sanl.c0 $COMOUT/$cyc/init/gec00.${cycle}.sanl$cfsuffix
+		testfile=$COMOUT/$cyc/init/gec00.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+	fi # (( ipair == 1 )) && (( cyc == cyc_fcst ))
+	if (( outflag == 1 )) || (( outflag == 3 )); then
+		cp -f sanlgm${ipair}n $COMOUT/$cyc/init/gen${ipair}.${cycle}.sanl$cfsuffix
+		testfile=$COMOUT/$cyc/init/gen${ipair}.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+	fi # (( outflag == 1 )) || (( outflag == 3 ))
+	if (( outflag == 2 )) || (( outflag == 3 )); then
+		cp -f sanlgm${ipair}p $COMOUT/$cyc/init/gep${ipair}.${cycle}.sanl$cfsuffix
+		testfile=$COMOUT/$cyc/init/gep${ipair}.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+	fi # (( outflag == 2 )) || (( outflag == 3 ))
+	if (( outflag == 4 )); then
+		cp -f sanlgm${ipair}n $COMOUT/$cyc/init/gen${ipairn}.${cycle}.sanl$cfsuffix
+		testfile=$COMOUT/$cyc/init/gen${ipairn}.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		cp -f sanlgm${ipair}p $COMOUT/$cyc/init/gen${ipairp}.${cycle}.sanl$cfsuffix
+		testfile=$COMOUT/$cyc/init/gen${ipairp}.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+	fi # (( outflag == 4 ))
+	if (( outflag == 5 )); then
+		cp -f sanlgm${ipair}n $COMOUT/$cyc/init/gep${ipairn}.${cycle}.sanl$cfsuffix
+		testfile=$COMOUT/$cyc/init/gep${ipairn}.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		cp -f sanlgm${ipair}p $COMOUT/$cyc/init/gep${ipairp}.${cycle}.sanl$cfsuffix
+		testfile=$COMOUT/$cyc/init/gep${ipairp}.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+	fi # (( outflag == 5 ))
+fi # [[ $SENDCOM = YES ]]
 
 ################################################################################
 #  Put model initial files.
@@ -462,237 +458,237 @@ fi
 (( missingcount = 0 ))
 
 if (( ipair == 1 )) && (( cyc == cyc_fcst )); then
-  if [[ -s sanl.c0 ]]; then
-    mv -f sanl.c0 $GESOUT/gec00.${cycle}.sanl$cfsuffix
-	 testfile=$GESOUT/gec00.${cycle}.sanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-    cp -f sfcanl.in $GESOUT/gec00.${cycle}.sfcanl$cfsuffix
-	   testfile=$GESOUT/gec00.${cycle}.sfcanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-  else
-    (( missingcount = missingcount + 1 ))
-  fi
-fi
+	if [[ -s sanl.c0 ]]; then
+		mv -f sanl.c0 $GESOUT/gec00.${cycle}.sanl$cfsuffix
+		testfile=$GESOUT/gec00.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		cp -f sfcanl.in $GESOUT/gec00.${cycle}.sfcanl$cfsuffix
+		testfile=$GESOUT/gec00.${cycle}.sfcanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+	else
+		(( missingcount = missingcount + 1 ))
+	fi # [[ -s sanl.c0 ]]
+fi # (( ipair == 1 )) && (( cyc == cyc_fcst ))
 if (( outflag == 1 )); then
-  if [[ -s sanlgm${ipair}n ]]; then
-    mv -f sanlgm${ipair}n $GESOUT/gen${ipair}.${cycle}.sanl$cfsuffix
-		 testfile=$GESOUT/gen${ipair}.${cycle}.sanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-    mv -f sfcanl.in $GESOUT/gen${ipair}.${cycle}.sfcanl$cfsuffix
-	   testfile=$GESOUT/gen${ipair}.${cycle}.sfcanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-  else
-    (( missingcount = missingcount + 1 ))
-  fi
-fi
+	if [[ -s sanlgm${ipair}n ]]; then
+		mv -f sanlgm${ipair}n $GESOUT/gen${ipair}.${cycle}.sanl$cfsuffix
+		testfile=$GESOUT/gen${ipair}.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		mv -f sfcanl.in $GESOUT/gen${ipair}.${cycle}.sfcanl$cfsuffix
+		testfile=$GESOUT/gen${ipair}.${cycle}.sfcanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+	else
+		(( missingcount = missingcount + 1 ))
+	fi # [[ -s sanlgm${ipair}n ]]
+fi # (( outflag == 1 ))
 if (( outflag == 2 )); then
-  if [[ -s sanlgm${ipair}p ]]; then
-    mv -f sanlgm${ipair}p $GESOUT/gep${ipair}.${cycle}.sanl$cfsuffix
-		 testfile=$GESOUT/gep${ipair}.${cycle}.sanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-    mv -f sfcanl.in $GESOUT/gep${ipair}.${cycle}.sfcanl$cfsuffix
-	   testfile=$GESOUT/gep${ipair}.${cycle}.sfcanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-  else
-    (( missingcount = missingcount + 1 ))
-  fi
-fi
+	if [[ -s sanlgm${ipair}p ]]; then
+		mv -f sanlgm${ipair}p $GESOUT/gep${ipair}.${cycle}.sanl$cfsuffix
+		testfile=$GESOUT/gep${ipair}.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		mv -f sfcanl.in $GESOUT/gep${ipair}.${cycle}.sfcanl$cfsuffix
+		testfile=$GESOUT/gep${ipair}.${cycle}.sfcanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+	else
+		(( missingcount = missingcount + 1 ))
+	fi # [[ -s sanlgm${ipair}p ]]
+fi # (( outflag == 2 ))
 if (( outflag == 3 )); then
-  if [[ -s sanlgm${ipair}n && -s sanlgm${ipair}p ]]; then
-    mv -f sanlgm${ipair}n $GESOUT/gen${ipair}.${cycle}.sanl$cfsuffix
-		 testfile=$GESOUT/gen${ipair}.${cycle}.sanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-    cp -f sfcanl.in $GESOUT/gen${ipair}.${cycle}.sfcanl$cfsuffix
-	   testfile=$GESOUT/gen${ipair}.${cycle}.sfcanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-    mv -f sanlgm${ipair}p $GESOUT/gep${ipair}.${cycle}.sanl$cfsuffix
-		 testfile=$GESOUT/gep${ipair}.${cycle}.sanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-    mv -f sfcanl.in $GESOUT/gep${ipair}.${cycle}.sfcanl$cfsuffix
-	   testfile=$GESOUT/gep${ipair}.${cycle}.sfcanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-  else
-    (( missingcount = missingcount + 1 ))
-  fi
-fi
+	if [[ -s sanlgm${ipair}n && -s sanlgm${ipair}p ]]; then
+		mv -f sanlgm${ipair}n $GESOUT/gen${ipair}.${cycle}.sanl$cfsuffix
+		testfile=$GESOUT/gen${ipair}.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		cp -f sfcanl.in $GESOUT/gen${ipair}.${cycle}.sfcanl$cfsuffix
+		testfile=$GESOUT/gen${ipair}.${cycle}.sfcanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		mv -f sanlgm${ipair}p $GESOUT/gep${ipair}.${cycle}.sanl$cfsuffix
+		testfile=$GESOUT/gep${ipair}.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		mv -f sfcanl.in $GESOUT/gep${ipair}.${cycle}.sfcanl$cfsuffix
+		testfile=$GESOUT/gep${ipair}.${cycle}.sfcanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+	else
+		(( missingcount = missingcount + 1 ))
+	fi # [[ -s sanlgm${ipair}n && -s sanlgm${ipair}p ]]
+fi # (( outflag == 3 ))
 if (( outflag == 4 )); then
-  if [[ -s sanlgm${ipair}n && -s sanlgm${ipair}p ]]; then
-    mv -f sanlgm${ipair}n $GESOUT/gen${ipairn}.${cycle}.sanl$cfsuffix
-		 testfile=$GESOUT/gen${ipairn}.${cycle}.sanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-    cp -f sfcanl.in $GESOUT/gen${ipairn}.${cycle}.sfcanl$cfsuffix
-	   testfile=$GESOUT/gen${ipairn}.${cycle}.sfcanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-    mv -f sanlgm${ipair}p $GEOUT/gen${ipairp}.${cycle}.sanl$cfsuffix
-		 testfile=$GEOUT/gen${ipairp}.${cycle}.sanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-    mv -f sfcanl.in $GESOUT/gen${ipairp}.${cycle}.sfcanl$cfsuffix
-	   testfile=$GESOUT/gen${ipairp}.${cycle}.sfcanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-  else
-    (( missingcount = missingcount + 1 ))
-  fi
-fi
+	if [[ -s sanlgm${ipair}n && -s sanlgm${ipair}p ]]; then
+		mv -f sanlgm${ipair}n $GESOUT/gen${ipairn}.${cycle}.sanl$cfsuffix
+		testfile=$GESOUT/gen${ipairn}.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		cp -f sfcanl.in $GESOUT/gen${ipairn}.${cycle}.sfcanl$cfsuffix
+		testfile=$GESOUT/gen${ipairn}.${cycle}.sfcanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		mv -f sanlgm${ipair}p $GEOUT/gen${ipairp}.${cycle}.sanl$cfsuffix
+		testfile=$GEOUT/gen${ipairp}.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		mv -f sfcanl.in $GESOUT/gen${ipairp}.${cycle}.sfcanl$cfsuffix
+		testfile=$GESOUT/gen${ipairp}.${cycle}.sfcanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+	else
+		(( missingcount = missingcount + 1 ))
+	fi # [[ -s sanlgm${ipair}n && -s sanlgm${ipair}p ]]
+fi # (( outflag == 4 ))
 if (( outflag == 5 )); then
-  if [[ -s sanlgm${ipair}n && -s sanlgm${ipair}p ]]; then
-    mv -f sanlgm${ipair}n $GESOUT/gep${ipairn}.${cycle}.sanl$cfsuffix
-		 testfile=$GESOUT/gep${ipairn}.${cycle}.sanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-    cp -f sfcanl.in $GESOUT/gep${ipairn}.${cycle}.sfcanl$cfsuffix
-	   testfile=$GESOUT/gep${ipairn}.${cycle}.sfcanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-    mv -f sanlgm${ipair}p $GESOUT/gep${ipairp}.${cycle}.sanl$cfsuffix
-		 testfile=$GESOUT/gep${ipairp}.${cycle}.sanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-    mv -f sfcanl.in $GESOUT/gep${ipairp}.${cycle}.sfcanl$cfsuffix
-	   testfile=$GESOUT/gep${ipairp}.${cycle}.sfcanl$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-  else
-    (( missingcount = missingcount + 1 ))
-  fi
-fi
+	if [[ -s sanlgm${ipair}n && -s sanlgm${ipair}p ]]; then
+		mv -f sanlgm${ipair}n $GESOUT/gep${ipairn}.${cycle}.sanl$cfsuffix
+		testfile=$GESOUT/gep${ipairn}.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		cp -f sfcanl.in $GESOUT/gep${ipairn}.${cycle}.sfcanl$cfsuffix
+		testfile=$GESOUT/gep${ipairn}.${cycle}.sfcanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		mv -f sanlgm${ipair}p $GESOUT/gep${ipairp}.${cycle}.sanl$cfsuffix
+		testfile=$GESOUT/gep${ipairp}.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		mv -f sfcanl.in $GESOUT/gep${ipairp}.${cycle}.sfcanl$cfsuffix
+		testfile=$GESOUT/gep${ipairp}.${cycle}.sfcanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+	else
+		(( missingcount = missingcount + 1 ))
+	fi # [[ -s sanlgm${ipair}n && -s sanlgm${ipair}p ]]
+fi # (( outflag == 5 ))
 
 ##############################
 # kill this job if data was missing
 ##############################
 if (( missingcount > 0 )); then
-  export pgm=gefs_vortex_combine
-  export err=9
-  err_chk
-fi
+	export pgm=gefs_vortex_combine
+	export err=9
+	err_chk
+fi # (( missingcount > 0 ))
 
 # DBN alerts moved here from scripts/exenstr.sh.sms
 ################################################################################
 #  Send DBN alerts
 
 if [[ $SENDDBN = YES ]];then
-  #if (( ipair == 1 )) && (( cyc == cyc_fcst )); then
-  #  $DBNROOT/bin/dbn_alert MODEL ENS_SA_C0 $job $COMOUT/$cyc/init/gec00.${cycle}.sanl$cfsuffix
-  #  $DBNROOT/bin/dbn_alert MODEL ENS_MSC_C0 $job $COMOUT/$cyc/init/gec00.${cycle}.sfcanl$cfsuffix
-  #fi
-  if (( outflag == 1 )) || (( outflag == 3 )); then
-    $DBNROOT/bin/dbn_alert MODEL ENS_SA_N${ipair} $job $COMOUT/$cyc/init/gen${ipair}.${cycle}.sanl$cfsuffix
-  fi
-  #if (( outflag == 2 )) || (( outflag == 3 )); then
-  #  $DBNROOT/bin/dbn_alert MODEL ENS_SA_P${ipair} $job $COMOUT/$cyc/init/gep${ipair}.${cycle}.sanl$cfsuffix
-  #fi
-  if (( outflag == 4 )); then
-    $DBNROOT/bin/dbn_alert MODEL ENS_SA_N${ipairn} $job $COMOUT/$cyc/init/gen${ipairn}.${cycle}.sanl$cfsuffix
-    $DBNROOT/bin/dbn_alert MODEL ENS_SA_N${ipairp} $job $COMOUT/$cyc/init/gen${ipairp}.${cycle}.sanl$cfsuffix
-  fi
-  #if (( outflag == 5 )); then
-  #  $DBNROOT/bin/dbn_alert MODEL ENS_SA_P${ipairn} $job $COMOUT/$cyc/init/gep${ipairn}.${cycle}.sanl$cfsuffix
-  #  $DBNROOT/bin/dbn_alert MODEL ENS_SA_P${ipairp} $job $COMOUT/$cyc/init/gep${ipairp}.${cycle}.sanl$cfsuffix
-  #fi
-fi
+	#if (( ipair == 1 )) && (( cyc == cyc_fcst )); then
+	#  $DBNROOT/bin/dbn_alert MODEL ENS_SA_C0 $job $COMOUT/$cyc/init/gec00.${cycle}.sanl$cfsuffix
+	#  $DBNROOT/bin/dbn_alert MODEL ENS_MSC_C0 $job $COMOUT/$cyc/init/gec00.${cycle}.sfcanl$cfsuffix
+	#fi
+	if (( outflag == 1 )) || (( outflag == 3 )); then
+		$DBNROOT/bin/dbn_alert MODEL ENS_SA_N${ipair} $job $COMOUT/$cyc/init/gen${ipair}.${cycle}.sanl$cfsuffix
+	fi
+	#if (( outflag == 2 )) || (( outflag == 3 )); then
+	#  $DBNROOT/bin/dbn_alert MODEL ENS_SA_P${ipair} $job $COMOUT/$cyc/init/gep${ipair}.${cycle}.sanl$cfsuffix
+	#fi
+	if (( outflag == 4 )); then
+		$DBNROOT/bin/dbn_alert MODEL ENS_SA_N${ipairn} $job $COMOUT/$cyc/init/gen${ipairn}.${cycle}.sanl$cfsuffix
+		$DBNROOT/bin/dbn_alert MODEL ENS_SA_N${ipairp} $job $COMOUT/$cyc/init/gen${ipairp}.${cycle}.sanl$cfsuffix
+	fi
+	#if (( outflag == 5 )); then
+	#  $DBNROOT/bin/dbn_alert MODEL ENS_SA_P${ipairn} $job $COMOUT/$cyc/init/gep${ipairn}.${cycle}.sanl$cfsuffix
+	#  $DBNROOT/bin/dbn_alert MODEL ENS_SA_P${ipairp} $job $COMOUT/$cyc/init/gep${ipairp}.${cycle}.sanl$cfsuffix
+	#fi
+fi # [[ $SENDDBN = YES ]]
 echo
 echo `date` combine end ipair=$ipairi
 echo

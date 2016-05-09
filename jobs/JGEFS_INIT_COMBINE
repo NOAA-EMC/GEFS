@@ -5,13 +5,15 @@ set -xa
 
 export PS4='$SECONDS + '
 date
-####################################
+
+###########################################
 # Run gefs_config to get input parameters
 ###########################################
-if [ "$RUN_ENVIR" = dev ]   ### For Developers
-then
-  . $basesource/nwdev/parm/gefs_config
+if [ "$RUN_ENVIR" = dev ]; then ### For Developers
+# . $basesource/nw${envir}/versions/gefs.ver
+	. $basesource/nwdev/parm/gefs_config
 fi
+
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ############################
@@ -21,14 +23,13 @@ export APRUN=${gefsmpexec:-mpirun.lsf}
 export cycle=t${cyc}z
 export cycle_fcst=t${cyc_fcst}z
 
-
 if (( cyc == cyc_fcst )); then
-  export cycsuffix=false
-  export fcstlong=true
+	export cycsuffix=false
+	export fcstlong=true
 else
-  export fcstlong=false
-  export cycsuffix=true
-fi
+	export fcstlong=false
+	export cycsuffix=true
+fi # (( cyc == cyc_fcst ))
 
 ##############################
 # Run setpdy and initialize PDY variables
@@ -56,7 +57,7 @@ export RUN=gefs
 ####################################
 # File To Log Msgs
 ####################################
-  export jlogfile=${jlogfile:-$COMROOT/logs/jlogfile/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-$COMROOT/logs/jlogfile/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -72,18 +73,17 @@ export pgmerr=errfile
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
 
+export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
+export USHgsm=${USHgsm:-$HOMEgsm/ush}
+export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
+export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 
-  export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
-  export USHgsm=${USHgsm:-$HOMEgsm/ush}
-  export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
-  export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
+export FIXGLOBAL=$FIXgsm
 
-  export FIXGLOBAL=$FIXgsm
-
-  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
-  export USHgefs=${USHgefs:-$HOMEgefs/ush}
-  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
-  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 
 ##############################################
@@ -94,7 +94,6 @@ echo set parameters using gefs.parm
 . $PARMgefs/gefs_init.parm
 
 env | sort
-
 
 ##############################################
 # for global_chgres.sh
@@ -134,8 +133,8 @@ postmsg "$jlogfile" "$msg"
 # Remove the working directory
 ##############################
 if [[ $KEEPDATA != "YES" ]]; then
-  cd $DATAROOT
-  rm -rf $DATA
+	cd $DATAROOT
+	rm -rf $DATA
 fi
 
 echo `date` $0 `date -u` end

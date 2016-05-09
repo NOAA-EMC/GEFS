@@ -66,7 +66,7 @@ parameter(len=60,mem=21)
 
 real, allocatable :: ff(:,:),pp(:,:),ss(:,:),aa(:),gg(:,:),hh(:,:)
 
-character*100 cpgb,cpgi,cpge
+character*255 cpgb,cpgi,cpge
 
 namelist /namin/ cpgb,cpge
 

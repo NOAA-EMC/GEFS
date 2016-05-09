@@ -11,11 +11,10 @@ date
 ###########################################
 # Run gefs_config to get input parameters
 ###########################################
-if [ "$RUN_ENVIR" = dev ]   ### For Developers
-then
+if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 # . $basesource/nw${envir}/versions/gefs.ver
-  . $basesource/nw${envir}/parm/gefs_config
-  export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+	. $basesource/nwdev/parm/gefs_config
+	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
 
 export APRUN=${gefsmpexec:-mpirun.lsf}
@@ -38,14 +37,14 @@ echo cyc=$cyc cyc_fcst=$cyc_fcst
 echo cycle=$cycle cycle_fcst=$cycle_fcst
 
 if (( cyc == cyc_fcst )); then
-  export fcstlong=true
-  export cfsuffix=""
-  export cycsuffix=false
+	export fcstlong=true
+	export cfsuffix=""
+	export cycsuffix=false
 else
-  export fcstlong=false
-  export cfsuffix=".cycfs$cyc_fcst"
-  export cycsuffix=true
-fi
+	export fcstlong=false
+	export cfsuffix=".cycfs$cyc_fcst"
+	export cycsuffix=true
+fi # (( cyc == cyc_fcst ))
 
 export fcstlong
 echo fcstlong=$fcstlong
@@ -154,7 +153,7 @@ export regtype=altg
 
 export pertdir=${DATA}/${cmodel}
 if [ ! -d ${pertdir} ]; then 
-  mkdir -p ${pertdir}
+	mkdir -p ${pertdir}
 fi
 
 outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
@@ -163,20 +162,21 @@ rm -rf ${DATA}/*
 
 #### NCEP/GFS genesis tcvitals  ###########################
 num_gen_vits=`cat ${genvitdir}/genesis.vitals.gfs.gfso.${JYYYY} | wc -l`
-if [ ${num_gen_vits} -gt 0 ]
-then
-  ln -s -f ${genvitdir}/genesis.vitals.gfs.gfso.${JYYYY} fort.41
-  ln -s -f ${genvitdir}/gen_tc.vitals.gfs.gfso.${JYYYY} fort.42
-  ${EXECens_tracker}/tcvital_ch_gfs
-  cat ${genvitdir}/gen_tc.vitals.gfs.gfso.${JYYYY} >> ${genvitdir}/all.vitals.gfs.gfso.${JYYYY}
-  rm -f ${genvitdir}/gen_tc.vitals.gfs.gfso.${JYYYY}
+if [ ${num_gen_vits} -gt 0 ]; then
+	ln -s -f ${genvitdir}/genesis.vitals.gfs.gfso.${JYYYY} fort.41
+	ln -s -f ${genvitdir}/gen_tc.vitals.gfs.gfso.${JYYYY} fort.42
+	${EXECens_tracker}/tcvital_ch_gfs
+	cat ${genvitdir}/gen_tc.vitals.gfs.gfso.${JYYYY} >> ${genvitdir}/all.vitals.gfs.gfso.${JYYYY}
+	rm -f ${genvitdir}/gen_tc.vitals.gfs.gfso.${JYYYY}
 else
-  touch ${genvitdir}/all.vitals.gfs.gfso.${JYYYY}
-fi
+	touch ${genvitdir}/all.vitals.gfs.gfso.${JYYYY}
+fi # [ ${num_gen_vits} -gt 0 ]
 
 #---- second run genesis ---------------------------------------
 export pertdir=${DATA}/${cmodel}/${pert}
-if [ ! -d ${pertdir} ]; then mkdir -p ${pertdir}; fi
+if [ ! -d ${pertdir} ]; then
+	mkdir -p ${pertdir}
+fi
 
 outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
 ${USHens_tracker}/extrkr_gen_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}
@@ -207,8 +207,8 @@ postmsg "$jlogfile" "$msg"
 # Remove the Temporary working directory
 ##############################
 if [[ $KEEPDATA != "YES" ]]; then
-  cd $DATAROOT
-  rm -rf $DATA
+	cd $DATAROOT
+	rm -rf $DATA
 fi
 
 `date` $0 `date -u` end

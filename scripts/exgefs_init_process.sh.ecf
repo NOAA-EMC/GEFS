@@ -85,16 +85,15 @@ echo relocfact=$relocfact relocflag=$relocflag
 (( npairt = npair * 4 ))
 nlist=
 ipair=0
-while (( ipair < npairt ))
-do
-  (( ipair = ipair + 1 ))
-  if (( ipair < 10 )); then
-    ipair=0$ipair
-  fi
-  nlist="$nlist $ipair"
-done
+while (( ipair < npairt )); do
+	(( ipair = ipair + 1 ))
+	if (( ipair < 10 )); then
+		ipair=0$ipair
+	fi
+	nlist="$nlist $ipair"
+done # while (( ipair < npairt ))
 echo nlist=$nlist
-  
+
 # these variables are now set in gefs.parm
 
 # these variables specify the resolution of low-resolution perturbation output
@@ -115,12 +114,12 @@ echo nlist=$nlist
 # associated with this breeding job
 
 if [[ "$cycsuffix" = "true" ]]; then
-  export cfsuffix=".cycfs$cyc_fcst"
-  export ensshort=yes
+	export cfsuffix=".cycfs$cyc_fcst"
+	export ensshort=yes
 else
-  export cfsuffix=""
-  export ensshort=no
-fi
+	export cfsuffix=""
+	export ensshort=no
+fi # [[ "$cycsuffix" = "true" ]]
 
 echo cyc=$cyc cyc_fcst=$cyc_fcst
 echo cycle=$cycle cycle_fcst=$cycle_fcst
@@ -141,12 +140,12 @@ echo pdycycp=$pdycycp pdyp=$pdyp cycp=$cycp
 # from which tracking information will be used
 
 if (( cycp != cyc_fcst )); then
-  export cfsuffixp=".cycfs$cyc_fcst"
-  export ensshortp=yes
+	export cfsuffixp=".cycfs$cyc_fcst"
+	export ensshortp=yes
 else
-  export cfsuffixp=""
-  export ensshortp=no
-fi
+	export cfsuffixp=""
+	export ensshortp=no
+fi # (( cycp != cyc_fcst ))
 
 echo cfsuffixp=$cfsuffixp
 echo ensshortp=$ensshortp
@@ -171,10 +170,10 @@ b2=$b2_et
 b3=$b3_et
 smax=$smax_et
 if [[ $etflag = no ]]; then
-netflag=0
+	netflag=0
 else
-netflag=1
-fi
+	netflag=1
+fi # [[ $etflag = no ]]
 mskflag=$mskflag_et
 echo globamplr=$globamplr
 echo globamplg=$globamplg
@@ -193,78 +192,80 @@ cp -f sanl.in  sanl.c0
 #
 #  Make namelist file
 #
-cat <<EOF >et_namens
-  &NAMENS npair1=$npair,jcap=$JCAPHR,ilat=$LATBHR,ilon=$LONBHR,
-  levs=$LEVSHR,ntrac=$NTRACHR,inflag=$inflag,icyc=$cyc,
-  globamplr=$globamplr,globamplg=$globamplg,itopres=$itopres,
-  contop=$contop,nlevrs=$nlevrs,mxlev=$mxlev,
-  nlevmask=$nlevmask,smax=$smax,b1=$b1,b2=$b2,b3=$b3,
-  netflag=$netflag,mskflag=$mskflag/
-EOF
+cat <<-EOF >et_namens
+	&NAMENS npair1=$npair,jcap=$JCAPHR,ilat=$LATBHR,ilon=$LONBHR,
+	levs=$LEVSHR,ntrac=$NTRACHR,inflag=$inflag,icyc=$cyc,
+	globamplr=$globamplr,globamplg=$globamplg,itopres=$itopres,
+	contop=$contop,nlevrs=$nlevrs,mxlev=$mxlev,
+	nlevmask=$nlevmask,smax=$smax,b1=$b1,b2=$b2,b3=$b3,
+	netflag=$netflag,mskflag=$mskflag/
+	EOF
 #
 echo  "&DATNAMES" >>  et_namens
 #
-for ip in $nlist;   do
-     (( iip = ip ))
-     if (( iip < 10 )); then
-        iip=0$iip
-     fi
-     if [[ $parallelinit = no ]]; then
-#
-#  input ensemble member file names
-#
-       en1v="en1($ip)='finn.pair${iip}',"
-       echo "$en1v" >> et_namens
-       en2v="en2($ip)='finp.pair${iip}',"
-       echo "$en2v" >> et_namens
-#
-#  output ensemble member file names
-#
-       enn1v="enn1($ip)='sanlgm${iip}n',"
-       echo "$enn1v" >> et_namens
-       enn2v="enn2($ip)='sanlgm${iip}p',"
-       echo "$enn2v" >> et_namens
-#
-     else
-       (( ipo = 2 * ip - 1 ))
-       en1v="en($ipo)='finn.pair${iip}',"
-       echo "$en1v" >> et_namens
-       enn1v="enn($ipo)='sanlgm${iip}n',"
-       echo "$enn1v" >> et_namens
-#
-       (( ipe = 2 * ip ))
-       en2v="en($ipe)='finp.pair${iip}',"
-       echo "$en2v" >> et_namens
-       enn2v="enn($ipe)='sanlgm${iip}p',"
-       echo "$enn2v" >> et_namens
-     fi
-done
+for ip in $nlist; do
+	(( iip = ip ))
+	if (( iip < 10 )); then
+		iip=0$iip
+	fi
+	if [[ $parallelinit = no ]]; then
+		#
+		#  input ensemble member file names
+		#
+		en1v="en1($ip)='finn.pair${iip}',"
+		echo "$en1v" >> et_namens
+		en2v="en2($ip)='finp.pair${iip}',"
+		echo "$en2v" >> et_namens
+		#
+		#  output ensemble member file names
+		#
+		enn1v="enn1($ip)='sanlgm${iip}n',"
+		echo "$enn1v" >> et_namens
+		enn2v="enn2($ip)='sanlgm${iip}p',"
+		echo "$enn2v" >> et_namens
+		#
+	else # [[ $parallelinit = no ]]
+		(( ipo = 2 * ip - 1 ))
+		en1v="en($ipo)='finn.pair${iip}',"
+		echo "$en1v" >> et_namens
+		enn1v="enn($ipo)='sanlgm${iip}n',"
+		echo "$enn1v" >> et_namens
+		#
+		(( ipe = 2 * ip ))
+		en2v="en($ipe)='finp.pair${iip}',"
+		echo "$en2v" >> et_namens
+		enn2v="enn($ipe)='sanlgm${iip}p',"
+		echo "$enn2v" >> et_namens
+	fi # [[ $parallelinit = no ]]
+done # for ip in $nlist
 echo "/" >> et_namens
 cat et_namens
 # if there are no initial, use backup perts
 #
 ip=1
 iip=0$ip
-for tz in t00z t06z t12z t18z;  do
-  np=01
-  while (( np <= npair )); do
-    if [[ ! -s finn.pair${iip}  ]]; then
-      ln -s -f  gefs.pertback.${tz}.n${np}.pair${iip} finn.pair${iip}
-    fi 
-    if [[ ! -s finp.pair${iip}  ]]; then
-      ln -s -f  gefs.pertback.${tz}.p${np}.pair${iip} finp.pair${iip}
-    fi
-    (( ip = ip + 1 ))
-    (( iip = ip ))
-    if (( iip < 10 )); then
-      iip=0$iip
-    fi
-    (( np = np + 1 ))
-    if (( np < 10 )); then
-      np=0$np
-    fi
-  done 
-done
+for tz in t00z t06z t12z t18z; do
+	np=01
+	while (( np <= npair )); do
+		if [[ ! -s finn.pair${iip} ]]; then
+			# ln -s -f  gefs.pertback.${tz}.n${np}.pair${iip} finn.pair${iip}
+			ln -s -f  $FIXgefs/gefs.pertback.${tz}.n${np}.pair${iip} finn.pair${iip}
+		fi # [[ ! -s finn.pair${iip} ]]
+		if [[ ! -s finp.pair${iip} ]]; then
+			# ln -s -f  gefs.pertback.${tz}.p${np}.pair${iip} finp.pair${iip}
+			ln -s -f  $FIXgefs/gefs.pertback.${tz}.p${np}.pair${iip} finp.pair${iip}
+		fi # [[ ! -s finp.pair${iip} ]]
+		(( ip = ip + 1 ))
+		(( iip = ip ))
+		if (( iip < 10 )); then
+			iip=0$iip
+		fi
+		(( np = np + 1 ))
+		if (( np < 10 )); then
+			np=0$np
+		fi
+	done # while (( np <= npair ))
+done # for tz in t00z t06z t12z t18z
 #
 echo list input files for ET
 ls -al | grep -e finn -e finp
@@ -277,23 +278,23 @@ ls -al | grep -e finn -e finp
 ###testb
 export exe_dir=EXECgefs/exec
 if [[ $parallelinit = no ]]; then
-  execet=$exe_dir/gefs_init_et
+	execet=$exe_dir/gefs_init_et
 else
-  execet=$exe_dir/gefs_init_et_p
+	execet=$exe_dir/gefs_init_et_p
 fi
 
 if ((mskflag == 2)); then
-cp -f $COMINm1/$cyc/track_enkf/TE_SPRD_ave.grd fort.48
-cp -f $COMINm1/$cyc/track_enkf/PS_SPRD_ave.grd fort.49
-echo using 3D mask of $COMINm1/$cyc/track_enkf/TE_SPRD_ave.grd and PS_SPRD_ave.grd
+	cp -f $COMINm1/$cyc/track_enkf/TE_SPRD_ave.grd fort.48
+	cp -f $COMINm1/$cyc/track_enkf/PS_SPRD_ave.grd fort.49
+	echo using 3D mask of $COMINm1/$cyc/track_enkf/TE_SPRD_ave.grd and PS_SPRD_ave.grd
 elif ((mskflag ==3 )); then
-       ln -s   $FIXgefs/enkf.geogr.monthly  fort.48
-       ln -s   $FIXgefs/enkf.geogr.monthly.ps  fort.49
-        echo using mask of $FIXgefs/enkf.geogr.monthly
+	ln -s   $FIXgefs/enkf.geogr.monthly  fort.48
+	ln -s   $FIXgefs/enkf.geogr.monthly.ps  fort.49
+	echo using mask of $FIXgefs/enkf.geogr.monthly
 else
-cp -f  $FIXgefs/gefs.geogr.monthly  fort.48
-echo using mask of $FIXgefs/gefs.geogr.monthly
-fi
+	cp -f  $FIXgefs/gefs.geogr.monthly  fort.48
+	echo using mask of $FIXgefs/gefs.geogr.monthly
+fi # ((mskflag == 2))
 # set env variables for running paralell version of ET code
 #export TARGET_CPU_LIST=-1
 #export MPI_DSM_DISTRIBUTE
@@ -308,87 +309,82 @@ fi
 #export MP_CPU_USE=multiple
 #export MP_CSS_INTERRUPT=yes
 if [[ $netflag == 0 && $mskflag == 0 ]]; then
-  (( recentmem = npair * 2 ))
-   case $cyc in
-     (00) (( ipair0 = 0  )) ;;
-     (06) (( ipair0 = npair   )) ;;
-     (12) (( ipair0 = 2 * npair )) ;;
-     (18) (( ipair0 = 3 * npair )) ;;
-   esac
+	(( recentmem = npair * 2 ))
+	case $cyc in
+		(00) (( ipair0 = 0  )) ;;
+		(06) (( ipair0 = npair   )) ;;
+		(12) (( ipair0 = 2 * npair )) ;;
+		(18) (( ipair0 = 3 * npair )) ;;
+	esac
 
-   (( ipairh = ipair0 + npair ))
+	(( ipairh = ipair0 + npair ))
 
-   for ipair in $nlist
-   do
-     if (( ipair > ipair0 && ipair <= ipairh)); then
-         (( ipairn = ipair - ipair0  ))
-         (( ipairp = ipair - ipair0 + npair ))
-#             if (( ipair < 10 )); then
-#               ipair=0$ipair
-#             fi
-             if (( ipairn < 10 )); then
-                ipairn=0$ipairn
-             fi
-             if  (( ipairp < 10 )); then
-                ipairp=0$ipairp
-              fi
-         ln -s   finn.pair${ipair}  fin_mem0$ipairn
-         ln -s    finp.pair${ipair}  fin_mem0$ipairp
-     else
-         cp -pr   finn.pair${ipair}  sanlgm${ipair}n
-         cp -pr   finp.pair${ipair}  sanlgm${ipair}p
-     fi
-  done
-  $APRUN $GETATMENSMEANEXEC ./ fin_ensmean fin $recentmem 6 | tee -a $pgmout
-  export err=$?
-  err_chk
-  echo `date` $GETATMENSMEANEXEC after
+	for ipair in $nlist; do
+		if (( ipair > ipair0 && ipair <= ipairh)); then
+			(( ipairn = ipair - ipair0  ))
+			(( ipairp = ipair - ipair0 + npair ))
+			#             if (( ipair < 10 )); then
+			#               ipair=0$ipair
+			#             fi
+			if (( ipairn < 10 )); then
+				ipairn=0$ipairn
+			fi
+			if  (( ipairp < 10 )); then
+				ipairp=0$ipairp
+			fi
+			ln -s finn.pair${ipair} fin_mem0$ipairn
+			ln -s finp.pair${ipair} fin_mem0$ipairp
+		else
+			cp -pr finn.pair${ipair} sanlgm${ipair}n
+			cp -pr finp.pair${ipair} sanlgm${ipair}p
+		fi # (( ipair > ipair0 && ipair <= ipairh))
+	done # for ipair in $nlist
+	$APRUN $GETATMENSMEANEXEC ./ fin_ensmean fin $recentmem 6 | tee -a $pgmout
+	export err=$?
+	err_chk
+	echo `date` $GETATMENSMEANEXEC after
 
-  $APRUN $RECENATMPEXEC fin fin_ensmean sanl.in.pair01 sanlgm $recentmem | tee -a $pgmout
-  export err=$?
-  err_chk
-  echo `date` $RECENATMPEXEC after
+	$APRUN $RECENATMPEXEC fin fin_ensmean sanl.in.pair01 sanlgm $recentmem | tee -a $pgmout
+	export err=$?
+	err_chk
+	echo `date` $RECENATMPEXEC after
 
-   for ipair in $nlist
-   do
-     if (( ipair > ipair0 && ipair <= ipairh)); then
-         (( ipairn = ipair - ipair0  ))
-         (( ipairp = ipair - ipair0 + npair ))
-             if (( ipairn < 10 )); then
-                ipairn=0$ipairn
-             fi
-             if  (( ipairp < 10 )); then
-                ipairp=0$ipairp
-              fi
-         cp -pr  sanlgm_mem0$ipairn sanlgm${ipair}n
-         cp -pr  sanlgm_mem0$ipairp sanlgm${ipair}p
-     fi
-   done
-
-
-else
-if [[ $parallelinit = no ]]; then
-# serial version of et
-  echo `date` $execet before
-  $execet  < et_namens | tee -a $pgmout
-  export err=$?
-  err_chk
-  echo `date` $execet after
-else
-# parallel version of et
-  echo `date` $execet  MPI ET before
-  #  $execet  < et_namens | tee -a $pgmout
-  #poe /usrx/local/mpi_trace/utils/launch.x $execet  < et_namens
-  #poe hpmcount /usrx/local/mpi_trace/utils/launch.x $execet  < et_namens
-  #poe hpmcount $execet  < et_namens
-#  poe $execet  < et_namens
-$APRUN $execet < et_namens
-  export err=$?
-  err_chk
-  echo `date` $execet  MPI ET after
-
-fi
-fi
+	for ipair in $nlist; do
+		if (( ipair > ipair0 && ipair <= ipairh)); then
+			(( ipairn = ipair - ipair0  ))
+			(( ipairp = ipair - ipair0 + npair ))
+			if (( ipairn < 10 )); then
+				ipairn=0$ipairn
+			fi
+			if  (( ipairp < 10 )); then
+				ipairp=0$ipairp
+			fi
+			cp -pr  sanlgm_mem0$ipairn sanlgm${ipair}n
+			cp -pr  sanlgm_mem0$ipairp sanlgm${ipair}p
+		fi # (( ipair > ipair0 && ipair <= ipairh))
+	done # for ipair in $nlist
+else # [[ $netflag == 0 && $mskflag == 0 ]]
+	if [[ $parallelinit = no ]]; then
+		# serial version of et
+		echo `date` $execet before
+		$execet  < et_namens | tee -a $pgmout
+		export err=$?
+		err_chk
+		echo `date` $execet after
+	else # [[ $parallelinit = no ]]
+		# parallel version of et
+		echo `date` $execet  MPI ET before
+		#  $execet  < et_namens | tee -a $pgmout
+		#poe /usrx/local/mpi_trace/utils/launch.x $execet  < et_namens
+		#poe hpmcount /usrx/local/mpi_trace/utils/launch.x $execet  < et_namens
+		#poe hpmcount $execet  < et_namens
+		#  poe $execet  < et_namens
+		$APRUN $execet < et_namens
+		export err=$?
+		err_chk
+		echo `date` $execet  MPI ET after
+	fi # [[ $parallelinit = no ]]
+fi # [[ $netflag == 0 && $mskflag == 0 ]]
 
 #
 echo change names after ET for gefs_init_pair_combine.sh 
@@ -397,31 +393,30 @@ echo  nlist=$nlist
 
 (( missingcount = 0 ))
 
-for ip in $nlist
-do
-  echo ip=$ip
-  if (( ip <= npair )); then
-    (( ipairh=ip ))
-  elif (( ip <= 2 * npair )); then
-    (( ipairh = ip - npair ))
-  elif (( ip <= 3 * npair )); then
-    (( ipairh = ip - 2 * npair ))
-  else
-    (( ipairh = ip - 3 * npair ))
-  fi
-  if (( ipairh < 10 )); then
-     ipairh=0${ipairh}
-  fi 
-  echo final ipairh=$ipairh
-#
-  if [[ -s sanlgm${ip}n && -s sanlgm${ip}p ]]; then
-    mv -f sanlgm${ip}n  sanlgm${ipairh}n.pair${ip}
-    mv -f sanlgm${ip}p  sanlgm${ipairh}p.pair${ip}
-    cp -f sanl.c0 sanl.c0.pair${ip}
-  else
-    (( missingcount = missingcount + 1 ))
-  fi
-done
+for ip in $nlist; do
+	echo ip=$ip
+	if (( ip <= npair )); then
+		(( ipairh=ip ))
+	elif (( ip <= 2 * npair )); then
+		(( ipairh = ip - npair ))
+	elif (( ip <= 3 * npair )); then
+		(( ipairh = ip - 2 * npair ))
+	else
+		(( ipairh = ip - 3 * npair ))
+	fi # (( ip <= npair ))
+	if (( ipairh < 10 )); then
+		ipairh=0${ipairh}
+	fi 
+	echo final ipairh=$ipairh
+	#
+	if [[ -s sanlgm${ip}n && -s sanlgm${ip}p ]]; then
+		mv -f sanlgm${ip}n sanlgm${ipairh}n.pair${ip}
+		mv -f sanlgm${ip}p sanlgm${ipairh}p.pair${ip}
+		cp -f sanl.c0 sanl.c0.pair${ip}
+	else
+		(( missingcount = missingcount + 1 ))
+	fi # [[ -s sanlgm${ip}n && -s sanlgm${ip}p ]]
+done # for ip in $nlist
 #
 echo
 echo `date` $0  ET part b end
@@ -434,9 +429,9 @@ ls -lt
 # kill this job if data was missing
 ##############################
 if (( missingcount > 0 )); then
-  export pgm=gefs_init_et_p
-  export err=9
-  err_chk
+	export pgm=gefs_init_et_p
+	export err=9
+	err_chk
 fi
 
 #

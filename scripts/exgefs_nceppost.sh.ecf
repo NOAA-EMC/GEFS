@@ -22,9 +22,9 @@ export MP_LABELIO=YES
 #poe hostname
 
 if [[ "$cycsuffix" = "true" ]]; then
-  export cfsuffix=".cycfs$cyc_fcst"
+	export cfsuffix=".cycfs$cyc_fcst"
 else
-  export cfsuffix=""
+	export cfsuffix=""
 fi
 echo cyc=$cyc cyc_fcst=$cyc_fcst
 echo cycle=$cycle cycle_fcst=$cycle_fcst
@@ -38,30 +38,38 @@ echo cfsuffix=$cfsuffix
 #export GRBINDEX2=${GRB2INDEX:-${EXECgrib}/grb2index}
 #export NDATE=${NDATE:-${EXECutil}/ndate}
 #
- export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
- export SIGHDR=${SIGHDR:-$EXECgsm/global_sighdr}
+export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
+export SIGHDR=${SIGHDR:-$EXECgsm/global_sighdr}
 
 R1=`echo $RUN|cut -c1-3`
 R2=`echo $RUN|cut -c4-5`
 e3=20
 case $R1 in
-  (gec) if (( R2 == 0 )); then 
-           (( e1 = 1 ))
-	   (( e2 = R2 ))
-           ens_pert_type='unpert_lo_res_ctrl_fcst'
-        else   
-	 echo unrecognized RUN=$RUN R1=$R1 R2=$R2 
-	fi;;
-  (gen) (( e1 = 2 ))
-	ens_pert_type='negatively_pert_fcst'
-	(( e2 = R2 ));;
-  (gep) (( e1 = 3 ))
-        ens_pert_type='pos_pert_fcst'
-	(( e2 = R2 ));;
-  (*)   (( e1 = 0 ))
-	(( e2 = 0 ))
-	echo unrecognized RUN=$RUN R1=$R1 R2=$R2 ;;
-esac
+	(gec)
+		if (( R2 == 0 )); then 
+			(( e1 = 1 ))
+			(( e2 = R2 ))
+			ens_pert_type='unpert_lo_res_ctrl_fcst'
+		else   
+			echo unrecognized RUN=$RUN R1=$R1 R2=$R2 
+		fi
+		;;
+	(gen)
+		(( e1 = 2 ))
+		ens_pert_type='negatively_pert_fcst'
+		(( e2 = R2 ))
+		;;
+	(gep)
+		(( e1 = 3 ))
+		ens_pert_type='pos_pert_fcst'
+		(( e2 = R2 ))
+		;;
+	(*)
+		(( e1 = 0 ))
+		(( e2 = 0 ))
+		echo unrecognized RUN=$RUN R1=$R1 R2=$R2
+		;;
+esac # $R1 
 export e1=$e1
 export e2=$e2
 export e3=$e3
@@ -70,26 +78,21 @@ export ens_pert_numb=$e2
 export ens=YES
 echo "ens_pert_type,ens_pert_numb,ens"= $ens_pert_type $ens_pert_numb $ens 
 
-    res=Gaus
-# 0.125 deg
-#  if [ $IDRT -eq 0 ] ; then
-     if [ $res = "p125" ] ; then
-       export LONB=2880
-       export LATB=1441
-       export grid='255 0 2880 1441 90000 0 128 -90000 359875 125 125 0'
-# .25 deg
-     elif [ $res = "p25" ] ; then
-       export LONB=1440
-       export LATB=721
-       export grid='255 0 1440 721 90000 0 128 -90000 359750 250 250 0'
-# .5 deg
-     elif [ $res = "p5" ] ; then
-       export LONB=720
-       export LATB=361
-       export grid='255 0 720 361 90000 0 128 -90000 359500 500 500 0'
-    fi
-# fi
-     
+res=Gaus
+if [ $res = "p125" ] ; then # 0.125 deg
+	export LONB=2880
+	export LATB=1441
+	export grid='255 0 2880 1441 90000 0 128 -90000 359875 125 125 0'	
+elif [ $res = "p25" ] ; then # .25 deg
+	export LONB=1440
+	export LATB=721
+	export grid='255 0 1440 721 90000 0 128 -90000 359750 250 250 0'
+elif [ $res = "p5" ] ; then # .5 deg
+	export LONB=720
+	export LATB=361
+	export grid='255 0 720 361 90000 0 128 -90000 359500 500 500 0'
+fi # [ $res = "p125" ]
+
 ############################################################
 #  Define Variables:
 #  -----------------
@@ -111,468 +114,438 @@ echo "ens_pert_type,ens_pert_numb,ens"= $ens_pert_type $ens_pert_numb $ens
 
 if [ $DOANALYSIS = YES ]; then
 
-  mcfile=$COMOUT/$cyc/misc/post/${RUN}.t${cyc}z.master.control.anl$cfsuffix
+mcfile=$COMOUT/$cyc/misc/post/${RUN}.t${cyc}z.master.control.anl$cfsuffix
 
-  if [[ ! -f $COMIN/$cyc/init/${RUN}.t${cyc}z.sanl$cfsuffix ]]; then
-    rm $mcfile
-  fi
+if [[ ! -f $COMIN/$cyc/init/${RUN}.t${cyc}z.sanl$cfsuffix ]]; then
+	rm $mcfile
+fi
 
-  if [ $GRIBVERSION = grib1 ]; then
-   fileout=$COMOUT/$cyc/master/$RUN.$cycle.master.grbanl$cfsuffix
-   fileouti=$COMOUT/$cyc/master/$RUN.$cycle.master.grbianl$cfsuffix
-  elif [ $GRIBVERSION = grib2 ]; then
-   fileout=$COMOUT/$cyc/master/$RUN.$cycle.master.grb2anl$cfsuffix
-   fileouti=$COMOUT/$cyc/master/$RUN.$cycle.master.grb2ianl$cfsuffix
-  fi
+if [ $GRIBVERSION = grib1 ]; then
+	fileout=$COMOUT/$cyc/master/$RUN.$cycle.master.grbanl$cfsuffix
+	fileouti=$COMOUT/$cyc/master/$RUN.$cycle.master.grbianl$cfsuffix
+elif [ $GRIBVERSION = grib2 ]; then
+	fileout=$COMOUT/$cyc/master/$RUN.$cycle.master.grb2anl$cfsuffix
+	fileouti=$COMOUT/$cyc/master/$RUN.$cycle.master.grb2ianl$cfsuffix
+fi # [ $GRIBVERSION = grib1 ]
 
-  if [[ -s $mcfile ]]; then
-    if [[ -s $fileout ]]; then
-      if [[ -s $fileouti ]]; then
-        cat $mcfile
-	echo skip creation of $fileout
-      else
-        echo fileouti=$fileouti IS MISSING
-        rm $mcfile
-      fi
-    else
-      echo fileout=$fileout IS MISSING
-      rm $mcfile
-    fi
-  fi
+if [[ -s $mcfile ]]; then
+	if [[ -s $fileout ]]; then
+		if [[ -s $fileouti ]]; then
+			cat $mcfile
+			echo skip creation of $fileout
+		else
+			echo fileouti=$fileouti IS MISSING
+			rm $mcfile
+		fi # [[ -s $fileouti ]]
+	else
+		echo fileout=$fileout IS MISSING
+		rm $mcfile
+	fi # [[ -s $fileout ]]
+fi # [[ -s $mcfile ]]
 
-  if [[ ! -s $mcfile ]]; then
-    # 20150622 RLW disable this temporarily to test the new post code
-    rm $fileout
-    rm $fileouti
-    for submc in prd0p5 prd1p0 prd2p5
-    do
-      pcfile=$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.anl$cfsuffix
-      rm $pcfile
-    done
-  fi
+if [[ ! -s $mcfile ]]; then
+	# 20150622 RLW disable this temporarily to test the new post code
+	rm $fileout
+	rm $fileouti
+	for submc in prd0p5 prd1p0 prd2p5; do
+		pcfile=$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.anl$cfsuffix
+		rm $pcfile
+	done
+fi # [[ ! -s $mcfile ]]
 
 fi
 
 (( fhr=SHOUR))
 if (( fhr < 10 )); then
-  fhr=0$fhr
+	fhr=0$fhr
 fi
 export fhr
 
-while (( fhr <= FHOUR )) 
-do
+while (( fhr <= FHOUR )); do
+	mcfile=$COMOUT/$cyc/misc/post/${RUN}.t${cyc}z.master.control.f$fhr$cfsuffix
 
-  mcfile=$COMOUT/$cyc/misc/post/${RUN}.t${cyc}z.master.control.f$fhr$cfsuffix
+	if [[ ! -f $restart_file$fhr$cfsuffix ]]; then
+		rm $mcfile
+	fi
 
-  if [[ ! -f $restart_file$fhr$cfsuffix ]]; then
-    rm $mcfile
-  fi
+	if [ $GRIBVERSION = grib1 ]; then
+		fileout=$COMOUT/$cyc/master/$RUN.$cycle.master.grbf$fhr$cfsuffix
+		fileouti=$COMOUT/$cyc/master/$RUN.$cycle.master.grbif$fhr$cfsuffix
+	elif [ $GRIBVERSION = grib2 ]; then
+		fileout=$COMOUT/$cyc/master/$RUN.$cycle.master.grb2f$fhr$cfsuffix
+		fileouti=$COMOUT/$cyc/master/$RUN.$cycle.master.grb2if$fhr$cfsuffix
+	fi # [ $GRIBVERSION = grib1 ]
 
-    if [ $GRIBVERSION = grib1 ]; then
-     fileout=$COMOUT/$cyc/master/$RUN.$cycle.master.grbf$fhr$cfsuffix
-     fileouti=$COMOUT/$cyc/master/$RUN.$cycle.master.grbif$fhr$cfsuffix
-    elif [ $GRIBVERSION = grib2 ]; then
-     fileout=$COMOUT/$cyc/master/$RUN.$cycle.master.grb2f$fhr$cfsuffix
-     fileouti=$COMOUT/$cyc/master/$RUN.$cycle.master.grb2if$fhr$cfsuffix
-    fi
+	if [[ -s $mcfile ]]; then
+		if [[ -s $fileout ]]; then
+			if [[ -s $fileouti ]]; then
+				cat $mcfile
+				echo skip creation of $fileout
+			else
+				echo fileouti=$fileouti IS MISSING
+				rm $mcfile
+			fi # [[ -s $fileouti ]]
+		else
+			echo fileout=$fileout IS MISSING
+			rm $mcfile
+		fi # [[ -s $fileout ]]
+	fi # [[ -s $mcfile ]]
 
-  if [[ -s $mcfile ]]; then
-    if [[ -s $fileout ]]; then
-      if [[ -s $fileouti ]]; then
-        cat $mcfile
-	echo skip creation of $fileout
-      else
-        echo fileouti=$fileouti IS MISSING
-        rm $mcfile
-      fi
-    else
-      echo fileout=$fileout IS MISSING
-      rm $mcfile
-    fi
-  fi
+	if [[ ! -s $mcfile ]]; then
+		# 20150622 RLW disable this temporarily to test the new post code
+		rm $fileout
+		rm $fileouti
+		for submc in prd0p5 prd1p0 prd2p5; do
+			pcfile=$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.f$fhr$cfsuffix
+			rm $pcfile
+		done # for submc in prd0p5 prd1p0 prd2p5
+	fi # [[ ! -s $mcfile ]]
 
-  if [[ ! -s $mcfile ]]; then
-    # 20150622 RLW disable this temporarily to test the new post code
-    rm $fileout
-    rm $fileouti
-    for submc in prd0p5 prd1p0 prd2p5
-    do
-      pcfile=$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.f$fhr$cfsuffix
-      rm $pcfile
-    done
-  fi
-
-  export fhr=`expr $fhr + $FHINC`
-  if (( fhr < 10 ))
-  then
-    export fhr="0$fhr"
-  fi
-done
+	export fhr=`expr $fhr + $FHINC`
+	if (( fhr < 10 )); then
+		export fhr="0$fhr"
+	fi
+done # while (( fhr <= FHOUR ))
 
 if [ $DOANALYSIS = YES ]; then
+	mcfile=$COMOUT/$cyc/misc/post/${RUN}.t${cyc}z.master.control.anl$cfsuffix
 
-  mcfile=$COMOUT/$cyc/misc/post/${RUN}.t${cyc}z.master.control.anl$cfsuffix
+	if [[ ! -s $mcfile ]]; then
 
-  if [[ ! -s $mcfile ]]; then
+		############################################################
+		# Post Analysis Files before starting the Forecast Post
+		############################################################
+		SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
-    ############################################################
-    # Post Analysis Files before starting the Forecast Post
-    ############################################################
-    SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
+		export pgm="postcheck"
+		ic=0
+		while [ $ic -le $SLEEP_LOOP_MAX ]; do
+			if test -f $COMIN/$cyc/init/${RUN}.t${cyc}z.sanl$cfsuffix; then
+				break
+			else
+				ic=`expr $ic + 1`
+				sleep $SLEEP_INT
+			fi # test -f $COMIN/$cyc/init/${RUN}.t${cyc}z.sanl$cfsuffix
+			###############################
+			# If we reach this point assume
+			# fcst job never reached restart 
+			# period and error exit
+			###############################
+			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+				msg="FATAL ERROR: $RUN FORECAST MISSING for hour anl"
+				echo "`date`    $msg"
+				postmsg "$jlogfile" "$msg"
+				export err=9
+				err_chk
+			fi
+		done  #while [ $ic -le $SLEEP_LOOP_MAX ]
 
-    export pgm="postcheck"
-    ic=0
-    while [ $ic -le $SLEEP_LOOP_MAX ]
-    do
-      if test -f $COMIN/$cyc/init/${RUN}.t${cyc}z.sanl$cfsuffix
-      then
-	break
-      else
-	ic=`expr $ic + 1`
-	sleep $SLEEP_INT
-      fi
-      ###############################
-      # If we reach this point assume
-      # fcst job never reached restart 
-      # period and error exit
-      ###############################
-      if [ $ic -eq $SLEEP_LOOP_MAX ]
-      then
-	msg="FATAL ERROR: $RUN FORECAST MISSING for hour anl"
-	echo "`date`    $msg"
-	postmsg "$jlogfile" "$msg"
-	export err=9
-	err_chk
-      fi
-    done
+		if test -f $COMIN/$cyc/init/${RUN}.t${cyc}z.sanl$cfsuffix; then
+			# add new environmental variables for running new ncep post
+			# Validation date
 
-    if test -f $COMIN/$cyc/init/${RUN}.t${cyc}z.sanl$cfsuffix
-    then
+			export VDATE=${PDY}${cyc}
 
-      # add new environmental variables for running new ncep post
-      # Validation date
+			# set outtyp to 1 because we need to run chgres in the post before model start running chgres
+			# otherwise set to 0, then chgres will not be executed in global_nceppost.sh
 
-       export VDATE=${PDY}${cyc}
+			export OUTTYP=1
+			# to generate both types of sigma files
 
-      # set outtyp to 1 because we need to run chgres in the post before model start running chgres
-      # otherwise set to 0, then chgres will not be executed in global_nceppost.sh
+			export OUTTYP=0
+			export OUTTYP=1
+			# to bypass chgres and read model sigma files directly
+			export OUTTYP=3
 
-      export OUTTYP=1
-      # to generate both types of sigma files
+			# specify output file name from chgres which is input file name to nceppost
+			# if model already runs gfs io, make sure GFSOUT is linked to the gfsio file
+			# new imported variable for global_nceppost.sh
 
-      export OUTTYP=0
-      export OUTTYP=1
-      # to bypass chgres and read model sigma files directly
-      export OUTTYP=3
+			export GFSOUT=${RUN}.${cycle}.gfsioanl$cfsuffix
 
-      # specify output file name from chgres which is input file name to nceppost
-      # if model already runs gfs io, make sure GFSOUT is linked to the gfsio file
-      # new imported variable for global_nceppost.sh
+			# specify smaller control file for GDAS because GDAS does not
+			# produce flux file, the default will be /nwprod/parm/gfs_master_fhh.parm
 
-      export GFSOUT=${RUN}.${cycle}.gfsioanl$cfsuffix
+			if [ $GRIBVERSION = grib1 ]; then
+				export IGEN=$IGEN_ANL
+				export CTLFILE=$PARMgefs/gefs_master_f00.parm
+			elif [ $GRIBVERSION = grib2 ]; then
+				export IGEN=$IGEN_ANL
+				export CTLFILE=${CTLFILEGFSANL:-$PARMpost/postcntrl_gefs_anl.xml}
+			fi # [ $GRIBVERSION = grib1 ]
 
-      # specify smaller control file for GDAS because GDAS does not
-      # produce flux file, the default will be /nwprod/parm/gfs_master_fhh.parm
+			cat $CTLFILE
 
-      if [ $GRIBVERSION = grib1 ]; then
-	export IGEN=$IGEN_ANL
-	export CTLFILE=$PARMgefs/gefs_master_f00.parm
-      elif [ $GRIBVERSION = grib2 ]; then
-	export IGEN=$IGEN_ANL
-	export CTLFILE=${CTLFILEGFSANL:-$PARMpost/postcntrl_gefs_anl.xml}
-      fi
+			rm -rf sigfile.anl$cfsuffix
+			ln -s $COMIN/$cyc/init/${RUN}.t${cyc}z.sanl$cfsuffix sigfile.anl$cfsuffix
 
-      cat $CTLFILE
+			####################################
+			# Create Master Post File 
+			####################################
+			export SIGINP=sigfile.anl$cfsuffix
+			export SFCINPUT=
+			export FLXINP=/dev/null
+			export FLXIOUT=/dev/null
+			rm -rf pgbfout pgbifout
+			if [ $GRIBVERSION = grib1 ]; then
+				ln -s $COMOUT/$cyc/master/$RUN.$cycle.master.grbanl$cfsuffix pgbfout
+				ln -s $COMOUT/$cyc/master/$RUN.$cycle.master.grbianl$cfsuffix pgbifout
+			elif [ $GRIBVERSION = grib2 ]; then
+				ln -s $COMOUT/$cyc/master/$RUN.$cycle.master.grb2anl$cfsuffix pgbfout
+				ln -s $COMOUT/$cyc/master/$RUN.$cycle.master.grb2ianl$cfsuffix pgbifout
+			fi # [ $GRIBVERSION = grib1 ]
+			export PGBOUT=pgbfout
+			export PGIOUT=pgbifout
+			export IGEN=$IGEN_ANL
 
-      rm -rf sigfile.anl$cfsuffix
-      ln -s $COMIN/$cyc/init/${RUN}.t${cyc}z.sanl$cfsuffix sigfile.anl$cfsuffix
+			# specify fhr even for analysis because postgp uses it
+			export fhr=00
 
-      ####################################
-      # Create Master Post File 
-      ####################################
-      export SIGINP=sigfile.anl$cfsuffix
-      export SFCINPUT=
-      export FLXINP=/dev/null
-      export FLXIOUT=/dev/null
-      rm -rf pgbfout pgbifout
-      if [ $GRIBVERSION = grib1 ]; then
-       ln -s $COMOUT/$cyc/master/$RUN.$cycle.master.grbanl$cfsuffix pgbfout
-       ln -s $COMOUT/$cyc/master/$RUN.$cycle.master.grbianl$cfsuffix pgbifout
-      elif [ $GRIBVERSION = grib2 ]; then
-       ln -s $COMOUT/$cyc/master/$RUN.$cycle.master.grb2anl$cfsuffix pgbfout
-       ln -s $COMOUT/$cyc/master/$RUN.$cycle.master.grb2ianl$cfsuffix pgbifout
-      fi
-      export PGBOUT=pgbfout
-      export PGIOUT=pgbifout
-      export IGEN=$IGEN_ANL
+			# run nceppost
+			export pgm="$POSTGPSH"
+			export VERBOSE=YES
+			$POSTGPSH
+			rc=$?
+			if (( rc == 0 )); then
+				echo pgm=$pgm completed successfully
+			else
+				msg="FATAL ERROR: $pgm FAILED for member $RUN hour anl"
+				echo "`date`    $msg"
+				postmsg "$jlogfile" "$msg"
+				export err=$rc
+				err_chk
+			fi # (( rc == 0 ))
 
-    # specify fhr even for analysis because postgp uses it
-      export fhr=00
-       
-    # run nceppost
-      export pgm="$POSTGPSH"
-      export VERBOSE=YES
-      $POSTGPSH
-      rc=$?
-      if (( rc == 0 )); then
-	echo pgm=$pgm completed successfully
-      else
-	msg="FATAL ERROR: $pgm FAILED for member $RUN hour anl"
-	echo "`date`    $msg"
-	postmsg "$jlogfile" "$msg"
-	export err=$rc
-	err_chk
-      fi
+			pgbfoutd=`readlink -n pgbfout`
+			if [[ ! -s $pgbfoutd ]]; then
+				msg="FATAL ERROR: $pgbfoutd WAS NOT WRITTEN"
+				echo "`date`    $msg"
+				postmsg "$jlogfile" "$msg"
+				export err=1
+				err_chk
+			fi # [[ ! -s $pgbfoutd ]];
 
-      pgbfoutd=`readlink -n pgbfout`
-      if [[ ! -s $pgbfoutd ]]; then
-	msg="FATAL ERROR: $pgbfoutd WAS NOT WRITTEN"
-	echo "`date`    $msg"
-	postmsg "$jlogfile" "$msg"
-	export err=1
-	err_chk
-      fi
+			pgbifoutd=`readlink -n pgbifout`
+			if [[ ! -s $pgbifoutd ]]; then
+				msg="FATAL ERROR: $pgbifoutd WAS NOT WRITTEN"
+				echo "`date`    $msg"
+				postmsg "$jlogfile" "$msg"
+				export err=1
+				err_chk
+			fi # [[ ! -s $pgbifoutd ]]
 
-      pgbifoutd=`readlink -n pgbifout`
-      if [[ ! -s $pgbifoutd ]]; then
-	msg="FATAL ERROR: $pgbifoutd WAS NOT WRITTEN"
-	echo "`date`    $msg"
-	postmsg "$jlogfile" "$msg"
-	export err=1
-	err_chk
-      fi
-
-    # 20100730 create a separate log file for the analysis for use by prdgen job
-      if test $SENDCOM = "YES"
-      then
-	if (( fhr < 100 ))
-	then
-	   pad="0"
-	else
-	   pad=""
-	fi
-	echo
-	ls -al $PGBOUT $PGBIOUT
-	echo
-	echo "$PDY$cyc$pad$fhr" > $mcfile
-	echo
-	ls -al  $mcfile
-	cat  $mcfile
-	echo "anl_done" >> $post_log
-	# ecflow_client --label info "`cat $post_log`"
-	  ecflow_client --event anl_done
-	echo
-      fi
-    fi
-
-  fi # mcfile
-
-fi # DOANALYSIS
+			# 20100730 create a separate log file for the analysis for use by prdgen job
+			if test $SENDCOM = "YES"; then
+				if (( fhr < 100 )); then
+					pad="0"
+				else
+					pad=""
+				fi
+				echo
+				ls -al $PGBOUT $PGBIOUT
+				echo
+				echo "$PDY$cyc$pad$fhr" > $mcfile
+				echo
+				ls -al  $mcfile
+				cat  $mcfile
+				echo "anl_done" >> $post_log
+				# ecflow_client --label info "`cat $post_log`"
+				ecflow_client --event anl_done
+				echo
+			fi # test $SENDCOM = "YES"
+		fi # test -f $COMIN/$cyc/init/${RUN}.t${cyc}z.sanl$cfsuffix
+	fi # [[ ! -s $mcfile ]]
+fi # [ $DOANALYSIS = YES ]
 
 SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
 (( fhr=SHOUR))
 if (( fhr < 10 )); then
-  fhr=0$fhr
+	fhr=0$fhr
 fi
 export fhr
 
 ############################################################
 # Loop Through the Post Forecast Files 
 ############################################################
-while (( fhr <= FHOUR )) 
-do
+while (( fhr <= FHOUR )); do
+	mcfile=$COMOUT/$cyc/misc/post/${RUN}.t${cyc}z.master.control.f$fhr$cfsuffix
 
-  mcfile=$COMOUT/$cyc/misc/post/${RUN}.t${cyc}z.master.control.f$fhr$cfsuffix
+	if [[ ! -s $mcfile ]]; then
+		###############################
+		# Start Looping for the 
+		# existence of the restart files
+		###############################
+		export pgm="postcheck"
+		ic=1
 
-  if [[ ! -s $mcfile ]]; then
+		while [ $ic -le $SLEEP_LOOP_MAX ]; do
+			if test -f $restart_file$fhr$cfsuffix; then
+				break
+			else
+				ic=`expr $ic + 1`
+				sleep $SLEEP_INT
+			fi # test -f $restart_file$fhr$cfsuffix
+			###############################
+			# If we reach this point assume
+			# fcst job never reached restart 
+			# period and error exit
+			###############################
+			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+				echo `date` forecast $RUN missing for hour $fhr 
+				msg="$RUN FORECAST MISSING for hour $fhr"
+				postmsg "$jlogfile" "$msg"
+				export err=9
+				err_chk
+			fi # [ $ic -eq $SLEEP_LOOP_MAX ]
+		done # [ $ic -le $SLEEP_LOOP_MAX ]
 
-    ###############################
-    # Start Looping for the 
-    # existence of the restart files
-    ###############################
-    export pgm="postcheck"
-    ic=1
+		msg="Starting post for fhr=$fhr"
+		postmsg "$jlogfile" "$msg"
 
-    while [ $ic -le $SLEEP_LOOP_MAX ]
-    do
-      if test -f $restart_file$fhr$cfsuffix
-      then
-	break
-      else
-	ic=`expr $ic + 1`
-	sleep $SLEEP_INT
-      fi
-      ###############################
-      # If we reach this point assume
-      # fcst job never reached restart 
-      # period and error exit
-      ###############################
-      if [ $ic -eq $SLEEP_LOOP_MAX ]
-      then
-	echo `date` forecast $RUN missing for hour $fhr 
-	msg="$RUN FORECAST MISSING for hour $fhr"
-	postmsg "$jlogfile" "$msg"
-	export err=9
-	err_chk
-      fi
-    done
+		###############################
+		# link sigma and flux files
+		###############################
+		rm -rf sigfile flxfile
+		ln -s $COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.sf$fhr$cfsuffix sigfile.f$fhr$cfsuffix
+		ln -s $COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.bf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
+		ln -s $COMIN/$cyc/sflux/${RUN}.t${cyc}z.sfluxgrbf$fhr$cfsuffix flxfile.f$fhr$cfsuffix
 
-    msg="Starting post for fhr=$fhr"
-    postmsg "$jlogfile" "$msg"
+		###################################3
+		# Create Master Post File
+		###################################3
+		if (( fhr > 0 )); then 
+			export IGEN=$IGEN_FCST 
+		else 
+			export IGEN=$IGEN_ANL
+		fi
 
-    ###############################
-    # link sigma and flux files
-    ###############################
-    rm -rf sigfile flxfile
-    ln -s $COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.sf$fhr$cfsuffix sigfile.f$fhr$cfsuffix
-    ln -s $COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.bf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
-    ln -s $COMIN/$cyc/sflux/${RUN}.t${cyc}z.sfluxgrbf$fhr$cfsuffix flxfile.f$fhr$cfsuffix
+		# add new environmental variables for running new ncep post
+		# Validation date
 
-    ###################################3
-    # Create Master Post File
-    ###################################3
-    if (( fhr > 0 ))
-    then 
-      export IGEN=$IGEN_FCST 
-    else 
-      export IGEN=$IGEN_ANL
-    fi
+		# export VDATE=`${EXECutil}/ndate +${fhr} ${PDY}${cyc}`
+		export VDATE=`$NDATE +${fhr} ${PDY}${cyc}`
 
-    # add new environmental variables for running new ncep post
-    # Validation date
+		# set outtyp to 1 because we need to run chgres in the post before model start running chgres
+		# otherwise set to 0, then chgres will not be executed in global_nceppost.sh
 
-  # export VDATE=`${EXECutil}/ndate +${fhr} ${PDY}${cyc}`
-    export VDATE=`$NDATE +${fhr} ${PDY}${cyc}`
-    
-    # set outtyp to 1 because we need to run chgres in the post before model start running chgres
-    # otherwise set to 0, then chgres will not be executed in global_nceppost.sh
+		export OUTTYP=1
+		# to generate both types of sigma files
+		export OUTTYP=0
+		export OUTTYP=1
+		# to bypass chgres and read model sigma files directly
+		export OUTTYP=3
 
-    export OUTTYP=1
-    # to generate both types of sigma files
-    export OUTTYP=0
-    export OUTTYP=1
-    # to bypass chgres and read model sigma files directly
-    export OUTTYP=3
-    
-    # specify output file name from chgres which is input file name to nceppost
-    # if model already runs gfs io, make sure GFSOUT is linked to the gfsio file
-    # new imported variable for global_nceppost.sh
+		# specify output file name from chgres which is input file name to nceppost
+		# if model already runs gfs io, make sure GFSOUT is linked to the gfsio file
+		# new imported variable for global_nceppost.sh
 
-      if test $fhr -gt 0
-      then
-	 export IGEN=$IGEN_FCST
-      else
-	 export IGEN=$IGEN_ANL
-      fi
-    if [ $GRIBVERSION = grib1 ]; then
-      export CTLFILE=$PARMgefs/gefs_master_fhh.parm
-    else
-      if test $fhr -eq 0
-      then
-       export CTLFILE=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
-      else
-       if test $fhr -le 96
-       then
-	export CTLFILE=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml_long}
-       else
-	export CTLFILE=${CTLFILEGFS1:-$PARMpost/postcntrl_gefs.xml}
-       fi
-      fi
-    fi
+		if test $fhr -gt 0; then
+			export IGEN=$IGEN_FCST
+		else
+			export IGEN=$IGEN_ANL
+		fi
+		if [ $GRIBVERSION = grib1 ]; then
+			export CTLFILE=$PARMgefs/gefs_master_fhh.parm
+		else
+			if test $fhr -eq 0; then
+				export CTLFILE=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
+			else
+				if test $fhr -le 96; then
+					export CTLFILE=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml_long}
+				else
+					export CTLFILE=${CTLFILEGFS1:-$PARMpost/postcntrl_gefs.xml}
+				fi
+			fi # test $fhr -eq 0
+		fi # [ $GRIBVERSION = grib1 ]
 
-  # export CTLFILE=$PARMgefs/gefs_master_fhh.parm
-    cat $CTLFILE
+		# export CTLFILE=$PARMgefs/gefs_master_fhh.parm
+		cat $CTLFILE
 
-    export SIGINP=sigfile.f$fhr$cfsuffix
-    export SFCINPUT=sfcfile.f$fhr$cfsuffix
+		export SIGINP=sigfile.f$fhr$cfsuffix
+		export SFCINPUT=sfcfile.f$fhr$cfsuffix
 
-    export FLXINP=flxfile.f$fhr$cfsuffix
-    export FLXIOUT=flxifile.f$fhr$cfsuffix
-    rm -rf pgbfout pgbifout
-  # ln -s $COMOUT/$cyc/master/$RUN.$cycle.master.grbf$fhr$cfsuffix pgbfout
-  # ln -s $COMOUT/$cyc/master/$RUN.$cycle.master.grbif$fhr$cfsuffix pgbifout
-    ln -s $COMOUT/$cyc/master/$RUN.$cycle.master.grb2f$fhr$cfsuffix pgbfout
-    ln -s $COMOUT/$cyc/master/$RUN.$cycle.master.grb2if$fhr$cfsuffix pgbifout
-    export PGBOUT=pgbfout
-    export PGIOUT=pgbifout
-    export ANOMCATSH=${USHGSM}/global_anomcat.sh
-    FILTER=1
-      
-  # RLW 20100910 add cleanup to prevent problems with overparm
-    echo
-    for file in fort.11 fort.51 h5wav prmsl tfile
-    do
-      ls -al $file
-      if [[ -L $file || -f $file ]]; then
-	rm -f $file
-	echo $file removed from working directory
-      else
-	echo $file not removed from working directory
-      fi
-    done
-    echo
+		export FLXINP=flxfile.f$fhr$cfsuffix
+		export FLXIOUT=flxifile.f$fhr$cfsuffix
+		rm -rf pgbfout pgbifout
+		# ln -s $COMOUT/$cyc/master/$RUN.$cycle.master.grbf$fhr$cfsuffix pgbfout
+		# ln -s $COMOUT/$cyc/master/$RUN.$cycle.master.grbif$fhr$cfsuffix pgbifout
+		ln -s $COMOUT/$cyc/master/$RUN.$cycle.master.grb2f$fhr$cfsuffix pgbfout
+		ln -s $COMOUT/$cyc/master/$RUN.$cycle.master.grb2if$fhr$cfsuffix pgbifout
+		export PGBOUT=pgbfout
+		export PGIOUT=pgbifout
+		export ANOMCATSH=${USHGSM}/global_anomcat.sh
+		FILTER=1
 
-  # run nceppost
-    export pgm="$POSTGPSH"
-    $POSTGPSH
-    rc=$?
-    if (( rc == 0 )); then
-      echo pgm=$pgm completed successfully
-    else
-      msg="FATAL ERROR: $pgm FAILED for member $RUN hour $fhr"
-      echo "`date`    $msg"
-      postmsg "$jlogfile" "$msg"
-      export err=$rc
-      err_chk
-    fi
+		# RLW 20100910 add cleanup to prevent problems with overparm
+		echo
+		for file in fort.11 fort.51 h5wav prmsl tfile; do
+			ls -al $file
+			if [[ -L $file || -f $file ]]; then
+				rm -f $file
+				echo $file removed from working directory
+			else
+				echo $file not removed from working directory
+			fi # [[ -L $file || -f $file ]]
+		done # for file in fort.11 fort.51 h5wav prmsl tfile
+		echo
 
-    pgbfoutd=`readlink -n pgbfout`
-    if [[ ! -s $pgbfoutd ]]; then
-      msg="FATAL ERROR: $pgbfoutd WAS NOT WRITTEN"
-      echo "`date`    $msg"
-      postmsg "$jlogfile" "$msg"
-      export err=1
-      err_chk
-    fi
-    pgbifoutd=`readlink -n pgbifout`
-    if [[ ! -s $pgbifoutd ]]; then
-      msg="FATAL ERROR: $pgbifoutd WAS NOT WRITTEN"
-      echo "`date`    $msg"
-      postmsg "$jlogfile" "$msg"
-      export err=1
-      err_chk
-    fi
+		# run nceppost
+		export pgm="$POSTGPSH"
+		$POSTGPSH
+		rc=$?
+		if (( rc == 0 )); then
+			echo pgm=$pgm completed successfully
+		else
+			msg="FATAL ERROR: $pgm FAILED for member $RUN hour $fhr"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=$rc
+			err_chk
+		fi # (( rc == 0 ))
 
-    if test $SENDCOM = "YES"
-    then
-      if (( fhr < 100 ))
-      then
-	 pad="0"
-      else
-	 pad=""
-      fi
-      echo
-      ls -al $PGBOUT $PGBIOUT
-      echo
-      echo "$PDY$cyc$pad$fhr" > $mcfile
-      echo
-      ls -al  $mcfile
-      cat  $mcfile
-      echo "f${fhr}_done" >> $post_log
-      # ecflow_client --label info "`cat $post_log`"
-      ecflow_client --event f${fhr}_done
-      echo
-    fi
+		pgbfoutd=`readlink -n pgbfout`
+		if [[ ! -s $pgbfoutd ]]; then
+			msg="FATAL ERROR: $pgbfoutd WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $pgbfoutd ]]
+		pgbifoutd=`readlink -n pgbifout`
+		if [[ ! -s $pgbifoutd ]]; then
+			msg="FATAL ERROR: $pgbifoutd WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $pgbifoutd ]]
 
-  fi # mcfile
+		if test $SENDCOM = "YES"; then
+			if (( fhr < 100 )); then
+				pad="0"
+			else
+				pad=""
+			fi
+			echo
+			ls -al $PGBOUT $PGBIOUT
+			echo
+			echo "$PDY$cyc$pad$fhr" > $mcfile
+			echo
+			ls -al  $mcfile
+			cat  $mcfile
+			echo "f${fhr}_done" >> $post_log
+			# ecflow_client --label info "`cat $post_log`"
+			ecflow_client --event f${fhr}_done
+			echo
+		fi # test $SENDCOM = "YES"
+	fi # [[ ! -s $mcfile ]]
 
-  export fhr=`expr $fhr + $FHINC`
-  if (( fhr < 10 ))
-  then
-    export fhr="0$fhr"
-  fi
-done
+	export fhr=`expr $fhr + $FHINC`
+	if (( fhr < 10 )); then
+		export fhr="0$fhr"
+	fi
+done # while (( fhr <= FHOUR ))
 
 cat $pgmout
 

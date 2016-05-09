@@ -52,7 +52,7 @@ integer jskp,jdisc,jpdtn,jgdtn,idisc,ipdtn,igdtn
 integer temp(200)
 
 integer ienst,iensi,lpgb,lpgi,lpge,icount,iretb,ireti,irete,iret,jret,ipdtnum_out                                        
-character*80 cpgb,cpge
+character*255 cpgb,cpge
 namelist     /namin/ ienst,iensi,cpgb,cpge      
 
 CALL W3TAGB('ENSADD',1999,0243,0068,'NP23')

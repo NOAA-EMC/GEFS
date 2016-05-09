@@ -14,24 +14,23 @@ set -x
 
 cd $DATA
 
-if [[ $# != 2 ]]
-then
-   echo "Usage: $0 gribin gribout"
-   exit 1
+if [[ $# != 2 ]]; then
+	echo "Usage: $0 gribin gribout"
+	exit 1
 fi
 
 #$GRBIDX $1 $2
 
 export pgm=global_ensppf
-. prep_step
+$USHutil/prep_step
 
 startmsg
 #eval $EXECGLOBAL/global_ensppf <<EOF 2>/dev/null
 #DHOU 03/26/2012 for Zeus
-eval $EXECgefs/global_ensppf <<EOF 2>/dev/null
- &namin
- cpgb='$1',cpge='$2' /
-EOF
+eval $EXECgefs/global_ensppf <<-EOF 2>/dev/null
+	&namin
+	cpgb='$1',cpge='$2' /
+	EOF
 export err=$?; err_chk
 
 set +x

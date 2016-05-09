@@ -12,11 +12,10 @@ date
 ###########################################
 # Run gefs_config to get input parameters
 ###########################################
-if [ "$RUN_ENVIR" = dev ]   ### For Developers
-then
+if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 # . $basesource/nw${envir}/versions/gefs.ver
-  . $basesource/nw${envir}/parm/gefs_config
-  export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+	. $basesource/nwdev/parm/gefs_config
+	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
 
 export APRUN=${gefsmpexec:-mpirun.lsf}
@@ -39,14 +38,14 @@ echo cyc=$cyc cyc_fcst=$cyc_fcst
 echo cycle=$cycle cycle_fcst=$cycle_fcst
 
 if (( cyc == cyc_fcst )); then
-  export fcstlong=true
-  export cfsuffix=""
-  export cycsuffix=false
+	export fcstlong=true
+	export cfsuffix=""
+	export cycsuffix=false
 else
-  export fcstlong=false
-  export cfsuffix=".cycfs$cyc_fcst"
-  export cycsuffix=true
-fi
+	export fcstlong=false
+	export cfsuffix=".cycfs$cyc_fcst"
+	export cycsuffix=true
+fi # (( cyc == cyc_fcst ))
 
 export fcstlong
 echo fcstlong=$fcstlong
@@ -120,13 +119,13 @@ echo set parameters using gefs.parm
 . $PARMgefs/gefs.parm
 
 if [[ $envir = dev ]]; then
-  export fhmax=$fhmax00
+	export fhmax=$fhmax00
 elif (( cyc == 06 )); then
-  export fhmax=$fhmax06
+	export fhmax=$fhmax06
 elif (( cyc == 12 )); then
-  export fhmax=$fhmax12
+	export fhmax=$fhmax12
 elif (( cyc == 18 )); then
-  export fhmax=$fhmax18
+	export fhmax=$fhmax18
 fi
 
 ####################################
@@ -134,20 +133,19 @@ fi
 ####################################
 
 if [[ $fcstlong = true ]]; then
-  memberlist="c00"
+	memberlist="c00"
 else
-  memberlist=""
+	memberlist=""
 fi
 
 (( imem = 0 ))
-while (( imem < npair * 2 ))
-do
-  (( imem = imem + 1 ))
-  if (( imem < 10 )); then
-    imem=0$imem
-  fi
-  memberlist="$memberlist p$imem"
-done
+while (( imem < npair * 2 )); do
+	(( imem = imem + 1 ))
+	if (( imem < 10 )); then
+		imem=0$imem
+	fi
+	memberlist="$memberlist p$imem"
+done # while (( imem < npair * 2 ))
 echo memberlist=$memberlist
 
 export homesyndir=$HOMEtrak
@@ -176,19 +174,18 @@ cd ${DATA}/${cmodel}
 
 >trkr.cmdfile
 for pert in ${memberlist}; do
-    pertdir=${DATA}/${cmodel}/${pert}
-    if [ ! -d ${pertdir} ]; then 
-     mkdir -p ${pertdir}
-    fi
-    outfile=${pertdir}/trkr.${cmodel}.${pert}.${ymdh}.out
-    echo "${USHens_tracker}/extrkr_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
-done
- 
+	pertdir=${DATA}/${cmodel}/${pert}
+	if [ ! -d ${pertdir} ]; then 
+		mkdir -p ${pertdir}
+	fi
+	outfile=${pertdir}/trkr.${cmodel}.${pert}.${ymdh}.out
+	echo "${USHens_tracker}/extrkr_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
+done # for pert in ${memberlist}
+
 cat trkr.cmdfile
 chmod 775 trkr.cmdfile
-export MP_PGMMODEL=mpmd
 export MP_CMDFILE=${DATA}/${cmodel}/trkr.cmdfile
-
+export MP_PGMMODEL=mpmd
 $APRUN
 
 #for pert in ${memberlist}; do
@@ -217,8 +214,8 @@ postmsg "$jlogfile" "$msg"
 # Remove the Temporary working directory
 ##############################
 if [[ $KEEPDATA != "YES" ]]; then
-  cd $DATAROOT
-  rm -rf $DATA
-fi  
+	cd $DATAROOT
+	rm -rf $DATA
+fi
 
 echo `date` $job completed

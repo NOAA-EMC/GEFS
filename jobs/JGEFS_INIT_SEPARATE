@@ -5,13 +5,15 @@ echo `date` $0 `date -u` begin
 set -xa
 export PS4='$SECONDS + '
 date
+
 ###########################################
 # Run gefs_config to get input parameters
 ###########################################
-if [ "$RUN_ENVIR" = dev ]   ### For Developers
-then
-  . $basesource/nwdev/parm/gefs_config
+if [ "$RUN_ENVIR" = dev ]; then ### For Developers
+# . $basesource/nw${envir}/versions/gefs.ver
+	. $basesource/nwdev/parm/gefs_config
 fi
+
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
 ############################
@@ -22,11 +24,11 @@ export cycle_fcst=t${cyc_fcst}z
 
 
 if (( cyc == cyc_fcst )); then
-  export cycsuffix=false
-  export fcstlong=true
+	export cycsuffix=false
+	export fcstlong=true
 else
-  export fcstlong=false
-  export cycsuffix=true
+	export fcstlong=false
+	export cycsuffix=true
 fi
 
 
@@ -36,11 +38,12 @@ fi
 ##############################
 setpdy.sh
 . PDY
+
 ####################################
 # obtain unique process id (pid) and make working directory
 ####################################
 export pid=$$
-  export DATA=$DATAROOT/gefs_init_$PDY$cyc.$envir.save
+export DATA=$DATAROOT/gefs_init_$PDY$cyc.$envir.save
 
 echo DATA=$DATA
 if [[ -d $DATA ]]; then
@@ -58,7 +61,7 @@ export RUN=${RUN:-gefs}
 ####################################
 # File To Log Msgs
 ####################################
-  export jlogfile=${jlogfile:-${COMROOT}/logs/jlogfiles/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${COMROOT}/logs/jlogfiles/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -76,17 +79,17 @@ export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
 export HOMEenkf=${HOMEenkf:-$NWROOTp1/enkf.${enkf_ver}}
 
-  export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
-  export USHgsm=${USHgsm:-$HOMEgsm/ush}
-  export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
-  export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
+export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
+export USHgsm=${USHgsm:-$HOMEgsm/ush}
+export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
+export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 
-  export FIXGLOBAL=$FIXgsm
+export FIXGLOBAL=$FIXgsm
 
-  export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
-  export USHgefs=${USHgefs:-$HOMEgefs/ush}
-  export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
-  export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 
 ##############################################
@@ -101,8 +104,6 @@ export fhrpstart=$fhrp
 export fhrpend=96
  
 env | sort
-
-
 
 ##############################################
 # Define COM directories
@@ -121,21 +122,18 @@ export COMINm2=${COMINm2:-${COM_IN}/${RUN}.${PDYm2}}
 export COMINm3=${COMINm3:-${COM_IN}/${RUN}.${PDYm3}}
 export COMINm4=${COMINm4:-${COM_IN}/${RUN}.${PDYm4}}
 
-
-
-
 export pdycycp=`$NDATE -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
 export cycp=`echo $pdycycp|cut -c9-10`
 
 
-  if (($inflag == 6)) ; then
-  export COMSFCSIGP=$COM_IN/${RUN}.$pdyp/$cycp/sfcsig_enkf
-  export COMTRACKP=$COM_IN/${RUN}.$pdyp/$cycp/track_enkf
-  else
-  export COMSFCSIGP=$COM_IN/${RUN}.$pdyp/$cycp/sfcsig
-  export COMTRACKP=$COM_IN/${RUN}.$pdyp/$cycp/track
-  fi
+if (($inflag == 6)) ; then
+	export COMSFCSIGP=$COM_IN/${RUN}.$pdyp/$cycp/sfcsig_enkf
+	export COMTRACKP=$COM_IN/${RUN}.$pdyp/$cycp/track_enkf
+else
+	export COMSFCSIGP=$COM_IN/${RUN}.$pdyp/$cycp/sfcsig
+	export COMTRACKP=$COM_IN/${RUN}.$pdyp/$cycp/track
+fi # (($inflag == 6))
 ###teste
 mkdir -m 775 -p $COMOUT/$cyc/init
 mkdir -m 775 -p $COMOUT/$cyc/sflux
@@ -160,16 +158,8 @@ echo location of chgres script and executable
 export CHGRESTHREAD=$NTHREADS_SIGCHGRS
 # Change Resolution script and executable
 
-   export chgresush=$USHgsm/global_chgres.sh
-   export CHGRESEXEC=$EXECgsm/global_chgres
-
-#case $gefsmachine in
-# (zeus)
-#   export chgresush=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/ush/global_chgres.sh
-#   export CHGRESEXEC=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/exec/global_chgres
-# ;;
-#esac
-
+export chgresush=$USHgsm/global_chgres.sh
+export CHGRESEXEC=$EXECgsm/global_chgres
 
 ##############################################
 echo list environment before running script

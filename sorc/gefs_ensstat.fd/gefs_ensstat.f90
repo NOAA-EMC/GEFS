@@ -64,8 +64,8 @@ integer     nfiles,nenspost,iskip(nmemd),tfiles,ifile
 integer     lfopg1,lfopg2
 integer     icfopg1,icfopg2
 
-character*200 cfipg(nmemd)
-character*150 cfopg1,cfopg2
+character*255 cfipg(nmemd)
+character*255 cfopg1,cfopg2
 
 real    gmin,gmax
 integer nbit
