@@ -15,6 +15,7 @@ date
 if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 # . $basesource/nw${envir}/versions/gefs.ver
 	. $basesource/nwdev/parm/gefs_config
+	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
 
 export APRUN=${gefsmpexec:-mpirun.lsf}
