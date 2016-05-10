@@ -271,10 +271,11 @@ if [ $DOANALYSIS = YES ]; then
 				export CTLFILE=$PARMgefs/gefs_master_f00.parm
 			elif [ $GRIBVERSION = grib2 ]; then
 				export IGEN=$IGEN_ANL
-				export CTLFILE=${CTLFILEGFSANL:-$PARMpost/postcntrl_gefs_anl.xml}
+#				export CTLFILE=${CTLFILEGFSANL:-$PARMpost/postcntrl_gefs_anl.xml}
+				export PostFlatFile=${FLTFILEGFSANL:-$PARMPOST/postxconfig-NT-GEFS-ANL.txt}
 			fi # [ $GRIBVERSION = grib1 ]
 
-			cat $CTLFILE
+#			cat $CTLFILE
 
 			rm -rf sigfile.anl$cfsuffix
 			ln -s $COMIN/$cyc/init/${RUN}.t${cyc}z.sanl$cfsuffix sigfile.anl$cfsuffix
@@ -449,18 +450,22 @@ while (( fhr <= FHOUR )); do
 			export CTLFILE=$PARMgefs/gefs_master_fhh.parm
 		else
 			if test $fhr -eq 0; then
-				export CTLFILE=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
+#				export CTLFILE=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
+				export PostFlatFile=${FLTFILEGFSF00:-$PARMPOST/postxconfig-NT-GEFS-F00.txt}
 			else
 				if test $fhr -le 96; then
-					export CTLFILE=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml_long}
+#					export CTLFILE=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml_long}
+					export PostFlatFile=${FLTFILEGFS:-$PARMPOST/postxconfig-NT-GEFS.txt}
 				else
-					export CTLFILE=${CTLFILEGFS1:-$PARMpost/postcntrl_gefs.xml}
+#					export CTLFILE=${CTLFILEGFS1:-$PARMpost/postcntrl_gefs.xml}
+					export PostFlatFile=${FLTFILEGFS1:-$PARMPOST/postxconfig-NT-GEFS.txt}
 				fi
 			fi # test $fhr -eq 0
 		fi # [ $GRIBVERSION = grib1 ]
 
-		# export CTLFILE=$PARMgefs/gefs_master_fhh.parm
-		cat $CTLFILE
+#		export CTLFILE=$PARMgefs/gefs_master_fhh.parm
+#		cat $CTLFILE
+#		cat $PostFlatFile
 
 		export SIGINP=sigfile.f$fhr$cfsuffix
 		export SFCINPUT=sfcfile.f$fhr$cfsuffix

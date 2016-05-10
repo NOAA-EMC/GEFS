@@ -178,6 +178,12 @@ if [ $GRIBVERSION = grib2 ]; then
 	export CTLFILEGFSANL1=${CTLFILEGFSANL:-$PARMpost/postcntrl_gefs_anl.xml}
 	export CTLFILEGFSF001=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
 	export CTLFILEGFS1=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml}
+	export FLTFILEGFSANL=${FLTFILEGFSANL:-$PARMpost/postxconfig-NT-GEFS-ANL.txt}
+	export FLTFILEGFSF00=${FLTFILEGFSF00:-$PARMpost/postxconfig-NT-GEFS-F00.txt}
+	export FLTFILEGFS=${FLTFILEGFS:-$PARMpost/postxconfig-NT-GEFS.txt}
+	export FLTFILEGFSANL1=${FLTFILEGFSANL1:-$PARMpost/postxconfig-NT-GEFS-ANL.txt}
+	export FLTFILEGFSF001=${FLTFILEGFSF001:-$PARMpost/postxconfig-NT-GEFS-F00.txt}
+	export FLTFILEGFS1=${FLTFILEGFS1:-$PARMpost/postxconfig-NT-GEFS.txt}
 fi # [ $GRIBVERSION = grib2 ]
 
 export POSTGPVARS_HIGH="KPO=47,PO=1000.,975.,950.,925.,900.,875.,850.,825.,800.,775.,750.,725.,700.,675.,650.,625.,600.,575.,550.,525.,500.,475.,450.,425.,400.,375.,350.,325.,300.,275.,250.,225.,200.,175.,150.,125.,100.,70.,50.,30.,20.,10.,7.,5.,3.,2.,1.,"
