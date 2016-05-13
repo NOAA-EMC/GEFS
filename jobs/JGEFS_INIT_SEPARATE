@@ -103,12 +103,19 @@ export fhrpend=96
 env | sort
 
 
+###########################################
+# Run gefs_config2 to get input parameters after dates are set
+###########################################
+if [ "$RUN_ENVIR" = dev ]   ### For Developers
+then
+  . $basesource/nwdev/parm/gefs_config2
+fi
 
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=$COMROOTp1/gfs/prod/gfs.$PDY
-export COMINenkf=$COMROOTp1/gfs/prod/enkf.
+export COMINgfs=${COMINgfs:-$COMROOTp1/gfs/prod/gfs.$PDY}
+export COMINenkf=${COMenkf:-$COMROOTp1/gfs/prod/enkf.}
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}

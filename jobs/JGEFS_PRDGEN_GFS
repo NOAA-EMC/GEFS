@@ -80,6 +80,13 @@ export REDERR='2>'
 setpdy.sh
 . PDY
 
+###########################################
+# Run gefs_config2 to get input parameters after dates are set
+###########################################
+if [ "$RUN_ENVIR" = dev ]      ### For Developers
+then
+  . $basesource/nwdev/parm/gefs_config2
+fi
 ##############################################
 # Define COM directories
 ##############################################

@@ -85,3 +85,6 @@ export gefsmachine=${gefsmachine:-wcoss}
 # Temperay setting for testing some special jobs, comment them out for real time dev test
 # export COMINGEST=/ensemble/noscrub/Yan.Luo/com-ingest-prod  #temporary testing of CQPF job
 # export COMIN=/ensemble/noscrub/emc.enspara/xz/T574L64SL/EK0 #temporary testing of CQPF job
+#
+echo RLW 20160129 gfs test
+export COMINgfs=/com/gfs/prod/gfs.$PDY

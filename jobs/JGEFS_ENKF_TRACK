@@ -116,14 +116,21 @@ d6ahead_ymdh=` $NDATE 6 ${PDY}${cyc}`
 d6ago_ymdh=` $NDATE -6 ${PDY}${cyc}`
 export d6ahead_ymd=`echo $d6ahead_ymdh|cut -c1-8`
 export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
+###########################################
+# Run gefs_config2 to get input parameters after dates are set
+###########################################
+if [ "$RUN_ENVIR" = dev ]   ### For Developers
+then
+  . $basesource/nw${envir}/parm/gefs_config2
+fi
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=$COMROOTp1/gfs/prod/gfs.$PDY 
-export COMINenkf=$COMROOTp1/gfs/prod/enkf.$pdyp 
+export COMINgfs=${COMINgfs:-COMROOTp1/gfs/prod/gfs.$PDY} 
+export COMINenkf=${COMINenkf:-$COMROOTp1/gfs/prod/enkf.$pdyp} 
 export COMINatcfsyn=$COMROOTp1/arch/prod/syndat
-export COMINgfs6ago=$COMROOTp1/gfs/prod/gfs.$d6ago_ymd
-export COMINgfs6ahead=$COMROOTp1/gfs/prod/gfs.$d6ahead_ymd
+export COMINgfs6ago=${COMINgfs6ago:-$COMROOTp1/gfs/prod/gfs.$d6ago_ymd}
+export COMINgfs6ahead=${COMINgfs6ahead:-$COMROOTp1/gfs/prod/gfs.$d6ahead_ymd}
 
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}

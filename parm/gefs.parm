@@ -345,7 +345,8 @@ if [[ $envir = dev ]]; then
   export rungfsprdgen=no
   export rungfsprdgen=yes
   export rungfsprdgen=test
-
+echo RLW 20160129 gfs testing
+export rungfsprdgen=yes
   # archive and cleanup if cyc ne 0
   export runarchcyc=1
   export runarchcyc=1
