@@ -209,9 +209,15 @@ then
   case $gfssource in
     (prod)
       export COMIN=/com/gfs/prod/gfs.${PDY}
+      #RLWb 20160202
+      export COMIN=$basedgfs/com/gfs/prod/gfs.${PDY}
+      #RLWe 20160202
     ;;
     (para)
       export COMIN=/com/gfs/para/gfs.${PDY}
+      #RLWb 20160202
+      export COMIN=$basedgfs/com/gfs/para/gfs.${PDY}
+      #RLWe 20160202
     ;;
   esac
   export COMOUT=$COM_OUT/gefs_legacy.${PDY}
