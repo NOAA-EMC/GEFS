@@ -34,13 +34,12 @@ export DBNROOT=
 export NWROOT=/nwprod2
 export NWROOTprod=/nwprod2
 export NWROOTp1=/nwprod
-#export PCOMROOT=$baseoutput/pcom/$envir
 export PCOMROOT=${PCOMROOT:-/pcom2/${envir}}
 
 HOMEDIR=/ensemble/save/Dingchen.Hou/RFC
 export gefsmachine=${gefsmachine:-wcoss}
 
-  export HOMEgefs=$HOMEDIR/gefs.v11.0.4
+  export HOMEgefs=$HOMEDIR/gefs.v11.0.5
   export HOMEgefs=$basesource/nwdev
 
   export HOMEgsm=$HOMEDIR/gsm.v12.1.1
@@ -85,6 +84,5 @@ export gefsmachine=${gefsmachine:-wcoss}
 # Temperay setting for testing some special jobs, comment them out for real time dev test
 # export COMINGEST=/ensemble/noscrub/Yan.Luo/com-ingest-prod  #temporary testing of CQPF job
 # export COMIN=/ensemble/noscrub/emc.enspara/xz/T574L64SL/EK0 #temporary testing of CQPF job
-#
-echo RLW 20160129 gfs test
-export COMINgfs=/com/gfs/prod/gfs.$PDY
+ 
+export COMINgfs=/com2/gfs/prod/gfs.$PDY

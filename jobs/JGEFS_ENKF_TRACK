@@ -119,10 +119,10 @@ export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
 ###########################################
 # Run gefs_config2 to get input parameters after dates are set
 ###########################################
-if [ "$RUN_ENVIR" = dev ]   ### For Developers
-then
-  . $basesource/nw${envir}/parm/gefs_config2
-fi
+#if [ "$RUN_ENVIR" = dev ]   ### For Developers
+#then
+#  . $basesource/nw${envir}/parm/gefs_config2
+#fi
 ##############################################
 # Define COM directories
 ##############################################
