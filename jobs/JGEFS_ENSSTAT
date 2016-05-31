@@ -184,7 +184,6 @@ export dataset_1=a
 export gridlist_2="p5"
 export FHINC_2=$FHINCP5
 export dataset_2=a
-export dataset_2=a
 
 #task 3, 0.5d grid, dataset=b
 export gridlist_3="p5"
@@ -193,10 +192,10 @@ export dataset_3=b
 
 export ext_h=""
 
-#subdata=${DATA}/${gridlist_1}${dataset_1}
-subdata_1=${DATA}/hr_lr
+subdata_1=${DATA}/${gridlist_1}${dataset_1}
+outfile=${subdata_1}/${gridlist_1}.out
 if [ ! -d ${subdata_1} ]; then mkdir -p ${subdata_1}; fi
-echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf '$gridlist_1' $FHINC_1 ${subdata_1} $dataset_1  2>&1 >${outfile}" >>ensstat.cmdfile
+echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_1 $FHINC_1 ${subdata_1} $dataset_1 2>&1 >${outfile}" >>ensstat.cmdfile
 
 subdata_2=${DATA}/${gridlist_2}${dataset_2}
 if [ ! -d ${subdata_2} ]; then mkdir -p ${subdata_2}; fi
