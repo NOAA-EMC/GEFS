@@ -192,7 +192,7 @@ fi
       fi
       if [[ "$makegrb2i" = "yes" ]]; then
 	mv pgb2afile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix.idx
-	  testfile=$COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr${cfsuffix}.idx 
+        testfile=$COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr${cfsuffix}.idx 
           if [[ ! -s $testfile ]]; then
             msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
             echo "`date`    $msg"
@@ -201,7 +201,7 @@ fi
             err_chk
           fi
 	mv pgb2bfile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix.idx
-	  testfile=$COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix.idx 
+        testfile=$COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix.idx 
           if [[ ! -s $testfile ]]; then
             msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
             echo "`date`    $msg"
