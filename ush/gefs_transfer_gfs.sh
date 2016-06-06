@@ -86,28 +86,28 @@ then
     if [[ $fhr -ge 0 && $fhr -le 84 && ` expr $fhr % $FHINCDBN ` -eq 0 ]]
     then
       if [[ "$makepgrb1" = "yes" ]]; then
-	$DBNROOT/bin/dbn_alert MODEL ENS_PGBA${GRID}_$MEMBER $job $COMOUT/$cyc/$GRBDIR/ge${RUN}.${cycle}.$GRBFIL\f$pgfhr
-	if [[ "$makegrb1i" = "yes" ]]; then
-	  $DBNROOT/bin/dbn_alert MODEL ENS_PGBAI${GRID}_$MEMBER $job $COMOUT/$cyc/$GRBDIR/ge${RUN}.${cycle}.$GRBFIL\if$pgfhr
-	fi
+      $DBNROOT/bin/dbn_alert MODEL ENS_PGBA${GRID}_$MEMBER $job $COMOUT/$cyc/$GRBDIR/ge${RUN}.${cycle}.$GRBFIL\f$pgfhr
+      if [[ "$makegrb1i" = "yes" ]]; then
+	$DBNROOT/bin/dbn_alert MODEL ENS_PGBAI${GRID}_$MEMBER $job $COMOUT/$cyc/$GRBDIR/ge${RUN}.${cycle}.$GRBFIL\if$pgfhr
+      fi
       fi
       $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_$MEMBER $job $COMOUT/$cyc/$GRBDIR2/ge${RUN}.${cycle}.$GRBFIL2\f$pgfhr
-      # JY if [[ "$makegrb2i" = "yes" ]]; then
-      #	JY $DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI${GRID}_$MEMBER $job $COMOUT/$cyc/$GRBDIR2/ge${RUN}.${cycle}.$GRBFIL2\f$pgfhr.idx
-      # JY fi
+     # JY if [[ "$makegrb2i" = "yes" ]]; then
+     # JY	$DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI${GRID}_$MEMBER $job $COMOUT/$cyc/$GRBDIR2/ge${RUN}.${cycle}.$GRBFIL2\f$pgfhr.idx
+     # JY fi
     fi
 
     if test "$DO_LOW_RES" = 'YES' -a ` expr $fhr % 12 ` -eq 0 -a $fhr -ge 96
     then
       if [[ "$makepgrb1" = "yes" ]]; then
-	$DBNROOT/bin/dbn_alert MODEL ENS_PGBA2_$MEMBER $job $COMOUT/$cyc/pgrbalr/ge${RUN}.${cycle}.pgrbaf$pgfhr.2
-	if [[ "$makegrb1i" = "yes" ]]; then
-	  $DBNROOT/bin/dbn_alert MODEL ENS_PGBAI2_$MEMBER $job $COMOUT/$cyc/pgrbalr/ge${RUN}.${cycle}.pgrbaif$pgfhr.2
-	fi
+      $DBNROOT/bin/dbn_alert MODEL ENS_PGBA2_$MEMBER $job $COMOUT/$cyc/pgrbalr/ge${RUN}.${cycle}.pgrbaf$pgfhr.2
+      if [[ "$makegrb1i" = "yes" ]]; then
+      $DBNROOT/bin/dbn_alert MODEL ENS_PGBAI2_$MEMBER $job $COMOUT/$cyc/pgrbalr/ge${RUN}.${cycle}.pgrbaif$pgfhr.2
+      fi
       fi
       $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A2_$MEMBER $job $COMOUT/$cyc/pgrb2alr/ge${RUN}.${cycle}.pgrb2af$pgfhr.2
       # JY if [[ "$makegrb2i" = "yes" ]]; then
-      #	JY $DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI2_$MEMBER $job $COMOUT/$cyc/pgrb2alr/ge${RUN}.${cycle}.pgrb2af$pgfhr.2.idx
+      #	JY	$DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI2_$MEMBER $job $COMOUT/$cyc/pgrb2alr/ge${RUN}.${cycle}.pgrb2af$pgfhr.2.idx
       # JY fi
     fi
 

@@ -360,7 +360,7 @@ if [ $DOANALYSIS = YES ]; then
 	cat  $mcfile
 	echo "anl_done" >> $post_log
 	# ecflow_client --label info "`cat $post_log`"
-	ecflow_client --event anl_done
+        ecflow_client --event anl_done
 	echo
       fi
     fi

@@ -170,7 +170,7 @@ do
 	(( nmem = nmem + 1 ))
 #       testfile=$COMIN/$cyc/pgrb2a$lr/ge${mem}.${cycle}.pgrb2aif$fh$EXT$cfsuffix
 #       testfile=$COMIN/$cyc/pgrb2a$lr/ge${mem}.${cycle}.pgrb2af$fh$EXT$cfsuffix
-	# JY testfile=$COMIN/$cyc/pgrb2a$lr/ge${mem}.${cycle}.pgrb2a$FXT\f$fh$EXT$cfsuffix
+        # JY testfile=$COMIN/$cyc/pgrb2a$lr/ge${mem}.${cycle}.pgrb2a$FXT\f$fh$EXT$cfsuffix
         testfile=$COMIN/$cyc/pgrb2a$lr/ge${mem}.${cycle}.pgrb2a$FXT\f$fh$EXT${cfsuffix}.idx
 
         if test -f $testfile
@@ -378,13 +378,13 @@ do
               then
                 #$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG $job ${COMOUT}/${cyc}/pgrb2alr/geavg.${cycle}.pgrb2af${fh}${cfsuffix}.2
                  $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG $job ${COMOUT}/${cyc}/pgrb2a$lr/geavg.${cycle}.pgrb2a$FXT\f${fh}$EXT${cfsuffix}
-	         $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG_WIDX $job ${COMOUT}/${cyc}/pgrb2a$lr/geavg.${cycle}.pgrb2a$FXT\f${fh}$EXT${cfsuffix}.idx
+                 $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG_WIDX $job ${COMOUT}/${cyc}/pgrb2a$lr/geavg.${cycle}.pgrb2a$FXT\f${fh}$EXT${cfsuffix}.idx
               fi
               if [[ "$run" = "gespr" ]]
               then
                 #$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR $job ${COMOUT}/${cyc}/pgrb2alr/gespr.${cycle}.pgrb2af${fh}${cfsuffix}.2
                  $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR $job ${COMOUT}/${cyc}/pgrb2a$lr/gespr.${cycle}.pgrb2a$FXT\f${fh}$EXT${cfsuffix}
-	         $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR_WIDX $job ${COMOUT}/${cyc}/pgrb2a$lr/gespr.${cycle}.pgrb2a$FXT\f${fh}$EXT${cfsuffix}.idx
+                 $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR_WIDX $job ${COMOUT}/${cyc}/pgrb2a$lr/gespr.${cycle}.pgrb2a$FXT\f${fh}$EXT${cfsuffix}.idx
               fi
            fi
         fi

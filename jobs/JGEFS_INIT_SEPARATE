@@ -103,13 +103,6 @@ export fhrpend=96
 env | sort
 
 
-###########################################
-# Run gefs_config2 to get input parameters after dates are set
-###########################################
-#if [ "$RUN_ENVIR" = dev ]   ### For Developers
-#then
-#  . $basesource/nwdev/parm/gefs_config2
-#fi
 
 ##############################################
 # Define COM directories

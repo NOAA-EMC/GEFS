@@ -80,17 +80,10 @@ export REDERR='2>'
 setpdy.sh
 . PDY
 
-###########################################
-# Run gefs_config2 to get input parameters after dates are set
-###########################################
-#if [ "$RUN_ENVIR" = dev ]      ### For Developers
-#then
-#  . $basesource/nwdev/parm/gefs_config2
-#fi
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=${COMINgfs:-$COMROOTp1/gfs/prod/gfs.${PDY}}
+export COMINgfs=${COMINgfs:-$COMROOT/gfs/prod/gfs.${PDY}}
 export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
 
 if [[ "$makepgrb1" = "yes" ]]; then
