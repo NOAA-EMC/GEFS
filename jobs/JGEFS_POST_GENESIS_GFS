@@ -111,7 +111,7 @@ mkdir -p ${genvitdir}
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=${COMINgfs:-$COMROOTp1/gfs/prod/gfs.${PDY}}
+export COMINgfs=${COMINgfs:-$COMROOT/gfs/prod/gfs.${PDY}}
 export COMIN=$COMINgfs
 
 export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}

@@ -86,3 +86,4 @@ export gefsmachine=${gefsmachine:-wcoss}
 # export COMIN=/ensemble/noscrub/emc.enspara/xz/T574L64SL/EK0 #temporary testing of CQPF job
  
 export COMINgfs=/com2/gfs/prod/gfs.$PDY
+export COMINenkf=/com2/gfs/prod/enkf.
