@@ -23,7 +23,7 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:1
 
-export envir=%ENVIR%
+
 export cyc=%CYC%
 export cyc_fcst=%CYC%
 

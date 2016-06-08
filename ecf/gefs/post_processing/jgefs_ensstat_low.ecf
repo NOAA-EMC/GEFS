@@ -7,8 +7,8 @@
 #BSUB -W 02:00
 #BSUB -P %PROJ%
 #BSUB -a poe
-#BSUB -n 2
-#BSUB -R span[ptile=2]
+#BSUB -n 3
+#BSUB -R span[ptile=3]
 #BSUB -R affinity[core(2):distribute=pack]
 #BSUB -R rusage[mem=1000]
 

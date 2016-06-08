@@ -21,7 +21,6 @@ set -x
 
 export OMP_NUM_THREADS=1
 
-export envir=%ENVIR%
 export cyc=%CYC%
 export cyc_fcst=%CYC%
 export RUN=gec00

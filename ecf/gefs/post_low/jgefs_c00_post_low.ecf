@@ -25,7 +25,7 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=yes # will check
 export MEMORY_AFFINITY=core:2
 
-export envir=%ENVIR%
+
 export cyc=%CYC%
 export cyc_fcst=%CYC%
 export RUN=gec00

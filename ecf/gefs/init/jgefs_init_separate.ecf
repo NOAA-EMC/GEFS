@@ -29,7 +29,7 @@ export OMP_STACKSIZE=3G
 export MP_COMPILER=intel
 export KMP_AFFINITY=granularity=fine,scatter
 
-export envir=%ENVIR%
+
 export cyc=%CYC%
 export cyc_fcst=%CYC%
 

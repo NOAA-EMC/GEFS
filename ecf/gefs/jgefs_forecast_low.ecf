@@ -42,10 +42,15 @@ export MP_SINGLE_THREAD=yes
 export MP_USE_TOKEN_FLOW_CONTROL=yes
 export MP_INSTANCES=2
 
-export envir=%ENVIR%
+
 export cyc=%CYC%
 export cyc_fcst=%CYC%
 export FORECAST_SEGMENT=lr
+
+# export total_tasks=1008 # may not need it
+# export gefsmachine=wcoss
+# export gefsmpexec=mpirun.lsf
+
 
 # CALL executable job script here
 VERSION_FILE=$NWROOT/versions/gefs.ver

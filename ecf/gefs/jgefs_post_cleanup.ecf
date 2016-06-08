@@ -2,7 +2,7 @@
 #BSUB -o /%COM%/output/%ENVIR%/today/gefs_post_cleanup_%CYC%.o%J
 #BSUB -e  /%COM%/output/%ENVIR%/today/gefs_post_cleanup_%CYC%.o%J
 #BSUB -cwd /tmpnwprd
-#BSUB -q %QUEUE%_serv2
+#BSUB -q %QUEUESERV%
 #BSUB -W  01:30
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%
@@ -16,7 +16,7 @@
 # EXPORT list here
 set -x
 
-export envir=%ENVIR%
+
 export cyc=%CYC%
 export cyc_fcst=%CYC%
 

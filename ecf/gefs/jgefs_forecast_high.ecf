@@ -30,19 +30,17 @@ export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:4
 
 export total_tasks=1386
-
 export OMP_STACKSIZE=256000
 export MP_EAGER_LIMIT=65536
 export MP_EUIDEVELOP=min
 export MP_MPILIB=mpich2
 export MP_USE_BULK_XFER=yes
+#export MP_TASK_AFFINITY=core:1
 export MP_LABELIO=YES
-
 export MP_SINGLE_THREAD=yes
 export MP_USE_TOKEN_FLOW_CONTROL=yes
 export MP_INSTANCES=2
 
-export envir=%ENVIR%
 export cyc=%CYC%
 export cyc_fcst=%CYC%
 export FORECAST_SEGMENT=hr
