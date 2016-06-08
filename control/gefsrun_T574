@@ -2558,6 +2558,7 @@ case $taskname in
    job_type=parallel
 #   total_tasks=8
    total_tasks=2
+   total_tasks=3 #(to process 2bp5, we need 3 tasks)
    #SUBJOB=B       # 2 ensstat jobs for hr (1.0d+lr) and [p5]
     SUBJOB=       # 1 ensstat jobs for hr (1.0d+lr) and [p5]
   if [[ $gefsmachine = wcoss ]]; then                       
@@ -2602,6 +2603,7 @@ case $taskname in
     job_type=parallel
 #   total_tasks=8
     total_tasks=2
+    total_tasks=3 #(to process 2bp5, we need 3 tasks)
     SUBJOB=B       # 2 ensstat jobs for hr (1.0d+lr) and [p5]
     SUBJOB=       # 1 ensstat jobs for hr (1.0d+lr) and [p5]
   if [[ $gefsmachine = wcoss ]]; then                       

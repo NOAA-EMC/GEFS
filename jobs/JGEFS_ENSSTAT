@@ -187,38 +187,42 @@ env | sort
 
 # Execute the script
 
-#mpmd job with 2 tasks, 1 for 1d and.5d; 2 for 0.5d grid
+####mpmd job with 2 tasks, 1 for 1d and.5d; 2 for 0.5d grid
+#mpmd job with 3 tasks, 1 for 1d and.5d; 2 for 0.5d grid a, 3 for 0.5d grid b
 
-#task 1, 1.0d grid
+#task 1, 1.0d and 2.5d, grid, dataset=a
 export gridlist_1="hr lr"
 export FHINC_1=$FHINC     
+export dataset_1=a
 
-#task 2, 2.5d grid
+#task 2, 0.5d grid, dataset=a
 export gridlist_2="p5"
 export FHINC_2=$FHINCP5     
+export dataset_2=a
 
-#task 3, 0.5d grid
-#export gridlist_3="p5"
-#export FHINC_3=$FHINCP5     
+#task 3, 0.5d grid, dataset=b
+export gridlist_3="p5"
+export FHINC_3=$FHINCP5     
+export dataset_3=b
 
 export ext_h=""
 
-subdata=${DATA}/${gridlist_1}
-subdata=${DATA}/hr_lr
-if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+#subdata=${DATA}/${gridlist_1}
+subdata_1=${DATA}/hr_lr
+if [ ! -d ${subdata_1} ]; then mkdir -p ${subdata_1}; fi
 # outfile=${subdata}/${gridlist_1}.out
-  outfile=${subdata}/hr_lr.out
-  echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf '$gridlist_1' $FHINC_1 ${subdata} 2>&1 >${outfile}" >>ensstat.cmdfile
+  outfile=${subdata_1}/hr_lr.out
+  echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf '$gridlist_1' $FHINC_1 ${subdata_1} $dataset_1 2>&1 >${outfile}" >>ensstat.cmdfile
 
-subdata=${DATA}/${gridlist_2}
-if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-  outfile=${subdata}/${gridlist_2}.out
-    echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_2 $FHINC_2 ${subdata} 2>&1 >${outfile}" >>ensstat.cmdfile
+subdata_2=${DATA}/${gridlist_2}${dataset_2}
+if [ ! -d ${subdata_2} ]; then mkdir -p ${subdata_2}; fi
+  outfile=${subdata_2}/${gridlist_2}.out
+    echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_2 $FHINC_2 ${subdata_2} $dataset_2 2>&1 >${outfile}" >>ensstat.cmdfile
 
-#subdata=${DATA}/${gridlist_3}
-#if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-#  outfile=${subdata}/${gridlist_3}.out
-#    echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_3 $FHINC_3 ${subdata} 2>&1 >${outfile}" >>ensstat.cmdfile
+subdata_3=${DATA}/${gridlist_3}${dataset_3}
+if [ ! -d ${subdata_3} ]; then mkdir -p ${subdata_3}; fi
+  outfile=${subdata_3}/${gridlist_3}.out
+    echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_3 $FHINC_3 ${subdata_3} $dataset_3 2>&1 >${outfile}" >>ensstat.cmdfile
 
 #$HOMEgefs/scripts/exgefs_ensstat.sh.ecf
 
