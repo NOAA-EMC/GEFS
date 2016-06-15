@@ -1,3 +1,12 @@
+#!/bin/ksh
+
+#############################################################################
+## This section is some parameter setup for for development testing only
+#############################################################################
+if [[ $envir = dev ]]; then
+	. $basesource/nw$envir/parm/gefs_dev.parm
+fi
+
 ###################################################################
 # This parm file defines the control variables for the GEFS model
 ###################################################################
@@ -5,67 +14,87 @@
 ##############################################
 # Number of pairs to run (normally 10 pairs)
 ##############################################
-export npair=10
-export nhrpair=$npair
+export npair=${npair:-10}
+export nhrpair=${nhrpair:-$npair}
 
 #################################################
 # Forecast Hour: fhmax and fhmaxh and fhmax_ext
 #################################################
-export fhmax=384
-export fhmaxh=192
+export fhmax=${fhmax:-384}
+export fhmaxh=${fhmaxh:-192}
 
-export fhmax00=384
-export fhmax06=384
-export fhmax12=384
-export fhmax18=384
+export fhmax00=${fhmax00:-$fhmax}
+export fhmax06=${fhmax06:-$fhmax}
+export fhmax12=${fhmax12:-$fhmax}
+export fhmax18=${fhmax18:-$fhmax}
 
 #For Extended forecast from 384-840 hours
-export fhmax_ext=840
+export fhmax_ext=${fhmax_ext:-840}
 
-export fhrp=06
+# Frequency of initializations
+export fhrp=${fhrp:-06}
 #export fhrp=24
-#
-# 3-hourly output: fhmax3 must be less than fhmaxh
-fhmax3=$fhmaxh
 
-#########################################################################################
-# Parameters to control the digital filter at the beginning of the forecast
-# and after the resolution change
-#########################################################################################
-export fhdfihires=0
-export fhdfihires=3
-export fhdfilores=3
-echo fhdfihires=$fhdfihires
-echo fhdfilores=$fhdfilores
+# 3-hourly output: fhmax3 must be less than or equal to fhmaxh
+fhmax3=${fhmax3:-$fhmaxh}
+
+case $cyc in
+	(00)
+		fhmax=$fhmax00 ;;
+	(06)
+		fhmax=$fhmax06 ;;
+	(12)
+		fhmax=$fhmax12 ;;
+	(18)
+		fhmax=$fhmax18 ;;
+	(*)
+		echo
+		echo UNDEFINED CYCLE cyc=$cyc
+		echo
+		echo unmodified fhmax=$fhmax
+		;;
+esac
+export fhmax
+
+# DHOU, 08/26/2010, added this block to modify fhmaxh fhmax3 and fhmaxhres
+if (( fhmax <= fhmaxh )); then
+        export fhmaxh=$fhmax
+fi
+if (( fhmaxh <= fhmax3 )); then
+        export fhmax3=$fhmaxh
+fi
 
 ####################################################################
 # Cold Start parameters
 # specify 1 or more cycles to cold start using dots as wild cards
 # cold start at 12Z on the first and 15th of each month
 ####################################################################
-export coldstartcycles="......0112 ......1512"
+#export coldstartcycles="......0112 ......1512"
 # one cold start
-export coldstartcycles="2007110112"
+#export coldstartcycles="2007110112"
 # no cold starts
-export coldstartcycles="0001010101"
-export sigzvd=yes
+export coldstartcycles=${coldstartcycles:-"0001010101"}
+export sigzvd=${sigzvd:-yes}
 
 #########################################################################################
 # This section defines the control variables for the Concurrent run
 # RUN_CONCURRENT,FH_INC=6 and ADVANCECOUNT_SETUP(=0 for current setting)
 #########################################################################################
-export FH_INC=6
-export ADVANCECOUNT_SETUP=0
+#export FH_INC=${FH_INC:-6}
+#export ADVANCECOUNT_SETUP=${ADVANCECOUNT_SETUP:-0}
 
 # RUN_CONCURRENT controls concurrent execution of forecasts
 if (( npair < 1 )); then
- export RUN_CONCURRENT=no
+	export RUN_CONCURRENT=no
 else
- export RUN_CONCURRENT=yes
+	export RUN_CONCURRENT=${RUN_CONCURRENT:-yes}
 fi
 
 # ENS_NUM,MEMBER_NAMES to be calculated later based on npair and RUN_CONCURRENT
 
+########################################
+# STTP
+########################################
 # if multiple forecasts are to be run concurrently, ENS_SPS controls whether stochastic forcing is used
  export ENS_SPS=.true.
  if (( npair < 1 )); then
@@ -75,23 +104,14 @@ fi
 ################################################################################
 # number of threads to use in the job JGEFS_SIGCHGRS
 ################################################################################
- NTHREADS_SIGCHGRS=8
- export NTHREADS_SIGCHGRS
+NTHREADS_SIGCHGRS=${NTHREADS_SIGCHGRS:-8}
+export NTHREADS_SIGCHGRS
 
 ################################################################################
 # USESUBDIR controls whether to use sub dir in the forecast working directory
 ################################################################################
 # note this does not work with GFS_VERSION=gfs_fcst
-export USESUBDIR=YES
-
-##################################
-# Forecast Restart Frequency
-##################################
-# Restart frequncy for the first fhmax3 hours
-export fhrestart3=420
-
-# Restart frequncy for hour after fhmax3
-export fhrestart=420
+export USESUBDIR=${USESUBDIR:-YES}
 
 #######################################
 # This section defines the resolution
@@ -132,15 +152,15 @@ export fhrestart=420
 #export SEMILG=.false.
 
 #For T574L64/42 Semi-Lagrangian, 2015 Implementation
-export JCAPHR=574
-export LEVSHR=64
-export LONBHR=1152
-export LATBHR=576
-export NTRACHR=3
-export MTNRSL=574.1152.576
-export SEMILG=.true.
-export DELTIM=900
-export DTPHYS=450
+export JCAPHR=${JCAPHR:-574}
+export LEVSHR=${LEVSHR:-64}
+export LONBHR=${LONBHR:-1152}
+export LATBHR=${LATBHR:-576}
+export NTRACHR=${NTRACHR:-3}
+export MTNRSL=${MTNRSL:-574.1152.576}
+export SEMILG=${SEMILG:-.true.}
+export DELTIM=${DELTIM:-900}
+export DTPHYS=${DTPHYS:-450}
 
 #Lower resolution part
 #For T190L42 Eulerian
@@ -153,28 +173,26 @@ export DTPHYS=450
 #export SEMILGLR=.false.
 
 #For T382L64 Semi-Lagrangian, 2015 Implementation
-export JCAPLR=382
-export LEVSLR=64
-export LONBLR=768
-export LATBLR=384
-export NTRACLR=3
-export MTNRSLLR=382.768.384
-export SEMILGLR=.true.
-export DELTIMLR=1200
-export DTPHYSLR=600
+export JCAPLR=${JCAPLR:-382}
+export LEVSLR=${LEVSLR:-64}
+export LONBLR=${LONBLR:-768}
+export LATBLR=${LATBLR:-384}
+export NTRACLR=${NTRACLR:-3}
+export MTNRSLLR=${MTNRSLLR:-382.768.384}
+export SEMILGLR=${SEMILGLR:-.true.}
+export DELTIMLR=${DELTIMLR:-1200}
+export DTPHYSLR=${DTPHYSLR:-600}
 
 # for new vertical coordinate
 # export IDVC=3
-export IDVC=2
+export IDVC=${IDVC:-2}
 # export IDVM=32
 
 ########################################
-# This section defines the output flags
+# This section defines the output flags for ncep_post + prdgen
 ########################################
-export gefsgribedition=2
 export GRIBVERSION=grib2
 
-export gfsgribedition=2
 export gfsfhmaxh=240
 export gfsfhoroglist=252
 
@@ -194,17 +212,12 @@ export grid1p0="0 6 0 0 0 0 0 0 360 181 0 0 90000000 0 48 -90000000 359000000 10
 export gridp5="0 6 0 0 0 0 0 0 720 361 0 0 90000000 0 48 -90000000 359500000 500000 500000 0"
 export grid2p5="0 6 0 0 0 0 0 0 144 73 0 0 90000000 0 48 -90000000 357500000 2500000 2500000 0"
 
-# DHOU, 09/09/2008, added variable HOUTSPS.
-# HOUTSPS=12: output after SPS 12 hours before fhmaxh, so that digital filtering can be applied after
-#             resolution change export HOUTSPS=12 
 export HOUTSPS=12
-
 export fhmaxhres=`expr $fhmaxh - $HOUTSPS`
- 
 #RLW 20110228 add SPS_PARM variables here
 export SPS_PARM1="0.005 10.0 0.005 10.0 0.0 0.0 0.0 0.0 0.0 0.0"
 export SPS_PARM2="0.105 0.06 0.12 42.0 0.0 0.0 0.0 0.0 0.0 0.0"
-export SPS_PARM3="0.2 0.34 -0.34 3.0 0.0 -1.0 -0.34 0.34 0.8 0.9"  
+export SPS_PARM3="0.2 0.34 -0.34 3.0 0.0 -1.0 -0.34 0.34 0.8 0.9"
 
 # RLW 20110720 add fhoroglist
 # fhoroglist is the list of additional hours at which surface height should be included in pgrba
@@ -215,181 +228,8 @@ else
   export fhoroglist=
 fi
 
-#############################################################################
-# This section is some parameter setup for for development testing only
-##############################################################################
-if [[ $envir = dev ]]; then
-
-  export fhmax=384
-  export fhmaxh=192
-  export fhmaxhres=`expr $fhmaxh - $HOUTSPS`
-
-  echo `date` $0 test section begin
-
-  # for test, NOT USED FOR PRODUCTION
-
-# 20131203 RLW replace pausecycle with pausecyclelist
-  # specify a list of cycles at which to pause
-  export pausecyclelist="1012050300"
-
-  export ncpumax=50
-  export ncpumin=30
-  export srefboundary=yes
-  export srefboundary=no
-  export fhmax00=384     # 00Z fcst only
-
-# # cycling forecasts only
-  export fhmax00=06
-  export fhmax06=06
-  export fhmax12=06
-  export fhmax18=06
-# # 00Z long forecasts only
-  export fhmax00=384
-# export fhmax06=06
-  export fhmax12=384
-# export fhmax18=06
-
-# long forecasts in all cycles
-  export fhmax00=384
-  export fhmax06=384
-  export fhmax12=384
-  export fhmax18=384
-
-#RLW move fhmax arithmetic from gefsrun begin
-
-#RLW modify fhmax by cycle if cyc is already defined
-#RLW 20110608 remove abort if cycle is not yet defined
-  case $cyc in
-    (00) fhmax=$fhmax00 ;;
-    (06) fhmax=$fhmax06 ;;
-    (12) fhmax=$fhmax12 ;;
-    (18) fhmax=$fhmax18 ;;
-    (*)
-      echo
-      echo UNDEFINED CYCLE cyc=$cyc
-      echo
-      #echo `date` $0 $* ABORT EXIT 6
-      #echo
-      #exit 6
-      echo unmodified fhmax=$fhmax
-    ;;
-  esac
-  export fhmax
-
-# DHOU, 08/26/2010, added this block to modify fhmaxh fhmax3 and fhmaxhres
-  if (( fhmax <= fhmaxh )); then
-    export fhmaxh=$fhmax
-  fi
-  if (( fhmaxh <= fhmax3 )); then
-    export fhmax3=$fhmaxh
-  fi
-  export fhmaxhres=`expr $fhmaxh - $HOUTSPS`
-
-#RLW move fhmax arithmetic from gefsrun end
-
-  # RLW repeat fhoroglist after resetting fhmax and fhmaxh
-  if (( fhmaxh < fhmax )); then
-    export fhoroglist=$(( fhmaxh + 12 ))
-  else
-    export fhoroglist=
-  fi
-
-  export gfssource=dev
-  export gfssource=para
-  export gfssource=prod
-
-  # new variables to specify locations of scripts and codes
-  #
-  # NOTE THAT THESE VARIABLES OVERLAP AND INTERACT WITH 
-  # GFS_VERSION
-  # and the config file
-  #
-  # until this interaction is resolved, check to be sure which setting is used
-
-################################################################################
-# restrict certain jobs to run during certain hours of the day
-################################################################################
-  # the list of job numbers of the jobs to be restricted
-  restrictjobjlist="050 450 600 750"
-  restrictjobjlist="99999"
-  # the list of hours during which these jobs are allowed to run
-  restrictjobhlist="18 19 20 21 22 23 24 00 01 02 03 04 05 06"
-  # the days of the week on which restrictions are imposed
-  restrictjobwlist="1 2 3 4 5"
-  echo restrictjobjlist=$restrictjobjlist
-  echo restrictjobhlist=$restrictjobhlist
-  echo restrictjobwlist=$restrictjobwlist
-
-
-  # parameter changes for concurrent runs
-  if [[ $RUN_CONCURRENT = yes ]] ; then
-    # test whether this is needed for concurrent
-    fhrestart=18
-    fhrestart=36
-    fhrestart=420
-  fi
-
-  # copy initial state from another run
-  # not yet implemented
-  export copyinitinterval=24
-  export copyinitenvir=geng
-  export copyinit=yes
-  export copyinit=no
-
-  # remove restart files and output before restarting the forecast
-  export cleanbeforefcst=no
-  export cleanbeforefcst=yes
-
-  # run the gfs prdgen job or not
-  # test means run only if the gfs master post files exist
-  export rungfsprdgen=no
-  export rungfsprdgen=yes
-  export rungfsprdgen=test
-
-  # archive and cleanup if cyc ne 0
-  export runarchcyc=1
-  export runarchcyc=1
-  export runarchcyc=0
-  export runarchcyc=4
-
-  # cycles to delay the cleanup
-  export runcleancyc=0
-  export runcleancyc=1
-  export runcleancyc=4
-
-  # run cycling forecasts or not
-  export runcyclingf=yes
-  export runcyclingf=no
-
-  # set all the following "make" and "save" flags to "yes" to simulate production
-  export makepgrba=no
-  export makepgrbb=no
-  export makepgrb2b=yes
-  export saveflux=yes
-  export savesfcsig=yes
-  export savesfcsig=no
-
-  # specify generation and retention of grads control files
-  # these are not currently implemented
-  export ctlgeskeep=0
-  export ctlsfckeep=0
-  export ctlsigkeep=0
-  export ctlgespara=0
-  export ctlsfcpara=0
-  export ctlsigpara=0
-  export ctlgesprod=0
-  export ctlsfcprod=0
-  export ctlsigprod=0
-
-  echo `date` $0 test section end
-
-fi
-
-export submit_post_together=yes
-export submit_post_together=no
-
-export submit_chgres_together=no
-export submit_chgres_together=yes
+export submit_post_together=${submit_post_together:-no}
+export submit_chgres_together=${submit_chgres_together:-yes}
 
 if (( npair < 1 )); then
  export submit_post_together=no
