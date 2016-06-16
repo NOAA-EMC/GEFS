@@ -80,8 +80,8 @@ export sigzvd=${sigzvd:-yes}
 # This section defines the control variables for the Concurrent run
 # RUN_CONCURRENT,FH_INC=6 and ADVANCECOUNT_SETUP(=0 for current setting)
 #########################################################################################
-#export FH_INC=${FH_INC:-6}
-#export ADVANCECOUNT_SETUP=${ADVANCECOUNT_SETUP:-0}
+export FH_INC=${FH_INC:-6}
+export ADVANCECOUNT_SETUP=${ADVANCECOUNT_SETUP:-0}
 
 # RUN_CONCURRENT controls concurrent execution of forecasts
 if (( npair < 1 )); then
@@ -212,8 +212,10 @@ export grid1p0="0 6 0 0 0 0 0 0 360 181 0 0 90000000 0 48 -90000000 359000000 10
 export gridp5="0 6 0 0 0 0 0 0 720 361 0 0 90000000 0 48 -90000000 359500000 500000 500000 0"
 export grid2p5="0 6 0 0 0 0 0 0 144 73 0 0 90000000 0 48 -90000000 357500000 2500000 2500000 0"
 
+# HOUTSPS=12: output after SPS 12 hours before fhmaxh, so that digital filtering can be applied after resolution change export HOUTSPS=12
 export HOUTSPS=12
 export fhmaxhres=`expr $fhmaxh - $HOUTSPS`
+
 #RLW 20110228 add SPS_PARM variables here
 export SPS_PARM1="0.005 10.0 0.005 10.0 0.0 0.0 0.0 0.0 0.0 0.0"
 export SPS_PARM2="0.105 0.06 0.12 42.0 0.0 0.0 0.0 0.0 0.0 0.0"
