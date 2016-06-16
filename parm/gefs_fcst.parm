@@ -51,9 +51,6 @@ export SPS_PARM1="0.005 10.0 0.005 10.0 0.0 0.0 0.0 0.0 0.0 0.0"
 export SPS_PARM2="0.105 0.06 0.12 42.0 0.0 0.0 0.0 0.0 0.0 0.0"
 export SPS_PARM3="0.2 0.34 -0.34 3.0 0.0 -1.0 -0.34 0.34 0.8 0.9"
 
-#Use STTP or SPPT
-export ENS_SPS=${ENS_SPS:-.true.}
-export stoc_phy=${stoc_phy:-.false.}
 
 #This block is copied from GFS J-job file
 export FHLWR=3600      # LW radiation calling interval (hrs)
@@ -113,6 +110,9 @@ FCSTVARS="$FCSTVARS,gg_tracers=.false.,lsm=1,tfiltc=0.85,liope=$LIOPE,IALB=$ialb
 FCSTVARS="$FCSTVARS,hybedmf=.true.,dspheat=.true.,cgwf=0.5,0.05"      #Ag,Ah Suru and Jongil
 
 FCSTVARS="$FCSTVARS,unphwind=$unphwind"      #June 3, 2015
+
+#Use STTP or SPPT
+export ENS_SPS=${ENS_SPS:-.true.}
 
 ########################################
 # Stochastic physics parameters
