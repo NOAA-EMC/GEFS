@@ -1,0 +1,24 @@
+#!/bin/ksh
+
+#############################################################################
+## This section is some parameter setup for for development testing only
+#############################################################################
+  echo `date` $0 test section begin
+
+  # for test, NOT USED FOR PRODUCTION
+  echo `date` $0 begin
+
+  export splitinit=no
+  export splitinit=yes
+  # choices for initmethod are b2 or et
+  export initmethod=b2
+  export initmethod=et
+
+  # cycles for special copy to baseinitarch
+  export initarchlist='00'
+  export initarchlist='00 06 12 18'
+  export initarchlist='999'
+  echo initarchlist=$initarchlist
+
+  echo `date` $0 test section end
+
