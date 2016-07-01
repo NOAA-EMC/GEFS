@@ -27,6 +27,32 @@ export PCOMROOT=$baseoutput/pcom/$envir
 
 #export COMROOTp1=/com
 #export COMROOTp1=/ensemble2/noscrub/Dingchen.Hou/GEFS15/PARA20150708/com
+if [[ $gefsmachine == cray ]]; then
+
+export CRAYDIR=/gpfs/hps
+export CRAYOPS=/gpfs/hps/nco/ops
+export CRAYEMC=/gpfs/hps/emc
+
+export WCSDIR=/gpfs/td1
+export WCSOPS=/gpfs/tp1/nco/ops
+export WCSEMC=/gpfs/td1/emc
+
+export COMROOTp1=$CRAYEMC/ensemble/noscrub/Bing.Fu/o/com
+#export archsyndir=/com/arch/prod/syndat
+export archsyndir=$WCSOPS/com/arch/prod/syndat
+export GESROOTp1=/nwges
+export DBNROOT=
+
+export NWROOT=$CRAYOPS/nwprod
+export NWROOTprod=$CRAYOPS/nwprod
+export NWROOTp1=$WCSOPS/nwprod
+
+HOMEDIR=$CRAYEMC/ensemble/save/Bing.Fu/TAGS
+
+fi
+
+if [[ $gefsmachine == wcoss ]]; then
+
 export COMROOTp1=/ensemble/noscrub/Richard.Wobus/o/com
 export archsyndir=/com/arch/prod/syndat
 export GESROOTp1=/nwges
@@ -37,12 +63,15 @@ export NWROOTprod=/nwprod2
 export NWROOTp1=/nwprod
 
 HOMEDIR=/ensemble/save/Dingchen.Hou/RFC
+
+fi
+
 export gefsmachine=${gefsmachine:-wcoss}
 
   export HOMEgefs=$HOMEDIR/gefs.v11.0.0
   export HOMEgefs=$basesource/nwdev
 
-  export HOMEgsm=$HOMEDIR/gsm.v12.1.0
+  export HOMEgsm=$HOMEDIR/gsm.v12.1.1-cray
 # export HOMEpost=$HOMEDIR/ncep_post.v5.1.1
   export HOMEpost=$HOMEDIR/ncep_post.v7.2.0
   export HOMEenkf=$HOMEDIR/enkf.v2.0.1
@@ -54,6 +83,7 @@ export gefsmachine=${gefsmachine:-wcoss}
 # export EXECutil=$UTILROOT/exec
 # export USHutil=$UTILROOT/ush
 # export EXECgrib=$GRIBROOT/exec
+if [[ $machl = g ]] || [[ $machl = t ]]; then
 
   . /usrx/local/Modules/default/init/ksh
   module use /nwprod2/modulefiles
@@ -61,6 +91,15 @@ export gefsmachine=${gefsmachine:-wcoss}
   module load grib_util/v1.0.1
   module use /nwpara2/modulefiles
   module load util_shared/v1.0.1
+fi
+
+if [[ $machl = s ]] || [[ $machl = l ]]; then
+
+  . /opt/modules/default/init/ksh
+  module use $CRAYOPS/nwprod/modulefiles
+  module load prod_util
+  module load grib_util/1.0.3
+fi
 
   export NDATE=${NDATE:-$USHutil/ndate}
 

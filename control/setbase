@@ -16,7 +16,9 @@ echo
   if [[ $machl = r ]]; then
       machl=f
   fi
-
+  if [[ $machl = n ]]; then
+      machl=l
+  fi
 envir=$(basename $(dirname $(pwd) ) | cut -c3-)
 echo envir=$envir
 
@@ -32,11 +34,10 @@ echo
 echo `date` $0 set directory tree locations
 echo
 
-#export JOBQUEUE=dev
-export JOBQUEUE=dev2
   PTMP=ptmp 
   STMP=stmp
 if [[ $machl = t ]] || [[ $machl = g ]]; then
+export JOBQUEUE=dev2
  if [[ $JOBQUEUE = dev ]]; then
   PTMP=ptmpd2
   STMP=stmpd2
@@ -47,6 +48,12 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
   echo Invalid option of JOBQUEUE in setbase $JOBQUEUE
   exit
  fi
+fi
+
+if [[ $machl = s ]] || [[ $machl = l ]]; then
+  PTMP=gpfs/hps/ptmp
+  STMP=gpfs/hps/ptmp
+export JOBQUEUE=dev
 fi
 
 if [[ $LOGNAME = glopara ]]; then
@@ -161,6 +168,24 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
 # basedgfs and TMPCOM are combined to define the directory of the gfs files
 fi
 #For WCOSS end
+
+#For CRAY 
+if [[ $machl = s ]] || [[ $machl = l ]]; then
+  group=ensemble
+# group=`pwd|cut -d'/' -f2`
+  export group=/gpfs/hps/emc/$group
+  export basesource=/$group/save/$LOGNAME/GEFS/$expid
+  export basebin=$basesource/nw$envir/control
+  export baseoutput=/$PTMP/$LOGNAME/o/$expid
+  export basetmp=/$PTMP/$LOGNAME/o/$expid
+  export baseptmp=/$PTMP/$LOGNAME/o/$expid
+  export basedgfs=/$group/noscrub/$LOGNAME/o
+fi
+# echo $baseoutput
+# export baseoutput
+# echo EXIT
+# exit
+#For CRAY end
 
   export account=GEN-T2O
   export group=g01

@@ -9,9 +9,6 @@ echo
 echo `date` $0 $*                                                         check arguments
 echo
 
-#export JOBQUEUE=dev
-export JOBQUEUE=dev2
-
 UBJOB= 
 
   machl=`uname -n | cut -c1`
@@ -22,7 +19,14 @@ UBJOB=
 #DHOU, 12/17/2013, define PTMP to pointing to /ptmp or /ptmpd2
  PTMP=ptmp
  STMP=stmp
+if [[ $machl = s ]] || [[ $machl = l ]]; then
+ PTMP=gpfs/hps/ptmp
+ STMP=gpfs/hps/stmp
+ COREPERNODE=24
+export JOBQUEUE=dev
+fi
 if [[ $machl = t ]] || [[ $machl = g ]]; then
+export JOBQUEUE=dev2
  if [[ $JOBQUEUE = dev ]]; then
   PTMP=ptmpd2
   STMP=stmpd2
@@ -224,8 +228,8 @@ echo expid=$expid id=$id
 #DHOU, 01/03/2013 add this block to generate the gefsmachine name related variables
   machl=`uname -n | cut -c1`
   case $machl in
-   (c) gefsmachine=ccs ;;
-   (s) gefsmachine=ccs ;;
+   (l) gefsmachine=cray ;;
+   (s) gefsmachine=cray ;;
    (r) gefsmachine=zeus ;;
    (f) gefsmachine=zeus ;;
    (t) gefsmachine=wcoss ;;
@@ -235,7 +239,7 @@ echo expid=$expid id=$id
        machl=f
   fi
   case $gefsmachine in
-   (ccs) gefsmpexec= ;;
+   (cray) gefsmpexec="aprun" ;;
    (zeus) gefsmpexec="mpiexec_mpt -np \$total_tasks" ;;
    (wcoss) gefsmpexec="mpirun.lsf" ;;
   esac
@@ -879,12 +883,12 @@ if [[ $nextflag = yes ]]; then
             else
             jjjb=012
             fi 
-#           jjjb=100         #use this line to skip INIT and gfs for testing
+           jjjb=100         #use this line to skip INIT and gfs for testing
           fi ;;
       (002) jjjb=100 ;;
       (005) jjjb=010 ;;
       (010) jjjb=012 ;;
-#     (010) jjjb=100 ;;      #use this line to skip INIT and gfs for testing
+ #     (010) jjjb=100 ;;      #use this line to skip INIT and gfs for testing
       (012) jjjb=013 ;;
       (013) jjjb=014 ;;
 
@@ -1438,7 +1442,7 @@ echo
 
 wall_clock_limit_fcst_short="00:30:00"
 wall_clock_limit_fcst_long="02:30:00"
-  if [[ $gefsmachine = wcoss ]]; then                       
+  if [[ $gefsmachine = wcoss || $gefsmachine = cray ]]; then                       
 wall_clock_limit_fcst_long="3:59"
 # RLW 20150511 ############################################################################ set lower limit to kill runaway jobs
 wall_clock_limit_fcst_long="1:29"
@@ -1527,6 +1531,14 @@ case $taskname in
     MP_SHARED_MEMORY=yes
     RUN=
   fi  
+  if [[ $gefsmachine = cray ]]; then
+    wall_clock_limit="00:10"
+    resources="1650"
+    MP_SHARED_MEMORY=yes
+    RUN=
+    total_tasks=24
+  fi
+
   ;;
   (init.mask)
     ################################# production variables
@@ -1818,12 +1830,13 @@ case $taskname in
        export taskspernode=$taskspernode
        export OMP_NUM_THREADS=$parallel_threads
   fi
-  if [[ $gefsmachine = wcoss ]]; then
+  if [[ $gefsmachine = wcoss || $gefsmachine = cray ]]; then
      if [[ $fcstjoblength = long ]]; then
 #      (( taskspermem = 30 ))
 #      (( taskspermem = 60 ))
 #      (( taskspermem = 72 ))
        (( taskspermem = 66 ))
+       (( taskspermem = 36 ))
      else
        (( taskspermem = 32 ))
      fi
@@ -1834,6 +1847,10 @@ case $taskname in
        export taskspernode=$taskspernode
        export OMP_NUM_THREADS=$parallel_threads
     MP_SHARED_MEMORY=yes
+  fi
+
+  if [[ $gefsmachine = cray ]]; then
+     resources=600
   fi
 
      RUN=
@@ -1935,7 +1952,7 @@ case $taskname in
        export taskspernode=$taskspernode
        export OMP_NUM_THREADS=$parallel_threads
   fi
-  if [[ $gefsmachine = wcoss ]]; then                       
+  if [[ $gefsmachine = wcoss || $gefsmachine = cray ]]; then                       
 #      (( taskspermem = 30 ))
        (( taskspermem = 36 ))
 #      parallel_threads=2
@@ -1947,7 +1964,11 @@ case $taskname in
     MP_SHARED_MEMORY=yes
   fi
 
-     RUN=
+ if [[ $gefsmachine = cray ]]; then
+     resources=600
+ fi
+
+    RUN=
      if [[ $RUN_CONCURRENT = yes ]]; then
        if [[ $cyc = $cyc_fcst ]]; then
          (( total_tasks = taskspermem * (npert + 1) ))
@@ -2065,7 +2086,7 @@ case $taskname in
 #   export OMP_NUM_THREADS_CH=$NTHREADS_SIGCHGRS
     export OMP_NUM_THREADS_CH=1
   fi    
-  if [[ $gefsmachine = wcoss ]]; then                       
+  if [[ $gefsmachine = wcoss || $gefsmachine = cray ]]; then                       
 #DHOU 03/29/2012   chgres is a non-mpi program
     job_type=parallel
     total_tasks=1 
@@ -2076,7 +2097,7 @@ case $taskname in
     export taskspernode=$taskspernode
     export OMP_NUM_THREADS_CH=$NTHREADS_SIGCHGRS
     resources="1000"
-    resources="4000"
+    resources="3000"
     wall_clock_limit="00:20"
     MP_SHARED_MEMORY=yes
    fi
