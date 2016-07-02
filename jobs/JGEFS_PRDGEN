@@ -349,8 +349,14 @@ if test $SHOUR -le $FHOUR; then
 	chmod 775 prdgen.cmdfile
 	export MP_CMDFILE=${DATA}/prdgen.cmdfile
 	export MP_PGMMODEL=mpmd
-	$APRUN
 
+	if [[ $gefsmachine == cray ]]; then
+	$APRUN cfp $MP_CMDFILE
+	fi
+	if [[ $gefsmachine == wcoss ]]; then
+	$APRUN
+	fi
+	
 	export SHOUR=`expr $FHOUR + $FHINC`
 fi # test $SHOUR -le $FHOUR
 

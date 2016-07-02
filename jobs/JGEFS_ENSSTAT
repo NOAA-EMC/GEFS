@@ -211,7 +211,13 @@ cat ensstat.cmdfile
 chmod 775 ensstat.cmdfile
 export MP_CMDFILE=${DATA}/ensstat.cmdfile
 export MP_PGMMODEL=mpmd
-$APRUN
+
+        if [[ $gefsmachine == cray ]]; then
+        $APRUN cfp $MP_CMDFILE
+        fi
+        if [[ $gefsmachine == wcoss ]]; then
+        $APRUN
+        fi
 
 msg="JOB COMPLETED NORMALLY"
 postmsg "$jlogfile" "$msg"

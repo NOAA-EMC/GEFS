@@ -2247,6 +2247,16 @@ case $taskname in
     total_tasks=12    #T574
     taskspernode=12
       ;;
+      (cray)
+    SUBJOB=
+    nodes=1
+    OMP_NUM_THREADS=2
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS ))
+    (( total_tasks = taskspernode * nodes ))
+#   (( taskspernode = 10 )) 
+    (( total_tasks = taskspernode * nodes ))
+    resources="3000"   #T574
+      ;;
     esac
   ;;
   (nceppost_lr)
@@ -2296,6 +2306,14 @@ case $taskname in
     (( total_tasks = taskspernode * nodes ))
     resources="1000"
     resources="5000"
+      ;;
+      (cray)
+    SUBJOB=
+    nodes=1
+    OMP_NUM_THREADS=2
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS ))
+    (( total_tasks = taskspernode * nodes ))
+    resources="3000"   #T574
       ;;
       (zeus)
     taskspernode=8
@@ -2361,6 +2379,25 @@ case $taskname in
 #   resources="200"
 #   resources="6912"     #T574SL grib2 for core(4)
       ;;
+      (cray)
+    OMP_NUM_THREADS=4
+#mpmd 04-15    
+    job_type=parallel
+    total_tasks=5
+    MP_SHARED_MEMORY=yes
+#mpmd 04-15    
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS ))
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
+    resources="3000"
+    SUBJOB=       # 1 prdgen job only for 1.0d/2.5d each membery
+    DO_LOW_RES=YES
+    if [[ $jobgrid = _p5 ]]; then
+     SUBJOB=C      # 3 prdgen jobs for each member, forecast_hr, p5 grid
+     DO_LOW_RES=NO
+    fi
+      ;;
     esac
   ;;
   (post.prdgen_lr)
@@ -2421,10 +2458,27 @@ case $taskname in
     fi
 #   resources="200"
 #   resources="3456"     #T574SL grib2 for core(2)
-      ;;
+    ;;
+      (cray)
+    MP_SHARED_MEMORY=yes
+    OMP_NUM_THREADS=4
+#mpmd 04-15    
+    job_type=parallel
+    total_tasks=4
+#mpmd 04-15    
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS ))
+    resources="3000"
+    SUBJOB=       # 1 prdgen job only for each membery, 1d and 2.5d grid
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
+    if [[ $jobgrid = _p5 ]]; then
+     SUBJOB=B      # 2 prdgen jobs for each member, hr and lr, p5 grid
+    fi 
+     ;;
     esac
-  ;;
-  (prdgen.gfs)
+   ;;
+ (prdgen.gfs)
     ################################# production variables
     jobscript=JGEFS_PRDGEN_GFS
 #   jobscript=JGEFS_PRDGEN_GFS.sms.$envir
@@ -2593,6 +2647,15 @@ case $taskname in
 #   resources="100"
 #   resources="3456"     #T574SL grib2 for core(2)
   fi
+  if [[ $gefsmachine = cray ]]; then
+    MP_SHARED_MEMORY=no
+    OMP_NUM_THREADS=4
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS ))
+    resources="3000"
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
+  fi
   ;;
   (ensstat_lr)
     FORECAST_SEGMENT=lr
@@ -2638,6 +2701,15 @@ case $taskname in
 #   resources="100"
 #   resources="3456"    # T574, include grid p5
   fi
+  if [[ $gefsmachine = cray ]]; then
+    MP_SHARED_MEMORY=no
+    OMP_NUM_THREADS=4
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS ))
+    resources="3000"
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
+  fi
   ;;
   (enspost)
     ################################# production variables
@@ -2674,6 +2746,12 @@ case $taskname in
 #   resources="100"
 #   resources="500"    # T574
 #   resources="1000"    # T574
+  fi
+  if [[ $gefsmachine = cray ]]; then
+    MP_SHARED_MEMORY=yes
+    OMP_NUM_THREADS=4
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS ))
+    resources="3000"
   fi
   ;;
   (post.track)
