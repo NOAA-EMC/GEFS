@@ -16,9 +16,6 @@ echo
   if [[ $machl = r ]]; then
       machl=f
   fi
-  if [[ $machl = n ]]; then
-      machl=l
-  fi
 envir=$(basename $(dirname $(pwd) ) | cut -c3-)
 echo envir=$envir
 

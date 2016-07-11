@@ -41,6 +41,7 @@ eofCAT
 
    export POSTGRB2TBL=/gpfs/hps/nco/ops/nwprod/lib/g2tmpl/v1.3.0/src/params_grib2_tbl_new
    export gefsmpexec=" ${gefsmpexec} -b -j1 -n${total_tasks} -N${taskspernode} -d${OMP_NUM_THREADS} -cc depth "
+   export gefsmpexec_mpmd=" ${gefsmpexec} -b -j1 -n${total_tasks} -N${taskspernode} -d${OMP_NUM_THREADS} -cc depth cfp mpmd_cmdfile"
 
 
         AFFINITY="core(1)"
@@ -253,6 +254,7 @@ cd $pwdsave
 export RUN_ENVIR=$envir
 export gefsmachine=$gefsmachine
 export gefsmpexec="${gefsmpexec}"
+export gefsmpexec_mpmd="${gefsmpexec_mpmd}"
 export APRUNC="aprun"
 
 export jjj=$jjj

@@ -15,7 +15,7 @@ if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
 
 export CNVGRIB=$CNVGRIB21_GFS
 
@@ -211,13 +211,9 @@ cat ensstat.cmdfile
 chmod 775 ensstat.cmdfile
 export MP_CMDFILE=${DATA}/ensstat.cmdfile
 export MP_PGMMODEL=mpmd
-
-        if [[ $gefsmachine == cray ]]; then
-        $APRUN cfp $MP_CMDFILE
-        fi
-        if [[ $gefsmachine == wcoss ]]; then
+	rm mpmd_cmdfile
+	ln -s $MP_CMDFILE mpmd_cmdfile
         $APRUN
-        fi
 
 msg="JOB COMPLETED NORMALLY"
 postmsg "$jlogfile" "$msg"

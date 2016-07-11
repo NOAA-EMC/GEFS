@@ -242,6 +242,7 @@ cd $pwdsave
 export RUN_ENVIR=$envir
 export gefsmachine=$gefsmachine
 export gefsmpexec=$gefsmpexec
+export gefsmpexec_mpmd=$gefsmpexec_mpmd
 export jjj=$jjj
 export jjje=$jjje
 export yyyymmddcc=$yyyymmddcc

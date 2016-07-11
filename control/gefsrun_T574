@@ -17,11 +17,13 @@ UBJOB=
   fi
 
 #DHOU, 12/17/2013, define PTMP to pointing to /ptmp or /ptmpd2
- PTMP=ptmp
- STMP=stmp
+# PTMP=ptmp
+# STMP=stmp
+ PTMP=/gpfs/hps/ptmp
+ STMP=/gpfs/hps/stmp
 if [[ $machl = s ]] || [[ $machl = l ]]; then
- PTMP=gpfs/hps/ptmp
- STMP=gpfs/hps/stmp
+ PTMP=/gpfs/hps/ptmp
+ STMP=/gpfs/hps/stmp
  COREPERNODE=24
 export JOBQUEUE=dev
 fi
@@ -240,7 +242,7 @@ echo expid=$expid id=$id
   fi
   case $gefsmachine in
    (cray) gefsmpexec="aprun" ;;
-   (zeus) gefsmpexec="mpiexec_mpt -np \$total_tasks" ;;
+   (theia) gefsmpexec="mpirun.lsf" ;;
    (wcoss) gefsmpexec="mpirun.lsf" ;;
   esac
 
@@ -1836,7 +1838,7 @@ case $taskname in
 #      (( taskspermem = 60 ))
 #      (( taskspermem = 72 ))
        (( taskspermem = 66 ))
-       (( taskspermem = 36 ))
+#       (( taskspermem = 36 ))
      else
        (( taskspermem = 32 ))
      fi
@@ -1844,8 +1846,8 @@ case $taskname in
        task_affinity="core(1)"
        (( taskspernode = COREPERNODE / parallel_threads )) # for T574SL P2/P1
 #      (( taskspernode = 32 / parallel_threads )) # for WCOSS prod April 2013
-       export taskspernode=$taskspernode
-       export OMP_NUM_THREADS=$parallel_threads
+#       export taskspernode=$taskspernode
+#       export OMP_NUM_THREADS=$parallel_threads
     MP_SHARED_MEMORY=yes
   fi
 
@@ -1866,6 +1868,8 @@ case $taskname in
        RUNMEM=ge$mem
      fi
      (( node = ( total_tasks + taskspernode - 1 ) / taskspernode ))
+       export taskspernode=$taskspernode
+       export OMP_NUM_THREADS=$parallel_threads
   ;;
   (forecast_lr)
     FORECAST_SEGMENT=lr
