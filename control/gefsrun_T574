@@ -15,7 +15,9 @@ UBJOB=
   if [[ $machl = r ]]; then
    machl=f
   fi
-
+  if [[ $machl = n ]]; then
+   machl=l
+  fi
 #DHOU, 12/17/2013, define PTMP to pointing to /ptmp or /ptmpd2
 # PTMP=ptmp
 # STMP=stmp
@@ -1615,7 +1617,14 @@ case $taskname in
     taskspernode=16
     OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=no
-  fi  
+  fi 
+  if [[ $gefsmachine = cray ]]; then
+    wall_clock_limit="01:50"
+    resources="3000"
+    taskspernode=20
+    OMP_NUM_THREADS=1
+    MP_SHARED_MEMORY=no
+  fi 
   ;;
   (init.separate)
     ################################# production variables
@@ -1648,6 +1657,13 @@ case $taskname in
     OMP_NUM_THREADS=6
     MP_SHARED_MEMORY=no
   fi  
+  if [[ $gefsmachine = cray ]]; then
+    wall_clock_limit="01:50"
+    resources="3000"
+    taskspernode=4
+    OMP_NUM_THREADS=6
+    MP_SHARED_MEMORY=no
+  fi
   ;;
   (init.et)
     ################################# production variables
@@ -1694,7 +1710,13 @@ case $taskname in
     OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=no
   fi  
-
+  if [[ $gefsmachine = cray ]]; then
+    wall_clock_limit="01:50"
+    taskspernode=4
+    OMP_NUM_THREADS=6
+    MP_SHARED_MEMORY=no
+    resources="3000"
+  fi
   ;;
   (init.combine)
     ################################# production variables
@@ -1739,6 +1761,13 @@ case $taskname in
     taskspernode=2
     OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=no
+  fi
+  if [[ $gefsmachine = cray ]]; then
+    wall_clock_limit="01:50"
+    taskspernode=2
+    OMP_NUM_THREADS=1
+    MP_SHARED_MEMORY=no
+    resources="3000"
   fi
   ;;
   (forecast_hr)

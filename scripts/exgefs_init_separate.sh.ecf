@@ -419,7 +419,7 @@ fi # (( relocpertflag == 1 ))
 echo HHH TEST 2
 
 #DHOU, XZHOU added this if block
-execseparate=$EXECgefs/gefs_vortex_separate
+execseparate=$exec $EXECgefs/gefs_vortex_separate
 
 if (( relocpertflag == 1 )); then
 	echo Separate the storm and environment forecast fields for c00 begin
@@ -542,7 +542,10 @@ export MP_PGMMODEL=mpmd
 export MP_LABELIO=yes
 export MP_INFOLEVEL=3
 export MP_STDOUTMODE=unordered
-$APRUN
+
+rm mpmd_cmdfile
+ln -s $MP_CMDFILE mpmd_cmdfile
+$APRUN 
 
 echo DATA=$DATA after poe
 pwd

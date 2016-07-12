@@ -229,6 +229,9 @@ export MP_PGMMODEL=mpmd
 export MP_LABELIO=yes
 export MP_INFOLEVEL=3
 export MP_STDOUTMODE=unordered
+
+rm mpmd_cmdfile
+ln -s $MP_CMDFILE mpmd_cmdfile
 $APRUN
 
 echo DATA=$DATA after poe

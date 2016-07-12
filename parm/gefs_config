@@ -36,7 +36,9 @@ export CRAYEMC=/gpfs/hps/emc
 export WCSDIR=/gpfs/td1
 export WCSOPS=/gpfs/tp1/nco/ops
 export WCSEMC=/gpfs/td1/emc
-
+export SUPVIT=/gpfs/hps/nco/ops/nwpara/util_shared.v1.0.3/exec/supvit
+export NTHREADS_SIGCHGRS=6
+export exec=$gefsmpexec
 export COMROOTp1=$CRAYEMC/ensemble/noscrub/Bing.Fu/o/com
 #export archsyndir=/com/arch/prod/syndat
 export archsyndir=$WCSOPS/com/arch/prod/syndat
