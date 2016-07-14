@@ -2825,6 +2825,18 @@ case $taskname in
      taskspernode=$total_tasks
     fi
   fi  
+  if [[ $gefsmachine = cray ]]; then
+    wall_clock_limit="00:45"
+    MP_SHARED_MEMORY=no
+    OMP_NUM_THREADS=1
+    (( taskspernode = 7 ))
+    total_tasks=21
+    resources="1000"
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
+  fi
+
   ;;
   (post.genesis)
     ################################# production variables

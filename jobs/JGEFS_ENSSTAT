@@ -211,9 +211,9 @@ cat ensstat.cmdfile
 chmod 775 ensstat.cmdfile
 export MP_CMDFILE=${DATA}/ensstat.cmdfile
 export MP_PGMMODEL=mpmd
-	rm mpmd_cmdfile
-	ln -s $MP_CMDFILE mpmd_cmdfile
-        $APRUN
+rm mpmd_cmdfile
+ln -s $MP_CMDFILE mpmd_cmdfile
+$APRUN
 
 msg="JOB COMPLETED NORMALLY"
 postmsg "$jlogfile" "$msg"

@@ -75,10 +75,10 @@ for dir in global_enscvprcp.fd  global_enspvrfy.fd  global_enssrbias.fd global_e
  cd ..
 done
 
-for dir in ../util/sorc/gettrk.fd; do
- cd $dir
- make clean
- make -f Makefile
- cd ../../../sorc
+for dir in ../util/sorc/gettrk.fd ../util/sorc/overenstr.grib.fd; do
+        cd $dir
+        make clean
+        make -f Makefile
+        cd ../../../sorc
 done
 

@@ -84,7 +84,7 @@ export gefsmachine=${gefsmachine:-wcoss}
 # export EXECutil=$UTILROOT/exec
 # export USHutil=$UTILROOT/ush
 # export EXECgrib=$GRIBROOT/exec
-if [[ $machl = g ]] || [[ $machl = t ]]; then
+if [[ $gefsmachine == wcoss]]; then
 
   . /usrx/local/Modules/default/init/ksh
   module use /nwprod2/modulefiles
@@ -94,7 +94,7 @@ if [[ $machl = g ]] || [[ $machl = t ]]; then
   module load util_shared/v1.0.1
 fi
 
-if [[ $machl = s ]] || [[ $machl = l ]]; then
+if [[ $gefsmachine == cray]]; then
 
   . /opt/modules/default/init/ksh
   module use $CRAYOPS/nwprod/modulefiles
