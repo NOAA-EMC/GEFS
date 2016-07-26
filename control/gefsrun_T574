@@ -27,10 +27,12 @@ if [[ $machl = s ]] || [[ $machl = l ]]; then
  PTMP=/gpfs/hps/ptmp
  STMP=/gpfs/hps/stmp
  COREPERNODE=24
-export JOBQUEUE=dev
+ export JOBQUEUE=dev
+ . /opt/modules/default/init/ksh
 fi
 if [[ $machl = t ]] || [[ $machl = g ]]; then
-export JOBQUEUE=dev2
+ export JOBQUEUE=dev2
+ . /usrx/local/Modules/default/init/ksh
  if [[ $JOBQUEUE = dev ]]; then
   PTMP=ptmpd2
   STMP=stmpd2
@@ -44,6 +46,8 @@ export JOBQUEUE=dev2
   exit
  fi
 fi
+
+module load prod_util
 
 goodargs=yes
 nextflag=no
@@ -1020,7 +1024,7 @@ if [[ $nextflag = yes ]]; then
       (900) jjjb=999 ;;
       (999)
 	jjjb=000
-	yyyymmddccb=`ndate +$fhrp $yyyymmddccc`
+	yyyymmddccb=`$NDATE +$fhrp $yyyymmddccc`
       ;;
       (*) 
 	echo
@@ -1075,14 +1079,14 @@ cyc=`echo $yyyymmddcc | cut -c9-10`
 echo PDY=$PDY "  " cyc=$cyc
 echo `date` $0 create date and time variables
 echo
-PDYp2=`ndate +48 $yyyymmddcc|cut -c1-8`
-PDYp1=`ndate +24 $yyyymmddcc|cut -c1-8`
+PDYp2=`$NDATE +48 $yyyymmddcc|cut -c1-8`
+PDYp1=`$NDATE +24 $yyyymmddcc|cut -c1-8`
 PDY=$yyyymmdd
-PDYm1=`ndate -24 $yyyymmddcc|cut -c1-8`
-PDYm2=`ndate -48 $yyyymmddcc|cut -c1-8`
-PDYm3=`ndate -72 $yyyymmddcc|cut -c1-8`
-PDYm4=`ndate -96 $yyyymmddcc|cut -c1-8`
-PDYm5=`ndate -120 $yyyymmddcc|cut -c1-8`
+PDYm1=`$NDATE -24 $yyyymmddcc|cut -c1-8`
+PDYm2=`$NDATE -48 $yyyymmddcc|cut -c1-8`
+PDYm3=`$NDATE -72 $yyyymmddcc|cut -c1-8`
+PDYm4=`$NDATE -96 $yyyymmddcc|cut -c1-8`
+PDYm5=`$NDATE -120 $yyyymmddcc|cut -c1-8`
 
 echo
 echo PDYp2=$PDYp2
@@ -1445,7 +1449,7 @@ echo
 #
 
 wall_clock_limit_fcst_short="00:30:00"
-wall_clock_limit_fcst_long="02:30:00"
+wall_clock_limit_fcst_long="01:30:00"
   if [[ $gefsmachine = wcoss || $gefsmachine = cray ]]; then                       
 wall_clock_limit_fcst_long="3:59"
 # RLW 20150511 ############################################################################ set lower limit to kill runaway jobs
@@ -2833,7 +2837,7 @@ case $taskname in
     total_tasks=21
     resources="1000"
     if (( taskspernode > total_tasks )); then
-     taskspernode=$total_tasks
+      taskspernode=$total_tasks
     fi
   fi
 
@@ -3639,8 +3643,8 @@ else
     esac
     if [[ $during_previous_job = no ]]; then
       jobtest1=$id$PDY$cyc
-#DH   pdycycprev=`/nwprod/util/exec/ndate -$fhrp $PDY$cyc`
-      pdycycprev=`ndate -$fhrp $PDY$cyc`
+#DH   pdycycprev=`/nwprod/util/exec/$NDATE -$fhrp $PDY$cyc`
+      pdycycprev=`$NDATE -$fhrp $PDY$cyc`
       jobtest2=$id$pdycycprev
       echo jobtest1=$jobtest1 pdycycprev=$pdycycprev jobtest2=$jobtest2 miwait=$miwait waitflag=$waitflag before
       numcurrent=`echo "$llqstring" | grep -c -e $jobtest1 -e $jobtest2`
@@ -3691,7 +3695,7 @@ else
     (( mi = mi + miwait ))
     while (( mi > 59 ))
     do
-      yyyymmddhh=`ndate +1 $yyyymmddhh`
+      yyyymmddhh=`$NDATE +1 $yyyymmddhh`
       (( mi = mi - 60 ))
     done
     if (( mi < 10 )); then

@@ -1,3 +1,4 @@
+# SUBJOB=
   rm  $jobcontrol$SUBJOB
   if [[ $waitflag = no ]]; then
 
@@ -39,10 +40,10 @@ fi
 #BSUB -P $account
 eofCAT
 
-   export POSTGRB2TBL=/gpfs/hps/nco/ops/nwprod/lib/g2tmpl/v1.3.0/src/params_grib2_tbl_new
-   export gefsmpexec=" ${gefsmpexec} -b -j1 -n${total_tasks} -N${taskspernode} -d${OMP_NUM_THREADS} -cc depth "
-   export gefsmpexec_mpmd=" ${gefsmpexec} cfp mpmd_cmdfile"
+export POSTGRB2TBL=/gpfs/hps/nco/ops/nwprod/lib/g2tmpl/v1.3.0/src/params_grib2_tbl_new
 
+export gefsmpexec=" ${gefsmpexec} -b -j1 -n${total_tasks} -N${taskspernode} -d${OMP_NUM_THREADS} -cc depth "
+export gefsmpexec_mpmd=" ${gefsmpexec} cfp mpmd_cmdfile"
 
         AFFINITY="core(1)"
     if [[ ${MP_SHARED_MEMORY} = yes ]] ; then
@@ -128,10 +129,17 @@ eofCAT
       fi
 
 
-    cat <<eofCAT >>$jobcontrol$SUBJOB
+	cat <<eofCAT >>$jobcontrol$SUBJOB
 . /opt/modules/default/init/ksh
-#BF add cfp-intel-sandybridge module for mpmd jobs 05/15/2016
 module load PrgEnv-intel ESMF-intel-haswell/3_1_0rp5 cfp-intel-sandybridge iobuf craype-hugepages2M 
+module use /gpfs/hps/nco/ops/nwprod/modulefiles
+module load prod_envir
+module load prod_util
+module load util_shared/1.0.3
+module load grib_util/1.0.3
+echo COMROOTp1=$COMROOTp1
+echo COMROOTp2=$COMROOTp2
+
 export IOBUF_PARAMS=$IOBUFSET
 export FORT_BUFFERED=TRUE
 eofCAT
@@ -256,6 +264,8 @@ export gefsmachine=$gefsmachine
 export gefsmpexec="${gefsmpexec}"
 export gefsmpexec_mpmd="${gefsmpexec_mpmd}"
 export APRUNC="aprun"
+export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
+export NTHREADS_SIGCHGRS=6
 
 export jjj=$jjj
 export jjje=$jjje

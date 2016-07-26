@@ -38,6 +38,8 @@ echo
   STMP=stmp
 if [[ $machl = t ]] || [[ $machl = g ]]; then
 export JOBQUEUE=dev2
+export HOMEDIR=/ensemble/save/Dingchen.Hou/RFC
+#export HOMEDIR=/ensemble/save/Bing.Fu/RFC     #temporay setting
  if [[ $JOBQUEUE = dev ]]; then
   PTMP=ptmpd2
   STMP=stmpd2
@@ -54,6 +56,8 @@ if [[ $machl = s ]] || [[ $machl = l ]]; then
   PTMP=gpfs/hps/ptmp
   STMP=gpfs/hps/ptmp
 export JOBQUEUE=dev
+export HOMEDIR=/gpfs/hps/emc/ensemble/save/Dingchen.Hou/TAGS
+#export HOMEDIR=/gpfs/hps/emc/ensemble/save/Bing.Fu/TAGS       #temporay setting
 fi
 
 if [[ $LOGNAME = glopara ]]; then
@@ -89,19 +93,6 @@ else
   export basetmp=/$PTMP/$LOGNAME/o/$expid
   export baseptmp=/$PTMP/$LOGNAME/o/$expid
 
-# For VAPOR
-# PTMP=/ptmp/$LOGNAME/tskh
-# PTMP=/gpfs/v3/benchmark/wx15dp/wx20dh/tskh
-# PGFS=/gpfs/v/mtb/noscrub/$LOGNAME/TSKH/GFS
-
-# export basesource=/gpfs/v/mtb/save/$LOGNAME/tskh/$expid
-# export baseoutput=$PTMP/o/$expid
-# For VAPOR end
-
-# For VAPOR
-# export basetmp=$PTMP/o/$expid
-# export baseptmp=$PTMP/o/$expid
-# For VAPOR end
   export basebin=$basesource/nw$envir/control
 
   export baselog=/$PTMP/$LOGNAME/o/$expid
@@ -115,65 +106,25 @@ else
 # export basedgens=$PTMP/o
 # For VAPOR end
 
-#For ZEUS
-if [[ $machl = f ]]; then
-  ZENS=/scratch1/portfolios/NCEPDEV/ensemble
-  ZPTP=/scratch2/portfolios/NCEPDEV/ptmp
-  ZGFS=$ZENS/noscrub
-  export basenwges=$ZGFS/$LOGNAME/NWGES
-
-  export basesource=$ZENS/save/$LOGNAME/GEFS/$expid
-  export baseoutput=$ZPTP/$LOGNAME/o/$expid
-  export basebin=$basesource/nw$envir/control
-  PTMP=$ZPTP/$LOGNAME
-  PGFS=$ZGFS/$LOGNAME/GEFS/GFS
-
-  export basetmp=$PTMP/o/$expid
-  export baseptmp=$PTMP/o/$expid
-
-  export baselog=$PTMP/o/$expid
-  export basedgfs=$PGFS/o
-  export basedgens=$PTMP/o
-  export TMPCOM=$basedgfs/com
-fi
-#For ZEUS end
-
 #For WCOSS 
 if [[ $machl = t ]] || [[ $machl = g ]]; then
   group=ensemble
   group=`pwd|cut -d'/' -f2`
   echo group=$group
-# export basesource=/$group/save/$LOGNAME/WCOSS/$expid
-# export basesource=/$group/save/$LOGNAME/GEFS14/$expid
-# export basesource=/$group/save/$LOGNAME/s/$expid
   export basesource=/$group/save/$LOGNAME/SVN/$expid
   export basebin=$basesource/nw$envir/control
   export baseoutput=/$PTMP/$LOGNAME/o/$expid
   export basetmp=/$PTMP/$LOGNAME/o/$expid
   export baseptmp=/$PTMP/$LOGNAME/o/$expid
-# export basedgfs=        #for prod/para
-# export basedgfs=/$group/noscrub/$LOGNAME/o
-# export basedgfs=/ensemble/noscrub/$LOGNAME  #Use this line as alternative when gfs data is missing from /com_p6/
-# export basedgfs=/gpfs/td1/emc/ensemble/noscrub/Dingchen.Hou/com/gfs/prod
-# export basedgfs=/ensemble/noscrub/Dingchen.Hou/com/gfs/prod
-  export basedgfs=/$group/noscrub/$LOGNAME/o
-# MISSINGGFS!!! see above line
-
-# export TMPCOM=/com_canned
-# export TMPCOM=/com_pu
-  export TMPCOM=/com
-# export TMPCOM=/gpfs/td1/emc/ensemble/noscrub/Dingchen.Hou/com
-# export TMPCOM=/ensemble/noscrub/Dingchen.Hou/com
-# export TMPCOM=/ensemble/noscrub/Richard.Wobus/o/com
-# basedgfs and TMPCOM are combined to define the directory of the gfs files
+  export basedgfs=/$group/noscrub/$LOGNAME/o       # This is for alternative GFS ou  MISSINGGFS!!!
+  export TMPCOM=/com                               # basedgfs and TMPCOM, combined to define directory of the gfs 
 fi
 #For WCOSS end
 
 #For CRAY 
 if [[ $machl = s ]] || [[ $machl = l ]]; then
   group=ensemble
-# group=`pwd|cut -d'/' -f2`
-  export group=/gpfs/hps/emc/$group
+  export group=gpfs/hps/emc/$group
   export basesource=/$group/save/$LOGNAME/GEFS/$expid
   export basebin=$basesource/nw$envir/control
   export baseoutput=/$PTMP/$LOGNAME/o/$expid
@@ -181,10 +132,6 @@ if [[ $machl = s ]] || [[ $machl = l ]]; then
   export baseptmp=/$PTMP/$LOGNAME/o/$expid
   export basedgfs=/$group/noscrub/$LOGNAME/o
 fi
-# echo $baseoutput
-# export baseoutput
-# echo EXIT
-# exit
 #For CRAY end
 
   export account=GEN-T2O
@@ -193,24 +140,6 @@ fi
   export classs=1
   export classp=devhigh
   export classp=dev
-# For VAPOR
-# export account=MTB001-RES
-# export group=mtb
-# export classs=1
-# export classp=mtb
-# export classp=mtb
-# For VAPOR end
-
-if [[ $machl = f ]]; then
-# For ZEUS
-  export account=glbss
-  export group=ensemble
-  export classs=batch
-  export classp=batch
-  export classp=batch
-  export NWPROD=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/nwzeus
-# For ZEUS end
-fi  
 
 if [[ $machl = t ]] || [[ $machl = g ]]; then
 # For WCOSS
@@ -223,7 +152,17 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
 # For WCOSS end
 fi  
 
-fi
+if [[ $machl = s ]] || [[ $machl = l ]]; then
+# For CRAY
+  export account=GEN-T2O
+# export account=gefs
+  export group=ensemble
+  export classs=batch
+  export classp=batch
+  export classp=batch
+# For CRAY end
+fi  
+fi         # [[ $LOGNAME = glopara ]]
 
 # RLW 20140903 modify selected settings for emc.enspara on WCOSS
 # RLW 20150603 this block copied and modified from rweh

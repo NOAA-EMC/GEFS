@@ -117,11 +117,14 @@ eofCAT
     cat <<eofCAT >>$jobcontrol$SUBJOB
 #. /usrx/local/Modules/3.2.9/init/ksh
 . /usrx/local/Modules/default/init/ksh
+module use /nwprod2/modulefiles
 module purge
 module load ics
 module load lsf
-module load grib_util/v1.0.1
+module load prod_envir
+module load prod_util
 module load util_shared/v1.0.0
+module load grib_util/v1.0.1
 eofCAT
     if [[ ${job_type} = parallel ]] ; then
      cat <<eofCAT >>$jobcontrol$SUBJOB
@@ -232,6 +235,9 @@ export OMP_NUM_THREADS=1
 eofCAT
     fi
     cat <<eofCAT >>$jobcontrol$SUBJOB
+
+export gefsmpexec_mpmd=${gefsmpexec}
+
 # export for development runs only begin
 pwdsave=$(pwd)
 echo $pwdsave

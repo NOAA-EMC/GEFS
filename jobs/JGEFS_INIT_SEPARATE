@@ -77,7 +77,7 @@ export pgmerr=errfile
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
-export HOMEenkf=${HOMEenkf:-$NWROOTp1/enkf.${enkf_ver}}
+export HOMEenkf=${HOMEenkf:-$NWROOTp2/enkf.${enkf_ver}}
 
 export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
 export USHgsm=${USHgsm:-$HOMEgsm/ush}
@@ -108,8 +108,8 @@ env | sort
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=$COMROOTp1/gfs/prod/gfs.$PDY
-export COMINenkf=$COMROOTp1/gfs/prod/enkf.
+export COMINgfs=$COMROOTp2/gfs/prod/gfs.$PDY
+export COMINenkf=$COMROOTp2/gfs/prod/enkf.
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
