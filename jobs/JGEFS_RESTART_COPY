@@ -16,18 +16,18 @@ echo `date` $0 `date -u` begin
 set -xa
 
 ###########################################
-# Run gefs_config to get input parameters
+# Run gefs_config_dev to get input parameters
 ###########################################
 if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
 ################# lines between these markers have been modified for dev begin
  if (( 0 == 1 )); then
 ################# lines between these markers have been modified for dev end
-  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
+  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config_dev
   . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_setbase
 ################# lines between these markers have been modified for dev begin
  else
-  . $basesource/nwdev/parm/gefs_config
+  . $basesource/nwdev/parm/gefs_config_dev
  fi
 ################# lines between these markers have been modified for dev end
 fi

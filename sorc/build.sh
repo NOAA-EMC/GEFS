@@ -7,7 +7,7 @@ mac=$(hostname | cut -c1-1)
 if [ $mac = t -o $mac = e -o $mac = g ] ; then # For WCOSS
                                                  # --------
  machine=wcoss
- export LIBDIR=/nwprod/lib
+#export LIBDIR=/nwprod2/lib
  export INCS="${SIGIO_INC4}"
  export INCSFC="${SFCIO_INC4}"
  export INC="${G2_INC4}"

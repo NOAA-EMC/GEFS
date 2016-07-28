@@ -16,18 +16,18 @@ export gefsmachine=${gefsmachine:-wcoss}
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 
 ###########################################
-# Run gefs_config to get input parameters
+# Run gefs_config_dev to get input parameters
 ###########################################
 if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
 ################# lines between these markers have been modified for dev begin
  if (( 0 == 1 )); then
 ################# lines between these markers have been modified for dev end
-  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config
+  . /climate/save/${LOGNAME}/gefs/nwdev/parm/gefs_config_dev
 ################# lines between these markers have been modified for dev begin
  else
 # echo $jobscript =jobscript #DHOU 03/07/2012
-  . $basesource/nwdev/parm/gefs_config
+  . $basesource/nwdev/parm/gefs_config_dev
  fi
 ################# lines between these markers have been modified for dev end
 fi
@@ -232,7 +232,7 @@ else
 . $basesource/nw$envir/parm/gefs.parm
 . $basesource/nw$envir/parm/gefs_init.parm
 ###added for zeus (kate)
-#. $basesource/nw$envir/parm/gefs_config
+#. $basesource/nw$envir/parm/gefs_config_dev
 fi
 ###teste
 
