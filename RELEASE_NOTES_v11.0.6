@@ -181,9 +181,17 @@ V11.0.6 to be released on or about 06/21/2016
 . Primary changes are to JGEFS_ENSSTAT job and scripts
 . Additional changes to jjobs and parms/gefs_config enable EMC testing to 
   match production exactly
+. parm/gefs_config is renamed to parm/gefs_config_dev
+. Library modules used in compilation are updated to the latest versions
+. Resource usage:
+  . One additional task is required by GEFS_ENSSTAT job
+  . Overall wall time is unchaned
+  . Additional files geavg* and gespr* are produced in pgrb2bp5 subdirectory
 . New SVN tag:
   . https://svnemc.ncep.noaa.gov/projects/gefs/tags/gefs.v11.0.6
   . Also requires GSM v12.1.1
+  . Working copy as tested is available on tide and gyre in
+    /ensemble/save/Richard.Wobus/s/rwjy/nwdev
 . Implementation instructions
   . Copy new tag to /nwprod/nw$envir
   . build codes: in sorc directory. follow the directions in README.build

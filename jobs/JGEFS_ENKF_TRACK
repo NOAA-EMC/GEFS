@@ -119,13 +119,13 @@ export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=${COMINgfs:-COMROOT/gfs/prod/gfs.$PDY} 
+export COMINgfs=${COMINgfs:-$COMROOT/gfs/prod/gfs.$PDY} 
 # 20160607 RLW if present, modify preset COMINenkf to include the date for this job
 if [[ -n $COMINenkf ]]; then
   COMINenkf=$COMINenkf$pdyp
 fi
 export COMINenkf=${COMINenkf:-$COMROOT/gfs/prod/enkf.$pdyp} 
-export COMINatcfsyn=${COMINatcfsyn:-COMROOTp1/arch/prod/syndat}
+export COMINatcfsyn=${COMINatcfsyn:-$COMROOTp1/arch/prod/syndat}
 export COMINgfs6ago=${COMINgfs6ago:-$COMROOT/gfs/prod/gfs.$d6ago_ymd}
 export COMINgfs6ahead=${COMINgfs6ahead:-$COMROOT/gfs/prod/gfs.$d6ahead_ymd}
 
