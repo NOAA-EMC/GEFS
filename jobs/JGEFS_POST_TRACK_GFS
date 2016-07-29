@@ -18,6 +18,9 @@ if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 fi
 
 export APRUN=${gefsmpexec:-mpirun.lsf}
+#export APRUNTRACK="aprun -j1 -n1 -N1 -d1"
+#export NODES=1
+#export IOBUF_PARAMS="*:size=32M:count=4:verbose"
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -99,17 +102,18 @@ export PARMgefs=$HOMEgefs/parm
 ##############################
 setpdy.sh
 . PDY
+#export PDY=20160709
 
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=${COMINgfs:-$COMROOTp2/gfs/prod/gfs.${PDY}}
-export COMIN=$COMINgfs
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
+export COMINgfs=${COMINgfs:-${COMROOTp2}/gfs/prod/gfs.${PDY}}
+export COMINsyn=${COMINsyn:-${COMROOTp1}/arch/prod/syndat}
 
-export gfsdir=${COMIN}
-export COM=$COMOUT/$cyc/tctrack
-mkdir -m 775 -p $COM
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/tctrack}
+export COMOUThur=${COMOUThur:-${COMROOTp1}/hur/${envir}/global}
+export COMOUTatcf=${COMOUTatcf:-${COMROOTp1}/nhc/${envir}/atcf}
+mkdir -m 775 -p $COMOUT $COMOUThur $COMOUTatcf
 
 ##############################################
 #echo set parameters using gefs.parm, if needed
@@ -127,44 +131,42 @@ echo
 export cmodel=gfs
 export loopnum=1
 export ymdh=${PDY}${cyc}
-export pert=${cmodel}
-export pert=gfs
 
-export exectrkdir=${EXECens_tracker}
-export rundir=${FIXens_tracker}
+export gfsdir=${COMINgfs}
 
-export CYL=${cyc}
-
-export pertdir=${DATA}/${cmodel}
-if [ ! -d ${pertdir} ]; then 
-	mkdir -p ${pertdir}
-fi
+export pert="p01"
+pertdir=${DATA}/${cmodel}/${pert}
+mkdir -p $pertdir
 
 #-----------input data checking -----------------
-${SCRIPTSens_tracker}/data_check.sh
+${USHens_tracker}/data_check.sh
 #------------------------------------------------
 
-outfile=${pertdir}/trkr.${cmodel}.${ymdh}.out
-${USHens_tracker}/extrkr_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}
+outfile=${pertdir}/trkr.${cmodel}.${pert}.${ymdh}.out
+$APRUN ${USHens_tracker}/extrkr_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}
+export err=$?; err_chk
 
-#cp ${pertdir}/trak.gfso.atcfunix.${PDY}${CYL} ${COM}/gfso.t${CYL}z.cyclone.trackatcfunix
+#if [ ${SENDCOM} = 'NO' ]; then
+#  cp ${pertdir}/trak.avnx.atcfunix.${PDY}${cyc} ${COMOUT}/avnx.t${cyc}z.cyclone.trackatcfunix
+#fi
 
-cp ${pertdir}/vitals.upd.gfso.${PDY}${CYL} ${COM}/.
-cp ${pertdir}/vitals.upd.gfso.${PDY}${CYL} ${COM}/vitals.upd.avn.${PDY}${CYL}
+if [ "$SENDCOM" = 'YES' ]; then
+  cp ${pertdir}/vitals.upd.avnx.${PDY}${cyc} ${COMOUT}/
+  cp ${pertdir}/vitals.upd.avnx.${PDY}${cyc} ${COMOUT}/vitals.upd.gfsx.${PDY}${cyc}
 
-cp ${pertdir}/trak.gfso.atcfunix.${PDY}${CYL} ${COM}/trak.avn.atcfunix.${PDY}${CYL}
+  #cp ${pertdir}/trak.avnx.atcfunix.${PDY}${cyc} ${COMOUT}/trak.gfsx.atcfunix.${PDY}${cyc}
+  #cat ${COMOUT}/trak.gfsx.atcfunix.${PDY}${cyc} | \
+  cat ${pertdir}/trak.avnx.atcfunix.${PDY}${cyc} | \
+      sed s:AVNX:GFSX:g \
+    > ${COMOUT}/gfsx.t${cyc}z.cyclone.trackatcfunix
+  #rm -f ${COMOUT}/trak.gfsx.atcfunix.${PDY}${cyc}
+fi
 
-cat ${COM}/trak.avn.atcfunix.${PDY}${CYL} | \
-sed s:GFSO:AVNO:g \
-> ${COM}/avn.t${CYL}z.cyclone.trackatcfunix
-rm -f ${COM}/trak.avn.atcfunix.${PDY}${CYL}
+cd $DATA
+rm -rf ${DATA}/${cmodel}
 
-rm -rf ${DATA}/*
-
-cd ${DATA}
-export COMOUT1=${COM}
-export COMOUT2=${COM}
-${USHens_tracker}/atcf_2_cxml.sh ${cmodel} ${ymdh} ${DATA}
+${USHens_tracker}/atcf_2_cxml.sh ${cmodel} ${ymdh} ${COMOUT} ${DATA} 
+export err=$?; err_chk
 
 ################################
 msg="JOB COMPLETED NORMALLY"

@@ -4,15 +4,15 @@
 # This section is some parameter setup for for development testing only
 ##############################################################################
 
-export npair=1
-export fhmax=48
-export fhmaxh=24
-export ENS_SPS=.true.
-
+#export fhmax=384
+#export fhmaxh=192
 #export fhmaxhres=`expr $fhmaxh - $HOUTSPS`
 
 echo `date` $0 test section begin
 
+export npair=10
+export fhmax=384
+export fhmaxh=192
 
 # for test, NOT USED FOR PRODUCTION
 

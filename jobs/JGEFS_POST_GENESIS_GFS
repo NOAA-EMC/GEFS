@@ -18,6 +18,9 @@ if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 fi
 
 export APRUN=${gefsmpexec:-mpirun.lsf}
+#export APRUNTRACK="aprun -j1 -n1 -N1 -d1"
+#export NODES=1
+#export IOBUF_PARAMS="*:size=32M:count=4:verbose"
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -98,25 +101,25 @@ export PARMgefs=$HOMEgefs/parm
 ##############################
 setpdy.sh
 . PDY
+#export PDY=20160709
 
 ##############################################
 # Define GENVITDIR directory. The PATH do be determined
 ##############################################
 export JYYYY=`echo ${PDY} | cut -c1-4`
-export genvitdir=${genvitdir:-${COMROOT}/${NET}/${envir}/genesis_vital_${JYYYY}}
-
-mkdir -p ${genvitdir}
+export COMINgenvit=${COMINgenvit:-${COMROOT}/${envir}/${NET}/genesis_vital_${JYYYY}}
+export COMOUTgenvit=${COMOUTgenvit:-${COMROOT}/${envir}/${NET}/genesis_vital_${JYYYY}}
+mkdir -p ${COMINgenvit}
 
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=${COMINgfs:-$COMROOTp2/gfs/prod/gfs.${PDY}}
-export COMIN=$COMINgfs
+export COMINgfs=${COMINgfs:-${COMROOTp2}/gfs/prod/gfs.${PDY}}
+export COMINsyn=${COMINsyn:-${COMROOTp1}/arch/prod/syndat}
 
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
-export gfsdir=${COMIN}
-export COM=$COMOUT/$cyc/genesis
-mkdir -m 775 -p $COM
+export COMIN=${COMIN:-${COMROOT:?}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/genesis}
+export COMOUT=${COMOUT:-${COMROOT:?}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/genesis}
+mkdir -m 775 -p $COMOUT 
 
 ##############################################
 #echo set parameters using gefs.parm if needed
@@ -134,12 +137,8 @@ echo
 export cmodel=gfs
 export loopnum=1
 export ymdh=${PDY}${cyc}
-export pert=gfs
 
-export exectrkdir=${EXECens_tracker}
-export rundir=${FIXens_tracker}
-
-export CYL=${cyc}
+export gfsdir=${COMINgfs}
 
 #---- first run to get GFS genesis vital at time=00 06 12 18Z -----------
 export trkrtype=tcgen
@@ -151,53 +150,73 @@ export mslpthresh=0.0015
 export v850thresh=1.5000
 export regtype=altg
 
-export pertdir=${DATA}/${cmodel}
-if [ ! -d ${pertdir} ]; then 
-	mkdir -p ${pertdir}
-fi
+export pert=p01
+export pertdir=${DATA}/${cmodel}/${pert}
+mkdir -p $pertdir
 
 outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
-${USHens_tracker}/extrkr_tcv_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile} 
+$APRUN ${USHens_tracker}/extrkr_tcv_g2.sh ${loopnum} ${cmodel} ${pert} ${pertdir} 2>&1 >${outfile}
+export err=$?; err_chk
 rm -rf ${DATA}/*
 
 #### NCEP/GFS genesis tcvitals  ###########################
-num_gen_vits=`cat ${genvitdir}/genesis.vitals.gfs.gfso.${JYYYY} | wc -l`
-if [ ${num_gen_vits} -gt 0 ]; then
-	ln -s -f ${genvitdir}/genesis.vitals.gfs.gfso.${JYYYY} fort.41
-	ln -s -f ${genvitdir}/gen_tc.vitals.gfs.gfso.${JYYYY} fort.42
-	${EXECens_tracker}/tcvital_ch_gfs
-	cat ${genvitdir}/gen_tc.vitals.gfs.gfso.${JYYYY} >> ${genvitdir}/all.vitals.gfs.gfso.${JYYYY}
-	rm -f ${genvitdir}/gen_tc.vitals.gfs.gfso.${JYYYY}
+num_gen_vits=`cat ${COMINgenvit}/genesis.vitals.gfs.gfso.${JYYYY} | wc -l`
+if [ ${num_gen_vits} -gt 0 ]
+then
+  . prep_step
+
+  # Input file
+  export FORT41=${COMINgenvit}/genesis.vitals.gfs.gfso.${JYYYY}
+
+  # Output files
+  export FORT42=gen_tc.vitals.gfs.gfso.${JYYYY}
+
+  ${EXECens_tracker}/tcvital_ch_gfs
+  export err=$?; err_chk
+
+  cat $FORT42 >> ${COMOUTgenvit}/all.vitals.gfs.gfso.${JYYYY}
 else
-	touch ${genvitdir}/all.vitals.gfs.gfso.${JYYYY}
-fi # [ ${num_gen_vits} -gt 0 ]
+  touch ${COMOUTgenvit}/all.vitals.gfs.gfso.${JYYYY}
+fi
 
 #---- second run genesis ---------------------------------------
 export pertdir=${DATA}/${cmodel}/${pert}
-if [ ! -d ${pertdir} ]; then
-	mkdir -p ${pertdir}
-fi
+mkdir -p $pertdir
+rm -f $pertdir/*
 
 outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
-${USHens_tracker}/extrkr_gen_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}
+$APRUN ${USHens_tracker}/extrkr_gen_g2.sh ${loopnum} ${cmodel} ${pert} ${pertdir} 2>&1 >${outfile}
+export err=$?; err_chk
 
 export atcfout=gfso
-export TRKDATA=${pertdir}
-${USHens_tracker}/sort_tracks.gen.sh  >${pertdir}/sort.${regtype}.${atcfout}.${ymdh}.out
+export TRKDATA=${DATA}/${cmodel}/${pert}
+${USHens_tracker}/sort_tracks.gen.sh  >${TRKDATA}/sort.${regtype}.${atcfout}.${ymdh}.out
+export err=$?; err_chk
 
-#cp ${pertdir}/trak.gfso.atcfunix.altg.${ymdh} ${COM}/.
-#cp ${pertdir}/storms.gfso.atcf_gen.altg.${ymdh}  ${COM}/.
+#cp ${pertdir}/trak.gfso.atcfunix.altg.${ymdh} ${COMOUT}/
+#cp ${pertdir}/storms.gfso.atcf_gen.altg.${ymdh}  ${COMOUT}/
 rm -f ${DATA}/*
 
 #### filtering weak storms for TC genesis #####
-infile=${COM}/storms.gfso.atcf_gen.altg.${ymdh}
-outf42=${COM}/storms.gfso.atcf_gen.${ymdh}
-outf43=${COM}/trak.gfso.atcfunix.${ymdh}
+. prep_step
 
-ln -s -f ${infile} fort.41
-ln -s -f ${outf42} fort.42
-ln -s -f ${outf43} fort.43
+# Input file
+export FORT41=storms.gfso.atcf_gen.altg.${ymdh}
+cp ${COMOUT}/$FORT41 .
+
+# Output files
+export FORT42=storms.gfso.atcf_gen.${ymdh}
+export FORT43=trak.gfso.atcfunix.${ymdh}
+
 ${EXECens_tracker}/filter_gen_gfs
+export err=$?; err_chk
+
+if [ "$SENDCOM" = YES ]; then
+  cp $FORT42 $FORT43 ${COMOUT}/
+  if [ $? -ne 0 ]; then
+    echo "WARNING: Filtering did not produce any files... perhaps there were no storms to begin with."
+  fi
+fi
 
 ################################
 msg="JOB COMPLETED NORMALLY"

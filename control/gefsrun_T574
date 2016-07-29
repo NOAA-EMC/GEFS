@@ -9,7 +9,9 @@ echo
 echo `date` $0 $*                                                         check arguments
 echo
 
-UBJOB= 
+SUBJOB=X 
+TPMHIGH=36
+TPMLOW=18
 
   machl=`uname -n | cut -c1`
   if [[ $machl = r ]]; then
@@ -1870,7 +1872,7 @@ case $taskname in
 #      (( taskspermem = 30 ))
 #      (( taskspermem = 60 ))
 #      (( taskspermem = 72 ))
-       (( taskspermem = 66 ))
+       (( taskspermem = ${TPMHIGH:-66} ))
 #       (( taskspermem = 36 ))
      else
        (( taskspermem = 32 ))
@@ -1991,7 +1993,7 @@ case $taskname in
   fi
   if [[ $gefsmachine = wcoss || $gefsmachine = cray ]]; then                       
 #      (( taskspermem = 30 ))
-       (( taskspermem = 36 ))
+       (( taskspermem = ${TPMLOW:-36} ))
 #      parallel_threads=2
        parallel_threads=4
        task_affinity="core(1)"
@@ -2273,6 +2275,7 @@ case $taskname in
 #   OMP_NUM_THREADS=4
 #If you  want to run  2 or 3  enspost jobs per members, use the following 3 lines with SUBJOB=B/C    
     SUBJOB=C      # SUBJOB=A,B,or C
+    SUBJOB=${SUBJOB:-C}      # SUBJOB=A,B,or C
     nodes=1
     OMP_NUM_THREADS=2
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
@@ -2587,6 +2590,18 @@ case $taskname in
 #   resources="6912"     #for core(4)
     total_tasks=1
       ;;
+      (cray)
+    job_type=parallel
+    wall_clock_limit="00:45"
+    MP_SHARED_MEMORY=no
+    OMP_NUM_THREADS=1
+    (( taskspernode = 1 ))
+    total_tasks=1
+    resources="1000"
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
+    ;;
     esac
   ;;
   (gefs.wafs)
@@ -2638,6 +2653,18 @@ case $taskname in
 #   resources="6912"     #for core(4)
     total_tasks=1
       ;;
+      (cray)
+    job_type=parallel
+    wall_clock_limit="00:45"
+    MP_SHARED_MEMORY=no
+    OMP_NUM_THREADS=1
+    (( taskspernode = 1 ))
+    total_tasks=1
+    resources="1000"
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
+    ;;
     esac
   ;;
   (ensstat_hr)
@@ -2785,8 +2812,8 @@ case $taskname in
 #   resources="1000"    # T574
   fi
   if [[ $gefsmachine = cray ]]; then
-    MP_SHARED_MEMORY=yes
-    OMP_NUM_THREADS=4
+    MP_SHARED_MEMORY=no
+    OMP_NUM_THREADS=24
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS ))
     resources="3000"
   fi
@@ -2874,6 +2901,19 @@ case $taskname in
      taskspernode=$total_tasks
     fi
   fi  
+
+  if [[ $gefsmachine = cray ]]; then
+    wall_clock_limit="00:45"
+    MP_SHARED_MEMORY=no
+    OMP_NUM_THREADS=1
+    (( taskspernode = 7 ))
+    total_tasks=21
+    resources="1000"
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
+  fi
+
   ;;
   (track.ave)
     ################################# production variables
@@ -3730,6 +3770,9 @@ echo $jjjb
 echo $nprdgen
 echo $SUBJOB
 
+  if [[ $SUBJOB = X ]]; then
+   SUBJOB=
+  fi 
 . $cwd/setup_job_card.$gefsmachine
 
   if [[ $SUBJOB = C ]]; then

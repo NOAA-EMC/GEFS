@@ -38,7 +38,7 @@ export HOMEgefs=$basesource/nwdev
 export HOMEgsm=$HOMEDIR/gsm.v12.1.1
 export HOMEpost=$HOMEDIR/ncep_post.v7.2.3
 export HOMEenkf=$HOMEDIR/enkf.v2.0.1
-export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.0
+export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.8
 
 # This section is optional, using path to define utility files
 # export UTILROOT=/nwprod2/prod_util.v1.0.0  
@@ -56,10 +56,8 @@ export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.0
   export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
   export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
   export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
-  export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
+  export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib}
   export CNVGRIB21_GFS=${CNVGRIB21_GFS:-$EXECgrib/cnvgrib21_gfs}
-  export CNVGRIB=$CNVGRIB21_GFS
-
   export SUPVIT=$SUPVIT
 
   export NET=gens
