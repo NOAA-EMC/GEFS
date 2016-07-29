@@ -118,7 +118,7 @@ eofCAT
 #. /usrx/local/Modules/3.2.9/init/ksh
 . /usrx/local/Modules/default/init/ksh
 module purge
-module load ics
+module load ics/16.0.3
 module load lsf
 module load grib_util/v1.0.1
 module load util_shared/v1.0.0

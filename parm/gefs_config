@@ -27,7 +27,7 @@ export PCOMROOT=$baseoutput/pcom/$envir
 
 #export COMROOTp1=/com
 #export COMROOTp1=/ensemble2/noscrub/Dingchen.Hou/GEFS15/PARA20150708/com
-export COMROOTp1=/ensemble/noscrub/Richard.Wobus/o/com
+export COMROOTp1=/ensemble/noscrub/emc.enspara/xz//o/com
 export archsyndir=/com/arch/prod/syndat
 export GESROOTp1=/nwges
 export DBNROOT=
@@ -36,16 +36,16 @@ export NWROOT=/nwprod2
 export NWROOTprod=/nwprod2
 export NWROOTp1=/nwprod
 
-HOMEDIR=/ensemble/save/Dingchen.Hou/RFC
+HOMEDIR=/ensemble/noscrub/emc.enspara/xz/gfs_q3fy17
 export gefsmachine=${gefsmachine:-wcoss}
 
   export HOMEgefs=$HOMEDIR/gefs.v11.0.0
   export HOMEgefs=$basesource/nwdev
 
-  export HOMEgsm=$HOMEDIR/gsm.v12.1.0
+  export HOMEgsm=$HOMEDIR/gsm.v14.1.0
 # export HOMEpost=$HOMEDIR/ncep_post.v5.1.1
-  export HOMEpost=$HOMEDIR/ncep_post.v7.2.0
-  export HOMEenkf=$HOMEDIR/enkf.v2.0.1
+  export HOMEpost=$HOMEDIR/ncep_post.v7.2.4
+  export HOMEenkf=$HOMEDIR/gdas.v14.1.0
   export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.0
 
 # This section is optional, using path to define utility files

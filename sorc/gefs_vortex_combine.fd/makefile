@@ -20,10 +20,10 @@ LDFLAGS= -openmp
 all:    $(CMD)
 
 $(CMD): $(OBJS)
-	$(FC) $(LDFLAGS) $(FFLAGS) -I $(INCS) -o $(@) $(OBJS) $(LIBS_INIT)
+	$(FC) $(LDFLAGS) $(FFLAGS) -I $(INCGFS) -I $(INCG)  -I $(INCS) -o $(@) $(OBJS) $(LIBS_INIT)
 
 $(OBJS):        $(SRCS)
-	$(FC) $(FFLAGS) -I $(INCS) -c $(SRCS)
+	$(FC) $(FFLAGS) -I $(INCGFS) -I $(INCG) -I $(INCS) -c $(SRCS)
 
 
 allclean:       clean all

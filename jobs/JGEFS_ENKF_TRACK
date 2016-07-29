@@ -147,6 +147,11 @@ echo CHGRESEXEC=$CHGRESEXEC
 echo location of tracking executable
 export exectrkdir=$HOMEgefs/util/exec
 
+echo location of nemsioget
+export nemsioget=/global/save/emc.glopara/bin/nemsio_get
+
+
+
 ##############################################
 echo list environment before running script
 ##############################################

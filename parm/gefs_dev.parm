@@ -172,5 +172,7 @@ export gfssource=prod
   export ctlsfcprod=0
   export ctlsigprod=0
 
+  export sigzvd=no
+
   echo `date` $0 test section end
 

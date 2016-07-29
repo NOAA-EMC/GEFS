@@ -147,8 +147,15 @@ echo ensshortp=$ensshortp
 #
 
 if (( nhrpair < npair )); then
+      if [ $NEMSIO_OUT = .true. ] ; then
+	export GFSOUT=sanl.lr.in
+	export SFNOUT=sfcanl.lr.in
+        export OUTTYP=1
+      else
 	export SIGOUT=sanl.lr.in
 	export SFCOUT=sfcanl.lr.in
+        export OUTTYP=2
+      fi
 
 	export JCAP=$JCAPLR
 	export LEVS=$LEVSLR
@@ -157,7 +164,10 @@ if (( nhrpair < npair )); then
 	export NTRAC=$NTRACLR
 	export IDVC=$IDVC
 	export NVCOORD=$IDVC
-	export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0"
+        export nopdpvv=$nopdpvv
+        export rdgrid=.true.
+        export use_ufo=.true.
+	export CHGRESVARS="use_ufo=$use_ufo,rdgrid=$rdgrid,idvc=$idvc,NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0,nopdpvv=$nopdpvv"
 	if (( IDVC == 1 )); then
 		export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
 	fi
@@ -186,13 +196,21 @@ if (( nhrpair < npair )); then
 			err_chk
 		fi # [[ -s $file ]]
 	done # for file in $SIGINP $SFCINP
-
+        if [ $NEMSIO_IN = .true. ] ; then
+	ojcap=$($nemsioget ${SIGINP} jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	olevs=$($nemsioget ${SIGINP} levs |grep -i "levs" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        olonb=$($nemsioget ${SIGINP} LONF|grep -i "LONF" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        olatb=$($nemsioget ${SIGINP} LATG|grep -i "LATG" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        ontrac=$($nemsioget ${SIGINP} NTRAC|grep -i "NTRAC" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        oidvc=$($nemsioget ${SIGINP} IDVC|grep -i "IDVC" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        else
 	ojcap=`$sighdrexec $SIGINP jcap`
 	olevs=`$sighdrexec $SIGINP levs`
 	olonb=`$sighdrexec $SIGINP lonb`
 	olatb=`$sighdrexec $SIGINP latb`
 	ontrac=`$sighdrexec $SIGINP ntrac`
 	oidvc=`$sighdrexec $SIGINP idvc`
+        fi
 	runchgres=yes
 	if [[ (( JCAP == ojcap )) && (( LEVS == olevs )) && (( LONB == olonb )) && (( LATB == olatb )) && (( NTRAC == ontrac )) && (( IDVC == oidvc )) ]]; then
 		runchgres=no
@@ -231,8 +249,15 @@ fi # (( nhrpair < npair ))
 #
 
 if (( nhrpair > 0 )); then
-	export SIGOUT=sanl.hr.in
+        if [ $NEMSIO_OUT = .true. ] ; then
+	export GFSOUT=sanl.hr.in
+	export SFNOUT=sfcanl.hr.in
+        export OUTTYP=1
+       else
 	export SFCOUT=sfcanl.hr.in
+	export SIGOUT=sanl.hr.in
+        export OUTTYP=2
+       fi
 
 	export JCAP=$JCAPHR
 	export LEVS=$LEVSHR
@@ -241,7 +266,9 @@ if (( nhrpair > 0 )); then
 	export NTRAC=$NTRACHR
 	export IDVC=$IDVC
 	export NVCOORD=$IDVC
-	export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0"
+        export nopdpvv=$nopdpvv
+        export rdgrid=.true.
+	export CHGRESVARS="use_ufo=.true.,rdgrid=$rdgrid,idvc=$idvc,NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0,GRDFMT='bin4',nopdpvv=$nopdpvv"
 	if (( IDVC == 1 )); then
 		export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
 	fi
@@ -270,12 +297,21 @@ if (( nhrpair > 0 )); then
 		fi # [[ -s $file ]]
 	done # for file in $SIGINP $SFCINP
 
+        if [ $NEMSIO_IN = .true. ] ; then
+	ojcap=$($nemsioget ${SIGINP} jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	olevs=$($nemsioget ${SIGINP} levs |grep -i "levs" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        olonb=$($nemsioget ${SIGINP} LONF|grep -i "LONF" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        olatb=$($nemsioget ${SIGINP} LATG|grep -i "LATG" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        ontrac=$($nemsioget ${SIGINP} NTRAC|grep -i "NTRAC" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        oidvc=$($nemsioget ${SIGINP} IDVC|grep -i "IDVC" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        else
 	ojcap=`$sighdrexec $SIGINP jcap`
 	olevs=`$sighdrexec $SIGINP levs`
 	olonb=`$sighdrexec $SIGINP lonb`
 	olatb=`$sighdrexec $SIGINP latb`
 	ontrac=`$sighdrexec $SIGINP ntrac`
 	oidvc=`$sighdrexec $SIGINP idvc`
+        fi
 	if [[ (( JCAP == ojcap )) && (( LEVS == olevs )) && (( LONB == olonb )) && (( LATB == olatb )) && (( NTRAC == ontrac )) && (( IDVC == oidvc )) ]]; then
 		runchgres=no
 	else

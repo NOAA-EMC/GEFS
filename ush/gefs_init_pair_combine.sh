@@ -240,6 +240,10 @@ echo
 
 rm fort.??
 
+if [ $NEMSIO_IN = .true. ];then
+echo skip sigzvdo for nemsio
+else
+
 ln -sf sanlgm${ipair}n sig_zvdi
 if [[ "$sigzvd" = "yes" ]]; then
 	ln -sf sanlgm${ipair}n sig_zvdo
@@ -259,7 +263,7 @@ fi
 echo rsanp$ipair > sig_zvdl
 $EXECgefs/global_sigzvd
 ret_sigzvd=$?
-
+fi
 #
 #  Combine the storm and environment forecast fields
 #
@@ -342,6 +346,9 @@ echo relocflag=$relocflag relocpertflag=$relocpertflag
 #
 # end relocation combining section
 #
+if [ $NEMSIO_IN = .true. ];then
+echo skip sigzvdo for nemsio
+else
 
 ln -sf sanlgm${ipair}n sig_zvdi
 if [[ "$sigzvd" = "yes" ]]; then
@@ -362,6 +369,7 @@ fi
 echo csanp$ipair > sig_zvdl
 $EXECgefs/global_sigzvd
 ret_sigzvd=$?
+fi
 
 # guess copies moved here from scripts/exenstr.sh.sms
 ################################################################################
