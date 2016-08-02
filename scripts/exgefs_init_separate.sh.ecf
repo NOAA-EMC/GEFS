@@ -147,7 +147,7 @@ echo ensshortp=$ensshortp
 #
 
 if (( nhrpair < npair )); then
-      if [ $NEMSIO_OUT = .true. ] ; then
+      if [ $NEMSIO_IN = .true. ] ; then
 	export GFSOUT=sanl.lr.in
 	export SFNOUT=sfcanl.lr.in
         export OUTTYP=1
@@ -249,7 +249,7 @@ fi # (( nhrpair < npair ))
 #
 
 if (( nhrpair > 0 )); then
-        if [ $NEMSIO_OUT = .true. ] ; then
+        if [ $NEMSIO_IN = .true. ] ; then
 	export GFSOUT=sanl.hr.in
 	export SFNOUT=sfcanl.hr.in
         export OUTTYP=1
