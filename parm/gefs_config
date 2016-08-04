@@ -56,7 +56,7 @@ export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.8
   export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
   export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
   export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
-  export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib}
+  export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
   export CNVGRIB21_GFS=${CNVGRIB21_GFS:-$EXECgrib/cnvgrib21_gfs}
   export SUPVIT=$SUPVIT
 

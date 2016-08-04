@@ -2582,12 +2582,12 @@ case $taskname in
     fi
     case $gefsmachine in
       (wcoss)
-    MP_SHARED_MEMORY=yes
-    OMP_NUM_THREADS=4
-    RUN=
-    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
-    (( resources =  27648 / taskspernode ))
-#   resources="6912"     #for core(4)
+    job_type=parallel   
+    wall_clock_limit="00:45"
+    MP_SHARED_MEMORY=no
+    OMP_NUM_THREADS=1
+    (( taskspernode = 1 )) 
+    resources="1000"     
     total_tasks=1
       ;;
       (cray)
@@ -2645,12 +2645,12 @@ case $taskname in
     fi
     case $gefsmachine in
       (wcoss)
-    MP_SHARED_MEMORY=yes
-    OMP_NUM_THREADS=4
-    RUN=
-    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
-    (( resources =  27648 / taskspernode ))
-#   resources="6912"     #for core(4)
+    job_type=parallel
+    wall_clock_limit="00:45"
+    MP_SHARED_MEMORY=no
+    OMP_NUM_THREADS=1
+    (( taskspernode = 1 ))
+    resources="1000"
     total_tasks=1
       ;;
       (cray)
@@ -2850,11 +2850,8 @@ case $taskname in
     wall_clock_limit="00:30"
     MP_SHARED_MEMORY=no
     OMP_NUM_THREADS=1
-    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( taskspernode = 7 )) 
     total_tasks=21
-    if (( taskspernode > total_tasks )); then
-     taskspernode=$total_tasks
-    fi
   fi  
   if [[ $gefsmachine = cray ]]; then
     wall_clock_limit="00:45"
@@ -2895,11 +2892,8 @@ case $taskname in
     wall_clock_limit="01:30"
     MP_SHARED_MEMORY=no
     OMP_NUM_THREADS=1
-    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( taskspernode = 7 )) 
     total_tasks=21
-    if (( taskspernode > total_tasks )); then
-     taskspernode=$total_tasks
-    fi
   fi  
 
   if [[ $gefsmachine = cray ]]; then
