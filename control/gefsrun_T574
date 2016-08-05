@@ -2822,6 +2822,7 @@ case $taskname in
     ################################# production variables
     jobscript=JGEFS_POST_TRACK
 #   jobscript=JGEFS_POST_TRACK.sms.$envir
+    RUN=
     if [[ $fcstjoblength = long ]]; then
       job_name=jgefs_post_track_${cyc}
       wall_clock_limit="01:00:00"
@@ -2869,6 +2870,7 @@ case $taskname in
   (post.genesis)
     ################################# production variables
     jobscript=JGEFS_POST_GENESIS
+    RUN=
     if [[ $fcstjoblength = long ]]; then
       job_name=jgefs_post_genesis_${cyc}
       wall_clock_limit="01:00:00"
