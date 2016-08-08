@@ -30,8 +30,8 @@ elif [ $mac = t -o $mac = e -o $mac = g ] ; then # For WCOSS
 	export LIBDIR=/nwprod/lib
 #        export NEMSIOGFS_LIB=/global/save/Fanglin.Yang/svn/gfs/tags/nemsiogfs/intel/libnemsiogfs_v1.1.0.a
 #        export NEMSIOGFS_INC=/global/save/Fanglin.Yang/svn/gfs/tags/nemsiogfs/intel/include/nemsiogfs_v1.1.0
-        export NEMSIOGFS_LIB=/global/save/Fanglin.Yang/svn/gfs/tags/nemsiogfs_test/intel/libnemsiogfs_v1.1.0.a
-        export NEMSIOGFS_INC=/global/save/Fanglin.Yang/svn/gfs/tags/nemsiogfs_test/intel/include/nemsiogfs_v1.1.0
+        export NEMSIOGFS_LIB=/global/save/emc.glopara/svn/gfs/q3fy17/nemsiogfsv2.0.1/libnemsiogfs.a
+        export NEMSIOGFS_INC=/global/save/emc.glopara/svn/gfs/q3fy17/nemsiogfsv2.0.1/include/nemsiogfs
         export NEMSIO_LIB=/global/save/emc.glopara/svn/nceplibs/nemsio/trunk/libnemsio.a
         export NEMSIO_INC=/global/save/emc.glopara/svn/nceplibs/nemsio/trunk/incmod/nemsio
 
