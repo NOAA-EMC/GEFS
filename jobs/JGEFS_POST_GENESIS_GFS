@@ -107,8 +107,8 @@ setpdy.sh
 # Define GENVITDIR directory. The PATH do be determined
 ##############################################
 export JYYYY=`echo ${PDY} | cut -c1-4`
-export COMINgenvit=${COMINgenvit:-${COMROOT}/${envir}/${NET}/genesis_vital_${JYYYY}}
-export COMOUTgenvit=${COMOUTgenvit:-${COMROOT}/${envir}/${NET}/genesis_vital_${JYYYY}}
+export COMINgenvit=${COMINgenvit:-${COMROOT}/${NET}/${envir}/genesis_vital_${JYYYY}}
+export COMOUTgenvit=${COMOUTgenvit:-${COMROOT}/${NET}/${envir}/genesis_vital_${JYYYY}}
 mkdir -p ${COMINgenvit}
 
 ##############################################
