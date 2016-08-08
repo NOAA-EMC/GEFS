@@ -439,7 +439,7 @@ if (( relocpertflag == 1 )); then
 	export ensm=c00
 
 	echo `date` $execseparate before
-	echo $gesfhr $ensm | $execseparate
+	echo $gesfhr $ensm | $aprun_gec00 $execseparate
 	filtrccc=$?
 	echo `date` $execseparate after
 
@@ -542,7 +542,10 @@ export MP_PGMMODEL=mpmd
 export MP_LABELIO=yes
 export MP_INFOLEVEL=3
 export MP_STDOUTMODE=unordered
-$APRUN
+
+rm mpmd_cmdfile
+ln -s $MP_CMDFILE mpmd_cmdfile
+$APRUN 
 
 echo DATA=$DATA after poe
 pwd
