@@ -412,7 +412,7 @@
 :USWRF:surface:
 :USWRF:top of atmosphere:
 :var discipline=0 master_table=2 parmcat=0 parm=21:2 m above ground:
-:APTMP:2 m above ground: 
+:APTMP:2 m above ground:
 :VFLX:surface:
 :VGRD:0.995 sigma level:
 :VGRD:1000 mb:

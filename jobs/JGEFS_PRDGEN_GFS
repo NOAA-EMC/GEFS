@@ -77,7 +77,7 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=${COMINgfs:-$COMROOTp1/gfs/prod/gfs.${PDY}}
+export COMINgfs=${COMINgfs:-$COMROOTp2/gfs/prod/gfs.${PDY}}
 export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
 
 if [[ "$makepgrb1" = "yes" ]]; then

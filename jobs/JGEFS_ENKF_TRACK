@@ -17,7 +17,7 @@ if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 	. $basesource/nwdev/parm/gefs_config
 fi
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
 
 ####################################
 # obtain unique process id (pid) and make working directory
@@ -113,11 +113,11 @@ export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=$COMROOTp1/gfs/prod/gfs.$PDY 
-export COMINenkf=$COMROOTp1/gfs/prod/enkf.$pdyp 
+export COMINgfs=$COMROOTp2/gfs/prod/gfs.$PDY 
+export COMINenkf=$COMROOTp2/gfs/prod/enkf.$pdyp 
 export COMINatcfsyn=$COMROOTp1/arch/prod/syndat
-export COMINgfs6ago=$COMROOTp1/gfs/prod/gfs.$d6ago_ymd
-export COMINgfs6ahead=$COMROOTp1/gfs/prod/gfs.$d6ahead_ymd
+export COMINgfs6ago=$COMROOTp2/gfs/prod/gfs.$d6ago_ymd
+export COMINgfs6ahead=$COMROOTp2/gfs/prod/gfs.$d6ahead_ymd
 
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
