@@ -366,6 +366,9 @@ if (( trackflag == 1 )); then
 	cp poescript cmdfile
 	echo APRUN=$APRUN
 	export MP_PGMMODEL=mpmd
+
+	rm mpmd_cmdfile
+	ln -s $MP_CMDFILE mpmd_cmdfile
 	$APRUN
 
 else # (( trackflag == 1 ))

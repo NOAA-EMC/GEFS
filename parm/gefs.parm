@@ -64,6 +64,15 @@ if (( fhmaxh <= fhmax3 )); then
         export fhmax3=$fhmaxh
 fi
 
+#########################################################################################
+# Parameters to control the digital filter at the beginning of the forecast
+# and after the resolution change
+#########################################################################################
+export fhdfihires=${fhdfihires:-3}
+export fhdfilores=${fhdfilores:-3}
+echo fhdfihires=$fhdfihires
+echo fhdfilores=$fhdfilores
+
 ####################################################################
 # Cold Start parameters
 # specify 1 or more cycles to cold start using dots as wild cards

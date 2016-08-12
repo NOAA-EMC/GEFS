@@ -1,8 +1,8 @@
 #######################################################
-# This file defines the various input varibles for the
-# GEFS model run
+# This file defines the various input varibles for Development Tests of GEFS
 #######################################################
- 
+#
+# Define DEVELOPMENT Enviorenmenat variables related to the TYPE of test 
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export envir=${envir:-dev}
 export SENDDBN=${SENDDBN:-%SENDDBN:NO%}
@@ -17,36 +17,33 @@ export SENDECF=${SENDECF:-NO}
 export SENDCOM=${SENDCOM:-YES}
 export KEEPDATA=${KEEPDATA:-%KEEPDATA:NO%}
 
+# Enviorenmenat variables related to Development work place and output files
+#
+#set nemsio data source temporarily
+export COMROOTp1=/ensemble/noscrub/Bing.Fu/o/com 
+export COMROOTp2=/ensemble/noscrub/Bing.Fu/o/com 
+
 export COMROOT=$baseoutput/com
 export GESROOT=$baseoutput/nwges
 export DATAROOT=$baseoutput/tmpnwprd
 export DCOMROOT=${DCOMROOT:-/dcom}
 export PCOMROOT=$baseoutput/pcom/$envir
 
-  mkdir -p  $COMROOT/logs/jlogfiles
+mkdir -p  $COMROOT/logs/jlogfiles
 
-#export COMROOTp1=/com
-#export COMROOTp1=/ensemble2/noscrub/Dingchen.Hou/GEFS15/PARA20150708/com
-export COMROOTp1=/ensemble/noscrub/emc.enspara/xz//o/com
-export archsyndir=/com/arch/prod/syndat
-export GESROOTp1=/nwges
+export GESROOTp1=$GESROOTp1
+export archsyndir=$COMROOTp1/arch/prod/syndat
 export DBNROOT=
 
-export NWROOT=/nwprod2
-export NWROOTprod=/nwprod2
-export NWROOTp1=/nwprod
+export HOMEDIR=$HOMEDIR
+export HOMEgefs=$HOMEDIR/gefs.v11.0.0
+export HOMEgefs=$basesource/nwdev
 
-HOMEDIR=/ensemble/noscrub/emc.enspara/xz/gfs_q3fy17
-export gefsmachine=${gefsmachine:-wcoss}
-
-  export HOMEgefs=$HOMEDIR/gefs.v11.0.0
-  export HOMEgefs=$basesource/nwdev
-
-  export HOMEgsm=$HOMEDIR/gsm.v14.1.0
-# export HOMEpost=$HOMEDIR/ncep_post.v5.1.1
-  export HOMEpost=$HOMEDIR/ncep_post.v7.2.4
-  export HOMEenkf=$HOMEDIR/gdas.v14.1.0
-  export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.0
+export HOMEgsm=$HOMEDIR/gsm.v14.1.0
+export HOMEpost=$HOMEDIR/ncep_post.v7.2.4
+#export HOMEenkf=$HOMEDIR/enkf.v2.0.1
+export HOMEenkf=$HOMEDIR/gdas.v14.1.0
+export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.8
 
 # This section is optional, using path to define utility files
 # export UTILROOT=/nwprod2/prod_util.v1.0.0  
@@ -55,13 +52,7 @@ export gefsmachine=${gefsmachine:-wcoss}
 # export USHutil=$UTILROOT/ush
 # export EXECgrib=$GRIBROOT/exec
 
-  . /usrx/local/Modules/default/init/ksh
-  module use /nwprod2/modulefiles
-  module load prod_util/v1.0.1
-  module load grib_util/v1.0.1
-  module use /nwpara2/modulefiles
-  module load util_shared/v1.0.1
-
+#Check and verify the most importand environment variables
   export NDATE=${NDATE:-$USHutil/ndate}
 
   export WGRIB=${WGRIB:-$EXECgrib/wgrib}
@@ -72,12 +63,16 @@ export gefsmachine=${gefsmachine:-wcoss}
   export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
   export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
   export CNVGRIB21_GFS=${CNVGRIB21_GFS:-$EXECgrib/cnvgrib21_gfs}
-  export CNVGRIB=$CNVGRIB21_GFS
+  export SUPVIT=$SUPVIT
 
   export NET=gens
 # export RUN=$RUN
 # export RUNMEM=$RUNMEM
 
+# The following lines are for users to edit in case they need to temporally change the setting
 # Temperay setting for testing some special jobs, comment them out for real time dev test
 # export COMINGEST=/ensemble/noscrub/Yan.Luo/com-ingest-prod  #temporary testing of CQPF job
 # export COMIN=/ensemble/noscrub/emc.enspara/xz/T574L64SL/EK0 #temporary testing of CQPF job
+# export COMROOTp1=/ensemble2/noscrub/Dingchen.Hou/GEFS15/PARA20150708/com
+# export COMROOTp1=/ensemble/noscrub/Richard.Wobus/o/com      #Dick's example for gfs
+# export COMROOTp2=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/o/com    #Bing's example

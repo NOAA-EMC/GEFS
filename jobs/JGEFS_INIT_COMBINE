@@ -14,7 +14,7 @@ if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 	. $basesource/nwdev/parm/gefs_config
 fi
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
 
 ############################
 # Set up cycle varaible

@@ -15,7 +15,7 @@ if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
 
 export CNVGRIB=$CNVGRIB21_GFS
 
@@ -349,6 +349,8 @@ if test $SHOUR -le $FHOUR; then
 	chmod 775 prdgen.cmdfile
 	export MP_CMDFILE=${DATA}/prdgen.cmdfile
 	export MP_PGMMODEL=mpmd
+	rm mpmd_cmdfile
+	ln -s $MP_CMDFILE mpmd_cmdfile
 	$APRUN
 
 	export SHOUR=`expr $FHOUR + $FHINC`
