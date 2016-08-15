@@ -140,7 +140,8 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
 
 # export TMPCOM=/com_canned
 # export TMPCOM=/com_p6
-  export TMPCOM=/com
+# export TMPCOM=/com
+  export TMPCOM=/com2
 fi
 #For WCOSS end
 

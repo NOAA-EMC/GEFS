@@ -178,7 +178,7 @@ sh $utilscript/setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export GFSCOMIN=/com/gfs/prod/gfs.${PDY}
+export COMINgfs=/com2/gfs/prod/gfs.${PDY}
 
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then

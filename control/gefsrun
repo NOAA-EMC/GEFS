@@ -2539,11 +2539,11 @@ else
   d="$d $plnwges"
 
   if [[ $gfssource = para ]]; then
-    plcomgfs=$basedgfs/com/gfs/para/gfs.$PDY
-    clcomgfs=/com/gfs/para/gfs.$PDY
+    plcomgfs=$basedgfs/com2/gfs/para/gfs.$PDY
+    clcomgfs=/com2/gfs/para/gfs.$PDY
   else
-    plcomgfs=$basedgfs/com/gfs/prod/gfs.$PDY
-    clcomgfs=/com/gfs/prod/gfs.$PDY
+    plcomgfs=$basedgfs/com2/gfs/prod/gfs.$PDY
+    clcomgfs=/com2/gfs/prod/gfs.$PDY
   fi
 # d="$d $plcomgfs"
 #DHOU 01/28/2013, remove this temporally 

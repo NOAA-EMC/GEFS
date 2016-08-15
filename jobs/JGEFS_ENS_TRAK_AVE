@@ -137,7 +137,7 @@ ksh $utilscript/setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export GFSCOMIN=/com/gfs/prod/gfs.$PDY
+export COMINgfs=/com2/gfs/prod/gfs.$PDY
 export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
 export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
 

@@ -145,7 +145,7 @@ symd=`echo ${PDY} | cut -c3-8`
 syyyy=`echo ${PDY} | cut -c1-4`
 symdh=${PDY}${CYL}
 
-export gfsvitdir=${gfsvitdir:-/com/gfs/prod/gfs.$PDY}
+export gfsvitdir=${gfsvitdir:-/com2/gfs/prod/gfs.$PDY}
 export namvitdir=${namvitdir:-/com/nam/prod/nam.$PDY}
 export gltrkdir=${gltrkdir:-/com/hur/${envir}/global}
 export TPCATdir=/tpcprd/atcf
@@ -213,7 +213,7 @@ case ${cmodel} in
        set -x                                       ;
 # RLW 20141010 modify gfsdir to generalize
        #gfsdir=/com/gfs/$envir/gfs.${PDY}              ;
-       gfsdir=/com/gfs/prod/gfs.${PDY}              ;
+       gfsdir=/com2/gfs/prod/gfs.${PDY}              ;
 #       gfsgfile=gfs.t${CYL}z.master.grbf            ;
 #       gfsifile=gfs.t${CYL}z.master.grbif           ;
 
@@ -365,11 +365,11 @@ future_str="${future_ymd} ${future_hh}00"
 
 # NOTE: Change synvitdir to point to /com/nam for regional models.
 
-synvitdir=/com/gfs/prod/gfs.${PDY}
+synvitdir=/com2/gfs/prod/gfs.${PDY}
 synvitfile=gfs.t${CYL}z.syndata.tcvitals.tm00
-synvitold_dir=/com/gfs/prod/gfs.${old_4ymd}
+synvitold_dir=/com2/gfs/prod/gfs.${old_4ymd}
 synvitold_file=gfs.t${old_hh}z.syndata.tcvitals.tm00
-synvitfuture_dir=/com/gfs/prod/gfs.${future_4ymd}
+synvitfuture_dir=/com2/gfs/prod/gfs.${future_4ymd}
 synvitfuture_file=gfs.t${future_hh}z.syndata.tcvitals.tm00
 
 #J.Peng-03-14-2014--------------------------------------------------

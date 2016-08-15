@@ -202,14 +202,14 @@ echo set parameters using gefs.parm
 ##############################################
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
-  export GFS_IN=${GFS_IN:-/com/gfs/prod/}
+  export GFS_IN=${GFS_IN:-/com2/gfs/prod/}
   export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
   export gespath=${gespath:-/global/noscrub/$LOGBAME/nwges/${envir}}
 
-  export COMGFS=$GFS_IN/gfs.${PDY}
+  export COMINgfs=$GFS_IN/gfs.${PDY}
   export COMOUT=$COM_OUT/gefs_legacy.${PDY}
-else                              ### Fir Operations
-  export COMGFS=/com/gfs/prod/gfs.${PDY}
+else                              ### For Operations
+  export COMINgfs=/com2/gfs/prod/gfs.${PDY}
   export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
   export gespath=/nwges/${envir}
 fi

@@ -187,22 +187,22 @@ export SLMASK=/dev/null
 ##############################################
 
 if [[ $envir = prod ]] ; then
-  export GFSCOMIN=/com/gfs/${envir}/gfs.$PDY
+  export COMINgfs=/com2/gfs/${envir}/gfs.$PDY
 elif [[ $envir = para ]] || \
      [[ $envir = test ]]; then
   gfssource=prod
   if [[ "$gfssource" = para ]]; then
-    export GFSCOMIN=/com/gfs/para/gfs.$PDY
+    export COMINgfs=/com2/gfs/para/gfs.$PDY
   else
-    export GFSCOMIN=/com/gfs/prod/gfs.$PDY
+    export COMINgfs=/com2/gfs/prod/gfs.$PDY
   fi
 else
   if [[ "$gfssource" = para ]]; then
-    export GFSCOMIN=/com/gfs/para/gfs.$PDY
+    export COMINgfs=/com2/gfs/para/gfs.$PDY
   elif [[ "$gfssource" = prod ]]; then
-    export GFSCOMIN=/com/gfs/prod/gfs.$PDY
+    export COMINgfs=/com2/gfs/prod/gfs.$PDY
   else
-    export GFSCOMIN=$baseptmp/com/gfs/${envir}/gfs.$PDY
+    export COMINgfs=$baseptmp/com/gfs/${envir}/gfs.$PDY
   fi
 fi
 

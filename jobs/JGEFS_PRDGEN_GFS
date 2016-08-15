@@ -200,8 +200,8 @@ sh $utilscript/setpdy.sh
 ##############################################
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
-# export COM_IN=/com/gfs/prod
-  export COM_IN=$TMPCOM/gfs/prod   #DHOU 01/25/2013 for WCOSS transition
+# export COM_IN=/com2/gfs/prod
+  export COM_IN=$TMPCOM/gfs/prod
   export COM_IN=${COM_IN:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
   export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
 
@@ -223,7 +223,8 @@ then
   export COMOUT=$COM_OUT/gefs_legacy.${PDY}
   export ENS_COM=$COMOUT
 else                              ### For Operations
-  export COMIN=/com/gfs/prod/gfs.${PDY}
+  #TODO:  Use COMINgfs instead of COMIN
+  export COMIN=/com2/gfs/prod/gfs.${PDY}
   export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
   export ENS_COM=$COMOUT
 fi

@@ -109,9 +109,9 @@ echo jobscript= $jobscript
 ################# lines between these markers have been modified for dev begin
   export gespath=$baseoutput/nwges/dev
 ################# lines between these markers have been modified for dev end
-  export COMGFS=/com/gfs/prod
+  export COMINgfs=/com2/gfs/prod
 ################# lines between these markers have been modified for dev begin
-  export COMGFS=$basedgfs/com/gfs/prod
+  export COMINgfs=$basedgfs/com/gfs/prod
 ################# lines between these markers have been modified for dev end
   export pcom_in=/ptmp/$LOGNAME/pcom
 ################# lines between these markers have been modified for dev begin
@@ -161,7 +161,7 @@ then
   export COM_IN=/com/gens/${envir}
   export COM_OUT=/com/gens/${envir}
   export gespath=/nwges/${envir}
-  export COMGFS=/com/gfs/prod
+  export COMINgfs=/com2/gfs/prod
 
 elif [ $RUN_ENVIR = para -o $RUN_ENVIR = test ]
 then
@@ -205,5 +205,5 @@ then
   export COM_IN=/com/gens/${envir}
   export COM_OUT=/com/gens/${envir}
   export gespath=/nwges/${envir}
-  export COMGFS=/com/gfs/prod
+  export COMINgfs=/com2/gfs/prod
 fi

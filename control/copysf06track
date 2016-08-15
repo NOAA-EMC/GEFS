@@ -1,9 +1,12 @@
 #!/bin/sh
 #
 # copy sf06 and track files from another experiment or from production
+# this version handles both current and legacy input and/or output
+# append "l" to source or dest experiment name for legacy
 #
 rc=0
 PTMP=/ptmpd2
+PTMP2=/ptmpp2
 if (( $# == 3 )); then
   source=$1
   dest=$2
@@ -24,25 +27,48 @@ if (( $# == 3 )); then
   if [[ $goodhh = yes ]]; then
     case $source in
       (prod)
-	dirsourcelist=/com/gens/prod/gefs.$yyyymmdd/$hh
+	dirsourcelist=/com2/gens/prod/gefs.$yyyymmdd/$hh
       ;;
       (para)
-	dirsourcelist=/com/gens/para/gefs.$yyyymmdd/$hh
+	dirsourcelist=/com2/gens/para/gefs.$yyyymmdd/$hh
       ;;
       (test)
-	dirsourcelist=/com/gens/test/gefs.$yyyymmdd/$hh
+	dirsourcelist=/com2/gens/test/gefs.$yyyymmdd/$hh
+      ;;
+      (prodl)
+	dirsourcelist=/com/gens/prod/gefs_legacy.$yyyymmdd/$hh
+      ;;
+      (paral)
+	dirsourcelist=/com/gens/para/gefs_legacy.$yyyymmdd/$hh
+      ;;
+      (testl)
+	dirsourcelist=/com/gens/test/gefs_legacy.$yyyymmdd/$hh
       ;;
       (*)
-	dirsourcelist="$PTMP/$LOGNAME/o/$source/com/gens/dev/gefs.$yyyymmdd/$hh $PTMP/$LOGNAME/o/$source/com/gens/dev/gefs_legacy.$yyyymmdd/$hh"
+        sourcel=`echo "$source" | cut -c5`
+	if [[ "$sourcel" = "l" ]]; then
+	  source=`echo "$source" | cut -c1-4`
+	  echo source=$source sourcel=$sourcel
+	  dirsourcelist="$PTMP/$LOGNAME/o/$source/com/gens/dev/gefs_legacy.$yyyymmdd/$hh"
+	else
+	  dirsourcelist="$PTMP2/$LOGNAME/o/$source/com/gens/dev/gefs.$yyyymmdd/$hh"
+	fi
 	local=yes
       ;;
     esac
     echo dirsourcelist=$dirsourcelist
+    destl=`echo "$dest" | cut -c5`
+    if [[ "$destl" = "l" ]]; then
+      dest=`echo $"$dest" | cut -c1-4`
+      echo dest=$dest destl=$destl
+      dirdest=$PTMP/$LOGNAME/o/$dest/com/gens/dev/gefs_legacy.$yyyymmdd/$hh
+    else
+      dirdest=$PTMP2/$LOGNAME/o/$dest/com/gens/dev/gefs_legacy.$yyyymmdd/$hh
+    fi
     for dirsource in $dirsourcelist
     do
       echo dirsource=$dirsource
       if [[ -d $dirsource/sfcsig && -d $dirsource/track ]]; then
-	dirdest=$PTMP/$LOGNAME/o/$dest/com/gens/dev/gefs_legacy.$yyyymmdd/$hh
 	if [[ -d $dirdest ]]; then
 	  echo dirdest=$dirdest already exists
 	else
@@ -138,6 +164,7 @@ if (( $# == 3 )); then
   fi
 else
   echo three arguments required source dest yyyymmddhh
+  echo suffix l to denote gefs_legacy directories
   rc=1
 fi
 exit $rc

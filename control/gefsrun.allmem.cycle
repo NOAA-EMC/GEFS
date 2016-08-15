@@ -782,7 +782,7 @@ if [[ $nextflag = yes ]]; then
             echo test whether to run gfs prdgen for rungfsprdgen=$rungfsprdgen
             yyyymmddb=`echo $yyyymmddccb|cut -c1-8`
             ccb=`echo $yyyymmddccb|cut -c9-10`
-            if [[ -a /com/gfs/prod/gfs.${yyyymmddb}/gfs.t${ccb}z.master.grbf06 ]]; then
+            if [[ -a /com2/gfs/prod/gfs.${yyyymmddb}/gfs.t${ccb}z.master.grbf06 ]]; then
               echo run the gfs prdgen next
               jjjb=$jjjg00
             else
@@ -2287,11 +2287,11 @@ else
   d="$d $plnwges"
 
   if [[ $gfssource = para ]]; then
-    plcomgfs=$basedgfs/com/gfs/para/gfs.$PDY
-    clcomgfs=/com/gfs/para/gfs.$PDY
+    plcomgfs=$basedgfs/com2/gfs/para/gfs.$PDY
+    clcomgfs=/com2/gfs/para/gfs.$PDY
   else
-    plcomgfs=$basedgfs/com/gfs/prod/gfs.$PDY
-    clcomgfs=/com/gfs/prod/gfs.$PDY
+    plcomgfs=$basedgfs/com2/gfs/prod/gfs.$PDY
+    clcomgfs=/com2/gfs/prod/gfs.$PDY
   fi
   d="$d $plcomgfs"
 

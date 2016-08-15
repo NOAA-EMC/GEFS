@@ -169,31 +169,31 @@ if (( nhrpair < npair )); then
 ###testb
   if [[ $envir = prod ]]; then
 ###teste
-    if [[ -f $GFSCOMIN/gfs.$cycle.sanl && -f $GFSCOMIN/gfs.$cycle.sfcanl ]]; then
-      export SIGINP=$GFSCOMIN/gfs.$cycle.sanl
-      export SFCINP=$GFSCOMIN/gfs.$cycle.sfcanl
+    if [[ -f $COMINgfs/gfs.$cycle.sanl && -f $COMINgfs/gfs.$cycle.sfcanl ]]; then
+      export SIGINP=$COMINgfs/gfs.$cycle.sanl
+      export SFCINP=$COMINgfs/gfs.$cycle.sfcanl
     else
       echo !!!! FATAL ERROR !!!!
-      echo $GFSCOMIN/gfs.$cycle.sanl and $GFSCOMIN/gfs.$cycle.sfcanl CANNOT BE FOUND
+      echo $COMINgfs/gfs.$cycle.sanl and $COMINgfs/gfs.$cycle.sfcanl CANNOT BE FOUND
       exit
     fi
 ###testb
   else
     export basedgft=/ensemble/noscrub/Dingchen.Hou
     echo $basedgft DHOU-BASEGFS for occational back-up of $basedgfs data
-    if [[ -f $GFSCOMIN/gfs.$cycle.sanl && -f $GFSCOMIN/gfs.$cycle.sfcanl ]]; then
-      export SIGINP=$GFSCOMIN/gfs.$cycle.sanl
-      export SFCINP=$GFSCOMIN/gfs.$cycle.sfcanl
-    elif [[ -f $basedgfs$GFSCOMIN/gfs.$cycle.sanl && -f $basedgfs$GFSCOMIN/gfs.$cycle.sfcanl ]]; then
+    if [[ -f $COMINgfs/gfs.$cycle.sanl && -f $COMINgfs/gfs.$cycle.sfcanl ]]; then
+      export SIGINP=$COMINgfs/gfs.$cycle.sanl
+      export SFCINP=$COMINgfs/gfs.$cycle.sfcanl
+    elif [[ -f $basedgfs$COMINgfs/gfs.$cycle.sanl && -f $basedgfs$COMINgfs/gfs.$cycle.sfcanl ]]; then
 
-      export SIGINP=$basedgfs$GFSCOMIN/gfs.$cycle.sanl
-      export SFCINP=$basedgfs$GFSCOMIN/gfs.$cycle.sfcanl
-    elif [[ -f $basedgft$GFSCOMIN/gfs.$cycle.sanl && -f $basedgft$GFSCOMIN/gfs.$cycle.sfcanl ]]; then
+      export SIGINP=$basedgfs$COMINgfs/gfs.$cycle.sanl
+      export SFCINP=$basedgfs$COMINgfs/gfs.$cycle.sfcanl
+    elif [[ -f $basedgft$COMINgfs/gfs.$cycle.sanl && -f $basedgft$COMINgfs/gfs.$cycle.sfcanl ]]; then
 
-      export SIGINP=$basedgft$GFSCOMIN/gfs.$cycle.sanl
-      export SFCINP=$basedgft$GFSCOMIN/gfs.$cycle.sfcanl
+      export SIGINP=$basedgft$COMINgfs/gfs.$cycle.sanl
+      export SFCINP=$basedgft$COMINgfs/gfs.$cycle.sfcanl
     else
-      echo $basedgfs$GFSCOMIN/gfs.$cycle.sanl and $basedgfs$GFSCOMIN/gfs.$cycle.sfcanl CANNOT BE FOUND
+      echo $basedgfs$COMINgfs/gfs.$cycle.sanl and $basedgfs$COMINgfs/gfs.$cycle.sfcanl CANNOT BE FOUND
       exit
     fi
   fi
@@ -272,31 +272,31 @@ if (( nhrpair > 0 )); then
 ###testb
   if [[ $envir = prod ]]; then
 ###teste
-    if [[ -f $GFSCOMIN/gfs.$cycle.sanl && -f $GFSCOMIN/gfs.$cycle.sfcanl ]]; then
-      export SIGINP=$GFSCOMIN/gfs.$cycle.sanl
-      export SFCINP=$GFSCOMIN/gfs.$cycle.sfcanl
+    if [[ -f $COMINgfs/gfs.$cycle.sanl && -f $COMINgfs/gfs.$cycle.sfcanl ]]; then
+      export SIGINP=$COMINgfs/gfs.$cycle.sanl
+      export SFCINP=$COMINgfs/gfs.$cycle.sfcanl
     else
       echo !!!! FATAL ERROR !!!!
-      echo $GFSCOMIN/gfs.$cycle.sanl and $GFSCOMIN/gfs.$cycle.sfcanl CANNOT BE FOUND
+      echo $COMINgfs/gfs.$cycle.sanl and $COMINgfs/gfs.$cycle.sfcanl CANNOT BE FOUND
       exit
     fi
 ###testb
   else
     export basedgft=/ensemble/noscrub/Dingchen.Hou2yy
     echo $basedgft DHOU-BASEGFS for occational back-up of $basedgfs data
-    if [[ -f $GFSCOMIN/gfs.$cycle.sanl && -f $GFSCOMIN/gfs.$cycle.sfcanl ]]; then
-      export SIGINP=$GFSCOMIN/gfs.$cycle.sanl
-      export SFCINP=$GFSCOMIN/gfs.$cycle.sfcanl
-    elif [[ -f $basedgfs$GFSCOMIN/gfs.$cycle.sanl && -f $basedgfs$GFSCOMIN/gfs.$cycle.sfcanl ]]; then
+    if [[ -f $COMINgfs/gfs.$cycle.sanl && -f $COMINgfs/gfs.$cycle.sfcanl ]]; then
+      export SIGINP=$COMINgfs/gfs.$cycle.sanl
+      export SFCINP=$COMINgfs/gfs.$cycle.sfcanl
+    elif [[ -f $basedgfs$COMINgfs/gfs.$cycle.sanl && -f $basedgfs$COMINgfs/gfs.$cycle.sfcanl ]]; then
 
-      export SIGINP=$basedgfs$GFSCOMIN/gfs.$cycle.sanl
-      export SFCINP=$basedgfs$GFSCOMIN/gfs.$cycle.sfcanl
-    elif [[ -f $basedgft$GFSCOMIN/gfs.$cycle.sanl && -f $basedgft$GFSCOMIN/gfs.$cycle.sfcanl ]]; then
+      export SIGINP=$basedgfs$COMINgfs/gfs.$cycle.sanl
+      export SFCINP=$basedgfs$COMINgfs/gfs.$cycle.sfcanl
+    elif [[ -f $basedgft$COMINgfs/gfs.$cycle.sanl && -f $basedgft$COMINgfs/gfs.$cycle.sfcanl ]]; then
 
-      export SIGINP=$basedgft$GFSCOMIN/gfs.$cycle.sanl
-      export SFCINP=$basedgft$GFSCOMIN/gfs.$cycle.sfcanl
+      export SIGINP=$basedgft$COMINgfs/gfs.$cycle.sanl
+      export SFCINP=$basedgft$COMINgfs/gfs.$cycle.sfcanl
     else
-      echo $basedgfs$GFSCOMIN/gfs.$cycle.sanl and $basedgfs$GFSCOMIN/gfs.$cycle.sfcanl CANNOT BE FOUND
+      echo $basedgfs$COMINgfs/gfs.$cycle.sanl and $basedgfs$COMINgfs/gfs.$cycle.sfcanl CANNOT BE FOUND
       exit
     fi
   fi
@@ -365,12 +365,12 @@ if (( relocpertflag == 1 )); then
   if [[ ! -e $COM/gefs_legacy.$pdyp/$cycp/sfcsig/gec00.t${cycp}z.sf$fhrp ]]; then
     export relocpertflag=0
   fi
-  if [[ ! -e $GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
+  if [[ ! -e $COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
     if [[ $envir = prod  ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
     export relocpertflag=0
     else
-      echo production $GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 does not exist
-      if [[ ! -e $basedgfs$GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
+      echo production $COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 does not exist
+      if [[ ! -e $basedgfs$COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
 	export relocpertflag=0
       fi
     fi
@@ -386,7 +386,7 @@ if (( relocpertflag == 1 )); then
   case $gfsgribedition in
     (1)
       ####### temporary reference from EMC parallel ############################################################################
-      filegfs00=$GFSCOMIN/gfs.${cycle}.master.grbf00
+      filegfs00=$COMINgfs/gfs.${cycle}.master.grbf00
       if [[ -s $filegfs00 ]]; then
         echo analysis tracking for gfsgribedition=$gfsgribedition begin
 	# f00 gfs tracking for relocation
@@ -410,16 +410,16 @@ if (( relocpertflag == 1 )); then
         echo search for existiong track file for $gfsgribedition begin
 	# replaced by f00 gfs tracking above but retained for retrospective runs
 	if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
-	  if [[ -e $GFSCOMIN/avn.${cycle}.cyclone.trackatcfunix ]]; then
-	    cat $GFSCOMIN/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
+	  if [[ -e $COMINgfs/avn.${cycle}.cyclone.trackatcfunix ]]; then
+	    cat $COMINgfs/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
 	  fi
 	else
-	  if [[ -e $GFSCOMIN/avn.${cycle}.cyclone.trackatcfunix ]]; then
-	    cat $GFSCOMIN/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
-	  elif [[ -e $basedgfs$GFSCOMIN/avn.${cycle}.cyclone.trackatcfunix ]]; then
-	    cat $basedgfs$GFSCOMIN/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
+	  if [[ -e $COMINgfs/avn.${cycle}.cyclone.trackatcfunix ]]; then
+	    cat $COMINgfs/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
+	  elif [[ -e $basedgfs$COMINgfs/avn.${cycle}.cyclone.trackatcfunix ]]; then
+	    cat $basedgfs$COMINgfs/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
 	  else 
-	    echo $basedgfs$GFSCOMIN/avn.${cycle}.cyclone.trackatcfunix DOES NOT EXIST
+	    echo $basedgfs$COMINgfs/avn.${cycle}.cyclone.trackatcfunix DOES NOT EXIST
 	    touch trackatcfunix.in
 	  fi
 	fi
@@ -428,8 +428,8 @@ if (( relocpertflag == 1 )); then
     ;;
     (2)
       ####### temporary reference from EMC parallel ############################################################################
-      filegfs00=/ensemble/noscrub/Richard.Wobus/o/com/gfs/para/gfs.$PDY/gfs.${cycle}.master.grbf00
-      filegfs00=$GFSCOMIN/gfs.${cycle}.pgrb2.0p25.f000
+      #filegfs00=/ensemble/noscrub/Richard.Wobus/o/com/gfs/para/gfs.$PDY/gfs.${cycle}.master.grbf00
+      filegfs00=$COMINgfs/gfs.${cycle}.pgrb2.0p25.f000
       if [[ -s $filegfs00 ]]; then
         echo analysis tracking for gfsgribedition=$gfsgribedition begin
 	# f00 gfs tracking for relocation
@@ -458,8 +458,8 @@ if (( relocpertflag == 1 )); then
         echo search for existiong track file for $gfsgribedition begin
 	# replaced by f00 gfs tracking above but retained for retrospective runs
 	if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
-	  if [[ -e $GFSCOMIN/avn.${cycle}.cyclone.trackatcfunix ]]; then
-	    cat $GFSCOMIN/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
+	  if [[ -e $COMINgfs/avn.${cycle}.cyclone.trackatcfunix ]]; then
+	    cat $COMINgfs/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
 	  else
 	    touch trackatcfunix.in
 	  fi
@@ -471,14 +471,14 @@ if (( relocpertflag == 1 )); then
     ls -al trackatcfunix.in
 
     if   [[ $envir = prod ]]; then
-    cp -f $GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 tcvitals.in
+    cp -f $COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 tcvitals.in
     else
-      if [[ -f $GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
-	cp -f $GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 tcvitals.in
-      elif [[ -f $basedgfs$GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
-	cp -f $basedgfs$GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 tcvitals.in
+      if [[ -f $COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
+	cp -f $COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 tcvitals.in
+      elif [[ -f $basedgfs$COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
+	cp -f $basedgfs$COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 tcvitals.in
 	else
-	echo $basedgfs$GFSCOMIN/gfs.$cycle.syndata.tcvitals.tm00 DOES NOT EXIST
+	echo $basedgfs$COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 DOES NOT EXIST
 	touch tcvitals.in
       fi
       ls -al tcvitals.in
