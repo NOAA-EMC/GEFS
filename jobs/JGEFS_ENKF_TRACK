@@ -148,7 +148,7 @@ echo location of tracking executable
 export exectrkdir=$HOMEgefs/util/exec
 
 echo location of nemsioget
-export nemsioget=/global/save/emc.glopara/bin/nemsio_get
+export nemsioget=$CRAYDIR/global/save/emc.glopara/bin/nemsio_get
 
 
 

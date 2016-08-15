@@ -19,10 +19,6 @@ export KEEPDATA=${KEEPDATA:-%KEEPDATA:NO%}
 
 # Enviorenmenat variables related to Development work place and output files
 #
-#set nemsio data source temporarily
-export COMROOTp1=/ensemble/noscrub/Bing.Fu/o/com 
-export COMROOTp2=/ensemble/noscrub/Bing.Fu/o/com 
-
 export COMROOT=$baseoutput/com
 export GESROOT=$baseoutput/nwges
 export DATAROOT=$baseoutput/tmpnwprd

@@ -139,6 +139,9 @@ module load prod_envir
 module load prod_util
 module load util_shared/1.0.3
 module load grib_util/1.0.3
+#prod_envir points to sigio data, here temporarily set nemsio data source
+export COMROOTp1=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/o/com
+export COMROOTp2=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/o/com
 echo COMROOTp1=$COMROOTp1
 echo COMROOTp2=$COMROOTp2
 

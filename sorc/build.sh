@@ -36,6 +36,14 @@ elif [ $mac = l -o $mac = s ] ; then # For CRAY
                                                  # --------
  machine=cray
  export LIBDIR=/gpfs/hps/nco/ops/nwprod/lib
+ export LIBDIR=/gpfs/hps/nco/ops/nwprod/lib
+ export NEMSIOGFS_LIB=/gpfs/hps/emc/global/noscrub/emc.glopara/svn/gfs/q3fy17/nemsiogfsv2.0.1/intel/libnemsiogfs.a
+ export NEMSIOGFS_INC=/gpfs/hps/emc/global/noscrub/emc.glopara/svn/gfs/q3fy17/nemsiogfsv2.0.1/intel/include/nemsiogfs
+ export NEMSIO_LIB=/gpfs/hps/nco/ops/nwprod/lib/nemsio/v2.2.2/intel/libnemsio_v2.2.2.a
+ export NEMSIO_INC=/gpfs/hps/nco/ops/nwprod/lib/nemsio/v2.2.2/intel/include/nemsio_v2.2.2
+ export INCG="$NEMSIO_INC"
+ export INCGFS="$NEMSIOGFS_INC"
+
  export INCS="${SIGIO_INC4} ${CRAY_IOBUF_INCLUDE_OPTS}"
  export INCSFC="${SFCIO_INC4}"
  export INC="${G2_INC4} ${CRAY_IOBUF_INCLUDE_OPTS}"
@@ -43,8 +51,8 @@ elif [ $mac = l -o $mac = s ] ; then # For CRAY
  export LIBS="${G2_LIB4} ${W3NCO_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB} ${CRAY_IOBUF_POST_LINK_OPTS}"
  export LIBS_d="${G2_LIBd} ${W3NCO_LIBd} ${BACIO_LIB4} ${IP_LIBd} ${SP_LIBd} ${PNG_LIB} ${JASPER_LIB} ${Z_LIB} ${W3NCO_LIBd}"
  export FC=ftn
- export LIBS_INIT="${SP_LIBd} ${SIGIO_LIB4} ${W3NCO_LIBd}"
- export LIBS_GTRK="${BACIO_LIB4} ${SIGIO_LIB4} ${IP_LIB4} ${SP_LIB4} ${SFCIO_LIB4} ${BUFR_LIB4} ${W3EMC_LIB4} ${W3NCO_LIB4} "
+ export LIBS_INIT="${NEMSIOGFS_LIB} ${NEMSIO_LIB} ${SP_LIBd} ${SIGIO_LIB4} ${W3NCO_LIBd} ${BACIO_LIB4}"
+ export LIBS_GTRK="${NEMSIOGFS_LIB} ${NEMSIO_LIB} ${BACIO_LIB4} ${SIGIO_LIB4} ${IP_LIB4} ${SP_LIB4} ${SFCIO_LIB4} ${BUFR_LIB4} ${W3EMC_LIB4} ${W3NCO_LIB4} "
  export FFLAGS="-O3 -g -convert big_endian -I ${G2_INC4}"
  export FFLAGS_d="-O3 -g -r8 -convert big_endian -auto -mkl -I ${G2_INCd}"
 

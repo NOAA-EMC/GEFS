@@ -57,8 +57,10 @@ if [[ $machl = s ]] || [[ $machl = l ]]; then
   PTMP=gpfs/hps/ptmp
   STMP=gpfs/hps/ptmp
 export JOBQUEUE=dev
-export HOMEDIR=/gpfs/hps/emc/ensemble/save/Dingchen.Hou/TAGS
+#export HOMEDIR=/gpfs/hps/emc/ensemble/save/Dingchen.Hou/TAGS
 #export HOMEDIR=/gpfs/hps/emc/ensemble/save/Bing.Fu/TAGS       #temporay setting
+export HOMEDIR=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/gfs_q3fy17       #temporay setting
+export CRAYDIR=/gpfs/gd1/emc
 fi
 
 if [[ $LOGNAME = glopara ]]; then
