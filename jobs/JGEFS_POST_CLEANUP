@@ -97,7 +97,7 @@ esac
 
   fhsave=${fhsave:-198}
   cycsavelistsfcsig=${cycsavelistsfcsig:-"00"}
-  cycsavelistmaster=${cycsavelistmaster:-""}
+  cycsavelistmaster=${cycsavelistmaster:-"00 06 12 18"}
   echo fhsave=$fhsave
   echo cycsavelistsfcsig="$cycsavelistsfcsig"
   echo cycsavelistmaster="$cycsavelistmaster"
