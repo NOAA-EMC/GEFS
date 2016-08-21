@@ -2387,8 +2387,9 @@ case $taskname in
     task_affinity="core(2)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
-    RUN=ge$mem
-#   RUNMEM=ge$mem
+#    RUN=ge$mem
+    RUN=
+    RUNMEM=ge$mem
     ################################# development variables
     during_previous_job=yes
     splim=301001001
@@ -2467,8 +2468,9 @@ case $taskname in
     task_affinity="core(2)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
-    RUN=ge$mem
-#   RUNMEM=ge$mem
+#    RUN=ge$mem
+    RUN=
+    RUNMEM=ge$mem
     ################################# development variables
     during_previous_job=yes
     splim=301001001
@@ -2532,6 +2534,7 @@ case $taskname in
     MEMORY_AFFINITY=MCM
     job=gefs_prdgen_gfs_${cyc}
     RUN=
+    RUNMEM=gfs
     ################################# development variables
     during_previous_job=yes
     fcstjoblength=long

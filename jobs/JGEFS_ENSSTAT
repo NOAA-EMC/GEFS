@@ -37,7 +37,7 @@ export cycle=t${cyc}z
 # Specify NET and RUN Name and model
 ####################################
 export NET=${NET:-gens}
-export RUN=stat
+export RUN=${RUN:-gefs}
 
 ####################################
 # File To Log Msgs
