@@ -2035,8 +2035,9 @@ case $taskname in
     network_MPI="sn_all,shared,us"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
-    RUN=ge$mem
-#   RUNMEM=ge$mem
+#    RUN=ge$mem
+    RUN=
+    RUNMEM=ge$mem
     task_affinity="core(1)"
     ################################# development variables
     if (( jjjb == jjjr00 )); then
@@ -2175,8 +2176,9 @@ case $taskname in
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
     if [[ $RUN_CONCURRENT != yes ]]; then
-      RUN=ge$mem
-#   RUNMEM=ge$mem
+#      RUN=ge$mem
+    RUN=
+    RUNMEM=ge$mem
     else
       RUN=
     fi
@@ -2256,8 +2258,9 @@ case $taskname in
     task_affinity="core(1)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
-    RUN=ge$mem
-#   RUNMEM=ge$mem
+#    RUN=ge$mem
+    RUN=
+    RUNMEM=ge$mem
     ################################# development variables
     during_previous_job=yes
     splim=301001001
@@ -2325,8 +2328,9 @@ case $taskname in
     task_affinity="core(1)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
-    RUN=ge$mem
-#   RUNMEM=ge$mem
+#    RUN=ge$mem
+    RUN=
+    RUNMEM=ge$mem
     ################################# development variables
     during_previous_job=yes
     splim=301001001

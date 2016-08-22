@@ -221,8 +221,8 @@ if [[ $RUN_CONCURRENT = yes ]]; then
 	(( ENS_NUM = imem ))
 	export ENS_NUM
 	echo "ENS_NUM=$ENS_NUM"
-	export RUM=ge'${MN}'
-	echo "RUM=$RUM"
+	export RUNMEM=ge'${MN}'
+	echo "RUNMEM=$RUNMEM"
 else
 	#single member
 	echo "RUNMEM=$RUNMEM"
@@ -240,14 +240,14 @@ MEMBER_NAMES=$memberlist
 
 # Output File Names
 if [[ $RUN_CONCURRENT = yes ]]; then
-	export SIGO=$COMOUT/$cyc/sfcsig/${RUM}.${cycle}.sf'${FH}'$cfsuffix
-	export SFCO=$COMOUT/$cyc/sfcsig/${RUM}.${cycle}.bf'${FH}'$cfsuffix
-	export FLXO=$COMOUT/$cyc/sflux/${RUM}.${cycle}.sfluxgrbf'${FH}'$cfsuffix
-	export LOGO=$COMOUT/$cyc/misc/fcst/${RUM}.${cycle}.logf'${FH}'$cfsuffix
+	export SIGO=$COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf'${FH}'$cfsuffix
+	export SFCO=$COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf'${FH}'$cfsuffix
+	export FLXO=$COMOUT/$cyc/sflux/${RUNMEM}.${cycle}.sfluxgrbf'${FH}'$cfsuffix
+	export LOGO=$COMOUT/$cyc/misc/fcst/${RUNMEM}.${cycle}.logf'${FH}'$cfsuffix
 	# 02/29/2008 DHOU,  added new files for the output after STTP
-	export SIGS=$COMOUT/$cyc/sfcsig/${RUM}.${cycle}.ss'${FH}'$cfsuffix
-	export SFBS=$COMOUT/$cyc/sfcsig/${RUM}.${cycle}.bs'${FH}'$cfsuffix
-	export FLXS=$COMOUT/$cyc/sflux/${RUM}.${cycle}.ssluxgrbs'${FH}'$cfsuffix
+	export SIGS=$COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.ss'${FH}'$cfsuffix
+	export SFBS=$COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bs'${FH}'$cfsuffix
+	export FLXS=$COMOUT/$cyc/sflux/${RUNMEM}.${cycle}.ssluxgrbs'${FH}'$cfsuffix
 else
 	export SIGO=$COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf'${FH}'$cfsuffix
 	export SFCO=$COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf'${FH}'$cfsuffix
@@ -262,15 +262,15 @@ fi
 if [[ $RUN_CONCURRENT = yes ]]; then
 	if [[ $ENS_SPS = .true. ]]; then
 		# Restart files in COMOUT area
-		export SIGS_P=$SFCSIG/${RUM}.${cycle}.ss
-		export SFCS_P=$SFCSIG/${RUM}.${cycle}.bs
+		export SIGS_P=$SFCSIG/${RUNMEM}.${cycle}.ss
+		export SFCS_P=$SFCSIG/${RUNMEM}.${cycle}.bs
 		# Restart files in COMOUT area
-		export SIGX_P=$SFCSIG/${RUM}.${cycle}.sf
-		export SFCX_P=$SFCSIG/${RUM}.${cycle}.bf
+		export SIGX_P=$SFCSIG/${RUNMEM}.${cycle}.sf
+		export SFCX_P=$SFCSIG/${RUNMEM}.${cycle}.bf
 	else
 		# Restart files in COMOUT area
-		export SIGX_P=$SFCSIG/${RUM}.${cycle}.sf
-		export SFCX_P=$SFCSIG/${RUM}.${cycle}.bf
+		export SIGX_P=$SFCSIG/${RUNMEM}.${cycle}.sf
+		export SFCX_P=$SFCSIG/${RUNMEM}.${cycle}.bf
 	fi
 else
 	# Restart files in COMOUT area
@@ -425,11 +425,11 @@ if test $RERUN = "RESTART"; then
 					for MN in $MEMBER_NAMES; do
 						SIGXm=$SIGX_P$HOURtest
 						SFCXm=$SFCX_P$HOURtest
-						eval cp $SIGXm $DATA/${RUM}.sigr
-						eval cp $SFCXm $DATA/${RUM}.sfcr
+						eval cp $SIGXm $DATA/${RUNMEM}.sigr
+						eval cp $SFCXm $DATA/${RUNMEM}.sfcr
 					done # MN in $MEMBER_NAMES
-					SIGI=$DATA/${RUM}.sigr
-					SFCI=$DATA/${RUM}.sfcr
+					SIGI=$DATA/${RUNMEM}.sigr
+					SFCI=$DATA/${RUNMEM}.sfcr
 				fi # [[ $goodrestart = yes ]]
 			fi # [[ $goodrestart = no ]]
 		else # [[ -f $SIGXtest ]]
@@ -482,15 +482,15 @@ if [[ $RERUN = YES ]]; then
 
 		if [[ $cycsuffix = false ]]; then
 			if [[ $FORECAST_SEGMENT = lr ]]; then
-				export SIGI=$GESIN/${RUM}.t${cyc}z.sig${hour_lr_ini}_T$JCAPLR\L$LEVSLR
-				export SFCI=$GESIN/${RUM}.t${cyc}z.sfc${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+				export SIGI=$GESIN/${RUNMEM}.t${cyc}z.sig${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+				export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfc${hour_lr_ini}_T$JCAPLR\L$LEVSLR
 			else
-				export SIGI=$GESIN/${RUM}.t${cyc}z.sanl
-				export SFCI=$GESIN/${RUM}.t${cyc}z.sfcanl
+				export SIGI=$GESIN/${RUNMEM}.t${cyc}z.sanl
+				export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfcanl
 			fi # [[ $FORECAST_SEGMENT = lr ]]
 		else
-			export SIGI=$GESIN/${RUM}.t${cyc}z.sanl.cycfs$cyc_fcst
-			export SFCI=$GESIN/${RUM}.t${cyc}z.sfcanl.cycfs$cyc_fcst
+			export SIGI=$GESIN/${RUNMEM}.t${cyc}z.sanl.cycfs$cyc_fcst
+			export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfcanl.cycfs$cyc_fcst
 		fi # [[ $cycsuffix = false ]]
 
 		for MN in $MEMBER_NAMES; do
@@ -740,9 +740,9 @@ if test $JCAPHR -eq $jcapin; then
 					if [[ $ENS_SPS = .true. ]]; then
 						echo "TTTT SIGS"
 						if eval test -f $SIGX1 -a -f $SIGX2 -a -f $SFCX; then
-							eval cp $SIGX1 $DATA/${RUM}.sigr1
-							eval cp $SIGX2 $DATA/${RUM}.sigr2
-							eval cp $SFCX $DATA/${RUM}.sfcr
+							eval cp $SIGX1 $DATA/${RUNMEM}.sigr1
+							eval cp $SIGX2 $DATA/${RUNMEM}.sigr2
+							eval cp $SFCX $DATA/${RUNMEM}.sfcr
 						else
 							msg="FATAL ERROR:  Restart file for Member $MN is not available"
 							echo "`date`   $msg"
@@ -754,9 +754,9 @@ if test $JCAPHR -eq $jcapin; then
 					else
 						echo "TTTT SIGR"
 						if eval test -f $SIGX1 -a -f $SIGX2 -a -f $SFCX; then
-							eval cp $SIGX1 $DATA/${RUM}.sigr1
-							eval cp $SIGX2 $DATA/${RUM}.sigr2
-							eval cp $SFCX $DATA/${RUM}.sfcr
+							eval cp $SIGX1 $DATA/${RUNMEM}.sigr1
+							eval cp $SIGX2 $DATA/${RUNMEM}.sigr2
+							eval cp $SFCX $DATA/${RUNMEM}.sfcr
 						else
 							msg="FATAL ERROR:  Restart file for Member $MN is not available"
 							echo "`date`   $msg"
@@ -768,9 +768,9 @@ if test $JCAPHR -eq $jcapin; then
 					fi
 				done # MN in $MEMBER_NAMES
 
-				export SIGI=$DATA/${RUM}.sigr1
-				export SIGI2=$DATA/${RUM}.sigr2
-				export SFCI=$DATA/${RUM}.sfcr
+				export SIGI=$DATA/${RUNMEM}.sigr1
+				export SIGI2=$DATA/${RUNMEM}.sigr2
+				export SFCI=$DATA/${RUNMEM}.sfcr
 
 			else # [[ $RUN_CONCURRENT = yes ]]
 				eval cp $SIGX1 $DATA/sigr1
@@ -867,11 +867,11 @@ if test $JCAPHR -eq $jcapin; then
 		if [[ $RUN_CONCURRENT = yes ]]; then
 			for MN in $MEMBER_NAMES; do
 				if [[ $cycsuffix = false ]]; then
-					eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.sf${HOUTASPS} $GESOUT/.
-					eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.bf${HOUTASPS} $GESOUT/.
+					eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf${HOUTASPS} $GESOUT/.
+					eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf${HOUTASPS} $GESOUT/.
 					if [[ $ENS_SPS = .true. ]]; then
-						eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.ss${HOUTASPS} $GESOUT/.
-						eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.bs${HOUTASPS} $GESOUT/.
+						eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.ss${HOUTASPS} $GESOUT/.
+						eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bs${HOUTASPS} $GESOUT/.
 					fi
 				fi
 			done # MN in $MEMBER_NAMES
@@ -922,25 +922,25 @@ fi # [[ $FORECAST_SEGMENT != hr ]] && [[ $fcstlong = true ]] && (( fhmax > fhmax
 if [[ $FORECAST_SEGMENT = hl ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh )) ; then
 	if [[ $RUN_CONCURRENT = YES ]] ; then
 		for MN in $MEMBER_NAMES; do
-			#    eval export SIGOUT=$DATA/${RUM}.siganl
-			#    eval export SFCOUT=$DATA/${RUM}.sfcanl
-			eval export SIGOUT=$GESOUT/${RUM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
-			eval export SFCOUT=$GESOUT/${RUM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+			#    eval export SIGOUT=$DATA/${RUNMEM}.siganl
+			#    eval export SFCOUT=$DATA/${RUNMEM}.sfcanl
+			eval export SIGOUT=$GESOUT/${RUNMEM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
+			eval export SFCOUT=$GESOUT/${RUNMEM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
 			if [[ $cycsuffix = false ]]; then
 				if [[ $ENS_SPS = .true. ]]; then
-					eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.ss${HOUTASPS}
-					eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.bs${HOUTASPS}
+					eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ss${HOUTASPS}
+					eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bs${HOUTASPS}
 				else
-					eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.sf${HOUTASPS}
-					eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.bf${HOUTASPS}
+					eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf${HOUTASPS}
+					eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf${HOUTASPS}
 				fi # [[ $ENS_SPS = .true. ]]
 			else
 				if [[ $ENS_SPS = .true. ]]; then
-					eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
-					eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
+					eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
+					eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
 				else
-					eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
-					eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUM}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
+					eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
+					eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
 				fi # [[ $ENS_SPS = .true. ]]
 			fi # [[ $cycsuffix = false ]]
 
@@ -978,8 +978,8 @@ if [[ $FORECAST_SEGMENT = hl ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh )
 	fi # [[ $RUN_CONCURRENT = YES ]]
 	# Redefine the $SIGI file names
 	if [[ $RUN_CONCURRENT = yes ]]; then
-		export SIGI=$DATA/${RUM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
-		export SFCI=$DATA/${RUM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+		export SIGI=$DATA/${RUNMEM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
+		export SFCI=$DATA/${RUNMEM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
 	else
 		export SIGI=$DATA/${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
 		export SFCI=$DATA/${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
@@ -1064,11 +1064,11 @@ if [[ $FORECAST_SEGMENT != hr ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh 
 	if [[ $RUN_CONCURRENT = yes ]]; then
 		for MN in $MEMBER_NAMES; do
 			if [[ $cycsuffix = false ]]; then
-				eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.sf${HOUTASPS} $GESOUT/.
-				eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.bf${HOUTASPS} $GESOUT/.
+				eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf${HOUTASPS} $GESOUT/.
+				eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf${HOUTASPS} $GESOUT/.
 				if [[ $ENS_SPS = .true. ]]; then
-					eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.ss${HOUTASPS} $GESOUT/.
-					eval cp -pr $COMOUT/$cyc/sfcsig/${RUM}.${cycle}.bs${HOUTASPS} $GESOUT/.
+					eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.ss${HOUTASPS} $GESOUT/.
+					eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bs${HOUTASPS} $GESOUT/.
 				fi # [[ $ENS_SPS = .true. ]]
 			fi # [[ $cycsuffix = false ]]
 		done # MN in $MEMBER_NAMES
