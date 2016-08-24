@@ -2096,8 +2096,9 @@ case $taskname in
     network_MPI="sn_all,shared,us"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
-    RUN=ge$mem
-#   RUNMEM=ge$mem
+#    RUN=ge$mem
+    RUN=
+    RUNMEM=ge$mem
     task_affinity="core(1)"
     ################################# development variables
     if (( jjjb == jjjr00 )); then
