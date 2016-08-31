@@ -43,6 +43,7 @@ fi
 # Specify NET and RUN Name and model
 ####################################
 export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
 #export NTHREADS=$NTHREADS_SIGCHGRS
 #export MP_LABELIO=YES
 CHGRES_ALL=no
@@ -88,9 +89,9 @@ setpdy.sh
 ##############################################
 # Define  COM and GES directories
 ##############################################
-export GESIN=$GESROOT/${envir}/gefs.${PDY}
-export GESOUT=$GESROOT/${envir}/gefs.${PDY}
-export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
+export GESIN=$GESROOT/${envir}/${RUN}.${PDY}
+export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
 mkdir -m 775 -p $GESOUT
 

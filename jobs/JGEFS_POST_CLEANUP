@@ -39,7 +39,7 @@ export cycle=t${cyc}z
 # Specify NET and RUN Name and model
 ####################################
 export NET=${NET:-gens}
-export RUN=gefs
+export RUN=${RUN:-gefs}
 
 ####################################
 # File To Log Msgs
@@ -74,8 +74,8 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
-export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
 ##############################################
 echo set parameters using gefs.parm
@@ -147,9 +147,9 @@ for cyc_check in $cyc; do
 		####################################
 		# Specify the Ensemble Member
 		####################################
-		export RUN=ge${member}
+		export RUNMEM=ge${member}
 
-		export PS4=' + $SECONDS $na $RUN R $LINENO: '
+		export PS4=' + $SECONDS $na $RUNMEM R $LINENO: '
 
 		####################################
 		# Specify Forecast Hour Range
@@ -282,8 +282,8 @@ else # (( nmissing > 0 ))
 				####################################
 				# Specify the Ensemble Member
 				####################################
-				export RUN=ge${member}
-				export PS4=' + $SECONDS $na $RUN R $LINENO: '
+				export RUNMEM=ge${member}
+				export PS4=' + $SECONDS $na $RUNMEM R $LINENO: '
 
 				####################################
 				# Specify Forecast Hour Range

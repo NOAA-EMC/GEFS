@@ -145,8 +145,8 @@ setpdy.sh
 ##############################################
 # Define COM and GES directories
 ##############################################
-export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
-export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
 mkdir -m 775 -p $COMOUT/$cyc/master
 mkdir -m 775 -p $COMOUT/$cyc/misc/post

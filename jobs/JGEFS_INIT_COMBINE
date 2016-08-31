@@ -51,8 +51,8 @@ cd $DATA
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=gens
-export RUN=gefs
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
 
 ####################################
 # File To Log Msgs

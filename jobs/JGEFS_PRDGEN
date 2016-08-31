@@ -114,8 +114,8 @@ fi
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
-export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
 # 20150622 RLW change to "yes" to remake prdgen when post is remade
 #export overwrite=no
