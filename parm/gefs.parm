@@ -105,7 +105,7 @@ fi
 # STTP
 ########################################
 # if multiple forecasts are to be run concurrently, ENS_SPS controls whether stochastic forcing is used
- export ENS_SPS=.true.
+ export ENS_SPS=${ENS_SPS:-.true.}
  if (( npair < 1 )); then
   export ENS_SPS=.false.
  fi
