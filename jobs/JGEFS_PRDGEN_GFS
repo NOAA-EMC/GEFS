@@ -39,7 +39,7 @@ export cycle=t${cyc}z
 # Specify NET and RUN Name and model
 ####################################
 export NET=${NET:-gens}
-export RUN=gfs
+export RUN=${RUN:-gefs}
 
 ####################################
 # File To Log Msgs
@@ -78,7 +78,7 @@ setpdy.sh
 # Define COM directories
 ##############################################
 export COMINgfs=${COMINgfs:-$COMROOTp2/gfs/prod/gfs.${PDY}}
-export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
 if [[ "$makepgrb1" = "yes" ]]; then
 	mkdir -m 775 -p $COMOUT/$cyc/pgrba

@@ -70,12 +70,12 @@ mkdir -m 775 -p $COMOUT/$cyc/misc/$submc
 cd $COMOUT/$cyc/misc/$submc
 rc=$?
 if (( rc == 0 )); then
-	for file in $RUN.*.missing; do
+	for file in $RUNMEM.*.missing; do
 		if [[ -f $file ]]; then
 			echo `date` removing $COMOUT/$cyc/misc/$submc/$file
 			rm -f $COMOUT/$cyc/misc/$submc/$file
 		fi
-	done # for file in $RUN.*.missing
+	done # for file in $RUNMEM.*.missing
 fi # (( rc == 0 ))
 #cd $DATA
 cd $jobdir
@@ -108,12 +108,12 @@ if [[ $DOANALYSIS = YES ]]; then
 	ic=1
 	while [ $ic -le $SLEEP_LOOP_MAX ]; do
 		#20100730 change test to use master control file
-		mcfile=$COMOUT/$cyc/misc/post/$RUN.$cycle.master.control.anl$cfsuffix
+		mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.anl$cfsuffix
 		testfhr=-1
 		if [[ -f $mcfile ]]; then
 			teststring=`cat $mcfile|head -1`
 			if [[ $teststring != '' ]]; then
-				if [[ -f $COMOUT/$cyc/master/$RUN.$cycle.master.grb2ianl$cfsuffix ]]; then
+				if [[ -f $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl$cfsuffix ]]; then
 					testfhr=`echo $teststring | cut -c11-13`
 				fi
 				#        if (( testfhr < 100 )); then
@@ -138,7 +138,7 @@ if [[ $DOANALYSIS = YES ]]; then
 		# indicate missing data
 		###############################
 		if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-			date >$COMOUT/$cyc/misc/$submc/$RUN.$ffhr$cfsuffix.missing
+			date >$COMOUT/$cyc/misc/$submc/$RUNMEM.$ffhr$cfsuffix.missing
 			echo `date` $sname $member end
 			msg="$member MISSING DATA for hour $ffhr"
 			postmsg "$jlogfile" "$msg"
@@ -154,11 +154,11 @@ if [[ $DOANALYSIS = YES ]]; then
 	export addgrb1id=yes
 	export addgrb1id=yes
 
-	pcfile=$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.anl$cfsuffix
-	fileaout=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}anl$pgasuf$cfsuffix
-	fileaouti=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}anl$pgasuf$cfsuffix.idx
-	filebout=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}anl$pgasuf$cfsuffix
-	filebouti=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}anl$pgasuf$cfsuffix.idx
+	pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.anl$cfsuffix
+	fileaout=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf$cfsuffix
+	fileaouti=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf$cfsuffix.idx
+	filebout=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf$cfsuffix
+	filebouti=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf$cfsuffix.idx
 
 	if [[ -s $pcfile ]]; then
 		nmissing=0
@@ -189,7 +189,7 @@ if [[ $DOANALYSIS = YES ]]; then
 			else
 				pad=""
 			fi
-			echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.anl$cfsuffix
+			echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.anl$cfsuffix
 		fi # test $SENDCOM = "YES"
 	fi # [[ ! -s $pcfile ]]
 fi # [[ $DOANALYSIS = YES ]]
@@ -222,12 +222,12 @@ while test $fhr -le $FHOUR; do
 
 	while [ $ic -le $SLEEP_LOOP_MAX ]; do
 		#20100730 change test to use master control file
-		mcfile=$COMOUT/$cyc/misc/post/$RUN.$cycle.master.control.f$fhr$cfsuffix
+		mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.f$fhr$cfsuffix
 		testfhr=-1
 		if [[ -f $mcfile ]]; then
 			teststring=`cat $mcfile|head -1`
 			if [[ $teststring != '' ]]; then
-				if [[ -f $COMOUT/$cyc/master/$RUN.$cycle.master.grb2i$ffhr$cfsuffix ]]; then
+				if [[ -f $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2i$ffhr$cfsuffix ]]; then
 					testfhr=`echo $teststring | cut -c11-13`
 				fi
 				#          if (( testfhr < 100 )); then
@@ -251,7 +251,7 @@ while test $fhr -le $FHOUR; do
 		# period and error exit
 		###############################
 		if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-			date >$COMOUT/$cyc/misc/$submc/$RUN.f$ffhr$cfsuffix.missing
+			date >$COMOUT/$cyc/misc/$submc/$RUNMEM.f$ffhr$cfsuffix.missing
 			echo `date` $sname $member end
 			msg="$member MISSING DATA"
 			postmsg "$jlogfile" "$msg"
@@ -269,16 +269,16 @@ while test $fhr -le $FHOUR; do
 	####################################
 	export addgrb1id=yes
 
-	pcfile=$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.f${fhr}$cfsuffix
+	pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f${fhr}$cfsuffix
 	if test $fhr -lt 100; then
 		pad="0"
 	else
 		pad=""
 	fi
-	fileaout=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}f$pad${fhr}$pgasuf$cfsuffix
-	fileaouti=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}f$pad${fhr}$pgasuf$cfsuffix.idx
-	filebout=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}f$pad${fhr}$pgasuf$cfsuffix
-	filebouti=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}f$pad${fhr}$pgasuf$cfsuffix.idx
+	fileaout=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}f$pad${fhr}$pgasuf$cfsuffix
+	fileaouti=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}f$pad${fhr}$pgasuf$cfsuffix.idx
+	filebout=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f$pad${fhr}$pgasuf$cfsuffix
+	filebouti=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f$pad${fhr}$pgasuf$cfsuffix.idx
 	if [[ -s $pcfile ]]; then
 		nmissing=0
 		for file in $fileaout $fileaouti $filebout $filebouti; do
@@ -313,7 +313,7 @@ while test $fhr -le $FHOUR; do
 			else
 				pad=""
 			fi
-			echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.f$fhr$cfsuffix
+			echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr$cfsuffix
 		fi # test $SENDCOM = "YES"
 	fi # [[ ! -s $pcfile ]]
 

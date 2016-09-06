@@ -74,7 +74,7 @@ export makegrb2i=yes
 ############################################################
 # Post Analysis Files before starting the Forecast Post
 ############################################################
-if test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2anl -a ${SHOUR} -eq 0; then
+if test -f $COMINgfs/${RUNMEM}.t${cyc}z.master.grb2anl -a ${SHOUR} -eq 0; then
 
 	# RLW 20110725 more complete cleanup of temporary files
 	rm -f master_grb2file
@@ -84,7 +84,7 @@ if test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2anl -a ${SHOUR} -eq 0; then
 
 	#  parmlist=$PARMgefs/gefs_pgrb2a_f00.parm
 	parmlist=$parm00 
-	ln -s $COMINgfs/${RUN}.t${cyc}z.master.grb2anl master_grb2file
+	ln -s $COMINgfs/${RUNMEM}.t${cyc}z.master.grb2anl master_grb2file
 	$WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile
 	$COPYGB2 -g "${grid}" -i0 -x tmpfile pgb2afile
 	$GRB2INDEX pgb2afile pgb2aifile
@@ -100,8 +100,8 @@ if test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2anl -a ${SHOUR} -eq 0; then
 		# Save Pressure GRIB/Index files
 		#
 		if [[ "$makepgrb1" = "yes" ]]; then
-			mv pgbafile $COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\anl
-			testfile=$COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\anl
+			mv pgbafile $COMOUT/$cyc/pgrba$dirsuf/ge${RUNMEM}.${cycle}.pgrba$filsuf\anl
+			testfile=$COMOUT/$cyc/pgrba$dirsuf/ge${RUNMEM}.${cycle}.pgrba$filsuf\anl
 			if [[ ! -s $testfile ]]; then
 				msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
 				echo "`date`    $msg"
@@ -110,8 +110,8 @@ if test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2anl -a ${SHOUR} -eq 0; then
 				err_chk
 			fi # [[ ! -s $testfile ]]
 			if [[ "$makegrb1i" = "yes" ]]; then
-				mv pgbaifile $COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\ianl
-				testfile=$COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\ianl
+				mv pgbaifile $COMOUT/$cyc/pgrba$dirsuf/ge${RUNMEM}.${cycle}.pgrba$filsuf\ianl
+				testfile=$COMOUT/$cyc/pgrba$dirsuf/ge${RUNMEM}.${cycle}.pgrba$filsuf\ianl
 				if [[ ! -s $testfile ]]; then
 					msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
 					echo "`date`    $msg"
@@ -122,8 +122,8 @@ if test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2anl -a ${SHOUR} -eq 0; then
 			fi # [[ "$makegrb1i" = "yes" ]]
 		fi # [[ "$makepgrb1" = "yes" ]]
 		if [[ "$makepgrb2" = "yes" ]]; then
-			mv pgb2afile $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl
-			testfile=$COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl
+			mv pgb2afile $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUNMEM}.${cycle}.pgrb2a$filsuf\anl
+			testfile=$COMOUT/$cyc/pgrb2a$dirsuf/ge${RUNMEM}.${cycle}.pgrb2a$filsuf\anl
 			if [[ ! -s $testfile ]]; then
 				msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
 				echo "`date`    $msg"
@@ -132,8 +132,8 @@ if test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2anl -a ${SHOUR} -eq 0; then
 				err_chk
 			fi # [[ ! -s $testfile ]]
 			if [[ "$makegrb2i" = "yes" ]]; then
-				mv pgb2aifile $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl.idx
-				testfile=$COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl.idx
+				mv pgb2aifile $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUNMEM}.${cycle}.pgrb2a$filsuf\anl.idx
+				testfile=$COMOUT/$cyc/pgrb2a$dirsuf/ge${RUNMEM}.${cycle}.pgrb2a$filsuf\anl.idx
 				if [[ ! -s $testfile ]]; then
 					msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
 					echo "`date`    $msg"
@@ -148,21 +148,21 @@ if test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2anl -a ${SHOUR} -eq 0; then
 			if test "$NET" = 'gens'; then
 				MEMBER=GFS
 				if [[ "$makepgrb1" = "yes" ]]; then
-					$DBNROOT/bin/dbn_alert MODEL ENS_PGBA${GRID}_$MEMBER $job $COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\anl
+					$DBNROOT/bin/dbn_alert MODEL ENS_PGBA${GRID}_$MEMBER $job $COMOUT/$cyc/pgrba$dirsuf/ge${RUNMEM}.${cycle}.pgrba$filsuf\anl
 				fi
 				if [[ "$makegrb1i" = "yes" ]]; then
-					$DBNROOT/bin/dbn_alert MODEL ENS_PGBAI${GRID}_$MEMBER $job $COMOUT/$cyc/pgrba$dirsuf/ge${RUN}.${cycle}.pgrba$filsuf\ianl
+					$DBNROOT/bin/dbn_alert MODEL ENS_PGBAI${GRID}_$MEMBER $job $COMOUT/$cyc/pgrba$dirsuf/ge${RUNMEM}.${cycle}.pgrba$filsuf\ianl
 				fi
 				if [[ "$makepgrb2" = "yes" ]]; then
-					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_$MEMBER $job $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\anl
+					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_$MEMBER $job $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUNMEM}.${cycle}.pgrb2a$filsuf\anl
 				fi
 				#if [[ "$makegrb2i" = "yes" ]]; then
-				#    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI${GRID}_$MEMBER $job $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUN}.${cycle}.pgrb2a$filsuf\ianl
+				#    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2AI${GRID}_$MEMBER $job $COMOUT/$cyc/pgrb2a$dirsuf/ge${RUNMEM}.${cycle}.pgrb2a$filsuf\ianl
 				#fi
 			fi # test "$NET" = 'gens'
 		fi # test "$SENDDBN" = 'YES'
 	fi # test "$SENDCOM" = 'YES'
-fi # test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2anl -a ${SHOUR} -eq 0
+fi # test -f $COMINgfs/${RUNMEM}.t${cyc}z.master.grb2anl -a ${SHOUR} -eq 0
 
 SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
@@ -191,13 +191,13 @@ while test $fhr -le $FHOUR; do
 
 	while [ $ic -le $SLEEP_LOOP_MAX ]; do
 		#      if [[ -s $restart_file_a$fhr ]] && [[ -s $restart_file_b$fhr ]]; then
-		if test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2f$fhr; then
+		if test -f $COMINgfs/${RUNMEM}.t${cyc}z.master.grb2f$fhr; then
 			found=yes
 			break
 		else
 			ic=`expr $ic + 1`
 			sleep $SLEEP_INT
-		fi # test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2f$fhr
+		fi # test -f $COMINgfs/${RUNMEM}.t${cyc}z.master.grb2f$fhr
 		if (( fhr > 180 )) && (( fhr % 12 == 6 )); then
 			if (( ic > 2 )) && (( ic < SLEEP_LOOP_MAX )); then
 				echo fhr=$fhr not expected
@@ -235,7 +235,7 @@ while test $fhr -le $FHOUR; do
 			parmlist=$parmhh 
 		fi # [ $fhr -eq 0 ]
 
-		ln -s $COMINgfs/${RUN}.t${cyc}z.master.grb2f${fhr} master_grb2file
+		ln -s $COMINgfs/${RUNMEM}.t${cyc}z.master.grb2f${fhr} master_grb2file
 
 		$WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile
 		if [[ x$fhoroglist != x ]]; then
@@ -306,7 +306,7 @@ while test $fhr -le $FHOUR; do
 			else
 				pad=""
 			fi
-			echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/gfs/ge${RUN}.t${cyc}z.control.$fhr$jobgrid
+			echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/gfs/ge${RUNMEM}.t${cyc}z.control.$fhr$jobgrid
 		fi # test $SENDCOM = "YES"
 	fi # [[ "$found" = yes ]]
 	# if not found, come here to increment
