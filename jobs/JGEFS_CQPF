@@ -37,7 +37,7 @@ export cycle=t${cyc}z
 # Specify NET and RUN Name and model
 ####################################
 export NET=${NET:-gens}
-export RUN=cqpf
+export RUN=${RUN:-gefs}
 
 ####################################
 # File To Log Msgs
@@ -77,7 +77,7 @@ setpdy.sh
 # Define COM directories
 ##############################################
 export COMIN=$COMROOT/${NET}/${envir}
-export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}/${cyc}/ensstat
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/ensstat
 export COMINGEST=${COMINGEST:-$COMROOTp1/ingest/prod}
 
 mkdir -m 775 -p $COMOUT

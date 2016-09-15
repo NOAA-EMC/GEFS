@@ -50,6 +50,7 @@ fi
 # Specify NET and RUN Name and model
 ####################################
 export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
 
 ####################################
 # File To Log Msgs
@@ -144,8 +145,8 @@ setpdy.sh
 ##############################################
 # Define COM and GES directories
 ##############################################
-export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
-export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
 mkdir -m 775 -p $COMOUT/$cyc/master
 mkdir -m 775 -p $COMOUT/$cyc/misc/post
@@ -200,9 +201,9 @@ fi
 # Specify Restart File Name to Key Off
 ####################################
 if [[ $fcstlong = true ]]; then
-	restart_file=$COMIN/$cyc/misc/fcst/${RUN}.t${cyc}z.logf
+	restart_file=$COMIN/$cyc/misc/fcst/${RUNMEM}.t${cyc}z.logf
 else
-	restart_file=$COMIN/$cyc/misc/fcst/${RUN}.t${cyc}z.logf
+	restart_file=$COMIN/$cyc/misc/fcst/${RUNMEM}.t${cyc}z.logf
 fi
 
 ####################################
@@ -302,10 +303,10 @@ if (( 0 == 1 )) ; then
 ####################################
 # Check if this is a restart
 ####################################
-  mcfile=$COMOUT/$cyc/misc/post/$RUN.t${cyc}z.master.control
+  mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control
 if [[ $cycsuffix = false ]]; then
 	if test -f $mcfile; then
-		# modelrecvy=`cat < $COMOUT/$cyc/misc/post/$RUN.t${cyc}z.master.control`
+		# modelrecvy=`cat < $COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control`
 		modelrecvy=`cat < $mcfile`
 		recvy_pdy=`echo $modelrecvy | cut -c1-8`
 		recvy_cyc=`echo $modelrecvy | cut -c9-10`
@@ -327,9 +328,9 @@ if [[ $cycsuffix = false ]]; then
 		fi # test $RERUN = "RESTART"
 	fi # test -f $miscfile
 else
-	mcfile=$COMOUT/$cyc/misc/$post/RUN.t${cyc}z.master.control.cycfs$cyc_fcst
+	mcfile=$COMOUT/$cyc/misc/$post/${RUNMEM}.t${cyc}z.master.control.cycfs$cyc_fcst
 	if test -f $mcfile; then
-		# modelrecvy=`cat < $COMOUT/$cyc/misc/post/$RUN.t${cyc}z.master.control.cycfs$cyc_fcst`
+		# modelrecvy=`cat < $COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.cycfs$cyc_fcst`
 		modelrecvy=`cat < $mcfile`
 		recvy_pdy=`echo $modelrecvy | cut -c1-8`
 		recvy_cyc=`echo $modelrecvy | cut -c9-10`
@@ -353,7 +354,7 @@ else
 fi # [[ $cycsuffix = false ]]
 fi # (( 0 == 1 ))
 
-export post_log=$DATA/post.$FORECAST_SEGMENT.log$SUBJOB\_${RUN}$cfsuffix
+export post_log=$DATA/post.$FORECAST_SEGMENT.log$SUBJOB\_${RUNMEM}$cfsuffix
 
 echo
 env | sort

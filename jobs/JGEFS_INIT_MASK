@@ -71,8 +71,8 @@ echo cycsuffix=$cycsuffix
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=gens
-export RUN=enstr
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
 
 ####################################
 # File To Log Msgs
@@ -256,10 +256,10 @@ export cycp=`echo $pdycycp|cut -c9-10`
 echo pdycycp=$pdycycp pdyp=$pdyp cycp=$cycp
 if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 	export COM=/com/${NET}/${envir}
-	export COMOUT=/com/${NET}/${envir}/gefs.${PDY}
+	export COMOUT=/com/${NET}/${envir}/${RUN}.${PDY}
 else
 	export COM=$baseoutput/com/${NET}/${envir}
-	export COMOUT=$baseoutput/com/${NET}/${envir}/gefs.${PDY}
+	export COMOUT=$baseoutput/com/${NET}/${envir}/${RUN}.${PDY}
 fi # [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]
 ###teste
 

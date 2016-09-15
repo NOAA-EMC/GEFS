@@ -43,6 +43,7 @@ fi
 # Specify NET and RUN Name and model
 ####################################
 export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
 #export NTHREADS=$NTHREADS_SIGCHGRS
 #export MP_LABELIO=YES
 CHGRES_ALL=no
@@ -88,9 +89,9 @@ setpdy.sh
 ##############################################
 # Define  COM and GES directories
 ##############################################
-export GESIN=$GESROOT/${envir}/gefs.${PDY}
-export GESOUT=$GESROOT/${envir}/gefs.${PDY}
-export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
+export GESIN=$GESROOT/${envir}/${RUN}.${PDY}
+export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
 mkdir -m 775 -p $GESOUT
 
@@ -136,12 +137,12 @@ if [[ $CHGRES_ALL = yes ]]; then
 	(( ENS_NUM = imem ))
 	export ENS_NUM
 	echo ENS_NUM=$ENS_NUM
-	export RUM=ge'${MN}'
-	echo RUM=$RUM
+	export RUNMEM=ge'${MN}'
+	echo RUNMEM=$RUNMEM
 else
 	#single member
-	echo RUN=$RUN
-	memberlist=`echo $RUN|cut -c3-5`
+	echo RUNMEM=$RUNMEM
+	memberlist=`echo $RUNMEM|cut -c3-5`
 	export ENS_NUM=1
 	echo ENS_NUM=$ENS_NUM
 fi # [[ $CHGRES_ALL = yes ]]
@@ -199,23 +200,23 @@ export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,idsl=$IDSL,idvc=$IDVC,idvm=$I
 # Write the resulted files in $GESOUT and make a copy in $DATA 
 if [[ $CHGRES_ALL = YES ]] ; then
 	for MN in $MEMBER_NAMES; do
-		eval export SIGOUT=$GESOUT/${RUM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
-		eval export SFCOUT=$GESOUT/${RUM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+		eval export SIGOUT=$GESOUT/${RUNMEM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
+		eval export SFCOUT=$GESOUT/${RUNMEM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
 		if [[ $cycsuffix = false ]]; then
 			if [[ $ENS_SPS = .true. ]]; then
-				eval export SIGINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.ss${HOUTASPS}
-				eval export SFCINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.bs${HOUTASPS}
+				eval export SIGINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ss${HOUTASPS}
+				eval export SFCINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bs${HOUTASPS}
 			else
-				eval export SIGINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.sf${HOUTASPS}
-				eval export SFCINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.bf${HOUTASPS}
+				eval export SIGINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf${HOUTASPS}
+				eval export SFCINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf${HOUTASPS}
 			fi # [[ $ENS_SPS = .true. ]]
 		else
 			if [[ $ENS_SPS = .true. ]]; then
-				eval export SIGINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
-				eval export SFCINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
+				eval export SIGINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
+				eval export SFCINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
 			else
-				eval export SIGINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
-				eval export SFCINP=$COMIN/$cyc/sfcsig/${RUM}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
+				eval export SIGINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
+				eval export SFCINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
 			fi # [[ $ENS_SPS = .true. ]]
 		fi # [[ $cycsuffix = false ]]
 
@@ -224,23 +225,23 @@ if [[ $CHGRES_ALL = YES ]] ; then
 		echo `date` timing lr $MN chgres after
 	done # MN in $MEMBER_NAMES
 else
-	export SIGOUT=$GESOUT/${RUN}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
-	export SFCOUT=$GESOUT/${RUN}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+	export SIGOUT=$GESOUT/${RUNMEM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
+	export SFCOUT=$GESOUT/${RUNMEM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
 	if [[ $cycsuffix = false ]]; then
 		if [[ $ENS_SPS = .true. ]]; then
-			export SIGINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.ss${HOUTASPS}
-			export SFCINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.bs${HOUTASPS}
+			export SIGINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ss${HOUTASPS}
+			export SFCINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bs${HOUTASPS}
 		else
-			export SIGINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.sf${HOUTASPS}
-			export SFCINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.bf${HOUTASPS}
+			export SIGINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf${HOUTASPS}
+			export SFCINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf${HOUTASPS}
 		fi # [[ $ENS_SPS = .true. ]]
 	else
 		if [[ $ENS_SPS = .true. ]]; then
-			export SIGINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
-			export SFCINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
+			export SIGINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
+			export SFCINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
 		else
-			export SIGINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
-			export SFCINP=$COMIN/$cyc/sfcsig/${RUN}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
+			export SIGINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
+			export SFCINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
 		fi # [[ $ENS_SPS = .true. ]]
 	fi # [[ $cycsuffix = false ]]
 	echo `date` timing lr chgres before

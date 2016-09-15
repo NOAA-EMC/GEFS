@@ -10,6 +10,12 @@
 
 echo `date` $0 test section begin
 
+#Define using STTP(ENS_SPS=.true.) or physics stochastic
+ENS_SPS=.true.
+STOC_SPPT=.false.
+STOC_SHUM=.false.
+STOC_SKEB=.false.
+
 export npair=10
 export fhmax=384
 export fhmaxh=192
