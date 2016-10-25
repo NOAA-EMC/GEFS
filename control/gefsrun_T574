@@ -3266,6 +3266,9 @@ d="$d $pllogdir"
 tmpdir=$basetmp
 d="$d $tmpdir"
 
+pltmpdir=$basetmp/tmpnwprd
+d="$d $pltmpdir"
+
 for dir in $d
 do
   if [[ -d $dir ]]; then
