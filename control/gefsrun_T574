@@ -26,8 +26,8 @@ TPMLOW=18
  PTMP=/gpfs/hps/ptmp
  STMP=/gpfs/hps/stmp
 if [[ $machl = s ]] || [[ $machl = l ]]; then
- PTMP=/gpfs/hps/ptmp
- STMP=/gpfs/hps/stmp
+ PTMP=gpfs/hps/ptmp
+ STMP=gpfs/hps/stmp
  COREPERNODE=24
  export JOBQUEUE=dev
  . /opt/modules/default/init/ksh

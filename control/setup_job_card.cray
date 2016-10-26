@@ -34,10 +34,11 @@ fi
     cat <<eofCAT >$jobcontrol$SUBJOB
 #!/bin/ksh
 #BSUB -J $jobname$SUBJOB.$yymmddhhmmss
-#BSUB -W $wall_clock_limit
+#BSUB -P $account
 #BSUB -o $plcomout/$jobname$SUBJOB.$yymmddhhmmss.o
 #BSUB -e $plcomout/$jobname$SUBJOB.$yymmddhhmmss.o
-#BSUB -P $account
+#BSUB -cwd $basetmp/tmpnwprd
+#BSUB -W $wall_clock_limit
 eofCAT
 
 export POSTGRB2TBL=/gpfs/hps/nco/ops/nwprod/lib/g2tmpl/v1.3.0/src/params_grib2_tbl_new
