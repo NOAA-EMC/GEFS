@@ -189,12 +189,16 @@ export FNAISC=$FIXGLOBAL/CFSR.SEAICE.1982.2012.monthly.clim.grb  # New for gfs 2
 #
 # chgres parameters
 #
+export VERBOSE=YES
 export FIXSUBDA=fix
 export use_ufo=.true.
 export IDSL=1
 export IDVM=0
 export IDVT=21
-export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,idsl=$IDSL,idvc=$IDVC,idvm=$IDVM,idvt=$IDVT,use_ufo=$use_ufo"
+export nopdpvv=.true.
+export LANDICE_OPT=3
+export OUTTYP=1
+export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,idsl=$IDSL,idvc=$IDVC,idvm=$IDVM,idvt=$IDVT,use_ufo=$use_ufo,nopdpvv=$nopdpvv"
 
 # Change resolution of the high-res forecast files
 # Write the resulted files in $GESOUT and make a copy in $DATA 
@@ -202,6 +206,10 @@ if [[ $CHGRES_ALL = YES ]] ; then
 	for MN in $MEMBER_NAMES; do
 		eval export SIGOUT=$GESOUT/${RUNMEM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
 		eval export SFCOUT=$GESOUT/${RUNMEM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+		eval export GFSOUT=$GESOUT/${RUNMEM}.${cycle}.gfs${HOUTASPS}_T$JCAP\L$LEVS
+		eval export NSTOUT=$GESOUT/${RUNMEM}.${cycle}.nst${HOUTASPS}_T$JCAP\L$LEVS
+		eval export NSNOUT=$GESOUT/${RUNMEM}.${cycle}.nsn${HOUTASPS}_T$JCAP\L$LEVS
+		eval export SFNOUT=$GESOUT/${RUNMEM}.${cycle}.sfn${HOUTASPS}_T$JCAP\L$LEVS
 		if [[ $cycsuffix = false ]]; then
 			if [[ $ENS_SPS = .true. ]]; then
 				eval export SIGINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ss${HOUTASPS}
@@ -225,8 +233,13 @@ if [[ $CHGRES_ALL = YES ]] ; then
 		echo `date` timing lr $MN chgres after
 	done # MN in $MEMBER_NAMES
 else
-	export SIGOUT=$GESOUT/${RUNMEM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
-	export SFCOUT=$GESOUT/${RUNMEM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+	        eval export SIGOUT=$GESOUT/${RUNMEM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
+                eval export SFCOUT=$GESOUT/${RUNMEM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+                eval export GFSOUT=$GESOUT/${RUNMEM}.${cycle}.gfs${HOUTASPS}_T$JCAP\L$LEVS
+                eval export NSTOUT=$GESOUT/${RUNMEM}.${cycle}.nst${HOUTASPS}_T$JCAP\L$LEVS
+                eval export NSNOUT=$GESOUT/${RUNMEM}.${cycle}.nsn${HOUTASPS}_T$JCAP\L$LEVS
+                eval export SFNOUT=$GESOUT/${RUNMEM}.${cycle}.sfn${HOUTASPS}_T$JCAP\L$LEVS
+
 	if [[ $cycsuffix = false ]]; then
 		if [[ $ENS_SPS = .true. ]]; then
 			export SIGINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ss${HOUTASPS}

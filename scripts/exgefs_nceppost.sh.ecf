@@ -256,7 +256,7 @@ if [ $DOANALYSIS = YES ]; then
 			export OUTTYP=1
 			# to bypass chgres and read model sigma files directly
 			export OUTTYP=3
-
+			export OUTTYP=4
 			# specify output file name from chgres which is input file name to nceppost
 			# if model already runs gfs io, make sure GFSOUT is linked to the gfsio file
 			# new imported variable for global_nceppost.sh
@@ -436,6 +436,7 @@ while (( fhr <= FHOUR )); do
 		export OUTTYP=1
 		# to bypass chgres and read model sigma files directly
 		export OUTTYP=3
+		export OUTTYP=4
 
 		# specify output file name from chgres which is input file name to nceppost
 		# if model already runs gfs io, make sure GFSOUT is linked to the gfsio file

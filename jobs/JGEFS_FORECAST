@@ -14,8 +14,19 @@ if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 	. $basesource/nwdev/parm/gefs_config
 	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
-
+export LDFIFLTO=.true.
+export machine='WCOSS_C'
+export nemsioget=$basesource/nwdev/util/exec/nemsio_get
+export PARM_NGAC=/gpfs/tp1/nco/ops/nwprod/ngac.v1.0.2/parm
 export APRUN=${gefsmpexec:-mpirun.lsf}
+export DOIAU=NO
+export OROGRAPHY_UF=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/q3fy17_super/global_shared.v14.1.0/fix/fix_am/global_orography_uf.t574.1152.576.grb
+export FIXGLOBAL=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/q3fy17_super/global_shared.v14.1.0/fix/fix_am
+                export MTNVAR=$FIXGLOBAL/global_mtnvar.t${MTNRSL}.f77
+                export OROGRAPHY=${FIXGLOBAL}/global_orography.t$MTNRSL.grb
+                export LONSPERLAT=${FIXGLOBAL}/global_lonsperlat.t$MTNRSL.txt
+                export LONSPERLAR=${FIXGLOBAL}/global_lonsperlat.t$MTNRSL.txt
+#                export OROGRAPHY_UF=${FIXGLOBAL}/global_orography_uf.t$MTNRSLUF.grb
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -188,8 +199,8 @@ export chgresush=$USHgsm/global_chgres.sh
 export CHGRESEXEC=$EXECgsm/global_chgres
 
 # forecast script  and executable
-export fcstscript=$HOMEgsm/scripts/exglobal_fcst.sh.ecf
-export FCSTEXEC=$HOMEgsm/exec/global_fcst
+export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nems.sh.ecf
+export FCSTEXEC=$EXECgsm/NEMS.x
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
 
@@ -200,6 +211,8 @@ export FNAISC=${FNAISC:-${FIXGLOBAL}/CFSR.SEAICE.1982.2012.monthly.clim.grb}
 
 export SIGHDR=${EXECgsm}/global_sighdr
 export SFCHDR=${EXECgsm}/global_sfchdr
+export SIGHDR=$nemsioget
+export SFCHDR=$nemsioget
 ####################################
 # Create member list
 ####################################
@@ -317,7 +330,7 @@ if test $RERUN = "RESTART"; then
 		if [[ -f $SIGXtest ]]; then
 			if [[ $goodrestart = no ]]; then
 				goodrestart=yes
-				export HOURtest=$(eval $SIGHDR $SIGXtest fhour | sed -e "s/\.00//")
+				export HOURtest=$(eval $SIGHDR $SIGXtest nfhour | sed -e "s/\.00//")
 				rch=$?
 				if (( rch == 0 )); then
 					if (( HOURtest > fhresini )); then
@@ -483,14 +496,17 @@ if [[ $RERUN = YES ]]; then
 
 		if [[ $cycsuffix = false ]]; then
 			if [[ $FORECAST_SEGMENT = lr ]]; then
-				export SIGI=$GESIN/${RUNMEM}.t${cyc}z.sig${hour_lr_ini}_T$JCAPLR\L$LEVSLR
-				export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfc${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+				export SIGI=$GESIN/${RUNMEM}.t${cyc}z.gfs${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+				export GRDI=$GESIN/${RUNMEM}.t${cyc}z.gfs${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+				export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfn${hour_lr_ini}_T$JCAPLR\L$LEVSLR
 			else
 				export SIGI=$GESIN/${RUNMEM}.t${cyc}z.sanl
+				export GRDI=$GESIN/${RUNMEM}.t${cyc}z.sanl
 				export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfcanl
 			fi # [[ $FORECAST_SEGMENT = lr ]]
 		else
 			export SIGI=$GESIN/${RUNMEM}.t${cyc}z.sanl.cycfs$cyc_fcst
+			export GRDI=$GESIN/${RUNMEM}.t${cyc}z.sanl.cycfs$cyc_fcst
 			export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfcanl.cycfs$cyc_fcst
 		fi # [[ $cycsuffix = false ]]
 
@@ -512,14 +528,17 @@ if [[ $RERUN = YES ]]; then
 	else # [[ $RUN_CONCURRENT = yes ]]
 		if [[ $cycsuffix = false ]]; then
 			if [[ $FORECAST_SEGMENT = lr ]]; then
-				export SIGI=$GESIN/${RUNMEM}.t${cyc}z.sig${hour_lr_ini}_T$JCAPLR\L$LEVSLR
-				export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfc${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+				export SIGI=$GESIN/${RUNMEM}.t${cyc}z.gfs${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+				export GRDI=$GESIN/${RUNMEM}.t${cyc}z.gfs${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+				export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfn${hour_lr_ini}_T$JCAPLR\L$LEVSLR
 			else
 				export SIGI=$GESIN/${RUNMEM}.t${cyc}z.sanl
+				export GRDI=$GESIN/${RUNMEM}.t${cyc}z.sanl
 				export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfcanl
 			fi # [[ $FORECAST_SEGMENT = lr ]]
 		else
 			export SIGI=$GESIN/${RUNMEM}.t${cyc}z.sanl.cycfs$cyc_fcst
+			export GRDI=$GESIN/${RUNMEM}.t${cyc}z.sanl.cycfs$cyc_fcst
 			export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfcanl.cycfs$cyc_fcst
 		fi # [[ $cycsuffix = false ]]
 
@@ -548,17 +567,17 @@ if [[ $RUN_CONCURRENT = yes ]]; then
 	CONC_INI=`echo $MEMBER_NAMES|cut -c1-3`
 	MN=$CONC_INI
 	eval echo SIGI=$SIGI
-	export JCAP=$(eval $SIGHDR $SIGI jcap)
-	export LEVS=$(eval $SIGHDR $SIGI levs)
-	export LONB=$(eval $SIGHDR $SIGI lonb)
-	export LATB=$(eval $SIGHDR $SIGI latb)
-	export HOUR=$(eval $SIGHDR $SIGI fhour)
+	export JCAP=$(eval $SIGHDR $SIGI jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export LEVS=$(eval $SIGHDR $SIGI levs |grep -i "levs" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export LONB=$(eval $SIGHDR $SIGI latb |grep -i "latb" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export LATB=$(eval $SIGHDR $SIGI lonb |grep -i "lonb" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export HOUR=$(eval $SIGHDR $SIGI nfhour |grep -i "nfhour" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
 else
-	export JCAP=$($SIGHDR $SIGI jcap)
-	export LEVS=$($SIGHDR $SIGI levs)
-	export LONB=$($SIGHDR $SIGI lonb)
-	export LATB=$($SIGHDR $SIGI latb)
-	export HOUR=$($SIGHDR $SIGI fhour)
+	export JCAP=$($SIGHDR $SIGI jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export LEVS=$($SIGHDR $SIGI levs |grep -i "levs" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export LONB=$($SIGHDR $SIGI latb |grep -i "latb" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export LATB=$($SIGHDR $SIGI lonb |grep -i "lonb" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export HOUR=$($SIGHDR $SIGI nfhour |grep -i "nfhour" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
 fi # [[ $RUN_CONCURRENT = yes ]]
 
 jcapin=$JCAP
@@ -569,8 +588,8 @@ hourin=$HOUR
 
 if [[ $RUN_CONCURRENT = yes ]]; then
 	for MN in $MEMBER_NAMES; do
-		export JCAP=$(eval $SIGHDR $SIGI jcap)
-		export HOUR=$(eval $SIGHDR $SIGI fhour)
+		export JCAP=$(eval $SIGHDR $SIGI jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+		export HOUR=$(eval $SIGHDR $SIGI nfhour |grep -i "nfhour" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
 		if [[ $jcapin != $JCAP ]] || [[ $hourin != $HOUR ]] ; then
 			echo "Forecast jobs is aborted"
 			msg="FATAL ERROR:  Initial file JCAP=$JCAP for member $MN does not match member $CONC_INI"
@@ -770,7 +789,9 @@ if test $JCAPHR -eq $jcapin; then
 				done # MN in $MEMBER_NAMES
 
 				export SIGI=$DATA/${RUNMEM}.sigr1
+				export GRDI=$DATA/${RUNMEM}.grdr1
 				export SIGI2=$DATA/${RUNMEM}.sigr2
+				export GRDI2=$DATA/${RUNMEM}.grdr2
 				export SFCI=$DATA/${RUNMEM}.sfcr
 
 			else # [[ $RUN_CONCURRENT = yes ]]
@@ -779,7 +800,9 @@ if test $JCAPHR -eq $jcapin; then
 				eval cp $SFCX $DATA/sfcr
 
 				export SIGI=$DATA/sigr1
+				export GRDI=$DATA/grdr1
 				export SIGI2=$DATA/sigr2
+				export GRDI2=$DATA/grdr2
 				export SFCI=$DATA/sfcr
 			fi # [[ $RUN_CONCURRENT = yes ]]
 
@@ -1003,6 +1026,15 @@ if [[ $FORECAST_SEGMENT != hr ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh 
 	#
 	export CO2CON=$FIXGLOBAL/global_co2con.l${LEVS}.f77
 	export MTNVAR=$FIXGLOBAL/global_mtnvar.t${MTNRSL}.f77
+
+	export FIXGLOBAL=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/q3fy17_super/global_shared.v14.1.0/fix/fix_am
+	export OROGRAPHY_UF=$FIXGLOBAL/global_orography_uf.t$MTNRSL.grb
+        export MTNVAR=$FIXGLOBAL/global_mtnvar.t${MTNRSL}.f77
+        export OROGRAPHY=${FIXGLOBAL}/global_orography.t$MTNRSL.grb
+        export LONSPERLAT=${FIXGLOBAL}/global_lonsperlat.t$MTNRSL.txt
+        export LONSPERLAR=${FIXGLOBAL}/global_lonsperlat.t$MTNRSL.txt
+
+
 	#    export MTNVAR=$FIXGLOBAL/global_mtnvar.t${JCAP}.f77
 	############################################################
 	#

@@ -11,7 +11,7 @@
 echo `date` $0 test section begin
 
 #Define using STTP(ENS_SPS=.true.) or physics stochastic
-ENS_SPS=.true.
+ENS_SPS=.false.
 STOC_SPPT=.false.
 STOC_SHUM=.false.
 STOC_SKEB=.false.

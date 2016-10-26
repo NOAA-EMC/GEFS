@@ -5,7 +5,7 @@ echo `date` $0 `date -u` begin
 set -xa
 export PS4='$SECONDS + '
 date
-
+export MODEL_OUT_FORM=binarynemsiompiio
 ###########################################
 # Run gefs_config to get input parameters
 ###########################################
@@ -121,7 +121,7 @@ export CHGRESEXEC=$EXECgsm/global_chgres
 export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
 # RLW 20150622 test new version of post executable
 export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
-
+export SIGHDR=$nemsioget
 #echo in $0: POSTGPSH=$POSTGPSH
 #echo in $0: POSTGPEXEC=$POSTGPEXEC
 

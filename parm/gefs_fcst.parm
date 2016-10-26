@@ -3,6 +3,18 @@
 #
 # Forecast Input Variables
 #
+export SEMILAG=.true.
+export RANDOM_CLDS=.true.
+export ISUBC_LW=2
+export ISUBC_SW=2
+export CNVGWD=.true.
+export CAL_PRE=.true.
+export CNVCLD=.true.
+export REDRAG=.true.
+export HYBEDMF=.true.
+export DSPHEAT=.true.
+export USE_UFO=.true.
+
 export SEMILG=$SEMILG
 export DELTIM=$DELTIM
 export DTPHYS=$DTPHYS
@@ -90,6 +102,12 @@ FCSTVARS="$FCSTVARS,gg_tracers=.false.,lsm=1,tfiltc=0.85,liope=$LIOPE,IALB=$ialb
 FCSTVARS="$FCSTVARS,hybedmf=.true.,dspheat=.true.,cgwf=0.5,0.05"      #Ag,Ah Suru and Jongil
 
 FCSTVARS="$FCSTVARS,unphwind=$unphwind"      #June 3, 2015
+FCSTVARS="IEMS=1,ISOL=2,IAER=111,ICO2=2,nemsio_in=.true.,nemsio_out=.true.,sfcio_out=.false.,ras=.false.,zhao_mic=.true.,lsm=1,old_monin=.false.,imfshalcnv=2,imfdeepcnv=2,shal_cnv=.true.,shuff_lats_r=.false.,ialb=1,pre_rad=.false.,random_clds=.false.,iovr_lw=1,iovr_sw=1,IAER=111,ictm=1,nsout=0,use_ufo=.true.,ldiag3d=.false.,ncw=50,150,crtrh=0.85,0.85,0.85,flgmin=0.180,0.220,cnvgwd=.true.,cgwf=0.5,0.05,ctei_rm=10.0,10.0,mstrat=.false.,ccnorm=.false.,mom4ice=.false.,A2OI_OUT=.false.,CPLFLX=.false.,NGRID_A2OI=20,lgoc3d=.false.,trans_trac=.true.,cal_pre=.true.,bkgd_vdif_m=1.0,bkgd_vdif_h=1.0,bkgd_vdif_s=1.0,climate=.false.,psautco=6.0e-4,3.0e-4,prautco=1.0e-4,1.0e-4,evpco=2.0e-5,wminco=1.0e-5,1.0e-5,CCWF=1.0,1.0,dlqf=0.0,0.0,cdmbgwd=0.25,2.0,grid_aldata=.false.,semilag=.true.,redrag=.true.,hybedmf=.true.,dspheat=.true.,cnvcld=.true.,pdfcld=.false.,shcnvcw=.false.,isubc_lw=2,isubc_sw=2,fixtrc=.false.,.true.,.false.,gg_tracers=.false.,h2o_phys=.false.,isot=1,ivegsrc=1"
+
+DYNVARS="nemsio_in=.true.,nemsio_out=.true.,sigio_out=.false.,shuff_lats_a=.false.,hdif_fac=1.0,hdif_fac2=1.0,settls_dep3ds=.true.,settls_dep3dg=.true.,redgg_a=.true.,gg_tracers=.false.,sl_epsln=0.02,ref_temp=350.0,yhalo=10,phigs_d=60.0,ldfi_spect=.true.,cdamp=50000,2.0,k2o=32,ref_pres=100.0"
+
+TRACERVARS=" RI=286.05,   461.50, 173.2247,    0.0,,CPI=1004.6,   1846.0, 820.2391,    0.0,,"
+
 
 #Use STTP or SPPT
 export ENS_SPS=${ENS_SPS:-.true.}
