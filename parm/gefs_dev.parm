@@ -19,7 +19,6 @@ STOC_SKEB=.false.
 export npair=10
 export fhmax=384
 export fhmaxh=192
-export COMROOTp2=/u/Wen.Meng/noscrub2/gefs/com
 
 # for test, NOT USED FOR PRODUCTION
 
