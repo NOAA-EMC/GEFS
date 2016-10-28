@@ -133,7 +133,7 @@ echo COMROOTp2=$COMROOTp2
 eofCAT
     if [[ ${job_type} = parallel ]] ; then
      cat <<eofCAT >>$jobcontrol$SUBJOB
-module load ibmpe/1.3.0.10
+module load ibmpe
 eofCAT
     fi
 
