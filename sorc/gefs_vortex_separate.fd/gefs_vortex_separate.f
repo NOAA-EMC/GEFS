@@ -824,11 +824,77 @@ c*** v   ****
        print *,'datatype2=',ghead%gdatatype
        print *,'recname2=',gheadv%recname(1:3)
 
-      call nemsio_gfsgrd_open(gfile,trim(kfile),
-     &   'write',nopdpvv,ghead,gheadv,iret=ios)
-        if (ios /= 0) print *,'open nemsio write file,',trim(kfile)
-     &,                        'iret=',iret
+
+          CALL NEMSIO_OPEN(GFILE,TRIM(kfile),'write'
+     &,                    MODELNAME="GFS"
+     &,                    GDATATYPE="grib"
+     &,                    NFHOUR=ghead%NFHOUR
+     &,                    NFMINUTE=ghead%NFMINUTE
+     &,                    NFSECONDN=ghead%NFSECONDN
+     &,                    NFSECONDD=ghead%NFSECONDD
+     &,                    IDATE=ghead%IDATE
+     &,                    NREC=ghead%NREC
+     &,                    DIMX=ghead%DIMX
+     &,                    DIMY=ghead%DIMY
+     &,                    DIMZ=ghead%DIMZ
+     &,                    JCAP=ghead%JCAP
+     &,                    NTRAC=ghead%NTRAC
+     &,                    IDSL=ghead%IDSL
+     &,                    IDVC=ghead%IDVC
+     &,                    IDVM=ghead%IDVM
+     &,                    NCLDT=ghead%NCLDT
+     &,                    IDRT=ghead%IDRT
+     &,                    RECNAME=gheadV%RECNAME
+     &,                    RECLEVTYP=gheadV%RECLEVTYP
+     &,                    RECLEV=gheadV%RECLEV
+     &,                    VCOORD=gheadV%VCOORD
+     &,                    LON=gheadV%LON
+     &,                    LAT=gheadV%LAT
+     &,                    CPI=gheadV%CPI
+     &,                    RI=gheadV%RI
+     &,                    EXTRAMETA=ghead%EXTRAMETA
+     &,                    NMETAVARI=ghead%NMETAVARI
+     &,                    NMETAVARR=ghead%NMETAVARR
+     &,                    NMETAVARR8=ghead%NMETAVARR8
+     &,                    NMETAVARL=ghead%NMETAVARL
+     &,                    NMETAVARC=ghead%NMETAVARC
+     &,                    NMETAARYI=ghead%NMETAARYI
+     &,                    NMETAARYR=ghead%NMETAARYR
+     &,                    NMETAARYR8=ghead%NMETAARYR8
+     &,                    VARINAME=gheadV%VARINAME
+     &,                    VARIVAL=gheadV%VARIVAL
+     &,                    VARRNAME=gheadV%VARRNAME
+     &,                    VARRVAL=gheadV%VARRVAL
+     &,                    VARLNAME=gheadV%VARLNAME
+     &,                    VARLVAL=gheadV%VARLVAL
+     &,                    VARCNAME=gheadV%VARCNAME
+     &,                    VARCVAL=gheadV%VARCVAL
+     &,                    VARR8NAME=gheadV%VARR8NAME
+     &,                    VARR8VAL=gheadV%VARR8VAL
+     &,                    ARYINAME=gheadV%ARYINAME
+     &,                    ARYILEN=gheadV%ARYILEN
+     &,                    ARYIVAL=gheadV%ARYIVAL
+     &,                    ARYRNAME=gheadV%ARYRNAME
+     &,                    ARYRLEN=gheadV%ARYRLEN
+     &,                    ARYRVAL=gheadV%ARYRVAL
+     &,                    ARYR8NAME=gheadV%ARYR8NAME
+     &,                    ARYR8LEN=gheadV%ARYR8LEN
+     &,                    ARYR8VAL=gheadV%ARYR8VAL
+     &,                    IRET=ios)
+
+
+c      call nemsio_gfsgrd_open(gfile,trim(kfile),
+c     &   'write',nopdpvv,ghead,gheadv,iret=ios)
+c      if (ios /= 0) print *,'open nemsio write file,',trim(kfile)
+c     &,                        'iret=',iret
+
+c       ghead%gdatatype="bin4_be"
+c       gfile%file_endian="big_endian"
+
       call nemsio_gfs_wrtgrd(gfile,gdata,iret=ios)
+      call nemsio_gfs_axgrd(gdata)
+      call nemsio_gfs_axheadv(gheadv)
+
       if (ios /=0 ) then
        print *,'nemsio write grd,ret=',ios
       else

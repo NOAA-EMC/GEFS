@@ -98,6 +98,7 @@ export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
 export USHpost=${HOMEpost}/ush
 export EXECpost=${HOMEpost}/exec
 export FIXpost=${HOMEpost}/fix
+export FIXglobal=${HOMEgsm}/fix
 export PARMpost=${HOMEpost}/parm
 # PARMPOST (instead of PARMpost) is used in the post ush script
 export PARMPOST=${PARMpost}
@@ -173,10 +174,10 @@ if [ $GRIBVERSION = grib2 ]; then
 	export OUTTYP=${OUTTYP:-3}
 	export POSTAVBLFLD=$HOMEpost/parm/post_avblflds.xml
 	export POSTGRB2TBL=${POSTGRB2TBL:-/nwprod/lib/sorc/g2tmpl/params_grib2_tbl_new}
-	export CTLFILEGFSANL=${CTLFILEGFSANL:-$PARMpost/postcntrl_gefs_anl.xml}
+	export CTLFILEGFSANL=${CTLFILEGFSANL:-$PARMpost/postcntrl_gfs.xml}
 	export CTLFILEGFSF00=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
 	export CTLFILEGFS=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml}
-	export CTLFILEGFSANL1=${CTLFILEGFSANL:-$PARMpost/postcntrl_gefs_anl.xml}
+	export CTLFILEGFSANL1=${CTLFILEGFSANL:-$PARMpost/postcntrl_gfs.xml}
 	export CTLFILEGFSF001=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
 	export CTLFILEGFS1=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml}
 	export FLTFILEGFSANL=${FLTFILEGFSANL:-$PARMpost/postxconfig-NT-GEFS-ANL.txt}
@@ -255,7 +256,7 @@ case $FORECAST_SEGMENT in
 			(*) 
 				export DOANALYSIS=YES;
 				export SHOUR=00;
-				export FHINC_HIGH=3
+				export FHINC_HIGH=6
 				;;
 		esac # $SUBJOB
 		;;

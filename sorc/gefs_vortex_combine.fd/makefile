@@ -12,7 +12,7 @@ LDFLAGS =
 
 CMD =   gefs_vortex_combine
 PROFLIB =   
-FFLAGS=  -p   -r8 -O0 -i4  -traceback -assume byterecl   -list
+FFLAGS=  -p   -convert big_endian -r8 -O0 -i4  -traceback -assume byterecl   -list
 
 LDFLAGS= -openmp
 

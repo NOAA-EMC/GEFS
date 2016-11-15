@@ -31,7 +31,7 @@ CMD =   gefs_vortex_separate
 #-O2 -xHOST -assume byterecl -warn all -implicitnone -traceback -openmp
 #LDFLAGS=-l essl
 #FFLAGS= -openmp -p  -xHOST -r8 -O0 -i4 -traceback -assume byterecl  -I$(LIBSIGIO) -list
-FFLAGS=  -p   -r8 -O0 -i4 -traceback -assume byterecl 
+FFLAGS=  -p  -convert big_endian -r8 -O0 -i4 -traceback -assume byterecl 
 LDFLAGS = -mkl  -openmp
 
 # Lines from here on down should not need to be changed.  They are the

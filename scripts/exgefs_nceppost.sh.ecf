@@ -219,26 +219,26 @@ if [ $DOANALYSIS = YES ]; then
 
 		export pgm="postcheck"
 		ic=0
-		while [ $ic -le $SLEEP_LOOP_MAX ]; do
-			if test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix; then
-				break
-			else
-				ic=`expr $ic + 1`
-				sleep $SLEEP_INT
-			fi # test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix
+#		while [ $ic -le $SLEEP_LOOP_MAX ]; do
+#			if test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix; then
+#				break
+#			else
+#				ic=`expr $ic + 1`
+#				sleep $SLEEP_INT
+#			fi # test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix
 			###############################
 			# If we reach this point assume
 			# fcst job never reached restart 
 			# period and error exit
 			###############################
-			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-				msg="FATAL ERROR: $RUNMEM FORECAST MISSING for hour anl"
-				echo "`date`    $msg"
-				postmsg "$jlogfile" "$msg"
-				export err=9
-				err_chk
-			fi
-		done  #while [ $ic -le $SLEEP_LOOP_MAX ]
+#			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+#				msg="FATAL ERROR: $RUNMEM FORECAST MISSING for hour anl"
+#				echo "`date`    $msg"
+#				postmsg "$jlogfile" "$msg"
+#				export err=9
+#				err_chk
+#			fi
+#		done  #while [ $ic -le $SLEEP_LOOP_MAX ]
 
 		if test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix; then
 			# add new environmental variables for running new ncep post
@@ -279,14 +279,16 @@ if [ $DOANALYSIS = YES ]; then
 
 			rm -rf sigfile.anl$cfsuffix
 			ln -s $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix sigfile.anl$cfsuffix
+#		        ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf00$cfsuffix sigfile.anl$cfsuffix
 
 			####################################
 			# Create Master Post File 
 			####################################
 			export SIGINP=sigfile.anl$cfsuffix
+			export NEMSINP=sigfile.anl$cfsuffix
 			export SFCINPUT=
-			export FLXINP=/dev/null
-			export FLXIOUT=/dev/null
+			export FLXINP=
+			export FLXIOUT=
 			rm -rf pgbfout pgbifout
 			if [ $GRIBVERSION = grib1 ]; then
 				ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbanl$cfsuffix pgbfout
@@ -380,26 +382,26 @@ while (( fhr <= FHOUR )); do
 		export pgm="postcheck"
 		ic=1
 
-		while [ $ic -le $SLEEP_LOOP_MAX ]; do
-			if test -f $restart_file$fhr$cfsuffix; then
-				break
-			else
-				ic=`expr $ic + 1`
-				sleep $SLEEP_INT
-			fi # test -f $restart_file$fhr$cfsuffix
+#		while [ $ic -le $SLEEP_LOOP_MAX ]; do
+#			if test -f $restart_file$fhr$cfsuffix; then
+#				break
+#			else
+#				ic=`expr $ic + 1`
+#				sleep $SLEEP_INT
+#			fi # test -f $restart_file$fhr$cfsuffix
 			###############################
 			# If we reach this point assume
 			# fcst job never reached restart 
 			# period and error exit
 			###############################
-			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-				echo `date` forecast $RUNMEM missing for hour $fhr 
-				msg="$RUNMEM FORECAST MISSING for hour $fhr"
-				postmsg "$jlogfile" "$msg"
-				export err=9
-				err_chk
-			fi # [ $ic -eq $SLEEP_LOOP_MAX ]
-		done # [ $ic -le $SLEEP_LOOP_MAX ]
+#			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+#				echo `date` forecast $RUNMEM missing for hour $fhr 
+#				msg="$RUNMEM FORECAST MISSING for hour $fhr"
+#				postmsg "$jlogfile" "$msg"
+#				export err=9
+#				err_chk
+#			fi # [ $ic -eq $SLEEP_LOOP_MAX ]
+#		done # [ $ic -le $SLEEP_LOOP_MAX ]
 
 		msg="Starting post for fhr=$fhr"
 		postmsg "$jlogfile" "$msg"
@@ -469,6 +471,7 @@ while (( fhr <= FHOUR )); do
 #		cat $PostFlatFile
 
 		export SIGINP=sigfile.f$fhr$cfsuffix
+		export NEMSINP=sigfile.f$fhr$cfsuffix
 		export SFCINPUT=sfcfile.f$fhr$cfsuffix
 
 		export FLXINP=flxfile.f$fhr$cfsuffix
