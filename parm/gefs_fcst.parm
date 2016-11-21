@@ -105,8 +105,7 @@ STOC_VC=${STOC_VC:-.false.}
 # Stochastically Perturbed Physics Tendency
 
 if [[ $STOC_SPPT = .true. ]]; then
-	# export SPPT_hr=${SPPT_hr:-"0.8,0.4,0.2,0.08,0.04"}                                 # Amplitude of SPPT patterns
-	export SPPT_hr=${SPPT_hr:-"0,-999,-999,-999,-999"}                                 # Amplitude of SPPT patterns
+	export SPPT_hr=${SPPT_hr:-"0.8,0.4,0.2,0.08,0.04"}                                 # Amplitude of SPPT patterns
 	export SPPT_LOGIT_hr=${SPPT_LOGIT_hr:-.TRUE.}                                      # Do a logit transform to bound values from -1.0 to 1.0
 	export SPPT_TAU_hr=${SPPT_TAU_hr:-"2.16E4,2.592E5,2.592E6,7.776E6,3.1536E7"}       # Time scale in seconds
 	export SPPT_LSCALE_hr=${SPPT_LSCALE_hr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
