@@ -114,8 +114,7 @@ if [[ $STOC_SPPT = .true. ]]; then
 	export sppt_sigtop2_hr=${sppt_sigtop2_hr:-0.025}
 	# export ISEED_SPPT_hr=${ISEED_SPPT_hr:-10}                                          # random seed for sppt pattern
 
-	# export SPPT_lr=${SPPT_lr:-"0.8,0.4,0.2,0.08,0.04"}                                 # Amplitude of SPPT patterns
-	export SPPT_lr=${SPPT_lr:-"0,-999,-999,-999,-999"}                                 # Amplitude of SPPT patterns
+	export SPPT_lr=${SPPT_lr:-"0.8,0.4,0.2,0.08,0.04"}                                 # Amplitude of SPPT patterns
 	export SPPT_LOGIT_lr=${SPPT_LOGIT_lr:-.TRUE.}                                      # Do a logit transform to bound values from -1.0 to 1.0
 	export SPPT_TAU_lr=${SPPT_TAU_lr:-"2.16E4,2.592E5,2.592E6,7.776E6,3.1536E7"}       # Time scale in seconds
 	export SPPT_LSCALE_lr=${SPPT_LSCALE_lr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
@@ -134,15 +133,13 @@ fi
 # Stochastic Humidity
 
 if [[ $STOC_SHUM = .true. ]]; then
-	# export SHUM_hr=${SHUM_hr:-"0.006,-999.,-999.,-999,-999"}                           # Amplitude of SHUM patterns
-	export SHUM_hr=${SHUM_hr:-"0,-999.,-999.,-999,-999"}                               # Amplitude of SHUM patterns
+	export SHUM_hr=${SHUM_hr:-"0.006,-999.,-999.,-999,-999"}                           # Amplitude of SHUM patterns
 	export SHUM_TAU_hr=${SHUM_TAU_hr:-"2.16E4,1.728E5,6.912E5,7.776E6,3.1536E7"}       # Time scale in seconds
 	export SHUM_LSCALE_hr=${SHUM_LSCALE_hr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
 	export shum_sigefold_hr=${shum_sigefold_hr:-0.2}                                   # limit SHUM to the PBL (~bottom 200 mb)
 	export ISEED_SHUM_hr=${ISEED_SHUM_hr:-20}                                          # random seed for SHUM pattern
 
-	# export SHUM_lr=${SHUM_lr:-"0.006,-999.,-999.,-999,-999"}                           # Amplitude of SHUM patterns
-	export SHUM_lr=${SHUM_lr:-"0,-999.,-999.,-999,-999"}                               # Amplitude of SHUM patterns
+	export SHUM_lr=${SHUM_lr:-"0.006,-999.,-999.,-999,-999"}                           # Amplitude of SHUM patterns
 	export SHUM_TAU_lr=${SHUM_TAU_lr:-"2.16E4,1.728E5,6.912E5,7.776E6,3.1536E7"}       # Time scale in seconds
 	export SHUM_LSCALE_lr=${SHUM_LSCALE_lr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
 	export shum_sigefold_lr=${shum_sigefold_lr:-0.2}                                   # limit SHUM to the PBL (~bottom 200 mb)
@@ -158,8 +155,7 @@ fi
 # Stochastic Kinetic Energy Backscatter
 
 if [[ $STOC_SKEB = .true. ]]; then
-	# export SKEB_hr=${SKEB_hr:-"1.0,-999,-999,-999,-999"}                               # Amplitude of SPPT patterns
-	export SKEB_hr=${SKEB_hr:-"0,-999,-999,-999,-999"}                                 # Amplitude of SPPT patterns
+	export SKEB_hr=${SKEB_hr:-"1.0,-999,-999,-999,-999"}                               # Amplitude of SPPT patterns
 	export SKEB_TAU_hr=${SKEB_TAU_hr:-"2.164E4,1.728E5,2.592E6,7.776E6,3.1536E7"}      # Time scale in seconds
 	export SKEB_LSCALE_hr=${SKEB_LSCALE_hr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
 	export SKEB_VFILT_hr=${SKEB_VFILT_hr:-40}                                          # number of iterations of a 1-2-1 filter of the random pattern in the vertical
@@ -168,8 +164,7 @@ if [[ $STOC_SKEB = .true. ]]; then
 	export skeb_sigtop2_hr=${skeb_sigtop2_hr:-0.025}
 	# export ISEED_SKEB_hr=${ISEED_SKEB_hr:-30}
 
-	# export SKEB_lr=${SKEB_lr:-"1.0,-999,-999,-999,-999"}                               # Amplitude of SPPT patterns
-	export SKEB_lr=${SKEB_lr:-"0,-999,-999,-999,-999"}                                 # Amplitude of SPPT patterns
+	export SKEB_lr=${SKEB_lr:-"1.0,-999,-999,-999,-999"}                               # Amplitude of SPPT patterns
 	export SKEB_TAU_lr=${SKEB_TAU_lr:-"2.164E4,1.728E5,2.592E6,7.776E6,3.1536E7"}      # Time scale in seconds
 	export SKEB_LSCALE_lr=${SKEB_LSCALE_lr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
 	export SKEB_VFILT_lr=${SKEB_VFILT_lr:-40}                                          # number of iterations of a 1-2-1 filter of the random pattern in the vertical
