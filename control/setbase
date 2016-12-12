@@ -38,8 +38,7 @@ echo
   STMP=stmp
 if [[ $machl = t ]] || [[ $machl = g ]]; then
 export JOBQUEUE=dev2
-export HOMEDIR=/ensemble/save/Dingchen.Hou/RFC
-#export HOMEDIR=/ensemble/save/Bing.Fu/RFC     #temporay setting
+export HOMEDIR=/ensemble/save/emc.enspara/RFC
  if [[ $JOBQUEUE = dev ]]; then
   PTMP=ptmpd2
   STMP=stmpd2
@@ -56,8 +55,7 @@ if [[ $machl = s ]] || [[ $machl = l ]]; then
   PTMP=gpfs/hps/ptmp
   STMP=gpfs/hps/ptmp
 export JOBQUEUE=dev
-export HOMEDIR=/gpfs/hps/emc/ensemble/save/Dingchen.Hou/TAGS
-#export HOMEDIR=/gpfs/hps/emc/ensemble/save/Bing.Fu/TAGS       #temporay setting
+export HOMEDIR=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC
 fi
 
 if [[ $LOGNAME = glopara ]]; then
@@ -109,7 +107,7 @@ else
 #For WCOSS 
 if [[ $machl = t ]] || [[ $machl = g ]]; then
   group=ensemble
-  group=`pwd|cut -d'/' -f2`
+#  group=`pwd|cut -d'/' -f2`
   echo group=$group
   export basesource=/$group/save/$LOGNAME/SVN/$expid
   export basebin=$basesource/nw$envir/control
@@ -125,7 +123,7 @@ fi
 if [[ $machl = s ]] || [[ $machl = l ]]; then
   group=ensemble
   export group=gpfs/hps/emc/$group
-  export basesource=/$group/save/$LOGNAME/GEFS/$expid
+  export basesource=/$group/save/$LOGNAME/SVN/$expid
   export basebin=$basesource/nw$envir/control
   export baseoutput=/$PTMP/$LOGNAME/o/$expid
   export basetmp=/$PTMP/$LOGNAME/o/$expid
