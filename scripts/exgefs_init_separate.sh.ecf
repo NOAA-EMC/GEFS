@@ -229,13 +229,25 @@ if (( nhrpair < npair )); then
 		#   export OROGRAPHY_UF=${OROGRAPHY_UF:-${FIXGLOBAL}/global_orography_uf.t${JCAP}.grb}
 		#   export SLMASK=${SLMASK:-${FIXGLOBAL}/global_slmask.t${JCAP}.grb}
 		#   export LONSPERLAT=${LONSPERLAT:-${FIXGLOBAL}/global_lonsperlat.t${JCAP}.txt}
-		export OROGRAPHY=${OROGRAPHY:-${FIXgsm}/global_orography.t${JCAP}.$LONB.$LATB.grb}
-		export OROGRAPHY_UF=${OROGRAPHY_UF:-${FIXgsm}/global_orography_uf.t${JCAP}.$LONB.$LATB.grb}
-		export SLMASK=${SLMASK:-${FIXgsm}/global_slmask.t${JCAP}.$LONB.$LATB.grb}
-		export LONSPERLAT=${LONSPERLAT:-${FIXgsm}/global_lonsperlat.t${JCAP}.$LONB.$LATB.txt}
-		# The SST and SEA_ICE Climate fix file:
-		export FNTSFC=${FNTSFC:-$FIXgsm/RTGSST.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
-		export FNAISC=${FNAISC:-$FIXgsm/CFSR.SEAICE.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
+
+                export OROGRAPHY=${OROGRAPHY:-${FIXgsm}/global_orography.t${JCAP}.$LONB.$LATB.rg.grb}
+                export OROGRAPHY_UF=${OROGRAPHY_UF:-${FIXgsm}/global_orography_uf.t${JCAP}.$LONB.$LATB.rg.grb}
+                export SLMASK=${SLMASK:-${FIXgsm}/global_slmask.t${JCAP}.$LONB.$LATB.rg.grb}
+                export LONSPERLAT=${LONSPERLAT:-${FIXgsm}/global_lonsperlat.t${JCAP}.$LONB.$LATB.txt}
+                # The SST and SEA_ICE Climate fix file:
+                export FNTSFC=${FNTSFC:-$FIXgsm/RTGSST.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
+                export FNAISC=${FNAISC:-$FIXgsm/CFSR.SEAICE.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
+                export SOILTYPE_INP=statsgo
+                export SOILTYPE_OUT=statsgo
+                export VEGTYPE_INP=igbp
+                export VEGTYPE_OUT=igbp
+                export FNVEGC=${FNVEGC:-${FIXgsm}/global_vegfrac.0.144.decpercent.grb}
+                export O3CLIM=${O3CLIM:-${FIXgsm}/global_o3clim.txt}
+                export O3FORC=${O3FORC:-${FIXgsm}/global_o3prdlos.f77}
+                export H2OFORC=${H2OFORC:-${FIXgsm}global_h2o_pltc.f77}
+                export FNALBC2=$FIXgsm/global_albedo4.1x1.grb
+                export FNZORC=igbp
+
 		$chgresush >>$pgmout
 		echo `date` timing lr chgres after
 	else
@@ -268,7 +280,7 @@ if (( nhrpair > 0 )); then
 	export NVCOORD=$IDVC
         export nopdpvv=$nopdpvv
         export rdgrid=.true.
-	export CHGRESVARS="use_ufo=.true.,rdgrid=$rdgrid,idvc=$idvc,NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0,GRDFMT='bin4',nopdpvv=$nopdpvv"
+	export CHGRESVARS="use_ufo=.true.,rdgrid=$rdgrid,idvc=$idvc,NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0,nopdpvv=$nopdpvv"
 	if (( IDVC == 1 )); then
 		export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
 	fi
@@ -330,13 +342,24 @@ if (( nhrpair > 0 )); then
 		#   export OROGRAPHY_UF=${OROGRAPHY_UF:-${FIXGLOBAL}/global_orography_uf.t${JCAP}.grb}
 		#   export SLMASK=${SLMASK:-${FIXGLOBAL}/global_slmask.t${JCAP}.grb}
 		#   export LONSPERLAT=${LONSPERLAT:-${FIXGLOBAL}/global_lonsperlat.t${JCAP}.txt}
-		export OROGRAPHY=${OROGRAPHY:-${FIXgsm}/global_orography.t${JCAP}.$LONB.$LATB.grb}
-		export OROGRAPHY_UF=${OROGRAPHY_UF:-${FIXgsm}/global_orography_uf.t${JCAP}.$LONB.$LATB.grb}
-		export SLMASK=${SLMASK:-${FIXgsm}/global_slmask.t${JCAP}.$LONB.$LATB.grb}
-		export LONSPERLAT=${LONSPERLAT:-${FIXgsm}/global_lonsperlat.t${JCAP}.$LONB.$LATB.txt}
-		# The SST and SEA_ICE Climate fix file:
-		export FNTSFC=${FNTSFC:-$FIXgsm/RTGSST.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
-		export FNAISC=${FNAISC:-$FIXgsm/CFSR.SEAICE.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
+                export OROGRAPHY=${OROGRAPHY:-${FIXgsm}/global_orography.t${JCAP}.$LONB.$LATB.rg.grb}
+                export OROGRAPHY_UF=${OROGRAPHY_UF:-${FIXgsm}/global_orography_uf.t${JCAP}.$LONB.$LATB.rg.grb}
+                export SLMASK=${SLMASK:-${FIXgsm}/global_slmask.t${JCAP}.$LONB.$LATB.rg.grb}
+                export LONSPERLAT=${LONSPERLAT:-${FIXgsm}/global_lonsperlat.t${JCAP}.$LONB.$LATB.txt}
+                # The SST and SEA_ICE Climate fix file:
+                export FNTSFC=${FNTSFC:-$FIXgsm/RTGSST.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
+                export FNAISC=${FNAISC:-$FIXgsm/CFSR.SEAICE.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
+                export SOILTYPE_INP=statsgo
+                export SOILTYPE_OUT=statsgo
+                export VEGTYPE_INP=igbp
+                export VEGTYPE_OUT=igbp
+                export FNVEGC=${FNVEGC:-${FIXgsm}/global_vegfrac.0.144.decpercent.grb}
+                export O3CLIM=${O3CLIM:-${FIXgsm}/global_o3clim.txt}
+                export O3FORC=${O3FORC:-${FIXgsm}/global_o3prdlos.f77}
+                export H2OFORC=${H2OFORC:-${FIXgsm}global_h2o_pltc.f77}
+		export FNALBC2=$FIXgsm/global_albedo4.1x1.grb
+		export FNZORC=igbp
+
 		$chgresush >>$pgmout
 		echo `date` timing hr chgres after
 	else

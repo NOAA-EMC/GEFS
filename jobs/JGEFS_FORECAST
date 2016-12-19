@@ -20,13 +20,12 @@ export nemsioget=$basesource/nwdev/util/exec/nemsio_get
 export PARM_NGAC=/gpfs/tp1/nco/ops/nwprod/ngac.v1.0.2/parm
 export APRUN=${gefsmpexec:-mpirun.lsf}
 export DOIAU=NO
-export OROGRAPHY_UF=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/q3fy17_super/global_shared.v14.1.0/fix/fix_am/global_orography_uf.t574.1152.576.grb
 export FIXGLOBAL=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/q3fy17_super/global_shared.v14.1.0/fix/fix_am
                 export MTNVAR=$FIXGLOBAL/global_mtnvar.t${MTNRSL}.f77
                 export OROGRAPHY=${FIXGLOBAL}/global_orography.t$MTNRSL.grb
                 export LONSPERLAT=${FIXGLOBAL}/global_lonsperlat.t$MTNRSL.txt
                 export LONSPERLAR=${FIXGLOBAL}/global_lonsperlat.t$MTNRSL.txt
-#                export OROGRAPHY_UF=${FIXGLOBAL}/global_orography_uf.t$MTNRSLUF.grb
+                export OROGRAPHY_UF=${FIXGLOBAL}/global_orography_uf.t$MTNRSL.grb
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -251,6 +250,78 @@ MEMBER_NAMES=$memberlist
 # Forecast Input Variables
 #
 . $PARMgefs/gefs_fcst.parm
+
+if [[ $FORECAST_SEGMENT = hr ]] ; then
+
+if [[ $STOC_SPPT = .true. ]] ; then
+export SPPT=$SPPT_hr
+export ISEED_SPPT=$ISEED_SPPT_hr
+export SPPT_LOGIT=$SPPT_LOGIT_hr
+export SPPT_TAU=$SPPT_TAU_hr
+export SPPT_LSCALE=$SPPT_LSCALE_hr
+fi
+
+if [[ $STOC_SHUM = .true. ]] ; then
+export SHUM=$SHUM_hr
+export ISEED_SHUM=$ISEED_SHUM_hr
+export SHUM_TAU=$SHUM_TAU_hr
+export SHUM_LSCALE=$SHUM_LSCALE_hr
+fi
+
+if [[ $STOC_SKEB = .true. ]] ; then
+export SKEB=$SKEB_hr
+export ISEED_SKEB=$ISEED_SKEB_hr
+export SKEB_TAU=$SKEB_TAU_hr
+export SKEB_LSCALE=$SKEB_LSCALE_hr
+export SKEB_VFILT=$SKEB_VFILT_hr
+export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr
+fi
+
+if [[ $STOC_VC = .true. ]] ; then
+export VC=$VC_hr
+export ISEED_VC=$ISEED_VC_hr
+export VCAMP=$VCAMP_hr
+export VC_TAU=$VC_TAU_hr
+export VC_LSCALE=$VC_LSCALE_hr
+export PHYVARS=$FCSTVARS
+fi
+
+else
+
+if [[ $STOC_SPPT = .true. ]] ; then
+export SPPT=$SPPT_lr
+export ISEED_SPPT=$ISEED_SPPT_lr
+export SPPT_LOGIT=$SPPT_LOGIT_lr
+export SPPT_TAU=$SPPT_TAU_lr
+export SPPT_LSCALE=$SPPT_LSCALE_lr
+fi
+
+if [[ $STOC_SHUM = .true. ]] ; then
+export SHUM=$SHUM_lr
+export ISEED_SHUM=$ISEED_SHUM_lr
+export SHUM_TAU=$SHUM_TAU_lr
+export SHUM_LSCALE=$SHUM_LSCALE_lr
+fi
+
+if [[ $STOC_SKEB = .true. ]] ; then
+export SKEB=$SKEB_lr
+export ISEED_SKEB=$ISEED_SKEB_lr
+export SKEB_TAU=$SKEB_TAU_lr
+export SKEB_LSCALE=$SKEB_LSCALE_lr
+export SKEB_VFILT=$SKEB_VFILT_lr
+export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_lr
+fi
+
+if [[ $STOC_VC = .true. ]] ; then
+export VC=$VC_lr
+export ISEED_VC=$ISEED_VC_lr
+export VCAMP=$VCAMP_lr
+export VC_TAU=$VC_TAU_lr
+export VC_LSCALE=$VC_LSCALE_lr
+export PHYVARS=$FCSTVARS
+fi
+
+fi
 
 # Output File Names
 if [[ $RUN_CONCURRENT = yes ]]; then
@@ -569,14 +640,14 @@ if [[ $RUN_CONCURRENT = yes ]]; then
 	eval echo SIGI=$SIGI
 	export JCAP=$(eval $SIGHDR $SIGI jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
 	export LEVS=$(eval $SIGHDR $SIGI levs |grep -i "levs" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
-	export LONB=$(eval $SIGHDR $SIGI latb |grep -i "latb" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
-	export LATB=$(eval $SIGHDR $SIGI lonb |grep -i "lonb" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export LONB=$(eval $SIGHDR $SIGI lonb |grep -i "lonb" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export LATB=$(eval $SIGHDR $SIGI latb |grep -i "latb" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
 	export HOUR=$(eval $SIGHDR $SIGI nfhour |grep -i "nfhour" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
 else
 	export JCAP=$($SIGHDR $SIGI jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
 	export LEVS=$($SIGHDR $SIGI levs |grep -i "levs" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
-	export LONB=$($SIGHDR $SIGI latb |grep -i "latb" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
-	export LATB=$($SIGHDR $SIGI lonb |grep -i "lonb" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export LONB=$($SIGHDR $SIGI lonb |grep -i "lonb" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export LATB=$($SIGHDR $SIGI latb |grep -i "latb" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
 	export HOUR=$($SIGHDR $SIGI nfhour |grep -i "nfhour" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
 fi # [[ $RUN_CONCURRENT = yes ]]
 

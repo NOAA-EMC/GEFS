@@ -60,7 +60,7 @@ export JOBQUEUE=dev
 #export JOBQUEUE=debug
 #export HOMEDIR=/gpfs/hps/emc/ensemble/save/Dingchen.Hou/TAGS
 #export HOMEDIR=/gpfs/hps/emc/ensemble/save/Bing.Fu/TAGS       #temporay setting
-export HOMEDIR=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/q3fy17_super      #temporay setting
+export HOMEDIR=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/q3fy17_eta      #temporay setting
 #export HOMEDIR=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/nemsgfs/q3fy17_final      #temporay setting
 export CRAYDIR=/gpfs/td1/emc
 fi

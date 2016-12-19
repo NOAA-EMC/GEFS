@@ -256,7 +256,7 @@ case $FORECAST_SEGMENT in
 			(*) 
 				export DOANALYSIS=YES;
 				export SHOUR=00;
-				export FHINC_HIGH=6
+				export FHINC_HIGH=3
 				;;
 		esac # $SUBJOB
 		;;

@@ -141,11 +141,11 @@ if [[ $STOC_SPPT = .true. ]]; then
 	export sppt_sigtop2_lr=${sppt_sigtop2_lr:-0.025}
 	# export ISEED_SPPT_lr=${ISEED_SPPT_lr:-10}
 
-	if [[ $FORECAST_SEGMENT = hr ]]; then 
-		FCSTVARS="$FCSTVARS,SPPT=$SPPT_hr,SPPT_TAU=$SPPT_TAU_hr,SPPT_LSCALE=$SPPT_LSCALE_hr,SPPT_LOGIT=$SPPT_LOGIT_hr,sppt_sigtop1=$sppt_sigtop1_hr,sppt_sigtop2=$sppt_sigtop2_hr,sppt_sfclimit=$sppt_sfclimit_hr"
-	else
-		FCSTVARS="$FCSTVARS,SPPT=$SPPT_lr,SPPT_TAU=$SPPT_TAU_lr,SPPT_LSCALE=$SPPT_LSCALE_lr,SPPT_LOGIT=$SPPT_LOGIT_lr,sppt_sigtop1=$sppt_sigtop1_lr,sppt_sigtop2=$sppt_sigtop2_lr,sppt_sfclimit=$sppt_sfclimit_lr"
-	fi
+#	if [[ $FORECAST_SEGMENT = hr ]]; then 
+#		FCSTVARS="$FCSTVARS,SPPT=$SPPT_hr,SPPT_TAU=$SPPT_TAU_hr,SPPT_LSCALE=$SPPT_LSCALE_hr,SPPT_LOGIT=$SPPT_LOGIT_hr,sppt_sigtop1=$sppt_sigtop1_hr,sppt_sigtop2=$sppt_sigtop2_hr,sppt_sfclimit=$sppt_sfclimit_hr"
+#	else
+#		FCSTVARS="$FCSTVARS,SPPT=$SPPT_lr,SPPT_TAU=$SPPT_TAU_lr,SPPT_LSCALE=$SPPT_LSCALE_lr,SPPT_LOGIT=$SPPT_LOGIT_lr,sppt_sigtop1=$sppt_sigtop1_lr,sppt_sigtop2=$sppt_sigtop2_lr,sppt_sfclimit=$sppt_sfclimit_lr"
+#	fi
 fi
 
 # Stochastic Humidity
@@ -163,11 +163,11 @@ if [[ $STOC_SHUM = .true. ]]; then
 	export shum_sigefold_lr=${shum_sigefold_lr:-0.2}                                   # limit SHUM to the PBL (~bottom 200 mb)
 	export ISEED_SHUM_lr=${ISEED_SHUM_lr:-20}
 
-	if [[ $FORECAST_SEGMENT = hr ]]; then 
-		FCSTVARS="$FCSTVARS,SHUM=$SHUM_hr,SHUM_TAU=$SHUM_TAU_hr,SHUM_LSCALE=$SHUM_LSCALE_hr,shum_sigefold=$shum_sigefold_hr"
-	else
-		FCSTVARS="$FCSTVARS,SHUM=$SHUM_lr,SHUM_TAU=$SHUM_TAU_lr,SHUM_LSCALE=$SHUM_LSCALE_lr,shum_sigefold=$shum_sigefold_lr"
-	fi
+#	if [[ $FORECAST_SEGMENT = hr ]]; then 
+#		FCSTVARS="$FCSTVARS,SHUM=$SHUM_hr,SHUM_TAU=$SHUM_TAU_hr,SHUM_LSCALE=$SHUM_LSCALE_hr,shum_sigefold=$shum_sigefold_hr"
+#	else
+#		FCSTVARS="$FCSTVARS,SHUM=$SHUM_lr,SHUM_TAU=$SHUM_TAU_lr,SHUM_LSCALE=$SHUM_LSCALE_lr,shum_sigefold=$shum_sigefold_lr"
+#	fi
 fi
 
 # Stochastic Kinetic Energy Backscatter
@@ -191,11 +191,11 @@ if [[ $STOC_SKEB = .true. ]]; then
 	export skeb_sigtop2_lr=${skeb_sigtop2_lr:-0.025}
 	# export ISEED_SKEB_lr=${ISEED_SKEB_lr:-30}
 
-	if [[ $FORECAST_SEGMENT = hr ]]; then 
-		FCSTVARS="$FCSTVARS,SKEB=$SKEB_hr,SKEB_TAU=$SKEB_TAU_hr,SKEB_LSCALE=$SKEB_LSCALE_hr,SKEB_VFILT=$SKEB_VFILT_hr,SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr,skeb_sigtop1=$skeb_sigtop1_hr,skeb_sigtop2=$skeb_sigtop2_hr"
-	else
-		FCSTVARS="$FCSTVARS,SKEB=$SKEB_lr,SKEB_TAU=$SKEB_TAU_lr,SKEB_LSCALE=$SKEB_LSCALE_lr,SKEB_VFILT=$SKEB_VFILT_lr,SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_lr,skeb_sigtop1=$skeb_sigtop1_lr,skeb_sigtop2=$skeb_sigtop2_lr"
-	fi
+#	if [[ $FORECAST_SEGMENT = hr ]]; then 
+#		FCSTVARS="$FCSTVARS,SKEB=$SKEB_hr,SKEB_TAU=$SKEB_TAU_hr,SKEB_LSCALE=$SKEB_LSCALE_hr,SKEB_VFILT=$SKEB_VFILT_hr,SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr,skeb_sigtop1=$skeb_sigtop1_hr,skeb_sigtop2=$skeb_sigtop2_hr"
+#	else
+#		FCSTVARS="$FCSTVARS,SKEB=$SKEB_lr,SKEB_TAU=$SKEB_TAU_lr,SKEB_LSCALE=$SKEB_LSCALE_lr,SKEB_VFILT=$SKEB_VFILT_lr,SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_lr,skeb_sigtop1=$skeb_sigtop1_lr,skeb_sigtop2=$skeb_sigtop2_lr"
+#	fi
 fi
 
 # Vorticity Confinement
@@ -217,11 +217,11 @@ if [[ $STOC_VC = .true. ]]; then
 	export VC_LSCALE_lr=${VC_LSCALE_lr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}      # Length Scale in meters
 	# export ISEED_VC_lr=${ISEED_VC_lr:-30}                                              # random seed for vorticity confinement pattern
 
-	if [[ $FORECAST_SEGMENT = hr ]]; then 
-		FCSTVARS="$FCSTVARS,VC=$VC_hr,VC_TAU=$VC_TAU_hr,VC_LSCALE=$VC_LSCALE_hr,VCAMP=$VCAMP_hr"
-	else
-		FCSTVARS="$FCSTVARS,VC=$VC_lr,VC_TAU=$VC_TAU_lr,VC_LSCALE=$VC_LSCALE_lr,VCAMP=$VCAMP_lr"
-	fi
+#	if [[ $FORECAST_SEGMENT = hr ]]; then 
+#		FCSTVARS="$FCSTVARS,VC=$VC_hr,VC_TAU=$VC_TAU_hr,VC_LSCALE=$VC_LSCALE_hr,VCAMP=$VCAMP_hr"
+#	else
+#		FCSTVARS="$FCSTVARS,VC=$VC_lr,VC_TAU=$VC_TAU_lr,VC_LSCALE=$VC_LSCALE_lr,VCAMP=$VCAMP_lr"
+#	fi
 fi
 
 
