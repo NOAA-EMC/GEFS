@@ -112,7 +112,7 @@ if [[ $STOC_SPPT = .true. ]]; then
 	export sppt_sfclimit_hr=${sppt_sfclimit_hr:-.true.}                                # damp amplitude of SPPT at surface
 	export sppt_sigtop1_hr=${sppt_sigtop1_hr:-0.1}                                     # taper SPPT pattern to zero between 0.1 and 0.025 sigma
 	export sppt_sigtop2_hr=${sppt_sigtop2_hr:-0.025}
-	# export ISEED_SPPT_hr=${ISEED_SPPT_hr:-10}                                          # random seed for sppt pattern
+	export ISEED_SPPT_hr=${ISEED_SPPT_hr:-"11${PDY}${cyc},12${PDY}${cyc},13${PDY}${cyc},14${PDY}${cyc},15${PDY}${cyc}"}                              # random seed for sppt pattern
 
 	export SPPT_lr=${SPPT_lr:-"0.8,0.4,0.2,0.08,0.04"}                                 # Amplitude of SPPT patterns
 	export SPPT_LOGIT_lr=${SPPT_LOGIT_lr:-.TRUE.}                                      # Do a logit transform to bound values from -1.0 to 1.0
@@ -121,12 +121,12 @@ if [[ $STOC_SPPT = .true. ]]; then
 	export sppt_sfclimit_lr=${sppt_sfclimit_lr:-.true.}                                # damp amplitude of SPPT at surface
 	export sppt_sigtop1_lr=${sppt_sigtop1_lr:-0.1}                                     # taper SPPT pattern to zero between 0.1 and 0.025 sigma
 	export sppt_sigtop2_lr=${sppt_sigtop2_lr:-0.025}
-	# export ISEED_SPPT_lr=${ISEED_SPPT_lr:-10}
+	export ISEED_SPPT_lr=${ISEED_SPPT_lr:-"16${PDY}${cyc},17${PDY}${cyc},18${PDY}${cyc},19${PDY}${cyc},10${PDY}${cyc}"}
 
 	if [[ $FORECAST_SEGMENT = hr ]]; then 
-		FCSTVARS="$FCSTVARS,SPPT=$SPPT_hr,SPPT_TAU=$SPPT_TAU_hr,SPPT_LSCALE=$SPPT_LSCALE_hr,SPPT_LOGIT=$SPPT_LOGIT_hr,sppt_sigtop1=$sppt_sigtop1_hr,sppt_sigtop2=$sppt_sigtop2_hr,sppt_sfclimit=$sppt_sfclimit_hr"
+		FCSTVARS="$FCSTVARS,SPPT=$SPPT_hr,SPPT_TAU=$SPPT_TAU_hr,SPPT_LSCALE=$SPPT_LSCALE_hr,SPPT_LOGIT=$SPPT_LOGIT_hr,sppt_sigtop1=$sppt_sigtop1_hr,sppt_sigtop2=$sppt_sigtop2_hr,sppt_sfclimit=$sppt_sfclimit_hr,ISEED_SPPT=$ISEED_SPPT_hr"
 	else
-		FCSTVARS="$FCSTVARS,SPPT=$SPPT_lr,SPPT_TAU=$SPPT_TAU_lr,SPPT_LSCALE=$SPPT_LSCALE_lr,SPPT_LOGIT=$SPPT_LOGIT_lr,sppt_sigtop1=$sppt_sigtop1_lr,sppt_sigtop2=$sppt_sigtop2_lr,sppt_sfclimit=$sppt_sfclimit_lr"
+		FCSTVARS="$FCSTVARS,SPPT=$SPPT_lr,SPPT_TAU=$SPPT_TAU_lr,SPPT_LSCALE=$SPPT_LSCALE_lr,SPPT_LOGIT=$SPPT_LOGIT_lr,sppt_sigtop1=$sppt_sigtop1_lr,sppt_sigtop2=$sppt_sigtop2_lr,sppt_sfclimit=$sppt_sfclimit_lr,ISEED_SPPT=$ISEED_SPPT_lr"
 	fi
 fi
 
@@ -137,18 +137,18 @@ if [[ $STOC_SHUM = .true. ]]; then
 	export SHUM_TAU_hr=${SHUM_TAU_hr:-"2.16E4,1.728E5,6.912E5,7.776E6,3.1536E7"}       # Time scale in seconds
 	export SHUM_LSCALE_hr=${SHUM_LSCALE_hr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
 	export shum_sigefold_hr=${shum_sigefold_hr:-0.2}                                   # limit SHUM to the PBL (~bottom 200 mb)
-	export ISEED_SHUM_hr=${ISEED_SHUM_hr:-20}                                          # random seed for SHUM pattern
+	export ISEED_SHUM_hr=${ISEED_SHUM_hr:-2${PDY}${cyc}}                             # random seed for SHUM pattern
 
 	export SHUM_lr=${SHUM_lr:-"0.006,-999.,-999.,-999,-999"}                           # Amplitude of SHUM patterns
 	export SHUM_TAU_lr=${SHUM_TAU_lr:-"2.16E4,1.728E5,6.912E5,7.776E6,3.1536E7"}       # Time scale in seconds
 	export SHUM_LSCALE_lr=${SHUM_LSCALE_lr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
 	export shum_sigefold_lr=${shum_sigefold_lr:-0.2}                                   # limit SHUM to the PBL (~bottom 200 mb)
-	export ISEED_SHUM_lr=${ISEED_SHUM_lr:-20}
+	export ISEED_SHUM_lr=${ISEED_SHUM_lr:-7${PDY}${cyc}}
 
 	if [[ $FORECAST_SEGMENT = hr ]]; then 
-		FCSTVARS="$FCSTVARS,SHUM=$SHUM_hr,SHUM_TAU=$SHUM_TAU_hr,SHUM_LSCALE=$SHUM_LSCALE_hr,shum_sigefold=$shum_sigefold_hr"
+		FCSTVARS="$FCSTVARS,SHUM=$SHUM_hr,SHUM_TAU=$SHUM_TAU_hr,SHUM_LSCALE=$SHUM_LSCALE_hr,shum_sigefold=$shum_sigefold_hr,ISEED_SHUM=$ISEED_SHUM_hr"
 	else
-		FCSTVARS="$FCSTVARS,SHUM=$SHUM_lr,SHUM_TAU=$SHUM_TAU_lr,SHUM_LSCALE=$SHUM_LSCALE_lr,shum_sigefold=$shum_sigefold_lr"
+		FCSTVARS="$FCSTVARS,SHUM=$SHUM_lr,SHUM_TAU=$SHUM_TAU_lr,SHUM_LSCALE=$SHUM_LSCALE_lr,shum_sigefold=$shum_sigefold_lr,ISEED_SHUM=$ISEED_SHUM_lr"
 	fi
 fi
 
@@ -162,7 +162,7 @@ if [[ $STOC_SKEB = .true. ]]; then
 	export SKEB_DISS_SMOOTH_hr=${SKEB_DISS_SMOOTH_hr:-12}                              # number of iterations of smoothing the dissipation estimate in the horizontal
 	export skeb_sigtop1_hr=${skeb_sigtop1_hr:-0.1}                                     # taper SKEB pattern to zero between 0.1 and 0.025 sigma
 	export skeb_sigtop2_hr=${skeb_sigtop2_hr:-0.025}
-	# export ISEED_SKEB_hr=${ISEED_SKEB_hr:-30}
+	export ISEED_SKEB_hr=${ISEED_SKEB_hr:-3${PDY}${cyc}}
 
 	export SKEB_lr=${SKEB_lr:-"1.0,-999,-999,-999,-999"}                               # Amplitude of SPPT patterns
 	export SKEB_TAU_lr=${SKEB_TAU_lr:-"2.164E4,1.728E5,2.592E6,7.776E6,3.1536E7"}      # Time scale in seconds
@@ -171,12 +171,12 @@ if [[ $STOC_SKEB = .true. ]]; then
 	export SKEB_DISS_SMOOTH_lr=${SKEB_DISS_SMOOTH_lr:-12}                              # number of iterations of smoothing the dissipation estimate in the horizontal
 	export skeb_sigtop1_lr=${skeb_sigtop1_lr:-0.1}                                     # taper SKEB pattern to zero between 0.1 and 0.025 sigma
 	export skeb_sigtop2_lr=${skeb_sigtop2_lr:-0.025}
-	# export ISEED_SKEB_lr=${ISEED_SKEB_lr:-30}
+	export ISEED_SKEB_lr=${ISEED_SKEB_lr:-8${PDY}${cyc}}
 
 	if [[ $FORECAST_SEGMENT = hr ]]; then 
-		FCSTVARS="$FCSTVARS,SKEB=$SKEB_hr,SKEB_TAU=$SKEB_TAU_hr,SKEB_LSCALE=$SKEB_LSCALE_hr,SKEB_VFILT=$SKEB_VFILT_hr,SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr,skeb_sigtop1=$skeb_sigtop1_hr,skeb_sigtop2=$skeb_sigtop2_hr"
+		FCSTVARS="$FCSTVARS,SKEB=$SKEB_hr,SKEB_TAU=$SKEB_TAU_hr,SKEB_LSCALE=$SKEB_LSCALE_hr,SKEB_VFILT=$SKEB_VFILT_hr,SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr,skeb_sigtop1=$skeb_sigtop1_hr,skeb_sigtop2=$skeb_sigtop2_hr,ISEED_SKEB=$ISEED_SKEB_hr"
 	else
-		FCSTVARS="$FCSTVARS,SKEB=$SKEB_lr,SKEB_TAU=$SKEB_TAU_lr,SKEB_LSCALE=$SKEB_LSCALE_lr,SKEB_VFILT=$SKEB_VFILT_lr,SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_lr,skeb_sigtop1=$skeb_sigtop1_lr,skeb_sigtop2=$skeb_sigtop2_lr"
+		FCSTVARS="$FCSTVARS,SKEB=$SKEB_lr,SKEB_TAU=$SKEB_TAU_lr,SKEB_LSCALE=$SKEB_LSCALE_lr,SKEB_VFILT=$SKEB_VFILT_lr,SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_lr,skeb_sigtop1=$skeb_sigtop1_lr,skeb_sigtop2=$skeb_sigtop2_lr,ISEED_SKEB=$ISEED_SKEB_lr"
 	fi
 fi
 
@@ -189,7 +189,7 @@ if [[ $STOC_VC = .true. ]]; then
 	export VCAMP_hr=${VCAMP_hr:-"0.0,-999,-999,-999,-999"}                             # Amplitude of VC patterns (random part)
 	export VC_TAU_hr=${VC_TAU_hr:-"2.16E4,1.728E5,2.592E6,7.776E6,3.1536E7"}           # Time scale in seconds
 	export VC_LSCALE_hr=${VC_LSCALE_hr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}      # Length Scale in meters
-	# export ISEED_VC_hr=${ISEED_VC_hr:-30}                                              # random seed for vorticity confinement pattern
+	export ISEED_VC_hr=${ISEED_VC_hr:-4${PDY}${cyc}}                                 # random seed for vorticity confinement pattern
 
 	export VC_lr=${VC_lr:-0.00}                                                        # Amplitude of Determinist Vorticty confinement
 	export VC_sigtop1_lr=${VC_sigtop1_lr:-0.15}
@@ -197,12 +197,12 @@ if [[ $STOC_VC = .true. ]]; then
 	export VCAMP_lr=${VCAMP_lr:-"0.0,-999,-999,-999,-999"}                             # Amplitude of VC patterns (random part)
 	export VC_TAU_lr=${VC_TAU_lr:-"2.16E4,1.728E5,2.592E6,7.776E6,3.1536E7"}           # Time scale in seconds
 	export VC_LSCALE_lr=${VC_LSCALE_lr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}      # Length Scale in meters
-	# export ISEED_VC_lr=${ISEED_VC_lr:-30}                                              # random seed for vorticity confinement pattern
+	export ISEED_VC_lr=${ISEED_VC_lr:-9${PDY}${cyc}}                                 # random seed for vorticity confinement pattern
 
 	if [[ $FORECAST_SEGMENT = hr ]]; then 
-		FCSTVARS="$FCSTVARS,VC=$VC_hr,VC_TAU=$VC_TAU_hr,VC_LSCALE=$VC_LSCALE_hr,VCAMP=$VCAMP_hr"
+		FCSTVARS="$FCSTVARS,VC=$VC_hr,VC_TAU=$VC_TAU_hr,VC_LSCALE=$VC_LSCALE_hr,VCAMP=$VCAMP_hr,ISEED_VC=$ISEED_VC_hr"
 	else
-		FCSTVARS="$FCSTVARS,VC=$VC_lr,VC_TAU=$VC_TAU_lr,VC_LSCALE=$VC_LSCALE_lr,VCAMP=$VCAMP_lr"
+		FCSTVARS="$FCSTVARS,VC=$VC_lr,VC_TAU=$VC_TAU_lr,VC_LSCALE=$VC_LSCALE_lr,VCAMP=$VCAMP_lr,ISEED_VC=$ISEED_VC_lr"
 	fi
 fi
 

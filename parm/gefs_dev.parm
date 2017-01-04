@@ -15,6 +15,7 @@ ENS_SPS=.true.
 STOC_SPPT=.false.
 STOC_SHUM=.false.
 STOC_SKEB=.false.
+STOC_VC=.false.
 
 export npair=10
 export fhmax=384
