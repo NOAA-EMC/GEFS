@@ -150,7 +150,7 @@ echo location of tracking executable
 export exectrkdir=$HOMEgefs/util/exec
 
 echo location of nemsioget
-export nemsioget=$basesource/nwdev/util/exec/nemsio_get
+export nemsioget=$nemsioget
 
 ##############################################
 echo list environment before running script

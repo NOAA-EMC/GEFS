@@ -33,8 +33,8 @@ export DBNROOT=
 
 export HOMEDIR=$HOMEDIR
 export HOMEgefs=$basesource/nwdev
-export nemsioget=$basesource/nwdev/util/exec/nemsio_get
 export HOMEgsm=$HOMEDIR/global_shared.v14.1.0
+export nemsioget=$HOMEgsm/exec/nemsio_get
 export HOMEpost=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/post_trunk
 #export HOMEpost=$HOMEDIR/global_shared.v14.1.0
 #export HOMEpost=/gpfs/hps/emc/global/noscrub/emc.glopara/svn/gfs/q3fy17_final/global_shared.v14.1.0
