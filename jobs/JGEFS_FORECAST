@@ -14,18 +14,14 @@ if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 	. $basesource/nwdev/parm/gefs_config
 	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
+export WRT_GROUP=2
+export WRTPE_PER_GROUP=4
 export LDFIFLTO=.true.
-export machine='WCOSS_C'
-export nemsioget=$basesource/nwdev/util/exec/nemsio_get
+export machine=$machine
+export nemsioget=$nemsioget
 export PARM_NGAC=/gpfs/tp1/nco/ops/nwprod/ngac.v1.0.2/parm
 export APRUN=${gefsmpexec:-mpirun.lsf}
 export DOIAU=NO
-export FIXGLOBAL=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/q3fy17_super/global_shared.v14.1.0/fix/fix_am
-                export MTNVAR=$FIXGLOBAL/global_mtnvar.t${MTNRSL}.f77
-                export OROGRAPHY=${FIXGLOBAL}/global_orography.t$MTNRSL.grb
-                export LONSPERLAT=${FIXGLOBAL}/global_lonsperlat.t$MTNRSL.txt
-                export LONSPERLAR=${FIXGLOBAL}/global_lonsperlat.t$MTNRSL.txt
-                export OROGRAPHY_UF=${FIXGLOBAL}/global_orography_uf.t$MTNRSL.grb
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -322,6 +318,42 @@ export PHYVARS=$FCSTVARS
 fi
 
 fi
+
+if [[ $FORECAST_SEGMENT = lr ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh )) ; then
+export MTNRSL=$MTNRSLLR
+fi
+
+export FIXGLOBAL=$HOMEgsm/fix/fix_am
+export FNGLAC=$FIXGLOBAL/global_glacier.2x2.grb
+export FNMXIC=$FIXGLOBAL/global_maxice.2x2.grb
+export FNTSFC=$FIXGLOBAL/RTGSST.1982.2012.monthly.clim.grb
+export FNSNOC=$FIXGLOBAL/global_snoclim.1.875.grb
+export FNZORC="igbp"
+export FNALBC=$FIXGLOBAL/global_snowfree_albedo.bosu.t$MTNRSL.rg.grb
+export FNALBC2=$FIXGLOBAL/global_albedo4.1x1.grb
+export FNAISC=$FIXGLOBAL/CFSR.SEAICE.1982.2012.monthly.clim.grb
+export FNTG3C=$FIXGLOBAL/global_tg3clim.2.6x1.5.grb
+export FNVEGC=$FIXGLOBAL/global_vegfrac.0.144.decpercent.grb
+export FNVETC=$FIXGLOBAL/global_vegtype.igbp.t$MTNRSL.rg.grb
+export FNSOTC=$FIXGLOBAL/global_soiltype.statsgo.t$MTNRSL.rg.grb
+export FNSMCC=$FIXGLOBAL/global_soilmgldas.t$MTNRSL.grb
+export FNMSKH=$FIXGLOBAL/seaice_newland.grb
+export FNTSFA=""
+export FNACNA=""
+export FNSNOA=""
+export FNVMNC=$FIXGLOBAL/global_shdmin.0.144x0.144.grb
+export FNVMXC=$FIXGLOBAL/global_shdmax.0.144x0.144.grb
+export FNSLPC=$FIXGLOBAL/global_slope.1x1.grb
+export FNABSC=$FIXGLOBAL/global_mxsnoalb.uariz.t$MTNRSL.rg.grb
+export OROGRAPHY_UF=$FIXGLOBAL/global_orography_uf.t$MTNRSL.rg.grb
+export OROGRAPHY=$FIXGLOBAL/global_orography.t$MTNRSL.rg.grb
+export LONSPERLAT=$FIXGLOBAL/global_lonsperlat.t$MTNRSL.txt
+export LONSPERLAR=$FIXGLOBAL/global_lonsperlat.t$MTNRSL.txt
+export SLMASK=$FIXGLOBAL/global_slmask.t$MTNRSL.rg.grb
+export MTNVAR=$FIXGLOBAL/global_mtnvar.t$MTNRSL.f77
+export FNMASK=$FIXGLOBAL/global_slmask.t$MTNRSL.rg.grb
+export FNOROG=$FIXGLOBAL/global_orography.t$MTNRSL.rg.grb
+
 
 # Output File Names
 if [[ $RUN_CONCURRENT = yes ]]; then
@@ -999,11 +1031,13 @@ if  [[ $FORECAST_SEGMENT != hr ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh
 	export LATB=$LATBLR
 	export MTNRSL=$MTNRSLLR
 	export SEMILG=$SEMILGLR
-
 	export NTRAC=$NTRACLR
+
 	export IDVC=$IDVC
 	export NVCOORD=$IDVC
 	export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD"
+
+
 	if (( IDVC == 1 )); then
 		export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
 	fi
@@ -1092,19 +1126,12 @@ if [[ $FORECAST_SEGMENT != hr ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh 
 	if test $RERUN = "YES"; then
 		unset SIGI2
 	fi
-	#
+	
+#
 	# Forecast Fix Fields
 	#
 	export CO2CON=$FIXGLOBAL/global_co2con.l${LEVS}.f77
 	export MTNVAR=$FIXGLOBAL/global_mtnvar.t${MTNRSL}.f77
-
-	export FIXGLOBAL=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/q3fy17_super/global_shared.v14.1.0/fix/fix_am
-	export OROGRAPHY_UF=$FIXGLOBAL/global_orography_uf.t$MTNRSL.grb
-        export MTNVAR=$FIXGLOBAL/global_mtnvar.t${MTNRSL}.f77
-        export OROGRAPHY=${FIXGLOBAL}/global_orography.t$MTNRSL.grb
-        export LONSPERLAT=${FIXGLOBAL}/global_lonsperlat.t$MTNRSL.txt
-        export LONSPERLAR=${FIXGLOBAL}/global_lonsperlat.t$MTNRSL.txt
-
 
 	#    export MTNVAR=$FIXGLOBAL/global_mtnvar.t${JCAP}.f77
 	############################################################

@@ -119,12 +119,13 @@ eofCAT
 . /usrx/local/Modules/default/init/ksh
 module use /nwprod2/modulefiles
 module purge
-module load ics/16.0.3
+module load ics
 module load lsf
 module load prod_envir
 module load prod_util
-module load util_shared/v1.0.0
-module load grib_util/v1.0.1
+module load util_shared
+module load grib_util/v1.0.2
+module load NetCDF/4.2/serial
 #prod_envir points to sigio data, here temporarily set nemsio data source
 export COMROOTp1=/ensemble/noscrub/Bing.Fu/o/com 
 export COMROOTp2=/ensemble/noscrub/Bing.Fu/o/com 

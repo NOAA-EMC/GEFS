@@ -47,6 +47,7 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
   echo Invalid option of JOBQUEUE in gefsrun $JOBQUEUE
   exit
  fi
+# export JOBQUEUE=debug2
 fi
 
 module load prod_util
@@ -1455,10 +1456,9 @@ echo
 wall_clock_limit_fcst_short="00:30:00"
 wall_clock_limit_fcst_long="01:30:00"
   if [[ $gefsmachine = wcoss || $gefsmachine = cray ]]; then                       
-wall_clock_limit_fcst_long="3:59"
 # RLW 20150511 ############################################################################ set lower limit to kill runaway jobs
-wall_clock_limit_fcst_long="01:29"
-#wall_clock_limit_fcst_long="0:15"
+wall_clock_limit_fcst_long="01:30"
+#wall_clock_limit_fcst_long="00:29"
 wall_clock_limit_fcst_short="00:20"
   fi
 
