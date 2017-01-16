@@ -255,6 +255,9 @@ export ISEED_SPPT=$ISEED_SPPT_hr
 export SPPT_LOGIT=$SPPT_LOGIT_hr
 export SPPT_TAU=$SPPT_TAU_hr
 export SPPT_LSCALE=$SPPT_LSCALE_hr
+export sppt_sigtop1=$sppt_sigtop1_hr
+export sppt_sigtop2=$sppt_sigtop2_hr
+export sppt_sfclimit=$sppt_sfclimit_hr
 fi
 
 if [[ $STOC_SHUM = .true. ]] ; then
@@ -262,6 +265,7 @@ export SHUM=$SHUM_hr
 export ISEED_SHUM=$ISEED_SHUM_hr
 export SHUM_TAU=$SHUM_TAU_hr
 export SHUM_LSCALE=$SHUM_LSCALE_hr
+export shum_sigefold=$shum_sigefold_hr
 fi
 
 if [[ $STOC_SKEB = .true. ]] ; then
@@ -271,6 +275,8 @@ export SKEB_TAU=$SKEB_TAU_hr
 export SKEB_LSCALE=$SKEB_LSCALE_hr
 export SKEB_VFILT=$SKEB_VFILT_hr
 export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr
+export skeb_sigtop1=$skeb_sigtop1_hr
+export skeb_sigtop2=$skeb_sigtop2_hr
 fi
 
 if [[ $STOC_VC = .true. ]] ; then
@@ -279,7 +285,6 @@ export ISEED_VC=$ISEED_VC_hr
 export VCAMP=$VCAMP_hr
 export VC_TAU=$VC_TAU_hr
 export VC_LSCALE=$VC_LSCALE_hr
-export PHYVARS=$FCSTVARS
 fi
 
 else
@@ -290,6 +295,9 @@ export ISEED_SPPT=$ISEED_SPPT_lr
 export SPPT_LOGIT=$SPPT_LOGIT_lr
 export SPPT_TAU=$SPPT_TAU_lr
 export SPPT_LSCALE=$SPPT_LSCALE_lr
+export sppt_sigtop1=$sppt_sigtop1_lr
+export sppt_sigtop2=$sppt_sigtop2_lr
+export sppt_sfclimit=$sppt_sfclimit_lr
 fi
 
 if [[ $STOC_SHUM = .true. ]] ; then
@@ -297,6 +305,7 @@ export SHUM=$SHUM_lr
 export ISEED_SHUM=$ISEED_SHUM_lr
 export SHUM_TAU=$SHUM_TAU_lr
 export SHUM_LSCALE=$SHUM_LSCALE_lr
+export shum_sigefold=$shum_sigefold_lr
 fi
 
 if [[ $STOC_SKEB = .true. ]] ; then
@@ -306,6 +315,8 @@ export SKEB_TAU=$SKEB_TAU_lr
 export SKEB_LSCALE=$SKEB_LSCALE_lr
 export SKEB_VFILT=$SKEB_VFILT_lr
 export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_lr
+export skeb_sigtop1=$skeb_sigtop1_lr
+export skeb_sigtop2=$skeb_sigtop2_lr
 fi
 
 if [[ $STOC_VC = .true. ]] ; then
@@ -314,7 +325,6 @@ export ISEED_VC=$ISEED_VC_lr
 export VCAMP=$VCAMP_lr
 export VC_TAU=$VC_TAU_lr
 export VC_LSCALE=$VC_LSCALE_lr
-export PHYVARS=$FCSTVARS
 fi
 
 fi

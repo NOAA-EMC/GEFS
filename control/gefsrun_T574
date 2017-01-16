@@ -2951,6 +2951,14 @@ case $taskname in
     resources="100"
     resources="500"    # T574
   fi  
+
+  if [[ $gefsmachine = cray ]]; then
+    wall_clock_limit="01:10"
+    MP_SHARED_MEMORY=yes
+    resources="100"
+    resources="500"    # T574
+  fi
+
   ;;
  (post.cqpf)
     ################################# production variables
@@ -2992,6 +3000,21 @@ case $taskname in
      taskspernode=$total_tasks
     fi
   fi  
+
+  if [[ $gefsmachine = cray ]]; then
+    job_type=parallel
+    node_usage=not_shared
+    wall_clock_limit="01:30"
+    MP_SHARED_MEMORY=no
+    OMP_NUM_THREADS=1
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS ))
+    total_tasks=16
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
+    resources=800
+  fi
+
   ;;
 
   (post.cleanup)

@@ -33,14 +33,21 @@ export DBNROOT=
 
 export HOMEDIR=$HOMEDIR
 export HOMEgefs=$basesource/nwdev
-export HOMEgsm=$HOMEDIR/global_shared.v14.1.0
-export nemsioget=$HOMEgsm/exec/nemsio_get
-export HOMEpost=$HOMEDIR/post_trunk
-#export HOMEpost=$HOMEDIR/global_shared.v14.1.0
-#export HOMEpost=/gpfs/hps/emc/global/noscrub/emc.glopara/svn/gfs/q3fy17_final/global_shared.v14.1.0
-export HOMEenkf=$HOMEDIR/gdas.v14.1.0
+
+#for regular GEFS
+export HOMEgsm=$HOMEDIR/gsm.v12.1.2
+export HOMEpost=$HOMEDIR/ncep_post.v7.2.3
+export HOMEenkf=$HOMEDIR/enkf.v2.0.1
 export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.8
+
+#for NEMS GEFS
+export HOMEgsm=$HOMEDIR1/global_shared.v14.1.0
+export nemsioget=$HOMEgsm/exec/nemsio_get
+export HOMEpost=$HOMEDIR1/post_trunk
+export HOMEenkf=$HOMEDIR1/gdas.v14.1.0
 export PARMglobal=$HOMEgsm/parm
+export nemsioget=$HOMEgsm/exec/nemsio_get
+
 # This section is optional, using path to define utility files
 # export UTILROOT=/nwprod2/prod_util.v1.0.0  
 # export GRIBROOT=/nwprod2/grib_util.v1.0.1

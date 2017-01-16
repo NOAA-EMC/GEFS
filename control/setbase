@@ -39,7 +39,8 @@ echo
 if [[ $machl = t ]] || [[ $machl = g ]]; then
 export machine='WCOSS'
 export JOBQUEUE=dev2
-export HOMEDIR=/ensemble/save/emc.enspara/RFC/q3fy17_eta     #temporay setting
+export HOMEDIR=/ensemble/save/emc.enspara/RFC
+export HOMEDIR1=/ensemble/save/emc.enspara/RFC/q3fy17_eta
  if [[ $JOBQUEUE = dev ]]; then
   PTMP=ptmpd2
   STMP=stmpd2
@@ -58,11 +59,8 @@ export machine='WCOSS_C'
   PTMP=gpfs/hps/ptmp
   STMP=gpfs/hps/ptmp
 export JOBQUEUE=dev
-#export JOBQUEUE=debug
-#export HOMEDIR=/gpfs/hps/emc/ensemble/save/Dingchen.Hou/TAGS
-#export HOMEDIR=/gpfs/hps/emc/ensemble/save/Bing.Fu/TAGS       #temporay setting
-export HOMEDIR=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC/q3fy17_eta    #temporay setting
-#export HOMEDIR=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/nemsgfs/q3fy17_final      #temporay setting
+export HOMEDIR=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC
+export HOMEDIR1=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC/q3fy17_eta    #temporay setting
 export CRAYDIR=/gpfs/td1/emc
 fi
 
@@ -115,7 +113,7 @@ else
 #For WCOSS 
 if [[ $machl = t ]] || [[ $machl = g ]]; then
   group=ensemble
-  group=`pwd|cut -d'/' -f2`
+#  group=`pwd|cut -d'/' -f2`
   echo group=$group
   export basesource=/$group/save/$LOGNAME/SVN/$expid
   export basebin=$basesource/nw$envir/control
@@ -131,7 +129,7 @@ fi
 if [[ $machl = s ]] || [[ $machl = l ]]; then
   group=ensemble
   export group=gpfs/hps/emc/$group
-  export basesource=/$group/save/$LOGNAME/GEFS/$expid
+  export basesource=/$group/save/$LOGNAME/SVN/$expid
   export basebin=$basesource/nw$envir/control
   export baseoutput=/$PTMP/$LOGNAME/o/$expid
   export basetmp=/$PTMP/$LOGNAME/o/$expid
