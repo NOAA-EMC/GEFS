@@ -119,7 +119,7 @@ eofCAT
 . /usrx/local/Modules/default/init/ksh
 module use /nwprod2/modulefiles
 module purge
-module load ics
+module load ics/16.0.3
 module load lsf
 module load prod_envir
 module load prod_util
