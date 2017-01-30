@@ -295,7 +295,8 @@ c      add these lines to zero out the vorticity as in the gfs code
        elseif(inptyp == 1) then
          do i=1,imax
          do j=1,jmax
-           gdata%ps(i,j)=gdata%ps(i,j)+EXP(PS1(i,j))*1000.
+c           gdata%ps(i,j)=gdata%ps(i,j)+EXP(PS1(i,j))*1000.
+	    gdata%ps(i,j)=exp(log(gdata%ps(i,j)/1000.)+PS1(i,j))*1000.
          do k=1,kmax
            gdata%t(i,j,k)=gdata%t(i,j,k)+T1(i,j,k)
            gdata%u(i,j,k)=gdata%u(i,j,k)+DIV1(i,j,k)
