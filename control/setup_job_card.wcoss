@@ -1,4 +1,5 @@
   rm $jobcontrol
+  mkdir -p $basetmp/tmpnwprd1
   if [[ $waitflag = no ]]; then
 
     echo `date` $0 $* write job cards for run begin
