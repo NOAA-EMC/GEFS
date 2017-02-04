@@ -44,8 +44,8 @@ elif [ $mac = l -o $mac = s ] ; then # For CRAY
  machine=cray
  export LIBDIR=/gpfs/hps/nco/ops/nwprod/lib
  export LIBDIR=/gpfs/hps/nco/ops/nwprod/lib
- export NEMSIOGFS_LIB=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/nemsiogfsv2.0.1/intel/libnemsiogfs.a
- export NEMSIOGFS_INC=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/nemsiogfsv2.0.1/intel/include/nemsiogfs
+ export NEMSIOGFS_LIB=/gpfs/hps/emc/global/noscrub/emc.glopara/svn/gfs/q3fy17/nemsiogfsv2.0.1/intel/libnemsiogfs.a
+ export NEMSIOGFS_INC=/gpfs/hps/emc/global/noscrub/emc.glopara/svn/gfs/q3fy17/nemsiogfsv2.0.1/intel/include/nemsiogfs
  export NEMSIO_LIB=/gpfs/hps/nco/ops/nwprod/lib/nemsio/v2.2.2/intel/libnemsio_v2.2.2.a
  export NEMSIO_INC=/gpfs/hps/nco/ops/nwprod/lib/nemsio/v2.2.2/intel/include/nemsio_v2.2.2
  export INCG="$NEMSIO_INC"
