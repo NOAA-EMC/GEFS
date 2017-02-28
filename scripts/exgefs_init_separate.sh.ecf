@@ -264,6 +264,7 @@ if (( nhrpair > 0 )); then
         if [ $NEMSIO_IN = .true. ] ; then
 	export GFSOUT=sanl.hr.in
 	export SFNOUT=sfcanl.hr.in
+	export NSNOUT=nsnanl.hr.in
         export OUTTYP=1
        else
 	export SFCOUT=sfcanl.hr.in
@@ -334,6 +335,7 @@ export RDGRID=.true.
 	if [[ -f $COMINgfs/gfs.$cycle.sanl && -f $COMINgfs/gfs.$cycle.sfcanl ]]; then
 		export SIGINP=$COMINgfs/gfs.$cycle.sanl
 		export SFCINP=$COMINgfs/gfs.$cycle.sfcanl
+		export NSTINP=$COMINgfs/gfs.$cycle.nsnanl
 	else
 		echo !!!! FATAL ERROR !!!!
 		echo $COMINgfs/gfs.$cycle.sanl and $COMINgfs/gfs.$cycle.sfcanl CANNOT BE FOUND
@@ -342,7 +344,7 @@ export RDGRID=.true.
 
 	# check for missing or zero-length analysis files
 
-	for file in $SIGINP $SFCINP; do
+	for file in $SIGINP $SFCINP $NSTINP; do
 		if [[ -s $file ]]; then
 			ls -al $file
 		else
@@ -350,7 +352,7 @@ export RDGRID=.true.
 			export err=9
 			err_chk
 		fi # [[ -s $file ]]
-	done # for file in $SIGINP $SFCINP
+	done # for file in $SIGINP $SFCINP $NSTINP
 
         if [ $NEMSIO_IN = .true. ] ; then
 	ojcap=$($nemsioget ${SIGINP} jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
@@ -392,6 +394,7 @@ export RDGRID=.true.
 	else
 		cp -fp $SIGINP $SIGOUT
 		cp -fp $SFCINP $SFCOUT
+		cp -fp $NSTINP $NSNOUT
 	fi # [[ $runchgres = yes ]]
 fi # (( nhrpair > 0 ))
 
@@ -411,7 +414,7 @@ if (( relocpertflag == 1 )); then
 	if [[ ! -e $COMSFCSIGP/gec00.t${cycp}z.sf$fhrp ]]; then
 		export relocpertflag=0
 	fi
-	if [[ ! -s $COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
+	if [[ ! -e $COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
 		export relocpertflag=0
 		echo $COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 does not exist
 	fi

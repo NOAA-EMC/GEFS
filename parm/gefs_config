@@ -43,7 +43,7 @@ export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.8
 #for NEMS GEFS
 export HOMEgsm=$HOMEDIR1/global_shared.v14.1.0
 export nemsioget=$HOMEgsm/exec/nemsio_get
-export HOMEpost=$HOMEDIR1/post_trunk
+export HOMEpost=$HOMEgsm
 export HOMEenkf=$HOMEDIR1/gdas.v14.1.0
 export PARMglobal=$HOMEgsm/parm
 export nemsioget=$HOMEgsm/exec/nemsio_get

@@ -60,7 +60,7 @@ export machine='WCOSS_C'
   STMP=gpfs/hps/ptmp
 export JOBQUEUE=dev
 export HOMEDIR=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC
-export HOMEDIR1=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC/q3fy17_eta    #temporay setting
+export HOMEDIR1=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC/q3fy17_theta_a    #temporay setting
 export CRAYDIR=/gpfs/td1/emc
 fi
 

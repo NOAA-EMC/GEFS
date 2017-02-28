@@ -738,18 +738,23 @@ if (( ipair > nhrpair )); then
 else
 	export SIGINP=../sanl.hr.in
 	export SFCINP=../sfcanl.hr.in
+	export NSTINP=../nsnanl.hr.in
 fi
 
 export SIGOUT=$DATALOCAL/sanl.in
 export SFCOUT=$DATALOCAL/sfcanl.in
+export NSNOUT=$DATALOCAL/nsnanl.in
 
 cp -fp $SIGINP $SIGOUT
 cp -fp $SFCINP $SFCOUT
+cp -fp $NSTINP $NSNOUT
 
 wait
 
 unset SFCINP
 unset SFCOUT
+unset NSTINP
+unset NSNOUT
 
 for meml in n p; do
 	if [[ ! -s fin${meml}  ]]; then
@@ -825,7 +830,7 @@ echo
 echo $relocpertflag>save.relocpertflag
 echo $inflaguse>save.inflaguse
 echo $ifhruse>save.ifhruse
-for file in finn finp finn_env finp_env finn_strm finp_strm finn_presep finp_presep gefs.pertback.$cycle_fcst.n${ipair} gefs.pertback.$cycle_fcst.p${ipair} sanl.in sfcanl.in save.relocpertflag save.inflaguse save.ifhruse; do
+for file in finn finp finn_env finp_env finn_strm finp_strm finn_presep finp_presep gefs.pertback.$cycle_fcst.n${ipair} gefs.pertback.$cycle_fcst.p${ipair} sanl.in sfcanl.in nsnanl.in save.relocpertflag save.inflaguse save.ifhruse; do
 	fils=../$file.pair$ipairi
 	echo file=$file fils=$fils
 	if [[ -f $file ]]; then

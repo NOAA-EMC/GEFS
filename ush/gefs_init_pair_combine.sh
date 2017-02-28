@@ -207,7 +207,7 @@ echo
 echo `date` restore from 2nd to 3rd ush script begin
 echo
 
-for file in finn finp finn_env finp_env finn_strm finp_strm finn_presep finp_presep sanl.in sfcanl.in save.relocpertflag save.inflaguse sanlgm${ipair}n sanlgm${ipair}p sanl.c0 save.ifhruse; do
+for file in finn finp finn_env finp_env finn_strm finp_strm finn_presep finp_presep sanl.in sfcanl.in nsnanl.in save.relocpertflag save.inflaguse sanlgm${ipair}n sanlgm${ipair}p sanl.c0 save.ifhruse; do
 	fils=../$file.pair$ipairi
 	echo file=$file fils=$fils
 	if [[ -f $fils ]]; then
@@ -378,6 +378,7 @@ fi
 if [[ $SENDCOM = YES ]];then
 	if (( ipair == 1 )) && (( cyc == cyc_fcst )); then
 		cp -f sfcanl.in $COMOUT/$cyc/init/gec00.${cycle}.sfcanl$cfsuffix
+		cp -f nsnanl.in $COMOUT/$cyc/init/gec00.${cycle}.nsnanl$cfsuffix
 		testfile=$COMOUT/$cyc/init/gec00.${cycle}.sfcanl$cfsuffix
 		if [[ ! -s $testfile ]]; then
 			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
@@ -477,6 +478,7 @@ if (( ipair == 1 )) && (( cyc == cyc_fcst )); then
 			err_chk
 		fi # [[ ! -s $testfile ]]
 		cp -f sfcanl.in $GESOUT/gec00.${cycle}.sfcanl$cfsuffix
+		cp -f nsnanl.in $GESOUT/gec00.${cycle}.nsnanl$cfsuffix
 		testfile=$GESOUT/gec00.${cycle}.sfcanl$cfsuffix
 		if [[ ! -s $testfile ]]; then
 			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
@@ -501,6 +503,7 @@ if (( outflag == 1 )); then
 			err_chk
 		fi # [[ ! -s $testfile ]]
 		mv -f sfcanl.in $GESOUT/gen${ipair}.${cycle}.sfcanl$cfsuffix
+		mv -f nsnanl.in $GESOUT/gen${ipair}.${cycle}.nsnanl$cfsuffix
 		testfile=$GESOUT/gen${ipair}.${cycle}.sfcanl$cfsuffix
 		if [[ ! -s $testfile ]]; then
 			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
@@ -525,6 +528,7 @@ if (( outflag == 2 )); then
 			err_chk
 		fi # [[ ! -s $testfile ]]
 		mv -f sfcanl.in $GESOUT/gep${ipair}.${cycle}.sfcanl$cfsuffix
+		mv -f nsnanl.in $GESOUT/gep${ipair}.${cycle}.nsnanl$cfsuffix
 		testfile=$GESOUT/gep${ipair}.${cycle}.sfcanl$cfsuffix
 		if [[ ! -s $testfile ]]; then
 			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
@@ -549,6 +553,7 @@ if (( outflag == 3 )); then
 			err_chk
 		fi # [[ ! -s $testfile ]]
 		cp -f sfcanl.in $GESOUT/gen${ipair}.${cycle}.sfcanl$cfsuffix
+		cp -f nsnanl.in $GESOUT/gen${ipair}.${cycle}.nsnanl$cfsuffix
 		testfile=$GESOUT/gen${ipair}.${cycle}.sfcanl$cfsuffix
 		if [[ ! -s $testfile ]]; then
 			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
@@ -567,6 +572,7 @@ if (( outflag == 3 )); then
 			err_chk
 		fi # [[ ! -s $testfile ]]
 		mv -f sfcanl.in $GESOUT/gep${ipair}.${cycle}.sfcanl$cfsuffix
+		mv -f nsnanl.in $GESOUT/gep${ipair}.${cycle}.nsnanl$cfsuffix
 		testfile=$GESOUT/gep${ipair}.${cycle}.sfcanl$cfsuffix
 		if [[ ! -s $testfile ]]; then
 			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
@@ -591,6 +597,7 @@ if (( outflag == 4 )); then
 			err_chk
 		fi # [[ ! -s $testfile ]]
 		cp -f sfcanl.in $GESOUT/gen${ipairn}.${cycle}.sfcanl$cfsuffix
+		cp -f nsnanl.in $GESOUT/gen${ipairn}.${cycle}.nsnanl$cfsuffix
 		testfile=$GESOUT/gen${ipairn}.${cycle}.sfcanl$cfsuffix
 		if [[ ! -s $testfile ]]; then
 			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
@@ -609,6 +616,7 @@ if (( outflag == 4 )); then
 			err_chk
 		fi # [[ ! -s $testfile ]]
 		mv -f sfcanl.in $GESOUT/gen${ipairp}.${cycle}.sfcanl$cfsuffix
+		mv -f nsnanl.in $GESOUT/gen${ipairp}.${cycle}.nsnanl$cfsuffix
 		testfile=$GESOUT/gen${ipairp}.${cycle}.sfcanl$cfsuffix
 		if [[ ! -s $testfile ]]; then
 			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
@@ -633,6 +641,7 @@ if (( outflag == 5 )); then
 			err_chk
 		fi # [[ ! -s $testfile ]]
 		cp -f sfcanl.in $GESOUT/gep${ipairn}.${cycle}.sfcanl$cfsuffix
+		cp -f nsnanl.in $GESOUT/gep${ipairn}.${cycle}.nsnanl$cfsuffix
 		testfile=$GESOUT/gep${ipairn}.${cycle}.sfcanl$cfsuffix
 		if [[ ! -s $testfile ]]; then
 			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
@@ -651,6 +660,7 @@ if (( outflag == 5 )); then
 			err_chk
 		fi # [[ ! -s $testfile ]]
 		mv -f sfcanl.in $GESOUT/gep${ipairp}.${cycle}.sfcanl$cfsuffix
+		mv -f nsnanl.in $GESOUT/gep${ipairp}.${cycle}.nsnanl$cfsuffix
 		testfile=$GESOUT/gep${ipairp}.${cycle}.sfcanl$cfsuffix
 		if [[ ! -s $testfile ]]; then
 			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
