@@ -255,17 +255,21 @@ if [[ $CHGRES_ALL = YES ]] ; then
 			if [[ $ENS_SPS = .true. ]]; then
 				eval export SIGINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ss${HOUTASPS}
 				eval export SFCINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bs${HOUTASPS}
+				eval export NSTINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ts${HOUTASPS}
 			else
 				eval export SIGINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf${HOUTASPS}
 				eval export SFCINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf${HOUTASPS}
+				eval export NSTINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.tf${HOUTASPS}
 			fi # [[ $ENS_SPS = .true. ]]
 		else
 			if [[ $ENS_SPS = .true. ]]; then
 				eval export SIGINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
 				eval export SFCINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
+				eval export NSTINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ts${HOUTASPS}.cycfs$cyc_fcst
 			else
 				eval export SIGINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
 				eval export SFCINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
+				eval export NSTINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.tf${HOUTASPS}.cycfs$cyc_fcst
 			fi # [[ $ENS_SPS = .true. ]]
 		fi # [[ $cycsuffix = false ]]
 
@@ -285,17 +289,21 @@ else
 		if [[ $ENS_SPS = .true. ]]; then
 			export SIGINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ss${HOUTASPS}
 			export SFCINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bs${HOUTASPS}
+			export NSTINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ts${HOUTASPS}
 		else
 			export SIGINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf${HOUTASPS}
 			export SFCINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf${HOUTASPS}
+			export NSTINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.tf${HOUTASPS}
 		fi # [[ $ENS_SPS = .true. ]]
 	else
 		if [[ $ENS_SPS = .true. ]]; then
 			export SIGINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
 			export SFCINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
+			export NSTINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ts${HOUTASPS}.cycfs$cyc_fcst
 		else
 			export SIGINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
 			export SFCINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
+			export NSTINP=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.tf${HOUTASPS}.cycfs$cyc_fcst
 		fi # [[ $ENS_SPS = .true. ]]
 	fi # [[ $cycsuffix = false ]]
 	echo `date` timing lr chgres before

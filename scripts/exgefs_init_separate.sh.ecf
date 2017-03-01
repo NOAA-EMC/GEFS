@@ -411,10 +411,10 @@ export relocpertflag
 
 if (( relocpertflag == 1 )); then
 	# test for files necessary for relocation
-	if [[ ! -e $COMSFCSIGP/gec00.t${cycp}z.sf$fhrp ]]; then
+	if [[ ! -s $COMSFCSIGP/gec00.t${cycp}z.sf$fhrp ]]; then
 		export relocpertflag=0
 	fi
-	if [[ ! -e $COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
+	if [[ ! -s $COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 ]]; then
 		export relocpertflag=0
 		echo $COMINgfs/gfs.$cycle.syndata.tcvitals.tm00 does not exist
 	fi

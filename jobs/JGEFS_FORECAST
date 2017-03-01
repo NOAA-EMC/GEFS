@@ -195,7 +195,7 @@ export CHGRESEXEC=$EXECgsm/global_chgres
 
 # forecast script  and executable
 export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nems.sh.ecf
-export FCSTEXEC=$EXECgsm/NEMS.x
+export FCSTEXEC=$EXECgsm/global_fcst
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
 
@@ -1055,6 +1055,7 @@ if test $JCAPHR -eq $jcapin; then
 				if [[ $cycsuffix = false ]]; then
 					eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf${HOUTASPS} $GESOUT/.
 					eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf${HOUTASPS} $GESOUT/.
+					eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.tf${HOUTASPS} $GESOUT/.
 					if [[ $ENS_SPS = .true. ]]; then
 						eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.ss${HOUTASPS} $GESOUT/.
 						eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bs${HOUTASPS} $GESOUT/.
@@ -1065,6 +1066,7 @@ if test $JCAPHR -eq $jcapin; then
 			if [[ $cycsuffix = false ]]; then
 				cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf${HOUTASPS} $GESOUT/.
 				cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf${HOUTASPS} $GESOUT/.
+				cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.tf${HOUTASPS} $GESOUT/.
 			fi
 		fi # [[ $RUN_CONCURRENT = yes ]]
 		### End of saving the HOUTASPS-hour sf and bf files for the LOW-RES run:
