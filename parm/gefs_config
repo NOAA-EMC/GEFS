@@ -117,6 +117,8 @@ echo jobscript= $jobscript
 ################# lines between these markers have been modified for dev begin
   export pcom_in=$baseoutput/pcom
 ################# lines between these markers have been modified for dev end
+  # to test NEMSIO from parallel GFS 20170224 RLW
+  export COMINgfs=/gpfs/hps/ptmp/emc.glopara/com2/gfs/para/gfs.$PDY
 
 elif [ $RUN_ENVIR = prod ]
 then

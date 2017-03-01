@@ -261,7 +261,6 @@ if (( nhrpair > 0 )); then
   export NTRAC=$NTRACHR
   export IDVC=$IDVC
   export NVCOORD=$IDVC
-  export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,use_ufo=.true.,IALB=0,idvc=2,idvt=21,idsl=1,IDVM=0"
   if (( IDVC == 1 )); then
     export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
   fi
@@ -270,6 +269,33 @@ if (( nhrpair > 0 )); then
   fi
 
 ###testb
+ if [[ $NEMSIO_IN = .true. ]]; then
+
+  export nopdpvv=$nopdpvv
+  export OUTTYP=$OUTTYP
+
+
+  export CLIMO_FIELDS_OPT=3
+  export LANDICE_OPT=2
+  export SOILTYPE_INP=statsgo
+  export SOILTYPE_OUT=zobler
+  export VEGTYPE_INP=igbp
+  export VEGTYPE_OUT=sib
+  export SEA_ICE_THRESHLD_OUTPUT="0.50"
+
+  export CHGRESVARS="NTRAC=$NTRACjR,NVCOORD=$NVCOORD,use_ufo=.true.,IALB=0,idvc=2,idvt=21,idsl=1,IDVM=0"
+  if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
+    export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
+    export SFCINP=$COMINgfs/gfs.$cycle.sfcanl.nemsio
+  else
+    echo !!!! FATAL ERROR !!!!
+    echo $COMINgfs/gfs.$cycle.atmanl.nemsio and $COMINgfs/gfs.$cycle.sfcanl.nemsio CANNOT BE FOUND
+    export err=9
+    err_chk
+    exit
+  fi
+ else
+  export CHGRESVARS="NTRAC=$NTRACjR,NVCOORD=$NVCOORD,use_ufo=.true.,IALB=0,idvc=2,idvt=21,idsl=1,IDVM=0"
   if [[ $envir = prod ]]; then
 ###teste
     if [[ -f $COMINgfs/gfs.$cycle.sanl && -f $COMINgfs/gfs.$cycle.sfcanl ]]; then
@@ -300,6 +326,7 @@ if (( nhrpair > 0 )); then
       exit
     fi
   fi
+ fi
 ###teste
 
   # check for missing or zero-length analysis files
@@ -315,6 +342,9 @@ if (( nhrpair > 0 )); then
     fi
   done
 
+ if [[ $NEMSIO_IN = .true. ]]; then
+  runchgres=yes
+ else
   ojcap=`$sighdrexec $SIGINP jcap`
   olevs=`$sighdrexec $SIGINP levs`
   ontrac=`$sighdrexec $SIGINP ntrac`
@@ -329,6 +359,7 @@ if (( nhrpair > 0 )); then
       fi
     fi
   fi
+ fi
 
   if [[ $runchgres = yes ]]; then
 #   if [[ $IDVC = 2 ]]; then
@@ -338,7 +369,19 @@ if (( nhrpair > 0 )); then
 #     fi
 #   fi
     echo `date` timing hr chgres before
+   if [[ $NEMSIO_IN = .true. ]]; then
+    export OROGRAPHY=${OROGRAPHY:-${FIXgsm}/global_orography.t${JCAP}.$LONB.$LATB.grb}
+    export OROGRAPHY_UF=${OROGRAPHY_UF:-${FIXgsm}/global_orography_uf.t${JCAP}.$LONB.$LATB.grb}
+    export SLMASK=${SLMASK:-${FIXgsm}/global_slmask.t${JCAP}.$LONB.$LATB.grb}
+    export LONSPERLAT=${LONSPERLAT:-${FIXgsm}/global_lonsperlat.t${JCAP}.$LONB.$LATB.txt}
+# The SST and SEA_ICE Climate fix file:
+    export FNTSFC=${FNTSFC:-$FIXgsm/RTGSST.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
+    export FNAISC=${FNAISC:-$FIXgsm/CFSR.SEAICE.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
+    export FNALBC2=$FIXgsm/global_albedo4.1x1.grb
+    export FNZORC=sib
+   else
     export FIXGLOBAL=$HOMEgsm/fix/fix_am
+   fi
     $chgresush >>$pgmout
     export FIXGLOBAL=/nwprod/fix
     echo `date` timing hr chgres after
@@ -578,6 +621,18 @@ echo relocflag=$relocflag relocpertflag=$relocpertflag
 #
 # end relocation splitting section for c00
 #
+
+if [[ $NEMSIO_IN = .true. ]]; then
+  echo CHGRESEXEC=$CHGRESEXEC
+  echo chgresush=$chgresush
+  echo FIXgsm=$FIXgsm
+  CHGRESEXEC=${CHGRESEXEC_SAVE}
+  chgresush=${chgresush_save}
+  FIXgsm=${FIXgsm_save}
+  echo CHGRESEXEC=$CHGRESEXEC
+  echo chgresush=$chgresush
+  echo FIXgsm=$FIXgsm
+fi
 
 echo
 echo `date` $0 poe separate begin

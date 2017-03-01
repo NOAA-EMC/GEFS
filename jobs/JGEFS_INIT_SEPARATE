@@ -221,23 +221,34 @@ export SLMASK=/dev/null
 # Define COM directories
 ##############################################
 
-if [[ $envir = prod ]] ; then
-  export COMINgfs=/com2/gfs/${envir}/gfs.$PDY
-elif [[ $envir = para ]] || \
+if [[ $NEMSIO_IN = .true. ]]; then
+  if [[ $envir = prod ]] || \
+     [[ $envir = para ]] || \
      [[ $envir = test ]]; then
-  gfssource=prod
-  if [[ "$gfssource" = para ]]; then
-    export COMINgfs=/com2/gfs/para/gfs.$PDY
+    export COMINgfs=${COMINgfs:-$COMROOThps/gfs/$envir/gfs.$PDY}
   else
-    export COMINgfs=/com2/gfs/prod/gfs.$PDY
+    export COMROOThps=/gpfs/hps/emc.glopara/com2
+    export COMINgfs=${COMINgfs:-$COMROOThps/gfs/para/gfs.$PDY}
   fi
 else
-  if [[ "$gfssource" = para ]]; then
-    export COMINgfs=$TMPCOM/gfs/para/gfs.$PDY
-  elif [[ "$gfssource" = prod ]]; then
-    export COMINgfs=$TMPCOM/gfs/prod/gfs.$PDY #WCOSS transition
+  if [[ $envir = prod ]] ; then
+    export COMINgfs=/com2/gfs/${envir}/gfs.$PDY
+  elif [[ $envir = para ]] || \
+       [[ $envir = test ]]; then
+    gfssource=prod
+    if [[ "$gfssource" = para ]]; then
+      export COMINgfs=/com2/gfs/para/gfs.$PDY
+    else
+      export COMINgfs=/com2/gfs/prod/gfs.$PDY
+    fi
   else
-    export COMINgfs=$basedgfs/com/gfs/prod/gfs.$PDY
+    if [[ "$gfssource" = para ]]; then
+      export COMINgfs=$TMPCOM/gfs/para/gfs.$PDY
+    elif [[ "$gfssource" = prod ]]; then
+      export COMINgfs=$TMPCOM/gfs/prod/gfs.$PDY #WCOSS transition
+    else
+      export COMINgfs=$basedgfs/com/gfs/prod/gfs.$PDY
+    fi
   fi
 fi
 
@@ -380,6 +391,35 @@ fi
 
 echo chgresush=$chgresush
 echo CHGRESEXEC=$CHGRESEXEC
+
+##############################################
+echo set up module for nemsio
+##############################################
+
+if [[ $NEMSIO_IN = .true. ]]; then
+echo FIXgsm=$FIXgsm
+export CHGRESEXEC_SAVE=$CHGRESEXEC
+export chgresush_save=$chgresush
+export FIXgsm_save=$FIXgsm
+unset CHGRESEXEC
+unset chgresush
+unset FIXgsm
+. /usrx/local/Modules/default/init/ksh
+# module use /nwtest2/modulefiles
+  module use /nwprod2/modulefiles
+  module load util_shared/v1.0.5
+
+  echo before set chgresush
+  export FIXgsm=${FIXSUBDA:-$HOMEgsm/fix/fix_am}
+  export chgresush=$GLOBALCHGRES
+  echo after set chgresush
+
+
+  echo chgresush=$chgresush
+  echo CHGRESEXEC=$CHGRESEXEC
+  echo FIXgsm=$FIXgsm
+
+fi
 
 ##############################################
 echo list environment before running script
