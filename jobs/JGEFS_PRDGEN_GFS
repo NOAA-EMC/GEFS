@@ -208,9 +208,9 @@ then
   export COMIN=$COM_IN/gfs.${PDY}
   case $gfssource in
     (prod)
-      export COMIN=/com/gfs/prod/gfs.${PDY}
+      export COMIN=/com2/gfs/prod/gfs.${PDY}
       #RLWb 20160202
-      export COMIN=$basedgfs/com/gfs/prod/gfs.${PDY}
+      #export COMIN=$basedgfs/com/gfs/prod/gfs.${PDY}
       #RLWe 20160202
     ;;
     (para)
