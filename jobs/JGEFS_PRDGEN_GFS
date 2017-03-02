@@ -214,9 +214,9 @@ then
       #RLWe 20160202
     ;;
     (para)
-      export COMIN=/com/gfs/para/gfs.${PDY}
+      export COMIN=/gpfs/hps/emc.glopara/com2/gfs/para/gfs.${PDY}
       #RLWb 20160202
-      export COMIN=$basedgfs/com/gfs/para/gfs.${PDY}
+      #export COMIN=$basedgfs/com/gfs/para/gfs.${PDY}
       #RLWe 20160202
     ;;
   esac
