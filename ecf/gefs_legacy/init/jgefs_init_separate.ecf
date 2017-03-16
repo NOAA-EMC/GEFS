@@ -1,0 +1,67 @@
+#BSUB -J %E%gefs_legacy_init_separate_%CYC%
+#BSUB -o /com/output/%ENVIR%/today/gefs_legacy_init_separate_%CYC%.o%J
+#BSUB -e  /com/output/%ENVIR%/today/gefs_legacy_init_separate_%CYC%.o%J
+#BSUB -cwd /tmpnwprd
+#BSUB -R span[ptile=8]
+#BSUB -n 40
+#BSUB -x
+#BSUB -q %QUEUE%
+#BSUB -R affinity[core(2)]
+#BSUB -W 00:30
+#BSUB -L /bin/sh
+#BSUB -P %PROJ%
+#BSUB -a poe
+
+%include <head.h>
+%include <envir-p1.h>
+
+# EXPORT list here
+set -x
+
+export OMP_NUM_THREADS=4
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+export MP_SHARED_MEMORY=no
+#export MEMORY_AFFINITY=core:2
+
+# JY export total_tasks=40
+
+export cyc=%CYC%
+export cyc_fcst=%CYC%
+export job=gefs_legacy_init_separate_%CYC%
+
+VERSION_FILE=/nw${envir}/versions/gefs_legacy.ver
+if [ -f $VERSION_FILE ]; then
+  . $VERSION_FILE
+else
+  ecflow_client --msg="***JOB ${ECF_NAME} ERROR: Version File $VERSION_FILE does not exist ***"
+  ecflow_client --abort
+  exit
+fi
+
+# CALL executable job script here
+/nw${envir}/gefs_legacy.${gefs_legacy_ver}/jobs/JGEFS_INIT_SEPARATE
+
+if [ $? -ne 0 ]; then
+   ecflow_client --msg="***JOB ${ECF_NAME} ERROR RUNNING J-SCRIPT ***"
+   ecflow_client --abort
+   exit
+fi
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose: process global ensemble init system (GEFS) init
+#          model
+#
+#
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end

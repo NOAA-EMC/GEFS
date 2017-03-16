@@ -738,7 +738,6 @@ d6ahead_str="${d6ahead_ymd} ${d6ahead_hh}00"
 
 if [ ${modtyp} = 'global' ]
 then
-
   #FAF  synvitdir=/com/gfs/prod/gfs.${PDY}
   #FAF  synvitfile=gfs.t${CYL}z.syndata.tcvitals.tm00
   #FAF  synvit6ago_dir=/com/gfs/prod/gfs.${d6ago_4ymd}
