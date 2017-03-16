@@ -7,7 +7,7 @@
 #BSUB -W 00:45
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%
-#BSUB -R rusage[mem=500]
+#BSUB -R rusage[mem=2000]
 #BSUB -R affinity[core]
 
 %include <head.h>
