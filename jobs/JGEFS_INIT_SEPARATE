@@ -227,7 +227,7 @@ if [[ $NEMSIO_IN = .true. ]]; then
      [[ $envir = test ]]; then
     export COMINgfs=${COMINgfs:-$COMROOThps/gfs/$envir/gfs.$PDY}
   else
-    export COMROOThps=/gpfs/hps/emc.glopara/com2
+    export COMROOThps=/gpfs/hps/ptmp/emc.glopara/com2
     export COMINgfs=${COMINgfs:-$COMROOThps/gfs/para/gfs.$PDY}
   fi
 else
