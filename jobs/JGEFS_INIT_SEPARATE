@@ -235,7 +235,7 @@ else
   if [[ "$gfssource" = para ]]; then
     export COMINgfs=$TMPCOM/gfs/para/gfs.$PDY
   elif [[ "$gfssource" = prod ]]; then
-    export COMINgfs=$TMPCOM/gfs/prod/gfs.$PDY #WCOSS transition
+    export COMINgfs=$TMPCOM/gfs/prod/gfs.$PDY
   else
     export COMINgfs=$basedgfs/com/gfs/prod/gfs.$PDY
   fi
@@ -257,32 +257,6 @@ else
   export COMINm2=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm2}
   export COMINm3=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm3}
   export COMINm4=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm4}
-        if (( 0 == 1 )); then
-  if [[ "$gfssource" = para ]]; then
-    export COMIN=$TMPCOM/gfs/para/gfs.$PDY
-    export COMINm1=$TMPCOM/gfs/para/gfs.$PDYm1
-    export COMINm2=$TMPCOM/gfs/para/gfs.$PDYm2
-    export COMINm3=$TMPCOM/gfs/para/gfs.$PDYm3
-    export COMINm4=$TMPCOM/gfs/para/gfs.$PDYm4
-  elif [[ "$gfssource" = prod ]]; then
-    export COMIN=$TMPCOM/gfs/prod/gfs.$PDY #WCOSS transition
-    export COMINm1=$TMPCOM/gfs/prod/gfs.$PDYm1
-    export COMINm2=$TMPCOM/gfs/prod/gfs.$PDYm2
-    export COMINm3=$TMPCOM/gfs/prod/gfs.$PDYm3
-    export COMINm4=$TMPCOM/gfs/prod/gfs.$PDYm4
-  else
-    export COMIN=$basedgfs/com/gfs/prod/gfs.$PDY
-    export COMINm1=$basedgfs/com/gfs/prod/gfs.$PDYm1
-    export COMINm2=$basedgfs/com/gfs/prod/gfs.$PDYm2
-    export COMINm3=$basedgfs/com/gfs/prod/gfs.$PDYm3
-    export COMINm4=$basedgfs/com/gfs/prod/gfs.$PDYm4
-  fi
-  export GFSCOMIN=$COMIN
-  export GFSCOMINm1=$COMINm1
-  export GFSCOMINm2=$COMINm2
-  export GFSCOMINm3=$COMINm3
-  export GFSCOMINm4=$COMINm4
-	fi
 fi
 
 if [[ $envir = prod ]] || \

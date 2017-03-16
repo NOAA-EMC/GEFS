@@ -1,0 +1,90 @@
+%comment - ecf user variables
+DUMMYVAR:4_ecflow_edit_only = 4_ecflow_edit_only
+ECF_VERSION = 3.1.9
+%end - ecf user variables
+#BSUB -J jgefs_p10_prdgen_cf12_18
+#BSUB -o /com/output/prod/today/gefs_p10_prdgen_cf12_18.o%J
+#BSUB -e  /com/output/prod/today/gefs_p10_prdgen_cf12_18.o%J
+#BSUB -cwd /tmpnwprd
+#BSUB -n 1
+#BSUB -q prod_shared
+#BSUB -W  00:45
+#BSUB -L /bin/sh
+#BSUB -P GEN-OPS
+#BSUB -R rusage[mem=500]
+#BSUB -R affinity[core]
+
+
+#!/bin/ksh
+set -e # stop the shell on first error
+#set -u # fail when using an undefined variable
+set -x # echo script lines as they are executed
+
+
+# Defines the variables that are needed for any communication with ECF
+export ECF_PORT=31415    # The server port number
+export ECF_NODE=t14z1    # The name of ecf host that issued this task
+export ECF_NAME=/prod18/gefs18/gefs18_cf12/prdgen/jgefs_p10_prdgen_cf12_18    # The name of this current task
+export ECF_PASS=LlMo8sCJ    # A unique password
+export ECF_TRYNO=2  # Current try number of the task
+export ECF_RID=$$
+export ECF_VERSION=3.1.9
+export DUMMYVAR=4_ecflow_edit_only
+
+# Tell ecFlow we have started
+ecflow_client --init=${ECF_RID}
+
+# Define a error handler
+ERROR() {
+   set +e                      # Clear -e flag, so we don't fail
+#   ecflow_client --alter delete variable ECF_QID $ECF_NAME  # Clear run specific variable 
+#   ecflow_client --alter delete variable ECF_SUB_HOST $ECF_NAME # Clear run specific variable
+   ecflow_client --abort="killed by signal"
+   trap 0                      # Remove the trap
+   exit 0                      # End the script
+}
+
+
+# Trap any calls to exit and errors caught by the -e flag
+trap ERROR 0
+
+
+# Trap any signal that may cause the script to fail
+trap '{ echo "Killed by a signal"; ERROR ; }' 1 2 3 4 5 6 7 8 10 12 13 15
+
+
+# EXPORT list here
+set -x
+
+export envir=prod
+export cyc=18
+export cyc_fcst=12
+export job=gefs_p10_prdgen_cf12_18
+export RUN=gep10
+export FORECAST_SEGMENT=hr
+
+
+
+# CALL executable job script here
+/nw${envir}/jobs/JGEFS_PRDGEN
+
+#ecflow_client --alter delete variable ECF_QID $ECF_NAME
+#ecflow_client --alter delete variable ECF_SUB_HOST $ECF_NAME
+ecflow_client --complete  # Notify ecFlow of a normal end
+trap 0                    # Remove all traps
+exit 0                    # End the shell
+%manual
+######################################################################
+# Purpose: post-process GEFS to generate pgrb.
+#
+#
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end
