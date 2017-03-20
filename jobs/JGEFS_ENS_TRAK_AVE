@@ -198,8 +198,8 @@ env | sort
 # Execute the script to compute the ensemble 
 # mean tropical cyclone track
 export cmodel=ens
+export COM=$COMOUT/$cyc/track
 if [[ $envir = dev ]]; then
-  export COM=$COMOUT/$cyc/track
 #DHOU 04/13/2012 Added 1 line for ZEUS
  if [[ $gefsmachine = zeus ]]; then
      exectrkdir=$HOMEglobal/util/exec
