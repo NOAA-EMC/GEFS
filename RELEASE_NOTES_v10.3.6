@@ -1,4 +1,4 @@
-Release Note: GEFS LEGACY v.10.3.4
+Release Note: GEFS LEGACY v.10.3.6
 
 v10.0.0 . released Feb 1, 2012
 . Implementation on CCS
@@ -87,8 +87,30 @@ v10.3.4 released December 21, 2015
 . remaining instructions are unchanged from gefs.v10.3.0
 . There will be a test run on gyre for comparison:
 . source: /ensemble/save/Richard.Wobus/s/rwja/nwdev/gefs_legacy.v10.3.4
-. products:
-/ptmpd2/Richard.Wobus/o/rwja/com/gens/dev/gefs.v20151218/12
+. products: /ptmpd2/Richard.Wobus/o/rwja/com/gens/dev/gefs.v20151218/12
 . To run identically to this test run, copy the sfcsig and track subdirectories from
 the previous cycle of the test run or the production legacy GEFS and then run
 the test cycle
+
+V10.3.5 released March 20, 2016
+. Modify J-jobs to take GFS data from new location on /com2
+
+V10.3.6 released March 17, 2017
+. Modify parm/gefs_init.parm and jobs/GEFS_INIT_SEPARATE to specify and process GFS analysis
+in NEMSIO format
+. Increase memory for GEFS_PRDGEN_GFS job to process higher-resolution master post files
+. Cleanup
+  . remove obsolete job_cards directory
+  . add ecf directory including memory change for GEFS_PRDGEN_GFS job
+. implementation instructions:
+  . use new tag: https://svnemc.ncep.noaa.gov/projects/gefs/tags/gefs_legacy.v10.3.6
+  . check out into /nw$envir/gefs_legacy.v10.3.6
+  . modify ecf script for GEFS_PRDGEN_GFS to increase memory to 2000
+  . remaining instructions are unchanged from gefs.v10.3.0
+  . There is a test run on the dev WCOSS phase 1 machine for comparison:
+    . source: /ensemble/save/Richard.Wobus/s/rwme/nwdev/gefs_legacy.v10.3.6
+    . products: /ptmpd2/emc.enspara/o/rwme/com/gens/dev/
+    . To run identically to this test run, copy the sfcsig and track subdirectories from
+the previous cycle of the test run
+
+
