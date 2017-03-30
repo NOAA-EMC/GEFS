@@ -40,7 +40,7 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
 export machine='WCOSS'
 export JOBQUEUE=dev2
 export HOMEDIR=/ensemble/save/emc.enspara/RFC
-export HOMEDIR1=/ensemble/save/emc.enspara/RFC/q3fy17_eta
+export HOMEDIR1=/ensemble/save/emc.enspara/RFC/q3fy17_lambda
  if [[ $JOBQUEUE = dev ]]; then
   PTMP=ptmpd2
   STMP=stmpd2
@@ -60,7 +60,7 @@ export machine='WCOSS_C'
   STMP=gpfs/hps/ptmp
 export JOBQUEUE=dev
 export HOMEDIR=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC
-export HOMEDIR1=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC/q3fy17_theta_a    #temporay setting
+export HOMEDIR1=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda   #temporay setting
 export CRAYDIR=/gpfs/td1/emc
 fi
 
