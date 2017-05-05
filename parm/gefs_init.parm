@@ -5,11 +5,19 @@
 # execute this script after  (. $HOMEgefs/gefs.parm)
 echo `date` $0 begin
 
+# ----------------------------------
+# options for NEMSIO
+# ----------------------------------
+#export NEMSIO_IN=.true.
+export NEMSIO_IN=.true.
+export NEMSIO_OUT=.true.
+export nopdpvv=.true.
+
 # parameters for relocation, 1 for yes, 0 for no
 export relocfact=0.05
 export relocflag=0
 export relocflag=1
-
+#
 # control pairing,inflag=6 means inputs from EnKF 6h FCST
 export inflag=6
 export outflag=5

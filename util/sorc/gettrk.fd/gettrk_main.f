@@ -187,6 +187,7 @@ c
         endif
       end if
 
+       print *, 'before tracker',imax,jmax
       call tracker (imax,jmax,grdspc,inp,storm,stormswitch
      &         ,ifhours,reslch,igetpds,igetgds,slonfg,slatfg,itret)
 c

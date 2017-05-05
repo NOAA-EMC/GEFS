@@ -37,8 +37,10 @@ echo
   PTMP=ptmp 
   STMP=stmp
 if [[ $machl = t ]] || [[ $machl = g ]]; then
+export machine='WCOSS'
 export JOBQUEUE=dev2
 export HOMEDIR=/ensemble/save/emc.enspara/RFC
+export HOMEDIR1=/ensemble/save/emc.enspara/RFC/q3fy17_lambda
  if [[ $JOBQUEUE = dev ]]; then
   PTMP=ptmpd2
   STMP=stmpd2
@@ -49,13 +51,17 @@ export HOMEDIR=/ensemble/save/emc.enspara/RFC
   echo Invalid option of JOBQUEUE in setbase $JOBQUEUE
   exit
  fi
+#export JOBQUEUE=debug2
 fi
 
 if [[ $machl = s ]] || [[ $machl = l ]]; then
+export machine='WCOSS_C'
   PTMP=gpfs/hps/ptmp
   STMP=gpfs/hps/ptmp
 export JOBQUEUE=dev
 export HOMEDIR=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC
+export HOMEDIR1=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda   #temporay setting
+export CRAYDIR=/gpfs/td1/emc
 fi
 
 if [[ $LOGNAME = glopara ]]; then

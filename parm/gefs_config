@@ -32,15 +32,21 @@ export archsyndir=$COMROOTp1/arch/prod/syndat
 export DBNROOT=
 
 export HOMEDIR=$HOMEDIR
-export HOMEgefs=$HOMEDIR/gefs.v11.0.0
 export HOMEgefs=$basesource/nwdev
 
+#for regular GEFS
 export HOMEgsm=$HOMEDIR/gsm.v12.1.2
 export HOMEpost=$HOMEDIR/ncep_post.v7.2.3
 export HOMEenkf=$HOMEDIR/enkf.v2.0.1
 export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.8
 
-export PARMglobal=$HOMEpost/parm
+#for NEMS GEFS
+export HOMEgsm=$HOMEDIR1/global_shared.v14.1.0
+export nemsioget=$HOMEgsm/exec/nemsio_get
+export HOMEpost=$HOMEgsm
+export HOMEenkf=$HOMEDIR1/gdas.v14.1.0
+export PARMglobal=$HOMEgsm/parm
+export nemsioget=$HOMEgsm/exec/nemsio_get
 
 # This section is optional, using path to define utility files
 # export UTILROOT=/nwprod2/prod_util.v1.0.0  

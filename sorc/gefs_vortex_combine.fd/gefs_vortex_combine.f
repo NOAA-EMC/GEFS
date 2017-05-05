@@ -25,9 +25,18 @@ C
       use sigio_module
       use sigio_r_module
 
-      type(sigio_head):: heado
+      use nemsio_module
+      use nemsio_gfs
 
+      type(sigio_head):: heado
       type(sigio_data):: datao
+
+      type(nemsio_gfile) :: gfile
+      type(nemsio_head)  :: ghead
+      type(nemsio_headv) :: gheadv
+      type(nemsio_data)  :: gdata
+
+
 
       character ifile*7, kfile*7
 
@@ -68,6 +77,12 @@ C
       CHARACTER*8 LAB(4)
       DIMENSION IDATE(4)
 
+      integer * 4  idate7(7)
+      integer inptyp
+      logical  nopdpvv
+
+
+
       CALL W3TAGB('GEFS_VORTEX_COMBINE',2006,0187,0068,'NP20')
 C
       READ(5,*)ITIM,IPAIR,FACT
@@ -84,7 +99,6 @@ C
       IF(IPAIR.GE.1)NSEM=9
 
 
-C
       IUNIT = 54
       KUNIT = 58
       ifile='fort.54'
@@ -93,180 +107,140 @@ C
       PRINT*,'IUNIT,KUNIT,NSEM= ',IUNIT,KUNIT,NSEM 
       PRINT*,'iunit,kunit,nsem= ',iunit,kunit,nsem 
 c
-c     call sigio_sropen(iunit,ifile,iret)
-c     if (iret.ne.0) print *,'sigio_sropen failed,iret=',iret,ifile,iunit
-
-c     call sigio_srhead(iunit,headi,iret)
-c     if (iret.ne.0) print *,'sigio_srhead failed,iret=',iret,iunit
-
-c     call sigio_aldata(headi,datai,iret)
-c     if (iret.ne.0) print *,'sigio_srdata for datai failed,iret=',iret
-
-c     call sigio_srdata(iunit,headi,datao,iret)
-c     if (iret.ne.0) print *,'sigio_srdata failed,iret=',iret
-
+       inptype=1
       call sigio_srohdc(iunit,ifile,heado,datao,iret)
-      if (iret.ne.0) print *,'sigio_srohdc failed,iret=',iret,ifile,iunit
+       if (iret == 0) then
+             inptyp=2    ! spectral GFS input
 
-c     heado = headi 
-c     datao = datai
 
-c     call sigio_swopen(iunit,kfile,iret)
-c     if (iret.ne.0) print *,'sigio_swopen failed,iret=',iret,kfile,kunit
 
-c     call sigio_aldata(iunit,heado,datao,iret)
-c     if (iret.ne.0) print *,'sigio_srdata for datao failed,iret=',iret
 
            print *,"   after read input"
 
-c     READ(IUNIT) LAB
-c     WRITE(KUNIT) LAB
-      lab=heado%clabsig
-       WRITE(10) LAB
-c23    format(4A8)
-C
-c     READ(IUNIT) FHOUR,(IDATE(I),I=1,4),DUMMY
-      fhour=heado%fhour
-      idate=heado%idate
-c     WRITE(KUNIT)FHOUR,(IDATE(I),I=1,4),DUMMY
+           fhour=heado%fhour
+           idate=heado%idate
+           mwave=heado%jcap
 
-c     MWAVE=DUMMY(202)
-      mwave=heado%jcap
+           kmax=heado%levs
+           imax=heado%lonb
+           jmax=heado%latb
+           itrac=heado%ntrac
+           IKMAX=(ITRAC-3)*KMAX
 
-      KMAX=DUMMY(203)
-      kmax=heado%levs
+      else
+          print *,'sigio_srohdc failed,iret=',iret,ifile,iunit
+           nopdpvv=.true.
+	    call nemsio_init(ios)
+            call nemsio_gfsgrd_open(gfile,ifile,'read',nopdpvv,
+     &                           ghead,gheadv,iret=ios)
 
-c     IF(MWAVE.LE.250)THEN
-c       IMAX=384
-c       JMAX=190
-c     ELSE
-c       IMAX=512
-c       JMAX=256
-c     END IF
+            if (ios == 0) then
+                inptyp = 1      
+            else
+               print *,'nemsio_open failed,ios=',ios
+            endif
+            idsl=ghead%idsl
+             mwave=ghead%jcap
+             idvm=ghead%idvm
+          if (mod(idvm,10)==2)idvm=11
+          itrac=ghead%ntrac
+          kmax=ghead%dimz
+          imax=ghead%dimx
+          jmax=ghead%dimy
+          idate7=ghead%IDATE
 
-c     IMAX=DUMMY(208)
-      imax=heado%lonb
+          NFHOUR=ghead%NFHOUR
+          NFMINUTE=ghead%NFMINUTE
+          NFSECONDN=ghead%NFSECONDN
+          NFSECONDD=ghead%NFSECONDD
+          FHOUR=real(NFHOUR,8)+real(NFMINUTE/60.,8)+
+     &       real(nfsecondn*1./(nfsecondd*360.),8)
 
-c     JMAX=DUMMY(209)
-      jmax=heado%latb
+          idate(1)=idate7(4)
+          idate(2:3)=idate7(2:3)
+          idate(4)=idate7(1)
+         write (*,*) idate,imax,jmax,kmax
+        print*,' start reading nemsio data'
 
-      ITRAC=DUMMY(214)
-      itrac=heado%ntrac
+        call nemsio_gfs_algrd(imax,jmax,kmax,itrac,gdata,nopdpvv)
+        call nemsio_gfs_rdgrd(gfile,gdata,iret=ios)
 
-      IKMAX=(ITRAC-3)*KMAX
+        print*,' complete reading data, inptyp=', inptyp
+       endif
+           PRINT*,'IKMAX=',IKMAX
+           WRITE(6,210) (IDATE(I),I=1,4),FHOUR
+210        FORMAT(5X,' INPUT DATE AND FCST HOUR ',4I5,F7.1/(2X,G13.6))
+        print *,'idsl=',idsl,'nwave=',mwave,'idvm=',idvm,
+     &   'idvc=',idvc,'ntrac=',ntrac,'kmax=',kmax,'idate=',idate
 
-      PRINT*,'IKMAX=',IKMAX
+           MAXWV=(MWAVE+1)*(MWAVE+2)/2
+           MAXWV2=2*MAXWV
+           MAXWV22=MAXWV2+1
 
-      WRITE(6,210) (IDATE(I),I=1,4),FHOUR
-c     1    ,(DUMMY(K),K=1,2*KMAX+1)
-210   FORMAT(5X,' INPUT DATE AND FCST HOUR ',4I5,F7.1/(2X,G13.6))
 
-      MAXWV=(MWAVE+1)*(MWAVE+2)/2
-      MAXWV2=2*MAXWV
-      MAXWV22=MAXWV2+1
-   
            print *,"   after process input"
 
-      ALLOCATE ( WORK_3(MAXWV2),WORK_4(MAXWV2,KMAX) )
-      ALLOCATE ( WORK_8(MAXWV22) )
 !      ALLOCATE ( WK_S1(MAXWV2,KMAX),WK_S2(MAXWV2,KMAX) )
 !      ALLOCATE ( WK_G(IMAX,JMAX,KMAX),WK_G2(IMAX,JMAX,KMAX) )
-      ALLOCATE ( WK_S1(MAXWV2,KMAX) )
 
-      ALLOCATE (PS1(IMAX,JMAX),T1(IMAX,JMAX,KMAX),Q1(IMAX,JMAX,KMAX))
-      ALLOCATE (VOR1(IMAX,JMAX,KMAX),DIV1(IMAX,JMAX,KMAX))
 
+
+      allocate (srlhi(imax,jmax))
+      allocate (srlpi(imax,jmax))
+      allocate (srlti(imax,jmax,kmax))
+      allocate (srldi(imax,jmax,kmax))
+      allocate (srlzi(imax,jmax,kmax))
+      allocate (srlqi(imax,jmax,kmax))
+
+      if (inptyp==2) then
       allocate (srlsphc(maxwv2))
       allocate (srlsphcl(maxwv2,kmax))
-
-!      allocate (srlhd(imax,jmax))
-      allocate (srlhi(imax,jmax))
-!      allocate (srlho(imax,jmax))
-!      allocate (srlpd(imax,jmax))
-      allocate (srlpi(imax,jmax))
-!      allocate (srlpo(imax,jmax))
-!      allocate (srltd(imax,jmax,kmax))
-      allocate (srlti(imax,jmax,kmax))
-!      allocate (srlto(imax,jmax,kmax))
-!      allocate (srldd(imax,jmax,kmax))
-      allocate (srldi(imax,jmax,kmax))
-!      allocate (srldo(imax,jmax,kmax))
-!      allocate (srlzd(imax,jmax,kmax))
-      allocate (srlzi(imax,jmax,kmax))
-!      allocate (srlzo(imax,jmax,kmax))
-!      allocate (srlqd(imax,jmax,kmax))
-      allocate (srlqi(imax,jmax,kmax))
-!      allocate (srlqo(imax,jmax,kmax))
+      endif
 
            print *,"   after allocate"
 
            ijmax=imax*jmax
            ijkmax=ijmax*kmax
 
-c	   print *
-           do nw=1,maxwv2
-	     srlsphc(nw)=datao%hs(nw)
-	   enddo
+      if(inptyp==2) then
+	    srlsphc(:)=datao%hs(:)
            call sptez(0,mwave,4,imax,jmax,srlsphc,srlhi,1) 
 c           call srangel (srlhi ,ijmax,' hs in  ',0)
-c	   print *
 
-           do nw=1,maxwv2
-	     srlsphc(nw)=datao%ps(nw)
-	   enddo
+	     srlsphc(:)=datao%ps(:)
            call sptez(0,mwave,4,imax,jmax,srlsphc,srlpi,1) 
 c           Call srangel (srlpi ,ijmax,' ps in  ',0)
-c	   print *
 
-	  do k=1,kmax
-           do nw=1,maxwv2
-	     srlsphcl(nw,k)=datao%t(nw,k)
-	   enddo
-	  enddo
+	     srlsphcl(:,:)=datao%t(:,:)
            call sptezm(0,mwave,4,imax,jmax,kmax,srlsphcl,srlti,1) 
 c           Call srangel (srlti  ,ijkmax,' t in  ',0)
-c	  do k=1,kmax
-c           call srangel (srlti(1,1,k),ijmax,' t in  ',k)
-c	  enddo
-c	   print *
 
-	  do k=1,kmax
-           do nw=1,maxwv2
-	     srlsphcl(nw,k)=datao%d(nw,k)
-	   enddo
-	  enddo
+	     srlsphcl(:,:)=datao%d(:,:)
            call sptezm(0,mwave,4,imax,jmax,kmax,srlsphcl,srldi,1) 
 c           call srangel (srldi  ,ijkmax,' d in  ',0)
-c	  do k=1,kmax
-c           call srangel (srldi(1,1,k),ijmax,' d in  ',k)
-c	  enddo
-c	   print *
 
-	  do k=1,kmax
-           do nw=1,maxwv2
-	     srlsphcl(nw,k)=datao%z(nw,k)
-	   enddo
-	  enddo
+	     srlsphcl(:,:)=datao%z(:,:)
            call sptezm(0,mwave,4,imax,jmax,kmax,srlsphcl,srlzi,1) 
 c           call srangel (srlzi  ,ijkmax,' z in  ',0)
-c	  do k=1,kmax
-c           call srangel (srlzi(1,1,k),ijmax,' z in  ',k)
-c	  enddo
-c	   print *
-
-	  do k=1,kmax
-           do nw=1,maxwv2
-	     srlsphcl(nw,k)=datao%q(nw,k,1)
-	   enddo
-	  enddo
+	     srlsphcl(:,:)=datao%q(:,:,1)
            call sptezm(0,mwave,4,imax,jmax,kmax,srlsphcl,srlqi,1) 
 c           call srangel (srlqi  ,ijkmax,' q in  ',0)
-c	  do k=1,kmax
-c           call srangel (srlqi(1,1,k),ijmax,' q in  ',k)
-c	  enddo
-c	   print *
 
-      CALL GET_STM(PS1,T1,Q1,VOR1,DIV1,IMAX,JMAX,KMAX,NSEM,FACT)
+      elseif(inptyp==1) then
+
+          srlhi(:,:)=gdata%zs(:,:)
+          srlpi(:,:)=gdata%ps(:,:)
+          srlti(:,:,:)=gdata%t(:,:,:)
+          srldi(:,:,:)=gdata%u(:,:,:)
+          srlzi(:,:,:)=gdata%v(:,:,:)
+          srlqi(:,:,:)=gdata%q(:,:,:,1)
+
+      endif
+
+      ALLOCATE (PS1(IMAX,JMAX),T1(IMAX,JMAX,KMAX),Q1(IMAX,JMAX,KMAX))
+      ALLOCATE (VOR1(IMAX,JMAX,KMAX),DIV1(IMAX,JMAX,KMAX))
+
+      CALL GET_STM(PS1,T1,Q1,VOR1,DIV1,IMAX,JMAX,KMAX,NSEM,FACT,inptyp)
 
            call srangel (ps1,ijmax,' ps1 ',0)
            call srangel (t1,ijkmax,' t1 ',0)
@@ -281,145 +255,78 @@ c	   print *
            enddo
 
            print *,"   after get_stm"
-cc
-c     READ(IUNIT) (WORK_3(NW),NW=1,MAXWV2)       ! terrain
-      do nw=1,maxwv2
-	work_3(nw)=datao%hs(nw)
-      enddo
+      if (inptyp == 2) then
+          ALLOCATE ( WK_S1(MAXWV2,KMAX) )
+          ALLOCATE ( WORK_8(MAXWV22) )
 
-c     WRITE(KUNIT)(WORK_3(NW),NW=1,MAXWV2)
-      do nw=1,maxwv2
-	datao%hs(nw)=work_3(nw)
-      enddo
+          call SPTEZ(0,MWAVE,4,IMAX,JMAX,WORK_8,PS1,-1)
+          datao%ps(:)=datao%ps(:)+WORK_8(:)
 
-c     READ(IUNIT) (WORK_3(NW),NW=1,MAXWV2)       ! LOG(PSFC) 
-      do nw=1,maxwv2
-	work_3(nw)=datao%ps(nw)
-      enddo
 
-      call SPTEZ(0,MWAVE,4,IMAX,JMAX,WORK_8,PS1,-1)
+          CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,T1,-1)
+          datao%t(:,:)=datao%t(:,:)+WK_S1(:,:)
+          print *,"   after process t"
 
-      DO NW=1,MAXWV2
-        WORK_3(NW)=WORK_3(NW)+WORK_8(NW)
-      END DO
 
-c     WRITE(KUNIT) (WORK_3(NW),NW=1,MAXWV2)       ! LOG(PSFC) 
-      do nw=1,maxwv2
-	datao%ps(nw)=work_3(nw)
-      enddo
-
-C
-      DO 220 K=1,KMAX
-c       READ(IUNIT) (WORK_4(NW,K),NW=1,MAXWV2)        ! T
-        do nw=1,maxwv2
-	  work_4(nw,k)=datao%t(nw,k)
-	enddo
-220   CONTINUE
-
-      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,T1,-1)
-
-      DO K=1,KMAX
-        DO NW=1,MAXWV2
-          WORK_4(NW,K)=WORK_4(NW,K)+WK_S1(NW,K)
-!          WORK_4(NW,K)=WORK_4(NW,K)
-          datao%t(nw,k)=work_4(nw,k)
-        END DO
-c       WRITE(KUNIT) (WORK_4(NW,K),NW=1,MAXWV2)
-      END DO
-
-	   print *,"   after process t"
-
-C
-      DO K=1,KMAX
-c       READ(IUNIT) (WORK_4(NW,K),NW=1,MAXWV2)      ! VOR
-        do nw=1,maxwv2
-	  work_4(nw,k)=datao%z(nw,k)
-	enddo
-      END DO
-
-      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,VOR1,-1)
-
-      DO K=1,KMAX
-        DO NW=1,MAXWV2
-          WORK_4(NW,K)=WORK_4(NW,K)+WK_S1(NW,K)
-	  datao%z(nw,k)=work_4(nw,k)
-        END DO
-c       WRITE(KUNIT) (WORK_4(NW,K),NW=1,MAXWV2)
-      END DO
- 
+          CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,VOR1,-1)
+	  datao%z(:,:)=datao%z(:,:)+WK_S1(:,:)
 	   print *,"   after process vor"
 
-      DO K=1,KMAX
-c       READ(IUNIT) (WORK_4(NW,K),NW=1,MAXWV2)      ! DIV
-        do nw=1,maxwv2
-	  work_4(nw,k)=datao%d(nw,k)
-	enddo
-      END DO
 
-      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,DIV1,-1)
-
-      DO K=1,KMAX
-        DO NW=1,MAXWV2
-          WORK_4(NW,K)=WORK_4(NW,K)+WK_S1(NW,K)
-	  datao%d(nw,k)=work_4(nw,k)
-        END DO
-c       WRITE(KUNIT) (WORK_4(NW,K),NW=1,MAXWV2)
-      END DO
-
+           CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,DIV1,-1)
+           datao%d(:,:)=datao%d(:,:)+WK_S1(:,:)
 	   print *,"   after process div"
 
-c      print*,'test2'
 
-      DO 240 K=1,KMAX
-c       READ(IUNIT) (WORK_4(NW,K),NW=1,MAXWV2)   !  Q
-        do nw=1,maxwv2
-	  work_4(nw,k)=datao%q(nw,k,1)
-	enddo
-240   CONTINUE
+          CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,Q1,-1)
+          datao%q(:,:,1)=datao%q(:,:,1)+WK_S1(:,:)
+          print *,"   after process q"
+c      add these lines to zero out the vorticity as in the gfs code
 
-      CALL SPTEZM(0,MWAVE,4,IMAX,JMAX,KMAX,WK_S1,Q1,-1)
+           DO K=1,KMAX
+	    datao%d(1,K)=0.
+	    datao%z(1,K)=0.
+           END DO
+           DEALLOCATE ( WORK_8, WK_S1 )
 
-      DO K=1,KMAX
-        DO NW=1,MAXWV2
-          WORK_4(NW,K)=WORK_4(NW,K)+WK_S1(NW,K)
-	  datao%q(nw,k,1)=work_4(nw,k)
-        END DO
-c       WRITE(KUNIT) (WORK_4(NW,K),NW=1,MAXWV2)
-      END DO
-C
-	   print *,"   after process q"
+         call sigio_swohdc(kunit, kfile, heado, datao, iret)
+         print *, 'iret from sigio_swohdc =', iret,kunit
 
-c  other tracers already copied
-c     DO 270 K=1,KMAX
-c     READ(IUNIT) (WORK_3(NW),NW=1,MAXWV2)   ! O3
-c     WRITE(KUNIT) (WORK_3(NW),NW=1,MAXWV2)   ! O3
-c270   CONTINUE
+       elseif(inptyp == 1) then
+         do i=1,imax
+         do j=1,jmax
+c           gdata%ps(i,j)=gdata%ps(i,j)+exp(PS1(i,j))*1000.
+	    gdata%ps(i,j)=exp(log(gdata%ps(i,j)/1000.)+PS1(i,j))*1000.
+         do k=1,kmax
+           gdata%t(i,j,k)=gdata%t(i,j,k)+T1(i,j,k)
+           gdata%u(i,j,k)=gdata%u(i,j,k)+DIV1(i,j,k)
+           gdata%v(i,j,k)=gdata%v(i,j,k)+VOR1(i,j,k)
+           gdata%q(i,j,k,1)=gdata%q(i,j,k,1)+Q1(i,j,k)
+         enddo
+         enddo
+         enddo
+       print *,'datatype2=',ghead%gdatatype
+       print *,'recname2=',gheadv%recname(1:3)
+
+      call nemsio_gfsgrd_open(gfile,trim(kfile),
+     &   'write',nopdpvv,ghead,gheadv,iret=ios)
+        if (ios /= 0) print *,'open nemsio write file,',trim(kfile)
+     &,                        'iret=',iret
+
+      call nemsio_gfs_wrtgrd(gfile,gdata,iret=ios)
+
+      if (ios /=0 ) then
+       print *,'nemsio write grd,ret=',ios
+      else
+        print*,' complete writing data, inptyp=', inptyp
+      endif
+      call nemsio_close(gfile)
+
+        endif
 c
-!      DO 280 K=1,IKMAX    ! ITRAC should be 3 something wrong in the pert data
-c     DO 280 K=1,IKMAX+KMAX
-c     READ(IUNIT) (WORK_3(NW),NW=1,MAXWV2)
-c     WRITE(KUNIT) (WORK_3(NW),NW=1,MAXWV2)
-c280   CONTINUE
-
-c     call sigio_axdata(datai,iret)
-c     print *, 'iret for datai from sigio_axdata =', iret
-
-c     call sigio_sclose(iunit,iret)
-c     if (iret.ne.0) print *,'sigio_sclose failed,iret=',iret,iunit
-
-c     call sigio_swhead(kunit,heado,iret)
-c     print *, 'iret from sigio_swhead =', iret,kunit
-c
-c add these lines to zero out the vorticity as in the gfs code
-
-      DO K=1,KMAX
-	datao%d(1,K)=0.
-	datao%z(1,K)=0.
-      END DO
-
+	call nemsio_finalize()
 	   print *,"   after zero z and d"
-      DEALLOCATE ( WORK_8, WK_S1 )
-      DEALLOCATE ( WORK_3,WORK_4 )
+
       DEALLOCATE ( PS1,T1,Q1,VOR1,DIV1 )
       allocate (srlhd(imax,jmax))
       allocate (srlho(imax,jmax))
@@ -433,7 +340,7 @@ c add these lines to zero out the vorticity as in the gfs code
       allocate (srlzo(imax,jmax,kmax))
       allocate (srlqd(imax,jmax,kmax))
       allocate (srlqo(imax,jmax,kmax))
-
+         if (inptyp ==2) then
            do nw=1,maxwv2
 	     srlsphc(nw)=datao%hs(nw)
 	   enddo
@@ -471,6 +378,17 @@ c add these lines to zero out the vorticity as in the gfs code
 	   enddo
 	  enddo
            call sptezm(0,mwave,4,imax,jmax,kmax,srlsphcl,srlqo,1) 
+
+          elseif(inptyp==1) then
+
+          srlho(:,:)=gdata%zs(:,:)
+          srlpo(:,:)=gdata%ps(:,:)
+          srlto(:,:,:)=gdata%t(:,:,:)
+          srldo(:,:,:)=gdata%u(:,:,:)
+          srlzo(:,:,:)=gdata%v(:,:,:)
+          srlqo(:,:,:)=gdata%q(:,:,:,1)
+
+          endif
 
 	   do j=1,jmax
 	     do i=1,imax
@@ -546,8 +464,6 @@ c add these lines to zero out the vorticity as in the gfs code
 	  enddo
 	   print *
 
-      call sigio_swohdc(kunit, kfile, heado, datao, iret)
-      print *, 'iret from sigio_swohdc =', iret,kunit
 
 c     call sigio_swdata(kunit, heado, datao, iret)
 c     print *, 'iret from sigio_swdata =', iret,kunit
@@ -573,7 +489,8 @@ C
       
 ! This program only called by one pair member (n1,n2,n3,n4,n5) or (p1,p2,p3,p4,p5) 
 
-       SUBROUTINE GET_STM(PS1,T1,Q1,VOR1,DIV1,IGU,JGU,KMAX,NSEM,FACT)
+       SUBROUTINE GET_STM(PS1,T1,Q1,VOR1,DIV1,IGU,JGU,KMAX,NSEM
+     *,FACT,inptyp)
 
 !        PARAMETER (IGU=384,JGU=190,KMAX=28)
         PARAMETER (MSTM=10)
@@ -591,6 +508,7 @@ c       PARAMETER (FACT=0.05)
         DIMENSION TKE_C0(MSTM),TKE_PN(MSTM) 
         DIMENSION TT1_C0(MSTM),TT1_PN(MSTM),TP1_C0(MSTM),TP1_PN(MSTM) 
         REAL*4, ALLOCATABLE :: SAVE(:,:,:)
+        integer inptyp
 
         MTV=4*KMAX+1
  
@@ -628,11 +546,13 @@ c       PARAMETER (FACT=0.05)
 
             U1=0.
           READ(NCT1)((U1(I,J),I=IWMIN1,IWMAX1),J=JWMIN1,JWMAX1)      ! P1
+          
             DO J=JWMIN1,JWMAX1
             DO I=IWMIN1,IWMAX1
               TP1_C0(KST)=TP1_C0(KST)+U1(I,J)**2
             END DO
             END DO
+          PRINT*,'KST,TP1_C0=',KST,TP1_C0(KST)
 
           READ(NCT1)               ! TS
           PRINT*,'STORM NAME=',STNAME(KST,1)
@@ -774,7 +694,7 @@ c       PARAMETER (FACT=0.05)
              PRINT*,'wrong pair'
              stop
           END IF
-          IF(STNAME(KST,1).NE.STNAME(KST,3))THEN
+           IF(STNAME(KST,1).NE.STNAME(KST,3))THEN
              PRINT*,'wrong control'
              stop
           END IF
@@ -942,21 +862,23 @@ C
       U1(IH,JH) = ALOG(D1)
       ENDDO
       ENDDO
+      PRINT*,'total ps',U1(21,21)
            
 ! ENV data
       DO JH=1,JGU
       DO IH=1,IGU
       PMSL = ALOG(PSL(IH,JH)*1.0)
       A = (GAMMA * ZS(IH,JH)) / TS(IH,JH)
-!      PRINT*,'IH,JH,APSL,TS=',IH,JH,A,PSL(IH,JH),TS(IH,JH)
       B = ALOG(1+A)
       C = (G*B)/(R*GAMMA)
       DD = PMSL - C
       D1 = EXP(DD)/1000.
       U1(IH,JH) = U1(IH,JH)-ALOG(D1)
+C      PRINT*,'IH,JH,APSL,TS=',IH,JH,A,PSL(IH,JH),TS(IH,JH),U1(IH,JH)
                            
       ENDDO
       ENDDO
+      PRINT*,'ps pert',U1(21,21)
            
       END
           subroutine srangel(var,n,label,level)

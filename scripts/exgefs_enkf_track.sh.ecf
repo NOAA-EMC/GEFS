@@ -179,7 +179,13 @@ if (( trackflag == 1 )); then
 	else # [[ ! -s ${COMINenkf}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean ]]
 		mkdir $COMOUTprevcyc/sfcsig_enkf
 		export SIGINP=$COMINenkf/${cycp}/sfg_${pdyp}${cycp}_fhr${fhrp}_ensmean
+           if [ $NEMSIO_IN = .true. ]; then
+                export GFSOUT=$COMOUTprevcyc/sfcsig_enkf/gec00.t${cycp}z.sf${fhrp}
+                export OUTTYP=1
+           else
 		export SIGOUT=$COMOUTprevcyc/sfcsig_enkf/gec00.t${cycp}z.sf${fhrp}
+                export OUTTYP=2
+           fi
 		export SFCINP=/dev/null
 		export SFCOUT=/dev/null
 		export JCAP=$JCAPHR
@@ -190,12 +196,23 @@ if (( trackflag == 1 )); then
 		export IDVC=$IDVC
 
 		#check if ENKF has same resolution as GEFS
+
+        if [ $NEMSIO_IN = .true. ]; then
+        ojcap=$($nemsioget ${SIGINP} jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        olevs=$($nemsioget ${SIGINP} levs |grep -i "levs" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        olonb=$($nemsioget ${SIGINP} LONF|grep -i "LONF" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        olatb=$($nemsioget ${SIGINP} LATG|grep -i "LATG" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        ontrac=$($nemsioget ${SIGINP} NTRAC|grep -i "NTRAC" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        oidvc=$($nemsioget ${SIGINP} IDVC|grep -i "IDVC" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        else
+
 		ojcap=`$sighdrexec $SIGINP jcap`
 		olevs=`$sighdrexec $SIGINP levs`
 		olonb=`$sighdrexec $SIGINP lonb`
 		olatb=`$sighdrexec $SIGINP latb`
 		ontrac=`$sighdrexec $SIGINP ntrac`
 		oidvc=`$sighdrexec $SIGINP idvc`
+        fi
 		runchgres=yes
 		if (( JCAP == ojcap )); then
 			if (( LEVS == olevs )); then
@@ -213,7 +230,8 @@ if (( trackflag == 1 )); then
 
 		if [[ $runchgres = yes ]]; then
 			export NVCOORD=$IDVC
-			export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0"
+                        export nopdpvv=$nopdpvv
+                        export CHGRESVARS="use_ufo=.true.,rdgrid=.true.,idvc=$idvc,NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0,nopdpvv=$nopdpvv"
 			if (( IDVC == 1 )); then
 				export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
 			fi
@@ -222,7 +240,11 @@ if (( trackflag == 1 )); then
 			fi
 			$chgresush >>$pgmout
 		else
-			cp -fp $SIGINP $SIGOUT
+                        if [ $NEMSIO_IN = .true. ]; then
+	                	cp -fp $SIGINP $GFSOUT
+                        else
+			       cp -fp $SIGINP $SIGOUT
+                        fi 
 			cp -fp $SFCINP $SFCOUT
 		fi
 	fi # [[ ! -s ${COMINenkf}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean ]]
@@ -285,12 +307,14 @@ if (( trackflag == 1 )); then
 		cat <<-EOF >> poescript.$itask
 			export pert=${suf}${pmemh}
 			export SIGVAL="&siginfo sigpath=\"\${DATA}/sigf_\${pert}_fhr\", ddeg=1.0, reslch=0 0 /"
-			ln -sf $COMINenkf/${cycp}/siganl_${pdycycp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr00
+#			ln -sf $COMINenkf/${cycp}/siganl_${pdycycp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr00
+			ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr00
 			ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr06
 			$UTILgefs/ush/extrkr.sh > ushout.track.$ipair 2>&1
 			export pert=${suf}${mmemh}
 			export SIGVAL="&siginfo sigpath=\"\${DATA}/sigf_\${pert}_fhr\", ddeg=1.0, reslch=0 0 /"
-			ln -sf $COMINenkf/${cycp}/siganl_${pdycycp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr00
+#			ln -sf $COMINenkf/${cycp}/siganl_${pdycycp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr00
+			ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr00
 			ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr06
 			$UTILgefs/ush/extrkr.sh >> ushout.track.$ipair 2>&1
 			EOF

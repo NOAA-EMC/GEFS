@@ -304,12 +304,32 @@ if (( coldstartflag == 0 )); then
 			fi # (( inflagt == 1 )) || (( inflagt == 3 ))
 			if [[ -e $fcstinn ]]; then
 				echo fcstinn=$fcstinn found
+                                echo fcstinn=$fcstinn found
+                               if [ $NEMSIO_IN = .true. ]; then
+                                onifhr=$($nemsioget $fcstinn nfhour |grep -i "nfhour" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+                               else
+
 				onifhr=`$sighdrexec $fcstinn ifhr`
+                               fi
 				rc=$?
 				echo rc=$rc onifhr=$onifhr
 				if (( rc == 0 )); then
 					if (( onifhr == fhrp )); then
+                                                if [ $NEMSIO_IN = .true. ];then
+                                                   export OCDATE_NEMS=$($nemsioget ${fcstinn} idate | grep -i "idate" |awk -F= '{print $2}')
+                                                   INI_YEAR=$(echo $OCDATE_NEMS | awk -F" " '{print $1}')
+                                                   INI_MONTH=$(echo $OCDATE_NEMS | awk -F" " '{print $2}')
+                                                   INI_DAY=$(echo $OCDATE_NEMS | awk -F" " '{print $3}')
+                                                   INI_HOUR=$(echo $OCDATE_NEMS | awk -F" " '{print $4}')
+                                                   oyyyy=$INI_YEAR
+                                                   omm=$INI_MONTH; if [ $omm -lt 10 ]; then omm=0$omm ; fi
+                                                   odd=$INI_DAY; if [ $odd -lt 10 ]; then odd=0$odd ; fi
+                                                   ohh=`expr $INI_HOUR + 0 `; if [ $ohh -lt 10 ]; then ohh=0$ohh ; fi
+                                                   onidate=${oyyyy}${omm}${odd}${ohh}
+                                                else
+
 						onidate=`$sighdrexec $fcstinn idate`
+                                               fi
 						rc=$?
 						echo rc=$rc onidate=$onidate
 						if (( rc == 0 )); then
@@ -346,12 +366,29 @@ if (( coldstartflag == 0 )); then
 			fi # (( inflagt == 2 )) || (( inflagt == 3 ))
 			if [[ -e $fcstinp ]]; then
 				echo fcstinp=$fcstinp found
+                               if [ $NEMSIO_IN = .true. ]; then
+                                opifhr=$($nemsioget $fcstinp nfhour |grep -i "nfhour" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+                               else
 				opifhr=`$sighdrexec $fcstinp ifhr`
+                               fi
 				rc=$?
 				echo opifhr=$opifhr
 				if (( rc == 0 )); then
 					if (( opifhr == fhrp )); then
+                                            if [ $NEMSIO_IN = .true. ];then
+                                                   export OCDATE_NEMS=$($nemsioget ${fcstinp} idate | grep -i "idate" |awk -F= '{print $2}')
+                                                   INI_YEAR=$(echo $OCDATE_NEMS | awk -F" " '{print $1}')
+                                                   INI_MONTH=$(echo $OCDATE_NEMS | awk -F" " '{print $2}')
+                                                   INI_DAY=$(echo $OCDATE_NEMS | awk -F" " '{print $3}')
+                                                   INI_HOUR=$(echo $OCDATE_NEMS | awk -F" " '{print $4}')
+                                                   oyyyy=$INI_YEAR
+                                                   omm=$INI_MONTH; if [ $omm -lt 10 ]; then omm=0$omm ; fi
+                                                   odd=$INI_DAY; if [ $odd -lt 10 ]; then odd=0$odd ; fi
+                                                   ohh=`expr $INI_HOUR + 0 `; if [ $ohh -lt 10 ]; then ohh=0$ohh ; fi
+                                                   opidate=${oyyyy}${omm}${odd}${ohh}
+                                                else
 						opidate=`$sighdrexec $fcstinp idate`
+                                                fi
 						rc=$?
 						echo rc=$rc opidate=$opidate
 						if (( rc == 0 )); then
@@ -409,10 +446,18 @@ fi # (( coldstartflag == 0 ))
 if [[ $haveinput = yes ]]; then
 	echo we have chosen ifhruse=$ifhruse com=$comfcstinuse
 	if (( inflaguse == 1 )) || (( inflaguse == 3 )); then
+          if [ $NEMSIO_IN = .true. ];then
+        ojcap=$($nemsioget $fcstinn jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        olevs=$($nemsioget $fcstinn levs |grep -i "levs" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        ontrac=$($nemsioget $fcstinn NTRAC|grep -i "NTRAC" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        oidvc=$($nemsioget $fcstinn IDVC|grep -i "IDVC" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+         else
+
 		ojcap=`$sighdrexec $fcstinn jcap` 
 		olevs=`$sighdrexec $fcstinn levs` 
 		ontrac=`$sighdrexec $fcstinn ntrac` 
 		oidvc=`$sighdrexec $fcstinn idvc` 
+        fi
 		export JCAP=$jcap
 		export LEVS=$levs
 		export LONB=$lonb
@@ -463,10 +508,17 @@ if [[ $haveinput = yes ]]; then
 		touch $DATALOCAL/finn
 	fi # (( inflaguse == 1 )) || (( inflaguse == 3 ));
 	if (( inflaguse == 2 )) || (( inflaguse == 3 )); then
+          if [ $NEMSIO_IN = .true. ];then
+        ojcap=$($nemsioget $fcstinp jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        olevs=$($nemsioget $fcstinp levs |grep -i "levs" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        ontrac=$($nemsioget $fcstinp NTRAC|grep -i "NTRAC" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        oidvc=$($nemsioget $fcstinp IDVC|grep -i "IDVC" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+         else
 		ojcap=`$sighdrexec $fcstinp jcap` 
 		olevs=`$sighdrexec $fcstinp levs` 
 		ontrac=`$sighdrexec $fcstinp ntrac` 
 		oidvc=`$sighdrexec $fcstinp idvc` 
+          fi
 		export JCAP=$jcap
 		export LEVS=$levs
 		export LONB=$lonb
@@ -536,6 +588,7 @@ else
 	export relocpertflag=0
 fi # (( ifhruse == fhrp ))
 
+if [ $NEMSIO_IN != .true. ];then
 ln -sf finn sig_zvdi
 if [[ "$sigzvd" = "yes" ]]; then
 	ln -sf finn sig_zvdo
@@ -561,6 +614,7 @@ echo ifinp$ipair > sig_zvdl
 $EXECgefs/global_sigzvd
 
 ret_sigzvd=$?
+fi
 
 #
 #  Separate the storm and environment forecast fields
@@ -684,18 +738,23 @@ if (( ipair > nhrpair )); then
 else
 	export SIGINP=../sanl.hr.in
 	export SFCINP=../sfcanl.hr.in
+	export NSTINP=../nsnanl.hr.in
 fi
 
 export SIGOUT=$DATALOCAL/sanl.in
 export SFCOUT=$DATALOCAL/sfcanl.in
+export NSNOUT=$DATALOCAL/nsnanl.in
 
 cp -fp $SIGINP $SIGOUT
 cp -fp $SFCINP $SFCOUT
+cp -fp $NSTINP $NSNOUT
 
 wait
 
 unset SFCINP
 unset SFCOUT
+unset NSTINP
+unset NSNOUT
 
 for meml in n p; do
 	if [[ ! -s fin${meml}  ]]; then
@@ -720,10 +779,18 @@ for meml in n p; do
 		#  export SIGOUT=$DATALOCAL/gefs.pertback.$cycle_fcst.${meml}${ipair}
 		export SIGOUT=$DATALOCAL/fin${meml}
 		export SFCOUT=sfcout
+                          if [ $NEMSIO_IN = .true. ];then
+        ojcap=$($nemsioget ${SIGINP} jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        olevs=$($nemsioget ${SIGINP} levs |grep -i "levs" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        ontrac=$($nemsioget ${SIGINP} NTRAC|grep -i "NTRAC" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        oidvc=$($nemsioget ${SIGINP} IDVC|grep -i "IDVC" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+         else
+
 		ojcap=`$sighdrexec $SIGINP jcap` 
 		olevs=`$sighdrexec $SIGINP levs` 
 		ontrac=`$sighdrexec $SIGINP ntrac` 
 		oidvc=`$sighdrexec $SIGINP idvc` 
+         fi
 		runchgres=yes
 		if (( JCAP == ojcap )); then
 			if (( LEVS == olevs )); then
@@ -763,7 +830,7 @@ echo
 echo $relocpertflag>save.relocpertflag
 echo $inflaguse>save.inflaguse
 echo $ifhruse>save.ifhruse
-for file in finn finp finn_env finp_env finn_strm finp_strm finn_presep finp_presep gefs.pertback.$cycle_fcst.n${ipair} gefs.pertback.$cycle_fcst.p${ipair} sanl.in sfcanl.in save.relocpertflag save.inflaguse save.ifhruse; do
+for file in finn finp finn_env finp_env finn_strm finp_strm finn_presep finp_presep gefs.pertback.$cycle_fcst.n${ipair} gefs.pertback.$cycle_fcst.p${ipair} sanl.in sfcanl.in nsnanl.in save.relocpertflag save.inflaguse save.ifhruse; do
 	fils=../$file.pair$ipairi
 	echo file=$file fils=$fils
 	if [[ -f $file ]]; then

@@ -84,7 +84,8 @@ eofCAT
       fi
 
     export JOBQUEUE=$JOBQUEUE
-    JOBQUEUESHARED=$JOBQUEUE\_shared
+    JOBQUEUESHARED=$JOBQUEUE
+#    JOBQUEUESHARED=$JOBQUEUE\_shared
 
     if [[ ${job_type} = serial ]] ; then
     cat <<eofCAT >>$jobcontrol$SUBJOB
@@ -119,12 +120,19 @@ eofCAT
 . /usrx/local/Modules/default/init/ksh
 module use /nwprod2/modulefiles
 module purge
-module load ics
+module load ics/16.0.3
 module load lsf
 module load prod_envir
 module load prod_util
-module load util_shared/v1.0.0
-module load grib_util/v1.0.1
+module load util_shared
+module load grib_util/v1.0.2
+module load NetCDF/4.2/serial
+module load ESMF/700
+#prod_envir points to sigio data, here temporarily set nemsio data source
+export COMROOTp1=/ensemble/noscrub/Bing.Fu/o/com 
+export COMROOTp2=/ensemble/noscrub/Bing.Fu/o/com 
+echo COMROOTp1=$COMROOTp1
+echo COMROOTp2=$COMROOTp2
 eofCAT
     if [[ ${job_type} = parallel ]] ; then
      cat <<eofCAT >>$jobcontrol$SUBJOB

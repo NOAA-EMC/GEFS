@@ -12,7 +12,7 @@ LDFLAGS =
 
 CMD =   gefs_vortex_combine
 PROFLIB =   
-FFLAGS=  -p   -r8 -O0 -i4  -traceback -assume byterecl   -list
+FFLAGS=  -p   -convert big_endian -r8 -O0 -i4  -traceback -assume byterecl   -list
 
 LDFLAGS= -openmp
 
@@ -20,10 +20,10 @@ LDFLAGS= -openmp
 all:    $(CMD)
 
 $(CMD): $(OBJS)
-	$(FC) $(LDFLAGS) $(FFLAGS) -I $(INCS) -o $(@) $(OBJS) $(LIBS_INIT)
+	$(FC) $(LDFLAGS) $(FFLAGS) -I $(INCGFS) -I $(INCG)  -I $(INCS) -o $(@) $(OBJS) $(LIBS_INIT)
 
 $(OBJS):        $(SRCS)
-	$(FC) $(FFLAGS) -I $(INCS) -c $(SRCS)
+	$(FC) $(FFLAGS) -I $(INCGFS) -I $(INCG) -I $(INCS) -c $(SRCS)
 
 
 allclean:       clean all

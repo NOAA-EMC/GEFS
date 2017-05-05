@@ -99,7 +99,7 @@ clean:
 .F90.o  :
 	@echo
 	@echo '---> Compiling $<'
-	$(CF) $(FFLAGS) $(_D) -c $<
+	$(CF) $(FFLAGS) $(_D)  $<
 
 .f90.o  :
 	@echo
