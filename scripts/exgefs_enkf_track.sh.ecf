@@ -142,19 +142,19 @@ export trackflag
 export COMOUT=${COMOUT}
 
 if (( trackflag == 1 )); then
-	echo  ${COMINenkf}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean 
+	echo  ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio 
 	# test for files necessary for relocation
-	if [[ ! -s ${COMINenkf}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean ]] ; then
+	if [[ ! -s ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio ]] ; then
 		export trackflag=0
-		echo  ${COMINenkf}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean not found
-	else # [[ ! -s ${COMINenkf}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean ]]
+		echo  ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio not found
+	else # [[ ! -s ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio ]]
 		export cmodel=enkf
 		export pert=ac00
 		export PDY=${pdyp}
 		export CYL=${cycp}
 		export SIGVAL="&siginfo sigpath=\"${DATA}/sigf_${pert}_fhr\", ddeg=1.0, reslch=0 0 /"
-		ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean ${DATA}/sigf_${pert}_fhr00
-		ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean ${DATA}/sigf_${pert}_fhr06
+		ln -sf ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio ${DATA}/sigf_${pert}_fhr00
+		ln -sf ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio ${DATA}/sigf_${pert}_fhr06
 		sh $UTILgefs/ush/extrkr.sh
 
 		atcfout=''
@@ -167,18 +167,18 @@ if (( trackflag == 1 )); then
 		atcfoutb=`echo ${atcfout} | tr '[a-z]' '[A-Z]'`
 		cat ${COM}/ac00.t${cycp}z.cyclone.trackatcfunix | sed -e 's/AC00/'${atcfoutb}'/g' > ${COM}/${atcfout}.t${cycp}z.cyclone.trackatcfunix
 		###teste
-	fi # [[ ! -s ${COMINenkf}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean ]]
+	fi # [[ ! -s ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio ]]
 fi # (( trackflag == 1 ))
 
 ### chgres ENKF control run forecast hr=$fhrp and save to precious cycle sfcsig directory 
 if (( trackflag == 1 )); then
 	# test for files necessary for relocation
-	if [[ ! -s ${COMINenkf}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean ]]; then
+	if [[ ! -s ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio ]]; then
 		export trackflag=0
-		echo  ${COMINenkf}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean not found
-	else # [[ ! -s ${COMINenkf}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean ]]
+		echo  ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio not found
+	else # [[ ! -s ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio ]]
 		mkdir $COMOUTprevcyc/sfcsig_enkf
-		export SIGINP=$COMINenkf/${cycp}/sfg_${pdyp}${cycp}_fhr${fhrp}_ensmean
+		export SIGINP=${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio
            if [ $NEMSIO_IN = .true. ]; then
                 export GFSOUT=$COMOUTprevcyc/sfcsig_enkf/gec00.t${cycp}z.sf${fhrp}
                 export OUTTYP=1
@@ -308,14 +308,14 @@ if (( trackflag == 1 )); then
 			export pert=${suf}${pmemh}
 			export SIGVAL="&siginfo sigpath=\"\${DATA}/sigf_\${pert}_fhr\", ddeg=1.0, reslch=0 0 /"
 #			ln -sf $COMINenkf/${cycp}/siganl_${pdycycp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr00
-			ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr00
-			ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr06
+			ln -sf ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.mem0${pmem}.nemsio \${DATA}/sigf_\${pert}_fhr00
+			ln -sf ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.mem0${pmem}.nemsio \${DATA}/sigf_\${pert}_fhr06
 			$UTILgefs/ush/extrkr.sh > ushout.track.$ipair 2>&1
 			export pert=${suf}${mmemh}
 			export SIGVAL="&siginfo sigpath=\"\${DATA}/sigf_\${pert}_fhr\", ddeg=1.0, reslch=0 0 /"
 #			ln -sf $COMINenkf/${cycp}/siganl_${pdycycp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr00
-			ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr00
-			ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr06
+			ln -sf ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio \${DATA}/sigf_\${pert}_fhr00
+			ln -sf ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio \${DATA}/sigf_\${pert}_fhr06
 			$UTILgefs/ush/extrkr.sh >> ushout.track.$ipair 2>&1
 			EOF
 		echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh end">>poescript.$itask

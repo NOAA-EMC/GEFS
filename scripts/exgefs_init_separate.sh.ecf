@@ -175,14 +175,14 @@ if (( nhrpair < npair )); then
 		export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
 	fi
 
-	if [[ -f $COMINgfs/gfs.$cycle.sanl && -f $COMINgfs/gfs.$cycle.sfcanl ]]; then
-		export SIGINP=$COMINgfs/gfs.$cycle.sanl
-		export SFCINP=$COMINgfs/gfs.$cycle.sfcanl
+	if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
+		export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
+		export SFCINP=$COMINgfs/gfs.$cycle.sfcanl.nemsio
 	else
 		echo !!!! FATAL ERROR !!!!
-		echo $COMINgfs/gfs.$cycle.sanl and $COMINgfs/gfs.$cycle.sfcanl CANNOT BE FOUND
+		echo $COMINgfs/gfs.$cycle.atmanl.nemsio and $COMINgfs/gfs.$cycle.sfcanl.nemsio CANNOT BE FOUND
 		exit
-	fi # [[ -f $COMINgfs/gfs.$cycle.sanl && -f $COMINgfs/gfs.$cycle.sfcanl ]]
+	fi # [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]
 	###teste
 
 	# check for missing or zero-length analysis files
@@ -332,15 +332,15 @@ export RDGRID=.true.
 		export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
 	fi
 
-	if [[ -f $COMINgfs/gfs.$cycle.sanl && -f $COMINgfs/gfs.$cycle.sfcanl ]]; then
-		export SIGINP=$COMINgfs/gfs.$cycle.sanl
-		export SFCINP=$COMINgfs/gfs.$cycle.sfcanl
-		export NSTINP=$COMINgfs/gfs.$cycle.nsnanl
+	if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
+		export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
+		export SFCINP=$COMINgfs/gfs.$cycle.sfcanl.nemsio
+		export NSTINP=$COMINgfs/gfs.$cycle.nstanl.nemsio
 	else
 		echo !!!! FATAL ERROR !!!!
-		echo $COMINgfs/gfs.$cycle.sanl and $COMINgfs/gfs.$cycle.sfcanl CANNOT BE FOUND
+		echo $COMINgfs/gfs.$cycle.atmanl.nemsio and $COMINgfs/gfs.$cycle.sfcanl.nemsio CANNOT BE FOUND
 		exit
-	fi # [[ -f $COMINgfs/gfs.$cycle.sanl && -f $COMINgfs/gfs.$cycle.sfcanl ]]
+	fi # [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]
 
 	# check for missing or zero-length analysis files
 
