@@ -40,7 +40,7 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
 export machine='WCOSS'
 export JOBQUEUE=dev2
 export HOMEDIR=/ensemble/save/emc.enspara/RFC
-export HOMEDIR1=/ensemble/save/emc.enspara/RFC/q3fy17_lambda
+export HOMEDIR1=/ensemble/save/emc.enspara/RFC/q3fy17_eta
  if [[ $JOBQUEUE = dev ]]; then
   PTMP=ptmpd2
   STMP=stmpd2
@@ -60,7 +60,8 @@ export machine='WCOSS_C'
   STMP=gpfs/hps/ptmp
 export JOBQUEUE=dev
 export HOMEDIR=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC
-export HOMEDIR1=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda   #temporay setting
+export HOMEDIR1=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda    #temporay setting
+#export HOMEDIR1=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/q3fy17_eta    #temporay setting
 export CRAYDIR=/gpfs/td1/emc
 fi
 
@@ -160,7 +161,7 @@ if [[ $machl = s ]] || [[ $machl = l ]]; then
 # For CRAY
   export account=GEN-T2O
 # export account=gefs
-  export group=ensemble
+  export group=gpfs/hps/emc/ensemble
   export classs=batch
   export classp=batch
   export classp=batch
@@ -170,15 +171,17 @@ fi         # [[ $LOGNAME = glopara ]]
 
 # RLW 20140903 modify selected settings for emc.enspara on WCOSS
 # RLW 20150603 this block copied and modified from rweh
+if [[ $machl = s ]] || [[ $machl = l ]]; then
+
 if [[ "$LOGNAME" = "emc.enspara" ]]; then
-  userin="Richard.Wobus"
-  export basesource=/$group/save/$userin/s/$expid
+  userin="Bing.Fu"
+  export basesource=/$group/save/$LOGNAME/$userin/$expid
   export basebin=$basesource/nw$envir/control
-  userout="emc.enspara"
-  export baseoutput=/$PTMP/$userout/o/$expid
-  export basetmp=/$STMP/$userout/o/$expid
-  export baseptmp=/$PTMP/$userout/o/$expid
-  usergfs="Richard.Wobus"
+  userout="Bing.Fu"
+  export baseoutput=/$PTMP/$LOGNAME/$userout/o/$expid
+  export basetmp=/$STMP/$LOGNAME/$userout/o/$expid
+  export baseptmp=/$PTMP/$LOGNAME/$userout/o/$expid
+  usergfs="Bing.Fu"
   export basedgfs=/$group/noscrub/$usergfs/o
   dh=`date +%H`
   if (( dh >= 00 )) && (( dh < 25 )); then
@@ -200,6 +203,8 @@ if [[ "$LOGNAME" = "emc.enspara" ]]; then
       export classp=dev
     fi
   fi
+fi
+
 fi
 
 echo basesource=$basesource

@@ -377,6 +377,19 @@ ls -al $jobdir/$jobscript
 echo
 
 eofCAT
+
+# BF 05/11/2017 run fv3 chgres by member
+typeset -RZ3 jjj=$jjj
+typeset -RZ3 jjjv00b=$jjjv00b
+typeset -RZ3 jjjv00e=$jjjv00e
+typeset -RZ3 iii=$iii
+typeset -RZ3 iiie=$iiie
+echo $jjj
+echo $jjjv00b
+echo $jjjv00e
+echo $iii
+echo $iiie
+
 if [[ $SUBJOB = '' ]] || [[ $SUBJOB = A ]]; then
 
 echo \`date\` $jobdir/$jobscript run after
@@ -410,6 +423,60 @@ eofCAT
                     fi
                     (( iii = iii + 1 ))
              done
+#BF 05/15/2017 nemsgfs to nemsfv3 chgres 
+elif [[ $jjj == 014 ]]; then
+
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 $yyyymmddccb$jjj $yyyymmddccb$jjjv00b nextafter 2>&1
+eofCAT
+
+                   (( iii = $jjjv00b  ))
+             while (( iii >= $jjjv00b && iii <= $jjjv00e -1 ));do
+                    if (( iii == $jjjv00e - 1 )); then
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 $yyyymmddccb$iii $yyyymmddcce$jjje nextbefore 2>&1
+eofCAT
+                    else
+
+                    (( iiie = iii + 1 ))
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 $yyyymmddccb$iii $yyyymmddccb$iiie nextbefore 2>&1
+eofCAT
+                    fi
+                    (( iii = iii + 1 ))
+             done
+
+
+#BF 05/15/2017 nemsfv3 high rresolution fcst by member
+#elif [[ $jjj == $jjjv00e ]]; then
+
+#      cat <<eofCAT >>$jobcontrol$SUBJOB
+#                     cd $controldir
+#                     $0 $yyyymmddccb$jjj $yyyymmddccb$jjjf00b nextbefore 2>&1
+#eofCAT
+#typeset -RZ2 iii=`echo $jjjf00b | cut -c2-3`
+#typeset -RZ2 iiife=`echo $jjjf00e | cut -c2-3`
+                   
+#             while (( iii >= $iii && iii <= $iiife -1 ));do
+#                    if (( iii == $iiife - 1 )); then
+#      cat <<eofCAT >>$jobcontrol$SUBJOB
+#                     cd $controldir
+#                     $0 ${yyyymmddccb}h$iii ${yyyymmddcce}$jjje nextbefore 2>&1
+#eofCAT
+#                    else
+#
+#                    (( iiie = iii + 1 ))
+#      cat <<eofCAT >>$jobcontrol$SUBJOB
+#                     cd $controldir
+#                     $0 ${yyyymmddccb}h$iii ${yyyymmddccb}h$iiie nextbefore 2>&1
+#eofCAT
+#                    fi
+#                    (( iii = iii + 1 ))
+#             done
+
 else
       cat <<eofCAT >>$jobcontrol$SUBJOB
                      cd $controldir

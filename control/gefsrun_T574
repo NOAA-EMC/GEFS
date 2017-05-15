@@ -495,6 +495,9 @@ nprdgen=1    # Number of prdgen jobs, 1,2, or3, default is 1
 (( jjjpec = jjjpo + npert * 4 - 2 ))
 (( jjjre = jjjro + npert ))
 
+typeset -RZ3 jjjv00b=015                  #fv3 chgres first job
+typeset -RZ3 jjjv00e=035			 #fv3 chgres  last job
+
 typeset -RZ3 jjjg00=$(( jjjog ))         #092, prdgen_gfs 1 degree grid
 typeset -RZ3 jjjg01=$(( jjjog + 1 ))     #093, prdgen_gfs job, 0.5 degree
 typeset -RZ3 jjjg04=$(( jjjog + 4 ))     #096 track_gfs
@@ -551,6 +554,10 @@ echo jjjoc=$jjjoc
 echo
 echo job numbers
 echo
+echo jjjv00b=$jjjv00b
+echo jjjv00e=$jjjv00e
+echo jjjfh00b=$jjjfh00b
+echo jjjfh00e=$jjjfh00e
 echo jjjf00=$jjjf00
 echo jjjp00=$jjjp00
 echo jjje00=$jjje00
@@ -594,6 +601,19 @@ echo
 echo 012 init separate job
 echo 013 init et job
 echo 014 init combine job
+
+echo "   " fv3 chgres jobs $jjjv00b to $jjjv00e
+typeset -RZ3 jjj=$jjjv00b
+typeset -RZ2 pp=00
+pert=c$pp
+while (( jjj <= jjjv00e ))
+do
+  echo $jjj fv3 chgres job for $pert
+  (( jjj = jjj + 1 ))
+  (( pp = pp + 1 ))
+  pert=p$pp
+done
+
 echo
 echo "       " jobs for this cycle
 echo
@@ -810,7 +830,9 @@ echo nextflag=$nextflag
 if [[ $nextflag = yes ]]; then
   yyyymmddccb=$yyyymmddccc
   echo jjjc=$jjjc
-  if   (( jjjc >= jjjp00 )) && (( jjjc < jjje00 )); then
+  if (( jjjc >= jjjv00b )) && (( jjjc < jjjv00e )); then
+    jjjb=$(( jjjc + 1 ))  
+  elif (( jjjc >= jjjp00 )) && (( jjjc < jjje00 )); then
     (( jjjd = jjjc - jjjf00 ))
     (( jjjm = ( jjjd / 4 ) * 4 ))
     (( leap = 4 - nprdgen  ))
@@ -903,8 +925,9 @@ if [[ $nextflag = yes ]]; then
  #     (010) jjjb=100 ;;      #use this line to skip INIT and gfs for testing
       (012) jjjb=013 ;;
       (013) jjjb=014 ;;
-
-      (014)
+      (014) jjjb=$jjjv00b ;;
+#      ($jjjv00e) jjjb=$jjjfh00b
+      ($jjjv00e)
         echo rungfsprdgen=$rungfsprdgen
         case $rungfsprdgen in
           (yes)
@@ -912,8 +935,7 @@ if [[ $nextflag = yes ]]; then
             jjjb=$jjjg00
           ;;
           (no)
-            echo do not run the gfs prdgen next
-            jjjb=$jjjf00
+            echo do not run the gfs prdgen nexti #            jjjb=$jjjf00
           ;;
           (test)
             echo test whether to run gfs prdgen for rungfsprdgen=$rungfsprdgen
@@ -946,7 +968,7 @@ if [[ $nextflag = yes ]]; then
       ($jjjg04) jjjb=$jjjg05 ;;     #job 96, go to 97
       ($jjjg05) jjjb=$jjjf00 ;;     #job 97, go to 100
 #     ($jjjf00) jjjb=$jjjp00 ;;
-      ($jjjf00) (( jjjb=jjjp00 + 1 )) ;; #to skip the restart copy job, e.g. in cycling only tests
+      ($jjjfh00e) (( jjjb=jjjp00 + 1 )) ;; #to skip the restart copy job, e.g. in cycling only tests
 #     ($jjje00) jjjb=$jjjs00 ;;
       ($jjje00) 
 	if (( npair > 0 )); then
@@ -964,7 +986,7 @@ if [[ $nextflag = yes ]]; then
       ;;
       ($jjjz00) jjjb=$jjjf00l ;;
 #     ($jjjf00l) jjjb=$jjjp00l ;;
-      ($jjjf00l) (( jjjb=jjjp00l + 1 )) ;; #skipping re-start copy
+      ($jjjfl00e) (( jjjb=jjjp00l + 1 )) ;; #skipping re-start copy
 #     ($jjje00l) jjjb=$jjjs00l ;;
       ($jjje00l) 
 	if (( npair > 0 )); then
@@ -1165,7 +1187,12 @@ fcstjoblength=
 
 jobtype=none
 forecast_segment=
-if   (( jjj >= jjjf00 )) && (( jjj <= jjje00 )); then
+if  (( jjj >= jjjv00b )) && (( jjj <= jjjv00e )); then
+  cyc_os=0
+  (( jjjv = jjjv00b ))
+  jobtype=init.fv3
+  fcstjoblength=short 
+elif(( jjj >= jjjf00 )) && (( jjj <= jjje00 )); then
   cyc_os=0
   (( jjjp = jjjf00 ))
   jobtype=fpp
@@ -1209,6 +1236,7 @@ else
     (012) taskname=init.separate ;;
     (013) taskname=init.et ;;
     (014) taskname=init.combine ;;
+    (015) taskname=init.fv3 ;;
     ($jjjg00) 
       taskname=prdgen.gfs 
       fcstjoblength=long
@@ -1348,6 +1376,18 @@ case $jobtype in
       ;;
     esac
   ;;
+  (init.fv3)
+   echo jjjv=$jjjv
+    (( memn = ( jjj - jjjv ) ))
+    echo memn=$memn
+    if (( memn == 0 )); then
+      mem=c00
+    else
+      mem=p$memn
+    fi
+    taskname=init.fv3
+  ;;
+
   (chgres)
     echo jjjr=$jjjr
     (( memn = ( jjj - jjjr ) ))
@@ -1776,6 +1816,26 @@ case $taskname in
     OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=no
     resources="3000"
+  fi
+  ;;
+  (init.fv3)
+  RUN=
+  RUNMEM=ge$mem
+    if (( jjjb == jjjv00b )); then
+      during_previous_job=no
+    else
+      during_previous_job=yes
+    fi
+  if [[ $gefsmachine = cray ]]; then
+    jobscript=JGEFS_INIT_FV3CHGRS
+    job_name=tgefs_init_fv3_$cyc
+    job_type=parallel
+    total_tasks=1
+    taskspernode=1
+    node=1
+    wall_clock_limit="00:10"
+    resources=1024
+    job=gefs_init_fv3_$cyc
   fi
   ;;
   (forecast_hr)

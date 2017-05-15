@@ -1,0 +1,258 @@
+#!/bin/sh
+echo `date` $0 `date -u` begin
+
+set -xa
+
+export PS4='$SECONDS + '
+date
+
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+if [ "$RUN_ENVIR" = dev ]; then ### For Developers
+# . $basesource/nw${envir}/versions/gefs.ver
+        . $basesource/nwdev/parm/gefs_config
+fi
+
+export APRUN=${gefsmpexec:-mpirun.lsf}
+
+############################
+# Set up cycle varaible
+############################
+
+export cycle=t${cyc}z
+export cycle_fcst=t${cyc_fcst}z
+
+if (( cyc == cyc_fcst )); then
+        export cycsuffix=false
+        export fcstlong=true
+else
+        export fcstlong=false
+        export cycsuffix=true
+fi # (( cyc == cyc_fcst ))
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+####################################
+# obtain unique process id (pid) and identify working directory
+####################################
+export pid=$$
+export DATA=$DATAROOT/gefs_init_$PDY$cyc.$envir.save
+
+echo DATA=$DATA
+cd $DATA
+
+
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# Specify Execution Areas
+####################################
+export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
+export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
+
+export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
+export USHgsm=${USHgsm:-$HOMEgsm/ush}
+export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
+export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
+
+export FIXGLOBAL=$FIXgsm
+
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+
+. $PARMgefs/gefs.parm
+. $PARMgefs/gefs_init.parm
+
+env | sort
+##############################################
+# for global_chgres.sh
+##############################################
+#export SLMASK=/dev/null
+
+##############################################
+# Define COM directories
+##############################################
+export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
+MEgefs/scripts/exgefs_init_separate.sh.ecf
+export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
+export COMIN=${COMIN:-${COM_IN}/${RUN}.${PDY}}
+export COMOUT=${COMOUT:-${COM_OUT}/${RUN}.${PDY}}
+
+##############################################
+# Define GES directories
+##############################################
+export GESOUT=${GESOUT:-$GESROOT/${envir}}
+export GESOUT=$GESOUT/gefs.${PDY}
+export FV3GESOUT=$GESROOT\/${envir}/fv3gefs.${PDY}
+##############################################
+echo list environment before running script
+##############################################
+
+env | sort
+
+#--------------------------------------------------------------------------------
+# This script is used to create FV3 initial conditions using operational GFS ICs
+# then run forecast-only FV3GFS experiments for multiple cases.
+# December 2016, Fanglin Yang
+#--------------------------------------------------------------------------------
+
+export PSLOT=fv3test          
+#paradir=/gpfs/hps/emc/ensemble/noscrub/$LOGNAME/Bing.Fu/para_gfs/pr$PSLOT 
+
+. $MODULESHOME/init/sh  2>>/dev/null
+module load prod_util hpss >>/dev/null
+export workflow_ver=v15.0.0
+export global_shared_ver=v15.0.0
+export tags=trunk     
+export PTMP=/gpfs/hps/ptmp
+export BASE_SVN=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Bing.Fu/svn/fv3gfs
+export BASE_GSM=$BASE_SVN/$tags/global_shared.$global_shared_ver
+export CASE=C384
+export res=`echo $CASE|cut -c 2-`
+export RUNMEM=$RUNMEM
+export mem=`echo $RUNMEM|cut -c 3-`
+ROTDIR=$COMOUT
+
+#-- create ICs using operational GFS initial conditions
+#.......................................................
+
+#--start from operational GFS initial conditions
+COMROT=${COMOUT}/${RUN}.${PDY}
+
+set -eux
+#-------------------------------------------------------------------------------------------------
+# Makes ICs on fv3 globally uniform cubed-sphere grid using operational GFS initial conditions.
+# Fanglin Yang, 09/30/2016
+#  This script is created based on the C-shell scripts fv3_gfs_preproc/IC_scripts/DRIVER_CHGRES.csh
+#  and submit_chgres.csh provided by GFDL.  APRUN and environment variables are added to run on 
+#  WCOSS CRAY.  Directory and file names are standaridized to follow NCEP global model convention.
+#  This script calls fv3gfs_chgres.sh.
+# Fanglin Yang and George Gayno, 02/08/2017
+#  Modified to use the new CHGRES George Gayno developed.
+# Fanglin Yang 03/08/2017
+#  Generalized and streamlined the script and enabled to run on multiple platforms.
+#-------------------------------------------------------------------------------------------------
+
+echo `date` $0 begin
+
+
+export PSLOT=fv3test
+paradir=/gpfs/hps/emc/ensemble/noscrub/$LOGNAME/Bing.Fu/para_gfs/pr$PSLOT
+
+. $MODULESHOME/init/sh  2>>/dev/null
+module load prod_util hpss >>/dev/null
+export NODES=1
+
+export workflow_ver=v15.0.0
+export global_shared_ver=v15.0.0
+export tags=trunk
+export PTMP=/gpfs/hps/ptmp
+#export BASE_SVN=/gpfs/hps/emc/global/noscrub/$LOGNAME/svn/fv3gfs
+export BASE_SVN=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Bing.Fu/svn/fv3gfs
+export BASEDIR=$BASE_SVN/$tags/gfs_workflow.$workflow_ver/para
+export BASE_GSM=$BASE_SVN/$tags/global_shared.$global_shared_ver
+export PSUB=$BASEDIR/bin/psub
+export SUB=$BASEDIR/bin/sub_wcoss_c
+export HPSSTAR=/u/emc.glopara/bin/hpsstar
+
+export CASE=C384
+export res=`echo $CASE|cut -c 2-`
+
+export ictype=nemsgfs                   #initial condition from nemsgfs or opsgfs
+export nemsgfs_exp=prnemsrn            #real-time nems gfs parallel
+
+envir=para
+NET=gfs
+ROTDIR=/gpfs/hps/ptmp/$LOGNAME/Bing.Fu/pr${PSLOT}
+export FV3ICDIR=/gpfs/hps/ptmp/$LOGNAME/Bing.Fu/FV3IC
+mkdir -p $ROTDIR $FV3ICDIR
+
+CDUMP=gfs
+
+cyclist="00"
+NDAT=1      ;##how many forecast only jobs to run at one time.
+
+export sdate=${sdate:-$START}
+export edate=`echo $($NDATE +$(expr ${NDAT} \* 24) ${sdate}00 ) |cut -c 1-8`
+#--------------------------------------------------------------
+while [ $sdate -lt $edate ]; do
+for cyc in $cyclist; do
+#--------------------------------------------------------------
+export cdate=${sdate}${cyc}
+
+#.......................................................
+#-- create ICs using operational GFS initial conditions
+export out_dir=$FV3ICDIR/ICs
+if [ ! -s $out_dir/${CASE}_${cdate}/gfs_data.tile6.nc ]; then
+#.......................................................
+
+export inidir=$FV3ICDIR/chgres_${CASE}_${cdate}
+export rundir=$FV3ICDIR/chgres_${CASE}_${cdate}
+export tmp_dir=$inidir
+if [ -s $inidir ]; then rm -rf $inidir ; fi
+mkdir -p $out_dir $inidir ; cd $inidir ||exit 8
+
+#--start from operational GFS initial conditions
+yymmdd=`echo $cdate |cut -c 1-8`
+yymm=`echo $cdate |cut -c 1-6`
+yy=`echo $cdate |cut -c 1-4`
+
+dev=$(cat /etc/dev)
+if [ $dev = luna ]; then d1=td1; fi
+if [ $dev = surge ]; then d1=gd1; fi
+
+COMROT=$ROTDIR/${CDUMP}.${yymmdd}/${cyc}
+if [ ! -d $COMROT ]; then mkdir -p $COMROT; fi
+
+
+set -x
+mkdir -p $GESOUT/$mem
+export NODE=1
+export inidir=$GESOUT/$mem
+export rundir=$GESOUT/$mem
+export out_dir=$FV3GESOUT/$mem
+export tmp_dir=$GESOUT/$mem
+export DATATMP=$GESOUT/$mem
+export DATA=$GESOUT/$mem
+export TMPDIR=$GESOUT/$mem
+export cdate=$PDY$cyc
+export ictype=nemsgfs
+
+cd $paradir
+if [ -s $out_dir/${CASE}_${cdate}/gfs_data.tile6.nc ]; then
+ $PSUB para_config $cdate gfs fcst1
+fi
+
+#.......................................................
+
+exit
