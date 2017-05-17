@@ -1,0 +1,17 @@
+#!/bin/ksh
+#
+# test the post and prdgen jobs
+#
+echo "`date`   `pwd`   $0 $*   begin"
+jjjb=000
+jjje=012
+if (( $# > 0 )); then
+  dtglist="$*"
+else
+  dtglist=2015071400
+fi
+for dtg in $dtglist
+do
+  gefsrun_T574 $dtg$jjjb $dtg$jjje
+done
+echo "`date`   `pwd`   $0 $*   end"

@@ -1,0 +1,564 @@
+#####################################################################
+echo "-----------------------------------------------------"
+echo " exgefs_nceppost_master.sh.sms" 
+echo " based on exglobal_post.sh.sms" 
+echo " Apr 99 - Michaud - Generated to post global forecast"
+echo " Mar 03 - Zhu - Add post for 0.5x0.5 degree"
+echo " Jul 05 - Wobus - 6-hour breeding, ensemble only"
+echo " Jul 07 - Wobus - nceppost creates master files"
+echo " Jul 10 - Wobus - create additional anl log file"
+echo " Jun 11 - Wobus - move master post files into /com"
+echo "-----------------------------------------------------"
+#####################################################################
+
+set -x
+
+cd $DATA
+
+msg="HAS BEGUN on `hostname`"
+postmsg "$jlogfile" "$msg"
+
+export MP_LABELIO=YES
+#poe hostname
+
+if [[ "$cycsuffix" = "true" ]]; then
+	export cfsuffix=".cycfs$cyc_fcst"
+else
+	export cfsuffix=""
+fi
+echo cyc=$cyc cyc_fcst=$cyc_fcst
+echo cycle=$cycle cycle_fcst=$cycle_fcst
+echo fcstlong=$fcstlong
+echo cycsuffix=$cycsuffix
+echo cfsuffix=$cfsuffix
+
+#export WGRIB2=${WGRIB2:-${EXECgrib}/wgrib2}
+#export COPYGB2=${COPYGB2:-${EXECgrib}/copygb2}
+#export GRBINDEX=${GRBINDEX:-${EXECgrib}/grbindex}
+#export GRBINDEX2=${GRB2INDEX:-${EXECgrib}/grb2index}
+#export NDATE=${NDATE:-${EXECutil}/ndate}
+#
+export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
+export SIGHDR=${SIGHDR:-$EXECgsm/global_sighdr}
+
+R1=`echo $RUNMEM|cut -c1-3`
+R2=`echo $RUNMEM|cut -c4-5`
+e3=20
+case $R1 in
+	(gec)
+		if (( R2 == 0 )); then 
+			(( e1 = 1 ))
+			(( e2 = R2 ))
+			ens_pert_type='unpert_lo_res_ctrl_fcst'
+		else   
+			echo unrecognized RUNMEM=$RUNMEM R1=$R1 R2=$R2 
+		fi
+		;;
+	(gen)
+		(( e1 = 2 ))
+		ens_pert_type='negatively_pert_fcst'
+		(( e2 = R2 ))
+		;;
+	(gep)
+		(( e1 = 3 ))
+		ens_pert_type='pos_pert_fcst'
+		(( e2 = R2 ))
+		;;
+	(*)
+		(( e1 = 0 ))
+		(( e2 = 0 ))
+		echo unrecognized RUNMEM=$RUNMEM R1=$R1 R2=$R2
+		;;
+esac # $R1 
+export e1=$e1
+export e2=$e2
+export e3=$e3
+export ens_pert_type=$ens_pert_type
+export ens_pert_numb=$e2
+export ens=YES
+echo "ens_pert_type,ens_pert_numb,ens"= $ens_pert_type $ens_pert_numb $ens 
+
+res=Gaus
+if [ $res = "p125" ] ; then # 0.125 deg
+	export LONB=2880
+	export LATB=1441
+	export grid='255 0 2880 1441 90000 0 128 -90000 359875 125 125 0'	
+elif [ $res = "p25" ] ; then # .25 deg
+	export LONB=1440
+	export LATB=721
+	export grid='255 0 1440 721 90000 0 128 -90000 359750 250 250 0'
+elif [ $res = "p5" ] ; then # .5 deg
+	export LONB=720
+	export LATB=361
+	export grid='255 0 720 361 90000 0 128 -90000 359500 500 500 0'
+fi # [ $res = "p125" ]
+
+############################################################
+#  Define Variables:
+#  -----------------
+#  SHOUR        is the starting forecast hour. normally 0 except for restarts.
+#  FHOUR        is the ending forecast hour.
+#  FHINC        is the increment hour for each forecast steps.
+#  FH           is the current forecast hour.
+#  SLEEP_TIME   is the number of seconds to sleep before exiting with error.
+#  SLEEP_INT    is the number of seconds to sleep between restrt file checks.
+#  restart_file is the name of the file to key off of to kick off post.
+############################################################
+
+#if (( SHOUR == 0 )); then
+#if [ $DOANALYSIS -eq YES ]; then
+
+############################################################
+# remove control files as needed
+############################################################
+
+if [ $DOANALYSIS = YES ]; then
+
+mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.anl$cfsuffix
+
+if [[ ! -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix ]]; then
+	rm $mcfile
+fi
+
+if [ $GRIBVERSION = grib1 ]; then
+	fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbanl$cfsuffix
+	fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbianl$cfsuffix
+elif [ $GRIBVERSION = grib2 ]; then
+	fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl$cfsuffix
+	fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl$cfsuffix
+fi # [ $GRIBVERSION = grib1 ]
+
+if [[ -s $mcfile ]]; then
+	if [[ -s $fileout ]]; then
+		if [[ -s $fileouti ]]; then
+			cat $mcfile
+			echo skip creation of $fileout
+		else
+			echo fileouti=$fileouti IS MISSING
+			rm $mcfile
+		fi # [[ -s $fileouti ]]
+	else
+		echo fileout=$fileout IS MISSING
+		rm $mcfile
+	fi # [[ -s $fileout ]]
+fi # [[ -s $mcfile ]]
+
+if [[ ! -s $mcfile ]]; then
+	# 20150622 RLW disable this temporarily to test the new post code
+	rm $fileout
+	rm $fileouti
+	for submc in prd0p5 prd1p0 prd2p5; do
+		pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.anl$cfsuffix
+		rm $pcfile
+	done
+fi # [[ ! -s $mcfile ]]
+
+fi
+
+(( fhr=SHOUR))
+if (( fhr < 10 )); then
+	fhr=0$fhr
+fi
+export fhr
+
+while (( fhr <= FHOUR )); do
+	mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr$cfsuffix
+
+	if [[ ! -f $restart_file$fhr$cfsuffix ]]; then
+		rm $mcfile
+	fi
+
+	if [ $GRIBVERSION = grib1 ]; then
+		fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbf$fhr$cfsuffix
+		fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbif$fhr$cfsuffix
+	elif [ $GRIBVERSION = grib2 ]; then
+		fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr$cfsuffix
+		fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr$cfsuffix
+	fi # [ $GRIBVERSION = grib1 ]
+
+	if [[ -s $mcfile ]]; then
+		if [[ -s $fileout ]]; then
+			if [[ -s $fileouti ]]; then
+				cat $mcfile
+				echo skip creation of $fileout
+			else
+				echo fileouti=$fileouti IS MISSING
+				rm $mcfile
+			fi # [[ -s $fileouti ]]
+		else
+			echo fileout=$fileout IS MISSING
+			rm $mcfile
+		fi # [[ -s $fileout ]]
+	fi # [[ -s $mcfile ]]
+
+	if [[ ! -s $mcfile ]]; then
+		# 20150622 RLW disable this temporarily to test the new post code
+		rm $fileout
+		rm $fileouti
+		for submc in prd0p5 prd1p0 prd2p5; do
+			pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr$cfsuffix
+			rm $pcfile
+		done # for submc in prd0p5 prd1p0 prd2p5
+	fi # [[ ! -s $mcfile ]]
+
+	export fhr=`expr $fhr + $FHINC`
+	if (( fhr < 10 )); then
+		export fhr="0$fhr"
+	fi
+done # while (( fhr <= FHOUR ))
+
+if [ $DOANALYSIS = YES ]; then
+	mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.anl$cfsuffix
+
+	if [[ ! -s $mcfile ]]; then
+
+		############################################################
+		# Post Analysis Files before starting the Forecast Post
+		############################################################
+		SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
+
+		export pgm="postcheck"
+		ic=0
+		while [ $ic -le $SLEEP_LOOP_MAX ]; do
+			if test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix; then
+				break
+			else
+				ic=`expr $ic + 1`
+				sleep $SLEEP_INT
+			fi # test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix
+			###############################
+			# If we reach this point assume
+			# fcst job never reached restart 
+			# period and error exit
+			###############################
+			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+				msg="FATAL ERROR: $RUNMEM FORECAST MISSING for hour anl"
+				echo "`date`    $msg"
+				postmsg "$jlogfile" "$msg"
+				export err=9
+				err_chk
+			fi
+		done  #while [ $ic -le $SLEEP_LOOP_MAX ]
+
+		if test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix; then
+			# add new environmental variables for running new ncep post
+			# Validation date
+
+			export VDATE=${PDY}${cyc}
+
+			# set outtyp to 1 because we need to run chgres in the post before model start running chgres
+			# otherwise set to 0, then chgres will not be executed in global_nceppost.sh
+
+			export OUTTYP=1
+			# to generate both types of sigma files
+
+			export OUTTYP=0
+			export OUTTYP=1
+			# to bypass chgres and read model sigma files directly
+			export OUTTYP=3
+			export OUTTYP=4
+			# specify output file name from chgres which is input file name to nceppost
+			# if model already runs gfs io, make sure GFSOUT is linked to the gfsio file
+			# new imported variable for global_nceppost.sh
+
+			export GFSOUT=${RUNMEM}.${cycle}.gfsioanl$cfsuffix
+
+			# specify smaller control file for GDAS because GDAS does not
+			# produce flux file, the default will be /nwprod/parm/gfs_master_fhh.parm
+
+			if [ $GRIBVERSION = grib1 ]; then
+				export IGEN=$IGEN_ANL
+				export CTLFILE=$PARMgefs/gefs_master_f00.parm
+			elif [ $GRIBVERSION = grib2 ]; then
+				export IGEN=$IGEN_ANL
+#				export CTLFILE=${CTLFILEGFSANL:-$PARMpost/postcntrl_gefs_anl.xml}
+				export PostFlatFile=${FLTFILEGFSANL:-$PARMPOST/postxconfig-NT-GEFS-ANL.txt}
+			fi # [ $GRIBVERSION = grib1 ]
+
+#			cat $CTLFILE
+
+			rm -rf sigfile.anl$cfsuffix
+			ln -s $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix sigfile.anl$cfsuffix
+#		        ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf00$cfsuffix sigfile.anl$cfsuffix
+
+			####################################
+			# Create Master Post File 
+			####################################
+			export SIGINP=sigfile.anl$cfsuffix
+			export NEMSINP=sigfile.anl$cfsuffix
+			export SFCINPUT=
+			export FLXINP=
+			export FLXIOUT=
+			rm -rf pgbfout pgbifout
+			if [ $GRIBVERSION = grib1 ]; then
+				ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbanl$cfsuffix pgbfout
+				ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbianl$cfsuffix pgbifout
+			elif [ $GRIBVERSION = grib2 ]; then
+				ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl$cfsuffix pgbfout
+				ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl$cfsuffix pgbifout
+			fi # [ $GRIBVERSION = grib1 ]
+			export PGBOUT=pgbfout
+			export PGIOUT=pgbifout
+			export IGEN=$IGEN_ANL
+
+			# specify fhr even for analysis because postgp uses it
+			export fhr=00
+
+			# run nceppost
+			export pgm="$POSTGPSH"
+			export VERBOSE=YES
+			$POSTGPSH
+			rc=$?
+			if (( rc == 0 )); then
+				echo pgm=$pgm completed successfully
+			else
+				msg="FATAL ERROR: $pgm FAILED for member $RUNMEM hour anl"
+				echo "`date`    $msg"
+				postmsg "$jlogfile" "$msg"
+				export err=$rc
+				err_chk
+			fi # (( rc == 0 ))
+
+			pgbfoutd=`readlink -n pgbfout`
+			if [[ ! -s $pgbfoutd ]]; then
+				msg="FATAL ERROR: $pgbfoutd WAS NOT WRITTEN"
+				echo "`date`    $msg"
+				postmsg "$jlogfile" "$msg"
+				export err=1
+				err_chk
+			fi # [[ ! -s $pgbfoutd ]];
+
+			pgbifoutd=`readlink -n pgbifout`
+			if [[ ! -s $pgbifoutd ]]; then
+				msg="FATAL ERROR: $pgbifoutd WAS NOT WRITTEN"
+				echo "`date`    $msg"
+				postmsg "$jlogfile" "$msg"
+				export err=1
+				err_chk
+			fi # [[ ! -s $pgbifoutd ]]
+
+			# 20100730 create a separate log file for the analysis for use by prdgen job
+			if test $SENDCOM = "YES"; then
+				if (( fhr < 100 )); then
+					pad="0"
+				else
+					pad=""
+				fi
+				echo
+				ls -al $PGBOUT $PGBIOUT
+				echo
+				echo "$PDY$cyc$pad$fhr" > $mcfile
+				echo
+				ls -al  $mcfile
+				cat  $mcfile
+				echo "anl_done" >> $post_log
+				# ecflow_client --label info "`cat $post_log`"
+				ecflow_client --event anl_done
+				echo
+			fi # test $SENDCOM = "YES"
+		fi # test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix
+	fi # [[ ! -s $mcfile ]]
+fi # [ $DOANALYSIS = YES ]
+
+SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
+
+(( fhr=SHOUR))
+if (( fhr < 10 )); then
+	fhr=0$fhr
+fi
+export fhr
+
+############################################################
+# Loop Through the Post Forecast Files 
+############################################################
+while (( fhr <= FHOUR )); do
+	mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr$cfsuffix
+
+	if [[ ! -s $mcfile ]]; then
+		###############################
+		# Start Looping for the 
+		# existence of the restart files
+		###############################
+		export pgm="postcheck"
+		ic=1
+
+		while [ $ic -le $SLEEP_LOOP_MAX ]; do
+			if test -f $restart_file$fhr$cfsuffix; then
+				break
+			else
+				ic=`expr $ic + 1`
+				sleep $SLEEP_INT
+			fi # test -f $restart_file$fhr$cfsuffix
+			###############################
+			# If we reach this point assume
+			# fcst job never reached restart 
+			# period and error exit
+			###############################
+			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+				echo `date` forecast $RUNMEM missing for hour $fhr 
+				msg="$RUNMEM FORECAST MISSING for hour $fhr"
+				postmsg "$jlogfile" "$msg"
+				export err=9
+				err_chk
+			fi # [ $ic -eq $SLEEP_LOOP_MAX ]
+		done # [ $ic -le $SLEEP_LOOP_MAX ]
+
+		msg="Starting post for fhr=$fhr"
+		postmsg "$jlogfile" "$msg"
+
+		###############################
+		# link sigma and flux files
+		###############################
+		rm -rf sigfile flxfile
+		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sigfile.f$fhr$cfsuffix
+		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
+		ln -s $COMIN/$cyc/sflux/${RUNMEM}.t${cyc}z.sfluxgrbf$fhr$cfsuffix flxfile.f$fhr$cfsuffix
+
+		###################################3
+		# Create Master Post File
+		###################################3
+		if (( fhr > 0 )); then 
+			export IGEN=$IGEN_FCST 
+		else 
+			export IGEN=$IGEN_ANL
+		fi
+
+		# add new environmental variables for running new ncep post
+		# Validation date
+
+		# export VDATE=`${EXECutil}/ndate +${fhr} ${PDY}${cyc}`
+		export VDATE=`$NDATE +${fhr} ${PDY}${cyc}`
+
+		# set outtyp to 1 because we need to run chgres in the post before model start running chgres
+		# otherwise set to 0, then chgres will not be executed in global_nceppost.sh
+
+		export OUTTYP=1
+		# to generate both types of sigma files
+		export OUTTYP=0
+		export OUTTYP=1
+		# to bypass chgres and read model sigma files directly
+		export OUTTYP=3
+		export OUTTYP=4
+
+		# specify output file name from chgres which is input file name to nceppost
+		# if model already runs gfs io, make sure GFSOUT is linked to the gfsio file
+		# new imported variable for global_nceppost.sh
+
+		if test $fhr -gt 0; then
+			export IGEN=$IGEN_FCST
+		else
+			export IGEN=$IGEN_ANL
+		fi
+		if [ $GRIBVERSION = grib1 ]; then
+			export CTLFILE=$PARMgefs/gefs_master_fhh.parm
+		else
+			if test $fhr -eq 0; then
+#				export CTLFILE=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
+				export PostFlatFile=${FLTFILEGFSF00:-$PARMPOST/postxconfig-NT-GEFS-F00.txt}
+			else
+				if test $fhr -le 96; then
+#					export CTLFILE=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml_long}
+					export PostFlatFile=${FLTFILEGFS:-$PARMPOST/postxconfig-NT-GEFS.txt}
+				else
+#					export CTLFILE=${CTLFILEGFS1:-$PARMpost/postcntrl_gefs.xml}
+					export PostFlatFile=${FLTFILEGFS1:-$PARMPOST/postxconfig-NT-GEFS.txt}
+				fi
+			fi # test $fhr -eq 0
+		fi # [ $GRIBVERSION = grib1 ]
+
+#		export CTLFILE=$PARMgefs/gefs_master_fhh.parm
+#		cat $CTLFILE
+#		cat $PostFlatFile
+
+		export SIGINP=sigfile.f$fhr$cfsuffix
+		export NEMSINP=sigfile.f$fhr$cfsuffix
+		export SFCINPUT=sfcfile.f$fhr$cfsuffix
+
+		export FLXINP=flxfile.f$fhr$cfsuffix
+		export FLXIOUT=flxifile.f$fhr$cfsuffix
+		rm -rf pgbfout pgbifout
+		# ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbf$fhr$cfsuffix pgbfout
+		# ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbif$fhr$cfsuffix pgbifout
+		ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr$cfsuffix pgbfout
+		ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr$cfsuffix pgbifout
+		export PGBOUT=pgbfout
+		export PGIOUT=pgbifout
+		export ANOMCATSH=${USHGSM}/global_anomcat.sh
+		FILTER=1
+
+		# RLW 20100910 add cleanup to prevent problems with overparm
+		echo
+		for file in fort.11 fort.51 h5wav prmsl tfile; do
+			ls -al $file
+			if [[ -L $file || -f $file ]]; then
+				rm -f $file
+				echo $file removed from working directory
+			else
+				echo $file not removed from working directory
+			fi # [[ -L $file || -f $file ]]
+		done # for file in fort.11 fort.51 h5wav prmsl tfile
+		echo
+
+		# run nceppost
+		export pgm="$POSTGPSH"
+		$POSTGPSH
+		rc=$?
+		if (( rc == 0 )); then
+			echo pgm=$pgm completed successfully
+		else
+			msg="FATAL ERROR: $pgm FAILED for member $RUNMEM hour $fhr"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=$rc
+			err_chk
+		fi # (( rc == 0 ))
+
+		pgbfoutd=`readlink -n pgbfout`
+		if [[ ! -s $pgbfoutd ]]; then
+			msg="FATAL ERROR: $pgbfoutd WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $pgbfoutd ]]
+		pgbifoutd=`readlink -n pgbifout`
+		if [[ ! -s $pgbifoutd ]]; then
+			msg="FATAL ERROR: $pgbifoutd WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $pgbifoutd ]]
+
+		if test $SENDCOM = "YES"; then
+			if (( fhr < 100 )); then
+				pad="0"
+			else
+				pad=""
+			fi
+			echo
+			ls -al $PGBOUT $PGBIOUT
+			echo
+			echo "$PDY$cyc$pad$fhr" > $mcfile
+			echo
+			ls -al  $mcfile
+			cat  $mcfile
+			echo "f${fhr}_done" >> $post_log
+			# ecflow_client --label info "`cat $post_log`"
+			ecflow_client --event f${fhr}_done
+			echo
+		fi # test $SENDCOM = "YES"
+	fi # [[ ! -s $mcfile ]]
+
+	export fhr=`expr $fhr + $FHINC`
+	if (( fhr < 10 )); then
+		export fhr="0$fhr"
+	fi
+done # while (( fhr <= FHOUR ))
+
+cat $pgmout
+
+msg='ENDED NORMALLY.'
+postmsg "$jlogfile" "$msg"
+
+################## END OF SCRIPT #######################

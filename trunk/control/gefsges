@@ -1,0 +1,182 @@
+#!/bin/ksh
+#
+# echo get nwges files from production or from another experiment
+#
+echo `date` $0 $* begin
+goodargs=no
+nerror=0
+if (( $# > 0 )); then
+  yyyymmddhh=$1
+  if (( yyyymmddhh < 1901010100 )) || (( yyyymmddhh > 2999123118 )); then
+    echo yyyymmddhh=$yyyymmddhh IS OUT OF RANGE
+    (( nerror = nerror + 1 ))
+  else
+    expin=prod
+    if (( $# > 1 )); then
+      expin=$2
+    fi
+
+    envir=$(basename $(dirname $(pwd) ) | cut -c3-)
+    echo envir=$envir
+
+    expid=$(basename $(dirname $(dirname $(pwd) ) ) )
+    id=`echo $expid|cut -c3-4`
+    echo expid=$expid
+    echo id=$id
+
+    . setbase
+
+    baseoutputin=`echo $baseoutput|sed -e"s/$expid/$expin/g"`
+    echo baseoutputin=$baseoutputin
+
+    case $expin in
+      (prod) dirgi=/nwges/prod ;;
+      (para) dirgi=/nwges/para ;;
+      (test) dirgi=/nwges/test ;;
+      (*)    dirgi=$baseoutputin/nwges/dev ;;
+    esac
+    if [[ -d $dirgi ]]; then
+      yyyymmdd=`echo $yyyymmddhh|cut -c1-8`
+      cyc=`echo $yyyymmddhh|cut -c9-10`
+      case $cyc in
+	(00) goodargs=yes ;;
+	(06) goodargs=yes ;;
+	(12) goodargs=yes ;;
+	(18) goodargs=yes ;;
+	(*) echo INVALID CYCLE=$cyc
+      esac
+      cycle=t${cyc}z
+      echo yyyymmdd=$yyyymmdd cyc=$cyc cycle=$cycle
+      if [[ $goodargs = yes ]]; then
+	dirgesi=$dirgi/gefs.$yyyymmdd
+	echo dirgesi=$dirgesi
+	if [[ -d $dirgesi ]]; then
+	  dirgeso=$baseoutput/nwges/dev/gefs.$yyyymmdd
+	  echo dirgeso=$dirgeso
+	  mkdir -p $dirgeso
+	  rc=$?
+	  if (( rc == 0 )); then
+	    dirinito=$baseoutput/com/gens/dev/gefs.$yyyymmdd/$cyc/init
+	    echo dirinito=$dirinito
+	    mkdir -p $dirinito
+	    rc=$?
+	    if (( rc == 0 )); then
+	      cd $dirgesi
+	      rc=$?
+	      if (( rc == 0 )); then
+		for file in gec00.$cycle.sanl gec00.$cycle.sfcanl gep??.$cycle.sanl*
+		do
+		  if [[ -f $file ]]; then
+		    if [[ -f $dirgeso/$file ]]; then
+		      echo dirgeso/$file ALREADY EXISTS
+		      ls -al $dirgeso/$file
+		    else
+		      cp $file $dirgeso/$file
+		      rc=$?
+		      if (( rc == 0 )); then
+			ls -al $dirgeso/$file
+		      else
+			echo cp $dirgesi/gec00.$cycle.sanl $dirgesi/gep??.$cycle.sanl* . FAILED rc=$?
+			(( nerror = nerror + 1 ))
+		      fi
+		    fi
+		  else
+		    echo file=$file DOES NOT EXIST IN $dirgesi
+		  fi
+		  if [[ -f $dirgeso/$file ]]; then
+		    if [[ -f $dirinito/$file ]]; then
+		      echo dirinito/file=$dirinito/$file already exists
+		      ls -al $dirinito/$file
+		    else
+		      ln -f $dirgeso/$file $dirinito/$file
+		      rc=$?
+		      if (( rc == 0 )); then
+		        ls -al $dirinito/$file
+		      else
+		        echo ln -f $dirgeso/$file $dirinito/$file FAILED rc=$?
+			(( nerror = nerror + 1 ))
+		      fi
+		    fi
+		  else
+		    echo file=$file DOES NOT EXIST IN $dirgeso
+		    (( nerror = nerror + 1 ))
+		  fi
+		done
+		filec0sfc=gec00.$cycle.sfcanl
+		if [[ -f $dirgeso/$filec0sfc ]]; then
+		  ls -al $dirgeso/$filec0sfc
+		  if [[ -f $dirinito/$filec0sfc ]]; then
+		    ls -al $dirinito/$iflec0
+		    for file in gep??.$cycle.sfcanl*
+		    do
+		      if [[ -f $file ]]; then
+		        ln -f $dirgeso/$filec0sfc $dirgeso/$file
+			if (( rc == 0 )); then
+			  ls -al $dirgeso/$file
+			else
+			  echo ln -f $dirgeso/$filec0sfc $dirgeso/$file FAILED rc=$?
+			  (( nerror = nerror + 1 ))
+			fi
+		        ln -f $dirinito/$filec0sfc $dirinito/$file
+			if (( rc == 0 )); then
+			  ls -al $dirinito/$file
+			else
+			  echo ln -f $dirinito/$filec0sfc $dirinito/$file FAILED rc=$?
+			  (( nerror = nerror + 1 ))
+			fi
+		      else
+		        echo file=$file DOES NOT EXIST IN $dirgesi
+			(( nerror = nerror + 1 ))
+		      fi
+		    done
+		  else
+		    echo dirinito/filec0sfc=$dirinito/$filec0sfc DOES NOT EXIST
+		    (( nerror = nerror + 1 ))
+		  fi
+		else
+		  echo dirgeso/filec0sfc=$dirgeso/$filec0sfc DOES NOT EXIST
+		  (( nerror = nerror + 1 ))
+		fi
+	      else
+		echo cd $dirgesi FAILED rc=$rc
+		(( nerror = nerror + 1 ))
+	      fi
+	    else
+	      echo mkdir -p $dirinito FAILED rc=$rc
+	      (( nerror = nerror + 1 ))
+	    fi
+	  else
+	    echo mkdir -p $dirgeso FAILED rc=$rc
+	    (( nerror = nerror + 1 ))
+	  fi
+	else
+	  echo dirgesi=$dirgesi DOES NOT EXIST AS A DIRECTORY
+	  goodargs=no
+	  (( nerror = nerror + 1 ))
+	fi
+      fi
+    else
+      echo dirgi=$dirgi DOES NOT EXIST
+      (( nerror = nerror + 1 ))
+    fi
+  fi
+fi
+if (( nerror > 0 )); then
+  echo THERE WERE $nerror ERRORS
+else
+  echo dirgeso=$dirgeso
+  ls -al $dirgeso
+  echo dirinito=$dirinito
+  ls -al $dirinito
+fi
+if [[ $goodargs != yes ]]; then
+  echo
+  ls -ald /nwges/prod/gefs* /nwges/prod/gefs*/gec00.*.sfcanl
+  echo
+  echo $0 "requires at least one argument yyyymmddhh [expin]"
+  echo "      where yyyymmddhh is the cycle to copy from nwges"
+  echo "      and expin is prod [default], para, test," 
+  echo "                or your expin to copy from"
+fi
+echo `date` $0 $* end
+exit $nerror

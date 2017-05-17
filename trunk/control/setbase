@@ -1,0 +1,221 @@
+#!/bin/ksh
+#
+# set up base variables
+# execute with dot
+#
+echo
+echo `date` $0 $* setbase begin
+echo
+
+echo
+echo `date` $0 set environment and experiment id
+echo
+
+#DHOU, 01/03/2013 add this block to generate the machine name related variables
+  machl=`uname -n | cut -c1`
+  if [[ $machl = r ]]; then
+      machl=f
+  fi
+  if [[ $machl = n ]]; then
+      machl=l
+  fi
+envir=$(basename $(dirname $(pwd) ) | cut -c3-)
+echo envir=$envir
+
+expid=$(basename $(dirname $(dirname $(pwd) ) ) )
+id=`echo $expid|cut -c3-4`
+echo expid=$expid
+echo id=$id
+
+#echo $LOGNAME
+#exit
+
+echo
+echo `date` $0 set directory tree locations
+echo
+
+  PTMP=ptmp 
+  STMP=stmp
+if [[ $machl = t ]] || [[ $machl = g ]]; then
+export machine='WCOSS'
+export JOBQUEUE=dev2
+export HOMEDIR=/ensemble/save/emc.enspara/RFC
+export HOMEDIR1=/ensemble/save/emc.enspara/RFC/q3fy17_lambda
+ if [[ $JOBQUEUE = dev ]]; then
+  PTMP=ptmpd2
+  STMP=stmpd2
+ elif [[ $JOBQUEUE = dev2 ]]; then
+  PTMP=ptmpp2
+  STMP=stmpp2
+ else
+  echo Invalid option of JOBQUEUE in setbase $JOBQUEUE
+  exit
+ fi
+#export JOBQUEUE=debug2
+fi
+
+if [[ $machl = s ]] || [[ $machl = l ]]; then
+export machine='WCOSS_C'
+  PTMP=gpfs/hps/ptmp
+  STMP=gpfs/hps/ptmp
+export JOBQUEUE=dev
+export HOMEDIR=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC
+export HOMEDIR1=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda   #temporay setting
+export CRAYDIR=/gpfs/td1/emc
+fi
+
+if [[ $LOGNAME = glopara ]]; then
+  echo
+  echo directory locations for running in glopara account
+  echo using codes and scripts in $LOGNAME account
+  echo
+
+  export basesource=/global/save/wx20rw/s/$expid
+  export baseoutput=/ptmp/$LOGNAME/para_gefs/o/$expid
+
+  export basetmp=/ptmp/$LOGNAME/para_gefs/o/$expid
+  export baseptmp=/ptmp/$LOGNAME/para_gefs/o/$expid
+  export basebin=$basesource/nw$envir/control
+
+  export baselog=/global/noscrub/$LOGNAME/para_gefs/o/$expid
+  export basedgfs=/global/noscrub/$LOGNAME/para_gefs/o/$expid
+  export basedgens=/ptmp/$LOGNAME/para_gefs/o
+  export baseinitarch=/global/mirror/$LOGNAME/para_gefs/o/$expid
+
+  export account=GEN-T2O
+  export group=devonprod
+  export classs=1
+  export classp=devhigh
+  export classp=dev
+else
+  echo
+  echo directory locations for running in $LOGNAME account
+  echo
+
+  export basesource=/global/save/$LOGNAME/s/$expid
+  export baseoutput=/$PTMP/$LOGNAME/o/$expid
+  export basetmp=/$PTMP/$LOGNAME/o/$expid
+  export baseptmp=/$PTMP/$LOGNAME/o/$expid
+
+  export basebin=$basesource/nw$envir/control
+
+  export baselog=/$PTMP/$LOGNAME/o/$expid
+  export basedgfs=/global/noscrub/$LOGNAME/o
+  export basedgens=/$PTMP/$LOGNAME/o
+  export baseinitarch=/global/mirror/$LOGNAME/o/$expid
+
+# For VAPOR
+# export baselog=$PTMP/o/$expid
+# export basedgfs=$PGFS/o
+# export basedgens=$PTMP/o
+# For VAPOR end
+
+#For WCOSS 
+if [[ $machl = t ]] || [[ $machl = g ]]; then
+  group=ensemble
+#  group=`pwd|cut -d'/' -f2`
+  echo group=$group
+  export basesource=/$group/save/$LOGNAME/SVN/$expid
+  export basebin=$basesource/nw$envir/control
+  export baseoutput=/$PTMP/$LOGNAME/o/$expid
+  export basetmp=/$PTMP/$LOGNAME/o/$expid
+  export baseptmp=/$PTMP/$LOGNAME/o/$expid
+  export basedgfs=/$group/noscrub/$LOGNAME/o       # This is for alternative GFS ou  MISSINGGFS!!!
+  export TMPCOM=/com                               # basedgfs and TMPCOM, combined to define directory of the gfs 
+fi
+#For WCOSS end
+
+#For CRAY 
+if [[ $machl = s ]] || [[ $machl = l ]]; then
+  group=ensemble
+  export group=gpfs/hps/emc/$group
+  export basesource=/$group/save/$LOGNAME/SVN/$expid
+  export basebin=$basesource/nw$envir/control
+  export baseoutput=/$PTMP/$LOGNAME/o/$expid
+  export basetmp=/$PTMP/$LOGNAME/o/$expid
+  export baseptmp=/$PTMP/$LOGNAME/o/$expid
+  export basedgfs=/$group/noscrub/$LOGNAME/o
+fi
+#For CRAY end
+
+  export account=GEN-T2O
+  export group=g01
+  export group=devonprod
+  export classs=1
+  export classp=devhigh
+  export classp=dev
+
+if [[ $machl = t ]] || [[ $machl = g ]]; then
+# For WCOSS
+  export account=GEN-T2O
+# export account=gefs
+  export group=ensemble
+  export classs=batch
+  export classp=batch
+  export classp=batch
+# For WCOSS end
+fi  
+
+if [[ $machl = s ]] || [[ $machl = l ]]; then
+# For CRAY
+  export account=GEN-T2O
+# export account=gefs
+  export group=ensemble
+  export classs=batch
+  export classp=batch
+  export classp=batch
+# For CRAY end
+fi  
+fi         # [[ $LOGNAME = glopara ]]
+
+# RLW 20140903 modify selected settings for emc.enspara on WCOSS
+# RLW 20150603 this block copied and modified from rweh
+if [[ "$LOGNAME" = "emc.enspara" ]]; then
+  userin="Richard.Wobus"
+  export basesource=/$group/save/$userin/s/$expid
+  export basebin=$basesource/nw$envir/control
+  userout="emc.enspara"
+  export baseoutput=/$PTMP/$userout/o/$expid
+  export basetmp=/$STMP/$userout/o/$expid
+  export baseptmp=/$PTMP/$userout/o/$expid
+  usergfs="Richard.Wobus"
+  export basedgfs=/$group/noscrub/$usergfs/o
+  dh=`date +%H`
+  if (( dh >= 00 )) && (( dh < 25 )); then
+    if [[ $JOBQUEUE = dev2 ]]; then
+      export classs=devhigh2_shared
+      export classp=devhigh2
+      export JOBQUEUE=devhigh2
+    else
+      export classs=devhigh_shared
+      export classp=devhigh
+      export JOBQUEUE=devhigh
+    fi
+  else
+    if [[ $JOBQUEUE = dev2 ]]; then
+      export classs=dev2_shared
+      export classp=dev2
+    else
+      export classs=dev_shared
+      export classp=dev
+    fi
+  fi
+fi
+
+echo basesource=$basesource
+echo baseoutput=$baseoutput
+echo
+echo basetmp=$basetmp
+echo baseptmp=$baseptmp
+echo basebin=$basebin
+echo
+echo basedgfs=$basedgfs
+echo basedgens=$basedgens
+echo
+echo account=$account
+echo group=$group
+echo classs=$classs
+echo classp=$classp
+echo
+echo `date` $0 $* setbase end
+echo

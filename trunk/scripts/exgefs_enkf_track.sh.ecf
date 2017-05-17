@@ -1,0 +1,411 @@
+#!/bin/ksh
+###testb
+# lines between ###testb and ###teste not needed for production
+###teste
+echo `date` $0 begin
+################################################################################
+#   Script:	exgefs_init.sh.sms
+#
+#   Author:	Mark Iredell
+#   Date:	1997 January 08
+#
+#   Steward:	Richard Wobus
+#   Center:	Environmental Modeling Center
+#   Phone:	(301) 763-8000 x7712
+#
+#   Abstract:	Creates initial conditions for the global ensemble
+#       	by perturbing the analysis with growing modes
+#               extracted from the previous day's ensemble forecasts.
+#       	This script is called by jobs JENS0 and JENS2 and calls
+#               the utility script enstr_pair.sh to process each pair.
+#
+#   Modified:   12/11/98	replace hardwired globampl with fixed file
+#                               save growth rate output file
+#   Modified:   06/08/99	dummy script made to hold over on IBM until real
+#                               exenstr.sh.sms script is ready
+#   Modified:   09/09/99	modified for IBM SP
+#   Modified:   04/17/00	increase to 5 pairs at 12z
+#   Modified:   05/19/00	create perturbation at any two resolutions,
+#                               currently set to create 5 pairs and a 
+#                               low-resolution control run at T126
+#   Modified:   04/30/01	generalize to run with create any number of
+#                               levels and any number of tracer variables
+#   Modified:   07/01/03        separate into outer and inner (single pair)
+#                               scripts
+#   Modified:   06/24/05        modify for relocation and 6-hour breeding
+#   Modified:   09/09/05        use one-sided names with two-sided breeding
+#   Modified:   12/18/12        adapted to ensemble TC tracking
+#
+################################################################################
+
+set +xa
+echo " ------------------------------------------------------------"
+echo "  "
+echo "            GLOBAL ENSEMBLE INITIALIZATION "
+echo "  "
+echo "                `date`     "
+echo "  "
+echo "                   JOB  $job  "
+echo "  "
+echo "  "
+echo "               FORECAST cycle TIME is $cycle"
+echo "  "
+echo " ------------------------------------------------------------"
+echo "          processing info for this execution"
+echo " Home directory is ............................ $HOMEGLOBAL"
+echo " Processing directory for files.. ............. $DATA"
+echo "  "
+echo " Executable file directory is ................. $EXECGLOBAL"
+echo " Fixed field directory is ..................... $FIXgsm"
+echo " Parameter directory is ....................... $PARMGLOBAL"
+echo " Unix control language file is ................ $USHGLOBAL"
+echo "  "
+echo " Network id is ................................ $NET"
+echo " Run id for $com processing is ................ $RUN"
+echo "  "
+echo " standard output in file ...................... $pgmout"
+echo " unique processing id for run ................. $pid"
+echo " YES SENDCOM means save com files ............. $SENDCOM"
+echo " ------------------------------------------------------------"
+set -xa
+
+cd $DATA
+DATATMP=$DATA
+
+################################################################################
+
+relocfact=$relocfact relocflag=$relocflag
+
+(( npairt = npair * 4 ))
+nlist=
+ipair=0
+while (( ipair < npairt )); do
+	(( ipair = ipair + 1 ))
+	if (( ipair < 10 )); then
+		ipair=0$ipair
+	fi
+	nlist="$nlist $ipair"
+done # while (( ipair < npairt ))
+echo nlist=$nlist
+
+# cfsuffix identifies long forecast cycle 
+# associated with this breeding job
+
+if [[ "$cycsuffix" = "true" ]]; then
+	export cfsuffix=".cycfs$cyc_fcst"
+	export ensshort=yes
+else
+	export cfsuffix=""
+	export ensshort=no
+fi # [[ "$cycsuffix" = "true" ]]
+
+echo cyc=$cyc cyc_fcst=$cyc_fcst
+echo cycle=$cycle cycle_fcst=$cycle_fcst
+echo fcstlong=$fcstlong
+echo cycsuffix=$cycsuffix
+echo cfsuffix=$cfsuffix
+echo ensshort=$ensshort
+
+export pdycycp=`$NDATE -$fhrp $PDY$cyc`
+export pdyp=`echo $pdycycp|cut -c1-8`
+export cycp=`echo $pdycycp|cut -c9-10`
+
+echo pdycycp=$pdycycp pdyp=$pdyp cycp=$cycp
+
+echo  COMINenkf=$COMINenkf
+
+export COM=$COMOUTprevcyc/track_enkf
+mkdir -m 775 -p  $COM
+# cfsuffixp identifies long forecast cycle
+# associated with the previous forecast cycle
+# from which tracking information will be used
+
+if (( cycp != cyc_fcst )); then
+	export cfsuffixp=".cycfs$cyc_fcst"
+	export ensshortp=yes
+else
+	export cfsuffixp=""
+	export ensshortp=no
+fi # (( cycp != cyc_fcst ))
+
+echo cfsuffixp=$cfsuffixp
+echo ensshortp=$ensshortp
+
+#
+# begin TC tracker section for c00 (ensemble mean)
+#
+echo relocflag=$relocflag
+
+(( trackflag = relocflag ))
+export relocflag
+export trackflag
+export COMOUT=${COMOUT}
+
+if (( trackflag == 1 )); then
+	echo  ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio 
+	# test for files necessary for relocation
+	if [[ ! -s ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio ]] ; then
+		export trackflag=0
+		echo  ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio not found
+	else # [[ ! -s ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio ]]
+		export cmodel=enkf
+		export pert=ac00
+		export PDY=${pdyp}
+		export CYL=${cycp}
+		export SIGVAL="&siginfo sigpath=\"${DATA}/sigf_${pert}_fhr\", ddeg=1.0, reslch=0 0 /"
+		ln -sf ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio ${DATA}/sigf_${pert}_fhr00
+		ln -sf ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio ${DATA}/sigf_${pert}_fhr06
+		sh $UTILgefs/ush/extrkr.sh
+
+		atcfout=''
+		case $cycp in
+			(00) atcfout='wc00' ;;
+			(06) atcfout='xc00' ;;
+			(12) atcfout='yc00' ;;
+			(18) atcfout='zc00' ;;
+		esac # $cycp
+		atcfoutb=`echo ${atcfout} | tr '[a-z]' '[A-Z]'`
+		cat ${COM}/ac00.t${cycp}z.cyclone.trackatcfunix | sed -e 's/AC00/'${atcfoutb}'/g' > ${COM}/${atcfout}.t${cycp}z.cyclone.trackatcfunix
+		###teste
+	fi # [[ ! -s ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio ]]
+fi # (( trackflag == 1 ))
+
+### chgres ENKF control run forecast hr=$fhrp and save to precious cycle sfcsig directory 
+if (( trackflag == 1 )); then
+	# test for files necessary for relocation
+	if [[ ! -s ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio ]]; then
+		export trackflag=0
+		echo  ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio not found
+	else # [[ ! -s ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio ]]
+		mkdir $COMOUTprevcyc/sfcsig_enkf
+		export SIGINP=${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio
+           if [ $NEMSIO_IN = .true. ]; then
+                export GFSOUT=$COMOUTprevcyc/sfcsig_enkf/gec00.t${cycp}z.sf${fhrp}
+                export OUTTYP=1
+           else
+		export SIGOUT=$COMOUTprevcyc/sfcsig_enkf/gec00.t${cycp}z.sf${fhrp}
+                export OUTTYP=2
+           fi
+		export SFCINP=/dev/null
+		export SFCOUT=/dev/null
+		export JCAP=$JCAPHR
+		export LEVS=$LEVSHR
+		export LONB=$LONBHR
+		export LATB=$LATBHR
+		export NTRAC=$NTRACHR
+		export IDVC=$IDVC
+
+		#check if ENKF has same resolution as GEFS
+
+        if [ $NEMSIO_IN = .true. ]; then
+        ojcap=$($nemsioget ${SIGINP} jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        olevs=$($nemsioget ${SIGINP} levs |grep -i "levs" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        olonb=$($nemsioget ${SIGINP} LONF|grep -i "LONF" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        olatb=$($nemsioget ${SIGINP} LATG|grep -i "LATG" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        ontrac=$($nemsioget ${SIGINP} NTRAC|grep -i "NTRAC" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        oidvc=$($nemsioget ${SIGINP} IDVC|grep -i "IDVC" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+        else
+
+		ojcap=`$sighdrexec $SIGINP jcap`
+		olevs=`$sighdrexec $SIGINP levs`
+		olonb=`$sighdrexec $SIGINP lonb`
+		olatb=`$sighdrexec $SIGINP latb`
+		ontrac=`$sighdrexec $SIGINP ntrac`
+		oidvc=`$sighdrexec $SIGINP idvc`
+        fi
+		runchgres=yes
+		if (( JCAP == ojcap )); then
+			if (( LEVS == olevs )); then
+				if (( LONB == olonb )); then
+					if (( LATB == olatb )); then
+						if (( NTRAC == ontrac )); then
+							if (( IDVC == oidvc )); then
+								runchgres=no
+							fi
+						fi
+					fi
+				fi
+			fi
+		fi
+
+		if [[ $runchgres = yes ]]; then
+			export NVCOORD=$IDVC
+                        export nopdpvv=$nopdpvv
+                        export CHGRESVARS="use_ufo=.true.,rdgrid=.true.,idvc=$idvc,NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0,nopdpvv=$nopdpvv"
+			if (( IDVC == 1 )); then
+				export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
+			fi
+			if (( IDVC == 2 )); then
+				export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
+			fi
+			$chgresush >>$pgmout
+		else
+                        if [ $NEMSIO_IN = .true. ]; then
+	                	cp -fp $SIGINP $GFSOUT
+                        else
+			       cp -fp $SIGINP $SIGOUT
+                        fi 
+			cp -fp $SFCINP $SFCOUT
+		fi
+	fi # [[ ! -s ${COMINenkf}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean ]]
+fi # (( trackflag == 1 ))
+echo
+
+if (( trackflag == 1 )); then
+	echo `date` $0 poe EnKF_track begin
+	echo
+
+	ls -al poescript*
+	rm -rf poescript*
+
+	(( itask = 0 ))
+	while (( itask < initseparatetasks )); do
+		echo 'echo `date` ############ poescript'" $itask begin">>poescript.$itask
+		(( itask = itask + 1 ))
+	done
+
+	(( itask = 0 ))
+	for ipair in $nlist; do
+		echo npair=$npair
+		if (( ipair <= npair )); then
+			(( ipairh = ipair ))
+			suf="wp"
+		elif (( ipair <= 2 * npair )); then
+			(( ipairh = ipair - npair ))
+			suf="xp"
+		elif (( ipair <= 3 * npair )); then
+			(( ipairh = ipair - 2 * npair ))
+			suf="yp"
+		else
+			(( ipairh = ipair - 3 * npair ))
+			suf="zp"
+		fi # (( ipair <= npair ))
+		(( pmem = 2 * ipair - 1 ))
+		(( mmem = 2 * ipair ))
+		(( pmemh = 2 * ipairh - 1 ))
+		(( mmemh = 2 * ipairh ))
+		if [ ${pmem} -lt 10 ]; then
+			pmem=0${pmem}
+		fi
+		if [ ${mmem} -lt 10 ]; then
+			mmem=0${mmem}
+		fi
+		if [ ${pmemh} -lt 10 ]; then
+			pmemh=0${pmemh}
+		fi
+		if [ ${mmemh} -lt 10 ]; then
+			mmemh=0${mmemh}
+		fi
+		echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh begin">>poescript.$itask
+		cat <<-EOF >> poescript.$itask
+			export DATA=${DATATMP}/tr${ipair}
+			mkdir -p \${DATA}
+			export cmodel=enkf
+			export PDY=${pdyp}
+			export CYL=${cycp}
+			EOF
+		cat <<-EOF >> poescript.$itask
+			export pert=${suf}${pmemh}
+			export SIGVAL="&siginfo sigpath=\"\${DATA}/sigf_\${pert}_fhr\", ddeg=1.0, reslch=0 0 /"
+#			ln -sf $COMINenkf/${cycp}/siganl_${pdycycp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr00
+			ln -sf ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.mem0${pmem}.nemsio \${DATA}/sigf_\${pert}_fhr00
+			ln -sf ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.mem0${pmem}.nemsio \${DATA}/sigf_\${pert}_fhr06
+			$UTILgefs/ush/extrkr.sh > ushout.track.$ipair 2>&1
+			export pert=${suf}${mmemh}
+			export SIGVAL="&siginfo sigpath=\"\${DATA}/sigf_\${pert}_fhr\", ddeg=1.0, reslch=0 0 /"
+#			ln -sf $COMINenkf/${cycp}/siganl_${pdycycp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr00
+			ln -sf ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio \${DATA}/sigf_\${pert}_fhr00
+			ln -sf ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio \${DATA}/sigf_\${pert}_fhr06
+			$UTILgefs/ush/extrkr.sh >> ushout.track.$ipair 2>&1
+			EOF
+		echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh end">>poescript.$itask
+
+		(( itask = itask + 1 ))
+		if (( itask == initseparatetasks )); then
+			(( itask = 0 ))
+		fi
+	done # for ipair in $nlist
+
+	(( itask = 0 ))
+	while (( itask < initseparatetasks )); do
+		echo 'echo `date` ############ poescript'" $itask end">>poescript.$itask
+		echo
+		chmod 755 poescript.$itask
+		ls -al poescript.$itask
+		echo
+		cat poescript.$itask
+		echo
+		echo "sh poescript.$itask" >>poescript
+		(( itask = itask + 1 ))
+	done # while (( itask < initseparatetasks ))
+
+	echo
+	chmod 755 poescript
+	ls -al $poescript
+	echo
+	cat poescript
+	echo
+
+	export MP_HOLDTIME=1000
+
+	export MP_CMDFILE=poescript
+	export MP_LABELIO=yes
+	export MP_INFOLEVEL=3
+	export MP_STDOUTMODE=unordered
+
+	echo
+	echo before ls before poe
+	echo
+
+	pwd
+	ls -ablp
+	echo
+	echo DATA=$DATA before poe
+	#### kate 4/24/2012 #####
+	echo trackflag=$trackflag
+	cp poescript cmdfile
+	echo APRUN=$APRUN
+	export MP_PGMMODEL=mpmd
+
+	rm mpmd_cmdfile
+	ln -s $MP_CMDFILE mpmd_cmdfile
+	$APRUN
+
+else # (( trackflag == 1 ))
+	echo WARNING: EnKF tracking is off
+fi # (( trackflag == 1 ))
+
+#### kate 4/24/2012 ##############
+
+echo DATA=$DATA after poe
+pwd
+ls -ablp
+
+echo
+echo after ls after poe
+echo
+
+for ipair in $nlist; do
+	file=ushout.track.$ipair
+	echo "############################### file=$file begin #######################"
+	cat $file
+	echo "############################### file=$file end ##########################"
+	echo
+done # for ipair in $nlist
+echo
+echo `date` $0 poe enkf_track end
+echo
+
+###testb
+#if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
+###teste
+msg='ENDED NORMALLY.'
+postmsg "$jlogfile" "$msg"
+
+################# END OF SCRIPT #######################
+###testb
+#else
+#  echo skip delete for now
+#fi
+###teste
+echo `date` $0 end

@@ -1,0 +1,408 @@
+#!/bin/ksh
+
+echo `date` $0 `date -u` begin
+
+set -xa
+export PS4='$SECONDS + '
+date
+export MODEL_OUT_FORM=binarynemsiompiio
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+if [ "$RUN_ENVIR" = dev ]; then ### For Developers
+# . $basesource/nw${envir}/versions/gefs.ver
+	. $basesource/nwdev/parm/gefs_config
+	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+fi
+
+export APRUN=${gefsmpexec:-mpirun.lsf}
+
+export GRIBVERSION=${GRIBVERSION:-grib2}
+
+####################################
+# obtain unique process id (pid) and make temp directory
+###################################
+export pid=$$
+export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
+mkdir -p $DATA
+cd $DATA
+
+# Define MASTERRES for master file grid, default being Gaussian with alternatives of  p125/p25/p5 
+export MASTERRES=        
+export res=$MASTERRES
+export SUBJOB=$SUBJOB
+
+######################################
+# Set up the cycle variable
+######################################
+export cycle=t${cyc}z
+export cycle_fcst=t${cyc_fcst}z
+
+if (( cyc == cyc_fcst )); then
+	export cycsuffix=false
+	export fcstlong=true
+else
+	export fcstlong=false
+	export cycsuffix=true
+fi
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# VERBOSE  - Specify Verbose Output in global_postgp.sh
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-NO}
+
+####################################
+# Define RERUN Parameter: default to RESTART if not previously set
+#
+# Set RERUN=RESTART to find the last set of complete SFCSIG files and restart the forecast at that point
+# (corresponds to previous setting RERUN=NO)
+# Set RERUN=YES to remove all forecast products and log files, if any, and start over from the conditions
+#
+# In case of FORECAST failure, set RERUN=RESTART if necessary in FORECAST, NCEPPOST, and PRDGEN jobs
+# In case of NCEPPOST failure, set RERUN=RESTART if necessary in NCEPPOST, and PRDGEN jobs
+# In case of PRDGEN   failure, set RERUN=RESTART if necessary in PRDGEN jobs
+####################################
+echo input setting RERUN=$RERUN
+export RERUN=${RERUN:-RESTART}
+echo current setting RERUN=$RERUN
+
+# Specify Execution Areas
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export HOMEpost=${HOMEpost:-${NWROOT}/ncep_post.${post_ver}}
+export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
+
+export USHpost=${HOMEpost}/ush
+export EXECpost=${HOMEpost}/exec
+export FIXpost=${HOMEpost}/fix
+export FIXglobal=${HOMEgsm}/fix
+export PARMpost=${HOMEpost}/parm
+# PARMPOST (instead of PARMpost) is used in the post ush script
+export PARMPOST=${PARMpost}
+# GRBINDEX2 (instead of GRB2INDEX) is used in the post ush script
+export GRBINDEX2=${GRB2INDEX}
+
+export USHgsm=$HOMEgsm/ush
+export EXECgsm=$HOMEgsm/exec
+
+export USHgefs=${USHgefs:-${HOMEgefs}/ush}
+export PARMgefs=$HOMEgefs/parm
+
+###############################################################
+# Specify locations of the following scripts and executables
+###############################################################
+export CHGRESTHREAD=1
+export OVERPARMEXEC=                        #Optional input in the post ush script
+export CHGRESSH=$USHgsm/global_chgres.sh
+export CHGRESEXEC=$EXECgsm/global_chgres
+
+export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
+# RLW 20150622 test new version of post executable
+export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
+export SIGHDR=$nemsioget
+#echo in $0: POSTGPSH=$POSTGPSH
+#echo in $0: POSTGPEXEC=$POSTGPEXEC
+
+export ERRSCRIPT=err_chk
+export LOGSCRIPT=startmsg
+export REDOUT='1>>'
+export REDERR='2>'
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+#ksh setup.sh
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+
+. PDY
+
+##############################################
+# Define COM and GES directories
+##############################################
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+
+mkdir -m 775 -p $COMOUT/$cyc/master
+mkdir -m 775 -p $COMOUT/$cyc/misc/post
+
+############################################
+# Run gefs.parm to get input variables
+############################################
+. $PARMgefs/gefs.parm
+
+case $cyc in
+	00) export fhmax=$fhmax00;;
+	06) export fhmax=$fhmax06;;
+	12) export fhmax=$fhmax12;;
+	18) export fhmax=$fhmax18;;
+esac
+
+####################################
+# Specify Process ID for the products
+####################################
+ export IGEN_ANL=107
+ export IGEN_FCST=107
+if [ $GRIBVERSION = grib2 ]; then
+	export CAT_FLX_TO_PGB=${CAT_FLX_TO_PGB:-YES}
+	export OUTTYP=${OUTTYP:-3}
+	export POSTAVBLFLD=$HOMEpost/parm/post_avblflds.xml
+	export POSTGRB2TBL=${POSTGRB2TBL:-/nwprod/lib/sorc/g2tmpl/params_grib2_tbl_new}
+	export CTLFILEGFSANL=${CTLFILEGFSANL:-$PARMpost/postcntrl_gfs.xml}
+	export CTLFILEGFSF00=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
+	export CTLFILEGFS=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml}
+	export CTLFILEGFSANL1=${CTLFILEGFSANL:-$PARMpost/postcntrl_gfs.xml}
+	export CTLFILEGFSF001=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
+	export CTLFILEGFS1=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml}
+	export FLTFILEGFSANL=${FLTFILEGFSANL:-$PARMpost/postxconfig-NT-GEFS-ANL.txt}
+	export FLTFILEGFSF00=${FLTFILEGFSF00:-$PARMpost/postxconfig-NT-GEFS-F00.txt}
+	export FLTFILEGFS=${FLTFILEGFS:-$PARMpost/postxconfig-NT-GEFS.txt}
+	export FLTFILEGFSANL1=${FLTFILEGFSANL1:-$PARMpost/postxconfig-NT-GEFS-ANL.txt}
+	export FLTFILEGFSF001=${FLTFILEGFSF001:-$PARMpost/postxconfig-NT-GEFS-F00.txt}
+	export FLTFILEGFS1=${FLTFILEGFS1:-$PARMpost/postxconfig-NT-GEFS.txt}
+fi # [ $GRIBVERSION = grib2 ]
+
+export POSTGPVARS_HIGH="KPO=47,PO=1000.,975.,950.,925.,900.,875.,850.,825.,800.,775.,750.,725.,700.,675.,650.,625.,600.,575.,550.,525.,500.,475.,450.,425.,400.,375.,350.,325.,300.,275.,250.,225.,200.,175.,150.,125.,100.,70.,50.,30.,20.,10.,7.,5.,3.,2.,1.,"
+export POSTGPVARS_LOW=$POSTGPVARS_HIGH
+
+####################################
+# If this is a rerun, remove all control files
+####################################
+if [[ $RERUN = YES ]]; then
+	$USHgefs/gefs_restart_cleanup.sh 00 $FHMAX post prd0p5 prd1p0 prd2p5
+fi
+
+####################################
+# Specify Restart File Name to Key Off
+####################################
+if [[ $fcstlong = true ]]; then
+	restart_file=$COMIN/$cyc/misc/fcst/${RUNMEM}.t${cyc}z.logf
+else
+	restart_file=$COMIN/$cyc/misc/fcst/${RUNMEM}.t${cyc}z.logf
+fi
+
+####################################
+# Specify Timeout Behavior of Post
+#
+# SLEEP_TIME - Amount of time to wait for
+#              a restart file before exiting
+# SLEEP_INT  - Amount of time to wait between
+#              checking for restart files
+####################################
+export SLEEP_TIME=900
+export SLEEP_INT=5
+
+####################################
+# Specify Forecast Hour Range
+####################################
+
+export FHINC_HIGH=3
+export FHINC_LOW=6
+
+##### RLW 20110704 note that only _HIGH is currently used
+case $FORECAST_SEGMENT in
+	(hr)
+		# high resolution segment
+		export SHOUR=00
+		if [[ $fcstlong = true ]]; then
+			export FHOUR_HIGH=$fhmaxh
+			export FHOUR_LOW=$fhmax
+		else
+			export FHOUR_HIGH=6
+			export FHOUR_LOW=6
+		fi # [[ $fcstlong = true ]]
+		case $SUBJOB in
+			(A)  
+				export DOANALYSIS=YES;
+				export SHOUR=06;
+				export FHINC_HIGH=9
+				;;
+			(B)  
+				export DOANALYSIS=NO;
+				export SHOUR=00;
+				export FHINC_HIGH=9
+				;;
+			(C)  
+				export DOANALYSIS=NO;
+				export SHOUR=03;
+				export FHINC_HIGH=9
+				;;
+			(*) 
+				export DOANALYSIS=YES;
+				export SHOUR=00;
+				export FHINC_HIGH=3
+				;;
+		esac # $SUBJOB
+		;;
+	(lr)
+		# low resolution segment
+		export FHINC_HIGH=6
+		export SHOUR=$(( $fhmaxh + $FHINC_LOW ))
+		if (( SHOUR < 10 )); then
+			SHOUR=0$SHOUR
+		fi
+		if [[ $fcstlong = true ]]; then
+			export FHOUR_HIGH=$fhmax
+			export FHOUR_LOW=$fhmax
+		else
+			export FHOUR_HIGH=6
+			export FHOUR_LOW=6
+		fi # [[ $fcstlong = true ]]
+		export DOANALYSIS=NO
+		;;
+	(*)
+		# whole forecast
+		export SHOUR=00
+		if [[ $fcstlong = true ]]; then
+			export FHOUR_HIGH=$fhmax
+			export FHOUR_LOW=$fhmax
+		else
+			export FHOUR_HIGH=6
+			export FHOUR_LOW=6
+		fi # [[ $fcstlong = true ]]
+		;;
+esac # $FORECAST_SEGMENT
+
+echo FORECAST_SEGMENT=$FORECAST_SEGMENT
+echo DOANALYSIS=$DOANALYSIS
+echo FHINC_HIGH=$FHINC_HIGH
+echo FHINC_LOW=$FHINC_LOW
+echo SHOUR=$SHOUR
+echo FHOUR_HIGH=$FHOUR_HIGH
+echo FHOUR_LOW=$FHOUR_LOW
+
+export DO_HD_PGRB=NO
+export HDMAX=00
+
+if (( 0 == 1 )) ; then
+####################################
+# Check if this is a restart
+####################################
+  mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control
+if [[ $cycsuffix = false ]]; then
+	if test -f $mcfile; then
+		# modelrecvy=`cat < $COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control`
+		modelrecvy=`cat < $mcfile`
+		recvy_pdy=`echo $modelrecvy | cut -c1-8`
+		recvy_cyc=`echo $modelrecvy | cut -c9-10`
+		recvy_shour=`echo $modelrecvy | cut -c11-13`
+		if test $RERUN = "RESTART"; then
+			if test $recvy_shour -ge $FHOUR_HIGH; then
+				msg="Forecast Post Already Completed to $recvy_shour"
+				postmsg "$jlogfile" "$msg"
+				SHOUR=$recvy_shour
+			else
+				if test $recvy_shour -ge $FHOUR_HIGH; then
+					SHOUR=`expr $recvy_shour + $FHINC_LOW`
+				else
+					SHOUR=`expr $recvy_shour + $FHINC_HIGH`
+				fi
+				msg="Starting: PDY=$PDY cycle=t${recvy_cyc}z SHOUR=$SHOUR	."
+				postmsg "$jlogfile" "$msg"
+			fi # test $recvy_shour -ge $FHOUR_HIGH
+		fi # test $RERUN = "RESTART"
+	fi # test -f $miscfile
+else
+	mcfile=$COMOUT/$cyc/misc/$post/${RUNMEM}.t${cyc}z.master.control.cycfs$cyc_fcst
+	if test -f $mcfile; then
+		# modelrecvy=`cat < $COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.cycfs$cyc_fcst`
+		modelrecvy=`cat < $mcfile`
+		recvy_pdy=`echo $modelrecvy | cut -c1-8`
+		recvy_cyc=`echo $modelrecvy | cut -c9-10`
+		recvy_shour=`echo $modelrecvy | cut -c11-13`
+		if test $RERUN = "RESTART"; then
+			if test $recvy_shour -ge $FHOUR_HIGH; then
+				msg="Forecast Post Already Completed to $recvy_shour"
+				postmsg "$jlogfile" "$msg"
+				SHOUR=$recvy_shour
+			else # test $recvy_shour -ge $FHOUR_HIGH
+				if test $recvy_shour -ge $FHOUR_HIGH; then
+					SHOUR=`expr $recvy_shour + $FHINC_LOW`
+				else
+					SHOUR=`expr $recvy_shour + $FHINC_HIGH`
+				fi
+				msg="Starting: PDY=$PDY cycle=t${recvy_cyc}z SHOUR=$SHOUR	."
+				postmsg "$jlogfile" "$msg"
+			fi # test $recvy_shour -ge $FHOUR_HIGH
+		fi # test $RERUN = "RESTART"
+	fi # test -f $miscfile
+fi # [[ $cycsuffix = false ]]
+fi # (( 0 == 1 ))
+
+export post_log=$DATA/post.$FORECAST_SEGMENT.log$SUBJOB\_${RUNMEM}$cfsuffix
+
+echo
+env | sort
+echo
+
+#################################
+# Run High Res Post if Needed
+#################################
+if test $SHOUR -le $FHOUR_HIGH; then
+	export FHINC=$FHINC_HIGH
+	export FHOUR=$FHOUR_HIGH
+	export DO_LOW_RES=YES 
+	export POSTGPVARS=$POSTGPVARS_HIGH
+
+	$HOMEgefs/scripts/exgefs_nceppost.sh.ecf
+
+	export SHOUR=`expr $FHOUR_HIGH + $FHINC_HIGH`
+fi # test $SHOUR -le $FHOUR_HIGH
+
+###################################################
+# Run Low Res Post if Needed
+###################################################
+#if test $SHOUR -lt $FHOUR_LOW
+#then
+#   export FHINC=$FHINC_LOW
+#   export FHOUR=$FHOUR_LOW
+#   export DO_LOW_RES=YES 
+#   export POSTGPVARS=$POSTGPVARS_LOW
+#   $HOMEgefs/scripts/exgefs_nceppost.sh.sms
+#fi
+###################################################
+
+mv $post_log $COMOUT/$cyc/misc/post
+
+################# lines between these markers have been modified for dev begin
+echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN
+echo DATA=$DATA
+ls -al $DATA
+echo `date` TEST LISTING OF WORKING DIRECTORY END
+################# lines between these markers have been modified for dev end
+
+msg="$job completed normally"
+postmsg "$jlogfile" "$msg"
+
+if [[ $KEEPDATA != "YES" ]]; then
+	cd $DATAROOT
+	rm -rf $DATA
+fi
+
+echo `date` $0 `date -u` end

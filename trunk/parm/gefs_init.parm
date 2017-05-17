@@ -1,0 +1,117 @@
+#!/bin/ksh
+
+# control parameters for gefs
+# execute this script in gefs job scripts  (. $HOMEgefs/gefs_init.parm)
+# execute this script after  (. $HOMEgefs/gefs.parm)
+echo `date` $0 begin
+
+# ----------------------------------
+# options for NEMSIO
+# ----------------------------------
+#export NEMSIO_IN=.true.
+export NEMSIO_IN=.true.
+export NEMSIO_OUT=.true.
+export nopdpvv=.true.
+
+# parameters for relocation, 1 for yes, 0 for no
+export relocfact=0.05
+export relocflag=0
+export relocflag=1
+#
+# control pairing,inflag=6 means inputs from EnKF 6h FCST
+export inflag=6
+export outflag=5
+
+# old versions for old code
+export contopet=1.666667
+export globampletr=1.10
+export globampletg=1.00
+
+# parameters for et
+export globamplr_et=0.88
+export globamplg_et=1.00
+
+# itopres_et 0 to rescale at top, 1 to skip
+export itopres_et=0
+
+# old values
+#export contop_et=1.666667
+#export b1_et=1.0e8
+#export b2_et=1.0e6
+#export b3_et=1.0e24
+
+# current values
+export contop_et=10.0
+export b1_et=1.0e3
+export b2_et=1.0e1
+export b3_et=1.0e19
+#
+#export smax_et=1.2    #Parameter used to inflate lower level Pert. M Wei, Aug. 2011
+export smax_et=1.0    #modified the code to de-activate this function if smax_et<=1.0, DHOU, 06/28/2013
+
+#XZHOU, 05/28/2013, Redefined these LEVS-related parameters
+export smx_msk=0.087    #Parameter used to smooth mask  X. Zhou
+export w_msk=0.2    #Weighting coefficient for  mask  X. Zhou
+
+#DHOU, 06/28/2013, Redefined these LEVS-related parameters
+# export globamplr_et=1.10    #tdLb
+  export globamplr_et=0.88    #tdLc
+  export globamplr_et=1.00
+
+case $LEVSHR in
+	(64)
+		export nlevmask_et=25
+		export nlevrs_et=37
+		# export nlevrs_et=36
+		export mxlev_et=41
+		# export mxlev_et=40
+		;;
+	(42)
+		export nlevmask_et=20
+		# export nlevrs_et=28
+		export nlevrs_et=30
+		# export mxlev_et=32
+		export mxlev_et=33
+		# export globamplr_et=0.88
+		# DHOU, 08/13/2010, parameters for L42 as suggested by Mozheng Wei
+		;;
+	(28)
+		export nlevmask_et=13
+		export nlevrs_et=19
+		export mxlev_et=21
+		# export globamplr_et=1.10
+		# DHOU, 08/13/2010, parameters used for L28 in the earlier versions
+		;;
+	(*)
+		echo Invalid value for LEVSHR, $LEVSHR
+		;;
+esac # $LEVSHR
+
+# task and node assignments
+export initseparatetasks=40
+export initmasktasks=80
+#export initseparatenodes=1
+export initcombinetasks=40
+#export initcombinenodes=1
+
+# run parallel or serial et code
+export parallelinit=no
+export parallelinit=yes
+
+#############################################################################
+## This section is some parameter setup for for development testing only
+#############################################################################
+if [[ $envir = dev ]]; then
+        . $basesource/nw$envir/parm/gefs_init_dev.parm
+fi
+
+# a flag to determine if run ET
+export etflag=yes
+export etflag=no
+# if mskflag=0 no rescaling
+# if mskflag=1 2D climatological mask
+# if mskflag=2 3D EnKF-based mask
+# if mskflag=3 3D EnKF-based  Monthly mean mask
+export mskflag_et=3
+export mskflag_et=0
+echo `date` $0 end

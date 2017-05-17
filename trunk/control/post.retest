@@ -1,0 +1,11 @@
+#!/bin/ksh
+#
+# test the post and prdgen jobs
+#
+jjb=02
+jje=99
+dtg=2015070506
+for k in 1 3
+do
+gefsrun_T574 $dtg$k$jjb $dtg$k$jje
+done

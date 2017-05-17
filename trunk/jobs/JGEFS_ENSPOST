@@ -1,0 +1,138 @@
+#!/bin/ksh 
+
+echo `date` $0 `date -u` begin
+
+set -xa
+export PS4='$SECONDS + '
+date
+
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+if [ "$RUN_ENVIR" = dev ]; then ### For Developers
+# . $basesource/nw${envir}/versions/gefs.ver
+	. $basesource/nwdev/parm/gefs_config
+	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+fi
+
+export APRUN=${gefsmpexec:-mpirun.lsf}
+
+####################################
+# obtain unique process id (pid) and make temp directory
+####################################
+export pid=$$
+export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
+
+mkdir -p $DATA
+cd $DATA
+
+######################################
+# Set up the cycle variable
+######################################
+export cycle=t${cyc}z
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# Specify Execution Areas
+####################################
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
+export REDOUT='1>>'
+export REDERR='2>'
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+. $PARMgefs/gefs.parm
+. $PARMgefs/gefs_ensstat.parm
+
+##############################################
+# Define COM directories
+##############################################
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMINm1=$COMROOT/${NET}/${envir}/${RUN}.${PDYm1}
+
+mkdir -m 775 -p $COMOUT/$cyc/ensstat
+
+msg="HAS BEGUN on `hostname`"
+postmsg "$jlogfile" "$msg"
+
+####################################
+# Specify Timeout Behavior of Post
+#
+# SLEEP_TIME - Amount of time to wait for
+#              a restart file before exiting
+# SLEEP_INT  - Amount of time to wait between
+#              checking for restart files
+####################################
+export SLEEP_TIME=900
+export SLEEP_INT=5
+
+export NTHREADS=1
+####################################
+# Specify Forecast Hour Range
+####################################
+# allow different forecast lengths in different cycles
+if [[ $envir = dev ]]; then
+	case $cyc in
+		(00) FHOUR=$fhmax00 ;;
+		(06) FHOUR=$fhmax06 ;;
+		(12) FHOUR=$fhmax12 ;;
+		(18) FHOUR=$fhmax18 ;;
+		(*)
+			echo cyc=$cyc IS UNDEFINED 
+			export pgm=JGEFS_ENSSTAT
+			export err=111
+			;;
+	esac # $cyc
+fi # [[ $envir = dev ]]
+
+export SHOUR=00
+export FHINC=06
+export FHOUR=$fhmax
+
+env | sort
+
+# Execute the script
+
+export ext_h=""
+
+$HOMEgefs/scripts/exgefs_enspost.sh.ecf
+
+msg="JOB COMPLETED NORMALLY"
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Remove the Temporary working directory
+##############################
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi

@@ -1,0 +1,65 @@
+#BSUB -J %E%gefs_init_separate_%CYC%
+#BSUB -o /%COM%/output/%ENVIR%/today/gefs_init_separate_%CYC%.o%J
+#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_init_separate_%CYC%.o%J
+#BSUB -cwd /tmpnwprd
+#BSUB -R span[ptile=4]
+#BSUB -R affinity[core(6)]
+#BSUB -n 40
+#BSUB -x
+#BSUB -q %QUEUE%
+#BSUB -W 00:30
+#BSUB -L /bin/sh
+#BSUB -P %PROJ%
+#BSUB -a poe
+
+%include <head.h>
+%include <envir-p2.h>
+
+
+# EXPORT list here
+set -x
+
+export OMP_NUM_THREADS=6
+export MP_TASK_AFFINITY=cpu:6
+export MP_USE_BULK_XFER=yes
+export MP_STDOUTMODE=unordered
+export MPICH_ALLTOALL_THROTTLE=0
+export MP_COREFILE_FORMAT=core.txt
+export OMP_STACKSIZE=3G
+export MP_COMPILER=intel
+export KMP_AFFINITY=granularity=fine,scatter
+
+export envir=%ENVIR%
+export cyc=%CYC%
+export cyc_fcst=%CYC%
+
+
+# CALL executable job script here
+VERSION_FILE=$NWROOT/versions/gefs.ver
+if [ -f $VERSION_FILE ]; then
+  . $VERSION_FILE
+else
+  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+  ecflow_client --abort
+  exit
+fi
+
+$NWROOT/gefs.${gefs_ver}/jobs/JGEFS_INIT_SEPARATE
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose: process global ensemble init system (GEFS) init
+#          model
+#
+#
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end

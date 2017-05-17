@@ -1,0 +1,140 @@
+#!/bin/ksh 
+echo `date` $0 `date -u` begin
+
+set -xa
+
+export PS4='$SECONDS + '
+date
+
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+if [ "$RUN_ENVIR" = dev ]; then ### For Developers
+# . $basesource/nw${envir}/versions/gefs.ver
+	. $basesource/nwdev/parm/gefs_config
+fi
+
+export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
+
+############################
+# Set up cycle varaible
+############################
+
+export cycle=t${cyc}z
+export cycle_fcst=t${cyc_fcst}z
+
+if (( cyc == cyc_fcst )); then
+	export cycsuffix=false
+	export fcstlong=true
+else
+	export fcstlong=false
+	export cycsuffix=true
+fi # (( cyc == cyc_fcst ))
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+####################################
+# obtain unique process id (pid) and identify working directory
+####################################
+export pid=$$
+export DATA=$DATAROOT/gefs_init_$PDY$cyc.$envir.save
+
+echo DATA=$DATA
+cd $DATA
+
+
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# Specify Execution Areas
+####################################
+export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
+export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
+
+export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
+export USHgsm=${USHgsm:-$HOMEgsm/ush}
+export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
+export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
+
+export FIXGLOBAL=$FIXgsm
+
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+
+. $PARMgefs/gefs.parm
+. $PARMgefs/gefs_init.parm
+
+env | sort
+
+##############################################
+# for global_chgres.sh
+##############################################
+#export SLMASK=/dev/null
+
+##############################################
+# Define COM directories
+##############################################
+export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
+export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
+export COMIN=${COMIN:-${COM_IN}/${RUN}.${PDY}}
+export COMOUT=${COMOUT:-${COM_OUT}/${RUN}.${PDY}}
+
+##############################################
+# Define GES directories
+##############################################
+export GESOUT=${GESOUT:-$GESROOT/${envir}}
+export GESOUT=$GESOUT/gefs.${PDY}
+##############################################
+echo list environment before running script
+##############################################
+
+env | sort
+
+#############################################################
+# Execute the script
+$HOMEgefs/scripts/exgefs_init_combine.sh.ecf
+#############################################################
+
+cat $pgmout
+
+msg="JOB COMPLETED NORMALLY"
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Remove the working directory
+##############################
+if [[ $KEEPDATA != "YES" ]]; then
+	cd $DATAROOT
+	rm -rf $DATA
+fi
+
+echo `date` $0 `date -u` end

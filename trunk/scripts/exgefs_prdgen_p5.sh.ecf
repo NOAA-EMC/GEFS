@@ -1,0 +1,336 @@
+#!/bin/ksh
+export VERBOSE=yes
+sname=`basename $0`
+echo `date` $sname $member begin
+#####################################################################
+echo "-----------------------------------------------------"
+echo " exgefs_prdgen.sh.sms" 
+echo " based on exglobal_post.sh.sms and exglobal_post_pgrb2.sh.sms" 
+echo " interpolate master post files (GRIB2) and convert to GRIB1"
+echo " Sep 07 - Wobus - reorganized script"
+echo " Aug 10 - Wobus - added test for control file from post"
+echo " Jun 11 - Wobus - moved master post files to /com"
+echo " Jun 14 - Hou   - adopted to grb2 version master files as input"
+echo "-----------------------------------------------------"
+#####################################################################
+export PS4='+ $SECONDS $sname $member $LINENO: '
+
+set -xa
+na=`basename $0`
+
+cd $DATA
+
+#$USHutil/setup.sh
+#setup.sh
+
+msg="HAS BEGUN on `hostname`"
+postmsg "$jlogfile" "$msg"
+
+export MP_LABELIO=YES
+
+if [[ "$cycsuffix" = "true" ]]; then
+	export cfsuffix=".cycfs$cyc_fcst"
+else
+	export cfsuffix=""
+fi
+echo cyc=$cyc cyc_fcst=$cyc_fcst
+echo cycle=$cycle cycle_fcst=$cycle_fcst
+echo fcstlong=$fcstlong
+echo cycsuffix=$cycsuffix
+echo cfsuffix=$cfsuffix
+
+export SHOUR=$1
+export FHOUR=$2
+export FHINC=$3
+export DO_LOW_RES=$4
+export DOANALYSIS=$5
+export jobdir=$6
+
+export DO_THIS_RES=YES
+submc=prd0p5
+pgad=pgrb2ap5
+pgbd=pgrb2bp5
+pgapre=pgrb2a.0p50.
+pgbpre=pgrb2b.0p50.
+pgasuf=
+if [[ "$DO_LOW_RES" = "YES" ]]; then
+	export DO_THIS_RES=NO
+	submc=prd2p5
+	pgad=pgrb2alr
+	pgbd=pgrb2blr
+	pgapre=pgrb2a
+	pgbpre=pgrb2b
+	pgasuf=.2
+fi # [[ "$DO_LOW_RES" = "YES" ]]
+
+############################################################
+# clean up missing markers from previous run
+############################################################
+mkdir -m 775 -p $COMOUT/$cyc/misc/$submc
+cd $COMOUT/$cyc/misc/$submc
+rc=$?
+if (( rc == 0 )); then
+	for file in $RUNMEM.*.missing; do
+		if [[ -f $file ]]; then
+			echo `date` removing $COMOUT/$cyc/misc/$submc/$file
+			rm -f $COMOUT/$cyc/misc/$submc/$file
+		fi
+	done # for file in $RUNMEM.*.missing
+fi # (( rc == 0 ))
+#cd $DATA
+cd $jobdir
+
+############################################################
+#  Define Variables:
+#  -----------------
+#  SHOUR        is the starting forecast hour. normally 0 except for restarts.
+#  FHOUR        is the ending forecast hour.
+#  FHINC        is the increment hour for each forecast steps.
+#  FH           is the current forecast hour.
+#  SLEEP_TIME   is the number of seconds to sleep before exiting with error.
+#  SLEEP_INT    is the number of seconds to sleep between restrt file checks.
+#  restart_file is the name of the file to key off of to kick off post.
+############################################################
+
+SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
+
+############################################################
+# Post Analysis Files before starting the Forecast Post 
+############################################################ 
+# wait for master post to be finished
+############################################################
+#if (( SHOUR = 0 )); then
+if [[ $DOANALYSIS = YES ]]; then
+	export ffhr=anl
+	export fhr=00
+	export anlflag=yes
+
+	ic=1
+	while [ $ic -le $SLEEP_LOOP_MAX ]; do
+		#20100730 change test to use master control file
+		mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.anl$cfsuffix
+		testfhr=-1
+		if [[ -f $mcfile ]]; then
+			teststring=`cat $mcfile|head -1`
+			if [[ $teststring != '' ]]; then
+				if [[ -f $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl$cfsuffix ]]; then
+					testfhr=`echo $teststring | cut -c11-13`
+				fi
+				#        if (( testfhr < 100 )); then
+				#   testfhr=`echo $testfhr | cut -c2-3`
+				#         if (( testfhr < 10 )); then
+				#   testfhr=`echo $testfhr | cut -c2-2`
+				#  fi  
+				# fi  
+			fi # [[ $teststring != '' ]]
+		fi # [[ -f $mcfile ]]
+		echo testfhr=$testfhr fhr=$fhr
+		if (( testfhr >= fhr )); then
+			break
+		else
+			ic=`expr $ic + 1`
+			sleep $SLEEP_INT
+		fi # (( testfhr >= fhr ))
+		###############################
+		# If we reach this point assume
+		# fcst job never reached restart 
+		# period and write file to
+		# indicate missing data
+		###############################
+		if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+			date >$COMOUT/$cyc/misc/$submc/$RUNMEM.$ffhr$cfsuffix.missing
+			echo `date` $sname $member end
+			msg="$member MISSING DATA for hour $ffhr"
+			postmsg "$jlogfile" "$msg"
+			export err=1; err_chk
+		fi # [ $ic -eq $SLEEP_LOOP_MAX ]
+	done # while [ $ic -le $SLEEP_LOOP_MAX ]
+
+	#######################################################
+	# control the inclusion of perturbation identifiers
+	# in the GRIB1 ensemble PDS header extension
+	#######################################################
+	export addgrb1id=yes
+	export addgrb1id=yes
+	export addgrb1id=yes
+
+	pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.anl$cfsuffix
+	fileaout=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf$cfsuffix
+	fileaouti=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf$cfsuffix.idx
+	filebout=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf$cfsuffix
+	filebouti=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf$cfsuffix.idx
+
+	if [[ -s $pcfile ]]; then
+		nmissing=0
+		for file in $fileaout $fileaouti $filebout $filebouti; do
+			if [[ ! -s $file ]]; then
+				echo file=$file IS MISSING
+				(( nmissing = nmissing + 1 ))
+			fi
+		done # for file in $fileaout $fileaouti $filebout $filebouti
+		if (( nmissing > 0 )); then
+			rm $pcfile
+		fi
+	else
+		nmissing=1
+	fi # [[ -s $pcfile ]]
+
+	if [[ ! -s $pcfile ]]; then
+
+		# Making the 0.5-degree grib files
+		$USHgefs/gefs_prdgen_p5.sh
+
+		####################################
+		# send control files to misc
+		####################################
+		if test $SENDCOM = "YES"; then
+			if test $fhr -lt 100; then
+				pad="0"
+			else
+				pad=""
+			fi
+			echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.anl$cfsuffix
+		fi # test $SENDCOM = "YES"
+	fi # [[ ! -s $pcfile ]]
+fi # [[ $DOANALYSIS = YES ]]
+
+############################################################
+# Initialize Loop Through the Post Forecast Files 
+############################################################
+
+(( fhr = SHOUR ))
+
+if test $fhr -lt 10; then
+	fhr="0$fhr"
+fi
+export fhr
+
+export anlflag=no
+
+############################################################
+# Loop Through the Post Forecast Files 
+############################################################
+while test $fhr -le $FHOUR; do
+	ffhr=f$fhr
+
+	###############################
+	# Start Looping for the 
+	# existence of the restart files
+	###############################
+	export pgm="postcheck"
+	ic=1
+
+	while [ $ic -le $SLEEP_LOOP_MAX ]; do
+		#20100730 change test to use master control file
+		mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.f$fhr$cfsuffix
+		testfhr=-1
+		if [[ -f $mcfile ]]; then
+			teststring=`cat $mcfile|head -1`
+			if [[ $teststring != '' ]]; then
+				if [[ -f $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2i$ffhr$cfsuffix ]]; then
+					testfhr=`echo $teststring | cut -c11-13`
+				fi
+				#          if (( testfhr < 100 )); then
+				#   testfhr=`echo $testfhr | cut -c2-3`
+				#           if (( testfhr < 10 )); then
+				#     testfhr=`echo $testfhr | cut -c2-2`
+				#    fi  
+				#   fi  
+			fi # [[ $teststring != '' ]]
+		fi # [[ -f $mcfile ]]
+		echo testfhr=$testfhr fhr=$fhr
+		if (( testfhr >= fhr )); then
+			break
+		else
+			ic=`expr $ic + 1`
+			sleep $SLEEP_INT
+		fi # (( testfhr >= fhr ))
+		###############################
+		# If we reach this point assume
+		# fcst job never reached restart 
+		# period and error exit
+		###############################
+		if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+			date >$COMOUT/$cyc/misc/$submc/$RUNMEM.f$ffhr$cfsuffix.missing
+			echo `date` $sname $member end
+			msg="$member MISSING DATA"
+			postmsg "$jlogfile" "$msg"
+			export err=1; err_chk
+		fi # [ $ic -eq $SLEEP_LOOP_MAX ]
+	done # while [ $ic -le $SLEEP_LOOP_MAX ]
+
+	msg="Starting post for fhr=$fhr"
+	postmsg "$jlogfile" "$msg"
+
+
+	#################################### 
+	# control the inclusion of perturbation identifiers
+	# in the GRIB1 ensemble PDS header extension
+	####################################
+	export addgrb1id=yes
+
+	pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f${fhr}$cfsuffix
+	if test $fhr -lt 100; then
+		pad="0"
+	else
+		pad=""
+	fi
+	fileaout=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}f$pad${fhr}$pgasuf$cfsuffix
+	fileaouti=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}f$pad${fhr}$pgasuf$cfsuffix.idx
+	filebout=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f$pad${fhr}$pgasuf$cfsuffix
+	filebouti=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f$pad${fhr}$pgasuf$cfsuffix.idx
+	if [[ -s $pcfile ]]; then
+		nmissing=0
+		for file in $fileaout $fileaouti $filebout $filebouti; do
+			if [[ ! -s $file ]]; then
+				echo file=$file IS MISSING
+				(( nmissing = nmissing + 1 ))
+			fi
+		done # for file in $fileaout $fileaouti $filebout $filebouti
+		if (( nmissing > 0 )); then
+			rm $pcfile
+		fi
+	else
+		nmissing=1
+	fi # [[ -s $pcfile ]]
+
+	if [[ ! -s $pcfile ]]; then
+		# Making the 2.5x2.5 degree GRIB files in background   - canceled 
+		if [[ "$DO_LOW_RES" = 'YES' ]] && [[ `expr $fhr % 6 ` -eq 0 ]]; then
+			$USHgefs/gefs_prdgen_lowres.sh
+		fi
+
+		# Making the 0.5x0.5 degree GRIB file
+		$USHgefs/gefs_prdgen_p5.sh
+
+
+		####################################
+		# send control files to misc
+		####################################
+		if test $SENDCOM = "YES"; then
+			if test $fhr -lt 100; then
+				pad="0"
+			else
+				pad=""
+			fi
+			echo "$PDY$cyc$pad$fhr" > $COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr$cfsuffix
+		fi # test $SENDCOM = "YES"
+	fi # [[ ! -s $pcfile ]]
+
+	#DHOU, 09/17/2015, added this block for global wave ensemble trigger 
+	if [ $fhr -eq 240 ]; then
+		ecflow_client --event pgrb2ap5_f240_ready
+	fi
+
+	export fhr=`expr $fhr + $FHINC`
+	if test $fhr -lt 10; then
+		export fhr="0$fhr"
+	fi
+done # while test $fhr -le $FHOUR
+########################################################
+
+
+msg='ENDED NORMALLY.'
+postmsg "$jlogfile" "$msg"
+
+################## END OF SCRIPT #######################

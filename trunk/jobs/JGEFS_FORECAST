@@ -1,0 +1,1307 @@
+#!/bin/ksh 
+
+echo `date` $0 `date -u` begin
+
+set -xa
+export PS4='$SECONDS + '
+date
+
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+if [ "$RUN_ENVIR" = dev ]; then ### For Developers
+# . $basesource/nw${envir}/versions/gefs.ver
+	. $basesource/nwdev/parm/gefs_config
+	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+fi
+export WRT_GROUP=2
+export WRTPE_PER_GROUP=4
+export LDFIFLTO=.true.
+export machine=$machine
+export nemsioget=$nemsioget
+export PARM_NGAC=/gpfs/tp1/nco/ops/nwprod/ngac.v1.0.2/parm
+export APRUN=${gefsmpexec:-mpirun.lsf}
+export DOIAU=NO
+
+####################################
+# obtain unique process id (pid) and make temp directory
+####################################
+export pid=$$
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+mkdir -p $DATA
+cd $DATA
+
+############################
+# Set up cycle varaible
+############################
+export cycle=t${cyc}z
+export cycle_fcst=t${cyc_fcst}z
+
+if (( cyc == cyc_fcst )); then
+	export cycsuffix=false
+	export fcstlong=true
+	cfsuffix=
+else
+	export fcstlong=false
+	export cycsuffix=true
+	export ENS_SPS=.false.
+	cfsuffix=.cycfs$cyc_fcst
+fi
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
+#export NTHREADS=1
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+if [[ $RUN_CONCURRENT = yes ]]; then
+	export PGMOUT=FCOUT.o$pid
+	export PGMERR=
+	export REDOUT=' | tee -a '
+	export REDERR=' 2>&1 '
+fi
+
+####################################
+# Define RERUN Parameter: default to RESTART if not previously set
+#
+# Set RERUN=RESTART to find the last set of complete SFCSIG files and restart the forecast at that point
+# (corresponds to previous setting RERUN=NO)
+# Set RERUN=YES to remove all forecast products and log files, if any, and start over from the conditions
+#
+# In case of FORECAST failure, set RERUN=RESTART if necessary in FORECAST, NCEPPOST, and PRDGEN jobs
+# In case of NCEPPOST failure, set RERUN=RESTART if necessary in NCEPPOST, and PRDGEN jobs
+# In case of PRDGEN   failure, set RERUN=RESTART if necessary in PRDGEN jobs
+####################################
+echo "input setting RERUN=$RERUN"
+export RERUN=${RERUN:-RESTART}
+# export RERUN=RESTART
+# export RERUN=YES
+echo "current setting RERUN=$RERUN"
+
+# Specify Execution Areas
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
+
+export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
+export USHgsm=${USHgsm:-$HOMEgsm/ush}
+export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
+export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
+
+export EXECGLOBAL=${EXECgsm:-$HOMEgsm/exec}
+export USHGLOBAL=${USHgsm:-$HOMEgsm/ush}
+export FIXGLOBAL=${FIXgsm:-$HOMEgsm/fix/fix_am}
+
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+##############################################
+# CHECK and ensure CONSISTENCY  among ENS related parameters
+##############################################
+if [[ $FORECAST_SEGMENT = hr ]] ; then
+	echo "Integrate the model for the high resolution segment"
+	fhresini=0
+elif [[ $FORECAST_SEGMENT = lr ]] ; then
+	echo "Integrate the model for the low resolution segment"
+	fhresini=$fhmaxh
+elif [[ $FORECAST_SEGMENT = hl ]] ; then
+	echo "Integrate the model for both high and low resolution segments, including chgres"
+	fhresini=0
+else
+	msg="FATAL ERROR:  Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
+	echo "`date`   $msg"
+	echo "The Forecast job will be aborted!!!!"
+	postmsg "$jlogfile" "$msg"
+	export pgm=JENS_FCST
+	export err=911
+	err_chk
+fi # [[ $FORECAST_SEGMENT = hr ]]
+
+echo FORECAST_SEGMENT = $FORECAST_SEGMENT
+echo fhresini=$fhresini
+echo ENS_SPS = $ENS_SPS
+echo RUN_CONCURRENT = $RUN_CONCURRENT
+echo npair = $npair
+
+if [[ $ENS_SPS = .true. ]] && [[ $RUN_CONCURRENT != yes ]]; then
+	RUN_CONCURRENT=yes
+	echo "RUN_CONCURRENT is modified "
+	echo "RUN_CONCURRENT = $RUN_CONCURRENT "
+fi
+
+if (( npair == 0 )) && [[ $RUN_CONCURRENT = yes ]]; then
+	RUN_CONCURRENT=no
+	echo "RUN_CONCURRENT is modified "
+	echo "RUN_CONCURRENT = $RUN_CONCURRENT "
+fi
+
+##############################################
+# Define COM and GES directories
+##############################################
+export GESIN=$GESROOT/${envir}/${RUN}.${PDY}
+export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+# RLW 20150320 update restart procedure, use sfcsig files instead of restart files
+SFCSIG=$COMOUT/$cyc/sfcsig
+
+mkdir -m 775 -p $COMOUT/$cyc/sfcsig
+mkdir -m 775 -p $COMOUT/$cyc/sflux
+mkdir -m 775 -p $COMOUT/$cyc/misc/fcst
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+. $PARMgefs/gefs.parm
+
+# hour_lr_ni will be used to define the IC files of the lower resolution part (if not restart) 
+(( hour_lr_ini = fhmaxh - HOUTSPS ))
+
+case $cyc in
+	00) export fhmax=$fhmax00;;
+	06) export fhmax=$fhmax06;;
+	12) export fhmax=$fhmax12;;
+	18) export fhmax=$fhmax18;;
+esac
+
+###############################################################
+# Specify locations of the following scripts and executables
+###############################################################
+export CHGRESTHREAD=4
+export OVERPARMEXEC=$EXECutil/overparm_grib
+
+# Change Resolution script and executable
+export chgresush=$USHgsm/global_chgres.sh
+export CHGRESEXEC=$EXECgsm/global_chgres
+
+# forecast script  and executable
+export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nems.sh.ecf
+export FCSTEXEC=$EXECgsm/global_fcst
+export ERRSCRIPT=err_chk
+export LOGSCRIPT=startmsg
+
+#  The VEGTYPE fix file:
+export FNVETC=${FNVETC:-${FIXGLOBAL}/global_vegtype.1x1.grb}
+export FNTSFC=${FNTSFC:-${FIXGLOBAL}/RTGSST.1982.2012.monthly.clim.grb}
+export FNAISC=${FNAISC:-${FIXGLOBAL}/CFSR.SEAICE.1982.2012.monthly.clim.grb}
+
+export SIGHDR=${EXECgsm}/global_sighdr
+export SFCHDR=${EXECgsm}/global_sfchdr
+export SIGHDR=$nemsioget
+export SFCHDR=$nemsioget
+####################################
+# Create member list
+####################################
+
+if [[ $RUN_CONCURRENT = yes ]]; then
+	#Concurrent run, multi member
+	memberlist=""
+	(( imem = 0 ))
+	while (( imem < npair * 2 )); do
+		(( imem = imem + 1 ))
+		if (( imem < 10 )); then
+			imem=0$imem
+		fi
+		memberlist="$memberlist p$imem"
+	done # while (( imem < npair * 2 ))
+	if (( cyc == cyc_fcst )) ; then
+		memberlist="$memberlist c00"
+		(( imem = imem + 1 ))
+	fi
+	(( ENS_NUM = imem ))
+	export ENS_NUM
+	echo "ENS_NUM=$ENS_NUM"
+	export RUNMEM=ge'${MN}'
+	echo "RUNMEM=$RUNMEM"
+else
+	#single member
+	echo "RUNMEM=$RUNMEM"
+	memberlist=`echo $RUNMEM|cut -c3-5`
+	export ENS_NUM=1
+	echo "ENS_NUM=$ENS_NUM"
+fi # [[ $RUN_CONCURRENT = yes ]]
+memberlist=`echo $memberlist`
+MEMBER_NAMES=$memberlist
+
+#
+# Forecast Input Variables
+#
+. $PARMgefs/gefs_fcst.parm
+
+if [[ $FORECAST_SEGMENT = hr ]] ; then
+
+if [[ $STOC_SPPT = .true. ]] ; then
+export SPPT=$SPPT_hr
+export ISEED_SPPT=$ISEED_SPPT_hr
+export SPPT_LOGIT=$SPPT_LOGIT_hr
+export SPPT_TAU=$SPPT_TAU_hr
+export SPPT_LSCALE=$SPPT_LSCALE_hr
+export sppt_sigtop1=$sppt_sigtop1_hr
+export sppt_sigtop2=$sppt_sigtop2_hr
+export sppt_sfclimit=$sppt_sfclimit_hr
+fi
+
+if [[ $STOC_SHUM = .true. ]] ; then
+export SHUM=$SHUM_hr
+export ISEED_SHUM=$ISEED_SHUM_hr
+export SHUM_TAU=$SHUM_TAU_hr
+export SHUM_LSCALE=$SHUM_LSCALE_hr
+export shum_sigefold=$shum_sigefold_hr
+fi
+
+if [[ $STOC_SKEB = .true. ]] ; then
+export SKEB=$SKEB_hr
+export ISEED_SKEB=$ISEED_SKEB_hr
+export SKEB_TAU=$SKEB_TAU_hr
+export SKEB_LSCALE=$SKEB_LSCALE_hr
+export SKEB_VFILT=$SKEB_VFILT_hr
+export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr
+export skeb_sigtop1=$skeb_sigtop1_hr
+export skeb_sigtop2=$skeb_sigtop2_hr
+fi
+
+if [[ $STOC_VC = .true. ]] ; then
+export VC=$VC_hr
+export ISEED_VC=$ISEED_VC_hr
+export VCAMP=$VCAMP_hr
+export VC_TAU=$VC_TAU_hr
+export VC_LSCALE=$VC_LSCALE_hr
+fi
+
+else
+
+if [[ $STOC_SPPT = .true. ]] ; then
+export SPPT=$SPPT_lr
+export ISEED_SPPT=$ISEED_SPPT_lr
+export SPPT_LOGIT=$SPPT_LOGIT_lr
+export SPPT_TAU=$SPPT_TAU_lr
+export SPPT_LSCALE=$SPPT_LSCALE_lr
+export sppt_sigtop1=$sppt_sigtop1_lr
+export sppt_sigtop2=$sppt_sigtop2_lr
+export sppt_sfclimit=$sppt_sfclimit_lr
+fi
+
+if [[ $STOC_SHUM = .true. ]] ; then
+export SHUM=$SHUM_lr
+export ISEED_SHUM=$ISEED_SHUM_lr
+export SHUM_TAU=$SHUM_TAU_lr
+export SHUM_LSCALE=$SHUM_LSCALE_lr
+export shum_sigefold=$shum_sigefold_lr
+fi
+
+if [[ $STOC_SKEB = .true. ]] ; then
+export SKEB=$SKEB_lr
+export ISEED_SKEB=$ISEED_SKEB_lr
+export SKEB_TAU=$SKEB_TAU_lr
+export SKEB_LSCALE=$SKEB_LSCALE_lr
+export SKEB_VFILT=$SKEB_VFILT_lr
+export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_lr
+export skeb_sigtop1=$skeb_sigtop1_lr
+export skeb_sigtop2=$skeb_sigtop2_lr
+fi
+
+if [[ $STOC_VC = .true. ]] ; then
+export VC=$VC_lr
+export ISEED_VC=$ISEED_VC_lr
+export VCAMP=$VCAMP_lr
+export VC_TAU=$VC_TAU_lr
+export VC_LSCALE=$VC_LSCALE_lr
+fi
+
+fi
+
+# ----------------------------------
+# options for NST in GFS & GSI
+# ----------------------------------
+ export NST_FCST=2           # default 0: No NSSTM,                                   W/O  Tr analysis
+                             #         1: With NSSTM but run passively (uncoupled),   W/O  Tr analysis
+                             #         2: With NSSTM and run actively    (coupled),   W/O  Tr analysis
+ export NST_GSI=3            # default 0: No NST info at all;
+
+                             #         1: Input NST info but not used in GSI;
+                             #         2: Input NST info, used in CRTM simulation, no Tr analysis
+                             #         3: Input NST info, used in both CRTM simulation and Tr analysis
+
+ export NST_SPINUP=0      #  0 = NSSTM spinup off (default); 1 = NSSTM spinup on
+ if [ $CDATE -eq 2016091406 ] ; then export NST_SPINUP=1; fi
+ export NST_RESERVED=0    #  Reserved
+ if [ $NST_GSI -eq 3 ]; then export NST_RESERVED=1; fi
+
+ export ZSEA1=0           #  the upper depth (in mm) to do vertical mean of T-Profile (0 = default)
+ export ZSEA2=5           #  the lower depth (in mm) to do vertical mean of T-Profile (0 = default)
+ export nstf_name="$NST_FCST,$NST_SPINUP,$NST_RESERVED,$ZSEA1,$ZSEA2"
+                          #
+                          #  nstf_name is an integer array to hold the NSST model control parameters
+                          #  nstf_name(1) : 0 (default) = No NSSTM; 1 = uncoupled; 2 = coupled (nstf_name(1) = NST_FCST)
+                          #  nstf_name(2) : 0 (default) = NSST Spinup off; 1 = NSST Spinup on
+                          #  nstf_name(3) : Reserved
+                          #  nstf_name(4) : 0 (default) = the upper depth (in mm) to do vertical mean of T-Profile
+                          #  nstf_name(5) : 0 (default) = the lower depth (in mm) to do vertical mean of T-Profile
+
+ export NST_ANL=.false.   #  .fasle. : NSST analysis off (default); true = NSST analysis on
+ if [ $NST_GSI -eq 3 ]; then export NST_ANL=.true.;  fi
+ export NSTINFO=0         # number of elements added in obs. data array (default = 0)
+ if [ $NST_GSI -gt 0 ]; then export NSTINFO=4; fi
+
+ export TZR_QC=1          # 0 = Tzr_qc off (default); 1 = Tzr_qc on
+ export FAC_DTL=1         # 0 = Diurnal Thermocline Model(DTM) off (default); 1 = DTM on
+ export FAC_TSL=1         # 0 = Thermal Skin Model(TSM) off (default); 1 = TSM on
+ export NST_STZR=0        # 0 = physical Tz retrieval save off; 1 =  Tz retrieval save on
+
+# end of NST settings
+
+
+if [[ $FORECAST_SEGMENT = lr ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh )) ; then
+export MTNRSL=$MTNRSLLR
+fi
+
+export FIXGLOBAL=$HOMEgsm/fix/fix_am
+export FNGLAC=$FIXGLOBAL/global_glacier.2x2.grb
+export FNMXIC=$FIXGLOBAL/global_maxice.2x2.grb
+export FNTSFC=$FIXGLOBAL/RTGSST.1982.2012.monthly.clim.grb
+export FNSNOC=$FIXGLOBAL/global_snoclim.1.875.grb
+export FNZORC="igbp"
+export FNALBC=$FIXGLOBAL/global_snowfree_albedo.bosu.t$MTNRSL.rg.grb
+export FNALBC2=$FIXGLOBAL/global_albedo4.1x1.grb
+export FNAISC=$FIXGLOBAL/CFSR.SEAICE.1982.2012.monthly.clim.grb
+export FNTG3C=$FIXGLOBAL/global_tg3clim.2.6x1.5.grb
+export FNVEGC=$FIXGLOBAL/global_vegfrac.0.144.decpercent.grb
+export FNVETC=$FIXGLOBAL/global_vegtype.igbp.t$MTNRSL.rg.grb
+export FNSOTC=$FIXGLOBAL/global_soiltype.statsgo.t$MTNRSL.rg.grb
+export FNSMCC=$FIXGLOBAL/global_soilmgldas.t$MTNRSL.grb
+export FNMSKH=$FIXGLOBAL/seaice_newland.grb
+export FNTSFA=""
+export FNACNA=""
+export FNSNOA=""
+export FNVMNC=$FIXGLOBAL/global_shdmin.0.144x0.144.grb
+export FNVMXC=$FIXGLOBAL/global_shdmax.0.144x0.144.grb
+export FNSLPC=$FIXGLOBAL/global_slope.1x1.grb
+export FNABSC=$FIXGLOBAL/global_mxsnoalb.uariz.t$MTNRSL.rg.grb
+export OROGRAPHY_UF=$FIXGLOBAL/global_orography_uf.t$MTNRSL.rg.grb
+export OROGRAPHY=$FIXGLOBAL/global_orography.t$MTNRSL.rg.grb
+export LONSPERLAT=$FIXGLOBAL/global_lonsperlat.t$MTNRSL.txt
+export LONSPERLAR=$FIXGLOBAL/global_lonsperlat.t$MTNRSL.txt
+export SLMASK=$FIXGLOBAL/global_slmask.t$MTNRSL.rg.grb
+export MTNVAR=$FIXGLOBAL/global_mtnvar.t$MTNRSL.f77
+export FNMASK=$FIXGLOBAL/global_slmask.t$MTNRSL.rg.grb
+export FNOROG=$FIXGLOBAL/global_orography.t$MTNRSL.rg.grb
+
+
+# Output File Names
+if [[ $RUN_CONCURRENT = yes ]]; then
+	export SIGO=$COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf'${FH}'$cfsuffix
+	export SFCO=$COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf'${FH}'$cfsuffix
+	export NSTO=$COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.tf'${FH}'$cfsuffix
+	export FLXO=$COMOUT/$cyc/sflux/${RUNMEM}.${cycle}.sfluxgrbf'${FH}'$cfsuffix
+	export LOGO=$COMOUT/$cyc/misc/fcst/${RUNMEM}.${cycle}.logf'${FH}'$cfsuffix
+	# 02/29/2008 DHOU,  added new files for the output after STTP
+	export SIGS=$COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.ss'${FH}'$cfsuffix
+	export SFBS=$COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bs'${FH}'$cfsuffix
+	export FLXS=$COMOUT/$cyc/sflux/${RUNMEM}.${cycle}.ssluxgrbs'${FH}'$cfsuffix
+else
+	export SIGO=$COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf'${FH}'$cfsuffix
+	export SFCO=$COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf'${FH}'$cfsuffix
+	export NSTO=$COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.tf'${FH}'$cfsuffix
+	export FLXO=$COMOUT/$cyc/sflux/${RUNMEM}.${cycle}.sfluxgrbf'${FH}'$cfsuffix
+	export LOGO=$COMOUT/$cyc/misc/fcst/${RUNMEM}.${cycle}.logf'${FH}'$cfsuffix
+fi
+#
+# RLW 20150320 update restart procedure, use sfcsig files instead of restart files
+# Restart File Names
+# Names ending in _P are prefixes requiring forecast hour and cfsuffix
+#
+if [[ $RUN_CONCURRENT = yes ]]; then
+	if [[ $ENS_SPS = .true. ]]; then
+		# Restart files in COMOUT area
+		export SIGS_P=$SFCSIG/${RUNMEM}.${cycle}.ss
+		export SFCS_P=$SFCSIG/${RUNMEM}.${cycle}.bs
+		# Restart files in COMOUT area
+		export SIGX_P=$SFCSIG/${RUNMEM}.${cycle}.sf
+		export SFCX_P=$SFCSIG/${RUNMEM}.${cycle}.bf
+	else
+		# Restart files in COMOUT area
+		export SIGX_P=$SFCSIG/${RUNMEM}.${cycle}.sf
+		export SFCX_P=$SFCSIG/${RUNMEM}.${cycle}.bf
+	fi
+else
+	# Restart files in COMOUT area
+	export SIGX_P=$SFCSIG/${RUNMEM}.${cycle}.sf
+	export SFCX_P=$SFCSIG/${RUNMEM}.${cycle}.bf
+fi # [[ $RUN_CONCURRENT = yes ]]
+
+#
+# PDS Grid Designator
+#
+export IGEN=107
+#
+# Time Step Interval
+#
+
+msg="HAS BEGUN on `hostname`"
+postmsg "$jlogfile" "$msg"
+
+####################################
+#
+# Check if this is a restart
+#
+# Define Initialization File Names
+#
+# and Copy these file to the work directory ($DATA)
+#
+####################################
+
+# RLW 20150320 update restart procedure, use sfcsig files instead of restart files
+CONC_INI=`echo $MEMBER_NAMES|cut -c1-3`
+
+if test $RERUN = "RESTART"; then
+	goodrestart=no
+	echo "check for restart files in $SFCSIG"
+	if [[ $FORECAST_SEGMENT = lr ]]; then
+		JCAP=$JCAPLR
+	else
+		JCAP=$JCAPHR
+	fi
+	MN=$CONC_INI
+	for SIGXtest in `eval ls -1t ${SIGX_P}*`; do
+		echo "SIGXtest=$SIGXtest"
+		if [[ -f $SIGXtest ]]; then
+			if [[ $goodrestart = no ]]; then
+				goodrestart=yes
+				export HOURtest=$(eval $SIGHDR $SIGXtest nfhour | sed -e "s/\.00//")
+				rch=$?
+				if (( rch == 0 )); then
+					if (( HOURtest > fhresini )); then
+						(( HOURtest6 = ( HOURtest / 6 ) * 6 ))
+						if (( HOURtest6 == HOURtest )); then
+							SIGXt=$SIGX_P$HOURtest$cfsuffix
+							SFCXt=$SFCX_P$HOURtest$cfsuffix
+							if eval test -f $SIGXt -a -f $SFCXt; then
+								export JCAPt=$(eval $SIGHDR $SIGXt jcap)
+								rcj=$?
+								export LEVSt=$(eval $SIGHDR $SIGXt levs)
+								rcl=$?
+								export LONBt=$(eval $SIGHDR $SIGXt lonb)
+								rcn=$?
+								export LATBt=$(eval $SIGHDR $SIGXt latb)
+								rct=$?
+								export HOURt=$(eval $SIGHDR $SIGXt fhour)
+								rch=$?
+								if (( rcj + rcl + rcn + rct + rch == 0 )); then
+									if (( JCAPt == JCAP )); then
+										fsize_sigrt=`eval ls -l $SIGXt |awk -F" " '{print $5}'`
+										fsize_sfcrt=`eval ls -l $SFCXt |awk -F" " '{print $5}'`
+										if (( HOURt > fhresini )); then
+											for MN in $MEMBER_NAMES; do
+												SIGXm=$SIGX_P$HOURtest$cfsuffix
+												SFCXm=$SFCX_P$HOURtest$cfsuffix
+												if eval test -f $SIGXm -a -f $SFCXm; then
+													export JCAPm=$(eval $SIGHDR $SIGXm jcap)
+													rcj=$?
+													export LEVSm=$(eval $SIGHDR $SIGXm levs)
+													rcl=$?
+													export LONBm=$(eval $SIGHDR $SIGXm lonb)
+													rcn=$?
+													export LATBm=$(eval $SIGHDR $SIGXm latb)
+													rct=$?
+													export HOURm=$(eval $SIGHDR $SIGXm fhour)
+													rch=$?
+													export HOURf=$(eval $SFCHDR $SFCXm fhour)
+													rcf=$?
+													if (( rcj + rcl + rcn + rct + rch +  rcf == 0 )); then
+														fsize_sigrm=`eval ls -l $SIGXm |awk -F" " '{print $5}'`
+														fsize_sfcrm=`eval ls -l $SFCXm |awk -F" " '{print $5}'`
+														if (( HOURt != HOURm )); then
+															echo "for $MN restart file forecast hour $HOURm does not match $HOURt"
+															goodrestart=no
+														elif (( HOURt != HOURf )); then
+															echo "for $MN sfc restart file forecast hour $HOURf does not match $HOURt"
+															goodrestart=no
+														elif (( fsize_sigrt != fsize_sigrm )); then
+															echo "for $MN restart file size sigr $fsize_sigrm does not match $fsize_sigrt"
+															goodrestart=no
+														elif (( fsize_sfcrt != fsize_sfcrm )); then
+															echo "for $MN restart file size sfcr $fsize_sfcrm does not match $fsize_sfcrt"
+															goodrestart=no
+														elif (( JCAPt != JCAPm )); then
+															echo "for $MN restart file JCAP $JCAPm does not match $JCAPt"
+															goodrestart=no
+														elif (( LEVSt != LEVSm )); then
+															echo "for $MN restart file LEVS $LEVSm does not match $LEVSt"
+															goodrestart=no
+														elif (( LONBt != LONBm )); then
+															echo "for $MN restart file LONB $LONBm does not match $LONBt"
+															goodrestart=no
+														elif (( LATBt != LATBm )); then
+															echo "for $MN restart file LATB $LATBm does not match $LATBt"
+															goodrestart=no
+														fi # (( HOURt != HOURm ))
+													else                        #rc
+														echo "Restart file $SIGXm for Member $MN cannot be processed"
+														goodrestart=no
+													fi # (( rcj + rcl + rcn + rct + rch +  rcf == 0 ))
+												else
+													echo "Restart file $SIGXm for Member $MN is NOT available"
+													goodrestart=no
+												fi # eval test -f $SIGXm -a -f $SFCXm
+											done #MN
+										else # (( HOURt > fhresini ))
+											echo "restart file $SIGXt hour $HOURt not later than initial hour $fhresini"
+											goodrestart=no
+										fi # (( HOURt > fhresini ))
+									else # (( JCAPt == JCAP ))
+										echo "for $MN restart JCAP $JCAPt does not match $JCAP"
+										goodrestart=no
+									fi # (( JCAPt == JCAP ))
+								else # (( rcj + rcl + rcn + rct + rch == 0 ))
+								  echo "Restart file $SIGXt for Member $MN cannot be processed"
+								  goodrestart=no
+								fi # (( rcj + rcl + rcn + rct + rch == 0 ))
+							else # eval test -f $SIGXt -a -f $SFCXt
+								echo "Restart file $SIGXt for Member $MN is NOT available"
+								goodrestart=no
+							fi # eval test -f $SIGXt -a -f $SFCXt
+						else # (( HOURtest6 == HOURtest ))
+							echo "HOURtest=$HOURtest is not a multiple of 6 hours"
+							goodrestart=no
+						fi # (( HOURtest6 == HOURtest ))
+					else # (( HOURtest > fhresini ))
+						echo "restart file $SIGXtest hour $HOURtest not later than initial hour $fhresini"
+						goodrestart=no
+					fi # (( HOURtest > fhresini ))
+				else
+					echo "Restart file $SIGXtest for Member $MN cannot be processed"
+					goodrestart=no
+				fi # (( rch == 0 ))
+				if [[ $goodrestart = yes ]]; then
+					for MN in $MEMBER_NAMES; do
+						SIGXm=$SIGX_P$HOURtest
+						SFCXm=$SFCX_P$HOURtest
+						eval cp $SIGXm $DATA/${RUNMEM}.sigr
+						eval cp $SFCXm $DATA/${RUNMEM}.sfcr
+					done # MN in $MEMBER_NAMES
+					SIGI=$DATA/${RUNMEM}.sigr
+					SFCI=$DATA/${RUNMEM}.sfcr
+				fi # [[ $goodrestart = yes ]]
+			fi # [[ $goodrestart = no ]]
+		else # [[ -f $SIGXtest ]]
+			echo "Restart file $SIGXtest for Member $MN is not available"
+			goodrestart=no
+		fi # [[ -f $SIGXtest ]]
+	done # SIGXtest in `eval ls -1t ${SIGX_P}*`
+fi # test $RERUN = "RESTART"
+
+if [[ $goodrestart = no ]]; then
+	export RERUN=YES
+	echo "Restart files not available, starting with initial conditions"
+fi
+
+####################################
+#
+# If this is a rerun, remove all log and control files
+#
+# If this is a restart, remove log and control files after the restart hour
+#
+####################################
+
+if [[ $RERUN = YES ]]; then
+	$USHgefs/gefs_restart_cleanup.sh 00 $FHMAX fcst post prd0p5 prd1p0 prd2p5
+else
+	if [[ $goodrestart = yes ]]; then
+		(( HOURclean = HOURtest + FH_INC ))
+		$USHgefs/gefs_restart_cleanup.sh $HOURclean $FHMAX fcst post prd0p5 prd1p0 prd2p5
+	fi
+fi # [[ $RERUN = YES ]]
+
+####################################
+#
+# If this is not a restart
+#
+# Define Initialization File Names
+#
+# and Copy these file to the work directory ($DATA)
+#
+####################################
+
+echo after restart file tests
+echo goodrestart=$goodrestart
+echo RERUN=$RERUN
+echo RUN_CONCURRENT=$RUN_CONCURRENT
+
+
+if [[ $RERUN = YES ]]; then
+	if [[ $RUN_CONCURRENT = yes ]]; then
+
+		if [[ $cycsuffix = false ]]; then
+			if [[ $FORECAST_SEGMENT = lr ]]; then
+				export SIGI=$GESIN/${RUNMEM}.t${cyc}z.gfs${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+				export GRDI=$GESIN/${RUNMEM}.t${cyc}z.gfs${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+				export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfn${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+				export NSTI=$GESIN/${RUNMEM}.t${cyc}z.nsn${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+			else
+				export SIGI=$GESIN/${RUNMEM}.t${cyc}z.sanl
+				export GRDI=$GESIN/${RUNMEM}.t${cyc}z.sanl
+				export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfcanl
+				export NSTI=$GESIN/${RUNMEM}.t${cyc}z.nsnanl
+			fi # [[ $FORECAST_SEGMENT = lr ]]
+		else
+			export SIGI=$GESIN/${RUNMEM}.t${cyc}z.sanl.cycfs$cyc_fcst
+			export GRDI=$GESIN/${RUNMEM}.t${cyc}z.sanl.cycfs$cyc_fcst
+			export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfcanl.cycfs$cyc_fcst
+			export NSTI=$GESIN/${RUNMEM}.t${cyc}z.nsnanl.cycfs$cyc_fcst
+		fi # [[ $cycsuffix = false ]]
+
+		for MN in $MEMBER_NAMES; do
+			if eval test -f $SIGI -a -f $SFCI; then
+				msg="Forecast Starting with Initial Guess Fields, member $MN"
+				echo "`date`   $msg"
+				postmsg "$jlogfile" "$msg"
+			else
+				msg="FATAL ERROR:  Initial Guess Fields (member $MN) Not Available/Rerun JENS_INIT"
+				echo "`date`   $msg"
+				postmsg "$jlogfile" "$msg"
+				export pgm=JENS_FCST
+				export err=911
+				err_chk
+			fi # eval test -f $SIGI -a -f $SFCI
+		done # MN in $MEMBER_NAMES
+
+	else # [[ $RUN_CONCURRENT = yes ]]
+		if [[ $cycsuffix = false ]]; then
+			if [[ $FORECAST_SEGMENT = lr ]]; then
+				export SIGI=$GESIN/${RUNMEM}.t${cyc}z.gfs${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+				export GRDI=$GESIN/${RUNMEM}.t${cyc}z.gfs${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+				export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfn${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+				export NSTI=$GESIN/${RUNMEM}.t${cyc}z.nsn${hour_lr_ini}_T$JCAPLR\L$LEVSLR
+			else
+				export SIGI=$GESIN/${RUNMEM}.t${cyc}z.sanl
+				export GRDI=$GESIN/${RUNMEM}.t${cyc}z.sanl
+				export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfcanl
+				export NSTI=$GESIN/${RUNMEM}.t${cyc}z.nsnanl
+			fi # [[ $FORECAST_SEGMENT = lr ]]
+		else
+			export SIGI=$GESIN/${RUNMEM}.t${cyc}z.sanl.cycfs$cyc_fcst
+			export GRDI=$GESIN/${RUNMEM}.t${cyc}z.sanl.cycfs$cyc_fcst
+			export SFCI=$GESIN/${RUNMEM}.t${cyc}z.sfcanl.cycfs$cyc_fcst
+			export NSTI=$GESIN/${RUNMEM}.t${cyc}z.nsnanl.cycfs$cyc_fcst
+		fi # [[ $cycsuffix = false ]]
+
+		if test -f $SIGI -a -f $SFCI; then
+			msg="Forecast Starting with Initial Guess Fields"
+			echo "`date`   $msg"
+			postmsg "$jlogfile" "$msg"
+		else
+			msg="FATAL ERROR: Initial Guess Fields Not Available/Rerun JENS_INIT"
+			echo "`date`   $msg"
+			postmsg "$jlogfile" "$msg"
+			export pgm=JENS_FCST
+			export err=911
+			err_chk
+		fi # test -f $SIGI -a -f $SFCI
+	fi # [[ $RUN_CONCURRENT = yes ]]
+fi # [[ $RERUN = YES ]]
+
+####################################
+# Specify Special Fcst Vars
+####################################
+####################################
+# Checking Initial files Consistency
+####################################
+if [[ $RUN_CONCURRENT = yes ]]; then
+	CONC_INI=`echo $MEMBER_NAMES|cut -c1-3`
+	MN=$CONC_INI
+	eval echo SIGI=$SIGI
+	export JCAP=$(eval $SIGHDR $SIGI jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export LEVS=$(eval $SIGHDR $SIGI levs |grep -i "levs" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export LONB=$(eval $SIGHDR $SIGI lonb |grep -i "lonb" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export LATB=$(eval $SIGHDR $SIGI latb |grep -i "latb" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export HOUR=$(eval $SIGHDR $SIGI nfhour |grep -i "nfhour" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+else
+	export JCAP=$($SIGHDR $SIGI jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export LEVS=$($SIGHDR $SIGI levs |grep -i "levs" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export LONB=$($SIGHDR $SIGI lonb |grep -i "lonb" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export LATB=$($SIGHDR $SIGI latb |grep -i "latb" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+	export HOUR=$($SIGHDR $SIGI nfhour |grep -i "nfhour" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+fi # [[ $RUN_CONCURRENT = yes ]]
+
+jcapin=$JCAP
+levsin=$LEVS
+lonbin=$LONB
+latbin=$LATB
+hourin=$HOUR
+
+if [[ $RUN_CONCURRENT = yes ]]; then
+	for MN in $MEMBER_NAMES; do
+		export JCAP=$(eval $SIGHDR $SIGI jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+		export HOUR=$(eval $SIGHDR $SIGI nfhour |grep -i "nfhour" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+		if [[ $jcapin != $JCAP ]] || [[ $hourin != $HOUR ]] ; then
+			echo "Forecast jobs is aborted"
+			msg="FATAL ERROR:  Initial file JCAP=$JCAP for member $MN does not match member $CONC_INI"
+			echo "`date`   $msg"
+			postmsg "$jlogfile" "$msg"
+			export pgm=JENS_FCST
+			export err=911
+			err_chk
+		fi # [[ $jcapin != $JCAP ]] || [[ $hourin != $HOUR ]]
+	done # MN in $MEMBER_NAMES
+fi # [[ $RUN_CONCURRENT = yes ]]
+
+if [[ $FORECAST_SEGMENT = lr ]] ; then
+	if [[ $jcapin = $JCAPLR ]] && [[ $levsin = $LEVSLR ]]; then
+		echo "Initial files are consistent with the required resolution $FORECAST_SEGMENT"
+		echo "Forecast proceed with T$jcapin\L$levsin "
+	else
+		echo "Forecast job failed. Please check the initial files"
+		msg="FATAL ERROR:  Initial files with $jcapin $levsin are not consistent with $FORECAST_SEGMENT"
+		echo "`date`   $msg"
+		postmsg "$jlogfile" "$msg"
+		export pgm=JENS_FCST
+		export err=911
+		err_chk
+	fi # [[ $jcapin = $JCAPLR ]] && [[ $levsin = $LEVSLR ]]
+else
+	if [[ $jcapin = $JCAPHR ]] && [[ $levsin = $LEVSHR ]]; then
+		echo "Initial files are consistent with the required resolution: $FORECAST_SEGMENT"
+		echo "Forecast proceed with T$jcapin\L$levsin "
+	else
+		echo "Initial files are not consitent with the required resolution: $FORECAST_SEGMENT"
+		echo "$jcapin $levsin "
+		echo "Forecast job failed. Please check the initial files"
+		msg="Initial files with $jcapin $levsin are not consistent with $FORECAST_SEGMENT"
+		postmsg "$jlogfile" "$msg"
+		export pgm=JENS_FCST
+		export err=911
+		err_chk
+	fi # [[ $jcapin = $JCAPHR ]] && [[ $levsin = $LEVSHR ]]
+fi # [[ $FORECAST_SEGMENT = lr ]]
+
+# Set the variable which indicates whether to skip the 3-hourly output, no=0, yes=1
+if (( hourin >= fhmax3 )); then
+	skip3=1
+else
+	skip3=0
+fi
+skip3=1
+
+env | sort
+echo
+
+# 3 lines copied from GFS J-job
+export CO2CON=${CO2CON:-$FIXGLOBAL/global_co2con.l${LEVS}.f77}
+#export CO2DIR=${CO2DIR:-$FIXGLOBAL/fix_co2_proj}
+yyyy=`echo $PDY|cut -c1-4`
+if (( $yyyy >= 2008 )); then
+	export CO2DIR=${CO2DIR:-$FIXGLOBAL/fix_co2_proj}
+else
+	export CO2DIR=${CO2DIR:-$FIXGLOBAL}
+fi
+
+export CO2_seasonal_cycle=${CO2_seasonal_cycle:-$FIXGLOBAL/global_co2monthlycyc1976_2006.txt}
+# end of GFS block
+
+#if test $JCAP -eq $jcapin
+if test $JCAPHR -eq $jcapin; then
+	if (( skip3 == 0 )); then
+		####################################################
+		# variables for high-resolution forecast first part
+		# from FH=00-fhmax3, 3-hourly output
+		####################################################
+		export JCAP=$jcapin
+		export LEVS=$levsin
+		export LONB=$lonbin
+		export LATB=$latbin
+
+		#
+		# Forecast Fix Fields
+		#
+		export CO2CON=$FIXGLOBAL/global_co2con.l${LEVS}.f77
+		export MTNVAR=$FIXGLOBAL/global_mtnvar.t${MTNRSL}.f77
+		#  export MTNVAR=$FIXGLOBAL/global_mtnvar.t${JCAP}.f77
+		#
+		# Forecast Hour Output Frequency
+		# 3-hourly output to generate boundary conditions for sref
+		#
+		export FHOUT=3
+		export FHOUT_HF=1 
+		export FHMAX_HF=0
+		#
+		# Forecast Length (Hours)
+		#
+		if [[ $fcstlong = true ]]; then
+			#    if [[ $fhmax -ge $fhmax3 ]]; then
+			if [[ $fhmaxh -ge $fhmax3 ]]; then
+				export FHMAX=$fhmax3
+			else
+				#      export FHMAX=$fhmax
+				export FHMAX=$fhmaxh
+			fi # [[ $fhmaxh -ge $fhmax3 ]]
+		else
+			export FHMAX=6
+			export fhmaxh=6
+		fi # [[ $fcstlong = true ]]
+		#
+		# Forecast Hour Restart Frequency
+		#
+		export FHRES=$fhrestart3
+		#
+		# Interval to Zero out precip field,etc.
+		# Should not be less that FHOUT
+		#
+		export FHZER=6
+		#
+		# Half number of hours of digital filter initialization
+		#
+		if test $RERUN = "YES"; then
+			export FHDFI=$fhdfihires
+		else
+			export FHDFI=0
+		fi
+		#
+		# Surface cycling boundary condition update frequency in hours
+		#
+		export FHCYC=24
+		#
+		#  Specify the integration hours at which extra forecast is output after SPS application
+		#  DHOU, 09/19/2008, added HOUTASPS variable
+		(( HOUTASPS = fhmaxh - HOUTSPS ))
+		if [[ $HOUTASPS -ge $FHMAX ]]; then
+			# (( HOUTASPS = 10000 ))
+			(( HOUTASPS = FHMAX ))
+		fi
+		export NMSUB=""
+		export HOUTASPS
+		export MN=`echo $MEMBER_NAMES|cut -c1-3`
+
+		# correct the surface cycling
+		#  export CYCLVARS="FVETL=99999,FSOTL=99999,FSLPL=99999"
+		#
+
+		# Execute the forecast script
+		$fcstscript
+
+	fi # (( skip3 == 0 ))
+
+	if [[ $fhmaxh -gt $fhmax3 ]] || (( skip3 == 1 )) ; then
+		#######################################################
+		# variables for high-resolution forecast second part
+		# from FH=fhmax3-fhmaxm, 6-hourly output
+		#######################################################
+		export JCAP=$jcapin
+		export LEVS=$levsin
+		export LONB=$lonbin
+		export LATB=$latbin
+		#    echo DHTEST-SIGI2 $SIGI2
+
+		if (( skip3 == 0 )); then
+			# Restart Files for the second part
+
+			if [[ $RUN_CONCURRENT = yes ]] ; then
+				#    # Restart Files for the second part
+				# DHOU, 01/08/2008, modify the following 3 lines(#) and
+				# extend the block into IF(SIGR etc) and FOR(MN) blocks for CONCURENT run.
+
+				for MN in $MEMBER_NAMES; do
+					if [[ $ENS_SPS = .true. ]]; then
+						echo "TTTT SIGS"
+						if eval test -f $SIGX1 -a -f $SIGX2 -a -f $SFCX; then
+							eval cp $SIGX1 $DATA/${RUNMEM}.sigr1
+							eval cp $SIGX2 $DATA/${RUNMEM}.sigr2
+							eval cp $SFCX $DATA/${RUNMEM}.sfcr
+						else
+							msg="FATAL ERROR:  Restart file for Member $MN is not available"
+							echo "`date`   $msg"
+							postmsg "$jlogfile" "$msg"
+							export pgm=JENS_FCST
+							export err=911
+							err_chk
+						fi # eval test -f $SIGX1 -a -f $SIGX2 -a -f $SFCX
+					else
+						echo "TTTT SIGR"
+						if eval test -f $SIGX1 -a -f $SIGX2 -a -f $SFCX; then
+							eval cp $SIGX1 $DATA/${RUNMEM}.sigr1
+							eval cp $SIGX2 $DATA/${RUNMEM}.sigr2
+							eval cp $SFCX $DATA/${RUNMEM}.sfcr
+						else
+							msg="FATAL ERROR:  Restart file for Member $MN is not available"
+							echo "`date`   $msg"
+							postmsg "$jlogfile" "$msg"
+							export pgm=JENS_FCST
+							export err=911
+							err_chk
+						fi # eval test -f $SIGX1 -a -f $SIGX2 -a -f $SFCX
+					fi
+				done # MN in $MEMBER_NAMES
+
+				export SIGI=$DATA/${RUNMEM}.sigr1
+				export GRDI=$DATA/${RUNMEM}.grdr1
+				export SIGI2=$DATA/${RUNMEM}.sigr2
+				export GRDI2=$DATA/${RUNMEM}.grdr2
+				export SFCI=$DATA/${RUNMEM}.sfcr
+
+			else # [[ $RUN_CONCURRENT = yes ]]
+				eval cp $SIGX1 $DATA/sigr1
+				eval cp $SIGX2 $DATA/sigr2
+				eval cp $SFCX $DATA/sfcr
+
+				export SIGI=$DATA/sigr1
+				export GRDI=$DATA/grdr1
+				export SIGI2=$DATA/sigr2
+				export GRDI2=$DATA/grdr2
+				export SFCI=$DATA/sfcr
+			fi # [[ $RUN_CONCURRENT = yes ]]
+
+		fi # (( skip3 == 0 ))
+
+		#
+		# Forecast Fix Fields
+		#
+		export CO2CON=$FIXGLOBAL/global_co2con.l${LEVS}.f77
+		export MTNVAR=$FIXGLOBAL/global_mtnvar.t${MTNRSL}.f77
+		#    export MTNVAR=$FIXGLOBAL/global_mtnvar.t${JCAP}.f77
+
+		#
+		# Forecast hour to Read One Time level
+		#
+		if test $RERUN = "RESTART"; then
+			export FHROT=$hourin
+		else
+			export FHROT=$fhmax3
+			if (( skip3 == 1 )); then
+				export FHROT=0
+			fi
+		fi # test $RERUN = "RESTART"
+		#
+		# Forecast Hour Output Frequency
+		#
+		export FHOUT=6
+		if (( skip3 == 1 )); then
+			export FHOUT_HF=3
+			export FHMAX_HF=$fhmax3
+		else 
+			export FHOUT_HF=1
+			export FHMAX_HF=0
+		fi # (( skip3 == 1 ))
+		#
+		# Forecast Length (Hours)
+		#
+		if (( fhmaxh < fhmax )); then
+			export FHMAX=$fhmaxh
+		else
+			export FHMAX=$fhmax
+		fi
+		#
+		# Forecast Hour Restart Frequency
+		#
+		export FHRES=$fhrestart
+		#
+		# Interval to Zero out precip field,etc.
+		# Should not be less that FHOUT
+		#
+		export FHZER=6
+		#
+		# Half number of hours of digital filter initialization
+		#
+		if (( skip3 == 1 )); then
+			if test $RERUN = "YES"; then
+				export FHDFI=$fhdfihires
+			else
+				export FHDFI=0
+			fi
+		else
+			export FHDFI=0
+		fi # (( skip3 == 1 ))
+		#
+		# Surface cycling boundary condition update frequency in hours
+		#
+		export FHCYC=24
+		#
+		#DHOU, 09/09/2008 add HOUTASPS to make the output after SPS, $HOUTASPS hour earlier
+		#        to facilitate digital filtering after resolution change
+		(( HOUTASPS = FHMAX - HOUTSPS ))
+		export HOUTASPS
+		echo "$HOUTASPS  =HOUTASPS"
+		export NMSUB=""
+		#DHOU 08/05/2010 Added this line
+		export MN=`echo $MEMBER_NAMES|cut -c1-3`
+		#
+		# correct the surface cycling
+		export CYCLVARS="FVETL=99999,FSOTL=99999,FSLPL=99999"
+		#
+
+		# Execute the forecast script 
+		$fcstscript
+
+		### Save the HOUTASPS-hour sf and bf files for the LOW-RES run:
+		if [[ $RUN_CONCURRENT = yes ]]; then
+			for MN in $MEMBER_NAMES; do
+				if [[ $cycsuffix = false ]]; then
+					eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf${HOUTASPS} $GESOUT/.
+					eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf${HOUTASPS} $GESOUT/.
+					eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.tf${HOUTASPS} $GESOUT/.
+					if [[ $ENS_SPS = .true. ]]; then
+						eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.ss${HOUTASPS} $GESOUT/.
+						eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bs${HOUTASPS} $GESOUT/.
+					fi
+				fi
+			done # MN in $MEMBER_NAMES
+		else
+			if [[ $cycsuffix = false ]]; then
+				cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf${HOUTASPS} $GESOUT/.
+				cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf${HOUTASPS} $GESOUT/.
+				cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.tf${HOUTASPS} $GESOUT/.
+			fi
+		fi # [[ $RUN_CONCURRENT = yes ]]
+		### End of saving the HOUTASPS-hour sf and bf files for the LOW-RES run:
+
+	fi # [[ $fhmaxh -gt $fhmax3 ]] || (( skip3 == 1 ))
+
+fi # test $JCAPHR -eq $jcapin
+# end of high resolution 
+
+#### DHOU, 09/10/2010 added this block for  truncation of forecast files to prepair for lower res.      
+#if [[ $fcstlong = true ]] && (( fhmax > fhmaxh )) ; then
+if  [[ $FORECAST_SEGMENT != hr ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh )) ; then
+	#######################################################
+	# variables for low-resolution forecast third part
+	# from FH=fhmaxh-fhmax, 6-hourly output
+	#######################################################
+
+	# Interpolate restart Files for the third part
+
+	export JCAP=$JCAPLR
+	export LEVS=$LEVSLR
+	export LONB=$LONBLR
+	export LATB=$LATBLR
+	export MTNRSL=$MTNRSLLR
+	export SEMILG=$SEMILGLR
+	export NTRAC=$NTRACLR
+
+	export IDVC=$IDVC
+	export NVCOORD=$IDVC
+	export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD"
+
+
+	if (( IDVC == 1 )); then
+		export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
+	fi
+	if (( IDVC == 2 )); then
+		export SIGLEVEL=$FIXGLOBAL/global_hyblev.l${LEVS}.txt
+	fi
+fi # [[ $FORECAST_SEGMENT != hr ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh ))
+
+# Change resolution of the high-res forecast files
+# Write the resuled files in $GESOUT and make a copy in $DATA 
+if [[ $FORECAST_SEGMENT = hl ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh )) ; then
+	if [[ $RUN_CONCURRENT = YES ]] ; then
+		for MN in $MEMBER_NAMES; do
+			#    eval export SIGOUT=$DATA/${RUNMEM}.siganl
+			#    eval export SFCOUT=$DATA/${RUNMEM}.sfcanl
+			eval export SIGOUT=$GESOUT/${RUNMEM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
+			eval export SFCOUT=$GESOUT/${RUNMEM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+			if [[ $cycsuffix = false ]]; then
+				if [[ $ENS_SPS = .true. ]]; then
+					eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ss${HOUTASPS}
+					eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bs${HOUTASPS}
+				else
+					eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf${HOUTASPS}
+					eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf${HOUTASPS}
+				fi # [[ $ENS_SPS = .true. ]]
+			else
+				if [[ $ENS_SPS = .true. ]]; then
+					eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
+					eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
+				else
+					eval export SIGINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
+					eval export SFCINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
+				fi # [[ $ENS_SPS = .true. ]]
+			fi # [[ $cycsuffix = false ]]
+
+			echo `date` timing lr chgres $MN before
+			$chgresush >>$pgmout
+			echo `date` timing lr $MN chgres after
+			eval cp -pr $SIGOUT $DATA
+			eval cp -pr $SFCOUT $DATA
+		done # MN in $MEMBER_NAMES
+	else # [[ $RUN_CONCURRENT = YES ]]
+		export SIGOUT=$GESOUT/${RUNMEM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
+		export SFCOUT=$GESOUT/${RUNMEM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+		if [[ $cycsuffix = false ]]; then
+			if [[ $ENS_SPS = .true. ]]; then
+				export SIGINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ss${HOUTASPS}
+				export SFCINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bs${HOUTASPS}
+			else
+				export SIGINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf${HOUTASPS}
+				export SFCINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf${HOUTASPS}
+			fi # [[ $ENS_SPS = .true. ]]
+		else
+			if [[ $ENS_SPS = .true. ]]; then
+				export SIGINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.ss${HOUTASPS}.cycfs$cyc_fcst
+				export SFCINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bs${HOUTASPS}.cycfs$cyc_fcst
+			else
+				export SIGINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf${HOUTASPS}.cycfs$cyc_fcst
+				export SFCINP=$COMOUT/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf${HOUTASPS}.cycfs$cyc_fcst
+			fi # [[ $ENS_SPS = .true. ]]
+		fi # [[ $cycsuffix = false ]]
+		echo "`date` timing lr chgres before"
+		$chgresush >>$pgmout
+		echo "`date` timing lr chgres after"
+		cp -pr $SIGOUT $DATA
+		cp -pr $SFCOUT $DATA
+	fi # [[ $RUN_CONCURRENT = YES ]]
+	# Redefine the $SIGI file names
+	if [[ $RUN_CONCURRENT = yes ]]; then
+		export SIGI=$DATA/${RUNMEM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
+		export SFCI=$DATA/${RUNMEM}.${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+	else
+		export SIGI=$DATA/${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
+		export SFCI=$DATA/${cycle}.sfc${HOUTASPS}_T$JCAP\L$LEVS
+	fi # [[ $RUN_CONCURRENT = yes ]]
+fi # [[ $FORECAST_SEGMENT = hl ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh ))
+# End of resolution change
+
+#### DHOU, 09/10/2010 added this block for lower res. forecast
+if [[ $FORECAST_SEGMENT != hr ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh )) ; then
+	if  [[ $FORECAST_SEGMENT = lr ]] ; then
+		(( HOUTASPS = hour_lr_ini ))  
+		export MN=`echo $MEMBER_NAMES|cut -c1-3`
+	fi
+
+	if test $RERUN = "YES"; then
+		unset SIGI2
+	fi
+	
+#
+	# Forecast Fix Fields
+	#
+	export CO2CON=$FIXGLOBAL/global_co2con.l${LEVS}.f77
+	export MTNVAR=$FIXGLOBAL/global_mtnvar.t${MTNRSL}.f77
+
+	#    export MTNVAR=$FIXGLOBAL/global_mtnvar.t${JCAP}.f77
+	############################################################
+	#
+	# Forecast hour to Read One Time level
+	#
+	if test $RERUN = "RESTART"; then
+		export FHROT=$hourin
+	else
+		export FHROT=$HOUTASPS
+	fi
+	#
+	# Forecast Hour Output Frequency
+	#
+	export FHOUT=6
+	export FHOUT_HF=1 
+	export FHMAX_HF=0
+	#
+	# Forecast Length (Hours)
+	#
+	export FHMAX=$fhmax
+	#
+	# Forecast Hour Restart Frequency
+	#
+	export FHRES=$fhrestart
+	#
+	# Interval to Zero out precip field,etc.
+	# Should not be less that FHOUT
+	#
+	export FHZER=6
+	#
+	# Half number of hours of digital filter initialization
+	#
+	#    export FHDFI=$fhdfilores
+	if test $RERUN = "YES"; then
+		export FHDFI=$fhdfilores
+	else
+		export FHDFI=0
+	fi
+	#
+	# Surface cycling boundary condition update frequency in hours
+	#
+	export FHCYC=24
+
+	#    HOUTASPS=10000
+	(( HOUTASPS = FHMAX - HOUTSPS ))
+	#    (( HOUTASPS = HOUTASPS + HOUTSPS + 10000 ))
+	if test $RERUN = "YES"; then
+		export NMSUB=".lr"
+	fi
+	export HOUTASPS=$HOUTASPS
+
+	# correct the surface cycling
+	export CYCLVARS="FVETL=99999,FSOTL=99999,FSLPL=99999"
+	#
+
+	# Execute the forecast script 
+	$fcstscript
+
+	### Save the HOUTASPS-hour sf and bf files for the extended-Range run:
+	if [[ $RUN_CONCURRENT = yes ]]; then
+		for MN in $MEMBER_NAMES; do
+			if [[ $cycsuffix = false ]]; then
+				eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf${HOUTASPS} $GESOUT/.
+				eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf${HOUTASPS} $GESOUT/.
+				if [[ $ENS_SPS = .true. ]]; then
+					eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.ss${HOUTASPS} $GESOUT/.
+					eval cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bs${HOUTASPS} $GESOUT/.
+				fi # [[ $ENS_SPS = .true. ]]
+			fi # [[ $cycsuffix = false ]]
+		done # MN in $MEMBER_NAMES
+	else
+		if [[ $cycsuffix = false ]]; then
+			cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.sf${HOUTASPS} $GESOUT/.
+			cp -pr $COMOUT/$cyc/sfcsig/${RUNMEM}.${cycle}.bf${HOUTASPS} $GESOUT/.
+		fi # [[ $cycsuffix = false ]]
+	fi # [[ $RUN_CONCURRENT = yes ]]
+fi # [[ $FORECAST_SEGMENT != hr ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh ))
+
+# end of added block for lower res. forecast
+#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+cat $pgmout
+echo
+if [[ $RUN_CONCURRENT = yes ]]; then
+	echo
+	echo "`date` sorted forecast output begin"
+	echo
+	cat $PGMOUT | sort -n -k1
+	echo
+	echo "`date` sorted forecast output end"
+	echo
+fi # [[ $RUN_CONCURRENT = yes ]]
+
+################# lines between these markers have been modified for dev begin
+echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN
+echo DATA=$DATA
+ls -al $DATA
+echo `date` TEST LISTING OF WORKING DIRECTORY END
+################# lines between these markers have been modified for dev end
+msg="ENDED NORMALLY."
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Remove the Temporary working directory
+##############################
+if [[ $KEEPDATA != "YES" ]]; then
+	cd $DATAROOT
+	rm -rf $DATA
+fi
+
+echo `date` $0 `date -u` end

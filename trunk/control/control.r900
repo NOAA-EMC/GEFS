@@ -1,0 +1,212 @@
+#!/bin/sh
+echo `date` $0 $* between production and archive/cleanup jobs begin
+echo
+pwd
+echo
+echo env sort before
+env|sort
+echo env sort after
+echo
+echo `date` touch crontask before
+dircrontask=/ptmp/$LOGNAME/cron/task/new
+echo dircrontask=$dircrontask
+if [[ -d $dircrontask ]]; then
+  echo list crontasks before begin
+  ls -alrt $dircrontask
+  echo list crontasks before end
+
+  if (( $runarchcyc > 0 )); then
+    (( fhrpm = fhrp * runarchcyc ))
+    echo fhrp=$fhrp runarchcyc=$runarchcyc fhrpm=$fhrpm
+    dtgprev=`/nwprod/util/exec/ndate -$fhrpm $PDY$cyc`
+    echo dtgprev=$dtgprev
+
+    yyyymmddp=`echo $dtgprev | cut -c1-8`
+    hhp=`echo $dtgprev | cut -c9-10`
+    echo yyyymmddp=$yyyymmddp hhp=$hhp
+    case $expid in
+      (xxxx)
+	if (( hhp == 0 )); then
+	  dirlist="nwges/dev/gefs.$yyyymmddp com/gens/dev/gefs.$yyyymmddp/$hhp/ensstat com/gens/dev/gefs.$yyyymmddp/$hhp/pgrba com/gens/dev/gefs.$yyyymmddp/$hhp/track"
+	else
+	  dirlist="com/gens/dev/gefs.$yyyymmddp/$hhp/pgrba"
+	fi
+      ;;
+      (rwco)
+	if (( hhp == 0 )); then
+	  dirlist="nwges/dev/gefs.$yyyymmddp"
+	else
+	  dirlist=
+	fi
+      ;;
+      (rwcp)
+	if (( hhp == 0 )); then
+	  dirlist="nwges/dev/gefs.$yyyymmddp"
+	else
+	  dirlist=
+	fi
+      ;;
+      (*)
+	if (( hhp == 0 )); then
+	  dirlist="nwges/dev/gefs.$yyyymmddp"
+	else
+	  dirlist=
+	fi
+      ;;
+    esac
+    rcm=0
+    for dir in $dirlist
+    do
+      dirs=/ptmp/$LOGNAME/o/$expid/$dir
+      echo dirs=$dirs
+      if [[ -d $dirs ]]; then
+	cd $dirs
+	rc=$?
+	if (( rc == 0 )); then
+	  dird=/ensemble/noscrub/$LOGNAME/o/$expid/$dir
+	  echo dird=$dird
+	  mkdir -p $dird
+	  rc=$?
+	  if (( rc == 0 )); then
+	    dir5=`echo $dir | cut -c1-5`
+	    if [[ $dir5 = nwges ]]; then
+	      for file in gec00.t${hhp}z.sfcanl ge*.t${hhp}z.sanl*
+	      do
+		if [[ -f $file ]]; then
+		  cp $file $dird
+		  rc=$?
+		  if (( rc == 0 )); then
+		    ls -al $dird/$file
+		  else
+		    echo cp $file $dird FAILED rc=$rc
+		    if (( rcm < rc )); then
+		      rcm=$rc
+		    elif (( rcm < 1 )); then
+		      rcm=1
+		    fi
+		  fi
+		else
+		  echo file=$file IS NOT A FILE IN $dirs
+		  rc=1
+		  if (( rcm < rc )); then
+		    rcm=$rc
+		  fi
+		fi
+	      done
+	    elif (( hhp == 0 )); then
+	      for file in *
+	      do
+		if [[ -f $file ]]; then
+		  cp $file $dird
+		  rc=$?
+		  if (( rc == 0 )); then
+		    ls -al $dird/$file
+		  else
+		    echo cp $file $dird FAILED rc=$rc
+		    if (( rcm < rc )); then
+		      rcm=$rc
+		    elif (( rcm < 1 )); then
+		      rcm=1
+		    fi
+		  fi
+		else
+		  echo file=$file IS NOT A FILE IN $dirs
+		  rc=1
+		  if (( rcm < rc )); then
+		    rcm=$rc
+		  fi
+		fi
+	      done
+	    else
+	      for file in gec00.*.*f00 gec00.*.*f00
+	      do
+		if [[ -f $file ]]; then
+		  cp $file $dird
+		  rc=$?
+		  if (( rc == 0 )); then
+		    ls -al $dird/$file
+		  else
+		    echo cp $file $dird FAILED rc=$rc
+		    if (( rcm < rc )); then
+		      rcm=$rc
+		    elif (( rcm < 1 )); then
+		      rcm=1
+		    fi
+		  fi
+		else
+		  echo file=$file IS NOT A FILE IN $dirs
+		  rc=1
+		  if (( rcm < rc )); then
+		    rcm=$rc
+		  fi
+		fi
+	      done
+	    fi
+	  else
+	    echo mkdir -p $dird FAILED rc=$rc
+	    if (( rcm < rc )); then
+	      rcm=$rc
+	    elif (( rcm < 1 )); then
+	      rcm=1
+	    fi
+	  fi
+	else
+	  echo cd $dirs FAILED rc=$rc
+	  if (( rcm < rc )); then
+	    rcm=$rc
+	  elif (( rcm < 1 )); then
+	    rcm=1
+	  fi
+	fi
+      else
+	echo dirs=$dirs DOES NOT EXIST
+	rc=1
+	if (( rcm < rc )); then
+	  rcm=$rc
+	fi
+      fi
+    done
+
+    if (( rcm == 0 )); then
+      crontaskselect=arch.$expid.selected.$dtgprev
+      echo crontaskselect=$crontaskselect
+      touch $dircrontask/$crontaskselect
+
+      crontasknwges=arch.$expid.nwges.$dtgprev
+      echo crontasknwges=$crontasknwges
+      touch $dircrontask/$crontasknwges
+
+      if (( hhp == 18 )); then
+	crontaskoutput=arch.$expid.output.$yyyymmddp
+	echo crontaskoutput=$crontaskoutput
+	touch $dircrontask/$crontaskoutput
+      else
+	echo output not archived because hhp=$hhp
+      fi
+    else
+      echo ARCHIVE SKIPPED BECAUSE rcm=$rcm
+    fi
+  fi
+
+  if (( $runcleancyc > 0 )); then
+    (( fhrpm = fhrp * runcleancyc ))
+    echo fhrp=$fhrp runcleancyc=$runcleancyc fhrpm=$fhrpm
+    dtgprev=`/nwprod/util/exec/ndate -$fhrpm $PDY$cyc`
+    echo dtgprev=$dtgprev
+
+    crontasktemp=clean.$expid.temp.$dtgprev
+    echo crontasktemp=$crontasktemp
+    touch $dircrontask/$crontasktemp
+  fi
+
+  echo list crontasks after begin
+  ls -alrt $dircrontask
+  echo list crontasks after end
+else
+  echo dircrontask=$dircrontask IS NOT A DIRECTORY
+fi
+echo `date` touch crontask after
+echo
+pwd
+echo
+echo `date` $0 $* between production and archive/cleanup jobs end
