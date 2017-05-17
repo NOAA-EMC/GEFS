@@ -618,17 +618,17 @@ echo 012 init separate job
 echo 013 init et job
 echo 014 init combine job
 
-echo "   " fv3 chgres jobs $jjjv00b to $jjjv00e
-typeset -RZ3 jjj=$jjjv00b
-typeset -RZ2 pp=00
-pert=c$pp
-while (( jjj <= jjjv00e ))
-do
-  echo $jjj fv3 chgres job for $pert
-  (( jjj = jjj + 1 ))
-  (( pp = pp + 1 ))
-  pert=p$pp
-done
+#echo "   " fv3 chgres jobs $jjjv00b to $jjjv00e
+#typeset -RZ3 jjj=$jjjv00b
+#typeset -RZ2 pp=00
+#pert=c$pp
+#while (( jjj < jjjv00e ))
+#do
+#  echo $jjj fv3 chgres job for $pert
+#  (( jjj = jjj + 1 ))
+#  (( pp = pp + 1 ))
+#  pert=p$pp
+#done
 
 echo
 echo "       " jobs for this cycle
@@ -1180,7 +1180,7 @@ if (( yyyymmddcc == yyyymmddcce )); then
   echo
   echo jjj=$jjj jjjt=$jjjt jjje=$jjje jjjte=$jjjte
   echo
-  if [[ fcstflag == no ]]; then
+  if [[ $fcstflag == no ]]; then
   if (( jjjt > jjjte )); then
     echo
     echo based on $jjjt later than $jjjte
@@ -1190,6 +1190,11 @@ if (( yyyymmddcc == yyyymmddcce )); then
     echo `date` $0 $* end
     echo
     exit 1
+  fi
+  else
+  if (( `echo $jjjt | cut -c2-3` > `echo $jjjte | cut -c2-3`)); then
+  echo job $jjj is later than $jjje for cycle $yyyymmddcc 
+  exit 1
   fi
   fi
 fi
