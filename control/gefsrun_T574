@@ -49,6 +49,8 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
  fi
 # export JOBQUEUE=debug2
 fi
+bflag=`echo $1 | cut -c11`
+eflag=`echo $2 | cut -c11`
 
 module load prod_util
 
@@ -60,7 +62,17 @@ tjobflag=no
 testflag=no
 testflag=yes
 joblistflag=no
+fcstflag=no
+
+if [[ $bflag == 'h' ]] || [[ $eflag == 'h' ]]; then
+fcstflag=yes
+fi
+if [[ $bflag == 'l' ]] || [[ $eflag == 'l' ]]; then
+fcstflag=yes
+fi
+
 whenrun=neither
+
 # special section for testing only
 if (( 0 == 0 )); then
   echo
@@ -495,8 +507,12 @@ nprdgen=1    # Number of prdgen jobs, 1,2, or3, default is 1
 (( jjjpec = jjjpo + npert * 4 - 2 ))
 (( jjjre = jjjro + npert ))
 
-typeset -RZ3 jjjv00b=015                  #fv3 chgres first job
-typeset -RZ3 jjjv00e=035			 #fv3 chgres  last job
+typeset -RZ3 jjjv00b=015                   #fv3 chgres first job (c00)
+typeset -RZ3 jjjv00e=035	           #fv3 chgres  last job (p20)
+
+
+typeset -RZ3 jjjfh00b=h00                  #fv3 hr fcst first job (c00)
+typeset -RZ3 jjjfh00e=h20	           #fv3 hr fcst  last job (p20)
 
 typeset -RZ3 jjjg00=$(( jjjog ))         #092, prdgen_gfs 1 degree grid
 typeset -RZ3 jjjg01=$(( jjjog + 1 ))     #093, prdgen_gfs job, 0.5 degree
@@ -830,6 +846,20 @@ echo nextflag=$nextflag
 if [[ $nextflag = yes ]]; then
   yyyymmddccb=$yyyymmddccc
   echo jjjc=$jjjc
+cflag=`echo $jjjc | cut -c1`
+typeset -RZ2 mm=`echo $jjjc | cut -c2-3`
+typeset -RZ2 mmp
+  if [[ $cflag == 'h' ]]; then
+   if (( mm >= 00 )) && (( mm < 20 )); then
+      (( mmp = mm + 1 ))
+    jjjb=h$mmp
+   fi
+elif [[ $cflag == 'l' ]]; then
+   if (( mm >= 00 )) && (( mm < 20 )); then
+      (( mmp = mm + 1 ))
+    jjjb=l$mmp
+   fi
+else   
   if (( jjjc >= jjjv00b )) && (( jjjc < jjjv00e )); then
     jjjb=$(( jjjc + 1 ))  
   elif (( jjjc >= jjjp00 )) && (( jjjc < jjje00 )); then
@@ -926,8 +956,8 @@ if [[ $nextflag = yes ]]; then
       (012) jjjb=013 ;;
       (013) jjjb=014 ;;
       (014) jjjb=$jjjv00b ;;
-#      ($jjjv00e) jjjb=$jjjfh00b
-      ($jjjv00e)
+      ($jjjv00e) jjjb=$jjjfh00b ;;
+      (888)
         echo rungfsprdgen=$rungfsprdgen
         case $rungfsprdgen in
           (yes)
@@ -1065,6 +1095,7 @@ if [[ $nextflag = yes ]]; then
   fi
   echo
 fi
+fi
 yyyymmddccjjjb=$yyyymmddccb$jjjb
 echo $jjjc $jjjb
 echo HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
@@ -1149,6 +1180,7 @@ if (( yyyymmddcc == yyyymmddcce )); then
   echo
   echo jjj=$jjj jjjt=$jjjt jjje=$jjje jjjte=$jjjte
   echo
+  if [[ fcstflag == no ]]; then
   if (( jjjt > jjjte )); then
     echo
     echo based on $jjjt later than $jjjte
@@ -1158,6 +1190,7 @@ if (( yyyymmddcc == yyyymmddcce )); then
     echo `date` $0 $* end
     echo
     exit 1
+  fi
   fi
 fi
 
@@ -1187,10 +1220,13 @@ fcstjoblength=
 
 jobtype=none
 forecast_segment=
+echo fcstflag=$fcstflag
+
+if [[ $fcstflag == no ]]; then
 if  (( jjj >= jjjv00b )) && (( jjj <= jjjv00e )); then
   cyc_os=0
   (( jjjv = jjjv00b ))
-  jobtype=init.fv3
+  jobtype=fv3chgres_hr
   fcstjoblength=short 
 elif(( jjj >= jjjf00 )) && (( jjj <= jjje00 )); then
   cyc_os=0
@@ -1236,7 +1272,6 @@ else
     (012) taskname=init.separate ;;
     (013) taskname=init.et ;;
     (014) taskname=init.combine ;;
-    (015) taskname=init.fv3 ;;
     ($jjjg00) 
       taskname=prdgen.gfs 
       fcstjoblength=long
@@ -1320,6 +1355,24 @@ else
   esac
 fi
 
+else
+
+if [[ `echo $jjj | cut -c1` == 'h' ]]; then
+  cyc_os=0
+  jobtype=fv3fcst_hr
+  fcstjoblength=long
+  forecast_segment=hr
+fi
+
+if [[ `echo $jjj | cut -c1` == 'l' ]]; then
+  cyc_os=0
+  jobtype=fv3fcst_hr
+  fcstjoblength=long
+  forecast_segment=lr
+fi
+
+fi
+
 echo
 echo jobtype=$jobtype
 
@@ -1376,7 +1429,7 @@ case $jobtype in
       ;;
     esac
   ;;
-  (init.fv3)
+  (fv3chgres_hr)
    echo jjjv=$jjjv
     (( memn = ( jjj - jjjv ) ))
     echo memn=$memn
@@ -1385,9 +1438,21 @@ case $jobtype in
     else
       mem=p$memn
     fi
-    taskname=init.fv3
+    taskname=fv3chgres_hr
   ;;
-
+  (fv3fcst_hr)
+   echo jjjfh00b=$jjjfh00b
+typeset -RZ2 h00=`echo $jjjfh00b | cut -c2-3`
+typeset -RZ2 hjj=`echo $jjj | cut -c2-3`
+    (( memn = ( hjj - h00 ) ))
+    echo memn=$memn
+    if (( memn == 0 )); then
+      mem=c00
+    else
+      mem=p$memn
+    fi
+  taskname=fv3fcst_hr
+  ;;
   (chgres)
     echo jjjr=$jjjr
     (( memn = ( jjj - jjjr ) ))
@@ -1818,7 +1883,7 @@ case $taskname in
     resources="3000"
   fi
   ;;
-  (init.fv3)
+  (fv3chgres_hr)
   RUN=
   RUNMEM=ge$mem
     if (( jjjb == jjjv00b )); then
@@ -1828,14 +1893,34 @@ case $taskname in
     fi
   if [[ $gefsmachine = cray ]]; then
     jobscript=JGEFS_INIT_FV3CHGRS
-    job_name=tgefs_init_fv3_$cyc
+    job_name=tgefs_fv3chgres_hr_$cyc
     job_type=parallel
     total_tasks=1
     taskspernode=1
     node=1
     wall_clock_limit="00:10"
     resources=1024
-    job=gefs_init_fv3_$cyc
+    job=gefs_fv3chgres_hr_$cyc
+  fi
+  ;;
+  (fv3fcst_hr)
+    RUN=
+  RUNMEM=ge$mem
+    if [[ $jjjb == $jjjfh00b ]]; then
+      during_previous_job=no
+    else
+      during_previous_job=yes
+    fi
+  if [[ $gefsmachine = cray ]]; then
+    jobscript=JGEFS_FORECAST_FV3
+    job_name=tgefs_fcst_fv3_$cyc
+    job_type=parallel
+    total_tasks=192
+    taskspernode=12
+    node=16
+    wall_clock_limit="02:00"
+    resources=1024
+    job=gefs_fcst_fv3_$cyc
   fi
   ;;
   (forecast_hr)

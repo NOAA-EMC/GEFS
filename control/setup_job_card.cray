@@ -451,31 +451,31 @@ eofCAT
 
 
 #BF 05/15/2017 nemsfv3 high rresolution fcst by member
-#elif [[ $jjj == $jjjv00e ]]; then
+elif [[ $jjj == $jjjv00e ]]; then
 
-#      cat <<eofCAT >>$jobcontrol$SUBJOB
-#                     cd $controldir
-#                     $0 $yyyymmddccb$jjj $yyyymmddccb$jjjf00b nextbefore 2>&1
-#eofCAT
-#typeset -RZ2 iii=`echo $jjjf00b | cut -c2-3`
-#typeset -RZ2 iiife=`echo $jjjf00e | cut -c2-3`
-                   
-#             while (( iii >= $iii && iii <= $iiife -1 ));do
-#                    if (( iii == $iiife - 1 )); then
-#      cat <<eofCAT >>$jobcontrol$SUBJOB
-#                     cd $controldir
-#                     $0 ${yyyymmddccb}h$iii ${yyyymmddcce}$jjje nextbefore 2>&1
-#eofCAT
-#                    else
-#
-#                    (( iiie = iii + 1 ))
-#      cat <<eofCAT >>$jobcontrol$SUBJOB
-#                     cd $controldir
-#                     $0 ${yyyymmddccb}h$iii ${yyyymmddccb}h$iiie nextbefore 2>&1
-#eofCAT
-#                    fi
-#                    (( iii = iii + 1 ))
-#             done
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 $yyyymmddccb$jjj $yyyymmddccb$jjjfh00b nextafter 2>&1
+eofCAT
+typeset -RZ2 ii=`echo $jjjfh00b | cut -c2-3`
+typeset -RZ2 iifhe=`echo $jjjfh00e | cut -c2-3`
+typeset -RZ2 iie                   
+             while (( ii >= $ii && ii <= $iifhe -1 ));do
+                    if (( ii == $iifhe - 1 )); then
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 ${yyyymmddccb}h$ii ${yyyymmddcce}$jjje nextbefore 2>&1
+eofCAT
+                    else
+
+                    (( iie = ii + 1 ))
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 ${yyyymmddccb}h$ii ${yyyymmddccb}h$iie nextbefore 2>&1
+eofCAT
+                    fi
+                    (( ii = ii + 1 ))
+             done
 
 else
       cat <<eofCAT >>$jobcontrol$SUBJOB
