@@ -113,11 +113,13 @@ export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=$COMROOTp2/gfs/prod/gfs.$PDY 
-export COMINenkf=$COMROOTp2/gfs/prod/enkf.$pdyp 
+#export COMINgfs=$COMROOTp2/gfs/prod/gfs.$PDY 
+#export COMINenkf=$COMROOTp2/gfs/prod/enkf.$pdyp 
+export COMINgfs=$COMROOTp2/gfs/prod_nems/gfs.$PDY 
+export COMINenkf=$COMROOTp2/gfs/prod_nems/enkf.$pdyp 
 export COMINatcfsyn=$COMROOTp1/arch/prod/syndat
-export COMINgfs6ago=$COMROOTp2/gfs/prod/gfs.$d6ago_ymd
-export COMINgfs6ahead=$COMROOTp2/gfs/prod/gfs.$d6ahead_ymd
+export COMINgfs6ago=$COMROOTp2/gfs/prod_nems/gfs.$d6ago_ymd
+export COMINgfs6ahead=$COMROOTp2/gfs/prod_nems/gfs.$d6ahead_ymd
 
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
@@ -146,6 +148,9 @@ echo CHGRESEXEC=$CHGRESEXEC
 #########################
 echo location of tracking executable
 export exectrkdir=$HOMEgefs/util/exec
+
+echo location of nemsioget
+export nemsioget=$nemsioget
 
 ##############################################
 echo list environment before running script

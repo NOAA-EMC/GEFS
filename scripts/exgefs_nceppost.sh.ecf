@@ -256,7 +256,7 @@ if [ $DOANALYSIS = YES ]; then
 			export OUTTYP=1
 			# to bypass chgres and read model sigma files directly
 			export OUTTYP=3
-
+			export OUTTYP=4
 			# specify output file name from chgres which is input file name to nceppost
 			# if model already runs gfs io, make sure GFSOUT is linked to the gfsio file
 			# new imported variable for global_nceppost.sh
@@ -279,14 +279,16 @@ if [ $DOANALYSIS = YES ]; then
 
 			rm -rf sigfile.anl$cfsuffix
 			ln -s $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix sigfile.anl$cfsuffix
+#		        ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf00$cfsuffix sigfile.anl$cfsuffix
 
 			####################################
 			# Create Master Post File 
 			####################################
 			export SIGINP=sigfile.anl$cfsuffix
+			export NEMSINP=sigfile.anl$cfsuffix
 			export SFCINPUT=
-			export FLXINP=/dev/null
-			export FLXIOUT=/dev/null
+			export FLXINP=
+			export FLXIOUT=
 			rm -rf pgbfout pgbifout
 			if [ $GRIBVERSION = grib1 ]; then
 				ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbanl$cfsuffix pgbfout
@@ -436,6 +438,7 @@ while (( fhr <= FHOUR )); do
 		export OUTTYP=1
 		# to bypass chgres and read model sigma files directly
 		export OUTTYP=3
+		export OUTTYP=4
 
 		# specify output file name from chgres which is input file name to nceppost
 		# if model already runs gfs io, make sure GFSOUT is linked to the gfsio file
@@ -468,6 +471,7 @@ while (( fhr <= FHOUR )); do
 #		cat $PostFlatFile
 
 		export SIGINP=sigfile.f$fhr$cfsuffix
+		export NEMSINP=sigfile.f$fhr$cfsuffix
 		export SFCINPUT=sfcfile.f$fhr$cfsuffix
 
 		export FLXINP=flxfile.f$fhr$cfsuffix

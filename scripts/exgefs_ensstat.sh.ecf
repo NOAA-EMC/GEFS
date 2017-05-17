@@ -162,7 +162,7 @@ while test $fh -le $FHOUR; do
 		# Start Looping for the
 		# existence of the pgrba files
 		###############################
-		#   set +x
+		   set +x
 		ic=1
 		while [ $ic -le $SLEEP_LOOP_MAX ]; do
 			nfiles=0

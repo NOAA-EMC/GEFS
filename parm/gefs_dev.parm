@@ -11,11 +11,18 @@
 echo `date` $0 test section begin
 
 #Define using STTP(ENS_SPS=.true.) or physics stochastic
-ENS_SPS=.true.
-STOC_SPPT=.false.
-STOC_SHUM=.false.
-STOC_SKEB=.false.
+ENS_SPS=.false.
+STOC_SPPT=.true.
+STOC_SHUM=.true.
+STOC_SKEB=.true.
 STOC_VC=.false.
+
+sppt_import=1
+sppt_export=1
+shum_import=1
+shum_export=1
+skeb_import=1
+skeb_export=1
 
 export npair=10
 export fhmax=384
@@ -178,6 +185,8 @@ export gfssource=prod
   export ctlgesprod=0
   export ctlsfcprod=0
   export ctlsigprod=0
+
+  export sigzvd=no
 
   echo `date` $0 test section end
 

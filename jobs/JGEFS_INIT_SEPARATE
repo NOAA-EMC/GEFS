@@ -108,8 +108,8 @@ env | sort
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=$COMROOTp2/gfs/prod/gfs.$PDY
-export COMINenkf=$COMROOTp2/gfs/prod/enkf.
+export COMINgfs=$COMROOTp2/gfs/prod_nems/gfs.$PDY
+export COMINenkf=$COMROOTp2/gfs/prod_nems/enkf.$pdyp
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
@@ -153,7 +153,8 @@ echo location of sighdr executable
 
 export sighdrexec=$EXECgsm/global_sighdr
 
-
+echo location of nemsioget
+export nemsioget=$nemsioget
 echo location of chgres script and executable
 export CHGRESTHREAD=$NTHREADS_SIGCHGRS
 # Change Resolution script and executable
