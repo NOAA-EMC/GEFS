@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!DOCTYPE workflow
+
+[
+  <!ENTITY CYCLE_THROTTLE "1">
+  <!ENTITY TASK_THROTTLE "25">
+  <!ENTITY SDATE "2016091300">
+  <!ENTITY EDATE "2016091400">
+  <!ENTITY INCYC "24">
+  <!ENTITY WHERE_AM_I "cray">
+  <!ENTITY GEFS_ROCOTO "/u/Wen.Meng/savec/gefs/SVN/tfBb/nwdev/rocoto">
+  <!ENTITY BIN "&GEFS_ROCOTO;/bin/&WHERE_AM_I;">
+  <!ENTITY PRE "&GEFS_ROCOTO;/bin/gefs_pre_job.sh">
+  <!ENTITY WORKFLOW_LOG_DIR "&GEFS_ROCOTO;/logs">
+  <!ENTITY LOG_DIR "&WORKDIR;/com/output/dev">
+  <!ENTITY tmpnwprd "&WORKDIR;/tmpnwprd">
+  <!ENTITY DATA_DIR "&WORKDIR;/com/gens/dev">
+  <!ENTITY EXPID "tfBb">
+  <!ENTITY SOURCEDIR "/u/Wen.Meng/savec/gefs/SVN/&EXPID;/nwdev">
+  <!ENTITY WORKDIR "/u/Wen.Meng/ptmp/o/&EXPID;">
+
+<!--  <!ENTITY INIT_FHR "9 12 15"> -->
+
+  <!-- External entities -->
+  <!ENTITY ENV_VARS   SYSTEM "env_vars.ent"> 
+  <!ENTITY DATE_VARS   SYSTEM "date_vars.ent"> 
+
+  <!-- External parameter entities -->
+  <!ENTITY % TASKS    SYSTEM "tasks/cray/all.ent">
+  %TASKS;
+
+  <!ENTITY ACCOUNT  "GEN-T2O">
+  <!ENTITY CUE2RUN  "dev">
+  <!ENTITY SCHEDULER "lsfcray">
+
+]>
+
+<workflow realtime="F" cyclethrottle="&CYCLE_THROTTLE;"
+          scheduler="&SCHEDULER;" taskthrottle="&TASK_THROTTLE;">
+   <log><cyclestr>&WORKFLOW_LOG_DIR;/gefs@Y@m@d@H.log</cyclestr></log>
+
+   <cycledef group="gefs">&SDATE;00 &EDATE;00 &INCYC;:00:00</cycledef>
+
+   <!--- init jobs -->
+   &jgefs_enkf_track;
+   &jgefs_init_separate;
+   &jgefs_init_process;
+   &jgefs_init_combine;
+
+   <!-- high resolution forecast and post process jobs -->
+   &jgefs_forecast_high;
+   &jgefs_post_high;
+   &jgefs_prdgen_high;
+   &jgefs_ensstat_high;
+
+  <!-- chargeres jobs -->
+   &jgefs_sigchgres;
+
+   <!-- low resolution forecast and post process jobs -->
+   &jgefs_forecast_low;
+   &jgefs_post_low;
+   &jgefs_prdgen_low;
+   &jgefs_ensstat_low;
+   &jgefs_enspost;
+
+  <!-- track and gensis jobs -->
+   &jgefs_post_track;
+   &jgefs_post_genesis;
+
+  <!-- other jobs -->
+   &jgefs_pqpf;
+
+</workflow>

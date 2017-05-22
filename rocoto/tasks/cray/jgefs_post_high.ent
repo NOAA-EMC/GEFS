@@ -1,0 +1,34 @@
+<metatask>
+   <var name="member">p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 c00</var>
+      <task name="jgefs_post_high1_#member#" cycledefs="gefs" maxtries="1">
+      <jobname><cyclestr>&EXPID;@Y@m@d@H102_#member#</cyclestr></jobname>
+      <account>&ACCOUNT;</account>
+      <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_#member#_post_high_@H.%J</cyclestr></join>
+      <walltime>01:30:00</walltime>
+      <queue>&CUE2RUN;</queue>
+      <nodes>1:ppn=12:tpp=2</nodes>
+      <native>-cwd &tmpnwprd;</native>
+      <memory>3000M</memory>
+      <native>-extsched "CRAYLINUX[]"</native>
+
+      &ENV_VARS;
+      &DATE_VARS;
+      <envar>
+         <name>SOURCEDIR</name>
+         <value>&SOURCEDIR;</value>
+      </envar>
+      <envar>
+         <name>job</name>
+         <value><cyclestr>&EXPID;@Y@m@d@H102#member#</cyclestr></value>
+      </envar>
+      <envar>
+         <name>RUNMEM</name>
+         <value>ge#member#</value>
+      </envar>
+      <command><cyclestr>&PRE; &BIN;/jgefs_post_high.sh</cyclestr></command>
+
+      <dependency>
+        <datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/fcst/ge#member#.t@Hz.logf48</cyclestr></datadep>
+      </dependency>
+      </task>
+</metatask>

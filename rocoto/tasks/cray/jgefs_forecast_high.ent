@@ -1,0 +1,26 @@
+<task name="jgefs_forecast_high" cycledefs="gefs" maxtries="1">
+   <jobname><cyclestr>&EXPID;@Y@m@d@H100</cyclestr></jobname>
+   <account>&ACCOUNT;</account>
+   <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_forecast_high_@H.%J</cyclestr></join>
+   <walltime>01:30:00</walltime>
+   <queue>&CUE2RUN;</queue>
+   <nodes>126:ppn=6:tpp=4</nodes>
+   <native>-cwd &tmpnwprd;</native>
+   <memory>600M</memory>
+   <native>-extsched "CRAYLINUX[]"</native>
+
+   &ENV_VARS;
+   &DATE_VARS;
+   <envar>
+      <name>SOURCEDIR</name>
+      <value>&SOURCEDIR;</value>
+   </envar>
+   <envar>
+      <name>job</name>
+      <value><cyclestr>&EXPID;@Y@m@d@H100</cyclestr></value>
+   </envar>
+   <command><cyclestr>&PRE; &BIN;/jgefs_forecast_high.sh</cyclestr></command>
+   <dependency>
+      <taskdep task="jgefs_init_combine"/>
+   </dependency>
+</task>
