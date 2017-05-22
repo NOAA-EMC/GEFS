@@ -141,6 +141,8 @@ module load prod_envir
 module load prod_util
 module load util_shared/1.0.3
 module load grib_util/1.0.3
+module load NetCDF-intel-haswell/4.2
+module load nco-gnu-sandybridge/4.4.4
 #prod_envir points to sigio data, here temporarily set nemsio data source
 export COMROOTp1=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/o/com
 export COMROOTp2=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/o/com
@@ -389,6 +391,7 @@ echo $jjjv00b
 echo $jjjv00e
 echo $iii
 echo $iiie
+echo $jjjfh00e
 
 if [[ $SUBJOB = '' ]] || [[ $SUBJOB = A ]]; then
 
@@ -476,6 +479,33 @@ eofCAT
                     fi
                     (( ii = ii + 1 ))
              done
+
+
+elif [[ $jjj == $jjjfh00e ]]; then
+
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 $yyyymmddccb$jjj ${yyyymmddccb}102 nextafter 2>&1
+eofCAT
+
+                   (( iii = 102  ))
+             while (( iii >= 102 && iii <= $jjje00 -1 ));do
+                    if (( iii == $jjje00 - 1 )); then
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 $yyyymmddccb$iii $yyyymmddcce$jjje nextbefore 2>&1
+eofCAT
+                    else
+
+                    (( iiie = iii + 4 ))
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 $yyyymmddccb$iii $yyyymmddccb$iiie nextbefore 2>&1
+eofCAT
+                    fi
+                    (( iii = iii + 4 ))
+             done
+
 
 else
       cat <<eofCAT >>$jobcontrol$SUBJOB

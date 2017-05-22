@@ -40,7 +40,7 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
 export machine='WCOSS'
 export JOBQUEUE=dev2
 export HOMEDIR=/ensemble/save/emc.enspara/RFC
-export HOMEDIR1=/ensemble/save/emc.enspara/RFC/q3fy17_eta
+export HOMEDIR1=/ensemble/save/emc.enspara/RFC/q3fy17_lambda
  if [[ $JOBQUEUE = dev ]]; then
   PTMP=ptmpd2
   STMP=stmpd2

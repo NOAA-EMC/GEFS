@@ -481,7 +481,9 @@ case $CASE in
 esac
 
 
-fmax1=192; fmax2=384
+fmax1=24; fmax2=384
+fout1=3; fout2=12
+fzer1=6; fzer2=12
 for cyc1 in 00 06 12 18; do
  eval FHMAXFCST${cyc1}GFS1=$fmax1             # maximum forecast hour for 1st segment
  eval FHMAXFCST${cyc1}GFS2=$fmax2             # maximum forecast hour for 2st segment
@@ -496,10 +498,13 @@ for cyc1 in 00 06 12 18; do
  eval MFCST${cyc1}GDAS=1                      #number of GDAS forecast segments
 done
 cdump=$(echo $CDUMP|tr '[a-z]' '[A-Z]')
-FHMAX=$(eval echo \${FHMAXFCST$cycn$cdump$nknd})
-FHOUT=$(eval echo \${FHOUTFCST$cycn$cdump$nknd})
-FHZER=$(eval echo \${FHZERFCST$cycn$cdump$nknd})
+#FHMAX=$(eval echo \${FHMAXFCST$cycn$cdump$nknd})
+#FHOUT=$(eval echo \${FHOUTFCST$cycn$cdump$nknd})
+#FHZER=$(eval echo \${FHZERFCST$cycn$cdump$nknd})
 
+FHMAX=$fmax1
+FHOUT=$fout1
+FHZER=$fzer1
 
 #---if fdiag is given, it overwrites FHOUT
 #fh00=$(echo $DELTIM 3600|awk '{printf "%f", $1/$2}')

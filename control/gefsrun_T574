@@ -853,29 +853,39 @@ typeset -RZ2 mmp
    if (( mm >= 00 )) && (( mm < 20 )); then
       (( mmp = mm + 1 ))
     jjjb=h$mmp
+   elif (( mm == 20 )); then
+    jjjb=102 
+   else
+    echo wrong job number 
    fi
 elif [[ $cflag == 'l' ]]; then
    if (( mm >= 00 )) && (( mm < 20 )); then
       (( mmp = mm + 1 ))
     jjjb=l$mmp
+   elif (( mm == 20 )); then
+    jjjb=302
+   else
+    echo wrong job number
    fi
 else   
   if (( jjjc >= jjjv00b )) && (( jjjc < jjjv00e )); then
     jjjb=$(( jjjc + 1 ))  
   elif (( jjjc >= jjjp00 )) && (( jjjc < jjje00 )); then
-    (( jjjd = jjjc - jjjf00 ))
-    (( jjjm = ( jjjd / 4 ) * 4 ))
-    (( leap = 4 - nprdgen  ))
-    (( jeap = leap )) 
-    if (( jeap == 2 )) ; then
-     jeap=0 
-    fi 
-    if (( ( jjjd - jjjm ) == jeap )) && (( jjjc > jjjp00 )) && [[ $RUN_CONCURRENT = yes ]]; then
-     jjjb=$(( jjjc + leap ))
-    else
-     jjjb=$(( jjjc + 1 ))
-    fi
-    echo $jeap $leap  $jjjd $jjjb
+#    (( jjjd = jjjc - jjjf00 ))
+#    (( jjjm = ( jjjd / 4 ) * 4 ))
+#    (( leap = 4 - nprdgen  ))
+#    (( jeap = leap )) 
+#    if (( jeap == 2 )) ; then
+#     jeap=0 
+#    fi 
+#    if (( ( jjjd - jjjm ) == jeap )) && (( jjjc > jjjp00 )) && [[ $RUN_CONCURRENT = yes ]]; then
+#     jjjb=$(( jjjc + leap ))
+#    else
+#     jjjb=$(( jjjc + 1 ))
+#    fi
+      jjjb=$(( jjjc +4 ))
+
+#    echo $jeap $leap  $jjjd $jjjb
 #Please check prdgen to make sure it matches with here    
 #if nprdgen=1, the next 2 lines should be de-commended     
 #   if (( jjjd - jjjm == 3 )) && [[ $RUN_CONCURRENT = yes ]]; then
@@ -957,6 +967,8 @@ else
       (013) jjjb=014 ;;
       (014) jjjb=$jjjv00b ;;
       ($jjjv00e) jjjb=$jjjfh00b ;;
+      (h20) jjjb=102 ;;
+      (l20) jjjb=302 ;;
       (888)
         echo rungfsprdgen=$rungfsprdgen
         case $rungfsprdgen in
@@ -998,7 +1010,7 @@ else
       ($jjjg04) jjjb=$jjjg05 ;;     #job 96, go to 97
       ($jjjg05) jjjb=$jjjf00 ;;     #job 97, go to 100
 #     ($jjjf00) jjjb=$jjjp00 ;;
-      ($jjjfh00e) (( jjjb=jjjp00 + 1 )) ;; #to skip the restart copy job, e.g. in cycling only tests
+#     ($jjjfh00e) (( jjjb=jjjp00 + 1 )) ;; #to skip the restart copy job, e.g. in cycling only tests
 #     ($jjje00) jjjb=$jjjs00 ;;
       ($jjje00) 
 	if (( npair > 0 )); then
@@ -1361,6 +1373,21 @@ else
 fi
 
 else
+
+#if [[ $jjj == 102 ]]; then
+#  cyc_os=0
+#  jobtype=fpp
+#  fcstjoblength=long
+#  forecast_segment=hr
+#  jjjp=$jjjf00
+#fi
+#if [[ $jjj == 302 ]]; then
+#  cyc_os=0
+#  jobtype=fpp
+#  fcstjoblength=long
+#  forecast_segment=lr
+#  jjjp=$jjjf00l
+#fi
 
 if [[ `echo $jjj | cut -c1` == 'h' ]]; then
   cyc_os=0
@@ -2388,8 +2415,9 @@ case $taskname in
   ;;
   (nceppost_hr)
     ################################# production variables
+
     FORECAST_SEGMENT=hr
-    jobscript=JGEFS_NCEPPOST
+    jobscript=JGEFS_NCEPPOST_FV3
 #   jobscript=JGEFS_NCEPPOST_GRB1.sms.$envir
     if [[ $fcstjoblength = long ]]; then
       job_name=jgefs_${mem}_post_${cyc}
@@ -2401,7 +2429,7 @@ case $taskname in
       job=gefs_${mem}_post_cf${cyc_fcst}_${cyc}
     fi
     job_type=parallel
-    total_tasks=4
+    total_tasks=1
     node=1
     network_MPI="sn_all,shared,us"
 #   resources="ConsumableMemory(1000 MB)"  # droped for ZEUS
@@ -2445,13 +2473,14 @@ case $taskname in
       ;;
       (cray)
     SUBJOB=
-    nodes=1
+    nodes=4
     OMP_NUM_THREADS=2
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS ))
     (( total_tasks = taskspernode * nodes ))
 #   (( taskspernode = 10 )) 
     (( total_tasks = taskspernode * nodes ))
     resources="3000"   #T574
+    wall_clock_limit="10:00"
       ;;
     esac
   ;;
