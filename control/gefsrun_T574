@@ -1374,20 +1374,20 @@ fi
 
 else
 
-#if [[ $jjj == 102 ]]; then
-#  cyc_os=0
-#  jobtype=fpp
-#  fcstjoblength=long
-#  forecast_segment=hr
-#  jjjp=$jjjf00
-#fi
-#if [[ $jjj == 302 ]]; then
-#  cyc_os=0
-#  jobtype=fpp
-#  fcstjoblength=long
-#  forecast_segment=lr
-#  jjjp=$jjjf00l
-#fi
+if [[ $jjj == 102 ]]; then
+  cyc_os=0
+  jobtype=fpp
+  fcstjoblength=long
+  forecast_segment=hr
+  jjjp=$jjjf00
+fi
+if [[ $jjj == 302 ]]; then
+  cyc_os=0
+  jobtype=fpp
+  fcstjoblength=long
+  forecast_segment=lr
+  jjjp=$jjjf00l
+fi
 
 if [[ `echo $jjj | cut -c1` == 'h' ]]; then
   cyc_os=0
@@ -2472,6 +2472,11 @@ case $taskname in
     taskspernode=12
       ;;
       (cray)
+    if [[ $jjjb == 102 ]]; then
+      during_previous_job=no
+    else
+      during_previous_job=yes
+    fi
     SUBJOB=
     nodes=4
     OMP_NUM_THREADS=2
