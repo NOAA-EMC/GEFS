@@ -329,6 +329,7 @@ fi
 
 fi
 
+if [[ $nstinit == yes ]]; then
 # ----------------------------------
 # options for NST in GFS & GSI
 # ----------------------------------
@@ -368,7 +369,7 @@ fi
  export NST_STZR=0        # 0 = physical Tz retrieval save off; 1 =  Tz retrieval save on
 
 # end of NST settings
-
+fi
 
 if [[ $FORECAST_SEGMENT = lr ]] && [[ $fcstlong = true ]] && (( fhmax > fhmaxh )) ; then
 export MTNRSL=$MTNRSLLR
