@@ -511,6 +511,7 @@ export GESOUT=$GESOUT/gefs.${PDY}
 export FV3GESOUT=$GESROOT\/${envir}/fv3gefs.${PDY}
 COMROT=$GESOUT/$mem
 export DATATMP=$FV3GESOUT/$mem/posttmp
+export CDATE=$PDY$cyc
 eval export DATA=$COMROT
 cd $DATA||exit 1
 if [ ${REMAP_GRID:-latlon} = latlon ]; then
