@@ -298,7 +298,7 @@ if (( coldstartflag == 0 )); then
 			elif (( inflagt == 5 )); then
 				fcstinn=$comfcstin/$cycstart/sfcsig/gep${ipairn}.$cyclestart.sf$fhr$cfsuffixstart
 			elif (( inflagt == 6 )); then
-				fcstinn=${COMINenkf}${pdyp0}/$cycp0/gdas.t${cycp0}z.atmf0${fhrp}.mem0${ipairip}.nemsio
+				fcstinn=${COMINenkf}${pdyp0}/$cycp0/gdas.t${cycp0}z.atmf0${fhrp}.mem0${ipairin}.nemsio
 			else
 				fcstinn=$comfcstin/$cycstart/sfcsig/gec00.$cyclestart.sf$fhr$cfsuffixstart
 			fi # (( inflagt == 1 )) || (( inflagt == 3 ))
@@ -746,19 +746,19 @@ export SFCOUT=$DATALOCAL/sfcanl.in
 cp -fp $SIGINP $SIGOUT
 cp -fp $SFCINP $SFCOUT
 
-         if [[ $nstinit == no ]]; then
-         export NSTINP=NULL
+        if [[ $nstinit == no ]]; then
+        export NSTINP=NULL
  	export NSNOUT=NULL
-         else
- 	if (( ipair > nhrpair )); then
-         export NSTINP=../nsnanl.lr.in
- 	else
- 	export SFCINP=../sfcanl.hr.in
- 	fi
- 	export NSNOUT=$DATALOCAL/nsnanl.in
- 	cp -fp $NSTINP $NSNOUT
+        else
+ 	 if (( ipair > nhrpair )); then
+         export NSTINP=NULL
+	 export NSTOUT=NULL
+ 	 else
+ 	 export NSTINP=../nsnanl.hr.in
+ 	 export NSNOUT=$DATALOCAL/nsnanl.in
+ 	 cp -fp $NSTINP $NSNOUT
          fi
-
+	fi
 wait
 
 unset SFCINP
