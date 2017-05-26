@@ -137,13 +137,13 @@ if [[ $DOANALYSIS = YES ]]; then
 		# period and write file to
 		# indicate missing data
 		###############################
-		if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-			date >$COMOUT/$cyc/misc/$submc/$RUNMEM.$ffhr$cfsuffix.missing
-			echo `date` $sname $member end
-			msg="$member MISSING DATA for hour $ffhr"
-			postmsg "$jlogfile" "$msg"
-			export err=1; err_chk
-		fi # [ $ic -eq $SLEEP_LOOP_MAX ]
+#		if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+#			date >$COMOUT/$cyc/misc/$submc/$RUNMEM.$ffhr$cfsuffix.missing
+#			echo `date` $sname $member end
+#			msg="$member MISSING DATA for hour $ffhr"
+#			postmsg "$jlogfile" "$msg"
+#			export err=1; err_chk
+#		fi # [ $ic -eq $SLEEP_LOOP_MAX ]
 	done # while [ $ic -le $SLEEP_LOOP_MAX ]
 
 	#######################################################
@@ -250,13 +250,13 @@ while test $fhr -le $FHOUR; do
 		# fcst job never reached restart 
 		# period and error exit
 		###############################
-		if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-			date >$COMOUT/$cyc/misc/$submc/$RUNMEM.f$ffhr$cfsuffix.missing
-			echo `date` $sname $member end
-			msg="$member MISSING DATA"
-			postmsg "$jlogfile" "$msg"
-			export err=1; err_chk
-		fi # [ $ic -eq $SLEEP_LOOP_MAX ]
+#		if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+#			date >$COMOUT/$cyc/misc/$submc/$RUNMEM.f$ffhr$cfsuffix.missing
+#			echo `date` $sname $member end
+#			msg="$member MISSING DATA"
+#			postmsg "$jlogfile" "$msg"
+#			export err=1; err_chk
+#		fi # [ $ic -eq $SLEEP_LOOP_MAX ]
 	done # while [ $ic -le $SLEEP_LOOP_MAX ]
 
 	msg="Starting post for fhr=$fhr"

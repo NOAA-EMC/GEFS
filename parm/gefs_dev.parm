@@ -26,7 +26,7 @@ skeb_export=1
 
 export npair=10
 export fhmax=384
-export fhmaxh=192
+export fhmaxh=384
 
 # for test, NOT USED FOR PRODUCTION
 

@@ -481,7 +481,7 @@ case $CASE in
 esac
 
 
-fmax1=240; fmax2=384
+fmax1=384; fmax2=384
 fout1=3; fout2=12
 fzer1=6; fzer2=12
 for cyc1 in 00 06 12 18; do

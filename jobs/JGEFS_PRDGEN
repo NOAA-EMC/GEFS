@@ -165,7 +165,9 @@ export NTHREADS=1
 # SLEEP_INT  - Amount of time to wait between
 #              checking for restart files
 ####################################
-export SLEEP_TIME=900
+#export SLEEP_TIME=900
+#export SLEEP_INT=5
+export SLEEP_TIME=5
 export SLEEP_INT=5
 
 echo
@@ -184,7 +186,8 @@ export IGEN_FCST=107
 
 case $FORECAST_SEGMENT in
 	(hr) # high resolution segment
-		export DOANALYSIS=YES;
+		export DOANALYSIS=NO;
+#		export DOANALYSIS=YES;
 		export SHOUR=00
 		export FHINC=06
 		export FHINCP5=03
@@ -206,7 +209,8 @@ case $FORECAST_SEGMENT in
 		fi
 		;;
 	(*) # whole forecast period
-		export DOANALYSIS=YES;
+		export DOANALYSIS=NO;
+#		export DOANALYSIS=YES;
 		export SHOUR=00
 		export FHINC=06
 		export FHINCP5=03
@@ -255,7 +259,8 @@ fi
 
 #task 1, 1.0d grid
 export jobgrid_1=
-export DOANALYSIS_1=YES
+export DOANALYSIS_1=NO
+#export DOANALYSIS_1=YES
 export DO_LOW_RES_1=NO
 export FHINC_1=$FHINC
 export SHOUR_1=$SHOUR_1

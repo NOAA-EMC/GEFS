@@ -506,13 +506,17 @@ nprdgen=1    # Number of prdgen jobs, 1,2, or3, default is 1
 (( jjjpe = jjjpo + npert * 4 + 1 + nprdgen ))
 (( jjjpec = jjjpo + npert * 4 - 2 ))
 (( jjjre = jjjro + npert ))
-
 typeset -RZ3 jjjv00b=015                   #fv3 chgres first job (c00)
 typeset -RZ3 jjjv00e=035	           #fv3 chgres  last job (p20)
 
 
 typeset -RZ3 jjjfh00b=h00                  #fv3 hr fcst first job (c00)
 typeset -RZ3 jjjfh00e=h20	           #fv3 hr fcst  last job (p20)
+
+typeset -RZ3 jjjph00b=$(( jjjf00 + jjjpo + 1)) #fv3 hr post first job (p01)
+typeset -RZ3 jjjph00e=$(( jjjf00 + jjjpe - 1)) #fv3 hr post  last job (c00)
+typeset -RZ3 jjjdh00b=$(( jjjf00 + jjjpo + 2)) #fv3 hr prdgen first job (p01)
+typeset -RZ3 jjjdh00e=$(( jjjf00 + jjjpe))     #fv3 hr prdgen last job (c00)
 
 typeset -RZ3 jjjg00=$(( jjjog ))         #092, prdgen_gfs 1 degree grid
 typeset -RZ3 jjjg01=$(( jjjog + 1 ))     #093, prdgen_gfs job, 0.5 degree
@@ -577,6 +581,10 @@ echo jjjfh00e=$jjjfh00e
 echo jjjf00=$jjjf00
 echo jjjp00=$jjjp00
 echo jjje00=$jjje00
+echo jjjph00b=$jjjph00b
+echo jjjph00e=$jjjph00e
+echo jjjdh00b=$jjjdh00b
+echo jjjdh00e=$jjjdh00e
 echo jjjg00=$jjjg00
 echo jjjs00=$jjjs00
 echo jjjr00=$jjjr00
@@ -870,7 +878,7 @@ elif [[ $cflag == 'l' ]]; then
 else   
   if (( jjjc >= jjjv00b )) && (( jjjc < jjjv00e )); then
     jjjb=$(( jjjc + 1 ))  
-  elif (( jjjc >= jjjp00 )) && (( jjjc < jjje00 )); then
+  elif (( jjjc >= jjjp00 )) && (( jjjc < jjjph00e )); then
 #    (( jjjd = jjjc - jjjf00 ))
 #    (( jjjm = ( jjjd / 4 ) * 4 ))
 #    (( leap = 4 - nprdgen  ))
@@ -967,8 +975,7 @@ else
       (013) jjjb=014 ;;
       (014) jjjb=$jjjv00b ;;
       ($jjjv00e) jjjb=$jjjfh00b ;;
-      (h20) jjjb=102 ;;
-      (l20) jjjb=302 ;;
+      ($jjjph00e) jjjb=$jjjdh00b ;;
       (888)
         echo rungfsprdgen=$rungfsprdgen
         case $rungfsprdgen in
@@ -1020,11 +1027,11 @@ else
 	fi
       ;;
       ($jjjs00)
-	if (( fcst_segments == 2 )); then
-	  jjjb=$jjjr00
-	else
+#	if (( fcst_segments == 2 )); then
+#	  jjjb=$jjjr00
+#	else
 	  jjjb=$jjjo00
-	fi
+#	fi
       ;;
       ($jjjz00) jjjb=$jjjf00l ;;
 #     ($jjjf00l) jjjb=$jjjp00l ;;
@@ -1194,6 +1201,9 @@ if (( yyyymmddcc == yyyymmddcce )); then
   echo
   if [[ $fcstflag == no ]]; then
   if (( jjjt > jjjte )); then
+    if [[ $jjjt == $jjjph00e ]] && [[ $jjjte == $jjjdh00b ]]; then
+    echo last post job 182 connect to first prdgen job 103
+    else  
     echo
     echo based on $jjjt later than $jjjte
     echo job $jjj is later than $jjje for cycle $yyyymmddcc
@@ -1202,6 +1212,7 @@ if (( yyyymmddcc == yyyymmddcce )); then
     echo `date` $0 $* end
     echo
     exit 1
+    fi
   fi
   else
   if (( `echo $jjjt | cut -c2-3` > `echo $jjjte | cut -c2-3`)); then
@@ -1594,7 +1605,7 @@ wall_clock_limit_fcst_short="00:30:00"
 wall_clock_limit_fcst_long="01:30:00"
   if [[ $gefsmachine = wcoss || $gefsmachine = cray ]]; then                       
 # RLW 20150511 ############################################################################ set lower limit to kill runaway jobs
-wall_clock_limit_fcst_long="01:30"
+wall_clock_limit_fcst_long="08:00"
 #wall_clock_limit_fcst_long="00:29"
 wall_clock_limit_fcst_short="00:20"
   fi
@@ -1950,7 +1961,7 @@ case $taskname in
     total_tasks=192
     taskspernode=12
     node=16
-    wall_clock_limit="02:00"
+    wall_clock_limit="10:00"
     resources=1024
     job=gefs_fcst_fv3_$cyc
   fi
@@ -2612,6 +2623,13 @@ case $taskname in
 #   resources="6912"     #T574SL grib2 for core(4)
       ;;
       (cray)
+     RUN=
+     RUNMEM=ge$mem
+    if [[ $jjjb == 103 ]]; then
+      during_previous_job=no
+    else
+      during_previous_job=yes
+    fi
     OMP_NUM_THREADS=4
 #mpmd 04-15    
     job_type=parallel
@@ -2625,10 +2643,6 @@ case $taskname in
     resources="3000"
     SUBJOB=       # 1 prdgen job only for 1.0d/2.5d each membery
     DO_LOW_RES=YES
-    if [[ $jobgrid = _p5 ]]; then
-     SUBJOB=C      # 3 prdgen jobs for each member, forecast_hr, p5 grid
-     DO_LOW_RES=NO
-    fi
       ;;
     esac
   ;;
