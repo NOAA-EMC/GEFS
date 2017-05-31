@@ -364,6 +364,8 @@ SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
 (( fhr=SHOUR))
 if (( fhr < 10 )); then
+	fhr=00$fhr
+elif (( fhr >= 10 )) && (( fhr < 100 )); then
 	fhr=0$fhr
 fi
 export fhr
@@ -372,47 +374,51 @@ export fhr
 # Loop Through the Post Forecast Files 
 ############################################################
 while (( fhr <= FHOUR )); do
-	mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr$cfsuffix
+#	mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr$cfsuffix
 
-	if [[ ! -s $mcfile ]]; then
+#	if [[ ! -s $mcfile ]]; then
 		###############################
 		# Start Looping for the 
 		# existence of the restart files
 		###############################
-		export pgm="postcheck"
-		ic=1
+#		export pgm="postcheck"
+#		ic=1
 
-		while [ $ic -le $SLEEP_LOOP_MAX ]; do
-			if test -f $restart_file$fhr$cfsuffix; then
-				break
-			else
-				ic=`expr $ic + 1`
-				sleep $SLEEP_INT
-			fi # test -f $restart_file$fhr$cfsuffix
+#		while [ $ic -le $SLEEP_LOOP_MAX ]; do
+#			if test -f $restart_file$fhr$cfsuffix; then
+#				break
+#			else
+#				ic=`expr $ic + 1`
+#				sleep $SLEEP_INT
+#			fi # test -f $restart_file$fhr$cfsuffix
 			###############################
 			# If we reach this point assume
 			# fcst job never reached restart 
 			# period and error exit
 			###############################
-			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-				echo `date` forecast $RUNMEM missing for hour $fhr 
-				msg="$RUNMEM FORECAST MISSING for hour $fhr"
-				postmsg "$jlogfile" "$msg"
-				export err=9
-				err_chk
-			fi # [ $ic -eq $SLEEP_LOOP_MAX ]
-		done # [ $ic -le $SLEEP_LOOP_MAX ]
+#			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+#				echo `date` forecast $RUNMEM missing for hour $fhr 
+#				msg="$RUNMEM FORECAST MISSING for hour $fhr"
+#				postmsg "$jlogfile" "$msg"
+#				export err=9
+#				err_chk
+#			fi # [ $ic -eq $SLEEP_LOOP_MAX ]
+#		done # [ $ic -le $SLEEP_LOOP_MAX ]
 
-		msg="Starting post for fhr=$fhr"
-		postmsg "$jlogfile" "$msg"
+#		msg="Starting post for fhr=$fhr"
+#		postmsg "$jlogfile" "$msg"
 
 		###############################
 		# link sigma and flux files
 		###############################
 		rm -rf sigfile flxfile
-		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sigfile.f$fhr$cfsuffix
-		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
-		ln -s $COMIN/$cyc/sflux/${RUNMEM}.t${cyc}z.sfluxgrbf$fhr$cfsuffix flxfile.f$fhr$cfsuffix
+
+#		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sigfile.f$fhr$cfsuffix
+		ln -s $COMROT/gfs.t${cyc}z.atmf${fhr}.nemsio sigfile.f$fhr$cfsuffix
+#		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
+#		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
+		ln -s NULL flxfile.f$fhr$cfsuffix
+		ln -s NULL flxfile.f$fhr$cfsuffix
 
 		###################################3
 		# Create Master Post File
@@ -548,12 +554,21 @@ while (( fhr <= FHOUR )); do
 			ecflow_client --event f${fhr}_done
 			echo
 		fi # test $SENDCOM = "YES"
-	fi # [[ ! -s $mcfile ]]
+#	fi # [[ ! -s $mcfile ]]
 
 	export fhr=`expr $fhr + $FHINC`
-	if (( fhr < 10 )); then
-		export fhr="0$fhr"
-	fi
+
+if (( fhr < 10 )); then
+        fhr=00$fhr
+elif (( fhr >= 10 )) && (( fhr < 100 )); then
+        fhr=0$fhr
+fi
+export fhr
+
+
+#	if (( fhr < 10 )); then
+#		export fhr="0$fhr"
+#	fi
 done # while (( fhr <= FHOUR ))
 
 cat $pgmout

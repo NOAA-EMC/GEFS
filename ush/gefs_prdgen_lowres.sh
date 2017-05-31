@@ -80,10 +80,10 @@ postmsg "$jlogfile" "$msg"
 ####################################
 # Step I: create 2.5 x 2.5 pgrb2
 ####################################
-$WGRIB2 $COMIN/$cyc/$mem/pgrbm$fhr1.gfs.$PDY$cyc.grib2 $option1 $option21 $option22 $option23 -new_grid $grid pgb2file.$ffhr.2$cfsuffix
+$WGRIB2 $COMIN/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr1$cfsuffix $option1 $option21 $option22 $option23 -new_grid $grid pgb2file.$ffhr.2$cfsuffix
 
 #$COPYGB2 -g "${grid}" -i0 -x $COMIN/$cyc/$mem/pgrbm$fhr1.gfs.$PDY$cyc.grib2 pgb2file.$ffhr.2$cfsuffix
-#$COPYGB2 -g "${grid}" -i0 -x $COMIN/$cyc/master/$RUNMEM.$cycle.master.grb2$ffhr$cfsuffix pgb2file.$ffhr.2$cfsuffix
+#$COPYGB2 -g "${grid}" -i0 -x $COMIN/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr1$cfsuffix pgb2file.$ffhr.2$cfsuffix
 echo `date` pgrba 2.5x2.5 grbindex $ffhr completed
 
 if (( fhr == 0 )); then

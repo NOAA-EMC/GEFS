@@ -254,7 +254,7 @@ case $FORECAST_SEGMENT in
 				export FHINC_HIGH=9
 				;;
 			(*) 
-				export DOANALYSIS=YES;
+				export DOANALYSIS=NO;
 				export SHOUR=00;
 				export FHINC_HIGH=3
 				;;
@@ -372,7 +372,7 @@ if test $SHOUR -le $FHOUR_HIGH; then
 
 #	$HOMEgefs/scripts/exgefs_nceppost.sh.ecf
 
-	export SHOUR=`expr $FHOUR_HIGH + $FHINC_HIGH`
+#	export SHOUR=`expr $FHOUR_HIGH + $FHINC_HIGH`
 fi # test $SHOUR -le $FHOUR_HIGH
 
 ###################################################
@@ -504,8 +504,8 @@ export machine=$(echo $machine|tr '[a-z]' '[A-Z]')
 ################################################################################
 export RUNMEM=$RUNMEM
 export mem=`echo $RUNMEM|cut -c3-5`
-export COMOUT=$COMOUT/$cyc/$mem
-mkdir -p $COMOUT
+export COMOUT=$COMOUT
+#mkdir -p $COMOUT
 export GESOUT=${GESOUT:-$GESROOT/${envir}}
 export GESOUT=$GESOUT/gefs.${PDY}
 export FV3GESOUT=$GESROOT\/${envir}/fv3gefs.${PDY}
@@ -527,12 +527,14 @@ else
  $REGRIDNEMSIOSH
  if [[ $? -ne 0 ]];then exit 1;fi
 fi
-export RUN=gfs
+export RUN=gefs
 echo
 eval export DATA=$DATATMP
 rm -rf $DATA||exit 1;mkdir -p $DATA||exit 1; cd $DATA||exit 1
 chmod ${permission:-755} $DATA
-$POSTJJOB                                        #converts nemsio to grib2 and run down-stream jobs
+export DOANALYSIS=NO
+#$POSTJJOB                                        #converts nemsio to grib2 and run down-stream jobs
+	$HOMEgefs/scripts/exgefs_nceppost.sh.ecf
 if [[ $? -ne 0 ]];then $PERR;exit 1;fi
 
 

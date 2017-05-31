@@ -85,9 +85,9 @@ if [[ -s $DATA/pgrb2$ffhr$cfsuffix ]] && \
 	echo `date` 1x1 pgrb2 processing skipped for $RUNMEM $ffhr
 else
 
-$WGRIB2 $COMIN/$cyc/$mem/pgrbm$fhr1.gfs.$PDY$cyc.grib2 $option1 $option21 $option22 $option23 -new_grid $grid pgb2file.$ffhr$cfsuffix
+$WGRIB2 $COMIN/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr1$cfsuffix $option1 $option21 $option22 $option23 -new_grid $grid pgb2file.$ffhr$cfsuffix
 #	$COPYGB2 -g "${grid}" -i0 -x $COMIN/$cyc/$mem/pgrbm$fhr1.gfs.$PDY$cyc.grib2 pgb2file.$ffhr$cfsuffix
-#	$COPYGB2 -g "${grid}" -i0 -x $COMIN/$cyc/master/$RUNMEM.$cycle.master.grb2$ffhr$cfsuffix pgb2file.$ffhr$cfsuffix
+#	$COPYGB2 -g "${grid}" -i0 -x $COMIN/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr1$cfsuffix pgb2file.$ffhr$cfsuffix
 	echo `date` pgrb2ap5 1x1 grbfile $ffhr completed
 
 	######################################################
