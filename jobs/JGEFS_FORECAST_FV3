@@ -539,7 +539,7 @@ COMCOP='$DMPDIR/$CDATE/${CDUMP}'
 # ----------------------------------
 # options for NST in GFS & GSI
 # ----------------------------------
- export NST_FCST=2           # default 0: No NSSTM,                                   W/O  Tr analysis
+ export NST_FCST=0           # default 0: No NSSTM,                                   W/O  Tr analysis
                              #         1: With NSSTM but run passively (uncoupled),   W/O  Tr analysis
                              #         2: With NSSTM and run actively    (coupled),   W/O  Tr analysis
  export NST_GSI=3            # default 0: No NST info at all;
@@ -574,6 +574,7 @@ COMCOP='$DMPDIR/$CDATE/${CDUMP}'
  export FAC_TSL=1         # 0 = Thermal Skin Model(TSM) off (default); 1 = TSM on
  export NST_STZR=0        # 0 = physical Tz retrieval save off; 1 =  Tz retrieval save on
 
+export cdmbgwd="1.0,1.2"
 FORECASTSH=$SCRDIR/exglobal_fcst_nemsfv3gfs.sh
 EXECDIR=$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin
 IC_DIR=$FV3GESOUT
