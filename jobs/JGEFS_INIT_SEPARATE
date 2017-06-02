@@ -31,14 +31,6 @@ else
 	export cycsuffix=true
 fi
 
-
-
-##############################
-# Run setpdy and initialize PDY variables
-##############################
-setpdy.sh
-. PDY
-
 ####################################
 # obtain unique process id (pid) and make working directory
 ####################################
@@ -51,6 +43,12 @@ if [[ -d $DATA ]]; then
 fi
 mkdir -p $DATA
 cd $DATA
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
 
 ####################################
 # Specify NET and RUN Name and model

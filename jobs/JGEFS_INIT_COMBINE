@@ -31,12 +31,6 @@ else
 	export cycsuffix=true
 fi # (( cyc == cyc_fcst ))
 
-##############################
-# Run setpdy and initialize PDY variables
-##############################
-setpdy.sh
-. PDY
-
 ####################################
 # obtain unique process id (pid) and identify working directory
 ####################################
@@ -47,6 +41,11 @@ echo DATA=$DATA
 cd $DATA
 
 
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
 
 ####################################
 # Specify NET and RUN Name and model

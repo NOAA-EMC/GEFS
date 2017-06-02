@@ -417,8 +417,7 @@ while (( fhr <= FHOUR )); do
 		ln -s $COMROT/gfs.t${cyc}z.atmf${fhr}.nemsio sigfile.f$fhr$cfsuffix
 #		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
 #		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
-		ln -s NULL flxfile.f$fhr$cfsuffix
-		ln -s NULL flxfile.f$fhr$cfsuffix
+		ln -s $COMROT/gfs.t${cyc}z.atmf${fhr}.nemsio flxfile.f$fhr$cfsuffix
 
 		###################################3
 		# Create Master Post File

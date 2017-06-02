@@ -31,12 +31,6 @@ else
         export cycsuffix=true
 fi # (( cyc == cyc_fcst ))
 
-##############################
-# Run setpdy and initialize PDY variables
-##############################
-setpdy.sh
-. PDY
-
 ####################################
 # obtain unique process id (pid) and identify working directory
 ####################################
@@ -46,6 +40,11 @@ export DATA=$DATAROOT/gefs_init_$PDY$cyc.$envir.save
 echo DATA=$DATA
 cd $DATA
 
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
 
 
 ####################################
