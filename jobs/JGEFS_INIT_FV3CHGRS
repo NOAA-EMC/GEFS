@@ -184,7 +184,7 @@ cp $GESOUT/ge$mem.t00z.nsnanl $GESOUT/$mem/nsnanl.gfs.$PDY$cyc
 
 testfile=$GESOUT/$mem/sfnanl.gfs.$PDY$cyc                       
 nsleep=0; tsleep=120;  msleep=50 
-while test ! -s $GESOUT/$mem/sfnanl.gfs.$PDY$cyc -a $nsleep -lt $msleep;do
+while test ! -s $testfile -a $nsleep -lt $msleep;do
   sleep $tsleep; nsleep=`expr $nsleep + 1`
 done
 
