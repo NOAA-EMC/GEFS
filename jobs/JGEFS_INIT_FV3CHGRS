@@ -35,9 +35,13 @@ fi # (( cyc == cyc_fcst ))
 # obtain unique process id (pid) and identify working directory
 ####################################
 export pid=$$
-export DATA=$DATAROOT/gefs_init_$PDY$cyc.$envir.save
+export DATA=$DATAROOT/gefs_fv3chgrs_$PDY$cyc.$envir.save
 
 echo DATA=$DATA
+if [[ -d $DATA ]]; then
+  rm -rf $DATA
+fi
+mkdir -p $DATA
 cd $DATA
 
 ##############################
@@ -111,7 +115,7 @@ export COMOUT=${COMOUT:-${COM_OUT}/${RUN}.${PDY}}
 ##############################################
 export GESOUT=${GESOUT:-$GESROOT/${envir}}
 export GESOUT=$GESOUT/gefs.${PDY}
-export FV3GESOUT=$GESROOT\/${envir}/fv3gefs.${PDY}
+export FV3GESOUT=$GESROOT/${envir}/fv3gefs.${PDY}
 ##############################################
 echo list environment before running script
 ##############################################
@@ -119,76 +123,46 @@ echo list environment before running script
 env | sort
 
 #--------------------------------------------------------------------------------
-# This script is used to create FV3 initial conditions using operational GFS ICs
-# then run forecast-only FV3GFS experiments for multiple cases.
-# December 2016, Fanglin Yang
-#--------------------------------------------------------------------------------
-
-export PSLOT=fv3test          
-#paradir=/gpfs/hps/emc/ensemble/noscrub/$LOGNAME/Bing.Fu/para_gfs/pr$PSLOT 
 
 . $MODULESHOME/init/sh  2>>/dev/null
 module load prod_util hpss >>/dev/null
-export workflow_ver=v15.0.0
-export global_shared_ver=v15.0.0
-export tags=trunk     
-export PTMP=/gpfs/hps/ptmp
-export BASE_SVN=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Bing.Fu/svn/fv3gfs
-export BASE_GSM=$BASE_SVN/$tags/global_shared.$global_shared_ver
-export CASE=C384
-export res=`echo $CASE|cut -c 2-`
+#export workflow_ver=v15.0.0
+export BASE_SVN=$HOMEDIR1/fv3gfs
+export BASE_GSM=$HOMEgsm
+export CASE=$caseh
 export RUNMEM=$RUNMEM
 export mem=`echo $RUNMEM|cut -c 3-`
-ROTDIR=$COMOUT
-
+#ROTDIR=$COMOUT
+mkdir -p $DATA/$mem
 #-- create ICs using operational GFS initial conditions
-#.......................................................
 
 #--start from operational GFS initial conditions
-COMROT=${COMOUT}/${RUN}.${PDY}
 
 set -eux
-#-------------------------------------------------------------------------------------------------
-# Makes ICs on fv3 globally uniform cubed-sphere grid using operational GFS initial conditions.
-# Fanglin Yang, 09/30/2016
-#  This script is created based on the C-shell scripts fv3_gfs_preproc/IC_scripts/DRIVER_CHGRES.csh
-#  and submit_chgres.csh provided by GFDL.  APRUN and environment variables are added to run on 
-#  WCOSS CRAY.  Directory and file names are standaridized to follow NCEP global model convention.
-#  This script calls fv3gfs_chgres.sh.
-# Fanglin Yang and George Gayno, 02/08/2017
-#  Modified to use the new CHGRES George Gayno developed.
-# Fanglin Yang 03/08/2017
-#  Generalized and streamlined the script and enabled to run on multiple platforms.
 #-------------------------------------------------------------------------------------------------
 
 echo `date` $0 begin
 
 set -x
-mkdir -p $GESOUT/$mem
-export NODE=1
-export inidir=$GESOUT/$mem
-export rundir=$GESOUT/$mem
+export inidir=$DATA/$mem
+export rundir=$DATA/$mem
 export out_dir=$FV3GESOUT/$mem
-export tmp_dir=$GESOUT/$mem
-export DATATMP=$GESOUT/$mem
-export DATA=$GESOUT/$mem
-export TMPDIR=$GESOUT/$mem
+export tmp_dir=$DATA/$mem
+export DATATMP=$DATA/$mem
+export TMPDIR=$DATA/$mem
 export cdate=$PDY$cyc
 export ictype=nemsgfs
-cp $GESOUT/ge$mem.t00z.sanl $GESOUT/$mem/gfnanl.gfs.$PDY$cyc                 
-cp $GESOUT/ge$mem.t00z.sfcanl $GESOUT/$mem/sfnanl.gfs.$PDY$cyc         
-cp $GESOUT/ge$mem.t00z.nsnanl $GESOUT/$mem/nsnanl.gfs.$PDY$cyc
-#export ATMANL=$GESOUT/$mem/gfnanl.gfs.$PDY$cyc
-#export SFCANL=$GESOUT/$mem/sfnanl.gfs.$PDY$cyc
-#export NSTANL=$GESOUT/$mem/nsnanl.gfs.$PDY$cyc
+cp $GESOUT/ge$mem.t00z.sanl $inidir/gfnanl.gfs.$PDY$cyc                 
+cp $GESOUT/ge$mem.t00z.sfcanl $inidir/sfnanl.gfs.$PDY$cyc         
+cp $GESOUT/ge$mem.t00z.nsnanl $inidir/nsnanl.gfs.$PDY$cyc
 
-testfile=$GESOUT/$mem/sfnanl.gfs.$PDY$cyc                       
+testfile=$inidir/sfnanl.gfs.$PDY$cyc                       
 nsleep=0; tsleep=120;  msleep=50 
-while test ! -s $GESOUT/$mem/sfnanl.gfs.$PDY$cyc -a $nsleep -lt $msleep;do
+while test ! -s $testfile -a $nsleep -lt $msleep;do
   sleep $tsleep; nsleep=`expr $nsleep + 1`
 done
 
-$BASE_GSM/ush/global_chgres_driver.sh
+$USHgsm/global_chgres_driver.sh
 
 #.......................................................
 

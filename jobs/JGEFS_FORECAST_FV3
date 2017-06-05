@@ -15,14 +15,9 @@ if [ "$RUN_ENVIR" = dev ]; then ### For Developers
         . $basesource/nwdev/parm/gefs_config
         export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
-export WRT_GROUP=2
-export WRTPE_PER_GROUP=4
-export LDFIFLTO=.true.
 export machine=$machine
 export nemsioget=$nemsioget
-export PARM_NGAC=/gpfs/tp1/nco/ops/nwprod/ngac.v1.0.2/parm
 export APRUN=${gefsmpexec:-mpirun.lsf}
-export DOIAU=NO
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -94,7 +89,7 @@ echo "current setting RERUN=$RERUN"
 
 # Specify Execution Areas
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
-export HOMEgsm=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Bing.Fu/svn/fv3gfs/trunk/global_shared.v15.0.0
+export HOMEgsm=$HOMEDIR1/global_shared.v15.0.0
 export EXECgsm=$HOMEgsm/exec
 export USHgsm=$HOMEgsm/ush
 export FIXgsm=$HOMEgsm/fix/fix_am
@@ -199,7 +194,6 @@ mac=`hostname |cut -c1`
 
 machine=WCOSS_C
 NEMS=YES
-CSTEP=fcst1
 if [ $machine = WCOSS ]; then
  EXPDIR=/global/save/$LOGNAME/para_gfs/pr$PSLOT
 elif [ $machine = WCOSS_C ]; then
@@ -397,7 +391,7 @@ SFCHDR=$nemsioget
 ARCDIR=$NOSCRUB/$LOGNAME/Bing.Fu/archive/pr$PSLOT
 FIT_DIR=$ARCDIR/fits                                    # Directory for SAVEFITS output
 HORZ_DIR=$ARCDIR/horiz                                  # Directory for SAVEFITS output
-DATATMP=$STMP/$LOGNAME/Bing.Fu/gefs.$PDY/$cyc/$mem
+DATATMP=$STMP/$LOGNAME/gefs.$PDY/$cyc/$mem
 DATA=$DATATMP
 TMPDIR=$DATATMP
 KEEPDATA=NO
@@ -498,9 +492,6 @@ for cyc1 in 00 06 12 18; do
  eval MFCST${cyc1}GDAS=1                      #number of GDAS forecast segments
 done
 cdump=$(echo $CDUMP|tr '[a-z]' '[A-Z]')
-#FHMAX=$(eval echo \${FHMAXFCST$cycn$cdump$nknd})
-#FHOUT=$(eval echo \${FHOUTFCST$cycn$cdump$nknd})
-#FHZER=$(eval echo \${FHZERFCST$cycn$cdump$nknd})
 
 FHMAX=$fmax1
 FHOUT=$fout1
@@ -512,29 +503,8 @@ FHZER=$fzer1
 warm_start=.false.
 #NFCST=$(echo $fdiag |awk -F '[\t,]' '{print NF}')   ;#number of forecast output
 
-
-
 REMAP_GRID=latlon        #gaussian or latlon for using fregrid or regrid_nemsio for remapping 
 CCPOST=NO                # To run concurrent post
-ARCHIVE=YES              # make online archive
-
-#  ----------------------------------
-#  dump info used by multiple steps
-#  ----------------------------------
-COMDMP='$DMPDIR/$CDATE/${CDUMP}'
-COMCOP='$DMPDIR/$CDATE/${CDUMP}'
-
-#----------------------------------------------------------
-#mkdir -p $COMROT $COMDAY $ARCDIR $FIT_DIR $HORZ_DIR $VFYARC
-#permission=755
-#chgrp rstprod $ARCDIR
-#chgrp rstprod $FIT_DIR
-#chgrp rstprod $HORZ_DIR
-#chmod $permission $COMROT
-#chmod $permission $COMDAY
-#chmod $permission $ARCDIR
-#chmod $permission $FIT_DIR
-#chmod $permission $HORZ_DIR
 
 # ----------------------------------
 # options for NST in GFS & GSI
@@ -621,22 +591,12 @@ fi
 USE_RESTART=NO                      #use restart file under COMROT/RESTART if run is interruptted
 FHSTRT=6                            #restart from a given hour if USE_RESTART=YES
 
-
 echo "-----end of $CONFIG in $0 --------"
-echo
 
-export CKSH=${CKSH:-$(echo $CSTEP|cut -c-4)}
-export CKND=${CKND:-$(echo $CSTEP|cut -c5-)}
-export machine=${machine:-WCOSS_C}
-machine=$(echo $machine|tr '[a-z]' '[A-Z]')
 eval export DATA=$DATATMP
 rm -rf $DATA||exit 1; mkdir -p $DATA||exit 1; cd $DATA||exit 1
 chmod ${permission:-755} $DATA
 
-#
-export PBEG=${PBEG:-$SHDIR/pbeg}
-export PEND=${PEND:-$SHDIR/pend}
-export PERR=${PERR:-$SHDIR/perr}
 export VERBOSE=YES
 ################################################################################
 export CDATE=$PDY$cyc
