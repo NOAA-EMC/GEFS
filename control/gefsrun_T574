@@ -1941,7 +1941,7 @@ case $taskname in
     total_tasks=1
     taskspernode=1
     node=1
-    wall_clock_limit="00:10"
+    wall_clock_limit="00:30"
     resources=1024
     job=gefs_fv3chgres_hr_$cyc
   fi
@@ -2630,6 +2630,7 @@ case $taskname in
     else
       during_previous_job=yes
     fi
+      wall_clock_limit="10:00"
     OMP_NUM_THREADS=4
 #mpmd 04-15    
     job_type=parallel

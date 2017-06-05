@@ -514,6 +514,13 @@ export DATATMP=$FV3GESOUT/$mem/posttmp
 export CDATE=$PDY$cyc
 eval export DATA=$COMROT
 cd $DATA||exit 1
+
+testfile=$COMROT/nggps3d.tile6.nc
+nsleep=0; tsleep=120;  msleep=90
+while test ! -s $testfile -a $nsleep -lt $msleep;do
+  sleep $tsleep; nsleep=`expr $nsleep + 1`
+done
+
 if [ ${REMAP_GRID:-latlon} = latlon ]; then
  echo
  $REMAPSH                                         #remap 6-tile output to global array in netcdf

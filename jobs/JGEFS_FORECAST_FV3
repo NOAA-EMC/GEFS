@@ -547,7 +547,7 @@ CCPOST=NO                # To run concurrent post
 export cdmbgwd="1.0,1.2"
 FORECASTSH=$SCRDIR/exglobal_fcst_nemsfv3gfs.sh
 EXECDIR=$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin
-IC_DIR=$FV3GESOUT
+IC_DIR=$FV3GESOUT/$mem
 if [ $REMAP_GRID = latlon ]; then
  DIAG_TABLE=$BASE_GSM/parm/parm_fv3diag/diag_table
 else
@@ -601,6 +601,13 @@ export VERBOSE=YES
 ################################################################################
 export CDATE=$PDY$cyc
 export ROTDIR=$GESOUT/$mem
+
+testfile=$IC_DIR/${CASE}_$CDATE/sfc_data.tile6.nc
+nsleep=0; tsleep=120;  msleep=50
+while test ! -s $testfile -a $nsleep -lt $msleep;do
+  sleep $tsleep; nsleep=`expr $nsleep + 1`
+done
+
 $FORECASTSH
 
 

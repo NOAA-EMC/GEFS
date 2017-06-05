@@ -356,6 +356,13 @@ if test $SHOUR -le $FHOUR; then
 	export MP_PGMMODEL=mpmd
 	rm mpmd_cmdfile
 	ln -s $MP_CMDFILE mpmd_cmdfile
+
+	testfile=$COMOUT/$cyc/master/$RUNMEM.t00z.master.grb2f$fhmax
+	nsleep=0; tsleep=120;  msleep=90
+	while test ! -s $testfile -a $nsleep -lt $msleep;do
+	  sleep $tsleep; nsleep=`expr $nsleep + 1`
+	done
+
 	$APRUN
 
 	export SHOUR=`expr $FHOUR + $FHINC`
