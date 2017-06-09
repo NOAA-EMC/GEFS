@@ -60,7 +60,7 @@ export machine='WCOSS_C'
   STMP=gpfs/hps/ptmp
 export JOBQUEUE=dev
 export HOMEDIR=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC
-export HOMEDIR1=/gpfs/hps/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda    #temporay setting
+export HOMEDIR1=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Bing.Fu/svn/fv3gfs   #temporay setting
 #export HOMEDIR1=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/q3fy17_eta    #temporay setting
 export CRAYDIR=/gpfs/td1/emc
 fi
@@ -174,14 +174,15 @@ fi         # [[ $LOGNAME = glopara ]]
 if [[ $machl = s ]] || [[ $machl = l ]]; then
 
 if [[ "$LOGNAME" = "emc.enspara" ]]; then
-  userin="Bing.Fu"
+# if run with emc.enspara account, you need to specify username
+#  userin="Bing.Fu"
   export basesource=/$group/save/$LOGNAME/$userin/$expid
   export basebin=$basesource/nw$envir/control
-  userout="Bing.Fu"
+#  userout="Bing.Fu"
   export baseoutput=/$PTMP/$LOGNAME/$userout/o/$expid
   export basetmp=/$STMP/$LOGNAME/$userout/o/$expid
   export baseptmp=/$PTMP/$LOGNAME/$userout/o/$expid
-  usergfs="Bing.Fu"
+#  usergfs="Bing.Fu"
   export basedgfs=/$group/noscrub/$usergfs/o
   dh=`date +%H`
   if (( dh >= 00 )) && (( dh < 25 )); then

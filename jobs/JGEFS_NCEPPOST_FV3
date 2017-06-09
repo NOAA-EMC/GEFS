@@ -407,11 +407,16 @@ fi
 
 echo `date` $0 `date -u` end
 
+if [[ $FORECAST_SEGMENT = hr ]] ; then
+CASE=$caseh;
+else
+CASE=$casel;
+fi
+
 echo starting fv3 nceppost....
-export CASE=C384
-export BASE_GSM=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Bing.Fu/svn/fv3gfs/trunk/global_shared.v15.0.0
-export BASE_POST=/gpfs/hps/emc/ensemble/noscrub/$LOGNAME/Bing.Fu/svn/fv3gfs/post4fv3
-export BASEDIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Bing.Fu/svn/fv3gfs/trunk/gfs_workflow.v15.0.0/para
+export CASE=$CASE
+export BASE_GSM=$HOMEgsm
+export BASE_POST=$HOMEpost
 export LEVS=64
 export NODES=$NODES                                          #number of nodes for all post jobs
 export pe_node=24

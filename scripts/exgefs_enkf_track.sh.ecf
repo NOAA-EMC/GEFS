@@ -314,8 +314,8 @@ if (( trackflag == 1 )); then
 			export pert=${suf}${mmemh}
 			export SIGVAL="&siginfo sigpath=\"\${DATA}/sigf_\${pert}_fhr\", ddeg=1.0, reslch=0 0 /"
 #			ln -sf $COMINenkf/${cycp}/siganl_${pdycycp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr00
-			ln -sf ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio \${DATA}/sigf_\${pert}_fhr00
-			ln -sf ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.ensmean.nemsio \${DATA}/sigf_\${pert}_fhr06
+			ln -sf ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.mem0${mmem}.nemsio \${DATA}/sigf_\${pert}_fhr00
+			ln -sf ${COMINenkf}/${cycp}/gdas.t${cycp}z.atmf0${fhrp}.mem0${mmem}.nemsio \${DATA}/sigf_\${pert}_fhr06
 			$UTILgefs/ush/extrkr.sh >> ushout.track.$ipair 2>&1
 			EOF
 		echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh end">>poescript.$itask

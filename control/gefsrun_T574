@@ -1947,8 +1947,9 @@ case $taskname in
   fi
   ;;
   (fv3fcst_hr)
+    FORECAST_SEGMENT=hr
     RUN=
-  RUNMEM=ge$mem
+    RUNMEM=ge$mem
     if [[ $jjjb == $jjjfh00b ]]; then
       during_previous_job=no
     else

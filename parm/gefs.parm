@@ -22,6 +22,10 @@ export nhrpair=${nhrpair:-$npair}
 #################################################
 export fhmax=${fhmax:-384}
 export fhmaxh=${fhmaxh:-192}
+export fhouth=${fhouth:-3}
+export fhoutl=${fhoutl:-6}
+export fhzerh=${fhzerh:-6}
+export fhzerl=${fhzerl:-6}
 export caseh=${caseh:-C384}
 export casel=${casel:-C192}
 export fhmax00=${fhmax00:-$fhmax}

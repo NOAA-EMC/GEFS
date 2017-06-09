@@ -28,7 +28,7 @@ else
 fi
 
 #FCSTEXECDIR=$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin                                                                 
-FCSTEXECDIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Bing.Fu/svn/fv3gfs/NEMSfv3gfs/trunk/NEMS/exe
+FCSTEXECDIR=$BASE_SVN/NEMSfv3gfs/trunk/NEMS/exe
 FCSTEXEC=fv3_gfs_${TYPE}.${COMP}.${MODE}.x
 APRUN="aprun -n $tasks -N $task_per_node -d $nth_f $j_opt -cc depth" 
 

@@ -298,7 +298,7 @@ if (( coldstartflag == 0 )); then
 			elif (( inflagt == 5 )); then
 				fcstinn=$comfcstin/$cycstart/sfcsig/gep${ipairn}.$cyclestart.sf$fhr$cfsuffixstart
 			elif (( inflagt == 6 )); then
-				fcstinn=${COMINenkf}${pdyp0}/$cycp0/sfg_${pdyp0}${cycp0}_fhr${fhrp}_mem0${ipairin}
+				fcstinn=${COMINenkf}${pdyp0}/$cycp0/gdas.t${cycp0}z.atmf0${fhrp}.mem0${ipairin}.nemsio
 			else
 				fcstinn=$comfcstin/$cycstart/sfcsig/gec00.$cyclestart.sf$fhr$cfsuffixstart
 			fi # (( inflagt == 1 )) || (( inflagt == 3 ))
@@ -360,7 +360,7 @@ if (( coldstartflag == 0 )); then
 			elif (( inflagt == 5 )); then
 				fcstinp=$comfcstin/$cycstart/sfcsig/gep${ipairp}.$cyclestart.sf$fhr$cfsuffixstart
 			elif (( inflagt == 6 )); then
-				fcstinp=${COMINenkf}${pdyp0}/$cycp0/sfg_${pdyp0}${cycp0}_fhr${fhrp}_mem0${ipairip}
+				fcstinp=${COMINenkf}${pdyp0}/$cycp0/gdas.t${cycp0}z.atmf0${fhrp}.mem0${ipairip}.nemsio
 			else
 				fcstinp=$comfcstin/$cycstart/sfcsig/gec00.$cyclestart.sf$fhr$cfsuffixstart
 			fi # (( inflagt == 2 )) || (( inflagt == 3 ))

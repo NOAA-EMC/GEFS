@@ -15,7 +15,8 @@ if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 fi
 
 export APRUN=${gefsmpexec:-mpirun.lsf}
-
+export RUNMEM=$RUNMEM
+export mem=`echo $RUNMEM|cut -c 3-`
 ############################
 # Set up cycle varaible
 ############################
@@ -41,8 +42,8 @@ echo DATA=$DATA
 if [[ -d $DATA ]]; then
   rm -rf $DATA
 fi
-mkdir -p $DATA
-cd $DATA
+mkdir -p $DATA/$mem
+cd $DATA/$mem
 
 ##############################
 # Run setpdy and initialize PDY variables
@@ -130,10 +131,6 @@ module load prod_util hpss >>/dev/null
 export BASE_SVN=$HOMEDIR1/fv3gfs
 export BASE_GSM=$HOMEgsm
 export CASE=$caseh
-export RUNMEM=$RUNMEM
-export mem=`echo $RUNMEM|cut -c 3-`
-#ROTDIR=$COMOUT
-mkdir -p $DATA/$mem
 #-- create ICs using operational GFS initial conditions
 
 #--start from operational GFS initial conditions

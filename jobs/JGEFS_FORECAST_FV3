@@ -18,7 +18,8 @@ fi
 export machine=$machine
 export nemsioget=$nemsioget
 export APRUN=${gefsmpexec:-mpirun.lsf}
-
+export RUNMEM=$RUNMEM
+export mem=`echo $RUNMEM|cut -c3-5`
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
@@ -89,7 +90,7 @@ echo "current setting RERUN=$RERUN"
 
 # Specify Execution Areas
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
-export HOMEgsm=$HOMEDIR1/global_shared.v15.0.0
+export HOMEgsm=$HOMEgsm
 export EXECgsm=$HOMEgsm/exec
 export USHgsm=$HOMEgsm/ush
 export FIXgsm=$HOMEgsm/fix/fix_am
@@ -168,16 +169,10 @@ export SFCHDR=$nemsioget
 # Create member list
 ####################################
 
-export RUNMEM=$RUNMEM
-export mem=`echo $RUNMEM|cut -c3-5`
-
 #
 # Forecast Input Variables
 #
 . $PARMgefs/gefs_fcst.parm
-export ialb=1
-export cdmbgwd=3.5,0.25
-export random_clds=.true.
 
 # end of from GEFS previous J job script.
 
@@ -192,13 +187,11 @@ export MP_LABELIO=yes
 #--------------------------------------------
 mac=`hostname |cut -c1`
 
-machine=WCOSS_C
 NEMS=YES
 if [ $machine = WCOSS ]; then
  EXPDIR=/global/save/$LOGNAME/para_gfs/pr$PSLOT
 elif [ $machine = WCOSS_C ]; then
-# EXPDIR=/gpfs/hps/emc/ensemble/noscrub/$LOGNAME/Bing.Fu/para_gfs/pr$PSLOT
- EXPDIR=/gpfs/hps/emc/ensemble/save/emc.enspara/Bing.Fu/nemsfv3gefs/nwdev/parm
+ EXPDIR=$HOMEgefs/parm
 elif [ $machine = THEIA ]; then
 IO_IN=.true.
 NEMSIO_OUT=.true.
@@ -298,7 +291,7 @@ elif [ $machine = WCOSS_C ]; then
  NWPROD=/gpfs/hps/nco/ops/nwprod
  NWPARA=/gpfs/hps/emc/global/save/emc.glopara/nwpara
  PERTURBDIR=$NWPROD/fix/enkf_gfs
- BASE_SVN=$DISK_GLOB/$LOGNAME/Bing.Fu/svn/fv3gfs
+ BASE_SVN=$HOMEDIR1
  tags=trunk
  nemsioget=/gpfs/hps/emc/global/noscrub/emc.glopara/bin/nemsio_get
  archsyndir=$COMROOTp1/arch/prod/syndat
@@ -325,9 +318,6 @@ else
  exit
 fi
 
-
-envir=para
-NET=gefs
 ROTDIR=$ROTDIR
 COMROT=$ROTDIR/${CDUMP}.$ymd/$cycn
 COMDAY=$COMROT
@@ -388,7 +378,6 @@ SCRDIR_ENKF=$BASE_ENKF/scripts
 EXECDIR=$BASEDIR/exec
 SIGHDR=$nemsioget
 SFCHDR=$nemsioget
-ARCDIR=$NOSCRUB/$LOGNAME/Bing.Fu/archive/pr$PSLOT
 FIT_DIR=$ARCDIR/fits                                    # Directory for SAVEFITS output
 HORZ_DIR=$ARCDIR/horiz                                  # Directory for SAVEFITS output
 DATATMP=$STMP/$LOGNAME/gefs.$PDY/$cyc/$mem
@@ -453,14 +442,13 @@ nknd=${CKND:-${nknd:-1}}
 gfs_cyc=1                          # GFS cycles (00, 06, 12 and 18Z), defaults to 1 (00Z) cycle
 gdas_cyc=4                         # number of GDAS cycles
 fseg=1                             # number of AM forecast segments for gfs 
-FHCYC=24                             # Surface cycle calling interval
-
+FHCYC=24                           # Surface cycle calling interval
 LEVS=64                            # number of AM levels
-CASE1=C384                        # 1st segment resolution (0-240 hr)
-CASE2=C384                         # 2nd segment resolution (240-384 hr)
-CASE_ENKF=C382                     # ENKF resolution 
-CASE=$(eval echo \${CASE$nknd})
-if [ $CSTEP = efmn -o $CSTEP = epos ]; then CASE=$CASE_ENKF; fi
+if [[ $FORECAST_SEGMENT = hr ]] ; then
+CASE=$caseh;FHMAX=$fhmaxh;FHOUT=$fhouth;FHZER=$fhzerh;                        
+else
+CASE=$casel;FHMAX=$fhmax;FHOUT=$fhoutl;FHZER=$fhzerl;
+fi
 
 case $CASE in
   C48)   DELTIM=3600; layout_x=4  ; layout_y=8  ;;
@@ -474,10 +462,6 @@ case $CASE in
          exit ;;
 esac
 
-
-fmax1=384; fmax2=384
-fout1=3; fout2=12
-fzer1=6; fzer2=12
 for cyc1 in 00 06 12 18; do
  eval FHMAXFCST${cyc1}GFS1=$fmax1             # maximum forecast hour for 1st segment
  eval FHMAXFCST${cyc1}GFS2=$fmax2             # maximum forecast hour for 2st segment
@@ -493,10 +477,6 @@ for cyc1 in 00 06 12 18; do
 done
 cdump=$(echo $CDUMP|tr '[a-z]' '[A-Z]')
 
-FHMAX=$fmax1
-FHOUT=$fout1
-FHZER=$fzer1
-
 #---if fdiag is given, it overwrites FHOUT
 #fh00=$(echo $DELTIM 3600|awk '{printf "%f", $1/$2}')
 #fdiag="$fh00,6.,12.,18.,24.,30.,36.,42.,48.,54.,60.,66.,72.,78.,84.,90.,96.,102.,108.,114.,120.,126.,132.,138.,144.,150.,156.,162.,168.,174.,180.,186.,192.,198.,204.,210.,216.,222.,228.,234.,240."
@@ -504,7 +484,6 @@ warm_start=.false.
 #NFCST=$(echo $fdiag |awk -F '[\t,]' '{print NF}')   ;#number of forecast output
 
 REMAP_GRID=latlon        #gaussian or latlon for using fregrid or regrid_nemsio for remapping 
-CCPOST=NO                # To run concurrent post
 
 # ----------------------------------
 # options for NST in GFS & GSI
@@ -544,7 +523,6 @@ CCPOST=NO                # To run concurrent post
  export FAC_TSL=1         # 0 = Thermal Skin Model(TSM) off (default); 1 = TSM on
  export NST_STZR=0        # 0 = physical Tz retrieval save off; 1 =  Tz retrieval save on
 
-export cdmbgwd="1.0,1.2"
 FORECASTSH=$SCRDIR/exglobal_fcst_nemsfv3gfs.sh
 EXECDIR=$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin
 IC_DIR=$FV3GESOUT/$mem
@@ -574,7 +552,7 @@ else
 fi
 
 #FCSTEXECDIR=$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin
-FCSTEXECDIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Bing.Fu/svn/fv3gfs/NEMSfv3gfs/trunk/NEMS/exe
+FCSTEXECDIR=$BASE_SVN/NEMSfv3gfs/trunk/NEMS/exe
 FCSTEXEC=fv3_gfs_${TYPE}.${COMP}.${MODE}.x
 APRUN="aprun -n $tasks -N $task_per_node -d $nth_f $j_opt -cc depth"
 
@@ -583,7 +561,7 @@ TIMELIMFCSTGFS2=03:00:00
 TIMELIMFCSTGDAS1=03:00:00
 FHINI=0                              #forecast starting hour
 FHRES=264                            #interval to write restart files
-if [ $CSTEP = fcst2 ]; then
+if [ $FORECAST_SEGMENT = lr ]; then
  FHINI=$fmax1
  FHRES=400
 fi
@@ -600,7 +578,7 @@ chmod ${permission:-755} $DATA
 export VERBOSE=YES
 ################################################################################
 export CDATE=$PDY$cyc
-export ROTDIR=$GESOUT/$mem
+export ROTDIR=$COMOUT/$mem
 
 testfile=$IC_DIR/${CASE}_$CDATE/sfc_data.tile6.nc
 nsleep=0; tsleep=120;  msleep=50

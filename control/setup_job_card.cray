@@ -148,7 +148,7 @@ export COMROOTp1=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/o/com
 export COMROOTp2=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/o/com
 echo COMROOTp1=$COMROOTp1
 echo COMROOTp2=$COMROOTp2
-
+export machine="WCOSS_C"
 export IOBUF_PARAMS=$IOBUFSET
 export FORT_BUFFERED=TRUE
 eofCAT
