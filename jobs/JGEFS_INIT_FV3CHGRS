@@ -39,8 +39,8 @@ export pid=$$
 export DATA=$DATAROOT/gefs_fv3chgrs_$PDY$cyc.$envir.save
 
 echo DATA=$DATA
-if [[ -d $DATA ]]; then
-  rm -rf $DATA
+if [[ -d $DATA/$mem ]]; then
+  rm -rf $DATA/$mem
 fi
 mkdir -p $DATA/$mem
 cd $DATA/$mem

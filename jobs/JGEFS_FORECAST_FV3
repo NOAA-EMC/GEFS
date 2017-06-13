@@ -450,6 +450,45 @@ else
 CASE=$casel;FHMAX=$fhmax;FHOUT=$fhoutl;FHZER=$fhzerl;
 fi
 
+export MEMBER=21
+
+if [[ $FORECAST_SEGMENT = hr ]] ; then
+
+if [[ $STOC_SPPT = .true. ]] ; then
+export SPPT=$SPPT_hr
+export do_sppt=.true.
+export ISEED_SPPT=$ISEED_SPPT_hr
+export SPPT_LOGIT=$SPPT_LOGIT_hr
+export SPPT_TSCALE=$SPPT_TAU_hr
+export SPPT_LSCALE=$SPPT_LSCALE_hr
+export sppt_sigtop1=$sppt_sigtop1_hr
+export sppt_sigtop2=$sppt_sigtop2_hr
+export sppt_sfclimit=$sppt_sfclimit_hr
+fi
+
+if [[ $STOC_SHUM = .true. ]] ; then
+export do_shum=.true.
+export SHUM=$SHUM_hr
+export ISEED_SHUM=$ISEED_SHUM_hr
+export SHUM_TSCALE=$SHUM_TAU_hr
+export SHUM_LSCALE=$SHUM_LSCALE_hr
+export shum_sigefold=$shum_sigefold_hr
+fi
+
+if [[ $STOC_SKEB = .true. ]] ; then
+export do_skeb=.true.
+export SKEB=$SKEB_hr
+export ISEED_SKEB=$ISEED_SKEB_hr
+export SKEB_TSCALE=$SKEB_TAU_hr
+export SKEB_LSCALE=$SKEB_LSCALE_hr
+export SKEB_VFILT=$SKEB_VFILT_hr
+export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr
+export skeb_sigtop1=$skeb_sigtop1_hr
+export skeb_sigtop2=$skeb_sigtop2_hr
+fi
+
+fi
+
 case $CASE in
   C48)   DELTIM=3600; layout_x=4  ; layout_y=8  ;;
   C96)   DELTIM=1800; layout_x=4  ; layout_y=8  ;;
@@ -552,7 +591,7 @@ else
 fi
 
 #FCSTEXECDIR=$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin
-FCSTEXECDIR=$BASE_SVN/NEMSfv3gfs/trunk/NEMS/exe
+FCSTEXECDIR=$BASE_SVN/NEMSfv3gfs/stochy/NEMS/exe
 FCSTEXEC=fv3_gfs_${TYPE}.${COMP}.${MODE}.x
 APRUN="aprun -n $tasks -N $task_per_node -d $nth_f $j_opt -cc depth"
 
