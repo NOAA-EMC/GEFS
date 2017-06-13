@@ -243,6 +243,11 @@ export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,rdgrid=$RDGRID,idsl=$IDSL,idv
 
 # Change resolution of the high-res forecast files
 # Write the resulted files in $GESOUT and make a copy in $DATA 
+if [[ nstinit == no ]]; then
+echo nsst is not used
+eval export NSNOUT=NULL
+eval export NSTINP=NULL
+else
 if [[ $CHGRES_ALL = YES ]] ; then
 	for MN in $MEMBER_NAMES; do
 		eval export SIGOUT=$GESOUT/${RUNMEM}.${cycle}.sig${HOUTASPS}_T$JCAP\L$LEVS
@@ -310,6 +315,7 @@ else
 	$chgresush >>$pgmout
 	echo `date` timing lr chgres after
 fi # [[ $CHGRES_ALL = YES ]]
+fi
 
 # End of resolution change
 

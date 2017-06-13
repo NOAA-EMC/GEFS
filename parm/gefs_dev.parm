@@ -24,6 +24,8 @@ shum_export=1
 skeb_import=1
 skeb_export=1
 
+export nstinit=no
+
 export npair=10
 export fhmax=384
 export fhmaxh=192

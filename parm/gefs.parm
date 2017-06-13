@@ -16,7 +16,7 @@ fi
 ##############################################
 export npair=${npair:-10}
 export nhrpair=${nhrpair:-$npair}
-
+export nstinit=${nstinit:-yes}
 #################################################
 # Forecast Hour: fhmax and fhmaxh and fhmax_ext
 #################################################
