@@ -344,7 +344,7 @@ export RDGRID=.true.
 
 	# check for missing or zero-length analysis files
 
-	for file in $SIGINP $SFCINP $NSTINP; do
+	for file in $SIGINP $SFCINP; do
 		if [[ -s $file ]]; then
 			ls -al $file
 		else
@@ -352,7 +352,20 @@ export RDGRID=.true.
 			export err=9
 			err_chk
 		fi # [[ -s $file ]]
-	done # for file in $SIGINP $SFCINP $NSTINP
+	done # for file in $SIGINP $SFCINP
+
+        if [[ $nstinit == yes ]]; then
+        export NSTINP=$COMINgfs/gfs.$cycle.nstanl.nemsio
+        if [[ -s $NSTINP ]]; then
+                        ls -al $file
+                else
+                        echo input file $NSTINP IS MISSING
+                        export err=9
+                        err_chk
+        fi # [[ -s $NSTINP ]]
+        else
+        export NSTINP=NULL
+        fi
 
         if [ $NEMSIO_IN = .true. ] ; then
 	ojcap=$($nemsioget ${SIGINP} jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
