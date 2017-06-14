@@ -1,0 +1,32 @@
+Run gefs workflow via ROCOTO
+
+1) Set up ROCOTO and python environment
+   >module use -a /gpfs/hps/emc/global/noscrub/emc.glopara/TUTORIAL/gfs_workflow.v3.0.0/para/exp/conf/modulefiles/machine  #luna, surge
+   >module load pyprodutil
+   >module use -a /gpfs/hps/emc/hwrf/noscrub/soft/modulefiles
+   >module load rocoto
+
+2) Check a working copy of gefs rocoto based workflow from EMC subversion
+   >svn co https://svnemc.ncep.noaa.gov/projects/gefs/branches/gefs_rocoto
+   >mkdir tfAa; cd tfAa
+   >ln -s your_local_directory/gefs_rocoto nwdev
+   >cd nwdev/sorc; ./build_all.sh
+    Build all executable for running GEFS.
+
+3) Generate ROCOTO xml and conjob 
+   a) >cd tfAa/nwdev/rocoto
+       edit the file user.conf with working directory, workflow directory, date, cycle and so of
+       your experinment.
+   b) >./run_gefs.py -w gefs.xml
+       The rocoto xml file ges.xml and conjob file cron_rocoto should be generated.
+   c) >crontab cron_rocoto
+         lunch cron job.
+   d) >rocotostat -w gefs.xml -d gefs.db
+       check the status of job running.
+   e) Go to $WORKDIR (defined in user.conf) for checking job standard outputs and output files
+      of your experiment.
+   
+   
+
+
+
