@@ -116,7 +116,7 @@ export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 export FV3GESOUT=$GESROOT/${envir}/fv3gefs.${PDY}
 # RLW 20150320 update restart procedure, use sfcsig files instead of restart files
-SFCSIG=$COMOUT/$cyc/sfcsig
+export SFCSIG=$COMOUT/$cyc/sfcsig
 
 mkdir -m 775 -p $COMOUT/$cyc/sfcsig
 mkdir -m 775 -p $COMOUT/$cyc/sflux
@@ -451,7 +451,11 @@ CASE=$casel;FHMAX=$fhmax;FHOUT=$fhoutl;FHZER=$fhzerl;
 fi
 
 export MEMBER=21
-
+export SPPT_LSCALE_hr=500.e3
+export SHUM_LSCALE_hr=500.e3
+export SKEB_LSCALE_hr=500.e3
+export SKEB_hr=0.01
+export SPPT_hr=0.6
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 
 if [[ $STOC_SPPT = .true. ]] ; then
@@ -492,7 +496,8 @@ fi
 case $CASE in
   C48)   DELTIM=3600; layout_x=4  ; layout_y=8  ;;
   C96)   DELTIM=1800; layout_x=4  ; layout_y=8  ;;
-  C192)  DELTIM=900 ; layout_x=4  ; layout_y=8  ;;
+# C192)  DELTIM=900 ; layout_x=4  ; layout_y=8  ;;
+  C192)  DELTIM=600 ; layout_x=4  ; layout_y=8  ;;
   C384)  DELTIM=450 ; layout_x=4  ; layout_y=8  ;;
   C768)  DELTIM=225 ; layout_x=8  ; layout_y=16 ;;
   C1152) DELTIM=150 ; layout_x=8  ; layout_y=16 ;;
@@ -617,7 +622,7 @@ chmod ${permission:-755} $DATA
 export VERBOSE=YES
 ################################################################################
 export CDATE=$PDY$cyc
-export ROTDIR=$COMOUT/$mem
+export ROTDIR=$SFCSIG/$mem
 
 testfile=$IC_DIR/${CASE}_$CDATE/sfc_data.tile6.nc
 nsleep=0; tsleep=120;  msleep=50

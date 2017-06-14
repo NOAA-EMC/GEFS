@@ -514,8 +514,8 @@ export COMOUT=$COMOUT
 export GESOUT=${GESOUT:-$GESROOT/${envir}}
 export GESOUT=$GESOUT/gefs.${PDY}
 export FV3GESOUT=$GESROOT\/${envir}/fv3gefs.${PDY}
-COMROT=$GESOUT/$mem
-export DATATMP=$FV3GESOUT/$mem/posttmp
+COMROT=$COMOUT/$cyc/sfcsig/$mem
+export DATATMP=$DATA/posttmp
 export CDATE=$PDY$cyc
 eval export DATA=$COMROT
 cd $DATA||exit 1
