@@ -170,7 +170,7 @@ fi
 
 if [[ $STOC_SKEB = .true. ]]; then
 	export SKEB_hr=${SKEB_hr:-"1.0,-999,-999,-999,-999"}                               # Amplitude of SPPT patterns
-	export SKEB_TAU_hr=${SKEB_TAU_hr:-"2.164E4,1.728E5,2.592E6,7.776E6,3.1536E7"}      # Time scale in seconds
+	export SKEB_TAU_hr=${SKEB_TAU_hr:-"2.16E4,1.728E5,2.592E6,7.776E6,3.1536E7"}      # Time scale in seconds
 	export SKEB_LSCALE_hr=${SKEB_LSCALE_hr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
 	export SKEB_VFILT_hr=${SKEB_VFILT_hr:-40}                                          # number of iterations of a 1-2-1 filter of the random pattern in the vertical
 	export SKEB_DISS_SMOOTH_hr=${SKEB_DISS_SMOOTH_hr:-12}                              # number of iterations of smoothing the dissipation estimate in the horizontal

@@ -449,13 +449,22 @@ CASE=$caseh;FHMAX=$fhmaxh;FHOUT=$fhouth;FHZER=$fhzerh;
 else
 CASE=$casel;FHMAX=$fhmax;FHOUT=$fhoutl;FHZER=$fhzerl;
 fi
-
-export MEMBER=21
+if [[ $mem = c00 ]] ;then 
+MEMBER=21
+else
+MEMBER=`echo $mem|cut -c2-3`
+fi
+export MEMBER=$MEMBER
+export SET_STP_SEED=YES
 export SPPT_LSCALE_hr=500.e3
 export SHUM_LSCALE_hr=500.e3
 export SKEB_LSCALE_hr=500.e3
-export SKEB_hr=0.01
+export SKEB_hr=0.028
 export SPPT_hr=0.6
+export JCAP=382
+export LONB=768
+export LATB=384
+
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 
 if [[ $STOC_SPPT = .true. ]] ; then
@@ -496,7 +505,7 @@ fi
 case $CASE in
   C48)   DELTIM=3600; layout_x=4  ; layout_y=8  ;;
   C96)   DELTIM=1800; layout_x=4  ; layout_y=8  ;;
-# C192)  DELTIM=900 ; layout_x=4  ; layout_y=8  ;;
+#  C192)  DELTIM=900 ; layout_x=4  ; layout_y=8  ;;
   C192)  DELTIM=600 ; layout_x=4  ; layout_y=8  ;;
   C384)  DELTIM=450 ; layout_x=4  ; layout_y=8  ;;
   C768)  DELTIM=225 ; layout_x=8  ; layout_y=16 ;;
@@ -567,7 +576,7 @@ REMAP_GRID=latlon        #gaussian or latlon for using fregrid or regrid_nemsio 
  export FAC_TSL=1         # 0 = Thermal Skin Model(TSM) off (default); 1 = TSM on
  export NST_STZR=0        # 0 = physical Tz retrieval save off; 1 =  Tz retrieval save on
 
-FORECASTSH=$SCRDIR/exglobal_fcst_nemsfv3gfs.sh
+FORECASTSH=$SCRDIR/exglobal_fcst_nemsfv3gfs_sp.sh
 EXECDIR=$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin
 IC_DIR=$FV3GESOUT/$mem
 if [ $REMAP_GRID = latlon ]; then
