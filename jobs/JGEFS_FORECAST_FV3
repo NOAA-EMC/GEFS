@@ -443,7 +443,9 @@ gfs_cyc=1                          # GFS cycles (00, 06, 12 and 18Z), defaults t
 gdas_cyc=4                         # number of GDAS cycles
 fseg=1                             # number of AM forecast segments for gfs 
 FHCYC=24                           # Surface cycle calling interval
-LEVS=64                            # number of AM levels
+LEVS=65                            # number of AM levels
+export MONO="mono"
+
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 CASE=$caseh;FHMAX=$fhmaxh;FHOUT=$fhouth;FHZER=$fhzerh;                        
 else
@@ -456,11 +458,13 @@ MEMBER=`echo $mem|cut -c2-3`
 fi
 export MEMBER=$MEMBER
 export SET_STP_SEED=YES
+
 export SPPT_LSCALE_hr=500.e3
 export SHUM_LSCALE_hr=500.e3
 export SKEB_LSCALE_hr=500.e3
 export SKEB_hr=0.028
-export SPPT_hr=0.6
+export SPPT_hr=0.4
+export SKEBNORM=1
 export JCAP=382
 export LONB=768
 export LATB=384
@@ -472,7 +476,7 @@ export SPPT=$SPPT_hr
 export do_sppt=.true.
 export ISEED_SPPT=$ISEED_SPPT_hr
 export SPPT_LOGIT=$SPPT_LOGIT_hr
-export SPPT_TSCALE=$SPPT_TAU_hr
+export SPPT_TAU=$SPPT_TAU_hr
 export SPPT_LSCALE=$SPPT_LSCALE_hr
 export sppt_sigtop1=$sppt_sigtop1_hr
 export sppt_sigtop2=$sppt_sigtop2_hr
@@ -483,7 +487,7 @@ if [[ $STOC_SHUM = .true. ]] ; then
 export do_shum=.true.
 export SHUM=$SHUM_hr
 export ISEED_SHUM=$ISEED_SHUM_hr
-export SHUM_TSCALE=$SHUM_TAU_hr
+export SHUM_TAU=$SHUM_TAU_hr
 export SHUM_LSCALE=$SHUM_LSCALE_hr
 export shum_sigefold=$shum_sigefold_hr
 fi
@@ -492,7 +496,7 @@ if [[ $STOC_SKEB = .true. ]] ; then
 export do_skeb=.true.
 export SKEB=$SKEB_hr
 export ISEED_SKEB=$ISEED_SKEB_hr
-export SKEB_TSCALE=$SKEB_TAU_hr
+export SKEB_TAU=$SKEB_TAU_hr
 export SKEB_LSCALE=$SKEB_LSCALE_hr
 export SKEB_VFILT=$SKEB_VFILT_hr
 export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr
@@ -501,6 +505,12 @@ export skeb_sigtop2=$skeb_sigtop2_hr
 fi
 
 fi
+#export do_sppt=.false.
+#export do_shum=.false.
+#export do_skeb=.false.
+#export SPPT=-999.0
+#export SHUM=-999.0
+#export SKEB=-999.0
 
 case $CASE in
   C48)   DELTIM=3600; layout_x=4  ; layout_y=8  ;;
@@ -509,7 +519,7 @@ case $CASE in
   C192)  DELTIM=600 ; layout_x=4  ; layout_y=8  ;;
   C384)  DELTIM=450 ; layout_x=4  ; layout_y=8  ;;
   C768)  DELTIM=225 ; layout_x=8  ; layout_y=16 ;;
-  C1152) DELTIM=150 ; layout_x=8  ; layout_y=16 ;;
+  #C1152) DELTIM=150 ; layout_x=8  ; layout_y=16 ;;
   C3072) DELTIM=90  ; layout_x=16 ; layout_y=32 ;;
   *)     echo "grid $CASE not supported, exit"
          exit ;;
@@ -544,7 +554,7 @@ REMAP_GRID=latlon        #gaussian or latlon for using fregrid or regrid_nemsio 
  export NST_FCST=0           # default 0: No NSSTM,                                   W/O  Tr analysis
                              #         1: With NSSTM but run passively (uncoupled),   W/O  Tr analysis
                              #         2: With NSSTM and run actively    (coupled),   W/O  Tr analysis
- export NST_GSI=3            # default 0: No NST info at all;
+ export NST_GSI=0            # default 0: No NST info at all;
 
                              #         1: Input NST info but not used in GSI;
                              #         2: Input NST info, used in CRTM simulation, no Tr analysis

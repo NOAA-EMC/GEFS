@@ -36,14 +36,14 @@ fi # (( cyc == cyc_fcst ))
 # obtain unique process id (pid) and identify working directory
 ####################################
 export pid=$$
-export DATA=$DATAROOT/gefs_fv3chgrs_$PDY$cyc.$envir.save
+export DATA=$DATAROOT/gefs_fv3chgrs_$PDY$cyc.$envir.save/$mem
 
 echo DATA=$DATA
-if [[ -d $DATA/$mem ]]; then
-  rm -rf $DATA/$mem
+if [[ -d $DATA ]]; then
+  rm -rf $DATA
 fi
-mkdir -p $DATA/$mem
-cd $DATA/$mem
+mkdir -p $DATA
+cd $DATA
 
 ##############################
 # Run setpdy and initialize PDY variables
@@ -141,12 +141,12 @@ set -eux
 echo `date` $0 begin
 
 set -x
-export inidir=$DATA/$mem
-export rundir=$DATA/$mem
+export inidir=$DATA
+export rundir=$DATA
 export out_dir=$FV3GESOUT/$mem
-export tmp_dir=$DATA/$mem
-export DATATMP=$DATA/$mem
-export TMPDIR=$DATA/$mem
+export tmp_dir=$DATA
+export DATATMP=$DATA
+export TMPDIR=$DATA
 export cdate=$PDY$cyc
 export ictype=nemsgfs
 cp $GESOUT/ge$mem.t00z.sanl $inidir/gfnanl.gfs.$PDY$cyc                 
@@ -158,7 +158,7 @@ nsleep=0; tsleep=120;  msleep=50
 while test ! -s $testfile -a $nsleep -lt $msleep;do
   sleep $tsleep; nsleep=`expr $nsleep + 1`
 done
-
+export LEVS=65
 $USHgsm/global_chgres_driver.sh
 
 #.......................................................

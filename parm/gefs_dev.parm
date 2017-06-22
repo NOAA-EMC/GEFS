@@ -16,7 +16,8 @@ STOC_SPPT=.true.
 STOC_SHUM=.true.
 STOC_SKEB=.true.
 STOC_VC=.false.
-
+#export LEVSHR=65
+#export LEVSLR=65
 sppt_import=1
 sppt_export=1
 shum_import=1
