@@ -22,12 +22,6 @@ export nhrpair=${nhrpair:-$npair}
 #################################################
 export fhmax=${fhmax:-384}
 export fhmaxh=${fhmaxh:-192}
-export fhouth=${fhouth:-3}
-export fhoutl=${fhoutl:-6}
-export fhzerh=${fhzerh:-6}
-export fhzerl=${fhzerl:-6}
-export caseh=${caseh:-C384}
-export casel=${casel:-C192}
 export fhmax00=${fhmax00:-$fhmax}
 export fhmax06=${fhmax06:-$fhmax}
 export fhmax12=${fhmax12:-$fhmax}
@@ -166,15 +160,25 @@ export USESUBDIR=${USESUBDIR:-YES}
 #export SEMILG=.false.
 
 #For T574L64/42 Semi-Lagrangian, 2015 Implementation
-export JCAPHR=${JCAPHR:-574}
-export LEVSHR=${LEVSHR:-64}
-export LONBHR=${LONBHR:-1152}
-export LATBHR=${LATBHR:-576}
-export NTRACHR=${NTRACHR:-3}
-export MTNRSL=${MTNRSL:-574.1152.576}
-export SEMILG=${SEMILG:-.true.}
-export DELTIM=${DELTIM:-900}
-export DTPHYS=${DTPHYS:-450}
+#export JCAPHR=${JCAPHR:-574}
+#export LEVSHR=${LEVSHR:-64}
+#export LONBHR=${LONBHR:-1152}
+#export LATBHR=${LATBHR:-576}
+#export NTRACHR=${NTRACHR:-3}
+#export MTNRSL=${MTNRSL:-574.1152.576}
+#export SEMILG=${SEMILG:-.true.}
+#export DELTIM=${DELTIM:-900}
+#export DTPHYS=${DTPHYS:-450}
+
+export CASEHR=${CASEHR:-384}
+export LEVSHR=${LEVSHR:-65}
+export DELTIM=${DTPHYS:-450}
+export layout_x=${layout_x:-4}
+export layout_y=${layout_y:-8}
+export JCAPHR=${JCAPHR:-670}
+export LONBHR=${LONBHR:-1344}
+export LATBHR=${LATBHR:-672}
+export MTNRSLHR=${MTNRSLHR:-670.1344.672}
 
 #Lower resolution part
 #For T190L42 Eulerian
@@ -187,15 +191,25 @@ export DTPHYS=${DTPHYS:-450}
 #export SEMILGLR=.false.
 
 #For T382L64 Semi-Lagrangian, 2015 Implementation
-export JCAPLR=${JCAPLR:-382}
-export LEVSLR=${LEVSLR:-64}
-export LONBLR=${LONBLR:-768}
-export LATBLR=${LATBLR:-384}
-export NTRACLR=${NTRACLR:-3}
-export MTNRSLLR=${MTNRSLLR:-382.768.384}
-export SEMILGLR=${SEMILGLR:-.true.}
-export DELTIMLR=${DELTIMLR:-1200}
-export DTPHYSLR=${DTPHYSLR:-600}
+#export JCAPLR=${JCAPLR:-382}
+#export LEVSLR=${LEVSLR:-64}
+#export LONBLR=${LONBLR:-768}
+#export LATBLR=${LATBLR:-384}
+#export NTRACLR=${NTRACLR:-3}
+#export MTNRSLLR=${MTNRSLLR:-382.768.384}
+#export SEMILGLR=${SEMILGLR:-.true.}
+#export DELTIMLR=${DELTIMLR:-1200}
+#export DTPHYSLR=${DTPHYSLR:-600}
+
+export CASELR=${CASELR:-192}
+export LEVSLR=${LEVSLR:-65}
+export DELTIMLR=${DTPHYSLR:-600}
+export layout_x=${layout_x:-4}
+export layout_y=${layout_y:-8}
+export JCAPLR=${JCAPLR:-670}
+export LONBLR=${LONBLR:-1344}
+export LATBLR=${LATBLR:-672}
+export MTNRSLLR=${MTNRSLLR:-670.1344.672}
 
 # for new vertical coordinate
 # export IDVC=3

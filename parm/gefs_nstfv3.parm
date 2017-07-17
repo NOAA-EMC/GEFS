@@ -1,0 +1,81 @@
+echo Beginning gefs_nstfv3.parm
+# ----------------------------------
+# options for NST in GFS & GSI
+# ----------------------------------
+ export NST_FCST=0           # default 0: No NSSTM,                                   W/O  Tr analysis
+                             #         1: With NSSTM but run passively (uncoupled),   W/O  Tr analysis
+                             #         2: With NSSTM and run actively    (coupled),   W/O  Tr analysis
+ export NST_GSI=0            # default 0: No NST info at all;
+
+                             #         1: Input NST info but not used in GSI;
+                             #         2: Input NST info, used in CRTM simulation, no Tr analysis
+                             #         3: Input NST info, used in both CRTM simulation and Tr analysis
+
+ export NST_SPINUP=0      #  0 = NSSTM spinup off (default); 1 = NSSTM spinup on
+#if [ $CDATE -eq 2017041700 ] ; then export NST_SPINUP=1; fi
+ export NST_RESERVED=0    #  Reserved
+ if [ $NST_GSI -eq 3 ]; then export NST_RESERVED=1; fi
+
+ export ZSEA1=0           #  the upper depth (in mm) to do vertical mean of T-Profile (0 = default)
+ export ZSEA2=5           #  the lower depth (in mm) to do vertical mean of T-Profile (0 = default)
+ export nstf_name="$NST_FCST,$NST_SPINUP,$NST_RESERVED,$ZSEA1,$ZSEA2"
+                          #
+                          #  nstf_name is an integer array to hold the NSST model control parameters
+                          #  nstf_name(1) : 0 (default) = No NSSTM; 1 = uncoupled; 2 = coupled (nstf_name(1) = NST_FCST)
+                          #  nstf_name(2) : 0 (default) = NSST Spinup off; 1 = NSST Spinup on
+                          #  nstf_name(3) : Reserved
+                          #  nstf_name(4) : 0 (default) = the upper depth (in mm) to do vertical mean of T-Profile
+                          #  nstf_name(5) : 0 (default) = the lower depth (in mm) to do vertical mean of T-Profile
+
+ export nst_anl=.false.   #  .fasle. : NSST analysis off (default); true = NSST analysis on
+ if [ $NST_GSI -eq 3 ]; then export nst_anl=.true.;  fi
+ export NSTINFO=0         # number of elements added in obs. data array (default = 0)
+ if [ $NST_GSI -gt 0 ]; then export NSTINFO=4; fi
+
+ export TZR_QC=1          # 0 = Tzr_qc off (default); 1 = Tzr_qc on
+ export FAC_DTL=1         # 0 = Diurnal Thermocline Model(DTM) off (default); 1 = DTM on
+ export FAC_TSL=1         # 0 = Thermal Skin Model(TSM) off (default); 1 = TSM on
+ export NST_STZR=0        # 0 = physical Tz retrieval save off; 1 =  Tz retrieval save on
+
+# FV# FCST related environment
+warm_start=.false.
+REMAP_GRID=latlon        #gaussian or latlon for using fregrid or regrid_nemsio for remapping
+export MONO=${MONO:-mono}
+BASE_GSM=$HOMEgsm
+
+#PE geometry
+parallel_threads=2
+parallel_threads=$parallel_threads
+COREPERNODE=${COREPERNODE:-24}
+
+export ntiles=${ntiles:-6}
+npes=$(( ${layout_x} * ${layout_y} * 6 ))
+export tasks=$npes                         # number of PEs for 1st segment
+
+nth_f=$parallel_threads                            # number of threads for AM forecast
+export nthreads=$nth_f
+
+pe_node=$COREPERNODE
+export npe_node_f=$pe_node                 # number of pes per node for AM forecast
+
+task_per_node=$((npe_node_f/nth_f))
+#taskspernode = COREPERNODE / parallel_threads
+
+#FV dynamics parameters
+MODE=32bit           # choices:  32bit, 64bit
+TYPE=hydro              # choices:  nh, hydro
+HYPT=off             # choices:  on, off  (controls hyperthreading)
+COMP="prod"          # choices:  debug, repro, prod
+ncep_plevels=".true."
+if [ ${HYPT} = on ]; then
+   export hyperthread=".true."
+   export j_opt="-j 2"
+else
+   export hyperthread=".false."
+   export j_opt="-j 1"
+fi
+
+APRUN="aprun -n $tasks -N $task_per_node -d $nth_f $j_opt -cc depth"
+export FCSTEXEC=fv3_gfs_${TYPE}.${COMP}.${MODE}.x
+export APRUN=${APRUN:-""}
+echo End of gefs_nstfv3.parm

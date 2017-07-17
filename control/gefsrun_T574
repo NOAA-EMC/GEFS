@@ -23,11 +23,9 @@ TPMLOW=18
 #DHOU, 12/17/2013, define PTMP to pointing to /ptmp or /ptmpd2
 # PTMP=ptmp
 # STMP=stmp
- PTMP=/gpfs/hps/ptmp
- STMP=/gpfs/hps/stmp
 if [[ $machl = s ]] || [[ $machl = l ]]; then
- PTMP=gpfs/hps/ptmp
- STMP=gpfs/hps/stmp
+ PTMP=/gpfs/hps3/ptmp
+ STMP=/gpfs/hps3/stmp
  COREPERNODE=24
  export JOBQUEUE=dev
  . /opt/modules/default/init/ksh
@@ -36,12 +34,12 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
  export JOBQUEUE=dev2
  . /usrx/local/Modules/default/init/ksh
  if [[ $JOBQUEUE = dev ]]; then
-  PTMP=ptmpd2
-  STMP=stmpd2
+  PTMP=/ptmpd2
+  STMP=/stmpd2
   COREPERNODE=16
  elif [[ $JOBQUEUE = dev2 ]]; then
-  PTMP=ptmpp2
-  STMP=stmpp2
+  PTMP=/ptmpp2
+  STMP=/stmpp2
   COREPERNODE=24
  else
   echo Invalid option of JOBQUEUE in gefsrun $JOBQUEUE
@@ -284,10 +282,10 @@ echo
 lname=$callstring.$expid.$dtg.$mach.$pid
 if [[ $LOGNAME = glopara ]]; then
   # ldir=/ptmp/$LOGNAME/para_gefs/temp.gefs.run
-  ldir=/ptmp/$LOGNAME/para_gefs/o/$expid/runlog
+  ldir=$PTMP/$LOGNAME/para_gefs/o/$expid/runlog
 else
   # ldir=/$PTMP/$LOGNAME/temp.gefs.run
-  ldir=/$PTMP/$LOGNAME/o/$expid/runlog
+  ldir=$PTMP/$LOGNAME/o/$expid/runlog
 #The next two lines for Zeus
   if [[ $gefsmachine = zeus ]]; then                       
   ZPTM=/scratch2/portfolios/NCEPDEV
@@ -4005,7 +4003,9 @@ echo $SUBJOB
   if [[ $SUBJOB = X ]]; then
    SUBJOB=
   fi 
+echo starting setup
 . $cwd/setup_job_card.$gefsmachine
+echo ending setup
 
   if [[ $SUBJOB = C ]]; then
    SUBJOB=B

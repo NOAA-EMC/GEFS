@@ -15,11 +15,13 @@ if [ "$RUN_ENVIR" = dev ]; then ### For Developers
         . $basesource/nwdev/parm/gefs_config
         export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
+
 export machine=$machine
 export nemsioget=$nemsioget
 export APRUN=${gefsmpexec:-mpirun.lsf}
 export RUNMEM=$RUNMEM
 export mem=`echo $RUNMEM|cut -c3-5`
+
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
@@ -83,22 +85,28 @@ fi
 # In case of PRDGEN   failure, set RERUN=RESTART if necessary in PRDGEN jobs
 ####################################
 echo "input setting RERUN=$RERUN"
-export RERUN=${RERUN:-RESTART}
+#export RERUN=${RERUN:-RESTART}
+export RERUN=${RERUN:-RERUN}
 # export RERUN=RESTART
 # export RERUN=YES
 echo "current setting RERUN=$RERUN"
 
 # Specify Execution Areas
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
-export HOMEgsm=$HOMEgsm
+export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
+
 export EXECgsm=$HOMEgsm/exec
 export USHgsm=$HOMEgsm/ush
 export FIXgsm=$HOMEgsm/fix/fix_am
 export PARMgsm=$HOMEgsm/parm
 
-export EXECGLOBAL=${EXECgsm:-$HOMEgsm/exec}
-export USHGLOBAL=${USHgsm:-$HOMEgsm/ush}
-export FIXGLOBAL=${FIXgsm:-$HOMEgsm/fix/fix_am}
+#Names used in exglobal_fv3.sh
+export BASE_GSM=$HOMEgsm
+export FIX_DIR=$FIXgsm
+export FIX_AM=$FIXgsm
+#export FIX_FV3=$FIXgsm/fix_fv3
+export FIX_FV3=$HOMEgsm/fix/fix_fv3
+
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 export USHgefs=${USHgefs:-$HOMEgefs/ush}
 export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
@@ -111,16 +119,42 @@ setpdy.sh
 ##############################################
 # Define COM and GES directories
 ##############################################
-export GESIN=$GESROOT/${envir}/${RUN}.${PDY}
-export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}
+if [[ $FORECAST_SEGMENT = hr ]] ; then
+        echo "Integrate the model for the high resolution segment"
+        fhresini=0
+elif [[ $FORECAST_SEGMENT = lr ]] ; then
+        echo "Integrate the model for the low resolution segment"
+        fhresini=$fhmaxh
+elif [[ $FORECAST_SEGMENT = hl ]] ; then
+        echo "Integrate the model for both high and low resolution segments, including chgres"
+        fhresini=0
+else
+        msg="FATAL ERROR:  Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
+        echo "`date`   $msg"
+        echo "The Forecast job will be aborted!!!!"
+        postmsg "$jlogfile" "$msg"
+        export pgm=JENS_FCST
+        export err=911
+        err_chk
+fi # [[ $FORECAST_SEGMENT = hr ]]
+
+echo FORECAST_SEGMENT = $FORECAST_SEGMENT
+echo fhresini=$fhresini
+echo ENS_SPS = $ENS_SPS
+echo RUN_CONCURRENT = $RUN_CONCURRENT
+echo npair = $npair
+
+export GESIN=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
+export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export FV3GESOUT=$GESROOT/${envir}/fv3gefs.${PDY}
-# RLW 20150320 update restart procedure, use sfcsig files instead of restart files
-export SFCSIG=$COMOUT/$cyc/sfcsig
+
+#export FV3GESOUT=$GESROOT/${envir}/fv3gefs.${PDY}
+#export SFCSIG=$COMOUT/$cyc/sfcsig
 
 mkdir -m 775 -p $COMOUT/$cyc/sfcsig
 mkdir -m 775 -p $COMOUT/$cyc/sflux
 mkdir -m 775 -p $COMOUT/$cyc/misc/fcst
+SFCSIG=$COMOUT/$cyc/sfcsig
 
 ##############################################
 echo set parameters using gefs.parm
@@ -137,37 +171,49 @@ case $cyc in
         18) export fhmax=$fhmax18;;
 esac
 
-###############################################################
-# Specify locations of the following scripts and executables
-###############################################################
-export CHGRESTHREAD=4
-export OVERPARMEXEC=$EXECutil/overparm_grib
-
-# Change Resolution script and executable
-export chgresush=$USHgsm/global_chgres.sh
-export CHGRESEXEC=$EXECgsm/global_chgres
-
-# forecast script  and executable
-export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nems.sh.ecf
-export FCSTEXEC=$EXECgsm/global_fcst
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
 
+if [[ $FORECAST_SEGMENT = hr ]] ; then
+	#CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$fhouth;FHZER=$fhzerh;                        
+	CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=6;FHZER=$6;                        
+        JCAP=$JCAPHR;LONB=$LONBHR;LATB=$LATBHR;MTNRSL=$MTNRSLHR
+        FHINI=0                              #forecast starting hour
+#else 
+##else if [[ $FORECAST_SEGMENT = lr ]] ; then
+	#CASE=$casel;FHMAX=$fhmax;FHOUT=$fhoutl;FHZER=$fhzerl;
+#	CASE=$CASELR;FHMAX=$fhmax;FHOUT=6;FHZER=6;                        
+#        JCAP=$JCAPLR;LONB=$LONBLR;LATB=$LATBLR;MTNRSL=$MTNRSLLR
+#        FHINI= (( $fhmax - 12 )                              #forecast starting hour
+#else
+#	FORECAST_SEGMENT=$FORECAST_SEGMENT is not supported !
+#        stop
+fi
+FHRES=400                            #interval to write restart files
+
 #  The VEGTYPE fix file:
-export FNVETC=${FNVETC:-${FIXGLOBAL}/global_vegtype.1x1.grb}
-export FNTSFC=${FNTSFC:-${FIXGLOBAL}/RTGSST.1982.2012.monthly.clim.grb}
-export FNAISC=${FNAISC:-${FIXGLOBAL}/CFSR.SEAICE.1982.2012.monthly.clim.grb}
+export FNVETC=${FNVETC:-${FIX_AM}/global_vegtype.igbp.t$MTNRSL.rg.grb}
+export FNTSFC=${FNTSFC:-${FIX_AM}/RTGSST.1982.2012.monthly.clim.grb}
+export FNAISC=${FNAISC:-${FIX_AM}/CFSR.SEAICE.1982.2012.monthly.clim.grb}
+export FNABSC=${FNABSC:-${FIX_AM}/global_mxsnoalb.uariz.t$MTNRSL.rg.grb}
+export FNALBC=$FIX_AM/global_snowfree_albedo.bosu.t$MTNRSL.rg.grb
+export FNALBC2=$FIX_AM/global_albedo4.1x1.grb
+export FNSMCC=$FIX_AM/global_soilmgldas.t$MTNRSL.grb
+export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 
-export SIGHDR=${EXECgsm}/global_sighdr
-export SFCHDR=${EXECgsm}/global_sfchdr
-export SIGHDR=$nemsioget
-export SFCHDR=$nemsioget
-
-
+#export SIGHDR=${EXECgsm}/global_sighdr
+#export SFCHDR=${EXECgsm}/global_sfchdr
+#export SIGHDR=$nemsioget
+#export SFCHDR=$nemsioget
 
 ####################################
 # Create member list
 ####################################
+
+export RUNMEM=$RUNMEM
+export mem=`echo $RUNMEM|cut -c3-5`
+export ENS_NUM=1
+echo "ENS_NUM=$ENS_NUM"
 
 #
 # Forecast Input Variables
@@ -200,257 +246,7 @@ fi
 # ----------------------------------
 # user account 
 # ----------------------------------
-if [ $machine = WCOSS ]; then
- . /usrx/local/Modules/3.2.10/init/ksh
- module unload ics/12.1
- module load ics/15.0.3
- CUE2RUN=devhigh2
- CUE2RUN1=devhigh2
- CUE2RUNA=transfer
- RUN_ENVIR=para
- ACCOUNT=FV3GFS-T2O
- group_name=rstprod
- GROUP=dev
- max_core=24
- pe_node=24
- memory_node=3072
 
-elif [ $machine = WCOSS_C ]; then
- . $MODULESHOME/init/sh  2>>/dev/null
- module load PrgEnv-intel cray-mpich crtm-intel/2.2.4 cfp-intel-sandybridge 2>>/dev/null
- module load prod_envir prod_util grib_util/1.0.3 hpss g2tmpl-intel/1.4.0 2>>/dev/null
- CUE2RUN=devhigh
- CUE2RUN1=devhigh
- CUE2RUNA=dev_transfer
- RUN_ENVIR=para
- ACCOUNT=FV3GFS-T2O
- group_name=rstprod
- GROUP=dev
- max_core=24
- pe_node=24
- memory_node=3072
-elif [ $machine = THEIA ]; then
- CUE2RUN=batch
- CUE2RUN1=batch
- CUE2RUNA=service
- RUN_ENVIR=para
- ACCOUNT=FV3GFS-T2O
- group_name=global
- GROUP=global
- max_core=24
- pe_node=24
- memory_node=3072
-
- OMP_STACKSIZE=500M
- MPI_BUFS_PER_HOST=1024
- MPI_BUFS_PER_PROC=1024
- if [ $CSTEP = fcst1 -o $CSTEP = fcst2 -o $CSTEP = anal ]; then
-  MPICH_FAST_MEMCPY="ENABLE"
-  MPICH_MAX_SHORT_MSG_SIZE=4096
-  MPICH_PTL_OTHER_EVENTS=100000
-  MPICH_PTL_UNEX_EVENTS=400000
-  MPI_BUFS_PER_HOST=2048
-  MPI_BUFS_PER_PROC=2048
-  KMP_STACKSIZE=2048m
-  LAPI_DEBUG_SLOT_ATT_THRESH=5000000
-  MP_STDOUTMODE=ordered
- fi
-fi
-
-# -----------------------------------------------
-# directories: source scripts, running space etc
-# -----------------------------------------------
-CHKNXTJOB=NO
-if [ $machine = WCOSS ]; then
- TOPDIR=/global                                       # DO NOT CHANGE
- DISK_GLOB=$TOPDIR/save
- NOSCRUB=/global/noscrub
- STMP=/stmpd3
- PTMP=/ptmpd3
- DMPDIR=/globaldump
- if [ $CDATE -lt 2014120100 ] ; then
-    DMPDIR=/globaldump2
- else
-    DMPDIR=/globaldump
- fi
- NWPROD=/nwprod
- NWPARA=/global/save/emc.glopara/nwpara
- PERTURBDIR=$NWPROD/fix/enkf_gfs
- BASE_SVN=/global/save/$LOGNAME/svn/fv3gfs
- tags=trunk_r88010
- nemsioget=/global/save/emc.glopara/bin/nemsio_get
- archsyndir=/com/arch/prod/syndat
-elif [ $machine = WCOSS_C ]; then
- TOPDIR=/gpfs/hps/emc/ensemble                                       # DO NOT CHANGE
- DISK_GLOB=$TOPDIR/noscrub
- NOSCRUB=/gpfs/hps/emc/ensemble/noscrub
- STMP=/gpfs/hps/stmp
- PTMP=/gpfs/hps/ptmp
- DMPROOT=`echo $NWROOTp1 | cut -d"/" -f1-3`
- DMPDIR=$DMPROOT/emc/globaldump
- NWPROD=/gpfs/hps/nco/ops/nwprod
- NWPARA=/gpfs/hps/emc/global/save/emc.glopara/nwpara
- PERTURBDIR=$NWPROD/fix/enkf_gfs
- BASE_SVN=$HOMEDIR1
- tags=trunk
- nemsioget=/gpfs/hps/emc/global/noscrub/emc.glopara/bin/nemsio_get
- archsyndir=$COMROOTp1/arch/prod/syndat
- FIX_FV3=/gpfs/hps/emc/global/noscrub/emc.glopara/svn/fv3gfs/fix_fv3
-elif [ $machine = THEIA ]; then
- TOPDIR=/scratch4/NCEPDEV/global
- DISK_GLOB=$TOPDIR/save
- NOSCRUB=/scratch4/NCEPDEV/global/noscrub
- BASE_SVN=/scratch4/NCEPDEV/global/save/glopara/svn/fv3gfs
- STMP=/scratch4/NCEPDEV/stmp3
- PTMP=/scratch4/NCEPDEV/stmp4
- DMPDIR=/scratch4/NCEPDEV/global/noscrub/dump
- NWPROD=/scratch4/NCEPDEV/global/save/glopara/nwpara
- NWPARA=$NWPROD
- PERTURBDIR=$TOPDIR/noscrub/glopara/enkf/data254_specps
- archsyndir=/scratch4/NCEPDEV/rstprod/com/arch/prod/syndat
- utilscript=/scratch4/NCEPDEV/rstprod/nwprod/util/ush
- pe_node=24
- nemsioget=/home/glopara/bin/nemsio_util/nemsio_get
- tags=trunk_r88010
- FIX_FV3=/scratch4/NCEPDEV/global/save/glopara/svn/fv3gfs/fix_fv3
-else
- echo '$machine is not supported, exit'
- exit
-fi
-
-ROTDIR=$ROTDIR
-COMROT=$ROTDIR/${CDUMP}.$ymd/$cycn
-COMDAY=$COMROT
-VFYARC=$ROTDIR/vrfyarch
-
-# ------------------- 
-# COMPONENT SETTINGS 
-# ------------------- 
-# Version
-workflow_ver=v15.0.0
-gdas_ver=v15.0.0
-gfs_ver=v15.0.0
-global_shared_ver=v15.0.0
-crtm_ver=v2.2.4
-obsproc_prep_ver=v3.5.0
-obsproc_prep_post_ver=v2.1.0
-obsproc_global_ver=v2.1.1
-verif_ver=v20
-radmon_ver=2.0.2a
-minmon_ver=1.0.0
-# Location
-BASEDIR=$BASE_SVN/$tags/gfs_workflow.$workflow_ver/para
-BASE_BUFRSND=$BASE_SVN/$tags/gfs.$gfs_ver
-BASE_ENKF=$BASE_SVN/$tags/gdas.$gdas_ver
-BASE_EMCSFC=$BASE_SVN/$tags/global_shared.$global_shared_ver
-BASE_GSM=$BASE_SVN/$tags/global_shared.$global_shared_ver
-BASE_GSI=$BASE_SVN/$tags/global_shared.$global_shared_ver
-BASE_TROPCY=$BASE_SVN/$tags/global_shared.$global_shared_ver
-#BASE_POST=$BASE_SVN/$tags/global_shared.$global_shared_ver
-BASE_POST=$BASE_SVN/post4fv3
-
-#BASE_PREP=$BASE_SVN/obsproc/releases/obsproc_prep.$obsproc_prep_ver
-BASE_PREP=$BASE_SVN/obsproc_prep_RB-3.5.0
-#BASE_PREP_GLOBAL=$BASE_SVN/obsproc/releases/obsproc_global.$obsproc_global_ver
-BASE_PREP_GLOBAL=$BASE_SVN/obsproc_global.$obsproc_global_ver
-BASE_VERIF=$BASE_SVN/verif
-if [ $machine = WCOSS_C ]; then
- BASE_MINMON=$BASE_SVN/$tags/global_shared.$global_shared_ver
- BASE_RADMON=$BASE_SVN/$tags/global_shared.$global_shared_ver
-else
- BASE_MINMON=$BASE_SVN/verif/global/tags/Minimization_Monitor_${minmon_ver}
- BASE_RADMON=$BASE_SVN/verif/global/tags/Radiance_Monitor-${radmon_ver}
-fi
-BASE_OZNMON=$BASE_SVN/gsi/REL-5.0.0
-BASE_NEMS=$BASE_SVN/NEMSfv3gfs/trunk/NEMS
-
-PENDDIR=$PTMP
-FIXSYND=$BASE_PREP/fix
-HOMEALL=$NWPROD
-SHDIR=$BASEDIR/bin
-JOBSDIR=$BASEDIR/jobs
-USHDIR=$BASEDIR/ush
-USHENKF=$BASE_ENKF/ush
-USHgdas=$BASE_ENKF/ush
-SCRDIR=$BASE_GSM/scripts
-SCRDIR_GSI=$BASE_GSI/scripts
-SCRDIR_ENKF=$BASE_ENKF/scripts
-EXECDIR=$BASEDIR/exec
-SIGHDR=$nemsioget
-SFCHDR=$nemsioget
-FIT_DIR=$ARCDIR/fits                                    # Directory for SAVEFITS output
-HORZ_DIR=$ARCDIR/horiz                                  # Directory for SAVEFITS output
-DATATMP=$STMP/$LOGNAME/gefs.$PDY/$cyc/$mem
-DATA=$DATATMP
-TMPDIR=$DATATMP
-KEEPDATA=NO
-
-# ---------------------------
-# utilities and misc options
-# ----------------------------
-NDATE=${NDATE:-$NWPROD/util/exec/ndate}
-NHOUR=${NHOUR:-$NWPROD/util/exec/nhour}
-WGRIB=${WGRIB:-$NWPROD/util/exec/wgrib}
-WGRIB2=${WGRIB2:-$NWPROD/util/exec/wgrib2}
-COPYGB=${COPYGB:-$NWPROD/util/exec/copygb}
-COPYGB2=${COPYGB2:-$NWPROD/util/exec/copygb2}
-BFCOMB=$EXECDIR/bufr_combfr
-GRBINDEX=${GRBINDEX:-/nwprod2/grib_util.v1.0.1/exec/grbindex}
-GRB2INDEX=${GRB2INDEX:-/nwprod2/grib_util.v1.0.1/exec/grb2index}
-GRBINDEX2=$GRB2INDEX
-windex=$GRBINDEX
-
-PMKR=$BASEDIR/bin/pmkr
-NCP="/bin/cp -p"
-INHERIT_ENV=NO
-
-if [ $machine = WCOSS ]; then
- HPSSTAR=/nwprod/util/ush/hpsstar
- HTAR=/usrx/local/hpss/htar
- HSI=/usrx/local/hpss/hsi
- SUB=$BASEDIR/bin/sub_wcoss
- PSUB=$BASEDIR/bin/psub
- PEND=$BASEDIR/bin/pend
-elif [ $machine = WCOSS_C ]; then
- HPSSTAR=/u/emc.glopara/bin/hpsstar
- HTAR=/usrx/local/prod/hpss/htar
- HSI=/usrx/local/prod/hpss/hsi
- SUB=$BASEDIR/bin/sub_wcoss_c
- PSUB=$BASEDIR/bin/psub
- PEND=$BASEDIR/bin/pend
-elif [ $machine = THEIA ]; then
- HPSSTAR=$USHDIR/hpsstar
- HTAR=/apps/hpss/htar
- HSI=/apps/hpss/hsi
- SUB=$BASEDIR/bin/sub_theia
- PSUB=$BASEDIR/bin/psub
- PEND=$BASEDIR/bin/pend_theia
-fi
-
-VERBOSE=YES
-RESUBMIT=NO                         # resubmit a failed job - Defaults to NO
-DODUMP=NO
-RUNLOG=$EXPDIR/runlog
-NEW_DAYFILE=YES                     # To create new dayfile for every rerun
-step1=`echo $CSTEP | cut -c1-4`
-step2=`echo $CSTEP | cut -c5-5`
-nknd=${CKND:-${nknd:-1}}
-
-# -------------------------------------------------------------
-#  settings that are used by more than one steps
-# -------------------------------------------------------------
-gfs_cyc=1                          # GFS cycles (00, 06, 12 and 18Z), defaults to 1 (00Z) cycle
-gdas_cyc=4                         # number of GDAS cycles
-fseg=1                             # number of AM forecast segments for gfs 
-FHCYC=24                           # Surface cycle calling interval
-LEVS=65                            # number of AM levels
-export MONO="mono"
-
-if [[ $FORECAST_SEGMENT = hr ]] ; then
-CASE=$caseh;FHMAX=$fhmaxh;FHOUT=$fhouth;FHZER=$fhzerh;                        
-else
-CASE=$casel;FHMAX=$fhmax;FHOUT=$fhoutl;FHZER=$fhzerl;
-fi
 if [[ $mem = c00 ]] ;then 
 MEMBER=21
 else
@@ -465,165 +261,93 @@ export SKEB_LSCALE_hr=500.e3
 export SKEB_hr=0.028
 export SPPT_hr=0.4
 export SKEBNORM=1
-export JCAP=382
-export LONB=768
-export LATB=384
+
+	export do_sppt=$STOC_SPPT
+	export do_shum=$STOC_SHUM
+	export do_skeb=$STOC_SKEB
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 
 if [[ $STOC_SPPT = .true. ]] ; then
-export SPPT=$SPPT_hr
-export do_sppt=.true.
-export ISEED_SPPT=$ISEED_SPPT_hr
-export SPPT_LOGIT=$SPPT_LOGIT_hr
-export SPPT_TAU=$SPPT_TAU_hr
-export SPPT_LSCALE=$SPPT_LSCALE_hr
-export sppt_sigtop1=$sppt_sigtop1_hr
-export sppt_sigtop2=$sppt_sigtop2_hr
-export sppt_sfclimit=$sppt_sfclimit_hr
+	export SPPT=$SPPT_hr
+	export ISEED_SPPT=$ISEED_SPPT_hr
+	export SPPT_LOGIT=$SPPT_LOGIT_hr
+	export SPPT_TAU=$SPPT_TAU_hr
+	export SPPT_LSCALE=$SPPT_LSCALE_hr
+	export sppt_sigtop1=$sppt_sigtop1_hr
+	export sppt_sigtop2=$sppt_sigtop2_hr
+	export sppt_sfclimit=$sppt_sfclimit_hr
 fi
 
 if [[ $STOC_SHUM = .true. ]] ; then
-export do_shum=.true.
-export SHUM=$SHUM_hr
-export ISEED_SHUM=$ISEED_SHUM_hr
-export SHUM_TAU=$SHUM_TAU_hr
-export SHUM_LSCALE=$SHUM_LSCALE_hr
-export shum_sigefold=$shum_sigefold_hr
+	export SHUM=$SHUM_hr
+	export ISEED_SHUM=$ISEED_SHUM_hr
+	export SHUM_TAU=$SHUM_TAU_hr
+	export SHUM_LSCALE=$SHUM_LSCALE_hr
+	export shum_sigefold=$shum_sigefold_hr
 fi
 
 if [[ $STOC_SKEB = .true. ]] ; then
-export do_skeb=.true.
-export SKEB=$SKEB_hr
-export ISEED_SKEB=$ISEED_SKEB_hr
-export SKEB_TAU=$SKEB_TAU_hr
-export SKEB_LSCALE=$SKEB_LSCALE_hr
-export SKEB_VFILT=$SKEB_VFILT_hr
-export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr
-export skeb_sigtop1=$skeb_sigtop1_hr
-export skeb_sigtop2=$skeb_sigtop2_hr
+	export SKEB=$SKEB_hr
+	export ISEED_SKEB=$ISEED_SKEB_hr
+	export SKEB_TAU=$SKEB_TAU_hr
+	export SKEB_LSCALE=$SKEB_LSCALE_hr
+	export SKEB_VFILT=$SKEB_VFILT_hr
+	export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr
+	export skeb_sigtop1=$skeb_sigtop1_hr
+	export skeb_sigtop2=$skeb_sigtop2_hr
 fi
 
 fi
-#export do_sppt=.false.
-#export do_shum=.false.
-#export do_skeb=.false.
-#export SPPT=-999.0
-#export SHUM=-999.0
-#export SKEB=-999.0
 
-case $CASE in
-  C48)   DELTIM=3600; layout_x=4  ; layout_y=8  ;;
-  C96)   DELTIM=1800; layout_x=4  ; layout_y=8  ;;
-#  C192)  DELTIM=900 ; layout_x=4  ; layout_y=8  ;;
-  C192)  DELTIM=600 ; layout_x=4  ; layout_y=8  ;;
-  C384)  DELTIM=450 ; layout_x=4  ; layout_y=8  ;;
-  C768)  DELTIM=225 ; layout_x=8  ; layout_y=16 ;;
-  #C1152) DELTIM=150 ; layout_x=8  ; layout_y=16 ;;
-  C3072) DELTIM=90  ; layout_x=16 ; layout_y=32 ;;
-  *)     echo "grid $CASE not supported, exit"
-         exit ;;
-esac
+#case $CASE in
+#  C48)   DELTIM=3600; layout_x=4  ; layout_y=8  ;;
+#  C96)   DELTIM=1800; layout_x=4  ; layout_y=8  ;;
+##  C192)  DELTIM=900 ; layout_x=4  ; layout_y=8  ;;
+#  C192)  DELTIM=600 ; layout_x=4  ; layout_y=8  ;;
+#  C384)  DELTIM=450 ; layout_x=4  ; layout_y=8  ;;
+#  C768)  DELTIM=225 ; layout_x=8  ; layout_y=16 ;;
+#  #C1152) DELTIM=150 ; layout_x=8  ; layout_y=16 ;;
+#  C3072) DELTIM=90  ; layout_x=16 ; layout_y=32 ;;
+#  *)     echo "grid $CASE not supported, exit"
+#         exit ;;
+#esac
 
-for cyc1 in 00 06 12 18; do
- eval FHMAXFCST${cyc1}GFS1=$fmax1             # maximum forecast hour for 1st segment
- eval FHMAXFCST${cyc1}GFS2=$fmax2             # maximum forecast hour for 2st segment
- eval FHMAXFCST${cyc1}GDAS=9                  # maximum forecast hour for GDAS          
- eval FHOUTFCST${cyc1}GFS1=3
- eval FHOUTFCST${cyc1}GFS2=12
- eval FHOUTFCST${cyc1}GDAS=1
- eval FHZERFCST${cyc1}GFS1=6
- eval FHZERFCST${cyc1}GFS2=12
- eval FHZERFCST${cyc1}GDAs=6
- eval MFCST${cyc1}GFS=$fseg                   #number of GFS forecast segmants
- eval MFCST${cyc1}GDAS=1                      #number of GDAS forecast segments
-done
-cdump=$(echo $CDUMP|tr '[a-z]' '[A-Z]')
+#
+# Forecast Input Variables
+#
+. $PARMgefs/gefs_nstfv3.parm
+#APRUN and FCSTEXEC are defined in gefs_nstfv3.parm
 
-#---if fdiag is given, it overwrites FHOUT
-#fh00=$(echo $DELTIM 3600|awk '{printf "%f", $1/$2}')
-#fdiag="$fh00,6.,12.,18.,24.,30.,36.,42.,48.,54.,60.,66.,72.,78.,84.,90.,96.,102.,108.,114.,120.,126.,132.,138.,144.,150.,156.,162.,168.,174.,180.,186.,192.,198.,204.,210.,216.,222.,228.,234.,240."
-warm_start=.false.
-#NFCST=$(echo $fdiag |awk -F '[\t,]' '{print NF}')   ;#number of forecast output
+#export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nems.sh.ecf
+#export FCSTEXEC=$EXECgsm/global_fcst
+export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nemsfv3gfs_sp.sh
+export FORECASTSH=$fcstscript
+export FCSTEXECDIR=${FCSTEXECDIR:-$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin}
+export PARM_FV3DIAG=${PARM_FV3DIAG:-$PARMgsm/parm_fv3diag}
 
-REMAP_GRID=latlon        #gaussian or latlon for using fregrid or regrid_nemsio for remapping 
+export APRUN=${APRUN:-""}
+export EXECDIR=$EXECgsm
+#export FCSTEXECDIR=$BASE_SVN/NEMSfv3gfs/stochy/NEMS/exe
+export FCSTEXECDIR=${FCSTEXECDIR:-$EXECDIR}
 
-# ----------------------------------
-# options for NST in GFS & GSI
-# ----------------------------------
- export NST_FCST=0           # default 0: No NSSTM,                                   W/O  Tr analysis
-                             #         1: With NSSTM but run passively (uncoupled),   W/O  Tr analysis
-                             #         2: With NSSTM and run actively    (coupled),   W/O  Tr analysis
- export NST_GSI=0            # default 0: No NST info at all;
+echo $fcstscript
+echo $FORECASTSH
+echo $FCSTEXECDIR
+echo $FCSTEXEC
+echo $PARM_FV3DIAG
+echo $APRUN
 
-                             #         1: Input NST info but not used in GSI;
-                             #         2: Input NST info, used in CRTM simulation, no Tr analysis
-                             #         3: Input NST info, used in both CRTM simulation and Tr analysis
-
- export NST_SPINUP=0      #  0 = NSSTM spinup off (default); 1 = NSSTM spinup on
-#if [ $CDATE -eq 2017041700 ] ; then export NST_SPINUP=1; fi
- export NST_RESERVED=0    #  Reserved
- if [ $NST_GSI -eq 3 ]; then export NST_RESERVED=1; fi
-
- export ZSEA1=0           #  the upper depth (in mm) to do vertical mean of T-Profile (0 = default)
- export ZSEA2=5           #  the lower depth (in mm) to do vertical mean of T-Profile (0 = default)
- export nstf_name="$NST_FCST,$NST_SPINUP,$NST_RESERVED,$ZSEA1,$ZSEA2"
-                          #
-                          #  nstf_name is an integer array to hold the NSST model control parameters
-                          #  nstf_name(1) : 0 (default) = No NSSTM; 1 = uncoupled; 2 = coupled (nstf_name(1) = NST_FCST)
-                          #  nstf_name(2) : 0 (default) = NSST Spinup off; 1 = NSST Spinup on
-                          #  nstf_name(3) : Reserved
-                          #  nstf_name(4) : 0 (default) = the upper depth (in mm) to do vertical mean of T-Profile
-                          #  nstf_name(5) : 0 (default) = the lower depth (in mm) to do vertical mean of T-Profile
-
- export nst_anl=.false.   #  .fasle. : NSST analysis off (default); true = NSST analysis on
- if [ $NST_GSI -eq 3 ]; then export nst_anl=.true.;  fi
- export NSTINFO=0         # number of elements added in obs. data array (default = 0)
- if [ $NST_GSI -gt 0 ]; then export NSTINFO=4; fi
-
- export TZR_QC=1          # 0 = Tzr_qc off (default); 1 = Tzr_qc on
- export FAC_DTL=1         # 0 = Diurnal Thermocline Model(DTM) off (default); 1 = DTM on
- export FAC_TSL=1         # 0 = Thermal Skin Model(TSM) off (default); 1 = TSM on
- export NST_STZR=0        # 0 = physical Tz retrieval save off; 1 =  Tz retrieval save on
-
-FORECASTSH=$SCRDIR/exglobal_fcst_nemsfv3gfs_sp.sh
-EXECDIR=$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin
-IC_DIR=$FV3GESOUT/$mem
+REMAP_GRID=latlon
 if [ $REMAP_GRID = latlon ]; then
- DIAG_TABLE=$BASE_GSM/parm/parm_fv3diag/diag_table
+ DIAG_TABLE=$HOMEgsm/parm/parm_fv3diag/diag_table
 else
- DIAG_TABLE=$BASE_GSM/parm/parm_fv3diag/diag_table_history
+ DIAG_TABLE=$HOMEgsm/parm/parm_fv3diag/diag_table_history
 fi
 
-npes=$(( ${layout_x} * ${layout_y} * 6 ))
-tasks=$npes                         # number of PEs for 1st segment
-nth_f=2                             # number of threads for AM forecast
-npe_node_f=$pe_node                 # number of pes per node for AM forecast
-task_per_node=$((npe_node_f/nth_f))
+NCP="/bin/cp -p"
 
-MODE=32bit           # choices:  32bit, 64bit
-TYPE=hydro              # choices:  nh, hydro
-HYPT=off             # choices:  on, off  (controls hyperthreading)
-COMP="prod"          # choices:  debug, repro, prod
-ncep_plevels=".true."
-if [ ${HYPT} = on ]; then
-   export hyperthread=".true."
-   export j_opt="-j 2"
-else
-   export hyperthread=".false."
-   export j_opt="-j 1"
-fi
-
-#FCSTEXECDIR=$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin
-FCSTEXECDIR=$BASE_SVN/NEMSfv3gfs/stochy/NEMS/exe
-FCSTEXEC=fv3_gfs_${TYPE}.${COMP}.${MODE}.x
-APRUN="aprun -n $tasks -N $task_per_node -d $nth_f $j_opt -cc depth"
-
-TIMELIMFCSTGFS1=10:00:00
-TIMELIMFCSTGFS2=03:00:00
-TIMELIMFCSTGDAS1=03:00:00
-FHINI=0                              #forecast starting hour
-FHRES=264                            #interval to write restart files
+restart_interval=${FHRES:-1}
 if [ $FORECAST_SEGMENT = lr ]; then
  FHINI=$fmax1
  FHRES=400
@@ -632,16 +356,24 @@ fi
 USE_RESTART=NO                      #use restart file under COMROT/RESTART if run is interruptted
 FHSTRT=6                            #restart from a given hour if USE_RESTART=YES
 
-echo "-----end of $CONFIG in $0 --------"
+#echo "-----end of $CONFIG in $0 --------"
+echo "-----end of CONFIG in $0 --------"
+echo DATA=$DATA
 
-eval export DATA=$DATATMP
-rm -rf $DATA||exit 1; mkdir -p $DATA||exit 1; cd $DATA||exit 1
+#rm -rf $DATA||exit 1; mkdir -p $DATA||exit 1; cd $DATA||exit 1
 chmod ${permission:-755} $DATA
 
 export VERBOSE=YES
 ################################################################################
 export CDATE=$PDY$cyc
 export ROTDIR=$SFCSIG/$mem
+IC_DIR=$GESIN/$mem
+#Temporal setting reading from Kate Zhou's archive
+IC_DIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160910/$mem
+
+export BASE_GSM=$HOMEgsm
+export FIX_DIR=$FIXgsm
+export FIX_AM=$FIXgsm
 
 testfile=$IC_DIR/${CASE}_$CDATE/sfc_data.tile6.nc
 nsleep=0; tsleep=120;  msleep=50
@@ -650,5 +382,4 @@ while test ! -s $testfile -a $nsleep -lt $msleep;do
 done
 
 $FORECASTSH
-
-
+#$fcstscript

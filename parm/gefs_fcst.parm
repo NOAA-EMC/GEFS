@@ -57,7 +57,7 @@ export FHGOC3D=0       # Forecast Output Length for G3D files for GOCART
 export LGOC3D=.false.  # Control Variable to output the G3D files for GOCART
 
 # Variables for input to the Namelist
-export ialb=0          # 0: climatology sw albedo based on surface veg types;
+export ialb=1          # 0: climatology sw albedo based on surface veg types;
                        # 1: MODIS based land surface albedo
 export IOVR_SW=1       # 0--random cloud overlap for SW; 1--maximum-random cloud overlap for SW
 
@@ -82,10 +82,10 @@ ctei_rm='10.0,10.0'
 ccwf='1.0,1.0'; dlqf='0.0,0.0';
 ictm=1
 cal_pre=.true.
-bkgd_vdif_m=1.0; bkgd_vdif_h=1.0; bkgd_vdif_s=1.0; random_clds=.false. 
+bkgd_vdif_m=1.0; bkgd_vdif_h=1.0; bkgd_vdif_s=1.0; random_clds=.true. 
  psautco='4.0e-4,4.0e-4'; prautco='1.0e-4,1.0e-4'  
 evpco=2.0e-5; wminco='1.0e-5,1.0e-5'  
- cdmbgwd=0.25,2.0 
+ cdmbgwd=1.0,1.2 
 ref_temp=350.0
 sl_epsln=0.05
 ndsl=.false.
@@ -100,10 +100,6 @@ FCSTVARS="IEMS=1,ISOL=2,IAER=111,ICO2=2,nemsio_in=.true.,nemsio_out=.true.,sfcio
 DYNVARS="nemsio_in=.true.,nemsio_out=.true.,sigio_out=.false.,shuff_lats_a=.false.,hdif_fac=1.0,hdif_fac2=1.0,settls_dep3ds=.true.,settls_dep3dg=.true.,redgg_a=.true.,gg_tracers=.false.,sl_epsln=0.02,ref_temp=350.0,yhalo=10,phigs_d=60.0,ldfi_spect=.true.,cdamp=50000,2.0,k2o=32,ref_pres=100.0"
 
 TRACERVARS=" RI=286.05,   461.50, 173.2247,    0.0,,CPI=1004.6,   1846.0, 820.2391,    0.0,,"
-
-export ialb=1
-export random_clds=.true.
-export cdmbgwd=1.0,1.2
 
 #Use STTP or SPPT
 export ENS_SPS=${ENS_SPS:-.true.}
@@ -230,4 +226,5 @@ if [ $LGOC3D = .true. ] ; then
 fi
 
 export FCSTVARS
+
 

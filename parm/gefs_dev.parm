@@ -25,7 +25,8 @@ shum_export=1
 skeb_import=1
 skeb_export=1
 
-export caseh=C384
+export CASEHR=C384
+export CASELR=C192
 
 export npair=10
 export fhmax=384

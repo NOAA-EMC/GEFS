@@ -32,7 +32,6 @@ export archsyndir=$COMROOTp1/arch/prod/syndat
 export DBNROOT=
 
 export HOMEDIR=$HOMEDIR
-export HOMEDIR1=$HOMEDIR1
 export HOMEgefs=$basesource/nwdev
 
 #for regular GEFS
@@ -41,14 +40,17 @@ export HOMEpost=$HOMEDIR/ncep_post.v7.2.3
 export HOMEenkf=$HOMEDIR/enkf.v2.0.1
 export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.8
 
-#for NEMS GEFS
-export HOMEgsm=$HOMEDIR1/trunk/global_shared.v15.0.0
-export HOMEgsm1=$HOMEDIR/q3fy17_lambda/global_shared.v14.1.0
-export nemsioget=$HOMEgsm/exec/nemsio_get
-export HOMEpost=$HOMEDIR1/post4fv3
-export HOMEenkf=$HOMEDIR1/trunk/gdas.v15.0.0
+#for NEMS GEFS, FV3 version
+export HOMEgsm=$HOMEDIR/trunk/global_shared.v15.0.0
+#FCST exec is from a different directory
+export EXECDIR=$HOMEgsm/sorc/fv3gfs.fd/BUILD/bin
+export FCSTEXECDIR=$HOMEDIRXZ/NEMSfv3gfs/stochy/NEMS/exe
+
+export HOMEpost=$HOMEDIR/post4fv3
+export HOMEenkf=$HOMEDIR/trunk/gdas.v15.0.0
 export PARMglobal=$HOMEgsm/parm
 
+export nemsioget=/gpfs/hps3/emc/global/noscrub/emc.glopara/bin/nemsio_get
 # This section is optional, using path to define utility files
 # export UTILROOT=/nwprod2/prod_util.v1.0.0  
 # export GRIBROOT=/nwprod2/grib_util.v1.0.1
