@@ -33,15 +33,15 @@ echo USER to prescribe user ID and JOB queue infirmation
 echo
 PROJECT=ensemble
 LOGNAME=$LOGNAME
-SUBMAME=
+SUBNAME=
 JOBPRIO=      
 JOBQUEUE=dev
 JOBPHASE=
 #Please make sure you have the correct account information
 export account=GEN-T2O
 
-if [[ "$LOGNAME" = "emc.enspara " || "$LOGNAME" = "emc.enspara1 " ]]; then
-        SUBMAME=/XX    #members of the enspara/enspara1 group accounts need to define e.g SUBNAME=/dc
+if [[ "$LOGNAME" = "emc.enspara" || "$LOGNAME" = "emc.enspara1" ]]; then
+        SUBNAME=/XX    #members of the enspara/enspara1 group accounts need to define e.g SUBNAME=/dc
         JOBPRIO=high       #(default; it could be high/max)
 fi
 
@@ -97,7 +97,7 @@ echo
 export basesource=$SAVE/$LOGNAME$SUBNAME/GEFS/$expid
 export basebin=$basesource/nw$envir/control
 
-export baseoutput=$PTMP/$LOGNAME$SUBNAMEE/o/$expid
+export baseoutput=$PTMP/$LOGNAME$SUBNAME/o/$expid
 export basetmp=$PTMP/$LOGNAME$SUBNAME/o/$expid
 export baseptmp=$PTMP/$LOGNAME$SUBNAME/o/$expid
 export basestmp=$STMP/$LOGNAME$SUBNAME/o/$expid
