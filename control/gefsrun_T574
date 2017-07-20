@@ -68,6 +68,9 @@ fi
 if [[ $bflag == 'l' ]] || [[ $eflag == 'l' ]]; then
 fcstflag=yes
 fi
+if [[ $bflag == 'k' ]] || [[ $eflag == 'k' ]]; then
+fcstflag=yes
+fi
 
 whenrun=neither
 
@@ -191,6 +194,7 @@ if [[ $goodargs = yes ]]; then
     echo jjje=$jjje
   fi
 fi
+
 echo goodargs=$goodargs 
 echo nextflag=$nextflag
 echo tseqflag=$tseqflag
@@ -221,7 +225,6 @@ if [[ $goodargs != yes ]]; then
   echo
   exit 2
 fi
-
 
 echo
 echo `date` $0 $*                                                    create log and expid
@@ -515,6 +518,9 @@ typeset -RZ3 jjjph00b=$(( jjjf00 + jjjpo + 1)) #fv3 hr post first job (p01)
 typeset -RZ3 jjjph00e=$(( jjjf00 + jjjpe - 1)) #fv3 hr post  last job (c00)
 typeset -RZ3 jjjdh00b=$(( jjjf00 + jjjpo + 2)) #fv3 hr prdgen first job (p01)
 typeset -RZ3 jjjdh00e=$(( jjjf00 + jjjpe))     #fv3 hr prdgen last job (c00)
+
+typeset -RZ3 jjjfk00b=k00                   #fv3 hr fcst-remap first member (c00)
+typeset -RZ3 jjjfk00e=k20                #fv3 hr fcst-remap  last job (p20)
 
 typeset -RZ3 jjjg00=$(( jjjog ))         #092, prdgen_gfs 1 degree grid
 typeset -RZ3 jjjg01=$(( jjjog + 1 ))     #093, prdgen_gfs job, 0.5 degree
@@ -855,10 +861,20 @@ if [[ $nextflag = yes ]]; then
 cflag=`echo $jjjc | cut -c1`
 typeset -RZ2 mm=`echo $jjjc | cut -c2-3`
 typeset -RZ2 mmp
-  if [[ $cflag == 'h' ]]; then
+if [[ $cflag == 'h' ]]; then
    if (( mm >= 00 )) && (( mm < 20 )); then
       (( mmp = mm + 1 ))
     jjjb=h$mmp
+   elif (( mm == 20 )); then
+#   jjjb=102 
+    jjjb=k00 
+   else
+    echo wrong job number 
+   fi
+elif [[ $cflag == 'k' ]]; then
+   if (( mm >= 00 )) && (( mm < 20 )); then
+      (( mmp = mm + 1 ))
+    jjjb=k$mmp
    elif (( mm == 20 )); then
     jjjb=102 
    else
@@ -973,6 +989,8 @@ else
       (013) jjjb=014 ;;
       (014) jjjb=$jjjv00b ;;
       ($jjjv00e) jjjb=$jjjfh00b ;;
+      ($jjjfh00e) jjjb=$jjjfk00b ;;
+      ($jjjfk00e) jjjb=$jjjph00b ;;
       ($jjjph00e) jjjb=$jjjdh00b ;;
       (888)
         echo rungfsprdgen=$rungfsprdgen
@@ -1405,9 +1423,16 @@ if [[ `echo $jjj | cut -c1` == 'h' ]]; then
   forecast_segment=hr
 fi
 
+if [[ `echo $jjj | cut -c1` == 'k' ]]; then
+  cyc_os=0
+  jobtype=fv3remap_hr
+  fcstjoblength=long
+  forecast_segment=hr
+fi
+
 if [[ `echo $jjj | cut -c1` == 'l' ]]; then
   cyc_os=0
-  jobtype=fv3fcst_hr
+  jobtype=fv3fcst_lr
   fcstjoblength=long
   forecast_segment=lr
 fi
@@ -1493,6 +1518,19 @@ typeset -RZ2 hjj=`echo $jjj | cut -c2-3`
       mem=p$memn
     fi
   taskname=fv3fcst_hr
+  ;;
+  (fv3remap_hr)
+   echo jjjfk00b=$jjjfk00b
+typeset -RZ2 k00=`echo $jjjfk00b | cut -c2-3`
+typeset -RZ2 kjj=`echo $jjj | cut -c2-3`
+    (( memn = ( kjj - k00 ) ))
+    echo memn=$memn
+    if (( memn == 0 )); then
+      mem=c00
+    else
+      mem=p$memn
+    fi
+  taskname=fv3remap_hr
   ;;
   (chgres)
     echo jjjr=$jjjr
@@ -1963,6 +2001,28 @@ case $taskname in
     wall_clock_limit="10:00"
     resources=1024
     job=gefs_fcst_fv3_$cyc
+  fi
+  ;;
+  (fv3remap_hr)
+    FORECAST_SEGMENT=hr
+    RUN=
+    RUNMEM=ge$mem
+    if [[ $jjjb == $jjjfk00b ]]; then
+      during_previous_job=no
+    else
+      during_previous_job=yes
+    fi
+  if [[ $gefsmachine = cray ]]; then
+    jobscript=JGEFS_FV3REMAP
+    job_name=gefs_fv3remap_$cyc
+    job_type=parallel
+    total_tasks=48
+    taskspernode=12
+    node=4
+    wall_clock_limit="1:00"
+    resources=1024
+    job=gefs_fv3remap_$cyc
+    OMP_NUM_THREADS=2
   fi
   ;;
   (forecast_hr)

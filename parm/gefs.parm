@@ -179,6 +179,7 @@ export JCAPHR=${JCAPHR:-670}
 export LONBHR=${LONBHR:-1344}
 export LATBHR=${LATBHR:-672}
 export MTNRSLHR=${MTNRSLHR:-670.1344.672}
+export NTRACHR=${NTRACHR:-3}
 
 #Lower resolution part
 #For T190L42 Eulerian
@@ -210,6 +211,7 @@ export JCAPLR=${JCAPLR:-670}
 export LONBLR=${LONBLR:-1344}
 export LATBLR=${LATBLR:-672}
 export MTNRSLLR=${MTNRSLLR:-670.1344.672}
+export NTRACLR=${NTRACLR:-3}
 
 # for new vertical coordinate
 # export IDVC=3

@@ -375,6 +375,14 @@ export BASE_GSM=$HOMEgsm
 export FIX_DIR=$FIXgsm
 export FIX_AM=$FIXgsm
 
+for n in `seq 1 $ntiles`; do
+      for file in atmos_4xdaily. atmos_static. fv3_history. fv3_history2d. grid_spec. nggps2d. nggps3d.
+      do
+              ln -s $ROTDIR/$file\tile$n.nc $DATA/$file\tile$n.nc
+      done
+done
+SEND=NO
+
 testfile=$IC_DIR/${CASE}_$CDATE/sfc_data.tile6.nc
 nsleep=0; tsleep=120;  msleep=50
 while test ! -s $testfile -a $nsleep -lt $msleep;do
