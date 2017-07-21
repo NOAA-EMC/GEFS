@@ -161,9 +161,12 @@ export LOGSCRIPT=startmsg
 ####################################
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
-	CASE=$CASEHR;LATB=$CASEHR;LONB=$LONBHR;LEVS=r$#LEVSHR;
+	CASE=$CASEHR;LATB=$LATBHR;LONB=$LONBHR;LEVS=$LEVSHR;
+	FHINI=0;FHMAX=$fhmaxh;FHOUT=6
 else
-	CASE=$CASELR;LATB=$CASELR;LONB=$LONBLR;LEVS=r$#LEVSLR;
+	CASE=$CASELR;LATB=$LATBLR;LONB=$LONBLR;LEVS=$LEVSLR;
+	(( FHINI = fhmaxh - 12 ))
+        FHMAX=$fhmax;FHOUT=6
 fi
 npe_regrid=$LEVS
 
@@ -265,11 +268,20 @@ export PREFIX=${RUNMEM}
 for nt in 1 2 3 4 5 6; do
 	for type in atmos_4xdaily nggps2d nggps3d ; do
 		ln -s $COMROT/${type}\.tile$nt.nc ${type}\.tile$nt.nc
+		ln -s $COMROT/${PREFIX}${type}.${GG}.nc ${PREFIX}${type}.${GG}.nc 
  	done
-	ln -s $COMROT/${PREFIX}${type}.${GG}.nc ${PREFIX}${type}.${GG}.nc 
-        for fhr in 00 06 12 18 24; do
-		ln -s ${SFCSIG}/${PREFIX}.t${cyc}z.f${fhr} ${PREFIX}atmf${fhr}.nemsio
-        done
+done
+
+FH=$((10#$FHINI))
+[[ $FH -lt 10 ]]&&FH=0$FH
+[[ $FH -lt 100 ]]&&FH=0$FH
+while [[ 10#$FH -le $FHMAX ]] ; do
+	for nt in 1 2 3 4 5 6; do
+		ln -s ${SFCSIG}/${PREFIX}.t${cyc}z.sf${FH} ${PREFIX}atmf${FH}.nemsio
+	done
+	((FH=10#$FH+10#$FHOUT))
+	[[ $FH -lt 10 ]]&&FH=0$FH
+	[[ $FH -lt 100 ]]&&FH=0$FH
 done
 
 #testfile=$COMROT/nggps3d.tile6.nc

@@ -4,10 +4,6 @@
 # This section is some parameter setup for for development testing only
 ##############################################################################
 
-#export fhmax=384
-#export fhmaxh=192
-#export fhmaxhres=`expr $fhmaxh - $HOUTSPS`
-
 echo `date` $0 test section begin
 
 #Define using STTP(ENS_SPS=.true.) or physics stochastic
@@ -27,10 +23,13 @@ skeb_export=1
 
 export CASEHR=C384
 export CASELR=C192
+export DOANALYSIS=NO
 
 export npair=10
 export fhmax=384
 export fhmaxh=384
+export fhmax=24
+export fhmaxh=24
 #export caseh=C192
 # for test, NOT USED FOR PRODUCTION
 
