@@ -164,6 +164,34 @@ case $cyc in
 	18) export fhmax=$fhmax18;;
 esac
 
+
+# set outtyp to 1 because we need to run chgres in the post before model start running chgres
+# otherwise set to 0, then chgres will not be executed in global_nceppost.sh
+
+export OUTTYP=4     # For nemsio files from forecast model (input to post)
+export OUTTYP=$OUTTYP
+REMAP_GRID=latlon
+if [ $REMAP_GRID = latlon ]; then
+	master_grid=0p25deg
+elseif [[ $FORECAST_SEGMENT = lr ]]
+	master_grid=0p50deg
+fi
+
+case $master_grid in
+	0p25deg) LATB=720;LONB=1440;
+	0p50deg) LATB=360;LONB=720;
+esac
+export LATB
+export LONB
+
+if [[ $FORECAST_SEGMENT = hr ]] ; then
+	LEVS=$LEVSHR;
+elseif [[ $FORECAST_SEGMENT = lr ]]
+	LEVS=$LEVSLR;
+fi
+(( LEVS = LEVS -1 ))
+echo $LEVS $LATB $LONB
+
 ####################################
 # Specify Process ID for the products
 ####################################
@@ -187,6 +215,7 @@ if [ $GRIBVERSION = grib2 ]; then
 	export FLTFILEGFSF001=${FLTFILEGFSF001:-$PARMpost/postxconfig-NT-GEFS-F00.txt}
 	export FLTFILEGFS1=${FLTFILEGFS1:-$PARMpost/postxconfig-NT-GEFS.txt}
 fi # [ $GRIBVERSION = grib2 ]
+
 
 export POSTGPVARS_HIGH="KPO=47,PO=1000.,975.,950.,925.,900.,875.,850.,825.,800.,775.,750.,725.,700.,675.,650.,625.,600.,575.,550.,525.,500.,475.,450.,425.,400.,375.,350.,325.,300.,275.,250.,225.,200.,175.,150.,125.,100.,70.,50.,30.,20.,10.,7.,5.,3.,2.,1.,"
 export POSTGPVARS_LOW=$POSTGPVARS_HIGH
@@ -223,6 +252,7 @@ export SLEEP_INT=5
 ####################################
 
 export FHINC_HIGH=3
+export FHINC_HIGH=6
 export FHINC_LOW=6
 
 ##### RLW 20110704 note that only _HIGH is currently used
@@ -256,7 +286,8 @@ case $FORECAST_SEGMENT in
 			(*) 
 				export DOANALYSIS=YES;
 				export SHOUR=00;
-				export FHINC_HIGH=3
+				#export FHINC_HIGH=3
+				export FHINC_HIGH=$FHINC_HIGH
 				;;
 		esac # $SUBJOB
 		;;

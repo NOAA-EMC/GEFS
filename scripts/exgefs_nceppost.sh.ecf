@@ -248,17 +248,6 @@ if [ $DOANALYSIS = YES ]; then
 
 			export VDATE=${PDY}${cyc}
 
-			# set outtyp to 1 because we need to run chgres in the post before model start running chgres
-			# otherwise set to 0, then chgres will not be executed in global_nceppost.sh
-
-			export OUTTYP=1
-			# to generate both types of sigma files
-
-			export OUTTYP=0
-			export OUTTYP=1
-			# to bypass chgres and read model sigma files directly
-			export OUTTYP=3
-			export OUTTYP=4
 			# specify output file name from chgres which is input file name to nceppost
 			# if model already runs gfs io, make sure GFSOUT is linked to the gfsio file
 			# new imported variable for global_nceppost.sh
@@ -433,17 +422,6 @@ while (( fhr <= FHOUR )); do
 
 		# export VDATE=`${EXECutil}/ndate +${fhr} ${PDY}${cyc}`
 		export VDATE=`$NDATE +${fhr} ${PDY}${cyc}`
-
-		# set outtyp to 1 because we need to run chgres in the post before model start running chgres
-		# otherwise set to 0, then chgres will not be executed in global_nceppost.sh
-
-		export OUTTYP=1
-		# to generate both types of sigma files
-		export OUTTYP=0
-		export OUTTYP=1
-		# to bypass chgres and read model sigma files directly
-		export OUTTYP=3
-		export OUTTYP=4
 
 		# specify output file name from chgres which is input file name to nceppost
 		# if model already runs gfs io, make sure GFSOUT is linked to the gfsio file
