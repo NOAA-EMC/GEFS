@@ -171,15 +171,17 @@ esac
 export OUTTYP=4     # For nemsio files from forecast model (input to post)
 export OUTTYP=$OUTTYP
 REMAP_GRID=latlon
-if [ $REMAP_GRID = latlon ]; then
+if [[ $REMAP_GRID = latlon ]]; then
+
+if [[ $FORECAST_SEGMENT = hr ]]; then
 	master_grid=0p25deg
 elseif [[ $FORECAST_SEGMENT = lr ]]
 	master_grid=0p50deg
 fi
 
 case $master_grid in
-	0p25deg) LATB=720;LONB=1440;
-	0p50deg) LATB=360;LONB=720;
+	0p25deg) LATB=720;LONB=1440;;
+	0p50deg) LATB=360;LONB=720;;
 esac
 export LATB
 export LONB
@@ -191,6 +193,8 @@ elseif [[ $FORECAST_SEGMENT = lr ]]
 fi
 (( LEVS = LEVS -1 ))
 echo $LEVS $LATB $LONB
+
+fi
 
 ####################################
 # Specify Process ID for the products

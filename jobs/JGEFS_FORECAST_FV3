@@ -367,9 +367,9 @@ export VERBOSE=YES
 ################################################################################
 export CDATE=$PDY$cyc
 export ROTDIR=$SFCSIG/$mem
-IC_DIR=$GESIN/$mem
+IC_DIR=${IC_DIR:-GESIN/$mem}
 #Temporal setting reading from Kate Zhou's archive
-IC_DIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160910/$mem
+#IC_DIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160910/$mem
 
 export BASE_GSM=$HOMEgsm
 export FIX_DIR=$FIXgsm

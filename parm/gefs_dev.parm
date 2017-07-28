@@ -24,6 +24,7 @@ skeb_export=1
 export CASEHR=C384
 export CASELR=C192
 export DOANALYSIS=NO
+export IC_DIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160913/p01
 
 export npair=10
 export fhmax=384
@@ -41,6 +42,7 @@ export ncpumax=50
 export ncpumin=30
 export srefboundary=yes
 export srefboundary=no
+
 #export fhmax00=384     # 00Z fcst only
 
 # # cycling forecasts only
