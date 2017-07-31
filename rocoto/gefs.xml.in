@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<!DOCTYPE workflow
+
+[
+  <!ENTITY CYCLE_THROTTLE "1">
+  <!ENTITY TASK_THROTTLE "25">
+  <!ENTITY SDATE "@[SDATE]">
+  <!ENTITY EDATE "@[EDATE]">
+  <!ENTITY INCYC "@[INCYC]">
+  <!ENTITY WHERE_AM_I "@[WHERE_AM_I]">
+  <!ENTITY GEFS_ROCOTO "@[GEFS_ROCOTO]">
+  <!ENTITY BIN "&GEFS_ROCOTO;/bin/&WHERE_AM_I;">
+  <!ENTITY PRE "&GEFS_ROCOTO;/bin/gefs_pre_job.sh">
+  <!ENTITY WORKFLOW_LOG_DIR "&GEFS_ROCOTO;/logs">
+  <!ENTITY LOG_DIR "&WORKDIR;/com/output/dev">
+  <!ENTITY tmpnwprd "&WORKDIR;/tmpnwprd">
+  <!ENTITY DATA_DIR "&WORKDIR;/com/gens/dev">
+  <!ENTITY EXPID "@[EXPID]">
+  <!ENTITY SOURCEDIR "@[SOURCEDIR]/&EXPID;/nwdev">
+  <!ENTITY WORKDIR "@[WORKDIR]/&EXPID;">
+
+<!--  <!ENTITY INIT_FHR "@[INIT_FHR]"> -->
+
+  <!-- External entities -->
+  <!ENTITY ENV_VARS   SYSTEM "env_vars.ent"> 
+  <!ENTITY DATE_VARS   SYSTEM "date_vars.ent"> 
+
+  <!-- External parameter entities -->
+  <!ENTITY % TASKS    SYSTEM "tasks/@[WHERE_AM_I]/all.ent">
+  %TASKS;
+
+@** if WHERE_AM_I==wcoss
+  <!ENTITY ACCOUNT  "GEN-T2O">
+  <!ENTITY CUE2RUN  "dev2">
+  <!ENTITY SCHEDULER "lsf">
+@** elseif WHERE_AM_I==cray
+  <!ENTITY ACCOUNT  "GEN-T2O">
+  <!ENTITY CUE2RUN  "dev">
+  <!ENTITY SCHEDULER "lsfcray">
+@** endif
+
+]>
+
+<workflow realtime="F" cyclethrottle="&CYCLE_THROTTLE;"
+          scheduler="&SCHEDULER;" taskthrottle="&TASK_THROTTLE;">
+   <log><cyclestr>&WORKFLOW_LOG_DIR;/gefs@Y@m@d@H.log</cyclestr></log>
+
+   <cycledef group="gefs">&SDATE;00 &EDATE;00 &INCYC;:00:00</cycledef>
+
+@** if RUN_INIT==YES
+   <!--- init jobs -->
+   &jgefs_enkf_track;
+   &jgefs_init_separate;
+   &jgefs_init_process;
+   &jgefs_init_combine;
+@** endif
+
+@** if RUN_FORECAST_HIGH==YES
+   <!-- high resolution forecast and post process jobs -->
+   &jgefs_forecast_high;
+   &jgefs_post_high;
+   &jgefs_prdgen_high;
+   &jgefs_ensstat_high;
+@** endif
+
+@** if RUN_CHGRES==YES
+  <!-- chargeres jobs -->
+   &jgefs_sigchgres;
+@** endif
+
+@** if RUN_FORECAST_LOW==YES
+   <!-- low resolution forecast and post process jobs -->
+   &jgefs_forecast_low;
+   &jgefs_post_low;
+   &jgefs_prdgen_low;
+   &jgefs_ensstat_low;
+   &jgefs_enspost;
+@** endif
+
+@** if RUN_TRACK==YES
+  <!-- track and gensis jobs -->
+   &jgefs_post_track;
+   &jgefs_post_genesis;
+@** endif
+
+@** if RUN_OTHERS==YES
+  <!-- other jobs -->
+   &jgefs_pqpf;
+@** endif
+
+</workflow>

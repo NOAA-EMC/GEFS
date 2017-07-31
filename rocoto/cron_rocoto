@@ -1,0 +1,5 @@
+# This is a basic crontab file to use with given settings that will execute rocotorun every 5 minutes
+# Usage: crontab cron_rocoto
+#        crontab -l   lists current crontab
+#        crontab -r   removes current crontab
+*/5 * * * * (. /opt/modules/3.2.10.3/init/sh; module use /usrx/local/emc_rocoto/modulefiles ; module load xt-lsfhpc; module load rocoto;/gpfs/hps/usrx/local/emc_rocoto/1.2.3/bin/rocotorun -d /gpfs/hps/emc/ensemble/noscrub/Wen.Meng/svn/gefs_rocoto/rocoto/gefs.db -w /gpfs/hps/emc/ensemble/noscrub/Wen.Meng/svn/gefs_rocoto/rocoto/gefs.xml) > /dev/null 2>&1
