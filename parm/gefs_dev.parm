@@ -24,11 +24,11 @@ shum_export=1
 skeb_import=1
 skeb_export=1
 
-export nstinit=no
-
 export npair=10
 export fhmax=384
 export fhmaxh=192
+
+export COMROOTp2=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/nems_gefs/com
 
 # for test, NOT USED FOR PRODUCTION
 
@@ -189,6 +189,8 @@ export gfssource=prod
   export ctlsigprod=0
 
   export sigzvd=no
+
+  export submit_post_together=yes
 
   echo `date` $0 test section end
 
