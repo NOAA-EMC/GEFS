@@ -2696,6 +2696,7 @@ case $taskname in
 #mpmd 04-15    
     job_type=parallel
     total_tasks=5
+    total_tasks=3
     MP_SHARED_MEMORY=yes
 #mpmd 04-15    
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS ))

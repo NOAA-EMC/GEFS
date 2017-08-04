@@ -31,7 +31,7 @@ ffhr=$ffhr
 fhr=$fhr
 grid=$grid2p5
 export fhr1=$fhr
-typeset -RZ3 fhr1
+#typeset -RZ3 fhr1
 #export WGRIB=${WGRIB:-$EXECgrib/wgrib}
 #export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
 #export COPYGB=${COPYGB:-$EXECgrib/copygb}
