@@ -738,17 +738,27 @@ if (( ipair > nhrpair )); then
 else
 	export SIGINP=../sanl.hr.in
 	export SFCINP=../sfcanl.hr.in
-	export NSTINP=../nsnanl.hr.in
 fi
 
 export SIGOUT=$DATALOCAL/sanl.in
 export SFCOUT=$DATALOCAL/sfcanl.in
-export NSNOUT=$DATALOCAL/nsnanl.in
 
 cp -fp $SIGINP $SIGOUT
 cp -fp $SFCINP $SFCOUT
-cp -fp $NSTINP $NSNOUT
 
+        if [[ $nstinit == no ]]; then
+        export NSTINP=NULL
+ 	export NSNOUT=NULL
+        else
+ 	 if (( ipair > nhrpair )); then
+         export NSTINP=NULL
+	 export NSTOUT=NULL
+ 	 else
+ 	 export NSTINP=../nsnanl.hr.in
+ 	 export NSNOUT=$DATALOCAL/nsnanl.in
+ 	 cp -fp $NSTINP $NSNOUT
+         fi
+	fi
 wait
 
 unset SFCINP

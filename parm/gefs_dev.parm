@@ -34,6 +34,8 @@ export npair=1
 export fhmax=384
 export fhmaxh=192
 #export caseh=C192
+export COMROOTp2=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/nems_gefs/com
+
 # for test, NOT USED FOR PRODUCTION
 
 # 20131203 RLW replace pausecycle with pausecyclelist
@@ -193,6 +195,8 @@ export gfssource=prod
   export ctlsigprod=0
 
   export sigzvd=no
+
+  export submit_post_together=yes
 
   echo `date` $0 test section end
 
