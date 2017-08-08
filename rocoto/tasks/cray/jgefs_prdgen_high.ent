@@ -1,5 +1,5 @@
 <metatask name="jgefs_prdgen_high" mode="parallel">
-   <var name="member">p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 c00</var>
+   <var name="member">&MEMLIST;</var>
    <task name="jgefs_prdgen_high_#member#" cycledefs="gefs" maxtries="1">
       <jobname><cyclestr>&EXPID;@Y@m@d@H103_#member#</cyclestr></jobname>
       <account>&ACCOUNT;</account>
@@ -28,7 +28,7 @@
       <command><cyclestr>&PRE; &BIN;/jgefs_prdgen_high.sh</cyclestr></command>
 
       <dependency>
-         <datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/post/ge#member#.t@Hz.master.control.f48</cyclestr></datadep>
+         <datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/post/ge#member#.t@Hz.master.control.f00</cyclestr></datadep>
       </dependency>
    </task>
 </metatask>

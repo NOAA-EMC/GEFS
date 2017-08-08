@@ -5,6 +5,7 @@
 <!ENTITY jgefs_init_process         SYSTEM   "jgefs_init_process.ent">
 <!ENTITY jgefs_init_combine         SYSTEM   "jgefs_init_combine.ent">
 <!ENTITY jgefs_forecast_high        SYSTEM   "jgefs_forecast_high.ent">
+<!ENTITY jgefs_remap_high           SYSTEM   "jgefs_remap_high.ent">
 <!ENTITY jgefs_post_high            SYSTEM   "jgefs_post_high.ent">
 <!ENTITY jgefs_prdgen_high          SYSTEM   "jgefs_prdgen_high.ent">
 <!ENTITY jgefs_ensstat_high         SYSTEM   "jgefs_ensstat_high.ent">

@@ -3,7 +3,7 @@
 
 # EXPORT list here
 set -x
-export NODES=126
+export NODES=16
 export IOBUF_PARAMS=
 export FORT_BUFFERED=TRUE
 export MKL_CBWR=AVX
@@ -29,11 +29,11 @@ export KMP_AFFINITY=disabled
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
 export MP_SHARED_MEMORY=yes
-export MEMORY_AFFINITY=core:4
+export MEMORY_AFFINITY=core:2
 
-export total_tasks=756
-export OMP_NUM_THREADS=4
-export taskspernode=6
+export total_tasks=192
+export OMP_NUM_THREADS=2
+export taskspernode=12
 
 #export total_tasks=756
 
@@ -48,7 +48,7 @@ export FORECAST_SEGMENT=hr
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export gefsmachine=cray
-export gefsmpexec=" aprun -b -j1 -n756 -N6 -d4 -cc depth "
+export gefsmpexec=" aprun -b -j1 -n192 -N12 -d2 -cc depth "
 export gefsmpexec_mpmd="  aprun -b -j1 -n756 -N6 -d4 -cc depth  cfp mpmd_cmdfile"
 export APRUNC="aprun"
 export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
@@ -59,5 +59,5 @@ cd $SOURCEDIR/control
 . $SOURCEDIR/parm/gefs.parm
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_FORECAST
+$SOURCEDIR/jobs/JGEFS_FORECAST_FV3
 

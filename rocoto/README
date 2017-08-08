@@ -1,3 +1,4 @@
+Wen Meng: 20170731 or earlier
 Run gefs workflow via ROCOTO
 
 1) Check a working copy of gefs rocoto based workflow from EMC subversion
@@ -26,7 +27,8 @@ Run gefs workflow via ROCOTO
    e) Go to $WORKDIR (defined in user.conf) for checking job standard outputs and output files
       of your experiment.
    
-   
-
-
-
+DHOU: 20170808 
+4) If you need to modify the workflow, some simple actions can be taken:
+   a) modify gefs.xml.in to avoid a group of jobs (YES or NO) or a specific job (delete a particular line)   
+   b) modify tasks/cray/~.ent file to delete or change the dependemce requirements.
+   c) the current setiing is to run the fcst-remap-post-prdgen-ensstat for high resolution only.
