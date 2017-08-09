@@ -145,9 +145,9 @@ module load NetCDF-intel-haswell/4.2
 module load nco-gnu-sandybridge/4.4.4
 #prod_envir points to sigio data, here temporarily set nemsio data source
 export COMROOTp1=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/o/com
-export COMROOTp2=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/o/com
+export COMROOThps=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/o/com
 echo COMROOTp1=$COMROOTp1
-echo COMROOTp2=$COMROOTp2
+echo COMROOThps=$COMROOThps
 export machine="WCOSS_C"
 export IOBUF_PARAMS=$IOBUFSET
 export FORT_BUFFERED=TRUE

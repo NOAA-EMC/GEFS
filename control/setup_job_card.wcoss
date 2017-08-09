@@ -130,9 +130,9 @@ module load NetCDF/4.2/serial
 module load ESMF/700
 #prod_envir points to sigio data, here temporarily set nemsio data source
 export COMROOTp1=/ensemble/noscrub/Bing.Fu/o/com 
-export COMROOTp2=/ensemble/noscrub/Bing.Fu/o/com 
-echo COMROOTp1=$COMROOTp1
-echo COMROOTp2=$COMROOTp2
+export COMROOThps=/ensemble/noscrub/Bing.Fu/o/com 
+echo COMROOTp1=$COMROOThps
+echo COMROOTp2=$COMROOThps
 eofCAT
     if [[ ${job_type} = parallel ]] ; then
      cat <<eofCAT >>$jobcontrol$SUBJOB

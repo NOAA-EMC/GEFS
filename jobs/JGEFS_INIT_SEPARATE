@@ -31,6 +31,12 @@ else
 	export cycsuffix=true
 fi
 
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
 ####################################
 # obtain unique process id (pid) and make working directory
 ####################################
@@ -43,12 +49,6 @@ if [[ -d $DATA ]]; then
 fi
 mkdir -p $DATA
 cd $DATA
-
-##############################
-# Run setpdy and initialize PDY variables
-##############################
-setpdy.sh
-. PDY
 
 ####################################
 # Specify NET and RUN Name and model
@@ -74,8 +74,7 @@ export pgmerr=errfile
 # Specify Execution Areas
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
-export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
-export HOMEgsm1=${HOMEgsm1:-$NWROOT/gsm.${gsm_ver}}
+export HOMEgsm=${HOMEgsm1:-$NWROOT/gsm.${gsm_ver}}
 export HOMEenkf=${HOMEenkf:-$NWROOTp2/enkf.${enkf_ver}}
 
 export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
@@ -83,18 +82,12 @@ export USHgsm=${USHgsm:-$HOMEgsm/ush}
 export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
 export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 
-export EXECgsm1=${EXECgsm1:-$HOMEgsm1/exec}
-export USHgsm1=${USHgsm1:-$HOMEgsm1/ush}
-export FIXgsm1=${FIXgsm1:-$HOMEgsm1/fix/fix_am}
-export PARMgsm1=${PARMgsm1:-$HOMEgsm1/parm}
-
 export FIXGLOBAL=$FIXgsm
 
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 export USHgefs=${USHgefs:-$HOMEgefs/ush}
 export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
-
 
 ##############################################
 echo set parameters using gefs.parm
@@ -112,8 +105,8 @@ env | sort
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=$COMROOTp2/gfs/prod_nems/gfs.$PDY
-export COMINenkf=$COMROOTp2/gfs/prod_nems/enkf.$pdyp
+export COMINgfs=${COMINgfs:-${COMROOThps}/gfs/prod/gfs.${PDY}}
+export COMINenkf=${COMINenkf:-${COMROOThps}/gfs/prod/enkf.${PDY}}
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
@@ -163,14 +156,8 @@ echo location of chgres script and executable
 export CHGRESTHREAD=$NTHREADS_SIGCHGRS
 # Change Resolution script and executable
 
-#export chgresush=$USHgsm/global_chgres.sh
-#export CHGRESEXEC=$EXECgsm/global_chgres
-
-# new chgres ush has new parameters input which is not provided in old jobs/script
-# so we have to use old chgres ush and exe
- 
-export chgresush=$USHgsm1/global_chgres.sh
-export CHGRESEXEC=$EXECgsm1/global_chgres
+export chgresush=$USHgsm/global_chgres.sh
+export CHGRESEXEC=$EXECgsm/global_chgres
 
 ##############################################
 echo list environment before running script

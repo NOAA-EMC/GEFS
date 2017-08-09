@@ -71,10 +71,9 @@ if [[ $machl = s ]] || [[ $machl = l ]]; then
 	STMP=/gpfs/hps3/stmp
 	export machine='WCOSS_C'
 	export JOBPHASE=
-	export HOMEDIR=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
         export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Bing.Fu/svn/fv3gfs   #temporay setting
         export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/svn/fv3gfs   #temporay setting
-        export HOMEDIRXZ=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/svn/fv3gfs
+	export HOMEDIR1=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda
 	SAVE=/gpfs/hps3/emc/$PROJECT/save
 	NOSCRUB=/gpfs/hps3/emc/$PROJECT/noscrub
 fi

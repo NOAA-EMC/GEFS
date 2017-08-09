@@ -1,8 +1,5 @@
 #!/bin/ksh 
-####################################
 # This is a new job to process the EnKF 6hr fcst by calculate the tracks
-####################################
-
 echo `date` $0 `date -u` begin
 
 set -xa
@@ -19,17 +16,10 @@ fi
 
 export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
 
-####################################
-# obtain unique process id (pid) and make working directory
-####################################
-export pid=$$
-export DATA=${DATA:-$DATAROOT/${job}.${pid}}
-mkdir -p $DATA
-cd $DATA
-
 ############################
 # Set up cycle varaible
 ############################
+
 export cycle=t${cyc}z
 export cycle_fcst=t${cyc_fcst}z
 
@@ -41,6 +31,19 @@ else
 	export cycsuffix=true
 fi
 
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+####################################
+# obtain unique process id (pid) and make working directory
+####################################
+export pid=$$
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+mkdir -p $DATA
+cd $DATA
 
 ###################################
 # Specify NET and RUN Name and model
@@ -87,22 +90,17 @@ echo set parameters using gefs.parm
 
 env | sort
 
-##############################
-# Run setpdy and initialize PDY variables
-##############################
-setpdy.sh
-. PDY
-
-##############################################
 # for global_chgres.sh
 ##############################################
 export SLMASK=/dev/null
+
 ##############################################
 # Define the time for the EnKF previous cycle
 ##############################################
 export pdycycp=`$NDATE -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
 export cycp=`echo $pdycycp|cut -c9-10`
+
 ##############################################
 # Define the time 6h ago and after for tracking
 ##############################################
@@ -110,17 +108,15 @@ d6ahead_ymdh=` $NDATE 6 ${PDY}${cyc}`
 d6ago_ymdh=` $NDATE -6 ${PDY}${cyc}`
 export d6ahead_ymd=`echo $d6ahead_ymdh|cut -c1-8`
 export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
+
 ##############################################
 # Define COM directories
 ##############################################
-#export COMINgfs=$COMROOTp2/gfs/prod/gfs.$PDY 
-#export COMINenkf=$COMROOTp2/gfs/prod/enkf.$pdyp 
-export COMINgfs=$COMROOTp2/gfs/prod_nems/gfs.$PDY 
-export COMINenkf=$COMROOTp2/gfs/prod_nems/enkf.$pdyp 
+export COMINgfs=${COMINgfs:-${COMROOThps}/gfs/prod/gfs.${PDY}}
+export COMINenkf=${COMINenkf:-${COMROOThps}/gfs/prod/enkf.$pdyp} 
 export COMINatcfsyn=$COMROOTp1/arch/prod/syndat
-export COMINgfs6ago=$COMROOTp2/gfs/prod_nems/gfs.$d6ago_ymd
-export COMINgfs6ahead=$COMROOTp2/gfs/prod_nems/gfs.$d6ahead_ymd
-
+export COMINgfs6ago=${COMINgfs6ago:-${COMROOThps}/gfs/prod/gfs.${d6ago_ymd}}
+export COMINgfs6ahead=${COMINgfs6ahead:-${COMROOThps}/gfs/prod/gfs.${d6ahead_ymd}}
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}

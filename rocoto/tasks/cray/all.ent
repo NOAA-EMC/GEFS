@@ -4,6 +4,7 @@
 <!ENTITY jgefs_init_separate        SYSTEM   "jgefs_init_separate.ent">
 <!ENTITY jgefs_init_process         SYSTEM   "jgefs_init_process.ent">
 <!ENTITY jgefs_init_combine         SYSTEM   "jgefs_init_combine.ent">
+<!ENTITY jgefs_init_fv3chgrs        SYSTEM   "jgefs_init_fv3chgrs.ent">
 <!ENTITY jgefs_forecast_high        SYSTEM   "jgefs_forecast_high.ent">
 <!ENTITY jgefs_remap_high           SYSTEM   "jgefs_remap_high.ent">
 <!ENTITY jgefs_post_high            SYSTEM   "jgefs_post_high.ent">
