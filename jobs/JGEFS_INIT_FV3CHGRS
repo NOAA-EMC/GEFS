@@ -1,8 +1,8 @@
 #!/bin/sh
+
 echo `date` $0 `date -u` begin
 
 set -xa
-
 export PS4='$SECONDS + '
 date
 
@@ -36,14 +36,10 @@ fi # (( cyc == cyc_fcst ))
 # obtain unique process id (pid) and identify working directory
 ####################################
 export pid=$$
-export DATA=$DATAROOT/gefs_fv3chgrs_$PDY$cyc.$envir.save/$mem
-
-echo DATA=$DATA
-if [[ -d $DATA ]]; then
-  rm -rf $DATA
-fi
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
+#export DATA=$DATAROOT/gefs_fv3chgrs_$PDY$cyc.$envir.save/$mem
 
 ##############################
 # Run setpdy and initialize PDY variables
@@ -97,6 +93,9 @@ echo set parameters using gefs.parm
 . $PARMgefs/gefs.parm
 . $PARMgefs/gefs_init.parm
 
+(( LEVS=LEVSHR+1 ))
+export LEVS=$LEVS
+export CASE=$CASEHR
 env | sort
 ##############################################
 # for global_chgres.sh
@@ -116,7 +115,9 @@ export COMOUT=${COMOUT:-${COM_OUT}/${RUN}.${PDY}}
 ##############################################
 export GESOUT=${GESOUT:-$GESROOT/${envir}}
 export GESOUT=$GESOUT/gefs.${PDY}
-export FV3GESOUT=$GESROOT/${envir}/fv3gefs.${PDY}
+export FV3GESOUT=$GESOUT/${cyc}/$mem/${CASE}_$PDY$cyc
+mkdir -p $FV3GESOUT
+#export FV3GESOUT=$GESROOT/${envir}/fv3gefs.${PDY}
 ##############################################
 echo list environment before running script
 ##############################################
@@ -130,7 +131,7 @@ module load prod_util hpss >>/dev/null
 #export workflow_ver=v15.0.0
 export BASE_SVN=$HOMEDIR1/fv3gfs
 export BASE_GSM=$HOMEgsm
-export CASE=$caseh
+#export CASE=$CASEHR
 #-- create ICs using operational GFS initial conditions
 
 #--start from operational GFS initial conditions
@@ -143,7 +144,8 @@ echo `date` $0 begin
 set -x
 export INIDIR=$DATA
 export CDATE=$PDY$cyc
-export OUTDIR=$FV3GESOUT/$mem/${CASE}_$CDATE
+#export OUTDIR=$FV3GESOUT/$mem/${CASE}_$CDATE
+export OUTDIR=$FV3GESOUT
 export ictype=nemsgfs
 cp $GESOUT/ge$mem.t00z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc                 
 cp $GESOUT/ge$mem.t00z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc         
@@ -154,7 +156,6 @@ nsleep=0; tsleep=120;  msleep=50
 while test ! -s $testfile -a $nsleep -lt $msleep;do
   sleep $tsleep; nsleep=`expr $nsleep + 1`
 done
-export LEVS=65
 $USHgsm/global_chgres_driver.sh
 
 #.......................................................

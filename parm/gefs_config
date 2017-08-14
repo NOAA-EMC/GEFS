@@ -44,7 +44,8 @@ export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.8
 export HOMEgsm=$HOMEDIR/trunk/global_shared.v15.0.0
 #FCST exec is from a different directory
 export EXECDIR=$HOMEgsm/sorc/fv3gfs.fd/BUILD/bin
-export FCSTEXECDIR=$HOMEDIRXZ/NEMSfv3gfs/stochy/NEMS/exe
+export FCSTEXECDIR=$HOMEDIR/NEMSfv3gfs/stochy/NEMS/exe
+export FCSTEXECDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/svn/fv3gfs/NEMSfv3gfs/stochy/NEMS/exe
 
 export HOMEpost=$HOMEDIR/post4fv3
 export HOMEenkf=$HOMEDIR/trunk/gdas.v15.0.0
@@ -84,4 +85,5 @@ export nemsioget=/gpfs/hps3/emc/global/noscrub/emc.glopara/bin/nemsio_get
 # export COMIN=/ensemble/noscrub/emc.enspara/xz/T574L64SL/EK0 #temporary testing of CQPF job
 # export COMROOTp1=/ensemble2/noscrub/Dingchen.Hou/GEFS15/PARA20150708/com
 # export COMROOTp1=/ensemble/noscrub/Richard.Wobus/o/com      #Dick's example for gfs
-# export COMROOTp2=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/o/com    #Bing's example
+# export COMROOThps=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/o/com    #Bing's example
+# export COMROOThps=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/nems_gefs/com    #Bing's archive for nems based gfs

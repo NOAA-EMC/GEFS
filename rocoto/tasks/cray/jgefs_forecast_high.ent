@@ -26,6 +26,9 @@
          <value>ge#member#</value>
       </envar>
       <command><cyclestr>&PRE; &BIN;/jgefs_forecast_high.sh</cyclestr></command>
+      <dependency>
+         <taskdep task="jgefs_init_fv3chgrs_#member#"/>
+      </dependency>
 
       </task>
 </metatask>

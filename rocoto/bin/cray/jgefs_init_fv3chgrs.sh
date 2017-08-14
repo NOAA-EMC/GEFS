@@ -3,7 +3,7 @@
 
 # EXPORT list here
 set -x
-export NODES=4
+export NODES=1
 export IOBUF_PARAMS=
 export FORT_BUFFERED=TRUE
 export MKL_CBWR=AVX
@@ -52,7 +52,7 @@ export FORECAST_SEGMENT=hr
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export gefsmachine=cray
-export gefsmpexec=" aprun -b -j1 -n48 -N12 -d2 -cc depth "
+export gefsmpexec=" aprun -b -j1 -n1 -N12 -d2 -cc depth "
 export gefsmpexec_mpmd="  aprun -b -j1 -n756 -N6 -d4 -cc depth  cfp mpmd_cmdfile"
 export APRUNC="aprun"
 export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"

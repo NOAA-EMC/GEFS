@@ -161,13 +161,14 @@ export LOGSCRIPT=startmsg
 ####################################
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
-	CASE=$CASEHR;LATB=$LATBHR;LONB=$LONBHR;LEVS=$LEVSHR;
+	CASE=$CASEHR;LATB=$LATBFV;LONB=$LONBFV;LEVS=$LEVSHR;
 	FHINI=0;FHMAX=$fhmaxh;FHOUT=6
 else
-	CASE=$CASELR;LATB=$LATBLR;LONB=$LONBLR;LEVS=$LEVSLR;
+	CASE=$CASELR;LATB=$LATBFV;LONB=$LONBFV;LEVS=$LEVSLR;
 	(( FHINI = fhmaxh - 12 ))
         FHMAX=$fhmax;FHOUT=6
 fi
+        (( LEVS = LEVSHR + 1 ))
 npe_regrid=$LEVS
 
 export CASE=$CASE

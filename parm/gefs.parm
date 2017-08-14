@@ -160,26 +160,26 @@ export USESUBDIR=${USESUBDIR:-YES}
 #export SEMILG=.false.
 
 #For T574L64/42 Semi-Lagrangian, 2015 Implementation
-#export JCAPHR=${JCAPHR:-574}
-#export LEVSHR=${LEVSHR:-64}
-#export LONBHR=${LONBHR:-1152}
-#export LATBHR=${LATBHR:-576}
-#export NTRACHR=${NTRACHR:-3}
-#export MTNRSL=${MTNRSL:-574.1152.576}
-#export SEMILG=${SEMILG:-.true.}
-#export DELTIM=${DELTIM:-900}
-#export DTPHYS=${DTPHYS:-450}
+ export JCAPHR=${JCAPHR:-574}
+ export LEVSHR=${LEVSHR:-64}
+ export LONBHR=${LONBHR:-1152}
+ export LATBHR=${LATBHR:-576}
+ export NTRACHR=${NTRACHR:-3}
+ export MTNRSL=${MTNRSL:-574.1152.576}
+ export SEMILG=${SEMILG:-.true.}
+ export DELTIM=${DELTIM:-900}
+ export DTPHYS=${DTPHYS:-450}
 
-export CASEHR=${CASEHR:-384}
-export LEVSHR=${LEVSHR:-65}
-export DELTIM=${DTPHYS:-450}
-export layout_x=${layout_x:-4}
-export layout_y=${layout_y:-8}
-export JCAPHR=${JCAPHR:-670}
-export LONBHR=${LONBHR:-1344}
-export LATBHR=${LATBHR:-672}
-export MTNRSLHR=${MTNRSLHR:-670.1344.672}
-export NTRACHR=${NTRACHR:-3}
+ export CASEHR=${CASEHR:-C384}
+#export LEVSHR=${LEVSHR:-65}
+ export DELTIM=${DTPHYS:-450}
+ export layout_x=${layout_x:-4}
+ export layout_y=${layout_y:-8}
+#export JCAPHR=${JCAPHR:-670}
+ export LONBFV=${LONBFV:-1344}
+ export LATBFV=${LATBFV:-672}
+ export MTNRSLFV=${MTNRSLFV:-670.1344.672}
+#export NTRACHR=${NTRACHR:-3}
 
 #Lower resolution part
 #For T190L42 Eulerian
@@ -202,8 +202,8 @@ export NTRACHR=${NTRACHR:-3}
 #export DELTIMLR=${DELTIMLR:-1200}
 #export DTPHYSLR=${DTPHYSLR:-600}
 
-export CASELR=${CASELR:-192}
-export LEVSLR=${LEVSLR:-65}
+export CASELR=${CASELR:-C192}
+export LEVSLR=${LEVSLR:-64}
 export DELTIMLR=${DTPHYSLR:-600}
 export layout_x=${layout_x:-4}
 export layout_y=${layout_y:-8}

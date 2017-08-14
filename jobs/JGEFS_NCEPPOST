@@ -175,8 +175,10 @@ if [[ $REMAP_GRID = latlon ]]; then
 
 if [[ $FORECAST_SEGMENT = hr ]]; then
 	master_grid=0p25deg
-elseif [[ $FORECAST_SEGMENT = lr ]]
+elseif [[ $FORECAST_SEGMENT = lr ]]: then
 	master_grid=0p50deg
+else
+	echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supporxtted          
 fi
 
 case $master_grid in
@@ -187,11 +189,13 @@ export LATB
 export LONB
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
-	LEVS=$LEVSHR;
-elseif [[ $FORECAST_SEGMENT = lr ]]
-	LEVS=$LEVSLR;
+	LEVS=$LEVSHR 
+#elseif [[ $FORECAST_SEGMENT = lr ]]; then
+#	LEVS=$LEVSLR 
+#else
+#	echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supporxtted          
 fi
-(( LEVS = LEVS -1 ))
+#(( LEVS = LEVS -1 ))
 echo $LEVS $LATB $LONB
 
 fi

@@ -106,7 +106,7 @@ env | sort
 # Define COM directories
 ##############################################
 export COMINgfs=${COMINgfs:-${COMROOThps}/gfs/prod/gfs.${PDY}}
-export COMINenkf=${COMINenkf:-${COMROOThps}/gfs/prod/enkf.${PDY}}
+export COMINenkf=${COMINenkf:-${COMROOThps}/gfs/prod/enkf.}
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
