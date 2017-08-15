@@ -227,19 +227,19 @@ if [[ $NEMSIO_IN = .true. ]]; then
      [[ $envir = test ]]; then
     export COMINgfs=${COMINgfs:-$COMROOThps/gfs/$envir/gfs.$PDY}
   else
-    export COMROOThps=/gpfs/hps/ptmp/emc.glopara/com2
-    export COMINgfs=${COMINgfs:-$COMROOThps/gfs/para/gfs.$PDY}
+    export COMROOThps=/gpfs/hps/nco/ops/com
+    export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.$PDY}
   fi
 else
   if [[ $envir = prod ]] ; then
-    export COMINgfs=/com2/gfs/${envir}/gfs.$PDY
+    export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.$PDY}
   elif [[ $envir = para ]] || \
        [[ $envir = test ]]; then
     gfssource=prod
     if [[ "$gfssource" = para ]]; then
-      export COMINgfs=/com2/gfs/para/gfs.$PDY
+      export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.$PDY}
     else
-      export COMINgfs=/com2/gfs/prod/gfs.$PDY
+      export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.$PDY}
     fi
   else
     if [[ "$gfssource" = para ]]; then

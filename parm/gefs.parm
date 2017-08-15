@@ -299,8 +299,8 @@ if [[ $envir = dev ]]; then
       export gfssource=prod
     ;;
     (2)
-      export gfssource=prod
       export gfssource=para
+      export gfssource=prod
     ;;
   esac
 

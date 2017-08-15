@@ -109,16 +109,20 @@ echo jobscript= $jobscript
 ################# lines between these markers have been modified for dev begin
   export gespath=$baseoutput/nwges/dev
 ################# lines between these markers have been modified for dev end
-  export COMINgfs=/com2/gfs/prod
+  # 20170811 RLW allow production GFS to be used
+  #export COMINgfs=/com2/gfs/prod
+  # 20170811 RLW allow production GFS to be used
 ################# lines between these markers have been modified for dev begin
-  export COMINgfs=$basedgfs/com/gfs/prod
+  #export COMINgfs=$basedgfs/com/gfs/prod
 ################# lines between these markers have been modified for dev end
   export pcom_in=/ptmp/$LOGNAME/pcom
 ################# lines between these markers have been modified for dev begin
   export pcom_in=$baseoutput/pcom
 ################# lines between these markers have been modified for dev end
   # to test NEMSIO from parallel GFS 20170224 RLW
-  export COMINgfs=/gpfs/hps/ptmp/emc.glopara/com2/gfs/para/gfs.$PDY
+  #export COMINgfs=/gpfs/hps/ptmp/emc.glopara/com2/gfs/para/gfs.$PDY
+  # 20170814 RLW use new COMROOThps variable as in production
+  export COMROOThps=/gpfs/hps/nco/ops/com
 
 elif [ $RUN_ENVIR = prod ]
 then
@@ -163,7 +167,7 @@ then
   export COM_IN=/com/gens/${envir}
   export COM_OUT=/com/gens/${envir}
   export gespath=/nwges/${envir}
-  export COMINgfs=/com2/gfs/prod
+  export COMINgfs=/gpfs/hps/nco/ops/com/gfs/prod
 
 elif [ $RUN_ENVIR = para -o $RUN_ENVIR = test ]
 then
@@ -207,5 +211,5 @@ then
   export COM_IN=/com/gens/${envir}
   export COM_OUT=/com/gens/${envir}
   export gespath=/nwges/${envir}
-  export COMINgfs=/com2/gfs/prod
+  export COMINgfs=/gpfs/hps/nco/ops/com/gfs/prod
 fi

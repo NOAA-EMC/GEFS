@@ -1391,6 +1391,12 @@ case $taskname in
     taskspernode=10
     OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=no
+    # 20170814 RLW to match production
+    taskspernode=2
+    taskspernode=1
+    taskspernode=8
+    task_affinity="core(2)"
+    OMP_NUM_THREADS=2
   fi  
   ;;
   (init.et)
@@ -2544,9 +2550,11 @@ else
     basedgfs=/gpfs/hps/ptmp/emc.glopara
     plcomgfs=$basedgfs/com2/gfs/para/gfs.$PDY
     clcomgfs=/com2/gfs/para/gfs.$PDY
+    clcomgfs=/gpfs/hps/nco/ops/com/gfs/prod/gfs.$PDY
   else
     plcomgfs=$basedgfs/com2/gfs/prod/gfs.$PDY
     clcomgfs=/com2/gfs/prod/gfs.$PDY
+    clcomgfs=/gpfs/hps/nco/ops/com/gfs/prod/gfs.$PDY
   fi
 # d="$d $plcomgfs"
 #DHOU 01/28/2013, remove this temporally 
@@ -2609,16 +2617,16 @@ else
 	(( iff = iff + 1 ))
       else
 	if [[ -f $comfile ]]; then
-	  cp $comfile $dirfile
-	  rc=$?
-	  if (( rc == 0 )); then
+	  #cp $comfile $dirfile
+	  #rc=$?
+	  #if (( rc == 0 )); then
 	    ls -al $comfile $dirfile
-	    echo copy succeeded
+	    #echo copy succeeded
 	    (( iff = iff + 1 ))
-	  else
-	    echo cp $comfile $dirfile FAILED rc=$rc
-	    tflag=yes
-	  fi
+	  #else
+	    #echo cp $comfile $dirfile FAILED rc=$rc
+	    #tflag=yes
+	  #fi
 	else
 	  echo file=$file NOT FOUND
 	  if (( ifa == 6 )); then

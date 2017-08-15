@@ -37,13 +37,20 @@ eofCAT
     fi
 
     if [[ ${MP_SHARED_MEMORY} = no ]] ; then
-    cat <<eofCAT >>$jobcontrol
+      cat <<eofCAT >>$jobcontrol
 ##BSUB -q "dev" 
 #BSUB -q "$class"
 #BSUB -x  
 eofCAT
+      if [[ -n $task_affinity ]]; then
+        AFFINITY=$task_affinity
+      fi
+      if [[ -n $AFFINITY ]]; then
+	cat <<eofCAT >>$jobcontrol
+#BSUB -R affinity[${AFFINITY}]
+eofCAT
+      fi
     fi
-
 #echo ${job_type} DHOU TTT    
     if [[ ${job_type} = parallel ]] ; then
     cat <<eofCAT >>$jobcontrol
