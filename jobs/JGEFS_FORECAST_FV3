@@ -177,7 +177,8 @@ export LOGSCRIPT=startmsg
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 	#CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$fhouth;FHZER=$fhzerh;                        
 	CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=6;FHZER=$6;                        
-        LONB=$LONBFV;LATB=$LATBFV;MTNRSL=$MTNRSLFV
+        MTNRSL=$MTNRSLFV
+#       LONB=$LONBFV;LATB=$LATBFV;
         FHINI=0                              #forecast starting hour
         (( LEVS = LEVSHR + 1 ))
 #else 
