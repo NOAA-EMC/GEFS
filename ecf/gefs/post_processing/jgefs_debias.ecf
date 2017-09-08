@@ -1,6 +1,6 @@
 #BSUB -J %E%gefs_debias_%CYC%
 #BSUB -o /%COM%/output/%ENVIR%/today/gefs_debias_%CYC%.o%J
-#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_debias_%CYC%.o%J
+#BSUB -e /%COM%/output/%ENVIR%/today/gefs_debias_%CYC%.o%J
 #BSUB -cwd /tmpnwprd
 #BSUB -R span[ptile=11] -R affinity[core:distribute=balance]
 #BSUB -n 22
@@ -32,7 +32,7 @@ else
    exit
 fi
 
-$NWROOT/naefs.${naefs_ver}/jobs/JGEFS_DEBIAS
+$NWROOT/naefs.${naefs_ver}/jobs/JNAEFS_GEFS_DEBIAS
 
 %include <tail.h>
 %manual

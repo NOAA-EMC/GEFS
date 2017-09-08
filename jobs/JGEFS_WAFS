@@ -21,10 +21,11 @@ export APRUN=${gefsmpexec:-mpirun.lsf}
 ####################################
 ##  Load the GRIB Utilities module
 #####################################
-. /usrx/local/Modules/default/init/ksh
-module load grib_util/v1.0.1
+# JY . /usrx/local/Modules/default/init/ksh
+# JY module load grib_util/v1.0.1
 export CNVGRIB=$CNVGRIB21_GFS
-module load util_shared/v1.0.2
+# JY module load util_shared/v1.0.2
+
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
@@ -33,14 +34,6 @@ export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
 
 mkdir -p $DATA
 cd $DATA
-
-####################################
-# Set up the UTILITIES and load prod
-# and grib utility modules
-####################################
-#module load prod_util/v1.0.1
-#module load grib_util/v1.0.1
-#module load util_shared/v1.0.0
 
 ######################################
 # Set up the cycle variable

@@ -30,7 +30,7 @@ else
    exit
 fi
 
-$NWROOT/naefs.${naefs_ver}/jobs/JGEFS_PROB_AVGSPR_GEMPAK
+$NWROOT/naefs.${naefs_ver}/jobs/JNAEFS_GEFS_PROB_AVGSPR_GEMPAK
 
 %include <tail.h>
 %manual

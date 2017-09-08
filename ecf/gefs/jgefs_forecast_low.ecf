@@ -20,7 +20,7 @@
 set -x
 
 . /usrx/local/Modules/default/init/ksh
-module switch ibmpe/1.3.0.8p
+# JY module switch ibmpe/1.3.0.8p
 module list
 
 export OMP_NUM_THREADS=4

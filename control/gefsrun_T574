@@ -550,6 +550,7 @@ echo jjjs00l=$jjjs00l
 echo jjjo00=$jjjo00
 echo jjjt00=$jjjt00
 echo jjja00=$jjja00
+echo jjja01=$jjja01
 echo
 echo jjjf06=$jjjf06
 echo jjjp06=$jjjp06
@@ -971,7 +972,8 @@ if [[ $nextflag = yes ]]; then
 #     ($jjjo00) jjjb=$jjjc18 ;;  # RLW 20150708 skip track and track-average jobs for production since they are in a different package
       ($jjjo00)
 	if (( cyct == 00 )); then
-	  jjjb=$jjja01
+#	  jjjb=$jjja01 #skip track and track-average job
+          jjjb=$jjjt00 #restore track job
 	else
 	  jjjb=$jjjc18
 	fi
@@ -1598,9 +1600,9 @@ case $taskname in
   fi  
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="01:50"
-    taskspernode=16
-    OMP_NUM_THREADS=1
-    MP_SHARED_MEMORY=no
+    taskspernode=4
+    OMP_NUM_THREADS=6
+    MP_SHARED_MEMORY=yes
   fi  
   ;;
   (init.separate)
@@ -1632,7 +1634,7 @@ case $taskname in
 #   taskspernode=15
     taskspernode=4
     OMP_NUM_THREADS=6
-    MP_SHARED_MEMORY=no
+    MP_SHARED_MEMORY=yes
   fi  
   ;;
   (init.et)
@@ -2410,7 +2412,7 @@ case $taskname in
     job_name=jgefs_prdgen_gfs_$cyc
     job_type=serial
     resources="ConsumableMemory(500 MB)"
-    task_affinity="cpu(2)"
+    task_affinity="cpu(3)"
     MP_SHARED_MEMORY=yes
     MEMORY_AFFINITY=MCM
     job=gefs_prdgen_gfs_${cyc}
@@ -2428,9 +2430,9 @@ case $taskname in
       (wcoss)
 #mpmd 04-20    
     job_type=parallel 
-    total_tasks=2
+    total_tasks=3
     MP_SHARED_MEMORY=no
-    OMP_NUM_THREADS=4
+    OMP_NUM_THREADS=3
 #mpmd 04-20    
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
     (( resources =  27648 / taskspernode ))
@@ -2558,7 +2560,7 @@ case $taskname in
    job_type=parallel
 #   total_tasks=8
    total_tasks=2
-   total_tasks=3 #(to process 2bp5, we need 3 tasks)
+#   total_tasks=3 #(to process 2bp5, we need 3 tasks)
    #SUBJOB=B       # 2 ensstat jobs for hr (1.0d+lr) and [p5]
     SUBJOB=       # 1 ensstat jobs for hr (1.0d+lr) and [p5]
   if [[ $gefsmachine = wcoss ]]; then                       
@@ -2603,7 +2605,7 @@ case $taskname in
     job_type=parallel
 #   total_tasks=8
     total_tasks=2
-    total_tasks=3 #(to process 2bp5, we need 3 tasks)
+#    total_tasks=3 #(to process 2bp5, we need 3 tasks)
     SUBJOB=B       # 2 ensstat jobs for hr (1.0d+lr) and [p5]
     SUBJOB=       # 1 ensstat jobs for hr (1.0d+lr) and [p5]
   if [[ $gefsmachine = wcoss ]]; then                       
@@ -3071,6 +3073,9 @@ d="$d $pllogdir"
 
 tmpdir=$basetmp
 d="$d $tmpdir"
+
+pltmpdir=$basetmp/tmpnwprd
+d="$d $pltmpdir"
 
 for dir in $d
 do

@@ -31,7 +31,7 @@ else
    exit
 fi
 
-$NWROOT/naefs.${naefs_ver}/jobs/JGEFS_BIAS_GEMPAK
+$NWROOT/naefs.${naefs_ver}/jobs/JNAEFS_GEFS_BIAS_GEMPAK
 
 %include <tail.h>
 %manual

@@ -120,6 +120,8 @@ eofCAT
 module purge
 module load ics
 module load lsf
+#module use /nwprod2/modulefiles
+#module load prod_util
 eofCAT
     if [[ ${job_type} = parallel ]] ; then
      cat <<eofCAT >>$jobcontrol$SUBJOB

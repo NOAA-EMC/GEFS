@@ -21,8 +21,8 @@ export APRUN=${gefsmpexec:-mpirun.lsf}
 ####################################
 # Load the grib module
 ####################################
-. /usrx/local/Modules/default/init/ksh
-module load grib_util/v1.0.1
+# JY . /usrx/local/Modules/default/init/ksh
+# JY module load grib_util/v1.0.1
 export CNVGRIB=$CNVGRIB21_GFS
 
 ####################################
@@ -201,9 +201,9 @@ export FHINC_2=$FHINCP5
 export dataset_2=a
 
 #task 3, 0.5d grid, dataset=b
-export gridlist_3="p5"
-export FHINC_3=$FHINCP5     
-export dataset_3=b
+#export gridlist_3="p5"
+#export FHINC_3=$FHINCP5     
+#export dataset_3=b
 
 export ext_h=""
 
@@ -219,10 +219,10 @@ if [ ! -d ${subdata_2} ]; then mkdir -p ${subdata_2}; fi
   outfile=${subdata_2}/${gridlist_2}.out
     echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_2 $FHINC_2 ${subdata_2} $dataset_2 2>&1 >${outfile}" >>ensstat.cmdfile
 
-subdata_3=${DATA}/${gridlist_3}${dataset_3}
-if [ ! -d ${subdata_3} ]; then mkdir -p ${subdata_3}; fi
-  outfile=${subdata_3}/${gridlist_3}.out
-    echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_3 $FHINC_3 ${subdata_3} $dataset_3 2>&1 >${outfile}" >>ensstat.cmdfile
+#subdata_3=${DATA}/${gridlist_3}${dataset_3}
+#if [ ! -d ${subdata_3} ]; then mkdir -p ${subdata_3}; fi
+#  outfile=${subdata_3}/${gridlist_3}.out
+#    echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_3 $FHINC_3 ${subdata_3} $dataset_3 2>&1 >${outfile}" >>ensstat.cmdfile
 
 #$HOMEgefs/scripts/exgefs_ensstat.sh.ecf
 

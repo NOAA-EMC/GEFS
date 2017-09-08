@@ -1,13 +1,15 @@
 #BSUB -J %E%gefs_bias_%CYC%
 #BSUB -o /%COM%/output/%ENVIR%/today/gefs_bias_%CYC%.o%J
-#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_bias_%CYC%.o%J
+#BSUB -e /%COM%/output/%ENVIR%/today/gefs_bias_%CYC%.o%J
 #BSUB -cwd /tmpnwprd
 #BSUB -n 1
-#BSUB -q %QUEUE%_shared
+##BSUB -q %QUEUE%_shared
+#BSUB -q %QUEUE%
 #BSUB -L /bin/sh
 #BSUB -W 01:30
 #BSUB -P %PROJ%
-#BSUB -R rusage[mem=3000] -R affinity[core]
+##BSUB -R rusage[mem=3000] -R affinity[core]
+#BSUB -R span[ptile=1] -R affinity[core]
 
 %include <head.h>
 %include <envir-p2.h>
@@ -30,7 +32,7 @@ else
    exit
 fi
 
-$NWROOT/naefs.${naefs_ver}/jobs/JGEFS_BIAS
+$NWROOT/naefs.${naefs_ver}/jobs/JNAEFS_GEFS_BIAS
 
 
 %include <tail.h>

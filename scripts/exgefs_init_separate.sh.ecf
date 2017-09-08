@@ -151,7 +151,6 @@ if (( nhrpair < npair )); then
 
   export SIGOUT=sanl.lr.in
   export SFCOUT=sfcanl.lr.in
-
   export JCAP=$JCAPLR
   export LEVS=$LEVSLR
   export LONB=$LONBLR
@@ -159,13 +158,43 @@ if (( nhrpair < npair )); then
   export NTRAC=$NTRACLR
   export IDVC=$IDVC
   export NVCOORD=$IDVC
-  export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0"
+  export nopdpvv=$nopdpvv
+  export OUTTYP=$OUTTYP
+export LSOIL=4
+export IDRT=4
+export CLIMO_FIELDS_OPT=3
+export LANDICE_OPT=2
+export SOILTYPE_INP=statsgo
+export SOILTYPE_OUT=zobler
+export VEGTYPE_INP=igbp
+export VEGTYPE_OUT=sib
+export SEA_ICE_THRESHLD_OUTPUT="0.50"
+  export CHGRESVARS="use_ufo=.true.,idvc=$IDVC,OUTTYP=$OUTTYP,NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0,idvt=21,idsl=1,IDVM=0,nopdpvv=$nopdpvv"
   if (( IDVC == 1 )); then
     export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
   fi
   if (( IDVC == 2 )); then
     export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
   fi
+  if [ $NEMSIO_IN = .true. ]; then
+    if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio && -f $COMINgfs/gfs.$cycle.nstanl.nemsio ]]; then
+      export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
+      $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
+      getnsttfrc=$?
+      if (( getnsttfrc == 0 )); then
+        echo `date` $getnsttf after
+         export SFCINP=$DATA/gfs.$cycle.sfcanl.nemsio
+      else
+        echo !!! FATAL ERROR !!
+        echo `date` $getnsttf failed
+        exit
+      fi
+    else
+      echo !!!! FATAL ERROR !!!!
+      echo $COMINgfs/gfs.$cycle.atmanl.nemsio,$COMINgfs/gfs.$cycle.sfcanl.nemsio and $COMINgfs/gfs.$cycle.nstanl.nemsio CANNOT BE FOUND
+      exit
+    fi
+  else
 
     if [[ -f $COMINgfs/gfs.$cycle.sanl && -f $COMINgfs/gfs.$cycle.sfcanl ]]; then
       export SIGINP=$COMINgfs/gfs.$cycle.sanl
@@ -175,6 +204,7 @@ if (( nhrpair < npair )); then
       echo $COMINgfs/gfs.$cycle.sanl and $COMINgfs/gfs.$cycle.sfcanl CANNOT BE FOUND
       exit
     fi
+  fi
 ###teste
 
   # check for missing or zero-length analysis files
@@ -189,26 +219,30 @@ if (( nhrpair < npair )); then
       err_chk
     fi
   done
-
-  ojcap=`$sighdrexec $SIGINP jcap`
-  olevs=`$sighdrexec $SIGINP levs`
-  olonb=`$sighdrexec $SIGINP lonb`
-  olatb=`$sighdrexec $SIGINP latb`
-  ontrac=`$sighdrexec $SIGINP ntrac`
-  oidvc=`$sighdrexec $SIGINP idvc`
-  runchgres=yes
-  if (( JCAP == ojcap )); then
-    if (( LEVS == olevs )); then
-    if (( LONB == olonb )); then
-    if (( LATB == olatb )); then
-      if (( NTRAC == ontrac )); then
-	if (( IDVC == oidvc )); then
-	  runchgres=no
-	fi
-      fi
-    fi
-    fi
-    fi
+#check if ENKF has same resolution as GEFS
+  if [ $NEMSIO_IN = .true. ]; then
+         runchgres=yes
+  else
+     ojcap=`$sighdrexec $SIGINP jcap`
+     olevs=`$sighdrexec $SIGINP levs`
+     olonb=`$sighdrexec $SIGINP lonb`
+     olatb=`$sighdrexec $SIGINP latb`
+     ontrac=`$sighdrexec $SIGINP ntrac`
+     oidvc=`$sighdrexec $SIGINP idvc`
+     runchgres=yes
+     if (( JCAP == ojcap )); then
+        if (( LEVS == olevs )); then
+          if (( LONB == olonb )); then
+            if (( LATB == olatb )); then
+               if (( NTRAC == ontrac )); then
+	         if (( IDVC == oidvc )); then
+	            runchgres=no
+	         fi
+               fi
+            fi
+         fi
+       fi
+     fi
   fi
 
   if [[ $runchgres = yes ]]; then
@@ -229,6 +263,8 @@ if (( nhrpair < npair )); then
 # The SST and SEA_ICE Climate fix file:
     export FNTSFC=${FNTSFC:-$FIXgsm/RTGSST.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
     export FNAISC=${FNAISC:-$FIXgsm/CFSR.SEAICE.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
+    export FNALBC2=$FIXgsm/global_albedo4.1x1.grb
+    export FNZORC=sib
     $chgresush >>$pgmout
     echo `date` timing lr chgres after
   else
@@ -254,7 +290,18 @@ if (( nhrpair > 0 )); then
   export NTRAC=$NTRACHR
   export IDVC=$IDVC
   export NVCOORD=$IDVC
-  export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0"
+  export nopdpvv=$nopdpvv
+  export OUTTYP=$OUTTYP
+export LSOIL=4
+export IDRT=4
+export CLIMO_FIELDS_OPT=3
+export LANDICE_OPT=2
+export SOILTYPE_INP=statsgo
+export SOILTYPE_OUT=zobler
+export VEGTYPE_INP=igbp
+export VEGTYPE_OUT=sib
+export SEA_ICE_THRESHLD_OUTPUT="0.50"
+  export CHGRESVARS="use_ufo=.true.,idvc=$IDVC,OUTTYP=$OUTTYP,NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0,idvt=21,idsl=1,IDVM=0,nopdpvv=$nopdpvv"
   if (( IDVC == 1 )); then
     export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
   fi
@@ -262,6 +309,26 @@ if (( nhrpair > 0 )); then
     export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
   fi
 
+  if [ $NEMSIO_IN = .true. ]; then
+    if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio && -f $COMINgfs/gfs.$cycle.nstanl.nemsio ]]; then
+      export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
+      $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
+      getnsttfrc=$?
+      if (( getnsttfrc == 0 )); then
+        echo `date` $getnsttf after 
+         export SFCINP=$DATA/gfs.$cycle.sfcanl.nemsio
+      else
+        echo !!! FATAL ERROR !! 
+        echo `date` $getnsttf failed
+        exit
+      fi
+
+    else
+      echo !!!! FATAL ERROR !!!!
+      echo $COMINgfs/gfs.$cycle.atmanl.nemsio,$COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio CANNOT BE FOUND
+      exit
+    fi
+  else
     if [[ -f $COMINgfs/gfs.$cycle.sanl && -f $COMINgfs/gfs.$cycle.sfcanl ]]; then
       export SIGINP=$COMINgfs/gfs.$cycle.sanl
       export SFCINP=$COMINgfs/gfs.$cycle.sfcanl
@@ -270,7 +337,7 @@ if (( nhrpair > 0 )); then
       echo $COMINgfs/gfs.$cycle.sanl and $COMINgfs/gfs.$cycle.sfcanl CANNOT BE FOUND
       exit
     fi
-
+ fi
   # check for missing or zero-length analysis files
 
   for file in $SIGINP $SFCINP
@@ -283,6 +350,10 @@ if (( nhrpair > 0 )); then
       err_chk
     fi
   done
+
+ if [ $NEMSIO_IN = .true. ]; then
+         runchgres=yes
+  else
 
   ojcap=`$sighdrexec $SIGINP jcap`
   olevs=`$sighdrexec $SIGINP levs`
@@ -304,6 +375,7 @@ if (( nhrpair > 0 )); then
     fi
     fi
   fi
+ fi
 
   if [[ $runchgres = yes ]]; then
 #   if [[ $IDVC = 2 ]]; then
@@ -324,6 +396,9 @@ if (( nhrpair > 0 )); then
 # The SST and SEA_ICE Climate fix file:
     export FNTSFC=${FNTSFC:-$FIXgsm/RTGSST.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
     export FNAISC=${FNAISC:-$FIXgsm/CFSR.SEAICE.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
+    export FNALBC2=$FIXgsm/global_albedo4.1x1.grb
+    export FNZORC=sib
+
     $chgresush >>$pgmout
     echo `date` timing hr chgres after
   else

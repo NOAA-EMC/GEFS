@@ -5,7 +5,7 @@
 #BSUB -q %QUEUE%
 #BSUB -W  00:40
 #BSUB -L /bin/sh
-#BSUB -R span[ptile=16]
+#BSUB -R span[ptile=8]
 #BSUB -n 64
 #BSUB -x    # not_shared
 #BSUB -P %PROJ%
@@ -32,7 +32,7 @@ else
    exit
 fi
 
-$NWROOT/naefs.${naefs_ver}/jobs/JGEFS_DVRTMA_PROB_AVGSPR_AK
+$NWROOT/naefs.${naefs_ver}/jobs/JNAEFS_GEFS_DVRTMA_PROB_AVGSPR_AK
 
 
 %include <tail.h>

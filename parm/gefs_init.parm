@@ -3,6 +3,14 @@
 # execute this script after  (. $PARMGLOBAL/gefs.parm)
 echo `date` $0 begin
 
+# ----------------------------------
+# # options for NEMSIO
+# # ----------------------------------
+ export NEMSIO_IN=.true.
+# OUTTYP=1:nemsio =2:sigio
+ export OUTTYP=2  
+ export nopdpvv=.true.
+#
 # parameters for relocation
 export relocfact=0.05
 export relocflag=0

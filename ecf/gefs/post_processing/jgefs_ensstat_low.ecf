@@ -7,24 +7,20 @@
 #BSUB -W 02:00
 #BSUB -P %PROJ%
 #BSUB -a poe
-#BSUB -n 3
-#BSUB -R span[ptile=3]
+#BSUB -n 2
+#BSUB -R span[ptile=2]
 #BSUB -R affinity[core(2):distribute=pack]
 #BSUB -R rusage[mem=1000]
 
 %include <head.h>
 %include <envir-p2.h>
 
-
 # EXPORT list here
 set -x
-
 
 export cyc=%CYC%
 export cyc_fcst=%CYC%
 export FORECAST_SEGMENT=lr
-
-
 
 # CALL executable job script here
 VERSION_FILE=$NWROOT/versions/gefs.ver
@@ -35,6 +31,8 @@ else
   ecflow_client --abort
   exit
 fi
+
+module load grib_util/${grib_util_ver}
 
 $NWROOT/gefs.${gefs_ver}/jobs/JGEFS_ENSSTAT
 

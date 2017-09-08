@@ -38,6 +38,8 @@ else
   exit
 fi
 
+module load grib_util/${grib_util_ver}
+
 $NWROOT/gefs.${gefs_ver}/jobs/JGEFS_PRDGEN
 
 %include <tail.h>

@@ -1,6 +1,8 @@
-export gefs_ver=v11.0.6
-export gsm_ver=v12.1.1
-export post_ver=v5.1.1
+export gefs_ver=v11.2.0
+export gsm_ver=v12.1.2
+export post_ver=v5.1.2
 export enkf_ver=v2.0.3
+export grib_util_ver=v1.0.1
+export util_shared_ver=v1.0.5
 #export enkf_ver=`cat $NWROOTp1/versions/gfs.ver |grep enkf_ver |awk -F"=" '{print $2}'`
 #export post_ver=`cat $NWROOTp1/versions/gfs.ver |grep post_ver |awk -F"=" '{print $2}'`

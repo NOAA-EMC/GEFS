@@ -30,7 +30,7 @@ else
    ecflow_client --abort
    exit
 fi
-$NWROOT/naefs.${naefs_ver}/jobs/JGEFS_DEBIAS_GEMPAK
+$NWROOT/naefs.${naefs_ver}/jobs/JNAEFS_GEFS_DEBIAS_GEMPAK
 
 
 %include <tail.h>

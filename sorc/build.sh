@@ -49,7 +49,7 @@ for dir in gefs_vortex_separate.fd gefs_vortex_combine.fd global_sigzvd.fd  glob
  make -f makefile
  cd ..
 done
-for dir in ../util/sorc/gettrk.fd; do
+for dir in ../util/sorc/gettrk.fd ../util/sorc/overenstr.grib.fd ../util/sorc/getnsttf.fd; do
  cd $dir
  make clean 
  make -f Makefile

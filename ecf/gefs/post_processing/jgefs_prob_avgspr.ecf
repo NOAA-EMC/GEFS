@@ -32,7 +32,7 @@ else
    exit
 fi
 
-$NWROOT/naefs.${naefs_ver}/jobs/JGEFS_PROB_AVGSPR
+$NWROOT/naefs.${naefs_ver}/jobs/JNAEFS_GEFS_PROB_AVGSPR
 
 
 %include <tail.h>

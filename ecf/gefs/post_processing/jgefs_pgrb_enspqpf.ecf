@@ -6,7 +6,7 @@
 #BSUB -W 00:30
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%
-#BSUB -R rusage[mem=1000] -R affinity[core]
+#BSUB -R rusage[mem=5000] -R affinity[core]
 
 %include <head.h>
 %include <envir-p2.h>
@@ -28,7 +28,7 @@ else
    exit
 fi
 
-$NWROOT/naefs.${naefs_ver}/jobs/JGEFS_PGRB_ENSPQPF
+$NWROOT/naefs.${naefs_ver}/jobs/JNAEFS_GEFS_PGRB_ENSPQPF
 
 
 %include <tail.h>

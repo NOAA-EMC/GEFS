@@ -49,6 +49,9 @@ else
   exit
 fi
 
+module load grib_util/${grib_util_ver}
+module load util_shared/${util_shared_ver}
+
 $NWROOT/gefs.${gefs_ver}/jobs/JGEFS_WAFS
 
 

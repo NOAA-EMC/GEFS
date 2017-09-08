@@ -89,18 +89,25 @@ export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
 export HOMEenkf=${HOMEenkf:-$NWROOTp1/enkf.${enkf_ver}}
 
-  export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
-  export USHgsm=${USHgsm:-$HOMEgsm/ush}
-  export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
-  export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
-
-  export FIXGLOBAL=$FIXgsm
+#This part is used for nemsio reading
+export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
+export FIXgsm=${FIXSUBDA:-$HOMEgsm/fix/fix_am}
+export FIXGLOBAL=$FIXgsm
+#This part is only used in sigio reading 
+# export USHgsm=${USHgsm:-$HOMEgsm/ush}
+# export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
+# export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
+  export UTILgefs=${UTILgefs:-$HOMEgefs/util}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
+  export chgresush=$GLOBALCHGRES
+  export sighdrexec=$EXECgsm/global_sighdr
+  export CHGRESTHREAD=$NTHREADS_SIGCHGRS
+  export getnsttf=$UTILgefs/exec/getnsttf.x
 
 ##############################################
 echo set parameters using gefs.parm
@@ -120,8 +127,8 @@ env | sort
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=${COMINgfs:-$COMROOT/gfs/prod/gfs.$PDY}
-export COMINenkf=${COMINenkf:-$COMROOT/gfs/prod/enkf.}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.$PDY)}
+export COMINenkf=${COMINenkf:-$(compath.py gfs/prod)/enkf.}
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
@@ -164,24 +171,24 @@ mkdir -m 775 -p $GESOUT
 echo locations of scripts and executables
 ##############################################
 
-echo location of sighdr executable
-
-export sighdrexec=$EXECgsm/global_sighdr
-
-
-echo location of chgres script and executable
-export CHGRESTHREAD=$NTHREADS_SIGCHGRS
-# Change Resolution script and executable
-
-   export chgresush=$USHgsm/global_chgres.sh
-   export CHGRESEXEC=$EXECgsm/global_chgres
-
-#case $gefsmachine in
-# (zeus)
-#   export chgresush=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/ush/global_chgres.sh
-#   export CHGRESEXEC=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/exec/global_chgres
-# ;;
-#esac
+#echo location of sighdr executable
+#
+#export sighdrexec=$EXECgsm/global_sighdr
+#
+#
+#echo location of chgres script and executable
+#export CHGRESTHREAD=$NTHREADS_SIGCHGRS
+## Change Resolution script and executable
+#
+##  export chgresush=$USHgsm/global_chgres.sh
+##  export CHGRESEXEC=$EXECgsm/global_chgres
+#
+##case $gefsmachine in
+## (zeus)
+##   export chgresush=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/ush/global_chgres.sh
+##   export CHGRESEXEC=/scratch1/portfolios/NCEPDEV/ensemble/save/wx20dh/SVN/GFS_TRUNK_37800/exec/global_chgres
+## ;;
+##esac
 
 
 ##############################################

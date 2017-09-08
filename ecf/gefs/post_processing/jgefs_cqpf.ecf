@@ -16,15 +16,11 @@
 %include <head.h>
 %include <envir-p2.h>
 
-
 # EXPORT list here
 set -x
 
-
 export cyc=%CYC%
 export cyc_fcst=%CYC%
-
-
 
 # CALL executable job script here
 VERSION_FILE=$NWROOT/versions/gefs.ver
@@ -35,6 +31,8 @@ else
   ecflow_client --abort
   exit
 fi
+
+module load grib_util/${grib_util_ver}
 
 $NWROOT/gefs.${gefs_ver}/jobs/JGEFS_CQPF
 

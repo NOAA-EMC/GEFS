@@ -8,7 +8,7 @@ export envir=${envir:-dev}
 export SENDDBN=${SENDDBN:-%SENDDBN:NO%}
 export SENDDBN_NTC=${SENDDBN_NTC:-%SENDDBN_NTC:NO%}
 
-export KEEPDATA=YES
+export KEEPDATA=NO
 export SENDCOM=YES
 export SENDECF=NO
 
@@ -24,9 +24,6 @@ export DCOMROOT=${DCOMROOT:-/dcom}
 
   mkdir -p  $COMROOT/logs/jlogfiles
 
-#export COMROOTp1=/com
-#export COMROOTp1=/ensemble2/noscrub/Dingchen.Hou/GEFS15/PARA20150708/com
-export COMROOTp1=/ensemble/noscrub/Richard.Wobus/o/com
 export archsyndir=/com/arch/prod/syndat
 export GESROOTp1=/nwges
 export DBNROOT=
@@ -36,18 +33,17 @@ export NWROOTprod=/nwprod2
 export NWROOTp1=/nwprod
 export PCOMROOT=${PCOMROOT:-/pcom2/${envir}}
 
-HOMEDIR=/ensemble/save/Dingchen.Hou/RFC
+HOMEDIR=/ensemble/save/emc.enspara/RFC
 export gefsmachine=${gefsmachine:-wcoss}
 
-  export HOMEgefs=$HOMEDIR/gefs.v11.0.6
+#  export HOMEgefs=$HOMEDIR/gefs.v11.1.1
   export HOMEgefs=$basesource/nwdev
 
-  export HOMEgsm=$HOMEDIR/gsm.v12.1.1
-  export HOMEgsm=/ensemble/save/Richard.Wobus/RFC/gsm.v12.1.1
+  export HOMEgsm=$HOMEDIR/gsm.v12.1.2
 
-  export HOMEpost=$HOMEDIR/ncep_post.v5.1.1
+  export HOMEpost=$HOMEDIR/ncep_post.v5.1.2
   export HOMEenkf=$HOMEDIR/enkf.v2.0.1
-  export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.0
+  export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.8
 
 # This section is optional, using path to define utility files
 # export UTILROOT=/nwprod2/prod_util.v1.0.0  
@@ -58,12 +54,9 @@ export gefsmachine=${gefsmachine:-wcoss}
 
   . /usrx/local/Modules/default/init/ksh
   module use /nwprod2/modulefiles
-  module load prod_util/v1.0.1
-#WC for 11.0.3  module load util_shared/v1.0.0
+  module load prod_util
   module load grib_util/v1.0.1
-#WC for 11.0.3: add these two lines
-  module use /nwpara2/modulefiles
-  module load util_shared/v1.0.1
+  module load util_shared/v1.0.5
 #
   export NDATE=${NDATE:-$USHutil/ndate}
 
@@ -85,5 +78,5 @@ export gefsmachine=${gefsmachine:-wcoss}
 # export COMINGEST=/ensemble/noscrub/Yan.Luo/com-ingest-prod  #temporary testing of CQPF job
 # export COMIN=/ensemble/noscrub/emc.enspara/xz/T574L64SL/EK0 #temporary testing of CQPF job
  
-export COMINgfs=/com2/gfs/prod/gfs.$PDY
-export COMINenkf=/com2/gfs/prod/enkf.
+# export COMINgfs=/com2/gfs/prod/gfs.$PDY
+# export COMINenkf=/com2/gfs/prod/enkf.

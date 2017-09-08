@@ -386,22 +386,21 @@ do
 	fi
         if test "$SENDDBN" = 'YES'
         then
-           if [[ ! -n "$cfsuffix" && ! -n "$lr" ]]
+           echo "Debug:cfsuffix=$cfsuffix, lr=$lr, dataset=$dataset"
+           if [[ ! -n "$cfsuffix" && ! -n "$lr" && "$dataset" = 'a' ]]
            then
               if [[ "$run" = "geavg" ]]
               then
                  $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_AVG $job ${COMOUT}/${cyc}/pgrb2$dataset/geavg.${cycle}.pgrb2$dataset\f${fh}${cfsuffix}
-                 $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_AVG_WIDX $job
-                         ${COMOUT}/${cyc}/pgrb2$dataset/geavg.${cycle}.pgrb2$dataset\f${fh}${cfsuffix}.idx
+                 $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_AVG_WIDX $job ${COMOUT}/${cyc}/pgrb2$dataset/geavg.${cycle}.pgrb2$dataset\f${fh}${cfsuffix}.idx
               fi
               if [[ "$run" = "gespr" ]]
               then
                  $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_SPR $job ${COMOUT}/${cyc}/pgrb2$dataset/gespr.${cycle}.pgrb2$dataset\f${fh}${cfsuffix}
-                 $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_SPR_WIDX $job
-                          ${COMOUT}/${cyc}/pgrb2$dataset/gespr.${cycle}.pgrb2$dataset\f${fh}${cfsuffix}.idx
+                 $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_SPR_WIDX $job ${COMOUT}/${cyc}/pgrb2$dataset/gespr.${cycle}.pgrb2$dataset\f${fh}${cfsuffix}.idx
               fi
            fi
-           if [[ ! -n "$cfsuffix" &&  -n "$lr" ]]
+           if [[ ! -n "$cfsuffix" &&  -n "$lr" && "$dataset" = 'a' ]]
            then
               if [[ "$run" = "geavg" ]]
               then

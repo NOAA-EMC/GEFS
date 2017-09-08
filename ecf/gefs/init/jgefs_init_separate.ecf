@@ -44,6 +44,8 @@ else
   exit
 fi
 
+module load util_shared/${util_shared_ver}
+
 $NWROOT/gefs.${gefs_ver}/jobs/JGEFS_INIT_SEPARATE
 
 %include <tail.h>

@@ -7,7 +7,7 @@
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%
 #BSUB -n 64
-#BSUB -R span[ptile=16]
+#BSUB -R span[ptile=8]
 #BSUB -x
 #BSUB -a poe
 
@@ -31,7 +31,7 @@ else
    exit
 fi
 
-$NWROOT/naefs.${naefs_ver}/jobs/JGEFS_DVRTMA_PROB_AVGSPR_CONUS
+$NWROOT/naefs.${naefs_ver}/jobs/JNAEFS_GEFS_DVRTMA_PROB_AVGSPR_CONUS
 
 
 %include <tail.h>
