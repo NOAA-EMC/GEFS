@@ -107,6 +107,7 @@ echo cycsuffix=$cycsuffix
 echo cfsuffix=$cfsuffix
 echo ensshort=$ensshort
 
+export pdysave=$PDY
 export pdycycp=`$NDATE -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
 export cycp=`echo $pdycycp|cut -c9-10`
@@ -142,20 +143,115 @@ export relocflag
 export trackflag
 export COMOUT=${COMOUT}
 
+#### EnKF 6h fcst ensemble mean file name 
+
+  if [ $NEMSIO_IN = .true. ]; then
+      fenkffcst6hmean=gdas.t${cycp}z.atmf`printf "%3.3d" $fhrp`.ensmean.nemsio
+      runchgres=yes
+  else
+      fenkffcst6hmean=sfg_${pdycycp}_fhr${fhrp}_ensmean
+  fi
+
+### chgres ENKF control run forecast hr=$fhrp and save to precious cycle sfcsig directory 
 if (( trackflag == 1 )); then
-   echo  ${COMINenkf}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean 
   # test for files necessary for relocation
-  if [[ ! -s ${COMINenkf}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean ]] ; then
+
+  if [[ ! -s ${COMINenkf}${pdyp}/${cycp}/${fenkffcst6hmean} ]]; then
     export trackflag=0
-    echo  ${COMINenkf}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean not found
+    echo  ${COMINenkf}${pdyp}/${cycp}/${fenkffcst6hmean} not found
+  else
+   mkdir $COMOUTprevcyc/sfcsig_enkf
+   export SIGINP=$COMINenkf${pdyp}/${cycp}/${fenkffcst6hmean}
+   export SIGOUT=$COMOUTprevcyc/sfcsig_enkf/gec00.t${cycp}z.sf${fhrp}
+
+    export JCAP=$JCAPHR
+    export LEVS=$LEVSHR
+    export LONB=$LONBHR
+    export LATB=$LATBHR
+    export NTRAC=$NTRACHR
+    export IDVC=$IDVC
+
+#check if ENKF has same resolution as GEFS
+           if [ $NEMSIO_IN = .true. ]; then
+                runchgres=yes
+           else 
+               ojcap=`$sighdrexec $SIGINP jcap`
+               olevs=`$sighdrexec $SIGINP levs`
+               olonb=`$sighdrexec $SIGINP lonb`
+               olatb=`$sighdrexec $SIGINP latb`
+               ontrac=`$sighdrexec $SIGINP ntrac`
+               oidvc=`$sighdrexec $SIGINP idvc`
+               runchgres=yes
+               if (( JCAP == ojcap )); then
+                    if (( LEVS == olevs )); then
+                       if (( LONB == olonb )); then
+                         if (( LATB == olatb )); then
+                            if (( NTRAC == ontrac )); then
+                                if (( IDVC == oidvc )); then
+                                    runchgres=no
+                                fi
+                            fi
+                         fi
+                       fi
+                    fi
+                fi
+           fi
+
+  if [[ $runchgres = yes ]]; then
+    export NVCOORD=$IDVC
+    export nopdpvv=$nopdpvv
+export LSOIL=4
+export IDRT=4
+export IALB=0
+export IDVM=0
+export CLIMO_FIELDS_OPT=3
+export LANDICE_OPT=2
+export SOILTYPE_INP=statsgo
+export SOILTYPE_OUT=zobler
+export VEGTYPE_INP=igbp
+export VEGTYPE_OUT=sib
+export SEA_ICE_THRESHLD_OUTPUT="0.50"
+export FNALBC2=$FIXgsm/global_albedo4.1x1.grb
+export FNZORC=sib
+export FNTSFC=$FIXgsm/RTGSST.1982.2012.monthly.clim.grb
+export FNAISC=$FIXgsm/CFSR.SEAICE.1982.2012.monthly.clim.grb
+
+    export CHGRESVARS="use_ufo=.true.,idvt=21,idsl=1,IDVM=$IDVM,idvc=$IDVC,OUTTYP=$OUTTYP,NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0,nopdpvv=$nopdpvv"
+    export OUTTYP=$OUTTYP
+    if (( IDVC == 1 )); then
+      export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
+    fi
+    if (( IDVC == 2 )); then
+      export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
+    fi
+    $chgresush 
+#    $chgresush >>$pgmout
+  else
+    cp -fp $SIGINP $SIGOUT
+  fi
+
+ fi 
+fi
+
+if (( trackflag == 1 )); then
+   echo  ${COMINenkf}${pdyp}/${cycp}/${fenkffcst6hmean}
+  # test for files necessary for relocation
+  if [[ ! -s ${COMINenkf}${pdyp}/${cycp}/${fenkffcst6hmean} ]] ; then
+    export trackflag=0
+    echo  ${COMINenkf}${pdyp}/${cycp}/${fenkffcst6hmean} not found
   else
     export cmodel=enkf
     export pert=ac00
     export PDY=${pdyp}
     export CYL=${cycp}
     export SIGVAL="&siginfo sigpath=\"${DATA}/sigf_${pert}_fhr\", ddeg=1.0, reslch=0 0 /"
-    ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean ${DATA}/sigf_${pert}_fhr00
-    ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean ${DATA}/sigf_${pert}_fhr06
+    if [ $NEMSIO_IN = .true. ]; then
+       ln -sf $COMOUTprevcyc/sfcsig_enkf/gec00.t${cycp}z.sf${fhrp} ${DATA}/sigf_${pert}_fhr00
+       ln -sf $COMOUTprevcyc/sfcsig_enkf/gec00.t${cycp}z.sf${fhrp} ${DATA}/sigf_${pert}_fhr06
+    else
+       ln -sf $COMINenkf${pdyp}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean ${DATA}/sigf_${pert}_fhr00
+       ln -sf $COMINenkf${pdyp}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean ${DATA}/sigf_${pert}_fhr06
+    fi
       sh $UTILgefs/ush/extrkr.sh
 
     atcfout=''
@@ -170,66 +266,9 @@ if (( trackflag == 1 )); then
 ###teste
   fi
 fi
-### chgres ENKF control run forecast hr=$fhrp and save to precious cycle sfcsig directory 
-if (( trackflag == 1 )); then
-  # test for files necessary for relocation
-  if [[ ! -s ${COMINenkf}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean ]]; then
-    export trackflag=0
-    echo  ${COMINenkf}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_ensmean not found
-  else
-   mkdir $COMOUTprevcyc/sfcsig_enkf
-   export SIGINP=$COMINenkf/${cycp}/sfg_${pdyp}${cycp}_fhr${fhrp}_ensmean
-    export SIGOUT=$COMOUTprevcyc/sfcsig_enkf/gec00.t${cycp}z.sf${fhrp}
-    export SFCINP=/dev/null
-    export SFCOUT=/dev/null
-    export JCAP=$JCAPHR
-    export LEVS=$LEVSHR
-    export LONB=$LONBHR
-    export LATB=$LATBHR
-    export NTRAC=$NTRACHR
-    export IDVC=$IDVC
-
-#check if ENKF has same resolution as GEFS
-  ojcap=`$sighdrexec $SIGINP jcap`
-  olevs=`$sighdrexec $SIGINP levs`
-  olonb=`$sighdrexec $SIGINP lonb`
-  olatb=`$sighdrexec $SIGINP latb`
-  ontrac=`$sighdrexec $SIGINP ntrac`
-  oidvc=`$sighdrexec $SIGINP idvc`
-  runchgres=yes
-  if (( JCAP == ojcap )); then
-    if (( LEVS == olevs )); then
-    if (( LONB == olonb )); then
-    if (( LATB == olatb )); then
-      if (( NTRAC == ontrac )); then
-        if (( IDVC == oidvc )); then
-          runchgres=no
-        fi
-      fi
-    fi
-    fi
-    fi
-  fi
-
-  if [[ $runchgres = yes ]]; then
-    export NVCOORD=$IDVC
-    export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0"
-    if (( IDVC == 1 )); then
-      export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
-    fi
-    if (( IDVC == 2 )); then
-      export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
-    fi
-    $chgresush >>$pgmout
-  else
-    cp -fp $SIGINP $SIGOUT
-    cp -fp $SFCINP $SFCOUT
-  fi
-
- fi 
-fi
+export PDY=$pdysave
 echo
-if (( trackflag == 1 )); then
+if [ $NEMSIO_IN = .true. ]; then
 echo `date` $0 poe EnKF_track begin
 echo
 
@@ -277,6 +316,147 @@ do
   if [ ${mmemh} -lt 10 ]; then
     mmemh=0${mmemh}
   fi
+# loop to find enkf input files
+     haveinput=no
+    (( fhr = $fhrp ))
+       while (( fhr <= $fhrpend ))
+           do
+         if (( fhr < 10 )); then
+             fhr=0$fhr
+         fi
+         echo begin loop for  fhr=$fhr
+         pdycycp0=`$NDATE -$fhr $PDY$cyc`
+         pdyp0=`echo $pdycycp0|cut -c1-8`
+         cycp0=`echo $pdycycp0|cut -c9-10`
+         datein=${pdycycp0}
+         if [[ $haveinput = no ]]; then
+            found=true
+           if   [[ $NEMSIO_IN = .true. ]]; then
+                fcstinn=$COMINenkf${pdyp0}/${cycp0}/gdas.t${cycp0}z.atmf`printf "%3.3d" $fhrp`.mem0${mmem}.nemsio
+                fcstinp=$COMINenkf${pdyp0}/${cycp0}/gdas.t${cycp0}z.atmf`printf "%3.3d" $fhrp`.mem0${pmem}.nemsio
+           else
+                fcstinn=$COMINenkf${pdyp0}/${cycp0}/sfg_${pdycycp0}_fhr${fhrp}_mem0${mmem}
+                fcstinp=$COMINenkf${pdyp0}/${cycp0}/sfg_${pdycycp0}_fhr${fhrp}_mem0${pmem}
+           fi
+			if [[ -e $fcstinn ]]; then
+				echo fcstinn=$fcstinn found
+                                echo fcstinn=$fcstinn found
+                               if [ $NEMSIO_IN = .true. ]; then
+                                onifhr=$($nemsioget $fcstinn nfhour |grep -i "nfhour" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+                               else
+
+				onifhr=`$sighdrexec $fcstinn ifhr`
+                               fi
+				rc=$?
+				echo rc=$rc onifhr=$onifhr
+				if (( rc == 0 )); then
+					if (( onifhr == fhrp )); then
+                                                if [ $NEMSIO_IN = .true. ];then
+                                                   export OCDATE_NEMS=$($nemsioget ${fcstinn} idate | grep -i "idate" |awk -F= '{print $2}')
+                                                   INI_YEAR=$(echo $OCDATE_NEMS | awk -F" " '{print $1}')
+                                                   INI_MONTH=$(echo $OCDATE_NEMS | awk -F" " '{print $2}')
+                                                   INI_DAY=$(echo $OCDATE_NEMS | awk -F" " '{print $3}')
+                                                   INI_HOUR=$(echo $OCDATE_NEMS | awk -F" " '{print $4}')
+                                                   oyyyy=$INI_YEAR
+                                                   omm=$INI_MONTH; if [ $omm -lt 10 ]; then omm=0$omm ; fi
+                                                   odd=$INI_DAY; if [ $odd -lt 10 ]; then odd=0$odd ; fi
+                                                   ohh=`expr $INI_HOUR + 0 `; if [ $ohh -lt 10 ]; then ohh=0$ohh ; fi
+                                                   onidate=${oyyyy}${omm}${odd}${ohh}
+                                                else
+
+						onidate=`$sighdrexec $fcstinn idate`
+                                               fi
+						rc=$?
+						echo rc=$rc onidate=$onidate
+						if (( rc == 0 )); then
+							if (( onidate == datein )); then
+								echo "fcstinn=$fcstinn appears to be usable"
+								fcstinnuse=$fcstinn
+							else
+								found=false
+							fi # (( onidate == datein ))
+						else
+							found=false
+						fi # (( rc == 0 ))
+					else
+						found=false
+					fi # (( onifhr == fhrp ))
+				else
+					found=false
+				fi # (( rc == 0 ))
+			else
+				echo fcstinn=$fcstinn not found
+				found=false
+			fi # [[ -e $fcstinn ]]
+			echo found=$found
+
+			if [[ -e $fcstinp ]]; then
+				echo fcstinp=$fcstinp found
+                               if [ $NEMSIO_IN = .true. ]; then
+                                opifhr=$($nemsioget $fcstinp nfhour |grep -i "nfhour" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
+                               else
+				opifhr=`$sighdrexec $fcstinp ifhr`
+                               fi
+				rc=$?
+				echo opifhr=$opifhr
+				if (( rc == 0 )); then
+					if (( opifhr == fhrp )); then
+                                            if [ $NEMSIO_IN = .true. ];then
+                                                   export OCDATE_NEMS=$($nemsioget ${fcstinp} idate | grep -i "idate" |awk -F= '{print $2}')
+                                                   INI_YEAR=$(echo $OCDATE_NEMS | awk -F" " '{print $1}')
+                                                   INI_MONTH=$(echo $OCDATE_NEMS | awk -F" " '{print $2}')
+                                                   INI_DAY=$(echo $OCDATE_NEMS | awk -F" " '{print $3}')
+                                                   INI_HOUR=$(echo $OCDATE_NEMS | awk -F" " '{print $4}')
+                                                   oyyyy=$INI_YEAR
+                                                   omm=$INI_MONTH; if [ $omm -lt 10 ]; then omm=0$omm ; fi
+                                                   odd=$INI_DAY; if [ $odd -lt 10 ]; then odd=0$odd ; fi
+                                                   ohh=`expr $INI_HOUR + 0 `; if [ $ohh -lt 10 ]; then ohh=0$ohh ; fi
+                                                   opidate=${oyyyy}${omm}${odd}${ohh}
+                                                else
+						opidate=`$sighdrexec $fcstinp idate`
+                                                fi
+						rc=$?
+						echo rc=$rc opidate=$opidate
+						if (( rc == 0 )); then
+							if (( opidate == datein )); then
+								echo fcstinp=$fcstinp appears to be usable
+								fcstinpuse=$fcstinp
+							else
+								found=false
+							fi # (( opidate == datein ))
+						else
+							found=false
+						fi # (( rc == 0 ))
+					else
+						found=false
+					fi # (( opifhr == fhrp ))
+				else
+					found=false
+				fi # (( rc == 0 ))
+			else
+				echo fcstinp=$fcstinp not found
+				found=false
+			fi # [[ -e $fcstinp ]]
+			echo found=$found
+                          if [[ $found = true ]]; then
+                                ifhruse=$fhr
+                                echo all forecasts found for ifhruse=$ifhruse
+                                        fcstinnuse=$fcstinn
+                                        fcstinpuse=$fcstinp
+                                haveinput=yes
+                        else
+                                echo some forecasts missing for fhr=$fhr
+                        fi # [[ $found = true ]]
+
+
+         fi
+
+         (( fhr = fhr + fhrp ))
+
+       done
+
+# end the loop to find enkf input files
+
   echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh begin">>poescript.$itask
   cat <<EOF >> poescript.$itask
 export DATA=${DATATMP}/tr${ipair}
@@ -284,18 +464,49 @@ mkdir -p \${DATA}
 export cmodel=enkf
 export PDY=${pdyp}
 export CYL=${cycp}
+export nopdpvv=$nopdpvv
+export runchgres=$runchgres
+export trackflag=$trackflag
+export NEMSIO_IN=$NEMSIO_IN
+export haveinput=$haveinput
+if  [[ \$runchgres = yes ]] &&  [[ \$haveinput = yes ]] ; then
+     export CHGRESVARS="use_ufo=.true.,idvt=21,idsl=1,idvm=$IDVM,idvc=$IDVC,OUTTYP=$OUTTYP,NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0,nopdpvv=$nopdpvv"
+    export SIGLEVEL=$SIGLEVEL
+     export SIGINP=$fcstinnuse
+     export SIGOUT=$COMOUTprevcyc/sfcsig_enkf/sfg_${pdycycp}_fhr${fhrp}_mem0${mmem}
+   $chgresush >>$pgmout
+   export SIGINP=$fcstinpuse
+   export SIGOUT=$COMOUTprevcyc/sfcsig_enkf/sfg_${pdycycp}_fhr${fhrp}_mem0${pmem}
+   $chgresush >>$pgmout
+fi
+
+
 EOF
   cat <<EOF >> poescript.$itask
+if (( trackflag == 1 )); then
 export pert=${suf}${pmemh}
 export SIGVAL="&siginfo sigpath=\"\${DATA}/sigf_\${pert}_fhr\", ddeg=1.0, reslch=0 0 /"
-ln -sf $COMINenkf/${cycp}/siganl_${pdycycp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr00
-ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr06
+ if   [[ \$NEMSIO_IN = .true. ]]; then
+           ln -sf $COMOUTprevcyc/sfcsig_enkf/sfg_${pdycycp}_fhr${fhrp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr00
+           ln -sf $COMOUTprevcyc/sfcsig_enkf/sfg_${pdycycp}_fhr${fhrp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr06
+  else
+          ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr00
+          ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr06
+  fi
+
 $UTILgefs/ush/extrkr.sh > ushout.track.$ipair 2>&1
+
 export pert=${suf}${mmemh}
 export SIGVAL="&siginfo sigpath=\"\${DATA}/sigf_\${pert}_fhr\", ddeg=1.0, reslch=0 0 /"
-ln -sf $COMINenkf/${cycp}/siganl_${pdycycp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr00
-ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr06
+ if   [[ \$NEMSIO_IN = .true. ]]; then
+        ln -sf $COMOUTprevcyc/sfcsig_enkf/sfg_${pdycycp}_fhr${fhrp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr00
+        ln -sf $COMOUTprevcyc/sfcsig_enkf/sfg_${pdycycp}_fhr${fhrp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr06
+  else
+        ln -sf $COMINenkf/${cycp}/siganl_${pdycycp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr00
+        ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr06
+ fi
 $UTILgefs/ush/extrkr.sh >> ushout.track.$ipair 2>&1
+fi
 EOF
   echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh end">>poescript.$itask
 

@@ -11,11 +11,11 @@ date
 
 ###########################################
 ###########################################
-# Run gefs_config to get input parameters
+# Run gefs_config_dev to get input parameters
 ###########################################
 if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
-  . $basesource/nw${envir}/parm/gefs_config
+  . $basesource/nw${envir}/parm/gefs_config_dev
 fi
 
 export APRUN=${gefsmpexec:-mpirun.lsf}
@@ -50,9 +50,9 @@ export RUN=${RUN:-gefs}
 ###################################
 # Load the GRIB Utilities module
 ####################################
- . /usrx/local/Modules/default/init/ksh
- module load grib_util
- module load util_shared/v1.0.0
+# module loaded in ecflow scripts
+# JY . /usrx/local/Modules/default/init/ksh
+# JY  module load grib_util
 
 ####################################
 # File To Log Msgs
@@ -73,11 +73,14 @@ export pgmerr=errfile
   export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.$gefs_ver}
   export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
 
-  export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
-  export USHgsm=${USHgsm:-$HOMEgsm/ush}
-  export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
-  export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
+#This part only use for sigio inputs
+#  export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
+#  export USHgsm=${USHgsm:-$HOMEgsm/ush}
+#  export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
+#  export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 
+#This part use for nemsio inputs
+  export FIXgsm=${FIXSUBDA:-${HOMEgsm}/fix/fix_am}
 
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
@@ -85,6 +88,10 @@ export pgmerr=errfile
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
+  export chgresush=$GLOBALCHGRES
+  export nemsioget=$UTILgefs/exec/nemsio_get
+  export sighdrexec=$EXECgsm/global_sighdr
+  export exectrkdir=$HOMEgefs/util/exec
 ##############################################
 echo set parameters using gefs.parm
 ##############################################
@@ -119,11 +126,13 @@ export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=$COMROOTp1/gfs/prod/gfs.$PDY 
-export COMINenkf=$COMROOTp1/gfs/prod/enkf.$pdyp 
-export COMINatcfsyn=$COMROOTp1/arch/prod/syndat
-export COMINgfs6ago=$COMROOTp1/gfs/prod/gfs.$d6ago_ymd
-export COMINgfs6ahead=$COMROOTp1/gfs/prod/gfs.$d6ahead_ymd
+# JY export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.$PDY} 
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.$PDY)} 
+# 20160607 RLW if present, modify preset COMINenkf to include the date for this job
+export COMINenkf=${COMINenkf:-$(compath.py /gfs/prod)/enkf.} 
+export COMINatcfsyn=${COMINatcfsyn:-$(compath.py arch/prod/syndat)}
+export COMINgfs6ago=${COMINgfs6ago:-$(compath.py gfs/prod/gfs.$d6ago_ymd)}
+export COMINgfs6ahead=${COMINgfs6ahead:-$(compath.py gfs/prod/gfs.$d6ahead_ymd)}
 
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
@@ -131,27 +140,40 @@ export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
 export COMIN=${COMIN:-${COM_IN}/${RUN}.${PDY}}
 export COMOUT=${COMOUT:-${COM_OUT}/${RUN}.${PDY}}
 
-export COMOUTprevcyc=$COMROOT/${NET}/${envir}/${RUN}.${pdyp}/$cycp 
+export COMOUTprevcyc=${COMOUTprevcyc:-$COMROOT/${NET}/${envir}/${RUN}.${pdyp}/$cycp}
 mkdir -m 775 -p $COMOUTprevcyc
+### echo Looking  the earlier EnKF
+#cycles from fhrp back to fhrpend  (hr)
+export fhrpend=96
+
 
 #######
-echo location of sighdr executable
+#  echo location of nemsio_get
+#
+## export nemsioget=$EXECgsm/nemsio_get
+#  export nemsioget=$UTILgefs/exec/nemsio_get
+#
+#  echo nemsioget=$nemsioget
+########
+#  echo location of sighdr executable
+#
+#  export sighdrexec=$EXECgsm/global_sighdr
+#
+#  echo sighdrexec=$sighdrexec
+#
+#
+#echo location of chgres script and executable
+## Change Resolution script and executable
+#
+##  export chgresush=$USHgsm/global_chgres.sh
+##  export CHGRESEXEC=$EXECgsm/global_chgres
+#
+##echo chgresush=$chgresush
+##echo CHGRESEXEC=$CHGRESEXEC
 
-export sighdrexec=$EXECgsm/global_sighdr
-
-echo sighdrexec=$sighdrexec
-
-
-echo location of chgres script and executable
-# Change Resolution script and executable
-   export chgresush=$USHgsm/global_chgres.sh
-   export CHGRESEXEC=$EXECgsm/global_chgres
-
-echo chgresush=$chgresush
-echo CHGRESEXEC=$CHGRESEXEC
 #########################
-echo location of tracking executable
-export exectrkdir=$HOMEgefs/util/exec
+#echo location of tracking executable
+#export exectrkdir=$HOMEgefs/util/exec
 
 ##############################################
 echo list environment before running script

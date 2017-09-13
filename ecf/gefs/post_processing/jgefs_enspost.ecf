@@ -1,17 +1,15 @@
 #BSUB -J %E%gefs_enspost_%CYC%
 #BSUB -o /%COM%/output/%ENVIR%/today/gefs_enspost_%CYC%.o%J
 #BSUB -e  /%COM%/output/%ENVIR%/today/gefs_enspost_%CYC%.o%J
+##BSUB -q %QUEUE%ser
 #BSUB -q %QUEUE%_shared
 #BSUB -cwd /tmpnwprd
 #BSUB -L /bin/sh
 #BSUB -W 02:50
 #BSUB -P %PROJ%
- 
-#BSUB -n 1
-##BSUB -a poe
+#BSUB -n 4
 #BSUB -R span[ptile=4]
 #BSUB -R affinity[core(4):distribute=pack]
-
 #BSUB -R rusage[mem=4608]
 
 %include <head.h>
@@ -22,7 +20,6 @@ set -x
 
 export OMP_NUM_THREADS=1
 
-export envir=%ENVIR%
 export cyc=%CYC%
 export cyc_fcst=%CYC%
 
@@ -35,6 +32,8 @@ else
   ecflow_client --abort
   exit
 fi
+
+module load grib_util/${grib_util_ver}
 
 $NWROOT/gefs.${gefs_ver}/jobs/JGEFS_ENSPOST
 

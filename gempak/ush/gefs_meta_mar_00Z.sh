@@ -65,7 +65,6 @@ do
 
             export pgm=gdplot2_nc;. prep_step; startmsg
 
-#GDFILE	= \$COMINs_p1/gfs.${PDY}/gfs_${PDY}${gfscyc}f${fcsthrsgfs}
 gdplot2_nc << EOF
 GDFILE	= F-GEFSC00 | ${PDY2}/${cyc}00
 GDATTIM	= F${fcsthr}
@@ -200,13 +199,13 @@ LINE    = 18/1/1/0
 TITLE   = 18/+20/~ ? P20|~${metaarea} ${level} DM
 run
 
-GDFILE	= \$COMINs_p1/gfs.${yesterday}/gfs_${yesterday}${gfscyc}f${fcsthrsgfs}
+GDFILE	= \$COMINs/gfs.${yesterday}/gfs_${yesterday}${gfscyc}f${fcsthrsgfs}
 LINE    = 3/1/3/0
 GDATTIM	= F${fcsthrsgfs}
 TITLE   = 3/+11/~ ? GFS 12Z YEST|~${metaarea} ${level} DM
 run
 
-GDFILE	= \$COMINs_p1/ecmwf.${ecmwfdate}/ecmwf_glob_${ecmwfdate}${ecmwfcyc}
+GDFILE	= \$COMINs/ecmwf.${ecmwfdate}/ecmwf_glob_${ecmwfdate}${ecmwfcyc}
 LINE    = 31/1/2/0
 GDATTIM	= F${fcsthrsgfs}
 TITLE   = 31/+12/~ ? ECMWF 12Z YEST|~${metaarea} ${level} DM
@@ -239,7 +238,6 @@ EOF
 
         export pgm=gdplot2_nc;. prep_step; startmsg
 
-#GDFILE	= \$COMINs_p1/gfs.${PDY}/gfs_${PDY}${gfscyc}f${fcsthrsgfs}
 gdplot2_nc << EOF
 GDFILE	= F-GEFSC00 | ${PDY2}/${cyc}00
 GDATTIM	= F${fcsthr}
@@ -374,13 +372,13 @@ HILO    = 18/L${num}/900-1016/5/50/y
 TITLE   = 18/+20/~ ? P20|~${metaarea} ${metashname}
 run
 
-GDFILE	= \$COMINs_p1/gfs.${yesterday}/gfs_${yesterday}${gfscyc}f${fcsthrsgfs}
+GDFILE	= \$COMINs/gfs.${yesterday}/gfs_${yesterday}${gfscyc}f${fcsthrsgfs}
 HILO    = 3/L${num}/900-1016/5/50/y
 GDATTIM	= F${fcsthrsgfs}
 TITLE   = 3/+11/~ ? GFS 12Z YEST|~${metaarea} ${metashname}
 run
 
-GDFILE	= \$COMINs_p1/ecmwf.${ecmwfdate}/ecmwf_glob_${ecmwfdate}${ecmwfcyc}
+GDFILE	= \$COMINs/ecmwf.${ecmwfdate}/ecmwf_glob_${ecmwfdate}${ecmwfcyc}
 HILO    = 31/L${num}/900-1016/5/50/y
 GDATTIM	= F${fcsthrsgfs}
 TITLE   = 31/+12/~ ? ECMWF 12Z YEST|~${metaarea} ${metashname}

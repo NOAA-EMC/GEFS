@@ -15,12 +15,12 @@ export PS4=' + $SECONDS $na $LINENO: '
 date
 
 ###########################################
-# Run gefs_config to get input parameters
+# Run gefs_config_dev to get input parameters
 ###########################################
 if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
-  . $basesource/nwdev/parm/gefs_config
+  . $basesource/nwdev/parm/gefs_config_dev
 fi
 
 ####################################
@@ -97,7 +97,7 @@ esac
 
   fhsave=${fhsave:-198}
   cycsavelistsfcsig=${cycsavelistsfcsig:-"00"}
-  cycsavelistmaster=${cycsavelistmaster:-""}
+  cycsavelistmaster=${cycsavelistmaster:-"00 06 12 18"}
   echo fhsave=$fhsave
   echo cycsavelistsfcsig="$cycsavelistsfcsig"
   echo cycsavelistmaster="$cycsavelistmaster"

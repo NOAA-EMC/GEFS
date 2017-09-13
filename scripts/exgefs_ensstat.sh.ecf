@@ -68,7 +68,6 @@ export ENSSTAT=$EXECgefs/gefs_ensstat
 export ENSPQPF=$USHgefs/global_enspqpf.sh
 
 echo settings in $0 WGRIB2=$WGRIB2
-parmlist=$PARMgefs/gefs_pgrb2a_fhh.parm
 
 #####################################
 # START TO DUMP DATA FOR $cycle CYCLE
@@ -120,6 +119,12 @@ do
 # else 
 #  reslist="p5"
 # fi
+
+  if (( fh == 0 )); then
+    parmlist=$PARMgefs/gefs_pgrb2a_f00.parm
+  else
+    parmlist=$PARMgefs/gefs_pgrb2a_fhh.parm
+  fi
 
   #  the order here should correspond to the order in
   #  which the pgrb files are produced by the post
@@ -176,7 +181,11 @@ do
       for mem in $memberlist
       do
 	(( nmem = nmem + 1 ))
-        testfile=$COMIN/$cyc/pgrb2$dataset$lr/ge${mem}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT${cfsuffix}.idx
+#       testfile=$COMIN/$cyc/pgrb2a$lr/ge${mem}.${cycle}.pgrb2aif$fh$EXT$cfsuffix
+#       testfile=$COMIN/$cyc/pgrb2a$lr/ge${mem}.${cycle}.pgrb2af$fh$EXT$cfsuffix
+        # JY testfile=$COMIN/$cyc/pgrb2a$lr/ge${mem}.${cycle}.pgrb2a$FXT\f$fh$EXT$cfsuffix
+        # RW testfile=$COMIN/$cyc/pgrb2a$lr/ge${mem}.${cycle}.pgrb2a$FXT\f$fh$EXT${cfsuffix}.idx
+	testfile=$COMIN/$cyc/pgrb2$dataset$lr/ge${mem}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT${cfsuffix}.idx
 
         if test -f $testfile
         then
@@ -286,9 +295,9 @@ do
        b) $WGRIB2 -s $COMIN/$cyc/pgrb2$dataset$lr/ge${mem}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix | \
            grep -F -f $parmlist | \
            $WGRIB2 $COMIN/$cyc/pgrb2$dataset$lr/ge${mem}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix -s -i -grib cfipg$ifile$res;
-	  $WGRIB2 -s $COMIN/$cyc/pgrb2$dataset$lr/ge${mem}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix | grep "HGT:300 mb" | \
-	   $WGRIB2 $COMIN/$cyc/pgrb2$dataset$lr/ge${mem}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix -i -append -grib cfipg$ifile$res;;
-      esac 
+          $WGRIB2 -s $COMIN/$cyc/pgrb2$dataset$lr/ge${mem}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix | grep "HGT:300 mb" | \
+           $WGRIB2 $COMIN/$cyc/pgrb2$dataset$lr/ge${mem}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix -i -append -grib cfipg$ifile$res;;
+      esac
       fi
 
 #     echo " cfipg($ifile)"=\"$COMIN/$cyc/pgrb2$dataset$lr/ge${mem}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix\", >>namin
@@ -299,6 +308,12 @@ do
     echo " nfiles=$ifile", >>namin
     echo " nenspost=$nenspost", >>namin
 
+#   echo " cfoag"=\"geavg.$cycle.pgrbaf$fh$EXT$cfsuffix\", >>namin
+#   echo " cfosg"=\"gespr.$cycle.pgrbaf$fh$EXT$cfsuffix\" >>namin
+#   echo " cfopg1"=\"geavg.$cycle.pgrb2af$fh$EXT$cfsuffix\", >>namin
+#   echo " cfopg2"=\"gespr.$cycle.pgrb2af$fh$EXT$cfsuffix\" >>namin
+#   echo " cfopg1"=\"geavg.$cycle.pgrb2a$FXT\f$fh$EXT$cfsuffix\", >>namin
+#   echo " cfopg2"=\"gespr.$cycle.pgrb2a$FXT\f$fh$EXT$cfsuffix\" >>namin
     echo " cfopg1"=\"geavg.$cycle.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix\", >>namin
     echo " cfopg2"=\"gespr.$cycle.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix\" >>namin
 
@@ -337,9 +352,9 @@ do
     for run in geavg gespr
     do
       if [[ -s ${run}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix ]]; then
-	ls -al ${run}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix
+        ls -al ${run}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix
       else
-	echo output file ${run}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix IS MISSING
+        echo output file ${run}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix IS MISSING
 	export err=9
 	err_chk
       fi
@@ -359,43 +374,45 @@ do
 	if [[ "$makegrb1i" = "yes" ]]; then
 	  $GRBINDEX ${run}.${cycle}.pgrb$dataset$FXT\f$fh$EXT$cfsuffix ${run}.${cycle}.pgrb$dataset$FXT\if$fh$EXT$cfsuffix
 	fi
-	if [[ -s ${run}.${cycle}.pgrb$dataset$FXT\f$fh$EXT$cfsuffix ]]; then
-	  mv ${run}.${cycle}.pgrb$dataset$FXT\f$fh$EXT$cfsuffix $COMOUT/$cyc/pgrb$dataset$lr
+        if [[ -s ${run}.${cycle}.pgrb$dataset$FXT\f$fh$EXT$cfsuffix ]]; then
+          mv ${run}.${cycle}.pgrb$dataset$FXT\f$fh$EXT$cfsuffix $COMOUT/$cyc/pgrb$dataset$lr
 	  if [[ "$makegrb1i" = "yes" ]]; then
-	    mv ${run}.${cycle}.pgrb$dataset$FXT\if$fh$EXT$cfsuffix $COMOUT/$cyc/pgrb$dataset$lr
+            mv ${run}.${cycle}.pgrb$dataset$FXT\if$fh$EXT$cfsuffix $COMOUT/$cyc/pgrb$dataset$lr
 	  fi
 	fi
-	if [[ -s ${run}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix ]]; then
-	  mv ${run}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix $COMOUT/$cyc/pgrb2$dataset$lr
-	  mv ${run}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT${cfsuffix}.idx $COMOUT/$cyc/pgrb2$dataset$lr
+        if [[ -s ${run}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix ]]; then
+          mv ${run}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix $COMOUT/$cyc/pgrb2$dataset$lr
+          mv ${run}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT${cfsuffix}.idx $COMOUT/$cyc/pgrb2$dataset$lr
 	fi
         if test "$SENDDBN" = 'YES'
         then
-           if [[ ! -n "$cfsuffix" && ! -n "$lr" ]]
+           echo "Debug:cfsuffix=$cfsuffix, lr=$lr, dataset=$dataset"
+           if [[ ! -n "$cfsuffix" && ! -n "$lr" && "$dataset" = 'a' ]]
            then
               if [[ "$run" = "geavg" ]]
               then
                  $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_AVG $job ${COMOUT}/${cyc}/pgrb2$dataset/geavg.${cycle}.pgrb2$dataset\f${fh}${cfsuffix}
-                 $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_AVG_WIDX $job
-                         ${COMOUT}/${cyc}/pgrb2$dataset/geavg.${cycle}.pgrb2$dataset\f${fh}${cfsuffix}.idx
+                 $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_AVG_WIDX $job ${COMOUT}/${cyc}/pgrb2$dataset/geavg.${cycle}.pgrb2$dataset\f${fh}${cfsuffix}.idx
               fi
               if [[ "$run" = "gespr" ]]
               then
                  $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_SPR $job ${COMOUT}/${cyc}/pgrb2$dataset/gespr.${cycle}.pgrb2$dataset\f${fh}${cfsuffix}
-                 $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_SPR_WIDX $job 
-                          ${COMOUT}/${cyc}/pgrb2$dataset/gespr.${cycle}.pgrb2$dataset\f${fh}${cfsuffix}.idx
+                 $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_SPR_WIDX $job ${COMOUT}/${cyc}/pgrb2$dataset/gespr.${cycle}.pgrb2$dataset\f${fh}${cfsuffix}.idx
               fi
            fi
-           if [[ ! -n "$cfsuffix" &&  -n "$lr" ]]
+           if [[ ! -n "$cfsuffix" &&  -n "$lr" && "$dataset" = 'a' ]]
            then
               if [[ "$run" = "geavg" ]]
               then
+                #$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG $job ${COMOUT}/${cyc}/pgrb2alr/geavg.${cycle}.pgrb2af${fh}${cfsuffix}.2
                  $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG $job ${COMOUT}/${cyc}/pgrb2$dataset$lr/geavg.${cycle}.pgrb2$dataset$FXT\f${fh}$EXT${cfsuffix}
-		 $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG_WIDX $job ${COMOUT}/${cyc}/pgrb2$dataset$lr/geavg.${cycle}.pgrb2$dataset$FXT\f${fh}$EXT${cfsuffix}.idx
+                 $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG_WIDX $job ${COMOUT}/${cyc}/pgrb2$dataset$lr/geavg.${cycle}.pgrb2$dataset$FXT\f${fh}$EXT${cfsuffix}.idx
               fi
               if [[ "$run" = "gespr" ]]
               then
-	         $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR $job ${COMOUT}/${cyc}/pgrb2a$lr/gespr.${cycle}.pgrb2$dataset$FXT\f${fh}$EXT${cfsuffix}
+                #$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR $job ${COMOUT}/${cyc}/pgrb2alr/gespr.${cycle}.pgrb2af${fh}${cfsuffix}.2
+                 $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR $job ${COMOUT}/${cyc}/pgrb2$dataset$lr/gespr.${cycle}.pgrb2$dataset$FXT\f${fh}$EXT${cfsuffix}
+	         $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR_WIDX $job ${COMOUT}/${cyc}/pgrb2$dataset$lr/gespr.${cycle}.pgrb2$dataset$FXT\f${fh}$EXT${cfsuffix}.idx
               fi
            fi
         fi

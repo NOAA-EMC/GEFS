@@ -86,6 +86,8 @@ export COM=${COMROOT}/${NET}/${envir}
 # export COMIN=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/pgrba
 export COMIN=${COM}/${RUN}.${PDY}/${cyc}/pgrb2a
 export COMIN_P5=${COM}/${RUN}.${PDY}/${cyc}/pgrb2ap5
+export COMIN_B=${COM}/${RUN}.${PDY}/${cyc}/pgrb2b
+export COMIN_B_P5=${COM}/${RUN}.${PDY}/${cyc}/pgrb2bp5
 export COMOUT=${COMROOT}/nawips/${envir}/${RUN}.${PDY}
 
 if [ ! -f $COMOUT ] ; then

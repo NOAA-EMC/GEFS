@@ -301,7 +301,11 @@ do
     elif (( inflagt == 5 )); then
       fcstinn=$comfcstin/$cycstart/sfcsig/gep${ipairn}.$cyclestart.sf$fhr$cfsuffixstart
     elif (( inflagt == 6 )); then
-     fcstinn=${COMINenkf}${pdyp0}/$cycp0/sfg_${pdyp0}${cycp0}_fhr${fhrp}_mem0${ipairin}
+         if [ $NEMSIO_IN = .true. ]; then
+              fcstinn=${comfcstin}/$cycstart/sfcsig_enkf/sfg_${datein}_fhr${fhrp}_mem0${ipairin}
+         else
+              fcstinn=${COMINenkf}${pdyp0}/$cycp0/sfg_${pdyp0}${cycp0}_fhr${fhrp}_mem0${ipairin}
+         fi
 
     else
       fcstinn=$comfcstin/$cycstart/sfcsig/gec00.$cyclestart.sf$fhr$cfsuffixstart
@@ -344,7 +348,11 @@ do
     elif (( inflagt == 5 )); then
       fcstinp=$comfcstin/$cycstart/sfcsig/gep${ipairp}.$cyclestart.sf$fhr$cfsuffixstart
     elif (( inflagt == 6 )); then
-     fcstinp=${COMINenkf}${pdyp0}/$cycp0/sfg_${pdyp0}${cycp0}_fhr${fhrp}_mem0${ipairip}
+         if [ $NEMSIO_IN = .true. ]; then
+              fcstinp=${comfcstin}/$cycstart/sfcsig_enkf/sfg_${datein}_fhr${fhrp}_mem0${ipairip}
+         else
+              fcstinp=${COMINenkf}${pdyp0}/$cycp0/sfg_${pdyp0}${cycp0}_fhr${fhrp}_mem0${ipairip}
+         fi
     else
       fcstinp=$comfcstin/$cycstart/sfcsig/gec00.$cyclestart.sf$fhr$cfsuffixstart
     fi

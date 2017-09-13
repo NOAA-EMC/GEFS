@@ -1,4 +1,4 @@
-Library are defined in Module_gefs_v11.0.4
+Library are defined in Module_gefs_v11.2.0
 
 To build codes:
 
@@ -6,8 +6,13 @@ To build codes:
      1) bash
      2) module purge
      3) module use .
-     4) module load Module_gefs_v11.0.4
+     4) module load Module_gefs_v11.2.0
      5) ./build.sh
-     6) ./buld_overenstr.sh  
-     7) ./install.sh
+     6) ./install.sh
+    cd ../util/sorc
+     7)  module purge
+     8) module use ./
+     9) ./build_nems_util.sh
 
+Or, you can simply execute
+     ./build_all.sh

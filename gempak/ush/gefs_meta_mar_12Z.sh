@@ -200,12 +200,7 @@ LINE    = 31/2/3/0
 TITLE   = 31/+10/~ ? NAM (DASHED) |~${level} DM - ${metaarea}
 run
 
-GDFILE  = \$COMINs_p1/ngm.${PDY}/ngm_${PDY}${cyc}f${fcsthr}
-LINE    = 23/2/3/0
-TITLE   = 23/+11/~ ? NGM (DASHED) |~${level} DM - ${metaarea}
-run
-
-GDFILE	= \$COMINs_p1/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr}
+GDFILE	= \$COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr}
 LINE    = 5/2/3/0
 TITLE   = 5/+12/~ ? GFS (DASHED) |~${level} DM - ${metaarea}
 run
@@ -388,13 +383,7 @@ HILO    = 31/L#/900-1016/5/50/y
 TITLE   = 31/+10/~ ? NAM |~${metaarea} ${metashname}
 run
 
-GDFILE  = \$COMINs_p1/ngm.${PDY}/ngm_${PDY}${cyc}f${fcsthr}
-LINE    = 23/2/3/0
-HILO    = 23/L#/900-1016/5/50/y
-TITLE   = 23/+11/~ ? NGM |~${metaarea} ${metashname}
-run
-
-GDFILE	= \$COMINs_p1/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr}
+GDFILE	= \$COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr}
 LINE    = 5/2/3/0
 HILO    = 5/L#/900-1016/5/50/y
 TITLE   = 5/+12/~ ? GFS |~${metaarea} ${metashname}

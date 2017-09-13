@@ -7,12 +7,12 @@ export PS4='$SECONDS + '
 date
 
 ###########################################
-# Run gefs_config to get input parameters
+# Run gefs_config_dev to get input parameters
 ###########################################
 if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
-  . $basesource/nw${envir}/parm/gefs_config
+  . $basesource/nw${envir}/parm/gefs_config_dev
   export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
 

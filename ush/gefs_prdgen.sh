@@ -13,6 +13,9 @@ echo " History - "
 echo "    Wobus   - 8/28/07 - New "
 echo "    Wobus   - 7/30/10 - move 180-192hr products to pgrbd"
 echo "    Hou     - 7/31/14 - adopted for grib2 based processing "
+echo "    Meng    - 11/17/16 - Use neighbor interpolation for ICSEV " 
+echo "    Meng    - 03/09/17 - Remove grib1, PGRBC and PGRBD generation, "
+echo "                         and use unify version to generate all grids"
 echo "-----------------------------------------------------"
 #####################################################################
 set -xa
@@ -20,7 +23,12 @@ set -xa
 anlflag=$anlflag
 ffhr=$ffhr
 fhr=$fhr
-grid=$grid1p0
+
+case $jobgrid in
+   1p0) grid=$grid1p0;;
+   2p5) grid=$grid2p5;;
+   0p5) grid=$gridp5;;
+esac
 
 #export WGRIB=${WGRIB:-$EXECgrib/wgrib}
 #export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
@@ -59,19 +67,27 @@ msg="Starting post for member=$member ffhr=$ffhr"
 postmsg "$jlogfile" "$msg"
 
 ####################################
-# Step I: Create 1x1 pgrb2 files 
+# Step I: Create pgrb2 files 
 ####################################
 if [[ -s $DATA/pgrb2$ffhr$cfsuffix ]] && \
    [[ -s $DATA/pgrb2i$ffhr$cfsuffix ]] && \
    [[ $overwrite = no ]]; then
    echo `date` 1x1 pgrb2 processing skipped for $RUN $ffhr
 else
-   $COPYGB2 -g "${grid}" -i0 -x $COMIN/$cyc/master/$RUN.$cycle.master.grb2$ffhr$cfsuffix pgb2file.$ffhr$cfsuffix
-   echo `date` pgrb2a 1x1 grbfile $ffhr completed
+#   $COPYGB2 -g "${grid}" -i0 -x $COMIN/$cyc/master/$RUN.$cycle.master.grb2$ffhr$cfsuffix pgb2file.$ffhr$cfsuffix
+   masterfile=$RUN.$cycle.master.grb2$ffhr$cfsuffix
+   cp $COMIN/$cyc/master/$masterfile $masterfile
+   if [[ -s icesv.grb2 ]]; then rm -f icesv.grb2; fi
+   if [[ -s others.grb2 ]]; then rm -f others.grb2; fi
+   wgrib2 -s $masterfile | grep ":ICSEV:" | wgrib2 -i $masterfile -grib icesv.grb2
+   wgrib2 -s $masterfile | grep -v ":ICSEV:" | wgrib2 -i $masterfile -grib others.grb2
+   $COPYGB2 -g "${grid}" -i0 -x others.grb2 pgb2file.$ffhr$cfsuffix
+   $COPYGB2 -g "${grid}" -i2 -a -x icesv.grb2 pgb2file.$ffhr$cfsuffix
+   echo `date` pgrb2 $jobgrid grbfile $ffhr completed
 
-   ######################################################
-   # Split the pgb2file into pgrb2a, pgrb2b and pgrb2d parts
-   ######################################################
+######################################################
+# STEP II: Split the pgb2file into pgrb2a, pgrb2b parts
+######################################################
    if (( fhr == 0 ))
    then
      hsuffix="00"
@@ -83,8 +99,6 @@ else
 
    excludestring='180-192hr'
 
-   # begin block removed from background
-#  parmlist=$PARMgefs/gefs_pgrba_f${hsuffix}.parm
    parmlist=$PARMgefs/gefs_pgrb2a_f${hsuffix}.parm
    $WGRIB2 -s pgb2file.$ffhr$cfsuffix | \
        grep -F -f $parmlist | \
@@ -99,11 +113,7 @@ else
       done
    fi
    $WGRIB2 -s pgb2afile.$ffhr$cfsuffix > pgb2afile.${ffhr}${cfsuffix}.idx
-#  $GRB2INDEX pgb2afile.$ffhr$cfsuffix pgb2afile.$ffhr$cfsuffix.idx
-   # end block removed from background
 
-   # begin block removed from background
-#  parmlist=$PARMgefs/gefs_pgrba_f${hsuffix}.parm
    parmlist2=$PARMgefs/gefs_pgrb2ab_f${hsuffix}.parm
    $WGRIB2 -s pgb2file.$ffhr$cfsuffix | \
        grep -F -f $parmlist2 | \
@@ -111,98 +121,43 @@ else
        grep -v -F $excludestring | \
        $WGRIB2 pgb2file.$ffhr$cfsuffix -s -i -grib pgb2bfile.$ffhr$cfsuffix
    $WGRIB2 -s pgb2bfile.$ffhr$cfsuffix > pgb2bfile.${ffhr}${cfsuffix}.idx
-#  $GRB2INDEX pgb2bfile.$ffhr$cfsuffix pgb2bfile.$ffhr$cfsuffix.idx
-   # end block removed from background
 
-   if test "$CREATE_TIGGE" = 'YES'
-   then
-      if (( fhr == 0 )); then
-#       parmlist=${PARMgefs}/gefs_pgrbc_f00.parm
-        parmlist=${PARMgefs}/gefs_pgrb2c_f00.parm
-      else
-#       parmlist=${PARMgefs}/gefs_pgrbc_fhh.parm
-        parmlist=${PARMgefs}/gefs_pgrb2c_fhh.parm
-      fi
-#     set +x
-      $WGRIB2 pgb2bfile.$ffhr$cfsuffix | \
-        grep -F -f $parmlist | \
-        $WGRIB2 pgb2bfile.$ffhr$cfsuffix -i -grib pgb2cfile.$ffhr$cfsuffix 
-        if test "$SENDCOM" = 'YES'
-        then
-         mv pgb2cfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2c/${RUN}.${cycle}.pgrb2c$ffhr$cfsuffix
-			    testfile=$COMOUT/$cyc/pgrb2c/${RUN}.${cycle}.pgrb2c$ffhr$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-	fi
-#     set -x
-   fi
-
-if test "$makepgrb2d" = 'yes'
-then
-   $WGRIB2 -s pgb2file.$ffhr$cfsuffix | \
-       grep -v -F -f $parmlist2 | \
-       $WGRIB2 pgb2file.$ffhr$cfsuffix -s -i -grib pgb2dfile.$ffhr$cfsuffix
-   $WGRIB2 -s pgb2file.$ffhr$cfsuffix | \
-       grep -F -f $parmlist2 | \
-       grep -F $excludestring | \
-       $WGRIB2 pgb2file.$ffhr$cfsuffix -s -i -append -grib pgb2dfile.$ffhr$cfsuffix
-fi   
-#  set -x
-
+   ##############################################
+   # Save Data
+   ##############################################
    if test "$SENDCOM" = 'YES'
    then
       #
       # Save Pressure GRIB/Index files
       #
-      mv pgb2afile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix
-			 testfile=$COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix
-          if [[ ! -s $testfile ]]; then
+      mv pgb2afile.$ffhr$cfsuffix $fileaout
+          if [[ ! -s $fileaout ]]; then
             msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
             echo "`date`    $msg"
             postmsg "$jlogfile" "$msg"
             export err=1
             err_chk
           fi
-      mv pgb2bfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
-			testfile=$COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
-          if [[ ! -s $testfile ]]; then
+      mv pgb2bfile.$ffhr$cfsuffix $filebout
+			testfile=$filebout
+          if [[ ! -s $filebout ]]; then
             msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
             echo "`date`    $msg"
             postmsg "$jlogfile" "$msg"
             export err=1
             err_chk
           fi
-#     mv pgb2cfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2c/${RUN}.${cycle}.pgrb2c$ffhr$cfsuffix
-      if test "$makepgrb2d" = 'yes'
-      then
-       mv pgb2dfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrb2d/${RUN}.${cycle}.pgrb2d$ffhr$cfsuffix
-       testfile=$COMOUT/$cyc/pgrb2d/${RUN}.${cycle}.pgrb2d$ffhr$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-      fi
       if [[ "$makegrb2i" = "yes" ]]; then
-	mv pgb2afile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix.idx
-	  testfile=$COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr${cfsuffix}.idx
-          if [[ ! -s $testfile ]]; then
+	mv pgb2afile.$ffhr$cfsuffix.idx $fileaouti
+          if [[ ! -s $fileaouti ]]; then
             msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
             echo "`date`    $msg"
             postmsg "$jlogfile" "$msg"
             export err=1
             err_chk
           fi
-	mv pgb2bfile.$ffhr$cfsuffix.idx $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix.idx
-	  testfile=$COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix.idx
-          if [[ ! -s $testfile ]]; then
+	mv pgb2bfile.$ffhr$cfsuffix.idx $filebouti
+          if [[ ! -s $filebouti ]]; then
             msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
             echo "`date`    $msg"
             postmsg "$jlogfile" "$msg"
@@ -211,8 +166,12 @@ fi
           fi
       fi
 
+      ####################################
+      # Send DBNET Alets
+      ####################################
+      if [[ "$jobgrid" = "1p0" ]]; then
       ###############################################################################
-      # Send DBNet alerts for PGB2A at 6 hour increments for all forecast hours
+      # Send DBNet alerts for PGB2A at 1p0 at 6 hour increments for all forecast hours
       # Do for 00, 06, 12, and 18Z cycles.
       ###############################################################################
       if test "$SENDDBN" = 'YES' -a "$NET" = 'gens' -a ` expr $cyc % 6 ` -eq 0
@@ -222,14 +181,14 @@ fi
 	  MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
 	  if [[ $fhr -ge 0 && $fhr -le $fhmax && ` expr $fhr % 6 ` -eq 0 && ! -n "$cfsuffix" ]]
 	  then
-	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_$MEMBER $job $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix
-	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_${MEMBER}_WIDX $job $COMOUT/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix.idx
+	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_$MEMBER $job $fileaout
+	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_${MEMBER}_WIDX $job $fileaouti
 	  fi
 	fi
       fi
 
       ###############################################################################
-      # Send DBNet alerts for PGB2B at 6 hour increments for up to 84 hours
+      # Send DBNet alerts for PGB2B at 1p0 at 6 hour increments for up to 84 hours
       # Do for 00Z and 12Z only
       ###############################################################################
        if test "$SENDDBN" = 'YES' -a "$NET" = 'gens' -a "$NET" = 'gens'
@@ -239,187 +198,97 @@ fi
 	  MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
 	# if [[ $fhr -ge 0 && $fhr -le 84 && ` expr $fhr % 6 ` -eq 0 && ! -n "$cfsuffix" ]]
 	# then
-	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_$MEMBER $job $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
-	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_${MEMBER}_WIDX $job $COMOUT/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix.idx
+	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_$MEMBER $job $filebout
+	    $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_${MEMBER}_WIDX $job $filebouti
 	# fi
          fi
 
-      ###############################################################################
-      # Send DBNet alerts for PGB2C at 6 hour increments 
-      ###############################################################################
-         if test "$CREATE_TIGGE" = 'YES'
-         then
-          MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-          $DBNROOT/bin/dbn_alert MODEL ENS_PGB2C_$MEMBER $job $COMOUT/$cyc/pgrb2c/${RUN}.${cycle}.pgrb2c$ffhr$cfsuffix
-         fi
-
-      ###############################################################################
-      # Do Not send DBNet alerts for the PGBD files at this time
-      ###############################################################################
        fi
-   fi
-echo `date` pgrb2a 1x1 sendcom $ffhr completed
-fi
-
-if [[ "$makepgrb1" = "yes" ]]; then
-######################################
-# Step II: Create GRIBA files
-#####################################
-if [[ -s $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrba$ffhr$cfsuffix ]] && \
-   [[ -s $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrbai$ffhr$cfsuffix ]] && \
-   [[ $overwrite = no ]]; then
-   echo `date` 1x1 pgrba processing skipped for $RUN $ffhr
-else
-   FILEA=$COMIN/$cyc/pgrb2a/${RUN}.${cycle}.pgrb2a$ffhr$cfsuffix
-   $CNVGRIB -g21 $FILEA pgbafile.$ffhr$cfsuffix
-   $GRBINDEX pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix
-#  $WGRIB -s pgbafile.$ffhr$cfsuffix > pgbaifile.${ffhr}${cfsuffix}.idx
-#  $ENSADD $e1 $e2 pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix epgbafile.$ffhr$cfsuffix
-#  echo after ADDING 1p0
-#  ls -lt pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix epgbafile.$ffhr$cfsuffix
-   if [[ "$addgrb1id" = "yes" ]]; then
-     mv epgbafile.$ffhr$cfsuffix pgbafile.$ffhr$cfsuffix
-#  echo after MVING 1p0
-#  ls -lt pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix epgbafile.$ffhr$cfsuffix
-     if [[ "$makegrb1i" = "yes" ]]; then
-       $GRBINDEX pgbafile.$ffhr$cfsuffix pgbaifile.$ffhr$cfsuffix
-     fi
-
-   if test "$SENDCOM" = 'YES'
-   then
-     #
-     # Save Pressure GRIB/Index files
-     #
-     mv pgbafile.$ffhr$cfsuffix $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrba$ffhr$cfsuffix
-		       testfile=$COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrba$ffhr$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-     mv pgbaifile.${ffhr}${cfsuffix} $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrbai${ffhr}${cfsuffix}
-			    testfile=$COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrbai${ffhr}${cfsuffix}
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-     if test "$SENDDBN" = 'YES'
-     then
-       if test "$NET" = 'gens'
-       then
-         if test `echo $RUN | cut -c1-2` = "ge" -a ! -n "$cfsuffix"
-         then
-           MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-           $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_$MEMBER $job $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrba$ffhr$cfsuffix
-           $DBNROOT/bin/dbn_alert MODEL ENS_PGBA_$MEMBER_WIDX $job $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrbai${ffhr}${cfsuffix}
-         fi
-       fi
-     fi
-   fi
-   fi
-fi
-
-###########################################
-# STEP III: Create GRIBB files
-###########################################
-if [[ -s $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbb$ffhr$cfsuffix ]] && \
-   [[ -s $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbbi$ffhr$cfsuffix ]] && \
-   [[ $overwrite = no ]]; then
-   echo `date` 1x1 pgrbb processing skipped for $RUN $ffhr
-else
-   FILEB=$COMIN/$cyc/pgrb2b/${RUN}.${cycle}.pgrb2b$ffhr$cfsuffix
-   $CNVGRIB -g21 $FILEB pgbbfile.$ffhr$cfsuffix
-   $GRBINDEX pgbbfile.$ffhr$cfsuffix pgbbifile.$ffhr$cfsuffix
-#  $WGRIB -s pgbbfile.$ffhr$cfsuffix > pgbbfile.${ffhr}${cfsuffix}.idx
-#  $ENSADD $e1 $e2 pgbbfile.$ffhr$cfsuffix pgbbifile.$ffhr$cfsuffix epgbbfile.$ffhr$cfsuffix
-   if [[ "$addgrb1id" = "yes" ]]; then
-     mv epgbbfile.$ffhr$cfsuffix pgbbfile.$ffhr$cfsuffix
-     if [[ "$makegrb1i" = "yes" ]]; then
-       $GRBINDEX pgbbfile.$ffhr$cfsuffix pgbbifile.$ffhr$cfsuffix
-     fi
-
-   if test "$SENDCOM" = 'YES'
-   then
-      #
-      # Save Pressure GRIB/Index files
-      #
-      mv pgbbfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbb$ffhr$cfsuffix
-			testfile=$COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbb$ffhr$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-      mv pgbbifile.${ffhr}${cfsuffix} $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbbi${ffhr}${cfsuffix}
-			     testfile=$COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbbi${ffhr}${cfsuffix}
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
-          fi
-      if test "$SENDDBN" = 'YES'
+      fi #1p0
+   
+      if [[ "$jobgrid" = "2p5" ]]; then
+      ######################################################################################
+      # Send DBNet alerts for PGBA2 at 6 hour increments for all forecast hours
+      # Do for 00, 06, 12, and 18Z cycles.
+      ######################################################################################
+      if test "$SENDDBN" = 'YES' -a "$NET" = 'gens' -a ` expr $cyc % 6 ` -eq 0
       then
-        if test "$NET" = 'gens'
+        if test `echo $RUN | cut -c1-2` = "ge"
         then
-          if test `echo $RUN | cut -c1-2` = "ge" -a ! -n "$cfsuffix"
+          MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
+          if test "$DO_LOW_RES" = 'YES' -a ` expr $fhr % 6 ` -eq 0 -a ! -n "$cfsuffix"
           then
-            MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-            $DBNROOT/bin/dbn_alert MODEL ENS_PGBB_$MEMBER $job $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbb$ffhr$cfsuffix
-            $DBNROOT/bin/dbn_alert MODEL ENS_PGBB_${MEMBER}_WIDX $job \
-                   $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbbi$ffhr${cfsuffix}
-            
+            $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A2_$MEMBER $job $fileaout
+            if [[ "$makegrb2i" = "yes" ]]; then
+            $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A2_${MEMBER}_WIDX $job $fileaouti
+            fi
           fi
         fi
       fi
-   fi
-   fi
-fi
 
-###############################
-# STEP IV: Create GRIBD files
-###############################
-if test "$makepgrb2d" = 'yes'
-then
-if [[ -f $COMOUT/$cyc/pgrbd/${RUN}.${cycle}.pgrbd$ffhr$cfsuffix ]] && \
-   [[ -f $COMOUT/$cyc/pgrbd/${RUN}.${cycle}.pgrbdi$ffhr$cfsuffix ]] && \
-   [[ $overwrite = no ]]; then
-   echo `date` 1x1 pgrbd processing skipped for $RUN $ffhr
-else
+      ######################################################################################
+      # Send DBNet alerts for PGB2B at 6 hour increments for forecast hours 0 - 84 and
+      # for PGBB2 at 6 hour increments for forecast hours 90 through 384.
+      # Do for 00 and 12Z cycles.
+      ######################################################################################
 
-   FILED=$COMIN/$cyc/pgrb2d/${RUN}.${cycle}.pgrb2d$ffhr$cfsuffix
-
-   $CNVGRIB -g21 $FILED pgbdfile.$ffhr$cfsuffix
-
-   if test "$SENDCOM" = 'YES'
-   then
-      #
-      # Save Pressure GRIB/Index files
-      #
-      mv pgbdfile.$ffhr$cfsuffix $COMOUT/$cyc/pgrbd/${RUN}.${cycle}.pgrbd$ffhr$cfsuffix
-			testfile=$COMOUT/$cyc/pgrbd/${RUN}.${cycle}.pgrbd$ffhr$cfsuffix
-          if [[ ! -s $testfile ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-            echo "`date`    $msg"
-            postmsg "$jlogfile" "$msg"
-            export err=1
-            err_chk
+      if test "$SENDDBN" = 'YES' -a "$NET" = 'gens' -a ` expr $cyc % 12 ` -eq 0
+      then
+        if test `echo $RUN | cut -c1-2` = "ge"
+        then
+          MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
+          if test "$DO_LOW_RES" = 'YES' -a ` expr $fhr % 6 ` -eq 0 -a $fhr -ge 90 -a ! -n "$cfsuffix"
+          then
+            $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B2_$MEMBER $job $filebout
+            if [[ "$makegrb2i" = "yes" ]]; then
+            $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B2_${MEMBER}_WIDX $job $filebouti
+            fi
           fi
-   fi
-fi
+        fi
+      fi
+          
+      fi #2p5
+
+      if [[ "$jobgrid" = "0p5" ]]; then
+      ###############################################################################
+      # Send DBNet alerts for  PGB2A at 3 hour increments for all forecast hours
+      # Do for 00, 06, 12, and 18Z cycles.
+      ###############################################################################
+      if test "$SENDDBN" = 'YES' -a "$NET" = 'gens' -a ` expr $cyc % 6 ` -eq 0
+      then
+        if test `echo $RUN | cut -c1-2` = "ge"
+        then
+          MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
+          if [[ $fhr -ge 0 && $fhr -le $fhmax && ` expr $fhr % $FHINCP5 ` -eq 0 && ! -n "$cfsuffix" ]]
+          then
+            $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_0P5_$MEMBER $job $fileaout
+            $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_0P5_${MEMBER}_WIDX $job $fileaouti
+          fi
+        fi
+      fi
+
+      ###############################################################################
+      # Send DBNet alerts for PGB2B at 3 hour increments for up to 84 hours
+      # Do for 00Z and 12Z only
+      ###############################################################################
+       if test "$SENDDBN" = 'YES' -a "$NET" = 'gens' -a "$NET" = 'gens'
+       then
+         if test `echo $RUN | cut -c1-2` = "ge" -a ! -n "$cfsuffix"
+         then
+          MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
+            $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_0P5_$MEMBER $job $filebout
+            $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_0P5_${MEMBER}_WIDX $job $filebouti
+         fi
+       fi
+          
+      fi #0p5
+
+   fi #$SENDCOM
+echo `date` pgrb2a $jobgrid sendcom $ffhr completed
 fi
 
-fi # ("$makepgrb1" = "yes")
 ########################################################
-echo `date` $sname $member $partltr $cfsuffix $fsuffix 1x1 GRIB end on machine=`uname -n`
+echo `date` $sname $member $partltr $cfsuffix $fsuffix $jobgrid GRIB end on machine=`uname -n`
 msg='ENDED NORMALLY.'
 postmsg "$jlogfile" "$msg"
 

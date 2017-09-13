@@ -10,7 +10,7 @@
 #BSUB -a poe
 #BSUB -R span[ptile=2]
 #BSUB -R affinity[core(2):distribute=pack]
-#BSUB -R rusage[mem=1000]
+#BSUB -R rusage[mem=3000]
 
 %include <head.h>
 %include <envir-p2.h>
@@ -19,7 +19,7 @@
 # EXPORT list here
 set -x
 
-export envir=%ENVIR%
+
 export cyc=%CYC%
 export cyc_fcst=%CYC%
 
@@ -33,6 +33,8 @@ else
   ecflow_client --abort
   exit
 fi
+
+module load grib_util/${grib_util_ver}
 
 $NWROOT/gefs.${gefs_ver}/jobs/JGEFS_PRDGEN_GFS
 

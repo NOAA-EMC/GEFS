@@ -11,6 +11,8 @@ echo " Sep 07 - Wobus - reorganized script"
 echo " Aug 10 - Wobus - added test for control file from post"
 echo " Jun 11 - Wobus - moved master post files to /com"
 echo " Jun 14 - Hou   - adopted to grb2 version master files as input"
+echo " Feb 17 - Meng  - Unify version for creating all grids(1.0, 2.5" 
+echo "                  and 0.5) files. "
 echo "-----------------------------------------------------"
 #####################################################################
 export PS4='+ $SECONDS $sname $member $LINENO: '
@@ -37,28 +39,36 @@ echo cfsuffix=$cfsuffix
 export SHOUR=$1
 export FHOUR=$2
 export FHINC=$3
-export DO_LOW_RES=$4
-export DOANALYSIS=$5
+#export DO_LOW_RES=$4
+export DOANALYSIS=$4
+export jobgrid=$5
 export jobdir=$6
 
 export MP_LABELIO=YES
-export DO_LOW_RES=$DO_LOW_RES
-export DO_THIS_RES=YES
-submc=prd1p0
-pgad=pgrb2a
-pgbd=pgrb2b
-pgapre=pgrb2a
-pgbpre=pgrb2b
-pgasuf=
-if [[ "$DO_LOW_RES" = "YES" ]]; then
-  export DO_THIS_RES=NO
-  submc=prd2p5
-  pgad=pgrb2alr
-  pgbd=pgrb2blr
-  pgapre=pgrb2a
-  pgbpre=pgrb2b
-  pgasuf=.2
-fi
+
+case $jobgrid in
+  1p0) submc=prd1p0
+       pgad=pgrb2a
+       pgbd=pgrb2b
+       pgapre=pgrb2a
+       pgbpre=pgrb2b
+       pgasuf=
+       ;;
+  2p5) submc=prd2p5
+       pgad=pgrb2alr
+       pgbd=pgrb2blr
+       pgapre=pgrb2a
+       pgbpre=pgrb2b
+       pgasuf=.2
+       ;;
+  0p5) submc=prd0p5
+       pgad=pgrb2ap5
+       pgbd=pgrb2bp5
+       pgapre=pgrb2a.0p50.
+       pgbpre=pgrb2b.0p50.
+       pgasuf=
+       ;;
+esac
 
 ############################################################
 # clean up missing markers from previous run
@@ -149,11 +159,11 @@ if (( SHOUR == 0 )); then
   #######################################################
   export addgrb1id=yes
 
-  pcfile=$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.anl$cfsuffix
-  fileaout=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}anl$pgasuf$cfsuffix
-  fileaouti=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}anl$pgasuf$cfsuffix.idx
-  filebout=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}anl$pgasuf$cfsuffix
-  filebouti=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}anl$pgasuf$cfsuffix.idx
+  export pcfile=$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.anl$cfsuffix
+  export fileaout=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}anl$pgasuf$cfsuffix
+  export fileaouti=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}anl$pgasuf$cfsuffix.idx
+  export filebout=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}anl$pgasuf$cfsuffix
+  export filebouti=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}anl$pgasuf$cfsuffix.idx
   if [[ -s $pcfile ]]; then
     nmissing=0
     for file in $fileaout $fileaouti $filebout $filebouti
@@ -172,8 +182,7 @@ if (( SHOUR == 0 )); then
 
   if [[ ! -s $pcfile ]]; then
 
-    # Making the 1-degree grib files
-    $USHgefs/gefs_prdgen.sh
+     $USHgefs/gefs_prdgen.sh
 
     ####################################
     # send control files to misc
@@ -268,11 +277,17 @@ do
   ####################################
   export addgrb1id=yes
 
-  pcfile=$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.f${fhr}$cfsuffix
-  fileaout=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}f${fhr}$pgasuf$cfsuffix
-  fileaouti=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}f${fhr}$pgasuf$cfsuffix.idx
-  filebout=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}f${fhr}$pgasuf$cfsuffix
-  filebouti=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}f${fhr}$pgasuf$cfsuffix.idx
+  if [[ "$jobgrid" = "0p5" ]] && [[ $fhr -lt 100 ]]; then
+    pad="0"
+  else
+    pad=""
+  fi
+
+  export pcfile=$COMOUT/$cyc/misc/$submc/${RUN}.t${cyc}z.prdgen.control.f${fhr}$cfsuffix
+  export fileaout=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}f${pad}${fhr}$pgasuf$cfsuffix
+  export fileaouti=$COMOUT/$cyc/$pgad/$RUN.$cycle.${pgapre}f${pad}${fhr}$pgasuf$cfsuffix.idx
+  export filebout=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}f${pad}${fhr}$pgasuf$cfsuffix
+  export filebouti=$COMOUT/$cyc/$pgbd/$RUN.$cycle.${pgbpre}f${pad}${fhr}$pgasuf$cfsuffix.idx
   if [[ -s $pcfile ]]; then
     nmissing=0
     for file in $fileaout $fileaouti $filebout $filebouti
@@ -291,18 +306,7 @@ do
 
   if [[ ! -s $pcfile ]]; then
 
-    # Making the 2.5x2.5 degree GRIB files in background -canceled
-    if [[ "$DO_LOW_RES" = 'YES' ]] && [[ `expr $fhr % 6 ` -eq 0 ]] 
-    then
-      #($USHgefs/gefs_prdgen_lowres.sh)&
-       $USHgefs/gefs_prdgen_lowres.sh
-    fi
-
-    if [[ "$DO_THIS_RES" != 'NO' ]] 
-    then
-      # Making the 1x1 degree GRIB file
-      $USHgefs/gefs_prdgen.sh
-    fi  
+    $USHgefs/gefs_prdgen.sh
 
     ####################################
     # send control files to misc
@@ -319,6 +323,14 @@ do
     fi
 
   fi
+
+#####################################################################
+#DHOU, 09/17/2015, added this block for global wave ensemble trigger
+#0p5 only
+#####################################################################
+if [[ "$jobgrid" = "0p5" ]] && [[ $fhr -eq 240 ]]; then
+  ecflow_client --event pgrb2ap5_f240_ready
+fi
 
   export fhr=`expr $fhr + $FHINC`
   if test $fhr -lt 10

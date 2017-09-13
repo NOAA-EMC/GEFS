@@ -7,12 +7,12 @@ export PS4='$SECONDS + '
 date
 
 ###########################################
-# Run gefs_config to get input parameters
+# Run gefs_config_dev to get input parameters
 ###########################################
 
 if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
-  . $basesource/nwdev/parm/gefs_config
+  . $basesource/nwdev/parm/gefs_config_dev
 fi
 
 export APRUN=${gefsmpexec:-mpirun.lsf}
@@ -32,16 +32,30 @@ else
   export cycsuffix=true
 fi
 
+####################################
+# obtain unique process id (pid) and make temporary working directory
+####################################
+export pid=$$
+export DATATEMP=${job}.${pid}.temp
+
+echo DATATEMP=$DATATEMP
+if [[ -d $DATATEMP ]]; then
+  rm -rf $DATATEMP
+fi
+mkdir -p $DATATEMP
+cd $DATATEMP
+
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
 setpdy.sh
 . PDY
 
+rm -rf $DATATEMP
+
 ####################################
-# obtain unique process id (pid) and identify working directory
+# identify saved working directory
 ####################################
-export pid=$$
 export DATA=$DATAROOT/gefs_init_$PDY$cyc.$envir.save
 cd $DATA
 

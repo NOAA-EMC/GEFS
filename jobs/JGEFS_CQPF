@@ -7,12 +7,12 @@ export PS4='$SECONDS + '
 date
 
 ###########################################
-# Run gefs_config to get input parameters
+# Run gefs_config_dev to get input parameters
 ###########################################
 if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
-  . $basesource/nwdev/parm/gefs_config
+  . $basesource/nwdev/parm/gefs_config_dev
   export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
 
@@ -21,8 +21,8 @@ export APRUN=${gefsmpexec:-mpirun.lsf}
 ####################################
 # Load the grib module
 ####################################
-. /usrx/local/Modules/default/init/ksh
-module load grib_util/v1.0.1
+# JY . /usrx/local/Modules/default/init/ksh
+# JY module load grib_util/v1.0.1
 export CNVGRIB=$CNVGRIB21_GFS
 
 ####################################
