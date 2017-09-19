@@ -148,6 +148,7 @@ if [[ $envir = dev ]]; then
     export PARMGLOBAL=$HOMEgefs/parm
     export USHGLOBAL=$HOMEgefs/ush
  fi
+  export UTILgefs=${UTILgefs:-$HOMEgefs/util}
 
 else
 
@@ -156,6 +157,7 @@ else
   export FIXgefs=$HOMEgefs/fix
   export PARMgefs=$HOMEgefs/parm
   export USHgefs=$HOMEgefs/ush
+  export UTILgefs=${UTILgefs:-$HOMEgefs/util}
 
 fi
 
@@ -325,6 +327,7 @@ echo location of chgres script and executable
 if [[ $envir = prod || $envir = para || $envir = test ]]; then
   export chgresush=$HOMEgsm/ush/global_chgres.sh
   export CHGRESEXEC=$HOMEgsm/exec/global_chgres
+  export getnsttf=$UTILgefs/exec/getnsttf
 else
   echo locchgresush=$locchgresush
   case $locchgresush in
@@ -361,10 +364,12 @@ else
              esac ;;
     (*)  export CHGRESEXEC=$locchgresexec ;;
   esac
+  export getnsttf=$UTILgefs/exec/getnsttf
 fi
 
 echo chgresush=$chgresush
 echo CHGRESEXEC=$CHGRESEXEC
+echo getnsttf=$getnsttf
 
 ##############################################
 echo set up module for nemsio

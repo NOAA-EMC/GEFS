@@ -429,9 +429,9 @@ if [[ $envir = dev ]]; then
 
   # run the gfs prdgen job or not
   # test means run only if the gfs master post files exist
-  export rungfsprdgen=no
   export rungfsprdgen=test
   export rungfsprdgen=yes
+  export rungfsprdgen=no
 
   # archive and cleanup if cyc ne 0
   export runarchcyc=1

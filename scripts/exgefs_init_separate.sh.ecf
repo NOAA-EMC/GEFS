@@ -158,14 +158,66 @@ if (( nhrpair < npair )); then
   export NTRAC=$NTRACLR
   export IDVC=$IDVC
   export NVCOORD=$IDVC
-  export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,use_ufo=.true.,IALB=0,idvc=2,idvt=21,idsl=1,IDVM=0"
   if (( IDVC == 1 )); then
     export SIGLEVEL=$FIXGLOBAL/global_siglevel.l${LEVS}.txt
   fi
   if (( IDVC == 2 )); then
     export SIGLEVEL=$FIXGLOBAL/global_hyblev.l${LEVS}.txt
   fi
+ if [[ $NEMSIO_IN = .true. ]]; then
 
+  export nopdpvv=$nopdpvv
+  export OUTTYP=$OUTTYP
+
+
+  export CLIMO_FIELDS_OPT=3
+  export LANDICE_OPT=2
+  export SOILTYPE_INP=statsgo
+  export SOILTYPE_OUT=zobler
+  export VEGTYPE_INP=igbp
+  export VEGTYPE_OUT=sib
+  export SEA_ICE_THRESHLD_OUTPUT="0.50"
+
+  export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,use_ufo=.true.,IALB=0,idvc=2,idvt=21,idsl=1,IDVM=0"
+
+  if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio && -f $COMINgfs/gfs.$cycle.nstanl.nemsio ]]; then
+    export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
+    $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
+    getnsttfrc=$?
+    if (( getnsttfrc == 0 )); then
+      echo `date` $getnsttf after
+       export SFCINP=$DATA/gfs.$cycle.sfcanl.nemsio
+    else
+      echo !!! FATAL ERROR !!
+      echo `date` $getnsttf failed
+      export pgm=$getnsttf
+      export err=9
+      err_chk
+      exit
+    fi
+
+  else
+    echo !!!! FATAL ERROR !!!!
+    echo $COMINgfs/gfs.$cycle.atmanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio CANNOT BE FOUND
+    export pgm=$getnsttf
+    export err=9
+    err_chk
+    exit
+  fi
+
+# if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
+#   export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
+#   export SFCINP=$COMINgfs/gfs.$cycle.sfcanl.nemsio
+# else
+#   echo !!!! FATAL ERROR !!!!
+#   echo $COMINgfs/gfs.$cycle.atmanl.nemsio and $COMINgfs/gfs.$cycle.sfcanl.nemsio CANNOT BE FOUND
+#   export err=9
+#   err_chk
+#   exit
+# fi
+ else
+
+  export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,use_ufo=.true.,IALB=0,idvc=2,idvt=21,idsl=1,IDVM=0"
 ###testb
   if [[ $envir = prod ]]; then
 ###teste
@@ -197,6 +249,7 @@ if (( nhrpair < npair )); then
       exit
     fi
   fi
+ fi
 ###teste
 
   # check for missing or zero-length analysis files
@@ -284,16 +337,42 @@ if (( nhrpair > 0 )); then
   export SEA_ICE_THRESHLD_OUTPUT="0.50"
 
   export CHGRESVARS="NTRAC=$NTRACjR,NVCOORD=$NVCOORD,use_ufo=.true.,IALB=0,idvc=2,idvt=21,idsl=1,IDVM=0"
-  if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
+
+  if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio && -f $COMINgfs/gfs.$cycle.nstanl.nemsio ]]; then
     export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
-    export SFCINP=$COMINgfs/gfs.$cycle.sfcanl.nemsio
+    $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
+    getnsttfrc=$?
+    if (( getnsttfrc == 0 )); then
+      echo `date` $getnsttf after
+       export SFCINP=$DATA/gfs.$cycle.sfcanl.nemsio
+    else
+      echo !!! FATAL ERROR !!
+      echo `date` $getnsttf failed
+      export pgm=$getnsttf
+      export err=9
+      err_chk
+      exit
+    fi
+
   else
     echo !!!! FATAL ERROR !!!!
-    echo $COMINgfs/gfs.$cycle.atmanl.nemsio and $COMINgfs/gfs.$cycle.sfcanl.nemsio CANNOT BE FOUND
+    echo $COMINgfs/gfs.$cycle.atmanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio CANNOT BE FOUND
+    export pgm=$getnsttf
     export err=9
     err_chk
     exit
   fi
+
+# if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
+#   export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
+#   export SFCINP=$COMINgfs/gfs.$cycle.sfcanl.nemsio
+# else
+#   echo !!!! FATAL ERROR !!!!
+#   echo $COMINgfs/gfs.$cycle.atmanl.nemsio and $COMINgfs/gfs.$cycle.sfcanl.nemsio CANNOT BE FOUND
+#   export err=9
+#   err_chk
+#   exit
+# fi
  else
   export CHGRESVARS="NTRAC=$NTRACjR,NVCOORD=$NVCOORD,use_ufo=.true.,IALB=0,idvc=2,idvt=21,idsl=1,IDVM=0"
   if [[ $envir = prod ]]; then
