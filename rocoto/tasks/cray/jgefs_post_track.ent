@@ -1,5 +1,5 @@
 <task name="jgefs_post_track" cycledefs="gefs" maxtries="1">
-   <jobname><cyclestr>&EXPID;@Y@m@d@H306</cyclestr></jobname>
+   <jobname><cyclestr>&EXPID;@Y@m@d@H396</cyclestr></jobname>
    <account>&ACCOUNT;</account>
    <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_post_track_@H.%J</cyclestr></join>
    <walltime>00:45:00</walltime>
@@ -25,6 +25,6 @@
    </envar>
    <command><cyclestr>&PRE; &BIN;/jgefs_post_track.sh</cyclestr></command>
    <dependency>
-      <metataskdep metatask="jgefs_prdgen_low"/>
+      <metataskdep metatask="jgefs_prdgen_high"/>
    </dependency>
 </task>

@@ -1,5 +1,5 @@
 <task name="jgefs_enspost" cycledefs="gefs" maxtries="1">
-   <jobname><cyclestr>&EXPID;@Y@m@d@H305</cyclestr></jobname>
+   <jobname><cyclestr>&EXPID;@Y@m@d@H395</cyclestr></jobname>
    <account>&ACCOUNT;</account>
    <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_enspost_@H.%J</cyclestr></join>
    <walltime>01:29:00</walltime>
@@ -25,6 +25,6 @@
    </envar>
    <command><cyclestr>&PRE; &BIN;/jgefs_enspost.sh</cyclestr></command>
    <dependency>
-      <taskdep task="jgefs_ensstat_low"/>
+      <taskdep task="jgefs_ensstat_high"/>
    </dependency>
 </task>

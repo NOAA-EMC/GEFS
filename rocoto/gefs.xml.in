@@ -78,7 +78,6 @@
    &jgefs_post_low;
    &jgefs_prdgen_low;
    &jgefs_ensstat_low;
-   &jgefs_enspost;
 @** endif
 
 @** if RUN_TRACK==YES
@@ -89,6 +88,7 @@
 
 @** if RUN_OTHERS==YES
   <!-- other jobs -->
+   &jgefs_enspost;
    &jgefs_pqpf;
 @** endif
 
