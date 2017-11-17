@@ -54,7 +54,7 @@ export NTHREADS_SIGCHGRS=6
 
 cd $SOURCEDIR/control
 . $SOURCEDIR/control/setbase
-. $SOURCEDIR/parm/gefs.parm
+#. $SOURCEDIR/parm/gefs.parm
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_INIT_COMBINE

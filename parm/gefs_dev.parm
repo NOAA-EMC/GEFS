@@ -12,10 +12,10 @@ echo `date` $0 test section begin
 
 #Define using STTP(ENS_SPS=.true.) or physics stochastic
 ENS_SPS=.false.
-STOC_SPPT=.true.
-STOC_SHUM=.true.
-STOC_SKEB=.true.
-STOC_VC=.false.
+DO_SPPT=.true.
+DO_SHUM=.true.
+DO_SKEB=.true.
+DO_VC=.false.
 #export LEVSHR=65
 #export LEVSLR=65
 sppt_import=1
@@ -25,6 +25,8 @@ shum_export=1
 skeb_import=1
 skeb_export=1
 
+TYPE=nh
+MONO=non-mono
 #export IC_DIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160913/p01
 
 export npair=10

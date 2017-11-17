@@ -3,196 +3,205 @@
 #
 # Forecast Input Variables
 #
-export SEMILAG=.true.
-export RANDOM_CLDS=.true.
-export ISUBC_LW=2
-export ISUBC_SW=2
-export CNVGWD=.true.
-export CAL_PRE=.true.
-export CNVCLD=.true.
-export REDRAG=.true.
-export HYBEDMF=.true.
-export DSPHEAT=.true.
-export USE_UFO=.true.
 
-export SEMILG=$SEMILG
 export DELTIM=$DELTIM
-export DTPHYS=$DTPHYS
 if [[ $FORECAST_SEGMENT = lr ]]; then
-	export SEMILG=$SEMILGLR
 	export DELTIM=$DELTIMLR
-	export DTPHYS=$DTPHYSLR
 fi
-export LIOPE=${LIOPE:-.true.}
-export NGPTC=30
 
-#########################################################################################
-# Parameters to control the digital filter at the beginning of the forecast
-# and after the resolution change
-#########################################################################################
-export fhdfihires=${fhdfihires:-3}
-export fhdfilores=${fhdfilores:-3}
-echo fhdfihires=$fhdfihires
-echo fhdfilores=$fhdfilores
+#FV3 
+layout_x=${layout_x:-4}
+layout_y=${layout_y:-8}
+export LEVS=${LEVS:-65}
 
-##################################
-# Forecast Restart Frequency
-##################################
-# Restart frequncy for the first fhmax3 hours
-export fhrestart3=${fhrestart3:-420}
+#Writing out 
+export QUILTING=.true.
+export WRITE_GROUP=2
+export WRTTASK_PER_GROUP=24
+export NUM_FILES=2
+export OUTPUT_GRID=${FV3OUT_GRID:-"gaussian_grid"}
+export WRITE_NEMSIOFILE=.true.
+export WRITE_NEMSIOFLIP=.true.
+export LONB=$LONB
+export LATB=$LATB
+export restart_interval=${fhrestart:-420}
+export NSOUT=0
 
-# Restart frequncy for hour after fhmax3
-export fhrestart=${fhrestart:-420}
+# CPU geopmetry
+export ntiles=${ntiles:-6}
+npes=$(( ${layout_x} * ${layout_y} * 6 + ${WRITE_GROUP} * ${WRTTASK_PER_GROUP} ))
+tasks=$(( ${layout_x} * ${layout_y} * 6 + ${WRITE_GROUP} * ${WRTTASK_PER_GROUP} ))
+export NTASKS_FV3=$tasks
+export npe_fv3=$tasks
+export npe_node_max
+export npe_fv3
 
-#This block is copied from GFS J-job file
-export FHLWR=3600      # LW radiation calling interval (hrs)
-export FHSWR=3600      # SW radiation calling interval (hrs)
-export IEMS=1          # 0-blackbody ground emission; 1-climatology on one-deg map
-export ISOL=2          # 0--fixed solar constant; 1--changing solar constant
-export IAER=111        # 111--with stratospheric aerosol, tropospheric aerosol LW, troposphere aerosol SW.
-export ICO2=1          # 0--fixed CO2 constant; 1--time varying global mean CO2; 2--changing CO2
+#PE geometry
+parallel_threads=2
+NTHREADS_FCST=${parallel_threads:-2}
+export NTHREADS_FV3=${parallel_threads:-2}
+COREPERNODE=${COREPERNODE:-24}
+export cores_per_node=$((COREPERNODE/NTHREADS_FV3))
 
-# Variables for GOCART Output
-export FHGOC3D=0       # Forecast Output Length for G3D files for GOCART
-export LGOC3D=.false.  # Control Variable to output the G3D files for GOCART
+#FV dynamics parameters
+export TYPE=${TYPE:-"hydro"}    # choices:  nh, hydro
+export MONO=${MONO:-mono}
+export MODE=32bit           # choices:  32bit, 64bit
+export HYPT=off             # choices:  on, off  (controls hyperthreading)
+export COMP="prod"          # choices:  debug, repro, prod
+# ncep_plevels=".true."
+if [ ${HYPT} = on ]; then
+   export hyperthread=".true."
+   export j_opt="-j 2"
+else
+   export hyperthread=".false."
+   export j_opt="-j 1"
+fi
+#APRUN="aprun -n $tasks -N $task_per_node -d $nth_fv3 $j_opt -cc depth"
+APRUN="aprun -n $NTASKS_FV3 -N $cores_per_node -d $NTHREADS_FV3 $j_opt -cc depth"
+export FCSTEXEC=fv3_gfs_${TYPE}.${COMP}.${MODE}.x
+export APRUN=${APRUN:-""}
 
-# Variables for input to the Namelist
+# OTHER FV# FCST related environment
+export warm_start=.false.
+export BASE_GSM=$HOMEgsm
+REMAP_GRID=none     # temporay setting, to void the latlon default
+export REMAP_GRID=${REMAP_GRID:-latlon}        #gaussian or latlon for using fregrid or regrid_nemsio for remapping
+export DIAG_TABLE=$HOMEgsm/parm/parm_fv3diag/diag_table2
+export FIELD_TABLE=$HOMEgsm/parm/parm_fv3diag/field_table_ncld5
+
+#gfs_physics
+export FHZERO=${FHZER:-6}
+export idiag3d=
+export FHCYC=${FHCYC:-24}
+export USE_UFO=.true.
+export PRE_RAD=.false.
+export ncld=${NCLD:-5}
+export do_sat_adj=${DO_SAT_ADJ:-".true."}
+export zhao_mic=${ZHAO_MIC:-".false."}
+export PDFCLD=${PDFCLD:-".false."}
+export FHLWR=3600.      # LW radiation calling interval (hrs)
+export FHSWR=3600.      # SW radiation calling interval (hrs)
 export ialb=1          # 0: climatology sw albedo based on surface veg types;
                        # 1: MODIS based land surface albedo
-export IOVR_SW=1       # 0--random cloud overlap for SW; 1--maximum-random cloud overlap for SW
+export IEMS=1          # 0-blackbody ground emission; 1-climatology on one-deg map
+export IAER=111        # 111--with stratospheric aerosol, tropospheric aerosol LW, troposphere aerosol SW.
+export ICO2=2          # 0--fixed CO2 constant; 1--time varying global mean CO2; 2--changing CO2
+export ISUBC_LW=2
+export ISUBC_SW=2
+export ISOL=2          # 0--fixed solar constant; 1--changing solar constant
+export lwhtr=${lwhtr:-".true."}
+export swhtr=${swhtr:-".true."}
 
-#  Other parameters input to the model
+export CNVGWD=.true.
+export shal_cnv=.true.
+export cal_pre=.false.
+export REDRAG=.true.
+export DSPHEAT=.true.
+export HYBEDMF=.true.
+export random_clds=.false.
+export trans_trac=.true.
+export cnvcld=.false.
+export NVCLD=.false.
+export imfshalcnv=2
+export imfdeepcnv=2
+export cdmbgwd=1.0,1.2 
+export prslrd0=
+export ivegsrc=
+export isot=
+export debug=${gfs_phys_debug:-".false."}
+#export nstf_name="$NST_FCST,$NST_SPINUP,$NST_RESERVED,$ZSEA1,$ZSEA2"
+export nst_anl=${nst_anl:-".true."}
+export nstf_name=${nstf_name:-"0,0,0,0,0"}
+export psautco=${psautco:-"0.0006,0.0003"}
+export prautco=${prautco:-"0.0001,0.0001"}
+#gfs_physics
 
-export IOVR_LW=1       # 0--random cloud overlap for SW; 1--maximum-random cloud overlap for SW
-ISOL=2               # 0--fixed solar constant; 1--changing solar constant
-ICO2=2               # 0--fixed CO2 constant; 1--time varying global mean CO2; 2--changing CO2
-IAER_MDL=0           # choosing different aerosol models, such as OPAC-monthly-climatology,
- ISUBC_LW=2           # 0--OPS/standard LW clouds.. no MCICA; 1--prescribed MCICA seeds; 2--random MCICA seeds
- ISUBC_SW=2           # 0--OPS/standard SW clouds.. no MCICA; 1--prescribed MCICA seeds; 2--random MCICA seeds
-nsout=0              # 1: write out every time step, default=0
-use_ufo=.true.
-RUN_ENTHALPY=.false.
-settls_dep3ds=.true.; settls_dep3dg=.true.; #SETTLS departure-point scheme
-#ncw='20,120'        # Russ
-ncw='50,150'         # gefs
-flgmin='0.180,0.220'
-#crtrh='0.90,0.90,0.90'   #Russ
-crtrh='0.85,0.85,0.85'    #gefs
-ctei_rm='10.0,10.0'    
-ccwf='1.0,1.0'; dlqf='0.0,0.0';
-ictm=1
-cal_pre=.true.
-bkgd_vdif_m=1.0; bkgd_vdif_h=1.0; bkgd_vdif_s=1.0; random_clds=.true. 
- psautco='4.0e-4,4.0e-4'; prautco='1.0e-4,1.0e-4'  
-evpco=2.0e-5; wminco='1.0e-5,1.0e-5'  
- cdmbgwd=1.0,1.2 
-ref_temp=350.0
-sl_epsln=0.05
-ndsl=.false.
- redrag=.true. 
-
-levwgt=24,30
-fixtrc=.false.,.true.
-
-unphwind=${unphwind:-1000.0} #unphwind: threshold for unphysical wind speed (m/s), to abort a fcst job
-
-FCSTVARS="IEMS=1,ISOL=2,IAER=111,ICO2=2,nemsio_in=.true.,nemsio_out=.true.,sfcio_out=.false.,ras=.false.,zhao_mic=.true.,lsm=1,old_monin=.false.,imfshalcnv=2,imfdeepcnv=2,shal_cnv=.true.,shuff_lats_r=.false.,ialb=1,pre_rad=.false.,random_clds=.true.,iovr_lw=1,iovr_sw=1,IAER=111,ictm=1,nsout=0,use_ufo=.true.,ldiag3d=.false.,ncw=50,150,crtrh=0.85,0.85,0.85,flgmin=0.180,0.220,cnvgwd=.true.,cgwf=0.5,0.05,ctei_rm=10.0,10.0,mstrat=.false.,ccnorm=.false.,mom4ice=.false.,A2OI_OUT=.false.,CPLFLX=.false.,NGRID_A2OI=20,lgoc3d=.false.,trans_trac=.true.,cal_pre=.true.,bkgd_vdif_m=1.0,bkgd_vdif_h=1.0,bkgd_vdif_s=1.0,climate=.false.,psautco=6.0e-4,3.0e-4,prautco=1.0e-4,1.0e-4,evpco=2.0e-5,wminco=1.0e-5,1.0e-5,CCWF=1.0,1.0,dlqf=0.0,0.0,cdmbgwd=1.0,1.2,grid_aldata=.false.,semilag=.true.,redrag=.true.,hybedmf=.true.,dspheat=.true.,cnvcld=.true.,pdfcld=.false.,shcnvcw=.false.,isubc_lw=2,isubc_sw=2,fixtrc=.false.,.true.,.false.,gg_tracers=.false.,h2o_phys=.false.,isot=1,ivegsrc=1"
-DYNVARS="nemsio_in=.true.,nemsio_out=.true.,sigio_out=.false.,shuff_lats_a=.false.,hdif_fac=1.0,hdif_fac2=1.0,settls_dep3ds=.true.,settls_dep3dg=.true.,redgg_a=.true.,gg_tracers=.false.,sl_epsln=0.02,ref_temp=350.0,yhalo=10,phigs_d=60.0,ldfi_spect=.true.,cdamp=50000,2.0,k2o=32,ref_pres=100.0"
-
-TRACERVARS=" RI=286.05,   461.50, 173.2247,    0.0,,CPI=1004.6,   1846.0, 820.2391,    0.0,,"
+#FV3 Core
+nwat=6;dnats=1;nord=2;dddmp=0.1;d4_bg=0.12;vtdm4_nh_nonmono=0.02
+hord_mt_nh_nonmono=6;hord_xx_nh_nonmono=6
+#FV3 Core
 
 #Use STTP or SPPT
-export ENS_SPS=${ENS_SPS:-.true.}
+export ENS_SPS=${ENS_SPS:-.false.}
 
 ########################################
 # Stochastic physics parameters
 ########################################
-STOC_SPPT=${STOC_SPPT:-.false.}
-STOC_SHUM=${STOC_SHUM:-.false.}
-STOC_SKEB=${STOC_SKEB:-.false.}
-STOC_VC=${STOC_VC:-.false.}
+export DO_SPPT=${DO_SPPT:-.true.}
+export DO_SHUM=${DO_SHUM:-.true.}
+export DO_SKEB=${DO_SKEB:-.true.}
+export DO_VC=${DO_VC:-.false.}
+export SET_STP_SEED=${SET_STP_SEED:-"NO"}
+export JCAP_STP=${JCAP_STP:-$JCAPFV}
+export LONB_STP=${LONB_STP:-$LONBFV}
+export LATB_STP=${LATB_STP:-$LATBFV}
 
 # Stochastically Perturbed Physics Tendency
 
-if [[ $STOC_SPPT = .true. ]]; then
+if [[ $DO_SPPT = .true. ]]; then
 	export SPPT_hr=${SPPT_hr:-"0.8,0.4,0.2,0.08,0.04"}                                 # Amplitude of SPPT patterns
 	export SPPT_LOGIT_hr=${SPPT_LOGIT_hr:-.TRUE.}                                      # Do a logit transform to bound values from -1.0 to 1.0
 	export SPPT_TAU_hr=${SPPT_TAU_hr:-"2.16E4,2.592E5,2.592E6,7.776E6,3.1536E7"}       # Time scale in seconds
 	export SPPT_LSCALE_hr=${SPPT_LSCALE_hr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
 	export sppt_sfclimit_hr=${sppt_sfclimit_hr:-.true.}                                # damp amplitude of SPPT at surface
-	export sppt_sigtop1_hr=${sppt_sigtop1_hr:-0.1}                                     # taper SPPT pattern to zero between 0.1 and 0.025 sigma
-	export sppt_sigtop2_hr=${sppt_sigtop2_hr:-0.025}
 	export ISEED_SPPT_hr=${ISEED_SPPT_hr:-"11${PDY}${cyc},12${PDY}${cyc},13${PDY}${cyc},14${PDY}${cyc},15${PDY}${cyc}"}                              # random seed for sppt pattern
+#	export sppt_sigtop1_hr=${sppt_sigtop1_hr:-0.1}                                     # taper SPPT pattern to zero between 0.1 and 0.025 sigma
+#	export sppt_sigtop2_hr=${sppt_sigtop2_hr:-0.025}
 
 	export SPPT_lr=${SPPT_lr:-"0.8,0.4,0.2,0.08,0.04"}                                 # Amplitude of SPPT patterns
 	export SPPT_LOGIT_lr=${SPPT_LOGIT_lr:-.TRUE.}                                      # Do a logit transform to bound values from -1.0 to 1.0
 	export SPPT_TAU_lr=${SPPT_TAU_lr:-"2.16E4,2.592E5,2.592E6,7.776E6,3.1536E7"}       # Time scale in seconds
 	export SPPT_LSCALE_lr=${SPPT_LSCALE_lr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
 	export sppt_sfclimit_lr=${sppt_sfclimit_lr:-.true.}                                # damp amplitude of SPPT at surface
-	export sppt_sigtop1_lr=${sppt_sigtop1_lr:-0.1}                                     # taper SPPT pattern to zero between 0.1 and 0.025 sigma
-	export sppt_sigtop2_lr=${sppt_sigtop2_lr:-0.025}
 	export ISEED_SPPT_lr=${ISEED_SPPT_lr:-"16${PDY}${cyc},17${PDY}${cyc},18${PDY}${cyc},19${PDY}${cyc},10${PDY}${cyc}"}
-
-#	if [[ $FORECAST_SEGMENT = hr ]]; then 
-#		FCSTVARS="$FCSTVARS,SPPT=$SPPT_hr,SPPT_TAU=$SPPT_TAU_hr,SPPT_LSCALE=$SPPT_LSCALE_hr,SPPT_LOGIT=$SPPT_LOGIT_hr,sppt_sigtop1=$sppt_sigtop1_hr,sppt_sigtop2=$sppt_sigtop2_hr,sppt_sfclimit=$sppt_sfclimit_hr,ISEED_SPPT=$ISEED_SPPT_hr"
-#	else
-#		FCSTVARS="$FCSTVARS,SPPT=$SPPT_lr,SPPT_TAU=$SPPT_TAU_lr,SPPT_LSCALE=$SPPT_LSCALE_lr,SPPT_LOGIT=$SPPT_LOGIT_lr,sppt_sigtop1=$sppt_sigtop1_lr,sppt_sigtop2=$sppt_sigtop2_lr,sppt_sfclimit=$sppt_sfclimit_lr,ISEED_SPPT=$ISEED_SPPT_lr"
-#	fi
+#	export sppt_sigtop1_lr=${sppt_sigtop1_lr:-0.1}                                     # taper SPPT pattern to zero between 0.1 and 0.025 sigma
+#	export sppt_sigtop2_lr=${sppt_sigtop2_lr:-0.025}
 fi
 
 # Stochastic Humidity
 
-if [[ $STOC_SHUM = .true. ]]; then
+if [[ $DO_SHUM = .true. ]]; then
 	export SHUM_hr=${SHUM_hr:-"0.006,-999.,-999.,-999,-999"}                           # Amplitude of SHUM patterns
 	export SHUM_TAU_hr=${SHUM_TAU_hr:-"2.16E4,1.728E5,6.912E5,7.776E6,3.1536E7"}       # Time scale in seconds
 	export SHUM_LSCALE_hr=${SHUM_LSCALE_hr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
-	export shum_sigefold_hr=${shum_sigefold_hr:-0.2}                                   # limit SHUM to the PBL (~bottom 200 mb)
 	export ISEED_SHUM_hr=${ISEED_SHUM_hr:-2${PDY}${cyc}}                             # random seed for SHUM pattern
+#	export shum_sigefold_hr=${shum_sigefold_hr:-0.2}                                   # limit SHUM to the PBL (~bottom 200 mb)
 
 	export SHUM_lr=${SHUM_lr:-"0.006,-999.,-999.,-999,-999"}                           # Amplitude of SHUM patterns
 	export SHUM_TAU_lr=${SHUM_TAU_lr:-"2.16E4,1.728E5,6.912E5,7.776E6,3.1536E7"}       # Time scale in seconds
 	export SHUM_LSCALE_lr=${SHUM_LSCALE_lr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
-	export shum_sigefold_lr=${shum_sigefold_lr:-0.2}                                   # limit SHUM to the PBL (~bottom 200 mb)
 	export ISEED_SHUM_lr=${ISEED_SHUM_lr:-7${PDY}${cyc}}
-
-#	if [[ $FORECAST_SEGMENT = hr ]]; then 
-#		FCSTVARS="$FCSTVARS,SHUM=$SHUM_hr,SHUM_TAU=$SHUM_TAU_hr,SHUM_LSCALE=$SHUM_LSCALE_hr,shum_sigefold=$shum_sigefold_hr,ISEED_SHUM=$ISEED_SHUM_hr"
-#	else
-#		FCSTVARS="$FCSTVARS,SHUM=$SHUM_lr,SHUM_TAU=$SHUM_TAU_lr,SHUM_LSCALE=$SHUM_LSCALE_lr,shum_sigefold=$shum_sigefold_lr,ISEED_SHUM=$ISEED_SHUM_lr"
-#	fi
+#	export shum_sigefold_lr=${shum_sigefold_lr:-0.2}                                   # limit SHUM to the PBL (~bottom 200 mb)
 fi
 
 # Stochastic Kinetic Energy Backscatter
 
-if [[ $STOC_SKEB = .true. ]]; then
+if [[ $DO_SKEB = .true. ]]; then
 	export SKEB_hr=${SKEB_hr:-"1.0,-999,-999,-999,-999"}                               # Amplitude of SPPT patterns
+	export ISEED_SKEB_hr=${ISEED_SKEB_hr:-3${PDY}${cyc}}
 	export SKEB_TAU_hr=${SKEB_TAU_hr:-"2.16E4,1.728E5,2.592E6,7.776E6,3.1536E7"}      # Time scale in seconds
 	export SKEB_LSCALE_hr=${SKEB_LSCALE_hr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
-	export SKEB_VFILT_hr=${SKEB_VFILT_hr:-40}                                          # number of iterations of a 1-2-1 filter of the random pattern in the vertical
-	export SKEB_DISS_SMOOTH_hr=${SKEB_DISS_SMOOTH_hr:-12}                              # number of iterations of smoothing the dissipation estimate in the horizontal
-	export skeb_sigtop1_hr=${skeb_sigtop1_hr:-0.1}                                     # taper SKEB pattern to zero between 0.1 and 0.025 sigma
-	export skeb_sigtop2_hr=${skeb_sigtop2_hr:-0.025}
-	export ISEED_SKEB_hr=${ISEED_SKEB_hr:-3${PDY}${cyc}}
+        export SKEBNORM=
+#	export SKEB_VFILT_hr=${SKEB_VFILT_hr:-40}                                          # number of iterations of a 1-2-1 filter of the random pattern in the vertical
+#	export SKEB_DISS_SMOOTH_hr=${SKEB_DISS_SMOOTH_hr:-12}                              # number of iterations of smoothing the dissipation estimate in the horizontal
+#	export skeb_sigtop1_hr=${skeb_sigtop1_hr:-0.1}                                     # taper SKEB pattern to zero between 0.1 and 0.025 sigma
+#	export skeb_sigtop2_hr=${skeb_sigtop2_hr:-0.025}
 
 	export SKEB_lr=${SKEB_lr:-"1.0,-999,-999,-999,-999"}                               # Amplitude of SPPT patterns
+	export ISEED_SKEB_lr=${ISEED_SKEB_lr:-8${PDY}${cyc}}
 	export SKEB_TAU_lr=${SKEB_TAU_lr:-"2.164E4,1.728E5,2.592E6,7.776E6,3.1536E7"}      # Time scale in seconds
 	export SKEB_LSCALE_lr=${SKEB_LSCALE_lr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
-	export SKEB_VFILT_lr=${SKEB_VFILT_lr:-40}                                          # number of iterations of a 1-2-1 filter of the random pattern in the vertical
-	export SKEB_DISS_SMOOTH_lr=${SKEB_DISS_SMOOTH_lr:-12}                              # number of iterations of smoothing the dissipation estimate in the horizontal
-	export skeb_sigtop1_lr=${skeb_sigtop1_lr:-0.1}                                     # taper SKEB pattern to zero between 0.1 and 0.025 sigma
-	export skeb_sigtop2_lr=${skeb_sigtop2_lr:-0.025}
-	export ISEED_SKEB_lr=${ISEED_SKEB_lr:-8${PDY}${cyc}}
-
-#	if [[ $FORECAST_SEGMENT = hr ]]; then 
-#		FCSTVARS="$FCSTVARS,SKEB=$SKEB_hr,SKEB_TAU=$SKEB_TAU_hr,SKEB_LSCALE=$SKEB_LSCALE_hr,SKEB_VFILT=$SKEB_VFILT_hr,SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr,skeb_sigtop1=$skeb_sigtop1_hr,skeb_sigtop2=$skeb_sigtop2_hr,ISEED_SKEB=$ISEED_SKEB_hr"
-#	else
-#		FCSTVARS="$FCSTVARS,SKEB=$SKEB_lr,SKEB_TAU=$SKEB_TAU_lr,SKEB_LSCALE=$SKEB_LSCALE_lr,SKEB_VFILT=$SKEB_VFILT_lr,SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_lr,skeb_sigtop1=$skeb_sigtop1_lr,skeb_sigtop2=$skeb_sigtop2_lr,ISEED_SKEB=$ISEED_SKEB_lr"
-#	fi
+        export SKEBNORM=
+#	export SKEB_VFILT_lr=${SKEB_VFILT_lr:-40}                                          # number of iterations of a 1-2-1 filter of the random pattern in the vertical
+#	export SKEB_DISS_SMOOTH_lr=${SKEB_DISS_SMOOTH_lr:-12}                              # number of iterations of smoothing the dissipation estimate in the horizontal
+#	export skeb_sigtop1_lr=${skeb_sigtop1_lr:-0.1}                                     # taper SKEB pattern to zero between 0.1 and 0.025 sigma
+#	export skeb_sigtop2_lr=${skeb_sigtop2_lr:-0.025}
 fi
 
 # Vorticity Confinement
 
-if [[ $STOC_VC = .true. ]]; then 
+if [[ $DO_VC = .true. ]]; then 
 	export VC_hr=${VC_hr:-0.0}                                                         # Amplitude of Determinist Vorticty confinement
 	export VC_sigtop1_hr=${VC_sigtop1_hr:-0.15}
 	export VC_sigtop2_hr=${VC_sigtop2_hr:-0.075}
@@ -208,23 +217,9 @@ if [[ $STOC_VC = .true. ]]; then
 	export VC_TAU_lr=${VC_TAU_lr:-"2.16E4,1.728E5,2.592E6,7.776E6,3.1536E7"}           # Time scale in seconds
 	export VC_LSCALE_lr=${VC_LSCALE_lr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}      # Length Scale in meters
 	export ISEED_VC_lr=${ISEED_VC_lr:-9${PDY}${cyc}}                                 # random seed for vorticity confinement pattern
-
-#	if [[ $FORECAST_SEGMENT = hr ]]; then 
-#		FCSTVARS="$FCSTVARS,VC=$VC_hr,VC_TAU=$VC_TAU_hr,VC_LSCALE=$VC_LSCALE_hr,VCAMP=$VCAMP_hr,ISEED_VC=$ISEED_VC_hr"
-#	else
-#		FCSTVARS="$FCSTVARS,VC=$VC_lr,VC_TAU=$VC_TAU_lr,VC_LSCALE=$VC_LSCALE_lr,VCAMP=$VCAMP_lr,ISEED_VC=$ISEED_VC_lr"
-#	fi
 fi
-
 
 ########################################
 # End stochastic physics parameters
 ########################################
-
-if [ $LGOC3D = .true. ] ; then
-	FCSTVARS="LGOC3D=$LGOC3D,FHGOC3D=$FHGOC3D,$FCSTVARS"
-fi
-
-export FCSTVARS
-
 

@@ -5,7 +5,7 @@
   <!ENTITY MEMLIST "p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 c00">
   <!-- <!ENTITY MEMLIST "p01 p02 p03 p04c00">  -->
   <!ENTITY CYCLE_THROTTLE "1">
-  <!ENTITY TASK_THROTTLE "25">
+  <!ENTITY TASK_THROTTLE "65">
   <!ENTITY SDATE "@[SDATE]">
   <!ENTITY EDATE "@[EDATE]">
   <!ENTITY INCYC "@[INCYC]">
@@ -61,7 +61,6 @@
 @** if RUN_FORECAST_HIGH==YES
    <!-- high resolution forecast and post process jobs -->
    &jgefs_forecast_high;
-   &jgefs_remap_high;
    &jgefs_post_high;
    &jgefs_prdgen_high;
    &jgefs_ensstat_high;
@@ -89,7 +88,6 @@
 @** if RUN_OTHERS==YES
   <!-- other jobs -->
    &jgefs_enspost;
-   &jgefs_pqpf;
 @** endif
 
 </workflow>

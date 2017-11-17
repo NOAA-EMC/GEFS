@@ -304,11 +304,10 @@ if (( coldstartflag == 0 )); then
 			fi # (( inflagt == 1 )) || (( inflagt == 3 ))
 			if [[ -e $fcstinn ]]; then
 				echo fcstinn=$fcstinn found
-                                echo fcstinn=$fcstinn found
+                                #echo fcstinn=$fcstinn found
                                if [ $NEMSIO_IN = .true. ]; then
                                 onifhr=$($nemsioget $fcstinn nfhour |grep -i "nfhour" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
                                else
-
 				onifhr=`$sighdrexec $fcstinn ifhr`
                                fi
 				rc=$?
@@ -497,7 +496,7 @@ if [[ $haveinput = yes ]]; then
 			echo
 			echo `date` env before chgres begin
 			env | sort
-			echo `date` env before chgres end
+			echo `date` env after chgres end
 			echo
 			###teste
 			$chgresush >>$pgmout

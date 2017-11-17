@@ -44,6 +44,7 @@ export nemsioget=$nemsioget
 
 R1=`echo $RUNMEM|cut -c1-3`
 R2=`echo $RUNMEM|cut -c4-5`
+mem=`echo $RUNMEM|cut -c3-5`
 e3=20
 case $R1 in
 	(gec)
@@ -410,9 +411,12 @@ while (( fhr <= FHOUR )); do
 		# link sigma and flux files
 		###############################
 		rm -rf sigfile flxfile
- 		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sigfile.f$fhr$cfsuffix
- 		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
- 		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix flxfile.f$fhr$cfsuffix
+# 		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sigfile.f$fhr$cfsuffix
+# 		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
+# 		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix flxfile.f$fhr$cfsuffix
+ 		ln -s $COMIN/$cyc/sfcsig/$mem/${RUNMEM}.t${cyc}z.atmf$fhr.nemsio sigfile.f$fhr
+#		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
+ 		ln -s $COMIN/$cyc/sfcsig/$mem/${RUNMEM}.t${cyc}z.sfcf$fhr.nemsio flxfile.f$fhr
 
 		###################################3
 		# Create Master Post File

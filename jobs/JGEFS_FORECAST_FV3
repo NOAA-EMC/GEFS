@@ -10,8 +10,6 @@ date
 # Run gefs_config to get input parameters
 ###########################################
 if [ "$RUN_ENVIR" = dev ]; then ### For Developers
-# . $basesource/nw${envir}/versions/gefs.ver
-#        . $basesource/nwdev/parm/gefs_config
         . $basesource/nwdev/parm/gefs_config
         export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
@@ -21,6 +19,9 @@ export nemsioget=$nemsioget
 export APRUN=${gefsmpexec:-mpirun.lsf}
 export RUNMEM=$RUNMEM
 export mem=`echo $RUNMEM|cut -c3-5`
+
+export ENS_NUM=1
+echo "ENS_NUM=$ENS_NUM"
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -113,7 +114,6 @@ export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 # Run setpdy and initialize PDY variables
-##############################
 setpdy.sh
 . PDY
 ##############################################
@@ -161,9 +161,6 @@ echo set parameters using gefs.parm
 ##############################################
 . $PARMgefs/gefs.parm
 
-# hour_lr_ni will be used to define the IC files of the lower resolution part (if not restart) 
-(( hour_lr_ini = fhmaxh - HOUTSPS ))
-
 case $cyc in
         00) export fhmax=$fhmax00;;
         06) export fhmax=$fhmax06;;
@@ -176,22 +173,19 @@ export LOGSCRIPT=startmsg
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 	#CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$fhouth;FHZER=$fhzerh;                        
-	CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=6;FHZER=$6;                        
-        MTNRSL=$MTNRSLFV
-#       LONB=$LONBFV;LATB=$LATBFV;
+	CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=6;FHZER=6;                        
+        MTNRSL=$MTNRSLFV;LONB=$LONBFV;LATB=$LATBFV;
         FHINI=0                              #forecast starting hour
         (( LEVS = LEVSHR + 1 ))
-#else 
-##else if [[ $FORECAST_SEGMENT = lr ]] ; then
+elif [[ $FORECAST_SEGMENT = lr ]] ; then
 	#CASE=$casel;FHMAX=$fhmax;FHOUT=$fhoutl;FHZER=$fhzerl;
-#	CASE=$CASELR;FHMAX=$fhmax;FHOUT=6;FHZER=6;                        
-#        JCAP=$JCAPLR;LONB=$LONBLR;LATB=$LATBLR;MTNRSL=$MTNRSLLR
-#        FHINI= (( $fhmax - 12 )                              #forecast starting hour
-#else
-#	FORECAST_SEGMENT=$FORECAST_SEGMENT is not supported !
-#        stop
+	CASE=$CASELR;FHMAX=$fhmax;FHOUT=6;FHZER=6;                        
+        JCAP=$JCAPLR;LONB=$LONBLR;LATB=$LATBLR;MTNRSL=$MTNRSLLR
+	FHINI=$fhmaxhres
+else
+ 	FORECAST_SEGMENT=$FORECAST_SEGMENT is not supported !
+        stop
 fi
-FHRES=400                            #interval to write restart files
 
 #  The VEGTYPE fix file:
 export FNVETC=${FNVETC:-${FIX_AM}/global_vegtype.igbp.t$MTNRSL.rg.grb}
@@ -212,18 +206,14 @@ export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 # Create member list
 ####################################
 
-export RUNMEM=$RUNMEM
-export mem=`echo $RUNMEM|cut -c3-5`
-export ENS_NUM=1
-echo "ENS_NUM=$ENS_NUM"
-
 #
 # Forecast Input Variables
 #
 . $PARMgefs/gefs_fcst.parm
 
-# end of from GEFS previous J job script.
-
+#
+# Forecast Input Variables
+#
 #--------------------------------------------
 export KMP_AFFINITY=disabled
 export OMP_STACKSIZE=1024m
@@ -249,13 +239,13 @@ fi
 # user account 
 # ----------------------------------
 
+#if [[ $mem = c00 ]] ;then 
 if [[ $mem = c00 ]] ;then 
 MEMBER=21
 else
 MEMBER=`echo $mem|cut -c2-3`
 fi
 export MEMBER=$MEMBER
-export SET_STP_SEED=YES
 
 export SPPT_LSCALE_hr=500.e3
 export SHUM_LSCALE_hr=500.e3
@@ -264,40 +254,42 @@ export SKEB_hr=0.028
 export SPPT_hr=0.4
 export SKEBNORM=1
 
-	export do_sppt=$STOC_SPPT
-	export do_shum=$STOC_SHUM
-	export do_skeb=$STOC_SKEB
+ 	export do_sppt=$STOC_SPPT
+#	export do_shum=$STOC_SHUM
+#	export do_skeb=$STOC_SKEB
 
+#	export SET_STP_SEED=${SET_STP_SEED:-"NO"}
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 
-if [[ $STOC_SPPT = .true. ]] ; then
+if [[ $DO_SPPT = .true. ]] ; then
 	export SPPT=$SPPT_hr
 	export ISEED_SPPT=$ISEED_SPPT_hr
 	export SPPT_LOGIT=$SPPT_LOGIT_hr
 	export SPPT_TAU=$SPPT_TAU_hr
 	export SPPT_LSCALE=$SPPT_LSCALE_hr
-	export sppt_sigtop1=$sppt_sigtop1_hr
-	export sppt_sigtop2=$sppt_sigtop2_hr
 	export sppt_sfclimit=$sppt_sfclimit_hr
+#	export sppt_sigtop1=$sppt_sigtop1_hr
+#	export sppt_sigtop2=$sppt_sigtop2_hr
 fi
 
-if [[ $STOC_SHUM = .true. ]] ; then
+if [[ $DO_SHUM = .true. ]] ; then
 	export SHUM=$SHUM_hr
 	export ISEED_SHUM=$ISEED_SHUM_hr
 	export SHUM_TAU=$SHUM_TAU_hr
 	export SHUM_LSCALE=$SHUM_LSCALE_hr
-	export shum_sigefold=$shum_sigefold_hr
+#	export shum_sigefold=$shum_sigefold_hr
 fi
 
-if [[ $STOC_SKEB = .true. ]] ; then
+if [[ $DO_SKEB = .true. ]] ; then
 	export SKEB=$SKEB_hr
 	export ISEED_SKEB=$ISEED_SKEB_hr
 	export SKEB_TAU=$SKEB_TAU_hr
 	export SKEB_LSCALE=$SKEB_LSCALE_hr
-	export SKEB_VFILT=$SKEB_VFILT_hr
-	export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr
-	export skeb_sigtop1=$skeb_sigtop1_hr
-	export skeb_sigtop2=$skeb_sigtop2_hr
+	export SKEBNORM=${SKEBNORM:-"1"}
+#	export SKEB_VFILT=$SKEB_VFILT_hr
+#	export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr
+#	export skeb_sigtop1=$skeb_sigtop1_hr
+#	export skeb_sigtop2=$skeb_sigtop2_hr
 fi
 
 fi
@@ -309,7 +301,7 @@ fi
 #  C192)  DELTIM=600 ; layout_x=4  ; layout_y=8  ;;
 #  C384)  DELTIM=450 ; layout_x=4  ; layout_y=8  ;;
 #  C768)  DELTIM=225 ; layout_x=8  ; layout_y=16 ;;
-#  #C1152) DELTIM=150 ; layout_x=8  ; layout_y=16 ;;
+#  C1152) DELTIM=150 ; layout_x=8  ; layout_y=16 ;;
 #  C3072) DELTIM=90  ; layout_x=16 ; layout_y=32 ;;
 #  *)     echo "grid $CASE not supported, exit"
 #         exit ;;
@@ -318,12 +310,13 @@ fi
 #
 # Forecast Input Variables
 #
-. $PARMgefs/gefs_nstfv3.parm
+# . $PARMgefs/gefs_nstfv3.parm
 #APRUN and FCSTEXEC are defined in gefs_nstfv3.parm
 
 #export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nems.sh.ecf
 #export FCSTEXEC=$EXECgsm/global_fcst
-export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nemsfv3gfs_sp.sh
+#export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nemsfv3gfs_sp.sh
+export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nemsfv3gfs.sh
 export FORECASTSH=$fcstscript
 export FCSTEXECDIR=${FCSTEXECDIR:-$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin}
 export PARM_FV3DIAG=${PARM_FV3DIAG:-$PARMgsm/parm_fv3diag}
@@ -340,56 +333,57 @@ echo $FCSTEXEC
 echo $PARM_FV3DIAG
 echo $APRUN
 
-REMAP_GRID=latlon
-if [ $REMAP_GRID = latlon ]; then
- DIAG_TABLE=$HOMEgsm/parm/parm_fv3diag/diag_table
-else
- DIAG_TABLE=$HOMEgsm/parm/parm_fv3diag/diag_table_history
-fi
-
 NCP="/bin/cp -p"
 
-restart_interval=${FHRES:-1}
-if [ $FORECAST_SEGMENT = lr ]; then
- FHINI=$fmax1
- FHRES=400
-fi
+restart_interval=${fhrestart:-1000}
 
-USE_RESTART=NO                      #use restart file under COMROT/RESTART if run is interruptted
-FHSTRT=6                            #restart from a given hour if USE_RESTART=YES
+#USE_RESTART=NO                      #use restart file under COMROT/RESTART if run is interruptted
+#FHSTRT=6                            #restart from a given hour if USE_RESTART=YES
+SEND=NO     #The eglobal script send output file to $memdir, which is defined improperly
+export VERBOSE=YES
 
 #echo "-----end of $CONFIG in $0 --------"
-echo "-----end of CONFIG in $0 --------"
-echo DATA=$DATA
+#echo "-----end of CONFIG in $0 --------"
+#echo DATA=$DATA
 
-#rm -rf $DATA||exit 1; mkdir -p $DATA||exit 1; cd $DATA||exit 1
-chmod ${permission:-755} $DATA
-
-export VERBOSE=YES
 ################################################################################
 export CDATE=$PDY$cyc
 export ROTDIR=$SFCSIG/$mem
-IC_DIR=${IC_DIR:-$GESIN/$mem}
+ICSDIR=${ICSDIR:-$GESIN/$mem}
+#ICSDIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160910/$mem
 #Temporal setting reading from Kate Zhou's archive
-#IC_DIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160910/$mem
+
+# To be consistent to the requirement of the exglobal script, temperal setting
+CDUMP=$RUNMEM
+mkdir -p $ICSDIR/$CDATE/$CDUMP/$CASE
+ln -s $ICSDIR/$CASE\_$CDATE $ICSDIR/$CDATE/$CDUMP/$CASE/INPUT
+# To be consistent to the requirement of the exglobal script, temperal setting
+
+if [ $OUTPUT_GRID = "gaussian_grid" ]; then
+	fhr=$FHINI
+	while (( fhr <= FHMAX ))
+	do
+		if (( fhr < 10 )); then
+        		fhr=00$fhr
+		elif (( fhr < 100 )); then
+        		fhr=0$fhr
+		fi
+		ln -s $ROTDIR/${CDUMP}.t${cyc}z.atmf$fhr.nemsio $DATA/${CDUMP}.t${cyc}z.atmf$fhr.nemsio
+		ln -s $ROTDIR/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio $DATA/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio
+		export fhr=`expr $fhr + $FHOUT`
+	done
+else
+	for n in `seq 1 $ntiles`; do
+		for file in atmos_4xdaily. atmos_static. fv3_history. fv3_history2d. grid_spec. nggps2d. nggps3d.
+		do
+              		ln -s $ROTDIR/$file\tile$n.nc $DATA/$file\tile$n.nc
+      		done
+	done
+fi
 
 export BASE_GSM=$HOMEgsm
 export FIX_DIR=$FIXgsm
 export FIX_AM=$FIXgsm
-
-for n in `seq 1 $ntiles`; do
-      for file in atmos_4xdaily. atmos_static. fv3_history. fv3_history2d. grid_spec. nggps2d. nggps3d.
-      do
-              ln -s $ROTDIR/$file\tile$n.nc $DATA/$file\tile$n.nc
-      done
-done
-SEND=NO
-
-testfile=$IC_DIR/${CASE}_$CDATE/sfc_data.tile6.nc
-nsleep=0; tsleep=120;  msleep=50
-while test ! -s $testfile -a $nsleep -lt $msleep;do
-  sleep $tsleep; nsleep=`expr $nsleep + 1`
-done
 
 $FORECASTSH
 #$fcstscript
