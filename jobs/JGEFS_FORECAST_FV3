@@ -247,18 +247,11 @@ MEMBER=`echo $mem|cut -c2-3`
 fi
 export MEMBER=$MEMBER
 
-export SPPT_LSCALE_hr=500.e3
-export SHUM_LSCALE_hr=500.e3
-export SKEB_LSCALE_hr=500.e3
-export SKEB_hr=0.028
-export SPPT_hr=0.4
-export SKEBNORM=1
-
  	export do_sppt=$STOC_SPPT
-#	export do_shum=$STOC_SHUM
-#	export do_skeb=$STOC_SKEB
+ 	export do_shum=$STOC_SHUM
+ 	export do_skeb=$STOC_SKEB
 
-#	export SET_STP_SEED=${SET_STP_SEED:-"NO"}
+ 	export SET_STP_SEED=${SET_STP_SEED:-"NO"}
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 
 if [[ $DO_SPPT = .true. ]] ; then

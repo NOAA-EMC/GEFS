@@ -1997,7 +1997,7 @@ case $taskname in
     job_type=parallel
     total_tasks=240
     taskspernode=12
-    node=16
+#   node=16
     wall_clock_limit="10:00"
     resources=1024
     job=gefs_fcst_fv3_$cyc
