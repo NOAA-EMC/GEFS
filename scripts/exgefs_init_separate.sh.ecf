@@ -335,7 +335,7 @@ export RDGRID=.true.
 	if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
 		export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
 		export SFCINP=$COMINgfs/gfs.$cycle.sfcanl.nemsio
-		export NSTINP=$COMINgfs/gfs.$cycle.nstanl.nemsio
+#		export NSTINP=$COMINgfs/gfs.$cycle.nstanl.nemsio
 	else
 		echo !!!! FATAL ERROR !!!!
 		echo $COMINgfs/gfs.$cycle.atmanl.nemsio and $COMINgfs/gfs.$cycle.sfcanl.nemsio CANNOT BE FOUND
@@ -364,7 +364,23 @@ export RDGRID=.true.
                         err_chk
         fi # [[ -s $NSTINP ]]
         else
-        export NSTINP=NULL
+        export NSTINP=$COMINgfs/gfs.$cycle.nstanl.nemsio
+          if [[ -s $NSTINP ]]; then
+             $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $NSTINP $DATA/gfs.$cycle.sfcanl.nemsio
+             getnsttfrc=$?
+             if (( getnsttfrc == 0 )); then
+               echo `date` $getnsttf after
+               export SFCINP=$DATA/gfs.$cycle.sfcanl.nemsio
+             else
+                 echo !!! FATAL ERROR !!
+                 echo `date` $getnsttf failed
+                 exit
+             fi
+          else
+             echo input file $NSTINP IS MISSING
+             export NSTINP=null
+
+         fi
         fi
 
         if [ $NEMSIO_IN = .true. ] ; then
