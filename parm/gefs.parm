@@ -15,6 +15,7 @@ fi
 # Number of pairs to run (normally 10 pairs)
 ##############################################
 export npair=${npair:-10}
+export npert=$((2*npair))
 export nhrpair=${nhrpair:-$npair}
 export nstinit=${nstinit:-yes}
 #################################################
