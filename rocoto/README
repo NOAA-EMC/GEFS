@@ -11,8 +11,15 @@ Run gefs workflow via ROCOTO
 2) Set up ROCOTO and python environment
    >module use -a /gpfs/hps3/emc/global/save/Terry.McGuinness/produtil/modulefiles
    >module load pyprodutil
+
    >module use -a /gpfs/hps3/emc/hwrf/noscrub/soft/modulefiles
-   >module load rocoto
+   >module load xt-lsfhpc/9.1.3
+   >module load rocoto/1.2.3
+
+   or a new version of rocoto
+
+   >module use /gpfs/hps/usrx/local/emc_rocoto/modulefiles
+   >module load rocoto/1.2.4-RC3
 
 3) Generate ROCOTO xml and conjob 
    a) >cd tfAa/nwdev/rocoto
