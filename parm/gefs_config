@@ -42,15 +42,15 @@ export HOMEtrak=$HOMERFC/ens_tracker.v1.1.8
 
 #for NEMS GEFS, FV3 version
 export HOMEgsm=$HOMEDIR/trunk/global_shared.v15.0.0
-export HOMEgsm=$HOMEDIR/trunk_20171023/global_shared.v15.0.0
+#export HOMEgsm=$HOMEDIR/trunk_20171023/global_shared.v15.0.0
 #FCST exec is from a different directory
 export EXECDIR=$HOMEgsm/sorc/fv3gfs.fd/BUILD/bin
-export FCSTEXECDIR=$HOMEDIR/NEMSfv3gfs/stochy/NEMS/exe
-export FCSTEXECDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/svn/fv3gfs/NEMSfv3gfs/stochy/NEMS/exe
-export FCSTEXECDIR=$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe
+export FCSTEXECDIR=$HOMEDIR/NEMSfv3gfs/trunk/NEMS/exe
+#export FCSTEXECDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/svn/fv3gfs/NEMSfv3gfs/stochy/NEMS/exe
+#export FCSTEXECDIR=$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe
 
 export HOMEpost=$HOMEDIR/post4fv3   #Aug 2017
-export HOMEpost=/gpfs/hps3/emc/global/noscrub/emc.glopara/svn/post/tags/ncep_post.v7.7.2
+#export HOMEpost=/gpfs/hps3/emc/global/noscrub/emc.glopara/svn/post/tags/ncep_post.v7.7.2
 export HOMEenkf=$HOMEDIR/trunk/gdas.v15.0.0
 export PARMglobal=$HOMEgsm/parm
 

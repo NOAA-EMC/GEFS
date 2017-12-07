@@ -67,12 +67,12 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
 fi
 
 if [[ $machl = s ]] || [[ $machl = l ]]; then
-	PTMP=/gpfs/hps3/ptmp
-	STMP=/gpfs/hps3/stmp
+	PTMP=/gpfs/hps/ptmp
+	STMP=/gpfs/hps2/stmp
 	export machine='WCOSS_C'
 	export JOBPHASE=
         export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Bing.Fu/svn/fv3gfs   #temporay setting
-        export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/svn/fv3gfs   #temporay setting
+#        export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/svn/fv3gfs   #temporay setting
 	export HOMEDIR1=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda
 	export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
 	SAVE=/gpfs/hps3/emc/$PROJECT/save

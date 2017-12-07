@@ -17,12 +17,15 @@ DO_SHUM=.true.
 DO_SKEB=.true.
 DO_VC=.false.
 
-export SPPT_LSCALE_hr=500.e3
-export SHUM_LSCALE_hr=500.e3
-export SKEB_LSCALE_hr=500.e3
-export SKEB_hr=0.028
-export SPPT_hr=0.4
+#export SPPT_LSCALE_hr=500.e3
+#export SHUM_LSCALE_hr=500.e3
+#export SKEB_LSCALE_hr=500.e3
+#export SKEB_hr=0.028
+#export SPPT_hr=0.4
 export SKEBNORM=1
+export DELTIM=225
+export k_split=1
+export n_split=6
 
 sppt_import=1
 sppt_export=1
@@ -37,8 +40,8 @@ MONO=non-mono
 
 export npair=10
 #export npair=0
-export fhmax=240
-export fhmaxh=240
+export fhmax=384
+export fhmaxh=384
 #export caseh=C192
 export COMROOTp2=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/nems_gefs/com
 
