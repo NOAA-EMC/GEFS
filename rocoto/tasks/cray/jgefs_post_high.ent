@@ -28,7 +28,7 @@
       <command><cyclestr>&PRE; &BIN;/jgefs_post_high.sh</cyclestr></command>
 
       <dependency>
-        <datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/sfcsig/#member#/ge#member#.t@Hz.atmf120.nemsio</cyclestr></datadep>
+        <datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/sfcsig/#member#/ge#member#.t@Hz.atmf330.nemsio</cyclestr></datadep>
       </dependency>
       </task>
 </metatask>
