@@ -309,7 +309,6 @@ fi # ((mskflag == 2))
 #export MP_CPU_USE=multiple
 #export MP_CSS_INTERRUPT=yes
 if [[ $netflag == 0 && $mskflag == 0 ]]; then
-	(( recentmem = npair * 2 ))
 	case $cyc in
 		(00) (( ipair0 = 0  )) ;;
 		(06) (( ipair0 = npair   )) ;;
@@ -317,23 +316,26 @@ if [[ $netflag == 0 && $mskflag == 0 ]]; then
 		(18) (( ipair0 = 3 * npair )) ;;
 	esac
 
-	(( ipairh = ipair0 + npair ))
+	(( recentpair = recentmem / 2 ))
+	(( ipairh = ipair0 + recentpair ))
 
 	for ipair in $nlist; do
-		if (( ipair > ipair0 && ipair <= ipairh)); then
-			(( ipairn = ipair - ipair0  ))
-			(( ipairp = ipair - ipair0 + npair ))
-			#             if (( ipair < 10 )); then
-			#               ipair=0$ipair
-			#             fi
-			if (( ipairn < 10 )); then
-				ipairn=0$ipairn
+		(( jpair = ipair - ipair0 ))
+#echo DHXXXX $ipair $ipair0 $jpair $recentpair $recentmen
+		if (( jpair < 0 )); then
+                        (( jpair = jpair + num_pair_enkf ))
+                fi
+		if (( jpair > 0 && jpair <= recentpair )); then
+			(( jpairn = jpair ))
+			(( jpairp = jpair + recentpair ))
+			if (( jpairn < 10 )); then
+				jpairn=0$jpairn
 			fi
-			if  (( ipairp < 10 )); then
-				ipairp=0$ipairp
+			if  (( jpairp < 10 )); then
+				jpairp=0$jpairp
 			fi
-			ln -s finn.pair${ipair} fin_mem0$ipairn
-			ln -s finp.pair${ipair} fin_mem0$ipairp
+			ln -s finn.pair${ipair} fin_mem0$jpairn
+			ln -s finp.pair${ipair} fin_mem0$jpairp
 		else
 			cp -pr finn.pair${ipair} sanlgm${ipair}n
 			cp -pr finp.pair${ipair} sanlgm${ipair}p
@@ -349,20 +351,25 @@ if [[ $netflag == 0 && $mskflag == 0 ]]; then
 	err_chk
 	echo `date` $RECENATMPEXEC after
 
-	for ipair in $nlist; do
-		if (( ipair > ipair0 && ipair <= ipairh)); then
-			(( ipairn = ipair - ipair0  ))
-			(( ipairp = ipair - ipair0 + npair ))
-			if (( ipairn < 10 )); then
-				ipairn=0$ipairn
-			fi
-			if  (( ipairp < 10 )); then
-				ipairp=0$ipairp
-			fi
-			cp -pr  sanlgm_mem0$ipairn sanlgm${ipair}n
-			cp -pr  sanlgm_mem0$ipairp sanlgm${ipair}p
-		fi # (( ipair > ipair0 && ipair <= ipairh))
-	done # for ipair in $nlist
+        for ipair in $nlist; do
+                (( jpair = ipair - ipair0 ))
+                if (( jpair < 0 )); then
+                        (( jpair = jpair + num_pair_enkf ))
+                fi
+                if (( jpair > 0 && jpair <= recentpair )); then
+                        (( jpairn = jpair ))
+                        (( jpairp = jpair + recentpair ))
+                        if (( jpairn < 10 )); then
+                                jpairn=0$jpairn
+                        fi
+                        if  (( jpairp < 10 )); then
+                                jpairp=0$jpairp
+                        fi
+                        cp -pr  sanlgm_mem0$jpairn sanlgm${ipair}n
+                        cp -pr  sanlgm_mem0$jpairp sanlgm${ipair}p
+                fi # (( ipair > ipair0 && ipair <= ipairh))
+        done # for ipair in $nlist
+
 else # [[ $netflag == 0 && $mskflag == 0 ]]
 	if [[ $parallelinit = no ]]; then
 		# serial version of et
