@@ -22,10 +22,10 @@ DO_VC=.false.
 #export SKEB_LSCALE_hr=500.e3
 #export SKEB_hr=0.028
 #export SPPT_hr=0.4
-export SKEBNORM=1
 export DELTIM=225
-export k_split=1
-export n_split=6
+#export SKEBNORM=1
+#export k_split=1
+#export n_split=6
 
 sppt_import=1
 sppt_export=1

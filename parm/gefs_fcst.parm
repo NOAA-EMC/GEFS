@@ -62,6 +62,9 @@ APRUN="aprun -n $NTASKS_FV3 -N $cores_per_node -d $NTHREADS_FV3 $j_opt -cc depth
 export FCSTEXEC=fv3_gfs_${TYPE}.${COMP}.${MODE}.x
 export APRUN=${APRUN:-""}
 
+export k_split=${k_split:-1}
+export k_split=${n_split:-6}
+
 # OTHER FV# FCST related environment
 export warm_start=.false.
 export BASE_GSM=$HOMEgsm
@@ -182,7 +185,8 @@ if [[ $DO_SKEB = .true. ]]; then
 	export ISEED_SKEB_hr=${ISEED_SKEB_hr:-3${PDY}${cyc}}
 	export SKEB_TAU_hr=${SKEB_TAU_hr:-"2.16E4,1.728E5,2.592E6,7.776E6,3.1536E7"}      # Time scale in seconds
 	export SKEB_LSCALE_hr=${SKEB_LSCALE_hr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
-        export SKEBNORM=
+        export SKEBNORM=${SKEBNORM:-1}
+
 #	export SKEB_VFILT_hr=${SKEB_VFILT_hr:-40}                                          # number of iterations of a 1-2-1 filter of the random pattern in the vertical
 #	export SKEB_DISS_SMOOTH_hr=${SKEB_DISS_SMOOTH_hr:-12}                              # number of iterations of smoothing the dissipation estimate in the horizontal
 #	export skeb_sigtop1_hr=${skeb_sigtop1_hr:-0.1}                                     # taper SKEB pattern to zero between 0.1 and 0.025 sigma
@@ -192,7 +196,6 @@ if [[ $DO_SKEB = .true. ]]; then
 	export ISEED_SKEB_lr=${ISEED_SKEB_lr:-8${PDY}${cyc}}
 	export SKEB_TAU_lr=${SKEB_TAU_lr:-"2.164E4,1.728E5,2.592E6,7.776E6,3.1536E7"}      # Time scale in seconds
 	export SKEB_LSCALE_lr=${SKEB_LSCALE_lr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
-        export SKEBNORM=
 #	export SKEB_VFILT_lr=${SKEB_VFILT_lr:-40}                                          # number of iterations of a 1-2-1 filter of the random pattern in the vertical
 #	export SKEB_DISS_SMOOTH_lr=${SKEB_DISS_SMOOTH_lr:-12}                              # number of iterations of smoothing the dissipation estimate in the horizontal
 #	export skeb_sigtop1_lr=${skeb_sigtop1_lr:-0.1}                                     # taper SKEB pattern to zero between 0.1 and 0.025 sigma
