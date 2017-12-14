@@ -63,7 +63,7 @@ export FCSTEXEC=fv3_gfs_${TYPE}.${COMP}.${MODE}.x
 export APRUN=${APRUN:-""}
 
 export k_split=${k_split:-1}
-export k_split=${n_split:-6}
+export n_split=${n_split:-6}
 
 # OTHER FV# FCST related environment
 export warm_start=.false.
