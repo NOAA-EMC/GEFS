@@ -10,7 +10,7 @@
 #BSUB -n 2
 #BSUB -R span[ptile=2]
 #BSUB -R affinity[core(2):distribute=pack]
-#BSUB -R rusage[mem=1000]
+#BSUB -R rusage[mem=3000]
 
 %include <head.h>
 %include <envir-p2.h>

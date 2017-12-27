@@ -1,0 +1,276 @@
+#!/bin/ksh 
+#####################################################################
+# 1/12/2015, Creadted by Jiayi Peng foolowing JGEFS_POST_TRACK,  Scripts in vertical structure 
+####################################################################
+
+echo `date` $0 `date -u` begin
+
+set -xa
+export PS4=' + $SECONDS $na $LINENO: '
+date
+
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+if [ "$RUN_ENVIR" = dev ]   ### For Developers
+then
+# . $basesource/nw${envir}/versions/gefs.ver
+  . $basesource/nw${envir}/parm/gefs_config
+  export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+fi
+
+export APRUN=${gefsmpexec:-mpirun.lsf}
+
+####################################
+# obtain unique process id (pid) and make temp directory
+####################################
+export pid=$$
+export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
+mkdir -p $DATA
+cd $DATA
+
+############################
+# Set up cycle varaible
+############################
+export cycle=t${cyc}z
+export cycle_fcst=t${cyc_fcst}z
+
+echo cyc=$cyc cyc_fcst=$cyc_fcst
+echo cycle=$cycle cycle_fcst=$cycle_fcst
+
+if (( cyc == cyc_fcst )); then
+  export fcstlong=true
+  export cfsuffix=""
+  export cycsuffix=false
+else
+  export fcstlong=false
+  export cfsuffix=".cycfs$cyc_fcst"
+  export cycsuffix=true
+fi
+
+export fcstlong
+echo fcstlong=$fcstlong
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+
+####################################
+# Specify Execution Areas
+####################################
+  export HOMEtrak=${HOMEtrak:-${NWROOT}/ens_tracker.${tracker_ver}}
+  export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+
+  export EXECens_tracker=${EXECtrak:-$HOMEtrak/exec}
+  export USHens_tracker=${USHtrak:-$HOMEtrak/ush}
+  export FIXens_tracker=${FIXtrak:-$HOMEtrak/fix}
+
+  export PARMgefs=$HOMEgefs/parm
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+#ksh setup.sh
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+##############################################
+# Define GENVITDIR directory. The PATH do be determined
+##############################################
+export JYYYY=`echo ${PDY} | cut -c1-4`
+export genvitdir=${genvitdir:-${COMROOT}/${NET}/${envir}/genesis_vital_${JYYYY}}
+mkdir -p ${genvitdir}
+
+##############################################
+# Define COM directories
+##############################################
+export COMIN=$COMROOT/${NET}/${envir}/gefs.${PDY}
+export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
+
+export ensdir=$COMIN/$cyc/pgrb2ap5
+export ensdirb=$COMIN/$cyc/pgrb2bp5
+
+export COM=$COMOUT/$cyc/genesis
+mkdir -m 775 -p $COM
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+. $PARMgefs/gefs.parm
+
+if [[ $envir = dev ]]; then
+  if (( cyc == 00 )); then
+  export fhmax=$fhmax00
+  elif (( cyc == 06 )); then
+  export fhmax=$fhmax06
+  elif (( cyc == 12 )); then
+  export fhmax=$fhmax12
+  elif (( cyc == 18 )); then
+  export fhmax=$fhmax18
+  fi
+fi
+
+####################################
+# Create member list
+####################################
+
+if [[ $fcstlong = true ]]; then
+  memberlist="c00"
+else
+  memberlist=""
+fi
+
+(( imem = 0 ))
+while (( imem < npair * 2 ))
+do
+  (( imem = imem + 1 ))
+  if (( imem < 10 )); then
+    imem=0$imem
+  fi
+  memberlist="$memberlist p$imem"
+done
+echo memberlist=$memberlist
+
+export homesyndir=$HOMEtrak
+
+echo
+env | sort
+echo
+
+########################################################
+# Execute the genesis script.
+export cmodel=ens
+export loopnum=1
+export ymdh=${PDY}${cyc}
+
+export exectrkdir=${EXECens_tracker}
+export rundir=${FIXens_tracker}
+
+export CYL=${cyc}
+
+export trkrtype=tcgen
+export trkrebd=350.0
+export trkrwbd=105.0
+export trkrnbd=30.0
+export trkrsbd=5.0
+export mslpthresh=0.0015
+export v850thresh=1.5000
+export regtype=altg
+
+mkdir ${DATA}/${cmodel}
+cd ${DATA}/${cmodel}
+
+>trkr.cmdfile
+for pert in ${memberlist}; do
+  pertdir=${DATA}/${cmodel}/${pert}
+  if [ ! -d ${pertdir} ]; then 
+   mkdir -p ${pertdir}
+  fi
+  outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
+  echo "${USHens_tracker}/extrkr_gen_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}" >>trkr.cmdfile
+done
+ 
+cat trkr.cmdfile
+chmod 775 trkr.cmdfile
+export MP_PGMMODEL=mpmd
+export MP_CMDFILE=${DATA}/${cmodel}/trkr.cmdfile
+
+$APRUN
+
+for pert in ${memberlist}; do
+  export TRKDATA=${DATA}/${cmodel}/${pert}
+  export pertdir=${DATA}/${cmodel}/${pert}
+  export atcfout="a${pert}"
+  ${USHens_tracker}/sort_tracks.gen.sh  >${pertdir}/sort.${regtype}.${atcfout}.${ymdh}.out
+# cp ${pertdir}/trak.a*.atcfunix.altg.${ymdh} ${COM}/.
+# cp ${pertdir}/storms.a*.atcf_gen.altg.${ymdh} ${COM}/.
+done
+rm -rf ${DATA}/*
+
+for pert in ${memberlist}; do
+  cd ${DATA}
+  cp ${COM}/storms.a${pert}.atcf_gen.altg.${ymdh} .
+
+  infile=storms.a${pert}.atcf_gen.altg.${ymdh}
+  outf42=storms.a${pert}.atcf_gen.${ymdh}
+  outf43=trak.a${pert}.atcfunix.${ymdh}
+  ln -s -f ${infile} fort.41
+  ln -s -f ${outf42} fort.42
+  ln -s -f ${outf43} fort.43
+  ${EXECens_tracker}/filter_gen_gfs
+  cp storms.a${pert}.atcf_gen.${ymdh} ${COM}/.
+  cp trak.a${pert}.atcfunix.${ymdh} ${COM}/.
+  rm -rf ${DATA}/*
+done
+
+##### ensemble mean calculation ##########################
+${USHens_tracker}/ens_trak_ave_2d.sh
+#cp ${DATA}/trak.aemn.* ${COM}/.
+#cp ${DATA}/aemn.trkprob.* ${COM}/.
+rm -f ${DATA}/*
+
+#mkdir -p ${COM}/5d
+#${USHens_tracker}/ens_trak_ave_5d.sh
+#cp ${DATA}/trak.aemn.* ${COM}/5d
+#cp ${DATA}/aemn.trkprob.* ${COM}/5d
+#rm -f ${DATA}/*
+
+cd ${DATA}
+cp ${COMOUT}/genesis/aemn.trkprob.*.65nm.${ymdh}.indiv.ieee ${DATA}
+export hurrlist="AL90 AL91 AL92 AL93 AL94 AL95 AL96 AL97 AL98 AL99 \
+                 EP90 EP91 EP92 EP93 EP94 EP95 EP96 EP97 EP98 EP99 \
+	         WP90 WP91 WP92 WP93 WP94 WP95 WP96 WP97 WP98 WP99 \
+	         HC01 HC02 HC03 HC04 HC05 HC06 HC07 HC08 HC09 HC10"
+
+for hurr in $hurrlist; do
+  if [ -s aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.ieee ]; then
+    rm -f *.nlist
+    namelist=input.${ymdh}.nlist
+    echo "&datain0 kymdh0='aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.ieee'/" >${namelist}
+    echo "&datain1 kymdh1='aemn.trkprob.${hurr}.65nm.${ymdh}.indiv.data'/" >>${namelist}
+    ${EXECens_tracker}/readprob <${namelist}
+  fi
+done
+cp *.indiv.data ${COMOUT}/genesis
+rm -f ${DATA}/*
+
+################################
+ msg="JOB COMPLETED NORMALLY"
+ postmsg "$jlogfile" "$msg"
+
+##############################
+# Remove the Temporary working directory
+##############################
+if [[ $KEEPDATA != "YES" ]]; then
+  cd $DATAROOT
+  rm -rf $DATA
+fi
+
+echo `date` $job completed

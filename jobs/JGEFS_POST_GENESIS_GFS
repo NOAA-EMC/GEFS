@@ -1,0 +1,214 @@
+#!/bin/ksh 
+#####################################################################
+# 1/13/2015, Creadted by Jiayi Peng and Dingchen Hou for GFS genesis, following JGEFS_POST_GENESIS 
+####################################################################
+echo `date` $0 `date -u` begin
+
+set -xa
+export PS4='$SECONDS + '
+date
+
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+if [ "$RUN_ENVIR" = dev ]   ### For Developers
+then
+# . $basesource/nw${envir}/versions/gefs.ver
+  . $basesource/nw${envir}/parm/gefs_config
+  export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+fi
+
+export APRUN=${gefsmpexec:-mpirun.lsf}
+
+####################################
+# obtain unique process id (pid) and make temp directory
+####################################
+export pid=$$
+export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
+mkdir -p $DATA
+cd $DATA
+
+############################
+# Set up cycle varaible
+############################
+export cycle=t${cyc}z
+export cycle_fcst=t${cyc_fcst}z
+
+echo cyc=$cyc cyc_fcst=$cyc_fcst
+echo cycle=$cycle cycle_fcst=$cycle_fcst
+
+if (( cyc == cyc_fcst )); then
+  export fcstlong=true
+  export cfsuffix=""
+  export cycsuffix=false
+else
+  export fcstlong=false
+  export cfsuffix=".cycfs$cyc_fcst"
+  export cycsuffix=true
+fi
+
+export fcstlong
+echo fcstlong=$fcstlong
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+
+####################################
+# Specify Execution Areas
+####################################
+export HOMEtrak=${HOMEtrak:-${NWROOT}/ens_tracker.${tracker_ver}}
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+
+export EXECens_tracker=${EXECtrak:-$HOMEtrak/exec}
+export USHens_tracker=${USHtrak:-$HOMEtrak/ush}
+export FIXens_tracker=${FIXtrak:-$HOMEtrak/fix}
+
+export PARMgefs=$HOMEgefs/parm
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+#ksh setup.sh
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+##############################################
+# Define GENVITDIR directory. The PATH do be determined
+##############################################
+export JYYYY=`echo ${PDY} | cut -c1-4`
+export genvitdir=${genvitdir:-${COMROOT}/${NET}/${envir}/genesis_vital_${JYYYY}}
+
+mkdir -p ${genvitdir}
+
+##############################################
+# Define COM directories
+##############################################
+export COMINgfs=${COMINgfs:-$COMROOTp1/gfs/prod/gfs.${PDY}}
+export COMIN=$COMINgfs
+
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}
+export gfsdir=${COMIN}
+export COM=$COMOUT/$cyc/genesis
+mkdir -m 775 -p $COM
+
+##############################################
+#echo set parameters using gefs.parm if needed
+##############################################
+# . $PARMgefs/gefs.parm
+
+export homesyndir=$HOMEtrak
+
+echo
+env | sort
+echo
+
+########################################################
+# Execute the genesis script.
+export cmodel=gfs
+export loopnum=1
+export ymdh=${PDY}${cyc}
+export pert=gfs
+
+export exectrkdir=${EXECens_tracker}
+export rundir=${FIXens_tracker}
+
+export CYL=${cyc}
+
+#---- first run to get GFS genesis vital at time=00 06 12 18Z -----------
+export trkrtype=tcgen
+export trkrebd=350.0
+export trkrwbd=105.0
+export trkrnbd=30.0
+export trkrsbd=5.0
+export mslpthresh=0.0015
+export v850thresh=1.5000
+export regtype=altg
+
+export pertdir=${DATA}/${cmodel}
+if [ ! -d ${pertdir} ]; then 
+  mkdir -p ${pertdir}
+fi
+
+outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
+${USHens_tracker}/extrkr_tcv_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile} 
+rm -rf ${DATA}/*
+
+#### NCEP/GFS genesis tcvitals  ###########################
+num_gen_vits=`cat ${genvitdir}/genesis.vitals.gfs.gfso.${JYYYY} | wc -l`
+if [ ${num_gen_vits} -gt 0 ]
+then
+  ln -s -f ${genvitdir}/genesis.vitals.gfs.gfso.${JYYYY} fort.41
+  ln -s -f ${genvitdir}/gen_tc.vitals.gfs.gfso.${JYYYY} fort.42
+  ${EXECens_tracker}/tcvital_ch_gfs
+  cat ${genvitdir}/gen_tc.vitals.gfs.gfso.${JYYYY} >> ${genvitdir}/all.vitals.gfs.gfso.${JYYYY}
+  rm -f ${genvitdir}/gen_tc.vitals.gfs.gfso.${JYYYY}
+else
+  touch ${genvitdir}/all.vitals.gfs.gfso.${JYYYY}
+fi
+
+#---- second run genesis ---------------------------------------
+export pertdir=${DATA}/${cmodel}/${pert}
+if [ ! -d ${pertdir} ]; then mkdir -p ${pertdir}; fi
+
+outfile=${pertdir}/trkr.${regtype}.${cmodel}.${pert}.${ymdh}.out
+${USHens_tracker}/extrkr_gen_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}
+
+export atcfout=gfso
+export TRKDATA=${pertdir}
+${USHens_tracker}/sort_tracks.gen.sh  >${pertdir}/sort.${regtype}.${atcfout}.${ymdh}.out
+
+#cp ${pertdir}/trak.gfso.atcfunix.altg.${ymdh} ${COM}/.
+#cp ${pertdir}/storms.gfso.atcf_gen.altg.${ymdh}  ${COM}/.
+rm -f ${DATA}/*
+
+#### filtering weak storms for TC genesis #####
+infile=${COM}/storms.gfso.atcf_gen.altg.${ymdh}
+outf42=${COM}/storms.gfso.atcf_gen.${ymdh}
+outf43=${COM}/trak.gfso.atcfunix.${ymdh}
+
+ln -s -f ${infile} fort.41
+ln -s -f ${outf42} fort.42
+ln -s -f ${outf43} fort.43
+${EXECens_tracker}/filter_gen_gfs
+
+################################
+msg="JOB COMPLETED NORMALLY"
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Remove the Temporary working directory
+##############################
+if [[ $KEEPDATA != "YES" ]]; then
+  cd $DATAROOT
+  rm -rf $DATA
+fi
+
+`date` $0 `date -u` end

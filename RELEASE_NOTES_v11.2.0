@@ -285,8 +285,8 @@ V11.2.0 to be released on 09/15/2017
   parm/gefs_pgrb2a_0p50_fhh.parm
 
 . New SVN tags:
-  . https://svnemc.ncep.noaa.gov/projects/gefs/tags/gefs.v11.1.0
-  . requires GSM v12.1.2
+  . https://svnemc.ncep.noaa.gov/projects/gefs/tags/gefs.v11.2.0
+  . requires GSM v12.1.3
   . requies ncep post_post.v5.1.2 from https://svnemc.ncep.noaa.gov/projects/post/tags/ncep_post.v5.1.2/. 
   . Working copy as tested is available on tide and gyre in
     /ensemble/save/Dingchen.Hou/GEFS/gefs_imp             
