@@ -79,8 +79,8 @@ else
    cp $COMIN/$cyc/master/$masterfile $masterfile
    if [[ -s icesv.grb2 ]]; then rm -f icesv.grb2; fi
    if [[ -s others.grb2 ]]; then rm -f others.grb2; fi
-   $WGRIB2 -s $masterfile | grep ":ICSEV:" | wgrib2 -i $masterfile -grib icesv.grb2
-   $WGRIB2 -s $masterfile | grep -v ":ICSEV:" | wgrib2 -i $masterfile -grib others.grb2
+   $WGRIB2 -s $masterfile | grep ":ICSEV:" | $WGRIB2 -i $masterfile -grib icesv.grb2
+   $WGRIB2 -s $masterfile | grep -v ":ICSEV:" | $WGRIB2 -i $masterfile -grib others.grb2
    $COPYGB2 -g "${grid}" -i0 -x others.grb2 pgb2file.$ffhr$cfsuffix
    $COPYGB2 -g "${grid}" -i2 -a -x icesv.grb2 pgb2file.$ffhr$cfsuffix
    echo `date` pgrb2 $jobgrid grbfile $ffhr completed
