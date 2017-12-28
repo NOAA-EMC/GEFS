@@ -375,6 +375,39 @@ fi
 ################################################################################
 #  Put output files.
 
+if (( outflag = 6 )); then
+#XXX addition for outflag=6
+	export cfsuffix=""
+	if (( cyc == 0 )); then
+		(( jpair = ipairi ))
+	elif (( cyc == 6 )); then
+		(( jpair = ipairi - npairc ))
+	elif (( cyc == 12 )); then
+		(( jpair = ipairi - 2 * npairc ))
+	elif (( cyc == 18 )); then
+		(( jpair = ipairi - 3 * npairc ))
+        fi
+	if (( jpair <= 0 )); then
+		(( jpair = jpair + npairi ))
+        fi
+	(( jpair = jpair + 0 ))
+	if (( jpair < 10 )); then
+		jpair=0$jpair
+	fi
+
+	echo For $cyc cycle  outflag=$outflag EnKF-pair=$ipairi GEFS-pair=$jpair
+
+	(( jpairp = 2 * jpair ))
+	(( jpairn = jpairp - 1 ))
+	if (( jpairp < 10 )); then
+		jpairp=0$jpairp
+	fi
+	if (( jpairn < 10 )); then
+		jpairn=0$jpairn
+	fi
+	echo two digit jpairn=$jpairn jpairp=$jpairp 
+fi # outflag = 6 
+
 if [[ $SENDCOM = YES ]];then
 	if (( ipair == 1 )) && (( cyc == cyc_fcst )); then
 		cp -f sfcanl.in $COMOUT/$cyc/init/gec00.${cycle}.sfcanl$cfsuffix
@@ -459,6 +492,26 @@ if [[ $SENDCOM = YES ]];then
 			err_chk
 		fi # [[ ! -s $testfile ]]
 	fi # (( outflag == 5 ))
+	if (( outflag == 6 )); then
+		cp -f sanlgm${ipair}n $COMOUT/$cyc/init/gep${jpairn}.${cycle}.sanl$cfsuffix
+		testfile=$COMOUT/$cyc/init/gep${jpairn}.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		cp -f sanlgm${ipair}p $COMOUT/$cyc/init/gep${jpairp}.${cycle}.sanl$cfsuffix
+		testfile=$COMOUT/$cyc/init/gep${jpairp}.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+	fi # (( outflag == 6 ))
 fi # [[ $SENDCOM = YES ]]
 
 ################################################################################
@@ -673,6 +726,50 @@ if (( outflag == 5 )); then
 		(( missingcount = missingcount + 1 ))
 	fi # [[ -s sanlgm${ipair}n && -s sanlgm${ipair}p ]]
 fi # (( outflag == 5 ))
+if (( outflag == 6 )); then
+	if [[ -s sanlgm${ipair}n && -s sanlgm${ipair}p ]]; then
+		mv -f sanlgm${ipair}n $GESOUT/gep${jpairn}.${cycle}.sanl$cfsuffix
+		testfile=$GESOUT/gep${jpairn}.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		cp -f sfcanl.in $GESOUT/gep${jpairn}.${cycle}.sfcanl$cfsuffix
+		cp -f nsnanl.in $GESOUT/gep${jpairn}.${cycle}.nsnanl$cfsuffix
+		testfile=$GESOUT/gep${jpairn}.${cycle}.sfcanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		mv -f sanlgm${ipair}p $GESOUT/gep${jpairp}.${cycle}.sanl$cfsuffix
+		testfile=$GESOUT/gep${jpairp}.${cycle}.sanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+		mv -f sfcanl.in $GESOUT/gep${jpairp}.${cycle}.sfcanl$cfsuffix
+		mv -f nsnanl.in $GESOUT/gep${jpairp}.${cycle}.nsnanl$cfsuffix
+		testfile=$GESOUT/gep${jpairp}.${cycle}.sfcanl$cfsuffix
+		if [[ ! -s $testfile ]]; then
+			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+			echo "`date`    $msg"
+			postmsg "$jlogfile" "$msg"
+			export err=1
+			err_chk
+		fi # [[ ! -s $testfile ]]
+	else
+		(( missingcount = missingcount + 1 ))
+	fi # [[ -s sanlgm${ipair}n && -s sanlgm${ipair}p ]]
+fi # (( outflag == 6 ))
 
 ##############################
 # kill this job if data was missing

@@ -40,9 +40,11 @@ echo cfsuffix=$cfsuffix
 #
 export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
 export SIGHDR=${SIGHDR:-$EXECgsm/global_sighdr}
+export nemsioget=$nemsioget
 
 R1=`echo $RUNMEM|cut -c1-3`
 R2=`echo $RUNMEM|cut -c4-5`
+mem=`echo $RUNMEM|cut -c3-5`
 e3=20
 case $R1 in
 	(gec)
@@ -112,6 +114,7 @@ fi # [ $res = "p125" ]
 # remove control files as needed
 ############################################################
 
+DOANALYSIS=NO
 if [ $DOANALYSIS = YES ]; then
 
 mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.anl$cfsuffix
@@ -246,17 +249,6 @@ if [ $DOANALYSIS = YES ]; then
 
 			export VDATE=${PDY}${cyc}
 
-			# set outtyp to 1 because we need to run chgres in the post before model start running chgres
-			# otherwise set to 0, then chgres will not be executed in global_nceppost.sh
-
-			export OUTTYP=1
-			# to generate both types of sigma files
-
-			export OUTTYP=0
-			export OUTTYP=1
-			# to bypass chgres and read model sigma files directly
-			export OUTTYP=3
-			export OUTTYP=4
 			# specify output file name from chgres which is input file name to nceppost
 			# if model already runs gfs io, make sure GFSOUT is linked to the gfsio file
 			# new imported variable for global_nceppost.sh
@@ -363,56 +355,68 @@ fi # [ $DOANALYSIS = YES ]
 SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
 (( fhr=SHOUR))
+(( fhrm=sHOUR ))
 if (( fhr < 10 )); then
+	fhr=00$fhr
+elif (( fhr >= 10 )) && (( fhr < 100 )); then
 	fhr=0$fhr
 fi
+if (( fhrm < 10 )); then
+	fhrm=0$fhrm
+fi
 export fhr
+export fhrm
+export fhr frhrm
 
 ############################################################
 # Loop Through the Post Forecast Files 
 ############################################################
 while (( fhr <= FHOUR )); do
-	mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr$cfsuffix
+ 	mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhrm$cfsuffix
 
-	if [[ ! -s $mcfile ]]; then
-		###############################
-		# Start Looping for the 
-		# existence of the restart files
-		###############################
-		export pgm="postcheck"
-		ic=1
+ 	if [[ ! -s $mcfile ]]; then
+ 		###############################
+ 		# Start Looping for the 
+ 		# existence of the restart files
+ 		###############################
+ 		export pgm="postcheck"
+ 		ic=1
+		ic=100000              
 
-		while [ $ic -le $SLEEP_LOOP_MAX ]; do
-			if test -f $restart_file$fhr$cfsuffix; then
-				break
-			else
-				ic=`expr $ic + 1`
-				sleep $SLEEP_INT
-			fi # test -f $restart_file$fhr$cfsuffix
-			###############################
-			# If we reach this point assume
-			# fcst job never reached restart 
-			# period and error exit
-			###############################
-			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-				echo `date` forecast $RUNMEM missing for hour $fhr 
-				msg="$RUNMEM FORECAST MISSING for hour $fhr"
-				postmsg "$jlogfile" "$msg"
-				export err=9
-				err_chk
-			fi # [ $ic -eq $SLEEP_LOOP_MAX ]
-		done # [ $ic -le $SLEEP_LOOP_MAX ]
+ 		while [ $ic -le $SLEEP_LOOP_MAX ]; do
+ 			if test -f $restart_file$fhr$cfsuffix; then
+ 				break
+ 			else
+ 				ic=`expr $ic + 1`
+ 				sleep $SLEEP_INT
+ 			fi # test -f $restart_file$fhr$cfsuffix
+ 			###############################
+ 			# If we reach this point assume
+ 			# fcst job never reached restart 
+ 			# period and error exit
+ 			###############################
+ 			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+ 				echo `date` forecast $RUNMEM missing for hour $fhr 
+ 				msg="$RUNMEM FORECAST MISSING for hour $fhr"
+ 				postmsg "$jlogfile" "$msg"
+ 				export err=9
+ 				err_chk
+ 			fi # [ $ic -eq $SLEEP_LOOP_MAX ]
+ 		done # [ $ic -le $SLEEP_LOOP_MAX ]
 
-		msg="Starting post for fhr=$fhr"
-		postmsg "$jlogfile" "$msg"
+ 		msg="Starting post for fhr=$fhr"
+ 		postmsg "$jlogfile" "$msg"
 
 		###############################
 		# link sigma and flux files
 		###############################
 		rm -rf sigfile flxfile
-		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sigfile.f$fhr$cfsuffix
-		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.bf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
-		ln -s $COMIN/$cyc/sflux/${RUNMEM}.t${cyc}z.sfluxgrbf$fhr$cfsuffix flxfile.f$fhr$cfsuffix
+# 		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sigfile.f$fhr$cfsuffix
+# 		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
+# 		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix flxfile.f$fhr$cfsuffix
+ 		ln -s $COMIN/$cyc/sfcsig/$mem/${RUNMEM}.t${cyc}z.atmf$fhr.nemsio sigfile.f$fhr
+#		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
+ 		ln -s $COMIN/$cyc/sfcsig/$mem/${RUNMEM}.t${cyc}z.sfcf$fhr.nemsio flxfile.f$fhr
 
 		###################################3
 		# Create Master Post File
@@ -428,17 +432,6 @@ while (( fhr <= FHOUR )); do
 
 		# export VDATE=`${EXECutil}/ndate +${fhr} ${PDY}${cyc}`
 		export VDATE=`$NDATE +${fhr} ${PDY}${cyc}`
-
-		# set outtyp to 1 because we need to run chgres in the post before model start running chgres
-		# otherwise set to 0, then chgres will not be executed in global_nceppost.sh
-
-		export OUTTYP=1
-		# to generate both types of sigma files
-		export OUTTYP=0
-		export OUTTYP=1
-		# to bypass chgres and read model sigma files directly
-		export OUTTYP=3
-		export OUTTYP=4
 
 		# specify output file name from chgres which is input file name to nceppost
 		# if model already runs gfs io, make sure GFSOUT is linked to the gfsio file
@@ -479,8 +472,8 @@ while (( fhr <= FHOUR )); do
 		rm -rf pgbfout pgbifout
 		# ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbf$fhr$cfsuffix pgbfout
 		# ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbif$fhr$cfsuffix pgbifout
-		ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr$cfsuffix pgbfout
-		ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr$cfsuffix pgbifout
+		ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhrm$cfsuffix pgbfout
+		ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhrm$cfsuffix pgbifout
 		export PGBOUT=pgbfout
 		export PGIOUT=pgbifout
 		export ANOMCATSH=${USHGSM}/global_anomcat.sh
@@ -531,7 +524,7 @@ while (( fhr <= FHOUR )); do
 		fi # [[ ! -s $pgbifoutd ]]
 
 		if test $SENDCOM = "YES"; then
-			if (( fhr < 100 )); then
+			if (( fhrm < 100 )); then
 				pad="0"
 			else
 				pad=""
@@ -539,7 +532,7 @@ while (( fhr <= FHOUR )); do
 			echo
 			ls -al $PGBOUT $PGBIOUT
 			echo
-			echo "$PDY$cyc$pad$fhr" > $mcfile
+			echo "$PDY$cyc$pad$fhrm" > $mcfile
 			echo
 			ls -al  $mcfile
 			cat  $mcfile
@@ -548,12 +541,26 @@ while (( fhr <= FHOUR )); do
 			ecflow_client --event f${fhr}_done
 			echo
 		fi # test $SENDCOM = "YES"
-	fi # [[ ! -s $mcfile ]]
+ 	fi # [[ ! -s $mcfile ]]
 
 	export fhr=`expr $fhr + $FHINC`
-	if (( fhr < 10 )); then
-		export fhr="0$fhr"
-	fi
+
+(( fhrm=fhr ))
+if (( fhr < 10 )); then
+        fhr=00$fhr
+elif (( fhr >= 10 )) && (( fhr < 100 )); then
+        fhr=0$fhr
+fi
+if (( fhrm < 10 )); then
+	fhrm=0$fhrm
+fi
+export fhr frhrm
+export fhr
+export fhrm
+
+#	if (( fhr < 10 )); then
+#		export fhr="0$fhr"
+#	fi
 done # while (( fhr <= FHOUR ))
 
 cat $pgmout

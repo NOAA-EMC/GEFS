@@ -45,15 +45,15 @@ export taskspernode=4
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export gefsmachine=cray
-export gefsmpexec=" aprun -b -j1 -n20 -N4 -d6 -cc depth "
-export gefsmpexec_mpmd="  aprun -b -j1 -n20 -N4 -d6 -cc depth  cfp mpmd_cmdfile"
+export gefsmpexec=" aprun -b -j1 -n32 -N4 -d6 -cc depth "
+export gefsmpexec_mpmd="  aprun -b -j1 -n32 -N4 -d6 -cc depth  cfp mpmd_cmdfile"
 export APRUNC="aprun"
 export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
 export NTHREADS_SIGCHGRS=6
 
 cd $SOURCEDIR/control
 . $SOURCEDIR/control/setbase
-. $SOURCEDIR/parm/gefs.parm
+#. $SOURCEDIR/parm/gefs.parm
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_INIT_PROCESS

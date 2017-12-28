@@ -1,12 +1,12 @@
 <metatask>
    <var name="member">&MEMLIST;</var>
-      <task name="jgefs_forecast_high1_#member#" cycledefs="gefs" maxtries="1">
-      <jobname><cyclestr>&EXPID;@Y@m@d@H100_#member#</cyclestr></jobname>
+      <task name="jgefs_remap_high1_#member#" cycledefs="gefs" maxtries="1">
+      <jobname><cyclestr>&EXPID;@Y@m@d@K100_#member#</cyclestr></jobname>
       <account>&ACCOUNT;</account>
-      <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_#member#_forecast_high_@H.%J</cyclestr></join>
-      <walltime>03:00:00</walltime>
+      <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_#member#_remap_high_@H.%J</cyclestr></join>
+      <walltime>01:30:00</walltime>
       <queue>&CUE2RUN;</queue>
-      <nodes>20:ppn=12:tpp=2</nodes>
+      <nodes>4:ppn=12:tpp=2</nodes>
       <native>-cwd &tmpnwprd;</native>
       <memory>600M</memory>
       <native>-extsched "CRAYLINUX[]"</native>
@@ -19,15 +19,15 @@
       </envar>
       <envar>
          <name>job</name>
-         <value><cyclestr>&EXPID;@Y@m@d@H100#member#</cyclestr></value>
+         <value><cyclestr>&EXPID;@Y@m@d@K100#member#</cyclestr></value>
       </envar>
       <envar>
          <name>RUNMEM</name>
          <value>ge#member#</value>
       </envar>
-      <command><cyclestr>&PRE; &BIN;/jgefs_forecast_high.sh</cyclestr></command>
+      <command><cyclestr>&PRE; &BIN;/jgefs_remap_high.sh</cyclestr></command>
       <dependency>
-         <taskdep task="jgefs_init_fv3chgrs_#member#"/>
+         <taskdep task="jgefs_forecast_high1_#member#"/>
       </dependency>
 
       </task>

@@ -17,11 +17,21 @@ echo "-----------------------------------------------------"
 #####################################################################
 set -xa
 
+export option1=' -set_grib_type same -new_grid_winds earth '
+export option21=' -new_grid_interpolation bilinear  -if '
+export option22=":(LAND|CSNOW|CRAIN|CFRZR|CICEP|ICSEV):"
+export option23=' -new_grid_interpolation neighbor -fi '
+export grid0p25="latlon 0:1440:0.25 90:721:-0.25"
+export grid0p5="latlon 0:720:0.5 90:361:-0.5"
+export grid1p0="latlon 0:360:1.0 90:181:-1.0"
+export grid2p5="latlon 0:144:2.5 90:73:-2.5"
+
 anlflag=$anlflag
 ffhr=$ffhr
 fhr=$fhr
 grid=$grid2p5
-
+export fhr1=$fhr
+#typeset -RZ3 fhr1
 #export WGRIB=${WGRIB:-$EXECgrib/wgrib}
 #export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
 #export COPYGB=${COPYGB:-$EXECgrib/copygb}
@@ -41,6 +51,7 @@ echo settings in $0 CNVGRIB=$CNVGRIB
 
 R1=`echo $RUNMEM|cut -c1-3`
 R2=`echo $RUNMEM|cut -c4-5`
+mem=`echo $RUNMEM|cut -c3-5`
 case $R1 in
 	(gec)
 		if (( R2 == 0 )); then 
@@ -69,8 +80,10 @@ postmsg "$jlogfile" "$msg"
 ####################################
 # Step I: create 2.5 x 2.5 pgrb2
 ####################################
+$WGRIB2 $COMIN/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr1$cfsuffix $option1 $option21 $option22 $option23 -new_grid $grid pgb2file.$ffhr.2$cfsuffix
 
-$COPYGB2 -g "${grid}" -i0 -x $COMIN/$cyc/master/$RUNMEM.$cycle.master.grb2$ffhr$cfsuffix pgb2file.$ffhr.2$cfsuffix
+#$COPYGB2 -g "${grid}" -i0 -x $COMIN/$cyc/$mem/pgrbm$fhr1.gfs.$PDY$cyc.grib2 pgb2file.$ffhr.2$cfsuffix
+#$COPYGB2 -g "${grid}" -i0 -x $COMIN/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr1$cfsuffix pgb2file.$ffhr.2$cfsuffix
 echo `date` pgrba 2.5x2.5 grbindex $ffhr completed
 
 if (( fhr == 0 )); then

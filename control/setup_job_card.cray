@@ -141,12 +141,10 @@ module load prod_envir
 module load prod_util
 module load util_shared/1.0.3
 module load grib_util/1.0.3
-#prod_envir points to sigio data, here temporarily set nemsio data source
-export COMROOTp1=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/o/com
-export COMROOTp2=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/o/com
-echo COMROOTp1=$COMROOTp1
-echo COMROOTp2=$COMROOTp2
+module load NetCDF-intel-haswell/4.2
+module load nco-gnu-sandybridge/4.4.4
 
+export machine="WCOSS_C"
 export IOBUF_PARAMS=$IOBUFSET
 export FORT_BUFFERED=TRUE
 eofCAT
@@ -377,6 +375,20 @@ ls -al $jobdir/$jobscript
 echo
 
 eofCAT
+
+# BF 05/11/2017 run fv3 chgres by member
+typeset -RZ3 jjj=$jjj
+typeset -RZ3 jjjv00b=$jjjv00b
+typeset -RZ3 jjjv00e=$jjjv00e
+typeset -RZ3 iii=$iii
+typeset -RZ3 iiie=$iiie
+echo $jjj
+echo $jjjv00b
+echo $jjjv00e
+echo $iii
+echo $iiie
+echo $jjjfh00e
+
 if [[ $SUBJOB = '' ]] || [[ $SUBJOB = A ]]; then
 
 echo \`date\` $jobdir/$jobscript run after
@@ -410,6 +422,112 @@ eofCAT
                     fi
                     (( iii = iii + 1 ))
              done
+#BF 05/15/2017 nemsgfs to nemsfv3 chgres 
+elif [[ $jjj == 014 ]]; then
+
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 $yyyymmddccb$jjj $yyyymmddccb$jjjv00b nextafter 2>&1
+eofCAT
+
+                   (( iii = $jjjv00b  ))
+             while (( iii >= $jjjv00b && iii <= $jjjv00e -1 ));do
+                    if (( iii == $jjjv00e - 1 )); then
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 $yyyymmddccb$iii $yyyymmddcce$jjje nextbefore 2>&1
+eofCAT
+                    else
+
+                    (( iiie = iii + 1 ))
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 $yyyymmddccb$iii $yyyymmddccb$iiie nextbefore 2>&1
+eofCAT
+                    fi
+                    (( iii = iii + 1 ))
+             done
+
+
+#BF 05/15/2017 nemsfv3 high rresolution fcst by member
+elif [[ $jjj == $jjjv00e ]]; then
+
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 $yyyymmddccb$jjj $yyyymmddccb$jjjfh00b nextafter 2>&1
+eofCAT
+typeset -RZ2 ii=`echo $jjjfh00b | cut -c2-3`
+typeset -RZ2 iifhe=`echo $jjjfh00e | cut -c2-3`
+typeset -RZ2 iie                   
+             while (( ii >= $ii && ii <= $iifhe -1 ));do
+                    if (( ii == $iifhe - 1 )); then
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 ${yyyymmddccb}h$ii ${yyyymmddcce}$jjje nextbefore 2>&1
+eofCAT
+                    else
+
+                    (( iie = ii + 1 ))
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 ${yyyymmddccb}h$ii ${yyyymmddccb}h$iie nextbefore 2>&1
+eofCAT
+                    fi
+                    (( ii = ii + 1 ))
+             done
+
+
+elif [[ $jjj == $jjjfh00e ]]; then
+
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 $yyyymmddccb$jjj $yyyymmddccb$jjjph00b nextafter 2>&1
+eofCAT
+
+                   (( iii = $jjjph00b  ))
+             while (( iii >= $jjjph00b && iii <= $jjjph00e - 4 ));do
+                    if (( iii == $jjjph00e - 4 )); then
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 $yyyymmddccb$iii $yyyymmddcce$jjje nextbefore 2>&1
+eofCAT
+                    else
+
+                    (( iiie = iii + 4 ))
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 $yyyymmddccb$iii $yyyymmddccb$iiie nextbefore 2>&1
+eofCAT
+                    fi
+                    (( iii = iii + 4 ))
+             done
+
+elif [[ $jjj == $jjjph00e ]]; then
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 $yyyymmddccb$jjj $yyyymmddccb$jjjdh00b nextafter 2>&1
+eofCAT
+
+                   (( iii = $jjjdh00b  ))
+             while (( iii >= $iii && iii <= $jjjdh00e - 4 ));do
+                    if (( iii == $jjjdh00e - 4 )); then
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 $yyyymmddccb$iii $yyyymmddcce$jjje nextbefore 2>&1
+eofCAT
+                    else
+
+                    (( iiie = iii + 4 ))
+      cat <<eofCAT >>$jobcontrol$SUBJOB
+                     cd $controldir
+                     $0 $yyyymmddccb$iii $yyyymmddccb$iiie nextbefore 2>&1
+eofCAT
+                    fi
+                    (( iii = iii + 4 ))
+             done
+
+
+
 else
       cat <<eofCAT >>$jobcontrol$SUBJOB
                      cd $controldir

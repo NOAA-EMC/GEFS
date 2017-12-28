@@ -24,5 +24,7 @@ module load prod_envir
 module load prod_util
 module load util_shared/1.0.3
 module load grib_util/1.0.3
+module load NetCDF-intel-haswell/4.2
+module load nco-gnu-sandybridge/4.4.4
 export PATH=$PATH:.
 fi

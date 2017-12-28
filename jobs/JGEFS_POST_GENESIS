@@ -114,7 +114,7 @@ mkdir -p ${COMINgenvit}
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=${COMINgfs:-${COMROOTp2}/gfs/prod/gfs.${PDY}}
+export COMINgfs=${COMINgfs:-${COMROOThps}/gfs/prod/gfs.${PDY}}
 export COMINsyn=${COMINsyn:-${COMROOTp1}/arch/prod/syndat}
 
 export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/gefs.${PDY}/${cyc}}

@@ -413,7 +413,8 @@ ecflow_client --event enspost_grb2_ready
 ## write out with ensemble extended messages
 ##
 #
-if test "$cycle" = "t00z"; then
+if test "$cycle" = "skipthis"; then
+#if test "$cycle" = "t00z"; then
 	#  $ENSPPF $COMOUT/$cyc/ensstat/enspost.$cycle.prcp $COMOUT/$cyc/ensstat/enspost${ext_h}.$cycle.prcpi ensppf${ext_h}.$PDY$cyc
 	$ENSPPF $COMOUT/$cyc/ensstat/enspost_grb2.$cycle.prcp ensppf${ext_h}.$PDY$cyc.grib2
 	$WGRIB2 ensppf${ext_h}.$PDY$cyc.grib2 -s >ensppf${ext_h}.$PDY$cyc.grib2.idx 
@@ -451,19 +452,19 @@ fi # test "$cycle" = "t00z"
 
 # part (1b): probabilistic forecasts ( PQPF, PQRF, PQFF, PQSF and PQIF )
 export CDATE=$PDY$cyc; 
-$ENSPQPF
+#$ENSPQPF
 
-for file in pqpf pqrf pqff pqsf pqif; do
-	$CNVGRIB -g21 $DATA/$file $DATA/$file\_grb1
-	$WGRIB2 $DATA/$file -s >$DATA/$file\.idx
-	$GRBINDEX $DATA/$file\_grb1 $DATA/${file}i_grb1
-	if [ $SENDCOM = "YES" ]; 	then
-		mv $DATA/${file} $COMOUT/$cyc/ensstat/ensstat_grb2${ext_h}.$cycle.$file
-		mv $DATA/${file}.idx $COMOUT/$cyc/ensstat/ensstat_grb2${ext_h}.$cycle.${file}.idx
-		mv $DATA/${file}_grb1 $COMOUT/$cyc/ensstat/ensstat${ext_h}.$cycle.$file
-		mv $DATA/${file}i_grb1 $COMOUT/$cyc/ensstat/ensstat${ext_h}.$cycle.${file}i
-	fi # [ $SENDCOM = "YES" ]
-done # for file in pqpf pqrf pqff pqsf pqif
+#for file in pqpf pqrf pqff pqsf pqif; do
+#	$CNVGRIB -g21 $DATA/$file $DATA/$file\_grb1
+#	$WGRIB2 $DATA/$file -s >$DATA/$file\.idx
+#	$GRBINDEX $DATA/$file\_grb1 $DATA/${file}i_grb1
+#	if [ $SENDCOM = "YES" ]; 	then
+#		mv $DATA/${file} $COMOUT/$cyc/ensstat/ensstat_grb2${ext_h}.$cycle.$file
+#		mv $DATA/${file}.idx $COMOUT/$cyc/ensstat/ensstat_grb2${ext_h}.$cycle.${file}.idx
+#		mv $DATA/${file}_grb1 $COMOUT/$cyc/ensstat/ensstat${ext_h}.$cycle.$file
+#		mv $DATA/${file}i_grb1 $COMOUT/$cyc/ensstat/ensstat${ext_h}.$cycle.${file}i
+#	fi # [ $SENDCOM = "YES" ]
+#done # for file in pqpf pqrf pqff pqsf pqif
 
 ############################################################################
 ###########  ADD DBN ALERTS FOR PPF AND PQPF FILES IF NEEDED  ##############

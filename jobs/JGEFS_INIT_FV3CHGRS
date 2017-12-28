@@ -1,4 +1,4 @@
-#!/bin/ksh 
+#!/bin/sh
 
 echo `date` $0 `date -u` begin
 
@@ -11,11 +11,12 @@ date
 ###########################################
 if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 # . $basesource/nw${envir}/versions/gefs.ver
-	. $basesource/nwdev/parm/gefs_config
+        . $basesource/nwdev/parm/gefs_config
 fi
 
 export APRUN=${gefsmpexec:-mpirun.lsf}
-
+export RUNMEM=$RUNMEM
+export mem=`echo $RUNMEM|cut -c 3-`
 ############################
 # Set up cycle varaible
 ############################
@@ -24,25 +25,28 @@ export cycle=t${cyc}z
 export cycle_fcst=t${cyc_fcst}z
 
 if (( cyc == cyc_fcst )); then
-	export cycsuffix=false
-	export fcstlong=true
+        export cycsuffix=false
+        export fcstlong=true
 else
-	export fcstlong=false
-	export cycsuffix=true
-fi
+        export fcstlong=false
+        export cycsuffix=true
+fi # (( cyc == cyc_fcst ))
 
 ####################################
 # obtain unique process id (pid) and identify working directory
 ####################################
 export pid=$$
-export DATA=$DATAROOT/gefs_init_$PDY$cyc.$envir.save
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+mkdir -p $DATA
 cd $DATA
+#export DATA=$DATAROOT/gefs_fv3chgrs_$PDY$cyc.$envir.save/$mem
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
 setpdy.sh
 . PDY
+
 
 ####################################
 # Specify NET and RUN Name and model
@@ -53,7 +57,7 @@ export RUN=${RUN:-gefs}
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-${COMROOT}/logs/jlogfiles/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -63,27 +67,24 @@ export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
- 
 ####################################
 # Specify Execution Areas
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
-export HOMEenkf=${HOMEenkf:-$NWROOTp1/enkf.${enkf_ver}}
 
 export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
 export USHgsm=${USHgsm:-$HOMEgsm/ush}
 export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
 export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 
-export EXECGLOBAL=${EXECgsm:-$HOMEgsm/exec}
-export USHGLOBAL=${USHgsm:-$HOMEgsm/ush}
-export FIXGLOBAL=${FIXgsm:-$HOMEgsm/fix/fix_am}
+export FIXGLOBAL=$FIXgsm
 
-export EXECgefs=${EXECgefs:-$HOMEGgefs/exec}
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 export USHgefs=${USHgefs:-$HOMEgefs/ush}
 export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
 
 ##############################################
 echo set parameters using gefs.parm
@@ -92,12 +93,14 @@ echo set parameters using gefs.parm
 . $PARMgefs/gefs.parm
 . $PARMgefs/gefs_init.parm
 
+(( LEVS=LEVSHR+1 ))
+export LEVS=$LEVS
+export CASE=$CASEHR
 env | sort
-
 ##############################################
 # for global_chgres.sh
 ##############################################
-export SLMASK=/dev/null
+#export SLMASK=/dev/null
 
 ##############################################
 # Define COM directories
@@ -107,29 +110,54 @@ export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
 export COMIN=${COMIN:-${COM_IN}/${RUN}.${PDY}}
 export COMOUT=${COMOUT:-${COM_OUT}/${RUN}.${PDY}}
 
-#####
-export XC=.x
-export GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-${HOMEenkf}/exec/getsigensmeanp_smooth$XC}
-export RECENATMPEXEC=${RECENATMPEXEC:-${HOMEenkf}/exec/recentersigp$XC}
-
-
+##############################################
+# Define GES directories
+##############################################
+export GESOUT=${GESOUT:-$GESROOT/${envir}}
+export GESOUT=$GESOUT/gefs.${PDY}
+export FV3GESOUT=$GESOUT/${cyc}/$mem/${CASE}_$PDY$cyc
+mkdir -p $FV3GESOUT
+#export FV3GESOUT=$GESROOT/${envir}/fv3gefs.${PDY}
 ##############################################
 echo list environment before running script
 ##############################################
 
 env | sort
 
-#############################################################
-# Execute the script
-#############################################################
-$HOMEgefs/scripts/exgefs_init_process.sh.ecf
+#--------------------------------------------------------------------------------
 
-cat $pgmout
+. $MODULESHOME/init/sh  2>>/dev/null
+module load prod_util hpss >>/dev/null
+#export workflow_ver=v15.0.0
+export BASE_SVN=$HOMEDIR1/fv3gfs
+export BASE_GSM=$HOMEgsm
+#export CASE=$CASEHR
+#-- create ICs using operational GFS initial conditions
 
-msg="JOB COMPLETED NORMALLY"
-postmsg "$jlogfile" "$msg"
+#--start from operational GFS initial conditions
 
-##############################
-# Save the working directory
-# for the COMBINE job
-##############################
+set -eux
+#-------------------------------------------------------------------------------------------------
+
+echo `date` $0 begin
+
+set -x
+export INIDIR=$DATA
+export CDATE=$PDY$cyc
+#export OUTDIR=$FV3GESOUT/$mem/${CASE}_$CDATE
+export OUTDIR=$FV3GESOUT
+export ictype=nemsgfs
+cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc                 
+cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc         
+cp $GESOUT/ge$mem.t$cyc\z.nsnanl $INIDIR/nsnanl.gfs.$PDY$cyc
+
+testfile=$INIDIR/sfnanl.gfs.$PDY$cyc                       
+nsleep=0; tsleep=120;  msleep=50 
+while test ! -s $testfile -a $nsleep -lt $msleep;do
+  sleep $tsleep; nsleep=`expr $nsleep + 1`
+done
+$USHgsm/global_chgres_driver.sh
+
+#.......................................................
+
+exit

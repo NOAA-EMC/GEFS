@@ -1,32 +1,48 @@
+History of the file:
+Wen Meng: 20170731 or earlier
+Dingchen Hou: 20171213 
 Run gefs workflow via ROCOTO
 
-1) Check a working copy of gefs rocoto based workflow from EMC subversion
-   >svn co https://svnemc.ncep.noaa.gov/projects/gefs/branches/gefs_rocoto
-   >mkdir tfAa; cd tfAa
-   >ln -s your_local_directory/gefs_rocoto nwdev
-   >cd nwdev/sorc; ./build_all.sh
-    Build all executable for running GEFS.
+1) Check out a working copy of gefs based workflow from VLAB
+   GIT repository is https://vlab.ncep.noaa.gov/redmine/projects/gefs/repository
+   >cd /gpfs/hps3/emc/ensemble/save/First.Last/GEFS   # note that First.Last is your user name
+   >mkdir tfAa; cd tfAa                               # tfAa is your test name, it can be any 4-letter string
+   >ln -s your_local_directory/gefs nwdev
+   >cd nwdev/sorc; ./build.sh ./install.sh
+    Build all executable for running GEFS. Please read the README.build file.
 
 2) Set up ROCOTO and python environment
-   >module use -a /gpfs/hps/emc/global/noscrub/emc.glopara/TUTORIAL/gfs_workflow.v3.0.0/para/exp/conf/modulefiles/machine  #luna, surge
+   >module use -a /gpfs/hps3/emc/global/save/Terry.McGuinness/produtil/modulefiles
    >module load pyprodutil
-   >module use -a /gpfs/hps/emc/hwrf/noscrub/soft/modulefiles
-   >module load rocoto
+
+   >module use -a /gpfs/hps3/emc/hwrf/noscrub/soft/modulefiles
+   >module load xt-lsfhpc/9.1.3
+   >module load rocoto/1.2.3
+
+   or a new version of rocoto:
+   (NOTE: Bin Liu's message 20171205, per Sam's suggestion, you may also consider loading a new version of rocotoi)
+
+   module use /gpfs/hps/usrx/local/emc_rocoto/modulefiles
+   module load rocoto/1.2.4-RC3
 
 3) Generate ROCOTO xml and conjob 
    a) >cd tfAa/nwdev/rocoto
-       edit the file user.conf with working directory, workflow directory, date, cycle and so of
-       your experinment.
-   b) >./run_gefs.py -w gefs.xml
+      check the user_conf.protype file, get your own copy if necessary
+   b) check the config.sh file and modify it based on your own choice of dates, sycle and various diretories  
+      > config.sh  This will generate your own user_conf file.
+      check the user_conf to make sure your choice of dates, sycle and various diretories are correctly specified  
+      if necessary, you can  edit the file user.conf with working directory, workflow directory, dates, cycle  etc. of your experinment.
+   c) >./run_gefs.py -w gefs.xml
        The rocoto xml file ges.xml and conjob file cron_rocoto should be generated.
-   c) >crontab cron_rocoto
+   d) >crontab cron_rocoto
          lunch cron job.
-   d) >rocotostat -w gefs.xml -d gefs.db
+   e) >rocotostat -w gefs.xml -d gefs.db
        check the status of job running.
-   e) Go to $WORKDIR (defined in user.conf) for checking job standard outputs and output files
+   f) Go to $WORKDIR (defined in user.conf) for checking job standard outputs and output files
       of your experiment.
    
-   
-
-
-
+DHOU: 20170808 
+4) If you need to modify the workflow, some simple actions can be taken:
+   a) modify gefs.xml.in to avoid a group of jobs (YES or NO) or a specific job (delete a particular line)   
+   b) modify tasks/cray/~.ent file to delete or change the dependemce requirements.
+   c) the current setiing is to run the init-fcst-post-prdgen-ensstat-track/genesis-enspost for high resolution only.

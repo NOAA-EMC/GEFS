@@ -38,16 +38,26 @@ export HOMEgefs=$basesource/nwdev
 export HOMEgsm=$HOMEDIR/gsm.v12.1.2
 export HOMEpost=$HOMEDIR/ncep_post.v7.2.3
 export HOMEenkf=$HOMEDIR/enkf.v2.0.1
-export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.8
+export HOMEtrak=$HOMERFC/ens_tracker.v1.1.8
 
-#for NEMS GEFS
-export HOMEgsm=$HOMEDIR1/global_shared.v14.1.0
-export nemsioget=$HOMEgsm/exec/nemsio_get
-export HOMEpost=$HOMEgsm
-export HOMEenkf=$HOMEDIR1/gdas.v14.1.0
+#for NEMS GEFS, FV3 version
+export HOMEgsm=$HOMEDIR/trunk/global_shared.v15.0.0
+#export HOMEgsm=$HOMEDIR/trunk_20171023/global_shared.v15.0.0
+#FCST exec is from a different directory
+export EXECDIR=$HOMEgsm/sorc/fv3gfs.fd/BUILD/bin
+export FCSTEXECDIR=$HOMEDIR/NEMSfv3gfs/trunk/NEMS/exe
+#export FCSTEXECDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/svn/fv3gfs/NEMSfv3gfs/stochy/NEMS/exe
+#export FCSTEXECDIR=$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe
+
+export HOMEpost=$HOMEDIR/post4fv3   #Aug 2017
+#export HOMEpost=/gpfs/hps3/emc/global/noscrub/emc.glopara/svn/post/tags/ncep_post.v7.7.2
+export HOMEenkf=$HOMEDIR/trunk/gdas.v15.0.0
 export PARMglobal=$HOMEgsm/parm
-export nemsioget=$HOMEgsm/exec/nemsio_get
 
+#Extra direcories for FV3 temporary settings
+export HOMEgsm1=$HOMEDIR1/global_shared.v14.1.0
+export nemsioget=$HOMEgsm1/exec/nemsio_get
+export nemsioget=/gpfs/hps3/emc/global/noscrub/emc.glopara/bin/nemsio_get
 # This section is optional, using path to define utility files
 # export UTILROOT=/nwprod2/prod_util.v1.0.0  
 # export GRIBROOT=/nwprod2/grib_util.v1.0.1
@@ -78,4 +88,5 @@ export nemsioget=$HOMEgsm/exec/nemsio_get
 # export COMIN=/ensemble/noscrub/emc.enspara/xz/T574L64SL/EK0 #temporary testing of CQPF job
 # export COMROOTp1=/ensemble2/noscrub/Dingchen.Hou/GEFS15/PARA20150708/com
 # export COMROOTp1=/ensemble/noscrub/Richard.Wobus/o/com      #Dick's example for gfs
-# export COMROOTp2=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/o/com    #Bing's example
+# export COMROOThps=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/o/com    #Bing's example
+# export COMROOThps=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/nems_gefs/com    #Bing's archive for nems based gfs

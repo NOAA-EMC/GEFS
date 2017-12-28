@@ -12,8 +12,8 @@ if [ $mac = t -o $mac = e -o $mac = g ] ; then # For WCOSS
 #export NEMSIOGFS_INC=/global/save/Fanglin.Yang/svn/gfs/tags/nemsiogfs/intel/include/nemsiogfs_v1.1.0
 # export NEMSIOGFS_LIB=/global/save/emc.glopara/svn/gfs/q3fy17/nemsiogfsv2.0.1/libnemsiogfs.a
 # export NEMSIOGFS_INC=/global/save/emc.glopara/svn/gfs/q3fy17/nemsiogfsv2.0.1/include/nemsiogfs
- export NEMSIO_LIB=/global/save/emc.glopara/svn/nceplibs/nemsio/trunk/libnemsio.a
- export NEMSIO_INC=/global/save/emc.glopara/svn/nceplibs/nemsio/trunk/incmod/nemsio
+# export NEMSIO_LIB=/global/save/emc.glopara/svn/nceplibs/nemsio/trunk/libnemsio.a
+# export NEMSIO_INC=/global/save/emc.glopara/svn/nceplibs/nemsio/trunk/incmod/nemsio
  export INCG="$NEMSIO_INC"
  export INCGFS="$NEMSIOGFS_INC"
 
@@ -44,10 +44,10 @@ elif [ $mac = l -o $mac = s ] ; then # For CRAY
  machine=cray
  export LIBDIR=/gpfs/hps/nco/ops/nwprod/lib
  export LIBDIR=/gpfs/hps/nco/ops/nwprod/lib
- export NEMSIOGFS_LIB=/gpfs/hps/emc/global/noscrub/emc.glopara/svn/gfs/q3fy17/nemsiogfsv2.0.1/intel/libnemsiogfs.a
- export NEMSIOGFS_INC=/gpfs/hps/emc/global/noscrub/emc.glopara/svn/gfs/q3fy17/nemsiogfsv2.0.1/intel/include/nemsiogfs
- export NEMSIO_LIB=/gpfs/hps/nco/ops/nwprod/lib/nemsio/v2.2.2/intel/libnemsio_v2.2.2.a
- export NEMSIO_INC=/gpfs/hps/nco/ops/nwprod/lib/nemsio/v2.2.2/intel/include/nemsio_v2.2.2
+# export NEMSIOGFS_LIB=/gpfs/hps/emc/global/noscrub/emc.glopara/svn/gfs/q3fy17/nemsiogfsv2.0.1/intel/libnemsiogfs.a
+# export NEMSIOGFS_INC=/gpfs/hps/emc/global/noscrub/emc.glopara/svn/gfs/q3fy17/nemsiogfsv2.0.1/intel/include/nemsiogfs
+# export NEMSIO_LIB=/gpfs/hps/nco/ops/nwprod/lib/nemsio/v2.2.2/intel/libnemsio_v2.2.2.a
+# export NEMSIO_INC=/gpfs/hps/nco/ops/nwprod/lib/nemsio/v2.2.2/intel/include/nemsio_v2.2.2
  export INCG="$NEMSIO_INC"
  export INCGFS="$NEMSIOGFS_INC"
 
@@ -118,7 +118,7 @@ for dir in global_enscvprcp.fd  global_enspvrfy.fd  global_enssrbias.fd global_e
  cd ..
 done
 
-for dir in ../util/sorc/gettrk.fd ../util/sorc/overenstr.grib.fd; do
+for dir in ../util/sorc/gettrk.fd ../util/sorc/overenstr.grib.fd ../util/sorc/getnsttf.fd; do
         cd $dir
         make clean
         make -f Makefile

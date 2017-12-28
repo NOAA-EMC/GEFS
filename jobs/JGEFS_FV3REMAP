@@ -1,0 +1,309 @@
+#!/bin/ksh
+
+echo `date` $0 `date -u` begin
+
+set -xa
+export PS4='$SECONDS + '
+date
+
+###########################################
+# Run gefs_config to get input parameters
+###########################################
+if [ "$RUN_ENVIR" = dev ]; then ### For Developers
+# . $basesource/nw${envir}/versions/gefs.ver
+#        . $basesource/nwdev/parm/gefs_config
+        . $basesource/nwdev/parm/gefs_config
+        export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+fi
+
+export machine=$machine
+export nemsioget=$nemsioget
+export APRUN=${gefsmpexec:-mpirun.lsf}
+export RUNMEM=$RUNMEM
+export mem=`echo $RUNMEM|cut -c3-5`
+
+####################################
+# obtain unique process id (pid) and make temp directory
+####################################
+export pid=$$
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+mkdir -p $DATA
+cd $DATA
+
+############################
+# Set up cycle varaible
+############################
+export cycle=t${cyc}z
+export cycle_fcst=t${cyc_fcst}z
+
+if (( cyc == cyc_fcst )); then
+        export cycsuffix=false
+        export fcstlong=true
+        cfsuffix=
+else
+        export fcstlong=false
+        export cycsuffix=true
+        export ENS_SPS=.false.
+        cfsuffix=.cycfs$cyc_fcst
+fi
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
+#export NTHREADS=1
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+if [[ $RUN_CONCURRENT = yes ]]; then
+        export PGMOUT=FCOUT.o$pid
+        export PGMERR=
+        export REDOUT=' | tee -a '
+        export REDERR=' 2>&1 '
+fi
+
+####################################
+# Define RERUN Parameter: default to RESTART if not previously set
+#
+# Set RERUN=RESTART to find the last set of complete SFCSIG files and restart the forecast at that point
+# (corresponds to previous setting RERUN=NO)
+# Set RERUN=YES to remove all forecast products and log files, if any, and start over from the conditions
+#
+# In case of FORECAST failure, set RERUN=RESTART if necessary in FORECAST, NCEPPOST, and PRDGEN jobs
+# In case of NCEPPOST failure, set RERUN=RESTART if necessary in NCEPPOST, and PRDGEN jobs
+# In case of PRDGEN   failure, set RERUN=RESTART if necessary in PRDGEN jobs
+####################################
+echo "input setting RERUN=$RERUN"
+#export RERUN=${RERUN:-RESTART}
+export RERUN=${RERUN:-RERUN}
+# export RERUN=RESTART
+# export RERUN=YES
+echo "current setting RERUN=$RERUN"
+
+# Specify Execution Areas
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
+
+export EXECgsm=$HOMEgsm/exec
+export USHgsm=$HOMEgsm/ush
+export FIXgsm=$HOMEgsm/fix
+export PARMgsm=$HOMEgsm/parm
+export PARM_FV3DIAG=$PARMgsm/parm_fv3diag
+
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+##############################################
+# Define COM and GES directories
+##############################################
+if [[ $FORECAST_SEGMENT = hr ]] ; then
+        echo "Remap the fv3 model output for the high resolution segment"
+        fhresini=0
+elif [[ $FORECAST_SEGMENT = lr ]] ; then
+        echo "Remap the fv3 model output for the low resolution segment"
+        fhresini=$fhmaxh
+elif [[ $FORECAST_SEGMENT = hl ]] ; then
+        echo "Remap the fv3 model output for both high and low resolution segments, including chgres"
+        fhresini=0
+else
+        msg="FATAL ERROR:  Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
+        echo "`date`   $msg"
+        echo "The Forecast job will be aborted!!!!"
+        postmsg "$jlogfile" "$msg"
+        export pgm=JENS_FCST
+        export err=911
+        err_chk
+fi # [[ $FORECAST_SEGMENT = hr ]]
+
+echo FORECAST_SEGMENT = $FORECAST_SEGMENT
+
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMIN=$COMOUT
+
+#mkdir -m 775 -p $COMOUT/$cyc/sfcsig
+#mkdir -m 775 -p $COMOUT/$cyc/misc/fcst
+#mkdir -m 775 -p $COMOUT/$cyc/misc/remap
+SFCSIG=$COMIN/$cyc/sfcsig
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+. $PARMgefs/gefs.parm
+
+case $cyc in
+        00) export fhmax=$fhmax00;;
+        06) export fhmax=$fhmax06;;
+        12) export fhmax=$fhmax12;;
+        18) export fhmax=$fhmax18;;
+esac
+
+export ERRSCRIPT=err_chk
+export LOGSCRIPT=startmsg
+
+# Create member list
+####################################
+
+if [[ $FORECAST_SEGMENT = hr ]] ; then
+	CASE=$CASEHR;LATB=$LATBFV;LONB=$LONBFV;LEVS=$LEVSHR;
+	FHINI=0;FHMAX=$fhmaxh;FHOUT=6
+else
+	CASE=$CASELR;LATB=$LATBFV;LONB=$LONBFV;LEVS=$LEVSLR;
+	(( FHINI = fhmaxh - 12 ))
+        FHMAX=$fhmax;FHOUT=6
+fi
+        (( LEVS = LEVSHR + 1 ))
+npe_regrid=$LEVS
+
+export CASE=$CASE
+export LEVS=$LEVS
+export LATB=$LATB
+export LONB=$LONB
+
+#Names used in exglobal_fv3.sh
+export BASE_GSM=$HOMEgsm
+export FIX_DIR=$FIXgsm
+export FIX_AM=$FIXgsm/fix_am
+export FIX_FV3=$FIXgsm/fix_fv3
+
+export NODES=$NODES                                          #number of nodes for all post jobs
+export pe_node=24
+export IPD4=YES
+#if [ $CKND -eq 2 ]; then NODES=3 ; fi
+#export POST_MEMORY=3072#
+
+#------------------------------------------------------------------------------
+#--use ESRL ESMF regrid tool to remap forecast 6-tile netcdf files to global
+#  gaussian grids and to write converted files directly in nemsio format.
+#-------------------------------------------------------------------------------
+REGRIDNEMSIOSH=$USHgsm/fv3gfs_regrid_nemsio.sh
+REGRIDNEMSIOEXE=$EXECgsm/regrid_nemsio
+variable_table=$PARM_FV3DIAG/variable_table.txt
+thread_regrid=1
+npe_node_regrid=$((pe_node/thread_regrid))
+NTHREADS_REGRID_NEMSIO=$thread_regrid
+APRUN_REGRID_NEMSIO="aprun -n $npe_regrid -N $npe_node_regrid -j 1 -d $thread_regrid -cc depth"
+
+#------------------------------------------------------------------------------
+#--use GFDL fregrid tool to remap forecast 6-tile netcdf files to global lat-lon
+#  grids but still in netcdf format, then use NC2NEMSIO to convert to nemsio.
+#-------------------------------------------------------------------------------
+#CSTEP=fcst1
+#export CKSH=$(echo $CSTEP|cut -c-4)
+#export CKND=$(echo $CSTEP|cut -c5-)
+export machine=${machine:-WCOSS}
+export machine=$(echo $machine|tr '[a-z]' '[A-Z]')
+
+REMAPSH=$USHgsm/fv3gfs_remap.sh            #remap 6-tile output to global array in netcdf
+REMAPEXE=$EXECgsm/fregrid_parallel
+REMAP_GRID=latlon
+master_grid=0p25deg                              #1deg 0p5deg 0p25deg 0p125deg etc
+export GG=${master_grid:-"0p25deg"}
+thread_remap=2
+NTHREADS_REMAP=$thread_remap
+npe_node_remap=$((pe_node/thread_remap))
+npe_remap=$((NODES*npe_node_remap))
+APRUN_REMAP="aprun -n $npe_remap -N $npe_node_remap -j 1 -d $thread_remap -cc depth"
+
+#--------------------------------------------------
+NC2NEMSIOSH=$USHgsm/fv3gfs_nc2nemsio.sh    #convert netcdf to nemsio
+NC2NEMSIOEXE=$EXECgsm/fv3nc2nemsio.x
+
+#if [[ $mem = c00 ]] ;then 
+#MEMBER=21
+#else
+#MEMBER=`echo $mem|cut -c2-3`
+#fi
+#export MEMBER=$MEMBER
+
+echo $REMAPSH
+echo $REMAPEXE
+echo $NC2NEMSIOSH
+echo $NC2NEMSIOEXE
+echo $PARM_FV3DIAG
+echo $APRUN
+
+if [ $REMAP_GRID = latlon ]; then
+	DIAG_TABLE=$HOMEgsm/parm/parm_fv3diag/diag_table
+else
+	DIAG_TABLE=$HOMEgsm/parm/parm_fv3diag/diag_table_history
+fi
+
+NCP="/bin/cp -p"
+
+#echo "-----end of $CONFIG in $0 --------"
+echo "-----end of CONFIG in $0 --------"
+echo DATA=$DATA
+
+#set -a;. $CONFIG;set +a
+#echo "-----end of $CONFIG ------------"
+echo
+
+#mkdir -p $COMOUT
+#export GESOUT=${GESOUT:-$GESROOT/${envir}}
+#export GESOUT=$GESOUT/gefs.${PDY}
+#export FV3GESOUT=$GESROOT\/${envir}/fv3gefs.${PDY}
+
+export CDATE=$PDY$cyc
+#COMROT=$COMOUT/$cyc/sfcsig/$mem
+COMROT=$SFCSIG/$mem
+
+export PREFIX=${RUNMEM}
+
+for nt in 1 2 3 4 5 6; do
+	for type in atmos_4xdaily nggps2d nggps3d ; do
+		ln -s $COMROT/${type}\.tile$nt.nc ${type}\.tile$nt.nc
+		ln -s $COMROT/${PREFIX}${type}.${GG}.nc ${PREFIX}${type}.${GG}.nc 
+ 	done
+done
+
+FH=$((10#$FHINI))
+[[ $FH -lt 10 ]]&&FH=0$FH
+[[ $FH -lt 100 ]]&&FH=0$FH
+while [[ 10#$FH -le $FHMAX ]] ; do
+	for nt in 1 2 3 4 5 6; do
+		ln -s ${SFCSIG}/${PREFIX}.t${cyc}z.sf${FH} ${PREFIX}atmf${FH}.nemsio
+	done
+	((FH=10#$FH+10#$FHOUT))
+	[[ $FH -lt 10 ]]&&FH=0$FH
+	[[ $FH -lt 100 ]]&&FH=0$FH
+done
+
+#testfile=$COMROT/nggps3d.tile6.nc
+testfile=nggps3d.tile6.nc
+nsleep=0; tsleep=120;  msleep=90
+while test ! -s $testfile -a $nsleep -lt $msleep;do
+  sleep $tsleep; nsleep=`expr $nsleep + 1`
+done
+
+# Run the script(s) for REMAP or REGRID
+if [ ${REMAP_GRID:-latlon} = latlon ]; then
+ echo
+ $REMAPSH                                         #remap 6-tile output to global array in netcdf
+ if [[ $? -ne 0 ]];then exit 1;fi
+
+ echo
+ $NC2NEMSIOSH                                     #convert netcdf to nemsio
+ if [[ $? -ne 0 ]];then exit 1;fi
+else
+ echo
+ $REGRIDNEMSIOSH
+ if [[ $? -ne 0 ]];then exit 1;fi
+fi
+

@@ -164,48 +164,6 @@ case $cyc in
 	18) export fhmax=$fhmax18;;
 esac
 
-
-# set outtyp to 1 because we need to run chgres in the post before model start running chgres
-# otherwise set to 0, then chgres will not be executed in global_nceppost.sh
-
-export OUTTYP=4     # For nemsio files from forecast model (input to post)
-export OUTTYP=$OUTTYP
-
-if [[ $REMAP_GRID = latlon ]]; then
-
-if [[ $FORECAST_SEGMENT = hr ]]; then
-	master_grid=0p25deg
-fi 
-if [[ $FORECAST_SEGMENT = lr ]]; then
-	master_grid=0p50deg
-#else
-#	echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supporxtted          
-fi
-
-case $master_grid in
-	0p25deg) LATB=720;LONB=1440;;
-	0p50deg) LATB=360;LONB=720;;
-esac
-export LATB
-export LONB
-
-if [[ $FORECAST_SEGMENT = hr ]] ; then
-	LEVS=$LEVSHR 
-elif [[ $FORECAST_SEGMENT = lr ]]; then
-	LEVS=$LEVSLR 
-else
-	echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supporxtted          
-fi
-#(( LEVS = LEVS -1 ))
-echo $LEVS $LATB $LONB
-
-else  #REMAP_GRID
-
-export JCAP=$JCAPFV
-export LATB=$LATBFV
-export LONB=$LONBFV
-
-fi
 ####################################
 # Specify Process ID for the products
 ####################################
@@ -229,7 +187,6 @@ if [ $GRIBVERSION = grib2 ]; then
 	export FLTFILEGFSF001=${FLTFILEGFSF001:-$PARMpost/postxconfig-NT-GEFS-F00.txt}
 	export FLTFILEGFS1=${FLTFILEGFS1:-$PARMpost/postxconfig-NT-GEFS.txt}
 fi # [ $GRIBVERSION = grib2 ]
-
 
 export POSTGPVARS_HIGH="KPO=47,PO=1000.,975.,950.,925.,900.,875.,850.,825.,800.,775.,750.,725.,700.,675.,650.,625.,600.,575.,550.,525.,500.,475.,450.,425.,400.,375.,350.,325.,300.,275.,250.,225.,200.,175.,150.,125.,100.,70.,50.,30.,20.,10.,7.,5.,3.,2.,1.,"
 export POSTGPVARS_LOW=$POSTGPVARS_HIGH
@@ -266,7 +223,6 @@ export SLEEP_INT=5
 ####################################
 
 export FHINC_HIGH=3
-export FHINC_HIGH=6
 export FHINC_LOW=6
 
 ##### RLW 20110704 note that only _HIGH is currently used
@@ -298,10 +254,9 @@ case $FORECAST_SEGMENT in
 				export FHINC_HIGH=9
 				;;
 			(*) 
-				export DOANALYSIS=YES;
+				export DOANALYSIS=NO;
 				export SHOUR=00;
-				#export FHINC_HIGH=3
-				export FHINC_HIGH=$FHINC_HIGH
+				export FHINC_HIGH=3
 				;;
 		esac # $SUBJOB
 		;;
@@ -415,9 +370,9 @@ if test $SHOUR -le $FHOUR_HIGH; then
 	export DO_LOW_RES=YES 
 	export POSTGPVARS=$POSTGPVARS_HIGH
 
-	$HOMEgefs/scripts/exgefs_nceppost.sh.ecf
+#	$HOMEgefs/scripts/exgefs_nceppost.sh.ecf
 
-	export SHOUR=`expr $FHOUR_HIGH + $FHINC_HIGH`
+#	export SHOUR=`expr $FHOUR_HIGH + $FHINC_HIGH`
 fi # test $SHOUR -le $FHOUR_HIGH
 
 ###################################################
@@ -451,3 +406,150 @@ if [[ $KEEPDATA != "YES" ]]; then
 fi
 
 echo `date` $0 `date -u` end
+
+if [[ $FORECAST_SEGMENT = hr ]] ; then
+CASE=$caseh;
+else
+CASE=$casel;
+fi
+
+echo starting fv3 nceppost....
+export CASE=$CASE
+export BASE_GSM=$HOMEgsm
+export BASE_POST=$HOMEpost
+export LEVS=64
+export NODES=$NODES                                          #number of nodes for all post jobs
+export pe_node=24
+export IPD4=YES
+#if [ $CKND -eq 2 ]; then NODES=3 ; fi
+export POST_MEMORY=3072
+#------------------------------------------------------------------------------
+#--use ESRL ESMF regrid tool to remap forecast 6-tile netcdf files to global
+#  gaussian grids and to write converted files directly in nemsio format.
+#-------------------------------------------------------------------------------
+res=`echo $CASE|cut -c 2-`
+NLAT=$((2*res))
+NLON=$((4*res))
+JCAP=$((res*2-2))
+LATB=$NLAT
+LONB=$NLON
+REGRIDNEMSIOSH=$BASE_GSM/ush/fv3gfs_regrid_nemsio.sh
+REGRIDNEMSIOEXE=$BASE_GSM/exec/regrid_nemsio
+variable_table=$BASE_GSM/parm/parm_fv3diag/variable_table.txt
+npe_regrid=$LEVS
+thread_regrid=1
+npe_node_regrid=$((pe_node/thread_regrid))
+NTHREADS_REGRID_NEMSIO=$thread_regrid
+APRUN_REGRID_NEMSIO="aprun -n $npe_regrid -N $npe_node_regrid -j 1 -d $thread_regrid -cc depth"
+
+
+#------------------------------------------------------------------------------
+#--use GFDL fregrid tool to remap forecast 6-tile netcdf files to global lat-lon
+#  grids but still in netcdf format, then use NC2NEMSIO to convert to nemsio.
+#-------------------------------------------------------------------------------
+REMAPSH=$BASE_GSM/ush/fv3gfs_remap.sh            #remap 6-tile output to global array in netcdf
+REMAPEXE=$BASE_GSM/exec/fregrid_parallel
+master_grid=0p25deg                              #1deg 0p5deg 0p25deg 0p125deg etc
+thread_remap=2
+npe_node_remap=$((pe_node/thread_remap))
+npe_remap=$((NODES*npe_node_remap))
+APRUN_REMAP="aprun -n $npe_remap -N $npe_node_remap -j 1 -d $thread_remap -cc depth"
+
+NC2NEMSIOSH=$BASE_GSM/ush/fv3gfs_nc2nemsio.sh    #convert netcdf to nemsio
+NC2NEMSIOEXE=$BASE_GSM/exec/fv3nc2nemsio.x
+#------------------------------------------------------------------------------
+
+POSTJJOB=$BASEDIR/jobs/JGFS_POST.sh              #JJOBS calls global_nceppost.sh and down-stream jobs
+POSTGPSH=$BASE_POST/ush/global_nceppost.sh       #UPP converts nemsio to grib2
+POSTGPEXEC=$BASE_POST/exec/ncep_post
+npe_node_po=6                                    #number of tasks per node for UPP
+npe_po=$((NODES*npe_node_po))                    #total number of tasks for UPP
+NTHRPOST=1
+APRUN_NP="aprun -n $npe_po -N $npe_node_po -j 1 -d $NTHRPOST -cc depth"
+
+
+#GFS_DOWNSTREAM=YES                               #run downstream jobs
+#GFSDOWNSH=$USHDIR/fv3gfs_downstream_nems.sh
+#GFSDWNSH=$USHDIR/fv3gfs_dwn_nems.sh
+#downset=1
+#npe_node_dwn=8                                   #number of tasks per node
+#npe_dwn=$((NODES*npe_node_dwn))
+#nthread_dwn=$((pe_node/npe_node_dwn))
+#APRUN_DWN="aprun -n $npe_dwn -N $npe_node_dwn -j 1 -d $nthread_dwn cfp"
+
+
+TIMELIMPOSTGFS1=10:00:00
+TIMELIMPOSTGFS2=03:00:00
+TIMELIMPOSTGDAS=04:00:00            # CPU limit for GDAS post
+post_delay_1=0000                   # AM Post delay time
+post_delay_2=0000                   # AM Post delay time
+REDO_POST=NO                        # Defaults to NO
+
+################################################################################
+# This script runs the post processor.
+# Usage: post.sh
+# Imported variables:
+#   CONFIG
+#   CDATE
+#   CDUMP
+#   CSTEP
+################################################################################
+set -aux
+
+#set -a;. $CONFIG;set +a
+#echo "-----end of $CONFIG ------------"
+echo 
+CSTEP=fcst1
+export CKSH=$(echo $CSTEP|cut -c-4)
+export CKND=$(echo $CSTEP|cut -c5-)
+export machine=${machine:-WCOSS}
+export machine=$(echo $machine|tr '[a-z]' '[A-Z]')
+#
+#$PBEG
+################################################################################
+export RUNMEM=$RUNMEM
+export mem=`echo $RUNMEM|cut -c3-5`
+export COMOUT=$COMOUT
+#mkdir -p $COMOUT
+export GESOUT=${GESOUT:-$GESROOT/${envir}}
+export GESOUT=$GESOUT/gefs.${PDY}
+export FV3GESOUT=$GESROOT\/${envir}/fv3gefs.${PDY}
+COMROT=$COMOUT/$cyc/sfcsig/$mem
+export DATATMP=$DATA/posttmp
+export CDATE=$PDY$cyc
+eval export DATA=$COMROT
+cd $DATA||exit 1
+
+testfile=$COMROT/nggps3d.tile6.nc
+nsleep=0; tsleep=120;  msleep=90
+while test ! -s $testfile -a $nsleep -lt $msleep;do
+  sleep $tsleep; nsleep=`expr $nsleep + 1`
+done
+
+if [ ${REMAP_GRID:-latlon} = latlon ]; then
+ echo
+ $REMAPSH                                         #remap 6-tile output to global array in netcdf
+ if [[ $? -ne 0 ]];then exit 1;fi
+
+ echo
+ $NC2NEMSIOSH                                     #convert netcdf to nemsio
+ if [[ $? -ne 0 ]];then exit 1;fi
+else
+ echo
+ $REGRIDNEMSIOSH
+ if [[ $? -ne 0 ]];then exit 1;fi
+fi
+export RUN=gefs
+echo
+eval export DATA=$DATATMP
+rm -rf $DATA||exit 1;mkdir -p $DATA||exit 1; cd $DATA||exit 1
+chmod ${permission:-755} $DATA
+export DOANALYSIS=NO
+#$POSTJJOB                                        #converts nemsio to grib2 and run down-stream jobs
+	$HOMEgefs/scripts/exgefs_nceppost.sh.ecf
+if [[ $? -ne 0 ]];then $PERR;exit 1;fi
+
+
+################################################################################
+# Exit gracefully
+

@@ -131,6 +131,7 @@ case $FORECAST_SEGMENT in
 	(hr)
 		# high resolution segment
 		export FHINCP5=03
+		export FHINCP5=06
 		export SHOUR=00
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmaxh

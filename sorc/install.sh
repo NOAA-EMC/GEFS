@@ -1,4 +1,4 @@
-#!/bin/sh
+!/bin/sh
 set -x -e
 EXECdir=../exec
 [ -d $EXECdir ] || mkdir $EXECdir
@@ -7,7 +7,9 @@ for dir in gefs_vortex_separate.fd gefs_vortex_combine.fd global_sigzvd.fd globa
 	make install
 	cd ..
 done
-for dir in ../util/sorc/gettrk.fd ../util/sorc/overenstr.grib.fd; do
+EXECdir=../util/exec
+[ -d $EXECdir ] || mkdir $EXECdir
+for dir in ../util/sorc/gettrk.fd ../util/sorc/overenstr.grib.fd ../util/sorc/getnsttf.fd; do
 	cd $dir
 	make install
 	cd ../../../sorc

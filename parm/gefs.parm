@@ -14,7 +14,8 @@ fi
 ##############################################
 # Number of pairs to run (normally 10 pairs)
 ##############################################
-export npair=${npair:-10}
+export npair=${npair:-15}
+export npert=$((2*npair))
 export nhrpair=${nhrpair:-$npair}
 export nstinit=${nstinit:-yes}
 #################################################
@@ -22,21 +23,15 @@ export nstinit=${nstinit:-yes}
 #################################################
 export fhmax=${fhmax:-384}
 export fhmaxh=${fhmaxh:-192}
-
 export fhmax00=${fhmax00:-$fhmax}
 export fhmax06=${fhmax06:-$fhmax}
 export fhmax12=${fhmax12:-$fhmax}
 export fhmax18=${fhmax18:-$fhmax}
-
-#For Extended forecast from 384-840 hours
 export fhmax_ext=${fhmax_ext:-840}
 
 # Frequency of initializations
 export fhrp=${fhrp:-06}
 #export fhrp=24
-
-# 3-hourly output: fhmax3 must be less than or equal to fhmaxh
-fhmax3=${fhmax3:-$fhmaxh}
 
 case $cyc in
 	(00)
@@ -54,15 +49,16 @@ case $cyc in
 		echo unmodified fhmax=$fhmax
 		;;
 esac
-export fhmax
 
+export fhmax
 # DHOU, 08/26/2010, added this block to modify fhmaxh fhmax3 and fhmaxhres
 if (( fhmax <= fhmaxh )); then
         export fhmaxh=$fhmax
 fi
-if (( fhmaxh <= fhmax3 )); then
-        export fhmax3=$fhmaxh
-fi
+
+# HOUTSPS=12: output after SPS 12 hours before fhmaxh, so that digital filtering can be applied after resolution change export HOUTSPS=12
+export HOUTSPS=12
+export fhmaxhres=`expr $fhmaxh - $HOUTSPS`
 
 #########################################################################################
 # Parameters to control the digital filter at the beginning of the forecast
@@ -73,16 +69,6 @@ export fhdfilores=${fhdfilores:-3}
 echo fhdfihires=$fhdfihires
 echo fhdfilores=$fhdfilores
 
-####################################################################
-# Cold Start parameters
-# specify 1 or more cycles to cold start using dots as wild cards
-# cold start at 12Z on the first and 15th of each month
-####################################################################
-#export coldstartcycles="......0112 ......1512"
-# one cold start
-#export coldstartcycles="2007110112"
-# no cold starts
-export coldstartcycles=${coldstartcycles:-"0001010101"}
 export sigzvd=${sigzvd:-yes}
 
 #########################################################################################
@@ -105,10 +91,10 @@ fi
 # STTP
 ########################################
 # if multiple forecasts are to be run concurrently, ENS_SPS controls whether stochastic forcing is used
- export ENS_SPS=${ENS_SPS:-.true.}
- if (( npair < 1 )); then
+export ENS_SPS=${ENS_SPS:-.false.}
+if (( npair < 1 )); then
   export ENS_SPS=.false.
- fi
+fi
 
 ################################################################################
 # number of threads to use in the job JGEFS_SIGCHGRS
@@ -125,82 +111,48 @@ export USESUBDIR=${USESUBDIR:-YES}
 #######################################
 # This section defines the resolution
 #######################################
-#export JCAPHR=190
-#export LEVSHR=28
-#export LONBHR=576
-#export LATBHR=288
-#export NTRACHR=3
+#temporay setting for INIT nemsio files from current GEFS prod (v11)
+ export JCAPHR=${JCAPHR:-574}
+ export LEVSHR=${LEVSHR:-64}
+ export LONBHR=${LONBHR:-1152}
+ export LATBHR=${LATBHR:-576}
+ export NTRACHR=${NTRACHR:-3}
+ export MTNRSL=${MTNRSL:-574.1152.576}
+#export DELTIM=${DELTIM:-900}
+#export DTPHYS=${DTPHYS:-450}
 
-#export JCAPLR=126
-#export LEVSLR=28
-#export LONBLR=384
-#export LATBLR=190
-#export NTRACLR=3
-
-#export JCAPHR=254
-#export LEVSHR=42
-#export LONBHR=768
-#export LATBHR=384
-#export NTRACHR=3
-
-#export JCAPHR=382
-#export LEVSHR=42
-#export LONBHR=1152
-#export LATBHR=576
-#export NTRACHR=3
-#export MTNRSL=382
-#export SEMILG=.false.
-
-#For T574L64/42 Euler
-#export JCAPHR=574
-#export LEVSHR=64
-#export LONBHR=1760
-#export LATBHR=880
-#export NTRACHR=3
-#export MTNRSL=574
-#export SEMILG=.false.
-
-#For T574L64/42 Semi-Lagrangian, 2015 Implementation
-export JCAPHR=${JCAPHR:-574}
-export LEVSHR=${LEVSHR:-64}
-export LONBHR=${LONBHR:-1152}
-export LATBHR=${LATBHR:-576}
-export NTRACHR=${NTRACHR:-3}
-export MTNRSL=${MTNRSL:-574.1152.576}
-export SEMILG=${SEMILG:-.true.}
-export DELTIM=${DELTIM:-900}
-export DTPHYS=${DTPHYS:-450}
+#For the higher resolution part of FV3 forecast
+ export CASEHR=${CASEHR:-C384}
+ export LEVSHR=${LEVSHR:-64}
+ export DELTIM=${DELTIM:-450}
+ export JCAPFV=${JCAPFV:-766}
+ export LATBFV=${LATBFV:-768}
+ export LONBFV=${LONBFV:-1536}
+ export MTNRSLFV=${MTNRSLFV:-766.1536.768}
 
 #Lower resolution part
-#For T190L42 Eulerian
-#export JCAPLR=190
-#export LEVSLR=42
-#export LONBLR=576
-#export LATBLR=288
-#export NTRACLR=3
-#export MTNRSLLR=190
-#export SEMILGLR=.false.
 
-#For T382L64 Semi-Lagrangian, 2015 Implementation
-export JCAPLR=${JCAPLR:-382}
+export CASELR=${CASELR:-C192}
 export LEVSLR=${LEVSLR:-64}
-export LONBLR=${LONBLR:-768}
+export DELTIMLR=${DELTIMLR:-600}
+export JCAPLR=${JCAPLR:-382}
 export LATBLR=${LATBLR:-384}
-export NTRACLR=${NTRACLR:-3}
+export LONBLR=${LONBLR:-768}
 export MTNRSLLR=${MTNRSLLR:-382.768.384}
-export SEMILGLR=${SEMILGLR:-.true.}
-export DELTIMLR=${DELTIMLR:-1200}
-export DTPHYSLR=${DTPHYSLR:-600}
+export NTRACLR=${NTRACLR:-3}
 
-# for new vertical coordinate
-# export IDVC=3
+#for new vertical coordinate
 export IDVC=${IDVC:-2}
-# export IDVM=32
+#export IDVM=32
+
 
 ########################################
 # This section defines the output flags for ncep_post + prdgen
 ########################################
+export FV3OUT_GRID="gaussian_grid"
 export GRIBVERSION=grib2
+REMAP_GRID=none     # temporay setting, to void the latlon default
+export REMAP_GRID=${REMAP_GRID:-latlon}        #gaussian or latlon for using fregrid or regrid_nemsio for remapping
 
 export gfsfhmaxh=240
 export gfsfhoroglist=252
@@ -221,16 +173,6 @@ export grid1p0="0 6 0 0 0 0 0 0 360 181 0 0 90000000 0 48 -90000000 359000000 10
 export gridp5="0 6 0 0 0 0 0 0 720 361 0 0 90000000 0 48 -90000000 359500000 500000 500000 0"
 export grid2p5="0 6 0 0 0 0 0 0 144 73 0 0 90000000 0 48 -90000000 357500000 2500000 2500000 0"
 
-# HOUTSPS=12: output after SPS 12 hours before fhmaxh, so that digital filtering can be applied after resolution change export HOUTSPS=12
-export HOUTSPS=12
-export fhmaxhres=`expr $fhmaxh - $HOUTSPS`
-
-#RLW 20110228 add SPS_PARM variables here
-export SPS_PARM1="0.005 10.0 0.005 10.0 0.0 0.0 0.0 0.0 0.0 0.0"
-export SPS_PARM2="0.105 0.06 0.12 42.0 0.0 0.0 0.0 0.0 0.0 0.0"
-export SPS_PARM3="0.2 0.34 -0.34 3.0 0.0 -1.0 -0.34 0.34 0.8 0.9"
-
-# RLW 20110720 add fhoroglist
 # fhoroglist is the list of additional hours at which surface height should be included in pgrba
 # this is normally fhmaxh + 12 to include the next gfs output time after the resolution change
 if (( fhmaxh < fhmax )); then

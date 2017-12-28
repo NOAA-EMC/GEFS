@@ -188,6 +188,7 @@ case $FORECAST_SEGMENT in
 		export SHOUR=00
 		export FHINC=06
 		export FHINCP5=03
+		export FHINCP5=06
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmaxh
 		else
@@ -217,6 +218,7 @@ case $FORECAST_SEGMENT in
 		fi
 		;;
 esac # $FORECAST_SEGMENT
+		export DOANALYSIS=NO;
 
 echo FORECAST_SEGMENT=$FORECAST_SEGMENT
 echo FHINC=$FHINC
@@ -255,7 +257,7 @@ fi
 
 #task 1, 1.0d grid
 export jobgrid_1=
-export DOANALYSIS_1=YES
+export DOANALYSIS_1=$DOANALYSIS
 export DO_LOW_RES_1=NO
 export FHINC_1=$FHINC
 export SHOUR_1=$SHOUR_1

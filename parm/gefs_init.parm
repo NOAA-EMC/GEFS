@@ -19,8 +19,20 @@ export relocflag=0
 export relocflag=1
 #
 # control pairing,inflag=6 means inputs from EnKF 6h FCST
+#control pairing,outflag=5 means output file names in Breeding style, e.g gep09.t00z.sanl.cycfs18
+#control pairing,outflag=6 means output file names in EnKF style, e.g gep39.t00z.sanl
 export inflag=6
-export outflag=5
+export outflag=6
+if (( inflag == 6 )); then
+	export num_mem_enkf=80    #number of ENKF members
+        (( num_pair_enkf = num_mem_enkf / 2 ))
+        export num_pair_enkf=$num_pair_enkf
+	(( recentmem = npair * 2 ))
+	export recentmem=$recentmem
+        (( npair = num_pair_enkf / 4 ))
+	export npair=$npair
+        export nhrpair=$npair
+fi
 
 # old versions for old code
 export contopet=1.666667
