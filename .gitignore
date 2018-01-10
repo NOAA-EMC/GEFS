@@ -1,0 +1,14 @@
+# Ignore compiled binaries
+exec/
+fix/
+util/exec/
+
+# Ignore compiled objects in sorc directories
+**/sorc/*/*.o
+**/sorc/*/*.mod
+**/sorc/*/*.x
+**/sorc/*/*.lst
+
+# Ignore other files created during compilation
+util/sorc/getnsttf.fd/loadmap.txt
+util/sorc/gettrk.fd/log.make.gettrk
