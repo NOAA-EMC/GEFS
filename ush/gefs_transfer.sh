@@ -31,10 +31,6 @@ if test "$SENDCOM" = "YES"; then
 mv flxifile $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhr$cfsuffix
 mv pgbafile $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrbaf$fhr$cfsuffix
 mv pgbbfile $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbbf$fhr$cfsuffix
-if [[ "$makegrb1i" = "yes" ]]; then
-	mv pgbaifile $COMOUT/$cyc/pgrba/${RUN}.${cycle}.pgrbaif$fhr$cfsuffix
-	mv pgbbifile $COMOUT/$cyc/pgrbb/${RUN}.${cycle}.pgrbbif$fhr$cfsuffix
-fi
 
 # Save Sig and sfc fcst files
 
@@ -78,10 +74,6 @@ if [[ $RUN = ge??? ]]; then
 	if test "$DO_LOW_RES" = 'YES' -a `expr $fhr % 6` -eq 0; then
 		mv pgbafile.2 $COMOUT/$cyc/pgrbalr/${RUN}.${cycle}.pgrbaf$fhr.2$cfsuffix
 		mv pgbbfile.2 $COMOUT/$cyc/pgrbblr/${RUN}.${cycle}.pgrbbf$fhr.2$cfsuffix
-		if [[ "$makegrb1i" = "yes" ]]; then
-			mv pgbaifile.2 $COMOUT/$cyc/pgrbalr/${RUN}.${cycle}.pgrbaif$fhr.2$cfsuffix
-			mv pgbbifile.2 $COMOUT/$cyc/pgrbblr/${RUN}.${cycle}.pgrbbif$fhr.2$cfsuffix
-		fi
 	fi # test "$DO_LOW_RES" = 'YES' -a `expr $fhr % 6` -eq 0
 fi # [[ $RUN = ge??? ]]
 

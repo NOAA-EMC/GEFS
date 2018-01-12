@@ -26,9 +26,6 @@ na=`basename $0`
 
 export jobgrid=$1
 export subdata=$2
-if [[ $jobgrid == hr_lr ]]; then
-	export jobgrid=
-fi
 cd $DATA
 cd $subdata
 
@@ -38,15 +35,11 @@ postmsg "$jlogfile" "$msg"
 echo cyc=$cyc
 echo cycle=$cycle
 
-if [[ $jobgrid == '' ]]; then
-	export FHINC_HIGH=$FHINC_HIGH
-	export DO_LOW_RES=YES
-fi
-
-if [[ $jobgrid == _p5 ]]; then
-	export FHINC_HIGH=$FHINC_HIGHP5
-	export DO_LOW_RES=NO
-fi
+case $jobgrid in
+	1p0) export FHINC_HIGH=$FHINC_HIGH;;
+	2p5) export FHINC_HIGH=$FHINC_HIGH;;
+	0p5) export FHINC_HIGH=$FHINC_HIGHP5;;
+esac
 
 #################################
 # Run High Res Prdgen if Needed
@@ -63,7 +56,6 @@ fi # test $SHOUR -le $FHOUR_HIGH
 if test $SHOUR -lt $FHOUR_LOW; then
 	export FHINC=$FHINC_LOW
 	export FHOUR=$FHOUR_LOW
-	export POSTGPVARS_HIGH=$POSTGPVARS_LOW
 	$USHgefs/gefs_prdgen_gfs.sh
 fi # test $SHOUR -lt $FHOUR_LOW
 

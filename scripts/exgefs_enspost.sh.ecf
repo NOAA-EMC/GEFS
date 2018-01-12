@@ -124,11 +124,21 @@ while test $fh -le $FHOUR; do
 	#  the order here should correspond to the order in
 	#  which the pgrb files are produced by the post
 	# for res in lr hr p5
+
+        #Change the $fh value from 2 digit to 3 digit 
+	if test $fh -lt 100; then
+		export fh="0$fh"
+	fi
+
 	for res in lr; do
 		if [[ $res = lr ]]; then
-			EXT=".2"
-			FXT=
-			lr=lr
+			#EXT=".2"
+			#FXT=
+			#lr=lr
+			#ext_h=
+			EXT=
+			FXT=.2p50.
+			lr=2p5
 			ext_h=
 			nenspost=$nenspostlr
 			lfm=$lfmlr

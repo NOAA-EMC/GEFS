@@ -15,8 +15,14 @@ if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+#export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
 
+###################################
+# Load the GRIB Utilities module
+####################################
+# JY . /usrx/local/Modules/default/init/ksh
+# JY module load grib_util/v1.0.1
 export CNVGRIB=$CNVGRIB21_GFS
 
 ####################################
@@ -80,13 +86,8 @@ setpdy.sh
 export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
-if [[ "$makepgrb1" = "yes" ]]; then
-	mkdir -m 775 -p $COMOUT/$cyc/pgrba
-	mkdir -m 775 -p $COMOUT/$cyc/pgrbalr
-fi
-
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2a
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2alr
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2a2p5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
 mkdir -m 775 -p $COMOUT/$cyc/misc/gfs
 
@@ -96,9 +97,6 @@ echo set parameters using gefs.parm
 . $PARMgefs/gefs.parm
 
 export NTHREADS=1
-
-export POSTGPVARS_HIGH="IDRTC=0,IOC=360,JOC=181,IDRT=0,IO=360,JO=181,MOO=120,MOW=30,MOOA=120,MOWA=30,"
-export POSTGPVARS_LOW="IDRTC=0,IOC=144,JOC=73,IDRT=0,IO=144,JO=73,MOO=48,MOW=12,MOOA=48,MOWA=12,"
 
 ####################################
 # Specify Timeout Behavior of Post
@@ -125,45 +123,39 @@ export FHINC_LOW=12
 export DO_HD_PGRB=NO
 export HDMAX=00
 
-#export MP_INFOLEVEL=6
-
 env | sort
 
-#mpmd job with 2 tasks, 1 for 1d/2.5d, 2 for 0.5d
+#mpmd job with 3 tasks, 1 for 1d, 2 for 2.5d, 3 for 0.5e
 
-#task 1, 1.0d/2.5d grid
-export jobgrid_1=hr_lr
-
-#task 2, 0.5d grid
-export jobgrid_2=_p5
-
+#task 1, 1.0 grid
+export jobgrid_1=1p0
 subdata=${DATA}/${jobgrid_1}
 if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
 outfile=${subdata}/${jobgrid_1}.out
 echo "$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf $jobgrid_1 ${subdata} 2>&1 >${outfile}" >>prdgen_gfs.cmdfile
 
+#task 2, 2.5d grid
+export jobgrid_2=2p5
 subdata=${DATA}/${jobgrid_2}
 if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
 outfile=${subdata}/${jobgrid_2}.out
 echo "$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf $jobgrid_2 ${subdata} 2>&1 >${outfile}" >>prdgen_gfs.cmdfile
 
+#task 3, 0.5d grid
+export jobgrid_3=0p5
+subdata=${DATA}/${jobgrid_3}
+if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+outfile=${subdata}/${jobgrid_3}.out
+echo "$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf $jobgrid_3 ${subdata} 2>&1 >${outfile}" >>prdgen_gfs.cmdfile
+
 cat prdgen_gfs.cmdfile
 chmod 775 prdgen_gfs.cmdfile
 export MP_CMDFILE=${DATA}/prdgen_gfs.cmdfile
 export MP_PGMMODEL=mpmd
+rm mpmd_cmdfile
+ln -s $MP_CMDFILE mpmd_cmdfile
+
 $APRUN
-
-####################################
-# Generating pgr2b files for 1.0d/2.5d grid
-####################################
-#export jobgrid=
-#$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf
-
-####################################
-# Generating pgr2b files for 0.5d grid
-####################################
-#export jobgrid=_p5
-#$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf
 
 msg="$job completed normally"
 postmsg "$jlogfile" "$msg"

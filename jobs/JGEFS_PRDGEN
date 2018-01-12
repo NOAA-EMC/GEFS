@@ -121,31 +121,17 @@ export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 #export overwrite=no
 export overwrite=yes
 
-if [[ "$makepgrb1" = "yes" ]]; then
-	mkdir -m 775 -p $COMOUT/$cyc/pgrba
-	mkdir -m 775 -p $COMOUT/$cyc/pgrbalr
-	mkdir -m 775 -p $COMOUT/$cyc/pgrbb
-	mkdir -m 775 -p $COMOUT/$cyc/pgrbblr
-	mkdir -m 775 -p $COMOUT/$cyc/pgrbap5
-	mkdir -m 775 -p $COMOUT/$cyc/pgrbbp5
-fi
+#mkdir -m 775 -p $COMOUT/$cyc/pgrb2a
+#mkdir -m 775 -p $COMOUT/$cyc/pgrb2alr
+#mkdir -m 775 -p $COMOUT/$cyc/pgrb2b
+#mkdir -m 775 -p $COMOUT/$cyc/pgrb2blr
 
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2a
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2alr
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2b
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2blr
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2a2p5
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2b1p0
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2b2p5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2bp5
-
-if test "$CREATE_TIGGE" = 'YES'; then
-	mkdir -m 775 -p $COMOUT/$cyc/pgrb2c
-fi
-
-if test "$makepgrb2d" = 'yes'; then
-	mkdir -m 775 -p $COMOUT/$cyc/pgrbd
-	mkdir -m 775 -p $COMOUT/$cyc/pgrb2d
-	mkdir -m 775 -p $COMOUT/$cyc/pgrb2dp5
-fi
 
 #mkdir -m 775 -p $COMOUT/$cyc/tctrack
 #mkdir -m 775 -p $COMOUT/$cyc/genesis
@@ -188,7 +174,7 @@ case $FORECAST_SEGMENT in
 		export SHOUR=00
 		export FHINC=06
 		export FHINCP5=03
-		export FHINCP5=06
+	 	export FHINCP5=06
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmaxh
 		else
@@ -218,7 +204,6 @@ case $FORECAST_SEGMENT in
 		fi
 		;;
 esac # $FORECAST_SEGMENT
-		export DOANALYSIS=NO;
 
 echo FORECAST_SEGMENT=$FORECAST_SEGMENT
 echo FHINC=$FHINC
@@ -249,33 +234,29 @@ if test $total_tasks -ge 5; then
 	SHOUR_5=$(( $SHOUR_4 + FHINCP5 ))
 	FHINC34=$(( $FHINC34 + FHINCP5 ))
 fi
-if test $FHINC34 -le 9; then
-	FHINC34=0$FHINC34
-fi
+#if test $FHINC34 -le 9; then
+#	FHINC34=0$FHINC34
+#fi
 
 #mpmd job with 5 tasks, 1 for 1d, 2 for 2.5d; 3-5 for 0.5d grid
 
 #task 1, 1.0d grid
-export jobgrid_1=
+export jobgrid_1=1p0
 export DOANALYSIS_1=$DOANALYSIS
-export DO_LOW_RES_1=NO
 export FHINC_1=$FHINC
 export SHOUR_1=$SHOUR_1
 export FHOUR_1=$FHOUR
 
 #task 2, 2.5d
-export jobgrid_1=
+export jobgrid_2=2p5
 export DOANALYSIS_2=NO
-export DO_LOW_RES_2=YES
-export DO_THIS_RES=NO
 export FHINC_2=$FHINC
 export SHOUR_2=$SHOUR_2
 export FHOUR_2=$FHOUR
 
 #task 3, 0.5d grid
-export jobgrid_3=_p5
+export jobgrid_3=0p5
 export DOANALYSIS_3=NO
-export DO_LOW_RES_3=NO
 export FHINC_3=$FHINC34
 export SHOUR_3=$SHOUR_3
 export FHOUR_3=$FHOUR
@@ -285,7 +266,7 @@ if test $total_tasks -eq 3; then
 fi
 
 #task 4, 0.5d grid
-export jobgrid_4=_p5
+export jobgrid_4=0p5
 export DOANALYSIS_4=NO
 export DO_LOW_RES_4=NO
 export FHINC_4=$FHINC34
@@ -297,7 +278,7 @@ if test $total_tasks -eq 4; then
 fi
 
 #task 5, 0.5d grid
-export jobgrid_5=_p5
+export jobgrid_5=0p5
 export DOANALYSIS_5=$DOANALYSIS
 export DO_LOW_RES_5=NO
 export FHINC_5=$FHINC34
@@ -310,49 +291,50 @@ fi
 if test $SHOUR_5 -le 9; then
 	SHOUR_5=0$SHOUR_5
 fi
+
 #################################
 # Run Post if Needed
 #################################
 if test $SHOUR -le $FHOUR; then
 
-	subdata=${DATA}/${SHOUR_1}.${FHOUR_1}.${FHINC_1}${jobgrid_1}
+	subdata=${DATA}/${SHOUR_1}.${FHOUR_1}.${FHINC_1}.${jobgrid_1}
 	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-	outfile=${subdata}/${SHOUR_1}.${FHOUR_1}.${FHINC_1}${jobgrid_1}.out
-	echo "$HOMEgefs/scripts/exgefs_prdgen$jobgrid_1.sh.ecf ${SHOUR_1} ${FHOUR_1} ${FHINC_1} $DO_LOW_RES_1 $DOANALYSIS_1 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
+	outfile=${subdata}/${SHOUR_1}.${FHOUR_1}.${FHINC_1}.${jobgrid_1}.out
+	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_1} ${FHOUR_1} ${FHINC_1} $DOANALYSIS_1 ${jobgrid_1} ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
 
-	#Note, task 2 is for the 2.5d grid, which shares the ex-script with 1.0d grid, but subdata should be different
-	subdata=${DATA}/${SHOUR_2}.${FHOUR_2}.${FHINC_2}\_2p5
+	subdata=${DATA}/${SHOUR_2}.${FHOUR_2}.${FHINC_2}.${jobgrid_2}
 	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-	outfile=${subdata}/${SHOUR_2}.${FHOUR_2}.${FHINC_2}\_2p5.out
-	echo "$HOMEgefs/scripts/exgefs_prdgen$jobgrid_2.sh.ecf ${SHOUR_2} ${FHOUR_2} ${FHINC_2} $DO_LOW_RES_2 $DOANALYSIS_2 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
+	outfile=${subdata}/${SHOUR_2}.${FHOUR_2}.${FHINC_2}.${jobgrid_2}.out
+	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_2} ${FHOUR_2} ${FHINC_2} $DOANALYSIS_2 ${jobgrid_2} ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
 
-	if test $total_tasks -ge 3; then
-		subdata=${DATA}/${SHOUR_3}.${FHOUR_3}.${FHINC_3}${jobgrid_3}
-		if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-		outfile=${subdata}/${SHOUR_3}.${FHOUR_3}.${FHINC_3}${jobgrid_3}.out
-		echo "$HOMEgefs/scripts/exgefs_prdgen$jobgrid_3.sh.ecf ${SHOUR_3} ${FHOUR_3} ${FHINC_3} $DO_LOW_RES_3 $DOANALYSIS_3 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
-	fi # test $total_tasks -ge 3
+		if test $total_tasks -ge 3; then
+	subdata=${DATA}/${SHOUR_3}.${FHOUR_3}.${FHINC_3}.${jobgrid_3}
+	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+	outfile=${subdata}/${SHOUR_3}.${FHOUR_3}.${FHINC_3}.${jobgrid_3}.out
+	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_3} ${FHOUR_3} ${FHINC_3} $DOANALYSIS_3 ${jobgrid_3} ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
+		fi # test $total_tasks -ge 3
 
-	if test $total_tasks -ge 4; then
-		subdata=${DATA}/${SHOUR_4}.${FHOUR_4}.${FHINC_4}${jobgrid_4}
-		if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-		outfile=${subdata}/${SHOUR_4}.${FHOUR_4}.${FHINC_4}${jobgrid_4}.out
-		echo "$HOMEgefs/scripts/exgefs_prdgen$jobgrid_4.sh.ecf ${SHOUR_4} ${FHOUR_4} ${FHINC_4} $DO_LOW_RES_4 $DOANALYSIS_4 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
-	fi # test $total_tasks -ge 4
+		if test $total_tasks -ge 4; then
+	ubdata=${DATA}/${SHOUR_4}.${FHOUR_4}.${FHINC_4}${jobgrid_4}
+	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+	outfile=${subdata}/${SHOUR_4}.${FHOUR_4}.${FHINC_4}${jobgrid_4}.out
+	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_4} ${FHOUR_4} ${FHINC_4} $DOANALYSIS_4 ${jobgrid_4} ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
+		fi # test $total_tasks -ge 4
 
-	if test $total_tasks -ge 5; then
-		subdata=${DATA}/${SHOUR_5}.${FHOUR_5}.${FHINC_5}${jobgrid_5}
-		if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-		outfile=${subdata}/${SHOUR_5}.${FHOUR_5}.${FHINC_5}${jobgrid_5}.out
-		echo "$HOMEgefs/scripts/exgefs_prdgen$jobgrid_5.sh.ecf ${SHOUR_5} ${FHOUR_5} ${FHINC_5} $DO_LOW_RES_5 $DOANALYSIS_5 ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
-	fi # test $total_tasks -ge 5
+		if test $total_tasks -ge 5; then
+	subdata=${DATA}/${SHOUR_5}.${FHOUR_5}.${FHINC_5}${jobgrid_5}
+	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+	outfile=${subdata}/${SHOUR_5}.${FHOUR_5}.${FHINC_5}${jobgrid_5}.out
+	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_5} ${FHOUR_5} ${FHINC_5} $DOANALYSIS_5 ${jobgrid_5} ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
+		fi # test $total_tasks -ge 5
 
 	cat prdgen.cmdfile
 	chmod 775 prdgen.cmdfile
 	export MP_CMDFILE=${DATA}/prdgen.cmdfile
 	export MP_PGMMODEL=mpmd
-	rm mpmd_cmdfile
-	ln -s $MP_CMDFILE mpmd_cmdfile
+        rm mpmd_cmdfile
+        ln -s $MP_CMDFILE mpmd_cmdfile
+
 	$APRUN
 
 	export SHOUR=`expr $FHOUR + $FHINC`
