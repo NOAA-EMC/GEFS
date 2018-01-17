@@ -24,11 +24,11 @@
 <!--  <!ENTITY INIT_FHR "@[INIT_FHR]"> -->
 
   <!-- External entities -->
-  <!ENTITY ENV_VARS   SYSTEM "env_vars.ent"> 
-  <!ENTITY DATE_VARS   SYSTEM "date_vars.ent"> 
+  <!ENTITY ENV_VARS   SYSTEM "@[GEFS_ROCOTO]/env_vars.ent"> 
+  <!ENTITY DATE_VARS   SYSTEM "@[GEFS_ROCOTO]/date_vars.ent"> 
 
   <!-- External parameter entities -->
-  <!ENTITY % TASKS    SYSTEM "tasks/@[WHERE_AM_I]/all.ent">
+  <!ENTITY % TASKS    SYSTEM "@[GEFS_ROCOTO]/tasks/@[WHERE_AM_I]/all.ent">
   %TASKS;
 
 @** if WHERE_AM_I==wcoss
