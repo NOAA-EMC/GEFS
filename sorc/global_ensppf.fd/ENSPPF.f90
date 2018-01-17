@@ -62,7 +62,7 @@ integer   lpgi,ireti,jj
 integer   temp(200),ipdt9,P2,iunit2
 real      bb,cc
 
-parameter(len=60,mem=21)
+parameter(len=60,mem=41)
 
 real, allocatable :: ff(:,:),pp(:,:),ss(:,:),aa(:),gg(:,:),hh(:,:)
 

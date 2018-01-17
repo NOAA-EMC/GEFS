@@ -25,9 +25,9 @@ Run gefs workflow via ROCOTO
    module use /gpfs/hps/usrx/local/emc_rocoto/modulefiles
    module load rocoto/1.2.4-RC3
 
-3) Generate ROCOTO xml and conjob 
+3) Generate ROCOTO xml and cronjob 
    a) >cd tfAa/nwdev/rocoto
-      check the user_conf.protype file, get your own copy if necessary
+      check the user.conf_protype file, get your own copy if necessary
    b) check the config.sh file and modify it based on your own choice of dates, sycle and various diretories  
       > config.sh  This will generate your own user_conf file.
       check the user_conf to make sure your choice of dates, sycle and various diretories are correctly specified  
