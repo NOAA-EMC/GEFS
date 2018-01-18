@@ -177,23 +177,16 @@ env | sort
 
 
 #task 1, 1.0d and 2.5d, grid, dataset=a
-export gridlist_1="hr,lr"
+export gridlist_1="1p0,2p5"
 export FHINC_1=$FHINC
 export dataset_1=a
 
 #task 2, 0.5d grid, dataset=a
-export gridlist_2="p5"
+export gridlist_2="0p5"
 export FHINC_2=$FHINCP5
 export dataset_2=a
 
-#task 3, 0.5d grid, dataset=b
-export gridlist_3="p5"
-export FHINC_3=$FHINCP5
-export dataset_3=b
-
-export ext_h=""
-
-subdata_1=${DATA}/${gridlist_1}${dataset_1}
+subdata_1=${DATA}/1p0-2p5${dataset_1}
 outfile=${subdata_1}/${gridlist_1}.out
 if [ ! -d ${subdata_1} ]; then mkdir -p ${subdata_1}; fi
 echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_1 $FHINC_1 ${subdata_1} $dataset_1 2>&1 >${outfile}" >>ensstat.cmdfile
@@ -203,17 +196,14 @@ if [ ! -d ${subdata_2} ]; then mkdir -p ${subdata_2}; fi
 outfile=${subdata_2}/${gridlist_2}.out
 echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_2 $FHINC_2 ${subdata_2} $dataset_2 2>&1 >${outfile}" >>ensstat.cmdfile
 
-subdata_3=${DATA}/${gridlist_3}${dataset_3}
-if [ ! -d ${subdata_3} ]; then mkdir -p ${subdata_3}; fi
-outfile=${subdata_3}/${gridlist_3}.out
-echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_3 $FHINC_3 ${subdata_3} $dataset_3 2>&1 >${outfile}" >>ensstat.cmdfile
-
 cat ensstat.cmdfile
 chmod 775 ensstat.cmdfile
 export MP_CMDFILE=${DATA}/ensstat.cmdfile
 export MP_PGMMODEL=mpmd
+
 rm mpmd_cmdfile
 ln -s $MP_CMDFILE mpmd_cmdfile
+
 $APRUN
 
 msg="JOB COMPLETED NORMALLY"

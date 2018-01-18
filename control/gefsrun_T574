@@ -24,8 +24,8 @@ TPMLOW=18
 # PTMP=ptmp
 # STMP=stmp
 if [[ $machl = s ]] || [[ $machl = l ]]; then
- PTMP=/gpfs/hps3/ptmp
- STMP=/gpfs/hps3/stmp
+ PTMP=/gpfs/hps/ptmp
+ STMP=/gpfs/hps/stmp
  COREPERNODE=24
  export JOBQUEUE=dev
  . /opt/modules/default/init/ksh
@@ -2778,11 +2778,11 @@ case $taskname in
     total_tasks=4
 #mpmd 04-15    
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS ))
-    resources="3000"
-    SUBJOB=       # 1 prdgen job only for each membery, 1d and 2.5d grid
     if (( taskspernode > total_tasks )); then
      taskspernode=$total_tasks
     fi
+    resources="3000"
+    SUBJOB=       # 1 prdgen job only for each membery, 1d and 2.5d grid
     if [[ $jobgrid = _p5 ]]; then
      SUBJOB=B      # 2 prdgen jobs for each member, hr and lr, p5 grid
     fi 
@@ -2815,24 +2815,30 @@ case $taskname in
       (wcoss)
 #mpmd 04-20    
     job_type=parallel 
-    total_tasks=2
+    total_tasks=3
     MP_SHARED_MEMORY=no
     OMP_NUM_THREADS=4
 #mpmd 04-20    
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
-    (( resources =  27648 / taskspernode ))
+    resources="3000"
+    SUBJOB=       # 1 prdgen job only for each membery, 1d and 2.5d grid
     if (( taskspernode > total_tasks )); then
      taskspernode=$total_tasks
     fi
     SUBJOB=       # 1 prdgen job only for each membery
-#   if [[ $jobgrid = _p5 ]]; then
-#    SUBJOB=C      # 3 prdgen jobs for each member, forecast_hr, p5 grid
-#   fi
-#   resources="200"
-#   resources="1000"     #T574SL
-#   resources="5000"     #T574SL grib2
-#   resources="3456"     #T574SL grib2 for core(2)
-#   resources="6912"     #T574SL grib2 for core(4)
+      ;;
+      (cray)
+    job_type=parallel 
+    total_tasks=3
+    MP_SHARED_MEMORY=yes
+    OMP_NUM_THREADS=4
+#mpmd 04-20    
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    resources="3000"
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
+    SUBJOB=       # 1 prdgen job only for each membery
       ;;
     esac
   ;;
@@ -2969,7 +2975,7 @@ case $taskname in
    job_type=parallel
 #   total_tasks=8
    total_tasks=2
-   total_tasks=3 #(to process 2bp5, we need 3 tasks)
+   #total_tasks=3 #(to process 2bp5, we need 3 tasks)
    #SUBJOB=B       # 2 ensstat jobs for hr (1.0d+lr) and [p5]
     SUBJOB=       # 1 ensstat jobs for hr (1.0d+lr+p5]
   if [[ $gefsmachine = wcoss ]]; then                       
@@ -3023,7 +3029,7 @@ case $taskname in
     job_type=parallel
 #   total_tasks=8
     total_tasks=2
-    total_tasks=3 #(to process 2bp5, we need 3 tasks)
+    #total_tasks=3 #(to process 2bp5, we need 3 tasks)
     SUBJOB=B       # 2 ensstat jobs for hr (1.0d+lr) and [p5]
     SUBJOB=       # 1 ensstat jobs for hr (1.0d+lr+p5]
   if [[ $gefsmachine = wcoss ]]; then                       

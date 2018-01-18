@@ -69,7 +69,7 @@ integer   irete,irerb,imem
 integer   temp(200),ipdt8,ipdt9,ipdt30
 real      bb,cc
 
-parameter(len=64,mem=21)
+parameter(len=64,mem=41)
 
 real, allocatable :: ff(:,:),pp(:,:),ss(:,:),aa(:)
 

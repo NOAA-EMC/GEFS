@@ -30,9 +30,6 @@ export FHINC=$2
 export subdata=$3
 export dataset=$4  # a or b
 
-makepgrb1="no"
-makegrb1i="no"
-
 if [[ ! -d $DATA ]]; then
 	mkdir -p $DATA
 fi
@@ -123,36 +120,30 @@ while test $fh -le $FHOUR; do
 	#  the order here should correspond to the order in
 	#  which the pgrb files are produced by the post
 	for res in $reslist; do
-		if [[ $res = p5 ]]; then
-			makepgrb1="no"
-			makegrb1i="no"
-			if test $fh -lt 100; then
-				export fh="0$fh"
-			fi
-		fi # [[ $res = p5 ]]
+		if test $fh -lt 100; then
+			export fh="0$fh"
+		fi
 
 		nenspost=0
+		GRID=_$res
 		case $res in
-			lr)    #2.5 degree grid
-				EXT=".2"
-				FXT=
-				lr=lr
+			2p5)    #2.5 degree grid
+				EXT=
+				FXT=.$res\0.
+				lr=2p5
 				lfm=$lfmlr
-				GRID=2
 				;;
-			hr)    #1.0 degree grid
+			1p0)    #1.0 degree grid
 				EXT=
-				FXT=
-				lr=
+				FXT=.$res\0.
+				lr=1p0
 				lfm=$lfmhr
-				GRID= 
 				;;
-			p5)   #0.5 degree gid
+			0p5)   #0.5 degree gid
 				EXT=
-				FXT=.0$res\0.       #".0p50."
+				FXT=.$res\0.       #".0p50."
 				lr=p5
 				lfm=$lfmp5
-				GRID=_0P5 
 				;;
 		esac # $res
 		# Note: These variables, combined together, determins names of pgrb2 directories and the files    
@@ -162,7 +153,7 @@ while test $fh -le $FHOUR; do
 		# Start Looping for the
 		# existence of the pgrba files
 		###############################
-		   set +x
+		set +x
 		ic=1
 		while [ $ic -le $SLEEP_LOOP_MAX ]; do
 			nfiles=0
@@ -274,21 +265,9 @@ while test $fh -le $FHOUR; do
 
 			if [[ $iskip = 0 ]]; then
 				rm cfipg$ifile$res
-				case $dataset in
-					a)
-						ln -s $COMIN/$cyc/pgrb2$dataset$lr/ge${mem}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix cfipg$ifile$res
-						;;
-					b)
-						$WGRIB2 -s $COMIN/$cyc/pgrb2$dataset$lr/ge${mem}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix | \
-						grep -F -f $parmlist | \
-						$WGRIB2 $COMIN/$cyc/pgrb2$dataset$lr/ge${mem}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix -s -i -grib cfipg$ifile$res;
-						$WGRIB2 -s $COMIN/$cyc/pgrb2$dataset$lr/ge${mem}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix | grep "HGT:300 mb" | \
-						$WGRIB2 $COMIN/$cyc/pgrb2$dataset$lr/ge${mem}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix -i -append -grib cfipg$ifile$res
-						;;
-				esac # $dataset
+				ln -s $COMIN/$cyc/pgrb2$dataset$lr/ge${mem}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix cfipg$ifile$res
 			fi # [[ $iskip = 0 ]]
 
-			#     echo " cfipg($ifile)"=\"$COMIN/$cyc/pgrb2$dataset$lr/ge${mem}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix\", >>namin
 			echo " cfipg($ifile)"=\"cfipg$ifile$res\", >>namin
 			echo " iskip($ifile)"=$iskip, >>namin
 
@@ -343,20 +322,11 @@ while test $fh -le $FHOUR; do
 
 		if [ $SENDCOM = "YES" ]; then
 			for run in geavg gespr; do
-				if [[ "$makepgrb1" = "yes" ]]; then
-					$CNVGRIB -g21 ${run}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix ${run}.${cycle}.pgrb$dataset$FXT\f$fh$EXT$cfsuffix
-				fi
 				if [[ "$makegrb2i" = "yes" ]]; then
 					$WGRIB2 -s ${run}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix >${run}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT${cfsuffix}.idx
 				fi
-				if [[ "$makegrb1i" = "yes" ]]; then
-					$GRBINDEX ${run}.${cycle}.pgrb$dataset$FXT\f$fh$EXT$cfsuffix ${run}.${cycle}.pgrb$dataset$FXT\if$fh$EXT$cfsuffix
-				fi
 				if [[ -s ${run}.${cycle}.pgrb$dataset$FXT\f$fh$EXT$cfsuffix ]]; then
 					mv ${run}.${cycle}.pgrb$dataset$FXT\f$fh$EXT$cfsuffix $COMOUT/$cyc/pgrb$dataset$lr
-					if [[ "$makegrb1i" = "yes" ]]; then
-						mv ${run}.${cycle}.pgrb$dataset$FXT\if$fh$EXT$cfsuffix $COMOUT/$cyc/pgrb$dataset$lr
-					fi
 				fi # [[ -s ${run}.${cycle}.pgrb$dataset$FXT\f$fh$EXT$cfsuffix ]]
 				if [[ -s ${run}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix ]]; then
 					mv ${run}.${cycle}.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix $COMOUT/$cyc/pgrb2$dataset$lr

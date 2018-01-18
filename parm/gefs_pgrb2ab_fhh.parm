@@ -134,6 +134,12 @@
 :ICIP:600 mb:
 :ICIP:700 mb:
 :ICIP:800 mb:
+:ICSEV:300 mb:
+:ICSEV:400 mb:
+:ICSEV:500 mb:
+:ICSEV:600 mb:
+:ICSEV:700 mb:
+:ICSEV:800 mb:
 :LAND:surface:
 :LFTX:surface:
 :LHTFL:surface:
@@ -411,8 +417,7 @@
 :USTM:6000-0 m above ground:
 :USWRF:surface:
 :USWRF:top of atmosphere:
-:var discipline=0 master_table=2 parmcat=0 parm=21:2 m above ground:
-:APTMP:2 m above ground:
+:APTMP:2 m above ground
 :VFLX:surface:
 :VGRD:0.995 sigma level:
 :VGRD:1000 mb:
