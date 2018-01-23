@@ -229,8 +229,10 @@ while test $fhr -le $FHOUR; do
 
 	if test $fhr -lt 100; then
 		pad="0"
-		export pfhr=$pad$fhr
+        else
+		pad=""
 	fi
+		export pfhr=$pad$fhr
 
 	export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.f$fhr$cfsuffix
 	export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2$ffhr$cfsuffix
