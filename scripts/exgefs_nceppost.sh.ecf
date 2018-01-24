@@ -114,7 +114,7 @@ fi # [ $res = "p125" ]
 # remove control files as needed
 ############################################################
 
-DOANALYSIS=NO
+#DOANALYSIS=NO
 if [ $DOANALYSIS = YES ]; then
 
 mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.anl$cfsuffix
