@@ -119,10 +119,10 @@ while test $fh -le $FHOUR; do
 
 	#  the order here should correspond to the order in
 	#  which the pgrb files are produced by the post
+	if test $fh -lt 100; then
+		export fh="0$fh"
+	fi
 	for res in $reslist; do
-		if test $fh -lt 100; then
-			export fh="0$fh"
-		fi
 
 		nenspost=0
 		GRID=_$res

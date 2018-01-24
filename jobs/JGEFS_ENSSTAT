@@ -177,7 +177,7 @@ env | sort
 
 
 #task 1, 1.0d and 2.5d, grid, dataset=a
-export gridlist_1="1p0,2p5"
+export gridlist_1="1p0-2p5"
 export FHINC_1=$FHINC
 export dataset_1=a
 
