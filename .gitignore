@@ -18,3 +18,5 @@ rocoto/user.conf
 rocoto/*.db
 rocoto/logs
 rocoto/logs/*
+rocoto/gefs.xml
+rocoto/cron_rocoto
