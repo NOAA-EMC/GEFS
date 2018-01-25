@@ -5,9 +5,9 @@
    <walltime>01:30:00</walltime>
    <queue>&CUE2RUN;</queue>
    <nodes>1:ppn=16</nodes>
-   <native>-cwd &tmpnwprd;</native>
+   
    <memory>500M</memory>
-   <native>-extsched "CRAYLINUX[]"</native>
+   
 
    &ENV_VARS;
    &DATE_VARS;
