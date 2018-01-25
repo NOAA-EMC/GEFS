@@ -1,7 +1,7 @@
 <task name="jgefs_enspost" cycledefs="gefs" maxtries="1">
    <jobname><cyclestr>&EXPID;@Y@m@d@H395</cyclestr></jobname>
    <account>&ACCOUNT;</account>
-   <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_enspost_@H.%J</cyclestr></join>
+   <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_enspost_@H.$PBS_JOBID</cyclestr></join>
    <walltime>01:29:00</walltime>
    <queue>&CUE2RUN;</queue>
    <nodes>1:ppn=1:tpp=24</nodes>

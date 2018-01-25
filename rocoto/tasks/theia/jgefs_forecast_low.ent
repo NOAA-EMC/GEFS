@@ -1,7 +1,7 @@
 <task name="jgefs_forecast_low" cycledefs="gefs" maxtries="1">
    <jobname><cyclestr>&EXPID;@Y@m@d@H300</cyclestr></jobname>
    <account>&ACCOUNT;</account>
-   <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_forecast_low_@H.%J</cyclestr></join>
+   <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_forecast_low_@H.$PBS_JOBID</cyclestr></join>
    <walltime>01:29:00</walltime>
    <queue>&CUE2RUN;</queue>
    <nodes>63:ppn=6:tpp=4</nodes>

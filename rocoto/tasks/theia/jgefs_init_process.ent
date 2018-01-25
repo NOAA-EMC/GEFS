@@ -1,7 +1,7 @@
 <task name="jgefs_init_process" cycledefs="gefs" maxtries="1">
    <jobname><cyclestr>&EXPID;@Y@m@d@H013</cyclestr></jobname>
    <account>&ACCOUNT;</account>
-   <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_init_process_@H.%J</cyclestr></join>
+   <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_init_process_@H.$PBS_JOBID</cyclestr></join>
    <walltime>01:50:00</walltime>
    <queue>&CUE2RUN;</queue>
    <nodes>8:ppn=4:tpp=6</nodes>
