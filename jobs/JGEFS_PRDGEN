@@ -171,6 +171,7 @@ export IGEN_FCST=107
 case $FORECAST_SEGMENT in
 	(hr) # high resolution segment
 		export DOANALYSIS=YES;
+		export DOANALYSIS=NO;
 		export SHOUR=00
 		export FHINC=06
 		export FHINCP5=03
@@ -194,6 +195,7 @@ case $FORECAST_SEGMENT in
 		;;
 	(*) # whole forecast period
 		export DOANALYSIS=YES;
+		export DOANALYSIS=NO;
 		export SHOUR=00
 		export FHINC=06
 		export FHINCP5=03

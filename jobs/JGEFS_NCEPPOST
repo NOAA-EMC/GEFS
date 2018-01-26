@@ -284,6 +284,7 @@ case $FORECAST_SEGMENT in
 		case $SUBJOB in
 			(A)  
 				export DOANALYSIS=YES;
+				export DOANALYSIS=NO;
 				export SHOUR=06;
 				export FHINC_HIGH=9
 				;;
@@ -299,6 +300,7 @@ case $FORECAST_SEGMENT in
 				;;
 			(*) 
 				export DOANALYSIS=YES;
+				export DOANALYSIS=NO;
 				export SHOUR=00;
 				#export FHINC_HIGH=3
 				export FHINC_HIGH=$FHINC_HIGH
