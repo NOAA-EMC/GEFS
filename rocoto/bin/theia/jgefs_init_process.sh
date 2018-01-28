@@ -44,11 +44,11 @@ export taskspernode=4
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export gefsmachine=cray
-export gefsmpexec=" aprun -b -j1 -n32 -N4 -d6 -cc depth "
-export gefsmpexec_mpmd="  aprun -b -j1 -n32 -N4 -d6 -cc depth  cfp mpmd_cmdfile"
-export APRUNC="aprun"
-export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
+export gefsmachine=theia
+export gefsmpexec="mpirun -np $total_tasks"
+export gefsmpexec_mpmd="mpirun -np $total_tasks /scratch3/NCEPDEV/nwprod/util/exec/mpiserial"
+export APRUNC="mpirun"
+export aprun_gec00="mpirun -np 1"
 export NTHREADS_SIGCHGRS=6
 
 cd $SOURCEDIR/control
