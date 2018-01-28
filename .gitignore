@@ -1,6 +1,6 @@
 # Ignore compiled binaries
 exec/
-fix/
+fix
 util/exec/
 
 # Ignore compiled objects in sorc directories
