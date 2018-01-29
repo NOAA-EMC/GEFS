@@ -1,0 +1,26 @@
+<task name="jgefs_init_separate" cycledefs="gefs" maxtries="1">
+   <jobname><cyclestr>&EXPID;@Y@m@d@H012</cyclestr></jobname>
+   <account>&ACCOUNT;</account>
+   <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_init_separate_@H.$PBS_JOBID</cyclestr></join>
+   <walltime>01:50:00</walltime>
+   <queue>&CUE2RUN;</queue>
+   <nodes>10:ppn=4:tpp=6</nodes>
+   
+   <memory>3000M</memory>
+   
+
+   &ENV_VARS;
+   &DATE_VARS;
+   <envar>
+      <name>SOURCEDIR</name>
+      <value>&SOURCEDIR;</value>
+   </envar>
+   <envar>
+      <name>job</name>
+      <value><cyclestr>&EXPID;@Y@m@d@H012</cyclestr></value>
+   </envar>
+   <command><cyclestr>&PRE; &BIN;/jgefs_init_separate.sh</cyclestr></command>
+   <dependency>
+      <taskdep task="jgefs_enkf_track"/>
+   </dependency>
+</task>

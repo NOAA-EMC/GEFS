@@ -1,0 +1,31 @@
+<task name="jgefs_ensstat_high" cycledefs="gefs" maxtries="1">
+   <jobname><cyclestr>&EXPID;@Y@m@d@H104</cyclestr></jobname>
+   <account>&ACCOUNT;</account>
+   <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_ensstat_high_@H.$PBS_JOBID</cyclestr></join>
+   <walltime>01:30:00</walltime>
+   <queue>&CUE2RUN;</queue>
+   <nodes>1:ppn=3:tpp=4</nodes>
+   
+   <memory>3000M</memory>
+   
+
+   &ENV_VARS;
+   &DATE_VARS;
+   <envar>
+      <name>SOURCEDIR</name>
+      <value>&SOURCEDIR;</value>
+   </envar>
+   <envar>
+      <name>job</name>
+      <value><cyclestr>&EXPID;@Y@m@d@H104</cyclestr></value>
+   </envar>
+   <envar>
+      <name>RUNMEM</name>
+      <value>#member#</value>
+   </envar>
+   <command><cyclestr>&PRE; &BIN;/jgefs_ensstat_high.sh</cyclestr></command>
+
+   <dependency>
+      <metataskdep metatask="jgefs_prdgen_high"/>
+   </dependency>
+</task>

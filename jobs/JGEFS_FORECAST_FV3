@@ -10,8 +10,8 @@ date
 # Run gefs_config to get input parameters
 ###########################################
 if [ "$RUN_ENVIR" = dev ]; then ### For Developers
-        . $basesource/nwdev/parm/gefs_config
-        export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+	. $basesource/nwdev/parm/gefs_config
+	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 fi
 
 export machine=$machine
@@ -38,14 +38,14 @@ export cycle=t${cyc}z
 export cycle_fcst=t${cyc_fcst}z
 
 if (( cyc == cyc_fcst )); then
-        export cycsuffix=false
-        export fcstlong=true
-        cfsuffix=
+	export cycsuffix=false
+	export fcstlong=true
+	cfsuffix=
 else
-        export fcstlong=false
-        export cycsuffix=true
-        export ENS_SPS=.false.
-        cfsuffix=.cycfs$cyc_fcst
+	export fcstlong=false
+	export cycsuffix=true
+	export ENS_SPS=.false.
+	cfsuffix=.cycfs$cyc_fcst
 fi
 
 ####################################
@@ -68,10 +68,10 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 if [[ $RUN_CONCURRENT = yes ]]; then
-        export PGMOUT=FCOUT.o$pid
-        export PGMERR=
-        export REDOUT=' | tee -a '
-        export REDERR=' 2>&1 '
+	export PGMOUT=FCOUT.o$pid
+	export PGMERR=
+	export REDOUT=' | tee -a '
+	export REDERR=' 2>&1 '
 fi
 
 ####################################
@@ -120,22 +120,22 @@ setpdy.sh
 # Define COM and GES directories
 ##############################################
 if [[ $FORECAST_SEGMENT = hr ]] ; then
-        echo "Integrate the model for the high resolution segment"
-        fhresini=0
+	echo "Integrate the model for the high resolution segment"
+	fhresini=0
 elif [[ $FORECAST_SEGMENT = lr ]] ; then
-        echo "Integrate the model for the low resolution segment"
-        fhresini=$fhmaxh
+	echo "Integrate the model for the low resolution segment"
+	fhresini=$fhmaxh
 elif [[ $FORECAST_SEGMENT = hl ]] ; then
-        echo "Integrate the model for both high and low resolution segments, including chgres"
-        fhresini=0
+	echo "Integrate the model for both high and low resolution segments, including chgres"
+	fhresini=0
 else
-        msg="FATAL ERROR:  Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
-        echo "`date`   $msg"
-        echo "The Forecast job will be aborted!!!!"
-        postmsg "$jlogfile" "$msg"
-        export pgm=JENS_FCST
-        export err=911
-        err_chk
+	msg="FATAL ERROR:  Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
+	echo "`date`   $msg"
+	echo "The Forecast job will be aborted!!!!"
+	postmsg "$jlogfile" "$msg"
+	export pgm=JENS_FCST
+	export err=911
+	err_chk
 fi # [[ $FORECAST_SEGMENT = hr ]]
 
 echo FORECAST_SEGMENT = $FORECAST_SEGMENT
@@ -162,10 +162,10 @@ echo set parameters using gefs.parm
 . $PARMgefs/gefs.parm
 
 case $cyc in
-        00) export fhmax=$fhmax00;;
-        06) export fhmax=$fhmax06;;
-        12) export fhmax=$fhmax12;;
-        18) export fhmax=$fhmax18;;
+	00) export fhmax=$fhmax00;;
+	06) export fhmax=$fhmax06;;
+	12) export fhmax=$fhmax12;;
+	18) export fhmax=$fhmax18;;
 esac
 
 export ERRSCRIPT=err_chk
@@ -174,17 +174,17 @@ export LOGSCRIPT=startmsg
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 	#CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$fhouth;FHZER=$fhzerh;                        
 	CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=6;FHZER=6;                        
-        MTNRSL=$MTNRSLFV;LONB=$LONBFV;LATB=$LATBFV;
-        FHINI=0                              #forecast starting hour
-        (( LEVS = LEVSHR + 1 ))
+	MTNRSL=$MTNRSLFV;LONB=$LONBFV;LATB=$LATBFV;
+	FHINI=0                              #forecast starting hour
+	(( LEVS = LEVSHR + 1 ))
 elif [[ $FORECAST_SEGMENT = lr ]] ; then
 	#CASE=$casel;FHMAX=$fhmax;FHOUT=$fhoutl;FHZER=$fhzerl;
 	CASE=$CASELR;FHMAX=$fhmax;FHOUT=6;FHZER=6;                        
-        JCAP=$JCAPLR;LONB=$LONBLR;LATB=$LATBLR;MTNRSL=$MTNRSLLR
+	JCAP=$JCAPLR;LONB=$LONBLR;LATB=$LATBLR;MTNRSL=$MTNRSLLR
 	FHINI=$fhmaxhres
 else
- 	FORECAST_SEGMENT=$FORECAST_SEGMENT is not supported !
-        stop
+	FORECAST_SEGMENT=$FORECAST_SEGMENT is not supported !
+	stop
 fi
 
 #  The VEGTYPE fix file:
@@ -247,11 +247,11 @@ MEMBER=`echo $mem|cut -c2-3`
 fi
 export MEMBER=$MEMBER
 
- 	export do_sppt=$STOC_SPPT
- 	export do_shum=$STOC_SHUM
- 	export do_skeb=$STOC_SKEB
+export do_sppt=$STOC_SPPT
+export do_shum=$STOC_SHUM
+export do_skeb=$STOC_SKEB
 
- 	export SET_STP_SEED=${SET_STP_SEED:-"NO"}
+export SET_STP_SEED=${SET_STP_SEED:-"NO"}
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 
 if [[ $DO_SPPT = .true. ]] ; then
@@ -357,9 +357,9 @@ if [ $OUTPUT_GRID = "gaussian_grid" ]; then
 	while (( fhr <= FHMAX ))
 	do
 		if (( fhr < 10 )); then
-        		fhr=00$fhr
+			hr=00$fhr
 		elif (( fhr < 100 )); then
-        		fhr=0$fhr
+			fhr=0$fhr
 		fi
 		ln -s $ROTDIR/${CDUMP}.t${cyc}z.atmf$fhr.nemsio $DATA/${CDUMP}.t${cyc}z.atmf$fhr.nemsio
 		ln -s $ROTDIR/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio $DATA/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio
@@ -367,10 +367,9 @@ if [ $OUTPUT_GRID = "gaussian_grid" ]; then
 	done
 else
 	for n in `seq 1 $ntiles`; do
-		for file in atmos_4xdaily. atmos_static. fv3_history. fv3_history2d. grid_spec. nggps2d. nggps3d.
-		do
-              		ln -s $ROTDIR/$file\tile$n.nc $DATA/$file\tile$n.nc
-      		done
+		for file in atmos_4xdaily. atmos_static. fv3_history. fv3_history2d. grid_spec. nggps2d. nggps3d.; do
+			ln -s $ROTDIR/$file\tile$n.nc $DATA/$file\tile$n.nc
+		done
 	done
 fi
 

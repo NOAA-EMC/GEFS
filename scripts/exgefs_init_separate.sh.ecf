@@ -656,6 +656,7 @@ echo DATA=$DATA before poe
 #### kate 4/24/2012 #####
 echo "APRUN=$APRUN"
 export MP_CMDFILE=poescript
+export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
 export MP_PGMMODEL=mpmd
 export MP_LABELIO=yes
 export MP_INFOLEVEL=3
