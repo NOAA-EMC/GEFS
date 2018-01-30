@@ -72,22 +72,27 @@
 :HGT:1000 mb:
 :HGT:100 mb:
 :HGT:10 mb:
+:HGT:1 mb:
 :HGT:150 mb:
 :HGT:200 mb:
 :HGT:20 mb:
+:HGT:2 mb:
 :HGT:250 mb:
 :HGT:300 mb:
 :HGT:30 mb:
+:HGT:3 mb:
 :HGT:350 mb:
 :HGT:400 mb:
 :HGT:450 mb:
 :HGT:500 mb:
 :HGT:50 mb:
+:HGT:5 mb:
 :HGT:550 mb:
 :HGT:600 mb:
 :HGT:650 mb:
 :HGT:700 mb:
 :HGT:70 mb:
+:HGT:7 mb:
 :HGT:750 mb:
 :HGT:800 mb:
 :HGT:850 mb:
@@ -223,28 +228,33 @@
 :SPFH:1000 mb:
 :SPFH:100 mb:
 :SPFH:10 mb:
+:SPFH:1 mb:
 :SPFH:120-90 mb above ground:
 :SPFH:150-120 mb above ground:
 :SPFH:150 mb:
 :SPFH:180-150 mb above ground:
 :SPFH:200 mb:
 :SPFH:20 mb:
+:SPFH:2 mb:
 :SPFH:250 mb:
 :SPFH:2 m above ground:
 :SPFH:300 mb:
 :SPFH:30-0 mb above ground:
 :SPFH:30 mb:
+:SPFH:3 mb:
 :SPFH:350 mb:
 :SPFH:400 mb:
 :SPFH:450 mb:
 :SPFH:500 mb:
 :SPFH:50 mb:
+:SPFH:5 mb:
 :SPFH:550 mb:
 :SPFH:600 mb:
 :SPFH:60-30 mb above ground:
 :SPFH:650 mb:
 :SPFH:700 mb:
 :SPFH:70 mb:
+:SPFH:7 mb:
 :SPFH:750 mb:
 :SPFH:800 mb:
 :SPFH:80 m above ground:
@@ -261,6 +271,7 @@
 :TMP:100 m above ground:
 :TMP:100 mb:
 :TMP:10 mb:
+:TMP:1 mb:
 :TMP:120-90 mb above ground:
 :TMP:150-120 mb above ground:
 :TMP:150 mb:
@@ -268,6 +279,7 @@
 :TMP:1829 m above mean sea level:
 :TMP:200 mb:
 :TMP:20 mb:
+:TMP:2 mb:
 :TMP:250 mb:
 :TMP:2743 m above mean sea level:
 :TMP:2 m above ground:
@@ -275,6 +287,7 @@
 :TMP:30-0 mb above ground:
 :TMP:305 m above mean sea level:
 :TMP:30 mb:
+:TMP:3 mb:
 :TMP:320 K isentropic level:
 :TMP:350 mb:
 :TMP:3658 m above mean sea level:
@@ -284,6 +297,7 @@
 :TMP:457 m above mean sea level:
 :TMP:500 mb:
 :TMP:50 mb:
+:TMP:5 mb:
 :TMP:550 mb:
 :TMP:600 mb:
 :TMP:60-30 mb above ground:
@@ -291,6 +305,7 @@
 :TMP:650 mb:
 :TMP:700 mb:
 :TMP:70 mb:
+:TMP:7 mb:
 :TMP:750 mb:
 :TMP:800 mb:
 :TMP:80 m above ground:
@@ -323,6 +338,7 @@
 :UGRD:100 mb:
 :UGRD:10 m above ground:
 :UGRD:10 mb:
+:UGRD:1 mb:
 :UGRD:120-90 mb above ground:
 :UGRD:150-120 mb above ground:
 :UGRD:150 mb:
@@ -330,12 +346,14 @@
 :UGRD:1829 m above mean sea level:
 :UGRD:200 mb:
 :UGRD:20 mb:
+:UGRD:2 mb:
 :UGRD:250 mb:
 :UGRD:2743 m above mean sea level:
 :UGRD:300 mb:
 :UGRD:30-0 mb above ground:
 :UGRD:305 m above mean sea level:
 :UGRD:30 mb:
+:UGRD:3 mb:
 :UGRD:320 K isentropic level:
 :UGRD:350 mb:
 :UGRD:3658 m above mean sea level:
@@ -345,6 +363,7 @@
 :UGRD:457 m above mean sea level:
 :UGRD:500 mb:
 :UGRD:50 mb:
+:UGRD:5 mb:
 :UGRD:550 mb:
 :UGRD:600 mb:
 :UGRD:60-30 mb above ground:
@@ -352,6 +371,7 @@
 :UGRD:650 mb:
 :UGRD:700 mb:
 :UGRD:70 mb:
+:UGRD:7 mb:
 :UGRD:750 mb:
 :UGRD:800 mb:
 :UGRD:80 m above ground:
@@ -381,6 +401,7 @@
 :VGRD:100 mb:
 :VGRD:10 m above ground:
 :VGRD:10 mb:
+:VGRD:1 mb:
 :VGRD:120-90 mb above ground:
 :VGRD:150-120 mb above ground:
 :VGRD:150 mb:
@@ -388,12 +409,14 @@
 :VGRD:1829 m above mean sea level:
 :VGRD:200 mb:
 :VGRD:20 mb:
+:VGRD:2 mb:
 :VGRD:250 mb:
 :VGRD:2743 m above mean sea level:
 :VGRD:300 mb:
 :VGRD:30-0 mb above ground:
 :VGRD:305 m above mean sea level:
 :VGRD:30 mb:
+:VGRD:3 mb:
 :VGRD:320 K isentropic level:
 :VGRD:350 mb:
 :VGRD:3658 m above mean sea level:
@@ -403,6 +426,7 @@
 :VGRD:457 m above mean sea level:
 :VGRD:500 mb:
 :VGRD:50 mb:
+:VGRD:5 mb:
 :VGRD:550 mb:
 :VGRD:600 mb:
 :VGRD:60-30 mb above ground:
@@ -410,6 +434,7 @@
 :VGRD:650 mb:
 :VGRD:700 mb:
 :VGRD:70 mb:
+:VGRD:7 mb:
 :VGRD:750 mb:
 :VGRD:800 mb:
 :VGRD:80 m above ground:
