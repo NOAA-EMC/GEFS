@@ -29,7 +29,7 @@ elif [[ "$WHERE_AM_I" == theia ]]; then
 	echo "Loading modules for theia"
 	. /apps/lmod/lmod/init/ksh
 	module use /scratch3/NCEPDEV/nwprod/lib/modulefiles
-	module load intel impi
+	module load intel impi/2018.0.1
 	module load netcdf
 	module load wgrib
 	module load wgrib2
