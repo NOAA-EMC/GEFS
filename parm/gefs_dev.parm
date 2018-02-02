@@ -12,27 +12,11 @@ echo `date` $0 test section begin
 
 #Define using STTP(ENS_SPS=.true.) or physics stochastic
 ENS_SPS=.false.
-DO_SPPT=.true.
-DO_SHUM=.true.
-DO_SKEB=.true.
-DO_VC=.false.
-
-#export SPPT_LSCALE_hr=500.e3
-#export SHUM_LSCALE_hr=500.e3
-#export SKEB_LSCALE_hr=500.e3
-#export SKEB_hr=0.028
-#export SPPT_hr=0.4
-export DELTIM=225
-#export SKEBNORM=1
-#export k_split=1
-#export n_split=6
-
-sppt_import=1
-sppt_export=1
-shum_import=1
-shum_export=1
-skeb_import=1
-skeb_export=1
+DO_SPPT=YES
+DO_SHUM=YES
+DO_SKEB=YES
+#define tmp time step
+export DELTIM=450
 
 TYPE=nh
 MONO=non-mono
