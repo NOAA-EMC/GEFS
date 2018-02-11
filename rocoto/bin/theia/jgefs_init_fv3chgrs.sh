@@ -31,10 +31,6 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:2
 
-. /opt/modules/default/init/ksh
-module load NetCDF-intel-haswell/4.2
-module load nco-gnu-sandybridge/4.4.4
-
 export total_tasks=48
 export OMP_NUM_THREADS=2
 export taskspernode=12
@@ -54,7 +50,7 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 export gefsmachine=theia
 export gefsmpexec="mpirun -np $total_tasks"
 export gefsmpexec_mpmd="mpirun -np $total_tasks /scratch3/NCEPDEV/nwprod/util/exec/mpiserial"
-export APRUNC="mpirun"
+export APRUNC="mpirun -np 1"
 export aprun_gec00="mpirun -np 1"
 export NTHREADS_SIGCHGRS=6
 

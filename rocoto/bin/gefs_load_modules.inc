@@ -30,6 +30,7 @@ elif [[ "$WHERE_AM_I" == theia ]]; then
 	. /apps/lmod/lmod/init/ksh
 	module use /scratch3/NCEPDEV/nwprod/lib/modulefiles
 	module load intel impi/2018.0.1
+	module load hdf5parallel/1.8.14
 	module load netcdf
 	module load wgrib
 	module load wgrib2
