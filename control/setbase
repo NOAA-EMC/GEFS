@@ -68,6 +68,8 @@ if [ -d /scratch4/NCEPDEV ]; then
     export HOMEDIR1=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/fv3gfs
     export HOMERFC=/scratch4/NCEPDEV/ensemble/save/common
 
+    export KMP_AFFINITY=scatter
+
     # export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/common
     export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/Walter.Kolczynski/nemsio_init
 
@@ -77,6 +79,19 @@ if [ -d /scratch4/NCEPDEV ]; then
 	export PATH=$PATH:$USHutil:$EXECutil
 
     export NDATE=${NDATE:-$EXECutil/ndate}
+
+    export HOMEgsm=$HOMEDIR/global_shared.v15.0.0
+	export HOMEgsm1=$HOMEDIR1/global_shared.v15.0.0
+	export FCSTEXECDIR=$HOMEgsm/exec
+	export nemsioget=$FCSTEXECDIR/nemsio_get
+
+	export HOMEenkf=$HOMEgsm/sorc/gsi.fd
+
+	export I_MPI_EXTRA_FILESYSTEM=on
+	export I_MPI_EXTRA_FILESYSTEM_LIST=lustre:panfs
+
+	export chgresush=$HOMEgsm1/ush/global_chgres_GSM.sh
+	export CHGRESEXEC=$HOMEgsm1/exec/global_chgres_GSM
 
 elif [ -d /gpfs/hps3 ]; then
 

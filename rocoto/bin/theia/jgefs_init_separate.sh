@@ -18,12 +18,7 @@ export MPICH_ENV_DISPLAY=1
 export MPICH_VERSION_DISPLAY=1
 export MPICH_CPUMASK_DISPLAY=1
 
-export KMP_STACKSIZE=1024m
 export OMP_NUM_THREADS=6
-export KMP_AFFINITY=disabled
-
-#export OMP_NUM_THREADS=6
-export KMP_AFFINITY=disabled
 
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
@@ -31,7 +26,6 @@ export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:6
 
 export total_tasks=40
-export OMP_NUM_THREADS=6
 export taskspernode=4
 export MP_TASK_AFFINITY=cpu:6
 export MP_USE_BULK_XFER=yes
@@ -51,11 +45,11 @@ export MP_COMPILER=intel
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export gefsmachine=theia
-export gefsmpexec="mpirun -np "
+export gefsmpexec="mpirun -np $total_tasks"
 export gefsmpexec_mpmd="mpirun -np $total_tasks /scratch3/NCEPDEV/nwprod/util/exec/mpiserial"
-export APRUNC="mpirun"
+export APRUNC="mpirun -np 1"
 export aprun_gec00="mpirun -np 1"
-export NTHREADS_SIGCHGRS=6
+export NTHREADS_SIGCHGRS=$OMP_NUM_THREADS
 
 cd $SOURCEDIR/control
 . $SOURCEDIR/control/setbase
