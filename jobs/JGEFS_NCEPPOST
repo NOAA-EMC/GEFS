@@ -31,6 +31,7 @@ cd $DATA
 export MASTERRES=        
 export res=$MASTERRES
 export SUBJOB=$SUBJOB
+export mem=`echo $RUNMEM|cut -c3-5`
 
 ######################################
 # Set up the cycle variable
@@ -245,7 +246,8 @@ fi
 # Specify Restart File Name to Key Off
 ####################################
 if [[ $fcstlong = true ]]; then
-	restart_file=$COMIN/$cyc/misc/fcst/${RUNMEM}.t${cyc}z.logf
+	#restart_file=$COMIN/$cyc/misc/fcst/${RUNMEM}.t${cyc}z.logf
+	restart_file=$COMIN/$cyc/sfcsig/$mem/${RUNMEM}.t${cyc}z.logf
 else
 	restart_file=$COMIN/$cyc/misc/fcst/${RUNMEM}.t${cyc}z.logf
 fi

@@ -12,9 +12,13 @@ Run gefs workflow via ROCOTO
     Build all executable for running GEFS. Please read the README.build file.
 
 2) Set up ROCOTO and python environment
-   >module use -a /gpfs/hps3/emc/global/save/Terry.McGuinness/produtil/modulefiles
+   python:
+   >module use -a /gpfs/hps3/emc/global/save/Terry.McGuinness/produtil/modulefiles (SURGE)
+     or
+   >module use -a /gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/modulefiles    (LUNA)
    >module load pyprodutil
 
+   rocoto: 
    >module use -a /gpfs/hps3/emc/hwrf/noscrub/soft/modulefiles
    >module load xt-lsfhpc/9.1.3
    >module load rocoto/1.2.3
@@ -28,7 +32,7 @@ Run gefs workflow via ROCOTO
 3) Generate ROCOTO xml and cronjob 
    a) >cd tfAa/nwdev/rocoto
       check the user.conf_protype file, get your own copy if necessary
-   b) check the config.sh file and modify it based on your own choice of dates, sycle and various diretories  
+   b) check the config.sh file and modify it based on your own choice of dates, sycle and various diretoriesFIRST and LAST names  
       >./config.sh  This will generate your own user_conf file.
       check the user_conf to make sure your choice of dates, sycle and various diretories are correctly specified  
       if necessary, you can  edit the file user.conf with working directory, workflow directory, dates, cycle  etc. of your experinment.
