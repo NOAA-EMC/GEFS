@@ -161,13 +161,18 @@ fi
 (( fhr=SHOUR))
 if (( fhr < 10 )); then
 	fhr=0$fhr
-fi
+fi 
 export fhr
 
 while (( fhr <= FHOUR )); do
+	if (( fhr < 100 )); then
+		ghr=0$fhr
+	else
+		ghr=$fhr
+	fi
 	mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr$cfsuffix
 
-	if [[ ! -f $restart_file$fhr$cfsuffix ]]; then
+	if [[ ! -f $restart_file$ghr$cfsuffix\.nemsio ]]; then
 		rm $mcfile
 	fi
 
@@ -381,10 +386,9 @@ while (( fhr <= FHOUR )); do
  		###############################
  		export pgm="postcheck"
  		ic=1
-		ic=100000              
 
  		while [ $ic -le $SLEEP_LOOP_MAX ]; do
- 			if test -f $restart_file$fhr$cfsuffix; then
+ 			if test -f $restart_file$fhr$cfsuffix\.nemsio; then
  				break
  			else
  				ic=`expr $ic + 1`
