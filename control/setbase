@@ -82,8 +82,8 @@ if [ -d /scratch4/NCEPDEV ]; then
 
     export HOMEgsm=$HOMEDIR/global_shared.v15.0.0
 	export HOMEgsm1=$HOMEDIR1/global_shared.v15.0.0
-	export FCSTEXECDIR=$HOMEgsm/exec
-	export nemsioget=$FCSTEXECDIR/nemsio_get
+	export FCSTEXECDIR=$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe
+	export nemsioget=$HOMEgsm/exec/nemsio_get
 
 	export HOMEenkf=$HOMEgsm/sorc/gsi.fd
 
@@ -92,6 +92,9 @@ if [ -d /scratch4/NCEPDEV ]; then
 
 	export chgresush=$HOMEgsm1/ush/global_chgres_GSM.sh
 	export CHGRESEXEC=$HOMEgsm1/exec/global_chgres_GSM
+
+	export DIAG_TABLE=$HOMEgsm/parm/parm_fv3diag/diag_table
+	export FIELD_TABLE=$HOMEgsm/parm/parm_fv3diag/field_table_gfdl
 
 elif [ -d /gpfs/hps3 ]; then
 

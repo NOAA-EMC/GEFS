@@ -105,8 +105,8 @@ export PARMgsm=$HOMEgsm/parm
 export BASE_GSM=$HOMEgsm
 export FIX_DIR=$FIXgsm
 export FIX_AM=$FIXgsm
-#export FIX_FV3=$FIXgsm/fix_fv3
-export FIX_FV3=$HOMEgsm/fix/fix_fv3
+export FIX_FV3=$FIXgsm/fix_fv3  				# Old variable name
+export FIXfv3=$HOMEgsm/fix/fix_fv3_gmted2010    # New variable name
 
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 export USHgefs=${USHgefs:-$HOMEgefs/ush}

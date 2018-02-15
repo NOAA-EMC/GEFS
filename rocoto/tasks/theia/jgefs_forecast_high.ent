@@ -8,9 +8,8 @@
       <queue>&CUE2RUN;</queue>
       <nodes>20:ppn=12:tpp=2</nodes>
       
-      <memory>600M</memory>
+      <memory>60000M</memory>
       
-
       &ENV_VARS;
       &DATE_VARS;
       <envar>

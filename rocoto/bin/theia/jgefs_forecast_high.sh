@@ -19,12 +19,7 @@ export MPICH_ENV_DISPLAY=1
 export MPICH_VERSION_DISPLAY=1
 export MPICH_CPUMASK_DISPLAY=1
 
-export KMP_STACKSIZE=1024m
 export OMP_NUM_THREADS=4
-export KMP_AFFINITY=disabled
-
-#export OMP_NUM_THREADS=4
-export KMP_AFFINITY=disabled
 
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
@@ -35,16 +30,8 @@ export total_tasks=240
 export OMP_NUM_THREADS=2
 export taskspernode=12
 
-#export total_tasks=756
-
-#Date and Cycle
-#export cyc=00
-#export PDY=20160415
-#export cyc_fcst=00
-#export job=Aa2016041500100
 export FORECAST_SEGMENT=hr
 
-# export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export gefsmachine=theia
@@ -56,7 +43,6 @@ export NTHREADS_SIGCHGRS=6
 
 cd $SOURCEDIR/control
 . $SOURCEDIR/control/setbase
-#. $SOURCEDIR/parm/gefs.parm
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_FORECAST_FV3

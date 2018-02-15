@@ -58,7 +58,7 @@ else
    export j_opt="-j 1"
 fi
 #APRUN="aprun -n $tasks -N $task_per_node -d $nth_fv3 $j_opt -cc depth"
-APRUN="aprun -n $NTASKS_FV3 -N $cores_per_node -d $NTHREADS_FV3 $j_opt -cc depth"
+# APRUN="aprun -n $NTASKS_FV3 -N $cores_per_node -d $NTHREADS_FV3 $j_opt -cc depth"
 export FCSTEXEC=fv3_gfs_${TYPE}.${COMP}.${MODE}.x
 export APRUN=${APRUN:-""}
 
@@ -70,8 +70,8 @@ export warm_start=.false.
 export BASE_GSM=$HOMEgsm
 REMAP_GRID=none     # temporay setting, to void the latlon default
 export REMAP_GRID=${REMAP_GRID:-latlon}        #gaussian or latlon for using fregrid or regrid_nemsio for remapping
-export DIAG_TABLE=$HOMEgsm/parm/parm_fv3diag/diag_table2
-export FIELD_TABLE=$HOMEgsm/parm/parm_fv3diag/field_table_ncld5
+export DIAG_TABLE=${DIAG_TABLE:-$HOMEgsm/parm/parm_fv3diag/diag_table2}
+export FIELD_TABLE=${FIELD_TABLE:-$HOMEgsm/parm/parm_fv3diag/field_table_ncld5}
 
 #gfs_physics
 export FHZERO=${FHZER:-6}
