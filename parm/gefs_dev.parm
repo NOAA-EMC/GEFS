@@ -17,6 +17,8 @@ DO_SHUM=YES
 DO_SKEB=YES
 #define tmp time step
 export DELTIM=450
+k_split=2
+n_split=6
 
 TYPE=nh
 MONO=non-mono

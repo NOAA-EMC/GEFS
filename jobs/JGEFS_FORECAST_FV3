@@ -15,7 +15,7 @@ if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 fi
 
 export machine=$machine
-export nemsioget=$nemsioget
+#export nemsioget=$nemsioget
 export APRUN=${gefsmpexec:-mpirun.lsf}
 export RUNMEM=$RUNMEM
 export mem=`echo $RUNMEM|cut -c3-5`

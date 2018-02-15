@@ -50,9 +50,9 @@ export HOMEpost=$HOMEDIR/post4fv3   #Aug 2017
 export HOMEenkf=$HOMEDIR1/gdas.v14.1.0
 export PARMglobal=$HOMEgsm/parm
 #Extra direcories for FV3 temporary settings
-export HOMEgsm1=$HOMEDIR1/global_shared.v14.1.0
-export nemsioget=$HOMEgsm1/exec/nemsio_get
-export nemsioget=/gpfs/hps3/emc/global/noscrub/emc.glopara/bin/nemsio_get
+export HOMEgsm1=$HOMEDIR1/global_shared.v14.1.0 #this is needed for global_chgres in init_separate
+#export nemsioget=$HOMEgsm1/exec/nemsio_get
+#export nemsioget=/gpfs/hps3/emc/global/noscrub/emc.glopara/bin/nemsio_get
 # This section is optional, using path to define utility files
 # export UTILROOT=/nwprod2/prod_util.v1.0.0  
 # export GRIBROOT=/nwprod2/grib_util.v1.0.1

@@ -68,7 +68,7 @@ export pgmerr=errfile
 # Specify Execution Areas
 ####################################
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.$gefs_ver}
-export HOMEgsm=${HOMEgsm1:-${NWROOT}/gsm.${gsm_ver}}
+export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
 
 export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
 export USHgsm=${USHgsm:-$HOMEgsm/ush}
@@ -146,7 +146,8 @@ echo location of tracking executable
 export exectrkdir=$HOMEgefs/util/exec
 
 echo location of nemsioget
-export nemsioget=$nemsioget
+#export nemsioget=$nemsioget
+export nemsioget=$EXECgsm/nemsio_get
 
 ##############################################
 echo list environment before running script
