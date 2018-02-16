@@ -155,6 +155,7 @@ mkdir -m 775 -p $COMOUT/$cyc/sfcsig
 mkdir -m 775 -p $COMOUT/$cyc/sflux
 mkdir -m 775 -p $COMOUT/$cyc/misc/fcst
 SFCSIG=$COMOUT/$cyc/sfcsig
+mkdir -m 775 -p $SFCSIG/$mem
 
 ##############################################
 echo set parameters using gefs.parm
@@ -246,6 +247,7 @@ else
 MEMBER=`echo $mem|cut -c2-3`
 fi
 export MEMBER=$MEMBER
+memchar=mem$(printf %03i $MEMBER)
 
 export do_sppt=$STOC_SPPT
 export do_shum=$STOC_SHUM
@@ -341,7 +343,7 @@ export VERBOSE=YES
 
 ################################################################################
 export CDATE=$PDY$cyc
-export ROTDIR=$SFCSIG/$mem
+export ROTDIR=$DATA
 ICSDIR=${ICSDIR:-$GESIN/$mem}
 #ICSDIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160910/$mem
 #Temporal setting reading from Kate Zhou's archive
@@ -352,26 +354,41 @@ mkdir -p $ICSDIR/$CDATE/$CDUMP/$CASE
 ln -s $ICSDIR/$CASE\_$CDATE $ICSDIR/$CDATE/$CDUMP/$CASE/INPUT
 # To be consistent to the requirement of the exglobal script, temperal setting
 
-if [ $OUTPUT_GRID = "gaussian_grid" ]; then
-	fhr=$FHINI
-	while (( fhr <= FHMAX ))
-	do
-		if (( fhr < 10 )); then
-			hr=00$fhr
-		elif (( fhr < 100 )); then
-			fhr=0$fhr
-		fi
-		ln -s $ROTDIR/${CDUMP}.t${cyc}z.atmf$fhr.nemsio $DATA/${CDUMP}.t${cyc}z.atmf$fhr.nemsio
-		ln -s $ROTDIR/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio $DATA/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio
-		export fhr=`expr $fhr + $FHOUT`
-	done
-else
-	for n in `seq 1 $ntiles`; do
-		for file in atmos_4xdaily. atmos_static. fv3_history. fv3_history2d. grid_spec. nggps2d. nggps3d.; do
-			ln -s $ROTDIR/$file\tile$n.nc $DATA/$file\tile$n.nc
-		done
-	done
-fi
+# Global script puts output in this location based on $ROTDIR, so we create symlinks to where we really want it
+memdir=$ROTDIR/enkf.$CDUMP.$PDY/$cyc/$memchar
+mkdir -p $ROTDIR/enkf.$CDUMP.$PDY/$cyc
+ln -s $SFCSIG/$mem $memdir
+
+# if [ $OUTPUT_GRID = "gaussian_grid" ]; then
+# 	fhr=$FHINI
+# 	while (( fhr <= FHMAX ))
+# 	do
+# 		if (( fhr < 10 )); then
+# 			hr=00$fhr
+# 		elif (( fhr < 100 )); then
+# 			fhr=0$fhr
+# 		fi
+# 		# ln -s $ROTDIR/${CDUMP}.t${cyc}z.atmf$fhr.nemsio $DATA/${CDUMP}.t${cyc}z.atmf$fhr.nemsio
+# 		# ln -s $ROTDIR/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio $DATA/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio
+
+# 		# touch $SFCSIG/$mem/${CDUMP}.t${cyc}z.atmf$fhr.nemsio
+# 		# ln -s $SFCSIG/$mem/${CDUMP}.t${cyc}z.atmf$fhr.nemsio $memdir/${CDUMP}.t${cyc}z.atmf$fhr.nemsio
+# 		# touch $SFCSIG/$mem/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio
+# 		# ln -s $SFCSIG/$mem/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio $memdir/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio
+
+# 		export fhr=`expr $fhr + $FHOUT`
+# 	done
+# else
+# 	for n in `seq 1 $ntiles`; do
+# 		for file in atmos_4xdaily. atmos_static. fv3_history. fv3_history2d. grid_spec. nggps2d. nggps3d.; do
+# 			# ln -s $ROTDIR/$file\tile$n.nc $DATA/$file\tile$n.nc
+
+# 			# touch $SFCSIG/$mem/$file\tile$n.nc
+# 			# ln -s $SFCSIG/$mem/$file\tile$n.nc $memdir/$file\tile$n.nc
+# 			;
+# 		done
+# 	done
+# fi
 
 export BASE_GSM=$HOMEgsm
 export FIX_DIR=$FIXgsm
