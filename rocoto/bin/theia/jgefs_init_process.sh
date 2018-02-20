@@ -18,12 +18,6 @@ export MPICH_ENV_DISPLAY=1
 export MPICH_VERSION_DISPLAY=1
 export MPICH_CPUMASK_DISPLAY=1
 
-export KMP_STACKSIZE=1024m
-export OMP_NUM_THREADS=6
-export KMP_AFFINITY=disabled
-
-export KMP_AFFINITY=disabled
-
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
 export MP_SHARED_MEMORY=no
@@ -47,7 +41,7 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 export gefsmachine=theia
 export gefsmpexec="mpirun -np $total_tasks"
 export gefsmpexec_mpmd="mpirun -np $total_tasks /scratch3/NCEPDEV/nwprod/util/exec/mpiserial"
-export APRUNC="mpirun"
+export APRUNC="mpirun -np $total_tasks"
 export aprun_gec00="mpirun -np 1"
 export NTHREADS_SIGCHGRS=6
 
