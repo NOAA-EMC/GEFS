@@ -86,6 +86,7 @@ if [ -d /scratch4/NCEPDEV ]; then
 	export nemsioget=$HOMEgsm/exec/nemsio_get
 
 	export HOMEenkf=$HOMEgsm/sorc/gsi.fd
+	export HOMEpost=$HOMEgsm/sorc/upp.fd
 
 	export I_MPI_EXTRA_FILESYSTEM=on
 	export I_MPI_EXTRA_FILESYSTEM_LIST=lustre:panfs
@@ -95,6 +96,10 @@ if [ -d /scratch4/NCEPDEV ]; then
 
 	export DIAG_TABLE=$HOMEgsm/parm/parm_fv3diag/diag_table
 	export FIELD_TABLE=$HOMEgsm/parm/parm_fv3diag/field_table_gfdl
+
+	export WGRIB2=${WGRIB2:-/apps/wgrib2/0.1.9.5.1/bin/wgrib2}
+	export GRB2INDEX=${GRB2INDEX:-/scratch3/NCEPDEV/nwprod/NWPROD.WCOSS/util/exec/grb2index}
+	export COPYGB2=${COPYGB2:-/scratch3/NCEPDEV/nwprod/NWPROD.WCOSS/util/exec/copygb2}
 
 elif [ -d /gpfs/hps3 ]; then
 

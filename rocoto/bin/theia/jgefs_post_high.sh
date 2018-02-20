@@ -31,12 +31,12 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:2
 
-export total_tasks=12
+export total_tasks=36
 export OMP_NUM_THREADS=2
 export taskspernode=12
-export POSTGRB2TBL=/gpfs/hps/nco/ops/nwprod/lib/g2tmpl/v1.3.0/src/params_grib2_tbl_new
+export POSTGRB2TBL=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/fv3gfs/global_shared.v15.0.0/parm/params_grib2_tbl_new
 
-#export total_tasks=12
+export ERRSCRIPT=" "
 
 #Date and Cycle
 #export cyc=00
