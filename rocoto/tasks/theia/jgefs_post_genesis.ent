@@ -6,7 +6,7 @@
    <queue>&CUE2RUN;</queue>
    <nodes>3:ppn=7</nodes>
    
-   <memory>3000M</memory>
+   <!-- <memory>3000M</memory> -->
    
 
    &ENV_VARS;
