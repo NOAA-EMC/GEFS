@@ -16,12 +16,30 @@ DO_SPPT=YES
 DO_SHUM=YES
 DO_SKEB=YES
 #define tmp time step
-export DELTIM=450
-k_split=2
-n_split=6
+#DELTIM=450
+#k_split=2
+#n_split=6
+DELTIM=300
+k_split=1
+n_split=8
 
 TYPE=nh
 MONO=non-mono
+
+# cpu geometry
+export layout_x=4
+export layout_y=8
+export WRITE_GROUP=2
+export WRTTASK_PER_GROUP=24
+export parallel_threads=2
+#export layout_x=4
+#export layout_y=8
+#export WRITE_GROUP=2
+#export WRTTASK_PER_GROUP=12
+#export parallel_threads=4
+
+export HYPT=on
+
 #export IC_DIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160913/p01
 
 export npair=10
