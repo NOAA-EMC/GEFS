@@ -6,7 +6,7 @@
       <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_#member#_forecast_high_@H.%J</cyclestr></join>
       <walltime>03:00:00</walltime>
       <queue>&CUE2RUN;</queue>
-      <nodes>18:ppn=12:tpp=2</nodes>
+      <nodes>20:ppn=12:tpp=2</nodes>
       <native>-cwd &tmpnwprd;</native>
       <memory>600M</memory>
       <native>-extsched "CRAYLINUX[]"</native>

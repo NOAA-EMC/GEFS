@@ -16,8 +16,8 @@ export LEVS=${LEVS:-65}
 
 #Writing out 
 export QUILTING=.true.
-export WRITE_GROUP=1
-export WRTTASK_PER_GROUP=24
+export WRITE_GROUP=${WRITE_GROUP:-2}
+export WRTTASK_PER_GROUP=${WRTTASK_PER_GROUP:-24}
 export NUM_FILES=2
 export OUTPUT_GRID=${FV3OUT_GRID:-"gaussian_grid"}
 export WRITE_NEMSIOFILE=.true.
@@ -30,15 +30,14 @@ export NSOUT=0
 # CPU geopmetry
 export ntiles=${ntiles:-6}
 npes=$(( ${layout_x} * ${layout_y} * 6 + ${WRITE_GROUP} * ${WRTTASK_PER_GROUP} ))
-tasks=$(( ${layout_x} * ${layout_y} * 6 + ${WRITE_GROUP} * ${WRTTASK_PER_GROUP} ))
+tasks=$npes
 export NTASKS_FV3=$tasks
 export npe_fv3=$tasks
 export npe_node_max
 export npe_fv3
 
 #PE geometry
-parallel_threads=2
-NTHREADS_FCST=${parallel_threads:-2}
+export hyperthread=${hyperthread:-".false."}
 export NTHREADS_FV3=${parallel_threads:-2}
 COREPERNODE=${COREPERNODE:-24}
 export cores_per_node=$((COREPERNODE/NTHREADS_FV3))
@@ -47,8 +46,9 @@ export cores_per_node=$((COREPERNODE/NTHREADS_FV3))
 export TYPE=${TYPE:-"hydro"}    # choices:  nh, hydro
 export MONO=${MONO:-mono}
 export MODE=32bit           # choices:  32bit, 64bit
-export HYPT=off             # choices:  on, off  (controls hyperthreading)
 export COMP="prod"          # choices:  debug, repro, prod
+
+export HYPT=${HYPT:-off}    # choices:  on, off  (controls hyperthreading)
 # ncep_plevels=".true."
 if [ ${HYPT} = on ]; then
    export hyperthread=".true."
