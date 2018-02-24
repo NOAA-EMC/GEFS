@@ -3,7 +3,7 @@
 
 # EXPORT list here
 set -x
-export NODES=20
+export NODES=18
 export IOBUF_PARAMS=
 export FORT_BUFFERED=TRUE
 export MKL_CBWR=AVX
@@ -19,14 +19,12 @@ export MPICH_ENV_DISPLAY=1
 export MPICH_VERSION_DISPLAY=1
 export MPICH_CPUMASK_DISPLAY=1
 
-export OMP_NUM_THREADS=4
-
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:2
 
-export total_tasks=240
+export total_tasks=216
 export OMP_NUM_THREADS=2
 export taskspernode=12
 

@@ -42,22 +42,19 @@ export HOMEtrak=$HOMERFC/ens_tracker.v1.1.8
 
 #for NEMS GEFS, FV3 version
 export HOMEgsm=${HOMEgsm:-$HOMEDIR/trunk/global_shared.v15.0.0}
-#export HOMEgsm=$HOMEDIR/trunk_20171023/global_shared.v15.0.0
 #FCST exec is from a different directory
-export EXECDIR=${EXECDIR:-$HOMEgsm/sorc/fv3gfs.fd/BUILD/bin}  # WCK - used?
-export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEDIR/NEMSfv3gfs/trunk/NEMS/exe}
-#export FCSTEXECDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/svn/fv3gfs/NEMSfv3gfs/stochy/NEMS/exe
-#export FCSTEXECDIR=$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe
+export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe}
 
 export HOMEpost=${HOMEpost:-$HOMEDIR/post4fv3}   #Aug 2017
-#export HOMEpost=/gpfs/hps3/emc/global/noscrub/emc.glopara/svn/post/tags/ncep_post.v7.7.2
-export HOMEenkf=${HOMEenkf:-$HOMEDIR/trunk/gdas.v15.0.0}
-export PARMglobal=$HOMEgsm/parm
+# export HOMEenkf=${HOMEenkf:-$HOMEDIR/gdas.v15.0.0}
+export HOMEenkf=${HOMEenkf:-$HOMEDIR1/gdas.v14.1.0}
 
+export PARMglobal=$HOMEgsm/parm
 #Extra direcories for FV3 temporary settings
-export HOMEgsm1=${HOMEgsm1:-$HOMEDIR1/global_shared.v14.1.0}
+export HOMEgsm1=${HOMEgsm1:-$HOMEDIR1/global_shared.v14.1.0} #this is needed for global_chgres in init_separate
 # export nemsioget=$HOMEgsm1/exec/nemsio_get
 export nemsioget=${nemsioget:-/gpfs/hps3/emc/global/noscrub/emc.glopara/bin/nemsio_get}
+
 # This section is optional, using path to define utility files
 # export UTILROOT=/nwprod2/prod_util.v1.0.0  
 # export GRIBROOT=/nwprod2/grib_util.v1.0.1

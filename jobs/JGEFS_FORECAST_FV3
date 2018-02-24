@@ -15,7 +15,7 @@ if [ "$RUN_ENVIR" = dev ]; then ### For Developers
 fi
 
 export machine=$machine
-export nemsioget=$nemsioget
+#export nemsioget=$nemsioget
 export APRUN=${gefsmpexec:-mpirun.lsf}
 export RUNMEM=$RUNMEM
 export mem=`echo $RUNMEM|cut -c3-5`
@@ -98,15 +98,14 @@ export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
 
 export EXECgsm=$HOMEgsm/exec
 export USHgsm=$HOMEgsm/ush
-export FIXgsm=$HOMEgsm/fix/fix_am
+export FIXgsm=$HOMEgsm/fix
 export PARMgsm=$HOMEgsm/parm
 
 #Names used in exglobal_fv3.sh
 export BASE_GSM=$HOMEgsm
 export FIX_DIR=$FIXgsm
-export FIX_AM=$FIXgsm
-export FIX_FV3=$FIXgsm/fix_fv3  				# Old variable name
-export FIXfv3=$HOMEgsm/fix/fix_fv3_gmted2010    # New variable name
+export FIX_AM=$FIX_DIR/fix_am
+export FIXfv3=$FIX_DIR/fix_fv3_gmted2010
 
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 export USHgefs=${USHgefs:-$HOMEgefs/ush}
@@ -249,14 +248,15 @@ fi
 export MEMBER=$MEMBER
 memchar=mem$(printf %03i $MEMBER)
 
-export do_sppt=$STOC_SPPT
-export do_shum=$STOC_SHUM
-export do_skeb=$STOC_SKEB
+# 	export do_sppt=$STOC_SPPT
+# 	export do_shum=$STOC_SHUM
+# 	export do_skeb=$STOC_SKEB
 
-export SET_STP_SEED=${SET_STP_SEED:-"NO"}
+export SET_STP_SEED=${SET_STP_SEED:-"YES"}
+
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 
-if [[ $DO_SPPT = .true. ]] ; then
+if [[ $DO_SPPT = YES ]] ; then
 	export SPPT=$SPPT_hr
 	export ISEED_SPPT=$ISEED_SPPT_hr
 	export SPPT_LOGIT=$SPPT_LOGIT_hr
@@ -267,7 +267,7 @@ if [[ $DO_SPPT = .true. ]] ; then
 #	export sppt_sigtop2=$sppt_sigtop2_hr
 fi
 
-if [[ $DO_SHUM = .true. ]] ; then
+if [[ $DO_SHUM = YES ]] ; then
 	export SHUM=$SHUM_hr
 	export ISEED_SHUM=$ISEED_SHUM_hr
 	export SHUM_TAU=$SHUM_TAU_hr
@@ -275,7 +275,7 @@ if [[ $DO_SHUM = .true. ]] ; then
 #	export shum_sigefold=$shum_sigefold_hr
 fi
 
-if [[ $DO_SKEB = .true. ]] ; then
+if [[ $DO_SKEB = YES ]] ; then
 	export SKEB=$SKEB_hr
 	export ISEED_SKEB=$ISEED_SKEB_hr
 	export SKEB_TAU=$SKEB_TAU_hr
@@ -392,7 +392,7 @@ ln -s $SFCSIG/$mem $memdir
 
 export BASE_GSM=$HOMEgsm
 export FIX_DIR=$FIXgsm
-export FIX_AM=$FIXgsm
+export FIX_AM=$FIX_AM
 
 $FORECASTSH
 #$fcstscript

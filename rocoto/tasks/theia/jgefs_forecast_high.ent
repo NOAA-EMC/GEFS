@@ -6,7 +6,7 @@
       <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_#member#_forecast_high_@H.$PBS_JOBID</cyclestr></join>
       <walltime>03:00:00</walltime>
       <queue>&CUE2RUN;</queue>
-      <nodes>20:ppn=12:tpp=2</nodes>
+      <nodes>18:ppn=12:tpp=2</nodes>
       
       <memory>60000M</memory>
       

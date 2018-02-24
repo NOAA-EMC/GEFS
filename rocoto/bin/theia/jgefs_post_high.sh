@@ -3,7 +3,7 @@
 
 # EXPORT list here
 set -x
-export NODES=1
+export NODES=3
 export IOBUF_PARAMS=
 export FORT_BUFFERED=TRUE
 export MKL_CBWR=AVX

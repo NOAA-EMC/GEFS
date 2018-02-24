@@ -16,7 +16,7 @@ export LEVS=${LEVS:-65}
 
 #Writing out 
 export QUILTING=.true.
-export WRITE_GROUP=2
+export WRITE_GROUP=1
 export WRTTASK_PER_GROUP=24
 export NUM_FILES=2
 export OUTPUT_GRID=${FV3OUT_GRID:-"gaussian_grid"}
@@ -62,7 +62,7 @@ fi
 export FCSTEXEC=fv3_gfs_${TYPE}.${COMP}.${MODE}.x
 export APRUN=${APRUN:-""}
 
-export k_split=${k_split:-1}
+export k_split=${k_split:-2}
 export n_split=${n_split:-6}
 
 # OTHER FV# FCST related environment
@@ -70,8 +70,8 @@ export warm_start=.false.
 export BASE_GSM=$HOMEgsm
 REMAP_GRID=none     # temporay setting, to void the latlon default
 export REMAP_GRID=${REMAP_GRID:-latlon}        #gaussian or latlon for using fregrid or regrid_nemsio for remapping
-export DIAG_TABLE=${DIAG_TABLE:-$HOMEgsm/parm/parm_fv3diag/diag_table2}
-export FIELD_TABLE=${FIELD_TABLE:-$HOMEgsm/parm/parm_fv3diag/field_table_ncld5}
+export DIAG_TABLE=${DIAG_TABLE:-$HOMEgsm/parm/parm_fv3diag/diag_table}
+# export FIELD_TABLE=${FIELD_TABLE:-$HOMEgsm/parm/parm_fv3diag/field_table_gfdl}
 
 #gfs_physics
 export FHZERO=${FHZER:-6}
@@ -123,7 +123,45 @@ export prautco=${prautco:-"0.0001,0.0001"}
 #FV3 Core
 nwat=6;dnats=1;nord=2;dddmp=0.1;d4_bg=0.12;vtdm4_nh_nonmono=0.02
 hord_mt_nh_nonmono=6;hord_xx_nh_nonmono=6
-#FV3 Core
+
+#FV3 imp_microphysics
+export dnats=0
+export cal_pre=".true."
+export do_sat_adj=".false."
+export random_clds=".true."
+export cnvcld=".true."
+
+export imp_physics=${imp_physics:-"11"}
+if [[ $imp_physics = 99 ]]; then # ZhaoCarr
+export ncld=1
+    export FIELD_TABLE="$BASE_GSM/parm/parm_fv3diag/field_table_zhaocarr"
+    export nwat=2
+elif [[ $imp_physics = 6 ]]; then # WSM6
+    export ncld=2
+    export FIELD_TABLE="$BASE_GSM/parm/parm_fv3diag/field_table_wsm6"
+    export nwat=6
+elif [[ $imp_physics = 8 ]]; then # Thompson
+    export ncld=2
+    export FIELD_TABLE="$BASE_GSM/parm/parm_fv3diag/field_table_thompson"
+    export nwat=6
+elif [[ $imp_physics = 11 ]]; then # GFDL
+    export ncld=5
+    export FIELD_TABLE="$BASE_GSM/parm/parm_fv3diag/field_table_gfdl"
+    export nwat=6
+    export dnats=1
+    export cal_pre=".false."
+    export do_sat_adj=".true."
+    export random_clds=".false."
+    export cnvcld=".false."
+    export hord_mt_nh_nonmono=6
+    export hord_xx_nh_nonmono=6
+    export vtdm4_nh_nonmono=0.02
+    export nord=2
+    export dddmp=0.1
+    export d4_bg=0.12
+else
+    echo "Unknown microphysics option, ABORT!"
+fi
 
 #Use STTP or SPPT
 export ENS_SPS=${ENS_SPS:-.false.}
@@ -131,18 +169,18 @@ export ENS_SPS=${ENS_SPS:-.false.}
 ########################################
 # Stochastic physics parameters
 ########################################
-export DO_SPPT=${DO_SPPT:-.true.}
-export DO_SHUM=${DO_SHUM:-.true.}
-export DO_SKEB=${DO_SKEB:-.true.}
-export DO_VC=${DO_VC:-.false.}
-export SET_STP_SEED=${SET_STP_SEED:-"NO"}
+export DO_SPPT=${DO_SPPT:-"YES"}
+export DO_SHUM=${DO_SHUM:-"YES"}
+export DO_SKEB=${DO_SKEB:-"YES"}
+export DO_VC=${DO_VC:-"NO"}
+export SET_STP_SEED=${SET_STP_SEED:-"YES"}
 export JCAP_STP=${JCAP_STP:-$JCAPFV}
 export LONB_STP=${LONB_STP:-$LONBFV}
 export LATB_STP=${LATB_STP:-$LATBFV}
 
 # Stochastically Perturbed Physics Tendency
 
-if [[ $DO_SPPT = .true. ]]; then
+if [[ $DO_SPPT = YES ]]; then
 	export SPPT_hr=${SPPT_hr:-"0.8,0.4,0.2,0.08,0.04"}                                 # Amplitude of SPPT patterns
 	export SPPT_LOGIT_hr=${SPPT_LOGIT_hr:-.TRUE.}                                      # Do a logit transform to bound values from -1.0 to 1.0
 	export SPPT_TAU_hr=${SPPT_TAU_hr:-"2.16E4,2.592E5,2.592E6,7.776E6,3.1536E7"}       # Time scale in seconds
@@ -164,7 +202,7 @@ fi
 
 # Stochastic Humidity
 
-if [[ $DO_SHUM = .true. ]]; then
+if [[ $DO_SHUM = YES ]]; then
 	export SHUM_hr=${SHUM_hr:-"0.006,-999.,-999.,-999,-999"}                           # Amplitude of SHUM patterns
 	export SHUM_TAU_hr=${SHUM_TAU_hr:-"2.16E4,1.728E5,6.912E5,7.776E6,3.1536E7"}       # Time scale in seconds
 	export SHUM_LSCALE_hr=${SHUM_LSCALE_hr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
@@ -180,7 +218,7 @@ fi
 
 # Stochastic Kinetic Energy Backscatter
 
-if [[ $DO_SKEB = .true. ]]; then
+if [[ $DO_SKEB = YES ]]; then
 	export SKEB_hr=${SKEB_hr:-"1.0,-999,-999,-999,-999"}                               # Amplitude of SPPT patterns
 	export ISEED_SKEB_hr=${ISEED_SKEB_hr:-3${PDY}${cyc}}
 	export SKEB_TAU_hr=${SKEB_TAU_hr:-"2.16E4,1.728E5,2.592E6,7.776E6,3.1536E7"}      # Time scale in seconds
@@ -204,7 +242,7 @@ fi
 
 # Vorticity Confinement
 
-if [[ $DO_VC = .true. ]]; then 
+if [[ $DO_VC = YES ]]; then 
 	export VC_hr=${VC_hr:-0.0}                                                         # Amplitude of Determinist Vorticty confinement
 	export VC_sigtop1_hr=${VC_sigtop1_hr:-0.15}
 	export VC_sigtop2_hr=${VC_sigtop2_hr:-0.075}
