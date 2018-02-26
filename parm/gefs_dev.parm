@@ -38,7 +38,7 @@ export parallel_threads=2
 #export WRTTASK_PER_GROUP=12
 #export parallel_threads=4
 
-export HYPT=on
+#export HYPT=on
 
 #export IC_DIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160913/p01
 
