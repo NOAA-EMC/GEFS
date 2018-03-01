@@ -24,3 +24,11 @@
    <name>GEFS_ROCOTO</name>
    <value>&GEFS_ROCOTO;</value>
 </envar>
+<envar>
+  <name>WORKDIR</name>
+  <value>&WORKDIR;</value>
+</envar>
+<envar>
+  <name>EXPID</name>
+  <value>&EXPID;</value>
+</envar>
