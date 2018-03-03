@@ -30,6 +30,8 @@ export taskspernode=12
 
 export FORECAST_SEGMENT=hr
 
+export memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc'
+
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export gefsmachine=theia

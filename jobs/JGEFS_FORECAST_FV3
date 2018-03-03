@@ -343,7 +343,7 @@ export VERBOSE=YES
 
 ################################################################################
 export CDATE=$PDY$cyc
-export ROTDIR=$DATA
+export ROTDIR=$DATA/dataout
 ICSDIR=${ICSDIR:-$GESIN/$mem}
 #ICSDIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160910/$mem
 #Temporal setting reading from Kate Zhou's archive
@@ -355,8 +355,14 @@ ln -s $ICSDIR/$CASE\_$CDATE $ICSDIR/$CDATE/$CDUMP/$CASE/INPUT
 # To be consistent to the requirement of the exglobal script, temperal setting
 
 # Global script puts output in this location based on $ROTDIR, so we create symlinks to where we really want it
-memdir=$ROTDIR/enkf.$CDUMP.$PDY/$cyc/$memchar
-mkdir -p $ROTDIR/enkf.$CDUMP.$PDY/$cyc
+# Use some bash trickery to do delayed variable expansion
+# For unmodified global script, use memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc' (must be single-quotes)
+memdir_template=${memdir_template:-$ROTDIR}
+memdir=`eval echo $memdir_template`
+# We need to make the directory structure above memdir, but memdir needs to actually be a symlink
+# So create the tree using mkdir -p, then remove the last product
+mkdir -p $memdir
+rmdir $memdir
 ln -s $SFCSIG/$mem $memdir
 
 # if [ $OUTPUT_GRID = "gaussian_grid" ]; then
