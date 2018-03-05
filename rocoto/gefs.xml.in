@@ -39,6 +39,10 @@
   <!ENTITY ACCOUNT  "GEN-T2O">
   <!ENTITY CUE2RUN  "dev">
   <!ENTITY SCHEDULER "lsfcray">
+@**elseif WHERE_AM_I==theia
+  <!ENTITY ACCOUNT  "fv3-cpu">
+  <!ENTITY CUE2RUN  "batch">
+  <!ENTITY SCHEDULER "moabtorque">
 @** endif
 
 ]>

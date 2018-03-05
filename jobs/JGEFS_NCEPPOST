@@ -128,7 +128,7 @@ export SIGHDR=$nemsioget
 #echo in $0: POSTGPSH=$POSTGPSH
 #echo in $0: POSTGPEXEC=$POSTGPEXEC
 
-export ERRSCRIPT=err_chk
+export ERRSCRIPT=${ERRSCRIPT:-err_chk}
 export LOGSCRIPT=startmsg
 export REDOUT='1>>'
 export REDERR='2>'
