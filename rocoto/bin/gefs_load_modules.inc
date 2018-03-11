@@ -35,4 +35,5 @@ elif [[ "$WHERE_AM_I" == theia ]]; then
 	module load wgrib
 	module load wgrib2
 	module load cnvgrib
+    export PATH=$PATH:./
 fi
