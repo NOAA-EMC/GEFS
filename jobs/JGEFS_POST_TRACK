@@ -189,9 +189,10 @@ done # for pert in ${memberlist}
 cat trkr.cmdfile
 chmod 775 trkr.cmdfile
 export MP_CMDFILE=${DATA}/${cmodel}/trkr.cmdfile
+export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
 export MP_PGMMODEL=mpmd
 rm mpmd_cmdfile
-ln -s $MP_CMDFILE mpmd_cmdfile 
+ln -s $MP_CMDFILE mpmd_cmdfile
 $APRUN 
 
 #for pert in ${memberlist}; do

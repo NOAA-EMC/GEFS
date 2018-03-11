@@ -333,6 +333,7 @@ if test $SHOUR -le $FHOUR; then
 	cat prdgen.cmdfile
 	chmod 775 prdgen.cmdfile
 	export MP_CMDFILE=${DATA}/prdgen.cmdfile
+	export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
 	export MP_PGMMODEL=mpmd
         rm mpmd_cmdfile
         ln -s $MP_CMDFILE mpmd_cmdfile
