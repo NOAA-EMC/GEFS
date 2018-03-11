@@ -38,14 +38,17 @@
 @** if WHERE_AM_I==wcoss
   <!ENTITY ACCOUNT  "GEN-T2O">
   <!ENTITY CUE2RUN  "dev2">
+  <!ENTITY TRANSFER_QUEUE "transfer">
   <!ENTITY SCHEDULER "lsf">
 @** elseif WHERE_AM_I==cray
   <!ENTITY ACCOUNT  "GEN-T2O">
   <!ENTITY CUE2RUN  "dev">
+  <!ENTITY TRANSFER_QUEUE "transfer">
   <!ENTITY SCHEDULER "lsfcray">
 @**elseif WHERE_AM_I==theia
   <!ENTITY ACCOUNT  "fv3-cpu">
   <!ENTITY CUE2RUN  "batch">
+  <!ENTITY TRANSFER_QUEUE "service">  
   <!ENTITY SCHEDULER "moabtorque">
 @** endif
 
