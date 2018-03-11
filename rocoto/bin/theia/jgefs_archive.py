@@ -1,48 +1,90 @@
 #! /apps/intel/intelpython3/bin/python3
 
+##########################################################
+# Archives specified directories of GEFS output to HPSS for long-term storage.
+#
+# Inputs (via environment variables):
+# 	WORKDIR         : The base GEFS output directory (usually in ptmp)
+# 	HPSS_DIR        : The base HPSS directory in which to store tar files
+# 	DIRS_TO_ARCHIVE : A comma-separated list of directories to archive
+# 	PDY             : Initialization date in YYYYMMDD form
+# 	cyc             : Initialization hour in HH form
+#
+# 	GEFS output must be located in the WORKDIR com directory as such:
+# 		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/<directory>
+#
+# Outputs:
+# 	For each directory in DIRS_TO_ARCHIVE, a tar file will be created in the following
+# 	  location on HPSS:
+# 	  	<HPSS_DIR>/<YYYY>/<YYYY><MM>/<YYYY><MM><DD>/gefs.<YYYY><MM><DD>_<HH>.<directory>.tar
+#
+# Error Codes:
+# 	-100 : Required environment variable not defined
+# 	-101 : HPSS error
+#
+##########################################################
+
 import os, shutil, glob, subprocess
+from functools import partial
+
+# Make sure print statements are flushed immediately, otherwise
+#   print statments may be out-of-order with subprocess output
+print = partial(print, flush=True)
 
 # Read in environment variables and make sure they exist
-ptmp = os.environ.get("WORKDIR")
-if( ptmp == None ):
+work_dir = os.environ.get("WORKDIR")
+if( work_dir == None ):
 	print("FATAL: Environment variable WORKDIR not set")
 	quit(-100)
-exp_id = os.environ.get("EXPID")
-if( exp_id == None ):
-	print("FATAL: Environment variable EXPID not set")
+
+hpss_path = os.environ.get("HPSS_DIR")
+if( hpss_path == None ):
+	print("FATAL: Environment variable HPSS_DIR not set")
 	quit(-100)
-date = os.environ.get("PDY")
-if( date == None ):
+
+dirs_to_archive_string = os.environ.get("DIRS_TO_ARCHIVE")
+if( dirs_to_archive_string == None ):
+	print("FATAL: Environment variable HPSS_DIR not set")
+	quit(-100)
+# Convert to array using commas and removing whitespace
+dirs_to_archive = [x.strip() for x in dirs_to_archive_string.split(',')]
+
+date_string = os.environ.get("PDY")
+if( date_string == None ):
 	print("FATAL: Environment variable PDY not set")
 	quit(-100)
+
 cycle = os.environ.get("cyc")
 if( cycle == None ):
 	print("FATAL: Environment variable cyc not set")
 	quit(-100)
 
-yyyy = date[0:4]
-mm = date[4:6]
-dd = date[6:8]
+print("Starting GEFS archive with the following settings:")
+print("Source directory              : " + work_dir)
+print("Destination Directory on HPSS : " + hpss_path)
+print("Directories to Archive        : " + str(dirs_to_archive))
+print("Date/Cycle                    : " + date_string + "_" + cycle)
 
-hpss_path = "/NCEPDEV/emc-ensemble/2year/Walter.Kolczynski/GEFS"
+yyyy = date_string[0:4]
+mm = date_string[4:6]
+dd = date_string[6:8]
 
-destination_path = hpss_path + "/" + exp_id + "/" + yyyy + "/" + yyyy + mm
-output_path = ptmp + "/com/gens/dev/gefs." + date + "/" + cycle
-
-dirs_to_archive = ["ensstat", "pgrb2a1p0", "pgrb2a2p5", "pgrb2ap5", "tctrack"]
-# dirs_to_archive = ["ensstat", "tctrack"]
+destination_path = hpss_path + "/" + yyyy + "/" + yyyy + mm + "/" + yyyy + mm + dd
+output_path = work_dir + "/com/gens/dev/gefs." + date_string + "/" + cycle
 
 # Create directory on HPSS
 err_code = subprocess.run(["hsi", "mkdir", "-p", destination_path]).returncode
 if(err_code != 0):
 	print("FATAL: Could not create destination directory " + destination_path + " on HPSS, error code: " + str(err_code))
-	quit(-1)
+	quit(-101)
 
 # Archive directories
 os.chdir(output_path)
 for directory in dirs_to_archive:
-	tar_file = destination_path + "gefs." + date + "_" + cycle + "." + directory + ".tar"
+	tar_file = destination_path + "/gefs." + date_string + "_" + cycle + "." + directory + ".tar"
+	print("Creating tar on HPSS for " + directory)
+	print("    From " + output_path + "/" + directory + " to " + tar_file)
 	err_code = subprocess.run(["htar", "-cvf", tar_file, directory]).returncode
 	if(err_code != 0):
 		print("FATAL: Could not create " + tar_file + " on HPSS, error code: " + str(err_code))
-		quit(-2)
+		quit(-101)

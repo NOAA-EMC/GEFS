@@ -20,7 +20,11 @@
   <!ENTITY EXPID "@[EXPID]">
   <!ENTITY SOURCEDIR "@[SOURCEDIR]/&EXPID;/nwdev">
   <!ENTITY WORKDIR "@[WORKDIR]/&EXPID;">
-
+  <!ENTITY KEEP_DIR "@[KEEP_DIR]/&EXPID;">
+  <!ENTITY HPSS_DIR "@[HPSS_DIR]/&EXPID;">
+  <!ENTITY DIRS_TO_KEEP "@[DIRS_TO_KEEP]">
+  <!ENTITY DIRS_TO_ARCHIVE "@[DIRS_TO_ARCHIVE]">
+  
 <!--  <!ENTITY INIT_FHR "@[INIT_FHR]"> -->
 
   <!-- External entities -->
@@ -92,6 +96,13 @@
 @** if RUN_OTHERS==YES
   <!-- other jobs -->
    &jgefs_enspost;
+@** endif
+
+@** if RUN_CLEANUP==YES
+  <!-- cleanup jobs -->
+   &jgefs_keep_data;
+   &jgefs_archive;
+   &jgefs_cleanup;
 @** endif
 
 </workflow>

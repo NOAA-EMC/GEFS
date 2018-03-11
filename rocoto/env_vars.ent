@@ -32,3 +32,19 @@
   <name>EXPID</name>
   <value>&EXPID;</value>
 </envar>
+<envar>
+  <name>KEEP_DIR</name>
+  <value>&KEEP_DIR;</value>
+</envar>
+<envar>
+  <name>HPSS_DIR</name>
+  <value>&HPSS_DIR;</value>
+</envar>
+<envar>
+  <name>DIRS_TO_KEEP</name>
+  <value>&DIRS_TO_KEEP;</value>
+</envar>
+<envar>
+  <name>DIRS_TO_ARCHIVE</name>
+  <value>&DIRS_TO_ARCHIVE;</value>
+</envar>
