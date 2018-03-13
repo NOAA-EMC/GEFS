@@ -1,4 +1,4 @@
-#! /apps/intel/intelpython3/bin/python3
+#! /usrx/local/prod/python/2.7.13/bin/python
 
 ##########################################################
 # Archives specified directories of GEFS output to HPSS for long-term storage.
@@ -24,12 +24,11 @@
 #
 ##########################################################
 
-import os, shutil, glob, subprocess
-from functools import partial
+import os, shutil, glob, subprocess, sys
 
 # Make sure print statements are flushed immediately, otherwise
 #   print statments may be out-of-order with subprocess output
-print = partial(print, flush=True)
+# print = partial(print, flush=True)
 
 # Read in environment variables and make sure they exist
 work_dir = os.environ.get("WORKDIR")
@@ -64,6 +63,7 @@ print("Source directory              : " + work_dir)
 print("Destination Directory on HPSS : " + hpss_path)
 print("Directories to Archive        : " + str(dirs_to_archive))
 print("Date/Cycle                    : " + date_string + "_" + cycle)
+sys.stdout.flush()
 
 yyyy = date_string[0:4]
 mm = date_string[4:6]
@@ -73,7 +73,7 @@ destination_path = hpss_path + "/" + yyyy + "/" + yyyy + mm + "/" + yyyy + mm + 
 output_path = work_dir + "/com/gens/dev/gefs." + date_string + "/" + cycle
 
 # Create directory on HPSS
-err_code = subprocess.run(["hsi", "mkdir", "-p", destination_path]).returncode
+err_code = subprocess.call(["hsi", "mkdir", "-p", destination_path])
 if(err_code != 0):
 	print("FATAL: Could not create destination directory " + destination_path + " on HPSS, error code: " + str(err_code))
 	quit(-101)
@@ -84,7 +84,8 @@ for directory in dirs_to_archive:
 	tar_file = destination_path + "/gefs." + date_string + "_" + cycle + "." + directory + ".tar"
 	print("Creating tar on HPSS for " + directory)
 	print("    From " + output_path + "/" + directory + " to " + tar_file)
-	err_code = subprocess.run(["htar", "-cvf", tar_file, directory]).returncode
+	sys.stdout.flush()
+	err_code = subprocess.call(["htar", "-cvf", tar_file, directory])
 	if(err_code != 0):
 		print("FATAL: Could not create " + tar_file + " on HPSS, error code: " + str(err_code))
 		quit(-101)

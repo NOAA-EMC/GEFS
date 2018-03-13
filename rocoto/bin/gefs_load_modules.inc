@@ -14,6 +14,7 @@ if [[ "$WHERE_AM_I" == wcoss ]] ; then
 	module load util_shared/v1.0.0
 	module load grib_util/v1.0.1
 	module load ibmpe
+	module load hpss
 	export PATH=$PATH:.
 elif [[ "$WHERE_AM_I" == cray ]] ; then
 	echo "Loading modules for WCOSS cray"
@@ -24,6 +25,7 @@ elif [[ "$WHERE_AM_I" == cray ]] ; then
 	module load prod_util
 	module load util_shared/1.0.3
 	module load grib_util/1.0.3
+	module load hpss
 	export PATH=$PATH:.
 elif [[ "$WHERE_AM_I" == theia ]]; then
 	echo "Loading modules for theia"

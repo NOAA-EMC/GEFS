@@ -1,4 +1,4 @@
-#! /apps/intel/intelpython3/bin/python3
+#! /usrx/local/prod/python/2.7.13/bin/python
 
 ##########################################################
 # Delete all GEFS output from temporary directory (except log files)
@@ -43,7 +43,7 @@
 #
 ##########################################################
 
-import os, shutil, glob, contextlib
+import os, shutil, glob
 import datetime
 from datetime import datetime, timedelta
 
@@ -114,8 +114,12 @@ for path in dirs_to_remove:
 	for f in glob.glob(path):
 		print("Removing " + f)
 		# Delete if it is a directory
-		with contextlib.suppress(NotADirectoryError):
+		try:
 			shutil.rmtree(f)
+		except OSError:
+			pass
 		# Delete if it is a file
-		with contextlib.suppress(FileNotFoundError):
+		try:
 			os.remove(f)
+		except OSError:
+			pass

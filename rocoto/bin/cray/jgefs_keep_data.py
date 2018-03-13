@@ -1,4 +1,4 @@
-#! /apps/intel/intelpython3/bin/python3
+#! /usrx/local/prod/python/2.7.13/bin/python
 
 ##########################################################
 # Copies specified directories of GEFS output from temporary location to another location.
