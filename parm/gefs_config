@@ -41,7 +41,7 @@ export HOMEgefs=$basesource/nwdev
 export HOMEtrak=$HOMERFC/ens_tracker.v1.1.8
 
 #for NEMS GEFS, FV3 version
-export HOMEgsm=${HOMEgsm:-$HOMEDIR/trunk/global_shared.v15.0.0}
+export HOMEgsm=${HOMEgsm:-$HOMEDIR/global_shared.v15.0.0}
 #FCST exec is from a different directory
 export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe}
 
