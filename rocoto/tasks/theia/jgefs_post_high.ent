@@ -1,0 +1,31 @@
+<metatask>
+   <var name="member">&MEMLIST;</var>
+      <task name="jgefs_post_high1_#member#" cycledefs="gefs" maxtries="1">
+      <jobname><cyclestr>&EXPID;@Y@m@d@H102_#member#</cyclestr></jobname>
+      <account>&ACCOUNT;</account>
+      <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_#member#_post_high_@H.$PBS_JOBID</cyclestr></join>
+      <walltime>02:30:00</walltime>
+      <queue>&CUE2RUN;</queue>
+      <nodes>3:ppn=12:tpp=2</nodes>
+      
+      &ENV_VARS;
+      &DATE_VARS;
+      <envar>
+         <name>SOURCEDIR</name>
+         <value>&SOURCEDIR;</value>
+      </envar>
+      <envar>
+         <name>job</name>
+         <value><cyclestr>&EXPID;@Y@m@d@H102#member#</cyclestr></value>
+      </envar>
+      <envar>
+         <name>RUNMEM</name>
+         <value>ge#member#</value>
+      </envar>
+      <command><cyclestr>&PRE; &BIN;/jgefs_post_high.sh</cyclestr></command>
+
+      <dependency>
+		<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/sfcsig/#member#/ge#member#.t@Hz.logf000.nemsio</cyclestr></datadep>
+      </dependency>
+      </task>
+</metatask>
