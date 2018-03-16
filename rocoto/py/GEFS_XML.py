@@ -1,0 +1,1152 @@
+from GEFS_XML_For_Tasks import *
+
+
+
+
+
+def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
+
+    import sys
+
+    import os
+
+
+
+    sSep = "/"
+
+    if sys.platform == 'win32':
+
+        sSep = r'\\'
+
+
+
+    sVarName = "XML".upper()
+
+    sVarValue = 'gefs_new.xml'
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    # ==
+
+    sVarName = "db".upper()
+
+    sVarValue = 'gefs_new.db'
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    # ==
+
+    sVarName = "crontab".upper()
+
+    sVarValue = 'cron_rocoto_new'
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    # ==
+
+    sVarName = "First".upper()
+
+    sVarValue = 'Xianwu'
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    sVarName = "Last".upper()
+
+    sVarValue = 'Xue'
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    sVarName = "HPS".upper()
+
+    sVarValue = 'hps3'
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    get_WHERE_AM_I(dicBase)
+
+    # WHERE_AM_I = "wcoss"
+
+    sVarName = "WHERE_AM_I".upper()
+
+    sVarValue = "cray"
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+    WHERE_AM_I = dicBase[sVarName]
+
+    # ==
+
+    sVarName = "SDATE".upper()
+
+    sVarValue = "2018012900"
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    # ==
+
+    sVarName = "EDATE".upper()
+
+    sVarValue = "2018013000"
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    # ===== To Be Changed
+
+    sVarName = "GEFS_ROCOTO".upper()
+
+    sVarValue = ""
+
+    if sVarName not in dicBase:
+
+        sVarValue = sRocoto_WS
+
+        # if WHERE_AM_I.lower() == "cray":
+
+        #     sVarValue = "/gpfs/hps3/emc/ensemble/save/emc.enspara/{0}.{1}/GEFS/&EXPID/nwdev/rocoto" \
+
+        #         .format(dicBase["FIRST"], dicBase["LAST"])
+
+        # elif WHERE_AM_I.lower() == 'theia':
+
+        #     sVarValue = "/gpfs/hps3/emc/ensemble/save/emc.enspara/{0}.{1}/GEFS/&EXPID/nwdev/rocoto" \
+
+        #         .format(dicBase["FIRST"], dicBase["LAST"])
+
+        # elif WHERE_AM_I.lower() == 'theia':
+
+        #     sVarValue = "/gpfs/hps3/emc/ensemble/save/emc.enspara/{0}.{1}/GEFS/&EXPID/nwdev/rocoto" \
+
+        #         .format(dicBase["FIRST"], dicBase["LAST"])
+
+        # else:
+
+        #     sVarValue = "/gpfs/hps3/emc/ensemble/save/emc.enspara/{0}.{1}/GEFS/&EXPID/nwdev/rocoto" \
+
+        #         .format(dicBase["FIRST"], dicBase["LAST"])
+
+
+
+    else:
+
+        sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
+
+        sVarValue = sVarValue.replace("Last", dicBase["LAST"])
+
+
+
+    dicBase[sVarName] = sVarValue
+
+
+
+    # print(dicBase["LAST"])
+
+    # exit()
+
+
+
+    sVarName = "SOURCEDIR".upper()
+
+    sVarValue = ""
+
+    if sVarName not in dicBase:
+
+        # sVarValue = sRocoto_WS + sSep + ".."
+
+        sVarValue = os.path.abspath(sRocoto_WS + sSep + "..")
+
+        # print(sVarValue)
+
+        # exit()
+
+
+
+        # if WHERE_AM_I.lower() == "cray":
+
+        #     sVarValue = "/gpfs/hps3/emc/ensemble/save/emc.enspara/{0}.{1}/GEFS/&EXPID;/nwdev" \
+
+        #         .format(dicBase["FIRST"], dicBase["LAST"])
+
+        # elif WHERE_AM_I.lower() == 'theia':
+
+        #     sVarValue = "/gpfs/hps3/emc/ensemble/save/emc.enspara/{0}.{1}/GEFS/&EXPID;/nwdev" \
+
+        #         .format(dicBase["FIRST"], dicBase["LAST"])
+
+        # elif WHERE_AM_I.lower() == 'theia':
+
+        #     sVarValue = "/gpfs/hps3/emc/ensemble/save/emc.enspara/{0}.{1}/GEFS/&EXPID;/nwdev" \
+
+        #         .format(dicBase["FIRST"], dicBase["LAST"])
+
+        # else:
+
+        #     sVarValue = "/gpfs/hps3/emc/ensemble/save/emc.enspara/{0}.{1}/GEFS/&EXPID;/nwdev" \
+
+        #         .format(dicBase["FIRST"], dicBase["LAST"])
+
+    else:
+
+        sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
+
+        sVarValue = sVarValue.replace("Last", dicBase["LAST"])
+
+        sVarValue += "/&EXPID;/nwdev"
+
+    dicBase[sVarName] = sVarValue
+
+
+
+
+
+    sVarName = "WORKDIR".upper()
+
+    if sVarName not in dicBase:
+
+        sVarValue = ""
+
+        if WHERE_AM_I.lower() == "cray":
+
+            sVarValue = "/gpfs/hps3/ptmp/emc.enspara/{0}.{1}/o/&EXPID;" \
+
+                .format(dicBase["FIRST"], dicBase["LAST"])
+
+        elif WHERE_AM_I.lower() == 'wcoss':
+
+            sVarValue = "/scratch4/NCEPDEV/stmp4/{0}.{1}/o/&EXPID;" \
+
+                .format(dicBase["FIRST"], dicBase["LAST"])
+
+        elif WHERE_AM_I.lower() == 'theia':
+
+            sVarValue = "/scratch4/NCEPDEV/stmp3/{0}.{1}/o/&EXPID;" \
+
+                .format(dicBase["FIRST"], dicBase["LAST"])
+
+        elif WHERE_AM_I.lower() == 'wins':
+
+            sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
+
+        else:
+
+            sVarValue = "/gpfs/hps3/ptmp/emc.enspara/{0}.{1}/o/&EXPID;" \
+
+                .format(dicBase["FIRST"], dicBase["LAST"])
+
+
+
+        sVarValue = sVarValue.replace('&EXPID;',dicBase['EXPID'])
+
+        dicBase[sVarName] = sVarValue
+
+    else:
+
+        sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
+
+        sVarValue = sVarValue.replace("Last", dicBase["LAST"])
+
+        sVarValue = sVarValue.replace("HPS", dicBase["HPS"])
+
+        sVarValue += '/&EXPID;'
+
+    dicBase[sVarName] = sVarValue
+
+
+
+    # ==
+
+    sVarName = "INCYC".upper()
+
+    sVarValue = 24
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    # ===== Default, you don't need to change them
+
+    # ==
+
+    get_MEMLIST(dicBase)
+
+
+
+    sVarName = "MEMLIST".upper()
+
+    sVarValue = "p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 c00"
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    # ==
+
+    sVarName = "CYCLE_THROTTLE".upper()
+
+    sVarValue = 1
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    # ==
+
+    sVarName = "TASK_THROTTLE".upper()
+
+    sVarValue = 65
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    sVarName = "BIN".upper()
+
+    sVarValue = "&GEFS_ROCOTO;/bin/&WHERE_AM_I;"
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    # =====
+
+    sVarName = "PRE".upper()
+
+    sVarValue = "&GEFS_ROCOTO;/bin/gefs_pre_job.sh"
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    # =====
+
+    sVarName = "WORKFLOW_LOG_DIR".upper()
+
+    sVarValue = "&GEFS_ROCOTO;/logs"
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    sVarName = "LOG_DIR".upper()
+
+    sVarValue = "&WORKDIR;/com/output/dev"
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    sVarName = "tmpnwprd".upper()
+
+    sVarValue = "&WORKDIR;/tmpnwprd"
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    sVarName = "DATA_DIR".upper()
+
+    sVarValue = "&WORKDIR;/com/gens/dev"
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    sVarName = "EXPID".upper()
+
+    sVarValue = "extsp"
+
+    if sVarName not in dicBase:
+
+        dicBase[sVarName] = sVarValue
+
+
+
+    # -----------------------------------------------------------------------------------------------
+
+    if WHERE_AM_I.lower() == "cray":
+
+        sVarName = "ACCOUNT".upper()
+
+        sVarValue = "GEN-T2O"
+
+        if sVarName not in dicBase:
+
+            dicBase[sVarName] = sVarValue
+
+
+
+        sVarName = "CUE2RUN".upper()
+
+        sVarValue = "devhigh"
+
+        if sVarName not in dicBase:
+
+            dicBase[sVarName] = sVarValue
+
+
+
+        sVarName = "SCHEDULER".upper()
+
+        sVarValue = "lsfcray"
+
+        if sVarName not in dicBase:
+
+            dicBase[sVarName] = sVarValue
+
+
+
+    elif WHERE_AM_I.lower() == "wcoss":
+
+        sVarName = "ACCOUNT".upper()
+
+        sVarValue = "GEN-T2O"
+
+        if sVarName not in dicBase:
+
+            dicBase[sVarName] = sVarValue
+
+
+
+        sVarName = "CUE2RUN".upper()
+
+        sVarValue = "dev2"
+
+        if sVarName not in dicBase:
+
+            dicBase[sVarName] = sVarValue
+
+
+
+        sVarName = "SCHEDULER".upper()
+
+        sVarValue = "lsf"
+
+        if sVarName not in dicBase:
+
+            dicBase[sVarName] = sVarValue
+
+    elif WHERE_AM_I.lower() == "theia":
+
+        sVarName = "ACCOUNT".upper()
+
+        sVarValue = "naefs"
+
+        if sVarName not in dicBase:
+
+            dicBase[sVarName] = sVarValue
+
+
+
+        sVarName = "CUE2RUN".upper()
+
+        sVarValue = "batch"
+
+        if sVarName not in dicBase:
+
+            dicBase[sVarName] = sVarValue
+
+
+
+        sVarName = "SCHEDULER".upper()
+
+        sVarValue = "moabtorque"
+
+        if sVarName not in dicBase:
+
+            dicBase[sVarName] = sVarValue
+
+    else:
+
+        sVarName = "ACCOUNT".upper()
+
+        sVarValue = "GEN-T2O"
+
+        if sVarName not in dicBase:
+
+            dicBase[sVarName] = sVarValue
+
+
+
+        sVarName = "CUE2RUN".upper()
+
+        sVarValue = "devhigh"
+
+        if sVarName not in dicBase:
+
+            dicBase[sVarName] = sVarValue
+
+
+
+        sVarName = "SCHEDULER".upper()
+
+        sVarValue = "lsfcray"
+
+        if sVarName not in dicBase:
+
+            dicBase[sVarName] = sVarValue
+
+
+
+
+
+def create_xml(dicBase):
+
+    print("..Generating XML file ...")
+
+    preamble = get_preamble()
+
+    definitions = get_definitions(dicBase)
+
+    workflow = get_workflow_body(dicBase)
+
+
+
+    # print(preamble)
+
+    # print(definitions)
+
+    # print(workflow)
+
+
+
+    # Start writing the XML file
+
+
+
+    sXML_File = dicBase["GEFS_ROCOTO"] + "/" + dicBase["XML"]
+
+
+
+    fh = open(sXML_File, 'w')
+
+
+
+    fh.write(preamble)
+
+    fh.flush()
+
+
+
+    fh.write(definitions)
+
+    fh.flush()
+
+
+
+    # fh.write(resources)
+
+    fh.write(workflow)
+
+    fh.flush()
+
+
+
+    fh.close()
+
+
+
+    print("..Generated XML file!")
+
+
+
+
+
+def get_preamble():
+
+    '''
+
+        Generate preamble for XML
+
+    '''
+
+    from datetime import datetime
+
+
+
+    strings = []
+
+
+
+    strings.append('<?xml version="1.0"?>\n')
+
+    strings.append('<!DOCTYPE workflow\n')
+
+    strings.append('[\n')
+
+    strings.append('\t<!--\n')
+
+    strings.append('\tPROGRAM\n')
+
+    strings.append('\t\tMain workflow manager for Global Ensemble Forecast System\n')
+
+    strings.append('\n')
+
+    strings.append('\tAUTHOR:\n')
+
+    strings.append('\t\tXianwu Xue\n')
+
+    strings.append('\t\tXianwu.Xue@noaa.gov\n')
+
+    strings.append('\n')
+
+    strings.append('\tNOTES:\n')
+
+    strings.append('\t\tThis workflow was automatically generated at %s\n' % datetime.now())
+
+    strings.append('\t-->\n')
+
+
+
+    return ''.join(strings)
+
+
+
+
+
+def get_definitions(dicBase):
+
+    '''
+
+        Create entities related to the experiment
+
+    '''
+
+
+
+    strings = []
+
+
+
+    strings.append('\n')
+
+    # # if base['INTERVAL'] is None:
+
+    # #     print('cycle INTERVAL cannot be None')
+
+    # #     sys.exit(1)
+
+
+
+    sVarName = "MEMLIST"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    # strings.append('\t<!-- <!ENTITY MEMLIST "p01 p02 p03 p04c00">  -->\n')
+
+
+
+    sVarName = "CYCLE_THROTTLE"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    sVarName = "TASK_THROTTLE"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    sVarName = "SDATE"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    sVarName = "EDATE"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    sVarName = "INCYC"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    # =====
+
+    sVarName = "WHERE_AM_I"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    # =====
+
+    sVarName = "GEFS_ROCOTO"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    # ===== Default, you don't need to change them
+
+    sVarName = "BIN"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    # =====
+
+    sVarName = "PRE"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    # =====
+
+    sVarName = "WORKFLOW_LOG_DIR"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    # ===== To Be Changed
+
+    sVarName = "SOURCEDIR"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    #  To Be Changed
+
+    sVarName = "WORKDIR"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    sVarName = "LOG_DIR"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    sVarName = "tmpnwprd"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    sVarName = "DATA_DIR"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    sVarName = "EXPID"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    strings.append('\n')
+
+
+
+    # # -----------------------------------------------------------------------------------------------
+
+    # strings.append('\t<!--  <!ENTITY INIT_FHR "9 12 15"> -->\n')
+
+    # strings.append('\n')
+
+
+
+    GenTaskEnt = get_GenTaskEnt(dicBase)
+
+
+
+    if GenTaskEnt:
+
+        import sys
+
+        sSep = "/"
+
+        if sys.platform == 'win32':
+
+            sSep = r'\\'
+
+
+
+        # -----------------------------------------------------------------------------------------------
+
+        strings.append('\t<!-- External entities -->\n')
+
+        strings.append(
+
+            '\t<!ENTITY ENV_VARS   SYSTEM "{0}{1}tasks{1}env_vars.ent">\n'.format(dicBase['GEFS_ROCOTO'], sSep))
+
+        strings.append(
+
+            '\t<!ENTITY DATE_VARS   SYSTEM "{0}{1}tasks{1}date_vars.ent">\n'.format(dicBase['GEFS_ROCOTO'], sSep))
+
+        strings.append('\n')
+
+
+
+        # -----------------------------------------------------------------------------------------------
+
+        strings.append('\t<!-- External parameter entities -->\n')
+
+        strings.append(
+
+            '\t<!ENTITY % TASKS    SYSTEM "{0}{2}tasks{2}{1}{2}all.ent">\n'.format(dicBase['GEFS_ROCOTO'],
+
+                                                                                   dicBase['WHERE_AM_I'], sSep))
+
+        strings.append('\t%TASKS;\n')
+
+        strings.append('\n')
+
+
+
+    # -----------------------------------------------------------------------------------------------
+
+    strings.append('\t<!-- Machine related entities -->\n')
+
+
+
+    sVarName = "ACCOUNT"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    sVarName = "CUE2RUN"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    sVarName = "SCHEDULER"
+
+    sVarValue = dicBase[sVarName.upper()]
+
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+
+
+    strings.append('\n')
+
+
+
+    strings.append('\t<!-- END: Resource requirements for the workflow -->\n')
+
+    strings.append(']>\n')
+
+
+
+    return ''.join(strings)
+
+
+
+
+
+def get_workflow_body(dicBase):
+
+    '''
+
+        Create the workflow body
+
+    '''
+
+
+
+    GenTaskEnt = get_GenTaskEnt(dicBase)
+
+
+
+    write_to_all_ent(GenTaskEnt, dicBase)
+
+
+
+    strings = []
+
+
+
+    strings.append('\n')
+
+    strings.append(
+
+        '<workflow realtime="F" cyclethrottle="&CYCLE_THROTTLE;" scheduler="&SCHEDULER;" taskthrottle="&TASK_THROTTLE;">\n')
+
+    strings.append('\n')
+
+    strings.append('\t<log><cyclestr>&WORKFLOW_LOG_DIR;/gefs@Y@m@d@H.log</cyclestr></log>\n')
+
+    strings.append('\n')
+
+    strings.append('\t<cycledef group="gefs">&SDATE;00 &EDATE;00 &INCYC;:00:00</cycledef>\n')
+
+    strings.append('\n')
+
+
+
+    sPre = "\t"
+
+
+
+    strings.append(sPre + '<!--- init jobs -->\n')
+
+
+
+    taskname_num = int(dicBase['taskname_num'.upper()])
+
+
+
+    WHERE_AM_I = dicBase['WHERE_AM_I'.upper()]
+
+
+
+    for k in range(taskname_num):
+
+        sTaskName = "taskname_{0}".format(k + 1).upper()
+
+        if sTaskName not in dicBase:
+
+            print('You must assign value of "{0}" in the configure file!'.format(sTaskName))
+
+            exit(0)
+
+        taskname = dicBase[sTaskName]
+
+
+
+        # print(taskname)
+
+        if GenTaskEnt:
+
+            strings.append(sPre + "&{0};\n".format(taskname))
+
+            write_to_ent(taskname, dicBase, GenTaskEnt=GenTaskEnt)
+
+        else:
+
+            strings.append(create_metatask_task(dicBase, taskname=taskname, sPre=sPre, \
+
+                                                GenTaskEnt=GenTaskEnt, WHERE_AM_I=WHERE_AM_I))
+
+
+
+    strings.append('\n')
+
+    strings.append('</workflow>\n')
+
+
+
+    return ''.join(strings)
+
+
+
+
+
+# ---
+
+def get_MEMLIST(dicBase):
+
+    MEM_Num = 12
+
+    # To Generate member list
+
+    bltGenerateMEMLIST = False
+
+    sVarName_Num = "MEM_Num".upper()
+
+    sVarName_List = 'MEMLIST'.upper()
+
+    if sVarName_Num in dicBase:  # Number of Memebers is the priority than the MEMLIST and the MEM_Num default value is 15
+
+        bltGenerateMEMLIST = True
+
+        MEM_Num = int(dicBase[sVarName_Num])
+
+    else:
+
+        if sVarName_List in dicBase:
+
+            bltGenerateMEMLIST = False
+
+        else:
+
+            MEM_Num = 12
+
+            dicBase[sVarName_Num] = MEM_Num
+
+            bltGenerateMEMLIST = True
+
+
+
+    if bltGenerateMEMLIST:
+
+        MEMLIST_Value = ""
+
+        for iNum in range(1, MEM_Num + 1):
+
+            MEMLIST_Value += "p{0:02d} ".format(iNum)
+
+        MEMLIST_Value += "c00"
+
+        # print(MEMLIST_Value)
+
+        dicBase[sVarName_List] = MEMLIST_Value
+
+
+
+
+
+def get_WHERE_AM_I(dicBase):
+
+    sVarName = 'WHERE_AM_I'
+
+    import os
+
+    if sVarName not in dicBase:
+
+        if os.path.exists('/scratch3'):
+
+            dicBase[sVarName] = 'theia'
+
+        elif os.path.exists('/gpfs') and os.path.exists('/etc/SuSE-release'):
+
+            dicBase[sVarName] = 'cray'
+
+        #     machine = 'WCOSS_C'
+
+        elif os.path.exists('c:'):
+
+            dicBase[sVarName] = 'windows'
+
+        else:
+
+            print('workflow is currently only supported on: %s' % ' '.join('other'))
+
+            raise NotImplementedError('Cannot auto-detect platform, ABORT!')
+
+
+
+
+
+def get_GenTaskEnt(dicBase):
+
+    sVarName = "GenTaskEnt".upper()
+
+    if sVarName in dicBase:
+
+        sGenTaskEnt = dicBase[sVarName]
+
+
+
+        if str(sGenTaskEnt).upper() == "YES" or str(sGenTaskEnt)[0].upper() == "Y":
+
+            GenTaskEnt = True
+
+        else:
+
+            GenTaskEnt = False
+
+    else:
+
+        GenTaskEnt = False
+
+
+
+    return GenTaskEnt
+
