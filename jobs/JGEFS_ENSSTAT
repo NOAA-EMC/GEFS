@@ -112,7 +112,6 @@ if [[ $envir = dev ]]; then
 		(00) fhmax=$fhmax00 ;;
 		(06) fhmax=$fhmax06 ;;
 		(12) fhmax=$fhmax12 ;;
-		(18) fhmax=$fhmax18 ;;
 		(*)
 			echo cyc=$cyc IS UNDEFINED 
 			export pgm=JGEFS_ENSSTAT
@@ -199,6 +198,10 @@ echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_2 $FHINC_2 ${subdata_2} 
 cat ensstat.cmdfile
 chmod 775 ensstat.cmdfile
 export MP_CMDFILE=${DATA}/ensstat.cmdfile
+if [ -d /scratch4/NCEPDEV ]; then 
+	export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
+fi
+
 export MP_PGMMODEL=mpmd
 
 rm mpmd_cmdfile

@@ -58,7 +58,12 @@ else
    export j_opt="-j 1"
 fi
 #APRUN="aprun -n $tasks -N $task_per_node -d $nth_fv3 $j_opt -cc depth"
-APRUN="aprun -n $NTASKS_FV3 -N $cores_per_node -d $NTHREADS_FV3 $j_opt -cc depth"
+if [ -d /scratch4/NCEPDEV ]; then 
+	echo "Nothing to do in Theia!"
+else
+	APRUN="aprun -n $NTASKS_FV3 -N $cores_per_node -d $NTHREADS_FV3 $j_opt -cc depth"	
+fi
+
 export FCSTEXEC=fv3_gfs_${TYPE}.${COMP}.${MODE}.x
 export APRUN=${APRUN:-""}
 
@@ -70,7 +75,12 @@ export warm_start=.false.
 export BASE_GSM=$HOMEgsm
 REMAP_GRID=none     # temporay setting, to void the latlon default
 export REMAP_GRID=${REMAP_GRID:-latlon}        #gaussian or latlon for using fregrid or regrid_nemsio for remapping
-export DIAG_TABLE=$HOMEgsm/parm/parm_fv3diag/diag_table
+if [ -d /scratch4/NCEPDEV ]; then 
+	export DIAG_TABLE=${DIAG_TABLE:-$HOMEgsm/parm/parm_fv3diag/diag_table}
+else
+	export DIAG_TABLE=$HOMEgsm/parm/parm_fv3diag/diag_table
+fi
+
 #export FIELD_TABLE=$HOMEgsm/parm/parm_fv3diag/field_table_gfdl
 
 #gfs_physics

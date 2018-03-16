@@ -245,12 +245,14 @@ else
 MEMBER=`echo $mem|cut -c2-3`
 fi
 export MEMBER=$MEMBER
+memchar=mem$(printf %03i $MEMBER)
 
 # 	export do_sppt=$STOC_SPPT
 # 	export do_shum=$STOC_SHUM
 # 	export do_skeb=$STOC_SKEB
 
- 	export SET_STP_SEED=${SET_STP_SEED:-"YES"}
+export SET_STP_SEED=${SET_STP_SEED:-"YES"}
+
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 
 if [[ $DO_SPPT = YES ]] ; then
@@ -340,7 +342,12 @@ export VERBOSE=YES
 
 ################################################################################
 export CDATE=$PDY$cyc
-export ROTDIR=$SFCSIG/$mem
+if [ -d /scratch4/NCEPDEV ]; then 
+	export ROTDIR=$DATA/$mem
+else
+	export ROTDIR=$SFCSIG/dataout
+fi
+
 ICSDIR=${ICSDIR:-$GESIN/$mem}
 #ICSDIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160910/$mem
 #Temporal setting reading from Kate Zhou's archive
