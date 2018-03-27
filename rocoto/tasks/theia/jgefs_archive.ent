@@ -1,0 +1,25 @@
+<task name="jgefs_archive" cycledefs="gefs" maxtries="1">
+   <jobname><cyclestr>&EXPID;@y@m@d@H_arch</cyclestr></jobname>
+   <account>&ACCOUNT;</account>
+   <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_archive_@H.$PBS_JOBID</cyclestr></join>
+   <walltime>06:00:00</walltime>
+   <queue>&TRANSFER_QUEUE;</queue>
+   <nodes>1:ppn=1:tpp=1</nodes>
+   
+   <memory>3000M</memory>   
+
+   &ENV_VARS;
+   &DATE_VARS;
+   <envar>
+      <name>SOURCEDIR</name>
+      <value>&SOURCEDIR;</value>
+   </envar>
+   <envar>
+      <name>job</name>
+      <value><cyclestr>&EXPID;@y@m@d@H_arch</cyclestr></value>
+   </envar>
+   <command><cyclestr>&PRE; &BIN;/jgefs_archive.py</cyclestr></command>
+   <dependency>
+      <taskdep task="jgefs_enspost"/>
+   </dependency>
+</task>

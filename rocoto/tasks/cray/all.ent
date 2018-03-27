@@ -19,3 +19,6 @@
 <!ENTITY jgefs_post_track           SYSTEM   "jgefs_post_track.ent">
 <!ENTITY jgefs_post_genesis         SYSTEM   "jgefs_post_genesis.ent">
 <!ENTITY jgefs_pqpf                 SYSTEM   "jgefs_pqpf.ent">
+<!ENTITY jgefs_keep_data            SYSTEM   "jgefs_keep_data.ent">
+<!ENTITY jgefs_archive              SYSTEM   "jgefs_archive.ent">
+<!ENTITY jgefs_cleanup              SYSTEM   "jgefs_cleanup.ent">
