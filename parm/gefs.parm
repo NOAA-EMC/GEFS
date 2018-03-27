@@ -14,7 +14,7 @@ fi
 ##############################################
 # Number of pairs to run (normally 10 pairs)
 ##############################################
-export npair=${npair:-15}
+export npair=${npair:-5}
 export npert=$((2*npair))
 export nhrpair=${nhrpair:-$npair}
 export nstinit=${nstinit:-yes}
@@ -124,7 +124,7 @@ export USESUBDIR=${USESUBDIR:-YES}
 #For the higher resolution part of FV3 forecast
  export CASEHR=${CASEHR:-C384}
  export LEVSHR=${LEVSHR:-64}
- export DELTIM=${DELTIM:-450}
+ export DELTIM=${DELTIM:-300}
  export JCAPFV=${JCAPFV:-766}
  export LATBFV=${LATBFV:-768}
  export LONBFV=${LONBFV:-1536}

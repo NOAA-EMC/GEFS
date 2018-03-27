@@ -32,16 +32,16 @@ echo
 echo USER to prescribe user ID and JOB queue infirmation
 echo
 PROJECT=ensemble
-LOGNAME=$LOGNAME
+LOGNAME=emc.enspara
 SUBNAME=
 JOBPRIO=      
-JOBQUEUE=dev
+JOBQUEUE=devhigh
 JOBPHASE=
 #Please make sure you have the correct account information
 export account=GEN-T2O
 
 if [[ "$LOGNAME" = "emc.enspara" || "$LOGNAME" = "emc.enspara1" ]]; then
-        SUBNAME=/XX    #members of the enspara/enspara1 group accounts need to define e.g SUBNAME=/dc
+        SUBNAME=/Hong.Guan    #members of the enspara/enspara1 group accounts need to define e.g SUBNAME=/dc
         JOBPRIO=high       #(default; it could be high/max)
 fi
 
@@ -76,8 +76,9 @@ if [[ $machl = s ]] || [[ $machl = l ]]; then
 #        export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/svn/fv3gfs   #temporay setting
 	export HOMEDIR1=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda
 	export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
-	SAVE=/gpfs/hps3/emc/$PROJECT/save
-	NOSCRUB=/gpfs/hps3/emc/$PROJECT/noscrub
+	SAVE=/gpfs/hps3/emc/$PROJECT/save/$LOGNAME$SUBNAME
+#	NOSCRUB=/gpfs/hps3/emc/$PROJECT/noscrub
+        NOSCRUB=/gpfs/hps3/emc/$PROJECT/$LOGNAME$SUBNAME/noscrub
 fi
 
 export JOBQUEUE=$JOBQUEUE$JOBPRIO$JOBPHASE
@@ -95,7 +96,7 @@ echo
 echo `date` $0 setuser base directory tree locations
 echo
 
-export basesource=$SAVE/$LOGNAME$SUBNAME/GEFS/$expid
+export basesource=$SAVE/$expid
 export basebin=$basesource/nw$envir/control
 
 export baseoutput=$PTMP/$LOGNAME$SUBNAME/o/$expid

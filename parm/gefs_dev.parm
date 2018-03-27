@@ -42,7 +42,7 @@ export parallel_threads=2
 
 #export IC_DIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160913/p01
 
-export npair=10
+export npair=5
 #export npair=0
 export fhmax=384
 export fhmaxh=384

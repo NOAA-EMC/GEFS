@@ -9,6 +9,10 @@ if [[ $FORECAST_SEGMENT = lr ]]; then
 	export DELTIM=$DELTIMLR
 fi
 
+#
+# old Tom Hamill Initial conditions
+#
+
 #FV3 
 layout_x=${layout_x:-4}
 layout_y=${layout_y:-8}
@@ -59,11 +63,12 @@ else
 fi
 #APRUN="aprun -n $tasks -N $task_per_node -d $nth_fv3 $j_opt -cc depth"
 APRUN="aprun -n $NTASKS_FV3 -N $cores_per_node -d $NTHREADS_FV3 $j_opt -cc depth"
-export FCSTEXEC=fv3_gfs_${TYPE}.${COMP}.${MODE}.x
+#export FCSTEXEC=fv3_gfs_${TYPE}.${COMP}.${MODE}.x
+export FCSTEXEC=fv3_gfs_nh.prod.32bit.x.tf
 export APRUN=${APRUN:-""}
 
-export k_split=${k_split:-2}
-export n_split=${n_split:-6}
+export k_split=${k_split:-1}
+export n_split=${n_split:-8}
 
 # OTHER FV# FCST related environment
 export warm_start=.false.
@@ -110,12 +115,13 @@ export imfshalcnv=2
 export imfdeepcnv=2
 export cdmbgwd=1.0,1.2 
 export prslrd0=
-export ivegsrc=
-export isot=
+export ivegsrc=1
+export isot=1
 export debug=${gfs_phys_debug:-".false."}
 #export nstf_name="$NST_FCST,$NST_SPINUP,$NST_RESERVED,$ZSEA1,$ZSEA2"
 export nst_anl=${nst_anl:-".true."}
-export nstf_name=${nstf_name:-"0,0,0,0,0"}
+export nstf_name=${nstf_name:-"2,1,5,0,0"}
+#export nstf_name=${nstf_name:-"0,0,0,0,0"}
 export psautco=${psautco:-"0.0006,0.0003"}
 export prautco=${prautco:-"0.0001,0.0001"}
 #gfs_physics
