@@ -188,7 +188,10 @@ fi
 
 #  The VEGTYPE fix file:
 export FNVETC=${FNVETC:-${FIX_AM}/global_vegtype.igbp.t$MTNRSL.rg.grb}
-export FNTSFC=${FNTSFC:-${FIX_AM}/RTGSST.1982.2012.monthly.clim.grb}
+#export FNTSFC=${FNTSFC:-${FIX_AM}/RTGSST.1982.2012.monthly.clim.grb}
+#export FNTSFA=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/my_util/2tsst/CFS_ANOM2_create_FoundT_0p25/sst/outdata/TMPsfc.$PDY$cyc.24hr.anom.grb
+export FNTSFA=/gpfs/hps3/emc/ensemble/noscrub/Wei.Li/CFS_ANOM2_create_CFSR_0p25/sst/outdata_1999/TMPsfc.$PDY$cyc.24hr.anom.grb
+export FTSFS=0
 export FNAISC=${FNAISC:-${FIX_AM}/CFSR.SEAICE.1982.2012.monthly.clim.grb}
 export FNABSC=${FNABSC:-${FIX_AM}/global_mxsnoalb.uariz.t$MTNRSL.rg.grb}
 export FNALBC=$FIX_AM/global_snowfree_albedo.bosu.t$MTNRSL.rg.grb
@@ -240,7 +243,7 @@ fi
 
 #if [[ $mem = c00 ]] ;then 
 if [[ $mem = c00 ]] ;then 
-MEMBER=21
+MEMBER=11
 else
 MEMBER=`echo $mem|cut -c2-3`
 fi
@@ -307,6 +310,7 @@ fi
 
 #export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nems.sh.ecf
 #export FCSTEXEC=$EXECgsm/global_fcst
+#export fcstscrippara@llogin2$ vi    JGEFS_FORECAST_FV3
 #export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nemsfv3gfs_sp.sh
 export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nemsfv3gfs.sh
 export FORECASTSH=$fcstscript
