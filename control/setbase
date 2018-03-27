@@ -85,6 +85,8 @@ if [ -d /scratch4/NCEPDEV ]; then
 	export FCSTEXECDIR=$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe
 	export nemsioget=$HOMEgsm/exec/nemsio_get
 
+	export memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc'
+
 	export HOMEenkf=$HOMEgsm/sorc/gsi.fd
 	export HOMEpost=$HOMEgsm/sorc/upp.fd
 
