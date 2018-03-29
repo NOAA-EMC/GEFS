@@ -6,14 +6,8 @@ set -xa
 export PS4='$SECONDS + '
 date
 export MODEL_OUT_FORM=binarynemsiompiio
-###########################################
-# Run gefs_config to get input parameters
-###########################################
-if [ "$RUN_ENVIR" = dev ]; then ### For Developers
-# . $basesource/nw${envir}/versions/gefs.ver
-	. $basesource/nwdev/parm/gefs_config
-	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-fi
+
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 
 export APRUN=${gefsmpexec:-mpirun.lsf}
 

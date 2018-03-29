@@ -32,7 +32,7 @@ export archsyndir=$COMROOTp1/arch/prod/syndat
 export DBNROOT=
 
 export HOMEDIR=$HOMEDIR
-export HOMEgefs=$basesource/nwdev
+export HOMEgefs=$basesource
 
 #for regular GEFS
 # export HOMEgsm=$HOMEDIR/gsm.v12.1.2
@@ -52,8 +52,8 @@ export HOMEenkf=${HOMEenkf:-$HOMEDIR1/gdas.v14.1.0}
 export PARMglobal=$HOMEgsm/parm
 #Extra direcories for FV3 temporary settings
 export HOMEgsm1=${HOMEgsm1:-$HOMEDIR1/global_shared.v14.1.0} #this is needed for global_chgres in init_separate
-# export nemsioget=$HOMEgsm1/exec/nemsio_get
-export nemsioget=${nemsioget:-/gpfs/hps3/emc/global/noscrub/emc.glopara/bin/nemsio_get}
+#export nemsioget=$HOMEgsm1/exec/nemsio_get
+#export nemsioget=${nemsioget:-/gpfs/hps3/emc/global/noscrub/emc.glopara/bin/nemsio_get}
 
 # This section is optional, using path to define utility files
 # export UTILROOT=/nwprod2/prod_util.v1.0.0  

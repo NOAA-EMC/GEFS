@@ -11,20 +11,20 @@
 echo `date` $0 test section begin
 
 #Define using STTP(ENS_SPS=.true.) or physics stochastic
-ENS_SPS=.false.
-DO_SPPT=YES
-DO_SHUM=YES
-DO_SKEB=YES
+export ENS_SPS=.false.
+export DO_SPPT=YES
+export DO_SHUM=YES
+export DO_SKEB=YES
 #define tmp time step
-#DELTIM=450
-#k_split=2
-#n_split=6
-DELTIM=300
-k_split=1
-n_split=8
+#export DELTIM=450
+#export k_split=2
+#export n_split=6
+export DELTIM=300
+export k_split=1
+export n_split=8
 
-TYPE=nh
-MONO=non-mono
+export TYPE=nh
+export MONO=non-mono
 
 # cpu geometry
 export layout_x=4
@@ -46,6 +46,7 @@ export npair=10
 #export npair=0
 export fhmax=384
 export fhmaxh=384
+export FHOUTHR=3
 #export caseh=C192
 export COMROOTp2=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/nems_gefs/com
 

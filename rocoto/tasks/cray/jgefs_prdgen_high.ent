@@ -18,6 +18,10 @@
          <value>&SOURCEDIR;</value>
       </envar>
       <envar>
+         <name>WORKDIR</name>
+         <value>&WORKDIR;</value>
+      </envar>
+      <envar>
          <name>job</name>
          <value><cyclestr>&EXPID;@Y@m@d@H103#member#</cyclestr></value>
       </envar>

@@ -3,7 +3,7 @@
 
 # EXPORT list here
 set -x
-export NODES=1
+
 export IOBUF_PARAMS=*:size=64M:count=4:verbose
 export FORT_BUFFERED=TRUE
 export MKL_CBWR=AVX
@@ -31,34 +31,24 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:4
 
-export total_tasks=3
+export NODES=1
+export total_tasks=5
 export OMP_NUM_THREADS=4
-export taskspernode=3
+export taskspernode=5
 
-#Date and Cycle
-#export PDY=20160415
-#export cyc=00
-#export cyc_fcst=00
-#export job=Aa2016041500103
-#export RUNMEM=gep01
 export FORECAST_SEGMENT=hr
 export DO_LOW_RES=
 
-export gefsmpexec_mpmd=mpirun.lsf
+export gefsmpexec_mpmd="  aprun -b -j1 -n5 -N5 -d4 -cc depth  cfp mpmd_cmdfile"
 
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export gefsmachine=cray
-export gefsmpexec=" aprun -b -j1 -n5 -N5 -d4 -cc depth "
-export gefsmpexec_mpmd="  aprun -b -j1 -n5 -N5 -d4 -cc depth  cfp mpmd_cmdfile"
-export APRUNC="aprun"
-export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
-export NTHREADS_SIGCHGRS=6
-
-cd $SOURCEDIR/control
-. $SOURCEDIR/control/setbase
-#. $SOURCEDIR/parm/gefs.parm
 
 # CALL executable job script here
+export expid=${EXPID}
+
+. $SOURCEDIR/rocoto/parm/setbase
+. $SOURCEDIR/rocoto/parm/gefs_config
+. $SOURCEDIR/rocoto/parm/gefs_dev.parm
 $SOURCEDIR/jobs/JGEFS_PRDGEN
