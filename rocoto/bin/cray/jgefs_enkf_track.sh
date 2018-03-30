@@ -34,7 +34,8 @@ export SOURCEDIR=${SOURCEDIR}
 export WORKDIR=${WORKDIR}
 
 # CALL executable job script here
-. $SOURCEDIR/rocoto/parm/setbase
-. $SOURCEDIR/rocoto/parm/gefs_config
-. $SOURCEDIR/rocoto/parm/gefs_dev.parm
+. $GEFS_ROCOTO/parm/setbase
+. $GEFS_ROCOTO/parm/gefs_config
+. $GEFS_ROCOTO/parm/gefs_dev.parm
+
 $SOURCEDIR/jobs/JGEFS_ENKF_TRACK

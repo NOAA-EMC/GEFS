@@ -51,9 +51,9 @@ export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
 export APRUNC="aprun"
 
 # export for development runs only begin
-. $SOURCEDIR/rocoto/parm/setbase
-. $SOURCEDIR/rocoto/parm/gefs_config
-. $SOURCEDIR/rocoto/parm/gefs_dev.parm
+. $GEFS_ROCOTO/parm/setbase
+. $GEFS_ROCOTO/parm/gefs_config
+. $GEFS_ROCOTO/parm/gefs_dev.parm
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_INIT_SEPARATE

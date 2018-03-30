@@ -21,10 +21,12 @@ if [[ $machl = n ]]; then
   machl=l
 fi
 
-envir=$(basename $(dirname $(pwd) ) | cut -c3-)
+#envir=$(basename $(dirname $(pwd) ) | cut -c3-)
 echo envir=$envir
 
-expid=$(basename $(dirname $(dirname $(pwd) ) ) )
+#expid=$(basename $(dirname $(dirname $(pwd) ) ) )
+echo expid=${expid}
+
 id=`echo $expid|cut -c3-4`
 echo expid=$expid
 echo id=$id
@@ -42,8 +44,8 @@ JOBPHASE=
 export account=GEN-T2O
 
 if [[ "$LOGNAME" = "emc.enspara" || "$LOGNAME" = "emc.enspara1" ]]; then
-		SUBNAME=/XX    #members of the enspara/enspara1 group accounts need to define e.g SUBNAME=/dc
-		JOBPRIO=high       #(default; it could be high/max)
+	SUBNAME=/XX    #members of the enspara/enspara1 group accounts need to define e.g SUBNAME=/dc
+	JOBPRIO=high       #(default; it could be high/max)
 fi
 
 echo USER info: $PROJECT $LOGNAME $SUBNAME $JOBPRIO

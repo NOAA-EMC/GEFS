@@ -11,8 +11,8 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 export expid=${EXPID}
 
 # CALL executable job script here
-. $SOURCEDIR/rocoto/parm/setbase
-. $SOURCEDIR/rocoto/parm/gefs_config
-. $SOURCEDIR/rocoto/parm/gefs_dev.parm
-$SOURCEDIR/jobs/JGEFS_ENSPOST
+. $GEFS_ROCOTO/parm/setbase
+. $GEFS_ROCOTO/parm/gefs_config
+. $GEFS_ROCOTO/parm/gefs_dev.parm
 
+$SOURCEDIR/jobs/JGEFS_ENSPOST
