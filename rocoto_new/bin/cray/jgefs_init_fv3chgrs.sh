@@ -50,8 +50,8 @@ export expid=${EXPID}
 
 export APRUNC="aprun"
 
-. $SOURCEDIR/rocoto/parm/setbase
-. $SOURCEDIR/rocoto/parm/gefs_config
-. $SOURCEDIR/rocoto/parm/gefs_dev.parm
-$SOURCEDIR/jobs/JGEFS_INIT_FV3CHGRS
+. $GEFS_ROCOTO/parm/setbase
+. $GEFS_ROCOTO/parm/gefs_config
+. $GEFS_ROCOTO/parm/gefs_dev.parm
 
+$SOURCEDIR/jobs/JGEFS_INIT_FV3CHGRS
