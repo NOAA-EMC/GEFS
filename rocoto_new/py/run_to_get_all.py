@@ -34,7 +34,7 @@ def main():
     dicBase = gefs_config.read_config(sConfig)
 
     print("--Checking the must parameters for the config file")
-    sMust_Items = ['SDATE', 'EDATE', 'First'.upper(), 'Last'.upper()]
+    sMust_Items = ['SDATE', 'EDATE']
     for sMust_Item in sMust_Items:
         if sMust_Item not in dicBase:
             print("You need assign value of {0}".format(sMust_Item))

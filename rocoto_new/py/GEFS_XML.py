@@ -25,12 +25,20 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarName = "First".upper()
     sVarValue = 'Xianwu'
     if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
+	import os
+        sVarValue = os.environ.get("USER")
+        if "." in sVarValue:
+            sVarValue = sVarValue.split(".")[0]
+    dicBase[sVarName] = sVarValue
     # ==
     sVarName = "Last".upper()
     sVarValue = 'Xue'
     if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
+    	import os
+        sVarValue = os.environ.get("USER")
+        if "." in sVarValue:
+            sVarValue = sVarValue.split(".")[1]
+    dicBase[sVarName] = sVarValue
     # ==
     sVarName = "HPS_PTMP".upper()
     sVarValue = 'hps'
