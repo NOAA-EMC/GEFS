@@ -29,7 +29,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sVarValue = os.environ.get("USER")
         if "." in sVarValue:
             sVarValue = sVarValue.split(".")[0]
-    dicBase[sVarName] = sVarValue
+    	dicBase[sVarName] = sVarValue
     # ==
     sVarName = "Last".upper()
     sVarValue = 'Xue'
@@ -38,7 +38,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sVarValue = os.environ.get("USER")
         if "." in sVarValue:
             sVarValue = sVarValue.split(".")[1]
-    dicBase[sVarName] = sVarValue
+    	dicBase[sVarName] = sVarValue
     # ==
     sVarName = "HPS_PTMP".upper()
     sVarValue = 'hps'
@@ -69,6 +69,14 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
         sVarValue = sVarValue.replace("Last", dicBase["LAST"])
     dicBase[sVarName] = sVarValue
+    # ===
+    sVarName = "EXPID".upper()
+    sVarValue = "extsp"
+    if sVarName not in dicBase:
+        sVarName_2 = "GEFS_ROCOTO".upper()
+        sRocoto_Path = dicBase[sVarName_2]
+        sVarValue =os.path.basename(os.path.abspath(sRocoto_Path + sSep + ".." + sSep + ".." ))
+        dicBase[sVarName] = sVarValue
     # ===
     sVarName = "SOURCEDIR".upper()
     sVarValue = ""
@@ -183,7 +191,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         else:
             sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
 
-    dicBase[sVarName] = sVarValue
+    	dicBase[sVarName] = sVarValue
     # ===
     sVarName = "DIRS_TO_ARCHIVE".upper()
     if sVarName not in dicBase:
@@ -199,7 +207,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         else:
             sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
 
-    dicBase[sVarName] = sVarValue
+    	dicBase[sVarName] = sVarValue
     # ==
     sVarName = "INCYC".upper()
     sVarValue = 24
@@ -254,19 +262,6 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarValue = "&WORKDIR;/com/gens/dev"
     if sVarName not in dicBase:
         dicBase[sVarName] = sVarValue
-    # ===
-    sVarName = "EXPID".upper()
-    sVarValue = "extsp"
-    if sVarName not in dicBase:
-        sVarName_2 = "GEFS_ROCOTO".upper()
-        sRocoto_Path = dicBase[sVarName_2]
-
-        sVarValue =os.path.basename(os.path.abspath(sRocoto_Path + sSep + ".." + sSep + ".." ))
-        dicBase[sVarName] = sVarValue
-
-    #     dicBase[sVarName] = sVarValue
-    # else:
-
     # -----------------------------------------------------------------------------------------------
     if WHERE_AM_I.lower() == "wcoss":
         sVarName = "ACCOUNT".upper()
