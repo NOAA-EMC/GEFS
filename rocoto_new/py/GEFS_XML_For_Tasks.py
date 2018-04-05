@@ -514,12 +514,14 @@ def create_metatask(taskname="jgefs_init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#
     # For sMemory
     if sMemory != "":
         strings += sPre + '\t\t' + '<memory>{0}</memory>\n'.format(sMemory)
+
     if WHERE_AM_I.upper() == "cray".upper():
         strings += sPre + '\t\t' + '<native>-extsched "CRAYLINUX[]"</native>\n'
-    if WHERE_AM_I.upper() == "Theia".upper():
+    elif WHERE_AM_I.upper() == "Theia".upper():
         strings += "\n"
     else:
         strings += sPre + '\t\t' + '<native>-extsched "CRAYLINUX[]"</native>\n'
+
 
     strings += sPre + '\n'
     strings += sENV_VARS
@@ -587,7 +589,13 @@ def create_task( \
     # strings += sPre + '\t' + '<queue>&CUE2RUN;</queue>\n'
 
     if sNodes != "":
-        strings += sPre + '\t' + '<nodes>{0}</nodes>\n'.format(sNodes)
+        if WHERE_AM_I.upper() == "cray".upper():
+            if taskname == "jgefs_archive":
+                strings += sPre + '\t\t' + '<nodes>{0}</nodes><shared></shared>\n'.format(sNodes)
+            else:
+                strings += sPre + '\t\t' + '<nodes>{0}</nodes>\n'.format(sNodes)
+        else:
+            strings += sPre + '\t\t' + '<nodes>{0}</nodes>\n'.format(sNodes)
 
     if WHERE_AM_I.upper() == "cray".upper():
         strings += sPre + '\t' + '<native>-cwd &tmpnwprd;</native>\n'
@@ -600,6 +608,9 @@ def create_task( \
         strings += sPre + '\t' + '<memory>{0}</memory>\n'.format(sMemory)
 
     if WHERE_AM_I.upper() == "cray".upper():
+        if taskname == "jgefs_archive":
+            strings += ""
+        else:
         strings += sPre + '\t' + '<native>-extsched "CRAYLINUX[]"</native>\n'
     elif WHERE_AM_I.upper() == "theia".upper():
         strings += "\n"
@@ -627,12 +638,9 @@ def create_task( \
     else:
         strings += sPre + sPre + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
 
-    # print(sDep, taskname)
-    # print("--")
     sDep = sDep.replace('\\n', '\n')
     sDep = sDep.replace('\\t', '\t')
-    # print(sDep)
-    # exit()
+
     if sDep != "":
         strings += sPre_2 + '<dependency>\n'
         strings += sPre_2 + '\t' + sDep + '\n'  # '\t<taskdep task="{0}"/>\n'.format(taskdep)
