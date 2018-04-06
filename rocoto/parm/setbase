@@ -21,10 +21,12 @@ if [[ $machl = n ]]; then
   machl=l
 fi
 
-envir=$(basename $(dirname $(pwd) ) | cut -c3-)
+#envir=$(basename $(dirname $(pwd) ) | cut -c3-)
 echo envir=$envir
 
-expid=$(basename $(dirname $(dirname $(pwd) ) ) )
+#expid=$(basename $(dirname $(dirname $(pwd) ) ) )
+echo expid=${expid}
+
 id=`echo $expid|cut -c3-4`
 echo expid=$expid
 echo id=$id
@@ -42,8 +44,8 @@ JOBPHASE=
 export account=GEN-T2O
 
 if [[ "$LOGNAME" = "emc.enspara" || "$LOGNAME" = "emc.enspara1" ]]; then
-		SUBNAME=/XX    #members of the enspara/enspara1 group accounts need to define e.g SUBNAME=/dc
-		JOBPRIO=high       #(default; it could be high/max)
+	SUBNAME=/XX    #members of the enspara/enspara1 group accounts need to define e.g SUBNAME=/dc
+	JOBPRIO=high       #(default; it could be high/max)
 fi
 
 echo USER info: $PROJECT $LOGNAME $SUBNAME $JOBPRIO
@@ -123,7 +125,6 @@ elif [ -d /gpfs/hps3 ]; then
 		export machine='WCOSS_C'
 		export JOBPHASE=
 		export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/svn/fv3gfs20180204  #temporay setting
-	#        export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/svn/fv3gfs   #temporay setting
 		export HOMEDIR1=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda
                 export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/git_gfs/fv3gfs/flat
 
@@ -148,22 +149,15 @@ echo
 echo `date` $0 setuser base directory tree locations
 echo
 
-export basesource=$SAVE/$LOGNAME$SUBNAME/GEFS/$expid
-export basebin=$basesource/nw$envir/control
-
-export baseoutput=$PTMP/$LOGNAME$SUBNAME/o/$expid
-export basetmp=$PTMP/$LOGNAME$SUBNAME/o/$expid
-export baseptmp=$PTMP/$LOGNAME$SUBNAME/o/$expid
-export basestmp=$STMP/$LOGNAME$SUBNAME/o/$expid
-export baselog=$PTMP/$LOGNAME/o/$expid
-
-export basedgfs=$NOSCRUB/$LOGNAME$SUBNAME/o
+#export basesource=$SAVE/$LOGNAME$SUBNAME/GEFS/$expid
+#export basebin=$basesource/nw$envir/control
+export basesource=$SOURCEDIR
+export baseoutput=$WORKDIR
 
 echo USER BASE DIRECTORY info:
 echo SOURCE: $basesource
 echo BIN: $basebin
 echo OUT: $baseoutput
-echo LOG: $baselog
 
 echo
 echo `date` $0 $* setbase end

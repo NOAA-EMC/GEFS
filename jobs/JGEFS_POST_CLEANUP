@@ -14,14 +14,6 @@ na=`basename $0`
 export PS4=' + $SECONDS $na $LINENO: '
 date
 
-###########################################
-# Run gefs_config to get input parameters
-###########################################
-if [ "$RUN_ENVIR" = dev ]; then ### For Developers
-# . $basesource/nw${envir}/versions/gefs.ver
-	. $basesource/nwdev/parm/gefs_config
-fi
-
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################

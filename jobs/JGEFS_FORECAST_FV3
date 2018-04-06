@@ -6,13 +6,7 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-###########################################
-# Run gefs_config to get input parameters
-###########################################
-if [ "$RUN_ENVIR" = dev ]; then ### For Developers
-	. $basesource/nwdev/parm/gefs_config
-	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-fi
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 
 export machine=$machine
 #export nemsioget=$nemsioget
@@ -173,13 +167,13 @@ export LOGSCRIPT=startmsg
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 	#CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$fhouth;FHZER=$fhzerh;                        
-	CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=6;FHZER=6;                        
+	CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$FHOUTHR;FHZER=6;
 	MTNRSL=$MTNRSLFV;LONB=$LONBFV;LATB=$LATBFV;
 	FHINI=0                              #forecast starting hour
 	(( LEVS = LEVSHR + 1 ))
 elif [[ $FORECAST_SEGMENT = lr ]] ; then
 	#CASE=$casel;FHMAX=$fhmax;FHOUT=$fhoutl;FHZER=$fhzerl;
-	CASE=$CASELR;FHMAX=$fhmax;FHOUT=6;FHZER=6;                        
+	CASE=$CASEHR;FHMAX=$fhmax;FHOUT=$FHOUTLR;FHZER=6;
 	JCAP=$JCAPLR;LONB=$LONBLR;LATB=$LATBLR;MTNRSL=$MTNRSLLR
 	FHINI=$fhmaxhres
 else
