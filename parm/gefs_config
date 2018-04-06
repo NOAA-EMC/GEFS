@@ -35,26 +35,29 @@ export HOMEDIR=$HOMEDIR
 export HOMEgefs=$basesource/nwdev
 
 #for regular GEFS
-# export HOMEgsm=$HOMEDIR/gsm.v12.1.2
-# export HOMEpost=$HOMEDIR/ncep_post.v7.2.3
-# export HOMEenkf=$HOMEDIR/enkf.v2.0.1
+export HOMEgsm=$HOMEDIR/gsm.v12.1.2
+export HOMEpost=$HOMEDIR/ncep_post.v7.2.3
+export HOMEenkf=$HOMEDIR/enkf.v2.0.1
 export HOMEtrak=$HOMERFC/ens_tracker.v1.1.8
 
 #for NEMS GEFS, FV3 version
-export HOMEgsm=${HOMEgsm:-$HOMEDIR/global_shared.v15.0.0}
+export HOMEgsm=$HOMEDIR/global_shared.v15.0.0
+export HOMEgsm=$HOMEDIR
 #FCST exec is from a different directory
-export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe}
+export FCSTEXECDIR=$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe
+export FCSTEXEC=fv3_gfs_nh.prod.32bit.x.tf.iobuf
 
-export HOMEpost=${HOMEpost:-$HOMEDIR/post4fv3}   #Aug 2017
-# export HOMEenkf=${HOMEenkf:-$HOMEDIR/gdas.v15.0.0}
-export HOMEenkf=${HOMEenkf:-$HOMEDIR1/gdas.v14.1.0}
-
+export HOMEpost=$HOMEDIR/post4fv3   #Aug 2017
+#export HOMEpost=/gpfs/hps3/emc/global/noscrub/emc.glopara/svn/post/tags/ncep_post.v7.7.2
+#export HOMEenkf=$HOMEDIR/gdas.v15.0.0
+export HOMEenkf1=$HOMEDIR1/gdas.v14.1.0
+export HOMEenkf=$HOMEDIR
+export HOMEgfs=$HOMEgsm
 export PARMglobal=$HOMEgsm/parm
 #Extra direcories for FV3 temporary settings
-export HOMEgsm1=${HOMEgsm1:-$HOMEDIR1/global_shared.v14.1.0} #this is needed for global_chgres in init_separate
-# export nemsioget=$HOMEgsm1/exec/nemsio_get
-export nemsioget=${nemsioget:-/gpfs/hps3/emc/global/noscrub/emc.glopara/bin/nemsio_get}
-
+export HOMEgsm1=$HOMEDIR1/global_shared.v14.1.0 #this is needed for global_chgres in init_separate
+#export nemsioget=$HOMEgsm1/exec/nemsio_get
+#export nemsioget=/gpfs/hps3/emc/global/noscrub/emc.glopara/bin/nemsio_get
 # This section is optional, using path to define utility files
 # export UTILROOT=/nwprod2/prod_util.v1.0.0  
 # export GRIBROOT=/nwprod2/grib_util.v1.0.1

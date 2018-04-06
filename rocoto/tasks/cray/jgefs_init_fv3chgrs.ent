@@ -27,7 +27,7 @@
       </envar>
       <command><cyclestr>&PRE; &BIN;/jgefs_init_fv3chgrs.sh</cyclestr></command>
       <dependency>
-         <taskdep task="jgefs_init_combine"/>
+         <taskdep task="jgefs_init_recenter"/>
       </dependency>
 
       </task>

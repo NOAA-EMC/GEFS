@@ -118,13 +118,15 @@ elif [ -d /gpfs/hps3 ]; then
 
 	elif [[ $machl = s ]] || [[ $machl = l ]]; then
 		echo "Using settings for WCOSS Cray"
-		PTMP=/gpfs/hps/ptmp
+		PTMP=/gpfs/hps2/ptmp
 		STMP=/gpfs/hps2/stmp
 		export machine='WCOSS_C'
 		export JOBPHASE=
 		export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/svn/fv3gfs20180204  #temporay setting
 	#        export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/svn/fv3gfs   #temporay setting
 		export HOMEDIR1=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda
+                export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/git_gfs/fv3gfs/flat
+
 		export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
 		SAVE=/gpfs/hps3/emc/$PROJECT/save
 		NOSCRUB=/gpfs/hps3/emc/$PROJECT/noscrub

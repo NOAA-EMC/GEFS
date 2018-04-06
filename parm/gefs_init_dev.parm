@@ -18,6 +18,8 @@
   export initarchlist='00'
   export initarchlist='00 06 12 18'
   export initarchlist='999'
+  export COMINgfs=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/data/FV3EnKF/gfs.$PDY/$cyc
+  export COMINenkf=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/data/FV3EnKF/enkf.gdas.
   echo initarchlist=$initarchlist
 
   echo `date` $0 test section end

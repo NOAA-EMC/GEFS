@@ -147,10 +147,22 @@ export CDATE=$PDY$cyc
 #export OUTDIR=$FV3GESOUT/$mem/${CASE}_$CDATE
 export OUTDIR=$FV3GESOUT
 export ictype=nemsgfs
+if [ $inflag = 7 ] ; then
+ if [ $mem = "c00" ] ; then
+   cp $GESOUT/ge$mem.t$cyc\z.atmanl $INIDIR/gfnanl.gfs.$PDY$cyc                 
+ else
+   cp $GESOUT/ge$mem.t$cyc\z.ratmanl $INIDIR/gfnanl.gfs.$PDY$cyc                 
+ fi  
+#cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc         
+#cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/nsnanl.gfs.$PDY$cyc
+cp $GESOUT/gec00.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc         
+cp $GESOUT/gec00.t$cyc\z.sfcanl $INIDIR/nsnanl.gfs.$PDY$cyc
+else
 cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc                 
 cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc         
 cp $GESOUT/ge$mem.t$cyc\z.nsnanl $INIDIR/nsnanl.gfs.$PDY$cyc
 
+fi
 testfile=$INIDIR/sfnanl.gfs.$PDY$cyc                       
 nsleep=0; tsleep=120;  msleep=50 
 while test ! -s $testfile -a $nsleep -lt $msleep;do
