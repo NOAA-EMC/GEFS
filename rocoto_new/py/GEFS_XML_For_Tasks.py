@@ -611,7 +611,7 @@ def create_task( \
         if taskname == "jgefs_archive":
             strings += ""
         else:
-        strings += sPre + '\t' + '<native>-extsched "CRAYLINUX[]"</native>\n'
+            strings += sPre + '\t' + '<native>-extsched "CRAYLINUX[]"</native>\n'
     elif WHERE_AM_I.upper() == "theia".upper():
         strings += "\n"
     else:
