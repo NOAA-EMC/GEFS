@@ -429,6 +429,25 @@ def create_metatask_task(dicBase, taskname="jgefs_init_fv3chgrs", sPre="\t", Gen
 
 # =======================================================
 def get_jobname(taskname):
+    import os, sys
+    sSep = "/"
+    if sys.platform == 'win32':
+        sSep = r'\\'
+
+    sDefaultJobID_File = sys.path[0] + sSep + "job_id.conf"
+    jobname_short="--"
+    if os.path.exists(sDefaultJobID_File):
+        # print("---Default Job-ID Configure file was found! Reading ...")
+        # print(sDefaultJobID_File)
+        dicJobID = read_jobid_config(sDefaultJobID_File)
+
+        if taskname in dicJobID:
+            jobname_short = dicJobID[taskname]
+            jobname = "&EXPID;@Y@m@d@H_" + jobname_short
+
+            return jobname
+
+    # else if this file does not exist and if the task name is not in the job_id.conf
     tasknames = taskname.split("_")
     if len(tasknames) == 2:
         jobname_short = tasknames[1][0:2] + "_" + tasknames[1][-2:]
@@ -438,6 +457,44 @@ def get_jobname(taskname):
     jobname = "&EXPID;@Y@m@d@H_" + jobname_short
 
     return jobname
+
+# =======================================================
+def read_jobid_config(sConfig):
+    # read config file
+    dicBase={}
+    with open(sConfig, "r")as f:
+        for sLine in f:
+            # print(sLine)
+            sLine = sLine.strip()
+
+            if len(sLine) != 0:
+                if str(sLine).startswith("#"):
+                    # print("This is the comment: {0}".format(sLine))
+                    continue
+                else:
+                    # print(sLine)
+                    a, b = sLine.split("=",1)
+
+                    a = str(a).strip()
+                    b = str(b).strip()
+
+                    if b.startswith('"'):
+                        b = b.replace('"', "",1)
+                    if b.endswith('"'):
+                        b = b[:-1]
+
+                    if b.startswith("'"):
+                        b = b.replace(",", "",1)
+                    if b.endswith(","):
+                        b = b[:-1]
+
+                    b = str(b).strip()
+
+                    dicBase[a] = b
+
+
+    return dicBase
+
 
 # =======================================================
 def create_metatask(taskname="jgefs_init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member#", \
