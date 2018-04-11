@@ -48,7 +48,9 @@ def rw_bin_forecast_high(taskname, dicBase):
         Task_Node = 24
     else:
         Task_Node = 24
-
+    
+    # PPN: Processes per node
+    # TPP: Threads per process
     iTotal_Tasks = layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP
     iNodes = int((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) / (Task_Node / parallel_threads))
     iPPN = int((Task_Node / parallel_threads))
@@ -70,10 +72,10 @@ def rw_bin_forecast_high(taskname, dicBase):
                     sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
 
                 if sLine1.startswith("export OMP_NUM_THREADS="):
-                    sLine = 'export OMP_NUM_THREADS={0}\n'.format(iPPN)
+                    sLine = 'export OMP_NUM_THREADS={0}\n'.format(iTPP)
 
                 if sLine1.startswith("export taskspernode"):
-                    sLine = 'export taskspernode={0}\n'.format(iTPP)
+                    sLine = 'export taskspernode={0}\n'.format(iPPN)
 
             sLines += sLine
             # fh.write(sLine)
