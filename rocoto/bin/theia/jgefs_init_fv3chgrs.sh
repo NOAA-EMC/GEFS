@@ -3,7 +3,6 @@
 
 # EXPORT list here
 set -x
-export NODES=1
 export IOBUF_PARAMS=
 export FORT_BUFFERED=TRUE
 export MKL_CBWR=AVX
@@ -31,33 +30,17 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:2
 
-export total_tasks=48
+export NODES=1
+export total_tasks=12
 export OMP_NUM_THREADS=2
 export taskspernode=12
 
-#export total_tasks=756
-
-#Date and Cycle
-#export cyc=00
-#export PDY=20160415
-#export cyc_fcst=00
-#export job=Aa2016041500100
 export FORECAST_SEGMENT=hr
 
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export gefsmachine=theia
-export gefsmpexec="mpirun -np $total_tasks"
-export gefsmpexec_mpmd="mpirun -np $total_tasks /scratch3/NCEPDEV/nwprod/util/exec/mpiserial"
 export APRUNC="mpirun -np 1"
-export aprun_gec00="mpirun -np 1"
-export NTHREADS_SIGCHGRS=6
-
-cd $SOURCEDIR/control
-
-#. $SOURCEDIR/parm/gefs.parm
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_INIT_FV3CHGRS
-
