@@ -8,7 +8,6 @@ def get_and_merge_default_config(dicBase):
     # To get the WHERE_AM_I from dicBase or identify it using default methode
     get_WHERE_AM_I(dicBase)
     WHERE_AM_I = dicBase["WHERE_AM_I"]
-    dicBase_Default = {}
     sDefaultConfig_File = sys.path[0] + sSep + "user_new_{0}.conf".format(WHERE_AM_I)
 
     if os.path.exists(sDefaultConfig_File):

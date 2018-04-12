@@ -71,8 +71,7 @@ def main():
         if sValue == 'YES' or sValue[0] == 'Y':
             # check gets_dev_parm items in configure file
             print("--Generating files for parm...")
-            gefs_parm.assign_default_for_gets_dev_parm(dicBase)
-            gefs_parm.create_gets_dev_parm(dicBase)
+            gefs_parm.create_parm(sConfig, dicBase)
             print("--Generated files for parm!")
 
     #---
