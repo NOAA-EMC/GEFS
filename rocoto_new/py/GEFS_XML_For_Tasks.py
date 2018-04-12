@@ -648,11 +648,11 @@ def create_task( \
     if sNodes != "":
         if WHERE_AM_I.upper() == "cray".upper():
             if taskname == "jgefs_archive":
-                strings += sPre + '\t\t' + '<nodes>{0}</nodes><shared></shared>\n'.format(sNodes)
+                strings += sPre + '\t' + '<nodes>{0}</nodes><shared></shared>\n'.format(sNodes)
             else:
-                strings += sPre + '\t\t' + '<nodes>{0}</nodes>\n'.format(sNodes)
+                strings += sPre + '\t' + '<nodes>{0}</nodes>\n'.format(sNodes)
         else:
-            strings += sPre + '\t\t' + '<nodes>{0}</nodes>\n'.format(sNodes)
+            strings += sPre + '\t' + '<nodes>{0}</nodes>\n'.format(sNodes)
 
     if WHERE_AM_I.upper() == "cray".upper():
         strings += sPre + '\t' + '<native>-cwd &tmpnwprd;</native>\n'
