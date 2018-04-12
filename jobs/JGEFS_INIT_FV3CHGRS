@@ -122,7 +122,7 @@ env | sort
 module load prod_util hpss >>/dev/null
 #export workflow_ver=v15.0.0
 export BASE_SVN=$HOMEDIR1/fv3gfs
-export BASE_GSM=$HOMEgsm
+export BASE_GSM=$HOMEgfs
 #export CASE=$CASEHR
 #-- create ICs using operational GFS initial conditions
 
@@ -160,7 +160,7 @@ nsleep=0; tsleep=120;  msleep=50
 while test ! -s $testfile -a $nsleep -lt $msleep;do
   sleep $tsleep; nsleep=`expr $nsleep + 1`
 done
-$USHgsm/global_chgres_driver.sh
+$HOMEgfs/ush/global_chgres_driver.sh
 
 #.......................................................
 

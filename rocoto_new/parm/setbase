@@ -90,7 +90,7 @@ if [ -d /scratch4/NCEPDEV ]; then
 	export memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc'
 
 	export HOMEenkf=$HOMEgsm/sorc/gsi.fd
-	export HOMEpost=$HOMEgsm/sorc/upp.fd
+	export HOMEpost=$HOMEgsm/post4fv3
 
 	export I_MPI_EXTRA_FILESYSTEM=on
 	export I_MPI_EXTRA_FILESYSTEM_LIST=lustre:panfs
@@ -125,6 +125,7 @@ elif [ -d /gpfs/hps3 ]; then
 		export machine='WCOSS_C'
 		export JOBPHASE=
 		export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/svn/fv3gfs20180204  #temporay setting
+                export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/git_gfs/fv3gfs/tic21f/
 		export HOMEDIR1=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda
 		export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
 		SAVE=/gpfs/hps3/emc/$PROJECT/save

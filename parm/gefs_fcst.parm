@@ -67,11 +67,11 @@ export n_split=${n_split:-6}
 
 # OTHER FV# FCST related environment
 export warm_start=.false.
-export BASE_GSM=$HOMEgsm
+export BASE_GSM=$HOMEgfs
 REMAP_GRID=none     # temporay setting, to void the latlon default
 export REMAP_GRID=${REMAP_GRID:-latlon}        #gaussian or latlon for using fregrid or regrid_nemsio for remapping
-export DIAG_TABLE=${DIAG_TABLE:-$HOMEgsm/parm/parm_fv3diag/diag_table}
-# export FIELD_TABLE=${FIELD_TABLE:-$HOMEgsm/parm/parm_fv3diag/field_table_gfdl}
+#export DIAG_TABLE=${DIAG_TABLE:-$HOMEgfs/parm/parm_fv3diag/diag_table}
+# export FIELD_TABLE=${FIELD_TABLE:-$HOMEgfs/parm/parm_fv3diag/field_table_gfdl}
 
 #gfs_physics
 export FHZERO=${FHZER:-6}

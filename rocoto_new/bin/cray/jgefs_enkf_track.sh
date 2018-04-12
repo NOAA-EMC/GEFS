@@ -32,10 +32,10 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 export expid=${EXPID}
 export SOURCEDIR=${SOURCEDIR}
 export WORKDIR=${WORKDIR}
-
-# CALL executable job script here
 . $GEFS_ROCOTO/parm/setbase
 . $GEFS_ROCOTO/parm/gefs_config
 . $GEFS_ROCOTO/parm/gefs_dev.parm
+
+# CALL executable job script here
 
 $SOURCEDIR/jobs/JGEFS_ENKF_TRACK

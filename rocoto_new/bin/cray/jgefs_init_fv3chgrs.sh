@@ -49,6 +49,8 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 export expid=${EXPID}
 
 export APRUNC="aprun"
+export APRUNC="aprun -b -j1 -n1 -N1 -d24 -cc depth"
+
 
 . $GEFS_ROCOTO/parm/setbase
 . $GEFS_ROCOTO/parm/gefs_config

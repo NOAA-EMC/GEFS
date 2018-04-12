@@ -82,7 +82,7 @@ if [ -d /scratch4/NCEPDEV ]; then
 
 	export NDATE=${NDATE:-$EXECutil/ndate}
 
-	export HOMEgsm=$HOMEDIR/global_shared.v15.0.0
+	export HOMEgsm=$HOMEDIR
 	export HOMEgsm1=$HOMEDIR1/global_shared.v15.0.0
 	export FCSTEXECDIR=$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe
 	export nemsioget=$HOMEgsm/exec/nemsio_get
@@ -90,7 +90,7 @@ if [ -d /scratch4/NCEPDEV ]; then
 	export memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc'
 
 	export HOMEenkf=$HOMEgsm/sorc/gsi.fd
-	export HOMEpost=$HOMEgsm/sorc/upp.fd
+#	export HOMEpost=$HOMEgsm/sorc/upp.fd
 
 	export I_MPI_EXTRA_FILESYSTEM=on
 	export I_MPI_EXTRA_FILESYSTEM_LIST=lustre:panfs

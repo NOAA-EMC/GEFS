@@ -123,7 +123,7 @@ export cycp=`echo $pdycycp|cut -c9-10`
 
 for imem in $(seq 1 $recentmem); do
    memchar="mem"$(printf %03i $imem)
-   $NLN $COMINenkf$pdyp/$cycp/$memchar/gdas.t${cycp}z.atmf006s.nemsio ./atmf006_$memchar
+   $NLN $COMINenkf$pdyp/$cycp/$memchar/gdas.t${cycp}z.atmf006.nemsio ./atmf006_$memchar
 done
 
 

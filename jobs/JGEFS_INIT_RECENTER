@@ -24,10 +24,6 @@ date
 ###########################################
 # Run gefs_config to get input parameters
 ###########################################
-if [ "$RUN_ENVIR" = dev ]; then ### For Developers
-# . $basesource/nw${envir}/versions/gefs.ver
-	. $basesource/nwdev/parm/gefs_config
-fi
 
 export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
 
@@ -138,8 +134,8 @@ echo locations of scripts and executables
 ##############################################
 echo location of EnKF utility executable
 export XC=.x
-export GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-${HOMEenkf}/exec/getsigensmeanp_smooth$XC}
-export RECENATMEXEC=${RECENATMEXEC:-${HOMEenkf}/exec/recentersigp$XC}
+export GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-${HOMEgfs}/exec/getsigensmeanp_smooth$XC}
+export RECENATMEXEC=${RECENATMEXEC:-${HOMEgfs}/exec/recentersigp$XC}
 
 
 echo location of nemsioget
