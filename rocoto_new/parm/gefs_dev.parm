@@ -42,6 +42,7 @@ export saveflux=yes
 export savesfcsig=no
 
 export sigzvd=no
+
  export COMINgfs=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/data/FV3EnKF/gfs.$PDY/$cyc
   export COMINenkf=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/data/FV3EnKF/enkf.gdas.
 
