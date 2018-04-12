@@ -46,7 +46,7 @@ export aprun_gec00="mpirun -np 1"
 export NTHREADS_SIGCHGRS=6
 
 cd $SOURCEDIR/control
-. $SOURCEDIR/control/setbase
+
 #. $SOURCEDIR/parm/gefs.parm
 
 # CALL executable job script here
