@@ -1,0 +1,709 @@
+diff --git a/rocoto/bin/cray/jgefs_enkf_track.sh b/rocoto/bin/cray/jgefs_enkf_track.sh
+index 6f4c242..44f5336 100755
+--- a/rocoto/bin/cray/jgefs_enkf_track.sh
++++ b/rocoto/bin/cray/jgefs_enkf_track.sh
+@@ -2,7 +2,6 @@
+ 
+ # EXPORT list here
+ set -x
+-export NODES=2
+ export IOBUF_PARAMS=
+ export FORT_BUFFERED=TRUE
+ export MKL_CBWR=AVX
+@@ -20,37 +19,23 @@ export KMP_STACKSIZE=1024m
+ export OMP_NUM_THREADS=1
+ export KMP_AFFINITY=disabled
+ 
+-#export OMP_NUM_THREADS=1
+-export KMP_AFFINITY=disabled
+-
+ export MP_EUIDEVICE=sn_all
+ export MP_EUILIB=us
+ export MP_SHARED_MEMORY=no
+ export MEMORY_AFFINITY=core:1
+ 
+-export total_tasks=40
+-export OMP_NUM_THREADS=1
+-export taskspernode=20
+-
+-#Date and Cycle
+-#export cyc=00
+-#export cyc_fcst=00
+-#export PDY=20160415
+-#export job=Aa2016041500010
++export gefsmpexec_mpmd="  aprun -b -j1 -n40 -N20 -d1 -cc depth  cfp mpmd_cmdfile"
+ 
+ # export for development runs only begin
+ export envir=${envir:-dev}
+ export RUN_ENVIR=${RUN_ENVIR:-dev}
+-export gefsmachine=cray
+-export gefsmpexec=" aprun -b -j1 -n40 -N20 -d1 -cc depth "
+-export gefsmpexec_mpmd="  aprun -b -j1 -n40 -N20 -d1 -cc depth  cfp mpmd_cmdfile"
+-export APRUNC="aprun"
+-export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
+-export NTHREADS_SIGCHGRS=6
+-
+-cd $SOURCEDIR/control
+-. $SOURCEDIR/control/setbase
+-#. $SOURCEDIR/parm/gefs.parm
++
++
++
+ 
+ # CALL executable job script here
++
++
++
++
+ $SOURCEDIR/jobs/JGEFS_ENKF_TRACK
+diff --git a/rocoto/bin/cray/jgefs_enspost.sh b/rocoto/bin/cray/jgefs_enspost.sh
+index 206529b..b6ac368 100755
+--- a/rocoto/bin/cray/jgefs_enspost.sh
++++ b/rocoto/bin/cray/jgefs_enspost.sh
+@@ -2,33 +2,17 @@
+ 
+ # EXPORT list here
+ set -x
+-export NODES=1
+ export IOBUF_PARAMS=*pgrb2*:size=64M:count=4:verbose,*enspost_grb2*:size=64M:count=4:verbose,*ensstat_grb2*:size=64M:count=4:verbose,*pq?f*:size=64M:count=4:verbose
+ export FORT_BUFFERED=TRUE
+ 
+-#Date and Cycle
+-#export cyc=00
+-#export cyc_fcst=00
+-#export job=Aa2016041500395
+-#export RUNMEM=gec00
+-export FORECAST_SEGMENT=lr
+-
+-#export gefsmpexec_mpmd=mpirun.lsf
+-
+ # export for development runs only begin
+ export envir=${envir:-dev}
+ export RUN_ENVIR=${RUN_ENVIR:-dev}
+-export gefsmachine=cray
+-export gefsmpexec=" aprun -b -j1 -n1 -N1 -d24 -cc depth "
+-export gefsmpexec_mpmd="  aprun -b -j1 -n1 -N1 -d24 -cc depth  cfp mpmd_cmdfile"
+-export APRUNC="aprun"
+-export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
+-export NTHREADS_SIGCHGRS=6
+-
+-cd $SOURCEDIR/control
+-. $SOURCEDIR/control/setbase
+-#. $SOURCEDIR/parm/gefs.parm
++
+ 
+ # CALL executable job script here
+-$SOURCEDIR/jobs/JGEFS_ENSPOST
++
++
++
+ 
++$SOURCEDIR/jobs/JGEFS_ENSPOST
+diff --git a/rocoto/bin/cray/jgefs_ensstat_high.sh b/rocoto/bin/cray/jgefs_ensstat_high.sh
+index 7514255..9d4be9c 100755
+--- a/rocoto/bin/cray/jgefs_ensstat_high.sh
++++ b/rocoto/bin/cray/jgefs_ensstat_high.sh
+@@ -2,7 +2,7 @@
+ 
+ # EXPORT list here
+ set -x
+-export NODES=1
++
+ export IOBUF_PARAMS=cfi*:size=64M:count=4:verbose
+ export FORT_BUFFERED=TRUE
+ export MKL_CBWR=AVX
+@@ -34,28 +34,19 @@ export total_tasks=2
+ export OMP_NUM_THREADS=4
+ export taskspernode=2
+ 
+-#Date and cycle
+-#export envir=dev
+-#export cyc=00
+-#export cyc_fcst=00
+-#export job=Aa2016041500194
+-#export RUNMEM=gec00
+ export FORECAST_SEGMENT=hr
+ 
+ # export for development runs only begin
+ export envir=${envir:-dev}
+ export RUN_ENVIR=${RUN_ENVIR:-dev}
+-export gefsmachine=cray
+-export gefsmpexec=" aprun -b -j1 -n2 -N2 -d4 -cc depth "
+-export gefsmpexec_mpmd="  aprun -b -j1 -n2 -N2 -d4 -cc depth  cfp mpmd_cmdfile"
+-export APRUNC="aprun"
+-export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
+-export NTHREADS_SIGCHGRS=6
+ 
+-cd $SOURCEDIR/control
+-. $SOURCEDIR/control/setbase
+-#. $SOURCEDIR/parm/gefs.parm
++export gefsmpexec_mpmd="aprun -b -j1 -n2 -N2 -d4 -cc depth cfp mpmd_cmdfile"
+ 
+ # CALL executable job script here
+-$SOURCEDIR/jobs/JGEFS_ENSSTAT
++
+ 
++
++
++
++
++$SOURCEDIR/jobs/JGEFS_ENSSTAT
+diff --git a/rocoto/bin/cray/jgefs_forecast_high.sh b/rocoto/bin/cray/jgefs_forecast_high.sh
+index 98fb43c..dbc290e 100755
+--- a/rocoto/bin/cray/jgefs_forecast_high.sh
++++ b/rocoto/bin/cray/jgefs_forecast_high.sh
+@@ -3,7 +3,6 @@
+ 
+ # EXPORT list here
+ set -x
+-export NODES=20
+ export IOBUF_PARAMS=
+ export FORT_BUFFERED=TRUE
+ export MKL_CBWR=AVX
+@@ -30,32 +29,21 @@ export MP_EUILIB=us
+ export MP_SHARED_MEMORY=yes
+ export MEMORY_AFFINITY=core:2
+ 
+-export total_tasks=240 
+-export OMP_NUM_THREADS=2
+-export taskspernode=12
+-
+-#export total_tasks=756
+-
+-#Date and Cycle
+-#export cyc=00
+-#export PDY=20160415
+-#export cyc_fcst=00
+-#export job=Aa2016041500100
+ export FORECAST_SEGMENT=hr
+ 
+ # export for development runs only begin
+ export envir=${envir:-dev}
+ export RUN_ENVIR=${RUN_ENVIR:-dev}
+-export gefsmachine=cray
++
++
++
++
+ export gefsmpexec=" aprun -b -j1 -n240 -N12 -d2 -cc depth "
+-export gefsmpexec_mpmd="  aprun -b -j1 -n756 -N6 -d4 -cc depth  cfp mpmd_cmdfile"
+-export APRUNC="aprun"
+-export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
+-export NTHREADS_SIGCHGRS=6
+-
+-cd $SOURCEDIR/control
+-. $SOURCEDIR/control/setbase
+-#. $SOURCEDIR/parm/gefs.parm
++export NTHREADS_SIGCHGRS=2
++
++
++
++
+ 
+ # CALL executable job script here
+ $SOURCEDIR/jobs/JGEFS_FORECAST_FV3
+diff --git a/rocoto/bin/cray/jgefs_init_combine.sh b/rocoto/bin/cray/jgefs_init_combine.sh
+index b1cbfce..5c32fb7 100755
+--- a/rocoto/bin/cray/jgefs_init_combine.sh
++++ b/rocoto/bin/cray/jgefs_init_combine.sh
+@@ -2,7 +2,6 @@
+ 
+ # EXPORT list here
+ set -x
+-export NODES=20
+ export IOBUF_PARAMS=
+ export FORT_BUFFERED=TRUE
+ export MKL_CBWR=AVX
+@@ -30,32 +29,22 @@ export MP_EUILIB=us
+ export MP_SHARED_MEMORY=no
+ export MEMORY_AFFINITY=core:1
+ 
++export NODES=20
+ export total_tasks=40
+ export OMP_NUM_THREADS=1
+ export taskspernode=2
+ 
+-#export total_tasks=40
+-
+-#Date and Cycle
+-#export cyc=00
+-#export PDY=20160415
+-#export cyc_fcst=00
+-#export job=Aa2016041500014
++export gefsmpexec_mpmd="  aprun -b -j1 -n40 -N2 -d1 -cc depth  cfp mpmd_cmdfile"
+ 
+-# export for development runs only begin
+ export envir=${envir:-dev}
+ export RUN_ENVIR=${RUN_ENVIR:-dev}
+-export gefsmachine=cray
+-export gefsmpexec=" aprun -b -j1 -n40 -N2 -d1 -cc depth "
+-export gefsmpexec_mpmd="  aprun -b -j1 -n40 -N2 -d1 -cc depth  cfp mpmd_cmdfile"
+-export APRUNC="aprun"
+-export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
+-export NTHREADS_SIGCHGRS=6
+-
+-cd $SOURCEDIR/control
+-. $SOURCEDIR/control/setbase
+-#. $SOURCEDIR/parm/gefs.parm
+ 
+ # CALL executable job script here
++
++
++
++
++
++
+ $SOURCEDIR/jobs/JGEFS_INIT_COMBINE
+ 
+diff --git a/rocoto/bin/cray/jgefs_init_fv3chgrs.sh b/rocoto/bin/cray/jgefs_init_fv3chgrs.sh
+index dd6fdd6..3c3ed6e 100755
+--- a/rocoto/bin/cray/jgefs_init_fv3chgrs.sh
++++ b/rocoto/bin/cray/jgefs_init_fv3chgrs.sh
+@@ -3,7 +3,6 @@
+ 
+ # EXPORT list here
+ set -x
+-export NODES=1
+ export IOBUF_PARAMS=
+ export FORT_BUFFERED=TRUE
+ export MKL_CBWR=AVX
+@@ -35,33 +34,24 @@ export MEMORY_AFFINITY=core:2
+ module load NetCDF-intel-haswell/4.2
+ module load nco-gnu-sandybridge/4.4.4
+ 
+-export total_tasks=48
++export NODES=1
++export total_tasks=12
+ export OMP_NUM_THREADS=2
+ export taskspernode=12
+ 
+-#export total_tasks=756
+-
+-#Date and Cycle
+-#export cyc=00
+-#export PDY=20160415
+-#export cyc_fcst=00
+-#export job=Aa2016041500100
+ export FORECAST_SEGMENT=hr
+ 
+ # export for development runs only begin
+ export envir=${envir:-dev}
+ export RUN_ENVIR=${RUN_ENVIR:-dev}
+-export gefsmachine=cray
+-export gefsmpexec=" aprun -b -j1 -n1 -N12 -d2 -cc depth "
+-export gefsmpexec_mpmd="  aprun -b -j1 -n756 -N6 -d4 -cc depth  cfp mpmd_cmdfile"
++
++# CALL executable job script here
++
++
+ export APRUNC="aprun"
+-export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
+-export NTHREADS_SIGCHGRS=6
+ 
+-cd $SOURCEDIR/control
+-. $SOURCEDIR/control/setbase
+-#. $SOURCEDIR/parm/gefs.parm
++
++
++
+ 
+-# CALL executable job script here
+ $SOURCEDIR/jobs/JGEFS_INIT_FV3CHGRS
+-
+diff --git a/rocoto/bin/cray/jgefs_init_process.sh b/rocoto/bin/cray/jgefs_init_process.sh
+index 888bd34..ae6511c 100755
+--- a/rocoto/bin/cray/jgefs_init_process.sh
++++ b/rocoto/bin/cray/jgefs_init_process.sh
+@@ -2,7 +2,6 @@
+ 
+ # EXPORT list here
+ set -x
+-export NODES=5
+ export IOBUF_PARAMS=
+ export FORT_BUFFERED=TRUE
+ export MKL_CBWR=AVX
+@@ -29,32 +28,22 @@ export MP_EUILIB=us
+ export MP_SHARED_MEMORY=no
+ export MEMORY_AFFINITY=core:6
+ 
+-export total_tasks=20
++export total_tasks=32
+ export OMP_NUM_THREADS=6
+ export taskspernode=4
+ 
+-#export total_tasks=20
+-
+-#Date and Cycle
+-#export PDY=20160415
+-#export cyc=00
+-#export cyc_fcst=00
+-#export job=Aa2016041500013
+-
+ # export for development runs only begin
+ export envir=${envir:-dev}
+ export RUN_ENVIR=${RUN_ENVIR:-dev}
+-export gefsmachine=cray
++
+ export gefsmpexec=" aprun -b -j1 -n32 -N4 -d6 -cc depth "
+-export gefsmpexec_mpmd="  aprun -b -j1 -n32 -N4 -d6 -cc depth  cfp mpmd_cmdfile"
+-export APRUNC="aprun"
+-export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
+ export NTHREADS_SIGCHGRS=6
+ 
+-cd $SOURCEDIR/control
+-. $SOURCEDIR/control/setbase
+-#. $SOURCEDIR/parm/gefs.parm
+-
+ # CALL executable job script here
+-$SOURCEDIR/jobs/JGEFS_INIT_PROCESS
++
++
++
++
++
+ 
++$SOURCEDIR/jobs/JGEFS_INIT_PROCESS
+diff --git a/rocoto/bin/cray/jgefs_init_separate.sh b/rocoto/bin/cray/jgefs_init_separate.sh
+index 8b9f550..1b4b959 100755
+--- a/rocoto/bin/cray/jgefs_init_separate.sh
++++ b/rocoto/bin/cray/jgefs_init_separate.sh
+@@ -2,7 +2,6 @@
+ 
+ # EXPORT list here
+ set -x
+-export NODES=10
+ export IOBUF_PARAMS=
+ export FORT_BUFFERED=TRUE
+ export MKL_CBWR=AVX
+@@ -19,8 +18,8 @@ export MPICH_VERSION_DISPLAY=1
+ export MPICH_CPUMASK_DISPLAY=1
+ 
+ export KMP_STACKSIZE=1024m
+-export OMP_NUM_THREADS=6
+ export KMP_AFFINITY=disabled
++export OMP_NUM_THREADS=6
+ 
+ #export OMP_NUM_THREADS=6
+ export KMP_AFFINITY=disabled
+@@ -30,9 +29,6 @@ export MP_EUILIB=us
+ export MP_SHARED_MEMORY=no
+ export MEMORY_AFFINITY=core:6
+ 
+-export total_tasks=40
+-export OMP_NUM_THREADS=6
+-export taskspernode=4
+ export MP_TASK_AFFINITY=cpu:6
+ export MP_USE_BULK_XFER=yes
+ export MP_STDOUTMODE=unordered
+@@ -41,26 +37,23 @@ export MP_COREFILE_FORMAT=core.txt
+ export OMP_STACKSIZE=3G
+ export MP_COMPILER=intel
+ 
+-#Date and Cycle
+-#export cyc=00
+-#export PDY=20160415
+-#export cyc_fcst=00
+-#export job=Aa2016041500012
+-
+-# export for development runs only begin
+ export envir=${envir:-dev}
+ export RUN_ENVIR=${RUN_ENVIR:-dev}
+-export gefsmachine=cray
+-export gefsmpexec=" aprun -b -j1 -n40 -N4 -d6 -cc depth "
++
++
++export NODES=10
++export total_tasks=40
++export OMP_NUM_THREADS=6
++export taskspernode=4
++
+ export gefsmpexec_mpmd="  aprun -b -j1 -n40 -N4 -d6 -cc depth  cfp mpmd_cmdfile"
+-export APRUNC="aprun"
+ export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
+-export NTHREADS_SIGCHGRS=6
++export APRUNC="aprun"
+ 
+-cd $SOURCEDIR/control
+-. $SOURCEDIR/control/setbase
+-#. $SOURCEDIR/parm/gefs.parm
++# export for development runs only begin
++
++
++
+ 
+ # CALL executable job script here
+ $SOURCEDIR/jobs/JGEFS_INIT_SEPARATE
+-
+diff --git a/rocoto/bin/cray/jgefs_post_genesis.sh b/rocoto/bin/cray/jgefs_post_genesis.sh
+index 6f126ba..9e284d2 100755
+--- a/rocoto/bin/cray/jgefs_post_genesis.sh
++++ b/rocoto/bin/cray/jgefs_post_genesis.sh
+@@ -2,7 +2,6 @@
+ 
+ # EXPORT list here
+ set -x
+-export NODES=3
+ export IOBUF_PARAMS=*:size=32M:count=4:verbose
+ export FORT_BUFFERED=TRUE
+ export MKL_CBWR=AVX
+@@ -34,29 +33,18 @@ export total_tasks=21
+ export OMP_NUM_THREADS=1
+ export taskspernode=7
+ 
+-#Date and Cycle
+-#export cyc=00
+-#export cyc_fcst=00
+-#export job=Aa2016041500397
+-#export RUNMEM=gec00
+ export FORECAST_SEGMENT=lr
+ 
+-#export gefsmpexec_mpmd=mpirun.lsf
+-
++export gefsmpexec_mpmd="  aprun -b -j1 -n21 -N7 -d1 -cc depth  cfp mpmd_cmdfile"
+ # export for development runs only begin
+ export envir=${envir:-dev}
+ export RUN_ENVIR=${RUN_ENVIR:-dev}
+-export gefsmachine=cray
+-export gefsmpexec=" aprun -b -j1 -n21 -N7 -d1 -cc depth "
+-export gefsmpexec_mpmd="  aprun -b -j1 -n21 -N7 -d1 -cc depth  cfp mpmd_cmdfile"
+-export APRUNC="aprun"
+-export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
+-export NTHREADS_SIGCHGRS=6
+ 
++# CALL executable job script here
++
+ 
+-cd $SOURCEDIR/control
+-. $SOURCEDIR/control/setbase
+-#. $SOURCEDIR/parm/gefs.parm
++
++
++
+ 
+-# CALL executable job script here
+ $SOURCEDIR/jobs/JGEFS_POST_GENESIS
+diff --git a/rocoto/bin/cray/jgefs_post_high.sh b/rocoto/bin/cray/jgefs_post_high.sh
+index 35d858f..c3d00b6 100755
+--- a/rocoto/bin/cray/jgefs_post_high.sh
++++ b/rocoto/bin/cray/jgefs_post_high.sh
+@@ -3,7 +3,7 @@
+ 
+ # EXPORT list here
+ set -x
+-export NODES=2
++
+ export IOBUF_PARAMS=
+ export FORT_BUFFERED=TRUE
+ export MKL_CBWR=AVX
+@@ -31,37 +31,24 @@ export MP_EUILIB=us
+ export MP_SHARED_MEMORY=yes
+ export MEMORY_AFFINITY=core:2
+ 
++export NODES=2
+ export total_tasks=24
+ export OMP_NUM_THREADS=2
+ export taskspernode=12
+ export POSTGRB2TBL=/gpfs/hps/nco/ops/nwprod/lib/g2tmpl/v1.3.0/src/params_grib2_tbl_new
+ 
+-#export total_tasks=12
+-
+-#Date and Cycle
+-#export cyc=00
+-#export PDY=20160415
+-#export cyc_fcst=00
+-#export job=Aa2016041500102
+-#export RUNMEM=gep01
+ export FORECAST_SEGMENT=hr
+-#export SUBJOB=A
+-
+-#export gefsmpexec_mpmd=mpirun.lsf
+ 
+-# export for development runs only begin
+ export envir=${envir:-dev}
+ export RUN_ENVIR=${RUN_ENVIR:-dev}
+-export gefsmachine=cray
+-export gefsmpexec=" aprun -b -j1 -n24 -N12 -d2 -cc depth "
+-export gefsmpexec_mpmd="  aprun -b -j1 -n24 -N12 -d2 -cc depth  cfp mpmd_cmdfile"
+-export APRUNC="aprun"
+-export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
+-export NTHREADS_SIGCHGRS=6
+ 
+-cd $SOURCEDIR/control
+-. $SOURCEDIR/control/setbase
+-#. $SOURCEDIR/parm/gefs.parm
++
++
++export gefsmpexec=" aprun -b -j1 -n24 -N12 -d2 -cc depth "
+ 
+ # CALL executable job script here
++
++
++
++
+ $SOURCEDIR/jobs/JGEFS_NCEPPOST
+diff --git a/rocoto/bin/cray/jgefs_post_track.sh b/rocoto/bin/cray/jgefs_post_track.sh
+index 5df510f..a749b83 100755
+--- a/rocoto/bin/cray/jgefs_post_track.sh
++++ b/rocoto/bin/cray/jgefs_post_track.sh
+@@ -2,7 +2,6 @@
+ 
+ # EXPORT list here
+ set -x
+-export NODES=3
+ export IOBUF_PARAMS=*:size=32M:count=4:verbose
+ export FORT_BUFFERED=TRUE
+ export MKL_CBWR=AVX
+@@ -30,32 +29,20 @@ export MP_EUILIB=us
+ export MP_SHARED_MEMORY=no
+ export MEMORY_AFFINITY=core:1
+ 
++export NODES=3
+ export total_tasks=21
+ export OMP_NUM_THREADS=1
+ export taskspernode=7
+ 
+-#Date and Cycle
+-#export cyc=00
+-#export cyc_fcst=00
+-#export job=Aa2016041500396
+-#export RUNMEM=gec00
+-export FORECAST_SEGMENT=lr
+-
+-#export gefsmpexec_mpmd=mpirun.lsf
+-
+ # export for development runs only begin
+ export envir=${envir:-dev}
+ export RUN_ENVIR=${RUN_ENVIR:-dev}
+-export gefsmachine=cray
+-export gefsmpexec=" aprun -b -j1 -n21 -N7 -d1 -cc depth "
+-export gefsmpexec_mpmd="  aprun -b -j1 -n21 -N7 -d1 -cc depth  cfp mpmd_cmdfile"
+-export APRUNC="aprun"
+-export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
+-export NTHREADS_SIGCHGRS=6
++
+ 
+-cd $SOURCEDIR/control
+-. $SOURCEDIR/control/setbase
+-#. $SOURCEDIR/parm/gefs.parm
++export gefsmpexec_mpmd="  aprun -b -j1 -n21 -N7 -d1 -cc depth  cfp mpmd_cmdfile"
+ 
+ # CALL executable job script here
++
++
++
+ $SOURCEDIR/jobs/JGEFS_POST_TRACK
+diff --git a/rocoto/bin/cray/jgefs_pqpf.sh b/rocoto/bin/cray/jgefs_pqpf.sh
+index 8a669dd..0e0ba3d 100755
+--- a/rocoto/bin/cray/jgefs_pqpf.sh
++++ b/rocoto/bin/cray/jgefs_pqpf.sh
+@@ -2,7 +2,6 @@
+ 
+ # EXPORT list here
+ set -x
+-export NODES=1
+ export IOBUF_PARAMS=
+ export FORT_BUFFERED=TRUE
+ export MKL_CBWR=AVX
+@@ -30,34 +29,20 @@ export MP_EUILIB=us
+ export MP_SHARED_MEMORY=no
+ export MEMORY_AFFINITY=core:1
+ 
+-export total_tasks=16
+-export OMP_NUM_THREADS=1
+-export taskspernode=16
+-
+-#export total_tasks=16
+-
+-#Date and Cycle
+-#export cyc=00
+-#export cyc_fcst=00
+-#export job=Aa2016041500398
+-#export RUNMEM=gec00
+-export FORECAST_SEGMENT=lr
+-
+-#export gefsmpexec_mpmd=mpirun.lsf
+-
+ # export for development runs only begin
+ export envir=${envir:-dev}
+ export RUN_ENVIR=${RUN_ENVIR:-dev}
+-export gefsmachine=cray
+-export gefsmpexec=" aprun -b -j1 -n16 -N16 -d1 -cc depth "
+-export gefsmpexec_mpmd="  aprun -b -j1 -n16 -N16 -d1 -cc depth  cfp mpmd_cmdfile"
+-export APRUNC="aprun"
+-export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
+-export NTHREADS_SIGCHGRS=6
++
+ 
+-cd $SOURCEDIR/control
+-. $SOURCEDIR/control/setbase
+-#. $SOURCEDIR/parm/gefs.parm
++export NODES=1
++export total_tasks=16
++export OMP_NUM_THREADS=1
++export taskspernode=16
+ 
++export gefsmpexec=" aprun -b -j1 -n16 -N16 -d1 -cc depth "
+ # CALL executable job script here
++
++
++
++
+ $SOURCEDIR/jobs/JGEFS_CQPF
+diff --git a/rocoto/bin/cray/jgefs_prdgen_high.sh b/rocoto/bin/cray/jgefs_prdgen_high.sh
+index 3213bb5..27a78a4 100755
+--- a/rocoto/bin/cray/jgefs_prdgen_high.sh
++++ b/rocoto/bin/cray/jgefs_prdgen_high.sh
+@@ -3,7 +3,7 @@
+ 
+ # EXPORT list here
+ set -x
+-export NODES=1
++
+ export IOBUF_PARAMS=*:size=64M:count=4:verbose
+ export FORT_BUFFERED=TRUE
+ export MKL_CBWR=AVX
+@@ -31,34 +31,25 @@ export MP_EUILIB=us
+ export MP_SHARED_MEMORY=yes
+ export MEMORY_AFFINITY=core:4
+ 
+-export total_tasks=3
++export NODES=1
++export total_tasks=5
+ export OMP_NUM_THREADS=4
+-export taskspernode=3
++export taskspernode=5
+ 
+-#Date and Cycle
+-#export PDY=20160415
+-#export cyc=00
+-#export cyc_fcst=00
+-#export job=Aa2016041500103
+-#export RUNMEM=gep01
+ export FORECAST_SEGMENT=hr
+ export DO_LOW_RES=
+ 
+-export gefsmpexec_mpmd=mpirun.lsf
++export gefsmpexec_mpmd="  aprun -b -j1 -n5 -N5 -d4 -cc depth  cfp mpmd_cmdfile"
+ 
+ # export for development runs only begin
+ export envir=${envir:-dev}
+ export RUN_ENVIR=${RUN_ENVIR:-dev}
+-export gefsmachine=cray
+-export gefsmpexec=" aprun -b -j1 -n5 -N5 -d4 -cc depth "
+-export gefsmpexec_mpmd="  aprun -b -j1 -n5 -N5 -d4 -cc depth  cfp mpmd_cmdfile"
+-export APRUNC="aprun"
+-export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
+-export NTHREADS_SIGCHGRS=6
+-
+-cd $SOURCEDIR/control
+-. $SOURCEDIR/control/setbase
+-#. $SOURCEDIR/parm/gefs.parm
+ 
+ # CALL executable job script here
++
++
++
++
++
++
+ $SOURCEDIR/jobs/JGEFS_PRDGEN

@@ -34,16 +34,16 @@ export FORECAST_SEGMENT=hr
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export expid=${EXPID}
-export SOURCEDIR=${SOURCEDIR}
-export WORKDIR=${WORKDIR}
+
+
+
 
 export gefsmpexec=" aprun -b -j1 -n240 -N12 -d2 -cc depth "
 export NTHREADS_SIGCHGRS=2
 
-. $GEFS_ROCOTO/parm/setbase
-. $GEFS_ROCOTO/parm/gefs_config
-. $GEFS_ROCOTO/parm/gefs_dev.parm
+
+
+
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_FORECAST_FV3

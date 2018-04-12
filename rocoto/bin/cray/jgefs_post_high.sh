@@ -42,13 +42,13 @@ export FORECAST_SEGMENT=hr
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 
-export expid=${EXPID}
+
 
 export gefsmpexec=" aprun -b -j1 -n24 -N12 -d2 -cc depth "
 
 # CALL executable job script here
-. $GEFS_ROCOTO/parm/setbase
-. $GEFS_ROCOTO/parm/gefs_config
-. $GEFS_ROCOTO/parm/gefs_dev.parm
+
+
+
 
 $SOURCEDIR/jobs/JGEFS_NCEPPOST
