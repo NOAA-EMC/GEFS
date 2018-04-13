@@ -12,10 +12,12 @@ def get_lstParm(sConfig, dicBase):
     get_and_merge_default_dicParm(dicBaseParm, WHERE_AM_I)
 
     return list(dicBaseParm.keys())
+
 #=======================================================
 def read_dicParm(sConfig):
     # read config file
-    dicBaseParm={}
+    from collections import OrderedDict
+    dicBaseParm = OrderedDict()
     IsParm = False
     StartParm = "# Start Parm"
     EndParm = "# End Parm"
@@ -59,7 +61,6 @@ def read_dicParm(sConfig):
 
                     dicBaseParm[a] = b
 
-
     return dicBaseParm
 
 #=======================================================
@@ -83,13 +84,12 @@ def get_and_merge_default_dicParm(dicParm, WHERE_AM_I):
 
 
 def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
-
     # ==
     sVarName_Num = "MEM_Num".upper()
     MEM_Num = int(dicBase[sVarName_Num])
 
     sVarName = "npair"
-    dicBase[sVarName.upper()] = int(MEM_Num/2)
+    dicBase[sVarName.upper()] = int(MEM_Num / 2)
     if sVarName not in lstBaseParm:
         lstBaseParm.append(sVarName)
     # ==
@@ -125,7 +125,7 @@ def create_gets_dev_parm(dicBase, listBaseParm):
     if not os.path.exists(sPath):
         os.mkdir(sPath)
 
-    sgefs_dev_parm_File = sPath + sSep +"gefs_dev.parm"
+    sgefs_dev_parm_File = sPath + sSep + "gefs_dev.parm"
     fh = open(sgefs_dev_parm_File, 'w')
 
     fh.write(strings)
@@ -245,7 +245,7 @@ def assign_default_for_gets_dev_parm0(dicBase):
     sVarName = "npair".upper()
     sVarName_Num = "MEM_Num".upper()
     MEM_Num = int(dicBase[sVarName_Num])
-    dicBase[sVarName] = int(MEM_Num/2)
+    dicBase[sVarName] = int(MEM_Num / 2)
 
     # ==
     sVarName = "npert".upper()
@@ -451,7 +451,7 @@ def create_gets_dev_parm0(dicBase):
     if not os.path.exists(sPath):
         os.mkdir(sPath)
 
-    sgefs_dev_parm_File = sPath + sSep +"gefs_dev.parm"
+    sgefs_dev_parm_File = sPath + sSep + "gefs_dev.parm"
     fh = open(sgefs_dev_parm_File, 'w')
 
     fh.write(strings)

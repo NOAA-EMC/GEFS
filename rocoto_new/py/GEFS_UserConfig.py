@@ -67,7 +67,8 @@ def get_config_file(OnlyForTest = False):
 #=======================================================
 def read_config(sConfig):
     # read config file
-    dicBase={}
+    from collections import OrderedDict
+    dicBase = OrderedDict()
     iTaskName_Num = 0
     with open(sConfig, "r")as f:
         for sLine in f:
@@ -124,7 +125,7 @@ def create_folders(dicBase):
     if not os.path.exists(WORKDIR):
         os.makedirs(WORKDIR)
 
-    sWS_Out = WORKDIR + sSep + EXPID
+    sWS_Out = WORKDIR # + sSep + EXPID
     if not os.path.exists(sWS_Out):
         os.mkdir(sWS_Out)
 
@@ -135,13 +136,12 @@ def create_folders(dicBase):
 
     import datetime
     #
-    dd = WORKDIR
-    dd += sSep + dicBase['EXPID'] + sSep + 'tmpnwprd'
+    dd = WORKDIR + sSep + 'tmpnwprd'
     if not os.path.exists(dd):
-        os.mkdir(dd)
+        os.mkdirs(dd)
     # cmd = "mkdir -p " + dd + "/tmpnwprd"
     # os.system(cmd)
-    dd += '{0}com{0}output{0}dev{0}'.format(sSep)
+    dd = WORKDIR + '{0}com{0}output{0}dev{0}'.format(sSep)
     if not os.path.exists(dd):
         os.makedirs(dd)
 
