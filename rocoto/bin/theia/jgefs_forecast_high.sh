@@ -31,7 +31,11 @@ export memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc'
 
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
+<<<<<<< HEAD
+export gefsmpexec="mpirun -np $PBS_NP"
+=======
 export gefsmpexec="mpirun -np $total_tasks"
+>>>>>>> 24e6f308dda50ebb1ff37693c9a6e193d44c7b6e
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_FORECAST_FV3
