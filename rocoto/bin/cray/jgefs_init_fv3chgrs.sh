@@ -46,12 +46,12 @@ export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 # CALL executable job script here
-export expid=${EXPID}
+
 
 export APRUNC="aprun"
 
-. $GEFS_ROCOTO/parm/setbase
-. $GEFS_ROCOTO/parm/gefs_config
-. $GEFS_ROCOTO/parm/gefs_dev.parm
+
+
+
 
 $SOURCEDIR/jobs/JGEFS_INIT_FV3CHGRS
