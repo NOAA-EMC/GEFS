@@ -166,9 +166,8 @@ case $FORECAST_SEGMENT in
 		export DOANALYSIS=YES;
 		export DOANALYSIS=NO;
 		export SHOUR=00
-		export FHINC=06
-		export FHINCP5=03
-	 	export FHINCP5=06
+		export FHINC=${FHOUTLR:-06}
+		export FHINCP5=${FHOUTHR:-06}
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmaxh
 		else
@@ -177,8 +176,8 @@ case $FORECAST_SEGMENT in
 		;;
 	(lr) # low resolution segment
 		export DOANALYSIS=NO;
-		export FHINC=06
-		export FHINCP5=06
+		export FHINC=${FHOUTLR:-06}
+		export FHINCP5=${FHOUTLR:-06}
 		export SHOUR=$(( $fhmaxh + FHINC ))
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmax
@@ -190,8 +189,8 @@ case $FORECAST_SEGMENT in
 		export DOANALYSIS=YES;
 		export DOANALYSIS=NO;
 		export SHOUR=00
-		export FHINC=06
-		export FHINCP5=03
+		export FHINC=${FHOUTHR:-06}
+		export FHINCP5=${FHOUTHR:-06}
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmax
 		else

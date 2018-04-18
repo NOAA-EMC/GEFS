@@ -46,7 +46,7 @@ export npair=10
 #export npair=0
 export fhmax=384
 export fhmaxh=384
-export FHOUTHR=3
+export FHOUTHR=6    # (change it to 3 for 3hourly output)
 #export caseh=C192
 export COMROOTp2=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/nems_gefs/com
 
