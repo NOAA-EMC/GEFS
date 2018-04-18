@@ -117,14 +117,15 @@ if (( fhmaxh > fhmax )); then
   fhmaxh=$fhmax
 fi
 
-export FHINC=06
+# FHINC is the interval for 1.0/2.5 grid files
+export FHINC=${FHOUTLR:-06}
+# FHINCP5 defined later is the interval for 0.5 grid files
 
 fcstlong=true
 case $FORECAST_SEGMENT in
 	(hr)
 		# high resolution segment
-		export FHINCP5=03
-		export FHINCP5=06
+		export FHINCP5=${FHOUTHR:-06}
 		export SHOUR=00
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmaxh
@@ -134,7 +135,7 @@ case $FORECAST_SEGMENT in
 		;;
 	(lr)
 		# low resolution segment
-		export FHINCP5=06
+		export FHINCP5=${FHOUTLR:-06}
 		export SHOUR=$(( $fhmaxh + FHINC ))
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmax
@@ -144,7 +145,7 @@ case $FORECAST_SEGMENT in
 		;;
 	(*)
 		# whole forecast period
-		export FHINCP5=03
+		export FHINCP5=06
 		export SHOUR=00
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmax

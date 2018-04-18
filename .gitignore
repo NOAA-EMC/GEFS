@@ -4,6 +4,10 @@ fix
 util/exec/
 
 # Ignore compiled objects in sorc directories
+sorc/*/*.o
+sorc/*/*.mod
+sorc/*/*.x
+sorc/*/*.lst
 **/sorc/*/*.o
 **/sorc/*/*.mod
 **/sorc/*/*.x

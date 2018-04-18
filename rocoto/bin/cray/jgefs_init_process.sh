@@ -40,10 +40,10 @@ export gefsmpexec=" aprun -b -j1 -n32 -N4 -d6 -cc depth "
 export NTHREADS_SIGCHGRS=6
 
 # CALL executable job script here
-export expid=${EXPID}
 
-. $GEFS_ROCOTO/parm/setbase
-. $GEFS_ROCOTO/parm/gefs_config
-. $GEFS_ROCOTO/parm/gefs_dev.parm
+
+
+
+
 
 $SOURCEDIR/jobs/JGEFS_INIT_PROCESS
