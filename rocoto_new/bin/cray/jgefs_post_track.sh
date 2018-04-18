@@ -37,12 +37,12 @@ export taskspernode=7
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export expid=${EXPID}
+
 
 export gefsmpexec_mpmd="  aprun -b -j1 -n21 -N7 -d1 -cc depth  cfp mpmd_cmdfile"
 
 # CALL executable job script here
-. $GEFS_ROCOTO/parm/setbase
-. $GEFS_ROCOTO/parm/gefs_config
-. $GEFS_ROCOTO/parm/gefs_dev.parm
+
+
+
 $SOURCEDIR/jobs/JGEFS_POST_TRACK
