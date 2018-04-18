@@ -75,7 +75,9 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     if sVarName not in dicBase:
         sVarName_2 = "GEFS_ROCOTO".upper()
         sRocoto_Path = dicBase[sVarName_2]
-        sVarValue =os.path.basename(os.path.abspath(sRocoto_Path + sSep + ".." + sSep + ".." ))
+        sVarValue = os.path.basename(os.path.abspath(sRocoto_Path + sSep + ".."))
+        if sVarValue == "nwdev":
+            sVarValue = os.path.basename(os.path.abspath(sRocoto_Path + sSep + ".." + sSep + ".."))
         dicBase[sVarName] = sVarValue
     # ===
     sVarName = "SOURCEDIR".upper()
