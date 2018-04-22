@@ -9,6 +9,8 @@ export FORT_BUFFERED=TRUE
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 
+ulimit -s unlimited
+
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_ENSPOST
 

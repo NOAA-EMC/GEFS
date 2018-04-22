@@ -6,7 +6,8 @@ set -x
 export IOBUF_PARAMS=
 export FORT_BUFFERED=TRUE
 export MKL_CBWR=AVX
-ulimit -s unlimited
+#ulimit -s unlimited
+ulimit -s 10999888
 ulimit -a
 
 export ATP_ENABLED=0
