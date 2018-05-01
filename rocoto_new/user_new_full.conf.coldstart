@@ -1,6 +1,6 @@
 # Very important items, users should change them based on his/her needs
-SDATE           =   2018012700
-EDATE           =   2018012700
+SDATE           =   2017060100
+EDATE           =   2017060100
 #First           =   Xianwu
 #Last            =   Xue
 #EXPID           =   fv35
@@ -11,7 +11,7 @@ WHERE_AM_I      =   cray
 # Whether generate standalone .ent file for each jobs
 GenTaskEnt        =   YES
 GenParm           =   YES
-GenBinSH          =   YES
+GenBinSH          =   NO
 # You may not change the items before
 RUN_INIT          =   YES
 RUN_FORECAST_HIGH =   YES
@@ -25,8 +25,8 @@ CYCLE_THROTTLE    =   1
 TASK_THROTTLE     =   65
 #WORKDIR           =   /scratch4/NCEPDEV/stmp4/First.Last/o
 #====
-ACCOUNT           =   fv3-cpu
-# Start Parm +++++++++++++++++++++++++++++ For gefs_dev.parm, +++++++++++++++++++++++++++++\/\/
+ACCOUNT           =   GEN-T2O
+# +++++++++++++++++++++++++++++ For gefs_dev.parm, +++++++++++++++++++++++++++++\/\/
 ENS_SPS           =   .false.
 DO_SPPT           =   YES
 DO_SHUM           =   YES
@@ -54,13 +54,12 @@ makepgrb2b        =   yes
 saveflux          =   yes
 savesfcsig        =   no
 sigzvd            =   no
-FHOUTHR           =   6
-# End Parm +++++++++++++++++++++++++++++ For gefs_dev.parm, +++++++++++++++++++++++++++++/\/\
+# +++++++++++++++++++++++++++++ For gefs_dev.parm, +++++++++++++++++++++++++++++/\/\
 # *****************************************
 #jgefs_enkf_track_walltime       = 01:50:00
 #jgefs_enkf_track_nodes          = 2
 #jgefs_enkf_track_ppn            = 20
-#jgefs_enkf_track_memory         = 50000M
+#jgefs_enkf_track_memory         = 3000M
 #jgefs_enkf_track_queue          = &CUE2RUN;
 ## *****************************************
 #jgefs_init_separate_walltime    = 01:50:00
@@ -89,7 +88,7 @@ FHOUTHR           =   6
 #jgefs_init_fv3chgrs_ppn         = 12
 #jgefs_init_fv3chgrs_tpp         = 2
 #jgefs_init_fv3chgrs_memory      = 50000M
-#jgefs_init_fv3chgrs_dep         = <taskdep task="jgefs_init_recenter"/>
+jgefs_init_fv3chgrs_dep         = <taskdep task="jgefs_init_recenter"/>
 ## ***************************************** nodes, ppn and tpp will be derived from parm automatically
 #jgefs_forecast_high_walltime    = 03:00:00
 ##jgefs_forecast_high_nodes       = 20
@@ -98,7 +97,7 @@ FHOUTHR           =   6
 #jgefs_forecast_high_memory      = 200000M
 #jgefs_forecast_high_dep         = <taskdep task="jgefs_init_fv3chgrs_#member#"/>
 ## *****************************************
-#jgefs_post_high_walltime        = 03:00:00
+#jgefs_post_high_walltime        = 02:30:00
 #jgefs_post_high_nodes           = 3
 #jgefs_post_high_ppn             = 12
 #jgefs_post_high_tpp             = 2
@@ -107,7 +106,7 @@ FHOUTHR           =   6
 ## *****************************************
 #jgefs_prdgen_high_walltime      = 01:30:00
 #jgefs_prdgen_high_nodes         = 1
-#jgefs_prdgen_high_ppn           = 3
+#jgefs_prdgen_high_ppn           = 5
 #jgefs_prdgen_high_tpp           = 4
 #jgefs_prdgen_high_memory        = 30000M
 #jgefs_prdgen_high_queue         = &CUE2RUN;
@@ -139,7 +138,7 @@ FHOUTHR           =   6
 #jgefs_enspost_memory            = 3000M
 #jgefs_enspost_dep               = <taskdep task="jgefs_ensstat_high"/>
 ## *****************************************
-#jgefs_keep_data_walltime        = 01:00:00
+#jgefs_keep_data_walltime        = 00:30:00
 #jgefs_keep_data_nodes           = 1
 #jgefs_keep_data_ppn             = 1
 #jgefs_keep_data_tpp             = 1
@@ -160,20 +159,20 @@ FHOUTHR           =   6
 #jgefs_cleanup_memory            = 3000M
 #jgefs_cleanup_dep               = <and>\n\t<taskdep task="jgefs_keep_data"/>\n\t<taskdep task="jgefs_archive"/>\n</and>
 ## *****************************************
-#jgefs_init_recenter_walltime     = 01:50:00
-#jgefs_init_recenter_nodes        = 5
-#jgefs_init_recenter_ppn          = 4
-#jgefs_init_recenter_tpp          = 6
-#jgefs_init_recenter_memory       = 1000M
-#jgefs_init_recenter_queue          = &CUE2RUN;
+jgefs_init_recenter_walltime     = 01:50:00
+jgefs_init_recenter_nodes        = 5
+jgefs_init_recenter_ppn          = 4
+jgefs_init_recenter_tpp          = 6
+jgefs_init_recenter_memory       = 1000M
+jgefs_init_recenter_queue          = &CUE2RUN;
 # *****************************************
 # Rarely changed default
 ##### taskname is for development, if you have taskname, RUN_* will NOT be used to determine the tasks!
-taskname        =    jgefs_enkf_track
-taskname        =    jgefs_init_separate
-taskname        =    jgefs_init_process
-taskname        =    jgefs_init_combine
-#taskname        =    jgefs_init_recenter
+#taskname        =    jgefs_enkf_track
+#taskname        =    jgefs_init_separate
+#taskname        =    jgefs_init_process
+#taskname        =    jgefs_init_combine
+taskname        =    jgefs_init_recenter
 taskname        =    jgefs_init_fv3chgrs
 taskname        =    jgefs_forecast_high
 taskname        =    jgefs_post_high
