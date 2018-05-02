@@ -8,7 +8,7 @@ def get_and_merge_default_config(dicBase):
     # To get the WHERE_AM_I from dicBase or identify it using default methode
     get_WHERE_AM_I(dicBase)
     WHERE_AM_I = dicBase["WHERE_AM_I"]
-    sDefaultConfig_File = sys.path[0] + sSep + "user_new_{0}.conf".format(WHERE_AM_I)
+    sDefaultConfig_File = sys.path[0] + sSep + "user_{0}.conf".format(WHERE_AM_I)
 
     if os.path.exists(sDefaultConfig_File):
         print("---Default User Configure file was found! Reading ...")
@@ -28,32 +28,32 @@ def get_config_file(OnlyForTest = False):
         sSep = r'\\'
 
     sRocoto_WS = os.getcwd()
-    sConfig = "" #"user_new.conf"
+    sConfig = "" #"user_conf"
     if OnlyForTest:
 
         sRocoto_WS = os.getcwd() + sSep + '..'
 
-        # sConfig = "user_new.conf"
-        sConfig = sRocoto_WS + sSep + "user_new_full.conf"
+        # sConfig = "user.conf"
+        sConfig = sRocoto_WS + sSep + "user_full.conf"
 
         if not os.path.exists(sConfig):
             sRocoto_WS = os.getcwd()
-            sConfig = sRocoto_WS + sSep + "user_new_full.conf"
+            sConfig = sRocoto_WS + sSep + "user_full.conf"
     else:
 
         if len(sys.argv) == 2:
             sConfig = sys.argv[1]
         else:
-            sConfig = "user_new.conf"
+            sConfig = "user.conf"
 
         if not os.path.exists(sConfig):
-            sConfig = ".." + sSep + "user_new.conf"
+            sConfig = ".." + sSep + "user.conf"
 
             if not os.path.exists(sConfig):
-                sConfig = "user_new_full.conf"
+                sConfig = "user_full.conf"
 
                 if not os.path.exists(sConfig):
-                    sConfig = ".." + sSep + "user_new_full.conf"
+                    sConfig = ".." + sSep + "user_full.conf"
 
                     if not os.path.exists(sConfig):
                         print("Please check whether you have config file in your rocoto path!")

@@ -4,12 +4,10 @@
 # This section is some parameter setup for for development testing only
 ##############################################################################
 echo `date` $0 test section begin
-
-#Define using STTP(ENS_SPS=.true.) or physics stochastic
-export ENS_SPS=.false.
-export DO_SPPT=YES
-export DO_SHUM=YES
-export DO_SKEB=YES
+export fhmax=384
+export fhmaxh=384
+export FHOUTHR=6
+export VERBOSE=no
 
 #define tmp time step
 export DELTIM=300
@@ -24,8 +22,12 @@ export layout_y=8
 export WRITE_GROUP=2
 export WRTTASK_PER_GROUP=24
 export parallel_threads=2
-export fhmax=384
-export fhmaxh=384
+
+#Define using STTP(ENS_SPS=.true.) or physics stochastic
+export ENS_SPS=.false.
+export DO_SPPT=YES
+export DO_SHUM=YES
+export DO_SKEB=YES
 
 # for test, NOT USED FOR PRODUCTION gfssource = dev, para, prod
 export gfssource=prod
@@ -37,8 +39,7 @@ export makepgrb2b=yes
 export saveflux=yes
 export savesfcsig=no
 export sigzvd=no
-export FHOUTHR=6
-export npair=5
-export npert=10
+export npair=1
+export npert=2
 
 echo `date` $0 test section end
