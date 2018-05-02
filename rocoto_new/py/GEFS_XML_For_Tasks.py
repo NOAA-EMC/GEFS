@@ -6,7 +6,8 @@ def config_tasknames(dicBase):
     if iTaskName_Num <= 0:
         iTaskName_Num = 0
 
-        if dicBase['RUN_INIT'] == "YES" or dicBase['RUN_INIT'][0] == "Y":
+	# #    <!-- initial jobs -->
+        if dicBase['RUN_INIT'] == "GSM_RELOC":
             # ---jgefs_enkf_track
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
@@ -26,6 +27,16 @@ def config_tasknames(dicBase):
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "jgefs_init_combine"
+
+            # ---jgefs_init_fv3chgrs
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_init_fv3chgrs"
+        elif dicBase['RUN_INIT'] == "FV3_COLD":
+            # ---jgefs_init_recenter
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_init_recenter"
 
             # ---jgefs_init_fv3chgrs
             iTaskName_Num += 1
@@ -243,6 +254,12 @@ def get_param_of_task(dicBase, taskname):
     sVarName = "{0}_dep".format(taskname).upper()
     if sVarName in dicBase:
         sDep = dicBase[sVarName.upper()]
+        if sDep.strip() != "": # identify whether include 'jgefs_init_recenter' or not
+            if taskname.lower() == "jgefs_init_fv3chgrs":
+                sRecenterTask = "jgefs_init_recenter"
+                sVarRecenterTask = 'taskname_1'.upper()
+                if dicBase[sVarRecenterTask].lower() == sRecenterTask:
+                    sDep = '<taskdep task="jgefs_init_recenter"/>'
 
     # Forecast can be derive from the parm items
     if taskname == 'jgefs_forecast_high':
@@ -414,6 +431,7 @@ def create_metatask_task(dicBase, taskname="jgefs_init_fv3chgrs", sPre="\t", Gen
     jobname = get_jobname(taskname)
     if taskname in metatask_names:
         jobname += "_#member#"
+
 
     strings = ""
     if taskname in metatask_names:

@@ -39,7 +39,7 @@ export makepgrb2b=yes
 export saveflux=yes
 export savesfcsig=no
 export sigzvd=no
-export npair=1
-export npert=2
+export npair=10
+export npert=20
 
 echo `date` $0 test section end
