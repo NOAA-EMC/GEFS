@@ -2,14 +2,16 @@ History of the file:
 Wen Meng: 20170731 or earlier
 Dingchen Hou: 20171213 
 Xianwu Xue: 20180330
+Xianwu Xue: 20180422
 
 # New Rototo Workflow
 
-open 'user_new_full.conf' to modify 'SDATE' 'EDATE' 'First' 'Last'. You don't need to modify 'EXPID'
+open 'user_new_full.conf' to modify 'SDATE' 'EDATE'. You don't need to modify 'EXPID', 'First' and 'Last'
 
 module load rocoto
-./py/run_to_get_all.py user_new_full.conf
-crontab cron_rocoto_new
+module load python # if your python version<=2.6
+./py/run_to_get_all.py user_full.conf
+crontab cron_rocoto
 
 #
 Run gefs workflow via ROCOTOi

@@ -8,37 +8,37 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sSep = r'\\'
 
     sVarName = "XML".upper()
-    sVarValue = 'gefs_new.xml'
+    sVarValue = 'gefs.xml'
     if sVarName not in dicBase:
         dicBase[sVarName] = sVarValue
     # ==
     sVarName = "db".upper()
-    sVarValue = 'gefs_new.db'
+    sVarValue = 'gefs.db'
     if sVarName not in dicBase:
         dicBase[sVarName] = sVarValue
     # ==
     sVarName = "crontab".upper()
-    sVarValue = 'cron_rocoto_new'
+    sVarValue = 'cron_rocoto'
     if sVarName not in dicBase:
         dicBase[sVarName] = sVarValue
     # ==
     sVarName = "First".upper()
     sVarValue = 'Xianwu'
     if sVarName not in dicBase:
-	import os
+        import os
         sVarValue = os.environ.get("USER")
         if "." in sVarValue:
             sVarValue = sVarValue.split(".")[0]
-    	dicBase[sVarName] = sVarValue
+    dicBase[sVarName] = sVarValue
     # ==
     sVarName = "Last".upper()
     sVarValue = 'Xue'
     if sVarName not in dicBase:
-    	import os
+        import os
         sVarValue = os.environ.get("USER")
         if "." in sVarValue:
             sVarValue = sVarValue.split(".")[1]
-    	dicBase[sVarName] = sVarValue
+    dicBase[sVarName] = sVarValue
     # ==
     sVarName = "HPS_PTMP".upper()
     sVarValue = 'hps'
@@ -75,7 +75,9 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     if sVarName not in dicBase:
         sVarName_2 = "GEFS_ROCOTO".upper()
         sRocoto_Path = dicBase[sVarName_2]
-        sVarValue =os.path.basename(os.path.abspath(sRocoto_Path + sSep + ".." + sSep + ".." ))
+        sVarValue = os.path.basename(os.path.abspath(sRocoto_Path + sSep + ".."))
+        if sVarValue == "nwdev":
+            sVarValue = os.path.basename(os.path.abspath(sRocoto_Path + sSep + ".." + sSep + ".."))
         dicBase[sVarName] = sVarValue
     # ===
     sVarName = "SOURCEDIR".upper()
@@ -191,7 +193,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         else:
             sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
 
-    	dicBase[sVarName] = sVarValue
+        dicBase[sVarName] = sVarValue
     # ===
     sVarName = "DIRS_TO_ARCHIVE".upper()
     if sVarName not in dicBase:
@@ -207,7 +209,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         else:
             sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
 
-    	dicBase[sVarName] = sVarValue
+        dicBase[sVarName] = sVarValue
     # ==
     sVarName = "INCYC".upper()
     sVarValue = 24
@@ -610,32 +612,35 @@ def get_workflow_body(dicBase):
 
 #=======================================================
 def get_MEMLIST(dicBase):
-    MEM_Num = 12
+    ### npert
+    ### npert means Number of Perturbation, default value is 20
+    ###
+    npert = 20
     # To Generate member list
     bltGenerateMEMLIST = False
-    sVarName_Num = "MEM_Num".upper()
+    sVarName_Num = "npert".upper()
     sVarName_List = 'MEMLIST'.upper()
-    if sVarName_Num in dicBase:  # Number of Memebers is the priority than the MEMLIST and the MEM_Num default value is 15
+    if sVarName_Num in dicBase:
         bltGenerateMEMLIST = True
-        MEM_Num = int(dicBase[sVarName_Num])
+        npert = int(dicBase[sVarName_Num])
     else:
         if sVarName_List in dicBase:
             bltGenerateMEMLIST = False
         else:
-            MEM_Num = 12
-            dicBase[sVarName_Num] = MEM_Num
+            npert = 20
+            dicBase[sVarName_Num] = npert
             bltGenerateMEMLIST = True
 
-    MEM_Num = int(dicBase[sVarName_Num])
+        npert = int(dicBase[sVarName_Num])
 
-    if MEM_Num%2 != 0:
+    if npert%2 != 0:
         print("please select the right number of memebers!")
         import sys
         sys.exit(1)
 
     if bltGenerateMEMLIST:
         MEMLIST_Value = ""
-        for iNum in range(1, MEM_Num + 1):
+        for iNum in range(1, npert + 1):
             MEMLIST_Value += "p{0:02d} ".format(iNum)
         MEMLIST_Value += "c00"
         # print(MEMLIST_Value)

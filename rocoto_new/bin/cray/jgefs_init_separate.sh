@@ -39,7 +39,7 @@ export MP_COMPILER=intel
 
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export expid=${EXPID}
+
 
 export NODES=10
 export total_tasks=40
@@ -51,9 +51,9 @@ export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
 export APRUNC="aprun"
 
 # export for development runs only begin
-. $GEFS_ROCOTO/parm/setbase
-. $GEFS_ROCOTO/parm/gefs_config
-. $GEFS_ROCOTO/parm/gefs_dev.parm
+
+
+
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_INIT_SEPARATE

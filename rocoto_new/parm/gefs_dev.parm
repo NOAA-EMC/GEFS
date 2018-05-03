@@ -3,26 +3,16 @@
 #############################################################################
 # This section is some parameter setup for for development testing only
 ##############################################################################
-
-#export fhmax=384
-#export fhmaxh=192
-#export fhmaxhres=`expr $fhmaxh - $HOUTSPS`
-
 echo `date` $0 test section begin
+export fhmax=384
+export fhmaxh=384
+export FHOUTHR=6
+export VERBOSE=no
 
-#Define using STTP(ENS_SPS=.true.) or physics stochastic
-export ENS_SPS=.false.
-export DO_SPPT=YES
-export DO_SHUM=YES
-export DO_SKEB=YES
 #define tmp time step
-#export DELTIM=450
-#export k_split=2
-#export n_split=6
 export DELTIM=300
 export k_split=1
 export n_split=8
-
 export TYPE=nh
 export MONO=non-mono
 
@@ -32,185 +22,24 @@ export layout_y=8
 export WRITE_GROUP=2
 export WRTTASK_PER_GROUP=24
 export parallel_threads=2
-#export layout_x=4
-#export layout_y=8
-#export WRITE_GROUP=2
-#export WRTTASK_PER_GROUP=12
-#export parallel_threads=4
 
-#export HYPT=on
+#Define using STTP(ENS_SPS=.true.) or physics stochastic
+export ENS_SPS=.false.
+export DO_SPPT=YES
+export DO_SHUM=YES
+export DO_SKEB=YES
 
-#export IC_DIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160913/p01
-
-export npair=10
-#export npair=0
-export fhmax=384
-export fhmaxh=384
-export FHOUTHR=3
-#export caseh=C192
-export COMROOTp2=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/nems_gefs/com
-
-# for test, NOT USED FOR PRODUCTION
-
-# 20131203 RLW replace pausecycle with pausecyclelist
-# specify a list of cycles at which to pause
-export pausecyclelist="1012050300"
-
-export ncpumax=50
-export ncpumin=30
-export srefboundary=yes
-export srefboundary=no
-#export fhmax00=384     # 00Z fcst only
-
-# # cycling forecasts only
-#export fhmax00=06
-#export fhmax06=06
-#export fhmax12=06
-#export fhmax18=06
-## # 00Z long forecasts only
-#export fhmax00=384
-## export fhmax06=06
-#export fhmax12=384
-## export fhmax18=06
-
-# long forecasts in all cycles
-#export fhmax00=384
-#export fhmax06=384
-#export fhmax12=384
-#export fhmax18=384
-#
-#RLW move fhmax arithmetic from gefsrun begin
-
-#RLW modify fhmax by cycle if cyc is already defined
-#RLW 20110608 remove abort if cycle is not yet defined
-#case $cyc in
-#	(00)
-#		fhmax=$fhmax00 ;;
-#	(06)
-#		fhmax=$fhmax06 ;;
-#	(12) 
-#		fhmax=$fhmax12 ;;
-#	(18) 
-#		fhmax=$fhmax18 ;;
-#	(*)
-#		echo
-#		echo UNDEFINED CYCLE cyc=$cyc
-#		echo
-#		#echo `date` $0 $* ABORT EXIT 6
-#		#echo
-#		#exit 6
-#		echo unmodified fhmax=$fhmax
-#		;;
-#esac
-#export fhmax
-
-## DHOU, 08/26/2010, added this block to modify fhmaxh fhmax3 and fhmaxhres
-#if (( fhmax <= fhmaxh )); then
-#	export fhmaxh=$fhmax
-#fi
-#if (( fhmaxh <= fhmax3 )); then
-#	export fhmax3=$fhmaxh
-#fi
-#export fhmaxhres=`expr $fhmaxh - $HOUTSPS`
-
-#RLW move fhmax arithmetic from gefsrun end
-
-# RLW repeat fhoroglist after resetting fhmax and fhmaxh
-#if (( fhmaxh < fhmax )); then
-#	export fhoroglist=$(( fhmaxh + 12 ))
-#else
-#	export fhoroglist=
-#fi
-
-export gfssource=dev
-export gfssource=para
+# for test, NOT USED FOR PRODUCTION gfssource = dev, para, prod
 export gfssource=prod
 
-# new variables to specify locations of scripts and codes
-#
-# NOTE THAT THESE VARIABLES OVERLAP AND INTERACT WITH
-# GFS_VERSION
-# and the config file
-#
-# until this interaction is resolved, check to be sure which setting is used
+# set all the following "make" and "save" flags to "yes" to simulate production
+export makepgrba=no
+export makepgrbb=no
+export makepgrb2b=yes
+export saveflux=yes
+export savesfcsig=no
+export sigzvd=no
+export npair=1
+export npert=2
 
-################################################################################
-# restrict certain jobs to run during certain hours of the day
-################################################################################
-  # the list of job numbers of the jobs to be restricted
-  restrictjobjlist="050 450 600 750"
-  restrictjobjlist="99999"
-  # the list of hours during which these jobs are allowed to run
-  restrictjobhlist="18 19 20 21 22 23 24 00 01 02 03 04 05 06"
-  # the days of the week on which restrictions are imposed
-  restrictjobwlist="1 2 3 4 5"
-  echo restrictjobjlist=$restrictjobjlist
-  echo restrictjobhlist=$restrictjobhlist
-  echo restrictjobwlist=$restrictjobwlist
-
-  # parameter changes for concurrent runs
-  if [[ $RUN_CONCURRENT = yes ]] ; then
-    # test whether this is needed for concurrent
-    fhrestart=18
-    fhrestart=36
-    fhrestart=420
-  fi
-
-  # copy initial state from another run
-  # not yet implemented
-  export copyinitinterval=24
-  export copyinitenvir=geng
-  export copyinit=yes
-  export copyinit=no
-
-  # remove restart files and output before restarting the forecast
-  export cleanbeforefcst=no
-  export cleanbeforefcst=yes
-
-  # run the gfs prdgen job or not
-  # test means run only if the gfs master post files exist
-  export rungfsprdgen=no
-  export rungfsprdgen=yes
-  export rungfsprdgen=test
-
-  # archive and cleanup if cyc ne 0
-  export runarchcyc=1
-  export runarchcyc=1
-  export runarchcyc=0
-  export runarchcyc=4
-
-  # cycles to delay the cleanup
-  export runcleancyc=0
-  export runcleancyc=1
-  export runcleancyc=4
-
-  # run cycling forecasts or not
-  export runcyclingf=yes
-  export runcyclingf=no
-
-  # set all the following "make" and "save" flags to "yes" to simulate production
-  export makepgrba=no
-  export makepgrbb=no
-  export makepgrb2b=yes
-  export saveflux=yes
-  export savesfcsig=yes
-  export savesfcsig=no
-
-  # specify generation and retention of grads control files
-  # these are not currently implemented
-  export ctlgeskeep=0
-  export ctlsfckeep=0
-  export ctlsigkeep=0
-  export ctlgespara=0
-  export ctlsfcpara=0
-  export ctlsigpara=0
-  export ctlgesprod=0
-  export ctlsfcprod=0
-  export ctlsigprod=0
-
-  export sigzvd=no
-
-  export submit_post_together=yes
-
-  echo `date` $0 test section end
-
+echo `date` $0 test section end

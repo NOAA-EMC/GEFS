@@ -32,7 +32,7 @@ export MEMORY_AFFINITY=core:1
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export expid=${EXPID}
+
 
 export NODES=1
 export total_tasks=16
@@ -41,8 +41,8 @@ export taskspernode=16
 
 export gefsmpexec=" aprun -b -j1 -n16 -N16 -d1 -cc depth "
 # CALL executable job script here
-. $GEFS_ROCOTO/parm/setbase
-. $GEFS_ROCOTO/parm/gefs_config
-. $GEFS_ROCOTO/parm/gefs_dev.parm
+
+
+
 
 $SOURCEDIR/jobs/JGEFS_CQPF

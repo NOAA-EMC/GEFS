@@ -29,13 +29,13 @@ export gefsmpexec_mpmd="  aprun -b -j1 -n40 -N20 -d1 -cc depth  cfp mpmd_cmdfile
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export expid=${EXPID}
-export SOURCEDIR=${SOURCEDIR}
-export WORKDIR=${WORKDIR}
+
+
+
 
 # CALL executable job script here
-. $GEFS_ROCOTO/parm/setbase
-. $GEFS_ROCOTO/parm/gefs_config
-. $GEFS_ROCOTO/parm/gefs_dev.parm
+
+
+
 
 $SOURCEDIR/jobs/JGEFS_ENKF_TRACK

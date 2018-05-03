@@ -32,24 +32,24 @@ export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:4
 
 export NODES=1
-export total_tasks=5
+export total_tasks=3
 export OMP_NUM_THREADS=4
-export taskspernode=5
+export taskspernode=3
 
 export FORECAST_SEGMENT=hr
 export DO_LOW_RES=
 
-export gefsmpexec_mpmd="  aprun -b -j1 -n5 -N5 -d4 -cc depth  cfp mpmd_cmdfile"
+export gefsmpexec_mpmd="  aprun -b -j1 -n3 -N3 -d4 -cc depth  cfp mpmd_cmdfile"
 
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 # CALL executable job script here
-export expid=${EXPID}
 
-. $GEFS_ROCOTO/parm/setbase
-. $GEFS_ROCOTO/parm/gefs_config
-. $GEFS_ROCOTO/parm/gefs_dev.parm
+
+
+
+
 
 $SOURCEDIR/jobs/JGEFS_PRDGEN
