@@ -62,7 +62,10 @@ integer   lpgi,ireti,jj
 integer   temp(200),ipdt9,P2,iunit2
 real      bb,cc
 
-parameter(len=60,mem=41)
+parameter(len=60)
+
+integer :: npert = 20
+character*255 :: snpert
 
 real, allocatable :: ff(:,:),pp(:,:),ss(:,:),aa(:),gg(:,:),hh(:,:)
 
@@ -72,6 +75,16 @@ namelist /namin/ cpgb,cpge
 
 real rk(9)
 data rk/0.254,1.00,2.54,5.00,6.35,10.00,12.7,25.4,50.8/
+
+! To get the value of npert from Environmental Variables
+!   and then get the value of mem
+CALL getenv("npert", snpert)
+if (trim(snpert) == "") then
+  npert = 20
+else
+  read(snpert,*)npert
+endif
+mem = npert + 1
 
 CALL W3TAGB('ENSPPF',2000,0110,0073,'NP20   ')
 
