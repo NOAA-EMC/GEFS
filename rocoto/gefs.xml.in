@@ -20,7 +20,11 @@
   <!ENTITY EXPID "@[EXPID]">
   <!ENTITY SOURCEDIR "@[SOURCEDIR];/nwdev">
   <!ENTITY WORKDIR "@[WORKDIR]/&EXPID;">
-
+  <!ENTITY KEEP_DIR "@[KEEP_DIR]/&EXPID;">
+  <!ENTITY HPSS_DIR "@[HPSS_DIR]/&EXPID;">
+  <!ENTITY DIRS_TO_KEEP "@[DIRS_TO_KEEP]">
+  <!ENTITY DIRS_TO_ARCHIVE "@[DIRS_TO_ARCHIVE]">
+  
 <!--  <!ENTITY INIT_FHR "@[INIT_FHR]"> -->
 
   <!-- External entities -->
@@ -32,13 +36,20 @@
   %TASKS;
 
 @** if WHERE_AM_I==wcoss
-  <!ENTITY ACCOUNT  "GEN-T2O">
-  <!ENTITY CUE2RUN  "dev2">
+  <!ENTITY ACCOUNT  @[ACCOUNT]>
+  <!ENTITY CUE2RUN  @[CUE2RUN]>
+  <!ENTITY TRANSFER_QUEUE "dev_transfer">
   <!ENTITY SCHEDULER "lsf">
 @** elseif WHERE_AM_I==cray
-  <!ENTITY ACCOUNT  "GEN-T2O">
-  <!ENTITY CUE2RUN  "devhigh">
+  <!ENTITY ACCOUNT  @[ACCOUNT]>
+  <!ENTITY CUE2RUN  @[CUE2RUN]>
+  <!ENTITY TRANSFER_QUEUE "dev_transfer">
   <!ENTITY SCHEDULER "lsfcray">
+@**elseif WHERE_AM_I==theia
+  <!ENTITY ACCOUNT  @[ACCOUNT]>
+  <!ENTITY CUE2RUN  @[CUE2RUN]>
+  <!ENTITY TRANSFER_QUEUE "service">  
+  <!ENTITY SCHEDULER "moabtorque">
 @** endif
 
 ]>
@@ -84,6 +95,13 @@
 @** if RUN_OTHERS==YES
   <!-- other jobs -->
    &jgefs_enspost;
+@** endif
+
+@** if RUN_CLEANUP==YES
+  <!-- cleanup jobs -->
+   &jgefs_keep_data;
+   &jgefs_archive;
+   &jgefs_cleanup;
 @** endif
 
 </workflow>

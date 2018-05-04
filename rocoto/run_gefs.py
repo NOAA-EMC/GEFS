@@ -79,18 +79,39 @@ def create_crontab_file(crontab_filename, outxml):
     crontab_file.write( crontab_string )
     crontab_file.close()
 
+def load_produtil_pythonpath():
+
+    try:
+        import produtil.cluster
+        return True
+    except ImportError:
+        pass
+
+    PRODUTIL = collections.defaultdict(list)
+    PRODUTIL['theia'] = '/scratch4/NCEPDEV/global/save/glopara/svn/nceplibs/produtil/trunk/ush'
+    PRODUTIL['luna']  = '/gpfs/hps3/emc/global/noscrub/emc.glopara/svn/nceplibs/produtil/trunk/ush'
+    PRODUTIL['tide']  = '/global/save/emc.glopara/svn/nceplibs/produtil/trunk/ush'
+    try_clusters = ('theia','luna','tide')
+
+    for cluster in try_clusters:
+        sys.path.append(PRODUTIL[cluster])
+        try:
+            import produtil.cluster
+            return True
+        except ImportError:
+            pass
+    return False
 
 ########################################################################
 # Load and set up the produtil package.
+if not load_produtil_pythonpath():
+        curses.endwin()
+        print '\n\nCRITICAL ERROR: The produtil package could not be loaded from your system'
+        sys.exit(-1)
 
 import produtil.setup, produtil.atparse, produtil.run, produtil.prog, \
     produtil.fileop, produtil.batchsystem, produtil.cluster
 from produtil.run import run, batchexe, runstr
-#import hwrf.launcher, hwrf.numerics, hwrf.rocoto
-#import hwrf_expt
-
-#from hwrf.numerics import to_datetime, to_timedelta
-#from hwrf.rocoto import entity_quote
 from produtil.fileop import remove_file, isnonempty
 
 ########################################################################

@@ -6,14 +6,7 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-###########################################
-# Run gefs_config to get input parameters
-###########################################
-if [ "$RUN_ENVIR" = dev ]; then ### For Developers
-# . $basesource/nw${envir}/versions/gefs.ver
-	. $basesource/nwdev/parm/gefs_config
-	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-fi
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 
 export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
 
@@ -173,9 +166,8 @@ case $FORECAST_SEGMENT in
 		export DOANALYSIS=YES;
 		export DOANALYSIS=NO;
 		export SHOUR=00
-		export FHINC=06
-		export FHINCP5=03
-	 	export FHINCP5=06
+		export FHINC=${FHOUTLR:-06}
+		export FHINCP5=${FHOUTHR:-06}
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmaxh
 		else
@@ -184,8 +176,8 @@ case $FORECAST_SEGMENT in
 		;;
 	(lr) # low resolution segment
 		export DOANALYSIS=NO;
-		export FHINC=06
-		export FHINCP5=06
+		export FHINC=${FHOUTLR:-06}
+		export FHINCP5=${FHOUTLR:-06}
 		export SHOUR=$(( $fhmaxh + FHINC ))
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmax
@@ -197,8 +189,8 @@ case $FORECAST_SEGMENT in
 		export DOANALYSIS=YES;
 		export DOANALYSIS=NO;
 		export SHOUR=00
-		export FHINC=06
-		export FHINCP5=03
+		export FHINC=${FHOUTHR:-06}
+		export FHINCP5=${FHOUTHR:-06}
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmax
 		else
@@ -333,6 +325,7 @@ if test $SHOUR -le $FHOUR; then
 	cat prdgen.cmdfile
 	chmod 775 prdgen.cmdfile
 	export MP_CMDFILE=${DATA}/prdgen.cmdfile
+	export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
 	export MP_PGMMODEL=mpmd
         rm mpmd_cmdfile
         ln -s $MP_CMDFILE mpmd_cmdfile

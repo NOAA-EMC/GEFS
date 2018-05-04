@@ -6,13 +6,7 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-###########################################
-# Run gefs_config to get input parameters
-###########################################
-if [ "$RUN_ENVIR" = dev ]; then ### For Developers
-        . $basesource/nwdev/parm/gefs_config
-        export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-fi
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 
 export machine=$machine
 #export nemsioget=$nemsioget
@@ -38,14 +32,14 @@ export cycle=t${cyc}z
 export cycle_fcst=t${cyc_fcst}z
 
 if (( cyc == cyc_fcst )); then
-        export cycsuffix=false
-        export fcstlong=true
-        cfsuffix=
+	export cycsuffix=false
+	export fcstlong=true
+	cfsuffix=
 else
-        export fcstlong=false
-        export cycsuffix=true
-        export ENS_SPS=.false.
-        cfsuffix=.cycfs$cyc_fcst
+	export fcstlong=false
+	export cycsuffix=true
+	export ENS_SPS=.false.
+	cfsuffix=.cycfs$cyc_fcst
 fi
 
 ####################################
@@ -68,10 +62,10 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 if [[ $RUN_CONCURRENT = yes ]]; then
-        export PGMOUT=FCOUT.o$pid
-        export PGMERR=
-        export REDOUT=' | tee -a '
-        export REDERR=' 2>&1 '
+	export PGMOUT=FCOUT.o$pid
+	export PGMERR=
+	export REDOUT=' | tee -a '
+	export REDERR=' 2>&1 '
 fi
 
 ####################################
@@ -119,22 +113,22 @@ setpdy.sh
 # Define COM and GES directories
 ##############################################
 if [[ $FORECAST_SEGMENT = hr ]] ; then
-        echo "Integrate the model for the high resolution segment"
-        fhresini=0
+	echo "Integrate the model for the high resolution segment"
+	fhresini=0
 elif [[ $FORECAST_SEGMENT = lr ]] ; then
-        echo "Integrate the model for the low resolution segment"
-        fhresini=$fhmaxh
+	echo "Integrate the model for the low resolution segment"
+	fhresini=$fhmaxh
 elif [[ $FORECAST_SEGMENT = hl ]] ; then
-        echo "Integrate the model for both high and low resolution segments, including chgres"
-        fhresini=0
+	echo "Integrate the model for both high and low resolution segments, including chgres"
+	fhresini=0
 else
-        msg="FATAL ERROR:  Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
-        echo "`date`   $msg"
-        echo "The Forecast job will be aborted!!!!"
-        postmsg "$jlogfile" "$msg"
-        export pgm=JENS_FCST
-        export err=911
-        err_chk
+	msg="FATAL ERROR:  Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
+	echo "`date`   $msg"
+	echo "The Forecast job will be aborted!!!!"
+	postmsg "$jlogfile" "$msg"
+	export pgm=JENS_FCST
+	export err=911
+	err_chk
 fi # [[ $FORECAST_SEGMENT = hr ]]
 
 echo FORECAST_SEGMENT = $FORECAST_SEGMENT
@@ -154,6 +148,7 @@ mkdir -m 775 -p $COMOUT/$cyc/sfcsig
 mkdir -m 775 -p $COMOUT/$cyc/sflux
 mkdir -m 775 -p $COMOUT/$cyc/misc/fcst
 SFCSIG=$COMOUT/$cyc/sfcsig
+mkdir -m 775 -p $SFCSIG/$mem
 
 ##############################################
 echo set parameters using gefs.parm
@@ -161,10 +156,10 @@ echo set parameters using gefs.parm
 . $PARMgefs/gefs.parm
 
 case $cyc in
-        00) export fhmax=$fhmax00;;
-        06) export fhmax=$fhmax06;;
-        12) export fhmax=$fhmax12;;
-        18) export fhmax=$fhmax18;;
+	00) export fhmax=$fhmax00;;
+	06) export fhmax=$fhmax06;;
+	12) export fhmax=$fhmax12;;
+	18) export fhmax=$fhmax18;;
 esac
 
 export ERRSCRIPT=err_chk
@@ -172,18 +167,18 @@ export LOGSCRIPT=startmsg
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 	#CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$fhouth;FHZER=$fhzerh;                        
-	CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=6;FHZER=6;                        
-        MTNRSL=$MTNRSLFV;LONB=$LONBFV;LATB=$LATBFV;
-        FHINI=0                              #forecast starting hour
-        (( LEVS = LEVSHR + 1 ))
+	CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$FHOUTHR;FHZER=6;
+	MTNRSL=$MTNRSLFV;LONB=$LONBFV;LATB=$LATBFV;
+	FHINI=0                              #forecast starting hour
+	(( LEVS = LEVSHR + 1 ))
 elif [[ $FORECAST_SEGMENT = lr ]] ; then
 	#CASE=$casel;FHMAX=$fhmax;FHOUT=$fhoutl;FHZER=$fhzerl;
-	CASE=$CASELR;FHMAX=$fhmax;FHOUT=6;FHZER=6;                        
-        JCAP=$JCAPLR;LONB=$LONBLR;LATB=$LATBLR;MTNRSL=$MTNRSLLR
+	CASE=$CASEHR;FHMAX=$fhmax;FHOUT=$FHOUTLR;FHZER=6;
+	JCAP=$JCAPLR;LONB=$LONBLR;LATB=$LATBLR;MTNRSL=$MTNRSLLR
 	FHINI=$fhmaxhres
 else
- 	FORECAST_SEGMENT=$FORECAST_SEGMENT is not supported !
-        stop
+	FORECAST_SEGMENT=$FORECAST_SEGMENT is not supported !
+	stop
 fi
 
 #  The VEGTYPE fix file:
@@ -243,17 +238,19 @@ fi
 
 #if [[ $mem = c00 ]] ;then 
 if [[ $mem = c00 ]] ;then 
-MEMBER=11
+	MEMBER=$((npert+1))
 else
-MEMBER=`echo $mem|cut -c2-3`
+	MEMBER=`echo $mem|cut -c2-3`
 fi
 export MEMBER=$MEMBER
+memchar=mem$(printf %03i $MEMBER)
 
 # 	export do_sppt=$STOC_SPPT
 # 	export do_shum=$STOC_SHUM
 # 	export do_skeb=$STOC_SKEB
 
- 	export SET_STP_SEED=${SET_STP_SEED:-"YES"}
+export SET_STP_SEED=${SET_STP_SEED:-"YES"}
+
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 
 if [[ $DO_SPPT = YES ]] ; then
@@ -344,7 +341,7 @@ export VERBOSE=YES
 
 ################################################################################
 export CDATE=$PDY$cyc
-export ROTDIR=$SFCSIG/$mem
+export ROTDIR=$DATA/dataout
 ICSDIR=${ICSDIR:-$GESIN/$mem}
 #ICSDIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160910/$mem
 #Temporal setting reading from Kate Zhou's archive
@@ -355,27 +352,47 @@ mkdir -p $ICSDIR/$CDATE/$CDUMP/$CASE
 ln -s $ICSDIR/$CASE\_$CDATE $ICSDIR/$CDATE/$CDUMP/$CASE/INPUT
 # To be consistent to the requirement of the exglobal script, temperal setting
 
-if [ $OUTPUT_GRID = "gaussian_grid" ]; then
-	fhr=$FHINI
-	while (( fhr <= FHMAX ))
-	do
-		if (( fhr < 10 )); then
-        		fhr=00$fhr
-		elif (( fhr < 100 )); then
-        		fhr=0$fhr
-		fi
-		ln -s $ROTDIR/${CDUMP}.t${cyc}z.atmf$fhr.nemsio $DATA/${CDUMP}.t${cyc}z.atmf$fhr.nemsio
-		ln -s $ROTDIR/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio $DATA/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio
-		export fhr=`expr $fhr + $FHOUT`
-	done
-else
-	for n in `seq 1 $ntiles`; do
-		for file in atmos_4xdaily. atmos_static. fv3_history. fv3_history2d. grid_spec. nggps2d. nggps3d.
-		do
-              		ln -s $ROTDIR/$file\tile$n.nc $DATA/$file\tile$n.nc
-      		done
-	done
-fi
+# Global script puts output in this location based on $ROTDIR, so we create symlinks to where we really want it
+# Use some bash trickery to do delayed variable expansion
+# For unmodified global script, use memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc' (must be single-quotes)
+memdir_template=${memdir_template:-$ROTDIR}
+memdir=`eval echo $memdir_template`
+# We need to make the directory structure above memdir, but memdir needs to actually be a symlink
+# So create the tree using mkdir -p, then remove the last product
+mkdir -p $memdir
+rmdir $memdir
+ln -s $SFCSIG/$mem $memdir
+
+# if [ $OUTPUT_GRID = "gaussian_grid" ]; then
+# 	fhr=$FHINI
+# 	while (( fhr <= FHMAX ))
+# 	do
+# 		if (( fhr < 10 )); then
+# 			hr=00$fhr
+# 		elif (( fhr < 100 )); then
+# 			fhr=0$fhr
+# 		fi
+# 		# ln -s $ROTDIR/${CDUMP}.t${cyc}z.atmf$fhr.nemsio $DATA/${CDUMP}.t${cyc}z.atmf$fhr.nemsio
+# 		# ln -s $ROTDIR/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio $DATA/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio
+
+# 		# touch $SFCSIG/$mem/${CDUMP}.t${cyc}z.atmf$fhr.nemsio
+# 		# ln -s $SFCSIG/$mem/${CDUMP}.t${cyc}z.atmf$fhr.nemsio $memdir/${CDUMP}.t${cyc}z.atmf$fhr.nemsio
+# 		# touch $SFCSIG/$mem/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio
+# 		# ln -s $SFCSIG/$mem/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio $memdir/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio
+
+# 		export fhr=`expr $fhr + $FHOUT`
+# 	done
+# else
+# 	for n in `seq 1 $ntiles`; do
+# 		for file in atmos_4xdaily. atmos_static. fv3_history. fv3_history2d. grid_spec. nggps2d. nggps3d.; do
+# 			# ln -s $ROTDIR/$file\tile$n.nc $DATA/$file\tile$n.nc
+
+# 			# touch $SFCSIG/$mem/$file\tile$n.nc
+# 			# ln -s $SFCSIG/$mem/$file\tile$n.nc $memdir/$file\tile$n.nc
+# 			;
+# 		done
+# 	done
+# fi
 
 export BASE_GSM=$HOMEgsm
 export FIX_DIR=$FIXgsm

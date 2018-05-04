@@ -62,9 +62,9 @@ else
    export j_opt="-j 1"
 fi
 #APRUN="aprun -n $tasks -N $task_per_node -d $nth_fv3 $j_opt -cc depth"
-APRUN="aprun -n $NTASKS_FV3 -N $cores_per_node -d $NTHREADS_FV3 $j_opt -cc depth"
+APRUN="aprun -n $NTASKS_FV3 -N $cores_per_node -d $NTHREADS_FV3 $j_opt -cc depth" 
 #export FCSTEXEC=fv3_gfs_${TYPE}.${COMP}.${MODE}.x
-export FCSTEXEC=fv3_gfs_nh.prod.32bit.x.tf
+export FCSTEXEC=fv3_gfs_nh.prod.32bit.x.tf # based on Hong Guan's Modification
 export APRUN=${APRUN:-""}
 
 export k_split=${k_split:-1}
@@ -75,8 +75,8 @@ export warm_start=.false.
 export BASE_GSM=$HOMEgsm
 REMAP_GRID=none     # temporay setting, to void the latlon default
 export REMAP_GRID=${REMAP_GRID:-latlon}        #gaussian or latlon for using fregrid or regrid_nemsio for remapping
-export DIAG_TABLE=$HOMEgsm/parm/parm_fv3diag/diag_table
-#export FIELD_TABLE=$HOMEgsm/parm/parm_fv3diag/field_table_gfdl
+export DIAG_TABLE=${DIAG_TABLE:-$HOMEgsm/parm/parm_fv3diag/diag_table}
+# export FIELD_TABLE=${FIELD_TABLE:-$HOMEgsm/parm/parm_fv3diag/field_table_gfdl}
 
 #gfs_physics
 export FHZERO=${FHZER:-6}
@@ -179,20 +179,30 @@ export DO_SPPT=${DO_SPPT:-"YES"}
 export DO_SHUM=${DO_SHUM:-"YES"}
 export DO_SKEB=${DO_SKEB:-"YES"}
 export DO_VC=${DO_VC:-"NO"}
-export SET_STP_SEED=${SET_STP_SEED:-"YES"}
+export SET_STP_SEED=${SET_STP_SEED:-"NO"}
 export JCAP_STP=${JCAP_STP:-$JCAPFV}
 export LONB_STP=${LONB_STP:-$LONBFV}
 export LATB_STP=${LATB_STP:-$LATBFV}
 
-# Stochastically Perturbed Physics Tendency
+MEMBER=`echo $RUNMEM|cut -c4-5`
+CDATE=$PDY$cyc
 
+# Turn of stochastic physics for control member
+if [[ $RUNMEM = "gec00" ]]; then
+	export DO_SPPT="NO"
+	export DO_SHUM="NO"
+	export DO_SKEB="NO"
+	export DO_VC="NO"
+fi # [[ $RUNMEM = "gec00" ]]
+
+# Stochastically Perturbed Physics Tendency
 if [[ $DO_SPPT = YES ]]; then
 	export SPPT_hr=${SPPT_hr:-"0.8,0.4,0.2,0.08,0.04"}                                 # Amplitude of SPPT patterns
 	export SPPT_LOGIT_hr=${SPPT_LOGIT_hr:-.TRUE.}                                      # Do a logit transform to bound values from -1.0 to 1.0
 	export SPPT_TAU_hr=${SPPT_TAU_hr:-"2.16E4,2.592E5,2.592E6,7.776E6,3.1536E7"}       # Time scale in seconds
 	export SPPT_LSCALE_hr=${SPPT_LSCALE_hr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
 	export sppt_sfclimit_hr=${sppt_sfclimit_hr:-.true.}                                # damp amplitude of SPPT at surface
-	export ISEED_SPPT_hr=${ISEED_SPPT_hr:-"11${PDY}${cyc},12${PDY}${cyc},13${PDY}${cyc},14${PDY}${cyc},15${PDY}${cyc}"}                              # random seed for sppt pattern
+	export ISEED_SPPT_hr=${ISEED_SPPT_hr:-$((CDATE*1000 + MEMBER*10 + 3)),$((CDATE*1000 + MEMBER*10 + 4)),$((CDATE*1000 + MEMBER*10 + 5)),$((CDATE*1000 + MEMBER*10 + 6)),$((CDATE*1000 + MEMBER*10 + 7))} # random seed for sppt pattern
 #	export sppt_sigtop1_hr=${sppt_sigtop1_hr:-0.1}                                     # taper SPPT pattern to zero between 0.1 and 0.025 sigma
 #	export sppt_sigtop2_hr=${sppt_sigtop2_hr:-0.025}
 
@@ -204,30 +214,36 @@ if [[ $DO_SPPT = YES ]]; then
 	export ISEED_SPPT_lr=${ISEED_SPPT_lr:-"16${PDY}${cyc},17${PDY}${cyc},18${PDY}${cyc},19${PDY}${cyc},10${PDY}${cyc}"}
 #	export sppt_sigtop1_lr=${sppt_sigtop1_lr:-0.1}                                     # taper SPPT pattern to zero between 0.1 and 0.025 sigma
 #	export sppt_sigtop2_lr=${sppt_sigtop2_lr:-0.025}
+else
+	export SPPT_hr="-999.,-999.,-999,-999,-999"
+	export SPPT_lr="-999.,-999.,-999,-999,-999"
 fi
 
 # Stochastic Humidity
 
 if [[ $DO_SHUM = YES ]]; then
-	export SHUM_hr=${SHUM_hr:-"0.006,-999.,-999.,-999,-999"}                           # Amplitude of SHUM patterns
+	export SHUM_hr=${SHUM_hr:-"0.004,-999.,-999.,-999,-999"}                           # Amplitude of SHUM patterns
 	export SHUM_TAU_hr=${SHUM_TAU_hr:-"2.16E4,1.728E5,6.912E5,7.776E6,3.1536E7"}       # Time scale in seconds
 	export SHUM_LSCALE_hr=${SHUM_LSCALE_hr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
-	export ISEED_SHUM_hr=${ISEED_SHUM_hr:-2${PDY}${cyc}}                             # random seed for SHUM pattern
+	export ISEED_SHUM_hr=${ISEED_SHUM_hr:-$((CDATE*1000 + MEMBER*10 + 2))}             # random seed for SHUM pattern
 #	export shum_sigefold_hr=${shum_sigefold_hr:-0.2}                                   # limit SHUM to the PBL (~bottom 200 mb)
 
-	export SHUM_lr=${SHUM_lr:-"0.006,-999.,-999.,-999,-999"}                           # Amplitude of SHUM patterns
+	export SHUM_lr=${SHUM_lr:-"0.004,-999.,-999.,-999,-999"}                           # Amplitude of SHUM patterns
 	export SHUM_TAU_lr=${SHUM_TAU_lr:-"2.16E4,1.728E5,6.912E5,7.776E6,3.1536E7"}       # Time scale in seconds
 	export SHUM_LSCALE_lr=${SHUM_LSCALE_lr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
 	export ISEED_SHUM_lr=${ISEED_SHUM_lr:-7${PDY}${cyc}}
 #	export shum_sigefold_lr=${shum_sigefold_lr:-0.2}                                   # limit SHUM to the PBL (~bottom 200 mb)
+else
+	export SHUM_hr="-999.,-999.,-999,-999,-999"
+	export SHUM_lr="-999.,-999.,-999,-999,-999"
 fi
 
 # Stochastic Kinetic Energy Backscatter
 
 if [[ $DO_SKEB = YES ]]; then
 	export SKEB_hr=${SKEB_hr:-"1.0,-999,-999,-999,-999"}                               # Amplitude of SPPT patterns
-	export ISEED_SKEB_hr=${ISEED_SKEB_hr:-3${PDY}${cyc}}
-	export SKEB_TAU_hr=${SKEB_TAU_hr:-"2.16E4,1.728E5,2.592E6,7.776E6,3.1536E7"}      # Time scale in seconds
+	export ISEED_SKEB_hr=${ISEED_SKEB_hr:-$((CDATE*1000 + MEMBER*10 + 1))}             # Seed for SKEB pattern
+	export SKEB_TAU_hr=${SKEB_TAU_hr:-"2.16E4,1.728E5,2.592E6,7.776E6,3.1536E7"}       # Time scale in seconds
 	export SKEB_LSCALE_hr=${SKEB_LSCALE_hr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
         export SKEBNORM=${SKEBNORM:-1}
 
@@ -244,6 +260,9 @@ if [[ $DO_SKEB = YES ]]; then
 #	export SKEB_DISS_SMOOTH_lr=${SKEB_DISS_SMOOTH_lr:-12}                              # number of iterations of smoothing the dissipation estimate in the horizontal
 #	export skeb_sigtop1_lr=${skeb_sigtop1_lr:-0.1}                                     # taper SKEB pattern to zero between 0.1 and 0.025 sigma
 #	export skeb_sigtop2_lr=${skeb_sigtop2_lr:-0.025}
+else
+	export SKEB_hr="-999.,-999.,-999,-999,-999"
+	export SKEB_lr="-999.,-999.,-999,-999,-999"
 fi
 
 # Vorticity Confinement
@@ -264,6 +283,9 @@ if [[ $DO_VC = YES ]]; then
 	export VC_TAU_lr=${VC_TAU_lr:-"2.16E4,1.728E5,2.592E6,7.776E6,3.1536E7"}           # Time scale in seconds
 	export VC_LSCALE_lr=${VC_LSCALE_lr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}      # Length Scale in meters
 	export ISEED_VC_lr=${ISEED_VC_lr:-9${PDY}${cyc}}                                 # random seed for vorticity confinement pattern
+else
+	export VC_hr="-999.,-999.,-999,-999,-999"
+	export VC_lr="-999.,-999.,-999,-999,-999"
 fi
 
 ########################################

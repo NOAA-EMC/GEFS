@@ -6,14 +6,8 @@ set -xa
 export PS4='$SECONDS + '
 date
 export MODEL_OUT_FORM=binarynemsiompiio
-###########################################
-# Run gefs_config to get input parameters
-###########################################
-if [ "$RUN_ENVIR" = dev ]; then ### For Developers
-# . $basesource/nw${envir}/versions/gefs.ver
-	. $basesource/nwdev/parm/gefs_config
-	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-fi
+
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 
 export APRUN=${gefsmpexec:-mpirun.lsf}
 
@@ -128,7 +122,7 @@ export SIGHDR=$nemsioget
 #echo in $0: POSTGPSH=$POSTGPSH
 #echo in $0: POSTGPEXEC=$POSTGPEXEC
 
-export ERRSCRIPT=err_chk
+export ERRSCRIPT=${ERRSCRIPT:-err_chk}
 export LOGSCRIPT=startmsg
 export REDOUT='1>>'
 export REDERR='2>'
@@ -268,9 +262,8 @@ export SLEEP_INT=5
 # Specify Forecast Hour Range
 ####################################
 
-export FHINC_HIGH=3
-export FHINC_HIGH=6
-export FHINC_LOW=6
+export FHINC_HIGH=${FHOUTHR:-6}
+export FHINC_LOW=${FHOUTLR:-6}
 
 ##### RLW 20110704 note that only _HIGH is currently used
 case $FORECAST_SEGMENT in
@@ -305,7 +298,6 @@ case $FORECAST_SEGMENT in
 				export DOANALYSIS=YES;
 				export DOANALYSIS=NO;
 				export SHOUR=00;
-				#export FHINC_HIGH=3
 				export FHINC_HIGH=$FHINC_HIGH
 				;;
 		esac # $SUBJOB
@@ -412,7 +404,7 @@ env | sort
 echo
 
 #################################
-# Run High Res Post if Needed
+# Run from $SHOUR to $FHOUR_HIGH
 #################################
 if test $SHOUR -le $FHOUR_HIGH; then
 	export FHINC=$FHINC_HIGH
@@ -424,19 +416,6 @@ if test $SHOUR -le $FHOUR_HIGH; then
 
 	export SHOUR=`expr $FHOUR_HIGH + $FHINC_HIGH`
 fi # test $SHOUR -le $FHOUR_HIGH
-
-###################################################
-# Run Low Res Post if Needed
-###################################################
-#if test $SHOUR -lt $FHOUR_LOW
-#then
-#   export FHINC=$FHINC_LOW
-#   export FHOUR=$FHOUR_LOW
-#   export DO_LOW_RES=YES 
-#   export POSTGPVARS=$POSTGPVARS_LOW
-#   $HOMEgefs/scripts/exgefs_nceppost.sh.sms
-#fi
-###################################################
 
 mv $post_log $COMOUT/$cyc/misc/post
 

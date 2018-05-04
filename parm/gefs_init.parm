@@ -110,13 +110,6 @@ export initcombinetasks=40
 export parallelinit=no
 export parallelinit=yes
 
-#############################################################################
-## This section is some parameter setup for for development testing only
-#############################################################################
-if [[ $envir = dev ]]; then
-        . $basesource/nw$envir/parm/gefs_init_dev.parm
-fi
-
 # a flag to determine if run ET
 export etflag=yes
 export etflag=no
