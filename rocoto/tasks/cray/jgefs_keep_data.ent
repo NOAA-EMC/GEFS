@@ -1,0 +1,26 @@
+<task name="jgefs_keep_data" cycledefs="gefs" maxtries="1">
+   <jobname><cyclestr>&EXPID;@y@m@d@H_save</cyclestr></jobname>
+   <account>&ACCOUNT;</account>
+   <join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_keep_data_@H.%J</cyclestr></join>
+   <walltime>01:00:00</walltime>
+   <queue>&CUE2RUN;</queue>
+   <nodes>1:ppn=1:tpp=1</nodes>
+   <native>-cwd &tmpnwprd;</native>
+   <memory>3000M</memory>   
+   <native>-extsched "CRAYLINUX[]"</native>
+
+   &ENV_VARS;
+   &DATE_VARS;
+   <envar>
+      <name>SOURCEDIR</name>
+      <value>&SOURCEDIR;</value>
+   </envar>
+   <envar>
+      <name>job</name>
+      <value><cyclestr>&EXPID;@y@m@d@H_save</cyclestr></value>
+   </envar>
+   <command><cyclestr>&PRE; &BIN;/jgefs_keep_data.py</cyclestr></command>
+   <dependency>
+      <taskdep task="jgefs_enspost"/>
+   </dependency>
+</task>

@@ -9,14 +9,7 @@ set -xa
 export PS4=' + $SECONDS $na $LINENO: '
 date
 
-###########################################
-# Run gefs_config to get input parameters
-###########################################
-if [ "$RUN_ENVIR" = dev ]; then ### For Developers
-# . $basesource/nw${envir}/versions/gefs.ver
-	. $basesource/nwdev/parm/gefs_config
-	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-fi
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 
 export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
 #export APRUNTRACK="aprun -j1 -n21 -N7 -d1"
@@ -189,9 +182,10 @@ done # for pert in ${memberlist}
 cat trkr.cmdfile
 chmod 775 trkr.cmdfile
 export MP_CMDFILE=${DATA}/${cmodel}/trkr.cmdfile
+export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
 export MP_PGMMODEL=mpmd
 rm mpmd_cmdfile
-ln -s $MP_CMDFILE mpmd_cmdfile 
+ln -s $MP_CMDFILE mpmd_cmdfile
 $APRUN 
 
 #for pert in ${memberlist}; do

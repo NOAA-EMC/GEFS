@@ -6,14 +6,6 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-###########################################
-# Run gefs_config to get input parameters
-###########################################
-if [ "$RUN_ENVIR" = dev ]; then ### For Developers
-# . $basesource/nw${envir}/versions/gefs.ver
-	. $basesource/nwdev/parm/gefs_config
-fi
-
 export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
 
 ############################
@@ -159,8 +151,8 @@ echo location of chgres script and executable
 export CHGRESTHREAD=$NTHREADS_SIGCHGRS
 # Change Resolution script and executable
 
-export chgresush=$USHgsm/global_chgres.sh
-export CHGRESEXEC=$EXECgsm/global_chgres
+export chgresush=${chgresush:-$USHgsm/global_chgres.sh}
+export CHGRESEXEC=${CHGRESEXEC:-$EXECgsm/global_chgres}
 
 ##############################################
 echo list environment before running script

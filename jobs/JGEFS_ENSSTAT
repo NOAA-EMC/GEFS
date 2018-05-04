@@ -6,14 +6,7 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-###########################################
-# Run gefs_config to get input parameters
-###########################################
-if [ "$RUN_ENVIR" = dev ]; then ### For Developers
-# . $basesource/nw${envir}/versions/gefs.ver
-	. $basesource/nwdev/parm/gefs_config
-	export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-fi
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 
 export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
 
@@ -84,9 +77,9 @@ export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 export COMINm1=$COMROOT/${NET}/${envir}/${RUN}.${PDYm1}
 
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2a
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2alr
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2a2p5
 
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
@@ -124,14 +117,15 @@ if (( fhmaxh > fhmax )); then
   fhmaxh=$fhmax
 fi
 
-export FHINC=06
+# FHINC is the interval for 1.0/2.5 grid files
+export FHINC=${FHOUTLR:-06}
+# FHINCP5 defined later is the interval for 0.5 grid files
 
 fcstlong=true
 case $FORECAST_SEGMENT in
 	(hr)
 		# high resolution segment
-		export FHINCP5=03
-		export FHINCP5=06
+		export FHINCP5=${FHOUTHR:-06}
 		export SHOUR=00
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmaxh
@@ -141,7 +135,7 @@ case $FORECAST_SEGMENT in
 		;;
 	(lr)
 		# low resolution segment
-		export FHINCP5=06
+		export FHINCP5=${FHOUTLR:-06}
 		export SHOUR=$(( $fhmaxh + FHINC ))
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmax
@@ -151,7 +145,7 @@ case $FORECAST_SEGMENT in
 		;;
 	(*)
 		# whole forecast period
-		export FHINCP5=03
+		export FHINCP5=06
 		export SHOUR=00
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmax
@@ -199,6 +193,7 @@ echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_2 $FHINC_2 ${subdata_2} 
 cat ensstat.cmdfile
 chmod 775 ensstat.cmdfile
 export MP_CMDFILE=${DATA}/ensstat.cmdfile
+export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
 export MP_PGMMODEL=mpmd
 
 rm mpmd_cmdfile
