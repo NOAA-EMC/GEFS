@@ -55,5 +55,4 @@ export APRUNC="aprun -b -j1 -n1 -N1 -d24 -cc depth"
 
 
 
-
 $SOURCEDIR/jobs/JGEFS_INIT_FV3CHGRS
