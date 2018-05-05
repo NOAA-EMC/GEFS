@@ -62,8 +62,9 @@ else
    export j_opt="-j 1"
 fi
 #APRUN="aprun -n $tasks -N $task_per_node -d $nth_fv3 $j_opt -cc depth"
-# APRUN="aprun -n $NTASKS_FV3 -N $cores_per_node -d $NTHREADS_FV3 $j_opt -cc depth"
-export FCSTEXEC=fv3_gfs_${TYPE}.${COMP}.${MODE}.x
+APRUN="aprun -n $NTASKS_FV3 -N $cores_per_node -d $NTHREADS_FV3 $j_opt -cc depth" 
+#export FCSTEXEC=fv3_gfs_${TYPE}.${COMP}.${MODE}.x
+export FCSTEXEC=fv3_gfs_nh.prod.32bit.x.tf # based on Hong Guan's Modification
 export APRUN=${APRUN:-""}
 
 export k_split=${k_split:-1}
