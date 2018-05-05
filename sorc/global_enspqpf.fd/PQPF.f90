@@ -69,9 +69,7 @@ integer   irete,irerb,imem
 integer   temp(200),ipdt8,ipdt9,ipdt30
 real      bb,cc
 
-parameter(len=64)
-integer :: npert = 20
-character*255 :: snpert
+parameter(len=64,mem=41)
 
 real, allocatable :: ff(:,:),pp(:,:),ss(:,:),aa(:)
 
@@ -91,16 +89,6 @@ data rk/0.254,1.00,2.54,5.00,6.35,10.00,12.7,20.0,25.4,50.8,  &
         0.254,1.00,2.54,5.00,6.35,10.00,12.7,20.0,25.4,50.8,  &
         0.254,1.00,2.54,5.00,6.35,10.00,12.7,20.0,25.4,50.8,  &
         0.254,1.00,2.54,5.00,6.35,10.00,12.7,20.0,25.4,50.8/
-
-! To get the value of npert from Environmental Variables
-!   and then get the value of mem
-CALL getenv("npert", snpert)
-if (trim(snpert) == "") then
-  npert = 20
-else
-  read(snpert,*)npert
-endif
-mem = npert + 1
 
 CALL W3TAGB('PQPF',2000,0110,0073,'NP20   ')
 
