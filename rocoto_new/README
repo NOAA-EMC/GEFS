@@ -6,7 +6,8 @@ Xianwu Xue: 20180422
 
 # New Rototo Workflow
 
-open 'user_new_full.conf' to modify 'SDATE' 'EDATE'. You don't need to modify 'EXPID', 'First' and 'Last'
+open 'user_full.conf' to modify 'SDATE' 'EDATE'. 
+BTW, you don't need to modify 'EXPID', 'First' and 'Last'
 
 module load rocoto
 module load python # if your python version<=2.6

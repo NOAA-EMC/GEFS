@@ -123,6 +123,7 @@ module load prod_util hpss >>/dev/null
 #export workflow_ver=v15.0.0
 export BASE_SVN=$HOMEDIR1/fv3gfs
 export BASE_GSM=$HOMEgsm
+export HOMEgfs=$HOMEgsm
 #export CASE=$CASEHR
 #-- create ICs using operational GFS initial conditions
 
@@ -139,24 +140,19 @@ export CDATE=$PDY$cyc
 #export OUTDIR=$FV3GESOUT/$mem/${CASE}_$CDATE
 export OUTDIR=$FV3GESOUT
 export ictype=nemsgfs
-#cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc                 
-#cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc         
-#cp $GESOUT/ge$mem.t$cyc\z.nsnanl $INIDIR/nsnanl.gfs.$PDY$cyc
-
-#cp /gpfs/hps3/emc/ensemble/noscrub/Wei.Li/init/gefs.${PDY}/${cyc}/init/ge$mem.t$cyc\z.sanl $INIDIR/gfs.t${cyc}z.sanl
-#cp /gpfs/hps3/emc/ensemble/noscrub/Wei.Li/init/gefs.${PDY}/${cyc}/init/gec00.t$cyc\z.sfcanl $INIDIR/gfs.t${cyc}z.sfcanl
-
-#cp /gpfs/hps3/emc/ensemble/noscrub/Eric.Sinsky/FV3GEFSinit/gefs.$PDY/sfcanl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sfcanl
-cp /gpfs/hps3/emc/ensemble/noscrub/Hong.Guan/reforecast_IC/${PDY}00/sfcanl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sfcanl
-
-if [ "$mem" = c00 ]; then
-# cp /gpfs/hps3/emc/ensemble/noscrub/Eric.Sinsky/FV3GEFSinit/gefs.$PDY/siganl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sanl
- cp /gpfs/hps3/emc/ensemble/noscrub/Hong.Guan/reforecast_IC/${PDY}00/siganl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sanl
+if [ $inflag = 7 ] ; then
+	if [ $mem = "c00" ] ; then
+		cp $GESOUT/ge$mem.t$cyc\z.atmanl $INIDIR/gfnanl.gfs.$PDY$cyc
+	else
+		cp $GESOUT/ge$mem.t$cyc\z.ratmanl $INIDIR/gfnanl.gfs.$PDY$cyc
+	fi
+	cp $GESOUT/gec00.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
+	cp $GESOUT/gec00.t$cyc\z.sfcanl $INIDIR/nsnanl.gfs.$PDY$cyc
 else
-#cp /gpfs/hps3/emc/ensemble/noscrub/Eric.Sinsky/FV3GEFSinit/gefs.$PDY/sanl.$mem $INIDIR/gfs.t${cyc}z.sanl
- cp /gpfs/hps3/emc/ensemble/noscrub/Hong.Guan/reforecast_IC/${PDY}00/sanl.$mem $INIDIR/gfs.t${cyc}z.sanl
+	cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
+	cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
+	cp $GESOUT/ge$mem.t$cyc\z.nsnanl $INIDIR/nsnanl.gfs.$PDY$cyc
 fi
-
 
 testfile=$INIDIR/gfs.t${cyc}z.sfcanl
 nsleep=0; tsleep=120;  msleep=50 

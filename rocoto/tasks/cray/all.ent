@@ -1,6 +1,7 @@
 <!-- List of all GEFS tasks -->
 
 <!ENTITY jgefs_enkf_track           SYSTEM   "jgefs_enkf_track.ent">
+<!ENTITY jgefs_init_recenter        SYSTEM   "jgefs_init_recenter.ent">
 <!ENTITY jgefs_init_separate        SYSTEM   "jgefs_init_separate.ent">
 <!ENTITY jgefs_init_process         SYSTEM   "jgefs_init_process.ent">
 <!ENTITY jgefs_init_combine         SYSTEM   "jgefs_init_combine.ent">
