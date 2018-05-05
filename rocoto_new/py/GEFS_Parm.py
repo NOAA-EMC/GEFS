@@ -98,19 +98,6 @@ def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
     if sVarName not in lstBaseParm:
         lstBaseParm.append(sVarName)
 
-    # ==
-    sVarName = "navg_min"
-    if sVarName.upper() not in dicBase:
-        dicBase[sVarName.upper()] = npert
-    else:
-        navg_min = int(dicBase[sVarName.upper()])
-        if navg_min > npert:
-	    navg_min = npert
-            dicBase[sVarName.upper()] = navg_min
-
-    if sVarName not in lstBaseParm:
-        lstBaseParm.append(sVarName)
-
 #------
 def create_gets_dev_parm(dicBase, listBaseParm):
     import sys
