@@ -28,7 +28,9 @@ program ens_avgspr_g2
 !
 ! attributes:
 !   language: fortran 90
-!
+! modified by:
+!   Xianwu Xue 04/24/2018
+!      added an ability to get 'navg_min' from environment variables
 !$$$
 
 use grib_mod
@@ -69,6 +71,9 @@ character*255 cfopg1,cfopg2
 
 real    gmin,gmax
 integer nbit
+
+integer :: navg_min
+character*255 :: snavg_min
 
 namelist /namens/nfiles,nenspost,cfipg,iskip,cfopg1,cfopg2
  
@@ -231,8 +236,15 @@ do
 
   ! end of imem loop, calculate ensemble mean and spread
 
+  CALL getenv("navg_min", snavg_min)
+  if (trim(snavg_min) == "") then
+    navg_min = 20
+  else
+    read(snavg_min,*)navg_min
+  endif
+
   print *, '   '; print *,' variable has member',inum; print *, '   '
-  if(inum.le.10) goto 200
+  if(inum.le.navg_min) goto 200
 
   print *, '   '; print *,  ' Combined Ensemble Data Example at Point 8601 '
   write (*,'(10f8.1)') (fgrid(8601,i),i=1,inum)
