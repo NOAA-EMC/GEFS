@@ -121,9 +121,21 @@ export pdycycp=`$NDATE -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
 export cycp=`echo $pdycycp|cut -c9-10`
 
+case $cyc in
+	00) memshift=0;;
+	06) memshift=20;;
+	12) memshift=40;;
+	18) memshift=60;;
+esac
+
 for imem in $(seq 1 $recentmem); do
-   memchar="mem"$(printf %03i $imem)
-   $NLN $COMINenkf$pdyp/$cycp/$memchar/gdas.t${cycp}z.atmf006.nemsio ./atmf006_$memchar
+	(( jmem = imem + memshift ))
+	if (( jmem > 80 )); then
+		(( jmem = jmem - 80 ))
+	fi
+	memchar="mem"$(printf %03i $imem)
+	memchar_shift="mem"$(printf %03i $jmem)
+	$NLN $COMINenkf$pdyp/$cycp/$memchar_shift/gdas.t${cycp}z.atmf006.nemsio ./atmf006_$memchar
 done
 
 
