@@ -14,7 +14,7 @@ export NEMSIO_OUT=.true.
 export ICTYP="FV3GFS"
 export nopdpvv=.true.
 
-# parameters for relocation, 1 for yes, 0 for no
+# parameters for relocation, 1 for yes, 0 for no, cold_start or warm_start
 export relocfact=0.05
 export relocflag=${relocflag:-0}
 #
@@ -27,7 +27,8 @@ if (( inflag == 6 || inflag == 7 )); then
 	export num_mem_enkf=80    #number of ENKF members
         (( num_pair_enkf = num_mem_enkf / 2 ))
         export num_pair_enkf=$num_pair_enkf
-	(( recentmem = npair * 2 ))
+	#(( recentmem = npair * 2 ))
+	(( recentmem = npert ))
 	export recentmem=$recentmem
         (( npair = num_pair_enkf / 4 ))
 	export npair=$npair

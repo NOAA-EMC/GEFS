@@ -35,7 +35,7 @@ export MEMORY_AFFINITY=core:2
 module load NetCDF-intel-haswell/4.2
 module load nco-gnu-sandybridge/4.4.4
 
-export total_tasks=20
+export total_tasks=30
 export OMP_NUM_THREADS=6
 export taskspernode=4
 
