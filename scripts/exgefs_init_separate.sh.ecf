@@ -74,36 +74,6 @@ cd $DATA
 
 relocfact=$relocfact relocflag=$relocflag
 
-(( npairt = npair * 4 ))
-nlist=
-ipair=0
-while (( ipair < npairt )); do
-	(( ipair = ipair + 1 ))
-	if (( ipair < 10 )); then
-		ipair=0$ipair
-	fi
-	nlist="$nlist $ipair"
-done # while (( ipair < npairt ))
-echo nlist=$nlist
-
-# explicit jcap specification replaced by specifications in parm file
-
-# these variables specify the resolution of low-resolution perturbation output
-# JCAPLR=62
-# LEVSLR=28
-# LONBLR=192
-# LATBLR=94
-# NTRACLR=3
-
-# these variables specify the resolution of high-resolution perturbation output
-# JCAPHR=126
-# LEVSHR=28
-# LONBHR=384
-# LATBHR=190
-# NTRACHR=3
-
-# cfsuffix identifies long forecast cycle 
-# associated with this breeding job
 
 if [[ "$cycsuffix" = "true" ]]; then
 	export cfsuffix=".cycfs$cyc_fcst"
@@ -143,199 +113,14 @@ echo cfsuffixp=$cfsuffixp
 echo ensshortp=$ensshortp
 
 #
-# low resolution center analysis
-#
-
-if (( nhrpair < npair )); then
-      if [ $NEMSIO_IN = .true. ] ; then
-	export GFSOUT=sanl.lr.in
-	export SFNOUT=sfcanl.lr.in
-        export OUTTYP=1
-      else
-	export SIGOUT=sanl.lr.in
-	export SFCOUT=sfcanl.lr.in
-        export OUTTYP=2
-      fi
-
-	export JCAP=$JCAPLR
-	export LEVS=$LEVSLR
-	export LONB=$LONBLR
-	export LATB=$LATBLR
-	export NTRAC=$NTRACLR
-	export IDVC=$IDVC
-	export NVCOORD=$IDVC
-        export nopdpvv=$nopdpvv
-        export rdgrid=.true.
-        export use_ufo=.true.
-	export CHGRESVARS="use_ufo=$use_ufo,rdgrid=$rdgrid,idvc=$idvc,NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0,nopdpvv=$nopdpvv"
-	if (( IDVC == 1 )); then
-		export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
-	fi
-	if (( IDVC == 2 )); then
-		export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
-	fi
-
-	if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
-		export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
-		export SFCINP=$COMINgfs/gfs.$cycle.sfcanl.nemsio
-	else
-		echo !!!! FATAL ERROR !!!!
-		echo $COMINgfs/gfs.$cycle.atmanl.nemsio and $COMINgfs/gfs.$cycle.sfcanl.nemsio CANNOT BE FOUND
-		exit
-	fi # [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]
-	###teste
-
-	# check for missing or zero-length analysis files
-
-	for file in $SIGINP $SFCINP; do
-		if [[ -s $file ]]; then
-			ls -al $file
-		else
-			echo input file $file IS MISSING
-			export err=9
-			err_chk
-		fi # [[ -s $file ]]
-	done # for file in $SIGINP $SFCINP
-        if [ $NEMSIO_IN = .true. ] ; then
-	ojcap=$($nemsioget ${SIGINP} jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
-	olevs=$($nemsioget ${SIGINP} levs |grep -i "levs" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
-        olonb=$($nemsioget ${SIGINP} LONF|grep -i "LONF" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
-        olatb=$($nemsioget ${SIGINP} LATG|grep -i "LATG" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
-        ontrac=$($nemsioget ${SIGINP} NTRAC|grep -i "NTRAC" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
-        oidvc=$($nemsioget ${SIGINP} IDVC|grep -i "IDVC" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
-        else
-	ojcap=`$sighdrexec $SIGINP jcap`
-	olevs=`$sighdrexec $SIGINP levs`
-	olonb=`$sighdrexec $SIGINP lonb`
-	olatb=`$sighdrexec $SIGINP latb`
-	ontrac=`$sighdrexec $SIGINP ntrac`
-	oidvc=`$sighdrexec $SIGINP idvc`
-        fi
-	runchgres=yes
-	if [[ (( JCAP == ojcap )) && (( LEVS == olevs )) && (( LONB == olonb )) && (( LATB == olatb )) && (( NTRAC == ontrac )) && (( IDVC == oidvc )) ]]; then
-		runchgres=no
-	else
-		runchgres=yes
-	fi
-
-	if [[ $runchgres = yes ]]; then
-		#   if (( IDVC != oidvc )); then
-		#     if [[ $oidvc != 2 ]] || [[ LEVS != olevs ]]; then
-		#       export SIGLEVEL=$siglevelfile
-		#     fi
-		#   fi
-		echo `date` timing lr chgres before
-		#   export OROGRAPHY=${OROGRAPHY:-${FIXgsm}/global_orography.t${JCAP}.grb}
-		#   export OROGRAPHY_UF=${OROGRAPHY_UF:-${FIXgsm}/global_orography_uf.t${JCAP}.grb}
-		#   export SLMASK=${SLMASK:-${FIXgsm}/global_slmask.t${JCAP}.grb}
-		#   export LONSPERLAT=${LONSPERLAT:-${FIXgsm}/global_lonsperlat.t${JCAP}.txt}
-
-                export OROGRAPHY=${OROGRAPHY:-${FIXgsm}/global_orography.t${JCAP}.$LONB.$LATB.rg.grb}
-                export OROGRAPHY_UF=${OROGRAPHY_UF:-${FIXgsm}/global_orography_uf.t${JCAP}.$LONB.$LATB.rg.grb}
-                export SLMASK=${SLMASK:-${FIXgsm}/global_slmask.t${JCAP}.$LONB.$LATB.rg.grb}
-                export LONSPERLAT=${LONSPERLAT:-${FIXgsm}/global_lonsperlat.t${JCAP}.$LONB.$LATB.txt}
-                # The SST and SEA_ICE Climate fix file:
-                export FNTSFC=${FNTSFC:-$FIXgsm/RTGSST.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
-                export FNAISC=${FNAISC:-$FIXgsm/CFSR.SEAICE.1982.2012.monthly.clim.grb}  # New for gfs 2014 implementation
-                export SOILTYPE_INP=statsgo
-                export SOILTYPE_OUT=statsgo
-                export VEGTYPE_INP=igbp
-                export VEGTYPE_OUT=igbp
-                export FNVEGC=${FNVEGC:-${FIXgsm}/global_vegfrac.0.144.decpercent.grb}
-                export O3CLIM=${O3CLIM:-${FIXgsm}/global_o3clim.txt}
-                export O3FORC=${O3FORC:-${FIXgsm}/global_o3prdlos.f77}
-                export H2OFORC=${H2OFORC:-${FIXgsm}global_h2o_pltc.f77}
-                export FNALBC2=$FIXgsm/global_albedo4.1x1.grb
-                export FNZORC=igbp
-
-		$chgresush >>$pgmout
-		echo `date` timing lr chgres after
-	else
-		cp -fp $SIGINP $SIGOUT
-		cp -fp $SFCINP $SFCOUT
-	fi # [[ $runchgres = yes ]]
-fi # (( nhrpair < npair ))
-
-#
 # high resolution center analysis
 #
-
-if (( nhrpair > 0 )); then
-        if [ $NEMSIO_IN = .true. ] ; then
-	export GFSOUT=sanl.hr.in
-	export SFNOUT=sfcanl.hr.in
-	export NSNOUT=nsnanl.hr.in
-        export OUTTYP=1
-       else
-	export SFCOUT=sfcanl.hr.in
-	export SIGOUT=sanl.hr.in
-        export OUTTYP=2
-       fi
-
-	export JCAP=$JCAPHR
-	export LEVS=$LEVSHR
-	export LONB=$LONBHR
-	export LATB=$LATBHR
-
-export use_ufo=.true.
-export IDSL=1
-export IDVM=0
-export IDVT=21
-export LSOIL=4
-export IALB=1
-export ISOT=1
-export nopdpvv=.true.
-export LANDICE_OPT=2
-export CLIMO_FIELDS_OPT=3
-export OUTTYP=1
-export IVEGSRC=1
-export NVCOORD=0
-export RDGRID=.true.
-                export SOILTYPE_INP=statsgo
-                export SOILTYPE_OUT=statsgo
-                export VEGTYPE_INP=igbp
-                export VEGTYPE_OUT=igbp
-                export O3CLIM=${O3CLIM:-${FIXgsm}/global_o3clim.txt}
-                export O3FORC=${O3FORC:-${FIXgsm}/global_o3prdlos.f77}
-                export FNGLAC=$FIXgsm/global_glacier.2x2.grb
-                export FNMXIC=$FIXgsm/global_maxice.2x2.grb
-                export FNTSFC=$FIXgsm/RTGSST.1982.2012.monthly.clim.grb
-                export FNSNOC=$FIXgsm/global_snoclim.1.875.grb
-                export FNZORC="igbp"
-                export FNALBC=$FIXgsm/global_snowfree_albedo.bosu.t$MTNRSL.rg.grb
-                export FNALBC2=$FIXgsm/global_albedo4.1x1.grb
-                export FNAISC=$FIXgsm/CFSR.SEAICE.1982.2012.monthly.clim.grb
-                export FNTG3C=$FIXgsm/global_tg3clim.2.6x1.5.grb
-                export FNVEGC=$FIXgsm/global_vegfrac.0.144.decpercent.grb
-                export FNVETC=$FIXgsm/global_vegtype.igbp.t$MTNRSL.rg.grb
-                export FNSOTC=$FIXgsm/global_soiltype.statsgo.t$MTNRSL.rg.grb
-                export FNSMCC=$FIXgsm/global_soilmgldas.t$MTNRSL.grb
-                export FNMSKH=$FIXgsm/seaice_newland.grb
-                export FNTSFA=""
-                export FNACNA=""
-                export FNSNOA=""
-                export FNVMNC=$FIXgsm/global_shdmin.0.144x0.144.grb
-                export FNVMXC=$FIXgsm/global_shdmax.0.144x0.144.grb
-                export FNSLPC=$FIXgsm/global_slope.1x1.grb
-                export FNABSC=$FIXgsm/global_mxsnoalb.uariz.t$MTNRSL.rg.grb
-                export OROGRAPHY_UF=$FIXgsm/global_orography_uf.t$MTNRSL.rg.grb
-                export OROGRAPHY=$FIXgsm/global_orography.t$MTNRSL.rg.grb
-                export LONSPERLAT=$FIXgsm/global_lonsperlat.t$MTNRSL.txt
-                export LONSPERLAR=$FIXgsm/global_lonsperlat.t$MTNRSL.txt
-                export SLMASK=$FIXgsm/global_slmask.t$MTNRSL.rg.grb
-
-	export CHGRESVARS="use_ufo=.true.,rdgrid=$RDGRID,idvc=$IDVC,ialb=$IALB,lsoil=$LSOIL,NTRAC=$NTRACLR,NVCOORD=$NVCOORD,nopdpvv=$nopdpvv"
-	if (( IDVC == 1 )); then
-		export SIGLEVEL=$FIXgsm/global_siglevel.l${LEVS}.txt
-	fi
-	if (( IDVC == 2 )); then
-		export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
-	fi
 
 	if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
 		export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
 		export SFCINP=$COMINgfs/gfs.$cycle.sfcanl.nemsio
 #		export NSTINP=$COMINgfs/gfs.$cycle.nstanl.nemsio
+		echo $COMINgfs/gfs.$cycle.atmanl.nemsio and $COMINgfs/gfs.$cycle.sfcanl.nemsio  FOUND
 	else
 		echo !!!! FATAL ERROR !!!!
 		echo $COMINgfs/gfs.$cycle.atmanl.nemsio and $COMINgfs/gfs.$cycle.sfcanl.nemsio CANNOT BE FOUND
@@ -354,80 +139,7 @@ export RDGRID=.true.
 		fi # [[ -s $file ]]
 	done # for file in $SIGINP $SFCINP
 
-        if [[ $nstinit == yes ]]; then
-        export NSTINP=$COMINgfs/gfs.$cycle.nstanl.nemsio
-        if [[ -s $NSTINP ]]; then
-                        ls -al $file
-                else
-                        echo input file $NSTINP IS MISSING
-                        export err=9
-                        err_chk
-        fi # [[ -s $NSTINP ]]
-        else
-        export NSTINP=$COMINgfs/gfs.$cycle.nstanl.nemsio
-          if [[ -s $NSTINP ]]; then
-             $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $NSTINP $DATA/gfs.$cycle.sfcanl.nemsio
-             getnsttfrc=$?
-             if (( getnsttfrc == 0 )); then
-               echo `date` $getnsttf after
-               export SFCINP=$DATA/gfs.$cycle.sfcanl.nemsio
-             else
-                 echo !!! FATAL ERROR !!
-                 echo `date` $getnsttf failed
-                 exit
-             fi
-          else
-             echo input file $NSTINP IS MISSING
-             export NSTINP=null
 
-         fi
-        fi
-
-        if [ $NEMSIO_IN = .true. ] ; then
-	ojcap=$($nemsioget ${SIGINP} jcap |grep -i "jcap" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
-	olevs=$($nemsioget ${SIGINP} levs |grep -i "levs" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
-        olonb=$($nemsioget ${SIGINP} LONF|grep -i "LONF" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
-        olatb=$($nemsioget ${SIGINP} LATG|grep -i "LATG" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
-        ontrac=$($nemsioget ${SIGINP} NTRAC|grep -i "NTRAC" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
-        oidvc=$($nemsioget ${SIGINP} IDVC|grep -i "IDVC" |awk -F"= " '{print $2}' |awk -F" " '{print $1}')
-        else
-	ojcap=`$sighdrexec $SIGINP jcap`
-	olevs=`$sighdrexec $SIGINP levs`
-	olonb=`$sighdrexec $SIGINP lonb`
-	olatb=`$sighdrexec $SIGINP latb`
-	ontrac=`$sighdrexec $SIGINP ntrac`
-	oidvc=`$sighdrexec $SIGINP idvc`
-        fi
-	if [[ (( JCAP == ojcap )) && (( LEVS == olevs )) && (( LONB == olonb )) && (( LATB == olatb )) && (( NTRAC == ontrac )) && (( IDVC == oidvc )) ]]; then
-		runchgres=no
-	else
-		runchgres=yes
-	fi
-
-	if [[ $runchgres = yes ]]; then
-		#   if [[ $IDVC = 2 ]]; then
-		#     if [[ $oidvc != 2 ]] || [[ LEVS != olevs ]]; then
-		#       export SIGLEVEL=$siglevelfile
-		#       export NVCOORD=2
-		#     fi
-		#   fi
-		echo `date` timing hr chgres before
-		#   export OROGRAPHY=${OROGRAPHY:-${FIXgsm}/global_orography.t${JCAP}.grb}
-		#   export OROGRAPHY_UF=${OROGRAPHY_UF:-${FIXgsm}/global_orography_uf.t${JCAP}.grb}
-		#   export SLMASK=${SLMASK:-${FIXgsm}/global_slmask.t${JCAP}.grb}
-		#   export LONSPERLAT=${LONSPERLAT:-${FIXgsm}/global_lonsperlat.t${JCAP}.txt}
- 
-
-		$chgresush >>$pgmout
-		echo `date` timing hr chgres after
-	else
-		cp -fp $SIGINP $SIGOUT
-		cp -fp $SFCINP $SFCOUT
-		cp -fp $NSTINP $NSNOUT
-	fi # [[ $runchgres = yes ]]
-fi # (( nhrpair > 0 ))
-
-wait
 
 #
 # begin relocation splitting section for c00
@@ -497,43 +209,23 @@ if (( relocpertflag == 1 )); then
 
 	# 20131111 RLW added this missing line
 	taufound=no
-	for tauprefix in w x y z; do
-		if [[ $tauprefix = w ]]; then
-			cyc_fcst_t=00
-		elif [[ $tauprefix = x ]]; then
-			cyc_fcst_t=06
-		elif [[ $tauprefix = y ]]; then
-			cyc_fcst_t=12
-		elif [[ $tauprefix = z ]]; then
-			cyc_fcst_t=18
-		else
-			cyc_fcst_t=cyc_fcst
-		fi # [[ $tauprefix = w ]]
+        tauprefix=m
+        cyc_fcst_t=$cycp
 		# 20131130 RLW add touch so this file will exist when linked and read
 		touch tracks.atcfunix.$cyc_fcst_t
-		for file in $COMTRACKP/${tauprefix}[pc]??.t${cycp}z.cyclone.trackatcfunix; do
+		for file in $COMTRACKP/${tauprefix}???.t${cycp}z.cyclone.trackatcfunix; do
 			if [[ -s $file ]]; then
 				cat $file >>tracks.atcfunix.$cyc_fcst_t
 				taufound=yes
 			fi
-		done # for file in $COMTRACKP/${tauprefix}[pc]??.t${cycp}z.cyclone.trackatcfunix
-		if [[ "$taufound" = "no" ]]; then
-			if (( cyc_fcst == cycp )); then
-				for file in $COMTRACKP/a[pc]??.t${cycp}z.cyclone.trackatcfunix; do
-					if [[ -s $file ]]; then
-						cat $file >>tracks.atcfunix.$cyc_fcst_t
-						taufound=yes
-					fi
-				done # for file in $COMTRACKP/a[pc]??.t${cycp}z.cyclone.trackatcfunix
-			fi
-		fi
-	done  #for tauprefix in w x y z
+		done # for file in $COMTRACKP/${tauprefix}???.t${cycp}z.cyclone.trackatcfunix
 	if [[ "$taufound" = "no" ]]; then
 		export relocpertflag=0
 	fi
-
-	echo Separate the storm and environment forecast fields for c00 setup end
 fi # (( relocpertflag == 1 ))
+        echo relocpertflag=$relocpertflag
+
+
 echo HHH TEST 2
 
 #DHOU, XZHOU added this if block
@@ -545,7 +237,7 @@ if (( relocpertflag == 1 )); then
 	ln -s -f tcvitals.as fort.11
 
 	#ln -s -f $FIXgsm/global_slmask.t$JCAPHR.$LONB.$LATB.grb    fort.12
-	ln -s -f $SLMASK    fort.12
+#	ln -s -f $SLMASK    fort.12
 
 	ln -s -f tracks.atcfunix.$cycp      fort.40
 	ln -s -f gec00_presep              fort.21
@@ -554,7 +246,7 @@ if (( relocpertflag == 1 )); then
 	ln -s -f gec00_strm              fort.71
 
 	export gesfhr=$fhrp
-	export ensm=c00
+	export ensm=000
 
 	echo `date` $execseparate before
 	echo $gesfhr $ensm | $aprun_gec00 $execseparate

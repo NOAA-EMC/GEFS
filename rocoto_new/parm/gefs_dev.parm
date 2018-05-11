@@ -41,5 +41,11 @@ export savesfcsig=no
 export sigzvd=no
 export npair=10
 export npert=20
+export pdycycp=`$NDATE -6 $PDY$cyc`
+export pdyp=`echo $pdycycp|cut -c1-8`
+
+export COMINenkf=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/data/FV3EnKF/enkf.gdas.$pdyp
+export COMINgfs=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/data/FV3EnKF/gfs.$PDY/$cyc
+
 
 echo `date` $0 test section end
