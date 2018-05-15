@@ -81,6 +81,7 @@ CALL W3TAGB('ENSPPF',2000,0110,0073,'NP20   ')
 read (5,namin,end=1020)
 write (6, namin)
 print *, "Xianwu-Xue-test-ENSPPF"
+print *, npert
 
 mem = npert + 1
 

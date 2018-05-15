@@ -40,7 +40,6 @@ echo "crain='$CRAIN',craino='$CRAINO'" >>inputpqpf
 echo "cfrzr='$CFRZR',cfrzro='$CFRZRO'" >>inputpqpf
 echo "cicep='$CICEP',cicepo='$CICEPO'" >>inputpqpf
 echo "csnow='$CSNOW',csnowo='$CSNOWO'" >>inputpqpf
-echo "npert=$npert" >>inputpqpf
 #echo "cpgb='$CPGB',cpgi='$CPGI',cpge='$CPGO'"           >>inputpqpf
 #echo "crain='$CRAIN',craini='$CRAINI',craino='$CRAINO'" >>inputpqpf
 #echo "cfrzr='$CFRZR',cfrzri='$CFRZRI',cfrzro='$CFRZRO'" >>inputpqpf
