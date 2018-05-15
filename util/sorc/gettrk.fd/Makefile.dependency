@@ -1,0 +1,3 @@
+sig2p.o: sig2p.f90 gettrk_modules.o
+gettrk_modules.o: gettrk_modules.f
+gettrk_main.o: gettrk_main.f gettrk_modules.o sig2p.o

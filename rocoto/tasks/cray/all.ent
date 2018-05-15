@@ -1,0 +1,24 @@
+<!-- List of all GEFS tasks -->
+
+<!ENTITY jgefs_enkf_track           SYSTEM   "jgefs_enkf_track.ent">
+<!ENTITY jgefs_init_separate        SYSTEM   "jgefs_init_separate.ent">
+<!ENTITY jgefs_init_process         SYSTEM   "jgefs_init_process.ent">
+<!ENTITY jgefs_init_combine         SYSTEM   "jgefs_init_combine.ent">
+<!ENTITY jgefs_init_fv3chgrs        SYSTEM   "jgefs_init_fv3chgrs.ent">
+<!ENTITY jgefs_forecast_high        SYSTEM   "jgefs_forecast_high.ent">
+<!ENTITY jgefs_remap_high           SYSTEM   "jgefs_remap_high.ent">
+<!ENTITY jgefs_post_high            SYSTEM   "jgefs_post_high.ent">
+<!ENTITY jgefs_prdgen_high          SYSTEM   "jgefs_prdgen_high.ent">
+<!ENTITY jgefs_ensstat_high         SYSTEM   "jgefs_ensstat_high.ent">
+<!ENTITY jgefs_sigchgres            SYSTEM   "jgefs_sigchgres.ent">
+<!ENTITY jgefs_forecast_low         SYSTEM   "jgefs_forecast_low.ent">
+<!ENTITY jgefs_post_low             SYSTEM   "jgefs_post_low.ent">
+<!ENTITY jgefs_prdgen_low           SYSTEM   "jgefs_prdgen_low.ent">
+<!ENTITY jgefs_ensstat_low          SYSTEM   "jgefs_ensstat_low.ent">
+<!ENTITY jgefs_enspost              SYSTEM   "jgefs_enspost.ent">
+<!ENTITY jgefs_post_track           SYSTEM   "jgefs_post_track.ent">
+<!ENTITY jgefs_post_genesis         SYSTEM   "jgefs_post_genesis.ent">
+<!ENTITY jgefs_pqpf                 SYSTEM   "jgefs_pqpf.ent">
+<!ENTITY jgefs_keep_data            SYSTEM   "jgefs_keep_data.ent">
+<!ENTITY jgefs_archive              SYSTEM   "jgefs_archive.ent">
+<!ENTITY jgefs_cleanup              SYSTEM   "jgefs_cleanup.ent">

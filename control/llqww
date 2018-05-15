@@ -1,0 +1,496 @@
+#!/bin/ksh
+#
+# run llq once and perform various operations on it depending on options
+#
+# based on llqwa run llqw and analyse the results by ST, Class, and LL Group
+#
+# default settings
+goodargs=yes
+                    verboseflag=yes
+verboseflag=no
+allflag=no
+nqflag=no
+queueflag=no
+analysisflag=no
+userflag=yes
+useronlyflag=yes
+username=$LOGNAME
+# process arguments if necessary
+if (( $# > 0 )); then
+  argprev=null
+  for arg in $*
+  do
+    case $argprev in
+      (-u)
+	username=$arg
+      ;;
+      (*)
+	case $arg in
+	  (a)
+	    analysisflag=yes
+	    useronlyflag=no
+	  ;;
+	  (-a)
+	    analysisflag=yes
+	    useronlyflag=no
+	  ;;
+	  (h)
+	    goodargs=no
+	  ;;
+	  (-h)
+	    goodargs=no
+	  ;;
+	  (i)
+	    queueflag=yes
+	    useronlyflag=no
+	  ;;
+	  (-i)
+	    queueflag=yes
+	    useronlyflag=no
+	  ;;
+	  (nq)
+	    nqflag=yes
+	    useronlyflag=no
+	  ;;
+	  (-nq)
+	    nqflag=yes
+	    useronlyflag=no
+	  ;;
+	  (nu)
+	    userflag=no
+	  ;;
+	  (-nu)
+	    userflag=no
+	  ;;
+	  (u)
+	    username=$LOGNAME
+	    userflag=yes
+	  ;;
+	  (-u)
+	    username=$LOGNAME
+	    userflag=yes
+	  ;;
+	  (v)
+	    verboseflag=yes
+	  ;;
+	  (-v)
+	    verboseflag=yes
+	  ;;
+	  (x)
+	    allflag=yes
+	    useronlyflag=no
+	  ;;
+	  (-x)
+	    allflag=yes
+	    useronlyflag=no
+	  ;;
+	  (*)
+	    goodargs=no
+	    echo $0 does not recognize the argument $arg after $argprev
+	  ;;
+	esac
+      ;;
+    esac
+    argprev=$arg
+  done
+fi
+if [[ $verboseflag = yes ]]; then
+  echo `date` $0 $* begin
+fi
+if [[ $goodargs != yes ]]; then
+  echo $0 takes only these arguments instead of $*
+  echo "x  -x          list all jobs"
+  echo "h  -h          print this list of arguments"
+  echo "i  -i          list all jobs waiting for execution"
+  echo "nq -nq         list all jobs in NQ status"
+  echo "a  -a          analyze job list by status and class"
+  echo "u  -u  [user]  list jobs for self [or user]"
+  echo "nu -nu         skip listing for self [or user]"
+else
+  if [[ $useronlyflag = yes ]]; then
+    llqargstring="-u $username"
+    userstring="For $username:"
+  else
+    llqargstring=""
+    userstring="For all users:"
+  fi
+  llqstring=`llq $llqargstring -f %dq %dh %dd %st %p %jn %id %o %c %gl %nh %h |\
+    sed -e"/^$/d"`
+  llqstringc=`echo "$llqstring" | cut -c1-81,89-97,101-109,112-121,123-138`
+  llqstringh=`echo "$llqstringc" |\
+    grep -e 'Queue Date  Hold Until  Disp. Date  ST ' -e '----------- ----------- ----------- -- '`
+  llqstringm=`echo "$llqstringc" |\
+    grep -v -e 'Queue Date  Hold Until  Disp. Date  ST ' |\
+    grep -v -e '----------- ----------- ----------- -- ' |\
+    grep -v -e 'job step(s) in que' |\
+    sort -k1.12,1.12 -k1.37,1.38r -k1.25,1.35r -k1.1,1.11r `
+  datestring=`date +"   %Y %a %m/%d %H:%M"`
+  llqstringt=`echo "$llqstring" | tail -1 | sed -e"s|^|$datestring  $userstring  |"`
+  if [[ $allflag = yes ]]; then
+    echo "$llqstringh"
+    echo "$llqstringm"
+    echo "$llqstringt"
+  fi
+  if [[ $nqflag = yes ]]; then
+    echo "$llqstringh"
+    echo "$llqstringm" | grep ' NQ '
+    echo "$llqstringt"
+  fi
+  if [[ $queueflag = yes ]]; then
+    echo "$llqstringh"
+    echo "$llqstringm" | grep ' I '
+    echo "$llqstringt"
+  fi
+  if [[ $analysisflag = yes ]]; then
+    echo "$llqstringc" |\
+    (
+      totalname="total   "
+      finished=no
+      ((kount=0))
+      ((kountl=9999))
+      aclass=
+      allgroup=
+      acount=
+      anode=
+      acr=
+      acrp=
+      acrm=
+      aci=
+      acd=
+      ach=
+      acc=
+      acca=
+      acst=
+      acnq=
+      acnr=
+      actx=
+      acp=
+      acvp=
+      acuk=
+      aindex=0
+
+      (( aindex = aindex + 1 ))
+      (( index = aindex ))
+      aclass[index]=$totalname
+      (( acount[index]=0 ))
+      (( anode[index]=0 ))
+
+      acr[index]=0
+      acrp[index]=0
+      acrm[index]=0
+      aci[index]=0
+      acd[index]=0
+      ach[index]=0
+      acc[index]=0
+      acca[index]=0
+      acst[index]=0
+      acnq[index]=0
+      acnr[index]=0
+      actx[index]=0
+      acp[index]=0
+      acvp[index]=0
+      acuk[index]=0
+
+      while [[ $finished == no ]] && (( kount < kountl )) ;
+      do
+
+	(( kount = kount + 1 ))
+
+	if [[ $verboseflag = yes ]]; then
+	  echo `date` before read string $string
+	fi
+	read string
+	if [[ $verboseflag = yes ]]; then
+	  echo `date` after read string $string
+	fi
+	echo "$string" | grep 'job step(s) in' >/dev/null 2>&1
+	rcg=$?
+	if (( $rcg == 0 )); then
+	  finished=yes
+	  if [[ $verboseflag = yes ]]; then
+	    echo "$string"
+	  fi
+	  savestring="$string"
+	else
+	  if (( kount > 2 )); then
+	    st=`echo "$string" | cut -c37-38`
+	    class=`echo "$string" | cut -c92-99`
+	    llgroup=`echo "$string" | cut -c101-108`
+	    nm=`echo "$string" | cut -c111-114`
+	    if [[ $verboseflag = yes ]]; then
+	      echo st="$st" class="$class" llgroup="$llgroup" nm="$nm"
+	    fi
+	    found=no
+	    index=0
+	    while (( index < aindex ))
+	    do
+	      (( index = index + 1 ))
+	      if [[ $class = ${aclass[index]} ]] || [[ $totalname = ${aclass[index]} ]]; then
+		if [[ $verboseflag = yes ]]; then
+		  echo $class ${aclass[index]}
+		fi
+		(( acount[index] = acount[index] + 1 ))
+		(( anode[index] = anode[index] + nm ))
+		case $st in
+		  ("R ")  (( acr[index] = acr[index] + 1 ));;
+		  ("RP")  (( acrp[index] = acrp[index] + 1 ));;
+		  ("RM")  (( acrm[index] = acrm[index] + 1 ));;
+		  ("I ")  (( aci[index] = aci[index] + 1 ));;
+		  ("D ")  (( acd[index] = acd[index] + 1 ));;
+		  ("H ")  (( ach[index] = ach[index] + 1 ));;
+		  ("C ")  (( acc[index] = acc[index] + 1 ));;
+		  ("CA")  (( acca[index] = acca[index] + 1 ));;
+		  ("ST")  (( acst[index] = acst[index] + 1 ));;
+		  ("NQ")  (( acnq[index] = acnq[index] + 1 ));;
+		  ("NR")  (( acnr[index] = acnr[index] + 1 ));;
+		  ("TX")  (( actx[index] = actx[index] + 1 ));;
+		  ("P ")  (( acp[index] = acp[index] + 1 ));;
+		  ("VP")  (( acvp[index] = acvp[index] + 1 ));;
+		  (*)     
+		    (( acuk[index] = acuk[index] + 1 ))
+		  ;;
+		esac
+		if [[ $class = ${aclass[index]} ]]; then
+		  found=yes
+		fi
+	      fi
+	    done
+	    if [[ $found = no ]]; then
+	      (( aindex = aindex + 1 ))
+	      (( index = aindex ))
+	      aclass[index]=$class
+	      (( acount[index]=1 ))
+	      (( anode[index]=nm ))
+
+	      acr[index]=0
+	      acrp[index]=0
+	      acrm[index]=0
+	      aci[index]=0
+	      acd[index]=0
+	      ach[index]=0
+	      acc[index]=0
+	      acca[index]=0
+	      acst[index]=0
+	      acnq[index]=0
+	      acnr[index]=0
+	      actx[index]=0
+	      acp[index]=0
+	      acvp[index]=0
+	      acuk[index]=0
+
+	      case $st in
+		("R ")  (( acr[index] = acr[index] + 1 ));;
+		("RP")  (( acrp[index] = acrp[index] + 1 ));;
+		("RM")  (( acrm[index] = acrm[index] + 1 ));;
+		("I ")  (( aci[index] = aci[index] + 1 ));;
+		("D ")  (( acd[index] = acd[index] + 1 ));;
+		("H ")  (( ach[index] = ach[index] + 1 ));;
+		("C ")  (( acc[index] = acc[index] + 1 ));;
+		("CA")  (( acca[index] = acca[index] + 1 ));;
+		("ST")  (( acst[index] = acst[index] + 1 ));;
+		("NQ")  (( acnq[index] = acnq[index] + 1 ));;
+		("NR")  (( acnr[index] = acnr[index] + 1 ));;
+		("TX")  (( actx[index] = actx[index] + 1 ));;
+		("P ")  (( acp[index] = acp[index] + 1 ));;
+		("VP")  (( acvp[index] = acvp[index] + 1 ));;
+		(*)
+		  (( acuk[index] = acuk[index] + 1 ))
+		;;
+
+	      esac
+
+	    fi
+	  else
+	    echo "$string" | grep 'currently no job status' >/dev/null 2>&1
+	    rcg=$?
+	    if (( rcg == 0 )); then
+	      echo "$string"
+	      exit
+	    fi
+	  fi
+	fi
+
+      done
+
+      index=0
+      echo "Class      Nodes    Jobs    R   RP   RM    I   NQ    D    H    C   CA   NR   ST   TX    P   VP  Other"
+      while (( index < aindex ))
+      do
+	(( index = index + 1 ))
+
+	if (( index < 10 )); then
+	  pindex="  $index"
+	elif (( index < 100 )); then
+	  pindex=" $index"
+	else
+	  pindex=$index
+	fi
+
+	count=${acount[index]} 
+	if (( count < 10 )); then
+	  pcount="  $count"
+	elif (( count < 100 )); then
+	  pcount=" $count"
+	else
+	  pcount=$count
+	fi
+
+	node=${anode[index]} 
+	if (( node < 10 )); then
+	  pnode="  $node"
+	elif (( node < 100 )); then
+	  pnode=" $node"
+	else
+	  pnode=$node
+	fi
+
+	cr=${acr[index]} 
+	if (( cr < 10 )); then
+	  pcr="  $cr"
+	elif (( cr < 100 )); then
+	  pcr=" $cr"
+	else
+	  pcr=$cr
+	fi
+
+	crp=${acrp[index]} 
+	if (( crp < 10 )); then
+	  pcrp="  $crp"
+	elif (( crp < 100 )); then
+	  pcrp=" $crp"
+	else
+	  pcrp=$crp
+	fi
+
+	crm=${acrm[index]} 
+	if (( crm < 10 )); then
+	  pcrm="  $crm"
+	elif (( crm < 100 )); then
+	  pcrm=" $crm"
+	else
+	  pcrm=$crm
+	fi
+
+	ci=${aci[index]} 
+	if (( ci < 10 )); then
+	  pci="  $ci"
+	elif (( ci < 100 )); then
+	  pci=" $ci"
+	else
+	  pci=$ci
+	fi
+
+	cd=${acd[index]} 
+	if (( cd < 10 )); then
+	  pcd="  $cd"
+	elif (( cd < 100 )); then
+	  pcd=" $cd"
+	else
+	  pcd=$cd
+	fi
+
+	ch=${ach[index]} 
+	if (( ch < 10 )); then
+	  pch="  $ch"
+	elif (( ch < 100 )); then
+	  pch=" $ch"
+	else
+	  pch=$ch
+	fi
+
+	cc=${acc[index]} 
+	if (( cc < 10 )); then
+	  pcc="  $cc"
+	elif (( cc < 100 )); then
+	  pcc=" $cc"
+	else
+	  pcc=$cc
+	fi
+
+	cca=${acca[index]} 
+	if (( cca < 10 )); then
+	  pcca="  $cca"
+	elif (( cca < 100 )); then
+	  pcca=" $cca"
+	else
+	  pcca=$cca
+	fi
+
+	cst=${acst[index]} 
+	if (( cst < 10 )); then
+	  pcst="  $cst"
+	elif (( cst < 100 )); then
+	  pcst=" $cst"
+	else
+	  pcst=$cst
+	fi
+
+	cnq=${acnq[index]} 
+	if (( cnq < 10 )); then
+	  pcnq="  $cnq"
+	elif (( cnq < 100 )); then
+	  pcnq=" $cnq"
+	else
+	  pcnq=$cnq
+	fi
+
+	cnr=${acnr[index]} 
+	if (( cnr < 10 )); then
+	  pcnr="  $cnr"
+	elif (( cnr < 100 )); then
+	  pcnr=" $cnr"
+	else
+	  pcnr=$cnr
+	fi
+
+	ctx=${actx[index]} 
+	if (( ctx < 10 )); then
+	  pctx="  $ctx"
+	elif (( ctx < 100 )); then
+	  pctx=" $ctx"
+	else
+	  pctx=$ctx
+	fi
+
+	cp=${acp[index]} 
+	if (( cp < 10 )); then
+	  pcp="  $cp"
+	elif (( cp < 100 )); then
+	  pcp=" $cp"
+	else
+	  pcp=$cp
+	fi
+
+	cvp=${acvp[index]} 
+	if (( cvp < 10 )); then
+	  pcvp="  $cvp"
+	elif (( cvp < 100 )); then
+	  pcvp=" $cvp"
+	else
+	  pcvp=$cvp
+	fi
+
+	cuk=${acuk[index]} 
+	if (( cuk < 10 )); then
+	  pcuk="  $cuk"
+	elif (( cuk < 100 )); then
+	  pcuk=" $cuk"
+	else
+	  pcuk=$cuk
+	fi
+
+	echo "${aclass[index]}    $pnode     $pcount   $pcr  $pcrp  $pcrm  $pci  $pcnq  $pcd  $pch  $pcc  $pcca  $pcnr  $pcst  $pctx  $pcp  $pcvp   $pcuk"
+      done | sort
+      echo "$datestring  $userstring  $savestring"
+    )
+  fi
+  if [[ $userflag = yes ]]; then
+    echo "$llqstringh"
+    echo "$llqstringm" | grep " $username "
+    echo "$llqstringt"
+  fi
+  #echo "$datestring"
+fi
+if [[ $verboseflag = yes ]]; then
+  echo `date` $0 $* end
+fi

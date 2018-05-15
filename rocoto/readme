@@ -1,0 +1,2 @@
+rocotorun -w gefs.xml -d gefs.db
+rocotostat -w gefs.xml -d gefs.db

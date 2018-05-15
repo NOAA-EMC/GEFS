@@ -1,0 +1,32 @@
+INCS   = -I$(MKLROOT)/include -I/nwprod/lib/incmod/sigio_4
+FC     = mpfort
+FFLAGS = -openmp -convert big_endian  -g -traceback -list
+LIBS   = -L/nwprod/lib -lsp_4 -lsigio_4 -lw3nco_4 \
+         -L$(MKLROOT)/lib/intel64 -lmkl_scalapack_lp64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lmkl_blacs_intelmpi_lp64 -lpthread -lm
+
+CMD    = gefs_init_et_p
+SRCS   = gefs_init_et_p.f90
+OBJS   = $(SRCS:.f90=.o)
+
+LDFLAGS =
+
+# Lines from here on down should not need to be changed.  They are the
+# actual rules which make uses to build a.out.
+#
+all:    $(CMD)
+
+$(CMD): $(OBJS)
+	$(FC) $(LDFLAGS) $(FFLAGS) -o $(@) $(OBJS) $(LIBS)
+
+$(OBJS):        $(SRCS)
+	$(FC) $(FFLAGS) $(INCS) -c $(SRCS)
+
+$(OBJS):        makefile_wcoss
+
+allclean:       clean all
+
+clean:
+	-rm -f $(OBJS) *.mod *.lst
+
+clobber:        clean
+	-rm -f $(CMD)

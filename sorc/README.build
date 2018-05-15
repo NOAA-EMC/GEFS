@@ -1,0 +1,15 @@
+Library are defined in Module_gefs_v12_XXXX     (XXXX=cray or wcoss or theia)
+
+To build codes:
+
+    cd /XXXX/sorc
+        mkdir ../exec
+        mkdir ../util/exec
+     1) module purge
+     2) module use ./
+     3) module load Module_gefs_v12_wcoss (wcoss) or 
+	module load Module_gefs_v12_cray (cray) or
+        module load Module_gefs_v12_theia (theia)
+     4) ./build.sh  
+     5) ./install.sh
+

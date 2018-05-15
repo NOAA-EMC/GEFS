@@ -1,0 +1,363 @@
+#!/bin/ksh 
+################# lines between these markers have been modified for dev begin
+################# lines between these markers have been modified for dev end
+###testb
+# lines between ###testb and ###teste not needed for production
+###teste
+
+$SMSBIN/smsinit $LOADL_STEP_ID 
+echo `date` $0 `date -u` begin
+
+set -xa
+
+export gefsmachine=${gefsmachine:-wcoss}
+export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+
+# #### 05/05/99 ###############################
+# SETUP ENS INITIALIZATION PROCESSING VARIABLES
+# #############################################
+export PS4='$SECONDS + '
+
+####################################
+# obtain unique process id (pid) and make working directory
+####################################
+export pid=$$
+###testb
+if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
+	###teste
+	export DATA=/tmpnwprd/gefs_init_mask_$cyc.$envir.save
+	###testb
+else
+	echo basenfs=$basenfs
+	echo baseptmp=$baseptmp
+	echo basetmp=$basetmp
+	export DATA=$basetmp/$envir/tmpnwprd/gefs_init_mask_$PDY$cyc.$envir.save
+	################# lines between these markers have been modified for dev begin
+	export DATA=$basetmp/tmpnwprd/gefs_init_mask_$PDY$cyc.$envir.save
+	################# lines between these markers have been modified for dev end
+	echo DATA=$DATA
+fi # [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]
+###teste
+if [[ -d $DATA ]]; then
+	rm -rf $DATA
+fi
+mkdir -p $DATA
+cd $DATA
+
+export cycle=t${cyc}z
+export cycle_fcst=t${cyc_fcst}z
+
+echo cyc=$cyc cyc_fcst=$cyc_fcst
+echo cycle=$cycle cycle_fcst=$cycle_fcst
+
+if (( cyc == cyc_fcst )); then
+	export cycsuffix=false
+	export fcstlong=true
+else
+	export fcstlong=false
+	export cycsuffix=true
+fi # (( cyc == cyc_fcst ))
+
+echo fcstlong=$fcstlong
+echo cycsuffix=$cycsuffix
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
+
+####################################
+# File To Log Msgs
+####################################
+###testb
+if [[ $envir = prod ]]; then
+	###teste
+	export jlogfile=/com/logs/jlogfile
+	###testb
+elif [[ $envir = para ]] || [[ $envir = test ]]; then
+	export jlogfile=/com/logs/para/jlogfile
+else
+	################# lines between these markers have been modified for dev begin
+	export jlogfile=$baselog/com/logs/jlogfile
+	################# lines between these markers have been modified for dev end
+fi # [[ $envir = prod ]]
+###teste
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# SAVEGES  - Copy Files From TMPDIR to $GESdir
+# RMGES    - Clean Files in $GESdir
+# SENDSMS  - Flag Events on SMS
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# VERBOSE  - Specify Verbose Output in global_postgp.sh
+####################################
+export SAVEGES=YES
+export SENDSMS=YES
+export SENDCOM=YES
+export VERBOSE=YES
+
+###testb
+if [[ $envir = prod ]]; then
+	###teste
+	if [ $cyc -eq 00 -o $cyc -eq 12 ]; then
+		export SENDDBN=YES
+	else
+		export SENDDBN=YES
+	fi
+	###testb
+else
+	export SENDDBN=NO
+fi # [[ $envir = prod ]]
+###teste
+
+
+####################################
+# Specify Execution Areas
+####################################
+###testb
+# DHOU 03/29/2012 For Zeus, make the HOMEGLOBAL definition more general
+if [[ $envir = prod ]]; then
+	###teste
+	export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
+	###testb
+else
+	export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
+fi # [[ $envir = prod ]]
+###teste
+
+if [[ $envir = dev ]]; then
+	#DHOU 03/29/2012 added the following block for ZEUS
+	#WCK 10/15/2015 added theia
+	if [[ $gefsmachine = theia ]]; then
+		export EXECGLOBAL=$HOMEgefs/exec
+		export FIXGLOBAL=$HOMEgefs/fix
+		export PARMGLOBAL=$HOMEgefs/parm
+		export USHGLOBAL=$HOMEgefs/ush
+	fi
+
+	#DHOU 01/18/2013 added the following block for WCOSS (temporary)
+	if [[ $gefsmachine = wcoss ]]; then
+		export EXECGLOBAL=$HOMEgefs/exec
+		export FIXGLOBAL=$HOMEgefs/fix
+		export PARMGLOBAL=$HOMEgefs/parm
+		export USHGLOBAL=$HOMEgefs/ush
+	fi
+fi # [[ $envir = dev ]]
+
+export EXECUTIL=${EXECUTIL:-/nwprod/util/exec}
+
+export ERRSCRIPT=err_chk
+export LOGSCRIPT=startmsg
+export REDOUT='1>>'
+export REDERR='2>'
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+
+
+###testb
+if [[ $envir = prod ]]; then
+	###teste
+	. $PARMGLOBAL/gefs.parm
+	. $PARMGLOBAL/gefs_init.parm
+	###testb
+elif [[ $envir = para ]] || \
+	[[ $envir = test ]]; then
+	. /nw$envir/parm/gefs.parm
+	. /nw$envir/parm/gefs_init.parm
+else
+	. $basesource/nw$envir/parm/gefs.parm
+	. $basesource/nw$envir/parm/gefs_init.parm
+fi # [[ $envir = prod ]]
+###teste
+
+echo
+env | sort
+echo
+
+##############################
+# Set up the UTILITIES
+##############################
+export utilscript=${utilscript:-$HOMEGLOBAL/util/ush}
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+ksh $utilscript/setup.sh
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+sh $utilscript/setpdy.sh
+
+###testb
+if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
+	###teste
+	. PDY
+	###testb
+else
+	echo PDY=$PDY is already set
+fi
+###teste
+
+##############################################
+# for global_chgres.sh
+##############################################
+export SLMASK=/dev/null
+
+##############################################
+# Define COM directories
+##############################################
+###testb
+if [[ $envir = prod ]] ; then
+	###teste
+	export GFSCOMIN=/com/gfs/${envir}/gfs.$PDY
+	###testb
+elif [[ $envir = para ]] || [[ $envir = test ]]; then
+	if [[ "$gfssource" = para ]]; then
+		export GFSCOMIN=/com/gfs/para/gfs.$PDY
+	else
+		export GFSCOMIN=/com/gfs/prod/gfs.$PDY
+	fi
+else
+	if [[ "$gfssource" = para ]]; then
+		export GFSCOMIN=/com/gfs/para/gfs.$PDY
+	elif [[ "$gfssource" = prod ]]; then
+		export GFSCOMIN=$TMPCOM/gfs/prod/gfs.$PDY #WCOSS transition
+		export ENKFCOMIN=$TMPCOM/gfs/prod/enkf. #WCOSS transition
+	else
+		export GFSCOMIN=$TMPCOM/gfs/prod/gfs.$PDY
+		export ENKFCOMIN=$TMPCOM/gfs/prod/enkf.
+	fi
+fi # [[ $envir = prod ]]
+
+###
+#export pdycycp=`/nwprod/util/exec/ndate -$fhrp $PDY$cyc`
+export pdycycp=`$EXECUTIL/ndate -$fhrp $PDY$cyc`
+export pdyp=`echo $pdycycp|cut -c1-8`
+export cycp=`echo $pdycycp|cut -c9-10`
+echo pdycycp=$pdycycp pdyp=$pdyp cycp=$cycp
+if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
+	export COM=/com/${NET}/${envir}
+	export COMOUT=/com/${NET}/${envir}/${RUN}.${PDY}
+else
+	export COM=$baseoutput/com/${NET}/${envir}
+	export COMOUT=$baseoutput/com/${NET}/${envir}/${RUN}.${PDY}
+fi # [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]
+###teste
+
+mkdir -m 775 -p $COMOUT
+mkdir -m 775 -p $COM/gefs.$pdyp/$cycp
+mkdir -m 775 -p $COM/gefs.$pdyp/$cycp/track_enkf
+echo location of chgres script and executable
+###testb
+if [[ $envir = prod ]]; then
+	###teste
+	export chgresush=$USHGLOBAL/global_chgres.sh
+	export CHGRESEXEC=/nwprod/exec/global_chgres_thread
+	###testb
+else
+	echo locchgresush=$locchgresush
+	case $locchgresush in
+		(prod) export chgresush=/nwprod/ush/global_chgres.sh ;;
+		(para) export chgresush=/nwpara/ush/global_chgres.sh ;;
+		(test) export chgresush=/nwpara/ush/global_chgres.sh ;;
+		(theia) export chgresush=$USHglobal/global_chgres.sh ;;
+		(wcoss) export chgresush=/global/noscrub/Shrinivas.Moorthi/para/ush/global_chgres.sh ;;
+		(local)
+			case $envir in
+				(prod) export chgresush=/nw$envir/ush/global_chgres.sh ;;
+				(para) export chgresush=/nw$envir/ush/global_chgres.sh ;;
+				(test) export chgresush=/nw$envir/ush/global_chgres.sh ;;
+				(*) export chgresush=$basesource/nw$envir/ush/global_chgres.sh ;;
+			esac # $envir
+			;;
+		(*) chgresush=$locchgresush ;;
+	esac # $locchgresush
+	echo locchgresexec=$locchgresexec
+	case $locchgresexec in
+		(prod) export CHGRESEXEC=/nwprod/exec/global_chgres ;;
+		(para) export CHGRESEXEC=/nwpara/exec/global_chgres_thread ;;
+		(test) export CHGRESEXEC=/nwpara/exec/global_chgres_thread ;;
+		(theia) export chgresush=$USHglobal/global_chgres.sh ;;
+		(wcoss) export CHGRESEXEC=/global/noscrub/Shrinivas.Moorthi/para/exec/global_chgres ;;
+		(local)
+			case $envir in
+				(prod) export CHGRESEXEC=/nw$envir/exec/global_chgres_thread ;;
+				(para) export CHGRESEXEC=/nw$envir/exec/global_chgres_thread ;;
+				(test) export CHGRESEXEC=/nw$envir/exec/global_chgres_thread ;;
+				(theia) export CHGRESEXEC=$EXECglobal/global_chgres ;;
+				(*) export CHGRESEXEC=$basesource/nw$envir/exec/global_chgres_thread ;;
+			esac # $envir
+			;;
+		(*)  export CHGRESEXEC=$locchgresexec ;;
+	esac # $locchgresexec
+fi # [[ $envir = prod ]]
+###teste
+echo chgresush=$chgresush
+echo CHGRESEXEC=$CHGRESEXEC
+
+export gefspoe=$gefsmpexec
+
+
+##############################################
+echo list environment before running script
+##############################################
+
+echo
+env | sort
+echo
+
+
+#############################################################
+# Execute the script
+###testb
+if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
+	###teste
+	/nw${envir}/scripts/exgefs_init_mask.sh.sms
+	###testb
+else
+	$basesource/nw${envir}/scripts/exgefs_init_mask.sh.sms
+fi
+###teste
+#############################################################
+
+cat $pgmout
+
+msg="JOB COMPLETED NORMALLY"
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Save the working directory
+# for the ET and COMBINE jobs
+##############################
+###testb
+if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
+	###teste
+	cd /tmpnwprd
+	###testb
+else
+	echo skip cleanup for testing
+fi
+###teste
+
+echo `date` $0 `date -u` end
+###testb
+if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
+	###teste
+	$SMSBIN/endt
+	###testb
+else
+	echo skip endt for testing
+fi
+###teste

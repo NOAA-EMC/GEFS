@@ -1,0 +1,52 @@
+#!/bin/sh
+echo `date` $0 $* begin
+echo
+pwd
+echo
+echo env sort before
+env|sort
+echo env sort after
+echo
+pwd
+
+#DHOU, 08/21/2014. PLEASE edit this if block to copy int files if INIT jobs are not running
+if (( 0 == 0 )); then
+echo before copy init files
+
+echo yyyymmddcc=$yyyymmddcc  
+echo basetmp=$basetmp  
+#nwgescp  `echo $yyyymmddccc | cut -c1-8` $id YES 
+
+#scourcedir=/gpfs/v/mtb/noscrub/wx20dh/TSKH/ThINIT00Ie
+#scourcedir=/nwges_p6/prod
+#scourcedir=/ensemble/noscrub/GEFS.2015/NWGES/prh14wCTL    # source of init files
+#scourcedir=/ensemble2/noscrub/Dingchen.Hou/NWGES/JEN
+#scourcedir=/ensemble2/noscrub/Dingchen.Hou/GEFS15/com2/gens/para
+#scourcedir=/gpfs/gd3/emc/ensemble/noscrub/Dingchen.Hou/GEFS15/com2/gens/para
+#scourcedir=/gpfs/td3/emc/ensemble/noscrub/Dingchen.Hou/GEFS15/NWGES/KATE/
+ scourcedir=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/nemsfv3gefs/init
+ expdir=$basetmp/nwges/$envir
+ inidir=$basetmp/com/gens/$envir
+ logdir=$basetmp/com/logs/jlogfiles
+ mkdir -p $expdir
+ mkdir -p $logdir
+ cd $expdir
+ mmdd=`echo $yyyymmddcc | cut -c1-8`
+ echo mmdd=$mmdd
+#cp -pr $scourcedir/gefs.$mmdd .
+ mkdir -p gefs.$mmdd
+ cd gefs.$mmdd
+
+ cp -pr $scourcedir/gefs.$mmdd\/$cyc .
+
+ mkdir -p $inidir\/gefs.$mmdd\/$cyc\/init
+ for id in 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20
+ do
+ cp -pr $expdir\/gefs.$mmdd\/$cyc\/$id $inidir\/gefs.$mmdd\/$cyc\/init
+
+ done
+echo after copy init files
+fi
+
+echo
+echo `date` $0 $* end
