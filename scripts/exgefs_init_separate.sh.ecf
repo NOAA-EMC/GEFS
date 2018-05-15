@@ -206,6 +206,7 @@ if (( relocpertflag == 1 )); then
 	$USHgefs/syndataxtrack.sh $PDY $cyc tcvitals.in trackatcfunix.in tcvitals.as #ZEUS
 
 	cp -f $COMSFCSIGP/gec00.t${cycp}z.sf$fhrp gec00_presep
+	cp -f $COMSFCSIGP/gec00.t${cycp}z.sf$fhrp gec00_env
 
 	# 20131111 RLW added this missing line
 	taufound=no
@@ -231,48 +232,8 @@ echo HHH TEST 2
 #DHOU, XZHOU added this if block
 execseparate=$EXECgefs/gefs_vortex_separate
 
-if (( relocpertflag == 1 )); then
-	echo Separate the storm and environment forecast fields for c00 begin
-
-	ln -s -f tcvitals.as fort.11
-
-	#ln -s -f $FIXgsm/global_slmask.t$JCAPHR.$LONB.$LATB.grb    fort.12
-#	ln -s -f $SLMASK    fort.12
-
-	ln -s -f tracks.atcfunix.$cycp      fort.40
-	ln -s -f gec00_presep              fort.21
-
-	ln -s -f gec00_env              fort.51
-	ln -s -f gec00_strm              fort.71
-
-	export gesfhr=$fhrp
-	export ensm=000
-
-	echo `date` $execseparate before
-	echo $gesfhr $ensm | $aprun_gec00 $execseparate
-	filtrccc=$?
-	echo `date` $execseparate after
-
-	ls -al gec00_presep gec00_env gec00_strm
-
-	export relocpertflag=0
-	if (( filtrccc == 0 )); then
-		if [[ -s gec00_strm ]]; then
-			echo c0 storm file was created
-			cp -f gec00_strm gec00_strm.c2
-			export relocpertflag=1
-		else
-			echo c0 storm file was not created
-		fi # [[ -s gec00_strm ]]
-	else
-		echo SEPARATION FAILED FOR control c00 filtrccc=$filtrccc
-	fi # (( filtrccc == 0 ))
-
-	echo Separate the storm and environment forecast fields for c00 end
-fi # (( relocpertflag == 1 ))
-echo relocflag=$relocflag relocpertflag=$relocpertflag
 #
-# end relocation splitting section for c00
+#  relocation splitting section for c00
 #
 
 echo
@@ -281,45 +242,50 @@ echo
 
 ls -al poescript*
 rm -rf poescript*
-
-(( itask = 0 ))
-while (( itask < initseparatetasks )); do
+    (( itask = 0 ))
+           (( imem0 = 0 ))
+           (( imema = 0 ))
+# For c00
 	echo 'echo `date` ############ poescript'" $itask begin">>poescript.$itask
+	echo 'echo `date` ###### `uname -a` ######'" mem=$imem start">>poescript.$itask
+		echo "$USHgefs/gefs_init_separate.sh $imema $imem0 $fhrp $inflag $relocfact >ushout.separate.$itask 2>&1" >>poescript.$itask
+	echo 'echo `date` ###### `uname -a` ######'" mem=$imema end">>poescript.$itask
+
+#  Select EnKF members for four cycling
+                case $cyc in
+                        (00) (( nlist_start = 1 )) ;;
+                        (06) (( nlist_start = nmem_enkf / 4 + 1  ));;
+                        (12) (( nlist_start = 2 * nmem_enkf / 4 + 1 ));;
+                        (18) (( nlist_start = 3 * nmem_enkf / 4 + 1  )) ;;
+                esac # $cyc
+
+
+    (( nlist_end = nlist_start + npert ))
+    (( itask = 1 ))
+    (( imem = nlist_start ))
+    echo EnKF members from $nlist_start to $nlist_end are selected for $cyc cycle
+     while (( imem <= nlist_end )) ; do
+           (( imem0 = imem - nlist_end + 1 ))
+        if ((  imem > nmem_enkf )); then 
+                (( imema = imem - nmem_enkf )) 
+        else
+                (( imema = imem  )) 
+        fi
+        cmem=$(printf %03i $imema)
+        memchar="mem$cmem"
+        memchars="m$cmem"
+	echo 'echo `date` ############ poescript'" $itask begin">>poescript.$itask
+	echo 'echo `date` ###### `uname -a` ######'" mem=$imem start">>poescript.$itask
+		echo "$USHgefs/gefs_init_separate.sh $imema $imem0 $fhrp $inflag $relocfact >ushout.separate.$itask 2>&1" >>poescript.$itask
+	echo 'echo `date` ###### `uname -a` ######'" mem=$imema end">>poescript.$itask
+
 	(( itask = itask + 1 ))
-done # while (( itask < initseparatetasks ))
+        (( imem = imem + 1 ))
+      done
 
-(( itask = 0 ))
-for ipair in $nlist; do
-	echo npair=$npair
-	if (( ipair <= npair )); then
-		(( ipairh = ipair ))
-	elif (( ipair <= 2 * npair )); then
-		(( ipairh = ipair - npair ))
-	elif (( ipair <= 3 * npair )); then
-		(( ipairh = ipair - 2 * npair ))
-	else
-		(( ipairh = ipair - 3 * npair ))
-	fi # (( ipair <= npair ))
-	echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh begin">>poescript.$itask
-	###testb
-	###teste
-	if (( ipairh > nhrpair )); then
-		echo "$USHgefs/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $relocfact >ushout.separate.$ipair 2>&1" >>poescript.$itask
-	else
-		echo "$USHgefs/gefs_init_pair_separate.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag $relocfact >ushout.separate.$ipair 2>&1" >>poescript.$itask
-	fi
-	echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh end">>poescript.$itask
 
-	(( itask = itask + 1 ))
-	if (( itask == initseparatetasks )); then
-		(( itask = 0 ))
-	fi
-done # for ipair in $nlist
-
-(( itask = 0 ))
-while (( itask < initseparatetasks )); do
-	echo 'echo `date` ############ poescript'" $itask end">>poescript.$itask
-	echo
+        (( itask = 0 ))
+while (( itask <= npert  )); do
 	chmod 755 poescript.$itask
 	ls -al poescript.$itask
 	echo
@@ -327,7 +293,7 @@ while (( itask < initseparatetasks )); do
 	echo
 	echo "poescript.$itask" >>poescript
 	(( itask = itask + 1 ))
-done # while (( itask < initseparatetasks ))
+done # while (( itask < npert ))
 
 echo
 chmod 755 poescript
@@ -366,8 +332,8 @@ echo
 echo after ls after poe
 echo
 
-for ipair in $nlist; do
-	file=ushout.separate.$ipair
+for itask in {0..$npert}; do
+	file=ushout.separate.$itask
 	echo "############################### file=$file begin #######################"
 	cat $file
 	echo "############################### file=$file end ##########################"
