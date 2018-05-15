@@ -15,6 +15,7 @@
 !   03-05-05   YUEJIAN ZHU: calculate for 6-hour intevals. 
 !   02-08-06   YUEJIAN ZHU: Modify for new implementation. 
 !   14-11-06   BO Cui     : Modify for grib2 encode/decode.
+!   18-05-10   Xianwu Xue : Add 'npert' to calculate 'mem'
 !
 ! USAGE:
 !
@@ -69,7 +70,9 @@ integer   irete,irerb,imem
 integer   temp(200),ipdt8,ipdt9,ipdt30
 real      bb,cc
 
-parameter(len=64,mem=41)
+parameter(len=64)
+
+integer :: npert = 20
 
 real, allocatable :: ff(:,:),pp(:,:),ss(:,:),aa(:)
 
@@ -82,7 +85,7 @@ character*255 cicep,cicepo
 character*255 csnow,csnowo
 
 namelist /namin/icyc,cpgb,cpge,crain,craino,cfrzr,cfrzro,  &
-                     cicep,cicepo,csnow,csnowo
+                     cicep,cicepo,csnow,csnowo,npert
 
 data rk/0.254,1.00,2.54,5.00,6.35,10.00,12.7,20.0,25.4,50.8,  &
         0.254,1.00,2.54,5.00,6.35,10.00,12.7,20.0,25.4,50.8,  &
@@ -93,6 +96,10 @@ data rk/0.254,1.00,2.54,5.00,6.35,10.00,12.7,20.0,25.4,50.8,  &
 CALL W3TAGB('PQPF',2000,0110,0073,'NP20   ')
 
 read (5,namin,end=1020)
+write (6, namin)
+print *, "Xianwu-Xue-test-PQPF"
+
+mem = npert + 1
 
 lpgb   = len_trim(cpgb)
 lpge   = len_trim(cpge)

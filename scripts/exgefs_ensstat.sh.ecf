@@ -277,7 +277,9 @@ while test $fh -le $FHOUR; do
 		echo " nenspost=$nenspost", >>namin
 
 		echo " cfopg1"=\"geavg.$cycle.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix\", >>namin
-		echo " cfopg2"=\"gespr.$cycle.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix\" >>namin
+		echo " cfopg2"=\"gespr.$cycle.pgrb2$dataset$FXT\f$fh$EXT$cfsuffix\", >>namin
+
+		echo " navg_min"=${navg_min} >>namin
 
 		echo ' /' >>namin
 		echo

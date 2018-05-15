@@ -313,6 +313,7 @@ while test $fh -le $FHOUR; do
 		#   echo " cfosg"=\"dummy.gespr.$cycle.pgrbaf$fh$EXT$cfsuffix\" >>namin
 		echo " cfopg1"="ensstat", >>namin
 		echo " cfopg2"="ensstat", >>namin
+		echo " navg_min"=${navg_min} >>namin
 
 		echo ' /' >>namin
 
@@ -426,7 +427,7 @@ ecflow_client --event enspost_grb2_ready
 if test "$cycle" = "skipthis"; then
 #if test "$cycle" = "t00z"; then
 	#  $ENSPPF $COMOUT/$cyc/ensstat/enspost.$cycle.prcp $COMOUT/$cyc/ensstat/enspost${ext_h}.$cycle.prcpi ensppf${ext_h}.$PDY$cyc
-	$ENSPPF $COMOUT/$cyc/ensstat/enspost_grb2.$cycle.prcp ensppf${ext_h}.$PDY$cyc.grib2
+	$ENSPPF $COMOUT/$cyc/ensstat/enspost_grb2.$cycle.prcp ensppf${ext_h}.$PDY$cyc.grib2 $npert
 	$WGRIB2 ensppf${ext_h}.$PDY$cyc.grib2 -s >ensppf${ext_h}.$PDY$cyc.grib2.idx 
 
 	###########################
