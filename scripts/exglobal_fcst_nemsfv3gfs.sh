@@ -134,9 +134,7 @@ else
 fi
 PDY=$(echo $CDATE | cut -c1-8)
 cyc=$(echo $CDATE | cut -c9-10)
-#memdir=$ROTDIR/${prefix}.$PDY/$cyc/$memchar
-memdir=$GESIN/$mem/${CASE}_$CDATE
-
+memdir=${memdir:-$ROTDIR/${prefix}.$PDY/$cyc/$memchar}
 if [ ! -d $memdir ]; then mkdir -p $memdir; fi
 
 GDATE=$($NDATE -$assim_freq $CDATE)
@@ -144,8 +142,6 @@ gPDY=$(echo $GDATE | cut -c1-8)
 gcyc=$(echo $GDATE | cut -c9-10)
 gmemdir=$ROTDIR/${rprefix}.$gPDY/$gcyc/$memchar
 
-memdir1=$COMROOThps/gfs/fy2019q1/enkf.gdas.$PDY/$cyc/$memchar
-gmemdir1=$COMROOThps/gfs/fy2019q1/enkf.gdas.$gPDY/$gcyc/$memchar
 #-------------------------------------------------------
 # initial conditions
 warm_start=${warm_start:-".false."}
@@ -153,14 +149,14 @@ read_increment=${read_increment:-".false."}
 restart_interval=${restart_interval:-0}
 
 # Determine if this is a warm start or cold start
-if [ -f $gmemdir1/RESTART/${PDY}.${cyc}0000.coupler.res ]; then
-  export warm_start=".true."
-fi
+#if [ -f $gmemdir/RESTART/${PDY}.${cyc}0000.coupler.res ]; then
+#  export warm_start=".true."
+#fi
 
 if [ $warm_start = ".true." ]; then
 
   # Link all (except sfc_data) restart files from $gmemdir
-  for file in $gmemdir1/RESTART/${PDY}.${cyc}0000.*.nc; do
+  for file in $gmemdir/RESTART/${PDY}.${cyc}0000.*.nc; do
     file2=$(echo $(basename $file))
     file2=$(echo $file2 | cut -d. -f3-) # remove the date from file
     fsuf=$(echo $file2 | cut -d. -f1)
@@ -170,7 +166,7 @@ if [ $warm_start = ".true." ]; then
   done
 
   # Link sfcanl_data restart files from $memdir
-  for file in $memdir1/RESTART/${PDY}.${cyc}0000.*.nc; do
+  for file in $memdir/RESTART/${PDY}.${cyc}0000.*.nc; do
     file2=$(echo $(basename $file))
     file2=$(echo $file2 | cut -d. -f3-) # remove the date from file
     fsufanl=$(echo $file2 | cut -d. -f1)
@@ -186,14 +182,14 @@ if [ $warm_start = ".true." ]; then
     # and the model start time is the analysis time
     # The alternative is to replace
     # model start time with current model time in coupler.res
-    file=$gmemdir1/RESTART/${PDY}.${cyc}0000.coupler.res
+    file=$gmemdir/RESTART/${PDY}.${cyc}0000.coupler.res
     file2=$(echo $(basename $file))
     file2=$(echo $file2 | cut -d. -f3-) # remove the date from file
     $NLN $file $DATA/INPUT/$file2
   fi
 
-#  increment_file=$memdir/${CDUMP}.t${cyc}z.atminc.nc
-  increment_file=$GESIN/$mem/${CASE}_$CDATE/fv3_increment.nc
+  #increment_file=$memdir/${CDUMP}.t${cyc}z.atminc.nc
+  increment_file=${increment_file:-$memdir/${CDUMP}.t${cyc}z.atminc.nc}
   if [ -f $increment_file ]; then
     $NLN $increment_file $DATA/INPUT/fv3_increment.nc
     read_increment=".true."
@@ -205,8 +201,8 @@ if [ $warm_start = ".true." ]; then
 
 else ## cold start                            
 
-#  for file in $memdir/INPUT/*.nc; do
-  for file in $memdir/*.nc; do
+  #for file in $memdir/INPUT/*.nc; do
+  for file in $ICSDIR/INPUT/*.nc; do
     file2=$(echo $(basename $file))
     fsuf=$(echo $file2 | cut -c1-3)
     if [ $fsuf = "gfs" -o $fsuf = "sfc" ]; then
@@ -872,20 +868,18 @@ fi
 #------------------------------------------------------------------
 # make symbolic links to write forecast files directly in memdir
 cd $DATA
+  memdir=${FCSTDIR:-$memdir}
+  CDUMP=${RUNMEM:-$CDUMP}
 if [ $QUILTING = ".true." -a $OUTPUT_GRID = "gaussian_grid" ]; then
   fhr=$FHMIN
- if [ ! -d $SFCSIG ]; then mkdir -p $SFCSIG; fi
   while [ $fhr -le $FHMAX ]; do
     FH3=$(printf %03i $fhr)
     atmi=atmf${FH3}.$OUTPUT_FILE
     sfci=sfcf${FH3}.$OUTPUT_FILE
     logi=logf${FH3}
-#    atmo=$memdir/${CDUMP}.t${cyc}z.atmf${FH3}.$OUTPUT_FILE
-#    sfco=$memdir/${CDUMP}.t${cyc}z.sfcf${FH3}.$OUTPUT_FILE
-#    logo=$memdir/${CDUMP}.t${cyc}z.logf${FH3}.$OUTPUT_FILE
-    atmo=$SFCSIG/$RUNMEM.t${cyc}z.atmf${FH3}.$OUTPUT_FILE
-    sfco=$SFCSIG/$RUNMEM.t${cyc}z.sfcf${FH3}.$OUTPUT_FILE
-    logo=$SFCSIG/$RUNMEM.t${cyc}z.logf${FH3}.$OUTPUT_FILE
+    atmo=$memdir/${CDUMP}.t${cyc}z.atmf${FH3}.$OUTPUT_FILE
+    sfco=$memdir/${CDUMP}.t${cyc}z.sfcf${FH3}.$OUTPUT_FILE
+    logo=$memdir/${CDUMP}.t${cyc}z.logf${FH3}.$OUTPUT_FILE
     eval $NLN $atmo $atmi
     eval $NLN $sfco $sfci
     eval $NLN $logo $logi
