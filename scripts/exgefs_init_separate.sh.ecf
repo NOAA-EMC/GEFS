@@ -6,34 +6,6 @@ echo `date` $0 begin
 ################################################################################
 #   Script:	exgefs_init.sh.sms
 #
-#   Author:	Mark Iredell
-#   Date:	1997 January 08
-#
-#   Steward:	Richard Wobus
-#   Center:	Environmental Modeling Center
-#   Phone:	(301) 763-8000 x7712
-#
-#   Abstract:	Creates initial conditions for the global ensemble
-#       	by perturbing the analysis with growing modes
-#               extracted from the previous day's ensemble forecasts.
-#       	This script is called by jobs JENS0 and JENS2 and calls
-#               the utility script enstr_pair.sh to process each pair.
-#
-#   Modified:   12/11/98	replace hardwired globampl with fixed file
-#                               save growth rate output file
-#   Modified:   06/08/99	dummy script made to hold over on IBM until real
-#                               exenstr.sh.sms script is ready
-#   Modified:   09/09/99	modified for IBM SP
-#   Modified:   04/17/00	increase to 5 pairs at 12z
-#   Modified:   05/19/00	create perturbation at any two resolutions,
-#                               currently set to create 5 pairs and a 
-#                               low-resolution control run at T126
-#   Modified:   04/30/01	generalize to run with create any number of
-#                               levels and any number of tracer variables
-#   Modified:   07/01/03        separate into outer and inner (single pair)
-#                               scripts
-#   Modified:   06/24/05        modify for relocation and 6-hour breeding
-#   Modified:   09/09/05        use one-sided names with two-sided breeding
 #
 ################################################################################
 
@@ -75,20 +47,8 @@ cd $DATA
 relocfact=$relocfact relocflag=$relocflag
 
 
-if [[ "$cycsuffix" = "true" ]]; then
-	export cfsuffix=".cycfs$cyc_fcst"
-	export ensshort=yes
-else
-	export cfsuffix=""
-	export ensshort=no
-fi # [[ "$cycsuffix" = "true" ]]
-
 echo cyc=$cyc cyc_fcst=$cyc_fcst
 echo cycle=$cycle cycle_fcst=$cycle_fcst
-echo fcstlong=$fcstlong
-echo cycsuffix=$cycsuffix
-echo cfsuffix=$cfsuffix
-echo ensshort=$ensshort
 
 #export pdycycp=`/nwprod/util/exec/ndate -$fhrp $PDY$cyc`
 export pdycycp=`$NDATE -$fhrp $PDY$cyc`
@@ -101,16 +61,6 @@ echo pdycycp=$pdycycp pdyp=$pdyp cycp=$cycp
 # associated with the previous forecast cycle
 # from which tracking information will be used
 
-if (( cycp != cyc_fcst )); then
-	export cfsuffixp=".cycfs$cyc_fcst"
-	export ensshortp=yes
-else
-	export cfsuffixp=""
-	export ensshortp=no
-fi  #(( cycp != cyc_fcst ))
-
-echo cfsuffixp=$cfsuffixp
-echo ensshortp=$ensshortp
 
 #
 # high resolution center analysis
@@ -118,8 +68,11 @@ echo ensshortp=$ensshortp
 
 	if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
 		export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
+		export SIGOUT=./sanl.in
 		export SFCINP=$COMINgfs/gfs.$cycle.sfcanl.nemsio
-#		export NSTINP=$COMINgfs/gfs.$cycle.nstanl.nemsio
+		export SFCOUT=./sfcanl.in
+		export NSTINP=$COMINgfs/gfs.$cycle.nstanl.nemsio
+		export NSTOUT=./nsnanl.in
 		echo $COMINgfs/gfs.$cycle.atmanl.nemsio and $COMINgfs/gfs.$cycle.sfcanl.nemsio  FOUND
 	else
 		echo !!!! FATAL ERROR !!!!
@@ -138,6 +91,9 @@ echo ensshortp=$ensshortp
 			err_chk
 		fi # [[ -s $file ]]
 	done # for file in $SIGINP $SFCINP
+         ln -s $SIGINP $SIGOUT
+         ln -s $SFCINP $SFCOUT
+         ln -s $NSTINP $NSTOUT
 
 
 
@@ -206,17 +162,16 @@ if (( relocpertflag == 1 )); then
 	$USHgefs/syndataxtrack.sh $PDY $cyc tcvitals.in trackatcfunix.in tcvitals.as #ZEUS
 
 	cp -f $COMSFCSIGP/gec00.t${cycp}z.sf$fhrp gec00_presep
-	cp -f $COMSFCSIGP/gec00.t${cycp}z.sf$fhrp gec00_env
 
 	# 20131111 RLW added this missing line
 	taufound=no
         tauprefix=m
         cyc_fcst_t=$cycp
 		# 20131130 RLW add touch so this file will exist when linked and read
-		touch tracks.atcfunix.$cyc_fcst_t
+		touch tracks.atcfunix.$cyc
 		for file in $COMTRACKP/${tauprefix}???.t${cycp}z.cyclone.trackatcfunix; do
 			if [[ -s $file ]]; then
-				cat $file >>tracks.atcfunix.$cyc_fcst_t
+				cat $file >>tracks.atcfunix.$cyc
 				taufound=yes
 			fi
 		done # for file in $COMTRACKP/${tauprefix}???.t${cycp}z.cyclone.trackatcfunix
@@ -252,36 +207,34 @@ rm -rf poescript*
 	echo 'echo `date` ###### `uname -a` ######'" mem=$imema end">>poescript.$itask
 
 #  Select EnKF members for four cycling
-                case $cyc in
+case $cyc in
                         (00) (( nlist_start = 1 )) ;;
                         (06) (( nlist_start = nmem_enkf / 4 + 1  ));;
                         (12) (( nlist_start = 2 * nmem_enkf / 4 + 1 ));;
                         (18) (( nlist_start = 3 * nmem_enkf / 4 + 1  )) ;;
-                esac # $cyc
+esac # $cyc
 
 
-    (( nlist_end = nlist_start + npert ))
-    (( itask = 1 ))
-    (( imem = nlist_start ))
+(( nlist_end = nlist_start + npert ))
     echo EnKF members from $nlist_start to $nlist_end are selected for $cyc cycle
-     while (( imem <= nlist_end )) ; do
-           (( imem0 = imem - nlist_end + 1 ))
+
+(( itask = 1 ))
+(( imem = nlist_start ))
+
+while (( imem <= nlist_end )) ; do
+	(( imem0 = imem - nlist_end + 1 ))
+	(( imema = imem  )) 
         if ((  imem > nmem_enkf )); then 
                 (( imema = imem - nmem_enkf )) 
-        else
-                (( imema = imem  )) 
         fi
-        cmem=$(printf %03i $imema)
-        memchar="mem$cmem"
-        memchars="m$cmem"
 	echo 'echo `date` ############ poescript'" $itask begin">>poescript.$itask
-	echo 'echo `date` ###### `uname -a` ######'" mem=$imem start">>poescript.$itask
+	echo 'echo `date` ###### `uname -a` ######'" mem=$imema start">>poescript.$itask
 		echo "$USHgefs/gefs_init_separate.sh $imema $imem0 $fhrp $inflag $relocfact >ushout.separate.$itask 2>&1" >>poescript.$itask
 	echo 'echo `date` ###### `uname -a` ######'" mem=$imema end">>poescript.$itask
 
 	(( itask = itask + 1 ))
         (( imem = imem + 1 ))
-      done
+done
 
 
         (( itask = 0 ))

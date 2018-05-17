@@ -7,6 +7,10 @@ export PS4='$SECONDS + '
 date
 
 export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN_CHGRES=${APRUN_CHGRES:-"aprun -j 1 -n 1 -N 1 -d 12 -cc depth"}
+export APRUN_RECENT=${APRUN_RECENT:-"aprun -j 1 -n $total_tasks -N $taskspernode -d $OMP_NUM_THREADS -cc depth"}
+
+
 
 ############################
 # Set up cycle varaible
@@ -101,8 +105,15 @@ export COMOUT=${COMOUT:-${COM_OUT}/${RUN}.${PDY}}
 
 #####
 export XC=.x
-export GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-${HOMEenkf}/exec/getsigensmeanp_smooth$XC}
-export RECENATMPEXEC=${RECENATMPEXEC:-${HOMEenkf}/exec/recentersigp$XC}
+export GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-${HOMEgfs}/exec/getsigensmeanp_smooth$XC}
+RECENATMEXEC=${RECENATMEXEC:-$HOMEgfs/exec/recentersigp.x}
+
+
+
+echo location of nemsioget
+#export nemsioget=$nemsioget
+export nemsioget=$EXECgsm/nemsio_get
+
 
 
 ##############################################

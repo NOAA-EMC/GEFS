@@ -2474,14 +2474,9 @@ c South Atlantic
 c rlw end replacement for cycle length
  436  CONTINUE
 
-      IF(NSEM.EQ.0)THEN
 !        NCHT=70+NSEM
-        NCHT=71
-        WRITE(NCHT)KSTM
-      ELSE
         NCHT=74
         WRITE(NCHT)KSTM
-      END IF
 
 
       DO 788 KST=1,KSTM
@@ -2489,14 +2484,7 @@ c rlw end replacement for cycle length
 c      IUT=89+KST
         IUT=KST
 
-        IF(NSEM.EQ.0)THEN
-!          NCHT=70+NSEM
-          NCHT=71
           WRITE(NCHT)ST_NAME(KST)
-        ELSE
-          NCHT=74
-          WRITE(NCHT)ST_NAME(KST)
-        END IF
 
 C
         DO K=1,MTV2

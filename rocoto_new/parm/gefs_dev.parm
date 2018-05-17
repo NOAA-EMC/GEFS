@@ -44,7 +44,7 @@ export npert=20
 export pdycycp=`$NDATE -6 $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
 
-export COMINenkf=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/data/FV3EnKF/enkf.gdas.$pdyp
+export COMINenkf=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/data/FV3EnKF/enkf.gdas.
 export COMINgfs=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/data/FV3EnKF/gfs.$PDY/$cyc
 
 

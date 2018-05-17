@@ -638,12 +638,7 @@ c        DIMENSION TEST(IGU,JGU)
 
         SAVE1=0.
 
-        IF(NSEM.EQ.0)THEN
-!          NCHT=70+NSEM
-          NCHT=71
-        ELSE
           NCHT=74
-        END IF
 
         IWMAX=0.
         IWMIN=1000.

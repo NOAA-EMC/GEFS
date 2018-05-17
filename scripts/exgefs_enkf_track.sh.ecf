@@ -59,7 +59,7 @@ export pdyp=`echo $pdycycp|cut -c1-8`
 export cycp=`echo $pdycycp|cut -c9-10`
 
 echo pdycycp=$pdycycp pdyp=$pdyp cycp=$cycp
-
+export COMINenkf=$COMINenkf$pdyp
 echo  COMINenkf=$COMINenkf
 
 export COM=$COMOUTprevcyc/track_enkf

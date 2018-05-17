@@ -29,10 +29,10 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:1
 
-export NODES=20
-export total_tasks=40
+export NODES=5
+export total_tasks=20
 export OMP_NUM_THREADS=1
-export taskspernode=2
+export taskspernode=4
 
 export gefsmpexec_mpmd="  aprun -b -j1 -n40 -N2 -d1 -cc depth  cfp mpmd_cmdfile"
 
