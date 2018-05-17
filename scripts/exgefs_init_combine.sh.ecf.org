@@ -1,0 +1,300 @@
+#!/bin/ksh -l
+###testb
+# lines between ###testb and ###teste not needed for production
+###teste
+echo `date` $0 begin
+################################################################################
+#   Script:	exgefs_init.sh.sms
+#
+#   Author:	Mark Iredell
+#   Date:	1997 January 08
+#
+#   Steward:	Richard Wobus
+#   Center:	Environmental Modeling Center
+#   Phone:	(301) 763-8000 x7712
+#
+#   Abstract:	Creates initial conditions for the global ensemble
+#       	by perturbing the analysis with growing modes
+#               extracted from the previous day's ensemble forecasts.
+#       	This script is called by jobs JENS0 and JENS2 and calls
+#               the utility script enstr_pair.sh to process each pair.
+#
+#   Modified:   12/11/98	replace hardwired globampl with fixed file
+#                               save growth rate output file
+#   Modified:   06/08/99	dummy script made to hold over on IBM until real
+#                               exenstr.sh.sms script is ready
+#   Modified:   09/09/99	modified for IBM SP
+#   Modified:   04/17/00	increase to 5 pairs at 12z
+#   Modified:   05/19/00	create perturbation at any two resolutions,
+#                               currently set to create 5 pairs and a 
+#                               low-resolution control run at T126
+#   Modified:   04/30/01	generalize to run with create any number of
+#                               levels and any number of tracer variables
+#   Modified:   07/01/03        separate into outer and inner (single pair)
+#                               scripts
+#   Modified:   06/24/05        modify for relocation and 6-hour breeding
+#   Modified:   09/09/05        use one-sided names with two-sided breeding
+#
+################################################################################
+
+set +xa
+echo " ------------------------------------------------------------"
+echo "  "
+echo "            GLOBAL ENSEMBLE INITIALIZATION "
+echo "  "
+echo "                `date`     "
+echo "  "
+echo "                   JOB  $job  "
+echo "  "
+echo "  "
+echo "               FORECAST cycle TIME is $cycle"
+echo "  "
+echo " ------------------------------------------------------------"
+echo "          processing info for this execution"
+echo " Home directory is ............................ $HOMEGLOBAL"
+echo " Processing directory for files.. ............. $DATA"
+echo "  "
+echo " Executable file directory is ................. $EXECGLOBAL"
+echo " Fixed field directory is ..................... $FIXGLOBAL"
+echo " Parameter directory is ....................... $PARMGLOBAL"
+echo " Unix control language file is ................ $USHGLOBAL"
+echo "  "
+echo " Network id is ................................ $NET"
+echo " Run id for $com processing is ................ $RUN"
+echo "  "
+echo " standard output in file ...................... $pgmout"
+echo " unique processing id for run ................. $pid"
+echo " YES SENDCOM means save com files ............. $SENDCOM"
+echo " ------------------------------------------------------------"
+set -xa
+
+cd $DATA
+
+################################################################################
+
+echo relocfact=$relocfact relocflag=$relocflag
+
+(( npairt = npair * 4 ))
+nlist=
+ipair=0
+while (( ipair < npairt )); do
+	(( ipair = ipair + 1 ))
+	if (( ipair < 10 )); then
+		ipair=0$ipair
+	fi
+	nlist="$nlist $ipair"
+done # while (( ipair < npairt ))
+echo nlist=$nlist
+
+# explicit jcap specification replaced by specifications in parm file
+
+# these variables specify the resolution of low-resolution perturbation output
+# JCAPLR=62
+# LEVSLR=28
+# LONBLR=192
+# LATBLR=94
+# NTRACLR=3
+
+# these variables specify the resolution of high-resolution perturbation output
+# JCAPHR=126
+# LEVSHR=28
+# LONBHR=384
+# LATBHR=190
+# NTRACHR=3
+
+# cfsuffix identifies long forecast cycle 
+# associated with this breeding job
+
+if [[ "$cycsuffix" = "true" ]]; then
+	export cfsuffix=".cycfs$cyc_fcst"
+	export ensshort=yes
+else
+	export cfsuffix=""
+	export ensshort=no
+fi # [[ "$cycsuffix" = "true" ]]
+
+echo cyc=$cyc cyc_fcst=$cyc_fcst
+echo cycle=$cycle cycle_fcst=$cycle_fcst
+echo fcstlong=$fcstlong
+echo cycsuffix=$cycsuffix
+echo cfsuffix=$cfsuffix
+echo ensshort=$ensshort
+
+export pdycycp=`$NDATE -$fhrp $PDY$cyc`
+#export pdycycp=`ndate -$fhrp $PDY$cyc`
+export pdyp=`echo $pdycycp|cut -c1-8`
+export cycp=`echo $pdycycp|cut -c9-10`
+
+echo pdycycp=$pdycycp pdyp=$pdyp cycp=$cycp
+
+# cfsuffixp identifies long forecast cycle
+# associated with the previous forecast cycle
+# from which tracking information will be used
+
+if (( cycp != cyc_fcst )); then
+	export cfsuffixp=".cycfs$cyc_fcst"
+	export ensshortp=yes
+else
+	export cfsuffixp=""
+	export ensshortp=no
+fi # (( cycp != cyc_fcst ))
+
+echo cfsuffixp=$cfsuffixp
+echo ensshortp=$ensshortp
+
+
+echo
+echo `date` $0 poe combine loop begin
+echo
+echo initcombinetasks=$initcombinetasks
+
+ls -al poescript*
+rm -rf poescript*
+############# kate 05/01/2012
+
+rm -rf cmdfile
+############# 05/01/2012
+
+(( itask = 0 ))
+while (( itask < initcombinetasks )); do
+	echo 'echo `date` ############ poescript'" $itask begin">>poescript.$itask
+	(( itask = itask + 1 ))
+done # while (( itask < initcombinetasks ))
+
+
+(( itask = 0 ))
+for ipair in $nlist; do
+	echo npair=$npair
+	if (( ipair <= npair )); then
+		(( ipairh = ipair ))
+	elif (( ipair <= 2 * npair )); then
+		(( ipairh = ipair - npair ))
+	elif (( ipair <= 3 * npair )); then
+		(( ipairh = ipair - 2 * npair ))
+	else
+		(( ipairh = ipair - 3 * npair ))
+	fi # (( ipair <= npair ))
+	echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh begin">>poescript.$itask
+	if (( ipairh > nhrpair )); then
+		echo "$USHgefs/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>poescript.$itask
+	else
+		echo "$USHgefs/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>poescript.$itask
+	fi # (( ipairh > nhrpair ))
+	###testb
+	echo 'echo `date` ###### `uname -a` ######'" $ipair $ipairh end">>poescript.$itask
+
+	(( itask = itask + 1 ))
+	if (( itask == initcombinetasks )); then
+		(( itask = 0 ))
+	fi
+done # for ipair in $nlist
+
+(( itask = 0 ))
+while (( itask < initcombinetasks )); do
+	echo 'echo `date` ############ poescript'" $itask end">>poescript.$itask
+	echo
+	chmod 755 poescript.$itask
+	ls -al poescript.$itask
+	echo
+	cat poescript.$itask
+	echo
+	echo "poescript.$itask" >>poescript
+	(( itask = itask + 1 ))
+done # while (( itask < initcombinetasks ))
+
+echo
+chmod 755 poescript
+ls -al poescript
+cp -pr poescript cmdfile
+echo
+cat poescript
+echo
+
+#export MP_HOLDTIME=1000
+
+export MP_CMDFILE=poescript
+
+echo
+echo before ls before poe
+echo
+
+pwd
+ls -ablp
+echo
+echo DATA=$DATA before poe
+
+echo "APRUN=$APRUN"
+export MP_CMDFILE=poescript
+export MP_PGMMODEL=mpmd
+export MP_LABELIO=yes
+export MP_INFOLEVEL=3
+export MP_STDOUTMODE=unordered
+
+rm mpmd_cmdfile
+ln -s $MP_CMDFILE mpmd_cmdfile
+$APRUN
+
+echo DATA=$DATA after poe
+pwd
+ls -ablp
+
+echo
+echo after ls after poe
+echo
+
+for ipair in $nlist; do
+	file=ushout.combine.$ipair
+	echo "############################### file=$file begin #######################"
+	cat $file
+	echo "############################### file=$file end ##########################"
+	echo
+done # for ipair in $nlist
+
+echo
+echo `date` $0 poe combine  loop end
+echo
+
+#
+# combine output
+#
+
+for ipair in $nlist; do
+	cat break >>$pgmout
+	echo ipair=$ipair begin >>$pgmout
+	cat break >>$pgmout >>$pgmout
+	cat pair.$ipair/$pgmout >>$pgmout
+	cat break >>$pgmout
+	echo ipair=$ipair end >>$pgmout
+	cat break >>$pgmout
+	cat pair.$ipair/errfile >>$pgmout
+	cat break >>$pgmout
+done # for ipair in $nlist
+
+#
+echo
+echo "############################# before pgmout ######################"
+echo
+cat $pgmout
+echo
+echo "############################# after pgmout ######################"
+echo
+
+################################################################################
+
+# DBN alerts moved to ush/enstr_pair_combine.sh
+
+########################################################
+
+###testb
+#if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
+###teste
+msg='ENDED NORMALLY.'
+postmsg "$jlogfile" "$msg"
+
+################# END OF SCRIPT #######################
+###testb
+#else
+#  echo skip delete for now
+#fi
+###teste
+echo `date` $0 end
