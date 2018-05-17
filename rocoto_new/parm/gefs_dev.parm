@@ -8,7 +8,7 @@ export fhmax=384
 export fhmaxh=384
 export FHOUTHR=6
 export VERBOSE=no
-export navg_min=1
+export navg_min=10
 
 #define tmp time step
 export DELTIM=300
@@ -40,7 +40,7 @@ export makepgrb2b=yes
 export saveflux=yes
 export savesfcsig=no
 export sigzvd=no
-export npair=1
-export npert=2
+export npair=10
+export npert=20
 
 echo `date` $0 test section end

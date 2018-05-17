@@ -77,9 +77,8 @@ integer :: navg_min = 10
 namelist /namens/nfiles,nenspost,cfipg,iskip,cfopg1,cfopg2,navg_min
  
 read (5,namens)
-write (6,namens)
-print *, 'Xianwu-Xue-test-ensstat'
-print *, navg_min
+!write (6,namens)
+!print *, navg_min
 
 print *, 'Input variables include '
 

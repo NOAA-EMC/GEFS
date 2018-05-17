@@ -79,9 +79,8 @@ data rk/0.254,1.00,2.54,5.00,6.35,10.00,12.7,25.4,50.8/
 CALL W3TAGB('ENSPPF',2000,0110,0073,'NP20   ')
 
 read (5,namin,end=1020)
-write (6, namin)
-print *, "Xianwu-Xue-test-ENSPPF"
-print *, npert
+!write (6, namin)
+!print *, npert
 
 mem = npert + 1
 
