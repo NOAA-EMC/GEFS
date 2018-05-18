@@ -1,10 +1,90 @@
-History of the file:
-Wen Meng: 20170731 or earlier
-Dingchen Hou: 20171213 
-Xianwu Xue: 20180330
-Xianwu Xue: 20180422
+# History of the file:
+# Wen Meng: 20170731 or earlier
+# Dingchen Hou: 20171213 
+# Xianwu Xue: 20180330
+# Xianwu Xue: 20180422
+# Xianwu Xue: 20180518 - Add detailed introduction of running GEFS
 
 # New Rototo Workflow
+
+1) Check out a working copy of gefs based workflow from VLAB
+   GIT repository is https://vlab.ncep.noaa.gov/redmine/projects/gefs/repository
+  a) Donwload the newest GEFS
+   > cd /gpfs/hps3/emc/ensemble/save/First.Last/GEFS   # note that First.Last is your user name
+   > git clone https://vlab.ncep.noaa.gov/code-review/GEFS
+   > mv GEFS nwdev 
+
+  b) Compile source codes of GEFS                          
+   > cd nwdev/sorc
+   ## mkdir folds
+   > mkdir ../exec
+   > mkdir ../util/exec
+   ## Deal with the modules
+   > module purge
+   > module use ./
+   > module load Module_gefs_v12_wcoss (wcoss) or 
+     module load Module_gefs_v12_cray (cray) or
+     module load Module_gefs_v12_theia (theia)
+   ## Build the code
+   > ./build.sh  
+   ## Install GEFS
+   > ./install.sh
+
+2) Generate ROCOTO xml and cronjob
+   
+  a) Set up ROCOTO and python environment
+   >module load rocoto
+   >module load python
+
+  b) Modify the user_full.conf based on your need
+    # check the user_full.conf file and modify it based on your own choice of dates (SDATE and EDATE), 
+    # double check the other options based on your need
+   > vim user_full.conf
+   
+  c) Generate 'gefs.xml' (and/or tasks .ent), 'parm/gefs_dev.parm' and 'jgefs_forecast_high.sh' in bin file and 'cron_rocoto'
+    # user_full.conf is optional, you can use your own config file
+   > ./py/run_to_get_all.py  user_full.conf 
+  
+   > rocotorun -w gefs.xml -d gefs.db
+    # Queries the job scheduler and updates the rocoto SQL database, then submits any new jobs that are ready to run. This will start your job immediately.
+
+   > crontab cron_rocoto
+    # Add rocotorun to your crontab so it runs automatically
+    # Note: This will overwrite your whole crontab, so if you already have other jobs in your cron, copy the last line in cron_rocoto into your cron using 
+    #       >crontab -e
+
+   e) Check the status of running tasks.
+        Use rocotoviewer (recommended):
+          While there is a rocotoviewer in the GFS pacakage, it needs a modification for the GEFS workflow that hasn't been added to GFS yet.
+          Use the following versions (it is recommended you set an alias to this to avoid typing is out all the time):
+            WCOSS: /gpfs/hps3/emc/ensemble/save/Walter.Kolczynski/fv3gfs/gfs_workflow.v15.0.0/ush/rocoto_viewer.py
+            Theia: /scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/rocoto_viewer.py
+
+            Assuming an alias to rv:
+            > rv -w gefs.xml -d gefs.db
+
+            In rocotoviewer, you can execute many of the rocoto commands. You can get a list of commands using 'h', but the key ones are:
+              up/down to change task
+              left/right to change cycle
+              <x> to expand metatasks
+              <R> to run rocotorun
+              <r> to run rocotorewind on the selected task(s), which deletes entries for this job from the SQL database (so it can be rerun)
+              <c> to run rocotocheck on the selected task(s) (show status of a task)
+              <Enter> to add a job to the selection (to select multiple jobs)
+              Hold <Shift> while using arrows to select multiple sequential tasks
+
+        or
+
+        Use rocotostat:
+          >rocotostat -w gefs.xml -d gefs.db
+
+          This just dumps current job information to the screen in a somewhat ugly format, and it is non-interactive.
+
+   d) Go to $WORKDIR (defined in user_full.conf or xml) for checking job standard outputs and output files of your experiment.
+
+
+#####################################
+#####################################
 
 open 'user_new_full.conf' to modify 'SDATE' 'EDATE'. You don't need to modify 'EXPID', 'First' and 'Last'
 
