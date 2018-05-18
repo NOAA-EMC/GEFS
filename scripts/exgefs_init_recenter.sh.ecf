@@ -8,11 +8,21 @@ echo `date` $0 begin
 #
 #   Author:	Xiaqiong Zhou
 #   Date:	2018 March 08
+#        April 2018, Dingchen Hou: Slight modification for consistency of the cold start part
+#        May 8 2018, Dingchen Hou: Added function for enkf membership shifting with the 4 cucles
+#        May 8 2018, Dingchen Hou: Added function to allow fleximble ensemble size
+#        April 2018, Bing Fu: Added the warm start part
+#        May 11 2018: Dingchen Hou: Added enkf membership shifting and flexible gefs membership 
 #
-#
-#   Abstract:	Creates initial conditions for the global ensemble
-#       	by perturbing the analysis with EnKF 6 hour forecast,
-#               then change NEMSIO format to 6 tile FV3 NETCDF  
+#    Abstract:	Creates initial conditions for the global ensemble (GEFS) from FV3 based enkf
+#		6-h forecast nemsio files 
+#		Cold start: Recenter the 6 hour forecast to gfs analysis (nemsio) file
+#			The resulted nemsio files need to changed to netCDF in init_fv3chgres jobs
+#		Warm start: Generate  increment file (netCDF format) for the ensemble members 
+#			from the ensemble mean forecast and gfs analysis, for the encemble contro;
+#                        from enkf member npert+1 forecast and gfs analysis
+#                	The netCDF format increment files will be used in the forecast job, together
+#			with RESTAT files  
 #
 ################################################################################
 
@@ -45,7 +55,7 @@ echo " standard output in file ...................... $pgmout"
 echo " unique processing id for run ................. $pid"
 echo " YES SENDCOM means save com files ............. $SENDCOM"
 echo " ------------------------------------------------------------"
-
+set -xa
 
 ##chang resolution for FV3GFS ananlysis 
 
@@ -198,6 +208,10 @@ EOF
 
    fi
 
+export warm_start=$warm_start
+
+if [ $warm_start = ".false." ]; then
+
    ################################################################################
    # Recenter ensemble member atmospheric analyses about hires analysis
 
@@ -228,15 +242,71 @@ done
    cp -f  ${SFCANL} $GESOUT/gec00.${cycle}.sfcanl
 
 
+else
 
+	DATA=$DATA
+	NMEM_ENKF=1
+	imp_physics=${imp_physics:-11}
+	INCREMENTS_TO_ZERO="'delz_inc','clwmr_inc','icmr_inc'"
+	APRUN_CALCINC="aprun -j 1 -n 1 -N 1 -d 1 -cc depth"
+	ATMANLNAME='atmanl_ensres'
+
+#calculate increment for ensemble members
+	$NLN ./atmf006_ensmean atmges_mem001
+	$NLN ./${ATMANLNAME} atmanl_mem001
+	$NLN ./fv3_increment.nc atminc_mem001
+	$NCP $CALCINCEXEC $DATA
+
+	rm calc_increment.nml
+	cat > calc_increment.nml << EOF
+&setup
+  datapath = './'
+  analysis_filename = 'atmanl'
+  firstguess_filename = 'atmges'
+  increment_filename = 'atminc'
+  debug = .false.
+  nens = $NMEM_ENKF
+  imp_physics = $imp_physics
+/
+&zeroinc
+  incvars_to_zero = $INCREMENTS_TO_ZERO
+/
+EOF
+	cat calc_increment.nml
+
+	$APRUN_CALCINC ${DATA}/$(basename $CALCINCEXEC)
+
+	for imem in $(seq 1 $npert); do
+		memchar="p"$(printf %02i $imem)
+		ICSDIR=$GESOUT/$cyc/$memchar/C${CASE}_$PDY$cyc
+		if [ ! -d $ICSDIR ]; then mkdir -p $ICSDIR; fi
+		$NCP ./fv3_increment.nc $ICSDIR
+	done #while (( pp < 21 ))
+
+#calculate c00 increment
+
+	(( jmem = npert + memshift + 1 ))
+	if (( jmem > 80 )); then (( jmem = jmem - 80 )); fi
+	memchar=$(printf %03i $jmem)
+	#$NLN ./atmf006_mem$memchar atmges_mem001
+	$NLN $COMINenkf$pdyp/$cycp/mem$memchar/gdas.t${cycp}z.atmf006.nemsio atmges_mem001
+	$NLN ./${ATMANLNAME} atmanl_mem001
+	$NLN ./fv3_increment.nc atminc_mem001
+
+	$APRUN_CALCINC ${DATA}/$(basename $CALCINCEXEC)
+
+	ICSDIR=$GESOUT/$cyc/c00/C${CASE}_$PDY$cyc
+	if [ ! -d $ICSDIR ]; then mkdir -p $ICSDIR; fi
+	$NCP ./fv3_increment.nc $ICSDIR
+
+fi #warm_start
 
 # Postprocessing
 cd $pwd
-#[[ ${KEEPDATA:-"NO"} = "NO" ]] && rm -rf $DATA
+[[ ${KEEPDATA:-"NO"} = "NO" ]] && rm -rf $DATA
 set +x
 if [ $VERBOSE = "YES" ]; then
    echo $(date) EXITING $0 with return code $err >&2
 fi
 exit $err
-
-                                                               
+                                                            

@@ -42,6 +42,11 @@ def config_tasknames(dicBase):
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "jgefs_init_fv3chgrs"
+        elif dicBase['RUN_INIT'] == "FV3_WARM":
+            # ---jgefs_init_recenter
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_init_recenter"
 
         # #    <!-- high resolution forecast and post process jobs -->
         if dicBase['RUN_FORECAST_HIGH'] == "YES" or dicBase['RUN_FORECAST_HIGH'][0] == "Y":

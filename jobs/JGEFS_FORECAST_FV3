@@ -388,5 +388,10 @@ ln -s $memdir/*.nc $memdir/INPUT/.
 export FIX_DIR=$FIXgfs
 export FIX_AM=$FIX_AM
 
+export assim_freq=6
+export ROTDIR=/gpfs/hps3/emc/ensemble/noscrub/Bing.Fu/o/com/gfs/fy2019q1
+export rCDUMP=gdas
+export CDUMP=gdas
+export COMROOThps=/gpfs/hps3/emc/ensemble/noscrub/Bing.Fu/o/com
 $FORECASTSH
 #$fcstscript
