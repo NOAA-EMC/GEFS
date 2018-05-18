@@ -147,8 +147,7 @@ export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 mkdir -m 775 -p $COMOUT/$cyc/sfcsig
 mkdir -m 775 -p $COMOUT/$cyc/sflux
 mkdir -m 775 -p $COMOUT/$cyc/misc/fcst
-
-export FCSTDIR=$COMOUT/$cyc/sfcsig
+SFCSIG=$COMOUT/$cyc/sfcsig
 
 ##############################################
 echo set parameters using gefs.parm
@@ -305,7 +304,7 @@ fi
 #export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nems.sh.ecf
 #export FCSTEXEC=$EXECgsm/global_fcst
 #export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nemsfv3gfs_sp.sh
-export fcstscript=${fcstscript:-HOMEgfs/scripts/exglobal_fcst_nemsfv3gfs.sh}
+export fcstscript=$HOMEgfs/scripts/exglobal_fcst_nemsfv3gfs.sh
 export FORECASTSH=$fcstscript
 export FCSTEXECDIR=${FCSTEXECDIR:-$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin}
 export PARM_FV3DIAG=${PARM_FV3DIAG:-$PARMgfs/parm_fv3diag}
@@ -337,21 +336,21 @@ export VERBOSE=YES
 
 ################################################################################
 export CDATE=$PDY$cyc
+export ROTDIR=$DATA/dataout
 #ICSDIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160910/$mem
 #Temporal setting reading from Kate Zhou's archive
 
 # To be consistent to the requirement of the exglobal script, temperal setting
+CDUMP=$RUNMEM
 # To be consistent to the requirement of the exglobal script, temperal setting
 
 # Global script puts output in this location based on $ROTDIR, so we create symlinks to where we really want it
 # Use some bash trickery to do delayed variable expansion
 # For unmodified global script, use memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc' (must be single-quotes)
-#memdir_template=${memdir_template:-$GESIN/$mem/$CASE\_$CDATE}
-#memdir=`eval echo $memdir_template`
-ICSDIR_template=${ICSDIR_template:-$GESIN/$mem/$CASE\_$CDATE}
-ICSDIR=`eval echo $ICSDIR_template`
-mkdir -p $ICSDIR/INPUT
-ln -s $ICSDIR/*.nc $ICSDIR/INPUT/. 
+memdir_template=${memdir_template:-$GESIN/$mem/$CASE\_$CDATE}
+memdir=`eval echo $memdir_template`
+mkdir -p $memdir/INPUT
+ln -s $memdir/*.nc $memdir/INPUT/. 
 # We need to make the directory structure above memdir, but memdir needs to actually be a symlink
 # So create the tree using mkdir -p, then remove the last product
 
@@ -390,11 +389,9 @@ export FIX_DIR=$FIXgfs
 export FIX_AM=$FIX_AM
 
 export assim_freq=6
-#export ROTDIR=/gpfs/hps3/emc/ensemble/noscrub/Bing.Fu/o/com/gfs/fy2019q1
-export ROTDIR=${ROTDIR:-$COMROOThps/gfs}
-export increment=$ICSDIR/fv3_increment.nc
+export ROTDIR=/gpfs/hps3/emc/ensemble/noscrub/Bing.Fu/o/com/gfs/fy2019q1
 export rCDUMP=gdas
 export CDUMP=gdas
-#export COMROOThps=/gpfs/hps3/emc/ensemble/noscrub/Bing.Fu/o/com
+export COMROOThps=/gpfs/hps3/emc/ensemble/noscrub/Bing.Fu/o/com
 $FORECASTSH
 #$fcstscript
