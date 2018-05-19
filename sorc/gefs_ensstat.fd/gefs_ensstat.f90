@@ -28,7 +28,9 @@ program ens_avgspr_g2
 !
 ! attributes:
 !   language: fortran 90
-!
+! modified by:
+!   Xianwu Xue 05/11/2018
+!      added 'navg_min' from namelist to determine the minimum members
 !$$$
 
 use grib_mod
@@ -70,10 +72,13 @@ character*255 cfopg1,cfopg2
 real    gmin,gmax
 integer nbit
 
-namelist /namens/nfiles,nenspost,cfipg,iskip,cfopg1,cfopg2
+integer :: navg_min = 10
+
+namelist /namens/nfiles,nenspost,cfipg,iskip,cfopg1,cfopg2,navg_min
  
 read (5,namens)
 !write (6,namens)
+!print *, navg_min
 
 print *, 'Input variables include '
 
@@ -232,7 +237,7 @@ do
   ! end of imem loop, calculate ensemble mean and spread
 
   print *, '   '; print *,' variable has member',inum; print *, '   '
-  if(inum.le.10) goto 200
+  if(inum.le.navg_min) goto 200
 
   print *, '   '; print *,  ' Combined Ensemble Data Example at Point 8601 '
   write (*,'(10f8.1)') (fgrid(8601,i),i=1,inum)
