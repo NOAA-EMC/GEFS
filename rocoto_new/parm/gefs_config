@@ -95,5 +95,8 @@ export HOMEgsm1=${HOMEgsm1:-$HOMEDIR1/global_shared.v14.1.0} #this is needed for
   #export COMINgfs_base=/gpfs/hps3/ptmp/emc.glopara/fv3fy18retro2/gfs.
   export COMINenkf_base=/gpfs/hps3/emc/ensemble/noscrub/Bing.Fu/o/com/gfs/fy2019q1/enkf.gdas.
   export COMINgfs_base=/gpfs/hps3/emc/ensemble/noscrub/Bing.Fu/o/com/gfs/fy2019q1/gfs.
+  export ROTDIR=/gpfs/hps3/emc/ensemble/noscrub/Bing.Fu/o/com/gfs/fy2019q1       #for warm start files
   #?export COMINenkf_base=/gpfs/hps3/ptmp/emc.glopara/fy2019q1/enkf.gdas.
   #?export COMINgfs_base=/gpfs/hps3/ptmp/emc.glopara/fy2019q1/gfs.
+
+  export fcstscript=/gpfs/hps3/emc/ensemble/save/Dingchen.Hou/GEFS/LINK/ECF/exglobal_fcst_nemsfv3gfs.sh_mod
