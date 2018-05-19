@@ -8,6 +8,7 @@ export fhmax=384
 export fhmaxh=384
 export FHOUTHR=6
 export VERBOSE=no
+export navg_min=10
 
 #define tmp time step
 export DELTIM=300

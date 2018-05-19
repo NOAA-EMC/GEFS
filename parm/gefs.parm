@@ -9,6 +9,7 @@
 ##############################################
 export npair=${npair:-15}
 export npert=$((2*npair))
+export navg_min=${navg_min:-10}
 export nhrpair=${nhrpair:-$npair}
 export nstinit=${nstinit:-yes}
 #################################################

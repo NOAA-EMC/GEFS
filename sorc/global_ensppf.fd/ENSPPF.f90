@@ -19,6 +19,7 @@
 !   14-11-06   BO Cui: Modify for grib2 encode/decode
 !                      Change for full ensemble member, 
 !                      production(20+1 members  and one side ensemble)
+!   18-05-10   Xianwu Xue : Add 'npert' to calculate 'mem'
 !
 !
 ! USAGE:
@@ -62,13 +63,15 @@ integer   lpgi,ireti,jj
 integer   temp(200),ipdt9,P2,iunit2
 real      bb,cc
 
-parameter(len=60,mem=41)
+parameter(len=60)
+
+integer :: npert = 20
 
 real, allocatable :: ff(:,:),pp(:,:),ss(:,:),aa(:),gg(:,:),hh(:,:)
 
 character*255 cpgb,cpgi,cpge
 
-namelist /namin/ cpgb,cpge
+namelist /namin/ cpgb,cpge,npert
 
 real rk(9)
 data rk/0.254,1.00,2.54,5.00,6.35,10.00,12.7,25.4,50.8/
@@ -76,6 +79,10 @@ data rk/0.254,1.00,2.54,5.00,6.35,10.00,12.7,25.4,50.8/
 CALL W3TAGB('ENSPPF',2000,0110,0073,'NP20   ')
 
 read (5,namin,end=1020)
+!write (6, namin)
+!print *, npert
+
+mem = npert + 1
 
 lpgb=len_trim(cpgb)
 lpge=len_trim(cpge)
