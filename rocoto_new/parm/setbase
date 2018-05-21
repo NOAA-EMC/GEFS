@@ -101,7 +101,7 @@ if [ -d /scratch4/NCEPDEV ]; then
 	export DIAG_TABLE=$HOMEgsm/parm/parm_fv3diag/diag_table
 	export FIELD_TABLE=$HOMEgsm/parm/parm_fv3diag/field_table_gfdl
 
-	export WGRIB2=${WGRIB2:-/apps/wgrib2/0.1.9.5.1/bin/wgrib2}
+	export WGRIB2=${WGRIB2:-wgrib2}
 	export GRB2INDEX=${GRB2INDEX:-/scratch3/NCEPDEV/nwprod/NWPROD.WCOSS/util/exec/grb2index}
 	export COPYGB2=${COPYGB2:-/scratch3/NCEPDEV/nwprod/NWPROD.WCOSS/util/exec/copygb2}
 

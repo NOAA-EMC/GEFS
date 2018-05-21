@@ -100,6 +100,14 @@ if [[ -s $DATA/pgrb2$ffhr$cfsuffix ]] && \
 	echo `date` $jobgrid  pgrb2 processing skipped for $RUNMEM $ffhr
 else
 	$WGRIB2 $mafile $option1 $option21 $option22 $option23 -new_grid $grid pgb2file.$ffhr$cfsuffix
+	rc=$?
+	if [[ $rc -ne 0 ]]; then
+		msg="FATAL ERROR: wgrib2 for $mafile failed!"
+		echo "`date`    $msg"
+		postmsg "$jlogfile" "$msg"
+		export err=1
+		err_chk
+	fi
 	echo `date` pgrb2 $jobgrid grbfile $ffhr completed
 
 	######################################################
