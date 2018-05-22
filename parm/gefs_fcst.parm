@@ -59,7 +59,7 @@ else
 fi
 #APRUN="aprun -n $tasks -N $task_per_node -d $nth_fv3 $j_opt -cc depth"
 # APRUN="aprun -n $NTASKS_FV3 -N $cores_per_node -d $NTHREADS_FV3 $j_opt -cc depth"
-export FCSTEXEC=fv3_gfs_${TYPE}.${COMP}.${MODE}.x
+export FCSTEXEC=${FCSTEXEC:-fv3_gfs_${TYPE}.${COMP}.${MODE}.x}
 export APRUN=${APRUN:-""}
 
 export k_split=${k_split:-2}
@@ -125,7 +125,7 @@ export cal_pre=".true."
 export do_sat_adj=".false."
 export random_clds=".true."
 export cnvcld=".true."
-
+PRUN:-""}
 export imp_physics=${imp_physics:-"11"}
 if [[ $imp_physics = 99 ]]; then # ZhaoCarr
 export ncld=1
