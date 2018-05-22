@@ -49,7 +49,7 @@ cd $DATA
 ################################################################################
 
 echo
-echo `date` separate begin ipair=$1
+echo `date` combin begin mem=$2
 echo
 if (( $# < 5 )); then
         echo $0 needs 5 arguments
@@ -220,8 +220,8 @@ fi # [[ $SENDCOM = YES ]]
 (( missingcount = 0 ))
 
 if (( imem0 == 1 )) ; then
-	if [[ -s sanl.in ]]; then
-		mv -f sanl.in $GESOUT/gec00.${cycle}.sanl
+	if [[ -s ../sanl.in ]]; then
+		mv -f ../sanl.in $GESOUT/gec00.${cycle}.sanl
 		testfile=$GESOUT/gec00.${cycle}.sanl
 		if [[ ! -s $testfile ]]; then
 			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
@@ -230,8 +230,8 @@ if (( imem0 == 1 )) ; then
 			export err=1
 			err_chk
 		fi # [[ ! -s $testfile ]]
-		cp -f sfcanl.in $GESOUT/gec00.${cycle}.sfcanl
-		cp -f nsnanl.in $GESOUT/gec00.${cycle}.nsnanl
+		cp -f ../sfcanl.in $GESOUT/gec00.${cycle}.sfcanl
+		cp -f ../nsnanl.in $GESOUT/gec00.${cycle}.nsnanl
 		testfile=$GESOUT/gec00.${cycle}.sfcanl
 		if [[ ! -s $testfile ]]; then
 			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
@@ -286,5 +286,5 @@ if [[ $SENDDBN = YES ]];then
 	  $DBNROOT/bin/dbn_alert MODEL ENS_SA_P${imem0} $job $COMOUT/$cyc/init/gep${cmem0}.${cycle}.sanl
 fi # [[ $SENDDBN = YES ]]
 echo
-echo `date` combine end ipair=$ipairi
+echo `date` combine end mem=$imem0
 echo
