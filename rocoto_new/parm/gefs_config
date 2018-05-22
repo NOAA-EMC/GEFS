@@ -41,14 +41,11 @@ export HOMEgefs=$basesource
 export HOMEtrak=$HOMERFC/ens_tracker.v1.1.8
 
 #for NEMS GEFS, FV3 version
-#export HOMEgsm=${HOMEgsm:-$HOMEDIR/global_shared.v15.0.0}  #Feb 2018
-export HOMEgsm=${HOMEgsm:-$HOMEDIR}
-export HOMEgfs=${HOMEgsm:-$HOMEDIR}
+export HOMEgsm=${HOMEgsm:-$HOMEDIR/global_shared.v15.0.0}
 #FCST exec is from a different directory
 export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe}
 
-#export HOMEpost=${HOMEpost:-$HOMEDIR/post4fv3}   #Aug 2017
-export HOMEpost=${HOMEpost:-$HOMEDIR}             #April 2018
+export HOMEpost=${HOMEpost:-$HOMEDIR/post4fv3}   #Aug 2017
 # export HOMEenkf=${HOMEenkf:-$HOMEDIR/gdas.v15.0.0}
 export HOMEenkf=${HOMEenkf:-$HOMEDIR1/gdas.v14.1.0}
 
@@ -90,5 +87,3 @@ export HOMEgsm1=${HOMEgsm1:-$HOMEDIR1/global_shared.v14.1.0} #this is needed for
 # export COMROOTp1=/ensemble/noscrub/Richard.Wobus/o/com      #Dick's example for gfs
 # export COMROOThps=/gpfs/hps/emc/ensemble/noscrub/Bing.Fu/o/com    #Bing's example
 # export COMROOThps=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/nems_gefs/com    #Bing's archive for nems based gfs
-  export COMINenkf_base=/gpfs/hps3/ptmp/emc.glopara/fv3fy18retro2/enkf.gdas.
-  export COMINgfs_base=/gpfs/hps3/ptmp/emc.glopara/fv3fy18retro2/gfs.

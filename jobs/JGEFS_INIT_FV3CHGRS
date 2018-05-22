@@ -123,7 +123,6 @@ module load prod_util hpss >>/dev/null
 #export workflow_ver=v15.0.0
 export BASE_SVN=$HOMEDIR1/fv3gfs
 export BASE_GSM=$HOMEgsm
-export HOMEgfs=$HOMEgsm
 #export CASE=$CASEHR
 #-- create ICs using operational GFS initial conditions
 
@@ -140,27 +139,16 @@ export CDATE=$PDY$cyc
 #export OUTDIR=$FV3GESOUT/$mem/${CASE}_$CDATE
 export OUTDIR=$FV3GESOUT
 export ictype=nemsgfs
-if [ $inflag = 7 ] ; then
-	if [ $mem = "c00" ] ; then
-		cp $GESOUT/ge$mem.t$cyc\z.atmanl $INIDIR/gfnanl.gfs.$PDY$cyc
-	else
-		cp $GESOUT/ge$mem.t$cyc\z.ratmanl $INIDIR/gfnanl.gfs.$PDY$cyc
-	fi
-	cp $GESOUT/gec00.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
-	cp $GESOUT/gec00.t$cyc\z.sfcanl $INIDIR/nsnanl.gfs.$PDY$cyc
-else
-	cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
-	cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
-	cp $GESOUT/ge$mem.t$cyc\z.nsnanl $INIDIR/nsnanl.gfs.$PDY$cyc
-fi
+cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc                 
+cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc         
+cp $GESOUT/ge$mem.t$cyc\z.nsnanl $INIDIR/nsnanl.gfs.$PDY$cyc
 
-testfile=$INIDIR/gfs.t${cyc}z.sfcanl
+testfile=$INIDIR/sfnanl.gfs.$PDY$cyc                       
 nsleep=0; tsleep=120;  msleep=50 
 while test ! -s $testfile -a $nsleep -lt $msleep;do
   sleep $tsleep; nsleep=`expr $nsleep + 1`
 done
-#$USHgsm/global_chgres_driver.sh
-/gpfs/hps3/emc/ensemble/save/emc.enspara/Hong.Guan/GEFS/nwdev/ush/global_chgres_driver.sh
+$USHgsm/global_chgres_driver.sh
 
 #.......................................................
 

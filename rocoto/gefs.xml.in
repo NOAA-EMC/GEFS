@@ -2,7 +2,7 @@
 <!DOCTYPE workflow
 
 [
-  <!ENTITY MEMLIST "p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 c00">
+  <!ENTITY MEMLIST "p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 c00">
   <!-- <!ENTITY MEMLIST "p01 p02 p03 p04c00">  -->
   <!ENTITY CYCLE_THROTTLE "1">
   <!ENTITY TASK_THROTTLE "65">
@@ -18,7 +18,7 @@
   <!ENTITY tmpnwprd "&WORKDIR;/tmpnwprd">
   <!ENTITY DATA_DIR "&WORKDIR;/com/gens/dev">
   <!ENTITY EXPID "@[EXPID]">
-  <!ENTITY SOURCEDIR "@[SOURCEDIR];/nwdev">
+  <!ENTITY SOURCEDIR "@[SOURCEDIR]/&EXPID;/nwdev">
   <!ENTITY WORKDIR "@[WORKDIR]/&EXPID;">
   <!ENTITY KEEP_DIR "@[KEEP_DIR]/&EXPID;">
   <!ENTITY HPSS_DIR "@[HPSS_DIR]/&EXPID;">
@@ -62,6 +62,10 @@
 
 @** if RUN_INIT==YES
    <!--- init jobs -->
+   &jgefs_enkf_track;
+   &jgefs_init_separate;
+   &jgefs_init_process;
+   &jgefs_init_combine;
    &jgefs_init_fv3chgrs;
 @** endif
 

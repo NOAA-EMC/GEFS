@@ -88,16 +88,16 @@ echo "current setting RERUN=$RERUN"
 
 # Specify Execution Areas
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
 
-export HOMEgfs=$HOMEgsm
-export EXECgfs=$HOMEgfs/exec
-export USHgfs=$HOMEgfs/ush
-export FIXgfs=$HOMEgfs/fix
-export PARMgfs=$HOMEgfs/parm
+export EXECgsm=$HOMEgsm/exec
+export USHgsm=$HOMEgsm/ush
+export FIXgsm=$HOMEgsm/fix
+export PARMgsm=$HOMEgsm/parm
 
 #Names used in exglobal_fv3.sh
-export BASE_GSM=${BASE_GSM:-$HOMEgfs}
-export FIX_DIR=$FIXgfs
+export BASE_GSM=$HOMEgsm
+export FIX_DIR=$FIXgsm
 export FIX_AM=$FIX_DIR/fix_am
 export FIXfv3=$FIX_DIR/fix_fv3_gmted2010
 
@@ -183,10 +183,7 @@ fi
 
 #  The VEGTYPE fix file:
 export FNVETC=${FNVETC:-${FIX_AM}/global_vegtype.igbp.t$MTNRSL.rg.grb}
-#export FNTSFC=${FNTSFC:-${FIX_AM}/RTGSST.1982.2012.monthly.clim.grb}
-#export FNTSFA=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/my_util/2tsst/CFS_ANOM2_create_FoundT_0p25/sst/outdata/TMPsfc.$PDY$cyc.24hr.anom.grb
-export FNTSFA=/gpfs/hps3/emc/ensemble/noscrub/Wei.Li/CFS_ANOM2_create_CFSR_0p25/sst/outdata_1999/TMPsfc.$PDY$cyc.24hr.anom.grb
-export FTSFS=0
+export FNTSFC=${FNTSFC:-${FIX_AM}/RTGSST.1982.2012.monthly.clim.grb}
 export FNAISC=${FNAISC:-${FIX_AM}/CFSR.SEAICE.1982.2012.monthly.clim.grb}
 export FNABSC=${FNABSC:-${FIX_AM}/global_mxsnoalb.uariz.t$MTNRSL.rg.grb}
 export FNALBC=$FIX_AM/global_snowfree_albedo.bosu.t$MTNRSL.rg.grb
@@ -307,15 +304,14 @@ fi
 
 #export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nems.sh.ecf
 #export FCSTEXEC=$EXECgsm/global_fcst
-#export fcstscrippara@llogin2$ vi    JGEFS_FORECAST_FV3
 #export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nemsfv3gfs_sp.sh
-export fcstscript=$HOMEgfs/scripts/exglobal_fcst_nemsfv3gfs.sh
+export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nemsfv3gfs.sh
 export FORECASTSH=$fcstscript
 export FCSTEXECDIR=${FCSTEXECDIR:-$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin}
-export PARM_FV3DIAG=${PARM_FV3DIAG:-$PARMgfs/parm_fv3diag}
+export PARM_FV3DIAG=${PARM_FV3DIAG:-$PARMgsm/parm_fv3diag}
 
 export APRUN=${APRUN:-""}
-export EXECDIR=$EXECgfs
+export EXECDIR=$EXECgsm
 #export FCSTEXECDIR=$BASE_SVN/NEMSfv3gfs/stochy/NEMS/exe
 export FCSTEXECDIR=${FCSTEXECDIR:-$EXECDIR}
 
@@ -342,22 +338,26 @@ export VERBOSE=YES
 ################################################################################
 export CDATE=$PDY$cyc
 export ROTDIR=$DATA/dataout
+ICSDIR=${ICSDIR:-$GESIN/$mem}
 #ICSDIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160910/$mem
 #Temporal setting reading from Kate Zhou's archive
 
 # To be consistent to the requirement of the exglobal script, temperal setting
 CDUMP=$RUNMEM
+mkdir -p $ICSDIR/$CDATE/$CDUMP/$CASE
+ln -s $ICSDIR/$CASE\_$CDATE $ICSDIR/$CDATE/$CDUMP/$CASE/INPUT
 # To be consistent to the requirement of the exglobal script, temperal setting
 
 # Global script puts output in this location based on $ROTDIR, so we create symlinks to where we really want it
 # Use some bash trickery to do delayed variable expansion
 # For unmodified global script, use memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc' (must be single-quotes)
-memdir_template=${memdir_template:-$GESIN/$mem/$CASE\_$CDATE}
+memdir_template=${memdir_template:-$ROTDIR}
 memdir=`eval echo $memdir_template`
-mkdir -p $memdir/INPUT
-ln -s $memdir/*.nc $memdir/INPUT/. 
 # We need to make the directory structure above memdir, but memdir needs to actually be a symlink
 # So create the tree using mkdir -p, then remove the last product
+mkdir -p $memdir
+rmdir $memdir
+ln -s $SFCSIG/$mem $memdir
 
 # if [ $OUTPUT_GRID = "gaussian_grid" ]; then
 # 	fhr=$FHINI
@@ -390,7 +390,8 @@ ln -s $memdir/*.nc $memdir/INPUT/.
 # 	done
 # fi
 
-export FIX_DIR=$FIXgfs
+export BASE_GSM=$HOMEgsm
+export FIX_DIR=$FIXgsm
 export FIX_AM=$FIX_AM
 
 $FORECASTSH
