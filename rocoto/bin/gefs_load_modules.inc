@@ -35,7 +35,7 @@ elif [[ "$WHERE_AM_I" == theia ]]; then
 	module load hdf5parallel/1.8.14
 	module load netcdf
 	module load wgrib
-	module load wgrib2
+	module load wgrib2/0.2.0.6c
 	module load cnvgrib
     export PATH=$PATH:./
 fi
