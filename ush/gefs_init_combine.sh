@@ -106,7 +106,7 @@ done # file in finuse finuse_env finuse_storm et al
 	if [[ -f $fils ]]; then
 		ls -al $fils
 		mv -f $fils .
-		ls -al atmanl_$memchar1
+		ls -al ratmanl_$memchar1
 	else
 		echo file=$file DOES NOT EXIST
 	fi # [[ -f $fils ]]
@@ -156,7 +156,7 @@ if (( relocpertflag == 1 )); then
 	echo
 	if (( filtrccan == 0 )); then
 		if (( filtrccap == 0 )); then
-			if [[ -s ratmanl.add ]]; then
+			if [[ -s ratmanl_add ]]; then
 					echo gefs_vortex_combine succeeded
 					mv -f ratmanl_${memchar1} ratmanl_env
 					mv -f ratmanl_add ratmanl_${memchar1}

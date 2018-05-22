@@ -206,7 +206,7 @@
           DO VLEV=1, KMAX
           CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY2,0,IRET)
              IF ( IRET == 0 ) THEN
-                GDATA%U(:,:,VLEV)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
+                GDATA%U(:,:,VLEV)=RESHAPE(DUMMY2, (/IMAX,JMAX/) )
              ELSE
                PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
                CALL ERREXIT (3)
@@ -218,7 +218,7 @@
           DO VLEV=1, KMAX
           CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY2,0,IRET)
              IF ( IRET == 0 ) THEN
-                GDATA%V(:,:,VLEV)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
+                GDATA%V(:,:,VLEV)=RESHAPE(DUMMY2, (/IMAX,JMAX/) )
              ELSE
                PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
                CALL ERREXIT (3)
@@ -230,7 +230,7 @@
           DO VLEV=1, KMAX
           CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY2,0,IRET)
              IF ( IRET == 0 ) THEN
-                GDATA%T(:,:,VLEV)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
+                GDATA%T(:,:,VLEV)=RESHAPE(DUMMY2, (/IMAX,JMAX/) )
              ELSE
                PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
                CALL ERREXIT (3)
@@ -241,7 +241,7 @@
           VLEVTYP='sfc' 
            CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,1, DUMMY2,0,IRET)
              IF ( IRET == 0 ) THEN
-                GDATA%ZS(:,:)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
+                GDATA%ZS(:,:)=RESHAPE(DUMMY2, (/IMAX,JMAX/) )
              ELSE
                PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
                CALL ERREXIT (3)
@@ -251,7 +251,7 @@
           VLEVTYP='sfc' 
           CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,1,DUMMY2,0,IRET)
              IF ( IRET == 0 ) THEN
-                GDATA%PS(:,:)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
+                GDATA%PS(:,:)=RESHAPE(DUMMY2, (/IMAX,JMAX/) )
              ELSE
                PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
                CALL ERREXIT (3)
@@ -263,7 +263,7 @@
           DO VLEV=1, KMAX
           CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY2,0,IRET)
              IF ( IRET == 0 ) THEN
-                GDATA%Q(:,:,VLEV,1)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
+                GDATA%Q(:,:,VLEV,1)=RESHAPE(DUMMY2, (/IMAX,JMAX/) )
              ELSE
                PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
                CALL ERREXIT (3)
@@ -275,7 +275,7 @@
           DO VLEV=1, KMAX
           CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY2,0,IRET)
              IF ( IRET == 0 ) THEN
-                GDATA%Q(:,:,VLEV,2)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
+                GDATA%Q(:,:,VLEV,2)=RESHAPE(DUMMY2, (/IMAX,JMAX/) )
              ELSE
                PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
                CALL ERREXIT (3)
@@ -287,7 +287,7 @@
           DO VLEV=1, KMAX
           CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY2,0,IRET)
              IF ( IRET == 0 ) THEN
-                GDATA%Q(:,:,VLEV,3)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
+                GDATA%Q(:,:,VLEV,3)=RESHAPE(DUMMY2, (/IMAX,JMAX/) )
              ELSE
                PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
                CALL ERREXIT (3)
@@ -299,7 +299,7 @@
           DO VLEV=1, KMAX
           CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY2,0,IRET)
              IF ( IRET == 0 ) THEN
-                GDATA%Q(:,:,VLEV,4)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
+                GDATA%Q(:,:,VLEV,4)=RESHAPE(DUMMY2, (/IMAX,JMAX/) )
              ELSE
                PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
                CALL ERREXIT (3)
@@ -311,7 +311,7 @@
           DO VLEV=1, KMAX
           CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY2,0,IRET)
              IF ( IRET == 0 ) THEN
-                GDATA%Q(:,:,VLEV,5)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
+                GDATA%Q(:,:,VLEV,5)=RESHAPE(DUMMY2, (/IMAX,JMAX/) )
              ELSE
                PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
                CALL ERREXIT (3)
@@ -323,7 +323,7 @@
           DO VLEV=1, KMAX
           CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY2,0,IRET)
              IF ( IRET == 0 ) THEN
-                GDATA%Q(:,:,VLEV,6)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
+                GDATA%Q(:,:,VLEV,6)=RESHAPE(DUMMY2, (/IMAX,JMAX/) )
              ELSE
                PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
                CALL ERREXIT (3)
@@ -335,7 +335,7 @@
           DO VLEV=1, KMAX
           CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY2,0,IRET)
              IF ( IRET == 0 ) THEN
-                GDATA%Q(:,:,VLEV,7)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
+                GDATA%Q(:,:,VLEV,7)=RESHAPE(DUMMY2, (/IMAX,JMAX/) )
              ELSE
                PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
                CALL ERREXIT (3)
@@ -487,7 +487,6 @@
          enddo
         enddo
         print *,'datatype2=',ghead%gdatatype
-        print *,'recname2=',gheadv%recname(1:3)
 
         IF ( TRIM(modelname) == 'GFS'  ) THEN
           call nemsio_gfsgrd_open(gfile,trim(kfile), &
@@ -544,8 +543,8 @@
           VNAME='o3mr' 
           VLEVTYP='mid layer' 
           DO VLEV=1, KMAX
-            DUMMY(:)=RESHAPE(GDATA%Q(:,:,VLEV,2),(/IMAX*JMAX/) ) 
-            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,IRET)
+            DUMMY2(:)=RESHAPE(GDATA%Q(:,:,VLEV,2),(/IMAX*JMAX/) ) 
+            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY2,IRET)
           ENDDO
           ! clwmr
           VNAME='clwmr' 
@@ -668,7 +667,7 @@
       endif
 
       do j=1,jmax
-        do i=1,imaxDUMMY_FV3GFS
+        do i=1,imax
           srlhd(i,j)=srlho(i,j)-srlhi(i,j)
           srlpd(i,j)=srlpo(i,j)-srlpi(i,j)
         enddo
