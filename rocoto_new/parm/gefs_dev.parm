@@ -29,9 +29,11 @@ export ENS_SPS=.false.
 export DO_SPPT=YES
 export DO_SHUM=YES
 export DO_SKEB=YES
+export warm_start=.false.
 
 # for test, NOT USED FOR PRODUCTION gfssource = dev, para, prod
-export gfssource=prod
+export gfssource=para
+export imp_physics=11
 
 # set all the following "make" and "save" flags to "yes" to simulate production
 export makepgrba=no

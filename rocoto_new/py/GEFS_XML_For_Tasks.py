@@ -32,6 +32,32 @@ def config_tasknames(dicBase):
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "jgefs_init_fv3chgrs"
+
+        elif dicBase['RUN_INIT'] == "FV3_RELOC":
+            # ---jgefs_enkf_track
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_enkf_track"
+
+            # ---jgefs_init_separate
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_init_separate"
+
+            # ---
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_init_process"
+
+            # ---jgefs_init_combine
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_init_combine"
+
+            # ---jgefs_init_fv3chgrs
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_init_fv3chgrs"
         elif dicBase['RUN_INIT'] == "FV3_COLD":
             # ---jgefs_init_recenter
             iTaskName_Num += 1
@@ -258,13 +284,20 @@ def get_param_of_task(dicBase, taskname):
     # for dependency
     sVarName = "{0}_dep".format(taskname).upper()
     if sVarName in dicBase:
-        sDep = dicBase[sVarName.upper()]
+        sDep = dicBase[sVarName.upper()]            
         if sDep.strip() != "": # identify whether include 'jgefs_init_recenter' or not
             if taskname.lower() == "jgefs_init_fv3chgrs":
                 sRecenterTask = "jgefs_init_recenter"
-                sVarRecenterTask = 'taskname_1'.upper()
-                if dicBase[sVarRecenterTask].lower() == sRecenterTask:
-                    sDep = '<taskdep task="jgefs_init_recenter"/>'
+                if dicBase['taskname_1'.upper()].lower() == sRecenterTask:
+                    if dicBase['taskname_2'.upper()].lower() == "jgefs_init_fv3chgrs":
+                        sDep = '<taskdep task="jgefs_init_recenter"/>'
+
+        if sDep.strip() != "": # identify whether include 'jgefs_init_recenter' or not
+            if taskname.lower() == "jgefs_forecast_high":
+                sRecenterTask = "jgefs_init_recenter"
+                if dicBase['taskname_1'.upper()].lower() == sRecenterTask:
+                    if dicBase['taskname_2'.upper()].lower() == "jgefs_forecast_high":
+                        sDep = '<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/C384_@Y@m@d@H/fv3_increment.nc</cyclestr></datadep>'
 
     # Forecast can be derive from the parm items
     if taskname == 'jgefs_forecast_high':
