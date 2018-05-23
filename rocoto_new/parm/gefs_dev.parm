@@ -29,7 +29,7 @@ export ENS_SPS=.false.
 export DO_SPPT=YES
 export DO_SHUM=YES
 export DO_SKEB=YES
-export warm_start=.false.
+export warm_start=.true.
 
 # for test, NOT USED FOR PRODUCTION gfssource = dev, para, prod
 export gfssource=para
