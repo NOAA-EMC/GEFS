@@ -45,7 +45,4 @@ export sigzvd=no
 export npair=10
 export npert=20
 
-export nstf_name="2,0,5,0,0"
-export export FTSFS=0
-export FNTSFA=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/data/tfcfs/outdata/TMPsfc.$PDY$cyc.24hr.anom.grb
 echo `date` $0 test section end
