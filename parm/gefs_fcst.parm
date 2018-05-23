@@ -40,7 +40,7 @@ export npe_fv3
 export hyperthread=${hyperthread:-".false."}
 export NTHREADS_FV3=${parallel_threads:-2}
 COREPERNODE=${COREPERNODE:-24}
-export cores_per_node=$((COREPERNODE/NTHREADS_FV3))
+export cores_per_node=$COREPERNODE
 
 #FV dynamics parameters
 export TYPE=${TYPE:-"hydro"}    # choices:  nh, hydro
@@ -59,19 +59,39 @@ else
 fi
 #APRUN="aprun -n $tasks -N $task_per_node -d $nth_fv3 $j_opt -cc depth"
 # APRUN="aprun -n $NTASKS_FV3 -N $cores_per_node -d $NTHREADS_FV3 $j_opt -cc depth"
-export FCSTEXEC=fv3_gfs_${TYPE}.${COMP}.${MODE}.x
+
+# add two tiered SST options
+export sst2tier=${sst2tier:-YES}
+if [[ $sst2tier = YES ]]; then
+export nstf_name="2,0,5,0,0"
+export FTSFS=0
+export FNTSFA=$SSTDIR/TMPsfc.$PDY$cyc.24hr.anom.grb
+export FCSTEXEC=${FCSTEXEC:-fv3_gfs_${TYPE}.${COMP}.${MODE}.2sst.x}
+else
+export FCSTEXEC=${FCSTEXEC:-fv3_gfs_${TYPE}.${COMP}.${MODE}.x}
+fi
+
 export APRUN=${APRUN:-""}
 
+# set fixed k_split and n_split for dt=450s and 300s
+if [[ $DELTIM = 450 ]]; then
+export k_split=2
+export n_split=6
+elif [[ $DELTIM = 300 ]]; then
+export k_split=1
+export n_split=8
+else 
 export k_split=${k_split:-2}
 export n_split=${n_split:-6}
+fi
 
 # OTHER FV# FCST related environment
 export warm_start=${warm_start:-".false."}
-export BASE_GSM=$HOMEgsm
+export BASE_GSM=$HOMEgfs
 REMAP_GRID=none     # temporay setting, to void the latlon default
 export REMAP_GRID=${REMAP_GRID:-latlon}        #gaussian or latlon for using fregrid or regrid_nemsio for remapping
-#export DIAG_TABLE=${DIAG_TABLE:-$HOMEgsm/parm/parm_fv3diag/diag_table}
-#export FIELD_TABLE=${FIELD_TABLE:-$HOMEgsm/parm/parm_fv3diag/field_table_gfdl}
+#export DIAG_TABLE=${DIAG_TABLE:-$HOMEgfs/parm/parm_fv3diag/diag_table}
+# export FIELD_TABLE=${FIELD_TABLE:-$HOMEgfs/parm/parm_fv3diag/field_table_gfdl}
 
 #gfs_physics
 export FHZERO=${FHZER:-6}
@@ -115,10 +135,9 @@ export isot=
 export debug=${gfs_phys_debug:-".false."}
 #export nstf_name="$NST_FCST,$NST_SPINUP,$NST_RESERVED,$ZSEA1,$ZSEA2"
 export nst_anl=${nst_anl:-".true."}
-export nstf_name=${nstf_name:-"0,0,0,0,0"}
-export psautco=${psautco:-"0.0006,0.0003"}
-export prautco=${prautco:-"0.0001,0.0001"}
-#gfs_physics
+export nstf_name=${nstf_name:-"2,0,0,0,0"}
+export psautco=${psautco:-"0.0008,0.0005"}
+export prautco=${prautco:-"0.00015,0.00015"}
 
 #FV3 imp_microphysics
 export dnats=0
@@ -126,7 +145,6 @@ export cal_pre=".true."
 export do_sat_adj=".false."
 export random_clds=".true."
 export cnvcld=".true."
-
 export imp_physics=${imp_physics:-"11"}
 if [[ $imp_physics = 99 ]]; then # ZhaoCarr
 export ncld=1
@@ -148,7 +166,6 @@ elif [[ $imp_physics = 11 ]]; then # GFDL
     export cal_pre=".false."
     export do_sat_adj=".true."
     export random_clds=".false."
-    export cnvcld=".false."
     export hord_mt_nh_nonmono=6
     export hord_xx_nh_nonmono=6
     export vtdm4_nh_nonmono=0.02
@@ -214,13 +231,13 @@ fi
 if [[ $DO_SHUM = YES ]]; then
 	export SHUM_hr=${SHUM_hr:-"0.004,-999.,-999.,-999,-999"}                           # Amplitude of SHUM patterns
 	export SHUM_TAU_hr=${SHUM_TAU_hr:-"2.16E4,1.728E5,6.912E5,7.776E6,3.1536E7"}       # Time scale in seconds
-	export SHUM_LSCALE_hr=${SHUM_LSCALE_hr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
+	export SHUM_LSCALE_hr=${SHUM_LSCALE_hr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
 	export ISEED_SHUM_hr=${ISEED_SHUM_hr:-$((CDATE*1000 + MEMBER*10 + 2))}             # random seed for SHUM pattern
 #	export shum_sigefold_hr=${shum_sigefold_hr:-0.2}                                   # limit SHUM to the PBL (~bottom 200 mb)
 
 	export SHUM_lr=${SHUM_lr:-"0.004,-999.,-999.,-999,-999"}                           # Amplitude of SHUM patterns
 	export SHUM_TAU_lr=${SHUM_TAU_lr:-"2.16E4,1.728E5,6.912E5,7.776E6,3.1536E7"}       # Time scale in seconds
-	export SHUM_LSCALE_lr=${SHUM_LSCALE_lr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
+	export SHUM_LSCALE_lr=${SHUM_LSCALE_lr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
 	export ISEED_SHUM_lr=${ISEED_SHUM_lr:-7${PDY}${cyc}}
 #	export shum_sigefold_lr=${shum_sigefold_lr:-0.2}                                   # limit SHUM to the PBL (~bottom 200 mb)
 else
@@ -234,7 +251,7 @@ if [[ $DO_SKEB = YES ]]; then
 	export SKEB_hr=${SKEB_hr:-"1.0,-999,-999,-999,-999"}                               # Amplitude of SPPT patterns
 	export ISEED_SKEB_hr=${ISEED_SKEB_hr:-$((CDATE*1000 + MEMBER*10 + 1))}             # Seed for SKEB pattern
 	export SKEB_TAU_hr=${SKEB_TAU_hr:-"2.16E4,1.728E5,2.592E6,7.776E6,3.1536E7"}       # Time scale in seconds
-	export SKEB_LSCALE_hr=${SKEB_LSCALE_hr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
+	export SKEB_LSCALE_hr=${SKEB_LSCALE_hr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
         export SKEBNORM=${SKEBNORM:-1}
 
 #	export SKEB_VFILT_hr=${SKEB_VFILT_hr:-40}                                          # number of iterations of a 1-2-1 filter of the random pattern in the vertical
@@ -245,7 +262,7 @@ if [[ $DO_SKEB = YES ]]; then
 	export SKEB_lr=${SKEB_lr:-"1.0,-999,-999,-999,-999"}                               # Amplitude of SPPT patterns
 	export ISEED_SKEB_lr=${ISEED_SKEB_lr:-8${PDY}${cyc}}
 	export SKEB_TAU_lr=${SKEB_TAU_lr:-"2.164E4,1.728E5,2.592E6,7.776E6,3.1536E7"}      # Time scale in seconds
-	export SKEB_LSCALE_lr=${SKEB_LSCALE_lr:-"250.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
+	export SKEB_LSCALE_lr=${SKEB_LSCALE_lr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
 #	export SKEB_VFILT_lr=${SKEB_VFILT_lr:-40}                                          # number of iterations of a 1-2-1 filter of the random pattern in the vertical
 #	export SKEB_DISS_SMOOTH_lr=${SKEB_DISS_SMOOTH_lr:-12}                              # number of iterations of smoothing the dissipation estimate in the horizontal
 #	export skeb_sigtop1_lr=${skeb_sigtop1_lr:-0.1}                                     # taper SKEB pattern to zero between 0.1 and 0.025 sigma
