@@ -16,6 +16,18 @@ export k_split=1
 export n_split=8
 export TYPE=nh
 export MONO=non-mono
+export LOGNAME=emc.enspara
+export SUBNAME=$First.$Last
+export SAVE=/gpfs/hps3/emc/$PROJECT/save/$LOGNAME$SUBNAME
+export NOSCRUB=/gpfs/hps3/emc/$PROJECT/$LOGNAME$SUBNAME/noscrub
+export basesource=$SAVE/$expid
+export FNTSFA=/gpfs/hps3/emc/ensemble/noscrub/Wei.Li/CFS_ANOM2_create_CFSR_0p25/sst/outdata_1999/TMPsfc.$PDY$cyc.24hr.anom.grb
+export FTSFS=0
+export SOURCEDIR=/gpfs/hps3/emc/ensemble/save/Xianwu.Xue/GEFS/nwdev/&EXPID;/nwdev
+export nstf_name=2,1,5,0,0
+export ivegsrc=1
+export isot=1
+export FCSTEXEC=fv3_gfs_nh.prod.32bit.x.tf
 
 # cpu geometry
 export layout_x=4
