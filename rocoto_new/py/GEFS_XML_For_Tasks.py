@@ -76,22 +76,22 @@ def config_tasknames(dicBase):
 
         # #    <!-- high resolution forecast and post process jobs -->
         if dicBase['RUN_FORECAST_HIGH'] == "YES" or dicBase['RUN_FORECAST_HIGH'][0] == "Y":
-            # ---jgefs_enkf_track
+            # ---jgefs_forecast_high
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "jgefs_forecast_high"
 
-            # ---jgefs_init_separate
+            # ---jgefs_post_high
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "jgefs_post_high"
 
-            # ---
+            # ---jgefs_prdgen_high
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "jgefs_prdgen_high"
 
-            # ---jgefs_init_combine
+            # ---jgefs_ensstat_high
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "jgefs_ensstat_high"
@@ -101,15 +101,29 @@ def config_tasknames(dicBase):
         #   <!-- chargeres jobs -->
         #    &jgefs_sigchgres;
         # @** endif
-        #
-        # @** if RUN_FORECAST_LOW==YES
-        #    <!-- low resolution forecast and post process jobs -->
-        #    &jgefs_forecast_low;
-        #    &jgefs_post_low;
-        #    &jgefs_prdgen_low;
-        #    &jgefs_ensstat_low;
-        # @** endif
-        #
+   
+
+        # #    <!-- low resolution forecast and post process jobs -->
+        if dicBase['RUN_FORECAST_LOW'] == "YES" or dicBase['RUN_FORECAST_LOW'][0] == "Y":
+            # ---jgefs_forecast_low
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_forecast_low"
+
+            # ---jgefs_post_low
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_post_low"
+
+            # ---jgefs_prdgen_low
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_prdgen_low"
+
+            # ---jgefs_ensstat_low
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_ensstat_low"
 
         # #    <!-- track and gensis jobs -->
         if dicBase['RUN_TRACK'] == "YES" or dicBase['RUN_TRACK'][0] == "Y":
@@ -118,14 +132,14 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "jgefs_post_track"
 
-            # ---jgefs_init_separate
+            # ---jgefs_post_genesis
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "jgefs_post_genesis"
 
         # #    <!-- other jobs -->
         if dicBase['RUN_OTHERS'] == "YES" or dicBase['RUN_OTHERS'][0] == "Y":
-            # ---jgefs_enkf_track
+            # ---jgefs_enspost
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "jgefs_enspost"
@@ -286,21 +300,27 @@ def get_param_of_task(dicBase, taskname):
     if sVarName in dicBase:
         sDep = dicBase[sVarName.upper()]            
         if sDep.strip() != "": # identify whether include 'jgefs_init_recenter' or not
+            # For Cold Start
             if taskname.lower() == "jgefs_init_fv3chgrs":
                 sRecenterTask = "jgefs_init_recenter"
                 if dicBase['taskname_1'.upper()].lower() == sRecenterTask:
                     if dicBase['taskname_2'.upper()].lower() == "jgefs_init_fv3chgrs":
                         sDep = '<taskdep task="jgefs_init_recenter"/>'
 
-        if sDep.strip() != "": # identify whether include 'jgefs_init_recenter' or not
+            # For Warm Start
             if taskname.lower() == "jgefs_forecast_high":
                 sRecenterTask = "jgefs_init_recenter"
                 if dicBase['taskname_1'.upper()].lower() == sRecenterTask:
                     if dicBase['taskname_2'.upper()].lower() == "jgefs_forecast_high":
                         sDep = '<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/C384_@Y@m@d@H/fv3_increment.nc</cyclestr></datadep>'
 
+            # For Low Resolution
+            if taskname.lower() == "jgefs_post_low" or taskname.lower() == "jgefs_prdgen_low":
+                start_hr_low = int(dicBase["fhmaxh".upper()]) + int(dicBase["FHOUTHR".upper()])
+                sDep = dicBase[sVarName].replace("fXXX","f{0:03d}".format(start_hr_low))
+
     # Forecast can be derive from the parm items
-    if taskname == 'jgefs_forecast_high':
+    if taskname == 'jgefs_forecast_high' or taskname == 'jgefs_forecast_low':
         layout_x = int(dicBase['layout_x'.upper()])
         layout_y = int(dicBase['layout_y'.upper()])
         WRITE_GROUP = int(dicBase['WRITE_GROUP'.upper()])
