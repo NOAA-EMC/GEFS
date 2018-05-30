@@ -591,7 +591,7 @@ def create_metatask(taskname="jgefs_init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#
         sDATE_VARS = get_DATE_VARS(sPre_2)
 
     strings += sPre + '<!-- **********{0}********** -->\n'.format(taskname)
-    if taskname == "jgefs_prdgen_high":
+    if taskname == "jgefs_prdgen_high" or taskname == "jgefs_prdgen_low":
         strings += sPre + '<metatask name="{0}" mode="parallel">\n'.format(taskname)
     else:
         strings += sPre + '<metatask>\n'
