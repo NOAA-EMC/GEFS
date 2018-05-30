@@ -153,6 +153,8 @@ restart_interval=${restart_interval:-0}
 #  export warm_start=".true."
 #fi
 
+if [ $RERUN != "RESTART" ]; then
+
 if [ $warm_start = ".true." ]; then
 
   # Link all (except sfc_data) restart files from $gmemdir
@@ -202,7 +204,8 @@ if [ $warm_start = ".true." ]; then
 else ## cold start                            
 
   #for file in $memdir/INPUT/*.nc; do
-  for file in $ICSDIR/INPUT/*.nc; do
+  #for file in $ICSDIR/INPUT/*.nc; do
+  for file in $ICSDIR/*.nc; do
     file2=$(echo $(basename $file))
     fsuf=$(echo $file2 | cut -c1-3)
     if [ $fsuf = "gfs" -o $fsuf = "sfc" ]; then
@@ -211,6 +214,25 @@ else ## cold start
   done
 
 fi 
+
+else   #RERUN=RESTART
+
+#for file in $COMOUT/$cyc/restart/$mem/*.nc; do
+#    file2=$(echo $(basename $file))
+#      $NLN $file $DATA/INPUT/$file2
+#done
+#$NLN $COMOUT/$cyc/restart/$mem/coupler.res $DATA/INPUT/coupler.res
+
+    RDATE=$($NDATE +$restart_hour $CDATE)
+    rPDY=$(echo $RDATE | cut -c1-8)
+    rcyc=$(echo $RDATE | cut -c9-10)
+    for file in RESTART/${rPDY}.${rcyc}0000.* ; do
+    file2=$(echo $(basename $file))
+    file2=$(echo $file2 | cut -d. -f3-) # remove the date from file
+      $NCP $file INPUT/$file2
+    done
+
+fi
 
 nfiles=$(ls -1 $DATA/INPUT/* | wc -l)
 if [ $nfiles -le 0 ]; then
@@ -240,8 +262,8 @@ else
     O3FORC=global_o3prdlos.f77
 fi
 H2OFORC=${H2OFORC:-"global_h2o_pltc.f77"}
-$NLN $FIX_AM/${O3FORC}                         $DATA/INPUT/global_o3prdlos.f77
-$NLN $FIX_AM/${H2OFORC}                        $DATA/INPUT/global_h2oprdlos.f77
+$NLN $FIX_AM/${O3FORC}                         $DATA/global_o3prdlos.f77
+$NLN $FIX_AM/${H2OFORC}                        $DATA/global_h2oprdlos.f77
 $NLN $FIX_AM/global_solarconstant_noaa_an.txt  $DATA/solarconstant_noaa_an.txt
 $NLN $FIX_AM/global_sfc_emissivity_idx.txt     $DATA/sfc_emissivity_idx.txt
 
@@ -497,6 +519,7 @@ ENS_SPS:                 ${ENS_SPS:-".false."}
 
 dt_atmos:                $DELTIM
 calendar:                ${calendar:-'julian'}
+cpl:                     ${cpl:-".false."}
 memuse_verbose:          ${memuse_verbose:-".false."}
 atmos_nthreads:          $NTHREADS_FV3
 use_hyper_thread:        ${hyperthread:-".false."}
@@ -855,10 +878,18 @@ EOF
 /
 EOF
 
+    cat >> input.nml << EOF
+&nam_sfcperts
+  $nam_sfcperts_nml
+/
+EOF
+
 else
 
   cat >> input.nml << EOF
 &nam_stochy
+/
+&nam_sfcperts
 /
 EOF
 

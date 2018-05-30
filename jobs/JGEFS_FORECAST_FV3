@@ -145,10 +145,14 @@ export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 #export SFCSIG=$COMOUT/$cyc/sfcsig
 
 mkdir -m 775 -p $COMOUT/$cyc/sfcsig
-mkdir -m 775 -p $COMOUT/$cyc/sflux
 mkdir -m 775 -p $COMOUT/$cyc/misc/fcst
+mkdir -m 775 -p $COMOUT/$cyc/restart/$mem
+
+mkdir -m 755 -p $GESOUT/$mem/RESTART
 
 export FCSTDIR=$COMOUT/$cyc/sfcsig
+export RESTDIR=$COMOUT/$cyc/restart/$mem
+ln -s $GESOUT/$mem/RESTART $DATA/RESTART 
 
 ##############################################
 echo set parameters using gefs.parm
@@ -173,13 +177,16 @@ if [[ $FORECAST_SEGMENT = hr ]] ; then
 	(( LEVS = LEVSHR + 1 ))
 elif [[ $FORECAST_SEGMENT = lr ]] ; then
 	#CASE=$casel;FHMAX=$fhmax;FHOUT=$fhoutl;FHZER=$fhzerl;
-	CASE=$CASEHR;FHMAX=$fhmax;FHOUT=$FHOUTLR;FHZER=6;
-	JCAP=$JCAPLR;LONB=$LONBLR;LATB=$LATBLR;MTNRSL=$MTNRSLLR
+	CASE=$CASELR;FHMAX=$fhmax;FHOUT=$FHOUTLR;FHZER=6;
+ 	MTNRSL=$MTNRSLLR;LONB=$LONBLR;LATB=$LATBLR;
 	FHINI=$fhmaxhres
+	(( LEVS = LEVSLR + 1 ))
 else
 	FORECAST_SEGMENT=$FORECAST_SEGMENT is not supported !
 	stop
 fi
+
+export FHMIN=$FHINI
 
 #  The VEGTYPE fix file:
 export FNVETC=${FNVETC:-${FIX_AM}/global_vegtype.igbp.t$MTNRSL.rg.grb}
@@ -205,6 +212,11 @@ export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 #
 . $PARMgefs/gefs_fcst.parm
 
+if [[ $FORECAST_SEGMENT = lr ]] ; then
+	export warm_start=.true.
+	export RERUN=RESTART
+	export restart_hour=$fhmaxh
+fi
 #
 # Forecast Input Variables
 #
@@ -249,6 +261,41 @@ memchar=mem$(printf %03i $MEMBER)
 export SET_STP_SEED=${SET_STP_SEED:-"YES"}
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
+
+if [[ $DO_SPPT = YES ]] ; then
+	export SPPT=$SPPT_hr
+	export ISEED_SPPT=$ISEED_SPPT_hr
+	export SPPT_LOGIT=$SPPT_LOGIT_hr
+	export SPPT_TAU=$SPPT_TAU_hr
+	export SPPT_LSCALE=$SPPT_LSCALE_hr
+	export sppt_sfclimit=$sppt_sfclimit_hr
+#	export sppt_sigtop1=$sppt_sigtop1_hr
+#	export sppt_sigtop2=$sppt_sigtop2_hr
+fi
+
+if [[ $DO_SHUM = YES ]] ; then
+	export SHUM=$SHUM_hr
+	export ISEED_SHUM=$ISEED_SHUM_hr
+	export SHUM_TAU=$SHUM_TAU_hr
+	export SHUM_LSCALE=$SHUM_LSCALE_hr
+#	export shum_sigefold=$shum_sigefold_hr
+fi
+
+if [[ $DO_SKEB = YES ]] ; then
+	export SKEB=$SKEB_hr
+	export ISEED_SKEB=$ISEED_SKEB_hr
+	export SKEB_TAU=$SKEB_TAU_hr
+	export SKEB_LSCALE=$SKEB_LSCALE_hr
+	export SKEBNORM=${SKEBNORM:-"1"}
+#	export SKEB_VFILT=$SKEB_VFILT_hr
+#	export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr
+#	export skeb_sigtop1=$skeb_sigtop1_hr
+#	export skeb_sigtop2=$skeb_sigtop2_hr
+fi
+
+fi
+
+if [[ $FORECAST_SEGMENT = lr ]] ; then
 
 if [[ $DO_SPPT = YES ]] ; then
 	export SPPT=$SPPT_hr
@@ -328,7 +375,7 @@ restart_interval=${fhrestart:-1000}
 
 #USE_RESTART=NO                      #use restart file under COMROT/RESTART if run is interruptted
 #FHSTRT=6                            #restart from a given hour if USE_RESTART=YES
-SEND=NO     #The eglobal script send output file to $memdir, which is defined improperly
+SEND=NO    
 export VERBOSE=YES
 
 #echo "-----end of $CONFIG in $0 --------"
@@ -348,10 +395,11 @@ export CDATE=$PDY$cyc
 # For unmodified global script, use memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc' (must be single-quotes)
 #memdir_template=${memdir_template:-$GESIN/$mem/$CASE\_$CDATE}
 #memdir=`eval echo $memdir_template`
-ICSDIR_template=${ICSDIR_template:-$GESIN/$mem/$CASE\_$CDATE}
+#ICSDIR_template=${ICSDIR_template:-$GESIN/$mem/$CASE\_$CDATE}
+ICSDIR_template=${ICSDIR_template:-$GESIN/$mem}
 ICSDIR=`eval echo $ICSDIR_template`
-mkdir -p $ICSDIR/INPUT
-ln -s $ICSDIR/*.nc $ICSDIR/INPUT/. 
+#mkdir -p $ICSDIR/INPUT
+#ln -s $ICSDIR/*.nc $ICSDIR/INPUT/. 
 # We need to make the directory structure above memdir, but memdir needs to actually be a symlink
 # So create the tree using mkdir -p, then remove the last product
 
