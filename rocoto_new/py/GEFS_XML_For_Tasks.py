@@ -312,7 +312,7 @@ def get_param_of_task(dicBase, taskname):
                 sRecenterTask = "jgefs_init_recenter"
                 if dicBase['taskname_1'.upper()].lower() == sRecenterTask:
                     if dicBase['taskname_2'.upper()].lower() == "jgefs_forecast_high":
-                        sDep = '<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/C384_@Y@m@d@H/fv3_increment.nc</cyclestr></datadep>'
+                        sDep = '<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
 
             # For Low Resolution
             if taskname.lower() == "jgefs_post_low" or taskname.lower() == "jgefs_prdgen_low":
