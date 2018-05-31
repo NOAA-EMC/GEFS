@@ -8,7 +8,7 @@ export fhmax=384
 export fhmaxh=384
 export FHOUTHR=6
 export VERBOSE=no
-export navg_min=10
+export navg_min=3
 
 #define tmp time step
 export DELTIM=300
@@ -17,13 +17,15 @@ export n_split=8
 export TYPE=nh
 export MONO=non-mono
 export LOGNAME=emc.enspara
-export SUBNAME=$First.$Last
+export SUBNAME=/$First.$Last
+export PROJECT=ensemble
+export JOBPRIO=devhigh
 export SAVE=/gpfs/hps3/emc/$PROJECT/save/$LOGNAME$SUBNAME
 export NOSCRUB=/gpfs/hps3/emc/$PROJECT/$LOGNAME$SUBNAME/noscrub
 export basesource=$SAVE/$expid
 export FNTSFA=/gpfs/hps3/emc/ensemble/noscrub/Wei.Li/CFS_ANOM2_create_CFSR_0p25/sst/outdata_1999/TMPsfc.$PDY$cyc.24hr.anom.grb
 export FTSFS=0
-export SOURCEDIR=/gpfs/hps3/emc/ensemble/save/Xianwu.Xue/GEFS/nwdev/&EXPID;/nwdev
+export SOURCEDIR=/gpfs/hps3/emc/ensemble/save/emc.enspara/Hong.Guan/&EXPID;/nwdev
 export nstf_name=2,1,5,0,0
 export ivegsrc=1
 export isot=1
@@ -52,7 +54,7 @@ export makepgrb2b=yes
 export saveflux=yes
 export savesfcsig=no
 export sigzvd=no
-export npair=10
-export npert=20
+export npair=2
+export npert=4
 
 echo `date` $0 test section end

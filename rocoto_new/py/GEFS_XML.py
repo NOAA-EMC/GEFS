@@ -29,7 +29,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sVarValue = os.environ.get("USER")
         if "." in sVarValue:
             sVarValue = sVarValue.split(".")[0]
-    dicBase[sVarName] = sVarValue
+        dicBase[sVarName] = sVarValue
     # ==
     sVarName = "Last".upper()
     sVarValue = 'Xue'
@@ -38,7 +38,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sVarValue = os.environ.get("USER")
         if "." in sVarValue:
             sVarValue = sVarValue.split(".")[1]
-    dicBase[sVarName] = sVarValue
+        dicBase[sVarName] = sVarValue
     # ==
     sVarName = "HPS_PTMP".upper()
     sVarValue = 'hps'

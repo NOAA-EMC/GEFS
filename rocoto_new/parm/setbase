@@ -34,8 +34,8 @@ echo id=$id
 echo
 echo USER to prescribe user ID and JOB queue infirmation
 echo
-PROJECT=ensemble
-LOGNAME=$LOGNAME
+PROJECT=${PROJECT:-ensemble}
+LOGNAME=${LOGNAME:-emc.enspara}
 SUBNAME=
 JOBPRIO=      
 JOBQUEUE=devhigh
@@ -44,8 +44,8 @@ JOBPHASE=
 export account=GEN-T2O
 
 if [[ "$LOGNAME" = "emc.enspara" || "$LOGNAME" = "emc.enspara1" ]]; then
-	SUBNAME=/$First.$Last    #members of the enspara/enspara1 group accounts need to define e.g SUBNAME=/dc
-	JOBPRIO=high       #(default; it could be high/max)
+	SUBNAME=${SUBNAME:-/$First.$Last}    #members of the enspara/enspara1 group accounts need to define e.g SUBNAME=/dc
+	JOBPRIO=${JOBPRIO:-high}       #(default; it could be high/max)
 fi
 
 echo USER info: $PROJECT $LOGNAME $SUBNAME $JOBPRIO
@@ -62,8 +62,8 @@ if [ -d /scratch4/NCEPDEV ]; then
 	echo "Using settings for Theia"
 	PTMP=/scratch4/NCEPDEV/stmp4
 	STMP=/scratch4/NCEPDEV/stmp4
-	SAVE=/scratch4/NCEPDEV/ensemble/save
-	NOSCRUB=/scratch4/NCEPDEV/ensemble/noscrub
+	SAVE=${SAVE:-/scratch4/NCEPDEV/ensemble/save}
+	NOSCRUB=${NOSCRUB:-/scratch4/NCEPDEV/ensemble/noscrub}
 	export machine='THEIA'
 	export JOBPHASE=
 	export HOMEDIR=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/fv3gfs
@@ -115,8 +115,8 @@ elif [ -d /gpfs/hps3 ]; then
 		export JOBPHASE=2
 		export HOMEDIR=/ensemble/save/emc.enspara/RFC
 		#export HOMEDIR1=/ensemble/save/emc.enspara/RFC/q3fy17_lambda
-		SAVE=/$PROJECT/save
-		NOSCRUB=/$PROJECT/noscrub
+		SAVE=${SAVE:-/$PROJECT/save}
+		NOSCRUB=${NOSCRUB:-/$PROJECT/noscrub}
 
 	elif [[ $machl = s ]] || [[ $machl = l ]]; then
 		echo "Using settings for WCOSS Cray"
@@ -128,7 +128,7 @@ elif [ -d /gpfs/hps3 ]; then
 		export HOMEDIR1=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda
 		export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
 		SAVE=${SAVE:-/gpfs/hps3/emc/$PROJECT/save}
-		NOSCRUB=${NOSCRUB:/gpfs/hps3/emc/$PROJECT/noscrub}
+		NOSCRUB=${NOSCRUB:-/gpfs/hps3/emc/$PROJECT/noscrub}
 	fi
 fi
 
