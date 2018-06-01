@@ -1,8 +1,8 @@
 #!/bin/ksh
+#
 
 # EXPORT list here
 set -x
-export NODES=63
 export IOBUF_PARAMS=
 export FORT_BUFFERED=TRUE
 export MKL_CBWR=AVX
@@ -18,48 +18,21 @@ export MPICH_ENV_DISPLAY=1
 export MPICH_VERSION_DISPLAY=1
 export MPICH_CPUMASK_DISPLAY=1
 
-export KMP_STACKSIZE=1024m
-export OMP_NUM_THREADS=4
-export KMP_AFFINITY=disabled
-
-#export OMP_NUM_THREADS=4
-export KMP_AFFINITY=disabled
-
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
 export MP_SHARED_MEMORY=yes
-export MEMORY_AFFINITY=core:4
+export MEMORY_AFFINITY=core:2
 
-export total_tasks=378
-export OMP_NUM_THREADS=4
-export taskspernode=6
+export NTHREADS_SIGCHGRS=2
 
-#export total_tasks=378
-
-#Date and Cycle
-#export PDY=20160415
-#export cyc=00
-#export cyc_fcst=00
-#export job=Aa2016041500300
-#export RUNMEM=gep20
 export FORECAST_SEGMENT=lr
 
-#export gefsmpexec_mpmd=mpirun.lsf
+export memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc'
 
-# export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export gefsmachine=theia
-export gefsmpexec="mpirun -np $total_tasks"
-export gefsmpexec_mpmd="mpirun -np $total_tasks /scratch3/NCEPDEV/nwprod/util/exec/mpiserial"
-export APRUNC="mpirun"
-export aprun_gec00="mpirun -np 1"
-export NTHREADS_SIGCHGRS=6
-
-cd $SOURCEDIR/control
-
-#. $SOURCEDIR/parm/gefs.parm
+export gefsmpexec="mpirun -np $PBS_NP"
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_FORECAST
+$SOURCEDIR/jobs/JGEFS_FORECAST_FV3
 

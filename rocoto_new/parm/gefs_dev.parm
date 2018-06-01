@@ -31,7 +31,7 @@ export DO_SHUM=YES
 export DO_SKEB=YES
 export warm_start=.false.
 
-# for test, NOT USED FOR PRODUCTION gfssource = para, prod
+# for test, NOT USED FOR PRODUCTION gfssource = dev, para, prod
 export gfssource=para
 export imp_physics=11
 
