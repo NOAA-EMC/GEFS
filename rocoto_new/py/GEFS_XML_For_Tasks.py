@@ -597,12 +597,7 @@ def create_metatask(taskname="jgefs_init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#
         strings += sPre + '<metatask>\n'
     strings += sPre + '\t' + '<var name="member">&MEMLIST;</var>\n'
 
-    if taskname == "jgefs_forecast_high" or taskname == "jgefs_post_high":
-        strings += sPre + '\t' + '<task name="{0}1_#member#" cycledefs="{1}" maxtries="{2}">\n'.format(taskname,
-                                                                                                       cycledef,
-                                                                                                       maxtries)
-    else:
-        strings += sPre + '\t' + '<task name="{0}_#member#" cycledefs="{1}" maxtries="{2}">\n'.format(taskname,
+    strings += sPre + '\t' + '<task name="{0}_#member#" cycledefs="{1}" maxtries="{2}">\n'.format(taskname,
                                                                                                       cycledef,
                                                                                                       maxtries)
 
