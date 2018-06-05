@@ -122,10 +122,7 @@ export pdycycp=`$NDATE -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
 export cycp=`echo $pdycycp|cut -c9-10`
 
-
-###teste
 mkdir -m 775 -p $COMOUT/$cyc/init
-mkdir -m 775 -p $COMOUT/$cyc/sflux
 
 ##############################################
 # Define GES directories

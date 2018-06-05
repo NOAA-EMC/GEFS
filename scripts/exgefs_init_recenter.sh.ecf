@@ -230,9 +230,7 @@ if [ $warm_start = ".false." ]; then
    export err=$ERR
    $ERRSCRIPT || exit 2
 
-
-################################################################################
-#SAVE DATA
+#SAVE DATA (init files in nemsio format) into $GESOUT
 for imem in $(seq 1 $recentmem); do
    memchar="mem"$(printf %03i $imem)
    memcharg="p"$(printf %02i $imem)
@@ -241,6 +239,8 @@ done
    cp -f ${ATMANL} $GESOUT/gec00.${cycle}.atmanl
    cp -f  ${SFCANL} $GESOUT/gec00.${cycle}.sfcanl
 
+#SAVE DATA (init files in nemsio format) into $COM
+   cp -f $GESOUT/ge* $COMOUT/$cyc/init
 
 else
 
@@ -278,9 +278,10 @@ EOF
 
 	for imem in $(seq 1 $npert); do
 		memchar="p"$(printf %02i $imem)
-		ICSDIR=$GESOUT/$cyc/$memchar/C${CASE}_$PDY$cyc
+		ICSDIR=$GESOUT/$cyc/$memchar
 		if [ ! -d $ICSDIR ]; then mkdir -p $ICSDIR; fi
 		$NCP ./fv3_increment.nc $ICSDIR
+		$NMV ./fv3_increment.nc $COMOUT/$cyc/init/$memchar
 	done #while (( pp < 21 ))
 
 #calculate c00 increment
@@ -295,18 +296,20 @@ EOF
 
 	$APRUN_CALCINC ${DATA}/$(basename $CALCINCEXEC)
 
-	ICSDIR=$GESOUT/$cyc/c00/C${CASE}_$PDY$cyc
+	ICSDIR=$GESOUT/$cyc/c00
 	if [ ! -d $ICSDIR ]; then mkdir -p $ICSDIR; fi
 	$NCP ./fv3_increment.nc $ICSDIR
+	$NMV ./fv3_increment.nc $COMOUT/$cyc/init/c00
 
 fi #warm_start
 
-# Postprocessing
 cd $pwd
 [[ ${KEEPDATA:-"NO"} = "NO" ]] && rm -rf $DATA
+
 set +x
 if [ $VERBOSE = "YES" ]; then
-   echo $(date) EXITING $0 with return code $err >&2
+	echo $(date) EXITING $0 with return code $err >&2
 fi
+
 exit $err
                                                             
