@@ -319,6 +319,13 @@ def get_param_of_task(dicBase, taskname):
                 start_hr_low = int(dicBase["fhmaxh".upper()]) + int(dicBase["FHOUTHR".upper()])
                 sDep = dicBase[sVarName].replace("fXXX","f{0:03d}".format(start_hr_low))
 
+            # For 'jgefs_enspost' task
+            if taskname.lower() == "jgefs_enspost":
+                if DoesTaskExist(dicBase, "jgefs_ensstat_low"):
+                    sDep = '<taskdep task="jgefs_ensstat_low"/>'
+                else:
+                    sDep = '<taskdep task="jgefs_ensstat_high"/>'
+
     # Forecast can be derive from the parm items
     if taskname == 'jgefs_forecast_high' or taskname == 'jgefs_forecast_low':
         layout_x = int(dicBase['layout_x'.upper()])
@@ -343,6 +350,20 @@ def get_param_of_task(dicBase, taskname):
         sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
     return sWalltime, sNodes, sMemory, sJoin, sDep, sQueue
+
+# =======================================================
+def DoesTaskExist(dicBase, taskname):
+    taskname_num = int(dicBase['taskname_num'.upper()])
+
+    if taskname_num <= 0:
+        return False
+
+    for k in range(taskname_num):
+        sTaskName = dicBase["taskname_{0}".format(k + 1).upper()]
+        if sTaskName == taskname:
+            return True
+
+    return False
 
 # =======================================================
 def get_Default_TaskParam(taskname):
@@ -597,12 +618,7 @@ def create_metatask(taskname="jgefs_init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#
         strings += sPre + '<metatask>\n'
     strings += sPre + '\t' + '<var name="member">&MEMLIST;</var>\n'
 
-    if taskname == "jgefs_forecast_high" or taskname == "jgefs_post_high":
-        strings += sPre + '\t' + '<task name="{0}1_#member#" cycledefs="{1}" maxtries="{2}">\n'.format(taskname,
-                                                                                                       cycledef,
-                                                                                                       maxtries)
-    else:
-        strings += sPre + '\t' + '<task name="{0}_#member#" cycledefs="{1}" maxtries="{2}">\n'.format(taskname,
+    strings += sPre + '\t' + '<task name="{0}_#member#" cycledefs="{1}" maxtries="{2}">\n'.format(taskname,
                                                                                                       cycledef,
                                                                                                       maxtries)
 
