@@ -358,7 +358,7 @@ def replace_First_Last(dicBase, sVarName):
     # to replace the first and last names in the strValue
     import os
     sUSER = os.environ.get("USER")
-    GoupNames = ['emc.enspara', 'emc.enspara1']
+    GroupNames = ['emc.enspara', 'emc.enspara1']
     if sUSER in GroupNames:
         sVarValue = str(dicBase[sVarName]).replace("First", sUSER + "/" + dicBase["FIRST"])
     else:
