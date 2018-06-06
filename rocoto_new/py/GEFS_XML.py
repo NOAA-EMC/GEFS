@@ -66,8 +66,10 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     if sVarName not in dicBase:
         sVarValue = sRocoto_WS
     else:
-        sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
-        sVarValue = sVarValue.replace("Last", dicBase["LAST"])
+        #sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
+        #sVarValue = sVarValue.replace("Last", dicBase["LAST"])
+        sVarValue = replace_First_Last(dicBase, sVarName)
+
     dicBase[sVarName] = sVarValue
     # ===
     sVarName = "EXPID".upper()
@@ -85,8 +87,9 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     if sVarName not in dicBase:
         sVarValue = os.path.abspath(sRocoto_WS + sSep + "..")
     else:
-        sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
-        sVarValue = sVarValue.replace("Last", dicBase["LAST"])
+        #sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
+        #sVarValue = sVarValue.replace("Last", dicBase["LAST"])
+        sVarValue = replace_First_Last(dicBase, sVarName)
         sVarValue += "/&EXPID;/nwdev"
     dicBase[sVarName] = sVarValue
     # ===
@@ -112,8 +115,9 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sVarValue = sVarValue.replace('&EXPID;',dicBase['EXPID'])
         # dicBase[sVarName] = sVarValue
     else:
-        sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
-        sVarValue = sVarValue.replace("Last", dicBase["LAST"])
+        #sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
+        #sVarValue = sVarValue.replace("Last", dicBase["LAST"])
+        sVarValue = replace_First_Last(dicBase, sVarName)
         sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
         if sVarValue.endswith("/o"):
             sVarValue += '/&EXPID;'
@@ -124,8 +128,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
 
     # ===
     sVarName = "KEEP_DIR".upper()
+    sVarValue = ""
     if sVarName not in dicBase:
-        sVarValue = ""
         if WHERE_AM_I.lower() == "cray":
             sVarValue = "/gpfs/hps3/emc/ensemble/noscrub/{0}.{1}/GEFS/&EXPID;" \
                 .format(dicBase["FIRST"], dicBase["LAST"])
@@ -145,8 +149,9 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sVarValue = sVarValue.replace('&EXPID;', dicBase['EXPID'])
         # dicBase[sVarName] = sVarValue
     else:
-        sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
-        sVarValue = sVarValue.replace("Last", dicBase["LAST"])
+        #sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
+        #sVarValue = sVarValue.replace("Last", dicBase["LAST"])
+        sVarValue = replace_First_Last(dicBase, sVarName)
         sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
         sVarValue += '/&EXPID;'
     dicBase[sVarName] = sVarValue
@@ -173,8 +178,9 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sVarValue = sVarValue.replace('&EXPID;', dicBase['EXPID'])
         # dicBase[sVarName] = sVarValue
     else:
-        sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
-        sVarValue = sVarValue.replace("Last", dicBase["LAST"])
+        #sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
+        #sVarValue = sVarValue.replace("Last", dicBase["LAST"])
+        sVarValue = replace_First_Last(dicBase, sVarName)
         sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
         sVarValue += '/&EXPID;'
     dicBase[sVarName] = sVarValue
@@ -346,6 +352,21 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sVarValue = "moabtorque"
         if sVarName not in dicBase:
             dicBase[sVarName] = sVarValue
+
+#=======================================================
+def replace_First_Last(dicBase, sVarName):
+    # to replace the first and last names in the strValue
+    import os
+    sUSER = os.environ.get("USER")
+    GoupNames = ['emc.enspara', 'emc.enspara1']
+    if sUSER in GroupNames:
+        sVarValue = str(dicBase[sVarName]).replace("First", sUSER + "/" + dicBase["FIRST"])
+    else:
+        sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
+
+    sVarValue = sVarValue.replace("Last", dicBase["LAST"])
+
+    return sVarValue
 
 #=======================================================
 def create_xml(dicBase):
