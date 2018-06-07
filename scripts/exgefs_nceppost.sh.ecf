@@ -359,8 +359,8 @@ fi # [ $DOANALYSIS = YES ]
 
 SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
-(( fhr=SHOUR))
-(( fhrm=sHOUR ))
+(( fhr=SHOUR ))
+(( fhrm=SHOUR ))
 if (( fhr < 10 )); then
 	fhr=00$fhr
 elif (( fhr >= 10 )) && (( fhr < 100 )); then
@@ -369,9 +369,8 @@ fi
 if (( fhrm < 10 )); then
 	fhrm=0$fhrm
 fi
-export fhr
-export fhrm
-export fhr frhrm
+export fhr=$fhr
+export fhrm=$fhrm
 
 ############################################################
 # Loop Through the Post Forecast Files 
@@ -418,9 +417,11 @@ while (( fhr <= FHOUR )); do
 # 		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sigfile.f$fhr$cfsuffix
 # 		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
 # 		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix flxfile.f$fhr$cfsuffix
- 		ln -s $COMIN/$cyc/sfcsig/$mem/${RUNMEM}.t${cyc}z.atmf$fhr.nemsio sigfile.f$fhr
+ 		#ln -s $COMIN/$cyc/sfcsig/$mem/${RUNMEM}.t${cyc}z.atmf$fhr.nemsio sigfile.f$fhr
+ 		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.atmf$fhr.nemsio sigfile.f$fhr
 #		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
- 		ln -s $COMIN/$cyc/sfcsig/$mem/${RUNMEM}.t${cyc}z.sfcf$fhr.nemsio flxfile.f$fhr
+ 		#ln -s $COMIN/$cyc/sfcsig/$mem/${RUNMEM}.t${cyc}z.sfcf$fhr.nemsio flxfile.f$fhr
+ 		ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sfcf$fhr.nemsio flxfile.f$fhr
 
 		###################################3
 		# Create Master Post File
@@ -558,9 +559,8 @@ fi
 if (( fhrm < 10 )); then
 	fhrm=0$fhrm
 fi
-export fhr frhrm
-export fhr
-export fhrm
+export fhr=$fhr
+export fhrm=$fhrm
 
 #	if (( fhr < 10 )); then
 #		export fhr="0$fhr"

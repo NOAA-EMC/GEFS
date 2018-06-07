@@ -11,23 +11,24 @@ echo `date` $0 begin
 #export NEMSIO_IN=.true.
 export NEMSIO_IN=.true.
 export NEMSIO_OUT=.true.
+export ICTYP="FV3GFS"
 export nopdpvv=.true.
 
-# parameters for relocation, 1 for yes, 0 for no
+# parameters for relocation, 1 for yes, 0 for no, cold_start or warm_start
 export relocfact=0.05
-export relocflag=0
-export relocflag=1
+export relocflag=${relocflag:-0}
 #
 # control pairing,inflag=6 means inputs from EnKF 6h FCST
 #control pairing,outflag=5 means output file names in Breeding style, e.g gep09.t00z.sanl.cycfs18
 #control pairing,outflag=6 means output file names in EnKF style, e.g gep39.t00z.sanl
-export inflag=6
+export inflag=${inflag:-7}               #7, nemsio files from FV3; 6, nemsio files from GSM v14
 export outflag=6
-if (( inflag == 6 )); then
+if (( inflag == 6 || inflag == 7 )); then
 	export num_mem_enkf=80    #number of ENKF members
         (( num_pair_enkf = num_mem_enkf / 2 ))
         export num_pair_enkf=$num_pair_enkf
-	(( recentmem = npair * 2 ))
+	#(( recentmem = npair * 2 ))
+	(( recentmem = npert ))
 	export recentmem=$recentmem
         (( npair = num_pair_enkf / 4 ))
 	export npair=$npair

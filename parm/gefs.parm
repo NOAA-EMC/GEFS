@@ -51,7 +51,7 @@ if (( fhmax <= fhmaxh )); then
 fi
 
 # HOUTSPS=12: output after SPS 12 hours before fhmaxh, so that digital filtering can be applied after resolution change export HOUTSPS=12
-export HOUTSPS=12
+export HOUTSPS=${HOUTSPS:-0}
 export fhmaxhres=`expr $fhmaxh - $HOUTSPS`
 
 #########################################################################################
