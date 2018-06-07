@@ -155,12 +155,29 @@ else
 	cp $GESOUT/ge$mem.t$cyc\z.nsnanl $INIDIR/nsnanl.gfs.$PDY$cyc
 fi
 
-testfile=$INIDIR/sfnanl.gfs.$PDY$cyc                       
+testfile=$INIDIR/sfnanl.gfs.$PDY$cyc   
+
+#===== For Reforecast -Start
+cp /gpfs/hps3/emc/ensemble/noscrub/Hong.Guan/reforecast_IC/${PDY}00/sfcanl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sfcanl
+if [ "$mem" = c00 ]; then
+# cp /gpfs/hps3/emc/ensemble/noscrub/Eric.Sinsky/FV3GEFSinit/gefs.$PDY/siganl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sanl
+ cp /gpfs/hps3/emc/ensemble/noscrub/Hong.Guan/reforecast_IC/${PDY}00/siganl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sanl
+else
+#cp /gpfs/hps3/emc/ensemble/noscrub/Eric.Sinsky/FV3GEFSinit/gefs.$PDY/sanl.$mem $INIDIR/gfs.t${cyc}z.sanl
+ cp /gpfs/hps3/emc/ensemble/noscrub/Hong.Guan/reforecast_IC/${PDY}00/sanl.$mem $INIDIR/gfs.t${cyc}z.sanl
+fi
+testfile=$INIDIR/gfs.t${cyc}z.sfcanl
+#===== For Reforecast -End
+                    
 nsleep=0; tsleep=120;  msleep=50 
 while test ! -s $testfile -a $nsleep -lt $msleep;do
   sleep $tsleep; nsleep=`expr $nsleep + 1`
 done
-$USHgsm/global_chgres_driver.sh
+#$USHgsm/global_chgres_driver.sh
+
+#===== For Reforecast -Start
+/gpfs/hps3/emc/ensemble/save/emc.enspara/$SUBNAME/GEFS/nwdev/ush/global_chgres_driver.sh
+#===== For Reforecast -End
 
 #.......................................................
 

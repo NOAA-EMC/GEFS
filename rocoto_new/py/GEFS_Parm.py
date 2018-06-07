@@ -84,6 +84,14 @@ def get_and_merge_default_dicParm(dicParm, WHERE_AM_I):
 
 #------
 def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
+
+    # ==
+    sVarName_Num = "First".upper()
+    npert = int(dicBase[sVarName_Num])
+    # ==
+    sVarName_Num = "Last".upper()
+    npert = int(dicBase[sVarName_Num])
+
     # ==
     sVarName_Num = "npert".upper()
     npert = int(dicBase[sVarName_Num])
