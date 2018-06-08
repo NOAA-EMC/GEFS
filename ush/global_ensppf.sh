@@ -29,7 +29,7 @@ startmsg
 #DHOU 03/26/2012 for Zeus
 eval $EXECgefs/global_ensppf <<-EOF 2>/dev/null
 	&namin
-	cpgb='$1',cpge='$2' /
+	cpgb='$1',cpge='$2', npert='$3' /
 	EOF
 export err=$?; err_chk
 
