@@ -30,7 +30,7 @@ program ens_avgspr_g2
 !   language: fortran 90
 ! modified by:
 !   Xianwu Xue 05/11/2018
-!      added an ability to get 'navg_min' from environment variables
+!      added 'navg_min' from namelist to determine the minimum members
 !$$$
 
 use grib_mod

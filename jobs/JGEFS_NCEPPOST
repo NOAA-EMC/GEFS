@@ -94,7 +94,8 @@ export USHpost=${HOMEpost}/ush
 export EXECpost=${HOMEpost}/exec
 export FIXpost=${HOMEpost}/fix
 export FIXglobal=${HOMEgsm}/fix
-export PARMpost=${HOMEpost}/parm
+#export PARMpost=${HOMEpost}/parm
+export PARMpost=${HOMEpost}/parm/post   # for the flat structure
 # PARMPOST (instead of PARMpost) is used in the post ush script
 export PARMPOST=${PARMpost}
 # GRBINDEX2 (instead of GRB2INDEX) is used in the post ush script
@@ -114,9 +115,11 @@ export OVERPARMEXEC=                        #Optional input in the post ush scri
 export CHGRESSH=$USHgsm/global_chgres.sh
 export CHGRESEXEC=$EXECgsm/global_chgres
 
-export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
+#export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
+export POSTGPSH=${POSTGPSH:-$USHpost/gfs_nceppost.sh}
 # RLW 20150622 test new version of post executable
-export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
+#export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
+export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/gfs_ncep_post}
 export nemsioget=$EXECgsm/nemsio_get
 export SIGHDR=$nemsioget
 #echo in $0: POSTGPSH=$POSTGPSH
@@ -242,7 +245,8 @@ fi
 ####################################
 if [[ $fcstlong = true ]]; then
 	#restart_file=$COMIN/$cyc/misc/fcst/${RUNMEM}.t${cyc}z.logf
-	restart_file=$COMIN/$cyc/sfcsig/$mem/${RUNMEM}.t${cyc}z.logf
+	restart_file=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.logf
+	#restart_file=$COMIN/$cyc/sfcsig/$mem/${RUNMEM}.t${cyc}z.logf
 else
 	restart_file=$COMIN/$cyc/misc/fcst/${RUNMEM}.t${cyc}z.logf
 fi

@@ -107,7 +107,8 @@ export COMOUT=${COMOUT:-${COM_OUT}/${RUN}.${PDY}}
 ##############################################
 export GESOUT=${GESOUT:-$GESROOT/${envir}}
 export GESOUT=$GESOUT/gefs.${PDY}
-export FV3GESOUT=$GESOUT/${cyc}/$mem/${CASE}_$PDY$cyc
+#export FV3GESOUT=$GESOUT/${cyc}/$mem/${CASE}_$PDY$cyc
+export FV3GESOUT=$GESOUT/${cyc}/$mem
 mkdir -p $FV3GESOUT
 #export FV3GESOUT=$GESROOT/${envir}/fv3gefs.${PDY}
 ##############################################
@@ -123,6 +124,7 @@ module load prod_util hpss >>/dev/null
 #export workflow_ver=v15.0.0
 export BASE_SVN=$HOMEDIR1/fv3gfs
 export BASE_GSM=$HOMEgsm
+export HOMEgfs=$HOMEgsm
 #export CASE=$CASEHR
 #-- create ICs using operational GFS initial conditions
 
@@ -139,9 +141,19 @@ export CDATE=$PDY$cyc
 #export OUTDIR=$FV3GESOUT/$mem/${CASE}_$CDATE
 export OUTDIR=$FV3GESOUT
 export ictype=nemsgfs
-cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc                 
-cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc         
-cp $GESOUT/ge$mem.t$cyc\z.nsnanl $INIDIR/nsnanl.gfs.$PDY$cyc
+if [ $inflag = 7 ] ; then
+	if [ $mem = "c00" ] ; then
+		cp $GESOUT/ge$mem.t$cyc\z.atmanl $INIDIR/gfnanl.gfs.$PDY$cyc
+	else
+		cp $GESOUT/ge$mem.t$cyc\z.ratmanl $INIDIR/gfnanl.gfs.$PDY$cyc
+	fi
+	cp $GESOUT/gec00.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
+	cp $GESOUT/gec00.t$cyc\z.sfcanl $INIDIR/nsnanl.gfs.$PDY$cyc
+else
+	cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
+	cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
+	cp $GESOUT/ge$mem.t$cyc\z.nsnanl $INIDIR/nsnanl.gfs.$PDY$cyc
+fi
 
 testfile=$INIDIR/sfnanl.gfs.$PDY$cyc                       
 nsleep=0; tsleep=120;  msleep=50 

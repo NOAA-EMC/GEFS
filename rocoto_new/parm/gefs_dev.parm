@@ -5,15 +5,15 @@
 ##############################################################################
 echo `date` $0 test section begin
 export fhmax=384
-export fhmaxh=384
+export fhmaxh=192
 export FHOUTHR=6
 export VERBOSE=no
 export navg_min=10
 
 #define tmp time step
-export DELTIM=300
-export k_split=1
-export n_split=8
+export DELTIM=450
+export k_split=2
+export n_split=6
 export TYPE=nh
 export MONO=non-mono
 
@@ -29,17 +29,28 @@ export ENS_SPS=.false.
 export DO_SPPT=YES
 export DO_SHUM=YES
 export DO_SKEB=YES
+export warm_start=.true.
 
 # for test, NOT USED FOR PRODUCTION gfssource = dev, para, prod
-export gfssource=prod
+export gfssource=para
+export fhrestart=48
+export sst2tier=YES
+export imp_physics=11
 
 # set all the following "make" and "save" flags to "yes" to simulate production
 export makepgrba=no
 export makepgrbb=no
-export makepgrb2b=yes
+export makepgrb2b=no
 export saveflux=yes
 export savesfcsig=no
 export sigzvd=no
+export CASELR=C384
+export LEVSLR=64
+export DELTIMLR=450
+export JCAPLR=766
+export LATBLR=768
+export LONBLR=1536
+export MTNRSLLR=766.1536.768
 export npair=10
 export npert=20
 
