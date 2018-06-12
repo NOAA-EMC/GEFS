@@ -87,11 +87,11 @@ def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
 
     # ==
     sVarName = "First"
-    if sVarName.upper() not in lstBaseParm:
+    if sVarName not in lstBaseParm:
         lstBaseParm.insert(0, sVarName)
     # ==
     sVarName = "Last"
-    if sVarName.upper() not in lstBaseParm:
+    if sVarName not in lstBaseParm:
         lstBaseParm.insert(1, sVarName)
     # ==
     sVarName_Num = "npert".upper()
