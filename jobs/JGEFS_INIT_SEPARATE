@@ -98,6 +98,11 @@ env | sort
 ##############################################
 # Define COM directories
 ##############################################
+if [[ $gfssource != prod ]]; then
+        export COMINgfs=${COMINgfs_base}${PDY}/$cyc
+        export COMINenkf=${COMINenkf_base}
+fi
+
 export COMINgfs=${COMINgfs:-${COMROOThps}/gfs/prod/gfs.${PDY}}
 export COMINenkf=${COMINenkf:-${COMROOThps}/gfs/prod/enkf.}
 

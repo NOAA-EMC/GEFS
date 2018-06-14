@@ -14,14 +14,13 @@ export nopdpvv=.true.
 
 # parameters for relocation, 1 for yes, 0 for no, cold_start or warm_start
 export relocfact=0.05
-export relocflag=0
-export relocflag=1
+export relocflag=${relocflag:-0}
 #
 #control initial analysis and EnKF input type
 # inflag=0  FV3NEMSIO
 #       =1  GSM NEMSIO 
 #        2  GSM SIGIO
-export inflag=0
+export inflag=${inflag:-0}
 export outflag=6
 	export nmem_enkf=80    #number of ENKF members
         (( num_pair_enkf = nmem_enkf / 2 ))

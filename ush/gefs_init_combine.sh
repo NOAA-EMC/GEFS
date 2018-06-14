@@ -101,8 +101,8 @@ for file in finuse_env finuse_strm finuse_presep save.relocpertflag save.ifhruse
 		echo file=$file DOES NOT EXIST
 	fi # [[ -f $fils ]]
 done # file in finuse finuse_env finuse_storm et al
+	file=ratmanl_$memchar1
 	fils=../ratmanl_$memchar1
-	echo  fils=$fils
 	if [[ -f $fils ]]; then
 		ls -al $fils
 		mv -f $fils .

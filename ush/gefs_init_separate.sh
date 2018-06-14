@@ -43,7 +43,7 @@ echo " Argument list:"
 echo "   1  ipair=number of this instance .............. $1"
 echo "   2  npair=number of pairs ...................... $2"
 echo "   3  fhrp=preferred input forecast length ....... $3"
-echo "   4  inflag=(0=FV3NEMSIO, 2=GFS NEMSIO, 3=SIGIO). ${4}"
+echo "   4  inflag=(0=FV3NEMSIO, 1=GFS NEMSIO, 2=SIGIO). ${4}"
 echo "   5  relocfact=relocation fraction .............. ${5}"
 echo " ------------------------------------------------------------"
 set -xa
@@ -123,15 +123,15 @@ echo DATAPARENT=$DATAPARENT
 			cycp0=`echo $pdycycp0|cut -c9-10`
                      if (( imem == 0 )) ; then
                         fcstin=$DATAPARENT/gec00_presep
-                        else
+                     else
 			if (( inflagt == 0 )) ; then
-				fcstin=${COMINenkf}${pdyp0}/$cycp0//$memchar/gdas.t${cycp0}z.atmf0${fhr}.nemsio
+				fcstin=${COMINenkf}${pdyp0}/$cycp0/$memchar/gdas.t${cycp0}z.atmf0${fhr}.nemsio
 			elif (( inflagt == 1 )); then
 				fcstin=${COMINenkf}${pdyp0}/$cycp0/gdas.t${cycp0}z.atmf0${fhr}.${memchar}.nemsio
 			elif (( inflagt == 2 )); then
 				fcstin=$comfcstin/$cycstart/sfcsig/gep${cmem0}.$cyclestart.sf${fhr}
 			fi
-                      fi  
+                     fi  
 			if [[ -e $fcstin ]]; then
 				echo fcstin=$fcstin found
 				found=true                                

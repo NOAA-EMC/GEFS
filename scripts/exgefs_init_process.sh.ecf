@@ -45,6 +45,7 @@ echo " standard output in file ...................... $pgmout"
 echo " unique processing id for run ................. $pid"
 echo " YES SENDCOM means save com files ............. $SENDCOM"
 echo " ------------------------------------------------------------"
+set -xa
 
 
 ##chang resolution for FV3GFS ananlysis 

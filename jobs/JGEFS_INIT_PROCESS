@@ -90,6 +90,11 @@ echo set parameters using gefs.parm
 
 env | sort
 
+if [[ $gfssource != prod ]]; then
+        export COMINgfs=${COMINgfs_base}${PDY}/$cyc
+        export COMINenkf=${COMINenkf_base}
+fi
+
 ##############################################
 # for global_chgres.sh
 ##############################################
