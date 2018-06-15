@@ -87,6 +87,7 @@ ntiles=${ntiles:-6}
 ERRSCRIPT=${ERRSCRIPT:-'eval [[ $err = 0 ]]'}
 NCP=${NCP:-"/bin/cp -p"}
 NLN=${NLN:-"/bin/ln -sf"}
+NMV=${NMV:-"/bin/mv -uv"}
 nemsioget=${nemsioget:-${NWPROD}/exec/nemsio_get}
 
 # Scripts
