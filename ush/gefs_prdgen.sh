@@ -39,6 +39,7 @@ case $jobgrid in
    1p0) grid=$grid1p0;;
    2p5) grid=$grid2p5;;
    0p5) grid=$grid0p5;;
+   0p25) grid=$grid0p25;;
 esac
 
 #export WGRIB=${WGRIB:-$EXECgrib/wgrib}
