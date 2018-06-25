@@ -125,6 +125,8 @@ mkdir -m 775 -p $COMOUT/$cyc/pgrb2b1p0
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2b2p5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2bp5
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap25
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2bp25
 
 #mkdir -m 775 -p $COMOUT/$cyc/tctrack
 #mkdir -m 775 -p $COMOUT/$cyc/genesis
@@ -133,6 +135,9 @@ mkdir -m 775 -p $COMOUT/$cyc/pgrb2bp5
 echo set parameters using gefs.parm
 ##############################################
 . $PARMgefs/gefs.parm
+export FHMAX_HF=$FHMAXHF
+export FHOUT_HF=$FHOUTHF
+export FHOUT=$FHOUTLF
 
 export NTHREADS=1
 
@@ -166,8 +171,10 @@ case $FORECAST_SEGMENT in
 		export DOANALYSIS=YES;
 		export DOANALYSIS=NO;
 		export SHOUR=00
-		export FHINC=${FHOUTLR:-06}
-		export FHINCP5=${FHOUTHR:-06}
+		export FHOUT=$FHOUT
+		export FHOUT_HF=$FHOUT_HF
+		export FHMAX_HF=$FHMAX_HF
+		export FHINCP5=${FHOUT_HF:-06}
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmaxh
 		else
@@ -176,9 +183,16 @@ case $FORECAST_SEGMENT in
 		;;
 	(lr) # low resolution segment
 		export DOANALYSIS=NO;
-		export FHINC=${FHOUTLR:-06}
-		export FHINCP5=${FHOUTLR:-06}
+		export FHINCP5=${FHOUT_LF:-06}
+		if [ $FHMAX_HF -gt $fhmaxh ]; then
+			FHINC=$FHOUT
+		else
+			FHINC=$FHOUT_HF
+		fi
 		export SHOUR=$(( $fhmaxh + FHINC ))
+		export FHOUT=$FHOUT
+		export FHOUT_HF=$FHOUT_HF
+		export FHMAX_HF=$FHMAX_HF
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmax
 		else
@@ -189,8 +203,10 @@ case $FORECAST_SEGMENT in
 		export DOANALYSIS=YES;
 		export DOANALYSIS=NO;
 		export SHOUR=00
-		export FHINC=${FHOUTHR:-06}
-		export FHINCP5=${FHOUTHR:-06}
+		export FHOUT=$FHOUT
+		export FHOUT_HF=$FHOUT_HF
+		export FHMAX_HF=$FHMAX_HF
+		export FHINCP5=${FHOUTHF:-06}
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmax
 		else
@@ -200,10 +216,12 @@ case $FORECAST_SEGMENT in
 esac # $FORECAST_SEGMENT
 
 echo FORECAST_SEGMENT=$FORECAST_SEGMENT
-echo FHINC=$FHINC
 echo FHINCP5=$FHINCP5
 echo SHOUR=$SHOUR
 echo FHOUR=$FHOUR
+echo FHOUT=$FHOUT
+echo FHOUT_HF=$FHOUT_HF
+echo FHMAX_HF=$FHMAX_HF
 
 export DO_HD_PGRB=NO
 export HDMAX=00
@@ -235,25 +253,43 @@ fi
 #mpmd job with 5 tasks, 1 for 1d, 2 for 2.5d; 3-5 for 0.5d grid
 
 #task 1, 1.0d grid
-export jobgrid_1=1p0
-export DOANALYSIS_1=$DOANALYSIS
-export FHINC_1=$FHINC
-export SHOUR_1=$SHOUR_1
-export FHOUR_1=$FHOUR
+export jobgrid_0=1p0
+export DOANALYSIS_0=$DOANALYSIS
+export FHOUT_0=$FHOUT
+export FHOUT_HF_0=$FHOUT_HF
+export FHMAX_HF_0=$FHMAX_HF
+export FHMAX_HF_0=0
+export SHOUR_0=$SHOUR_1
+export FHOUR_0=$FHOUR
 
 #task 2, 2.5d
 export jobgrid_2=2p5
 export DOANALYSIS_2=NO
-export FHINC_2=$FHINC
+export FHOUT_2=$FHOUT
+export FHOUT_HF_2=$FHOUT_HF
+export FHMAX_HF_2=$FHMAX_HF
+export FHMAX_HF_2=0
 export SHOUR_2=$SHOUR_2
 export FHOUR_2=$FHOUR
 
 #task 3, 0.5d grid
-export jobgrid_3=0p5
+export jobgrid_1=0p5
+export DOANALYSIS_1=NO
+export FHOUT_1=$FHOUT
+export FHOUT_HF_1=$FHOUT_HF
+export FHMAX_HF_1=0
+#export FHMAX_HF_3=$FHMAX_HF
+export SHOUR_1=$SHOUR_1
+export FHOUR_1=$FHOUR
+
+#task 3, 0.5d grid
+export jobgrid_3=0p25
 export DOANALYSIS_3=NO
-export FHINC_3=$FHINC34
+export FHOUT_3=$FHOUT
+export FHOUT_HF_3=$FHOUT_HF
+export FHMAX_HF_3=$FHMAX_HF
 export SHOUR_3=$SHOUR_3
-export FHOUR_3=$FHOUR
+export FHOUR_3=$FHMAX_HF
 
 if test $total_tasks -eq 3; then
 	export DOANALYSIS_3=$DOANALYSIS
@@ -294,18 +330,18 @@ if test $SHOUR -le $FHOUR; then
 	subdata=${DATA}/${SHOUR_1}.${FHOUR_1}.${FHINC_1}.${jobgrid_1}
 	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
 	outfile=${subdata}/${SHOUR_1}.${FHOUR_1}.${FHINC_1}.${jobgrid_1}.out
-	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_1} ${FHOUR_1} ${FHINC_1} $DOANALYSIS_1 ${jobgrid_1} ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
+	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_1} ${FHOUR_1} ${FHOUT_1} $DOANALYSIS_1 ${jobgrid_1} ${subdata} ${FHOUT_HF_1} ${FHMAX_HF_1} 2>&1 >${outfile}" >>prdgen.cmdfile
 
 	subdata=${DATA}/${SHOUR_2}.${FHOUR_2}.${FHINC_2}.${jobgrid_2}
 	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
 	outfile=${subdata}/${SHOUR_2}.${FHOUR_2}.${FHINC_2}.${jobgrid_2}.out
-	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_2} ${FHOUR_2} ${FHINC_2} $DOANALYSIS_2 ${jobgrid_2} ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
+	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_2} ${FHOUR_2} ${FHOUT_2} $DOANALYSIS_2 ${jobgrid_2} ${subdata} ${FHOUT_HF_2} ${FHMAX_HF_2} 2>&1 >${outfile}" >>prdgen.cmdfile
 
 		if test $total_tasks -ge 3; then
 	subdata=${DATA}/${SHOUR_3}.${FHOUR_3}.${FHINC_3}.${jobgrid_3}
 	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
 	outfile=${subdata}/${SHOUR_3}.${FHOUR_3}.${FHINC_3}.${jobgrid_3}.out
-	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_3} ${FHOUR_3} ${FHINC_3} $DOANALYSIS_3 ${jobgrid_3} ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
+	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_3} ${FHOUR_3} ${FHOUT_3} $DOANALYSIS_3 ${jobgrid_3} ${subdata} ${FHOUT_HF_3} ${FHMAX_HF_3} 2>&1 >${outfile}" >>prdgen.cmdfile
 		fi # test $total_tasks -ge 3
 
 		if test $total_tasks -ge 4; then

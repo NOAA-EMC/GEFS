@@ -156,6 +156,9 @@ mkdir -m 775 -p $COMOUT/$cyc/misc/post
 ############################################
 . $PARMgefs/gefs.parm
 
+export FHMAX_HF=$FHMAXHF
+export FHOUT_HF=$FHOUTHF
+export FHOUT=$FHOUTLF
 case $cyc in
 	00) export fhmax=$fhmax00;;
 	06) export fhmax=$fhmax06;;
@@ -266,8 +269,8 @@ export SLEEP_INT=5
 # Specify Forecast Hour Range
 ####################################
 
-export FHINC_HIGH=${FHOUTHR:-6}
-export FHINC_LOW=${FHOUTLR:-6}
+export FHOUT_HF=${FHOUTHF:-3}
+export FHOUT=${FHOUTLF:-6}
 
 ##### RLW 20110704 note that only _HIGH is currently used
 case $FORECAST_SEGMENT in
@@ -302,7 +305,8 @@ case $FORECAST_SEGMENT in
 				export DOANALYSIS=YES;
 				export DOANALYSIS=NO;
 				export SHOUR=00;
-				export FHINC_HIGH=$FHINC_HIGH
+				export FHOUT=$FHOUT;
+				export FHOUT_HF=$FHOUT_HF
 				;;
 		esac # $SUBJOB
 		;;
@@ -316,6 +320,8 @@ case $FORECAST_SEGMENT in
 		if [[ $fcstlong = true ]]; then
 			export FHOUR_HIGH=$fhmax
 			export FHOUR_LOW=$fhmax
+			export FHOUT=$FHOUT;
+			export FHOUT_HF=$FHOUT_HF
 		else
 			export FHOUR_HIGH=6
 			export FHOUR_LOW=6
@@ -328,6 +334,8 @@ case $FORECAST_SEGMENT in
 		if [[ $fcstlong = true ]]; then
 			export FHOUR_HIGH=$fhmax
 			export FHOUR_LOW=$fhmax
+			export FHOUT=$FHOUT;
+			export FHOUT_HF=$FHOUT_HF
 		else
 			export FHOUR_HIGH=6
 			export FHOUR_LOW=6
@@ -339,6 +347,9 @@ echo FORECAST_SEGMENT=$FORECAST_SEGMENT
 echo DOANALYSIS=$DOANALYSIS
 echo FHINC_HIGH=$FHINC_HIGH
 echo FHINC_LOW=$FHINC_LOW
+echo FHOUT=$FHOUT
+echo FHOUT_HF=$FHOUT_HF
+echo FHMAX_HF=$FHMAX_HF
 echo SHOUR=$SHOUR
 echo FHOUR_HIGH=$FHOUR_HIGH
 echo FHOUR_LOW=$FHOUR_LOW
