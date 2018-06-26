@@ -26,9 +26,12 @@ echo "Modified by: Bo Cui and Dingchen Hou change to grib2 operations  ---- Nov.
 ### need pass the values of CYC, YMD, DATA, COMIN and COMOUT
 
 export gridlist="${1//,/ }"		# replace commas with spaces
-export FHINC=$2
+export FHOUT=$2
 export subdata=$3
 export dataset=$4  # a or b
+export FHOUT_HF=$5
+export FHMAX_HF=$6
+export FHOUR=$7
 
 if [[ ! -d $DATA ]]; then
 	mkdir -p $DATA
@@ -73,8 +76,9 @@ parmlist=$PARMgefs/gefs_pgrb2a_fhh.parm
 #####################################
 
 case $dataset in
- a) memberlist="gfs c00";;
+#a) memberlist="gfs c00";;
  b) memberlist="c00";;
+ a) memberlist="c00";;
 esac
 
 # # Skip gfs for "dev" jobs
@@ -110,6 +114,11 @@ reslist=$gridlist
 (( nfilesprev = 9999 ))
 foundgfs=no
 while test $fh -le $FHOUR; do
+	if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fh -lt $FHMAX_HF ]; then
+		FHINC=$FHOUT_HF
+	else
+		FHINC=$FHOUT
+	fi
 	# if test ` expr $fh % 6 ` -eq 0 
 	# then
 	#  reslist=$gridlist
@@ -143,6 +152,12 @@ while test $fh -le $FHOUR; do
 				EXT=
 				FXT=.$res\0.       #".0p50."
 				lr=p5
+				lfm=$lfmp5
+				;;
+			0p25)   #0.5 degree gid
+				EXT=
+				FXT=.$res.       #".0p25."
+				lr=p25
 				lfm=$lfmp5
 				;;
 		esac # $res
