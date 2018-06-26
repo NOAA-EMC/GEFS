@@ -172,7 +172,8 @@ def get_WHERE_AM_I(dicBase):
             dicBase[sVarName] = 'theia'
         elif os.path.exists('/gpfs') and os.path.exists('/etc/SuSE-release'):
             dicBase[sVarName] = 'cray'
-        #     machine = 'WCOSS_C'
+        elif os.path.exists('/dcom') and os.path.exists('/hwrf'):
+            dicBase[sVarName] = 'wcoss_ibm'
         elif os.path.exists('c:'):
             dicBase[sVarName] = 'wins'
         else:
