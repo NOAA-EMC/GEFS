@@ -322,7 +322,7 @@ if [ $DOANALYSIS = YES ]; then
 				err_chk
 			fi # (( rc == 0 ))
 
-			pgbfoutd=`readlink -n pgbfout`
+			pgbfoutd=`readlink -nf pgbfout`
 			if [[ ! -s $pgbfoutd ]]; then
 				msg="FATAL ERROR: $pgbfoutd WAS NOT WRITTEN"
 				echo "`date`    $msg"
@@ -331,7 +331,7 @@ if [ $DOANALYSIS = YES ]; then
 				err_chk
 			fi # [[ ! -s $pgbfoutd ]];
 
-			pgbifoutd=`readlink -n pgbifout`
+			pgbifoutd=`readlink -nf pgbifout`
 			if [[ ! -s $pgbifoutd ]]; then
 				msg="FATAL ERROR: $pgbifoutd WAS NOT WRITTEN"
 				echo "`date`    $msg"
@@ -523,7 +523,7 @@ while (( fhr <= FHOUR )); do
 			err_chk
 		fi # (( rc == 0 ))
 
-		pgbfoutd=`readlink -n pgbfout`
+		pgbfoutd=`readlink -nf pgbfout`
 		if [[ ! -s $pgbfoutd ]]; then
 			msg="FATAL ERROR: $pgbfoutd WAS NOT WRITTEN"
 			echo "`date`    $msg"
@@ -531,7 +531,7 @@ while (( fhr <= FHOUR )); do
 			export err=1
 			err_chk
 		fi # [[ ! -s $pgbfoutd ]]
-		pgbifoutd=`readlink -n pgbifout`
+		pgbifoutd=`readlink -nf pgbifout`
 		if [[ ! -s $pgbifoutd ]]; then
 			msg="FATAL ERROR: $pgbifoutd WAS NOT WRITTEN"
 			echo "`date`    $msg"
