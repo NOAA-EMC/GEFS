@@ -52,11 +52,10 @@ def create_crontab(dicBase, OnlyForTest=False, cronint=5):
     if system == 'theia' or system == 'wins':
         crontab_string += crontab_usage
         crontab_string += crontab_time + rocotorun_args
-    elif system == 'gyre' or system == 'tide':
-        head = system[0];
+    elif system == 'wcoss_ibm':
         hosts = ''
-        for host in ('10a1', '10a2', '14a1', '14a2'):
-            hosts += head + host + ' '
+        for host in ('g10a1', 'g10a2', 'g14a1', 'g14a2', 't10a1', 't10a2', 't14a1', 't14a2'):
+            hosts += host + ' '
         crontab_string += '# When on ' + system + ' you can only run cron on the hosts: ' + hosts + '\n'
         crontab_string += crontab_usage
         crontab_string += crontab_time + '(. /usrx/local/Modules/default/init/sh; module load lsf; ' \
