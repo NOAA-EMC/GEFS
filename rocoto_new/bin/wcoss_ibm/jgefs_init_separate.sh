@@ -41,7 +41,7 @@ export taskspernode=4
 
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export gefsmpexec_mpmd="mpirun -np $total_tasks /scratch3/NCEPDEV/nwprod/util/exec/mpiserial"
+export gefsmpexec_mpmd="mpirun.lsf"
 export aprun_gec00="mpirun -np 1"
 export APRUNC="mpirun -np 1"
 
