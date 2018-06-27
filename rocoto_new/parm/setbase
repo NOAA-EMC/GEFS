@@ -108,7 +108,7 @@ if [ -d /scratch4/NCEPDEV ]; then
 elif [ -d /gpfs/hps3 ]; then
 
 	if [[ $machl = t ]] || [[ $machl = g ]]; then
-		"Using settings for WCOSS Phase II"
+		echo "Using settings for WCOSS IBM"
 		PTMP=/ptmpd2
 		STMP=/stmpd2
 		export machine='WCOSS'
