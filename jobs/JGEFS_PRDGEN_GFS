@@ -79,9 +79,10 @@ setpdy.sh
 export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
+#mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2a2p5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap25
 mkdir -m 775 -p $COMOUT/$cyc/misc/gfs
 
 ##############################################
