@@ -638,12 +638,7 @@ c        DIMENSION TEST(IGU,JGU)
 
         SAVE1=0.
 
-        IF(NSEM.EQ.1)THEN
-!          NCHT=70+NSEM
-          NCHT=71
-        ELSE
           NCHT=74
-        END IF
 
         IWMAX=0.
         IWMIN=1000.
@@ -666,13 +661,13 @@ c        print*,'qliu=',IWMAX1,IWMIN1,JWMAX1,JWMIN1
 
         RDIST2=AMDX*AMDX+AMDY*AMDY
 
-        IF(NSEM.GE.1)RDIST2=max(0.021,RDIST2)
+        IF(NSEM.GE.0)RDIST2=max(0.021,RDIST2)
 
         IF(RDIST2.LE.0.02)THEN
           DO I = 1,IB
             IW = ING(I)
             JW = JNG(I)
-            IF(NSEM.GE.1)THEN
+            IF(NSEM.GE.0)THEN
                DATG(IW,JW)=DATG(IW,JW)
                SAVE1(IW,JW)=DDAT(IW,JW)
             ELSE
@@ -708,7 +703,7 @@ c        print*,'qliu=',IWMAX1,IWMIN1,JWMAX1,JWMIN1
           HLO = GLON(IW,JW)
 C
         CALL splin2(HLON,HLAT,DTT,DTT2,IIM,JJM,HLO,HLA,DATT)
-            IF(NSEM.GE.1)THEN
+            IF(NSEM.GE.0)THEN
                DATG(IW,JW)=DATG(IW,JW)
                SAVE1(IW,JW)=DATT
             ELSE
@@ -726,7 +721,7 @@ c        END IF
       END IF
 
         PRINT*,'NSEM,ISE=',NSEM,ISE
-      IF(NSEM.GE.1)THEN
+      IF(NSEM.GE.0)THEN
         IF(ISE.EQ.1)THEN
           WRITE(NCHT)IWMIN1,IWMAX1,JWMIN1,JWMAX1
 !          DO J=JWMIN1,JWMAX1

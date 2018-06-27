@@ -157,15 +157,18 @@ subroutine init_sig2p(iunit,ifile,ddeg,minplev,iret)
            if (iret /= 0) print *,'nemsio_open failed,iret=',inems
            return
       endif
-     call nemsio_gfsgrd_open(gfile,trim(ifile),&
- &'read',nopdpvv,ghead,gheadv,iret)
+     call nemsio_open(gfile,trim(ifile),'read',iret=iret)
+      write(*,*)'iret=',iret
+      call nemsio_getfilehead(gfile,dimz=ghead%dimz, &
+ & dimx=ghead%dimx,dimy=ghead%dimy,idvc=ghead%idvc,idsl=ghead%idsl)
       kmax=ghead%dimz
       imax=ghead%dimx
       jmax=ghead%dimy
-
+       write(*,*)'imax,jmax',imax,jmax,ghead%idvc,ghead%idsl
       allocate ( vcrd4(kmax+1,3,2) )
       allocate ( cpi(ghead%ntrac+1) )
-      call nemsio_getfilehead(gfile,iret=iret,vcoord=vcrd4,cpi=cpi)
+      call nemsio_getfilehead(gfile,vcoord=vcrd4,iret=iret)
+      write(*,*)'iret=',iret
 
       print*,'test QL'
       NVCD=3
@@ -202,10 +205,15 @@ subroutine init_sig2p(iunit,ifile,ddeg,minplev,iret)
       call sigio_modpr(1,1,shead%levs,shead%nvcoord,shead%idvc,shead%idsl, &
        & shead%vcoord,iret,ps=psclim,pm=pm)
   elseif (infiletyp == 1 ) then !For nemsio
+       write(*,*)'before modpr'
       allocate(pm(ghead%dimz))
+       write(*,*)'before modpr'
       call sigio_modpr(1,1,ghead%dimz,nvcd,ghead%idvc,ghead%idsl, &
        & vcrd,iret,ps=psclim,pm=pm)
+      write(*,*)'iret=',iret
+       write(*,*)'after modpr'
       call nemsio_gfs_axheadv(gheadv)
+       write(*,*)'after axheadv'
       deallocate (vcrd)
   endif
   maxslev = 0
@@ -228,6 +236,8 @@ subroutine init_sig2p(iunit,ifile,ddeg,minplev,iret)
   allocate(pmsl(imax*jmax))
   allocate(lnpm(imax*jmax,maxslev))
   allocate(lnps(imax*jmax))
+       write(*,*)'after allocate'
+
 
 ! Preparation for the transformation (spectrum -> grid)
 
@@ -238,9 +248,10 @@ subroutine init_sig2p(iunit,ifile,ddeg,minplev,iret)
      allocate(eon((shead%jcap+1)*(shead%jcap+2)/2),eontop(shead%jcap+1))
      call spwget(0,shead%jcap,eps,epstop,enn1,elonn1,eon,eontop)
   endif
-
   ! Preparation for horizontal interpolation
+  write(*,*)'before end of init_sig2p'
   call init_kgds(real(ddeg))
+  write(*,*)'end of init_sig2p'
   return
 end subroutine init_sig2p
 
@@ -348,15 +359,16 @@ subroutine oper_sig2p(iunit,ifile,plev,iret,isfluxfile)
            if (iret /= 0) print *,'nemsio_gfsgrd_open failed,ios=',iret
            return
          endif
-     call nemsio_gfsgrd_open(gfile,trim(ifile),'read',nopdpvv,&
-     &                           ghead,gheadv,iret)
+      call nemsio_getfilehead(gfile,dimz=ghead%dimz, &
+ & dimx=ghead%dimx,dimy=ghead%dimy,idvc=ghead%idvc,idsl=ghead%idsl)
+
          kmax=ghead%dimz
          imax=ghead%dimx
          jmax=ghead%dimy
 
       allocate ( vcrd4(kmax+1,3,2) )
       allocate ( cpi(ghead%ntrac+1) )
-      call nemsio_getfilehead(gfile,iret=iret,vcoord=vcrd4,cpi=cpi)
+      call nemsio_getfilehead(gfile,iret=iret,vcoord=vcrd4)
 
 
         print*,'test QL'
@@ -388,7 +400,15 @@ subroutine oper_sig2p(iunit,ifile,plev,iret,isfluxfile)
 
 
         print*,' start reading nemsio data'
-        call nemsio_gfs_algrd(ghead%dimx,ghead%dimy,ghead%dimz,ghead%ntrac,gdata,nopdpvv)
+!        call nemsio_gfs_algrd(ghead%dimx,ghead%dimy,ghead%dimz,ghead%ntrac,gdata,nopdpvv)
+!  READ INPUT NEMSIO DATA ARRAY
+
+        ALLOCATE(gdata%zs(imax,jmax))
+        ALLOCATE(gdata%ps(imax,jmax))
+        ALLOCATE(gdata%t(imax,jmax,kmax))
+        ALLOCATE(gdata%u(imax,jmax,kmax))
+        ALLOCATE(gdata%v(imax,jmax,kmax))
+
         call nemsio_gfs_rdgrd(gfile,gdata,iret=iret)
         call copyarray(work(:,1),gdata%zs,1)
         hs(:)=work(:,1)
@@ -579,7 +599,7 @@ subroutine init_kgds(ddeg)
   implicit none
   real,intent(in) :: ddeg
   real,allocatable :: gaulat(:), wlat(:)
-
+  write(*,*)'imax,jmax',imax,jmax
   nllon = nint(360.0 / ddeg)
   nllat = nint(180.0 / ddeg) + 1
   allocate(gaulat(jmax))

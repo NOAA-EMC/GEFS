@@ -1,9 +1,9 @@
 SHELL = /bin/bash
 
-SRCS=	gefs_vortex_combine.f
+SRCS=	gefs_vortex_combine.f90
 
 #OBJS=	gefs_vortex_combine.o
-OBJS=   $(SRCS:.f=.o)
+OBJS=   $(SRCS:.f90=.o)
 
 
 CF =    ifort

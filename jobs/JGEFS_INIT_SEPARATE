@@ -98,6 +98,11 @@ env | sort
 ##############################################
 # Define COM directories
 ##############################################
+if [[ $gfssource != prod ]]; then
+        export COMINgfs=${COMINgfs_base}${PDY}/$cyc
+        export COMINenkf=${COMINenkf_base}
+fi
+
 export COMINgfs=${COMINgfs:-${COMROOThps}/gfs/prod/gfs.${PDY}}
 export COMINenkf=${COMINenkf:-${COMROOThps}/gfs/prod/enkf.}
 
@@ -116,15 +121,8 @@ export pdycycp=`$NDATE -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
 export cycp=`echo $pdycycp|cut -c9-10`
 
-
-if (($inflag == 6)) ; then
-	export COMSFCSIGP=$COM_IN/${RUN}.$pdyp/$cycp/sfcsig_enkf
-	export COMTRACKP=$COM_IN/${RUN}.$pdyp/$cycp/track_enkf
-else
-	export COMSFCSIGP=$COM_IN/${RUN}.$pdyp/$cycp/sfcsig
-	export COMTRACKP=$COM_IN/${RUN}.$pdyp/$cycp/track
-fi # (($inflag == 6))
-###teste
+export COMSFCSIGP=$COM_IN/${RUN}.$pdyp/$cycp/sfcsig_enkf
+export COMTRACKP=$COM_IN/${RUN}.$pdyp/$cycp/track_enkf
 mkdir -m 775 -p $COMOUT/$cyc/init
 mkdir -m 775 -p $COMOUT/$cyc/sflux
 
