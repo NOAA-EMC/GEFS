@@ -114,14 +114,9 @@ export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 #export overwrite=no
 export overwrite=yes
 
-#mkdir -m 775 -p $COMOUT/$cyc/pgrb2a
-#mkdir -m 775 -p $COMOUT/$cyc/pgrb2alr
-#mkdir -m 775 -p $COMOUT/$cyc/pgrb2b
-#mkdir -m 775 -p $COMOUT/$cyc/pgrb2blr
-
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
+#mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
+#mkdir -m 775 -p $COMOUT/$cyc/pgrb2b1p0
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2a2p5
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2b1p0
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2b2p5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2bp5
