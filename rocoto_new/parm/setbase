@@ -66,44 +66,62 @@ if [ -d /scratch4/NCEPDEV ]; then
 	NOSCRUB=/scratch4/NCEPDEV/ensemble/noscrub
 	export machine='THEIA'
 	export JOBPHASE=
-	export HOMEDIR=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/fv3gfs
-	export HOMEDIR1=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/fv3gfs
+	#export HOMEDIR=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/fv3gfs
+	#export HOMEDIR1=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/fv3gfs
+	#export HOMERFC=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
+
+	export HOMEDIR=/home/Xianwu.Xue/save4/GIT/fv3gfs 			# this is the master branch with Bing Fu's modification based on the GEFS needs
+	export HOMEDIR1=$HOMEDIR 						#/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/fv3gfs
 	export HOMERFC=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
 
-	export KMP_AFFINITY=scatter
+	#export KMP_AFFINITY=scatter
 
 	# export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/common
-	export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/Walter.Kolczynski/nemsio_init
+	#export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/Walter.Kolczynski/nemsio_init
+ 	export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/Bing.Fu/fv3gefs_init
+	export HOMEdata=${COMROOThps} 
 
 	export EXECutil=${EXECutil:-/scratch4/NCEPDEV/global/save/glopara/nwpara/util/exec}
 	export USHutil=${USHutil:-/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/nwprod/util/ush}
 
 	export PATH=$PATH:$USHutil:$EXECutil
 
-	export NDATE=${NDATE:-$EXECutil/ndate}
+	#export USHutil=/scratch3/NCEPDEV/nwprod/util/exec for ndate
+	#export EXECgrib=/scratch3/NCEPDEV/nwprod/grib_util.v1.0.5/exec
 
-	export HOMEgsm=$HOMEDIR/global_shared.v15.0.0
-	export HOMEgsm1=$HOMEDIR1/global_shared.v15.0.0
-	export FCSTEXECDIR=$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe
-	export nemsioget=$HOMEgsm/exec/nemsio_get
+	export EXECgrib=${EXECutil}
+	export NDATE=${NDATE:-$EXECgrib/ndate}
+	export utilscript=$USHutil
 
-	export memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc'
+	#export HOMEgsm=$HOMEDIR/global_shared.v15.0.0
+	#export HOMEgsm1=$HOMEDIR1/global_shared.v15.0.0
+	#export FCSTEXECDIR=$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe
+	#export nemsioget=$HOMEgsm/exec/nemsio_get
 
-	export HOMEenkf=$HOMEgsm/sorc/gsi.fd
-	export HOMEpost=$HOMEgsm/sorc/upp.fd
+	# No program use it.
+	#export memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc'
 
-	export I_MPI_EXTRA_FILESYSTEM=on
-	export I_MPI_EXTRA_FILESYSTEM_LIST=lustre:panfs
+	#export HOMEenkf=$HOMEgsm/sorc/gsi.fd
+	#export HOMEpost=$HOMEgsm/sorc/upp.fd
 
-	export chgresush=$HOMEgsm1/ush/global_chgres_GSM.sh
-	export CHGRESEXEC=$HOMEgsm1/exec/global_chgres_GSM
+	# It seems that no program uses  these two variables
+	#export I_MPI_EXTRA_FILESYSTEM=on
+	#export I_MPI_EXTRA_FILESYSTEM_LIST=lustre:panfs
 
-	export DIAG_TABLE=$HOMEgsm/parm/parm_fv3diag/diag_table
-	export FIELD_TABLE=$HOMEgsm/parm/parm_fv3diag/field_table_gfdl
+	#export chgresush=$HOMEgsm1/ush/global_chgres_GSM.sh
+	# if need, we can use : export chgresush=$HOMEDIR/ush/global_chgres.sh
 
-	export WGRIB2=${WGRIB2:-wgrib2}
-	export GRB2INDEX=${GRB2INDEX:-/scratch3/NCEPDEV/nwprod/NWPROD.WCOSS/util/exec/grb2index}
-	export COPYGB2=${COPYGB2:-/scratch3/NCEPDEV/nwprod/NWPROD.WCOSS/util/exec/copygb2}
+	#export CHGRESEXEC=$HOMEgsm1/exec/global_chgres_GSM
+	#export CHGRESEXEC=$HOMEDIR/exec/global_chgres
+
+	#export DIAG_TABLE=$HOMEgsm/parm/parm_fv3diag/diag_table
+	#export FIELD_TABLE=$HOMEgsm/parm/parm_fv3diag/field_table_gfdl
+
+	#export WGRIB2=${WGRIB2:-wgrib2}
+	#export GRB2INDEX=${GRB2INDEX:-/scratch3/NCEPDEV/nwprod/NWPROD.WCOSS/util/exec/grb2index}
+	#export COPYGB2=${COPYGB2:-/scratch3/NCEPDEV/nwprod/NWPROD.WCOSS/util/exec/copygb2}
+
+	
 
 elif [ -d /gpfs/hps3 ]; then
 
