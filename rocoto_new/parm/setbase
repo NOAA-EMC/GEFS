@@ -70,7 +70,7 @@ if [ -d /scratch4/NCEPDEV ]; then
 	#export HOMEDIR1=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/fv3gfs
 	#export HOMERFC=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
 
-	export HOMEDIR=/home/Xianwu.Xue/save4/GIT/fv3gfs 			# this is the master branch with Bing Fu's modification based on the GEFS needs
+	export HOMEDIR=/scratch4/NCEPDEV/ensemble/save/Xianwu.Xue/GIT/fv3gfs # this is the master branch with Bing Fu's modification based on the GEFS needs
 	export HOMEDIR1=$HOMEDIR 						#/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/fv3gfs
 	export HOMERFC=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
 
