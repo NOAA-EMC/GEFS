@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 sWS=`pwd`
 echo $sWS
