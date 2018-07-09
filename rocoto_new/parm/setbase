@@ -126,19 +126,15 @@ if [ -d /scratch4/NCEPDEV ]; then
 elif [ -d /gpfs/hps3 ]; then
 
 	if [[ $machl = t ]] || [[ $machl = g ]]; then
-<<<<<<< Updated upstream
 		echo "Using settings for WCOSS IBM"
-=======
-		echo "Using settings for WCOSS Phase II"
->>>>>>> Stashed changes
 		PTMP=/ptmpd2
 		STMP=/stmpd2
 		export machine='WCOSS'
 		export JOBPHASE=2
-		export HOMEDIR=/ensemble/save/emc.enspara/RFC
-		#export HOMEDIR1=/ensemble/save/emc.enspara/RFC/q3fy17_lambda
+		export HOMEDIR=/ensemble/save/Walter.Kolczynski/fv3gfs/fv3gfs_jongil
 		SAVE=/$PROJECT/save
 		NOSCRUB=/$PROJECT/noscrub
+		export COMROOThps=/ensemble/noscrub/Walter.Kolczynski/fv3_anly/from_fv3_cold
 
 	elif [[ $machl = s ]] || [[ $machl = l ]]; then
 		echo "Using settings for WCOSS Cray"
