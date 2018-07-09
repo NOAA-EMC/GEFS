@@ -81,8 +81,9 @@ export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 export COMINm1=$COMROOT/${NET}/${envir}/${RUN}.${PDYm1}
 
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap25
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
+#mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2a2p5
 
 msg="HAS BEGUN on `hostname`"
@@ -158,6 +159,11 @@ case $FORECAST_SEGMENT in
 		fi
 		;;
 esac # $FORECAST_SEGMENT
+
+if test $FHMAX_HF -gt $FHOUR; then
+        export FHMAX_HF=$FHOUR
+fi
+
 
 echo FORECAST_SEGMENT=$FORECAST_SEGMENT
 echo makepgrba=$makepgrba
