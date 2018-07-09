@@ -6,8 +6,8 @@ set -x
 export IOBUF_PARAMS=
 export FORT_BUFFERED=TRUE
 export MKL_CBWR=AVX
-#ulimit -s unlimited
-ulimit -s 10999888
+ulimit -s unlimited
+#ulimit -s 10999888
 ulimit -a
 
 export ATP_ENABLED=0
@@ -35,7 +35,8 @@ export NODES=3
 export total_tasks=36
 export OMP_NUM_THREADS=2
 export taskspernode=12
-export POSTGRB2TBL=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/fv3gfs/global_shared.v15.0.0/parm/params_grib2_tbl_new
+#export POSTGRB2TBL=/scratch4/NCEPDEV/ensemble/save/Xianwu.Xue/GIT/fv3gfs_old_ByWalter/global_shared.v15.0.0/parm/params_grib2_tbl_new
+export POSTGRB2TBL="/scratch3/NCEPDEV/nwprod/lib/sorc/g2tmpl/params_grib2_tbl_new"
 
 export ERRSCRIPT=" "
 

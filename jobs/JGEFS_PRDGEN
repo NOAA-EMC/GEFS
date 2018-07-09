@@ -285,6 +285,9 @@ export FHOUT_HF_3=$FHOUT_HF
 export FHMAX_HF_3=$FHMAX_HF
 export SHOUR_3=$SHOUR_3
 export FHOUR_3=$FHMAX_HF
+if test $FHOUR_3 -gt $FHOUR; then
+        export FHOUR_3=$FHOUR
+fi
 
 if test $total_tasks -eq 3; then
 	export DOANALYSIS_3=$DOANALYSIS
