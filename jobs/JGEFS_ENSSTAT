@@ -160,6 +160,11 @@ case $FORECAST_SEGMENT in
 		;;
 esac # $FORECAST_SEGMENT
 
+if test $FHMAX_HF -gt $FHOUR; then
+        export FHMAX_HF=$FHOUR
+fi
+
+
 echo FORECAST_SEGMENT=$FORECAST_SEGMENT
 echo makepgrba=$makepgrba
 echo FHINC=$FHINC      
