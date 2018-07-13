@@ -18,11 +18,11 @@ done
 CompileCode=${CompileCode:-no}
 CleanAll=${CleanAll:-no}
 RunRocoto=${RunRocoto:-no}
-machine=${machine:-none}
+machine=${machine:-nomachine}
 userConfigFile=${userConfigFile:-user_full.conf}
 
 
-if [ $machine = none ]; then
+if [ $machine = "nomachine" ]; then
 	if [ -d /scratch4/NCEPDEV ]; then
 		machine=theia
 	elif [ -d /gpfs ]; then
@@ -39,7 +39,7 @@ echo $machine
 echo $userConfigFile
 
 
-if [ $CompileCode = yes ]; then
+if [ $CompileCode = "yes" ]; then
 	cd $sWS/../sorc
 
 	## mkdir folds
@@ -72,7 +72,7 @@ if [ $CompileCode = yes ]; then
 fi
 
 # for cleanning
-if [ $CleanAll = yes ]; then
+if [ $CleanAll = "yes" ]; then
   echo "Cleaning ..."
 
  	cd $sWS/../sorc
@@ -106,7 +106,7 @@ fi
 
 # for rocoto
 
-if [ $RunRocoto = yes ]; then
+if [ $RunRocoto = "yes" ]; then
 	cd $sWS
 	module load rocoto
 	#module load python
