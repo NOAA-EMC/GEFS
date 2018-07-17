@@ -96,12 +96,26 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "jgefs_ensstat_high"
 
-        # will be used in the future
-        # @** if RUN_CHGRES==YES
-        #   <!-- chargeres jobs -->
-        #    &jgefs_sigchgres;
-        # @** endif
-   
+        # #    <!-- CHGRES jobs -->
+        if dicBase['RUN_CHGRES'] == "YES" or dicBase['RUN_CHGRES'][0] == "Y":
+            # ---jgefs_sigchgres
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_sigchgres"
+
+        # #    <!-- RUN_PRDGEN_GFS jobs -->
+        if dicBase['RUN_PRDGEN_GFS'] == "YES" or dicBase['RUN_PRDGEN_GFS'][0] == "Y":
+            # ---jgefs_sigchgres
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_prdgen_gfs"
+
+        # #    <!-- RUN_GETCFSSST jobs -->
+        if dicBase['RUN_GETCFSSST'] == "YES" or dicBase['RUN_GETCFSSST'][0] == "Y":
+            # ---jgefs_sigchgres
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_getcfssst"
 
         # #    <!-- low resolution forecast and post process jobs -->
         if dicBase['RUN_FORECAST_LOW'] == "YES" or dicBase['RUN_FORECAST_LOW'][0] == "Y":
