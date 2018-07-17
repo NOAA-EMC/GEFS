@@ -313,7 +313,11 @@ case $FORECAST_SEGMENT in
 	(lr)
 		# low resolution segment
 		export FHINC_HIGH=6
-		export SHOUR=$(( $fhmaxh + $FHINC_LOW ))
+		if (( fhmaxh > FHMAX_HF )); then
+                        export SHOUR=$(( $fhmaxh + $FHOUT ))
+                else
+                        export SHOUR=$(( $fhmaxh + $FHOUT_HF ))
+                fi
 		if (( SHOUR < 10 )); then
 			SHOUR=0$SHOUR
 		fi

@@ -6,7 +6,7 @@ def config_tasknames(dicBase):
     if iTaskName_Num <= 0:
         iTaskName_Num = 0
 
-	# #    <!-- initial jobs -->
+        # #   <!-- initial jobs -->
         if dicBase['RUN_INIT'] == "GSM_RELOC":
             # ---jgefs_enkf_track
             iTaskName_Num += 1
