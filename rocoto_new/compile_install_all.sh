@@ -21,13 +21,17 @@ RunRocoto=${RunRocoto:-no}
 machine=${machine:-nomachine}
 userConfigFile=${userConfigFile:-user_full.conf}
 
-
 if [ $machine = "nomachine" ]; then
     if [ -d /scratch4/NCEPDEV ]; then
         machine=theia
     elif [ -d /gpfs ]; then
-        if [ -d /etc/SuSE-release ]; then
-          machine=cray
+        if [ -f /etc/SuSE-release ]; then
+            machine=cray
+        fi
+        if [ $machine = "nomachine" ]; then
+            if [ $SITE = SURGE ]; then
+                machine=cray
+            fi
         fi
     fi
 fi
