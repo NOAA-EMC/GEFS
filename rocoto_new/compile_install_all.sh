@@ -112,8 +112,15 @@ fi
 
 if [ $RunRocoto = "yes" ]; then
     cd $sWS
-    module load rocoto
-    #module load python
+    if [ $machine = "theia" ]; then
+        module load rocoto
+    elif [ $machine = "cray" ]; then
+        . /opt/modules/3.2.10.3/init/sh
+        module use /usrx/local/emc_rocoto/modulefiles
+        module load xt-lsfhpc
+        module load rocoto
+        module load python
+    fi
     ./py/run_to_get_all.py  $userConfigFile
 fi
 
