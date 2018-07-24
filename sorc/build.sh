@@ -107,7 +107,7 @@ for dir in ../util/sorc/gettrk.fd ../util/sorc/overenstr.grib.fd ../util/sorc/ge
 done
 
 # For SST
-for dir in gefs_anom2_fcst.fd; do
+for dir in gefs_anom2_fcst.fd gefs_nstgen.fd; do
     cd $dir
     make clean
     make -f makefile
