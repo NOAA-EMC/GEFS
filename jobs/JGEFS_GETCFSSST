@@ -15,7 +15,8 @@ export cycle=t${cyc}z
 # obtain unique process id (pid) and make working directory
 ####################################
 export pid=$$
-export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+#export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+export DATA=${DATA:-$DATAROOT/gefs_getcfssst_$PDY$cyc.$envir.${LSB_JOBID}} #.${pid}} #For tempory use by Xianwu Xue
 mkdir -p $DATA
 cd $DATA
 

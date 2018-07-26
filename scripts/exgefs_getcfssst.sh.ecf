@@ -1,15 +1,15 @@
 #!/bin/ksh
 echo `date` $0 begin
 ################################################################################
-#   Script:	exgefs_getcfssst.sh.sms
+#   Script:    exgefs_getcfssst.sh.sms
 #
 
 set -x
 # Set environment.
 VERBOSE=${VERBOSE:-"YES"}
 if [ $VERBOSE = "YES" ]; then
-	echo $(date) EXECUTING $0 $* >&2
-	set -x
+    echo $(date) EXECUTING $0 $* >&2
+    set -x
 fi
 
 # Utilities
@@ -19,8 +19,8 @@ NMV=${NMV:-"/bin/mv -uv"}
 
 # Executables.
 if [[ -z "$EXECgefs" ]]; then
-	echo "$EXECgefs is empty"
-	exit 5
+    echo "$EXECgefs is empty"
+    exit 5
 fi
 
 export GEFS_ANOM2_FCST=${GEFS_ANOM2_FCST:-$EXECgefs/gefs_anom2_fcst}
@@ -32,11 +32,7 @@ if [ ! -d $DATA ]; then mkdir -p $DATA; fi
 cd $DATA || exit 99
 
 # ---For SST
-export DATA=$DATA
-export nstcfsoutdir=$DATA/realtimeCFSBC_inputs
-mkdir -p $nstcfsoutdir
-export sstoutdir=$DATA/sst/outdata
-export ptmpdir=$DATA/sst
+# export DATA=$DATA
 
 #################################################################################
 # Run
@@ -44,23 +40,15 @@ export ptmpdir=$DATA/sst
 #=====
 echo real-time data transfer begins at $date
 
-# need to modify!!!!
-if [[ -d /gpfs/hps/nco/ops ]]; then
-  nstindir=/gpfs/hps/nco/ops/com/gfs/prod
-  cfsv2dir=/gpfs/gp1/nco/ops/com/cfs/prod/cfs
-elif [[ -d /gpfs/tp2/nco/ops ]]; then
-  nstindir=/gpfs/tp2/nco/ops/com/gfs/prod
-  cfsv2dir=/gpfs/tp1/nco/ops/com/cfs/prod/cfs
-else
-  echo NCO WCOSS directory DOES NOT EXIST
-  exit 91
-fi
-
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+export filenamein_CFSv2=tmpsfc.grb2 #tmpsfc.01.$PDY$cyc.daily.grb2
+export filenamein_nst=nstanl.nemsio #gfs.${cycle}.nstanl.nemsio
+export filenameout_nst=Tsfc.grb  #gfs.t00z.Tsfc.$PDY.grb
+
 #Link Real-time CFSv2
 sFile=$COMINcfs/time_grib_01/tmpsfc.01.$PDY$cyc.daily.grb2
 if [[ -f $sFile ]]; then
-    $NLN $sFile tmpsfc.grb2   
+    $NLN $sFile $filenamein_CFSv2
 else
     echo " Real-time CFSv2 does not exist: $sFile"
     exit 92
@@ -73,7 +61,7 @@ fi
 #Link Real-time nst file
 sFile=$COMINgfs/gfs.${cycle}.nstanl.nemsio
 if [[ -f $sFile ]]; then
-    $NLN $sFile nstanl.nemsio  
+    $NLN $sFile $filenamein_nst
 else
     echo " Real-time nst does not exist: $sFile"
     exit 93
@@ -84,13 +72,9 @@ if (( rc != 0 )); then
 fi
 echo real-time data transfer ends at $date
 
-echo real-time data transfer ends at $date
-
 echo read nst file to save tref begin
-export filenamein_nst=nstanl.nemsio
-export filenameout=Tsfc.grb
 
-$GEFS_NSTGEN  $filenamein_nst $filenameout
+$GEFS_NSTGEN  $filenamein_nst $filenameout_nst
 
 ERR=$?
 if (( ERR !=0 )); then
@@ -100,117 +84,34 @@ fi
 
 echo read nst file to save tref end!!!
 
-#------------------------------------------------
-exit 0
-$NLN $COMINgfs/gfs.${cycle}.nstanl.nemsio gfs.${cycle}.nstanl.nemsio nstanl.nemsio 
-
-exit 0
-
-mkdir -p $nstcfsoutdir/cfsbcinput.$PDY
-
-#Copy Real-time nst file 
-if [[ -f $nstindir/gfs.$PDY/gfs.t00z.nstanl.nemsio ]]; then
-    #cp -rv $nstindir/gfs.$PDY/gfs.t00z.nstanl.nemsio $nstcfsoutdir/cfsbcinput.$PDY
-    $NLN $nstindir/gfs.$PDY/gfs.t00z.nstanl.nemsio $nstcfsoutdir/cfsbcinput.$PDY/gfs.t00z.nstanl.nemsio
-else
-    echo "nstfile doesn't exist on $nstindir/gfs.$PDY" 
-    #cp -rv /gpfs/gd1/emc/ensemble/noscrub/Richard.Wobus/o/com2/gfs/prod/gfs.$PDY/gfs.t00z.nstanl.nemsio $nstcfsoutdir/cfsbcinput.$PDY
-    $NLN /gpfs/gd1/emc/ensemble/noscrub/Richard.Wobus/o/com2/gfs/prod/gfs.$PDY/gfs.t00z.nstanl.nemsio $nstcfsoutdir/cfsbcinput.$PDY/gfs.t00z.nstanl.nemsio
-fi
-rc=$?
-
-if (( rc != 0 )); then
-    echo "link sst FAILED!"
-    exit 92
-fi
-
-#Copy Real-time CFSv2
-if [[ -d $cfsv2dir/cfs.${PDY} ]]; then
-    #cp -rv $cfsv2dir/cfs.${PDY}/${cyc}/time_grib_01/tmpsfc.01.$date.daily.grb2 $nstcfsoutdir/cfsbcinput.$PDY
-    $NLN $cfsv2dir/cfs.${PDY}/${cyc}/time_grib_01/tmpsfc.01.${PDY}${cyc}.daily.grb2 $nstcfsoutdir/cfsbcinput.$PDY/tmpsfc.01.${PDY}${cyc}.daily.grb2
-else
-    #cp -rv /gpfs/hps3/emc/ensemble/noscrub/Wei.Li/CFSv2_17/tmpsfc.01.$date.daily.grb2 $nstcfsoutdir/cfsbcinput.$PDY
-    $NLN /gpfs/hps3/emc/ensemble/noscrub/Wei.Li/CFSv2_17/tmpsfc.01.${PDY}${cyc}.daily.grb2 $nstcfsoutdir/cfsbcinput.$PDY/tmpsfc.01.${PDY}${cyc}.daily.grb2
-fi
-
-rc=$?
-if (( rc != 0 )); then
-    echo link cfsv2 FAILED
-    exit 93
-fi
-
-
-echo real-time data transfer ends at $date
-
-echo read nst file to save tref begin
-srcdir=$DATA/sst/nst_src
-export filenamein_nst=$nstindir/gfs.$PDY/gfs.t00z.nstanl.nemsio
-export filenameout=$nstcfsoutdir/cfsbcinput.$PDY/gfs.t00z.Tsfc.$PDY.grb
-
-
-$GEFS_NSTGEN  $filenamein_nst $filenameout
-rc=$?
-if (( rc !=0 )); then
-    echo "Reading NST lfile to save tref FAILED!"
-    exit 95
-fi
-
-echo read nst file to save tref end!!!
-
-
 #==============================================================================================
 echo 2-tiered sst generation begin
 
-ndate=${NDAT:-/gpfs/hps/nco/ops/nwprod/prod_util.v1.0.24/exec/ndate} #${NDATE:-}
-cnvgrib=${CNVGRIB:-/gpfs/hps/nco/ops/nwprod/grib_util.v1.0.3/exec/cnvgrib}
-copygb=${COPYGB:-/gpfs/hps/nco/ops/nwprod/grib_util.v1.0.3/exec/copygb}
-copygb2=${COPYGB2:-/gpfs/hps/nco/ops/nwprod/grib_util.v1.0.3/exec/copygb2}
-
-wgrib=${WGRIB:-/gpfs/hps/nco/ops/nwprod/grib_util.v1.0.3/exec/wgrib}
-wgrib2=${WGRIB2:-/gpfs/hps/nco/ops/nwprod/grib_util.v1.0.3/exec/wgrib2}
-
-echo $ndate
-
-
-mkdir -p $sstoutdir
-
 # Land Sea mask file
-export LSmaskT126=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/subx/CFS_ANOM2_create_Eric_0p25/mask/mask.t126.grb
+export LSmaskT126=${LSmaskT126:-/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/subx/CFS_ANOM2_create_Eric_0p25/mask/mask.t126.grb}
 
-
-# ptmp and no-scrub directories
-ptmp=$ptmpdir
-
-# Cd to working directory
-wkdir=$ptmp/sst_tmp
-mkdir -p $wkdir
-cd $wkdir
-
+export sstoutdir="outdata"
+mkdir -p $sstoutdir
 # temporary directories for climm and cfsr (analysis)
-tmpraw=$wkdir/raw
+tmpraw=raw
 mkdir -p $tmpraw
-tmpclim=$wkdir/clim
+tmpclim=clim
 mkdir -p $tmpclim
-tmpcfsr=$wkdir/cfsr
+tmpcfsr=cfsr
 mkdir -p $tmpcfsr
 # file with parameters kpds8, kpds9 and kpds10
-kpdsfile=$wkdir/kpdslist.txt
+kpdsfile=kpdslist.txt
 
 # Unit files
 un_climm=55
 un_climo=57
 un_rtgan=59
 
-
 #set -ux
 NFH=840  # 35 days. Fixed. The fortran code is expecting this.
 
-# runs' initial date
-#WWLL<<<< created 2014 data. 9/2/2016
-
 grid='255 0 1440 720 90000 0 128 -90000 359750 250 250 0'
 grid_new="0 6 0 0 0 0 0 0 1440 720 0 0 90000000 0 48 -90000000 359750000 250000 250000 0"
-
 
 export grid0p25="latlon 0:1440:0.25 90:720:-0.25"
 export option1=' -set_grib_type same -new_grid_winds earth '
@@ -219,10 +120,10 @@ export option22=":(LAND|CSNOW|CRAIN|CFRZR|CICEP|ICSEV):"
 export option23=' -new_grid_interpolation neighbor -fi '
 
 #   -------------------- Main Loop -------------------------------
-
-mm=`echo ${PDY}${cyc} | cut -c5-6`
-dd=`echo ${PDY}${cyc} | cut -c7-8`
-hh=`echo ${PDY}${cyc} | cut -c9-10`
+mm=`echo ${PDY} | cut -c5-6`
+dd=`echo ${PDY} | cut -c7-8`
+#hh=`echo ${PDY}${cyc} | cut -c9-10`
+hh=${cyc}
 echo ${PDY}${cyc}
 
 # RTG + CFS fcst
@@ -230,95 +131,112 @@ sstinfile=$tmpraw/TMPsfc.${PDY}${cyc}.24hr.grb
 >$sstinfile
 
 # RTG analysis for initial time required by GFS
-sstanlfile=$nstcfsoutdir/cfsbcinput.$PDY/gfs.t00z.Tsfc.$PDY.grb 
-anlfileout=$wkdir/anl_sst_grb_latlon.$PDY
-$copygb -g"$grid" -x $sstanlfile $anlfileout
+sstanlfile=$filenameout_nst #gfs.${cycle}.Tsfc.$PDY.grb======================
+anlfileout=anl_sst_grb_latlon.$PDY
+$COPYGB -g"$grid" -x $sstanlfile $anlfileout
+ERR=$?
+if (( ERR !=0 )); then
+    echo "FAILED to COPYGB: $sstanlfile; $anlfileout!"
+    exit 96
+fi
 cat $anlfileout > $sstinfile    # This is lead 0 forecast
 
-# CFS forecast data 
+# CFS forecast data
 # Raw flx forecast (make sure it has been downloaded from hpss by running gethpss.sh)
 # it is trimmed to obtain data every 24h
-rawgb2triml=$nstcfsoutdir/cfsbcinput.$PDY/tmpsfc.01.${PDY}${cyc}.daily.grb2
-rawgb2trimdir=$ptmpdir/CFSBC_inputs_0p25/cfsbcinput.${PDY}${cyc}
+#rawgb2triml=$filenamein_CFSv2
+rawgb2trimdir=$DATA/CFSBC_inputs_0p25/cfsbcinput.${PDY}${cyc}
 mkdir -p $rawgb2trimdir
 rawgb2trim=$rawgb2trimdir/tmpsfc.01.${PDY}${cyc}.daily.grb2
 if [ ! -f $rawgb2trim  ]; then
-#$copygb2 -g "$grid_new" -x  $rawgb2triml $rawgb2trim
-$wgrib2  $rawgb2triml $option1 $option21 $option22 $option23 -new_grid $grid0p25 $rawgb2trim 
+    #$COPYGB2 -g "$grid_new" -x  $rawgb2triml $rawgb2trim
+    $WGRIB2  $filenamein_CFSv2 $option1 $option21 $option22 $option23 -new_grid $grid0p25 $rawgb2trim
+    ERR=$?
+    if (( ERR !=0 )); then
+        echo "FAILED to WGRIB2: $filenamein_CFSv2; $anlfileout!"
+        exit 96
+    fi
 fi
 
 rawgb2=$tmpraw/TMPsfc.${PDY}${cyc}.24h.grb2
 if [ -s $rawgb2 ] ; then
-rm -f $rawgb2
+    rm -f $rawgb2
 fi
 FH=24
 until [ $FH -gt $NFH ] ; do
-$wgrib2 $rawgb2trim -append -if "TMP:surface:$FH hour fcst:" -grib $rawgb2 > /dev/null
-FH=`expr $FH \+ 24`
+    $WGRIB2 $rawgb2trim -append -if "TMP:surface:$FH hour fcst:" -grib $rawgb2 > /dev/null
+    FH=`expr $FH \+ 24`
 done
 # convert from grib2 to grib and change resolution
 rawgb=$tmpraw/TMPsfc.${PDY}${cyc}.fcs.grb
-$cnvgrib -g21 $rawgb2 $rawgb
+$CNVGRIB -g21 $rawgb2 $rawgb
 if [ $? -eq 0 ] ; then rm $rawgb2 ; fi
 cat $rawgb >> $sstinfile
 
-# Model climatology 
+# Model climatology
 # daily one-season forecast must be trimmed to 35 days every 24h
 # Files do not include f00h
-climmgb2trim=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/subx/CFS_ANOM2_create_Eric_0p25/CFSv2_clim/tmpsfc.$mm.$dd.${hh}Z.mean.clim.daily.grb2
+climmgb2trim=${climmgb2trim:-/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/subx/CFS_ANOM2_create_Eric_0p25/CFSv2_clim/tmpsfc.$mm.$dd.${hh}Z.mean.clim.daily.grb2}
 climmgb2=$tmpclim/tmpsfc.${PDY}${cyc}.mean.clim.daily.grb2
 if [ -s $climmgb2 ] ; then
-rm -f $climmgb2
+    rm -f $climmgb2
 fi
 FH=24
 until [ $FH -gt $NFH ] ; do
-$wgrib2 $climmgb2trim -append -if "TMP:surface:$FH hour fcst:" -grib $climmgb2 > /dev/null
-FH=`expr $FH \+ 24`
+    $WGRIB2 $climmgb2trim -append -if "TMP:surface:$FH hour fcst:" -grib $climmgb2 > /dev/null
+    FH=`expr $FH \+ 24`
 done
+
 climmgb=$tmpclim/tmpsfc.${PDY}${cyc}.mean.clim.daily.grb
 >$climmgb
-$cnvgrib -g21 $climmgb2 $climmgb
+$CNVGRIB -g21 $climmgb2 $climmgb
 cat $anlfileout $climmgb > $climmgb.plus  # This is to add rtg analysis as lead 0 to the hindcast
 echo "$climmgb.plus:" $climmgb.plus
-$wgrib $climmgb.plus -d all -ieee -o fort.$un_climm
-if [ $? -eq 0 ] ; then rm -f $climmgb2 ; fi
+$WGRIB $climmgb.plus -d all -ieee -o fort.$un_climm
+if [ $? -eq 0 ] ; then
+    rm -f $climmgb2
+fi
 
 #   # Observations (analysis). RTG i.c. are persisted 35 days
 echo "$anlfileout:"$anlfileout
-$wgrib $anlfileout -d all -ieee -o fort.$un_rtgan
-#   
+$WGRIB $anlfileout -d all -ieee -o fort.$un_rtgan
+#
 #   # CFSR must be trimmed to the 35 days of the forecasts
-climogb2trim=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/subx/CFS_ANOM2_create_Eric_0p25/CFSR_clim/tmpsfc.cfsr.mean.clim.daily.1999.2010.grb2
+climogb2trim=${climogb2trim:-/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/subx/CFS_ANOM2_create_Eric_0p25/CFSR_clim/tmpsfc.cfsr.mean.clim.daily.1999.2010.grb2}
 climogb2=$tmpcfsr/tmpsfc.cfsr.${PDY}${cyc}.clim.daily.grb2
 cfsr_date=2000${mm}${dd}${hh}
 if [ -s $climogb2 ] ; then
-rm -f $climogb2
+    rm -f $climogb2
 fi
 FH=0
 until [ $FH -gt $NFH ] ; do
-$wgrib2 $climogb2trim -append -if ":d=$cfsr_date:" -grib $climogb2 > /dev/null
-FH=`expr $FH \+ 24`
-cfsr_date=`$ndate +24 $cfsr_date`
-yyn=`echo $cfsr_date | cut -c1-4`
-#      echo " reanalysis: year $yyn "
-if [ $yyn = 2001 ] ; then
-    mmn=`echo $cfsr_date | cut -c5-6`
-    ddn=`echo $cfsr_date | cut -c7-8`
-    cfsr_date=2000${mmn}${ddn}${hh}
-fi
+    $WGRIB2 $climogb2trim -append -if ":d=$cfsr_date:" -grib $climogb2 > /dev/null
+    FH=`expr $FH \+ 24`
+    cfsr_date=`$NDATE +24 $cfsr_date`
+    yyn=`echo $cfsr_date | cut -c1-4`
+    #      echo " reanalysis: year $yyn "
+    if [ $yyn = 2001 ] ; then
+        mmn=`echo $cfsr_date | cut -c5-6`
+        ddn=`echo $cfsr_date | cut -c7-8`
+        cfsr_date=2000${mmn}${ddn}${hh}
+    fi
 done
 climogb=$tmpcfsr/tmpsfc.cfsr.${PDY}${cyc}.clim.daily.grb
-$cnvgrib -g21 $climogb2 $climogb
+$CNVGRIB -g21 $climogb2 $climogb
 echo "climogb:"$climogb
-$wgrib $climogb -d all -ieee -o fort.$un_climo
-if [ $? -eq 0 ] ; then rm -f $climmgb2 ; fi
-#
+$WGRIB $climogb -d all -ieee -o fort.$un_climo
+ERR=$?
+if [ $? -eq 0 ] ;
+    then rm -f $climmgb2
+else
+    echo "FAILED to CNVGRIB: $climogb"
+fi
 #
 export fn_rawfc=$sstinfile
 export fn_anom_fc=$sstoutdir/TMPsfc.${PDY}${cyc}.24hr.anom.grb
 echo "fn_anom_fc:"$fn_anom_fc
 if [ -s $fn_anom_fc ] ; then
-rm -f $fn_anom_fc
+    rm -f $fn_anom_fc
 fi
 #
 #  Generate kpds starting from this and going through the 35 days forecast
@@ -326,56 +244,45 @@ fi
 kdate=${PDY}${cyc}
 FH=0
 until [ $FH -gt $NFH ] ; do
-#     kdate=`$ndate +24 $kdate`
-kcc=`echo $kdate | cut -c1-2`
-kyy=`echo $kdate | cut -c3-4`
-kpds8=`echo $kdate | cut -c3-4`
-if [ "$kpds8" -eq "00" ] ; then
-    kpds8="100"
-fi
-kpds9=`echo $kdate | cut -c5-6`
-kpds10=`echo $kdate | cut -c7-8`
+    #     kdate=`$NDATE +24 $kdate`
+    kcc=`echo $kdate | cut -c1-2`
+    kyy=`echo $kdate | cut -c3-4`
+    kpds8=`echo $kdate | cut -c3-4`
+    if [ "$kpds8" -eq "00" ] ; then
+        kpds8="100"
+    fi
+    kpds9=`echo $kdate | cut -c5-6`
+    kpds10=`echo $kdate | cut -c7-8`
 
-if [ "$kcc" -eq "19" ] ; then
-    kpds21="20"
-elif [ "$kcc" -eq "20" ] ; then
-    kpds21="21"
-fi
+    if [ "$kcc" -eq "19" ] ; then
+        kpds21="20"
+    elif [ "$kcc" -eq "20" ] ; then
+        kpds21="21"
+    fi
 
-if [ "$kyy" -eq "00" ] ; then
-    kpds21="20"
-fi
+    if [ "$kyy" -eq "00" ] ; then
+        kpds21="20"
+    fi
 
-echo $kpds8 $kpds9 $kpds10 $kpds21 >> $kpdsfile
+    echo $kpds8 $kpds9 $kpds10 $kpds21 >> $kpdsfile
 
-kdate=`$ndate +24 $kdate`
+    kdate=`$NDATE +24 $kdate`
 
-FH=`expr $FH \+ 24`
+    FH=`expr $FH \+ 24`
 done
 echo "$kpdsfile:"$kpdsfile
 #
 #  Run the bias correction
 echo $fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile $LSmaskT126
 $GEFS_ANOM2_FCST $fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile $LSmaskT126
-# Xue --rm -rf $ptmpdir/CFSBC_inputs_0p25 
-
-echo 2-tiered sst generation finished!!!
-
-exit 0
-
-
-
-
-
+ERR=$?
+if [ ERR -eq 0 ] ; then 
+    echo "2-tiered sst generation finished!!!"
+    exit 0
+else
+    echo "FAILED to do the bias correction: $GEFS_ANOM2_FCST"
+    exit $ERR
+fi
 
 
 
-
-
-
-
-
-
-
-
-                                                            
