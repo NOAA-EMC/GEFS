@@ -67,9 +67,19 @@ export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 if [[ $gfssource != prod ]]; then
     export COMINgfs=${COMINgfs_base}${PDY}/$cyc
     export COMINcfs=${COMINcfs_base}${PDY}/$cyc
+
+    if [ -f $COMINgfs ]; then
+        COMINgfs=
+    fi
+    if [ -f $COMINcfs ]; then
+        COMINcfs=
+    fi
+
+    echo $COMINgfs
+    echo $COMINcfs
 fi
-export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}} #/$cyc
-export COMINcfs=${COMINcfs:-$COMROOTp1/cfs/prod/cfs/cfs.${PDY}} #/$cyc
+export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}}    #/$cyc
+export COMINcfs=${COMINcfs:-$COMROOTp1/cfs/prod/cfs/cfs.${PDY}/$cyc} #
 
 #For test
 export COMINgfs=/gpfs/hps/nco/ops/com/gfs/prod/gfs.${PDY}

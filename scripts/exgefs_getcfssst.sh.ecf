@@ -43,6 +43,7 @@ echo real-time data transfer begins at $date
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 export filenamein_CFSv2=tmpsfc.grb2 #tmpsfc.01.$PDY$cyc.daily.grb2
 export filenamein_nst=nstanl.nemsio #gfs.${cycle}.nstanl.nemsio
+
 export filenameout_nst=Tsfc.grb  #gfs.t00z.Tsfc.$PDY.grb
 
 #Link Real-time CFSv2
@@ -78,7 +79,7 @@ $GEFS_NSTGEN  $filenamein_nst $filenameout_nst
 
 ERR=$?
 if (( ERR !=0 )); then
-    echo "Reading NST lfile to save tref FAILED!"
+    echo "Reading NST file to save tref FAILED!"
     exit 94
 fi
 
@@ -99,8 +100,15 @@ tmpclim=clim
 mkdir -p $tmpclim
 tmpcfsr=cfsr
 mkdir -p $tmpcfsr
-# file with parameters kpds8, kpds9 and kpds10
+
+
+# -- file with parameters kpds8, kpds9 and kpds10
 kpdsfile=kpdslist.txt
+
+sstinfile=$tmpraw/TMPsfc.${PDY}${cyc}.24hr.grb
+export fn_rawfc=$sstinfile
+export fn_anom_fc=$sstoutdir/TMPsfc.${PDY}${cyc}.24hr.anom.grb
+
 
 # Unit files
 un_climm=55
@@ -126,8 +134,9 @@ dd=`echo ${PDY} | cut -c7-8`
 hh=${cyc}
 echo ${PDY}${cyc}
 
+# -- Generate Raw Forecast data
 # RTG + CFS fcst
-sstinfile=$tmpraw/TMPsfc.${PDY}${cyc}.24hr.grb
+
 >$sstinfile
 
 # RTG analysis for initial time required by GFS
@@ -145,11 +154,11 @@ cat $anlfileout > $sstinfile    # This is lead 0 forecast
 # Raw flx forecast (make sure it has been downloaded from hpss by running gethpss.sh)
 # it is trimmed to obtain data every 24h
 #rawgb2triml=$filenamein_CFSv2
-rawgb2trimdir=$DATA/CFSBC_inputs_0p25/cfsbcinput.${PDY}${cyc}
+rawgb2trimdir=$DATA/CFSBC_inputs_0p25 #/cfsbcinput.${PDY}${cyc}
 mkdir -p $rawgb2trimdir
 rawgb2trim=$rawgb2trimdir/tmpsfc.01.${PDY}${cyc}.daily.grb2
 if [ ! -f $rawgb2trim  ]; then
-    #$COPYGB2 -g "$grid_new" -x  $rawgb2triml $rawgb2trim
+    #$COPYGB2 -g "$grid_new" -x  $filenamein_CFSv2 $rawgb2trim
     $WGRIB2  $filenamein_CFSv2 $option1 $option21 $option22 $option23 -new_grid $grid0p25 $rawgb2trim
     ERR=$?
     if (( ERR !=0 )); then
@@ -177,6 +186,10 @@ cat $rawgb >> $sstinfile
 # daily one-season forecast must be trimmed to 35 days every 24h
 # Files do not include f00h
 climmgb2trim=${climmgb2trim:-/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/subx/CFS_ANOM2_create_Eric_0p25/CFSv2_clim/tmpsfc.$mm.$dd.${hh}Z.mean.clim.daily.grb2}
+if [ ! -s $climmgb2trim ] ; then
+    echo "FAILED: $climmgb2trim does not exist!"
+    exit 89
+fi
 climmgb2=$tmpclim/tmpsfc.${PDY}${cyc}.mean.clim.daily.grb2
 if [ -s $climmgb2 ] ; then
     rm -f $climmgb2
@@ -203,6 +216,10 @@ $WGRIB $anlfileout -d all -ieee -o fort.$un_rtgan
 #
 #   # CFSR must be trimmed to the 35 days of the forecasts
 climogb2trim=${climogb2trim:-/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/subx/CFS_ANOM2_create_Eric_0p25/CFSR_clim/tmpsfc.cfsr.mean.clim.daily.1999.2010.grb2}
+if [ ! -s $climogb2trim ] ; then
+    echo "FAILED: $climogb2trim does not exist!"
+    exit 90
+fi
 climogb2=$tmpcfsr/tmpsfc.cfsr.${PDY}${cyc}.clim.daily.grb2
 cfsr_date=2000${mm}${dd}${hh}
 if [ -s $climogb2 ] ; then
@@ -231,14 +248,9 @@ if [ $? -eq 0 ] ;
 else
     echo "FAILED to CNVGRIB: $climogb"
 fi
+
 #
-export fn_rawfc=$sstinfile
-export fn_anom_fc=$sstoutdir/TMPsfc.${PDY}${cyc}.24hr.anom.grb
-echo "fn_anom_fc:"$fn_anom_fc
-if [ -s $fn_anom_fc ] ; then
-    rm -f $fn_anom_fc
-fi
-#
+# -- Generate kpds -- =========================================================
 #  Generate kpds starting from this and going through the 35 days forecast
 >$kpdsfile
 kdate=${PDY}${cyc}
@@ -273,6 +285,12 @@ done
 echo "$kpdsfile:"$kpdsfile
 #
 #  Run the bias correction
+# -- Uses persistence with growing weight towards CFSv2 as lead time increases NCEP grib T126 (Gaussian 384*190)
+echo "fn_anom_fc:"$fn_anom_fc
+if [ -s $fn_anom_fc ] ; then
+    rm -f $fn_anom_fc
+fi
+
 echo $fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile $LSmaskT126
 $GEFS_ANOM2_FCST $fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile $LSmaskT126
 ERR=$?
