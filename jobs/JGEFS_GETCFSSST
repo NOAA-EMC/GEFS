@@ -5,35 +5,19 @@ echo `date` $0 `date -u` begin
 set -xa
 export PS4='$SECONDS + '
 date
+
 ############################
 # Set up cycle varaible
 ############################
- export cycle=t${cyc}z
- export cycle_fcst=t${cyc_fcst}z
-
-
-# if (( cyc == cyc_fcst )); then
-#       export cycsuffix=false
-#       export fcstlong=true
-# else
-#       export fcstlong=false
-#       export cycsuffix=true
-# fi
-
+export cycle=t${cyc}z
 
 ####################################
 # obtain unique process id (pid) and make working directory
 ####################################
 export pid=$$
-export DATA=$DATAROOT/gefs_init_$PDY$cyc.$envir.save
-
-echo DATA=$DATA
-if [[ -d $DATA ]]; then
-  rm -rf $DATA
-fi
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
-
 
 ##############################
 # Run setpdy and initialize PDY variables
@@ -60,57 +44,57 @@ export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
- 
 ####################################
 # Specify Execution Areas
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
-export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
+#export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 
 ##############################################
-echo set parameters using gefs.parm
+#echo set parameters using gefs.parm
 ##############################################
 #. $PARMgefs/gefs.parm
 #. $PARMgefs/gefs_init.parm
 
+#env | sort
+
 ##############################################
 # Define COM directories
 ##############################################
+if [[ $gfssource != prod ]]; then
+    export COMINgfs=${COMINgfs_base}${PDY}/$cyc
+    export COMINcfs=${COMINcfs_base}${PDY}/$cyc
+fi
+export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}} #/$cyc
+export COMINcfs=${COMINcfs:-$COMROOTp1/cfs/prod/cfs/cfs.${PDY}} #/$cyc
 
-#if [[ $gfssource != prod ]]; then
-#	export COMINgfs=${COMINgfs_base}${PDY}/$cyc
-#	export COMINenkf=${COMINenkf_base}
-#fi
-#export COMINgfs=${COMINgfs:-${COMROOThps}/gfs/prod/gfs.${PDY}/$cyc}
-#export COMINenkf=${COMINenkf:-${COMROOThps}/gfs/prod/enkf.gdas.}
+#For test
+export COMINgfs=/gpfs/hps/nco/ops/com/gfs/prod/gfs.${PDY}
+export COMINcfs=/gpfs/gp1/nco/ops/com/cfs/prod/cfs/cfs.${PDY}/$cyc
 
-export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
-export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
+##############################################
+# Define COM OUT directories
+##############################################
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
-export COMIN=${COMIN:-${COM_IN}/${RUN}.${PDY}}
-export COMOUT=${COMOUT:-${COM_OUT}/${RUN}.${PDY}}
-
-#export pdycycp=`$NDATE -$fhrp $PDY$cyc`
-#export pdyp=`echo $pdycycp|cut -c1-8`
-#export cycp=`echo $pdycycp|cut -c9-10`
-
-mkdir -m 775 -p $COMOUT/$cyc/init
+##############################################
+# Define CFSSST directories
+##############################################
+export COMOUTcfssst=$COMOUT/$cyc/cfssst
+mkdir -m 775 -p $COMOUTcfssst
 
 ##############################################
 # Define GES directories
 ##############################################
-export GESOUT=${GESOUT:-$GESROOT/${envir}}
-export GESOUT=$GESOUT/gefs.${PDY}
-mkdir -m 775 -p $GESOUT
+#export GESOUT=${GESOUT:-$GESROOT/${envir}}
+#export GESOUT=$GESOUT/gefs.${PDY}
+#mkdir -m 775 -p $GESOUT
 
 ##############################################
-echo locations of scripts and executables
+#echo locations of scripts and executables
 ##############################################
-#echo location of Get CFS SST
-#export GEFS_ANOM2_FCST=${EXECgefs}/gefs_anom2_fcst
-#export GEFS_NSTGEN=${EXECgefs}/gefs_nstgen
 
 ##############################################
 echo list environment before running script
@@ -124,7 +108,7 @@ $HOMEgefs/scripts/exgefs_getcfssst.sh.ecf
 #############################################################
 ERR=$?
 
-echo $ERR
+#echo $ERR
 
 if [ $ERR = 0 ]; then
     msg="JOB COMPLETED NORMALLY"
@@ -142,3 +126,4 @@ postmsg "$jlogfile" "$msg"
 echo `date` $0 `date -u` end
 
 exit $ERR
+
