@@ -68,10 +68,10 @@ if [[ $gfssource != prod ]]; then
     export COMINgfs=${COMINgfs_base}${PDY}/$cyc
     export COMINcfs=${COMINcfs_base}${PDY}/$cyc
 
-    if [ -f $COMINgfs ]; then
+    if [ ! -f $COMINgfs ]; then
         COMINgfs=
     fi
-    if [ -f $COMINcfs ]; then
+    if [ ! -f $COMINcfs ]; then
         COMINcfs=
     fi
 
@@ -81,9 +81,18 @@ fi
 export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}}    #/$cyc
 export COMINcfs=${COMINcfs:-$COMROOTp1/cfs/prod/cfs/cfs.${PDY}/$cyc} #
 
+if [ ! -d $COMINgfs ]; then
+    echo "FAILED: $COMINgfs does not exist!"
+    exit 50
+fi
+if [ ! -d $COMINcfs ]; then
+    echo "FAILED: $COMINcfs does not exist!"
+    exit 51
+fi
+
 #For test
-export COMINgfs=/gpfs/hps/nco/ops/com/gfs/prod/gfs.${PDY}
-export COMINcfs=/gpfs/gp1/nco/ops/com/cfs/prod/cfs/cfs.${PDY}/$cyc
+#export COMINgfs=/gpfs/hps/nco/ops/com/gfs/prod/gfs.${PDY}
+#export COMINcfs=/gpfs/gp1/nco/ops/com/cfs/prod/cfs/cfs.${PDY}/$cyc
 
 ##############################################
 # Define COM OUT directories
