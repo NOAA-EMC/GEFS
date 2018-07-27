@@ -185,7 +185,8 @@ cat $rawgb >> $sstinfile
 # Model climatology
 # daily one-season forecast must be trimmed to 35 days every 24h
 # Files do not include f00h
-climmgb2trim=${climmgb2trim:-/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/subx/CFS_ANOM2_create_Eric_0p25/CFSv2_clim/tmpsfc.$mm.$dd.${hh}Z.mean.clim.daily.grb2}
+CFSv2_clim_dir=${CFSv2_clim_dir:-/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/subx/CFS_ANOM2_create_Eric_0p25/CFSv2_clim}
+climmgb2trim=${CFSv2_clim_dir}/tmpsfc.$mm.$dd.${hh}Z.mean.clim.daily.grb2
 if [ ! -s $climmgb2trim ] ; then
     echo "FAILED: $climmgb2trim does not exist!"
     exit 89

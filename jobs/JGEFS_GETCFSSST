@@ -78,13 +78,16 @@ if [[ $gfssource != prod ]]; then
     echo $COMINgfs
     echo $COMINcfs
 fi
-export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}}    #/$cyc
-export COMINcfs=${COMINcfs:-$COMROOTp1/cfs/prod/cfs/cfs.${PDY}/$cyc} #
-
+export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}}  
 if [ ! -d $COMINgfs ]; then
-    echo "FAILED: $COMINgfs does not exist!"
-    exit 50
+    export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}/$cyc}
+    if [ ! -d $COMINgfs ]; then
+        echo "FAILED: $COMINgfs does not exist!"
+        exit 50
+    fi
 fi
+
+export COMINcfs=${COMINcfs:-$COMROOTp1/cfs/prod/cfs/cfs.${PDY}/$cyc}
 if [ ! -d $COMINcfs ]; then
     echo "FAILED: $COMINcfs does not exist!"
     exit 51

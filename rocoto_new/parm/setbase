@@ -86,12 +86,16 @@ if [ -d /scratch4/NCEPDEV ]; then
 
 	export PATH=$PATH:$USHutil:$EXECutil
 
-	#export USHutil=/scratch3/NCEPDEV/nwprod/util/exec for ndate
-	#export EXECgrib=/scratch3/NCEPDEV/nwprod/grib_util.v1.0.5/exec
-
 	export EXECgrib=${EXECutil}
 	export NDATE=${NDATE:-$EXECgrib/ndate}
 	export utilscript=$USHutil
+
+	# For SST - For CRAY, it has  the default value
+	export CFSv2_clim_dir=${CFSv2_clim_dir:-/scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/.svn/DATA/subx/CFS_ANOM2_create_Eric_0p25/CFSv2_clim}
+	export LSmaskT126=${LSmaskT126:-/scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/.svn/DATA/subx/CFS_ANOM2_create_Eric_0p25/mask/mask.t126.grb}
+
+	#export USHutil=/scratch3/NCEPDEV/nwprod/util/exec for ndate
+	#export EXECgrib=/scratch3/NCEPDEV/nwprod/grib_util.v1.0.5/exec
 
 	#export HOMEgsm=$HOMEDIR/global_shared.v15.0.0
 	#export HOMEgsm1=$HOMEDIR1/global_shared.v15.0.0
