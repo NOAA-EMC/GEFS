@@ -132,16 +132,15 @@ else
       #
       mv pgb2afile.$ffhr$cfsuffix $fileaout
           if [[ ! -s $fileaout ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            msg="FATAL ERROR: $fileaout WAS NOT WRITTEN"
             echo "`date`    $msg"
             postmsg "$jlogfile" "$msg"
             export err=1
             err_chk
           fi
       mv pgb2bfile.$ffhr$cfsuffix $filebout
-			testfile=$filebout
           if [[ ! -s $filebout ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            msg="FATAL ERROR: $filebout WAS NOT WRITTEN"
             echo "`date`    $msg"
             postmsg "$jlogfile" "$msg"
             export err=1
@@ -150,7 +149,7 @@ else
       if [[ "$makegrb2i" = "yes" ]]; then
 	mv pgb2afile.$ffhr$cfsuffix.idx $fileaouti
           if [[ ! -s $fileaouti ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            msg="FATAL ERROR: $fileaouti WAS NOT WRITTEN"
             echo "`date`    $msg"
             postmsg "$jlogfile" "$msg"
             export err=1
@@ -158,7 +157,7 @@ else
           fi
 	mv pgb2bfile.$ffhr$cfsuffix.idx $filebouti
           if [[ ! -s $filebouti ]]; then
-            msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
+            msg="FATAL ERROR: $filebouti WAS NOT WRITTEN"
             echo "`date`    $msg"
             postmsg "$jlogfile" "$msg"
             export err=1
@@ -216,7 +215,8 @@ else
         if test `echo $RUN | cut -c1-2` = "ge"
         then
           MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-          if test "$DO_LOW_RES" = 'YES' -a ` expr $fhr % 6 ` -eq 0 -a ! -n "$cfsuffix"
+          # if test "$DO_LOW_RES" = 'YES' -a ` expr $fhr % 6 ` -eq 0 -a ! -n "$cfsuffix"
+          if test ` expr $fhr % 6 ` -eq 0 -a ! -n "$cfsuffix"
           then
             $DBNROOT/bin/dbn_alert MODEL ENS_PGB2A2_$MEMBER $job $fileaout
             if [[ "$makegrb2i" = "yes" ]]; then
@@ -237,7 +237,8 @@ else
         if test `echo $RUN | cut -c1-2` = "ge"
         then
           MEMBER=`echo $RUN | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-          if test "$DO_LOW_RES" = 'YES' -a ` expr $fhr % 6 ` -eq 0 -a $fhr -ge 90 -a ! -n "$cfsuffix"
+          # if test "$DO_LOW_RES" = 'YES' -a ` expr $fhr % 6 ` -eq 0 -a $fhr -ge 90 -a ! -n "$cfsuffix"
+          if test ` expr $fhr % 6 ` -eq 0 -a $fhr -ge 90 -a ! -n "$cfsuffix"
           then
             $DBNROOT/bin/dbn_alert MODEL ENS_PGB2B2_$MEMBER $job $filebout
             if [[ "$makegrb2i" = "yes" ]]; then
