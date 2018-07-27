@@ -59,12 +59,13 @@ do
     # existence of the files (2m Temperatures - bias corrected)
     ############################################################
     
-    set +x
+    # JY set +x
+    hr_bc=`printf %03d $hr`
     export pgm="postcheck"
     ic=1
     while [ $ic -le $SLEEP_LOOP_MAX ]
     do
-       if test -f ${COMIN}/${type}_bc/${id}.t${cyc}z.${type}_bcf${hr}
+       if test -f ${COMIN_BC}/${type}_bc/${id}.t${cyc}z.${type}_bcf${hr_bc}
        then
           break
        else
@@ -78,7 +79,7 @@ do
        ###############################
        if [ $ic -eq $SLEEP_LOOP_MAX ]
        then
-          echo " FATAL ERROR ${COMIN}/${type}_bc/${id}.t${cyc}z.${type}_bcf${hr} is not available!!!"
+          echo " FATAL ERROR ${COMIN_BC}/${type}_bc/${id}.t${cyc}z.${type}_bcf${hr_bc} is not available!!!"
           export err=9
           err_chk
        fi
@@ -93,9 +94,9 @@ do
 #
 #    Process 2m Temperatures - bias corrected
 # 
-     cp ${COMIN}/${type}_bc/${id}.t${cyc}z.${type}_bcf${hr} .
-     $WGRIB2 ${id}.t${cyc}z.${type}_bcf${hr} | grep "TMP:2 m" | $WGRIB2 -i ${id}.t${cyc}z.${type}_bcf${hr} -grib ${id}.t${cyc}z.${type}_bcf${hr}_tmp_2m
-     cat ${id}.t${cyc}z.${type}_bcf${hr}_tmp_2m  >>  ${id}.t${cyc}z.${type}_bc_tmp_2m
+     cp ${COMIN_BC}/${type}_bc/${id}.t${cyc}z.${type}_bcf${hr_bc} .
+     $WGRIB2 ${id}.t${cyc}z.${type}_bcf${hr_bc} | grep "TMP:2 m" | $WGRIB2 -i ${id}.t${cyc}z.${type}_bcf${hr_bc} -grib ${id}.t${cyc}z.${type}_bcf${hr_bc}_tmp_2m
+     cat ${id}.t${cyc}z.${type}_bcf${hr_bc}_tmp_2m  >>  ${id}.t${cyc}z.${type}_bc_tmp_2m
 
    done
 done
