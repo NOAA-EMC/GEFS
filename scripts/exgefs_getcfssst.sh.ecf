@@ -25,7 +25,11 @@ fi
 
 export GEFS_ANOM2_FCST=${GEFS_ANOM2_FCST:-$EXECgefs/gefs_anom2_fcst}
 export GEFS_NSTGEN=${GEFS_NSTGEN:-$EXECgefs/gefs_nstgen}
-
+export nemsioread=${nemsioread:-${HOMEDIR}/exec/nemsio_read}
+if [ ! -f $nemsioread ]; then
+    echo "FAILED: Missing nemsio_read!"
+    exit 85
+fi
 ################################################################################
 # Preprocessing
 if [ ! -d $DATA ]; then mkdir -p $DATA; fi
@@ -42,7 +46,7 @@ echo real-time data transfer begins at $date
 
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 export filenamein_CFSv2=tmpsfc.grb2 #tmpsfc.01.$PDY$cyc.daily.grb2
-export filenamein_nst=nstanl.nemsio #gfs.${cycle}.nstanl.nemsio
+export filenamein_nst=nstanl.nemsio #gfs.${cycle}.nstanl.nemsio  or gfs.${cycle}.sfcanl.nemsio
 
 export filenameout_nst=Tsfc.grb  #gfs.t00z.Tsfc.$PDY.grb
 
@@ -62,6 +66,15 @@ fi
 #Link Real-time nst file
 sFile=$COMINgfs/gfs.${cycle}.nstanl.nemsio
 if [[ -f $sFile ]]; then
+    test_tref=`$nemsioread $sFile | grep tref`
+    if [ -z $test_tref ]; then
+        sFile=$COMINgfs/gfs.${cycle}.sfcanl.nemsio
+        test_tref=`$nemsioread $sFile | grep tref`
+        if [ -z $test_tref ]; then
+            echo " Real-time nst does not exist: $gfs.${cycle}.nstanl.nemsio or gfs.${cycle}.sfcanl.nemsio"
+            exit 93
+        fi
+    fi
     $NLN $sFile $filenamein_nst
 else
     echo " Real-time nst does not exist: $sFile"

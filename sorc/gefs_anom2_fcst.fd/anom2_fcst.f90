@@ -63,7 +63,7 @@
 !      print *, 'landsea mask'
 !      print *,(lsmask(ii),ii=1,maxgrd,50)
       call baclose(lsunit,iret)
-      if(iret.ne.0) then; print *,'error closing file=',iunit;stop;endif
+      if(iret.ne.0) then; print *,'error closing file=',lunit;stop;endif
       print *, 'LS mask successfully read'
 !
 !     reads raw forecast as a grib array, each lead time at a time
@@ -117,7 +117,7 @@
         call getgb(iunit,index,jf,n,jpds,jgds,kf,k,kpds,kgds,lbms,fgrid,iret)
         if(iret.ne.0) then
           print *,'error reading=',iunit
-          stop
+          call exit(iret)
         endif
    
        print*,kpds    
@@ -149,6 +149,10 @@
         call putgb(ounit,maxgrd,kpds,kgds,lbms,fgrid,iret)
 !        print *,(kpds(j),j=8,11)
 !
+        if (iret.ne.0) then
+            print *, 'error reading file=', iunit
+            call exit(iret)
+        endif
       enddo
       close(unit_climm)
       call baclose(iunit,iret)
