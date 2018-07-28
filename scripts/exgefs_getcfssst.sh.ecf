@@ -77,9 +77,21 @@ if [[ -f $sFile ]]; then
     fi
     $NLN $sFile $filenamein_nst
 else
-    echo " Real-time nst does not exist: $sFile"
-    exit 93
+    sFile=$COMINgfs/gfs.${cycle}.sfcanl.nemsio
+    if [[ -f $sFile ]]; then
+        test_tref=`$nemsioread $sFile | grep tref`
+        if [ -z $test_tref ]; then
+            echo " Real-time nst does not include tref varilable: $sFile"
+            exit 93
+        fi
+        $NLN $sFile $filenamein_nst
+    else
+        echo " Real-time nst does not exist: $sFile"
+        exit 93
+    fi
+
 fi
+
 if (( rc != 0 )); then
     echo "link sst FAILED!"
     exit 93

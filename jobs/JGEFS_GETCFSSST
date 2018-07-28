@@ -68,10 +68,10 @@ if [[ $gfssource != prod ]]; then
     export COMINgfs=${COMINgfs_base}${PDY}/$cyc
     export COMINcfs=${COMINcfs_base}${PDY}/$cyc
 
-    if [ ! -f $COMINgfs ]; then
+    if [ ! -d $COMINgfs ]; then
         COMINgfs=
     fi
-    if [ ! -f $COMINcfs ]; then
+    if [ ! -d $COMINcfs ]; then
         COMINcfs=
     fi
 
