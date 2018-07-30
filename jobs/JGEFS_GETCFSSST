@@ -16,7 +16,13 @@ export cycle=t${cyc}z
 ####################################
 export pid=$$
 #export DATA=${DATA:-$DATAROOT/${job}.${pid}}
-export DATA=${DATA:-$DATAROOT/gefs_getcfssst_$PDY$cyc.$envir.${LSB_JOBID}} #.${pid}} #For tempory use by Xianwu Xue
+if [ $gefsmachine = cray ]; then
+    export DATA=${DATA:-$DATAROOT/gefs_getcfssst_$PDY$cyc.$envir.${LSB_JOBID}}
+elif [ $gefsmachine = theia ]; then
+    export DATA=${DATA:-$DATAROOT/gefs_getcfssst_$PDY$cyc.$envir.${PBS_JOBID}}
+else
+    export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+fi
 mkdir -p $DATA
 cd $DATA
 

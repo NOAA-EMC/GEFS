@@ -78,7 +78,8 @@ if [ -d /scratch4/NCEPDEV ]; then
 
 	# export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/common
 	#export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/Walter.Kolczynski/nemsio_init
- 	export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/Bing.Fu/fv3gefs_init
+ 	#export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/Bing.Fu/fv3gefs_init
+    export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/fv3gefs_init
 	export HOMEdata=${COMROOThps} 
 
 	export EXECutil=${EXECutil:-/scratch4/NCEPDEV/global/save/glopara/nwpara/util/exec}
@@ -90,9 +91,10 @@ if [ -d /scratch4/NCEPDEV ]; then
 	export NDATE=${NDATE:-$EXECgrib/ndate}
 	export utilscript=$USHutil
 
-	# For SST - For CRAY, it has  the default value
-	export CFSv2_clim_dir=${CFSv2_clim_dir:-/scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/.svn/DATA/subx/CFS_ANOM2_create_Eric_0p25/CFSv2_clim}
-	export LSmaskT126=${LSmaskT126:-/scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/.svn/DATA/subx/CFS_ANOM2_create_Eric_0p25/mask/mask.t126.grb}
+	# For SST - However, for CRAY, it has  the default value
+    export LSmaskT126=${LSmaskT126:-/scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/svn/DATA/subx/CFS_ANOM2_create_Eric_0p25/mask/mask.t126.grb}
+    export CFSv2_clim_dir=${CFSv2_clim_dir:-/scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/svn/DATA/subx/CFS_ANOM2_create_Eric_0p25/CFSv2_clim}
+    export climogb2trim=${climogb2trim:-/scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/svn/DATA/subx/CFS_ANOM2_create_Eric_0p25/CFSR_clim/tmpsfc.cfsr.mean.clim.daily.1999.2010.grb2}
 
 	#export USHutil=/scratch3/NCEPDEV/nwprod/util/exec for ndate
 	#export EXECgrib=/scratch3/NCEPDEV/nwprod/grib_util.v1.0.5/exec
