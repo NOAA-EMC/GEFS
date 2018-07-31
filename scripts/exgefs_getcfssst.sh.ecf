@@ -51,17 +51,56 @@ export filenamein_nst=nstanl.nemsio #gfs.${cycle}.nstanl.nemsio  or gfs.${cycle}
 export filenameout_nst=Tsfc.grb  #gfs.t00z.Tsfc.$PDY.grb
 
 #Link Real-time CFSv2
-sFile=$COMINcfs/time_grib_01/tmpsfc.01.$PDY$cyc.daily.grb2
-if [[ -f $sFile ]]; then
-    $NLN $sFile $filenamein_CFSv2
-else
+HFcfsMax=120  # 5 days back
+HFcfs=0
+PDYcfs=$PDY
+until [ $HFcfs -gt $HFcfsMax ] ; do
+    PDYcfscfc=`$NDATE -${HFcfs} ${PDY}${cyc}`
+    PDYcfs=`echo $PDYcfscfc | cut -c1-8`
+    if [[ $gfssource != prod ]]; then
+        export COMINcfs=${COMINcfs_base}${PDYcfs}/$cyc
+        if [ ! -d $COMINcfs ]; then
+            COMINcfs=
+        fi
+        echo $COMINcfs
+    fi
+    export COMINcfs=${COMINcfs:-$COMROOTp1/cfs/prod/cfs/cfs.${PDYcfs}/$cyc}
+    if [ ! -d $COMINcfs ]; then
+        HFcfs=`expr $HFcfs \+ 24` 
+        continue
+    else
+        export COMINcfs_base=$(readlink -f ${COMINcfs}/../../)/cfs.
+    fi
+
+    #${COMINgfs_base}${PDY}/$cyc
+    sFile=${COMINcfs_base}${PDYcfs}/${cyc}/time_grib_01/tmpsfc.01.${PDYcfs}${cyc}.daily.grb2
+    if [[ -f $sFile ]]; then
+        $NLN $sFile $filenamein_CFSv2
+        break
+    fi
+
+    echo $HFcfs
+    echo $PDYcfs
+    HFcfs=`expr $HFcfs \+ 24` 
+done
+echo ${HFcfs}----Edwardted
+
+if [ $HFcfs -gt $HFcfsMax ];  then
     echo " Real-time CFSv2 does not exist: $sFile"
     exit 92
 fi
-if (( rc != 0 )); then
-    echo "link sst FAILED!"
-    exit 92
-fi
+
+#sFile=$COMINcfs/time_grib_01/tmpsfc.01.$PDY$cyc.daily.grb2
+#if [[ -f $sFile ]]; then
+#    $NLN $sFile $filenamein_CFSv2
+#else
+#    echo " Real-time CFSv2 does not exist: $sFile"
+#    exit 92
+#fi
+#if (( rc != 0 )); then
+#    echo "link sst FAILED!"
+#    exit 92
+#fi
 
 #Link Real-time nst file
 sFile=$COMINgfs/gfs.${cycle}.nstanl.nemsio
@@ -196,7 +235,8 @@ rawgb2=$tmpraw/TMPsfc.${PDY}${cyc}.24h.grb2
 if [ -s $rawgb2 ] ; then
     rm -f $rawgb2
 fi
-FH=24
+FH=`expr 24 \+ ${HFcfs}`
+echo $FH
 until [ $FH -gt $NFH ] ; do
     $WGRIB2 $rawgb2trim -append -if "TMP:surface:$FH hour fcst:" -grib $rawgb2 > /dev/null
     FH=`expr $FH \+ 24`

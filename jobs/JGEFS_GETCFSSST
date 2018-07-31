@@ -70,19 +70,15 @@ export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 ##############################################
 # Define COM directories
 ##############################################
+# For COMINgfs
 if [[ $gfssource != prod ]]; then
     export COMINgfs=${COMINgfs_base}${PDY}/$cyc
-    export COMINcfs=${COMINcfs_base}${PDY}/$cyc
 
     if [ ! -d $COMINgfs ]; then
         COMINgfs=
     fi
-    if [ ! -d $COMINcfs ]; then
-        COMINcfs=
-    fi
 
     echo $COMINgfs
-    echo $COMINcfs
 fi
 export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}}  
 if [ ! -d $COMINgfs ]; then
@@ -93,11 +89,23 @@ if [ ! -d $COMINgfs ]; then
     fi
 fi
 
-export COMINcfs=${COMINcfs:-$COMROOTp1/cfs/prod/cfs/cfs.${PDY}/$cyc}
-if [ ! -d $COMINcfs ]; then
-    echo "FAILED: $COMINcfs does not exist!"
-    exit 51
-fi
+## For COMINcfs
+#if [[ $gfssource != prod ]]; then
+#    export COMINcfs=${COMINcfs_base}${PDY}/$cyc
+#
+#    if [ ! -d $COMINcfs ]; then
+#        COMINcfs=
+#    fi#
+#
+#    echo $COMINcfs
+#fi
+#export COMINcfs=${COMINcfs:-$COMROOTp1/cfs/prod/cfs/cfs.${PDY}/$cyc}
+#if [ ! -d $COMINcfs ]; then
+#    echo "FAILED: $COMINcfs does not exist!"
+#    exit 51
+#else
+#    export COMINcfs_base=$(readlink -f ${COMINcfs}/../../)/cfs.
+#fi
 
 #For test
 #export COMINgfs=/gpfs/hps/nco/ops/com/gfs/prod/gfs.${PDY}
