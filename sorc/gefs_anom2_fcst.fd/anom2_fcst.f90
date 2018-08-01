@@ -8,7 +8,7 @@
       integer,     parameter :: iunit=51,ounit=61,lsunit=41
       real,        parameter :: undef=10e+20
       character*250 fn_rawfc,fn_anom_fc,kpdsfile,LSmaskT126
-      character*3  un_climm,un_climo,un_rtgan
+      character*3  un_climm,un_climo,un_rtgan,un_HFcfs
       real         fgrid(maxgrd),lsmask(maxgrd)
       real         rawfc(maxgrd,ndays)
       real*4       climo(maxgrd), climo_0(maxgrd)
@@ -23,7 +23,7 @@
       integer      kpds8, kpds9, kpds10, kpds21
       integer      res,unit_climm,unit_climo,unit_rtgan
       real         dmin,dmax
-      integer      iday,iret,tret,ii
+      integer      iday,iret,tret,ii,HFcfs
 
       call getarg(1,fn_rawfc)
       call getarg(2,un_climm)
@@ -32,6 +32,7 @@
       call getarg(5,fn_anom_fc)
       call getarg(6,kpdsfile)
       call getarg(7,LSmaskT126)
+      call getarg(8,un_HFcfs)
       fn_rawfc = trim(adjustl(fn_rawfc))
       print *,'Raw forecast filename:',fn_rawfc
       read(un_climm,'(i3)')unit_climm
@@ -44,6 +45,8 @@
       print *,'Output forecast filename:',fn_anom_fc
       LSmaskT126 = trim(adjustl(LSmaskT126))
       print *,'Land and Sea mask filename:',LSmaskT126
+      read(un_HFcfs,'(i3)')HFcfs
+      print *, HFcfs, ' Days before'
 !
 !     reads land (=1) -sea (=0) mask
       iret = 0
@@ -111,8 +114,12 @@
         jf = maxgrd
         jgds=-1
        
-
-        jhr = 24*iday
+        if (iday.eq.0) then
+            jhr=0
+        else
+            jhr =HFcfs + 24*iday
+        endif
+        print *, "hour: ", jhr
         jpds(14) = jhr
         call getgb(iunit,index,jf,n,jpds,jgds,kf,k,kpds,kgds,lbms,fgrid,iret)
         if(iret.ne.0) then

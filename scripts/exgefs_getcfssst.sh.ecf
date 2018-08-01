@@ -83,7 +83,6 @@ until [ $HFcfs -gt $HFcfsMax ] ; do
     echo $PDYcfs
     HFcfs=`expr $HFcfs \+ 24` 
 done
-echo ${HFcfs}----Edwardted
 
 if [ $HFcfs -gt $HFcfsMax ];  then
     echo " Real-time CFSv2 does not exist: $sFile"
@@ -130,7 +129,7 @@ else
     fi
 
 fi
-
+rc=$?
 if (( rc != 0 )); then
     echo "link sst FAILED!"
     exit 93
@@ -185,7 +184,8 @@ NFH=840  # 35 days. Fixed. The fortran code is expecting this.
 grid='255 0 1440 720 90000 0 128 -90000 359750 250 250 0'
 grid_new="0 6 0 0 0 0 0 0 1440 720 0 0 90000000 0 48 -90000000 359750000 250000 250000 0"
 
-export grid0p25="latlon 0:1440:0.25 90:720:-0.25"
+export grid0p25="latlon 0:1440:0.25 90:720:-0.25034770514603616"
+#export grid0p25="latlon 0:1440:0.25 90:721:-0.25"
 export option1=' -set_grib_type same -new_grid_winds earth '
 export option21=' -new_grid_interpolation bilinear  -if '
 export option22=":(LAND|CSNOW|CRAIN|CFRZR|CICEP|ICSEV):"
@@ -213,7 +213,7 @@ if (( ERR !=0 )); then
     exit 96
 fi
 cat $anlfileout > $sstinfile    # This is lead 0 forecast
-
+#exit 150
 # CFS forecast data
 # Raw flx forecast (make sure it has been downloaded from hpss by running gethpss.sh)
 # it is trimmed to obtain data every 24h
@@ -235,9 +235,11 @@ rawgb2=$tmpraw/TMPsfc.${PDY}${cyc}.24h.grb2
 if [ -s $rawgb2 ] ; then
     rm -f $rawgb2
 fi
+#FH=24
 FH=`expr 24 \+ ${HFcfs}`
+NFHcfs=`expr ${HFcfs} \+ ${NFH}`
 echo $FH
-until [ $FH -gt $NFH ] ; do
+until [ $FH -gt $NFHcfs ] ; do
     $WGRIB2 $rawgb2trim -append -if "TMP:surface:$FH hour fcst:" -grib $rawgb2 > /dev/null
     FH=`expr $FH \+ 24`
 done
@@ -358,7 +360,7 @@ if [ -s $fn_anom_fc ] ; then
 fi
 
 echo $fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile $LSmaskT126
-$GEFS_ANOM2_FCST $fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile $LSmaskT126
+$GEFS_ANOM2_FCST $fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile $LSmaskT126 $HFcfs
 ERR=$?
 if [ ERR -eq 0 ] ; then 
     echo "2-tiered sst generation finished!!!"
