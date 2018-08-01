@@ -92,7 +92,6 @@ if [ -d /scratch4/NCEPDEV ]; then
 	export utilscript=$USHutil
 
 	# For SST - However, for CRAY, it has  the default value
-    export LSmaskT126=${LSmaskT126:-/scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/svn/DATA/subx/CFS_ANOM2_create_Eric_0p25/mask/mask.t126.grb}
     export CFSv2_clim_dir=${CFSv2_clim_dir:-/scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/svn/DATA/subx/CFS_ANOM2_create_Eric_0p25/CFSv2_clim}
     export climogb2trim=${climogb2trim:-/scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/svn/DATA/subx/CFS_ANOM2_create_Eric_0p25/CFSR_clim/tmpsfc.cfsr.mean.clim.daily.1999.2010.grb2}
 

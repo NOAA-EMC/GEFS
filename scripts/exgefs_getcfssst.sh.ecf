@@ -151,9 +151,6 @@ echo read nst file to save tref end!!!
 #==============================================================================================
 echo 2-tiered sst generation begin
 
-# Land Sea mask file
-export LSmaskT126=${LSmaskT126:-/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/subx/CFS_ANOM2_create_Eric_0p25/mask/mask.t126.grb}
-
 export sstoutdir="outdata"
 mkdir -p $sstoutdir
 # temporary directories for climm and cfsr (analysis)
@@ -359,8 +356,8 @@ if [ -s $fn_anom_fc ] ; then
     rm -f $fn_anom_fc
 fi
 
-echo $fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile $LSmaskT126
-$GEFS_ANOM2_FCST $fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile $LSmaskT126 $HFcfs
+echo $fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile
+$GEFS_ANOM2_FCST $fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile $HFcfs
 ERR=$?
 if [ ERR -eq 0 ] ; then 
     echo "2-tiered sst generation finished!!!"

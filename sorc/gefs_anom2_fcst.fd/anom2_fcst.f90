@@ -5,11 +5,11 @@
       implicit none
 
       integer,     parameter :: maxgrd=1036800, ndays=35
-      integer,     parameter :: iunit=51,ounit=61,lsunit=41
+      integer,     parameter :: iunit=51,ounit=61 
       real,        parameter :: undef=10e+20
-      character*250 fn_rawfc,fn_anom_fc,kpdsfile,LSmaskT126
+      character*250 fn_rawfc,fn_anom_fc,kpdsfile
       character*3  un_climm,un_climo,un_rtgan,un_HFcfs
-      real         fgrid(maxgrd),lsmask(maxgrd)
+      real         fgrid(maxgrd) 
       real         rawfc(maxgrd,ndays)
       real*4       climo(maxgrd), climo_0(maxgrd)
       real*4       climm(maxgrd)
@@ -31,8 +31,7 @@
       call getarg(4,un_rtgan)
       call getarg(5,fn_anom_fc)
       call getarg(6,kpdsfile)
-      call getarg(7,LSmaskT126)
-      call getarg(8,un_HFcfs)
+      call getarg(7,un_HFcfs)
       fn_rawfc = trim(adjustl(fn_rawfc))
       print *,'Raw forecast filename:',fn_rawfc
       read(un_climm,'(i3)')unit_climm
@@ -43,15 +42,10 @@
       print *,'Unit file of RTG analysis',unit_rtgan
       fn_anom_fc = trim(adjustl(fn_anom_fc))
       print *,'Output forecast filename:',fn_anom_fc
-      LSmaskT126 = trim(adjustl(LSmaskT126))
-      print *,'Land and Sea mask filename:',LSmaskT126
       read(un_HFcfs,'(i3)')HFcfs
       print *, HFcfs, ' Days before'
 !
-!     reads land (=1) -sea (=0) mask
       iret = 0
-      call baopenr(lsunit,LSmaskT126,iret)
-      if(iret.ne.0) then; print *,'error opening LS mask';stop;endif
       index = 0
       n = 0
       jpds = -1
@@ -59,16 +53,7 @@
       jpds(6) = 1
       jpds(7) = 0
       jf = maxgrd
-      call getgb(lsunit,index,jf,n,jpds,jgds,kf,k,kpds,kgds,lbms,fgrid,iret)      
-      if(iret.ne.0) then; print *,'error reading mask';stop;endif
-      lsmask=fgrid
-!      print *,(lsmask(ii),ii=500,5000,500)
-!      print *, 'landsea mask'
-!      print *,(lsmask(ii),ii=1,maxgrd,50)
-      call baclose(lsunit,iret)
-      if(iret.ne.0) then; print *,'error closing file=',lsunit;stop;endif
-      print *, 'LS mask successfully read'
-!
+
 !     reads raw forecast as a grib array, each lead time at a time
       iret = 0
       call baopenr(iunit,fn_rawfc,iret)
