@@ -223,7 +223,7 @@ if [ ! -f $rawgb2trim  ]; then
     $WGRIB2  $filenamein_CFSv2 $option1 $option21 $option22 $option23 -new_grid $grid0p25 $rawgb2trim
     ERR=$?
     if (( ERR !=0 )); then
-        echo "FAILED to WGRIB2: $filenamein_CFSv2; $anlfileout!"
+        echo "FAILED to WGRIB2: $filenamein_CFSv2; $rawgb2trim!"
         exit 96
     fi
 fi
