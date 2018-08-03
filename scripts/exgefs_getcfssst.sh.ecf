@@ -35,20 +35,15 @@ fi
 if [ ! -d $DATA ]; then mkdir -p $DATA; fi
 cd $DATA || exit 99
 
-# ---For SST
-# export DATA=$DATA
-
 #################################################################################
 # Run
-
 #=====
 echo real-time data transfer begins at $date
 
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 export filenamein_CFSv2=tmpsfc.grb2 #tmpsfc.01.$PDY$cyc.daily.grb2
 export filenamein_nst=nstanl.nemsio #gfs.${cycle}.nstanl.nemsio  or gfs.${cycle}.sfcanl.nemsio
-
-export filenameout_nst=Tsfc.grb  #gfs.t00z.Tsfc.$PDY.grb
+export filenameout_nst=Tsfc.grb     #gfs.t00z.Tsfc.$PDY.grb  #-- is sstanlfile
 
 #Link Real-time CFSv2
 HFcfsMax=120  # 5 days back
@@ -72,7 +67,6 @@ until [ $HFcfs -gt $HFcfsMax ] ; do
         export COMINcfs_base=$(readlink -f ${COMINcfs}/../../)/cfs.
     fi
 
-    #${COMINgfs_base}${PDY}/$cyc
     sFile=${COMINcfs_base}${PDYcfs}/${cyc}/time_grib_01/tmpsfc.01.${PDYcfs}${cyc}.daily.grb2
     if [[ -f $sFile ]]; then
         $NLN $sFile $filenamein_CFSv2
@@ -89,17 +83,6 @@ if [ $HFcfs -gt $HFcfsMax ];  then
     exit 92
 fi
 
-#sFile=$COMINcfs/time_grib_01/tmpsfc.01.$PDY$cyc.daily.grb2
-#if [[ -f $sFile ]]; then
-#    $NLN $sFile $filenamein_CFSv2
-#else
-#    echo " Real-time CFSv2 does not exist: $sFile"
-#    exit 92
-#fi
-#if (( rc != 0 )); then
-#    echo "link sst FAILED!"
-#    exit 92
-#fi
 
 #Link Real-time nst file
 sFile=$COMINgfs/gfs.${cycle}.nstanl.nemsio
@@ -165,8 +148,7 @@ mkdir -p $tmpcfsr
 # -- file with parameters kpds8, kpds9 and kpds10
 kpdsfile=kpdslist.txt
 
-sstinfile=$tmpraw/TMPsfc.${PDY}${cyc}.24hr.grb
-export fn_rawfc=$sstinfile
+export fn_rawfc=$tmpraw/TMPsfc.${PDY}${cyc}.24hr.grb
 export fn_anom_fc=$sstoutdir/TMPsfc.${PDY}${cyc}.24hr.anom.grb
 
 
@@ -198,18 +180,17 @@ echo ${PDY}${cyc}
 # -- Generate Raw Forecast data
 # RTG + CFS fcst
 
->$sstinfile
+>$fn_rawfc
 
 # RTG analysis for initial time required by GFS
-sstanlfile=$filenameout_nst #gfs.${cycle}.Tsfc.$PDY.grb======================
 anlfileout=anl_sst_grb_latlon.$PDY
-$COPYGB -g"$grid" -x $sstanlfile $anlfileout
+$COPYGB -g"$grid" -x $filenameout_nst $anlfileout
 ERR=$?
 if (( ERR !=0 )); then
-    echo "FAILED to COPYGB: $sstanlfile; $anlfileout!"
+    echo "FAILED to COPYGB: $filenameout_nst; $anlfileout!"
     exit 96
 fi
-cat $anlfileout > $sstinfile    # This is lead 0 forecast
+cat $anlfileout > $fn_rawfc    # This is lead 0 forecast
 #exit 150
 # CFS forecast data
 # Raw flx forecast (make sure it has been downloaded from hpss by running gethpss.sh)
@@ -244,7 +225,7 @@ done
 rawgb=$tmpraw/TMPsfc.${PDY}${cyc}.fcs.grb
 $CNVGRIB -g21 $rawgb2 $rawgb
 if [ $? -eq 0 ] ; then rm $rawgb2 ; fi
-cat $rawgb >> $sstinfile
+cat $rawgb >> $fn_rawfc
 
 # Model climatology
 # daily one-season forecast must be trimmed to 35 days every 24h
