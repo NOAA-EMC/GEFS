@@ -77,9 +77,13 @@ setpdy.sh
 # Define COM directories
 ##############################################
 export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}}
+##
+# for test parall run, use this directory
+
+export COMINgfs=/gpfs/hps3/ptmp/emc.glopara/fv3q2fy19retro2/gfs.$PDY
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
-#mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2a2p5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap25
@@ -122,11 +126,11 @@ env | sort
 #mpmd job with 4 tasks, 1 for 1d, 2 for 2.5d, 3 for 0.5e 4 for 0.25d
 
 #task 1, 1.0 grid
-#export jobgrid_1=1p0
-#subdata=${DATA}/${jobgrid_1}
-#if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-#outfile=${subdata}/${jobgrid_1}.out
-#echo "$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf $jobgrid_1 ${subdata} 2>&1 >${outfile}" >>prdgen_gfs.cmdfile
+export jobgrid_1=1p0
+subdata=${DATA}/${jobgrid_1}
+if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+outfile=${subdata}/${jobgrid_1}.out
+echo "$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf $jobgrid_1 ${subdata} 2>&1 >${outfile}" >>prdgen_gfs.cmdfile
 
 #task 2, 2.5d grid
 export jobgrid_2=2p5

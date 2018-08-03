@@ -6,7 +6,7 @@ def config_tasknames(dicBase):
     if iTaskName_Num <= 0:
         iTaskName_Num = 0
 
-        # #   <!-- initial jobs -->
+	# #    <!-- initial jobs -->
         if dicBase['RUN_INIT'] == "GSM_RELOC":
             # ---jgefs_enkf_track
             iTaskName_Num += 1
@@ -96,7 +96,6 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "jgefs_ensstat_high"
 
-        # #    <!-- CHGRES jobs -->
         if dicBase['RUN_CHGRES'] == "YES" or dicBase['RUN_CHGRES'][0] == "Y":
             # ---jgefs_sigchgres
             iTaskName_Num += 1
@@ -105,14 +104,14 @@ def config_tasknames(dicBase):
 
         # #    <!-- RUN_PRDGEN_GFS jobs -->
         if dicBase['RUN_PRDGEN_GFS'] == "YES" or dicBase['RUN_PRDGEN_GFS'][0] == "Y":
-            # ---jgefs_sigchgres
+            # ---jgefs_prdgen_gfs
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "jgefs_prdgen_gfs"
 
         # #    <!-- RUN_GETCFSSST jobs -->
         if dicBase['RUN_GETCFSSST'] == "YES" or dicBase['RUN_GETCFSSST'][0] == "Y":
-            # ---jgefs_sigchgres
+            # ---jgefs_getcfssst
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "jgefs_getcfssst"
@@ -795,6 +794,9 @@ def create_task( \
 
     if taskname in ["jgefs_ensstat_high", "jgefs_post_track", "jgefs_post_genesis", "jgefs_enspost"]:
         strings += (create_envar(name="RUNMEM", value="#member#", sPre=sPre_2))
+
+    if taskname in ["jgefs_prdgen_gfs"]:
+        strings += (create_envar(name="RUNMEM", value="gfs", sPre=sPre_2))
 
     if taskname in ['jgefs_keep_data', 'jgefs_archive', 'jgefs_cleanup']:
         strings += sPre + sPre + '<command><cyclestr>&PRE; &BIN;/{0}.py</cyclestr></command>\n'.format(taskname)
