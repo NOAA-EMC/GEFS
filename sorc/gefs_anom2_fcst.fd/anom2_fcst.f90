@@ -136,7 +136,7 @@
 !        endif 
         kpds(9)=  kpds9    !month
         kpds(10)= kpds10   !day of the month
-        kpds(14) = 0
+        kpds(14) = 24*iday !0
         kpds(21) = kpds21
         call putgb(ounit,maxgrd,kpds,kgds,lbms,fgrid,iret)
 !        print *,(kpds(j),j=8,11)
