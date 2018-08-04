@@ -92,7 +92,8 @@ if [ -d /scratch4/NCEPDEV ]; then
 	export utilscript=$USHutil
 
 	# For SST - However, for CRAY, it has  the default value
-    export CFSv2_clim_dir=${CFSv2_clim_dir:-/scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/svn/DATA/subx/CFS_ANOM2_create_Eric_0p25/CFSv2_clim}
+    #export CFSv2_clim_dir=${CFSv2_clim_dir:-/scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/svn/DATA/subx/CFS_ANOM2_create_Eric_0p25/CFSv2_clim}
+    export CFSv2_clim_dir=${CFSv2_clim_dir:-/scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/svn/DATA/subx/CFS_ANOM2_create_Xianwu_0p25/CFSv2_clim_4cyc}
     export climogb2trim=${climogb2trim:-/scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/svn/DATA/subx/CFS_ANOM2_create_Eric_0p25/CFSR_clim/tmpsfc.cfsr.mean.clim.daily.1999.2010.grb2}
 
 	#export USHutil=/scratch3/NCEPDEV/nwprod/util/exec for ndate
