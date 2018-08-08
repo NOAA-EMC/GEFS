@@ -548,9 +548,9 @@ c                W1=(PSIG(I,J,K)-P(L))/(P(L+1)-P(L))
         COMMON /NHC3/AMDX,AMDY
 
         IWMAX=0.
-        IWMIN=1000.
+        IWMIN=9999
         JWMAX=0.
-        JWMIN=1000.
+        JWMIN=9999.
         DO I = 1,IB
           IW = ING(I)
           JW = JNG(I)
