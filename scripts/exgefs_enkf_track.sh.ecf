@@ -332,8 +332,8 @@ do
          if [[ $haveinput = no ]]; then
             found=true
            if   [[ $NEMSIO_IN = .true. ]]; then
-                fcstinn=$COMINenkf${pdyp0}/${cycp0}/gdas.t${cycp0}z.atmf`printf "%3.3d" $fhrp`.mem0${mmem}.nemsio
-                fcstinp=$COMINenkf${pdyp0}/${cycp0}/gdas.t${cycp0}z.atmf`printf "%3.3d" $fhrp`.mem0${pmem}.nemsio
+                fcstinn=$COMINenkf${pdyp0}/${cycp0}/mem0${mmem}/gdas.t${cycp0}z.atmf`printf "%3.3d" $fhrp`.nemsio
+                fcstinp=$COMINenkf${pdyp0}/${cycp0}/mem0${pmem}/gdas.t${cycp0}z.atmf`printf "%3.3d" $fhrp`.nemsio
            else
                 fcstinn=$COMINenkf${pdyp0}/${cycp0}/sfg_${pdycycp0}_fhr${fhrp}_mem0${mmem}
                 fcstinp=$COMINenkf${pdyp0}/${cycp0}/sfg_${pdycycp0}_fhr${fhrp}_mem0${pmem}

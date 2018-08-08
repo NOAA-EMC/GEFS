@@ -177,9 +177,9 @@ export SEA_ICE_THRESHLD_OUTPUT="0.50"
     export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
   fi
   if [ $NEMSIO_IN = .true. ]; then
-    if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio && -f $COMINgfs/gfs.$cycle.nstanl.nemsio ]]; then
+    if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
       export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
-      $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
+      $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
       getnsttfrc=$?
       if (( getnsttfrc == 0 )); then
         echo `date` $getnsttf after
@@ -310,9 +310,9 @@ export SEA_ICE_THRESHLD_OUTPUT="0.50"
   fi
 
   if [ $NEMSIO_IN = .true. ]; then
-    if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio && -f $COMINgfs/gfs.$cycle.nstanl.nemsio ]]; then
+    if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
       export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
-      $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
+      $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
       getnsttfrc=$?
       if (( getnsttfrc == 0 )); then
         echo `date` $getnsttf after 

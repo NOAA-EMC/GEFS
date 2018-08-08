@@ -166,6 +166,13 @@ fi
 while test $fhr -le $FHOUR
 do
 
+if test $fhr -lt 100
+then
+   export mfhr="0$fhr"
+else
+   export mfhr=$fhr
+fi
+
     ###############################
     # Start Looping for the 
     # existence of the restart files
@@ -178,7 +185,7 @@ do
     while [ $ic -le $SLEEP_LOOP_MAX ]
     do
 #      if [[ -s $restart_file_a$fhr ]] && [[ -s $restart_file_b$fhr ]]; then
-       if test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2f$fhr
+       if test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2f$mfhr
        then
 	  found=yes
           break
@@ -224,7 +231,7 @@ do
       parmlist=$parmhh 
     fi
 
-    ln -s $COMINgfs/${RUN}.t${cyc}z.master.grb2f${fhr} master_grb2file
+    ln -s $COMINgfs/${RUN}.t${cyc}z.master.grb2f${mfhr} master_grb2file
 
     $WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile
     if [[ x$fhoroglist != x ]]; then

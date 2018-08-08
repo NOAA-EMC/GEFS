@@ -287,11 +287,16 @@ d6ahead_str="${d6ahead_ymd} ${d6ahead_hh}00"
 
 
   synvitdir=${synvitdir:-$COMINgfs}
-  synvitfile=gfs.t${CYL}z.syndata.tcvitals.tm00
+  synvitfile=t${CYL}z/gfs.t${CYL}z.syndata.tcvitals.tm00
   synvit6ago_dir=${synvit6ago_dir:-$COMINgfs6ago}
-  synvit6ago_file=gfs.t${d6ago_hh}z.syndata.tcvitals.tm00
+  synvit6ago_file=t$t${d6ago_hh}z/gfs.t${d6ago_hh}z.syndata.tcvitals.tm00
   synvit6ahead_dir=${synvit6ahead_dir:-$COMINgfs6ahead}
-  synvit6ahead_file=gfs.t${d6ahead_hh}z.syndata.tcvitals.tm00
+  synvit6ahead_file=t${t${d6ahead_hh}z}z/gfs.t${d6ahead_hh}z.syndata.tcvitals.tm00
+# synvitfile=gfs.t${CYL}z.syndata.tcvitals.tm00
+# synvit6ago_dir=${synvit6ago_dir:-$COMINgfs6ago}
+# synvit6ago_file=gfs.t${d6ago_hh}z.syndata.tcvitals.tm00
+# synvit6ahead_dir=${synvit6ahead_dir:-$COMINgfs6ahead}
+# synvit6ahead_file=gfs.t${d6ahead_hh}z.syndata.tcvitals.tm00
 
 set +x
 echo " "
