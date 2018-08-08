@@ -31,15 +31,6 @@ export mem=`echo $RUNMEM|cut -c3-5`
 # Set up the cycle variable
 ######################################
 export cycle=t${cyc}z
-export cycle_fcst=t${cyc_fcst}z
-
-if (( cyc == cyc_fcst )); then
-	export cycsuffix=false
-	export fcstlong=true
-else
-	export fcstlong=false
-	export cycsuffix=true
-fi
 
 ####################################
 # Specify NET and RUN Name and model
@@ -94,6 +85,7 @@ export USHpost=${HOMEpost}/ush
 export EXECpost=${HOMEpost}/exec
 export FIXpost=${HOMEpost}/fix
 export FIXglobal=${HOMEgsm}/fix
+export FIXgfs=${HOMEgsm}/fix
 #export PARMpost=${HOMEpost}/parm
 export PARMpost=${HOMEpost}/parm/post   # for the flat structure
 # PARMPOST (instead of PARMpost) is used in the post ush script
@@ -246,13 +238,9 @@ fi
 ####################################
 # Specify Restart File Name to Key Off
 ####################################
-if [[ $fcstlong = true ]]; then
-	#restart_file=$COMIN/$cyc/misc/fcst/${RUNMEM}.t${cyc}z.logf
-	restart_file=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.logf
-	#restart_file=$COMIN/$cyc/sfcsig/$mem/${RUNMEM}.t${cyc}z.logf
-else
-	restart_file=$COMIN/$cyc/misc/fcst/${RUNMEM}.t${cyc}z.logf
-fi
+#restart_file=$COMIN/$cyc/misc/fcst/${RUNMEM}.t${cyc}z.logf
+restart_file=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.logf
+#restart_file=$COMIN/$cyc/sfcsig/$mem/${RUNMEM}.t${cyc}z.logf
 
 ####################################
 # Specify Timeout Behavior of Post
@@ -277,13 +265,8 @@ case $FORECAST_SEGMENT in
 	(hr)
 		# high resolution segment
 		export SHOUR=00
-		if [[ $fcstlong = true ]]; then
 			export FHOUR_HIGH=$fhmaxh
 			export FHOUR_LOW=$fhmax
-		else
-			export FHOUR_HIGH=6
-			export FHOUR_LOW=6
-		fi # [[ $fcstlong = true ]]
 		case $SUBJOB in
 			(A)  
 				export DOANALYSIS=YES;
@@ -312,38 +295,27 @@ case $FORECAST_SEGMENT in
 		;;
 	(lr)
 		# low resolution segment
-		export FHINC_HIGH=6
-		if (( fhmaxh > FHMAX_HF )); then
-                        export SHOUR=$(( $fhmaxh + $FHOUT ))
-                else
-                        export SHOUR=$(( $fhmaxh + $FHOUT_HF ))
-                fi
+		if (( FHMAX_HF > fhmaxh )); then
+			export SHOUR=$(( $fhmaxh + $FHOUT_HF ))
+		else
+			export SHOUR=$(( $fhmaxh + $FHOUT ))
+		fi
 		if (( SHOUR < 10 )); then
 			SHOUR=0$SHOUR
 		fi
-		if [[ $fcstlong = true ]]; then
 			export FHOUR_HIGH=$fhmax
 			export FHOUR_LOW=$fhmax
 			export FHOUT=$FHOUT;
 			export FHOUT_HF=$FHOUT_HF
-		else
-			export FHOUR_HIGH=6
-			export FHOUR_LOW=6
-		fi # [[ $fcstlong = true ]]
 		export DOANALYSIS=NO
 		;;
 	(*)
 		# whole forecast
 		export SHOUR=00
-		if [[ $fcstlong = true ]]; then
 			export FHOUR_HIGH=$fhmax
 			export FHOUR_LOW=$fhmax
 			export FHOUT=$FHOUT;
 			export FHOUT_HF=$FHOUT_HF
-		else
-			export FHOUR_HIGH=6
-			export FHOUR_LOW=6
-		fi # [[ $fcstlong = true ]]
 		;;
 esac # $FORECAST_SEGMENT
 
@@ -365,8 +337,7 @@ if (( 0 == 1 )) ; then
 ####################################
 # Check if this is a restart
 ####################################
-  mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control
-if [[ $cycsuffix = false ]]; then
+	mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control
 	if test -f $mcfile; then
 		# modelrecvy=`cat < $COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control`
 		modelrecvy=`cat < $mcfile`
@@ -389,34 +360,9 @@ if [[ $cycsuffix = false ]]; then
 			fi # test $recvy_shour -ge $FHOUR_HIGH
 		fi # test $RERUN = "RESTART"
 	fi # test -f $miscfile
-else
-	mcfile=$COMOUT/$cyc/misc/$post/${RUNMEM}.t${cyc}z.master.control.cycfs$cyc_fcst
-	if test -f $mcfile; then
-		# modelrecvy=`cat < $COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.cycfs$cyc_fcst`
-		modelrecvy=`cat < $mcfile`
-		recvy_pdy=`echo $modelrecvy | cut -c1-8`
-		recvy_cyc=`echo $modelrecvy | cut -c9-10`
-		recvy_shour=`echo $modelrecvy | cut -c11-13`
-		if test $RERUN = "RESTART"; then
-			if test $recvy_shour -ge $FHOUR_HIGH; then
-				msg="Forecast Post Already Completed to $recvy_shour"
-				postmsg "$jlogfile" "$msg"
-				SHOUR=$recvy_shour
-			else # test $recvy_shour -ge $FHOUR_HIGH
-				if test $recvy_shour -ge $FHOUR_HIGH; then
-					SHOUR=`expr $recvy_shour + $FHINC_LOW`
-				else
-					SHOUR=`expr $recvy_shour + $FHINC_HIGH`
-				fi
-				msg="Starting: PDY=$PDY cycle=t${recvy_cyc}z SHOUR=$SHOUR	."
-				postmsg "$jlogfile" "$msg"
-			fi # test $recvy_shour -ge $FHOUR_HIGH
-		fi # test $RERUN = "RESTART"
-	fi # test -f $miscfile
-fi # [[ $cycsuffix = false ]]
 fi # (( 0 == 1 ))
 
-export post_log=$DATA/post.$FORECAST_SEGMENT.log$SUBJOB\_${RUNMEM}$cfsuffix
+export post_log=$DATA/post.$FORECAST_SEGMENT.log$SUBJOB\_${RUNMEM}
 
 echo
 env | sort

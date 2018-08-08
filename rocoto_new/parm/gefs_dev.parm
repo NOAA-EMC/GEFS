@@ -6,6 +6,7 @@
 echo `date` $0 test section begin
 export fhmax=384
 export fhmaxh=192
+export FHMAXHF=192
 export FHOUTHF=3
 export FHOUTLF=6
 export VERBOSE=no
