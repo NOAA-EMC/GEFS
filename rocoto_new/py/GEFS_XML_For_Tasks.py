@@ -320,6 +320,9 @@ def get_param_of_task(dicBase, taskname):
                 if dicBase['taskname_1'.upper()].lower() == sRecenterTask:
                     if dicBase['taskname_2'.upper()].lower() == "jgefs_init_fv3chgrs":
                         sDep = '<taskdep task="jgefs_init_recenter"/>'
+                elif dicBase['taskname_2'.upper()].lower() == sRecenterTask:
+                    if dicBase['taskname_3'.upper()].lower() == "jgefs_init_fv3chgrs":
+                        sDep = '<taskdep task="jgefs_init_recenter"/>'
 
             # For Warm Start
             if taskname.lower() == "jgefs_forecast_high":
