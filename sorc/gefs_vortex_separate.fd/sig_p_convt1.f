@@ -641,9 +641,9 @@ c        DIMENSION TEST(IGU,JGU)
           NCHT=74
 
         IWMAX=0.
-        IWMIN=1000.
+        IWMIN=9999.
         JWMAX=0.
-        JWMIN=1000.
+        JWMIN=9999.
         DO I = 1,IB
           IW = ING(I)
           JW = JNG(I)
