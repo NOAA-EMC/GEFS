@@ -330,7 +330,12 @@ def get_param_of_task(dicBase, taskname):
                 if dicBase['taskname_1'.upper()].lower() == sRecenterTask:
                     if dicBase['taskname_2'.upper()].lower() == "jgefs_forecast_high":
                         sDep = '<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
-
+                if dicBase['taskname_1'.upper()].lower() == "jgefs_getcfssst":
+                    if dicBase['taskname_3'.upper()].lower() == "jgefs_init_fv3chgrs":
+                        sDep = '<and>\n\t<taskdep task="jgefs_init_fv3chgrs_#member#"/>\n\t<taskdep task="jgefs_getcfssst"/>\n</and>'
+                elif dicBase['taskname_1'.upper()].lower() == "jgefs_init_recenter":
+                    if  dicBase['taskname_2'.upper()].lower() == "jgefs_init_fv3chgrs":
+                        sDep = '<taskdep task="jgefs_init_fv3chgrs_#member#"/>'
             # For Low Resolution
             if taskname.lower() == "jgefs_post_low" or taskname.lower() == "jgefs_prdgen_low":
                 start_hr_low = int(dicBase["fhmaxh".upper()]) + int(dicBase["FHOUTHF".upper()])
