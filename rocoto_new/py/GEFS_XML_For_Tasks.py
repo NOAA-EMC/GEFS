@@ -700,6 +700,9 @@ def create_metatask(taskname="jgefs_init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#
 
     strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
 
+    sDep = sDep.replace('\\n', '\n')
+    sDep = sDep.replace('\\t', '\t')
+
     if sDep != "":
         strings += sPre_2 + '<dependency>\n'
         strings += sPre_2 + '\t' + sDep + '\n'  # '\t<taskdep task="{0}"/>\n'.format(taskdep)

@@ -11,26 +11,19 @@ date
 ############################
 export cycle=t${cyc}z
 
-####################################
-# obtain unique process id (pid) and make working directory
-####################################
-export pid=$$
-#export DATA=${DATA:-$DATAROOT/${job}.${pid}}
-if [ $gefsmachine = cray ]; then
-    export DATA=${DATA:-$DATAROOT/gefs_getcfssst_$PDY$cyc.$envir.${LSB_JOBID}}
-elif [ $gefsmachine = theia ]; then
-    export DATA=${DATA:-$DATAROOT/gefs_getcfssst_$PDY$cyc.$envir.${PBS_JOBID}}
-else
-    export DATA=${DATA:-$DATAROOT/${job}.${pid}}
-fi
-mkdir -p $DATA
-cd $DATA
-
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
 setpdy.sh
 . PDY
+
+####################################
+# obtain unique process id (pid) and make working directory
+####################################
+export pid=$$
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+mkdir -p $DATA
+cd $DATA
 
 ####################################
 # Specify NET and RUN Name and model
@@ -55,61 +48,17 @@ export pgmerr=errfile
 # Specify Execution Areas
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
-
-#export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
-
-##############################################
-#echo set parameters using gefs.parm
-##############################################
-#. $PARMgefs/gefs.parm
-#. $PARMgefs/gefs_init.parm
-
-#env | sort
 
 ##############################################
 # Define COM directories
 ##############################################
-# For COMINgfs
 if [[ $gfssource != prod ]]; then
-    export COMINgfs=${COMINgfs_base}${PDY}/$cyc
-
-    if [ ! -d $COMINgfs ]; then
-        COMINgfs=
-    fi
-
-    echo $COMINgfs
+	export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc}
+	export COMINcfs=${COMINcfs:-${COMINcfs_base}}
 fi
-export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}}  
-if [ ! -d $COMINgfs ]; then
-    export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}/$cyc}
-    if [ ! -d $COMINgfs ]; then
-        echo "FAILED: $COMINgfs does not exist!"
-        exit 50
-    fi
-fi
-
-## For COMINcfs
-#if [[ $gfssource != prod ]]; then
-#    export COMINcfs=${COMINcfs_base}${PDY}/$cyc
-#
-#    if [ ! -d $COMINcfs ]; then
-#        COMINcfs=
-#    fi#
-#
-#    echo $COMINcfs
-#fi
-#export COMINcfs=${COMINcfs:-$COMROOTp1/cfs/prod/cfs/cfs.${PDY}/$cyc}
-#if [ ! -d $COMINcfs ]; then
-#    echo "FAILED: $COMINcfs does not exist!"
-#    exit 51
-#else
-#    export COMINcfs_base=$(readlink -f ${COMINcfs}/../../)/cfs.
-#fi
-
-#For test
-#export COMINgfs=/gpfs/hps/nco/ops/com/gfs/prod/gfs.${PDY}
-#export COMINcfs=/gpfs/gp1/nco/ops/com/cfs/prod/cfs/cfs.${PDY}/$cyc
+export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}/$cyc}  
+export COMINcfs=${COMINcfs:-$COMROOTp1/cfs/prod/cfs/cfs.}
 
 ##############################################
 # Define COM OUT directories
@@ -121,13 +70,6 @@ export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 ##############################################
 export COMOUTcfssst=$COMOUT/$cyc/cfssst
 mkdir -m 775 -p $COMOUTcfssst
-
-##############################################
-# Define GES directories
-##############################################
-#export GESOUT=${GESOUT:-$GESROOT/${envir}}
-#export GESOUT=$GESOUT/gefs.${PDY}
-#mkdir -m 775 -p $GESOUT
 
 ##############################################
 #echo locations of scripts and executables
@@ -161,6 +103,12 @@ postmsg "$jlogfile" "$msg"
 ##############################
 
 echo `date` $0 `date -u` end
+
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
 exit $ERR
 

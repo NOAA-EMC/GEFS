@@ -73,40 +73,46 @@ if [ $CompileCode = "yes" ]; then
 
     ## Install GEFS
     ./install.sh
+
+    cd $sWS/../
+    if [ $machine = "theia" ]; then
+        /bin/ln -sf /scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/common/gefs-fixed fix
+    elif [ $machine = "cray" ]; then
+        /bin/ln -sf /gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/gefs-fixed fix
+    fi
 fi
 
 # for cleanning
 if [ $CleanAll = "yes" ]; then
-  echo "Cleaning ..."
+    echo "Cleaning ..."
 
     cd $sWS/../sorc
 
     for dir in gefs_vortex_separate.fd gefs_vortex_combine.fd global_sigzvd.fd  global_ensadd.fd  global_enspqpf.fd  gefs_ensstat.fd  global_ensppf.fd ; do
-          cd $dir
-          make clean
-          cd ..
+        cd $dir
+        make clean
+        cd ..
     done
 
     export LIBS="${G2_LIB4} ${W3NCO_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}"
 
     for dir in global_enscvprcp.fd  global_enspvrfy.fd  global_enssrbias.fd global_enscqpf.fd  global_enscvt24h.fd  global_ensrfmat.fd ; do
-          cd $dir
-          make clean
-          cd ..
+        cd $dir
+        make clean
+        cd ..
     done
 
     for dir in ../util/sorc/gettrk.fd ../util/sorc/overenstr.grib.fd ../util/sorc/getnsttf.fd; do
-          cd $dir
-          make clean
-          cd ../../../sorc
+        cd $dir
+        make clean
+        cd ../../../sorc
     done
 
     cd $sWS/../sorc
   rm -rf ../exec
   rm -rf ../util/exec
 
-
-fi
+fi # for CleanAll
 
 # for rocoto
 
@@ -122,6 +128,6 @@ if [ $RunRocoto = "yes" ]; then
         module load python
     fi
     ./py/run_to_get_all.py  $userConfigFile
-fi
+fi # For RunRocoto
 
 
