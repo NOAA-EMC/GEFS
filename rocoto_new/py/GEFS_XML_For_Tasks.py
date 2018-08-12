@@ -6,6 +6,13 @@ def config_tasknames(dicBase):
     if iTaskName_Num <= 0:
         iTaskName_Num = 0
 
+        # #    <!-- RUN_GETCFSSST jobs -->
+        if dicBase['RUN_GETCFSSST'] == "YES" or dicBase['RUN_GETCFSSST'][0] == "Y":
+            # ---jgefs_sigchgres
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_getcfssst"
+
         # #   <!-- initial jobs -->
         if dicBase['RUN_INIT'] == "GSM_RELOC":
             # ---jgefs_enkf_track
@@ -109,13 +116,6 @@ def config_tasknames(dicBase):
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "jgefs_prdgen_gfs"
-
-        # #    <!-- RUN_GETCFSSST jobs -->
-        if dicBase['RUN_GETCFSSST'] == "YES" or dicBase['RUN_GETCFSSST'][0] == "Y":
-            # ---jgefs_sigchgres
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_getcfssst"
 
         # #    <!-- low resolution forecast and post process jobs -->
         if dicBase['RUN_FORECAST_LOW'] == "YES" or dicBase['RUN_FORECAST_LOW'][0] == "Y":
