@@ -44,6 +44,7 @@ export gefsmachine=${gefsmachine:-wcoss}
 
   export HOMEpost=$HOMEDIR/ncep_post.v5.1.2
   export HOMEenkf=$HOMEDIR/enkf.v2.0.3
+  export HOMEenkf=/nwprod/enkf.v2.0.3
   export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.8
 
 # This section is optional, using path to define utility files
