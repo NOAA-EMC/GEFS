@@ -85,6 +85,10 @@ fi
 # for cleanning
 if [ $CleanAll = "yes" ]; then
     echo "Cleaning ..."
+    
+    rm -rf gefs.xml
+    rm -rf cron_rocoto
+    rm -rf tasks
 
     cd $sWS/../sorc
 
@@ -93,8 +97,6 @@ if [ $CleanAll = "yes" ]; then
         make clean
         cd ..
     done
-
-    export LIBS="${G2_LIB4} ${W3NCO_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}"
 
     for dir in global_enscvprcp.fd  global_enspvrfy.fd  global_enssrbias.fd global_enscqpf.fd  global_enscvt24h.fd  global_ensrfmat.fd ; do
         cd $dir
@@ -107,10 +109,17 @@ if [ $CleanAll = "yes" ]; then
         make clean
         cd ../../../sorc
     done
+    for dir in gefs_anom2_fcst.fd gefs_nstgen.fd ; do
+        cd $dir
+        make clean
+        cd ..
+    done    
 
-    cd $sWS/../sorc
-  rm -rf ../exec
-  rm -rf ../util/exec
+
+    cd ${sWS}/../sorc
+    rm -rf ../exec
+    rm -rf ../util/exec
+    rm -rf ../fix
 
 fi # for CleanAll
 
