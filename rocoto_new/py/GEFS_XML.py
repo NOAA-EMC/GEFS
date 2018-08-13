@@ -27,6 +27,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     if sVarName not in dicBase:
         import os
         sVarValue = os.environ.get("USER")
+        if sVarValue in ['emc.enspara', 'emc.enspara1']:
+            sVarValue = os.environ.get("SUDO_USER")    
         if "." in sVarValue:
             sVarValue = sVarValue.split(".")[0]
         dicBase[sVarName] = sVarValue
@@ -36,6 +38,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     if sVarName not in dicBase:
         import os
         sVarValue = os.environ.get("USER")
+        if sVarValue in ['emc.enspara', 'emc.enspara1']:
+            sVarValue = os.environ.get("SUDO_USER")
         if "." in sVarValue:
             sVarValue = sVarValue.split(".")[1]
         dicBase[sVarName] = sVarValue

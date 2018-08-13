@@ -6,7 +6,14 @@ def config_tasknames(dicBase):
     if iTaskName_Num <= 0:
         iTaskName_Num = 0
 
-	# #    <!-- initial jobs -->
+        # #    <!-- RUN_GETCFSSST jobs -->
+        if dicBase['RUN_GETCFSSST'] == "YES" or dicBase['RUN_GETCFSSST'][0] == "Y":
+            # ---jgefs_sigchgres
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_getcfssst"
+
+        # #   <!-- initial jobs -->
         if dicBase['RUN_INIT'] == "GSM_RELOC":
             # ---jgefs_enkf_track
             iTaskName_Num += 1
@@ -96,12 +103,19 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "jgefs_ensstat_high"
 
-        # will be used in the future
-        # @** if RUN_CHGRES==YES
-        #   <!-- chargeres jobs -->
-        #    &jgefs_sigchgres;
-        # @** endif
-   
+        # #    <!-- CHGRES jobs -->
+        if dicBase['RUN_CHGRES'] == "YES" or dicBase['RUN_CHGRES'][0] == "Y":
+            # ---jgefs_sigchgres
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_sigchgres"
+
+        # #    <!-- RUN_PRDGEN_GFS jobs -->
+        if dicBase['RUN_PRDGEN_GFS'] == "YES" or dicBase['RUN_PRDGEN_GFS'][0] == "Y":
+            # ---jgefs_sigchgres
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "jgefs_prdgen_gfs"
 
         # #    <!-- low resolution forecast and post process jobs -->
         if dicBase['RUN_FORECAST_LOW'] == "YES" or dicBase['RUN_FORECAST_LOW'][0] == "Y":
@@ -306,6 +320,9 @@ def get_param_of_task(dicBase, taskname):
                 if dicBase['taskname_1'.upper()].lower() == sRecenterTask:
                     if dicBase['taskname_2'.upper()].lower() == "jgefs_init_fv3chgrs":
                         sDep = '<taskdep task="jgefs_init_recenter"/>'
+                elif dicBase['taskname_2'.upper()].lower() == sRecenterTask:
+                    if dicBase['taskname_3'.upper()].lower() == "jgefs_init_fv3chgrs":
+                        sDep = '<taskdep task="jgefs_init_recenter"/>'
 
             # For Warm Start
             if taskname.lower() == "jgefs_forecast_high":
@@ -313,7 +330,12 @@ def get_param_of_task(dicBase, taskname):
                 if dicBase['taskname_1'.upper()].lower() == sRecenterTask:
                     if dicBase['taskname_2'.upper()].lower() == "jgefs_forecast_high":
                         sDep = '<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
-
+                if dicBase['taskname_1'.upper()].lower() == "jgefs_getcfssst":
+                    if dicBase['taskname_3'.upper()].lower() == "jgefs_init_fv3chgrs":
+                        sDep = '<and>\n\t<taskdep task="jgefs_init_fv3chgrs_#member#"/>\n\t<taskdep task="jgefs_getcfssst"/>\n</and>'
+                elif dicBase['taskname_1'.upper()].lower() == "jgefs_init_recenter":
+                    if  dicBase['taskname_2'.upper()].lower() == "jgefs_init_fv3chgrs":
+                        sDep = '<taskdep task="jgefs_init_fv3chgrs_#member#"/>'
             # For Low Resolution
             if taskname.lower() == "jgefs_post_low" or taskname.lower() == "jgefs_prdgen_low":
                 start_hr_low = int(dicBase["fhmaxh".upper()]) + int(dicBase["FHOUTHF".upper()])
@@ -682,6 +704,9 @@ def create_metatask(taskname="jgefs_init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#
     strings += (create_envar(name="RUNMEM", value="ge#member#", sPre=sPre_2))
 
     strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
+
+    sDep = sDep.replace('\\n', '\n')
+    sDep = sDep.replace('\\t', '\t')
 
     if sDep != "":
         strings += sPre_2 + '<dependency>\n'
