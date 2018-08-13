@@ -11,12 +11,6 @@ date
 ############################
 export cycle=t${cyc}z
 
-##############################
-# Run setpdy and initialize PDY variables
-##############################
-setpdy.sh
-. PDY
-
 ####################################
 # obtain unique process id (pid) and make working directory
 ####################################
@@ -24,6 +18,12 @@ export pid=$$
 export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
 
 ####################################
 # Specify NET and RUN Name and model
