@@ -58,7 +58,7 @@ export gefsmachine=${gefsmachine:-wcoss}
   module use /nwprod2/modulefiles
   module load prod_util
   module load grib_util/v1.0.1
-  module load util_shared/v1.0.5
+# module load util_shared/v1.0.5
 #
   export NDATE=${NDATE:-$USHutil/ndate}
 
