@@ -27,17 +27,6 @@ export jobgrid=$jobgrid
 # Set up the cycle variable
 ######################################
 export cycle=t${cyc}z
-export cycle_fcst=t${cyc_fcst}z
-
-if (( cyc == cyc_fcst )); then
-	export fcstlong=true
-	export cfsuffix=""
-	export cycsuffix=false
-else
-	export fcstlong=false
-	export cfsuffix=".cycfs$cyc_fcst"
-	export cycsuffix=true
-fi # (( cyc == cyc_fcst ))
 
 ####################################
 # Specify NET and RUN Name and model
@@ -96,13 +85,8 @@ setpdy.sh
 ####################################
 # Create member list
 ####################################
-if [[ $fcstlong = true ]]; then
-	memberlist="c00"
-	kmem=1
-else
-	memberlist=""
-	kmem=0
-fi
+memberlist="c00"
+kmem=1
 
 ##############################################
 # Define COM directories
@@ -170,11 +154,7 @@ case $FORECAST_SEGMENT in
 		export FHOUT_HF=$FHOUT_HF
 		export FHMAX_HF=$FHMAX_HF
 		export FHINCP5=${FHOUT_HF:-06}
-		if [[ $fcstlong = true ]]; then
-			export FHOUR=$fhmaxh
-		else
-			export FHOUR=06
-		fi
+		export FHOUR=$fhmaxh
 		;;
 	(lr) # low resolution segment
 		export DOANALYSIS=NO;
@@ -188,11 +168,7 @@ case $FORECAST_SEGMENT in
 		export FHOUT=$FHOUT
 		export FHOUT_HF=$FHOUT_HF
 		export FHMAX_HF=$FHMAX_HF
-		if [[ $fcstlong = true ]]; then
-			export FHOUR=$fhmax
-		else
-			export FHOUR=06
-		fi
+		export FHOUR=$fhmax
 		;;
 	(*) # whole forecast period
 		export DOANALYSIS=YES;
@@ -202,11 +178,7 @@ case $FORECAST_SEGMENT in
 		export FHOUT_HF=$FHOUT_HF
 		export FHMAX_HF=$FHMAX_HF
 		export FHINCP5=${FHOUTHF:-06}
-		if [[ $fcstlong = true ]]; then
-			export FHOUR=$fhmax
-		else
-			export FHOUR=06
-		fi
+		export FHOUR=$fhmax
 		;;
 esac # $FORECAST_SEGMENT
 

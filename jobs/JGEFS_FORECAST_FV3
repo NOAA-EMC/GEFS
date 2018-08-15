@@ -29,18 +29,6 @@ cd $DATA
 # Set up cycle varaible
 ############################
 export cycle=t${cyc}z
-export cycle_fcst=t${cyc_fcst}z
-
-if (( cyc == cyc_fcst )); then
-	export cycsuffix=false
-	export fcstlong=true
-	cfsuffix=
-else
-	export fcstlong=false
-	export cycsuffix=true
-	export ENS_SPS=.false.
-	cfsuffix=.cycfs$cyc_fcst
-fi
 
 ####################################
 # Specify NET and RUN Name and model
