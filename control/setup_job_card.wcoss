@@ -204,6 +204,9 @@ export envir=$envir
 export cyc=$cyc
 export cyc_fcst=$cyc_fcst
 export job=$jobname
+
+#export GFSFV3=/gpfs/hps3/ptmp/emc.glopara/fv3q2fy19retro2   #gyre
+export GFSFV3=/gpfs/hps3/ptmp/emc.glopara/ROTDIRS/prfv3rt1   #tide
 eofCAT
 #DHOU 03/07/2012 1 line
 #export jobscript=$jobscript

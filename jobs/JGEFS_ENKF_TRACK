@@ -136,8 +136,11 @@ export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
 # JY export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.$PDY} 
 
 #XXXXX
-export COMINgfs=/gpfs/hps3/ptmp/emc.glopara/fv3q2fy19retro2/gfs.$PDY/$cyc
-export COMINgfs6ago=/gpfs/hps3/ptmp/emc.glopara/fv3q2fy19retro2/gfs.$PDY
+#export COMINgfs=/gpfs/hps3/ptmp/emc.glopara/fv3q2fy19retro2/gfs.$PDY/$cyc
+#export COMINgfs6ago=/gpfs/hps3/ptmp/emc.glopara/fv3q2fy19retro2/gfs.$PDY
+export COMINgfs=$GFSFV3/gfs.$PDY/$cyc
+export COMINgfs6ago=$GFSFV3/gfs.${d6ago_ymd}
+export COMINgfs6ahead=$GFSFV3/gfs.${d6ahead_ymd}
 #export COMINgfs=/gpfs/hps3/ptmp/emc.glopara/ROTDIRS/prfv3rt1/gfs.$PDY/$cyc
 #XXXXX
 
@@ -145,7 +148,8 @@ export COMINgfs6ago=/gpfs/hps3/ptmp/emc.glopara/fv3q2fy19retro2/gfs.$PDY
 export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.$PDY/$cyc)} 
 # 20160607 RLW if present, modify preset COMINenkf to include the date for this job
 #XXXXX
-export COMINenkf=/gpfs/hps3/ptmp/emc.glopara/fv3q2fy19retro2/enkf.gdas.
+#export COMINenkf=/gpfs/hps3/ptmp/emc.glopara/fv3q2fy19retro2/enkf.gdas.
+export COMINenkf=$GFSFV3/enkf.gdas.
 #export COMINenkf=-/gpfs/hps3/ptmp/emc.glopara/ROTDIRS/prfv3rt1/enkf.gdas.
 #XXXXX
 

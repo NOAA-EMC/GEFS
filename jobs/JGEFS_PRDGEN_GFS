@@ -83,7 +83,8 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=/gpfs/hps3/ptmp/emc.glopara/fv3q2fy19retro2/gfs.$PDY/$cyc
+#export COMINgfs=/gpfs/hps3/ptmp/emc.glopara/fv3q2fy19retro2/gfs.$PDY/$cyc
+export COMINgfs=$GFSFV3/gfs.$PDY/$cyc
 export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY}/$cyc)}
 export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
 

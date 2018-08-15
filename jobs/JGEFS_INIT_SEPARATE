@@ -134,9 +134,10 @@ env | sort
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=/gpfs/hps3/ptmp/emc.glopara/fv3q2fy19retro2/gfs.$PDY/$cyc
+#export COMINgfs=/gpfs/hps3/ptmp/emc.glopara/fv3q2fy19retro2/gfs.$PDY/$cyc
+export COMINgfs=$GFSFV3/gfs.$PDY/$cyc
 export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.$PDY)}
-export COMINenkf=/gpfs/hps3/ptmp/emc.glopara/fv3q2fy19retro2/enkf.gdas.
+export COMINenkf=$GFSFV3/enkf.gdas.
 export COMINenkf=${COMINenkf:-$(compath.py gfs/prod)/enkf.}
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
