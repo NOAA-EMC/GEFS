@@ -8,7 +8,9 @@ export First=Xianwu
 export Last=Xue
 export fhmax=384
 export fhmaxh=192
-export FHOUTHR=6
+export FHMAXHF=192
+export FHOUTHF=3
+export FHOUTLF=6
 export VERBOSE=no
 export navg_min=3
 

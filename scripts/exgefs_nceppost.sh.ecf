@@ -8,6 +8,10 @@ echo " Jul 05 - Wobus - 6-hour breeding, ensemble only"
 echo " Jul 07 - Wobus - nceppost creates master files"
 echo " Jul 10 - Wobus - create additional anl log file"
 echo " Jun 11 - Wobus - move master post files into /com"
+echo " Dec 14 - Hou - updated to grib2 format and add grib2 ensemble messages"
+echo " Feb 18 - Hou - updated to process FV3 based nemsio files"
+echo " Jun 18 - Hou - replaced hard-wired output frequency with FHOUT_HF and FHOUT"
+echo " Jul 18 - Hou - removed variables related to cyc_fcst (Breeding) "
 echo "-----------------------------------------------------"
 #####################################################################
 
@@ -21,16 +25,8 @@ postmsg "$jlogfile" "$msg"
 export MP_LABELIO=YES
 #poe hostname
 
-if [[ "$cycsuffix" = "true" ]]; then
-	export cfsuffix=".cycfs$cyc_fcst"
-else
-	export cfsuffix=""
-fi
-echo cyc=$cyc cyc_fcst=$cyc_fcst
-echo cycle=$cycle cycle_fcst=$cycle_fcst
-echo fcstlong=$fcstlong
-echo cycsuffix=$cycsuffix
-echo cfsuffix=$cfsuffix
+echo cyc=$cyc
+echo cycle=$cycle
 
 #export WGRIB2=${WGRIB2:-${EXECgrib}/wgrib2}
 #export COPYGB2=${COPYGB2:-${EXECgrib}/copygb2}
@@ -165,6 +161,12 @@ fi
 export fhr
 
 while (( fhr <= FHOUR )); do
+	if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
+		FHINC=$FHOUT_HF
+	else
+		FHINC=$FHOUT
+	fi
+
 	if (( fhr < 100 )); then
 		ghr=0$fhr
 	else
@@ -316,7 +318,7 @@ if [ $DOANALYSIS = YES ]; then
 				err_chk
 			fi # (( rc == 0 ))
 
-			pgbfoutd=`readlink -n pgbfout`
+			pgbfoutd=`readlink -nf pgbfout`
 			if [[ ! -s $pgbfoutd ]]; then
 				msg="FATAL ERROR: $pgbfoutd WAS NOT WRITTEN"
 				echo "`date`    $msg"
@@ -325,7 +327,7 @@ if [ $DOANALYSIS = YES ]; then
 				err_chk
 			fi # [[ ! -s $pgbfoutd ]];
 
-			pgbifoutd=`readlink -n pgbifout`
+			pgbifoutd=`readlink -nf pgbifout`
 			if [[ ! -s $pgbifoutd ]]; then
 				msg="FATAL ERROR: $pgbifoutd WAS NOT WRITTEN"
 				echo "`date`    $msg"
@@ -376,6 +378,12 @@ export fhrm=$fhrm
 # Loop Through the Post Forecast Files 
 ############################################################
 while (( fhr <= FHOUR )); do
+	if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
+		FHINC=$FHOUT_HF
+	else
+		FHINC=$FHOUT
+	fi
+
  	mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhrm$cfsuffix
 
  	if [[ ! -s $mcfile ]]; then
@@ -511,7 +519,7 @@ while (( fhr <= FHOUR )); do
 			err_chk
 		fi # (( rc == 0 ))
 
-		pgbfoutd=`readlink -n pgbfout`
+		pgbfoutd=`readlink -nf pgbfout`
 		if [[ ! -s $pgbfoutd ]]; then
 			msg="FATAL ERROR: $pgbfoutd WAS NOT WRITTEN"
 			echo "`date`    $msg"
@@ -519,7 +527,7 @@ while (( fhr <= FHOUR )); do
 			export err=1
 			err_chk
 		fi # [[ ! -s $pgbfoutd ]]
-		pgbifoutd=`readlink -n pgbifout`
+		pgbifoutd=`readlink -nf pgbifout`
 		if [[ ! -s $pgbifoutd ]]; then
 			msg="FATAL ERROR: $pgbifoutd WAS NOT WRITTEN"
 			echo "`date`    $msg"

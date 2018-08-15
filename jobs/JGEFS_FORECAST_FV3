@@ -29,18 +29,6 @@ cd $DATA
 # Set up cycle varaible
 ############################
 export cycle=t${cyc}z
-export cycle_fcst=t${cyc_fcst}z
-
-if (( cyc == cyc_fcst )); then
-	export cycsuffix=false
-	export fcstlong=true
-	cfsuffix=
-else
-	export fcstlong=false
-	export cycsuffix=true
-	export ENS_SPS=.false.
-	cfsuffix=.cycfs$cyc_fcst
-fi
 
 ####################################
 # Specify NET and RUN Name and model
@@ -171,15 +159,15 @@ export LOGSCRIPT=startmsg
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 	#CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$fhouth;FHZER=$fhzerh;                        
-	CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$FHOUTHR;FHZER=6;
+	CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$FHOUTLF;FHZER=6;
 	MTNRSL=$MTNRSLFV;LONB=$LONBFV;LATB=$LATBFV;
-	FHINI=0                              #forecast starting hour
+	FHINI=0;FHMAX_HF=$FHMAXHF;FHOUT_HF=$FHOUTHF; 
 	(( LEVS = LEVSHR + 1 ))
 elif [[ $FORECAST_SEGMENT = lr ]] ; then
 	#CASE=$casel;FHMAX=$fhmax;FHOUT=$fhoutl;FHZER=$fhzerl;
-	CASE=$CASELR;FHMAX=$fhmax;FHOUT=$FHOUTLR;FHZER=6;
+	CASE=$CASELR;FHMAX=$fhmax;FHOUT=$FHOUTLF;FHZER=6;
  	MTNRSL=$MTNRSLLR;LONB=$LONBLR;LATB=$LATBLR;
-	FHINI=$fhmaxhres
+	FHINI=$fhmaxhres;FHMAX_HF=$FHMAXHF;FHOUT_HF=$FHOUTHF;
 	(( LEVS = LEVSLR + 1 ))
 else
 	FORECAST_SEGMENT=$FORECAST_SEGMENT is not supported !

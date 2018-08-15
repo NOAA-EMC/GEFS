@@ -81,10 +81,12 @@ if(err_code != 0):
 # Archive directories
 os.chdir(output_path)
 for directory in dirs_to_archive:
-	tar_file = destination_path + "/gefs." + date_string + "_" + cycle + "." + directory + ".tar"
-	print("Creating tar on HPSS for " + directory)
-	print("    From " + output_path + "/" + directory + " to " + tar_file)
-	err_code = subprocess.run(["htar", "-cvf", tar_file, directory]).returncode
-	if(err_code != 0):
-		print("FATAL: Could not create " + tar_file + " on HPSS, error code: " + str(err_code))
-		quit(-101)
+	tar_folder = destination_path + "/gefs." + date_string + "_" + cycle + "." + directory
+	if os.path.exists(tar_folder):
+		tar_file = tar_folder + ".tar"
+		print("Creating tar on HPSS for " + directory)
+		print("    From " + output_path + "/" + directory + " to " + tar_file)
+		err_code = subprocess.run(["htar", "-cvf", tar_file, directory]).returncode
+		if(err_code != 0):
+			print("FATAL: Could not create " + tar_file + " on HPSS, error code: " + str(err_code))
+			quit(-101)

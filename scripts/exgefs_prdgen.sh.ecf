@@ -25,24 +25,20 @@ cd $DATA
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
 
-if [[ "$cycsuffix" = "true" ]]; then
-	export cfsuffix=".cycfs$cyc_fcst"
-else
-	export cfsuffix=""
-fi
-echo cyc=$cyc cyc_fcst=$cyc_fcst
-echo cycle=$cycle cycle_fcst=$cycle_fcst
+echo cyc=$cyc
+echo cycle=$cycle
 echo fcstlong=$fcstlong
-echo cycsuffix=$cycsuffix
-echo cfsuffix=$cfsuffix
 
 #usage "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR} ${FHOUR} ${FHINC} $DOANALYSIS ${jobgrid_1} ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
 export SHOUR=$1
 export FHOUR=$2
-export FHINC=$3
+#export FHINC=$3
+export FHOUT=$3
 export DOANALYSIS=$4
 export jobgrid=$5
 export jobdir=$6
+export FHOUT_HF=$7
+export FHMAX_HF=$8
 
 export MP_LABELIO=YES
 
@@ -72,6 +68,13 @@ case $jobgrid in
        pgbd=pgrb2bp5
        pgapre=pgrb2a.0p50.
        pgbpre=pgrb2b.0p50.
+       pgasuf=
+       ;;
+  0p25) submc=prd0p25
+       pgad=pgrb2ap25
+       pgbd=pgrb2bp25
+       pgapre=pgrb2a.0p25.
+       pgbpre=pgrb2b.0p25.
        pgasuf=
        ;;
 esac
@@ -220,6 +223,11 @@ export fhr
 ############################################################
 while test $fhr -le $FHOUR; do
 	ffhr=f$fhr
+	if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
+		FHINC=$FHOUT_HF
+	else
+		FHINC=$FHOUT
+	fi
 
 	###############################
 	# Start Looping for the 

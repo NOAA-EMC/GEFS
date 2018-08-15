@@ -70,6 +70,10 @@ echo set parameters using gefs.parm
 . $PARMgefs/gefs.parm
 . $PARMgefs/gefs_ensstat.parm
 
+export FHMAX_HF=$FHMAXHF
+export FHOUT_HF=$FHOUTHF
+export FHOUT=$FHOUTLF
+
 ##############################################
 # Define COM directories
 ##############################################
@@ -77,8 +81,9 @@ export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 export COMINm1=$COMROOT/${NET}/${envir}/${RUN}.${PDYm1}
 
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap25
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
+#mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2a2p5
 
 msg="HAS BEGUN on `hostname`"
@@ -118,14 +123,14 @@ if (( fhmaxh > fhmax )); then
 fi
 
 # FHINC is the interval for 1.0/2.5 grid files
-export FHINC=${FHOUTLR:-06}
+export FHINC=${FHOUTLF:-06}
 # FHINCP5 defined later is the interval for 0.5 grid files
 
 fcstlong=true
 case $FORECAST_SEGMENT in
 	(hr)
 		# high resolution segment
-		export FHINCP5=${FHOUTHR:-06}
+		export FHINCP5=${FHOUTHF:-06}
 		export SHOUR=00
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmaxh
@@ -155,6 +160,11 @@ case $FORECAST_SEGMENT in
 		;;
 esac # $FORECAST_SEGMENT
 
+if test $FHMAX_HF -gt $FHOUR; then
+        export FHMAX_HF=$FHOUR
+fi
+
+
 echo FORECAST_SEGMENT=$FORECAST_SEGMENT
 echo makepgrba=$makepgrba
 echo FHINC=$FHINC      
@@ -171,24 +181,32 @@ env | sort
 
 
 #task 1, 1.0d and 2.5d, grid, dataset=a
-export gridlist_1="1p0,2p5"
-export FHINC_1=$FHINC
+export gridlist_1="0p5,2p5"
+export FHINC_1=$FHOUT
+export FHINC_HF_1=0
 export dataset_1=a
 
 #task 2, 0.5d grid, dataset=a
-export gridlist_2="0p5"
-export FHINC_2=$FHINCP5
+export gridlist_2="0p25"
+export FHINC_2=$FHOUT
+export FHINC_HF_2=0
+export FHINC_HF_2=$FHOUT_HF
 export dataset_2=a
 
-subdata_1=${DATA}/1p0-2p5${dataset_1}
+subdata_1=${DATA}/0p5-2p5${dataset_1}
 outfile=${subdata_1}/${gridlist_1}.out
 if [ ! -d ${subdata_1} ]; then mkdir -p ${subdata_1}; fi
-echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_1 $FHINC_1 ${subdata_1} $dataset_1 2>&1 >${outfile}" >>ensstat.cmdfile
+echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_1 $FHINC_1 ${subdata_1} $dataset_1 $FHINC_HF_1 0 $FHOUR 2>&1 >${outfile}" >>ensstat.cmdfile
 
 subdata_2=${DATA}/${gridlist_2}${dataset_2}
 if [ ! -d ${subdata_2} ]; then mkdir -p ${subdata_2}; fi
 outfile=${subdata_2}/${gridlist_2}.out
-echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_2 $FHINC_2 ${subdata_2} $dataset_2 2>&1 >${outfile}" >>ensstat.cmdfile
+echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_2 $FHINC_2 ${subdata_2} $dataset_2 $FHINC_HF_2 $FHMAX_HF $FHMAX_HF 2>&1 >${outfile}" >>ensstat.cmdfile
+
+#ubdata_3=${DATA}/${gridlist_3}${dataset_3}
+#f [ ! -d ${subdata_3} ]; then mkdir -p ${subdata_3}; fi
+#utfile=${subdata_3}/${gridlist_3}.out
+#cho "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_3 $FHINC_3 ${subdata_3} $dataset_3 $FHINC_HF_3 $FHMAX_HF 2>&1 >${outfile}" >>ensstat.cmdfile
 
 cat ensstat.cmdfile
 chmod 775 ensstat.cmdfile

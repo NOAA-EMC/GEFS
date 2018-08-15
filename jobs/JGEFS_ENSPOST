@@ -111,7 +111,7 @@ if [[ $envir = dev ]]; then
 fi # [[ $envir = dev ]]
 
 export SHOUR=00
-export FHINC=06
+export FHINC=${FHOUTLF:-06}
 export FHOUR=$fhmax
 
 env | sort

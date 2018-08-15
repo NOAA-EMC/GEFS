@@ -23,6 +23,11 @@ export fhmax12=${fhmax12:-$fhmax}
 export fhmax18=${fhmax18:-$fhmax}
 export fhmax_ext=${fhmax_ext:-840}
 
+#OUTPUT frequency
+export FHMAXHF=${FHMAXHF:-240}
+export FHOUTHF=${FHOUTHF:-3}
+export FHOUTLF=${FHOUTLF:-6}
+
 # Frequency of initializations
 export fhrp=${fhrp:-06}
 #export fhrp=24
@@ -123,7 +128,6 @@ export USESUBDIR=${USESUBDIR:-YES}
  export LATBFV=${LATBFV:-768}
  export LONBFV=${LONBFV:-1536}
  export MTNRSLFV=${MTNRSLFV:-766.1536.768}
- export FHOUTHR=${FHOUTHR:-3}
 
 #Lower resolution part
 
@@ -135,12 +139,10 @@ export LATBLR=${LATBLR:-384}
 export LONBLR=${LONBLR:-768}
 export MTNRSLLR=${MTNRSLLR:-382.768.384}
 export NTRACLR=${NTRACLR:-3}
-export FHOUTLR=${FHOUTLR:-6}
 
 #for new vertical coordinate
 export IDVC=${IDVC:-2}
 #export IDVM=32
-
 
 ########################################
 # This section defines the output flags for ncep_post + prdgen
