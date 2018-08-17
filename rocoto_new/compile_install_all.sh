@@ -75,6 +75,7 @@ if [ $CompileCode = "yes" ]; then
     ./install.sh
 
     cd $sWS/../
+    rm -rf fix
     if [ $machine = "theia" ]; then
         /bin/ln -sf /scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/common/gefs-fixed fix
     elif [ $machine = "cray" ]; then

@@ -53,10 +53,6 @@ export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 ##############################################
 # Define COM directories
 ##############################################
-if [[ $gfssource != prod ]]; then
-	export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc}
-	export COMINcfs=${COMINcfs:-${COMINcfs_base}}
-fi
 export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}/$cyc}  
 export COMINcfs=${COMINcfs:-$COMROOTp1/cfs/prod/cfs/cfs.}
 
@@ -70,10 +66,6 @@ export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 ##############################################
 export COMOUTcfssst=$COMOUT/$cyc/cfssst
 mkdir -m 775 -p $COMOUTcfssst
-
-##############################################
-#echo locations of scripts and executables
-##############################################
 
 ##############################################
 echo list environment before running script
@@ -96,11 +88,6 @@ else
 fi
 
 postmsg "$jlogfile" "$msg"
-
-##############################
-# Save the working directory
-# for the ET and COMBINE jobs
-##############################
 
 echo `date` $0 `date -u` end
 

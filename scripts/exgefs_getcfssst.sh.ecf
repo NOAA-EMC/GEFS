@@ -19,7 +19,7 @@ NMV=${NMV:-"/bin/mv -uv"}
 
 # Executables.
 if [[ -z "$EXECgefs" ]]; then
-    echo "$EXECgefs is empty"
+    echo "$EXECgefs is missing"
     exit 5
 fi
 
@@ -38,7 +38,7 @@ cd $DATA || exit 99
 #################################################################################
 # Run
 #=====
-echo real-time data transfer begins at $date
+echo real-time data link begins at $date
 
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 export filenamein_CFSv2=tmpsfc.grb2 #tmpsfc.01.$PDY$cyc.daily.grb2
@@ -46,7 +46,7 @@ export filenamein_nst=nstanl.nemsio #gfs.${cycle}.nstanl.nemsio  or gfs.${cycle}
 export filenameout_nst=Tsfc.grb     #gfs.t00z.Tsfc.$PDY.grb  #-- is sstanlfile
 
 #Link Real-time CFSv2
-HFcfsMax=120  # 5 days back
+HFcfsMax=120  # 5 day backword search for cfs fcst
 HFcfs=24
 PDYcfs=$PDY
 while [ $HFcfs -le $HFcfsMax ] ; do
@@ -64,7 +64,7 @@ while [ $HFcfs -le $HFcfsMax ] ; do
 
     echo ${PDYcfs} ${HFcfs}h
 
-    HFcfs=`expr $HFcfs \+ 24` 
+    HFcfs=`expr $HFcfs + 24` 
 done
 
 if [ $HFcfs -gt $HFcfsMax ];  then
@@ -106,7 +106,7 @@ if (( ERR != 0 )); then
     echo "link sst FAILED!"
     exit 93
 fi
-echo real-time data transfer ends at $date
+echo real-time data link ends at $date
 
 echo read nst file to save tref begin
 
@@ -154,9 +154,7 @@ grid_new="0 6 0 0 0 0 0 0 1440 720 0 0 90000000 0 48 -90000000 359750000 250000 
 
 export grid0p25="latlon 0:1440:0.25 90:720:-0.25034770514603616"
 export option1=' -set_grib_type same -new_grid_winds earth '
-export option21=' -new_grid_interpolation bilinear  -if '
-export option22=":(LAND|CSNOW|CRAIN|CFRZR|CICEP|ICSEV):"
-export option23=' -new_grid_interpolation neighbor -fi '
+export option21=' -new_grid_interpolation bilinear'
 
 #   -------------------- Main Loop -------------------------------
 mm=`echo ${PDY} | cut -c5-6`
@@ -179,9 +177,9 @@ if (( ERR !=0 )); then
     exit 96
 fi
 cat $anlfileout > $fn_rawfc    # This is lead 0 forecast
-#exit 150
+
 # CFS forecast data
-# Raw flx forecast (make sure it has been downloaded from hpss by running gethpss.sh)
+# Raw flx forecast
 # it is trimmed to obtain data every 24h
 #rawgb2triml=$filenamein_CFSv2
 rawgb2trimdir=$DATA/CFSBC_inputs_0p25 #/cfsbcinput.${PDY}${cyc}
@@ -189,7 +187,7 @@ mkdir -p $rawgb2trimdir
 rawgb2trim=$rawgb2trimdir/tmpsfc.01.${PDY}${cyc}.daily.grb2
 if [ ! -f $rawgb2trim  ]; then
     #$COPYGB2 -g "$grid_new" -x  $filenamein_CFSv2 $rawgb2trim
-    $WGRIB2  $filenamein_CFSv2 $option1 $option21 $option22 $option23 -new_grid $grid0p25 $rawgb2trim
+    $WGRIB2  $filenamein_CFSv2 $option1 $option21 -new_grid $grid0p25 $rawgb2trim
     ERR=$?
     if (( ERR !=0 )); then
         echo "FAILED to WGRIB2: $filenamein_CFSv2; $rawgb2trim!"
@@ -202,12 +200,12 @@ if [ -s $rawgb2 ] ; then
     rm -f $rawgb2
 fi
 #FH=24
-FH=`expr 24 \+ ${HFcfs}`
-NFHcfs=`expr ${HFcfs} \+ ${NFH}`
+FH=`expr 24 + ${HFcfs}`
+NFHcfs=`expr ${HFcfs} + ${NFH}`
 echo $FH
 until [ $FH -gt $NFHcfs ] ; do
     $WGRIB2 $rawgb2trim -append -if "TMP:surface:$FH hour fcst:" -grib $rawgb2 > /dev/null
-    FH=`expr $FH \+ 24`
+    FH=`expr $FH + 24`
 done
 # convert from grib2 to grib and change resolution
 rawgb=$tmpraw/TMPsfc.${PDY}${cyc}.fcs.grb
@@ -232,7 +230,7 @@ fi
 FH=24
 until [ $FH -gt $NFH ] ; do
     $WGRIB2 $climmgb2trim -append -if "TMP:surface:$FH hour fcst:" -grib $climmgb2 > /dev/null
-    FH=`expr $FH \+ 24`
+    FH=`expr $FH + 24`
 done
 
 climmgb=$tmpclim/tmpsfc.${PDY}${cyc}.mean.clim.daily.grb
@@ -263,7 +261,7 @@ fi
 FH=0
 until [ $FH -gt $NFH ] ; do
     $WGRIB2 $climogb2trim -append -if ":d=$cfsr_date:" -grib $climogb2 > /dev/null
-    FH=`expr $FH \+ 24`
+    FH=`expr $FH + 24`
     cfsr_date=`$NDATE +24 $cfsr_date`
     yyn=`echo $cfsr_date | cut -c1-4`
     #      echo " reanalysis: year $yyn "
@@ -315,7 +313,7 @@ until [ $FH -gt $NFH ] ; do
 
     kdate=`$NDATE +24 $kdate`
 
-    FH=`expr $FH \+ 24`
+    FH=`expr $FH + 24`
 done
 echo "$kpdsfile:"$kpdsfile
 #
@@ -344,6 +342,4 @@ else
     echo "FAILED to do the bias correction: $GEFS_ANOM2_FCST"
     exit $ERR
 fi
-
-
 
