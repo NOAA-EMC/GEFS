@@ -57,11 +57,17 @@
 !     reads raw forecast as a grib array, each lead time at a time
       iret = 0
       call baopenr(iunit,fn_rawfc,iret)
-      if(iret.ne.0) then; print *,'error opening input unit';goto 100;endif
+      if(iret.ne.0) then
+          print *,'error opening input unit'
+          call exit(iret)
+      endif
 !
       iret = 0
       call baopenw(ounit,fn_anom_fc,iret)
-      if(iret.ne.0) then; print *,'error opening output unit';goto 100;endif
+      if(iret.ne.0) then
+          print *,'error opening output unit'
+          call exit(iret)
+      endif
 !
 !     read the list of kpds values
       open(300,file=kpdsfile,form='formatted')
@@ -71,7 +77,10 @@
       jpds = -1
       jgds = -1
       call getgbh(iunit,index,mskp,jpds,jgds,kg,kf,k,kpds,kgds,iret)
-      if(iret.ne.0) then; print *,'error get header=',iunit;stop;endif
+      if(iret.ne.0) then
+          print *,'error get header=',iunit
+          call exit(iret)
+      endif
       
    
 
@@ -148,9 +157,15 @@
       enddo
       close(unit_climm)
       call baclose(iunit,iret)
-      if(iret.ne.0) then; print *,'error closing file=',iunit;stop;endif
+      if(iret.ne.0) then
+          print *,'error closing file=',iunit
+          call exit(iret)
+      endif
       call baclose(ounit,iret)
-      if(iret.ne.0) then; print *,'error closing file=',ounit;stop;endif
+      if(iret.ne.0) then
+          print *,'error closing file=',ounit
+          call exit(iret)
+      endif
       close(300)
 !
 800   format(2(2x,i4),2x,i6,2(2x,f8.3))
