@@ -21,13 +21,17 @@ RunRocoto=${RunRocoto:-no}
 machine=${machine:-nomachine}
 userConfigFile=${userConfigFile:-user_full.conf}
 
-
 if [ $machine = "nomachine" ]; then
     if [ -d /scratch4/NCEPDEV ]; then
         machine=theia
     elif [ -d /gpfs ]; then
-        if [ -d /etc/SuSE-release ]; then
-          machine=cray
+        if [ -f /etc/SuSE-release ]; then
+            machine=cray
+        fi
+        if [ $machine = "nomachine" ]; then
+            if [ $SITE = SURGE ]; then
+                machine=cray
+            fi
         fi
     fi
 fi
@@ -69,48 +73,71 @@ if [ $CompileCode = "yes" ]; then
 
     ## Install GEFS
     ./install.sh
+
+    cd $sWS/../
+    rm -rf fix
+    if [ $machine = "theia" ]; then
+        /bin/ln -sf /scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/common/gefs-fixed fix
+    elif [ $machine = "cray" ]; then
+        /bin/ln -sf /gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/gefs-fixed fix
+    fi
 fi
 
 # for cleanning
 if [ $CleanAll = "yes" ]; then
-  echo "Cleaning ..."
+    echo "Cleaning ..."
+    
+    rm -rf gefs.xml
+    rm -rf cron_rocoto
+    rm -rf tasks
 
     cd $sWS/../sorc
 
     for dir in gefs_vortex_separate.fd gefs_vortex_combine.fd global_sigzvd.fd  global_ensadd.fd  global_enspqpf.fd  gefs_ensstat.fd  global_ensppf.fd ; do
-          cd $dir
-          make clean
-          cd ..
+        cd $dir
+        make clean
+        cd ..
     done
 
-    export LIBS="${G2_LIB4} ${W3NCO_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}"
-
     for dir in global_enscvprcp.fd  global_enspvrfy.fd  global_enssrbias.fd global_enscqpf.fd  global_enscvt24h.fd  global_ensrfmat.fd ; do
-          cd $dir
-          make clean
-          cd ..
+        cd $dir
+        make clean
+        cd ..
     done
 
     for dir in ../util/sorc/gettrk.fd ../util/sorc/overenstr.grib.fd ../util/sorc/getnsttf.fd; do
-          cd $dir
-          make clean
-          cd ../../../sorc
+        cd $dir
+        make clean
+        cd ../../../sorc
     done
+    for dir in gefs_anom2_fcst.fd gefs_nstgen.fd ; do
+        cd $dir
+        make clean
+        cd ..
+    done    
 
-    cd $sWS/../sorc
-  rm -rf ../exec
-  rm -rf ../util/exec
 
+    cd ${sWS}/../sorc
+    rm -rf ../exec
+    rm -rf ../util/exec
+    rm -rf ../fix
 
-fi
+fi # for CleanAll
 
 # for rocoto
 
 if [ $RunRocoto = "yes" ]; then
     cd $sWS
-    module load rocoto
-    #module load python
+    if [ $machine = "theia" ]; then
+        module load rocoto
+    elif [ $machine = "cray" ]; then
+        . /opt/modules/3.2.10.3/init/sh
+        module use /usrx/local/emc_rocoto/modulefiles
+        module load xt-lsfhpc
+        module load rocoto
+        module load python
+    fi
     ./py/run_to_get_all.py  $userConfigFile
-fi
+fi # For RunRocoto
 
 
