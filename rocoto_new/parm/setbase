@@ -75,7 +75,7 @@ if [ -d /scratch4/NCEPDEV ]; then
 	# export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/common
 	#export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/Walter.Kolczynski/nemsio_init
  	#export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/Bing.Fu/fv3gefs_init
-    export HOMEdata=/scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/fv3gefs_init
+    export HOMEdata=/scratch4/NCEPDEV/ensemble/noscrub/common
 	export COMROOThps=${HOMEdata} 
 
 	export EXECutil=${EXECutil:-/scratch4/NCEPDEV/global/save/glopara/nwpara/util/exec}

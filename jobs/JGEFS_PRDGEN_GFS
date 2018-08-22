@@ -76,11 +76,7 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}}
-##
-# for test parall run, use this directory
-
-export COMINgfs=/gpfs/hps3/ptmp/emc.glopara/fv3q2fy19retro2/gfs.$PDY
+export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}/$cyc}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
@@ -156,13 +152,21 @@ echo "$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf $jobgrid_4 ${subdata} 2>&1 >${o
 cat prdgen_gfs.cmdfile
 chmod 775 prdgen_gfs.cmdfile
 export MP_CMDFILE=${DATA}/prdgen_gfs.cmdfile
+export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
 export MP_PGMMODEL=mpmd
 rm mpmd_cmdfile
 ln -s $MP_CMDFILE mpmd_cmdfile
 
 $APRUN
 
-msg="$job completed normally"
+ERR=$?
+
+if [ $ERR = 0 ]; then
+    msg="$job completed normally"
+else
+    msg="$job FAILED!"
+fi
+
 postmsg "$jlogfile" "$msg"
 
 ##############################
@@ -172,3 +176,6 @@ cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
 echo `date` $0 `date -u` end
+
+exit $ERR
+
