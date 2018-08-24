@@ -164,6 +164,7 @@ LEVS_ENKF=${LEVS_ENKF:-$($nemsioget ./atmf006_ensmean dimz | awk '{print $2}')}
 
    # GFS  analysis
 #$NLN $COMINenkf$pdyp/$cycp/$memchar/gdas.t${cycp}z.atmf006.nemsio ./atmf006_$memchar
+   ATMANL=./sanl.in
    ATMANL=${ATMANL:-$COMINgfs/gfs.$cycle.atmanl.nemsio}
    SFCANL=${SFCANL:-$COMINgfs/gfs.$cycle.sfcanl.nemsio}
 

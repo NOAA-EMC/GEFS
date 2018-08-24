@@ -350,6 +350,7 @@ c          print *,'recname=',gheadv%recname(1:3)
         ALLOCATE(GDATA%ZS(IMAX,JMAX))
         ALLOCATE(GDATA%PS(IMAX,JMAX))
         ALLOCATE(GDATA%T(IMAX,JMAX,KMAX))
+        ALLOCATE(GDATA%W(IMAX,JMAX,KMAX))
         ALLOCATE(GDATA%U(IMAX,JMAX,KMAX))
         ALLOCATE(GDATA%V(IMAX,JMAX,KMAX))
         ALLOCATE(GDATA%Q(IMAX,JMAX,KMAX,7))
@@ -386,6 +387,18 @@ c          print *,'recname=',gheadv%recname(1:3)
             CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,0,IRET)
                IF ( IRET == 0 ) THEN
                   GDATA%T(:,:,VLEV)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
+               ELSE
+                 PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
+                 CALL ERREXIT (3)
+               ENDIF
+           ENDDO
+! dzdt
+           VNAME='dzdt' 
+           VLEVTYP='mid layer' 
+           DO VLEV=1, KMAX
+            CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,0,IRET)
+               IF ( IRET == 0 ) THEN
+                  GDATA%W(:,:,VLEV)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
                ELSE
                  PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
                  CALL ERREXIT (3)
@@ -992,6 +1005,13 @@ c*** v   ****
            VLEVTYP='mid layer' 
            DO VLEV=1, KMAX
                   DUMMY(:)=RESHAPE(GDATA%T(:,:,VLEV),(/IMAX*JMAX/) ) 
+            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,IRET)
+           ENDDO
+! dzdt
+           VNAME='dzdt' 
+           VLEVTYP='mid layer' 
+           DO VLEV=1, KMAX
+                DUMMY(:)=RESHAPE(GDATA%W(:,:,VLEV),(/IMAX*JMAX/) ) 
             CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,IRET)
            ENDDO
 ! hgt
@@ -1900,16 +1920,20 @@ cnew     1           CLON_N(I),CLAT_N(I)
 
 
       END DO
-      NS_MEM="000"
-      write(NS_NEM,'(A3)')NSEM
+      if (NSEM.eq.-1) then
+      ENS_MEM="GFSO"
+      NS_MEM="FSO"
+      else
+      write(NS_MEM,'(i3.3)')NSEM
 
       ENS_MEM="M"//NS_MEM
+      endif
 
 
       K1STM=0
       I=0
 c rlw replace this read (for 24h cycle) with atcf read 
-      icycx=6
+      icycx=itim
 c decrement date and time by icycx for test
       rinc(1)=0.0
       rinc(2)=-icycx
@@ -2382,7 +2406,7 @@ c 233  FORMAT(2x,I5)
       K1STM=0
       I=0
 c rlw replace this read (for 24h cycle) with atcf read 
-      icycx=6
+      icycx=itim
       if ( icycx .eq. 24 ) then
       DO MEM=1,100
         READ(40,442,end=436)MEM_READ,
@@ -2592,7 +2616,10 @@ c      fact=cos(CLAT*rad)
       end do
 C.. DO ZONAL FILTER
 C
-      DO 100 J=1,JX
+!$omp parallel do
+!$omp& private(I,J,N,XTU,XTV)
+
+      CYC_100: DO J=1,JX  !DO 100 J=1,JX
       DO N=1,NF
       XTU(1,N)  = U(1,J)
       XTU(IX,N) = U(IX,J)
@@ -2619,11 +2646,14 @@ C
       VS(I,J) = XTV(I,NF)
       ENDDO
 C
-100   CONTINUE
+      ENDDO CYC_100
+!100   CONTINUE
 C
 C.. DO MERIDIONAL FILTER 
 C
-      DO 200 I=1,IX
+!$omp parallel do
+!$omp& private(I,J,N,YTU,YTV)
+      CYC_200: DO I=1,IX   ! DO 200 I=1,IX
 C
       DO N=1,NF
       YTU(1,N)  = US(I,1)
@@ -2652,7 +2682,8 @@ C
       US(I,J)   =  YTU(J,NF)
       VS(I,J)   =  YTV(J,NF)
       ENDDO   
-200   CONTINUE
+      ENDDO CYC_200
+!200   CONTINUE
 C
 C.. GET THE DISTURBANCE FIELD
 C
@@ -2921,7 +2952,9 @@ c obtain the disturbance field
 c
 c First smooth in east-west direction
 c
-      DO 107 J=1,JX
+!$omp parallel do
+!$omp& private(I,J,N,XTU)
+      CYC_107: DO J=1,JX    ! DO 107 J=1,JX
       DO N=1,NF
       XTU(1,N)  = U(1,J)
       XTU(IX,N) = U(IX,J)
@@ -2942,11 +2975,15 @@ C
       US(I,J) = XTU(I,NF)
       ENDDO
 C
- 107  CONTINUE
+      ENDDO CYC_107
+!
 C
 C.. DO MERIDIONAL FILTER
+
 C
-      DO 207 I=1,IX
+!$omp parallel do
+!$omp& private(I,J,N,YTU)
+      CYC_207: DO I=1,IX   ! DO 207 I=1,IX
 C
       DO N=1,NF
       YTU(1,N)  = US(I,1)
@@ -2968,7 +3005,9 @@ C
       DO J = 1 , JX
       US(I,J)   =  YTU(J,NF)
       ENDDO
- 207  CONTINUE
+      ENDDO CYC_207
+
+! 207  CONTINUE
 C
 C.. GET THE DISTURBANCE FIELD
 C
@@ -3170,6 +3209,10 @@ C
       iprint=1
       jprint=1
       kprint=0
+!$omp parallel do
+!$omp& private(I,J,DR,DD,DLON,DLAT,TLON,TLAT,IDX,
+!$omp&         IDY,DXX,DYY,X1,X2,Y1,Y2,UT,VT)
+
       DO J=1,IR
       DO I=1,IT
 C.. DETERMINE LAT, LON AREOUND CIRCLE
@@ -3507,7 +3550,7 @@ C
 cc test
 !$omp parallel do
 !$omp& private(I,IW,JW,HLA,HLO,II,JJ,LX,LY,DXX,DYY,X1,X2,Y1,Y2)
-      DO I = 1,IB
+      CYC_555: DO I = 1,IB
       IW = ING(I)
       JW = JNG(I)
 
@@ -3533,16 +3576,16 @@ C
          DATG(IW,JW)=(X1*(1-DXX)+X2*DXX + Y1*(1-DYY)+Y2*DYY)/2.
 
 !         IF(ISE.GE.2) DDAT(IW,JW)=DATG2(IW,JW)-DATG(IW,JW)
-         GO TO 555
+         CYCLE CYC_555   !GO TO 555
 
         END IF
         END DO
        END IF
       END DO  
- 555   CONTINUE
+! 555   CONTINUE
 c      ENDDO
 c      ENDDO
-      ENDDO
+      ENDDO CYC_555
       if(inptyp.eq.1.and.ISE.GT.(KMAX+1).and.ISE.LE.(3*KMAX+1))then
 
 !         DO I=1,IGU
