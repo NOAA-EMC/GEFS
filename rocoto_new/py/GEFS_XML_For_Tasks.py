@@ -339,7 +339,15 @@ def get_param_of_task(dicBase, taskname):
                             
             # For Low Resolution
             if taskname.lower() == "jgefs_post_low" or taskname.lower() == "jgefs_prdgen_low":
-                start_hr_low = int(dicBase["fhmaxh".upper()]) + int(dicBase["FHOUTHF".upper()])
+                FHOUTHF=int(dicBase["FHOUTHF".upper()])
+                FHOUTLF=int(dicBase["FHOUTLF".upper()])
+                fhmaxh=int(dicBase["fhmaxh".upper()])
+                FHMAXHF=int(dicBase["FHMAXHF".upper()])
+
+                if FHMAXHF <= fhmaxh:
+                    start_hr_low =  fhmaxh + FHOUTLF
+                else:
+                    start_hr_low =  fhmaxh + FHOUTHF
                 sDep = dicBase[sVarName].replace("fXXX","f{0:03d}".format(start_hr_low))
 
             # For 'jgefs_enspost' task
