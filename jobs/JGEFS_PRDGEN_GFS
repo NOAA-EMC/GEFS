@@ -110,8 +110,8 @@ export SHOUR=00
 export FHOUR_HIGH=$gfsfhmaxh
 export fhoroglist=$gfsfhoroglist
 export FHOUR_LOW=$fhmax
-export FHINC_HIGH=6
-export FHINC_HIGHP5=3
+export FHINC_HIGH=$FHOUTLF
+export FHINC_HIGHP5=$FHOUTHF
 export FHINC_LOW=12
 
 export DO_HD_PGRB=NO
