@@ -103,7 +103,7 @@ export HOMEgsm1=${HOMEgsm1:-$HOMEDIR1/global_shared.v14.1.0} #this is needed for
   
   export ROTDIR=$HOMEdata/fv3init                                        #for warm start files
   #export SSTDIR=$HOMEdata/2tsst                                          #for 2-tier sst files 
-  export SSTDIR=${WORKDIR}/com/gens/dev/gefs.${PDY}/${cyc}/cfssst        # for real time run to provide 2-tier sst files
+  export SSTDIR=${SSTDIR:-${WORKDIR}/com/gens/dev/gefs.${PDY}/${cyc}/cfssst}        # for real time run to provide 2-tier sst files
   #?export COMINenkf_base=/gpfs/hps3/ptmp/emc.glopara/fy2019q1/enkf.gdas.
   #?export COMINgfs_base=/gpfs/hps3/ptmp/emc.glopara/fy2019q1/gfs.
 
