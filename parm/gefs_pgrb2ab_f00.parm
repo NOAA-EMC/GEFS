@@ -172,6 +172,9 @@
 :PRES:tropopause:
 :PRMSL:mean sea level:
 :PVORT:320 K isentropic level:
+:PVORT:450 K isentropic level:
+:PVORT:550 K isentropic level:
+:PVORT:650 K isentropic level:
 :PWAT:30-0 mb above ground:
 :PWAT:entire atmosphere (considered as a single layer):
 :RH:0.33-1 sigma layer:
@@ -293,16 +296,19 @@
 :TMP:3658 m above mean sea level:
 :TMP:400 mb:
 :TMP:450 mb:
+:TMP:450 K isentropic level:
 :TMP:4572 m above mean sea level:
 :TMP:457 m above mean sea level:
 :TMP:500 mb:
 :TMP:50 mb:
 :TMP:5 mb:
 :TMP:550 mb:
+:TMP:550 K isentropic level:
 :TMP:600 mb:
 :TMP:60-30 mb above ground:
 :TMP:610 m above mean sea level:
 :TMP:650 mb:
+:TMP:650 K isentropic level:
 :TMP:700 mb:
 :TMP:70 mb:
 :TMP:7 mb:
@@ -359,16 +365,19 @@
 :UGRD:3658 m above mean sea level:
 :UGRD:400 mb:
 :UGRD:450 mb:
+:UGRD:450 K isentropic level:
 :UGRD:4572 m above mean sea level:
 :UGRD:457 m above mean sea level:
 :UGRD:500 mb:
 :UGRD:50 mb:
 :UGRD:5 mb:
 :UGRD:550 mb:
+:UGRD:550 K isentropic level:
 :UGRD:600 mb:
 :UGRD:60-30 mb above ground:
 :UGRD:610 m above mean sea level:
 :UGRD:650 mb:
+:UGRD:650 K isentropic level:
 :UGRD:700 mb:
 :UGRD:70 mb:
 :UGRD:7 mb:
@@ -422,16 +431,19 @@
 :VGRD:3658 m above mean sea level:
 :VGRD:400 mb:
 :VGRD:450 mb:
+:VGRD:450 K isentropic level:
 :VGRD:4572 m above mean sea level:
 :VGRD:457 m above mean sea level:
 :VGRD:500 mb:
 :VGRD:50 mb:
 :VGRD:5 mb:
 :VGRD:550 mb:
+:VGRD:550 K isentropic level:
 :VGRD:600 mb:
 :VGRD:60-30 mb above ground:
 :VGRD:610 m above mean sea level:
 :VGRD:650 mb:
+:VGRD:650 K isentropic level:
 :VGRD:700 mb:
 :VGRD:70 mb:
 :VGRD:7 mb:
