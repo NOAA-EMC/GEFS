@@ -351,6 +351,7 @@ c          print *,'recname=',gheadv%recname(1:3)
         ALLOCATE(GDATA%PS(IMAX,JMAX))
         ALLOCATE(GDATA%T(IMAX,JMAX,KMAX))
         ALLOCATE(GDATA%W(IMAX,JMAX,KMAX))
+        ALLOCATE(GDATA%DP(IMAX,JMAX,KMAX))
         ALLOCATE(GDATA%U(IMAX,JMAX,KMAX))
         ALLOCATE(GDATA%V(IMAX,JMAX,KMAX))
         ALLOCATE(GDATA%Q(IMAX,JMAX,KMAX,7))
@@ -399,6 +400,18 @@ c          print *,'recname=',gheadv%recname(1:3)
             CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,0,IRET)
                IF ( IRET == 0 ) THEN
                   GDATA%W(:,:,VLEV)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
+               ELSE
+                 PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
+                 CALL ERREXIT (3)
+               ENDIF
+           ENDDO
+! dpres
+           VNAME='dpres' 
+           VLEVTYP='mid layer' 
+           DO VLEV=1, KMAX
+            CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,0,IRET)
+               IF ( IRET == 0 ) THEN
+                  GDATA%DP(:,:,VLEV)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
                ELSE
                  PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
                  CALL ERREXIT (3)
@@ -1011,7 +1024,22 @@ c*** v   ****
            VNAME='dzdt' 
            VLEVTYP='mid layer' 
            DO VLEV=1, KMAX
+               if (NSEM.eq.-1) then
                 DUMMY(:)=RESHAPE(GDATA%W(:,:,VLEV),(/IMAX*JMAX/) ) 
+               else
+                DUMMY(:)=0 
+               endif
+            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,IRET)
+           ENDDO
+! dpres
+           VNAME='dpres' 
+           VLEVTYP='mid layer' 
+           DO VLEV=1, KMAX
+               if (NSEM.eq.-1) then
+                DUMMY(:)=RESHAPE(GDATA%DP(:,:,VLEV),(/IMAX*JMAX/) ) 
+               else
+                DUMMY(:)=0 
+               endif
             CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,IRET)
            ENDDO
 ! hgt
