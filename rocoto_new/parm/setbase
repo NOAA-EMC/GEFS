@@ -44,8 +44,8 @@ JOBPHASE=
 export account=GEN-T2O
 
 if [[ "$LOGNAME" = "emc.enspara" || "$LOGNAME" = "emc.enspara1" ]]; then
-	SUBNAME=/XX    #members of the enspara/enspara1 group accounts need to define e.g SUBNAME=/dc
-	JOBPRIO=high       #(default; it could be high/max)
+    SUBNAME=/XX    #members of the enspara/enspara1 group accounts need to define e.g SUBNAME=/dc
+    JOBPRIO=high       #(default; it could be high/max)
 fi
 
 echo USER info: $PROJECT $LOGNAME $SUBNAME $JOBPRIO
@@ -65,8 +65,8 @@ if [ -d /scratch4/NCEPDEV ]; then
 	SAVE=/scratch4/NCEPDEV/ensemble/save
 	NOSCRUB=/scratch4/NCEPDEV/ensemble/noscrub
 	export machine='THEIA'
-
-	export HOMEDIR=/scratch4/NCEPDEV/ensemble/save/Xianwu.Xue/GIT/fv3gfs # this is the master branch with Bing Fu's modification based on the GEFS needs
+    
+    export HOMEDIR=/scratch4/NCEPDEV/ensemble/noscrub/common/fv3gfs/fv3gfs_ens_20180814
 	export HOMEDIR1=$HOMEDIR 						#/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/fv3gfs
 	export HOMERFC=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
 
@@ -75,47 +75,48 @@ if [ -d /scratch4/NCEPDEV ]; then
 	# export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/common
 	#export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/Walter.Kolczynski/nemsio_init
  	#export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/Bing.Fu/fv3gefs_init
-    export HOMEdata=/scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/fv3gefs_init
-	export COMROOThps=${HOMEdata} 
+    export HOMEdata=/scratch4/NCEPDEV/ensemble/noscrub/common
+    export COMROOThps=${HOMEdata} 
 
-	export EXECutil=${EXECutil:-/scratch4/NCEPDEV/global/save/glopara/nwpara/util/exec}
-	export USHutil=${USHutil:-/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/nwprod/util/ush}
+    export EXECutil=${EXECutil:-/scratch4/NCEPDEV/global/save/glopara/nwpara/util/exec}
+    export USHutil=${USHutil:-/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/nwprod/util/ush}
 
-	export PATH=$PATH:$USHutil:$EXECutil
+    export PATH=$PATH:$USHutil:$EXECutil
 
-	export EXECgrib=${EXECutil}
-	export NDATE=${NDATE:-$EXECgrib/ndate}
-	export utilscript=$USHutil
+    export EXECgrib=${EXECutil}
+    export NDATE=${NDATE:-$EXECgrib/ndate}
+    export utilscript=$USHutil
 
 elif [ -d /gpfs/hps3 ]; then
 
-	if [[ $machl = t ]] || [[ $machl = g ]]; then
-		"Using settings for WCOSS Phase II"
-		PTMP=/ptmpd2
-		STMP=/stmpd2
-		export machine='WCOSS'
-		export JOBPHASE=2
-		export HOMEDIR=/ensemble/save/emc.enspara/RFC
-		#export HOMEDIR1=/ensemble/save/emc.enspara/RFC/q3fy17_lambda
-		SAVE=/$PROJECT/save
-		NOSCRUB=/$PROJECT/noscrub
+    if [[ $machl = t ]] || [[ $machl = g ]]; then
+        "Using settings for WCOSS Phase II"
+        PTMP=/ptmpd2
+        STMP=/stmpd2
+        export machine='WCOSS'
+        export JOBPHASE=2
+        export HOMEDIR=/ensemble/save/emc.enspara/RFC
+        #export HOMEDIR1=/ensemble/save/emc.enspara/RFC/q3fy17_lambda
+        SAVE=/$PROJECT/save
+        NOSCRUB=/$PROJECT/noscrub
 
-	elif [[ $machl = s ]] || [[ $machl = l ]]; then
-		echo "Using settings for WCOSS Cray"
-		PTMP=/gpfs/hps/ptmp
-		STMP=/gpfs/hps2/stmp
-		export machine='WCOSS_C'
-		export JOBPHASE=
-		#export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/svn/fv3gfs20180204  #temporay setting
-		#export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/git_gfs/fv3gfs/tic21f  # Kate, cold start before 5/9
-#		export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Bing.Fu/svn/tic21f      #Bing Fu warm start after 5/9
-#		export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Bing.Fu/svn/fy2019q1      # most recent fv3gfs upon 5/15/2018
-		export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/svn/fy2019q2      # most recent fv3gfs upon 5/15/2018
-		export HOMEDIR1=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda
-		export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
-		SAVE=/gpfs/hps3/emc/$PROJECT/save
-		NOSCRUB=/gpfs/hps3/emc/$PROJECT/noscrub
-	fi
+    elif [[ $machl = s ]] || [[ $machl = l ]]; then
+        echo "Using settings for WCOSS Cray"
+        PTMP=/gpfs/hps/ptmp
+        STMP=/gpfs/hps2/stmp
+        export machine='WCOSS_C'
+        export JOBPHASE=
+        #export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/svn/fv3gfs20180204  #temporay setting
+        #export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/git_gfs/fv3gfs/tic21f  # Kate, cold start before 5/9
+#       export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Bing.Fu/svn/tic21f      #Bing Fu warm start after 5/9
+#       export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Bing.Fu/svn/fy2019q1      # most recent fv3gfs upon 5/15/2018
+        #export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/svn/fy2019q2      # most recent fv3gfs upon 5/15/2018
+        export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/svn/fv3gfs
+        export HOMEDIR1=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda
+        export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
+        SAVE=/gpfs/hps3/emc/$PROJECT/save
+        NOSCRUB=/gpfs/hps3/emc/$PROJECT/noscrub
+    fi
 fi
 
 export JOBQUEUE=$JOBQUEUE$JOBPRIO$JOBPHASE

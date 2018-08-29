@@ -38,8 +38,6 @@ export taskspernode=5
 export FORECAST_SEGMENT=hr
 export DO_LOW_RES=
 
-export gefsmpexec_mpmd=mpirun.lsf
-
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
