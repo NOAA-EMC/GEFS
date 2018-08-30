@@ -528,7 +528,7 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
     if taskname == "prdgen_high" or taskname == "prdgen_low":
         strings += sPre + '<metatask name="{0}" mode="parallel">\n'.format(taskname)
     else:
-        strings += sPre + '<metatask>\n'
+        strings += sPre + '<metatask name="{0}">\n'.format(taskname)
     strings += sPre + '\t' + '<var name="member">&MEMLIST;</var>\n'
 
     strings += sPre + '\t' + '<task name="{0}_#member#" cycledefs="{1}" maxtries="{2}">\n'.format(taskname, cycledef, maxtries)
