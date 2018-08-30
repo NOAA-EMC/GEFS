@@ -28,6 +28,8 @@ if [ $machine = "nomachine" ]; then
         machine=cray
     elif [[ -d /dcom && -d /hwrf ]] ; then # Tide or Gyre
         machine=wcoss
+    elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then # We are on NOAA Mars or Venus
+        machine=wcoss_dell_p3
     else
         echo "This is not supported by this script!"
         exit 55
@@ -61,6 +63,9 @@ if [ $CompileCode = "yes" ]; then
     elif [ $machine = wcoss ]; then
         echo "You are running on wcoss!"
         module load Module_gefs_v12_wcoss
+    elif [ $machine = wcoss_dell_p3 ]; then
+        echo "You are running on wcoss_dell_p3!"
+        module load Module_gefs_v12_wcoss_dell_p3
     else
         echo "You are running on some platform we didn't support, please check it!"
         exit

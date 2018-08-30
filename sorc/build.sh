@@ -27,6 +27,7 @@ if [ $mac2 = tf ]; then # For THEIA
 
     export FFLAGS="-O3 -g -convert big_endian -I ${G2_INC4}"
     export FFLAGS_d="-O3 -g -r8 -convert big_endian -auto -mkl -I ${G2_INCd}"
+    export OPENMPFFLAG=qopenmp
 
 elif [ $mac = t -o $mac = e -o $mac = g ] ; then # For WCOSS
 
@@ -58,7 +59,7 @@ elif [ $mac = t -o $mac = e -o $mac = g ] ; then # For WCOSS
     export LIBS_GTRK="${NEMSIOGFS_LIB} ${NEMSIO_LIB} ${BACIO_LIB4} ${SIGIO_LIB4} ${IP_LIB4} ${SP_LIB4} ${SFCIO_LIB4} ${BUFR_LIB4} ${W3EMC_LIB4} ${W3NCO_LIB4} "
     export FFLAGS="-O3 -g -convert big_endian -I ${G2_INC4}"
     export FFLAGS_d="-O3 -g -r8 -convert big_endian -auto -mkl -I ${G2_INCd}"
-
+    export OPENMPFFLAG=openmp
 
 elif [ $mac = l -o $mac = s ] ; then # For CRAY
     echo "Building for Cray"
@@ -79,6 +80,28 @@ elif [ $mac = l -o $mac = s ] ; then # For CRAY
     export LIBS_GTRK="${NEMSIOGFS_LIB} ${NEMSIO_LIB} ${BACIO_LIB4} ${SIGIO_LIB4} ${IP_LIB4} ${SP_LIB4} ${SFCIO_LIB4} ${BUFR_LIB4} ${W3EMC_LIB4} ${W3NCO_LIB4} "
     export FFLAGS="-O3 -g -convert big_endian -I ${G2_INC4}"
     export FFLAGS_d="-O3 -g -r8 -convert big_endian -auto -mkl -I ${G2_INCd}"
+    export OPENMPFFLAG=openmp
+
+elif  [ $mac = m ] ; then # For wcoss_dell_p3
+    echo "Building for wcoss_dell_p3"
+
+    machine=wcoss_dell_p3
+
+    export LIBDIR=/gpfs/dell1/nco/ops/nwprod/lib
+    export INCG="$NEMSIO_INC"
+    export INCGFS="$NEMSIOGFS_INC"
+    export INCS="${SIGIO_INC4}"
+    export INCSFC="${SFCIO_INC4}"
+    export INC="${G2_INC4}"
+    export LIBS="${G2_LIB4} ${W3NCO_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}"
+    export INC_d="${G2_INCd}"
+    export LIBS_d="${G2_LIBd} ${W3NCO_LIBd} ${BACIO_LIB4} ${IP_LIBd} ${SP_LIBd} ${PNG_LIB} ${JASPER_LIB} ${Z_LIB} ${W3NCO_LIBd}"
+    export FC=ifort
+    export LIBS_INIT="${NEMSIOGFS_LIB} ${NEMSIO_LIB} ${SP_LIBd} ${SIGIO_LIB4} ${W3NCO_LIBd} ${BACIO_LIB4}"
+    export LIBS_GTRK="${NEMSIOGFS_LIB} ${NEMSIO_LIB} ${BACIO_LIB4} ${SIGIO_LIB4} ${IP_LIB4} ${SP_LIB4} ${SFCIO_LIB4} ${BUFR_LIB4} ${W3EMC_LIB4} ${W3NCO_LIB4} "
+    export FFLAGS="-O3 -g -convert big_endian -I ${G2_INC4}"
+    export FFLAGS_d="-O3 -g -r8 -convert big_endian -auto -mkl -I ${G2_INCd}"
+    export OPENMPFFLAG=qopenmp
 fi
 
 
@@ -91,10 +114,12 @@ done
 
 export LIBS="${G2_LIB4} ${W3NCO_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}"
 
-for dir in global_enscvprcp.fd  global_enspvrfy.fd  global_enssrbias.fd global_enscqpf.fd  global_enscvt24h.fd  global_ensrfmat.fd ; do
+for dir in global_enscvprcp.fd global_enspvrfy.fd global_enssrbias.fd global_enscqpf.fd  global_enscvt24h.fd  global_ensrfmat.fd ; do
     cd $dir
-    make clean
-    make -f makefile
+    if [ $dir != 'global_enspvrfy.fd' -a $machine = 'wcoss_dell_p3' ]; then
+        make clean
+        make -f makefile
+    fi
     cd ..
 done
 
