@@ -3,6 +3,7 @@
 
 # EXPORT list here
 set -x
+
 export IOBUF_PARAMS=*:size=64M:count=4:verbose
 export FORT_BUFFERED=TRUE
 export MKL_CBWR=AVX
@@ -38,12 +39,13 @@ export taskspernode=3
 export FORECAST_SEGMENT=hr
 export DO_LOW_RES=
 
-export gefsmpexec_mpmd=mpirun.lsf
+export gefsmpexec_mpmd="  aprun -b -j1 -n3 -N3 -d4 -cc depth  cfp mpmd_cmdfile"
 
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export gefsmpexec_mpmd="mpirun -np $total_tasks /scratch3/NCEPDEV/nwprod/util/exec/mpiserial"
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_PRDGEN
+
+
+$SOURCEDIR/jobs/JGEFS_PRDGEN_GFS

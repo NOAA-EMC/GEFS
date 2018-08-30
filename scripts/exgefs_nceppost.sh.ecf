@@ -8,6 +8,10 @@ echo " Jul 05 - Wobus - 6-hour breeding, ensemble only"
 echo " Jul 07 - Wobus - nceppost creates master files"
 echo " Jul 10 - Wobus - create additional anl log file"
 echo " Jun 11 - Wobus - move master post files into /com"
+echo " Dec 14 - Hou - updated to grib2 format and add grib2 ensemble messages"
+echo " Feb 18 - Hou - updated to process FV3 based nemsio files"
+echo " Jun 18 - Hou - replaced hard-wired output frequency with FHOUT_HF and FHOUT"
+echo " Jul 18 - Hou - removed variables related to cyc_fcst (Breeding) "
 echo "-----------------------------------------------------"
 #####################################################################
 
@@ -21,16 +25,8 @@ postmsg "$jlogfile" "$msg"
 export MP_LABELIO=YES
 #poe hostname
 
-if [[ "$cycsuffix" = "true" ]]; then
-	export cfsuffix=".cycfs$cyc_fcst"
-else
-	export cfsuffix=""
-fi
-echo cyc=$cyc cyc_fcst=$cyc_fcst
-echo cycle=$cycle cycle_fcst=$cycle_fcst
-echo fcstlong=$fcstlong
-echo cycsuffix=$cycsuffix
-echo cfsuffix=$cfsuffix
+echo cyc=$cyc
+echo cycle=$cycle
 
 #export WGRIB2=${WGRIB2:-${EXECgrib}/wgrib2}
 #export COPYGB2=${COPYGB2:-${EXECgrib}/copygb2}

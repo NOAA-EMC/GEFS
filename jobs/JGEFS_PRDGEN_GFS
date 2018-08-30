@@ -76,10 +76,10 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}}
+export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}/$cyc}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
-#mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2a2p5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap25
@@ -110,8 +110,8 @@ export SHOUR=00
 export FHOUR_HIGH=$gfsfhmaxh
 export fhoroglist=$gfsfhoroglist
 export FHOUR_LOW=$fhmax
-export FHINC_HIGH=6
-export FHINC_HIGHP5=3
+export FHINC_HIGH=$FHOUTLF
+export FHINC_HIGHP5=$FHOUTHF
 export FHINC_LOW=12
 
 export DO_HD_PGRB=NO
@@ -119,7 +119,7 @@ export HDMAX=00
 
 env | sort
 
-#mpmd job with 3 tasks, 1 for 1d, 2 for 2.5d, 3 for 0.5e
+#mpmd job with 4 tasks, 1 for 1d, 2 for 2.5d, 3 for 0.5e 4 for 0.25d
 
 #task 1, 1.0 grid
 export jobgrid_1=1p0
@@ -142,16 +142,31 @@ if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
 outfile=${subdata}/${jobgrid_3}.out
 echo "$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf $jobgrid_3 ${subdata} 2>&1 >${outfile}" >>prdgen_gfs.cmdfile
 
+#task 4, 0.25d grid
+export jobgrid_4=0p25
+subdata=${DATA}/${jobgrid_4}
+if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+outfile=${subdata}/${jobgrid_4}.out
+echo "$HOMEgefs/scripts/exgefs_prdgen_gfs.sh.ecf $jobgrid_4 ${subdata} 2>&1 >${outfile}" >>prdgen_gfs.cmdfile
+
 cat prdgen_gfs.cmdfile
 chmod 775 prdgen_gfs.cmdfile
 export MP_CMDFILE=${DATA}/prdgen_gfs.cmdfile
+export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
 export MP_PGMMODEL=mpmd
 rm mpmd_cmdfile
 ln -s $MP_CMDFILE mpmd_cmdfile
 
 $APRUN
 
-msg="$job completed normally"
+ERR=$?
+
+if [ $ERR = 0 ]; then
+    msg="$job completed normally"
+else
+    msg="$job FAILED!"
+fi
+
 postmsg "$jlogfile" "$msg"
 
 ##############################
@@ -161,3 +176,6 @@ cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
 echo `date` $0 `date -u` end
+
+exit $ERR
+

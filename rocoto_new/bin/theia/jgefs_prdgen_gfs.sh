@@ -31,14 +31,12 @@ export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:4
 
 export NODES=1
-export total_tasks=3
+export total_tasks=5
 export OMP_NUM_THREADS=4
-export taskspernode=3
+export taskspernode=5
 
 export FORECAST_SEGMENT=hr
 export DO_LOW_RES=
-
-export gefsmpexec_mpmd=mpirun.lsf
 
 # export for development runs only begin
 export envir=${envir:-dev}
@@ -46,4 +44,4 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 export gefsmpexec_mpmd="mpirun -np $total_tasks /scratch3/NCEPDEV/nwprod/util/exec/mpiserial"
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_PRDGEN
+$SOURCEDIR/jobs/JGEFS_PRDGEN_GFS
