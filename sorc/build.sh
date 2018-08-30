@@ -86,7 +86,9 @@ elif  [ $mac = m ] ; then # For wcoss_dell_p3
     echo "Building for wcoss_dell_p3"
 
     machine=wcoss_dell_p3
-
+   
+    export IP_LIBd=/gpfs/dell1/nco/ops/nwtest/lib.p2/ip/v2.0.0/libip_v2.0.0_d.a
+    export IP_LIB4=/gpfs/dell1/nco/ops/nwtest/lib.p2/ip/v2.0.0/libip_v2.0.0_4.a
     export LIBDIR=/gpfs/dell1/nco/ops/nwprod/lib
     export INCG="$NEMSIO_INC"
     export INCGFS="$NEMSIOGFS_INC"
@@ -112,14 +114,10 @@ for dir in gefs_vortex_separate.fd gefs_vortex_combine.fd global_sigzvd.fd  glob
     cd ..
 done
 
-export LIBS="${G2_LIB4} ${W3NCO_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}"
-
 for dir in global_enscvprcp.fd global_enspvrfy.fd global_enssrbias.fd global_enscqpf.fd  global_enscvt24h.fd  global_ensrfmat.fd ; do
     cd $dir
-    if [ $dir != 'global_enspvrfy.fd' -a $machine = 'wcoss_dell_p3' ]; then
-        make clean
-        make -f makefile
-    fi
+    make clean
+    make -f makefile
     cd ..
 done
 
