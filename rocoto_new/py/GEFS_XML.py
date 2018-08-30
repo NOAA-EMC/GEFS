@@ -85,6 +85,9 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         if sVarValue == "nwdev":
             sVarValue = os.path.basename(os.path.abspath(sRocoto_Path + sSep + ".." + sSep + ".."))
         dicBase[sVarName] = sVarValue
+    # PSLOT is used by rocoto_viewer and should always be the same as EXPID
+    dicBase["PSLOT"] = sVarValue
+
     # ===
     sVarName = "SOURCEDIR".upper()
     sVarValue = ""
@@ -501,6 +504,10 @@ def get_definitions(dicBase):
     strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
 
     sVarName = "EXPID"
+    sVarValue = dicBase[sVarName.upper()]
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+    sVarName = "PSLOT"
     sVarValue = dicBase[sVarName.upper()]
     strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
 
