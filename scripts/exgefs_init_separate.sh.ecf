@@ -98,6 +98,7 @@ echo pdycycp=$pdycycp pdyp=$pdyp cycp=$cycp
 
 
 #
+
 # begin relocation splitting section for c00
 #
 echo relocflag=$relocflag
@@ -190,10 +191,19 @@ execseparate=$EXECgefs/gefs_vortex_separate
 #
 #  relocation splitting section for c00
 #
+#### begin relocation high resoluton analysis
+
+    
+
+#### begin relocation high resoluton analysis
 
 echo
 echo `date` $0 poe separate begin
 echo
+
+if (( relocflagana == 1 )); then
+cp -pr tcvitals.in tcvitals.as
+fi
 
 ls -al poescript*
 rm -rf poescript*
@@ -215,14 +225,14 @@ case $cyc in
 esac # $cyc
 
 
-(( nlist_end = nlist_start + npert ))
+(( nlist_end = nlist_start + npert - 1 ))
     echo EnKF members from $nlist_start to $nlist_end are selected for $cyc cycle
 
 (( itask = 1 ))
 (( imem = nlist_start ))
 
 while (( imem <= nlist_end )) ; do
-	(( imem0 = imem - nlist_end + 1 ))
+	(( imem0 = imem - nlist_start + 1 ))
 	(( imema = imem  )) 
         if ((  imem > nmem_enkf )); then 
                 (( imema = imem - nmem_enkf )) 
@@ -235,10 +245,22 @@ while (( imem <= nlist_end )) ; do
 	(( itask = itask + 1 ))
         (( imem = imem + 1 ))
 done
+         (( totaltasks = npert  ))
+if (( relocflagana == 1 )); then
+         (( imema = -1 ))
+         (( imem0 = -1 ))
+         (( fhrp0 = 0 ))
+         (( totaltasks = npert + 1 ))
+	echo 'echo `date` ############ poescript'" $itask begin">>poescript.$itask
+	echo 'echo `date` ###### `uname -a` ######'" mem=$imema start">>poescript.$itask
+		echo "$USHgefs/gefs_init_separate.sh $imema $imem0 $fhrp0 $inflag $relocfact >ushout.separate.$itask 2>&1" >>poescript.$itask
+	echo 'echo `date` ###### `uname -a` ######'" mem=$imema end">>poescript.$itask
+fi
+
 
 
         (( itask = 0 ))
-while (( itask <= npert  )); do
+while (( itask <= totaltasks )); do
 	chmod 755 poescript.$itask
 	ls -al poescript.$itask
 	echo
@@ -247,6 +269,7 @@ while (( itask <= npert  )); do
 	echo "poescript.$itask" >>poescript
 	(( itask = itask + 1 ))
 done # while (( itask < npert ))
+
 
 echo
 chmod 755 poescript

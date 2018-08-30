@@ -110,7 +110,8 @@ echo DATAPARENT=$DATAPARENT
 	eminflaguse=0
 
 	inflagt=$inflag
-
+             
+     if (( imem != -1 )); then   
    	 	(( fhr = $fhrp ))
 		while (( fhr < $fhrpend )); do
 			if [[ $haveinput = no ]]; then
@@ -154,6 +155,7 @@ else
 	echo turn relocation off
 	export relocpertflag=0
 fi # (( ifhruse == fhrp ))
+     fi   
 
 
 #
@@ -168,6 +170,32 @@ if (( relocpertflag == 1 )); then
 	echo yy=$yy
 
 	# this file is created once for all in the exenstr script
+     if (( imem == -1 )); then   #for analysis Relocation
+
+	ln -s -f ../tcvitals.in fort.11
+
+	ln -s -f ../trackatcfunix.in      fort.40
+	ln -s -f ../sanl.in               fort.24
+
+	ln -s -f ../sanl.in_relocated              fort.54
+	ln -s -f ../sanl.in_strm              fort.74
+
+	export gesfhr=0
+	export ensm=${cmem}
+
+	echo `date` $execseparate before
+	echo  $gesfhr $ensm | $execseparate
+	filtrccn=$?
+	echo `date` $execseparate after
+	if (( filtrccn == 0 )); then
+		if [[ -s ../sanl.in_relocated ]]; then
+			mv ../sanl.in ../sanl.in.presep
+			mv ../sanl.in_relocated ../sanl.in
+		fi
+	fi
+               
+     else
+
 
 	ln -s -f ../tcvitals.as fort.11
 
@@ -204,6 +232,7 @@ if (( relocpertflag == 1 )); then
 	fi # (( filtrccn == 0 ))
 
 	echo `date` Separate the storm and environment forecast fields for $cmem end
+   fi
 fi # (( relocpertflag == 1 ))
 #
 # end relocation splitting section

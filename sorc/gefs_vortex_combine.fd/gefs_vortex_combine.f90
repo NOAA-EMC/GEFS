@@ -197,6 +197,8 @@
           ALLOCATE(GDATA%T(IMAX,JMAX,KMAX))
           ALLOCATE(GDATA%U(IMAX,JMAX,KMAX))
           ALLOCATE(GDATA%V(IMAX,JMAX,KMAX))
+          ALLOCATE(GDATA%W(IMAX,JMAX,KMAX))
+          ALLOCATE(GDATA%DP(IMAX,JMAX,KMAX))
           ALLOCATE(GDATA%Q(IMAX,JMAX,KMAX,7))
 
           ALLOCATE(DUMMY2(imax*jmax))
@@ -336,6 +338,30 @@
           CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY2,0,IRET)
              IF ( IRET == 0 ) THEN
                 GDATA%Q(:,:,VLEV,7)=RESHAPE(DUMMY2, (/IMAX,JMAX/) )
+             ELSE
+               PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
+               CALL ERREXIT (3)
+             ENDIF
+          ENDDO
+          ! dzdt
+          VNAME='dzdt' 
+          VLEVTYP='mid layer' 
+          DO VLEV=1, KMAX
+          CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY2,0,IRET)
+             IF ( IRET == 0 ) THEN
+                GDATA%W(:,:,VLEV)=RESHAPE(DUMMY2, (/IMAX,JMAX/) )
+             ELSE
+               PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
+               CALL ERREXIT (3)
+             ENDIF
+          ENDDO
+          ! dpres
+          VNAME='dpres' 
+          VLEVTYP='mid layer' 
+          DO VLEV=1, KMAX
+          CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY2,0,IRET)
+             IF ( IRET == 0 ) THEN
+                GDATA%DP(:,:,VLEV)=RESHAPE(DUMMY2, (/IMAX,JMAX/) )
              ELSE
                PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
                CALL ERREXIT (3)
@@ -586,6 +612,20 @@
           VLEVTYP='mid layer' 
           DO VLEV=1, KMAX
             DUMMY2(:)=RESHAPE(GDATA%Q(:,:,VLEV,7),(/IMAX*JMAX/) ) 
+            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY2,IRET)
+          ENDDO
+          ! dzdt
+          VNAME='dzdt' 
+          VLEVTYP='mid layer' 
+          DO VLEV=1, KMAX
+            DUMMY2(:)=RESHAPE(GDATA%W(:,:,VLEV),(/IMAX*JMAX/) ) 
+            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY2,IRET)
+          ENDDO
+          ! dpres
+          VNAME='dpres' 
+          VLEVTYP='mid layer' 
+          DO VLEV=1, KMAX
+            DUMMY2(:)=RESHAPE(GDATA%DP(:,:,VLEV),(/IMAX*JMAX/) ) 
             CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY2,IRET)
           ENDDO
         ENDIF
