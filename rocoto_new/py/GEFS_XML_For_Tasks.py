@@ -377,6 +377,8 @@ def get_param_of_task(dicBase, taskname):
             Task_Node = 24
         elif WHERE_AM_I == "theia":
             Task_Node = 24
+        elif WHERE_AM_I == "wcoss_dell_p3":
+            Task_Node = 24
         else:
             Task_Node = 24
 
@@ -568,6 +570,8 @@ def create_metatask(taskname="jgefs_init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#
         strings += sPre + '\t\t' + '<native>-cwd &tmpnwprd;</native>\n'
     elif WHERE_AM_I.upper() == "Theia".upper():
         strings += "\n"
+    elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
+        strings += "\n"
     else:
         strings += sPre + '\t\t' + '<native>-cwd &tmpnwprd;</native>\n'
 
@@ -578,6 +582,8 @@ def create_metatask(taskname="jgefs_init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#
     if WHERE_AM_I.upper() == "cray".upper():
         strings += sPre + '\t\t' + '<native>-extsched "CRAYLINUX[]"</native>\n'
     elif WHERE_AM_I.upper() == "Theia".upper():
+        strings += "\n"
+    elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
         strings += "\n"
     else:
         strings += sPre + '\t\t' + '<native>-extsched "CRAYLINUX[]"</native>\n'
@@ -642,6 +648,8 @@ def create_task( \
             strings += sPre + '\t' + '<join><cyclestr>&LOG_DIR;/@Y@m@d/{0}_@H.%J</cyclestr></join>\n'.format(taskname[1:])
         elif WHERE_AM_I.upper() == "THEIA":
             strings += sPre + '\t' + '<join><cyclestr>&LOG_DIR;/@Y@m@d/{0}_@H.%PBS_JOBID</cyclestr></join>\n'.format(taskname[1:])
+        elif WHERE_AM_I.upper() == "WCOSS_DELL_P3":
+            strings += sPre + '\t' + '<join><cyclestr>&LOG_DIR;/@Y@m@d/{0}_@H.%J</cyclestr></join>\n'.format(taskname[1:])
         else:
             strings += sPre + '\t' + '<join><cyclestr>&LOG_DIR;/@Y@m@d/{0}_@H.%J</cyclestr></join>\n'.format(taskname[1:])
     else:
@@ -670,6 +678,8 @@ def create_task( \
         strings += sPre + '\t' + '<native>-cwd &tmpnwprd;</native>\n'
     elif WHERE_AM_I.upper() == "theia".upper():
         strings += "\n"
+    elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
+        strings += "\n"
     else:
         strings += sPre + '\t' + '<native>-cwd &tmpnwprd;</native>\n'
 
@@ -682,6 +692,8 @@ def create_task( \
         else:
             strings += sPre + '\t' + '<native>-extsched "CRAYLINUX[]"</native>\n'
     elif WHERE_AM_I.upper() == "theia".upper():
+        strings += "\n"
+    elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
         strings += "\n"
     else:
         strings += sPre + '\t' + '<native>-extsched "CRAYLINUX[]"</native>\n'

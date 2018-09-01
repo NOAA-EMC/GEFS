@@ -83,6 +83,8 @@ if [ $CompileCode = "yes" ]; then
         /bin/ln -sf /scratch4/NCEPDEV/ensemble/noscrub/common/gefs-fixed fix
     elif [ $machine = "cray" ]; then
         /bin/ln -sf /gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/gefs-fixed fix
+    elif [ $machine = "wcoss_dell_p3" ]; then
+        /bin/ln -sf /gpfs/dell2/emc/retros/noscrub/Xianwu.Xue/common/gefs-fixed fix
     fi
 fi
 
@@ -139,6 +141,12 @@ if [ $RunRocoto = "yes" ]; then
         module load xt-lsfhpc
         module load rocoto
         module load python
+    elif [ $machine = "wcoss_dell_p3" ]; then
+        . /usrx/local/prod/lmod/lmod/init/sh
+        module use /gpfs/dell3/usrx/local/dev/emc_rocoto/modulefiles
+        module load lsf/10.1
+        module load rocoto/1.2.4
+        module load python/2.7.14        
     fi
     ./py/run_to_get_all.py  $userConfigFile
 fi # For RunRocoto

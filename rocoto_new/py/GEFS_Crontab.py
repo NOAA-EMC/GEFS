@@ -77,6 +77,14 @@ def create_crontab(dicBase, OnlyForTest=False, cronint=5):
                           'module load xt-lsfhpc; module load rocoto;'
         crontab_string += rocotorun_args
         crontab_string += ') > /dev/null 2>&1'
+    elif system == "wcoss_dell_p3":
+        crontab_string += crontab_usage
+        crontab_string += crontab_time
+        crontab_string += ' (. /usrx/local/prod/lmod/lmod/init/sh; ' \
+                          'module use /gpfs/dell3/usrx/local/dev/emc_rocoto/modulefiles; ' \
+                          'module load lsf/10.1; module load rocoto/1.2.4;'
+        crontab_string += rocotorun_args
+        crontab_string += ') > /dev/null 2>&1'
     else:
         print("CRITICAL ERROR: auto-crontab file generation for %s still needs to be implemented" % system)
         sys.exit(-502)

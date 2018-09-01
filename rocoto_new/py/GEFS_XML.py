@@ -111,6 +111,9 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
                 .format(dicBase["FIRST"], dicBase["LAST"])
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
+        elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
+            sVarValue = "/gpfs/dell2/ptmp/{0}.{1}/o/&EXPID;" \
+                .format(dicBase["FIRST"], dicBase["LAST"])
         else:
             sVarValue = "/gpfs/hps3/ptmp/emc.enspara/{0}.{1}/o/&EXPID;" \
                 .format(dicBase["FIRST"], dicBase["LAST"])
@@ -143,6 +146,9 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         elif WHERE_AM_I.lower() == 'theia':
             sVarValue = "/scratch4/NCEPDEV/stmp4/{0}.{1}/GEFS/&EXPID;" \
                 .format(dicBase["FIRST"], dicBase["LAST"])
+        elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
+            sVarValue = "/gpfs/dell2/emc/retros/noscrub/{0}.{1}/GEFS/&EXPID;" \
+                .format(dicBase["FIRST"], dicBase["LAST"])
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         else:
@@ -172,6 +178,9 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         elif WHERE_AM_I.lower() == 'theia':
             sVarValue = "/NCEPDEV/emc-ensemble/2year/{0}.{1}/GEFS/&EXPID;" \
                 .format(dicBase["FIRST"], dicBase["LAST"])
+        elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
+            sVarValue = "/NCEPDEV/emc-ensemble/2year/{0}.{1}/GEFS/&EXPID;" \
+                .format(dicBase["FIRST"], dicBase["LAST"])
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         else:
@@ -198,6 +207,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
         elif WHERE_AM_I.lower() == 'theia':
             sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
+        elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
+            sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
         else:
@@ -213,6 +224,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         elif WHERE_AM_I.lower() == 'wcoss':
             sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
         elif WHERE_AM_I.lower() == 'theia':
+            sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
+        elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
             sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
@@ -336,6 +349,27 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sVarValue = "moabtorque"
         if sVarName not in dicBase:
             dicBase[sVarName] = sVarValue
+    elif WHERE_AM_I.lower() == "wcoss_dell_p3":
+        sVarName = "ACCOUNT".upper()
+        sVarValue = "GEN-T2O"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "CUE2RUN".upper()
+        sVarValue = "dev"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "TRANSFER_QUEUE".upper()
+        sVarValue = "dev_transfer"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "SCHEDULER".upper()
+        sVarValue = "lsf"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+
     else:
         sVarName = "ACCOUNT".upper()
         sVarValue = "fv3-cpu"

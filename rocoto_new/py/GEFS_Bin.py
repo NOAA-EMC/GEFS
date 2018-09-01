@@ -46,6 +46,8 @@ def rw_bin_forecast_high(taskname, dicBase):
         Task_Node = 24
     elif WHERE_AM_I == "theia":
         Task_Node = 24
+    elif WHERE_AM_I == "wcoss_dell_p3":
+        Task_Node = 24
     else:
         Task_Node = 24
     
@@ -67,6 +69,7 @@ def rw_bin_forecast_high(taskname, dicBase):
             if WHERE_AM_I == "cray":
                 if sLine1.startswith("export gefsmpexec="):
                     sLine = 'export gefsmpexec=" aprun -b -j1 -n{0} -N{1} -d{2} -cc depth "\n'.format(iTotal_Tasks,iPPN,iTPP)
+
             elif WHERE_AM_I == "theia":
                 if sLine1.startswith("export total_tasks="):
                     sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
@@ -76,6 +79,11 @@ def rw_bin_forecast_high(taskname, dicBase):
 
                 if sLine1.startswith("export taskspernode"):
                     sLine = 'export taskspernode={0}\n'.format(iPPN)
+
+            elif WHERE_AM_I == "wcoss_dell_p3":
+                if sLine1.startswith("export gefsmpexec="):
+                    sLine = 'export gefsmpexec=" mpirun -n {0} "\n'.format(iTotal_Tasks)
+
 
             sLines += sLine
             # fh.write(sLine)
