@@ -34,7 +34,7 @@ export total_tasks=40
 export OMP_NUM_THREADS=1
 export taskspernode=2
 
-export gefsmpexec_mpmd="  mpirun -n 40 cfp mpmd_cmdfile"
+export gefsmpexec_mpmd="  mpirun -n $total_tasks cfp mpmd_cmdfile"
 
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}

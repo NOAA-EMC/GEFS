@@ -46,7 +46,7 @@ export total_tasks=40
 export OMP_NUM_THREADS=6
 export taskspernode=4
 
-export gefsmpexec_mpmd="  mpirun -n 40 cfp mpmd_cmdfile"
+export gefsmpexec_mpmd="  mpirun -n $total_tasks cfp mpmd_cmdfile"
 export aprun_gec00="mpirun -n 1"
 export APRUNC="mpirun"
 

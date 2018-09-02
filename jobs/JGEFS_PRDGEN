@@ -335,8 +335,13 @@ if test $SHOUR -le $FHOUR; then
 	export MP_PGMMODEL=mpmd
         rm mpmd_cmdfile
         ln -s $MP_CMDFILE mpmd_cmdfile
+    
+    $APRUN
 
-	$APRUN
+    
+    #export CMDFILE=${DATA}/prdgen.cmdfile
+
+	#$APRUN  cfp $CMDFILE
 
 	export SHOUR=`expr $FHOUR + $FHINC`
 fi # test $SHOUR -le $FHOUR

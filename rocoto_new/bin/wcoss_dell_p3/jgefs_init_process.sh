@@ -36,7 +36,7 @@ export taskspernode=4
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 
-export gefsmpexec=" mpirun -n 32 "
+export gefsmpexec=" mpirun -n $total_tasks "
 export NTHREADS_SIGCHGRS=6
 
 # CALL executable job script here

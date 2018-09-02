@@ -35,7 +35,7 @@ export taskspernode=7
 
 export FORECAST_SEGMENT=lr
 
-export gefsmpexec_mpmd="  mpirun -n 21 cfp mpmd_cmdfile"
+export gefsmpexec_mpmd="  mpirun -n $total_tasks cfp mpmd_cmdfile"
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}

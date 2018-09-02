@@ -51,6 +51,8 @@ elif [[ "$WHERE_AM_I" == wcoss_dell_p3 ]] ; then
 
     module load NetCDF/4.5.0
     module load HDF5-serial/1.10.1
-
+    module load impi/18.0.1
+    module load CFP/2.0.1
+    export USE_CFP=YES
     export PATH=$PATH:.
 fi

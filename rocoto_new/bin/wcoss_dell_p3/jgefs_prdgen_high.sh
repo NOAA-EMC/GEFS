@@ -39,7 +39,7 @@ export taskspernode=3
 export FORECAST_SEGMENT=hr
 export DO_LOW_RES=
 
-export gefsmpexec_mpmd="  mpirun -n 3 cfp mpmd_cmdfile"
+export gefsmpexec_mpmd="  mpirun -n $total_tasks cfp mpmd_cmdfile"
 
 # export for development runs only begin
 export envir=${envir:-dev}

@@ -48,7 +48,7 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 # CALL executable job script here
 
 
-export APRUNC="mpirun -n 1"
+export APRUNC="mpirun -n $total_tasks"
 
 
 

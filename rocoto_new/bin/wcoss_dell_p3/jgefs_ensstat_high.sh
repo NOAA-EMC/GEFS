@@ -40,7 +40,7 @@ export FORECAST_SEGMENT=hr
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 
-export gefsmpexec_mpmd="mpirun -n 2 cfp mpmd_cmdfile"
+export gefsmpexec_mpmd="mpirun -n $total_tasks cfp mpmd_cmdfile"
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_ENSSTAT

@@ -50,7 +50,7 @@ module load NCO/4.7.0
 module load HDF5-serial/1.10.1
 module load NetCDF/4.5.0
 module load CFP/2.0.1
-#setenv USE_CFP YES
+export USE_CFP=YES
 export PATH=$PATH:.
 fi
 

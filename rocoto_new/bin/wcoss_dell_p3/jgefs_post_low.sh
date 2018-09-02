@@ -35,16 +35,14 @@ export NODES=2
 export total_tasks=24
 export OMP_NUM_THREADS=2
 export taskspernode=12
-export POSTGRB2TBL=/gpfs/hps/nco/ops/nwprod/lib/g2tmpl/v1.3.0/src/params_grib2_tbl_new
+export POSTGRB2TBL=/gpfs/dell1/nco/ops/nwprod/lib/g2tmpl/v1.5.0/src/params_grib2_tbl_new
 
 export FORECAST_SEGMENT=lr
 
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 
-
-
-export gefsmpexec=" mpirun -n 24 "
+export gefsmpexec=" mpirun -n $total_tasks "
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_NCEPPOST

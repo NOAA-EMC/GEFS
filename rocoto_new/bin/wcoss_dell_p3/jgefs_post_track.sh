@@ -39,7 +39,7 @@ export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 
-export gefsmpexec_mpmd="  mpirun -n 21 cfp mpmd_cmdfile"
+export gefsmpexec_mpmd="  mpirun -n $total_tasks cfp mpmd_cmdfile"
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_POST_TRACK

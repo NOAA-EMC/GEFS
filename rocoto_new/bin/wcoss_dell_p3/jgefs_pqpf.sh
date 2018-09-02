@@ -39,7 +39,7 @@ export total_tasks=16
 export OMP_NUM_THREADS=1
 export taskspernode=16
 
-export gefsmpexec=" mpirun -n 16 "
+export gefsmpexec=" mpirun -n $total_tasks "
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_CQPF

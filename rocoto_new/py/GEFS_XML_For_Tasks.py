@@ -304,6 +304,7 @@ def get_param_of_task(dicBase, taskname):
     sVarName = "{0}_queue".format(taskname).upper()
     if sVarName in dicBase:
         sQueue = dicBase[sVarName.upper()]
+    
     # for Join
     sVarName = "{0}_join".format(taskname).upper()
     if sVarName in dicBase:
