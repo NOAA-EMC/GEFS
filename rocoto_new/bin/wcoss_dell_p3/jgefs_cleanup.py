@@ -1,4 +1,7 @@
-#! /usrx/local/prod/python/2.7.13/bin/python
+#!/usr/bin/env python
+###!/usrx/local/dev/packages/python/2.7.14/bin/python
+
+##! /usrx/local/prod/python/2.7.13/bin/python
 
 ##########################################################
 # Delete all GEFS output from temporary directory (except log files)
