@@ -23,7 +23,7 @@
 #
 ##########################################################
 
-import os, shutil, glob
+import os, shutil, glob, sys
 
 # Read in environment variables and make sure they exist
 work_dir = os.environ.get("WORKDIR")
@@ -55,6 +55,7 @@ print("Starting GEFS copy_init with the following settings:")
 print("Source Directory      : " + init_dir)
 print("Destination Directory : " + work_dir)
 print("Date/Cycle            : " + date_string + "_" + cycle)
+sys.stdout.flush()
 
 clobber = True
 
@@ -67,6 +68,7 @@ if ( os.path.exists(destination_dir) ):
 		shutil.rmtree(destination_dir)
 	else:
 		print(destination_dir + " already exists and clobber is False, skipping.")
+		sys.stdout.flush()
 		quit(0)
 
 if ( not os.path.exists(destination_base) ):
@@ -77,4 +79,5 @@ if ( not os.path.exists(destination_base) ):
 
 print("Copying files for init")
 print("    From " + source_dir + " to " + destination_dir)
+sys.stdout.flush()
 shutil.copytree(source_dir, destination_dir, symlinks=True)

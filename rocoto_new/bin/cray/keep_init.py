@@ -23,10 +23,8 @@
 #
 ##########################################################
 
-import os, shutil, glob
+import os, shutil, glob, sys
 from functools import partial
-
-print = partial(print, flush=True)
 
 # Read in environment variables and make sure they exist
 work_dir = os.environ.get("WORKDIR")
@@ -61,6 +59,7 @@ print("Source Directory      : " + work_dir)
 print("Destination Directory : " + init_dir)
 print("Member                : " + member)
 print("Date/Cycle            : " + date_string + "_" + cycle)
+sys.stdout.flush()
 
 source_dir = work_dir + "/nwges/dev/gefs." + date_string + "/" + cycle + "/" + member
 destination_base = init_dir + "/" + date_string + "/" + cycle
@@ -70,6 +69,7 @@ if ( os.path.exists(destination_dir) ):
 		shutil.rmtree(destination_dir)
 	else:
 		print(destination_dir + " already exists and clobber is False, skipping.")
+		sys.stdout.flush()
 		quit(0)
 
 if ( not os.path.exists(destination_base) ):
@@ -80,4 +80,5 @@ if ( not os.path.exists(destination_base) ):
 
 print("Copying files for init")
 print("    From " + source_dir + " to " + destination_dir)
+sys.stdout.flush()
 shutil.copytree(source_dir, destination_dir, symlinks=True)
