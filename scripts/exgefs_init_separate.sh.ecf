@@ -440,7 +440,7 @@ if (( relocpertflag == 1 )); then
 # RLW 20131003 modify to point to experimental data
   #if [[ -s /com/gfs/prod/gfs.$PDY/gfs.$cycle.pgrbf00 ]]; then
     export gfsdir=$COMINgfs
-  testfile=gfs.$cycle.master.grbf00
+  testfile=gfs.$cycle.master.grbf000
   if [[ -s $gfsdir/$testfile ]]; then
   # f00 gfs tracking for relocation
     export cmodel=gfs00
