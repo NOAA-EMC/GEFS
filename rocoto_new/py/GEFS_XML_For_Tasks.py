@@ -83,6 +83,18 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "init_recenter"
 
+        elif dicBase['RUN_INIT'] == "COPY_INIT":
+            # ---copy_init
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "copy_init"
+
+        if dicBase['KEEP_INIT'].upper()[0] == "Y" and dicBase['RUN_INIT'] != "COPY_INIT":
+            # ---keep_init
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "keep_init"
+
         # #    <!-- high resolution forecast and post process jobs -->
         if dicBase['RUN_FORECAST_HIGH'].upper()[0] == "Y":
             # ---forecast_high
@@ -326,8 +338,8 @@ def get_param_of_task(dicBase, taskname):
             # For 'forecast_high' task
             if taskname.lower() == "forecast_high": 
                 if DoesTaskExist(dicBase, "init_recenter"):
-                    if DoesTaskExist(dicBase, "init_fv3chgrs"):  
-                        if DoesTaskExist(dicBase, "getcfssst"):   
+                    if DoesTaskExist(dicBase, "init_fv3chgrs"):
+                        if DoesTaskExist(dicBase, "getcfssst"):
                             sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
                         else:
                             sDep = '<taskdep task="init_fv3chgrs_#member#"/>'
@@ -336,6 +348,11 @@ def get_param_of_task(dicBase, taskname):
                             sDep = '<and>\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>\n\t<taskdep task="getcfssst"/>\n</and>'
                         else:
                             sDep = '<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
+                elif DoesTaskExist(dicBase, "copy_init"):
+                    if DoesTaskExist(dicBase, "getcfssst"):
+                        sDep = '<and>\n\t<taskdep task="copy_init_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+                    else:
+                        sDep = '<taskdep task="copy_init_#member#"/>'
                             
             # For Low Resolution
             if taskname.lower() == "post_low" or taskname.lower() == "prdgen_low":
@@ -362,6 +379,35 @@ def get_param_of_task(dicBase, taskname):
                         sDep = '<and>\n\t<taskdep task="ensstat_high"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
                     #else:
                     #    sDep = '<taskdep task="ensstat_high"/>' #Default
+
+            # For 'keep_data' and 'archive' tasks
+            if taskname.lower() == "keep_data" or taskname.lower() == "archive":
+                if DoesTaskExist(dicBase, "enspost"):
+                    if DoesTaskExist(dicBase, "post_track"):
+                        if DoesTaskExist(dicBase, "post_genesis"):
+                            sDep = '<and>\n\t<taskdep task="enspost"/>\n\t<taskdep task="post_track"/>\n\t<taskdep task="post_genesis"/>\n</and>'
+                        else:
+                            sDep = '<and>\n\t<taskdep task="enspost"/>\n\t<taskdep task="post_track"/>\n</and>'
+                    else:
+                        if DoesTaskExist(dicBase, "post_genesis"):
+                            sDep = '<and>\n\t<taskdep task="enspost"/>\n\t<taskdep task="post_genesis"/>\n</and>'
+                        else:
+                            sDep = '<and>\n\t<taskdep task="enspost"/>\n</and>'
+                else:
+                    if DoesTaskExist(dicBase, "post_track"):
+                        if DoesTaskExist(dicBase, "post_genesis"):
+                            sDep = '<and>\n\t<taskdep task="post_track"/>\n\t<taskdep task="post_genesis"/>\n</and>'
+                        else:
+                            sDep = '<and>\n\t<taskdep task="post_track"/>\n</and>'
+                    else:
+                        if DoesTaskExist(dicBase, "post_genesis"):
+                            sDep = '<and>\n\t<taskdep task="post_genesis"/>\n</and>'
+                        else:
+                            sDep = ''
+
+            # Don't clean up if keep_init isn't finished
+            if taskname.lower() == "cleanup" and DoesTaskExist(dicBase, "keep_init"):
+                sDep = '<and>\n\t' + sDep + '\n\t<metataskdep metatask="keep_init"/>\n</and>'
 
     # Forecast can be derive from the parm items
     if taskname == 'forecast_high' or taskname == 'forecast_low':
@@ -412,6 +458,8 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
 
     metatask_names = []
     metatask_names.append('init_fv3chgrs')
+    metatask_names.append('keep_init')
+    metatask_names.append('copy_init')
     # forecast
     metatask_names.append('forecast_high')
     metatask_names.append('forecast_low')
@@ -592,7 +640,11 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
     strings += (create_envar(name="job", value=jobname.replace("_#member#", "#member#"), sPre=sPre_2))
     strings += (create_envar(name="RUNMEM", value="ge#member#", sPre=sPre_2))
 
-    strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
+    if taskname in ['keep_init', 'copy_init']:
+        strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
+        strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.py</cyclestr></command>\n'.format(taskname)
+    else:
+        strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
 
     sDep = sDep.replace('\\n', '\n')
     sDep = sDep.replace('\\t', '\t')
@@ -750,6 +802,7 @@ def get_ENV_VARS(sPre="\t\t"):
     dicENV_VARS['EXPID'] = '&EXPID;'
     dicENV_VARS['KEEP_DIR'] = '&KEEP_DIR;'
     dicENV_VARS['HPSS_DIR'] = '&HPSS_DIR;'
+    dicENV_VARS['INIT_DIR'] = '&INIT_DIR;'
     dicENV_VARS['DIRS_TO_KEEP'] = '&DIRS_TO_KEEP;'
     dicENV_VARS['DIRS_TO_ARCHIVE'] = '&DIRS_TO_ARCHIVE;'
     sENV_VARS = ""
