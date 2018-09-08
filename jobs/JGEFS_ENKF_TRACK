@@ -119,24 +119,25 @@ export cycp=`echo $pdycycp|cut -c9-10`
 ##############################################
 # Define the time 6h ago and after for tracking
 ##############################################
-#d6ahead_ymdh=` $NDATE 6 ${PDY}${cyc}`
 d6ahead_ymdh=${PDY}${cyc}
+d_hour_ymdh=` $NDATE -6 ${PDY}${cyc}`
 d6ago_ymdh=` $NDATE -12 ${PDY}${cyc}`
 export d6ahead_ymd=`echo $d6ahead_ymdh|cut -c1-8`
 export d6ahead_hh=`echo $d6ahead_ymdh|cut -c9-10`
 export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
 export d6ago_hh=`echo $d6ago_ymdh|cut -c9-10`
+export d_hour_ymd=`echo $d_hour_ymdh|cut -c1-8`
+export d_hour_hh=`echo $d_hour_ymdh|cut -c9-10`
 ##############################################
 # Define COM directories
 ##############################################
 # JY export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.$PDY} 
-export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.$PDY/$cycp)} 
 # 20160607 RLW if present, modify preset COMINenkf to include the date for this job
-export COMINenkf=${COMINenkf:-$(compath.py /gfs/prod)/enkf.gdas.} 
+export COMINenkf=${COMINenkf:-$(compath.py /gfs/prod/enkf.gdas.)} 
 export COMINatcfsyn=${COMINatcfsyn:-$(compath.py arch/prod/syndat)}
-export COMINgfs6ago=${COMINgfs6ago:-$(compath.py gfs/prod/gfs.$d6ago_ymd/$d6ago_hh)}
-export COMINgfs6ahead=${COMINgfs6ahead:-$(compath.py gfs/prod/gfs.$d6ahead_ymd/d6ahead_hh)}
-
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${d_hour_ymd}/${d_hour_hh})}
+export COMINgfs6ago=${COMINgfs6ago:-$(compath.py gfs/prod/gfs.${d6ago_ymd}/${d6ago_hh})}
+export COMINgfs6ahead=${COMINgfs6ahead:-$(compath.py gfs/prod/gfs.${d6ahead_ymd}/${d6ahead_hh})}
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
