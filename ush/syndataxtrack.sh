@@ -12,7 +12,7 @@ if [[ $1 == "test" ]]; then
   pdy=20040824
   cyc=12
   filesyn=gblav.t12z.syndata.tcvitals.tm00
-  filetrk=avn.t12z.cyclone.trackatcfunix
+  filetrk=avno.t12z.cyclone.trackatcfunix
   fileout=test.syntrk
 else
   pdy=$1

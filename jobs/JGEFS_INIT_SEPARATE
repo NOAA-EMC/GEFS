@@ -127,8 +127,15 @@ env | sort
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.$PDY)}
-export COMINenkf=${COMINenkf:-$(compath.py gfs/prod)/enkf.}
+d6ahead_ymdh=` $NDATE 6 ${PDY}${cyc}`
+d6ago_ymdh=` $NDATE -6 ${PDY}${cyc}`
+export d6ahead_ymd=`echo $d6ahead_ymdh|cut -c1-8`
+export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
+
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.$PDY)/$cyc}
+export COMINgfs6ago=${COMINgfs6ago:-$(compath.py gfs/prod/gfs.$d6ago_ymd)}
+export COMINgfs6ahead=${COMINgfs6ahead:-$(compath.py gfs/prod/gfs.$d6ahead_ymd)}
+export COMINenkf=${COMINenkf:-$(compath.py gfs/prod)/enkf.gdas.}
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}

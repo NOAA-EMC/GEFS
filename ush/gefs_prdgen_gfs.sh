@@ -166,6 +166,13 @@ fi
 while test $fhr -le $FHOUR
 do
 
+if test $fhr -lt 100
+then
+   export mfhr="0$fhr"
+else
+   export mfhr=$fhr
+fi
+
     ###############################
     # Start Looping for the 
     # existence of the restart files
@@ -178,7 +185,7 @@ do
     while [ $ic -le $SLEEP_LOOP_MAX ]
     do
 #      if [[ -s $restart_file_a$fhr ]] && [[ -s $restart_file_b$fhr ]]; then
-       if test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2f$fhr
+       if test -f $COMINgfs/${RUN}.t${cyc}z.master.grb2f$mfhr
        then
 	  found=yes
           break
@@ -224,9 +231,16 @@ do
       parmlist=$parmhh 
     fi
 
-    ln -s $COMINgfs/${RUN}.t${cyc}z.master.grb2f${fhr} master_grb2file
+    ln -s $COMINgfs/${RUN}.t${cyc}z.master.grb2f${mfhr} master_grb2file
 
-    $WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile
+    $WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile_tem
+   rm ex-list*
+   if (( fhr > 6 )); then
+    $WGRIB2 -s tmpfile_tem | grep "APCP" | grep "0-" > ex-list1
+   fi
+    $WGRIB2 -s tmpfile_tem | grep -e CSN -e CIC -e CFR -e CRA | grep "hour fcst" > ex-list
+    cat ex-list1 >> ex-list
+    $WGRIB2 -s tmpfile_tem | grep -v -f ex-list | $WGRIB2 -i tmpfile_tem -grib tmpfile
     if [[ x$fhoroglist != x ]]; then
       for fhorog in $fhoroglist
       do
