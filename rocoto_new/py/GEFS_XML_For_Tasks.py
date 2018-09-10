@@ -372,13 +372,13 @@ def get_param_of_task(dicBase, taskname):
         WRTTASK_PER_GROUP = int(dicBase['WRTTASK_PER_GROUP'.upper()])
         parallel_threads = int(dicBase['parallel_threads'.upper()])
 
-        WHERE_AM_I = dicBase['WHERE_AM_I']
+        WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
 
-        if WHERE_AM_I == 'cray':
+        if WHERE_AM_I == 'cray'.upper():
             Task_Node = 24
-        elif WHERE_AM_I == "theia":
+        elif WHERE_AM_I == "theia".upper():
             Task_Node = 24
-        elif WHERE_AM_I == "wcoss_dell_p3":
+        elif WHERE_AM_I == "wcoss_dell_p3".upper():
             Task_Node = 24
         else:
             Task_Node = 24
@@ -387,7 +387,11 @@ def get_param_of_task(dicBase, taskname):
         iPPN = int((Task_Node / parallel_threads))
         iTPP = parallel_threads
 
-        sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
+        if WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
+            sNodes = "{0}:ppn={1}".format(iNodes, iPPN)
+        else:
+            sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
+
 
     return sWalltime, sNodes, sMemory, sJoin, sDep, sQueue
 
