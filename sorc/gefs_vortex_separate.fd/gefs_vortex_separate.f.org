@@ -101,7 +101,6 @@ C                                 ! NST is the max storm num
       COMMON /ENS1/ENS_MEM,idatez,IUTCZ,icycx
 
       REAL,   ALLOCATABLE :: GLAT(:),GLON(:)
-      REAL(4),   ALLOCATABLE :: GLAT2D(:,:),DUMMY4(:)
       REAL,   ALLOCATABLE :: COLRAD(:),WGT(:),WGTCS(:),RCS2(:)
 
       REAL,   ALLOCATABLE :: PSL(:,:),PS2(:)
@@ -153,10 +152,6 @@ C                                 ! NST is the max storm num
       real,   allocatable :: srlqd(:,:,:)
       real,   allocatable :: srlqi(:,:,:)
       real,   allocatable :: srlqo(:,:,:)
-      real, allocatable :: DUMMY(:)
-      integer :: VLEV
-      CHARACTER(LEN=20)       ::VLEVTYP,VNAME
-
 
       INTEGER IDVC,IDSL
 
@@ -169,7 +164,7 @@ C                                 ! NST is the max storm num
 !      CHARACTER*8 LAB(4)
       DIMENSION IDATE(4)
 
-      CHARACTER cfile*7,kfile*7,modelname*8
+      CHARACTER cfile*7,kfile*7
 
 !      COMMON /COEF1/LAB
       COMMON /COEF2/IDATE
@@ -181,15 +176,73 @@ C                                 ! NST is the max storm num
       CALL W3TAGB('GEFS_VORTEX_SEPARATE',2000,0202,0068,'NP22')
 C
       READ(5,*)ITIM,MEMBER
-      READ(MEMBER,'(i3)')NSEM
+
+      NSEM=1
+      IF(trim(MEMBER).EQ.'n1')NSEM=3
+      IF(trim(MEMBER).EQ.'p1')NSEM=4
+      IF(trim(MEMBER).EQ.'n2')NSEM=5
+      IF(trim(MEMBER).EQ.'p2')NSEM=6
+      IF(trim(MEMBER).EQ.'n3')NSEM=7
+      IF(trim(MEMBER).EQ.'p3')NSEM=8
+      IF(trim(MEMBER).EQ.'n4')NSEM=9
+      IF(trim(MEMBER).EQ.'p4')NSEM=10
+      IF(trim(MEMBER).EQ.'n5')NSEM=11
+      IF(trim(MEMBER).EQ.'p5')NSEM=12
+      IF(trim(MEMBER).EQ.'n01')NSEM=3
+      IF(trim(MEMBER).EQ.'p01')NSEM=4
+      IF(trim(MEMBER).EQ.'n02')NSEM=5
+      IF(trim(MEMBER).EQ.'p02')NSEM=6
+      IF(trim(MEMBER).EQ.'n03')NSEM=7
+      IF(trim(MEMBER).EQ.'p03')NSEM=8
+      IF(trim(MEMBER).EQ.'n04')NSEM=9
+      IF(trim(MEMBER).EQ.'p04')NSEM=10
+      IF(trim(MEMBER).EQ.'n05')NSEM=11
+      IF(trim(MEMBER).EQ.'p05')NSEM=12
+      IF(trim(MEMBER).EQ.'n06')NSEM=13
+      IF(trim(MEMBER).EQ.'p06')NSEM=14
+      IF(trim(MEMBER).EQ.'n07')NSEM=15
+      IF(trim(MEMBER).EQ.'p07')NSEM=16
+      IF(trim(MEMBER).EQ.'n08')NSEM=17
+      IF(trim(MEMBER).EQ.'p08')NSEM=18
+      IF(trim(MEMBER).EQ.'n09')NSEM=19
+      IF(trim(MEMBER).EQ.'p09')NSEM=20
+      IF(trim(MEMBER).EQ.'n10')NSEM=21
+      IF(trim(MEMBER).EQ.'p10')NSEM=22
+      IF(trim(MEMBER).EQ.'n11')NSEM=23
+      IF(trim(MEMBER).EQ.'p11')NSEM=24
+      IF(trim(MEMBER).EQ.'n12')NSEM=25
+      IF(trim(MEMBER).EQ.'p12')NSEM=26
+      IF(trim(MEMBER).EQ.'n13')NSEM=27
+      IF(trim(MEMBER).EQ.'p13')NSEM=28
+      IF(trim(MEMBER).EQ.'n14')NSEM=29
+      IF(trim(MEMBER).EQ.'p14')NSEM=30
+      IF(trim(MEMBER).EQ.'n15')NSEM=31
+      IF(trim(MEMBER).EQ.'p15')NSEM=32
+      IF(trim(MEMBER).EQ.'n16')NSEM=33
+      IF(trim(MEMBER).EQ.'p16')NSEM=34
+      IF(trim(MEMBER).EQ.'n17')NSEM=35
+      IF(trim(MEMBER).EQ.'p17')NSEM=36
+      IF(trim(MEMBER).EQ.'n18')NSEM=37
+      IF(trim(MEMBER).EQ.'p18')NSEM=38
+      IF(trim(MEMBER).EQ.'n19')NSEM=39
+      IF(trim(MEMBER).EQ.'p19')NSEM=40
+      IF(trim(MEMBER).EQ.'n20')NSEM=41
+      IF(trim(MEMBER).EQ.'p20')NSEM=42
 
 C
 !      IUNIT = 20+NSEM
 !      KUNIT = 50+NSEM
+      IF(NSEM.EQ.1)THEN
+        IUNIT = 21
+        KUNIT = 51
+        cfile='fort.21'
+        kfile='fort.51'
+      ELSE
         IUNIT = 24
         KUNIT = 54
         cfile='fort.24'
         kfile='fort.54'
+      END IF
 C
       PRINT*,'IUNIT,KUNIT,NSEM= ',IUNIT,KUNIT,NSEM 
 c
@@ -245,30 +298,20 @@ C
             nopdpvv=.true.
 c            call nemsio_open(gfile,trim(cfile),'read',ios)
 	    call nemsio_init(ios)
-            call nemsio_open(gfile,trim(cfile),'read',iret=ios)
+            call nemsio_gfsgrd_open(gfile,trim(cfile),'read',nopdpvv,
+     &                           ghead,gheadv,iret=ios)
             print *,'reading nemsio file,',trim(cfile),' ios=',ios
             if (ios == 0) then
                 inptyp = 1       ! nemsio GFS input file
-       call nemsio_getfilehead(gfile,version=ghead%version,
-     & gdatatype=ghead%gdatatype,
-     &  dimz=ghead%dimz,dimx=ghead%dimx,dimy=ghead%dimy,
-     &  idvc=ghead%idvc,idsl=ghead%idsl,idvm=ghead%idvm,idrt=ghead%idrt,
-     & ntrac=ghead%ntrac,nrec=ghead%nrec,recname=gheadv%recname,
-     & jcap=ghead%jcap,idate=ghead%idate,
-     &  nfhour=ghead%nfhour,nfminute=ghead%nfminute
-     &,nfsecondn=ghead%nfsecondn,nfsecondd=ghead%nfsecondd, 
-     & ncldt=ghead%ncldt,nsoil=ghead%nsoil,
-     & modelname=ghead%modelname)
-
             else
                if (ios /= 0) print *,'nemsio_open failed,ios=',ios
-               stop
             endif
 
           print *,'dim=',ghead%dimx,ghead%dimy,ghead%dimz,
      &         ghead%ntrac,'nrec=',ghead%nrec
 
-c          print *,'recname=',gheadv%recname(1:3)
+          print *,'datatype=',ghead%gdatatype
+          print *,'recname=',gheadv%recname(1:3)
 
           idsl=ghead%idsl
            mwave=ghead%jcap
@@ -294,16 +337,9 @@ c          print *,'recname=',gheadv%recname(1:3)
         print *,'idsl=',idsl,'nwave=',mwave,'idvm=',idvm,
      &   'idvc=',idvc,'ntrac=',ntrac,'kmax=',kmax,'idate=',idate
 
-        allocate ( GLAT2D(IMAX,JMAX),DUMMY4(IMAX*JMAX) )
-         call nemsio_getheadvar(gfile,'lat',dummy4,iret)
-          if( iret == 0) then
-          print *, 'READ in LAT '
-          GLAT2D(:,:)=RESHAPE(DUMMY4,(/IMAX,JMAX/))
-          endif
-          deallocate (DUMMY4)
         allocate ( vcrd4(kmax+1,3,2) )
         allocate ( cpi(ntrac+1) )
-        call nemsio_getfilehead(gfile,iret=iret,vcoord=vcrd4)
+        call nemsio_getfilehead(gfile,iret=iret,vcoord=vcrd4,cpi=cpi)
 !
 
         print *,' idate=',idate(:),' fhour=',fhour,nfhour,nfminute,
@@ -340,196 +376,15 @@ c          print *,'recname=',gheadv%recname(1:3)
 !        vcrd(1:KMAX+1,1:nvcd)=vcrd4(1:KMAX+1,1:nvcd,1)
 !read data
         print*,' start reading data'
-        modelname=ghead%modelname
-        IF ( TRIM(modelname) == 'GFS'  ) THEN
+
         call nemsio_gfs_algrd(imax,jmax,kmax,ntrac,gdata,nopdpvv)
         call nemsio_gfs_rdgrd(gfile,gdata,iret=ios)
 
-        ELSEIF ( TRIM(modelname) == 'FV3GFS'  ) THEN
-        print *, 'READING FV3GFS DATA'
-        ALLOCATE(GDATA%ZS(IMAX,JMAX))
-        ALLOCATE(GDATA%PS(IMAX,JMAX))
-        ALLOCATE(GDATA%T(IMAX,JMAX,KMAX))
-        ALLOCATE(GDATA%W(IMAX,JMAX,KMAX))
-        ALLOCATE(GDATA%DP(IMAX,JMAX,KMAX))
-        ALLOCATE(GDATA%U(IMAX,JMAX,KMAX))
-        ALLOCATE(GDATA%V(IMAX,JMAX,KMAX))
-        ALLOCATE(GDATA%Q(IMAX,JMAX,KMAX,7))
-
-         ALLOCATE(DUMMY(imax*jmax))
-! ugrd
-           VNAME='ugrd' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-            CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,0,IRET)
-               IF ( IRET == 0 ) THEN
-                  GDATA%U(:,:,VLEV)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
-               ELSE
-                 PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
-                 CALL ERREXIT (3)
-               ENDIF
-           ENDDO
-! vgrd
-           VNAME='vgrd' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-            CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,0,IRET)
-               IF ( IRET == 0 ) THEN
-                  GDATA%V(:,:,VLEV)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
-               ELSE
-                 PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
-                 CALL ERREXIT (3)
-               ENDIF
-           ENDDO
-! tmp
-           VNAME='tmp' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-            CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,0,IRET)
-               IF ( IRET == 0 ) THEN
-                  GDATA%T(:,:,VLEV)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
-               ELSE
-                 PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
-                 CALL ERREXIT (3)
-               ENDIF
-           ENDDO
-! dzdt
-           VNAME='dzdt' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-            CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,0,IRET)
-               IF ( IRET == 0 ) THEN
-                  GDATA%W(:,:,VLEV)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
-               ELSE
-                 PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
-                 CALL ERREXIT (3)
-               ENDIF
-           ENDDO
-! dpres
-           VNAME='dpres' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-            CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,0,IRET)
-               IF ( IRET == 0 ) THEN
-                  GDATA%DP(:,:,VLEV)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
-               ELSE
-                 PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
-                 CALL ERREXIT (3)
-               ENDIF
-           ENDDO
-! hgt
-           VNAME='hgt' 
-           VLEVTYP='sfc' 
-             CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,1, DUMMY,0,IRET)
-               IF ( IRET == 0 ) THEN
-                  GDATA%ZS(:,:)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
-               ELSE
-                 PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
-                 CALL ERREXIT (3)
-               ENDIF
-! pres
-           VNAME='pres' 
-           VLEVTYP='sfc' 
-           CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,1,DUMMY,0,IRET)
-               IF ( IRET == 0 ) THEN
-                  GDATA%PS(:,:)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
-               ELSE
-                 PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
-                 CALL ERREXIT (3)
-               ENDIF
-
-! spfh
-           VNAME='spfh' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-           CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,0,IRET)
-               IF ( IRET == 0 ) THEN
-                  GDATA%Q(:,:,VLEV,1)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
-               ELSE
-                 PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
-                 CALL ERREXIT (3)
-               ENDIF
-           ENDDO
-! o3mr
-           VNAME='o3mr' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-           CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,0,IRET)
-               IF ( IRET == 0 ) THEN
-                  GDATA%Q(:,:,VLEV,2)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
-               ELSE
-                 PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
-                 CALL ERREXIT (3)
-               ENDIF
-           ENDDO
-! clwmr
-           VNAME='clwmr' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-            CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,0,IRET)
-               IF ( IRET == 0 ) THEN
-                  GDATA%Q(:,:,VLEV,3)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
-               ELSE
-                 PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
-                 CALL ERREXIT (3)
-               ENDIF
-           ENDDO
-! rwmr
-           VNAME='rwmr' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-            CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,0,IRET)
-               IF ( IRET == 0 ) THEN
-                  GDATA%Q(:,:,VLEV,4)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
-               ELSE
-                 PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
-                 CALL ERREXIT (3)
-               ENDIF
-           ENDDO
-! icmr
-           VNAME='icmr' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-            CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,0,IRET)
-               IF ( IRET == 0 ) THEN
-                  GDATA%Q(:,:,VLEV,5)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
-               ELSE
-                 PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
-                 CALL ERREXIT (3)
-               ENDIF
-           ENDDO
-! snmr
-           VNAME='snmr' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-           CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,0,IRET)
-               IF ( IRET == 0 ) THEN
-                  GDATA%Q(:,:,VLEV,6)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
-               ELSE
-                 PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
-                 CALL ERREXIT (3)
-               ENDIF
-           ENDDO
-! grle
-           VNAME='grle' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-           CALL NEMSIO_READRECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,0,IRET)
-               IF ( IRET == 0 ) THEN
-                  GDATA%Q(:,:,VLEV,7)=RESHAPE(DUMMY, (/IMAX,JMAX/) )
-               ELSE
-                 PRINT *, 'ERROR in rdgrd (',TRIM(VNAME),') IRET=', IRET
-                 CALL ERREXIT (3)
-               ENDIF
-           ENDDO
-
-        ENDIF
-!        call nemsio_close(gfile)
         print*,' complete reading data, inptyp=', inptyp
 
-      endif
+       endif
 
-cccc End of reading data
+cccc
 
       WRITE(6,210) (IDATE(I),I=1,4),FHOUR
 c     1    ,(DUMMY(K),K=1,2*KMAX+1)
@@ -550,7 +405,7 @@ c     1    ,(DUMMY(K),K=1,2*KMAX+1)
       ALLOCATE ( GLAT(JMAX),GLON(IMAX) ) 
       ALLOCATE ( COLRAD(JHF), WGT(JHF),WGTCS(JHF),RCS2(JHF) ) 
       ALLOCATE ( ZG(IMAX,JMAX),PSFC(IMAX,JMAX),PSLB(IMAX,JMAX) )
-      ALLOCATE ( PSL(IMAX,JMAX) )
+      ALLOCATE ( PSL(IMAX,JMAX),PS2(MAXWV2) )
 
 !      ALLOCATE ( WK_S1(MAXWV2,KMAX),WK_S2(MAXWV2,KMAX) )
       ALLOCATE ( WK_G(IMAX,JMAX,KMAX),WK_G2(IMAX,JMAX,KMAX) )
@@ -574,7 +429,6 @@ c       ALLOCATE ( WORK_4(MAXWV2,MTV1+IKMAX) )
        ALLOCATE ( WORK_8(MAXWV22) )
        ALLOCATE ( WK_S1(MAXWV2,KMAX) )
        ALLOCATE ( WR_S1(MAXWV2),WR_S2(MAXWV2) )
-      ALLOCATE ( PS2(MAXWV2) )
 c$omp parallel do
         do k=1,kmax
         do i=1,maxwv2
@@ -630,21 +484,17 @@ cc  save orignial data
 
       endif
 
-C      CALL GLATS(JHF,COLRAD,WGT,WGTCS,RCS2)
+      CALL GLATS(JHF,COLRAD,WGT,WGTCS,RCS2)
+
+      PI=ASIN(1.)*2
+      RDR=180./PI
 C
-C      PI=ASIN(1.)*2
-C      RDR=180./PI
-CC
-C      DO LL = 1,JHF
-C      LLS = JMAX+1 - LL
-C      GLAT(LL)  = 90. - COLRAD(LL)*RDR
-C      GLAT(LLS) = -GLAT(LL)
-C      write(*,*)'LAT',LL,GLAT(LLS)
-C      ENDDO
-CC
-      DO LL = 1,JMAX
-      GLAT(LL)=GLAT2D(1,LL)
+      DO LL = 1,JHF
+      LLS = JMAX+1 - LL
+      GLAT(LL)  = 90. - COLRAD(LL)*RDR
+      GLAT(LLS) = -GLAT(LL)
       ENDDO
+C
       DLN = 360.0/FLOAT(IMAX)
       DO LN = 1,IMAX
       GLON(LN) = (LN-1) * DLN
@@ -779,7 +629,6 @@ c     &,datao%z(1:maxwv2,K8501),U8501,V8501,+1)
        endif
 
 
-      print*,'before SPC2G'
 
       IDX=10
       DO 232 K=1,KMAX
@@ -797,7 +646,6 @@ Cccc U850, V850
       CALL SPC2G(IMAX,JMAX,GLON,GLAT,ZG,PSFC,PSLB,
      1         MTV,MTV2,HDAT,HDATA,V8501(1,1),101,idvm)
 232   CONTINUE
-      print*,'AFTER SPC2G'
 ccccccccccccc  Q ccccccccccccccccccccccccccccccccccccc
       if (inptyp==2) then
 
@@ -831,13 +679,12 @@ c      if(NCNT.ne.(212+IKMAX))print*,'Wrong Data Read In'
 !      DEALLOCATE ( WK_G2, WK_G3, WK_G4 )
 
 
-       print *, 'BEFORE HURR_REL'
       CALL HURR_REL(inptyp,NSEM,MWAVE,IMAX,JMAX,KMAX,IKMAX,MAXWV2,
      1                 JHF,MTV,MTV1,MTV2,MTV3,
      2                 HDAT,HDATA,PDAT,PSL,PS2,PSLB,SLREF,
      3                 nvcd,idvc,idsl,vcrd,idvm,ntrac,
-     4                 STRPSF,GLAT) 
-       print *, 'After HURR_REL'
+     4                 STRPSF) 
+
 
 CCc Update fileds after seperating TC and environment
       if (inptyp == 2) then
@@ -943,13 +790,13 @@ c*** ps   ****
         PSL=exp(psl)
         gdata%ps = psl*1000.
         print *,'pres2=',maxval(gdata%ps),minval(gdata%ps),gdata%ps(1,1)
-        print *,'in nemsio out,ps=',maxval(gdata%ps),minval(gdata%ps)
+!        print *,'in nemsio out,ps=',maxval(gdata%ps),minval(gdata%ps)
 !                             !   seniable tmp
 c*** t   ****
         gdata%t(:,:,1:kmax) = hdata(:,:,3:kmax+2)
      &     / (1.+(461.50/287.05-1)*HDATA(:,:,3+3*kmax:2+4*kmax))
 
-        print *,'in nemsio out,t=',maxval(gdata%t),minval(gdata%t)
+!        print *,'in nemsio out,t=',maxval(gdata%t),minval(gdata%t)
 !                             !   q
 c*** q   ****
         gdata%q(:,:,1:kmax,1) = HDATA(:,:,3+3*KMAX:2+4*KMAX)
@@ -974,141 +821,15 @@ c*** v   ****
 
 !
 !--open nemsio file
-!       print *,'datatype2=',ghead%gdatatype
-!       print *,'recname2=',gheadv%recname
+       print *,'datatype2=',ghead%gdatatype
+       print *,'recname2=',gheadv%recname(1:3)
 
-        IF ( TRIM(modelname) == 'GFS'  ) THEN
-
-         call nemsio_gfsgrd_open(gfile,trim(kfile),
+      call nemsio_gfsgrd_open(gfile,trim(kfile),
      &   'write',nopdpvv,ghead,gheadv,iret=ios)
       if (ios /= 0) print *,'open nemsio write file,',trim(kfile)
      &,                        'iret=',iret
 
-           call nemsio_gfs_wrtgrd(gfile,gdata,iret=ios)
-       ELSEIF ( TRIM(modelname) == 'FV3GFS'  ) THEN
-       print *,'start writing FV3GFS nemsio'
-           
-            call nemsio_open(gfile,trim(kfile),'write',iret=ios)
-!     & ,version=ghead%version,gdatatype=ghead%gdatatype)
-!     &  dimz=ghead%dimz,dimx=ghead%dimx,dimy=ghead%dimy,
-!     &  idvc=ghead%idvc,idsl=ghead%idsl,idvm=ghead%idvm,idrt=ghead%idrt,
-!     & ntrac=ghead%ntrac,nrec=ghead%nrec,recname=gheadv%recname,
-!     & jcap=ghead%jcap,idate=ghead%idate,
-!     &  nfhour=ghead%nfhour,nfminute=ghead%nfminute
-!     &,nfsecondn=ghead%nfsecondn,nfsecondd=ghead%nfsecondd,
-!     & ncldt=ghead%ncldt,nsoil=ghead%nsoil,
-!     & modelname=ghead%modelname)
-       print *,'after  FV3GFS nemsio head writing'
-! ugrd
-       VNAME='ugrd' 
-       VLEVTYP='mid layer' 
-       DO VLEV=1, KMAX
-        DUMMY(:)=RESHAPE(GDATA%U(:,:,VLEV),(/IMAX*JMAX/) ) 
-      CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,IRET=IRET)
-       ENDDO
-! vgrd
-           VNAME='vgrd' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-                  DUMMY(:)=RESHAPE(GDATA%V(:,:,VLEV),(/IMAX*JMAX/) ) 
-            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,IRET)
-           ENDDO
-! tmp
-           VNAME='tmp' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-                  DUMMY(:)=RESHAPE(GDATA%T(:,:,VLEV),(/IMAX*JMAX/) ) 
-            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,IRET)
-           ENDDO
-! dzdt
-           VNAME='dzdt' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-               if (NSEM.eq.-1) then
-                DUMMY(:)=RESHAPE(GDATA%W(:,:,VLEV),(/IMAX*JMAX/) ) 
-               else
-                DUMMY(:)=0 
-               endif
-            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,IRET)
-           ENDDO
-! dpres
-           VNAME='dpres' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-               if (NSEM.eq.-1) then
-                DUMMY(:)=RESHAPE(GDATA%DP(:,:,VLEV),(/IMAX*JMAX/) ) 
-               else
-                DUMMY(:)=0 
-               endif
-            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,IRET)
-           ENDDO
-! hgt
-           VNAME='hgt' 
-           VLEVTYP='sfc' 
-                  DUMMY(:)=RESHAPE(GDATA%ZS(:,:),(/IMAX*JMAX/) ) 
-            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,1, DUMMY,IRET)
-! pres
-           VNAME='pres' 
-           VLEVTYP='sfc' 
-                  DUMMY(:)=RESHAPE(GDATA%PS(:,:),(/IMAX*JMAX/) ) 
-            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,1, DUMMY,IRET)
-! spfh
-           VNAME='spfh' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-                  DUMMY(:)=RESHAPE(GDATA%Q(:,:,VLEV,1),(/IMAX*JMAX/) ) 
-            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,IRET)
-           ENDDO
-! o3mr
-           VNAME='o3mr' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-                  DUMMY(:)=RESHAPE(GDATA%Q(:,:,VLEV,2),(/IMAX*JMAX/) ) 
-            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,IRET)
-           ENDDO
-! clwmr
-           VNAME='clwmr' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-                  DUMMY(:)=RESHAPE(GDATA%Q(:,:,VLEV,3),(/IMAX*JMAX/) ) 
-            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,IRET)
-           ENDDO
-! clwmr
-           VNAME='clwmr' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-                  DUMMY(:)=RESHAPE(GDATA%Q(:,:,VLEV,3),(/IMAX*JMAX/) ) 
-            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,IRET)
-           ENDDO
-! rwmr
-           VNAME='rwmr' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-                  DUMMY(:)=RESHAPE(GDATA%Q(:,:,VLEV,4),(/IMAX*JMAX/) ) 
-            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,IRET)
-           ENDDO
-! icmr
-           VNAME='icmr' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-                  DUMMY(:)=RESHAPE(GDATA%Q(:,:,VLEV,5),(/IMAX*JMAX/) ) 
-            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,IRET)
-           ENDDO
-! snmr
-           VNAME='snmr' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-                  DUMMY(:)=RESHAPE(GDATA%Q(:,:,VLEV,6),(/IMAX*JMAX/) ) 
-            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,IRET)
-           ENDDO
-! grle
-           VNAME='grle' 
-           VLEVTYP='mid layer' 
-           DO VLEV=1, KMAX
-                  DUMMY(:)=RESHAPE(GDATA%Q(:,:,VLEV,7),(/IMAX*JMAX/) ) 
-            CALL NEMSIO_WRITERECV(GFILE,VNAME,VLEVTYP,VLEV, DUMMY,IRET)
-           ENDDO
-      ENDIF
+      call nemsio_gfs_wrtgrd(gfile,gdata,iret=ios)
 
       if (ios /=0 ) then
        print *,'nemsio write grd,ret=',ios
@@ -1948,20 +1669,55 @@ cnew     1           CLON_N(I),CLAT_N(I)
 
 
       END DO
-      if (NSEM.eq.-1) then
-      ENS_MEM="GFSO"
-      NS_MEM="FSO"
-      else
-      write(NS_MEM,'(i3.3)')NSEM
 
-      ENS_MEM="M"//NS_MEM
-      endif
+      IF(NSEM.eq.1)ENS_MEM='AC00'
+      IF(NSEM.eq.3)ENS_MEM='AN01'
+      IF(NSEM.eq.4)ENS_MEM='AP01'
+      IF(NSEM.eq.5)ENS_MEM='AN02'
+      IF(NSEM.eq.6)ENS_MEM='AP02'
+      IF(NSEM.eq.7)ENS_MEM='AN03'
+      IF(NSEM.eq.8)ENS_MEM='AP03'
+      IF(NSEM.eq.9)ENS_MEM='AN04'
+      IF(NSEM.eq.10)ENS_MEM='AP04'
+      IF(NSEM.eq.11)ENS_MEM='AN05'
+      IF(NSEM.eq.12)ENS_MEM='AP05'
+      IF(NSEM.eq.13)ENS_MEM='AN06'
+      IF(NSEM.eq.14)ENS_MEM='AP06'
+      IF(NSEM.eq.15)ENS_MEM='AN07'
+      IF(NSEM.eq.16)ENS_MEM='AP07'
+      IF(NSEM.eq.17)ENS_MEM='AN08'
+      IF(NSEM.eq.18)ENS_MEM='AP08'
+      IF(NSEM.eq.19)ENS_MEM='AN09'
+      IF(NSEM.eq.20)ENS_MEM='AP09'
+      IF(NSEM.eq.21)ENS_MEM='AN10'
+      IF(NSEM.eq.22)ENS_MEM='AP10'
+      IF(NSEM.eq.23)ENS_MEM='AN11'
+      IF(NSEM.eq.24)ENS_MEM='AP11'
+      IF(NSEM.eq.25)ENS_MEM='AN12'
+      IF(NSEM.eq.26)ENS_MEM='AP12'
+      IF(NSEM.eq.27)ENS_MEM='AN13'
+      IF(NSEM.eq.28)ENS_MEM='AP13'
+      IF(NSEM.eq.29)ENS_MEM='AN14'
+      IF(NSEM.eq.30)ENS_MEM='AP14'
+      IF(NSEM.eq.31)ENS_MEM='AN15'
+      IF(NSEM.eq.32)ENS_MEM='AP15'
+      IF(NSEM.eq.33)ENS_MEM='AN16'
+      IF(NSEM.eq.34)ENS_MEM='AP16'
+      IF(NSEM.eq.35)ENS_MEM='AN17'
+      IF(NSEM.eq.36)ENS_MEM='AP17'
+      IF(NSEM.eq.37)ENS_MEM='AN18'
+      IF(NSEM.eq.38)ENS_MEM='AP18'
+      IF(NSEM.eq.39)ENS_MEM='AN19'
+      IF(NSEM.eq.40)ENS_MEM='AP19'
+      IF(NSEM.eq.41)ENS_MEM='AN20'
+      IF(NSEM.eq.42)ENS_MEM='AP20'
 
+      NS_MEM=ENS_MEM(2:4)
 
       K1STM=0
       I=0
 c rlw replace this read (for 24h cycle) with atcf read 
-      icycx=itim
+      icycx=6
 c decrement date and time by icycx for test
       rinc(1)=0.0
       rinc(2)=-icycx
@@ -2144,7 +1900,7 @@ C
 C
 1     DO 30 JG=JMAX,1,-1
       GLA = 90 - GLAT(JG)
-      daT = BLA - GLA
+      DAT = BLA - GLA
       IF (DAT.GE.0) THEN
       DY = DAT
       IY = JG
@@ -2266,7 +2022,7 @@ c      PRINT*,'READ2 COUNT = ',NRED2
      1                       JHF,MTV,MTV1,MTV2,MTV3,
      2                       HDAT,HDATA,PDAT,PSL,PS2,PSLB,SL,
      3                       nvcd,idvc,idsl,vcrd,idvm,ntrac,
-     4                       STRPSF,GLAT1D)
+     4                       STRPSF)
 
 c      SUBROUTINE HURR_REL(MWAVE,KMAX,MAXWV2,
 c     1                       MTV,MTV1,MTV2,MTV3,
@@ -2296,7 +2052,6 @@ C
 !      DIMENSION INP(IJ),JNP(IJ),CM(IJ),DIST(IJ)
       DIMENSION ALAT(JX),ALON(IX),ZG(IX,JX),DATG(IMAX,JMAX)
       DIMENSION GLON(IMAX,JMAX),GLAT(IMAX,JMAX),ZDATG(IMAX,JMAX)
-      DIMENSION GLAT1D(JMAX)
       DIMENSION ING(NSG),JNG(NSG)
       DIMENSION ING5(NSG5),JNG5(NSG5)
       DIMENSION ING6(NSG5),JNG6(NSG5)
@@ -2379,21 +2134,16 @@ C
       JNG(LO) = 0
       ENDDO
 C
-C      CALL GLATS(JHF,COLRAD,WGT,WGTCS,RCS2)
+      CALL GLATS(JHF,COLRAD,WGT,WGTCS,RCS2)
 C
-C      PI=ASIN(1.)*2
-C      RAD=PI/180.
+      PI=ASIN(1.)*2
+      RAD=PI/180.
 C
-C      DO I = 1,IMAX
-C      DO LL = 1,JHF 
-C      LLS = JMAX+1 - LL
-C      GLAT(I,LL)  = 90. - COLRAD(LL)/RAD
-C      GLAT(I,LLS) = -GLAT(I,LL)
-C      ENDDO
-C      ENDDO
       DO I = 1,IMAX
-      DO LL = 1,JMAX 
-      GLAT(I,LL)  = GLAT1D(LL)
+      DO LL = 1,JHF 
+      LLS = JMAX+1 - LL
+      GLAT(I,LL)  = 90. - COLRAD(LL)/RAD
+      GLAT(I,LLS) = -GLAT(I,LL)
       ENDDO
       ENDDO
 C
@@ -2434,7 +2184,7 @@ c 233  FORMAT(2x,I5)
       K1STM=0
       I=0
 c rlw replace this read (for 24h cycle) with atcf read 
-      icycx=itim
+      icycx=6
       if ( icycx .eq. 24 ) then
       DO MEM=1,100
         READ(40,442,end=436)MEM_READ,
@@ -2526,9 +2276,14 @@ c South Atlantic
 c rlw end replacement for cycle length
  436  CONTINUE
 
+      IF(NSEM.EQ.1)THEN
 !        NCHT=70+NSEM
+        NCHT=71
+        WRITE(NCHT)KSTM
+      ELSE
         NCHT=74
         WRITE(NCHT)KSTM
+      END IF
 
 
       DO 788 KST=1,KSTM
@@ -2536,7 +2291,14 @@ c rlw end replacement for cycle length
 c      IUT=89+KST
         IUT=KST
 
+        IF(NSEM.EQ.1)THEN
+!          NCHT=70+NSEM
+          NCHT=71
           WRITE(NCHT)ST_NAME(KST)
+        ELSE
+          NCHT=74
+          WRITE(NCHT)ST_NAME(KST)
+        END IF
 
 C
         DO K=1,MTV2
@@ -2644,10 +2406,7 @@ c      fact=cos(CLAT*rad)
       end do
 C.. DO ZONAL FILTER
 C
-!$omp parallel do
-!$omp& private(I,J,N,XTU,XTV)
-
-      CYC_100: DO J=1,JX  !DO 100 J=1,JX
+      DO 100 J=1,JX
       DO N=1,NF
       XTU(1,N)  = U(1,J)
       XTU(IX,N) = U(IX,J)
@@ -2674,14 +2433,11 @@ C
       VS(I,J) = XTV(I,NF)
       ENDDO
 C
-      ENDDO CYC_100
-!100   CONTINUE
+100   CONTINUE
 C
 C.. DO MERIDIONAL FILTER 
 C
-!$omp parallel do
-!$omp& private(I,J,N,YTU,YTV)
-      CYC_200: DO I=1,IX   ! DO 200 I=1,IX
+      DO 200 I=1,IX
 C
       DO N=1,NF
       YTU(1,N)  = US(I,1)
@@ -2710,8 +2466,7 @@ C
       US(I,J)   =  YTU(J,NF)
       VS(I,J)   =  YTV(J,NF)
       ENDDO   
-      ENDDO CYC_200
-!200   CONTINUE
+200   CONTINUE
 C
 C.. GET THE DISTURBANCE FIELD
 C
@@ -2758,7 +2513,7 @@ c      CALL FIND_NEWCT1(UD,VD)
       ELSE
         PRINT*,'GFDL CENTER= ',CLON_NEW,CLAT_NEW,
      &stmname(i),st_name(kst)
-        IF(NSEM.LT.0)THEN
+        IF(NSEM.LT.1)THEN
           CLON_NEW=CLON_NHC
           CLAT_NEW=CLAT_NHC
         ELSE
@@ -2837,7 +2592,7 @@ c      AMDX=AMDX+50*DLN
       PRINT*,'CLON_NEW,CLAT_NEW=',CLON_NEW,CLAT_NEW
       RDIST2=AMDX*AMDX+AMDY*AMDY
 
-      IF(NSEM.GE.0)RDIST2=max(0.021,RDIST2)
+      IF(NSEM.GE.1)RDIST2=max(0.021,RDIST2)
 
       IF(RDIST2.LE.0.02)THEN
         PRINT*,'   '
@@ -2980,9 +2735,7 @@ c obtain the disturbance field
 c
 c First smooth in east-west direction
 c
-!$omp parallel do
-!$omp& private(I,J,N,XTU)
-      CYC_107: DO J=1,JX    ! DO 107 J=1,JX
+      DO 107 J=1,JX
       DO N=1,NF
       XTU(1,N)  = U(1,J)
       XTU(IX,N) = U(IX,J)
@@ -3003,15 +2756,11 @@ C
       US(I,J) = XTU(I,NF)
       ENDDO
 C
-      ENDDO CYC_107
-!
+ 107  CONTINUE
 C
 C.. DO MERIDIONAL FILTER
-
 C
-!$omp parallel do
-!$omp& private(I,J,N,YTU)
-      CYC_207: DO I=1,IX   ! DO 207 I=1,IX
+      DO 207 I=1,IX
 C
       DO N=1,NF
       YTU(1,N)  = US(I,1)
@@ -3033,9 +2782,7 @@ C
       DO J = 1 , JX
       US(I,J)   =  YTU(J,NF)
       ENDDO
-      ENDDO CYC_207
-
-! 207  CONTINUE
+ 207  CONTINUE
 C
 C.. GET THE DISTURBANCE FIELD
 C
@@ -3237,10 +2984,6 @@ C
       iprint=1
       jprint=1
       kprint=0
-!$omp parallel do
-!$omp& private(I,J,DR,DD,DLON,DLAT,TLON,TLAT,IDX,
-!$omp&         IDY,DXX,DYY,X1,X2,Y1,Y2,UT,VT)
-
       DO J=1,IR
       DO I=1,IT
 C.. DETERMINE LAT, LON AREOUND CIRCLE
@@ -3572,13 +3315,13 @@ c
 C
       RDIST2=AMDX*AMDX+AMDY*AMDY
 
-      IF(NSEM.GE.0)RDIST2=max(0.021,RDIST2)
+      IF(NSEM.GE.1)RDIST2=max(0.021,RDIST2)
 
       IF(RDIST2.GT.0.02)THEN
 cc test
 !$omp parallel do
 !$omp& private(I,IW,JW,HLA,HLO,II,JJ,LX,LY,DXX,DYY,X1,X2,Y1,Y2)
-      CYC_555: DO I = 1,IB
+      DO I = 1,IB
       IW = ING(I)
       JW = JNG(I)
 
@@ -3604,16 +3347,16 @@ C
          DATG(IW,JW)=(X1*(1-DXX)+X2*DXX + Y1*(1-DYY)+Y2*DYY)/2.
 
 !         IF(ISE.GE.2) DDAT(IW,JW)=DATG2(IW,JW)-DATG(IW,JW)
-         CYCLE CYC_555   !GO TO 555
+         GO TO 555
 
         END IF
         END DO
        END IF
       END DO  
-! 555   CONTINUE
+ 555   CONTINUE
 c      ENDDO
 c      ENDDO
-      ENDDO CYC_555
+      ENDDO
       if(inptyp.eq.1.and.ISE.GT.(KMAX+1).and.ISE.LE.(3*KMAX+1))then
 
 !         DO I=1,IGU
@@ -3695,6 +3438,7 @@ c
         ENDDO
        END IF
         IF(KST.EQ.KSTM)THEN
+          print *,'before slpsp'
           CALL SLP2SP(IGU,JGU,ZDATG,KUNIT,MWAVE,MAXWV2,T1,PSL,PS2,idvm)
 
         END IF
@@ -3844,9 +3588,8 @@ C
 C.. GAUSSIAN GRID TO SPECTRAL COEFFEICENT
 C
       call maxmin(psl,igu*jgu,1,1,1,'global SLP at SLP after int')
-      if (MWAVE .gt. 0 .and. MWAVE .lt. 9999)then
+      print *,'psl in slp2sp',psl(1,1)
       CALL G2SPC(KUNIT,MWAVE,MAXWV2,IGU,JGU,PSL,PS2)
-      endif   
 c      call maxmin(t1,igu*jgu,1,1,1,'global T1 at SLP after int')
 c      call maxmin(ps2,1,1,1,maxwv2,'global ps2 at SLP after g2spc')
 c      CALL G2SPC(KUNIT,T1)

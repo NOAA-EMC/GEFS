@@ -149,6 +149,11 @@ if [ $inflag = 7 ] ; then
 	fi
 	cp $GESOUT/gec00.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
 	cp $GESOUT/gec00.t$cyc\z.sfcanl $INIDIR/nsnanl.gfs.$PDY$cyc
+elif  [ $inflag = 0 ] ; then
+export ictype=fv3gfs
+export NTRAC=7
+	cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
+	cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
 else
 	cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
 	cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
