@@ -24,7 +24,7 @@ userConfigFile=${userConfigFile:-user_full.conf}
 if [ $machine = "nomachine" ]; then
     if [ -d /scratch4/NCEPDEV ]; then
         machine=theia
-    elif [[ -d /gpfs/hps53 && -e /etc/SuSE-release ]]; then # Luna or Surge
+    elif [[ -d /gpfs/hps3 && -e /etc/SuSE-release ]]; then # Luna or Surge
         machine=cray
     elif [[ -d /dcom && -d /hwrf ]] ; then # Tide or Gyre
         machine=wcoss
