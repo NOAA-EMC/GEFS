@@ -64,7 +64,7 @@ export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 ##############################################
 # Define CFSSST directories
 ##############################################
-export COMOUTcfssst=$COMOUT/$cyc/cfssst
+export COMOUTcfssst=${SSTDIR:-$COMOUT/$cyc/cfssst}
 mkdir -m 775 -p $COMOUTcfssst
 
 ##############################################

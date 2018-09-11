@@ -33,7 +33,7 @@ Method 1:
    
   3) aa) Compile and install the source codes of GEFS
      bb) link the "fix" to the "gefs-fixed"
-     cc) Generate 'gefs.xml' (and/or tasks .ent), 'parm/gefs_dev.parm' and 'jgefs_forecast_high.sh' in bin file and 'cron_rocoto'
+     cc) Generate 'gefs.xml' (and/or tasks .ent), 'parm/gefs_dev.parm' and 'forecast_high.sh' in bin file and 'cron_rocoto'
     > ./compile_install_all.sh -c yes -r yes -f user_full.conf
     
   4) rocoto run
@@ -117,7 +117,7 @@ Method 2:
         # double check the other options based on your need
        > vim user_full.conf
        
-      c) Generate 'gefs.xml' (and/or tasks .ent), 'parm/gefs_dev.parm' and 'jgefs_forecast_high.sh' in bin file and 'cron_rocoto'
+      c) Generate 'gefs.xml' (and/or tasks .ent), 'parm/gefs_dev.parm' and 'forecast_high.sh' in bin file and 'cron_rocoto'
         # user_full.conf is optional, you can use your own config file
        > ./py/run_to_get_all.py  user_full.conf 
       

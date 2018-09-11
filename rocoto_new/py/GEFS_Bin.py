@@ -14,7 +14,7 @@ def create_bin_file(dicBase):
     #
     ##########################################################
 
-    taskname ='jgefs_forecast_high'  # 06
+    taskname ='forecast_high'  # 06
     rw_bin_forecast_high(taskname, dicBase)
 
 def rw_bin_forecast_high(taskname, dicBase):

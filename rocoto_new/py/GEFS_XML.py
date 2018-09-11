@@ -85,6 +85,11 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         if sVarValue == "nwdev":
             sVarValue = os.path.basename(os.path.abspath(sRocoto_Path + sSep + ".." + sSep + ".."))
         dicBase[sVarName] = sVarValue
+    else:
+        sVarValue = dicBase[sVarName]
+    # PSLOT is used by rocoto_viewer and should always be the same as EXPID
+    dicBase["PSLOT"] = sVarValue
+
     # ===
     sVarName = "SOURCEDIR".upper()
     sVarValue = ""
@@ -112,10 +117,10 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
-            sVarValue = "/gpfs/dell2/ptmp/{0}.{1}/o/&EXPID;" \
+            sVarValue = "/gpfs/HPS_PTMP/ptmp/{0}.{1}/o/&EXPID;" \
                 .format(dicBase["FIRST"], dicBase["LAST"])
         else:
-            sVarValue = "/gpfs/hps3/ptmp/emc.enspara/{0}.{1}/o/&EXPID;" \
+            sVarValue = "/gpfs/HPS_PTMP/ptmp/emc.enspara/{0}.{1}/o/&EXPID;" \
                 .format(dicBase["FIRST"], dicBase["LAST"])
 
         sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
@@ -138,21 +143,21 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarValue = ""
     if sVarName not in dicBase:
         if WHERE_AM_I.lower() == "cray":
-            sVarValue = "/gpfs/hps3/emc/ensemble/noscrub/{0}.{1}/GEFS/&EXPID;" \
+            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/{0}.{1}/GEFS/&EXPID;" \
                 .format(dicBase["FIRST"], dicBase["LAST"])
         elif WHERE_AM_I.lower() == 'wcoss':
-            sVarValue = "/gpfs/hps3/emc/ensemble/noscrub/{0}.{1}/GEFS/&EXPID;" \
+            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/{0}.{1}/GEFS/&EXPID;" \
                 .format(dicBase["FIRST"], dicBase["LAST"])
         elif WHERE_AM_I.lower() == 'theia':
             sVarValue = "/scratch4/NCEPDEV/stmp4/{0}.{1}/GEFS/&EXPID;" \
                 .format(dicBase["FIRST"], dicBase["LAST"])
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
-            sVarValue = "/gpfs/dell2/emc/retros/noscrub/{0}.{1}/GEFS/&EXPID;" \
+            sVarValue = "/gpfs/HPS_PTMP/emc/retros/noscrub/{0}.{1}/GEFS/&EXPID;" \
                 .format(dicBase["FIRST"], dicBase["LAST"])
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         else:
-            sVarValue = "/gpfs/hps3/emc/ensemble/noscrub/{0}.{1}/GEFS/&EXPID;" \
+            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/{0}.{1}/GEFS/&EXPID;" \
                 .format(dicBase["FIRST"], dicBase["LAST"])
 
         sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
@@ -196,6 +201,26 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sVarValue = replace_First_Last(dicBase, sVarName)
         sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
         sVarValue += '/&EXPID;'
+    dicBase[sVarName] = sVarValue
+    # ===
+    sVarName = "INIT_DIR".upper()
+    sVarValue = ""
+    if sVarName not in dicBase:
+        if WHERE_AM_I.lower() == "cray":
+            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/{0}.{1}/GEFS_INIT/".format(dicBase["FIRST"], dicBase["LAST"]) + dicBase['RUN_INIT'].lower() + "_init"
+        elif WHERE_AM_I.lower() == 'wcoss':
+            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/{0}.{1}/GEFS_INIT/".format(dicBase["FIRST"], dicBase["LAST"]) + dicBase['RUN_INIT'].lower() + "_init"
+        elif WHERE_AM_I.lower() == 'theia':
+            sVarValue = "/scratch4/NCEPDEV/stmp4/{0}.{1}/GEFS_INIT/".format(dicBase["FIRST"], dicBase["LAST"]) + dicBase['RUN_INIT'].lower() + "_init"
+        elif WHERE_AM_I.lower() == 'wins':
+            sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
+        else:
+            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/{0}.{1}/GEFS_INIT/".format(dicBase["FIRST"], dicBase["LAST"]) + dicBase['RUN_INIT'].lower() + "_init"
+
+        sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
+    else:
+        sVarValue = replace_First_Last(dicBase, sVarName)
+        sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
     dicBase[sVarName] = sVarValue
     # ===
     sVarName = "DIRS_TO_KEEP".upper()
@@ -538,6 +563,10 @@ def get_definitions(dicBase):
     sVarValue = dicBase[sVarName.upper()]
     strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
 
+    sVarName = "PSLOT"
+    sVarValue = dicBase[sVarName.upper()]
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
     sVarName = "SOURCEDIR"
     sVarValue = dicBase[sVarName.upper()]
     strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
@@ -547,6 +576,10 @@ def get_definitions(dicBase):
     strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
 
     sVarName = "KEEP_DIR"
+    sVarValue = dicBase[sVarName.upper()]
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+    sVarName = "INIT_DIR"
     sVarValue = dicBase[sVarName.upper()]
     strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
 
