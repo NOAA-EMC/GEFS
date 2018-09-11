@@ -70,10 +70,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     if sVarName not in dicBase:
         sVarValue = sRocoto_WS
     else:
-        #sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
-        #sVarValue = sVarValue.replace("Last", dicBase["LAST"])
         sVarValue = replace_First_Last(dicBase, sVarName)
-
     dicBase[sVarName] = sVarValue
     # ===
     sVarName = "EXPID".upper()
@@ -96,8 +93,6 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     if sVarName not in dicBase:
         sVarValue = os.path.abspath(sRocoto_WS + sSep + "..")
     else:
-        #sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
-        #sVarValue = sVarValue.replace("Last", dicBase["LAST"])
         sVarValue = replace_First_Last(dicBase, sVarName)
         sVarValue += "/&EXPID;/nwdev"
     dicBase[sVarName] = sVarValue
@@ -106,36 +101,27 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     if sVarName not in dicBase:
         sVarValue = ""
         if WHERE_AM_I.lower() == "cray":
-            sVarValue = "/gpfs/HPS_PTMP/ptmp/{0}.{1}/o/&EXPID;" \
-                .format(dicBase["FIRST"], dicBase["LAST"])
+            sVarValue = "/gpfs/HPS_PTMP/ptmp/First.Last/o/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss':
-            sVarValue = "/gpfs/HPS_PTMP/ptmp/{0}.{1}/o/&EXPID;" \
-                .format(dicBase["FIRST"], dicBase["LAST"])
+            sVarValue = "/gpfs/HPS_PTMP/ptmp/First.Last/o/&EXPID;"
         elif WHERE_AM_I.lower() == 'theia':
-            sVarValue = "/scratch4/NCEPDEV/stmp4/{0}.{1}/o/&EXPID;" \
-                .format(dicBase["FIRST"], dicBase["LAST"])
+            sVarValue = "/scratch4/NCEPDEV/stmp4/First.Last/o/&EXPID;"
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
-            sVarValue = "/gpfs/HPS_PTMP/ptmp/{0}.{1}/o/&EXPID;" \
-                .format(dicBase["FIRST"], dicBase["LAST"])
+            sVarValue = "/gpfs/HPS_PTMP/ptmp/First.Last/o/&EXPID;"
         else:
-            sVarValue = "/gpfs/HPS_PTMP/ptmp/emc.enspara/{0}.{1}/o/&EXPID;" \
-                .format(dicBase["FIRST"], dicBase["LAST"])
+            sVarValue = "/gpfs/HPS_PTMP/ptmp/First.Last/o/&EXPID;"
 
-        sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
-        sVarValue = sVarValue.replace('&EXPID;',dicBase['EXPID'])
-        # dicBase[sVarName] = sVarValue
+        dicBase[sVarName] = sVarValue
+
+    sVarValue = replace_First_Last(dicBase, sVarName)
+    sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
+    if sVarValue.endswith("/o"):
+        sVarValue += '/&EXPID;'
     else:
-        #sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
-        #sVarValue = sVarValue.replace("Last", dicBase["LAST"])
-        sVarValue = replace_First_Last(dicBase, sVarName)
-        sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
-        if sVarValue.endswith("/o"):
-            sVarValue += '/&EXPID;'
-        else:
-            sVarValue += '/o/&EXPID;'
-
+        sVarValue += '/o/&EXPID;'
+    sVarValue = sVarValue.replace('&EXPID;',dicBase['EXPID'])
     dicBase[sVarName] = sVarValue
 
     # ===
@@ -143,85 +129,86 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarValue = ""
     if sVarName not in dicBase:
         if WHERE_AM_I.lower() == "cray":
-            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/{0}.{1}/GEFS/&EXPID;" \
-                .format(dicBase["FIRST"], dicBase["LAST"])
+            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss':
-            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/{0}.{1}/GEFS/&EXPID;" \
-                .format(dicBase["FIRST"], dicBase["LAST"])
+            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'theia':
-            sVarValue = "/scratch4/NCEPDEV/stmp4/{0}.{1}/GEFS/&EXPID;" \
-                .format(dicBase["FIRST"], dicBase["LAST"])
+            sVarValue = "/scratch4/NCEPDEV/stmp4/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
-            sVarValue = "/gpfs/HPS_PTMP/emc/retros/noscrub/{0}.{1}/GEFS/&EXPID;" \
-                .format(dicBase["FIRST"], dicBase["LAST"])
+            sVarValue = "/gpfs/HPS_PTMP/emc/retros/noscrub/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         else:
-            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/{0}.{1}/GEFS/&EXPID;" \
-                .format(dicBase["FIRST"], dicBase["LAST"])
+            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS/&EXPID;"
 
-        sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
+        dicBase[sVarName] = sVarValue
+
+    sVarValue = replace_First_Last(dicBase, sVarName)
+    sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
+    if sVarValue.endswith("/&EXPID;"): 
         sVarValue = sVarValue.replace('&EXPID;', dicBase['EXPID'])
-        # dicBase[sVarName] = sVarValue
     else:
-        #sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
-        #sVarValue = sVarValue.replace("Last", dicBase["LAST"])
-        sVarValue = replace_First_Last(dicBase, sVarName)
-        sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
-        sVarValue += '/&EXPID;'
+        sVarValue += dicBase['EXPID']
+
+    if not sVarValue.endswith(dicBase['EXPID']):
+        sVarValue += dicBase['EXPID']
+
     dicBase[sVarName] = sVarValue
+
     # ===
     sVarName = "HPSS_DIR".upper()
     if sVarName not in dicBase:
         sVarValue = ""
         if WHERE_AM_I.lower() == "cray":
-            sVarValue = "/NCEPDEV/emc-ensemble/2year/{0}.{1}/GEFS/&EXPID;" \
-                .format(dicBase["FIRST"], dicBase["LAST"])
+            sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss':
-            sVarValue = "/NCEPDEV/emc-ensemble/2year/{0}.{1}/GEFS/&EXPID;" \
-                .format(dicBase["FIRST"], dicBase["LAST"])
+            sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'theia':
-            sVarValue = "/NCEPDEV/emc-ensemble/2year/{0}.{1}/GEFS/&EXPID;" \
-                .format(dicBase["FIRST"], dicBase["LAST"])
+            sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
-            sVarValue = "/NCEPDEV/emc-ensemble/2year/{0}.{1}/GEFS/&EXPID;" \
-                .format(dicBase["FIRST"], dicBase["LAST"])
+            sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         else:
-            sVarValue = "/NCEPDEV/emc-ensemble/2year/{0}.{1}/GEFS/&EXPID;" \
-                .format(dicBase["FIRST"], dicBase["LAST"])
+            sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
 
-        sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
+        dicBase[sVarName] = sVarValue
+    
+    sVarValue = replace_First_Last(dicBase, sVarName)
+    sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
+    if sVarValue.endswith("/&EXPID;"):
         sVarValue = sVarValue.replace('&EXPID;', dicBase['EXPID'])
-        # dicBase[sVarName] = sVarValue
     else:
-        #sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
-        #sVarValue = sVarValue.replace("Last", dicBase["LAST"])
-        sVarValue = replace_First_Last(dicBase, sVarName)
-        sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
-        sVarValue += '/&EXPID;'
+        sVarValue += dicBase['EXPID']
+
+    if not sVarValue.endswith(dicBase['EXPID']):
+        sVarValue += dicBase['EXPID']
+    
     dicBase[sVarName] = sVarValue
+    
     # ===
     sVarName = "INIT_DIR".upper()
     sVarValue = ""
     if sVarName not in dicBase:
         if WHERE_AM_I.lower() == "cray":
-            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/{0}.{1}/GEFS_INIT/".format(dicBase["FIRST"], dicBase["LAST"]) + dicBase['RUN_INIT'].lower() + "_init"
+            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         elif WHERE_AM_I.lower() == 'wcoss':
-            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/{0}.{1}/GEFS_INIT/".format(dicBase["FIRST"], dicBase["LAST"]) + dicBase['RUN_INIT'].lower() + "_init"
+            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         elif WHERE_AM_I.lower() == 'theia':
-            sVarValue = "/scratch4/NCEPDEV/stmp4/{0}.{1}/GEFS_INIT/".format(dicBase["FIRST"], dicBase["LAST"]) + dicBase['RUN_INIT'].lower() + "_init"
+            sVarValue = "/scratch4/NCEPDEV/stmp4/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
+        elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
+            sVarValue = "/gpfs/HPS_PTMP/emc/retros/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         else:
-            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/{0}.{1}/GEFS_INIT/".format(dicBase["FIRST"], dicBase["LAST"]) + dicBase['RUN_INIT'].lower() + "_init"
+            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
+        
+        dicBase[sVarName] = sVarValue
 
-        sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
-    else:
-        sVarValue = replace_First_Last(dicBase, sVarName)
-        sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
+    sVarValue = replace_First_Last(dicBase, sVarName)
+    sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
     dicBase[sVarName] = sVarValue
+    
     # ===
     sVarName = "DIRS_TO_KEEP".upper()
     if sVarName not in dicBase:

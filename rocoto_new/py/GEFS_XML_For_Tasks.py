@@ -751,7 +751,7 @@ def create_task( \
     elif WHERE_AM_I.upper() == "theia".upper():
         strings += "\n"
     elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
-        strings += "\n"
+        strings += sPre + '\t' + "<native>-R 'affinity[core(1)]'</native>\n"
     else:
         strings += sPre + '\t' + '<native>-extsched "CRAYLINUX[]"</native>\n'
 
