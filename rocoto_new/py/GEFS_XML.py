@@ -417,7 +417,7 @@ def replace_First_Last(dicBase, sVarName):
     GroupNames = ['emc.enspara', 'emc.enspara1']
     if sUSER in GroupNames:
         sVarValue = str(dicBase[sVarName]).replace("First", sUSER + "/" + dicBase["FIRST"])
-        sVarValue = str(dicBase[sVarName]).replace("retros", "verification") # temporary
+        sVarValue = sVarValue.replace("retros", "verification") # temporary
     else:
         sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
 
