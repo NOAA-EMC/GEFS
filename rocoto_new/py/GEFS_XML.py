@@ -142,7 +142,10 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS/&EXPID;"
 
         dicBase[sVarName] = sVarValue
-
+    else:
+        sVarValue = dicBase[sVarName] + "/&EXPID;"    
+        dicBase[sVarName] = sVarValue
+ 
     sVarValue = replace_First_Last(dicBase, sVarName)
     sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
     if sVarValue.endswith("/&EXPID;"): 
@@ -172,6 +175,9 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         else:
             sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
 
+        dicBase[sVarName] = sVarValue
+    else:
+        sVarValue = dicBase[sVarName] + "/&EXPID;"
         dicBase[sVarName] = sVarValue
     
     sVarValue = replace_First_Last(dicBase, sVarName)
@@ -411,6 +417,7 @@ def replace_First_Last(dicBase, sVarName):
     GroupNames = ['emc.enspara', 'emc.enspara1']
     if sUSER in GroupNames:
         sVarValue = str(dicBase[sVarName]).replace("First", sUSER + "/" + dicBase["FIRST"])
+        sVarValue = str(dicBase[sVarName]).replace("retros", "verification") # temporary
     else:
         sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
 
