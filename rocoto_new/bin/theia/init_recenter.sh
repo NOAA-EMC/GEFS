@@ -68,6 +68,8 @@ export APRUN_CHGRES="mpirun -np 1"
 #export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
 export aprun_gec00="mpirun -np 1"
 
+export APRUN_CALCINC="mpirun -np 1"
+
 export NTHREADS_SIGCHGRS=6
 
 . $GEFS_ROCOTO/parm/setbase
