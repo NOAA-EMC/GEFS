@@ -114,6 +114,7 @@ for dir in gefs_vortex_separate.fd gefs_vortex_combine.fd global_sigzvd.fd  glob
     cd ..
 done
 
+export LIBS="${G2_LIB4} ${W3NCO_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}"
 for dir in global_enscvprcp.fd global_enspvrfy.fd global_enssrbias.fd global_enscqpf.fd  global_enscvt24h.fd  global_ensrfmat.fd ; do
     cd $dir
     make clean
