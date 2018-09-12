@@ -27,7 +27,7 @@ if [ $mac2 = tf ]; then # For THEIA
 
     export FFLAGS="-O3 -g -convert big_endian -I ${G2_INC4}"
     export FFLAGS_d="-O3 -g -r8 -convert big_endian -auto -mkl -I ${G2_INCd}"
-    export OPENMPFFLAG=qopenmp
+    export OPENMPFFLAG=openmp
 
 elif [ $mac = t -o $mac = e -o $mac = g ] ; then # For WCOSS
 
