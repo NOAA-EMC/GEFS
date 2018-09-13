@@ -128,7 +128,8 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     SAVE=/gpfs/hps3/emc/retros/save #$PROJECT/save
     NOSCRUB=/gpfs/hps3/emc/retros/noscrub #/$PROJECT/noscrub
     
-    export HOMEdata=/gpfs/dell2/emc/retros/noscrub/Xianwu.Xue/common/initdata
+    #export HOMEdata=/gpfs/dell2/emc/retros/noscrub/Xianwu.Xue/common/initdata
+    export HOMEdata=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common
     export COMROOThps=${HOMEdata} 
 fi
 
