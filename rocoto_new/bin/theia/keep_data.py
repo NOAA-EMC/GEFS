@@ -73,7 +73,7 @@ for directory in dirs_to_keep:
 		destination_dir = destination_path + "/" + directory
 		if ( os.path.exists(destination_dir) ):
 			if(clobber):
-				shutil.rmtree(destination_dir)
+				shutil.rmtree(destination_dir + "/")
 			else:
 				print("FATAL: Destination diretory " + destination_dir + " already exists and clobber is False")
 				quit(-102)
