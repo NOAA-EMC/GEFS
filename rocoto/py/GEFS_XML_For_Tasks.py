@@ -279,6 +279,7 @@ def write_to_ent(taskname, dicBase, GenTaskEnt=False):
 
 # =======================================================
 def get_param_of_task(dicBase, taskname):
+    import math
     sWalltime = ""
     sNodes = ""
     sMemory = ""
@@ -429,8 +430,9 @@ def get_param_of_task(dicBase, taskname):
         else:
             Task_Node = 24
 
-        iNodes = int((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) / (Task_Node / parallel_threads))
-        iPPN = int((Task_Node / parallel_threads))
+        iNodes = int(math.ceil((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) * 1.0 / (Task_Node / parallel_threads)))
+        iPPN = int(math.ceil(Task_Node * 1.0 / parallel_threads))
+
         iTPP = parallel_threads
 
         if WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
