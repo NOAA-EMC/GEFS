@@ -6,157 +6,187 @@ def config_tasknames(dicBase):
     if iTaskName_Num <= 0:
         iTaskName_Num = 0
 
-	# #    <!-- initial jobs -->
-        if dicBase['RUN_INIT'] == "GSM_RELOC":
-            # ---jgefs_enkf_track
+        # #    <!-- RUN_GETCFSSST jobs -->
+        if dicBase['RUN_GETCFSSST'].upper()[0] == "Y":
+            # ---sigchgres
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_enkf_track"
+            dicBase[sTaskName.upper()] = "getcfssst"
 
-            # ---jgefs_init_separate
+        # #   <!-- initial jobs -->
+        if dicBase['RUN_INIT'].upper() == "GSM_RELOC":
+            # ---enkf_track
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_init_separate"
+            dicBase[sTaskName.upper()] = "enkf_track"
 
-            # ---
+            # ---init_separate
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_init_process"
+            dicBase[sTaskName.upper()] = "init_separate"
 
-            # ---jgefs_init_combine
+            # ---init_process
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_init_combine"
+            dicBase[sTaskName.upper()] = "init_process"
 
-            # ---jgefs_init_fv3chgrs
+            # ---init_combine
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_init_fv3chgrs"
+            dicBase[sTaskName.upper()] = "init_combine"
 
-        elif dicBase['RUN_INIT'] == "FV3_RELOC":
-            # ---jgefs_enkf_track
+            # ---init_fv3chgrs
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_enkf_track"
+            dicBase[sTaskName.upper()] = "init_fv3chgrs"
 
-            # ---jgefs_init_separate
+        elif dicBase['RUN_INIT'].upper() == "FV3_RELOC":
+            # ---enkf_track
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_init_separate"
+            dicBase[sTaskName.upper()] = "enkf_track"
 
-            # ---
+            # ---init_separate
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_init_process"
+            dicBase[sTaskName.upper()] = "init_separate"
 
-            # ---jgefs_init_combine
+            # ---init_process
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_init_combine"
+            dicBase[sTaskName.upper()] = "init_process"
 
-            # ---jgefs_init_fv3chgrs
+            # ---init_combine
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_init_fv3chgrs"
-        elif dicBase['RUN_INIT'] == "FV3_COLD":
-            # ---jgefs_init_recenter
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_init_recenter"
+            dicBase[sTaskName.upper()] = "init_combine"
 
-            # ---jgefs_init_fv3chgrs
+            # ---init_fv3chgrs
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_init_fv3chgrs"
+            dicBase[sTaskName.upper()] = "init_fv3chgrs"
+            
+        elif dicBase['RUN_INIT'].upper() == "FV3_COLD":
+            # ---init_recenter
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "init_recenter"
+
+            # ---init_fv3chgrs
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "init_fv3chgrs"
+            
         elif dicBase['RUN_INIT'] == "FV3_WARM":
-            # ---jgefs_init_recenter
+            # ---init_recenter
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_init_recenter"
+            dicBase[sTaskName.upper()] = "init_recenter"
+
+        elif dicBase['RUN_INIT'] == "COPY_INIT":
+            # ---copy_init
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "copy_init"
+
+        if dicBase['KEEP_INIT'].upper()[0] == "Y" and dicBase['RUN_INIT'] != "COPY_INIT":
+            # ---keep_init
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "keep_init"
 
         # #    <!-- high resolution forecast and post process jobs -->
-        if dicBase['RUN_FORECAST_HIGH'] == "YES" or dicBase['RUN_FORECAST_HIGH'][0] == "Y":
-            # ---jgefs_forecast_high
+        if dicBase['RUN_FORECAST_HIGH'].upper()[0] == "Y":
+            # ---forecast_high
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_forecast_high"
+            dicBase[sTaskName.upper()] = "forecast_high"
 
-            # ---jgefs_post_high
+            # ---post_high
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_post_high"
+            dicBase[sTaskName.upper()] = "post_high"
 
-            # ---jgefs_prdgen_high
+            # ---prdgen_high
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_prdgen_high"
+            dicBase[sTaskName.upper()] = "prdgen_high"
 
-            # ---jgefs_ensstat_high
+            # ---ensstat_high
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_ensstat_high"
+            dicBase[sTaskName.upper()] = "ensstat_high"
 
-        # will be used in the future
-        # @** if RUN_CHGRES==YES
-        #   <!-- chargeres jobs -->
-        #    &jgefs_sigchgres;
-        # @** endif
-   
+        # #    <!-- CHGRES jobs -->
+        if dicBase['RUN_CHGRES'].upper()[0] == "Y":
+            # ---sigchgres
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "sigchgres"
+
+        # #    <!-- RUN_PRDGEN_GFS jobs -->
+        if dicBase['RUN_PRDGEN_GFS'].upper()[0] == "Y": 
+            # ---sigchgres
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "prdgen_gfs"
 
         # #    <!-- low resolution forecast and post process jobs -->
-        if dicBase['RUN_FORECAST_LOW'] == "YES" or dicBase['RUN_FORECAST_LOW'][0] == "Y":
-            # ---jgefs_forecast_low
+        if dicBase['RUN_FORECAST_LOW'].upper()[0] == "Y":
+            # ---forecast_low
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_forecast_low"
+            dicBase[sTaskName.upper()] = "forecast_low"
 
-            # ---jgefs_post_low
+            # ---post_low
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_post_low"
+            dicBase[sTaskName.upper()] = "post_low"
 
-            # ---jgefs_prdgen_low
+            # ---prdgen_low
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_prdgen_low"
+            dicBase[sTaskName.upper()] = "prdgen_low"
 
-            # ---jgefs_ensstat_low
+            # ---ensstat_low
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_ensstat_low"
+            dicBase[sTaskName.upper()] = "ensstat_low"
 
         # #    <!-- track and gensis jobs -->
-        if dicBase['RUN_TRACK'] == "YES" or dicBase['RUN_TRACK'][0] == "Y":
-            # ---jgefs_enkf_track
+        if dicBase['RUN_TRACK'].upper()[0] == "Y": 
+            # ---enkf_track
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_post_track"
+            dicBase[sTaskName.upper()] = "post_track"
 
-            # ---jgefs_post_genesis
+            # ---post_genesis
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_post_genesis"
+            dicBase[sTaskName.upper()] = "post_genesis"
 
         # #    <!-- other jobs -->
-        if dicBase['RUN_OTHERS'] == "YES" or dicBase['RUN_OTHERS'][0] == "Y":
-            # ---jgefs_enspost
+        if dicBase['RUN_OTHERS'].upper()[0] == "Y":
+            # ---enspost
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_enspost"
-
-        if dicBase['RUN_CLEANUP'] == "YES" or dicBase['RUN_CLEANUP'][0] == "Y":
-            # ---jgefs_keep_data
+            dicBase[sTaskName.upper()] = "enspost"
+        
+        # #    <!-- RUN_CLEANUP -->
+        if dicBase['RUN_CLEANUP'].upper()[0] == "Y":
+            # ---keep_data
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_keep_data"
-            # ---jgefs_archive
+            dicBase[sTaskName.upper()] = "keep_data"
+            # ---archive
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_archive"
-            # ---jgefs_cleanup
+            dicBase[sTaskName.upper()] = "archive"
+            # ---cleanup
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "jgefs_cleanup"
+            dicBase[sTaskName.upper()] = "cleanup"
+            
         # final
         dicBase[sVarName] = iTaskName_Num
 
@@ -238,10 +268,8 @@ def write_to_ent(taskname, dicBase, GenTaskEnt=False):
     if not os.path.exists(sPath):
         os.mkdir(sPath)
 
-    # print(strings)
     sFile = sPath + sSep + "{0}.ent".format(taskname)
-    # print(sFile)
-    # exit()
+
     fh = open(sFile, 'w')
 
     fh.write(strings)
@@ -257,8 +285,6 @@ def get_param_of_task(dicBase, taskname):
     sJoin = ""
     sDep = ""
     sQueue = ""
-
-    sWalltime, sNodes, sMemory, sJoin, sDep, sQueue= get_Default_TaskParam(taskname)
 
     sVarName = "{0}_walltime".format(taskname).upper()
     if sVarName in dicBase:
@@ -299,35 +325,92 @@ def get_param_of_task(dicBase, taskname):
     sVarName = "{0}_dep".format(taskname).upper()
     if sVarName in dicBase:
         sDep = dicBase[sVarName.upper()]            
-        if sDep.strip() != "": # identify whether include 'jgefs_init_recenter' or not
-            # For Cold Start
-            if taskname.lower() == "jgefs_init_fv3chgrs":
-                sRecenterTask = "jgefs_init_recenter"
-                if dicBase['taskname_1'.upper()].lower() == sRecenterTask:
-                    if dicBase['taskname_2'.upper()].lower() == "jgefs_init_fv3chgrs":
-                        sDep = '<taskdep task="jgefs_init_recenter"/>'
+        if sDep.strip() != "": # identify whether include 'init_recenter' or not
+            
+            # For 'init_fv3chgrs' task
+            if taskname.lower() == "init_fv3chgrs":
+                if DoesTaskExist(dicBase, "init_recenter"): # For Cold Start
+                    sDep = '<taskdep task="init_recenter"/>' 
+                elif DoesTaskExist(dicBase, "init_combine"):
+                    sDep = '<taskdep task="init_combine"/>'
+                    
 
-            # For Warm Start
-            if taskname.lower() == "jgefs_forecast_high":
-                sRecenterTask = "jgefs_init_recenter"
-                if dicBase['taskname_1'.upper()].lower() == sRecenterTask:
-                    if dicBase['taskname_2'.upper()].lower() == "jgefs_forecast_high":
-                        sDep = '<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
-
+            # For 'forecast_high' task
+            if taskname.lower() == "forecast_high": 
+                if DoesTaskExist(dicBase, "init_recenter"):
+                    if DoesTaskExist(dicBase, "init_fv3chgrs"):
+                        if DoesTaskExist(dicBase, "getcfssst"):
+                            sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+                        else:
+                            sDep = '<taskdep task="init_fv3chgrs_#member#"/>'
+                    else:  # For Warm Start
+                        if DoesTaskExist(dicBase, "getcfssst"):   
+                            sDep = '<and>\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>\n\t<taskdep task="getcfssst"/>\n</and>'
+                        else:
+                            sDep = '<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
+                elif DoesTaskExist(dicBase, "copy_init"):
+                    if DoesTaskExist(dicBase, "getcfssst"):
+                        sDep = '<and>\n\t<taskdep task="copy_init_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+                    else:
+                        sDep = '<taskdep task="copy_init_#member#"/>'
+                            
             # For Low Resolution
-            if taskname.lower() == "jgefs_post_low" or taskname.lower() == "jgefs_prdgen_low":
-                start_hr_low = int(dicBase["fhmaxh".upper()]) + int(dicBase["FHOUTHF".upper()])
+            if taskname.lower() == "post_low" or taskname.lower() == "prdgen_low":
+                FHOUTHF=int(dicBase["FHOUTHF".upper()])
+                FHOUTLF=int(dicBase["FHOUTLF".upper()])
+                fhmaxh=int(dicBase["fhmaxh".upper()])
+                FHMAXHF=int(dicBase["FHMAXHF".upper()])
+
+                if FHMAXHF <= fhmaxh:
+                    start_hr_low =  fhmaxh + FHOUTLF
+                else:
+                    start_hr_low =  fhmaxh + FHOUTHF
                 sDep = dicBase[sVarName].replace("fXXX","f{0:03d}".format(start_hr_low))
 
-            # For 'jgefs_enspost' task
-            if taskname.lower() == "jgefs_enspost":
-                if DoesTaskExist(dicBase, "jgefs_ensstat_low"):
-                    sDep = '<taskdep task="jgefs_ensstat_low"/>'
+            # For 'enspost' task
+            if taskname.lower() == "enspost":
+                if DoesTaskExist(dicBase, "ensstat_low"):
+                    if DoesTaskExist(dicBase, "prdgen_gfs"):
+                        sDep = '<and>\n\t<taskdep task="ensstat_low"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
+                    else:
+                        sDep = '<taskdep task="ensstat_low"/>'
+                elif DoesTaskExist(dicBase, "ensstat_high"):  
+                    if DoesTaskExist(dicBase, "prdgen_gfs"):
+                        sDep = '<and>\n\t<taskdep task="ensstat_high"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
+                    #else:
+                    #    sDep = '<taskdep task="ensstat_high"/>' #Default
+
+            # For 'keep_data' and 'archive' tasks
+            if taskname.lower() == "keep_data" or taskname.lower() == "archive":
+                if DoesTaskExist(dicBase, "enspost"):
+                    if DoesTaskExist(dicBase, "post_track"):
+                        if DoesTaskExist(dicBase, "post_genesis"):
+                            sDep = '<and>\n\t<taskdep task="enspost"/>\n\t<taskdep task="post_track"/>\n\t<taskdep task="post_genesis"/>\n</and>'
+                        else:
+                            sDep = '<and>\n\t<taskdep task="enspost"/>\n\t<taskdep task="post_track"/>\n</and>'
+                    else:
+                        if DoesTaskExist(dicBase, "post_genesis"):
+                            sDep = '<and>\n\t<taskdep task="enspost"/>\n\t<taskdep task="post_genesis"/>\n</and>'
+                        else:
+                            sDep = '<and>\n\t<taskdep task="enspost"/>\n</and>'
                 else:
-                    sDep = '<taskdep task="jgefs_ensstat_high"/>'
+                    if DoesTaskExist(dicBase, "post_track"):
+                        if DoesTaskExist(dicBase, "post_genesis"):
+                            sDep = '<and>\n\t<taskdep task="post_track"/>\n\t<taskdep task="post_genesis"/>\n</and>'
+                        else:
+                            sDep = '<and>\n\t<taskdep task="post_track"/>\n</and>'
+                    else:
+                        if DoesTaskExist(dicBase, "post_genesis"):
+                            sDep = '<and>\n\t<taskdep task="post_genesis"/>\n</and>'
+                        else:
+                            sDep = ''
+
+            # Don't clean up if keep_init isn't finished
+            if taskname.lower() == "cleanup" and DoesTaskExist(dicBase, "keep_init"):
+                sDep = '<and>\n\t' + sDep + '\n\t<metataskdep metatask="keep_init"/>\n</and>'
 
     # Forecast can be derive from the parm items
-    if taskname == 'jgefs_forecast_high' or taskname == 'jgefs_forecast_low':
+    if taskname == 'forecast_high' or taskname == 'forecast_low':
         layout_x = int(dicBase['layout_x'.upper()])
         layout_y = int(dicBase['layout_y'.upper()])
         WRITE_GROUP = int(dicBase['WRITE_GROUP'.upper()])
@@ -366,129 +449,7 @@ def DoesTaskExist(dicBase, taskname):
     return False
 
 # =======================================================
-def get_Default_TaskParam(taskname):
-    sWalltime = ""
-    sNodes = ""
-    sMemory = ""
-    sJoin = ""
-    sDep = ""
-
-    if taskname == 'jgefs_enkf_track':  # 01
-        sWalltime = "01:50:00"
-        sNodes = "2:ppn=20"
-        sMemory = "3000M"
-        sJoin = "&LOG_DIR;/@Y@m@d/gefs_enkf_track_@H.$PBS_JOBID"
-        sDep = ""
-        sQueue = '&CUE2RUN;'
-    elif taskname == 'jgefs_init_separate':  # 02
-        sWalltime = "01:50:00"
-        sNodes = "10:ppn=4:tpp=6"
-        sMemory = "3000M"
-        sJoin = "&LOG_DIR;/@Y@m@d/gefs_init_separate_@H.$PBS_JOBID"
-        sDep = '<taskdep task="jgefs_enkf_track"/>'
-        sQueue = '&CUE2RUN;'
-    elif taskname == 'jgefs_init_process':  # 03
-        sWalltime = "01:50:00"
-        sNodes = "8:ppn=4:tpp=6"
-        sMemory = "3000M"
-        sJoin = "&LOG_DIR;/@Y@m@d/gefs_init_process_@H.$PBS_JOBID"
-        sDep = '<taskdep task="jgefs_init_separate"/>'
-        sQueue = '&CUE2RUN;'
-    elif taskname == 'jgefs_init_combine':  # 04
-        sWalltime = "01:50:00"
-        sNodes = "20:ppn=2"
-        sMemory = "3000M"
-        sJoin = "&LOG_DIR;/@Y@m@d/gefs_init_combine_@H.$PBS_JOBID"
-        sDep = '<taskdep task="jgefs_init_process"/>'
-        sQueue = '&CUE2RUN;'
-    elif taskname == 'jgefs_init_fv3chgrs':  # 05
-        sWalltime = "00:30:00"
-        sNodes = "1:ppn=12:tpp=2"
-        sMemory = "600M"
-        sJoin = "&LOG_DIR;/@Y@m@d/gefs_#member#_init_fv3chgrs@H.$PBS_JOBID"
-        sDep = '<taskdep task="jgefs_init_combine"/>'
-        sQueue = '&CUE2RUN;'
-    elif taskname == 'jgefs_forecast_high':  # 06
-        sWalltime = "03:00:00"
-        sNodes = "20:ppn=12:tpp=2"
-        sMemory = "600M"
-        sJoin = "&LOG_DIR;/@Y@m@d/gefs_#member#_forecast_high_@H.$PBS_JOBID"
-        sDep = '<taskdep task="jgefs_init_fv3chgrs_#member#"/>'
-        sQueue = '&CUE2RUN;'
-    elif taskname == 'jgefs_post_high':  # 07
-        sWalltime = "01:30:00"
-        sNodes = "1:ppn=12:tpp=2"
-        sMemory = "3000M"
-        sJoin = "&LOG_DIR;/@Y@m@d/gefs_#member#_post_high_@H.$PBS_JOBID"
-        sDep = "<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/sfcsig/#member#/ge#member#.t@Hz.logf000.nemsio</cyclestr></datadep>"
-        sQueue = '&CUE2RUN;'
-    elif taskname == 'jgefs_prdgen_high':  # 08
-        sWalltime = "01:30:00"
-        sNodes = "1:ppn=5:tpp=4"
-        sMemory = "3000M"
-        sJoin = "&LOG_DIR;/@Y@m@d/gefs_#member#_prdgen_high_@H.$PBS_JOBID"
-        sDep = '<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/post/ge#member#.t@Hz.master.control.f00</cyclestr></datadep>'
-        sQueue = '&CUE2RUN;'
-    elif taskname == 'jgefs_ensstat_high':  # 09
-        sWalltime = "01:30:00"
-        sNodes = "1:ppn=3:tpp=4"
-        sMemory = "3000M"
-        sJoin = "&LOG_DIR;/@Y@m@d/gefs_ensstat_high_@H.$PBS_JOBID" # "&LOG_DIR;/@Y@m@d/gefs_#member#_prdgen_high_@H.$PBS_JOBID"
-        sDep = '<metataskdep metatask="jgefs_prdgen_high"/>' #'<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/post/ge#member#.t@Hz.master.control.f00</cyclestr></datadep>'
-        sQueue = '&CUE2RUN;'
-    elif taskname == 'jgefs_post_track':  # 10
-        sWalltime = "00:45:00"
-        sNodes = "3:ppn=7"
-        sMemory = "1000M"
-        sJoin = "&LOG_DIR;/@Y@m@d/gefs_post_track_@H.$PBS_JOBID"
-        sDep = '<metataskdep metatask="jgefs_prdgen_high"/>'
-        sQueue = '&CUE2RUN;'
-    elif taskname == 'jgefs_post_genesis':  # 11
-        sWalltime = "00:45:00"
-        sNodes = "3:ppn=7"
-        sMemory = "3000M"
-        sJoin = "&LOG_DIR;/@Y@m@d/gefs_post_genesis_@H.$PBS_JOBID"
-        sDep = '<metataskdep metatask="jgefs_prdgen_high"/>'
-        sQueue = '&CUE2RUN;'
-    elif taskname == 'jgefs_enspost':  # 12
-        sWalltime = "01:29:00"
-        sNodes = "1:ppn=1:tpp=24"
-        sMemory = "3000M"
-        sJoin = "&LOG_DIR;/@Y@m@d/gefs_enspost_@H.$PBS_JOBID"
-        sDep = '<taskdep task="jgefs_ensstat_high"/>'
-        sQueue = '&CUE2RUN;'
-    elif taskname == 'jgefs_keep_data':  # 13
-        sWalltime = "00:30:00"
-        sNodes = "1:ppn=1:tpp=1"
-        sMemory = "3000M"
-        sJoin = "&LOG_DIR;/@Y@m@d/gefs_keep_data_@H.$PBS_JOBID"
-        sDep = '<taskdep task="jgefs_enspost"/>'
-        sQueue = '&CUE2RUN;'
-    elif taskname == 'jgefs_archive':  # 14
-        sWalltime = "06:00:00"
-        sNodes = "1:ppn=1:tpp=1"
-        sMemory = "3000M"
-        sJoin = "&LOG_DIR;/@Y@m@d/gefs_archive_@H.$PBS_JOBID"
-        sDep = '<taskdep task="jgefs_enspost"/>'
-        sQueue = '&TRANSFER_QUEUE;'
-    elif taskname == 'jgefs_keep_data':  # 15
-        sWalltime = "00:30:00"
-        sNodes = "1:ppn=1:tpp=1"
-        sMemory = "3000M"
-        sJoin = "&LOG_DIR;/@Y@m@d/gefs_keep_data_@H.$PBS_JOBID"
-        sDep = '<taskdep task="jgefs_enspost"/>'
-        sQueue = '&CUE2RUN;'
-    else:
-        sWalltime = "01:50:00"
-        sNodes = "2:ppn=20"
-        sMemory = "3000M"
-        sJoin = ""
-        sDep = ""
-        sQueue = ""
-    return sWalltime, sNodes, sMemory, sJoin, sDep, sQueue
-
-# =======================================================
-def create_metatask_task(dicBase, taskname="jgefs_init_fv3chgrs", sPre="\t", GenTaskEnt=False):
+def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEnt=False):
     # walltime = "00:30:00"
     # nodes = "1:ppn=12:tpp=2"
     # memory = "600M"
@@ -496,16 +457,18 @@ def create_metatask_task(dicBase, taskname="jgefs_init_fv3chgrs", sPre="\t", Gen
     sWalltime, sNodes, sMemory, sJoin, sDep, sQueue = get_param_of_task(dicBase, taskname)
 
     metatask_names = []
-    metatask_names.append('jgefs_init_fv3chgrs')
+    metatask_names.append('init_fv3chgrs')
+    metatask_names.append('keep_init')
+    metatask_names.append('copy_init')
     # forecast
-    metatask_names.append('jgefs_forecast_high')
-    metatask_names.append('jgefs_forecast_low')
+    metatask_names.append('forecast_high')
+    metatask_names.append('forecast_low')
     # post
-    metatask_names.append('jgefs_post_high')
-    metatask_names.append('jgefs_post_low')
+    metatask_names.append('post_high')
+    metatask_names.append('post_low')
     # prdgen
-    metatask_names.append('jgefs_prdgen_high')
-    metatask_names.append('jgefs_prdgen_low')
+    metatask_names.append('prdgen_high')
+    metatask_names.append('prdgen_low')
 
     jobname = get_jobname(taskname)
     if taskname in metatask_names:
@@ -589,12 +552,10 @@ def read_jobid_config(sConfig):
 
                     dicBase[a] = b
 
-
     return dicBase
 
-
 # =======================================================
-def create_metatask(taskname="jgefs_init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member#", \
+def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member#", \
                     sWalltime="00:30:00", sNodes="1:ppn=12:tpp=2", sMemory="600M", sJoin="", sDep="", sQueue="", \
                     sPre="\t", GenTaskEnt=False, WHERE_AM_I="cray"):
     cycledef = "gefs"
@@ -612,15 +573,13 @@ def create_metatask(taskname="jgefs_init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#
         sDATE_VARS = get_DATE_VARS(sPre_2)
 
     strings += sPre + '<!-- **********{0}********** -->\n'.format(taskname)
-    if taskname == "jgefs_prdgen_high" or taskname == "jgefs_prdgen_low":
+    if taskname == "prdgen_high" or taskname == "prdgen_low":
         strings += sPre + '<metatask name="{0}" mode="parallel">\n'.format(taskname)
     else:
-        strings += sPre + '<metatask>\n'
+        strings += sPre + '<metatask name="{0}">\n'.format(taskname)
     strings += sPre + '\t' + '<var name="member">&MEMLIST;</var>\n'
 
-    strings += sPre + '\t' + '<task name="{0}_#member#" cycledefs="{1}" maxtries="{2}">\n'.format(taskname,
-                                                                                                      cycledef,
-                                                                                                      maxtries)
+    strings += sPre + '\t' + '<task name="{0}_#member#" cycledefs="{1}" maxtries="{2}">\n'.format(taskname, cycledef, maxtries)
 
     if "@" in jobname:
         strings += sPre + '\t\t' + '<jobname><cyclestr>{0}</cyclestr></jobname>\n'.format(jobname)
@@ -631,7 +590,7 @@ def create_metatask(taskname="jgefs_init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#
     strings += sPre + '\t\t' + '<account>{0}</account>\n'.format(account)
 
     if sJoin == "":
-        if taskname == "jgefs_init_fv3chgrs":
+        if taskname == "init_fv3chgrs":
             strings += sPre + '\t\t' + '<sJoin><cyclestr>&LOG_DIR;/@Y@m@d/gefs_#member#{0}@H.%J</cyclestr></sJoin>\n'.format(
                 taskname.replace("jgefs", ""))
         else:
@@ -685,13 +644,21 @@ def create_metatask(taskname="jgefs_init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#
     strings += (create_envar(name="job", value=jobname.replace("_#member#", "#member#"), sPre=sPre_2))
     strings += (create_envar(name="RUNMEM", value="ge#member#", sPre=sPre_2))
 
-    strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
+    if taskname in ['keep_init', 'copy_init']:
+        strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
+        strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.py</cyclestr></command>\n'.format(taskname)
+    else:
+        strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
+
+    sDep = sDep.replace('\\n', '\n')
+    sDep = sDep.replace('\\t', '\t')
 
     if sDep != "":
+        if "\n\t" in sDep:
+            sDep = sDep.replace("\n","\n{0}".format(sPre_2 + '\t'))
         strings += sPre_2 + '<dependency>\n'
         strings += sPre_2 + '\t' + sDep + '\n'  # '\t<taskdep task="{0}"/>\n'.format(taskdep)
         strings += sPre_2 + '</dependency>\n'
-    # strings += get_dependency(taskname, sPre=sPre_2)
 
     strings += sPre + '\t' + '</task>\n'
     strings += sPre + '</metatask>\n\n'
@@ -699,7 +666,7 @@ def create_metatask(taskname="jgefs_init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#
 
 # =======================================================
 def create_task( \
-        taskname="jgefs_enkf_track", jobname="&EXPID;@Y@m@d@H010", \
+        taskname="enkf_track", jobname="&EXPID;@Y@m@d@H010", \
         sWalltime="01:50:00", sNodes="2:ppn=20", sMemory="3000M", sJoin="", sDep="",sQueue="", \
         sPre="\t", GenTaskEnt=False, WHERE_AM_I="cray"):
     cycledef = "gefs"
@@ -727,7 +694,12 @@ def create_task( \
     strings += sPre + '\t' + '<account>{0}</account>\n'.format(account)
 
     if sJoin == "":
-        strings += sPre + '\t' + '<join><cyclestr>&LOG_DIR;/@Y@m@d/{0}_@H.%J</cyclestr></join>\n'.format(taskname[1:])
+        if WHERE_AM_I.upper() == "CRAY":
+            strings += sPre + '\t' + '<join><cyclestr>&LOG_DIR;/@Y@m@d/{0}_@H.%J</cyclestr></join>\n'.format(taskname[1:])
+        elif WHERE_AM_I.upper() == "THEIA":
+            strings += sPre + '\t' + '<join><cyclestr>&LOG_DIR;/@Y@m@d/{0}_@H.%PBS_JOBID</cyclestr></join>\n'.format(taskname[1:])
+        else:
+            strings += sPre + '\t' + '<join><cyclestr>&LOG_DIR;/@Y@m@d/{0}_@H.%J</cyclestr></join>\n'.format(taskname[1:])
     else:
         if "@" in sJoin:
             strings += sPre + '\t' + '<join><cyclestr>{0}</cyclestr></join>\n'.format(sJoin)
@@ -743,7 +715,7 @@ def create_task( \
 
     if sNodes != "":
         if WHERE_AM_I.upper() == "cray".upper():
-            if taskname == "jgefs_archive":
+            if taskname == "archive":
                 strings += sPre + '\t' + '<nodes>{0}</nodes><shared></shared>\n'.format(sNodes)
             else:
                 strings += sPre + '\t' + '<nodes>{0}</nodes>\n'.format(sNodes)
@@ -763,7 +735,7 @@ def create_task( \
         strings += sPre + '\t' + '<memory>{0}</memory>\n'.format(sMemory)
 
     if WHERE_AM_I.upper() == "cray".upper():
-        if taskname == "jgefs_archive":
+        if taskname == "archive":
             strings += ""
         else:
             strings += sPre + '\t' + '<native>-extsched "CRAYLINUX[]"</native>\n'
@@ -780,72 +752,35 @@ def create_task( \
     strings += sPre + '\t' + '<!-- Other Environment Variables -->\n'
     strings += (create_envar(name="SOURCEDIR", value="&SOURCEDIR;", sPre=sPre_2))
     # strings += (create_envar(name="WORKDIR", value="&WORKDIR;", sPre=sPre_2))
-    if taskname == "jgefs_post_genesis":
-        strings += (create_envar(name="job", value=jobname.replace('H397', 'H307'), sPre=sPre_2))
-    elif taskname == "jgefs_enspost":
-        strings += (create_envar(name="job", value=jobname.replace('H395', 'H305'), sPre=sPre_2))
-    else:
-        strings += (create_envar(name="job", value=jobname, sPre=sPre_2))
+    #if taskname == "post_genesis":
+    #    strings += (create_envar(name="job", value=jobname.replace('H397', 'H307'), sPre=sPre_2))
+    #elif taskname == "enspost":
+    #    strings += (create_envar(name="job", value=jobname.replace('H395', 'H305'), sPre=sPre_2))
+    #else:
+    strings += (create_envar(name="job", value=jobname, sPre=sPre_2))
 
-    if taskname in ["jgefs_ensstat_high", "jgefs_post_track", "jgefs_post_genesis", "jgefs_enspost"]:
+    if taskname in ["ensstat_high", "post_track", "post_genesis", "enspost"]:
         strings += (create_envar(name="RUNMEM", value="#member#", sPre=sPre_2))
 
-    if taskname in ['jgefs_keep_data', 'jgefs_archive', 'jgefs_cleanup']:
-        strings += sPre + sPre + '<command><cyclestr>&PRE; &BIN;/{0}.py</cyclestr></command>\n'.format(taskname)
+    if taskname in ["prdgen_gfs"]:
+        strings += (create_envar(name="RUNMEM", value="gfs", sPre=sPre_2))
+
+    if taskname in ['keep_data', 'archive', 'cleanup']:
+        strings += sPre + '\t' + '<command><cyclestr>&PRE; &BIN;/{0}.py</cyclestr></command>\n'.format(taskname)
     else:
-        strings += sPre + sPre + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
+        strings += sPre + '\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
 
     sDep = sDep.replace('\\n', '\n')
     sDep = sDep.replace('\\t', '\t')
 
     if sDep != "":
+        if "\n\t" in sDep:
+            sDep = sDep.replace("\n","\n{0}".format(sPre_2 + '\t'))
         strings += sPre_2 + '<dependency>\n'
         strings += sPre_2 + '\t' + sDep + '\n'  # '\t<taskdep task="{0}"/>\n'.format(taskdep)
         strings += sPre_2 + '</dependency>\n'
-    # strings += get_dependency(taskname, sPre=sPre_2)
 
     strings += sPre + '</task>\n\n'
-    return strings
-
-# =======================================================
-def get_dependency(taskname, sPre="\t\t"):
-    strings = ""
-
-    if taskname != "jgefs_enkf_track":
-        taskdep = ""
-        if taskname == "jgefs_init_separate":  # 02
-            taskdep = '<taskdep task="jgefs_enkf_track"/>'
-        elif taskname == "jgefs_init_process":  # 03
-            taskdep = '<taskdep task="jgefs_init_separate"/>'
-        elif taskname == "jgefs_init_combine":  # 04
-            taskdep = '<taskdep task="jgefs_init_process"/>'
-        elif taskname == "jgefs_init_fv3chgrs":  # 05
-            taskdep = '<taskdep task="jgefs_init_combine"/>'
-        elif taskname == "jgefs_forecast_high":  # 06
-            taskdep = '<taskdep task="jgefs_init_fv3chgrs_#member#"/>'
-        elif taskname == "jgefs_post_high":  # 07
-            taskdep = '<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/sfcsig/#member#/ge#member#.t@Hz.atmf330.nemsio</cyclestr></datadep>'
-        elif taskname == "jgefs_prdgen_high":  # 08
-            taskdep = '<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/post/ge#member#.t@Hz.master.control.f00</cyclestr></datadep>'
-        elif taskname == "jgefs_ensstat_high":  # 09
-            taskdep = '<metataskdep metatask="jgefs_prdgen_high"/>'
-        elif taskname == "jgefs_post_track":  # 10
-            taskdep = '<metataskdep metatask="jgefs_prdgen_high"/>'
-        elif taskname == "jgefs_post_genesis":  # 11
-            taskdep = '<metataskdep metatask="jgefs_prdgen_high"/>'
-        elif taskname == "jgefs_enspost":  # 12
-            taskdep = '<taskdep task="jgefs_ensstat_high"/>'
-        elif taskname == "jgefs_archive":  # 13
-            taskdep = '<taskdep task="jgefs_enspost"/>'
-        elif taskname == "jgefs_cleanup":  # 14
-            taskdep = '<and>\n\t<taskdep task="jgefs_keep_data"/>\n\t<taskdep task="jgefs_archive"/>\n</and>'
-        elif taskname == "jgefs_keep_data":  # 15
-            taskdep = '<taskdep task="jgefs_enspost"/>'
-
-        strings += sPre + '<dependency>\n'
-        strings += sPre + '\t' + taskdep + '\n'  # '\t<taskdep task="{0}"/>\n'.format(taskdep)
-        strings += sPre + '</dependency>\n'
-
     return strings
 
 # =======================================================
@@ -875,6 +810,7 @@ def get_ENV_VARS(sPre="\t\t"):
     dicENV_VARS['EXPID'] = '&EXPID;'
     dicENV_VARS['KEEP_DIR'] = '&KEEP_DIR;'
     dicENV_VARS['HPSS_DIR'] = '&HPSS_DIR;'
+    dicENV_VARS['INIT_DIR'] = '&INIT_DIR;'
     dicENV_VARS['DIRS_TO_KEEP'] = '&DIRS_TO_KEEP;'
     dicENV_VARS['DIRS_TO_ARCHIVE'] = '&DIRS_TO_ARCHIVE;'
     sENV_VARS = ""

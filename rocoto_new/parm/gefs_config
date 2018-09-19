@@ -93,12 +93,18 @@ export HOMEgsm1=${HOMEgsm1:-$HOMEDIR1/global_shared.v14.1.0} #this is needed for
 # export COMINenkf_base=/gpfs/hps3/ptmp/emc.glopara/fv3fy18retro2/enkf.gdas.
 # export COMINgfs_base=/gpfs/hps3/ptmp/emc.glopara/fv3fy18retro2/gfs.
   export HOMEdata=${HOMEdata:-/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common}
-  export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
-  export COMINgfs_base=$HOMEdata/fv3init/gfs.
-  export ROTDIR=$HOMEdata/fv3init                                        #for warm start files
-  export SSTDIR=$HOMEdata/2tsst                                          #for 2-tier sst files 
+  export COMINenkf_base=${COMINenkf_base:-$HOMEdata/fv3init/enkf.gdas.}
+  export COMINgfs_base=${COMINgfs_base:-$HOMEdata/fv3init/gfs.}
+  export COMINcfs_base=${COMINcfs_base:-$HOMEdata/cfs/cfs.}
+  
+  export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc}
+  export COMINcfs=${COMINcfs:-${COMINcfs_base}}
+  export COMINenkf=${COMINenkf:-${COMINenkf_base}}
+  
+  export ROTDIR=$HOMEdata/fv3init                         #for pre-generated warm start files, otherwise comment out
+  # export SSTDIR=$HOMEdata/2tsst                           #for pre-generated 2tsst files, otherwise comment this line out 
   #?export COMINenkf_base=/gpfs/hps3/ptmp/emc.glopara/fy2019q1/enkf.gdas.
   #?export COMINgfs_base=/gpfs/hps3/ptmp/emc.glopara/fy2019q1/gfs.
 
   #export fcstscript=/gpfs/hps3/emc/ensemble/save/Dingchen.Hou/GEFS/LINK/ECF/exglobal_fcst_nemsfv3gfs.sh_mod
-   export fcstscript=$HOMEgefs/scripts/exglobal_fcst_nemsfv3gfs.sh
+  export fcstscript=$HOMEgefs/scripts/exglobal_fcst_nemsfv3gfs.sh

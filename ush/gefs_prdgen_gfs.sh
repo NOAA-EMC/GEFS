@@ -12,6 +12,7 @@ echo " Jan 15 - Hou -  renamed exgefs_prdgen_gfs.sh.ecf"
 echo " April 15 - Hou - moved to ush and renamed gefs_prdgen_gfs.sh"
 echo " April 17 - Meng - Simplified to process a single grid $jobgrid=1p0/2p5/0p5"
 echo " Jan 18 - Hou - unified for 3-digit forecast hours in file names"
+echo " Jul 28, 2018 - Cui - add new option of grid 0p25"
 echo "-----------------------------------------------------"
 #####################################################################
 
@@ -26,25 +27,17 @@ export grid0p5=${grid0p5:-"latlon 0:720:0.5 90:361:-0.5"}
 export grid1p0=${grid1p0:-"latlon 0:360:1.0 90:181:-1.0"}
 export grid2p5=${grid2p5:-"latlon 0:144:2.5 90:73:-2.5"}
 
-#export WGRIB=${WGRIB:-$EXECgrib/wgrib}
-#export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
-#export COPYGB=${COPYGB:-$EXECgrib/copygb}
-#export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
-#export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
-#export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
-#export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
-
 export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
 export TRANSG=${TRANSG:-$USHgefs/gefs_transfer_gfs.sh}
 
-echo WGRIB=$WGRIB
-echo WGRIB2=$WGRIB2
-echo COPYGB=$COPYGB
-echo COPYGB2=$COPYGB2
-echo CNVGRIB=$CNVGRIB
-echo GRBINDEX=$GRBINDEX
-echo GRB2INDEX=$GRB2INDEX
-echo ENSADD=$ENSADD
+#echo WGRIB=$WGRIB
+#echo WGRIB2=$WGRIB2
+#echo COPYGB=$COPYGB
+#echo COPYGB2=$COPYGB2
+#echo CNVGRIB=$CNVGRIB
+#echo GRBINDEX=$GRBINDEX
+#echo GRB2INDEX=$GRB2INDEX
+#echo ENSADD=$ENSADD
 
 parm00=$PARMgefs/gefs_pgrb2a_f00.parm
 parmhh=$PARMgefs/gefs_pgrb2a_fhh.parm
@@ -68,6 +61,12 @@ case $jobgrid in
 		filsuf=.0p50.
 		filetail=
 		grid=${grid0p5}
+		;;
+	0p25) 
+		dirsuf=p25
+		filsuf=.0p25.
+		filetail=
+		grid=${grid0p25}
 		;;
 esac
 
@@ -250,6 +249,10 @@ while test $fhr -le $FHOUR; do
 	if [[ $jobgrid == 0p5 ]] && [[ $fhr == $fhmaxh ]]; then
 		FHINC=6
 	fi 
+	if [[ $jobgrid == 0p25 ]] && [[ $fhr == $fhmaxh ]]; then
+		FHINC=6
+	fi 
+
 	export fhr=`expr $fhr + $FHINC`
 	if test $fhr -lt 10; then
 		export fhr="0$fhr"

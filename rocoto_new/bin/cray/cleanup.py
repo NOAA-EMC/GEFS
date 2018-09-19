@@ -1,4 +1,4 @@
-#! /apps/intel/intelpython3/bin/python3
+#! /usrx/local/prod/python/2.7.13/bin/python
 
 ##########################################################
 # Delete all GEFS output from temporary directory (except log files)
@@ -43,7 +43,7 @@
 #
 ##########################################################
 
-import os, shutil, glob, contextlib
+import os, shutil, glob
 import datetime
 from datetime import datetime, timedelta
 
@@ -74,7 +74,7 @@ print("Experiment ID  : " + exp_id)
 print("Date/Cycle     : " + date_string + "_" + cycle)
 
 # Output directories that need to be removed
-output_dirs = ["ensstat", "init", "misc", "pgrb2a1p0", "pgrb2alr", "pgrb2b1p0", "pgrb2bp5", "sflux", "genesis", "master", "pgrb2a", "pgrb2a2p5", "pgrb2ap5", "pgrb2b2p5", "sfcsig", "tctrack"]
+output_dirs = ["ensstat", "init", "misc", "pgrb2alr", "sflux", "genesis", "master", "pgrb2ap25", "pgrb2bp25", "pgrb2ap5", "pgrb2bp5", "pgrb2a2p5", "pgrb2b2p5", "pgrb2a", "sfcsig", "tctrack"]
 output_dirs_last_cyc = ["sfcsig_enkf", "track_enkf"]
 
 date = datetime.strptime(date_string + cycle, "%Y%m%d%H")
@@ -114,8 +114,12 @@ for path in dirs_to_remove:
 	for f in glob.glob(path):
 		print("Removing " + f)
 		# Delete if it is a directory
-		with contextlib.suppress(NotADirectoryError):
+		try:
 			shutil.rmtree(f)
+		except OSError:
+			pass
 		# Delete if it is a file
-		with contextlib.suppress(FileNotFoundError):
+		try:
 			os.remove(f)
+		except OSError:
+			pass

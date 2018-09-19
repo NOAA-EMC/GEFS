@@ -249,7 +249,7 @@ else
 	NMEM_ENKF=1
 	imp_physics=${imp_physics:-11}
 	INCREMENTS_TO_ZERO="'delz_inc','clwmr_inc','icmr_inc'"
-	APRUN_CALCINC="aprun -j 1 -n 1 -N 1 -d 1 -cc depth"
+	APRUN_CALCINC=${APRUN_CALCINC:-"aprun -j 1 -n 1 -N 1 -d 1 -cc depth"}
 	ATMANLNAME='atmanl_ensres'
 
 #calculate increment for ensemble members

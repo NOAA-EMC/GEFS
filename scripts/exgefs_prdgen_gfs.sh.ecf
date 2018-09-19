@@ -15,6 +15,7 @@ echo `date` $sname $member begin
 #echo "                 and the Principal J-job function moved into this ex script."
 #echo "                 This reorganization enables running the ush scripts multiple"
 #echo "                 times for different grid (1.0 and 0.5 degree, for example)"
+#echo " July 28, 2018 - Cui - - add new option of grid 0p25"                        
 #echo "-----------------------------------------------------"
 ######################################################################
 export PS4='+ $SECONDS $sname $member $LINENO: '
@@ -39,6 +40,7 @@ case $jobgrid in
 	1p0) export FHINC_HIGH=$FHINC_HIGH;;
 	2p5) export FHINC_HIGH=$FHINC_HIGH;;
 	0p5) export FHINC_HIGH=$FHINC_HIGHP5;;
+       0p25) export FHINC_HIGH=$FHINC_HIGHP5;;
 esac
 
 #################################

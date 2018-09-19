@@ -29,18 +29,6 @@ cd $DATA
 # Set up cycle varaible
 ############################
 export cycle=t${cyc}z
-export cycle_fcst=t${cyc_fcst}z
-
-if (( cyc == cyc_fcst )); then
-	export cycsuffix=false
-	export fcstlong=true
-	cfsuffix=
-else
-	export fcstlong=false
-	export cycsuffix=true
-	export ENS_SPS=.false.
-	cfsuffix=.cycfs$cyc_fcst
-fi
 
 ####################################
 # Specify NET and RUN Name and model
@@ -140,6 +128,8 @@ echo npair = $npair
 export GESIN=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
 export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export SSTDIR=${SSTDIR:-$COMIN/${cyc}/cfssst}
 
 #export FV3GESOUT=$GESROOT/${envir}/fv3gefs.${PDY}
 #export SFCSIG=$COMOUT/$cyc/sfcsig

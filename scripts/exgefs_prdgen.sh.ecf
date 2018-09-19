@@ -25,16 +25,9 @@ cd $DATA
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
 
-if [[ "$cycsuffix" = "true" ]]; then
-	export cfsuffix=".cycfs$cyc_fcst"
-else
-	export cfsuffix=""
-fi
-echo cyc=$cyc cyc_fcst=$cyc_fcst
-echo cycle=$cycle cycle_fcst=$cycle_fcst
+echo cyc=$cyc
+echo cycle=$cycle
 echo fcstlong=$fcstlong
-echo cycsuffix=$cycsuffix
-echo cfsuffix=$cfsuffix
 
 #usage "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR} ${FHOUR} ${FHINC} $DOANALYSIS ${jobgrid_1} ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
 export SHOUR=$1
