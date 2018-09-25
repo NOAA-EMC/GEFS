@@ -98,8 +98,8 @@ export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 #export overwrite=no
 export overwrite=yes
 
-#mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
-#mkdir -m 775 -p $COMOUT/$cyc/pgrb2b1p0
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2b1p0
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2a2p5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2b2p5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
@@ -116,6 +116,7 @@ echo set parameters using gefs.parm
 . $PARMgefs/gefs.parm
 export FHMAX_HF=$FHMAXHF
 export FHOUT_HF=$FHOUTHF
+export FHOUT_LF=$FHOUTLF
 export FHOUT=$FHOUTLF
 
 export NTHREADS=1
@@ -197,136 +198,123 @@ export HDMAX=00
 # If this is a rerun, remove all control files
 ####################################
 if [[ $RERUN = YES ]]; then
-	$USHgefs/gefs_restart_cleanup.sh 00 $FHMAX prd0p5 prd1p0 prd2p5
+	$USHgefs/gefs_restart_cleanup.sh 00 $FHMAX prd0p5 prd1p0 prd2p5 prd0p25 
 fi
 
-FHINC34=$FHINCP5
+# SHOUR_1 000, run 000-384 for 2p5
+# SHOUR_2 000, run 000-384 for 1p0
+# SHOUR_3 000, run 000-384 for 0p5
+# SHOUR_4 000, run 000,009,...378 for 0p25
+# SHOUR_5 003, run 003,012,...372 for 0p25
+# SHOUR_6 006, run 006,015,...384 for 0p25
+# FHINC34: increment hour for 0p25 tasks
+
 SHOUR_1=$SHOUR 
 SHOUR_2=$SHOUR 
 SHOUR_3=$SHOUR 
 
-if test $total_tasks -ge 4; then
-	SHOUR_4=$(( $SHOUR_3 + FHINCP5 ))
-	FHINC34=$(( $FHINC34 + FHINCP5 ))
-fi
-if test $total_tasks -ge 5; then
-	SHOUR_5=$(( $SHOUR_4 + FHINCP5 ))
-	FHINC34=$(( $FHINC34 + FHINCP5 ))
-fi
-#if test $FHINC34 -le 9; then
-#	FHINC34=0$FHINC34
-#fi
+SHOUR_4=$SHOUR 
+SHOUR_5=$(( SHOUR_4 + FHOUT_HF ))           
+SHOUR_6=$(( SHOUR_5 + FHOUT_HF ))
 
-#mpmd job with 5 tasks, 1 for 1d, 2 for 2.5d; 3-5 for 0.5d grid
+FHINC34=9
 
-#task 1, 1.0d grid
-export jobgrid_0=1p0
-export DOANALYSIS_0=$DOANALYSIS
-export FHOUT_0=$FHOUT
-export FHOUT_HF_0=$FHOUT_HF
-export FHMAX_HF_0=$FHMAX_HF
-export FHMAX_HF_0=0
-export SHOUR_0=$SHOUR_1
-export FHOUR_0=$FHOUR
+#mpmd job with 6 tasks, 1 for 2.5d , 2 for 1d; 3 for 0.5d
+#                       4 for .25d from 000,009 to 378
+#                       5 for .25d from 003,012 to 372
+#                       6 for .25d from 006,015 to 384 
 
-#task 2, 2.5d
-export jobgrid_2=2p5
-export DOANALYSIS_2=NO
-export FHOUT_2=$FHOUT
-export FHOUT_HF_2=$FHOUT_HF
-export FHMAX_HF_2=$FHMAX_HF
-export FHMAX_HF_2=0
-export SHOUR_2=$SHOUR_2
-export FHOUR_2=$FHOUR
-
-#task 3, 0.5d grid
-export jobgrid_1=0p5
+#task 1, 2.5d
+export jobgrid_1=2p5
 export DOANALYSIS_1=NO
 export FHOUT_1=$FHOUT
 export FHOUT_HF_1=$FHOUT_HF
 export FHMAX_HF_1=0
-#export FHMAX_HF_3=$FHMAX_HF
 export SHOUR_1=$SHOUR_1
 export FHOUR_1=$FHOUR
 
-#task 3, 0.5d grid
-export jobgrid_3=0p25
-export DOANALYSIS_3=NO
+#task 2, 1.0d grid
+export jobgrid_2=1p0
+export DOANALYSIS_2=$DOANALYSIS
+export FHOUT_2=$FHOUT
+export FHOUT_HF_2=$FHOUT_HF
+export FHMAX_HF_2=0
+export SHOUR_2=$SHOUR_2
+export FHOUR_2=$FHOUR
+
+#task 3, 0.5d grid 
+export jobgrid_3=0p5
+export DOANALYSIS_3=$DOANALYSIS
 export FHOUT_3=$FHOUT
 export FHOUT_HF_3=$FHOUT_HF
 export FHMAX_HF_3=$FHMAX_HF
 export SHOUR_3=$SHOUR_3
-export FHOUR_3=$FHMAX_HF
-if test $FHOUR_3 -gt $FHOUR; then
-        export FHOUR_3=$FHOUR
-fi
+export FHOUR_3=$FHOUR
 
-if test $total_tasks -eq 3; then
-	export DOANALYSIS_3=$DOANALYSIS
-fi
-
-#task 4, 0.5d grid
-export jobgrid_4=0p5
-export DOANALYSIS_4=NO
-export DO_LOW_RES_4=NO
-export FHINC_4=$FHINC34
+#task 4, 0.25d grid
+export jobgrid_4=0p25
+export DOANALYSIS_4=$DOANALYSIS
+export FHOUT_4=$FHOUT
+#export FHOUT_HF_4=$FHOUT_HF
+export FHOUT_HF_4=$FHINC34 
+export FHMAX_HF_4=$FHMAX_HF
 export SHOUR_4=$SHOUR_4
-export FHOUR_4=$FHOUR
+export FHOUR_4=$FHOUR              
 
-if test $total_tasks -eq 4; then
-	export DOANALYSIS_4=$DOANALYSIS
-fi
-
-#task 5, 0.5d grid
-export jobgrid_5=0p5
-export DOANALYSIS_5=$DOANALYSIS
-export DO_LOW_RES_5=NO
-export FHINC_5=$FHINC34
+#task 5, 0.25d grid
+export jobgrid_5=0p25
+export DOANALYSIS_5=NO            
+export FHOUT_5=$FHOUT
+#export FHOUT_HF_5=$FHOUT_HF
+export FHOUT_HF_5=$FHINC34
+export FHMAX_HF_5=$FHMAX_HF
 export SHOUR_5=$SHOUR_5
-export FHOUR_5=$FHOUR
+export FHOUR_5=$FHOUR   
 
-if test $SHOUR_4 -le 9; then
-	SHOUR_4=0$SHOUR_4
-fi
-if test $SHOUR_5 -le 9; then
-	SHOUR_5=0$SHOUR_5
-fi
+#task 6, 0.25d grid
+export jobgrid_6=0p25
+export DOANALYSIS_6=NO                
+export FHOUT_6=$FHOUT
+#export FHOUT_HF_6=$FHOUT_HF
+export FHOUT_HF_6=$FHINC34
+export FHMAX_HF_6=$FHMAX_HF
+export SHOUR_6=$SHOUR_6
+export FHOUR_6=$FHOUR
 
 #################################
 # Run Post if Needed
 #################################
 if test $SHOUR -le $FHOUR; then
 
-	subdata=${DATA}/${SHOUR_1}.${FHOUR_1}.${FHINC_1}.${jobgrid_1}
+	subdata=${DATA}/${SHOUR_1}.${FHOUR_1}.${jobgrid_1}
 	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-	outfile=${subdata}/${SHOUR_1}.${FHOUR_1}.${FHINC_1}.${jobgrid_1}.out
+	outfile=${subdata}/${SHOUR_1}.${FHOUR_1}.${jobgrid_1}.out
 	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_1} ${FHOUR_1} ${FHOUT_1} $DOANALYSIS_1 ${jobgrid_1} ${subdata} ${FHOUT_HF_1} ${FHMAX_HF_1} 2>&1 >${outfile}" >>prdgen.cmdfile
 
-	subdata=${DATA}/${SHOUR_2}.${FHOUR_2}.${FHINC_2}.${jobgrid_2}
+	subdata=${DATA}/${SHOUR_2}.${FHOUR_2}.${jobgrid_2}
 	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-	outfile=${subdata}/${SHOUR_2}.${FHOUR_2}.${FHINC_2}.${jobgrid_2}.out
+	outfile=${subdata}/${SHOUR_2}.${FHOUR_2}.${jobgrid_2}.out
 	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_2} ${FHOUR_2} ${FHOUT_2} $DOANALYSIS_2 ${jobgrid_2} ${subdata} ${FHOUT_HF_2} ${FHMAX_HF_2} 2>&1 >${outfile}" >>prdgen.cmdfile
 
-		if test $total_tasks -ge 3; then
-	subdata=${DATA}/${SHOUR_3}.${FHOUR_3}.${FHINC_3}.${jobgrid_3}
+	subdata=${DATA}/${SHOUR_3}.${FHOUR_3}.${jobgrid_3}
 	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-	outfile=${subdata}/${SHOUR_3}.${FHOUR_3}.${FHINC_3}.${jobgrid_3}.out
+	outfile=${subdata}/${SHOUR_3}.${FHOUR_3}.${jobgrid_3}.out
 	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_3} ${FHOUR_3} ${FHOUT_3} $DOANALYSIS_3 ${jobgrid_3} ${subdata} ${FHOUT_HF_3} ${FHMAX_HF_3} 2>&1 >${outfile}" >>prdgen.cmdfile
-		fi # test $total_tasks -ge 3
 
-		if test $total_tasks -ge 4; then
-	ubdata=${DATA}/${SHOUR_4}.${FHOUR_4}.${FHINC_4}${jobgrid_4}
+	subdata=${DATA}/${SHOUR_4}.${FHOUR_4}.${jobgrid_4}
 	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-	outfile=${subdata}/${SHOUR_4}.${FHOUR_4}.${FHINC_4}${jobgrid_4}.out
-	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_4} ${FHOUR_4} ${FHINC_4} $DOANALYSIS_4 ${jobgrid_4} ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
-		fi # test $total_tasks -ge 4
+	outfile=${subdata}/${SHOUR_4}.${FHOUR_4}.${jobgrid_4}.out
+	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_4} ${FHOUR_4} ${FHOUT_4} $DOANALYSIS_4 ${jobgrid_4} ${subdata} ${FHOUT_HF_4} ${FHMAX_HF_4} 2>&1 >${outfile}" >>prdgen.cmdfile
 
-		if test $total_tasks -ge 5; then
-	subdata=${DATA}/${SHOUR_5}.${FHOUR_5}.${FHINC_5}${jobgrid_5}
+	subdata=${DATA}/${SHOUR_5}.${FHOUR_5}.${jobgrid_5}
 	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-	outfile=${subdata}/${SHOUR_5}.${FHOUR_5}.${FHINC_5}${jobgrid_5}.out
-	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_5} ${FHOUR_5} ${FHINC_5} $DOANALYSIS_5 ${jobgrid_5} ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
-		fi # test $total_tasks -ge 5
+	outfile=${subdata}/${SHOUR_5}.${FHOUR_5}.${jobgrid_5}.out
+	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_5} ${FHOUR_5} ${FHOUT_5} $DOANALYSIS_5 ${jobgrid_5} ${subdata} ${FHOUT_HF_5} ${FHMAX_HF_5} 2>&1 >${outfile}" >>prdgen.cmdfile
+
+	subdata=${DATA}/${SHOUR_6}.${FHOUR_6}.${jobgrid_6}
+	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+	outfile=${subdata}/${SHOUR_6}.${FHOUR_6}.${jobgrid_6}.out
+	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_6} ${FHOUR_6} ${FHOUT_6} $DOANALYSIS_6 ${jobgrid_6} ${subdata} ${FHOUT_HF_6} ${FHMAX_HF_6} 2>&1 >${outfile}" >>prdgen.cmdfile
 
 	cat prdgen.cmdfile
 	chmod 775 prdgen.cmdfile

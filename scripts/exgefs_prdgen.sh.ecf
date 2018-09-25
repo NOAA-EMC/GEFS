@@ -13,6 +13,7 @@ echo " Jun 11 - Wobus - moved master post files to /com"
 echo " Jun 14 - Hou   - adopted to grb2 version master files as input"
 echo " Feb 17 - Meng  - Unify version for creating all grids(1.0, 2.5"
 echo "                  and 0.5) files. "
+echo " Sep 18 - Cui   - add option for 0.25d grids "
 echo "-----------------------------------------------------"
 #####################################################################
 export PS4='+ $SECONDS $sname $member $LINENO: '
@@ -25,9 +26,16 @@ cd $DATA
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
 
-echo cyc=$cyc
-echo cycle=$cycle
+if [[ "$cycsuffix" = "true" ]]; then
+	export cfsuffix=".cycfs$cyc_fcst"
+else
+	export cfsuffix=""
+fi
+echo cyc=$cyc cyc_fcst=$cyc_fcst
+echo cycle=$cycle cycle_fcst=$cycle_fcst
 echo fcstlong=$fcstlong
+echo cycsuffix=$cycsuffix
+echo cfsuffix=$cfsuffix
 
 #usage "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR} ${FHOUR} ${FHINC} $DOANALYSIS ${jobgrid_1} ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
 export SHOUR=$1
@@ -222,12 +230,39 @@ export fhr
 # Loop Through the Post Forecast Files 
 ############################################################
 while test $fhr -le $FHOUR; do
-	ffhr=f$fhr
-	if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
-		FHINC=$FHOUT_HF
-	else
-		FHINC=$FHOUT
-	fi
+        ffhr=f$fhr
+        if [ $FHMAX_HF -eq 0 ]; then
+                FHINC=$FHOUT
+        else
+          if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
+                FHINC=$FHOUT_HF
+          else
+                if [ $FHOUT_HF -gt $FHOUT ]; then
+                  FHINC=$FHOUT_HF
+                else
+                  FHINC=$FHOUT
+                fi
+
+                rem=`echo "${fhr}%${FHOUT}" | bc`
+                if [ $rem -eq 0 ]; then
+                  echo "$fhr forecast is needed, continue the prdgen process"
+                else
+#                 echo "$fhr forecast is not needed, process next fhr"
+                  while test $rem -ne 0; do
+                    export fhr=`expr $fhr + $FHINC`
+                    rem=`echo "${fhr}%${FHOUT}" | bc`
+#                   echo "fhr change to " $fhr
+#                   echo "rem change to " $rem
+                  done
+                fi
+          fi
+          echo " TEST 01" $jobgrid $fhr $FHINC
+        fi
+
+        if [ $fhr -gt $FHOUR ]; then
+          echo $fhr "is longer than" $FHOUR  "break !"
+          break
+        fi
 
 	###############################
 	# Start Looping for the 
@@ -243,8 +278,8 @@ while test $fhr -le $FHOUR; do
 		export pfhr=$pad$fhr
 
 	export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.f$fhr$cfsuffix
-	export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2$ffhr$cfsuffix
-	export mifile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2i$ffhr$cfsuffix
+	export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr$cfsuffix
+	export mifile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr$cfsuffix
 
 	export pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f${pfhr}$cfsuffix
 	export fileaout=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}f${pfhr}$pgasuf$cfsuffix
@@ -262,6 +297,8 @@ while test $fhr -le $FHOUR; do
 					testfhr=`echo $teststring | cut -c11-13`
 				fi
 			fi # [[ $teststring != '' ]]
+                else
+                  echo " file mcfile missing"
 		fi # [[ -f $mcfile ]]
 		echo testfhr=$testfhr fhr=$fhr
 		if (( testfhr >= fhr )); then
