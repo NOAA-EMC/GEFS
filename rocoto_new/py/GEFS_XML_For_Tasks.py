@@ -611,6 +611,8 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
 
     if sNodes != "":
         strings += sPre + '\t\t' + '<nodes>{0}</nodes>\n'.format(sNodes)
+        if WHERE_AM_I.upper() == "wcoss_ibm".upper():
+			strings += sPre + '\t\t' + '<native>-a poe</native>'
 
     if WHERE_AM_I.upper() == "cray".upper():
         strings += sPre + '\t\t' + '<native>-cwd &tmpnwprd;</native>\n'
@@ -719,6 +721,9 @@ def create_task( \
                 strings += sPre + '\t' + '<nodes>{0}</nodes><shared></shared>\n'.format(sNodes)
             else:
                 strings += sPre + '\t' + '<nodes>{0}</nodes>\n'.format(sNodes)
+        elif WHERE_AM_I.upper() == "wcoss_ibm".upper():
+			strings += sPre + '\t' + '<nodes>{0}</nodes>\n'.format(sNodes)
+			strings += sPre + '\t' + '<native>-a poe</native>'
         else:
             strings += sPre + '\t' + '<nodes>{0}</nodes>\n'.format(sNodes)
 
