@@ -23,7 +23,7 @@
 #
 ##########################################################
 
-import os, shutil, glob, sys
+import os, shutil, glob, sys, errno
 
 # Read in environment variables and make sure they exist
 work_dir = os.environ.get("WORKDIR")
