@@ -119,8 +119,8 @@ env | sort
 
 #--------------------------------------------------------------------------------
 
-. $MODULESHOME/init/sh  2>>/dev/null
-module load prod_util hpss >>/dev/null
+#. $MODULESHOME/init/sh  2>>/dev/null
+#module load prod_util hpss >>/dev/null
 #export workflow_ver=v15.0.0
 export BASE_SVN=$HOMEDIR1/fv3gfs
 export BASE_GSM=$HOMEgsm
@@ -141,7 +141,9 @@ export CDATE=$PDY$cyc
 #export OUTDIR=$FV3GESOUT/$mem/${CASE}_$CDATE
 export OUTDIR=$FV3GESOUT
 export ictype=nemsgfs
-if [ $inflag = 7 ] ; then
+#0=FV3NEMSIO, 2=GFS NEMSIO, 3=SIGIO
+#if [ $inflag = 7 ] ; then
+if [ $inflag = 0 ] ; then
     if [ $mem = "c00" ] ; then
         cp $GESOUT/ge$mem.t$cyc\z.atmanl $INIDIR/gfnanl.gfs.$PDY$cyc
     else
@@ -149,11 +151,11 @@ if [ $inflag = 7 ] ; then
     fi
     cp $GESOUT/gec00.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
     cp $GESOUT/gec00.t$cyc\z.sfcanl $INIDIR/nsnanl.gfs.$PDY$cyc
-elif  [ $inflag = 0 ] ; then
-    export ictype=fv3gfs
-    export NTRAC=7
-    cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
-    cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
+#elif  [ $inflag = 0 ] ; then
+#    export ictype=fv3gfs
+#    export NTRAC=7
+#    cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
+#    cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
 else
     cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
     cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc

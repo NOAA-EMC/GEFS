@@ -47,7 +47,7 @@ export taskspernode=4
 #export PDY=20160415
 #export cyc_fcst=00
 #export job=Aa2016041500100
-export FORECAST_SEGMENT=hr
+#export FORECAST_SEGMENT=hr
 
 # export for development runs only begin
 export envir=${envir:-dev}
