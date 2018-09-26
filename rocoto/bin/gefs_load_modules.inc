@@ -47,8 +47,10 @@ elif [[ "$WHERE_AM_I" == wcoss_dell_p3 ]] ; then
     module load grib_util/1.0.6
     module load prod_util/1.1.0
     module load HPSS/5.0.2.5
-    module load dev/util_shared/1.0.8
-
+    module use -a /gpfs/dell1/nco/ops/nwpara/util_shared.v1.1.0/modulefiles
+    module load util_shared/1.1.0
+    #module load dev/util_shared/1.0.8
+    
     module load NetCDF/4.5.0
     module load HDF5-serial/1.10.1
     module load impi/18.0.1
