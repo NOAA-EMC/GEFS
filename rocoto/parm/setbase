@@ -66,7 +66,8 @@ if [ -d /scratch4/NCEPDEV ]; then
 	NOSCRUB=/scratch4/NCEPDEV/ensemble/noscrub
 	export machine='THEIA'
     
-	export HOMEDIR=/scratch4/NCEPDEV/ensemble/noscrub/common/fv3gfs/fv3gfs_ens_20180814
+	#export HOMEDIR=/scratch4/NCEPDEV/ensemble/noscrub/common/fv3gfs/fv3gfs_ens_20180814
+    export HOMEDIR=/scratch4/NCEPDEV/ensemble/noscrub/common/fv3gfs/fv3gfs_ens_20180814_fy2018q2b
 	export HOMEDIR1=$HOMEDIR 						#/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/fv3gfs
 	export HOMERFC=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
 
