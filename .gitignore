@@ -4,7 +4,7 @@ fix
 util/exec/
 
 # Ignore compiled objects in sorc directories
-rocoto_new/py/*.pyc
+rocoto/py/*.pyc
 sorc/*/*.o
 sorc/*/*.mod
 sorc/*/*.x

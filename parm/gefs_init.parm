@@ -8,24 +8,24 @@ echo `date` $0 begin
 # ----------------------------------
 # options for NEMSIO
 # ----------------------------------
-#export NEMSIO_IN=.true.
 export NEMSIO_IN=.true.
 export NEMSIO_OUT=.true.
-export ICTYP="FV3GFS"
 export nopdpvv=.true.
 
 # parameters for relocation, 1 for yes, 0 for no, cold_start or warm_start
+#relocflagana is added for relocation TC for analysis 
 export relocfact=0.05
 export relocflag=${relocflag:-0}
+export relocflagana=${relocflagana:-0} 
 #
-# control pairing,inflag=6 means inputs from EnKF 6h FCST
-#control pairing,outflag=5 means output file names in Breeding style, e.g gep09.t00z.sanl.cycfs18
-#control pairing,outflag=6 means output file names in EnKF style, e.g gep39.t00z.sanl
-export inflag=${inflag:-7}               #7, nemsio files from FV3; 6, nemsio files from GSM v14
+#control initial analysis and EnKF input type
+# inflag=0  FV3NEMSIO
+#       =1  GSM NEMSIO 
+#        2  GSM SIGIO
+export inflag=${inflag:-0}
 export outflag=6
-if (( inflag == 6 || inflag == 7 )); then
-	export num_mem_enkf=80    #number of ENKF members
-        (( num_pair_enkf = num_mem_enkf / 2 ))
+	export nmem_enkf=80    #number of ENKF members
+        (( num_pair_enkf = nmem_enkf / 2 ))
         export num_pair_enkf=$num_pair_enkf
 	#(( recentmem = npair * 2 ))
 	(( recentmem = npert ))
@@ -33,72 +33,7 @@ if (( inflag == 6 || inflag == 7 )); then
         (( npair = num_pair_enkf / 4 ))
 	export npair=$npair
         export nhrpair=$npair
-fi
 
-# old versions for old code
-export contopet=1.666667
-export globampletr=1.10
-export globampletg=1.00
-
-# parameters for et
-export globamplr_et=0.88
-export globamplg_et=1.00
-
-# itopres_et 0 to rescale at top, 1 to skip
-export itopres_et=0
-
-# old values
-#export contop_et=1.666667
-#export b1_et=1.0e8
-#export b2_et=1.0e6
-#export b3_et=1.0e24
-
-# current values
-export contop_et=10.0
-export b1_et=1.0e3
-export b2_et=1.0e1
-export b3_et=1.0e19
-#
-#export smax_et=1.2    #Parameter used to inflate lower level Pert. M Wei, Aug. 2011
-export smax_et=1.0    #modified the code to de-activate this function if smax_et<=1.0, DHOU, 06/28/2013
-
-#XZHOU, 05/28/2013, Redefined these LEVS-related parameters
-export smx_msk=0.087    #Parameter used to smooth mask  X. Zhou
-export w_msk=0.2    #Weighting coefficient for  mask  X. Zhou
-
-#DHOU, 06/28/2013, Redefined these LEVS-related parameters
-# export globamplr_et=1.10    #tdLb
-  export globamplr_et=0.88    #tdLc
-  export globamplr_et=1.00
-
-case $LEVSHR in
-	(64)
-		export nlevmask_et=25
-		export nlevrs_et=37
-		# export nlevrs_et=36
-		export mxlev_et=41
-		# export mxlev_et=40
-		;;
-	(42)
-		export nlevmask_et=20
-		# export nlevrs_et=28
-		export nlevrs_et=30
-		# export mxlev_et=32
-		export mxlev_et=33
-		# export globamplr_et=0.88
-		# DHOU, 08/13/2010, parameters for L42 as suggested by Mozheng Wei
-		;;
-	(28)
-		export nlevmask_et=13
-		export nlevrs_et=19
-		export mxlev_et=21
-		# export globamplr_et=1.10
-		# DHOU, 08/13/2010, parameters used for L28 in the earlier versions
-		;;
-	(*)
-		echo Invalid value for LEVSHR, $LEVSHR
-		;;
-esac # $LEVSHR
 
 # task and node assignments
 export initseparatetasks=40
@@ -110,14 +45,4 @@ export initcombinetasks=40
 # run parallel or serial et code
 export parallelinit=no
 export parallelinit=yes
-
-# a flag to determine if run ET
-export etflag=yes
-export etflag=no
-# if mskflag=0 no rescaling
-# if mskflag=1 2D climatological mask
-# if mskflag=2 3D EnKF-based mask
-# if mskflag=3 3D EnKF-based  Monthly mean mask
-export mskflag_et=3
-export mskflag_et=0
 echo `date` $0 end

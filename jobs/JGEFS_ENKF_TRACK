@@ -100,10 +100,19 @@ d6ahead_ymdh=` $NDATE 6 ${PDY}${cyc}`
 d6ago_ymdh=` $NDATE -6 ${PDY}${cyc}`
 export d6ahead_ymd=`echo $d6ahead_ymdh|cut -c1-8`
 export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
+export d6ahead_cyc=`echo $d6ahead_ymdh|cut -c9-10`
+export d6ago_cyc=`echo $d6ago_ymdh|cut -c9-10`
 
 ##############################################
 # Define COM directories
 ##############################################
+if [[ $gfssource != prod ]]; then
+        export COMINgfs=${COMINgfs_base}${PDY}/$cyc
+        export COMINgfs6ago=${COMINgfs_base}${d6ago_ymd}/${d6ago_cyc}
+        export COMINgfs6ahead=${COMINgfs_base}${d6ahead_ymd}/${d6ahead_cyc}
+        export COMINenkf=${COMINenkf_base}$pdyp
+fi
+
 export COMINgfs=${COMINgfs:-${COMROOThps}/gfs/prod/gfs.${PDY}}
 export COMINenkf=${COMINenkf:-${COMROOThps}/gfs/prod/enkf.$pdyp} 
 export COMINatcfsyn=$COMROOTp1/arch/prod/syndat

@@ -128,6 +128,8 @@ echo npair = $npair
 export GESIN=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
 export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export SSTDIR=${SSTDIR:-$COMIN/${cyc}/cfssst}
 
 #export FV3GESOUT=$GESROOT/${envir}/fv3gefs.${PDY}
 #export SFCSIG=$COMOUT/$cyc/sfcsig

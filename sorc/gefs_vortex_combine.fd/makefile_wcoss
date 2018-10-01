@@ -1,9 +1,9 @@
 SHELL = /bin/bash
 
-SRCS=	gefs_vortex_combine.f
+SRCS=	gefs_vortex_combine.f90
 
 #OBJS=	gefs_vortex_combine.o
-OBJS=   $(SRCS:.f=.o)
+OBJS=   $(SRCS:.f90=.o)
 
 #INCMODS=/scratch2/portfolios/NCEPDEV/stmp/Xiaqiong.Zhou/incmod
 #INCMODS=/nwprod/lib/incmod/sigio_4
