@@ -83,7 +83,7 @@ export COMINm1=$COMROOT/${NET}/${envir}/${RUN}.${PDYm1}
 
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap25
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
-#mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
+mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2a2p5
 
 msg="HAS BEGUN on `hostname`"
@@ -177,21 +177,25 @@ env | sort
 
 # Execute the script
 
-#mpmd job with 2 tasks, 1 for 1d and 2.5d; 2 for 0.5d grid
-
+#mpmd job with 3 tasks, 1 for 1d/2.5d; 2 for 0.5d grid; 3 for 0.25d grid
 
 #task 1, 1.0d and 2.5d, grid, dataset=a
-export gridlist_1="0p5,2p5"
+export gridlist_1="0p5,2p5,1p0"
 export FHINC_1=$FHOUT
 export FHINC_HF_1=0
 export dataset_1=a
 
 #task 2, 0.5d grid, dataset=a
-export gridlist_2="0p25"
+export gridlist_2="0p5"
 export FHINC_2=$FHOUT
-export FHINC_HF_2=0
 export FHINC_HF_2=$FHOUT_HF
 export dataset_2=a
+
+#task 3, 0.25d grid, dataset=a
+export gridlist_3="0p25"
+export FHINC_3=$FHOUT
+export FHINC_HF_3=$FHOUT_HF
+export dataset_3=a
 
 subdata_1=${DATA}/0p5-2p5${dataset_1}
 outfile=${subdata_1}/${gridlist_1}.out
@@ -201,12 +205,12 @@ echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_1 $FHINC_1 ${subdata_1} 
 subdata_2=${DATA}/${gridlist_2}${dataset_2}
 if [ ! -d ${subdata_2} ]; then mkdir -p ${subdata_2}; fi
 outfile=${subdata_2}/${gridlist_2}.out
-echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_2 $FHINC_2 ${subdata_2} $dataset_2 $FHINC_HF_2 $FHMAX_HF $FHMAX_HF 2>&1 >${outfile}" >>ensstat.cmdfile
+echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_2 $FHINC_2 ${subdata_2} $dataset_2 $FHINC_HF_2 $FHMAX_HF $FHOUR 2>&1 >${outfile}" >>ensstat.cmdfile
 
-#ubdata_3=${DATA}/${gridlist_3}${dataset_3}
-#f [ ! -d ${subdata_3} ]; then mkdir -p ${subdata_3}; fi
-#utfile=${subdata_3}/${gridlist_3}.out
-#cho "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_3 $FHINC_3 ${subdata_3} $dataset_3 $FHINC_HF_3 $FHMAX_HF 2>&1 >${outfile}" >>ensstat.cmdfile
+subdata_3=${DATA}/${gridlist_3}${dataset_3}
+if [ ! -d ${subdata_3} ]; then mkdir -p ${subdata_3}; fi
+outfile=${subdata_3}/${gridlist_3}.out
+echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_3 $FHINC_3 ${subdata_3} $dataset_3 $FHINC_HF_3 $FHMAX_HF $FHMAX_HF 2>&1 >${outfile}" >>ensstat.cmdfile
 
 cat ensstat.cmdfile
 chmod 775 ensstat.cmdfile
