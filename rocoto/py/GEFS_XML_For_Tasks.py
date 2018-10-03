@@ -426,7 +426,7 @@ def get_param_of_task(dicBase, taskname):
         elif WHERE_AM_I == "theia".upper():
             Task_Node = 24
         elif WHERE_AM_I == "wcoss_dell_p3".upper():
-            Task_Node = 24
+            Task_Node = 28
         else:
             Task_Node = 24
 
