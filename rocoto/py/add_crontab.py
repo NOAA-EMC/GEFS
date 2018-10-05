@@ -44,7 +44,7 @@ def Add_Cron_To_myCrontab(sMyCrontab, sCronLine):
     
     sFile.close
 
-    sLines += sCronLine
+    sLines += "\n" + sCronLine + "\n"
 
     sFile = open(sMyCrontab, "w")
     sFile.write(sLines)
