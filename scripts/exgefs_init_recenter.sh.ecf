@@ -235,10 +235,11 @@ if [ $warm_start = ".false." ]; then
 for imem in $(seq 1 $recentmem); do
    memchar="mem"$(printf %03i $imem)
    memcharg="p"$(printf %02i $imem)
-   mv ratmanl_$memchar $GESOUT/ge${memcharg}.${cycle}.ratmanl
+   mv ratmanl_$memchar $GESOUT/ge${memcharg}.${cycle}.sanl
+   cp -f  ${SFCANL} $GESOUT/ge${memcharg}.${cycle}.sfcanl
 done
-   cp -f ${ATMANL} $GESOUT/gec00.${cycle}.atmanl
-   cp -f  ${SFCANL} $GESOUT/gec00.${cycle}.sfcanl
+   #cp -f ${ATMANL} $GESOUT/gec00.${cycle}.atmanl
+   #cp -f  ${SFCANL} $GESOUT/gec00.${cycle}.sfcanl
 
 #SAVE DATA (init files in nemsio format) into $COM
    cp -f $GESOUT/ge* $COMOUT/$cyc/init

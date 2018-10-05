@@ -83,7 +83,7 @@ if [ $CompileCode = "yes" ]; then
     cd $sWS/../
     rm -rf fix
     if [ $machine = "theia" ]; then
-        /bin/ln -sf /scratch4/NCEPDEV/ensemble/noscrub/common/gefs-fixed fix
+        /bin/ln -sf /scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix fix
     elif [ $machine = "cray" ]; then
         /bin/ln -sf /gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gefs/fix fix
     elif [ $machine = "wcoss_dell_p3" ]; then

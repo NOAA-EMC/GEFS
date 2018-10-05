@@ -152,7 +152,8 @@ export CHGRESTHREAD=$NTHREADS_SIGCHGRS
 # Change Resolution script and executable
 
 export chgresush=${chgresush:-$USHgsm/global_chgres.sh}
-export CHGRESEXEC=${CHGRESEXEC:-$EXECgsm/global_chgres}
+#export CHGRESEXEC=${CHGRESEXEC:-$EXECgsm/global_chgres}
+export CHGRESEXEC=$EXECgsm/global_chgres
 
 ##############################################
 echo list environment before running script
