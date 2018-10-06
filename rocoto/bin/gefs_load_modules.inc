@@ -15,6 +15,7 @@ if [[ "$WHERE_AM_I" == wcoss ]] ; then
 	module load grib_util/v1.0.1
 	module load ibmpe
 	module load hpss
+    module load g2tmpl/v1.5.0
 	export PATH=$PATH:.
 elif [[ "$WHERE_AM_I" == cray ]] ; then
 	echo "Loading modules for WCOSS cray"
@@ -26,6 +27,7 @@ elif [[ "$WHERE_AM_I" == cray ]] ; then
 	module load util_shared/1.0.3
 	module load grib_util/1.0.3
 	module load hpss
+    module load g2tmpl-intel/1.5.0
 	export PATH=$PATH:.
 elif [[ "$WHERE_AM_I" == theia ]]; then
 	echo "Loading modules for theia"
@@ -37,5 +39,30 @@ elif [[ "$WHERE_AM_I" == theia ]]; then
 	module load wgrib
 	module load wgrib2/0.2.0.6c
 	module load cnvgrib
+    module load prod_util/v1.1.0
+    #module load grib_util/v1.1.0
+    module load g2tmpl/v1.5.0
     export PATH=$PATH:./
+elif [[ "$WHERE_AM_I" == wcoss_dell_p3 ]] ; then
+    echo "Loading modules for wcoss_dell_p3"
+    . /usrx/local/prod/lmod/lmod/init/ksh
+    module load EnvVars/1.0.2
+    module load ips/18.0.1.163
+    module load prod_envir/1.0.2
+    module load grib_util/1.0.6
+    module load prod_util/1.1.0
+    module load HPSS/5.0.2.5
+    #module use -a /gpfs/dell1/nco/ops/nwpara/util_shared.v1.1.0/modulefiles
+    #module load util_shared/1.1.0
+    #module load dev/util_shared/1.0.8
+    module use -a /gpfs/dell1/nco/ops/nwpara/modulefiles/compiler_prod/ips/18.0.1
+    module load util_shared/1.1.0
+    module load g2tmpl/1.5.0
+    
+    module load NetCDF/4.5.0
+    module load HDF5-serial/1.10.1
+    module load impi/18.0.1
+    module load CFP/2.0.1
+    export USE_CFP=YES
+    export PATH=$PATH:.
 fi
