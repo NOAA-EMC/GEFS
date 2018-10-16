@@ -161,9 +161,9 @@ fi # For RunRocoto
 if [ $AddCrontabToMyCrontab = "yes" ]; then
     cd $sWS
     if [ $machine = "theia" ]; then
-        echo "No ready on theia"
+        echo "Not ready on theia"
     elif [ $machine = "cray" ]; then
-        echo "No ready on cray"
+        echo "Not ready on cray"
     elif [ $machine = "wcoss_dell_p3" ]; then
         py/add_crontab.py
         echo "Added crontab to system!"
