@@ -27,7 +27,7 @@ if [ $mac2 = tf ]; then # For THEIA
 
     export FFLAGS="-O3 -g -convert big_endian -I ${G2_INC4}"
     export FFLAGS_d="-O3 -g -r8 -convert big_endian -auto -mkl -I ${G2_INCd}"
-    export OPENMPFFLAG=qopenmp
+    export OPENMPFFLAG=openmp
 
 elif [ $mac = t -o $mac = e -o $mac = g ] ; then # For WCOSS
 
@@ -114,6 +114,7 @@ for dir in gefs_vortex_separate.fd gefs_vortex_combine.fd global_sigzvd.fd  glob
     cd ..
 done
 
+export LIBS="${G2_LIB4} ${W3NCO_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}"
 for dir in global_enscvprcp.fd global_enspvrfy.fd global_enssrbias.fd global_enscqpf.fd  global_enscvt24h.fd  global_ensrfmat.fd ; do
     cd $dir
     make clean
