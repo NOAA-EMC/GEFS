@@ -79,13 +79,36 @@ def create_crontab(dicBase, OnlyForTest=False, cronint=5):
         crontab_string += ') > /dev/null 2>&1'
     elif system == "wcoss_dell_p3":
         #crontab_string += crontab_usage
+        import os
+        if not os.path.exists(sRocotoPath + "/logs"):
+            os.mkdir(sRocotoPath + "/logs")
+        sBashFile = sRocotoPath + "/logs/crontab.sh"
+        sLogFile = sRocotoPath + "/logs/crontab.log"
+        
+        bash_file = open(sBashFile, 'w')
+        bash_file.write("#!/bin/ksh --login\n")
+        bash_file.write("set -x\n")
+        
+        bash_file.write("\n")
+        bash_file.write(". $MODULESHOME/init/bash                          2>/dev/null\n")
+        bash_file.write("module load lsf/10.1                              2>/dev/null\n")
+        bash_file.write("module use /usrx/local/dev/emc_rocoto/modulefiles 2>/dev/null\n")
+        bash_file.write("module load ruby/2.5.1 rocoto/complete            2>/dev/null\n")
+        bash_file.write("\n")
+        bash_file.write(rocotorun_args + "\n")
+        bash_file.write("\n")
+        bash_file.write("date\n")
+        bash_file.close()
+        os.chmod(sBashFile, 0755)
         crontab_string = ""
         crontab_string += crontab_time
-        crontab_string += ' (. /usrx/local/prod/lmod/lmod/init/sh; ' \
-                          'module use /gpfs/dell3/usrx/local/dev/emc_rocoto/modulefiles; ' \
-                          'module load lsf/10.1; module load ruby/2.5.1 rocoto/complete;'
-        crontab_string += rocotorun_args
-        crontab_string += ') 1>>{0} 2>&1'.format(sRocotoPath + "/logs/crontab.log")
+        #crontab_string += ' (. /usrx/local/prod/lmod/lmod/init/sh; ' \
+        #                  'module use /gpfs/dell3/usrx/local/dev/emc_rocoto/modulefiles; ' \
+        #                  'module load lsf/10.1; module load ruby/2.5.1 rocoto/complete;'
+        #crontab_string += rocotorun_args
+        #crontab_string += ') 1>>{0} 2>&1'.format(sRocotoPath + "/logs/crontab.log")
+        crontab_string += sBashFile
+        crontab_string += ' 1>>{0} 2>&1'.format(sRocotoPath + "/logs/crontab.log")
     else:
         print("CRITICAL ERROR: auto-crontab file generation for %s still needs to be implemented" % system)
         sys.exit(-502)

@@ -87,7 +87,7 @@ if [ -d /scratch4/NCEPDEV ]; then
     export EXECgrib=${EXECutil}
     export NDATE=${NDATE:-$EXECgrib/ndate}
     export utilscript=$USHutil
-    export SUPVIT=${SUPVIT:-${EXECutil}/supvit
+    export SUPVIT=${SUPVIT:-${EXECutil}/supvit}
 
 elif [[ -d /dcom && -d /hwrf ]] ; then
     "Using settings for WCOSS Phase II"
