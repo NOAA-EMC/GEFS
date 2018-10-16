@@ -68,7 +68,7 @@ export pgmerr=errfile
 # Specify Execution Areas
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
-export HOMEgsm=${HOMEgsm1:-$NWROOT/gsm.${gsm_ver}}
+export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
 export HOMEenkf=${HOMEenkf:-$NWROOTp2/enkf.${enkf_ver}}
 
 export EXECgsm=${EXECgsm:-$HOMEgsm/exec}

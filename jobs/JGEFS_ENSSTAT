@@ -180,7 +180,7 @@ env | sort
 #mpmd job with 3 tasks, 1 for 1d/2.5d; 2 for 0.5d grid; 3 for 0.25d grid
 
 #task 1, 1.0d and 2.5d, grid, dataset=a
-export gridlist_1="0p5,2p5,1p0"
+export gridlist_1="2p5,1p0"
 export FHINC_1=$FHOUT
 export FHINC_HF_1=0
 export dataset_1=a
@@ -197,7 +197,7 @@ export FHINC_3=$FHOUT
 export FHINC_HF_3=$FHOUT_HF
 export dataset_3=a
 
-subdata_1=${DATA}/0p5-2p5${dataset_1}
+subdata_1=${DATA}/1p0-2p5${dataset_1}
 outfile=${subdata_1}/${gridlist_1}.out
 if [ ! -d ${subdata_1} ]; then mkdir -p ${subdata_1}; fi
 echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_1 $FHINC_1 ${subdata_1} $dataset_1 $FHINC_HF_1 0 $FHOUR 2>&1 >${outfile}" >>ensstat.cmdfile

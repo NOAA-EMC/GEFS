@@ -34,7 +34,10 @@ export taskspernode=2
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
+export gefsmpexec="mpirun -np $total_tasks"
 export gefsmpexec_mpmd="mpirun -np $total_tasks /scratch3/NCEPDEV/nwprod/util/exec/mpiserial"
+export APRUNC="mpirun"
+export aprun_gec00="mpirun -np 1"
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_INIT_COMBINE

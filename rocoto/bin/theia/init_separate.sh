@@ -35,7 +35,7 @@ export OMP_STACKSIZE=3G
 export MP_COMPILER=intel
 
 export NODES=10
-export total_tasks=40
+export total_tasks=22
 export OMP_NUM_THREADS=6
 export taskspernode=4
 

@@ -23,6 +23,10 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:1
 
+export total_tasks=21
+export OMP_NUM_THREADS=6
+export taskspernode=4
+
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}

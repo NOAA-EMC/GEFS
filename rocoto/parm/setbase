@@ -75,16 +75,19 @@ if [ -d /scratch4/NCEPDEV ]; then
 
     # export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/common
     export HOMEdata=/scratch4/NCEPDEV/ensemble/noscrub/common
-    export COMROOThps=${HOMEdata} 
+    export COMROOThps=${HOMEdata}
+    export COMROOTp1=/scratch4/NCEPDEV/rstprod/com 
 
     export EXECutil=${EXECutil:-/scratch4/NCEPDEV/global/save/glopara/nwpara/util/exec}
-    export USHutil=${USHutil:-/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/nwprod/util/ush}
+    #export USHutil=${USHutil:-/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/nwprod/util/ush}
 
-    export PATH=$PATH:$USHutil:$EXECutil
+    #export PATH=$PATH:$USHutil:$EXECutil
+    export PATH=$PATH:$EXECutil:/scratch3/NCEPDEV/nwprod/lib/prod_util/v1.1.0/ush
 
     export EXECgrib=${EXECutil}
     export NDATE=${NDATE:-$EXECgrib/ndate}
     export utilscript=$USHutil
+    export SUPVIT=${SUPVIT:-${EXECutil}/supvit
 
 elif [[ -d /dcom && -d /hwrf ]] ; then
     "Using settings for WCOSS Phase II"
