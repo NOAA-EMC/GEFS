@@ -35,7 +35,7 @@ export NODES=2
 export total_tasks=24
 export OMP_NUM_THREADS=2
 export taskspernode=12
-export POSTGRB2TBL=/gpfs/dell1/nco/ops/nwprod/lib/g2tmpl/v1.5.0/src/params_grib2_tbl_new
+export POSTGRB2TBL=$G2TMPL_SRC/params_grib2_tbl_new
 
 export FORECAST_SEGMENT=lr
 
