@@ -112,7 +112,7 @@ export COMOUT=${COMOUT:-${COM_OUT}/${RUN}.${PDY}}
 export XC=.x
 export GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-${HOMEgfs}/exec/getsigensmeanp_smooth$XC}
 RECENATMEXEC=${RECENATMEXEC:-$HOMEgfs/exec/recentersigp.x}
-
+export CHGRESEXEC=$HOMEgsm/exec/chgres_recenter.exe
 
 
 echo location of nemsioget

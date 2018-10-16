@@ -12,17 +12,7 @@ export mem=`echo $RUNMEM|cut -c 3-`
 ############################
 # Set up cycle varaible
 ############################
-
 export cycle=t${cyc}z
-export cycle_fcst=t${cyc_fcst}z
-
-if (( cyc == cyc_fcst )); then
-     export cycsuffix=false
-     export fcstlong=true
-else
-     export fcstlong=false
-     export cycsuffix=true
-fi # (( cyc == cyc_fcst ))
 
 ####################################
 # obtain unique process id (pid) and identify working directory
@@ -142,20 +132,11 @@ export CDATE=$PDY$cyc
 export OUTDIR=$FV3GESOUT
 export ictype=nemsgfs
 #0=FV3NEMSIO, 2=GFS NEMSIO, 3=SIGIO
-#if [ $inflag = 7 ] ; then
 if [ $inflag = 0 ] ; then
-    if [ $mem = "c00" ] ; then
-        cp $GESOUT/ge$mem.t$cyc\z.atmanl $INIDIR/gfnanl.gfs.$PDY$cyc
-    else
-        cp $GESOUT/ge$mem.t$cyc\z.ratmanl $INIDIR/gfnanl.gfs.$PDY$cyc
-    fi
-    cp $GESOUT/gec00.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
-    cp $GESOUT/gec00.t$cyc\z.sfcanl $INIDIR/nsnanl.gfs.$PDY$cyc
-#elif  [ $inflag = 0 ] ; then
-#    export ictype=fv3gfs
-#    export NTRAC=7
-#    cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
-#    cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
+    export ictype=fv3gfs
+    export NTRAC=7
+    cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
+    cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
 else
     cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
     cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc

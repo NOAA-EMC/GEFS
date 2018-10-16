@@ -3,7 +3,7 @@
 sWS=`pwd`
 echo $sWS
 
-while getopts c:a:r:m:f: option
+while getopts c:a:r:m:f:b: option
 do
     case "${option}"
     in
@@ -12,6 +12,7 @@ do
         r) RunRocoto=${OPTARG};;
         m) machine=${OPTARG};;
         f) userConfigFile=${OPTARG};;
+        b) AddCrontabToMyCrontab=${OPTARG};;
     esac
 done
 
@@ -20,6 +21,8 @@ CleanAll=${CleanAll:-no}
 RunRocoto=${RunRocoto:-no}
 machine=${machine:-nomachine}
 userConfigFile=${userConfigFile:-user_full.conf}
+AddCrontabToMyCrontab=${AddCrontabToMyCrontab:-no}
+DeleteCrontabFromMyCrontab=${DeleteCrontabFromMyCrontab:-no}
 
 if [ $machine = "nomachine" ]; then
     if [ -d /scratch4/NCEPDEV ]; then
@@ -80,11 +83,11 @@ if [ $CompileCode = "yes" ]; then
     cd $sWS/../
     rm -rf fix
     if [ $machine = "theia" ]; then
-        /bin/ln -sf /scratch4/NCEPDEV/ensemble/noscrub/common/gefs-fixed fix
+        /bin/ln -sf /scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix fix
     elif [ $machine = "cray" ]; then
-        /bin/ln -sf /gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/gefs-fixed fix
+        /bin/ln -sf /gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gefs/fix fix
     elif [ $machine = "wcoss_dell_p3" ]; then
-        /bin/ln -sf /gpfs/dell2/emc/retros/noscrub/Xianwu.Xue/common/gefs-fixed fix
+        /bin/ln -sf /gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gefs/fix fix
     fi
 fi
 
@@ -145,10 +148,24 @@ if [ $RunRocoto = "yes" ]; then
         . /usrx/local/prod/lmod/lmod/init/sh
         module use /gpfs/dell3/usrx/local/dev/emc_rocoto/modulefiles
         module load lsf/10.1
-        module load rocoto/1.2.4
+        module load rocoto/complete
         module load python/2.7.14        
     fi
     ./py/run_to_get_all.py  $userConfigFile
+    
+    echo "Generated xml and/or ent and updated bin file!"
 fi # For RunRocoto
 
-
+#echo "crontab"
+# For Crontab
+if [ $AddCrontabToMyCrontab = "yes" ]; then
+    cd $sWS
+    if [ $machine = "theia" ]; then
+        echo "No ready on theia"
+    elif [ $machine = "cray" ]; then
+        echo "No ready on cray"
+    elif [ $machine = "wcoss_dell_p3" ]; then
+        py/add_crontab.py
+        echo "Added crontab to system!"
+    fi
+fi

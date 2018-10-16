@@ -47,7 +47,7 @@ def rw_bin_forecast_high(taskname, dicBase):
     elif WHERE_AM_I == "theia":
         Task_Node = 24
     elif WHERE_AM_I == "wcoss_dell_p3":
-        Task_Node = 24
+        Task_Node = 28
     else:
         Task_Node = 24
     
@@ -60,8 +60,8 @@ def rw_bin_forecast_high(taskname, dicBase):
 
     # sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
-    sLines=""
-    with open(sInput_File, "r")as f:
+    sLines = ""
+    with open(sInput_File, "r") as f:
         for sLine in f:
             # print(sLine)
             sLine1 = sLine.strip()
