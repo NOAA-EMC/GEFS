@@ -1,6 +1,6 @@
-SDATE             =   2017060100
-EDATE             =   2017060100
-npert             =   20
+SDATE             =   2017082300
+EDATE             =   2017082300
+npert             =   2
 INCYC             =   24
 #ACCOUNT          =   GEN-T2O
 #CUE2RUN          =   dev
@@ -15,7 +15,7 @@ FHOUTHF           =   3
 FHOUTLF           =   6
 VERBOSE           =   no
 # navg_min < npert
-navg_min          =   10
+navg_min          =   1
 #define tmp time step
 DELTIM            =   450
 k_split           =   2
@@ -23,15 +23,15 @@ n_split           =   6
 TYPE              =   nh
 MONO              =   non-mono
 # cpu geometry
-#layout_x          =   8
-#layout_y          =   8
-#WRITE_GROUP       =   2
-#WRTTASK_PER_GROUP =   36
-#parallel_threads  =   1
+layout_x          =   8
+layout_y          =   8
+WRITE_GROUP       =   2
+WRTTASK_PER_GROUP =   36
+parallel_threads  =   2
 # others
 ENS_SPS           =   .false.
 DO_SPPT           =   YES
-DO_SHUM           =   YES
+DO_SHUM           =   NO
 DO_SKEB           =   YES
 # for test, NOT USED FOR PRODUCTION gfssource = dev, para, prod
 # To run FV3_COLD, use these line:
@@ -67,9 +67,9 @@ MTNRSLLR          =   766.1536.768
 GenTaskEnt        =   YES
 GenParm           =   YES
 GenBinSH          =   YES
-#SOURCEDIR         =  
+SOURCEDIR         =  /gpfs/dell2/emc/retros/noscrub/Xianwu.Xue/Test_FCST/test_fcst_16d_aa/nwdev 
 #WORKDIR           =   /gpfs/HPS_PTMP/ptmp/First.Last/o
-#INIT_DIR          =  
+INIT_DIR          =  /gpfs/dell2/emc/retros/noscrub/Xianwu.Xue/GEFS_INIT/fv3_cold_init_aa
 #KEEP_DIR          =  /gpfs/hps3/emc/ensemble/noscrub/First.Last/GEFS
 #HPSS_DIR          =  /NCEPDEV/emc-ensemble/2year/First.Last/GEFS
 # For tests====
@@ -78,14 +78,14 @@ GenBinSH          =   YES
 # Be sure to set INIT_DIR if using COPY_INIT or KEEP_INIT = YES
 RUN_GETCFSSST     =   YES
 RUN_INIT          =   FV3_COLD
-KEEP_INIT         =   NO
+KEEP_INIT         =   YES
 RUN_FORECAST_HIGH =   YES
 RUN_CHGRES        =   NO
 RUN_PRDGEN_GFS    =   NO
 RUN_FORECAST_LOW  =   NO
 RUN_TRACK         =   NO
 RUN_OTHERS        =   NO
-RUN_CLEANUP       =   YES
+RUN_CLEANUP       =   NO
 ##### taskname is for development, if you have taskname, RUN_* will NOT be used to determine the tasks!
 #taskname          =    getcfssst
 #taskname          =    prdgen_gfs
