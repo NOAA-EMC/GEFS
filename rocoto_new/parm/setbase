@@ -90,14 +90,23 @@ if [ -d /scratch4/NCEPDEV ]; then
 elif [ -d /gpfs/hps3 ]; then
 
     if [[ $machl = t ]] || [[ $machl = g ]]; then
-        "Using settings for WCOSS Phase II"
+        echo "Using settings for WCOSS Phase II"
         PTMP=/ptmpd2
         STMP=/stmpd2
         export machine='WCOSS'
         export JOBPHASE=2
-        export HOMEDIR=/ensemble/save/Walter.Kolczynski/fv3gfs/fv3gfs_ens_20180814
+        # export HOMEDIR=/ensemble/save/Walter.Kolczynski/fv3gfs/fv3gfs_ens_20180814
+        export HOMEDIR=/ensemble/save/Walter.Kolczynski/fv3gfs/20181004_c550fea3
         export HOMEDIR1=$HOMEDIR
         export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
+		
+		export HOMEdata=/ensemble/noscrub/Walter.Kolczynski/gefs_input/gfs_15_para
+		export COMINenkf_base=$HOMEdata/enkf.gdas.
+		export COMINgfs_base=$HOMEdata/gfs.
+		export COMINcfs_base=/ensemble/noscrub/Walter.Kolczynski/gefs_input/cfs_2_sst/cfs.
+		export COMROOThps=${HOMEdata}
+		export CHGRESEXEC=$HOMEDIR/exec/chgres_recenter.exe
+
         SAVE=/$PROJECT/save
         NOSCRUB=/$PROJECT/noscrub
 
