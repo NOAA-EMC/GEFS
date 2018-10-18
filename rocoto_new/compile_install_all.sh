@@ -80,7 +80,9 @@ if [ $CompileCode = "yes" ]; then
         /bin/ln -sf /scratch4/NCEPDEV/ensemble/noscrub/common/gefs-fixed fix
     elif [ $machine = "cray" ]; then
         /bin/ln -sf /gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/gefs-fixed fix
-    fi
+    elif [ $machine = "wcoss_ibm" ]; then
+		/bin/ln -sf /ensemble/noscrub/Walter.Kolczynski/gefs-fixed fix
+	fi
 fi
 
 # for cleanning
