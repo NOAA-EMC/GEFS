@@ -148,6 +148,7 @@ if [ $RunRocoto = "yes" ]; then
         . /usrx/local/prod/lmod/lmod/init/sh
         module use /gpfs/dell3/usrx/local/dev/emc_rocoto/modulefiles
         module load lsf/10.1
+        module load ruby/2.5.1
         module load rocoto/complete
         module load python/2.7.14        
     fi
@@ -161,9 +162,9 @@ fi # For RunRocoto
 if [ $AddCrontabToMyCrontab = "yes" ]; then
     cd $sWS
     if [ $machine = "theia" ]; then
-        echo "No ready on theia"
+        echo "Not ready on theia"
     elif [ $machine = "cray" ]; then
-        echo "No ready on cray"
+        echo "Not ready on cray"
     elif [ $machine = "wcoss_dell_p3" ]; then
         py/add_crontab.py
         echo "Added crontab to system!"

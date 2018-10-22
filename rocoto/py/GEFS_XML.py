@@ -78,9 +78,12 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     if sVarName not in dicBase:
         sVarName_2 = "GEFS_ROCOTO".upper()
         sRocoto_Path = dicBase[sVarName_2]
-        sVarValue = os.path.basename(os.path.abspath(sRocoto_Path + sSep + ".."))
-        if sVarValue == "nwdev":
-            sVarValue = os.path.basename(os.path.abspath(sRocoto_Path + sSep + ".." + sSep + ".."))
+        sVarValue = os.path.basename(os.path.abspath(sRocoto_Path))
+        if sVarValue.startswith("rocoto"):
+            sVarValue = os.path.basename(os.path.abspath(sRocoto_Path + sSep + ".."))
+            if sVarValue == "nwdev":
+                sVarValue = os.path.basename(os.path.abspath(sRocoto_Path + sSep + ".." + sSep + ".."))
+
         dicBase[sVarName] = sVarValue
     else:
         sVarValue = dicBase[sVarName]
@@ -92,9 +95,30 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarValue = ""
     if sVarName not in dicBase:
         sVarValue = os.path.abspath(sRocoto_WS + sSep + "..")
+        if not (os.path.exists(sVarValue + sSep + "parm") and os.path.exists(sVarValue + sSep + "sorc")):
+            print('!!! It seems that your GEFS SOURE is not in the same path with ROCOTO, therefore, you must assign a avalue for "SOURCEDIR" in the user configure file!!!')
+            exit(-5)
     else:
         sVarValue = replace_First_Last(dicBase, sVarName)
-        sVarValue += "/&EXPID;/nwdev"
+        if not (os.path.exists(sVarValue + sSep + "parm") and os.path.exists(sVarValue + sSep + "sorc")):
+            sPathTem = sVarValue + sSep + dicBase["EXPID"]
+            if os.path.exists(sPathTem):
+                if os.path.exists(sPathTem + sSep + "parm") and os.path.exists(sPathTem + sSep + "sorc"):
+                    sVarValue = sPathTem
+                else:
+                    sPathTem = sVarValue + sSep + dicBase["EXPID"] + sSep + "nwdev"
+                    if os.path.exists(sPathTem):
+                        if os.path.exists(sPathTem + sSep + "parm") and os.path.exists(sPathTem + sSep + "sorc"):
+                            sVarValue = sPathTem
+                        else:
+                            print("Please check your SOURCEDIR - {0}".format(sVarValue))
+                            exit(-6)    
+            else:
+                sPathTem = sVarValue + sSep + "nwdev"
+                if os.path.exists(sPathTem) and os.path.exists(sPathTem + sSep + "parm") and os.path.exists(sPathTem + sSep + "sorc"):
+                    sVarValue = sPathTem
+                    #sVarValue += "/&EXPID;/nwdev"
+
     dicBase[sVarName] = sVarValue
     # ===
     sVarName = "WORKDIR".upper()
@@ -412,16 +436,15 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
 #=======================================================
 def replace_First_Last(dicBase, sVarName):
     # to replace the first and last names in the strValue
+    # Modified on 10/17/2018 to avoid the path has individual "First" or "Last" to be replaced by mistake. If just replace the "First.Last", it will be safer.
     import os
     sUSER = os.environ.get("USER")
     GroupNames = ['emc.enspara', 'emc.enspara1']
     if sUSER in GroupNames:
-        sVarValue = str(dicBase[sVarName]).replace("First", sUSER + "/" + dicBase["FIRST"])
+        sVarValue = str(dicBase[sVarName]).replace("First.Last", sUSER + "/" + dicBase["FIRST"] + "." + dicBase["LAST"])
         sVarValue = sVarValue.replace("retros", "verification") # temporary
     else:
-        sVarValue = str(dicBase[sVarName]).replace("First", dicBase["FIRST"])
-
-    sVarValue = sVarValue.replace("Last", dicBase["LAST"])
+        sVarValue = str(dicBase[sVarName]).replace("First.Last", dicBase["FIRST"] + "." + dicBase["LAST"])
 
     return sVarValue
 
