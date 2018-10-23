@@ -1,11 +1,8 @@
 #!/bin/sh
 set -x -e
 
-mac=$(hostname | cut -c1-1)
-mac2=$(hostname | cut -c1-2)
-
 #---------------------------------------------------------
-if [ $mac2 = tf ]; then # For THEIA
+if [ -d /scratch4/NCEPDEV ]; then # For THEIA
     echo "Building for Theia"
     machine=theia
     ptmp=/scratch4/NCEPDEV/ensemble/ptmp/$LOGNAME
@@ -29,8 +26,7 @@ if [ $mac2 = tf ]; then # For THEIA
     export FFLAGS_d="-O3 -g -r8 -convert big_endian -auto -mkl -I ${G2_INCd}"
     export OPENMPFFLAG=openmp
 
-elif [ $mac = t -o $mac = e -o $mac = g ] ; then # For WCOSS
-
+elif [[ -d /dcom && -d /hwrf ]] ; then # Tide or Gyre
     machine=wcoss
     export LIBDIR=/nwprod/lib
     # #export NEMSIOGFS_LIB=/global/save/Fanglin.Yang/svn/gfs/tags/nemsiogfs/intel/libnemsiogfs_v1.1.0.a
@@ -61,7 +57,7 @@ elif [ $mac = t -o $mac = e -o $mac = g ] ; then # For WCOSS
     export FFLAGS_d="-O3 -g -r8 -convert big_endian -auto -mkl -I ${G2_INCd}"
     export OPENMPFFLAG=openmp
 
-elif [ $mac = l -o $mac = s ] ; then # For CRAY
+elif [[ -d /gpfs/hps3 && -e /etc/SuSE-release ]]; then # Luna or Surge
     echo "Building for Cray"
 
     machine=cray
@@ -82,7 +78,7 @@ elif [ $mac = l -o $mac = s ] ; then # For CRAY
     export FFLAGS_d="-O3 -g -r8 -convert big_endian -auto -mkl -I ${G2_INCd}"
     export OPENMPFFLAG=openmp
 
-elif  [ $mac = m ] ; then # For wcoss_dell_p3
+elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then # We are on NOAA Mars or Venus
     echo "Building for wcoss_dell_p3"
 
     machine=wcoss_dell_p3
