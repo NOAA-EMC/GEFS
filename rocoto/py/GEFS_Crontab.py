@@ -99,7 +99,7 @@ def create_crontab(dicBase, OnlyForTest=False, cronint=5):
         bash_file.write("\n")
         bash_file.write("date\n")
         bash_file.close()
-        os.chmod(sBashFile, 0755)
+        os.chmod(sBashFile, 0o755)
         crontab_string = ""
         crontab_string += crontab_time
         #crontab_string += ' (. /usrx/local/prod/lmod/lmod/init/sh; ' \
