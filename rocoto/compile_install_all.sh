@@ -148,6 +148,7 @@ if [ $RunRocoto = "yes" ]; then
         . /usrx/local/prod/lmod/lmod/init/sh
         module use /gpfs/dell3/usrx/local/dev/emc_rocoto/modulefiles
         module load lsf/10.1
+        module load ruby/2.5.1
         module load rocoto/complete
         module load python/2.7.14        
     fi
