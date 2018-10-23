@@ -150,6 +150,7 @@ export CHGRESTHREAD=$NTHREADS_SIGCHGRS
 
 #export chgresush=$USHgsm/global_chgres.sh
 #export CHGRESEXEC=$EXECgsm/global_chgres
+export CHGRESEXEC=$HOMEgsm/exec/chgres_recenter.exe
 
 ##############################################
 echo list environment before running script
