@@ -52,6 +52,7 @@ elif [[ -d /dcom && -d /hwrf ]] ; then # Tide or Gyre
     export LIBS_GTRK="${NEMSIOGFS_LIB} ${NEMSIO_LIB} ${BACIO_LIB4} ${SIGIO_LIB4} ${IP_LIB4} ${SP_LIB4} ${SFCIO_LIB4} ${BUFR_LIB4} ${W3EMC_LIB4} ${W3NCO_LIB4} "
     export FFLAGS="-O3 -g -convert big_endian -I ${G2_INC4}"
     export FFLAGS_d="-O3 -g -r8 -convert big_endian -auto -mkl -I ${G2_INCd}"
+    export OPENMPFFLAG=qopenmp
 
 elif [[ -d /gpfs/hps3 && -e /etc/SuSE-release ]]; then # Luna or Surge
     echo "Building for Cray"
