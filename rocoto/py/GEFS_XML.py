@@ -223,7 +223,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         if WHERE_AM_I.lower() == "cray":
             sVarValue = "/gpfs/hps3/emc/ensemble/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         elif WHERE_AM_I.lower() == 'wcoss':
-            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
+            sVarValue = "/ensemble/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         elif WHERE_AM_I.lower() == 'theia':
             sVarValue = "/scratch4/NCEPDEV/stmp4/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
