@@ -27,16 +27,12 @@ if [ -d /scratch4/NCEPDEV ]; then # For THEIA
     export OPENMPFFLAG=openmp
 
 elif [[ -d /dcom && -d /hwrf ]] ; then # Tide or Gyre
+    echo "Building for WCOSS IBM"
     machine=wcoss
     export LIBDIR=/nwprod/lib
-    # #export NEMSIOGFS_LIB=/global/save/Fanglin.Yang/svn/gfs/tags/nemsiogfs/intel/libnemsiogfs_v1.1.0.a
-    # #export NEMSIOGFS_INC=/global/save/Fanglin.Yang/svn/gfs/tags/nemsiogfs/intel/include/nemsiogfs_v1.1.0
-    # # export NEMSIOGFS_LIB=/global/save/emc.glopara/svn/gfs/q3fy17/nemsiogfsv2.0.1/libnemsiogfs.a
-    # # export NEMSIOGFS_INC=/global/save/emc.glopara/svn/gfs/q3fy17/nemsiogfsv2.0.1/include/nemsiogfs
-    # # export NEMSIO_LIB=/global/save/emc.glopara/svn/nceplibs/nemsio/trunk/libnemsio.a
-    # # export NEMSIO_INC=/global/save/emc.glopara/svn/nceplibs/nemsio/trunk/incmod/nemsio
     export INCG="$NEMSIO_INC"
     export INCGFS="$NEMSIOGFS_INC"
+
     # # Hui-Ya updated g2 lib for nceppost, we need to follow to use same g2 library for our apps. 
     export G2_SRC=/usrx/local/nceplibs/g2/v3.0.0/src
     export G2_INC4=/usrx/local/nceplibs/g2/v3.0.0/include/g2_v3.0.0_4
@@ -44,6 +40,7 @@ elif [[ -d /dcom && -d /hwrf ]] ; then # Tide or Gyre
     export G2_LIB4=/usrx/local/nceplibs/g2/v3.0.0/libg2_v3.0.0_4.a
     export G2_LIBd=/usrx/local/nceplibs/g2/v3.0.0/libg2_v3.0.0_d.a
     export G2_VER=v3.0.0
+
     export INCS="${SIGIO_INC4}"
     export INCSFC="${SFCIO_INC4}"
     export INC="${G2_INC4}"
@@ -55,7 +52,7 @@ elif [[ -d /dcom && -d /hwrf ]] ; then # Tide or Gyre
     export LIBS_GTRK="${NEMSIOGFS_LIB} ${NEMSIO_LIB} ${BACIO_LIB4} ${SIGIO_LIB4} ${IP_LIB4} ${SP_LIB4} ${SFCIO_LIB4} ${BUFR_LIB4} ${W3EMC_LIB4} ${W3NCO_LIB4} "
     export FFLAGS="-O3 -g -convert big_endian -I ${G2_INC4}"
     export FFLAGS_d="-O3 -g -r8 -convert big_endian -auto -mkl -I ${G2_INCd}"
-    export OPENMPFFLAG=openmp
+    export OPENMPFFLAG=qopenmp
 
 elif [[ -d /gpfs/hps3 && -e /etc/SuSE-release ]]; then # Luna or Surge
     echo "Building for Cray"
