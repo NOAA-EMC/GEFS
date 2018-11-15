@@ -25,6 +25,16 @@ When you want to run "restart" forecast you need to add the following three line
 > export FHINI=03    (forecast lead hour at which your want to restart the fcst)
 > export RFNDATE=NO  (If there is prefix in the restart file names, use YES)  
 
+To run restart properly, I had to modify the the fv3 and upp code. Therefore, you have to use the modified version of fv3gfs package in
+/gpfs/hps3/emc/ensemble/noscrub/Dingchen.Hou/TAGS/fv3gefs_c550fea3_20181004_ForHong
+by changing the $HOMEDIR specification in rocoto/parm/setbase
+Xianwu should work with Bing to build this version on DELL.
+Bing can add more chages to the FV3 code.
+
+Two most obvious issues exist now:
+1) We can not output the f03 (beginning of restart) nemsio files now, but Bing already has a fix.
+2) When 2 different output frequency are used (with FHOUTHF and FHOUTLF), the LF part files can not be written out. Bing is looking into this issue.
+
 I have tested the scripts for "hr" section
 In the reforecat project, we will run the "hr" fcst with the above three lines.
 Xianwu will test the branch to make sure it works for different situations, before merging it to master.
