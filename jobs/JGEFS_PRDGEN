@@ -259,7 +259,8 @@ export FHOUT_4=$FHOUT
 export FHOUT_HF_4=$FHINC34 
 export FHMAX_HF_4=$FHMAX_HF
 export SHOUR_4=$SHOUR_4
-export FHOUR_4=$FHOUR              
+#export FHOUR_4=$FHOUR              
+export FHOUR_4=$FHMAX_HF              
 
 #task 5, 0.25d grid
 export jobgrid_5=0p25
@@ -269,7 +270,8 @@ export FHOUT_5=$FHOUT
 export FHOUT_HF_5=$FHINC34
 export FHMAX_HF_5=$FHMAX_HF
 export SHOUR_5=$SHOUR_5
-export FHOUR_5=$FHOUR   
+#export FHOUR_5=$FHOUR   
+export FHOUR_5=$FHMAX_HF              
 
 #task 6, 0.25d grid
 export jobgrid_6=0p25
@@ -279,7 +281,8 @@ export FHOUT_6=$FHOUT
 export FHOUT_HF_6=$FHINC34
 export FHMAX_HF_6=$FHMAX_HF
 export SHOUR_6=$SHOUR_6
-export FHOUR_6=$FHOUR
+#export FHOUR_6=$FHOUR
+export FHOUR_6=$FHMAX_HF              
 
 #################################
 # Run Post if Needed
