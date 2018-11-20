@@ -48,6 +48,8 @@ def rw_bin_forecast_high(taskname, dicBase):
         Task_Node = 24
     elif WHERE_AM_I == "wcoss_dell_p3":
         Task_Node = 28
+    elif WHERE_AM_I == "wcoss_ibm":
+        Task_Node = 24
     else:
         Task_Node = 24
     
