@@ -47,7 +47,7 @@ export filenameout_nst=Tsfc.grb     #gfs.t00z.Tsfc.$PDY.grb  #-- is sstanlfile
 
 #Link Real-time CFSv2
 HFcfsMax=120  # 5 day backword search for cfs fcst
-HFcfs=24
+HFcfs=0
 PDYcfs=$PDY
 while [ $HFcfs -le $HFcfsMax ] ; do
     PDYcfscfc=`$NDATE -${HFcfs} ${PDY}${cyc}`

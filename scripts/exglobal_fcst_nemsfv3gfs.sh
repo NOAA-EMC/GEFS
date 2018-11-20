@@ -81,6 +81,7 @@ ENS_NUM=${ENS_NUM:-1}  # Single executable runs multiple members (e.g. GEFS)
 
 # Model specific stuff
 FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgfs/sorc/fv3gfs.fd/NEMS/exe}
+#FCSTEXECDIR=/gpfs/hps3/emc/ensemble/noscrub/Hong.Guan
 FCSTEXEC=${FCSTEXEC:-fv3_gfs.x}
 PARM_FV3DIAG=${PARM_FV3DIAG:-$HOMEgfs/parm/parm_fv3diag}
 
@@ -121,8 +122,45 @@ if [ ! -d $DATA ]; then mkdir -p $DATA ;fi
 mkdir -p $DATA/RESTART $DATA/INPUT
 cd $DATA || exit 8
 
+PDY=$(echo $CDATE | cut -c1-8)
+cyc=$(echo $CDATE | cut -c9-10)
+
+#Link 2tiersst
+HFcfsMax=120  # 5 day backword search for 2tiersst
+HFcfs=0
+PDYcfs=$PDY
+while [ $HFcfs -le $HFcfsMax ] ; do
+    PDYcfscyc=`$NDATE -${HFcfs} ${PDY}${cyc}`
+    PDYcfs=`echo ${PDYcfscyc} | cut -c1-8`
+
+    COMINsst=${SSTDIR}/TMPsfc.${PDYcfscyc}.24hr.anom.grb
+    if [ -d ${SSTDIR} ]; then
+        COMINsst=${SSTDIR}/TMPsfc.${PDYcfscyc}.24hr.anom.grb
+        sFile=${COMINsst}
+
+        if [[ -f $sFile ]]; then
+            $NLN $sFile $filenamein_CFSv2
+            FNTSFA=$sFile
+            break
+        fi
+    fi
+
+    echo ${PDYcfs} ${HFcfs}h
+
+    HFcfs=`expr $HFcfs + 24`
+done
+
+if [ $HFcfs -gt $HFcfsMax ];  then
+    echo " Real-time CFSv2 does not exist: $sFile"
+    exit 92
+fi
+
 #-------------------------------------------------------
 # member directory
+if [ $mem = "c00" ]; then
+   MEMBER=-1
+fi
+
 if [ $MEMBER -lt 0 ]; then
   prefix=$CDUMP
   rprefix=$rCDUMP
@@ -132,15 +170,22 @@ else
   rprefix=enkf.$rCDUMP
   memchar=mem$(printf %03i $MEMBER)
 fi
-PDY=$(echo $CDATE | cut -c1-8)
-cyc=$(echo $CDATE | cut -c9-10)
 memdir=${memdir:-$ROTDIR/${prefix}.$PDY/$cyc/$memchar}
 if [ ! -d $memdir ]; then mkdir -p $memdir; fi
 
+#GDATE=$($NDATE -$assim_freq $CDATE)
+assim_freq=3
 GDATE=$($NDATE -$assim_freq $CDATE)
 gPDY=$(echo $GDATE | cut -c1-8)
-gcyc=$(echo $GDATE | cut -c9-10)
-gmemdir=$ROTDIR/${rprefix}.$gPDY/$gcyc/$memchar
+#gcyc=$(echo $GDATE | cut -c9-10)
+gcyc=$(echo $CDATE | cut -c9-10)
+#gmemdir=$ROTDIR/${rprefix}.$gPDY/$gcyc/$memchar
+#gmemdir=$ROTDIR/gfs.$gPDY/$gcyc/C384_$memchar
+if [ $mem = "c00" ]; then
+gmemdir=$ROTDIR/${PDY}$cyc/restarts/control2/INPUT
+else
+gmemdir=$ROTDIR/${PDY}$cyc/C384_$memchar
+fi
 
 #-------------------------------------------------------
 # initial conditions
@@ -158,25 +203,42 @@ if [ $RERUN != "RESTART" ]; then
 if [ $warm_start = ".true." ]; then
 
   # Link all (except sfc_data) restart files from $gmemdir
-  for file in $gmemdir/RESTART/${PDY}.${cyc}0000.*.nc; do
+#  for file in $gmemdir/RESTART/${PDY}.${cyc}0000.*.nc; do
+#  for file in $gmemdir/RESTART/*.nc; do
+#    file2=$(echo $(basename $file))
+#    file2=$(echo $file2 | cut -d. -f3-) # remove the date from file
+#    fsuf=$(echo $file2 | cut -d. -f1)
+#    if [ $fsuf != "sfc_data" ]; then
+#       $NLN $file $DATA/INPUT/$file2
+
+#    fi
+#  done
+# cp $gmemdir/RESTART/* $DATA/INPUT/
+#       $NLN $file $DATA/INPUT/$file2
+#    fi
+
+  for file in $gmemdir/*.nc; do
     file2=$(echo $(basename $file))
-    file2=$(echo $file2 | cut -d. -f3-) # remove the date from file
-    fsuf=$(echo $file2 | cut -d. -f1)
-    if [ $fsuf != "sfc_data" ]; then
+#    file2=$(echo $file2 | cut -d. -f3-) # remove the date from file
+    finc=$(echo $file2 | cut -d. -f1)
+    if [ $finc != "fv3_increment3" ] && [ $finc != "fv3_increment6" ] &&[ $finc != "fv3_increment9" ]; then
        $NLN $file $DATA/INPUT/$file2
     fi
   done
+#        $NLN  /gpfs/hps3/emc/ensemble/noscrub/Hong.Guan/2015060100/control2/INPUT/fv_core.res.nc  $DATA/INPUT/fv_core.res.nc
+        $NLN  $ROTDIR/${PDY}$cyc/restarts/control2/INPUT/fv_core.res.nc $DATA/INPUT/fv_core.res.nc
+
 
   # Link sfcanl_data restart files from $memdir
-  for file in $memdir/RESTART/${PDY}.${cyc}0000.*.nc; do
-    file2=$(echo $(basename $file))
-    file2=$(echo $file2 | cut -d. -f3-) # remove the date from file
-    fsufanl=$(echo $file2 | cut -d. -f1)
-    if [ $fsufanl = "sfcanl_data" ]; then
-      file2=$(echo $file2 | sed -e "s/sfcanl_data/sfc_data/g")
-      $NLN $file $DATA/INPUT/$file2
-    fi
-  done
+#  for file in $memdir/RESTART/${PDY}.${cyc}0000.*.nc; do
+#    file2=$(echo $(basename $file))
+#    file2=$(echo $file2 | cut -d. -f3-) # remove the date from file
+#    fsufanl=$(echo $file2 | cut -d. -f1)
+#    if [ $fsufanl = "sfcanl_data" ]; then
+#      file2=$(echo $file2 | sed -e "s/sfcanl_data/sfc_data/g")
+#      $NLN $file $DATA/INPUT/$file2
+#    fi
+#  done
 
   # Handle coupler.res file for DA cycling
   if [ ${USE_COUPLER_RES:-"NO"} = "YES" ]; then
@@ -190,16 +252,20 @@ if [ $warm_start = ".true." ]; then
     $NLN $file $DATA/INPUT/$file2
   fi
 
-  #increment_file=$memdir/${CDUMP}.t${cyc}z.atminc.nc
-  increment_file=${increment_file:-$memdir/${CDUMP}.t${cyc}z.atminc.nc}
-  if [ -f $increment_file ]; then
-    $NLN $increment_file $DATA/INPUT/fv3_increment.nc
-    read_increment=".true."
-    res_latlon_dynamics="fv3_increment.nc"
-  else
+#  increment_file=$memdir/${CDUMP}.t${cyc}z.atminc.nc
+#  increment_file=$gmemdir/RESTART/fv3_increment3.nc
+#  increment_file=${increment_file:-$memdir/${CDUMP}.t${cyc}z.atminc.nc}
+ # increment_file=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Hong.Guan/common/fv3init/2016032600/fv3_increment6.nc
+
+#  if [ -f $increment_file ]; then
+#    $NLN $increment_file $DATA/INPUT/fv3_increment.nc
+#    read_increment=".true."
+#    res_latlon_dynamics="fv3_increment.nc"
+#  else
     read_increment=".false."
     res_latlon_dynamics="''"
-  fi
+#  fi
+
 
 else ## cold start                            
 
@@ -271,6 +337,10 @@ $NLN $FIX_AM/global_co2historicaldata_glob.txt $DATA/co2historicaldata_glob.txt
 $NLN $FIX_AM/co2monthlycyc.txt                 $DATA/co2monthlycyc.txt
 if [ $ICO2 -gt 0 ]; then
   for file in $(ls $FIX_AM/fix_co2_proj/global_co2historicaldata*) ; do
+    $NLN $file $DATA/$(echo $(basename $file) | sed -e "s/global_//g")
+  done
+
+  for file in $(ls $FIX_AM/co2dat_4a/global_co2historicaldata*) ; do
     $NLN $file $DATA/$(echo $(basename $file) | sed -e "s/global_//g")
   done
 fi
@@ -724,6 +794,8 @@ cat > input.nml <<EOF
   nst_anl      = $nst_anl
   psautco      = ${psautco:-"0.0008,0.0005"}
   prautco      = ${prautco:-"0.00015,0.00015"}
+
+
   $gfs_physics_nml
 /
 
