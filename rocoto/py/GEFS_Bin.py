@@ -16,7 +16,9 @@ def create_bin_file(dicBase):
 
     taskname ='forecast_high'  # 06
     rw_bin_forecast_high(taskname, dicBase)
-
+    taskname ='forecast_low'  
+    rw_bin_forecast_high(taskname, dicBase)
+    
 def rw_bin_forecast_high(taskname, dicBase):
     import sys
     import os
