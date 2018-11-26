@@ -39,8 +39,12 @@ export FORECAST_SEGMENT=hr
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 
-export gefsmpexec=" mpirun -n 240 "
+export gefsmpexec=" mpirun -n 456 "
 #export NTHREADS_SIGCHGRS=2
+
+#export restart_run=.true.
+#export output_1st_tstep=.true.
+#export restart_hour=3
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_FORECAST_FV3
