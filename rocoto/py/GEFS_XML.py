@@ -219,7 +219,6 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     # ===
     sVarName = "INIT_DIR".upper()
     sVarValue = ""
-    print(dicBase[sVarName])
     if sVarName not in dicBase:
         if WHERE_AM_I.lower() == "cray":
             sVarValue = "/gpfs/hps3/emc/ensemble/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
@@ -235,17 +234,11 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         
         dicBase[sVarName] = sVarValue
-        print("dd")
-        print(sVarValue)
 
     sVarValue = replace_First_Last(dicBase, sVarName)
-    print(sVarValue)
     sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
-    print(sVarValue)
-    print(dicBase["HPS_PTMP"])
     dicBase[sVarName] = sVarValue
    
-    print(dicBase[sVarName]) 
     # ===
     sVarName = "DIRS_TO_KEEP".upper()
     if sVarName not in dicBase:
@@ -444,19 +437,15 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
 def replace_First_Last(dicBase, sVarName):
     # to replace the first and last names in the strValue
     # Modified on 10/17/2018 to avoid the path has individual "First" or "Last" to be replaced by mistake. If just replace the "First.Last", it will be safer.
-    if "First.Last" in dicBase[sVarName]:
-        import os
-        sUSER = os.environ.get("USER")
-        GroupNames = ['emc.enspara', 'emc.enspara1']
-        if sUSER in GroupNames:
-            sVarValue = str(dicBase[sVarName]).replace("First.Last", sUSER + "/" + dicBase["FIRST"] + "." + dicBase["LAST"])
-            sVarValue = sVarValue.replace("retros", "verification") # temporary
-        else:
-            sVarValue = str(dicBase[sVarName]).replace("First.Last", dicBase["FIRST"] + "." + dicBase["LAST"])
-
+    import os
+    sUSER = os.environ.get("USER")
+    GroupNames = ['emc.enspara', 'emc.enspara1']
+    if sUSER in GroupNames:
+        sVarValue = str(dicBase[sVarName]).replace("First.Last", sUSER + "/" + dicBase["FIRST"] + "." + dicBase["LAST"])
+        sVarValue = sVarValue.replace("retros", "verification") # temporary
     else:
-        sVarValue = dicBase[sVarName]
-
+        sVarValue = str(dicBase[sVarName]).replace("First.Last", dicBase["FIRST"] + "." + dicBase["LAST"])
+    
     return sVarValue
 
 
