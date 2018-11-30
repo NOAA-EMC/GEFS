@@ -148,14 +148,14 @@ export YEAR=`echo $PDY|cut -c1-4`
 
 #===== For Reforecast -Start
 
-#cp /gpfs/dell3/nco/storage/fv3gefs/INIT/${YEAR}/${MM}/gefs.${PDY}/sfcanl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sfcanl
-cp /gpfs/dell2/emc/retros/noscrub/Hong.Guan/IC/sfcanl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sfcanl
+ cp /gpfs/dell3/nco/storage/fv3gefs/INIT/${YEAR}/${MM}/gefs.${PDY}/sfcanl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sfcanl
+#cp /gpfs/dell2/emc/retros/noscrub/Hong.Guan/IC/sfcanl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sfcanl
 if [ "$mem" = c00 ]; then
-# cp /gpfs/dell3/nco/storage/fv3gefs/INIT/${YEAR}/${MM}/gefs.${PDY}/siganl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sanl
-cp /gpfs/dell2/emc/retros/noscrub/Hong.Guan/IC/siganl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sanl
+ cp /gpfs/dell3/nco/storage/fv3gefs/INIT/${YEAR}/${MM}/gefs.${PDY}/siganl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sanl
+#cp /gpfs/dell2/emc/retros/noscrub/Hong.Guan/IC/siganl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sanl
 else
-cp /gpfs/dell2/emc/retros/noscrub/Hong.Guan/IC/sanl.$mem $INIDIR/gfs.t${cyc}z.sanl
-# cp /gpfs/dell3/nco/storage/fv3gefs/INIT/${YEAR}/${MM}/gefs.${PDY}/sanl.$mem $INIDIR/gfs.t${cyc}z.sanl
+#cp /gpfs/dell2/emc/retros/noscrub/Hong.Guan/IC/sanl.$mem $INIDIR/gfs.t${cyc}z.sanl
+ cp /gpfs/dell3/nco/storage/fv3gefs/INIT/${YEAR}/${MM}/gefs.${PDY}/sanl.$mem $INIDIR/gfs.t${cyc}z.sanl
 
 fi
 testfile=$INIDIR/gfs.t${cyc}z.sfcanl
@@ -169,7 +169,7 @@ done
 #$USHgsm/global_chgres_driver.sh
 
 #===== For Reforecast -Start
-/gpfs/hps3/emc/ensemble/save/emc.enspara/$SUBNAME/GEFS/nwdev/ush/global_chgres_driver.sh
+#/gpfs/hps3/emc/ensemble/save/emc.enspara/$SUBNAME/GEFS/nwdev/ush/global_chgres_driver.sh
 /gpfs/dell2/emc/verification/noscrub/emc.enspara/Hong.Guan/reforecast/nwdev/ush/global_chgres_driver.sh
 
 #===== For Reforecast -End
