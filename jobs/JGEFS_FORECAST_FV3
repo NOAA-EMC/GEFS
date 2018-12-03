@@ -216,6 +216,8 @@ export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 if [[ $RERUN = RESTART ]] ; then
 	export warm_start=.true.
 	export restart_hour=$FHMIN
+	export restart_run=.true.    
+	export output_1st_tstep=.true.
 fi
 
 #
