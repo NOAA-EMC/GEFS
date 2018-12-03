@@ -151,6 +151,14 @@ case $FORECAST_SEGMENT in
 		export DOANALYSIS=YES;
 		export DOANALYSIS=NO;
 		export SHOUR=00
+        if [ $RERUN = "RESTART" ]; then
+            if [ $FHMAX_HF -gt $restart_hour ]; then
+                FHINC=$FHOUT_HF
+            else
+                FHINC=$FHOUT_LF
+            fi 
+            export SHOUR=$(( $restart_hour + FHINC ))
+        fi
 		export FHOUT=$FHOUT
 		export FHOUT_HF=$FHOUT_HF
 		export FHMAX_HF=$FHMAX_HF
@@ -161,11 +169,12 @@ case $FORECAST_SEGMENT in
 		export DOANALYSIS=NO;
 		export FHINCP5=${FHOUT_LF:-06}
 		if [ $FHMAX_HF -gt $fhmaxh ]; then
-			FHINC=$FHOUT
-		else
 			FHINC=$FHOUT_HF
+		else
+			FHINC=$FHOUT_LF
 		fi
 		export SHOUR=$(( $fhmaxh + FHINC ))
+    
 		export FHOUT=$FHOUT
 		export FHOUT_HF=$FHOUT_HF
 		export FHMAX_HF=$FHMAX_HF

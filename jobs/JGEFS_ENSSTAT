@@ -132,6 +132,15 @@ case $FORECAST_SEGMENT in
 		# high resolution segment
 		export FHINCP5=${FHOUTHF:-06}
 		export SHOUR=00
+        if [ $RERUN = "RESTART" ]; then
+            if [ $FHMAX_HF -gt $restart_hour ]; then
+                FHINC=$FHOUT_HF
+            else
+                FHINC=$FHOUT_LF
+            fi
+            export SHOUR=$(( $restart_hour + FHINC ))
+        fi
+
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmaxh
 		else
@@ -141,6 +150,11 @@ case $FORECAST_SEGMENT in
 	(lr)
 		# low resolution segment
 		export FHINCP5=${FHOUTLR:-06}
+        if [ $FHMAX_HF -gt $fhmaxh ]; then
+            FHINC=$FHOUT_HF
+        else
+            FHINC=$FHOUT_LF
+        fi
 		export SHOUR=$(( $fhmaxh + FHINC ))
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmax
