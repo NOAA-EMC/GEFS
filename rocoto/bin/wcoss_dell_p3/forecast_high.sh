@@ -39,8 +39,20 @@ export FORECAST_SEGMENT=hr
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 
-export gefsmpexec=" mpirun -n 240 "
+export gefsmpexec=" mpirun -n 456 "
 #export NTHREADS_SIGCHGRS=2
+
+#export restart_run=.true.
+#export output_1st_tstep=.true.
+#export restart_hour=3
+
+export RERUN=RESTART  #(the J-job script has default value "RERUN"
+export FHINI=03    #(forecast lead hour at which your want to restart the fcst)
+export RFNDATE=YES  #(If there is prefix in the restart file names, use YES)
+export warm_start=.true.
+export restart_run=.true.
+export output_1st_tstep=.true.
+export restart_hour=3
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_FORECAST_FV3

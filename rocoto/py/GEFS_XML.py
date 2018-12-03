@@ -238,7 +238,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarValue = replace_First_Last(dicBase, sVarName)
     sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
     dicBase[sVarName] = sVarValue
-    
+   
     # ===
     sVarName = "DIRS_TO_KEEP".upper()
     if sVarName not in dicBase:
@@ -445,8 +445,9 @@ def replace_First_Last(dicBase, sVarName):
         sVarValue = sVarValue.replace("retros", "verification") # temporary
     else:
         sVarValue = str(dicBase[sVarName]).replace("First.Last", dicBase["FIRST"] + "." + dicBase["LAST"])
-
+    
     return sVarValue
+
 
 #=======================================================
 def create_xml(dicBase):

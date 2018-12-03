@@ -128,9 +128,10 @@ while test $fh -le $FHOUR; do
 
 	#  the order here should correspond to the order in
 	#  which the pgrb files are produced by the post
-	if test $fh -lt 100; then
-		export fh="0$fh"
-	fi
+	#if test $fh -lt 100; then
+	#	export fh="0$fh"
+	#fi
+    export fh=$(printf %03i $fh)
 	for res in $reslist; do
 
 		nenspost=0
@@ -379,9 +380,10 @@ while test $fh -le $FHOUR; do
 	echo "`date` send pgrb$dataset output end"
 
 	export fh=`expr $fh + $FHINC`
-	if test $fh -lt 10; then
-		export fh="0$fh"
-	fi
+    export fh=$(printf %03i $fh)
+	#if test $fh -lt 10; then
+  	#	export fh="00$fh"
+	#fi
 	#   if [[ $res = p5 ]]; then
 	# if test $fh -lt 100 
 	# then

@@ -167,6 +167,7 @@ while (( fhr <= FHOUR )); do
 		FHINC=$FHOUT
 	fi
 
+    #ghr=$(printf %03i $fhr
 	if (( fhr < 100 )); then
 		ghr=0$fhr
 	else

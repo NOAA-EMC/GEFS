@@ -30,11 +30,16 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:4
 
-export total_tasks=2
+export total_tasks=3
 export OMP_NUM_THREADS=4
-export taskspernode=2
+export taskspernode=3
 
 export FORECAST_SEGMENT=lr
+
+#export RERUN=RESTART  #(the J-job script has default value "RERUN"
+#export restart_run=.true.
+#export restart_hour=3
+
 
 # export for development runs only begin
 export envir=${envir:-dev}
