@@ -169,6 +169,6 @@ if [ $AddCrontabToMyCrontab = "yes" ]; then
         echo "Not ready on cray"
     elif [ $machine = "wcoss_dell_p3" ]; then
         py/add_crontab.py
-        echo "Added crontab to system!"
+        echo "Added crontab to $HOME/cron/mycrontab!"
     fi
 fi
