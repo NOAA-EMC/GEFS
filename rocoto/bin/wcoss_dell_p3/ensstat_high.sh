@@ -36,11 +36,6 @@ export taskspernode=3
 
 export FORECAST_SEGMENT=hr
 
-export RERUN=RESTART  #(the J-job script has default value "RERUN"
-export restart_run=.true.
-export restart_hour=3
-
-
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}

@@ -45,10 +45,6 @@ export gefsmpexec_mpmd="  mpirun -n $total_tasks cfp mpmd_cmdfile"
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 
-export RERUN=RESTART  #(the J-job script has default value "RERUN"
-export restart_run=.true.
-export restart_hour=3
-
 
 # CALL executable job script here
 
