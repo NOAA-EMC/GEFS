@@ -152,6 +152,7 @@ case $FORECAST_SEGMENT in
 		export DOANALYSIS=NO;
 		export SHOUR=00
         if [ $RERUN = "RESTART" ]; then
+            export restart_hour=${FHMIN:-0}
             if [ $FHMAX_HF -gt $restart_hour ]; then
                 FHINC=$FHOUT_HF
             else
