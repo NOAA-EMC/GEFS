@@ -51,6 +51,7 @@ export RFNDATE=YES  #(If there is prefix in the restart file names, use YES)
 #export restart_run=.true.
 #export output_1st_tstep=.true.
 #export restart_hour=3
+export fhrestart=48
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_FORECAST_FV3

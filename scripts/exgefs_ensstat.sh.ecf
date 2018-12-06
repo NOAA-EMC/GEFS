@@ -381,15 +381,6 @@ while test $fh -le $FHOUR; do
 
 	export fh=`expr $fh + $FHINC`
     export fh=$(printf %03i $fh)
-	#if test $fh -lt 10; then
-  	#	export fh="00$fh"
-	#fi
-	#   if [[ $res = p5 ]]; then
-	# if test $fh -lt 100 
-	# then
-	#   export fh="0$fh"
-	# fi
-	#   fi
 done # while test $fh -le $FHOUR
 
 
