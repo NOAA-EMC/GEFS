@@ -206,10 +206,6 @@ def write_to_all_ent(GenTaskEnt, dicBase):
         if not os.path.exists(sPath):
             os.mkdir(sPath)
 
-        sPath += sSep + dicBase["WHERE_AM_I"]
-        if not os.path.exists(sPath):
-            os.mkdir(sPath)
-
         sAllEnt_File = sPath + sSep + "all.ent"
         fh = open(sAllEnt_File, 'w')
 
@@ -261,10 +257,6 @@ def write_to_ent(taskname, dicBase, GenTaskEnt=False):
     sPath = dicBase["GEFS_ROCOTO"]
     sPath += sSep + "tasks"
 
-    if not os.path.exists(sPath):
-        os.mkdir(sPath)
-
-    sPath += sSep + dicBase["WHERE_AM_I"]
     if not os.path.exists(sPath):
         os.mkdir(sPath)
 
