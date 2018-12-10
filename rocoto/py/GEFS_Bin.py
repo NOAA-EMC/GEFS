@@ -45,21 +45,21 @@ def rw_bin_forecast_high(taskname, dicBase):
     WHERE_AM_I = dicBase['WHERE_AM_I']
 
     if WHERE_AM_I == 'cray':
-        Task_Node = 24
+        ncores_per_node = 24
     elif WHERE_AM_I == "theia":
-        Task_Node = 24
+        ncores_per_node = 24
     elif WHERE_AM_I == "wcoss_dell_p3":
-        Task_Node = 28
+        ncores_per_node = 28
     elif WHERE_AM_I == "wcoss_ibm":
-        Task_Node = 24
+        ncores_per_node = 24
     else:
-        Task_Node = 24
-    
+        ncores_per_node = 24
+
     # PPN: Processes per node
     # TPP: Threads per process
     iTotal_Tasks = layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP
-    iNodes = int((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) / (Task_Node / parallel_threads))
-    iPPN = int((Task_Node / parallel_threads))
+    iNodes = int((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) / (ncores_per_node / parallel_threads))
+    iPPN = int((ncores_per_node / parallel_threads))
     iTPP = parallel_threads
 
     # sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)

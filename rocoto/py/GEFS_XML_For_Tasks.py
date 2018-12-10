@@ -422,16 +422,17 @@ def get_param_of_task(dicBase, taskname):
         WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
 
         if WHERE_AM_I == 'cray'.upper():
-            Task_Node = 24
+            ncores_per_node = 24
         elif WHERE_AM_I == "theia".upper():
-            Task_Node = 24
+            ncores_per_node = 24
         elif WHERE_AM_I == "wcoss_dell_p3".upper():
-            Task_Node = 28
+            ncores_per_node = 28
         else:
-            Task_Node = 24
+            ncores_per_node = 24
 
-        iNodes = int(math.ceil((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) * 1.0 / (Task_Node / parallel_threads)))
-        iPPN = int(math.ceil(Task_Node * 1.0 / parallel_threads))
+        dicBase['COREPERNODE'] = ncores_per_node
+        iNodes = int(math.ceil((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) * 1.0 / (ncores_per_node / parallel_threads)))
+        iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
 
         iTPP = parallel_threads
 
