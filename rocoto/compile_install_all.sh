@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eu
 
 sWS=`pwd`
 echo $sWS
@@ -80,16 +81,15 @@ if [ $CompileCode = "yes" ]; then
     ## Install GEFS
     ./install.sh
 
-    cd $sWS/../
-    rm -rf fix
+    cd $sWS/../sorc
     if [ $machine = "theia" ]; then
-        /bin/ln -sf /scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix fix
+        ./link_gefs.sh -e emc -m theia
     elif [ $machine = "cray" ]; then
-        /bin/ln -sf /gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gefs/fix fix
+        ./link_gefs.sh -e emc -m cray
     elif [ $machine = "wcoss_ibm" ]; then
-        /bin/ln -sf /ensemble/noscrub/Walter.Kolczynski/gefs-fixed fix
+        ./link_gefs.sh -e emc -m ibm
     elif [ $machine = "wcoss_dell_p3" ]; then
-        /bin/ln -sf /gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gefs/fix fix
+        ./link_gefs.sh -e emc -m dell
     fi
 fi
 
@@ -130,7 +130,7 @@ if [ $CleanAll = "yes" ]; then
     cd ${sWS}/../sorc
     rm -rf ../exec
     rm -rf ../util/exec
-    rm -rf ../fix
+    rm -f ../fix
 
 fi # for CleanAll
 
