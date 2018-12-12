@@ -638,8 +638,7 @@ def get_definitions(dicBase):
         # -----------------------------------------------------------------------------------------------
         strings.append('\t<!-- External parameter entities -->\n')
         strings.append(
-            '\t<!ENTITY % TASKS    SYSTEM "{0}{2}tasks{2}{1}{2}all.ent">\n'.format(dicBase['GEFS_ROCOTO'],
-                                                                                   dicBase['WHERE_AM_I'], sSep))
+            '\t<!ENTITY % TASKS    SYSTEM "{0}{1}tasks{1}all.ent">\n'.format(dicBase['GEFS_ROCOTO'], sSep))
         strings.append('\t%TASKS;\n')
         strings.append('\n')
 
