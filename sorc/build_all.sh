@@ -38,19 +38,12 @@ fi
 
 . ./partial_build.sh
 
-echo $Build_libs
-echo $Build_grib_util
-
-echo $Build_gefs_anom2_fcst
-echo $Build_overenstr_grib
-echo $Build_global_enscvt24h
-
 #------------------------------------
 # build gefs_anom2_fcst
 #------------------------------------
 $Build_gefs_anom2_fcst && {
 echo " .... Building gefs_anom2_fcst - 01 .... "
-#./build_gefs_anom2_fcst.sh > $logs_dir/build_gefs_anom2_fcst.log 2>&1
+./build_gefs_anom2_fcst.sh > $logs_dir/build_gefs_anom2_fcst.log 2>&1
 }
 
 #------------------------------------

@@ -99,6 +99,23 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then # We ar
     export OPENMPFFLAG=qopenmp
 fi
 
+#export LIBS="${G2_LIB4} ${W3NCO_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}"
+
+module load ips/18.0.1.163
+module load g2/3.1.0
+module load w3nco/2.0.6
+module load bacio/2.0.2
+
+for dir in gefs_anom2_fcst.fd; do #gefs_nstgen.fd; do
+    cd $dir
+    make clean
+    make -f makefile
+    cd ..
+done
+
+
+
+exit 0
 
 for dir in gefs_vortex_separate.fd gefs_vortex_combine.fd global_sigzvd.fd  global_ensadd.fd  global_enspqpf.fd  gefs_ensstat.fd  global_ensppf.fd ; do
     cd $dir
@@ -123,11 +140,9 @@ for dir in ../util/sorc/gettrk.fd ../util/sorc/overenstr.grib.fd ../util/sorc/ge
 done
 
 # For SST
-for dir in  gefs_nstgen.fd; do
+for dir in gefs_anom2_fcst.fd gefs_nstgen.fd; do
     cd $dir
     make clean
     make -f makefile
     cd ..
 done
-
-./build_gefs_anom2_fcst.sh

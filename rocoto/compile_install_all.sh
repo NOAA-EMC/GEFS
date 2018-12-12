@@ -51,8 +51,17 @@ if [ $CompileCode = "yes" ]; then
     cd $sWS/../sorc
 
     ## mkdir folds
-    mkdir ../exec
-    mkdir ../util/exec
+	# Check final exec folder exists
+	if [ ! -d "../exec" ]; then
+		echo "Creating ../exec folder"
+		mkdir ../exec
+	fi
+
+	# Check final exec folder exists
+    if [ ! -d "../util/exec" ]; then
+        echo "Creating ../exec folder"
+        mkdir ../util/exec
+    fi
 
     ## Deal with the modules
     module purge
