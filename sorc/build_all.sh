@@ -67,7 +67,7 @@ echo " .... Building gefs_vortex_separate - 03 .... "
 #------------------------------------
 $Build_gefs_vortex_combine && {
 echo " .... Building gefs_vortex_combine - 04 .... "
-#./build_gefs_vortex_combine.sh > $logs_dir/build_gefs_vortex_combine.log 2>&1
+./build_gefs_vortex_combine.sh > $logs_dir/build_gefs_vortex_combine.log 2>&1
 }
 
 #------------------------------------

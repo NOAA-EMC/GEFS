@@ -100,7 +100,7 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then # We ar
 fi
 
 
-for dir in gefs_vortex_combine.fd global_sigzvd.fd  global_ensadd.fd  global_enspqpf.fd  gefs_ensstat.fd  global_ensppf.fd ; do
+for dir in global_sigzvd.fd  global_ensadd.fd  global_enspqpf.fd  gefs_ensstat.fd  global_ensppf.fd ; do
     cd $dir
     make clean
     make -f makefile
@@ -127,4 +127,4 @@ done
 ./build_gefs_nstgen.sh
 
 ./build_gefs_vortex_separate.sh
-
+./build_gefs_vortex_combine.sh
