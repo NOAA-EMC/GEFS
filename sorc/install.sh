@@ -15,10 +15,3 @@ for dir in ../util/sorc/gettrk.fd ../util/sorc/overenstr.grib.fd ../util/sorc/ge
 	make install
 	cd ../../../sorc
 done
-EXECdir=../exec
-[ -d $EXECdir ] || mkdir $EXECdir
-for dir in gefs_nstgen.fd; do
-    cd $dir
-    make install
-    cd ..
-done

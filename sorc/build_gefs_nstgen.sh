@@ -4,7 +4,7 @@ set -eux
 source ./machine-setup.sh > /dev/null 2>&1
 cwd=`pwd`
 
-progname=gefs_anom2_fcst
+progname=gefs_nstgen
 
 USE_PREINST_LIBS=${USE_PREINST_LIBS:-"true"}
 if [ $USE_PREINST_LIBS = true ]; then
@@ -17,7 +17,7 @@ fi
 
 # Check final exec folder exists
 if [ ! -d "../exec" ]; then
-    mkdir ../exec
+  mkdir ../exec
 fi
 
 #
@@ -27,15 +27,14 @@ cd ${progname}.fd
 export FCMP=${FCMP:-ifort}
 export FCMP95=$FCMP
 
-#export FFLAGSM="-i4 -O3 -r8  -convert big_endian -fp-model precise"
-export FFLAGSM="-O3 -g -convert big_endian"
+export FFLAGSM="-O3 -fp-model source -convert big_endian -assume byterecl -implicitnone"
 export RECURS=
 export LDFLAGSM=${LDFLAGSM:-""}
 export OMPFLAGM=${OMPFLAGM:-""}
 
-export INCSM="-I ${G2_INC4}"
+export INCSM="-I ${SFCIO_INC4} -I ${NEMSIO_INC}"
 
-export LIBSM="${W3NCO_LIB4} ${BACIO_LIB4}"
+export LIBSM="${NEMSIO_LIB} ${BACIO_LIB4} ${SFCIO_LIB4} ${W3NCO_LIB4}"
 
 
 make -f Makefile clobber

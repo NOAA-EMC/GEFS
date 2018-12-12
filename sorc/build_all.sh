@@ -39,7 +39,7 @@ fi
 . ./partial_build.sh
 
 #------------------------------------
-# build gefs_anom2_fcst
+# build gefs_anom2_fcst - 01/02 For SST
 #------------------------------------
 $Build_gefs_anom2_fcst && {
 echo " .... Building gefs_anom2_fcst - 01 .... "
@@ -47,11 +47,11 @@ echo " .... Building gefs_anom2_fcst - 01 .... "
 }
 
 #------------------------------------
-# build gefs_nstgen
+# build gefs_nstgen     - 02/02 For SST      
 #------------------------------------
 $Build_gefs_nstgen && {
 echo " .... Building gefs_nstgen - 02.... "
-#./build_gefs_nstgen.sh > $logs_dir/build_gefs_nstgen.log 2>&1
+./build_gefs_nstgen.sh > $logs_dir/build_gefs_nstgen.log 2>&1
 }
 
 #------------------------------------

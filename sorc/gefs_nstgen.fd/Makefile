@@ -11,11 +11,11 @@ FFLAGS  =$(FFLAGSM)
 OMPFLAG	=$(OMPFLAGM)
 LDFLAGS =$(LDFLAGSM)
 
-SRCSf90	= anom2_fcst.f90
+SRCSf90	= nstgen.f90
 SRCSf	=
 SRCS	= $(SRCSf90) $(SRCSf)
 OBJS	= $(SRCSf:.f=.o) $(SRCSf90:.f90=.o)
-CMD		= gefs_anom2_fcst
+CMD		= gefs_nstgen 
 
 $(CMD):		$(OBJS)
 	$(LDR) $(LDFLAGS) $(OBJS) $(LIBS) -o $(CMD)

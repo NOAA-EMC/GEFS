@@ -123,11 +123,7 @@ for dir in ../util/sorc/gettrk.fd ../util/sorc/overenstr.grib.fd ../util/sorc/ge
 done
 
 # For SST
-for dir in  gefs_nstgen.fd; do
-    cd $dir
-    make clean
-    make -f makefile
-    cd ..
-done
-
 ./build_gefs_anom2_fcst.sh
+./build_gefs_nstgen.sh
+
+
