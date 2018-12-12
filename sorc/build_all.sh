@@ -59,7 +59,7 @@ echo " .... Building gefs_nstgen - 02.... "
 #------------------------------------
 $Build_gefs_vortex_separate && {
 echo " .... Building gefs_vortex_separate - 03 .... "
-#./build_gefs_vortex_separate.sh > $logs_dir/build_gefs_vortex_separate.log 2>&1
+./build_gefs_vortex_separate.sh > $logs_dir/build_gefs_vortex_separate.log 2>&1
 }
 
 #------------------------------------

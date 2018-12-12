@@ -32,6 +32,6 @@ clobber:	clean
 	-rm -f $(CMD)
 
 install:
-	mv $(CMD) ../../exec/$(CMD)
+	cp $(CMD) ../../exec/$(CMD)
 
 
