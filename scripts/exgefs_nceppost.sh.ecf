@@ -155,9 +155,9 @@ fi # [[ ! -s $mcfile ]]
 fi
 
 (( fhr=SHOUR))
-fhr=$(printf %03i $fhr)
 
 while (( fhr <= FHOUR )); do
+	fhr=$(printf %03i $fhr)
 	if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
 		FHINC=$FHOUT_HF
 	else
@@ -204,7 +204,6 @@ while (( fhr <= FHOUR )); do
 	fi # [[ ! -s $mcfile ]]
 
 	export fhr=`expr $fhr + $FHINC`
-    fhr=$(printf %03i $fhr)
 
 done # while (( fhr <= FHOUR ))
 
@@ -348,12 +347,12 @@ fi # [ $DOANALYSIS = YES ]
 SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
 (( fhr=SHOUR ))
-export fhr=$(printf %03i $fhr)
 
 ############################################################
 # Loop Through the Post Forecast Files 
 ############################################################
 while (( fhr <= FHOUR )); do
+	export fhr=$(printf %03i $fhr)
 	if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
 		FHINC=$FHOUT_HF
 	else
@@ -528,7 +527,6 @@ while (( fhr <= FHOUR )); do
  	fi # [[ ! -s $mcfile ]]
 
 	export fhr=`expr $fhr + $FHINC`
-    export fhr=$(printf %03i $fhr)
 
 done # while (( fhr <= FHOUR ))
 

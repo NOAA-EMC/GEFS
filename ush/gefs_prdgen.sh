@@ -141,6 +141,17 @@ else
 	$WGRIB2 -s pgb2bfile.$ffhr$cfsuffix > pgb2bfile.${ffhr}${cfsuffix}.idx
 
 	##############################################
+	# Save the master files at 0p5 grid for fcst beyond day 10
+	##############################################
+	if test "$save_master_p5" = 'YES' -a "$jobgrid" = '0p5'; then
+		if (( fhr > FHMAXHF )); then
+			$WGRIB2 -s pgb2file.$ffhr$cfsuffix > pgb2file.${ffhr}${cfsuffix}.idx
+			mv pgb2file.${ffhr}${cfsuffix} $mafile_p5 
+			mv pgb2file.${ffhr}${cfsuffix}.idx $mifile_p5
+		fi
+	fi
+
+	##############################################
 	# Save Data
 	##############################################
 	if test "$SENDCOM" = 'YES'; then

@@ -107,6 +107,10 @@ mkdir -m 775 -p $COMOUT/$cyc/pgrb2bp5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap25
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2bp25
 
+if [[ $save_master_p5 == YES ]]; then
+	mkdir -m 775 -p $COMOUT/$cyc/master_p5
+fi
+
 #mkdir -m 775 -p $COMOUT/$cyc/tctrack
 #mkdir -m 775 -p $COMOUT/$cyc/genesis
 
@@ -151,15 +155,6 @@ case $FORECAST_SEGMENT in
 		export DOANALYSIS=YES;
 		export DOANALYSIS=NO;
 		export SHOUR=00
-        if [ $RERUN = "RESTART" ]; then
-            export restart_hour=${FHMIN:-0}
-            if [ $FHMAX_HF -gt $restart_hour ]; then
-                FHINC=$FHOUT_HF
-            else
-                FHINC=$FHOUT_LF
-            fi 
-            export SHOUR=$(( $restart_hour + FHINC ))
-        fi
 		export FHOUT=$FHOUT
 		export FHOUT_HF=$FHOUT_HF
 		export FHMAX_HF=$FHMAX_HF
