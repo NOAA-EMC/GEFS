@@ -83,7 +83,7 @@ echo " .... Building global_sigzvd - 05 .... "
 #------------------------------------
 $Build_global_ensadd && {
 echo " .... Building global_ensadd - 06 .... "
-#./build_global_ensadd.sh > $logs_dir/build_global_ensadd.log 2>&1
+./build_global_ensadd.sh > $logs_dir/build_global_ensadd.log 2>&1
 }
 
 #------------------------------------
