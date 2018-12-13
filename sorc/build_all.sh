@@ -75,7 +75,7 @@ echo " .... Building gefs_vortex_combine - 04 .... "
 #------------------------------------
 $Build_global_sigzvd && {
 echo " .... Building global_sigzvd - 05 .... "
-#./build_global_sigzvd.sh > $logs_dir/build_global_sigzvd.log 2>&1
+./build_global_sigzvd.sh > $logs_dir/build_global_sigzvd.log 2>&1
 }
 
 #------------------------------------
