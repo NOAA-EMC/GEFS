@@ -1,0 +1,129 @@
+#!/bin/ksh
+
+#
+# Product Generation Input Variables
+#
+
+# Establish an array of stream names which will establish the number and be used as keys for the associative arrays
+typeset -a PRDGEN_STREAMS=${PRDGEN_STREAMS:-res_2p50 res_1p00 res_0p50 res_0p25_s1 res_0p25_s2 res_0p25_s3}
+
+export PRDGEN_STREAMS
+
+#
+# Establish associative arrays for needed variables. 
+#
+# Each stream needs to define a value for their stream for each of these like this:
+#   stream="res_2p50"
+#   PRDGEN_GRID[res_2p50]="2p5"
+#   PRDGEN_GRID_SPEC[res_2p50]="latlon 0:144:2.5 90:73:-2.5"
+#   ...
+#
+# PRDGEN_HOURS can be an explicit list of hours, or you can use { .. } to create a list. You can even
+#   combine multiple { .. } notations as long as you enclose the combined expression in quotes:
+#   
+#   Examples:
+#     PRDGEN_HOURS[$stream]={0..120..3}                   # Every three hours from 0 to 120 (inclusive)
+#     PRDGEN_HOURS[$stream]="0 3 6 12"                    # Output at 0, 3, 6, and 12 hours
+#     PRDGEN_HOURS[$stream]="{0..120..3} {126..240..6}"   # Every three hours from 0 to 120, then every 6 hours from 126 to 240
+#
+typeset -A PRDGEN_GRID           # old jobgrid, used to set GRIB for DBN
+typeset -A PRDGEN_GRID_SPEC      # grid specification for wgrib2
+typeset -A PRDGEN_HOURS          # forecast hours to create product for
+typeset -A PRDGEN_SUBMC          # temporary directory for files before partitioning into a and b
+typeset -A PRDGEN_A_DIR          # directory name for pgrba files (e.g. pgrb2ap5)
+typeset -A PRDGEN_B_DIR          # directory name for pgrbb files (e.g. pgrb2bp5)
+typeset -A PRDGEN_A_PREFIX       # pgrba identifier in file name (e.g. pgrb2a.0p50.)
+typeset -A PRDGEN_B_PREFIX       # pgrbb identifier in file name (e.g. pgrb2b.0p50.)
+
+# DO_ANALYSIS can be omitted unless you want to change the default
+typeset -A PRDGEN_DO_ANALYSIS    # create analysis products for this stream
+
+# 2.50°
+PRDGEN_GRID[res_2p50]=${PRDGEN_GRID[res_2p50]:-"2p5"}
+PRDGEN_GRID_SPEC[res_2p50]=${PRDGEN_GRID_SPEC[res_2p50]:-"latlon 0:144:2.5 90:73:-2.5"}
+PRDGEN_HOURS[res_2p50]=${PRDGEN_HOURS[res_2p50]:-"{0..240..3} {246..${fhmax}..6}"}
+PRDGEN_SUBMC[res_2p50]=${PRDGEN_SUBMC[res_2p50]:-"prd2p5"}
+PRDGEN_A_DIR[res_2p50]=${PRDGEN_A_DIR[res_2p50]:-"pgrb2a2p5"}
+PRDGEN_B_DIR[res_2p50]=${PRDGEN_B_DIR[res_2p50]:-"pgrb2b2p5"}
+PRDGEN_A_PREFIX[res_2p50]=${PRDGEN_A_PREFIX[res_2p50]:-"pgrb2a.2p50."}
+PRDGEN_B_PREFIX[res_2p50]=${PRDGEN_B_PREFIX[res_2p50]:-"pgrb2b.2p50."}
+
+# 1.00°
+PRDGEN_GRID_SPEC[res_1p00]=${PRDGEN_GRID_SPEC[res_1p00]:-"latlon 0:360:1.0 90:181:-1.0"}
+PRDGEN_HOURS[res_1p00]=${PRDGEN_HOURS[res_1p00]:-"{0..240..3} {246..${fhmax}..6}"}
+PRDGEN_SUBMC[res_1p00]=${PRDGEN_SUBMC[res_1p00]:-"prd1p0"}
+PRDGEN_A_DIR[res_1p00]=${PRDGEN_A_DIR[res_1p00]:-"pgrb2a1p0"}
+PRDGEN_B_DIR[res_1p00]=${PRDGEN_B_DIR[res_1p00]:-"pgrb2b1p0"}
+PRDGEN_A_PREFIX[res_1p00]=${PRDGEN_A_PREFIX[res_1p00]:-"pgrb2a.1p00."}
+PRDGEN_B_PREFIX[res_1p00]=${PRDGEN_B_PREFIX[res_1p00]:-"pgrb2b.1p00."}
+
+# 0.50°
+PRDGEN_GRID[res_0p50]=${PRDGEN_GRID[res_0p50]:-"0p5"}
+PRDGEN_GRID_SPEC[res_0p50]=${PRDGEN_GRID_SPEC[res_0p50]:-"latlon 0:720:0.5 90:361:-0.5"}
+PRDGEN_HOURS[res_0p50]=${PRDGEN_HOURS[res_0p50]:-"{0..240..3} {246..${fhmax}..6}"}
+PRDGEN_SUBMC[res_0p50]=${PRDGEN_SUBMC[res_0p50]:-"prd0p5"}
+PRDGEN_A_DIR[res_0p50]=${PRDGEN_A_DIR[res_0p50]:-"pgrb2ap5"}
+PRDGEN_B_DIR[res_0p50]=${PRDGEN_B_DIR[res_0p50]:-"pgrb2bp5"}
+PRDGEN_A_PREFIX[res_0p50]=${PRDGEN_A_PREFIX[res_0p50]:-"pgrb2a.0p50."}
+PRDGEN_B_PREFIX[res_0p50]=${PRDGEN_B_PREFIX[res_0p50]:-"pgrb2b.0p50."}
+
+# 0.25° Stream 1
+PRDGEN_GRID[res_0p25_s1]=${PRDGEN_GRID[res_0p25_s1]:-"0p25"}
+PRDGEN_GRID_SPEC[res_0p25_s1]=${PRDGEN_GRID_SPEC[res_0p25_s1]:-"latlon 0:1440:0.25 90:721:-0.25"}
+PRDGEN_HOURS[res_0p25_s1]=${PRDGEN_HOURS[res_0p25_s1]:-"{0..240..9}"}
+PRDGEN_SUBMC[res_0p25_s1]=${PRDGEN_SUBMC[res_0p25_s1]:-"prd0p25"}
+PRDGEN_A_DIR[res_0p25_s1]=${PRDGEN_A_DIR[res_0p25_s1]:-"pgrb2ap25"}
+PRDGEN_B_DIR[res_0p25_s1]=${PRDGEN_B_DIR[res_0p25_s1]:-"pgrb2bp25"}
+PRDGEN_A_PREFIX[res_0p25_s1]=${PRDGEN_A_PREFIX[res_0p25_s1]:-"pgrb2a.0p25."}
+PRDGEN_B_PREFIX[res_0p25_s1]=${PRDGEN_B_PREFIX[res_0p25_s1]:-"pgrb2b.0p25."}
+
+# 0.25° Stream 2
+PRDGEN_GRID[res_0p25_s2]=${PRDGEN_GRID[res_0p25_s2]:-"0p25"}
+PRDGEN_GRID_SPEC[res_0p25_s2]=${PRDGEN_GRID_SPEC[res_0p25_s2]:-"latlon 0:1440:0.25 90:721:-0.25"}
+PRDGEN_HOURS[res_0p25_s2]=${PRDGEN_HOURS[res_0p25_s2]:-"{3..240..9}"}
+PRDGEN_SUBMC[res_0p25_s2]=${PRDGEN_SUBMC[res_0p25_s2]:-"prd0p25"}
+PRDGEN_A_DIR[res_0p25_s2]=${PRDGEN_A_DIR[res_0p25_s2]:-"pgrb2ap25"}
+PRDGEN_B_DIR[res_0p25_s2]=${PRDGEN_B_DIR[res_0p25_s2]:-"pgrb2bp25"}
+PRDGEN_A_PREFIX[res_0p25_s2]=${PRDGEN_A_PREFIX[res_0p25_s2]:-"pgrb2a.0p25."}
+PRDGEN_B_PREFIX[res_0p25_s2]=${PRDGEN_B_PREFIX[res_0p25_s2]:-"pgrb2b.0p25."}
+
+# 0.25° Stream 3
+PRDGEN_GRID[res_0p25_s3]=${PRDGEN_GRID[res_0p25_s3]:-"0p25"}
+PRDGEN_GRID_SPEC[res_0p25_s3]=${PRDGEN_GRID_SPEC[res_0p25_s3]:-"latlon 0:1440:0.25 90:721:-0.25"}
+PRDGEN_HOURS[res_0p25_s3]=${PRDGEN_HOURS[res_0p25_s3]:-"{6..240..9}"}
+PRDGEN_SUBMC[res_0p25_s3]=${PRDGEN_SUBMC[res_0p25_s3]:-"prd0p25"}
+PRDGEN_A_DIR[res_0p25_s3]=${PRDGEN_A_DIR[res_0p25_s3]:-"pgrb2ap25"}
+PRDGEN_B_DIR[res_0p25_s3]=${PRDGEN_B_DIR[res_0p25_s3]:-"pgrb2bp25"}
+PRDGEN_A_PREFIX[res_0p25_s3]=${PRDGEN_A_PREFIX[res_0p25_s3]:-"pgrb2a.0p25."}
+PRDGEN_B_PREFIX[res_0p25_s3]=${PRDGEN_B_PREFIX[res_0p25_s3]:-"pgrb2b.0p25."}
+
+export PRDGEN_GRID
+export PRDGEN_GRID_SPEC
+export PRDGEN_HOURS
+export PRDGEN_SUBMC
+export PRDGEN_A_DIR
+export PRDGEN_B_DIR
+export PRDGEN_A_PREFIX
+export PRDGEN_B_PREFIX
+export PRDGEN_DO_ANALYSIS
+
+# for stream in ${PRDGEN_STREAMS[@]}; do
+# 	cat <<-EOF
+# 		Settings for prgden stream $stream:
+# 			Grid: ${PRDGEN_GRID[$stream]}
+# 			Grid Spec: ${PRDGEN_GRID_SPEC[$stream]}
+# 			Hours: ${PRDGEN_HOURS[$stream]}
+# 			submc: ${PRDGEN_SUBMC[$stream]}
+# 			A Dir: ${PRDGEN_A_DIR[$stream]}
+# 			A Prefix: ${PRDGEN_A_PREFIX[$stream]}
+# 			B Dir: ${PRDGEN_B_DIR[$stream]}
+# 			B Prefix: ${PRDGEN_B_PREFIX[$stream]}
+# 			Do Anaylsis: ${PRDGEN_DO_ANALYSIS[$stream]:-"NO (default)"}
+
+# 	EOF
+
+# 	for hour in ${PRDGEN_HOURS[$stream]}; do
+# 		echo "hour=$hour"
+# 	done
+
+# done

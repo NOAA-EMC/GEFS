@@ -37,55 +37,20 @@ echo fcstlong=$fcstlong
 echo cycsuffix=$cycsuffix
 echo cfsuffix=$cfsuffix
 
-#usage "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR} ${FHOUR} ${FHINC} $DOANALYSIS ${jobgrid_1} ${subdata} 2>&1 >${outfile}" >>prdgen.cmdfile
-export SHOUR=$1
-export FHOUR=$2
-#export FHINC=$3
-export FHOUT=$3
-export DOANALYSIS=$4
-export jobgrid=$5
-export jobdir=$6
-export FHOUT_HF=$7
-export FHMAX_HF=$8
+export jobdir="${1}"                   # ${DATA}/${stream}
+export stream="${2}"                   # PRDGEN_STREAMS
+export jobgrid="${3}"                  # PRDGEN_GRID[$stream]
+export grid_spec="${4}"                # PRDGEN_GRID_SPEC[$stream]
+typeset -a hours="${5}"                # PRDGEN_HOURS[$stream]
+export submc="${6}"                    # PRDGEN_SUBMC[$stream]
+export pgad="${7}"                     # PRDGEN_A_DIR[$stream]
+export pgbd="${8}"                     # PRDGEN_B_DIR[$stream]
+export pgapre="${9}"                   # PRDGEN_A_PREFIX[$stream]
+export pgbpre="${10}"                  # PRDGEN_B_PREFIX[$stream]
+export do_analysis="${11}"             # PRDGEN_DO_ANALYSIS[$stream]
 
 export MP_LABELIO=YES
-
 export GRID=$jobgrid   # GRID is part of the DBN message
-case $jobgrid in
-  1p0) submc=prd1p0
-       #pgad=pgrb2a
-       #pgbd=pgrb2b
-       #pgapre=pgrb2a
-       #pgbpre=pgrb2b
-       pgad=pgrb2a1p0
-       pgbd=pgrb2b1p0
-       pgapre=pgrb2a.1p00.
-       pgbpre=pgrb2b.1p00.
-       pgasuf=
-       ;;
-  2p5) submc=prd2p5
-       pgad=pgrb2a2p5
-       pgbd=pgrb2b2p5
-       pgapre=pgrb2a.2p50.
-       pgbpre=pgrb2b.2p50.
-       #pgasuf=.2
-       pgasuf=
-       ;;
-  0p5) submc=prd0p5
-       pgad=pgrb2ap5
-       pgbd=pgrb2bp5
-       pgapre=pgrb2a.0p50.
-       pgbpre=pgrb2b.0p50.
-       pgasuf=
-       ;;
-  0p25) submc=prd0p25
-       pgad=pgrb2ap25
-       pgbd=pgrb2bp25
-       pgapre=pgrb2a.0p25.
-       pgbpre=pgrb2b.0p25.
-       pgasuf=
-       ;;
-esac
 
 ############################################################
 # clean up missing markers from previous run
@@ -96,7 +61,7 @@ rc=$?
 if (( rc == 0 )); then
 	for file in $RUNMEM.*.missing; do
 		if [[ -f $file ]]; then
-			echo `date` removing $COMOUT/$cyc/misc/$submc/$file
+			echo "$(date) removing $COMOUT/$cyc/misc/$submc/$file"
 			rm -f $COMOUT/$cyc/misc/$submc/$file
 		fi
 	done # for file in $RUNMEM.*.missing
@@ -104,178 +69,100 @@ fi # (( rc == 0 ))
 #cd $DATA
 cd $jobdir
 
-############################################################
-#  Define Variables:
-#  -----------------
-#  SHOUR        is the starting forecast hour. normally 0 except for restarts.
-#  FHOUR        is the ending forecast hour.
-#  FHINC        is the increment hour for each forecast steps.
-#  FH           is the current forecast hour.
-#  SLEEP_TIME   is the number of seconds to sleep before exiting with error.
-#  SLEEP_INT    is the number of seconds to sleep between restrt file checks.
-#  restart_file is the name of the file to key off of to kick off post.
-############################################################
-
 SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
-############################################################
-# Post Analysis Files before starting the Forecast Post 
-############################################################ 
-if [[ $DOANALYSIS = YES ]] && (( SHOUR == 0 )); then
-	############################################################ 
-	# wait for master post to be finished
-	############################################################
-#if (( SHOUR == 0 )); then
+for hour in $hours; do
 
-	export ffhr=anl
-	export fhr=00
-	export pfhr=00
-	if test $fhr -lt 100; then
-		pad="0"
-		export pfhr=$pad$fhr
-	fi
+	if [[ $do_analysis = YES ]] && (( hour == 0 )); then
+		export ffhr=anl
+		export fhr=00
 
-	export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.anl$cfsuffix
-	export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl$cfsuffix 
-	export mifile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl$cfsuffix 
+		export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.anl$cfsuffix
+		export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl$cfsuffix
+		export mifile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl$cfsuffix
 
-	export pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.anl$cfsuffix
-	export fileaout=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf$cfsuffix
-	export fileaouti=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf$cfsuffix.idx
-	export filebout=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf$cfsuffix
-	export filebouti=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf$cfsuffix.idx
+		export pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.anl$cfsuffix
+		export fileaout=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf$cfsuffix
+		export fileaouti=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf$cfsuffix.idx
+		export filebout=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf$cfsuffix
+		export filebouti=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf$cfsuffix.idx
 
-	ic=1
-	while [ $ic -le $SLEEP_LOOP_MAX ]; do
-	#20100730 change test to use master control file
-		testfhr=-1
-		if [[ -f $mcfile ]]; then
-			teststring=`cat $mcfile|head -1`
-			if [[ $teststring != '' ]]; then
-				if [[ -f $mifile ]]; then
-					testfhr=`echo $teststring | cut -c11-13`
+		ic=1
+		while [ $ic -le $SLEEP_LOOP_MAX ]; do
+			testfhr=-1
+			if [[ -f $mcfile ]]; then
+				teststring=`cat $mcfile|head -1`
+				if [[ $teststring != '' ]]; then
+					if [[ -f $mifile ]]; then
+						testfhr=`echo $teststring | cut -c11-13`
+					fi
+				fi # [[ $teststring != '' ]]
+			fi # [[ -f $mcfile ]]
+			echo "testfhr=$testfhr fhr=$fhr"
+
+			if (( testfhr >= fhr )); then
+				break
+			else
+				ic=`expr $ic + 1`
+				sleep $SLEEP_INT
+			fi # (( testfhr >= fhr ))
+
+			###############################
+			# If we reach this point assume
+			# fcst job never reached restart 
+			# period and write file to
+			# indicate missing data
+			###############################
+			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+				date >$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.anl$cfsuffix.missing
+				echo "$(date) $sname $member post data missing for analysis"
+				msg="$member MISSING POST DATA for analysis"
+				postmsg "$jlogfile" "$msg"
+				export err=1; err_chk
+			fi # [ $ic -eq $SLEEP_LOOP_MAX ]
+
+		done # [ $ic -le $SLEEP_LOOP_MAX ]
+
+		#
+		# If control file already exists and skip if all output also present, otherwise
+		#   delete control file to rerun. 
+		#
+		if [[ -s $pcfile ]]; then
+			nmissing=0
+			for file in $fileaout $fileaouti $filebout $filebouti; do
+				if [[ ! -s $file ]]; then
+					echo file=$file IS MISSING
+					(( nmissing = nmissing + 1 ))
 				fi
-			fi # [[ $teststring != '' ]]
-		fi # [[ -f $mcfile ]]
-		echo testfhr=$testfhr fhr=$fhr
-
-		if (( testfhr >= fhr )); then
-			break
-		else
-			ic=`expr $ic + 1`
-			sleep $SLEEP_INT
-		fi # (( testfhr >= fhr ))
-	###############################
-		# If we reach this point assume
-		# fcst job never reached restart 
-		# period and write file to
-		# indicate missing data
-		###############################
-		if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-			date >$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.anl$cfsuffix.missing
-			echo `date` $sname $member post data missing for analysis
-			msg="$member MISSING POST DATA for analysis"
-			postmsg "$jlogfile" "$msg"
-			export err=1; err_chk
-		fi # [ $ic -eq $SLEEP_LOOP_MAX ]
-	done # [ $ic -le $SLEEP_LOOP_MAX ]
-
-	#######################################################
-	# control the inclusion of perturbation identifiers
-	# in the GRIB1 ensemble PDS header extension
-	#######################################################
-
-	if [[ -s $pcfile ]]; then
-		nmissing=0
-		for file in $fileaout $fileaouti $filebout $filebouti; do
-			if [[ ! -s $file ]]; then
-				echo file=$file IS MISSING
-				(( nmissing = nmissing + 1 ))
+			done # for file in $fileaout $fileaouti $filebout $filebouti
+			if (( nmissing > 0 )); then
+				rm $pcfile
 			fi
-		done # for file in $fileaout $fileaouti $filebout $filebouti
-		if (( nmissing > 0 )); then
-			rm $pcfile
-		fi
-	else
-		nmissing=1
-	fi # [[ -s $pcfile ]]
+		else
+			nmissing=1
+		fi # [[ -s $pcfile ]]
 
-	if [[ ! -s $pcfile ]]; then
+		if [[ ! -s $pcfile ]]; then
+			$USHgefs/gefs_prdgen.sh 
 
-		$USHgefs/gefs_prdgen.sh
+			####################################
+			# send control files to misc
+			####################################
+			if test $SENDCOM = "YES"; then
+				echo "$PDY$cyc$pfhr" > $pcfile
+			fi # test $SENDCOM = "YES"
+		fi # [[ ! -s $pcfile ]]
+	fi # [[ $do_analysis = YES ]] && (( hour == 0 ))
 
-		####################################
-		# send control files to misc
-		####################################
-		if test $SENDCOM = "YES"; then
-			echo "$PDY$cyc$pfhr" > $pcfile
-		fi # test $SENDCOM = "YES"
-	fi # [[ ! -s $pcfile ]]
-
-#fi # (( SHOUR == 0 ))
-fi # [[ $DOANALYSIS = YES ]]
-
-############################################################
-# Initialize Loop Through the Post Forecast Files 
-############################################################
-
-(( fhr=SHOUR))
-
-if test $fhr -lt 10; then
-	fhr="0$fhr"
-fi
-export fhr
-
-############################################################
-# Loop Through the Post Forecast Files 
-############################################################
-while test $fhr -le $FHOUR; do
-        ffhr=f$fhr
-        if [ $FHMAX_HF -eq 0 ]; then
-                FHINC=$FHOUT
-        else
-          if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
-                FHINC=$FHOUT_HF
-          else
-                if [ $FHOUT_HF -gt $FHOUT ]; then
-                  FHINC=$FHOUT_HF
-                else
-                  FHINC=$FHOUT
-                fi
-
-                rem=`echo "${fhr}%${FHOUT}" | bc`
-                if [ $rem -eq 0 ]; then
-                  echo "$fhr forecast is needed, continue the prdgen process"
-                else
-#                 echo "$fhr forecast is not needed, process next fhr"
-                  while test $rem -ne 0; do
-                    export fhr=`expr $fhr + $FHINC`
-                    rem=`echo "${fhr}%${FHOUT}" | bc`
-#                   echo "fhr change to " $fhr
-#                   echo "rem change to " $rem
-                  done
-                fi
-          fi
-          echo " TEST 01" $jobgrid $fhr $FHINC
-        fi
-
-        if [ $fhr -gt $FHOUR ]; then
-          echo $fhr "is longer than" $FHOUR  "break !"
-          break
-        fi
+	export fhr=$(printf "%02.0f" $hour)        # Zero-pad to two places
+	export pfhr=$(printf "%03.0f" $hour)       # Zero-pad to three places
+	export ffhr="f${fhr}"
 
 	###############################
 	# Start Looping for the 
 	# existence of the restart files
 	###############################
 	export pgm="postcheck"
-
-	if test $fhr -lt 100; then
-		pad="0"
-        else
-		pad=""
-	fi
-		export pfhr=$pad$fhr
 
 	export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.f$fhr$cfsuffix
 	export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr$cfsuffix
@@ -297,16 +184,19 @@ while test $fhr -le $FHOUR; do
 					testfhr=`echo $teststring | cut -c11-13`
 				fi
 			fi # [[ $teststring != '' ]]
-                else
-                  echo " file mcfile missing"
+		else
+			echo " file mcfile missing"
 		fi # [[ -f $mcfile ]]
+
 		echo testfhr=$testfhr fhr=$fhr
+
 		if (( testfhr >= fhr )); then
 			break
 		else
 			ic=`expr $ic + 1`
 			sleep $SLEEP_INT
 		fi # (( testfhr >= fhr ))
+
 		###############################
 		# If we reach this point assume
 		# fcst job never reached restart 
@@ -314,7 +204,7 @@ while test $fhr -le $FHOUR; do
 		###############################
 		if [ $ic -eq $SLEEP_LOOP_MAX ]; then
 			date >$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.f$pfhr$cfsuffix.missing
-			echo `date` $sname $member missing post data for hour $fhr
+			echo "$(date) $sname $member missing post data for hour $fhr"
 			msg="$member MISSING POST DATA for hour $fhr"
 			postmsg "$jlogfile" "$msg"
 			export err=1; err_chk
@@ -323,7 +213,6 @@ while test $fhr -le $FHOUR; do
 
 	msg="Starting post for fhr=$fhr"
 	postmsg "$jlogfile" "$msg"
-
 
 	#################################### 
 	# control the inclusion of perturbation identifiers
@@ -363,14 +252,7 @@ while test $fhr -le $FHOUR; do
 	if [[ "$jobgrid" = "0p5" ]] && [[ $fhr -eq 240 ]]; then
 		ecflow_client --event pgrb2ap5_f240_ready
 	fi
-
-	export fhr=`expr $fhr + $FHINC`
-	if test $fhr -lt 10; then
-		export fhr="0$fhr"
-	fi
-done # while test $fhr -le $FHOUR
-########################################################
-
+done # for hour in $hours
 
 msg='ENDED NORMALLY.'
 postmsg "$jlogfile" "$msg"

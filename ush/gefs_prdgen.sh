@@ -25,22 +25,9 @@ export option1=' -set_grib_type same -new_grid_winds earth '
 export option21=' -new_grid_interpolation bilinear  -if '
 export option22=":(LAND|CSNOW|CRAIN|CFRZR|CICEP|ICSEV):"
 export option23=' -new_grid_interpolation neighbor -fi '
-export grid0p25="latlon 0:1440:0.25 90:721:-0.25"
-export grid0p5="latlon 0:720:0.5 90:361:-0.5"
-export grid1p0="latlon 0:360:1.0 90:181:-1.0"
-export grid2p5="latlon 0:144:2.5 90:73:-2.5"
-#NB: the gridXXX defined in gefs.parm is for copygb2. 
-#Now we are changing to wgrib2 and these new settings are needed.
 
 ffhr=$ffhr
 fhr=$fhr
-
-case $jobgrid in
-   1p0) grid=$grid1p0;;
-   2p5) grid=$grid2p5;;
-   0p5) grid=$grid0p5;;
-   0p25) grid=$grid0p25;;
-esac
 
 #export WGRIB=${WGRIB:-$EXECgrib/wgrib}
 #export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
@@ -84,7 +71,7 @@ case $R1 in
 		;;
 esac # $R1 in
 
-msg="Starting post for member=$member ffhr=$ffhr"
+msg="Starting post for member=$RUNMEM ffhr=$ffhr"
 postmsg "$jlogfile" "$msg"
 
 if (( fhr == 0 )); then
@@ -100,7 +87,7 @@ if [[ -s $DATA/pgrb2$ffhr$cfsuffix ]] && \
    [[ $overwrite = no ]]; then
 	echo `date` $jobgrid  pgrb2 processing skipped for $RUNMEM $ffhr
 else
-	$WGRIB2 $mafile $option1 $option21 $option22 $option23 -new_grid $grid pgb2file.$ffhr$cfsuffix
+	$WGRIB2 $mafile $option1 $option21 $option22 $option23 -new_grid $grid_spec pgb2file.$ffhr$cfsuffix
 	rc=$?
 	if [[ $rc -ne 0 ]]; then
 		msg="FATAL ERROR: wgrib2 for $mafile failed!"
