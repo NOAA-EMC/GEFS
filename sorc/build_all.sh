@@ -91,7 +91,7 @@ echo " .... Building global_ensadd - 06 .... "
 #------------------------------------
 $Build_global_enspqpf && {
 echo " .... Building global_enspqpf - 07 .... "
-#./build_global_enspqpf.sh > $logs_dir/build_global_enspqpf.log 2>&1
+./build_global_enspqpf.sh > $logs_dir/build_global_enspqpf.log 2>&1
 }
 
 #------------------------------------
@@ -99,7 +99,7 @@ echo " .... Building global_enspqpf - 07 .... "
 #------------------------------------
 $Build_gefs_ensstat && {
 echo " .... Building gefs_ensstat - 08 .... "
-#./build_gefs_ensstat.sh > $logs_dir/build_gefs_ensstat.log 2>&1
+./build_gefs_ensstat.sh > $logs_dir/build_gefs_ensstat.log 2>&1
 }
 
 #------------------------------------
@@ -107,7 +107,7 @@ echo " .... Building gefs_ensstat - 08 .... "
 #------------------------------------
 $Build_global_ensppf && {
 echo " .... Building global_ensppf - 09 .... "
-#./build_global_ensppf.sh > $logs_dir/build_global_ensppf.log 2>&1
+./build_global_ensppf.sh > $logs_dir/build_global_ensppf.log 2>&1
 }
 
 #------------------------------------
@@ -115,7 +115,7 @@ echo " .... Building global_ensppf - 09 .... "
 #------------------------------------
 $Build_global_enscvprcp && {
 echo " .... Building global_enscvprcp - 10 .... "
-#./build_global_enscvprcp.sh > $logs_dir/build_global_enscvprcp.log 2>&1
+./build_global_enscvprcp.sh > $logs_dir/build_global_enscvprcp.log 2>&1
 }
 
 #------------------------------------
@@ -123,7 +123,7 @@ echo " .... Building global_enscvprcp - 10 .... "
 #------------------------------------
 $Build_global_enspvrfy && {
 echo " .... Building global_enspvrfy - 11 .... "
-#./build_global_enspvrfy.sh > $logs_dir/build_global_enspvrfy.log 2>&1
+./build_global_enspvrfy.sh > $logs_dir/build_global_enspvrfy.log 2>&1
 }
 
 #------------------------------------
@@ -131,7 +131,7 @@ echo " .... Building global_enspvrfy - 11 .... "
 #------------------------------------
 $Build_global_enssrbias && {
 echo " .... Building global_enssrbias - 12 .... "
-#./build_global_enssrbias.sh > $logs_dir/build_global_enssrbias.log 2>&1
+./build_global_enssrbias.sh > $logs_dir/build_global_enssrbias.log 2>&1
 }
 
 #------------------------------------
@@ -139,7 +139,7 @@ echo " .... Building global_enssrbias - 12 .... "
 #------------------------------------
 $Build_global_enscqpf && {
 echo " .... Building global_enscqpf - 13 .... "
-#./build_global_enscqpf.sh > $logs_dir/build_global_enscqpf.log 2>&1
+./build_global_enscqpf.sh > $logs_dir/build_global_enscqpf.log 2>&1
 }
 
 #------------------------------------
@@ -147,7 +147,7 @@ echo " .... Building global_enscqpf - 13 .... "
 #------------------------------------
 $Build_global_enscvt24h && {
 echo " .... Building global_enscvt24h - 14 .... "
-#./build_global_enscvt24h.sh > $logs_dir/build_global_enscvt24h.log 2>&1
+./build_global_enscvt24h.sh > $logs_dir/build_global_enscvt24h.log 2>&1
 }
 
 #------------------------------------
@@ -155,7 +155,7 @@ echo " .... Building global_enscvt24h - 14 .... "
 #------------------------------------
 $Build_global_ensrfmat && {
 echo " .... Building global_ensrfmat - 15 .... "
-#./build_global_ensrfmat.sh > $logs_dir/build_global_ensrfmat.log 2>&1
+./build_global_ensrfmat.sh > $logs_dir/build_global_ensrfmat.log 2>&1
 }
 
 #------------------------------------
@@ -163,7 +163,7 @@ echo " .... Building global_ensrfmat - 15 .... "
 #------------------------------------
 $Build_gettrk && {
 echo " .... Building gettrk - 16 .... "
-#./build_gettrk.sh > $logs_dir/build_gettrk.log 2>&1
+./build_gettrk.sh > $logs_dir/build_gettrk.log 2>&1
 }
 
 
@@ -172,7 +172,7 @@ echo " .... Building gettrk - 16 .... "
 #------------------------------------
 $Build_overenstr_grib && {
 echo " .... Building overenstr_grib - 17 .... "
-#./build_overenstr_grib.sh > $logs_dir/build_overenstr_grib.log 2>&1
+./build_overenstr_grib.sh > $logs_dir/build_overenstr_grib.log 2>&1
 }
 
 #------------------------------------
@@ -180,10 +180,10 @@ echo " .... Building overenstr_grib - 17 .... "
 #------------------------------------
 $Build_getnsttf && {
 echo " .... Building getnsttf - 18 .... "
-#./build_getnsttf.sh > $logs_dir/build_getnsttf.log 2>&1
+./build_getnsttf.sh > $logs_dir/build_getnsttf.log 2>&1
 }
 
-exit
+exit 0
 
 #------------------------------------
 # build libraries first

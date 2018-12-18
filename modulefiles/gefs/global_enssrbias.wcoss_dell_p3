@@ -1,0 +1,11 @@
+#%Module#####################################################
+## global_enssrbias component - wcoss_dell_p3
+#############################################################
+module load ips/18.0.1.163
+
+
+##
+export FCMP=ifort
+export LDFLAGSM=
+export OMPFLAGM=
+
