@@ -141,9 +141,12 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     #export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Bing.Fu/git/q2fy19_nco_rftest
     #export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Bing.Fu/git/q2fy19_nco_rftest1
     export HOMEDIR=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gfs/fv3gfs_b84e91d2
-    
+   
+    export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
+ 
     #export HOMEdata=/gpfs/dell2/emc/retros/noscrub/Xianwu.Xue/common/initdata
-    export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
+    #export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
+	export HOMEdata=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Hong.Guan/common
     export COMROOThps=${HOMEdata} 
 fi
 
