@@ -34,8 +34,6 @@ export OMPFLAGM=${OMPFLAGM:-""}
 
 export INCSM="-I ${G2_INCd}"
 
-export IP_LIBd=/gpfs/dell1/nco/ops/nwtest/lib.p2/ip/v2.0.0/libip_v2.0.0_d.a
-#export IP_LIBd=/gpfs/dell1/nco/ops/nwtest/lib.p2/ip/v3.0.0/libip_v3.0.0_d.a
 export LIBSM="${G2_LIBd} ${W3NCO_LIBd} ${BACIO_LIB4} ${IP_LIBd} ${SP_LIBd} ${PNG_LIB} ${JASPER_LIB} ${Z_LIB} ${W3NCO_LIBd}"
 
 make -f Makefile clobber

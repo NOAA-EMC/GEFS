@@ -3,7 +3,6 @@
 #############################################################
 module load ips/18.0.1.163
 
-
 ##
 export FCMP=ifort
 export LDFLAGSM=
