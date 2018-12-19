@@ -107,8 +107,11 @@ mkdir -m 775 -p $COMOUT/$cyc/pgrb2bp5
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap25
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2bp25
 
-if [[ $save_master_p5 == YES ]]; then
-	mkdir -m 775 -p $COMOUT/$cyc/master_p5
+if [[ $save_pgrb2_p5 == YES ]]; then
+	mkdir -m 775 -p $COMOUT/$cyc/pgrb2p5
+fi
+if [[ $save_pgrb2_p25 == YES ]]; then
+	mkdir -m 775 -p $COMOUT/$cyc/pgrb2p25 
 fi
 
 #mkdir -m 775 -p $COMOUT/$cyc/tctrack

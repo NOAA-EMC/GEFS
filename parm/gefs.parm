@@ -179,7 +179,8 @@ export option22=${option22:-":(LAND|CSNOW|CRAIN|CFRZR|CICEP|ICSEV):"}
 export option23=${option3:-' -new_grid_interpolation neighbor -fi '}
 
 # The following options are fore re-forecast
-export save_master_p5=${save_master_p5:-NO} 
+export save_pgrb2_p5=${save_pgrb2_p5:-NO} 
+export save_pgrb2_p25=${save_pgrb2_p25:-NO} 
 
 # fhoroglist is the list of additional hours at which surface height should be included in pgrba
 # this is normally fhmaxh + 12 to include the next gfs output time after the resolution change

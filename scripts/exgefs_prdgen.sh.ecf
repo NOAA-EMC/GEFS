@@ -270,9 +270,14 @@ while test $fhr -le $FHOUR; do
 	export filebout=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}$pgasuf$cfsuffix
 	export filebouti=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}$pgasuf$cfsuffix.idx
 
-	if [[ $save_master_p5 = YES ]] && (( FHOUR > FHMAXHF )); then
-		export mafile_p5=$COMOUT/$cyc/master_p5/$RUNMEM.$cycle.master_p5.grb2f${fhr}
-		export mifile_p5=$COMOUT/$cyc/master_p5/$RUNMEM.$cycle.master_p5.grb2if${fhr}
+	if [[ $save_pgrb2_p5 = YES ]] && (( FHOUR > FHMAXHF )); then
+		export mafile_p5=$COMOUT/$cyc/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.${fhr}
+		export mifile_p5=$COMOUT/$cyc/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.${fhr}.idx
+	fi
+	fi
+	if [[ $save_pgrb2_p25 = YES ]] && (( FHOUR <= FHMAXHF )); then
+		export mafile_p25=$COMOUT/$cyc/pgrb2p25/$RUNMEM.$cycle.pgrb2.0p25.${fhr}
+		export mifile_p25=$COMOUT/$cyc/pgrb2p25/$RUNMEM.$cycle.pgrb2.0p25.${fhr}.idx
 	fi
 
 	ic=1
