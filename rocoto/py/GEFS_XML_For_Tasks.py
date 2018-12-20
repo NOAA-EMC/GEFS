@@ -347,6 +347,50 @@ def get_param_of_task(dicBase, taskname):
                         sDep = '<and>\n\t<taskdep task="copy_init_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
                     else:
                         sDep = '<taskdep task="copy_init_#member#"/>'
+                else:
+                    sDep = "" 
+                       
+            # For 'forecast_low' task
+            if taskname.lower() == "forecast_low": 
+                if DoesTaskExist(dicBase, "forecast_high"):
+                    sDep = '<taskdep task="forecast_high_#member#"/>'
+                else:
+                    if DoesTaskExist(dicBase, "init_fv3chgrs"):
+                        if DoesTaskExist(dicBase, "getcfssst"):
+                            sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+                        else:
+                            sDep = '<taskdep task="init_fv3chgrs_#member#"/>'
+                    elif DoesTaskExist(dicBase, "rf_prep"):
+                        if DoesTaskExist(dicBase, "getcfssst"):
+                            sDep = '<and>\n\t<taskdep task="rf_prep"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+                        else:
+                            sDep = '<taskdep task="rf_prep"/>'
+                    else:  # For Warm Start
+                        if DoesTaskExist(dicBase, "getcfssst"):   
+                            sDep = '<and>\n\t<taskdep task="getcfssst"/>\n</and>'
+                        else:
+                            sDep = ''
+                            
+            # For ensstat_high
+            if taskname.lower() == "ensstat_high": 
+                npert = int(dicBase["NPERT"])
+                sDep = '<and>'
+                for i in range(npert):
+                    sDep += '\n\t<datadep>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.master.control.f000</cyclestr></datadep>'.format(i+1)
+                sDep +='\n\t<datadep>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.master.control.f000</cyclestr></datadep>'
+                sDep +='\n</and>'
+                
+            # For ensstat_low
+            if taskname.lower() == "ensstat_low": 
+                npert = int(dicBase["NPERT"])
+                sDep = '<and>'
+                for i in range(npert):
+                    sDep += '\n\t<datadep>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.master.control.f{1:03}</cyclestr></datadep>'.format(i+1,int(dicBase["fhmaxh".upper()]))
+                sDep +='\n\t<datadep>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.master.control.f{0:03}</cyclestr></datadep>'.format(int(dicBase["fhmaxh".upper()]))
+                sDep +='\n</and>'
+                
+            #misc/prd1p0/*fXXX
+            #/gpfs/dell3/nco/storage/fv3gefs/HOME/Xianwu.Xue/o/DHrestart_2/com/gens/dev/gefs.20160326/00/misc/prd1p0/gep10.t00z.prdgen.control.f276
                             
             # For Low Resolution
             if taskname.lower() == "post_low" or taskname.lower() == "prdgen_low":
