@@ -183,6 +183,8 @@ echo " .... Building getnsttf - 18 .... "
 ./build_getnsttf.sh > $logs_dir/build_getnsttf.log 2>&1
 }
 
+echo;echo " .... Build system finished .... "
+
 exit 0
 
 #------------------------------------
