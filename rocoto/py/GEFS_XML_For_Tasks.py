@@ -376,8 +376,8 @@ def get_param_of_task(dicBase, taskname):
                 npert = int(dicBase["NPERT"])
                 sDep = '<and>'
                 for i in range(npert):
-                    sDep += '\n\t<datadep>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.master.control.f000</cyclestr></datadep>'.format(i+1)
-                sDep +='\n\t<datadep>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.master.control.f000</cyclestr></datadep>'
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.prdgen.control.f000</cyclestr></datadep>'.format(i+1)
+                sDep +='\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.prdgen.control.f000</cyclestr></datadep>'
                 sDep +='\n</and>'
                 
             # For ensstat_low
@@ -385,8 +385,8 @@ def get_param_of_task(dicBase, taskname):
                 npert = int(dicBase["NPERT"])
                 sDep = '<and>'
                 for i in range(npert):
-                    sDep += '\n\t<datadep>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.master.control.f{1:03}</cyclestr></datadep>'.format(i+1,int(dicBase["fhmaxh".upper()]))
-                sDep +='\n\t<datadep>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.master.control.f{0:03}</cyclestr></datadep>'.format(int(dicBase["fhmaxh".upper()]))
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.prdgen.control.f{1:03}</cyclestr></datadep>'.format(i+1,int(dicBase["fhmaxh".upper()])+ int(dicBase["FHOUTHF"]))
+                sDep +='\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.prdgen.control.f{0:03}</cyclestr></datadep>'.format(int(dicBase["fhmaxh".upper()]) + int(dicBase["FHOUTHF"]))
                 sDep +='\n</and>'
                 
             #misc/prd1p0/*fXXX
@@ -555,8 +555,10 @@ def get_jobname(taskname):
 
     # else if this file does not exist and if the task name is not in the job_id.conf
     tasknames = taskname.split("_")
-    if len(tasknames) == 2:
-        jobname_short = tasknames[1][0:2] + "_" + tasknames[1][-2:]
+    if len(tasknames) == 1:
+        jobname_short = tasknames[0][0:2] + "_" + tasknames[0][-2:]
+    elif len(tasknames) == 2:
+        jobname_short = tasknames[0][0:2] + "_" + tasknames[1][-2:]
     else:
         jobname_short = tasknames[1][0] + tasknames[1][-1] + "_" + tasknames[2][0] + tasknames[2][-1]
 

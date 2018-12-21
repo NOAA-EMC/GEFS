@@ -1,0 +1,96 @@
+#!/bin/ksh 
+
+echo `date` $0 `date -u` begin
+
+set -xa
+export PS4='$SECONDS + '
+date
+
+############################
+# Set up cycle varaible
+############################
+export cycle=t${cyc}z
+
+####################################
+# obtain unique process id (pid) and make working directory
+####################################
+export pid=$$
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+mkdir -p $DATA
+cd $DATA
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-${COMROOT}/logs/jlogfiles/jlogfile.${job}.${pid}}
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# Specify Execution Areas
+####################################
+export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+
+##############################################
+# Define COM directories
+##############################################
+#export COMINrestart=${COMINrestart:-/gpfs/dell3/nco/storage/fv3gefs/RESTRT}  
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
+##############################################
+# Define COM OUT directories
+##############################################
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}
+
+##############################################
+echo list environment before running script
+##############################################
+
+env | sort
+
+#############################################################
+# Execute the script
+$HOMEgefs/scripts/exgefs_extractvars.sh.ecf
+#############################################################
+ERR=$?
+
+#echo $ERR
+
+if [ $ERR = 0 ]; then
+    msg="JOB COMPLETED NORMALLY"
+else
+    msg="JOB FAILED!"
+fi
+
+postmsg "$jlogfile" "$msg"
+
+echo `date` $0 `date -u` end
+
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
+
+exit $ERR
+

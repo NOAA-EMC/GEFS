@@ -274,7 +274,6 @@ while test $fhr -le $FHOUR; do
 		export mafile_p5=$COMOUT/$cyc/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.${fhr}
 		export mifile_p5=$COMOUT/$cyc/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.${fhr}.idx
 	fi
-	fi
 	if [[ $save_pgrb2_p25 = YES ]] && (( FHOUR <= FHMAXHF )); then
 		export mafile_p25=$COMOUT/$cyc/pgrb2p25/$RUNMEM.$cycle.pgrb2.0p25.${fhr}
 		export mifile_p25=$COMOUT/$cyc/pgrb2p25/$RUNMEM.$cycle.pgrb2.0p25.${fhr}.idx
@@ -290,8 +289,8 @@ while test $fhr -le $FHOUR; do
 					testfhr=`echo $teststring | cut -c11-13`
 				fi
 			fi # [[ $teststring != '' ]]
-                else
-                  echo " file mcfile missing"
+        else
+            echo " file mcfile missing"
 		fi # [[ -f $mcfile ]]
 		echo testfhr=$testfhr fhr=$fhr
 		if (( testfhr >= fhr )); then

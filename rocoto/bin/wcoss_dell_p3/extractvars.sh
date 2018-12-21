@@ -12,7 +12,7 @@ export OMP_NUM_THREADS=6
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export gefsmachine=wcoss_dell_p3y
+export gefsmachine=cray
 
 . $GEFS_ROCOTO/parm/setbase
 . $GEFS_ROCOTO/parm/gefs_config
@@ -20,5 +20,5 @@ export gefsmachine=wcoss_dell_p3y
 
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_RF_PREP
+$SOURCEDIR/jobs/JGEFS_EXTRACTVARS
 
