@@ -345,6 +345,9 @@ while test $fh -le $FHOUR; do
 				rain) TEXT='CRAIN:surface';;
 				icep) TEXT='CICEP:surface';;
 				frzr) TEXT='CFRZR:surface';;
+                                u200) TEXT='UGRD:200 mb';;
+                                v200) TEXT='VGRD:200 mb';;
+                                olr) TEXT='ULWRF:top of atmosphere';;
 			esac # $var
 			echo $var  $TEXT  
 			for mem in $memberlist; do
