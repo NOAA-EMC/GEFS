@@ -762,6 +762,8 @@ cat > input.nml <<EOF
   pre_rad      = ${pre_rad:-".false."}
   ncld         = ${ncld:-1}
   imp_physics  = ${imp_physics:-"99"}
+  lgfdlmprad   = ${lgfdlmprad:-".true."}
+  effr_in      = ${effr_in:-".true."}
   pdfcld       = ${pdfcld:-".false."}
   fhswr        = ${FHSWR:-"3600."}
   fhlwr        = ${FHLWR:-"3600."}

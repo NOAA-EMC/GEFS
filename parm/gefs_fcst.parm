@@ -63,7 +63,7 @@ fi
 # add two tiered SST options
 export sst2tier=${sst2tier:-YES}
 if [[ $sst2tier = YES ]]; then
-export nstf_name="2,1,5,0,0"
+export nstf_name="2,1,0,0,0"
 export FTSFS=0
 export FNTSFA=$SSTDIR/TMPsfc.$PDY$cyc.24hr.anom.grb
 fi
@@ -165,8 +165,8 @@ elif [[ $imp_physics = 11 ]]; then # GFDL
     export cal_pre=".false."
     export do_sat_adj=".true."
     export random_clds=".false."
-    export hord_mt_nh_nonmono=6
-    export hord_xx_nh_nonmono=6
+    export hord_mt_nh_nonmono=5
+    export hord_xx_nh_nonmono=5
     export vtdm4_nh_nonmono=0.02
     export nord=2
     export dddmp=0.1
@@ -247,7 +247,7 @@ fi
 # Stochastic Kinetic Energy Backscatter
 
 if [[ $DO_SKEB = YES ]]; then
-	export SKEB_hr=${SKEB_hr:-"1.0,-999,-999,-999,-999"}                               # Amplitude of SPPT patterns
+	export SKEB_hr=${SKEB_hr:-"0.6,-999,-999,-999,-999"}                               # Amplitude of SPPT patterns
 	export ISEED_SKEB_hr=${ISEED_SKEB_hr:-$((CDATE*1000 + MEMBER*10 + 1))}             # Seed for SKEB pattern
 	export SKEB_TAU_hr=${SKEB_TAU_hr:-"2.16E4,1.728E5,2.592E6,7.776E6,3.1536E7"}       # Time scale in seconds
 	export SKEB_LSCALE_hr=${SKEB_LSCALE_hr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
