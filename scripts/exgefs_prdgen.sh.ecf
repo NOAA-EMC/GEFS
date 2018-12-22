@@ -126,14 +126,8 @@ if [[ $DOANALYSIS = YES ]] && (( SHOUR == 0 )); then
 	# wait for master post to be finished
 	############################################################
 #if (( SHOUR == 0 )); then
-
-	export ffhr=anl
-	export fhr=00
-	export pfhr=00
-	if test $fhr -lt 100; then
-		pad="0"
-		export pfhr=$pad$fhr
-	fi
+    export ffhr=anl
+	export fhr=000
 
 	export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.anl$cfsuffix
 	export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl$cfsuffix 
@@ -208,7 +202,7 @@ if [[ $DOANALYSIS = YES ]] && (( SHOUR == 0 )); then
 		# send control files to misc
 		####################################
 		if test $SENDCOM = "YES"; then
-			echo "$PDY$cyc$pfhr" > $pcfile
+			echo "$PDY$cyc$fhr" > $pcfile
 		fi # test $SENDCOM = "YES"
 	fi # [[ ! -s $pcfile ]]
 
@@ -220,17 +214,13 @@ fi # [[ $DOANALYSIS = YES ]]
 ############################################################
 
 (( fhr=SHOUR))
-
-if test $fhr -lt 10; then
-	fhr="0$fhr"
-fi
-export fhr
+export fhr=$(printf %03i $fhr)
 
 ############################################################
 # Loop Through the Post Forecast Files 
 ############################################################
 while test $fhr -le $FHOUR; do
-        ffhr=f$fhr
+        export ffhr=f$fhr
         if [ $FHMAX_HF -eq 0 ]; then
                 FHINC=$FHOUT
         else
@@ -270,22 +260,24 @@ while test $fhr -le $FHOUR; do
 	###############################
 	export pgm="postcheck"
 
-	if test $fhr -lt 100; then
-		pad="0"
-        else
-		pad=""
-	fi
-		export pfhr=$pad$fhr
-
 	export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.f$fhr$cfsuffix
 	export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr$cfsuffix
 	export mifile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr$cfsuffix
 
-	export pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f${pfhr}$cfsuffix
-	export fileaout=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}f${pfhr}$pgasuf$cfsuffix
-	export fileaouti=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}f${pfhr}$pgasuf$cfsuffix.idx
-	export filebout=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f${pfhr}$pgasuf$cfsuffix
-	export filebouti=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f${pfhr}$pgasuf$cfsuffix.idx
+	export pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f${fhr}$cfsuffix
+	export fileaout=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}$pgasuf$cfsuffix
+	export fileaouti=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}$pgasuf$cfsuffix.idx
+	export filebout=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}$pgasuf$cfsuffix
+	export filebouti=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}$pgasuf$cfsuffix.idx
+
+	if [[ $save_pgrb2_p5 = YES ]] && (( FHOUR > FHMAXHF )); then
+		export mafile_p5=$COMOUT/$cyc/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.f${fhr}
+		export mifile_p5=$COMOUT/$cyc/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.f${fhr}.idx
+	fi
+	if [[ $save_pgrb2_p25 = YES ]] && (( FHOUR <= FHMAXHF )); then
+		export mafile_p25=$COMOUT/$cyc/pgrb2p25/$RUNMEM.$cycle.pgrb2.0p25.f${fhr}
+		export mifile_p25=$COMOUT/$cyc/pgrb2p25/$RUNMEM.$cycle.pgrb2.0p25.f${fhr}.idx
+	fi
 
 	ic=1
 	while [ $ic -le $SLEEP_LOOP_MAX ]; do
@@ -297,8 +289,8 @@ while test $fhr -le $FHOUR; do
 					testfhr=`echo $teststring | cut -c11-13`
 				fi
 			fi # [[ $teststring != '' ]]
-                else
-                  echo " file mcfile missing"
+        else
+            echo " file mcfile missing"
 		fi # [[ -f $mcfile ]]
 		echo testfhr=$testfhr fhr=$fhr
 		if (( testfhr >= fhr )); then
@@ -313,7 +305,7 @@ while test $fhr -le $FHOUR; do
 		# period and error exit
 		###############################
 		if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-			date >$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.f$pfhr$cfsuffix.missing
+			date >$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.f$fhr$cfsuffix.missing
 			echo `date` $sname $member missing post data for hour $fhr
 			msg="$member MISSING POST DATA for hour $fhr"
 			postmsg "$jlogfile" "$msg"
@@ -352,7 +344,7 @@ while test $fhr -le $FHOUR; do
 		# send control files to misc
 		####################################
 		if test $SENDCOM = "YES"; then
-			echo "$PDY$cyc$pfhr" > $pcfile
+			echo "$PDY$cyc$fhr" > $pcfile
 		fi # test $SENDCOM = "YES"
 	fi # [[ ! -s $pcfile ]]
 
@@ -365,9 +357,8 @@ while test $fhr -le $FHOUR; do
 	fi
 
 	export fhr=`expr $fhr + $FHINC`
-	if test $fhr -lt 10; then
-		export fhr="0$fhr"
-	fi
+    export fhr=$(printf %03i $fhr)
+
 done # while test $fhr -le $FHOUR
 ########################################################
 

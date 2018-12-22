@@ -1,0 +1,136 @@
+#!/bin/ksh
+echo `date` $0 begin
+################################################################################
+#   Script:    
+#
+
+set -x
+# Set environment.
+VERBOSE=${VERBOSE:-"YES"}
+if [ $VERBOSE = "YES" ]; then
+    echo $(date) EXECUTING $0 $* >&2
+    set -x
+fi
+
+# Utilities
+NCP=${NCP:-"/bin/cp -p"}
+NLN=${NLN:-"/bin/ln -sf"}
+NMV=${NMV:-"/bin/mv -uv"}
+
+#REFCST=${RFHOME}/REFCST
+REFCST=${WORKDIR}/REFCST
+
+CDATE=$PDY$cyc
+
+yyyy=$(echo  $CDATE | cut -c1-4)
+mm=$(echo $CDATE | cut -c5-6)
+dd=$(echo   $CDATE | cut -c7-8)
+hh=$(echo  $CDATE | cut -c9-10)
+
+npert=${npert}
+if [ $npert <=0 ]; then
+    echo "WARNING: npert <=0"
+    exit 8
+fi
+
+envir=${envir}
+fhmax=${fhmax}
+FHMAXHF=${FHMAXHF}
+FHOUTHF=${FHOUTHF}
+FHOUTLF=${FHOUTLF}
+
+#MEMLIST=${MEMLIST}
+PARMgefs=${PARMgefs}
+
+COMIN=$COMIN  # GEFS Output Folder
+#enslist = "${MEMLIST} avg spr"
+
+if [[ $npert -eq 10 ]];then
+    enslist="p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 c00 ${enslistend}" # avg spr"
+elif [[ $npert -eq 4 ]]; then
+    enslist="p01 p02 p03 p04 c00 ${enslistend}" # avg spr"
+else
+    echo "npert ($npert) not currently supported. Exiting..."
+    exit
+fi
+
+outdirpre_2d=${REFCST}/$yyyy/$mm/$dd/f2d #directory where we want to save the extracted files
+outdirpre_3d=${REFCST}/$yyyy/$mm/$dd/f3d #directory where we want to save the extracted files
+
+varlist_2d=${PARMgefs}/gefs_shortparmlist_2d.parm
+varlist_3d=${PARMgefs}/gefs_shortparmlist_3d.parm
+
+
+mkdir -p $outdirpre_2d/
+mkdir -p $outdirpre_3d/
+rm -f $outdirpre_2d/*
+rm -f $outdirpre_3d/*
+
+
+for outtype in "f2d" "f3d"; do
+
+    if [[ "$outtype" == "f2d" ]];then
+        varlist=$varlist_2d
+        outdirpre=$outdirpre_2d
+    elif [[ "$outtype" == "f3d" ]];then 
+        varlist=$varlist_3d
+        outdirpre=$outdirpre_3d
+    fi
+
+    nh=6
+    while [[ $nh -le $fhmax ]];do
+        fnh=`printf "%3.3d" ${nh}`
+        echo "extracting f${fnh}"
+
+        if [[ $nh -le $FHMAXHF ]];then
+            outres="0p25"
+            indirpres=$COMIN/pgrb2p25
+
+            #if [[ "$outtype" == "f2d" ]];then
+            #    outres="0p25"
+            #    indirpres=$COMIN/pgrb2p25
+            #elif [[ "$outtype" == "f3d" ]];then 
+            #    outres="0p25"
+            #    indirpres=$COMIN/pgrb2p25
+            #fi
+        else
+            outres="0p50"
+            indirpres=$COMIN/pgrb2p5
+        fi
+
+
+        if [[ $nh -lt $FHMAXHF ]];then
+            outfreq=$FHOUTHF
+        else
+            outfreq=$FHOUTLF
+        fi
+
+        #Extract individual member files
+        for ensname in $enslist; do
+            echo $ensname ==============
+            infile=$indirpres/ge${ensname}.t00z.pgrb2.$outres.f${fnh}
+            oufile=$outdirpre/ge${ensname}.t00z.pgrb2.$outres.f${fnh}
+            
+            echo $infile
+            echo $oufile
+            
+            if [ -f $infile ]; then #check if input file exists before extraction
+                rm -f $oufile #remove outfile if it already exists before extraction   
+                $WGRIB2 $infile | grep -F -f $varlist | $WGRIB2 -i $infile -append -grib $oufile>/dev/null
+            else
+                echo "$infile does not exist"
+                echo "Please check it"
+                #exit 9
+            fi 
+
+        done #member
+
+        nh=$(($nh + $outfreq))
+    done #fhr
+
+done #f2d,f3d
+
+exit 0
+
+
+

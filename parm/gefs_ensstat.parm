@@ -6,7 +6,7 @@ export lfmhr=66000
 export lfmlr=11000
 export lfmp5=264000
 export nensposthr=0
-export nenspostlr=17
+export nenspostlr=20
 export nenspostp5=0
 export statskiplist="gfs c00"
 export statoutfhlist="0 6 384"
@@ -79,6 +79,18 @@ enspostnamlr[17]=v10m
 enspostvarlr[17]=34
 enspostlvtlr[17]=105
 enspostlevlr[17]=10
+enspostnamlr[18]=u200
+enspostvarlr[18]=33
+enspostlvtlr[18]=100
+enspostlevlr[18]=200
+enspostnamlr[19]=v200
+enspostvarlr[19]=34
+enspostlvtlr[19]=100
+enspostlevlr[19]=200
+enspostnamlr[20]=olr
+enspostvarlr[20]=
+enspostlvtlr[20]=
+enspostlevlr[20]=
 
 epnamhr=
 epvarhr=
@@ -135,6 +147,6 @@ export eplvtlr
 export eplevlr
 
 # For grib2 version
-postvarlist='z500 z1000 t850 t2m u10m v10m u250 v250 u850 v850 rh700 prcp snow rain icep frzr prmsl'
+postvarlist='z500 z1000 t850 t2m u10m v10m u250 v250 u850 v850 rh700 prcp snow rain icep frzr prmsl u200 v200 olr'
 export postvarlist
 echo `date` $0 end

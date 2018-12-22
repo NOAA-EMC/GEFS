@@ -1,0 +1,268 @@
+#!/bin/ksh
+echo `date` $0 begin
+################################################################################
+#   Script:    exgefs_getcfssst.sh.sms
+#
+
+set -x
+# Set environment.
+VERBOSE=${VERBOSE:-"YES"}
+if [ $VERBOSE = "YES" ]; then
+    echo $(date) EXECUTING $0 $* >&2
+    set -x
+fi
+
+# Utilities
+NCP=${NCP:-"/bin/cp -p"}
+NLN=${NLN:-"/bin/ln -sf"}
+NMV=${NMV:-"/bin/mv -uv"}
+
+RESTARTDIR=${RFHOME}/RESTRT
+
+RFNDATE=${RFNDATE:-YES}
+#CDATE=$PDY$cyc
+fhmaxh=$fhmaxh
+sfhmaxh=$(printf %02i $fhmaxh)
+CDATE=$PDY$sfhmaxh
+cyc=$cyc
+
+SYEAR=$(echo  $CDATE | cut -c1-4)
+SMONTH=$(echo $CDATE | cut -c5-6)
+SDAY=$(echo   $CDATE | cut -c7-8)
+SHOUR=$(echo  $CDATE | cut -c9-10)
+
+SDATE=${SYEAR}${SMONTH}${SDAY}
+sDate=$SDATE
+sHour=$SHOUR
+
+npert=${npert}
+envir=${envir}
+
+sInWS=${RESTARTDIR}/${SYEAR}/${SMONTH}/${SDAY}
+sOutWS=${GESROOT}/${envir}/gefs.${SYEAR}${SMONTH}${SDAY}/${cyc}
+
+function fun_cp
+{
+    iMem=$1
+    sInWS=$2
+    sOutWS=$3
+    sFileName=$4
+    sDate=$5
+    sHour=$6
+    echo "success"
+
+    if [ $iMem == 0 ]; then
+        sInput_WS=${sInWS}/restarts/control2/INPUT
+        sMem=c00
+    else
+        sMem=p$(printf %02i $iMem)
+
+        if [ ${sFileName} == fv_core.res.nc -o ${sFileName} == coupler.res ]; then
+            sInput_WS=${sInWS}/restarts/control2/INPUT
+        else
+            sMem_3=$(printf %03i $iMem)
+            sInput_WS=${sInWS}/C384_mem${sMem_3}
+        fi
+    fi
+
+    echo $sOutWS
+    echo $sInput_WS
+
+    echo $iMem $sInWS $sOutWS $sFileName $sDate $sHour
+
+    sOutput_WS=${sOutWS}/${sMem}/RESTART
+    mkdir -p $sOutput_WS
+
+    if [ $RFNDATE == "YES" ]; then
+        sOutput_File=${sOutput_WS}/${sDate}.${sHour}0000.${sFileName}
+    else
+        sOutput_File=${sOutput_WS}/${sFileName}
+    fi    
+
+    echo $sOutput_File
+
+    sInput_File=${sInput_WS}/${sFileName}
+    if [ -f $sInput_File ]; then
+        cp -rfp $sInput_File $sOutput_File
+    else
+        echo "---skip:" $sInput_File 
+    fi
+}
+
+
+for iMem in {0..${npert}}
+do
+
+    echo ===========$iMem
+    
+    sFileName=fv_core.res.nc
+    fun_cp $iMem $sInWS $sOutWS $sFileName $sDate $sHour
+
+    sFileName=coupler.res
+    fun_cp $iMem $sInWS $sOutWS $sFileName $sDate $sHour
+
+    for iTile in {1..6}
+    do
+        sFileName=fv_core.res.tile${iTile}.nc
+        fun_cp $iMem $sInWS $sOutWS $sFileName $sDate $sHour
+
+        sFileName=fv_srf_wnd.res.tile${iTile}.nc
+        fun_cp $iMem $sInWS $sOutWS $sFileName $sDate $sHour
+
+        sFileName=fv_tracer.res.tile${iTile}.nc
+        fun_cp $iMem $sInWS $sOutWS $sFileName $sDate $sHour
+
+        sFileName=phy_data.tile${iTile}.nc
+        fun_cp $iMem $sInWS $sOutWS $sFileName $sDate $sHour
+
+        sFileName=sfc_data.tile${iTile}.nc
+        fun_cp $iMem $sInWS $sOutWS $sFileName $sDate $sHour
+    done
+
+done
+
+
+
+exit
+
+function fun_cp
+{
+    iMem=$1
+    sWS=$2
+    sOutputWS=$3
+    sFileName=$4
+    sDate=$5
+    sHour=$6
+    
+    echo ===== $iMem $sWS $sOutputWS $sFileName $sDate $sHour
+
+
+    
+}
+
+
+exit
+
+
+
+c_WS=/gpfs/hps3/emc/ensemble/noscrub/Hong.Guan/common/fv3init/2016032603/restarts/control2/INPUT
+
+sWS=/gpfs/hps3/emc/ensemble/noscrub/Hong.Guan/common/fv3init/2016032603
+
+#sOutputWS=${GESROOT}/dev/gefs.20160326/00
+
+sOutputWS=$COMOUT
+sDate=$PDY
+
+
+
+exit 9
+
+sDate=20160326
+sHour=03
+sMem=c00
+RFNDATE=YES
+
+sInput_WS=${sWS}/restarts/control2/INPUT
+
+sFileName=fv_core.res.nc
+
+
+
+function fun_cp
+{
+	iMem=$1
+	sWS=$2
+	sOutputWS=$3
+	sFileName=$4
+	sDate=$5
+	sHour=$6
+
+	if [ $iMem == 0 ]; then
+        sInput_WS=${sWS}/restarts/control2/INPUT
+        sMem=c00
+    else
+		sMem=p$(printf %02i $iMem)
+
+		if [ ${sFileName} == fv_core.res.nc -o ${sFileName} == coupler.res ]; then
+			sInput_WS=${sWS}/restarts/control2/INPUT
+		else
+			sMem_3=$(printf %03i $iMem)
+			sInput_WS=${sWS}/C384_mem${sMem_3}
+		fi
+    fi
+
+	echo $sMem
+	echo $sInput_WS
+	echo $sOutputWS
+	
+	sOutput_WS=${sOutputWS}/${sMem}/RESTART
+	mkdir -p $sOutput_WS
+
+	if [ $RFNDATE == "YES" ]; then
+		sOutput_File=${sOutput_WS}/${sDate}.${sHour}0000.${sFileName}
+	else
+		sOutput_File=${sOutput_WS}/${sFileName}
+	fi
+
+	echo $sOutput_File
+
+	sInput_File=${sInput_WS}/${sFileName}
+	if [ -f $sInput_File ]; then
+		cp -rfp $sInput_File $sOutput_File
+	else
+		echo "---skip:" $sInput_File 
+	fi
+}
+
+for iMem in {0..10}
+do
+
+	echo ===========$iMem
+	
+	sFileName=fv_core.res.nc
+	fun_cp $iMem $sWS $sOutputWS $sFileName $sDate $sHour
+
+	sFileName=coupler.res
+	fun_cp $iMem $sWS $sOutputWS $sFileName $sDate $sHour
+
+	for iTile in {1..6}
+	do
+		sFileName=fv_core.res.tile${iTile}.nc
+		fun_cp $iMem $sWS $sOutputWS $sFileName $sDate $sHour
+
+		sFileName=fv_srf_wnd.res.tile${iTile}.nc
+        fun_cp $iMem $sWS $sOutputWS $sFileName $sDate $sHour
+
+		sFileName=fv_tracer.res.tile${iTile}.nc
+        fun_cp $iMem $sWS $sOutputWS $sFileName $sDate $sHour
+
+		sFileName=phy_data.tile${iTile}.nc
+        fun_cp $iMem $sWS $sOutputWS $sFileName $sDate $sHour
+
+		sFileName=sfc_data.tile${iTile}.nc
+        fun_cp $iMem $sWS $sOutputWS $sFileName $sDate $sHour
+	done
+
+
+done
+
+
+exit
+
+
+sFileName=fv_core.res.nc
+fun_cp $sMem $sInput_WS $sOutputWS
+
+sFileName=coupler.res
+fun_cp $sMem $sInput_WS $sOutputWS
+
+
+
+coupler.res
+for iTile in {0..6}
+do
+	#FH3=$(printf %03i $fhr)
+	iTile=$(printf %03i $iTile)
+	echo $iTile
+done

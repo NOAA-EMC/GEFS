@@ -38,7 +38,8 @@ export HOMEgefs=$basesource
 # export HOMEpost=$HOMEDIR/ncep_post.v7.2.3
 # export HOMEenkf=$HOMEDIR/enkf.v2.0.1
 #export HOMEtrak=$HOMERFC/ens_tracker.v1.1.8
-export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v1.1.15
+export HOMEtrak=${HOMEtrak:-$HOMERFC/ens_tracker.v1.1.8}
+
 #for NEMS GEFS, FV3 version
 #export HOMEgsm=${HOMEgsm:-$HOMEDIR/global_shared.v15.0.0}  #Feb 2018
 export HOMEgsm=${HOMEgsm:-$HOMEDIR}

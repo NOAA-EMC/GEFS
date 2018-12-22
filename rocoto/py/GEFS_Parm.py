@@ -120,6 +120,16 @@ def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
     if sVarName not in lstBaseParm:
         lstBaseParm.append(sVarName)
 
+    # ==
+    sVarName = "COREPERNODE"
+    if sVarName not in lstBaseParm:
+        lstBaseParm.append(sVarName)
+
+
+    # ==
+    sVarName = "MEMLIST"
+    if sVarName not in lstBaseParm:
+        lstBaseParm.append(sVarName)
 #------
 def create_gets_dev_parm(dicBase, listBaseParm):
     import sys

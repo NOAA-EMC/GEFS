@@ -206,10 +206,6 @@ def write_to_all_ent(GenTaskEnt, dicBase):
         if not os.path.exists(sPath):
             os.mkdir(sPath)
 
-        sPath += sSep + dicBase["WHERE_AM_I"]
-        if not os.path.exists(sPath):
-            os.mkdir(sPath)
-
         sAllEnt_File = sPath + sSep + "all.ent"
         fh = open(sAllEnt_File, 'w')
 
@@ -261,10 +257,6 @@ def write_to_ent(taskname, dicBase, GenTaskEnt=False):
     sPath = dicBase["GEFS_ROCOTO"]
     sPath += sSep + "tasks"
 
-    if not os.path.exists(sPath):
-        os.mkdir(sPath)
-
-    sPath += sSep + dicBase["WHERE_AM_I"]
     if not os.path.exists(sPath):
         os.mkdir(sPath)
 
@@ -355,7 +347,62 @@ def get_param_of_task(dicBase, taskname):
                         sDep = '<and>\n\t<taskdep task="copy_init_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
                     else:
                         sDep = '<taskdep task="copy_init_#member#"/>'
+                else:
+                    sDep = "" 
+                       
+            # For 'forecast_low' task
+            if taskname.lower() == "forecast_low": 
+                if DoesTaskExist(dicBase, "forecast_high"):
+                    sDep = '<taskdep task="forecast_high_#member#"/>'
+                else:
+                    if DoesTaskExist(dicBase, "init_fv3chgrs"):
+                        if DoesTaskExist(dicBase, "getcfssst"):
+                            sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+                        else:
+                            sDep = '<taskdep task="init_fv3chgrs_#member#"/>'
+                    elif DoesTaskExist(dicBase, "rf_prep"):
+                        if DoesTaskExist(dicBase, "getcfssst"):
+                            sDep = '<and>\n\t<taskdep task="rf_prep"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+                        else:
+                            sDep = '<taskdep task="rf_prep"/>'
+                    else:  # For Warm Start
+                        if DoesTaskExist(dicBase, "getcfssst"):   
+                            sDep = '<and>\n\t<taskdep task="getcfssst"/>\n</and>'
+                        else:
+                            sDep = ''
                             
+            # For ensstat_high
+            if taskname.lower() == "ensstat_high": 
+                npert = int(dicBase["NPERT"])
+                sDep = '<and>'
+                for i in range(npert):
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.prdgen.control.f000</cyclestr></datadep>'.format(i+1)
+                sDep +='\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.prdgen.control.f000</cyclestr></datadep>'
+                sDep +='\n</and>'
+                
+            # For ensstat_low
+            if taskname.lower() == "ensstat_low": 
+                npert = int(dicBase["NPERT"])
+                sDep = '<and>'
+                for i in range(npert):
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.prdgen.control.f{1:03}</cyclestr></datadep>'.format(i+1,int(dicBase["fhmaxh".upper()])+ int(dicBase["FHOUTHF"]))
+                sDep +='\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.prdgen.control.f{0:03}</cyclestr></datadep>'.format(int(dicBase["fhmaxh".upper()]) + int(dicBase["FHOUTHF"]))
+                sDep +='\n</and>'
+                
+            # For extractvars
+            if taskname.lower() == "extractvars":
+                if DoesTaskExist(dicBase, "ensstat_low"):
+                    sDep = '<taskdep task="ensstat_low"/>'
+                elif DoesTaskExist(dicBase, "prdgen_low"):
+                    sDep = '<taskdep task="prdgen_low"/>'
+                elif DoesTaskExist(dicBase, "ensstat_high"):
+                    sDep = '<taskdep task="ensstat_high"/>'
+                elif DoesTaskExist(dicBase, "prdgen_high"):
+                    sDep = '<taskdep task="prdgen_high"/>'
+                else:
+                    sDep = ''
+
+ 
             # For Low Resolution
             if taskname.lower() == "post_low" or taskname.lower() == "prdgen_low":
                 FHOUTHF=int(dicBase["FHOUTHF".upper()])
@@ -422,16 +469,17 @@ def get_param_of_task(dicBase, taskname):
         WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
 
         if WHERE_AM_I == 'cray'.upper():
-            Task_Node = 24
+            ncores_per_node = 24
         elif WHERE_AM_I == "theia".upper():
-            Task_Node = 24
+            ncores_per_node = 24
         elif WHERE_AM_I == "wcoss_dell_p3".upper():
-            Task_Node = 28
+            ncores_per_node = 28
         else:
-            Task_Node = 24
+            ncores_per_node = 24
 
-        iNodes = int(math.ceil((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) * 1.0 / (Task_Node / parallel_threads)))
-        iPPN = int(math.ceil(Task_Node * 1.0 / parallel_threads))
+        dicBase['COREPERNODE'] = ncores_per_node
+        iNodes = int(math.ceil((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) * 1.0 / (ncores_per_node / parallel_threads)))
+        iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
 
         iTPP = parallel_threads
 
@@ -518,8 +566,10 @@ def get_jobname(taskname):
 
     # else if this file does not exist and if the task name is not in the job_id.conf
     tasknames = taskname.split("_")
-    if len(tasknames) == 2:
-        jobname_short = tasknames[1][0:2] + "_" + tasknames[1][-2:]
+    if len(tasknames) == 1:
+        jobname_short = tasknames[0][0:2] + "_" + tasknames[0][-2:]
+    elif len(tasknames) == 2:
+        jobname_short = tasknames[0][0:2] + "_" + tasknames[1][-2:]
     else:
         jobname_short = tasknames[1][0] + tasknames[1][-1] + "_" + tasknames[2][0] + tasknames[2][-1]
 
