@@ -147,7 +147,8 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v1.1.15 
     #export HOMEdata=/gpfs/dell2/emc/retros/noscrub/Xianwu.Xue/common/initdata
     #export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
-	export HOMEdata=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Hong.Guan/common
+	#export HOMEdata=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Hong.Guan/common
+    export HOMEdata=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common
 
     export COMROOThps=${HOMEdata} 
 fi
