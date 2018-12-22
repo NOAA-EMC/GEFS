@@ -167,18 +167,18 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
 
         dicBase[sVarName] = sVarValue
     else:
-        sVarValue = dicBase[sVarName] + "/&EXPID;"    
+        sVarValue = dicBase[sVarName] #+ "/&EXPID;"    
         dicBase[sVarName] = sVarValue
  
     sVarValue = replace_First_Last(dicBase, sVarName)
     sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
-    if sVarValue.endswith("/&EXPID;"): 
-        sVarValue = sVarValue.replace('&EXPID;', dicBase['EXPID'])
-    else:
-        sVarValue += dicBase['EXPID']
+    #if sVarValue.endswith("/&EXPID;"): 
+    #    sVarValue = sVarValue.replace('&EXPID;', dicBase['EXPID'])
+    #else:
+    #    sVarValue += dicBase['EXPID']
 
-    if not sVarValue.endswith(dicBase['EXPID']):
-        sVarValue += dicBase['EXPID']
+    #if not sVarValue.endswith(dicBase['EXPID']):
+    #    sVarValue += dicBase['EXPID']
 
     dicBase[sVarName] = sVarValue
 
@@ -201,18 +201,18 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
 
         dicBase[sVarName] = sVarValue
     else:
-        sVarValue = dicBase[sVarName] + "/&EXPID;"
+        sVarValue = dicBase[sVarName] #+ "/&EXPID;"
         dicBase[sVarName] = sVarValue
     
     sVarValue = replace_First_Last(dicBase, sVarName)
     sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
-    if sVarValue.endswith("/&EXPID;"):
-        sVarValue = sVarValue.replace('&EXPID;', dicBase['EXPID'])
-    else:
-        sVarValue += dicBase['EXPID']
+    #if sVarValue.endswith("/&EXPID;"):
+    #    sVarValue = sVarValue.replace('&EXPID;', dicBase['EXPID'])
+    #else:
+    #    sVarValue += dicBase['EXPID']
 
-    if not sVarValue.endswith(dicBase['EXPID']):
-        sVarValue += dicBase['EXPID']
+    #if not sVarValue.endswith(dicBase['EXPID']):
+    #    sVarValue += dicBase['EXPID']
     
     dicBase[sVarName] = sVarValue
     

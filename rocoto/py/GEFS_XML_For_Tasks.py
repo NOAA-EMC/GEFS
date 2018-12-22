@@ -347,6 +347,11 @@ def get_param_of_task(dicBase, taskname):
                         sDep = '<and>\n\t<taskdep task="copy_init_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
                     else:
                         sDep = '<taskdep task="copy_init_#member#"/>'
+                elif DoesTaskExist(dicBase, "init_fv3chgrs"):
+                    if DoesTaskExist(dicBase, "getcfssst"):
+                        sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+                    else:
+                        sDep = '<taskdep task="init_fv3chgrs_#member#"/>'
                 else:
                     sDep = "" 
                        
@@ -431,28 +436,26 @@ def get_param_of_task(dicBase, taskname):
 
             # For 'keep_data' and 'archive' tasks
             if taskname.lower() == "keep_data" or taskname.lower() == "archive":
+                sDep = '<and>'
                 if DoesTaskExist(dicBase, "enspost"):
-                    if DoesTaskExist(dicBase, "post_track"):
-                        if DoesTaskExist(dicBase, "post_genesis"):
-                            sDep = '<and>\n\t<taskdep task="enspost"/>\n\t<taskdep task="post_track"/>\n\t<taskdep task="post_genesis"/>\n</and>'
-                        else:
-                            sDep = '<and>\n\t<taskdep task="enspost"/>\n\t<taskdep task="post_track"/>\n</and>'
-                    else:
-                        if DoesTaskExist(dicBase, "post_genesis"):
-                            sDep = '<and>\n\t<taskdep task="enspost"/>\n\t<taskdep task="post_genesis"/>\n</and>'
-                        else:
-                            sDep = '<and>\n\t<taskdep task="enspost"/>\n</and>'
-                else:
-                    if DoesTaskExist(dicBase, "post_track"):
-                        if DoesTaskExist(dicBase, "post_genesis"):
-                            sDep = '<and>\n\t<taskdep task="post_track"/>\n\t<taskdep task="post_genesis"/>\n</and>'
-                        else:
-                            sDep = '<and>\n\t<taskdep task="post_track"/>\n</and>'
-                    else:
-                        if DoesTaskExist(dicBase, "post_genesis"):
-                            sDep = '<and>\n\t<taskdep task="post_genesis"/>\n</and>'
-                        else:
-                            sDep = ''
+                    sDep += '\n\t<taskdep task="enspost"/>'
+                if DoesTaskExist(dicBase, "post_track"):
+                    sDep += '\n\t<taskdep task="post_track"/>'
+                if DoesTaskExist(dicBase, "post_genesis"):
+                    sDep += '\n\t<taskdep task="post_genesis"/>'
+                if DoesTaskExist(dicBase, "extractvars"):
+                    sDep += '\n\t<taskdep task="extractvars"/>'
+                if DoesTaskExist(dicBase, "ensstat_low"):
+                    sDep += '\n\t<taskdep task="ensstat_low"/>'                    
+                if DoesTaskExist(dicBase, "prdgen_low"):
+                    sDep += '\n\t<metataskdep metatask="prdgen_low"/>'
+                if DoesTaskExist(dicBase, "ensstat_high"):
+                    sDep += '\n\t<taskdep task="ensstat_high"/>'
+                if DoesTaskExist(dicBase, "prdgen_high"):
+                    sDep += '\n\t<metataskdep metatask="prdgen_high"/>'
+                if DoesTaskExist(dicBase, "getcfssst"):
+                    sDep += '\n\t<taskdep task="getcfssst"/>'
+                sDep += '\n</and>'
 
             # Don't clean up if keep_init isn't finished
             if taskname.lower() == "cleanup" and DoesTaskExist(dicBase, "keep_init"):

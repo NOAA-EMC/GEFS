@@ -67,7 +67,12 @@ print("Date/Cycle            : " + date_string + "_" + cycle)
 # keep_dir = "/scratch4/NCEPDEV/ensemble/noscrub/Walter.Kolczynski/GEFS"
 clobber = True
 
-destination_path = keep_dir + "/gefs." + date_string + "/" + cycle
+yyyy = date_string[0:4]
+mm = date_string[4:6]
+dd = date_string[6:8]
+
+#destination_path = keep_dir + "/gefs." + date_string + "/" + cycle
+destination_path = keep_dir + "/" +  yyyy + "/" + mm + "/" + dd #+ "/" + cycle
 output_path = work_dir + "/com/gens/dev/gefs." + date_string + "/" + cycle
 
 # Output directories

@@ -72,7 +72,7 @@ yyyy = date_string[0:4]
 mm = date_string[4:6]
 dd = date_string[6:8]
 
-destination_path = hpss_path + "/" + yyyy + "/" + yyyy + mm + "/" + yyyy + mm + dd
+destination_path = hpss_path + "/" + yyyy + "/" + mm + "/" +  dd
 output_path = work_dir + "/com/gens/dev/gefs." + date_string + "/" + cycle
 
 # Create directory on HPSS
