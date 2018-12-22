@@ -389,9 +389,20 @@ def get_param_of_task(dicBase, taskname):
                 sDep +='\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.prdgen.control.f{0:03}</cyclestr></datadep>'.format(int(dicBase["fhmaxh".upper()]) + int(dicBase["FHOUTHF"]))
                 sDep +='\n</and>'
                 
-            #misc/prd1p0/*fXXX
-            #/gpfs/dell3/nco/storage/fv3gefs/HOME/Xianwu.Xue/o/DHrestart_2/com/gens/dev/gefs.20160326/00/misc/prd1p0/gep10.t00z.prdgen.control.f276
-                            
+            # For extractvars
+            if taskname.lower() == "extractvars":
+                if DoesTaskExist(dicBase, "ensstat_low"):
+                    sDep = '<taskdep task="ensstat_low"/>'
+                elif DoesTaskExist(dicBase, "prdgen_low"):
+                    sDep = '<taskdep task="prdgen_low"/>'
+                elif DoesTaskExist(dicBase, "ensstat_high"):
+                    sDep = '<taskdep task="ensstat_high"/>'
+                elif DoesTaskExist(dicBase, "prdgen_high"):
+                    sDep = '<taskdep task="prdgen_high"/>'
+                else:
+                    sDep = ''
+
+ 
             # For Low Resolution
             if taskname.lower() == "post_low" or taskname.lower() == "prdgen_low":
                 FHOUTHF=int(dicBase["FHOUTHF".upper()])

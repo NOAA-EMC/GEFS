@@ -35,17 +35,20 @@ fi
 
 envir=${envir}
 fhmax=${fhmax}
+FHMAXHF=${FHMAXHF}
+FHOUTHF=${FHOUTHF}
+FHOUTLF=${FHOUTLF}
 
 #MEMLIST=${MEMLIST}
 PARMgefs=${PARMgefs}
 
-COMOUT=$COMIN  # GEFS Output Folder
+COMIN=$COMIN  # GEFS Output Folder
 #enslist = "${MEMLIST} avg spr"
 
 if [[ $npert -eq 10 ]];then
-    enslist="p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 c00 avg spr"
+    enslist="p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 c00 ${enslistend}" # avg spr"
 elif [[ $npert -eq 4 ]]; then
-    enslist="p01 p02 p03 p04 c00 avg spr"
+    enslist="p01 p02 p03 p04 c00 ${enslistend}" # avg spr"
 else
     echo "npert ($npert) not currently supported. Exiting..."
     exit
@@ -54,9 +57,8 @@ fi
 outdirpre_2d=${REFCST}/$yyyy/$mm/$dd/f2d #directory where we want to save the extracted files
 outdirpre_3d=${REFCST}/$yyyy/$mm/$dd/f3d #directory where we want to save the extracted files
 
-varlist_2d=${PARMgefs}/gefs_gshortparmlist_2d.parm
+varlist_2d=${PARMgefs}/gefs_shortparmlist_2d.parm
 varlist_3d=${PARMgefs}/gefs_shortparmlist_3d.parm
-
 
 
 mkdir -p $outdirpre_2d/
@@ -75,35 +77,39 @@ for outtype in "f2d" "f3d"; do
         outdirpre=$outdirpre_3d
     fi
 
-    nh=0
+    nh=6
     while [[ $nh -le $fhmax ]];do
         fnh=`printf "%3.3d" ${nh}`
         echo "extracting f${fnh}"
 
-        if [[ $nh -le 240 ]];then
-            if [[ "$outtype" == "f2d" ]];then
-                outres="0p25"
-                indirpres=$COMOUT/pgrb2ap25
-            elif [[ "$outtype" == "f3d" ]];then 
-                outres="0p50"
-                indirpres=$COMOUT/pgrb2ap5
-            fi
+        if [[ $nh -le $FHMAXHF ]];then
+            outres="0p25"
+            indirpres=$COMIN/pgrb2p25
+
+            #if [[ "$outtype" == "f2d" ]];then
+            #    outres="0p25"
+            #    indirpres=$COMIN/pgrb2p25
+            #elif [[ "$outtype" == "f3d" ]];then 
+            #    outres="0p25"
+            #    indirpres=$COMIN/pgrb2p25
+            #fi
         else
             outres="0p50"
-            indirpres=$COMOUT/pgrb2ap5
+            indirpres=$COMIN/pgrb2p5
         fi
 
 
-        if [[ $nh -lt 240 ]];then
-            outfreq=3
+        if [[ $nh -lt $FHMAXHF ]];then
+            outfreq=$FHOUTHF
         else
-            outfreq=6
+            outfreq=$FHOUTLF
         fi
 
         #Extract individual member files
         for ensname in $enslist; do
-            infile=$indirpres/ge${ensname}.t00z.pgrb2a.$outres.f${fnh}
-            oufile=$outdirpre/ge${ensname}.t00z.pgrb2a.$outres.f${fnh}
+            echo $ensname ==============
+            infile=$indirpres/ge${ensname}.t00z.pgrb2.$outres.f${fnh}
+            oufile=$outdirpre/ge${ensname}.t00z.pgrb2.$outres.f${fnh}
             
             echo $infile
             echo $oufile
@@ -113,7 +119,8 @@ for outtype in "f2d" "f3d"; do
                 $WGRIB2 $infile | grep -F -f $varlist | $WGRIB2 -i $infile -append -grib $oufile>/dev/null
             else
                 echo "$infile does not exist"
-                exit 9
+                echo "Please check it"
+                #exit 9
             fi 
 
         done #member

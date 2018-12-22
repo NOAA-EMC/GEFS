@@ -53,14 +53,13 @@ export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 ##############################################
 # Define COM directories
 ##############################################
-#export COMINrestart=${COMINrestart:-/gpfs/dell3/nco/storage/fv3gefs/RESTRT}  
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 ##############################################
 # Define COM OUT directories
 ##############################################
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}
+#export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}
 
 ##############################################
 echo list environment before running script
