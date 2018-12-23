@@ -110,6 +110,11 @@ export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/tctrack}
 ##export COMOUThur=${COMOUThur:-${COMROOTp1}/hur/${envir}/global}
 ##export COMOUTatcf=${COMOUTatcf:-${COMROOTp1}/nhc/${envir}/atcf}
 
+export COMOUThur=/gpfs/dell2/ptmp/Jiayi.Peng/com2/hur/dev/global
+export COMOUThur=${COMOUThur:-${COMROOTp1}/hur/${envir}/global}
+export COMOUTatcf=${COMOUTatcf:-${COMROOTp1}/nhc/${envir}/atcf}
+
+
 mkdir -m 775 -p $COMOUT $COMOUThur $COMOUTatcf
 
 export ensdira=$COMIN/pgrb2ap25
