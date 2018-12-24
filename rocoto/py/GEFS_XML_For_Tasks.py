@@ -399,11 +399,11 @@ def get_param_of_task(dicBase, taskname):
                 if DoesTaskExist(dicBase, "ensstat_low"):
                     sDep = '<taskdep task="ensstat_low"/>'
                 elif DoesTaskExist(dicBase, "prdgen_low"):
-                    sDep = '<taskdep task="prdgen_low"/>'
+                    sDep = '<metataskdep metatask="prdgen_low"/>'
                 elif DoesTaskExist(dicBase, "ensstat_high"):
                     sDep = '<taskdep task="ensstat_high"/>'
                 elif DoesTaskExist(dicBase, "prdgen_high"):
-                    sDep = '<taskdep task="prdgen_high"/>'
+                    sDep = '<metataskdep metatask="prdgen_high"/>'
                 else:
                     sDep = ''
 
