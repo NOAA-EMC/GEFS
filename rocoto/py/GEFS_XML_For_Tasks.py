@@ -396,12 +396,8 @@ def get_param_of_task(dicBase, taskname):
                 
             # For extractvars
             if taskname.lower() == "extractvars":
-                if DoesTaskExist(dicBase, "ensstat_low"):
-                    sDep = '<taskdep task="ensstat_low"/>'
-                elif DoesTaskExist(dicBase, "prdgen_low"):
+                if DoesTaskExist(dicBase, "prdgen_low"):
                     sDep = '<metataskdep metatask="prdgen_low"/>'
-                elif DoesTaskExist(dicBase, "ensstat_high"):
-                    sDep = '<taskdep task="ensstat_high"/>'
                 elif DoesTaskExist(dicBase, "prdgen_high"):
                     sDep = '<metataskdep metatask="prdgen_high"/>'
                 else:
