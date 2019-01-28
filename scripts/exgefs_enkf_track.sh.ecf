@@ -490,8 +490,8 @@ export SIGVAL="&siginfo sigpath=\"\${DATA}/sigf_\${pert}_fhr\", ddeg=1.0, reslch
            ln -sf $COMOUTprevcyc/sfcsig_enkf/sfg_${pdycycp}_fhr${fhrp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr00
            ln -sf $COMOUTprevcyc/sfcsig_enkf/sfg_${pdycycp}_fhr${fhrp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr06
   else
-          ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr00
-          ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr06
+          ln -sf $COMINenkf${pdyp}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr00
+          ln -sf $COMINenkf${pdyp}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${pmem} \${DATA}/sigf_\${pert}_fhr06
   fi
 
 $UTILgefs/ush/extrkr.sh > ushout.track.$ipair 2>&1
@@ -502,8 +502,8 @@ export SIGVAL="&siginfo sigpath=\"\${DATA}/sigf_\${pert}_fhr\", ddeg=1.0, reslch
         ln -sf $COMOUTprevcyc/sfcsig_enkf/sfg_${pdycycp}_fhr${fhrp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr00
         ln -sf $COMOUTprevcyc/sfcsig_enkf/sfg_${pdycycp}_fhr${fhrp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr06
   else
-        ln -sf $COMINenkf/${cycp}/siganl_${pdycycp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr00
-        ln -sf $COMINenkf/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr06
+        ln -sf $COMINenkf${pdyp}/${cycp}/siganl_${pdycycp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr00
+        ln -sf $COMINenkf${pdyp}/${cycp}/sfg_${pdycycp}_fhr${fhrp}_mem0${mmem} \${DATA}/sigf_\${pert}_fhr06
  fi
 $UTILgefs/ush/extrkr.sh >> ushout.track.$ipair 2>&1
 fi
