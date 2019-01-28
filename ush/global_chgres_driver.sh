@@ -149,10 +149,10 @@ if [ $ictype = oldgfs ]; then   # input data is old spectral sigio format.
  fi
  export FNSMCC=$FIXgsm/global_soilmgldas.t${JCAP_CASE}.${LONB_SFC}.${LATB_SFC}.grb
  export FNSOTC=$FIXgsm/global_soiltype.statsgo.t${JCAP_CASE}.${LONB_SFC}.${LATB_SFC}.rg.grb
- export SOILTYPE_INP=statsgo
+# export SOILTYPE_INP=statsgo
  export SOILTYPE_OUT=statsgo
  export FNVETC=$FIXgsm/global_vegtype.igbp.t${JCAP_CASE}.${LONB_SFC}.${LATB_SFC}.rg.grb
- export VEGTYPE_INP=igbp
+# export VEGTYPE_INP=igbp
  export VEGTYPE_OUT=igbp
  export FNABSC=$FIXgsm/global_mxsnoalb.uariz.t${JCAP_CASE}.${LONB_SFC}.${LATB_SFC}.rg.grb
  export FNALBC=$FIXgsm/global_snowfree_albedo.bosu.t${JCAP_CASE}.${LONB_SFC}.${LATB_SFC}.rg.grb
