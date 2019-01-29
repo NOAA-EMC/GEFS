@@ -311,7 +311,7 @@ V11.3.0 to be released on 09/15/2018
                 CSNOW CICEP CFRZR CRAIN, instantaneous values      
   . The nemsio files from gfs/enkf contain more variables than those in the gsm-based files 
       A new version of global_chgres is in converting the NEW nemsio files to sigio format, to be inplemented in 
-                /nwprod2/util_shared.v1.0.X/global_chgres.v15.0.0 
+                /nwprod2/util_shared.v1.0.8/global_chgres.v15.0.0 
 
 . Updated files include:
   jobs/JGEFS_ENKF_TRACK
@@ -331,8 +331,8 @@ V11.3.0 to be released on 09/15/2018
   . checkout the tag named v11.3.0-update1 
 
 . Implementation instructions
-  . Make sure util_shared.v1.0.X is implemented under /nwprod2 or /nwtest2 or /nwpara2
-       NCO/SPA needs to change X to a proper number 
+  . Make sure util_shared.v1.0.8 is implemented under /nwprod2 or /nwtest2 or /nwpara2
+       (NCO/SPA needs has changed X to a proper number 8)
   . copy versions/gefs.ver to /nwprod2   (nwtest2 for testing)
-  . Copy the gefs v11.3.0-update1 tag to /nwprod2  and rename it gefs.v11.3.0 
+  . Copy the gefs v11.3.0-update2 tag to /nwprod2  and rename it gefs.v11.3.0 
     . build codes: in sorc directory. follow the directions in README.build

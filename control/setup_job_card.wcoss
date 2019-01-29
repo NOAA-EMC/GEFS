@@ -131,13 +131,13 @@ eofCAT
     if [[ ${taskname} = enkf.track ]] ; then
      cat <<eofCAT >>$jobcontrol$SUBJOB
 module use /nwprod2/modulefiles
-module load util_shared/v1.0.X
+module load util_shared/v1.0.8
 eofCAT
     fi
     if [[ ${taskname} = init.separate ]] ; then
      cat <<eofCAT >>$jobcontrol$SUBJOB
 module use /nwprod2/modulefiles
-module load util_shared/v1.0.X
+module load util_shared/v1.0.8
 eofCAT
     fi
 
