@@ -83,7 +83,7 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY}/$cyc)}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
 export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}
 
 if [[ "$makepgrb1" = "yes" ]]; then

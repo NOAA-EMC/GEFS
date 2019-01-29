@@ -84,8 +84,8 @@ setpdy.sh
 export COMINs=${COMROOT}/nawips/prod
 export COMINs_p1=${COMROOTp1}/nawips/prod
 export COMIN=${COMROOT}/nawips/prod/${RUN}.${PDY}
-# JY export COMINgfs=${COMROOT}/nawips/prod/gfs.${PDY}
-export COMINgfs=$(compath.py nawips/prod/gfs.${PDY})
+# JY export COMINgfs=$(compath.py nawips/prod/gfs.${PDY})
+export COMINgfs=$(compath.py gfs/prod/gfs.$PDY)/$cyc/gempak}
 export COMINecmwf=$(compath.py nawips/prod/ecmwf.${PDY})
 export COMINm1ecmwf=$(compath.py nawips/prod/ecmwf.${PDYm1})
 export COMINm1=${COMROOT}/nawips/prod/${RUN}.${PDYm1}

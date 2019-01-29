@@ -236,7 +236,7 @@ fi
     $WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile_tem
    rm ex-list*
    if (( fhr > 6 )); then
-    $WGRIB2 -s tmpfile_tem | grep "APCP" | grep "0-" > ex-list1
+    $WGRIB2 -s tmpfile_tem | grep "APCP" | grep ":0-" > ex-list1
    fi
     $WGRIB2 -s tmpfile_tem | grep -e CSN -e CIC -e CFR -e CRA | grep "hour fcst" > ex-list
     cat ex-list1 >> ex-list

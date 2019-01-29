@@ -133,11 +133,11 @@ export d_hour_hh=`echo $d_hour_ymdh|cut -c9-10`
 ##############################################
 # JY export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.$PDY} 
 # 20160607 RLW if present, modify preset COMINenkf to include the date for this job
-export COMINenkf=${COMINenkf:-$(compath.py /gfs/prod/enkf.gdas.)} 
+export COMINenkf=${COMINenkf:-$(compath.py /gfs/prod)/enkfgdas.} 
 export COMINatcfsyn=${COMINatcfsyn:-$(compath.py arch/prod/syndat)}
-export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${d_hour_ymd}/${d_hour_hh})}
-export COMINgfs6ago=${COMINgfs6ago:-$(compath.py gfs/prod/gfs.${d6ago_ymd}/${d6ago_hh})}
-export COMINgfs6ahead=${COMINgfs6ahead:-$(compath.py gfs/prod/gfs.${d6ahead_ymd}/${d6ahead_hh})}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${d_hour_ymd}/${d_hour_hh}}
+export COMINgfs6ago=${COMINgfs6ago:-$(compath.py gfs/prod)/gfs.${d6ago_ymd}/${d6ago_hh}}
+export COMINgfs6ahead=${COMINgfs6ahead:-$(compath.py gfs/prod)/gfs.${d6ahead_ymd}/${d6ahead_hh}}
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
