@@ -32,7 +32,7 @@ CMD =   gefs_vortex_separate
 #LDFLAGS=-l essl
 #FFLAGS= -openmp -p  -xHOST -r8 -O0 -i4 -traceback -assume byterecl  -I$(LIBSIGIO) -list
 FFLAGS=  -p   -r8 -O0 -i4 -traceback -assume byterecl -list
-LDFLAGS = -mkl  -openmp
+LDFLAGS = -mkl  -${OPENMPFFLAG}
 
 # Lines from here on down should not need to be changed.  They are the
 # actual rules which make uses to build a.out.
