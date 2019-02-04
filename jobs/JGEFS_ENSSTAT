@@ -68,6 +68,7 @@ setpdy.sh
 echo set parameters using gefs.parm
 ##############################################
 . $PARMgefs/gefs.parm
+. $PARMgefs/gefs_prdgen.parm
 . $PARMgefs/gefs_ensstat.parm
 
 export FHMAX_HF=$FHMAXHF
@@ -128,89 +129,72 @@ export FHINC=${FHOUTLF:-06}
 
 fcstlong=true
 case $FORECAST_SEGMENT in
-	(hr)
-		# high resolution segment
-		export FHINCP5=${FHOUTHF:-06}
-		export SHOUR=00
-		if [[ $fcstlong = true ]]; then
-			export FHOUR=$fhmaxh
-		else
-			export FHOUR=06
-		fi
+	hr)
+		start_hour=0
+		end_hour=${fhmaxh}
 		;;
-	(lr)
-		# low resolution segment
-		export FHINCP5=${FHOUTLR:-06}
-		export SHOUR=$(( $fhmaxh + FHINC ))
-		if [[ $fcstlong = true ]]; then
-			export FHOUR=$fhmax
-		else
-			export FHOUR=06
-		fi
+	lr)
+		start_hour=$((${fhmaxh}+1))
+		end_hour=${fhmax}
 		;;
-	(*)
-		# whole forecast period
-		export FHINCP5=06
-		export SHOUR=00
-		if [[ $fcstlong = true ]]; then
-			export FHOUR=$fhmax
-		else
-			export FHOUR=06
-		fi
+	*)
+		start_hour=0
+		end_hour=${fhmax}
 		;;
-esac # $FORECAST_SEGMENT
+esac # $FORECAST_SEGMENT in
 
-if test $FHMAX_HF -gt $FHOUR; then
-        export FHMAX_HF=$FHOUR
-fi
+for stream in ${PRDGEN_STREAMS[@]}; do
+	# Filter out hours based on forecast segment
+	typeset -a hours=($(echo ${PRDGEN_HOURS[$stream]}))
+	echo "hours = $hours"
+	for i in "${!hours[@]}"; do
+		hour=${hours[i]}
+		echo "i = $i  hour = $hour"
+		if [[ $hour -lt $start_hour || $hour -gt $end_hour ]]; then
+			unset 'hours[i]'
+		fi
+	done
+	PRDGEN_HOURS[$stream]="${hours[@]}"
+	unset hours
 
-
-echo FORECAST_SEGMENT=$FORECAST_SEGMENT
-echo makepgrba=$makepgrba
-echo FHINC=$FHINC      
-echo FHINCP5=$FHINCP5      
-echo SHOUR=$SHOUR
-echo FHOUR=$FHOUR
-echo $makepgrba
+	# Print out settings for this stream
+	cat <<-EOF
+		Settings for prgden stream $stream:
+			Grid: ${PRDGEN_GRID[$stream]}
+			Grid Spec: ${PRDGEN_GRID_SPEC[$stream]}
+			Hours: (${PRDGEN_HOURS[$stream]})
+			submc: ${PRDGEN_SUBMC[$stream]}
+			A Dir: ${PRDGEN_A_DIR[$stream]}
+			A Prefix: ${PRDGEN_A_PREFIX[$stream]}
+			B Dir: ${PRDGEN_B_DIR[$stream]}
+			B Prefix: ${PRDGEN_B_PREFIX[$stream]}
+			Do Anaylsis: ${PRDGEN_DO_ANALYSIS[$stream]:-"NO (default)"}
+	EOF
+done
 
 env | sort
 
 # Execute the script
 
-#mpmd job with 3 tasks, 1 for 1d/2.5d; 2 for 0.5d grid; 3 for 0.25d grid
+for stream in ${PRDGEN_STREAMS[@]}; do
 
-#task 1, 1.0d and 2.5d, grid, dataset=a
-export gridlist_1="2p5,1p0"
-export FHINC_1=$FHOUT
-export FHINC_HF_1=0
-export dataset_1=a
+	subdata=${DATA}/${stream}
+	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+	outfile=${subdata}/${stream}.out
 
-#task 2, 0.5d grid, dataset=a
-export gridlist_2="0p5"
-export FHINC_2=$FHOUT
-export FHINC_HF_2=$FHOUT_HF
-export dataset_2=a
+	jobgrid="${PRDGEN_GRID[$stream]}"
+	grid_spec="${PRDGEN_GRID_SPEC[$stream]}"
+	hours="${PRDGEN_HOURS[$stream]}"
+	submc="${PRDGEN_SUBMC[$stream]}"
+	pgad="${PRDGEN_A_DIR[$stream]}"
+	pgbd="${PRDGEN_B_DIR[$stream]}"
+	pgapre="${PRDGEN_A_PREFIX[$stream]}"
+	pgbpre="${PRDGEN_B_PREFIX[$stream]}"
+	do_analysis="${PRDGEN_DO_ANALYSIS[$stream]:-NO}"
 
-#task 3, 0.25d grid, dataset=a
-export gridlist_3="0p25"
-export FHINC_3=$FHOUT
-export FHINC_HF_3=$FHOUT_HF
-export dataset_3=a
+	echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $subdata \"$stream\" \"$jobgrid\" \"$hours\" \"$pgad\" \"$pgapre\" 2>&1 >${outfile}" >> ensstat.cmdfile
 
-subdata_1=${DATA}/1p0-2p5${dataset_1}
-outfile=${subdata_1}/${gridlist_1}.out
-if [ ! -d ${subdata_1} ]; then mkdir -p ${subdata_1}; fi
-echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_1 $FHINC_1 ${subdata_1} $dataset_1 $FHINC_HF_1 0 $FHOUR 2>&1 >${outfile}" >>ensstat.cmdfile
-
-subdata_2=${DATA}/${gridlist_2}${dataset_2}
-if [ ! -d ${subdata_2} ]; then mkdir -p ${subdata_2}; fi
-outfile=${subdata_2}/${gridlist_2}.out
-echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_2 $FHINC_2 ${subdata_2} $dataset_2 $FHINC_HF_2 $FHMAX_HF $FHOUR 2>&1 >${outfile}" >>ensstat.cmdfile
-
-subdata_3=${DATA}/${gridlist_3}${dataset_3}
-if [ ! -d ${subdata_3} ]; then mkdir -p ${subdata_3}; fi
-outfile=${subdata_3}/${gridlist_3}.out
-echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $gridlist_3 $FHINC_3 ${subdata_3} $dataset_3 $FHINC_HF_3 $FHMAX_HF $FHMAX_HF 2>&1 >${outfile}" >>ensstat.cmdfile
+done
 
 cat ensstat.cmdfile
 chmod 775 ensstat.cmdfile

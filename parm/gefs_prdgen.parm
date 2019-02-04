@@ -106,24 +106,3 @@ export PRDGEN_B_DIR
 export PRDGEN_A_PREFIX
 export PRDGEN_B_PREFIX
 export PRDGEN_DO_ANALYSIS
-
-# for stream in ${PRDGEN_STREAMS[@]}; do
-# 	cat <<-EOF
-# 		Settings for prgden stream $stream:
-# 			Grid: ${PRDGEN_GRID[$stream]}
-# 			Grid Spec: ${PRDGEN_GRID_SPEC[$stream]}
-# 			Hours: ${PRDGEN_HOURS[$stream]}
-# 			submc: ${PRDGEN_SUBMC[$stream]}
-# 			A Dir: ${PRDGEN_A_DIR[$stream]}
-# 			A Prefix: ${PRDGEN_A_PREFIX[$stream]}
-# 			B Dir: ${PRDGEN_B_DIR[$stream]}
-# 			B Prefix: ${PRDGEN_B_PREFIX[$stream]}
-# 			Do Anaylsis: ${PRDGEN_DO_ANALYSIS[$stream]:-"NO (default)"}
-
-# 	EOF
-
-# 	for hour in ${PRDGEN_HOURS[$stream]}; do
-# 		echo "hour=$hour"
-# 	done
-
-# done

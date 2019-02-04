@@ -206,13 +206,6 @@ for stream in ${PRDGEN_STREAMS[@]}; do
 	pgbpre="${PRDGEN_B_PREFIX[$stream]}"
 	do_analysis="${PRDGEN_DO_ANALYSIS[$stream]:-NO}"
 
-	# Insert filter for hours based on forecast segment
-	for hour in $hours; do
-		if [[ $hour -lt $start_hour || $hour -gt end_hour ]]; then
-			hours=("${hours[@]/$hour/}")
-		fi
-	done
-
 	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf $subdata \"$stream\" \"$jobgrid\" \"$grid_spec\" \"$hours\" \"$submc\" \"$pgad\" \"$pgbd\" \"$pgapre\" \"$pgbpre\" \"$do_analysis\" 2>&1 >${outfile}" >> prdgen.cmdfile
 
 done
