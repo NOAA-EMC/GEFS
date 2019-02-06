@@ -76,7 +76,7 @@ for outtype in "f2d" "f3d"; do
         outdirpre=$outdirpre_3d
     fi
 
-    nh=6
+    nh=0
     while [[ $nh -le $fhmax ]];do
         fnh=`printf "%3.3d" ${nh}`
         echo "extracting f${fnh}"
