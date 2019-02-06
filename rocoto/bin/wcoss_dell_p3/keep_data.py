@@ -93,3 +93,24 @@ for directory in dirs_to_keep:
 		print("Copying files for " + directory)
 		print("    From " + output_dir + " to " + destination_dir)
 		shutil.copytree(output_dir, destination_dir)
+
+
+# Keep "output" files
+output_dir = work_dir + "/com/output/dev/" + date_string
+if os.path.exists(output_dir):
+    destination_dir = destination_path + "/" + "logs"
+    if ( os.path.exists(destination_dir) ):
+        if(clobber):
+            shutil.rmtree(destination_dir + "/")
+        else:
+            print("FATAL: Destination diretory " + destination_dir + " already exists and clobber is False")
+            quit(-102)
+
+    if ( not os.path.exists(destination_path) ):
+        os.makedirs(destination_path)
+    print("Copying files for " + directory)
+    print("    From " + output_dir + " to " + destination_dir)
+    shutil.copytree(output_dir, destination_dir)
+
+
+
