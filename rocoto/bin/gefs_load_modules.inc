@@ -39,10 +39,54 @@ elif [[ "$WHERE_AM_I" == theia ]]; then
 	module load wgrib
 	module load wgrib2/0.2.0.6c
 	module load cnvgrib
-    module load prod_util/v1.1.0
+    module load prod_util/v1.0.18
     #module load grib_util/v1.1.0
-    module load g2tmpl/v1.5.0
+    module load g2tmpl/v1.4.0
     export PATH=$PATH:./
+elif [[ "$WHERE_AM_I" == jet ]]; then
+        echo "Loading modules for jet"
+        . /apps/lmod/lmod/init/ksh
+#        module use /apps/modules/modulefiles
+#	module use /apps/modules/modulefamilies/intel
+#	module use /apps/modules/modulefiles
+#        module load intel/15.0.3.187
+#	module load mvapich2/1.8
+#	module load szip/2.1
+#        module load hdf5/1.8.9
+#        module load netcdf4/4.2.1.1
+#        module load wgrib
+#        module load wgrib2/0.2.0.1
+#        module load grib_util/v1.0.1
+#	module load cnvgrib
+#        module use /lfs3/projects/hwrf-vd/soft/modulefiles
+#	module load prod_util/1.0.18
+#	module use /mnt/lfs3/projects/hfv3gfs/nwprod/lib/modulefiles
+#        module load g2tmpl
+
+module load newdefaults intel/15.0.3.187 impi/5.1.3.181 szip hdf5 netcdf4/4.2.1.1
+
+module use /lfs3/projects/hfv3gfs/nwprod/lib/modulefiles
+module load bacio/v2.0.2
+module load sp/v2.0.2
+module load ip/v2.0.0
+module load w3nco/v2.0.6
+module load w3emc/v2.2.0
+module load nemsio/v2.2.2
+
+#set NCEPLIBS $::env(NCEPLIBS)
+#module use $NCEPLIBS/modulefiles
+#module load esmf/7.1.0r_impi
+
+module use /lfs3/projects/hwrf-vd/soft/modulefiles
+module load prod_util
+module load grib_util
+module load hpss
+
+# mpiserial on Jet includes a cfp wrapper
+module load mpiserial
+
+module load gempak/7.4.2
+export PATH=$PATH:./
 elif [[ "$WHERE_AM_I" == wcoss_dell_p3 ]] ; then
     echo "Loading modules for wcoss_dell_p3"
     . /usrx/local/prod/lmod/lmod/init/ksh
@@ -64,5 +108,5 @@ elif [[ "$WHERE_AM_I" == wcoss_dell_p3 ]] ; then
     module load impi/18.0.1
     module load CFP/2.0.1
     export USE_CFP=YES
-    export PATH=$PATH:.
+    export PATH=$PATH:./
 fi

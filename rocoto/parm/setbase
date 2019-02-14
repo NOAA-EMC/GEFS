@@ -88,6 +88,36 @@ if [ -d /scratch4/NCEPDEV ]; then
     export utilscript=$USHutil
     export SUPVIT=${SUPVIT:-${EXECutil}/supvit}
 
+elif [[ -d /jetmon ]] ; then
+    echo "Using settings for Jet"
+#    PTMP=/scratch4/NCEPDEV/stmp4
+#    STMP=/scratch4/NCEPDEV/stmp4
+#    SAVE=/scratch4/NCEPDEV/ensemble/save
+#    NOSCRUB=/scratch4/NCEPDEV/ensemble/noscrub
+    export machine='Jet'
+
+    export HOMEDIR=/mnt/lfs3/projects/hfv3gfs/Bing.Fu/git/fv3gfs
+    export HOMEDIR1=$HOMEDIR                        #/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/fv3gfs
+    export HOMERFC=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
+    export HOMEtrak=/mnt/lfs3/projects/hfv3gfs/Bing.Fu/ens_tracker.v1.1.13.2
+    #export KMP_AFFINITY=scatter
+    export RFHOME=/mnt/lfs3/projects/hfv3gfs/Bing.Fu
+    # export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/common
+#    export HOMEdata=/scratch4/NCEPDEV/ensemble/noscrub/common
+    export COMROOThps=${HOMEdata}
+#    export COMROOTp1=/scratch4/NCEPDEV/rstprod/com 
+
+#    export EXECutil=${EXECutil:-/scratch4/NCEPDEV/global/save/glopara/nwpara/util/exec}
+    #export USHutil=${USHutil:-/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/nwprod/util/ush}
+
+    #export PATH=$PATH:$USHutil:$EXECutil
+#    export PATH=$PATH:$EXECutil:/scratch3/NCEPDEV/nwprod/lib/prod_util/v1.1.0/ush
+
+#    export EXECgrib=${EXECutil}
+    export NDATE=${NDATE:-$EXECgrib/ndate}
+    export utilscript=$USHutil
+    export SUPVIT=${SUPVIT:-${EXECutil}/supvit}
+
 elif [[ -d /dcom && -d /hwrf ]] ; then
     echo "Using settings for WCOSS Phase II"
     PTMP=/ptmpd2

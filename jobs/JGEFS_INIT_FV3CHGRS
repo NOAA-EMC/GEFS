@@ -148,14 +148,17 @@ export YEAR=`echo $PDY|cut -c1-4`
 
 #===== For Reforecast -Start
 
- cp /gpfs/dell3/nco/storage/fv3gefs/INIT/${YEAR}/${MM}/gefs.${PDY}/sfcanl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sfcanl
+ #cp /gpfs/dell3/nco/storage/fv3gefs/INIT/${YEAR}/${MM}/gefs.${PDY}/sfcanl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sfcanl
+ cp /mnt/lfs3/projects/hfv3gfs/Bing.Fu/INIT/fv3gefs/INIT/gefs.${PDY}/sfcanl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sfcanl
 #cp /gpfs/dell2/emc/retros/noscrub/Hong.Guan/IC/sfcanl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sfcanl
 if [ "$mem" = c00 ]; then
- cp /gpfs/dell3/nco/storage/fv3gefs/INIT/${YEAR}/${MM}/gefs.${PDY}/siganl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sanl
+ #cp /gpfs/dell3/nco/storage/fv3gefs/INIT/${YEAR}/${MM}/gefs.${PDY}/siganl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sanl
+ cp /mnt/lfs3/projects/hfv3gfs/Bing.Fu/INIT/fv3gefs/INIT/gefs.${PDY}/siganl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sanl
 #cp /gpfs/dell2/emc/retros/noscrub/Hong.Guan/IC/siganl.gdas.$PDY$cyc $INIDIR/gfs.t${cyc}z.sanl
 else
 #cp /gpfs/dell2/emc/retros/noscrub/Hong.Guan/IC/sanl.$mem $INIDIR/gfs.t${cyc}z.sanl
- cp /gpfs/dell3/nco/storage/fv3gefs/INIT/${YEAR}/${MM}/gefs.${PDY}/sanl.$mem $INIDIR/gfs.t${cyc}z.sanl
+ #cp /gpfs/dell3/nco/storage/fv3gefs/INIT/${YEAR}/${MM}/gefs.${PDY}/sanl.$mem $INIDIR/gfs.t${cyc}z.sanl
+ cp /mnt/lfs3/projects/hfv3gfs/Bing.Fu/INIT/fv3gefs/INIT/gefs.${PDY}/sanl.$mem $INIDIR/gfs.t${cyc}z.sanl
 
 fi
 testfile=$INIDIR/gfs.t${cyc}z.sfcanl
