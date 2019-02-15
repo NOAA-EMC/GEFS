@@ -30,9 +30,9 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:4
 
-export total_tasks=2
+export total_tasks=3
 export OMP_NUM_THREADS=4
-export taskspernode=2
+export taskspernode=3
 
 export FORECAST_SEGMENT=lr
 
