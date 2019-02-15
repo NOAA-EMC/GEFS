@@ -39,7 +39,7 @@ export FORECAST_SEGMENT=hr
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 
-export gefsmpexec=" mpirun -n 240 "
+export gefsmpexec=" mpirun -n 456 "
 #export NTHREADS_SIGCHGRS=2
 
 # CALL executable job script here
