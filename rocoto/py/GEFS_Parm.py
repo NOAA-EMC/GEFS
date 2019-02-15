@@ -84,6 +84,15 @@ def get_and_merge_default_dicParm(dicParm, WHERE_AM_I):
 
 #------
 def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
+
+    # ==
+    sVarName = "First"
+    if sVarName not in lstBaseParm:
+        lstBaseParm.insert(0, sVarName)
+    # ==
+    sVarName = "Last"
+    if sVarName not in lstBaseParm:
+        lstBaseParm.insert(1, sVarName)
     # ==
     sVarName_Num = "npert".upper()
     npert = int(dicBase[sVarName_Num])
@@ -112,9 +121,10 @@ def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
         lstBaseParm.append(sVarName)
 
     # ==
-    sVarName = "COREPERNODE"
-    if sVarName not in lstBaseParm:
-        lstBaseParm.append(sVarName)
+    if ("forecast_high".upper() in dicBase) or ("forecast_low".upper() in dicBase):
+        sVarName = "COREPERNODE"
+        if sVarName not in lstBaseParm:
+            lstBaseParm.append(sVarName)
 
 
     # ==
