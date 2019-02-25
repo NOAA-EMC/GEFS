@@ -66,7 +66,8 @@ if [ -d /scratch4/NCEPDEV ]; then
     NOSCRUB=/scratch4/NCEPDEV/ensemble/noscrub
     export machine='THEIA'
     
-    export HOMEDIR=/scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gfs/fv3gefs_q2fy19nco_a03e7bc6_20181031
+    #export HOMEDIR=/scratch4/NCEPDEV/ensemble/noscrub/common/fv3gfs/fv3gfs_ens_20180814
+    export HOMEDIR=/scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gfs/fv3gefs_c550fea3_20181004
     export HOMEDIR1=$HOMEDIR                        #/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/fv3gfs
     export HOMERFC=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
 
@@ -122,7 +123,7 @@ elif [[ -d /gpfs/hps && -e /etc/SuSE-release ]] ; then
     # export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Bing.Fu/svn/fy2019q1      # most recent fv3gfs upon 5/15/2018
     #export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/svn/fy2019q2      # most recent fv3gfs upon 5/15/2018
     #export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/svn/fv3gfs
-    export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gfs/fv3gefs_q2fy19nco_a03e7bc6_20181031
+    export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gfs/fv3gefs_c550fea3_20181004
     export HOMEDIR1=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda
     export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
     export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
@@ -137,16 +138,30 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     export machine='WCOSS_DELL_P3'
     export JOBPHASE=    
     #export HOMEDIR=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gfs/fv3gefs_c550fea3_20181004
-    export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Bing.Fu/git/q2fy19_nco_rftest1
-    export HOMEDIR1=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda
-    export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
-    SAVE=/gpfs/hps3/emc/retros/save #$PROJECT/save
-    NOSCRUB=/gpfs/hps3/emc/retros/noscrub #/$PROJECT/noscrub
-    
+    #export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Bing.Fu/git/q2fy19_nco_rftest
+    #export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Bing.Fu/git/q2fy19_nco_rftest1
+    export HOMEDIR=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gfs/fv3gfs_b84e91d2
+    #export HOMEDIR=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gfs/fv3gfs_rfcst
+ 
+    #export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
+    #export HOMERFC=/gpfs/dell2/emc/modeling/noscrub/Jiayi.Peng/ens_tracker.v1.1.15
+    export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v1.1.15 
     #export HOMEdata=/gpfs/dell2/emc/retros/noscrub/Xianwu.Xue/common/initdata
     export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
+    #export HOMEdata=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Hong.Guan/common
     export COMROOThps=${HOMEdata} 
 fi
+
+if [[ $machine == WCOSS* ]]; then
+    #fv3gfs and cfs data from NCO para run
+    export COMINgfs_base=/gpfs/dell1/nco/ops/com/gfs/para/gfs.
+    export COMINenkf_base=/gpfs/dell1/nco/ops/com/gfs/para/enkfgdas.
+    export COMINcfs_base=/gpfs/gp1/nco/ops/com/cfs/prod/cfs/cfs.
+fi
+# If you use gfs/enkf data from archived data, e.g $HOMEdata, specify here or in the corresponding "if" block .
+#export COMINenkf_base=$HOMEdata/enkf.gdas.
+#export COMINgfs_base=$HOMEdata/gfs.
+#export COMINcfs_base=/ensemble/noscrub/Walter.Kolczynski/gefs_input/cfs_2_sst/cfs.
 
 export JOBQUEUE=$JOBQUEUE$JOBPRIO$JOBPHASE
 echo JOB QUEUE info: $JOBQUEUE 

@@ -1,6 +1,18 @@
-This is a note on how to run forecast job in "restart mode"
+Dingchen Hou: 12/13/2018
+
+This is a note about the commit to DHrestart branch, focus on the restart capability
+a) The RESTART capabilioty is limited to the forecast job only
+b) The gefs_parm file sets the resolution for "hr" and "lr" section as the same C384L64. No change this time
+c) The rocoto workflow assumes that the high resolution forecast starts from 0h (cold start or FV3_RELOC)
+d) The rocoto workflow assumes that the low resolution forecast starts from 03 (cold start or FV3_RELOC) with RFNdate=NO
+e) The above setting is to meet the requirement of GEFS v12 REFORECAST project
+f) The general RESTART capability (restart other 03h, restart including the post jobs) are not ready yet, but
+   every is encoraged to do exploration
+
 
 Dingchen Hou: 11/15/2018
+
+This is a note on how to run forecast job in "restart mode"
 
 To run fv3 forecast job you need to have a set of "restart files" (32 files in total) in the ptmp
 ~nwges/dev/gefs.YYYYMMDD/00/c00/RESTART directory (c00 is an example of member ID)
