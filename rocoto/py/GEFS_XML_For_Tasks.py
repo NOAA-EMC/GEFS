@@ -347,7 +347,63 @@ def get_param_of_task(dicBase, taskname):
                         sDep = '<and>\n\t<taskdep task="copy_init_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
                     else:
                         sDep = '<taskdep task="copy_init_#member#"/>'
+                elif DoesTaskExist(dicBase, "init_fv3chgrs"):
+                    if DoesTaskExist(dicBase, "getcfssst"):
+                        sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+                    else:
+                        sDep = '<taskdep task="init_fv3chgrs_#member#"/>'
+                else:
+                    sDep = "" 
+                       
+            # For 'forecast_low' task
+            if taskname.lower() == "forecast_low": 
+                if DoesTaskExist(dicBase, "forecast_high"):
+                    sDep = '<taskdep task="forecast_high_#member#"/>'
+                else:
+                    if DoesTaskExist(dicBase, "init_fv3chgrs"):
+                        if DoesTaskExist(dicBase, "getcfssst"):
+                            sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+                        else:
+                            sDep = '<taskdep task="init_fv3chgrs_#member#"/>'
+                    elif DoesTaskExist(dicBase, "rf_prep"):
+                        if DoesTaskExist(dicBase, "getcfssst"):
+                            sDep = '<and>\n\t<taskdep task="rf_prep"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+                        else:
+                            sDep = '<taskdep task="rf_prep"/>'
+                    else:  # For Warm Start
+                        if DoesTaskExist(dicBase, "getcfssst"):   
+                            sDep = '<and>\n\t<taskdep task="getcfssst"/>\n</and>'
+                        else:
+                            sDep = ''
                             
+            # For ensstat_high
+            if taskname.lower() == "ensstat_high": 
+                npert = int(dicBase["NPERT"])
+                sDep = '<and>'
+                for i in range(npert):
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.prdgen.control.f000</cyclestr></datadep>'.format(i+1)
+                sDep +='\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.prdgen.control.f000</cyclestr></datadep>'
+                sDep +='\n</and>'
+                
+            # For ensstat_low
+            if taskname.lower() == "ensstat_low": 
+                npert = int(dicBase["NPERT"])
+                sDep = '<and>'
+                for i in range(npert):
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.prdgen.control.f{1:03}</cyclestr></datadep>'.format(i+1,int(dicBase["fhmaxh".upper()])+ int(dicBase["FHOUTHF"]))
+                sDep +='\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.prdgen.control.f{0:03}</cyclestr></datadep>'.format(int(dicBase["fhmaxh".upper()]) + int(dicBase["FHOUTHF"]))
+                sDep +='\n</and>'
+                
+            # For extractvars
+            if taskname.lower() == "extractvars":
+                if DoesTaskExist(dicBase, "prdgen_low"):
+                    sDep = '<metataskdep metatask="prdgen_low"/>'
+                elif DoesTaskExist(dicBase, "prdgen_high"):
+                    sDep = '<metataskdep metatask="prdgen_high"/>'
+                else:
+                    sDep = ''
+
+ 
             # For Low Resolution
             if taskname.lower() == "post_low" or taskname.lower() == "prdgen_low":
                 FHOUTHF=int(dicBase["FHOUTHF".upper()])
@@ -376,28 +432,26 @@ def get_param_of_task(dicBase, taskname):
 
             # For 'keep_data' and 'archive' tasks
             if taskname.lower() == "keep_data" or taskname.lower() == "archive":
+                sDep = '<and>'
                 if DoesTaskExist(dicBase, "enspost"):
-                    if DoesTaskExist(dicBase, "post_track"):
-                        if DoesTaskExist(dicBase, "post_genesis"):
-                            sDep = '<and>\n\t<taskdep task="enspost"/>\n\t<taskdep task="post_track"/>\n\t<taskdep task="post_genesis"/>\n</and>'
-                        else:
-                            sDep = '<and>\n\t<taskdep task="enspost"/>\n\t<taskdep task="post_track"/>\n</and>'
-                    else:
-                        if DoesTaskExist(dicBase, "post_genesis"):
-                            sDep = '<and>\n\t<taskdep task="enspost"/>\n\t<taskdep task="post_genesis"/>\n</and>'
-                        else:
-                            sDep = '<and>\n\t<taskdep task="enspost"/>\n</and>'
-                else:
-                    if DoesTaskExist(dicBase, "post_track"):
-                        if DoesTaskExist(dicBase, "post_genesis"):
-                            sDep = '<and>\n\t<taskdep task="post_track"/>\n\t<taskdep task="post_genesis"/>\n</and>'
-                        else:
-                            sDep = '<and>\n\t<taskdep task="post_track"/>\n</and>'
-                    else:
-                        if DoesTaskExist(dicBase, "post_genesis"):
-                            sDep = '<and>\n\t<taskdep task="post_genesis"/>\n</and>'
-                        else:
-                            sDep = ''
+                    sDep += '\n\t<taskdep task="enspost"/>'
+                if DoesTaskExist(dicBase, "post_track"):
+                    sDep += '\n\t<taskdep task="post_track"/>'
+                if DoesTaskExist(dicBase, "post_genesis"):
+                    sDep += '\n\t<taskdep task="post_genesis"/>'
+                if DoesTaskExist(dicBase, "extractvars"):
+                    sDep += '\n\t<taskdep task="extractvars"/>'
+                if DoesTaskExist(dicBase, "ensstat_low"):
+                    sDep += '\n\t<taskdep task="ensstat_low"/>'                    
+                if DoesTaskExist(dicBase, "prdgen_low"):
+                    sDep += '\n\t<metataskdep metatask="prdgen_low"/>'
+                if DoesTaskExist(dicBase, "ensstat_high"):
+                    sDep += '\n\t<taskdep task="ensstat_high"/>'
+                if DoesTaskExist(dicBase, "prdgen_high"):
+                    sDep += '\n\t<metataskdep metatask="prdgen_high"/>'
+                if DoesTaskExist(dicBase, "getcfssst"):
+                    sDep += '\n\t<taskdep task="getcfssst"/>'
+                sDep += '\n</and>'
 
             # Don't clean up if keep_init isn't finished
             if taskname.lower() == "cleanup" and DoesTaskExist(dicBase, "keep_init"):
@@ -511,8 +565,10 @@ def get_jobname(taskname):
 
     # else if this file does not exist and if the task name is not in the job_id.conf
     tasknames = taskname.split("_")
-    if len(tasknames) == 2:
-        jobname_short = tasknames[1][0:2] + "_" + tasknames[1][-2:]
+    if len(tasknames) == 1:
+        jobname_short = tasknames[0][0:2] + "_" + tasknames[0][-2:]
+    elif len(tasknames) == 2:
+        jobname_short = tasknames[0][0:2] + "_" + tasknames[1][-2:]
     else:
         jobname_short = tasknames[1][0] + tasknames[1][-1] + "_" + tasknames[2][0] + tasknames[2][-1]
 

@@ -37,7 +37,6 @@ export FORECAST_SEGMENT=hr
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export gefsmachine=wcoss_ibm
 
 export gefsmpexec_mpmd=" mpirun.lsf"
 export APRUNC="mpirun.lsf"

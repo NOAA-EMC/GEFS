@@ -39,7 +39,7 @@ export npe_fv3
 #PE geometry
 export hyperthread=${hyperthread:-".false."}
 export NTHREADS_FV3=${parallel_threads:-2}
-COREPERNODE=${COREPERNODE:-24}
+COREPERNODE=${COREPERNODE:-28}
 export cores_per_node=$COREPERNODE
 
 #FV dynamics parameters
