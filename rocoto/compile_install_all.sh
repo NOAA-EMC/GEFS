@@ -85,10 +85,7 @@ if [ $CompileCode = "yes" ]; then
     fi
 
     ## Build the code
-    ./build.sh
-
-    ## Install GEFS
-    ./install.sh
+    ./build_all.sh
 
     cd $sWS/../sorc
     if [ $machine = "theia" ]; then
