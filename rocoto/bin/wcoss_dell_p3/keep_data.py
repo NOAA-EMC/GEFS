@@ -96,21 +96,45 @@ for directory in dirs_to_keep:
 
 
 # Keep "output" files
+clobber = False
 output_dir = work_dir + "/com/output/dev/" + date_string
 if os.path.exists(output_dir):
-    destination_dir = destination_path + "/" + "logs"
-    if ( os.path.exists(destination_dir) ):
-        if(clobber):
-            shutil.rmtree(destination_dir + "/")
-        else:
-            print("FATAL: Destination diretory " + destination_dir + " already exists and clobber is False")
-            quit(-102)
+        destination_dir = destination_path + "/" + "logs"
+        if ( os.path.exists(destination_dir) ):
+            if(clobber):
+                print("Deleting " + destination_dir)
+                shutil.rmtree(destination_dir + "/")
+        #else:
+        #     os.makedirs(destination_dir)
+            #print("FATAL: Destination diretory " + destination_dir + " already exists and clobber is False")
+            #quit(-102)
 
-    if ( not os.path.exists(destination_path) ):
-        os.makedirs(destination_path)
-    print("Copying files for " + directory)
-    print("    From " + output_dir + " to " + destination_dir)
-    shutil.copytree(output_dir, destination_dir)
+        #if ( not os.path.exists(destination_path) ):
+        #    os.makedirs(destination_path)
+        print("Copying files for " + "logs")
+        print("    From " + output_dir + " to " + destination_dir)
+        #shutil.copytree(output_dir, destination_dir)
+        import subprocess
+        p = subprocess.Popen("rsync -avzh  {0}/ {1}/".format(output_dir, destination_dir), stdout=subprocess.PIPE, shell=True)
+        (output, err) = p.communicate()
+        p_status = p.wait()
+
+
+
+#if os.path.exists(output_dir):    
+#    destination_dir = destination_path + "/" + "logs"
+#    if ( os.path.exists(destination_dir) ):
+#        if(clobber):
+#            shutil.rmtree(destination_dir + "/")
+#        else:
+#            print("FATAL: Destination diretory " + destination_dir + " already exists and clobber is False")
+#            quit(-102)
+#
+#    if ( not os.path.exists(destination_path) ):
+#        os.makedirs(destination_path)
+#    print("Copying files for " + directory)
+#    print("    From " + output_dir + " to " + destination_dir)
+#    shutil.copytree(output_dir, destination_dir)
 
 
 
