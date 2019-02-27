@@ -40,9 +40,9 @@ export INCSM="-I ${SFCIO_INC4} -I ${NEMSIO_INC}"
 
 export LIBSM="${NEMSIO_LIB} ${BACIO_LIB4} ${SFCIO_LIB4} ${W3NCO_LIB4}"
 
-make -f Makefile2 clobber
-make -f Makefile2
-make -f Makefile2 install
-make -f Makefile2 clobber
+make -f Makefile clobber
+make -f Makefile
+make -f Makefile install
+make -f Makefile clobber
 
 exit
