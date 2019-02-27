@@ -50,41 +50,7 @@ echo $userConfigFile
 if [ $CompileCode = "yes" ]; then
     cd $sWS/../sorc
 
-    ## mkdir folds
-	# Check final exec folder exists
-	if [ ! -d "../exec" ]; then
-		echo "Creating ../exec folder"
-		mkdir ../exec
-	fi
-
-	# Check final exec folder exists
-    if [ ! -d "../util/exec" ]; then
-        echo "Creating ../exec folder"
-        mkdir ../util/exec
-    fi
-
-    ## Deal with the modules
-    module purge
-    module use ./
-
-    if [ $machine = theia ]; then
-        echo "You are running on Theia!"
-        module load Module_gefs_v12_theia
-    elif [ $machine = cray ]; then
-        echo "You are running on Cray!"
-        module load Module_gefs_v12_cray
-    elif [ $machine = wcoss ]; then
-        echo "You are running on wcoss!"
-        module load Module_gefs_v12_wcoss
-    elif [ $machine = wcoss_dell_p3 ]; then
-        echo "You are running on wcoss_dell_p3!"
-        module load Module_gefs_v12_wcoss_dell_p3
-    else
-        echo "You are running on some platform we didn't support, please check it!"
-        exit
-    fi
-
-    ## Build the code
+    ## Build the code and install
     ./build_all.sh
 
     cd $sWS/../sorc
