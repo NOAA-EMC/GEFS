@@ -75,6 +75,8 @@ if [ $CleanAll = "yes" ]; then
 
     cd $sWS/../sorc
 
+    rm -rf logs
+
     for dir in gefs_vortex_separate.fd gefs_vortex_combine.fd global_sigzvd.fd  global_ensadd.fd  global_enspqpf.fd  gefs_ensstat.fd  global_ensppf.fd ; do
         cd $dir
         make clean
