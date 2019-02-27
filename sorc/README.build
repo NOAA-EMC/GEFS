@@ -2,14 +2,16 @@ Library are defined in Module_gefs_v12_XXXX     (XXXX=cray or wcoss or theia)
 
 To build codes:
 
-    cd /XXXX/sorc
-        mkdir ../exec
-        mkdir ../util/exec
-     1) module purge
-     2) module use ./
-     3) module load Module_gefs_v12_wcoss (wcoss) or 
-	module load Module_gefs_v12_cray (cray) or
-        module load Module_gefs_v12_theia (theia)
-     4) ./build.sh  
-     5) ./install.sh
+    cd sorc
+
+    ./build_all.sh
+
+To link the fix data:
+
+    cd sorc
+    
+    ./link_gefs.sh -e emc -m theia # For Theia    
+    ./link_gefs.sh -e emc -m cray  # For Cray
+    ./link_gefs.sh -e emc -m ibm   # For WCOSS    
+    ./link_gefs.sh -e emc -m dell  # For WCOSS_DELL_P3
 

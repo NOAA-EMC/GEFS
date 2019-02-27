@@ -6,14 +6,7 @@ cwd=`pwd`
 
 progname=global_enspvrfy
 
-USE_PREINST_LIBS=${USE_PREINST_LIBS:-"true"}
-if [ $USE_PREINST_LIBS = true ]; then
-    export MOD_PATH=/scratch3/NCEPDEV/nwprod/lib/modulefiles
-    source ../modulefiles/gefs/${progname}.$target             > /dev/null 2>&1
-else
-    export MOD_PATH=${cwd}/lib/modulefiles
-    source ../modulefiles/gefs/${progname}.$target             > /dev/null 2>&1
-fi
+source ../modulefiles/gefs/${progname}.$target             > /dev/null 2>&1
 
 # Check final exec folder exists
 if [ ! -d "../exec" ]; then

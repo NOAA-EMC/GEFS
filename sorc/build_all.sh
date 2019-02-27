@@ -1,17 +1,5 @@
 #!/bin/sh
 set -ex
-#------------------------------------
-# USER DEFINED STUFF:
-#
-# USE_PREINST_LIBS: set to "true" to use preinstalled libraries.
-#                   Anything other than "true"  will use libraries locally.
-#------------------------------------
-
-export USE_PREINST_LIBS="true"
-
-#------------------------------------
-# END USER DEFINED STUFF
-#------------------------------------
 
 build_dir=`pwd`
 logs_dir=$build_dir/logs
