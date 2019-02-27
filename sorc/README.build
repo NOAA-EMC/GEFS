@@ -1,17 +1,16 @@
-Library are defined in Module_gefs_v12_XXXX     (XXXX=cray or wcoss or theia)
+Instructions for building up the gefs system:
 
-To build codes:
+1) "build" is done in the current directory (~gefs.v12/sorc)
 
-    cd sorc
+2) To build programs:
+    ./build_all.sh                 #this builds all programs
+    ./build_XXXXX.sh               #this builds the XXXXX program
 
-    ./build_all.sh
+3) To link or copy the fix files with options for environment and machine
+    ./link_gefs.sh [-e emc/nco ][ -m theia/cray/ibm/dell ]
+      emc and dell are used as default
+      ibm is for WCOSS P1/P2; dell is for WCOSS_DELL_P3
 
-To link the fix data:
-
-    cd sorc
-    
-    ./link_gefs.sh -e emc -m theia # For Theia    
-    ./link_gefs.sh -e emc -m cray  # For Cray
-    ./link_gefs.sh -e emc -m ibm   # For WCOSS    
-    ./link_gefs.sh -e emc -m dell  # For WCOSS_DELL_P3
+4) The following files are used before and saved here for reference
+     Module_gefs_vxx_XXXX     ( xx=11 or 12, XXXX=cray or wcoss or theia, or wcoss_dell_p3)
 
