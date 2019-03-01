@@ -185,10 +185,12 @@ function fun_cp
 		sMem=p$(printf %02i $iMem)
 
 		if [ ${sFileName} == fv_core.res.nc -o ${sFileName} == coupler.res ]; then
-			sInput_WS=${sWS}/restarts/control2/INPUT
+#			sInput_WS=${sWS}/restarts/control2/INPUT
+			sInput_WS=${sWS}/control2/INPUT
 		else
 			sMem_3=$(printf %03i $iMem)
-			sInput_WS=${sWS}/C384_mem${sMem_3}
+#			sInput_WS=${sWS}/C384_mem${sMem_3}
+			sInput_WS=${sWS}/mem${sMem_3}
 		fi
     fi
 

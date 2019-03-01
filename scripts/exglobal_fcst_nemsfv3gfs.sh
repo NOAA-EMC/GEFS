@@ -126,6 +126,8 @@ PDY=$(echo $CDATE | cut -c1-8)
 cyc=$(echo $CDATE | cut -c9-10)
 
 #Link 2tiersst
+if [[ $sst2tier = YES ]]; then
+
 HFcfsMax=120  # 5 day backword search for 2tiersst
 HFcfs=0
 PDYcfs=$PDY
@@ -153,6 +155,8 @@ done
 if [ $HFcfs -gt $HFcfsMax ];  then
     echo " Real-time CFSv2 does not exist: $sFile"
     exit 92
+fi
+
 fi
 
 #-------------------------------------------------------

@@ -186,7 +186,7 @@ else
 	FORECAST_SEGMENT=$FORECAST_SEGMENT is not supported !
 	stop
 fi
-
+export FHOUT=03
 export FHMIN=$FHINI
 
 #  The VEGTYPE fix file:

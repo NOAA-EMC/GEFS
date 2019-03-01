@@ -1,0 +1,3 @@
+/gpfs/hps3/emc/ensemble/noscrub/Eric.Sinsky/RFCST_APCP/scripts/extract_APCP.sh
+/gpfs/hps3/emc/ensemble/noscrub/Eric.Sinsky/RFCST_APCP/sorc/gefs_daily_ave_1mem_apcp.f90
+make.sh to generate ../exec/gfsnemsio2grb
