@@ -27,6 +27,8 @@ DeleteCrontabFromMyCrontab=${DeleteCrontabFromMyCrontab:-no}
 if [ $machine = "nomachine" ]; then
     if [ -d /scratch4/NCEPDEV ]; then
         machine=theia
+    elif [[ -d /mnt/lfs2 && -d /mnt/lfs3 ]] ; then # Jet
+        machine=jet
     elif [[ -d /gpfs/hps3 && -e /etc/SuSE-release ]]; then # Luna or Surge
         machine=cray
     elif [[ -d /dcom && -d /hwrf ]] ; then # Tide or Gyre
@@ -60,6 +62,9 @@ if [ $CompileCode = "yes" ]; then
     if [ $machine = theia ]; then
         echo "You are running on Theia!"
         module load Module_gefs_v12_theia
+    elif [ $machine = jet ]; then
+        echo "You are running on Jet!"
+        module load Module_gefs_v12_jet
     elif [ $machine = cray ]; then
         echo "You are running on Cray!"
         module load Module_gefs_v12_cray
