@@ -46,6 +46,8 @@ elif [[ "$WHERE_AM_I" == theia ]]; then
 elif [[ "$WHERE_AM_I" == jet ]]; then
     echo "Loading modules for jet"
     . /apps/lmod/lmod/init/ksh
+    module use /apps/modules/modulefiles
+    module use /apps/modules/modulefamilies/intel
     module load newdefaults intel/15.0.3.187 impi/5.1.3.181 szip hdf5 netcdf4/4.2.1.1
     module use /lfs3/projects/hfv3gfs/nwprod/lib/modulefiles
     module load bacio/v2.0.2
@@ -54,9 +56,12 @@ elif [[ "$WHERE_AM_I" == jet ]]; then
     module load w3nco/v2.0.6
     module load w3emc/v2.2.0
     module load nemsio/v2.2.2
+    module load g2tmpl/v1.4.0
+    module use /mnt/lfs3/projects/hfv3gfs/Bing.Fu/soft/grib_util.v1.1.0/modulefiles
+    module load grib_util/jet/v1.1.0
     module use /lfs3/projects/hwrf-vd/soft/modulefiles
     module load prod_util
-    module load grib_util
+    #module load grib_util
     module load hpss
     # mpiserial on Jet includes a cfp wrapper
     module load mpiserial

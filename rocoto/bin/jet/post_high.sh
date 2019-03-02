@@ -31,8 +31,8 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:2
 
-export NODES=2
-export total_tasks=24
+export NODES=3
+export total_tasks=36
 export OMP_NUM_THREADS=2
 export taskspernode=12
 export POSTGRB2TBL=$G2TMPL_SRC/params_grib2_tbl_new
