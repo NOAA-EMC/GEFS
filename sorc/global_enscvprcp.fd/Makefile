@@ -11,12 +11,12 @@ FFLAGS  =$(FFLAGSM)
 OMPFLAG	=$(OMPFLAGM)
 LDFLAGS =$(LDFLAGSM)
 
-SRCSf90	= getnsttf.f90 
+SRCSf90	= CVPRCP.f90 INIT_PARM.f90 PRINTINFR.f90
 SRCSf	= 
 
 SRCS	= $(SRCSf90) $(SRCSf)
 OBJS	= $(SRCSf:.f=.o) $(SRCSf90:.f90=.o)
-CMD		= getnsttf.x
+CMD		= global_enscvprcp
 
 $(CMD):		$(OBJS)
 	$(LDR) $(LDFLAGS) $(OBJS) $(LIBS) -o $(CMD)
