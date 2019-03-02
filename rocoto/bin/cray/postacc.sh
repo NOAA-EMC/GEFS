@@ -20,4 +20,6 @@ export gefsmachine=cray
 
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_RF_PREP
+$SOURCEDIR/jobs/JGEFS_ACC
+
+

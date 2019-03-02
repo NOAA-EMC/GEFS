@@ -172,8 +172,9 @@ case $FORECAST_SEGMENT in
 		else
 			FHINC=$FHOUT_LF
 		fi
-		export SHOUR=$(( $fhmaxh + FHINC ))
-    
+#Hong Guan		export SHOUR=$(( $fhmaxh + FHINC ))
+#    
+                export SHOUR=3
 		export FHOUT=$FHOUT
 		export FHOUT_HF=$FHOUT_HF
 		export FHMAX_HF=$FHMAX_HF
@@ -217,7 +218,7 @@ fi
 # SHOUR_6 006, run 006,015,...384 for 0p25
 # FHINC34: increment hour for 0p25 tasks
 
-SHOUR_1=$SHOUR 
+SHOUR_1=6
 SHOUR_2=$SHOUR 
 SHOUR_3=$SHOUR 
 
@@ -308,10 +309,10 @@ if test $SHOUR -le $FHOUR; then
 	outfile=${subdata}/${SHOUR_1}.${FHOUR_1}.${jobgrid_1}.out
 	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_1} ${FHOUR_1} ${FHOUT_1} $DOANALYSIS_1 ${jobgrid_1} ${subdata} ${FHOUT_HF_1} ${FHMAX_HF_1} 2>&1 >${outfile}" >>prdgen.cmdfile
 
-	subdata=${DATA}/${SHOUR_2}.${FHOUR_2}.${jobgrid_2}
-	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-	outfile=${subdata}/${SHOUR_2}.${FHOUR_2}.${jobgrid_2}.out
-	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_2} ${FHOUR_2} ${FHOUT_2} $DOANALYSIS_2 ${jobgrid_2} ${subdata} ${FHOUT_HF_2} ${FHMAX_HF_2} 2>&1 >${outfile}" >>prdgen.cmdfile
+#	subdata=${DATA}/${SHOUR_2}.${FHOUR_2}.${jobgrid_2}
+#	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+#	outfile=${subdata}/${SHOUR_2}.${FHOUR_2}.${jobgrid_2}.out
+#	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_2} ${FHOUR_2} ${FHOUT_2} $DOANALYSIS_2 ${jobgrid_2} ${subdata} ${FHOUT_HF_2} ${FHMAX_HF_2} 2>&1 >${outfile}" >>prdgen.cmdfile
 
 	subdata=${DATA}/${SHOUR_3}.${FHOUR_3}.${jobgrid_3}
 	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi

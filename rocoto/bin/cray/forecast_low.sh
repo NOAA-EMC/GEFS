@@ -38,13 +38,18 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 
 
-export gefsmpexec=" aprun -b -j1 -n240 -N12 -d2 -cc depth "
+export gefsmpexec=" aprun -b -j1 -n420 -N24 -d1 -cc depth "
 export NTHREADS_SIGCHGRS=2
 
 
 
+export RERUN=RESTART  #(the J-job script has default value "RERUN"
+export FHINI=03    #(forecast lead hour at which your want to restart the fcst)
+export RFNDATE=YES
 
 
-# CALL executable job script here
+ #CALL executable job script here
+
+
 $SOURCEDIR/jobs/JGEFS_FORECAST_FV3
 
