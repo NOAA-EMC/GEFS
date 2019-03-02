@@ -97,6 +97,9 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then # We ar
     export FFLAGS="-O3 -g -convert big_endian -I ${G2_INC4}"
     export FFLAGS_d="-O3 -g -r8 -convert big_endian -auto -mkl -I ${G2_INCd}"
     export OPENMPFFLAG=qopenmp
+
+    export wgrib2api=/gpfs/dell2/emc/verification/noscrub/emc.enspara/Xianwu.Xue/common/ForReforecast/ExternalLibs/grib2.v2.0.7/lib
+    export INCacc= 
 fi
 
 
@@ -129,3 +132,8 @@ for dir in gefs_anom2_fcst.fd gefs_nstgen.fd; do
     make -f makefile
     cd ..
 done
+
+# For gefs_postacc
+./build_gfsnemsio2grb.sh
+
+./build_gefs_6h_ave_1mem.sh
