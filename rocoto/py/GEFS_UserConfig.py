@@ -176,6 +176,8 @@ def get_WHERE_AM_I(dicBase):
             dicBase[sVarName] = 'wcoss_ibm'
         elif os.path.lexists('/usrx') and os.path.realpath('/usrx').startswith('/gpfs/dell'):
             dicBase[sVarName] = 'wcoss_dell_p3'
+        elif os.path.lexists('/jetmon'):
+            dicBase[sVarName] = 'jet'
         elif os.path.exists('c:'):
             dicBase[sVarName] = 'wins'
         else:
