@@ -7,7 +7,6 @@ LDR 	=$(FCMP)
 INCS    =$(INCSM)
 LIBS    =$(LIBSM)
 
-#FFLAGS  =$(FFLAGSM)
 OMPFLAG	=$(OMPFLAGM)
 LDFLAGS =$(LDFLAGSM)
 
@@ -19,7 +18,6 @@ SRCSf_m	= gettrk_main.f
 SRCSf1  = gettrk_modules.f
 
 SRCS	= $(SRCSf90) $(SRCSf1) $(SRCSf_m)
-#OBJS	= $(SRCSf1:.f=.o) $(SRCSf_m:.f=.o) $(SRCSf90:.f90=.o)
 OBJS    = $(SRCSf90:.f90=.o) $(SRCSf_m:.f=.o) $(SRCSf1:.f=.o)
 OBJSf_m = $(SRCSf_m:.f=.o)
 OBJSf1  = $(SRCSf1:.f=.o)
@@ -29,18 +27,15 @@ CMD		= gettrk
 
 
 $(CMD):		$(OBJSf1) $(OBJSf90) $(OBJSf_m)
-	$(LDR) $(LDFLAGS) $(OBJS) $(LIBS) -o $(CMD)
-	#$(LDR) $(INCS) -o $(CMD) $(OBJS) $(LIBS) $(LDFLAGS) # Can get the original results
+	$(LDR) $(LDFLAGS) $(OBJS) $(LIBS) -o $(CMD) 		# New and concise method
+	#$(LDR) $(INCS) -o $(CMD) $(OBJS) $(LIBS) $(LDFLAGS) # To get the original size of executable file
 
-#$(OBJS):	$(SRCS)
-#	$(FC) $(FFLAGS) $(OMPFLAG) $(INCS) -c $(SRCS)
-#
 $(OBJSf1):   $(SRCSf1)
 	$(FC) $(FFLAGSf) -c $(SRCSf1)	
 
 $(OBJSf90):  $(OBJSf1)  $(SRCSf90)
-	$(FC) $(FFLAGSf90) $(OMPFLAG) $(INCS) -c $(SRCSf90)
-	#$(FC) $(FFLAGSf90) -c  $(OMPFLAG) $(INCS) -c $(SRCSf90) # Can get the original results
+	$(FC) $(FFLAGSf90) $(OMPFLAG) $(INCS) -c $(SRCSf90)	 # New and concise method
+	#$(FC) $(FFLAGSf90) -c  $(OMPFLAG) $(INCS) -c $(SRCSf90) # To get the original size of executable file
 
 $(OBJSf_m):   $(SRCSf_m) $(OBJSf1) $(OBJSf90)
 	$(FC) $(FFLAGSf) -c $(SRCSf_m) 

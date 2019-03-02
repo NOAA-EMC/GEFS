@@ -19,8 +19,8 @@ OBJS	= $(SRCSf:.f=.o) $(SRCSf90:.f90=.o)
 CMD		= global_enscqpf
 
 $(CMD):		$(OBJS)
-	$(LDR) $(LDFLAGS) $(OBJS) $(LIBS) -o $(CMD)
-	#$(LDR) $(LDFLAGS) $(FFLAGS) $(OMPFLAG) $(OBJS) $(LIBS) -o $(CMD)
+	$(LDR) $(LDFLAGS) $(OBJS) $(LIBS) -o $(CMD)                      # New and concise method
+	#$(LDR) $(LDFLAGS) $(FFLAGS) $(OMPFLAG) $(OBJS) $(LIBS) -o $(CMD) # To get the original size of executable file
 
 $(OBJS):	$(SRCS)
 	$(FC) $(FFLAGS) $(OMPFLAG) $(INCS) -c $(SRCS)

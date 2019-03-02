@@ -22,10 +22,8 @@ OBJS	= $(SRCSf:.f=.o) $(SRCSf90:.f90=.o)
 CMD		= gefs_vortex_separate 
 
 $(CMD):		$(OBJS)
-	# This is the new method by Xianwu Xue to remove the INCS and its corresponding options [$(FFLAGS) $(OMPFLAG) $(INCS)]
-	$(LDR) $(LDFLAGS) $(OBJS) $(LIBS) -o $(CMD)
-	# Using the below method will generate the same exec file size as the one before changing to EE2
-	#$(LDR) $(LDFLAGS) $(FFLAGS) $(OMPFLAG) $(INCS) $(OBJS) $(LIBS) -o $(CMD)
+	$(LDR) $(LDFLAGS) $(OBJS) $(LIBS) -o $(CMD)                             # New and concise method
+	#$(LDR) $(LDFLAGS) $(FFLAGS) $(OMPFLAG) $(INCS) $(OBJS) $(LIBS) -o $(CMD) # To get the original size of executable file
 
 $(OBJS):	$(SRCS)
 	$(FC) $(FFLAGS) $(OMPFLAG) $(INCS) -c $(SRCS)
