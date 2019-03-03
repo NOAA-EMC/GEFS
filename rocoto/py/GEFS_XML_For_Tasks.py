@@ -402,7 +402,15 @@ def get_param_of_task(dicBase, taskname):
                     sDep = '<metataskdep metatask="prdgen_high"/>'
                 else:
                     sDep = ''
-
+            
+            # For postacc
+            if taskname.lower() == "postacc":
+                npert = int(dicBase["NPERT"])
+                sDep = '<and>'
+                for i in range(npert):
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/master/gep{0:02}.t@Hz.master.grb2f006</cyclestr></datadep>'.format(i+1)
+                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/master/gec00.t@Hz.master.grb2f006</cyclestr></datadep>'
+                sDep +='\n</and>'
  
             # For Low Resolution
             if taskname.lower() == "post_low" or taskname.lower() == "prdgen_low":
@@ -417,19 +425,35 @@ def get_param_of_task(dicBase, taskname):
                     start_hr_low =  fhmaxh + FHOUTHF
                 sDep = dicBase[sVarName].replace("fXXX","f{0:03d}".format(start_hr_low))
 
+                if DoesTaskExist(dicBase,"postacc"):
+                   sDep = '<taskdep task="postacc"/>'
+
             # For 'enspost' task
             if taskname.lower() == "enspost":
-                if DoesTaskExist(dicBase, "ensstat_low"):
-                    if DoesTaskExist(dicBase, "prdgen_gfs"):
-                        sDep = '<and>\n\t<taskdep task="ensstat_low"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
-                    else:
-                        sDep = '<taskdep task="ensstat_low"/>'
-                elif DoesTaskExist(dicBase, "ensstat_high"):  
-                    if DoesTaskExist(dicBase, "prdgen_gfs"):
-                        sDep = '<and>\n\t<taskdep task="ensstat_high"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
-                    #else:
-                    #    sDep = '<taskdep task="ensstat_high"/>' #Default
-
+                sDep = '<and>'
+                if DoesTaskExist(dicBase, "prdgen_high"):
+                    sDep += '\n\t<metataskdep metatask="prdgen_high"/>'
+                if DoesTaskExist(dicBase, "prdgen_low"):
+                    sDep += '\n\t<metataskdep metatask="prdgen_low"/>'
+                sDep += '\n</and>'
+                #if DoesTaskExist(dicBase, "ensstat_low"):
+                #    if DoesTaskExist(dicBase, "prdgen_gfs"):
+                #        sDep = '<and>\n\t<taskdep task="ensstat_low"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
+                #    else:
+                #        sDep = '<taskdep task="ensstat_low"/>'
+                #elif DoesTaskExist(dicBase, "ensstat_high"):  
+                #    if DoesTaskExist(dicBase, "prdgen_gfs"):
+                #        sDep = '<and>\n\t<taskdep task="ensstat_high"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
+                #    #else:
+                #    #    sDep = '<taskdep task="ensstat_high"/>' #Default
+            
+            # For 'post_track' task
+            if taskname.lower() == "post_track":
+                if DoesTaskExist(dicBase, "prdgen_low"):
+                    sDep = '<metataskdep metatask="prdgen_low"/>'
+                elif DoesTaskExist(dicBase, "prdgen_high"):
+                    sDep = '<metataskdep metatask="prdgen_high"/>'
+ 
             # For 'keep_data' and 'archive' tasks
             if taskname.lower() == "keep_data" or taskname.lower() == "archive":
                 sDep = '<and>'
@@ -473,6 +497,24 @@ def get_param_of_task(dicBase, taskname):
             ncores_per_node = 24
         elif WHERE_AM_I == "wcoss_dell_p3".upper():
             ncores_per_node = 28
+        elif WHERE_AM_I == "jet".upper():
+            if dicBase["nativepartition".upper()].upper() == "tjet".upper():
+                ncores_per_node = 12
+            elif dicBase["nativepartition".upper()].upper() == "ujet".upper():
+                ncores_per_node = 12
+            elif dicBase["nativepartition".upper()].upper() == "sjet".upper():
+                ncores_per_node = 16
+            elif dicBase["nativepartition".upper()].upper() == "vjet".upper():
+                ncores_per_node = 16
+            elif dicBase["nativepartition".upper()].upper() == "xjet".upper():
+                ncores_per_node = 24
+            elif dicBase["nativepartition".upper()].upper() == "bigmem".upper():
+                ncores_per_node = 24
+            elif dicBase["nativepartition".upper()].upper() == "kjet".upper():
+                ncores_per_node = 40
+            else:
+                ncores_per_node = 24
+
         else:
             ncores_per_node = 24
 
@@ -533,13 +575,23 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
 
     strings = ""
     if taskname in metatask_names:
-        strings += create_metatask(taskname=taskname, jobname=jobname, sWalltime=sWalltime, sNodes=sNodes, \
-                                   sMemory=sMemory, sJoin=sJoin, sDep=sDep, sQueue=sQueue, sPre=sPre, \
-                                   GenTaskEnt=GenTaskEnt, WHERE_AM_I=WHERE_AM_I)
+        if WHERE_AM_I.upper() == "jet".upper():
+            strings += create_metatask(taskname=taskname, jobname=jobname, sWalltime=sWalltime, sNodes=sNodes, \
+                                       sMemory=sMemory, sJoin=sJoin, sDep=sDep, sQueue=sQueue, sPre=sPre, \
+                                       GenTaskEnt=GenTaskEnt, WHERE_AM_I=WHERE_AM_I,snativepartition=dicBase["nativepartition".upper()])
+        else:
+            strings += create_metatask(taskname=taskname, jobname=jobname, sWalltime=sWalltime, sNodes=sNodes, \
+                                       sMemory=sMemory, sJoin=sJoin, sDep=sDep, sQueue=sQueue, sPre=sPre, \
+                                       GenTaskEnt=GenTaskEnt, WHERE_AM_I=WHERE_AM_I)
     else:
-        strings += create_task(taskname=taskname, jobname=jobname, sWalltime=sWalltime, sNodes=sNodes, \
-                               sMemory=sMemory, sJoin=sJoin, sQueue=sQueue, sDep=sDep, sPre=sPre, GenTaskEnt=GenTaskEnt, \
-                               WHERE_AM_I=WHERE_AM_I)
+        if WHERE_AM_I.upper() == "jet".upper():
+            strings += create_task(taskname=taskname, jobname=jobname, sWalltime=sWalltime, sNodes=sNodes, \
+                                   sMemory=sMemory, sJoin=sJoin, sQueue=sQueue, sDep=sDep, sPre=sPre, GenTaskEnt=GenTaskEnt, \
+                                   WHERE_AM_I=WHERE_AM_I,snativepartition=dicBase["nativepartition".upper()])
+        else:
+            strings += create_task(taskname=taskname, jobname=jobname, sWalltime=sWalltime, sNodes=sNodes, \
+                                   sMemory=sMemory, sJoin=sJoin, sQueue=sQueue, sDep=sDep, sPre=sPre, GenTaskEnt=GenTaskEnt, \
+                                   WHERE_AM_I=WHERE_AM_I)
 
     return strings
 
@@ -615,7 +667,7 @@ def read_jobid_config(sConfig):
 # =======================================================
 def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member#", \
                     sWalltime="00:30:00", sNodes="1:ppn=12:tpp=2", sMemory="600M", sJoin="", sDep="", sQueue="", \
-                    sPre="\t", GenTaskEnt=False, WHERE_AM_I="cray"):
+                    sPre="\t", GenTaskEnt=False, WHERE_AM_I="cray",snativepartition="xjet"):
     cycledef = "gefs"
     maxtries = 1
 
@@ -698,6 +750,8 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
         strings += "\n"
     elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
         strings += "\n"
+    elif WHERE_AM_I.upper() == "jet".upper():
+        strings += sPre + '\t\t' + '<native>-l partition={0}</native>\n'.format(snativepartition.lower())
     else:
         strings += sPre + '\t\t' + '<native>-extsched "CRAYLINUX[]"</native>\n'
 
@@ -735,7 +789,7 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
 def create_task( \
         taskname="enkf_track", jobname="&EXPID;@Y@m@d@H010", \
         sWalltime="01:50:00", sNodes="2:ppn=20", sMemory="3000M", sJoin="", sDep="",sQueue="", \
-        sPre="\t", GenTaskEnt=False, WHERE_AM_I="cray"):
+        sPre="\t", GenTaskEnt=False, WHERE_AM_I="cray", snativepartition="xjet"):
     cycledef = "gefs"
     maxtries = 1
 
@@ -822,6 +876,8 @@ def create_task( \
         strings += "\n"
     elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
         strings += sPre + '\t' + "<native>-R 'affinity[core(1)]'</native>\n"
+    elif WHERE_AM_I.upper() == "jet".upper():
+        strings += sPre + '\t' + '<native>-l partition={0}</native>\n'.format(snativepartition.lower())
     else:
         strings += sPre + '\t' + '<native>-extsched "CRAYLINUX[]"</native>\n'
 

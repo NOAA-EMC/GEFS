@@ -52,6 +52,23 @@ def rw_bin_forecast_high(taskname, dicBase):
         ncores_per_node = 28
     elif WHERE_AM_I == "wcoss_ibm":
         ncores_per_node = 24
+    elif WHERE_AM_I == "jet":
+        if dicBase["nativepartition".upper()].upper() == "tjet".upper():
+            ncores_per_node = 12
+        elif dicBase["nativepartition".upper()].upper() == "ujet".upper():
+            ncores_per_node = 12
+        elif dicBase["nativepartition".upper()].upper() == "sjet".upper():
+            ncores_per_node = 16
+        elif dicBase["nativepartition".upper()].upper() == "vjet".upper():
+            ncores_per_node = 16
+        elif dicBase["nativepartition".upper()].upper() == "xjet".upper():
+            ncores_per_node = 24
+        elif dicBase["nativepartition".upper()].upper() == "bigmem".upper():
+            ncores_per_node = 24
+        elif dicBase["nativepartition".upper()].upper() == "kjet".upper():
+            ncores_per_node = 40
+        else:
+            ncores_per_node = 24
     else:
         ncores_per_node = 24
 
