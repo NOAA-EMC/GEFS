@@ -175,5 +175,9 @@ if [ $AddCrontabToMyCrontab = "yes" ]; then
     elif [ $machine = "wcoss_dell_p3" ]; then
         py/add_crontab.py
         echo "Added crontab to system!"
+    elif [ $machine = "jet" ]; then
+        py/add_crontab.py
+        crontab ~/cron/mycrontab
+        echo "Added crontab to system!"
     fi
 fi
