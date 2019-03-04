@@ -3,7 +3,7 @@
 sWS=`pwd`
 echo $sWS
 
-while getopts c:a:r:m:f:b: option
+while getopts c:a:r:m:f:b:d: option
 do
     case "${option}"
     in
@@ -13,6 +13,7 @@ do
         m) machine=${OPTARG};;
         f) userConfigFile=${OPTARG};;
         b) AddCrontabToMyCrontab=${OPTARG};;
+        d) DeleteCrontabFromMyCrontab=${OPTARG};;
     esac
 done
 
@@ -179,5 +180,22 @@ if [ $AddCrontabToMyCrontab = "yes" ]; then
         py/add_crontab.py
         crontab ~/cron/mycrontab
         echo "Added crontab to system!"
+    fi
+fi
+
+if [ $DeleteCrontabFromMyCrontab = "yes" ]; then
+    cd $sWS
+    if [ $machine = "theia" ]; then
+        echo "Not ready on theia"
+    elif [ $machine = "cray" ]; then
+        echo "Not ready on cray"
+    elif [ $machine = "wcoss_dell_p3" ]; then
+        py/del_crontab.py
+        echo "Deleted crontab to system!"
+    elif [ $machine = "jet" ]; then
+        crontab -r
+        py/del_crontab.py
+        crontab ~/cron/mycrontab
+        echo "Deleted crontab to system!"
     fi
 fi
