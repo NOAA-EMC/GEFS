@@ -735,6 +735,8 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
         strings += "\n"
     elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
         strings += "\n"
+    elif WHERE_AM_I.upper() == "jet".upper():
+        strings += "\n"
     else:
         strings += sPre + '\t\t' + '<native>-cwd &tmpnwprd;</native>\n'
 
@@ -858,6 +860,8 @@ def create_task( \
     elif WHERE_AM_I.upper() == "wcoss_ibm".upper():
         strings += "\n"
     elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
+        strings += "\n"
+    elif WHERE_AM_I.upper() == "jet".upper():
         strings += "\n"
     else:
         strings += sPre + '\t' + '<native>-cwd &tmpnwprd;</native>\n'

@@ -4,7 +4,7 @@ set -x -e
 #---------------------------------------------------------
 if [ -d /scratch4/NCEPDEV ]; then # For THEIA
     echo "Building for Theia"
-    machine=theia
+    export machine=theia
     ptmp=/scratch4/NCEPDEV/ensemble/ptmp/$LOGNAME
 
     # Set variables used by makefiles - same as WCOSS - WCK
@@ -28,7 +28,7 @@ if [ -d /scratch4/NCEPDEV ]; then # For THEIA
 
 elif [[ -d /mnt/lfs2 && -d /mnt/lfs3 ]] ; then # Jet
     echo "Building for Jet"
-    machine=jet
+    export machine=jet
     ptmp=/mnt/lfs3/projects/hfv3gfs/$LOGNAME/ptmp
 
     # Set variables used by makefiles - same as WCOSS - WCK
@@ -52,7 +52,7 @@ elif [[ -d /mnt/lfs2 && -d /mnt/lfs3 ]] ; then # Jet
 
 elif [[ -d /dcom && -d /hwrf ]] ; then # Tide or Gyre
     echo "Building for WCOSS IBM"
-    machine=wcoss
+    export machine=wcoss
     export LIBDIR=/nwprod/lib
     export INCG="$NEMSIO_INC"
     export INCGFS="$NEMSIOGFS_INC"
@@ -81,7 +81,7 @@ elif [[ -d /dcom && -d /hwrf ]] ; then # Tide or Gyre
 elif [[ -d /gpfs/hps3 && -e /etc/SuSE-release ]]; then # Luna or Surge
     echo "Building for Cray"
 
-    machine=cray
+    export machine=cray
     export LIBDIR=/gpfs/hps/nco/ops/nwprod/lib
     export INCG="$NEMSIO_INC"
     export INCGFS="$NEMSIOGFS_INC"
@@ -102,7 +102,7 @@ elif [[ -d /gpfs/hps3 && -e /etc/SuSE-release ]]; then # Luna or Surge
 elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then # We are on NOAA Mars or Venus
     echo "Building for wcoss_dell_p3"
 
-    machine=wcoss_dell_p3
+    export machine=wcoss_dell_p3
    
     export IP_LIBd=/gpfs/dell1/nco/ops/nwtest/lib.p2/ip/v2.0.0/libip_v2.0.0_d.a
     export IP_LIB4=/gpfs/dell1/nco/ops/nwtest/lib.p2/ip/v2.0.0/libip_v2.0.0_4.a
