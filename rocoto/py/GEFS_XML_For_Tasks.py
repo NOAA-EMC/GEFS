@@ -425,8 +425,8 @@ def get_param_of_task(dicBase, taskname):
                     start_hr_low =  fhmaxh + FHOUTHF
                 sDep = dicBase[sVarName].replace("fXXX","f{0:03d}".format(start_hr_low))
 
-                if DoesTaskExist(dicBase,"postacc"):
-                   sDep = '<taskdep task="postacc"/>'
+#                if DoesTaskExist(dicBase,"postacc"):
+                   sDep = '<metataskdep metatask="forecast_low"/>'
 
             # For 'enspost' task
             if taskname.lower() == "enspost":
