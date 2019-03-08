@@ -797,6 +797,8 @@ def create_task( \
 
     if taskname in ['keep_data', 'archive', 'cleanup']:
         strings += sPre + '\t' + '<command><cyclestr>&PRE; &BIN;/{0}.py</cyclestr></command>\n'.format(taskname)
+    elif taskname in ['prdgen_gfs']:
+        strings += sPre + '\t' + '<command><cyclestr>&PRE; &BIN;/prdgen_high.sh</cyclestr></command>\n'   
     else:
         strings += sPre + '\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
 
