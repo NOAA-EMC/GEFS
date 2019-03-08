@@ -3,10 +3,28 @@
 #
 # Product Generation Input Variables
 #
+# export makepgrb2=${makepgrb2:-yes}
+export makegrb2i=${makegrb2i:-yes}
+export makepgrb2b=${makepgrb2b:-yes}
 
+# The following are options for $WGRIB2 when used to change grid resolution
+export option1=${option1:-' -set_grib_type same -new_grid_winds earth '}
+export option21=${option21:-' -new_grid_interpolation bilinear  -if '}
+export option22=${option22:-":(LAND|CSNOW|CRAIN|CFRZR|CICEP|ICSEV):"}
+export option23=${option3:-' -new_grid_interpolation neighbor -fi '}
+
+# fhoroglist is the list of additional hours at which surface height should be included in pgrba
+# this is normally fhmaxh + 12 to include the next gfs output time after the resolution change
+if (( fhmaxh < fhmax )); then
+  export fhoroglist=$(( fhmaxh + 12 ))
+else
+  export fhoroglist=
+fi
+
+#
 # Establish an array of stream names which will establish the number and be used as keys for the associative arrays
+#
 typeset -a PRDGEN_STREAMS=${PRDGEN_STREAMS:-res_2p50 res_1p00 res_0p50 res_0p25_s1 res_0p25_s2 res_0p25_s3}
-
 export PRDGEN_STREAMS
 
 #

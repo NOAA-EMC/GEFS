@@ -111,26 +111,25 @@ export USESUBDIR=${USESUBDIR:-YES}
 # This section defines the resolution
 #######################################
 #temporay setting for INIT nemsio files from current GEFS prod (v11)
- export JCAPHR=${JCAPHR:-574}
- export LEVSHR=${LEVSHR:-64}
- export LONBHR=${LONBHR:-1152}
- export LATBHR=${LATBHR:-576}
- export NTRACHR=${NTRACHR:-3}
- export MTNRSL=${MTNRSL:-574.1152.576}
-#export DELTIM=${DELTIM:-900}
-#export DTPHYS=${DTPHYS:-450}
+# export JCAPHR=${JCAPHR:-574}
+# export LEVSHR=${LEVSHR:-64}
+# export LONBHR=${LONBHR:-1152}
+# export LATBHR=${LATBHR:-576}
+# export NTRACHR=${NTRACHR:-3}
+# export MTNRSL=${MTNRSL:-574.1152.576}
+# export DELTIM=${DELTIM:-900}
+# export DTPHYS=${DTPHYS:-450}
 
 #For the higher resolution part of FV3 forecast
- export CASEHR=${CASEHR:-C384}
- export LEVSHR=${LEVSHR:-64}
- export DELTIM=${DELTIM:-450}
- export JCAPFV=${JCAPFV:-766}
- export LATBFV=${LATBFV:-768}
- export LONBFV=${LONBFV:-1536}
- export MTNRSLFV=${MTNRSLFV:-766.1536.768}
+export CASEHR=${CASEHR:-C384}
+export LEVSHR=${LEVSHR:-64}
+export DELTIM=${DELTIM:-450}
+export JCAPFV=${JCAPFV:-766}
+export LATBFV=${LATBFV:-768}
+export LONBFV=${LONBFV:-1536}
+export MTNRSLFV=${MTNRSLFV:-766.1536.768}
 
 #Lower resolution part
-
 export CASELR=${CASELR:-C192}
 export LEVSLR=${LEVSLR:-64}
 export DELTIMLR=${DELTIMLR:-600}
@@ -155,42 +154,11 @@ export REMAP_GRID=${REMAP_GRID:-latlon}        #gaussian or latlon for using fre
 export gfsfhmaxh=240
 export gfsfhoroglist=252
 
-#DHOU 3/15/2015 for prdgen
-export makepgrb2=yes
-export makegrb2i=yes
+# export submit_post_together=${submit_post_together:-no}
+# export submit_chgres_together=${submit_chgres_together:-yes}
 
-########################################
-# This section defines the product output grid  definitions (for grib2 format, used in prdgen(_gfs))
-########################################
-#export grid1p0="0 6 0 0 0 0 0 0 360 181 0 0 90000000 0 48 -90000000 359000000 1000000 1000000 0"
-#export gridp5="0 6 0 0 0 0 0 0 720 361 0 0 90000000 0 48 -90000000 359500000 500000 500000 0"
-#export grid2p5="0 6 0 0 0 0 0 0 144 73 0 0 90000000 0 48 -90000000 357500000 2500000 2500000 0"
-#The above is for copygb2
-#The following is for wgrib2
-export grid0p25=${grid0p25:-"latlon 0:1440:0.25 90:721:-0.25"}
-export grid0p5=${grid0p5:-"latlon 0:720:0.5 90:361:-0.5"}
-export grid1p0=${grid1p0:-"latlon 0:360:1.0 90:181:-1.0"}
-export grid2p5=${grid2p5:-"latlon 0:144:2.5 90:73:-2.5"}
-
-# The following are options for $WGRIB2 when used to change grid resolution
-export option1=${option1:-' -set_grib_type same -new_grid_winds earth '}
-export option21=${option21:-' -new_grid_interpolation bilinear  -if '}
-export option22=${option22:-":(LAND|CSNOW|CRAIN|CFRZR|CICEP|ICSEV):"}
-export option23=${option3:-' -new_grid_interpolation neighbor -fi '}
-
-# fhoroglist is the list of additional hours at which surface height should be included in pgrba
-# this is normally fhmaxh + 12 to include the next gfs output time after the resolution change
-if (( fhmaxh < fhmax )); then
-  export fhoroglist=$(( fhmaxh + 12 ))
-else
-  export fhoroglist=
-fi
-
-export submit_post_together=${submit_post_together:-no}
-export submit_chgres_together=${submit_chgres_together:-yes}
-
-if (( npair < 1 )); then
- export submit_post_together=no
- export submit_chgres_together=no
-fi
+# if (( npair < 1 )); then
+#  export submit_post_together=no
+#  export submit_chgres_together=no
+# fi
 echo `date` $0 end
