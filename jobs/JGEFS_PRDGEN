@@ -7,9 +7,7 @@ export PS4='$SECONDS + '
 date
 
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-
 export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
-
 export CNVGRIB=$CNVGRIB21_GFS
 
 ####################################
@@ -92,6 +90,7 @@ kmem=1
 # Define COM directories
 ##############################################
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}/$cyc}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
 # 20150622 RLW change to "yes" to remake prdgen when post is remade

@@ -49,6 +49,26 @@ export pgapre="${9}"                   # PRDGEN_A_PREFIX[$stream]
 export pgbpre="${10}"                  # PRDGEN_B_PREFIX[$stream]
 export do_analysis="${11}"             # PRDGEN_DO_ANALYSIS[$stream]
 
+cat <<-EOF
+	Settings for $0:
+	  RUNMEM: $RUNMEM
+	  cyc: $cyc
+	  DATA: $DATA
+  
+  	  jobdir: $jobdir
+  	  stream: $stream
+  	  jobgrid: $jobgrid
+  	  grid_spec: $grid_spec
+  	  hours: ($hours)
+  	  submc: $submc
+  	  pgad: $pgad
+  	  pgbd: $pgbd
+  	  pgapre: $pgapre
+  	  pgbpre: $pgbpre
+	  do_analysis: $do_analysis
+
+EOF
+
 export MP_LABELIO=YES
 export GRID=$jobgrid   # GRID is part of the DBN message
 
@@ -77,11 +97,22 @@ for hour in $hours; do
 		export ffhr=anl
 		export fhr=00
 
-		export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.anl$cfsuffix
-		export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl$cfsuffix
-		export mifile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl$cfsuffix
+		if [[ $RUNMEM = "gfs" ]]; then
+			if [[ jobgrid = "2p5" ]]; then
+				# Don't run for GFS analysis on 2.5° grid
+				break;
+			fi
+			export mafile=$COMINgfs/$RUNMEM.$cycle.master.grb2anl
+			export mifile=$COMINgfs/$RUNMEM.$cycle.master.grb2ianl
+			export mcfile=""
+			export makepgrb2b="no"
+		else
+			export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl$cfsuffix
+			export mifile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl$cfsuffix
+			export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.anl$cfsuffix
+		fi # [[ $RUNMEM = "gfs" ]]
 
-		export pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.anl$cfsuffix
+		export pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.$cycle.prdgen.control.anl$cfsuffix
 		export fileaout=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf$cfsuffix
 		export fileaouti=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf$cfsuffix.idx
 		export filebout=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf$cfsuffix
@@ -89,23 +120,31 @@ for hour in $hours; do
 
 		ic=1
 		while [ $ic -le $SLEEP_LOOP_MAX ]; do
-			testfhr=-1
-			if [[ -f $mcfile ]]; then
-				teststring=`cat $mcfile|head -1`
-				if [[ $teststring != '' ]]; then
-					if [[ -f $mifile ]]; then
-						testfhr=`echo $teststring | cut -c11-13`
-					fi
-				fi # [[ $teststring != '' ]]
-			fi # [[ -f $mcfile ]]
-			echo "testfhr=$testfhr fhr=$fhr"
-
-			if (( testfhr >= fhr )); then
-				break
+			if [[ $RUNMEM = "gfs" ]]; then
+				# Assume GFS is complete
+				if [[ -f $mafile ]]; then
+					break
+				fi
 			else
-				ic=`expr $ic + 1`
-				sleep $SLEEP_INT
-			fi # (( testfhr >= fhr ))
+				# Check if control file has been created, to make sure file is complete before using
+				testfhr=-1
+				if [[ -f $mcfile ]]; then
+					teststring=`cat $mcfile|head -1`
+					if [[ $teststring != '' ]]; then
+						if [[ -f $mifile ]]; then
+							testfhr=`echo $teststring | cut -c11-13`
+						fi
+					fi # [[ $teststring != '' ]]
+				fi # [[ -f $mcfile ]]
+				echo "testfhr=$testfhr fhr=$fhr"
+
+				if (( testfhr >= fhr )); then
+					break
+				fi # (( testfhr >= fhr ))
+			fi
+
+			ic=`expr $ic + 1`
+			sleep $SLEEP_INT
 
 			###############################
 			# If we reach this point assume
@@ -143,7 +182,7 @@ for hour in $hours; do
 		fi # [[ -s $pcfile ]]
 
 		if [[ ! -s $pcfile ]]; then
-			$USHgefs/gefs_prdgen.sh 
+			$USHgefs/gefs_prdgen.sh
 
 			####################################
 			# send control files to misc
@@ -164,9 +203,16 @@ for hour in $hours; do
 	###############################
 	export pgm="postcheck"
 
-	export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.f$fhr$cfsuffix
-	export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr$cfsuffix
-	export mifile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr$cfsuffix
+	if [[ $RUNMEM = "gfs" ]]; then
+		export mafile=$COMINgfs/$RUNMEM.$cycle.master.grb2$ffhr
+		export mifile=$COMINgfs/$RUNMEM.$cycle.master.grb2i$ffhr
+		export mcfile=""
+		export makepgrb2b="no"
+	else 
+		export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr$cfsuffix
+		export mifile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr$cfsuffix
+		export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.f$fhr$cfsuffix
+	fi # [[ $RUNMEM = "gfs" ]]
 
 	export pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f${pfhr}$cfsuffix
 	export fileaout=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}f${pfhr}$pgasuf$cfsuffix
@@ -175,27 +221,41 @@ for hour in $hours; do
 	export filebouti=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f${pfhr}$pgasuf$cfsuffix.idx
 
 	ic=1
+	found="no"
 	while [ $ic -le $SLEEP_LOOP_MAX ]; do
-		testfhr=-1
-		if [[ -f $mcfile ]]; then
-			teststring=`cat $mcfile|head -1`
-			if [[ $teststring != '' ]]; then
-				if [[ -f $mifile ]]; then
-					testfhr=`echo $teststring | cut -c11-13`
+		if [[ $RUNMEM = "gfs" ]]; then
+			# Assume GFS is complete
+			if [[ -f $mafile ]]; then
+				found="yes"
+				break
+			else
+				# GFS output is only every 12 hours after 240
+				if (( fhr > 240 )) &&  (( fhr%12 == 6 )); then
+					echo "fhr=$fhr not expected for GFS"
+					break
 				fi
-			fi # [[ $teststring != '' ]]
-		else
-			echo " file mcfile missing"
-		fi # [[ -f $mcfile ]]
+			fi # [[ -f $mafile ]]
+		else # [[ $RUNMEM = "gfs" ]]
+			# Check if control file has been created, to make sure file is complete before using
+			testfhr=-1
+			if [[ -f $mcfile ]]; then
+				teststring=`cat $mcfile|head -1`
+				if [[ $teststring != '' ]]; then
+					if [[ -f $mifile ]]; then
+						testfhr=`echo $teststring | cut -c11-13`
+					fi
+				fi # [[ $teststring != '' ]]
+			fi # [[ -f $mcfile ]]
+			echo "testfhr=$testfhr fhr=$fhr"
 
-		echo testfhr=$testfhr fhr=$fhr
+			if (( testfhr >= fhr )); then
+				found="yes"
+				break
+			fi # (( testfhr >= fhr ))
+		fi # [[ $RUNMEM = "gfs" ]]
 
-		if (( testfhr >= fhr )); then
-			break
-		else
-			ic=`expr $ic + 1`
-			sleep $SLEEP_INT
-		fi # (( testfhr >= fhr ))
+		ic=`expr $ic + 1`
+		sleep $SLEEP_INT
 
 		###############################
 		# If we reach this point assume
@@ -208,50 +268,64 @@ for hour in $hours; do
 			msg="$member MISSING POST DATA for hour $fhr"
 			postmsg "$jlogfile" "$msg"
 			export err=1; err_chk
+			exit $err
 		fi # [ $ic -eq $SLEEP_LOOP_MAX ]
 	done # while [ $ic -le $SLEEP_LOOP_MAX ]
 
-	msg="Starting post for fhr=$fhr"
-	postmsg "$jlogfile" "$msg"
+	if [[ $found = "yes" ]]; then
+		msg="Starting post for fhr=$fhr"
+		postmsg "$jlogfile" "$msg"
 
-	#################################### 
-	# control the inclusion of perturbation identifiers
-	# in the GRIB1 ensemble PDS header extension
-	####################################
+		#################################### 
+		# control the inclusion of perturbation identifiers
+		# in the GRIB1 ensemble PDS header extension
+		####################################
 
-	if [[ -s $pcfile ]]; then
-		nmissing=0
-		for file in $fileaout $fileaouti $filebout $filebouti; do
-			if [[ ! -s $file ]]; then
-				echo file=$file IS MISSING
-				(( nmissing = nmissing + 1 ))
+		if [[ -s $pcfile ]]; then
+			nmissing=0
+			for file in $fileaout $fileaouti $filebout $filebouti; do
+				if [[ ! -s $file ]]; then
+					echo "file=$file IS MISSING"
+					(( nmissing = nmissing + 1 ))
+				fi
+			done # for file in $fileaout $fileaouti $filebout $filebouti
+			if (( nmissing > 0 )); then
+				rm $pcfile
 			fi
-		done # for file in $fileaout $fileaouti $filebout $filebouti
-		if (( nmissing > 0 )); then
-			rm $pcfile
+		else
+			nmissing=1
+		fi # [[ -s $pcfile ]]
+
+		if [[ ! -s $pcfile ]]; then
+			$USHgefs/gefs_prdgen.sh
+
+			# Check for error
+			rc=$?
+			if [[ $rc -ne 0 ]]; then
+				msg="FATAL ERROR: gefs_prdgen.sh failed!"
+				echo "$(date)    $msg"
+				postmsg "$jlogfile" "$msg"
+				export err=1
+				err_chk
+				exit $err
+			fi
+
+			####################################
+			# send control files to misc
+			####################################
+			if [[ $SENDCOM = "YES" ]]; then
+				echo "$PDY$cyc$pfhr" > $pcfile
+			fi # test $SENDCOM = "YES"
+		fi # [[ ! -s $pcfile ]]
+
+		#####################################################################
+		#DHOU, 09/17/2015, added this block for global wave ensemble trigger
+		#0p5 only
+		#####################################################################
+		if [[ "$jobgrid" = "0p5" ]] && [[ $fhr -eq 240 ]]; then
+			ecflow_client --event pgrb2ap5_f240_ready
 		fi
-	else
-		nmissing=1
-	fi # [[ -s $pcfile ]]
-
-	if [[ ! -s $pcfile ]]; then
-		$USHgefs/gefs_prdgen.sh
-
-		####################################
-		# send control files to misc
-		####################################
-		if test $SENDCOM = "YES"; then
-			echo "$PDY$cyc$pfhr" > $pcfile
-		fi # test $SENDCOM = "YES"
-	fi # [[ ! -s $pcfile ]]
-
-	#####################################################################
-	#DHOU, 09/17/2015, added this block for global wave ensemble trigger
-	#0p5 only
-	#####################################################################
-	if [[ "$jobgrid" = "0p5" ]] && [[ $fhr -eq 240 ]]; then
-		ecflow_client --event pgrb2ap5_f240_ready
-	fi
+	fi # [[ $found = "yes" ]]
 done # for hour in $hours
 
 msg='ENDED NORMALLY.'
