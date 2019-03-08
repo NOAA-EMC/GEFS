@@ -55,16 +55,25 @@ fi
 
 outdirpre_2d=${REFCST}/$yyyy/$mm/$dd/f2d #directory where we want to save the extracted files
 outdirpre_3d=${REFCST}/$yyyy/$mm/$dd/f3d #directory where we want to save the extracted files
-
+sv_m0306=${REFCST}/$yyyy/$mm/$dd/m0306
 varlist_2d=${PARMgefs}/gefs_shortparmlist_2d.parm
 varlist_3d=${PARMgefs}/gefs_shortparmlist_3d.parm
 
 
 mkdir -p $outdirpre_2d/
 mkdir -p $outdirpre_3d/
+mkdir -p $sv_m0306/
+
 rm -f $outdirpre_2d/*
 rm -f $outdirpre_3d/*
+rm -f $sv_m0306/*
 
+nh=3
+while [[ $nh -le 6 ]];do
+$NCP $COMIN/master/*f003 $sv_m0306
+$NCP $COMIN/master/*f006 $sv_m0306
+nh=$(($nh + 3))
+done
 
 for outtype in "f2d" "f3d"; do
 

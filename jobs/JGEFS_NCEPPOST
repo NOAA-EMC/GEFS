@@ -302,7 +302,7 @@ case $FORECAST_SEGMENT in
 		else
 			export SHOUR=$(( $fhmaxh + $FHOUT ))
 		fi
-                SHOUR=3
+                SHOUR=0
 		if (( SHOUR < 10 )); then
 			SHOUR=0$SHOUR
 		fi

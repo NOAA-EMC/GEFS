@@ -43,7 +43,8 @@ export gefsmpexec_mpmd=mpirun.lsf
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export gefsmpexec_mpmd="mpirun -np $total_tasks /lfs3/projects/hwrf-vd/soft/mpiserial-3.0rc1/exec/mpiserial"
+#export gefsmpexec_mpmd="mpirun -np $total_tasks /lfs3/projects/hwrf-vd/soft/mpiserial-3.0rc1/exec/mpiserial"
+export gefsmpexec_mpmd="mpirun -np $total_tasks /mnt/lfs3/projects/hfv3gfs/Bing.Fu/soft/mpiserial-3.0rc1/impi/exec/mpiserial"
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_PRDGEN

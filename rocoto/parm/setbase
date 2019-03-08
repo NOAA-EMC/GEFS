@@ -93,7 +93,8 @@ elif [[ -d /jetmon ]] ; then
     export machine='Jet'
     export HOMEDIR=/mnt/lfs3/projects/hfv3gfs/Bing.Fu/git/fv3gfs
     export HOMEDIR1=$HOMEDIR                        #/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/fv3gfs
-    export HOMEtrak=/mnt/lfs3/projects/hfv3gfs/Bing.Fu/ens_tracker.v1.1.13.2
+#    export HOMEtrak=/mnt/lfs3/projects/hfv3gfs/Bing.Fu/ens_tracker.v1.1.13.2
+    export HOMEtrak=/mnt/lfs3/projects/hfv3gfs/emc.enspara/common/ens_tracker.v1.1.15_newOS
     export RFHOME=/mnt/lfs3/projects/hfv3gfs/emc.enspara/Bing.Fu
     export COMROOThps=${HOMEdata}
     export NDATE=${NDATE:-$EXECgrib/ndate}

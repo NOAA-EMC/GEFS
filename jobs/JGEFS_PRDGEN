@@ -174,7 +174,7 @@ case $FORECAST_SEGMENT in
 		fi
 #Hong Guan		export SHOUR=$(( $fhmaxh + FHINC ))
 #    
-                export SHOUR=3
+                export SHOUR=0
 		export FHOUT=$FHOUT
 		export FHOUT_HF=$FHOUT_HF
 		export FHMAX_HF=$FHMAX_HF
@@ -218,7 +218,7 @@ fi
 # SHOUR_6 006, run 006,015,...384 for 0p25
 # FHINC34: increment hour for 0p25 tasks
 
-SHOUR_1=6
+SHOUR_1=$SHOUR
 SHOUR_2=$SHOUR 
 SHOUR_3=$SHOUR 
 

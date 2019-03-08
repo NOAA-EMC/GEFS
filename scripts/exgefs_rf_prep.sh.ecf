@@ -17,7 +17,8 @@ NCP=${NCP:-"/bin/cp -p"}
 NLN=${NLN:-"/bin/ln -sf"}
 NMV=${NMV:-"/bin/mv -uv"}
 
-RESTARTDIR=${RFHOME}/RESTRT
+#RESTARTDIR=${RFHOME}/RESTRT
+RESTARTDIR=${INIT_DIR}
 
 RFNDATE=${RFNDATE:-YES}
 #CDATE=$PDY$cyc
@@ -38,7 +39,8 @@ sHour=$SHOUR
 npert=${npert}
 envir=${envir}
 
-sInWS=${RESTARTDIR}/${SYEAR}/${SMONTH}/${SDAY}
+#sInWS=${RESTARTDIR}/${SYEAR}/${SMONTH}/${SDAY}
+sInWS=${RESTARTDIR}/${SYEAR}${SMONTH}${SDAY}
 sOutWS=${GESROOT}/${envir}/gefs.${SYEAR}${SMONTH}${SDAY}/${cyc}
 
 function fun_cp
@@ -52,16 +54,16 @@ function fun_cp
     echo "success"
 
     if [ $iMem == 0 ]; then
-        sInput_WS=${sInWS}/restarts/control2/INPUT
+        sInput_WS=${sInWS}/control2/INPUT
         sMem=c00
     else
         sMem=p$(printf %02i $iMem)
 
         if [ ${sFileName} == fv_core.res.nc -o ${sFileName} == coupler.res ]; then
-            sInput_WS=${sInWS}/restarts/control2/INPUT
+            sInput_WS=${sInWS}/control2/INPUT
         else
             sMem_3=$(printf %03i $iMem)
-            sInput_WS=${sInWS}/C384_mem${sMem_3}
+            sInput_WS=${sInWS}/PERTS/mem${sMem_3}/INPUT
         fi
     fi
 

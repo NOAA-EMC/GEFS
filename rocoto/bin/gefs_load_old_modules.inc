@@ -48,8 +48,8 @@ elif [[ "$WHERE_AM_I" == jet ]]; then
     . /apps/lmod/lmod/init/ksh
     module use /apps/modules/modulefiles
     module use /apps/modules/modulefamilies/intel
-#    module load newdefaults intel/15.0.3.187 impi/5.1.3.181 szip hdf5 netcdf4/4.2.1.1
-    module load intel/18.0.5.274 impi szip hdf5 netcdf
+    module load newdefaults intel/15.0.3.187 impi/5.1.3.181 szip hdf5 netcdf4/4.2.1.1
+#    module load intel/18.0.5.274 impi szip hdf5 netcdf
     module use /lfs3/projects/hfv3gfs/nwprod/lib/modulefiles
     module load bacio/v2.0.2
     module load sp/v2.0.2

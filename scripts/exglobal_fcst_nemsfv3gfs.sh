@@ -1005,6 +1005,9 @@ if [ $QUILTING = ".true." -a $OUTPUT_GRID = "gaussian_grid" ]; then
     fi
     fhr=$((fhr+FHINC))
   done
+   eval $NLN $memdir/${CDUMP}.t${cyc}z.atmf000.$OUTPUT_FILE $memdir/${CDUMP}.t${cyc}z.atmf003.$OUTPUT_FILE
+   eval $NLN $memdir/${CDUMP}.t${cyc}z.sfcf000.$OUTPUT_FILE $memdir/${CDUMP}.t${cyc}z.sfcf003.$OUTPUT_FILE
+   eval $NLN $memdir/${CDUMP}.t${cyc}z.logf000.$OUTPUT_FILE $memdir/${CDUMP}.t${cyc}z.logf003.$OUTPUT_FILE
 else
   for n in $(seq 1 $ntiles); do
     eval $NLN nggps2d.tile${n}.nc       $memdir/nggps2d.tile${n}.nc

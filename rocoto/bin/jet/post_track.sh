@@ -37,7 +37,7 @@ export taskspernode=7
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export gefsmpexec_mpmd="mpirun -np $total_tasks /scratch3/NCEPDEV/nwprod/util/exec/mpiserial"
+export gefsmpexec_mpmd="mpirun -np $total_tasks /mnt/lfs3/projects/hfv3gfs/Bing.Fu/soft/mpiserial-3.0rc1/impi/exec/mpiserial"
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_POST_TRACK
