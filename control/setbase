@@ -49,6 +49,13 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
  fi
 fi
 
+# Bo Cui: 20190201: Add new mechine for Dell 
+if [[ $machl = v ]] || [[ $machl = m ]]; then
+  export JOBQUEUE=dev  
+  PTMP=gpfs/dell2/ptmp 
+  STMP=gpfs/dell2/ptmp 
+fi
+
 if [[ $LOGNAME = glopara ]]; then
   echo
   echo directory locations for running in glopara account
@@ -198,7 +205,39 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
 # For WCOSS end
 fi  
 
+# Bo Cui: 20190201: Add new mechine for Dell 
+
+if [[ $machl = v ]] || [[ $machl = m ]]; then
+
+  export basesource=/gpfs/dell2/emc/retros/noscrub/$LOGNAME/$expid
+  export baseoutput=/gpfs/dell2/ptmp/$LOGNAME/o/$expid
+
+  export basetmp=/$PTMP/$LOGNAME/o/$expid
+  export baseptmp=/$PTMP/$LOGNAME/o/$expid
+  export basebin=$basesource/nw$envir/control
+
+  export baselog=/$PTMP/$LOGNAME/o/$expid 
+  export basedgfs=/gpfs/dell1/nco/ops/com/gfs/para                        
+  export basedgens=/$PTMP/$LOGNAME/o               
+
+  export DATATEMP=$baseoutput
+
+## ? for baseinitarch
+  export baseinitarch=/gpfs/dell2/emc/retros/noscrub/$LOGNAME/$expid
+## ?
+
+  export account=GEN-T2O
+  export group=ensemble
+  export classs=batch
+  export classp=batch
+  export classp=batch
+
 fi
+
+# For DELL end
+
+fi
+
 
 # RLW 20140903 modify selected settings for emc.enspara on WCOSS
 # RLW 20150603 this block copied and modified from rweh
