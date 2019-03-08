@@ -97,6 +97,14 @@ export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 #export overwrite=no
 export overwrite=yes
 
+
+if [[ $save_pgrb2_p5 == YES ]]; then
+	mkdir -m 775 -p $COMOUT/$cyc/pgrb2p5
+fi
+if [[ $save_pgrb2_p25 == YES ]]; then
+	mkdir -m 775 -p $COMOUT/$cyc/pgrb2p25 
+fi
+
 ##############################################
 echo set parameters using gefs.parm
 ##############################################
@@ -192,7 +200,9 @@ for stream in ${PRDGEN_STREAMS[@]}; do
 	mkdir -m 755 -p $COMOUT/$cyc/${PRDGEN_B_DIR[${stream}]}
 
 	subdata=${DATA}/${stream}
-	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+	if [ ! -d ${subdata} ]; then
+		mkdir -p ${subdata};
+	fi
 	outfile=${subdata}/${stream}.out
 
 	jobgrid="${PRDGEN_GRID[$stream]}"

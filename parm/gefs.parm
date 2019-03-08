@@ -154,6 +154,10 @@ export REMAP_GRID=${REMAP_GRID:-latlon}        #gaussian or latlon for using fre
 export gfsfhmaxh=240
 export gfsfhoroglist=252
 
+# The following options are fore re-forecast
+export save_pgrb2_p5=${save_pgrb2_p5:-NO} 
+export save_pgrb2_p25=${save_pgrb2_p25:-NO} 
+
 # export submit_post_together=${submit_post_together:-no}
 # export submit_chgres_together=${submit_chgres_together:-yes}
 
@@ -161,4 +165,5 @@ export gfsfhoroglist=252
 #  export submit_post_together=no
 #  export submit_chgres_together=no
 # fi
+
 echo `date` $0 end

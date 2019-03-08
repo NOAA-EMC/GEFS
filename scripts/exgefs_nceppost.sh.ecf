@@ -155,26 +155,18 @@ fi # [[ ! -s $mcfile ]]
 fi
 
 (( fhr=SHOUR))
-if (( fhr < 10 )); then
-	fhr=0$fhr
-fi 
-export fhr
 
 while (( fhr <= FHOUR )); do
+	fhr=$(printf %03i $fhr)
 	if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
 		FHINC=$FHOUT_HF
 	else
 		FHINC=$FHOUT
 	fi
 
-	if (( fhr < 100 )); then
-		ghr=0$fhr
-	else
-		ghr=$fhr
-	fi
 	mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr$cfsuffix
 
-	if [[ ! -f $restart_file$ghr$cfsuffix\.nemsio ]]; then
+	if [[ ! -f $restart_file$fhr$cfsuffix\.nemsio ]]; then
 		rm $mcfile
 	fi
 
@@ -212,9 +204,7 @@ while (( fhr <= FHOUR )); do
 	fi # [[ ! -s $mcfile ]]
 
 	export fhr=`expr $fhr + $FHINC`
-	if (( fhr < 10 )); then
-		export fhr="0$fhr"
-	fi
+
 done # while (( fhr <= FHOUR ))
 
 if [ $DOANALYSIS = YES ]; then
@@ -301,7 +291,7 @@ if [ $DOANALYSIS = YES ]; then
 			export IGEN=$IGEN_ANL
 
 			# specify fhr even for analysis because postgp uses it
-			export fhr=00
+			export fhr=000
 
 			# run nceppost
 			export pgm="$POSTGPSH"
@@ -338,15 +328,10 @@ if [ $DOANALYSIS = YES ]; then
 
 			# 20100730 create a separate log file for the analysis for use by prdgen job
 			if test $SENDCOM = "YES"; then
-				if (( fhr < 100 )); then
-					pad="0"
-				else
-					pad=""
-				fi
 				echo
 				ls -al $PGBOUT $PGBIOUT
 				echo
-				echo "$PDY$cyc$pad$fhr" > $mcfile
+				echo "$PDY$cyc$fhr" > $mcfile
 				echo
 				ls -al  $mcfile
 				cat  $mcfile
@@ -362,29 +347,19 @@ fi # [ $DOANALYSIS = YES ]
 SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
 (( fhr=SHOUR ))
-(( fhrm=SHOUR ))
-if (( fhr < 10 )); then
-	fhr=00$fhr
-elif (( fhr >= 10 )) && (( fhr < 100 )); then
-	fhr=0$fhr
-fi
-if (( fhrm < 10 )); then
-	fhrm=0$fhrm
-fi
-export fhr=$fhr
-export fhrm=$fhrm
 
 ############################################################
 # Loop Through the Post Forecast Files 
 ############################################################
 while (( fhr <= FHOUR )); do
+	export fhr=$(printf %03i $fhr)
 	if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
 		FHINC=$FHOUT_HF
 	else
 		FHINC=$FHOUT
 	fi
 
- 	mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhrm$cfsuffix
+ 	mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr$cfsuffix
 
  	if [[ ! -s $mcfile ]]; then
  		###############################
@@ -485,8 +460,8 @@ while (( fhr <= FHOUR )); do
 		rm -rf pgbfout pgbifout
 		# ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbf$fhr$cfsuffix pgbfout
 		# ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbif$fhr$cfsuffix pgbifout
-		ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhrm$cfsuffix pgbfout
-		ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhrm$cfsuffix pgbifout
+		ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr$cfsuffix pgbfout
+		ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr$cfsuffix pgbifout
 		export PGBOUT=pgbfout
 		export PGIOUT=pgbifout
 		export ANOMCATSH=${USHGSM}/global_anomcat.sh
@@ -537,15 +512,10 @@ while (( fhr <= FHOUR )); do
 		fi # [[ ! -s $pgbifoutd ]]
 
 		if test $SENDCOM = "YES"; then
-			if (( fhrm < 100 )); then
-				pad="0"
-			else
-				pad=""
-			fi
 			echo
 			ls -al $PGBOUT $PGBIOUT
 			echo
-			echo "$PDY$cyc$pad$fhrm" > $mcfile
+			echo "$PDY$cyc$fhr" > $mcfile
 			echo
 			ls -al  $mcfile
 			cat  $mcfile
@@ -558,21 +528,6 @@ while (( fhr <= FHOUR )); do
 
 	export fhr=`expr $fhr + $FHINC`
 
-(( fhrm=fhr ))
-if (( fhr < 10 )); then
-        fhr=00$fhr
-elif (( fhr >= 10 )) && (( fhr < 100 )); then
-        fhr=0$fhr
-fi
-if (( fhrm < 10 )); then
-	fhrm=0$fhrm
-fi
-export fhr=$fhr
-export fhrm=$fhrm
-
-#	if (( fhr < 10 )); then
-#		export fhr="0$fhr"
-#	fi
 done # while (( fhr <= FHOUR ))
 
 cat $pgmout

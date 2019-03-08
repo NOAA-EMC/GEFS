@@ -344,7 +344,7 @@ for hour in $hours; do
 	fi # [ $SENDCOM = "YES" ]
 
 	echo "`date` send pgrb2a output end"
-
+	
 done #hour in $hours
 
 echo ###############################`date` cat $pgmout begin

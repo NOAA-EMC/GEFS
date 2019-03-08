@@ -17,7 +17,6 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 . $GEFS_ROCOTO/parm/gefs_config
 . $GEFS_ROCOTO/parm/gefs_dev.parm
 
-
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_GETCFSSST
+$SOURCEDIR/jobs/JGEFS_EXTRACTVARS
 
