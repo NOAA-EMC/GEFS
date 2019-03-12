@@ -94,7 +94,7 @@ SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 for hour in $hours; do
 	if [[ $do_analysis = YES ]] && (( hour == 0 )); then
 		export ffhr=anl
-		export fhr=00
+		export fhr=000
 
 		if [[ $RUNMEM = "gfs" ]]; then
 			if [[ jobgrid = "2p5" ]]; then
@@ -187,13 +187,13 @@ for hour in $hours; do
 			# send control files to misc
 			####################################
 			if test $SENDCOM = "YES"; then
-				echo "$PDY$cyc$pfhr" > $pcfile
+				echo "$PDY$cyc$fhr" > $pcfile
 			fi # test $SENDCOM = "YES"
 		fi # [[ ! -s $pcfile ]]
 	fi # [[ $do_analysis = YES ]] && (( hour == 0 ))
 
-	export fhr=$(printf "%02.0f" $hour)        # Zero-pad to two places
-	export pfhr=$(printf "%03.0f" $hour)       # Zero-pad to three places
+	export fhr=$(printf "%03.0f" $hour)        # Zero-pad to three places
+	export shr=$(printf "%02.0f" $hour)        # Zero-pad to two places
 	export ffhr="f${fhr}"
 
 	###############################
@@ -203,8 +203,8 @@ for hour in $hours; do
 	export pgm="postcheck"
 
 	if [[ $RUNMEM = "gfs" ]]; then
-		export mafile=$COMINgfs/$RUNMEM.$cycle.master.grb2$ffhr
-		export mifile=$COMINgfs/$RUNMEM.$cycle.master.grb2i$ffhr
+		export mafile=$COMINgfs/$RUNMEM.$cycle.master.grb2f$shr
+		export mifile=$COMINgfs/$RUNMEM.$cycle.master.grb2if$shr
 		export mcfile=""
 		export makepgrb2b="no"
 	else 
@@ -213,7 +213,7 @@ for hour in $hours; do
 		export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.f$fhr$cfsuffix
 	fi # [[ $RUNMEM = "gfs" ]]
 
-	export pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f${fhr}$cfsuffix
+	export pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr$cfsuffix
 	export fileaout=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}$pgasuf$cfsuffix
 	export fileaouti=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}$pgasuf$cfsuffix.idx
 	export filebout=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}$pgasuf$cfsuffix
@@ -271,7 +271,7 @@ for hour in $hours; do
 		# period and error exit
 		###############################
 		if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-			date >$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.f$pfhr$cfsuffix.missing
+			date >$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.f$fhr$cfsuffix.missing
 			echo "$(date) $sname $member missing post data for hour $fhr"
 			msg="$member MISSING POST DATA for hour $fhr"
 			postmsg "$jlogfile" "$msg"
@@ -322,7 +322,7 @@ for hour in $hours; do
 			# send control files to misc
 			####################################
 			if [[ $SENDCOM = "YES" ]]; then
-				echo "$PDY$cyc$pfhr" > $pcfile
+				echo "$PDY$cyc$fhr" > $pcfile
 			fi # test $SENDCOM = "YES"
 		fi # [[ ! -s $pcfile ]]
 
