@@ -44,6 +44,8 @@ export PRDGEN_STREAMS
 #     PRDGEN_HOURS[$stream]="0 3 6 12"                    # Output at 0, 3, 6, and 12 hours
 #     PRDGEN_HOURS[$stream]="{0..120..3} {126..240..6}"   # Every three hours from 0 to 120, then every 6 hours from 126 to 240
 #
+#   Specified hours must be output by post.
+# 
 typeset -A PRDGEN_GRID           # old jobgrid, used to set GRIB for DBN
 typeset -A PRDGEN_GRID_SPEC      # grid specification for wgrib2
 typeset -A PRDGEN_HOURS          # forecast hours to create product for
