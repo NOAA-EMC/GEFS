@@ -15,7 +15,7 @@ then
   . $basesource/nwdev/parm/gefs_config_dev
 fi
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec:-mpirun}
 
 ############################
 # Set up cycle varaible

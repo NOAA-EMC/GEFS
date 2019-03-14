@@ -18,7 +18,7 @@ then
   . $basesource/nw${envir}/parm/gefs_config_dev
 fi
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec:-mpirun}
 ####################################
 # obtain unique process id (pid) and make working directory
 ####################################
