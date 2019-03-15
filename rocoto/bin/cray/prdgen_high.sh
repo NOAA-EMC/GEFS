@@ -48,4 +48,4 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 export RERUN=NO
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_PRDGEN
+. $SOURCEDIR/jobs/JGEFS_PRDGEN

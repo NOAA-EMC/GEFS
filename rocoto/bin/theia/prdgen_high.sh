@@ -48,4 +48,4 @@ export gefsmpexec_mpmd="mpirun -np $total_tasks /scratch3/NCEPDEV/nwprod/util/ex
 export RERUN=NO
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_PRDGEN
+. $SOURCEDIR/jobs/JGEFS_PRDGEN

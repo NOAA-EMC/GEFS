@@ -140,6 +140,39 @@ for stream in ${PRDGEN_STREAMS[@]}; do
 	PRDGEN_HOURS[$stream]="${hours[@]}"
 	unset hours
 
+	if [[ -z ${PRDGEN_GRID[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_GRID not defined for $stream"
+		exit -1
+	fi
+	if [[ -z ${PRDGEN_GRID_SPEC[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_GRID_SPEC not defined for $stream"
+		exit -1
+	fi
+	if [[ -z ${PRDGEN_HOURS[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_HOURS not defined for $stream"
+		exit -1
+	fi
+	if [[ -z ${PRDGEN_SUBMC[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_SUBMC not defined for $stream"
+		exit -1
+	fi
+	if [[ -z ${PRDGEN_A_DIR[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_A_DIR not defined for $stream"
+		exit -1
+	fi
+	if [[ -z ${PRDGEN_B_DIR[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_B_DIR not defined for $stream"
+		exit -1
+	fi
+	if [[ -z ${PRDGEN_A_PREFIX[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_A_PREFIX not defined for $stream"
+		exit -1
+	fi
+	if [[ -z ${PRDGEN_B_PREFIX[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_B_PREFIX not defined for $stream"
+		exit -1
+	fi
+
 	# Print out settings for this stream
 	cat <<-EOF
 		Settings for prgden stream $stream:
@@ -194,7 +227,7 @@ fi
 #################################
 # Run Post if Needed
 #################################
-rm prdgen.cmdfile
+rm -f prdgen.cmdfile
 for stream in ${PRDGEN_STREAMS[@]}; do
 	mkdir -m 755 -p $COMOUT/$cyc/${PRDGEN_A_DIR[${stream}]}
 	mkdir -m 755 -p $COMOUT/$cyc/${PRDGEN_B_DIR[${stream}]}
@@ -224,7 +257,7 @@ chmod 775 prdgen.cmdfile
 export MP_CMDFILE=${DATA}/prdgen.cmdfile
 export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
 export MP_PGMMODEL=mpmd
-rm mpmd_cmdfile
+rm -f mpmd_cmdfile
 ln -s $MP_CMDFILE mpmd_cmdfile
 
 $APRUN

@@ -714,6 +714,8 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
     if taskname in ['keep_init', 'copy_init']:
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
         strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.py</cyclestr></command>\n'.format(taskname)
+    elif taskname in ['prdgen_high', 'prdgen_low']:
+        strings += sPre + '\t' + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
     else:
         strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
 
@@ -847,7 +849,7 @@ def create_task( \
     if taskname in ['keep_data', 'archive', 'cleanup']:
         strings += sPre + '\t' + '<command><cyclestr>&PRE; &BIN;/{0}.py</cyclestr></command>\n'.format(taskname)
     elif taskname in ['prdgen_gfs']:
-        strings += sPre + '\t' + '<command><cyclestr>&PRE; &BIN;/prdgen_high.sh</cyclestr></command>\n'   
+        strings += sPre + '\t' + '<command><cyclestr>&PRE; . &BIN;/prdgen_high.sh</cyclestr></command>\n'
     else:
         strings += sPre + '\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
 

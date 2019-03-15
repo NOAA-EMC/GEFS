@@ -46,17 +46,17 @@ export PRDGEN_STREAMS
 #
 #   Specified hours must be output by post.
 # 
-typeset -A PRDGEN_GRID           # old jobgrid, used to set GRIB for DBN
-typeset -A PRDGEN_GRID_SPEC      # grid specification for wgrib2
-typeset -A PRDGEN_HOURS          # forecast hours to create product for
-typeset -A PRDGEN_SUBMC          # temporary directory for files before partitioning into a and b
-typeset -A PRDGEN_A_DIR          # directory name for pgrba files (e.g. pgrb2ap5)
-typeset -A PRDGEN_B_DIR          # directory name for pgrbb files (e.g. pgrb2bp5)
-typeset -A PRDGEN_A_PREFIX       # pgrba identifier in file name (e.g. pgrb2a.0p50.)
-typeset -A PRDGEN_B_PREFIX       # pgrbb identifier in file name (e.g. pgrb2b.0p50.)
+[[ -v PRDGEN_GRID ]] || typeset -A PRDGEN_GRID                # old jobgrid, used to set GRIB for DBN
+[[ -v PRDGEN_GRID_SPEC ]] || typeset -A PRDGEN_GRID_SPEC      # grid specification for wgrib2
+[[ -v PRDGEN_HOURS ]] || typeset -A PRDGEN_HOURS              # forecast hours to create product for
+[[ -v PRDGEN_SUBMC ]] || typeset -A PRDGEN_SUBMC              # temporary directory for files before partitioning into a and b
+[[ -v PRDGEN_A_DIR ]] || typeset -A PRDGEN_A_DIR              # directory name for pgrba files (e.g. pgrb2ap5)
+[[ -v PRDGEN_B_DIR ]] || typeset -A PRDGEN_B_DIR              # directory name for pgrbb files (e.g. pgrb2bp5)
+[[ -v PRDGEN_A_PREFIX ]] || typeset -A PRDGEN_A_PREFIX        # pgrba identifier in file name (e.g. pgrb2a.0p50.)
+[[ -v PRDGEN_B_PREFIX ]] || typeset -A PRDGEN_B_PREFIX        # pgrbb identifier in file name (e.g. pgrb2b.0p50.)
 
 # DO_ANALYSIS can be omitted unless you want to change the default
-typeset -A PRDGEN_DO_ANALYSIS    # create analysis products for this stream
+[[ -v PRDGEN_DO_ANALYSIS ]] || typeset -A PRDGEN_DO_ANALYSIS  # create analysis products for this stream
 
 # 2.50°
 PRDGEN_GRID[res_2p50]=${PRDGEN_GRID[res_2p50]:-"2p5"}
@@ -69,6 +69,7 @@ PRDGEN_A_PREFIX[res_2p50]=${PRDGEN_A_PREFIX[res_2p50]:-"pgrb2a.2p50."}
 PRDGEN_B_PREFIX[res_2p50]=${PRDGEN_B_PREFIX[res_2p50]:-"pgrb2b.2p50."}
 
 # 1.00°
+PRDGEN_GRID[res_1p00]=${PRDGEN_GRID[res_1p00]:-"1p0"}
 PRDGEN_GRID_SPEC[res_1p00]=${PRDGEN_GRID_SPEC[res_1p00]:-"latlon 0:360:1.0 90:181:-1.0"}
 PRDGEN_HOURS[res_1p00]=${PRDGEN_HOURS[res_1p00]:-"{0..240..3} {246..${fhmax}..6}"}
 PRDGEN_SUBMC[res_1p00]=${PRDGEN_SUBMC[res_1p00]:-"prd1p0"}

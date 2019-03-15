@@ -46,10 +46,4 @@ export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 # CALL executable job script here
-
-
-
-
-
-
-$SOURCEDIR/jobs/JGEFS_PRDGEN
+. $SOURCEDIR/jobs/JGEFS_PRDGEN
