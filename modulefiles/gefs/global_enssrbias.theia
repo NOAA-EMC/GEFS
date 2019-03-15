@@ -1,0 +1,13 @@
+#%Module#####################################################
+## global_enssrbias component - Theia
+#############################################################
+module use /scratch3/NCEPDEV/nwprod/lib/modulefiles
+
+module load intel
+
+
+##
+export FCMP=ifort
+export LDFLAGSM=
+export OMPFLAGM=
+

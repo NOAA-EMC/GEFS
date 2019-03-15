@@ -126,7 +126,7 @@ if [[ $DOANALYSIS = YES ]] && (( SHOUR == 0 )); then
 	# wait for master post to be finished
 	############################################################
 #if (( SHOUR == 0 )); then
-    export ffhr=anl
+	export ffhr=anl
 	export fhr=000
 
 	export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.anl$cfsuffix
@@ -270,6 +270,15 @@ while test $fhr -le $FHOUR; do
 	export filebout=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}$pgasuf$cfsuffix
 	export filebouti=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}$pgasuf$cfsuffix.idx
 
+	if [[ $save_pgrb2_p5 = YES ]] && (( FHOUR > FHMAXHF )); then
+		export mafile_p5=$COMOUT/$cyc/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.f${fhr}
+		export mifile_p5=$COMOUT/$cyc/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.f${fhr}.idx
+	fi
+	if [[ $save_pgrb2_p25 = YES ]] && (( FHOUR <= FHMAXHF )); then
+		export mafile_p25=$COMOUT/$cyc/pgrb2p25/$RUNMEM.$cycle.pgrb2.0p25.f${fhr}
+		export mifile_p25=$COMOUT/$cyc/pgrb2p25/$RUNMEM.$cycle.pgrb2.0p25.f${fhr}.idx
+	fi
+
 	ic=1
 	while [ $ic -le $SLEEP_LOOP_MAX ]; do
 		testfhr=-1
@@ -280,8 +289,8 @@ while test $fhr -le $FHOUR; do
 					testfhr=`echo $teststring | cut -c11-13`
 				fi
 			fi # [[ $teststring != '' ]]
-                else
-                  echo " file mcfile missing"
+        else
+            echo " file mcfile missing"
 		fi # [[ -f $mcfile ]]
 		echo testfhr=$testfhr fhr=$fhr
 		if (( testfhr >= fhr )); then
