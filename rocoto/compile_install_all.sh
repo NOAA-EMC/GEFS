@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eu
 
 sWS=`pwd`
 echo $sWS
@@ -49,47 +50,18 @@ echo $userConfigFile
 if [ $CompileCode = "yes" ]; then
     cd $sWS/../sorc
 
-    ## mkdir folds
-    mkdir ../exec
-    mkdir ../util/exec
+    ## Build the code and install
+    ./build_all.sh
 
-    ## Deal with the modules
-    module purge
-    module use ./
-
-    if [ $machine = theia ]; then
-        echo "You are running on Theia!"
-        module load Module_gefs_v12_theia
-    elif [ $machine = cray ]; then
-        echo "You are running on Cray!"
-        module load Module_gefs_v12_cray
-    elif [ $machine = wcoss ]; then
-        echo "You are running on wcoss!"
-        module load Module_gefs_v12_wcoss
-    elif [ $machine = wcoss_dell_p3 ]; then
-        echo "You are running on wcoss_dell_p3!"
-        module load Module_gefs_v12_wcoss_dell_p3
-    else
-        echo "You are running on some platform we didn't support, please check it!"
-        exit
-    fi
-
-    ## Build the code
-    ./build.sh
-
-    ## Install GEFS
-    ./install.sh
-
-    cd $sWS/../
-    rm -rf fix
+    cd $sWS/../sorc
     if [ $machine = "theia" ]; then
-        /bin/ln -sf /scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix fix
+        ./link_gefs.sh -e emc -m theia
     elif [ $machine = "cray" ]; then
-        /bin/ln -sf /gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gefs/fix fix
+        ./link_gefs.sh -e emc -m cray
     elif [ $machine = "wcoss_ibm" ]; then
-        /bin/ln -sf /ensemble/noscrub/Walter.Kolczynski/gefs-fixed fix
+        ./link_gefs.sh -e emc -m ibm
     elif [ $machine = "wcoss_dell_p3" ]; then
-        /bin/ln -sf /gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gefs/fix fix
+        ./link_gefs.sh -e emc -m dell
     fi
 fi
 
@@ -102,6 +74,8 @@ if [ $CleanAll = "yes" ]; then
     rm -rf tasks
 
     cd $sWS/../sorc
+
+    rm -rf logs
 
     for dir in gefs_vortex_separate.fd gefs_vortex_combine.fd global_sigzvd.fd  global_ensadd.fd  global_enspqpf.fd  gefs_ensstat.fd  global_ensppf.fd ; do
         cd $dir
@@ -130,7 +104,7 @@ if [ $CleanAll = "yes" ]; then
     cd ${sWS}/../sorc
     rm -rf ../exec
     rm -rf ../util/exec
-    rm -rf ../fix
+    rm -f ../fix
 
 fi # for CleanAll
 
@@ -169,6 +143,6 @@ if [ $AddCrontabToMyCrontab = "yes" ]; then
         echo "Not ready on cray"
     elif [ $machine = "wcoss_dell_p3" ]; then
         py/add_crontab.py
-        echo "Added crontab to system!"
+        echo "Added crontab to $HOME/cron/mycrontab!"
     fi
 fi

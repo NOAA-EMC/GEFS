@@ -11,12 +11,12 @@ FFLAGS  =$(FFLAGSM)
 OMPFLAG	=$(OMPFLAGM)
 LDFLAGS =$(LDFLAGSM)
 
-SRCSf90	= getnsttf.f90 
-SRCSf	= 
+SRCSf90	= 
+SRCSf	= REFORMAT.f
 
 SRCS	= $(SRCSf90) $(SRCSf)
 OBJS	= $(SRCSf:.f=.o) $(SRCSf90:.f90=.o)
-CMD		= getnsttf.x
+CMD		= global_ensrfmat
 
 $(CMD):		$(OBJS)
 	$(LDR) $(LDFLAGS) $(OBJS) $(LIBS) -o $(CMD)

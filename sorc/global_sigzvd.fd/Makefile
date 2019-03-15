@@ -11,16 +11,16 @@ FFLAGS  =$(FFLAGSM)
 OMPFLAG	=$(OMPFLAGM)
 LDFLAGS =$(LDFLAGSM)
 
-SRCSf90	= getnsttf.f90 
-SRCSf	= 
+SRCSf90	= 
+SRCSf	= global_sigzvd.f
 
 SRCS	= $(SRCSf90) $(SRCSf)
 OBJS	= $(SRCSf:.f=.o) $(SRCSf90:.f90=.o)
-CMD		= getnsttf.x
+CMD		= global_sigzvd
 
 $(CMD):		$(OBJS)
-	$(LDR) $(LDFLAGS) $(OBJS) $(LIBS) -o $(CMD)
-	#$(LDR) $(LDFLAGS) $(FFLAGS) $(OMPFLAG) $(OBJS) $(LIBS) -o $(CMD)
+	#$(LDR) $(LDFLAGS) $(OBJS) $(LIBS) -o $(CMD)
+	$(LDR) $(LDFLAGS) $(FFLAGS) $(OMPFLAG) $(OBJS) $(LIBS) -o $(CMD)
 
 $(OBJS):	$(SRCS)
 	$(FC) $(FFLAGS) $(OMPFLAG) $(INCS) -c $(SRCS)
