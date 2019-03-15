@@ -13,10 +13,10 @@ if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nwdev/parm/gefs_config_dev
-    export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+    export gefsmpexec=${gefsmpexec:-mpirun}
 fi
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec:-mpirun}
 
 ####################################
 #  Load the GRIB Utilities module
@@ -374,7 +374,7 @@ chmod 775 prdgen.cmdfile
 export MP_PGMMODEL=mpmd
 export MP_CMDFILE=${DATA}/prdgen.cmdfile
 
-$APRUN
+$APRUN cfp $MP_CMDFILE
 				      
 # $HOMEgefs/scripts/exgefs_prdgen$jobgrid.sh.ecf
 

@@ -9,7 +9,6 @@ export SENDDBN=${SENDDBN:-%SENDDBN:NO%}
 export SENDDBN_NTC=${SENDDBN_NTC:-%SENDDBN_NTC:NO%}
 
 export KEEPDATA=NO
-export KEEPDATA=YES
 export SENDCOM=YES
 export SENDECF=NO
 
@@ -25,7 +24,12 @@ export DCOMROOT=${DCOMROOT:-/dcom}
 
 mkdir -p  $COMROOT/logs/jlogfiles
 
-export archsyndir=/com/arch/prod/syndat
+# Bo Cui, 20190315, comment the line of archsyndir setting,
+# archsyndir comes from $COMINatcfsyn in jobs/JGEFS_ENKF_TRACK
+  
+# archsyndir=/com/arch/prod/syndat on wcoss 
+# archsyndir=/gpfs/tp1/nco/ops/com/arch/prod/syndat on dell
+ 
 export GESROOTp1=/nwges
 export DBNROOT=
 
@@ -42,11 +46,13 @@ export gefsmachine=${gefsmachine:-dell}
   export HOMEgefs=$basesource/nwdev
 
   #export HOMEgsm=$HOMEDIR/gsm.v12.1.3
-  export HOMEgsm=/gpfs/dell2/emc/retros/noscrub/Xianwu.Xue/z_GSM/GEFS_gsm      
+# export HOMEgsm=/gpfs/dell2/emc/retros/noscrub/Xianwu.Xue/z_GSM/GEFS_gsm      
+  export HOMEgsm=/gpfs/dell2/emc/retros/noscrub/Bo.Cui/z_GSM/GEFS_gsm      
   #export HOMEpost=$HOMEDIR/ncep_post.v5.1.2
-  export HOMEpost=/gpfs/dell2/emc/retros/noscrub/Xianwu.Xue/z_GSM/GEFS_ncep_post      
-# export HOMEenkf=$HOMEDIR/enkf.v2.0.3
-# export HOMEenkf=/nwprod/enkf.v2.0.3
+# export HOMEpost=/gpfs/dell2/emc/retros/noscrub/Xianwu.Xue/z_GSM/GEFS_ncep_post      
+  export HOMEpost=/gpfs/dell2/emc/retros/noscrub/Bo.Cui/z_GSM/GEFS_ncep_post      
+#  export HOMEenkf=$HOMEDIR/enkf.v2.0.3
+#  export HOMEenkf=/nwprod/enkf.v2.0.3
   export HOMEenkf=/gpfs/dell2/emc/retros/noscrub/Xianwu.Xue/z_GSM/GEFS_ENKF
   export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.8
 
@@ -64,25 +70,15 @@ export gefsmachine=${gefsmachine:-dell}
   module load prod_util/1.1.0
   module load grib_util/1.1.0
   module load util_shared/1.1.0
-
-# module load compiler_prod/ips/18.0.1/graphics/2.0.0
-# module load dev/graphics/2.0.0
   
-# module load NetCDF/4.5.0
-# module load HDF5-serial/1.10.1
+  module load EnvVars/1.0.2
+  module load ips/18.0.1.163
+  module load lsf/10.1
   module load impi/18.0.1
   module load CFP/2.0.1
   export USE_CFP=YES
-  export PATH=$PATH:.
+# export PATH=$PATH:.
 
-# module load ics
-  module load lsf/10.1
-
-# module load prod_util
-# module load /usrx/local/nceplibs/dev/lib/grib_util/v1.1.0
-# module load /usrx/local/nceplibs/dev/lib/util_shared/v1.1.0
-
-#
   export NDATE=${NDATE:-$USHutil/ndate}
 
   export WGRIB=${WGRIB:-$EXECgrib/wgrib}
@@ -103,27 +99,61 @@ export gefsmachine=${gefsmachine:-dell}
 # export COMINGEST=/ensemble/noscrub/Yan.Luo/com-ingest-prod  #temporary testing of CQPF job
 # export COMIN=/ensemble/noscrub/emc.enspara/xz/T574L64SL/EK0 #temporary testing of CQPF job
  
-# export COMINgfs=/com2/gfs/prod/gfs.$PDY
+# export p_post=/com2/gfs/prod/gfs.$PDY
 # export COMINenkf=/com2/gfs/prod/enkf.
 #
-# 
-# Define COMINgfs and COMINenkf and alike for the enkf_track job 
-  export GFSbase=/gpfs/dell1/nco/ops/com/gfs/para
-  export COMINenkf=${GFSbase}/enkfgdas.
-  export COMINgfs=${GFSbase}/gfs.${PDY}/${cyc}
+# Define COMINgfs and alike for the enkf_track job 
+ 
+if [[ ${jobscript} = JGEFS_ENKF_TRACK ]] ; then
 
-  if [[ ${jobscript} = JGEFS_ENKF_TRACK ]] ; then
-d6ahead_ymdh=${PDY}${cyc}
-d_hour_ymdh=` $NDATE -6 ${PDY}${cyc}`
-d6ago_ymdh=` $NDATE -12 ${PDY}${cyc}`
-export d6ahead_ymd=`echo $d6ahead_ymdh|cut -c1-8`
-export d6ahead_hh=`echo $d6ahead_ymdh|cut -c9-10`
-export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
-export d6ago_hh=`echo $d6ago_ymdh|cut -c9-10`
-export d_hour_ymd=`echo $d_hour_ymdh|cut -c1-8`
-export d_hour_hh=`echo $d_hour_ymdh|cut -c9-10`
+  d6ahead_ymdh=${PDY}${cyc}
+  d_hour_ymdh=` $NDATE -6 ${PDY}${cyc}`
+  d6ago_ymdh=` $NDATE -12 ${PDY}${cyc}`
+  export d6ahead_ymd=`echo $d6ahead_ymdh|cut -c1-8`
+  export d6ahead_hh=`echo $d6ahead_ymdh|cut -c9-10`
+  export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
+  export d6ago_hh=`echo $d6ago_ymdh|cut -c9-10`
+  export d_hour_ymd=`echo $d_hour_ymdh|cut -c1-8`
+  export d_hour_hh=`echo $d_hour_ymdh|cut -c9-10`
+
+  export GFSbase=/gpfs/dell1/nco/ops/com/gfs/para
 
   export COMINgfs=${GFSbase}/gfs.${d_hour_ymd}/${d_hour_hh}
   export COMINgfs6ago=${GFSbase}/gfs.${d6ago_ymd}/${d6ago_hh}
   export COMINgfs6ahead=${GFSbase}/gfs.${d6ahead_ymd}/${d6ahead_hh}
-  fi 
+  export COMINenkf=${GFSbase}/enkfgdas.
+
+fi
+
+# Define COMINgfs and alike for the gefs_init_separate job 
+#
+if [[ ${jobscript} = JGEFS_INIT_SEPARATE ]] ; then
+
+  d6ahead_ymdh=` $NDATE 6 ${PDY}${cyc}`
+  d6ago_ymdh=` $NDATE -6 ${PDY}${cyc}`
+  export d6ahead_ymd=`echo $d6ahead_ymdh|cut -c1-8`
+  export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
+
+  export GFSbase=/gpfs/dell1/nco/ops/com/gfs/para
+
+  export COMINgfs=${GFSbase}/gfs.$PDY/$cyc
+  export COMINgfs6ago=${GFSbase}/gfs.$d6ago_ymd
+  export COMINgfs6ahead=${GFSbase}/gfs.$d6ahead_ymd
+  export COMINenkf=${GFSbase}/enkfgdas.
+
+fi
+
+# Define POSTGRB2TBL for JGEFS_NCEPPOST
+# POSTGRB2TBL=${POSTGRB2TBL:-/nwprod/lib/sorc/g2tmpl/params_grib2_tbl_new}
+#
+if [[ ${jobscript} = JGEFS_NCEPPOST ]] ; then
+# export POSTGRB2TBL=/gpfs/dell1/nco/ops/nwprod/lib/g2tmpl/v1.5.0/unit_test/params_grib2_tbl_new
+  export POSTGRB2TBL=/gpfs/dell1/nco/ops/nwprod/lib/g2tmpl/v1.5.0/src/params_grib2_tbl_new
+fi
+
+# Define USHPOST for ush/gfs_downstream.sh in GEFS_ncep_post 
+# In GEFS_ncep_post USHPOST=$HOMEPOST/ush is from /nw${envir}/ncep_post.$post_ver,
+# which is not available now on Dell
+# Comment the line is because DOWNSTREAM=NO, no ush was actually needed 
+# export USHPOST=$HOMEpost/ush
+  
