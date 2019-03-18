@@ -20,6 +20,9 @@ if [[ "$WHERE_AM_I" == wcoss_ibm ]] ; then
 elif [[ "$WHERE_AM_I" == cray ]] ; then
 	echo "Loading modules for WCOSS cray"
 	. /opt/modules/default/init/ksh
+	module purge
+	module load modules/3.2.10.3
+	module load ncep/1.0
 	module load PrgEnv-intel ESMF-intel-haswell/3_1_0rp5 cfp-intel-sandybridge iobuf craype-hugepages2M craype-haswell
 	module use /gpfs/hps/nco/ops/nwprod/modulefiles
 	module load prod_envir
@@ -27,7 +30,7 @@ elif [[ "$WHERE_AM_I" == cray ]] ; then
 	module load util_shared/1.0.3
 	module load grib_util/1.0.3
 	module load hpss
-    module load g2tmpl-intel/1.5.0
+    	module load g2tmpl-intel/1.5.0
 	export PATH=$PATH:.
 elif [[ "$WHERE_AM_I" == theia ]]; then
 	echo "Loading modules for theia"
