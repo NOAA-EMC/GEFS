@@ -193,7 +193,6 @@ for hour in $hours; do
 	fi # [[ $do_analysis = YES ]] && (( hour == 0 ))
 
 	export fhr=$(printf "%03.0f" $hour)        # Zero-pad to three places
-	export shr=$(printf "%02.0f" $hour)        # Zero-pad to two places
 	export ffhr="f${fhr}"
 
 	###############################
@@ -203,8 +202,8 @@ for hour in $hours; do
 	export pgm="postcheck"
 
 	if [[ $RUNMEM = "gfs" ]]; then
-		export mafile=$COMINgfs/$RUNMEM.$cycle.master.grb2f$shr
-		export mifile=$COMINgfs/$RUNMEM.$cycle.master.grb2if$shr
+		export mafile=$COMINgfs/$RUNMEM.$cycle.master.grb2f$fhr
+		export mifile=$COMINgfs/$RUNMEM.$cycle.master.grb2if$fhr
 		export mcfile=""
 		export makepgrb2b="no"
 	else 
