@@ -61,7 +61,7 @@ export PRDGEN_STREAMS
 # 2.50°
 PRDGEN_GRID[res_2p50]=${PRDGEN_GRID[res_2p50]:-"2p5"}
 PRDGEN_GRID_SPEC[res_2p50]=${PRDGEN_GRID_SPEC[res_2p50]:-"latlon 0:144:2.5 90:73:-2.5"}
-PRDGEN_HOURS[res_2p50]=${PRDGEN_HOURS[res_2p50]:-"{0..240..3} {246..${fhmax}..6}"}
+PRDGEN_HOURS[res_2p50]=${PRDGEN_HOURS[res_2p50]:-"{0..${FHMAXHF}..3} {$(( $FHMAXHF + 6 ))..${fhmax}..6}"}
 PRDGEN_SUBMC[res_2p50]=${PRDGEN_SUBMC[res_2p50]:-"prd2p5"}
 PRDGEN_A_DIR[res_2p50]=${PRDGEN_A_DIR[res_2p50]:-"pgrb2a2p5"}
 PRDGEN_B_DIR[res_2p50]=${PRDGEN_B_DIR[res_2p50]:-"pgrb2b2p5"}
@@ -71,7 +71,7 @@ PRDGEN_B_PREFIX[res_2p50]=${PRDGEN_B_PREFIX[res_2p50]:-"pgrb2b.2p50."}
 # 1.00°
 PRDGEN_GRID[res_1p00]=${PRDGEN_GRID[res_1p00]:-"1p0"}
 PRDGEN_GRID_SPEC[res_1p00]=${PRDGEN_GRID_SPEC[res_1p00]:-"latlon 0:360:1.0 90:181:-1.0"}
-PRDGEN_HOURS[res_1p00]=${PRDGEN_HOURS[res_1p00]:-"{0..240..3} {246..${fhmax}..6}"}
+PRDGEN_HOURS[res_1p00]=${PRDGEN_HOURS[res_1p00]:-"{0..${FHMAXHF}..3} {$(( $FHMAXHF + 6 ))..${fhmax}..6}"}
 PRDGEN_SUBMC[res_1p00]=${PRDGEN_SUBMC[res_1p00]:-"prd1p0"}
 PRDGEN_A_DIR[res_1p00]=${PRDGEN_A_DIR[res_1p00]:-"pgrb2a1p0"}
 PRDGEN_B_DIR[res_1p00]=${PRDGEN_B_DIR[res_1p00]:-"pgrb2b1p0"}
@@ -81,7 +81,7 @@ PRDGEN_B_PREFIX[res_1p00]=${PRDGEN_B_PREFIX[res_1p00]:-"pgrb2b.1p00."}
 # 0.50°
 PRDGEN_GRID[res_0p50]=${PRDGEN_GRID[res_0p50]:-"0p5"}
 PRDGEN_GRID_SPEC[res_0p50]=${PRDGEN_GRID_SPEC[res_0p50]:-"latlon 0:720:0.5 90:361:-0.5"}
-PRDGEN_HOURS[res_0p50]=${PRDGEN_HOURS[res_0p50]:-"{0..240..3} {246..${fhmax}..6}"}
+PRDGEN_HOURS[res_0p50]=${PRDGEN_HOURS[res_0p50]:-"{0..${FHMAXHF}..3} {$(( $FHMAXHF + 6 ))..${fhmax}..6}"}
 PRDGEN_SUBMC[res_0p50]=${PRDGEN_SUBMC[res_0p50]:-"prd0p5"}
 PRDGEN_A_DIR[res_0p50]=${PRDGEN_A_DIR[res_0p50]:-"pgrb2ap5"}
 PRDGEN_B_DIR[res_0p50]=${PRDGEN_B_DIR[res_0p50]:-"pgrb2bp5"}
@@ -91,7 +91,7 @@ PRDGEN_B_PREFIX[res_0p50]=${PRDGEN_B_PREFIX[res_0p50]:-"pgrb2b.0p50."}
 # 0.25° Stream 1
 PRDGEN_GRID[res_0p25_s1]=${PRDGEN_GRID[res_0p25_s1]:-"0p25"}
 PRDGEN_GRID_SPEC[res_0p25_s1]=${PRDGEN_GRID_SPEC[res_0p25_s1]:-"latlon 0:1440:0.25 90:721:-0.25"}
-PRDGEN_HOURS[res_0p25_s1]=${PRDGEN_HOURS[res_0p25_s1]:-"{0..240..9}"}
+PRDGEN_HOURS[res_0p25_s1]=${PRDGEN_HOURS[res_0p25_s1]:-"{0..${FHMAXHF}..9}"}
 PRDGEN_SUBMC[res_0p25_s1]=${PRDGEN_SUBMC[res_0p25_s1]:-"prd0p25"}
 PRDGEN_A_DIR[res_0p25_s1]=${PRDGEN_A_DIR[res_0p25_s1]:-"pgrb2ap25"}
 PRDGEN_B_DIR[res_0p25_s1]=${PRDGEN_B_DIR[res_0p25_s1]:-"pgrb2bp25"}
@@ -101,7 +101,7 @@ PRDGEN_B_PREFIX[res_0p25_s1]=${PRDGEN_B_PREFIX[res_0p25_s1]:-"pgrb2b.0p25."}
 # 0.25° Stream 2
 PRDGEN_GRID[res_0p25_s2]=${PRDGEN_GRID[res_0p25_s2]:-"0p25"}
 PRDGEN_GRID_SPEC[res_0p25_s2]=${PRDGEN_GRID_SPEC[res_0p25_s2]:-"latlon 0:1440:0.25 90:721:-0.25"}
-PRDGEN_HOURS[res_0p25_s2]=${PRDGEN_HOURS[res_0p25_s2]:-"{3..240..9}"}
+PRDGEN_HOURS[res_0p25_s2]=${PRDGEN_HOURS[res_0p25_s2]:-"{3..${FHMAXHF}..9}"}
 PRDGEN_SUBMC[res_0p25_s2]=${PRDGEN_SUBMC[res_0p25_s2]:-"prd0p25"}
 PRDGEN_A_DIR[res_0p25_s2]=${PRDGEN_A_DIR[res_0p25_s2]:-"pgrb2ap25"}
 PRDGEN_B_DIR[res_0p25_s2]=${PRDGEN_B_DIR[res_0p25_s2]:-"pgrb2bp25"}
@@ -111,7 +111,7 @@ PRDGEN_B_PREFIX[res_0p25_s2]=${PRDGEN_B_PREFIX[res_0p25_s2]:-"pgrb2b.0p25."}
 # 0.25° Stream 3
 PRDGEN_GRID[res_0p25_s3]=${PRDGEN_GRID[res_0p25_s3]:-"0p25"}
 PRDGEN_GRID_SPEC[res_0p25_s3]=${PRDGEN_GRID_SPEC[res_0p25_s3]:-"latlon 0:1440:0.25 90:721:-0.25"}
-PRDGEN_HOURS[res_0p25_s3]=${PRDGEN_HOURS[res_0p25_s3]:-"{6..240..9}"}
+PRDGEN_HOURS[res_0p25_s3]=${PRDGEN_HOURS[res_0p25_s3]:-"{6..${FHMAXHF}..9}"}
 PRDGEN_SUBMC[res_0p25_s3]=${PRDGEN_SUBMC[res_0p25_s3]:-"prd0p25"}
 PRDGEN_A_DIR[res_0p25_s3]=${PRDGEN_A_DIR[res_0p25_s3]:-"pgrb2ap25"}
 PRDGEN_B_DIR[res_0p25_s3]=${PRDGEN_B_DIR[res_0p25_s3]:-"pgrb2bp25"}
