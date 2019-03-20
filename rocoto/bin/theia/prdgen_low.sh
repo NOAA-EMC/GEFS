@@ -35,7 +35,6 @@ export total_tasks=6
 export OMP_NUM_THREADS=4
 export taskspernode=6
 
-export FORECAST_SEGMENT=lr
 export DO_LOW_RES=
 
 export gefsmpexec_mpmd=mpirun.lsf
@@ -46,4 +45,4 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 export gefsmpexec_mpmd="mpirun -np $total_tasks /scratch3/NCEPDEV/nwprod/util/exec/mpiserial"
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_PRDGEN
+. $SOURCEDIR/jobs/JGEFS_PRDGEN
