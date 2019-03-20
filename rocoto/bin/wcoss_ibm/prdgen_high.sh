@@ -48,4 +48,4 @@ export gefsmpexec_mpmd="mpirun.lsf"
 export RERUN=NO
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_PRDGEN
+. $SOURCEDIR/jobs/JGEFS_PRDGEN

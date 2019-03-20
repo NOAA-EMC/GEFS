@@ -43,10 +43,4 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 export gefsmpexec_mpmd="aprun -b -j1 -n2 -N2 -d4 -cc depth cfp mpmd_cmdfile"
 
 # CALL executable job script here
-
-
-
-
-
-
-$SOURCEDIR/jobs/JGEFS_ENSSTAT
+. $SOURCEDIR/jobs/JGEFS_ENSSTAT
