@@ -82,11 +82,6 @@ export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 export COMINm1=$COMROOT/${NET}/${envir}/${RUN}.${PDYm1}
 
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap25
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2a2p5
-
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
 
@@ -224,7 +219,8 @@ for stream in ${PRDGEN_STREAMS[@]}; do
 	pgapre="${PRDGEN_A_PREFIX[$stream]}"
 	pgbpre="${PRDGEN_B_PREFIX[$stream]}"
 	do_analysis="${PRDGEN_DO_ANALYSIS[$stream]:-NO}"
-
+	if [ ! -d ${pgad} ]; then mkdir -m 775 -p $COMOUT/$cyc/${pgad}; fi
+	
 	echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $subdata \"$stream\" \"$jobgrid\" \"$hours\" \"$pgad\" \"$pgapre\" 2>&1 >${outfile}" >> ensstat.cmdfile
 
 done
