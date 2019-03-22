@@ -111,8 +111,8 @@ export grid_new="40 6 0 0 0 0 0 0 1536 768 0 0 89820709 0 48 -89820709 359765625
     export ens_mem="gep${memh}"
    fi
 
-   cd $sorc_dir
-     compile_gefs_1mem_p1.sh
+   #cd $sorc_dir
+   #  compile_gefs_1mem_p1.sh
    cd $DATA
 
    $exec_dir/$sorc_name.exe
