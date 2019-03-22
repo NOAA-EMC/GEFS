@@ -87,8 +87,22 @@ export gefsmachine=${gefsmachine:-dell}
   export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
   export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
   export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
-  export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
-  export CNVGRIB21_GFS=${CNVGRIB21_GFS:-$EXECgrib/cnvgrib21_gfs}
+# export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
+# export CNVGRIB21_GFS=${CNVGRIB21_GFS:-$EXECgrib/cnvgrib21_gfs}
+# export CNVGRIB=$CNVGRIB21_GFS
+
+# Define CNVGRIB21_GFS for the jobs below, the setting of CNVGRIB21_GFS is exported to CNVGRIB
+# There is no cnvgrib21_gfs in /gpfs/dell1/nco/ops/nwprod/grib_util.v1.1.0/exec
+# but in /gefs/dell1/nco/ops/nwprod/grib_util.v1.0.6/exec/cnvgrib21_gfs
+# cnvgrib21_gfs and cnvgrib are the same
+# JGEFS_CQPF:export CNVGRIB=$CNVGRIB21_GFS
+# JGEFS_ENSPOST:export CNVGRIB=$CNVGRIB21_GFS
+# JGEFS_ENSSTAT:export CNVGRIB=$CNVGRIB21_GFS
+# JGEFS_PRDGEN:export CNVGRIB=$CNVGRIB21_GFS
+# JGEFS_PRDGEN_GFS:export CNVGRIB=$CNVGRIB21_GFS
+# JGEFS_WAFS:export CNVGRIB=$CNVGRIB21_GFS
+ 
+  export CNVGRIB21_GFS=${CNVGRIB:-$EXECgrib/cnvgrib}
   export CNVGRIB=$CNVGRIB21_GFS
 
   export NET=gens
@@ -123,11 +137,9 @@ if [[ ${jobscript} = JGEFS_ENKF_TRACK ]] ; then
   export COMINgfs6ahead=${GFSbase}/gfs.${d6ahead_ymd}/${d6ahead_hh}
   export COMINenkf=${GFSbase}/enkfgdas.
 
-fi
-
 # Define COMINgfs and alike for the gefs_init_separate job 
-#
-if [[ ${jobscript} = JGEFS_INIT_SEPARATE ]] ; then
+ 
+elif [[ ${jobscript} = JGEFS_INIT_SEPARATE ]] ; then
 
   d6ahead_ymdh=` $NDATE 6 ${PDY}${cyc}`
   d6ago_ymdh=` $NDATE -6 ${PDY}${cyc}`
@@ -141,15 +153,12 @@ if [[ ${jobscript} = JGEFS_INIT_SEPARATE ]] ; then
   export COMINgfs6ahead=${GFSbase}/gfs.$d6ahead_ymd
   export COMINenkf=${GFSbase}/enkfgdas.
 
-fi
-
 # Define POSTGRB2TBL for JGEFS_NCEPPOST
 # POSTGRB2TBL=${POSTGRB2TBL:-/nwprod/lib/sorc/g2tmpl/params_grib2_tbl_new}
-#
-if [[ ${jobscript} = JGEFS_NCEPPOST ]] ; then
+ 
+elif [[ ${jobscript} = JGEFS_NCEPPOST ]] ; then
 # export POSTGRB2TBL=/gpfs/dell1/nco/ops/nwprod/lib/g2tmpl/v1.5.0/unit_test/params_grib2_tbl_new
   export POSTGRB2TBL=/gpfs/dell1/nco/ops/nwprod/lib/g2tmpl/v1.5.0/src/params_grib2_tbl_new
-fi
 
 # Define USHPOST for ush/gfs_downstream.sh in GEFS_ncep_post 
 # In GEFS_ncep_post USHPOST=$HOMEPOST/ush is from /nw${envir}/ncep_post.$post_ver,
@@ -157,3 +166,10 @@ fi
 # Comment the line is because DOWNSTREAM=NO, no ush was actually needed 
 # export USHPOST=$HOMEpost/ush
   
+else
+
+  export GFSbase=/gpfs/dell1/nco/ops/com/gfs/para
+  export COMINgfs=${GFSbase}/gfs.${PDY}/$cyc
+
+fi
+
