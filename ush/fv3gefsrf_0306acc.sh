@@ -1,5 +1,6 @@
 #!/bin/ksh
 
+set -xa
 cdate=$1
 DATA=$2
 
@@ -12,6 +13,9 @@ cp -p $FIXens_acc/template_512.grb $DATA
 cd $DATA
 
 ddate=`echo $cdate | cut -c1-8`
+YYYY=`echo $cdate | cut -c1-4`
+MONTH=`echo $cdate | cut -c5-6`
+DAY=`echo $cdate | cut -c7-8`
 echo $ddate,$cdate
 
 # COMIN_00and03 and COMIN_master are directory containing the files that we want to extract
@@ -23,12 +27,12 @@ export grid_new="40 6 0 0 0 0 0 0 1536 768 0 0 89820709 0 48 -89820709 359765625
       infile=bfg_${PDY}06_fhr${fnh}_control2
       oufile=$DATA/gec00.t00z.master.grb2f0${fnh}
       echo $COMIN_00and03/$infile
-      if [ -f $COMIN_00and03/$infile ]; then #check if input file exists before extraction
+      if [ -f $COMIN_00and03/$YYYY/$MONTH/$DAY/sfcsig/$infile ]; then #check if input file exists before extraction
         rm -f $outfile #remove outfile if it already exists before extraction   
-        cp $COMIN_00and03/$infile .
+        cp $COMIN_00and03/$YYYY/$MONTH/$DAY/sfcsig/$infile .
 #    $nemsio2grb $infile a
         $nemsio2grb $infile 
-        copygb2 -g "$grid_new" -x $infile.grb $oufile
+       $COPYGB2 -g "$grid_new" -x $infile.grb $oufile
       else
         echo "$infile does not exist"
       fi 
@@ -92,6 +96,7 @@ export grid_new="40 6 0 0 0 0 0 0 1536 768 0 0 89820709 0 48 -89820709 359765625
 
  export out_dir1=$COMOUT/master0306/
  export out_dir=$DATA/
+ export file_dir=$DATA/
  export exec_dir=$EXECacc
  export sorc_dir=$SORCacc
  export sorc_name=gefs_6h_ave_1mem
@@ -111,15 +116,16 @@ export grid_new="40 6 0 0 0 0 0 0 1536 768 0 0 89820709 0 48 -89820709 359765625
     export ens_mem="gep${memh}"
    fi
 
-   #cd $sorc_dir
-   #  compile_gefs_1mem_p1.sh
+#   cd $sorc_dir
+#     compile_gefs_1mem_p1.sh
    cd $DATA
 
-   $exec_dir/$sorc_name.exe
+   $exec_dir/$sorc_name.exe >sorc_name.exe.out
+   cat sorc_name.exe.out
 
 #output f06
    infile=$COMIN_master/${ens_mem}.t00z.master.grb2f006
-   wgrib2 $infile -not "(ULWRF|USWRF)" -not "(DLWRF|DSWRF|UFLX|VFLX|SHTFL|LHTFL|PRATE|CPRAT|ALBDO|GFLUX|U-GWD|V-GWD)" -not "TCDC:(low|middle|high|entire|boundary)" -grib out1.grb2
+   $WGRIB2 $infile -not "(ULWRF|USWRF)" -not "(DLWRF|DSWRF|UFLX|VFLX|SHTFL|LHTFL|PRATE|CPRAT|ALBDO|GFLUX|U-GWD|V-GWD)" -not "TCDC:(low|middle|high|entire|boundary)" -grib out1.grb2
    cat out1.grb2 $ens_mem.t00z.pgrb2af006 > out2.grb
 
    mv $COMIN_master/${ens_mem}.t00z.master.grb2f006 $COMIN_master/${ens_mem}.t00z.master.grb2f006_org
@@ -133,7 +139,7 @@ export grid_new="40 6 0 0 0 0 0 0 1536 768 0 0 89820709 0 48 -89820709 359765625
 
 #output f03
    infile=$COMIN_master/${ens_mem}.t00z.master.grb2f003
-   wgrib2 $infile -not "(ULWRF|USWRF)" -not "(DLWRF|DSWRF|UFLX|VFLX|SHTFL|LHTFL|PRATE|CPRAT|ALBDO|GFLUX|U-GWD|V-GWD)" -not "TCDC:(low|middle|high|entire|boundary)" -grib out1.grb2
+   $WGRIB2 $infile -not "(ULWRF|USWRF)" -not "(DLWRF|DSWRF|UFLX|VFLX|SHTFL|LHTFL|PRATE|CPRAT|ALBDO|GFLUX|U-GWD|V-GWD)" -not "TCDC:(low|middle|high|entire|boundary)" -grib out1.grb2
    cat out1.grb2 gec00.t00z.pgrb2af03 > out2.grb
 
    mv $COMIN_master/${ens_mem}.t00z.master.grb2f003 $COMIN_master/${ens_mem}.t00z.master.grb2f003_org
