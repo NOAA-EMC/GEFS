@@ -75,6 +75,10 @@ export grid_new="40 6 0 0 0 0 0 0 1536 768 0 0 89820709 0 48 -89820709 359765625
     $WGRIB2 $infile | grep ":GFLUX:surface" | $WGRIB2 -i $infile -append -grib $oufile>/dev/null
     $WGRIB2 $infile | grep ":U-GWD:surface" | $WGRIB2 -i $infile -append -grib $oufile>/dev/null
     $WGRIB2 $infile | grep ":V-GWD:surface" | $WGRIB2 -i $infile -append -grib $oufile>/dev/null
+    $WGRIB2 $infile | grep ":APCP:surface" | $WGRIB2 -i $infile -append -grib $oufile>/dev/null
+    $WGRIB2 $infile | grep ":ACPCP:surface" | $WGRIB2 -i $infile -append -grib $oufile>/dev/null
+    $WGRIB2 $infile | grep ":NCPCP:surface" | $WGRIB2 -i $infile -append -grib $oufile>/dev/null
+
 
    else
     echo "$infile does not exist"
@@ -119,7 +123,9 @@ export grid_new="40 6 0 0 0 0 0 0 1536 768 0 0 89820709 0 48 -89820709 359765625
 
 #output f06
    infile=$COMIN_master/${ens_mem}.t00z.master.grb2f006
-   wgrib2 $infile -not "(ULWRF|USWRF)" -not "(DLWRF|DSWRF|UFLX|VFLX|SHTFL|LHTFL|PRATE|CPRAT|ALBDO|GFLUX|U-GWD|V-GWD)" -not "TCDC:(low|middle|high|entire|boundary)" -grib out1.grb2
+#   wgrib2 $infile -not "(ULWRF|USWRF)" -not "(DLWRF|DSWRF|UFLX|VFLX|SHTFL|LHTFL|PRATE|CPRAT|ALBDO|GFLUX|U-GWD|V-GWD)" -not "TCDC:(low|middle|high|entire|boundary)" -grib out1.grb2
+wgrib2 $infile -not "(ULWRF|USWRF)" -not "(DLWRF|DSWRF|UFLX|VFLX|SHTFL|LHTFL|PRATE|CPRAT|ALBDO|GFLUX|U-GWD|V-GWD)" -not "TCDC:(low|middle|high|entire|boundary)" -not "(APCP|ACPCP|NCPCP)" -grib out1.grb2
+
    cat out1.grb2 $ens_mem.t00z.pgrb2af006 > out2.grb
 
    mv $COMIN_master/${ens_mem}.t00z.master.grb2f006 $COMIN_master/${ens_mem}.t00z.master.grb2f006_org
@@ -133,7 +139,7 @@ export grid_new="40 6 0 0 0 0 0 0 1536 768 0 0 89820709 0 48 -89820709 359765625
 
 #output f03
    infile=$COMIN_master/${ens_mem}.t00z.master.grb2f003
-   wgrib2 $infile -not "(ULWRF|USWRF)" -not "(DLWRF|DSWRF|UFLX|VFLX|SHTFL|LHTFL|PRATE|CPRAT|ALBDO|GFLUX|U-GWD|V-GWD)" -not "TCDC:(low|middle|high|entire|boundary)" -grib out1.grb2
+   wgrib2 $infile -not "(ULWRF|USWRF)" -not "(DLWRF|DSWRF|UFLX|VFLX|SHTFL|LHTFL|PRATE|CPRAT|ALBDO|GFLUX|U-GWD|V-GWD)" -not "TCDC:(low|middle|high|entire|boundary)"  -not "(APCP|ACPCP|NCPCP)" -grib out1.grb2
    cat out1.grb2 gec00.t00z.pgrb2af03 > out2.grb
 
    mv $COMIN_master/${ens_mem}.t00z.master.grb2f003 $COMIN_master/${ens_mem}.t00z.master.grb2f003_org

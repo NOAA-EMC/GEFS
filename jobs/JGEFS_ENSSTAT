@@ -156,6 +156,7 @@ case $FORECAST_SEGMENT in
             FHINC=$FHOUT_LF
         fi
 		export SHOUR=$(( $fhmaxh + FHINC ))
+                export SHOUR=03
 		if [[ $fcstlong = true ]]; then
 			export FHOUR=$fhmax
 		else

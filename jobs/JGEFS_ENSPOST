@@ -110,7 +110,9 @@ if [[ $envir = dev ]]; then
 	esac # $cyc
 fi # [[ $envir = dev ]]
 
+#Hong Guan
 export SHOUR=03
+#Hong Guan
 export FHINC=${FHOUTLF:-06}
 export FHOUR=$fhmax
 

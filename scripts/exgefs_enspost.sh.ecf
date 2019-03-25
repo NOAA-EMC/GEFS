@@ -105,7 +105,9 @@ echo
 
 SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
-export fh=$SHOUR
+#HONG export fh=$SHOUR
+> export fh=06
+
 #export  (( fh = SHOUR ))
 if test $fh -lt 10 -a $fh -gt 0; then
 	export fhr="0$fh"
