@@ -5,21 +5,7 @@
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-#setpdy.sh
-#. PDY
-#echo $PDY
-
-export date=2016032600
-#export date=${PDY}00
-
-#export date=${PDY}06
-yyyymmdd=`echo $date | cut -c1-8`
-echo $date,$yyyymmdd
-#echo `date` $0 `date -u` begin
-
 set -xa
-export PS4=' + $SECONDS $na $LINENO: '
-echo $date
 
 export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 
@@ -31,10 +17,26 @@ export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################
+export cycle=t${cyc}z
+
 export pid=$$
 export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
+setpdy.sh
+. PDY
+echo $PDY
+
+#export date=2016032600
+export date=${PDY}00
+
+#export date=${PDY}06
+yyyymmdd=`echo $date | cut -c1-8`
+echo $date,$yyyymmdd
+echo `date` $0 `date -u` begin
+
+export PS4=' + $SECONDS $na $LINENO: '
+echo $date
 
 #export pid=$$
 #export DATAacc=/gpfs/hps3/ptmp/${LOGNAME}/acc
