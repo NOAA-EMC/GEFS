@@ -13,10 +13,10 @@ if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nw${envir}/parm/gefs_config_dev
-  export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+  export gefsmpexec=${gefsmpexec:-mpirun}
 fi
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec:-mpirun}
 
 ####################################
 # obtain unique process id (pid) and make temp directory
