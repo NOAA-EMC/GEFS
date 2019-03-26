@@ -23,7 +23,7 @@ export APRUN=${gefsmpexec:-mpirun}
 ####################################
 # JY . /usrx/local/Modules/default/init/ksh
 # JY module load grib_util/v1.0.1
-export CNVGRIB=$CNVGRIB21_GFS
+export CNVGRIB=$CNVGRIB
 
 ####################################
 # obtain unique process id (pid) and make temp directory

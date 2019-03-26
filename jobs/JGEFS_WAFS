@@ -23,7 +23,7 @@ export APRUN=${gefsmpexec:-mpirun.lsf}
 #####################################
 # JY . /usrx/local/Modules/default/init/ksh
 # JY module load grib_util/v1.0.1
-export CNVGRIB=$CNVGRIB21_GFS
+export CNVGRIB=$CNVGRIB
 # JY module load util_shared/v1.0.2
 
 ####################################
