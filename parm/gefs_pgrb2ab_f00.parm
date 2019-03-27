@@ -374,7 +374,7 @@
 :UGRD:PV=5e-07 (Km^2/kg/s) surface:
 :UGRD:tropopause:
 :USTM:6000-0 m above ground:
-:APTMP:2 m above ground
+:APTMP:2 m above ground:
 :VGRD:0.995 sigma level:
 :VGRD:1000 mb:
 :VGRD:100 m above ground:
