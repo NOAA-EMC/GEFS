@@ -52,7 +52,7 @@ export FORECAST_SEGMENT=hr
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export gefsmachine=cray
+
 #export gefsmpexec=" aprun -b -j1 -n1 -N12 -d2 -cc depth "
 export gefsmpexec_mpmd="  aprun -b -j1 -n756 -N6 -d4 -cc depth  cfp mpmd_cmdfile"
 export APRUNC="aprun"
