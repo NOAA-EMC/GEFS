@@ -6,7 +6,7 @@ set -x
 
 # PATH for working directory
 export NET=${NET:-wave}
-export RUN=${RUN:-multi_1}
+export RUN=${RUN:-gwes}
 HOMEwave=${HOMEwave:-$(dirname $(dirname $0))} # parent directory of current job card
 
 export DATA=${DATA:-${DATAROOT:?}/${jobid}}
@@ -20,9 +20,6 @@ export pgmout=OUTPUT.$$
 
 export MP_PULSE=0
 
-export modID=${modID:-multi_1}
-export sigMODE=${sigMODE:-prep}
-
 ####################################
 # Path to HOME Directory
 ####################################
@@ -35,8 +32,6 @@ export PARMwave=$HOMEwave/parm
 export USHwave=$HOMEwave/ush
 export EXECcode=$CODEwave/exec
 
-export GETGES=${NWROOTprod:?}/util/ush/getges.sh
-
 # Set PDY
 setpdy.sh
 sh ./PDY
@@ -45,12 +40,7 @@ sh ./PDY
 # Set COM Paths and GETGES environment
 ###################################
 
-export COMGFS=${COMGFS:-${COMROOThps}/gfs/prod}
-export COMINgdas=${COMINgdas:-${COMGFS}/gdas.${PDY}/${cyc}}
-export COMINgfs=${COMINgfs:-${COMGFS}/gfs.${PDY}/${cyc}}
 export COMICE=${COMICE:-${COMROOTp2}/omb/prod}
-export COMSST=${COMSST:-${COMROOTp2}/gfs/prod}
-export GETGES_envr=${GETGES_envr:-prod}
 
 export COMINwave=${COMINwave:-${COMROOT:?}/${NET}/${envir}}
 export COMOUTwave=${COMOUTwave:-${COMROOT:?}/${NET}/${envir}}
@@ -63,13 +53,19 @@ fi
 
 export wavelog=${COMOUTwave}/wave.log
 
-env
+##############################################
+ Set parameters using gwes_prep.parm
+##############################################
+
+. $PARMgefs/gwes_prep.parm
+
+env | sort
 
 ###################################
 # Execute the Script  
 ###################################
 
-$HOMEwave/scripts/exwave_multi_1_prep.sh.ecf
+$HOMEwave/scripts/exwave_gwes_prep.sh
 
 ###################################
 # Remove temp directories

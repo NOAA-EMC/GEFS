@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Wave component parm file for PREP step
+
+export IDIML=720
+export JDIML=361
+export JCLIP=0

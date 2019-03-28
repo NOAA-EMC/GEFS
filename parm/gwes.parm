@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Parameters that are common to all wave model steps
+
+export wave_code_ver=v6.6.0
+export code_pkg=st4nc
+
+export buoy="points"
+export grids='glo_30m'
+export iceID=icean_5m
+export wndID=gfs_30m
+#   The ending time of the run is always the $lsth hour forecast. 
+export lsth=${lsth:-240}
+
+export modID=${modID:-gwes}
+export sigMODE=${sigMODE:-prep}
+export nback=
+export stp_hour=24 # Parameter interval between restart files for wavestart_gwes.sh
+
+# Set runmember to default value if not GEFS cpl run
+#  (for a GFS coupled run, instead of ctl, this would be gfs for instance)
+export RUNMEM=${RUNMEM:-ctl}
+
+# Should we add variables that tell the wave component if it is coupled?
+# this could assist stand-alone runs to create and distribute forcing files
+export WW3ATMCPL='NO'
+export WW3ICECPL='NO'
+export WW3CURCPL='NO'
+

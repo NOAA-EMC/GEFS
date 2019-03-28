@@ -13,7 +13,6 @@
 # child scripts :                                                             #
 #                                                                             #
 #  wave_gwes_ice.sh    :    generate ice files.                               #
-#  wave_gwes_wind.sh   :    generate wind files.                              #
 #                                                                             #
 # Remarks :                                                                   #
 # - For non-fatal errors output is witten to the wave.log) file.              #
@@ -43,7 +42,7 @@
 
   msg="HAS BEGUN on `hostname`"
   ./postmsg "$jlogfile" "$msg"
-  msg="Starting MWW3 PREPROCESSOR SCRIPT for $modID"
+  msg="Starting WW3 PREPROCESSOR SCRIPT for $modID"
   ./postmsg "$jlogfile" "$msg"
 
   set +x
@@ -55,27 +54,6 @@
   echo "Starting at : `date`"
   [[ "$LOUD" = YES ]] && set -x
 #
-# 0.b Define all grids used
-
-  export buoy="points"
-  #export grids='bot_30m mid_30m top_30m' # Three tier, keep for future-proofing
-  export grids='glo_30m'
-  export iceID=icean_5m
-  export wndID=gfs_30m 
-  export sstID=rtg_05m
-  export IDIML=720
-  export JDIML=361
-  export JCLIP=0
-
-#
-# 0.c. Date and time stuff:
-#
-#   The ending time of the run is always the $lsth hour forecast. 
-#   The starting time is given as in $PDY$cycle.
-#   ** THIS PARAMATER MUST BE IDENTICAL IN PREP, FORECAST AND POST!! **
-#
-  export lsth=${lsth:-240}
-
 # 0.b Date and time stuff
 #     The ending time of the run always is the $lsth hour forecast. The starting
 #     time depends on availablility of restart files, and is obtained with
@@ -91,8 +69,7 @@
 
   export modIE=gwes00 # Check times in control member for wavestart_gwes
 
-# stp_hour for wave ensembles is set as argument to wavestart
-  export stp_hour=24 # Parameter interval between restart files for wavestart_gwes.sh
+# stp_hour needs to be set in gwes.parm: for wave ensembles is set as argument to wavestart
 
   $USHwave/wavestart_gwes.sh
 
