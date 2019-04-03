@@ -22,7 +22,7 @@ C
       dimension ets(ncat,nreg+1,nfhr)
       dimension bis(ncat,nreg+1,nfhr)
       dimension ifile(2),index(nfhr)
-      character*80 cfile(2),ofile(1)
+      character*255 cfile(2),ofile(1)
       namelist/namin/ cfile,ifile,ofile,iymd,idday
       data iunit/11/,junit/12/,kunit/51/
 ccc
