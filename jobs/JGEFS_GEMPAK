@@ -75,7 +75,8 @@ export COMIN_RAW=${COM}/${RUN}.${PDY}/${cyc}/pgrb2a
 export COMIN_P5=${COM}/${RUN}.${PDY}/${cyc}/pgrb2ap5
 export COMIN_B=${COM}/${RUN}.${PDY}/${cyc}/pgrb2b
 export COMIN_B_P5=${COM}/${RUN}.${PDY}/${cyc}/pgrb2bp5
-export COMOUT=${COMROOT}/nawips/${envir}/${RUN}.${PDY}
+#export COMOUT=${COMROOT}/nawips/${envir}/${RUN}.${PDY}
+export COMOUT=${COMROOT}/${NET}/${envir}/gefs.${PDY}/$cyc/gempak
 
 if [ ! -f $COMOUT ] ; then
   mkdir -p -m 775 $COMOUT
