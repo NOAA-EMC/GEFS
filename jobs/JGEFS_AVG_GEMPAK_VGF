@@ -75,8 +75,9 @@ export utilexec=${NWROOTp1}/util/exec
 setpdy.sh
 . PDY
 
-export COMIN=${COMROOT}/nawips/${envir}/${RUN}.${PDY}
+#export COMIN=${COMROOT}/nawips/${envir}/${RUN}.${PDY}
 #export COMOUT=${COMROOT}/nawips/${envir}/${RUN}.${PDY}/meta
+export COMIN=${COMROOT}/${NET}/${envir}/gefs.${PDY}/$cyc/gempak
 export COMOUT=${COMROOT}/${NET}/${envir}/gefs.${PDY}/$cyc/gempak/meta
 
 if [ ! -d $COMOUT ] ; then
