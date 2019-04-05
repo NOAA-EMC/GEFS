@@ -86,7 +86,7 @@ export MP_PGMMODEL=mpmd
 export MP_CMDFILE=$DATA/poescript
 #
 # Execute the script.
-$APRUN
+$APRUN cfp $DATA/poescript
 export err=$?; err_chk
 
 echo " ------------------------------------------"

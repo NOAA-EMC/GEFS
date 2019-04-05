@@ -36,7 +36,11 @@ export DBNROOT=
 export NWROOT=/nwprod2
 export NWROOTprod=/nwprod2
 export NWROOTp1=/nwprod
-export PCOMROOT=${PCOMROOT:-/pcom2/${envir}}
+ 
+#export PCOMROOT=$baseoutput/pcom2/${envir}
+#export PCOM=$PCOMROOT/gefs                
+ 
+export COMROOThps=/gpfs/hps/nco/ops/com
 
 HOMEDIR=/ensemble/save/emc.enspara/RFC
 HOMEDIR=/nwprod2
@@ -152,6 +156,11 @@ elif [[ ${jobscript} = JGEFS_NCEPPOST ]] ; then
 # Comment the line is because DOWNSTREAM=NO, no ush was actually needed 
 # export USHPOST=$HOMEpost/ush
   
+# Define COMIN for JGEFS_CQPF for dev test, which needs previous 16 day forecast
+ 
+elif [[ ${jobscript} = JGEFS_CQPF ]] ; then
+  export COMIN=/gpfs/tp2/nco/ops/com/gens/prod
+ 
 else
 
   export GFSbase=/gpfs/dell1/nco/ops/com/gfs/para

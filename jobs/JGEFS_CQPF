@@ -82,7 +82,8 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=$COMROOT/${NET}/${envir}
+
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}}
 export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}/${cyc}/ensstat
 export COMINGEST=${COMINGEST:-$COMROOTp1/ingest/prod}
 
