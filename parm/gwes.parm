@@ -2,19 +2,39 @@
 
 # Parameters that are common to all wave model steps
 
+# Wave code version and package details
 export wave_code_ver=v6.6.0
 export code_pkg=st4nc
 
-export buoy="points"
-export grids='glo_30m'
+# System and version
+export wave_sys_ver=v1.0.0  
+
+# General runtime labels
+export modID=${modID:-gwes}
+
+# Grids for wave model
+export grids='core_15m up_1530m' 
+export curvID=
+
+# Grids for input fields 
 export iceID=icean_5m
-export wndID=gfs_30m
+export curID=rtofs_5m
+export wndID=gfs_30m 
+
+# Grids for output fields 
+export buoy=points
+export int_grids='glo_15mext'
+
+# Output stride
+export HOUR_INC=3      # This value should match with the one used in 
+                         # the wind update script
+
 #   The ending time of the run is always the $lsth hour forecast. 
 export lsth=${lsth:-240}
 
-export modID=${modID:-gwes}
-export sigMODE=${sigMODE:-prep}
+# Number of cycles to look back for restart files
 export nback=
+
 export stp_hour=24 # Parameter interval between restart files for wavestart_gwes.sh
 
 # Set runmember to default value if not GEFS cpl run

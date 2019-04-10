@@ -1,0 +1,83 @@
+#!/bin/bash
+
+date
+export PS4=' $SECONDS + '
+set -x
+
+# PATH for working directory
+export NET=${NET:-wave}
+export RUN=${RUN:-gwes}
+
+export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
+export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
+
+# Set HOMEwave to HOMEgefs
+HOMEwave=${HOMEwave:-${HOMEgefs}} 
+
+export DATA=${DATA:-${DATAROOT:?}/${jobid}}
+mkdir -p $DATA
+cd $DATA
+
+cyc=${cyc:-00}
+export cycle=${cycle:-t${cyc}z}
+ 
+export pgmout=OUTPUT.$$
+
+export MP_PULSE=0
+
+####################################
+# Path to HOME Directory
+####################################
+
+export CODEwave=${CODEwave:-${NWROOT}/${NET}_code.${wave_code_ver}/${code_pkg}}
+
+export EXECwave=${EXECwave:-$HOMEwave/exec}
+export FIXwave=${FIXwave:-$HOMEwave/fix}
+export PARMwave=${PARMwave:-$HOMEwave/parm}
+export USHwave=${USHwave:-$HOMEwave/ush}
+export EXECcode=${EXECcode:-$CODEwave/exec}
+
+# Set PDY
+setpdy.sh
+sh ./PDY
+
+###################################
+# Set COM Paths and GETGES environment
+###################################
+
+export COMINwave=${COMINwave:-${COMROOT:?}/${NET}/${envir}}
+export COMOUTwave=${COMOUTwave:-${COMROOT:?}/${NET}/${envir}}
+export COMIN=${COMIN:-${COMINwave}/${RUN}.${PDY}}
+export COMOUT=${COMOUT:-${COMOUTwave}/${RUN}.${PDY}}
+
+if [ $SENDCOM = YES ]; then
+  mkdir -p $COMOUT
+fi
+
+export wavelog=${COMOUTwave}/wave.log
+
+##############################################
+ Set parameters using gwes_prep.parm
+##############################################
+
+. $PARMgefs/gwes.parm
+. $PARMgefs/gwes_init.parm
+
+env | sort
+
+###################################
+# Execute the Script  
+###################################
+
+$HOMEwave/scripts/exwave_gwes_init.sh
+
+###################################
+# Remove temp directories
+###################################
+
+if [ "$KEEPDATA" != "YES" ]; then
+  cd $DATAROOT
+  rm -rf $DATA
+fi
+date
+
