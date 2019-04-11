@@ -35,7 +35,6 @@ export total_tasks=6
 export OMP_NUM_THREADS=4
 export taskspernode=6
 
-export FORECAST_SEGMENT=hr
 export DO_LOW_RES=
 
 export gefsmpexec_mpmd=mpirun.lsf
@@ -48,4 +47,4 @@ export gefsmpexec_mpmd="mpirun.lsf"
 export RERUN=NO
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_PRDGEN
+. $SOURCEDIR/jobs/JGEFS_PRDGEN

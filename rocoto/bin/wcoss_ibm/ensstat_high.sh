@@ -41,5 +41,5 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 export gefsmpexec_mpmd="mpirun.lsf"
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_ENSSTAT
+. $SOURCEDIR/jobs/JGEFS_ENSSTAT
 
