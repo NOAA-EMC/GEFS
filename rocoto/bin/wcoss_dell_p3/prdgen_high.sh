@@ -36,7 +36,6 @@ export total_tasks=6
 export OMP_NUM_THREADS=4
 export taskspernode=6
 
-export FORECAST_SEGMENT=hr
 export DO_LOW_RES=
 
 export gefsmpexec_mpmd="  mpirun -n $total_tasks cfp mpmd_cmdfile"

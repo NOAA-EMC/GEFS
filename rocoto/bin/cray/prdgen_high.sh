@@ -36,7 +36,6 @@ export total_tasks=6
 export OMP_NUM_THREADS=4
 export taskspernode=6
 
-export FORECAST_SEGMENT=hr
 export DO_LOW_RES=
 
 export gefsmpexec_mpmd="  aprun -b -j1 -n6 -N6 -d4 -cc depth  cfp mpmd_cmdfile"

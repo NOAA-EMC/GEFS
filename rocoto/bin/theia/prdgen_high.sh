@@ -14,7 +14,6 @@ export total_tasks=$SLURM_NTASKS
 export OMP_NUM_THREADS=4
 export taskspernode=$SLURM_CPUS_ON_NODE
 
-export FORECAST_SEGMENT=hr
 export DO_LOW_RES=
 
 # export for development runs only begin

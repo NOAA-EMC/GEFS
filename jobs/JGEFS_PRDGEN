@@ -80,12 +80,6 @@ export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 setpdy.sh
 . PDY
 
-####################################
-# Create member list
-####################################
-memberlist="c00"
-kmem=1
-
 ##############################################
 # Define COM directories
 ##############################################

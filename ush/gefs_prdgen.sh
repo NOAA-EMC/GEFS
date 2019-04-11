@@ -100,11 +100,11 @@ else
 		done # for fhorog in $fhoroglist
 	fi # [[ x$fhoroglist != x ]]
 	$WGRIB2 -s pgb2afile.$ffhr$cfsuffix > pgb2afile.${ffhr}${cfsuffix}.idx
-	if [[ $RUNMEM = "gfs" ]]; then
+	if [[ $RUNMEM = "gegfs" ]]; then
 		# Add ensemble PDS header to GFS file
 		$ENSADD 0 0 pgb2afile.$ffhr$cfsuffix epgbafile
 		mv epgbafile pgb2afile.$ffhr$cfsuffix
-	fi # [[ $RUNMEM = "gfs" ]]
+	fi # [[ $RUNMEM = "gegfs" ]]
 
 	if [[ $makepgrb2b = "yes" ]]; then
 		parmlist2=$PARMgefs/gefs_pgrb2ab_f${hsuffix}.parm

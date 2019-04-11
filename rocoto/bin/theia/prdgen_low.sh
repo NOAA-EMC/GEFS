@@ -24,7 +24,6 @@ export total_tasks=6
 export OMP_NUM_THREADS=4
 export taskspernode=6
 
-export FORECAST_SEGMENT=lr
 export DO_LOW_RES=
 
 
