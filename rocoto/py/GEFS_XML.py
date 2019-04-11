@@ -388,7 +388,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             dicBase[sVarName] = sVarValue
         # ===
         sVarName = "SCHEDULER".upper()
-        sVarValue = "moabtorque"
+        sVarValue = "slurm"
         if sVarName not in dicBase:
             dicBase[sVarName] = sVarValue
     elif WHERE_AM_I.lower() == "wcoss_dell_p3":
