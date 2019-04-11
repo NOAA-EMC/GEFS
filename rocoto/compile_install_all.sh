@@ -114,19 +114,28 @@ if [ $RunRocoto = "yes" ]; then
     cd $sWS
     if [ $machine = "theia" ]; then
         module load rocoto
+        module load intelpython
+
+    elif [ $machine = "wcoss_ibm" ]; then
+        module load ibmpe ics lsf
+        module load python/3.6.3
+        module use /usrx/local/emc_rocoto/modulefiles
+        module load rocoto
+
     elif [ $machine = "cray" ]; then
         . /opt/modules/3.2.10.3/init/sh
         module use /usrx/local/emc_rocoto/modulefiles
         module load xt-lsfhpc
         module load rocoto
-        module load python
+        module load python/3.6.3
+
     elif [ $machine = "wcoss_dell_p3" ]; then
         . /usrx/local/prod/lmod/lmod/init/sh
         module use /gpfs/dell3/usrx/local/dev/emc_rocoto/modulefiles
         module load lsf/10.1
         module load ruby/2.5.1
         module load rocoto/complete
-        module load python/2.7.14        
+        module load python/3.6.3       
     fi
     ./py/run_to_get_all.py  $userConfigFile
     
@@ -138,9 +147,41 @@ fi # For RunRocoto
 if [ $AddCrontabToMyCrontab = "yes" ]; then
     cd $sWS
     if [ $machine = "theia" ]; then
-        echo "Not ready on theia"
+        if [ -f $HOME/cron/mycrontab ]; then
+            echo "Adding crontab to $HOME/cron/mycrontab!" 
+        else 
+            mkdir $HOME/cron
+            touch $HOME/cron/mycrontab
+        fi
+    
+        py/add_crontab.py
+        crontab $HOME/cron/mycrontab
+        echo "Added crontab to $HOME/cron/mycrontab!"
+
+    elif [ $machine = "wcoss_ibm" ]; then
+        if [ -f $HOME/cron/mycrontab ]; then
+            echo "Adding crontab to $HOME/cron/mycrontab!" 
+        else
+            mkdir $HOME/cron
+            touch $HOME/cron/mycrontab
+        fi
+
+        py/add_crontab.py
+        crontab $HOME/cron/mycrontab
+        echo "Added crontab to $HOME/cron/mycrontab!"
+
     elif [ $machine = "cray" ]; then
-        echo "Not ready on cray"
+        if [ -f $HOME/cron/mycrontab ]; then
+            echo "Adding crontab to $HOME/cron/mycrontab!" 
+        else
+            mkdir $HOME/cron
+            touch $HOME/cron/mycrontab
+        fi
+
+        py/add_crontab.py
+        crontab $HOME/cron/mycrontab
+        echo "Added crontab to $HOME/cron/mycrontab!"
+
     elif [ $machine = "wcoss_dell_p3" ]; then
         py/add_crontab.py
         echo "Added crontab to $HOME/cron/mycrontab!"
