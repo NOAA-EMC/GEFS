@@ -148,6 +148,18 @@ def create_gets_dev_parm(dicBase, listBaseParm):
     strings.append('# This section is some parameter setup for for development testing only\n')
     strings.append('##############################################################################\n')
     strings.append('echo `date` $0 test section begin\n')
+    strings.append('\n')
+    strings.append('# Setup associative arrays for prdgen\n')
+    strings.append('typeset -A PRDGEN_GRID\n')
+    strings.append('typeset -A PRDGEN_GRID_SPEC\n')
+    strings.append('typeset -A PRDGEN_HOURS\n')
+    strings.append('typeset -A PRDGEN_SUBMC\n')
+    strings.append('typeset -A PRDGEN_A_DIR\n')
+    strings.append('typeset -A PRDGEN_B_DIR\n')
+    strings.append('typeset -A PRDGEN_A_PREFIX\n')
+    strings.append('typeset -A PRDGEN_B_PREFIX\n')
+    strings.append('typeset -A PRDGEN_DO_ANALYSIS\n')
+    strings.append('\n')
 
     strings = "".join(strings)
 
@@ -177,7 +189,7 @@ def create_gets_dev_parm(dicBase, listBaseParm):
             fh.write('\n# set all the following "make" and "save" flags to "yes" to simulate production\n')
 
         #==
-        fh.write('export {0}={1}\n'.format(sVarName, dicBase[sVarName.upper()]))
+        fh.write('export {0}="{1}"\n'.format(sVarName, dicBase[sVarName.upper()]))
 
     # fh.write(strings)
     fh.write("\necho `date` $0 test section end\n")
