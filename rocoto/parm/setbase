@@ -114,7 +114,7 @@ elif [[ -d /gpfs/hps && -e /etc/SuSE-release ]] ; then
     SAVE=/gpfs/hps3/emc/$PROJECT/save
     NOSCRUB=/gpfs/hps3/emc/$PROJECT/noscrub
 
-    export COMINenkf_base=$HOMEdata/fv3init/enkfgdas.
+    export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
     export COMINgfs_base=$HOMEdata/fv3init/gfs.
     export COMINcfs_base=$HOMEdata/cfs/cfs.
     
@@ -130,7 +130,7 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
     export COMROOThps=${HOMEdata}
 
-    export COMINenkf_base=$HOMEdata/fv3init/enkfgdas.
+    export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
     export COMINgfs_base=$HOMEdata/fv3init/gfs.
     export COMINcfs_base=$HOMEdata/cfs/cfs. 
 fi
