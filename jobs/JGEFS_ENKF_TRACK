@@ -131,7 +131,6 @@ export d_hour_hh=`echo $d_hour_ymdh|cut -c9-10`
 ##############################################
 # Define COM directories
 ##############################################
-# JY export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.$PDY} 
 # 20160607 RLW if present, modify preset COMINenkf to include the date for this job
 export COMINenkf=${COMINenkf:-$(compath.py /gfs/prod)/enkfgdas.} 
 export COMINatcfsyn=${COMINatcfsyn:-$(compath.py arch/prod/syndat)}
