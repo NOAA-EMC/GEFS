@@ -11,7 +11,7 @@ export SENDCOM=YES
 #export CODEwave=/marine/save/wavepa/ops/wave_code.v4.15.6/st4nc
 
 # Temp directory
-export DATAROOT=/gpfs/hps3/stmp/wavepa
+export DATAROOT=${DATAROOT:-/gpfs/hps3/stmp/wavepa}
 
 module list
 

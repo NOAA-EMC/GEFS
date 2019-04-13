@@ -27,7 +27,7 @@ elif [[ "$WHERE_AM_I" == cray ]] ; then
 	module load util_shared/1.0.3
 	module load grib_util/1.0.3
 	module load hpss
-    module load g2tmpl-intel/1.5.0
+        module load g2tmpl-intel/1.5.0
 # wave modules
         module load HDF5-serial-intel-sandybridge/1.8.9
         module load NetCDF-intel-sandybridge/4.2

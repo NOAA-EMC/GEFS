@@ -121,7 +121,7 @@
         echo $msg
         [[ "$LOUD" = YES ]] && set -x
         echo "$modID init config $date $cycle : $grdID.inp missing." >> $wavelog
-        err=1;export err;err_chk
+        err=1;export err;err_chk;exit
       fi
 
       echo "$USHwave/ww3_mod_def.sh $grdID > $grdID.out 2>&1" >> cmdfile
@@ -147,7 +147,7 @@
       mpirun.lsf cfp cmdfile
       exit=$?
     else
-      ./cmdfile
+      chmod 744 cmdfile; ./cmdfile
       exit=$?
     fi
 
@@ -178,7 +178,7 @@
       sed "s/^/$grdID.out : /g"  $grdID.out
       [[ "$LOUD" = YES ]] && set -x
       echo "$modID prep $date $cycle : mod_def.$grdID missing." >> $wavelog
-      err=2;export err;err_chk
+      err=2;export err;err_chk;exit
     fi
   done
 

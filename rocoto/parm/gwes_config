@@ -1,4 +1,5 @@
 #!/bin/bash
-export CODEwave=/gpfs/hps3/emc/marine/noscrub/Henrique.Alves/GIT/ajhenrique/WW3/model
-export EXEewave=/gpfs/hps3/emc/marine/noscrub/Henrique.Alves/GIT/ajhenrique/WW3/model
-
+export DATAROOT=${baseoutput}
+export HOMEwave=$basesource
+export CODEwave=${CODEwave:-${HOMEWAVE}}
+export EXECwave=${CODEwave/exec}
