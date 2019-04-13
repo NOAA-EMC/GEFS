@@ -35,7 +35,7 @@ export MP_PULSE=0
 export CODEwave=${CODEwave:-${NWROOT}/${NET}_code.${wave_code_ver}/${code_pkg}}
 
 export EXECwave=${EXECwave:-$HOMEwave/exec}
-export FIXwave=${FIXwave:-$HOMEwave/fix}
+export FIXwave=${FIXwave:-$HOMEwave/fix_wave}
 export PARMwave=${PARMwave:-$HOMEwave/parm}
 export USHwave=${USHwave:-$HOMEwave/ush}
 export EXECcode=${EXECcode:-$CODEwave/exec}
