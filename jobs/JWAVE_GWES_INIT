@@ -25,6 +25,9 @@ export pgmout=OUTPUT.$$
 
 export MP_PULSE=0
 
+###################################
+
+
 ####################################
 # Path to HOME Directory
 ####################################
@@ -60,8 +63,8 @@ export wavelog=${COMOUTwave}/wave.log
  Set parameters using gwes_prep.parm
 ##############################################
 
-. $PARMgefs/gwes.parm
-. $PARMgefs/gwes_init.parm
+. $PARMwave/gwes.parm
+. $PARMwave/gwes_init.parm
 
 env | sort
 

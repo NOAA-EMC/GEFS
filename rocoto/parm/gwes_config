@@ -1,5 +1,5 @@
 #!/bin/bash
 export DATAROOT=${baseoutput}
 export HOMEwave=$basesource
-export CODEwave=${CODEwave:-${HOMEWAVE}}
-export EXECwave=${CODEwave/exec}
+export CODEwave=${CODEwave:-${HOMEwave}}
+export EXECwave=${CODEwave}/exec

@@ -142,14 +142,14 @@
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
 
-    if [ "$nfile" -gt '1' ]
-    then
-      mpirun.lsf cfp cmdfile
-      exit=$?
-    else
+    #if [ "$nfile" -gt '1' ]
+    #then
+    #  mpirun.lsf cfp cmdfile
+    #  exit=$?
+    #else
       chmod 744 cmdfile; ./cmdfile
       exit=$?
-    fi
+    #fi
 
   fi 
 
