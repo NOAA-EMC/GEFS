@@ -46,8 +46,8 @@ export HOMEgfs=${HOMEgsm:-$HOMEDIR}
 export HOMEgsi=${HOMEgsm:-$HOMEDIR}
 #FCST exec is from a different directory
 export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe}
-export FCSTEXECDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/git_gfs/fv3gfs/master/sorc/fv3gfs.fd.master20190321/NEMS/exe/
-export FCSTEXEC=global_fv3gfs.x.master20190321
+export FCSTEXECDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/git_gfs/fv3gfs/master/sorc/fv3gfs.fd.master20190415/NEMS/exe/
+export FCSTEXEC=global_fv3gfs.x.master20190415
 
 #export HOMEpost=${HOMEpost:-$HOMEDIR/post4fv3}   #Aug 2017
 export HOMEpost=${HOMEpost:-$HOMEDIR}             #April 2018

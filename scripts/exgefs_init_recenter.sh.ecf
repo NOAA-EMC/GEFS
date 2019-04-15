@@ -283,7 +283,7 @@ done
         rm -rf poescript*
 
         (( itile = 1 ))
-        while (( itile < ntiles  )); do
+        while (( itile <= ntiles  )); do
 		echo $RECENATMPY $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH $itile >>poescript
         (( itile = itile + 1 ))
         done # while (( itask < npert ))
