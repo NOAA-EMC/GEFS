@@ -279,7 +279,36 @@ mkdir -p $FILEOUTPATH/p$member
 cp -pr $FILEINPATH/p$member/gfs_ctrl.nc  $FILEOUTPATH/p$member/.
 cp -pr $FILEINPATH/p$member/sfc*  $FILEOUTPATH/p$member/.
 done
-$RECENATMPY $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH
+## 
+        rm -rf poescript*
+
+        (( itile = 1 ))
+        while (( itile < ntiles  )); do
+		echo $RECENATMPY $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH $itile >>poescript
+        (( itile = itile + 1 ))
+        done # while (( itask < npert ))
+
+        echo
+        chmod 755 poescript
+        ls -al $poescript
+        echo
+        cat poescript
+        export MP_HOLDTIME=1000
+
+        export MP_CMDFILE=poescript
+        export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
+        export MP_LABELIO=yes
+        export MP_INFOLEVEL=3
+        export MP_STDOUTMODE=unordered
+        echo APRUN=$APRUN
+        export MP_PGMMODEL=mpmd
+
+        rm mpmd_cmdfile
+        ln -s $MP_CMDFILE mpmd_cmdfile
+        $APRUN
+
+
+
 fi
 
 else
