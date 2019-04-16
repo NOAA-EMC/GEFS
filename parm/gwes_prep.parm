@@ -4,6 +4,9 @@
 # Step label
 export sigMODE=${sigMODE:-prep}
 
+export HOUR_INC=3      # This value should match with the one used in 
+                         # the wind update script
+
 #export IDIML=720
 #export JDIML=361
 #export JCLIP=0

@@ -7,11 +7,8 @@ export jobid=${job}.$$
 export SENDDBN=NO
 export SENDCOM=YES
 
-# Set wave-specific COM
-export CODEwave=/marine/save/wavepa/ops/wave_code.v4.15.6/st4nc
-
 # Temp directory
-export DATAROOT=/gpfs/hps3/stmp/wavepa
+export DATAROOT=${DATAROOT:-/gpfs/hps3/stmp/wavepa}
 
 module list
 
@@ -20,6 +17,8 @@ export COMICE=$COMROOTp2/omb/prod
 export DATA=$DATAROOT/${job}.${wave_multi_1_ver}
 if [ -d $DATA ]; then
   rm -rf $DATA/*
+else
+  mkdir -p ${DATA}
 fi
 
 export PDY=20181116

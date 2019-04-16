@@ -7,7 +7,12 @@ set -x
 # PATH for working directory
 export NET=${NET:-wave}
 export RUN=${RUN:-gwes}
-HOMEwave=${HOMEwave:-$(dirname $(dirname $0))} # parent directory of current job card
+
+export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
+export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
+
+# Set HOMEwave to HOMEgefs
+HOMEwave=${HOMEwave:-${HOMEgefs}} 
 
 export DATA=${DATA:-${DATAROOT:?}/${jobid}}
 mkdir -p $DATA
@@ -26,11 +31,11 @@ export MP_PULSE=0
 
 export CODEwave=${CODEwave:-${NWROOT}/${NET}_code.${wave_code_ver}/${code_pkg}}
 
-export EXECwave=$HOMEwave/exec
-export FIXwave=$HOMEwave/fix
-export PARMwave=$HOMEwave/parm
-export USHwave=$HOMEwave/ush
-export EXECcode=$CODEwave/exec
+export EXECwave=${EXECwave:-$HOMEwave/exec}
+export FIXwave=${FIXwave:-$HOMEwave/fix_wave}
+export PARMwave=${PARMwave:-$HOMEwave/parm}
+export USHwave=${USHwave:-$HOMEwave/ush}
+export EXECcode=${EXECcode:-$CODEwave/exec}
 
 # Set PDY
 setpdy.sh
@@ -40,12 +45,14 @@ sh ./PDY
 # Set COM Paths and GETGES environment
 ###################################
 
-export COMICE=${COMICE:-${COMROOTp2}/omb/prod}
-
 export COMINwave=${COMINwave:-${COMROOT:?}/${NET}/${envir}}
 export COMOUTwave=${COMOUTwave:-${COMROOT:?}/${NET}/${envir}}
 export COMIN=${COMIN:-${COMINwave}/${RUN}.${PDY}}
 export COMOUT=${COMOUT:-${COMOUTwave}/${RUN}.${PDY}}
+
+export COMICE=${COMICE:-${COMROOTp2}/omb/prod}
+export COMWND=${COMWND:-${COMROOTp2}/omb/prod}
+export COMCUR=${COMCUR:-${COMROOTp2}/omb/prod}
 
 if [ $SENDCOM = YES ]; then
   mkdir -p $COMOUT
@@ -57,7 +64,8 @@ export wavelog=${COMOUTwave}/wave.log
  Set parameters using gwes_prep.parm
 ##############################################
 
-. $PARMgefs/gwes_prep.parm
+. $PARMwave/gwes.parm
+. $PARMwave/gwes_prep.parm
 
 env | sort
 

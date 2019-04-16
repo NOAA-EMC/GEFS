@@ -59,22 +59,6 @@
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
 
-# definition of the multi-scale wave model inputs
-
-  export iceID=icean_5m
-  export curID=rtofs_5m
-
-  export wndID=gfs_30m ; export IDIML=720 ; export JDIML=361 
-                         export JCLIP=0
-  export curvID='aoc_9km ant_9km'
-  #export curvID='aoc_15m'
-  export HOUR_INC=3      # This value should match with the one used in 
-                         # the wind update script
-  export buoy=points
-  export grids='glo_10m ant_9km wcat_4m aoc_9km' # oconus_6m hwipac_6m' #ak_5m10m' #oconus_7p5m' #atl_6m' # ak_5m10m'
-  #export grids='glo_30m aoc_15m at_10m' # ak_5m10m'
-  export int_grids='glo_15mext'
-
 #  export MP_PGMMODEL=mpmd
 #  export MP_CMDFILE=./cmdfile
 
@@ -96,12 +80,12 @@
   export date=$PDY
   export YMDH=${PDY}${cyc}
 
-  export nback=${nback:-16}
+#  export nback=${nback:-16}
 
-  $USHwave/multiwavestart.sh
+#  $USHwave/multiwavestart.sh
 
   ymdh_beg=`head multiwavestart.out | awk '{ print $1 }'`
-  rm -f multiwavestart.out
+#  rm -f multiwavestart.out
   time_beg="`echo $ymdh_beg | cut -c1-8` `echo $ymdh_beg | cut -c9-10`0000"
 
   ymdh_end=`$NDATE $lsth $YMDH`
