@@ -1,7 +1,5 @@
 #!/bin/ksh
-#
 
-# EXPORT list here
 set -x
 export IOBUF_PARAMS=*:size=64M:count=4:verbose
 export FORT_BUFFERED=TRUE
@@ -19,10 +17,6 @@ export MPICH_VERSION_DISPLAY=1
 export MPICH_CPUMASK_DISPLAY=1
 
 export KMP_STACKSIZE=1024m
-export OMP_NUM_THREADS=4
-export KMP_AFFINITY=disabled
-
-#export OMP_NUM_THREADS=4
 export KMP_AFFINITY=disabled
 
 export MP_EUIDEVICE=sn_all
@@ -30,15 +24,12 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:4
 
-export NODES=1
-export total_tasks=6
+export NODES=$PBS_NUM_NODES
+export total_tasks=$PBS_NP
 export OMP_NUM_THREADS=4
-export taskspernode=6
+export taskspernode=$PBS_NUM_PPN
 
-export FORECAST_SEGMENT=hr
 export DO_LOW_RES=
-
-export gefsmpexec_mpmd=mpirun.lsf
 
 # export for development runs only begin
 export envir=${envir:-dev}
@@ -48,4 +39,4 @@ export gefsmpexec_mpmd="mpirun -np $total_tasks /scratch3/NCEPDEV/nwprod/util/ex
 export RERUN=NO
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_PRDGEN
+. $SOURCEDIR/jobs/JGEFS_PRDGEN

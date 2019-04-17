@@ -10,4 +10,5 @@ export WORKDIR=${WORKDIR}
 . $GEFS_ROCOTO/parm/gefs_config
 . $GEFS_ROCOTO/parm/gwes_config
 . $GEFS_ROCOTO/parm/gefs_dev.parm
-exec "$@"
+
+"$@"
