@@ -278,6 +278,7 @@ def get_param_of_task(dicBase, taskname):
     sJoin = ""
     sDep = ""
     sQueue = ""
+    sPartition = ""
 
     sVarName = "{0}_walltime".format(taskname).upper()
     if sVarName in dicBase:
@@ -292,23 +293,54 @@ def get_param_of_task(dicBase, taskname):
     sVarName_nodes = "{0}_nodes".format(taskname).upper()
     sVarName_ppn = "{0}_ppn".format(taskname).upper()
     sVarName_tpp = "{0}_tpp".format(taskname).upper()
+    #if sVarName_nodes in dicBase:
+    #    if sVarName_ppn in dicBase:
+    #        if sVarName_tpp in dicBase:
+    #            sNodes = "{0}:ppn={1}:tpp={2}".format(dicBase[sVarName_nodes], dicBase[sVarName_ppn],
+    #                                                  dicBase[sVarName_tpp])
+    #        else:
+    #            sNodes = "{0}:ppn={1}".format(dicBase[sVarName_nodes], dicBase[sVarName_ppn])
+    #    else:
+    #        if sVarName_tpp in dicBase:
+    #            sNodes = "{0}:tpp={1}".format(dicBase[sVarName_nodes], dicBase[sVarName_tpp])
+    #        else:
+    #            sNodes = "{0}".format(dicBase[sVarName_nodes])
+    
+    sNodes = ""
     if sVarName_nodes in dicBase:
-        if sVarName_ppn in dicBase:
-            if sVarName_tpp in dicBase:
-                sNodes = "{0}:ppn={1}:tpp={2}".format(dicBase[sVarName_nodes], dicBase[sVarName_ppn],
-                                                      dicBase[sVarName_tpp])
-            else:
-                sNodes = "{0}:ppn={1}".format(dicBase[sVarName_nodes], dicBase[sVarName_ppn])
+        sNodes = "{0}".format(dicBase[sVarName_nodes])
+        
+    if sVarName_ppn in dicBase:
+        ppn = dicBase[sVarName_ppn]
+        if taskname.lower() in ["prdgen_high","prdgen_low","prdgen_gfs"]:
+            #print(taskname)
+            #print("{0}".format("PRDGEN_STREAMS" in dicBase))
+            #print(dicBase["PRDGEN_STREAMS"])
+            #print(dicBase["PRDGEN_STREAMS"].split())
+            if "PRDGEN_STREAMS" in dicBase:
+               ppn = len(dicBase["PRDGEN_STREAMS"].split())
+            #print(ppn) 
+        if sNodes != "":
+            sNodes += ":ppn={0}".format(ppn)
         else:
-            if sVarName_tpp in dicBase:
-                sNodes = "{0}:tpp={1}".format(dicBase[sVarName_nodes], dicBase[sVarName_tpp])
-            else:
-                sNodes = "{0}".format(dicBase[sVarName_nodes])
+            sNodes += "ppn={0}".format(ppn)
+
+    if sVarName_tpp in dicBase:
+        if sNodes != "":
+            sNodes += ":tpp={0}".format(dicBase[sVarName_tpp])
+        else:
+            sNodes += "tpp={0}".format(dicBase[sVarName_tpp])
+    
 
     # for queue
     sVarName = "{0}_queue".format(taskname).upper()
     if sVarName in dicBase:
         sQueue = dicBase[sVarName.upper()]
+
+    # for partition (RDHPCS only)
+    sVarName = "{0}_partition".format(taskname).upper()
+    if sVarName in dicBase:
+        sPartition = dicBase[sVarName.upper()]
     
     # for Join
     sVarName = "{0}_join".format(taskname).upper()
@@ -488,7 +520,7 @@ def get_param_of_task(dicBase, taskname):
             sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
 
-    return sWalltime, sNodes, sMemory, sJoin, sDep, sQueue
+    return sWalltime, sNodes, sMemory, sJoin, sDep, sQueue, sPartition
 
 # =======================================================
 def DoesTaskExist(dicBase, taskname):
@@ -510,7 +542,7 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     # nodes = "1:ppn=12:tpp=2"
     # memory = "600M"
     WHERE_AM_I = dicBase['WHERE_AM_I']
-    sWalltime, sNodes, sMemory, sJoin, sDep, sQueue = get_param_of_task(dicBase, taskname)
+    sWalltime, sNodes, sMemory, sJoin, sDep, sQueue, sPartition = get_param_of_task(dicBase, taskname)
 
     metatask_names = []
     metatask_names.append('init_fv3chgrs')
@@ -534,12 +566,12 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     strings = ""
     if taskname in metatask_names:
         strings += create_metatask(taskname=taskname, jobname=jobname, sWalltime=sWalltime, sNodes=sNodes, \
-                                   sMemory=sMemory, sJoin=sJoin, sDep=sDep, sQueue=sQueue, sPre=sPre, \
+                                   sMemory=sMemory, sJoin=sJoin, sDep=sDep, sQueue=sQueue, sPartition=sPartition, sPre=sPre, \
                                    GenTaskEnt=GenTaskEnt, WHERE_AM_I=WHERE_AM_I)
     else:
         strings += create_task(taskname=taskname, jobname=jobname, sWalltime=sWalltime, sNodes=sNodes, \
-                               sMemory=sMemory, sJoin=sJoin, sQueue=sQueue, sDep=sDep, sPre=sPre, GenTaskEnt=GenTaskEnt, \
-                               WHERE_AM_I=WHERE_AM_I)
+                               sMemory=sMemory, sJoin=sJoin, sQueue=sQueue, sPartition=sPartition, sDep=sDep, sPre=sPre, \
+                               GenTaskEnt=GenTaskEnt, WHERE_AM_I=WHERE_AM_I)
 
     return strings
 
@@ -615,7 +647,7 @@ def read_jobid_config(sConfig):
 # =======================================================
 def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member#", \
                     sWalltime="00:30:00", sNodes="1:ppn=12:tpp=2", sMemory="600M", sJoin="", sDep="", sQueue="", \
-                    sPre="\t", GenTaskEnt=False, WHERE_AM_I="cray"):
+                    sPartition="", sPre="\t", GenTaskEnt=False, WHERE_AM_I="cray"):
     cycledef = "gefs"
     maxtries = 1
 
@@ -667,6 +699,9 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
         strings += sPre + '\t\t' + '<queue>{0}</queue>\n'.format(sQueue)
     # strings += sPre + '\t\t' + '<queue>&CUE2RUN;</queue>\n'
 
+    if sPartition != "":
+        strings += sPre + '\t\t' + '<partition>{0}</partition>\n'.format(sPartition)
+
     if sNodes != "":
         strings += sPre + '\t\t' + '<nodes>{0}</nodes>\n'.format(sNodes)
         if WHERE_AM_I.upper() == "wcoss_ibm".upper():
@@ -711,9 +746,16 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
     strings += (create_envar(name="job", value=jobname.replace("_#member#", "#member#"), sPre=sPre_2))
     strings += (create_envar(name="RUNMEM", value="ge#member#", sPre=sPre_2))
 
+    if taskname in ['prdgen_high']:
+        strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
+    elif taskname in ['prdgen_low']:
+        strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
+
     if taskname in ['keep_init', 'copy_init']:
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
         strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.py</cyclestr></command>\n'.format(taskname)
+    elif taskname in ['prdgen_high', 'prdgen_low']:
+        strings += sPre + '\t' + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
     else:
         strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
 
@@ -735,7 +777,7 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
 def create_task( \
         taskname="enkf_track", jobname="&EXPID;@Y@m@d@H010", \
         sWalltime="01:50:00", sNodes="2:ppn=20", sMemory="3000M", sJoin="", sDep="",sQueue="", \
-        sPre="\t", GenTaskEnt=False, WHERE_AM_I="cray"):
+        sPartition="", sPre="\t", GenTaskEnt=False, WHERE_AM_I="cray"):
     cycledef = "gefs"
     maxtries = 1
 
@@ -782,6 +824,9 @@ def create_task( \
         strings += sPre + '\t' + '<queue>{0}</queue>\n'.format(sQueue)
     # strings += sPre + '\t' + '<queue>&CUE2RUN;</queue>\n'
 
+    if sPartition != "":
+        strings += sPre + '\t' + '<partition>{0}</partition>\n'.format(sPartition)
+    
     if sNodes != "":
         if WHERE_AM_I.upper() == "cray".upper():
             if taskname == "archive":
@@ -842,10 +887,14 @@ def create_task( \
         strings += (create_envar(name="RUNMEM", value="#member#", sPre=sPre_2))
 
     if taskname in ["prdgen_gfs"]:
-        strings += (create_envar(name="RUNMEM", value="gfs", sPre=sPre_2))
+        strings += (create_envar(name="RUNMEM", value="gegfs", sPre=sPre_2))
 
     if taskname in ['keep_data', 'archive', 'cleanup']:
         strings += sPre + '\t' + '<command><cyclestr>&PRE; &BIN;/{0}.py</cyclestr></command>\n'.format(taskname)
+    elif taskname in ['prdgen_gfs']:
+        strings += sPre + '\t' + '<command><cyclestr>&PRE; . &BIN;/prdgen_high.sh</cyclestr></command>\n'
+    elif taskname in ['ensstat_high', 'ensstat_low']:
+        strings += sPre + '\t' + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
     else:
         strings += sPre + '\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
 

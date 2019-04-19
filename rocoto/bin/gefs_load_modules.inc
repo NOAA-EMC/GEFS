@@ -14,14 +14,17 @@ if [[ "$WHERE_AM_I" == wcoss_ibm ]] ; then
 	module load util_shared/v1.0.7
 	module load grib_util/v1.0.5
 	module load ibmpe/1.3.0.12
-        module load NetCDF/4.2/serial
-        module load python/2.7.14
+    module load NetCDF/4.2/serial
+    module load python/2.7.14
 	module load hpss
     module load g2tmpl/v1.5.0
 	export PATH=$PATH:.
 elif [[ "$WHERE_AM_I" == cray ]] ; then
 	echo "Loading modules for WCOSS cray"
 	. /opt/modules/default/init/ksh
+	module purge
+	module load modules/3.2.10.3
+	module load ncep/1.0
 	module load PrgEnv-intel ESMF-intel-haswell/3_1_0rp5 cfp-intel-sandybridge iobuf craype-hugepages2M craype-haswell
 	module use /gpfs/hps/nco/ops/nwprod/modulefiles
 	module load prod_envir
@@ -30,12 +33,13 @@ elif [[ "$WHERE_AM_I" == cray ]] ; then
 	module load grib_util/1.0.3
 	module load hpss
     module load g2tmpl-intel/1.5.0
-
 	export PATH=$PATH:.
 elif [[ "$WHERE_AM_I" == theia ]]; then
 	echo "Loading modules for theia"
 	. /apps/lmod/lmod/init/ksh
 	module use /scratch3/NCEPDEV/nwprod/lib/modulefiles
+	module load slurm
+	module load hpss
 	module load intel impi/2018.0.1
 	module load hdf5parallel/1.8.14
 	module load netcdf
@@ -46,6 +50,10 @@ elif [[ "$WHERE_AM_I" == theia ]]; then
     #module load grib_util/v1.1.0
     module load g2tmpl/v1.5.0
     export PATH=$PATH:./
+
+    # Temporary setting to test common settings
+	. $GEFS_ROCOTO/bin/theia/common.sh
+
 elif [[ "$WHERE_AM_I" == wcoss_dell_p3 ]] ; then
     echo "Loading modules for wcoss_dell_p3"
     . /usrx/local/prod/lmod/lmod/init/ksh
