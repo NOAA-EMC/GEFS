@@ -530,7 +530,7 @@ use_hyper_thread:        ${hyperthread:-".false."}
 ncores_per_node:         $cores_per_node
 restart_interval:        $restart_interval
 restart_run:             ${restart_run:-".false."}
-output_1st_tstep:        ${output_1st_tstep:-".false."}
+output_1st_tstep_rst:    ${output_1st_tstep_rst:-".false."}
 restart_hour:            ${restart_hour:-0}
 
 quilting:                $QUILTING

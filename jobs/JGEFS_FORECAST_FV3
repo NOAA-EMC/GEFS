@@ -217,7 +217,7 @@ if [[ $RERUN = RESTART ]] ; then
 	export warm_start=.true.
 	export restart_hour=$FHMIN
 	export restart_run=.true.    
-	export output_1st_tstep=.true.
+	export output_1st_tstep_rst=.true.
 fi
 
 #

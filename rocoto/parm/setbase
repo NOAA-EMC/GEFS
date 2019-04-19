@@ -125,7 +125,9 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     STMP=/gpfs/dell2/stmp
     export machine='WCOSS_DELL_P3'
     export JOBPHASE=    
-    export HOMEDIR=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gfs/fv3gefs_q2fy19nco_b84e91_20181211
+    #export HOMEDIR=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gfs/fv3gefs_q2fy19nco_b84e91_20181211
+    export HOMEDIR=/gpfs/dell2/emc/retros/noscrub/Xiaqiong.Zhou/git_gfs/fv3gfs/master
+
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v1.1.15 
     export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
     export COMROOThps=${HOMEdata}
