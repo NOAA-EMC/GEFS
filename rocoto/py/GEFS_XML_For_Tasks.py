@@ -278,6 +278,7 @@ def get_param_of_task(dicBase, taskname):
     sJoin = ""
     sDep = ""
     sQueue = ""
+    sPartition = ""
 
     sVarName = "{0}_walltime".format(taskname).upper()
     if sVarName in dicBase:
@@ -335,6 +336,11 @@ def get_param_of_task(dicBase, taskname):
     sVarName = "{0}_queue".format(taskname).upper()
     if sVarName in dicBase:
         sQueue = dicBase[sVarName.upper()]
+
+    # for partition (RDHPCS only)
+    sVarName = "{0}_partition".format(taskname).upper()
+    if sVarName in dicBase:
+        sPartition = dicBase[sVarName.upper()]
     
     # for Join
     sVarName = "{0}_join".format(taskname).upper()
@@ -514,7 +520,7 @@ def get_param_of_task(dicBase, taskname):
             sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
 
-    return sWalltime, sNodes, sMemory, sJoin, sDep, sQueue
+    return sWalltime, sNodes, sMemory, sJoin, sDep, sQueue, sPartition
 
 # =======================================================
 def DoesTaskExist(dicBase, taskname):
@@ -536,7 +542,7 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     # nodes = "1:ppn=12:tpp=2"
     # memory = "600M"
     WHERE_AM_I = dicBase['WHERE_AM_I']
-    sWalltime, sNodes, sMemory, sJoin, sDep, sQueue = get_param_of_task(dicBase, taskname)
+    sWalltime, sNodes, sMemory, sJoin, sDep, sQueue, sPartition = get_param_of_task(dicBase, taskname)
 
     metatask_names = []
     metatask_names.append('init_fv3chgrs')
@@ -560,12 +566,12 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     strings = ""
     if taskname in metatask_names:
         strings += create_metatask(taskname=taskname, jobname=jobname, sWalltime=sWalltime, sNodes=sNodes, \
-                                   sMemory=sMemory, sJoin=sJoin, sDep=sDep, sQueue=sQueue, sPre=sPre, \
+                                   sMemory=sMemory, sJoin=sJoin, sDep=sDep, sQueue=sQueue, sPartition=sPartition, sPre=sPre, \
                                    GenTaskEnt=GenTaskEnt, WHERE_AM_I=WHERE_AM_I)
     else:
         strings += create_task(taskname=taskname, jobname=jobname, sWalltime=sWalltime, sNodes=sNodes, \
-                               sMemory=sMemory, sJoin=sJoin, sQueue=sQueue, sDep=sDep, sPre=sPre, GenTaskEnt=GenTaskEnt, \
-                               WHERE_AM_I=WHERE_AM_I)
+                               sMemory=sMemory, sJoin=sJoin, sQueue=sQueue, sPartition=sPartition, sDep=sDep, sPre=sPre, \
+                               GenTaskEnt=GenTaskEnt, WHERE_AM_I=WHERE_AM_I)
 
     return strings
 
@@ -641,7 +647,7 @@ def read_jobid_config(sConfig):
 # =======================================================
 def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member#", \
                     sWalltime="00:30:00", sNodes="1:ppn=12:tpp=2", sMemory="600M", sJoin="", sDep="", sQueue="", \
-                    sPre="\t", GenTaskEnt=False, WHERE_AM_I="cray"):
+                    sPartition="", sPre="\t", GenTaskEnt=False, WHERE_AM_I="cray"):
     cycledef = "gefs"
     maxtries = 1
 
@@ -692,6 +698,9 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
     if sQueue != "":
         strings += sPre + '\t\t' + '<queue>{0}</queue>\n'.format(sQueue)
     # strings += sPre + '\t\t' + '<queue>&CUE2RUN;</queue>\n'
+
+    if sPartition != "":
+        strings += sPre + '\t\t' + '<partition>{0}</partition>\n'.format(sPartition)
 
     if sNodes != "":
         strings += sPre + '\t\t' + '<nodes>{0}</nodes>\n'.format(sNodes)
@@ -768,7 +777,7 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
 def create_task( \
         taskname="enkf_track", jobname="&EXPID;@Y@m@d@H010", \
         sWalltime="01:50:00", sNodes="2:ppn=20", sMemory="3000M", sJoin="", sDep="",sQueue="", \
-        sPre="\t", GenTaskEnt=False, WHERE_AM_I="cray"):
+        sPartition="", sPre="\t", GenTaskEnt=False, WHERE_AM_I="cray"):
     cycledef = "gefs"
     maxtries = 1
 
@@ -815,6 +824,9 @@ def create_task( \
         strings += sPre + '\t' + '<queue>{0}</queue>\n'.format(sQueue)
     # strings += sPre + '\t' + '<queue>&CUE2RUN;</queue>\n'
 
+    if sPartition != "":
+        strings += sPre + '\t' + '<partition>{0}</partition>\n'.format(sPartition)
+    
     if sNodes != "":
         if WHERE_AM_I.upper() == "cray".upper():
             if taskname == "archive":
