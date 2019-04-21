@@ -85,12 +85,12 @@
 
   for grdID in $curID $iceID $wndID $buoy $grids $int_grids
   do
-    if [ -f "$COMIN/ww3_${modID}_${grdID}.moddef.${wave_multi_1_ver}" ]
+    if [ -f "$COMIN/ww3_${modID}_${grdID}.moddef.${wave_sys_ver}" ]
     then
       set +x
       echo " Mod def file for $grdID found in $COMIN. copying ...."
       [[ "$LOUD" = YES ]] && set -x
-      cp $COMIN/ww3_${modID}_${grdID}.moddef.${wave_multi_1_ver} mod_def.$grdID
+      cp $COMIN/ww3_${modID}_${grdID}.moddef.${wave_sys_ver} mod_def.$grdID
 
     else
       set +x

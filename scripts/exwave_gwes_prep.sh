@@ -6,14 +6,14 @@
 # some generally used files to the work directory. After this the actual      #
 # preprocessing is performed by the following child scripts :                 #
 #                                                                             #
-#  multiwaveice.sh     : preprocess ice fields.                               #
-#  multiwave_rtofs     : preprocess rtofs current fields.                     #
-#  multiwave_g2ges.sh  : find and copy wind grib2 files.                      #
+#  ww3_ice.sh     : preprocess ice fields.                               #
+#  ww3_rtofs     : preprocess rtofs current fields.                     #
+#  ww3_g2ges.sh  : find and copy wind grib2 files.                      #
 #                                                                             #
 # Also used is the utililty script                                            #
 #                                                                             #
-#  multiwavestart.sh   : get initial time of most recent restart file(s)      #
-#  multiwavemod_def.sh : creates the mod_def file for the grid                #
+#  ww3_start.sh   : get initial time of most recent restart file(s)      #
+#  ww3_mod_def.sh : creates the mod_def file for the grid                #
 #                                                                             #
 # Remarks :                                                                   #
 # - For non-fatal errors output is witten to the wave.log file.               #
@@ -72,7 +72,7 @@
 # 0.b Date and time stuff
 #     The ending time of the run always is the $lsth hour forecast. The starting
 #     time depends on availablility of restart files, and is obtained with
-#     multiwavestart.sh
+#     ww3_start.sh
 #
 #     Make sure nback is set identically in the forecast script !!!
 #     nback is the number of cycles to look back.
@@ -82,10 +82,10 @@
 
 #  export nback=${nback:-16}
 
-#  $USHwave/multiwavestart.sh
+#  $USHwave/ww3_start.sh
 
-  ymdh_beg=`head multiwavestart.out | awk '{ print $1 }'`
-#  rm -f multiwavestart.out
+  ymdh_beg=`head ww3_start.out | awk '{ print $1 }'`
+#  rm -f ww3_start.out
   time_beg="`echo $ymdh_beg | cut -c1-8` `echo $ymdh_beg | cut -c9-10`0000"
 
   ymdh_end=`$NDATE $lsth $YMDH`
@@ -141,104 +141,42 @@
   ifile=1
   rm -f cmdfile
   touch cmdfile
-#  rm -f cmdfile.*
 
-#  set +x
-#  while [ "$ifile" -le "$nfile" ]
-#  do
-#    touch cmdfile.$ifile
-#    chmod 700 cmdfile.$ifile
-#    echo "./cmdfile.$ifile" >> cmdfile
-#    ifile=`expr $ifile + 1`
-#  done
-#  [[ "$LOUD" = YES ]] && set -x
+  grdINP=''
+  if [ "${WW3ATMINP}" = 'YES' ]; then grdINP="${grdINP} $wndID" ; fi 
+  if [ "${WW3ICEINP}" = 'YES' ]; then grdINP="${grdINP} $iceID" ; fi 
+  if [ "${WW3CURINP}" = 'YES' ]; then grdINP="${grdINP} $curID" ; fi 
 
   ifile=1
 
-  for grdID in $curID $iceID $wndID $buoy $grids $int_grids
+  for grdID in $grdINP $grids
   do
-    if [ -f "$COMIN/multiwave_${modID}_${grdID}.moddef.${wave_multi_1_ver}" ]
+    if [ -f "$FIXwave/ww3_${modID}_${grdID}.moddef.${wave_sys_ver}" ]
     then
       set +x
-      echo " Mod def file for $grdID found in $COMIN. copying ...."
+      echo " Mod def file for $grdID found in $FIXwave. copying ...."
       [[ "$LOUD" = YES ]] && set -x
-      cp $COMIN/multiwave_${modID}_${grdID}.moddef.${wave_multi_1_ver} mod_def.$grdID
+      cp $FIXwave/ww3_${modID}_${grdID}.moddef.${wave_sys_ver} mod_def.$grdID
 
     else
+      msg="FATAL ERROR: NO INP FILE FOR MODEL DEFINITION FILE"
+      postmsg "$jlogfile" "$msg"
       set +x
-      echo " Mod def file for $grdID not found in $COMIN. Setting up to generate ..."
+      echo ' '
+      echo '*********************************************************** '
+      echo '*** FATAL ERROR : NOT FOUND WAVE  MODEL DEFINITION FILE *** '
+      echo '*********************************************************** '
+      echo "                                grdID = $grdID"
+      echo ' '
+      echo $msg
       [[ "$LOUD" = YES ]] && set -x
-      if [ -f $FIXwave/multiwave_$grdID.inp ]
-      then
-        cp $FIXwave/multiwave_$grdID.inp $grdID.inp
-      fi
-
-      if [ -f $grdID.inp ]
-      then
-        set +x
-        echo ' '
-        echo "   $grdID.inp copied ($FIXwave/multiwave_$grdID.inp)."
-        echo ' '
-        [[ "$LOUD" = YES ]] && set -x
-      else
-        msg="ABNORMAL EXIT: NO INP FILE FOR MODEL DEFINITION FILE"
-        postmsg "$jlogfile" "$msg"
-        set +x
-        echo ' '
-        echo '*********************************************************** '
-        echo '*** FATAL ERROR : NO INP FILE FOR MODEL DEFINITION FILE *** '
-        echo '*********************************************************** '
-        echo "                                grdID = $grdID"
-        echo ' '
-        echo $msg
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$modID prep $date $cycle : $grdID.inp missing." >> $wavelog
-        err=1;export err;err_chk
-      fi
-
-      echo "$USHwave/multiwavemod_def.sh $grdID > $grdID.out 2>&1" >> cmdfile
-#      echo "$USHwave/multiwavemod_def.sh $grdID > $grdID.out 2>&1" >> cmdfile.$ifile
-
-      nmoddef=`expr $nmoddef + 1`
-#      if [ "$nfile" -gt '1' ]
-#      then
-#        ifile=`expr $ifile + 1`
-#      fi
-
-#      if [ "$ifile" -gt "$nfile" ]
-#      then
-#        ifile=1
-#      fi
-
+      echo "$modID prep $date $cycle : ww3_${modID}_${grdID}.moddef.${wave_sys_ver} missing." >> $wavelog
+      err=1;export err;err_chk
     fi
   done
 
-# 1.a.1 Execute poe (if needed)
-
-  if [ "$nmoddef" -gt '0' ]
-  then
-
-    set +x
-    echo ' '
-    echo " Generating $nmoddef mod def files"
-    echo ' '
-    [[ "$LOUD" = YES ]] && set -x
-
-    if [ "$nfile" -gt '1' ]
-    then
-      mpirun.lsf cfp cmdfile
-      exit=$?
-    else
-#      cmdfile.1
-      ./cmdfile
-      exit=$?
-    fi
-
-  fi 
-
 # 1.a.3 File check
-
-  for grdID in $curID $iceID $wndID $grids $int_grids
+  for grdID in $grdINP $grids
   do
     if [ -f mod_def.$grdID ]
     then
@@ -267,60 +205,40 @@
 
 # 1.b Preprocessor template files
 
-  for grdID in $iceID $wndID $curvID 
-  do
+# 1.c Netcdf Preprocessor template files
 
-    if ls $FIXwave/multiwaveprep.*.$grdID.tmpl 
-    then
-      cp $FIXwave/multiwaveprep.*.$grdID.tmpl .
-    fi
-
-    if ls -f multiwaveprep.*.$grdID.tmpl
-    then
-      set +x
-      echo ' '
-      echo "   multiwaveprep.*.$grdID.tmpl copied ($FIXwave)."
-      echo ' '
-      [[ "$LOUD" = YES ]] && set -x
-    else
-      msg="ABNORMAL EXIT: NO FILE $file"
-      postmsg "$jlogfile" "$msg"
-      set +x
-      echo ' '
-      echo '************************************** '
-      echo '*** FATAL ERROR : NO TEMPLATE FILE *** '
-      echo '************************************** '
-      echo "             multiwaveprep.*.$grdID.tmpl"
-      echo ' '
-      echo $msg
-      echo ' '
-      [[ "$LOUD" = YES ]] && set -x
-      echo "$modID prep $date $cycle : multiwaveprep.$grdID.tmpl missing." >> $wavelog
-      err=2;export err;err_chk
-    fi
-  done
-
- # 1.c Netcdf Preprocessor template files
-
-   for grdID in $curID $curvID $wndID
+   for grdID in $grdINP
    do
 
-     type='wind'
-     if [ "${grdID}" = "${curID}" ]
+     case $grdID in
+     $currID ) 
+              type='curr' 
+     ;;
+     $wndID )
+              type='wind'
+     ;;
+     $iceID )
+              type='ice'
+     ;;
+     * )
+              echo 'Input type not yet implelemted' 	    
+              err_chk
+              ;;
+     esac 
+
+     echo 'Working here,TYPE is: '$type
+
+
+     if [ -f $FIXwave/ww3_prnc.${type}.$grdID.inp.tmpl ]
      then
-       type='curr'
+       cp $FIXwave/ww3_prnc.${type}.$grdID.inp.tmpl .
      fi
 
-     if [ -f $FIXwave/multiwaveprnc.${type}.$grdID.tmpl ]
-     then
-       cp $FIXwave/multiwaveprnc.${type}.$grdID.tmpl .
-     fi
-
-     if [ -f multiwaveprnc.${type}.$grdID.tmpl ]
+     if [ -f ww3_prnc.${type}.$grdID.inp.tmpl ]
      then
        set +x
        echo ' '
-       echo "   multiwaveprnc.${type}.$grdID.tmpl copied ($FIXwave)."
+       echo "   ww3_prnc.${type}.$grdID.inp.tmpl copied ($FIXwave)."
        echo ' '
        [[ "$LOUD" = YES ]] && set -x
      else
@@ -331,15 +249,19 @@
        echo '************************************** '
        echo '*** FATAL ERROR : NO TEMPLATE FILE *** '
        echo '************************************** '
-       echo "             multiwaveprnc.${type}.$grdID.tmpl"
+       echo "             ww3_prnc.${type}.$grdID.inp.tmpl"
        echo ' '
        echo $msg
        echo ' '
        [[ "$LOUD" = YES ]] && set -x
-       echo "$modID prep $date $cycle : multiwaveprnc.${type}.$grdID.tmpl missing." >> $wavelog
+       echo "$modID prep $date $cycle : ww3_prnc.${type}.$grdID.tmpl missing." >> $wavelog
        err=2;export err;./err_chk
      fi
    done
+
+
+exit
+
 
 # 1.d Data assimilation buoy file
 #     *** NOT YET PORTED TO NEW SYSTEM ***
@@ -350,7 +272,7 @@
 
 # 2.a Ice pre - processing 
 
-  $USHwave/multiwaveice.sh > ice.out 
+  $USHwave/ww3_ice.sh > ice.out 
   err=$?
 
   if [ -d ice ]
@@ -365,7 +287,7 @@
     [[ "$LOUD" = YES ]] && set -x
   else
     mv -f ice.out $DATA/outtmp
-    rm -f multiwaveprep.$iceID.tmpl mod_def.$iceID
+    rm -f ww3_prep.$iceID.tmpl mod_def.$iceID
     set +x
     echo ' '
     echo '      Ice field unpacking successful.'
@@ -403,8 +325,8 @@
 
   while [ "$ymdh" -le "$ymdh_end" ]
   do
-    echo "$USHwave/multiwave_g2ges.sh $ymdh > grb_$ymdh.out 2>&1" >> cmdfile
-    echo "$USHwave/multiwave_rtofs.sh $ymdh > rtofs_$ymdh.out 2>&1" >> cmdfile
+    echo "$USHwave/ww3_g2ges.sh $ymdh > grb_$ymdh.out 2>&1" >> cmdfile
+    echo "$USHwave/ww3_rtofs.sh $ymdh > rtofs_$ymdh.out 2>&1" >> cmdfile
 
     ymdh=`$NDATE $HOUR_INC $ymdh`
 
@@ -461,10 +383,10 @@
     then
       set +x
       echo ' '
-      echo "         File for $ymdh : error in multiwave_g2ges.sh"
+      echo "         File for $ymdh : error in ww3_g2ges.sh"
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      postmsg "$jlogfile" "    File for $ymdh : error in multiwave_g2ges.sh"
+      postmsg "$jlogfile" "    File for $ymdh : error in ww3_g2ges.sh"
       nr_err=`expr $nr_err + 1`
       rm -f gwnd.$ymdh
     else
@@ -505,7 +427,7 @@
     set +x
     echo ' '
     echo '*******************************'
-    echo '*** ERROR OUTPUT multiwave_g2ges.sh ***'
+    echo '*** ERROR OUTPUT ww3_g2ges.sh ***'
     echo '*******************************'
     echo '            Possibly in multiple calls'
     [[ "$LOUD" = YES ]] && set -x
@@ -519,7 +441,7 @@
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
     mv -f grb_*.out $DATA/outtmp
-    postmsg "$jlogfile" "NON-FATAL ERROR in multiwave_g2ges.sh, possibly in multiple calls."
+    postmsg "$jlogfile" "NON-FATAL ERROR in ww3_g2ges.sh, possibly in multiple calls."
   fi
 
   if [ "$nr_err" -gt "$err_max" ]
@@ -589,14 +511,14 @@
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
 
-    sed -e "s/HDRFL/T/g" multiwaveprnc.wind.$grdID.tmpl > multiwaveprnc.inp
+    sed -e "s/HDRFL/T/g" ww3_prnc.wind.$grdID.tmpl > ww3_prnc.inp
     ln -sf mod_def.$grdID mod_def.ww3
 
     set +x
-    echo "Executing $EXECcode/multiwaveprnc"
+    echo "Executing $EXECcode/ww3_prnc"
     [[ "$LOUD" = YES ]] && set -x
 
-    $EXECcode/multiwaveprnc > prnc.out
+    $EXECcode/ww3_prnc > prnc.out
     err=$?
 
     if [ "$err" != '0' ]
@@ -632,7 +554,7 @@
     fi
 
     rm -f mod_def.ww3
-    rm -f multiwaveprep.inp
+    rm -f ww3_prep.inp
 
     mv wind.ww3 wind.$grdID
     mv times.WND times.$grdID
@@ -678,7 +600,7 @@
 
   rm -f gfs.wind
   rm -f mod_def.ww3
-  rm -f multiwaveprnc.inp
+  rm -f ww3_prnc.inp
 
 #####################################################################
 # 4.  Process current fields

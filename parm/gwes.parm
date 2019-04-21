@@ -19,7 +19,7 @@ export curvID=
 # Grids for input fields 
 export iceID=icean_5m
 export curID=rtofs_5m
-export wndID=gfs_30m 
+export wndID=gefs_30m 
 
 # Grids for output fields 
 export buoy=points
@@ -43,7 +43,7 @@ export RUNMEM=${RUNMEM:-ctl}
 
 # Should we add variables that tell the wave component if it is coupled?
 # this could assist stand-alone runs to create and distribute forcing files
-export WW3ATMCPL='NO'
-export WW3ICECPL='NO'
-export WW3CURCPL='NO'
+export WW3ATMINP='YES'
+export WW3ICEINP='YES'
+export WW3CURINP='NO'
 
