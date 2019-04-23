@@ -143,7 +143,7 @@ mkdir -m 755 -p $GESOUT/$mem/RESTART
 
 export FCSTDIR=$COMOUT/$cyc/sfcsig
 export RESTDIR=$COMOUT/$cyc/restart/$mem
-ln -s $GESOUT/$mem/RESTART $DATA/RESTART 
+ln -s $GESOUT/$mem/RESTART $DATA/RESTART
 
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
@@ -359,6 +359,7 @@ export fcstscript=${fcstscript:-$HOMEgfs/scripts/exglobal_fcst_nemsfv3gfs.sh}
 export FORECASTSH=$fcstscript
 export FCSTEXECDIR=${FCSTEXECDIR:-$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin}
 export PARM_FV3DIAG=${PARM_FV3DIAG:-$PARMgfs/parm_fv3diag}
+export ROTDIR=${ROTDIR:-$DATA}
 
 export APRUN=${APRUN:-""}
 export EXECDIR=$EXECgfs
@@ -387,6 +388,8 @@ export VERBOSE=YES
 
 ################################################################################
 export CDATE=$PDY$cyc
+export rCDUMP=gdas
+export CDUMP=gdas
 #ICSDIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160910/$mem
 #Temporal setting reading from Kate Zhou's archive
 
@@ -399,6 +402,8 @@ export CDATE=$PDY$cyc
 #memdir_template=${memdir_template:-$GESIN/$mem/$CASE\_$CDATE}
 #memdir=`eval echo $memdir_template`
 #ICSDIR_template=${ICSDIR_template:-$GESIN/$mem/$CASE\_$CDATE}
+memdir=$ROTDIR/enkf$CDUMP.$PDY/$cyc/$memchar
+
 ICSDIR_template=${ICSDIR_template:-$GESIN/$mem}
 ICSDIR=`eval echo $ICSDIR_template`
 #mkdir -p $ICSDIR/INPUT
@@ -406,46 +411,43 @@ ICSDIR=`eval echo $ICSDIR_template`
 # We need to make the directory structure above memdir, but memdir needs to actually be a symlink
 # So create the tree using mkdir -p, then remove the last product
 
-# if [ $OUTPUT_GRID = "gaussian_grid" ]; then
-# 	fhr=$FHINI
-# 	while (( fhr <= FHMAX ))
-# 	do
-# 		if (( fhr < 10 )); then
-# 			hr=00$fhr
-# 		elif (( fhr < 100 )); then
-# 			fhr=0$fhr
-# 		fi
-# 		# ln -s $ROTDIR/${CDUMP}.t${cyc}z.atmf$fhr.nemsio $DATA/${CDUMP}.t${cyc}z.atmf$fhr.nemsio
-# 		# ln -s $ROTDIR/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio $DATA/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio
+if [ $OUTPUT_GRID = "gaussian_grid" ]; then
+	# Link init directory
+	ln -s $ICSDIR $DATA/INPUT
+	mkdir -p $memdir
 
-# 		# touch $SFCSIG/$mem/${CDUMP}.t${cyc}z.atmf$fhr.nemsio
-# 		# ln -s $SFCSIG/$mem/${CDUMP}.t${cyc}z.atmf$fhr.nemsio $memdir/${CDUMP}.t${cyc}z.atmf$fhr.nemsio
-# 		# touch $SFCSIG/$mem/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio
-# 		# ln -s $SFCSIG/$mem/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio $memdir/${CDUMP}.t${cyc}z.sfcf$fhr.nemsio
+	# Link output files
+	hr=$FHINI
+	while (( hr < FHMAX_HF )); do
+		fhr=$(printf "%03.0f" $hr)
+		ln -s $FCSTDIR/${RUNMEM}.t${cyc}z.atmf$fhr.nemsio $memdir/$CDUMP.t${cyc}z.atmf$fhr.nemsio
+		ln -s $FCSTDIR/${RUNMEM}.t${cyc}z.sfcf$fhr.nemsio $memdir/$CDUMP.t${cyc}z.sfcf$fhr.nemsio
+		ln -s $FCSTDIR/${RUNMEM}.t${cyc}z.logf$fhr.nemsio $memdir/$CDUMP.t${cyc}z.logf$fhr.nemsio
+		export hr=$(expr $hr + $FHOUT_HF)
+	done
+	while (( hr <= FHMAX )); do
+		fhr=$(printf "%03.0f" $hr)
+		ln -s $FCSTDIR/${RUNMEM}.t${cyc}z.atmf$fhr.nemsio $memdir/$CDUMP.t${cyc}z.atmf$fhr.nemsio
+		ln -s $FCSTDIR/${RUNMEM}.t${cyc}z.sfcf$fhr.nemsio $memdir/$CDUMP.t${cyc}z.sfcf$fhr.nemsio
+		ln -s $FCSTDIR/${RUNMEM}.t${cyc}z.logf$fhr.nemsio $memdir/$CDUMP.t${cyc}z.logf$fhr.nemsio		
+		export hr=$(expr $hr + $FHOUT)
+	done
+else
+	for n in `seq 1 $ntiles`; do
+		for file in atmos_4xdaily. atmos_static. fv3_history. fv3_history2d. grid_spec. nggps2d. nggps3d.; do
+			# ln -s $ROTDIR/$file\tile$n.nc $DATA/$file\tile$n.nc
 
-# 		export fhr=`expr $fhr + $FHOUT`
-# 	done
-# else
-# 	for n in `seq 1 $ntiles`; do
-# 		for file in atmos_4xdaily. atmos_static. fv3_history. fv3_history2d. grid_spec. nggps2d. nggps3d.; do
-# 			# ln -s $ROTDIR/$file\tile$n.nc $DATA/$file\tile$n.nc
-
-# 			# touch $SFCSIG/$mem/$file\tile$n.nc
-# 			# ln -s $SFCSIG/$mem/$file\tile$n.nc $memdir/$file\tile$n.nc
-# 			;
-# 		done
-# 	done
-# fi
+			# touch $SFCSIG/$mem/$file\tile$n.nc
+			# ln -s $SFCSIG/$mem/$file\tile$n.nc $memdir/$file\tile$n.nc
+			;
+		done
+	done
+fi
 
 export FIX_DIR=$FIXgfs
 export FIX_AM=$FIX_AM
 
 export assim_freq=6
-#export ROTDIR=/gpfs/hps3/emc/ensemble/noscrub/Bing.Fu/o/com/gfs/fy2019q1
-export ROTDIR=${ROTDIR:-$COMROOThps/gfs}
 export increment=$ICSDIR/fv3_increment.nc
-export rCDUMP=gdas
-export CDUMP=gdas
-#export COMROOThps=/gpfs/hps3/emc/ensemble/noscrub/Bing.Fu/o/com
+
 $FORECASTSH
-#$fcstscript
