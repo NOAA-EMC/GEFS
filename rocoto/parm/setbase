@@ -94,7 +94,7 @@ elif [[ -d /dcom && -d /hwrf ]] ; then
     export COMINenkf_base=$HOMEdata/enkf.gdas.
     export COMINgfs_base=$HOMEdata/gfs.
     export COMINcfs_base=/ensemble/noscrub/Walter.Kolczynski/gefs_input/cfs_2_sst/cfs.
-    export ROTDIR=${HOMEdata}
+    # export ROTDIR=${HOMEdata}
     export COMROOThps=${HOMEdata}
     export CHGRESEXEC=$HOMEDIR/exec/chgres_recenter.exe
 
