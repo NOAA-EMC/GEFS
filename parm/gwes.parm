@@ -45,8 +45,9 @@ export lsth=${lsth:-240}
 # Number of cycles to look back for restart files
 export nback=
 
-export stp_hour=24 # Parameter interval between restart files for wavestart_gwes.sh
-
+# Restart file config
+export CYCSTRIDE=6 # cycle stride in h
+export DTRST=1 # time between restart files, set to DTRST=1 for a single restart file
 # Set runmember to default value if not GEFS cpl run
 #  (for a GFS coupled run, instead of ctl, this would be gfs for instance)
 export RUNMEM=${RUNMEM:-ctl}

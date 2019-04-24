@@ -75,6 +75,19 @@
   ymdh_end=`$NDATE $lsth $YMDH`
   time_end="`echo $ymdh_end | cut -c1-8` `echo $ymdh_end | cut -c9-10`0000"
 
+# Restart file times 
+  RSTOFFSET=`expr ${CYCSTRIDE} - ${HINDH}`
+  ymdh=`$NDATE ${RSTOFFSET} $YMDH`
+  time_rst_ini="`echo $ymdh | cut -c1-8` `echo $ymdh | cut -c9-10`0000"
+  if [ ${DTRST} -gt 1 ]
+  then
+    ymdh=`$NDATE $DTRST $ymdh`
+    time_rst_end="`echo $ymdh | cut -c1-8` `echo $ymdh | cut -c9-10`0000"
+  else
+    time_rst_end=${time_rst_ini}
+     DTRST=1
+  fi
+
   set +x
   echo ' '
   echo 'Times in wave model format :'
@@ -659,14 +672,21 @@
 
 # Initialize inp file parameters
   NFGRIDS=0
+  NMGRIDS=0
   ICELINE='$'
   ICEFLAG='no'
   CURRLINE='$'
   CURRFLAG='no'
   WINDLINE='$'
   WINDFLAG='no'
+  UNIPOINTS='$'
 
 # Check for required inputs and coupling options
+  if [ $buoy ]
+  then
+    UNIPOINTS="'$buoy'"
+  fi
+
   case ${WW3ATMINP} in
     'YES' )
       NFGRIDS=`expr $NFGRIDS + 1`
@@ -685,7 +705,7 @@
       ICEFLAG="$iceID"
     ;;
     'CPL' )
-      WINDFLAG='cpld'
+      ICEFLAG='cpld'
     ;;
   esac
 
@@ -705,18 +725,23 @@
   for grid in ${grids} 
   do
     agrid=( ${agrid[*]} ${grid} )
+     NMGRIDS=`expr $NMGRIDS + 1`
   done
 
   sed -e "s/NFGRIDS/$NFGRIDS/g" \
+      -e "s/NMGRIDS/${NMGRIDS}/g" \
+      -e "s/UNIPOINTS/${UNIPOINTS}/g" \
       -e "s/GRID01/${agrid[0]}/g" \
       -e "s/GRID02/${agrid[1]}/g" \
       -e "s/ICELINE/$ICELINE/g" \
       -e "s/CURRLINE/$CURRLINE/g" \
+      -e "s/WINDLINE/$CURRLINE/g" \
       -e "s/ICEFLAG/$ICEFLAG/g" \
       -e "s/CURRFLAG/$CURRFLAG/g" \
-      -e "s/RUN_BEG/$time_ini/g" \
+      -e "s/WINDFLAG/$CURRFLAG/g" \
+      -e "s/RUN_BEG/$time_beg/g" \
       -e "s/RUN_END/$time_end/g" \
-      -e "s/OUT_BEG/$time_ini/g" \
+      -e "s/OUT_BEG/$time_beg/g" \
       -e "s/OUT_END/$time_end/g" \
       -e "s/DTFLD/ $DTFLD/g" \
       -e "s/FIELDS/$FIELDS/g" \
@@ -724,7 +749,7 @@
       -e "/BUOY_FILE/r buoy.loc" \
       -e "s/BUOY_FILE/DUMMY/g" \
       -e "s/RST_BEG/$time_rst_ini/g" \
-      -e "s/DTRST/$dtrsts/g" \
+      -e "s/DTRST/$DTRST/g" \
       -e "s/RST_END/$time_rst_end/g" \
                                      ww3_multi.inp.tmpl | \
   sed -n "/DUMMY/!p"               > ww3_multi.inp
