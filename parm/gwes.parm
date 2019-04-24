@@ -29,6 +29,16 @@ export int_grids='glo_15mext'
 export HOUR_INC=3      # This value should match with the one used in 
                          # the wind update script
 
+# gridded and point output rate
+export DTFLD=10800
+export DTPNT=3600
+
+# Selected output parameters (gridded)
+export FIELDS='F F T F F  F T F F T  F F T T F  T T T F T  F F F F F  F F F F F  F F F F F   F F F F F   F F F F F   F F F F F  F F F'
+
+# The start time reflects the number of hindcast hours prior to the cycle initial time
+export HINDH=0
+
 #   The ending time of the run is always the $lsth hour forecast. 
 export lsth=${lsth:-240}
 
@@ -43,7 +53,7 @@ export RUNMEM=${RUNMEM:-ctl}
 
 # Should we add variables that tell the wave component if it is coupled?
 # this could assist stand-alone runs to create and distribute forcing files
-export WW3ATMINP='YES'
+export WW3ATMINP='NO '
 export WW3ICEINP='YES'
 export WW3CURINP='NO'
 

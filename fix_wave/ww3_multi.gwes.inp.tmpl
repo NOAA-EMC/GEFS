@@ -1,0 +1,36 @@
+$ WAVEWATCH III multi-grid input file
+$ ------------------------------------
+  NMGRIDS NFGRIDS T 1 T F
+$
+WINDLINE
+ICELINE
+CURRLINE
+UNIPOINTS
+  'GRID01'  'no' 'CURRFLAG' 'WINDFLAG' 'ICEFLAG'  'no' 'no' 'no'  1 10  0.00 1.00  F
+  'GRID02'  'no' 'CURRFLAG' 'WINDFLAG' 'ICEFLAG'  'no' 'no' 'no'  1 20  0.00 1.00  F
+$
+   RUN_BEG   RUN_END
+$
+   T  T
+$
+   OUT_BEG  DTFLD  OUT_END
+   N
+   WND CUR HS T01 FP DIR DP PHS PTP PDIR CFX CFD CFK DTD
+$
+   OUT_BEG  DTPNT  OUT_END
+BUOY_FILE
+$
+   OUT_BEG      0  OUT_END
+$
+   RST_BEG   DTRST  RST_END
+$
+   OUT_BEG      0  OUT_END
+$
+   OUT_BEG      0  OUT_END
+$
+  'the_end'  0
+$
+  'STP'
+$
+$ End of input file
+
