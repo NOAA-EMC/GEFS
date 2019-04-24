@@ -10,8 +10,6 @@ ulimit -a
 export OMP_NUM_THREADS=6
 
 # export for development runs only begin
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 . $GEFS_ROCOTO/parm/setbase
 . $GEFS_ROCOTO/parm/gefs_config

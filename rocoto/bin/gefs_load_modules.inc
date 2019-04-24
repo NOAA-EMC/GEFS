@@ -40,6 +40,8 @@ elif [[ "$WHERE_AM_I" == theia ]]; then
 	echo "Loading modules for theia"
 	. /apps/lmod/lmod/init/ksh
 	module use /scratch3/NCEPDEV/nwprod/lib/modulefiles
+	module load slurm
+	module load hpss
 	module load intel impi/2018.0.1
 	module load hdf5parallel/1.8.14
 	module load netcdf
@@ -50,6 +52,10 @@ elif [[ "$WHERE_AM_I" == theia ]]; then
     #module load grib_util/v1.1.0
     module load g2tmpl/v1.5.0
     export PATH=$PATH:./
+
+    # Temporary setting to test common settings
+	. $GEFS_ROCOTO/bin/theia/common.sh
+
 elif [[ "$WHERE_AM_I" == wcoss_dell_p3 ]] ; then
     echo "Loading modules for wcoss_dell_p3"
     . /usrx/local/prod/lmod/lmod/init/ksh
