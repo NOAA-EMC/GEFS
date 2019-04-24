@@ -148,12 +148,12 @@
 
   for grdID in $grdINP $grids
   do
-    if [ -f "$FIXwave/ww3_${modID}_${grdID}.moddef.${wave_sys_ver}" ]
+    if [ -f "$COMIN/ww3.mod_def.${grdID}" ]
     then
       set +x
-      echo " Mod def file for $grdID found in $FIXwave. copying ...."
+      echo " Mod def file for $grdID found in $COMIN. copying ...."
       [[ "$LOUD" = YES ]] && set -x
-      cp $FIXwave/ww3_${modID}_${grdID}.moddef.${wave_sys_ver} mod_def.$grdID
+      cp $COMIN/ww3.mod_def.${grdID} mod_def.$grdID
 
     else
       msg="FATAL ERROR: NO MODEL DEFINITION FILE"
@@ -167,7 +167,7 @@
       echo ' '
       echo $msg
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID prep $date $cycle : ww3_${modID}_${grdID}.moddef.${wave_sys_ver} missing." >> $wavelog
+      echo "$modID prep $date $cycle : ww3.mod_def.${grdID} missing." >> $wavelog
       err=1;export err;err_chk
     fi
   done
@@ -774,21 +774,21 @@
     do
       set +x
       echo ' '
-      echo "   Saving wind.$grdID as $COMOUT/${modID}.$grdID.$cycle.wind"
-      echo "   Saving times.$grdID file as $COMOUT/${modID}.times.$cycle.$grdID"
+      echo "   Saving wind.$grdID as $COMOUT/ww3.$grdID.$PDY$cyc.wind"
+      echo "   Saving times.$grdID file as $COMOUT/$grdID.$PDY$cyc.$grdID.wind.times"
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      cp wind.$grdID $COMOUT/${modID}.$grdID.$cycle.wind
-      cp times.$grdID $COMOUT/${modID}.times.$cycle.$grdID
+      cp wind.$grdID $COMOUT/ww3.$grdID.$PDY$cyc.wind
+      cp times.$grdID $COMOUT/ww3.$grdID.$PDY$cyc.$grdID.wind.times
     done
     for grdID in $curID
     do
       set +x
       echo ' '
-      echo "   Saving current.$grdID as $COMOUT/${modID}.$grdID.$cycle.curr"
+      echo "   Saving current.$grdID as $COMOUT/ww3.$grdID.$PDY$cyc.curr"
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      cp curr.$grdID $COMOUT/${modID}.$grdID.$cycle.curr
+      cp curr.$grdID $COMOUT/ww3.$grdID.$PDY$cyc.curr
     done
   fi 
 

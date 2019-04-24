@@ -13,7 +13,7 @@ export wave_sys_ver=v1.0.0
 export modID=${modID:-gwes}
 
 # Grids for wave model
-export grids='gwes_core_15m gwes_up_1530m' 
+export grids='gwes_glo_30m gwes_core_15m gwes_up_1530m' 
 export curvID=
 
 # Grids for input fields 

@@ -208,11 +208,7 @@
     set $setoff
     echo "   Saving ice.ww3 as $COMOUT/${modID}.${iceID}.$cycle.ice"
     set $seton
-    # Check if ice was already copied by other ensemble member process
-    if [ ! -f $COMOUT/${modID}.${iceID}.$cycle.ice ]
-    then
-      cp ice.ww3 $COMOUT/${modID}.${iceID}.$cycle.ice
-    fi
+    cp ice.ww3 $COMOUT/ww3.${iceID}.$PDY$cyc.ice
   fi 
 
   rm -f ice.ww3

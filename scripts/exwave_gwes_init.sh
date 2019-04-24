@@ -7,7 +7,7 @@
 #                                                                             #
 # The main script for generating mod_def files is                             #
 #                                                                             #
-#  ww3_mod_def.sh : creates the mod_def file for the grid                #
+#  wave_moddef.sh : creates the mod_def file for the grid                #
 #                                                                             #
 # Remarks :                                                                   #
 # - For non-fatal errors output is witten to the wave.log file.               #
@@ -85,12 +85,12 @@
 
   for grdID in $curID $iceID $wndID $buoy $grids $int_grids
   do
-    if [ -f "$COMIN/ww3_${modID}_${grdID}.moddef.${wave_sys_ver}" ]
+    if [ -f "$COMIN/ww3.mod_def.${grdID}" ]
     then
       set +x
       echo " Mod def file for $grdID found in $COMIN. copying ...."
       [[ "$LOUD" = YES ]] && set -x
-      cp $COMIN/ww3_${modID}_${grdID}.moddef.${wave_sys_ver} mod_def.$grdID
+      cp $COMIN/ww3.mod_def.${grdID} mod_def.$grdID
 
     else
       set +x
@@ -124,7 +124,7 @@
         err=1;export err;err_chk;exit
       fi
 
-      echo "$USHwave/ww3_mod_def.sh $grdID > $grdID.out 2>&1" >> cmdfile
+      echo "$USHwave/wave_moddef.sh $grdID > $grdID.out 2>&1" >> cmdfile
 
       nmoddef=`expr $nmoddef + 1`
 
