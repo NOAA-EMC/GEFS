@@ -12,7 +12,7 @@ ulimit -a
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:6
 
-export total_tasks=32
+export total_tasks=6
 export OMP_NUM_THREADS=6
 export taskspernode=4
 

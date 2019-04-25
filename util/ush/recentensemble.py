@@ -57,14 +57,7 @@ def main():
         print("Cheking variables ...")
         sys.stdout.flush()
 
-        sControlFile = sInWS + "/c00/{1}{2}.nc".format(sFileName, iTile)
-        import netCDF4
-        dset = netCDF.Dataset(sControlFile)
-        for sVar in sVars:
-            if sVar not in dset.variables.keys():
-                 sVars.remove(sVar)
-                 print("Removed '{0}' because it does not exist in the Variable list!".format(sVar))
-                 sys.stdout.flush()
+        RemoveUnusedVars(sInWS,sFileName,sVars)
 
         DoAllTiles(Npert, NTiles, sFileName, sInWS, sOutWS, sVars)
         
@@ -96,21 +89,42 @@ def main():
         print("Working on the Tile {0} - Cheking variables ...".format(iTile))
         sys.stdout.flush()
         
-        sControlFile = sInWS + "/c00/{0}{1}.nc".format(sFileName, 1)
-        import netCDF4
-        dset = netCDF4.Dataset(sControlFile)
-        for sVar in sVars:
-            if sVar not in dset.variables.keys():
-                 sVars.remove(sVar)
-                 print("Working on the Tile {0} - Removed '{1}' because it does not exist in the Variable list!".format(iTile, sVar))
-                 sys.stdout.flush()
-        
-         
+        RemoveUnusedVars(sInWS,sFileName,sVars,iTile)
+ 
         getMems_mean(iTile, Npert, sInWS, sOutWS, sFileName, sVars)
     else:
         print('You should run "recentensemble.py Npert Ntiles filename sInWS sOutWS [iTile]"')
         exit(-1)
 
+
+def RemoveUnusedVars(sInWS,sFileName,sVars,iTile=-1):
+    sControlFile = sInWS + "/c00/{0}{1}.nc".format(sFileName, 1)
+    import netCDF4
+    dset = netCDF4.Dataset(sControlFile)
+    sys.stdout.flush()
+
+    sVarsDel = []
+    for sVar in sVars:
+        print(sVar)
+        sys.stdout.flush()
+
+        if sVar not in dset.variables.keys():
+            sVarsDel.append(sVar)
+            print("Var: {0} will be removed".format(sVar))
+            sys.stdout.flush()
+
+    for sVar in sVarsDel:
+        #print(sVar)
+        sVars.remove(sVar)
+        if iTile != -1:
+            print("Working on the Tile {0} - Removed '{1}' because it does not exist in the Variable list!".format(iTile, sVar))
+            sys.stdout.flush()
+        else:
+            print("Removed '{0}' because it does not exist in the Variable list!".format(sVar))
+            sys.stdout.flush()
+
+    print(sVars)
+    sys.stdout.flush()
 
 def DoAllTiles(Npert, NTiles, sFileName, sInWS, sOutWS, sVars):
     
@@ -146,9 +160,12 @@ def getMems_mean(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
         call(["cp", sInFile, sOutFile])
 
         nc_fid = Dataset(sInFile, 'r')
-
+        print(nc_fid.variables.keys())
+        sys.stdout.flush()
         for k in range(len(sVars)):
             sVar = sVars[k]
+            print("  working on vaiable: {0} on iTile {1}".format(sVar, iTile))
+            sys.stdout.flush()
             wmeans[k] = calValue(nc_fid, sVar, wmeans[k], iPert, Npert=Npert)
 
         nc_fid.close

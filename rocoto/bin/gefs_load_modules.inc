@@ -49,6 +49,7 @@ elif [[ "$WHERE_AM_I" == theia ]]; then
     module load prod_util/v1.1.0
     #module load grib_util/v1.1.0
     module load g2tmpl/v1.5.0
+    module load python/3.6.3
     export PATH=$PATH:./
 
     # Temporary setting to test common settings
@@ -74,6 +75,7 @@ elif [[ "$WHERE_AM_I" == wcoss_dell_p3 ]] ; then
     module load HDF5-serial/1.10.1
     module load impi/18.0.1
     module load CFP/2.0.1
+    module load python/3.6.3
     export USE_CFP=YES
     export PATH=$PATH:.
 fi

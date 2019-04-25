@@ -784,8 +784,6 @@ cat > input.nml <<EOF
   fix_negative = .true.
   icloud_f = 1
   mp_time = 150.
-  lgfdlmprad   = ${lgfdlmprad:-".true."}
-  effr_in      = ${effr_in:-".true."}
   $gfdl_cloud_microphysics_nml
 /
 
