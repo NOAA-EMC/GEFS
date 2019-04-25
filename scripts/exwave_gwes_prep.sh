@@ -694,7 +694,7 @@
       WINDFLAG="$wndID"
     ;;
     'CPL' )
-      WINDFLAG='cpld'
+      WINDFLAG='CPL:native'
     ;;
   esac
   
@@ -705,7 +705,7 @@
       ICEFLAG="$iceID"
     ;;
     'CPL' )
-      ICEFLAG='cpld'
+      ICEFLAG='CPL:native'
     ;;
   esac
 
@@ -716,29 +716,32 @@
       CURRFLAG="$curID"
     ;;
     'CPL' )
-      WINDFLAG='cpld'
+      CURRFLAG='CPL:native'
     ;;
   esac
 
   unset agrid
   agrid=
+  gline=
   for grid in ${grids} 
   do
     agrid=( ${agrid[*]} ${grid} )
      NMGRIDS=`expr $NMGRIDS + 1`
+     gline="${gline}'${grid}'  'no' 'CURRFLAG' 'WINDFLAG' 'ICEFLAG'  'no' 'no' 'no'  1 10  0.00 1.00  F\n"
   done
+  gline="${gline}\$"
+  echo $gline
 
   sed -e "s/NFGRIDS/$NFGRIDS/g" \
       -e "s/NMGRIDS/${NMGRIDS}/g" \
       -e "s/UNIPOINTS/${UNIPOINTS}/g" \
-      -e "s/GRID01/${agrid[0]}/g" \
-      -e "s/GRID02/${agrid[1]}/g" \
+      -e "s/GRIDLINE/${gline}/g" \
       -e "s/ICELINE/$ICELINE/g" \
       -e "s/CURRLINE/$CURRLINE/g" \
-      -e "s/WINDLINE/$CURRLINE/g" \
+      -e "s/WINDLINE/$WINDLINE/g" \
       -e "s/ICEFLAG/$ICEFLAG/g" \
       -e "s/CURRFLAG/$CURRFLAG/g" \
-      -e "s/WINDFLAG/$CURRFLAG/g" \
+      -e "s/WINDFLAG/$WINDFLAG/g" \
       -e "s/RUN_BEG/$time_beg/g" \
       -e "s/RUN_END/$time_end/g" \
       -e "s/OUT_BEG/$time_beg/g" \

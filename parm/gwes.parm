@@ -13,7 +13,7 @@ export wave_sys_ver=v1.0.0
 export modID=${modID:-gwes}
 
 # Grids for wave model
-export grids='gwes_glo_30m gwes_core_15m gwes_up_1530m' 
+export grids='gwes_glo_30m' # For 1/4 degree upgrade: 'gwes_core_15m gwes_up_1530m' 
 export curvID=
 
 # Grids for input fields 
@@ -54,7 +54,7 @@ export RUNMEM=${RUNMEM:-ctl}
 
 # Should we add variables that tell the wave component if it is coupled?
 # this could assist stand-alone runs to create and distribute forcing files
-export WW3ATMINP='NO '
+export WW3ATMINP='CPL'
 export WW3ICEINP='YES'
 export WW3CURINP='NO'
 
