@@ -113,7 +113,7 @@ fi # for CleanAll
 if [ $RunRocoto = "yes" ]; then
     cd $sWS
     if [ $machine = "theia" ]; then
-        module load rocoto
+        module load rocoto/1.3.0-RC3
         module load intelpython
 
     elif [ $machine = "wcoss_ibm" ]; then
