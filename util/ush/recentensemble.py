@@ -33,6 +33,12 @@ def main():
     sVars.append('v_w')
     sVars.append('u_s')
     sVars.append('v_s')
+
+    try: 
+        import netCDF4
+    except:
+        sys.exit(-5)
+        
     
     if len(sys.argv) == 6:
         print(sys.argv)

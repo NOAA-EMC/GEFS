@@ -119,14 +119,14 @@ if [ $RunRocoto = "yes" ]; then
         module use /usrx/local/emc_rocoto/modulefiles
         module load xt-lsfhpc
         module load rocoto
-        module load python
+        module load python/3.6.3
     elif [ $machine = "wcoss_dell_p3" ]; then
         . /usrx/local/prod/lmod/lmod/init/sh
         module use /gpfs/dell3/usrx/local/dev/emc_rocoto/modulefiles
         module load lsf/10.1
         module load ruby/2.5.1
         module load rocoto/complete
-        module load python/2.7.14        
+        module load python/3.6.3       
     fi
     ./py/run_to_get_all.py  $userConfigFile
     
