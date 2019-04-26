@@ -33,6 +33,7 @@ elif [[ "$WHERE_AM_I" == cray ]] ; then
 	module load grib_util/1.0.3
 	module load hpss
     module load g2tmpl-intel/1.5.0
+        module load netcdf4-python/1.2.2
 	export PATH=$PATH:.
 elif [[ "$WHERE_AM_I" == theia ]]; then
 	echo "Loading modules for theia"
