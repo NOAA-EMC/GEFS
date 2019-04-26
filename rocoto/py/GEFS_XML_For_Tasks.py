@@ -476,16 +476,16 @@ def get_param_of_task(dicBase, taskname):
 
             # For 'enspost' task
             if taskname.lower() == "enspost":
-                if DoesTaskExist(dicBase, "ensstat_low"):
+                if DoesTaskExist(dicBase, "prdgen_low"):
                     if DoesTaskExist(dicBase, "prdgen_gfs"):
-                        sDep = '<and>\n\t<taskdep task="ensstat_low"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
+                        sDep = '<and>\n\t<metataskdep metatask="prdgen_low"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
                     else:
-                        sDep = '<taskdep task="ensstat_low"/>'
-                elif DoesTaskExist(dicBase, "ensstat_high"):  
+                        sDep = '<metataskdep metatask="prdgen_low"/>'
+                elif DoesTaskExist(dicBase, "prdgen_high"):  
                     if DoesTaskExist(dicBase, "prdgen_gfs"):
-                        sDep = '<and>\n\t<taskdep task="ensstat_high"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
-                    #else:
-                    #    sDep = '<taskdep task="ensstat_high"/>' #Default
+                        sDep = '<and>\n\t<metataskdep metatask="prdgen_high"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
+                    else:
+                        sDep = '<metataskdep metatask="prdgen_high"/>' #Default
 
             # For 'keep_data' and 'archive' tasks
             if taskname.lower() == "keep_data" or taskname.lower() == "archive":
