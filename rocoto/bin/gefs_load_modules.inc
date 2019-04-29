@@ -51,7 +51,8 @@ elif [[ "$WHERE_AM_I" == theia ]]; then
     module load prod_util/v1.1.0
     #module load grib_util/v1.1.0
     module load g2tmpl/v1.5.0
-    module load python/3.6.3
+    #module load python/3.6.3
+    module load intelpython/3.6.1.0
     export PATH=$PATH:./
 
     # Temporary setting to test common settings
