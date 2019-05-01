@@ -128,7 +128,7 @@ if [ $RunRocoto = "yes" ]; then
         module load xt-lsfhpc
         module load rocoto
         module load python/3.6.3
-
+    
     elif [ $machine = "wcoss_dell_p3" ]; then
         . /usrx/local/prod/lmod/lmod/init/sh
         module use /gpfs/dell3/usrx/local/dev/emc_rocoto/modulefiles

@@ -67,16 +67,16 @@ def config_tasknames(dicBase):
             dicBase[sTaskName.upper()] = "init_fv3chgrs"
             
         elif dicBase['RUN_INIT'].upper() == "FV3_COLD":
+            # ---init_fv3chgrs
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "init_fv3chgrs"
+
             # ---init_recenter
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "init_recenter"
 
-            # ---init_fv3chgrs
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_fv3chgrs"
-            
         elif dicBase['RUN_INIT'] == "FV3_WARM":
             # ---init_recenter
             iTaskName_Num += 1
@@ -355,37 +355,62 @@ def get_param_of_task(dicBase, taskname):
             
             # For 'init_fv3chgrs' task
             if taskname.lower() == "init_fv3chgrs":
-                if DoesTaskExist(dicBase, "init_recenter"): # For Cold Start
-                    sDep = '<taskdep task="init_recenter"/>' 
-                elif DoesTaskExist(dicBase, "init_combine"):
+                if DoesTaskExist(dicBase, "init_combine"):
                     sDep = '<taskdep task="init_combine"/>'
+                else:
+                    sDep = ""
                     
+            # For 'init_recenter' task
+            if taskname.lower() == "init_recenter":
+                if DoesTaskExist(dicBase, "init_fv3chgrs"):
+                    sDep = '<metataskdep metatask="init_fv3chgrs"/>'
+                else:
+                    sDep = ""
 
             # For 'forecast_high' task
-            if taskname.lower() == "forecast_high": 
-                if DoesTaskExist(dicBase, "init_recenter"):
-                    if DoesTaskExist(dicBase, "init_fv3chgrs"):
-                        if DoesTaskExist(dicBase, "getcfssst"):
-                            sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
-                        else:
-                            sDep = '<taskdep task="init_fv3chgrs_#member#"/>'
-                    else:  # For Warm Start
-                        if DoesTaskExist(dicBase, "getcfssst"):   
-                            sDep = '<and>\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>\n\t<taskdep task="getcfssst"/>\n</and>'
-                        else:
-                            sDep = '<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
+            if taskname.lower() == "forecast_high":
+                sDep = '<and>'
+                if DoesTaskExist(dicBase, "getcfssst"):
+                    sDep += '\n\t<taskdep task="getcfssst"/>'
+                if DoesTaskExist(dicBase, "init_recenter"): 
+                    if DoesTaskExist(dicBase, "init_fv3chgrs"): # Cold Restart
+                        sDep += '\n\t<taskdep task="init_recenter"/>'
+                    else: # Warm Start  ???
+                        sDep += '\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
+
+                elif DoesTaskExist(dicBase, "init_fv3chgrs"): # *_Reloc
+                    sDep += '\n\t<taskdep task="init_fv3chgrs_#member#"/>'
                 elif DoesTaskExist(dicBase, "copy_init"):
-                    if DoesTaskExist(dicBase, "getcfssst"):
-                        sDep = '<and>\n\t<taskdep task="copy_init_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
-                    else:
-                        sDep = '<taskdep task="copy_init_#member#"/>'
-                elif DoesTaskExist(dicBase, "init_fv3chgrs"):
-                    if DoesTaskExist(dicBase, "getcfssst"):
-                        sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
-                    else:
-                        sDep = '<taskdep task="init_fv3chgrs_#member#"/>'
+                    sDep += '\n\t<taskdep task="copy_init_#member#"/>'
+                
+                if sDep == '<and>':
+                    sDep = ""
                 else:
-                    sDep = "" 
+                    sDep += '\n</and>'
+ 
+#                if DoesTaskExist(dicBase, "init_recenter"):
+#                    if DoesTaskExist(dicBase, "init_fv3chgrs"):
+#                        if DoesTaskExist(dicBase, "getcfssst"):
+#                            sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+#                        else:
+#                            sDep = '<taskdep task="init_fv3chgrs_#member#"/>'
+#                    else:  # For Warm Start
+#                        if DoesTaskExist(dicBase, "getcfssst"):   
+#                            sDep = '<and>\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>\n\t<taskdep task="getcfssst"/>\n</and>'
+#                        else:
+#                            sDep = '<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
+#                elif DoesTaskExist(dicBase, "copy_init"):
+#                    if DoesTaskExist(dicBase, "getcfssst"):
+#                        sDep = '<and>\n\t<taskdep task="copy_init_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+#                    else:
+#                        sDep = '<taskdep task="copy_init_#member#"/>'
+#                elif DoesTaskExist(dicBase, "init_fv3chgrs"):
+#                    if DoesTaskExist(dicBase, "getcfssst"):
+#                        sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+#                    else:
+#                        sDep = '<taskdep task="init_fv3chgrs_#member#"/>'
+#                else:
+#                    sDep = "" 
                        
             # For 'forecast_low' task
             if taskname.lower() == "forecast_low": 
@@ -451,16 +476,16 @@ def get_param_of_task(dicBase, taskname):
 
             # For 'enspost' task
             if taskname.lower() == "enspost":
-                if DoesTaskExist(dicBase, "ensstat_low"):
+                if DoesTaskExist(dicBase, "prdgen_low"):
                     if DoesTaskExist(dicBase, "prdgen_gfs"):
-                        sDep = '<and>\n\t<taskdep task="ensstat_low"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
+                        sDep = '<and>\n\t<metataskdep metatask="prdgen_low"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
                     else:
-                        sDep = '<taskdep task="ensstat_low"/>'
-                elif DoesTaskExist(dicBase, "ensstat_high"):  
+                        sDep = '<metataskdep metatask="prdgen_low"/>'
+                elif DoesTaskExist(dicBase, "prdgen_high"):  
                     if DoesTaskExist(dicBase, "prdgen_gfs"):
-                        sDep = '<and>\n\t<taskdep task="ensstat_high"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
-                    #else:
-                    #    sDep = '<taskdep task="ensstat_high"/>' #Default
+                        sDep = '<and>\n\t<metataskdep metatask="prdgen_high"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
+                    else:
+                        sDep = '<metataskdep metatask="prdgen_high"/>' #Default
 
             # For 'keep_data' and 'archive' tasks
             if taskname.lower() == "keep_data" or taskname.lower() == "archive":

@@ -97,13 +97,11 @@ GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-$HOMEgsi/exec/getsigensmeanp_smooth.x}
 GETSFCENSMEANEXEC=${GETSFCENSMEANEXEC:-$HOMEgsi/exec/getsfcensmeanp.x}
 RECENATMEXEC=${RECENATMEXEC:-$HOMEgsi/exec/recentersigp.x}
 CALCINCEXEC=${CALCINCEXEC:-$HOMEgsi/exec/calc_increment_ens.x}
-ADJUSTFORTERRAINEXEC=${ADJUSTFORTERRAINEXEC-$HOMEgefs/exec/adjust_for_terrain.exe}
-RECENATMPY=${RECENATMPY:-$HOMEgefs/util/ush/recentensemble.py}
 
 # Variables
 
 # global_chgres stuff
-export RCHGRESEXEC=${RCHGRESEXEC-$HOMEgefs/exec/chgres_recenter.exe}
+export CHGRESEXEC=${CHGRESEXEC-$HOMEgsm/exec/chgres_recenter.exe}
 NTHREADS_CHGRES=${NTHREADS_CHGRES:-24}
 CHGRESVARS_ENKF=${CHGRESVARS_ENKF:-""}
 APRUN_CHGRES=${APRUN_CHGRES:-""}
@@ -126,6 +124,8 @@ NTHREADS_ECEN=${NTHREADS_ECEN:-${NTHREADS:-1}}
 # Preprocessing
 if [ ! -d $DATA ]; then mkdir -p $DATA; fi
 cd $DATA || exit 99
+
+
 ################################################################################
 # Link ensemble member guess, analysis and increment files
 export pdycycp=`$NDATE -$fhrp $PDY$cyc`
@@ -138,16 +138,6 @@ case $cyc in
 	12) memshift=40;;
 	18) memshift=60;;
 esac
-################################################################################
-
-   # GFS  analysis
-#$NLN $COMINenkf$pdyp/$cycp/$memchar/gdas.t${cycp}z.atmf006.nemsio ./atmf006_$memchar
-   ATMANL=${ATMANL:-$COMINgfs/gfs.$cycle.atmanl.nemsio}
-   SFCANL=${SFCANL:-$COMINgfs/gfs.$cycle.sfcanl.nemsio}
-################################################################################
-
-export warm_start=$warm_start
-if [ $warm_start = ".true." ]; then
 
 for imem in $(seq 1 $recentmem); do
 	(( jmem = imem + memshift ))
@@ -158,9 +148,30 @@ for imem in $(seq 1 $recentmem); do
 	memchar_shift="mem"$(printf %03i $jmem)
 	$NLN $COMINenkf$pdyp/$cycp/$memchar_shift/gdas.t${cycp}z.atmf006.nemsio ./atmf006_$memchar
 done
-LONB_ENKF=${LONB_ENKF:-$($nemsioget ./atmf006_mem001 dimx | awk '{print $2}')}
-LATB_ENKF=${LATB_ENKF:-$($nemsioget ./atmf006_mem001 dimy | awk '{print $2}')}
-LEVS_ENKF=${LEVS_ENKF:-$($nemsioget ./atmf006_mem001 dimz | awk '{print $2}')}
+
+
+# Compute ensemble mean 
+export OMP_NUM_THREADS=$NTHREADS_ECEN
+
+$NCP $GETATMENSMEANEXEC $DATA
+$APRUN_RECENT ${DATA}/$(basename $GETATMENSMEANEXEC) ./ atmf006_ensmean atmf006 $recentmem
+rc=$?
+
+export ERR=$rc
+export err=$ERR
+$ERRSCRIPT || exit 2
+
+LONB_ENKF=${LONB_ENKF:-$($nemsioget ./atmf006_ensmean dimx | awk '{print $2}')}
+LATB_ENKF=${LATB_ENKF:-$($nemsioget ./atmf006_ensmean dimy | awk '{print $2}')}
+LEVS_ENKF=${LEVS_ENKF:-$($nemsioget ./atmf006_ensmean dimz | awk '{print $2}')}
+
+################################################################################
+
+   # GFS  analysis
+#$NLN $COMINenkf$pdyp/$cycp/$memchar/gdas.t${cycp}z.atmf006.nemsio ./atmf006_$memchar
+   ATMANL=${ATMANL:-$COMINgfs/gfs.$cycle.atmanl.nemsio}
+   SFCANL=${SFCANL:-$COMINgfs/gfs.$cycle.sfcanl.nemsio}
+
    LONB=${LONB:-$($nemsioget $ATMANL dimx | awk '{print $2}')}
    LATB=${LATB:-$($nemsioget $ATMANL dimy | awk '{print $2}')}
 
@@ -184,12 +195,12 @@ LEVS_ENKF=${LEVS_ENKF:-$($nemsioget ./atmf006_mem001 dimz | awk '{print $2}')}
   j_output=$LATB_ENKF
   input_file="atmanl"
   output_file="atmanl_ensres"
-  terrain_file="atmf006_mem001"
+  terrain_file="atmf006_ensmean"
   vcoord_file="$SIGLEVEL"
 /
 EOF
 
-      $APRUN_CHGRES $RCHGRESEXEC
+      $APRUN_CHGRES $CHGRESEXEC
       rc=$?
 
       export ERR=$rc
@@ -198,49 +209,14 @@ EOF
 
    fi
 
-
-
-################################################################################
-# adjust ENKF to terrain in atmanl_ensres
-
-      rm -f fort.43
-      cat > fort.43 << EOF
-&nam_setup
-  i_output=$LONB_ENKF
-  j_output=$LATB_ENKF
-  input_file="atmf006"
-  output_file="atmf006_adj"
-  terrain_file="atmanl_ensres"
-  vcoord_file="$SIGLEVEL"
-  nanals=$npert
-/
-EOF
-
-      $APRUN_CHGRES $ADJUSTFORTERRAINEXEC
-      rc=$?
-
-################################################################################
-# Compute ensemble mean 
-export OMP_NUM_THREADS=$NTHREADS_ECEN
-
-$NCP $GETATMENSMEANEXEC $DATA
-$APRUN_RECENT ${DATA}/$(basename $GETATMENSMEANEXEC) ./ atmf006_ensmean atmf006_adj $recentmem
-rc=$?
-
-export ERR=$rc
-export err=$ERR
-$ERRSCRIPT || exit 2
-
-
-fi
+export warm_start=$warm_start
 
 if [ $warm_start = ".false." ]; then
 
-if [ ".true." = ".false." ]; then #skip it 
    ################################################################################
    # Recenter ensemble member atmospheric analyses about hires analysis
 
-   FILENAMEIN="./atmf006_adj"
+   FILENAMEIN="./atmf006"
    FILENAME_MEANIN="./atmf006_ensmean"     # EnKF ensemble mean analysis
    FILENAME_MEANOUT="./atmanl_ensres" # recenter around GSI analysis at ensemble resolution
    FILENAMEOUT="./ratmanl"
@@ -268,48 +244,6 @@ cp -f ${SFCANL} $GESOUT/gec00.${cycle}.sfcanl
 
 #SAVE DATA (init files in nemsio format) into $COM
    cp -f $GESOUT/ge* $COMOUT/$cyc/init
-else
-export FILENAME='gfs_data.tile'
-export FILEINPATH=$COMOUT/$cyc/init/
-export FILEOUTPATH=$GESOUT/$cyc/
-mkdir -p $FILEOUTPATH/c00
-cp -pr $FILEINPATH/c00/*  $FILEOUTPATH/c00/.
-for member in $(seq -w 1 $npert );do
-mkdir -p $FILEOUTPATH/p$member
-cp -pr $FILEINPATH/p$member/gfs_ctrl.nc  $FILEOUTPATH/p$member/.
-cp -pr $FILEINPATH/p$member/sfc*  $FILEOUTPATH/p$member/.
-done
-## 
-        rm -rf poescript*
-
-        (( itile = 1 ))
-        while (( itile <= ntiles  )); do
-		echo $RECENATMPY $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH $itile >>poescript
-        (( itile = itile + 1 ))
-        done # while (( itask < npert ))
-
-        echo
-        chmod 755 poescript
-        ls -al $poescript
-        echo
-        cat poescript
-        export MP_HOLDTIME=1000
-
-        export MP_CMDFILE=poescript
-        export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
-        export MP_LABELIO=yes
-        export MP_INFOLEVEL=3
-        export MP_STDOUTMODE=unordered
-        echo APRUN=$APRUN
-        export MP_PGMMODEL=mpmd
-
-        rm mpmd_cmdfile
-        ln -s $MP_CMDFILE mpmd_cmdfile
-        $APRUN
-
-
-
-fi
 
 else
 
