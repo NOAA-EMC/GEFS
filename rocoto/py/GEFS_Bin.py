@@ -37,8 +37,7 @@ def create_bin_file(dicBase):
 
     taskname ='init_fv3chgrs'
     if DoesTaskExist(dicBase, taskname):
-        if DoesTaskExist(dicBase, 'init_combine'):
-            rw_bin_init_fv3chgrs(taskname, dicBase)
+        rw_bin_init_fv3chgrs(taskname, dicBase)
 
 def rw_bin_init_fv3chgrs(taskname, dicBase):
     import sys
@@ -66,6 +65,9 @@ def rw_bin_init_fv3chgrs(taskname, dicBase):
             if sLine1.startswith("$SOURCEDIR/jobs/JGEFS_INIT_FV3CHGRS"):
                 if DoesTaskExist(dicBase, 'init_combine'):
                     sLine = "$SOURCEDIR/jobs/JGEFS_INIT_FV3CHGRS_old"
+                else:
+                    sLine = "$SOURCEDIR/jobs/JGEFS_INIT_FV3CHGRS"
+
             
             sLines += sLine                 
 
