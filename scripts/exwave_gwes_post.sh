@@ -197,7 +197,7 @@
 
   if [ "$nfile" -gt '1' ]
   then
-    mpirun.lsf cfp cmdfile
+    ${gwesmpexec_mpmd} cmdfile
     exit=$?
   else
 #    ./cmdfile.1
@@ -1229,7 +1229,7 @@
 
   if [ "$nfile" -gt '1' ]
   then
-    mpirun.lsf cfp cmdfile
+    ${gwesmpexec_mpmd} cmdfile
     exit=$?
   else
 #    ./cmdfile.1
@@ -1619,7 +1619,7 @@ then
 
   if [ "$nfile" -gt '1' ]
   then
-    mpirun.lsf cfp cmdfile
+    ${gwesmpexec_mpmd} cmdfile
     exit=$?
   else
 #    ./cmdfile.1
@@ -1858,7 +1858,7 @@ fi
 
   if [ "$nfile" -gt '1' ]
   then
-    mpirun.lsf cfp cmdfile
+    ${gwesmpexec_mpmd} cmdfile
     exit=$?
   else
 #    ./cmdfile.1

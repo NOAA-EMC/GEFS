@@ -69,6 +69,11 @@ export wavelog=${COMOUTwave}/wave.log
 
 env | sort
 
+##################################
+# Set mpi serial command
+#################################
+export gwesmpexec_mpmd=${gwesmpexec_mpmd:-"mpirun.lsf cfp cmdfile"}
+
 ###################################
 # Execute the Script  
 ###################################

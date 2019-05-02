@@ -325,7 +325,7 @@
   
     if [ "$nfile" -gt '1' ]
     then
-      mpirun.lsf cfp cmdfile
+      ${gwesmpexec_mpmd} cmdfile
       exit=$?
     else
       ./cmdfile
