@@ -23,6 +23,7 @@ export KMP_AFFINITY=disabled
 
 export gefsmpexec="srun -n $SLURM_NTASKS"
 export gefsmpexec_mpmd="srun -n $SLURM_NTASKS /scratch3/NCEPDEV/nwprod/util/exec/mpiserial"
+export gwesmpexec_mpmd=${gefsmpexec_mpmd}
 
 export APRUNC="srun -n 1"
 export APRUN_RECENT="srun -n $SLURM_NTASKS"
