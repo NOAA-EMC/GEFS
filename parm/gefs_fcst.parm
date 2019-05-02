@@ -63,25 +63,26 @@ fi
 # add two tiered SST options
 export sst2tier=${sst2tier:-YES}
 if [[ $sst2tier = YES ]]; then
-export nstf_name="2,0,5,0,0"
-export FTSFS=0
-export FNTSFA=$SSTDIR/TMPsfc.$PDY$cyc.24hr.anom.grb
+	export nstf_name="2,0,5,0,0"
+	export FTSFS=0
+	export FNTSFA=$SSTDIR/TMPsfc.$PDY$cyc.24hr.anom.grb
 fi
 
-export FCSTEXEC=${FCSTEXEC:-fv3_gfs_${TYPE}.${COMP}.${MODE}.x}
+# export FCSTEXEC=${FCSTEXEC:-fv3_gfs_${TYPE}.${COMP}.${MODE}.x}
+export FCSTEXEC=${FCSTEXEC:-global_fv3gfs.x}
 
 export APRUN=${APRUN:-""}
 
 # set fixed k_split and n_split for dt=450s and 300s
 if [[ $DELTIM = 450 ]]; then
-export k_split=2
-export n_split=6
+	export k_split=2
+	export n_split=6
 elif [[ $DELTIM = 300 ]]; then
-export k_split=1
-export n_split=8
+	export k_split=1
+	export n_split=8
 else 
-export k_split=${k_split:-2}
-export n_split=${n_split:-6}
+	export k_split=${k_split:-2}
+	export n_split=${n_split:-6}
 fi
 
 # OTHER FV# FCST related environment
@@ -146,7 +147,7 @@ export random_clds=".true."
 export cnvcld=".true."
 export imp_physics=${imp_physics:-"11"}
 if [[ $imp_physics = 99 ]]; then # ZhaoCarr
-export ncld=1
+	export ncld=1
     export FIELD_TABLE="$BASE_GSM/parm/parm_fv3diag/field_table_zhaocarr"
     export nwat=2
 elif [[ $imp_physics = 6 ]]; then # WSM6
