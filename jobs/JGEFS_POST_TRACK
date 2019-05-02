@@ -163,7 +163,13 @@ export loopnum=1
 export ymdh=${PDY}${cyc}
 
 #-----------input data checking -----------------
-##${USHens_tracker}/data_check.sh
+${USHens_tracker}/data_check_gefs.sh
+export err=$?; err_chk
+
+if [ $err != 0 ]; then
+    msg="JOB FAILED!"
+    exit $err
+fi
 #------------------------------------------------
 
 mkdir ${DATA}/${cmodel}
@@ -201,9 +207,9 @@ cp ${DATA}/trak.aemn.atcfunix.* ${COMOUT}/aemn.t${CYL}z.cyclone.trackatcfunix
 cp ${DATA}/trak.aemn.mode.* ${COMOUT}/aemn.t${CYL}z.cyclone.trackmode
 cp ${DATA}/trak.aemn.spread.* ${COMOUT}/aemn.t${CYL}z.cyclone.trackspread
 
-cd ${DATA}
-${USHens_tracker}/atcf_2_cxml.sh ${cmodel} ${ymdh} ${COMOUT} ${DATA}
-export err=$?; err_chk
+#cd ${DATA}
+#${USHens_tracker}/atcf_2_cxml.sh ${cmodel} ${ymdh} ${COMOUT} ${DATA}
+#export err=$?; err_chk
 
 ################################
 msg="JOB COMPLETED NORMALLY"
