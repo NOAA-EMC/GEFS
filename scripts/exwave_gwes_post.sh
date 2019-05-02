@@ -39,7 +39,7 @@
 
   postmsg "$jlogfile" "HAS BEGUN on `hostname`"
 
-  msg="Starting MWW3 POSTPROCESSOR SCRIPT for $modID"
+  msg="Starting MWW3 POSTPROCESSOR SCRIPT for $wavemodID"
   postmsg "$jlogfile" "$msg"
 
   set +x
@@ -98,7 +98,7 @@
   echo '-------------------'
   echo "   wave grids    : $grids"
   echo "   old grids     : $Ogrids"
-  echo "   output points : ${modID}_$buoy"
+  echo "   output points : ${wavemodID}_$buoy"
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
 
@@ -170,10 +170,10 @@
     if [ ! -f out_grd.$grdID ]
     then
       set +x
-      echo "   Copying $modID.$grdID.$cycle.outgrd from $COMIN to out_grd.$grdID"
+      echo "   Copying $wavemodID.$grdID.$cycle.outgrd from $COMIN to out_grd.$grdID"
       [[ "$LOUD" = YES ]] && set -x
 
-      echo  "cp $COMIN/$modID.$grdID.$cycle.outgrd out_grd.$grdID"  >> cmdfile
+      echo  "cp $COMIN/$wavemodID.$grdID.$cycle.outgrd out_grd.$grdID"  >> cmdfile
     fi 
 
   done
@@ -181,9 +181,9 @@
   if [ ! -f out_pnt.ww3 ]
   then
     set +x
-    echo "   Copying $COMIN/$modID.$cycle.outpnt to out_pnt.ww3"
+    echo "   Copying $COMIN/$wavemodID.$cycle.outpnt to out_pnt.ww3"
     [[ "$LOUD" = YES ]] && set -x
-    echo "cp $COMIN/$modID.$cycle.outpnt out_pnt.ww3" >> cmdfile
+    echo "cp $COMIN/$wavemodID.$cycle.outpnt out_pnt.ww3" >> cmdfile
   fi
 
 # 1.a.2 Execute the poe command
@@ -230,7 +230,7 @@
       echo '**************************************** '
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID post $grdID $date $cycle : field output missing." >> $wavelog
+      echo "$wavemodID post $grdID $date $cycle : field output missing." >> $wavelog
       postmsg "$jlogfile" "NON-FATAL ERROR : NO RAW FIELD OUTPUT FILE"
       exit_code=1
       field_OK='no'
@@ -257,7 +257,7 @@
     echo '**************************************** '
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
-    echo "$modID post $date $cycle : point output missing." >> $wavelog
+    echo "$wavemodID post $date $cycle : point output missing." >> $wavelog
     postmsg "$jlogfile" "NON-FATAL ERROR NO RAW POINT OUTPUT FILE"
     exit_code=12
     point_OK='no'
@@ -271,13 +271,13 @@
 
   for grdID in $grids
   do
-    if [ -f "$COMIN/ww3_${modID}_${grdID}.moddef.${wave_multi_1_ver}" ]
+    if [ -f "$COMIN/ww3_${wavemodID}_${grdID}.moddef.${wave_multi_1_ver}" ]
     then
       set +x
       echo " Mod def file for $grdID found in $COMIN. copying ...."
       [[ "$LOUD" = YES ]] && set -x
 
-      cp $COMIN/ww3_${modID}_${grdID}.moddef.${wave_multi_1_ver} mod_def.$grdID
+      cp $COMIN/ww3_${wavemodID}_${grdID}.moddef.${wave_multi_1_ver} mod_def.$grdID
 
     else
       set +x
@@ -306,7 +306,7 @@
         echo ' '
         echo $msg
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID post $date $cycle : $grdID.inp missing." >> $wavelog
+        echo "$wavemodID post $date $cycle : $grdID.inp missing." >> $wavelog
         exit_code=2
       fi
 
@@ -337,7 +337,7 @@
       echo ' '
       echo $msg
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID post $date $cycle : mod_def.$grdID missing." >> $wavelog
+      echo "$wavemodID post $date $cycle : mod_def.$grdID missing." >> $wavelog
       sed "s/^/$grdID.out : /g"  $grdID.out
       rm -f $grdID.out
       exit_code=3
@@ -355,12 +355,12 @@
 
     for grdID in $Ogrids
     do
-      if [ -f "$COMIN/ww3_${modID}_${grdID}.moddef.${wave_multi_1_ver}" ]
+      if [ -f "$COMIN/ww3_${wavemodID}_${grdID}.moddef.${wave_multi_1_ver}" ]
       then
         set +x
         echo " Mod def file for $grdID found in $COMIN. copying ...."
         [[ "$LOUD" = YES ]] && set -x
-        cp $COMIN/ww3__${modID}_${grdID}.moddef.${wave_multi_1_ver} mod_def.$grdID
+        cp $COMIN/ww3__${wavemodID}_${grdID}.moddef.${wave_multi_1_ver} mod_def.$grdID
       else
         set +x
         echo " Mod def file for $grdID not found in $COMIN. Setting up to generate ..."
@@ -388,7 +388,7 @@
           echo ' '
           echo $msg
           [[ "$LOUD" = YES ]] && set -x
-          echo "$modID post $date $cycle : $grdID.inp missing." >> $wavelog
+          echo "$wavemodID post $date $cycle : $grdID.inp missing." >> $wavelog
           exit_code=4
         fi
 
@@ -419,7 +419,7 @@
         echo ' '
         echo $msg
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID post $date $cycle : mod_def.$grdID missing." >> $wavelog
+        echo "$wavemodID post $date $cycle : mod_def.$grdID missing." >> $wavelog
         sed "s/^/$grdID.out : /g"  $grdID.out
         rm -f $grdID.out
         exit_code=5
@@ -450,7 +450,7 @@
         echo ' '
         echo $msg
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID fcst $date $cycle : fixed file(s) missing." >> $wavelog
+        echo "$wavemodID fcst $date $cycle : fixed file(s) missing." >> $wavelog
         exit_code=6
         grint_OK='no'
       else
@@ -468,12 +468,12 @@
   then
     for grdID in $Xgrids
     do
-      if [ -f "$COMIN/ww3__${modID}_${grdID}.moddef.${wave_multi_1_ver}" ]
+      if [ -f "$COMIN/ww3__${wavemodID}_${grdID}.moddef.${wave_multi_1_ver}" ]
       then
         set +x
         echo " Mod def file for $grdID found in $COMIN. copying ...."
         [[ "$LOUD" = YES ]] && set -x
-        cp $COMIN/ww3__${modID}_${grdID}.moddef.${wave_multi_1_ver} mod_def.$grdID
+        cp $COMIN/ww3__${wavemodID}_${grdID}.moddef.${wave_multi_1_ver} mod_def.$grdID
       else
         set +x
         echo " Mod def file for $grdID not found in $COMIN. Setting up to generate ..."
@@ -500,7 +500,7 @@
           echo ' '
           echo $msg
           [[ "$LOUD" = YES ]] && set -x
-          echo "$modID post $date $cycle : $grdID.inp missing." >> $wavelog
+          echo "$wavemodID post $date $cycle : $grdID.inp missing." >> $wavelog
           exit_code=7
         fi
 
@@ -529,7 +529,7 @@
         echo ' '
         echo $msg
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID post $date $cycle : mod_def.$grdID missing." >> $wavelog
+        echo "$wavemodID post $date $cycle : mod_def.$grdID missing." >> $wavelog
         sed "s/^/$grdID.out : /g"  $grdID.out
         rm -f $grdID.out
         exit_code=8
@@ -559,7 +559,7 @@
         echo ' '
         echo $msg
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID fcst $date $cycle : fixed file(s) missing." >> $wavelog
+        echo "$wavemodID fcst $date $cycle : fixed file(s) missing." >> $wavelog
         exit_code=9
         grintx_OK='no'
       fi
@@ -587,7 +587,7 @@
         echo ' '
         echo $msg
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID fcst $date $cycle : fixed file(s) missing." >> $wavelog
+        echo "$wavemodID fcst $date $cycle : fixed file(s) missing." >> $wavelog
         exit_code=9
         grintx_OK='no'
       fi
@@ -601,12 +601,12 @@
   then
     for grdID in $OXgrids
     do
-      if [ -f "$COMIN/ww3__${modID}_${grdID}.moddef.${wave_multi_1_ver}" ]
+      if [ -f "$COMIN/ww3__${wavemodID}_${grdID}.moddef.${wave_multi_1_ver}" ]
       then
         set +x
         echo " Mod def file for $grdID found in $COMIN. copying ...."
         [[ "$LOUD" = YES ]] && set -x
-        cp $COMIN/ww3__${modID}_${grdID}.moddef.${wave_multi_1_ver} mod_def.$grdID
+        cp $COMIN/ww3__${wavemodID}_${grdID}.moddef.${wave_multi_1_ver} mod_def.$grdID
       else
         set +x
         echo " Mod def file for $grdID not found in $COMIN. Setting up to generate ..."
@@ -633,7 +633,7 @@
           echo ' '
           echo $msg
           [[ "$LOUD" = YES ]] && set -x
-          echo "$modID post $date $cycle : $grdID.inp missing." >> $wavelog
+          echo "$wavemodID post $date $cycle : $grdID.inp missing." >> $wavelog
           exit_code=7
         fi
 
@@ -663,7 +663,7 @@
         echo ' '
         echo $msg
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID post $date $cycle : mod_def.$grdID missing." >> $wavelog
+        echo "$wavemodID post $date $cycle : mod_def.$grdID missing." >> $wavelog
         sed "s/^/$grdID.out : /g"  $grdID.out
         rm -f $grdID.out
         exit_code=8
@@ -693,7 +693,7 @@
         echo ' '
         echo $msg
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID fcst $date $cycle : fixed file(s) missing." >> $wavelog
+        echo "$wavemodID fcst $date $cycle : fixed file(s) missing." >> $wavelog
         exit_code=9
         grintox_OK='no'
       fi
@@ -702,12 +702,12 @@
 
 # 1.c Point moddef file and buoy list
 
-  if [ -f "$COMIN/ww3__${modID}_${buoy}.moddef.${wave_multi_1_ver}" ]
+  if [ -f "$COMIN/ww3__${wavemodID}_${buoy}.moddef.${wave_multi_1_ver}" ]
   then
     set +x
     echo " Mod def file for $buoy found in $COMIN. copying ...."
     [[ "$LOUD" = YES ]] && set -x
-    cp $COMIN/ww3__${modID}_${buoy}.moddef.${wave_multi_1_ver} mod_def.$buoy
+    cp $COMIN/ww3__${wavemodID}_${buoy}.moddef.${wave_multi_1_ver} mod_def.$buoy
   else
     set +x
     echo " Mod def file for $buoy not found in $COMIN. Setting up to generate ..."
@@ -734,7 +734,7 @@
       echo ' '
       echo $msg
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID post $date $cycle : $buoy.inp missing." >> $wavelog
+      echo "$wavemodID post $date $cycle : $buoy.inp missing." >> $wavelog
       exit_code=10
     fi
 
@@ -765,7 +765,7 @@
     echo ' '
     echo $msg
     [[ "$LOUD" = YES ]] && set -x
-    echo "$modID post $date $cycle : mod_def.$buoy missing." >> $wavelog
+    echo "$wavemodID post $date $cycle : mod_def.$buoy missing." >> $wavelog
     sed "s/^/$buoy.out : /g"  $buoy.out
     rm -f $buoy.out
     exit_code=11
@@ -782,9 +782,9 @@
 
   rm -f buoy.loc
 
-  if [ -f $FIXwave/wave_$modID.buoys ]
+  if [ -f $FIXwave/wave_$wavemodID.buoys ]
   then
-    cp $FIXwave/wave_$modID.buoys buoy.loc.temp
+    cp $FIXwave/wave_$wavemodID.buoys buoy.loc.temp
 # Reverse grep to exclude IBP points
     sed -n '/^\$.*/!p' buoy.loc.temp | grep -v IBP > buoy.loc
     rm -f buoy.loc.temp
@@ -793,7 +793,7 @@
   if [ -f buoy.loc ]
   then
     set +x
-    echo "   buoy.loc copied and processed ($FIXwave/wave_$modID.buoys)."
+    echo "   buoy.loc copied and processed ($FIXwave/wave_$wavemodID.buoys)."
     [[ "$LOUD" = YES ]] && set -x
   else
     set +x
@@ -803,7 +803,7 @@
     echo '************************************* '
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
-    echo "$modID post $date $cycle : buoy location file missing." >> $wavelog
+    echo "$wavemodID post $date $cycle : buoy location file missing." >> $wavelog
     postmsg "$jlogfile" "NON-FATAL ERROR : NO BUOY LOCATION FILE"
     exit_code=13
     point_OK='no'
@@ -867,7 +867,7 @@
       echo '*********************************************** '
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID post $date $cycle : GRIB template file missing." >> $wavelog
+      echo "$wavemodID post $date $cycle : GRIB template file missing." >> $wavelog
       postmsg "$jlogfile" "NON-FATAL ERROR : NO TEMPLATE FOR GRIB INPUT FILE"
       exit_code=15
       grib_OK='no'
@@ -894,7 +894,7 @@
         echo '*********************************************** '
         echo ' '
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID post $date $cycle : GRIB template file missing." >> $wavelog
+        echo "$wavemodID post $date $cycle : GRIB template file missing." >> $wavelog
         postmsg "$jlogfile" "NON-FATAL ERROR : NO TEMPLATE FOR GRIB INPUT FILE"
         exit_code=15
         grib1_OK='no'
@@ -923,7 +923,7 @@
       echo '*********************************************** '
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID post $date $cycle : GRIB2 template file missing." >> $wavelog
+      echo "$wavemodID post $date $cycle : GRIB2 template file missing." >> $wavelog
       postmsg "$jlogfile" "NON-FATAL ERROR : NO TEMPLATE FOR GRIB2 INPUT FILE"
       exit_code=16
       grib_OK='no'
@@ -949,7 +949,7 @@
     echo '*********************************************** '
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
-    echo "$modID post $date $cycle : specra template file missing." >> $wavelog
+    echo "$wavemodID post $date $cycle : specra template file missing." >> $wavelog
     postmsg "$jlogfile" "NON-FATAL ERROR : NO TEMPLATE FOR SPEC INPUT FILE"
     exit_code=18
     spec_OK='no'
@@ -977,7 +977,7 @@
     echo '*************************************************** '
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
-    echo "$modID post $date $cycle : bulletin template file missing." >> $wavelog
+    echo "$wavemodID post $date $cycle : bulletin template file missing." >> $wavelog
     postmsg "$jlogfile" "NON-FATAL ERROR : NO TEMPLATE FOR BULLETIN INPUT FILE"
     exit_code=19
     bull_OK='no'
@@ -1014,7 +1014,7 @@
       echo '*** FATAL ERROR : ERROR IN ww3_spec *** '
       echo '******************************************** '
       echo ' '
-      echo "$modID post $date $cycle : buoy log file failed to be created." >> $wavelog
+      echo "$wavemodID post $date $cycle : buoy log file failed to be created." >> $wavelog
       echo $msg
       [[ "$LOUD" = YES ]] && set -x
       exit_code=19
@@ -1051,7 +1051,7 @@
       echo '**************************************** '
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID post $date $cycle : buoy log file missing." >> $wavelog
+      echo "$wavemodID post $date $cycle : buoy log file missing." >> $wavelog
       postmsg "$jlogfile" "NON-FATAL ERROR : NO BUOY LOG FILE GENERATED FOR SPEC AND BULLETIN FILES"
       exit_code=19
       spec_OK='no'
@@ -1459,7 +1459,7 @@
         echo '********************************************'
         echo ' '
         [[ "$LOUD" = YES ]] && set -x 
-        echo "$modID post $date $cycle : error in GRID Interpolation." >> $wavelog
+        echo "$wavemodID post $date $cycle : error in GRID Interpolation." >> $wavelog
         postmsg "$jlogfile" "NON-FATAL ERROR in ww3_grid_interp.sh"
         exit_code=20
         sed "s/^/grint_$grdID.out : /g"  grint_$grdID.out
@@ -1476,7 +1476,7 @@
         echo '**************************************'
         echo ' '
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID post $date $cycle : error in subsequent GRIB encoding (for interpolated grids)." >> $wavelog
+        echo "$wavemodID post $date $cycle : error in subsequent GRIB encoding (for interpolated grids)." >> $wavelog
         postmsg "$jlogfile" "NON-FATAL ERROR in ww3_grib2.sh"
         exit_code=21
         sed "s/^/grib_$grdID.out : /g"  grib_$grdID.out
@@ -1493,7 +1493,7 @@
         echo '**************************************'
         echo ' '
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID post $date $cycle : error in subsequent GRIB1 encoding (for interpolated grids)." >> $wavelog
+        echo "$wavemodID post $date $cycle : error in subsequent GRIB1 encoding (for interpolated grids)." >> $wavelog
         postmsg "$jlogfile" "NON-FATAL ERROR in ww3_grib1.sh"
         exit_code=21
         sed "s/^/grib1_$grdID.out : /g"  grib1_$grdID.out
@@ -1513,7 +1513,7 @@
         echo '**************************************'
         echo ' '
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID post $date $cycle : error in GRIB." >> $wavelog
+        echo "$wavemodID post $date $cycle : error in GRIB." >> $wavelog
         postmsg "$jlogfile" "NON-FATAL ERROR in ww3_grib2.sh"
         exit_code=22
         sed "s/^/grib_$grdID.out : /g"  grib_$grdID.out
@@ -1531,7 +1531,7 @@
       echo '*************************************'
       echo '            Possibly in multiple calls'
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID post $date $cycle : error in spectra." >> $wavelog
+      echo "$wavemodID post $date $cycle : error in spectra." >> $wavelog
       postmsg "$jlogfile" "NON-FATAL ERROR in ww3_spec.sh, possibly in multiple calls."
       exit_code=24
       for file in spec_*.out
@@ -1552,7 +1552,7 @@
       echo '            Possibly in multiple calls'
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID post $date $cycle : error in bulletins." >> $wavelog
+      echo "$wavemodID post $date $cycle : error in bulletins." >> $wavelog
       postmsg "$jlogfile" "NON-FATAL ERROR in ww3_bull.sh, possibly in multiple calls."
       exit_code=25
       for file in bull_*.out
@@ -1661,7 +1661,7 @@ then
         echo '*************************************'
         echo '            Possibly in multiple calls'
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID post $date $cycle : error in copying spectral files to $grdID." >> $wavelog
+        echo "$wavemodID post $date $cycle : error in copying spectral files to $grdID." >> $wavelog
         postmsg "$jlogfile" "NON-FATAL ERROR in ww3_copy.sh, possibly in multiple calls."
         exit_code=26
       else
@@ -1688,7 +1688,7 @@ then
         echo '*************************************'
         echo '            Possibly in multiple calls'
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID post $date $cycle : error in copying bulletin files to $grdID." >> $wavelog
+        echo "$wavemodID post $date $cycle : error in copying bulletin files to $grdID." >> $wavelog
         postmsg "$jlogfile" "NON-FATAL ERROR in ww3_copy.sh, possibly in multiple calls."
         exit_code=27
       else
@@ -1707,7 +1707,7 @@ then
         echo '*************************************'
         echo '            Possibly in multiple calls'
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID post $date $cycle : error in copying compressed bulletin files to $grdID." >> $wavelog
+        echo "$wavemodID post $date $cycle : error in copying compressed bulletin files to $grdID." >> $wavelog
         postmsg "$jlogfile" "NON-FATAL ERROR in ww3_copy.sh, possibly in multiple calls."
         exit_code=28
       else
@@ -1726,7 +1726,7 @@ then
         echo '*************************************'
         echo '            Possibly in multiple calls'
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID post $date $cycle : error in copying csv bulletin files to $grdID." >> $wavelog
+        echo "$wavemodID post $date $cycle : error in copying csv bulletin files to $grdID." >> $wavelog
         postmsg "$jlogfile" "NON-FATAL ERROR in ww3_copy.sh, possibly in multiple calls."
         exit_code=29
       else
@@ -1777,7 +1777,7 @@ fi
 
   if [ "$spec_OK" = 'yes' ]
   then
-    echo "$USHwave/ww3_tar.sh $modID spec $Nb > ${modID}_spec_tar.out 2>&1 "   >> cmdfile
+    echo "$USHwave/ww3_tar.sh $wavemodID spec $Nb > ${wavemodID}_spec_tar.out 2>&1 "   >> cmdfile
 
   fi
 
@@ -1785,7 +1785,7 @@ fi
 
   if [ "$bull_OK" = 'yes' ]
   then
-    echo "$USHwave/ww3_tar.sh $modID bull $Nb > ${modID}_bull_tar.out 2>&1 "   >> cmdfile
+    echo "$USHwave/ww3_tar.sh $wavemodID bull $Nb > ${wavemodID}_bull_tar.out 2>&1 "   >> cmdfile
 
   fi
 
@@ -1793,14 +1793,14 @@ fi
 
   if [ "$bull_OK" = 'yes' ]
   then
-     echo "$USHwave/ww3_tar.sh $modID cbull $Nb > ${modID}_cbull_tar.out 2>&1 " >> cmdfile
+     echo "$USHwave/ww3_tar.sh $wavemodID cbull $Nb > ${wavemodID}_cbull_tar.out 2>&1 " >> cmdfile
   fi
 
 # 8.d CSV bulletins
 
   if [ "$bull_OK" = 'yes' ]
   then
-    echo "$USHwave/ww3_tar.sh $modID csbull $Nb > ${modID}_csbull_tar.out 2>&1 " >> cmdfile
+    echo "$USHwave/ww3_tar.sh $wavemodID csbull $Nb > ${wavemodID}_csbull_tar.out 2>&1 " >> cmdfile
   fi
 
 # 8.e Old Spectral data files
@@ -1891,17 +1891,17 @@ fi
 
   if [ "$spec_OK" = 'yes' ]
   then
-    if [ -d TAR_spec_$modID ]
+    if [ -d TAR_spec_$wavemodID ]
     then
       set +x
-      echo "      Error in $modID spectral tar file."
+      echo "      Error in $wavemodID spectral tar file."
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID post $date $cycle : error in spectral tar." >> $wavelog
-      postmsg "$jlogfile" "NON-FATAL ERROR in $modID spectral tar file."
+      echo "$wavemodID post $date $cycle : error in spectral tar." >> $wavelog
+      postmsg "$jlogfile" "NON-FATAL ERROR in $wavemodID spectral tar file."
     else
-      rm -f ${modID}_spec_tar.out
+      rm -f ${wavemodID}_spec_tar.out
       set +x
-      echo "      $modID Spectral tar file OK."
+      echo "      $wavemodID Spectral tar file OK."
       [[ "$LOUD" = YES ]] && set -x
     fi
   fi
@@ -1910,45 +1910,45 @@ fi
 
   if [ "$bull_OK" = 'yes' ]
   then
-    if [ -d TAR_bull_$modID ]
+    if [ -d TAR_bull_$wavemodID ]
     then
       set +x
-      echo "      Error in $modID bulletin tar file."
+      echo "      Error in $wavemodID bulletin tar file."
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID post $date $cycle : error in bulletin tar." >> $wavelog
-      postmsg "$jlogfile" "NON-FATAL ERROR in $modID bulletin tar file."
+      echo "$wavemodID post $date $cycle : error in bulletin tar." >> $wavelog
+      postmsg "$jlogfile" "NON-FATAL ERROR in $wavemodID bulletin tar file."
     else
-      rm -f ${modID}_bull_tar.out
+      rm -f ${wavemodID}_bull_tar.out
       set +x
-      echo "      $modID Bulletin tar file OK."
+      echo "      $wavemodID Bulletin tar file OK."
       [[ "$LOUD" = YES ]] && set -x
     fi
 
-    if [ -d TAR_cbull_$modID ]
+    if [ -d TAR_cbull_$wavemodID ]
     then
       set +x
-      echo "      Error in $modID compressed bulletin tar file."
+      echo "      Error in $wavemodID compressed bulletin tar file."
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID post $date $cycle : error in compressed bulletin tar." >> $wavelog
-      postmsg "$jlogfile" "NON-FATAL ERROR in $modID compressed bulletin tar file."
+      echo "$wavemodID post $date $cycle : error in compressed bulletin tar." >> $wavelog
+      postmsg "$jlogfile" "NON-FATAL ERROR in $wavemodID compressed bulletin tar file."
     else
-      rm -f ${modID}_cbull_tar.out
+      rm -f ${wavemodID}_cbull_tar.out
       set +x
-      echo "      $modID compressed bulletin tar file OK."
+      echo "      $wavemodID compressed bulletin tar file OK."
       [[ "$LOUD" = YES ]] && set -x
     fi
 
-    if [ -d TAR_csbull_$modID ]
+    if [ -d TAR_csbull_$wavemodID ]
     then
       set +x
-      echo "      Error in $modID csv bulletin tar file."
+      echo "      Error in $wavemodID csv bulletin tar file."
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID post $date $cycle : error in csv bulletin tar." >> $wavelog
-      postmsg "$jlogfile" "NON-FATAL ERROR in $modID csv bulletin tar file."
+      echo "$wavemodID post $date $cycle : error in csv bulletin tar." >> $wavelog
+      postmsg "$jlogfile" "NON-FATAL ERROR in $wavemodID csv bulletin tar file."
     else
-      rm -f ${modID}_csbull_tar.out
+      rm -f ${wavemodID}_csbull_tar.out
       set +x
-      echo "      $modID csv bulletin tar file OK."
+      echo "      $wavemodID csv bulletin tar file OK."
       [[ "$LOUD" = YES ]] && set -x
     fi
   fi
@@ -2051,7 +2051,7 @@ fi
 
   set +x
   rm -f *.tmpl
-  for ID in $modID $Ogrids
+  for ID in $wavemodID $Ogrids
   do
     rm -f $ID.*.spec
     rm -f $ID.*.bull
@@ -2064,8 +2064,8 @@ fi
   then
     for ID in $Ogrids
     do
-#      mv $COMOUT/$modID.$ID.$cycle.grib       $COMOUT/$ID.$cycle.grib   # comment out per RFC 1576 (imp May 2010)
-      mv $COMOUT/$modID.$ID.$cycle.outgrd     $COMOUT/$ID.$cycle.outgrd
+#      mv $COMOUT/$wavemodID.$ID.$cycle.grib       $COMOUT/$ID.$cycle.grib   # comment out per RFC 1576 (imp May 2010)
+      mv $COMOUT/$wavemodID.$ID.$cycle.outgrd     $COMOUT/$ID.$cycle.outgrd
     done
   fi
 
@@ -2088,7 +2088,7 @@ fi
      echo $msg
      err=$exit_code ; export err ; err_chk
   else
-     touch $COMOUT/$modID.$cycle.postdone
+     touch $COMOUT/$wavemodID.$cycle.postdone
   fi
 
   msg="$job completed normally"

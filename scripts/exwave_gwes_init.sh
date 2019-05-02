@@ -32,7 +32,7 @@
 
   msg="HAS BEGUN on `hostname`"
   postmsg "$jlogfile" "$msg"
-  msg="Starting MWW3 INIT CONFIG SCRIPT for $modID"
+  msg="Starting MWW3 INIT CONFIG SCRIPT for $wavemodID"
   postmsg "$jlogfile" "$msg"
 
   set +x
@@ -41,7 +41,7 @@
   echo '                      *** MWW3 PREPROCESSOR SCRIPT ***'
   echo '                      ********************************'
   echo '                          Initial configuration script'
-  echo "                          Model identifier : $modID"
+  echo "                          Model identifier : $wavemodID"
   echo ' '
   echo "Starting at : `date`"
   echo ' '
@@ -85,12 +85,12 @@
 
   for grdID in $curID $iceID $wndID $buoy $grids $int_grids
   do
-    if [ -f "$COMIN/ww3.mod_def.${grdID}" ]
+    if [ -f "$COMIN/${wavemodID}.mod_def.${grdID}" ]
     then
       set +x
       echo " Mod def file for $grdID found in $COMIN. copying ...."
       [[ "$LOUD" = YES ]] && set -x
-      cp $COMIN/ww3.mod_def.${grdID} mod_def.$grdID
+      cp $COMIN/${wavemodID}.mod_def.${grdID} mod_def.$grdID
 
     else
       set +x
@@ -120,7 +120,7 @@
         echo ' '
         echo $msg
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID init config $date $cycle : $grdID.inp missing." >> $wavelog
+        echo "$wavemodID init config $date $cycle : $grdID.inp missing." >> $wavelog
         err=1;export err;err_chk;exit
       fi
 
@@ -177,7 +177,7 @@
       echo $msg
       sed "s/^/$grdID.out : /g"  $grdID.out
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID prep $date $cycle : mod_def.$grdID missing." >> $wavelog
+      echo "$wavemodID prep $date $cycle : mod_def.$grdID missing." >> $wavelog
       err=2;export err;err_chk;exit
     fi
   done

@@ -41,7 +41,7 @@
   echo '+--------------------------------+'
   echo '!         Make ice fields        |'
   echo '+--------------------------------+'
-  echo "   Model ID        : $modID"
+  echo "   Model ID        : $wavemodID"
   echo "   Ice grid ID     : $iceID"
   echo ' '
   set $seton
@@ -49,7 +49,7 @@
 
   if [ -z "$YMDH" ] || [ -z "$cycle" ] || \
      [ -z "$COMOUT" ] || [ -z "$FIXwave" ] || [ -z "$EXECcode" ] || \
-     [ -z "$modID" ] || [ -z "$iceID" ] || [ -z "$SENDCOM" ] || \
+     [ -z "$wavemodID" ] || [ -z "$iceID" ] || [ -z "$SENDCOM" ] || \
      [ -z "$COMICE" ]
   then
     set $setoff
@@ -172,12 +172,9 @@
   echo ' '
   set $seton
 
-  #sed "s/YYYYMMDD/$YMD/g" ../ww3_prnc.$iceID.tmpl > ww3_prep.inp
   cp -f ../ww3_prnc.ice.$iceID.inp.tmpl ww3_prnc.inp
 
-#  ln -s ../$iceID.$cycle.ice ice.ww3
-  #$EXECcode/ww3_prep > wave_prep.out
-  $EXECcode/ww3_prnc #> wave_prnc.out
+  $EXECcode/ww3_prnc > wave_prnc.out
   err=$?
 
   if [ "$err" != '0' ]
@@ -194,11 +191,7 @@
     exit 0
   fi
 
-  rm -f wave_prep.out
-  rm -f ww3_prep.inp
-  rm -f ice.raw
-#  rm -f ice.ww3
-  rm -f mod_def.ww3
+  rm -f wave_prep.out ww3_prep.inp ice.raw mod_def.ww3
 
 # --------------------------------------------------------------------------- #
 # 3.  Save the ice file
@@ -206,9 +199,9 @@
   if [ "$SENDCOM" = 'YES' ]
   then
     set $setoff
-    echo "   Saving ice.ww3 as $COMOUT/${modID}.${iceID}.$cycle.ice"
+    echo "   Saving ice.ww3 as $COMOUT/${wavemodID}.${iceID}.$cycle.ice"
     set $seton
-    cp ice.ww3 $COMOUT/ww3.${iceID}.$PDY$cyc.ice
+    cp ice.ww3 $COMOUT/${wavemodID}.${iceID}.$PDY$cyc.ice
   fi 
 
   rm -f ice.ww3

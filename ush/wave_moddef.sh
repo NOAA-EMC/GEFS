@@ -107,7 +107,7 @@
  
   if [ -f mod_def.ww3 ]
   then
-    cp mod_def.ww3 $COMOUT/ww3.mod_def.${grdID}
+    cp mod_def.ww3 $COMOUT/${wavemodID}.mod_def.${grdID}
     mv mod_def.ww3 ../mod_def.$grdID
   else
     set +x

@@ -10,7 +10,7 @@ export code_pkg=st4nc
 export wave_sys_ver=v1.0.0  
 
 # General runtime labels
-export modID=${modID:-gwes}
+export wavemodID=${wavemodID:-gwes}
 
 # Grids for wave model
 export grids='glo_30m' # For 1/4 degree upgrade: 'gwes_core_15m gwes_up_1530m' 

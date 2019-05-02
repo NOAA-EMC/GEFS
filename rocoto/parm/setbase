@@ -82,6 +82,9 @@ if [ -d /scratch4/NCEPDEV ]; then
     export utilscript=$USHutil
     export SUPVIT=${SUPVIT:-${EXECutil}/supvit}
 
+# Wave model settings: ice data dir
+    export COMICE=/scratch4/NCEPDEV/rstprod/com/omb/prod
+
 elif [[ -d /dcom && -d /hwrf ]] ; then
     echo "Using settings for WCOSS Phase II"
     PTMP=/ptmpd2

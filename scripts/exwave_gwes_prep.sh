@@ -39,7 +39,7 @@
 
   msg="HAS BEGUN on `hostname`"
   postmsg "$jlogfile" "$msg"
-  msg="Starting MWW3 PREPROCESSOR SCRIPT for $modID"
+  msg="Starting MWW3 PREPROCESSOR SCRIPT for $wavemodID"
   postmsg "$jlogfile" "$msg"
 
   set +x
@@ -48,7 +48,7 @@
   echo '                      *** MWW3 PREPROCESSOR SCRIPT ***'
   echo '                      ********************************'
   echo '                          Global multi-grid model with GFS forcing'
-  echo "                          Model identifier : $modID"
+  echo "                          Model identifier : $wavemodID"
   echo ' '
   echo "Starting at : `date`"
   echo ' '
@@ -148,12 +148,12 @@
 
   for grdID in $grdINP $grids
   do
-    if [ -f "$COMIN/ww3.mod_def.${grdID}" ]
+    if [ -f "$COMIN/${wavemodID}.mod_def.${grdID}" ]
     then
       set +x
       echo " Mod def file for $grdID found in $COMIN. copying ...."
       [[ "$LOUD" = YES ]] && set -x
-      cp $COMIN/ww3.mod_def.${grdID} mod_def.$grdID
+      cp $COMIN/${wavemodID}.mod_def.${grdID} mod_def.$grdID
 
     else
       msg="FATAL ERROR: NO MODEL DEFINITION FILE"
@@ -167,7 +167,7 @@
       echo ' '
       echo $msg
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID prep $date $cycle : ww3.mod_def.${grdID} missing." >> $wavelog
+      echo "$wavemodID prep $date $cycle : ${wavemodID}.mod_def.${grdID} missing." >> $wavelog
       err=1;export err;err_chk;exit
     fi
   done
@@ -195,7 +195,7 @@
       echo $msg
       sed "s/^/$grdID.out : /g"  $grdID.out
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID prep $date $cycle : mod_def.$grdID missing." >> $wavelog
+      echo "$wavemodID prep $date $cycle : mod_def.$grdID missing." >> $wavelog
       err=2;export err;err_ch;exit
     fi
   done
@@ -251,7 +251,7 @@
        echo $msg
        echo ' '
        [[ "$LOUD" = YES ]] && set -x
-       echo "$modID prep $date $cycle : ww3_prnc.${type}.$grdID.tmpl missing." >> $wavelog
+       echo "$wavemodID prep $date $cycle : ww3_prnc.${type}.$grdID.tmpl missing." >> $wavelog
        err=4;export err;err_chk; exit
      fi
    done
@@ -407,7 +407,7 @@
       echo '*******************************'
       echo '            Possibly in multiple calls'
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID prep $date $cycle : error in grib2 files." >> $wavelog
+      echo "$wavemodID prep $date $cycle : error in grib2 files." >> $wavelog
       set +x
       for file in grb_*.out
       do
@@ -432,7 +432,7 @@
       echo ' '
       echo $msg
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID prep $date $cycle : fatal error in grib2 files." >> $wavelog
+      echo "$wavemodID prep $date $cycle : fatal error in grib2 files." >> $wavelog
       err=5;export err;err_chk
     fi
 
@@ -461,7 +461,7 @@
       echo '******************************************** '
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID prep $date $cycle : no wind files found." >> $wavelog
+      echo "$wavemodID prep $date $cycle : no wind files found." >> $wavelog
       err=6;export err;err_chk
     fi
   
@@ -508,7 +508,7 @@
         echo '*************************************** '
         echo ' '
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID prep $grdID $date $cycle : error in waveprnc." >> $wavelog
+        echo "$wavemodID prep $grdID $date $cycle : error in waveprnc." >> $wavelog
         err=7;export err;err_chk
       fi
 
@@ -525,7 +525,7 @@
         echo '****************************************'
         echo ' '
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID prep $grdID $date $cycle : wind.ww3 missing." >> $wavelog
+        echo "$wavemodID prep $grdID $date $cycle : wind.ww3 missing." >> $wavelog
         err=8;export err;err_chk
       fi
 
@@ -568,7 +568,7 @@
         echo '************************************************'
         echo ' '
         [[ "$LOUD" = YES ]] && set -x
-        echo "$modID prep $grdID $date $cycle : error in wind increment." >> $wavelog
+        echo "$wavemodID prep $grdID $date $cycle : error in wind increment." >> $wavelog
         err=9;export err;err_chk
       fi
   
@@ -608,7 +608,7 @@
       echo '******************************************** '
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      echo "$modID prep $date $cycle : no current files found." >> $wavelog
+      echo "$wavemodID prep $date $cycle : no current files found." >> $wavelog
       err=10;export err;err_chk
     fi
 
@@ -628,9 +628,9 @@
 
 # 5.a ww3_multi template
 
-  if [ -f $FIXwave/ww3_multi.$modID.inp.tmpl ]
+  if [ -f $FIXwave/ww3_multi.$wavemodID.inp.tmpl ]
   then
-    cp $FIXwave/ww3_multi.$modID.inp.tmpl ww3_multi.inp.tmpl
+    cp $FIXwave/ww3_multi.$wavemodID.inp.tmpl ww3_multi.inp.tmpl
   fi
 
   if [ ! -f ww3_multi.inp.tmpl ]
@@ -643,7 +643,7 @@
     echo '*** FATAL ERROR : NO TEMPLATE FOR INPUT FILE *** '
     echo '************************************************ '
     echo ' '
-    echo "$modID fcst $date $cycle : ww3_multi file missing." >> $wavelog
+    echo "$wavemodID fcst $date $cycle : ww3_multi file missing." >> $wavelog
     echo $msg
     [[ "$LOUD" = YES ]] && set -x
     err=8;export err;err_chk
@@ -651,15 +651,15 @@
 
 # 5.b Buoy location file
 
-  if [ -f $FIXwave/wave_$modID.buoys ]
+  if [ -f $FIXwave/wave_$wavemodID.buoys ]
   then
-    cp $FIXwave/wave_$modID.buoys buoy.loc
+    cp $FIXwave/wave_$wavemodID.buoys buoy.loc
   fi
 
   if [ -f buoy.loc ]
   then
     set +x
-    echo "   buoy.loc copied ($FIXwave/wave_$modID.buoys)."
+    echo "   buoy.loc copied ($FIXwave/wave_$wavemodID.buoys)."
     [[ "$LOUD" = YES ]] && set -x
   else
     set +x
@@ -667,7 +667,7 @@
     [[ "$LOUD" = YES ]] && set -x
     postmsg "$jlogfile" " **** WARNING **** buoy.loc NOT FOUND"
     touch buoy.loc
-    echo "$modID fcst $date $cycle : no buoy locations file." >> $wavelog
+    echo "$wavemodID fcst $date $cycle : no buoy locations file." >> $wavelog
   fi
 
 # Initialize inp file parameters
@@ -769,10 +769,10 @@
 
   if [ -f ww3_multi.inp ]
   then
-    echo " Copying file ww3_multi.${modID}.inp to $COMOUT "
-    cp ww3_multi.inp ${COMOUT}/ww3_multi.${modID}.$cycle.inp
+    echo " Copying file ww3_multi.${wavemodID}.inp to $COMOUT "
+    cp ww3_multi.inp ${COMOUT}/ww3_multi.${wavemodID}.$cycle.inp
   else
-    echo "FATAL ERROR: file ww3_multi.${modID}.$cycle.inp NOR CREATED, ABORTING"
+    echo "FATAL ERROR: file ww3_multi.${wavemodID}.$cycle.inp NOR CREATED, ABORTING"
     err=9;export err;err_chk; exit
   fi 
 
@@ -788,12 +788,12 @@
     do
       set +x
       echo ' '
-      echo "   Saving wind.$grdID as $COMOUT/ww3.$grdID.$PDY$cyc.wind"
+      echo "   Saving wind.$grdID as $COMOUT/${wavemodID}.$grdID.$PDY$cyc.wind"
       echo "   Saving times.$grdID file as $COMOUT/$grdID.$PDY$cyc.$grdID.wind.times"
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      cp wind.$grdID $COMOUT/ww3.$grdID.$PDY$cyc.wind
-      cp times.$grdID $COMOUT/ww3.$grdID.$PDY$cyc.$grdID.wind.times
+      cp wind.$grdID $COMOUT/${wavemodID}.$grdID.$PDY$cyc.wind
+      cp times.$grdID $COMOUT/${wavemodID}.$grdID.$PDY$cyc.$grdID.wind.times
     done
    fi
 
@@ -803,10 +803,10 @@
     do
       set +x
       echo ' '
-      echo "   Saving current.$grdID as $COMOUT/ww3.$grdID.$PDY$cyc.curr"
+      echo "   Saving current.$grdID as $COMOUT/${wavemodID}.$grdID.$PDY$cyc.curr"
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      cp curr.$grdID $COMOUT/ww3.$grdID.$PDY$cyc.curr
+      cp curr.$grdID $COMOUT/${wavemodID}.$grdID.$PDY$cyc.curr
     done
    fi
   fi 
