@@ -71,17 +71,18 @@ export pgmerr=errfile
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
+export HOMEgfs=$HOMEgsm
 
-export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
-export USHgsm=${USHgsm:-$HOMEgsm/ush}
-export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
-export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
+#export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
+ export USHgsm=${USHgsm:-$HOMEgsm/ush}
+#export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
+#export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 
-export FIXGLOBAL=$FIXgsm
+#export FIXGLOBAL=$FIXgsm
 
-export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
-export USHgefs=${USHgefs:-$HOMEgefs/ush}
-export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+#export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+#export USHgefs=${USHgefs:-$HOMEgefs/ush}
+#export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 
@@ -131,9 +132,9 @@ env | sort
 #. $MODULESHOME/init/sh  2>>/dev/null
 #module load prod_util hpss >>/dev/null
 #export workflow_ver=v15.0.0
-export BASE_SVN=$HOMEDIR1/fv3gfs
-export BASE_GSM=$HOMEgsm
-export HOMEgfs=$HOMEgsm
+#export BASE_SVN=$HOMEDIR1/fv3gfs
+#export BASE_GSM=$HOMEgsm
+#export HOMEgfs=$HOMEgsm
 #export CASE=$CASEHR
 #-- create ICs using operational GFS initial conditions
 

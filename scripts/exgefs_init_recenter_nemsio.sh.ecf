@@ -101,7 +101,7 @@ CALCINCEXEC=${CALCINCEXEC:-$HOMEgsi/exec/calc_increment_ens.x}
 # Variables
 
 # global_chgres stuff
-export CHGRESEXEC=${CHGRESEXEC-$HOMEgsm/exec/chgres_recenter.exe}
+export CHGRESEXEC=${CHGRESEXEC:-$HOMEgsm/exec/chgres_recenter.exe}
 NTHREADS_CHGRES=${NTHREADS_CHGRES:-24}
 CHGRESVARS_ENKF=${CHGRESVARS_ENKF:-""}
 APRUN_CHGRES=${APRUN_CHGRES:-""}

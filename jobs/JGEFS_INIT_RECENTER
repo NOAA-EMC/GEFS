@@ -5,34 +5,19 @@ echo `date` $0 `date -u` begin
 set -xa
 export PS4='$SECONDS + '
 date
+
+export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
+
 ############################
 # Set up cycle varaible
 ############################
  export cycle=t${cyc}z
- export cycle_fcst=t${cyc_fcst}z
-
-
- if (( cyc == cyc_fcst )); then
-       export cycsuffix=false
-       export fcstlong=true
- else
-       export fcstlong=false
-       export cycsuffix=true
- fi
-
-
-###########################################
-# Run gefs_config to get input parameters
-###########################################
-
-export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
-
 
 ####################################
 # obtain unique process id (pid) and make working directory
 ####################################
 export pid=$$
-export DATA=$DATAROOT/gefs_init_$PDY$cyc.$envir.save
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 
 echo DATA=$DATA
 if [[ -d $DATA ]]; then
@@ -40,7 +25,6 @@ if [[ -d $DATA ]]; then
 fi
 mkdir -p $DATA
 cd $DATA
-
 
 ##############################
 # Run setpdy and initialize PDY variables
@@ -67,26 +51,25 @@ export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
- 
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
-export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
-export HOMEenkf=${HOMEenkf:-$NWROOTp2/enkf.${enkf_ver}}
+ export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
+#export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
+#export HOMEenkf=${HOMEenkf:-$NWROOTp2/enkf.${enkf_ver}}
 
-export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
-export USHgsm=${USHgsm:-$HOMEgsm/ush}
-export UTILgefs=${UTILgefs:-$HOMEgefs/util}
-export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
-export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
+#export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
+#export USHgsm=${USHgsm:-$HOMEgsm/ush}
+#export UTILgefs=${UTILgefs:-$HOMEgefs/util}
+#export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
+#export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 
-export FIXGLOBAL=$FIXgsm
+#export FIXGLOBAL=$FIXgsm
 
-export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
-export USHgefs=${USHgefs:-$HOMEgefs/ush}
-export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
-export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+#export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+#export USHgefs=${USHgefs:-$HOMEgefs/ush}
+#export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 ##############################################
 echo set parameters using gefs.parm
@@ -101,23 +84,25 @@ export fhrpend=96
  
 env | sort
 
-
 ##############################################
 # Define COM directories
 ##############################################
-
 if [[ $gfssource != prod ]]; then
 	export COMINgfs=${COMINgfs_base}${PDY}/$cyc
 	export COMINenkf=${COMINenkf_base}
 fi
+
 export COMINgfs=${COMINgfs:-${COMROOThps}/gfs/prod/gfs.${PDY}/$cyc}
 export COMINenkf=${COMINenkf:-${COMROOThps}/gfs/prod/enkf.gdas.}
 
-export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
-export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
+#export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
+#export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
 
-export COMIN=${COMIN:-${COM_IN}/${RUN}.${PDY}}
-export COMOUT=${COMOUT:-${COM_OUT}/${RUN}.${PDY}}
+#export COMIN=${COMIN:-${COM_IN}/${RUN}.${PDY}}
+#export COMOUT=${COMOUT:-${COM_OUT}/${RUN}.${PDY}}
+
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
 export pdycycp=`$NDATE -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
@@ -135,22 +120,21 @@ mkdir -m 775 -p $GESOUT
 ##############################################
 echo locations of scripts and executables
 ##############################################
-echo location of EnKF utility executable
-export XC=.x
-export GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-${HOMEgsm}/exec/getsigensmeanp_smooth$XC}
-export RECENATMEXEC=${RECENATMEXEC:-${HOMEgsm}/exec/recentersigp$XC}
+#echo location of EnKF utility executable
+#export XC=.x
+#export GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-${HOMEgsm}/exec/getsigensmeanp_smooth$XC}
+#export RECENATMEXEC=${RECENATMEXEC:-${HOMEgsm}/exec/recentersigp$XC}
 
-
-echo location of nemsioget
+#echo location of nemsioget
 #export nemsioget=$nemsioget
-export nemsioget=$EXECgsm/nemsio_get
-echo location of chgres script and executable
-export CHGRESTHREAD=$NTHREADS_SIGCHGRS
+#export nemsioget=$EXECgsm/nemsio_get
+#echo location of chgres script and executable
+#export CHGRESTHREAD=$NTHREADS_SIGCHGRS
 # Change Resolution script and executable
 
 #export chgresush=$USHgsm/global_chgres.sh
 #export CHGRESEXEC=$EXECgsm/global_chgres
-export CHGRESEXEC=$HOMEgsm/exec/chgres_recenter.exe
+#export CHGRESEXEC=$HOMEgsm/exec/chgres_recenter.exe
 
 ##############################################
 echo list environment before running script
@@ -170,8 +154,10 @@ msg="JOB COMPLETED NORMALLY"
 postmsg "$jlogfile" "$msg"
 
 ##############################
-# Save the working directory
-# for the ET and COMBINE jobs
+# Remove the Temporary working directory
 ##############################
+cd $DATAROOT
+
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
 echo `date` $0 `date -u` end
