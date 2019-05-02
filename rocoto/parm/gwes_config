@@ -3,3 +3,9 @@ export DATAROOT=${baseoutput}
 export HOMEwave=$basesource
 export CODEwave=${CODEwave:-${HOMEwave}}
 export EXECwave=${CODEwave}/exec
+
+export COMICE=/scratch4/NCEPDEV/rstprod/com/omb/prod
+export COMWND=/scratch4/NCEPDEV/rstprod/com/gens/prod/
+
+export SENDDBN=NO
+export SENDCOM=YES

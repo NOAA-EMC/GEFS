@@ -58,8 +58,10 @@ echo
 
 if [ -d /scratch4/NCEPDEV ]; then 
     echo "Using settings for Theia"
-    PTMP=/scratch4/NCEPDEV/stmp4
-    STMP=/scratch4/NCEPDEV/stmp4
+    PTMP=/scratch4/NCEPDEV/ensemble/noscrub/$USER/ptmp
+    STMP=/scratch4/NCEPDEV/ensemble/noscrub/$USER/ptmp
+#    PTMP=/scratch4/NCEPDEV/stmp4
+#    STMP=/scratch4/NCEPDEV/stmp4
     SAVE=/scratch4/NCEPDEV/ensemble/save
     NOSCRUB=/scratch4/NCEPDEV/ensemble/noscrub
     export machine='THEIA'

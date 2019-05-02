@@ -39,6 +39,7 @@ elif [[ "$WHERE_AM_I" == cray ]] ; then
 elif [[ "$WHERE_AM_I" == theia ]]; then
 	echo "Loading modules for theia"
 	. /apps/lmod/lmod/init/ksh
+        module purge 
 	module use /scratch3/NCEPDEV/nwprod/lib/modulefiles
 	module load slurm
 	module load hpss

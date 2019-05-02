@@ -723,17 +723,25 @@
   unset agrid
   agrid=
   gline=
+  grdNR=0
+  grdGRP=1 # Single group for now
   for grid in ${grids} 
   do
+    grdNR=`expr ${grdNR} + 1`
     agrid=( ${agrid[*]} ${grid} )
-     NMGRIDS=`expr $NMGRIDS + 1`
-     gline="${gline}'${grid}'  'no' 'CURRFLAG' 'WINDFLAG' 'ICEFLAG'  'no' 'no' 'no'  1 10  0.00 1.00  F\n"
+    NMGRIDS=`expr $NMGRIDS + 1`
+    gline="${gline}'${grid}'  'no' 'CURRFLAG' 'WINDFLAG' 'ICEFLAG'  'no' 'no' 'no'  ${grdNR} ${grdGRP}  0.00 1.00  F\n"
   done
   gline="${gline}\$"
   echo $gline
 
   sed -e "s/NFGRIDS/$NFGRIDS/g" \
       -e "s/NMGRIDS/${NMGRIDS}/g" \
+      -e "s/FUNIPNT/${FUNIPNT}/g" \
+      -e "s/PNTSRV/${PNTSRV}/g" \
+      -e "s/FPNTPROC/${FPNTPROC}/g" \
+      -e "s/FGRDPROC/${FGRDPROC}/g" \
+      -e "s/OUTPARS/${OUTPARS}/g" \
       -e "s/UNIPOINTS/${UNIPOINTS}/g" \
       -e "s/GRIDLINE/${gline}/g" \
       -e "s/ICELINE/$ICELINE/g" \
