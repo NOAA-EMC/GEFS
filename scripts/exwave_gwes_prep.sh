@@ -168,7 +168,7 @@
       echo $msg
       [[ "$LOUD" = YES ]] && set -x
       echo "$modID prep $date $cycle : ww3.mod_def.${grdID} missing." >> $wavelog
-      err=1;export err;err_chk
+      err=1;export err;err_chk;exit
     fi
   done
 
@@ -196,7 +196,7 @@
       sed "s/^/$grdID.out : /g"  $grdID.out
       [[ "$LOUD" = YES ]] && set -x
       echo "$modID prep $date $cycle : mod_def.$grdID missing." >> $wavelog
-      err=2;export err;err_chk
+      err=2;export err;err_ch;exit
     fi
   done
 
@@ -219,7 +219,7 @@
      ;;
      * )
               echo 'Input type not yet implelemted' 	    
-              err_chk
+              err=3; export err;err_chk; exit
               ;;
      esac 
 
@@ -252,7 +252,7 @@
        echo ' '
        [[ "$LOUD" = YES ]] && set -x
        echo "$modID prep $date $cycle : ww3_prnc.${type}.$grdID.tmpl missing." >> $wavelog
-       err=2;export err;./err_chk
+       err=4;export err;err_chk; exit
      fi
    done
 
@@ -270,7 +270,7 @@
 # 2.a Ice pre - processing 
 
     $USHwave/wave_ice.sh #> ice.out 
-    err=$?
+    ERR=$?
   
     if [ -d ice ]
     then
@@ -583,7 +583,7 @@
 #-------------------------------------------------------------------
 # CURR processing
 
-  if [ "${WW3ATMINP}" = 'YES' ]; then
+  if [ "${WW3CURINP}" = 'YES' ]; then
 
 #-------------------------------------------------------------------
 # 4.  Process current fields
@@ -773,7 +773,7 @@
     cp ww3_multi.inp ${COMOUT}/ww3_multi.${modID}.$cycle.inp
   else
     echo "FATAL ERROR: file ww3_multi.${modID}.$cycle.inp NOR CREATED, ABORTING"
-    err=9;export err;err_chk
+    err=9;export err;err_chk; exit
   fi 
 
 # --------------------------------------------------------------------------- #
@@ -781,6 +781,9 @@
 
   if [ "$SENDCOM" = 'YES' ]
   then
+
+   if [ "${WW3ATMINP}" = 'YES' ]; then
+
     for grdID in $wndID $curvID 
     do
       set +x
@@ -792,6 +795,10 @@
       cp wind.$grdID $COMOUT/ww3.$grdID.$PDY$cyc.wind
       cp times.$grdID $COMOUT/ww3.$grdID.$PDY$cyc.$grdID.wind.times
     done
+   fi
+
+   if [ "${WW3CURINP}" = 'YES' ]; then
+
     for grdID in $curID
     do
       set +x
@@ -801,6 +808,7 @@
       [[ "$LOUD" = YES ]] && set -x
       cp curr.$grdID $COMOUT/ww3.$grdID.$PDY$cyc.curr
     done
+   fi
   fi 
 
   rm -f wind.*
