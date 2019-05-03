@@ -12,6 +12,9 @@ echo `date` $0 begin
 #        May 8 2018, Dingchen Hou: Added function to allow fleximble ensemble size
 #        April 2018, Bing Fu: Added the warm start part
 #        May 11 2018: Dingchen Hou: Added enkf membership shifting and flexible gefs membership 
+#        April, 2019: Xiaqiong Zhou: Added new recenter method with NETCDF files
+#        May 2, 2019: Dingchen Hou: Dropped off the old recenter methods with NEMSIO files
+#        May 3, 2019: Dingchen Hou: Cleaning the script by remove commented lines
 #
 #    Abstract:	Creates initial conditions for the global ensemble (GEFS) from FV3 based enkf
 #		6-h forecast nemsio files 
@@ -38,13 +41,8 @@ echo "               FORECAST cycle TIME is $cycle"
 echo "  "
 echo " ------------------------------------------------------------"
 echo "          processing info for this execution"
-echo " Home directory is ............................ $HOMEGLOBAL"
+echo " Home directory is ............................ $HOMEgefs"
 echo " Processing directory for files.. ............. $DATA"
-echo "  "
-echo " Executable file directory is ................. $EXECGLOBAL"
-echo " Fixed field directory is ..................... $FIXgsm"
-echo " Parameter directory is ....................... $PARMGLOBAL"
-echo " Unix control language file is ................ $USHGLOBAL"
 echo "  "
 echo " Network id is ................................ $NET"
 echo " Run id for $com processing is ................ $RUN"
@@ -65,17 +63,6 @@ if [ $VERBOSE = "YES" ]; then
    set -x
 fi
 
-# Directories.
-#export BASE_GSM=${BASE_GSM:-$NWPROD}
-#BASE_GSI=${BASE_GSI:-$NWPROD}
-#COMIN=${COMIN:-$pwd}
-#COMIN_ENS=${COMIN_ENS:-$pwd}
-#COMIN_GES_ENS=${COMIN_GES_ENS:-${COMIN_ENS:-$pwd}}
-#COMOUT=${COMOUT:-$COMIN}
-#DMPDIR=${DMPDIR:-$NWPROD}
-
-#CDATE=${CDATE:-"2010010100"}
-
 export CASE=${CASE:-384}
 ntiles=${ntiles:-6}
 
@@ -84,39 +71,9 @@ ERRSCRIPT=${ERRSCRIPT:-'eval [[ $err = 0 ]]'}
 NCP=${NCP:-"/bin/cp -p"}
 NLN=${NLN:-"/bin/ln -sf"}
 NMV=${NMV:-"/bin/mv -uv"}
-#nemsioget=${nemsioget:-${NWPROD}/exec/nemsio_get}
 
 # Scripts
-
-# Executables.
-#GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-$HOMEgsi/exec/getsigensmeanp_smooth.x}
-#GETSFCENSMEANEXEC=${GETSFCENSMEANEXEC:-$HOMEgsi/exec/getsfcensmeanp.x}
-#RECENATMEXEC=${RECENATMEXEC:-$HOMEgsi/exec/recentersigp.x}
-#CALCINCEXEC=${CALCINCEXEC:-$HOMEgsi/exec/calc_increment_ens.x}
-#ADJUSTFORTERRAINEXEC=${ADJUSTFORTERRAINEXEC-$HOMEgefs/exec/adjust_for_terrain.exe}
 RECENATMPY=${RECENATMPY:-$HOMEgefs/util/ush/recentensemble.py}
-
-# Variables
-
-# global_chgres stuff
-#export RCHGRESEXEC=${RCHGRESEXEC:-$HOMEgefs/exec/chgres_recenter.exe}
-#NTHREADS_CHGRES=${NTHREADS_CHGRES:-24}
-#CHGRESVARS_ENKF=${CHGRESVARS_ENKF:-""}
-#APRUN_CHGRES=${APRUN_CHGRES:-""}
-
-# global_cycle stuff
-#CYCLESH=${CYCLESH:-$BASE_GSM/ush/global_cycle.sh}
-#export CYCLEXEC=${CYCLEXEC:-$HOMEgsm/exec/global_cycle}
-#export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
-#export FIXfv3=${FIXfv3:-$HOMEgsm/fix/fix_fv3}
-#export CYCLVARS=${CYCLVARS:-"FSNOL=-2.,FSNOS=99999.,"}
-#export FHOUR=${FHOUR:-0}
-#export DELTSFC=${DELTSFC:-6}
-
-#RECENTER_ENKF=${RECENTER_ENKF:-"YES"}
-#SMOOTH_ENKF=${SMOOTH_ENKF:-"YES"}
-
-#NTHREADS_ECEN=${NTHREADS_ECEN:-${NTHREADS:-1}}
 
 ################################################################################
 # Link ensemble member guess, analysis and increment files
@@ -130,15 +87,8 @@ case $cyc in
 	12) memshift=40;;
 	18) memshift=60;;
 esac
-################################################################################
-
-# GFS  analysis
-#ATMANL=${ATMANL:-$COMINgfs/gfs.$cycle.atmanl.nemsio}
-#SFCANL=${SFCANL:-$COMINgfs/gfs.$cycle.sfcanl.nemsio}
-################################################################################
 
 if [ $warm_start = ".false." ]; then
-#Recenter for nc 6-tile files
 	export FILENAME='gfs_data.tile'
 	export FILEINPATH=$COMOUT/$cyc/init/
 	export FILEOUTPATH=$GESOUT/$cyc/
@@ -176,7 +126,6 @@ if [ $warm_start = ".false." ]; then
         rm mpmd_cmdfile
         ln -s $MP_CMDFILE mpmd_cmdfile
         $APRUN
-
 fi # if warm_start
 
 msg="$job completed normally"

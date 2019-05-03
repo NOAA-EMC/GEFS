@@ -38,14 +38,12 @@ export pid=$$
 export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
-#export DATA=$DATAROOT/gefs_fv3chgrs_$PDY$cyc.$envir.save/$mem
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
 setpdy.sh
 . PDY
-
 
 ####################################
 # Specify NET and RUN Name and model
@@ -73,18 +71,9 @@ export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
 export HOMEgfs=$HOMEgsm
 
-#export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
- export USHgsm=${USHgsm:-$HOMEgsm/ush}
-#export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
-#export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
+export USHgsm=${USHgsm:-$HOMEgsm/ush}
 
-#export FIXGLOBAL=$FIXgsm
-
-#export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
-#export USHgefs=${USHgefs:-$HOMEgefs/ush}
-#export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
-
 
 ##############################################
 echo set parameters using gefs.parm
@@ -96,11 +85,6 @@ echo set parameters using gefs.parm
 (( LEVS=LEVSHR+1 ))
 export LEVS=$LEVS
 export CASE=$CASEHR
-env | sort
-##############################################
-# for global_chgres.sh
-##############################################
-#export SLMASK=/dev/null
 
 ##############################################
 # Define COM directories
@@ -116,32 +100,16 @@ mkdir -p $COMOUT/$cyc/init
 ##############################################
 export GESOUT=${GESOUT:-$GESROOT/${envir}}
 export GESOUT=$GESOUT/gefs.${PDY}
-#export FV3GESOUT=$GESOUT/${cyc}/$mem/${CASE}_$PDY$cyc
 export FV3GESOUT=$GESOUT/${cyc}/$mem
 export FV3GESOUT=$COMOUT/$cyc/init/$mem
 mkdir -p $FV3GESOUT
-#export FV3GESOUT=$GESROOT/${envir}/fv3gefs.${PDY}
+
 ##############################################
 echo list environment before running script
 ##############################################
-
 env | sort
 
-#--------------------------------------------------------------------------------
-
-#. $MODULESHOME/init/sh  2>>/dev/null
-#module load prod_util hpss >>/dev/null
-#export workflow_ver=v15.0.0
-#export BASE_SVN=$HOMEDIR1/fv3gfs
-#export BASE_GSM=$HOMEgsm
-#export HOMEgfs=$HOMEgsm
-#export CASE=$CASEHR
-#-- create ICs using operational GFS initial conditions
-
-#--start from operational GFS initial conditions
-
 set -eux
-#-------------------------------------------------------------------------------------------------
 
 echo `date` $0 begin
 
@@ -149,20 +117,16 @@ set -x
 export COMINgfs=${COMINgfs:-${COMROOThps}/gfs/prod/gfs.${PDY}}
 export COMINenkf=${COMINenkf:-${COMROOThps}/gfs/prod/enkf.}
 
-
 export pdycycp=`$NDATE -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
 export cycp=`echo $pdycycp|cut -c9-10`
 
 export INIDIR=$DATA
 export CDATE=$PDY$cyc
-#export OUTDIR=$FV3GESOUT/$mem/${CASE}_$CDATE
 export OUTDIR=$FV3GESOUT
 export ictype=nemsgfs
-#0=FV3NEMSIO, 2=GFS NEMSIO, 3=SIGIO
 
-#if [ $inflag = 0 ] ; then
-if [[ ! -f $GESOUT/ge$mem.t$cyc\z.sanl ]]
+if [[ ! -f $GESOUT/ge$mem.t$cyc\z.sanl ]]; then
 	export ictype=fv3gfs
 	export NTRAC=7
 	export FV3GESOUT=$COMOUT/$cyc/init/$mem
@@ -174,18 +138,15 @@ if [[ ! -f $GESOUT/ge$mem.t$cyc\z.sanl ]]
 		cp $COMINgfs/gfs.t${cyc}z.sfcanl.nemsio $INIDIR/sfnanl.gfs.$PDY$cyc
 	fi
 else
-    cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
-    cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
-    cp $GESOUT/ge$mem.t$cyc\z.nsnanl $INIDIR/nsnanl.gfs.$PDY$cyc
+	cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
+	cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
+	cp $GESOUT/ge$mem.t$cyc\z.nsnanl $INIDIR/nsnanl.gfs.$PDY$cyc
 fi
 
 $USHgsm/global_chgres_driver.sh
 
-#.......................................................
-
 cat $pgmout
 
-#We should check error message here  ---- Dingchen
 msg="JOB COMPLETED NORMALLY"
 postmsg "$jlogfile" "$msg"
 
