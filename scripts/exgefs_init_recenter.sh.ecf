@@ -94,7 +94,7 @@ if [ $warm_start = ".false." ]; then
 	export FILEOUTPATH=$GESOUT/$cyc/
 	mkdir -p $FILEOUTPATH/c00
 	cp -pr $FILEINPATH/c00/*  $FILEOUTPATH/c00/.
-	for member in $(seq -w 1 $npert );do
+	for member in $(seq -w 01 $npert );do
 		mkdir -p $FILEOUTPATH/p$member
 		cp -pr $FILEINPATH/p$member/gfs_ctrl.nc  $FILEOUTPATH/p$member/.
 		cp -pr $FILEINPATH/p$member/sfc*  $FILEOUTPATH/p$member/.
