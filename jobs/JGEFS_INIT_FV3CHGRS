@@ -160,17 +160,19 @@ export CDATE=$PDY$cyc
 export OUTDIR=$FV3GESOUT
 export ictype=nemsgfs
 #0=FV3NEMSIO, 2=GFS NEMSIO, 3=SIGIO
-if [ $inflag = 0 ] ; then
-    export ictype=fv3gfs
-    export NTRAC=7
-    export FV3GESOUT=$COMOUT/$cyc/init/$mem
- if [[ $mem = c00 ]] ;then
-    cp $COMINgfs/gfs.t${cyc}z.atmanl.nemsio $INIDIR/gfnanl.gfs.$PDY$cyc
-    cp $COMINgfs/gfs.t${cyc}z.sfcanl.nemsio $INIDIR/sfnanl.gfs.$PDY$cyc
- else
-    cp $COMINenkf$pdyp/$cycp/$memchar_shift/gdas.t${cycp}z.atmf006.nemsio $INIDIR/gfnanl.gfs.$PDY$cyc
-    cp $COMINgfs/gfs.t${cyc}z.sfcanl.nemsio $INIDIR/sfnanl.gfs.$PDY$cyc
- fi
+
+#if [ $inflag = 0 ] ; then
+if [[ ! -f $GESOUT/ge$mem.t$cyc\z.sanl ]]
+	export ictype=fv3gfs
+	export NTRAC=7
+	export FV3GESOUT=$COMOUT/$cyc/init/$mem
+	if [[ $mem = c00 ]] ;then
+		cp $COMINgfs/gfs.t${cyc}z.atmanl.nemsio $INIDIR/gfnanl.gfs.$PDY$cyc
+		cp $COMINgfs/gfs.t${cyc}z.sfcanl.nemsio $INIDIR/sfnanl.gfs.$PDY$cyc
+	else
+		cp $COMINenkf$pdyp/$cycp/$memchar_shift/gdas.t${cycp}z.atmf006.nemsio $INIDIR/gfnanl.gfs.$PDY$cyc
+		cp $COMINgfs/gfs.t${cyc}z.sfcanl.nemsio $INIDIR/sfnanl.gfs.$PDY$cyc
+	fi
 else
     cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
     cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
@@ -181,4 +183,17 @@ $USHgsm/global_chgres_driver.sh
 
 #.......................................................
 
-exit
+cat $pgmout
+
+#We should check error message here  ---- Dingchen
+msg="JOB COMPLETED NORMALLY"
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
+
+echo `date` $0 `date -u` end
