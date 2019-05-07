@@ -35,9 +35,9 @@ def create_bin_file(dicBase):
         if not DoesTaskExist(dicBase, 'prdgen_high'):
             rw_bin_prdgen(taskname, dicBase)
 
-    taskname ='init_fv3chgrs'
-    if DoesTaskExist(dicBase, taskname):
-        rw_bin_init_fv3chgrs(taskname, dicBase)
+    #taskname ='init_fv3chgrs'
+    #if DoesTaskExist(dicBase, taskname):
+    #    rw_bin_init_fv3chgrs(taskname, dicBase)
 
 def rw_bin_init_fv3chgrs(taskname, dicBase):
     import sys
