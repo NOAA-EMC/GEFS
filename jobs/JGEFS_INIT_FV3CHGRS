@@ -129,8 +129,11 @@ export ictype=nemsgfs
 if [[ ! -f $GESOUT/ge$mem.t$cyc\z.sanl ]]; then
 	export ictype=fv3gfs
 	export NTRAC=7
+
 	export FV3GESOUT=$COMOUT/$cyc/init/$mem
     mkdir -p $FV3GESOUT
+    export OUTDIR=$FV3GESOUT
+
 	if [[ $mem = c00 ]] ;then
 		cp $COMINgfs/gfs.t${cyc}z.atmanl.nemsio $INIDIR/gfnanl.gfs.$PDY$cyc
 		cp $COMINgfs/gfs.t${cyc}z.sfcanl.nemsio $INIDIR/sfnanl.gfs.$PDY$cyc
