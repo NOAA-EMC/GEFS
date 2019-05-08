@@ -146,7 +146,7 @@
 
   ifile=1
 
-  for grdID in $grdINP $grids
+  for grdID in $grdINP $grids $out_grids
   do
     if [ -f "$COMIN/${wavemodID}.mod_def.${grdID}" ]
     then
@@ -173,7 +173,7 @@
   done
 
 # 1.a.3 File check
-  for grdID in $grdINP $grids
+  for grdID in $grdINP $grids $out_grids
   do
     if [ -f mod_def.$grdID ]
     then

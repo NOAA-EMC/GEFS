@@ -83,7 +83,7 @@
   rm -f cmdfile
   touch cmdfile
 
-  for grdID in $curID $iceID $wndID $buoy $grids $int_grids
+  for grdID in $curID $iceID $wndID $buoy $grids $out_grids
   do
     if [ -f "$COMIN/${wavemodID}.mod_def.${grdID}" ]
     then
@@ -155,7 +155,7 @@
 
 # 1.a.3 File check
 
-  for grdID in $curID $iceID $wndID $grids $int_grids
+  for grdID in $curID $iceID $wndID $grids $out_grids
   do
     if [ -f mod_def.$grdID ]
     then

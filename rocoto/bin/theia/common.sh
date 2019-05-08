@@ -21,12 +21,14 @@ export MP_EUILIB=us
 export KMP_STACKSIZE=1024m
 export KMP_AFFINITY=disabled
 
-export gefsmpexec="srun -n $SLURM_NTASKS"
-export gefsmpexec_mpmd="srun -n $SLURM_NTASKS /scratch3/NCEPDEV/nwprod/util/exec/mpiserial"
+export NTASKS=$SLURM_NTASKS
+
+export gefsmpexec="srun -n $NTASKS"
+export gefsmpexec_mpmd="srun -n $NTASKS /scratch3/NCEPDEV/nwprod/util/exec/mpiserial"
 export gwesmpexec_mpmd=${gefsmpexec_mpmd}
 
 export APRUNC="srun -n 1"
-export APRUN_RECENT="srun -n $SLURM_NTASKS"
+export APRUN_RECENT="srun -n $NTASKS"
 export APRUN_CHGRES="srun -n 1"
 export aprun_gec00="srun -n 1"
 export APRUN_CALCINC="srun -n 1"

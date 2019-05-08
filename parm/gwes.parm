@@ -23,7 +23,7 @@ export wndID=gefs_30m
 
 # Grids for output fields 
 export buoy=points
-export int_grids=''
+export out_grids='glo_15mext'  # out_grids take interpolated data from native grids
 
 # Output stride
 export HOUR_INC=3      # This value should match with the one used in 

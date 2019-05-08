@@ -5,7 +5,7 @@ export PS4=' $SECONDS + '
 set -x
 
 # PATH for working directory
-export NET=${NET:-wave}
+export NET=${NET:-gens}
 export RUN=${RUN:-gwes}
 
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}

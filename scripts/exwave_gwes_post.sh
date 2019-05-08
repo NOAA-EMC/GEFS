@@ -56,6 +56,9 @@
 #  export MP_PGMMODEL=mpmd
 #  export MP_CMDFILE=./cmdfile
 
+# Check if NTASKS set for mpiserial runs
+NTASKS=${NTASKS:?Var NTASKS Not Set}
+
 # 0.b Date and time stuff
 
   export date=$PDY
@@ -63,20 +66,14 @@
 
 # 0.c Defining model grids
 
-  buoy="points"
+  buoy=${buoy:?buoyNotSet}
 
-# 0.c.1 old and new grids
+# 0.c.1 Grids
 
-  export grids='glo_10m ant_9km aoc_9km wcat_4m' # oconus_6m hwipac_6m'
-
-# 0.c.2 use second line when old global model (nww3) no longer functional
- 
-  export Ogrids=''
+  export grids=${grids:?gridsNotSet}
 
 # 0.c.3 extended global grid and rtma transfer grid
-  export Xgrids='glo_15mext'
-# If there is need for any other xgrid not generated side by side
-  export OXgrids='glo_15mext'
+  export out_grids=${out_grids:?Var out_grids Not Set}
 
 # 0.c.4 Define a temporary directory for storing ascii point output files
 #       and flush it
@@ -97,7 +94,6 @@
   echo 'Grid information  :'
   echo '-------------------'
   echo "   wave grids    : $grids"
-  echo "   old grids     : $Ogrids"
   echo "   output points : ${wavemodID}_$buoy"
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
@@ -108,11 +104,11 @@
 
   field_OK='yes'
   point_OK='yes'
-   grib_OK='no '
+   grib_OK='yes'
   grint_OK='yes'
   grib1_OK='no '
   grintx_OK='no '
-  grintox_OK='no '
+  grintox_OK='yes'
    spec_OK='yes'
    bull_OK='yes'
   Ospec_OK='no '
@@ -131,29 +127,13 @@
 
 # 1.a.1 Set up the poe command 
 
-  ifile=1
-#  nfile=`echo $LSB_HOSTS | wc -w | awk '{ print $1}'`
-  nppn=`echo $LSB_MCPU_HOSTS | awk '{ print $2}'`
-  nnod=`echo $LSB_MCPU_HOSTS | wc -w | awk '{ print $1}'`
-  nnod=`expr ${nnod} / 2`
-  nfile=`expr $nnod \* $nppn`
-  echo "NFILE: " $nfile
-
-#  nper=4
-  
-  if [ "$nfile" -gt '1' ]
-  then
-    cmdtype='poe'
-  else
-    cmdtype='sh'
-    nskip='-'
-    nper='-'
-  fi
+  echo "NFILE: " $NTASKS
+  nfile=$NTASKS
 
   set +x
   echo ' '
   echo "   Setting up first command file for copying model definition and data files."
-  echo "   Set up command file structure (type = $cmdtype)."
+  echo "   Set up command file structure"
   echo "      Number of command files                         : $nfile"
   [[ "$LOUD" = YES ]] && set -x
 
@@ -170,10 +150,10 @@
     if [ ! -f out_grd.$grdID ]
     then
       set +x
-      echo "   Copying $wavemodID.$grdID.$cycle.outgrd from $COMIN to out_grd.$grdID"
+      echo "   Copying $wavemodID.out_grd.$grdID.$PDY$cyc from $COMIN to out_grd.$grdID"
       [[ "$LOUD" = YES ]] && set -x
 
-      echo  "cp $COMIN/$wavemodID.$grdID.$cycle.outgrd out_grd.$grdID"  >> cmdfile
+      echo  "cp $COMIN/$wavemodID.out_grd.$grdID.$PDY$cyc out_grd.$grdID"  >> cmdfile
     fi 
 
   done
@@ -181,9 +161,9 @@
   if [ ! -f out_pnt.ww3 ]
   then
     set +x
-    echo "   Copying $COMIN/$wavemodID.$cycle.outpnt to out_pnt.ww3"
+    echo "   Copying $COMIN/$wavemodID.out_pnt.${buoy}.$PDY$cyc to out_pnt.ww3"
     [[ "$LOUD" = YES ]] && set -x
-    echo "cp $COMIN/$wavemodID.$cycle.outpnt out_pnt.ww3" >> cmdfile
+    echo "cp $COMIN/$wavemodID.out_pnt.${buoy}.$PDY$cyc out_pnt.ww3" >> cmdfile
   fi
 
 # 1.a.2 Execute the poe command
@@ -200,7 +180,7 @@
     ${gwesmpexec_mpmd} cmdfile
     exit=$?
   else
-#    ./cmdfile.1
+    chmod 744 cmdfile
     ./cmdfile
     exit=$?
   fi
@@ -267,516 +247,41 @@
     Obull_ok='no'
   fi
 
+
 # 1.c Model definition files
 
-  for grdID in $grids
+  for grdID in $grids $buoy $out_grids
   do
-    if [ -f "$COMIN/ww3_${wavemodID}_${grdID}.moddef.${wave_multi_1_ver}" ]
+    if [ -f "$COMIN/${wavemodID}.mod_def.${grdID}" ]
     then
       set +x
       echo " Mod def file for $grdID found in $COMIN. copying ...."
       [[ "$LOUD" = YES ]] && set -x
 
-      cp $COMIN/ww3_${wavemodID}_${grdID}.moddef.${wave_multi_1_ver} mod_def.$grdID
+      cp $COMIN/${wavemodID}.mod_def.${grdID} mod_def.$grdID
 
     else
       set +x
-      echo " Mod def file for $grdID not found in $COMIN. Setting up to generate ..."
-      [[ "$LOUD" = YES ]] && set -x
-
-      if [ -f $FIXwave/ww3_$grdID.inp ]
-      then
-        cp $FIXwave/ww3_$grdID.inp $grdID.inp
-      fi
-
-      if [ -f $grdID.inp ]
-      then
-        set +x
-        echo "   $grdID.inp copied ($FIXwave/ww3_$grdID.inp)."
-        [[ "$LOUD" = YES ]] && set -x
-      else
-        msg="ABNORMAL EXIT: NO INP FILE FOR MODEL DEFINITION FILE"
-        postmsg "$jlogfile" "$msg"
-        set +x
-        echo ' '
-        echo '*********************************************************** '
-        echo '*** FATAL ERROR : NO INP FILE FOR MODEL DEFINITION FILE *** '
-        echo '*********************************************************** '
-        echo "                                grdID = $grdID"
-        echo ' '
-        echo $msg
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$wavemodID post $date $cycle : $grdID.inp missing." >> $wavelog
-        exit_code=2
-      fi
-
-      set +x
-      echo "   Generating mod_def file for $grdID ... "
-      [[ "$LOUD" = YES ]] && set -x
-
-      $USHwave/ww3_mod_def.sh $grdID > $grdID.out
-
-    fi
-
-    if [ -f mod_def.$grdID ]
-    then
-      set +x
-      echo " mod_def.$grdID created. Syncing to all nodes ... "
-      [[ "$LOUD" = YES ]] && set -x
-      $FSYNC mod_def.$grdID
-      rm -f $grdID.out
-    else
-      msg="ABNORMAL EXIT: NO MODEL DEFINITION FILE"
+      echo " Mod def file for $grdID not found in $COMIN. Exiting ..."
+      msg="ABNORMAL EXIT: NO mod_def FILE for grid $grdID"
       postmsg "$jlogfile" "$msg"
       set +x
       echo ' '
-      echo '********************************************** '
-      echo '*** FATAL ERROR : NO MODEL DEFINITION FILE *** '
-      echo '********************************************** '
-      echo "                                grdID = $grdID"
+      echo '*********************************************************** '
+      echo "*** FATAL ERROR : NO mod_def FILE FOR GRID $grdID *** "
+      echo '*********************************************************** '
       echo ' '
       echo $msg
       [[ "$LOUD" = YES ]] && set -x
       echo "$wavemodID post $date $cycle : mod_def.$grdID missing." >> $wavelog
-      sed "s/^/$grdID.out : /g"  $grdID.out
-      rm -f $grdID.out
-      exit_code=3
+      exit_code=2
       grint_OK='no'
       grintx_OK='no'
-      grintox_OK='no'
       grib_OK='no'
+
     fi
+
   done
-
-# 1.c Model definition and interpolation template files for old grids
-
-  if [ "$grint_OK" = 'yes' ]
-  then
-
-    for grdID in $Ogrids
-    do
-      if [ -f "$COMIN/ww3_${wavemodID}_${grdID}.moddef.${wave_multi_1_ver}" ]
-      then
-        set +x
-        echo " Mod def file for $grdID found in $COMIN. copying ...."
-        [[ "$LOUD" = YES ]] && set -x
-        cp $COMIN/ww3__${wavemodID}_${grdID}.moddef.${wave_multi_1_ver} mod_def.$grdID
-      else
-        set +x
-        echo " Mod def file for $grdID not found in $COMIN. Setting up to generate ..."
-        [[ "$LOUD" = YES ]] && set -x
-
-        if [ -f $FIXwave/ww3__$grdID.inp ]
-        then
-          cp $FIXwave/ww3__$grdID.inp $grdID.inp
-        fi
-
-        if [ -f $grdID.inp ]
-        then
-          set +x
-          echo "   $grdID.inp copied ($FIXwave/ww3__$grdID.inp)."
-          [[ "$LOUD" = YES ]] && set -x
-        else
-          msg="ABNORMAL EXIT: NO INP FILE FOR MODEL DEFINITION FILE"
-          postmsg "$jlogfile" "$msg"
-          set +x
-          echo ' '
-          echo '*********************************************************** '
-          echo '*** FATAL ERROR : NO INP FILE FOR MODEL DEFINITION FILE *** '
-          echo '*********************************************************** '
-          echo "                                grdID = $grdID"
-          echo ' '
-          echo $msg
-          [[ "$LOUD" = YES ]] && set -x
-          echo "$wavemodID post $date $cycle : $grdID.inp missing." >> $wavelog
-          exit_code=4
-        fi
-
-        set +x
-        echo "   Generating mod_def file for $grdID ... "
-        [[ "$LOUD" = YES ]] && set -x
-
-        $USHwave/ww3_mod_def.sh $grdID > $grdID.out
-
-      fi
-
-      if [ -f mod_def.$grdID ]
-      then
-        set +x
-        echo " mod_def.$grdID created. Syncing to all nodes ... "
-        [[ "$LOUD" = YES ]] && set -x
-        $FSYNC mod_def.$grdID
-        rm -f $grdID.out
-      else
-        msg="ABNORMAL EXIT: NO MODEL DEFINITION FILE"
-        postmsg "$jlogfile" "$msg"
-        set +x
-        echo ' '
-        echo '********************************************** '
-        echo '*** FATAL ERROR : NO MODEL DEFINITION FILE *** '
-        echo '********************************************** '
-        echo "                                grdID = $grdID"
-        echo ' '
-        echo $msg
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$wavemodID post $date $cycle : mod_def.$grdID missing." >> $wavelog
-        sed "s/^/$grdID.out : /g"  $grdID.out
-        rm -f $grdID.out
-        exit_code=5
-        grint_OK='no'
-      fi
-
-      if [ ! -f ${grdID}_interp.inp.tmpl ]
-      then      
-        set +x
-        echo "   Copying ${grdID}_interp.inp.tmpl from $FIXwave/${grdID}_interp.inp.tmpl"
-        [[ "$LOUD" = YES ]] && set -x
-
-        if [ -f $FIXwave/${grdID}_interp.inp.tmpl ]
-        then
-          cp $FIXwave/${grdID}_interp.inp.tmpl ${grdID}_interp.inp.tmpl
-        fi
-      fi
-
-      if [ ! -f ${grdID}_interp.inp.tmpl ]
-      then
-        msg="ABNORMAL EXIT: NO GRID INTERPOLATION INPUT FILE"
-        postmsg "$jlogfile" "$msg"
-        set +x
-        echo ' '
-        echo '****************************************************** '
-        echo '*** FATAL ERROR : NO GRID INTERPOLATION INPUT FILE *** '
-        echo '****************************************************** '
-        echo ' '
-        echo $msg
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$wavemodID fcst $date $cycle : fixed file(s) missing." >> $wavelog
-        exit_code=6
-        grint_OK='no'
-      else
-        set +x
-        echo "File ${grdID}_interp.inp.tmpl found. Syncing to all nodes ..."
-        [[ "$LOUD" = YES ]] && set -x
-        $FSYNC ${grdID}_interp.inp.tmpl
-      fi
-    done
-  fi
-
-# 1.d Model definition and Grid interpolation file for extended global grid
-
-  if [ "$grintx_OK" = 'yes' ]
-  then
-    for grdID in $Xgrids
-    do
-      if [ -f "$COMIN/ww3__${wavemodID}_${grdID}.moddef.${wave_multi_1_ver}" ]
-      then
-        set +x
-        echo " Mod def file for $grdID found in $COMIN. copying ...."
-        [[ "$LOUD" = YES ]] && set -x
-        cp $COMIN/ww3__${wavemodID}_${grdID}.moddef.${wave_multi_1_ver} mod_def.$grdID
-      else
-        set +x
-        echo " Mod def file for $grdID not found in $COMIN. Setting up to generate ..."
-        [[ "$LOUD" = YES ]] && set -x
-        if [ -f $FIXwave/ww3__$grdID.inp ]
-        then
-          cp $FIXwave/ww3__$grdID.inp $grdID.inp
-        fi
-
-        if [ -f $grdID.inp ]
-        then
-          set +x
-          echo "   $grdID.inp copied ($FIXwave/ww3__$grdID.inp)."
-          [[ "$LOUD" = YES ]] && set -x
-        else
-          msg="ABNORMAL EXIT: NO INP FILE FOR MODEL DEFINITION FILE"
-          postmsg "$jlogfile" "$msg"
-          set +x
-          echo ' '
-          echo '*********************************************************** '
-          echo '*** FATAL ERROR : NO INP FILE FOR MODEL DEFINITION FILE *** '
-          echo '*********************************************************** '
-          echo "                                grdID = $grdID"
-          echo ' '
-          echo $msg
-          [[ "$LOUD" = YES ]] && set -x
-          echo "$wavemodID post $date $cycle : $grdID.inp missing." >> $wavelog
-          exit_code=7
-        fi
-
-        set +x
-        echo "   Generating mod_def file for $grdID ... "
-        [[ "$LOUD" = YES ]] && set -x
-
-        $USHwave/ww3_mod_def.sh $grdID > $grdID.out
-
-      fi
-      if [ -f mod_def.$grdID ]
-      then
-        set +x
-        echo " mod_def.$grdID created "
-        [[ "$LOUD" = YES ]] && set -x
-        rm -f $grdID.out
-      else
-        msg="ABNORMAL EXIT: NO MODEL DEFINITION FILE"
-        postmsg "$jlogfile" "$msg"
-        set +x
-        echo ' '
-        echo '********************************************** '
-        echo '*** FATAL ERROR : NO MODEL DEFINITION FILE *** '
-        echo '********************************************** '
-        echo "                                grdID = $grdID"
-        echo ' '
-        echo $msg
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$wavemodID post $date $cycle : mod_def.$grdID missing." >> $wavelog
-        sed "s/^/$grdID.out : /g"  $grdID.out
-        rm -f $grdID.out
-        exit_code=8
-        grintx_OK='no'
-      fi
-
-      if [ ! -f ${grdID}_interp.inp.tmpl ]
-      then
-        set +x
-        echo "   Copying ${grdID}_interp.inp.tmpl from $FIXwave/${grdID}_interp.inp.tmpl"
-        [[ "$LOUD" = YES ]] && set -x
-        if [ -f $FIXwave/${grdID}_interp.inp.tmpl ]
-        then
-          cp $FIXwave/${grdID}_interp.inp.tmpl ${grdID}_interp.inp.tmpl
-        fi
-      fi
-
-      if [ ! -f ${grdID}_interp.inp.tmpl ]
-      then
-        msg="ABNORMAL EXIT: NO GRID INTERPOLATION INPUT FILE"
-        postmsg "$jlogfile" "$msg"
-        set +x
-        echo ' '
-        echo '****************************************************** '
-        echo '*** FATAL ERROR : NO GRID INTERPOLATION INPUT FILE *** '
-        echo '****************************************************** '
-        echo ' '
-        echo $msg
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$wavemodID fcst $date $cycle : fixed file(s) missing." >> $wavelog
-        exit_code=9
-        grintx_OK='no'
-      fi
-
-      if [ ! -f ${grdID}_interp.inp.tmpl ]
-      then
-        set +x
-        echo "   Copying ${grdID}_interp.inp.tmpl from $FIXwave/${grdID}_interp.inp.tmpl"
-        [[ "$LOUD" = YES ]] && set -x
-        if [ -f $FIXwave/${grdID}_interp.inp.tmpl ]
-        then
-          cp $FIXwave/${grdID}_interp.inp.tmpl ${grdID}_interp.inp.tmpl
-        fi
-      fi
-
-      if [ ! -f ${grdID}_interp.inp.tmpl ]
-      then
-        msg="ABNORMAL EXIT: NO GRID INTERPOLATION INPUT FILE"
-        postmsg "$jlogfile" "$msg"
-        set +x
-        echo ' '
-        echo '****************************************************** '
-        echo '*** FATAL ERROR : NO GRID INTERPOLATION INPUT FILE *** '
-        echo '****************************************************** '
-        echo ' '
-        echo $msg
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$wavemodID fcst $date $cycle : fixed file(s) missing." >> $wavelog
-        exit_code=9
-        grintx_OK='no'
-      fi
-    done
-  fi
-
-
-# 1.d.2 Model definition and Grid interpolation file for other extended global grid
-
-  if [ "$grintox_OK" = 'yes' ]
-  then
-    for grdID in $OXgrids
-    do
-      if [ -f "$COMIN/ww3__${wavemodID}_${grdID}.moddef.${wave_multi_1_ver}" ]
-      then
-        set +x
-        echo " Mod def file for $grdID found in $COMIN. copying ...."
-        [[ "$LOUD" = YES ]] && set -x
-        cp $COMIN/ww3__${wavemodID}_${grdID}.moddef.${wave_multi_1_ver} mod_def.$grdID
-      else
-        set +x
-        echo " Mod def file for $grdID not found in $COMIN. Setting up to generate ..."
-        [[ "$LOUD" = YES ]] && set -x
-        if [ -f $FIXwave/ww3__$grdID.inp ]
-        then
-          cp $FIXwave/ww3__$grdID.inp $grdID.inp
-        fi
-
-        if [ -f $grdID.inp ]
-        then
-          set +x
-          echo "   $grdID.inp copied ($FIXwave/ww3__$grdID.inp)."
-          [[ "$LOUD" = YES ]] && set -x
-        else
-          msg="ABNORMAL EXIT: NO INP FILE FOR MODEL DEFINITION FILE"
-          postmsg "$jlogfile" "$msg"
-          set +x
-          echo ' '
-          echo '*********************************************************** '
-          echo '*** FATAL ERROR : NO INP FILE FOR MODEL DEFINITION FILE *** '
-          echo '*********************************************************** '
-          echo "                                grdID = $grdID"
-          echo ' '
-          echo $msg
-          [[ "$LOUD" = YES ]] && set -x
-          echo "$wavemodID post $date $cycle : $grdID.inp missing." >> $wavelog
-          exit_code=7
-        fi
-
-        set +x
-        echo "   Generating mod_def file for $grdID ... "
-        [[ "$LOUD" = YES ]] && set -x
-
-        $USHwave/ww3_mod_def.sh $grdID > $grdID.out
-
-      fi
-
-      if [ -f mod_def.$grdID ]
-      then
-        set +x
-        echo " mod_def.$grdID created "
-        [[ "$LOUD" = YES ]] && set -x
-        rm -f $grdID.out
-      else
-        msg="ABNORMAL EXIT: NO MODEL DEFINITION FILE"
-        postmsg "$jlogfile" "$msg"
-        set +x
-        echo ' '
-        echo '********************************************** '
-        echo '*** FATAL ERROR : NO MODEL DEFINITION FILE *** '
-        echo '********************************************** '
-        echo "                                grdID = $grdID"
-        echo ' '
-        echo $msg
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$wavemodID post $date $cycle : mod_def.$grdID missing." >> $wavelog
-        sed "s/^/$grdID.out : /g"  $grdID.out
-        rm -f $grdID.out
-        exit_code=8
-        grintx_OK='no'
-      fi
-
-      if [ ! -f ${grdID}_interp.inp.tmpl ]
-      then      
-        set +x
-        echo "   Copying ${grdID}_interp.inp.tmpl from $FIXwave/${grdID}_interp.inp.tmpl"
-        [[ "$LOUD" = YES ]] && set -x
-        if [ -f $FIXwave/${grdID}_interp.inp.tmpl ]
-        then
-          cp $FIXwave/${grdID}_interp.inp.tmpl ${grdID}_interp.inp.tmpl
-        fi
-      fi
-
-      if [ ! -f ${grdID}_interp.inp.tmpl ]
-      then
-        msg="ABNORMAL EXIT: NO GRID INTERPOLATION INPUT FILE"
-        postmsg "$jlogfile" "$msg"
-        set +x
-        echo ' '
-        echo '****************************************************** '
-        echo '*** FATAL ERROR : NO GRID INTERPOLATION INPUT FILE *** '
-        echo '****************************************************** '
-        echo ' '
-        echo $msg
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$wavemodID fcst $date $cycle : fixed file(s) missing." >> $wavelog
-        exit_code=9
-        grintox_OK='no'
-      fi
-    done
-  fi
-
-# 1.c Point moddef file and buoy list
-
-  if [ -f "$COMIN/ww3__${wavemodID}_${buoy}.moddef.${wave_multi_1_ver}" ]
-  then
-    set +x
-    echo " Mod def file for $buoy found in $COMIN. copying ...."
-    [[ "$LOUD" = YES ]] && set -x
-    cp $COMIN/ww3__${wavemodID}_${buoy}.moddef.${wave_multi_1_ver} mod_def.$buoy
-  else
-    set +x
-    echo " Mod def file for $buoy not found in $COMIN. Setting up to generate ..."
-    [[ "$LOUD" = YES ]] && set -x
-    if [  -f $FIXwave/ww3__${buoy}.inp ]
-    then 
-       cp $FIXwave/ww3__$buoy.inp $buoy.inp
-    fi 
-
-    if [  -f $buoy.inp ]
-    then
-      set +x
-      echo "   $buoy.inp copied ($FIXwave/ww3__$buoy.inp)."
-      [[ "$LOUD" = YES ]] && set -x
-    else
-      msg="ABNORMAL EXIT: NO INP FILE FOR MODEL DEFINITION FILE"
-      postmsg "$jlogfile" "$msg"
-      set +x
-      echo ' '
-      echo '*********************************************************** '
-      echo '*** FATAL ERROR : NO INP FILE FOR MODEL DEFINITION FILE *** '
-      echo '*********************************************************** '
-      echo "                                grdID = $buoy"
-      echo ' '
-      echo $msg
-      [[ "$LOUD" = YES ]] && set -x
-      echo "$wavemodID post $date $cycle : $buoy.inp missing." >> $wavelog
-      exit_code=10
-    fi
-
-    set +x
-    echo "   Generating mod_def file for $buoy ... "
-    [[ "$LOUD" = YES ]] && set -x
-
-    $USHwave/ww3_mod_def.sh $buoy > $buoy.out
-
-  fi
-
-  if [ -f mod_def.$buoy ]
-  then
-    set +x
-    echo " mod_def.$buoy created. Syncing to all nodes ... "
-    [[ "$LOUD" = YES ]] && set -x
-    $FSYNC mod_def.$buoy
-    rm -f $buoy.out
-  else
-    msg="ABNORMAL EXIT: NO MODEL DEFINITION FILE"
-    postmsg "$jlogfile" "$msg"
-    set +x
-    echo ' '
-    echo '********************************************** '
-    echo '*** FATAL ERROR : NO MODEL DEFINITION FILE *** '
-    echo '********************************************** '
-    echo "                                grdID = $buoy"
-    echo ' '
-    echo $msg
-    [[ "$LOUD" = YES ]] && set -x
-    echo "$wavemodID post $date $cycle : mod_def.$buoy missing." >> $wavelog
-    sed "s/^/$buoy.out : /g"  $buoy.out
-    rm -f $buoy.out
-    exit_code=11
-    point_OK='no'
-    spec_OK='no'
-    bull_OK='no'
-    Ospec_OK='no'
-    Obull_ok='no'
-  fi
-
-
 
 # 1.d Output locations file
 
@@ -813,95 +318,38 @@
     Obull_ok='no'
   fi
 
-  for grdID in $Ogrids
-  do
-    rm -f buoy_$grdID.loc
-    if [ -f $FIXwave/wave_$grdID.buoys ]
-    then
-      cp $FIXwave/wave_$grdID.buoys buoy_$grdID.tmp.loc
-      sed -n '/^\$.*/!p' buoy_$grdID.tmp.loc > buoy_$grdID.loc
-      rm -f buoy_$grdID.tmp.loc
-    fi
-
-    if [ -f buoy_$grdID.loc ]
-    then
-      set +x
-      echo "   wave_$grdID.buoys copied and processed for old model processing."
-      [[ "$LOUD" = YES ]] && set -x
-    else
-      set +x
-      echo ' '
-      echo '************************************* '
-      echo '*** ERROR : NO BUOY LOCATION FILE *** '
-      echo '************************************* '
-      echo ' '
-      [[ "$LOUD" = YES ]] && set -x
-      echo "$grdID post $date $cycle : buoy location file missing." >> $wavelog
-      postmsg "$jlogfile" "NON-FATAL ERROR : NO BUOY LOCATION FILE"
-      exit_code=14
-      Ospec_OK='no'
-      Obull_OK='no'
-    fi
-  done
-
 # 1.e Input template files
 
   if [ "$grint_OK" = 'yes' ]
   then
-    if [ -f $FIXwave/ww3_grib2.inp.tmpl ]
+    for outGRD in $out_grids
+    do
+    if [ -f $FIXwave/${outGRD}_interp.inp.tmpl ]
     then
-      cp $FIXwave/ww3_grib2.inp.tmpl ww3_grib2.inp.tmpl
+      cp $FIXwave/${outGRD}_interp.inp.tmpl ${outGRD}_interp.inp.tmpl
     fi
 
-    if [ -f ww3_grib2.inp.tmpl ]
+    if [ -f ${outGRD}_interp.inp.tmpl ]
     then
       set +x
-      echo "   ww3_grib2.inp.tmpl copied. Syncing to all nodes ..."
+      echo "   ${outGRD}_interp.inp.tmpl copied. Syncing to all nodes ..."
       [[ "$LOUD" = YES ]] && set -x
-      $FSYNC ww3_grib2.inp.tmpl
+      $FSYNC ${outGRD}_interp.inp.tmpl
     else
       set +x
       echo ' '
       echo '*********************************************** '
-      echo '*** ERROR : NO TEMPLATE FOR GRIB INPUT FILE *** '
+      echo '*** ERROR : NO TEMPLATE FOR GRINT INPUT FILE *** '
       echo '*********************************************** '
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      echo "$wavemodID post $date $cycle : GRIB template file missing." >> $wavelog
-      postmsg "$jlogfile" "NON-FATAL ERROR : NO TEMPLATE FOR GRIB INPUT FILE"
+      echo "$wavemodID post $date $cycle : GRINT template file missing." >> $wavelog
+      postmsg "$jlogfile" "NON-FATAL ERROR : NO TEMPLATE FOR GRINT INPUT FILE"
       exit_code=15
-      grib_OK='no'
+      grint_OK='no'
     fi
-
-    if [ "$grib1_OK" = 'yes' ]
-    then
-      if [ -f $FIXwave/ww3_grib1.inp.tmpl ]
-      then
-        cp $FIXwave/ww3_grib1.inp.tmpl ww3_grib1.inp.tmpl
-      fi
-
-      if [ -f ww3_grib1.inp.tmpl ]
-      then
-        set +x
-        echo "   ww3_grib1.inp.tmpl copied. Syncing to all nodes ..."
-        [[ "$LOUD" = YES ]] && set -x
-        $FSYNC ww3_grib1.inp.tmpl
-      else
-        set +x
-        echo ' '
-        echo '*********************************************** '
-        echo '*** ERROR : NO TEMPLATE FOR GRIB INPUT FILE *** '
-        echo '*********************************************** '
-        echo ' '
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$wavemodID post $date $cycle : GRIB template file missing." >> $wavelog
-        postmsg "$jlogfile" "NON-FATAL ERROR : NO TEMPLATE FOR GRIB INPUT FILE"
-        exit_code=15
-        grib1_OK='no'
-      fi
-    fi
+    done
   fi
-
   if [ "$grib_OK" = 'yes' ]
   then
     if [ -f $FIXwave/ww3_grib2.inp.tmpl ]
@@ -999,8 +447,9 @@
                                ww3_spec.inp.tmpl > ww3_spec.inp
    
     ln -s mod_def.$buoy mod_def.ww3
-
-    $EXECcode/ww3_spec > buoy_tmp.loc 
+    rm -f ww3_oup.inp
+    ln -s ww3_spec.inp ww3_outp.inp  
+    $EXECcode/ww3_outp > buoy_tmp.loc 
     err=$?
 
     if [ "$err" != '0' ]
@@ -1078,7 +527,6 @@
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
 
-
 # --------------------------------------------------------------------------- #
 # 2.  Make second command file(s) (GRID interpolation and GRIB generation)
 # 2.a Command file set-up
@@ -1087,62 +535,15 @@
 #     is used for load balancing. GRIB packing takes more time than making
 #     spectral data files or bulletins.
 
-  ifile=1
-  nskip=1
-  nlayer=10  # These are the additional point extractions being loaded on the
-            # first processor to balance the load
-
-  if [ "$nfile" -gt '1' ]
-  then
-    cmdtype='poe'
-  else
-    cmdtype='sh'
-    nskip='-'
-  fi
-
   set +x
   echo '   Making second command file (GRID Interpolation, GRIB, SPEC and BULLETINS) '
-  echo "   Set up command file structure (type = $cmdtype)."
-  echo "      Number of command files                : $nfile"
-  echo "      Number of skips for I/O intensive jobs : $nskip"
 
   rm -f cmdfile
   touch cmdfile
 
   [[ "$LOUD" = YES ]] && set -x
 
-  ifile=1
-
-# 2.b GRID Interpolation and corresponding GRIB generation files
-
-  if [ "$grint_OK" = 'yes' ]
-  then
-    gribFLO1=\''F F T F F  F T F F T  F F T T F  T F T F T  F F F F F  F F F F F  F F F F F   F F F F F   F F F F F   F F F F F  F F F'\'
-    gribFLO2=\''F F T F F  F T F F F  F F T F F  T T T F T  F F F F F  F F F F F  F F F F F   F F F F F   F F F F F   F F F F F  F F F'\'
-    ymdh_int=`$NDATE -9 $YMDH`
-    dt_int=10800.
-    n_int=64
-
-    for grdID in $Ogrids
-    do
-      case $grdID in
-      nww3)     GRIDNR=233 ; MODNR=88  ; dtgrib=10800. ; ngrib=61 ;;
-       wna)     GRIDNR=238 ; MODNR=121 ; dtgrib=10800. ; ngrib=61 ;;
-       akw)     GRIDNR=239 ; MODNR=122 ; dtgrib=10800. ; ngrib=61 ;;
-       enp)     GRIDNR=253 ; MODNR=124 ; dtgrib=10800. ; ngrib=61 ;;
-      esac
-
-      if [ "$grib1_OK" = 'yes' ]
-      then
-        echo "$USHwave/ww3_grid_interp.sh $grdID $ymdh_int $dt_int $n_int > grint_$grdID.out 2>&1;$USHwave/ww3_grib2.sh $grdID $dtgrib $ngrib $GRIDNR $MODNR $gribFLO2 > grib_$grdID.out 2>&1;$USHwave/ww3_grib1.sh $grdID $dtgrib $ngrib $GRIDNR $MODNR $gribFLO1 > grib1_$grdID.out 2>&1"               >> cmdfile
-      else
-        echo "$USHwave/ww3_grid_interp.sh $grdID $ymdh_int $dt_int $n_int > grint_$grdID.out 2>&1;$USHwave/ww3_grib2.sh $grdID $dtgrib $ngrib $GRIDNR $MODNR $gribFLO2 > grib_$grdID.out 2>&1"               >> cmdfile
-      fi
-
-    done
-  fi
-
-# 2.c GRIB files
+# 2.c GRIB files for main grids
 
 # GRIB field time step -- dtgrib
 # Number of GRIB fields -- ngrib
@@ -1151,13 +552,36 @@
 
   if [ "$grib_OK" = 'yes' ]
   then
-    for grdID in $grids $Xgrids
+    for grdID in $grids $out_grids
     do
 
-      echo "$USHwave/ww3_grib2_cat.sh $grdID > grib_$grdID.out 2>&1"               >> cmdfile
+      case $grdID in
+      glo_30m) GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
+      glo_15mext) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+                  GRIDNR=11  ; MODNR=255 ; dtgrib=10800. ; ngrib=181; ymdh_int=`$NDATE -9 $YMDH`; dt_int=10800.; n_int=190 ; make_grib='yes';;
+      glo_30mext) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+                  GRIDNR=11  ; MODNR=11  ; dtgrib=3600. ; ngrib=181; ymdh_int=`$NDATE -9 $YMDH`; dt_int=3600.; n_int=190 ; make_grib='yes';;
+      esac
+
+# Recalculate ngrib based on lsth (TODO: add new interval if changes to dtgrib after given forecast hour)
+      dtgi=`echo ${dtgrib} | sed 's/\.//g'`
+      dtgh=`expr ${dtgi} / 3600`
+      ngrib=`expr ${lsth} / ${dtgh} + 1`
+
+      export dtgrib ngrib 
+# Next line for multi_1
+#      echo "$USHwave/ww3_grib2_cat.sh $grdID > grib_$grdID.out 2>&1"               >> cmdfile
+      echo "$USHwave/ww3_grib2.sh $grdID $dtgrib $ngrib $GRIDNR $MODNR $gribFL > grib_$grdID.out 2>&1"               >> cmdfile
 
     done
+
+
+$USHwave/ww3_grib2.sh $grdID $dtgrib $ngrib $GRIDNR $MODNR $gribFL
+
+
   fi
+#### Done up to here: need to test grib2 output
+exit
 
   if [ "$grintox_OK" = 'yes' ]
   then
@@ -1167,12 +591,10 @@
     for grdID in $OXgrids
     do
       case $grdID in
-      glo_15mext) gribFL=\''F F T F F  F T F F F  F F T F F  T T T F T  F F F F F  F F F F F  F F F F F   F F F F F   F F F F F   F F F F F  F F F'\';
+      glo_15mext) gribFL=\''WND CUR ICE HS T01 T02 FP DIR DP PHS PTP PDIR'\';
                   GRIDNR=11  ; MODNR=255 ; dtgrib=10800. ; ngrib=181; ymdh_int=`$NDATE -9 $YMDH`; dt_int=10800.; n_int=190 ; make_grib='yes';;
-      glo_30mext) gribFL=\''F F T F F  F T F F F  F F T F F  T T T F T  F F F F F  F F F F F  F F F F F   F F F F F   F F F F F   F F F F F  F F F'\';
+      glo_30mext) gribFL=\''WND CUR ICE HS T01 T02 FP DIR DP PHS PTP PDIR'\';
                   GRIDNR=11  ; MODNR=11  ; dtgrib=3600. ; ngrib=181; ymdh_int=`$NDATE -9 $YMDH`; dt_int=3600.; n_int=190 ; make_grib='yes';;
-      rtma) gribFL=\''F F T F F  F T F F F  F F T F F  F F F F F  F F F F F  F F F F F  F F F F F   F F F F F   F F F F F   F F F F F  F F F'\';
-            GRIDNR=11  ; MODNR=20  ; dtgrib=3600. ; ngrib=25; ymdh_int=${YMDH} ; dt_int=3600.; n_int=25 ; make_grib='yes';;
       esac
 
       if [ "$make_grib" = 'yes' ]
