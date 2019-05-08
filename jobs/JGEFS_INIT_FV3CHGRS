@@ -100,9 +100,6 @@ mkdir -p $COMOUT/$cyc/init
 ##############################################
 export GESOUT=${GESOUT:-$GESROOT/${envir}}
 export GESOUT=$GESOUT/gefs.${PDY}
-export FV3GESOUT=$GESOUT/${cyc}/$mem
-#export FV3GESOUT=$COMOUT/$cyc/init/$mem
-mkdir -p $FV3GESOUT
 
 ##############################################
 echo list environment before running script
@@ -123,7 +120,6 @@ export cycp=`echo $pdycycp|cut -c9-10`
 
 export INIDIR=$DATA
 export CDATE=$PDY$cyc
-export OUTDIR=$FV3GESOUT
 export ictype=nemsgfs
 
 if [[ ! -f $GESOUT/ge$mem.t$cyc\z.sanl ]]; then
@@ -131,8 +127,8 @@ if [[ ! -f $GESOUT/ge$mem.t$cyc\z.sanl ]]; then
 	export NTRAC=7
 
 	export FV3GESOUT=$COMOUT/$cyc/init/$mem
-    mkdir -p $FV3GESOUT
-    export OUTDIR=$FV3GESOUT
+	mkdir -p $FV3GESOUT
+	export OUTDIR=$FV3GESOUT
 
 	if [[ $mem = c00 ]] ;then
 		cp $COMINgfs/gfs.t${cyc}z.atmanl.nemsio $INIDIR/gfnanl.gfs.$PDY$cyc
@@ -142,16 +138,19 @@ if [[ ! -f $GESOUT/ge$mem.t$cyc\z.sanl ]]; then
 		cp $COMINgfs/gfs.t${cyc}z.sfcanl.nemsio $INIDIR/sfnanl.gfs.$PDY$cyc
 	fi
 else
-    if [ $inflag = 0 ] ; then
-        export ictype=fv3gfs
-        export NTRAC=7
-        cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
-        cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
-    else
-	    cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
-	    cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
-	    cp $GESOUT/ge$mem.t$cyc\z.nsnanl $INIDIR/nsnanl.gfs.$PDY$cyc
-    fi
+	export FV3GESOUT=$GESOUT/${cyc}/$mem
+	mkdir -p $FV3GESOUT
+	export OUTDIR=$FV3GESOUT
+	if [ $inflag = 0 ] ; then
+		export ictype=fv3gfs
+        	export NTRAC=7
+		cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
+		cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
+	else
+		cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
+		cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
+		cp $GESOUT/ge$mem.t$cyc\z.nsnanl $INIDIR/nsnanl.gfs.$PDY$cyc
+	fi
 fi
 
 $USHgsm/global_chgres_driver.sh
