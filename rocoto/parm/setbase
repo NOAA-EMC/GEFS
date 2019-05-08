@@ -111,8 +111,7 @@ elif [[ -d /gpfs/hps && -e /etc/SuSE-release ]] ; then
     export HOMEDIR1=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda
     export HOMEtrak=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.0
     export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
-    export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/fv3init
-    export HOMEdata=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common
+    export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
     SAVE=/gpfs/hps3/emc/$PROJECT/save
     NOSCRUB=/gpfs/hps3/emc/$PROJECT/noscrub
     
