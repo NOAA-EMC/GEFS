@@ -146,7 +146,7 @@
 
   ifile=1
 
-  for grdID in $grdINP $grids $out_grids
+  for grdID in $grdINP $waveGRD
   do
     if [ -f "$COMIN/${wavemodID}.mod_def.${grdID}" ]
     then
@@ -173,7 +173,7 @@
   done
 
 # 1.a.3 File check
-  for grdID in $grdINP $grids $out_grids
+  for grdID in $grdINP $waveGRD
   do
     if [ -f mod_def.$grdID ]
     then
@@ -325,7 +325,7 @@
   
     if [ "$nfile" -gt '1' ]
     then
-      ${gwesmpexec_mpmd} cmdfile
+      ${wave_mpmd} cmdfile
       exit=$?
     else
       ./cmdfile
@@ -725,7 +725,7 @@
   gline=
   grdNR=0
   grdGRP=1 # Single group for now
-  for grid in ${grids} 
+  for grid in ${waveGRD} 
   do
     grdNR=`expr ${grdNR} + 1`
     agrid=( ${agrid[*]} ${grid} )

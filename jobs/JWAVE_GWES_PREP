@@ -72,7 +72,7 @@ env | sort
 ##################################
 # Set mpi serial command
 #################################
-export gwesmpexec_mpmd=${gwesmpexec_mpmd:-"mpirun.lsf cfp cmdfile"}
+export wave_mpmd=${wave_mpmd:-"mpirun.lsf cfp cmdfile"}
 
 ###################################
 # Execute the Script  

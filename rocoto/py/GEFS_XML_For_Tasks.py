@@ -931,6 +931,7 @@ def get_ENV_VARS(sPre="\t\t"):
     dicENV_VARS['envir'] = 'dev'
     dicENV_VARS['RUN_ENVIR'] = 'dev'
     dicENV_VARS['gefsmpexec'] = 'mpirun.lsf'
+    dicENV_VARS['wavempexec'] = 'mpirun.lsf'
     dicENV_VARS['gefsmpexec_mpmd'] = 'mpirun.lsf'
     dicENV_VARS['WHERE_AM_I'] = '&WHERE_AM_I;'
     dicENV_VARS['GEFS_ROCOTO'] = '&GEFS_ROCOTO;'

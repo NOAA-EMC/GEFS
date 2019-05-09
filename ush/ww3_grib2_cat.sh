@@ -1,7 +1,7 @@
 #!/bin/bash
 ###############################################################################
 #                                                                             #
-# This script generates the GRIB2 file for the MWW3 forecast model            #
+# This script concatenates  GRIB2 file for the MWW3 forecast model            #
 # It is run as a child scipt interactively by the postprocessor.              #
 #                                                                             #
 # Remarks :                                                                   #
@@ -10,7 +10,7 @@
 # - See section 0.b for variables that need to be set.                        # 
 #                                                                             #
 #                                                                July, 2007   #
-# Last update : 02-29-2012                                                    #
+# Last update : 05-05-2019                                                    #
 #                                                                             #
 ###############################################################################
 
@@ -31,7 +31,7 @@
   [[ "$LOUD" != YES ]] && set +x
 
   cd $DATA
-#  postmsg "$jlogfile" "Making GRIB2 Files."   # commented to reduce unnecessary output to jlogfile
+#  postmsg "$jlogfile" "Catting GRIB2 Files."   # commented to reduce unnecessary output to jlogfile
 
   grdID=$1  
   rm -rf grib_$grdID
@@ -42,11 +42,11 @@
     set +x
     echo ' '
     echo '******************************************************************************* '
-    echo '*** FATAL ERROR : ERROR IN ww3_grib2 (COULD NOT CREATE TEMP DIRECTORY) *** '
+    echo '*** FATAL ERROR : ERROR IN multiwavegrib2_cat (COULD NOT CREATE TEMP DIRECTORY) *** '
     echo '******************************************************************************* '
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
-    postmsg "$jlogfile" "FATAL ERROR : ERROR IN ww3_grib2 (Could not create temp directory)"
+    postmsg "$jlogfile" "FATAL ERROR : ERROR IN multiwavegrib2_cat (Could not create temp directory)"
     exit 1
   fi
 
@@ -71,8 +71,7 @@
 
   if [ -z "$YMDH" ] || [ -z "$cycle" ] || [ -z "$EXECwave" ] || [ -z "$EXECcode" ] || \
      [ -z "$COMOUT" ] || [ -z "$wavemodID" ] || [ -z "$SENDCOM" ] || \
-     [ -z "$dtgrib" ] || [ -z "$ngrib" ] || [ -z "$gribflags" ] || \
-     [ -z "$GRIDNR" ] || [ -z "$MODNR" ] || [ -z "$SENDDBN" ]
+     [ -z "$SENDDBN" ]
   then
     set +x
     echo ' '
@@ -92,63 +91,39 @@
 
   set +x
   echo "   Starting time    : $tstart"
-  echo "   Time step        : $dtgrib"
-  echo "   Number of times  : $ngrib"
-  echo "   GRIB field flags : $gribflags"
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
 
-# 0.e Links to working directory
+# 0.d sync important files
 
-  ln -s ../mod_def.$grdID mod_def.ww3
-  ln -s ../out_grd.$grdID out_grd.ww3 
+# 0.e Links to working directory
 
 # --------------------------------------------------------------------------- #
 # 1.  Generate GRIB file with all data
-# 1.a Generate input file for ww3_grib2
-#     Template copied in mother script ...
-
-  set +x
-  echo "   Generate input file for ww3_grib2"
-  [[ "$LOUD" = YES ]] && set -x
-
-  sed -e "s/TIME/$tstart/g" \
-      -e "s/DT/$dtgrib/g" \
-      -e "s/NT/$ngrib/g" \
-      -e "s/GRIDNR/$GRIDNR/g" \
-      -e "s/MODNR/$MODNR/g" \
-      -e "s/FLAGS/$gribflags/g" \
-                               ../ww3_grib2.inp.tmpl > ww3_grib.inp
 
 # 1.b Run GRIB packing program
 
+
   set +x
-  echo "   Run ww3_grib2"
-  echo "   Executing $EXECcode/ww3_grib"
+  echo "   Catting grib2 files ${COMOUT}/$wavemodID.$grdID.$cycle.f???.grib2"
   [[ "$LOUD" = YES ]] && set -x
 
-  ln -sf ../$wavemodID.$grdID.${cycle}.grib2 gribfile
-  $EXECcode/ww3_grib
+  ln -sf ../$wavemodID.$grdID.$cycle.grib2 gribfile
+  cat ${COMOUT}/$wavemodID.$grdID.$cycle.f???.grib2 >> gribfile
   err=$?
 
   if [ "$err" != '0' ]
   then
     set +x
     echo ' '
-    echo '********************************************* '
-    echo '*** FATAL ERROR : ERROR IN ww3_grib2 *** '
-    echo '********************************************* '
+    echo '************************************************* '
+    echo '*** FATAL ERROR : ERROR IN multiwavegrib2_cat *** '
+    echo '************************************************* '
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
-    postmsg "$jlogfile" "FATAL ERROR : ERROR IN ww3_grib2"
+    postmsg "$jlogfile" "FATAL ERROR : ERROR IN multiwavegrib2_cat"
     exit 3
   fi
-
-# 1.c Clean up
-
-  rm -f ww3_grib.inp
-  rm -f mod_def.ww3
-  rm -f out_grd.ww3
 
 # 1.e Save in /com
 
@@ -157,37 +132,25 @@
     set +x
     echo "   Saving GRIB file as $COMOUT/$wavemodID.$grdID.$cycle.grib2"
     [[ "$LOUD" = YES ]] && set -x
-    cp -f ${DATA}/$wavemodID.$grdID.$cycle.grib2 $COMOUT/
-    $WGRIB2 -s $COMOUT/$wavemodID.$grdID.$cycle.grib2 > $COMOUT/$wavemodID.$grdID.$cycle.grib2.idx
+    cp gribfile $COMOUT/$wavemodID.$grdID.$cycle.grib2
     
     if [ ! -f $COMOUT/$wavemodID.$grdID.$cycle.grib2 ]
     then
       set +x
       echo ' '
       echo '********************************************* '
-      echo '*** FATAL ERROR : ERROR IN ww3_grib2 *** '
+      echo '*** FATAL ERROR : ERROR IN multiwavegrib2 *** '
       echo '********************************************* '
       echo ' '
       echo " Error in moving grib file $wavemodID.$grdID.$cycle.grib2 to com"
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      postmsg "$jlogfile" "FATAL ERROR : ERROR IN ww3_grib2"
+      postmsg "$jlogfile" "FATAL ERROR : ERROR IN multiwavegrib2"
       exit 4
     fi
-    if [ ! -f $COMOUT/$wavemodID.$grdID.$cycle.grib2.idx ]
-    then
-      set +x
-      echo ' '
-      echo '*************************************************** '
-      echo '*** FATAL ERROR : ERROR IN ww3_grib2 INDEX FILE *** '
-      echo '*************************************************** '
-      echo ' '
-      echo " Error in moving grib file $wavemodID.$grdID.$cycle.grib2idx to com"
-      echo ' '
-      [[ "$LOUD" = YES ]] && set -x
-      postmsg "$jlogfile" "FATAL ERROR : ERROR IN creating ww3_grib2 index"
-      exit 4
-    fi
+
+    echo "   Creating wgrib index of $COMOUT/$wavemodID.$grdID.$cycle.grib2"
+    $WGRIB2 -s $COMOUT/$wavemodID.$grdID.$cycle.grib2 > $COMOUT/$wavemodID.$grdID.$cycle.grib2.idx
 
     if [ "$SENDDBN" = 'YES' ]
     then
@@ -209,12 +172,12 @@
   [[ "$LOUD" = YES ]] && set -x
 
   cd ..
-#  rm -rf grib_$grdID
+  rm -rf grib_$grdID
 
   set +x
   echo ' '
-  echo "End of ww3_grib2.sh at"
+  echo "End of multiwavegrib2_cat.sh at"
   date
   [[ "$LOUD" = YES ]] && set -x
 
-# End of ww3_grib2.sh -------------------------------------------------- #
+# End of multiwavegrib2.sh -------------------------------------------------- #
