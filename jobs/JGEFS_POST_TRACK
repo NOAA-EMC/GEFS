@@ -101,19 +101,19 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=${COMINgfs:-${COMROOThps}/gfs/prod/gfs.${PDY}}
-export COMINsyn=${COMINsyn:-${COMROOTp1}/arch/prod/syndat}
+##export COMINgfs=${COMINgfs:-${COMROOThps}/gfs/prod/gfs.${PDY}}
+##export COMINsyn=${COMINsyn:-${COMROOTp1}/arch/prod/syndat}
 
 export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/gefs.${PDY}/${cyc}}
 export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/tctrack}
 
-export COMOUThur=${COMOUThur:-${COMROOTp1}/hur/${envir}/global}
-export COMOUTatcf=${COMOUTatcf:-${COMROOTp1}/nhc/${envir}/atcf}
+export COMOUThur=${COMOUThur:-${COMROOT}/hur/${envir}/global}
+export COMOUTatcf=${COMOUTatcf:-${COMROOT}/nhc/${envir}/atcf}
 
 mkdir -m 775 -p $COMOUT $COMOUThur $COMOUTatcf
 
-export ensdira=$COMIN/pgrb2ap5
-export ensdirb=$COMIN/pgrb2bp5
+export ensdira=$COMIN/pgrb2ap25
+export ensdirb=$COMIN/pgrb2bp25
 
 ##############################################
 echo set parameters using gefs.parm
@@ -163,7 +163,13 @@ export loopnum=1
 export ymdh=${PDY}${cyc}
 
 #-----------input data checking -----------------
-${USHens_tracker}/data_check.sh
+${USHens_tracker}/data_check_gefs.sh
+export err=$?; err_chk
+
+if [ $err != 0 ]; then
+    msg="JOB FAILED!"
+    exit $err
+fi
 #------------------------------------------------
 
 mkdir ${DATA}/${cmodel}
@@ -192,14 +198,14 @@ $APRUN
 #  pertdir=${DATA}/${cmodel}/${pert}
 #  cp ${pertdir}/trak.a${pert}.atcfunix.${PDY}${CYL} ${COMOUT}/a${pert}.t${CYL}z.cyclone.trackatcfunix
 #done
-rm -rf ${DATA}/*
+##rm -rf ${DATA}/*
 
 sh ${USHens_tracker}/ens_trak_ave.sh
 export err=$?; err_chk
-#cp ${DATA}/aemn.trkprob.* ${COMOUT}
-#cp ${DATA}/trak.aemn.atcfunix.* ${COMOUT}/aemn.t${CYL}z.cyclone.trackatcfunix
-#cp ${DATA}/trak.aemn.mode.* ${COMOUT}/aemn.t${CYL}z.cyclone.trackmode
-#cp ${DATA}/trak.aemn.spread.* ${COMOUT}/aemn.t${CYL}z.cyclone.trackspread
+cp ${DATA}/aemn.trkprob.* ${COMOUT}
+cp ${DATA}/trak.aemn.atcfunix.* ${COMOUT}/aemn.t${CYL}z.cyclone.trackatcfunix
+cp ${DATA}/trak.aemn.mode.* ${COMOUT}/aemn.t${CYL}z.cyclone.trackmode
+cp ${DATA}/trak.aemn.spread.* ${COMOUT}/aemn.t${CYL}z.cyclone.trackspread
 
 #cd ${DATA}
 #${USHens_tracker}/atcf_2_cxml.sh ${cmodel} ${ymdh} ${COMOUT} ${DATA}

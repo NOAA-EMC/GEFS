@@ -35,7 +35,7 @@ export MEMORY_AFFINITY=core:2
 module load NetCDF-intel-haswell/4.2
 module load nco-gnu-sandybridge/4.4.4
 
-export total_tasks=30
+export total_tasks=6
 export OMP_NUM_THREADS=6
 export taskspernode=4
 
@@ -52,9 +52,10 @@ export FORECAST_SEGMENT=hr
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export gefsmachine=cray
+
 #export gefsmpexec=" aprun -b -j1 -n1 -N12 -d2 -cc depth "
 export gefsmpexec_mpmd="  aprun -b -j1 -n756 -N6 -d4 -cc depth  cfp mpmd_cmdfile"
+export gefsmpexec_mpmd="  aprun -b -j1 -n$total_tasks -N6 -d4 -cc depth  cfp mpmd_cmdfile"
 export APRUNC="aprun"
 export APRUN_RECENT="aprun -j 1 -n $total_tasks -N $taskspernode -d $OMP_NUM_THREADS -cc depth"
 export APRUN_CHGRES="aprun -j 1 -n 1 -N 1 -d 12 -cc depth"

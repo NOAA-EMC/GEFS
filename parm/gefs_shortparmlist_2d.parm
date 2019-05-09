@@ -1,0 +1,22 @@
+:PRMSL:mean sea level:
+:PRES:surface:
+:TMP:2 m above ground:
+:TMAX:2 m above ground:
+:TMIN:2 m above ground:
+:RH:2 m above ground:
+:UGRD:10 m above ground:
+:VGRD:10 m above ground:
+:APCP:surface:
+:CRAIN:surface:
+:CSNOW:surface:
+:CFRZR:surface:
+:CICEP:surface:
+:PWAT:entire atmosphere (considered as a single layer):
+:CAPE:180-0 mb above ground:
+:CIN:180-0 mb above ground:
+:HLCY:3000-0 m above ground:
+:TCDC:entire atmosphere:
+:WEASD:surface:
+:ULWRF:top of atmosphere:
+:DLWRF:surface:
+:DSWRF:surface:

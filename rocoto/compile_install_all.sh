@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eu
 
 sWS=`pwd`
 echo $sWS
@@ -49,45 +50,18 @@ echo $userConfigFile
 if [ $CompileCode = "yes" ]; then
     cd $sWS/../sorc
 
-    ## mkdir folds
-    mkdir ../exec
-    mkdir ../util/exec
+    ## Build the code and install
+    ./build_all.sh
 
-    ## Deal with the modules
-    module purge
-    module use ./
-
-    if [ $machine = theia ]; then
-        echo "You are running on Theia!"
-        module load Module_gefs_v12_theia
-    elif [ $machine = cray ]; then
-        echo "You are running on Cray!"
-        module load Module_gefs_v12_cray
-    elif [ $machine = wcoss ]; then
-        echo "You are running on wcoss!"
-        module load Module_gefs_v12_wcoss
-    elif [ $machine = wcoss_dell_p3 ]; then
-        echo "You are running on wcoss_dell_p3!"
-        module load Module_gefs_v12_wcoss_dell_p3
-    else
-        echo "You are running on some platform we didn't support, please check it!"
-        exit
-    fi
-
-    ## Build the code
-    ./build.sh
-
-    ## Install GEFS
-    ./install.sh
-
-    cd $sWS/../
-    rm -rf fix
+    cd $sWS/../sorc
     if [ $machine = "theia" ]; then
-        /bin/ln -sf /scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix fix
+        ./link_gefs.sh -e emc -m theia
     elif [ $machine = "cray" ]; then
-        /bin/ln -sf /gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gefs/fix fix
+        ./link_gefs.sh -e emc -m cray
+    elif [ $machine = "wcoss_ibm" ]; then
+        ./link_gefs.sh -e emc -m ibm
     elif [ $machine = "wcoss_dell_p3" ]; then
-        /bin/ln -sf /gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gefs/fix fix
+        ./link_gefs.sh -e emc -m dell
     fi
 fi
 
@@ -100,6 +74,8 @@ if [ $CleanAll = "yes" ]; then
     rm -rf tasks
 
     cd $sWS/../sorc
+
+    rm -rf logs
 
     for dir in gefs_vortex_separate.fd gefs_vortex_combine.fd global_sigzvd.fd  global_ensadd.fd  global_enspqpf.fd  gefs_ensstat.fd  global_ensppf.fd ; do
         cd $dir
@@ -128,7 +104,7 @@ if [ $CleanAll = "yes" ]; then
     cd ${sWS}/../sorc
     rm -rf ../exec
     rm -rf ../util/exec
-    rm -rf ../fix
+    rm -f ../fix
 
 fi # for CleanAll
 
@@ -137,20 +113,29 @@ fi # for CleanAll
 if [ $RunRocoto = "yes" ]; then
     cd $sWS
     if [ $machine = "theia" ]; then
+        module load rocoto/1.3.0-RC3
+        module load intelpython
+
+    elif [ $machine = "wcoss_ibm" ]; then
+        module load ibmpe ics lsf
+        module load python/3.6.3
+        module use /usrx/local/emc_rocoto/modulefiles
         module load rocoto
+
     elif [ $machine = "cray" ]; then
         . /opt/modules/3.2.10.3/init/sh
         module use /usrx/local/emc_rocoto/modulefiles
         module load xt-lsfhpc
         module load rocoto
-        module load python/2.7.13
+        module load python/3.6.3
+
     elif [ $machine = "wcoss_dell_p3" ]; then
         . /usrx/local/prod/lmod/lmod/init/sh
         module use /gpfs/dell3/usrx/local/dev/emc_rocoto/modulefiles
         module load lsf/10.1
         module load ruby/2.5.1
         module load rocoto/complete
-        module load python/2.7.14        
+        module load python/3.6.3       
     fi
     ./py/run_to_get_all.py  $userConfigFile
     
@@ -162,11 +147,43 @@ fi # For RunRocoto
 if [ $AddCrontabToMyCrontab = "yes" ]; then
     cd $sWS
     if [ $machine = "theia" ]; then
-        echo "Not ready on theia"
+        if [ -f $HOME/cron/mycrontab ]; then
+            echo "Adding crontab to $HOME/cron/mycrontab!" 
+        else 
+            mkdir $HOME/cron
+            touch $HOME/cron/mycrontab
+        fi
+    
+        py/add_crontab.py
+        crontab $HOME/cron/mycrontab
+        echo "Added crontab to $HOME/cron/mycrontab!"
+
+    elif [ $machine = "wcoss_ibm" ]; then
+        if [ -f $HOME/cron/mycrontab ]; then
+            echo "Adding crontab to $HOME/cron/mycrontab!" 
+        else
+            mkdir $HOME/cron
+            touch $HOME/cron/mycrontab
+        fi
+
+        py/add_crontab.py
+        crontab $HOME/cron/mycrontab
+        echo "Added crontab to $HOME/cron/mycrontab!"
+
     elif [ $machine = "cray" ]; then
-        echo "Not ready on cray"
+        if [ -f $HOME/cron/mycrontab ]; then
+            echo "Adding crontab to $HOME/cron/mycrontab!" 
+        else
+            mkdir $HOME/cron
+            touch $HOME/cron/mycrontab
+        fi
+
+        py/add_crontab.py
+        crontab $HOME/cron/mycrontab
+        echo "Added crontab to $HOME/cron/mycrontab!"
+
     elif [ $machine = "wcoss_dell_p3" ]; then
         py/add_crontab.py
-        echo "Added crontab to system!"
+        echo "Added crontab to $HOME/cron/mycrontab!"
     fi
 fi

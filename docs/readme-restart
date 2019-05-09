@@ -1,0 +1,52 @@
+Dingchen Hou: 12/13/2018
+
+This is a note about the commit to DHrestart branch, focus on the restart capability
+a) The RESTART capabilioty is limited to the forecast job only
+b) The gefs_parm file sets the resolution for "hr" and "lr" section as the same C384L64. No change this time
+c) The rocoto workflow assumes that the high resolution forecast starts from 0h (cold start or FV3_RELOC)
+d) The rocoto workflow assumes that the low resolution forecast starts from 03 (cold start or FV3_RELOC) with RFNdate=NO
+e) The above setting is to meet the requirement of GEFS v12 REFORECAST project
+f) The general RESTART capability (restart other 03h, restart including the post jobs) are not ready yet, but
+   every is encoraged to do exploration
+
+
+Dingchen Hou: 11/15/2018
+
+This is a note on how to run forecast job in "restart mode"
+
+To run fv3 forecast job you need to have a set of "restart files" (32 files in total) in the ptmp
+~nwges/dev/gefs.YYYYMMDD/00/c00/RESTART directory (c00 is an example of member ID)
+The file names are
+coupler.res
+ fv_core.res.nc
+ fv_core.res.tilerN.nc    (N=1,2,..6)
+ fv_srf_wnd.res.tileN.nc
+ fv_tracer.res.tileN.nc
+ phy_data.tileN.nc
+ sfc_data.tileN.nc
+These files could have prefix to represent the valid time, like "YYYYMMDDCC0000."
+
+To run fv3 forecast in restart mode, I have modified the J-job and the exglobal script
+
+When you want to run "restart" forecast you need to add the following three lines in your 
+ rocoto/bin/cray/forecast_high.sh 
+     or
+ rocoto/bin/cray/forecast_low.sh 
+
+> export RERUN=RESTART  (the J-job script has default value "RERUN"
+> export FHINI=03    (forecast lead hour at which your want to restart the fcst)
+> export RFNDATE=NO  (If there is prefix in the restart file names, use YES)  
+
+To run restart properly, I had to modify the the fv3 and upp code. Therefore, you have to use the modified version of fv3gfs package in
+/gpfs/hps3/emc/ensemble/noscrub/Dingchen.Hou/TAGS/fv3gefs_c550fea3_20181004_ForHong
+by changing the $HOMEDIR specification in rocoto/parm/setbase
+Xianwu should work with Bing to build this version on DELL.
+Bing can add more chages to the FV3 code.
+
+Two most obvious issues exist now:
+1) We can not output the f03 (beginning of restart) nemsio files now, but Bing already has a fix.
+2) When 2 different output frequency are used (with FHOUTHF and FHOUTLF), the LF part files can not be written out. Bing is looking into this issue.
+
+I have tested the scripts for "hr" section
+In the reforecat project, we will run the "hr" fcst with the above three lines.
+Xianwu will test the branch to make sure it works for different situations, before merging it to master.

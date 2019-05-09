@@ -222,7 +222,7 @@ else   #RERUN=RESTART
 #      $NLN $file $DATA/INPUT/$file2
 #done
 #$NLN $COMOUT/$cyc/restart/$mem/coupler.res $DATA/INPUT/coupler.res
-
+  if [ $RFNDATE == YES ]; then
     RDATE=$($NDATE +$restart_hour $CDATE)
     rPDY=$(echo $RDATE | cut -c1-8)
     rcyc=$(echo $RDATE | cut -c9-10)
@@ -231,7 +231,11 @@ else   #RERUN=RESTART
     file2=$(echo $file2 | cut -d. -f3-) # remove the date from file
       $NCP $file INPUT/$file2
     done
-
+  else
+    for file in coupler.res fv* phy* sfc* ; do
+      $NCP RESTART/$file INPUT
+    done
+  fi
 fi
 
 nfiles=$(ls -1 $DATA/INPUT/* | wc -l)
@@ -525,6 +529,9 @@ atmos_nthreads:          $NTHREADS_FV3
 use_hyper_thread:        ${hyperthread:-".false."}
 ncores_per_node:         $cores_per_node
 restart_interval:        $restart_interval
+restart_run:             ${restart_run:-".false."}
+output_1st_tstep_rst:        ${output_1st_tstep_rst:-".false."}
+restart_hour:            ${restart_hour:-0}
 
 quilting:                $QUILTING
 write_groups:            ${WRITE_GROUP:-1}
@@ -710,6 +717,7 @@ cat > input.nml <<EOF
   redrag       = ${redrag:-".true."}
   dspheat      = ${dspheat:-".true."}
   hybedmf      = ${hybedmf:-".true."}
+  lheatstrg      = ${lheatstrg:-".false."}
   random_clds  = ${random_clds:-".true."}
   trans_trac   = ${trans_trac:-".true."}
   cnvcld       = ${cnvcld:-".true."}
@@ -724,6 +732,8 @@ cat > input.nml <<EOF
   nst_anl      = $nst_anl
   psautco      = ${psautco:-"0.0008,0.0005"}
   prautco      = ${prautco:-"0.00015,0.00015"}
+  lgfdlmprad   = ${lgfdlmprad:-".true."}
+  effr_in      = ${effr_in:-".true."}
   $gfs_physics_nml
 /
 

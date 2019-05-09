@@ -1,0 +1,14 @@
+#%Module#####################################################
+## gefs_anom2_fcst component - wcoss_dell_p3
+#############################################################
+module load ips/18.0.1.163
+
+module load g2/3.1.0
+module load w3nco/2.0.6
+module load bacio/2.0.2
+
+##
+export FCMP=ifort
+export LDFLAGSM=
+export OMPFLAGM=
+

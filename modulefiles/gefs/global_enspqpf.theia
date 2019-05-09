@@ -1,0 +1,22 @@
+#%Module#####################################################
+## global_enspqpf component - Theia
+#############################################################
+module use /scratch3/NCEPDEV/nwprod/lib/modulefiles
+
+module load intel
+
+module load g2/v2.5.0
+module load w3nco/v2.0.6
+module load bacio/v2.0.1
+module load sp/v2.0.2
+
+module load jasper/v1.900.1
+module load png/v1.2.44
+module load z/v1.2.6
+
+
+##
+export FCMP=ifort
+export LDFLAGSM=
+export OMPFLAGM=
+
