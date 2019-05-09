@@ -8,9 +8,9 @@ date -u
 
 fi
 
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export gefsmpexec=${gefsmpexec:-mpirun}
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec:-mpirun}
 
 export CNVGRIB=$CNVGRIB21_GFS
 

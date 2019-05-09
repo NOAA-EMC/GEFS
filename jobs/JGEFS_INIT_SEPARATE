@@ -6,7 +6,7 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
+export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
 
 ############################
 # Set up cycle varaible
@@ -105,8 +105,8 @@ if [[ $gfssource != prod ]]; then
         export COMINenkf=${COMINenkf_base}
 fi
 
-export COMINgfs=${COMINgfs:-${COMROOThps}/gfs/prod/gfs.${PDY}}
-export COMINenkf=${COMINenkf:-${COMROOThps}/gfs/prod/enkf.}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.$PDY)}
+export COMINenkf=${COMINenkf:-$(compath.py gfs/prod)/enkfgdas.}
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}

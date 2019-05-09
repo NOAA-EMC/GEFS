@@ -9,9 +9,9 @@ set -xa
 export PS4=' + $SECONDS $na $LINENO: '
 date
 
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export gefsmpexec=${gefsmpexec:-mpirun}
 
-export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
+export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
 #export APRUNTRACK="aprun -j1 -n21 -N7 -d1"
 #export NODES=3
 #export IOBUF_PARAMS="*:size=32M:count=4:verbose"
