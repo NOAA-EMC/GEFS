@@ -79,19 +79,23 @@ export PARMglobal=$HOMEgsm/parm
 # export COMROOThps=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/nems_gefs/com    #Bing's archive for nems based gfs
 # export COMINenkf_base=/gpfs/hps3/ptmp/emc.glopara/fv3fy18retro2/enkf.gdas.
 # export COMINgfs_base=/gpfs/hps3/ptmp/emc.glopara/fv3fy18retro2/gfs.
+
 GFSArchivedData=no
 if [[ $GFSArchivedData == "yes" ]]; then
-    # You can also redefine HOMEdata here, it was defined in setbase
+    # HOMEdata, COMINgfs_base, COMINenkf_base and COMINcfs_base are defined in setbase, pointing to the NCO  gfs.v15 parallel
+    # However, if you use gfs/enkf data from archived data, you may speficfy them in this "if" block and make GFSArchivedData=yes
+
     # export HOMEdata=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common
 
-    # COMINgfs_base and COMINenkf_base are defined in setbase, pointing to the NCO  gfs.v15 parallel
-    # If you use gfs/enkf data from archived data, e.g $HOMEdata, specify here or in the corresponding "if" block .
-    export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
-    export COMINgfs_base=$HOMEdata/fv3init/gfs.
-    # export COMINgfs=${COMINgfs_base}${PDY}     # gfs com structure may be different from v15 parallel
-
-    # COMINcfs_base is also defined in setbase, but you can redefine it here
-    export COMINcfs_base=$HOMEdata/cfs/cfs.
+    if [[ -d /dcom && -d /hwrf ]]; then #WCOSS
+        export COMINenkf_base=$HOMEdata/enkf.gdas.
+        export COMINgfs_base=$HOMEdata/gfs.
+        export COMINcfs_base=/ensemble/noscrub/Walter.Kolczynski/gefs_input/cfs_2_sst/cfs.
+    else
+        export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
+        export COMINgfs_base=$HOMEdata/fv3init/gfs.
+        export COMINcfs_base=$HOMEdata/cfs/cfs.
+    fi
 fi
 
   export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc}
