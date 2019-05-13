@@ -79,18 +79,20 @@ export PARMglobal=$HOMEgsm/parm
 # export COMROOThps=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/nems_gefs/com    #Bing's archive for nems based gfs
 # export COMINenkf_base=/gpfs/hps3/ptmp/emc.glopara/fv3fy18retro2/enkf.gdas.
 # export COMINgfs_base=/gpfs/hps3/ptmp/emc.glopara/fv3fy18retro2/gfs.
+GFSArchiveData=no
+if [[ $GFSArchiveData == "yes" ]]; then
+    # You can also redefine HOMEdata here, it was defined in setbase
+    # export HOMEdata=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common
 
-# You can also redefine HOMEdata here, it was defined in setbase
-# export HOMEdata=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common
+    # COMINgfs_base and COMINenkf_base are defined in setbase, pointing to the NCO  gfs.v15 parallel
+    # If you use gfs/enkf data from archived data, e.g $HOMEdata, specify here or in the corresponding "if" block .
+    export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
+    export COMINgfs_base=$HOMEdata/fv3init/gfs.
+    # export COMINgfs=${COMINgfs_base}${PDY}     # gfs com structure may be different from v15 parallel
 
-# COMINgfs_base and COMINenkf_base are defined in setbase, pointing to the NCO  gfs.v15 parallel
-# If you use gfs/enkf data from archived data, e.g $HOMEdata, specify here or in the corresponding "if" block .
-# export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
-# export COMINgfs_base=$HOMEdata/fv3init/gfs.
-# export COMINgfs=${COMINgfs_base}${PDY}     # gfs com structure may be different from v15 parallel
-
-# COMINcfs_base is also defined in setbase, but you can redefine it here
-# export COMINcfs_base=/ensemble/noscrub/Walter.Kolczynski/gefs_input/cfs_2_sst/cfs
+    # COMINcfs_base is also defined in setbase, but you can redefine it here
+    export COMINcfs_base=$HOMEdata/cfs/cfs.
+fi
 
   export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc}
   export COMINenkf=${COMINenkf:-${COMINenkf_base}}
