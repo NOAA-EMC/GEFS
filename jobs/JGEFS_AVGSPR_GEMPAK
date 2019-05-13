@@ -127,7 +127,7 @@ export MP_CMDFILE=$DATA/poescript
 
 ## Execute the script.
 
-mpirun
+mpirun -n 2 cfp $MP_CMDFILE
 
 #cat $pgmout
 
