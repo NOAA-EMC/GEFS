@@ -24,6 +24,10 @@
 #                                                              10-Jan-2018    #
 # - Transitioning to GEFS workflow                              2-Apr-2019    #
 #                                                                             #
+#   wavemodID and wavemodTAG replace modID. wavemodTAG                        # 
+#   is used for ensemble-specific I/O. For deterministic                      #
+#   wavemodID=wavemodTAG                                                      # 
+#                                                                             #
 ###############################################################################
 # --------------------------------------------------------------------------- #
 # 0.  Preparations
@@ -39,7 +43,7 @@
 
   msg="HAS BEGUN on `hostname`"
   postmsg "$jlogfile" "$msg"
-  msg="Starting MWW3 PREPROCESSOR SCRIPT for $wavemodID"
+  msg="Starting MWW3 PREPROCESSOR SCRIPT for $wavemodTAG"
   postmsg "$jlogfile" "$msg"
 
   set +x
@@ -48,7 +52,7 @@
   echo '                      *** MWW3 PREPROCESSOR SCRIPT ***'
   echo '                      ********************************'
   echo '                          Global multi-grid model with GFS forcing'
-  echo "                          Model identifier : $wavemodID"
+  echo "                          Model identifier : $wavemodTAG "
   echo ' '
   echo "Starting at : `date`"
   echo ' '
@@ -252,29 +256,42 @@
 # --------------------------------------------------------------------------- #
 # 2. Ice pre - processing 
 
-    $USHwave/wave_ice.sh #> ice.out 
-    ERR=$?
-  
-    if [ -d ice ]
+# 2.a Check if ice input is perturbed (number of inputs equal to number of wave
+#     ensemble members
+    if [ "${RUNMEM}" = "-1" ] || [ "${WW3ICEIENS}" = "T" ] || [ "$waveMEMB" = "00" ]
     then
-      postmsg "$jlogfile" "NON-FATAL ERROR in ice field (will be trapped by fcst)."
-      set +x
-      echo ' '
-      echo '      Error in ice field (not fatal, will be trapped by fcst).'
-      echo ' '
-      sed "s/^/ice.out : /g" ice.out
-      echo ' '
-      [[ "$LOUD" = YES ]] && set -x
+
+      $USHwave/wave_ice.sh > wave_ice.out 
+      ERR=$?
+    
+      if [ -d ice ]
+      then
+        postmsg "$jlogfile" "NON-FATAL ERROR in ice field (will be trapped by fcst)."
+        set +x
+        echo ' '
+        echo '      Error in ice field (not fatal, will be trapped by fcst).'
+        echo ' '
+        sed "s/^/ice.out : /g" ice.out
+        echo ' '
+        [[ "$LOUD" = YES ]] && set -x
+      else
+        mv -f ice.out $DATA/outtmp
+        rm -f ww3_prep.$iceID.tmpl mod_def.$iceID
+        set +x
+        echo ' '
+        echo '      Ice field unpacking successful.'
+        echo ' '
+        [[ "$LOUD" = YES ]] && set -x
+      fi
     else
-      mv -f ice.out $DATA/outtmp
-      rm -f ww3_prep.$iceID.tmpl mod_def.$iceID
-      set +x
       echo ' '
-      echo '      Ice field unpacking successful.'
+      echo " Ice input is not perturbed, single ice file generated, skipping ${wavemodTAG}"
       echo ' '
-      [[ "$LOUD" = YES ]] && set -x
-    fi
- 
+    fi 
+  else
+      echo ' '
+      echo ' No input ice file generated, this run did not request pre-processed ice data '
+      echo ' '
   fi
 
 # --------------------------------------------------------------------------- #
@@ -284,307 +301,314 @@
 
 # --------------------------------------------------------------------------- #
 # 3.  Wind pre-processing
+
+    if [ "${RUNMEM}" = "-1" ] || [ "${WW3ATMIENS}" = "T" ] || [ "$waveMEMB" = "00" ]
+    then
  
-    rm -f cmdfile
-    touch cmdfile
-    chmod 744 cmdfile
+      rm -f cmdfile
+      touch cmdfile
+      chmod 744 cmdfile
  
 # 3.a Gather and pre-process grib2 files 
-    ymdh=$ymdh_beg
-  
-    while [ "$ymdh" -le "$ymdh_end" ]
-    do
-      echo "$USHwave/wave_g2ges.sh $ymdh > grb_$ymdh.out 2>&1" >> cmdfile
-      ymdh=`$NDATE $HOUR_INC $ymdh`
-    done
+      ymdh=$ymdh_beg
+    
+      while [ "$ymdh" -le "$ymdh_end" ]
+      do
+        echo "$USHwave/wave_g2ges.sh $ymdh > grb_$ymdh.out 2>&1" >> cmdfile
+        ymdh=`$NDATE $HOUR_INC $ymdh`
+      done
   
 # 3.b Execute the serial or parallel cmdfile
 
 # Set number of processes for mpmd
-    wavenproc=`wc -l cmdfile | awk '{print $1}'`
-    wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
-
-    set +x
-    echo ' '
-    echo "   Executing the copy command file at : `date`"
-    echo '   ------------------------------------'
-    echo ' '
-    [[ "$LOUD" = YES ]] && set -x
-
-    if [ "$nfile" -gt '1' ]
-    then
-      ${wavempexec} ${wavenproc} ${wave_mpmd} cmdfile
-      exit=$?
-    else
-      ./cmdfile
-      exit=$?
-    fi
-
-    if [ "$exit" != '0' ]
-    then
+      wavenproc=`wc -l cmdfile | awk '{print $1}'`
+      wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
+  
       set +x
       echo ' '
-      echo '********************************************'
-      echo '*** CMDFILE FAILED IN WIND GENERATION   ***'
-      echo '********************************************'
-      echo '     See Details Below '
+      echo "   Executing the copy command file at : `date`"
+      echo '   ------------------------------------'
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-    fi
- 
-# 3.c Check for errors
-
-    set +x
-    echo ' '
-    echo '   Checking for errors.'
-    echo ' '
-    [[ "$LOUD" = YES ]] && set -x
   
-#     We will go on if the number of errors in files is less
-#     than err_max
-
-    [[ "$LOUD" = YES ]] && set -x
-    err_max=1
-
-
-    ymdh=$ymdh_beg
-    nr_err=0
-
-    set +x
-    echo '      Sources of grib2 files :'
-    [[ "$LOUD" = YES ]] && set -x
-    while [ "$ymdh" -le "$ymdh_end" ]
-    do
-      if [ -d grb_${ymdh} ]
+      if [ "$nfile" -gt '1' ]
+      then
+        ${wavempexec} ${wavenproc} ${wave_mpmd} cmdfile
+        exit=$?
+      else
+        ./cmdfile
+        exit=$?
+      fi
+  
+      if [ "$exit" != '0' ]
       then
         set +x
         echo ' '
-        echo "         File for $ymdh : error in wave_g2ges.sh"
+        echo '********************************************'
+        echo '*** CMDFILE FAILED IN WIND GENERATION   ***'
+        echo '********************************************'
+        echo '     See Details Below '
         echo ' '
         [[ "$LOUD" = YES ]] && set -x
-        postmsg "$jlogfile" "    File for $ymdh : error in wave_g2ges.sh"
-        nr_err=`expr $nr_err + 1`
-        rm -f gwnd.$ymdh
-      else
-        grbfile=`grep 'File for' grb_${ymdh}.out`
-        if [ -z "$grbfile" ]
+      fi
+   
+# 3.c Check for errors
+  
+      set +x
+      echo ' '
+      echo '   Checking for errors.'
+      echo ' '
+      [[ "$LOUD" = YES ]] && set -x
+    
+#     We will go on if the number of errors in files is less
+#     than err_max
+
+      [[ "$LOUD" = YES ]] && set -x
+      err_max=1
+  
+  
+      ymdh=$ymdh_beg
+      nr_err=0
+
+      set +x
+      echo '      Sources of grib2 files :'
+      [[ "$LOUD" = YES ]] && set -x
+      while [ "$ymdh" -le "$ymdh_end" ]
+      do
+        if [ -d grb_${ymdh} ]
         then
           set +x
           echo ' '
-          echo "         File for $ymdh : cannot identify source"
+          echo "         File for $ymdh : error in wave_g2ges.sh"
           echo ' '
           [[ "$LOUD" = YES ]] && set -x
+          postmsg "$jlogfile" "    File for $ymdh : error in wave_g2ges.sh"
           nr_err=`expr $nr_err + 1`
           rm -f gwnd.$ymdh
         else
-          if [ ! -f gwnd.$ymdh ]
+          grbfile=`grep 'File for' grb_${ymdh}.out`
+          if [ -z "$grbfile" ]
           then
             set +x
             echo ' '
-            echo "         File for $ymdh : file not found"
+            echo "         File for $ymdh : cannot identify source"
             echo ' '
             [[ "$LOUD" = YES ]] && set -x
             nr_err=`expr $nr_err + 1`
+            rm -f gwnd.$ymdh
           else
-            set +x
-            echo ' '
-            echo "      $grbfile"
-            echo ' '
-            [[ "$LOUD" = YES ]] && set -x
-            mv -f grb_${ymdh}.out $DATA/outtmp
+            if [ ! -f gwnd.$ymdh ]
+            then
+              set +x
+              echo ' '
+              echo "         File for $ymdh : file not found"
+              echo ' '
+              [[ "$LOUD" = YES ]] && set -x
+              nr_err=`expr $nr_err + 1`
+            else
+              set +x
+              echo ' '
+              echo "      $grbfile"
+              echo ' '
+              [[ "$LOUD" = YES ]] && set -x
+              mv -f grb_${ymdh}.out $DATA/outtmp
+            fi
           fi
         fi
-      fi
-      ymdh=`$NDATE $HOUR_INC $ymdh`
-    done
-
-    if [ -f grb_*.out ]
-    then
-      set +x
-      echo ' '
-      echo '**********************************'
-      echo '*** ERROR OUTPUT wave_g2ges.sh ***'
-      echo '**********************************'
-      echo '            Possibly in multiple calls'
-      [[ "$LOUD" = YES ]] && set -x
-      echo "$wavemodID prep $date $cycle : error in wind grib2 files." >> $wavelog
-      set +x
-      for file in grb_*.out
-      do
-        echo ' '
-        sed "s/^/$file : /g" $file
+        ymdh=`$NDATE $HOUR_INC $ymdh`
       done
-      echo ' '
-      [[ "$LOUD" = YES ]] && set -x
-      mv -f grb_*.out $DATA/outtmp
-      postmsg "$jlogfile" "NON-FATAL ERROR in wave_g2ges.sh, possibly in multiple calls."
-    fi
-  
-    if [ "$nr_err" -gt "$err_max" ]
-    then
-      msg="ABNORMAL EXIT: ERROR(S) IN SIGMA FILES"
-      postmsg "$jlogfile" "$msg"
-      set +x
-      echo ' '
-      echo '********************************************* '
-      echo '*** FATAL ERROR : ERROR(S) IN WIND  FILES *** '
-      echo '********************************************* '
-      echo ' '
-      echo $msg
-      [[ "$LOUD" = YES ]] && set -x
-      echo "$wavemodID prep $date $cycle : fatal error in grib2 wind files." >> $wavelog
-      err=5;export err;${errchk}
-    fi
 
-    rm -f cmdfile
+      if [ -f grb_*.out ]
+      then
+        set +x
+        echo ' '
+        echo '**********************************'
+        echo '*** ERROR OUTPUT wave_g2ges.sh ***'
+        echo '**********************************'
+        echo '            Possibly in multiple calls'
+        [[ "$LOUD" = YES ]] && set -x
+        echo "$wavemodTAG prep $date $cycle : error in wind grib2 files." >> $wavelog
+        set +x
+        for file in grb_*.out
+        do
+          echo ' '
+          sed "s/^/$file : /g" $file
+        done
+        echo ' '
+        [[ "$LOUD" = YES ]] && set -x
+        mv -f grb_*.out $DATA/outtmp
+        postmsg "$jlogfile" "NON-FATAL ERROR in wave_g2ges.sh, possibly in multiple calls."
+      fi
+    
+      if [ "$nr_err" -gt "$err_max" ]
+      then
+        msg="ABNORMAL EXIT: ERROR(S) IN SIGMA FILES"
+        postmsg "$jlogfile" "$msg"
+        set +x
+        echo ' '
+        echo '********************************************* '
+        echo '*** FATAL ERROR : ERROR(S) IN WIND  FILES *** '
+        echo '********************************************* '
+        echo ' '
+        echo $msg
+        [[ "$LOUD" = YES ]] && set -x
+        echo "$wavemodTAG prep $date $cycle : fatal error in grib2 wind files." >> $wavelog
+        err=5;export err;${errchk}
+      fi
+  
+      rm -f cmdfile
 
 # 3.d Getwind data into single file 
 
-    set +x
-    echo ' '
-    echo '   Concatenate extracted wind fields ...'
-    echo ' '
-    [[ "$LOUD" = YES ]] && set -x
-
-    files=`ls gwnd.* 2> /dev/null`
-
-    if [ -z "$files" ]
-    then
-      msg="ABNORMAL EXIT: NO gwnd.* FILES FOUND"
-      postmsg "$jlogfile" "$msg"
       set +x
       echo ' '
-      echo '******************************************** '
-      echo '*** FATAL ERROR : CANNOT FIND WIND FILES *** '
-      echo '******************************************** '
+      echo '   Concatenate extracted wind fields ...'
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      echo "$wavemodID prep $date $cycle : no wind files found." >> $wavelog
-      err=6;export err;${errchk}
-    fi
-  
-    rm -f gfs.wind
 
-    for file in $files
-    do
-      cat $file >> gfs.wind
-      rm -f $file
-    done
+      files=`ls gwnd.* 2> /dev/null`
+
+      if [ -z "$files" ]
+      then
+        msg="ABNORMAL EXIT: NO gwnd.* FILES FOUND"
+        postmsg "$jlogfile" "$msg"
+        set +x
+        echo ' '
+        echo '******************************************** '
+        echo '*** FATAL ERROR : CANNOT FIND WIND FILES *** '
+        echo '******************************************** '
+        echo ' '
+        [[ "$LOUD" = YES ]] && set -x
+        echo "$wavemodTAG prep $date $cycle : no wind files found." >> $wavelog
+        err=6;export err;${errchk}
+      fi
+  
+      rm -f gfs.wind
+  
+      for file in $files
+      do
+        cat $file >> gfs.wind
+        rm -f $file
+      done
   
 # 3.e Run ww3_prnc
 
 # Convert gfs wind to netcdf
-    $WGRIB2 gfs.wind -netcdf gfs.nc
-
-    for grdID in $wndID $curvID
-    do
-
-      set +x
-      echo ' '
-      echo "   Running wind fields through preprocessor for grid $grdID"
-      echo ' '
-      [[ "$LOUD" = YES ]] && set -x
-
-      sed -e "s/HDRFL/T/g" ww3_prnc.wind.$grdID.tmpl > ww3_prnc.inp
-      ln -sf mod_def.$grdID mod_def.ww3
-
-      set +x
-      echo "Executing $EXECcode/ww3_prnc"
-      [[ "$LOUD" = YES ]] && set -x
-
-      $EXECcode/ww3_prnc > prnc.out
-      err=$?
-
-      if [ "$err" != '0' ]
-      then
-        msg="ABNORMAL EXIT: ERROR IN waveprnc"
-        postmsg "$jlogfile" "$msg"
+      $WGRIB2 gfs.wind -netcdf gfs.nc
+  
+      for grdID in $wndID $curvID
+      do
+  
         set +x
         echo ' '
-        echo '*************************************** '
-        echo '*** FATAL ERROR : ERROR IN waveprnc *** '
-        echo '*************************************** '
+        echo "   Running wind fields through preprocessor for grid $grdID"
         echo ' '
         [[ "$LOUD" = YES ]] && set -x
-        echo "$wavemodID prep $grdID $date $cycle : error in waveprnc." >> $wavelog
-        err=7;export err;${errchk}
-      fi
-
-      if [ ! -f wind.ww3 ]
-      then
-        msg="ABNORMAL EXIT: FILE wind.ww3 MISSING"
-        postmsg "$jlogfile" "$msg"
+  
+        sed -e "s/HDRFL/T/g" ww3_prnc.wind.$grdID.tmpl > ww3_prnc.inp
+        ln -sf mod_def.$grdID mod_def.ww3
+  
         set +x
-        echo ' '
-        cat waveprep.out
-        echo ' '
-        echo '****************************************'
-        echo '*** FATAL ERROR : wind.ww3 NOT FOUND ***'
-        echo '****************************************'
-        echo ' '
+        echo "Executing $EXECcode/ww3_prnc"
         [[ "$LOUD" = YES ]] && set -x
-        echo "$wavemodID prep $grdID $date $cycle : wind.ww3 missing." >> $wavelog
-        err=8;export err;${errchk}
-      fi
+  
+        $EXECcode/ww3_prnc > prnc.out
+        err=$?
+  
+        if [ "$err" != '0' ]
+        then
+          msg="ABNORMAL EXIT: ERROR IN waveprnc"
+          postmsg "$jlogfile" "$msg"
+          set +x
+          echo ' '
+          echo '*************************************** '
+          echo '*** FATAL ERROR : ERROR IN waveprnc *** '
+          echo '*************************************** '
+          echo ' '
+          [[ "$LOUD" = YES ]] && set -x
+          echo "$wavemodTAG prep $grdID $date $cycle : error in waveprnc." >> $wavelog
+          err=7;export err;${errchk}
+        fi
+  
+        if [ ! -f wind.ww3 ]
+        then
+          msg="ABNORMAL EXIT: FILE wind.ww3 MISSING"
+          postmsg "$jlogfile" "$msg"
+          set +x
+          echo ' '
+          cat waveprep.out
+          echo ' '
+          echo '****************************************'
+          echo '*** FATAL ERROR : wind.ww3 NOT FOUND ***'
+          echo '****************************************'
+          echo ' '
+          [[ "$LOUD" = YES ]] && set -x
+          echo "$wavemodTAG prep $grdID $date $cycle : wind.ww3 missing." >> $wavelog
+          err=8;export err;${errchk}
+        fi
 
-      rm -f mod_def.ww3
-      rm -f ww3_prep.inp
+        rm -f mod_def.ww3
+        rm -f ww3_prep.inp
 
-      mv wind.ww3 wind.$grdID
-      mv times.WND times.$grdID
+        mv wind.ww3 wind.$grdID
+        mv times.WND times.$grdID
 
 # 3.f Check to make sure wind files are properly incremented
 
-      first_pass='yes'
-      windOK='yes'
-      while read line
-      do
-        date1=`echo $line | cut -d ' ' -f 1`
-        date2=`echo $line | cut -d ' ' -f 2`
-        ymdh="$date1`echo $date2 | cut -c1-2`"
-        if [ "$first_pass" = 'no' ]
-        then
-          hr_inc=`$NHOUR $ymdh $ymdh_prev`
-          if [ "${hr_inc}" -gt "${HOUR_INC}" ]
+        first_pass='yes'
+        windOK='yes'
+        while read line
+        do
+          date1=`echo $line | cut -d ' ' -f 1`
+          date2=`echo $line | cut -d ' ' -f 2`
+          ymdh="$date1`echo $date2 | cut -c1-2`"
+          if [ "$first_pass" = 'no' ]
           then
-            set +x
-            echo "Incorrect wind forcing increment at $ymdh" 
-            [[ "$LOUD" = YES ]] && set -x
-            windOK='no'
+            hr_inc=`$NHOUR $ymdh $ymdh_prev`
+            if [ "${hr_inc}" -gt "${HOUR_INC}" ]
+            then
+              set +x
+              echo "Incorrect wind forcing increment at $ymdh" 
+              [[ "$LOUD" = YES ]] && set -x
+              windOK='no'
+            fi
           fi
-        fi
-        ymdh_prev=$ymdh
-        first_pass='no'
-      done < times.$grdID
-
-      if [ "$windOK" = 'no' ]
-      then
-        set +x
-        echo ' '
-        echo '************************************************'
-        echo '*** ERROR : WIND DATA INCREMENT INCORRECT !! ***'
-        echo '************************************************'
-        echo ' '
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$wavemodID prep $grdID $date $cycle : error in wind increment." >> $wavelog
-        err=9;export err;${errchk}
-      fi
+          ymdh_prev=$ymdh
+          first_pass='no'
+        done < times.$grdID
   
-    done
+        if [ "$windOK" = 'no' ]
+        then
+          set +x
+          echo ' '
+          echo '************************************************'
+          echo '*** ERROR : WIND DATA INCREMENT INCORRECT !! ***'
+          echo '************************************************'
+          echo ' '
+          [[ "$LOUD" = YES ]] && set -x
+          echo "$wavemodTAG prep $grdID $date $cycle : error in wind increment." >> $wavelog
+          err=9;export err;${errchk}
+        fi
+    
+      done
 
-    rm -f gfs.wind
-    rm -f mod_def.ww3
-    rm -f ww3_prnc.inp
+      rm -f gfs.wind
+      rm -f mod_def.ww3
+      rm -f ww3_prnc.inp
+    else
+      echo ' '
+      echo " Wind input is not perturbed, single wnd file generated, skipping ${wavemodTAG}"
+      echo ' '
+
+    fi
 
   else
 
-    echo ' '
-    echo ' Atmospheric inputs not generated, this is likely a coupled run '
-    echo ' '
-
+      echo ' '
+      echo ' Atmospheric inputs not generated, this run did not request pre-processed winds '
+      echo ' '
+  
   fi
-
-echo 'o0k after wind'
 
 #-------------------------------------------------------------------
 # CURR processing
@@ -594,43 +618,51 @@ echo 'o0k after wind'
 #-------------------------------------------------------------------
 # 4.  Process current fields
 # 4.a Get into single file 
-
-    set +x
-    echo ' '
-    echo '   Concatenate binary current fields ...'
-    echo ' '
-    [[ "$LOUD" = YES ]] && set -x
-
-    files=`ls rtofs.* 2> /dev/null`
-
-    if [ -z "$files" ]
+    if [ "${RUNMEM}" = "-1" ] || [ "${WW3CURIENS}" = "T" ] || [ "$waveMEMB" = "00" ]
     then
-      msg="ABNORMAL EXIT: NO rtofs.* FILES FOUND"
-      postmsg "$jlogfile" "$msg"
+
       set +x
       echo ' '
-      echo '******************************************** '
-      echo '*** FATAL ERROR : CANNOT FIND WIND FILES *** '
-      echo '******************************************** '
+      echo '   Concatenate binary current fields ...'
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      echo "$wavemodID prep $date $cycle : no current files found." >> $wavelog
-      err=10;export err;${errchk}
+
+      files=`ls rtofs.* 2> /dev/null`
+
+      if [ -z "$files" ]
+      then
+        msg="ABNORMAL EXIT: NO rtofs.* FILES FOUND"
+        postmsg "$jlogfile" "$msg"
+        set +x
+        echo ' '
+        echo '******************************************** '
+        echo '*** FATAL ERROR : CANNOT FIND WIND FILES *** '
+        echo '******************************************** '
+        echo ' '
+        [[ "$LOUD" = YES ]] && set -x
+        echo "$wavemodTAG prep $date $cycle : no current files found." >> $wavelog
+        err=10;export err;${errchk}
+      fi
+
+      rm -f curr.${curID}
+
+      for file in $files
+      do
+        cat $file >> curr.${curID}
+        rm -f $file
+      done
+
+    else
+      echo ' '
+      echo " Current input is not perturbed, single cur file generated, skipping ${wavemodTAG}"
+      echo ' '
     fi
 
-    rm -f curr.${curID}
-
-    for file in $files
-    do
-      cat $file >> curr.${curID}
-      rm -f $file
-    done
-
   else
-
-    echo ' '
-    echo ' Current inputs not generated, this is likely a coupled run '
-    echo ' '
+  
+      echo ' '
+      echo ' Current inputs not generated, this run did not request pre-processed currents '
+      echo ' '
 
   fi
 
@@ -640,9 +672,9 @@ echo 'o0k after wind'
 
 # 5.a ww3_multi template
 
-  if [ -f $FIXwave/ww3_multi.$wavemodID.inp.tmpl ]
+  if [ -f $FIXwave/ww3_multi.${wavemodID}.inp.tmpl ]
   then
-    cp $FIXwave/ww3_multi.$wavemodID.inp.tmpl ww3_multi.inp.tmpl
+    cp $FIXwave/ww3_multi.${wavemodID}.inp.tmpl ww3_multi.inp.tmpl
   fi
 
   if [ ! -f ww3_multi.inp.tmpl ]
@@ -655,7 +687,7 @@ echo 'o0k after wind'
     echo '*** FATAL ERROR : NO TEMPLATE FOR INPUT FILE *** '
     echo '************************************************ '
     echo ' '
-    echo "$wavemodID fcst $date $cycle : ww3_multi file missing." >> $wavelog
+    echo "${wavemodTAG} fcst $date $cycle : ww3_multi file missing." >> $wavelog
     echo $msg
     [[ "$LOUD" = YES ]] && set -x
     err=11;export err;${errchk}
@@ -781,10 +813,10 @@ echo 'o0k after wind'
 
   if [ -f ww3_multi.inp ]
   then
-    echo " Copying file ww3_multi.${wavemodID}.inp to $COMOUT "
-    cp ww3_multi.inp ${COMOUT}/ww3_multi.${wavemodID}.$cycle.inp
+    echo " Copying file ww3_multi.${wavemodTAG}.inp to $COMOUT "
+    cp ww3_multi.inp ${COMOUT}/ww3_multi.${wavemodTAG}.$cycle.inp
   else
-    echo "FATAL ERROR: file ww3_multi.${wavemodID}.$cycle.inp NOT CREATED, ABORTING"
+    echo "FATAL ERROR: file ww3_multi.${wavemodTAG}.$cycle.inp NOT CREATED, ABORTING"
     err=12;export err;${errchk}
   fi 
 
@@ -800,12 +832,12 @@ echo 'o0k after wind'
     do
       set +x
       echo ' '
-      echo "   Saving wind.$grdID as $COMOUT/${wavemodID}.$grdID.$PDY$cyc.wind"
-      echo "   Saving times.$grdID file as $COMOUT/$grdID.$PDY$cyc.$grdID.wind.times"
+      echo "   Saving wind.$grdID as $COMOUT/${wavemodTAG}.$grdID.$PDY$cyc.wind"
+      echo "   Saving times.$grdID file as $COMOUT/${wavemodTAG}.$grdID.$PDY$cyc.$grdID.wind.times"
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      cp wind.$grdID $COMOUT/${wavemodID}.$grdID.$PDY$cyc.wind
-      cp times.$grdID $COMOUT/${wavemodID}.$grdID.$PDY$cyc.$grdID.wind.times
+      cp wind.$grdID $COMOUT/${wavemodTAG}.$grdID.$PDY$cyc.wind
+      cp times.$grdID $COMOUT/${wavemodTAG}.$grdID.$PDY$cyc.$grdID.wind.times
     done
    fi
 
@@ -815,10 +847,10 @@ echo 'o0k after wind'
     do
       set +x
       echo ' '
-      echo "   Saving current.$grdID as $COMOUT/${wavemodID}.$grdID.$PDY$cyc.curr"
+      echo "   Saving current.$grdID as $COMOUT/${wavemodTAG}.$grdID.$PDY$cyc.curr"
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      cp curr.$grdID $COMOUT/${wavemodID}.$grdID.$PDY$cyc.curr
+      cp curr.$grdID $COMOUT/${wavemodTAG}.$grdID.$PDY$cyc.curr
     done
    fi
   fi 

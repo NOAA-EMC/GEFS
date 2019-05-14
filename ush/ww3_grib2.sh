@@ -67,11 +67,11 @@
   echo '+--------------------------------+'
   echo '!         Make GRIB files        |'
   echo '+--------------------------------+'
-  echo "   Model ID         : $wavemodID"
+  echo "   Model ID         : $wavemodTAG"
   [[ "$LOUD" = YES ]] && set -x
 
   if [ -z "$YMDH" ] || [ -z "$cycle" ] || [ -z "$EXECwave" ] || [ -z "$EXECcode" ] || \
-     [ -z "$COMOUT" ] || [ -z "$wavemodID" ] || [ -z "$SENDCOM" ] || \
+     [ -z "$COMOUT" ] || [ -z "$wavemodTAG" ] || [ -z "$SENDCOM" ] || \
      [ -z "$dtgrib" ] || [ -z "$ngrib" ] || [ -z "$gribflags" ] || \
      [ -z "$GRIDNR" ] || [ -z "$MODNR" ] || [ -z "$SENDDBN" ]
   then
@@ -128,7 +128,7 @@
   echo "   Executing $EXECcode/ww3_grib"
   [[ "$LOUD" = YES ]] && set -x
 
-  ln -sf ../$wavemodID.$grdID.${cycle}.grib2 gribfile
+  ln -sf ../$wavemodTAG.$grdID.${cycle}.grib2 gribfile
   $EXECcode/ww3_grib
   err=$?
 
@@ -156,12 +156,12 @@
   if [ "$SENDCOM" = 'YES' ]
   then
     set +x
-    echo "   Saving GRIB file as $COMOUT/$wavemodID.$grdID.$cycle.grib2"
+    echo "   Saving GRIB file as $COMOUT/$wavemodTAG.$grdID.$cycle.grib2"
     [[ "$LOUD" = YES ]] && set -x
-    cp -f ${DATA}/$wavemodID.$grdID.$cycle.grib2 $COMOUT/
-    $WGRIB2 -s $COMOUT/$wavemodID.$grdID.$cycle.grib2 > $COMOUT/$wavemodID.$grdID.$cycle.grib2.idx
+    cp -f ${DATA}/$wavemodTAG.$grdID.$cycle.grib2 $COMOUT/
+    $WGRIB2 -s $COMOUT/$wavemodTAG.$grdID.$cycle.grib2 > $COMOUT/$wavemodTAG.$grdID.$cycle.grib2.idx
     
-    if [ ! -f $COMOUT/$wavemodID.$grdID.$cycle.grib2 ]
+    if [ ! -f $COMOUT/$wavemodTAG.$grdID.$cycle.grib2 ]
     then
       set +x
       echo ' '
@@ -169,13 +169,13 @@
       echo '*** FATAL ERROR : ERROR IN ww3_grib2 *** '
       echo '********************************************* '
       echo ' '
-      echo " Error in moving grib file $wavemodID.$grdID.$cycle.grib2 to com"
+      echo " Error in moving grib file $wavemodTAG.$grdID.$cycle.grib2 to com"
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
       postmsg "$jlogfile" "FATAL ERROR : ERROR IN ww3_grib2"
       exit 4
     fi
-    if [ ! -f $COMOUT/$wavemodID.$grdID.$cycle.grib2.idx ]
+    if [ ! -f $COMOUT/$wavemodTAG.$grdID.$cycle.grib2.idx ]
     then
       set +x
       echo ' '
@@ -183,7 +183,7 @@
       echo '*** FATAL ERROR : ERROR IN ww3_grib2 INDEX FILE *** '
       echo '*************************************************** '
       echo ' '
-      echo " Error in moving grib file $wavemodID.$grdID.$cycle.grib2idx to com"
+      echo " Error in moving grib file $wavemodTAG.$grdID.$cycle.grib2idx to com"
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
       postmsg "$jlogfile" "FATAL ERROR : ERROR IN creating ww3_grib2 index"
@@ -193,11 +193,11 @@
     if [ "$SENDDBN" = 'YES' ]
     then
       set +x
-      echo "   Alerting GRIB file as $COMOUT/$wavemodID.$grdID.$cycle.grib2"
-      echo "   Alerting GRIB index file as $COMOUT/$wavemodID.$grdID.$cycle.grib2.idx"
+      echo "   Alerting GRIB file as $COMOUT/$wavemodTAG.$grdID.$cycle.grib2"
+      echo "   Alerting GRIB index file as $COMOUT/$wavemodTAG.$grdID.$cycle.grib2.idx"
       [[ "$LOUD" = YES ]] && set -x
-      $DBNROOT/bin/dbn_alert MODEL WAVE_GRIB_GB2 $job $COMOUT/$wavemodID.$grdID.$cycle.grib2
-      $DBNROOT/bin/dbn_alert MODEL WAVE_GRIB_GB2_WIDX $job $COMOUT/$wavemodID.$grdID.$cycle.grib2.idx
+      $DBNROOT/bin/dbn_alert MODEL WAVE_GRIB_GB2 $job $COMOUT/$wavemodTAG.$grdID.$cycle.grib2
+      $DBNROOT/bin/dbn_alert MODEL WAVE_GRIB_GB2_WIDX $job $COMOUT/$wavemodTAG.$grdID.$cycle.grib2.idx
     fi
   fi 
 

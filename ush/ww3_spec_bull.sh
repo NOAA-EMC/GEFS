@@ -60,7 +60,7 @@
   echo '+--------------------------------+'
   echo '!     Make spectral bulletin     |'
   echo '+--------------------------------+'
-  echo "   Model ID        : $wavemodID"
+  echo "   Model ID        : $wavemodTAG"
   [[ "$LOUD" = YES ]] && set -x
 
 # 0.b Check if buoy location set
@@ -110,7 +110,7 @@
 #     The tested variables should be exported by the postprocessor script.
 
   if [ -z "$YMDH" ] || [ -z "$date" ] || [ -z "$cycle" ] || \
-     [ -z "$dtbull" ] || [ -z "$EXECwave" ] || [ -z "$wavemodID" ] || \
+     [ -z "$dtbull" ] || [ -z "$EXECwave" ] || [ -z "$wavemodTAG" ] || \
      [ -z "$ymdh" ] || [ -z "${STA_DIR}" ]
   then
     set +x
@@ -181,11 +181,10 @@
     exit 4
   fi
 
-  if [ -f $buoy.bull ] && [ -f $buoy.cbull ] && [ -f $buoy.csv ]
+  if [ -f $buoy.bull ] && [ -f $buoy.cbull ]
   then
-    mv $buoy.bull  ${STA_DIR}/bull/$wavemodID.$buoy.bull
-    mv $buoy.cbull ${STA_DIR}/cbull/$wavemodID.$buoy.cbull
-    mv $buoy.csv   ${STA_DIR}/csbull/$wavemodID.$buoy.csbull
+    mv $buoy.bull  ${STA_DIR}/bull/$wavemodTAG.$buoy.bull
+    mv $buoy.cbull ${STA_DIR}/cbull/$wavemodTAG.$buoy.cbull
   else
     set +x
     echo ' '
@@ -198,9 +197,9 @@
     exit 7
   fi
 
-  for ext in bull cbull csbull
+  for ext in bull cbull 
   do
-    if [ ! -f "${STA_DIR}/${ext}/$wavemodID.$buoy.$ext" ]
+    if [ ! -f "${STA_DIR}/${ext}/$wavemodTAG.$buoy.$ext" ]
     then
       set +x
       echo ' '
@@ -208,9 +207,9 @@
       echo '*** FATAL ERROR : BULLETIN FILE NOT MOVED PROPERLY ***'
       echo'*******************************************************' 
       echo ' '
-      echo " file $wavemodID.$buoy.$ext not found in ${STA_DIR}/${ext}/ directory!!"
+      echo " file $wavemodTAG.$buoy.$ext not found in ${STA_DIR}/${ext}/ directory!!"
       [[ "$LOUD" = YES ]] && set -x
-      postmsg "$jlogfile" "FATAL ERROR : BULLETIN FILE $wavemodID.$buoy.$ext NOT FOUND"
+      postmsg "$jlogfile" "FATAL ERROR : BULLETIN FILE $wavemodTAG.$buoy.$ext NOT FOUND"
       exit 8
     fi
   done

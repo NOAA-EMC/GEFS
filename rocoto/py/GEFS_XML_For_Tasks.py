@@ -557,6 +557,10 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     # prdgen
     metatask_names.append('prdgen_high')
     metatask_names.append('prdgen_low')
+    # gwes
+    metatask_names.append('gwes_prep')
+    metatask_names.append('gwes_post')
+    metatask_names.append('gwes_stats')
 
     jobname = get_jobname(taskname)
     if taskname in metatask_names:

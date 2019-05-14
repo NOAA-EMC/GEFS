@@ -17,10 +17,6 @@ export errchk=${errchk:-err_chk}
 # Set HOMEwave to HOMEgefs
 HOMEwave=${HOMEwave:-${HOMEgefs}} 
 
-export DATA=${DATA:-${DATAROOT:?}/${jobid}}
-mkdir -p $DATA
-cd $DATA
-
 cyc=${cyc:-00}
 export cycle=${cycle:-t${cyc}z}
  
@@ -44,6 +40,17 @@ export EXECcode=${EXECcode:-$CODEwave/exec}
 setpdy.sh
 sh ./PDY
 
+##############################################
+ Set parameters using gwes_post.parm
+##############################################
+
+. $PARMwave/gwes.parm
+. $PARMwave/gwes_post.parm
+
+# Set wave model ID tag to include member number 
+# if ensemble; waveMEMB var empty in deterministic
+export wavemodTAG=${wavemodID}${waveMEMB}
+
 ###################################
 # Set COM Paths and GETGES environment
 ###################################
@@ -63,19 +70,20 @@ fi
 
 export wavelog=${COMOUTwave}/wave.log
 
-##############################################
- Set parameters using gwes_post.parm
-##############################################
-
-. $PARMwave/gwes.parm
-. $PARMwave/gwes_post.parm
-
-env | sort
+###################################
+# Create and go to DATA directory
+#  (requires wavemodTAG) 
+###################################
+export DATA=${DATA:-${DATAROOT:?}/${wavemodTAG}.${jobid}}
+mkdir -p $DATA
+cd $DATA
 
 ##################################
 # Set mpi serial command
 #################################
 export wave_mpmd=${wave_mpmd:-"mpirun.lsf cfp cmdfile"}
+
+env | sort
 
 ###################################
 # Execute the Script  

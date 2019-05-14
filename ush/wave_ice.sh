@@ -41,6 +41,7 @@
   echo '+--------------------------------+'
   echo '!         Make ice fields        |'
   echo '+--------------------------------+'
+  echo "   Model TAG       : $wavemodTAG"
   echo "   Model ID        : $wavemodID"
   echo "   Ice grid ID     : $iceID"
   echo ' '
@@ -49,8 +50,8 @@
 
   if [ -z "$YMDH" ] || [ -z "$cycle" ] || \
      [ -z "$COMOUT" ] || [ -z "$FIXwave" ] || [ -z "$EXECcode" ] || \
-     [ -z "$wavemodID" ] || [ -z "$iceID" ] || [ -z "$SENDCOM" ] || \
-     [ -z "$COMICE" ]
+     [ -z "$wavemodTAG" ] || [ -z "$iceID" ] || [ -z "$SENDCOM" ] || \
+     [ -z "$COMICE" ] || [ -z "$wavemodID" ]
   then
     set $setoff
     echo ' '
@@ -195,13 +196,24 @@
 
 # --------------------------------------------------------------------------- #
 # 3.  Save the ice file
-
+#
+# Ice file name will have ensemble member number if WW3ATMIENS=T
+# and only wavemodID if WW3ATMIENS=F
+#
+  if [ "${WW3ATMIENS}" = "T" ]
+  then 
+    icefile=${wavemodTAG}.${iceID}.$cycle.ice
+  elif [ "${WW3ATMIENS}" = "F" ]
+  then 
+    icefile=${wavemodID}.${iceID}.$cycle.ice
+  fi
+ 
   if [ "$SENDCOM" = 'YES' ]
   then
     set $setoff
-    echo "   Saving ice.ww3 as $COMOUT/${wavemodID}.${iceID}.$cycle.ice"
+    echo "   Saving ice.ww3 as $COMOUT/${icefile}"
     set $seton
-    cp ice.ww3 $COMOUT/${wavemodID}.${iceID}.$PDY$cyc.ice
+    cp ice.ww3 $COMOUT/${icefile}
   fi 
 
   rm -f ice.ww3
