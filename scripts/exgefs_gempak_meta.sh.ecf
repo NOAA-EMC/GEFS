@@ -37,7 +37,7 @@ export MP_CMDFILE=$DATA/poescript
 
 # Execute the script.
 
-mpirun
+mpirun -n $num cfp $MP_CMDFILE
 
 export err=$?; err_chk
 
