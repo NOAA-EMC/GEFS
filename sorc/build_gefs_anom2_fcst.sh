@@ -37,6 +37,8 @@ if $GetOriginal; then
     if [ $target == theia ]; then
         echo "This is on theia"
         echo "You don't need do anything, because it will not affect on Theia"
+    elif [ $target == jet ]; then
+        echo "This is on jet"
     elif [ $target == wcoss_cray ]; then
         echo "This is on wcoss_cray" 
         export INCSM="-I ${G2_INC4} -I/opt/cray/iobuf/2.0.5/include"
