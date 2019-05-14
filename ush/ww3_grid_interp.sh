@@ -179,14 +179,14 @@
   if [ "$SENDCOM" = 'YES' ]
   then
     set +x
-    echo "   Saving GRID file as $COMOUT/$wavemodID.out_grd.$grdID.$PDY$CYC"
+    echo "   Saving GRID file as $COMOUT/$wavemodID.out_grd.$grdID.$PDY$cyc"
     [[ "$LOUD" = YES ]] && set -x
-    cp out_grd.$grdID $COMOUT/$wavemodID.out_grd.$grdID.$PDY$CYC
+    cp out_grd.$grdID $COMOUT/$wavemodID.out_grd.$grdID.$PDY$cyc
 
 #    if [ "$SENDDBN" = 'YES' ]
 #    then
 #      set +x
-#      echo "   Alerting GRID file as $COMOUT/$wavemodID.out_grd.$grdID.$PDY$CYC
+#      echo "   Alerting GRID file as $COMOUT/$wavemodID.out_grd.$grdID.$PDY$cyc
 #      [[ "$LOUD" = YES ]] && set -x
 
 #
@@ -204,7 +204,7 @@
   [[ "$LOUD" = YES ]] && set -x
 
   cd ..
-#  rm -rf grint_${grdID}_${ymdh}
+  mv -f grint_${grdID}_${ymdh} done.grint_${grdID}_${ymdh}
 
   set +x
   echo ' '

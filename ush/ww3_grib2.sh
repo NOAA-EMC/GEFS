@@ -33,11 +33,12 @@
   cd $DATA
 #  postmsg "$jlogfile" "Making GRIB2 Files."   # commented to reduce unnecessary output to jlogfile
 
-  grdID=$1  
-  rm -rf grib_$grdID
-  mkdir grib_$grdID
+  grdID=$1 
+  gribDIR=${grdID}_grib 
+  rm -rfd ${gribDIR}
+  mkdir ${gribDIR}
   err=$?
-  if [ "$err" != '0' ]
+  if [ $err != 0 ]
   then
     set +x
     echo ' '
@@ -50,7 +51,7 @@
     exit 1
   fi
 
-  cd grib_$grdID
+  cd ${gribDIR}
 
 # 0.b Define directories and the search path.
 #     The tested variables should be exported by the postprocessor script.
@@ -131,7 +132,7 @@
   $EXECcode/ww3_grib
   err=$?
 
-  if [ "$err" != '0' ]
+  if [ $err != 0 ]
   then
     set +x
     echo ' '
@@ -209,7 +210,7 @@
   [[ "$LOUD" = YES ]] && set -x
 
   cd ..
-#  rm -rf grib_$grdID
+  mv -f ${gribDIR} done.${gribDIR}
 
   set +x
   echo ' '

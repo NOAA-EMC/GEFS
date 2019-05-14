@@ -52,7 +52,7 @@ elif [[ "$WHERE_AM_I" == theia ]]; then
     module load prod_util/v1.1.0
     #module load grib_util/v1.1.0
     module load g2tmpl/v1.5.0
-    export PATH=$PATH:./
+        export PATH=$PATH:./
 
     # Temporary setting to test common settings
 	. $GEFS_ROCOTO/bin/theia/common.sh

@@ -172,7 +172,7 @@
   [[ "$LOUD" = YES ]] && set -x
 
   cd ..
-  rm -rf grib_$grdID
+  mv -f grib_$grdID done.grib_$grdID 
 
   set +x
   echo ' '

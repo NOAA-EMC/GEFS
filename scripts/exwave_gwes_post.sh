@@ -1,21 +1,21 @@
 #!/bin/bash
 ###############################################################################
 #                                                                             #
-# This script is the postprocessor for the multi scale MWW3 wave model. It    #
+# This script is the postprocessor for the multi scale  WW3 wave model. It    #
 # sets some shell script variables for export to child scripts and copies     #
 # some generally used files to the work directory. After this the actual      #
 # postprocessing is performed by the following child scripts :                #
 #                                                                             #
 #  ww3_grib.sh              : generates GRIB2 files.                          #
-#  ww3_outp.sh              : generates spectral data files for output        #
+#  ww3_spec2.sh             : generates spectral data files for output        #
 #                             locations.                                      #
-#  ww3_bull.sh              : generates bulletins for output locations.       #
+#  ww3_spec_bull.sh         : generates bulletins for output locations.       #
 #                             grids for backward compatibility                #
 #  ww3_tar.sh               : tars the spectral and bulletin multiple files   #
-#  ww3_gint.sh              : interpolates data from new grids to old grids   #
+#  ww3_grid_interp.sh       : interpolates data from new grids to old grids   #
 #                                                                             #
 # Remarks :                                                                   #
-# - The above scripts are (mostly) run under poe in parallel.                 #
+# - The above scripts are (mostly) run using mpiserial or cfp.                #
 #   Each script runs in its own directory created in DATA. If all is well     #
 #   this directory disappears. If this directory is still there after poe     #
 #   has finished, an error has occured Only then the output of the process    #
@@ -53,12 +53,22 @@
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
 
-#  export MP_PGMMODEL=mpmd
-#  export MP_CMDFILE=./cmdfile
-
-# Check if NTASKS set for mpiserial runs
-NTASKS=${NTASKS:?Var NTASKS Not Set}
-
+# Script will run serial only if not LSB or pre-defined NTASKS
+#     The actual work is distributed over these tasks.
+  nfile=
+  x=1
+  if [ -z ${LSB_MCPU_HOSTS+x} ] && [ -z ${NTASKS+x} ]        
+  then
+    echo " Scripts requires LSB_MCPU_HOSTS or NTASKS to be set "
+    err=999; export err;${errchk}
+  elif [ ! -z ${LSB_MCPU_HOSTS+x} ]
+  then
+    nppn=`echo $LSB_MCPU_HOSTS | awk '{ print $2}'`
+    nnod=`echo $LSB_MCPU_HOSTS | wc -w | awk '{ print $1}'`
+    nnod=`expr ${nnod} / 2`
+    nfile=`expr $nnod \* $nppn`
+  fi
+  NTASKS=${NTASKS:-$nfile}
 # 0.b Date and time stuff
 
   export date=$PDY
@@ -124,23 +134,15 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
 
 # 1.a Model definition files and output files (set up using poe) 
 
-# 1.a.1 Set up the poe command 
-
-  echo "NFILE: " $NTASKS
-  nfile=$NTASKS
-
-  set +x
-  echo ' '
-  echo "   Setting up first command file for copying model definition and data files."
-  echo "   Set up command file structure"
-  echo "      Number of command files                         : $nfile"
-  [[ "$LOUD" = YES ]] && set -x
+# 1.a.1 Set up the parallel command tasks
 
   rm -f cmdfile
   touch cmdfile
   chmod 744 cmdfile
 
   [[ "$LOUD" = YES ]] && set -x
+
+# 1.a.2 Create entries in cmdfile for copying raw data files
 
   for grdID in $waveGRD $sbsGRD
   do
@@ -164,11 +166,11 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
     echo "cp $COMIN/$wavemodID.out_pnt.${buoy}.$PDY$cyc out_pnt.ww3" >> cmdfile
   fi
 
-# Number of processes for mpmd
+# Set number of processes for mpmd
     wavenproc=`wc -l cmdfile | awk '{print $1}'`
     wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
 
-# 1.a.2 Execute the serial or paralle command
+# 1.a.3 Execute the serial or parallel cmdfile
 
   set +x
   echo ' '
@@ -177,7 +179,7 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
 
-  if [ "$nfile" -gt '1' ]
+  if [ "$wavenproc" -gt '1' ]
   then
     ${wavempexec} ${wavenproc} ${wave_mpmd} cmdfile
     exit=$?
@@ -198,9 +200,9 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
     [[ "$LOUD" = YES ]] && set -x
   fi
 
-# 1.a.3 Error checks
+# 1.a.4 Error checks
 
-  for grdID in $grids
+  for grdID in $waveGRD
   do
     if [ ! -f out_grd.$grdID ]
     then
@@ -249,7 +251,7 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
   fi
 
 
-# 1.c Model definition files
+# 1.b Model definition files
 
   for grdID in $waveGRD $sbsGRD $postGRD $interpGRD $buoy
   do
@@ -280,7 +282,7 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
 
   done
 
-# 1.d Output locations file
+# 1.c Output locations file
 
   rm -f buoy.loc
 
@@ -313,36 +315,36 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
     bullOK='no'
   fi
 
-# 1.e Input template files
+# 1.d Input template files
 
   if [ "$grintOK" = 'yes' ]
   then
     for intGRD in $interpGRD
     do
-    if [ -f $FIXwave/${intGRD}_interp.inp.tmpl ]
-    then
-      cp $FIXwave/${intGRD}_interp.inp.tmpl ${intGRD}_interp.inp.tmpl
-    fi
-
-    if [ -f ${intGRD}_interp.inp.tmpl ]
-    then
-      set +x
-      echo "   ${intGRD}_interp.inp.tmpl copied. Syncing to all nodes ..."
-      [[ "$LOUD" = YES ]] && set -x
-      $FSYNC ${intGRD}_interp.inp.tmpl
-    else
-      set +x
-      echo ' '
-      echo '*********************************************** '
-      echo '*** ERROR : NO TEMPLATE FOR GRINT INPUT FILE *** '
-      echo '*********************************************** '
-      echo ' '
-      [[ "$LOUD" = YES ]] && set -x
-      echo "$wavemodID post $date $cycle : GRINT template file missing." >> $wavelog
-      postmsg "$jlogfile" "NON-FATAL ERROR : NO TEMPLATE FOR GRINT INPUT FILE"
-      exit_code=15
-      grintOK='no'
-    fi
+      if [ -f $FIXwave/${intGRD}_interp.inp.tmpl ]
+      then
+        cp $FIXwave/${intGRD}_interp.inp.tmpl ${intGRD}_interp.inp.tmpl
+      fi
+  
+      if [ -f ${intGRD}_interp.inp.tmpl ]
+      then
+        set +x
+        echo "   ${intGRD}_interp.inp.tmpl copied. Syncing to all nodes ..."
+        [[ "$LOUD" = YES ]] && set -x
+        $FSYNC ${intGRD}_interp.inp.tmpl
+      else
+        set +x
+        echo ' '
+        echo '*********************************************** '
+        echo '*** ERROR : NO TEMPLATE FOR GRINT INPUT FILE *** '
+        echo '*********************************************** '
+        echo ' '
+        [[ "$LOUD" = YES ]] && set -x
+        echo "$wavemodID post $date $cycle : GRINT template file missing." >> $wavelog
+        postmsg "$jlogfile" "NON-FATAL ERROR : NO TEMPLATE FOR GRINT INPUT FILE"
+        exit_code=15
+        grintOK='no'
+      fi
     done
   fi
   if [ "$gribOK" = 'yes' ]
@@ -424,7 +426,7 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
     bullOK='no'
   fi
 
-# 1.f Getting buoy information for points
+# 1.e Getting buoy information for points
 
   if [ "$specOK" = 'yes' ] || [ "$bullOK" = 'yes' ]
   then
@@ -458,7 +460,7 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
       echo "$wavemodID post $date $cycle : buoy log file failed to be created." >> $wavelog
       echo $msg
       [[ "$LOUD" = YES ]] && set -x
-      exit_code=19
+      err=1;export err;${errchk}
       specOK='no'
       bullOK='no'
     fi
@@ -501,7 +503,7 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
 
   fi
 
-# 1.g Data summary
+# 1.f Data summary
 
   set +x
   echo ' '
@@ -517,15 +519,13 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
   [[ "$LOUD" = YES ]] && set -x
 
 # --------------------------------------------------------------------------- #
-# 2.  Make second command file(s) (GRID interpolation and GRIB generation)
+# 2.  Make consolidated grib2 file for side-by-side grids and interpolate
+#     onto extended grids
+#
 # 2.a Command file set-up
-#     The command file points to $nfile files named cmdfile.$ifile.
-#     The actual work is distributed over these files. The skip parameter
-#     is used for load balancing. GRIB packing takes more time than making
-#     spectral data files or bulletins.
 
   set +x
-  echo '   Making second command file (GRID Interpolation, GRIB, SPEC and BULLETINS) '
+  echo '   Making command file for sbs grib2 and GRID Interpolation '
 
   rm -f cmdfile
   touch cmdfile
@@ -533,7 +533,7 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
 
   [[ "$LOUD" = YES ]] && set -x
 
-# 2.c GRIB files for side-by-side grids
+# 2.b Generate GRIB files for side-by-side grid (if any)s
 
 # GRIB field time step -- dtgrib
 # Number of GRIB fields -- ngrib
@@ -565,12 +565,10 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
 
   fi
 
+# 2.c Generate binary raw data for extended, interpolated grids (if any)
+
   if [ "$grintOK" = 'yes' ]
   then
-# Other Xtended grids to be activated if need to post-process other xgrids
-# Currently the global xgrid for multi_1 is created side by side and the unified fiel can
-# be created as other regular grid types using ww3_grib2_cat. For GWES, extended grid
-# needs to use this processing route
     for grdID in $interpGRD
     do
       case $grdID in
@@ -586,17 +584,15 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
   wavenproc=`wc -l cmdfile | awk '{print $1}'`
   wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
 
-# --------------------------------------------------------------------------- #
-# 3   Execute gridded filed command
-# 3.a Execution
+# 2.d Execute sbs grib2 and interpolation grids cmdfile
 
   set +x
-  echo "   Executing gridded command file at : `date`"
-  echo '   ----------------------------------'
+  echo "   Executing sbs grib2 and interpolated grids raw cmdfile at : `date`"
+  echo '   ----------------------------------------------------------'
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
 
-  if [ "$nfile" -gt '1' ]
+  if [ "$wavenproc" -gt '1' ]
   then
     ${wavempexec} ${wavenproc} ${wave_mpmd} cmdfile
     exit=$?
@@ -605,23 +601,31 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
     exit=$?
   fi
 
+# 2.e Check for errors
+
   if [ "$exit" != '0' ]
   then
     set +x
     echo ' '
     echo '***********************************************************'
-    echo '*** POE FAILURE DURING GRIB AND POINT OUTPUT GENERATION ***'
+    echo '*** CMDFILE FAILED TO GENERATE SBS GRIB2 AND GINT FILES ***'
     echo '***********************************************************'
     echo '     See Details Below '
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
   fi
 
-# END of grib2 cat and grint MPMD section
+# --------------------------------------------------------------------------- #
+# 3. Generate grib2 filed for postprocessed grids, including exetend grids (if)
+#
+
+# 3.a Prepare cmdfile
 
   rm -f cmdfile
   touch cmdfile
   chmod 744 cmdfile
+
+# 3.b Generate post grib2 files
 
   if [ "$gribOK" = 'yes' ]
   then
@@ -629,11 +633,11 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
     do
 
       case $grdID in
-      glo_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-      glo_15mext) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_15mext) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
                   GRIDNR=11  ; MODNR=255 ; dtgrib=10800. ; ngrib=181 ;;
-      glo_30mext) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_30mext) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
                   GRIDNR=11  ; MODNR=11  ; dtgrib=3600. ; ngrib=181 ;;
       esac
 
@@ -642,19 +646,17 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
       dtgh=`expr ${dtgi} / 3600`
       ngrib=`expr ${lsth} / ${dtgh} + 1`
 
-      echo "$USHwave/ww3_grib2.sh $grdID $dtgrib $ngrib $GRIDNR $MODNR $gribFL > grib_$grdID.out 2>&1"               >> cmdfile
+      echo "$USHwave/ww3_grib2.sh $grdID $dtgrib $ngrib $GRIDNR $MODNR $gribFL > grib_$grdID.out 2>&1"  >> cmdfile
 
     done
 
   fi
 
+# 3.c Run mpmd cmdfile
+
 # Determine number of processes needed for mpmd
   wavenproc=`wc -l cmdfile | awk '{print $1}'`
   wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
-
-# --------------------------------------------------------------------------- #
-# 3   Execute gridded filed command
-# 3.a Execution
 
   set +x
   echo "   Executing gridded command file at : `date`"
@@ -662,36 +664,40 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
 
-  if [ "$nfile" -gt '1' ]
+  if [ "$wavenproc" -gt '1' ]
   then
     ${wavempexec} ${wavenproc} ${wave_mpmd} cmdfile
     exit=$?
   else
-#    ./cmdfile.1
     ./cmdfile
     exit=$?
   fi
+
+# 3.d Check for errors
 
   if [ "$exit" != '0' ]
   then
     set +x
     echo ' '
     echo '***********************************************************'
-    echo '*** POE FAILURE DURING GRIB AND POINT OUTPUT GENERATION ***'
+    echo '*** CMDFILE FAILED TO GENERATE POST GRIB2 FILES ***********'
     echo '***********************************************************'
-    echo '     See Details Below '
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
+    err=2;export err;${errchk}
   fi
 
-# End of gridded field section
+# --------------------------------------------------------------------------- #
+# 4. Point outputs: files containing spectra, bulletins 
+#
 
+# 4.a Set up cmdfile
 
   rm -f cmdfile
   touch cmdfile
   chmod 744 cmdfile
 
-# 2.e Spectral data files
+# 4.b Spectral data files
 
   set +x; [ "$LOUD" = YES -a "$specOK" = 'yes' ] 
   if [ "$specOK" = 'yes' ]
@@ -708,7 +714,7 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
   fi
   [[ "$LOUD" = YES ]] && set -x
 
-# 2.f Bulletins
+# 4.c Bulletins
 
   set +x; [ "$LOUD" = YES -a "$bullOK" = 'yes' ] 
   if [ "$bullOK" = 'yes' ]
@@ -723,21 +729,19 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
   fi
   [[ "$LOUD" = YES ]] && set -x
 
+# 4.d Execute point output cmd file
+
 # Determine number of processes needed for mpmd
   wavenproc=`wc -l cmdfile | awk '{print $1}'`
   wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
 
-# --------------------------------------------------------------------------- #
-# 3   Execute second command file
-# 3.a Execution
-
   set +x
-  echo "   Executing second command file at : `date`"
-  echo '   ----------------------------------'
+  echo "   Executing point output command file at : `date`"
+  echo '   ---------------------------------------'
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
 
-  if [ "$nfile" -gt '1' ]
+  if [ "$wavenproc" -gt '1' ]
   then
     ${wavempexec} ${wavenproc} ${wave_mpmd} cmdfile
     exit=$?
@@ -746,35 +750,33 @@ NTASKS=${NTASKS:?Var NTASKS Not Set}
     exit=$?
   fi
 
+# 4.e Check for errors
+
   if [ "$exit" != '0' ]
   then
     set +x
     echo ' '
     echo '***********************************************************'
-    echo '*** POE FAILURE DURING GRIB AND POINT OUTPUT GENERATION ***'
+    echo '*** CMDFILE FAILED TO GENERATE SPEC AND BULLETIN FILES  ***'
     echo '***********************************************************'
-    echo '     See Details Below '
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
+    err=3;export err;${errchk}
   fi
 
-
-# Done here
-exit
-
 # --------------------------------------------------------------------------- #
-# 4.  Check for errors
+# 5.  General error checking
 
   set +x
   echo ' '
   echo '   Checking for errors (error output concatenated below).'
   [[ "$LOUD" = YES ]] && set -x
 
-# 4.b Extended grid interpolation
+# 5.a Grid interpolation
 
-  if [ "$grintxOK" = 'yes' ]
+  if [ "$grintOK" = 'yes' ]
   then
-    for grdID in $Xgrids
+    for grdID in $interpGRD
     do
       if [ -d grint_$grdID ]
       then
@@ -782,8 +784,8 @@ exit
         echo "      Error in GRID interpolation for $grdID."
         [[ "$LOUD" = YES ]] && set -x
         postmsg "$jlogfile" "NON-FATAL ERROR in GRID interpolation for $grdID."
+        mv -f grint_$grdID.out grint_$grdID.err 
       else
-        rm -f grint_$grdID.out
         set +x
         echo "      GRID interpolation successful for $grdID."
         [[ "$LOUD" = YES ]] && set -x
@@ -795,55 +797,20 @@ exit
         echo "      Error in GRIB encoding for $grdID."
         [[ "$LOUD" = YES ]] && set -x
         postmsg "$jlogfile" "NON-FATAL ERROR in GRIB encoding for $grdID."
+        mv -f grib_$grdID.out grib_$grdID.err 
       else
-        rm -f grib_$grdID.out
         set +x
         echo "      GRIB encoding successful for $grdID."
         [[ "$LOUD" = YES ]] && set -x
-        touch $COMOUT/$grdID.t${cyc}z.gribdone
-      fi
-    done
-  fi
-# 4.b Extended grid interpolation
-
-  if [ "$grintoxOK" = 'yes' ]
-  then
-    for grdID in $OXgrids
-    do
-      if [ -d grint_$grdID ]
-      then
-        set +x
-        echo "      Error in GRID interpolation for $grdID."
-        [[ "$LOUD" = YES ]] && set -x
-        postmsg "$jlogfile" "NON-FATAL ERROR in GRID interpolation for $grdID."
-      else
-        rm -f grint_$grdID.out
-        set +x
-        echo "      GRID interpolation successful for $grdID."
-        [[ "$LOUD" = YES ]] && set -x
-      fi
-
-      if [ -d grib_$grdID ]
-      then
-        set +x
-        echo "      Error in GRIB encoding for $grdID."
-        [[ "$LOUD" = YES ]] && set -x
-        postmsg "$jlogfile" "NON-FATAL ERROR in GRIB encoding for $grdID."
-      else
-        rm -f grib_$grdID.out
-        set +x
-        echo "      GRIB encoding successful for $grdID."
-        [[ "$LOUD" = YES ]] && set -x
-        touch $COMOUT/$grdID.t${cyc}z.gribdone
       fi
     done
   fi
 
-# 4.b GRIB file
+# 5.b GRIB file
 
   if [ "$gribOK" = 'yes' ]
   then
-    for grdID in $grids
+    for grdID in $sbsGRD $postGRD
     do
       if [ -d grib_$grdID ]
       then
@@ -851,25 +818,22 @@ exit
         echo "      Error in GRIB encoding for $grdID."
         [[ "$LOUD" = YES ]] && set -x
         postmsg "$jlogfile" "NON-FATAL ERROR in GRIB encoding for $grdID."
+        mv -f grib_$grdID.out grib_$grdID.err
       else
-        rm -f grib_$grdID.out
         set +x
         echo "      GRIB encoding successful for $grdID."
         [[ "$LOUD" = YES ]] && set -x
-        touch $COMOUT/$grdID.t${cyc}z.gribdone
       fi
     done
   fi
 
-# 4.d Spectral data files and bulletins
+# 5.c Spectral data files and bulletins
 
   set +x
-#  bullstring='Bulletins not generated'
-#  specstring='Spectra not generated'
 
   if  [ "$specOK" = 'yes' ]
   then
-    if [ -d spec_* ]
+    if ls spec_* 1> /dev/null 2>&1
     then
       for buoy in $buoys
       do
@@ -877,18 +841,17 @@ exit
         then
           specstring='Error in spectra.'
           postmsg "$jlogfile" "NON-FATAL ERROR in spectra."
-        else
-          rm -f spec_$buoy.out
+          mv -f spec_$buoy.out spec_$buoy.err
         fi
       done
     else
-      rm -f spec*.out
+      echo " Spectra OK "
     fi
   fi
  
   if  [ "$bullOK" = 'yes' ]
   then
-    if [ -d bull_* ]
+    if ls bull_* 1> /dev/null 2>&1
     then
       for buoy in $buoys
       do
@@ -896,76 +859,21 @@ exit
         then
           specstring='Error in spectra.'
           postmsg "$jlogfile" "NON-FATAL ERROR in spectra."
-        else
-          rm -f bull_$buoy.out
+          mv -f bull_$buoy.out bull_$buoy.err
         fi
       done
     else
-      rm -f bull*.out
+      echo " Bulletins OK "
     fi
   fi
 
   [[ "$LOUD" = YES ]] && set -x
 
-  if [ -f *.out ]
+  if ls *.err 1> /dev/null 2>&1
   then
-    for grdID in $Ogrids
+    for grdID in $waveGRD $sbsGRD $postGRD
     do 
-      if [ -f grint_$grdID.out ]
-      then
-        set +x
-        echo ' '
-        echo '********************************************'
-        echo '*** ERROR OUTPUT ww3_grid_interp.sh ***'
-        echo '********************************************'
-        echo ' '
-        [[ "$LOUD" = YES ]] && set -x 
-        echo "$wavemodID post $date $cycle : error in GRID Interpolation." >> $wavelog
-        postmsg "$jlogfile" "NON-FATAL ERROR in ww3_grid_interp.sh"
-        exit_code=20
-        sed "s/^/grint_$grdID.out : /g"  grint_$grdID.out
-        rm -f grint_$grdID.out
-	grintOK='no'
-      fi
-
-      if [ -f grib_$grdID.out ]
-      then
-        set +x
-        echo ' '
-        echo '**************************************'
-        echo '*** ERROR OUTPUT ww3_grib2.sh ***'
-        echo '**************************************'
-        echo ' '
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$wavemodID post $date $cycle : error in subsequent GRIB encoding (for interpolated grids)." >> $wavelog
-        postmsg "$jlogfile" "NON-FATAL ERROR in ww3_grib2.sh"
-        exit_code=21
-        sed "s/^/grib_$grdID.out : /g"  grib_$grdID.out
-        rm -f grib_$grdID.out
-	grintOK='no'
-      fi
-
-      if [ -f grib1_$grdID.out ]
-      then
-        set +x
-        echo ' '
-        echo '**************************************'
-        echo '*** ERROR OUTPUT ww3_grib1.sh ***'
-        echo '**************************************'
-        echo ' '
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$wavemodID post $date $cycle : error in subsequent GRIB1 encoding (for interpolated grids)." >> $wavelog
-        postmsg "$jlogfile" "NON-FATAL ERROR in ww3_grib1.sh"
-        exit_code=21
-        sed "s/^/grib1_$grdID.out : /g"  grib1_$grdID.out
-        rm -f grib1_$grdID.out
-	grintOK='no'
-      fi
-    done
-
-    for grdID in $grids
-    do 
-      if [ -f grib_$grdID.out ]
+      if [ -f grib_$grdID.err ]
       then
         set +x
         echo ' '
@@ -976,14 +884,13 @@ exit
         [[ "$LOUD" = YES ]] && set -x
         echo "$wavemodID post $date $cycle : error in GRIB." >> $wavelog
         postmsg "$jlogfile" "NON-FATAL ERROR in ww3_grib2.sh"
-        exit_code=22
-        sed "s/^/grib_$grdID.out : /g"  grib_$grdID.out
-        rm -f grib_$grdID.out
+        err=2;export err;${errchk}
+        sed "s/^/grib_$grdID.err : /g"  grib_$grdID.err
       fi
 
     done
 
-    if [ -f spec_*.out ]
+    if ls spec_*.err 1> /dev/null 2>&1
     then
       set +x
       echo ' '
@@ -994,16 +901,15 @@ exit
       [[ "$LOUD" = YES ]] && set -x
       echo "$wavemodID post $date $cycle : error in spectra." >> $wavelog
       postmsg "$jlogfile" "NON-FATAL ERROR in ww3_spec.sh, possibly in multiple calls."
-      exit_code=24
-      for file in spec_*.out
+      err=3;export err;${errchk}
+      for file in spec_*.err
       do
         echo ' '
         sed "s/^/$file : /g" $file
       done
-      rm -f spec_*.out
     fi
 
-    if [ -f bull_*.out ]
+    if ls bull_*.err 1> /dev/null 2>&1
     then
       set +x
       echo ' '
@@ -1015,229 +921,32 @@ exit
       [[ "$LOUD" = YES ]] && set -x
       echo "$wavemodID post $date $cycle : error in bulletins." >> $wavelog
       postmsg "$jlogfile" "NON-FATAL ERROR in ww3_bull.sh, possibly in multiple calls."
-      exit_code=25
-      for file in bull_*.out
+      err=4;export err;${errchk}
+      for file in bull_*.err
       do
         echo ' '
         sed "s/^/$file : /g" $file
       done
-      rm -f bull_*.out
     fi
   fi
 
 
 # --------------------------------------------------------------------------- #
+# 6. Compress point output data into tar files
 
-if [ "$OspecOK" = 'yes' ]
-then
+# 6.a Set up cmdfile
 
-# 5.  Make third command file
-
-  set +x
-#  rm -f cmdfile*
   rm -f cmdfile
   touch cmdfile
   chmod 744 cmdfile
 
-  echo ' '
-  echo '   Making third command file (copying points files to old grids).'
-
-  [[ "$LOUD" = YES ]] && set -x
-
-  ifile=1
-
-# 5.a Spectral files
-
   set +x
-  if [ "$OspecOK" = 'yes' ] && [ "$specOK" = 'yes' ]
-  then
-    for grdID in $Ogrids
-    do
-      echo "$USHwave/ww3_copy.sh $grdID spec > spec_${grdID}_copy.out 2>&1" >> cmdfile
-    done
-  fi
-
-# 5.b Bulletins
-
-  if [ "$ObullOK" = 'yes' ] && [ "$bullOK" = 'yes' ]
-  then
-    for grdID in $Ogrids
-    do
-      echo "$USHwave/ww3_copy.sh $grdID bull > bull_${grdID}_copy.out 2>&1" >> cmdfile
-      echo "$USHwave/ww3_copy.sh $grdID cbull > cbull_${grdID}_copy.out 2>&1" >> cmdfile
-      echo "$USHwave/ww3_copy.sh $grdID csbull > csbull_${grdID}_copy.out 2>&1" >> cmdfile
-    done
-  fi
-  [[ "$LOUD" = YES ]] && set -x
-
-# --------------------------------------------------------------------------- #
-# 6   Execute third command file
-
-
-  set +x
-  echo "   Executing point copy command file at : `date`"
-  echo '   --------------------------------------'
   echo ' '
-  [[ "$LOUD" = YES ]] && set -x
-
-  if [ "$nfile" -gt '1' ]
-  then
-    ${wave_mpmd} cmdfile
-    exit=$?
-  else
-#    ./cmdfile.1
-    ./cmdfile
-    exit=$?
-  fi
-
-  if [ "$exit" != '0' ]
-  then
-    set +x
-    echo ' '
-    echo '****************************************'
-    echo '*** POE FAILURE DURING POINT COPYING ***'
-    echo '****************************************'
-    echo '     See Details Below '
-    echo ' '
-    [[ "$LOUD" = YES ]] && set -x
-  fi
-
-#  set +x
-#  rm -f cmdfile*
-#  [[ "$LOUD" = YES ]] && set -x
-
-# --------------------------------------------------------------------------- #
-# 7. Check for errors 
-
-# 7.a Spectral files
-
-  if [ $OspecOK = 'yes' ] 
-  then
-    for grdID in $Ogrids
-    do
-      if [ -d COPY_spec_$grdID ]
-      then
-        set +x
-        echo ' '
-        echo '*************************************'
-        echo '*** ERROR OUTPUT ww3_copy.sh ***'
-        echo '*************************************'
-        echo '            Possibly in multiple calls'
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$wavemodID post $date $cycle : error in copying spectral files to $grdID." >> $wavelog
-        postmsg "$jlogfile" "NON-FATAL ERROR in ww3_copy.sh, possibly in multiple calls."
-        exit_code=26
-      else
-        rm -f spec_${grdID}_copy.out
-        set +x
-        echo "  Copying of spectral files to $grdID succesful"
-        [[ "$LOUD" = YES ]] && set -x
-      fi
-    done
-  fi
-
-# 7.b Bulletin files
-
-  if [ $ObullOK = 'yes' ] 
-  then
-    for grdID in $Ogrids
-    do
-      if [ -d COPY_bull_$grdID ]
-      then
-        set +x
-        echo ' '
-        echo '*************************************'
-        echo '*** ERROR OUTPUT ww3_copy.sh ***'
-        echo '*************************************'
-        echo '            Possibly in multiple calls'
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$wavemodID post $date $cycle : error in copying bulletin files to $grdID." >> $wavelog
-        postmsg "$jlogfile" "NON-FATAL ERROR in ww3_copy.sh, possibly in multiple calls."
-        exit_code=27
-      else
-        rm -f bull_${grdID}_copy.out
-        set +x
-        echo "  Copying of bulletin files to $grdID succesful"
-        [[ "$LOUD" = YES ]] && set -x
-      fi
-
-      if [ -d COPY_cbull_$grdID ]
-      then
-        set +x
-        echo ' '
-        echo '*************************************'
-        echo '*** ERROR OUTPUT ww3_copy.sh ***'
-        echo '*************************************'
-        echo '            Possibly in multiple calls'
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$wavemodID post $date $cycle : error in copying compressed bulletin files to $grdID." >> $wavelog
-        postmsg "$jlogfile" "NON-FATAL ERROR in ww3_copy.sh, possibly in multiple calls."
-        exit_code=28
-      else
-        rm -f cbull_${grdID}_copy.out
-        set +x
-        echo "  Copying of compressed bulletin files to $grdID succesful"
-        [[ "$LOUD" = YES ]] && set -x
-      fi
-
-      if [ -d COPY_csbull_$grdID ]
-      then
-        set +x
-        echo ' '
-        echo '*************************************'
-        echo '*** ERROR OUTPUT ww3_copy.sh ***'
-        echo '*************************************'
-        echo '            Possibly in multiple calls'
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$wavemodID post $date $cycle : error in copying csv bulletin files to $grdID." >> $wavelog
-        postmsg "$jlogfile" "NON-FATAL ERROR in ww3_copy.sh, possibly in multiple calls."
-        exit_code=29
-      else
-        rm -f csbull_${grdID}_copy.out
-        set +x
-        echo "  Copying of csv bulletin files to $grdID succesful"
-        [[ "$LOUD" = YES ]] && set -x
-      fi
-    done
-  fi
-
-# 7.c Error outputs
-
-  if [ -f *.out ]
-  then
-    set +x
-    echo ' '
-    echo '*********************'
-    echo '*** ERROR OUTPUTS ***'
-    echo '*********************'
-    echo ' '
-    [[ "$LOUD" = YES ]] && set -x
-    exit_code=30
-    for file in *.out
-    do
-      echo ' '
-      sed "s/^/$file : /g" $file
-    done
-    rm -f *.out
-  fi
-
-fi
-
-# --------------------------------------------------------------------------- #
-# 8.  Make fourth command file
-
-  set +x
-  rm -f cmdfile
-  touch cmdfile
-  chmod 744 cmdfile
-  echo ' '
-  echo '   Making fourth command file for taring all point output files.'
+  echo '   Making command file for taring all point output files.'
 
   [[ "$LOUD" = YES ]] && set -x
 
-  ifile=1
-
-# 8.a Spectral data files
+# 6.b Spectral data files
 
   if [ "$specOK" = 'yes' ]
   then
@@ -1245,7 +954,7 @@ fi
 
   fi
 
-# 8.b Bulletins
+# 6.c Bulletins
 
   if [ "$bullOK" = 'yes' ]
   then
@@ -1253,66 +962,21 @@ fi
 
   fi
 
-# 8.c Compressed bulletins
+# 6.d Compressed bulletins
 
   if [ "$bullOK" = 'yes' ]
   then
      echo "$USHwave/ww3_tar.sh $wavemodID cbull $Nb > ${wavemodID}_cbull_tar.out 2>&1 " >> cmdfile
   fi
 
-# 8.d CSV bulletins
+# 6.e CSV bulletins
 
   if [ "$bullOK" = 'yes' ]
   then
     echo "$USHwave/ww3_tar.sh $wavemodID csbull $Nb > ${wavemodID}_csbull_tar.out 2>&1 " >> cmdfile
   fi
 
-# 8.e Old Spectral data files
-
-  if [ "$OspecOK" = 'yes' ]
-  then
-    for grdID in $Ogrids
-    do
-      Nb=`wc buoy_${grdID}.loc | awk '{ print $1 }'`
-      echo "$USHwave/ww3_tar.sh $grdID spec $Nb > ${grdID}_spec_tar.out 2>&1 "   >> cmdfile
-    done
-  fi
-
-# 8.f Old Bulletins
-
-  if [ "$ObullOK" = 'yes' ]
-  then
-    for grdID in $Ogrids
-    do
-      Nb=`wc buoy_${grdID}.loc | awk '{ print $1 }'`
-      echo "$USHwave/ww3_tar.sh $grdID bull $Nb > ${grdID}_bull_tar.out 2>&1 "   >> cmdfile
-    done
-  fi
-
-# 8.g Old Compressed Bulletins
-
-  if [ "$ObullOK" = 'yes' ]
-  then
-    for grdID in $Ogrids
-    do
-      Nb=`wc buoy_${grdID}.loc | awk '{ print $1 }'`
-      echo "$USHwave/ww3_tar.sh $grdID cbull $Nb > ${grdID}_cbull_tar.out 2>&1 "   >> cmdfile
-    done
-  fi
-
-# 8.h Old CSV Bulletins
-
-  if [ "$ObullOK" = 'yes' ]
-  then
-    for grdID in $Ogrids
-    do
-      Nb=`wc buoy_${grdID}.loc | awk '{ print $1 }'`
-      echo "$USHwave/ww3_tar.sh $grdID csbull $Nb > ${grdID}_csbull_tar.out 2>&1 "   >> cmdfile
-    done
-  fi
-
-# --------------------------------------------------------------------------- #
-# 9.  Execute fourth command file
+# 6.f Execute fourth command file
 
   set +x
   echo "   Executing tar command file at : `date`"
@@ -1320,22 +984,23 @@ fi
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
 
-  if [ "$nfile" -gt '1' ]
+  if [ "$wavenproc" -gt '1' ]
   then
     ${wave_mpmd} cmdfile
     exit=$?
   else
-#    ./cmdfile.1
     ./cmdfile
     exit=$?
   fi
+
+# 6.g Check for errors
 
   if [ "$exit" != '0' ]
   then
     set +x
     echo ' '
     echo '**************************************'
-    echo '*** POE FAILURE DURING TAR PROCESS ***'
+    echo '*** CMD FAILURE DURING TAR PROCESS ***'
     echo '**************************************'
     echo '     See Details Below '
     echo ' '
@@ -1343,15 +1008,14 @@ fi
   fi
 
 
-# --------------------------------------------------------------------------- #
-# 10.  Check for errors
+# 6.h  Check further for errors in file generation`
 
   set +x
   echo ' '
   echo '   Checking for errors (error output concatenated below).'
   [[ "$LOUD" = YES ]] && set -x
 
-# 10.a Spectral tar file
+# 6.h.1 Spectral tar file
 
   if [ "$specOK" = 'yes' ]
   then
@@ -1362,15 +1026,15 @@ fi
       [[ "$LOUD" = YES ]] && set -x
       echo "$wavemodID post $date $cycle : error in spectral tar." >> $wavelog
       postmsg "$jlogfile" "NON-FATAL ERROR in $wavemodID spectral tar file."
+      mv ${wavemodID}_spec_tar.out ${wavemodID}_spec_tar.err
     else
-      rm -f ${wavemodID}_spec_tar.out
       set +x
       echo "      $wavemodID Spectral tar file OK."
       [[ "$LOUD" = YES ]] && set -x
     fi
   fi
 
-# 10.b Bulletin tar files
+# 6.h.2 Bulletin tar files
 
   if [ "$bullOK" = 'yes' ]
   then
@@ -1381,8 +1045,8 @@ fi
       [[ "$LOUD" = YES ]] && set -x
       echo "$wavemodID post $date $cycle : error in bulletin tar." >> $wavelog
       postmsg "$jlogfile" "NON-FATAL ERROR in $wavemodID bulletin tar file."
+      mv -f ${wavemodID}_bull_tar.out ${wavemodID}_bull_tar.err
     else
-      rm -f ${wavemodID}_bull_tar.out
       set +x
       echo "      $wavemodID Bulletin tar file OK."
       [[ "$LOUD" = YES ]] && set -x
@@ -1395,8 +1059,8 @@ fi
       [[ "$LOUD" = YES ]] && set -x
       echo "$wavemodID post $date $cycle : error in compressed bulletin tar." >> $wavelog
       postmsg "$jlogfile" "NON-FATAL ERROR in $wavemodID compressed bulletin tar file."
+      mv -f ${wavemodID}_cbull_tar.out ${wavemodID}_cbull_tar.err
     else
-      rm -f ${wavemodID}_cbull_tar.out
       set +x
       echo "      $wavemodID compressed bulletin tar file OK."
       [[ "$LOUD" = YES ]] && set -x
@@ -1409,90 +1073,17 @@ fi
       [[ "$LOUD" = YES ]] && set -x
       echo "$wavemodID post $date $cycle : error in csv bulletin tar." >> $wavelog
       postmsg "$jlogfile" "NON-FATAL ERROR in $wavemodID csv bulletin tar file."
+      mv -f ${wavemodID}_csbull_tar.out ${wavemodID}_csbull_tar.err
     else
-      rm -f ${wavemodID}_csbull_tar.out
       set +x
       echo "      $wavemodID csv bulletin tar file OK."
       [[ "$LOUD" = YES ]] && set -x
     fi
   fi
 
-# 10.c Old Spectral tar file
+# 7. Check if any left over error output
 
-  if [ "$OspecOK" = 'yes' ]
-  then
-    for grdID in $Ogrids
-    do
-      if [ -d TAR_spec_$grdID ]
-      then
-        set +x
-        echo "      Error in $grdID spectral tar file."
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$grdID post $date $cycle : error in spectral tar." >> $wavelog
-        postmsg "$jlogfile" "NON-FATAL ERROR in $grdID spectral tar file."
-      else
-        rm -f ${grdID}_spec_tar.out
-        set +x
-        echo "      $grdID Spectral tar file OK."
-        [[ "$LOUD" = YES ]] && set -x
-      fi
-    done
-  fi
-
-# 10.d Old Bulletin tar file
-
-  if [ "$ObullOK" = 'yes' ]
-  then
-    for grdID in $Ogrids
-    do
-      if [ -d TAR_bull_$grdID ]
-      then
-        set +x
-        echo "      Error in $grdID bulletin tar file."
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$grdID post $date $cycle : error in bulletin tar." >> $wavelog
-        postmsg "$jlogfile" "NON-FATAL ERROR in $grdID bulletin tar file."
-      else
-        rm -f ${grdID}_bull_tar.out
-        set +x
-        echo "      $grdID bulletin tar file OK."
-        [[ "$LOUD" = YES ]] && set -x
-      fi
-
-      if [ -d TAR_cbull_$grdID ]
-      then
-        set +x
-        echo "      Error in $grdID compressed bulletin tar file."
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$grdID post $date $cycle : error in compressed bulletin tar." >> $wavelog
-        postmsg "$jlogfile" "NON-FATAL ERROR in $grdID compressed bulletin tar file."
-      else
-        rm -f ${grdID}_cbull_tar.out
-        set +x
-        echo "      $grdID compressed bulletin tar file OK."
-        [[ "$LOUD" = YES ]] && set -x
-      fi
-
-      if [ -d TAR_csbull_$grdID ]
-      then
-        set +x
-        echo "      Error in $grdID csv bulletin tar file."
-        [[ "$LOUD" = YES ]] && set -x
-        echo "$grdID post $date $cycle : error in csv bulletin tar." >> $wavelog
-        postmsg "$jlogfile" "NON-FATAL ERROR in $grdID csv bulletin tar file."
-      else
-        rm -f ${grdID}_csbull_tar.out
-        set +x
-        echo "      $grdID csv bulletin tar file OK."
-        [[ "$LOUD" = YES ]] && set -x
-      fi
-
-    done
-  fi
-
-# 10.e Error outputs
-
-  if [ -f *.out ]
+  if ls *.err 1> /dev/null 2>&1
   then
     set +x
     echo ' '
@@ -1501,17 +1092,16 @@ fi
     echo '*********************'
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
-    exit_code=31
-    for file in *.out
+    err=5;export err;${errchk}
+    for file in *.err
     do
       echo ' '
       sed "s/^/$file : /g" $file
     done
-    rm -f *.out
   fi
 
 # --------------------------------------------------------------------------- #
-# 11.  CLean up and rename old grid files
+# 8. Clean up and rename old grid files
 
   set +x
   rm -f *.tmpl
@@ -1528,13 +1118,12 @@ fi
   then
     for ID in $Ogrids
     do
-#      mv $COMOUT/$wavemodID.$ID.$cycle.grib       $COMOUT/$ID.$cycle.grib   # comment out per RFC 1576 (imp May 2010)
       mv $COMOUT/$wavemodID.$ID.$cycle.outgrd     $COMOUT/$ID.$cycle.outgrd
     done
   fi
 
 # --------------------------------------------------------------------------- #
-# 12.  Ending output
+# 9.  Ending output
 
   set +x
   echo ' '
@@ -1550,9 +1139,9 @@ fi
      msg="ABNORMAL EXIT: Problem in MWW3 POST"
      postmsg "$jlogfile" "$msg"
      echo $msg
-     err=$exit_code ; export err ; err_chk
+     err=6; export err;${errchk}
   else
-     touch $COMOUT/$wavemodID.$cycle.postdone
+     echo " Wave Post Completed Normally "
   fi
 
   msg="$job completed normally"

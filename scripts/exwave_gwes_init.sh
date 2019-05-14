@@ -2,12 +2,11 @@
 ###############################################################################
 #                                                                             #
 # This script is the init config  for the global multi_grid wave model. It    #
-# created model definition files with all configurations of spatial and       #
+# creates model definition files with all configurations of spatial and       #
 # spectral grids, as well as set general physics parameters and time steps.   #
 #                                                                             #
 # The main script for generating mod_def files is                             #
-#                                                                             #
-#  wave_moddef.sh : creates the mod_def file for the grid                #
+#  wave_moddef.sh : creates the mod_def file for the grid                     #
 #                                                                             #
 # Remarks :                                                                   #
 # - For non-fatal errors output is witten to the wave.log file.               #
@@ -15,7 +14,7 @@
 #  Update record :                                                            #
 #                                                                             #
 # - Origination:                                               02-Apr-2019    #
-# - Transitioning to GEFS workflow                             02-Apr-2019    #
+# - Transitioning to GEFS workflow                             02-May-2019    #
 #                                                                             #
 ###############################################################################
 # --------------------------------------------------------------------------- #
@@ -28,7 +27,6 @@
   [[ "$LOUD" != YES ]] && set +x
 
   cd $DATA
-  mkdir outtmp
 
   msg="HAS BEGUN on `hostname`"
   postmsg "$jlogfile" "$msg"
@@ -38,7 +36,7 @@
   set +x
   echo ' '
   echo '                      ********************************'
-  echo '                      *** MWW3 PREPROCESSOR SCRIPT ***'
+  echo '                      *** MWW3 INIT CONFIG  SCRIPT ***'
   echo '                      ********************************'
   echo '                          Initial configuration script'
   echo "                          Model identifier : $wavemodID"
@@ -47,25 +45,29 @@
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
 
-#     The actual work is distributed over these files.
-
-  nfile=`echo $LSB_HOSTS | wc -w | awk '{ print $1}'`
-
-  if [ "$nfile" -gt '1' ]
+# Script will run serial only if not LSB or pre-defined NTASKS
+#     The actual work is distributed over these tasks.
+  nfile=
+  x=1
+  if [ -z ${LSB_MCPU_HOSTS+x} ] && [ -z ${NTASKS+x} ] 
   then
-    cmdtype='mpirun.lsf'
-  else
-    cmdtype='bash'
-    nskip='-'
+    echo " Scripts requires LSB_MCPU_HOSTS or NTASKS to be set "
+    err=999; export err;${errchk}
+  elif [ ! -z ${LSB_MCPU_HOSTS+x} ]
+  then
+    nppn=`echo $LSB_MCPU_HOSTS | awk '{ print $2}'`
+    nnod=`echo $LSB_MCPU_HOSTS | wc -w | awk '{ print $1}'`
+    nnod=`expr ${nnod} / 2`
+    nfile=`expr $nnod \* $nppn`
   fi
+  NTASKS=${NTASKS:-$nfile}
 
   set +x
   echo ' '
-  echo '   Making command file(s)'
-  echo "   Set up command file structure (type = $cmdtype)."
-  echo "      Number of command files  : $nfile"
+  echo " Script set to run with $NTASKS tasks "
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
+
 
 # --------------------------------------------------------------------------- #
 # 1.  Get files that are used by most child scripts
@@ -82,6 +84,7 @@
 
   rm -f cmdfile
   touch cmdfile
+  chmod 744 cmdfile
 
   for grdID in $curID $iceID $wndID $buoy $waveGRD $sbsGRD $postGRD $interpGRD
   do
@@ -121,7 +124,7 @@
         echo $msg
         [[ "$LOUD" = YES ]] && set -x
         echo "$wavemodID init config $date $cycle : $grdID.inp missing." >> $wavelog
-        err=1;export err;err_chk;exit
+        err=1;export err;${errchk}
       fi
 
       echo "$USHwave/wave_moddef.sh $grdID > $grdID.out 2>&1" >> cmdfile
@@ -142,15 +145,40 @@
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
 
-    #if [ "$nfile" -gt '1' ]
-    #then
-    #  mpirun.lsf cfp cmdfile
-    #  exit=$?
-    #else
-      chmod 744 cmdfile; ./cmdfile
-      exit=$?
-    #fi
+# Set number of processes for mpmd
+    wavenproc=`wc -l cmdfile | awk '{print $1}'`
+    wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
 
+# 1.a.3 Execute the serial or parallel cmdfile
+
+    set +x
+    echo ' '
+    echo "   Executing the copy command file at : `date`"
+    echo '   ------------------------------------'
+    echo ' '
+    [[ "$LOUD" = YES ]] && set -x
+  
+    if [ "$NTASKS" -gt '1' ]
+    then
+      ${wavempexec} ${wavenproc} ${wave_mpmd} cmdfile
+      exit=$?
+    else
+      ./cmdfile
+      exit=$?
+    fi
+  
+    if [ "$exit" != '0' ]
+    then
+      set +x
+      echo ' '
+      echo '********************************************'
+      echo '*** POE FAILURE DURING RAW DATA COPYING ***'
+      echo '********************************************'
+      echo '     See Details Below '
+      echo ' '
+      [[ "$LOUD" = YES ]] && set -x
+    fi
+  
   fi 
 
 # 1.a.3 File check
@@ -178,7 +206,7 @@
       sed "s/^/$grdID.out : /g"  $grdID.out
       [[ "$LOUD" = YES ]] && set -x
       echo "$wavemodID prep $date $cycle : mod_def.$grdID missing." >> $wavelog
-      err=2;export err;err_chk;exit
+      err=2;export err;${errchk}
     fi
   done
 

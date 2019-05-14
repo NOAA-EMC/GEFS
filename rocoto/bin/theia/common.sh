@@ -26,7 +26,9 @@ export NTASKS=$SLURM_NTASKS
 export gefsmpexec="srun -n $NTASKS"
 export gefsmpexec_mpmd="srun -n $NTASKS /scratch3/NCEPDEV/nwprod/util/exec/mpiserial"
 export wavempexec="srun -n" 
-export wave_mpmd="/scratch3/NCEPDEV/nwprod/util/exec/mpiserial"
+export wave_mpmd="/scratch4/NCEPDEV/nems/noscrub/emc.nemspara/soft/mpiserial/3.0/exec/mpiserial -m"
+
+export errchk='exit'
 
 export APRUNC="srun -n 1"
 export APRUN_RECENT="srun -n $NTASKS"

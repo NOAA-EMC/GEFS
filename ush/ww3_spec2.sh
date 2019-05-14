@@ -206,7 +206,7 @@
   rm -f mod_def.ww3 out_pnt.ww3
 
   cd ..
-  rm -rf spec_$buoy
+  mv -f spec_$buoy done.spec_$buoy
 
   set +x
   echo ' '

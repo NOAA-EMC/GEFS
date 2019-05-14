@@ -11,6 +11,9 @@ export RUN=${RUN:-gwes}
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
 
+# Add default errchk = err_chk
+export errchk=${errchk:-err_chk}
+
 # Set HOMEwave to HOMEgefs
 HOMEwave=${HOMEwave:-${HOMEgefs}} 
 

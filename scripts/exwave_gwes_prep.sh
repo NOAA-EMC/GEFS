@@ -98,29 +98,22 @@
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
 
-# 0.c Command file set-up
-#     The command file points to $nfile files named cmdfile.$ifile.
-#     The actual work is distributed over these files.
-
-  ifile=1
-  nfile=`echo $LSB_HOSTS | wc -w | awk '{ print $1}'`
-  iskip=1
-
-  if [ "$nfile" -gt '1' ]
+# Script will run serial only if not LSB or pre-defined NTASKS
+#     The actual work is distributed over these tasks.
+  nfile=
+  x=1
+  if [ -z ${LSB_MCPU_HOSTS+x} ] && [ -z ${NTASKS+x} ]        
   then
-    cmdtype='mpirun.lsf'
-  else
-    cmdtype='bash'
-    nskip='-'
+    echo " Scripts requires LSB_MCPU_HOSTS or NTASKS to be set "
+    err=999; export err;${errchk}
+  elif [ ! -z ${LSB_MCPU_HOSTS+x} ]
+  then
+    nppn=`echo $LSB_MCPU_HOSTS | awk '{ print $2}'`
+    nnod=`echo $LSB_MCPU_HOSTS | wc -w | awk '{ print $1}'`
+    nnod=`expr ${nnod} / 2`
+    nfile=`expr $nnod \* $nppn`
   fi
-
-  set +x
-  echo ' '
-  echo '   Making command file(s)'
-  echo "   Set up command file structure (type = $cmdtype)."
-  echo "      Number of command files  : $nfile"
-  echo ' '
-  [[ "$LOUD" = YES ]] && set -x
+  NTASKS=${NTASKS:-$nfile}
 
 # --------------------------------------------------------------------------- #
 # 1.  Get files that are used by most child scripts
@@ -133,9 +126,6 @@
 
 # 1.a Model definition files
 
-  nmoddef=0
-
-  ifile=1
   rm -f cmdfile
   touch cmdfile
 
@@ -168,18 +158,18 @@
       echo $msg
       [[ "$LOUD" = YES ]] && set -x
       echo "$wavemodID prep $date $cycle : ${wavemodID}.mod_def.${grdID} missing." >> $wavelog
-      err=1;export err;err_chk;exit
+      err=1;export err;${errchk}
     fi
   done
 
-# 1.a.3 File check
+# 1.a.1 Check if mod_defs are available
   for grdID in $grdINP $waveGRD
   do
     if [ -f mod_def.$grdID ]
     then
       set +x
       echo ' '
-      echo " mod_def.$grdID succesfully created/copied "
+      echo " mod_def.$grdID succesfully copied "
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
     else 
@@ -196,13 +186,11 @@
       sed "s/^/$grdID.out : /g"  $grdID.out
       [[ "$LOUD" = YES ]] && set -x
       echo "$wavemodID prep $date $cycle : mod_def.$grdID missing." >> $wavelog
-      err=2;export err;err_ch;exit
+      err=2;export err;${errchk}
     fi
   done
 
-# 1.b Preprocessor template files
-
-# 1.c Netcdf Preprocessor template files
+# 1.b Netcdf Preprocessor template files
 
    for grdID in $grdINP
    do
@@ -219,7 +207,7 @@
      ;;
      * )
               echo 'Input type not yet implelemted' 	    
-              err=3; export err;err_chk; exit
+              err=3; export err;${errchk}
               ;;
      esac 
 
@@ -252,12 +240,9 @@
        echo ' '
        [[ "$LOUD" = YES ]] && set -x
        echo "$wavemodID prep $date $cycle : ww3_prnc.${type}.$grdID.tmpl missing." >> $wavelog
-       err=4;export err;err_chk; exit
+       err=4;export err;${errchk}
      fi
    done
-
-# 1.d Data assimilation buoy file
-#     *** NOT YET PORTED TO NEW SYSTEM ***
 
 # --------------------------------------------------------------------------- #
 # ICEC processing
@@ -265,9 +250,7 @@
   if [ "${WW3ICEINP}" = 'YES' ]; then
 
 # --------------------------------------------------------------------------- #
-# 2.  Ice , and wind data files
-
-# 2.a Ice pre - processing 
+# 2. Ice pre - processing 
 
     $USHwave/wave_ice.sh #> ice.out 
     ERR=$?
@@ -300,39 +283,56 @@
   if [ "${WW3ATMINP}" = 'YES' ]; then
 
 # --------------------------------------------------------------------------- #
+# 3.  Wind pre-processing
  
     rm -f cmdfile
     touch cmdfile
     chmod 744 cmdfile
-  
+ 
+# 3.a Gather and pre-process grib2 files 
     ymdh=$ymdh_beg
   
     while [ "$ymdh" -le "$ymdh_end" ]
     do
       echo "$USHwave/wave_g2ges.sh $ymdh > grb_$ymdh.out 2>&1" >> cmdfile
-      echo "$USHwave/wave_rtofs.sh $ymdh > rtofs_$ymdh.out 2>&1" >> cmdfile
-  
       ymdh=`$NDATE $HOUR_INC $ymdh`
     done
   
-# 2.d.ii   Execute command file
+# 3.b Execute the serial or parallel cmdfile
+
+# Set number of processes for mpmd
+    wavenproc=`wc -l cmdfile | awk '{print $1}'`
+    wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
 
     set +x
     echo ' '
-    echo "   Executing command file."
+    echo "   Executing the copy command file at : `date`"
+    echo '   ------------------------------------'
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
-  
+
     if [ "$nfile" -gt '1' ]
     then
-      ${wave_mpmd} cmdfile
+      ${wavempexec} ${wavenproc} ${wave_mpmd} cmdfile
       exit=$?
     else
       ./cmdfile
       exit=$?
     fi
 
-# 2.d.iii  Check for errors
+    if [ "$exit" != '0' ]
+    then
+      set +x
+      echo ' '
+      echo '********************************************'
+      echo '*** CMDFILE FAILED IN WIND GENERATION   ***'
+      echo '********************************************'
+      echo '     See Details Below '
+      echo ' '
+      [[ "$LOUD" = YES ]] && set -x
+    fi
+ 
+# 3.c Check for errors
 
     set +x
     echo ' '
@@ -402,12 +402,12 @@
     then
       set +x
       echo ' '
-      echo '*******************************'
+      echo '**********************************'
       echo '*** ERROR OUTPUT wave_g2ges.sh ***'
-      echo '*******************************'
+      echo '**********************************'
       echo '            Possibly in multiple calls'
       [[ "$LOUD" = YES ]] && set -x
-      echo "$wavemodID prep $date $cycle : error in grib2 files." >> $wavelog
+      echo "$wavemodID prep $date $cycle : error in wind grib2 files." >> $wavelog
       set +x
       for file in grb_*.out
       do
@@ -427,20 +427,18 @@
       set +x
       echo ' '
       echo '********************************************* '
-      echo '*** FATAL ERROR : ERROR(S) IN SIGMA FILES *** '
+      echo '*** FATAL ERROR : ERROR(S) IN WIND  FILES *** '
       echo '********************************************* '
       echo ' '
       echo $msg
       [[ "$LOUD" = YES ]] && set -x
-      echo "$wavemodID prep $date $cycle : fatal error in grib2 files." >> $wavelog
-      err=5;export err;err_chk
+      echo "$wavemodID prep $date $cycle : fatal error in grib2 wind files." >> $wavelog
+      err=5;export err;${errchk}
     fi
 
     rm -f cmdfile
 
-# --------------------------------------------------------------------------- #
-# 3.  Process extracted wind fields
-# 3.a Get into single file 
+# 3.d Getwind data into single file 
 
     set +x
     echo ' '
@@ -462,7 +460,7 @@
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
       echo "$wavemodID prep $date $cycle : no wind files found." >> $wavelog
-      err=6;export err;err_chk
+      err=6;export err;${errchk}
     fi
   
     rm -f gfs.wind
@@ -473,7 +471,7 @@
       rm -f $file
     done
   
-# 3.b Run waveprep
+# 3.e Run ww3_prnc
 
 # Convert gfs wind to netcdf
     $WGRIB2 gfs.wind -netcdf gfs.nc
@@ -509,7 +507,7 @@
         echo ' '
         [[ "$LOUD" = YES ]] && set -x
         echo "$wavemodID prep $grdID $date $cycle : error in waveprnc." >> $wavelog
-        err=7;export err;err_chk
+        err=7;export err;${errchk}
       fi
 
       if [ ! -f wind.ww3 ]
@@ -526,7 +524,7 @@
         echo ' '
         [[ "$LOUD" = YES ]] && set -x
         echo "$wavemodID prep $grdID $date $cycle : wind.ww3 missing." >> $wavelog
-        err=8;export err;err_chk
+        err=8;export err;${errchk}
       fi
 
       rm -f mod_def.ww3
@@ -535,7 +533,7 @@
       mv wind.ww3 wind.$grdID
       mv times.WND times.$grdID
 
-# 3.c Check to make sure wind files are properly incremented
+# 3.f Check to make sure wind files are properly incremented
 
       first_pass='yes'
       windOK='yes'
@@ -569,7 +567,7 @@
         echo ' '
         [[ "$LOUD" = YES ]] && set -x
         echo "$wavemodID prep $grdID $date $cycle : error in wind increment." >> $wavelog
-        err=9;export err;err_chk
+        err=9;export err;${errchk}
       fi
   
     done
@@ -578,7 +576,15 @@
     rm -f mod_def.ww3
     rm -f ww3_prnc.inp
 
+  else
+
+    echo ' '
+    echo ' Atmospheric inputs not generated, this is likely a coupled run '
+    echo ' '
+
   fi
+
+echo 'o0k after wind'
 
 #-------------------------------------------------------------------
 # CURR processing
@@ -609,7 +615,7 @@
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
       echo "$wavemodID prep $date $cycle : no current files found." >> $wavelog
-      err=10;export err;err_chk
+      err=10;export err;${errchk}
     fi
 
     rm -f curr.${curID}
@@ -619,6 +625,12 @@
       cat $file >> curr.${curID}
       rm -f $file
     done
+
+  else
+
+    echo ' '
+    echo ' Current inputs not generated, this is likely a coupled run '
+    echo ' '
 
   fi
 
@@ -646,7 +658,7 @@
     echo "$wavemodID fcst $date $cycle : ww3_multi file missing." >> $wavelog
     echo $msg
     [[ "$LOUD" = YES ]] && set -x
-    err=8;export err;err_chk
+    err=11;export err;${errchk}
   fi
 
 # 5.b Buoy location file
@@ -772,8 +784,8 @@
     echo " Copying file ww3_multi.${wavemodID}.inp to $COMOUT "
     cp ww3_multi.inp ${COMOUT}/ww3_multi.${wavemodID}.$cycle.inp
   else
-    echo "FATAL ERROR: file ww3_multi.${wavemodID}.$cycle.inp NOR CREATED, ABORTING"
-    err=9;export err;err_chk; exit
+    echo "FATAL ERROR: file ww3_multi.${wavemodID}.$cycle.inp NOT CREATED, ABORTING"
+    err=12;export err;${errchk}
   fi 
 
 # --------------------------------------------------------------------------- #

@@ -221,7 +221,7 @@
   rm -f ww3_outp.inp
   rm -f mod_def.ww3 out_pnt.ww3
   cd ..
-  rm -rf bull_$buoy
+  mv -f bull_$buoy done.bull_$buoy
 
   set +x
   echo ' '
