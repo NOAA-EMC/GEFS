@@ -75,12 +75,6 @@ NMV=${NMV:-"/bin/mv -uv"}
 # Scripts
 RECENATMPY=${RECENATMPY:-$HOMEgefs/util/ush/recentensemble.py}
 
-################################################################################
-# Link ensemble member guess, analysis and increment files
-export pdycycp=`$NDATE -$fhrp $PDY$cyc`
-export pdyp=`echo $pdycycp|cut -c1-8`
-export cycp=`echo $pdycycp|cut -c9-10`
-
 case $cyc in
 	00) memshift=0;;
 	06) memshift=20;;
@@ -90,8 +84,8 @@ esac
 
 if [ $warm_start = ".false." ]; then
 	export FILENAME='gfs_data.tile'
-	export FILEINPATH=$COMOUT/$cyc/init/
-	export FILEOUTPATH=$GESOUT/$cyc/
+	export FILEINPATH=$COMOUT/$cyc/init
+	export FILEOUTPATH=$GESOUT/$cyc
 	mkdir -p $FILEOUTPATH/c00
 	cp -pr $FILEINPATH/c00/*  $FILEOUTPATH/c00/.
 	for member in $(seq -w 01 $npert );do

@@ -68,14 +68,6 @@ env | sort
 ##############################################
 # Define COM directories
 ##############################################
-if [[ $gfssource != prod ]]; then
-	export COMINgfs=${COMINgfs_base}${PDY}/$cyc
-	export COMINenkf=${COMINenkf_base}
-fi
-
-export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/$cyc}
-export COMINenkf=${COMINenkf:-$(compath.py gfs/prod)/enkfgdas.}
-
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 

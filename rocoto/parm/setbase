@@ -139,10 +139,6 @@ if [[ $machine == WCOSS* ]]; then
         export COMINcfs_base=/gpfs/tp1/nco/ops/com/cfs/prod/cfs/cfs.
     fi
 fi
-# If you use gfs/enkf data from archived data, e.g $HOMEdata, specify here or in the corresponding "if" block .
-#export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
-#export COMINgfs_base=$HOMEdata/fv3init/gfs.
-#export COMINcfs_base=/ensemble/noscrub/Walter.Kolczynski/gefs_input/cfs_2_sst/cfs.
 
 export JOBQUEUE=$JOBQUEUE$JOBPRIO$JOBPHASE
 echo JOB QUEUE info: $JOBQUEUE 
@@ -156,7 +152,7 @@ echo noscrub: $NOSCRUB
 echo homedir: $HOMEDIR
 
 echo
-echo `date` $0 setuser base directory tree locations
+echo `date` $0 set user base directory tree locations
 echo
 
 export basesource=$SOURCEDIR
@@ -164,7 +160,6 @@ export baseoutput=$WORKDIR
 
 echo USER BASE DIRECTORY info:
 echo SOURCE: $basesource
-echo BIN: $basebin
 echo OUT: $baseoutput
 
 echo
