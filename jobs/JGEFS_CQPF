@@ -10,7 +10,7 @@ export gefsmpexec=${gefsmpexec:-mpirun}
 
 export APRUN=${gefsmpexec:-mpirun}
 
-export CNVGRIB=$CNVGRIB21_GFS
+export CNVGRIB=$CNVGRIB
 
 ####################################
 # obtain unique process id (pid) and make temp directory

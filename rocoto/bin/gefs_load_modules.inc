@@ -30,7 +30,7 @@ elif [[ "$WHERE_AM_I" == cray ]] ; then
 	module load prod_envir
 	module load prod_util
 	module load util_shared/1.0.3
-	module load grib_util/1.0.3
+	module load grib_util/1.1.0
 	module load hpss
     module load g2tmpl-intel/1.5.0
     module load python/3.6.3
@@ -64,7 +64,7 @@ elif [[ "$WHERE_AM_I" == wcoss_dell_p3 ]] ; then
     module load EnvVars/1.0.2
     module load ips/18.0.1.163
     module load prod_envir/1.0.2
-    module load grib_util/1.0.6
+    module load grib_util/1.1.0
     module load prod_util/1.1.0
     module load HPSS/5.0.2.5
     #module use -a /gpfs/dell1/nco/ops/nwpara/util_shared.v1.1.0/modulefiles
