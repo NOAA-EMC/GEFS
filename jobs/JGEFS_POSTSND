@@ -1,7 +1,19 @@
 #!/bin/sh
+
+echo `date` $0 `date -u` begin
+
+set -xa
 export PS4='$SECONDS + '
 date
-set -xa
+export MODEL_OUT_FORM=binarynemsiompiio
+
+export gefsmpexec=${gefsmpexec:-mpirun}
+
+export APRUN=${gefsmpexec:-mpirun}
+export APRUN_POSTSNDCFP=$APRUN
+
+export GRIBVERSION=${GRIBVERSION:-grib2}
+
 ########################################
 # Runs GFS BUFR SOUNDINGS
 ########################################
@@ -17,34 +29,69 @@ export MP_COLLECTIVE_OFFLOAD=no
 export MP_SHARED_MEMORY=yes
 export MP_MPILIB=mpich2
 export MP_LABELIO=yes
+
 ####################################
-# obtain unique process id (pid) and make temp directories
-export DATA=${DATA:-${DATAROOT}/${jobid:?}}
-mkdir $DATA
-cd $DATA 
+# obtain unique process id (pid) and make temp directory
+###################################
+export pid=$$
+export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
+mkdir -p $DATA
+cd $DATA
+
+# Define MASTERRES for master file grid, default being Gaussian with alternatives of  p125/p25/p5
+export mem=`echo $RUNMEM|cut -c3-5`
+
+######################################
+# Set up the cycle variable
+######################################
+export cycle=t${cyc}z
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
+export model=${model:-gfs}
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
 ####################################
 export outid="LL$job"
+export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
 
-export cycle=t${cyc}z 
+####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# VERBOSE  - Specify Verbose Output in global_postgp.sh
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-NO}
 
-export NET=${NET:-gfs}
-export RUN=${RUN:-gfs}
-export model=${model:-gfs}
+# Specify Execution Areas
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export HOMEpost=${HOMEpost:-${NWROOT}/ncep_post.${post_ver}}
+export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
+export HOMEgfs=${HOMEgsm}
 
 ###################################
 # Set up the UTILITIES
 ###################################
 
-export HOMEbufrsnd=${HOMEbufrsnd:-$NWROOT/gfs.${gfs_ver}}
-export EXECbufrsnd=${EXECbufrsnd:-$HOMEbufrsnd/exec}
-export FIXbufrsnd=${FIXbufrsnd:-$HOMEbufrsnd/fix/product}
-export PARMbufrsnd=${PARMbufrsnd:-$HOMEbufrsnd/parm/product}
-export USHbufrsnd=${USHbufrsnd:-$HOMEbufrsnd/ush}
-export SCRbufrsnd=${SCRbufrsnd:-$HOMEbufrsnd/scripts}
+export HOMEbufrsnd=${HOMEgfs:-$NWROOT/gfs.${gfs_ver}}
+export EXECbufrsnd=${EXECgfs:-$HOMEgfs/exec}
+export FIXbufrsnd=${FIXgfs:-$HOMEgfs/fix/product}
+export PARMbufrsnd=${PARMgfs:-$HOMEgfs/parm/product}
+export USHbufrsnd=${USHgfs:-$HOMEgfs/ush}
+export SCRbufrsnd=${SCRgfs:-$HOMEgfs/scripts}
 
 # Run setpdy and initialize PDY variables
 setpdy.sh
@@ -58,6 +105,40 @@ export COMOUT=${COMOUT:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}}
 export pcom=${pcom:-${COMOUT}/wmo}
 export COMAWP=${COMAWP:-${COMOUT}/gempak}
 mkdir -p $COMOUT $pcom $COMAWP
+
+mkdir -m 775 -p $COMOUT/burf/$mem
+mkdir -m 775 -p $COMOUT/misc/burf
+
+############################################
+# Run gefs.parm to get input variables
+############################################
+. $PARMgefs/gefs.parm
+
+export FHMAX_HF=$FHMAXHF
+export FHOUT_HF=$FHOUTHF
+export FHOUT=$FHOUTLF
+
+export JCAP=${JCAPFV:-768}
+export LEVS=${LEVSHR:-64}
+export LATB=${LATBFV:-766}
+export LONB=${LONBFV:-1536}
+
+export STARTHOUR=${STARTHOUR:-00}
+export ENDHOUR=${ENDHOUR:-180}
+export NINT3=6     ##second period time interval
+export NZERO=6
+export NEND1=${FHMAXHF}   ##first period length with time interval = NINT1
+export NINT1=3 
+
+if (( fhmax <= ENDHOUR )); then
+        export ENDHOUR=$fhmax
+fi
+
+export INCREMENT=12
+export OUTFILE=meteomrf
+export MAKEBUFR=NO
+export F00FLAG=YES
+
 env
 
 ########################################################
