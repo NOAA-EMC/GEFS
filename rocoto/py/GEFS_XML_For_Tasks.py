@@ -153,6 +153,13 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "ensstat_low"
 
+        # #    <!-- postsnd  Post Sound -->
+        if dicBase['RUN_POSTSND'].upper()[0] == "Y":
+            # ---postsnd
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "postsnd"
+
         # #    <!-- track and gensis jobs -->
         if dicBase['RUN_TRACK'].upper()[0] == "Y": 
             # ---enkf_track
@@ -506,6 +513,8 @@ def get_param_of_task(dicBase, taskname):
                     sDep += '\n\t<taskdep task="ensstat_high"/>'
                 if DoesTaskExist(dicBase, "prdgen_high"):
                     sDep += '\n\t<metataskdep metatask="prdgen_high"/>'
+                if DoesTaskExist(dicBase, "postsnd"):
+                    sDep += '\n\t<metataskdep metatask="postsnd"/>'
                 if DoesTaskExist(dicBase, "getcfssst"):
                     sDep += '\n\t<taskdep task="getcfssst"/>'
                 sDep += '\n</and>'
@@ -582,6 +591,8 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     # prdgen
     metatask_names.append('prdgen_high')
     metatask_names.append('prdgen_low')
+    # postsnd
+    metatask_names.append('postsnd')
 
     jobname = get_jobname(taskname)
     if taskname in metatask_names:
@@ -688,10 +699,11 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
         sDATE_VARS = get_DATE_VARS(sPre_2)
 
     strings += sPre + '<!-- **********{0}********** -->\n'.format(taskname)
-    if taskname == "prdgen_high" or taskname == "prdgen_low":
+    if taskname == "prdgen_high" or taskname == "prdgen_low" or taskname == "postsnd":
         strings += sPre + '<metatask name="{0}" mode="parallel">\n'.format(taskname)
     else:
         strings += sPre + '<metatask name="{0}">\n'.format(taskname)
+
     strings += sPre + '\t' + '<var name="member">&MEMLIST;</var>\n'
 
     strings += sPre + '\t' + '<task name="{0}_#member#" cycledefs="{1}" maxtries="{2}">\n'.format(taskname, cycledef, maxtries)
@@ -779,8 +791,8 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
     if taskname in ['keep_init', 'copy_init']:
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
         strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.py</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['prdgen_high', 'prdgen_low']:
-        strings += sPre + '\t' + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
+    elif taskname in ['prdgen_high', 'prdgen_low', 'postsnd']:
+        strings += sPre + '\t\t' + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
     else:
         strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
 
