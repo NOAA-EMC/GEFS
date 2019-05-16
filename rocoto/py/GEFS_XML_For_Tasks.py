@@ -699,7 +699,7 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
         sDATE_VARS = get_DATE_VARS(sPre_2)
 
     strings += sPre + '<!-- **********{0}********** -->\n'.format(taskname)
-    if taskname == "prdgen_high" or taskname == "prdgen_low" or taskname == "postsnd":
+    if taskname == "prdgen_high" or taskname == "prdgen_low":
         strings += sPre + '<metatask name="{0}" mode="parallel">\n'.format(taskname)
     else:
         strings += sPre + '<metatask name="{0}">\n'.format(taskname)
@@ -791,7 +791,7 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
     if taskname in ['keep_init', 'copy_init']:
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
         strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.py</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['prdgen_high', 'prdgen_low', 'postsnd']:
+    elif taskname in ['prdgen_high', 'prdgen_low']:
         strings += sPre + '\t\t' + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
     else:
         strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
