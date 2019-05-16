@@ -9,10 +9,9 @@ export MODEL_OUT_FORM=binarynemsiompiio
 
 export gefsmpexec=${gefsmpexec:-mpirun}
 
-export APRUN=${gefsmpexec:-mpirun}
-export APRUN_POSTSNDCFP=$APRUN
-
-export GRIBVERSION=${GRIBVERSION:-grib2}
+#export APRUN=${gefsmpexec:-'mpirun -n 4'}
+export APRUN_POSTSND=${gefsmpexec:-'mpirun -n 4'}
+export APRUN_POSTSNDCFP=${gefsmpexec_mpmd:-'mpirun -n 9 cfp'}
 
 ########################################
 # Runs GFS BUFR SOUNDINGS
