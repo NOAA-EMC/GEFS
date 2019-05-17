@@ -108,7 +108,7 @@ export FINT=$NINT1
    export FSTART=$FEND
 done
 
-if test "NO" = 'YES'
+if test 'NO' = 'YES'
 then
 ##############################################################
 # Tar and gzip the individual bufr files and send them to /com
