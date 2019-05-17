@@ -57,7 +57,7 @@ export F00FLAG=YES
 # Extract number of vertical levels from $STARTHOUR atmospheric file
 export NEMSIOGET=${NEMSIOGET:-$EXECbufrsnd/nemsio_get}
 fhr3=$(printf %03i $STARTHOUR)
-ATMFCS=$COMIN/${RUNMEM}.${cycle}.atmf${fhr3}.nemsio
+ATMFCS=$COMIN/sfcsig/${RUNMEM}.${cycle}.atmf${fhr3}.nemsio
 export LEVS=$($NEMSIOGET $ATMFCS dimz | awk '{print $2}')
 
 ### Loop for the hour and wait for the sigma and surface flux file:
@@ -84,7 +84,7 @@ export FINT=$NINT1
    ic=0
    while [ $ic -lt 1000 ]
    do
-      if [ ! -f $COMIN/${RUNMEM}.${cycle}.logf$FEND.nemsio ]
+      if [ ! -f $COMIN/sfcsig/${RUNMEM}.${cycle}.logf$FEND.nemsio ]
       then
           sleep 10
           ic=`expr $ic + 1`
@@ -109,6 +109,7 @@ export FINT=$NINT1
 done
 
 if test "NO" = 'YES'
+then
 ##############################################################
 # Tar and gzip the individual bufr files and send them to /com
 ##############################################################

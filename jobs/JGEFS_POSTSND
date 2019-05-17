@@ -78,6 +78,7 @@ export VERBOSE=${VERBOSE:-NO}
 # Specify Execution Areas
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
 export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 export HOMEpost=${HOMEpost:-${NWROOT}/ncep_post.${post_ver}}
 export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
 export HOMEgfs=${HOMEgsm}
@@ -106,8 +107,8 @@ export pcom=${pcom:-${COMOUT}/wmo}
 export COMAWP=${COMAWP:-${COMOUT}/gempak}
 mkdir -p $COMOUT $pcom $COMAWP
 
-mkdir -m 775 -p $COMOUT/burf/$mem
-mkdir -m 775 -p $COMOUT/misc/burf
+mkdir -m 775 -p $COMOUT/bufr/$mem
+mkdir -m 775 -p $COMOUT/misc/bufr
 
 ############################################
 # Run gefs.parm to get input variables
@@ -147,7 +148,6 @@ env
 ########################################################
 # Execute the script.
 #$SCRbufrsnd/exgfs_postsnd.sh.ecf
-$SCRbufrsnd/exgfs_postsnd.sh.ecf
 $HOMEgefs/scripts/exgefs_postsnd.sh.ecf
 ########################################################
 

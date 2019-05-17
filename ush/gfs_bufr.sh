@@ -68,7 +68,6 @@ fi
 cat << EOF > gfsparm
  &NAMMET
   iromb=0,maxwv=$JCAP,levs=$LEVS,makebufr=$bufrflag,
-  dird="$COMOUT/bufr.${cycle}/bufr",
   dird="$COMOUT/bufr/$mem/bufr",
   nstart=$FSTART,nend=$FEND,nint=$FINT,
   nend1=$NEND1,nint1=$NINT1,nint3=$NINT3,
