@@ -120,9 +120,18 @@ if [ $warm_start = ".false." ]; then
         rm mpmd_cmdfile
         ln -s $MP_CMDFILE mpmd_cmdfile
         $APRUN
+        
+        err=$?
+        echo $err
+
 fi # if warm_start
 
-msg="$job completed normally"
+if [ $ERR = 0 ]; then
+    msg="$job completed normally"
+else
+    msg="JOB FAILED!"
+fi
+
 postmsg "$jlogfile" "$msg"
 
 echo `date` $0 `date -u` end
@@ -133,3 +142,4 @@ if [ $VERBOSE = "YES" ]; then
 fi
 
 exit $err
+

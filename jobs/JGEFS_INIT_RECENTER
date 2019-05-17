@@ -68,8 +68,8 @@ env | sort
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMIN=${COMIN:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}}
+export COMOUT=${COMOUT:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}}
 
 export pdycycp=`$NDATE -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
@@ -96,11 +96,17 @@ env | sort
 # Execute the script
 $HOMEgefs/scripts/exgefs_init_recenter.sh.ecf
 #############################################################
+ERR=$?
+echo $ERR
 
 cat $pgmout
 
 #We should check error message here  ---- Dingchen
-msg="JOB COMPLETED NORMALLY"
+if [ $ERR = 0 ]; then
+    msg="JOB COMPLETED NORMALLY"
+else
+    msg="JOB FAILED!"
+fi
 postmsg "$jlogfile" "$msg"
 
 ##############################
@@ -111,3 +117,6 @@ cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
 echo `date` $0 `date -u` end
+
+exit $ERR
+
