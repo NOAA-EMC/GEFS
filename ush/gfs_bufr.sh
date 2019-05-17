@@ -58,7 +58,7 @@ else
    bufrflag=".false."
 fi
 
-if [ -s ${COMIN}/${RUN}.${cycle}.sfcf000.nemsio ]; then
+if [ -s ${COMIN}/sfcsig/${RUNMEM}.${cycle}.sfcf000.nemsio ]; then
  SFCF="sfc"
  CLASS="class1fv3"
  else
@@ -69,6 +69,7 @@ cat << EOF > gfsparm
  &NAMMET
   iromb=0,maxwv=$JCAP,levs=$LEVS,makebufr=$bufrflag,
   dird="$COMOUT/bufr.${cycle}/bufr",
+  dird="$COMOUT/bufr/$mem/bufr",
   nstart=$FSTART,nend=$FEND,nint=$FINT,
   nend1=$NEND1,nint1=$NINT1,nint3=$NINT3,
   nsfc=80,f00=$f00flag,
@@ -95,7 +96,7 @@ do
    ic=0
    while [ $ic -lt 1000 ]
    do
-      if [ ! -f $COMIN/${RUN}.${cycle}.logf${hh2}.nemsio ]
+      if [ ! -f $COMIN/sfcsig/${RUNMEM}.${cycle}.logf${hh2}.nemsio ]
       then
           sleep 10
           ic=`expr $ic + 1`
@@ -109,8 +110,8 @@ do
       fi
    done
 #------------------------------------------------------------------
-   ln -sf $COMIN/${RUN}.${cycle}.atmf${hh2}.nemsio sigf${hh} 
-   ln -sf $COMIN/${RUN}.${cycle}.${SFCF}f${hh2}.nemsio flxf${hh}
+   ln -sf $COMIN/sfcsig/${RUNMEM}.${cycle}.atmf${hh2}.nemsio sigf${hh} 
+   ln -sf $COMIN/sfcsig/${RUNMEM}.${cycle}.${SFCF}f${hh2}.nemsio flxf${hh}
 
    hh=` expr $hh + $FINT `
    if test $hh -lt 10

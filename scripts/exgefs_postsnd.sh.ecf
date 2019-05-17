@@ -27,10 +27,10 @@ msg="HAS BEGUN"
 ###################################################
 ## Run meteogram generator for T574
 ###################################################
-export JCAP=${JCAP:-1534}
+export JCAP=${JCAP:-766}
 export LEVS=${LEVS:-64}
-export LATB=${LATB:-1536}
-export LONB=${LONB:-3072}
+export LATB=${LATB:-768}
+export LONB=${LONB:-1536}
 export STARTHOUR=${STARTHOUR:-00}
 export ENDHOUR=${ENDHOUR:-180}
 export NEND1=${NEND1:-120}   ##first period length with time interval = NINT1
@@ -51,8 +51,8 @@ export F00FLAG=YES
 #    export NINT3=${FHOUT_GFS:-3}
 #fi
 
-rm -f -r ${COMOUT}/bufr.${cycle}
-mkdir -p ${COMOUT}/bufr.${cycle}
+#rm -f -r ${COMOUT}/bufr.${cycle}
+#mkdir -p ${COMOUT}/bufr.${cycle}
 
 # Extract number of vertical levels from $STARTHOUR atmospheric file
 export NEMSIOGET=${NEMSIOGET:-$EXECbufrsnd/nemsio_get}
@@ -102,7 +102,8 @@ export FINT=$NINT1
    if [ $FEND -gt $NEND1 ]; then
      export FINT=$NINT3
    fi
-   $USHbufrsnd/gfs_bufr.sh
+   #$USHbufrsnd/gfs_bufr.sh
+   $USHgefs/gfs_bufr.sh
   
    export FSTART=$FEND
 done
@@ -160,7 +161,7 @@ fi
 # Convert the bufr soundings into GEMPAK files
 ################################################
 ##$USHbufrsnd/gfs_bfr2gpk.sh
-fi #if test "$SENDDBN" = 'YES'
+fi #if test "NO" = 'YES'
 
 #####################################################################
 # GOOD RUN

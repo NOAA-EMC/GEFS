@@ -77,6 +77,7 @@ export VERBOSE=${VERBOSE:-NO}
 
 # Specify Execution Areas
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
 export HOMEpost=${HOMEpost:-${NWROOT}/ncep_post.${post_ver}}
 export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
 export HOMEgfs=${HOMEgsm}
@@ -117,20 +118,23 @@ export FHMAX_HF=$FHMAXHF
 export FHOUT_HF=$FHOUTHF
 export FHOUT=$FHOUTLF
 
-export JCAP=${JCAPFV:-768}
+export JCAP=${JCAPFV:-766}
 export LEVS=${LEVSHR:-64}
-export LATB=${LATBFV:-766}
+export LATB=${LATBFV:-768}
 export LONB=${LONBFV:-1536}
 
 export STARTHOUR=${STARTHOUR:-00}
 export ENDHOUR=${ENDHOUR:-180}
-export NINT3=6     ##second period time interval
+export NINT3=$FHOUTLF     ##second period time interval
 export NZERO=6
 export NEND1=${FHMAXHF}   ##first period length with time interval = NINT1
-export NINT1=3 
+export NINT1=$FHOUTHF 
 
 if (( fhmax <= ENDHOUR )); then
         export ENDHOUR=$fhmax
+fi
+if (( NEND1 >= ENDHOUR )); then
+        export NEND1=$ENDHOUR
 fi
 
 export INCREMENT=12
@@ -142,7 +146,9 @@ env
 
 ########################################################
 # Execute the script.
+#$SCRbufrsnd/exgfs_postsnd.sh.ecf
 $SCRbufrsnd/exgfs_postsnd.sh.ecf
+$HOMEgefs/scripts/exgefs_postsnd.sh.ecf
 ########################################################
 
 if [ -e "$pgmout" ] ; then
