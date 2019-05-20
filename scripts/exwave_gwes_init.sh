@@ -87,6 +87,7 @@
   chmod 744 cmdfile
 
 # Eliminate duplicate grids
+  array=($curID $iceID $wndID $buoy $waveGRD $sbsGRD $postGRD $interpGRD)
   grdALL=`printf "%s\n" "${array[@]}" | sort -u | tr '\n' ' '`
 
   for grdID in ${grdALL}
