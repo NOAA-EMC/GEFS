@@ -1,0 +1,66 @@
+#!/bin/ksh
+
+echo `date` $0 begin
+
+set -xa
+
+echo DATA=$DATA
+
+VERBOSE=${VERBOSE:-"YES"}
+if [ $VERBOSE = "YES" ]; then
+   echo $(date) EXECUTING $0 $* >&2
+   set -x
+fi
+
+export CASE=${CASE:-384}
+ntiles=${ntiles:-6}
+
+# Utilities
+ERRSCRIPT=${ERRSCRIPT:-'eval [[ $err = 0 ]]'}
+NCP=${NCP:-"/bin/cp -p"}
+NLN=${NLN:-"/bin/ln -sf"}
+NMV=${NMV:-"/bin/mv -uv"}
+nemsioget=${nemsioget:-${NWPROD}/exec/nemsio_get}
+
+GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-$HOMEgsi/exec/getsigensmeanp_smooth.x}
+
+################################################################################
+# Link ensemble member guess, analysis and increment files
+
+# Compute ensemble mean 
+export OMP_NUM_THREADS=$NTHREADS_ECEN
+echo memberlist=${memberlist}
+$NCP $GETATMENSMEANEXEC $DATA
+
+FHINC=$FHOUTHF
+while [[ $SHOUR -lt $FHOUR ]]
+do
+	fhr=$SHOUR
+        fhr=$(printf %03i $fhr)
+        mem2=$(printf %02i $mem)
+	for mem in $memberlist; do
+		$NLN $COMIN/$cyc/sfcsig/gep{$mem2}.${cycle}.atmf${fhr} ./atm_mem$mem
+	done
+		$NLN $COMIN/$cyc/sfcsig/geavg.${cycle}.atmf${fhr} ./atm_ensmean
+	$NLN $COMIN/$cyc/sfcsig/geavg.${cycle}.atmf${fhr} ./atm_ensmean
+	$APRUN ${DATA}/$(basename $GETATMENSMEANEXEC) ./ atm_ensmean atm $memberlist
+	rc=$?
+	export ERR=$rc
+	export err=$ERR
+	$ERRSCRIPT || exit 2
+	if [ $SHOUR -eq $FHOUT_HF ]
+	then
+		FHINC=$FHOUT
+	fi
+	SHOUR=(( SHOUR + FHINC ))
+done
+
+cd $pwd
+[[ ${KEEPDATA:-"NO"} = "NO" ]] && rm -rf $DATA
+
+set +x
+if [ $VERBOSE = "YES" ]; then
+	echo $(date) EXITING $0 with return code $err >&2
+fi
+
+exit $err
