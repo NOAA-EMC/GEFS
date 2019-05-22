@@ -19,12 +19,7 @@ export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 export gefsmpexec_mpmd="  mpirun -n $total_tasks cfp mpmd_cmdfile"
-export APRUNC="mpirun"
-export APRUN_RECENT="mpirun -n $total_tasks"
-export APRUN_CHGRES="mpirun -n 1"
-
-export aprun_gec00="mpirun -n 1 "
-export NTHREADS_SIGCHGRS=6
+export gefsmpexec=mpirun 
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_ENSAVG_NEMSIO
