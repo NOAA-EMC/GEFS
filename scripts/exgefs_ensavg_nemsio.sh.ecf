@@ -23,6 +23,7 @@ NMV=${NMV:-"/bin/mv -uv"}
 nemsioget=${nemsioget:-${NWPROD}/exec/nemsio_get}
 
 GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-$HOMEgsi/exec/getsigensmeanp_smooth.x}
+GETSFCENSMEANEXEC=${GETSFCENSMEANEXEC:-$HOMEgsi/exec/getsfcensmeanp.x}
 
 ################################################################################
 # Link ensemble member guess, analysis and increment files
@@ -31,6 +32,7 @@ GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-$HOMEgsi/exec/getsigensmeanp_smooth.x}
 export OMP_NUM_THREADS=4
 echo memberlist=${memberlist}
 $NCP $GETATMENSMEANEXEC $DATA
+$NCP $GETSFCENSMEANEXEC $DATA
 
 FHINC=$FHOUT_HF
 fhr=$SHOUR
@@ -40,9 +42,12 @@ do
 	for mem in $memberlist; do
         	mem2=$(printf %02i $mem)
 		$NLN $COMIN/$cyc/sfcsig/gep${mem2}.${cycle}.atmf${fhr}.nemsio ./atm_mem$mem
+		$NLN $COMIN/$cyc/sfcsig/gep${mem2}.${cycle}.sfcf${fhr}.nemsio ./sfc_mem$mem
 	done
 	$NLN $COMIN/$cyc/sfcsig/geavg.${cycle}.atmf${fhr}.nemsio ./atm_ensmean
-	$APRUN ${DATA}/$(basename $GETATMENSMEANEXEC) ./ atm_ensmean atm $memberlist
+	$NLN $COMIN/$cyc/sfcsig/geavg.${cycle}.sfcf${fhr}.nemsio ./sfc_ensmean
+	$APRUN ${DATA}/$(basename $GETATMENSMEANEXEC) ./ atm_ensmean atm $npert
+	$APRUN ${DATA}/$(basename $GETSFCENSMEANEXEC) ./ sfc_ensmean sfc $npert
 	rc=$?
 	export ERR=$rc
 	export err=$ERR
