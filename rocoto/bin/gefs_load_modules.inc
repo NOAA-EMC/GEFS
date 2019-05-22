@@ -54,7 +54,7 @@ elif [[ "$WHERE_AM_I" == theia ]]; then
     module load g2tmpl/v1.5.0
     #module load python/3.6.3
     module load intelpython/3.6.1.0
-    export PATH=$PATH:./
+    export PATH=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/anaconda3/bin:$PATH:./
 
     # Temporary setting to test common settings
     . $GEFS_ROCOTO/bin/theia/common.sh
