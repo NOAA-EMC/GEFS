@@ -7,9 +7,9 @@ export PS4='$SECONDS + '
 date
 export MODEL_OUT_FORM=binarynemsiompiio
 
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export gefsmpexec=${gefsmpexec:-mpirun}
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec:-mpirun}
 
 export GRIBVERSION=${GRIBVERSION:-grib2}
 
@@ -195,16 +195,7 @@ echo
 #################################
 # Run from $SHOUR to $FHOUR_HIGH
 #################################
-if test $SHOUR -le $FHOUR_HIGH; then
-	export FHINC=$FHINC_HIGH
-	export FHOUR=$FHOUR_HIGH
-
-	$HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf
-
-	export SHOUR=`expr $FHOUR_HIGH + $FHINC_HIGH`
-fi # test $SHOUR -le $FHOUR_HIGH
-
-mv $post_log $COMOUT/$cyc/misc/post
+$HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf
 
 ################# lines between these markers have been modified for dev begin
 echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN

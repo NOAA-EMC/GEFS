@@ -28,31 +28,31 @@ GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-$HOMEgsi/exec/getsigensmeanp_smooth.x}
 # Link ensemble member guess, analysis and increment files
 
 # Compute ensemble mean 
-export OMP_NUM_THREADS=$NTHREADS_ECEN
+export OMP_NUM_THREADS=4
 echo memberlist=${memberlist}
 $NCP $GETATMENSMEANEXEC $DATA
 
-FHINC=$FHOUTHF
-while [[ $SHOUR -lt $FHOUR ]]
+FHINC=$FHOUT_HF
+fhr=$SHOUR
+while [[ $fhr -le $FHOUR ]];
 do
-	fhr=$SHOUR
         fhr=$(printf %03i $fhr)
-        mem2=$(printf %02i $mem)
 	for mem in $memberlist; do
-		$NLN $COMIN/$cyc/sfcsig/gep{$mem2}.${cycle}.atmf${fhr} ./atm_mem$mem
+        	mem2=$(printf %02i $mem)
+		$NLN $COMIN/$cyc/sfcsig/gep${mem2}.${cycle}.atmf${fhr}.nemsio ./atm_mem$mem
 	done
-		$NLN $COMIN/$cyc/sfcsig/geavg.${cycle}.atmf${fhr} ./atm_ensmean
-	$NLN $COMIN/$cyc/sfcsig/geavg.${cycle}.atmf${fhr} ./atm_ensmean
+	$NLN $COMIN/$cyc/sfcsig/geavg.${cycle}.atmf${fhr}.nemsio ./atm_ensmean
 	$APRUN ${DATA}/$(basename $GETATMENSMEANEXEC) ./ atm_ensmean atm $memberlist
 	rc=$?
 	export ERR=$rc
 	export err=$ERR
 	$ERRSCRIPT || exit 2
-	if [ $SHOUR -eq $FHOUT_HF ]
+	echo completed fv3gfs average fhour= $fhr > $COMIN/$cyc/sfcsig/geavg.${cycle}.logf${fhr}.nemsio         
+	if [ $fhr -ge $FHMAX_HF ]
 	then
 		FHINC=$FHOUT
 	fi
-	SHOUR=(( SHOUR + FHINC ))
+	(( fhr = fhr + FHINC ))
 done
 
 cd $pwd
