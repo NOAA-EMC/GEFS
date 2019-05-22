@@ -327,10 +327,10 @@ fi
 echo $fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile
 $GEFS_ANOM2_FCST $fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile $HFcfs
 ERR=$?
-if [ ERR -eq 0 ] ; then 
+if [ $ERR -eq 0 ] ; then 
     echo "2-tiered sst generation finished!!!"
     $NCP $fn_anom_fc $COMOUTcfssst/TMPsfc.${PDY}${cyc}.24hr.anom.grb
-    ERR=$?
+    $ERR=$?
     if [ ERR -eq 0 ]; then
         exit 0
     else
