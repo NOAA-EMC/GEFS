@@ -25,8 +25,7 @@ nemsioget=${nemsioget:-${NWPROD}/exec/nemsio_get}
 GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-$HOMEgsi/exec/getsigensmeanp_smooth.x}
 GETSFCENSMEANEXEC=${GETSFCENSMEANEXEC:-$HOMEgsi/exec/getsfcensmeanp.x}
 
-################################################################################
-# Link ensemble member guess, analysis and increment files
+SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
 # Compute ensemble mean 
 export OMP_NUM_THREADS=4
@@ -39,15 +38,36 @@ fhr=$SHOUR
 while [[ $fhr -le $FHOUR ]];
 do
         fhr=$(printf %03i $fhr)
+	nfile=$npert
 	for mem in $memberlist; do
         	mem2=$(printf %02i $mem)
+		ic=0
+		while [ $ic -le $SLEEP_LOOP_MAX ]; do
+			if test -f  $COMIN/$cyc/sfcsig/gep${mem2}.${cycle}.logf${fhr}.nemsio; then
 		$NLN $COMIN/$cyc/sfcsig/gep${mem2}.${cycle}.atmf${fhr}.nemsio ./atm_mem$mem
 		$NLN $COMIN/$cyc/sfcsig/gep${mem2}.${cycle}.sfcf${fhr}.nemsio ./sfc_mem$mem
+				break
+			else
+				ic=`expr $ic + 1`
+                                sleep $SLEEP_INT
+			fi
+                        if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+				(( nfile = nfile - 1 ))
+                                echo `date` forecast gep${mem2} missing for hour $fhr
+                        fi # [ $ic 
+		done
 	done
+	if [ $nfile -le 1 ]; then
+		echo `date` Not enough forecast files for average at  hour $fhr
+		msg="Not enough forecast files for average at  hour $fhr"
+		postmsg "$jlogfile" "$msg"
+		export err=1
+		$ERRSCRIPT || exit $err
+	fi # [ $ic 
 	$NLN $COMIN/$cyc/sfcsig/geavg.${cycle}.atmf${fhr}.nemsio ./atm_ensmean
 	$NLN $COMIN/$cyc/sfcsig/geavg.${cycle}.sfcf${fhr}.nemsio ./sfc_ensmean
-	$APRUN ${DATA}/$(basename $GETATMENSMEANEXEC) ./ atm_ensmean atm $npert
-	$APRUN ${DATA}/$(basename $GETSFCENSMEANEXEC) ./ sfc_ensmean sfc $npert
+	$APRUN ${DATA}/$(basename $GETATMENSMEANEXEC) ./ atm_ensmean atm $nfile
+	$APRUN ${DATA}/$(basename $GETSFCENSMEANEXEC) ./ sfc_ensmean sfc $nfile
 	rc=$?
 	export ERR=$rc
 	export err=$ERR

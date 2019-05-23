@@ -151,7 +151,7 @@ echo $LEVS $LATB $LONB
 # SLEEP_INT  - Amount of time to wait between
 #              checking for restart files
 ####################################
-export SLEEP_TIME=900
+export SLEEP_TIME=600
 export SLEEP_INT=5
 
 ####################################
