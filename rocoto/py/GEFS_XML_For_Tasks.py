@@ -155,17 +155,16 @@ def config_tasknames(dicBase):
 
         # #    <!-- postsnd  Post Sound -->
         if dicBase['RUN_POSTSND'].upper()[0] == "Y":
+            # ---ensavg_nemsio
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "ensavg_nemsio"
+
             # ---postsnd
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "postsnd"
                 
-            # ---ensavg_nemsio           
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "ensavg_nemsio"
-
-
         # #    <!-- track and gensis jobs -->
         if dicBase['RUN_TRACK'].upper()[0] == "Y": 
             # ---enkf_track
@@ -719,7 +718,10 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
     else:
         strings += sPre + '<metatask name="{0}">\n'.format(taskname)
 
-    strings += sPre + '\t' + '<var name="member">&MEMLIST;</var>\n'
+    if taskname == "postsnd":
+        strings += sPre + '\t' + '<var name="member">&MEMLIST; avg</var>\n'
+    else:
+        strings += sPre + '\t' + '<var name="member">&MEMLIST;</var>\n'
 
     strings += sPre + '\t' + '<task name="{0}_#member#" cycledefs="{1}" maxtries="{2}">\n'.format(taskname, cycledef, maxtries)
 
