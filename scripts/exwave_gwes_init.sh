@@ -86,7 +86,11 @@
   touch cmdfile
   chmod 744 cmdfile
 
-  for grdID in $curID $iceID $wndID $buoy $waveGRD $sbsGRD $postGRD $interpGRD
+# Eliminate duplicate grids
+  array=($curID $iceID $wndID $buoy $waveGRD $sbsGRD $postGRD $interpGRD)
+  grdALL=`printf "%s\n" "${array[@]}" | sort -u | tr '\n' ' '`
+
+  for grdID in ${grdALL}
   do
     if [ -f "$COMIN/${wavemodID}.mod_def.${grdID}" ]
     then
