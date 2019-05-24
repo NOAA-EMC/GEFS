@@ -45,7 +45,7 @@ sh ./PDY
 ##############################################
 
 . $PARMwave/gwes.parm
-. $PARMwave/gwes_post.parm
+. $PARMwave/gwes_prep.parm
 
 # Set wave model ID tag to include member number 
 # if ensemble; waveMEMB var empty in deterministic
