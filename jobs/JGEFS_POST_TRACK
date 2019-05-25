@@ -202,11 +202,6 @@ $APRUN
 
 sh ${USHens_tracker}/ens_trak_ave.sh
 export err=$?; err_chk
-cp ${DATA}/aemn.trkprob.* ${COMOUT}
-cp ${DATA}/trak.aemn.atcfunix.* ${COMOUT}/aemn.t${CYL}z.cyclone.trackatcfunix
-cp ${DATA}/trak.aemn.mode.* ${COMOUT}/aemn.t${CYL}z.cyclone.trackmode
-cp ${DATA}/trak.aemn.spread.* ${COMOUT}/aemn.t${CYL}z.cyclone.trackspread
-
 #cd ${DATA}
 #${USHens_tracker}/atcf_2_cxml.sh ${cmodel} ${ymdh} ${COMOUT} ${DATA}
 #export err=$?; err_chk
