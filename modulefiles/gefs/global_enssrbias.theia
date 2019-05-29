@@ -3,8 +3,7 @@
 #############################################################
 module use /scratch3/NCEPDEV/nwprod/lib/modulefiles
 
-module load intel
-
+module load intel/18.1.163
 
 ##
 export FCMP=ifort

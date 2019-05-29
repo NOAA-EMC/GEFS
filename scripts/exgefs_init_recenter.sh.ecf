@@ -82,6 +82,7 @@ case $cyc in
 	18) memshift=60;;
 esac
 
+err=0
 if [ $warm_start = ".false." ]; then
 	export FILENAME='gfs_data.tile'
 	export FILEINPATH=$COMOUT/$cyc/init
@@ -117,7 +118,9 @@ if [ $warm_start = ".false." ]; then
         echo APRUN=$APRUN
         export MP_PGMMODEL=mpmd
 
-        rm mpmd_cmdfile
+        if [ -f mpmd_cmdfile ]; then 
+            rm mpmd_cmdfile
+        fi
         ln -s $MP_CMDFILE mpmd_cmdfile
         $APRUN
         
@@ -126,7 +129,7 @@ if [ $warm_start = ".false." ]; then
 
 fi # if warm_start
 
-if [ $ERR = 0 ]; then
+if [ $err = 0 ]; then
     msg="$job completed normally"
 else
     msg="JOB FAILED!"

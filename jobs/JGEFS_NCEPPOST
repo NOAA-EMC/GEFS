@@ -7,9 +7,9 @@ export PS4='$SECONDS + '
 date
 export MODEL_OUT_FORM=binarynemsiompiio
 
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export gefsmpexec=${gefsmpexec:-mpirun}
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec:-mpirun}
 
 export GRIBVERSION=${GRIBVERSION:-grib2}
 

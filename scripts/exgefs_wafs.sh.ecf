@@ -26,7 +26,7 @@ do
   (for ens_id in gegfs gec00 gep01 gep02 gep03 gep04 gep05 gep06 gep07 gep08 gep09 gep10;
   do
      cp  $COMIN/pgrb2a/${ens_id}.t${cyc}z.pgrb2af${hr}  .
-     $CNVGRIB21_GFS -g21 ${ens_id}.t${cyc}z.pgrb2af${hr} ${ens_id}.t${cyc}z.pgrbaf${hr}
+     $CNVGRIB -g21 ${ens_id}.t${cyc}z.pgrb2af${hr} ${ens_id}.t${cyc}z.pgrbaf${hr}
 
      input=$DATA/$ens_id.t${cyc}z.pgrbaf$hr
      DATA2=$DATA/ens_${ens_id}_${hr}
@@ -86,7 +86,7 @@ export MP_PGMMODEL=mpmd
 export MP_CMDFILE=$DATA/poescript
 #
 # Execute the script.
-$APRUN
+$APRUN -n 4 cfp $MP_CMDFILE
 export err=$?; err_chk
 
 echo " ------------------------------------------"
