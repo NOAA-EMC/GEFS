@@ -113,7 +113,7 @@ fi # for CleanAll
 if [ $RunRocoto = "yes" ]; then
     cd $sWS
     if [ $machine = "theia" ]; then
-        module load rocoto/1.3.0-RC3
+        module load rocoto/1.3.0
     elif [ $machine = "cray" ]; then
         . /opt/modules/3.2.10.3/init/sh
         module use /usrx/local/emc_rocoto/modulefiles
