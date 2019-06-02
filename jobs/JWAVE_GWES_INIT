@@ -2,7 +2,7 @@
 
 date
 export PS4=' $SECONDS + '
-set -x
+set -x -e
 
 # PATH for working directory
 export NET=${NET:-gens}
@@ -60,7 +60,7 @@ fi
 export wavelog=${COMOUTwave}/wave.log
 
 ##############################################
- Set parameters using gwes_init.parm
+# Set parameters using gwes_init.parm
 ##############################################
 
 . $PARMwave/gwes.parm

@@ -2,7 +2,7 @@
 
 date
 export PS4=' $SECONDS + '
-set -x
+set -x -e
 
 # PATH for working directory
 export NET=${NET:-gens}
@@ -41,7 +41,7 @@ setpdy.sh
 sh ./PDY
 
 ##############################################
- Set parameters using gwes_post.parm
+# Set parameters using gwes_post.parm
 ##############################################
 
 . $PARMwave/gwes.parm
