@@ -53,7 +53,7 @@ export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}/$cyc}  
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/$cyc}
 export COMINcfs=${COMINcfs:-$COMROOTp1/cfs/prod/cfs/cfs.}
 
 ##############################################

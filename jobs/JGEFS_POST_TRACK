@@ -9,9 +9,9 @@ set -xa
 export PS4=' + $SECONDS $na $LINENO: '
 date
 
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export gefsmpexec=${gefsmpexec:-mpirun}
 
-export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
+export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
 #export APRUNTRACK="aprun -j1 -n21 -N7 -d1"
 #export NODES=3
 #export IOBUF_PARAMS="*:size=32M:count=4:verbose"
@@ -163,7 +163,13 @@ export loopnum=1
 export ymdh=${PDY}${cyc}
 
 #-----------input data checking -----------------
-##${USHens_tracker}/data_check.sh
+${USHens_tracker}/data_check_gefs.sh
+export err=$?; err_chk
+
+if [ $err != 0 ]; then
+    msg="JOB FAILED!"
+    exit $err
+fi
 #------------------------------------------------
 
 mkdir ${DATA}/${cmodel}
@@ -196,14 +202,9 @@ $APRUN
 
 sh ${USHens_tracker}/ens_trak_ave.sh
 export err=$?; err_chk
-cp ${DATA}/aemn.trkprob.* ${COMOUT}
-cp ${DATA}/trak.aemn.atcfunix.* ${COMOUT}/aemn.t${CYL}z.cyclone.trackatcfunix
-cp ${DATA}/trak.aemn.mode.* ${COMOUT}/aemn.t${CYL}z.cyclone.trackmode
-cp ${DATA}/trak.aemn.spread.* ${COMOUT}/aemn.t${CYL}z.cyclone.trackspread
-
-cd ${DATA}
-${USHens_tracker}/atcf_2_cxml.sh ${cmodel} ${ymdh} ${COMOUT} ${DATA}
-export err=$?; err_chk
+#cd ${DATA}
+#${USHens_tracker}/atcf_2_cxml.sh ${cmodel} ${ymdh} ${COMOUT} ${DATA}
+#export err=$?; err_chk
 
 ################################
 msg="JOB COMPLETED NORMALLY"
