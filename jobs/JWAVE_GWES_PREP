@@ -36,6 +36,18 @@ export PARMwave=${PARMwave:-$HOMEwave/parm}
 export USHwave=${USHwave:-$HOMEwave/ush}
 export EXECcode=${EXECcode:-$CODEwave/exec}
 
+# Set wave model ID tag to include member number 
+# if ensemble; waveMEMB var empty in deterministic
+export wavemodTAG=${wavemodID}${waveMEMB}
+
+###################################
+# Create and go to DATA directory
+#  (requires wavemodTAG) 
+###################################
+export DATA=${DATA:-${DATAROOT:?}/${wavemodTAG}.${jobid}}
+mkdir -p $DATA
+cd $DATA
+
 # Set PDY
 setpdy.sh
 sh ./PDY
@@ -46,10 +58,6 @@ sh ./PDY
 
 . $PARMwave/gwes.parm
 . $PARMwave/gwes_prep.parm
-
-# Set wave model ID tag to include member number 
-# if ensemble; waveMEMB var empty in deterministic
-export wavemodTAG=${wavemodID}${waveMEMB}
 
 ###################################
 # Set COM Paths and GETGES environment
@@ -74,14 +82,6 @@ export wavelog=${COMOUTwave}/wave.log
 # Set mpi serial command
 #################################
 export wave_mpmd=${wave_mpmd:-"mpirun.lsf cfp cmdfile"}
-
-###################################
-# Create and go to DATA directory
-#  (requires wavemodTAG) 
-###################################
-export DATA=${DATA:-${DATAROOT:?}/${wavemodTAG}.${jobid}}
-mkdir -p $DATA
-cd $DATA
 
 env | sort
 
