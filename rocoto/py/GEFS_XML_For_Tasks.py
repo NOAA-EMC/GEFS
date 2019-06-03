@@ -366,26 +366,53 @@ def get_param_of_task(dicBase, taskname):
                 if DoesTaskExist(dicBase, "init_recenter"):
                     if DoesTaskExist(dicBase, "init_fv3chgrs"):
                         if DoesTaskExist(dicBase, "getcfssst"):
-                            sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+                            if DoesTaskExist(dicBase, "gwes_prep"):
+                                sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n\t<taskdep task="gwes_prep_#member#"/>\n</and>'
+                            else:
+                                sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
                         else:
-                            sDep = '<taskdep task="init_fv3chgrs_#member#"/>'
+                            if DoesTaskExist(dicBase, "gwes_prep"):
+                                sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="gwes_prep_#member#"/>\n</and>'
+                            else:
+                                sDep = '<taskdep task="init_fv3chgrs_#member#"/>'
                     else:  # For Warm Start
-                        if DoesTaskExist(dicBase, "getcfssst"):   
-                            sDep = '<and>\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>\n\t<taskdep task="getcfssst"/>\n</and>'
+                        if DoesTaskExist(dicBase, "getcfssst"):
+                            if DoesTaskExist(dicBase, "gwes_prep"):
+                                sDep = '<and>\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>\n\t<taskdep task="getcfssst"/>\n\t<taskdep task="gwes_prep_#member#"/>\n</and>'
+                            else:
+                                sDep = '<and>\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>\n\t<taskdep task="getcfssst"/>\n</and>'
                         else:
-                            sDep = '<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
+                            if DoesTaskExist(dicBase, "gwes_prep"):
+                                sDep = '<and>\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>\n\t<taskdep task="gwes_prep_#member#"/>\n</and>'
+                            else:
+                                sDep = '<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
                 elif DoesTaskExist(dicBase, "copy_init"):
                     if DoesTaskExist(dicBase, "getcfssst"):
-                        sDep = '<and>\n\t<taskdep task="copy_init_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+                        if DoesTaskExist(dicBase, "gwes_prep"):
+                            sDep = '<and>\n\t<taskdep task="copy_init_#member#"/>\n\t<taskdep task="getcfssst"/>\n\t<taskdep task="gwes_prep_#member#"/>\n</and>'
+                        else:
+                            sDep = '<and>\n\t<taskdep task="copy_init_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
                     else:
-                        sDep = '<taskdep task="copy_init_#member#"/>'
+                        if DoesTaskExist(dicBase, "gwes_prep"):
+                            sDep = '<and>\n\t<taskdep task="copy_init_#member#"/>\n\t<taskdep task="gwes_prep_#member#"/>\n</and>'
+                        else:
+                            sDep = '<taskdep task="copy_init_#member#"/>'
                 elif DoesTaskExist(dicBase, "init_fv3chgrs"):
                     if DoesTaskExist(dicBase, "getcfssst"):
-                        sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+                        if DoesTaskExist(dicBase, "gwes_prep"):
+                            sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n\t<taskdep task="gwes_prep_#member#"/>\n</and>'
+                        else:
+                            sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
                     else:
-                        sDep = '<taskdep task="init_fv3chgrs_#member#"/>'
+                        if DoesTaskExist(dicBase, "gwes_prep"):
+                            sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="gwes_prep_#member#"/>\n</and>'
+                        else:
+                            sDep = '<taskdep task="init_fv3chgrs_#member#"/>'
                 else:
-                    sDep = "" 
+                    if DoesTaskExist(dicBase, "gwes_prep"):
+                        sDep = '<taskdep task="gwes_prep_#member#"/>'
+                    else:
+                        sDep = "" 
                        
             # For 'forecast_low' task
             if taskname.lower() == "forecast_low": 
@@ -509,8 +536,12 @@ def get_param_of_task(dicBase, taskname):
             ncores_per_node = 24
 
         dicBase['COREPERNODE'] = ncores_per_node
-        iNodes = int(math.ceil((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) * 1.0 / (ncores_per_node / parallel_threads)))
         iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
+        iNodes = int(math.ceil((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) * 1.0 / iPPN))
+
+        if dicBase['CPLWAV'] == ".true.":
+            iWaveThreads = int(dicBase['NPE_WAV'])
+            iNodes = iNodes + int( math.ceil( iWaveThreads / iPPN ) )
 
         iTPP = parallel_threads
 

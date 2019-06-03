@@ -66,11 +66,13 @@ if [ -d /scratch4/NCEPDEV ]; then
     NOSCRUB=/scratch4/NCEPDEV/ensemble/noscrub
     export machine='THEIA'
     
-    export HOMEDIR=/scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gfs/fv3gefs_q2fy19nco_b84e91_20181211
+    # export HOMEDIR=/scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gfs/fv3gefs_q2fy19nco_b84e91_20181211
+    export HOMEDIR=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/global-workflow/lgan_fv3_ww3_upWW3  # Copuled version
     export HOMEDIR1=$HOMEDIR
     export HOMERFC=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
 
     export HOMEdata=/scratch4/NCEPDEV/ensemble/noscrub/common
+
     export COMROOThps=${HOMEdata}
     export COMROOTp1=/scratch4/NCEPDEV/rstprod/com 
 
@@ -82,7 +84,9 @@ if [ -d /scratch4/NCEPDEV ]; then
     export utilscript=$USHutil
     export SUPVIT=${SUPVIT:-${EXECutil}/supvit}
 
-# Wave model settings: ice data dir
+    # Location of WW3 executables
+    export EXECcode=$HOMEDIR/sorc/fv3gfs.fd/WW3/model/exe
+    # Wave model settings: ice data dir
     export COMICE=/scratch4/NCEPDEV/rstprod/com/omb/prod
 
 elif [[ -d /dcom && -d /hwrf ]] ; then

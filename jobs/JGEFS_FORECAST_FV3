@@ -95,6 +95,10 @@ export USHgefs=${USHgefs:-$HOMEgefs/ush}
 export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
+# Setting for Wavewatch III
+export COMINwave=${COMINwave:-${COMROOT:?}/${NET}/${envir}}
+export COMOUTWW3=$COMROOT/${NET}/${envir}
+
 # Run setpdy and initialize PDY variables
 setpdy.sh
 . PDY
@@ -251,8 +255,10 @@ fi
 #if [[ $mem = c00 ]] ;then 
 if [[ $mem = c00 ]] ;then 
 	MEMBER=$((npert+1))
+	WAV_MEMBER="00"
 else
 	MEMBER=`echo $mem|cut -c2-3`
+	WAV_MEMBER=$MEMBER
 fi
 export MEMBER=$MEMBER
 memchar=mem$(printf %03i $MEMBER)
@@ -414,22 +420,22 @@ ICSDIR=`eval echo $ICSDIR_template`
 if [ $OUTPUT_GRID = "gaussian_grid" ]; then
 	# Link init directory
 	ln -s $ICSDIR $DATA/INPUT
-	mkdir -p $memdir
+	mkdir -p "$memdir"
 
 	# Link output files
 	hr=$FHINI
 	while (( hr < FHMAX_HF )); do
 		fhr=$(printf "%03.0f" $hr)
-		ln -s $FCSTDIR/${RUNMEM}.t${cyc}z.atmf$fhr.nemsio $memdir/$CDUMP.t${cyc}z.atmf$fhr.nemsio
-		ln -s $FCSTDIR/${RUNMEM}.t${cyc}z.sfcf$fhr.nemsio $memdir/$CDUMP.t${cyc}z.sfcf$fhr.nemsio
-		ln -s $FCSTDIR/${RUNMEM}.t${cyc}z.logf$fhr.nemsio $memdir/$CDUMP.t${cyc}z.logf$fhr.nemsio
+		ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $memdir/$CDUMP.${cycle}.atmf$fhr.nemsio
+		ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $memdir/$CDUMP.${cycle}.sfcf$fhr.nemsio
+		ln -s $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $memdir/$CDUMP.${cycle}.logf$fhr.nemsio
 		export hr=$(expr $hr + $FHOUT_HF)
 	done
 	while (( hr <= FHMAX )); do
 		fhr=$(printf "%03.0f" $hr)
-		ln -s $FCSTDIR/${RUNMEM}.t${cyc}z.atmf$fhr.nemsio $memdir/$CDUMP.t${cyc}z.atmf$fhr.nemsio
-		ln -s $FCSTDIR/${RUNMEM}.t${cyc}z.sfcf$fhr.nemsio $memdir/$CDUMP.t${cyc}z.sfcf$fhr.nemsio
-		ln -s $FCSTDIR/${RUNMEM}.t${cyc}z.logf$fhr.nemsio $memdir/$CDUMP.t${cyc}z.logf$fhr.nemsio		
+		ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $memdir/$CDUMP.${cycle}.atmf$fhr.nemsio
+		ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $memdir/$CDUMP.${cycle}.sfcf$fhr.nemsio
+		ln -s $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $memdir/$CDUMP.${cycle}.logf$fhr.nemsio
 		export hr=$(expr $hr + $FHOUT)
 	done
 else
@@ -443,6 +449,26 @@ else
 		done
 	done
 fi
+
+# Link WW3 files
+mkdir -p $DATA/INPUT/${WAV_MOD_ID}.${PDY}/${cyc}
+ln -sf $COMINwave/${WAV_MOD_ID}.${PDY}/${cyc}/ww3_multi.${WAV_MOD_ID}${WAV_MEMBER}.${cycle}.inp $DATA/INPUT/${WAV_MOD_ID}.${PDY}/${cyc}/ww3_multi.inp
+ln -sf $COMINwave/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}.mod_def.points $DATA/INPUT/${WAV_MOD_ID}.${PDY}/${cyc}/ww3.mod_def.points
+ln -sf $COMINwave/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}.mod_def.glo_30m $DATA/INPUT/${WAV_MOD_ID}.${PDY}/${cyc}/ww3.mod_def.glo_30m
+ln -sf $COMINwave/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}.mod_def.icean_5m $DATA/INPUT/${WAV_MOD_ID}.${PDY}/${cyc}/ww3.mod_def.icean_5m
+ln -sf $COMINwave/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}.icean_5m.${cycle}.ice $DATA/INPUT/${WAV_MOD_ID}.${PDY}/${cyc}/ww3.icean_5m.${PDY}${cyc}.ice
+
+ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.out_grd.glo_30m.${PDY}${cyc} out_grd.glo_30m
+ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.out_pnt.points.${PDY}${cyc} out_pnt.points
+ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.log.mww3.${PDY}${cyc} log.mww3
+ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.log.glo_30m.${PDY}${cyc} log.glo_30m
+ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.restart001.glo_30m.${PDY}${cyc} restart001.glo_30m
+
+# Change wave paths to the working directory for exglobal
+export COMINwave=$DATA/INPUT
+export COMOUTWW3=$DATA/INPUT
+
+mkdir -p $memdir
 
 export FIX_DIR=$FIXgfs
 export FIX_AM=$FIX_AM
