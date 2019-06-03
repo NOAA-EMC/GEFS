@@ -37,6 +37,7 @@ def main():
     try: 
         import netCDF4
     except:
+        print("FATAL ERROR: Failed to import netCDF4 in recenterensemble.py; exiting!")
         sys.exit(-5)
         
     

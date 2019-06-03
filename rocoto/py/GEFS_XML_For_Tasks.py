@@ -324,7 +324,7 @@ def get_param_of_task(dicBase, taskname):
         
     if sVarName_ppn in dicBase:
         ppn = dicBase[sVarName_ppn]
-        if taskname.lower() in ["prdgen_high","prdgen_low","prdgen_gfs"]:
+        if taskname.lower() in ["prdgen_high","prdgen_low","prdgen_gfs","ensstat_high","ensstat_low"]:
             #print(taskname)
             #print("{0}".format("PRDGEN_STREAMS" in dicBase))
             #print(dicBase["PRDGEN_STREAMS"])

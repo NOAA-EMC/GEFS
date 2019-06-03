@@ -154,10 +154,18 @@ else
 fi
 
 $USHgsm/global_chgres_driver.sh
+ERR=$?
+
+echo $ERR
 
 cat $pgmout
 
-msg="JOB COMPLETED NORMALLY"
+if [ $ERR = 0 ]; then
+    msg="JOB COMPLETED NORMALLY"
+else
+    msg="JOB FAILED!"
+fi
+
 postmsg "$jlogfile" "$msg"
 
 ##############################
