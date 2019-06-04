@@ -165,7 +165,7 @@ export FHOUT=${FHOUTLF:-6}
 case $FORECAST_SEGMENT in
 	(hr)
 		export SHOUR=00
-		export FHOUR=$fhmaxh
+		export FHOUR=180 #$fhmaxh
 		;;
 	(lr)
 		# low resolution segment
@@ -196,6 +196,7 @@ echo
 # Run from $SHOUR to $FHOUR_HIGH
 #################################
 $HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf
+ERR=$?
 
 ################# lines between these markers have been modified for dev begin
 echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN
@@ -213,3 +214,5 @@ if [[ $KEEPDATA != "YES" ]]; then
 fi
 
 echo `date` $0 `date -u` end
+
+exit $ERR
