@@ -95,9 +95,6 @@ export USHgefs=${USHgefs:-$HOMEgefs/ush}
 export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
-# Setting for Wavewatch III
-export COMINwave=${COMINwave:-${COMROOT:?}/${NET}/${envir}}
-export COMOUTWW3=$COMROOT/${NET}/${envir}
 
 # Run setpdy and initialize PDY variables
 setpdy.sh
@@ -448,25 +445,31 @@ else
 			;
 		done
 	done
-fi
+fi # [ $OUTPUT_GRID = "gaussian_grid" ]
 
-# Link WW3 files
-mkdir -p $DATA/INPUT/${WAV_MOD_ID}.${PDY}/${cyc}
-ln -sf $COMINwave/${WAV_MOD_ID}.${PDY}/${cyc}/ww3_multi.${WAV_MOD_ID}${WAV_MEMBER}.${cycle}.inp $DATA/INPUT/${WAV_MOD_ID}.${PDY}/${cyc}/ww3_multi.inp
-ln -sf $COMINwave/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}.mod_def.points $DATA/INPUT/${WAV_MOD_ID}.${PDY}/${cyc}/ww3.mod_def.points
-ln -sf $COMINwave/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}.mod_def.glo_30m $DATA/INPUT/${WAV_MOD_ID}.${PDY}/${cyc}/ww3.mod_def.glo_30m
-ln -sf $COMINwave/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}.mod_def.icean_5m $DATA/INPUT/${WAV_MOD_ID}.${PDY}/${cyc}/ww3.mod_def.icean_5m
-ln -sf $COMINwave/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}.icean_5m.${cycle}.ice $DATA/INPUT/${WAV_MOD_ID}.${PDY}/${cyc}/ww3.icean_5m.${PDY}${cyc}.ice
+if [[ $cplwav = ".true." ]]; then
+	# Settings for Wavewatch III
+	export COMINwave=${COMINwave:-${COMROOT:?}/${NET}/${envir}}
+	export COMOUTWW3=$COMROOT/${NET}/${envir}
 
-ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.out_grd.glo_30m.${PDY}${cyc} out_grd.glo_30m
-ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.out_pnt.points.${PDY}${cyc} out_pnt.points
-ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.log.mww3.${PDY}${cyc} log.mww3
-ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.log.glo_30m.${PDY}${cyc} log.glo_30m
-ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.restart001.glo_30m.${PDY}${cyc} restart001.glo_30m
+	# Link WW3 files
+	mkdir -p $DATA/INPUT/${WAV_MOD_ID}.${PDY}/${cyc}
+	ln -sf $COMINwave/${WAV_MOD_ID}.${PDY}/${cyc}/ww3_multi.${WAV_MOD_ID}${WAV_MEMBER}.${cycle}.inp $DATA/INPUT/${WAV_MOD_ID}.${PDY}/${cyc}/ww3_multi.inp
+	ln -sf $COMINwave/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}.mod_def.points $DATA/INPUT/${WAV_MOD_ID}.${PDY}/${cyc}/ww3.mod_def.points
+	ln -sf $COMINwave/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}.mod_def.glo_30m $DATA/INPUT/${WAV_MOD_ID}.${PDY}/${cyc}/ww3.mod_def.glo_30m
+	ln -sf $COMINwave/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}.mod_def.icean_5m $DATA/INPUT/${WAV_MOD_ID}.${PDY}/${cyc}/ww3.mod_def.icean_5m
+	ln -sf $COMINwave/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}.icean_5m.${cycle}.ice $DATA/INPUT/${WAV_MOD_ID}.${PDY}/${cyc}/ww3.icean_5m.${PDY}${cyc}.ice
 
-# Change wave paths to the working directory for exglobal
-export COMINwave=$DATA/INPUT
-export COMOUTWW3=$DATA/INPUT
+	ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.out_grd.glo_30m.${PDY}${cyc} out_grd.glo_30m
+	ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.out_pnt.points.${PDY}${cyc} out_pnt.points
+	ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.log.mww3.${PDY}${cyc} log.mww3
+	ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.log.glo_30m.${PDY}${cyc} log.glo_30m
+	ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.restart001.glo_30m.${PDY}${cyc} restart001.glo_30m
+
+	# Change wave paths to the working directory for exglobal
+	export COMINwave=$DATA/INPUT
+	export COMOUTWW3=$DATA/INPUT
+fi # [[ $cplwav = ".true." ]]
 
 mkdir -p $memdir
 
