@@ -76,6 +76,8 @@ elif [[ "$WHERE_AM_I" == wcoss_dell_p3 ]] ; then
     module load util_shared/1.1.0
     module load g2tmpl/1.5.0
     
+    module load gempak/7.3.1
+
     module load NetCDF/4.5.0
     module load HDF5-serial/1.10.1
     module load impi/18.0.1

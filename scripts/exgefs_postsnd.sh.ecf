@@ -15,8 +15,10 @@
 #                          parameters as input; make it work for 
 #                          both FV3GFS and GFS
 #   7) 2018-07-18       Guang Ping Lou Generalize this version to other platforms
+#   8) 2019-05-27       Bo Cui modify to generate GEFS BUFR sounding files          
 ################################################################
 set -xa
+export PS4='+t+$SECONDS exgefs_postsnd.sh.ecf:LINENO -- '
 
 cd $DATA
 ########################################
@@ -32,27 +34,17 @@ export LEVS=${LEVS:-64}
 export LATB=${LATB:-768}
 export LONB=${LONB:-1536}
 export STARTHOUR=${STARTHOUR:-00}
-export ENDHOUR=${ENDHOUR:-180}
-export NEND1=${NEND1:-120}   ##first period length with time interval = NINT1
-export NINT1=${NINT1:-3}     ##first period time interval
-##export NINT1=1     ##first period time interval
-export NINT3=${NINT3:-3}     ##second period time interval
+
+export ENDHOUR=$fhmaxh                 
+export NEND1=$FHMAXHF        ##first period length with time interval = NINT1
+export NINT1=$FHOUTHF        ##first period time interval
+export NINT3=$FHOUTLF        ##second period time interval
+
 export NZERO=6
 export INCREMENT=${INCREMENT:-12}
 export OUTFILE=meteomrf
 export MAKEBUFR=NO
 export F00FLAG=YES
-
-#if [ $FHMAX_HF_GFS -gt 0 -a $FHOUT_HF_GFS -gt 0 ]
-#  then
-#    export NINT1=${FHOUT_HF_GFS:-1}
-#    export NEND1=${FHMAX_HF_GFS:-120}
-#  else
-#    export NINT3=${FHOUT_GFS:-3}
-#fi
-
-#rm -f -r ${COMOUT}/bufr.${cycle}
-#mkdir -p ${COMOUT}/bufr.${cycle}
 
 # Extract number of vertical levels from $STARTHOUR atmospheric file
 export NEMSIOGET=${NEMSIOGET:-$EXECbufrsnd/nemsio_get}
@@ -102,19 +94,18 @@ export FINT=$NINT1
    if [ $FEND -gt $NEND1 ]; then
      export FINT=$NINT3
    fi
-   #$USHbufrsnd/gfs_bufr.sh
    $USHgefs/gfs_bufr.sh
   
    export FSTART=$FEND
 done
 
-if test 'NO' = 'YES'
-then
+#if test 'NO' = 'YES'
+#then
 ##############################################################
 # Tar and gzip the individual bufr files and send them to /com
 ##############################################################
-cd ${COMOUT}/bufr.${cycle}
-tar -cf - . | /usr/bin/gzip > ../${RUNMEM}.${cycle}.bufrsnd.tar.gz
+cd ${COMOUT}/bufr/${mem}
+tar -cf - . | /usr/bin/gzip > ${RUNMEM}.${cycle}.bufrsnd.tar.gz
 cd $DATA
 
 ########################################
@@ -134,20 +125,20 @@ collect=' 1 2 3 4 5 6 7 8 9'
 if [ $machine == "THEIA" -o  $machine == "JET" ]; then
 for m in ${collect}
 do
-sh $USHbufrsnd/gfs_sndp.sh $m
+sh $USHgefs/gfs_sndp.sh $m
 done
 
 ################################################
 # Convert the bufr soundings into GEMPAK files
 ################################################
-sh $USHbufrsnd/gfs_bfr2gpk.sh
+sh $USHgefs/gfs_bfr2gpk.sh
 
 else
 rm -rf poe_col
-echo "sh $USHbufrsnd/gfs_bfr2gpk.sh " >> poe_col
+echo "sh $USHgefs/gfs_bfr2gpk.sh " >> poe_col
 for m in ${collect}
 do
-echo "sh $USHbufrsnd/gfs_sndp.sh $m " >> poe_col
+echo "sh $USHgefs/gfs_sndp.sh $m " >> poe_col
 done
 
 mv poe_col cmdfile
@@ -158,11 +149,8 @@ chmod +x cmdfile
 ##mpirun -n 10 cfp cmdfile
 ${APRUN_POSTSNDCFP} cmdfile
 fi
-################################################
-# Convert the bufr soundings into GEMPAK files
-################################################
-##$USHbufrsnd/gfs_bfr2gpk.sh
-fi #if test "NO" = 'YES'
+
+#fi #if test "NO" = 'YES'
 
 #####################################################################
 # GOOD RUN

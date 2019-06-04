@@ -27,27 +27,6 @@ else
    f00flag=".false."
 fi
 
-export pgm=gfs_flux
-#. prep_step
-
-cat << EOF > gfsflxparm
- &NAMKEN
-  nout=$FINT,lonf=$LONB,latg=$LATB,nsfc=80,
-  nstart=$FSTART,nend=$FEND,nint=$FINT,
-  nend1=$NEND1,nint1=$NINT1,nint3=$NINT3,
-  nzero=$NZERO,f00=$f00flag,
-/
-EOF
-hh=$FSTART
-while  test $hh -le $FEND
-do  
-   hh=` expr $hh + $FINT `
-   if test $hh -lt 10
-   then
-      hh=0$hh
-   fi
-done
-
 export pgm=gfs_bufr
 #. prep_step
 

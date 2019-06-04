@@ -11,7 +11,8 @@ export gefsmpexec=${gefsmpexec:-mpirun}
 
 #export APRUN=${gefsmpexec:-'mpirun -n 4'}
 export APRUN_POSTSND=${gefsmpexec:-'mpirun -n 4'}
-export APRUN_POSTSNDCFP=${gefsmpexec_mpmd:-'mpirun -n 9 cfp'}
+#export APRUN_POSTSNDCFP=${gefsmpexec_mpmd:-'mpirun -n 9 cfp'}
+export APRUN_POSTSNDCFP=${gefsmpexec_mpmd:-'mpirun -n 10 cfp'}
 
 ########################################
 # Runs GFS BUFR SOUNDINGS
@@ -147,7 +148,6 @@ env
 
 ########################################################
 # Execute the script.
-#$SCRbufrsnd/exgfs_postsnd.sh.ecf
 $HOMEgefs/scripts/exgefs_postsnd.sh.ecf
 ########################################################
 
