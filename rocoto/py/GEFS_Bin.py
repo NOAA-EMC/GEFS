@@ -35,6 +35,110 @@ def create_bin_file(dicBase):
         if not DoesTaskExist(dicBase, 'prdgen_high'):
             rw_bin_prdgen(taskname, dicBase)
 
+    taskname ='ensstat_high'
+    if DoesTaskExist(dicBase, taskname):
+        rw_bin_ensstat(taskname, dicBase)
+
+    taskname ='ensstat_low'
+    if DoesTaskExist(dicBase, taskname):
+        rw_bin_ensstat(taskname, dicBase)
+
+    #taskname ='init_fv3chgrs'
+    #if DoesTaskExist(dicBase, taskname):
+    #    rw_bin_init_fv3chgrs(taskname, dicBase)
+
+def rw_bin_ensstat(taskname, dicBase):
+    import sys
+    import os
+
+    sSep = "/"
+    if sys.platform == 'win32':
+        sSep = r'\\'
+
+    sPath = dicBase["GEFS_ROCOTO"]
+
+    sPath += sSep + "bin" + sSep + dicBase["WHERE_AM_I"] + sSep
+    sInput_File = sPath + "{0}.sh".format(taskname)
+
+    if not os.path.exists(sInput_File):
+        print("Please check whether you have the input file: "+sInput_File )
+        return
+
+    if "PRDGEN_STREAMS" not in dicBase:
+        print("Please check whether you have the 'PRDGEN_STREAMS' variable in your user_full.conf and gefs_dev.parm" )
+        return
+
+    iTotal_Tasks = len(dicBase["PRDGEN_STREAMS"].split())
+    WHERE_AM_I = dicBase['WHERE_AM_I'].lower()
+    sLines = ""
+    with open(sInput_File, "r") as f:
+        for sLine in f:
+            # print(sLine)
+            sLine1 = sLine.strip()
+
+            if WHERE_AM_I == "cray":
+                if sLine1.startswith("export total_tasks="):
+                    sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
+
+            elif WHERE_AM_I == "theia":
+                pass
+
+            elif WHERE_AM_I == "wcoss_dell_p3":
+                if sLine1.startswith("export total_tasks="):
+                    sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
+
+            elif WHERE_AM_I == "wcoss_ibm":
+                if sLine1.startswith("export total_tasks="):
+                    sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
+
+            sLines += sLine
+            # fh.write(sLine)
+
+    fh = open(sInput_File, 'w')
+    fh.writelines(sLines)
+    fh.flush()
+    fh.close()
+
+
+def rw_bin_init_fv3chgrs(taskname, dicBase):
+    import sys
+    import os
+
+    sSep = "/"
+    if sys.platform == 'win32':
+        sSep = r'\\'
+
+    WHERE_AM_I = dicBase['WHERE_AM_I'].lower()
+    sPath = dicBase["GEFS_ROCOTO"]
+    sPath += sSep + "bin" + sSep + WHERE_AM_I + sSep
+
+    sInput_File = sPath + taskname + ".sh"
+
+    if not os.path.exists(sInput_File):
+        print("Please check whether you have the input file: "+sInput_File )
+        return
+
+    sLines = ""
+    with open(sInput_File, "r") as f:
+        for sLine in f:
+            sLine1 = sLine.strip()
+
+            if sLine1.startswith("$SOURCEDIR/jobs/JGEFS_INIT_FV3CHGRS"):
+                if DoesTaskExist(dicBase, 'init_combine'):
+                    sLine = "$SOURCEDIR/jobs/JGEFS_INIT_FV3CHGRS_old"
+                else:
+                    sLine = "$SOURCEDIR/jobs/JGEFS_INIT_FV3CHGRS"
+
+            
+            sLines += sLine                 
+
+
+    fh = open(sInput_File, 'w')
+    fh.writelines(sLines)
+    fh.flush()
+    fh.close()
+
+
 def rw_bin_prdgen(taskname, dicBase):
     import sys
     import os

@@ -38,7 +38,7 @@ export taskspernode=6
 
 export DO_LOW_RES=
 
-export gefsmpexec_mpmd="  aprun -b -j1 -n6 -N6 -d4 -cc depth  cfp mpmd_cmdfile"
+export gefsmpexec_mpmd="  aprun -b -j1 -n${total_tasks} -N${taskspernode} -d${OMP_NUM_THREADS} -cc depth  cfp mpmd_cmdfile"
 
 # export for development runs only begin
 export envir=${envir:-dev}

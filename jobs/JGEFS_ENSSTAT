@@ -6,11 +6,11 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export gefsmpexec=${gefsmpexec:-mpirun}
 
-export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
+export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
 
-export CNVGRIB=$CNVGRIB21_GFS
+export CNVGRIB=$CNVGRIB
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -234,7 +234,7 @@ export MP_PGMMODEL=mpmd
 rm -f mpmd_cmdfile
 ln -s $MP_CMDFILE mpmd_cmdfile
 
-$APRUN
+$APRUN 
 
 msg="JOB COMPLETED NORMALLY"
 postmsg "$jlogfile" "$msg"
