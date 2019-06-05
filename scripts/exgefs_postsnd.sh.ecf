@@ -1,7 +1,7 @@
 #!/bin/ksh
 ################################################################
-# Script Name:		exgfs_postsnd.sh.sms
-# Script Description:	Generate GFS BUFR sounding files
+# Script Name:      exgfs_postsnd.sh.sms
+# Script Description:   Generate GFS BUFR sounding files
 # Script History Log:
 #   1) 2003-03-25       Hualu Pan       First Implementation
 #   2) 2010-05-25       V. Krishna Kumar Modified for the GFS 
@@ -15,7 +15,8 @@
 #                          parameters as input; make it work for 
 #                          both FV3GFS and GFS
 #   7) 2018-07-18       Guang Ping Lou Generalize this version to other platforms
-#   8) 2019-05-27       Bo Cui modify to generate GEFS BUFR sounding files          
+#   8) 2019-05-27       Bo Cui modify to generate GEFS BUFR sounding files
+#   9) 2019-06-05       Xianwu Xue reformatted it and add checked the errors        
 ################################################################
 set -xa
 export PS4='+t+$SECONDS exgefs_postsnd.sh.ecf:LINENO -- '
@@ -57,46 +58,48 @@ export FSTART=$STARTHOUR
 #
 while [ $FSTART -lt $ENDHOUR ]
 do
-export FINT=$NINT1
-   # Define the end hour for the input
-   export FEND=`expr $FSTART + $INCREMENT` 
-   if test $FEND -lt 100; then FEND=0$FEND; fi 
-   if [ $FSTART -eq 00 ]
-   then 
-       export F00FLAG=YES
-   else
-       export F00FLAG=NO
-   fi
+    export FINT=$NINT1
+    # Define the end hour for the input
+    export FEND=`expr $FSTART + $INCREMENT` 
+    if test $FEND -lt 100; then FEND=0$FEND; fi 
+    if [ $FSTART -eq 00 ]
+    then 
+        export F00FLAG=YES
+    else
+        export F00FLAG=NO
+    fi
    
-   if [ $FEND -eq $ENDHOUR ]
-   then
-       export MAKEBUFR=YES
-   fi
+    if [ $FEND -eq $ENDHOUR ]
+    then
+        export MAKEBUFR=YES
+    fi
 
-   ic=0
-   while [ $ic -lt 1000 ]
-   do
-      if [ ! -f $COMIN/sfcsig/${RUNMEM}.${cycle}.logf$FEND.nemsio ]
-      then
-          sleep 10
-          ic=`expr $ic + 1`
-      else
-          break
-      fi
+    ic=0
+    while [ $ic -lt 1000 ]
+    do
+        if [ ! -f $COMIN/sfcsig/${RUNMEM}.${cycle}.logf$FEND.nemsio ]
+        then
+            sleep 10
+            ic=`expr $ic + 1`
+        else
+            break
+        fi
 
-      if [ $ic -ge 360 ]
-      then
-         err_exit "COULD NOT LOCATE logf$FEND file AFTER 1 HOUR"
-      fi
-   done
+        if [ $ic -ge 360 ]
+        then
+            err_exit "COULD NOT LOCATE logf$FEND file AFTER 1 HOUR"
+            ERR=-5
+            exit $ERR
+        fi
+    done
 
-## 1-hourly output before $NEND1, 3-hourly output after
-   if [ $FEND -gt $NEND1 ]; then
-     export FINT=$NINT3
-   fi
-   $USHgefs/gfs_bufr.sh
-  
-   export FSTART=$FEND
+    ## 1-hourly output before $NEND1, 3-hourly output after
+    if [ $FEND -gt $NEND1 ]; then
+        export FINT=$NINT3
+    fi
+    $USHgefs/gfs_bufr.sh
+    ERR=$?
+    export FSTART=$FEND
 done
 
 #if test 'NO' = 'YES'
@@ -114,7 +117,7 @@ cd $DATA
 if test "$SENDDBN" = 'YES'
 then
     $DBNROOT/bin/dbn_alert MODEL GFS_BUFRSND_TAR $job \
-  $COMOUT/${RUNMEM}.${cycle}.bufrsnd.tar.gz
+    $COMOUT/${RUNMEM}.${cycle}.bufrsnd.tar.gz
 fi
 
 ########################################
@@ -123,31 +126,32 @@ fi
 ########################################
 collect=' 1 2 3 4 5 6 7 8 9'
 if [ $machine == "THEIA" -o  $machine == "JET" ]; then
-for m in ${collect}
-do
-sh $USHgefs/gfs_sndp.sh $m
-done
+    for m in ${collect}
+    do
+        sh $USHgefs/gfs_sndp.sh $m
+    done
 
-################################################
-# Convert the bufr soundings into GEMPAK files
-################################################
-sh $USHgefs/gfs_bfr2gpk.sh
-
+    ################################################
+    # Convert the bufr soundings into GEMPAK files
+    ################################################
+    sh $USHgefs/gfs_bfr2gpk.sh
+    ERR=$?
 else
-rm -rf poe_col
-echo "sh $USHgefs/gfs_bfr2gpk.sh " >> poe_col
-for m in ${collect}
-do
-echo "sh $USHgefs/gfs_sndp.sh $m " >> poe_col
-done
+    rm -rf poe_col
+    echo "sh $USHgefs/gfs_bfr2gpk.sh " >> poe_col
+    for m in ${collect}
+    do
+        echo "sh $USHgefs/gfs_sndp.sh $m " >> poe_col
+    done
 
-mv poe_col cmdfile
+    mv poe_col cmdfile
 
-cat cmdfile
-chmod +x cmdfile
+    cat cmdfile
+    chmod +x cmdfile
 
-##mpirun -n 10 cfp cmdfile
-${APRUN_POSTSNDCFP} cmdfile
+    ##mpirun -n 10 cfp cmdfile
+    ${APRUN_POSTSNDCFP} cmdfile
+    ERR=$?
 fi
 
 #fi #if test "NO" = 'YES'
@@ -160,8 +164,13 @@ echo "**************JOB GFS_meteogrm COMPLETED NORMALLY ON THE IBM"
 echo "**************JOB GFS_meteogrm COMPLETED NORMALLY ON THE IBM"
 set -x
 #####################################################################
-
-msg='HAS COMPLETED NORMALLY.'
+if [ $ERR -eq 0 ] ; then
+    msg='HAS COMPLETED NORMALLY.'
+    exit 0
+else
+    echo "FAILED to Generate GFS BUFR sounding!"
+    exit $ERR
+fi
 #postmsg "$jlogfile" "$msg"
 
 ############## END OF SCRIPT #######################
