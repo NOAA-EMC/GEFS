@@ -18,6 +18,8 @@ export taskspernode=4
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 
+export FORECAST_SEGMENT=hr
+
 export gefsmpexec_mpmd="  mpirun -n $total_tasks cfp mpmd_cmdfile"
 export gefsmpexec=mpirun 
 

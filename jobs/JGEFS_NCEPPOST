@@ -173,7 +173,7 @@ fi
 if [[ $FORECAST_SEGMENT = lr ]]; then
 	master_grid=0p50deg
 #else
-#	echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supporxtted          
+#	echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supportted          
 fi
 
 case $master_grid in
@@ -188,7 +188,7 @@ if [[ $FORECAST_SEGMENT = hr ]] ; then
 elif [[ $FORECAST_SEGMENT = lr ]]; then
 	LEVS=$LEVSLR 
 else
-	echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supporxtted          
+	echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supportted          
 fi
 #(( LEVS = LEVS -1 ))
 echo $LEVS $LATB $LONB
