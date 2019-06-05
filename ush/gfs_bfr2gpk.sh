@@ -1,13 +1,13 @@
 #!/bin/sh
 #########################################################################
-#									#
-# Script:  gfs_bfr2gpk							#
-#									#
-#  This script reads GFS BUFR output and transfers it into GEMPAK	#
-#  surface and sounding data files.					#
-#									#
-# Log:									#
-# K. Brill/HPC		04/12/05					#
+#                                   #
+# Script:  gfs_bfr2gpk                          #
+#                                   #
+#  This script reads GFS BUFR output and transfers it into GEMPAK   #
+#  surface and sounding data files.                 #
+#                                   #
+# Log:                                  #
+# K. Brill/HPC      04/12/05                    #
 #########################################################################  
 set -x
 
@@ -39,7 +39,8 @@ date
 ##for file in $filelist; do
 ##  cat $BPATH/$file >> bufr.combined
 ##done
-  cat $BPATH/bufr.*.${PDY}${cyc} > bufr.combined
+cat $BPATH/bufr.*.${PDY}${cyc} > bufr.combined
+
 date
 namsnd << EOF > /dev/null
 SNBUFR   = bufr.combined
@@ -65,7 +66,10 @@ mv $OUTDIR/.$sfc $OUTDIR/$sfc
 
 if [ $SENDDBN = "YES" ]
 then
-   $DBNROOT/bin/dbn_alert MODEL GFS_PTYP_SFC $job $OUTDIR/$sfc
-   $DBNROOT/bin/dbn_alert MODEL GFS_PTYP_SND $job $OUTDIR/$snd
+    $DBNROOT/bin/dbn_alert MODEL GFS_PTYP_SFC $job $OUTDIR/$sfc
+    $DBNROOT/bin/dbn_alert MODEL GFS_PTYP_SND $job $OUTDIR/$snd
 fi
 echo done > $DATA/gembufr.done
+
+exit 0
+

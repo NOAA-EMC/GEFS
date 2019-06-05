@@ -107,6 +107,9 @@ export pcom=${pcom:-${COMOUT}/wmo}
 export COMAWP=${COMAWP:-${COMOUT}/gempak}
 mkdir -p $COMOUT $pcom $COMAWP
 
+if [ -e $COMOUT/bufr/$mem ]; then
+    rm -rf $COMOUT/bufr/$mem
+fi
 mkdir -m 775 -p $COMOUT/bufr/$mem
 mkdir -m 775 -p $COMOUT/misc/bufr
 
@@ -128,7 +131,7 @@ export STARTHOUR=${STARTHOUR:-00}
 export ENDHOUR=${ENDHOUR:-180}
 export NINT3=$FHOUTLF     ##second period time interval
 export NZERO=6
-export NEND1=${FHMAXHF}   ##first period length with time interval = NINT1
+export NEND1=${NEND1:-180} #${FHMAXHF}   ##first period length with time interval = NINT1
 export NINT1=$FHOUTHF 
 
 if (( fhmax <= ENDHOUR )); then

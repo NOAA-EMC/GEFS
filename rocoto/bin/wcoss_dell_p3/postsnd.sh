@@ -29,7 +29,7 @@ export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:2
 
 export NODES=2
-export total_tasks=9
+export total_tasks=5
 export OMP_NUM_THREADS=2
 export taskspernode=12
 
@@ -37,6 +37,6 @@ export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 export gefsmpexec=" mpirun -n $total_tasks "
-
+export gefsmpexec_mpmd='mpirun -n 10 cfp'
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_POSTSND

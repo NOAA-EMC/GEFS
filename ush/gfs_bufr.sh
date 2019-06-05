@@ -22,9 +22,9 @@ set -ax
 
 if test "$F00FLAG" = "YES"
 then
-   f00flag=".true."
+    f00flag=".true."
 else
-   f00flag=".false."
+    f00flag=".false."
 fi
 
 export pgm=gfs_bufr
@@ -32,17 +32,17 @@ export pgm=gfs_bufr
 
 if test "$MAKEBUFR" = "YES"
 then
-   bufrflag=".true."
+    bufrflag=".true."
 else
-   bufrflag=".false."
+    bufrflag=".false."
 fi
 
 if [ -s ${COMIN}/sfcsig/${RUNMEM}.${cycle}.sfcf000.nemsio ]; then
- SFCF="sfc"
- CLASS="class1fv3"
- else
- SFCF="flx"
- CLASS="class1"
+    SFCF="sfc"
+    CLASS="class1fv3"
+else
+    SFCF="flx"
+    CLASS="class1"
 fi 
 cat << EOF > gfsparm
  &NAMMET
@@ -55,47 +55,50 @@ cat << EOF > gfsparm
 EOF
 
 hh=$FSTART
-   if test $hh -lt 100
-   then
-      hh1=`echo "${hh#"${hh%??}"}"`
-      hh=$hh1
-   fi
+if test $hh -lt 100
+then
+    hh1=`echo "${hh#"${hh%??}"}"`
+    hh=$hh1
+fi
+
 while  test $hh -le $FEND
 do  
-   if test $hh -lt 100
-   then
-      hh2=0$hh
-   else
-      hh2=$hh
-   fi
+    if test $hh -lt 100
+    then
+        hh2=0$hh
+    else
+        hh2=$hh
+    fi
 
-#---------------------------------------------------------
-# Make sure all files are available:
-   ic=0
-   while [ $ic -lt 1000 ]
-   do
-      if [ ! -f $COMIN/sfcsig/${RUNMEM}.${cycle}.logf${hh2}.nemsio ]
-      then
-          sleep 10
-          ic=`expr $ic + 1`
-      else
+    #---------------------------------------------------------
+    # Make sure all files are available:
+    ic=0
+    while [ $ic -lt 1000 ]
+    do
+        if [ ! -f $COMIN/sfcsig/${RUNMEM}.${cycle}.logf${hh2}.nemsio ]
+        then
+            sleep 10
+            ic=`expr $ic + 1`
+        else
           break
-      fi
+        fi
 
-      if [ $ic -ge 360 ]
-      then
-         err_exit "COULD NOT LOCATE logf${hh2} file AFTER 1 HOUR"
-      fi
-   done
-#------------------------------------------------------------------
-   ln -sf $COMIN/sfcsig/${RUNMEM}.${cycle}.atmf${hh2}.nemsio sigf${hh} 
-   ln -sf $COMIN/sfcsig/${RUNMEM}.${cycle}.${SFCF}f${hh2}.nemsio flxf${hh}
+        if [ $ic -ge 360 ]
+        then
+            err_exit "COULD NOT LOCATE logf${hh2} file AFTER 1 HOUR"
+            err=-6
+            exit $err
+        fi
+    done
+    #------------------------------------------------------------------
+    ln -sf $COMIN/sfcsig/${RUNMEM}.${cycle}.atmf${hh2}.nemsio sigf${hh} 
+    ln -sf $COMIN/sfcsig/${RUNMEM}.${cycle}.${SFCF}f${hh2}.nemsio flxf${hh}
 
-   hh=` expr $hh + $FINT `
-   if test $hh -lt 10
-   then
-      hh=0$hh
-   fi
+    hh=` expr $hh + $FINT `
+    if test $hh -lt 10
+    then
+        hh=0$hh
+    fi
 done  
 
 #  define input BUFR table file.
@@ -108,3 +111,5 @@ ln -sf ${STNLIST:-$PARMbufrsnd/bufr_stalist.meteo.gfs} fort.8
 ##mpirun $EXECbufrsnd/gfs_bufr < gfsparm > out_gfs_bufr_$FEND
 ${APRUN_POSTSND} $EXECbufrsnd/gfs_bufr < gfsparm > out_gfs_bufr_$FEND
 export err=$?;err_chk
+exit $err
+

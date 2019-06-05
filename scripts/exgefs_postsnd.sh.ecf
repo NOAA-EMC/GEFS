@@ -36,8 +36,8 @@ export LATB=${LATB:-768}
 export LONB=${LONB:-1536}
 export STARTHOUR=${STARTHOUR:-00}
 
-export ENDHOUR=$fhmaxh                 
-export NEND1=$FHMAXHF        ##first period length with time interval = NINT1
+export ENDHOUR=${ENDHOUR:-180}                 
+export NEND1=${NEND1:-180} #$FHMAXHF        ##first period length with time interval = NINT1
 export NINT1=$FHOUTHF        ##first period time interval
 export NINT3=$FHOUTLF        ##second period time interval
 
