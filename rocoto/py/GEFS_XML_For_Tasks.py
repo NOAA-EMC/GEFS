@@ -13,6 +13,25 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "getcfssst"
 
+        if dicBase['RUN_WAVE_PREP'].upper()[0] == "Y":
+            # ---wave init
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "gwes_init"
+
+            # ---wave prep
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "gwes_prep"
+
+        # Automatically turns on coupled forecast if wave prep is run
+        #   unless it has already been defined
+        if not 'CPLWAV' in dicBase:
+            if dicBase['RUN_WAVE_PREP'].upper()[0] == "Y":
+                dicBase['CPLWAV'] = ".true."
+            else:
+                dicBase['CPLWAV'] = ".false."
+
         # #   <!-- initial jobs -->
         if dicBase['RUN_INIT'].upper() == "GSM_RELOC":
             # ---enkf_track
@@ -107,6 +126,12 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "post_high"
 
+            if dicBase['CPLWAV'] == ".true.":
+                # ---wave_post
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "gwes_post"
+
             # ---prdgen_high
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
@@ -186,7 +211,7 @@ def config_tasknames(dicBase):
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "cleanup"
-            
+
         # final
         dicBase[sVarName] = iTaskName_Num
 
