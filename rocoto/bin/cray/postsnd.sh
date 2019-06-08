@@ -37,6 +37,8 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 
 export gefsmpexec=" aprun -b -j1 -n${total_tasks} -N${taskspernode} -d2 -cc depth "
-
+#export gefsmpexec=" mpirun -n $total_tasks "
+#export gefsmpexec_mpmd='aprun -n 10 cfp'
+export gefsmpexec_mpmd=" aprun -b -j1 -n9 -N9 -d2 -cc depth  cfp "
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_POSTSND
