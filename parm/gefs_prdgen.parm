@@ -13,9 +13,9 @@ export option21=${option21:-' -new_grid_interpolation bilinear  -if '}
 export option22=${option22:-":(LAND|CSNOW|CRAIN|CFRZR|CICEP|ICSEV):"}
 export option23=${option23:-' -new_grid_interpolation neighbor -fi '}
 export option24=${option24:-' -set_bitmap 1 -set_grib_max_bits 16 -if '}
-export option25=${option25:-":(APCP|ACPCP|PRATE|CPRAT):"}
+export option25=${option25:-":(APCP|ACPCP|NCPCP|PRATE|CPRAT):"}
 export option26=${option26:-' -set_grib_max_bits 25 -fi -if '}
-export option27=${option27:-":(APCP|ACPCP|PRATE|CPRAT|DZDT):"}
+export option27=${option27:-":(APCP|ACPCP|NCPCP|PRATE|CPRAT|DZDT):"}
 export option28=${option28:-' -new_grid_interpolation budget -fi '}
 
 # fhoroglist is the list of additional hours at which surface height should be included in pgrba
