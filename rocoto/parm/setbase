@@ -130,8 +130,8 @@ fi
 
 if [[ $machine == WCOSS* ]]; then
     # fv3gfs data from NCO para run
-    export COMINgfs_base=/gpfs/dell1/nco/ops/com/gfs/para/gfs.
-    export COMINenkf_base=/gpfs/dell1/nco/ops/com/gfs/para/enkfgdas.
+    export COMINgfs_base=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.
+    export COMINenkf_base=/gpfs/dell1/nco/ops/com/gfs/prod/enkfgdas.
     # cfs data from NCO prod run
     export COMINcfs_base=$(compath.py cfs/prod)/cfs/cfs.
     #if [[ $machl = v || $machl = s || $machl = g ]] ; then # For venus, surge and gyre in Orlando
