@@ -1,0 +1,76 @@
+#BSUB -J %E%gefs_forecast_high_%CYC%
+#BSUB -o /%COM%/output/%ENVIR%/today/gefs_forecast_high_%CYC%.o%J
+#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_forecast_high_%CYC%.o%J
+#BSUB -cwd /tmpnwprd
+#BSUB -n 1386
+#BSUB -R span[ptile=6]
+#BSUB -R affinity[core(4):distribute=balance]
+#BSUB -q %QUEUE%
+#BSUB -W 00:45
+#BSUB -L /bin/sh
+#BSUB -P %PROJ%
+#BSUB -x  
+#BSUB -a poe
+
+%include <head.h>
+%include <envir-p2.h>
+
+
+# EXPORT list here
+set -x
+
+. /usrx/local/Modules/default/init/ksh
+# JY module switch ibmpe/1.3.0.8p
+module list
+
+export OMP_NUM_THREADS=4
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+export MP_SHARED_MEMORY=yes
+export MEMORY_AFFINITY=core:4
+
+export total_tasks=1386
+export OMP_STACKSIZE=256000
+export MP_EAGER_LIMIT=65536
+export MP_EUIDEVELOP=min
+export MP_MPILIB=mpich2
+export MP_USE_BULK_XFER=yes
+#export MP_TASK_AFFINITY=core:1
+export MP_LABELIO=YES
+export MP_SINGLE_THREAD=yes
+export MP_USE_TOKEN_FLOW_CONTROL=yes
+export MP_INSTANCES=2
+
+export cyc=%CYC%
+export cyc_fcst=%CYC%
+export FORECAST_SEGMENT=hr
+
+# CALL executable job script here
+VERSION_FILE=$NWROOT/versions/gefs.ver
+if [ -f $VERSION_FILE ]; then
+  . $VERSION_FILE
+else
+  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+  ecflow_client --abort
+  exit
+fi
+
+$NWROOT/gefs.${gefs_ver}/jobs/JGEFS_FORECAST
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose: process global ensemble forecast system (GEFS) forecast_high_high
+#          model
+#
+#
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end
