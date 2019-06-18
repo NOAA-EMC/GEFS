@@ -216,11 +216,9 @@ if [[ $machl = v ]] || [[ $machl = m ]]; then
   export baseptmp=/$PTMP/$LOGNAME/o/$expid
   export basebin=$basesource/nw$envir/control
 
-  export baselog=/$PTMP/$LOGNAME/o/$expid 
+  export baselog=/$PTMP/$LOGNAME/o/$expid
   export basedgfs=/gpfs/dell1/nco/ops/com/gfs/para                        
   export basedgens=/$PTMP/$LOGNAME/o               
-
-  export DATATEMP=$baseoutput
 
 ## ? for baseinitarch
   export baseinitarch=/gpfs/dell2/emc/retros/noscrub/$LOGNAME/$expid
@@ -231,6 +229,8 @@ if [[ $machl = v ]] || [[ $machl = m ]]; then
   export classs=batch
   export classp=batch
   export classp=batch
+
+  export jobscript=$jobscript
 
 fi
 

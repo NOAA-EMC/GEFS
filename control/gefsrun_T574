@@ -250,7 +250,6 @@ echo expid=$expid id=$id
    (dell) gefsmpexec="mpirun" ;;
   esac
 
-#  (dell) gefsmpexec="mpirun -n \$total_tasks" ;;
 export gefsmachine
 echo gefsmachine=$gefsmachine
 export gefsmpexec
@@ -1460,10 +1459,10 @@ wall_clock_limit_fcst_long="1:29"
 wall_clock_limit_fcst_short="00:20"
   fi
 
-  if [[ $gefsmachine = dell ]]; then                       
-wall_clock_limit_fcst_long="1:29"
-wall_clock_limit_fcst_short="00:20"
-  fi
+if [[ $gefsmachine = dell ]]; then                       
+  wall_clock_limit_fcst_long="2:35"
+  wall_clock_limit_fcst_short="00:40"
+fi
 
 echo wall_clock_limit_fcst_long=$wall_clock_limit_fcst_long
 echo wall_clock_limit_fcst_short=$wall_clock_limit_fcst_short
@@ -1634,6 +1633,7 @@ case $taskname in
     wall_clock_limit="01:50"
     node=10
     taskspernode=4
+    total_tasks=40
     OMP_NUM_THREADS=7
     MP_SHARED_MEMORY=yes
   fi  
@@ -1902,10 +1902,13 @@ case $taskname in
 
   if [[ $gefsmachine = dell ]]; then
      if [[ $fcstjoblength = long ]]; then
-       (( taskspermem = 66 ))
+#      (( taskspermem = 66 ))
+       (( taskspermem = 30 ))
      else
-       (( taskspermem = 32 ))
+#      (( taskspermem = 32 ))
+       (( taskspermem = 16 ))
      fi
+#      wall_clock_limit="02:30"
        parallel_threads=4
        task_affinity="core(1)"
        (( taskspernode = COREPERNODE / parallel_threads )) # for T574SL P2/P1
@@ -1914,17 +1917,10 @@ case $taskname in
     MP_SHARED_MEMORY=yes
   fi
 
-    echo "BOCUI taskspermem" $taskspermem   
-    echo "BOCUI npert" $npert
-    echo "BOCUI taskpernode" $taskpernode
-    echo "BOCUI COREPERNODE" $COREPERNODE
-    echo "BOCUI RUN_CONCURRENT" $RUN_CONCURRENT
-
      RUN=
      if [[ $RUN_CONCURRENT = yes ]]; then
        if [[ $cyc = $cyc_fcst ]]; then
          (( total_tasks = taskspermem * (npert + 1) ))
-          echo "BOCUI total_tasks" $total_tasks
        else
          (( total_tasks = taskspermem * npert ))
        fi
@@ -1933,13 +1929,8 @@ case $taskname in
 #      RUN=ge$mem
        RUNMEM=ge$mem
      fi
-    echo "TEST" $jobscript
-    echo "TEST" $taskspernode
-          echo "BOCUI node" $node             
      (( node = ( total_tasks + taskspernode - 1 ) / taskspernode ))
 
-     echo BOCUI test node $node
-     echo BOCUI test $total_tasks
   ;;
   (forecast_lr)
     FORECAST_SEGMENT=lr
@@ -2038,7 +2029,8 @@ case $taskname in
     MP_SHARED_MEMORY=yes
   fi
   if [[ $gefsmachine = dell ]]; then                       
-       (( taskspermem = 36 ))
+#      (( taskspermem = 36 ))
+       (( taskspermem = 18 ))
        parallel_threads=4
        task_affinity="core(1)"
        (( taskspernode = COREPERNODE / parallel_threads )) # for T574SL P2/P1
@@ -2056,7 +2048,6 @@ case $taskname in
        fi
      else
        (( total_tasks = taskspermem ))
-#      RUN=ge$mem
        RUNMEM=ge$mem
      fi
      (( node = ( total_tasks + taskspernode - 1 ) / taskspernode ))
@@ -2195,9 +2186,9 @@ case $taskname in
     MP_SHARED_MEMORY=yes
    fi
   if [[ $gefsmachine = dell ]]; then                       
-#DHOU 03/29/2012   chgres is a non-mpi program
     job_type=parallel
     total_tasks=1 
+    node=1
     (( taskspernode = 16 / NTHREADS_SIGCHGRS ))
     if (( taskspernode > total_tasks )); then
      taskspernode=$total_tasks
@@ -2208,6 +2199,7 @@ case $taskname in
     resources="4000"
     wall_clock_limit="00:20"
     MP_SHARED_MEMORY=yes
+    OMP_NUM_THREADS=1
    fi
 
   ;;
@@ -2219,6 +2211,9 @@ case $taskname in
     if [[ $fcstjoblength = long ]]; then
       job_name=jgefs_restart_copy_${mem}_${cyc}
       wall_clock_limit="01:30:00"
+  if [[ $gefsmachine = wcoss ]]; then                       
+      wall_clock_limit="01:30"
+  fi
   if [[ $gefsmachine = dell ]]; then                       
       wall_clock_limit="01:30"
   fi
@@ -2226,6 +2221,9 @@ case $taskname in
     else
       job_name=jgefs_restart_copy_${mem}_cf${cyc_fcst}_${cyc}
       wall_clock_limit="01:30:00"
+  if [[ $gefsmachine = wcoss ]]; then                       
+      wall_clock_limit="01:30"
+  fi
   if [[ $gefsmachine = dell ]]; then                       
       wall_clock_limit="01:30"
   fi
@@ -2337,6 +2335,21 @@ case $taskname in
     fi
     total_tasks=5     #T254
     case $gefsmachine in
+      (wcoss)
+    MP_SHARED_MEMORY=no
+#If you jsut want to run only 1 enspost job, use the following 3 lines    
+#   SUBJOB=   
+#   nodes=2
+#   OMP_NUM_THREADS=4
+#If you  want to run  2 or 3  enspost jobs per members, use the following 3 lines with SUBJOB=B/C    
+    SUBJOB=C      # SUBJOB=A,B,or C
+    nodes=1
+    OMP_NUM_THREADS=2
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( total_tasks = taskspernode * nodes ))
+    resources="2000"
+    resources="5000"   #T574
+      ;;
       (dell)
     MP_SHARED_MEMORY=no
 #If you jsut want to run only 1 enspost job, use the following 3 lines    
@@ -2397,6 +2410,24 @@ case $taskname in
 #   total_tasks=16
     SUBJOB=   
     case $gefsmachine in
+      (wcoss)
+    MP_SHARED_MEMORY=no
+    nodes=1
+    OMP_NUM_THREADS=2
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( total_tasks = taskspernode * nodes ))
+    resources="1000"
+    resources="5000"
+      ;;
+      (wcoss)
+    MP_SHARED_MEMORY=no
+    nodes=1
+    OMP_NUM_THREADS=2
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( total_tasks = taskspernode * nodes ))
+    resources="1000"
+    resources="5000"
+      ;;
       (dell)
     MP_SHARED_MEMORY=no
     nodes=1
@@ -2448,7 +2479,7 @@ case $taskname in
       wall_clock_limit="$wall_clock_limit_fcst_short"
     fi
     case $gefsmachine in
-      (dell)
+      (wcoss)
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=4
 #mpmd 04-15    
@@ -2469,6 +2500,24 @@ case $taskname in
     fi
 #   resources="200"
 #   resources="6912"     #T574SL grib2 for core(4)
+      ;;
+      (dell)
+    MP_SHARED_MEMORY=yes
+    OMP_NUM_THREADS=4
+    job_type=parallel 
+    total_tasks=5
+    MP_SHARED_MEMORY=no
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( resources =  27648 / taskspernode ))
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
+    SUBJOB=       # 1 prdgen job only for 1.0d/2.5d each membery
+    DO_LOW_RES=YES
+    if [[ $jobgrid = _p5 ]]; then
+     SUBJOB=C      # 3 prdgen jobs for each member, forecast_hr, p5 grid
+     DO_LOW_RES=NO
+    fi
       ;;
     esac
   ;;
@@ -2509,7 +2558,7 @@ case $taskname in
       wall_clock_limit="$wall_clock_limit_fcst_short"
     fi
     case $gefsmachine in
-      (dell)
+      (wcoss)
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=4
 #mpmd 04-15    
@@ -2530,6 +2579,26 @@ case $taskname in
     fi
 #   resources="200"
 #   resources="3456"     #T574SL grib2 for core(2)
+      ;;
+      (dell)
+    MP_SHARED_MEMORY=yes
+    OMP_NUM_THREADS=4
+#mpmd 04-15    
+    job_type=parallel 
+    total_tasks=4
+#mpmd 04-15    
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( resources =  27648 / taskspernode ))
+    SUBJOB=       # 1 prdgen job only for each membery, 1d and 2.5d grid
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
+    if [[ $jobgrid = _p5 ]]; then
+     SUBJOB=B      # 2 prdgen jobs for each member, hr and lr, p5 grid
+    fi
       ;;
     esac
   ;;
@@ -2556,6 +2625,21 @@ case $taskname in
     fi
     case $gefsmachine in
       (dell)
+#mpmd 04-20    
+    job_type=parallel 
+    total_tasks=3
+    node=1
+    MP_SHARED_MEMORY=no
+    OMP_NUM_THREADS=3
+#mpmd 04-20    
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( resources =  27648 / taskspernode ))
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
+    SUBJOB=       # 1 prdgen job only for each membery
+      ;;
+      (wcoss)
 #mpmd 04-20    
     job_type=parallel 
     total_tasks=3
@@ -2629,6 +2713,7 @@ case $taskname in
     if (( taskspernode > total_tasks )); then
      taskspernode=$total_tasks
     fi
+    node=1
   ;;
   (genesis.gfs)
     ################################# production variables
@@ -2699,6 +2784,17 @@ case $taskname in
     if (( taskspernode > total_tasks )); then
      taskspernode=$total_tasks
     fi
+    total_tasks=2
+    node=1
+  fi
+  if [[ $gefsmachine = wcoss ]]; then                       
+    MP_SHARED_MEMORY=yes
+    OMP_NUM_THREADS=4
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( resources =  27648 / taskspernode ))
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
 #   resources="100"
 #   resources="3456"     #T574SL grib2 for core(2)
   fi
@@ -2744,6 +2840,17 @@ case $taskname in
     if (( taskspernode > total_tasks )); then
      taskspernode=$total_tasks
     fi
+    total_tasks=2
+    node=1
+  fi
+  if [[ $gefsmachine = wcoss ]]; then                       
+    MP_SHARED_MEMORY=yes
+    OMP_NUM_THREADS=4
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( resources =  27648 / taskspernode ))
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
 #   resources="100"
 #   resources="3456"    # T574, include grid p5
   fi
@@ -2776,6 +2883,15 @@ case $taskname in
     total_tasks=1
     SUBJOB=   
   if [[ $gefsmachine = dell ]]; then                       
+    MP_SHARED_MEMORY=yes
+    OMP_NUM_THREADS=4
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    (( resources =  27648 / taskspernode ))
+#   resources="100"
+#   resources="500"    # T574
+#   resources="1000"    # T574
+  fi
+  if [[ $gefsmachine = wcoss ]]; then                       
     MP_SHARED_MEMORY=yes
     OMP_NUM_THREADS=4
     (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
@@ -2916,6 +3032,18 @@ case $taskname in
 #   resources="500"    # T574
 #   resources="1000"    # T574, grib2
 # fi
+  if [[ $gefsmachine = wcoss ]]; then                       
+    job_type=parallel
+    node_usage=not_shared
+    wall_clock_limit="01:30"
+    MP_SHARED_MEMORY=no
+    OMP_NUM_THREADS=1
+    (( taskspernode = COREPERNODE / OMP_NUM_THREADS )) 
+    total_tasks=16
+    if (( taskspernode > total_tasks )); then
+     taskspernode=$total_tasks
+    fi
+  fi  
   if [[ $gefsmachine = dell ]]; then                       
     job_type=parallel
     node_usage=not_shared
@@ -2927,6 +3055,7 @@ case $taskname in
     if (( taskspernode > total_tasks )); then
      taskspernode=$total_tasks
     fi
+    node=1
   fi  
   ;;
 
