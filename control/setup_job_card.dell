@@ -155,6 +155,7 @@ export taskspernode=$taskspernode
 export NODES=$node
 #export gefsmpexec="mpirun -n $total_tasks cfp mpmd_cmdfile "
  
+export jobscript=$jobscript
 eofCAT
     fi
 
@@ -193,7 +194,6 @@ export GFSFV3=/gpfs/dell1/nco/ops/com/gfs/para                      #venus
 eofCAT
 
 #DHOU 03/07/2012 1 line
- export jobscript=$jobscript
 #True if FILE exists and has been modified since it was last read.
  
     if [[ -n $RUN ]]; then
@@ -350,6 +350,7 @@ ls -al $jobdir/$jobscript
 
 # CALL executable job script here
 export jobgrid=$jobgrid
+export jobscript=$jobscript
 $jobdir/$jobscript
 #/usrx/local/bin/getrusage -rss $jobdir/$jobscript
 

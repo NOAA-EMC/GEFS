@@ -1,0 +1,51 @@
+#BSUB -J %E%gefs_bias_gempak_%CYC%
+#BSUB -o /%COM%/output/%ENVIR%/today/gefs_bias_gempak_%CYC%.o%J
+#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_bias_gempak_%CYC%.o%J
+#BSUB -cwd /tmpnwprd
+#BSUB -q %QUEUE%
+#BSUB -W 01:00
+#BSUB -L /bin/sh
+#BSUB -P %PROJ%
+#BSUB -n 3
+#BSUB -R span[ptile=3] -R affinity[core]
+#BSUB -a poe
+#BSUB -x
+
+%include <head.h>
+%include <envir-p2.h>
+
+
+# EXPORT list here
+set -x
+
+export cyc=%CYC%
+
+# CALL executable job script here
+# versions file for naefs sets $gefs_ver and $code_ver
+VERSION_FILE=$NWROOT/versions/naefs.ver
+if [ -f $VERSION_FILE ]; then
+   . $VERSION_FILE
+else
+   ecflow_client --msg="***JOB ${SMSNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+   ecflow_client --abort
+   exit
+fi
+
+$NWROOT/naefs.${naefs_ver}/jobs/JNAEFS_GEFS_BIAS_GEMPAK
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose: Create gempak files for the gefs bias estimated grib files.
+#
+#
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end
