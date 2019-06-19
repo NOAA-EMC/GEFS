@@ -3,14 +3,15 @@
 #BSUB -e  /%COM%/output/%ENVIR%/today/gefs_p14_prdgen_low_%CYC%.o%J
 #BSUB -cwd /tmpnwprd
 #BSUB -n 4
-#BSUB -q %QUEUE%_shared
+#BSUB -x
+#BSUB -q %QUEUE%
 #BSUB -W  02:00
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%
 #BSUB -R affinity[core(3):distribute=pack]
 #BSUB -a poe
 #BSUB -R span[ptile=4]
-#BSUB -R rusage[mem=3456]
+##BSUB -R rusage[mem=3456]
 
 %include <head.h>
 %include <envir-p2.h>
