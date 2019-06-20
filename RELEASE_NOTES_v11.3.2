@@ -337,11 +337,11 @@ V11.3.0 to be released on 09/15/2018
   . Copy the gefs v11.3.0-update2 tag to /nwprod2  and rename it gefs.v11.3.0 
     . build codes: in sorc directory. follow the directions in README.build
 
-V11.3.1 to be released on 06/21/2019
+V11.3.2 to be released on 06/21/2019
 
 . This release is based on V11.3.0 with the following changes to work on DELL for production:
-  . grib_util is updated to v1.1.0  (from 1.0.4)
-  . util_shared is updated to v1.1.0      (from 1.0.8)
+  . grib_util is updated to v1.1.0   (from 1.0.4)
+  . util_shared is updated to v1.1.0 (from 1.0.8)
   . Use prod_util.v1.1.0   (same as on phase 2)
   . Default $APRUN setting is changed to "mpirun"   (from mpirun.lsf)
   . Use $compath.py to replace $COMROOT n search for prod  com directories 
@@ -349,7 +349,7 @@ V11.3.1 to be released on 06/21/2019
   . In parm/gefs_pgrb2ab_fXX.parm files, use APTMP for a previously undefined variable
   . Changed path of gempak files from /com/nawips to  /com/gens sub-dir gempak in each cycle
   . Change wafs files from /pcom to /com/gen wmo sub-dir in each cycle.
-  . Reorganize the copilation/building scripts
+  . Reorganize the compilation/building scripts
   . Extend the length definition of input file names in some sorc code files
 
 . Updated files include:
@@ -409,7 +409,7 @@ V11.3.1 to be released on 06/21/2019
   sorc/global_sigzvd.fd/global_sigzvd.f 
   sorc/global_sigzvd.fd/makefile 
 
-. Added file
+. Added files
   ecflow (contains drafts of ecflow scripts suggested to NCO/SPA)
   RELEASE_NOTES_v11.3.2    (this note)
 

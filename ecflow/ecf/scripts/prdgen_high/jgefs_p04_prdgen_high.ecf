@@ -1,6 +1,6 @@
 #BSUB -J %E%gefs_p04_prdgen_high_%CYC%
 #BSUB -o /%COM%/output/%ENVIR%/today/gefs_p04_prdgen_high_%CYC%.o%J
-#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_p04_prdgen_high_%CYC%.o%J
+#BSUB -e /%COM%/output/%ENVIR%/today/gefs_p04_prdgen_high_%CYC%.o%J
 #BSUB -cwd /tmpnwprd
 #BSUB -n 5
 #BSUB -q %QUEUE%_shared
@@ -10,23 +10,31 @@
 #BSUB -R affinity[core(4):distribute=pack]
 #BSUB -a poe
 #BSUB -R span[ptile=5]
-#BSUB -R rusage[mem=4608]"
+##BSUB -R rusage[mem=4608]"
 
 %include <head.h>
-%include <envir-p2.h>
+%include <envir-p3.h>
 
 
 # EXPORT list here
 set -x
+ulimit -s unlimited
+ulimit -a
 
-export OMP_NUM_THREADS=1
+export OMP_NUM_THREADS=4
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+export MP_SHARED_MEMORY=no
+export MEMORY_AFFINITY=core:4 
+
+export total_tasks=5
+export taskspernode=5      
+export NODES=1
 
 export cyc=%CYC%
 export cyc_fcst=%CYC%
 export RUN=gep04
 export FORECAST_SEGMENT=hr
-
-export total_tasks=5
 
 # CALL executable job script here
 VERSION_FILE=$NWROOT/versions/gefs.ver

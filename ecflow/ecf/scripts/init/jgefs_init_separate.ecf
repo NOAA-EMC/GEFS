@@ -7,7 +7,7 @@
 #BSUB -n 40
 #BSUB -x
 #BSUB -q %QUEUE%
-#BSUB -W 02:50
+#BSUB -W 00:30
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%
 #BSUB -a poe

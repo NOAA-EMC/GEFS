@@ -1,9 +1,9 @@
 #BSUB -J %E%gefs_p13_post_low_%CYC%
 #BSUB -o /%COM%/output/%ENVIR%/today/gefs_p13_post_low_%CYC%.o%J
-#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_p13_post_low_%CYC%.o%J
+#BSUB -e /%COM%/output/%ENVIR%/today/gefs_p13_post_low_%CYC%.o%J
 #BSUB -cwd /tmpnwprd
-#BSUB -n 12
-#BSUB -R span[ptile=12]
+#BSUB -n 14
+#BSUB -R span[ptile=14]
 #BSUB -q %QUEUE%
 #BSUB -x
 #BSUB -W  01:00
@@ -13,25 +13,28 @@
 #BSUB -a poe
 
 %include <head.h>
-%include <envir-p2.h>
+%include <envir-p3.h>
 
 
 # EXPORT list here
 set -x
+ulimit -s unlimited
+ulimit -a
 
 export OMP_NUM_THREADS=2
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
-export MP_SHARED_MEMORY=yes # will check
-export MEMORY_AFFINITY=core:2
+export MP_SHARED_MEMORY=no
+export MEMORY_AFFINITY=core:2 
 
+export total_tasks=14
+export taskspernode=14      
+export NODES=1
 
 export cyc=%CYC%
 export cyc_fcst=%CYC%
 export RUN=gep13
 export FORECAST_SEGMENT=lr
-
-
 
 # CALL executable job script here
 VERSION_FILE=$NWROOT/versions/gefs.ver

@@ -1,6 +1,6 @@
 #BSUB -J %E%gefs_ensstat_low_%CYC%
 #BSUB -o /%COM%/output/%ENVIR%/today/gefs_ensstat_low_%CYC%.o%J
-#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_ensstat_low_%CYC%.o%J
+#BSUB -e /%COM%/output/%ENVIR%/today/gefs_ensstat_low_%CYC%.o%J
 #BSUB -q %QUEUE%_shared
 #BSUB -cwd /tmpnwprd
 #BSUB -L /bin/sh
@@ -9,14 +9,26 @@
 #BSUB -a poe
 #BSUB -n 2
 #BSUB -R span[ptile=2]
-#BSUB -R affinity[core(2):distribute=pack]
-#BSUB -R rusage[mem=3000]
+#BSUB -R affinity[core(4)]
+##BSUB -R rusage[mem=3000]
 
 %include <head.h>
-%include <envir-p2.h>
+%include <envir-p3.h>
 
 # EXPORT list here
 set -x
+ulimit -s unlimited
+ulimit -a
+
+export OMP_NUM_THREADS=4
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+export MP_SHARED_MEMORY=yes
+export MEMORY_AFFINITY=core:4 
+
+export total_tasks=2
+export taskspernode=2      
+export NODES=1
 
 export cyc=%CYC%
 export cyc_fcst=%CYC%

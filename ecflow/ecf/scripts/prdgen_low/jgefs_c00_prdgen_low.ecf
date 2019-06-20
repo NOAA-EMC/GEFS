@@ -1,6 +1,6 @@
 #BSUB -J %E%gefs_c00_prdgen_low_%CYC%
 #BSUB -o /%COM%/output/%ENVIR%/today/gefs_c00_prdgen_low_%CYC%.o%J
-#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_c00_prdgen_low_%CYC%.o%J
+#BSUB -e /%COM%/output/%ENVIR%/today/gefs_c00_prdgen_low_%CYC%.o%J
 #BSUB -cwd /tmpnwprd
 #BSUB -n 4
 #BSUB -x
@@ -8,26 +8,34 @@
 #BSUB -W  02:00
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%
-#BSUB -R affinity[core(3):distribute=pack]
+#BSUB -R affinity[core(4):distribute=pack]
 #BSUB -a poe
 #BSUB -R span[ptile=4]
 ##BSUB -R rusage[mem=3456]
 
 %include <head.h>
-%include <envir-p2.h>
+%include <envir-p3.h>
 
 
 # EXPORT list here
 set -x
+ulimit -s unlimited
+ulimit -a
 
-export OMP_NUM_THREADS=1
+export OMP_NUM_THREADS=4
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+export MP_SHARED_MEMORY=yes
+export MEMORY_AFFINITY=core:4 
+
+export total_tasks=4
+export taskspernode=4      
+export NODES=1
 
 export cyc=%CYC%
 export cyc_fcst=%CYC%
 export RUN=gec00
 export FORECAST_SEGMENT=lr
-
-export total_tasks=4
 
 # CALL executable job script here
 VERSION_FILE=$NWROOT/versions/gefs.ver

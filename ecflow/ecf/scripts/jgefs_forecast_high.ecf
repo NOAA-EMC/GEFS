@@ -6,7 +6,7 @@
 #BSUB -R span[ptile=7]
 #BSUB -R affinity[core(4):distribute=balance]
 #BSUB -q %QUEUE%
-#BSUB -W 2:35
+#BSUB -W 00:45
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%
 #BSUB -x  

@@ -1,11 +1,11 @@
 #BSUB -J %E%gefs_p06_sigchgres_%CYC%
 #BSUB -o /%COM%/output/%ENVIR%/today/gefs_p06_sigchgres_%CYC%.o%J
-#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_p06_sigchgres_%CYC%.o%J
+#BSUB -e /%COM%/output/%ENVIR%/today/gefs_p06_sigchgres_%CYC%.o%J
 #BSUB -cwd /tmpnwprd
 #BSUB -q %QUEUE%
 #BSUB -n 1
 #BSUB -R span[ptile=1]
-#BSUB -R affinity[core(4):distribute=balance]
+#BSUB -R affinity[core(1):distribute=balance]
 #BSUB -W  00:15
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%
@@ -13,17 +13,22 @@
 #BSUB -a poe
 
 %include <head.h>
-%include <envir-p2.h>
+%include <envir-p3.h>
 
 # EXPORT list here
 set -x
+ulimit -s unlimited
+ulimit -a
 
-export OMP_NUM_THREADS=4
+export OMP_NUM_THREADS=1
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
-# JY export MP_SHARED_MEMORY=no  
-export MEMORY_AFFINITY=core:4
+export MP_SHARED_MEMORY=yes
+export MEMORY_AFFINITY=core:1 
 
+export total_tasks=1
+export taskspernode=1      
+export NODES=1
 
 export cyc=%CYC%
 export cyc_fcst=%CYC%
