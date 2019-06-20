@@ -3,15 +3,15 @@
 
 # EXPORT list here
 set -x
-export NODES=7
+export NODES=5
 
 ulimit -s unlimited
 ulimit -a
 
 export KMP_AFFINITY=disabled
 
-export total_tasks=6
-export OMP_NUM_THREADS=7
+export total_tasks=30
+export OMP_NUM_THREADS=6
 export taskspernode=4
 
 # export for development runs only begin

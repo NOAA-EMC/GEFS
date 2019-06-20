@@ -87,7 +87,7 @@ do
 
         if [ $ic -ge 360 ]
         then
-            err_exit "COULD NOT LOCATE logf$FEND file AFTER 1 HOUR"
+            err_exit "FATAL ERROR: COULD NOT LOCATE logf$FEND file AFTER 1 HOUR"
             ERR=-5
             exit $ERR
         fi
@@ -157,21 +157,14 @@ fi
 #fi #if test "NO" = 'YES'
 
 #####################################################################
-# GOOD RUN
-set +x
-echo "**************JOB GFS_meteogrm COMPLETED NORMALLY ON THE IBM"
-echo "**************JOB GFS_meteogrm COMPLETED NORMALLY ON THE IBM"
-echo "**************JOB GFS_meteogrm COMPLETED NORMALLY ON THE IBM"
-set -x
-#####################################################################
 if [ $ERR -eq 0 ] ; then
-    msg='HAS COMPLETED NORMALLY.'
+    msg='HAS GERERATED GFS BUFR SOUNDING NORMALLY!'
+    #postmsg "$jlogfile" "$msg"
     exit 0
 else
-    echo "FAILED to Generate GFS BUFR sounding!"
+    echo "FATAL ERROR: FAILED to Generate GFS BUFR sounding!"
     exit $ERR
 fi
-#postmsg "$jlogfile" "$msg"
 
 ############## END OF SCRIPT #######################
 

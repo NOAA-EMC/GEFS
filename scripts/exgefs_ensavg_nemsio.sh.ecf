@@ -53,13 +53,13 @@ do
             fi
             if [ $ic -eq $SLEEP_LOOP_MAX ]; then
                 (( nfile = nfile - 1 ))
-                echo `date` forecast gep${mem2} missing for hour $fhr
+                echo WARNING: `date` forecast gep${mem2} missing for hour $fhr
             fi # [ $ic 
         done
     done
     if [ $nfile -le 1 ]; then
         echo `date` Not enough forecast files for average at  hour $fhr
-        msg="Not enough forecast files for average at  hour $fhr"
+        msg="FATAL ERROR: Not enough forecast files for average at  hour $fhr"
         postmsg "$jlogfile" "$msg"
         export err=1
         $ERRSCRIPT || exit $err

@@ -138,7 +138,10 @@ if [[ $FORECAST_SEGMENT = hr ]] ; then
 elif [[ $FORECAST_SEGMENT = lr ]]; then
 	LEVS=$LEVSLR 
 else
-	echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supportted          
+	echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supportted
+    msg="FATAL ERROR: $job failed!"
+    postmsg "$jlogfile" "$msg"
+    exit $ERR
 fi
 #(( LEVS = LEVS -1 ))
 echo $LEVS $LATB $LONB

@@ -85,7 +85,7 @@ do
 
         if [ $ic -ge 360 ]
         then
-            err_exit "COULD NOT LOCATE logf${hh2} file AFTER 1 HOUR"
+            err_exit "FATAL ERROR: COULD NOT LOCATE logf${hh2} file AFTER 1 HOUR"
             err=-6
             exit $err
         fi
