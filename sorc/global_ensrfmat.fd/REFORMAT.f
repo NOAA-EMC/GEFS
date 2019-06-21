@@ -16,7 +16,7 @@ c     parameter (len=51485)
       dimension prcp (nrec)
       character*8 gageid(nrec)
       character*8 statid(ntab),cymd
-      character*80 fname1,fname2,fname3
+      character*255 fname1,fname2,fname3
       namelist /namin/iymd,fname1,fname2,fname3
 cccccc
       read (5,namin)

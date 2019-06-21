@@ -32,7 +32,8 @@ postmsg "$jlogfile" "$msg"
 # Copy model specific GEMPAK tables into working directory
 cp $GEMPAKgefs/fix/*.tbl .
 
-NAGRIB_TABLE=${NAGRIB_TABLE:-/nwprod/gempak/fix/nagrib.tbl}
+#NAGRIB_TABLE=${NAGRIB_TABLE:-/nwprod/gempak/fix/nagrib.tbl}
+NAGRIB_TABLE=${NAGRIB_TABLE:-$NWROOT/gempak/fix/nagrib.tbl}
 NAGRIB=nagrib2
 #
 

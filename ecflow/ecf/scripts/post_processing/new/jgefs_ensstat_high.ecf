@@ -1,0 +1,47 @@
+#BSUB -J %E%gefs_ensstat_high_%CYC%
+#BSUB -o /com/output/%ENVIR%/today/gefs_ensstat_high_%CYC%.o%J
+#BSUB -e  /com/output/%ENVIR%/today/gefs_ensstat_high_%CYC%.o%J
+#BSUB -cwd /tmpnwprd
+#BSUB -n 2
+#BSUB -q %QUEUE%_shared
+#BSUB -W 02:00
+#BSUB -L /bin/sh
+#BSUB -P %PROJ%
+#BSUB -a poe
+#BSUB -R span[ptile=2]
+#BSUB -R affinity[core(2):distribute=pack]
+#BSUB -R rusage[mem=1000]  
+
+%include <head.h>
+%include <envir-p2.h>
+
+
+# EXPORT list here
+set -x
+
+
+export cyc=%CYC%
+export cyc_fcst=%CYCFCST%
+export job=gefs_ensstat_high_%CYC%
+export FORECAST_SEGMENT=hr
+
+
+# CALL executable job script here
+/nw${envir}/jobs/JGEFS_ENSSTAT
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose: cleanup gefs post working directory
+#
+#
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end

@@ -1,0 +1,431 @@
+
+Release Notes: GEFS v.11.2.0
+
+v10.0.0 . released Feb 1, 2012
+. Implementation on CCS
+
+v10.1.0 . released July 25, 2013
+. Modified model to run on WCOSS
+
+v10.2.0 . released Oct 16, 2014 (The first version in EE structure, but contains only part of the
+package: GEFS_INIT jobs and GEFS_PRDGEN_GFS)
+. Modified initialization to run downstream of GFS implementation
+
+v10.2.1 . released Jan 1, 2015
+. As implemented with GFS implementation Jan 14, 2015
+
+v11.0.0 . to be released May/June 2015
+. Made scientific changes to (1) unify the GEFS and GDAS ensembles, by initializing the forecast
+ensemble members from ENKF 06h forecast of previous cycle; (2) improve model related
+uncertainties by upgrading the STTP scheme and (3) use the updated version of the GFS model
+with SemiLagrangian
+integration.
+. Modified to use new version GFS model code gsm.v12.1.0, slightly different from gsm.v12.0.1.
+. Modified to use new version of ncep_post v5.1.1.
+. Modified to use ENKF model version of enkf.v2.0.1.
+. Added new model version ens_tracker.v1.1.0.
+. Enhancement of bug fix from Bugzilla
+. Output changes
+. Grib2 replacing grib1 in all post processing jobs.
+. Removing generation of grib1 files in pgrb2a, pgrb2b, pgrb2alr and pgrb2blr.
+. Added half degree grid pgrb2 data directory pgrb2ap5, every 3 hours from 00 to 192
+hours, and 6 hourly from 192 to 384 hours.
+. Added new products of tropical storm track forecast and genesis probability, as text
+files, of the GEFS ensemble system.
+. Added new products (or replace existing products) of tropical storm track forecast and
+genesis probability, as text files, for other global ensemble systems: FNMOC (fens),
+ECMWF (ecme) and CMC (cmce), in their corresponding directories.
+. Compute resource information:
+. GEFS_ENKF_TRACK, A new job, 3 nodes, 4.7 5.0
+minutes
+. GEFS_INIT_SEPARATE, 10 nodes, 1215
+minutes
+. GEFS_INIT_PROCESS (formerly GEFS_INIT_ET), 5 nodes, 2 minute
+. GEFS_INIT_COMBINE, 5 nodes, 8 minutes
+. GEFS_FORECAST:
+. GEFS_FORECAST_hr: 231 nodes, about 30 minutes. Doubled node usage
+compared with current production.
+. GEFS_FORECAST_lr: 84 nodes, about 30 minutes. Doubled node usage
+compared with current production.
+. GEFS_SIGCHGRS:
+. 21 jobs, one for each member, running parallel to each other; 1 node, 1
+minute per job
+. 21 nodes between the two forecast jobs and thus not a resource issue.
+. GEFS_NCEPPOST :
+. GEFS_NCEPPOST_hr,
+. One job for each member in current production, ¼ node, 30 minute
+per job.
+. 3 jobs for each member. 1 node, about 30 minutes per job.
+. 63 nodes are needed, compared with 5.25 in production
+. GEFS_NCEPPOST_lr,
+. One job for each member in production, ¼ node, 30 minute per job.
+. one job for each member. 1 node, about 30 minutes per job.
+. 21 nodes are needed, compared with 5.25 in production
+. GEFS_PRDGEN:
+. GEFS_PRDGEN_hr
+. One SERIAL job for each member in current production, 1 task, 30
+minute per job.
+. One 5task
+MPMD job for each member. 1 task for the 1.0d grid, 1 for
+2.5d, and 3 for the 0.5 degree grid. About 30 minutes per job.
+. 18 nodes are needed, compared with 2 in production
+. GEFS_PRDGEN_lr
+. One SERIAL job for each member in current production, 1 task, 30
+minute per job.
+. One 4task
+MPMD job for each member, about 30 minutes.
+. 14 nodes are needed, compared with 2 in production
+. GEFS_PRDGEN_GFS:
+. One 2task
+MPMD job, 1/3 node, about 13 minutes. Similar to production
+. GEFS_ENSSTAT:
+. GEFS_ENSSTAT_hr, a 2task
+MPMD job; . node, about 30 minutes.
+. GEFS_ENSSTAT_lr, 2 2task
+MPMD job; . node, about 30 minutes.
+. GEFS_ENSPOST:
+. 1 task, about 30 minutes
+. GEFS_CQPF:
+. 1 node, about 15 minutes
+. GEFS_POST_TRACK
+. 1 node, 12+ minutes (or 3 nodes, 3+ minutes)
+. GEFS_TRAK_AVE
+. This job is deleted
+. GEFS_POST_GENESIS
+. New job, 1 nodes, 12+ minutes (or 3 nodes, 3+ minutes)
+. GEFS_POST_TRACK_GFS
+. New job, 1 task, 4+ minutes
+. GEFS_POST_GENESIS_GFS
+. New job, 1 task, 14+ minutes
+. POST_TRACK, POST_GENESIS of lowerresolution
+ensemble and higher resolution
+control jobs for FNMOC, ECMWF and CMC
+. 4 jobs for each ensemble systems
+. Resources requirements similar to the corresponding GEFS jobs.
+. Replace existing tracker jobs in the corresponding models.
+. Preimplementation
+testing requirements
+. Checkout svn tags:
+. https://svnemc.ncep.noaa.gov/projects/gefs/tags/gefs.v11.0.0 (to be created
+at the time of integration) or
+. https://svnemc.ncep.noaa.gov/projects/gefs/tags/gefs.v11.0.y (available for
+testing)
+. https://svnemc.ncep.noaa.gov/projects/gfs/tags/gsm.v12.1.0 (to be created
+at the time of implementation) or
+. https://svnemc.ncep.noaa.gov/projects/gfs/tags/gsm.v12.0.2 (available for
+testing)
+. https://svnemc.ncep.noaa.gov/projects/post/tags/ncep_post.v5.1.1
+. https://svnemc.ncep.noaa.gov/projects/ens_tracker/tags/ens_tracker.v1.1.0
+. enkf.v2.0.1 (already available in /nwprod/enkf.v2.0.1)
+. Make sure the following modules are available:
+. prod_util.v1.0.1
+. grib_util.v1.0.1
+. util_shared.v1.0.0
+. ibmpe.v1.3.0.8p
+. ics.v13.1p
+. Dissemination information: The data will be sent to NCEP server
+. http://www.ftp.ncep.noaa.gov/data/nccf/com/
+. or ftp:// ftp.ncep.noaa.gov/pub/data/nccf/com/
+. and NWS server: ftp://tgftp.nws.noaa.gov/SL.us008001/ST.opnl/ .
+. The users include NCEP service centers, WFOs, (same as production) among others.
+. Directories to be transferred from PROD WCOSS to DEV WCOSS include
+. pgrb2a, pgrb2b, pgrb2ap5, pgrb2bp5, pgrb2alr, pgrb2blr
+. ensstat, track, genesis, init, sfcsig, sflux, misc
+. track and genesis for FNMOC (fens) and CMC (cmce)
+. The following data should be archived to HPSS for 2 years retention:
+. pgrb2a, pgrb2b, pgrb2ap5, pgrb2bp5, pgrb2alr, pgrb2blr
+. genesis, track, ensstat
+. sfcsig, sflux, init
+. track and genesis for FNMOC, CMC and ECMWF
+
+V11.0.1 . released July 13, 2015
+. Modified to restart from sfcsig files
+. Added error checking to GEFS_FORECAST, GEFS_NCEPPOST, GEFS_PRDGEN jobs
+. Modified GEFS_NCEPPOST and GEFS_PRDGEN jobs to track products for individual forecast
+times and, when rerunning, to create only the ones needed
+. New SVN tag:
+. https://svnemc.ncep.noaa.gov/projects/gefs/tags/gefs.v11.0.1
+. Resource changes from v11.0.0:
+. error checking adds up to 1 minute to each GEFS_NCEPPOST job
+
+V11.0.2 released July 22, 2015
+. Modified gefs_init_separate code and script to handle 4 or more storms correctly
+. New SVN tag:
+. https://svnemc.ncep.noaa.gov/projects/gefs/tags/gefs.v11.0.2
+. The following jobs listed above are deleted from this package and replaced by jobs in
+ens_tracker.v1.1.0:
+. GEFS_POST_TRACK
+. GEFS_POST_GENESIS
+. GEFS_POST_TRACK_GFS
+. GEFS_POST_GENESIS_GFS
+. GEFS_TRAK_AVE
+. POST_TRACK and POST_GENESIS for other centers
+
+V11.0.3 released August 12, 2015
+. Added the gefs_wafs job
+. Updated scripts for dbn_alert
+
+V11.0.4, released 12/10/2015
+. Update GEFS 0p5 degree GEMPAK data to include additional parameters change:
+. jobs/JGEFS_GEMPAK
+. jobs/JGEFS_AVGSPR_GEMPAK
+. scripts/exnawips_gefs.sh.ecf
+. parm/gefs_gempak_0p50_b.parm (new)
+. Includes update to use 2016 CO2 maps, added by 01/01/2016
+
+V11.0.5 released 05/10/2016
+. Update to use new GFS/GDAS analysis
+
+V11.0.6 to be released on or about 06/21/2016
+. Add ensstat (mean and spread) processing for selected pgrb2bp5 variables
+. Primary changes are to JGEFS_ENSSTAT job and scripts
+. Additional changes to jjobs and parms/gefs_config enable EMC testing to 
+  match production exactly
+. parm/gefs_config is renamed to parm/gefs_config_dev
+. Library modules used in compilation are updated to the latest versions
+. Resource usage:
+  . One additional task is required by GEFS_ENSSTAT job
+  . Overall wall time is unchaned
+  . Additional files geavg* and gespr* are produced in pgrb2bp5 subdirectory
+. New SVN tag:
+  . https://svnemc.ncep.noaa.gov/projects/gefs/tags/gefs.v11.0.6
+  . Also requires GSM v12.1.1
+  . Working copy as tested is available on tide and gyre in
+    /ensemble/save/Richard.Wobus/s/rwjy/nwdev
+. Implementation instructions
+  . Copy new tag to /nwprod/nw$envir
+  . build codes: in sorc directory. follow the directions in README.build
+
+V11.0.7 released on 10/25/2016
+ . Fix the gefs metafiles problem
+   jobs/JGEFS_GEMPAK_META
+   gempak/ush/gefs_meta_850.sh_comb
+   gempak/ush/gefs_meta_carib_spag.sh_comb
+   gempak/ush/gefs_meta_hi_spag.sh_comb
+   gempak/ush/gefs_meta_lows.sh_comb
+   gempak/ush/gefs_meta_mar_00Z.sh
+   gempak/ush/gefs_meta_mar_12Z.sh
+   gempak/ush/gefs_meta_nam_spag.sh_comb
+   gempak/ush/gefs_meta_qpf.sh
+   gempak/ush/gefs_meta_sam_spag.sh_comb
+
+V11.1.0 to be released on or about 02/14/2017
+ . Read the nemsio files from GFS and ENKF following GFS Q3FY17 implementation (enkf_track and init_separate jobs)
+ . Updates include:
+   ecf/gefs/init/jgefs_enkf_track.ecf
+   ecf/gefs/init/jgefs_init_separate.ecf
+   jobs/JGEFS_ENKF_TRACK
+   jobs/JGEFS_INIT_SEPARATE
+   scripts/exgefs_enkf_track.sh.ecf
+   scripts/exgefs_init_separate.sh.ecf
+   ush/gefs_init_pair_separate.sh
+   parm/gefs_init.parm
+   parm/gefs_config_dev
+   parm/gefs_pgrb2ab_f00.parm
+   sorc/nemsio_get.fd
+   versions/gefs.ver
+ . New SVN tag:
+  . https://svnemc.ncep.noaa.gov/projects/gefs/tags/gefs.v11.1.0
+
+V11.1.1 to be released on or about 08/18/2017
+ . An emergency fix to gefs.v11.1.0 on or about 08/18/2017
+ . Replace the surface temperature in the gfs surface analysis file (gfs.tCCz.sfcanl.nemsio) with the foundation temperature from the nst analysis file (gfs.tCCz.nstanl.nemsio)
+ . Updates include:
+   jobs/JGEFS_INIT_SEPARATE
+   scripts/exgefs_init_separate.sh.ecf
+   sorc/build.sh
+   sorc/install.sh
+   versions/gefs.ver
+ . New SVN tag:
+  . https://svnemc.ncep.noaa.gov/projects/gefs/tags/gefs.v11.1.1
+
+V11.2.0 to be released on 09/15/2017
+
+. This is based on V11.1.1 with the following changes:
+  Make all pgrb2a data files at 0.5 degree, 1.0 degree and 2.5 degress have same list of parameters.
+  Make all pgrb2b data files at 0.5 degree, 1.0 degree and 2.5 degress have same list of parameters.
+  Redistribute two parameter 300mb Height and Ice Thickness from pgrb2b to pgrb2a.
+  Add ice severity (ICSEV) at 300, 400 500 600 700 800mb to the master files in ncep_post processing.
+  Use special copygb option(-i2, nearest neighbor ) for the ICSEV variables in PRDGEN jobs
+  Modify the prdgen jobs to use the same set of scripts for different grids (0.5, 1.0 and 2.5 degrees)
+  Modify the two gefs gempak jobs to remove the special procedure in pgrb2ap5 processing for including variables from pgrb2bp5
+
+. Updated files include:
+  ecf/gefs/post_processing/jgefs_ensstat_high.ecf 
+  ecf/gefs/post_processing/jgefs_ensstat_low.ecf 
+  jobs/JGEFS_ENSSTAT
+  jobs/JGEFS_PRDGEN
+  jobs/JGEFS_PRDGEN_GFS
+  parm/gefs_pgrb2ab_f00.parm
+  parm/gefs_pgrb2ab_fhh.parm
+  parm/gefs_pgrb2a_f00.parm
+  parm/gefs_pgrb2a_f00.parm
+  scripts/exgefs_prdgen_gfs.sh.ecf
+  scripts/exgefs_prdgen.sh.ecf
+  scripts/exnawips_gefs.sh.ecf
+  ush/gefs_prdgen_gfs.sh
+  ush/gefs_prdgen_gfs.sh
+  ush/gefs_transfer_gfs.sh
+  versions/gefs.ver
+  sorc/README.build
+  sorc/build_all.sh
+  ecf/gefs/post_processing/jgefs_ensstat_high.ecf
+  ecf/gefs/post_processing/jgefs_ensstat_low.ecf
+
+. Change in resources  
+  There is slight change in task geometry of the ENSSTAT jobs, see theecf scripts in ecf/gefs/post_processing
+
+. Removed files include:
+. Remove special ex and ush scripts for special treatment of 0.5/2.0 degree grids in prdgen jobs 
+  scripts/exgefs_prdgen_p5.sh.ecf
+  ush/gefs_prdgen_lowres.sh
+  ush/gefs_prdgen_p5.sh
+. Remove special parm files for 0.5 degree grid files (0p50), that are not needed any more
+  parm/gefs_pgrb2a_0p50_f00.parm
+  parm/gefs_pgrb2a_0p50_fhh.parm
+
+. New SVN tags:
+  . https://svnemc.ncep.noaa.gov/projects/gefs/tags/gefs.v11.2.0
+  . requires GSM v12.1.3
+  . requies ncep post_post.v5.1.2 from https://svnemc.ncep.noaa.gov/projects/post/tags/ncep_post.v5.1.2/. 
+  . Working copy as tested is available on tide and gyre in
+    /ensemble/save/Dingchen.Hou/GEFS/gefs_imp             
+
+. Implementation instructions
+  . Copy gefs.v11.2.0 tag to /nwtest2
+    . build codes: in sorc directory. follow the directions in README.build
+  . Copy ncep_post.v5.1.2 tag to /nwtest2
+    . Execute "make -f makefile_wcoss" under sub directory sorc/ncep_post.fd to build excutable "ncep_post" into sub directory exec.
+
+V11.3.0 to be released on 09/15/2018
+
+. This is based on V11.2.0 with the following changes to accept gfs/enkf files:
+  . Upstream model gfs and enkf are udated with the FY19Q1 implementation
+  . Input file for gfs track info, avn* is changed to avno*
+  . Input nemsio files from gfs and enkf are generated by FV3 based gfs model, which replaced GSM model 
+  . The directory of gfs and enkf files (~/com/gfs/prod) is moved from CRAY (luna/surge) to DELL (mars/venus)
+  . The path and/or name of gfs/enkf nemsio files are changed
+  . The gfs master files contains more variables that can go to pgrb2a directories (gegfs member) 
+      Additional procedure is applied to avoid these extra variable
+                APCP for continuous accumulations
+                CSNOW CICEP CFRZR CRAIN, instantaneous values      
+  . The nemsio files from gfs/enkf contain more variables than those in the gsm-based files 
+      A new version of global_chgres is in converting the NEW nemsio files to sigio format, to be inplemented in 
+                /nwprod2/util_shared.v1.0.8/global_chgres.v15.0.0 
+
+. Updated files include:
+  jobs/JGEFS_ENKF_TRACK
+  jobs/JGEFS_INIT_SEPARATE
+  jobs/JGEFS_PRDGEN_GFS
+  scripts/exgefs_enkf_track.sh.ecf
+  scripts/exgefs_init_separate.sh.ecf
+  ush/gefs_prdgen_gfs.sh
+  ush/syndataxtrack.sh
+  versions/gefs.ver
+
+. Added file
+  RELEASE_NOTES_v11.3.0    (this note)
+
+. New VLAB tags:
+  . https://vlab.ncep.noaa.gov/code-review/#/admin/projects/GEFS, tags 
+  . checkout the tag named v11.3.0-update1 
+
+. Implementation instructions
+  . Make sure util_shared.v1.0.8 is implemented under /nwprod2 or /nwtest2 or /nwpara2
+       (NCO/SPA needs has changed X to a proper number 8)
+  . copy versions/gefs.ver to /nwprod2   (nwtest2 for testing)
+  . Copy the gefs v11.3.0-update2 tag to /nwprod2  and rename it gefs.v11.3.0 
+    . build codes: in sorc directory. follow the directions in README.build
+
+V11.3.2 to be released on 06/21/2019
+
+. This release is based on V11.3.0 with the following changes to work on DELL for production:
+  . grib_util is updated to v1.1.0   (from 1.0.4)
+  . util_shared is updated to v1.1.0 (from 1.0.8)
+  . Use prod_util.v1.1.0   (same as on phase 2)
+  . Default $APRUN setting is changed to "mpirun"   (from mpirun.lsf)
+  . Use $compath.py to replace $COMROOT n search for prod  com directories 
+  . Eliminate $CNVGRIB21_GFS as default cnvgrib is working well now in grib_util
+  . In parm/gefs_pgrb2ab_fXX.parm files, use APTMP for a previously undefined variable
+  . Changed path of gempak files from /com/nawips to  /com/gens sub-dir gempak in each cycle
+  . Change wafs files from /pcom to /com/gen wmo sub-dir in each cycle.
+  . Reorganize the compilation/building scripts
+  . Extend the length definition of input file names in some sorc code files
+
+. Updated files include:
+  scripts/exgefs_enkf_track.sh.ecf
+  scripts/exgefs_init_separate.sh.ecf
+  ush/gefs_prdgen_gfs.sh
+  ush/syndataxtrack.sh
+  versions/gefs.ver
+
+  jobs/JGEFS_AVG_GEMPAK_VGF
+  jobs/JGEFS_AVGSPR_GEMPAK 
+  jobs/JGEFS_AVGSPR_GEMPAK_META
+  jobs/JGEFS_CQPF 
+  jobs/JGEFS_ENKF_TRACK 
+  jobs/JGEFS_ENSPOST 
+  jobs/JGEFS_ENSSTAT 
+  jobs/JGEFS_FORECAST
+  jobs/JGEFS_GEMPAK 
+  jobs/JGEFS_GEMPAK_META 
+  jobs/JGEFS_INIT_COMBINE 
+  jobs/JGEFS_INIT_PROCESS 
+  jobs/JGEFS_INIT_SEPARATE 
+  jobs/JGEFS_NCEPPOST 
+  jobs/JGEFS_PRDGEN 
+  jobs/JGEFS_PRDGEN_GFS 
+  jobs/JGEFS_WAFS
+
+  scripts/exgefs_avg_gempak_vgf.sh.ecf 
+  scripts/exgefs_avgspr_gempak_meta.sh.ecf 
+  scripts/exgefs_enkf_track.sh.ecf
+  scripts/exgefs_gempak_meta.sh.ecf 
+  scripts/exgefs_init_combine.sh.ecf 
+  scripts/exgefs_init_separate.sh.ecf 
+  scripts/exgefs_wafs.sh.ecf 
+  scripts/exnawips_gefs.sh.ecf 
+
+  ush/global_enspvrfy.sh 
+  ush/mkgefs_wafs.sh 
+
+  parm/gefs_pgrb2ab_f00.parm
+  parm/gefs_pgrb2ab_fhh.parm
+
+  util/sorc/getnsttf.fd/Makefile.conf
+
+  sorc/build_all.sh 
+  sorc/build.sh 
+  sorc/gefs_vortex_combine.fd/makefile 
+  sorc/gefs_vortex_separate.fd/makefile 
+  sorc/global_enscqpf.fd/CQPF.f90
+  sorc/global_enscvprcp.fd/CVPRCP.f90 
+  sorc/global_enscvt24h.fd/CVT24H.f90 
+  sorc/global_enspvrfy.fd/PVRFY.f90 
+  sorc/global_ensrfmat.fd/REFORMAT.f 
+  sorc/global_enssrbias.fd/STAT_RM_BIAS_30D.f 
+  sorc/global_sigzvd.fd/global_sigzvd.f 
+  sorc/global_sigzvd.fd/makefile 
+
+. Added files
+  ecflow (contains drafts of ecflow scripts suggested to NCO/SPA)
+  RELEASE_NOTES_v11.3.2    (this note)
+
+. New VLAB tags:
+  . https://vlab.ncep.noaa.gov/code-review/#/admin/projects/GEFS,tags
+    checkout the tag named v11.3.2
+  . https://vlab.ncep.noaa.gov/code-review/#/admin/projects/GEFS-gsm,tags
+    checkout the tag named v12.1.5
+  . https://vlab.ncep.noaa.gov/code-review/#/admin/projects/GEFS-ncep_post,tags
+    checkout the tag named v5.1.3
+  . https://vlab.ncep.noaa.gov/code-review/#/admin/projects/GEFS-enkf,tags
+    checkout the tag named v2.0.4
+
+. Implementation instructions
+  . Copy versions/gefs.ver to ~/nwprod   (nwtest for testing)
+  . Copy the gefs v11.3.2 tag to ~/nwprod  and rename it gefs.v11.3.2 
+  . Copy the gefs_gsm v12.1.5 tag to ~/nwprod  and rename it gsm.v12.1.5 
+  . Copy the gefs_ncep_post v5.1.3 tag to ~/nwprod  and rename it ncep_post.v5.1.3 
+  . Copy the gefs_enkf v2.0.4 tag to ~/nwprod  and rename it enkf.v2.0.4 
+  . build codes: in sorc directory of each tag, follow the directions in the release note
+

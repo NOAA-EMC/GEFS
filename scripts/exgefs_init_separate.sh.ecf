@@ -651,7 +651,8 @@ echo
 echo DATA=$DATA before poe
 #### kate 4/24/2012 #####
 echo "APRUN=$APRUN"
-$APRUN
+
+$APRUN cfp poescript
 
 echo DATA=$DATA after poe
 pwd

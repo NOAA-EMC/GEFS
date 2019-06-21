@@ -1,0 +1,64 @@
+#BSUB -J %E%gefs_gempak_meta_%CYC%
+#BSUB -o /%COM%/output/%ENVIR%/today/gefs_gempak_meta_%CYC%.o%J
+#BSUB -e /%COM%/output/%ENVIR%/today/gefs_gempak_meta_%CYC%.o%J
+#BSUB -L /bin/sh
+#BSUB -q %QUEUE%_shared
+#BSUB -cwd /tmpnwprd
+#BSUB -R "span[ptile=8]"
+#BSUB -n 8
+#BSUB -W 01:30
+#BSUB -P %PROJ%
+#BSUB -R rusage[mem=500]
+#BSUB -R affinity[core]
+#BSUB -a poe
+
+%include <head.h>
+%include <envir-p2.h>
+
+
+
+export cyc=%CYC%
+export numproc=8
+
+# CALL executable job script here
+
+
+VERSION_FILE=$NWROOT/versions/gefs.ver
+if [ -f $VERSION_FILE ]; then
+  . $VERSION_FILE
+else
+  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+  ecflow_client --abort
+  exit
+fi
+
+. /usrx/local/prod/lmod/lmod/init/ksh
+module use /gpfs/dell1/nco/ops/nwprod/modulefiles
+module load prod_util/$prod_util_ver
+module load grib_util/$grib_util_ver
+module load util_shared/$util_shared_ver
+
+module load EnvVars/$EnvVars_ver
+module load ips/$ips_ver
+module load lsf/$lsf_ver
+module load impi/$impi_ver
+module load CFP/$cfp_ver
+export USE_CFP=YES
+
+$NWROOT/gefs.${gefs_ver}/jobs/JGEFS_GEMPAK_META
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose:
+# To generate GFS ENS META files for NAWIPS used by HPC and OPC.
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end

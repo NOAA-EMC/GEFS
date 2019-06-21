@@ -48,7 +48,7 @@ chmod 775 cvt24h.cmdfile
 export MP_PGMMODEL=mpmd
 export MP_CMDFILE=$DATA/cvt24h.cmdfile
 
-mpirun.lsf
+$APRUN cfp $DATA/cvt24h.cmdfile
 
 for fhour in $hourlist
 do

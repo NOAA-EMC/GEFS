@@ -244,8 +244,10 @@ echo DATA=$DATA before poe
 #fi
 #echo "gefsmpexec=$gefsmpexec"
 #$gefsmpexec
-echo "APRUN=$APRUNe"
- $APRUN
+echo "APRUN=$APRUN"
+
+$APRUN cfp poescript
+
 ###############################################kate  05/01/2012
 
 

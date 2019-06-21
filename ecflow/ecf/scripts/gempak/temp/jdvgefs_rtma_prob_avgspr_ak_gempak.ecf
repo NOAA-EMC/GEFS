@@ -1,0 +1,50 @@
+#BSUB -J %E%dvgefs_prob_avgspr_ak_gempak_%CYC%
+#BSUB -o /%COM%/output/%ENVIR%/today/dvgefs_prob_avgspr_ak_gempak_%CYC%.o%J
+#BSUB -e  /%COM%/output/%ENVIR%/today/dvgefs_prob_avgspr_ak_gempak_%CYC%.o%J
+#BSUB -cwd /tmpnwprd
+#BSUB -q %QUEUE%
+#BSUB -W  00:15
+#BSUB -L /bin/sh
+#BSUB -P %PROJ%
+#BSUB -M 2000
+
+%include <head.h>
+%include <envir-p2.h>
+
+
+# EXPORT list here
+set -x
+
+
+export cyc=%CYC%
+export cyc_fcst=%CYC%
+export job=dvgefs_prob_avgspr_ak_gempak_${cyc}
+
+
+
+# CALL executable job script here
+VERSION_FILE=$NWROOT/versions/gefs.ver
+if [ -f $VERSION_FILE ]; then
+  . $VERSION_FILE
+else
+  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+  ecflow_client --abort
+  exit
+fi
+
+$NWROOT/gefs.${gefs_ver}/jobs/JDVGEFS_RTMA_PROB_AVGSPR_ALASKA_GEMPAK
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose: NAEFS gempak product generation
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end

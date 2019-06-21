@@ -1,3 +1,12 @@
+DHOU: 03/08/2019
+    Xianwu has updated the build_all.sh scripts to make it work on both WCOSS P2 and P3 (DELL)
+    A new file is added:  Module_gefs_v11.2.0_dell3
+    To build the system, simplt execute
+    ./build_all.sh
+
+You can ignor the following message:
+
+DHOU: 09/08/2017
 Library are defined in Module_gefs_v11.2.0
 
 To build codes:

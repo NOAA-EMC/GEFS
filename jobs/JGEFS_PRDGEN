@@ -13,17 +13,17 @@ if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nwdev/parm/gefs_config_dev
-    export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+    export gefsmpexec=${gefsmpexec:-mpirun}
 fi
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec:-mpirun}
 
 ####################################
 #  Load the GRIB Utilities module
 ####################################
 # JY . /usrx/local/Modules/default/init/ksh
 # JY module load grib_util/v1.0.1
-export CNVGRIB=$CNVGRIB21_GFS
+export CNVGRIB=$CNVGRIB
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -374,7 +374,7 @@ chmod 775 prdgen.cmdfile
 export MP_PGMMODEL=mpmd
 export MP_CMDFILE=${DATA}/prdgen.cmdfile
 
-$APRUN
+$APRUN cfp $MP_CMDFILE
 				      
 # $HOMEgefs/scripts/exgefs_prdgen$jobgrid.sh.ecf
 

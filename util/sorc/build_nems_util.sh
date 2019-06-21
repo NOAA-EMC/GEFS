@@ -10,7 +10,12 @@ set -x -e
 EXECdir=../exec
 [ -d $EXECdir ] || mkdir $EXECdir
 
-. /usrx/local/Modules/3.2.10/init/sh
+if [ ! -z $MODULESHOME ]; then
+    . $MODULESHOME/init/sh
+else
+    . /opt/modules/default/init/sh
+fi
+
 
  module load ./module_nemsutil.wcoss
 module list

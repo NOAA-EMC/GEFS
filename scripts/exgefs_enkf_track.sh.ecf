@@ -224,8 +224,7 @@ export FNAISC=$FIXgsm/CFSR.SEAICE.1982.2012.monthly.clim.grb
     if (( IDVC == 2 )); then
       export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
     fi
-    $chgresush 
-#    $chgresush >>$pgmout
+    $chgresush >>$pgmout
   else
     cp -fp $SIGINP $SIGOUT
   fi
@@ -540,7 +539,6 @@ echo
 
 export MP_HOLDTIME=1000
 
-export MP_PGMMODEL=mpmd
 export MP_CMDFILE=poescript
 export MP_LABELIO=yes
 export MP_INFOLEVEL=3
@@ -559,11 +557,14 @@ echo trackflag=$trackflag
 cp poescript cmdfile
 #mpiexec_mpt -np $initseparatetasks $execpoe
 #$gefsmpexec
+export MP_PGMMODEL=mpmd
+
 echo APRUN=$APRUN
-$APRUN
+$APRUN cfp poescript
+
 else
 echo WARNING: EnKF tracking is off
-fi
+fi # (( trackflag == 1 )); then
 
 #### kate 4/24/2012 ##############
 

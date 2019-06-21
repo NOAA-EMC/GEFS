@@ -13,17 +13,17 @@ if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nwdev/parm/gefs_config_dev
-  export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+  export gefsmpexec=${gefsmpexec:-mpirun}
 fi
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec:-mpirun}
 
 ####################################
 # Load the grib module
 ####################################
 # JY . /usrx/local/Modules/default/init/ksh
 # JY module load grib_util/v1.0.1
-export CNVGRIB=$CNVGRIB21_GFS
+export CNVGRIB=$CNVGRIB
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -82,7 +82,8 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=$COMROOT/${NET}/${envir}
+
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}}
 export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}/${cyc}/ensstat
 export COMINGEST=${COMINGEST:-$COMROOTp1/ingest/prod}
 

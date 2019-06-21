@@ -13,17 +13,17 @@ if [ "$RUN_ENVIR" = dev ]      ### For Developers
 then
 # . $basesource/nw${envir}/versions/gefs.ver
   . $basesource/nwdev/parm/gefs_config_dev
-    export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+    export gefsmpexec=${gefsmpexec:-mpirun}
 fi
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec:-mpirun}
 
 ####################################
 ##  Load the GRIB Utilities module
 #####################################
 # JY . /usrx/local/Modules/default/init/ksh
 # JY module load grib_util/v1.0.1
-export CNVGRIB=$CNVGRIB21_GFS
+export CNVGRIB=$CNVGRIB
 # JY module load util_shared/v1.0.2
 
 ####################################
@@ -99,9 +99,10 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 ##############################################
 export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}}
 export COMINm1=${COMINm1:-${COMROOT}/${NET}/${envir}/${RUN}.${PDYm1}/${cyc}}
-export COMIN_BC=${COMIN_BC:-${COMROOThps}/naefs/prod/${RUN}.${PDY}/${cyc}}
+export COMIN_BC=${COMIN_BC:-$(compath.py naefs/prod)/${RUN}.${PDY}/${cyc}}
 export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/wafs}
-export PCOM=${PCOM:-${PCOMROOT}/${RUN}}
+#export PCOM=${PCOM:-${PCOMROOT}/${RUN}}
+export PCOM=${PCOM:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/wmo}
 
 mkdir -m 775 -p $PCOM
 mkdir -m 775 -p $COMOUT

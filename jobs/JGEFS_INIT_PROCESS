@@ -15,7 +15,7 @@ then
   . $basesource/nwdev/parm/gefs_config_dev
 fi
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec:-mpirun}
 
 ############################
 # Set up cycle varaible
@@ -36,7 +36,7 @@ fi
 # obtain unique process id (pid) and make temporary working directory
 ####################################
 export pid=$$
-export DATATEMP=${job}.${pid}.temp
+export DATATEMP=$DATAROOT/${job}.${pid}.temp
 
 echo DATATEMP=$DATATEMP
 if [[ -d $DATATEMP ]]; then
