@@ -24,14 +24,6 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "gwes_prep"
 
-        # Automatically turns on coupled forecast if wave prep is run
-        #   unless it has already been defined
-        if not 'CPLWAV' in dicBase:
-            if dicBase['RUN_WAVE_PREP'].upper()[0] == "Y":
-                dicBase['CPLWAV'] = ".true."
-            else:
-                dicBase['CPLWAV'] = ".false."
-
         # #   <!-- initial jobs -->
         if dicBase['RUN_INIT'].upper() == "GSM_RELOC":
             # ---enkf_track
@@ -126,7 +118,7 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "post_high"
 
-            if dicBase['CPLWAV'] == ".true.":
+            if dicBase['cplwav'] == ".true.":
                 # ---wave_post
                 iTaskName_Num += 1
                 sTaskName = "taskname_{0}".format(iTaskName_Num)
@@ -564,7 +556,7 @@ def get_param_of_task(dicBase, taskname):
         iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
         iNodes = int(math.ceil((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) * 1.0 / iPPN))
 
-        if dicBase['CPLWAV'] == ".true.":
+        if dicBase['cplwav'] == ".true.":
             iWaveThreads = int(dicBase['NPE_WAV'])
             iNodes = iNodes + int( math.ceil( iWaveThreads / iPPN ) )
 
