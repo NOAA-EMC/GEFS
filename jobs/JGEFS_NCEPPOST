@@ -272,18 +272,28 @@ case $FORECAST_SEGMENT in
 			export FHOUR_HIGH=$fhmaxh
 			export FHOUR_LOW=$fhmax
 		case $SUBJOB in
-			(A)  
+			(2A)  
+				export DOANALYSIS=NO;
+				export SHOUR=00;
+				export FHINC_HIGH=$(($FHOUT_HF+$FHOUT_HF))
+				;;
+			(2B)  
+				export DOANALYSIS=NO;
+				export SHOUR=$FHOUT_HF;
+				export FHINC_HIGH=$(($FHOUT_HF+$FHOUT_HF))
+				;;
+			(3A)  
 				export DOANALYSIS=YES;
 				export DOANALYSIS=NO;
 				export SHOUR=06;
 				export FHINC_HIGH=9
 				;;
-			(B)  
+			(3B)  
 				export DOANALYSIS=NO;
 				export SHOUR=00;
 				export FHINC_HIGH=9
 				;;
-			(C)  
+			(3C)  
 				export DOANALYSIS=NO;
 				export SHOUR=03;
 				export FHINC_HIGH=9
