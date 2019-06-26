@@ -107,6 +107,7 @@ setpdy.sh
 # Define COM and GES directories
 ##############################################
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMIN=/gpfs/hps3/ptmp/emc.enspara/Xiaqiong.Zhou/o/retro/com/gens/dev/gefs.20170605
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
 ############################################
@@ -167,8 +168,11 @@ export FHOUT=${FHOUTLF:-6}
 ##### RLW 20110704 note that only _HIGH is currently used
 case $FORECAST_SEGMENT in
 	(hr)
-		export SHOUR=00
+		export SHOUR=${SHOUR:-00}
 		export FHOUR=180 #$fhmaxh
+		if (( 180 > fhmaxh )); then
+                        export FHOUR=$fhmaxh
+                fi
 		;;
 	(lr)
 		# low resolution segment
@@ -178,10 +182,16 @@ case $FORECAST_SEGMENT in
 			export SHOUR=$(( $fhmaxh + $FHOUT ))
 		fi
 		export FHOUR=$fhmax
+		if (( 180 > fhmax )); then
+                        export FHOUR=$fhmax
+                fi
 		;;
 	(*)
-		export SHOUR=00
+		export SHOUR=${SHOUR:-00}
 		export FHOUR=$fhmax
+		if (( 180 > fhmax )); then
+                        export FHOUR=$fhmax
+                fi
 		;;
 esac # $FORECAST_SEGMENT
 
@@ -198,7 +208,21 @@ echo
 #################################
 # Run from $SHOUR to $FHOUR_HIGH
 #################################
-$HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf
+
+export SHOUR=$SHOUR
+export FHOUTLF=$FHOUT
+export FHOUTHF=$FHOUT_HF
+export FHMAXHF=$FHMAX_HF
+
+if (( $stream == 2 )); then
+	export SHOUR=$(( $SHOUR + $FHOUTHF ))
+fi
+if (( $stream >= 1 )); then
+	FHOUTLF=$(( $FHOUTLF + $FHOUTLF ))
+	FHOUTHF=$(( $FHOUTHF + $FHOUTHF ))
+fi
+#$HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf
+$HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf $DATA $SHOUR $FHOUTHF $FHOUTLF $FHMAXHF $FHOUR
 ERR=$?
 
 ################# lines between these markers have been modified for dev begin

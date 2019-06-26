@@ -12,6 +12,14 @@ if [ $VERBOSE = "YES" ]; then
    set -x
 fi
 
+export jobdir="${1}"
+export SHOUR="${2}"
+export FHOUTHF="${3}"
+export FHOUTLF="${4}"
+export FHMAXFH="${5}"
+export FHOUR="${6}"
+cd $jobdir
+
 export CASE=${CASE:-384}
 ntiles=${ntiles:-6}
 
@@ -33,7 +41,7 @@ echo memberlist=${memberlist}
 $NCP $GETATMENSMEANEXEC $DATA
 $NCP $GETSFCENSMEANEXEC $DATA
 
-FHINC=$FHOUT_HF
+FHINC=$FHOUTHF
 fhr=$SHOUR
 while [[ $fhr -le $FHOUR ]];
 do
@@ -64,22 +72,22 @@ do
         export err=1
         $ERRSCRIPT || exit $err
     fi # [ $ic 
-    $NLN $COMIN/$cyc/sfcsig/geavg.${cycle}.atmf${fhr}.nemsio ./atm_ensmean
-    $NLN $COMIN/$cyc/sfcsig/geavg.${cycle}.sfcf${fhr}.nemsio ./sfc_ensmean
+    $NLN $COMOUT/$cyc/sfcsig/geavg.${cycle}.atmf${fhr}.nemsio ./atm_ensmean
+    $NLN $COMOUT/$cyc/sfcsig/geavg.${cycle}.sfcf${fhr}.nemsio ./sfc_ensmean
     $APRUN ${DATA}/$(basename $GETATMENSMEANEXEC) ./ atm_ensmean atm $nfile
     $APRUN ${DATA}/$(basename $GETSFCENSMEANEXEC) ./ sfc_ensmean sfc $nfile
     export err=$?
     $ERRSCRIPT || exit 2
-    echo completed fv3gfs average fhour= $fhr > $COMIN/$cyc/sfcsig/geavg.${cycle}.logf${fhr}.nemsio         
+    echo completed fv3gfs average fhour= $fhr > $COMOUT/$cyc/sfcsig/geavg.${cycle}.logf${fhr}.nemsio         
     if [ $fhr -ge $FHMAX_HF ]
     then
-        FHINC=$FHOUT
+        FHINC=$FHOUTLF
     fi
     (( fhr = fhr + FHINC ))
 done
 
-cd $pwd
-[[ ${KEEPDATA:-"NO"} = "NO" ]] && rm -rf $DATA
+#cd $pwd
+#[[ ${KEEPDATA:-"NO"} = "NO" ]] && rm -rf $DATA
 
 set +x
 if [ $VERBOSE = "YES" ]; then
