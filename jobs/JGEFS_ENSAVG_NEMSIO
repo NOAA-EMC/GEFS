@@ -107,7 +107,6 @@ setpdy.sh
 # Define COM and GES directories
 ##############################################
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export COMIN=/gpfs/hps3/ptmp/emc.enspara/Xiaqiong.Zhou/o/retro/com/gens/dev/gefs.20170605
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
 ############################################
