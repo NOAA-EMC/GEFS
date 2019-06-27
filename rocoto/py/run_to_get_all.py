@@ -52,7 +52,7 @@ def main():
     # Automatically turns on coupled forecast if wave prep is run
     #   unless it has already been defined
     if not 'cplwav' in dicBase:
-        if gefs_xml_for_tasks.DoesTaskExist(dicBase, "gwes_prep"):
+        if dicBase['RUN_WAVE_PREP'].upper()[0] == "Y" or gefs_xml_for_tasks.DoesTaskExist(dicBase, "gwes_prep"):
             dicBase['cplwav'] = ".true."
         else:
             dicBase['cplwav'] = ".false."
