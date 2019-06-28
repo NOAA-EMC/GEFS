@@ -47,7 +47,7 @@ export EXECcode=${EXECcode:-$CODEwave/exec}
 # Create and go to DATA directory
 #  (requires wavemodTAG) 
 ###################################
-export DATA=${DATA:-${DATAROOT:?}/${wavemodTAG}.${jobid}}
+export DATA=${DATA:-${DATAROOT:?}/${jobid}}
 mkdir -p $DATA
 cd $DATA
 
