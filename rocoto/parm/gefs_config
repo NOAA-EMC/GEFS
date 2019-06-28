@@ -106,9 +106,9 @@ export COMINcfs=${COMINcfs:-${COMINcfs_base}}
 export HOMEwave=$basesource
 export CODEwave=${CODEwave:-${HOMEgsm}/sorc/fv3gfs.fd/WW3/model}
 export EXECwave=${CODEwave}/exe
-export COMICE=/scratch4/NCEPDEV/rstprod/com/omb/prod
-export COMWND=/scratch4/NCEPDEV/rstprod/com/gens/prod/
-  
+export COMICE=${COMICE:-/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod}
+# export COMWND=${COMWND:-/scratch4/NCEPDEV/rstprod/com/gens/prod}
+
 # export ROTDIR=${ROTDIR:-$HOMEdata/fv3init}   #for pre-generated warm start files, otherwise comment out
 #
 # #for pre-generated 2tsst files, otherwise comment this line out 
