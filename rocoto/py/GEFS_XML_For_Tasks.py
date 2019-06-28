@@ -558,7 +558,7 @@ def get_param_of_task(dicBase, taskname):
 
         if dicBase['cplwav'] == ".true.":
             iWaveThreads = int(dicBase['NPE_WAV'])
-            iNodes = iNodes + int( math.ceil( iWaveThreads / iPPN ) )
+            iNodes = iNodes + int( math.ceil( iWaveThreads * 1.0 / iPPN ) )
 
         iTPP = parallel_threads
 
