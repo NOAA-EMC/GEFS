@@ -24,12 +24,14 @@ export grid_new="40 6 0 0 0 0 0 0 1536 768 0 0 89820709 0 48 -89820709 359765625
 
     for fnh in 00 03; do
       echo "extracting f${fnh}"
-      infile=bfg_${PDY}06_fhr${fnh}_control2
+#      infile=bfg_${PDY}06_fhr${fnh}_control2
+      infile=bfg_${PDY}06_fhr${fnh}_control
       oufile=$DATA/gec00.t00z.master.grb2f0${fnh}
       echo $COMIN_00and03/$infile
-      if [ -f $COMIN_00and03/$YYYY/$MONTH/$DAY/sfcsig/$infile ]; then #check if input file exists before extraction
+#      if [ -f $COMIN_00and03/${YYYY}${MONTH}${DAY}/sfcsig/$infile ]; then #check if input file exists before extraction
+      if [ -f $COMIN_00and03/${YYYY}${MONTH}${DAY}06/$infile ]; then #check if input file exists before extraction
         rm -f $outfile #remove outfile if it already exists before extraction   
-        cp $COMIN_00and03/$YYYY/$MONTH/$DAY/sfcsig/$infile .
+        cp $COMIN_00and03/${YYYY}${MONTH}${DAY}06/$infile .
 #    $nemsio2grb $infile a
         $nemsio2grb $infile 
        $COPYGB2 -g "$grid_new" -x $infile.grb $oufile

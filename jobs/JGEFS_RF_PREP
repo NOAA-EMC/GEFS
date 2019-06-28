@@ -53,7 +53,8 @@ export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 ##############################################
 # Define COM directories
 ##############################################
-export COMINrestart=${COMINrestart:-/gpfs/dell3/nco/storage/fv3gefs/RESTRT}  
+#export COMINrestart=${COMINrestart:-/gpfs/dell3/nco/storage/fv3gefs/RESTRT}  
+export COMINrestart=/gpfs/dell3/nco/storage/fv3gefs/INIT
 
 ##############################################
 # Define COM OUT directories

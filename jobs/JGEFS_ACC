@@ -134,7 +134,7 @@ echo $PDY
 
 #export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/gefs.${PDY}/${cyc}}
 export COMINrestart=${COMINrestart:-/gpfs/dell3/nco/storage/fv3gefs/RESTRT}
-export COMIN_00and03=${COMIN_00and03:-${COMINrestart}}
+export COMIN_00and03=/gpfs/dell3/nco/storage/fv3gefs/REANLY
 export COMIN_master=$COMOUT/master
 #/$RUNMEM.$cycle.master.grb2f$fhr$cfsuffix
 #export COMIN_06=/gpfs/hps3/emc/ensemble/noscrub/$LOGNAME/master_reforecast/master

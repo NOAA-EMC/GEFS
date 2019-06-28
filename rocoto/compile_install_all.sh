@@ -158,7 +158,7 @@ if [ $RunRocoto = "yes" ]; then
         module load lsf/10.1
         module load ruby/2.5.1
         module load rocoto/complete
-        module load python/2.7.14        
+        module load python/3.6.3       
     fi
     ./py/run_to_get_all.py  $userConfigFile
     
