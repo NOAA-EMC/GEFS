@@ -89,4 +89,7 @@ elif [[ "$WHERE_AM_I" == wcoss_dell_p3 ]] ; then
     module load python/3.6.3
     export USE_CFP=YES
     export PATH=$PATH:.
+
+    # Temporary setting to test common settings
+    . $GEFS_ROCOTO/bin/wcoss_dell_p3/common.sh
 fi

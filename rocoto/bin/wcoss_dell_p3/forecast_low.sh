@@ -29,18 +29,18 @@ ulimit -a
 #export MP_SHARED_MEMORY=yes
 #export MEMORY_AFFINITY=core:2
 
-export MPI_LABELIO=YES
-export MP_STDOUTMODE=ORDERED
-export KMP_STACKSIZE=2048M
+# export MPI_LABELIO=YES
+# export MP_STDOUTMODE=ORDERED
+export KMP_STACKSIZE=2048M # Overrides common.sh
 export KMP_AFFINITY=scatter
 
 export FORECAST_SEGMENT=lr
 
 # export for development runs only begin
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
+# export envir=${envir:-dev}
+# export RUN_ENVIR=${RUN_ENVIR:-dev}
 
-export gefsmpexec=" mpirun -n 420 "
+# export gefsmpexec=" mpirun -n 420 "
 #export NTHREADS_SIGCHGRS=2
 
 # For Restart
