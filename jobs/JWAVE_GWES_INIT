@@ -59,6 +59,12 @@ fi
 
 export wavelog=${COMOUTwave}/wave.log
 
+##################################
+# Set mpi serial command
+#################################
+export wavempexec=${wavempexec:-"mpirun"}
+export wave_mpmd=${wave_mpmd:-"cfp"}
+
 ##############################################
 # Set parameters using gwes_init.parm
 ##############################################
