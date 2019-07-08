@@ -9,7 +9,8 @@ export wave_sys_ver=v1.0.0
 export wavemodID=${wavemodID:-gwes}
 
 # Grids for wave model
-export waveGRD='glo_30m' # For 1/4 degree upgrade: 'gwes_core_15m gwes_up_1530m' 
+export waveGRD='glo_30m' 
+#export waveGRD='gwes_core_15m gwes_up_1530m' 
 export curvGRD=  # Curvilinear grids
 
 # Grids for input fields 
@@ -20,6 +21,7 @@ export wndID=gefs_30m
 # Grids for output fields 
 export buoy=points
 export sbsGRD=''  # grids that have output generated as wave model runs and writes to com
+#export postGRD='gwes_core_15m gwes_up_1530m glo_15mext'
 export postGRD='glo_30m glo_15mext'
 export interpGRD='glo_15mext' # Grids that need to be interpolated from native 
 
