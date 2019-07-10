@@ -27,10 +27,10 @@ program getnsttf
 
   character*500 filenamein_nst,filenamein_sfc,filenameout
   character*3 charnanal
-  integer lunin,lunout,iret,k
+  integer lunin,lunout,iret,k,i
   integer nrec, lonb, latb, n, npts
   integer,dimension(7):: idate
-  real,allocatable,dimension(:)   :: rwork1d
+  real,allocatable,dimension(:)   :: rwork1d,rwork1d0,landm
 
 
   type(nemsio_gfile) :: gfile, gfileo,nstfile
@@ -81,6 +81,9 @@ program getnsttf
         npts=lonb*latb
            write(6,*)'lonb latb ',lonb,latb,npts
         if (.not.allocated(rwork1d)) allocate(rwork1d(npts))
+        if (.not.allocated(rwork1d0)) allocate(rwork1d0(npts))
+        if (.not.allocated(landm)) allocate(landm(npts))
+
         
         do n=1,nrec
            rwork1d=zero
@@ -97,8 +100,19 @@ program getnsttf
 !         orog  = orog sfc
 
            rwork1d=zero
+           rwork1d0=zero
+           landm=zero
            call nemsio_readrecv(nstfile,'tref','sfc',1,rwork1d,iret)
-           call nemsio_writerecv(gfileo,'tmp','sfc',1,rwork1d,iret)
+           call nemsio_readrecv(nstfile,'tmp','sfc',1,rwork1d0,iret)
+           call nemsio_readrecv(nstfile,'land','sfc',1,landm,iret)
+          write(*,*)'land',landm(300:400)
+        do i=1,npts
+        if(landm(i).lt.1)then
+          rwork1d0(i)=rwork1d(i)
+        endif
+        enddo
+            
+           call nemsio_writerecv(gfileo,'tmp','sfc',1,rwork1d0,iret)
 
         
         deallocate(rwork1d)
