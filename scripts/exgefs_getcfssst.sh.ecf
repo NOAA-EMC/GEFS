@@ -25,7 +25,7 @@ fi
 
 export GEFS_ANOM2_FCST=${GEFS_ANOM2_FCST:-$EXECgefs/gefs_anom2_fcst}
 export GEFS_NSTGEN=${GEFS_NSTGEN:-$EXECgefs/gefs_nstgen}
-export nemsioread=${nemsioread:-${HOMEDIR}/exec/nemsio_read}
+export nemsioread=${nemsioread:-${HOMEDIR}/sorc/ufs_utils.fd/exec/nemsio_read}
 if [ ! -f $nemsioread ]; then
     echo "FAILED: Missing nemsio_read!"
     exit 85
