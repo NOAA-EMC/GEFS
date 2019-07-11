@@ -120,13 +120,13 @@ export FHOUT=$FHOUTLF
 
 (( imem = 0 ))
 while (( imem < npert )); do
-        (( imem = imem + 1 ))
-        if (( imem >= 10 )); then
-                imem=0$imem
-	else
-                imem=00$imem
-        fi
-        memberlist="$memberlist $imem"
+    (( imem = imem + 1 ))
+    if (( imem >= 10 )); then
+        imem=0$imem
+    else
+        imem=00$imem
+    fi
+    memberlist="$memberlist $imem"
 done # while (( imem < npair * 2 ))
 echo memberlist=$memberlist
 
@@ -134,11 +134,11 @@ echo memberlist=$memberlist
 # otherwise set to 0, then chgres will not be executed in global_nceppost.sh
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
-	LEVS=$LEVSHR 
+    LEVS=$LEVSHR 
 elif [[ $FORECAST_SEGMENT = lr ]]; then
-	LEVS=$LEVSLR 
+    LEVS=$LEVSLR 
 else
-	echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supportted
+    echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supportted
     msg="FATAL ERROR: $job failed!"
     postmsg "$jlogfile" "$msg"
     exit $ERR
@@ -166,32 +166,32 @@ export FHOUT=${FHOUTLF:-6}
 
 ##### RLW 20110704 note that only _HIGH is currently used
 case $FORECAST_SEGMENT in
-	(hr)
-		export SHOUR=${SHOUR:-00}
-		export FHOUR=180 #$fhmaxh
-		if (( 180 > fhmaxh )); then
-                        export FHOUR=$fhmaxh
-                fi
-		;;
-	(lr)
-		# low resolution segment
-		if (( FHMAX_HF > fhmaxh )); then
-			export SHOUR=$(( $fhmaxh + $FHOUT_HF ))
-		else
-			export SHOUR=$(( $fhmaxh + $FHOUT ))
-		fi
-		export FHOUR=$fhmax
-		if (( 180 > fhmax )); then
-                        export FHOUR=$fhmax
-                fi
-		;;
-	(*)
-		export SHOUR=${SHOUR:-00}
-		export FHOUR=$fhmax
-		if (( 180 > fhmax )); then
-                        export FHOUR=$fhmax
-                fi
-		;;
+    (hr)
+        export SHOUR=${SHOUR:-00}
+        export FHOUR=180 #$fhmaxh
+        if (( 180 > fhmaxh )); then
+            export FHOUR=$fhmaxh
+        fi
+        ;;
+    (lr)
+        # low resolution segment
+        if (( FHMAX_HF > fhmaxh )); then
+            export SHOUR=$(( $fhmaxh + $FHOUT_HF ))
+        else
+            export SHOUR=$(( $fhmaxh + $FHOUT ))
+        fi
+        export FHOUR=$fhmax
+        if (( 180 > fhmax )); then
+            export FHOUR=$fhmax
+        fi
+        ;;
+    (*)
+        export SHOUR=${SHOUR:-00}
+        export FHOUR=$fhmax
+        if (( 180 > fhmax )); then
+            export FHOUR=$fhmax
+        fi
+        ;;
 esac # $FORECAST_SEGMENT
 
 echo SHOUR=$SHOUR
@@ -214,11 +214,11 @@ export FHOUTHF=$FHOUT_HF
 export FHMAXHF=$FHMAX_HF
 
 if (( $stream == 2 )); then
-	export SHOUR=$(( $SHOUR + $FHOUTHF ))
+    export SHOUR=$(( $SHOUR + $FHOUTHF ))
 fi
 if (( $stream >= 1 )); then
-	FHOUTLF=$(( $FHOUTLF + $FHOUTLF ))
-	FHOUTHF=$(( $FHOUTHF + $FHOUTHF ))
+    FHOUTLF=$(( $FHOUTLF + $FHOUTLF ))
+    FHOUTHF=$(( $FHOUTHF + $FHOUTHF ))
 fi
 #$HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf
 $HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf $DATA $SHOUR $FHOUTHF $FHOUTLF $FHMAXHF $FHOUR
@@ -235,8 +235,8 @@ msg="$job completed normally"
 postmsg "$jlogfile" "$msg"
 
 if [[ $KEEPDATA != "YES" ]]; then
-	cd $DATAROOT
-	rm -rf $DATA
+    cd $DATAROOT
+    rm -rf $DATA
 fi
 
 echo `date` $0 `date -u` end
