@@ -113,44 +113,44 @@ fi # [ $res = "p125" ]
 #DOANALYSIS=NO
 if [ $DOANALYSIS = YES ]; then
 
-mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.anl$cfsuffix
+    mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.anl$cfsuffix
 
-if [[ ! -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix ]]; then
-	rm $mcfile
-fi
+    if [[ ! -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix ]]; then
+	    rm $mcfile
+    fi
 
-if [ $GRIBVERSION = grib1 ]; then
-	fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbanl$cfsuffix
-	fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbianl$cfsuffix
-elif [ $GRIBVERSION = grib2 ]; then
-	fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl$cfsuffix
-	fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl$cfsuffix
-fi # [ $GRIBVERSION = grib1 ]
+    if [ $GRIBVERSION = grib1 ]; then
+	    fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbanl$cfsuffix
+	    fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbianl$cfsuffix
+    elif [ $GRIBVERSION = grib2 ]; then
+	    fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl$cfsuffix
+	    fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl$cfsuffix
+    fi # [ $GRIBVERSION = grib1 ]
 
-if [[ -s $mcfile ]]; then
-	if [[ -s $fileout ]]; then
-		if [[ -s $fileouti ]]; then
-			cat $mcfile
-			echo skip creation of $fileout
-		else
-			echo fileouti=$fileouti IS MISSING
-			rm $mcfile
-		fi # [[ -s $fileouti ]]
-	else
-		echo fileout=$fileout IS MISSING
-		rm $mcfile
-	fi # [[ -s $fileout ]]
-fi # [[ -s $mcfile ]]
+    if [[ -s $mcfile ]]; then
+	    if [[ -s $fileout ]]; then
+		    if [[ -s $fileouti ]]; then
+			    cat $mcfile
+			    echo skip creation of $fileout
+		    else
+			    echo fileouti=$fileouti IS MISSING
+			    rm $mcfile
+		    fi # [[ -s $fileouti ]]
+        else
+		    echo fileout=$fileout IS MISSING
+		    rm $mcfile
+	    fi # [[ -s $fileout ]]
+    fi # [[ -s $mcfile ]]
 
-if [[ ! -s $mcfile ]]; then
-	# 20150622 RLW disable this temporarily to test the new post code
-	rm $fileout
-	rm $fileouti
-	for submc in prd0p5 prd1p0 prd2p5; do
-		pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.anl$cfsuffix
-		rm $pcfile
-	done
-fi # [[ ! -s $mcfile ]]
+    if [[ ! -s $mcfile ]]; then
+    	# 20150622 RLW disable this temporarily to test the new post code
+	    rm $fileout
+	    rm $fileouti
+	    for submc in prd0p5 prd1p0 prd2p5; do
+		    pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.anl$cfsuffix
+		    rm $pcfile
+	    done
+    fi # [[ ! -s $mcfile ]]
 
 fi
 
@@ -203,7 +203,13 @@ while (( fhr <= FHOUR )); do
 		done # for submc in prd0p5 prd1p0 prd2p5
 	fi # [[ ! -s $mcfile ]]
 
-	export fhr=`expr $fhr + $FHINC`
+	export fhrtest=`expr $fhr + $FHINC`
+	if [ $FHMAXHF -gt 0 -a $FHOUTHF -gt 0 -a $fhrtest -ge $FHMAXHF -a $fhr -lt $FHMAXHF ]; then
+		export FHINC=$FHOUT
+		export fhr=`expr $FHMAX_HF`
+	else
+		export fhr=`expr $fhr + $FHINC`
+	fi
 
 done # while (( fhr <= FHOUR ))
 
@@ -382,7 +388,7 @@ while (( fhr <= FHOUR )); do
  			# period and error exit
  			###############################
  			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
- 				echo `date` forecast $RUNMEM missing for hour $fhr 
+ 				echo "`date` forecast $RUNMEM missing for hour $fhr" 
  				msg="$RUNMEM FORECAST MISSING for hour $fhr"
  				postmsg "$jlogfile" "$msg"
  				export err=9
@@ -526,7 +532,14 @@ while (( fhr <= FHOUR )); do
 		fi # test $SENDCOM = "YES"
  	fi # [[ ! -s $mcfile ]]
 
-	export fhr=`expr $fhr + $FHINC`
+	#export fhr=`expr $fhr + $FHINC`
+    export fhrtest=`expr $fhr + $FHINC`
+    if [ $FHMAXHF -gt 0 -a $FHOUTHF -gt 0 -a $fhrtest -ge $FHMAXHF -a $fhr -lt $FHMAXHF ]; then
+        export FHINC=$FHOUT
+        export fhr=`expr $FHMAX_HF`
+    else
+        export fhr=`expr $fhr + $FHINC`
+    fi
 
 done # while (( fhr <= FHOUR ))
 
