@@ -86,8 +86,8 @@ export EXECpost=${HOMEpost}/exec
 export FIXpost=${HOMEpost}/fix
 export FIXglobal=${HOMEgsm}/fix
 export FIXgfs=${HOMEgsm}/fix
-#export PARMpost=${HOMEpost}/parm
-export PARMpost=${HOMEpost}/parm/post   # for the flat structure
+export PARMpost=${HOMEpost}/parm
+# export PARMpost=${HOMEpost}/parm/post   # for the flat structure
 # PARMPOST (instead of PARMpost) is used in the post ush script
 export PARMPOST=${PARMpost}
 # GRBINDEX2 (instead of GRB2INDEX) is used in the post ush script
@@ -112,7 +112,7 @@ export POSTGPSH=${POSTGPSH:-$USHpost/gfs_nceppost.sh}
 # RLW 20150622 test new version of post executable
 #export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
 export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/gfs_ncep_post}
-export nemsioget=$EXECgsm/nemsio_get
+export nemsioget=$HOMEgsm/sorc/ufs_utils.fd/exec/nemsio_get
 export SIGHDR=$nemsioget
 #echo in $0: POSTGPSH=$POSTGPSH
 #echo in $0: POSTGPEXEC=$POSTGPEXEC
@@ -221,7 +221,7 @@ if [ $GRIBVERSION = grib2 ]; then
 	export FLTFILEGFS=${FLTFILEGFS:-$PARMpost/postxconfig-NT-GEFS.txt}
 	export FLTFILEGFSANL1=${FLTFILEGFSANL1:-$PARMpost/postxconfig-NT-GEFS-ANL.txt}
 	export FLTFILEGFSF001=${FLTFILEGFSF001:-$PARMpost/postxconfig-NT-GEFS-F00.txt}
-	export FLTFILEGFS1=${FLTFILEGFS1:-$PARMpost/postxconfig-NT-GEFS.txt}
+	export FLTFILEGFS1=${FLTFILEGFS1:-$PARMpost/postxconfig-NT-GEFS.txt}	
 fi # [ $GRIBVERSION = grib2 ]
 
 
@@ -367,6 +367,12 @@ export post_log=$DATA/post.$FORECAST_SEGMENT.log$SUBJOB\_${RUNMEM}
 echo
 env | sort
 echo
+
+#### ESRL CHEM addition optics_luts_*.dat
+if [ $ESRL_CHEM = "YES" ] ; then
+	export AeroFile=$PARMPOST/optics_luts_*.dat
+	cp $AeroFile $DATA/
+fi
 
 #################################
 # Run from $SHOUR to $FHOUR_HIGH

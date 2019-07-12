@@ -126,7 +126,8 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     export machine='WCOSS_DELL_P3'
     export JOBPHASE=    
     #export HOMEDIR=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gfs/fv3gefs_q2fy19nco_b84e91_20181211
-    export HOMEDIR=/gpfs/dell2/emc/retros/noscrub/Xiaqiong.Zhou/git_gfs/fv3gfs/master
+    #export HOMEDIR=/gpfs/dell2/emc/retros/noscrub/Xiaqiong.Zhou/git_gfs/fv3gfs/master
+    export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/save/global-workflow/lgan_fv3_ww3_esmf_bs32
 
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v1.1.15 
     export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
@@ -134,7 +135,19 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
 
     export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
     export COMINgfs_base=$HOMEdata/fv3init/gfs.
-    export COMINcfs_base=$HOMEdata/cfs/cfs. 
+    export COMINcfs_base=$HOMEdata/cfs/cfs.
+
+    # Test post with GFS Chem
+    # export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Lin.Gan/git/gefs_gsdchem_fcstchem
+    export HOMEpost=/gpfs/dell2/emc/modeling/noscrub/Lin.Gan/git/gefs-post/lgan-esrl-post/gfs_post.fd
+    export PARMpost=${HOMEpost}/parm
+    export POSTGPEXEC=$HOMEpost/exec/ncep_post
+    export FLTFILEGFSF00=$PARMpost/postxconfig-NT-GFS-F00-FV3CHEM.txt
+    export FLTFILEGFS=$PARMpost/postxconfig-NT-GFS-FV3CHEM.txt
+    export FLTFILEGFSF001=$PARMpost/postxconfig-NT-GFS-F00-FV3CHEM.txt
+    export FLTFILEGFS1=$PARMpost/postxconfig-NT-GFS-FV3CHEM.txt
+    export ESRL_CHEM=YES
+    
 fi
 
 if [[ $machine == WCOSS* ]]; then
@@ -151,6 +164,9 @@ fi
 #export COMINenkf_base=$HOMEdata/enkf.gdas.
 #export COMINgfs_base=$HOMEdata/gfs.
 #export COMINcfs_base=/ensemble/noscrub/Walter.Kolczynski/gefs_input/cfs_2_sst/cfs.
+
+
+
 
 export JOBQUEUE=$JOBQUEUE$JOBPRIO$JOBPHASE
 echo JOB QUEUE info: $JOBQUEUE 
