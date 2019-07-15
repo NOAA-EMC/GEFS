@@ -132,14 +132,17 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     export machine='WCOSS_DELL_P3'
     export JOBPHASE=
     # export HOMEDIR=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gfs/fv3gefs_f0b283bd_20190517
-    export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/save/global-workflow/lgan_fv3_ww3_esmf_bs32
+    export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/Full_GEFS//global-workflow
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.0
-    export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
+    export HOMEdata=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/gefs_input
 
     # Location of WW3 executables
     export EXECcode=$HOMEDIR/sorc/fv3gfs.fd/WW3/model/exe
     # Wave model settings: ice data dir
-    export COMICE=/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod
+    export COMINcfs_base=$HOMEdata/cfs_2_sst/cfs.
+    export COMINenkf_base="$HOMEdata/gfs_15/enkfgdas."
+    export COMINgfs_base="$HOMEdata/gfs_15/gfs."
+    export COMICE=$HOMEdata/sea_ice
 
     export COMROOThps=${HOMEdata}
 fi
