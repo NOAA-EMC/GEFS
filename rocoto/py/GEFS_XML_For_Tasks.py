@@ -72,7 +72,7 @@ def Replace_task_UsingSubjobs(dicBase, taskname="post_high", sNSubJobs='N_SUBJOB
         #print(sVarName,kk)
         dicBase[sVarName] = "{0}_{1}{2}".format(taskname, N_SubJobs, SubExts[k])
 
-    dicBase['taskname_num'.upper()] = taskname_num + N_SubJobs
+    dicBase['taskname_num'.upper()] = taskname_num + N_SubJobs - 1
     return 
     
 # =======================================================
