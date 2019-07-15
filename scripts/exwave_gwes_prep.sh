@@ -717,6 +717,7 @@
 # Initialize inp file parameters
   NFGRIDS=0
   NMGRIDS=0
+  CPLILINE='$'
   ICELINE='$'
   ICEFLAG='no'
   CURRLINE='$'
@@ -731,6 +732,12 @@
     UNIPOINTS="'$buoy'"
   fi
 
+# Check if esmfGRD is set
+  if [ ${esmfGRD} ]
+  then
+    NFGRIDS=`expr $NFGRIDS + 1`
+  fi 
+
   case ${WW3ATMINP} in
     'YES' )
       NFGRIDS=`expr $NFGRIDS + 1`
@@ -738,7 +745,9 @@
       WINDFLAG="$wndID"
     ;;
     'CPL' )
-      WINDFLAG='CPL:native'
+      WINDFLAG="CPL:${esmfGRD}"
+      WNDIFLAG='T'
+      CPLILINE="  '${esmfGRD}' F F T F F F F"
     ;;
   esac
   
@@ -749,7 +758,9 @@
       ICEFLAG="$iceID"
     ;;
     'CPL' )
-      ICEFLAG='CPL:native'
+      ICEFLAG="CPL:${esmfGRD}"
+      ICEIFLAG='T'
+      CPLILINE="  '${esmfGRD}' F F ${WNDIFLAG} T F F F"
     ;;
   esac
 
@@ -760,21 +771,25 @@
       CURRFLAG="$curID"
     ;;
     'CPL' )
-      CURRFLAG='CPL:native'
+      CURRFLAG="CPL:${esmfGRD}"
+      CURIFLAG='T'
+      CPLILINE="  '${esmfGRD}' F T ${WNDIFLAG} ${ICEIFLAG} F F F"
     ;;
   esac
 
   unset agrid
   agrid=
   gline=
-  grdNR=0
-  grdGRP=1 # Single group for now
+  GRDN=0
+#  grdGRP=1 # Single group for now
   for grid in ${waveGRD} 
   do
-    grdNR=`expr ${grdNR} + 1`
+    GRDN=`expr ${GRDN} + 1`
     agrid=( ${agrid[*]} ${grid} )
     NMGRIDS=`expr $NMGRIDS + 1`
-    gline="${gline}'${grid}'  'no' 'CURRFLAG' 'WINDFLAG' 'ICEFLAG'  'no' 'no' 'no'  ${grdNR} ${grdGRP}  0.00 1.00  F\n"
+    gridN=`echo $waveGRDN | awk -v i=$GRDN '{print $i}'`
+    gridG=`echo $waveGRDG | awk -v i=$GRDN '{print $i}'`
+    gline="${gline}'${grid}'  'no' 'CURRFLAG' 'WINDFLAG' 'ICEFLAG'  'no' 'no' 'no'  ${gridN} ${gridG}  0.00 1.00  F\n"
   done
   gline="${gline}\$"
   echo $gline
@@ -786,6 +801,7 @@
       -e "s/FPNTPROC/${FPNTPROC}/g" \
       -e "s/FGRDPROC/${FGRDPROC}/g" \
       -e "s/OUTPARS/${OUTPARS}/g" \
+      -e "s/CPLILINE/${CPLILINE}/g" \
       -e "s/UNIPOINTS/${UNIPOINTS}/g" \
       -e "s/GRIDLINE/${gline}/g" \
       -e "s/ICELINE/$ICELINE/g" \

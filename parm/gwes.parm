@@ -9,9 +9,14 @@ export wave_sys_ver=v1.0.0
 export wavemodID=${wavemodID:-gwes}
 
 # Grids for wave model
-export waveGRD='glo_30m' 
-#export waveGRD='gwes_core_15m gwes_up_1530m' 
+#export waveGRD='glo_30m' 
+export waveGRD='glo_15m ao_20m so_20m' 
+export waveGRDN='1 2 2' # gridnumber for ww3_multi
+export waveGRDG='10 20 20' # gridgroup for ww3_multi
 export curvGRD=  # Curvilinear grids
+
+# ESMF input grid
+export esmfGRD=glo_15mxt # input grid
 
 # Grids for input fields 
 export iceID=icean_5m
@@ -21,9 +26,9 @@ export wndID=gefs_30m
 # Grids for output fields 
 export buoy=points
 export sbsGRD=''  # grids that have output generated as wave model runs and writes to com
-#export postGRD='gwes_core_15m gwes_up_1530m glo_15mext'
-export postGRD='glo_30m glo_15mext'
-export interpGRD='glo_15mext' # Grids that need to be interpolated from native 
+export postGRD='glo_15m ao_20m so_20m glo_15mxt'
+#export postGRD='glo_30m glo_15mxt'
+export interpGRD='glo_15mxt' # Grids that need to be interpolated from native 
 
 # Output stride
 export HOUR_INC=3      # This value should match with the one used in 
