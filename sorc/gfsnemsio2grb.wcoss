@@ -8,4 +8,4 @@ module load bacio/v2.0.2
 export FCMP=ifort
 export LDFLAGSM=-qopenmp
 export OMPFLAGM=
-export wgrib2api=/ensemble/noscrub/emc.enspara/Xianwu.Xue/common/ForReforecast/ExternalLibs/grib2.v2.0.7/lib
+export wgrib2api=/ensemble2/noscrub/emc.enspara/common/git/ForReforecast/ExternalLibs/grib2.v2.0.7/lib

@@ -92,8 +92,8 @@ if [ $CompileCode = "yes" ]; then
         /bin/ln -sf /scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix fix
     elif [ $machine = "cray" ]; then
         /bin/ln -sf /gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gefs/fix fix
-    elif [ $machine = "wcoss_ibm" ]; then
-        /bin/ln -sf /ensemble/noscrub/Walter.Kolczynski/gefs-fixed fix
+    elif [ $machine = "wcoss" ]; then
+        /bin/ln -sf /gpfs/td3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gefs/fix fix
     elif [ $machine = "wcoss_dell_p3" ]; then
         /bin/ln -sf /gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gefs/fix fix
     fi
@@ -146,6 +146,11 @@ if [ $RunRocoto = "yes" ]; then
     cd $sWS
     if [ $machine = "theia" ]; then
         module load rocoto
+    elif [ $machine = "wcoss" ]; then
+        . $MODULESHOME/init/sh
+        module load rocoto
+        module load python/3.6.3 
+         
     elif [ $machine = "cray" ]; then
         . /opt/modules/3.2.10.3/init/sh
         module use /usrx/local/emc_rocoto/modulefiles
@@ -189,6 +194,8 @@ if [ $DeleteCrontabFromMyCrontab = "yes" ]; then
         echo "Not ready on theia"
     elif [ $machine = "cray" ]; then
         echo "Not ready on cray"
+    elif [ $machine = "wcoss" ]; then
+        echo "Not ready on wcoss p1/p2"
     elif [ $machine = "wcoss_dell_p3" ]; then
         py/del_crontab.py
         echo "Deleted crontab to system!"

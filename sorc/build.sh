@@ -122,7 +122,6 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then # We ar
     export FFLAGS_d="-O3 -g -r8 -convert big_endian -auto -mkl -I ${G2_INCd}"
     export OPENMPFFLAG=qopenmp
 
-    export wgrib2api=/gpfs/dell2/emc/verification/noscrub/emc.enspara/Xianwu.Xue/common/ForReforecast/ExternalLibs/grib2.v2.0.7/lib
     export INCacc= 
 fi
 
