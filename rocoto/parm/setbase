@@ -107,7 +107,8 @@ elif [[ -d /dcom && -d /hwrf ]] ; then
     export machine='WCOSS'
     export JOBPHASE=2
     # export HOMEDIR=/ensemble/save/Walter.Kolczynski/fv3gfs/fv3gfs_ens_20180814
-    export HOMEDIR=/ensemble/save/Walter.Kolczynski/fv3gfs/20181004_c550fea3
+    #export HOMEDIR=/ensemble/save/Walter.Kolczynski/fv3gfs/20181004_c550fea3
+    export HOMEDIR=/ensemble/noscrub/Bing.Fu/git/fv3gfs_rfcst
     export HOMEDIR1=$HOMEDIR
     export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
     

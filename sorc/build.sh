@@ -58,12 +58,12 @@ elif [[ -d /dcom && -d /hwrf ]] ; then # Tide or Gyre
     export INCGFS="$NEMSIOGFS_INC"
 
     # # Hui-Ya updated g2 lib for nceppost, we need to follow to use same g2 library for our apps. 
-    export G2_SRC=/usrx/local/nceplibs/g2/v3.0.0/src
-    export G2_INC4=/usrx/local/nceplibs/g2/v3.0.0/include/g2_v3.0.0_4
-    export G2_INCd=/usrx/local/nceplibs/g2/v3.0.0/include/g2_v3.0.0_d
-    export G2_LIB4=/usrx/local/nceplibs/g2/v3.0.0/libg2_v3.0.0_4.a
-    export G2_LIBd=/usrx/local/nceplibs/g2/v3.0.0/libg2_v3.0.0_d.a
-    export G2_VER=v3.0.0
+    #export G2_SRC=/usrx/local/nceplibs/g2/v3.0.0/src
+    #export G2_INC4=/usrx/local/nceplibs/g2/v3.0.0/include/g2_v3.0.0_4
+    #export G2_INCd=/usrx/local/nceplibs/g2/v3.0.0/include/g2_v3.0.0_d
+    #export G2_LIB4=/usrx/local/nceplibs/g2/v3.0.0/libg2_v3.0.0_4.a
+    #export G2_LIBd=/usrx/local/nceplibs/g2/v3.0.0/libg2_v3.0.0_d.a
+    #export G2_VER=v3.0.0
 
     export INCS="${SIGIO_INC4}"
     export INCSFC="${SFCIO_INC4}"

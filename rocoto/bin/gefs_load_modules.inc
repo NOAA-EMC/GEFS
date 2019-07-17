@@ -7,12 +7,12 @@ if [[ "$WHERE_AM_I" == wcoss_ibm ]] ; then
 	. /usrx/local/Modules/default/init/ksh
 	module use /nwprod2/modulefiles
 	module purge
-	module load ics/17.0.3
+	module load ips/18.0.1.163
 	module load lsf
-	module load prod_envir
-	module load prod_util/v1.0.24
+	module load prod_envir/v1.0.2
+	module load prod_util/v1.1.0
 	module load util_shared/v1.0.7
-	module load grib_util/v1.0.5
+	module load grib_util/v1.0.6
 	module load ibmpe/1.3.0.12
 	module load hpss
     module load g2tmpl/v1.5.0
