@@ -1000,6 +1000,7 @@ def get_ENV_VARS(sPre="\t\t"):
     dicENV_VARS['INIT_DIR'] = '&INIT_DIR;'
     dicENV_VARS['DIRS_TO_KEEP'] = '&DIRS_TO_KEEP;'
     dicENV_VARS['DIRS_TO_ARCHIVE'] = '&DIRS_TO_ARCHIVE;'
+    dicENV_VARS['gefs_cych']= '&INCYC;'
     sENV_VARS = ""
 
     sENV_VARS += sPre + '<!-- Environment Variables -->\n'
