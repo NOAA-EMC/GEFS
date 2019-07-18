@@ -208,7 +208,7 @@ fi
 if [ $GRIBVERSION = grib2 ]; then
 	export CAT_FLX_TO_PGB=${CAT_FLX_TO_PGB:-YES}
 	export OUTTYP=${OUTTYP:-3}
-	export POSTAVBLFLD=$HOMEpost/parm/post_avblflds.xml
+	export POSTAVBLFLD=${POSTAVBLFLD:-$HOMEpost/parm/post_avblflds.xml}
 	export POSTGRB2TBL=${POSTGRB2TBL:-/nwprod/lib/sorc/g2tmpl/params_grib2_tbl_new}
 	export CTLFILEGFSANL=${CTLFILEGFSANL:-$PARMpost/postcntrl_gfs.xml}
 	export CTLFILEGFSF00=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
@@ -221,7 +221,7 @@ if [ $GRIBVERSION = grib2 ]; then
 	export FLTFILEGFS=${FLTFILEGFS:-$PARMpost/postxconfig-NT-GEFS.txt}
 	export FLTFILEGFSANL1=${FLTFILEGFSANL1:-$PARMpost/postxconfig-NT-GEFS-ANL.txt}
 	export FLTFILEGFSF001=${FLTFILEGFSF001:-$PARMpost/postxconfig-NT-GEFS-F00.txt}
-	export FLTFILEGFS1=${FLTFILEGFS1:-$PARMpost/postxconfig-NT-GEFS.txt}	
+	export FLTFILEGFS1=${FLTFILEGFS1:-$PARMpost/postxconfig-NT-GEFS.txt}
 fi # [ $GRIBVERSION = grib2 ]
 
 
