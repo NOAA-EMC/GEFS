@@ -6,11 +6,11 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export gefsmpexec=${gefsmpexec:-mpirun}
 
 export machine=$machine
 export nemsioget=$nemsioget
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec:-mpirun}
 export RUNMEM=$RUNMEM
 export mem=`echo $RUNMEM|cut -c3-5`
 

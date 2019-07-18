@@ -69,7 +69,10 @@ if [[ -s $DATA/pgrb2$ffhr$cfsuffix ]] && \
    [[ $overwrite = no ]]; then
 	echo "$(date) $jobgrid  pgrb2 processing skipped for $RUNMEM $ffhr"
 else
-	$WGRIB2 $mafile $option1 $option21 $option22 $option23 -new_grid $grid_spec pgb2file.$ffhr$cfsuffix
+#	$WGRIB2 $mafile $option1 $option21 $option22 $option23 -set_bitmap 1 -new_grid $grid_spec pgb2file.$ffhr$cfsuffix
+	$WGRIB2 $mafile $option1 $option21 $option22 $option23 $option24 \
+			$option25 $option26 $option27 $option28 \
+			-new_grid $grid_spec pgb2file.$ffhr
 	rc=$?
 	if [[ $rc -ne 0 ]]; then
 		msg="FATAL ERROR: wgrib2 for $mafile failed!"

@@ -7,9 +7,9 @@ export PS4='$SECONDS + '
 date
 export MODEL_OUT_FORM=binarynemsiompiio
 
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export gefsmpexec=${gefsmpexec:-mpirun}
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec:-mpirun}
 
 export GRIBVERSION=${GRIBVERSION:-grib2}
 
@@ -110,7 +110,7 @@ export CHGRESEXEC=$EXECgsm/global_chgres
 #export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
 export POSTGPSH=${POSTGPSH:-$USHpost/gfs_nceppost.sh}
 # RLW 20150622 test new version of post executable
-#export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
+# export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
 export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/gfs_ncep_post}
 export nemsioget=$HOMEgsm/sorc/ufs_utils.fd/exec/nemsio_get
 export SIGHDR=$nemsioget
@@ -167,37 +167,41 @@ export OUTTYP=$OUTTYP
 
 if [[ $REMAP_GRID = latlon ]]; then
 
-if [[ $FORECAST_SEGMENT = hr ]]; then
-	master_grid=0p25deg
-fi 
-if [[ $FORECAST_SEGMENT = lr ]]; then
-	master_grid=0p50deg
-#else
-#	echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supporxtted          
-fi
+    if [[ $FORECAST_SEGMENT = hr ]]; then
+	    master_grid=0p25deg
+    elif [[ $FORECAST_SEGMENT = lr ]]; then
+	    master_grid=0p50deg
+    else
+	    echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supportted  
+        msg="FATAL ERROR: $job failed!"
+        postmsg "$jlogfile" "$msg"
+        exit $ERR
+    fi
 
-case $master_grid in
-	0p25deg) LATB=720;LONB=1440;;
-	0p50deg) LATB=360;LONB=720;;
-esac
-export LATB
-export LONB
+    case $master_grid in
+	    0p25deg) LATB=720;LONB=1440;;
+	    0p50deg) LATB=360;LONB=720;;
+    esac
+    export LATB
+    export LONB
 
-if [[ $FORECAST_SEGMENT = hr ]] ; then
-	LEVS=$LEVSHR 
-elif [[ $FORECAST_SEGMENT = lr ]]; then
-	LEVS=$LEVSLR 
-else
-	echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supporxtted          
-fi
-#(( LEVS = LEVS -1 ))
-echo $LEVS $LATB $LONB
-
+    if [[ $FORECAST_SEGMENT = hr ]] ; then
+	    LEVS=$LEVSHR 
+    elif [[ $FORECAST_SEGMENT = lr ]]; then
+	    LEVS=$LEVSLR 
+    else
+	    echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supportted
+        msg="FATAL ERROR: $job failed!"
+        postmsg "$jlogfile" "$msg"
+        exit $ERR
+    fi
+    #(( LEVS = LEVS -1 ))
+    echo $LEVS $LATB $LONB
 else  #REMAP_GRID
 
-export JCAP=$JCAPFV
-export LATB=$LATBFV
-export LONB=$LONBFV
+    export JCAP=$JCAPFV
+    export LATB=$LATBFV
+    export LONB=$LONBFV
 
 fi
 ####################################
@@ -384,7 +388,13 @@ if test $SHOUR -le $FHOUR_HIGH; then
 	export POSTGPVARS=$POSTGPVARS_HIGH
 
 	$HOMEgefs/scripts/exgefs_nceppost.sh.ecf
-
+    ERR=$?
+    if [ $ERR -ne 0 ]; then
+        msg="FATAL ERROR: ex-script of GEFS_NCEPPOST failed!"
+        postmsg "$jlogfile" "$msg"
+        exit $ERR
+    fi
+    
 	export SHOUR=`expr $FHOUR_HIGH + $FHINC_HIGH`
 fi # test $SHOUR -le $FHOUR_HIGH
 
@@ -396,9 +406,13 @@ echo DATA=$DATA
 ls -al $DATA
 echo `date` TEST LISTING OF WORKING DIRECTORY END
 ################# lines between these markers have been modified for dev end
-
-msg="$job completed normally"
+if [ $ERR = 0 ]; then
+    msg="$job completed normally!"
+else
+    msg="FATAL ERROR: $job failed!"
+fi
 postmsg "$jlogfile" "$msg"
+
 
 if [[ $KEEPDATA != "YES" ]]; then
 	cd $DATAROOT
@@ -406,3 +420,6 @@ if [[ $KEEPDATA != "YES" ]]; then
 fi
 
 echo `date` $0 `date -u` end
+
+exit $ERR
+

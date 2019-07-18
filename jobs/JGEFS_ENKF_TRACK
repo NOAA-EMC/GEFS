@@ -6,7 +6,7 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
+export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
 
 ############################
 # Set up cycle varaible
@@ -113,11 +113,11 @@ if [[ $gfssource != prod ]]; then
         export COMINenkf=${COMINenkf_base}$pdyp
 fi
 
-export COMINgfs=${COMINgfs:-${COMROOThps}/gfs/prod/gfs.${PDY}}
-export COMINenkf=${COMINenkf:-${COMROOThps}/gfs/prod/enkf.$pdyp} 
-export COMINatcfsyn=$COMROOTp1/arch/prod/syndat
-export COMINgfs6ago=${COMINgfs6ago:-${COMROOThps}/gfs/prod/gfs.${d6ago_ymd}}
-export COMINgfs6ahead=${COMINgfs6ahead:-${COMROOThps}/gfs/prod/gfs.${d6ahead_ymd}}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/$cyc}
+export COMINenkf=${COMINenkf:-$(compath.py gfs/prod)/enkfgdas.$pdyp} 
+export COMINatcfsyn=${COMINatcfsyn:-$(compath.py arch/prod/syndat)}
+export COMINgfs6ago=${COMINgfs6ago:-$(compath.py gfs/prod)/gfs.${d6ago_ymd}/${d6ago_cyc}}
+export COMINgfs6ahead=${COMINgfs6ahead:-$(compath.py gfs/prod)/gfs.${d6ahead_ymd}/${d6ahead_cyc}}
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}

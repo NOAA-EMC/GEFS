@@ -717,6 +717,7 @@ cat > input.nml <<EOF
   redrag       = ${redrag:-".true."}
   dspheat      = ${dspheat:-".true."}
   hybedmf      = ${hybedmf:-".true."}
+  lheatstrg      = ${lheatstrg:-".false."}
   random_clds  = ${random_clds:-".true."}
   trans_trac   = ${trans_trac:-".true."}
   cnvcld       = ${cnvcld:-".true."}
@@ -731,6 +732,8 @@ cat > input.nml <<EOF
   nst_anl      = $nst_anl
   psautco      = ${psautco:-"0.0008,0.0005"}
   prautco      = ${prautco:-"0.00015,0.00015"}
+  lgfdlmprad   = ${lgfdlmprad:-".true."}
+  effr_in      = ${effr_in:-".true."}
   $gfs_physics_nml
 /
 

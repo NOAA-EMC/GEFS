@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# Parameters that are common to all wave model steps
+
+# System and version
+export wave_sys_ver=v1.0.0  
+
+# General runtime labels
+export wavemodID=${wavemodID:-gwes}
+
+# Grids for wave model
+export waveGRD='glo_30m' 
+#export waveGRD='gwes_core_15m gwes_up_1530m' 
+export curvGRD=  # Curvilinear grids
+
+# Grids for input fields 
+export iceID=icean_5m
+export curID=rtofs_5m
+export wndID=gefs_30m 
+
+# Grids for output fields 
+export buoy=points
+export sbsGRD=''  # grids that have output generated as wave model runs and writes to com
+#export postGRD='gwes_core_15m gwes_up_1530m glo_15mext'
+export postGRD='glo_30m glo_15mext'
+export interpGRD='glo_15mext' # Grids that need to be interpolated from native 
+
+# Output stride
+export HOUR_INC=3      # This value should match with the one used in 
+                         # the wind update script
+# gridded and point output rate
+export DTFLD=10800
+export DTPNT=3600
+
+# Selected output parameters (gridded)
+export OUTPARS='WND CUR HS T01 FP DIR DP PHS PTP PDIR ICE CHAR'
+
+# The start time reflects the number of hindcast hours prior to the cycle initial time
+export HINDH=0
+
+#   The ending time of the run is always the $lsth hour forecast. 
+export lsth=${lsth:-240}
+
+# Number of cycles to look back for restart files
+export nback=
+
+# Restart file config
+export CYCSTRIDE=6 # cycle stride in h
+export DTRST=1 # time between restart files, set to DTRST=1 for a single restart file
+# Set runmember to default value if not GEFS cpl run
+#  (for a GFS coupled run, RUNMEN would be unset, this should default to -1)
+export RUNMEM=${RUNMEM:--1}
+# Set wave model member tags to wavemodID if ensemble run 
+# -1: no suffix, deterministic; xxxNN: extract two last digits to make ofilename prefix=gwesNN
+if [ $RUNMEM = -1 ]; then
+# No suffix added to wavemodID in case of deterministic run
+  export waveMEMB=
+else
+# Extract member number only
+  export waveMEMB=`echo $RUNMEM | grep -o '..$'`
+fi
+
+# Determine if wave component needs input and/or is coupled
+export WW3ATMINP='CPL'
+export WW3ICEINP='YES'
+export WW3CURINP='NO'
+
+# Determine if input is from perturbed ensemble (T) or single input file (F) for all members
+export WW3ATMIENS='F'
+export WW3ICEIENS='F'
+export WW3CURIENS='F'
+

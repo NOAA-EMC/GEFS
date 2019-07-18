@@ -25,7 +25,7 @@ fi
 
 export GEFS_ANOM2_FCST=${GEFS_ANOM2_FCST:-$EXECgefs/gefs_anom2_fcst}
 export GEFS_NSTGEN=${GEFS_NSTGEN:-$EXECgefs/gefs_nstgen}
-export nemsioread=${nemsioread:-${HOMEDIR}/exec/nemsio_read}
+export nemsioread=${nemsioread:-${HOMEDIR}/sorc/ufs_utils.fd/exec/nemsio_read}
 if [ ! -f $nemsioread ]; then
     echo "FAILED: Missing nemsio_read!"
     exit 85
@@ -327,11 +327,11 @@ fi
 echo $fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile
 $GEFS_ANOM2_FCST $fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile $HFcfs
 ERR=$?
-if [ ERR -eq 0 ] ; then 
+if [ $ERR -eq 0 ] ; then 
     echo "2-tiered sst generation finished!!!"
     $NCP $fn_anom_fc $COMOUTcfssst/TMPsfc.${PDY}${cyc}.24hr.anom.grb
-    ERR=$?
-    if [ ERR -eq 0 ]; then
+    $ERR=$?
+    if [ $ERR -eq 0 ]; then
         exit 0
     else
         echo "FAILED when copy $fn_anom_fc to $COMOUTcfssst"

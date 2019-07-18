@@ -1,0 +1,89 @@
+#!/bin/ksh
+
+echo `date` $0 begin
+
+set -xa
+
+echo DATA=$DATA
+
+VERBOSE=${VERBOSE:-"YES"}
+if [ $VERBOSE = "YES" ]; then
+   echo $(date) EXECUTING $0 $* >&2
+   set -x
+fi
+
+export CASE=${CASE:-384}
+ntiles=${ntiles:-6}
+
+# Utilities
+ERRSCRIPT=${ERRSCRIPT:-'eval [[ $err = 0 ]]'}
+NCP=${NCP:-"/bin/cp -p"}
+NLN=${NLN:-"/bin/ln -sf"}
+NMV=${NMV:-"/bin/mv -uv"}
+nemsioget=${nemsioget:-${NWPROD}/exec/nemsio_get}
+
+GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-$HOMEgsi/exec/getsigensmeanp_smooth.x}
+GETSFCENSMEANEXEC=${GETSFCENSMEANEXEC:-$HOMEgsi/exec/getsfcensmeanp.x}
+
+SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
+
+# Compute ensemble mean 
+export OMP_NUM_THREADS=4
+echo memberlist=${memberlist}
+$NCP $GETATMENSMEANEXEC $DATA
+$NCP $GETSFCENSMEANEXEC $DATA
+
+FHINC=$FHOUT_HF
+fhr=$SHOUR
+while [[ $fhr -le $FHOUR ]];
+do
+    fhr=$(printf %03i $fhr)
+    nfile=$npert
+    for mem in $memberlist; do
+        mem2=$(printf %02i $mem)
+        ic=0
+        while [ $ic -le $SLEEP_LOOP_MAX ]; do
+            if test -f  $COMIN/$cyc/sfcsig/gep${mem2}.${cycle}.logf${fhr}.nemsio; then
+                $NLN $COMIN/$cyc/sfcsig/gep${mem2}.${cycle}.atmf${fhr}.nemsio ./atm_mem$mem
+                $NLN $COMIN/$cyc/sfcsig/gep${mem2}.${cycle}.sfcf${fhr}.nemsio ./sfc_mem$mem
+                break
+            else
+                ic=`expr $ic + 1`
+                sleep $SLEEP_INT
+            fi
+            if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+                (( nfile = nfile - 1 ))
+                echo WARNING: `date` forecast gep${mem2} missing for hour $fhr
+            fi # [ $ic 
+        done
+    done
+    if [ $nfile -le 1 ]; then
+        echo `date` Not enough forecast files for average at  hour $fhr
+        msg="FATAL ERROR: Not enough forecast files for average at  hour $fhr"
+        postmsg "$jlogfile" "$msg"
+        export err=1
+        $ERRSCRIPT || exit $err
+    fi # [ $ic 
+    $NLN $COMIN/$cyc/sfcsig/geavg.${cycle}.atmf${fhr}.nemsio ./atm_ensmean
+    $NLN $COMIN/$cyc/sfcsig/geavg.${cycle}.sfcf${fhr}.nemsio ./sfc_ensmean
+    $APRUN ${DATA}/$(basename $GETATMENSMEANEXEC) ./ atm_ensmean atm $nfile
+    $APRUN ${DATA}/$(basename $GETSFCENSMEANEXEC) ./ sfc_ensmean sfc $nfile
+    export err=$?
+    $ERRSCRIPT || exit 2
+    echo completed fv3gfs average fhour= $fhr > $COMIN/$cyc/sfcsig/geavg.${cycle}.logf${fhr}.nemsio         
+    if [ $fhr -ge $FHMAX_HF ]
+    then
+        FHINC=$FHOUT
+    fi
+    (( fhr = fhr + FHINC ))
+done
+
+cd $pwd
+[[ ${KEEPDATA:-"NO"} = "NO" ]] && rm -rf $DATA
+
+set +x
+if [ $VERBOSE = "YES" ]; then
+    echo $(date) EXITING $0 with return code $err >&2
+fi
+
+exit $err
