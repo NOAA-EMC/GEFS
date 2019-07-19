@@ -19,12 +19,18 @@ export GRIBVERSION=${GRIBVERSION:-grib2}
 export pid=$$
 export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
 mkdir -p $DATA
+
 cd $DATA
 
 ######################################
 # Set up the cycle variable
 ######################################
 export cycle=t${cyc}z
+
+######################################
+# Define parameters for ENSAVG_NEMSIO
+######################################
+export SUBJOB=${SUBJOB:-""}
 
 ####################################
 # Specify NET and RUN Name and model
@@ -66,6 +72,8 @@ export VERBOSE=${VERBOSE:-NO}
 # In case of NCEPPOST failure, set RERUN=RESTART if necessary in NCEPPOST, and PRDGEN jobs
 # In case of PRDGEN   failure, set RERUN=RESTART if necessary in PRDGEN jobs
 ####################################
+export SUBJOB=$SUBJOB
+
 echo input setting RERUN=$RERUN
 export RERUN=${RERUN:-RESTART}
 echo current setting RERUN=$RERUN
@@ -109,14 +117,11 @@ setpdy.sh
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
+mkdir -m 775 -p $COMOUT/$cyc/misc/ensavg_nemsio
 ############################################
 # Run gefs.parm to get input variables
 ############################################
 . $PARMgefs/gefs.parm
-
-export FHMAX_HF=$FHMAXHF
-export FHOUT_HF=$FHOUTHF
-export FHOUT=$FHOUTLF
 
 (( imem = 0 ))
 while (( imem < npert )); do
@@ -161,13 +166,15 @@ export SLEEP_INT=5
 # Specify Forecast Hour Range
 ####################################
 
+export SHOUR=${SHOUR:-00}
 export FHOUT_HF=${FHOUTHF:-3}
-export FHOUT=${FHOUTLF:-6}
+export FHOUT_LF=${FHOUTLF:-6}
+export FHMAX_HF=${FHMAXHF:-240}
+export FHOUR=${FHOUR:-180}
 
 ##### RLW 20110704 note that only _HIGH is currently used
 case $FORECAST_SEGMENT in
     (hr)
-        export SHOUR=${SHOUR:-00}
         export FHOUR=180 #$fhmaxh
         if (( 180 > fhmaxh )); then
             export FHOUR=$fhmaxh
@@ -178,7 +185,7 @@ case $FORECAST_SEGMENT in
         if (( FHMAX_HF > fhmaxh )); then
             export SHOUR=$(( $fhmaxh + $FHOUT_HF ))
         else
-            export SHOUR=$(( $fhmaxh + $FHOUT ))
+            export SHOUR=$(( $fhmaxh + $FHOUT_LF ))
         fi
         export FHOUR=$fhmax
         if (( 180 > fhmax )); then
@@ -196,7 +203,7 @@ esac # $FORECAST_SEGMENT
 
 echo SHOUR=$SHOUR
 echo FHOUR=$FHOUR
-echo FHOUT=$FHOUT
+echo FHOUT_LF=$FHOUT_LF
 echo FHOUT_HF=$FHOUT_HF
 echo FHMAX_HF=$FHMAX_HF
 
@@ -204,25 +211,49 @@ echo
 env | sort
 echo
 
-#################################
-# Run from $SHOUR to $FHOUR_HIGH
-#################################
 
-export SHOUR=$SHOUR
-export FHOUTLF=$FHOUT
-export FHOUTHF=$FHOUT_HF
-export FHMAXHF=$FHMAX_HF
+J1=`echo $SUBJOB | cut -c1-1` 
+J2=`echo $SUBJOB | cut -c2-2` 
 
-if (( $stream == 2 )); then
-    export SHOUR=$(( $SHOUR + $FHOUTHF ))
-fi
-if (( $stream >= 1 )); then
-    FHOUTLF=$(( $FHOUTLF + $FHOUTLF ))
-    FHOUTHF=$(( $FHOUTHF + $FHOUTHF ))
-fi
+case $J1 in
+	(2) 
+	    export FHOUT_HF=$(( $FHOUTHF + $FHOUTHF ))
+		export FHOUT_LF=$(( $FHOUTLF + $FHOUTLF ))
+		;;
+	(3) 
+		export FHOUT_HF=$(( $FHOUTHF + $FHOUTHF  + $FHOUTHF ))
+		export FHOUT_LF=$(( $FHOUTLF + $FHOUTLF + $FHOUTLF ))
+		;;
+	(*)
+		;;
+esac
+case $J2 in
+	(A) 
+		export SHOUR=$SHOUR;
+		;;
+	(B) 
+		export SHOUR=$(( $SHOUR + $FHOUTHF ));
+		;;
+	(C) 
+		export SHOUR=$(( $SHOUR + $FHOUTHF + $FHOUTHF ));
+		;;
+esac
+
+#if (( $stream == 2 )); then
+#    export SHOUR=$(( $SHOUR + $FHOUTHF ))
+#fi
+#if (( $stream >= 1 )); then
+#    FHOUTLF=$(( $FHOUTLF + $FHOUTLF ))
+#    FHOUTHF=$(( $FHOUTHF + $FHOUTHF ))
+#fi
+
+export ensavg_nemsio_log=$DATA/ensavg_nemsio_$SUBJOB.$FORECAST_SEGMENT.log
+
 #$HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf
-$HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf $DATA $SHOUR $FHOUTHF $FHOUTLF $FHMAXHF $FHOUR
+$HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf $DATA $SHOUR $FHOUT_HF $FHOUT_LF $FHMAXHF $FHOUR $ensavg_nemsio_log
 ERR=$?
+
+mv $ensavg_nemsio_log $COMOUT/$cyc/misc/ensavg_nemsio
 
 ################# lines between these markers have been modified for dev begin
 echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN
@@ -230,8 +261,12 @@ echo DATA=$DATA
 ls -al $DATA
 echo `date` TEST LISTING OF WORKING DIRECTORY END
 ################# lines between these markers have been modified for dev end
+if [ $ERR = 0 ]; then
+    msg="$job completed normally!"
+else
+    msg="FATAL ERROR: $job failed!"
+fi
 
-msg="$job completed normally"
 postmsg "$jlogfile" "$msg"
 
 if [[ $KEEPDATA != "YES" ]]; then
