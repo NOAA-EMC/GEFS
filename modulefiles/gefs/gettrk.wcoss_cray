@@ -1,0 +1,26 @@
+#%Module#####################################################
+## gettrk component - wcoss_cray
+#############################################################
+# Load Intel environment
+module load PrgEnv-intel
+module load cray-mpich
+          
+module load nemsiogfs-intel/2.0.1
+module load nemsio-intel/2.2.2
+module load bacio-intel/2.0.1
+module load sigio-intel/2.0.1
+
+module load ip-intel/2.0.0
+module load sp-intel/2.0.2
+
+module load sfcio-intel/1.0.0
+
+module load bufr-intel/11.0.1
+module load w3emc-intel/2.2.0
+module load w3nco-intel/2.0.6
+
+##
+export FCMP=ifort
+export LDFLAGSM="-liomp5"
+export OMPFLAGM=
+

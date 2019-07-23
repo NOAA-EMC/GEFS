@@ -78,7 +78,6 @@ ntiles=${ntiles:-6}
 ERRSCRIPT=${ERRSCRIPT:-'eval [[ $err = 0 ]]'}
 NCP=${NCP:-"/bin/cp -p"}
 NLN=${NLN:-"/bin/ln -sf"}
-nemsioget=${nemsioget:-${NWPROD}/exec/nemsio_get}
 
 # Scripts
 
@@ -87,12 +86,13 @@ GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-$HOMEgsi/exec/getsigensmeanp_smooth.x}
 GETSFCENSMEANEXEC=${GETSFCENSMEANEXEC:-$HOMEgsi/exec/getsfcensmeanp.x}
 RECENATMEXEC=${RECENATMEXEC:-$HOMEgsi/exec/recentersigp.x}
 CALCINCEXEC=${CALCINCEXEC:-$HOMEgsi/exec/calc_increment_ens.x}
+nemsioget=${nemsioget:-${HOMEgsi}/exec/nemsio_get}
 
 # Variables
 export APRUN_RECENT=${APRUN_RECENT:-"aprun -j 1 -n $total_tasks -N $taskspernode -d $OMP_NUM_THREADS -cc depth"}
 
 # global_chgres stuff
-export CHGRESEXEC=${CHGRESEXEC-$HOMEgsm/exec/chgres_recenter.exe}
+export CHGRESEXEC=${CHGRESEXEC:-$HOMEgsm/exec/chgres_recenter.exe}
 NTHREADS_CHGRES=${NTHREADS_CHGRES:-24}
 CHGRESVARS_ENKF=${CHGRESVARS_ENKF:-""}
 APRUN_CHGRES=${APRUN_CHGRES:-""}

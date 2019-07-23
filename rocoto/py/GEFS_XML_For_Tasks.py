@@ -1,7 +1,102 @@
 # =======================================================
+def GetIndexOfTask(dicBase, taskname):
+    taskname_num = int(dicBase['taskname_num'.upper()])
+    if taskname_num <= 0:
+        return -1
+
+    #print(taskname_num)
+    for k in range(taskname_num):
+        sTaskName = dicBase["taskname_{0}".format(k + 1).upper()]
+        if sTaskName == taskname:
+            return k
+
+    return False
+
+def Replace_task_UsingSubjobs(dicBase, taskname="post_high", sNSubJobs='N_SUBJOBS_POST_HI'):
+    SubExts = []
+    SubExts.append("A")
+    SubExts.append("B")
+    SubExts.append("C")
+    SubExts.append("D")
+    SubExts.append("E")
+    
+    IsDebug = False
+
+    taskname_num = int(dicBase['taskname_num'.upper()])
+    if taskname_num <= 0:
+        return 
+
+    sNSubJobs = sNSubJobs.upper()
+
+    if IsDebug:
+        print("=================",taskname)
+        
+    if sNSubJobs in dicBase:
+        N_SubJobs = int(dicBase[sNSubJobs])
+    else:
+        N_SubJobs = 0
+        #dicBase['N_SUBJOBS_POST_HI'] = 0
+
+    if N_SubJobs<=0:
+        return 
+
+    itaskname = GetIndexOfTask(dicBase, taskname)
+    
+    Added_NewTasks = N_SubJobs - 1
+    taskname_num_new = taskname_num + Added_NewTasks
+
+    if IsDebug:
+        for k in range(taskname_num):
+            sVarName = "taskname_{0}".format(k + 1).upper()
+            sTaskName = dicBase[sVarName]
+            if IsDebug:
+                print(sVarName, sTaskName)
+        
+        if IsDebug:
+            print("=================")
+        
+    #print(itaskname)
+    for k in range(taskname_num_new-1, itaskname+N_SubJobs-1, -1):
+        kk = k - Added_NewTasks
+        sVarName = "taskname_{0}".format(k+1).upper()
+        sVarName_k_1 = "taskname_{0}".format(kk+1).upper() #k+1-N_SubJobs).upper()
+        dicBase[sVarName] = dicBase[sVarName_k_1]
+        if IsDebug:
+            print(sVarName, "-", dicBase[sVarName], k, sVarName_k_1, "-", dicBase[sVarName_k_1], kk)
+        
+    if IsDebug:
+        print("===")
+    for k in range(N_SubJobs):
+        kk = k + itaskname
+        sVarName = "taskname_{0}".format(kk+1).upper()
+        if IsDebug:
+            print(sVarName,kk)
+        dicBase[sVarName] = "{0}_{1}{2}".format(taskname, N_SubJobs, SubExts[k])
+  
+
+    dicBase['taskname_num'.upper()] = taskname_num_new
+    
+    if IsDebug:
+        print("===")
+        taskname_num = int(dicBase['taskname_num'.upper()])
+        for k in range(taskname_num):
+            sVarName = "taskname_{0}".format(k + 1).upper()
+            sTaskName = dicBase[sVarName]
+            print(sVarName, sTaskName)
+        
+    return 
+    
+# =======================================================
 def config_tasknames(dicBase):
     sVarName = 'taskname_num'.upper()
     iTaskName_Num = int(dicBase[sVarName])
+
+    if iTaskName_Num > 0:
+        if DoesTaskExist(dicBase, "post_high"):
+            Replace_task_UsingSubjobs(dicBase, "post_high", sNSubJobs='N_SUBJOBS_POST_HI')
+            
+        if DoesTaskExist(dicBase, "ensavg_nemsio"):
+            Replace_task_UsingSubjobs(dicBase, "ensavg_nemsio", sNSubJobs='N_SUBJOBS_ENSAVG_NEMSIO')
 
     if iTaskName_Num <= 0:
         iTaskName_Num = 0
@@ -67,16 +162,16 @@ def config_tasknames(dicBase):
             dicBase[sTaskName.upper()] = "init_fv3chgrs"
             
         elif dicBase['RUN_INIT'].upper() == "FV3_COLD":
+            # ---init_fv3chgrs
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "init_fv3chgrs"
+
             # ---init_recenter
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "init_recenter"
 
-            # ---init_fv3chgrs
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_fv3chgrs"
-            
         elif dicBase['RUN_INIT'] == "FV3_WARM":
             # ---init_recenter
             iTaskName_Num += 1
@@ -103,9 +198,38 @@ def config_tasknames(dicBase):
             dicBase[sTaskName.upper()] = "forecast_high"
 
             # ---post_high
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "post_high"
+            if "N_SUBJOBS_POST_HI" in dicBase:
+                N_SUBJOBS_POST_HI = int(dicBase['N_SUBJOBS_POST_HI'])
+            else:
+                N_SUBJOBS_POST_HI = 0
+                dicBase['N_SUBJOBS_POST_HI'] = 0
+
+            if N_SUBJOBS_POST_HI == 2:
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "post_high_2A"
+
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "post_high_2B"
+
+            elif N_SUBJOBS_POST_HI == 3:
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "post_high_3A"
+
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "post_high_3B"
+
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "post_high_3C"                    
+                
+            else:
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "post_high"
 
             # ---prdgen_high
             iTaskName_Num += 1
@@ -153,6 +277,47 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "ensstat_low"
 
+        # #    <!-- postsnd  Post Sound -->
+        if dicBase['RUN_POSTSND'].upper()[0] == "Y":
+            # ---ensavg_nemsio
+            if "N_SUBJOBS_ENSAVG_NEMSIO" in dicBase:
+                N_SUBJOBS_ENSAVG_NEMSIO = int(dicBase['N_SUBJOBS_ENSAVG_NEMSIO'])
+            else:
+                N_SUBJOBS_ENSAVG_NEMSIO = 0
+                dicBase['N_SUBJOBS_ENSAVG_NEMSIO'] = 0
+
+            if N_SUBJOBS_ENSAVG_NEMSIO == 2:
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "ensavg_nemsio_2A"
+
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "ensavg_nemsio_2B"
+
+            elif N_SUBJOBS_ENSAVG_NEMSIO == 3:
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "ensavg_nemsio_3A"
+
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "ensavg_nemsio_3B"
+
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "ensavg_nemsio_3C"                    
+                
+            else:               
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "ensavg_nemsio"
+
+            # ---postsnd
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "postsnd"
+                
         # #    <!-- track and gensis jobs -->
         if dicBase['RUN_TRACK'].upper()[0] == "Y": 
             # ---enkf_track
@@ -203,10 +368,6 @@ def write_to_all_ent(GenTaskEnt, dicBase):
         sPath = dicBase["GEFS_ROCOTO"]
         sPath += sSep + "tasks"
 
-        if not os.path.exists(sPath):
-            os.mkdir(sPath)
-
-        sPath += sSep + dicBase["WHERE_AM_I"]
         if not os.path.exists(sPath):
             os.mkdir(sPath)
 
@@ -264,10 +425,6 @@ def write_to_ent(taskname, dicBase, GenTaskEnt=False):
     if not os.path.exists(sPath):
         os.mkdir(sPath)
 
-    sPath += sSep + dicBase["WHERE_AM_I"]
-    if not os.path.exists(sPath):
-        os.mkdir(sPath)
-
     sFile = sPath + sSep + "{0}.ent".format(taskname)
 
     fh = open(sFile, 'w')
@@ -286,6 +443,13 @@ def get_param_of_task(dicBase, taskname):
     sJoin = ""
     sDep = ""
     sQueue = ""
+    sPartition = ""
+
+    taskname_org = taskname
+    if taskname.startswith("post_high_"):
+        taskname = "post_high"
+    elif taskname.startswith("ensavg_nemsio_"):
+        taskname = "ensavg_nemsio"
 
     sVarName = "{0}_walltime".format(taskname).upper()
     if sVarName in dicBase:
@@ -300,28 +464,63 @@ def get_param_of_task(dicBase, taskname):
     sVarName_nodes = "{0}_nodes".format(taskname).upper()
     sVarName_ppn = "{0}_ppn".format(taskname).upper()
     sVarName_tpp = "{0}_tpp".format(taskname).upper()
+    #if sVarName_nodes in dicBase:
+    #    if sVarName_ppn in dicBase:
+    #        if sVarName_tpp in dicBase:
+    #            sNodes = "{0}:ppn={1}:tpp={2}".format(dicBase[sVarName_nodes], dicBase[sVarName_ppn],
+    #                                                  dicBase[sVarName_tpp])
+    #        else:
+    #            sNodes = "{0}:ppn={1}".format(dicBase[sVarName_nodes], dicBase[sVarName_ppn])
+    #    else:
+    #        if sVarName_tpp in dicBase:
+    #            sNodes = "{0}:tpp={1}".format(dicBase[sVarName_nodes], dicBase[sVarName_tpp])
+    #        else:
+    #            sNodes = "{0}".format(dicBase[sVarName_nodes])
+    
+    sNodes = ""
     if sVarName_nodes in dicBase:
-        if sVarName_ppn in dicBase:
-            if sVarName_tpp in dicBase:
-                sNodes = "{0}:ppn={1}:tpp={2}".format(dicBase[sVarName_nodes], dicBase[sVarName_ppn],
-                                                      dicBase[sVarName_tpp])
-            else:
-                sNodes = "{0}:ppn={1}".format(dicBase[sVarName_nodes], dicBase[sVarName_ppn])
+        sNodes = "{0}".format(dicBase[sVarName_nodes])
+        
+    if sVarName_ppn in dicBase:
+        ppn = dicBase[sVarName_ppn]
+        if taskname.lower() in ["prdgen_high","prdgen_low","prdgen_gfs","ensstat_high","ensstat_low"]:
+            #print(taskname)
+            #print("{0}".format("PRDGEN_STREAMS" in dicBase))
+            #print(dicBase["PRDGEN_STREAMS"])
+            #print(dicBase["PRDGEN_STREAMS"].split())
+            if "PRDGEN_STREAMS" in dicBase:
+               ppn = len(dicBase["PRDGEN_STREAMS"].split())
+            #print(ppn) 
+        if sNodes != "":
+            sNodes += ":ppn={0}".format(ppn)
         else:
-            if sVarName_tpp in dicBase:
-                sNodes = "{0}:tpp={1}".format(dicBase[sVarName_nodes], dicBase[sVarName_tpp])
-            else:
-                sNodes = "{0}".format(dicBase[sVarName_nodes])
+            sNodes += "ppn={0}".format(ppn)
+
+    if sVarName_tpp in dicBase:
+        if sNodes != "":
+            sNodes += ":tpp={0}".format(dicBase[sVarName_tpp])
+        else:
+            sNodes += "tpp={0}".format(dicBase[sVarName_tpp])
+    
 
     # for queue
     sVarName = "{0}_queue".format(taskname).upper()
     if sVarName in dicBase:
         sQueue = dicBase[sVarName.upper()]
+
+    # for partition (RDHPCS only)
+    sVarName = "{0}_partition".format(taskname).upper()
+    if sVarName in dicBase:
+        sPartition = dicBase[sVarName.upper()]
     
     # for Join
     sVarName = "{0}_join".format(taskname).upper()
     if sVarName in dicBase:
         sJoin = dicBase[sVarName.upper()]
+        if taskname_org.startswith("post_high_"):
+            sJoin = sJoin.replace("post_high", taskname_org)
+        elif taskname_org.startswith("ensavg_nemsio_"):
+            sJoin = sJoin.replace("ensavg_nemsio", taskname_org)
 
     # for dependency
     sVarName = "{0}_dep".format(taskname).upper()
@@ -331,31 +530,121 @@ def get_param_of_task(dicBase, taskname):
             
             # For 'init_fv3chgrs' task
             if taskname.lower() == "init_fv3chgrs":
-                if DoesTaskExist(dicBase, "init_recenter"): # For Cold Start
-                    sDep = '<taskdep task="init_recenter"/>' 
-                elif DoesTaskExist(dicBase, "init_combine"):
+                if DoesTaskExist(dicBase, "init_combine"):
                     sDep = '<taskdep task="init_combine"/>'
+                else:
+                    sDep = ""
                     
+            # For 'init_recenter' task
+            if taskname.lower() == "init_recenter":
+                if DoesTaskExist(dicBase, "init_fv3chgrs"):
+                    sDep = '<metataskdep metatask="init_fv3chgrs"/>'
+                else:
+                    sDep = ""
 
             # For 'forecast_high' task
-            if taskname.lower() == "forecast_high": 
-                if DoesTaskExist(dicBase, "init_recenter"):
+            if taskname.lower() == "forecast_high":
+                sDep = '<and>'
+                if DoesTaskExist(dicBase, "getcfssst"):
+                    sDep += '\n\t<taskdep task="getcfssst"/>'
+                if DoesTaskExist(dicBase, "init_recenter"): 
+                    if DoesTaskExist(dicBase, "init_fv3chgrs"): # Cold Restart
+                        sDep += '\n\t<taskdep task="init_recenter"/>'
+                    else: # Warm Start  ???
+                        sDep += '\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
+
+                elif DoesTaskExist(dicBase, "init_fv3chgrs"): # *_Reloc
+                    sDep += '\n\t<taskdep task="init_fv3chgrs_#member#"/>'
+                elif DoesTaskExist(dicBase, "copy_init"):
+                    sDep += '\n\t<taskdep task="copy_init_#member#"/>'
+                
+                if sDep == '<and>':
+                    sDep = ""
+                else:
+                    sDep += '\n</and>'
+ 
+#                if DoesTaskExist(dicBase, "init_recenter"):
+#                    if DoesTaskExist(dicBase, "init_fv3chgrs"):
+#                        if DoesTaskExist(dicBase, "getcfssst"):
+#                            sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+#                        else:
+#                            sDep = '<taskdep task="init_fv3chgrs_#member#"/>'
+#                    else:  # For Warm Start
+#                        if DoesTaskExist(dicBase, "getcfssst"):   
+#                            sDep = '<and>\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>\n\t<taskdep task="getcfssst"/>\n</and>'
+#                        else:
+#                            sDep = '<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
+#                elif DoesTaskExist(dicBase, "copy_init"):
+#                    if DoesTaskExist(dicBase, "getcfssst"):
+#                        sDep = '<and>\n\t<taskdep task="copy_init_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+#                    else:
+#                        sDep = '<taskdep task="copy_init_#member#"/>'
+#                elif DoesTaskExist(dicBase, "init_fv3chgrs"):
+#                    if DoesTaskExist(dicBase, "getcfssst"):
+#                        sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+#                    else:
+#                        sDep = '<taskdep task="init_fv3chgrs_#member#"/>'
+#                else:
+#                    sDep = "" 
+                       
+            # For 'forecast_low' task
+            if taskname.lower() == "forecast_low": 
+                if DoesTaskExist(dicBase, "forecast_high"):
+                    sDep = '<taskdep task="forecast_high_#member#"/>'
+                else:
                     if DoesTaskExist(dicBase, "init_fv3chgrs"):
                         if DoesTaskExist(dicBase, "getcfssst"):
                             sDep = '<and>\n\t<taskdep task="init_fv3chgrs_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
                         else:
                             sDep = '<taskdep task="init_fv3chgrs_#member#"/>'
+                    elif DoesTaskExist(dicBase, "rf_prep"):
+                        if DoesTaskExist(dicBase, "getcfssst"):
+                            sDep = '<and>\n\t<taskdep task="rf_prep"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+                        else:
+                            sDep = '<taskdep task="rf_prep"/>'
                     else:  # For Warm Start
                         if DoesTaskExist(dicBase, "getcfssst"):   
-                            sDep = '<and>\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>\n\t<taskdep task="getcfssst"/>\n</and>'
+                            sDep = '<and>\n\t<taskdep task="getcfssst"/>\n</and>'
                         else:
-                            sDep = '<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
-                elif DoesTaskExist(dicBase, "copy_init"):
-                    if DoesTaskExist(dicBase, "getcfssst"):
-                        sDep = '<and>\n\t<taskdep task="copy_init_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
-                    else:
-                        sDep = '<taskdep task="copy_init_#member#"/>'
-                            
+                            sDep = ''
+        
+            # For ensavg_nemsio
+            if taskname.lower() == "ensavg_nemsio":
+                npert = int(dicBase["NPERT"])
+                sDep = '<and>'
+                for i in range(npert):
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/sfcsig/gep{0:02}.t@Hz.logf000.nemsio</cyclestr></datadep>'.format(i+1)
+                sDep +='\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/sfcsig/gec00.t@Hz.logf000.nemsio</cyclestr></datadep>'
+                sDep +='\n</and>'
+ 
+            # For ensstat_high
+            if taskname.lower() == "ensstat_high": 
+                npert = int(dicBase["NPERT"])
+                sDep = '<and>'
+                for i in range(npert):
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.prdgen.control.f000</cyclestr></datadep>'.format(i+1)
+                sDep +='\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.prdgen.control.f000</cyclestr></datadep>'
+                sDep +='\n</and>'
+                
+            # For ensstat_low
+            if taskname.lower() == "ensstat_low": 
+                npert = int(dicBase["NPERT"])
+                sDep = '<and>'
+                for i in range(npert):
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.prdgen.control.f{1:03}</cyclestr></datadep>'.format(i+1,int(dicBase["fhmaxh".upper()])+ int(dicBase["FHOUTHF"]))
+                sDep +='\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.prdgen.control.f{0:03}</cyclestr></datadep>'.format(int(dicBase["fhmaxh".upper()]) + int(dicBase["FHOUTHF"]))
+                sDep +='\n</and>'
+                
+            # For extractvars
+            if taskname.lower() == "extractvars":
+                if DoesTaskExist(dicBase, "prdgen_low"):
+                    sDep = '<metataskdep metatask="prdgen_low"/>'
+                elif DoesTaskExist(dicBase, "prdgen_high"):
+                    sDep = '<metataskdep metatask="prdgen_high"/>'
+                else:
+                    sDep = ''
+
+ 
             # For Low Resolution
             if taskname.lower() == "post_low" or taskname.lower() == "prdgen_low":
                 FHOUTHF=int(dicBase["FHOUTHF".upper()])
@@ -371,41 +660,41 @@ def get_param_of_task(dicBase, taskname):
 
             # For 'enspost' task
             if taskname.lower() == "enspost":
-                if DoesTaskExist(dicBase, "ensstat_low"):
+                if DoesTaskExist(dicBase, "prdgen_low"):
                     if DoesTaskExist(dicBase, "prdgen_gfs"):
-                        sDep = '<and>\n\t<taskdep task="ensstat_low"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
+                        sDep = '<and>\n\t<metataskdep metatask="prdgen_low"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
                     else:
-                        sDep = '<taskdep task="ensstat_low"/>'
-                elif DoesTaskExist(dicBase, "ensstat_high"):  
+                        sDep = '<metataskdep metatask="prdgen_low"/>'
+                elif DoesTaskExist(dicBase, "prdgen_high"):  
                     if DoesTaskExist(dicBase, "prdgen_gfs"):
-                        sDep = '<and>\n\t<taskdep task="ensstat_high"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
-                    #else:
-                    #    sDep = '<taskdep task="ensstat_high"/>' #Default
+                        sDep = '<and>\n\t<metataskdep metatask="prdgen_high"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
+                    else:
+                        sDep = '<metataskdep metatask="prdgen_high"/>' #Default
 
             # For 'keep_data' and 'archive' tasks
             if taskname.lower() == "keep_data" or taskname.lower() == "archive":
+                sDep = '<and>'
                 if DoesTaskExist(dicBase, "enspost"):
-                    if DoesTaskExist(dicBase, "post_track"):
-                        if DoesTaskExist(dicBase, "post_genesis"):
-                            sDep = '<and>\n\t<taskdep task="enspost"/>\n\t<taskdep task="post_track"/>\n\t<taskdep task="post_genesis"/>\n</and>'
-                        else:
-                            sDep = '<and>\n\t<taskdep task="enspost"/>\n\t<taskdep task="post_track"/>\n</and>'
-                    else:
-                        if DoesTaskExist(dicBase, "post_genesis"):
-                            sDep = '<and>\n\t<taskdep task="enspost"/>\n\t<taskdep task="post_genesis"/>\n</and>'
-                        else:
-                            sDep = '<and>\n\t<taskdep task="enspost"/>\n</and>'
-                else:
-                    if DoesTaskExist(dicBase, "post_track"):
-                        if DoesTaskExist(dicBase, "post_genesis"):
-                            sDep = '<and>\n\t<taskdep task="post_track"/>\n\t<taskdep task="post_genesis"/>\n</and>'
-                        else:
-                            sDep = '<and>\n\t<taskdep task="post_track"/>\n</and>'
-                    else:
-                        if DoesTaskExist(dicBase, "post_genesis"):
-                            sDep = '<and>\n\t<taskdep task="post_genesis"/>\n</and>'
-                        else:
-                            sDep = ''
+                    sDep += '\n\t<taskdep task="enspost"/>'
+                if DoesTaskExist(dicBase, "post_track"):
+                    sDep += '\n\t<taskdep task="post_track"/>'
+                if DoesTaskExist(dicBase, "post_genesis"):
+                    sDep += '\n\t<taskdep task="post_genesis"/>'
+                if DoesTaskExist(dicBase, "extractvars"):
+                    sDep += '\n\t<taskdep task="extractvars"/>'
+                if DoesTaskExist(dicBase, "ensstat_low"):
+                    sDep += '\n\t<taskdep task="ensstat_low"/>'                    
+                if DoesTaskExist(dicBase, "prdgen_low"):
+                    sDep += '\n\t<metataskdep metatask="prdgen_low"/>'
+                if DoesTaskExist(dicBase, "ensstat_high"):
+                    sDep += '\n\t<taskdep task="ensstat_high"/>'
+                if DoesTaskExist(dicBase, "prdgen_high"):
+                    sDep += '\n\t<metataskdep metatask="prdgen_high"/>'
+                if DoesTaskExist(dicBase, "postsnd"):
+                    sDep += '\n\t<metataskdep metatask="postsnd"/>'
+                if DoesTaskExist(dicBase, "getcfssst"):
+                    sDep += '\n\t<taskdep task="getcfssst"/>'
+                sDep += '\n</and>'
 
             # Don't clean up if keep_init isn't finished
             if taskname.lower() == "cleanup" and DoesTaskExist(dicBase, "keep_init"):
@@ -422,16 +711,17 @@ def get_param_of_task(dicBase, taskname):
         WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
 
         if WHERE_AM_I == 'cray'.upper():
-            Task_Node = 24
+            ncores_per_node = 24
         elif WHERE_AM_I == "theia".upper():
-            Task_Node = 24
+            ncores_per_node = 24
         elif WHERE_AM_I == "wcoss_dell_p3".upper():
-            Task_Node = 28
+            ncores_per_node = 28
         else:
-            Task_Node = 24
+            ncores_per_node = 24
 
-        iNodes = int(math.ceil((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) * 1.0 / (Task_Node / parallel_threads)))
-        iPPN = int(math.ceil(Task_Node * 1.0 / parallel_threads))
+        dicBase['COREPERNODE'] = ncores_per_node
+        iNodes = int(math.ceil((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) * 1.0 / (ncores_per_node / parallel_threads)))
+        iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
 
         iTPP = parallel_threads
 
@@ -441,7 +731,7 @@ def get_param_of_task(dicBase, taskname):
             sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
 
-    return sWalltime, sNodes, sMemory, sJoin, sDep, sQueue
+    return sWalltime, sNodes, sMemory, sJoin, sDep, sQueue, sPartition
 
 # =======================================================
 def DoesTaskExist(dicBase, taskname):
@@ -463,7 +753,7 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     # nodes = "1:ppn=12:tpp=2"
     # memory = "600M"
     WHERE_AM_I = dicBase['WHERE_AM_I']
-    sWalltime, sNodes, sMemory, sJoin, sDep, sQueue = get_param_of_task(dicBase, taskname)
+    sWalltime, sNodes, sMemory, sJoin, sDep, sQueue, sPartition = get_param_of_task(dicBase, taskname)
 
     metatask_names = []
     metatask_names.append('init_fv3chgrs')
@@ -474,10 +764,18 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     metatask_names.append('forecast_low')
     # post
     metatask_names.append('post_high')
+    metatask_names.append('post_high_2A')
+    metatask_names.append('post_high_2B')
+    metatask_names.append('post_high_3A')
+    metatask_names.append('post_high_3B')
+    metatask_names.append('post_high_3C')
+
     metatask_names.append('post_low')
     # prdgen
     metatask_names.append('prdgen_high')
     metatask_names.append('prdgen_low')
+    # postsnd
+    metatask_names.append('postsnd')
 
     jobname = get_jobname(taskname)
     if taskname in metatask_names:
@@ -487,12 +785,12 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     strings = ""
     if taskname in metatask_names:
         strings += create_metatask(taskname=taskname, jobname=jobname, sWalltime=sWalltime, sNodes=sNodes, \
-                                   sMemory=sMemory, sJoin=sJoin, sDep=sDep, sQueue=sQueue, sPre=sPre, \
+                                   sMemory=sMemory, sJoin=sJoin, sDep=sDep, sQueue=sQueue, sPartition=sPartition, sPre=sPre, \
                                    GenTaskEnt=GenTaskEnt, WHERE_AM_I=WHERE_AM_I)
     else:
         strings += create_task(taskname=taskname, jobname=jobname, sWalltime=sWalltime, sNodes=sNodes, \
-                               sMemory=sMemory, sJoin=sJoin, sQueue=sQueue, sDep=sDep, sPre=sPre, GenTaskEnt=GenTaskEnt, \
-                               WHERE_AM_I=WHERE_AM_I)
+                               sMemory=sMemory, sJoin=sJoin, sQueue=sQueue, sPartition=sPartition, sDep=sDep, sPre=sPre, \
+                               GenTaskEnt=GenTaskEnt, WHERE_AM_I=WHERE_AM_I)
 
     return strings
 
@@ -518,8 +816,10 @@ def get_jobname(taskname):
 
     # else if this file does not exist and if the task name is not in the job_id.conf
     tasknames = taskname.split("_")
-    if len(tasknames) == 2:
-        jobname_short = tasknames[1][0:2] + "_" + tasknames[1][-2:]
+    if len(tasknames) == 1:
+        jobname_short = tasknames[0][0:2] + "_" + tasknames[0][-2:]
+    elif len(tasknames) == 2:
+        jobname_short = tasknames[0][0:2] + "_" + tasknames[1][-2:]
     else:
         jobname_short = tasknames[1][0] + tasknames[1][-1] + "_" + tasknames[2][0] + tasknames[2][-1]
 
@@ -566,7 +866,7 @@ def read_jobid_config(sConfig):
 # =======================================================
 def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member#", \
                     sWalltime="00:30:00", sNodes="1:ppn=12:tpp=2", sMemory="600M", sJoin="", sDep="", sQueue="", \
-                    sPre="\t", GenTaskEnt=False, WHERE_AM_I="cray"):
+                    sPartition="", sPre="\t", GenTaskEnt=False, WHERE_AM_I="cray"):
     cycledef = "gefs"
     maxtries = 1
 
@@ -586,7 +886,11 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
         strings += sPre + '<metatask name="{0}" mode="parallel">\n'.format(taskname)
     else:
         strings += sPre + '<metatask name="{0}">\n'.format(taskname)
-    strings += sPre + '\t' + '<var name="member">&MEMLIST;</var>\n'
+
+    if taskname == "postsnd":
+        strings += sPre + '\t' + '<var name="member">&MEMLIST; avg</var>\n'
+    else:
+        strings += sPre + '\t' + '<var name="member">&MEMLIST;</var>\n'
 
     strings += sPre + '\t' + '<task name="{0}_#member#" cycledefs="{1}" maxtries="{2}">\n'.format(taskname, cycledef, maxtries)
 
@@ -618,12 +922,22 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
         strings += sPre + '\t\t' + '<queue>{0}</queue>\n'.format(sQueue)
     # strings += sPre + '\t\t' + '<queue>&CUE2RUN;</queue>\n'
 
+    if sPartition != "":
+        strings += sPre + '\t\t' + '<partition>{0}</partition>\n'.format(sPartition)
+
     if sNodes != "":
         strings += sPre + '\t\t' + '<nodes>{0}</nodes>\n'.format(sNodes)
+        if WHERE_AM_I.upper() == "wcoss_ibm".upper():
+            if sQueue.upper() == "&TRANSFER_QUEUE;":
+                strings += sPre + '\t\t' + '<native>-R "affinity[core]"</native>'
+            else:
+                strings += sPre + '\t\t' + '<native>-a poe</native>'
 
     if WHERE_AM_I.upper() == "cray".upper():
         strings += sPre + '\t\t' + '<native>-cwd &tmpnwprd;</native>\n'
     elif WHERE_AM_I.upper() == "Theia".upper():
+        strings += "\n"
+    elif WHERE_AM_I.upper() == "wcoss_ibm".upper():
         strings += "\n"
     elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
         strings += "\n"
@@ -637,6 +951,8 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
     if WHERE_AM_I.upper() == "cray".upper():
         strings += sPre + '\t\t' + '<native>-extsched "CRAYLINUX[]"</native>\n'
     elif WHERE_AM_I.upper() == "Theia".upper():
+        strings += "\n"
+    elif WHERE_AM_I.upper() == "wcoss_ibm".upper():
         strings += "\n"
     elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
         strings += "\n"
@@ -653,9 +969,20 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
     strings += (create_envar(name="job", value=jobname.replace("_#member#", "#member#"), sPre=sPre_2))
     strings += (create_envar(name="RUNMEM", value="ge#member#", sPre=sPre_2))
 
+    if taskname in ['prdgen_high']:
+        strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
+    elif taskname in ['prdgen_low']:
+        strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
+    elif taskname.startswith("post_high_"):
+        strings += (create_envar(name="SUBJOB", value=taskname.replace("post_high_",""), sPre=sPre_2))
+
     if taskname in ['keep_init', 'copy_init']:
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
         strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.py</cyclestr></command>\n'.format(taskname)
+    elif taskname in ['prdgen_high', 'prdgen_low']:
+        strings += sPre + '\t\t' + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
+    elif taskname.startswith("post_high_"):
+        strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format("post_high")
     else:
         strings += sPre + '\t\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
 
@@ -677,7 +1004,7 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
 def create_task( \
         taskname="enkf_track", jobname="&EXPID;@Y@m@d@H010", \
         sWalltime="01:50:00", sNodes="2:ppn=20", sMemory="3000M", sJoin="", sDep="",sQueue="", \
-        sPre="\t", GenTaskEnt=False, WHERE_AM_I="cray"):
+        sPartition="", sPre="\t", GenTaskEnt=False, WHERE_AM_I="cray"):
     cycledef = "gefs"
     maxtries = 1
 
@@ -724,18 +1051,29 @@ def create_task( \
         strings += sPre + '\t' + '<queue>{0}</queue>\n'.format(sQueue)
     # strings += sPre + '\t' + '<queue>&CUE2RUN;</queue>\n'
 
+    if sPartition != "":
+        strings += sPre + '\t' + '<partition>{0}</partition>\n'.format(sPartition)
+    
     if sNodes != "":
         if WHERE_AM_I.upper() == "cray".upper():
             if taskname == "archive":
                 strings += sPre + '\t' + '<nodes>{0}</nodes><shared></shared>\n'.format(sNodes)
             else:
                 strings += sPre + '\t' + '<nodes>{0}</nodes>\n'.format(sNodes)
+        elif WHERE_AM_I.upper() == "wcoss_ibm".upper():
+            strings += sPre + '\t' + '<nodes>{0}</nodes>\n'.format(sNodes)
+            if sQueue == "&TRANSFER_QUEUE;":
+                strings += sPre + '\t' + '<native>-R "affinity[core]"</native>'
+            else: 
+                strings += sPre + '\t' + '<native>-a poe</native>'
         else:
             strings += sPre + '\t' + '<nodes>{0}</nodes>\n'.format(sNodes)
 
     if WHERE_AM_I.upper() == "cray".upper():
         strings += sPre + '\t' + '<native>-cwd &tmpnwprd;</native>\n'
     elif WHERE_AM_I.upper() == "theia".upper():
+        strings += "\n"
+    elif WHERE_AM_I.upper() == "wcoss_ibm".upper():
         strings += "\n"
     elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
         strings += "\n"
@@ -751,6 +1089,8 @@ def create_task( \
         else:
             strings += sPre + '\t' + '<native>-extsched "CRAYLINUX[]"</native>\n'
     elif WHERE_AM_I.upper() == "theia".upper():
+        strings += "\n"
+    elif WHERE_AM_I.upper() == "wcoss_ibm".upper():
         strings += "\n"
     elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
         strings += sPre + '\t' + "<native>-R 'affinity[core(1)]'</native>\n"
@@ -774,10 +1114,19 @@ def create_task( \
         strings += (create_envar(name="RUNMEM", value="#member#", sPre=sPre_2))
 
     if taskname in ["prdgen_gfs"]:
-        strings += (create_envar(name="RUNMEM", value="gfs", sPre=sPre_2))
+        strings += (create_envar(name="RUNMEM", value="gegfs", sPre=sPre_2))
+
+    if taskname.startswith("ensavg_nemsio_"):
+        strings += (create_envar(name="SUBJOB", value=taskname.replace("ensavg_nemsio_",""), sPre=sPre_2))
 
     if taskname in ['keep_data', 'archive', 'cleanup']:
         strings += sPre + '\t' + '<command><cyclestr>&PRE; &BIN;/{0}.py</cyclestr></command>\n'.format(taskname)
+    elif taskname in ['prdgen_gfs']:
+        strings += sPre + '\t' + '<command><cyclestr>&PRE; . &BIN;/prdgen_high.sh</cyclestr></command>\n'
+    elif taskname in ['ensstat_high', 'ensstat_low']:
+        strings += sPre + '\t' + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
+    elif taskname.startswith("ensavg_nemsio_"):
+        strings += sPre + '\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format("ensavg_nemsio")
     else:
         strings += sPre + '\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
 

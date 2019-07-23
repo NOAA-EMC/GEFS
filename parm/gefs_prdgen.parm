@@ -1,0 +1,134 @@
+#!/bin/ksh
+
+#
+# Product Generation Input Variables
+#
+# export makepgrb2=${makepgrb2:-yes}
+export makegrb2i=${makegrb2i:-yes}
+export makepgrb2b=${makepgrb2b:-yes}
+
+# The following are options for $WGRIB2 when used to change grid resolution
+export option1=${option1:-' -set_grib_type same -new_grid_winds earth '}
+export option21=${option21:-' -new_grid_interpolation bilinear  -if '}
+export option22=${option22:-":(LAND|CSNOW|CRAIN|CFRZR|CICEP|ICSEV):"}
+export option23=${option23:-' -new_grid_interpolation neighbor -fi '}
+export option24=${option24:-' -set_bitmap 1 -set_grib_max_bits 16 -if '}
+export option25=${option25:-":(APCP|ACPCP|NCPCP|PRATE|CPRAT):"}
+export option26=${option26:-' -set_grib_max_bits 25 -fi -if '}
+export option27=${option27:-":(APCP|ACPCP|NCPCP|PRATE|CPRAT|DZDT):"}
+export option28=${option28:-' -new_grid_interpolation budget -fi '}
+
+# fhoroglist is the list of additional hours at which surface height should be included in pgrba
+# this is normally fhmaxh + 12 to include the next gfs output time after the resolution change
+if (( fhmaxh < fhmax )); then
+  export fhoroglist=$(( fhmaxh + 12 ))
+else
+  export fhoroglist=
+fi
+
+#
+# Establish an array of stream names which will establish the number and be used as keys for the associative arrays
+#
+typeset -a PRDGEN_STREAMS=${PRDGEN_STREAMS:-res_2p50 res_1p00 res_0p50 res_0p25_s1 res_0p25_s2 res_0p25_s3}
+export PRDGEN_STREAMS
+
+#
+# Establish associative arrays for needed variables. 
+#
+# Each stream needs to define a value for their stream for each of these like this:
+#   stream="res_2p50"
+#   PRDGEN_GRID[res_2p50]="2p5"
+#   PRDGEN_GRID_SPEC[res_2p50]="latlon 0:144:2.5 90:73:-2.5"
+#   ...
+#
+# PRDGEN_HOURS can be an explicit list of hours, or you can use { .. } to create a list. You can even
+#   combine multiple { .. } notations as long as you enclose the combined expression in quotes:
+#   
+#   Examples:
+#     PRDGEN_HOURS[$stream]={0..120..3}                   # Every three hours from 0 to 120 (inclusive)
+#     PRDGEN_HOURS[$stream]="0 3 6 12"                    # Output at 0, 3, 6, and 12 hours
+#     PRDGEN_HOURS[$stream]="{0..120..3} {126..240..6}"   # Every three hours from 0 to 120, then every 6 hours from 126 to 240
+#
+#   Specified hours must be output by post.
+# 
+[[ -v PRDGEN_GRID ]] || typeset -A PRDGEN_GRID                # old jobgrid, used to set GRIB for DBN
+[[ -v PRDGEN_GRID_SPEC ]] || typeset -A PRDGEN_GRID_SPEC      # grid specification for wgrib2
+[[ -v PRDGEN_HOURS ]] || typeset -A PRDGEN_HOURS              # forecast hours to create product for
+[[ -v PRDGEN_SUBMC ]] || typeset -A PRDGEN_SUBMC              # temporary directory for files before partitioning into a and b
+[[ -v PRDGEN_A_DIR ]] || typeset -A PRDGEN_A_DIR              # directory name for pgrba files (e.g. pgrb2ap5)
+[[ -v PRDGEN_B_DIR ]] || typeset -A PRDGEN_B_DIR              # directory name for pgrbb files (e.g. pgrb2bp5)
+[[ -v PRDGEN_A_PREFIX ]] || typeset -A PRDGEN_A_PREFIX        # pgrba identifier in file name (e.g. pgrb2a.0p50.)
+[[ -v PRDGEN_B_PREFIX ]] || typeset -A PRDGEN_B_PREFIX        # pgrbb identifier in file name (e.g. pgrb2b.0p50.)
+
+# DO_ANALYSIS can be omitted unless you want to change the default
+[[ -v PRDGEN_DO_ANALYSIS ]] || typeset -A PRDGEN_DO_ANALYSIS  # create analysis products for this stream
+
+# 2.50°
+PRDGEN_GRID[res_2p50]=${PRDGEN_GRID[res_2p50]:-"2p5"}
+PRDGEN_GRID_SPEC[res_2p50]=${PRDGEN_GRID_SPEC[res_2p50]:-"latlon 0:144:2.5 90:73:-2.5"}
+PRDGEN_HOURS[res_2p50]=${PRDGEN_HOURS[res_2p50]:-"{0..${FHMAXHF}..${FHOUTHF}} {$(( $FHMAXHF + ${FHOUTLF}))..${fhmax}..${FHOUTLF}}"}
+PRDGEN_SUBMC[res_2p50]=${PRDGEN_SUBMC[res_2p50]:-"prd2p5"}
+PRDGEN_A_DIR[res_2p50]=${PRDGEN_A_DIR[res_2p50]:-"pgrb2a2p5"}
+PRDGEN_B_DIR[res_2p50]=${PRDGEN_B_DIR[res_2p50]:-"pgrb2b2p5"}
+PRDGEN_A_PREFIX[res_2p50]=${PRDGEN_A_PREFIX[res_2p50]:-"pgrb2a.2p50."}
+PRDGEN_B_PREFIX[res_2p50]=${PRDGEN_B_PREFIX[res_2p50]:-"pgrb2b.2p50."}
+
+# 1.00°
+PRDGEN_GRID[res_1p00]=${PRDGEN_GRID[res_1p00]:-"1p0"}
+PRDGEN_GRID_SPEC[res_1p00]=${PRDGEN_GRID_SPEC[res_1p00]:-"latlon 0:360:1.0 90:181:-1.0"}
+PRDGEN_HOURS[res_1p00]=${PRDGEN_HOURS[res_1p00]:-"{0..${FHMAXHF}..${FHOUTHF}} {$(( $FHMAXHF + ${FHOUTLF} ))..${fhmax}..${FHOUTLF}}"}
+PRDGEN_SUBMC[res_1p00]=${PRDGEN_SUBMC[res_1p00]:-"prd1p0"}
+PRDGEN_A_DIR[res_1p00]=${PRDGEN_A_DIR[res_1p00]:-"pgrb2a1p0"}
+PRDGEN_B_DIR[res_1p00]=${PRDGEN_B_DIR[res_1p00]:-"pgrb2b1p0"}
+PRDGEN_A_PREFIX[res_1p00]=${PRDGEN_A_PREFIX[res_1p00]:-"pgrb2a.1p00."}
+PRDGEN_B_PREFIX[res_1p00]=${PRDGEN_B_PREFIX[res_1p00]:-"pgrb2b.1p00."}
+
+# 0.50°
+PRDGEN_GRID[res_0p50]=${PRDGEN_GRID[res_0p50]:-"0p5"}
+PRDGEN_GRID_SPEC[res_0p50]=${PRDGEN_GRID_SPEC[res_0p50]:-"latlon 0:720:0.5 90:361:-0.5"}
+PRDGEN_HOURS[res_0p50]=${PRDGEN_HOURS[res_0p50]:-"{0..${FHMAXHF}..${FHOUTHF}} {$(( $FHMAXHF + ${FHOUTLF} ))..${fhmax}..${FHOUTLF}}"}
+PRDGEN_SUBMC[res_0p50]=${PRDGEN_SUBMC[res_0p50]:-"prd0p5"}
+PRDGEN_A_DIR[res_0p50]=${PRDGEN_A_DIR[res_0p50]:-"pgrb2ap5"}
+PRDGEN_B_DIR[res_0p50]=${PRDGEN_B_DIR[res_0p50]:-"pgrb2bp5"}
+PRDGEN_A_PREFIX[res_0p50]=${PRDGEN_A_PREFIX[res_0p50]:-"pgrb2a.0p50."}
+PRDGEN_B_PREFIX[res_0p50]=${PRDGEN_B_PREFIX[res_0p50]:-"pgrb2b.0p50."}
+
+# 0.25° Stream 1
+PRDGEN_GRID[res_0p25_s1]=${PRDGEN_GRID[res_0p25_s1]:-"0p25"}
+PRDGEN_GRID_SPEC[res_0p25_s1]=${PRDGEN_GRID_SPEC[res_0p25_s1]:-"latlon 0:1440:0.25 90:721:-0.25"}
+PRDGEN_HOURS[res_0p25_s1]=${PRDGEN_HOURS[res_0p25_s1]:-"{0..${FHMAXHF}..$(( ${FHOUTHF} * 3 ))}"}
+PRDGEN_SUBMC[res_0p25_s1]=${PRDGEN_SUBMC[res_0p25_s1]:-"prd0p25"}
+PRDGEN_A_DIR[res_0p25_s1]=${PRDGEN_A_DIR[res_0p25_s1]:-"pgrb2ap25"}
+PRDGEN_B_DIR[res_0p25_s1]=${PRDGEN_B_DIR[res_0p25_s1]:-"pgrb2bp25"}
+PRDGEN_A_PREFIX[res_0p25_s1]=${PRDGEN_A_PREFIX[res_0p25_s1]:-"pgrb2a.0p25."}
+PRDGEN_B_PREFIX[res_0p25_s1]=${PRDGEN_B_PREFIX[res_0p25_s1]:-"pgrb2b.0p25."}
+
+# 0.25° Stream 2
+PRDGEN_GRID[res_0p25_s2]=${PRDGEN_GRID[res_0p25_s2]:-"0p25"}
+PRDGEN_GRID_SPEC[res_0p25_s2]=${PRDGEN_GRID_SPEC[res_0p25_s2]:-"latlon 0:1440:0.25 90:721:-0.25"}
+PRDGEN_HOURS[res_0p25_s2]=${PRDGEN_HOURS[res_0p25_s2]:-"{${FHOUTHF}..${FHMAXHF}..$(( ${FHOUTHF} * 3 ))}"}
+PRDGEN_SUBMC[res_0p25_s2]=${PRDGEN_SUBMC[res_0p25_s2]:-"prd0p25"}
+PRDGEN_A_DIR[res_0p25_s2]=${PRDGEN_A_DIR[res_0p25_s2]:-"pgrb2ap25"}
+PRDGEN_B_DIR[res_0p25_s2]=${PRDGEN_B_DIR[res_0p25_s2]:-"pgrb2bp25"}
+PRDGEN_A_PREFIX[res_0p25_s2]=${PRDGEN_A_PREFIX[res_0p25_s2]:-"pgrb2a.0p25."}
+PRDGEN_B_PREFIX[res_0p25_s2]=${PRDGEN_B_PREFIX[res_0p25_s2]:-"pgrb2b.0p25."}
+
+# 0.25° Stream 3
+PRDGEN_GRID[res_0p25_s3]=${PRDGEN_GRID[res_0p25_s3]:-"0p25"}
+PRDGEN_GRID_SPEC[res_0p25_s3]=${PRDGEN_GRID_SPEC[res_0p25_s3]:-"latlon 0:1440:0.25 90:721:-0.25"}
+PRDGEN_HOURS[res_0p25_s3]=${PRDGEN_HOURS[res_0p25_s3]:-"{$(( ${FHOUTHF} * 2 ))..${FHMAXHF}..$(( ${FHOUTHF} * 3 ))}"}
+PRDGEN_SUBMC[res_0p25_s3]=${PRDGEN_SUBMC[res_0p25_s3]:-"prd0p25"}
+PRDGEN_A_DIR[res_0p25_s3]=${PRDGEN_A_DIR[res_0p25_s3]:-"pgrb2ap25"}
+PRDGEN_B_DIR[res_0p25_s3]=${PRDGEN_B_DIR[res_0p25_s3]:-"pgrb2bp25"}
+PRDGEN_A_PREFIX[res_0p25_s3]=${PRDGEN_A_PREFIX[res_0p25_s3]:-"pgrb2a.0p25."}
+PRDGEN_B_PREFIX[res_0p25_s3]=${PRDGEN_B_PREFIX[res_0p25_s3]:-"pgrb2b.0p25."}
+
+export PRDGEN_GRID
+export PRDGEN_GRID_SPEC
+export PRDGEN_HOURS
+export PRDGEN_SUBMC
+export PRDGEN_A_DIR
+export PRDGEN_B_DIR
+export PRDGEN_A_PREFIX
+export PRDGEN_B_PREFIX
+export PRDGEN_DO_ANALYSIS

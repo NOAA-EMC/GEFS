@@ -1,0 +1,14 @@
+#%Module#####################################################
+## overenstr.grib component - wcoss_cray
+#############################################################
+# Load Intel environment
+module load PrgEnv-intel
+          
+module load w3nco-intel/2.0.6
+module load bacio-intel/2.0.1
+
+##
+export FCMP=ifort
+export LDFLAGSM=
+export OMPFLAGM=
+

@@ -30,11 +30,12 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:4
 
-export total_tasks=2
+export total_tasks=3
 export OMP_NUM_THREADS=4
-export taskspernode=2
+export taskspernode=3
 
 export FORECAST_SEGMENT=lr
+
 
 # export for development runs only begin
 export envir=${envir:-dev}
@@ -43,4 +44,4 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 export gefsmpexec_mpmd="mpirun -n $total_tasks cfp mpmd_cmdfile"
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_ENSSTAT
+. $SOURCEDIR/jobs/JGEFS_ENSSTAT
