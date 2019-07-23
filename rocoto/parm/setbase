@@ -64,7 +64,7 @@ if [ -d /scratch4/NCEPDEV ]; then
     NOSCRUB=/scratch4/NCEPDEV/ensemble/noscrub
     export machine='THEIA'
     
-    export HOMEDIR=/scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gfs/fv3gefs_f0b283bd_20190517_OldPost
+    export HOMEDIR=/scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gfs/fv3gefs_f0b283bd_20190517
     export HOMEDIR1=$HOMEDIR
     export HOMERFC=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
 
@@ -86,7 +86,7 @@ elif [[ -d /dcom && -d /hwrf ]] ; then
     STMP=/stmpd2
     export machine='WCOSS'
     export JOBPHASE=2
-    export HOMEDIR=/ensemble/save/Walter.Kolczynski/global-workflow/fv3gefs_f0b283bd_20190517_OldPost
+    export HOMEDIR=/ensemble/save/Walter.Kolczynski/global-workflow/fv3gefs_f0b283bd_20190517
     export HOMEDIR1=$HOMEDIR
     export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
     
@@ -107,7 +107,7 @@ elif [[ -d /gpfs/hps && -e /etc/SuSE-release ]] ; then
     STMP=/gpfs/hps2/stmp
     export machine='WCOSS_C'
     export JOBPHASE=
-    export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gfs/fv3gefs_f0b283bd_20190517_OldPost
+    export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gfs/fv3gefs_f0b283bd_20190517
     export HOMEDIR1=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda
     export HOMEtrak=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.0
     export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
@@ -122,7 +122,7 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     STMP=/gpfs/dell2/stmp
     export machine='WCOSS_DELL_P3'
     export JOBPHASE=    
-    export HOMEDIR=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gfs/fv3gefs_f0b283bd_20190517_OldPost
+    export HOMEDIR=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gfs/fv3gefs_f0b283bd_20190517
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.0
     export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
     export COMROOThps=${HOMEdata} 
@@ -130,14 +130,15 @@ fi
 
 if [[ $machine == WCOSS* ]]; then
     # fv3gfs data from NCO para run
-    export COMINgfs_base=/gpfs/dell1/nco/ops/com/gfs/para/gfs.
-    export COMINenkf_base=/gpfs/dell1/nco/ops/com/gfs/para/enkfgdas.
-    # cfs data from NCO para run
-    if [[ $machl = v || $machl = s || $machl = g ]] ; then # For venus, surge and gyre in Orlando
-        export COMINcfs_base=/gpfs/gp1/nco/ops/com/cfs/prod/cfs/cfs.
-    else    # For Mars, Luna, and Tide in Reston
-        export COMINcfs_base=/gpfs/tp1/nco/ops/com/cfs/prod/cfs/cfs.
-    fi
+    export COMINgfs_base=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.
+    export COMINenkf_base=/gpfs/dell1/nco/ops/com/gfs/prod/enkfgdas.
+    # cfs data from NCO prod run
+    export COMINcfs_base=$(compath.py cfs/prod)/cfs/cfs.
+    #if [[ $machl = v || $machl = s || $machl = g ]] ; then # For venus, surge and gyre in Orlando
+    #    export COMINcfs_base=/gpfs/gp1/nco/ops/com/cfs/prod/cfs/cfs.
+    #else    # For Mars, Luna, and Tide in Reston
+    #    export COMINcfs_base=/gpfs/tp1/nco/ops/com/cfs/prod/cfs/cfs.
+    #fi
 fi
 
 export JOBQUEUE=$JOBQUEUE$JOBPRIO$JOBPHASE
