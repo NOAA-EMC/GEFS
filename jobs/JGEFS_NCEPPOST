@@ -86,8 +86,8 @@ export EXECpost=${HOMEpost}/exec
 export FIXpost=${HOMEpost}/fix
 export FIXglobal=${HOMEgsm}/fix
 export FIXgfs=${HOMEgsm}/fix
-# export PARMpost=${HOMEpost}/parm
-export PARMpost=${HOMEpost}/parm/post   # for the flat structure
+export PARMpost=${HOMEpost}/parm
+#export PARMpost=${HOMEpost}/parm/post   # for the flat structure
 # PARMPOST (instead of PARMpost) is used in the post ush script
 export PARMPOST=${PARMpost}
 # GRBINDEX2 (instead of GRB2INDEX) is used in the post ush script
