@@ -452,26 +452,6 @@ if [[ $cplwav = ".true." ]]; then
 	# Settings for Wavewatch III
 	export COMINWW3=${COMINWW3:-${COMROOT:?}/${NET}/${envir}}
 	export COMOUTWW3=$COMROOT/${NET}/${envir}
-
-	# Link WW3 files
-#	ln -sf $COMINWW3/${WAV_MOD_ID}.${PDY}/${cyc}/ww3_multi.${WAV_MOD_ID}${WAV_MEMBER}.${cycle}.inp $DATA/ww3_multi.inp
-        ## Check for expected wave grids for this run
-        #array=($curID $iceID $wndID $buoy $waveGRD $sbsGRD $postGRD $interpGRD)
-        #grdALL=`printf "%s\n" "${array[@]}" | sort -u | tr '\n' ' '`
-        #for wavGRD in $grdAll
-        #do 
-	  #ln -sf $COMINWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}.mod_def.$wavGRD $DATA/mod_def.$wavGRD
-        #done
- 	#ln -sf $COMINWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}.${iceID}.${cycle}.ice $DATA/ice.${iceID}
-## Wave output
-       # for wavGRD in $waveGRD
-        #do
-	  #ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.out_grd.${wavGRD}.${PDY}${cyc} out_grd.${wavGRD}
-	  #ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.log.${wavGRD}.${PDY}${cyc} log.${wavGRD}
-	  #ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.restart001.${wavGRD}.${PDY}${cyc} restart001.${wavGRD}
-        #done
-	#ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.out_pnt.points.${PDY}${cyc} out_pnt.points
-	#ln -sf $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/${WAV_MOD_ID}${WAV_MEMBER}.log.mww3.${PDY}${cyc} log.mww3
 fi # [[ $cplwav = ".true." ]]
 
 mkdir -p $memdir

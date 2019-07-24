@@ -87,7 +87,7 @@
   chmod 744 cmdfile
 
 # Eliminate duplicate grids
-  array=($curID $iceID $wndID $buoy $waveGRD $sbsGRD $postGRD $interpGRD)
+  array=($curID $iceID $wndID $buoy $waveGRD $esmfGRD $sbsGRD $postGRD $interpGRD)
   grdALL=`printf "%s\n" "${array[@]}" | sort -u | tr '\n' ' '`
 
   for grdID in ${grdALL}
@@ -187,7 +187,7 @@
 
 # 1.a.3 File check
 
-  for grdID in $curID $iceID $wndID $waveGRD $sbsGRD $postGRD $interpGRD
+  for grdID in $curID $iceID $wndID $waveGRD $esmfGRD $sbsGRD $postGRD $interpGRD
   do
     if [ -f mod_def.$grdID ]
     then
