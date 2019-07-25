@@ -43,10 +43,7 @@ def create_bin_file(dicBase):
     if DoesTaskExist(dicBase, taskname):
         rw_bin_ensstat(taskname, dicBase)
 
-    #taskname ='init_fv3chgrs'
-    #if DoesTaskExist(dicBase, taskname):
-    #    rw_bin_init_fv3chgrs(taskname, dicBase)
-
+#===========================================================
 def rw_bin_ensstat(taskname, dicBase):
     import sys
     import os
@@ -99,46 +96,7 @@ def rw_bin_ensstat(taskname, dicBase):
     fh.flush()
     fh.close()
 
-
-def rw_bin_init_fv3chgrs(taskname, dicBase):
-    import sys
-    import os
-
-    sSep = "/"
-    if sys.platform == 'win32':
-        sSep = r'\\'
-
-    WHERE_AM_I = dicBase['WHERE_AM_I'].lower()
-    sPath = dicBase["GEFS_ROCOTO"]
-    sPath += sSep + "bin" + sSep + WHERE_AM_I + sSep
-
-    sInput_File = sPath + taskname + ".sh"
-
-    if not os.path.exists(sInput_File):
-        print("Please check whether you have the input file: "+sInput_File )
-        return
-
-    sLines = ""
-    with open(sInput_File, "r") as f:
-        for sLine in f:
-            sLine1 = sLine.strip()
-
-            if sLine1.startswith("$SOURCEDIR/jobs/JGEFS_INIT_FV3CHGRS"):
-                if DoesTaskExist(dicBase, 'init_combine'):
-                    sLine = "$SOURCEDIR/jobs/JGEFS_INIT_FV3CHGRS_old"
-                else:
-                    sLine = "$SOURCEDIR/jobs/JGEFS_INIT_FV3CHGRS"
-
-            
-            sLines += sLine                 
-
-
-    fh = open(sInput_File, 'w')
-    fh.writelines(sLines)
-    fh.flush()
-    fh.close()
-
-
+#===========================================================
 def rw_bin_prdgen(taskname, dicBase):
     import sys
     import os
@@ -195,7 +153,7 @@ def rw_bin_prdgen(taskname, dicBase):
     fh.flush()
     fh.close()    
 
-
+#===========================================================
 def rw_bin_forecast_high(taskname, dicBase):
     import sys
     import os
@@ -275,7 +233,7 @@ def rw_bin_forecast_high(taskname, dicBase):
     fh.flush()
     fh.close()
 
-# =======================================================
+# =========================================================
 def DoesTaskExist(dicBase, taskname):
     taskname_num = int(dicBase['taskname_num'.upper()])
 
@@ -289,7 +247,7 @@ def DoesTaskExist(dicBase, taskname):
 
     return False
 
-
+#===========================================================
 def main():
     # for test this function
 

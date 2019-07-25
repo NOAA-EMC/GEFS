@@ -82,7 +82,8 @@ def read_config(sConfig):
                 else:
                     # print(sLine)
                     a, b = sLine.split("=",1)
-
+                    b = b.split(" #",1)[0]
+    
                     a = str(a).strip()
                     b = str(b).strip()
 
