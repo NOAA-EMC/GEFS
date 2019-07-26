@@ -279,20 +279,20 @@ esac
 export SHOUR=$SHOUR
 export FHMAX_HF=$FHMAXHF
 export FHOUT_HF=$FHOUTHF
-export FHOUT=$FHOUTLF
+export FHOUT_LF=$FHOUTLF
 
-if [[ -n $SUBJOB ]] ;
-then
+if [[ -n $SUBJOB ]]; then
     J1=`echo $SUBJOB | cut -c1-1`
     J2=`echo $SUBJOB | cut -c2-2`
     iJ2=`printf '%d\n' "'$J2"`
     iJ2=$((iJ2-65))
 
     export FHOUT_HF=$((FHOUTHF*J1))
-    export FHOUT=$(($FHOUTLF*J1))
+    export FHOUT_LF=$(($FHOUTLF*J1))
 
     export SHOUR=$(($SHOUR+$FHOUTHF*iJ2))
-    export FHMAX_HF=$(($FHMAXHF+$FHOUTLF*iJ2))
+    #export FHMAX_HF=$(($FHMAXHF+$FHOUTLF*iJ2))
+    export SHOUR_LF=$(($FHMAXHF+$FHOUTLF*iJ2))
 fi
 
 echo FORECAST_SEGMENT=$FORECAST_SEGMENT
@@ -300,7 +300,7 @@ echo SUBJOB=$SUBJOB
 echo DOANALYSIS=$DOANALYSIS
 echo SHOUR=$SHOUR
 echo FHOUR=$FHOUR
-echo FHOUT=$FHOUT
+echo FHOUT_LF=$FHOUT_LF
 echo FHOUT_HF=$FHOUT_HF
 echo FHMAX_HF=$FHMAX_HF
 
@@ -350,7 +350,7 @@ if test $SHOUR -le $FHOUR; then
     export DO_LOW_RES=YES 
     export POSTGPVARS=$POSTGPVARS_HIGH
 
-    $HOMEgefs/scripts/exgefs_nceppost.sh.ecf
+    $HOMEgefs/scripts/exgefs_nceppost.sh.ecf $SHOUR $FHOUR $FHOUT_HF $FHOUT_LF $FHMAX_HF $SHOUR_LF
     ERR=$?
     if [ $ERR -ne 0 ]; then
         msg="FATAL ERROR: ex-script of GEFS_NCEPPOST failed!"
