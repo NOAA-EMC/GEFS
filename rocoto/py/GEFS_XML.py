@@ -742,10 +742,10 @@ def get_MEMLIST(dicBase):
 
         npert = int(dicBase[sVarName_Num])
 
-    if npert%2 != 0:
-        print("please select the right number of memebers!")
-        import sys
-        sys.exit(1)
+    #if npert%2 != 0:
+    #    print("please select the right number of memebers!")
+    #    import sys
+    #    sys.exit(1)
 
     if bltGenerateMEMLIST:
         MEMLIST_Value = ""
