@@ -2,7 +2,7 @@
 #BSUB -o /%COM%/output/%ENVIR%/today/gefs_forecast_high_%CYC%.o%J
 #BSUB -e /%COM%/output/%ENVIR%/today/gefs_forecast_high_%CYC%.o%J
 #BSUB -cwd /tmpnwprd
-#BSUB -n 630
+#BSUB -n 1386
 #BSUB -R span[ptile=7]
 #BSUB -R affinity[core(4):distribute=balance]
 #BSUB -q %QUEUE%
@@ -30,7 +30,7 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:4 
 
-export total_tasks=630
+export total_tasks=1386
 export taskspernode=7      
 export NODES=90
 
