@@ -84,6 +84,15 @@ def get_and_merge_default_dicParm(dicParm, WHERE_AM_I):
 
 #------
 def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
+
+    # ==
+    sVarName = "First"
+    if sVarName not in lstBaseParm:
+        lstBaseParm.insert(0, sVarName)
+    # ==
+    sVarName = "Last"
+    if sVarName not in lstBaseParm:
+        lstBaseParm.insert(1, sVarName)
     # ==
     sVarName_Num = "npert".upper()
     npert = int(dicBase[sVarName_Num])
@@ -111,6 +120,17 @@ def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
     if sVarName not in lstBaseParm:
         lstBaseParm.append(sVarName)
 
+    # ==
+    if ("forecast_high".upper() in dicBase) or ("forecast_low".upper() in dicBase):
+        sVarName = "COREPERNODE"
+        if sVarName not in lstBaseParm:
+            lstBaseParm.append(sVarName)
+
+
+    # ==
+    sVarName = "MEMLIST"
+    if sVarName not in lstBaseParm:
+        lstBaseParm.append(sVarName)
 #------
 def create_gets_dev_parm(dicBase, listBaseParm):
     import sys
@@ -128,6 +148,18 @@ def create_gets_dev_parm(dicBase, listBaseParm):
     strings.append('# This section is some parameter setup for for development testing only\n')
     strings.append('##############################################################################\n')
     strings.append('echo `date` $0 test section begin\n')
+    strings.append('\n')
+    strings.append('# Setup associative arrays for prdgen\n')
+    strings.append('typeset -A PRDGEN_GRID\n')
+    strings.append('typeset -A PRDGEN_GRID_SPEC\n')
+    strings.append('typeset -A PRDGEN_HOURS\n')
+    strings.append('typeset -A PRDGEN_SUBMC\n')
+    strings.append('typeset -A PRDGEN_A_DIR\n')
+    strings.append('typeset -A PRDGEN_B_DIR\n')
+    strings.append('typeset -A PRDGEN_A_PREFIX\n')
+    strings.append('typeset -A PRDGEN_B_PREFIX\n')
+    strings.append('typeset -A PRDGEN_DO_ANALYSIS\n')
+    strings.append('\n')
 
     strings = "".join(strings)
 
@@ -157,7 +189,7 @@ def create_gets_dev_parm(dicBase, listBaseParm):
             fh.write('\n# set all the following "make" and "save" flags to "yes" to simulate production\n')
 
         #==
-        fh.write('export {0}={1}\n'.format(sVarName, dicBase[sVarName.upper()]))
+        fh.write('export {0}="{1}"\n'.format(sVarName, dicBase[sVarName.upper()]))
 
     # fh.write(strings)
     fh.write("\necho `date` $0 test section end\n")

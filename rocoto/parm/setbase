@@ -21,10 +21,8 @@ if [[ $machl = n ]]; then
   machl=l
 fi
 
-#envir=$(basename $(dirname $(pwd) ) | cut -c3-)
 echo envir=$envir
 
-#expid=$(basename $(dirname $(dirname $(pwd) ) ) )
 echo expid=${expid}
 
 id=`echo $expid|cut -c3-4`
@@ -66,25 +64,19 @@ if [ -d /scratch4/NCEPDEV ]; then
     NOSCRUB=/scratch4/NCEPDEV/ensemble/noscrub
     export machine='THEIA'
     
-    export HOMEDIR=/scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gfs/fv3gefs_q2fy19nco_a03e7bc6_20181031
-    export HOMEDIR1=$HOMEDIR                        #/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/fv3gfs
+    export HOMEDIR=/scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gfs/fv3gefs_f0b283bd_20190517
+    export HOMEDIR1=$HOMEDIR
     export HOMERFC=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
 
-    #export KMP_AFFINITY=scatter
-
-    # export COMROOThps=/scratch4/NCEPDEV/ensemble/noscrub/common
     export HOMEdata=/scratch4/NCEPDEV/ensemble/noscrub/common
     export COMROOThps=${HOMEdata}
     export COMROOTp1=/scratch4/NCEPDEV/rstprod/com 
 
     export EXECutil=${EXECutil:-/scratch4/NCEPDEV/global/save/glopara/nwpara/util/exec}
-    #export USHutil=${USHutil:-/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/nwprod/util/ush}
-
-    #export PATH=$PATH:$USHutil:$EXECutil
-    export PATH=$PATH:$EXECutil:/scratch3/NCEPDEV/nwprod/lib/prod_util/v1.1.0/ush
+    #export PATH=$PATH:$EXECutil #:/scratch3/NCEPDEV/nwprod/lib/prod_util/v1.1.0/ush
 
     export EXECgrib=${EXECutil}
-    export NDATE=${NDATE:-$EXECgrib/ndate}
+    #export NDATE=${NDATE:-$EXECgrib/ndate}
     export utilscript=$USHutil
     export SUPVIT=${SUPVIT:-${EXECutil}/supvit}
 
@@ -94,8 +86,7 @@ elif [[ -d /dcom && -d /hwrf ]] ; then
     STMP=/stmpd2
     export machine='WCOSS'
     export JOBPHASE=2
-    # export HOMEDIR=/ensemble/save/Walter.Kolczynski/fv3gfs/fv3gfs_ens_20180814
-    export HOMEDIR=/ensemble/save/Walter.Kolczynski/fv3gfs/20181004_c550fea3
+    export HOMEDIR=/ensemble/save/Walter.Kolczynski/global-workflow/fv3gefs_f0b283bd_20190517
     export HOMEDIR1=$HOMEDIR
     export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
     
@@ -116,15 +107,11 @@ elif [[ -d /gpfs/hps && -e /etc/SuSE-release ]] ; then
     STMP=/gpfs/hps2/stmp
     export machine='WCOSS_C'
     export JOBPHASE=
-    #export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/svn/fv3gfs20180204  #temporay setting
-    #export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/git_gfs/fv3gfs/tic21f  # Kate, cold start before 5/9
-    # export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Bing.Fu/svn/tic21f      #Bing Fu warm start after 5/9
-    # export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/Bing.Fu/svn/fy2019q1      # most recent fv3gfs upon 5/15/2018
-    #export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/svn/fy2019q2      # most recent fv3gfs upon 5/15/2018
-    #export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/svn/fv3gfs
-    export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gfs/fv3gefs_q2fy19nco_a03e7bc6_20181031
+    export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gfs/fv3gefs_f0b283bd_20190517
     export HOMEDIR1=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda
+    export HOMEtrak=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.0
     export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
+    export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
     SAVE=/gpfs/hps3/emc/$PROJECT/save
     NOSCRUB=/gpfs/hps3/emc/$PROJECT/noscrub
     
@@ -135,15 +122,23 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     STMP=/gpfs/dell2/stmp
     export machine='WCOSS_DELL_P3'
     export JOBPHASE=    
-    export HOMEDIR=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gfs/fv3gefs_q2fy19nco_a03e7bc6_20181031
-    export HOMEDIR1=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda
-    export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
-    SAVE=/gpfs/hps3/emc/retros/save #$PROJECT/save
-    NOSCRUB=/gpfs/hps3/emc/retros/noscrub #/$PROJECT/noscrub
-    
-    #export HOMEdata=/gpfs/dell2/emc/retros/noscrub/Xianwu.Xue/common/initdata
-    export HOMEdata=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common
+    export HOMEDIR=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gfs/fv3gefs_f0b283bd_20190517
+    export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.0
+    export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
     export COMROOThps=${HOMEdata} 
+fi
+
+if [[ $machine == WCOSS* ]]; then
+    # fv3gfs data from NCO para run
+    export COMINgfs_base=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.
+    export COMINenkf_base=/gpfs/dell1/nco/ops/com/gfs/prod/enkfgdas.
+    # cfs data from NCO prod run
+    export COMINcfs_base=$(compath.py cfs/prod)/cfs/cfs.
+    #if [[ $machl = v || $machl = s || $machl = g ]] ; then # For venus, surge and gyre in Orlando
+    #    export COMINcfs_base=/gpfs/gp1/nco/ops/com/cfs/prod/cfs/cfs.
+    #else    # For Mars, Luna, and Tide in Reston
+    #    export COMINcfs_base=/gpfs/tp1/nco/ops/com/cfs/prod/cfs/cfs.
+    #fi
 fi
 
 export JOBQUEUE=$JOBQUEUE$JOBPRIO$JOBPHASE
@@ -158,17 +153,14 @@ echo noscrub: $NOSCRUB
 echo homedir: $HOMEDIR
 
 echo
-echo `date` $0 setuser base directory tree locations
+echo `date` $0 set user base directory tree locations
 echo
 
-#export basesource=$SAVE/$LOGNAME$SUBNAME/GEFS/$expid
-#export basebin=$basesource/nw$envir/control
 export basesource=$SOURCEDIR
 export baseoutput=$WORKDIR
 
 echo USER BASE DIRECTORY info:
 echo SOURCE: $basesource
-echo BIN: $basebin
 echo OUT: $baseoutput
 
 echo

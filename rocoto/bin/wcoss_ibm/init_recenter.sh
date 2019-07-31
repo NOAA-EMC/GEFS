@@ -23,7 +23,7 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:6
 
-export total_tasks=32
+export total_tasks=6
 export OMP_NUM_THREADS=6
 export taskspernode=4
 
@@ -37,7 +37,6 @@ export FORECAST_SEGMENT=hr
 # export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export gefsmachine=wcoss_ibm
 
 export gefsmpexec_mpmd=" mpirun.lsf"
 export APRUNC="mpirun.lsf"

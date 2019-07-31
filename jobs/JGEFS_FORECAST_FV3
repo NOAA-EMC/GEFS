@@ -6,11 +6,11 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export gefsmpexec=${gefsmpexec:-mpirun}
 
 export machine=$machine
 #export nemsioget=$nemsioget
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec:-mpirun}
 export RUNMEM=$RUNMEM
 export mem=`echo $RUNMEM|cut -c3-5`
 
@@ -68,8 +68,9 @@ fi
 # In case of PRDGEN   failure, set RERUN=RESTART if necessary in PRDGEN jobs
 ####################################
 echo "input setting RERUN=$RERUN"
-#export RERUN=${RERUN:-RESTART}
+
 export RERUN=${RERUN:-RERUN}
+#
 # export RERUN=RESTART
 # export RERUN=YES
 echo "current setting RERUN=$RERUN"
@@ -144,32 +145,42 @@ export FCSTDIR=$COMOUT/$cyc/sfcsig
 export RESTDIR=$COMOUT/$cyc/restart/$mem
 ln -s $GESOUT/$mem/RESTART $DATA/RESTART 
 
+export ERRSCRIPT=err_chk
+export LOGSCRIPT=startmsg
+
 ##############################################
 echo set parameters using gefs.parm
 ##############################################
 . $PARMgefs/gefs.parm
 
-case $cyc in
-	00) export fhmax=$fhmax00;;
-	06) export fhmax=$fhmax06;;
-	12) export fhmax=$fhmax12;;
-	18) export fhmax=$fhmax18;;
-esac
-
-export ERRSCRIPT=err_chk
-export LOGSCRIPT=startmsg
+if [[ $FORECAST_SEGMENT = lr ]] ; then
+	export RERUN=${RERUN:-RESTART}
+	export FHINI=${FHINI:-$fhmaxh}
+fi
+if [[ $RERUN = RERUN ]] ; then
+	if [[ $FORECAST_SEGMENT = hr ]] ; then
+		FHINI=${FHINI:-0}
+	elif [[ $FORECAST_SEGMENT = lr ]] ; then
+		FHINI=${FHINI:-$fhmaxh}
+	else
+		FORECAST_SEGMENT=$FORECAST_SEGMENT is not supported !
+		stop
+	fi	
+fi
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 	#CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$fhouth;FHZER=$fhzerh;                        
 	CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$FHOUTLF;FHZER=6;
 	MTNRSL=$MTNRSLFV;LONB=$LONBFV;LATB=$LATBFV;
-	FHINI=0;FHMAX_HF=$FHMAXHF;FHOUT_HF=$FHOUTHF; 
+	FHMAX_HF=$FHMAXHF;FHOUT_HF=$FHOUTHF; 
+	FHINI=$FHINI;
 	(( LEVS = LEVSHR + 1 ))
 elif [[ $FORECAST_SEGMENT = lr ]] ; then
 	#CASE=$casel;FHMAX=$fhmax;FHOUT=$fhoutl;FHZER=$fhzerl;
 	CASE=$CASELR;FHMAX=$fhmax;FHOUT=$FHOUTLF;FHZER=6;
  	MTNRSL=$MTNRSLLR;LONB=$LONBLR;LATB=$LATBLR;
-	FHINI=$fhmaxhres;FHMAX_HF=$FHMAXHF;FHOUT_HF=$FHOUTHF;
+	FHMAX_HF=$FHMAXHF;FHOUT_HF=$FHOUTHF;
+	FHINI=$FHINI;
 	(( LEVS = LEVSLR + 1 ))
 else
 	FORECAST_SEGMENT=$FORECAST_SEGMENT is not supported !
@@ -202,11 +213,13 @@ export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 #
 . $PARMgefs/gefs_fcst.parm
 
-if [[ $FORECAST_SEGMENT = lr ]] ; then
+if [[ $RERUN = RESTART ]] ; then
 	export warm_start=.true.
-	export RERUN=RESTART
-	export restart_hour=$fhmaxh
+	export restart_hour=$FHMIN
+	export restart_run=.true.    
+	export output_1st_tstep=.true.
 fi
+
 #
 # Forecast Input Variables
 #

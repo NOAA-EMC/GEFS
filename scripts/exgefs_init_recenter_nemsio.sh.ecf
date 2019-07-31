@@ -1,0 +1,318 @@
+#!/bin/ksh
+###testb
+# lines between ###testb and ###teste not needed for production
+###teste
+echo `date` $0 begin
+################################################################################
+#   Script:	exgefs_init_recenter.sh.sms
+#
+#   Author:	Xiaqiong Zhou
+#   Date:	2018 March 08
+#        April 2018, Dingchen Hou: Slight modification for consistency of the cold start part
+#        May 8 2018, Dingchen Hou: Added function for enkf membership shifting with the 4 cucles
+#        May 8 2018, Dingchen Hou: Added function to allow fleximble ensemble size
+#        April 2018, Bing Fu: Added the warm start part
+#        May 11 2018: Dingchen Hou: Added enkf membership shifting and flexible gefs membership 
+#
+#    Abstract:	Creates initial conditions for the global ensemble (GEFS) from FV3 based enkf
+#		6-h forecast nemsio files 
+#		Cold start: Recenter the 6 hour forecast to gfs analysis (nemsio) file
+#			The resulted nemsio files need to changed to netCDF in init_fv3chgres jobs
+#		Warm start: Generate  increment file (netCDF format) for the ensemble members 
+#			from the ensemble mean forecast and gfs analysis, for the encemble contro;
+#                        from enkf member npert+1 forecast and gfs analysis
+#                	The netCDF format increment files will be used in the forecast job, together
+#			with RESTAT files  
+#
+################################################################################
+
+set +xa
+echo " ------------------------------------------------------------"
+echo "  "
+echo "            GLOBAL ENSEMBLE INITIALIZATION "
+echo "  "
+echo "                `date`     "
+echo "  "
+echo "                   JOB  $job  "
+echo "  "
+echo "  "
+echo "               FORECAST cycle TIME is $cycle"
+echo "  "
+echo " ------------------------------------------------------------"
+echo "          processing info for this execution"
+echo " Home directory is ............................ $HOMEGLOBAL"
+echo " Processing directory for files.. ............. $DATA"
+echo "  "
+echo " Executable file directory is ................. $EXECGLOBAL"
+echo " Fixed field directory is ..................... $FIXgsm"
+echo " Parameter directory is ....................... $PARMGLOBAL"
+echo " Unix control language file is ................ $USHGLOBAL"
+echo "  "
+echo " Network id is ................................ $NET"
+echo " Run id for $com processing is ................ $RUN"
+echo "  "
+echo " standard output in file ...................... $pgmout"
+echo " unique processing id for run ................. $pid"
+echo " YES SENDCOM means save com files ............. $SENDCOM"
+echo " ------------------------------------------------------------"
+set -xa
+
+##chang resolution for FV3GFS ananlysis 
+
+# Set environment.
+VERBOSE=${VERBOSE:-"YES"}
+if [ $VERBOSE = "YES" ]; then
+   echo $(date) EXECUTING $0 $* >&2
+   set -x
+fi
+
+# Directories.
+pwd=$(pwd)
+export NWPROD=${NWPROD:-$pwd}
+export BASE_GSM=${BASE_GSM:-$NWPROD}
+BASE_GSI=${BASE_GSI:-$NWPROD}
+export DATA=${DATA:-$pwd}
+COMIN=${COMIN:-$pwd}
+COMIN_ENS=${COMIN_ENS:-$pwd}
+COMIN_GES_ENS=${COMIN_GES_ENS:-${COMIN_ENS:-$pwd}}
+COMOUT=${COMOUT:-$COMIN}
+DMPDIR=${DMPDIR:-$NWPROD}
+
+CDATE=${CDATE:-"2010010100"}
+
+export CASE=${CASE:-384}
+ntiles=${ntiles:-6}
+
+# Utilities
+ERRSCRIPT=${ERRSCRIPT:-'eval [[ $err = 0 ]]'}
+NCP=${NCP:-"/bin/cp -p"}
+NLN=${NLN:-"/bin/ln -sf"}
+NMV=${NMV:-"/bin/mv -uv"}
+nemsioget=${nemsioget:-${NWPROD}/exec/nemsio_get}
+
+# Scripts
+
+# Executables.
+GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-$HOMEgsi/exec/getsigensmeanp_smooth.x}
+GETSFCENSMEANEXEC=${GETSFCENSMEANEXEC:-$HOMEgsi/exec/getsfcensmeanp.x}
+RECENATMEXEC=${RECENATMEXEC:-$HOMEgsi/exec/recentersigp.x}
+CALCINCEXEC=${CALCINCEXEC:-$HOMEgsi/exec/calc_increment_ens.x}
+
+# Variables
+
+# global_chgres stuff
+export CHGRESEXEC=${CHGRESEXEC:-$HOMEgsm/exec/chgres_recenter.exe}
+NTHREADS_CHGRES=${NTHREADS_CHGRES:-24}
+CHGRESVARS_ENKF=${CHGRESVARS_ENKF:-""}
+APRUN_CHGRES=${APRUN_CHGRES:-""}
+
+# global_cycle stuff
+CYCLESH=${CYCLESH:-$BASE_GSM/ush/global_cycle.sh}
+export CYCLEXEC=${CYCLEXEC:-$HOMEgsm/exec/global_cycle}
+export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
+export FIXfv3=${FIXfv3:-$HOMEgsm/fix/fix_fv3}
+export CYCLVARS=${CYCLVARS:-"FSNOL=-2.,FSNOS=99999.,"}
+export FHOUR=${FHOUR:-0}
+export DELTSFC=${DELTSFC:-6}
+
+RECENTER_ENKF=${RECENTER_ENKF:-"YES"}
+SMOOTH_ENKF=${SMOOTH_ENKF:-"YES"}
+
+NTHREADS_ECEN=${NTHREADS_ECEN:-${NTHREADS:-1}}
+
+################################################################################
+# Preprocessing
+if [ ! -d $DATA ]; then mkdir -p $DATA; fi
+cd $DATA || exit 99
+
+
+################################################################################
+# Link ensemble member guess, analysis and increment files
+export pdycycp=`$NDATE -$fhrp $PDY$cyc`
+export pdyp=`echo $pdycycp|cut -c1-8`
+export cycp=`echo $pdycycp|cut -c9-10`
+
+case $cyc in
+	00) memshift=0;;
+	06) memshift=20;;
+	12) memshift=40;;
+	18) memshift=60;;
+esac
+
+for imem in $(seq 1 $recentmem); do
+	(( jmem = imem + memshift ))
+	if (( jmem > 80 )); then
+		(( jmem = jmem - 80 ))
+	fi
+	memchar="mem"$(printf %03i $imem)
+	memchar_shift="mem"$(printf %03i $jmem)
+	$NLN $COMINenkf$pdyp/$cycp/$memchar_shift/gdas.t${cycp}z.atmf006.nemsio ./atmf006_$memchar
+done
+
+
+# Compute ensemble mean 
+export OMP_NUM_THREADS=$NTHREADS_ECEN
+
+$NCP $GETATMENSMEANEXEC $DATA
+$APRUN_RECENT ${DATA}/$(basename $GETATMENSMEANEXEC) ./ atmf006_ensmean atmf006 $recentmem
+rc=$?
+
+export ERR=$rc
+export err=$ERR
+$ERRSCRIPT || exit 2
+
+LONB_ENKF=${LONB_ENKF:-$($nemsioget ./atmf006_ensmean dimx | awk '{print $2}')}
+LATB_ENKF=${LATB_ENKF:-$($nemsioget ./atmf006_ensmean dimy | awk '{print $2}')}
+LEVS_ENKF=${LEVS_ENKF:-$($nemsioget ./atmf006_ensmean dimz | awk '{print $2}')}
+
+################################################################################
+
+   # GFS  analysis
+#$NLN $COMINenkf$pdyp/$cycp/$memchar/gdas.t${cycp}z.atmf006.nemsio ./atmf006_$memchar
+   ATMANL=${ATMANL:-$COMINgfs/gfs.$cycle.atmanl.nemsio}
+   SFCANL=${SFCANL:-$COMINgfs/gfs.$cycle.sfcanl.nemsio}
+
+   LONB=${LONB:-$($nemsioget $ATMANL dimx | awk '{print $2}')}
+   LATB=${LATB:-$($nemsioget $ATMANL dimy | awk '{print $2}')}
+
+   # If GFS  analysis is at ensemble resolution, no chgres is required
+   if [ $JCAP = $JCAP_ENKF -a $LATB = $LATB_ENKF -a $LONB = $LONB_ENKF ]; then
+
+      $NLN $ATMANL atmanl_ensres
+
+   else
+
+      $NLN $ATMANL atmanl
+      (( LEVS = LEVS_ENKF +1 ))
+
+      SIGLEVEL=${SIGLEVEL:-$HOMEgsm/fix/fix_am/global_hyblev.l${LEVS}.txt}
+
+      export OMP_NUM_THREADS=$NTHREADS_CHGRES
+      rm -f fort.43
+      cat > fort.43 << EOF
+&nam_setup
+  i_output=$LONB_ENKF
+  j_output=$LATB_ENKF
+  input_file="atmanl"
+  output_file="atmanl_ensres"
+  terrain_file="atmf006_ensmean"
+  vcoord_file="$SIGLEVEL"
+/
+EOF
+
+      $APRUN_CHGRES $CHGRESEXEC
+      rc=$?
+
+      export ERR=$rc
+      export err=$ERR
+      $ERRSCRIPT || exit 3
+
+   fi
+
+export warm_start=$warm_start
+
+if [ $warm_start = ".false." ]; then
+
+   ################################################################################
+   # Recenter ensemble member atmospheric analyses about hires analysis
+
+   FILENAMEIN="./atmf006"
+   FILENAME_MEANIN="./atmf006_ensmean"     # EnKF ensemble mean analysis
+   FILENAME_MEANOUT="./atmanl_ensres" # recenter around GSI analysis at ensemble resolution
+   FILENAMEOUT="./ratmanl"
+
+   export OMP_NUM_THREADS=$NTHREADS_ECEN
+
+   $NCP $RECENATMEXEC $DATA
+   $APRUN_RECENT ${DATA}/$(basename $RECENATMEXEC) $FILENAMEIN $FILENAME_MEANIN $FILENAME_MEANOUT $FILENAMEOUT $recentmem
+   rc=$?
+
+   export ERR=$rc
+   export err=$ERR
+   $ERRSCRIPT || exit 2
+
+   #SAVE DATA (init files in nemsio format) into $GESOUT
+   for imem in $(seq 1 $recentmem); do
+      memchar="mem"$(printf %03i $imem)
+      memcharg="p"$(printf %02i $imem)
+      mv ratmanl_$memchar $GESOUT/ge${memcharg}.${cycle}.sanl
+      cp -f  ${SFCANL} $GESOUT/ge${memcharg}.${cycle}.sfcanl
+   done
+
+   cp -f ${ATMANL} $GESOUT/gec00.${cycle}.sanl
+   cp -f ${SFCANL} $GESOUT/gec00.${cycle}.sfcanl
+
+   #SAVE DATA (init files in nemsio format) into $COM
+   cp -f $GESOUT/ge* $COMOUT/$cyc/init
+
+else
+
+	DATA=$DATA
+	NMEM_ENKF=1
+	imp_physics=${imp_physics:-11}
+	INCREMENTS_TO_ZERO="'delz_inc','clwmr_inc','icmr_inc'"
+	APRUN_CALCINC=${APRUN_CALCINC:-"aprun -j 1 -n 1 -N 1 -d 1 -cc depth"}
+	ATMANLNAME='atmanl_ensres'
+
+#calculate increment for ensemble members
+	$NLN ./atmf006_ensmean atmges_mem001
+	$NLN ./${ATMANLNAME} atmanl_mem001
+	$NLN ./fv3_increment.nc atminc_mem001
+	$NCP $CALCINCEXEC $DATA
+
+	rm calc_increment.nml
+	cat > calc_increment.nml << EOF
+&setup
+  datapath = './'
+  analysis_filename = 'atmanl'
+  firstguess_filename = 'atmges'
+  increment_filename = 'atminc'
+  debug = .false.
+  nens = $NMEM_ENKF
+  imp_physics = $imp_physics
+/
+&zeroinc
+  incvars_to_zero = $INCREMENTS_TO_ZERO
+/
+EOF
+	cat calc_increment.nml
+
+	$APRUN_CALCINC ${DATA}/$(basename $CALCINCEXEC)
+
+	for imem in $(seq 1 $npert); do
+		memchar="p"$(printf %02i $imem)
+		ICSDIR=$GESOUT/$cyc/$memchar
+		if [ ! -d $ICSDIR ]; then mkdir -p $ICSDIR; fi
+		$NCP ./fv3_increment.nc $ICSDIR
+		$NMV ./fv3_increment.nc $COMOUT/$cyc/init/$memchar
+	done #while (( pp < 21 ))
+
+    #calculate c00 increment
+
+	(( jmem = npert + memshift + 1 ))
+	if (( jmem > 80 )); then (( jmem = jmem - 80 )); fi
+	memchar=$(printf %03i $jmem)
+	#$NLN ./atmf006_mem$memchar atmges_mem001
+	$NLN $COMINenkf$pdyp/$cycp/mem$memchar/gdas.t${cycp}z.atmf006.nemsio atmges_mem001
+	$NLN ./${ATMANLNAME} atmanl_mem001
+	$NLN ./fv3_increment.nc atminc_mem001
+
+	$APRUN_CALCINC ${DATA}/$(basename $CALCINCEXEC)
+
+	ICSDIR=$GESOUT/$cyc/c00
+	if [ ! -d $ICSDIR ]; then mkdir -p $ICSDIR; fi
+	$NCP ./fv3_increment.nc $ICSDIR
+	$NMV ./fv3_increment.nc $COMOUT/$cyc/init/c00
+
+fi #warm_start
+
+cd $pwd
+[[ ${KEEPDATA:-"NO"} = "NO" ]] && rm -rf $DATA
+
+set +x
+if [ $VERBOSE = "YES" ]; then
+	echo $(date) EXITING $0 with return code $err >&2
+fi
+
+exit $err
+                                                            

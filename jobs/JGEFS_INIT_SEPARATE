@@ -6,7 +6,7 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
+export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
 
 ############################
 # Set up cycle varaible
@@ -68,16 +68,16 @@ export pgmerr=errfile
 # Specify Execution Areas
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
-export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
-export HOMEenkf=${HOMEenkf:-$NWROOTp2/enkf.${enkf_ver}}
+#export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
+#export HOMEenkf=${HOMEenkf:-$NWROOTp2/enkf.${enkf_ver}}
 
-export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
-export USHgsm=${USHgsm:-$HOMEgsm/ush}
+#export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
+#export USHgsm=${USHgsm:-$HOMEgsm/ush}
 export UTILgefs=${UTILgefs:-$HOMEgefs/util}
-export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
-export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
+#export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
+#export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 
-export FIXGLOBAL=$FIXgsm
+#export FIXGLOBAL=$FIXgsm
 
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 export USHgefs=${USHgefs:-$HOMEgefs/ush}
@@ -105,8 +105,8 @@ if [[ $gfssource != prod ]]; then
         export COMINenkf=${COMINenkf_base}
 fi
 
-export COMINgfs=${COMINgfs:-${COMROOThps}/gfs/prod/gfs.${PDY}}
-export COMINenkf=${COMINenkf:-${COMROOThps}/gfs/prod/enkf.}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.$PDY)}
+export COMINenkf=${COMINenkf:-$(compath.py gfs/prod)/enkfgdas.}
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
@@ -136,24 +136,24 @@ export GESOUT=$GESOUT/gefs.${PDY}
 mkdir -m 775 -p $GESOUT
 
 ##############################################
-echo locations of scripts and executables
+#echo locations of scripts and executables
 ##############################################
 
-echo location of sighdr executable
+#echo location of sighdr executable
 
-export sighdrexec=$EXECgsm/global_sighdr
-export getnsttf=$UTILgefs/exec/getnsttf.x
+#export sighdrexec=$EXECgsm/global_sighdr
+#export getnsttf=$UTILgefs/exec/getnsttf.x
 
-echo location of nemsioget
+#echo location of nemsioget
 #export nemsioget=$nemsioget
-export nemsioget=$EXECgsm/nemsio_get
+#export nemsioget=$EXECgsm/nemsio_get
 echo location of chgres script and executable
 export CHGRESTHREAD=$NTHREADS_SIGCHGRS
 # Change Resolution script and executable
 
-export chgresush=${chgresush:-$USHgsm/global_chgres.sh}
+#export chgresush=${chgresush:-$USHgsm/global_chgres.sh}
 #export CHGRESEXEC=${CHGRESEXEC:-$EXECgsm/global_chgres}
-export CHGRESEXEC=$EXECgsm/global_chgres
+#export CHGRESEXEC=$EXECgsm/global_chgres
 
 ##############################################
 echo list environment before running script

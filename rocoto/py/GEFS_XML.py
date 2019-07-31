@@ -238,7 +238,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarValue = replace_First_Last(dicBase, sVarName)
     sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
     dicBase[sVarName] = sVarValue
-    
+   
     # ===
     sVarName = "DIRS_TO_KEEP".upper()
     if sVarName not in dicBase:
@@ -388,7 +388,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             dicBase[sVarName] = sVarValue
         # ===
         sVarName = "SCHEDULER".upper()
-        sVarValue = "moabtorque"
+        sVarValue = "slurm"
         if sVarName not in dicBase:
             dicBase[sVarName] = sVarValue
     elif WHERE_AM_I.lower() == "wcoss_dell_p3":
@@ -445,8 +445,9 @@ def replace_First_Last(dicBase, sVarName):
         sVarValue = sVarValue.replace("retros", "verification") # temporary
     else:
         sVarValue = str(dicBase[sVarName]).replace("First.Last", dicBase["FIRST"] + "." + dicBase["LAST"])
-
+    
     return sVarValue
+
 
 #=======================================================
 def create_xml(dicBase):
@@ -637,8 +638,7 @@ def get_definitions(dicBase):
         # -----------------------------------------------------------------------------------------------
         strings.append('\t<!-- External parameter entities -->\n')
         strings.append(
-            '\t<!ENTITY % TASKS    SYSTEM "{0}{2}tasks{2}{1}{2}all.ent">\n'.format(dicBase['GEFS_ROCOTO'],
-                                                                                   dicBase['WHERE_AM_I'], sSep))
+            '\t<!ENTITY % TASKS    SYSTEM "{0}{1}tasks{1}all.ent">\n'.format(dicBase['GEFS_ROCOTO'], sSep))
         strings.append('\t%TASKS;\n')
         strings.append('\n')
 

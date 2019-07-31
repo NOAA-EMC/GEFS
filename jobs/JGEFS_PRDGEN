@@ -6,11 +6,9 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-
-export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
-
-export CNVGRIB=$CNVGRIB21_GFS
+export gefsmpexec=${gefsmpexec:-mpirun}
+export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
+export CNVGRIB=$CNVGRIB
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -82,42 +80,108 @@ export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
 setpdy.sh
 . PDY
 
-####################################
-# Create member list
-####################################
-memberlist="c00"
-kmem=1
-
 ##############################################
 # Define COM directories
 ##############################################
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
 # 20150622 RLW change to "yes" to remake prdgen when post is remade
 #export overwrite=no
 export overwrite=yes
 
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2a1p0
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2b1p0
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2a2p5
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2b2p5
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap5
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2bp5
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2ap25
-mkdir -m 775 -p $COMOUT/$cyc/pgrb2bp25
 
-#mkdir -m 775 -p $COMOUT/$cyc/tctrack
-#mkdir -m 775 -p $COMOUT/$cyc/genesis
+if [[ $save_pgrb2_p5 == YES ]]; then
+	mkdir -m 775 -p $COMOUT/$cyc/pgrb2p5
+fi
+if [[ $save_pgrb2_p25 == YES ]]; then
+	mkdir -m 775 -p $COMOUT/$cyc/pgrb2p25 
+fi
 
 ##############################################
 echo set parameters using gefs.parm
 ##############################################
 . $PARMgefs/gefs.parm
-export FHMAX_HF=$FHMAXHF
-export FHOUT_HF=$FHOUTHF
-export FHOUT_LF=$FHOUTLF
-export FHOUT=$FHOUTLF
+. $PARMgefs/gefs_prdgen.parm
+
+case $FORECAST_SEGMENT in
+	hr)
+		start_hour=0
+		end_hour=${fhmaxh}
+		;;
+	lr)
+		start_hour=$((${fhmaxh}+1))
+		end_hour=${fhmax}
+		;;
+	*)
+		start_hour=0
+		end_hour=${fhmax}
+		;;
+esac # $FORECAST_SEGMENT in
+
+for stream in ${PRDGEN_STREAMS[@]}; do
+	# Filter out hours based on forecast segment
+	typeset -a hours=($(echo ${PRDGEN_HOURS[$stream]}))
+	echo "hours = $hours"
+	for i in "${!hours[@]}"; do
+		hour=${hours[i]}
+		echo "i = $i  hour = $hour"
+		if [[ $hour -lt $start_hour || $hour -gt $end_hour ]]; then
+			unset 'hours[i]'
+		fi
+	done
+	PRDGEN_HOURS[$stream]="${hours[@]}"
+	unset hours
+
+	if [[ -z ${PRDGEN_GRID[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_GRID not defined for $stream"
+		exit -1
+	fi
+	if [[ -z ${PRDGEN_GRID_SPEC[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_GRID_SPEC not defined for $stream"
+		exit -1
+	fi
+	if [[ -z ${PRDGEN_HOURS[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_HOURS not defined for $stream"
+		exit -1
+	fi
+	if [[ -z ${PRDGEN_SUBMC[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_SUBMC not defined for $stream"
+		exit -1
+	fi
+	if [[ -z ${PRDGEN_A_DIR[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_A_DIR not defined for $stream"
+		exit -1
+	fi
+	if [[ -z ${PRDGEN_B_DIR[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_B_DIR not defined for $stream"
+		exit -1
+	fi
+	if [[ -z ${PRDGEN_A_PREFIX[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_A_PREFIX not defined for $stream"
+		exit -1
+	fi
+	if [[ -z ${PRDGEN_B_PREFIX[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_B_PREFIX not defined for $stream"
+		exit -1
+	fi
+
+	# Print out settings for this stream
+	cat <<-EOF
+		Settings for prgden stream $stream:
+			Grid: ${PRDGEN_GRID[$stream]}
+			Grid Spec: ${PRDGEN_GRID_SPEC[$stream]}
+			Hours: (${PRDGEN_HOURS[$stream]})
+			submc: ${PRDGEN_SUBMC[$stream]}
+			A Dir: ${PRDGEN_A_DIR[$stream]}
+			A Prefix: ${PRDGEN_A_PREFIX[$stream]}
+			B Dir: ${PRDGEN_B_DIR[$stream]}
+			B Prefix: ${PRDGEN_B_PREFIX[$stream]}
+			Do Anaylsis: ${PRDGEN_DO_ANALYSIS[$stream]:-"NO (default)"}
+
+	EOF
+done
 
 export NTHREADS=1
 
@@ -142,54 +206,7 @@ echo
 export IGEN_ANL=107
 export IGEN_FCST=107
 
-####################################
-# Specify Forecast Hour Range
-####################################
-
-case $FORECAST_SEGMENT in
-	(hr) # high resolution segment
-		export DOANALYSIS=YES;
-		export DOANALYSIS=NO;
-		export SHOUR=00
-		export FHOUT=$FHOUT
-		export FHOUT_HF=$FHOUT_HF
-		export FHMAX_HF=$FHMAX_HF
-		export FHINCP5=${FHOUT_HF:-06}
-		export FHOUR=$fhmaxh
-		;;
-	(lr) # low resolution segment
-		export DOANALYSIS=NO;
-		export FHINCP5=${FHOUT_LF:-06}
-		if [ $FHMAX_HF -gt $fhmaxh ]; then
-			FHINC=$FHOUT
-		else
-			FHINC=$FHOUT_HF
-		fi
-		export SHOUR=$(( $fhmaxh + FHINC ))
-		export FHOUT=$FHOUT
-		export FHOUT_HF=$FHOUT_HF
-		export FHMAX_HF=$FHMAX_HF
-		export FHOUR=$fhmax
-		;;
-	(*) # whole forecast period
-		export DOANALYSIS=YES;
-		export DOANALYSIS=NO;
-		export SHOUR=00
-		export FHOUT=$FHOUT
-		export FHOUT_HF=$FHOUT_HF
-		export FHMAX_HF=$FHMAX_HF
-		export FHINCP5=${FHOUTHF:-06}
-		export FHOUR=$fhmax
-		;;
-esac # $FORECAST_SEGMENT
-
 echo FORECAST_SEGMENT=$FORECAST_SEGMENT
-echo FHINCP5=$FHINCP5
-echo SHOUR=$SHOUR
-echo FHOUR=$FHOUR
-echo FHOUT=$FHOUT
-echo FHOUT_HF=$FHOUT_HF
-echo FHMAX_HF=$FHMAX_HF
 
 export DO_HD_PGRB=NO
 export HDMAX=00
@@ -198,141 +215,56 @@ export HDMAX=00
 # If this is a rerun, remove all control files
 ####################################
 if [[ $RERUN = YES ]]; then
-	$USHgefs/gefs_restart_cleanup.sh 00 $FHMAX prd0p5 prd1p0 prd2p5 prd0p25 
+	$USHgefs/gefs_restart_cleanup.sh 00 $fhmax ${PRDGEN_SUBMC[@]}
 fi
-
-# SHOUR_1 000, run 000-384 for 2p5
-# SHOUR_2 000, run 000-384 for 1p0
-# SHOUR_3 000, run 000-384 for 0p5
-# SHOUR_4 000, run 000,009,...378 for 0p25
-# SHOUR_5 003, run 003,012,...372 for 0p25
-# SHOUR_6 006, run 006,015,...384 for 0p25
-# FHINC34: increment hour for 0p25 tasks
-
-SHOUR_1=$SHOUR 
-SHOUR_2=$SHOUR 
-SHOUR_3=$SHOUR 
-
-SHOUR_4=$SHOUR 
-SHOUR_5=$(( SHOUR_4 + FHOUT_HF ))           
-SHOUR_6=$(( SHOUR_5 + FHOUT_HF ))
-
-FHINC34=9
-
-#mpmd job with 6 tasks, 1 for 2.5d , 2 for 1d; 3 for 0.5d
-#                       4 for .25d from 000,009 to 378
-#                       5 for .25d from 003,012 to 372
-#                       6 for .25d from 006,015 to 384 
-
-#task 1, 2.5d
-export jobgrid_1=2p5
-export DOANALYSIS_1=NO
-export FHOUT_1=$FHOUT
-export FHOUT_HF_1=$FHOUT_HF
-export FHMAX_HF_1=0
-export SHOUR_1=$SHOUR_1
-export FHOUR_1=$FHOUR
-
-#task 2, 1.0d grid
-export jobgrid_2=1p0
-export DOANALYSIS_2=$DOANALYSIS
-export FHOUT_2=$FHOUT
-export FHOUT_HF_2=$FHOUT_HF
-export FHMAX_HF_2=0
-export SHOUR_2=$SHOUR_2
-export FHOUR_2=$FHOUR
-
-#task 3, 0.5d grid 
-export jobgrid_3=0p5
-export DOANALYSIS_3=$DOANALYSIS
-export FHOUT_3=$FHOUT
-export FHOUT_HF_3=$FHOUT_HF
-export FHMAX_HF_3=$FHMAX_HF
-export SHOUR_3=$SHOUR_3
-export FHOUR_3=$FHOUR
-
-#task 4, 0.25d grid
-export jobgrid_4=0p25
-export DOANALYSIS_4=$DOANALYSIS
-export FHOUT_4=$FHOUT
-#export FHOUT_HF_4=$FHOUT_HF
-export FHOUT_HF_4=$FHINC34 
-export FHMAX_HF_4=$FHMAX_HF
-export SHOUR_4=$SHOUR_4
-export FHOUR_4=$FHOUR              
-
-#task 5, 0.25d grid
-export jobgrid_5=0p25
-export DOANALYSIS_5=NO            
-export FHOUT_5=$FHOUT
-#export FHOUT_HF_5=$FHOUT_HF
-export FHOUT_HF_5=$FHINC34
-export FHMAX_HF_5=$FHMAX_HF
-export SHOUR_5=$SHOUR_5
-export FHOUR_5=$FHOUR   
-
-#task 6, 0.25d grid
-export jobgrid_6=0p25
-export DOANALYSIS_6=NO                
-export FHOUT_6=$FHOUT
-#export FHOUT_HF_6=$FHOUT_HF
-export FHOUT_HF_6=$FHINC34
-export FHMAX_HF_6=$FHMAX_HF
-export SHOUR_6=$SHOUR_6
-export FHOUR_6=$FHOUR
 
 #################################
 # Run Post if Needed
 #################################
-if test $SHOUR -le $FHOUR; then
+rm -f prdgen.cmdfile
+for stream in ${PRDGEN_STREAMS[@]}; do
+	mkdir -m 755 -p $COMOUT/$cyc/${PRDGEN_A_DIR[${stream}]}
+	mkdir -m 755 -p $COMOUT/$cyc/${PRDGEN_B_DIR[${stream}]}
 
-	subdata=${DATA}/${SHOUR_1}.${FHOUR_1}.${jobgrid_1}
-	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-	outfile=${subdata}/${SHOUR_1}.${FHOUR_1}.${jobgrid_1}.out
-	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_1} ${FHOUR_1} ${FHOUT_1} $DOANALYSIS_1 ${jobgrid_1} ${subdata} ${FHOUT_HF_1} ${FHMAX_HF_1} 2>&1 >${outfile}" >>prdgen.cmdfile
+	subdata=${DATA}/${stream}
+	if [ ! -d ${subdata} ]; then
+		mkdir -p ${subdata};
+	fi
+	outfile=${subdata}/${stream}.out
 
-	subdata=${DATA}/${SHOUR_2}.${FHOUR_2}.${jobgrid_2}
-	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-	outfile=${subdata}/${SHOUR_2}.${FHOUR_2}.${jobgrid_2}.out
-	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_2} ${FHOUR_2} ${FHOUT_2} $DOANALYSIS_2 ${jobgrid_2} ${subdata} ${FHOUT_HF_2} ${FHMAX_HF_2} 2>&1 >${outfile}" >>prdgen.cmdfile
+	jobgrid="${PRDGEN_GRID[$stream]}"
+	grid_spec="${PRDGEN_GRID_SPEC[$stream]}"
+	hours="${PRDGEN_HOURS[$stream]}"
+	submc="${PRDGEN_SUBMC[$stream]}"
+	pgad="${PRDGEN_A_DIR[$stream]}"
+	pgbd="${PRDGEN_B_DIR[$stream]}"
+	pgapre="${PRDGEN_A_PREFIX[$stream]}"
+	pgbpre="${PRDGEN_B_PREFIX[$stream]}"
+	do_analysis="${PRDGEN_DO_ANALYSIS[$stream]:-NO}"
 
-	subdata=${DATA}/${SHOUR_3}.${FHOUR_3}.${jobgrid_3}
-	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-	outfile=${subdata}/${SHOUR_3}.${FHOUR_3}.${jobgrid_3}.out
-	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_3} ${FHOUR_3} ${FHOUT_3} $DOANALYSIS_3 ${jobgrid_3} ${subdata} ${FHOUT_HF_3} ${FHMAX_HF_3} 2>&1 >${outfile}" >>prdgen.cmdfile
+	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf $subdata \"$stream\" \"$jobgrid\" \"$grid_spec\" \"$hours\" \"$submc\" \"$pgad\" \"$pgbd\" \"$pgapre\" \"$pgbpre\" \"$do_analysis\" 2>&1 >${outfile}" >> prdgen.cmdfile
 
-	subdata=${DATA}/${SHOUR_4}.${FHOUR_4}.${jobgrid_4}
-	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-	outfile=${subdata}/${SHOUR_4}.${FHOUR_4}.${jobgrid_4}.out
-	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_4} ${FHOUR_4} ${FHOUT_4} $DOANALYSIS_4 ${jobgrid_4} ${subdata} ${FHOUT_HF_4} ${FHMAX_HF_4} 2>&1 >${outfile}" >>prdgen.cmdfile
+done
 
-	subdata=${DATA}/${SHOUR_5}.${FHOUR_5}.${jobgrid_5}
-	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-	outfile=${subdata}/${SHOUR_5}.${FHOUR_5}.${jobgrid_5}.out
-	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_5} ${FHOUR_5} ${FHOUT_5} $DOANALYSIS_5 ${jobgrid_5} ${subdata} ${FHOUT_HF_5} ${FHMAX_HF_5} 2>&1 >${outfile}" >>prdgen.cmdfile
+cat prdgen.cmdfile
+chmod 775 prdgen.cmdfile
+export MP_CMDFILE=${DATA}/prdgen.cmdfile
+export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
+export MP_PGMMODEL=mpmd
+rm -f mpmd_cmdfile
+ln -s $MP_CMDFILE mpmd_cmdfile
 
-	subdata=${DATA}/${SHOUR_6}.${FHOUR_6}.${jobgrid_6}
-	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
-	outfile=${subdata}/${SHOUR_6}.${FHOUR_6}.${jobgrid_6}.out
-	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf ${SHOUR_6} ${FHOUR_6} ${FHOUT_6} $DOANALYSIS_6 ${jobgrid_6} ${subdata} ${FHOUT_HF_6} ${FHMAX_HF_6} 2>&1 >${outfile}" >>prdgen.cmdfile
+$APRUN 
 
-	cat prdgen.cmdfile
-	chmod 775 prdgen.cmdfile
-	export MP_CMDFILE=${DATA}/prdgen.cmdfile
-	export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
-	export MP_PGMMODEL=mpmd
-        rm mpmd_cmdfile
-        ln -s $MP_CMDFILE mpmd_cmdfile
-    
-    $APRUN
-
-    
-    #export CMDFILE=${DATA}/prdgen.cmdfile
-
-	#$APRUN  cfp $CMDFILE
-
-	export SHOUR=`expr $FHOUR + $FHINC`
-fi # test $SHOUR -le $FHOUR
+rc=$?
+if [[ $rc -ne 0 ]]; then
+	msg="FATAL ERROR: $0 failed!"
+	echo "`date`    $msg"
+	postmsg "$jlogfile" "$msg"
+	export err=1
+	err_chk
+	exit $err
+fi
 
 msg="$job completed normally"
 postmsg "$jlogfile" "$msg"
