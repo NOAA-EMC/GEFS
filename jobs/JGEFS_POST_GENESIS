@@ -145,13 +145,13 @@ else
 fi
 
 (( imem = 0 ))
-while (( imem < npair * 2 )); do
+while (( imem < npert )); do
 	(( imem = imem + 1 ))
 	if (( imem < 10 )); then
 		imem=0$imem
 	fi
 	memberlist="$memberlist p$imem"
-done # (( imem < npair * 2 ))
+done # (( imem < npert ))
 echo memberlist=$memberlist
 
 export homesyndir=$HOMEtrak

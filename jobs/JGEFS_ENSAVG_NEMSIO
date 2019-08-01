@@ -130,7 +130,7 @@ while (( imem < npert )); do
         imem=00$imem
     fi
     memberlist="$memberlist $imem"
-done # while (( imem < npair * 2 ))
+done # while (( imem < npert ))
 echo memberlist=$memberlist
 
 # set outtyp to 1 because we need to run chgres in the post before model start running chgres

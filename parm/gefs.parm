@@ -8,7 +8,7 @@
 # Number of pairs to run (normally 10 pairs)
 ##############################################
 export npair=${npair:-15}
-export npert=$((2*npair))
+export npert=${npert:-2}
 export navg_min=${navg_min:-10}
 export nhrpair=${nhrpair:-$npair}
 export nstinit=${nstinit:-yes}
