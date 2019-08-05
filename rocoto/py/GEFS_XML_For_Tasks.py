@@ -266,6 +266,33 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "ensstat_low"
 
+        # #    <!-- gempak jobs -->
+        if dicBase['RUN_GEMPAK'].upper()[0] == "Y":
+            # ---gempak
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "gempak"
+
+            # ---avgspr_gempak
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "avgspr_gempak"
+
+            # ---gempak_meta
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "gempak_meta"
+
+            # ---avgspr_gempak_meta
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "avgspr_gempak_meta"
+
+            # ---avg_gempak_vgf
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "avg_gempak_vgf"
+
         # #    <!-- postsnd  Post Sound -->
         if dicBase['RUN_POSTSND'].upper()[0] == "Y":
             # ---ensavg_nemsio
