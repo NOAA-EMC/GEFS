@@ -125,6 +125,8 @@ export MP_CMDFILE=$DATA/poescript
 ## Execute the script.
 
 mpirun -n 2 cfp $MP_CMDFILE
+ERR=$?
+echo $ERR
 
 #cat $pgmout
 
@@ -133,10 +135,17 @@ mpirun -n 2 cfp $MP_CMDFILE
 ##################################################
 if [ $GET_IOPROFILE = YES ]; then
     . ${COMROOT}/miostats/.set_IOprofile
+    ERR=$?
+    echo $ERR
 fi
 
-cd ${DATAROOT}
-rm -rf $DATA
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-date
+echo `date` $0 `date -u` end
+
+exit $ERR
 

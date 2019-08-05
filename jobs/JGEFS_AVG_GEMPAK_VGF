@@ -90,6 +90,8 @@ postmsg "$jlogfile" "$msg"
 ########################################################
 # Execute the script.
 $HOMEgefs/scripts/exgefs_avg_gempak_vgf.sh.ecf
+ERR=$?
+echo $ERR
 ########################################################
 
 msg="job has ended"
@@ -97,8 +99,12 @@ postmsg "$jlogfile" "$msg"
 
 cat $pgmout
 
-cd ${DATAROOT}
-rm -rf $DATA
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-date
+echo `date` $0 `date -u` end
 
+exit $ERR
