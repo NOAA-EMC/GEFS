@@ -159,6 +159,8 @@ do
             gdattim_6to10="${PDY2}/${cyc}00F270"
             gdattim_8to14="${PDY2}/${cyc}00F366"
         fi
+	f216="f384"
+	F240="F384"
     elif [ ${area} = "sam" ] ; then
         garea="-66;-127;14.5;-19"
         proj="mer"
@@ -173,6 +175,8 @@ do
         run3=""
         run6to10=""
         run8to14=""
+	f216="f216"
+	F240="F240"
     else
         garea="35.0;178.0;78.0;-94.0"
 	proj="NPS"
@@ -187,6 +191,8 @@ do
         run3="run"
         run6to10=""
         run8to14=""
+	f216="f216"
+	F240="F240"
     fi
     metaname="gefs_avgspr_${PDY}_${cyc}_${area}"
     device="nc | ${metaname}"
@@ -197,7 +203,7 @@ gdplot2_nc << EOF
 GAREA    = ${garea}
 PROJ     = ${proj}
 gdfile   = F-GEFSAVG | ${PDY2}/${cyc}00
-gdattim  = F00-F240-06
+gdattim  = F00-${F240}-06
 device   = ${device}
 GLEVEL   = 500:1000!500:1000!0
 GVCORD   = pres!pres!none
@@ -278,7 +284,7 @@ ${run3}
 gdfile   = F-GEFSAVG | ${PDY2}/${cyc}00
 garea    = ${garea2}
 proj     = ${proj2}
-GDATTIM  = f12-f216-06
+GDATTIM  = f12-${f216}-06
 wind     = bk0
 GLEVEL   = 0
 LATLON   = 0
@@ -297,22 +303,22 @@ refvec   =
 title    = 5/-2/~ ? GEFS MEAN 12-HR PCPN|~12-HR PCPN
 ${run2}
 
-GDATTIM  = f24-f216-06
+GDATTIM  = f24-${f216}-06
 gdpfun   = p24${parm}
 title    = 5/-2/~ ? GEFS MEAN 24-HR PCPN|~24-HR PCPN
 ${run}
 
-GDATTIM  = f48-f216-06
+GDATTIM  = f48-${f216}-06
 gdpfun   = p48${parm}
 title    = 5/-2/~ ? GEFS MEAN 48-HR PCPN|~48-HR PCPN
 ${run2}
 
-GDATTIM  = f72-f216-06
+GDATTIM  = f72-${f216}-06
 gdpfun   = p72${parm}
 title    = 5/-2/~ ? GEFS MEAN 72-HR PCPN|~72-HR PCPN
 ${run2}
 
-GDATTIM  = f120-f216-06
+GDATTIM  = f120-${f216}-06
 gdpfun   = p120${parm}
 title    = 5/-2/~ ? GEFS MEAN 120-HR PCPN|~120-HR PCPN
 ${run2}
