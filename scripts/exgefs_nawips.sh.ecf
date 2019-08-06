@@ -14,9 +14,14 @@ set -xa
 
 cd $DATA
 
-RUN=$1
-member=$2
-resolution=$3
+RUN=${1:-RUN}
+member=${2:-member}
+resolution=${3:-resolution}
+GEMPAKgefs=${4:-GEMPAKgefs}
+COMIN=${5:-COMIN}
+COMOUT
+fstart
+fend
 
 DATA_member=$DATA/${member}/$resolution
 mkdir -p $DATA_member
@@ -39,23 +44,23 @@ NAGRIB=nagrib2
 entry=`grep "^$RUN " $NAGRIB_TABLE | awk 'index($1,"#") != 1 {print $0}'`
 
 if [ "$entry" != "" ] ; then
-  cpyfil=`echo $entry  | awk 'BEGIN {FS="|"} {print $2}'`
-  garea=`echo $entry   | awk 'BEGIN {FS="|"} {print $3}'`
-  gbtbls=`echo $entry  | awk 'BEGIN {FS="|"} {print $4}'`
-  maxgrd=`echo $entry  | awk 'BEGIN {FS="|"} {print $5}'`
-  kxky=`echo $entry    | awk 'BEGIN {FS="|"} {print $6}'`
-  grdarea=`echo $entry | awk 'BEGIN {FS="|"} {print $7}'`
-  proj=`echo $entry    | awk 'BEGIN {FS="|"} {print $8}'`
-  output=`echo $entry  | awk 'BEGIN {FS="|"} {print $9}'`
+    cpyfil=`echo $entry  | awk 'BEGIN {FS="|"} {print $2}'`
+    garea=`echo $entry   | awk 'BEGIN {FS="|"} {print $3}'`
+    gbtbls=`echo $entry  | awk 'BEGIN {FS="|"} {print $4}'`
+    maxgrd=`echo $entry  | awk 'BEGIN {FS="|"} {print $5}'`
+    kxky=`echo $entry    | awk 'BEGIN {FS="|"} {print $6}'`
+    grdarea=`echo $entry | awk 'BEGIN {FS="|"} {print $7}'`
+    proj=`echo $entry    | awk 'BEGIN {FS="|"} {print $8}'`
+    output=`echo $entry  | awk 'BEGIN {FS="|"} {print $9}'`
 else
-  cpyfil=gds
-  garea=dset
-  gbtbls=
-  maxgrd=4999
-  kxky=
-  grdarea=
-  proj=
-  output=T
+    cpyfil=gds
+    garea=dset
+    gbtbls=
+    maxgrd=4999
+    kxky=
+    grdarea=
+    proj=
+    output=T
 fi  
 pdsext=no
 
@@ -66,88 +71,93 @@ maxtries=180
 fhcnt=$fstart
 while [ $fhcnt -le $fend ] ; do
 
-  # only if resolution is 0p50
-  if [ $fhcnt -ge 100 ] || [ $resolution = "0p50" ]; then
-    typeset -Z3 fhr
-  else
-    typeset -Z2 fhr
-  fi
-  fhr=$fhcnt
-  fhcnt3=`expr $fhr % 3`
+    # only if resolution is 0p50
+    if [ $fhcnt -ge 100 ] || [ $resolution = "0p50" ]; then
+        typeset -Z3 fhr
+    else
+        typeset -Z2 fhr
+    fi
+    fhr=$fhcnt
+    fhcnt3=`expr $fhr % 3`
 
-  fhr3=$fhcnt
-  typeset -Z3 fhr3
-  GRIBIN=$COMIN/${model}.${cycle}.${GRIB}${fhr}${EXT}
-  GEMGRD=${RUN}_${PDY}${cyc}f${fhr3}
+    fhr3=$fhcnt
+    typeset -Z3 fhr3
+    GRIBIN=$COMIN/${model}.${cycle}.${GRIB}${fhr}${EXT}
+    GEMGRD=${RUN}_${PDY}${cyc}f${fhr3}
 
-  finc1=finc
-  case $RUN in
-   ens*)  GRIBIN=$COMIN/${model}.${member}.${PDY}.${cyc}
-          GEMGRD=${RUN}_${PDY}${cyc} ;;
-    ge*)  if test "$model" = "bc" -o "$model" = "an" -o "$model" = "wt" -o "$model" = "me" -o "$model" = "anv" 
-          then
-             GRIBIN=$COMIN/${RUN}.${cycle}.pgrb2a_${model}f${fhr}
-             GEMGRD=${RUN}${model}_${PDY}${cyc}f${fhr3}
+    finc1=finc
+    case $RUN in
+    ens*)  
+        GRIBIN=$COMIN/${model}.${member}.${PDY}.${cyc}
+        GEMGRD=${RUN}_${PDY}${cyc} 
+        ;;
+    ge*)  
+        if test "$model" = "bc" -o "$model" = "an" -o "$model" = "wt" -o "$model" = "me" -o "$model" = "anv" 
+        then
+            GRIBIN=$COMIN/${RUN}.${cycle}.pgrb2a_${model}f${fhr}
+            GEMGRD=${RUN}${model}_${PDY}${cyc}f${fhr3}
 
-             # create subdirectory for the bc and an gefs files, -- 05/16/2013
-             # so that the mag system can only take the expected gefs files
-             # COMOUT_hold=$COMOUT
-             if test "$model" = "bc" -o "$model" = "an" 
-             then
+            # create subdirectory for the bc and an gefs files, -- 05/16/2013
+            # so that the mag system can only take the expected gefs files
+            # COMOUT_hold=$COMOUT
+            if test "$model" = "bc" -o "$model" = "an" 
+            then
                 COMOUT=${COMOUT_hold}/${model}
                 mkdir -p -m 775 $COMOUT
              fi
-          elif test "$model" = "glbanl"
-          then
-             GRIBIN=$COMIN/${model}.${cycle}.pgrb2a_mdf${fhr}
-             GEMGRD=${model}_${PDYm2}${cyc}f${fhr3}
-          elif test "$model" = "ndgd"
-          then
-             GRIBIN=$COMIN/${RUN}.${cycle}.${model}_conusf${fhr}
-             GEMGRD=${RUN}${model}_${PDY}${cyc}f${fhr3}
-          elif test "$model" = "ndgd_alaska"
-          then
-             GRIBIN=$COMIN/${RUN}.${cycle}.${model}f${fhr}
-             GEMGRD=${RUN}${model}_${PDY}${cyc}f${fhr3}
-          else
-             # This is for gefs
-             if [ $resolution = "0p50" ]
-             then
-               # pgrb2ap5/gep10.t00z.pgrb2a.0p50.f384
-               GRIBIN=$COMIN_P5/${RUN}.${cycle}.pgrb2a.${resolution}.f${fhr}
-               GEMGRD=${RUN}_${resolution}_${PDY}${cyc}f${fhr3}
-               if [ $fhcnt -lt 192 ] 
-               then 
-                 finc1=finc_0p50
-               fi
-             else   
-               # pgrb2a/gep10.t00z.pgrb2af384
-               GRIBIN=$COMIN/${RUN}.${cycle}.pgrb2af${fhr}
-               GEMGRD=${RUN}_${PDY}${cyc}f${fhr3}
-             fi
-          fi;;
-  esac
+        elif test "$model" = "glbanl"
+        then
+            GRIBIN=$COMIN/${model}.${cycle}.pgrb2a_mdf${fhr}
+            GEMGRD=${model}_${PDYm2}${cyc}f${fhr3}
+        elif test "$model" = "ndgd"
+        then
+            GRIBIN=$COMIN/${RUN}.${cycle}.${model}_conusf${fhr}
+            GEMGRD=${RUN}${model}_${PDY}${cyc}f${fhr3}
+        elif test "$model" = "ndgd_alaska"
+        then
+            GRIBIN=$COMIN/${RUN}.${cycle}.${model}f${fhr}
+            GEMGRD=${RUN}${model}_${PDY}${cyc}f${fhr3}
+        else
+            # This is for gefs
+            if [ $resolution = "0p50" ]
+            then
+                # pgrb2ap5/gep10.t00z.pgrb2a.0p50.f384
+                GRIBIN=$COMIN_P5/${RUN}.${cycle}.pgrb2a.${resolution}.f${fhr}
+                GEMGRD=${RUN}_${resolution}_${PDY}${cyc}f${fhr3}
+                if [ $fhcnt -lt 192 ] 
+                then 
+                    finc1=finc_0p50
+                fi
+            else   
+                # pgrb2a/gep10.t00z.pgrb2af384
+                GRIBIN=$COMIN/${RUN}.${cycle}.pgrb2af${fhr}
+                GEMGRD=${RUN}_${PDY}${cyc}f${fhr3}
+            fi
+        fi
+        ;;
+    esac
 
-  # GRIBIN_chk=$GRIBIN
-  GRIBIN_chk=${GRIBIN}.idx
+    # GRIBIN_chk=$GRIBIN
+    GRIBIN_chk=${GRIBIN}.idx
 
-  icnt=1
-  while [ $icnt -lt 1000 ]
-  do
+    icnt=1
+    while [ $icnt -lt 1000 ]
+    do
     if [ -r $GRIBIN_chk ] ; then
-      break
+        break
     else
-      let "icnt=icnt+1"
-      sleep 20
+        let "icnt=icnt+1"
+        sleep 20
     fi
     if [ $icnt -ge $maxtries ]
     then
-      msg="ABORTING after 1 hour of waiting for F$fhr to end."
-      err_exit $msg
+        msg="ABORTING after 1 hour of waiting for F$fhr to end."
+        err_exit $msg
     fi
-  done
+    done
 
-  cp $GRIBIN grib$fhr
+    cp $GRIBIN grib$fhr
+
 #DHOU: 12/27/2016 With the number of variables in pgrb2a/pgrb2ap5 increased from 83/42 to 85, the case block is replaced by the line above
 #  case $RUN in
 #    ge*)  if test "$model" = "bc" -o "$model" = "me" -o "$model" = "an" -o "$model" = "wt" -o "$model" = "glbanl" -o "$model" = "ndgd" -o "$model" = "anv"
@@ -158,10 +168,10 @@ while [ $fhcnt -le $fend ] ; do
 #             then
 #               # pgrb2bp5/gep10.t00z.pgrb2b.0p50.f384
 #               GRIBIN_B=$COMIN_B_P5/${RUN}.${cycle}.pgrb2b.0p50.f${fhr}
-#	         /nwprod/util/exec/wgrib2 -s $GRIBIN_B | grep -f ${PARMgefs}/gefs_gempak_0p50_b.parm | /nwprod/util/exec/wgrib2 -i -grib temp $GRIBIN_B
+#            /nwprod/util/exec/wgrib2 -s $GRIBIN_B | grep -f ${PARMgefs}/gefs_gempak_0p50_b.parm | /nwprod/util/exec/wgrib2 -i -grib temp $GRIBIN_B
 #             else
 #               GRIBIN_B=$COMIN_B/${RUN}.${cycle}.pgrb2bf${fhr}
-#	         /nwprod/util/exec/wgrib2 -s $GRIBIN_B | grep "HGT:300 mb" | /nwprod/util/exec/wgrib2 -i -grib temp $GRIBIN_B
+#            /nwprod/util/exec/wgrib2 -s $GRIBIN_B | grep "HGT:300 mb" | /nwprod/util/exec/wgrib2 -i -grib temp $GRIBIN_B
 #             fi
 #             cat $GRIBIN temp > grib$fhr
 #          fi
@@ -170,77 +180,74 @@ while [ $fhcnt -le $fend ] ; do
 #     cp $GRIBIN grib$fhr
 #  esac
 
-  if [ "$model" = "ensemble" ] ; then
-    export pgm="nagrib2 $RUN"
-  else
-    export pgm="nagrib2 F$fhr"
-  fi
+    if [ "$model" = "ensemble" ] ; then
+        export pgm="nagrib2 $RUN"
+    else
+        export pgm="nagrib2 F$fhr"
+    fi
 
-  # export pgm="nagrib2 F$fhr"
-  startmsg
+    # export pgm="nagrib2 F$fhr"
+    startmsg
 
-  $GEMEXE/$NAGRIB << EOF
-   GBFILE   = grib$fhr
-   INDXFL   = 
-   GDOUTF   = $GEMGRD
-   PROJ     = $proj
-   GRDAREA  = $grdarea
-   KXKY     = $kxky
-   MAXGRD   = $maxgrd
-   CPYFIL   = $cpyfil
-   GAREA    = $garea
-   OUTPUT   = $output
-   GBTBLS   = $gbtbls
-   GBDIAG   = 
-   PDSEXT   = $pdsext
-  l
-  r
+$GEMEXE/$NAGRIB << EOF
+GBFILE   = grib$fhr
+INDXFL   = 
+GDOUTF   = $GEMGRD
+PROJ     = $proj
+GRDAREA  = $grdarea
+KXKY     = $kxky
+MAXGRD   = $maxgrd
+CPYFIL   = $cpyfil
+GAREA    = $garea
+OUTPUT   = $output
+GBTBLS   = $gbtbls
+GBDIAG   = 
+PDSEXT   = $pdsext
+l
+r
 EOF
-  export err=$?;err_chk
+    
+    export err=$? #;err_chk
 
-  #####################################################
-  # GEMPAK DOES NOT ALWAYS HAVE A NON ZERO RETURN CODE
-  # WHEN IT CAN NOT PRODUCE THE DESIRED GRID.  CHECK
-  # FOR THIS CASE HERE.
-  #####################################################
-  ls -l $GEMGRD
-  # JY export err=$?;export pgm="GEMPAK CHECK FILE";err_chk
-  export err=$?
-  export pgm="GEMPAK CHECK FILE"
-  if [ $err -ne 0 ]
-  then
-    echo "Error: failed to create gempak file $GEMGRD"
-    err_chk
-  fi
+    #####################################################
+    # GEMPAK DOES NOT ALWAYS HAVE A NON ZERO RETURN CODE
+    # WHEN IT CAN NOT PRODUCE THE DESIRED GRID.  CHECK
+    # FOR THIS CASE HERE.
+    #####################################################
+    ls -l $GEMGRD
 
-  if [ "$NAGRIB" = "nagrib2" ] ; then
-    gpend
-  fi
- if [ $SENDCOM = "YES" ] ; then
-     mv $GEMGRD $COMOUT/$GEMGRD
-     if [ $SENDDBN = "YES" ] ; then
-       $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job \
-         $COMOUT/$GEMGRD
-     else
-       echo "##### DBN_ALERT_TYPE is: ${DBN_ALERT_TYPE} #####"
-     fi
-  fi
+    export pgm="GEMPAK CHECK FILE"
+    if [ $err -ne 0 ]
+    then
+        echo "Error: failed to create gempak file $GEMGRD"
+        err_chk
+    fi
 
-  # JY let fhcnt=fhcnt+finc
-  let fhcnt=fhcnt+finc1
+    if [ "$NAGRIB" = "nagrib2" ] ; then
+        gpend
+    fi
+    if [ $SENDCOM = "YES" ] ; then
+        mv $GEMGRD $COMOUT/$GEMGRD
+        if [ $SENDDBN = "YES" ] ; then
+            $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job \
+            $COMOUT/$GEMGRD
+        else
+            echo "##### DBN_ALERT_TYPE is: ${DBN_ALERT_TYPE} #####"
+        fi
+    fi
+
+    # JY let fhcnt=fhcnt+finc
+    let fhcnt=fhcnt+finc1
 done
 
-#####################################################################
-# GOOD RUN
-set +x
-echo "**************JOB $RUN NAWIPS COMPLETED NORMALLY ON THE IBM"
-echo "**************JOB $RUN NAWIPS COMPLETED NORMALLY ON THE IBM"
-echo "**************JOB $RUN NAWIPS COMPLETED NORMALLY ON THE IBM"
-set -x
-#####################################################################
-
-msg='Job completed normally.'
-echo $msg
-postmsg "$jlogfile" "$msg"
+if [ $err -eq 0 ] ; then 
+    echo "**************JOB $RUN NAWIPS COMPLETED NORMALLY ON THE IBM"
+    msg='Job completed normally.'
+    echo $msg
+    postmsg "$jlogfile" "$msg"
+else
+    echo "FAILED to convert NCEP GRIB files into GEMPAK Grids"
+    exit $err
+fi
 
 ############################### END OF SCRIPT #######################
