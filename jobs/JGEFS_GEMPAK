@@ -1,29 +1,51 @@
 #!/bin/sh
-
+#
 ########################################
-# Runs NAM Postprocessing up to 24 hours
+# GEFS GEMPAK PRODUCT GENERATION
 ########################################
 
 set -xa
-export MP_IOAGENT_CNT=all
-export MP_IO_BUFFER_SIZE=8M
 # #### 08/25/1999 ###################
 # SET SHELL PROCESSING VARIABLES
 # ###################################
 export PS4='$SECONDS + ' 
 date
-# 
-# obtain unique process id (pid) and make temp directories
-#
+
+############
+export MP_IOAGENT_CNT=all
+export MP_IO_BUFFER_SIZE=8M
+
+####################################
+# obtain unique process id (pid) and make working directory
+####################################
 export pid=$$
-export DATA=${DATAROOT}/${job}.${pid}
-mkdir $DATA
-cd $DATA 
+export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
+mkdir -p $DATA
+cd $DATA
+
+######################################
+# Set up the cycle variable
+######################################
+export cycle=${cycle:-t${cyc}z}
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
+export model=${model:-ensemble}
 
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+#export jlogfile=${jlogfile:-${COMROOT}/logs/jlogfiles/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -32,44 +54,54 @@ export outid="LL$job"
 export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
 
-export cycle=t${cyc}z 
-
+####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output in global_postgp.sh
+####################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDECF=${SENDECF:-YES}
 export SENDDBN=${SENDDBN:-YES}
+export VERBOSE=${VERBOSE:-NO}
 
+################################
+# Set up the HOME directory
+################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
-export GEMPAKgefs=${GEMPAKgefs:-$HOMEgefs/gempak}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
-#
+######################################
+# Set up the GEMPAK directory
+#######################################
+export GEMPAKgefs=${GEMPAKgefs:-$HOMEgefs/gempak}
+
+############################################
+# Run gefs.parm to get input variables
+############################################
+. $PARMgefs/gefs.parm
+
+############################################
 # Set up model and cycle specific variables
-#
-export NET=gens
-export RUN=gefs
-export fend=384
-export finc=6
-export finc_0p50=3
-export fstart=00
-export model=ensemble
+############################################
+export fstart=${fstart:-0}
+export fend=${fhmax:-384}
+export finc=${finc:-6}
+export finc_0p50=${finc_0p50:-3}
+
+export FHMAXHF=${FHMAXHF:-240}
+export FHOUTHF=${FHOUTHF:-3}
+export FHOUTLF=${FHOUTLF:-6}
+
 export GRIB=
 export EXT=""
-export DBN_ALERT_TYPE=GEFS_GEMPAK
+export DBN_ALERT_TYPE=${DBN_ALERT_TYPE:-GEFS_GEMPAK}
 
-#
-# Now set up GEMPAK/NTRANS environment
-#
-#
-# Copy model specific GEMPAK tables into working directory
-#
+export GEMPAK_RES=${GEMPAK_RES:-"1p 0p50"}
 
-# Run setpdy and initialize PDY variables
-setpdy.sh
-. PDY
-
-. ${NWROOTp1}/gempak/.gempak
-set -x
-
+##############################################
+# Define COM directories
+##############################################
 export COM=${COMROOT}/${NET}/${envir}
 export COMIN_RAW=${COM}/${RUN}.${PDY}/${cyc}/pgrb2a
 export COMIN_P5=${COM}/${RUN}.${PDY}/${cyc}/pgrb2ap5
@@ -78,9 +110,9 @@ export COMIN_B_P5=${COM}/${RUN}.${PDY}/${cyc}/pgrb2bp5
 export COMOUT=${COMROOT}/nawips/${envir}/${RUN}.${PDY}
 
 if [ ! -f $COMOUT ] ; then
-  mkdir -p -m 775 $COMOUT
+    mkdir -p -m 775 $COMOUT
 fi
- 
+
 env
 
 ########################################################
@@ -88,23 +120,40 @@ env
 export COMIN=$COMIN_RAW
 export model=raw
 
-for member in c00 p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 p11 p12 p13 p14 \
-              p15 p16 p17 p18 p19 p20
-do
-  export RUN=ge${member}
-  for resolution in 1p 0p50
-  do
-    #echo "$HOMEgefs/scripts/exnawips_gefs.sh.ecf  > $DATAHOLD/${member}.out 2>&1 " >> poescript
-    echo "$HOMEgefs/scripts/exnawips_gefs.sh.ecf $RUN $member $resolution" >> poescript
-  done
-done
 ########################################################
+## Get member list
+########################################################
+memberlist=""
+(( imem = 0 ))
+while (( imem < npert+1 )); do
+    if (( imem == 0 )); then
+        smem=c$(printf %02i $imem)
+    else
+        smem=p$(printf %02i $imem)
+    fi
+    memberlist="$memberlist $smem"
+    (( imem = imem + 1 ))
+done # while (( imem < npert ))
+echo memberlist=$memberlist
+
+########################################################
+## Generate poescript
+########################################################
+for member in $memberlist
+do
+    export RUN=ge${member}
+    for resolution in 1p 0p50
+    do
+        echo "$HOMEgefs/scripts/exgefs_nawips.sh.ecf $RUN $member $resolution" >> poescript
+    done
+done
 
 cat poescript
 
 chmod 775 $DATA/poescript
 export MP_PGMMODEL=mpmd
 export MP_CMDFILE=$DATA/poescript
+########################################################
 
 ## Execute the script.
 
@@ -112,16 +161,6 @@ mpirun -n 21 cfp $MP_CMDFILE
 ERR=$?
 echo $ERR
 
-#for member in c00 p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 p11 p12 p13 p14 \
-#              p15 p16 p17 p18 p19 p20
-#do
-#   set +x
-#   echo "######################################"
-#   echo "  $member.OUT "
-#   echo "######################################"
-#   set -x
-#   cat $member.out
-#done
 
 ##############################
 # Remove the Temporary working directory

@@ -10,25 +10,38 @@ set -xa
 # ###################################
 export PS4='$SECONDS + ' 
 date
-# 
-# obtain unique process id (pid) and make temp directories
-#
+
+####################################
+# obtain unique process id (pid) and make working directory
+####################################
 export pid=$$
-export DATA=${DATAROOT}/${job}.${pid}
-mkdir $DATA
-cd $DATA 
+export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
+mkdir -p $DATA
+cd $DATA
+
+######################################
+# Set up the cycle variable
+######################################
+export cycle=${cycle:-t${cyc}z}
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
+export model=${model:-ensemble}
 
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${COMROOT}/logs/jlogfiles/jlogfile.${job}.$$
-
-#############################################
-#set the fcst hrs for all the cycles
-#############################################
-export fhbeg=00
-export fhend=384
-export fhinc=12
+#export jlogfile=${jlogfile:-${COMROOT}/logs/jlogfiles/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -37,50 +50,56 @@ export outid="LL$job"
 export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
 
-export cycle=t${cyc}z 
-
+####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output in global_postgp.sh
+####################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDECF=${SENDECF:-YES}
 export SENDDBN=${SENDDBN:-YES}
-
+export VERBOSE=${VERBOSE:-NO}
 if [ "$DBNROOT" = "DBNROOT_OFF" ]; then
    export SENDDBN=NO
 else
    export SENDDBN=${SENDDBN:-YES}
 fi
 
-#
-# Set up model and cycle specific variables
-#
-export NET=gens
-export RUN=gefs
-export DBN_ALERT_TYPE=GEFS_METAFILE
-
+################################
+# Set up the HOME directory
+################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
+######################################
+# Set up the GEMPAK directory
+#######################################
 export GEMPAKgefs=${GEMPAKgefs:-$HOMEgefs/gempak}
+export FIXgempak=${FIXgempak:-$GEMPAKgefs/fix}
+export USHgempak=${USHgempak:-$GEMPAKgefs/ush}
 
-# export HOMEgempak=${NWROOT}/gempak
-export FIXgempak=$GEMPAKgefs/fix
-export USHgempak=$GEMPAKgefs/ush
+############################################
+# Run gefs.parm to get input variables
+############################################
+. $PARMgefs/gefs.parm
 
-#
-# Now set up GEMPAK/NTRANS environment
-#
-. ${NWROOTp1}/gempak/.gempak
+############################################
+# Set up model and cycle specific variables
+############################################
+export fhbeg=${fhbeg:-0}
+export fhend=${fhmax:-384}
+export fhinc=${fhinc:-12}
 
-###################################
-# Set up the UTILITIES
-###################################
-#export utilscript=${NWROOTp1}/util/ush
-#export utilities=${NWROOTp1}/util/ush
-#export utilexec=${NWROOTp1}/util/exec
+export FHMAXHF=${FHMAXHF:-240}
+export FHOUTHF=${FHOUTHF:-3}
+export FHOUTLF=${FHOUTLF:-6}
 
-# Run setup to initialize working directory and utility scripts
-# setup.sh
-# Run setpdy and initialize PDY variables
-setpdy.sh
-. PDY
+export DBN_ALERT_TYPE=${DBN_ALERT_TYPE:-GEFS_METAFILE}
 
+##############################################
+# Define COM directories
+##############################################
 export COMINs=${COMROOT}/nawips/${envir}
 export COMINs_p1=${COMROOTp1}/nawips/prod
 export COMIN=${COMROOT}/nawips/${envir}/${RUN}.${PDY}
@@ -88,7 +107,7 @@ export COMINm1=${COMROOT}/nawips/${envir}/${RUN}.${PDYm1}
 export COMOUT=${COMROOT}/nawips/${envir}/${RUN}.${PDY}/meta
 
 if [ ! -d $COMOUT ] ; then
-  mkdir -p -m 775 $COMOUT
+    mkdir -p -m 775 $COMOUT
 fi
  
 env

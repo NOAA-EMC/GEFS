@@ -4,25 +4,44 @@
 # Runs GEFS AVG and SPR gempak process
 ########################################
 
-
 set -xa
 # #### 08/25/1999 ###################
 # SET SHELL PROCESSING VARIABLES
 # ###################################
 export PS4='$SECONDS + ' 
 date
-# 
-# obtain unique process id (pid) and make temp directories
-#
+
+####################################
+# obtain unique process id (pid) and make working directory
+####################################
 export pid=$$
-export DATA=${DATAROOT}/${job}.${pid}
-mkdir $DATA
-cd $DATA 
+export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
+mkdir -p $DATA
+cd $DATA
+
+######################################
+# Set up the cycle variable
+######################################
+export cycle=${cycle:-t${cyc}z}
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
+export model=${model:-ensemble}
 
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+#export jlogfile=${jlogfile:-${COMROOT}/logs/jlogfiles/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -31,57 +50,54 @@ export outid="LL$job"
 export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
 
-export cycle=t${cyc}z 
-
 ####################################
-# SENDECF  - Flag Events on ECF
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
-# SENDCOM  - Copy files to /com directory
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output in global_postgp.sh
 # GET_IOPROFILE - Run I/O statistics
 ####################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDECF=${SENDECF:-YES}
 export SENDDBN=${SENDDBN:-YES}
+export VERBOSE=${VERBOSE:-NO}
+export GET_IOPROFILE=${GET_IOPROFILE:-NO}
 
-export GET_IOPROFILE=NO
-
+################################
+# Set up the HOME directory
+################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
-export GEMPAKgefs=${GEMPAKgefs:-$HOMEgefs/gempak}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
-#
+######################################
+# Set up the GEMPAK directory
+#######################################
+export GEMPAKgefs=${GEMPAKgefs:-$HOMEgefs/gempak}
+
+############################################
+# Run gefs.parm to get input variables
+############################################
+. $PARMgefs/gefs.parm
+
+############################################
 # Set up model and cycle specific variables
-#
-export NET=gens
-export RUN=gefs
-export fend=384
-export finc=6
-export finc_0p50=3
-export fstart=00
-export model=ensemble
+############################################
+export fstart=${fstart:-0}
+export fend=${fhmax:-384}
+export finc=${finc:-6}
+export finc_0p50=${finc_0p50:-3}
+
+export FHMAXHF=${FHMAXHF:-240}
+export FHOUTHF=${FHOUTHF:-3}
+export FHOUTLF=${FHOUTLF:-6}
+
 export GRIB=
 export EXT=""
-export DBN_ALERT_TYPE=GEFS_GEMPAK
+export DBN_ALERT_TYPE=${DBN_ALERT_TYPE:-GEFS_GEMPAK}
 
-#
-# Now set up GEMPAK/NTRANS environment
-#
-. ${NWROOTp1}/gempak/.gempak
-
-
-###################################
-# Set up the UTILITIES
-###################################
-export utilscript=${NWROOTp1}/util/ush
-export utilities=${NWROOTp1}/util/ush
-export utilexec=${NWROOTp1}/util/exec
-
-# Run setup to initialize working directory and utility scripts
-sh $utilscript/setup.sh
-# Run setpdy and initialize PDY variables
-setpdy.sh
-. PDY
-
+##############################################
+# Define COM directories
+##############################################
 export COM=${COMROOT}/${NET}/${envir}
 # export COMIN=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/pgrba
 export COMIN=${COM}/${RUN}.${PDY}/${cyc}/pgrb2a
@@ -89,7 +105,7 @@ export COMIN_P5=${COM}/${RUN}.${PDY}/${cyc}/pgrb2ap5
 export COMOUT=${COMROOT}/nawips/${envir}/${RUN}.${PDY}
 
 if [ ! -f $COMOUT ] ; then
-  mkdir -p -m 775 $COMOUT
+    mkdir -p -m 775 $COMOUT
 fi
  
 env
@@ -106,10 +122,10 @@ do
   if [ $GET_IOPROFILE = YES ]; then
      /usrx/local/mio/tools/bin/miostats -X0 \
     # JY  ${NWROOT}/scripts/exnawips.sh.ecf
-     echo "$HOMEgefs/scripts/exnawips_gefs.sh.ecf $RUN $member $resolution" >> poescript
+     echo "$HOMEgefs/scripts/exgefs_nawips.sh.ecf $RUN $member $resolution" >> poescript
   else
      # JY ${NWROOT}/scripts/exnawips.sh.ecf
-     echo "$HOMEgefs/scripts/exnawips_gefs.sh.ecf $RUN $member $resolution" >> poescript
+     echo "$HOMEgefs/scripts/exgefs_nawips.sh.ecf $RUN $member $resolution" >> poescript
   fi
   
   done
