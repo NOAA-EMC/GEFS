@@ -1,6 +1,8 @@
 # Ignore compiled binaries
 exec/
-/fix/
+fix/
+fix
+!gempak/fix/
 util/exec/
 
 # Ignore compiled objects in sorc directories
