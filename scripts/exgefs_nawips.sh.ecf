@@ -17,11 +17,12 @@ cd $DATA
 RUN=${1:-RUN}
 member=${2:-member}
 resolution=${3:-resolution}
-GEMPAKgefs=${4:-GEMPAKgefs}
-COMIN=${5:-COMIN}
-COMOUT
-fstart
-fend
+#GEMPAKgefs=${4:-GEMPAKgefs}
+#COMIN=${5:-COMIN}
+#COMOUT
+#fstart
+#fend
+pgrdbType=${pdgrbType:-pgrb2a}
 
 DATA_member=$DATA/${member}/$resolution
 mkdir -p $DATA_member
@@ -72,16 +73,20 @@ fhcnt=$fstart
 while [ $fhcnt -le $fend ] ; do
 
     # only if resolution is 0p50
-    if [ $fhcnt -ge 100 ] || [ $resolution = "0p50" ]; then
-        typeset -Z3 fhr
-    else
-        typeset -Z2 fhr
-    fi
-    fhr=$fhcnt
-    fhcnt3=`expr $fhr % 3`
+    #if [ $fhcnt -ge 100 ] || [ $resolution = "0p50" ]; then
+    #    typeset -Z3 fhr
+    #else
+    #    typeset -Z3 fhr
+    #fi
+    
+    fhr=$(printf %03i $fhcnt)
+    
+    #fhr=$fhcnt
+    #fhcnt3=`expr $fhr % 3`
 
-    fhr3=$fhcnt
-    typeset -Z3 fhr3
+    #fhr3=$fhcnt
+    #typeset -Z3 fhr3
+    
     GRIBIN=$COMIN/${model}.${cycle}.${GRIB}${fhr}${EXT}
     GEMGRD=${RUN}_${PDY}${cyc}f${fhr3}
 
@@ -121,17 +126,18 @@ while [ $fhcnt -le $fend ] ; do
             # This is for gefs
             if [ $resolution = "0p50" ]
             then
-                # pgrb2ap5/gep10.t00z.pgrb2a.0p50.f384
-                GRIBIN=$COMIN_P5/${RUN}.${cycle}.pgrb2a.${resolution}.f${fhr}
-                GEMGRD=${RUN}_${resolution}_${PDY}${cyc}f${fhr3}
+                GRIBIN=$COMIN_P5/${RUN}.${cycle}.${pgrdbType}.${resolution}.f${fhr}
+                GEMGRD=${RUN}_${resolution}_${PDY}${cyc}f${fhr}
                 if [ $fhcnt -lt 192 ] 
                 then 
                     finc1=finc_0p50
                 fi
+            elif [ $resolution = "1p00" ]; then
+                GRIBIN=${COMIN}/${RUN}.${cycle}.${pgrdbType}.${resolution}.f${fhr}
+                GEMGRD=${RUN}_${resolution}_${PDY}${cyc}f${fhr}
             else   
-                # pgrb2a/gep10.t00z.pgrb2af384
-                GRIBIN=$COMIN/${RUN}.${cycle}.pgrb2af${fhr}
-                GEMGRD=${RUN}_${PDY}${cyc}f${fhr3}
+                GRIBIN=${COMIN}/${RUN}.${cycle}.${pgrdbType}.${resolution}.f${fhr}
+                GEMGRD=${RUN}_${resolution}_${PDY}${cyc}f${fhr}
             fi
         fi
         ;;
