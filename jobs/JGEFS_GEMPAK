@@ -97,21 +97,21 @@ export GRIB=
 export EXT=""
 export DBN_ALERT_TYPE=${DBN_ALERT_TYPE:-GEFS_GEMPAK}
 
-export GEMPAK_RES=${GEMPAK_RES:-"1p 0p50"}
+export GEMPAK_RES=${GEMPAK_RES:-"1p00 0p50"}
 
 ##############################################
 # Define COM directories
 ##############################################
-export COM=${COMROOT}/${NET}/${envir}
-export COMIN_RAW=${COM}/${RUN}.${PDY}/${cyc}/pgrb2a1p0
-export COMIN_P5=${COM}/${RUN}.${PDY}/${cyc}/pgrb2ap5
-export COMIN_B=${COM}/${RUN}.${PDY}/${cyc}/pgrb2b1p0
-export COMIN_B_P5=${COM}/${RUN}.${PDY}/${cyc}/pgrb2bp5
-export COMOUT=${COMROOT}/nawips/${envir}/${RUN}.${PDY}
+#export COM=${COMROOT}/${NET}/${envir}
+#export COMIN_RAW=${COM}/${RUN}.${PDY}/${cyc}/pgrb2a1p0
+#export COMIN_P5=${COM}/${RUN}.${PDY}/${cyc}/pgrb2ap5
+#export COMIN_B=${COM}/${RUN}.${PDY}/${cyc}/pgrb2b1p0
+#export COMIN_B_P5=${COM}/${RUN}.${PDY}/${cyc}/pgrb2bp5
+#export COMOUT=${COMROOT}/nawips/${envir}/${RUN}.${PDY}
 
 
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/gempak
 
 if [ ! -f $COMOUT ] ; then
     mkdir -p -m 775 $COMOUT
@@ -121,8 +121,8 @@ env
 
 ########################################################
 # Execute the script.
-export COMIN=$COMIN_RAW
-export model=raw
+#export COMIN=$COMIN_RAW
+export model=ensemble
 
 ########################################################
 ## Get member list
@@ -145,10 +145,22 @@ echo memberlist=$memberlist
 ########################################################
 for member in $memberlist
 do
-    export RUN=ge${member}
-    for resolution in 1p 0p50
+    export RUNM=ge${member}
+    for resolution in ${GEMPAK_RES}
     do
-        echo "$HOMEgefs/scripts/exgefs_nawips.sh.ecf $RUN $member $resolution" >> poescript
+        if [ $resolution = "1p00" ]; then
+            export COMIN_Folder=pgrb2a1p0
+        elif [ $resolution = "0p50" ]; then
+            export COMIN_Folder=pgrb2ap5
+        elif [ $resolution = "0p25" ]; then
+            export COMIN_Folder=pgrb2ap25
+        else
+            echo "GEMPAK does not support this resolution!"
+            err=5
+            exit $err
+        fi
+        
+        echo "$HOMEgefs/scripts/exgefs_nawips.sh.ecf $RUNM $member $resolution ${GEMPAKgefs} ${COMIN}/${COMIN_Folder} ${COMOUT} ${fstart} ${fend} ${finc} ${finc_0p50}" >> poescript
     done
 done
 
