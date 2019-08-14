@@ -11,6 +11,8 @@ set -xa
 export PS4='$SECONDS + ' 
 date
 
+export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
+
 ############
 export MP_IOAGENT_CNT=all
 export MP_IO_BUFFER_SIZE=8M
@@ -170,11 +172,15 @@ cat poescript
 chmod 775 $DATA/poescript
 export MP_PGMMODEL=mpmd
 export MP_CMDFILE=$DATA/poescript
+export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
+rm -f mpmd_cmdfile
+ln -s $MP_CMDFILE mpmd_cmdfile
 ########################################################
 
 ## Execute the script.
 
-mpirun -n 21 cfp $MP_CMDFILE
+#mpirun -n 21 cfp $MP_CMDFILE
+$APRUN
 err=$?
 echo $err
 

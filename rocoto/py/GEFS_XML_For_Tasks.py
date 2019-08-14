@@ -595,7 +595,7 @@ def get_param_of_task(dicBase, taskname):
                     sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.prdgen.control.f{1:03}</cyclestr></datadep>'.format(i+1,int(dicBase["fhmaxh".upper()])+ int(dicBase["FHOUTHF"]))
                 sDep +='\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.prdgen.control.f{0:03}</cyclestr></datadep>'.format(int(dicBase["fhmaxh".upper()]) + int(dicBase["FHOUTHF"]))
                 sDep +='\n</and>'
-                
+               
             # For extractvars
             if taskname.lower() == "extractvars":
                 if DoesTaskExist(dicBase, "prdgen_low"):
@@ -660,6 +660,21 @@ def get_param_of_task(dicBase, taskname):
             # Don't clean up if keep_init isn't finished
             if taskname.lower() == "cleanup" and DoesTaskExist(dicBase, "keep_init"):
                 sDep = '<and>\n\t' + sDep + '\n\t<metataskdep metatask="keep_init"/>\n</and>'
+            
+            # For GEMPAK
+            if taskname.lower() == "gempak":
+                sDep = '<and>'
+                if DoesTaskExist(dicBase, "prdgen_low"):
+                    sDep = '<metataskdep metatask="prdgen_low"/>'
+                elif DoesTaskExist(dicBase, "prdgen_high"):
+                    sDep = '<metataskdep metatask="prdgen_high"/>'
+                else:
+                    sDep = ''
+
+                if sDep == '<and>':
+                    sDep = ""
+                else:
+                    sDep += '\n</and>'
 
     # Forecast can be derive from the parm items
     if taskname == 'forecast_high' or taskname == 'forecast_low':
@@ -671,16 +686,16 @@ def get_param_of_task(dicBase, taskname):
 
         WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
 
-        if WHERE_AM_I == 'cray'.upper():
-            ncores_per_node = 24
-        elif WHERE_AM_I == "theia".upper():
-            ncores_per_node = 24
-        elif WHERE_AM_I == "wcoss_dell_p3".upper():
-            ncores_per_node = 28
-        else:
-            ncores_per_node = 24
+        #if WHERE_AM_I == 'cray'.upper():
+        #    ncores_per_node = 24
+        #elif WHERE_AM_I == "theia".upper():
+        #    ncores_per_node = 24
+        #elif WHERE_AM_I == "wcoss_dell_p3".upper():
+        #    ncores_per_node = 28
+        #else:
+        #    ncores_per_node = 24
 
-        dicBase['COREPERNODE'] = ncores_per_node
+        dicBase['COREPERNODE'] = Get_NCORES_PER_NODE(dicBase) #ncores_per_node
         iNodes = int(math.ceil((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) * 1.0 / (ncores_per_node / parallel_threads)))
         iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
 
@@ -692,7 +707,41 @@ def get_param_of_task(dicBase, taskname):
             sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
 
+    # For gempak
+    if taskname == "gempak":
+        ncores_per_node = Get_NCORES_PER_NODE(dicBase)
+        WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
+        npert = int(dicBase["NPERT"])
+        Total_tasks = npert + 1
+        if "GEMPAK_RES" in dicBase:
+            Total_tasks *= len(dicBase["GEMPAK_RES"].split())
+
+        if Total_tasks<=ncores_per_node:
+            iNodes = 1
+            iPPN = Total_tasks
+        else:
+            iPPN = ncores_per_node
+            iNodes = int(Total_tasks/(iPPN*1.0) + 0.5) 
+        iTPP = 1
+        sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
+
+
     return sWalltime, sNodes, sMemory, sJoin, sDep, sQueue, sPartition
+
+# =======================================================
+def Get_NCORES_PER_NODE(dicBase):
+    WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
+
+    if WHERE_AM_I == 'cray'.upper():
+        ncores_per_node = 24
+    elif WHERE_AM_I == "theia".upper():
+        ncores_per_node = 24
+    elif WHERE_AM_I == "wcoss_dell_p3".upper():
+        ncores_per_node = 28
+    else:
+        ncores_per_node = 24
+    
+    return ncores_per_node
 
 # =======================================================
 def DoesTaskExist(dicBase, taskname):
@@ -866,13 +915,31 @@ def create_metatask(taskname="init_fv3chgrs", jobname="&EXPID;@Y@m@d@H15_#member
     account = "&ACCOUNT;"
     strings += sPre + '\t\t' + '<account>{0}</account>\n'.format(account)
 
+    metatask_names = get_metatask_names()
     if sJoin == "":
-        if taskname == "init_fv3chgrs":
-            strings += sPre + '\t\t' + '<sJoin><cyclestr>&LOG_DIR;/@Y@m@d/gefs_#member#{0}@H.%J</cyclestr></sJoin>\n'.format(
-                taskname.replace("jgefs", ""))
+        if taskname in metatask_names:
+            sJoin = "&LOG_DIR;/@Y@m@d/gefs_#member#{0}_@H".format(taskname)
         else:
-            strings += sPre + '\t\t' + '<join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_#member#{0}_@H.%J</cyclestr></join>\n'.format(
-                taskname.replace("jgefs", ""))
+            sJoin = "&LOG_DIR;/@Y@m@d/gefs_{0}_@H".format(taskname)
+
+        if WHERE_AM_I.upper().startswith("WCOSS"):
+            sJoin += ".%J"
+        elif WHERE_AM_I.upper() == "THEIA":
+            sJoin += ".%j"
+        else:
+            sJoin += ".%J"
+
+        if "@" in sJoin:
+            strings += sPre + '\t\t' + '<join><cyclestr>{0}</cyclestr></join>\n'.format(sJoin)
+        else:
+            strings += sPre + '\t\t' + '<join>{0}</join>\n'.format(sJoin)
+
+        #if taskname == "init_fv3chgrs":
+        #    strings += sPre + '\t\t' + '<sJoin><cyclestr>&LOG_DIR;/@Y@m@d/gefs_#member#{0}@H.%J</cyclestr></sJoin>\n'.format(
+        #        taskname.replace("jgefs", ""))
+        #else:
+        #    strings += sPre + '\t\t' + '<join><cyclestr>&LOG_DIR;/@Y@m@d/gefs_#member#{0}_@H.%J</cyclestr></join>\n'.format(
+        #        taskname.replace("jgefs", ""))
     else:
         if "@" in sJoin:
             strings += sPre + '\t\t' + '<join><cyclestr>{0}</cyclestr></join>\n'.format(sJoin)
