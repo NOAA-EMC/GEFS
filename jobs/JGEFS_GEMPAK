@@ -154,6 +154,7 @@ do
             export COMIN_Folder=pgrb2ap5
         elif [ $resolution = "0p25" ]; then
             export COMIN_Folder=pgrb2ap25
+            export fend=${FHMAXHF}
         else
             echo "GEMPAK does not support this resolution!"
             err=5
