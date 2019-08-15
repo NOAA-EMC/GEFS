@@ -709,8 +709,8 @@ def get_param_of_task(dicBase, taskname):
         #    ncores_per_node = 28
         #else:
         #    ncores_per_node = 24
-
-        dicBase['COREPERNODE'] = Get_NCORES_PER_NODE(dicBase) #ncores_per_node
+        ncores_per_node = Get_NCORES_PER_NODE(dicBase)
+        dicBase['COREPERNODE'] = ncores_per_node
         iNodes = int(math.ceil((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) * 1.0 / (ncores_per_node / parallel_threads)))
         iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
 
@@ -748,6 +748,23 @@ def get_param_of_task(dicBase, taskname):
             iTPP = 1
             sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
+    # For avgspr_gempak
+    if taskname == "avgspr_gempak":
+        if (sVarName_nodes not in dicBase) and (sVarName_ppn not in dicBase):
+
+            ncores_per_node = Get_NCORES_PER_NODE(dicBase)
+            WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
+            npert = int(dicBase["NPERT"])
+            Total_tasks = 2
+            nGEMPAK_RES = 1
+            if "GEMPAK_RES" in dicBase:
+                nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
+                Total_tasks *= nGEMPAK_RES
+
+            iNodes = 1
+            iPPN = Total_tasks
+            iTPP = 1
+            sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
     return sWalltime, sNodes, sMemory, sJoin, sDep, sQueue, sPartition
 

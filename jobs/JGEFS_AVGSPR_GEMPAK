@@ -139,7 +139,7 @@ do
         #   echo "$HOMEgefs/scripts/exgefs_nawips.sh.ecf $RUN $member $resolution" >> poescript
         #fi
         if [ $GET_IOPROFILE = YES ]; then
-            /usrx/local/mio/tools/bin/miostats -X0 \
+            /usrx/local/mio/tools/bin/miostats -X0 #\
         fi
     
         if [ $resolution = "1p00" ]; then
