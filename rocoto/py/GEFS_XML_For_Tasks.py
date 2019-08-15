@@ -676,6 +676,21 @@ def get_param_of_task(dicBase, taskname):
                 else:
                     sDep += '\n</and>'
 
+            # For AVGSPR_GEMPAK
+            if taskname.lower() == "avgspr_gempak":
+                sDep = '<and>'
+                if DoesTaskExist(dicBase, "ensstat_low"):
+                    sDep = '<taskdep task="ensstat_low"/>'
+                elif DoesTaskExist(dicBase, "ensstat_high"):
+                    sDep = '<taskdep task="ensstat_high"/>'
+                else:
+                    sDep = ''
+
+                if sDep == '<and>':
+                    sDep = ""
+                else:
+                    sDep += '\n</and>'
+
     # Forecast can be derive from the parm items
     if taskname == 'forecast_high' or taskname == 'forecast_low':
         layout_x = int(dicBase['layout_x'.upper()])

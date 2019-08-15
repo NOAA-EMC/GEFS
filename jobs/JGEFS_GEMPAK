@@ -14,8 +14,8 @@ date
 export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
 
 ############
-export MP_IOAGENT_CNT=all
-export MP_IO_BUFFER_SIZE=8M
+#export MP_IOAGENT_CNT=all
+#export MP_IO_BUFFER_SIZE=8M
 
 ####################################
 # obtain unique process id (pid) and make working directory
@@ -111,7 +111,6 @@ export GEMPAK_RES=${GEMPAK_RES:-"1p00 0p50"}
 #export COMIN_B_P5=${COM}/${RUN}.${PDY}/${cyc}/pgrb2bp5
 #export COMOUT=${COMROOT}/nawips/${envir}/${RUN}.${PDY}
 
-
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/gempak
 
@@ -168,6 +167,7 @@ do
         echo "$HOMEgefs/scripts/exgefs_nawips.sh.ecf $RUNM $member $resolution ${GEMPAKgefs} ${COMIN}/${COMIN_Folder} ${COMOUT} ${fstart} ${fend} ${finc} ${finc_0p50}" >> poescript
     done
 done
+########################################################
 
 cat poescript
 
