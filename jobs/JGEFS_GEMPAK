@@ -186,7 +186,6 @@ $APRUN
 err=$?
 echo $err
 
-
 ##############################
 # Remove the Temporary working directory
 ##############################

@@ -278,6 +278,11 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "avgspr_gempak"
 
+            # ---avg_gempak_vgf
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "avg_gempak_vgf"
+
             # ---gempak_meta
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
@@ -287,11 +292,6 @@ def config_tasknames(dicBase):
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "avgspr_gempak_meta"
-
-            # ---avg_gempak_vgf
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "avg_gempak_vgf"
 
         # #    <!-- postsnd  Post Sound -->
         if dicBase['RUN_POSTSND'].upper()[0] == "Y":
@@ -665,11 +665,11 @@ def get_param_of_task(dicBase, taskname):
             if taskname.lower() == "gempak":
                 sDep = '<and>'
                 if DoesTaskExist(dicBase, "prdgen_low"):
-                    sDep = '<metataskdep metatask="prdgen_low"/>'
+                    sDep += '<metataskdep metatask="prdgen_low"/>'
                 elif DoesTaskExist(dicBase, "prdgen_high"):
-                    sDep = '<metataskdep metatask="prdgen_high"/>'
+                    sDep += '<metataskdep metatask="prdgen_high"/>'
                 else:
-                    sDep = ''
+                    sDep += ''
 
                 if sDep == '<and>':
                     sDep = ""
@@ -680,16 +680,24 @@ def get_param_of_task(dicBase, taskname):
             if taskname.lower() == "avgspr_gempak":
                 sDep = '<and>'
                 if DoesTaskExist(dicBase, "ensstat_low"):
-                    sDep = '<taskdep task="ensstat_low"/>'
+                    sDep += '<taskdep task="ensstat_low"/>'
                 elif DoesTaskExist(dicBase, "ensstat_high"):
-                    sDep = '<taskdep task="ensstat_high"/>'
+                    sDep += '<taskdep task="ensstat_high"/>'
                 else:
-                    sDep = ''
+                    sDep += ''
 
                 if sDep == '<and>':
                     sDep = ""
                 else:
                     sDep += '\n</and>'
+
+            # For avg_gempak_vgf
+            if taskname.lower() == "avg_gempak_vgf":
+                if DoesTaskExist(dicBase, "avgspr_gempak"):
+                    sDep = '<taskdep task="avgspr_gempak"/>'
+                else:
+                    sDep = ''
+
 
     # Forecast can be derive from the parm items
     if taskname == 'forecast_high' or taskname == 'forecast_low':

@@ -24,11 +24,11 @@ PDY2=`echo $PDY | cut -c3-`
 
 for fcsthrs in 96 108
 do
-   for area in NATL MPAC
-   do
-       ocean=`echo ${area} | cut -c2-`
+    for area in NATL MPAC
+    do
+        ocean=`echo ${area} | cut -c2-`
 
-       export pgm=gdplot2_vg;. prep_step; startmsg
+        export pgm=gdplot2_vg;. prep_step; startmsg
 
 gdplot2_vg << EOF
 GDFILE  = F-GEFSAVG | ${PDY2}/${cyc}00
@@ -99,16 +99,16 @@ list
 ru
 EOF
 
-       export err=$?;err_chk
+        export err=$?;err_chk
 
-       if [ $SENDCOM = "YES" ] ; then
-           mv *.vgf ${COMOUT}
-           if [ $SENDDBN = "YES" ] ; then
-               ${DBNROOT}/bin/dbn_alert VGF OPC $job ${COMOUT}/${ocean}_gefs_avgPMSL_${PDY2}_${cyc}_F${fcsthrs}.vgf
-               ${DBNROOT}/bin/dbn_alert VGF OPC $job ${COMOUT}/${ocean}_gefs_avg500_${PDY2}_${cyc}_F${fcsthrs}.vgf
-           fi
-       fi
-   done
+        if [ $SENDCOM = "YES" ] ; then
+            mv *.vgf ${COMOUT}
+            if [ $SENDDBN = "YES" ] ; then
+                ${DBNROOT}/bin/dbn_alert VGF OPC $job ${COMOUT}/${ocean}_gefs_avgPMSL_${PDY2}_${cyc}_F${fcsthrs}.vgf
+                ${DBNROOT}/bin/dbn_alert VGF OPC $job ${COMOUT}/${ocean}_gefs_avg500_${PDY2}_${cyc}_F${fcsthrs}.vgf
+            fi
+        fi
+    done
 done
 
 exit
