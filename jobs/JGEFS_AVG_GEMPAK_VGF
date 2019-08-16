@@ -40,7 +40,6 @@ export model=${model:-ensemble}
 ####################################
 # File To Log Msgs
 ####################################
-#export jlogfile=${jlogfile:-${COMROOT}/logs/jlogfiles/jlogfile.${job}.${pid}}
 export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
 
 ####################################
