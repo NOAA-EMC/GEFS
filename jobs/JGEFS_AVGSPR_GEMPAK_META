@@ -21,7 +21,7 @@ cd $DATA
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${COMROOT}/logs/jlogfiles/jlogfile.${job}.$$
+export jlogfile=${jlogfile:-${DATA}/jlogfile}
 
 #############################################
 #set the fcst hrs for all the cycles
@@ -65,7 +65,7 @@ export USHgempak=$GEMPAKgefs/ush
 #
 # Now set up GEMPAK/NTRANS environment
 #
-. ${NWROOTp1}/gempak/.gempak
+# JY . ${NWROOTp1}/gempak/.gempak
 
 # JY cp ${NWROOTp1}/gempak/fix/datatype.tbl datatype.tbl
 cp $FIXgempak/datatype.tbl datatype.tbl

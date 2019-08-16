@@ -453,10 +453,10 @@ if (( relocpertflag == 1 )); then
     cat $COMIN/$cyc/init/zgfs.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
   else
     # replaced by f00 gfs tracking above but retained for retrospective runs
-    if [[ -e $COMINgfs/avno.${cycle}.cyclone.trackatcfunix ]]; then
-      cat $COMINgfs/avno.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
+    if [[ -e $COMINens_tracker_gfs/avno.${cycle}.cyclone.trackatcfunix ]]; then
+      cat $COMINens_tracker_gfs/avno.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
     else
-	echo $COMINgfs/avno.${cycle}.cyclone.trackatcfunix DOES NOT EXIST
+	echo $COMINens_tracker_gfs/avno.${cycle}.cyclone.trackatcfunix DOES NOT EXIST
 	touch trackatcfunix.in
     fi
   fi

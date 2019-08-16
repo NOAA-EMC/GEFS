@@ -71,7 +71,7 @@ export RUN=${RUN:-gefs}
 ####################################
 # File To Log Msgs
 ####################################
-  export jlogfile=${jlogfile:-${COMROOT}/logs/jlogfiles/jlogfile.${job}.${pid}}
+  export jlogfile=${jlogfile:-${DATA}/jlogfile}
 
 ####################################
 # Determine Job Output Name on System
@@ -87,7 +87,7 @@ export pgmerr=errfile
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
-export HOMEenkf=${HOMEenkf:-$NWROOTp1/enkf.${enkf_ver}}
+export HOMEenkf=${HOMEenkf:-$NWROOT/enkf.${enkf_ver}}
 
 #This part is used for nemsio reading
 export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
@@ -136,6 +136,7 @@ export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.$PDY)/$cyc}
 export COMINgfs6ago=${COMINgfs6ago:-$(compath.py gfs/prod/gfs.$d6ago_ymd)}
 export COMINgfs6ahead=${COMINgfs6ahead:-$(compath.py gfs/prod/gfs.$d6ahead_ymd)}
 export COMINenkf=${COMINenkf:-$(compath.py gfs/prod)/enkfgdas.}
+export COMINens_tracker_gfs=${COMINens_tracker_gfs:-$(compath.py ens_tracker/prod/gfs.$PDY)/$cyc/tctrack}
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}

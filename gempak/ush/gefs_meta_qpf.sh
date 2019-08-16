@@ -11,7 +11,6 @@ set -x
 export PS4='gefs_meta_qpf:$SECONDS + '
 mkdir $DATA/gefs_meta_qpf
 cd $DATA/gefs_meta_qpf
-sh $utilscript/setup.sh
 cp $FIXgempak/datatype.tbl datatype.tbl
 
 mdl=gefs

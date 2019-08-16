@@ -33,7 +33,8 @@ postmsg "$jlogfile" "$msg"
 cp $GEMPAKgefs/fix/*.tbl .
 
 #NAGRIB_TABLE=${NAGRIB_TABLE:-/nwprod/gempak/fix/nagrib.tbl}
-NAGRIB_TABLE=${NAGRIB_TABLE:-$NWROOT/gempak/fix/nagrib.tbl}
+#NAGRIB_TABLE=${NAGRIB_TABLE:-$NWROOT/gempak/fix/nagrib.tbl}
+NAGRIB_TABLE=${NAGRIB_TABLE:-$GEMPAKgefs/fix/nagrib.tbl}
 NAGRIB=nagrib2
 #
 

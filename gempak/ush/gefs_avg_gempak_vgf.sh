@@ -13,7 +13,6 @@ set -x
 export PS4='gefs_avg_vgf:$SECONDS + '
 mkdir $DATA/gefs_avg_vgf
 cd $DATA/gefs_avg_vgf
-sh $utilscript/setup.sh
 cp $FIXgempak/datatype.tbl datatype.tbl
 
 mdl=gefs_avg_vgf
