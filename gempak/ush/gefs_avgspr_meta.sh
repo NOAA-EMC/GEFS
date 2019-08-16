@@ -18,7 +18,6 @@ set -x
 export PS4='gefs_avgspr:$SECONDS + '
 mkdir $DATA/gefs_avgspr
 cd $DATA/gefs_avgspr
-sh $utilscript/setup.sh
 cp $FIXgempak/datatype.tbl datatype.tbl
 
 mdl=gefs_avgspr
