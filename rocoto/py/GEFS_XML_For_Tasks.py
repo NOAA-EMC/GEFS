@@ -663,33 +663,21 @@ def get_param_of_task(dicBase, taskname):
             
             # For GEMPAK
             if taskname.lower() == "gempak":
-                sDep = '<and>'
                 if DoesTaskExist(dicBase, "prdgen_low"):
-                    sDep += '<metataskdep metatask="prdgen_low"/>'
+                    sDep = '<metataskdep metatask="prdgen_low"/>'
                 elif DoesTaskExist(dicBase, "prdgen_high"):
-                    sDep += '<metataskdep metatask="prdgen_high"/>'
+                    sDep = '<metataskdep metatask="prdgen_high"/>'
                 else:
-                    sDep += ''
-
-                if sDep == '<and>':
-                    sDep = ""
-                else:
-                    sDep += '\n</and>'
+                    sDep = ''
 
             # For AVGSPR_GEMPAK
             if taskname.lower() == "avgspr_gempak":
-                sDep = '<and>'
                 if DoesTaskExist(dicBase, "ensstat_low"):
-                    sDep += '<taskdep task="ensstat_low"/>'
+                    sDep = '<taskdep task="ensstat_low"/>'
                 elif DoesTaskExist(dicBase, "ensstat_high"):
-                    sDep += '<taskdep task="ensstat_high"/>'
+                    sDep = '<taskdep task="ensstat_high"/>'
                 else:
-                    sDep += ''
-
-                if sDep == '<and>':
-                    sDep = ""
-                else:
-                    sDep += '\n</and>'
+                    sDep = ''
 
             # For avg_gempak_vgf
             if taskname.lower() == "avg_gempak_vgf":
