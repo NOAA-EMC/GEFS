@@ -1,5 +1,7 @@
 import GEFS_XML_For_Tasks as gefs_xml_for_tasks
 
+
+# ===========================================================
 def create_bin_file(dicBase):
     '''
         Create crontab to execute rocotorun every cronint (5) minutes
@@ -16,45 +18,45 @@ def create_bin_file(dicBase):
     #
     ##########################################################
 
-    taskname ='forecast_high'  # 06
+    taskname = 'forecast_high'  # 06
     if DoesTaskExist(dicBase, taskname):
         rw_bin_forecast_high(taskname, dicBase)
 
-    taskname ='forecast_low'  
+    taskname = 'forecast_low'
     if DoesTaskExist(dicBase, taskname):
         rw_bin_forecast_high(taskname, dicBase)
 
-    taskname ='prdgen_high'
+    taskname = 'prdgen_high'
     if DoesTaskExist(dicBase, taskname):
         rw_bin_prdgen(taskname, dicBase)
 
-    taskname ='prdgen_low'
+    taskname = 'prdgen_low'
     if DoesTaskExist(dicBase, taskname):
         rw_bin_prdgen(taskname, dicBase)
 
-    taskname ='prdgen_gfs'
+    taskname = 'prdgen_gfs'
     if DoesTaskExist(dicBase, taskname):
         if not DoesTaskExist(dicBase, 'prdgen_high'):
             rw_bin_prdgen(taskname, dicBase)
 
-    taskname ='ensstat_high'
+    taskname = 'ensstat_high'
     if DoesTaskExist(dicBase, taskname):
         rw_bin_ensstat(taskname, dicBase)
 
-    taskname ='ensstat_low'
+    taskname = 'ensstat_low'
     if DoesTaskExist(dicBase, taskname):
         rw_bin_ensstat(taskname, dicBase)
 
-    taskname ='gempak'
+    taskname = 'gempak'
     if DoesTaskExist(dicBase, taskname):
         rw_bin_gempak(taskname, dicBase)
 
-    taskname ='avgspr_gempak'
+    taskname = 'avgspr_gempak'
     if DoesTaskExist(dicBase, taskname):
         rw_bin_avgspr_gempak(taskname, dicBase)
 
 
-#===========================================================
+# ===========================================================
 def rw_bin_avgspr_gempak(taskname, dicBase):
     import sys
     import os
@@ -69,11 +71,11 @@ def rw_bin_avgspr_gempak(taskname, dicBase):
     sInput_File = sPath + "{0}.sh".format(taskname)
 
     if not os.path.exists(sInput_File):
-        print("Please check whether you have the input file: "+sInput_File )
+        print("Please check whether you have the input file: " + sInput_File)
         return
 
     if "PRDGEN_STREAMS" not in dicBase:
-        print("Please check whether you have the 'PRDGEN_STREAMS' variable in your user_full.conf and gefs_dev.parm" )
+        print("Please check whether you have the 'PRDGEN_STREAMS' variable in your user_full.conf and gefs_dev.parm")
         return
 
     Total_tasks = 2
@@ -84,7 +86,6 @@ def rw_bin_avgspr_gempak(taskname, dicBase):
 
     WHERE_AM_I = dicBase['WHERE_AM_I'].lower()
 
-    
     iPPN = Total_tasks
     iNodes = 1
 
@@ -123,7 +124,8 @@ def rw_bin_avgspr_gempak(taskname, dicBase):
     fh.flush()
     fh.close()
 
-#===========================================================
+
+# ===========================================================
 def rw_bin_gempak(taskname, dicBase):
     import sys
     import os
@@ -138,13 +140,13 @@ def rw_bin_gempak(taskname, dicBase):
     sInput_File = sPath + "{0}.sh".format(taskname)
 
     if not os.path.exists(sInput_File):
-        print("Please check whether you have the input file: "+sInput_File )
+        print("Please check whether you have the input file: " + sInput_File)
         return
 
     if "PRDGEN_STREAMS" not in dicBase:
-        print("Please check whether you have the 'PRDGEN_STREAMS' variable in your user_full.conf and gefs_dev.parm" )
+        print("Please check whether you have the 'PRDGEN_STREAMS' variable in your user_full.conf and gefs_dev.parm")
         return
-    
+
     ncores_per_node = gefs_xml_for_tasks.Get_NCORES_PER_NODE(dicBase)
     npert = int(dicBase["NPERT"])
     Total_tasks = npert + 1
@@ -164,7 +166,7 @@ def rw_bin_gempak(taskname, dicBase):
             iNodes = 31
         else:
             iPPN = ncores_per_node
-            iNodes = int(Total_tasks/(iPPN*1.0) + 0.5)
+            iNodes = int(Total_tasks / (iPPN * 1.0) + 0.5)
 
     sLines = ""
     with open(sInput_File, "r") as f:
@@ -201,7 +203,8 @@ def rw_bin_gempak(taskname, dicBase):
     fh.flush()
     fh.close()
 
-#===========================================================
+
+# ===========================================================
 def rw_bin_ensstat(taskname, dicBase):
     import sys
     import os
@@ -216,11 +219,11 @@ def rw_bin_ensstat(taskname, dicBase):
     sInput_File = sPath + "{0}.sh".format(taskname)
 
     if not os.path.exists(sInput_File):
-        print("Please check whether you have the input file: "+sInput_File )
+        print("Please check whether you have the input file: " + sInput_File)
         return
 
     if "PRDGEN_STREAMS" not in dicBase:
-        print("Please check whether you have the 'PRDGEN_STREAMS' variable in your user_full.conf and gefs_dev.parm" )
+        print("Please check whether you have the 'PRDGEN_STREAMS' variable in your user_full.conf and gefs_dev.parm")
         return
 
     iTotal_Tasks = len(dicBase["PRDGEN_STREAMS"].split())
@@ -254,11 +257,12 @@ def rw_bin_ensstat(taskname, dicBase):
     fh.flush()
     fh.close()
 
-#===========================================================
+
+# ===========================================================
 def rw_bin_prdgen(taskname, dicBase):
     import sys
     import os
-    
+
     sSep = "/"
     if sys.platform == 'win32':
         sSep = r'\\'
@@ -272,11 +276,11 @@ def rw_bin_prdgen(taskname, dicBase):
         sInput_File = sPath + "prdgen_high.sh"
 
     if not os.path.exists(sInput_File):
-        print("Please check whether you have the input file: "+sInput_File )
+        print("Please check whether you have the input file: " + sInput_File)
         return
 
     if "PRDGEN_STREAMS" not in dicBase:
-        print("Please check whether you have the 'PRDGEN_STREAMS' variable in your user_full.conf and gefs_dev.parm" )
+        print("Please check whether you have the 'PRDGEN_STREAMS' variable in your user_full.conf and gefs_dev.parm")
         return
 
     iTotal_Tasks = len(dicBase["PRDGEN_STREAMS"].split())
@@ -297,7 +301,7 @@ def rw_bin_prdgen(taskname, dicBase):
             elif WHERE_AM_I == "wcoss_dell_p3":
                 if sLine1.startswith("export total_tasks="):
                     sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
-            
+
             elif WHERE_AM_I == "wcoss_ibm":
                 if sLine1.startswith("export total_tasks="):
                     sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
@@ -305,13 +309,13 @@ def rw_bin_prdgen(taskname, dicBase):
             sLines += sLine
             # fh.write(sLine)
 
-
     fh = open(sInput_File, 'w')
     fh.writelines(sLines)
     fh.flush()
-    fh.close()    
+    fh.close()
 
-#===========================================================
+
+# ===========================================================
 def rw_bin_forecast_high(taskname, dicBase):
     import sys
     import os
@@ -326,7 +330,7 @@ def rw_bin_forecast_high(taskname, dicBase):
     sInput_File = sPath + taskname + ".sh"
 
     if not os.path.exists(sInput_File):
-        print("Please check whether you have the input file: "+sInput_File )
+        print("Please check whether you have the input file: " + sInput_File)
         return
 
     layout_x = int(dicBase['layout_x'.upper()])
@@ -337,16 +341,7 @@ def rw_bin_forecast_high(taskname, dicBase):
 
     WHERE_AM_I = dicBase['WHERE_AM_I']
 
-    if WHERE_AM_I == 'cray':
-        ncores_per_node = 24
-    elif WHERE_AM_I == "theia":
-        ncores_per_node = 24
-    elif WHERE_AM_I == "wcoss_dell_p3":
-        ncores_per_node = 28
-    elif WHERE_AM_I == "wcoss_ibm":
-        ncores_per_node = 24
-    else:
-        ncores_per_node = 24
+    ncores_per_node = gefs_xml_for_tasks.Get_NCORES_PER_NODE(dicBase)
 
     # PPN: Processes per node
     # TPP: Threads per process
@@ -365,7 +360,7 @@ def rw_bin_forecast_high(taskname, dicBase):
 
             if WHERE_AM_I == "cray":
                 if sLine1.startswith("export gefsmpexec="):
-                    sLine = 'export gefsmpexec=" aprun -b -j1 -n{0} -N{1} -d{2} -cc depth "\n'.format(iTotal_Tasks,iPPN,iTPP)
+                    sLine = 'export gefsmpexec=" aprun -b -j1 -n{0} -N{1} -d{2} -cc depth "\n'.format(iTotal_Tasks, iPPN, iTPP)
 
             elif WHERE_AM_I == "theia":
                 if sLine1.startswith("export total_tasks="):
@@ -381,15 +376,14 @@ def rw_bin_forecast_high(taskname, dicBase):
                 if sLine1.startswith("export gefsmpexec="):
                     sLine = 'export gefsmpexec=" mpirun -n {0} "\n'.format(iTotal_Tasks)
 
-
             sLines += sLine
             # fh.write(sLine)
-
 
     fh = open(sInput_File, 'w')
     fh.writelines(sLines)
     fh.flush()
     fh.close()
+
 
 # =========================================================
 def DoesTaskExist(dicBase, taskname):
@@ -405,7 +399,8 @@ def DoesTaskExist(dicBase, taskname):
 
     return False
 
-#===========================================================
+
+# ===========================================================
 def main():
     # for test this function
 
@@ -458,6 +453,8 @@ def main():
 
     create_bin_file(dicBase)
 
+
+# ===========================================================
 if __name__ == '__main__':
     import sys
 
@@ -465,7 +462,3 @@ if __name__ == '__main__':
 
     print("--Done to generate all files!")
     sys.exit(0)
-
-
-
-
