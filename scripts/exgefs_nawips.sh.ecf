@@ -134,7 +134,11 @@ while [ $fhcnt -le $fend ] ; do
             fi
 
             GRIBIN=${COMIN}/${RUNM}.${cycle}.${pgrdbType}.${resolution}.f${fhr}
-            GEMGRD=${RUNM}_${resolution}_${PDY}${cyc}f${fhr}
+            if [ $resolution = "1p00" ]; then
+                GEMGRD=${RUNM}_${PDY}${cyc}f${fhr}
+            else
+                GEMGRD=${RUNM}_${resolution}_${PDY}${cyc}f${fhr}
+            fi
         fi
         ;;
     esac

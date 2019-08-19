@@ -5,6 +5,8 @@ set -x
 msg="JOB $job HAS BEGUN"
 postmsg "$jlogfile" "$msg"
 
+numproc=${numproc:-1}
+
 cd $DATA
 rm $DATA/poescript
 typeset -Z2 fhr
