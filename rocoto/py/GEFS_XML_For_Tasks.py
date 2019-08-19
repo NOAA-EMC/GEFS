@@ -175,15 +175,15 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "avg_gempak_vgf"
 
-            # ---gempak_meta
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "gempak_meta"
-
             # ---avgspr_gempak_meta
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "avgspr_gempak_meta"
+
+            # ---gempak_meta
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "gempak_meta"
 
         # #    <!-- postsnd  Post Sound -->
         if dicBase['RUN_POSTSND'].upper()[0] == "Y":
@@ -867,6 +867,28 @@ def get_param_of_task(dicBase, taskname):
 
             # For avg_gempak_vgf
             if taskname.lower() == "avg_gempak_vgf":
+                if DoesTaskExist(dicBase, "avgspr_gempak"):
+                    sDep = '<taskdep task="avgspr_gempak"/>'
+                else:
+                    sDep = ''
+
+            # For gempak_meta
+            if taskname.lower() == "gempak_meta":
+                sDep = '<and>'
+                if DoesTaskExist(dicBase, "gempak"):
+                    sDep += '\n\t<taskdep task="gempak"/>'
+                elif DoesTaskExist(dicBase, "avgspr_gempak"):
+                    sDep += '\n\t<taskdep task="avgspr_gempak"/>'
+                else:
+                    sDep += ""
+
+                if sDep == '<and>':
+                    sDep = ""
+                else:
+                    sDep += '\n</and>'
+
+            # For avgsgempak_meta
+            if taskname.lower() == "avgspr_gempak_meta":
                 if DoesTaskExist(dicBase, "avgspr_gempak"):
                     sDep = '<taskdep task="avgspr_gempak"/>'
                 else:
