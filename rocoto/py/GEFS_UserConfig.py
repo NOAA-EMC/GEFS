@@ -143,9 +143,9 @@ def create_folders(dicBase):
     day = datetime.timedelta(days=1)
 
     while date1 <= date2:
-        sPath += date1.strftime('%Y%m%d')
-        if not os.path.exists(sPath):
-            os.makedirs(sPath)
+        sPath1 = sPath + date1.strftime('%Y%m%d')
+        if not os.path.exists(sPath1):
+            os.makedirs(sPath1)
         date1 = date1 + day
 
 
