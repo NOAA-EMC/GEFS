@@ -100,6 +100,8 @@
       integer,dimension(200) :: jids,jpdt,jgdt,iids,ipdt,igdt 
       common /param/jskp,jdisc,jids,jpdtn,jpdt,jgdtn,jgdt 
 
+      integer nc
+
       type(gribfield) :: gfld,gfldo 
       integer :: currlen=0 
       logical :: unpack=.true. 
@@ -165,7 +167,7 @@
 !
 !  READ IN MODEL INFO FILE NAME AND OPENED
       READ   (5,80) FNAME
-      WRITE  (6,*) 'MODEL  INFORMATION FILE: ',FNAME(1:40)
+      WRITE  (6,*) 'MODEL  INFORMATION FILE: ',FNAME(1:80)
       CLOSE  (MDLINF)
       OPEN   (UNIT=MDLINF,FILE=FNAME,FORM='FORMATTED')
  99   REWIND (MDLINF)
@@ -173,19 +175,19 @@
 !
 !  READ IN CONUS and US REGIONAL DATA FILE                   
       READ   (5,80,END=9000) CMASK 
-      WRITE  (6,*) 'CON US AND REGIONAL MASK: ',CMASK(1:40) 
+      WRITE  (6,*) 'CON US AND REGIONAL MASK: ',CMASK(1:80) 
       LCMASK=LEN_TRIM(CMASK)
 
 !
 !  READ IN FOR TEMP DIRECTORY                                
       READ   (5,80,END=9000) CTMPD 
-      WRITE  (6,*) 'FOR TEMP DIRECTORY: ',CTMPD(1:40) 
+      WRITE  (6,*) 'FOR TEMP DIRECTORY: ',CTMPD(1:80) 
       LCTMPD=LEN_TRIM(CTMPD)
 
 !
 !  READ IN GRIB ANALYSIS PRECIPITATION FILE NAME AND OPENED
       READ   (5,80,END=9000) CPGBA  
-      WRITE  (6,*) 'GRIB PRECIPITATION FILE: ',CPGBA(1:40) 
+      WRITE  (6,*) 'GRIB PRECIPITATION FILE: ',CPGBA(1:90) 
       LPGB=LEN_TRIM(CPGBA)
       CALL BAOPENR(11,CPGBA(1:LPGB),IER11)
       IERRS = IER11
@@ -198,7 +200,7 @@
 !
 !  READ IN OBSERVATION PRECIPITATION DATA FILE NAME AND OPENED
       READ   (5,80) PCPDA
-      WRITE  (6,*) 'OBS  PRECIPITATION FILE: ',PCPDA(1:40)
+      WRITE  (6,*) 'OBS  PRECIPITATION FILE: ',PCPDA(1:90)
       IF (PCPDA(1:4).NE.'NONE') THEN
        LPCPDA=.TRUE.
        CLOSE(LPCDAT)
@@ -278,7 +280,7 @@
        DMASK=CMASK(1:LCMASK) // FNAME(1:8)
        OPEN(UNIT=LUMASK,FILE=DMASK,FORM='UNFORMATTED')
        REWIND(LUMASK)    
-       WRITE (6,*) ' START TO READ: ',DMASK(1:60)
+       WRITE (6,*) ' START TO READ: ',DMASK(1:90)
        READ(LUMASK) (SMASK(KK),KK=1,JSIZE)
        CLOSE(LUMASK)
 
@@ -366,7 +368,9 @@
 !  GET THE FORECASTS THAT ARE VALID AT THE ANALYSIS DATE/TIME
 !  AND COVER THE SAME ACCUMULATION PERIOD AS THE ANALYSIS
 !
+       nc=0
        DO KTIME=IACC,IFDUR,IFREQ2
+       nc=nc+1
         ismn=ivmn
         isyr=ivyr
         isda=ivda
@@ -405,7 +409,7 @@
             ifhr1=ifhr
             ifhr=0
            ENDIF
-           CLOSE(21)
+           CLOSE(21+nc)
            CLOSE(22)
 !CC Modified by Yuejian Zhu (12/14/98)
            if (ifhr1.lt.100.and.ifhr.lt.100) THEN
@@ -436,10 +440,10 @@
 !        CALL FUNCTION STAT TO FIND NUMBER OF BYTES IN FILE
 !
            WRITE  (6,*) '==============================================' 
-           WRITE  (6,*) 'FORECAST DATA NAME: ',CPGBF(1:60)
+           WRITE  (6,*) 'FORECAST DATA NAME: ',CPGBF(1:90)
 
            LPGB=LEN_TRIM(CPGBF)
-           CALL BAOPENR(21,CPGBF(1:LPGB),IER21)
+           CALL BAOPENR(21+nc,CPGBF(1:LPGB),IER21)
            IERRS = IER21 
            IF (IERRS.NE.0) THEN
             WRITE(6,*) 'GRIB:BAOPEN ERR FOR DATA ',CPGBF                  
@@ -460,7 +464,7 @@
 
       ipdtn=11; igdtn=-1 
       call init_parm(ipdtn,ipdt,igdtn,igdt,idisc,iids) 
-      call getgb2(21,0,jskp,jdisc,jids,jpdtn,jpdt,jgdtn,jgdt,& 
+      call getgb2(21+nc,0,jskp,jdisc,jids,jpdtn,jpdt,jgdtn,jgdt,& 
                   unpack,jskp,gfldo,iret) 
       if (iret.eq.0) then 
        fci(1:maxgrd) = gfldo%fld(1:maxgrd)  
@@ -484,7 +488,8 @@
          endif  
          print *,' SAGT: NCEP GRID: ',igrid
       else 
-       write(6,*) 'GETGB PROBLEM FOR ANALYSIS : IRET=',iret 
+       write(6,*) 'GETGB PROBLEM FOR FORECAST : IRET=',iret,'n= ',n,&
+                 'kn= ',kn 
        goto 9000 
       endif 
 
