@@ -5,6 +5,8 @@ set -x
 msg="JOB $job HAS BEGUN"
 postmsg "$jlogfile" "$msg"
 
+numproc=${numproc:-1}
+
 cd $DATA
 rm $DATA/poescript
 typeset -Z2 fhr
@@ -25,8 +27,8 @@ done
 num=`cat $DATA/poescript |wc -l` 
 
 while [ $num -lt $numproc ] ; do
-   echo "hostname" >>poescript
-   num=`expr $num + 1`
+    echo "hostname" >>poescript
+    num=`expr $num + 1`
 done
 
 cat poescript
@@ -34,20 +36,25 @@ cat poescript
 chmod 775 $DATA/poescript
 export MP_PGMMODEL=mpmd
 export MP_CMDFILE=$DATA/poescript
+export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
+rm -f mpmd_cmdfile
+ln -s $MP_CMDFILE mpmd_cmdfile
 
 # Execute the script.
 
-mpirun -n $num cfp $MP_CMDFILE
+#mpirun -n $num cfp $MP_CMDFILE
+$APRUN
+err=$?
+echo $err
 
 #####################################################################
-# GOOD RUN
-set +x
-echo "********JOB GEFS_AVG_VGF COMPLETED NORMALLY on the IBM-SP"
-echo "********JOB GEFS_AVG_VGF COMPLETED NORMALLY on the IBM-SP"
-echo "********JOB GEFS_AVG_VGF COMPLETED NORMALLY on the IBM-SP"
-set -x
-#####################################################################
-
-echo EXITING $0
-exit
+if [ $err -eq 0 ] ; then 
+    echo "**************JOB $RUN NAWIPS COMPLETED NORMALLY ON THE IBM"
+    msg='Job completed normally.'
+    echo $msg
+    postmsg "$jlogfile" "$msg"
+else
+    echo "FAILED for GEFS_AVG_VGF"
+    exit $err
+fi
 #

@@ -1,0 +1,2 @@
+cp /gpfs/tp1/nco/ops/nwprod/gempak/fix/nagrib.tbl .
+

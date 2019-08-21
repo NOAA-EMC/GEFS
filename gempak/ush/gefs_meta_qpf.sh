@@ -11,7 +11,6 @@ set -x
 export PS4='gefs_meta_qpf:$SECONDS + '
 mkdir $DATA/gefs_meta_qpf
 cd $DATA/gefs_meta_qpf
-sh $utilscript/setup.sh
 cp $FIXgempak/datatype.tbl datatype.tbl
 
 mdl=gefs
@@ -137,15 +136,15 @@ do
         if [ ${grid} = "GFS" ]; then
             GDFILE="F-GFS | ${ddate}/${cyc}00"
             COMINtmp=$COMIN
-            export COMIN=/com/nawips/prod/gfs.$PDY
+            export COMIN=$COMINgfs
         elif [ ${grid} = "EC" ]; then
             if [ $cyc = "12" ]; then
                COMINtmp=$COMIN
-               export COMIN=/com/nawips/prod/ecmwf.$PDY
+               export COMIN=$COMINecmwf
                GDFILE="$COMIN/ecmwf_glob_${PDY}$cycm12"
             else
                COMINtmp=$COMIN
-               export COMIN=/com/nawips/prod/ecmwf.$PDYm1
+               export COMIN=$COMINm1ecmwf
                GDFILE="$COMIN/ecmwf_glob_${PDYm1}$cycm12"
             fi
             if [ ${area} = "us" ]; then
@@ -212,15 +211,15 @@ do
     if [ ${grid} = "GFS" ]; then
         GDFILE="F-GFS | ${ddate}/${cyc}00"
         COMINtmp=$COMIN
-        export COMIN=/com/nawips/prod/gfs.$PDY
+        export COMIN=$COMINgfs
     elif [ ${grid} = "EC" ]; then
         if [ $cyc = "12" ]; then
            COMINtmp=$COMIN
-           export COMIN=/com/nawips/prod/ecmwf.$PDY
+           export COMIN=$COMINecmwf
            GDFILE="$COMIN/ecmwf_glob_${PDY}$cycm12"
         else
            COMINtmp=$COMIN
-           export COMIN=/com/nawips/prod/ecmwf.$PDYm1
+           export COMIN=$COMINm1ecmwf
            GDFILE="$COMIN/ecmwf_glob_${PDYm1}$cycm12"
         fi
     else

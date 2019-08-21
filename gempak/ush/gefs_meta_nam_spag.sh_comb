@@ -16,7 +16,6 @@ set -x
 export PS4='gefs_nam_spag:$SECONDS + '
 mkdir $DATA/gefs_meta_nam_spag
 cd $DATA/gefs_meta_nam_spag
-sh $utilscript/setup.sh
 cp $FIXgempak/datatype.tbl datatype.tbl
 
 mdl=gefs
@@ -136,9 +135,11 @@ do
            then
               ln -s $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} $fn
            fi
-           if [ -r $COMINs/gefs.${PDY_6}/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ]
+           #if [ -r $COMINs/gefs.${PDY_6}/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ]
+           if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ]
            then
-              ln -s $COMINs/gefs.${PDY_6}/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}_6
+           #  ln -s $COMINs/gefs.${PDY_6}/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}_6
+              ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}_6
            fi
         done
 
@@ -147,40 +148,36 @@ do
            ln -s $COMIN/geavg_${PDY}${cyc}f${fcsthr} gefs_avg
         fi
 
-        if [ -r $COMINs/gefs.${PDY_6}/geavg_${PDY_6}${cyc_6}f${fcsthr_6} ]
+        #f [ -r $COMINs/gefs.${PDY_6}/geavg_${PDY_6}${cyc_6}f${fcsthr_6} ]
+        if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/geavg_${PDY_6}${cyc_6}f${fcsthr_6} ]
         then
-           ln -s $COMINs/gefs.${PDY_6}/geavg_${PDY_6}${cyc_6}f${fcsthr_6} gefs_avg_6
+        #  ln -s $COMINs/gefs.${PDY_6}/geavg_${PDY_6}${cyc_6}f${fcsthr_6} gefs_avg_6
+           ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/geavg_${PDY_6}${cyc_6}f${fcsthr_6} gefs_avg_6
         fi
 
-        if [ -r $COMINs_p1/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} ]
+        #if [ -r $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} ]
+        if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ]
         then
-           ln -s $COMINs_p1/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} gfs
+        #  ln -s $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} gfs
+           ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} gfs
         fi
 
-        if [ -r $COMINs_p1/gfs.${PDY_6}/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ]
+        #if [ -r $COMINs/gfs.${PDY_6}/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ]
+        if [ -r $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ]
         then
-           ln -s $COMINs_p1/gfs.${PDY_6}/gfs_${PDY_6}${cyc_6}f${fcsthr_6} gfs_6
+        #  ln -s $COMINs/gfs.${PDY_6}/gfs_${PDY_6}${cyc_6}f${fcsthr_6} gfs_6
+           ln -s $COMINsgfs/gfs.${PDY_6}a${cyc_6}/gempak/gfs_${PDY_6}${cyc_6}f${fcsthr_6} gfs_6
         fi
 
-        if [ -r $COMINs_p1/ecmwf.${ECM_PDY}/ecmwf_glob_${ECM_PDY}${ECM_cyc} ]
+        if [ -r $COMINs/ecmwf.${ECM_PDY}/ecmwf_glob_${ECM_PDY}${ECM_cyc} ]
         then
-           ln -s $COMINs_p1/ecmwf.${ECM_PDY}/ecmwf_glob_${ECM_PDY}${ECM_cyc} ecmwf
+           ln -s $COMINs/ecmwf.${ECM_PDY}/ecmwf_glob_${ECM_PDY}${ECM_cyc} ecmwf
         fi
 
         if [ -r $COMINs_p1/ukmet.${ECM_PDY}/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ]
         then
            ln -s $COMINs_p1/ukmet.${ECM_PDY}/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ukmet
         fi
-
-#        if [ -r $COMINs_p1/cmc.${PDY}/cmc${PDY}${CMC_cyc}f${fcsthr_cmc} ]
-#        then
-#           ln -s $COMINs_p1/cmc.${PDY}/cmc${PDY}${CMC_cyc}f${fcsthr_cmc} cmc
-#        fi
-#
-#        if [ -r $COMINs_p1/nogaps.${PDY}/nogaps${PDY}${CMC_cyc}f${fcsthr_cmc} ]
-#        then
-#           ln -s $COMINs_p1/nogaps.${PDY}/nogaps${PDY}${CMC_cyc}f${fcsthr_cmc} nogaps
-#        fi
 
         if [ -r $COMINs_p1/dgex.${PDY}/dgex_${PDY}${cyc}f${fcsthr} ]
         then

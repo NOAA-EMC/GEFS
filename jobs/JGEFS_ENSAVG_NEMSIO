@@ -41,7 +41,7 @@ export RUN=${RUN:-gefs}
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -130,7 +130,7 @@ while (( imem < npert )); do
         imem=00$imem
     fi
     memberlist="$memberlist $imem"
-done # while (( imem < npair * 2 ))
+done # while (( imem < npert ))
 echo memberlist=$memberlist
 
 # set outtyp to 1 because we need to run chgres in the post before model start running chgres
@@ -209,37 +209,21 @@ echo
 env | sort
 echo
 
+if [[ -n $SUBJOB ]] ;
+then
+    J1=`echo $SUBJOB | cut -c1-1` 
+    J2=`echo $SUBJOB | cut -c2-2` 
+    iJ2=`printf '%d\n' "'$J2"`
+    iJ2=$((iJ2-65))
 
-J1=`echo $SUBJOB | cut -c1-1` 
-J2=`echo $SUBJOB | cut -c2-2` 
+    export FHOUT_HF=$(($FHOUTHF*J1))
+    export FHOUT_LF=$(($FHOUTLF*J1))
 
-case $J1 in
-    (2) 
-        export FHOUT_HF=$(( $FHOUTHF + $FHOUTHF ))
-        export FHOUT_LF=$(( $FHOUTLF + $FHOUTLF ))
-        ;;
-    (3) 
-        export FHOUT_HF=$(( $FHOUTHF + $FHOUTHF  + $FHOUTHF ))
-        export FHOUT_LF=$(( $FHOUTLF + $FHOUTLF + $FHOUTLF ))
-        ;;
-    (*)
-        ;;
-esac
-case $J2 in
-    (A) 
-        export SHOUR=$SHOUR;
-        ;;
-    (B) 
-        export SHOUR=$(( $SHOUR + $FHOUTHF ));
-        ;;
-    (C) 
-        export SHOUR=$(( $SHOUR + $FHOUTHF + $FHOUTHF ));
-        ;;
-esac
+    export SHOUR=$((SHOUR+FHOUTHF*iJ2))
+fi
 
 export ensavg_nemsio_log=$DATA/ensavg_nemsio_$SUBJOB.$FORECAST_SEGMENT.log
 
-#$HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf
 $HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf $DATA $SHOUR $FHOUT_HF $FHOUT_LF $FHMAXHF $FHOUR $ensavg_nemsio_log
 ERR=$?
 

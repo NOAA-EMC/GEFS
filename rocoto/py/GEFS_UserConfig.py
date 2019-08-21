@@ -1,4 +1,4 @@
-#=======================================================
+# =======================================================
 def get_and_merge_default_config(dicBase):
     import os, sys
     sSep = "/"
@@ -19,8 +19,9 @@ def get_and_merge_default_config(dicBase):
             if sDic not in dicBase:
                 dicBase[sDic] = dicBase_Default[sDic]
 
-#=======================================================
-def get_config_file(OnlyForTest = False):
+
+# =======================================================
+def get_config_file(OnlyForTest=False):
     import os, sys
 
     sSep = "/"
@@ -28,7 +29,7 @@ def get_config_file(OnlyForTest = False):
         sSep = r'\\'
 
     sRocoto_WS = os.getcwd()
-    sConfig = "" #"user_conf"
+    sConfig = ""  # "user_conf"
     if OnlyForTest:
 
         sRocoto_WS = os.getcwd() + sSep + '..'
@@ -64,7 +65,8 @@ def get_config_file(OnlyForTest = False):
     sRocoto_WS = os.path.abspath(sRocoto_WS)
     return sConfig, sRocoto_WS
 
-#=======================================================
+
+# =======================================================
 def read_config(sConfig):
     # read config file
     from collections import OrderedDict
@@ -81,18 +83,19 @@ def read_config(sConfig):
                     continue
                 else:
                     # print(sLine)
-                    a, b = sLine.split("=",1)
+                    a, b = sLine.split("=", 1)
+                    b = b.split(" #", 1)[0]
 
                     a = str(a).strip()
                     b = str(b).strip()
 
                     if b.startswith('"'):
-                        b = b.replace('"', "",1)
+                        b = b.replace('"', "", 1)
                     if b.endswith('"'):
                         b = b[:-1]
 
                     if b.startswith("'"):
-                        b = b.replace(",", "",1)
+                        b = b.replace(",", "", 1)
                     if b.endswith(","):
                         b = b[:-1]
 
@@ -111,7 +114,8 @@ def read_config(sConfig):
 
     return dicBase
 
-#=======================================================
+
+# =======================================================
 def create_folders(dicBase):
     import os, sys
 
@@ -120,50 +124,32 @@ def create_folders(dicBase):
         sSep = r'\\'
 
     EXPID = dicBase['EXPID']
-    WORKDIR = str(dicBase['WORKDIR']).replace("&EXPID;",EXPID)
+    WORKDIR = str(dicBase['WORKDIR']).replace("&EXPID;", EXPID)
 
     if not os.path.exists(WORKDIR):
         os.makedirs(WORKDIR)
 
-    sWS_Out = WORKDIR # + sSep + EXPID
-    if not os.path.exists(sWS_Out):
-        os.mkdir(sWS_Out)
-
-    sPath = sWS_Out + sSep + 'tmpnwprd'
-
+    sPath = WORKDIR + sSep + 'tmpnwprd'
     if not os.path.exists(sPath):
-        os.mkdir(sPath)
+        os.mkdirs(sPath)
+
+    sPath = WORKDIR + '{0}com{0}output{0}dev{0}'.format(sSep)
+    if not os.path.exists(sPath):
+        os.makedirs(sPath)
 
     import datetime
-    #
-    dd = WORKDIR + sSep + 'tmpnwprd'
-    if not os.path.exists(dd):
-        os.mkdirs(dd)
-    # cmd = "mkdir -p " + dd + "/tmpnwprd"
-    # os.system(cmd)
-    dd = WORKDIR + '{0}com{0}output{0}dev{0}'.format(sSep)
-    if not os.path.exists(dd):
-        os.makedirs(dd)
-
-    pdy = dicBase['SDATE'][0:8]
-    year = dicBase['SDATE'][0:4]
-    month = dicBase['SDATE'][4:6]
-    day = dicBase['SDATE'][6:8]
-
     date1 = datetime.datetime.strptime(dicBase['SDATE'][0:8], "%Y%m%d")
     date2 = datetime.datetime.strptime(dicBase['EDATE'][0:8], "%Y%m%d")
     day = datetime.timedelta(days=1)
 
     while date1 <= date2:
-        d = date1.strftime('%Y%m%d')
-        d1 = dd + d
-        # cmd = "mkdir -p " + d1
-        # os.system(cmd)
-        if not os.path.exists(d1):
-            os.makedirs(d1)
+        sPath1 = sPath + date1.strftime('%Y%m%d')
+        if not os.path.exists(sPath1):
+            os.makedirs(sPath1)
         date1 = date1 + day
 
-#=======================================================
+
+# =======================================================
 def get_WHERE_AM_I(dicBase):
     sVarName = 'WHERE_AM_I'
     import os
@@ -181,4 +167,3 @@ def get_WHERE_AM_I(dicBase):
         else:
             print('workflow is currently only supported on: %s' % ' '.join('other'))
             raise NotImplementedError('Cannot auto-detect platform, ABORT!')
-

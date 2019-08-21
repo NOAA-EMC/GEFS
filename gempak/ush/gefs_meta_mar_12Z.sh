@@ -14,7 +14,6 @@ set -x
 export PS4='mar_12Z:$SECONDS + '
 mkdir $DATA/mar_12Z
 cd $DATA/mar_12Z
-sh $utilscript/setup.sh
 cp $FIXgempak/datatype.tbl datatype.tbl
 
 mdl=gefs
@@ -33,8 +32,8 @@ mdl=gefs
 MDL=GEFS
 
 # DEFINE YESTERDAY
-yesterday=`/nwprod/util/exec/ndate -24 ${PDY}${cyc} | cut -c -8`
-shrtyesterday=`/nwprod/util/exec/ndate -24 ${PDY}${cyc} | cut -c3-8`
+yesterday=`${NDATE} -24 ${PDY}${cyc} | cut -c -8`
+shrtyesterday=`${NDATE} -24 ${PDY}${cyc} | cut -c3-8`
 
 fcsthrs="000 012 024 036 048 060 072 084 096 108 120"
 levels="534 540 546 552 558 564 570"
@@ -200,12 +199,8 @@ LINE    = 31/2/3/0
 TITLE   = 31/+10/~ ? NAM (DASHED) |~${level} DM - ${metaarea}
 run
 
-GDFILE  = \$COMINs_p1/ngm.${PDY}/ngm_${PDY}${cyc}f${fcsthr}
-LINE    = 23/2/3/0
-TITLE   = 23/+11/~ ? NGM (DASHED) |~${level} DM - ${metaarea}
-run
-
-GDFILE	= \$COMINs_p1/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr}
+#GDFILE	= \$COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr}
+GDFILE	= \$COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr}
 LINE    = 5/2/3/0
 TITLE   = 5/+12/~ ? GFS (DASHED) |~${level} DM - ${metaarea}
 run
@@ -388,13 +383,7 @@ HILO    = 31/L#/900-1016/5/50/y
 TITLE   = 31/+10/~ ? NAM |~${metaarea} ${metashname}
 run
 
-GDFILE  = \$COMINs_p1/ngm.${PDY}/ngm_${PDY}${cyc}f${fcsthr}
-LINE    = 23/2/3/0
-HILO    = 23/L#/900-1016/5/50/y
-TITLE   = 23/+11/~ ? NGM |~${metaarea} ${metashname}
-run
-
-GDFILE	= \$COMINs_p1/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr}
+GDFILE	= \$COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr}
 LINE    = 5/2/3/0
 HILO    = 5/L#/900-1016/5/50/y
 TITLE   = 5/+12/~ ? GFS |~${metaarea} ${metashname}
@@ -403,7 +392,7 @@ run
 exit
 EOF
 
-        export err=$?;$DATA/err_chk
+        export err=$?;err_chk
     done
 
     #####################################################
@@ -412,7 +401,7 @@ EOF
     # FOR THIS CASE HERE.
     #####################################################
     ls -l ${metaname}
-    export err=$?;export pgm="GEMPAK CHECK FILE";$DATA/err_chk
+    export err=$?;export pgm="GEMPAK CHECK FILE";err_chk
 
     if [ $SENDCOM = "YES" ] ; then
         mv ${metaname} ${COMOUT}/gefs_${PDY}_${cyc}_${metatype}

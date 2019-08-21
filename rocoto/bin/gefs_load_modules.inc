@@ -56,6 +56,8 @@ elif [[ "$WHERE_AM_I" == theia ]]; then
     module use -a /scratch3/NCEPDEV/nwprod/modulefiles
     module load grib_util/v1.1.0
 
+    module load gempak/7.4.2
+
     export PATH=/scratch4/NCEPDEV/ensemble/save/common/anaconda3/bin:$PATH:./
 
     # Temporary setting to test common settings
