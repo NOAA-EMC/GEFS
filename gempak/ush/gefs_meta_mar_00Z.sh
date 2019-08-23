@@ -11,6 +11,27 @@
 #
 set -x
 export PS4='mar_00Z:$SECONDS + '
+
+########################################################
+## Get member list
+########################################################
+export npert=${npert:-30}
+memberlist=""
+(( imem = 0 ))
+while (( imem < npert+1 )); do
+    if (( imem == 0 )); then
+        smem=c$(printf %02i $imem)
+    else
+        smem=p$(printf %02i $imem)
+    fi
+    memberlist="$memberlist $smem"
+    (( imem = imem + 1 ))
+done # while (( imem < npert ))
+echo memberlist=$memberlist
+########################################################
+## Get member list
+########################################################
+
 mkdir $DATA/mar_00Z
 cd $DATA/mar_00Z
 cp $FIXgempak/datatype.tbl datatype.tbl
