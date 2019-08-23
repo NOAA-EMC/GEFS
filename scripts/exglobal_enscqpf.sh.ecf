@@ -148,9 +148,24 @@ fi
 ### Check OBS preciptation data and today's forecast data
 ###
 echo "SEARCHING FOR OBS"
-ls -l $COMINGEST/shf.$OBSYMD/rfc24-uniq-early
-if [ -s $COMINGEST/shf.$OBSYMD/rfc24-uniq-early ]; then
- echo " $COMINGEST/shf.$OBSYMD/rfc24-uniq-early is available "
+ls -l $COMINshef/$OBSYMD.pe
+if [ -s $COMINshef/$OBSYMD.pe ]; then
+ echo " $COMINshef/$OBSYMD.pe is available "
+ echo " We need to re-format this data to get rfc24-uniq-early file "
+
+ PDYshef=$OBSYMD
+ cp -pr ${COMINshef}/${OBSYMD}.pe SHEFOUT1
+ $USHgefs/gefs_exishef.sh
+fi
+
+ls -l rfc24-uniq-early-shef
+
+#ls -l $COMINGEST/shf.$OBSYMD/rfc24-uniq-early
+#if [ -s $COMINGEST/shf.$OBSYMD/rfc24-uniq-early ]; then
+
+if [ -s rfc24-uniq-early-shef ]; then
+#echo " $COMINGEST/shf.$OBSYMD/rfc24-uniq-early is available "
+ echo " rfc24-uniq-early-shef is available "
  echo " We need to re-format this data to usa-dlyprcp format "
  ##### ADDED BY YAN LUO, 2013-07-15##############
  echo " Search all of the rfc24 reports for the date: " $OBSYMD
@@ -171,7 +186,8 @@ if [ -s $COMINGEST/shf.$OBSYMD/rfc24-uniq-early ]; then
   DDO=${DDO}
  fi
  obsdate=${YYO}${space}${MMO}${space}${DDO}${space}12
- grep "$obsdate"  $COMINGEST/shf.$OBSYMD/rfc24-uniq-early >  $DATA/rfc24-uniq-early
+#grep "$obsdate"  $COMINGEST/shf.$OBSYMD/rfc24-uniq-early >  $DATA/rfc24-uniq-early
+ grep "$obsdate"  $DATA/rfc24-uniq-early-shef >  $DATA/rfc24-uniq-early
  filesize=`  cat $DATA/rfc24-uniq-early | wc -l `
  abortatend=no
  if [ $filesize -ne 0 -a $filesize -le 20000 ]; then
