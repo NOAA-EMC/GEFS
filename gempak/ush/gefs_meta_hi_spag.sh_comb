@@ -260,7 +260,7 @@ EOF
             gdfn=gfs_6 
             if [ -e ${gdfn} ]; then
 cat >> cmdfilehi << EOF
-GDFILE  = gfs_6
+GDFILE  = ${gdfn}
 LINE    = 21/2/2/0
 TITLE   = 21/-1/~ ? GFS ${cyc_6}Z (DASHED) |~${name} ${level} DM
 GDATTIM = F${fcsthr_6}
@@ -284,7 +284,7 @@ EOF
             for gridl in ${grids}
             do
                 # ----- gridl -----
-                gdfn={gridl}_6
+                gdfn=${gridl}_6
                 if [ -e ${gdfn} ]; then
 cat >> cmdfilehi << EOF
 GDFILE  = ${gdfn}
@@ -325,7 +325,7 @@ EOF
             do
                 #gridl=`echo $grid | tr [A-Z] [a-z]`
                 # ----- gridl -----
-                gdfn={gridl}
+                gdfn=${gridl}
                 if [ -e ${gdfn} ]; then
 cat >> cmdfilehi  << EOF
 !GDFILE  = \$COMIN/ge${gridl}_${PDY}${cyc}f${fcsthr}
@@ -461,8 +461,8 @@ run
 EOF
             fi
     
-    echo cmdfilehi
-    gdplot2_nc < cmdfilehi
+            cat cmdfilehi
+            gdplot2_nc < cmdfilehi
 
     done    # For fcsthrs loop
 done    # For levels loop
