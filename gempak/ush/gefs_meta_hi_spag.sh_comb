@@ -202,7 +202,7 @@ do
         fi
 
 
-cat > cmdfilehi  << EOF
+cat > cmdfilehi << EOF
 GDATTIM	= F${fcsthr}
 DEVICE	= ${device}
 PANEL	= 0
@@ -235,7 +235,7 @@ EOF
             # ----- gfs -----
             gdfn=gfs # gd file name
             if [ -e ${gdfn} ]; then
-cat >> cmdfilecarib  << EOF
+cat >> cmdfilehi << EOF
 GDFILE  = ${gdfn}
 LINE    = 22/2/2/0
 TITLE   = 22/-2/~ ? GFS ${cyc}Z (DASHED) |~${name} ${level} DM
@@ -245,7 +245,7 @@ run
 EOF
                 
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilecarib  << EOF
+cat >> cmdfilehi << EOF
 MAP     = 0
 LATLON  = 0
 CLEAR   = no
@@ -259,7 +259,7 @@ EOF
             # ----- gfs_6 -----
             gdfn=gfs_6 
             if [ -e ${gdfn} ]; then
-cat >> cmdfilecarib  << EOF
+cat >> cmdfilehi << EOF
 GDFILE  = gfs_6
 LINE    = 21/2/2/0
 TITLE   = 21/-1/~ ? GFS ${cyc_6}Z (DASHED) |~${name} ${level} DM
@@ -269,7 +269,7 @@ run
 EOF
                 
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilecarib  << EOF
+cat >> cmdfilehi << EOF
 MAP     = 0
 LATLON  = 0
 CLEAR   = no
@@ -286,7 +286,7 @@ EOF
                 # ----- gridl -----
                 gdfn={gridl}_6
                 if [ -e ${gdfn} ]; then
-cat >> cmdfilehi  << EOF
+cat >> cmdfilehi << EOF
 GDFILE  = ${gdfn}
 LINE    = 25/1/1/0
 TITLE   = 25/+1/~ ? ${cyc_6}Z ENS MEMBERS|~${name} ${level} DM
@@ -295,7 +295,7 @@ run
 
 EOF
                     if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilecarib  << EOF
+cat >> cmdfilehi << EOF
 MAP     = 0
 LATLON  = 0
 CLEAR   = no
@@ -337,7 +337,7 @@ run
 
 EOF
                     if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilecarib  << EOF
+cat >> cmdfilehi << EOF
 MAP     = 0
 LATLON  = 0
 CLEAR   = no
@@ -355,7 +355,7 @@ EOF
             # ----- ukmet -----
             gdfn=ukmet 
             if [ -e ${gdfn} ]; then
-cat >> cmdfilehi  << EOF
+cat >> cmdfilehi << EOF
 GDFILE  = ${gdfn}
 LINE    = 7/2/2/0
 GDATTIM = F${fcsthr_ecm}
@@ -365,7 +365,7 @@ run
 EOF
                 
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilecarib  << EOF
+cat >> cmdfilehi << EOF
 MAP     = 0
 LATLON  = 0
 CLEAR   = no
@@ -379,7 +379,7 @@ EOF
             # ----- ecmwf -----
             gdfn=ecmwf 
             if [ -e ${gdfn} ]; then
-cat >> cmdfilehi  << EOF
+cat >> cmdfilehi << EOF
 GDFILE  = ${gdfn}
 LINE    = 6/2/2/0
 GDATTIM = F${fcsthr_ecm}
@@ -389,7 +389,7 @@ run
 EOF
                 
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilecarib  << EOF
+cat >> cmdfilehi << EOF
 MAP     = 0
 LATLON  = 0
 CLEAR   = no
@@ -403,7 +403,7 @@ EOF
             # ----- gefs_avg -----
             gdfn=gefs_avg 
             if [ -e ${gdfn} ]; then
-cat >> cmdfilehi  << EOF
+cat >> cmdfilehi << EOF
 GDFILE  = ${gdfn}
 LINE    = 1/2/2/0
 TITLE   = 1/-6/~ ? ENSMEAN ${cyc}Z       |~${name} ${level} DM
@@ -413,7 +413,7 @@ run
 EOF
                 
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilecarib  << EOF
+cat >> cmdfilehi << EOF
 MAP     = 0
 LATLON  = 0
 CLEAR   = no
@@ -427,7 +427,7 @@ EOF
             # ----- gefs_avg_6 -----
             gdfn=gefs_avg_6 
             if [ -e ${gdfn} ]; then
-cat >> cmdfilehi  << EOF
+cat >> cmdfilehi << EOF
 GDFILE  = ${gdfn}
 LINE    = 31/2/3/0
 TITLE   = 31/-5/~ ? ENSMEAN ${cyc_6}Z (DASHED)|~${name} ${level} DM
@@ -437,7 +437,7 @@ run
 EOF
                 
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilecarib  << EOF
+cat >> cmdfilehi << EOF
 MAP     = 0
 LATLON  = 0
 CLEAR   = no
@@ -451,7 +451,7 @@ EOF
             # ----- dgex -----
             gdfn=dgex 
             if [ -e ${gdfn} ]; then
-cat >> cmdfilehi  << EOF
+cat >> cmdfilehi << EOF
 GDFILE  = ${gdfn} 
 LINE    = 13/2/2/0
 GDATTIM = F${fcsthr}
@@ -461,7 +461,7 @@ run
 EOF
             fi
     
-    echo cdmfile
+    echo cmdfilehi
     gdplot2_nc < cmdfilehi
 
     done    # For fcsthrs loop
