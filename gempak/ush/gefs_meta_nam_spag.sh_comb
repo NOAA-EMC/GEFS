@@ -143,9 +143,9 @@ do
             fcsthr_ecm="0${fcsthr_ecm}"
         fi
         
-        rm -rf gefs_avg gefs_avg_6 gfs gfs_6 ecmwf ukmet dgex
-        rm -rf p0* p1* p2* c00*
-#        rm -rf gefs_avg gefs_avg_6 gfs gfs_6 ecmwf ukmet cmc nogaps dgex
+        #rm -rf gefs_avg gefs_avg_6 gfs gfs_6 ecmwf ukmet dgex
+        #rm -rf p0* p1* p2* c00*
+        #rm -rf gefs_avg gefs_avg_6 gfs gfs_6 ecmwf ukmet cmc nogaps dgex
 
         grids=${memberlist} #"p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 c00"
         for fn in `echo $grids`
@@ -240,7 +240,6 @@ WIND    = 0
 REFVEC  =
 
 EOF
-
 
         WrottenZERO=0
 
