@@ -253,6 +253,7 @@ cat >> cmdfilecarib  << EOF
 MAP     = 0
 LATLON  = 0
 CLEAR   = no
+
 EOF
                     
                 fi
@@ -275,6 +276,7 @@ cat >> cmdfilecarib  << EOF
 MAP     = 0
 LATLON  = 0
 CLEAR   = no
+
 EOF
                 
                 fi
@@ -285,22 +287,23 @@ EOF
             for gridl in ${grids}
             do
                 # ----- gridl -----
-                gdfn=${gridl}_06
+                gdfn=${gridl}_6
                 if [ -e ${gdfn} ]; then
-                    cat >> cmdfilecarib  << EOF
-                    GDFILE  = $gdfn
-                    LINE    = 25/1/1/0
-                    TITLE   = 25/+1/~ ? ${cyc_6}Z ENS MEMBERS|~${name} ${level} DM
-                    GDATTIM = F${fcsthr_6}
-                    run
+cat >> cmdfilecarib  << EOF
+GDFILE  = $gdfn
+LINE    = 25/1/1/0
+TITLE   = 25/+1/~ ? ${cyc_6}Z ENS MEMBERS|~${name} ${level} DM
+GDATTIM = F${fcsthr_6}
+run
 
 EOF
 
                     if [ $WrottenZERO -eq 0 ]; then            
-                        cat >> cmdfilecarib  << EOF
-                        MAP     = 0
-                        LATLON  = 0
-                        CLEAR   = no
+cat >> cmdfilecarib  << EOF
+MAP     = 0
+LATLON  = 0
+CLEAR   = no
+
 EOF
                     
                     fi
@@ -344,6 +347,7 @@ cat >> cmdfilecarib  << EOF
 MAP     = 0
 LATLON  = 0
 CLEAR   = no
+
 EOF
                     
                     fi
@@ -372,6 +376,7 @@ cat >> cmdfilecarib  << EOF
 MAP     = 0
 LATLON  = 0
 CLEAR   = no
+
 EOF
                     
                 fi
@@ -395,6 +400,7 @@ cat >> cmdfilecarib  << EOF
 MAP     = 0
 LATLON  = 0
 CLEAR   = no
+
 EOF
                     
                 fi
@@ -417,6 +423,7 @@ cat >> cmdfilecarib  << EOF
 MAP     = 0
 LATLON  = 0
 CLEAR   = no
+
 EOF
                     
                 fi
@@ -439,6 +446,7 @@ cat >> cmdfilecarib  << EOF
 MAP     = 0
 LATLON  = 0
 CLEAR   = no
+
 EOF
                     
                 fi
