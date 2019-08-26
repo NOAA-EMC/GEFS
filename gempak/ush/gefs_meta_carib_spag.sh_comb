@@ -237,6 +237,7 @@ EOF
 
             WrottenZERO=0
 
+            # ----- gfs -----
             gdfn=gfs # gd file name
             if [ -e ${gdfn} ]; then
 cat >> cmdfilecarib  << EOF
