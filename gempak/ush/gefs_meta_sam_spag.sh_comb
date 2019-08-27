@@ -302,7 +302,7 @@ EOF
             #gridl=`echo $grid | tr [A-Z] [a-z]`
 
             # ----- gridl -----
-            gdfn=${gridl} # gd file name
+            gdfn=${gridl}_6 # gd file name
             if [ -e ${gdfn} ]; then
 cat >> cmdfilesam  << EOF
 !GDFILE  = \$COMIN/ge${gridl}_${PDY}${cyc}f${fcsthr}
