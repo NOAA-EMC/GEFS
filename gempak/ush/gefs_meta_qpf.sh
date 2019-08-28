@@ -157,7 +157,7 @@ do
         if [ ${grid} = "GFS" ]; then
             GDFILE="F-GFS | ${ddate}/${cyc}00"
             COMINtmp=$COMIN
-            export COMIN=$COMINgfs
+            export COMIN=$COMINgfs/gfs.${PDY}/${cyc}/gempak/ 
         elif [ ${grid} = "EC" ]; then
             if [ $cyc = "12" ]; then
                COMINtmp=$COMIN
