@@ -46,7 +46,7 @@ MDL=GEFS
 #ddatem1=`echo $PDYm1 | cut -c3-8`
 
 # carib plots only go out to 132...but will go an extra 24 hrs to 156 at 12z.
-fcsthrs="000 012" # 024 036 048 060 072 084 096 108 120 132"
+fcsthrs="000 012 024 036 048 060 072 084 096 108 120 132"
 
 # SET VARIOUS TIME/DATE PARAMETERS
 case $cyc in
@@ -184,7 +184,7 @@ do
             #if [ -r $COMINs/gfs.${PDY_6}/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ]
             if [ -r $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
                 #  ln -s $COMINs/gfs.${PDY_6}/gfs_${PDY_6}${cyc_6}f${fcsthr_6} gfs_6
-                ln -s $COMINsgfs/gfs.${PDY_6}a${cyc_6}/gempak/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
+                ln -s $COMINsgfs/gfs.${PDY_6}${cyc_6}/gempak/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
             fi
 
             fn=ecmwf
