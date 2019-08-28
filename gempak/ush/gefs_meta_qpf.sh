@@ -210,8 +210,8 @@ run
 exit
 EOF
 
-export COMIN=$COMINtmp
-    done
+    export COMIN=$COMINtmp
+done
 
 if [ $SENDCOM = "YES" ] ; then
     mv ${metaname} ${COMOUT}/$metaname
@@ -279,7 +279,7 @@ run
 exit
 EOF
 
-export COMIN=$COMINtmp
+    export COMIN=$COMINtmp
 
 done
 
