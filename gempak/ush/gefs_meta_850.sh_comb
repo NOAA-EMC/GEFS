@@ -177,7 +177,7 @@ do
             #if [ -r $COMINs/gfs.${PDY_6}/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ]
             if [ -r $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
                 #  ln -s $COMINs/gfs.${PDY_6}/gfs_${PDY_6}${cyc_6}f${fcsthr_6} gfs_6
-                ln -s $COMINsgfs/gfs.${PDY_6}a${cyc_6}/gempak/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
+                ln -s $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
             fi
 
             fn=ecmwf
