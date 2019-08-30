@@ -256,7 +256,7 @@ EOF
 cat >> cmdfile850  << EOF
 GDFILE  = ${gdfn}
 LINE    = 21/2/2/0
-TITLE   = 21/-2/~ ? GFS ${cyc_6}Z (DASHED) |~${name}
+TITLE   = 21/-2/~ ? GFS6 ${cyc_6}Z (DASHED) |~${name}
 GDATTIM = F${fcsthr_6}
 run
 
@@ -323,7 +323,7 @@ cat >> cmdfile850  << EOF
 !GDFILE  = \$COMIN/ge${gridl}_${PDY}${cyc}f${fcsthr}
 GDFILE  = ${gdfn}
 LINE    = ${color_number}/1/1/0
-TITLE   = ${color_number}/+${line_count}/~ ? ${cyc}Z ${grid}|~${name}
+TITLE   = ${color_number}/+${line_count}/~ ? ${gdfn} ${cyc}Z ${grid}|~${name}
 GDATTIM = F${fcsthr}
 run
 
@@ -343,14 +343,14 @@ EOF
                 let color_number=$color_number+1
             done
 
-            # ----- gfs_6 -----
-            gdfn=gfs_6 # gd file name
+            # ----- ukmet -----
+            gdfn=ukmet # gd file name
             if [ -e ${gdfn} ]; then
 cat >> cmdfile850  << EOF
-GDFILE  = ukmet
+GDFILE  = ${gdfn}
 LINE    = 7/2/2/0
 GDATTIM = F${fcsthr_ecm}
-TITLE   = 7/-5/~ ? UKMET ${ECM_cyc}Z (DASHED)|~${name}
+TITLE   = 7/-5/~ ? ${gdfn} ${ECM_cyc}Z (DASHED)|~${name}
 run
 
 EOF
@@ -415,7 +415,7 @@ EOF
 cat >> cmdfile850  << EOF
 GDFILE  = ${gdfn}
 LINE    = 31/2/3/0
-TITLE   = 31/-6/~ ? ENSMEAN ${cyc_6}Z (DASHED)|~${name}
+TITLE   = 31/-6/~ ? ENSMEAN6 ${cyc_6}Z (DASHED)|~${name}
 GDATTIM = F${fcsthr_6}
 run
 

@@ -272,7 +272,7 @@ EOF
 cat >> cmdfilelows  << EOF
 GDFILE  = ${gdfn}
 HILO    = 21/L${num}/900-1016/5/50/y
-TITLE   = 21/-1/~ ? GFS ${cyc_6}Z|~${name}
+TITLE   = 21/-1/~ ? GFS6 ${cyc_6}Z|~${name}
 GDATTIM = F${fcsthr_6}
 run
 
@@ -339,7 +339,7 @@ cat >> cmdfilelows  << EOF
 !GDFILE  = \$COMIN/ge${gridl}_${PDY}${cyc}f${fcsthr}
 GDFILE  = ${gdfn}
 HILO    = ${color_number}/L${num}/900-1016/5/50/y
-TITLE   = ${color_number}/+${line_count}/~ ? ${cyc}Z ${grid}|~${name}
+TITLE   = ${color_number}/+${line_count}/~ ? ${gdfn} ${cyc}Z ${grid}|~${name}
 GDATTIM = F${fcsthr}
 run
 
@@ -430,7 +430,7 @@ EOF
 cat >> cmdfilelows  << EOF
 GDFILE  = ${gdfn}
 HILO    = 31/L${num}/900-1016/5/50/y
-TITLE   = 31/-6/~ ? ENSMEAN ${cyc_6}Z|~${name}
+TITLE   = 31/-6/~ ? ENSMEAN6 ${cyc_6}Z|~${name}
 GDATTIM = F${fcsthr_6}
 run
 

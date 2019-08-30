@@ -267,7 +267,7 @@ EOF
 cat >> cmdfilecarib  << EOF
 GDFILE  = ${gdfn}
 LINE    = 21/2/2/0
-TITLE   = 21/-1/~ ? GFS ${cyc_6}Z (DASHED) |~${name} ${level} DM
+TITLE   = 21/-1/~ ? GFS_6 ${cyc_6}Z (DASHED) |~${name} ${level} DM
 GDATTIM = F${fcsthr_6}
 run
 
@@ -291,7 +291,7 @@ EOF
                 gdfn=${gridl}_6
                 if [ -e ${gdfn} ]; then
 cat >> cmdfilecarib  << EOF
-GDFILE  = $gdfn
+GDFILE  = ${gdfn}
 LINE    = 25/1/1/0
 TITLE   = 25/+1/~ ? ${cyc_6}Z ENS MEMBERS|~${name} ${level} DM
 GDATTIM = F${fcsthr_6}
@@ -336,9 +336,9 @@ EOF
                 if [ -e ${gdfn} ]; then
 cat >> cmdfilecarib  << EOF
 !GDFILE  = \$COMIN/ge${gridl}_${PDY}${cyc}f${fcsthr}
-GDFILE  = $gdfn
+GDFILE  = ${gdfn}
 LINE    = ${color_number}/1/1/0
-TITLE   = ${color_number}/+${line_count}/~ ? ${cyc}Z ${grid}|~${name} ${level} DM
+TITLE   = ${color_number}/+${line_count}/~ ? ${gdfn} ${cyc}Z ${grid}|~${name} ${level} DM
 GDATTIM = F${fcsthr}
 run
 
@@ -364,8 +364,7 @@ EOF
             gdfn=ukmet
             if [ -e ${gdfn} ]; then
 cat >> cmdfilecarib  << EOF
-
-GDFILE  = ukmet
+GDFILE  = ${gdfn}
 LINE    = 7/2/2/0
 GDATTIM = F${fcsthr_ecm}
 TITLE   = 7/-4/~ ? UKMET ${ECM_cyc}Z (DASHED)|~${name} ${level} DM
@@ -388,7 +387,7 @@ EOF
             gdfn=ecmwf
             if [ -e ${gdfn} ]; then
 cat >> cmdfilecarib  << EOF
-GDFILE  = ecmwf
+GDFILE  = ${gdfn}
 LINE    = 6/2/2/0
 GDATTIM = F${fcsthr_ecm}
 TITLE   = 6/-3/~ ? ECMWF ${ECM_cyc}Z (DASHED)|~${name} ${level} DM
@@ -412,7 +411,7 @@ EOF
             gdfn=gefs_avg
             if [ -e ${gdfn} ]; then
 cat >> cmdfilecarib  << EOF
-GDFILE  = gefs_avg
+GDFILE  = ${gdfn}
 LINE    = 1/2/2/0
 TITLE   = 1/-6/~ ? ENSMEAN ${cyc}Z       |~${name} ${level} DM
 GDATTIM = F${fcsthr}
@@ -435,9 +434,9 @@ EOF
             gdfn=gefs_avg_6
             if [ -e ${gdfn} ]; then
 cat >> cmdfilecarib  << EOF
-GDFILE  = gefs_avg_6
+GDFILE  = ${gdfn}
 LINE    = 31/2/3/0
-TITLE   = 31/-5/~ ? ENSMEAN ${cyc_6}Z (DASHED)|~${name} ${level} DM
+TITLE   = 31/-5/~ ? ENSMEAN6 ${cyc_6}Z (DASHED)|~${name} ${level} DM
 GDATTIM = F${fcsthr_6}
 run
 
