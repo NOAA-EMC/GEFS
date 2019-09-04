@@ -40,6 +40,7 @@ export EXECcode=${EXECcode:-$CODEwave/exec}
 # Set parameters using gwes_post.parm
 ##############################################
 
+. $PARMgefs/gefs.parm
 . $PARMwave/gwes.parm
 . $PARMwave/gwes_prep.parm
 
