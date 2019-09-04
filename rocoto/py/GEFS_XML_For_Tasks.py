@@ -877,10 +877,8 @@ def get_param_of_task(dicBase, taskname):
                 sDep = '<and>'
                 if DoesTaskExist(dicBase, "gempak"):
                     sDep += '\n\t<taskdep task="gempak"/>'
-                elif DoesTaskExist(dicBase, "avgspr_gempak"):
+                if DoesTaskExist(dicBase, "avgspr_gempak"):
                     sDep += '\n\t<taskdep task="avgspr_gempak"/>'
-                else:
-                    sDep += ""
 
                 if sDep == '<and>':
                     sDep = ""
