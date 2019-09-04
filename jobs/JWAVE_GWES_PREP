@@ -35,6 +35,7 @@ export FIXwave=${FIXwave:-$HOMEwave/fix_wave}
 export PARMwave=${PARMwave:-$HOMEwave/parm}
 export USHwave=${USHwave:-$HOMEwave/ush}
 export EXECcode=${EXECcode:-$CODEwave/exec}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 ##############################################
 # Set parameters using gwes_post.parm
