@@ -171,7 +171,9 @@
 :PRES:surface:
 :PRES:tropopause:
 :PRMSL:mean sea level:
+:PVORT:310 K isentropic level:
 :PVORT:320 K isentropic level:
+:PVORT:350 K isentropic level:
 :PVORT:450 K isentropic level:
 :PVORT:550 K isentropic level:
 :PVORT:650 K isentropic level:
@@ -220,6 +222,8 @@
 :RH:highest tropospheric freezing level:
 :SFCR:surface:
 :SNOD:surface:
+:SNOHF:surface:
+:SNOWC:surface:
 :SOILL:0-0.1 m below ground:
 :SOILL:0.1-0.4 m below ground:
 :SOILL:0.4-1 m below ground:
@@ -472,6 +476,16 @@
 :VRATE:planetary boundary layer:
 :VSTM:6000-0 m above ground:
 :VVEL:0.995 sigma level:
+:VVEL:1 mb:
+:VVEL:2 mb:
+:VVEL:3 mb:
+:VVEL:5 mb:
+:VVEL:7 mb:
+:VVEL:10 mb:
+:VVEL:20 mb:
+:VVEL:30 mb:
+:VVEL:50 mb:
+:VVEL:70 mb:
 :VVEL:1000 mb:
 :VVEL:100 mb:
 :VVEL:150 mb:
@@ -504,4 +518,29 @@
 :VWSH:tropopause:
 :WEASD:surface:
 :WILT:surface:
+:HGT:cloud ceiling:
+:PRES:1 hybrid level:
+:HGT:1 hybrid level:
+:TMP:1 hybrid level:
+:RH:1 hybrid level:
+:UGRD:1 hybrid level:
+:VGRD:1 hybrid level:
+:PRES:2 hybrid level:
+:HGT:2 hybrid level:
+:TMP:2 hybrid level:
+:RH:2 hybrid level:
+:UGRD:2 hybrid level:
+:VGRD:2 hybrid level:
+:PRES:3 hybrid level:
+:HGT:3 hybrid level:
+:TMP:3 hybrid level:
+:RH:3 hybrid level:
+:UGRD:3 hybrid level:
+:VGRD:3 hybrid level:
+:PRES:4 hybrid level:
+:HGT:4 hybrid level:
+:TMP:4 hybrid level:
+:RH:4 hybrid level:
+:UGRD:4 hybrid level:
+:VGRD:4 hybrid level:
 ;############################ do not leave a blank line at the end
