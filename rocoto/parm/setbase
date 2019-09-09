@@ -56,31 +56,25 @@ echo
 echo `date` $0 set ROOT directory tree locations
 echo
 
-if [ -d /scratch4/NCEPDEV ]; then 
-    echo "Using settings for Theia"
-    PTMP=/scratch4/NCEPDEV/ensemble/noscrub/$USER/ptmp
-    STMP=/scratch4/NCEPDEV/ensemble/noscrub/$USER/ptmp
-#    PTMP=/scratch4/NCEPDEV/stmp4
-#    STMP=/scratch4/NCEPDEV/stmp4
-    SAVE=/scratch4/NCEPDEV/ensemble/save
-    NOSCRUB=/scratch4/NCEPDEV/ensemble/noscrub
-    export machine='THEIA'
-    
-    # export HOMEDIR=/scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gfs/fv3gefs_f0b283bd_20190517
-    export HOMEDIR=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/global-workflow/lgan_fv3_ww3_upWW3  # Copuled version
-    export HOMEDIR1=$HOMEDIR
-    export HOMERFC=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
 
+if [ -d /scratch1/NCEPDEV ]; then
+    echo "Using settings for Hera"
+    export machine='HERA'
+    # Placeholder for Hera
+
+elif [ -d /scratch4/NCEPDEV ]; then
+    echo "Using settings for Theia"
+    export machine='THEIA'
+    export HOMEDIR=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/global-workflow/lgan_fv3_ww3_esmf_bs47  # Copuled version
+    export HOMEtrak=/scratch4/NCEPDEV/ensemble/save/common/ens_tracker/ens_tracker.v1.1.8 # Outdated version    
     export HOMEdata=/scratch4/NCEPDEV/ensemble/noscrub/common
 
     export COMROOThps=${HOMEdata}
-    export COMROOTp1=/scratch4/NCEPDEV/rstprod/com 
+    export COMROOTp1=/scratch4/NCEPDEV/rstprod/com
 
     export EXECutil=${EXECutil:-/scratch4/NCEPDEV/global/save/glopara/nwpara/util/exec}
-    #export PATH=$PATH:$EXECutil #:/scratch3/NCEPDEV/nwprod/lib/prod_util/v1.1.0/ush
 
     export EXECgrib=${EXECutil}
-    #export NDATE=${NDATE:-$EXECgrib/ndate}
     export utilscript=$USHutil
     export SUPVIT=${SUPVIT:-${EXECutil}/supvit}
 
@@ -91,60 +85,37 @@ if [ -d /scratch4/NCEPDEV ]; then
 
 elif [[ -d /dcom && -d /hwrf ]] ; then
     echo "Using settings for WCOSS Phase II"
-    PTMP=/ptmpd2
-    STMP=/stmpd2
     export machine='WCOSS'
     export JOBPHASE=2
     export HOMEDIR=/ensemble/save/Walter.Kolczynski/global-workflow/fv3gefs_f0b283bd_20190517
-    export HOMEDIR1=$HOMEDIR
-    export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
-    
+    export HOMEtrak=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC/ens_tracker.v1.1.8 # Outdated version    
     export HOMEdata=/ensemble/noscrub/Walter.Kolczynski/gefs_input/gfs_15_para
     export COMINenkf_base=$HOMEdata/enkf.gdas.
     export COMINgfs_base=$HOMEdata/gfs.
     export COMINcfs_base=/ensemble/noscrub/Walter.Kolczynski/gefs_input/cfs_2_sst/cfs.
-    # export ROTDIR=${HOMEdata}
-    export COMROOThps=${HOMEdata}
-    export CHGRESEXEC=$HOMEDIR/exec/chgres_recenter.exe
 
-    SAVE=/$PROJECT/save
-    NOSCRUB=/$PROJECT/noscrub
+    export CHGRESEXEC=$HOMEDIR/exec/chgres_recenter.exe
 
 elif [[ -d /gpfs/hps && -e /etc/SuSE-release ]] ; then
     echo "Using settings for WCOSS Cray"
-    PTMP=/gpfs/hps/ptmp
-    STMP=/gpfs/hps2/stmp
     export machine='WCOSS_C'
     export JOBPHASE=
-    export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gfs/fv3gefs_f0b283bd_20190517
-    export HOMEDIR1=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC/q3fy17_lambda
-    export HOMEtrak=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.0
-    export HOMERFC=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC
+    export HOMEDIR=/gpfs/hps3/emc/ensemble/save/Walter.Kolczynski/global-workflow/lgan_fv3_ww3_esmf_bs47
+    export HOMEtrak=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
     export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
-    SAVE=/gpfs/hps3/emc/$PROJECT/save
-    NOSCRUB=/gpfs/hps3/emc/$PROJECT/noscrub
-
-    export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
-    export COMINgfs_base=$HOMEdata/fv3init/gfs.
-    export COMINcfs_base=$HOMEdata/cfs/cfs.
     
 elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     # We are on NOAA Venus or Mars
     echo "Using settings for WCOSS DELL Phase III"
-    PTMP=/gpfs/dell2/ptmp
-    STMP=/gpfs/dell2/stmp
     export machine='WCOSS_DELL_P3'
-    export JOBPHASE=    
-    #export HOMEDIR=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gfs/fv3gefs_q2fy19nco_b84e91_20181211
-    #export HOMEDIR=/gpfs/dell2/emc/retros/noscrub/Xiaqiong.Zhou/git_gfs/fv3gfs/master
-    export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/save/global-workflow/lgan_fv3_ww3_esmf_bs32
-    # export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/Full_GEFS//global-workflow # For Wave
-
-    #export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v1.1.15 
-    export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.0
-
-    #export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
+    export JOBPHASE=
+    export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/save/global-workflow/lgan_fv3_ww3_esmf_bs47
+    export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
+    # export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
     export HOMEdata=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/gefs_input
+    export COMINenkf_base=$HOMEdata/gfs_15/enkfgdas.
+    export COMINgfs_base=$HOMEdata/gfs_15/gfs.
+    export COMINcfs_base=$HOMEdata/cfs_2_sst/cfs.
 
     export COMROOThps=${HOMEdata}
 
@@ -155,9 +126,7 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     # Location of WW3 executables
     export EXECcode=$HOMEDIR/sorc/fv3gfs.fd/WW3/model/exe
     # Wave model settings: ice data dir
-    export COMINcfs_base=$HOMEdata/cfs_2_sst/cfs.
-    export COMINenkf_base="$HOMEdata/gfs_15/enkfgdas."
-    export COMINgfs_base="$HOMEdata/gfs_15/gfs."
+    # export COMICE=/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod
     export COMICE=$HOMEdata/sea_ice
 
     # Test post with GFS Chem
@@ -173,17 +142,13 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     
 fi
 
+# Uncomment below to run from real-time production data
 # if [[ $machine == WCOSS* ]]; then
-#     # fv3gfs data from NCO para run
-#     export COMINgfs_base=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.
-#     export COMINenkf_base=/gpfs/dell1/nco/ops/com/gfs/prod/enkfgdas.
-#     # cfs data from NCO prod run
+#     # fv3gfs data from NCO prod run
+#     export COMINgfs_base=$(compath.py gfs/prod)/gfs.
+#     export COMINenkf_base=$(compath.py gfs/prod)enkfgdas.
 #     export COMINcfs_base=$(compath.py cfs/prod)/cfs/cfs.
-#     #if [[ $machl = v || $machl = s || $machl = g ]] ; then # For venus, surge and gyre in Orlando
-#     #    export COMINcfs_base=/gpfs/gp1/nco/ops/com/cfs/prod/cfs/cfs.
-#     #else    # For Mars, Luna, and Tide in Reston
-#     #    export COMINcfs_base=/gpfs/tp1/nco/ops/com/cfs/prod/cfs/cfs.
-#     #fi
+#     export COMICE=/gpfs/dell1/nco/ops/com/omb/prod # No compath.py alias yet
 # fi
 
 export JOBQUEUE=$JOBQUEUE$JOBPRIO$JOBPHASE
@@ -191,10 +156,6 @@ echo JOB QUEUE info: $JOBQUEUE
 
 echo ROOT DIRECTORY info:
 echo $machine  jobqueue=$JOBQUEUE
-echo ptmp: $PTMP
-echo stmp: $STMP
-echo save: $SAVE
-echo noscrub: $NOSCRUB
 echo homedir: $HOMEDIR
 
 echo
