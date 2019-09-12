@@ -4,7 +4,7 @@
  
       implicit none
 
-      integer,     parameter :: maxgrd=1036800, ndays=35
+      integer,     parameter :: maxgrd=1038240, ndays=35
       integer,     parameter :: iunit=51,ounit=61 
       real,        parameter :: undef=10e+20
       character*250 fn_rawfc,fn_anom_fc,kpdsfile
