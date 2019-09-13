@@ -91,7 +91,7 @@ c        rlon(jjj) = float(lon(jjj))/100.00
       print *, "total record write out",jcnt
       stop
  1001 format(a8,f7.2,f7.2)
-#1002 format(a8,40x,f8.2)
+C1002 format(a8,40x,f8.2)
  1002 format(a8,39x,f9.3)
 C1002 format(17x,a8,4x,f8.2)
  1003 format(f6.2,f8.2,f7.2,1x,a8,i6)

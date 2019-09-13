@@ -109,34 +109,34 @@ export YMDM4=`$NDATE -96 $YMDH | cut -c1-8`
 export OBSYMDH=`$NDATE -12 $YMDH `
 export OBSYMD=`$NDATE -24 $YMDH | cut -c1-8 `
 
-if [ -s $COMIN/gefs.$YMDM1/00/ensstat/STAT_RM_BIAS_gfs.dat ]; then
- cp $COMIN/gefs.$YMDM1/00/ensstat/STAT_RM_BIAS_gfs.dat \
+if [ -s $COMINstat/gefs.$YMDM1/00/ensstat/STAT_RM_BIAS_gfs.dat ]; then
+ cp $COMINstat/gefs.$YMDM1/00/ensstat/STAT_RM_BIAS_gfs.dat \
      $DATA/STAT_RM_BIAS_gfs.dat
-elif [ -s $COMIN/gefs.$YMDM2/00/ensstat/STAT_RM_BIAS_gfs.dat ]; then
- cp $COMIN/gefs.$YMDM2/00/ensstat/STAT_RM_BIAS_gfs.dat \
+elif [ -s $COMINstat/gefs.$YMDM2/00/ensstat/STAT_RM_BIAS_gfs.dat ]; then
+ cp $COMINstat/gefs.$YMDM2/00/ensstat/STAT_RM_BIAS_gfs.dat \
      $DATA/STAT_RM_BIAS_gfs.dat
-elif [ -s $COMIN/gefs.$YMDM3/00/ensstat/STAT_RM_BIAS_gfs.dat ]; then
- cp $COMIN/gefs.$YMDM3/00/ensstat/STAT_RM_BIAS_gfs.dat \
+elif [ -s $COMINstat/gefs.$YMDM3/00/ensstat/STAT_RM_BIAS_gfs.dat ]; then
+ cp $COMINstat/gefs.$YMDM3/00/ensstat/STAT_RM_BIAS_gfs.dat \
      $DATA/STAT_RM_BIAS_gfs.dat
-elif [ -s $COMIN/gefs.$YMDM4/00/ensstat/STAT_RM_BIAS_gfs.dat ]; then
- cp $COMIN/gefs.$YMDM4/00/ensstat/STAT_RM_BIAS_gfs.dat \
+elif [ -s $COMINstat/gefs.$YMDM4/00/ensstat/STAT_RM_BIAS_gfs.dat ]; then
+ cp $COMINstat/gefs.$YMDM4/00/ensstat/STAT_RM_BIAS_gfs.dat \
      $DATA/STAT_RM_BIAS_gfs.dat
 else
  cp ${FIXgefs}/STAT_RM_BIAS_MONTHLY-${MM}_gfs \
      $DATA/STAT_RM_BIAS_gfs.dat
 fi
 
-if [ -s $COMIN/gefs.$YMDM1/00/ensstat/STAT_RM_BIAS_ctl.dat ]; then
- cp $COMIN/gefs.$YMDM1/00/ensstat/STAT_RM_BIAS_ctl.dat \
+if [ -s $COMINstat/gefs.$YMDM1/00/ensstat/STAT_RM_BIAS_ctl.dat ]; then
+ cp $COMINstat/gefs.$YMDM1/00/ensstat/STAT_RM_BIAS_ctl.dat \
      $DATA/STAT_RM_BIAS_ctl.dat
-elif [ -s $COMIN/gefs.$YMDM2/00/ensstat/STAT_RM_BIAS_ctl.dat ]; then
- cp $COMIN/gefs.$YMDM2/00/ensstat/STAT_RM_BIAS_ctl.dat \
+elif [ -s $COMINstat/gefs.$YMDM2/00/ensstat/STAT_RM_BIAS_ctl.dat ]; then
+ cp $COMINstat/gefs.$YMDM2/00/ensstat/STAT_RM_BIAS_ctl.dat \
      $DATA/STAT_RM_BIAS_ctl.dat
-elif [ -s $COMIN/gefs.$YMDM3/00/ensstat/STAT_RM_BIAS_ctl.dat ]; then
- cp $COMIN/gefs.$YMDM3/00/ensstat/STAT_RM_BIAS_ctl.dat \
+elif [ -s $COMINstat/gefs.$YMDM3/00/ensstat/STAT_RM_BIAS_ctl.dat ]; then
+ cp $COMINstat/gefs.$YMDM3/00/ensstat/STAT_RM_BIAS_ctl.dat \
      $DATA/STAT_RM_BIAS_ctl.dat
-elif [ -s $COMIN/gefs.$YMDM4/00/ensstat/STAT_RM_BIAS_ctl.dat ]; then
- cp $COMIN/gefs.$YMDM4/00/ensstat/STAT_RM_BIAS_ctl.dat \
+elif [ -s $COMINstat/gefs.$YMDM4/00/ensstat/STAT_RM_BIAS_ctl.dat ]; then
+ cp $COMINstat/gefs.$YMDM4/00/ensstat/STAT_RM_BIAS_ctl.dat \
      $DATA/STAT_RM_BIAS_ctl.dat
 else
  cp $FIXgefs/STAT_RM_BIAS_MONTHLY-${MM}_ctl \
