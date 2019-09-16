@@ -28,4 +28,4 @@ export jobid=${job}.$$
 export wavempexec="aprun -b -j1 -cc depth -n"
 export wave_mpmd="cfp"
 
-$SOURCEDIR/jobs/JWAVE_GWES_INIT
+$SOURCEDIR/jobs/JWAVE_GWES_POST

@@ -104,6 +104,9 @@ elif [[ -d /gpfs/hps && -e /etc/SuSE-release ]] ; then
     export HOMEtrak=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
     export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
     
+    # Location of WW3 executables
+    export EXECcode=$HOMEDIR/sorc/fv3gfs.fd/WW3/model/exe
+    
 elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     # We are on NOAA Venus or Mars
     echo "Using settings for WCOSS DELL Phase III"
@@ -129,7 +132,7 @@ fi
 # if [[ $machine == WCOSS* ]]; then
 #     # fv3gfs data from NCO prod run
 #     export COMINgfs_base=$(compath.py gfs/prod)/gfs.
-#     export COMINenkf_base=$(compath.py gfs/prod)enkfgdas.
+#     export COMINenkf_base=$(compath.py gfs/prod)/enkfgdas.
 #     export COMINcfs_base=$(compath.py cfs/prod)/cfs/cfs.
 #     export COMICE=/gpfs/dell1/nco/ops/com/omb/prod # No compath.py alias yet
 # fi
