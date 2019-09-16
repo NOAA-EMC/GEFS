@@ -23,6 +23,7 @@ elif [[ "$WHERE_AM_I" == cray ]] ; then
     echo "Loading modules for WCOSS cray"
     . /opt/modules/default/init/ksh
     module purge
+    module use /opt/cray/ari/modulefiles
     module load modules/3.2.10.3
     module load ncep/1.0
     module load PrgEnv-intel ESMF-intel-haswell/3_1_0rp5 cfp-intel-sandybridge iobuf craype-hugepages2M craype-haswell
