@@ -8,9 +8,9 @@ export envir=${envir:-dev}
 export SENDDBN=${SENDDBN:-%SENDDBN:NO%}
 export SENDDBN_NTC=${SENDDBN_NTC:-%SENDDBN_NTC:NO%}
 
-export KEEPDATA=NO
-export SENDCOM=YES
-export SENDECF=NO
+#export KEEPDATA=NO
+#export SENDCOM=YES
+#export SENDECF=NO
 
 export PARAFLAG=${PARAFLAG:-YES}
 export SENDECF=${SENDECF:-NO}
