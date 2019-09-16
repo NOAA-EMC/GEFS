@@ -383,7 +383,7 @@ HILO    = 31/L#/900-1016/5/50/y
 TITLE   = 31/+10/~ ? NAM |~${metaarea} ${metashname}
 run
 
-GDFILE	= \$COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr}
+GDFILE	= \$COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr}
 LINE    = 5/2/3/0
 HILO    = 5/L#/900-1016/5/50/y
 TITLE   = 5/+12/~ ? GFS |~${metaarea} ${metashname}

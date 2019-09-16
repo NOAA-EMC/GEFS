@@ -372,7 +372,7 @@ HILO    = 18/L${num}/900-1016/5/50/y
 TITLE   = 18/+20/~ ? P20|~${metaarea} ${metashname}
 run
 
-GDFILE	= \$COMINs/gfs.${yesterday}/gfs_${yesterday}${gfscyc}f${fcsthrsgfs}
+GDFILE	= \$COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${yesterday}${gfscyc}f${fcsthrsgfs}
 HILO    = 3/L${num}/900-1016/5/50/y
 GDATTIM	= F${fcsthrsgfs}
 TITLE   = 3/+11/~ ? GFS 12Z YEST|~${metaarea} ${metashname}

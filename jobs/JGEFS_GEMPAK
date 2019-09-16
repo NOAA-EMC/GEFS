@@ -67,10 +67,9 @@ export DBN_ALERT_TYPE=GEFS_GEMPAK
 setpdy.sh
 . PDY
 
-# JY . ${NWROOTp1}/gempak/.gempak
 set -x
 
-export COM=${COMROOT}/${NET}/${envir}
+export COM=${COMROOT}/${NET}/${envir_in:-$envir}
 export COMIN_RAW=${COM}/${RUN}.${PDY}/${cyc}/pgrb2a
 export COMIN_P5=${COM}/${RUN}.${PDY}/${cyc}/pgrb2ap5
 export COMIN_B=${COM}/${RUN}.${PDY}/${cyc}/pgrb2b

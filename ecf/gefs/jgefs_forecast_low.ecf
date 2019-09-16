@@ -1,27 +1,38 @@
 #BSUB -J %E%gefs_forecast_low_%CYC%
-#BSUB -o /%COM%/output/%ENVIR%/today/gefs_forecast_low_%CYC%.o%J
-#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_forecast_low_%CYC%.o%J
-#BSUB -cwd /tmpnwprd
-#BSUB -n 504
-#BSUB -R span[ptile=6]
+#BSUB -o %COM%/output/%ENVIR%/today/gefs_forecast_low_%CYC%.o%J
+#BSUB -cwd /tmp
+##BSUB -n 378
+##BSUB -n 504
+#BSUB -n 420
+#BSUB -R span[ptile=7]
 #BSUB -R affinity[core(4):distribute=balance]
 #BSUB -q %QUEUE%
 #BSUB -W 00:45
 #BSUB -L /bin/sh
-#BSUB -P %PROJ%
-#BSUB -x    
-#BSUB -a poe
+#BSUB -P %PROJ%-%PROJENVIR%
 
 %include <head.h>
-%include <envir-p2.h>
+%include <envir-p3.h>
 
+export model=gefs
+%include <model_ver.h>
+
+. /usrx/local/prod/lmod/lmod/init/ksh
+module load grib_util/$grib_util_ver
+module load util_shared/$util_shared_ver
+
+module load ips/$ips_ver
+module load lsf/$lsf_ver
+module load impi/$impi_ver
+module load CFP/$cfp_ver
+export USE_CFP=YES
+
+module list
 
 # EXPORT list here
 set -x
-
-. /usrx/local/Modules/default/init/ksh
-# JY module switch ibmpe/1.3.0.8p
-module list
+ulimit -s unlimited
+ulimit -a
 
 export OMP_NUM_THREADS=4
 export MP_EUIDEVICE=sn_all
@@ -29,7 +40,9 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:4
 
-export total_tasks=504
+#export total_tasks=378
+#export taskspernode=7      
+#export NODES=54
 
 export OMP_STACKSIZE=256000
 export MP_EAGER_LIMIT=65536
@@ -42,7 +55,6 @@ export MP_SINGLE_THREAD=yes
 export MP_USE_TOKEN_FLOW_CONTROL=yes
 export MP_INSTANCES=2
 
-
 export cyc=%CYC%
 export cyc_fcst=%CYC%
 export FORECAST_SEGMENT=lr
@@ -53,16 +65,8 @@ export FORECAST_SEGMENT=lr
 
 
 # CALL executable job script here
-VERSION_FILE=$NWROOT/versions/gefs.ver
-if [ -f $VERSION_FILE ]; then
-  . $VERSION_FILE
-else
-  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
-  ecflow_client --abort
-  exit
-fi
 
-$NWROOT/gefs.${gefs_ver}/jobs/JGEFS_FORECAST
+${HOMEgefs}/jobs/JGEFS_FORECAST
 
 %include <tail.h>
 %manual

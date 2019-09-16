@@ -82,7 +82,7 @@ sh $utilscript/setup.sh
 setpdy.sh
 . PDY
 
-export COM=${COMROOT}/${NET}/${envir}
+export COM=${COMROOT}/${NET}/${envir_in:-$envir}
 # export COMIN=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/pgrba
 export COMIN=${COM}/${RUN}.${PDY}/${cyc}/pgrb2a
 export COMIN_P5=${COM}/${RUN}.${PDY}/${cyc}/pgrb2ap5
