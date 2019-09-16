@@ -298,6 +298,39 @@ def write_to_ent(taskname, dicBase, GenTaskEnt=False):
     fh.close()
     # print("exit")
 
+def calc_fcst_resources(dicBase):
+    import math
+
+    layout_x = int(dicBase['layout_x'.upper()])
+    layout_y = int(dicBase['layout_y'.upper()])
+    WRITE_GROUP = int(dicBase['WRITE_GROUP'.upper()])
+    WRTTASK_PER_GROUP = int(dicBase['WRTTASK_PER_GROUP'.upper()])
+    parallel_threads = int(dicBase['parallel_threads'.upper()])
+
+    WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
+
+    if WHERE_AM_I == 'cray'.upper():
+        ncores_per_node = 24
+    elif WHERE_AM_I == "theia".upper():
+        ncores_per_node = 24
+    elif WHERE_AM_I == "wcoss_dell_p3".upper():
+        ncores_per_node = 28
+    else:
+        ncores_per_node = 24
+
+    dicBase['COREPERNODE'] = ncores_per_node
+    iTotal_Tasks = layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP
+
+    if dicBase['cplwav'] == ".true.":
+        iWaveThreads = int(dicBase['NPE_WAV'])
+        iTotal_Tasks = iTotal_Tasks + iWaveThreads
+
+    iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
+    iNodes = int(math.ceil( iTotal_Tasks * 1.0 / iPPN))
+    iTPP = parallel_threads
+
+    return iTotal_Tasks, iNodes, iPPN, iTPP
+
 # =======================================================
 def get_param_of_task(dicBase, taskname):
     import math
@@ -535,33 +568,11 @@ def get_param_of_task(dicBase, taskname):
 
     # Forecast can be derive from the parm items
     if taskname == 'forecast_high' or taskname == 'forecast_low':
-        layout_x = int(dicBase['layout_x'.upper()])
-        layout_y = int(dicBase['layout_y'.upper()])
-        WRITE_GROUP = int(dicBase['WRITE_GROUP'.upper()])
-        WRTTASK_PER_GROUP = int(dicBase['WRTTASK_PER_GROUP'.upper()])
-        parallel_threads = int(dicBase['parallel_threads'.upper()])
+
+        iTotal_Tasks, iNodes, iPPN, iTPP = calc_fcst_resources(dicBase)
 
         WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
-
-        if WHERE_AM_I == 'cray'.upper():
-            ncores_per_node = 24
-        elif WHERE_AM_I == "theia".upper():
-            ncores_per_node = 24
-        elif WHERE_AM_I == "wcoss_dell_p3".upper():
-            ncores_per_node = 28
-        else:
-            ncores_per_node = 24
-
-        dicBase['COREPERNODE'] = ncores_per_node
-        iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
-        iNodes = int(math.ceil((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) * 1.0 / iPPN))
-
-        if dicBase['cplwav'] == ".true.":
-            iWaveThreads = int(dicBase['NPE_WAV'])
-            iNodes = iNodes + int( math.ceil( iWaveThreads * 1.0 / iPPN ) )
-
-        iTPP = parallel_threads
-
+        
         if WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
             sNodes = "{0}:ppn={1}".format(iNodes, iPPN)
         else:
