@@ -19,12 +19,18 @@ export GRIBVERSION=${GRIBVERSION:-grib2}
 export pid=$$
 export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
 mkdir -p $DATA
+
 cd $DATA
 
 ######################################
 # Set up the cycle variable
 ######################################
 export cycle=t${cyc}z
+
+######################################
+# Define parameters for ENSAVG_NEMSIO
+######################################
+export SUBJOB=${SUBJOB:-""}
 
 ####################################
 # Specify NET and RUN Name and model
@@ -35,7 +41,7 @@ export RUN=${RUN:-gefs}
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -109,36 +115,33 @@ setpdy.sh
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
+mkdir -m 775 -p $COMOUT/$cyc/misc/ensavg_nemsio
 ############################################
 # Run gefs.parm to get input variables
 ############################################
 . $PARMgefs/gefs.parm
 
-export FHMAX_HF=$FHMAXHF
-export FHOUT_HF=$FHOUTHF
-export FHOUT=$FHOUTLF
-
 (( imem = 0 ))
 while (( imem < npert )); do
-        (( imem = imem + 1 ))
-        if (( imem >= 10 )); then
-                imem=0$imem
-	else
-                imem=00$imem
-        fi
-        memberlist="$memberlist $imem"
-done # while (( imem < npair * 2 ))
+    (( imem = imem + 1 ))
+    if (( imem >= 10 )); then
+        imem=0$imem
+    else
+        imem=00$imem
+    fi
+    memberlist="$memberlist $imem"
+done # while (( imem < npert ))
 echo memberlist=$memberlist
 
 # set outtyp to 1 because we need to run chgres in the post before model start running chgres
 # otherwise set to 0, then chgres will not be executed in global_nceppost.sh
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
-	LEVS=$LEVSHR 
+    LEVS=$LEVSHR 
 elif [[ $FORECAST_SEGMENT = lr ]]; then
-	LEVS=$LEVSLR 
+    LEVS=$LEVSLR 
 else
-	echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supportted
+    echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supportted
     msg="FATAL ERROR: $job failed!"
     postmsg "$jlogfile" "$msg"
     exit $ERR
@@ -161,33 +164,44 @@ export SLEEP_INT=5
 # Specify Forecast Hour Range
 ####################################
 
+export SHOUR=${SHOUR:-00}
 export FHOUT_HF=${FHOUTHF:-3}
-export FHOUT=${FHOUTLF:-6}
+export FHOUT_LF=${FHOUTLF:-6}
+export FHMAX_HF=${FHMAXHF:-240}
+export FHOUR=${FHOUR:-180}
 
 ##### RLW 20110704 note that only _HIGH is currently used
 case $FORECAST_SEGMENT in
-	(hr)
-		export SHOUR=00
-		export FHOUR=180 #$fhmaxh
-		;;
-	(lr)
-		# low resolution segment
-		if (( FHMAX_HF > fhmaxh )); then
-			export SHOUR=$(( $fhmaxh + $FHOUT_HF ))
-		else
-			export SHOUR=$(( $fhmaxh + $FHOUT ))
-		fi
-		export FHOUR=$fhmax
-		;;
-	(*)
-		export SHOUR=00
-		export FHOUR=$fhmax
-		;;
+    (hr)
+        export FHOUR=180 #$fhmaxh
+        if (( 180 > fhmaxh )); then
+            export FHOUR=$fhmaxh
+        fi
+        ;;
+    (lr)
+        # low resolution segment
+        if (( FHMAX_HF > fhmaxh )); then
+            export SHOUR=$(( $fhmaxh + $FHOUT_HF ))
+        else
+            export SHOUR=$(( $fhmaxh + $FHOUT_LF ))
+        fi
+        export FHOUR=$fhmax
+        if (( 180 > fhmax )); then
+            export FHOUR=$fhmax
+        fi
+        ;;
+    (*)
+        export SHOUR=${SHOUR:-00}
+        export FHOUR=$fhmax
+        if (( 180 > fhmax )); then
+            export FHOUR=$fhmax
+        fi
+        ;;
 esac # $FORECAST_SEGMENT
 
 echo SHOUR=$SHOUR
 echo FHOUR=$FHOUR
-echo FHOUT=$FHOUT
+echo FHOUT_LF=$FHOUT_LF
 echo FHOUT_HF=$FHOUT_HF
 echo FHMAX_HF=$FHMAX_HF
 
@@ -195,11 +209,24 @@ echo
 env | sort
 echo
 
-#################################
-# Run from $SHOUR to $FHOUR_HIGH
-#################################
-$HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf
+if [[ -n $SUBJOB ]]; then
+    J1=`echo $SUBJOB | cut -c1-1` 
+    J2=`echo $SUBJOB | cut -c2-2` 
+    iJ2=`printf '%d\n' "'$J2"`
+    iJ2=$((iJ2-65))
+
+    export FHOUT_HF=$(($FHOUTHF*J1))
+    export FHOUT_LF=$(($FHOUTLF*J1))
+
+    export SHOUR=$((SHOUR+FHOUTHF*iJ2))
+fi
+
+export ensavg_nemsio_log=$DATA/ensavg_nemsio_$SUBJOB.$FORECAST_SEGMENT.log
+
+$HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf $DATA $SHOUR $FHOUT_HF $FHOUT_LF $FHMAXHF $FHOUR $ensavg_nemsio_log
 ERR=$?
+
+mv $ensavg_nemsio_log $COMOUT/$cyc/misc/ensavg_nemsio
 
 ################# lines between these markers have been modified for dev begin
 echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN
@@ -207,13 +234,17 @@ echo DATA=$DATA
 ls -al $DATA
 echo `date` TEST LISTING OF WORKING DIRECTORY END
 ################# lines between these markers have been modified for dev end
+if [ $ERR = 0 ]; then
+    msg="$job completed normally!"
+else
+    msg="FATAL ERROR: $job failed!"
+fi
 
-msg="$job completed normally"
 postmsg "$jlogfile" "$msg"
 
 if [[ $KEEPDATA != "YES" ]]; then
-	cd $DATAROOT
-	rm -rf $DATA
+    cd $DATAROOT
+    rm -rf $DATA
 fi
 
 echo `date` $0 `date -u` end

@@ -9,9 +9,29 @@
 #
 set -x
 export PS4='gefs_meta_qpf:$SECONDS + '
+
+########################################################
+## Get member list
+########################################################
+export npert=${npert:-30}
+memberlist=""
+(( imem = 0 ))
+while (( imem < npert+1 )); do
+    if (( imem == 0 )); then
+        smem=C$(printf %02i $imem)
+    else
+        smem=P$(printf %02i $imem)
+    fi
+    memberlist="$memberlist $smem"
+    (( imem = imem + 1 ))
+done # while (( imem < npert ))
+echo memberlist=$memberlist
+########################################################
+## Get member list
+########################################################
+
 mkdir $DATA/gefs_meta_qpf
 cd $DATA/gefs_meta_qpf
-sh $utilscript/setup.sh
 cp $FIXgempak/datatype.tbl datatype.tbl
 
 mdl=gefs
@@ -26,9 +46,9 @@ else
 fi
 
 if [ ${cyc} = "00" ]; then
-    grids="GFS C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20 EC"
+    grids="GFS $memberlist EC" #"GFS C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20 EC"
 elif [ ${cyc} = "12" ]; then
-    grids="GFS C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20 "
+    grids="GFS $memberlist" #"GFS C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20 "
 fi
 
 for area in us sam us24 us12
@@ -137,15 +157,15 @@ do
         if [ ${grid} = "GFS" ]; then
             GDFILE="F-GFS | ${ddate}/${cyc}00"
             COMINtmp=$COMIN
-            export COMIN=/com/nawips/prod/gfs.$PDY
+            export COMIN=$COMINgfs/gfs.${PDY}/${cyc}/gempak/
         elif [ ${grid} = "EC" ]; then
             if [ $cyc = "12" ]; then
                COMINtmp=$COMIN
-               export COMIN=/com/nawips/prod/ecmwf.$PDY
+               export COMIN=$COMINecmwf
                GDFILE="$COMIN/ecmwf_glob_${PDY}$cycm12"
             else
                COMINtmp=$COMIN
-               export COMIN=/com/nawips/prod/ecmwf.$PDYm1
+               export COMIN=$COMINm1ecmwf
                GDFILE="$COMIN/ecmwf_glob_${PDYm1}$cycm12"
             fi
             if [ ${area} = "us" ]; then
@@ -156,42 +176,42 @@ do
             COMINtmp=$COMIN
         fi
 
-gdplot2_nc << EOF 
-GDFILE	= ${GDFILE}
-GDATTIM	= ${gdattim}
-DEVICE	= ${device}
-PANEL	= 0
-TEXT	= 1/22/1/1/hw
-MAP	= 11!0
-CLEAR	= yes
-GAREA   = ${garea}
-PROJ    = ${proj}
-LATLON  = 11/10/1/1/20;20!0
+		gdplot2_nc <<- EOF 
+			GDFILE	= ${GDFILE}
+			GDATTIM	= ${gdattim}
+			DEVICE	= ${device}
+			PANEL	= 0
+			TEXT	= 1/22/1/1/hw
+			MAP	= 11!0
+			CLEAR	= yes
+			GAREA   = ${garea}
+			PROJ    = ${proj}
+			LATLON  = 11/10/1/1/20;20!0
 
-GLEVEL  = ${glevel}
-GVCORD  = ${gvcord}
-GDPFUN  = ${gdpfun}
-TYPE    = ${type}
-CONTUR  = ${contur}
-CINT    = ${cint}
-LINE    = ${line}
-FINT    = ${fint}
-FLINE   = ${fline}
-HILO    = ${hilo}
-HLSYM   = ${hlsym}
-SKIP    = 0
-SCALE   = ${scale}
-CLRBAR  = ${clrbar}
-WIND    = 0
-REFVEC  =
-TITLE   = ${title}
-run
+			GLEVEL  = ${glevel}
+			GVCORD  = ${gvcord}
+			GDPFUN  = ${gdpfun}
+			TYPE    = ${type}
+			CONTUR  = ${contur}
+			CINT    = ${cint}
+			LINE    = ${line}
+			FINT    = ${fint}
+			FLINE   = ${fline}
+			HILO    = ${hilo}
+			HLSYM   = ${hlsym}
+			SKIP    = 0
+			SCALE   = ${scale}
+			CLRBAR  = ${clrbar}
+			WIND    = 0
+			REFVEC  =
+			TITLE   = ${title}
+			run
 
-exit
-EOF
+			exit
+			EOF
 
-export COMIN=$COMINtmp
-    done
+    export COMIN=$COMINtmp
+done
 
 if [ $SENDCOM = "YES" ] ; then
     mv ${metaname} ${COMOUT}/$metaname
@@ -212,15 +232,15 @@ do
     if [ ${grid} = "GFS" ]; then
         GDFILE="F-GFS | ${ddate}/${cyc}00"
         COMINtmp=$COMIN
-        export COMIN=/com/nawips/prod/gfs.$PDY
+        export COMIN=$COMINgfs/gfs.${PDY}/${cyc}/gempak/
     elif [ ${grid} = "EC" ]; then
         if [ $cyc = "12" ]; then
            COMINtmp=$COMIN
-           export COMIN=/com/nawips/prod/ecmwf.$PDY
+           export COMIN=$COMINecmwf
            GDFILE="$COMIN/ecmwf_glob_${PDY}$cycm12"
         else
            COMINtmp=$COMIN
-           export COMIN=/com/nawips/prod/ecmwf.$PDYm1
+           export COMIN=$COMINm1ecmwf
            GDFILE="$COMIN/ecmwf_glob_${PDYm1}$cycm12"
         fi
     else
@@ -228,38 +248,38 @@ do
         COMINtmp=$COMIN
     fi
 
-gdplot2_nc << EOF
-GDFILE	= ${GDFILE}
-GDATTIM	= f24-f204-12
-DEVICE	= ${device}
-PANEL	= 0
-TEXT	= 1/22/1/1/hw
-MAP	= 11!0
-CLEAR	= yes
-GAREA   = 2;-139;27;-22
-PROJ    = STR/90;-105;0
-LATLON  = 11/10/1/1/20;20!0
-glevel  = 0              !500
-gvcord  = none           !pres
-gdpfun  = sm5s(pmsl)     !sm9s(hght)
-type    = c              !c
-contur  = 2
-skip    = 0
-cint    = 8              !6
-line    = 19/1/3/1       !2/2/3/1
-scale   = 0              !-1
-fint    = 0
-fline   = 0
-hilo    = 19/H#;L#/1020-1070;900-1012 !0
-hlsym   = 1;1//22;22/2;2/hw           !0
-clrbar  = 0
-TITLE   = ${title}
-run
+	gdplot2_nc <<- EOF
+		GDFILE	= ${GDFILE}
+		GDATTIM	= f24-f204-12
+		DEVICE	= ${device}
+		PANEL	= 0
+		TEXT	= 1/22/1/1/hw
+		MAP	= 11!0
+		CLEAR	= yes
+		GAREA   = 2;-139;27;-22
+		PROJ    = STR/90;-105;0
+		LATLON  = 11/10/1/1/20;20!0
+		glevel  = 0              !500
+		gvcord  = none           !pres
+		gdpfun  = sm5s(pmsl)     !sm9s(hght)
+		type    = c              !c
+		contur  = 2
+		skip    = 0
+		cint    = 8              !6
+		line    = 19/1/3/1       !2/2/3/1
+		scale   = 0              !-1
+		fint    = 0
+		fline   = 0
+		hilo    = 19/H#;L#/1020-1070;900-1012 !0
+		hlsym   = 1;1//22;22/2;2/hw           !0
+		clrbar  = 0
+		TITLE   = ${title}
+		run
 
-exit
-EOF
+		exit
+		EOF
 
-export COMIN=$COMINtmp
+    export COMIN=$COMINtmp
 
 done
 

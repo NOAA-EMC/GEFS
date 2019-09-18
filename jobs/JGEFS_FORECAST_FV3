@@ -40,7 +40,8 @@ export RUN=${RUN:-gefs}
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
+
 ####################################
 # Determine Job Output Name on System
 ####################################
@@ -125,7 +126,6 @@ echo FORECAST_SEGMENT = $FORECAST_SEGMENT
 echo fhresini=$fhresini
 echo ENS_SPS = $ENS_SPS
 echo RUN_CONCURRENT = $RUN_CONCURRENT
-echo npair = $npair
 
 export GESIN=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
 export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}/$cyc

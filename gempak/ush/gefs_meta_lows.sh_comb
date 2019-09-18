@@ -14,9 +14,29 @@
 #
 set -x
 export PS4='gefs_lows_spag:$SECONDS + '
+
+########################################################
+## Get member list
+########################################################
+export npert=${npert:-30}
+memberlist=""
+(( imem = 0 ))
+while (( imem < npert+1 )); do
+    if (( imem == 0 )); then
+        smem=c$(printf %02i $imem)
+    else
+        smem=p$(printf %02i $imem)
+    fi
+    memberlist="$memberlist $smem"
+    (( imem = imem + 1 ))
+done # while (( imem < npert ))
+echo memberlist=$memberlist
+########################################################
+## Get member list
+########################################################
+
 mkdir $DATA/gefs_meta_lows_spag
 cd $DATA/gefs_meta_lows_spag
-sh $utilscript/setup.sh
 cp $FIXgempak/datatype.tbl datatype.tbl
 
 mdl=gefs
@@ -127,178 +147,325 @@ do
         rm -rf gefs_avg gefs_avg_6 gfs gfs_6 ecmwf ukmet dgex
 
 
-        grids="p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 c00"
+        grids=${memberlist} #"p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 c00"
         for fn in `echo $grids`
         do
-           rm -rf $fn ${fn}_6
+            rm -rf $fn ${fn}_6
 
-           if [ -r $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} ]
-           then
-              ln -s $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} $fn
-           fi
-           if [ -r $COMINs/gefs.${PDY_6}/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ]
-           then
-              ln -s $COMINs/gefs.${PDY_6}/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}_6
-           fi
+            if [ -r $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} ]; then
+                ln -s $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} $fn
+            fi
+
+            #  if [ -r $COMINs/gefs.${PDY_6}/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ]
+            if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
+                #  ln -s $COMINs/gefs.${PDY_6}/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}_6
+                ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}_6
+            fi
         done
 
-        if [ -r $COMIN/geavg_${PDY}${cyc}f${fcsthr} ]
-        then
-           ln -s $COMIN/geavg_${PDY}${cyc}f${fcsthr} gefs_avg
+        fn=gefs_avg
+        rm -rf ${fn}
+        if [ -r $COMIN/geavg_${PDY}${cyc}f${fcsthr} ]; then
+            ln -s $COMIN/geavg_${PDY}${cyc}f${fcsthr} ${fn}
         fi
 
-        if [ -r $COMINs/gefs.${PDY_6}/geavg_${PDY_6}${cyc_6}f${fcsthr_6} ]
-        then
-           ln -s $COMINs/gefs.${PDY_6}/geavg_${PDY_6}${cyc_6}f${fcsthr_6} gefs_avg_6
+        fn=gefs_avg_6
+        rm -rf ${fn}
+        #if [ -r $COMINs/gefs.${PDY_6}/geavg_${PDY_6}${cyc_6}f${fcsthr_6} ]
+        if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/geavg_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
+            #  ln -s $COMINs/gefs.${PDY_6}/geavg_${PDY_6}${cyc_6}f${fcsthr_6} gefs_avg_6
+            ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/geavg_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
         fi
 
-        if [ -r $COMINs_p1/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} ]
-        then
-           ln -s $COMINs_p1/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} gfs
+        fn=gfs
+        rm -rf ${fn}
+        #f [ -r $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} ]
+        if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ]; then
+            #  ln -s $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} gfs
+            ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ${fn}
         fi
 
-        if [ -r $COMINs_p1/gfs.${PDY_6}/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ]
-        then
-           ln -s $COMINs_p1/gfs.${PDY_6}/gfs_${PDY_6}${cyc_6}f${fcsthr_6} gfs_6
+        fn=gfs_6
+        rm -rf ${fn}
+        #if [ -r $COMINs/gfs.${PDY_6}/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ]
+        if [ -r $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
+            #  ln -s $COMINs/gfs.${PDY_6}/gfs_${PDY_6}${cyc_6}f${fcsthr_6} gfs_6
+            ln -s $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
         fi
 
-        if [ -r $COMINs_p1/ecmwf.${ECM_PDY}/ecmwf_glob_${ECM_PDY}${ECM_cyc} ]
-        then
-           ln -s $COMINs_p1/ecmwf.${ECM_PDY}/ecmwf_glob_${ECM_PDY}${ECM_cyc} ecmwf
+        fn=ecmwf
+        rm -rf ${fn}
+        if [ -r $COMINs/ecmwf.${ECM_PDY}/ecmwf_glob_${ECM_PDY}${ECM_cyc} ]; then
+            ln -s $COMINs/ecmwf.${ECM_PDY}/ecmwf_glob_${ECM_PDY}${ECM_cyc} ${fn}
         fi
 
-        if [ -r $COMINs_p1/ukmet.${ECM_PDY}/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ]
-        then
-           ln -s $COMINs_p1/ukmet.${ECM_PDY}/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ukmet
+        fn=ukmet
+        rm -rf ${fn}
+        if [ -r $COMINs_p1/ukmet.${ECM_PDY}/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ]; then
+            ln -s $COMINs_p1/ukmet.${ECM_PDY}/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ${fn}
         fi
 
-#        if [ -r $COMINs_p1/cmc.${PDY}/cmc${PDY}${CMC_cyc}f${fcsthr_cmc} ]
-#        then
-#           ln -s $COMINs_p1/cmc.${PDY}/cmc${PDY}${CMC_cyc}f${fcsthr_cmc} cmc
-#        fi
-#
-#        if [ -r $COMINs_p1/nogaps.${PDY}/nogaps${PDY}${CMC_cyc}f${fcsthr_cmc} ]
-#        then
-#           ln -s $COMINs_p1/nogaps.${PDY}/nogaps${PDY}${CMC_cyc}f${fcsthr_cmc} nogaps
-#        fi
-#
-        if [ -r $COMINs_p1/dgex.${PDY}/dgex_${PDY}${cyc}f${fcsthr} ]
-        then
-           ln -s $COMINs_p1/dgex.${PDY}/dgex_${PDY}${cyc}f${fcsthr} dgex
+        fn=dgex
+        rm -rf ${fn}
+        if [ -r $COMINs_p1/dgex.${PDY}/dgex_${PDY}${cyc}f${fcsthr} ]; then
+            ln -s $COMINs_p1/dgex.${PDY}/dgex_${PDY}${cyc}f${fcsthr} ${fn}
         fi
 
 
-cat > cmdfilelows  << EOF
-DEVICE  = ${device}
-PANEL   = 0
-TEXT    = s/22/1/1/hw
-CONTUR  = 2
-MAP     = 1
-CLEAR   = yes
-GAREA   = ${garea}
-PROJ    = ${proj}
-LATLON  = 1/10/1/2/10;10
+		cat > cmdfilelows  <<- EOF
+			DEVICE  = ${device}
+			PANEL   = 0
+			TEXT    = s/22/1/1/hw
+			CONTUR  = 2
+			MAP     = 1
+			CLEAR   = yes
+			GAREA   = ${garea}
+			PROJ    = ${proj}
+			LATLON  = 1/10/1/2/10;10
 
-GLEVEL  = 0
-GVCORD  = none
-SKIP    = 0
-SCALE   = 0
-GDPFUN  = sm5s(pmsl)
-TYPE    = c
-!CINT    = 4/1/8
-CINT    = 4
-LINE    = 0
-FINT    =
-FLINE   =
-HILO    = 25/L${num}/900-1016/5/50/y
-HLSYM   = l/22/3/hw
-CLRBAR  = 0
-WIND    = 0
-REFVEC  =
+			GLEVEL  = 0
+			GVCORD  = none
+			SKIP    = 0
+			SCALE   = 0
+			GDPFUN  = sm5s(pmsl)
+			TYPE    = c
+			!CINT    = 4/1/8
+			CINT    = 4
+			LINE    = 0
+			FINT    =
+			FLINE   =
+			HILO    = 25/L${num}/900-1016/5/50/y
+			HLSYM   = l/22/3/hw
+			CLRBAR  = 0
+			WIND    = 0
+			REFVEC  =
 
+			EOF
 
-GDFILE  = gfs
-HILO    = 22/L${num}/900-1016/5/50/y
-TITLE   = 22/-2/~ ? GFS ${cyc}Z|~${name}
-GDATTIM = F${fcsthr}
-run
+        WrottenZERO=0
 
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+        # ----- gfs -----
+        gdfn=gfs # gd file name
+        if [ -e ${gdfn} ]; then
+			cat >> cmdfilelows  <<- EOF
+				GDFILE  = ${gdfn}
+				HILO    = 22/L${num}/900-1016/5/50/y
+				TITLE   = 22/-2/~ ? GFS ${cyc}Z|~${name}
+				GDATTIM = F${fcsthr}
+				run
 
-GDFILE  = gfs_6
-HILO    = 21/L${num}/900-1016/5/50/y
-TITLE   = 21/-1/~ ? GFS ${cyc_6}Z|~${name}
-GDATTIM = F${fcsthr_6}
+				EOF
 
-GDFILE  = p01_6 ! p02_6 ! p03_6 ! p04_6 ! p05_6 ! p06_6 ! p07_6 ! p08_6 ! p09_6 ! p10_6
-HILO    = 25/L${num}/900-1016/5/50/y
-TITLE   = 25/+1/~ ? ${cyc_6}Z ENS MEMBERS|~${name}
-GDATTIM = F${fcsthr_6}
-run
+            if [ $WrottenZERO -eq 0 ]; then            
+			cat >> cmdfilelows  <<- EOF
+				MAP     = 0
+				LATLON  = 0
+				CLEAR   = no
 
-GDFILE  = p11_6 ! p12_6 ! p13_6 ! p14_6 ! p15_6 ! p16_6 ! p17_6 ! p18_6 ! p19_6 ! p20_6 ! c00_6
-run
+				EOF
+            fi
+            WrottenZERO=1
+        fi 
 
-EOF
+        # ----- gfs_6 -----
+        gdfn=gfs_6
+        if [ -e ${gdfn} ]; then
+			cat >> cmdfilelows  <<- EOF
+				GDFILE  = ${gdfn}
+				HILO    = 21/L${num}/900-1016/5/50/y
+				TITLE   = 21/-1/~ ? GFS6 ${cyc_6}Z|~${name}
+				GDATTIM = F${fcsthr_6}
+				run
 
-       grids="C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20"
-       line_count=2
-       color_number=9
-       for grid in ${grids}
-       do
-       gridl=`echo $grid | tr [A-Z] [a-z]`
+				EOF
+            if [ $WrottenZERO -eq 0 ]; then            
+				cat >> cmdfilelows  <<- EOF
+					MAP     = 0
+					LATLON  = 0
+					CLEAR   = no
 
-cat >> cmdfilelows  << EOF
-!GDFILE  = \$COMIN/ge${gridl}_${PDY}${cyc}f${fcsthr}
-GDFILE  = $gridl
-HILO    = ${color_number}/L${num}/900-1016/5/50/y
-TITLE   = ${color_number}/+${line_count}/~ ? ${cyc}Z ${grid}|~${name}
-GDATTIM = F${fcsthr}
-run
+					EOF
 
-EOF
-          let line_count=$line_count+1
-          let color_number=$color_number+1
+            fi
+            WrottenZERO=1
+        fi 
+
+        grids=${memberlist}
+        for gridl in ${grids}
+        do
+            # ----- gridl_6 -----
+            gdfn=${gridl}_6 
+            if [ -e ${gdfn} ]; then
+				cat >> cmdfilelows  <<- EOF
+					GDFILE  = ${gdfn}
+					HILO    = 25/L${num}/900-1016/5/50/y
+					TITLE   = 25/+1/~ ? ${cyc_6}Z ENS MEMBERS|~${name}
+					GDATTIM = F${fcsthr_6}
+					run
+
+					EOF
+                if [ $WrottenZERO -eq 0 ]; then            
+					cat >> cmdfilelows  <<- EOF
+						MAP     = 0
+						LATLON  = 0
+						CLEAR   = no
+
+						EOF
+                fi
+                WrottenZERO=1
+            fi 
+        done
+#GDFILE  = p01_6 ! p02_6 ! p03_6 ! p04_6 ! p05_6 ! p06_6 ! p07_6 ! p08_6 ! p09_6 ! p10_6
+#HILO    = 25/L${num}/900-1016/5/50/y
+#TITLE   = 25/+1/~ ? ${cyc_6}Z ENS MEMBERS|~${name}
+#GDATTIM = F${fcsthr_6}
+#run
+
+#GDFILE  = p11_6 ! p12_6 ! p13_6 ! p14_6 ! p15_6 ! p16_6 ! p17_6 ! p18_6 ! p19_6 ! p20_6 ! c00_6
+#run
+
+#EOF
+
+        grids=${memberlist} #"C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20"
+        line_count=2
+        color_number=9
+        for gridl in ${grids}
+        do
+            #gridl=${grid} #`echo $grid | tr [A-Z] [a-z]`
+
+            # ----- gridl -----
+            gdfn=${gridl} # gd file name
+            if [ -e ${gdfn} ]; then
+				cat >> cmdfilelows  <<- EOF
+					!GDFILE  = \$COMIN/ge${gridl}_${PDY}${cyc}f${fcsthr}
+					GDFILE  = ${gdfn}
+					HILO    = ${color_number}/L${num}/900-1016/5/50/y
+					TITLE   = ${color_number}/+${line_count}/~ ? ${gdfn} ${cyc}Z ${grid}|~${name}
+					GDATTIM = F${fcsthr}
+					run
+
+					EOF
+
+                if [ $WrottenZERO -eq 0 ]; then            
+					cat >> cmdfilelows  <<- EOF
+						MAP     = 0
+						LATLON  = 0
+						CLEAR   = no
+
+						EOF
+                fi
+                WrottenZERO=1
+            fi 
+            let line_count=$line_count+1
+            let color_number=$color_number+1
         done
 
-cat >> cmdfilelows  << EOF
+        # ----- ukmet -----
+        gdfn=ukmet # gd file name
+        if [ -e ${gdfn} ]; then
+			cat >> cmdfilelows  <<- EOF
+				GDFILE  = ${gdfn}
+				GDATTIM = F${fcsthr_ecm}
+				HILO    = 7/L${num}/900-1016/5/50/y
+				TITLE   = 7/-5/~ ? UKMET ${ECM_cyc}Z|~${name}
+				run
 
-HILO    = 21/L${num}/900-1016/5/50/y ! 22/L${num}/900-1016/5/50/y
+				EOF
 
-GDFILE  = ukmet
-GDATTIM = F${fcsthr_ecm}
-HILO    = 7/L${num}/900-1016/5/50/y
-TITLE   = 7/-5/~ ? UKMET ${ECM_cyc}Z|~${name}
-run
+            if [ $WrottenZERO -eq 0 ]; then            
+				cat >> cmdfilelows  <<- EOF
+					MAP     = 0
+					LATLON  = 0
+					CLEAR   = no
 
-GDFILE  = ecmwf
-GDATTIM = F${fcsthr_ecm}
-HILO    = 6/L${num}/900-1016/5/50/y
-TITLE   = 6/-4/~ ? ECMWF ${ECM_cyc}Z|~${name}
-run
+					EOF
+            fi
+            WrottenZERO=1
+        fi 
 
-GDFILE  = gefs_avg
-HILO    = 1/L${num}/900-1016/5/50/y
-TITLE   = 1/-7/~ ? ENSMEAN ${cyc}Z       |~${name}
-GDATTIM = F${fcsthr}
-run
+        # ----- ecmwf -----
+        gdfn=ecmwf # gd file name
+        if [ -e ${gdfn} ]; then
+			cat >> cmdfilelows  <<- EOF
+				GDFILE  = ${gdfn}
+				GDATTIM = F${fcsthr_ecm}
+				HILO    = 6/L${num}/900-1016/5/50/y
+				TITLE   = 6/-4/~ ? ECMWF ${ECM_cyc}Z|~${name}
+				run
 
-GDFILE  = gefs_avg_6
-HILO    = 31/L${num}/900-1016/5/50/y
-TITLE   = 31/-6/~ ? ENSMEAN ${cyc_6}Z|~${name}
-GDATTIM = F${fcsthr_6}
-run
+				EOF
 
-GDFILE  = dgex 
-GDATTIM = F${fcsthr}
-HILO    = 13/L${num}/900-1016/5/50/y
-TITLE   = 13/-8/~ ? ${cyc}Z DGEX|~${name}
-run
+            if [ $WrottenZERO -eq 0 ]; then            
+				cat >> cmdfilelows  <<- EOF
+					MAP     = 0
+					LATLON  = 0
+					CLEAR   = no
 
-EOF
-    echo cdmfile
+					EOF
+            fi
+            WrottenZERO=1
+        fi 
+
+        # ----- gefs_avg -----
+        gdfn=gefs_avg # gd file name
+        if [ -e ${gdfn} ]; then
+			cat >> cmdfilelows  <<- EOF
+				GDFILE  = ${gdfn}
+				HILO    = 1/L${num}/900-1016/5/50/y
+				TITLE   = 1/-7/~ ? ENSMEAN ${cyc}Z       |~${name}
+				GDATTIM = F${fcsthr}
+				run
+
+				EOF
+
+            if [ $WrottenZERO -eq 0 ]; then            
+				cat >> cmdfilelows  <<- EOF
+					MAP     = 0
+					LATLON  = 0
+					CLEAR   = no
+
+					EOF
+            fi
+            WrottenZERO=1
+        fi 
+
+        # ----- gefs_avg_6 -----
+        gdfn=gefs_avg_6 # gd file name
+        if [ -e ${gdfn} ]; then
+			cat >> cmdfilelows  <<- EOF
+				GDFILE  = ${gdfn}
+				HILO    = 31/L${num}/900-1016/5/50/y
+				TITLE   = 31/-6/~ ? ENSMEAN6 ${cyc_6}Z|~${name}
+				GDATTIM = F${fcsthr_6}
+				run
+
+				EOF
+
+            if [ $WrottenZERO -eq 0 ]; then            
+				cat >> cmdfilelows  <<- EOF
+					MAP     = 0
+					LATLON  = 0
+					CLEAR   = no
+
+					EOF
+            fi
+            WrottenZERO=1
+        fi 
+
+        # ----- dgex -----
+        gdfn=dgex # gd file name
+        if [ -e ${gdfn} ]; then
+			cat >> cmdfilelows  <<- EOF
+				GDFILE  = ${gdfn} 
+				GDATTIM = F${fcsthr}
+				HILO    = 13/L${num}/900-1016/5/50/y
+				TITLE   = 13/-8/~ ? ${cyc}Z DGEX|~${name}
+				run
+
+				EOF
+        fi 
+
+    cat cmdfilelows
     gdplot2_nc < cmdfilelows
     
     done
