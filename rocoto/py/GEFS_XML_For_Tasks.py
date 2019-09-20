@@ -807,16 +807,20 @@ def get_param_of_task(dicBase, taskname):
 
             # For 'enspost' task
             if taskname.lower() == "enspost":
+                sDep = '<and>'
                 if DoesTaskExist(dicBase, "prdgen_low"):
+                    sDep += '\n\t<metataskdep metatask="prdgen_low"/>'
                     if DoesTaskExist(dicBase, "prdgen_gfs"):
-                        sDep = '<and>\n\t<metataskdep metatask="prdgen_low"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
-                    else:
-                        sDep = '<metataskdep metatask="prdgen_low"/>'
+                        sDep += '\n\t<taskdep task="prdgen_gfs"/>'
                 elif DoesTaskExist(dicBase, "prdgen_high"):
+                    sDep += '\n\t<metataskdep metatask="prdgen_high"/>'
                     if DoesTaskExist(dicBase, "prdgen_gfs"):
-                        sDep = '<and>\n\t<metataskdep metatask="prdgen_high"/>\n\t<taskdep task="prdgen_gfs"/>\n</and>'
-                    else:
-                        sDep = '<metataskdep metatask="prdgen_high"/>'  # Default
+                        sDep += '\n\t<taskdep task="prdgen_gfs"/>'
+
+                if sDep == '<and>':
+                    sDep = ""
+                else:
+                    sDep += '\n</and>'
 
             # For 'keep_data' and 'archive' tasks
             if taskname.lower() == "keep_data" or taskname.lower() == "archive":
@@ -841,11 +845,30 @@ def get_param_of_task(dicBase, taskname):
                     sDep += '\n\t<metataskdep metatask="postsnd"/>'
                 if DoesTaskExist(dicBase, "getcfssst"):
                     sDep += '\n\t<taskdep task="getcfssst"/>'
-                sDep += '\n</and>'
+
+                if sDep == '<and>':
+                    sDep = ""
+                else:
+                    sDep += '\n</and>'
+
+            # For keep_init
+            if taskname.lower() == "keep_init":
+                if DoesTaskExist(dicBase, "init_recenter"):
+                    sDep = '<taskdep task="init_recenter"/>'
 
             # Don't clean up if keep_init isn't finished
-            if taskname.lower() == "cleanup" and DoesTaskExist(dicBase, "keep_init"):
-                sDep = '<and>\n\t' + sDep + '\n\t<metataskdep metatask="keep_init"/>\n</and>'
+            if taskname.lower() == "cleanup":
+                sDep = '<and>'
+                if DoesTaskExist(dicBase, "keep_init"):
+                    sDep += '\n\t<metataskdep metatask="keep_init"/>'
+                if DoesTaskExist(dicBase, "keep_data"):
+                    sDep += '\n\t<taskdep task="keep_data"/>'
+                if DoesTaskExist(dicBase, "archive"):
+                    sDep += '\n\t<taskdep task="archive"/>'
+                if sDep == '<and>':
+                    sDep = ""
+                else:
+                    sDep += '\n</and>'
 
             # For GEMPAK
             if taskname.lower() == "gempak":
@@ -877,10 +900,8 @@ def get_param_of_task(dicBase, taskname):
                 sDep = '<and>'
                 if DoesTaskExist(dicBase, "gempak"):
                     sDep += '\n\t<taskdep task="gempak"/>'
-                elif DoesTaskExist(dicBase, "avgspr_gempak"):
+                if DoesTaskExist(dicBase, "avgspr_gempak"):
                     sDep += '\n\t<taskdep task="avgspr_gempak"/>'
-                else:
-                    sDep += ""
 
                 if sDep == '<and>':
                     sDep = ""

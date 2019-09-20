@@ -9,6 +9,27 @@
 #
 set -x
 export PS4='gefs_meta_qpf:$SECONDS + '
+
+########################################################
+## Get member list
+########################################################
+export npert=${npert:-30}
+memberlist=""
+(( imem = 0 ))
+while (( imem < npert+1 )); do
+    if (( imem == 0 )); then
+        smem=C$(printf %02i $imem)
+    else
+        smem=P$(printf %02i $imem)
+    fi
+    memberlist="$memberlist $smem"
+    (( imem = imem + 1 ))
+done # while (( imem < npert ))
+echo memberlist=$memberlist
+########################################################
+## Get member list
+########################################################
+
 mkdir $DATA/gefs_meta_qpf
 cd $DATA/gefs_meta_qpf
 cp $FIXgempak/datatype.tbl datatype.tbl
@@ -25,9 +46,9 @@ else
 fi
 
 if [ ${cyc} = "00" ]; then
-    grids="GFS C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20 EC"
+    grids="GFS $memberlist EC" #"GFS C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20 EC"
 elif [ ${cyc} = "12" ]; then
-    grids="GFS C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20 "
+    grids="GFS $memberlist" #"GFS C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20 "
 fi
 
 for area in us sam us24 us12
@@ -136,7 +157,7 @@ do
         if [ ${grid} = "GFS" ]; then
             GDFILE="F-GFS | ${ddate}/${cyc}00"
             COMINtmp=$COMIN
-            export COMIN=$COMINgfs
+            export COMIN=$COMINgfs/gfs.${PDY}/${cyc}/gempak/
         elif [ ${grid} = "EC" ]; then
             if [ $cyc = "12" ]; then
                COMINtmp=$COMIN
@@ -189,8 +210,8 @@ run
 exit
 EOF
 
-export COMIN=$COMINtmp
-    done
+    export COMIN=$COMINtmp
+done
 
 if [ $SENDCOM = "YES" ] ; then
     mv ${metaname} ${COMOUT}/$metaname
@@ -211,7 +232,7 @@ do
     if [ ${grid} = "GFS" ]; then
         GDFILE="F-GFS | ${ddate}/${cyc}00"
         COMINtmp=$COMIN
-        export COMIN=$COMINgfs
+        export COMIN=$COMINgfs/gfs.${PDY}/${cyc}/gempak/
     elif [ ${grid} = "EC" ]; then
         if [ $cyc = "12" ]; then
            COMINtmp=$COMIN
@@ -258,7 +279,7 @@ run
 exit
 EOF
 
-export COMIN=$COMINtmp
+    export COMIN=$COMINtmp
 
 done
 

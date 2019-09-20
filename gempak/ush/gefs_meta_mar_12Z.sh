@@ -12,6 +12,27 @@
 #
 set -x
 export PS4='mar_12Z:$SECONDS + '
+
+########################################################
+## Get member list
+########################################################
+export npert=${npert:-30}
+memberlist=""
+(( imem = 0 ))
+while (( imem < npert+1 )); do
+    if (( imem == 0 )); then
+        smem=c$(printf %02i $imem)
+    else
+        smem=p$(printf %02i $imem)
+    fi
+    memberlist="$memberlist $smem"
+    (( imem = imem + 1 ))
+done # while (( imem < npert ))
+echo memberlist=$memberlist
+########################################################
+## Get member list
+########################################################
+
 mkdir $DATA/mar_12Z
 cd $DATA/mar_12Z
 cp $FIXgempak/datatype.tbl datatype.tbl
@@ -58,11 +79,30 @@ do
             fcsthrsgfs=`expr ${fcsthr} + 12` 
             typeset -Z3 fcsthrsgfs
 
+            grids=${memberlist}
+            for fn in `echo $grids`
+            do
+                rm -rf $fn 
+                if [ -r $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} ]; then
+                    ln -s $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} $fn
+                fi
+            done
+
+            fn=gfs
+            rm -rf ${fn}
+            if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ]; then
+                ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ${fn}
+            fi
+
+            fn=nam
+            rm -rf ${fn}
+            if [ -r $COMINs_p1/nam.${PDY}/nam_${PDY}${cyc}f${fcsthr} ]; then
+                ln -s $COMINs_p1/nam.${PDY}/nam_${PDY}${cyc}f${fcsthr} ${fn}
+            fi
+
             export pgm=gdplot2_nc;. prep_step; startmsg
 
-gdplot2_nc << EOF
-GDFILE	= F-GEFSC00 | ${PDY2}/${cyc}00
-GDATTIM	= F${fcsthr}
+cat > cmdfilemar  << EOF
 DEVICE	= ${device}
 PANEL	= 0
 TEXT	= m/22/1/1/hw
@@ -80,7 +120,6 @@ SCALE   = -1
 GDPFUN  = sm5s(hght)
 TYPE    = c
 CINT    = ${level}
-LINE    = 6/1/2/0
 FINT    =
 FLINE   =
 HILO    = 0
@@ -88,125 +127,157 @@ HLSYM   = 0
 CLRBAR  = 0
 WIND    = 0
 REFVEC  =
-TITLE   = 6/-1/~ ? C00 (CNTL)|~${level} DM - ${metaarea}
+
+EOF
+            WrottenZERO=0
+            grids=${memberlist}
+            line_count=2
+            color_number=9
+            for gridl in ${grids}
+            do
+                # ----- gridl -----
+                gdfn=${gridl} 
+                
+                if [ ${gdfn} == c00 ]; then
+                    color_number=6
+                    sline_count="-1"
+                    sCNTL="(CNTL)"
+                elif [[ ${gdfn} == p01 ]]; then
+                    color_number=14
+                    sline_count="-2"
+                    sCNTL=""
+                else
+        
+                    
+                    if [[ ${gdfn} == p02 ]]; then
+                        color_number=2
+                        line_count=1
+                    elif [[ ${gdfn} == p03 ]]; then
+                        color_number=3
+                        line_count=2
+                    elif [[ ${gdfn} == p04 ]]; then
+                        color_number=4
+                        line_count=3
+                    elif [[ ${gdfn} == p05 ]]; then
+                        color_number=12
+                        line_count=4
+                    elif [[ ${gdfn} == p06 ]]; then
+                        color_number=11
+                        line_count=5
+                    elif [[ ${gdfn} == p07 ]]; then
+                        color_number=7
+                        line_count=6
+                    elif [[ ${gdfn} == p08 ]]; then
+                        color_number=8
+                        line_count=7
+                    elif [[ ${gdfn} == p09 ]]; then
+                        color_number=9
+                        line_count=8
+                    elif [[ ${gdfn} == p10 ]]; then
+                        color_number=10
+                        line_count=9
+                    elif [[ ${gdfn} == p11 ]]; then
+                        color_number=11
+                        line_count=10
+                    elif [[ ${gdfn} == p12 ]]; then
+                        color_number=12
+                        line_count=11
+                    elif [[ ${gdfn} == p13 ]]; then
+                        color_number=13
+                        line_count=12
+                    elif [[ ${gdfn} == p14 ]]; then
+                        color_number=14
+                        line_count=13
+                    elif [[ ${gdfn} == p15 ]]; then
+                        color_number=15
+                        line_count=13
+                    elif [[ ${gdfn} == p16 ]]; then
+                        color_number=16
+                        line_count=13
+                    elif [[ ${gdfn} == p17 ]]; then
+                        color_number=17
+                        line_count=13
+                    elif [[ ${gdfn} == p18 ]]; then
+                        color_number=18
+                        line_count=13
+                    elif [[ ${gdfn} == p19 ]]; then
+                        color_number=19
+                        line_count=13
+                    elif [[ ${gdfn} == p20 ]]; then
+                        color_number=20
+                        line_count=13
+                    else
+                        color_number=`echo $gdfn | cut -c2-`
+                        line_count=13
+                    fi
+
+                    sline_count="+${line_count}"
+                    sCNTL=""
+
+                    #let line_count=$line_count+1
+                fi
+
+                # ----- gridl -----
+                if [ -e ${gdfn} ]; then
+cat >> cmdfilemar  << EOF
+GDFILE  = ${gdfn}
+LINE    = ${color_number}/1/2/0
+TITLE   = ${color_number}/${sline_count}/~ ? ${gdfn} ${sCNTL} |~${level} DM - ${metaarea}
+GDATTIM = F${fcsthr}
 run
 
-GDFILE	= F-GEFSP01 | ${PDY2}/${cyc}00
+EOF
+                    if [ $WrottenZERO -eq 0 ]; then            
+cat >> cmdfilemar  << EOF
 MAP     = 0
 LATLON  = 0
-CLEAR	= no
-LINE    = 14/1/2/0
-TITLE   = 14/-2/~ ? P01 |~${level} DM - ${metaarea}
-run
+CLEAR   = no
 
-GDFILE	= F-GEFSP02 | ${PDY2}/${cyc}00
-LINE    = 2/1/2/0
-TITLE   = 2/+1/~ ? P02 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= F-GEFSP03 | ${PDY2}/${cyc}00
-LINE    = 3/1/2/0
-TITLE   = 3/+2/~ ? P03 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= F-GEFSP04 | ${PDY2}/${cyc}00
-LINE    = 4/1/2/0
-TITLE   = 4/+3/~ ? P04 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= F-GEFSP05 | ${PDY2}/${cyc}00
-LINE    = 12/1/2/0
-TITLE   = 12/+4/~ ? P05 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= F-GEFSP06 | ${PDY2}/${cyc}00
-LINE    = 11/1/2/0
-TITLE   = 11/+5/~ ? P06 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= F-GEFSP07 | ${PDY2}/${cyc}00
-LINE    = 7/1/2/0
-TITLE   = 7/+6/~ ? P07 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= F-GEFSP08 | ${PDY2}/${cyc}00
-LINE    = 8/1/2/0
-TITLE   = 8/+7/~ ? P08 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= F-GEFSP09 | ${PDY2}/${cyc}00
-LINE    = 9/1/2/0
-TITLE   = 9/+8/~ ? P09 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= F-GEFSP10 | ${PDY2}/${cyc}00
-LINE    = 10/1/2/0
-TITLE   = 10/+9/~ ? P10 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= F-GEFSP11 | ${PDY2}/${cyc}00
-LINE    = 11/1/2/0
-TITLE   = 11/+10/~ ? P11 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= F-GEFSP12 | ${PDY2}/${cyc}00
-LINE    = 12/1/2/0
-TITLE   = 12/+11/~ ? P12 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= F-GEFSP13 | ${PDY2}/${cyc}00
-LINE    = 13/1/2/0
-TITLE   = 13/+12/~ ? P13 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= F-GEFSP14 | ${PDY2}/${cyc}00
-LINE    = 14/1/2/0
-TITLE   = 14/+13/~ ? P14 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= F-GEFSP15 | ${PDY2}/${cyc}00
-LINE    = 15/1/2/0
-TITLE   = 15/+13/~ ? P15 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= F-GEFSP16 | ${PDY2}/${cyc}00
-LINE    = 16/1/2/0
-TITLE   = 16/+13/~ ? P16 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= F-GEFSP17 | ${PDY2}/${cyc}00
-LINE    = 17/1/2/0
-TITLE   = 17/+13/~ ? P17 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= F-GEFSP18 | ${PDY2}/${cyc}00
-LINE    = 18/1/2/0
-TITLE   = 18/+13/~ ? P18 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= F-GEFSP19 | ${PDY2}/${cyc}00
-LINE    = 19/1/2/0
-TITLE   = 19/+13/~ ? P19 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= F-GEFSP20 | ${PDY2}/${cyc}00
-LINE    = 20/1/2/0
-TITLE   = 20/+13/~ ? P20 |~${level} DM - ${metaarea}
-run
-
-GDFILE	= \$COMINs_p1/nam.${PDY}/nam_${PDY}${cyc}f${fcsthr}
-LINE    = 31/2/3/0
-TITLE   = 31/+10/~ ? NAM (DASHED) |~${level} DM - ${metaarea}
-run
-
-#GDFILE	= \$COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr}
-GDFILE	= \$COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr}
-LINE    = 5/2/3/0
-TITLE   = 5/+12/~ ? GFS (DASHED) |~${level} DM - ${metaarea}
-run
-
-exit
 EOF
+                    fi
+                    WrottenZERO=1
+                fi
+
+
+            done
+
+            # ----- nam -----
+            gdfn=nam
+            if [ -e ${gdfn} ]; then
+cat >> cmdfilemar  << EOF
+GDFILE  = ${gdfn}
+LINE    = 31/2/3/0
+TITLE   = 31/+10/~ ? ${gdfn} (DASHED) |~${level} DM - ${metaarea}
+GDATTIM = F${fcsthr}
+run
+
+EOF
+                if [ $WrottenZERO -eq 0 ]; then            
+cat >> cmdfilemar  << EOF
+MAP     = 0
+LATLON  = 0
+CLEAR   = no
+
+EOF
+                fi
+                WrottenZERO=1
+            fi
+
+            # ----- gfs -----
+            gdfn=gfs
+            if [ -e ${gdfn} ]; then
+cat >> cmdfilemar  << EOF
+GDFILE  = ${gdfn}
+LINE    = 5/2/3/0
+TITLE   = 5/+12/~ ? ${gdfn} (DASHED) |~${level} DM - ${metaarea}
+GDATTIM = F${fcsthr}
+run
+
+EOF
+            fi
+
+            cat cmdfilemar
+            gdplot2_nc < cmdfilemar
 
             export err=$?;err_chk
         done
@@ -221,10 +292,30 @@ EOF
         fcsthrsgfs=`expr ${fcsthr} + 12`
         typeset -Z3 fcsthrsgfs
 
+        grids=${memberlist}
+        for fn in `echo $grids`
+        do
+            rm -rf $fn 
+            if [ -r $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} ]; then
+                ln -s $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} $fn
+            fi
+        done
+
+        fn=gfs
+        rm -rf ${fn}
+        if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ]; then
+            ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ${fn}
+        fi
+
+        fn=nam
+        rm -rf ${fn}
+        if [ -r $COMINs_p1/nam.${PDY}/nam_${PDY}${cyc}f${fcsthr} ]; then
+            ln -s $COMINs_p1/nam.${PDY}/nam_${PDY}${cyc}f${fcsthr} ${fn}
+        fi
+
         export pgm=gdplot2_nc;. prep_step; startmsg
 
-gdplot2_nc << EOF
-GDFILE	= F-GEFSC00 | ${PDY2}/${cyc}00
+cat > cmdfilemar_low  << EOF
 GDATTIM	= F${fcsthr}
 DEVICE	= ${device}
 PANEL	= 0
@@ -235,7 +326,6 @@ CLEAR	= yes
 GAREA   = ${garea}
 PROJ    = ${proj}
 LATLON  = 1/10/1/2/10;10
-
 GLEVEL  = 0 
 GVCORD  = none 
 SKIP    = 0 
@@ -243,154 +333,171 @@ SCALE   = 0
 GDPFUN  = pmsl
 TYPE    = c
 CINT    = 4/1/8
-LINE    = 0
-HILO    = 6/L#/900-1016/5/50/y
 HLSYM   = l/22/3/hw
 FINT    =
 FLINE   =
 CLRBAR  = 0
 WIND    = 0
 REFVEC  =
-TITLE   = 6/-1/~ ? C00 (CNTL)|~${metaarea} ${metashname}
+
+EOF
+        WrottenZERO = 0
+        grids=${memberlist}
+        line_count=2
+        color_number=9
+        for gridl in ${grids}
+        do
+            # ----- gridl -----
+            gdfn=${gridl} 
+            
+            if [ ${gdfn} == c00 ]; then
+                color_number=6
+                sline_count="-1"
+                sCNTL="(CNTL)"
+
+            else
+    
+                if [ ${gdfn} == c00 ]; then
+                    color_number=6
+                    sline_count="-1"
+                    sCNTL="(CNTL)"
+                elif [[ ${gdfn} == p01 ]]; then
+                    color_number=14
+                    sline_count="-2"
+                    sCNTL=""
+                else
+        
+                    
+                    if [[ ${gdfn} == p02 ]]; then
+                        color_number=2
+                        line_count=1
+                    elif [[ ${gdfn} == p03 ]]; then
+                        color_number=3
+                        line_count=2
+                    elif [[ ${gdfn} == p04 ]]; then
+                        color_number=4
+                        line_count=3
+                    elif [[ ${gdfn} == p05 ]]; then
+                        color_number=12
+                        line_count=4
+                    elif [[ ${gdfn} == p06 ]]; then
+                        color_number=11
+                        line_count=5
+                    elif [[ ${gdfn} == p07 ]]; then
+                        color_number=7
+                        line_count=6
+                    elif [[ ${gdfn} == p08 ]]; then
+                        color_number=8
+                        line_count=7
+                    elif [[ ${gdfn} == p09 ]]; then
+                        color_number=9
+                        line_count=8
+                    elif [[ ${gdfn} == p10 ]]; then
+                        color_number=10
+                        line_count=9
+                    elif [[ ${gdfn} == p11 ]]; then
+                        color_number=11
+                        line_count=10
+                    elif [[ ${gdfn} == p12 ]]; then
+                        color_number=12
+                        line_count=11
+                    elif [[ ${gdfn} == p13 ]]; then
+                        color_number=13
+                        line_count=12
+                    elif [[ ${gdfn} == p14 ]]; then
+                        color_number=14
+                        line_count=13
+                    elif [[ ${gdfn} == p15 ]]; then
+                        color_number=15
+                        line_count=13
+                    elif [[ ${gdfn} == p16 ]]; then
+                        color_number=16
+                        line_count=13
+                    elif [[ ${gdfn} == p17 ]]; then
+                        color_number=17
+                        line_count=13
+                    elif [[ ${gdfn} == p18 ]]; then
+                        color_number=18
+                        line_count=13
+                    elif [[ ${gdfn} == p19 ]]; then
+                        color_number=19
+                        line_count=13
+                    elif [[ ${gdfn} == p20 ]]; then
+                        color_number=20
+                        line_count=13
+                    else
+                        color_number=`echo $gdfn | cut -c2-`
+                        line_count=13
+                    fi
+
+                sline_count="+${line_count}"
+                sCNTL=""
+
+                #let line_count=$line_count+1
+            fi
+
+            if [ -e ${gdfn} ]; then
+cat >> cmdfilemar_low  << EOF
+GDFILE  = ${gdfn}
+LINE    = ${color_number}/1/2/0
+HILO    = ${color_number}//L#/900-1016/5/50/y
+TITLE   = ${color_number}/${sline_count}/~ ? ${gdfn} ${sCNTL} |~${metaarea} ${metashname}
+GDATTIM	= F${fcsthr}
 run
 
-GDFILE	= F-GEFSP01 | ${PDY2}/${cyc}00
+EOF
+                if [ $WrottenZERO -eq 0 ]; then            
+cat >> cmdfilemar_low  << EOF
 MAP     = 0
 LATLON  = 0
-CLEAR	= no
-LINE    = 14/1/2/0
-HILO    = 14/L#/900-1016/5/50/y
-TITLE   = 14/-2/~ ? P01 |~${metaarea} ${metashname}
-run
+CLEAR   = no
 
-GDFILE	= F-GEFSP02 | ${PDY2}/${cyc}00
-LINE    = 2/1/2/0
-HILO    = 2/L#/900-1016/5/50/y
-TITLE   = 2/+1/~ ? P02 |~${metaarea} ${metashname}
-run
+EOF
+                fi
+                WrottenZERO=1
+            fi
 
-GDFILE	= F-GEFSP03 | ${PDY2}/${cyc}00
-LINE    = 3/1/2/0
-HILO    = 3/L#/900-1016/5/50/y
-TITLE   = 3/+2/~ ? P03 |~${metaarea} ${metashname}
-run
+        done
 
-GDFILE	= F-GEFSP04 | ${PDY2}/${cyc}00
-LINE    = 4/1/2/0
-HILO    = 4/L#/900-1016/5/50/y
-TITLE   = 4/+3/~ ? P04 |~${metaarea} ${metashname}
-run
 
-GDFILE	= F-GEFSP05 | ${PDY2}/${cyc}00
-LINE    = 12/1/2/0
-HILO    = 12/L#/900-1016/5/50/y
-TITLE   = 12/+4/~ ? P05 |~${metaarea} ${metashname}
-run
 
-GDFILE	= F-GEFSP06 | ${PDY2}/${cyc}00
-LINE    = 11/1/2/0
-HILO    = 11/L#/900-1016/5/50/y
-TITLE   = 11/+5/~ ? P06 |~${metaarea} ${metashname}
-run
-
-GDFILE	= F-GEFSP07 | ${PDY2}/${cyc}00
-LINE    = 7/1/2/0
-HILO    = 7/L#/900-1016/5/50/y
-TITLE   = 7/+6/~ ? P07 |~${metaarea} ${metashname}
-run
-
-GDFILE	= F-GEFSP08 | ${PDY2}/${cyc}00
-LINE    = 8/1/2/0
-HILO    = 8/L#/900-1016/5/50/y
-TITLE   = 8/+7/~ ? P08 |~${metaarea} ${metashname}
-run
-
-GDFILE	= F-GEFSP09 | ${PDY2}/${cyc}00
-LINE    = 9/1/2/0
-HILO    = 9/L#/900-1016/5/50/y
-TITLE   = 9/+8/~ ? P09 |~${metaarea} ${metashname}
-run
-
-GDFILE	= F-GEFSP10 | ${PDY2}/${cyc}00
-LINE    = 10/1/2/0
-HILO    = 10/L#/900-1016/5/50/y
-TITLE   = 10/+9/~ ? P10 |~${metaarea} ${metashname}
-run
-
-GDFILE	= F-GEFSP11 | ${PDY2}/${cyc}00
-LINE    = 11/1/2/0
-HILO    = 11/L#/900-1016/5/50/y
-TITLE   = 11/+10/~ ? P11 |~${metaarea} ${metashname}
-run
-
-GDFILE	= F-GEFSP12 | ${PDY2}/${cyc}00
-LINE    = 12/1/2/0
-HILO    = 12/L#/900-1016/5/50/y
-TITLE   = 12/+11/~ ? P12 |~${metaarea} ${metashname}
-run
-
-GDFILE	= F-GEFSP13 | ${PDY2}/${cyc}00
-LINE    = 13/1/2/0
-HILO    = 13/L#/900-1016/5/50/y
-TITLE   = 13/+12/~ ? P13 |~${metaarea} ${metashname}
-run
-
-GDFILE	= F-GEFSP14 | ${PDY2}/${cyc}00
-LINE    = 14/1/2/0
-HILO    = 14/L#/900-1016/5/50/y
-TITLE   = 14/+13/~ ? P14 |~${metaarea} ${metashname}
-run
-
-GDFILE	= F-GEFSP15 | ${PDY2}/${cyc}00
-LINE    = 15/1/2/0
-HILO    = 15/L#/900-1016/5/50/y
-TITLE   = 15/+13/~ ? P15 |~${metaarea} ${metashname}
-run
-
-GDFILE	= F-GEFSP16 | ${PDY2}/${cyc}00
-LINE    = 16/1/2/0
-HILO    = 16/L#/900-1016/5/50/y
-TITLE   = 16/+13/~ ? P16 |~${metaarea} ${metashname}
-run
-
-GDFILE	= F-GEFSP17 | ${PDY2}/${cyc}00
-LINE    = 17/1/2/0
-HILO    = 17/L#/900-1016/5/50/y
-TITLE   = 17/+13/~ ? P17 |~${metaarea} ${metashname}
-run
-
-GDFILE	= F-GEFSP18 | ${PDY2}/${cyc}00
-LINE    = 18/1/2/0
-HILO    = 18/L#/900-1016/5/50/y
-TITLE   = 18/+13/~ ? P18 |~${metaarea} ${metashname}
-run
-
-GDFILE	= F-GEFSP19 | ${PDY2}/${cyc}00
-LINE    = 19/1/2/0
-HILO    = 19/L#/900-1016/5/50/y
-TITLE   = 19/+13/~ ? P19 |~${metaarea} ${metashname}
-run
-
-GDFILE	= F-GEFSP20 | ${PDY2}/${cyc}00
-LINE    = 20/1/2/0
-HILO    = 20/L#/900-1016/5/50/y
-TITLE   = 20/+13/~ ? P20 |~${metaarea} ${metashname}
-run
-
-GDFILE	= \$COMINs_p1/nam.${PDY}/nam_${PDY}${cyc}f${fcsthr}
+        # ----- nam -----
+        gdfn=nam
+        if [ -e ${gdfn} ]; then
+cat >> cmdfilemar_low  << EOF
+GDFILE	= ${gdfn}
 LINE    = 31/2/3/0
 HILO    = 31/L#/900-1016/5/50/y
-TITLE   = 31/+10/~ ? NAM |~${metaarea} ${metashname}
+TITLE   = 31/+10/~ ? ${gdfn} |~${metaarea} ${metashname}
 run
 
-GDFILE	= \$COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr}
+EOF
+            if [ $WrottenZERO -eq 0 ]; then            
+cat >> cmdfilemar_low  << EOF
+MAP     = 0
+LATLON  = 0
+CLEAR   = no
+
+EOF
+            fi
+            WrottenZERO=1
+        fi
+
+        # ----- gfs -----
+        gdfn=gfs
+        if [ -e ${gdfn} ]; then
+cat >> cmdfilemar_low  << EOF
+GDFILE	= ${gdfn}
 LINE    = 5/2/3/0
 HILO    = 5/L#/900-1016/5/50/y
-TITLE   = 5/+12/~ ? GFS |~${metaarea} ${metashname}
+TITLE   = 5/+12/~ ? ${gdfn} |~${metaarea} ${metashname}
 run
 
-exit
 EOF
+        fi
+
+        cat cmdfilemar_low
+        gdplot2_nc < cmdfilemar_low
 
         export err=$?;err_chk
     done

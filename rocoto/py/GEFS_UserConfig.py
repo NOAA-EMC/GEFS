@@ -131,7 +131,7 @@ def create_folders(dicBase):
 
     sPath = WORKDIR + sSep + 'tmpnwprd'
     if not os.path.exists(sPath):
-        os.mkdirs(sPath)
+        os.makedirs(sPath)
 
     sPath = WORKDIR + '{0}com{0}output{0}dev{0}'.format(sSep)
     if not os.path.exists(sPath):

@@ -143,8 +143,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
     if sVarValue.endswith("/o"):
         sVarValue += '/&EXPID;'
-    else:
-        sVarValue += '/o/&EXPID;'
+    #else: # this means WORKDIR has assigned a specific path, so you don't need to modify it
+    #    sVarValue += '/o/&EXPID;'
     sVarValue = sVarValue.replace('&EXPID;', dicBase['EXPID'])
     dicBase[sVarName] = sVarValue
 
