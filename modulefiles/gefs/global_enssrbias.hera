@@ -1,0 +1,16 @@
+#%Module#####################################################
+## global_enssrbias component - Hera
+#############################################################
+#module use -a /scratch2/NCEPDEV/nwprod/NCEPLIBS/modulefiles
+
+##
+## load programming environment
+## this typically includes compiler, MPI and job scheduler
+##
+module load intel/18.0.5.274
+
+##
+export FCMP=ifort
+export LDFLAGSM=
+export OMPFLAGM=
+
