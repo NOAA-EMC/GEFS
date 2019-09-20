@@ -63,6 +63,28 @@ elif [[ "$WHERE_AM_I" == theia ]]; then
     # Temporary setting to test common settings
     . $GEFS_ROCOTO/bin/theia/common.sh
 
+elif [[ "$WHERE_AM_I" == hera ]]; then
+    echo "Loading modules for hera"
+    #. /apps/lmod/lmod/init/ksh
+    module purge
+    module load contrib
+    module load hpss
+    module load intel/18.0.5.274
+    module load impi/2018.0.4
+    module load hdf5parallel/1.10.5
+    module load netcdf
+    module load anaconda/anaconda3-5.3.1
+
+    module use -a /scratch2/NCEPDEV/nwprod/NCEPLIBS/modulefiles
+    module load prod_util/1.1.0
+    module load g2tmpl/1.5.1
+    module load grib_util/1.1.1
+
+    module load gempak/7.4.2
+
+    # Temporary setting to test common settings
+    . $GEFS_ROCOTO/bin/hera/common.sh
+
 elif [[ "$WHERE_AM_I" == wcoss_dell_p3 ]] ; then
     echo "Loading modules for wcoss_dell_p3"
     . /usrx/local/prod/lmod/lmod/init/ksh
