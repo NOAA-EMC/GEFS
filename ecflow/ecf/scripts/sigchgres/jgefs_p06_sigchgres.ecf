@@ -1,19 +1,31 @@
 #BSUB -J %E%gefs_p06_sigchgres_%CYC%
-#BSUB -o /%COM%/output/%ENVIR%/today/gefs_p06_sigchgres_%CYC%.o%J
-#BSUB -e /%COM%/output/%ENVIR%/today/gefs_p06_sigchgres_%CYC%.o%J
-#BSUB -cwd /tmpnwprd
+#BSUB -o %COM%/output/%ENVIR%/today/gefs_p06_sigchgres_%CYC%.o%J
+#BSUB -cwd /tmp
 #BSUB -q %QUEUE%
 #BSUB -n 1
 #BSUB -R span[ptile=1]
-#BSUB -R affinity[core(1):distribute=balance]
+#BSUB -R affinity[core(4):distribute=balance]
 #BSUB -W  00:15
 #BSUB -L /bin/sh
-#BSUB -P %PROJ%
-#BSUB -x
-#BSUB -a poe
+#BSUB -P %PROJ%-%PROJENVIR%
 
 %include <head.h>
 %include <envir-p3.h>
+
+export model=gefs
+%include <model_ver.h>
+
+. /usrx/local/prod/lmod/lmod/init/ksh
+module load grib_util/$grib_util_ver
+module load util_shared/$util_shared_ver
+
+module load ips/$ips_ver
+module load lsf/$lsf_ver
+module load impi/$impi_ver
+module load CFP/$cfp_ver
+export USE_CFP=YES
+
+module list 
 
 # EXPORT list here
 set -x
@@ -35,29 +47,9 @@ export cyc_fcst=%CYC%
 export RUN=gep06
 
 # CALL executable job script here
-VERSION_FILE=$NWROOT/versions/gefs.ver
-if [ -f $VERSION_FILE ]; then
-  . $VERSION_FILE
-else
-  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
-  ecflow_client --abort
-  exit
-fi
 
-. /usrx/local/prod/lmod/lmod/init/ksh
-module use /gpfs/dell1/nco/ops/nwprod/modulefiles
-module load prod_util/$prod_util_ver
-module load grib_util/$grib_util_ver
-module load util_shared/$util_shared_ver
 
-module load EnvVars/$EnvVars_ver
-module load ips/$ips_ver
-module load lsf/$lsf_ver
-module load impi/$impi_ver
-module load CFP/$cfp_ver
-export USE_CFP=YES
-
-$NWROOT/gefs.${gefs_ver}/jobs/JGEFS_SIGCHGRS
+${HOMEgefs}/jobs/JGEFS_SIGCHGRS
 
 %include <tail.h>
 %manual
