@@ -102,33 +102,34 @@ do
 
             export pgm=gdplot2_nc;. prep_step; startmsg
 
-cat > cmdfilemar  << EOF
-DEVICE	= ${device}
-PANEL	= 0
-TEXT	= m/22/1/1/hw
-CONTUR	= 2
-MAP	= 1
-CLEAR	= yes
-GAREA   = ${garea}
-PROJ    = ${proj}
-LATLON  = 1/10/1/2/10;10
+			cat > cmdfilemar  <<- EOF
+				DEVICE	= ${device}
+				PANEL	= 0
+				TEXT	= m/22/1/1/hw
+				CONTUR	= 2
+				MAP	= 1
+				CLEAR	= yes
+				GAREA   = ${garea}
+				PROJ    = ${proj}
+				LATLON  = 1/10/1/2/10;10
 
-GLEVEL  = 500 
-GVCORD  = pres 
-SKIP    = 0 
-SCALE   = -1 
-GDPFUN  = sm5s(hght)
-TYPE    = c
-CINT    = ${level}
-FINT    =
-FLINE   =
-HILO    = 0
-HLSYM   = 0
-CLRBAR  = 0
-WIND    = 0
-REFVEC  =
+				GLEVEL  = 500 
+				GVCORD  = pres 
+				SKIP    = 0 
+				SCALE   = -1 
+				GDPFUN  = sm5s(hght)
+				TYPE    = c
+				CINT    = ${level}
+				FINT    =
+				FLINE   =
+				HILO    = 0
+				HLSYM   = 0
+				CLRBAR  = 0
+				WIND    = 0
+				REFVEC  =
 
-EOF
+				EOF
+
             WrottenZERO=0
             grids=${memberlist}
             line_count=2
@@ -138,102 +139,158 @@ EOF
                 # ----- gridl -----
                 gdfn=${gridl} 
                 
-                if [ ${gdfn} == c00 ]; then
-                    color_number=6
-                    sline_count="-1"
-                    sCNTL="(CNTL)"
-                elif [[ ${gdfn} == p01 ]]; then
-                    color_number=14
-                    sline_count="-2"
-                    sCNTL=""
-                else
-        
-                    
-                    if [[ ${gdfn} == p02 ]]; then
+				case ${gdfn} in
+
+					(c00)
+						color_number=6
+                    	sline_count="-1"
+                    	sCNTL="(CNTL)"
+						;;
+					(p01)
+						color_number=14
+                    	sline_count="-2"
+                    	sCNTL=""
+						;;
+					((p02)
                         color_number=2
                         line_count=1
-                    elif [[ ${gdfn} == p03 ]]; then
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+                    (p03)
                         color_number=3
                         line_count=2
-                    elif [[ ${gdfn} == p04 ]]; then
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+                    (p04)
                         color_number=4
                         line_count=3
-                    elif [[ ${gdfn} == p05 ]]; then
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+                    (p05)
                         color_number=12
                         line_count=4
-                    elif [[ ${gdfn} == p06 ]]; then
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+                    (p06)
                         color_number=11
                         line_count=5
-                    elif [[ ${gdfn} == p07 ]]; then
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+                    (p07)
                         color_number=7
                         line_count=6
-                    elif [[ ${gdfn} == p08 ]]; then
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+                    (p08)
                         color_number=8
                         line_count=7
-                    elif [[ ${gdfn} == p09 ]]; then
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+                    (p09)
                         color_number=9
                         line_count=8
-                    elif [[ ${gdfn} == p10 ]]; then
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+                    (p10)
                         color_number=10
                         line_count=9
-                    elif [[ ${gdfn} == p11 ]]; then
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+                    (p11)
                         color_number=11
                         line_count=10
-                    elif [[ ${gdfn} == p12 ]]; then
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+                    (p12)
                         color_number=12
                         line_count=11
-                    elif [[ ${gdfn} == p13 ]]; then
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+                    (p13)
                         color_number=13
                         line_count=12
-                    elif [[ ${gdfn} == p14 ]]; then
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+                    (p14)
                         color_number=14
                         line_count=13
-                    elif [[ ${gdfn} == p15 ]]; then
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+                    (p15)
                         color_number=15
                         line_count=13
-                    elif [[ ${gdfn} == p16 ]]; then
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+                    (p16)
                         color_number=16
                         line_count=13
-                    elif [[ ${gdfn} == p17 ]]; then
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+                    (p17)
                         color_number=17
                         line_count=13
-                    elif [[ ${gdfn} == p18 ]]; then
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+                    (p18)
                         color_number=18
                         line_count=13
-                    elif [[ ${gdfn} == p19 ]]; then
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+                    (p19)
                         color_number=19
                         line_count=13
-                    elif [[ ${gdfn} == p20 ]]; then
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+                    (p20)
                         color_number=20
                         line_count=13
-                    else
-                        color_number=`echo $gdfn | cut -c2-`
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+					(*)
+						color_number=`echo $gdfn | cut -c2-`
                         line_count=13
-                    fi
-
-                    sline_count="+${line_count}"
-                    sCNTL=""
-
-                    #let line_count=$line_count+1
-                fi
+						sline_count="+${line_count}"
+                		sCNTL=""
+						;;
+				esac
+				
 
                 # ----- gridl -----
                 if [ -e ${gdfn} ]; then
-cat >> cmdfilemar  << EOF
-GDFILE  = ${gdfn}
-LINE    = ${color_number}/1/2/0
-TITLE   = ${color_number}/${sline_count}/~ ? ${gdfn} ${sCNTL} |~${level} DM - ${metaarea}
-GDATTIM = F${fcsthr}
-run
+					cat >> cmdfilemar  <<- EOF
+						GDFILE  = ${gdfn}
+						LINE    = ${color_number}/1/2/0
+						TITLE   = ${color_number}/${sline_count}/~ ? ${gdfn} ${sCNTL} |~${level} DM - ${metaarea}
+						GDATTIM = F${fcsthr}
+						run
 
-EOF
+						EOF
                     if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilemar  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+						cat >> cmdfilemar  <<- EOF
+							MAP     = 0
+							LATLON  = 0
+							CLEAR   = no
 
-EOF
+							EOF
                     fi
                     WrottenZERO=1
                 fi
@@ -244,21 +301,21 @@ EOF
             # ----- nam -----
             gdfn=nam
             if [ -e ${gdfn} ]; then
-cat >> cmdfilemar  << EOF
-GDFILE  = ${gdfn}
-LINE    = 31/2/3/0
-TITLE   = 31/+10/~ ? ${gdfn} (DASHED) |~${level} DM - ${metaarea}
-GDATTIM = F${fcsthr}
-run
+				cat >> cmdfilemar  <<- EOF
+					GDFILE  = ${gdfn}
+					LINE    = 31/2/3/0
+					TITLE   = 31/+10/~ ? ${gdfn} (DASHED) |~${level} DM - ${metaarea}
+					GDATTIM = F${fcsthr}
+					run
 
-EOF
+					EOF
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilemar  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+				cat >> cmdfilemar  <<- EOF
+					MAP     = 0
+					LATLON  = 0
+					CLEAR   = no
 
-EOF
+					EOF
                 fi
                 WrottenZERO=1
             fi
@@ -266,14 +323,14 @@ EOF
             # ----- gfs -----
             gdfn=gfs
             if [ -e ${gdfn} ]; then
-cat >> cmdfilemar  << EOF
-GDFILE  = ${gdfn}
-LINE    = 5/2/3/0
-TITLE   = 5/+12/~ ? ${gdfn} (DASHED) |~${level} DM - ${metaarea}
-GDATTIM = F${fcsthr}
-run
+				cat >> cmdfilemar  <<- EOF
+					GDFILE  = ${gdfn}
+					LINE    = 5/2/3/0
+					TITLE   = 5/+12/~ ? ${gdfn} (DASHED) |~${level} DM - ${metaarea}
+					GDATTIM = F${fcsthr}
+					run
 
-EOF
+					EOF
             fi
 
             cat cmdfilemar
@@ -315,32 +372,33 @@ EOF
 
         export pgm=gdplot2_nc;. prep_step; startmsg
 
-cat > cmdfilemar_low  << EOF
-GDATTIM	= F${fcsthr}
-DEVICE	= ${device}
-PANEL	= 0
-TEXT	= m/22/1/1/hw
-CONTUR	= 1
-MAP	= 1
-CLEAR	= yes
-GAREA   = ${garea}
-PROJ    = ${proj}
-LATLON  = 1/10/1/2/10;10
-GLEVEL  = 0 
-GVCORD  = none 
-SKIP    = 0 
-SCALE   = 0 
-GDPFUN  = pmsl
-TYPE    = c
-CINT    = 4/1/8
-HLSYM   = l/22/3/hw
-FINT    =
-FLINE   =
-CLRBAR  = 0
-WIND    = 0
-REFVEC  =
+		cat > cmdfilemar_low  <<- EOF
+			GDATTIM	= F${fcsthr}
+			DEVICE	= ${device}
+			PANEL	= 0
+			TEXT	= m/22/1/1/hw
+			CONTUR	= 1
+			MAP	= 1
+			CLEAR	= yes
+			GAREA   = ${garea}
+			PROJ    = ${proj}
+			LATLON  = 1/10/1/2/10;10
+			GLEVEL  = 0 
+			GVCORD  = none 
+			SKIP    = 0 
+			SCALE   = 0 
+			GDPFUN  = pmsl
+			TYPE    = c
+			CINT    = 4/1/8
+			HLSYM   = l/22/3/hw
+			FINT    =
+			FLINE   =
+			CLRBAR  = 0
+			WIND    = 0
+			REFVEC  =
 
-EOF
+			EOF
+
         WrottenZERO = 0
         grids=${memberlist}
         line_count=2
@@ -350,109 +408,158 @@ EOF
             # ----- gridl -----
             gdfn=${gridl} 
             
-            if [ ${gdfn} == c00 ]; then
-                color_number=6
-                sline_count="-1"
-                sCNTL="(CNTL)"
+			case ${gdfn} in
 
-            else
-    
-                if [ ${gdfn} == c00 ]; then
-                    color_number=6
-                    sline_count="-1"
-                    sCNTL="(CNTL)"
-                elif [[ ${gdfn} == p01 ]]; then
+				(c00)
+					color_number=6
+                	sline_count="-1"
+                	sCNTL="(CNTL)"
+					;;
+				(p01)
+					color_number=14
+                	sline_count="-2"
+                	sCNTL=""
+					;;
+				((p02)
+                    color_number=2
+                    line_count=1
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+                (p03)
+                    color_number=3
+                    line_count=2
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+                (p04)
+                    color_number=4
+                    line_count=3
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+                (p05)
+                    color_number=12
+                    line_count=4
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+                (p06)
+                    color_number=11
+                    line_count=5
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+                (p07)
+                    color_number=7
+                    line_count=6
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+                (p08)
+                    color_number=8
+                    line_count=7
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+                (p09)
+                    color_number=9
+                    line_count=8
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+                (p10)
+                    color_number=10
+                    line_count=9
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+                (p11)
+                    color_number=11
+                    line_count=10
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+                (p12)
+                    color_number=12
+                    line_count=11
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+                (p13)
+                    color_number=13
+                    line_count=12
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+                (p14)
                     color_number=14
-                    sline_count="-2"
-                    sCNTL=""
-                else
-        
-                    
-                    if [[ ${gdfn} == p02 ]]; then
-                        color_number=2
-                        line_count=1
-                    elif [[ ${gdfn} == p03 ]]; then
-                        color_number=3
-                        line_count=2
-                    elif [[ ${gdfn} == p04 ]]; then
-                        color_number=4
-                        line_count=3
-                    elif [[ ${gdfn} == p05 ]]; then
-                        color_number=12
-                        line_count=4
-                    elif [[ ${gdfn} == p06 ]]; then
-                        color_number=11
-                        line_count=5
-                    elif [[ ${gdfn} == p07 ]]; then
-                        color_number=7
-                        line_count=6
-                    elif [[ ${gdfn} == p08 ]]; then
-                        color_number=8
-                        line_count=7
-                    elif [[ ${gdfn} == p09 ]]; then
-                        color_number=9
-                        line_count=8
-                    elif [[ ${gdfn} == p10 ]]; then
-                        color_number=10
-                        line_count=9
-                    elif [[ ${gdfn} == p11 ]]; then
-                        color_number=11
-                        line_count=10
-                    elif [[ ${gdfn} == p12 ]]; then
-                        color_number=12
-                        line_count=11
-                    elif [[ ${gdfn} == p13 ]]; then
-                        color_number=13
-                        line_count=12
-                    elif [[ ${gdfn} == p14 ]]; then
-                        color_number=14
-                        line_count=13
-                    elif [[ ${gdfn} == p15 ]]; then
-                        color_number=15
-                        line_count=13
-                    elif [[ ${gdfn} == p16 ]]; then
-                        color_number=16
-                        line_count=13
-                    elif [[ ${gdfn} == p17 ]]; then
-                        color_number=17
-                        line_count=13
-                    elif [[ ${gdfn} == p18 ]]; then
-                        color_number=18
-                        line_count=13
-                    elif [[ ${gdfn} == p19 ]]; then
-                        color_number=19
-                        line_count=13
-                    elif [[ ${gdfn} == p20 ]]; then
-                        color_number=20
-                        line_count=13
-                    else
-                        color_number=`echo $gdfn | cut -c2-`
-                        line_count=13
-                    fi
-
-                sline_count="+${line_count}"
-                sCNTL=""
-
-                #let line_count=$line_count+1
-            fi
+                    line_count=13
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+                (p15)
+                    color_number=15
+                    line_count=13
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+                (p16)
+                    color_number=16
+                    line_count=13
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+                (p17)
+                    color_number=17
+                    line_count=13
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+                (p18)
+                    color_number=18
+                    line_count=13
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+                (p19)
+                    color_number=19
+                    line_count=13
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+                (p20)
+                    color_number=20
+                    line_count=13
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+				(*)
+					color_number=`echo $gdfn | cut -c2-`
+                    line_count=13
+					sline_count="+${line_count}"
+            		sCNTL=""
+					;;
+			esac
 
             if [ -e ${gdfn} ]; then
-cat >> cmdfilemar_low  << EOF
-GDFILE  = ${gdfn}
-LINE    = ${color_number}/1/2/0
-HILO    = ${color_number}//L#/900-1016/5/50/y
-TITLE   = ${color_number}/${sline_count}/~ ? ${gdfn} ${sCNTL} |~${metaarea} ${metashname}
-GDATTIM	= F${fcsthr}
-run
+				cat >> cmdfilemar_low  <<- EOF
+					GDFILE  = ${gdfn}
+					LINE    = ${color_number}/1/2/0
+					HILO    = ${color_number}//L#/900-1016/5/50/y
+					TITLE   = ${color_number}/${sline_count}/~ ? ${gdfn} ${sCNTL} |~${metaarea} ${metashname}
+					GDATTIM	= F${fcsthr}
+					run
 
-EOF
+					EOF
+
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilemar_low  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+					cat >> cmdfilemar_low  <<- EOF
+						MAP     = 0
+						LATLON  = 0
+						CLEAR   = no
 
-EOF
+						EOF
                 fi
                 WrottenZERO=1
             fi
@@ -464,21 +571,21 @@ EOF
         # ----- nam -----
         gdfn=nam
         if [ -e ${gdfn} ]; then
-cat >> cmdfilemar_low  << EOF
-GDFILE	= ${gdfn}
-LINE    = 31/2/3/0
-HILO    = 31/L#/900-1016/5/50/y
-TITLE   = 31/+10/~ ? ${gdfn} |~${metaarea} ${metashname}
-run
+			cat >> cmdfilemar_low  <<- EOF
+				GDFILE	= ${gdfn}
+				LINE    = 31/2/3/0
+				HILO    = 31/L#/900-1016/5/50/y
+				TITLE   = 31/+10/~ ? ${gdfn} |~${metaarea} ${metashname}
+				run
 
-EOF
+				EOF
             if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilemar_low  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+				cat >> cmdfilemar_low  <<- EOF
+					MAP     = 0
+					LATLON  = 0
+					CLEAR   = no
 
-EOF
+					EOF
             fi
             WrottenZERO=1
         fi
@@ -486,14 +593,14 @@ EOF
         # ----- gfs -----
         gdfn=gfs
         if [ -e ${gdfn} ]; then
-cat >> cmdfilemar_low  << EOF
-GDFILE	= ${gdfn}
-LINE    = 5/2/3/0
-HILO    = 5/L#/900-1016/5/50/y
-TITLE   = 5/+12/~ ? ${gdfn} |~${metaarea} ${metashname}
-run
+			cat >> cmdfilemar_low  <<- EOF
+				GDFILE	= ${gdfn}
+				LINE    = 5/2/3/0
+				HILO    = 5/L#/900-1016/5/50/y
+				TITLE   = 5/+12/~ ? ${gdfn} |~${metaarea} ${metashname}
+				run
 
-EOF
+				EOF
         fi
 
         cat cmdfilemar_low

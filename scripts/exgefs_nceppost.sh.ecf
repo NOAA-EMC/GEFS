@@ -201,8 +201,7 @@ fi
 
 #(( fhr=SHOUR))
 #while (( fhr <= FHOUR )); do
-for fhr in ${RUN_HOURS[@]}
-do
+for fhr in ${RUN_HOURS[@]}; do
     #fhr=$(printf %03i $fhr)
     #if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
     #    FHINC=$FHOUT_HF

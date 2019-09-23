@@ -333,22 +333,9 @@ def rw_bin_forecast_high(taskname, dicBase):
         print("Please check whether you have the input file: " + sInput_File)
         return
 
-    layout_x = int(dicBase['layout_x'.upper()])
-    layout_y = int(dicBase['layout_y'.upper()])
-    WRITE_GROUP = int(dicBase['WRITE_GROUP'.upper()])
-    WRTTASK_PER_GROUP = int(dicBase['WRTTASK_PER_GROUP'.upper()])
-    parallel_threads = int(dicBase['parallel_threads'.upper()])
-
     WHERE_AM_I = dicBase['WHERE_AM_I']
 
-    ncores_per_node = gefs_xml_for_tasks.Get_NCORES_PER_NODE(dicBase)
-
-    # PPN: Processes per node
-    # TPP: Threads per process
-    iTotal_Tasks = layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP
-    iNodes = int((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) / (ncores_per_node / parallel_threads))
-    iPPN = int((ncores_per_node / parallel_threads))
-    iTPP = parallel_threads
+    iTotal_Tasks, iNodes, iPPN, iTPP = gefs_xml_for_tasks.calc_fcst_resources(dicBase)
 
     # sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 

@@ -176,39 +176,39 @@ do
             COMINtmp=$COMIN
         fi
 
-gdplot2_nc << EOF 
-GDFILE	= ${GDFILE}
-GDATTIM	= ${gdattim}
-DEVICE	= ${device}
-PANEL	= 0
-TEXT	= 1/22/1/1/hw
-MAP	= 11!0
-CLEAR	= yes
-GAREA   = ${garea}
-PROJ    = ${proj}
-LATLON  = 11/10/1/1/20;20!0
+		gdplot2_nc <<- EOF 
+			GDFILE	= ${GDFILE}
+			GDATTIM	= ${gdattim}
+			DEVICE	= ${device}
+			PANEL	= 0
+			TEXT	= 1/22/1/1/hw
+			MAP	= 11!0
+			CLEAR	= yes
+			GAREA   = ${garea}
+			PROJ    = ${proj}
+			LATLON  = 11/10/1/1/20;20!0
 
-GLEVEL  = ${glevel}
-GVCORD  = ${gvcord}
-GDPFUN  = ${gdpfun}
-TYPE    = ${type}
-CONTUR  = ${contur}
-CINT    = ${cint}
-LINE    = ${line}
-FINT    = ${fint}
-FLINE   = ${fline}
-HILO    = ${hilo}
-HLSYM   = ${hlsym}
-SKIP    = 0
-SCALE   = ${scale}
-CLRBAR  = ${clrbar}
-WIND    = 0
-REFVEC  =
-TITLE   = ${title}
-run
+			GLEVEL  = ${glevel}
+			GVCORD  = ${gvcord}
+			GDPFUN  = ${gdpfun}
+			TYPE    = ${type}
+			CONTUR  = ${contur}
+			CINT    = ${cint}
+			LINE    = ${line}
+			FINT    = ${fint}
+			FLINE   = ${fline}
+			HILO    = ${hilo}
+			HLSYM   = ${hlsym}
+			SKIP    = 0
+			SCALE   = ${scale}
+			CLRBAR  = ${clrbar}
+			WIND    = 0
+			REFVEC  =
+			TITLE   = ${title}
+			run
 
-exit
-EOF
+			exit
+			EOF
 
     export COMIN=$COMINtmp
 done
@@ -248,36 +248,36 @@ do
         COMINtmp=$COMIN
     fi
 
-gdplot2_nc << EOF
-GDFILE	= ${GDFILE}
-GDATTIM	= f24-f204-12
-DEVICE	= ${device}
-PANEL	= 0
-TEXT	= 1/22/1/1/hw
-MAP	= 11!0
-CLEAR	= yes
-GAREA   = 2;-139;27;-22
-PROJ    = STR/90;-105;0
-LATLON  = 11/10/1/1/20;20!0
-glevel  = 0              !500
-gvcord  = none           !pres
-gdpfun  = sm5s(pmsl)     !sm9s(hght)
-type    = c              !c
-contur  = 2
-skip    = 0
-cint    = 8              !6
-line    = 19/1/3/1       !2/2/3/1
-scale   = 0              !-1
-fint    = 0
-fline   = 0
-hilo    = 19/H#;L#/1020-1070;900-1012 !0
-hlsym   = 1;1//22;22/2;2/hw           !0
-clrbar  = 0
-TITLE   = ${title}
-run
+	gdplot2_nc <<- EOF
+		GDFILE	= ${GDFILE}
+		GDATTIM	= f24-f204-12
+		DEVICE	= ${device}
+		PANEL	= 0
+		TEXT	= 1/22/1/1/hw
+		MAP	= 11!0
+		CLEAR	= yes
+		GAREA   = 2;-139;27;-22
+		PROJ    = STR/90;-105;0
+		LATLON  = 11/10/1/1/20;20!0
+		glevel  = 0              !500
+		gvcord  = none           !pres
+		gdpfun  = sm5s(pmsl)     !sm9s(hght)
+		type    = c              !c
+		contur  = 2
+		skip    = 0
+		cint    = 8              !6
+		line    = 19/1/3/1       !2/2/3/1
+		scale   = 0              !-1
+		fint    = 0
+		fline   = 0
+		hilo    = 19/H#;L#/1020-1070;900-1012 !0
+		hlsym   = 1;1//22;22/2;2/hw           !0
+		clrbar  = 0
+		TITLE   = ${title}
+		run
 
-exit
-EOF
+		exit
+		EOF
 
     export COMIN=$COMINtmp
 

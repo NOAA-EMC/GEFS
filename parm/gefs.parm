@@ -8,7 +8,7 @@
 # Number of pairs to run (normally 10 pairs)
 ##############################################
 export npair=${npair:-15}
-export npert=${npert:-2}
+export npert=${npert:-30}
 export navg_min=${navg_min:-10}
 export nhrpair=${nhrpair:-$npair}
 export nstinit=${nstinit:-yes}
@@ -31,6 +31,7 @@ export FHOUTLF=${FHOUTLF:-6}
 # Frequency of initializations
 export fhrp=${fhrp:-06}
 #export fhrp=24
+export gefs_cych=${gefs_cych:-6}
 
 case $cyc in
 	(00)

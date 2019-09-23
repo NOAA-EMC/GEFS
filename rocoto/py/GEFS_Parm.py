@@ -134,8 +134,11 @@ def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
     if sVarName not in lstBaseParm:
         lstBaseParm.append(sVarName)
 
+    # ==
+    sVarName = "cplwav"
+    if sVarName not in lstBaseParm:
+        lstBaseParm.append(sVarName)
 
-# ------
 def create_gets_dev_parm(dicBase, listBaseParm):
     import sys
     import os
@@ -192,8 +195,11 @@ def create_gets_dev_parm(dicBase, listBaseParm):
         elif sVarName.upper() == 'makepgrba'.upper():
             fh.write('\n# set all the following "make" and "save" flags to "yes" to simulate production\n')
 
-        # ==
-        fh.write('export {0}="{1}"\n'.format(sVarName, dicBase[sVarName.upper()]))
+        #==
+        if sVarName == "cplwav":
+            fh.write('export {0}="{1}"\n'.format(sVarName, dicBase[sVarName]))
+        else:
+            fh.write('export {0}="{1}"\n'.format(sVarName, dicBase[sVarName.upper()]))
 
     # fh.write(strings)
     fh.write("\necho `date` $0 test section end\n")

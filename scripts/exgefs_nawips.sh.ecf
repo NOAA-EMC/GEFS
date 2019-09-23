@@ -99,35 +99,29 @@ while [ $fhcnt -le $fend ] ; do
         GEMGRD=${RUNM}_${PDY}${cyc} 
         ;;
     ge*)  
-        if test "$model" = "bc" -o "$model" = "an" -o "$model" = "wt" -o "$model" = "me" -o "$model" = "anv" 
-        then
+        if [ "$model" = "bc" -o "$model" = "an" -o "$model" = "wt" -o "$model" = "me" -o "$model" = "anv" ]; then
             GRIBIN=$COMIN/${RUNM}.${cycle}.pgrb2a_${model}f${fhr}
             GEMGRD=${RUNM}${model}_${PDY}${cyc}f${fhr3}
 
             # create subdirectory for the bc and an gefs files, -- 05/16/2013
             # so that the mag system can only take the expected gefs files
             # COMOUT_hold=$COMOUT
-            if test "$model" = "bc" -o "$model" = "an" 
-            then
+            if test "$model" = "bc" -o "$model" = "an"; then
                 COMOUT=${COMOUT_hold}/${model}
                 mkdir -p -m 775 $COMOUT
              fi
-        elif test "$model" = "glbanl"
-        then
+        elif [ "$model" = "glbanl" ]; then
             GRIBIN=$COMIN/${model}.${cycle}.pgrb2a_mdf${fhr}
             GEMGRD=${model}_${PDYm2}${cyc}f${fhr3}
-        elif test "$model" = "ndgd"
-        then
+        elif [ "$model" = "ndgd" ]; then
             GRIBIN=$COMIN/${RUNM}.${cycle}.${model}_conusf${fhr}
             GEMGRD=${RUNM}${model}_${PDY}${cyc}f${fhr3}
-        elif test "$model" = "ndgd_alaska"
-        then
+        elif [ "$model" = "ndgd_alaska" ]; then
             GRIBIN=$COMIN/${RUNM}.${cycle}.${model}f${fhr}
             GEMGRD=${RUNM}${model}_${PDY}${cyc}f${fhr3}
         else
             # This is for gefs
-            if [ $resolution = "0p50" ]
-            then
+            if [ $resolution = "0p50" ]; then
                 if [ $fhcnt -lt 192 ]; then 
                     finc1=finc_0p50
                 fi
@@ -147,16 +141,14 @@ while [ $fhcnt -le $fend ] ; do
     GRIBIN_chk=${GRIBIN}.idx
 
     icnt=1
-    while [ $icnt -lt 1000 ]
-    do
-    if [ -r $GRIBIN_chk ] ; then
+    while [ $icnt -lt 1000 ]; do
+    if [ -r $GRIBIN_chk ]; then
         break
     else
         let "icnt=icnt+1"
         sleep 20
     fi
-    if [ $icnt -ge $maxtries ]
-    then
+    if [ $icnt -ge $maxtries ]; then
         msg="ABORTING after 1 hour of waiting for F$fhr to end."
         err_exit $msg
     fi
@@ -186,7 +178,7 @@ while [ $fhcnt -le $fend ] ; do
 #     cp $GRIBIN grib$fhr
 #  esac
 
-    if [ "$model" = "ensemble" ] ; then
+    if [ "$model" = "ensemble" ]; then
         export pgm="nagrib2 $RUNM"
     else
         export pgm="nagrib2 F$fhr"
@@ -195,23 +187,23 @@ while [ $fhcnt -le $fend ] ; do
     # export pgm="nagrib2 F$fhr"
     startmsg
 
-$GEMEXE/$NAGRIB << EOF
-GBFILE   = grib$fhr
-INDXFL   = 
-GDOUTF   = $GEMGRD
-PROJ     = $proj
-GRDAREA  = $grdarea
-KXKY     = $kxky
-MAXGRD   = $maxgrd
-CPYFIL   = $cpyfil
-GAREA    = $garea
-OUTPUT   = $output
-GBTBLS   = $gbtbls
-GBDIAG   = 
-PDSEXT   = $pdsext
-l
-r
-EOF
+	$GEMEXE/$NAGRIB <<- EOF
+		GBFILE   = grib$fhr
+		INDXFL   = 
+		GDOUTF   = $GEMGRD
+		PROJ     = $proj
+		GRDAREA  = $grdarea
+		KXKY     = $kxky
+		MAXGRD   = $maxgrd
+		CPYFIL   = $cpyfil
+		GAREA    = $garea
+		OUTPUT   = $output
+		GBTBLS   = $gbtbls
+		GBDIAG   = 
+		PDSEXT   = $pdsext
+		l
+		r
+		EOF
     
     export err=$? #;err_chk
 
@@ -223,18 +215,17 @@ EOF
     ls -l $GEMGRD
 
     export pgm="GEMPAK CHECK FILE"
-    if [ $err -ne 0 ]
-    then
+    if [ $err -ne 0 ]; then
         echo "Error: failed to create gempak file $GEMGRD"
         err_chk
     fi
 
-    if [ "$NAGRIB" = "nagrib2" ] ; then
+    if [ "$NAGRIB" = "nagrib2" ]; then
         gpend
     fi
-    if [ $SENDCOM = "YES" ] ; then
+    if [ $SENDCOM = "YES" ]; then
         mv $GEMGRD $COMOUT/$GEMGRD
-        if [ $SENDDBN = "YES" ] ; then
+        if [ $SENDDBN = "YES" ]; then
             $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job \
             $COMOUT/$GEMGRD
         else

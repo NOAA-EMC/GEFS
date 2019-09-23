@@ -198,54 +198,55 @@ do
                 ln -s $COMINs_p1/dgex.${PDY}/dgex_${PDY}${cyc}f${fcsthr} ${fn}
             fi
 
-cat > cmdfile850  << EOF
-DEVICE  = ${device}
-PANEL   = 0
-TEXT    = s/22/1/1/hw
-CONTUR  = 2
-MAP     = 1
-CLEAR   = yes
-GAREA   = ${garea}
-PROJ    = ${proj}
-LATLON  = 0
+			cat > cmdfile850  <<- EOF
+				DEVICE  = ${device}
+				PANEL   = 0
+				TEXT    = s/22/1/1/hw
+				CONTUR  = 2
+				MAP     = 1
+				CLEAR   = yes
+				GAREA   = ${garea}
+				PROJ    = ${proj}
+				LATLON  = 0
 
-GLEVEL  = 850
-GVCORD  = pres
-SKIP    = 0
-SCALE   = 0
-GDPFUN  = sm5s(tmpc)
-TYPE    = c
-CINT    = 100/${tempc}/${tempc}
-FINT    =
-FLINE   =
-HILO    = 0
-HLSYM   = 0
-CLRBAR  = 0
-WIND    = 0
-REFVEC  =
+				GLEVEL  = 850
+				GVCORD  = pres
+				SKIP    = 0
+				SCALE   = 0
+				GDPFUN  = sm5s(tmpc)
+				TYPE    = c
+				CINT    = 100/${tempc}/${tempc}
+				FINT    =
+				FLINE   =
+				HILO    = 0
+				HLSYM   = 0
+				CLRBAR  = 0
+				WIND    = 0
+				REFVEC  =
 
-EOF
+				EOF
 
             WrottenZERO=0
 
             # ----- gfs -----
             gdfn=gfs # gd file name
             if [ -e ${gdfn} ]; then
-cat >> cmdfile850  << EOF
-GDFILE  = ${gdfn}
-LINE    = 22/2/2/0
-TITLE   = 22/-1/~ ? GFS ${cyc}Z (DASHED) |~${name}
-GDATTIM = F${fcsthr}
-run
+				cat >> cmdfile850  <<- EOF
+					GDFILE  = ${gdfn}
+					LINE    = 22/2/2/0
+					TITLE   = 22/-1/~ ? GFS ${cyc}Z (DASHED) |~${name}
+					GDATTIM = F${fcsthr}
+					run
 
-EOF
+					EOF
+
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfile850  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+					cat >> cmdfile850  <<- EOF
+						MAP     = 0
+						LATLON  = 0
+						CLEAR   = no
 
-EOF
+						EOF
                 fi
                 WrottenZERO=1
             fi
@@ -253,21 +254,22 @@ EOF
             # ----- gfs_6 -----
             gdfn=gfs_6 # gd file name
             if [ -e ${gdfn} ]; then
-cat >> cmdfile850  << EOF
-GDFILE  = ${gdfn}
-LINE    = 21/2/2/0
-TITLE   = 21/-2/~ ? GFS6 ${cyc_6}Z (DASHED) |~${name}
-GDATTIM = F${fcsthr_6}
-run
+				cat >> cmdfile850  <<- EOF
+					GDFILE  = ${gdfn}
+					LINE    = 21/2/2/0
+					TITLE   = 21/-2/~ ? GFS6 ${cyc_6}Z (DASHED) |~${name}
+					GDATTIM = F${fcsthr_6}
+					run
 
-EOF
+					EOF
+
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfile850  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+					cat >> cmdfile850  <<- EOF
+						MAP     = 0
+						LATLON  = 0
+						CLEAR   = no
 
-EOF
+						EOF
                 fi
                 WrottenZERO=1
             fi
@@ -279,21 +281,22 @@ EOF
                 # ----- gridl -----
                 gdfn=${gridl}_6 # gd file name
                 if [ -e ${gdfn} ]; then
-cat >> cmdfile850  << EOF
-GDFILE  = ${gdfn}
-LINE    = 25/1/1/0
-TITLE   = 25/+1/~ ? ${cyc_6}Z ENS MEMBERS|~${name}
-GDATTIM = F${fcsthr_6}
-run
+					cat >> cmdfile850  <<- EOF
+						GDFILE  = ${gdfn}
+						LINE    = 25/1/1/0
+						TITLE   = 25/+1/~ ? ${cyc_6}Z ENS MEMBERS|~${name}
+						GDATTIM = F${fcsthr_6}
+						run
 
-EOF
+						EOF
+
                     if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfile850  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+						cat >> cmdfile850  <<- EOF
+							MAP     = 0
+							LATLON  = 0
+							CLEAR   = no
 
-EOF
+							EOF
                     fi
                     WrottenZERO=1
                 fi
@@ -319,22 +322,23 @@ EOF
                 # ----- gridl -----
                 gdfn=${gridl} # gd file name
                 if [ -e ${gdfn} ]; then
-cat >> cmdfile850  << EOF
-!GDFILE  = \$COMIN/ge${gridl}_${PDY}${cyc}f${fcsthr}
-GDFILE  = ${gdfn}
-LINE    = ${color_number}/1/1/0
-TITLE   = ${color_number}/+${line_count}/~ ? ${gdfn} ${cyc}Z ${grid}|~${name}
-GDATTIM = F${fcsthr}
-run
+					cat >> cmdfile850  <<- EOF
+						!GDFILE  = \$COMIN/ge${gridl}_${PDY}${cyc}f${fcsthr}
+						GDFILE  = ${gdfn}
+						LINE    = ${color_number}/1/1/0
+						TITLE   = ${color_number}/+${line_count}/~ ? ${gdfn} ${cyc}Z ${grid}|~${name}
+						GDATTIM = F${fcsthr}
+						run
 
-EOF
+						EOF
+
                     if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfile850  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+						cat >> cmdfile850  <<- EOF
+							MAP     = 0
+							LATLON  = 0
+							CLEAR   = no
 
-EOF
+							EOF
                     fi
                     WrottenZERO=1
                 fi
@@ -346,21 +350,21 @@ EOF
             # ----- ukmet -----
             gdfn=ukmet # gd file name
             if [ -e ${gdfn} ]; then
-cat >> cmdfile850  << EOF
-GDFILE  = ${gdfn}
-LINE    = 7/2/2/0
-GDATTIM = F${fcsthr_ecm}
-TITLE   = 7/-5/~ ? ${gdfn} ${ECM_cyc}Z (DASHED)|~${name}
-run
+				cat >> cmdfile850 <<- EOF
+					GDFILE  = ${gdfn}
+					LINE    = 7/2/2/0
+					GDATTIM = F${fcsthr_ecm}
+					TITLE   = 7/-5/~ ? ${gdfn} ${ECM_cyc}Z (DASHED)|~${name}
+					run
 
-EOF
+					EOF
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfile850  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+					cat >> cmdfile850  <<- EOF
+						MAP     = 0
+						LATLON  = 0
+						CLEAR   = no
 
-EOF
+						EOF
                 fi
                 WrottenZERO=1
             fi
@@ -368,21 +372,22 @@ EOF
             # ----- ecmwf -----
             gdfn=ecmwf # gd file name
             if [ -e ${gdfn} ]; then
-cat >> cmdfile850  << EOF
-GDFILE  = ${gdfn}
-LINE    = 6/2/2/0
-GDATTIM = F${fcsthr_ecm}
-TITLE   = 6/-4/~ ? ECMWF ${ECM_cyc}Z (DASHED)|~${name}
-run
+				cat >> cmdfile850  <<- EOF
+					GDFILE  = ${gdfn}
+					LINE    = 6/2/2/0
+					GDATTIM = F${fcsthr_ecm}
+					TITLE   = 6/-4/~ ? ECMWF ${ECM_cyc}Z (DASHED)|~${name}
+					run
 
-EOF
+					EOF
+
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfile850  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+					cat >> cmdfile850  <<- EOF
+						MAP     = 0
+						LATLON  = 0
+						CLEAR   = no
 
-EOF
+						EOF
                 fi
                 WrottenZERO=1
             fi
@@ -390,21 +395,21 @@ EOF
             # ----- gefs_avg -----
             gdfn=gefs_avg # gd file name
             if [ -e ${gdfn} ]; then
-cat >> cmdfile850  << EOF
-GDFILE  = ${gdfn}
-LINE    = 1/2/2/0
-TITLE   = 1/-7/~ ? ENSMEAN ${cyc}Z       |~${name}
-GDATTIM = F${fcsthr}
-run
+				cat >> cmdfile850  <<- EOF
+					GDFILE  = ${gdfn}
+					LINE    = 1/2/2/0
+					TITLE   = 1/-7/~ ? ENSMEAN ${cyc}Z       |~${name}
+					GDATTIM = F${fcsthr}
+					run
 
-EOF
+					EOF
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfile850  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+					cat >> cmdfile850  <<- EOF
+						MAP     = 0
+						LATLON  = 0
+						CLEAR   = no
 
-EOF
+						EOF
                 fi
                 WrottenZERO=1
             fi
@@ -412,21 +417,22 @@ EOF
             # ----- gefs_avg_6 -----
             gdfn=gefs_avg_6 # gd file name
             if [ -e ${gdfn} ]; then
-cat >> cmdfile850  << EOF
-GDFILE  = ${gdfn}
-LINE    = 31/2/3/0
-TITLE   = 31/-6/~ ? ENSMEAN6 ${cyc_6}Z (DASHED)|~${name}
-GDATTIM = F${fcsthr_6}
-run
+				cat >> cmdfile850  <<- EOF
+					GDFILE  = ${gdfn}
+					LINE    = 31/2/3/0
+					TITLE   = 31/-6/~ ? ENSMEAN6 ${cyc_6}Z (DASHED)|~${name}
+					GDATTIM = F${fcsthr_6}
+					run
 
-EOF
+					EOF
+
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfile850  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+					cat >> cmdfile850  <<- EOF
+						MAP     = 0
+						LATLON  = 0
+						CLEAR   = no
 
-EOF
+						EOF
                 fi
                 WrottenZERO=1
             fi
@@ -434,14 +440,14 @@ EOF
             # ----- dgex -----
             gdfn=dgex # gd file name
             if [ -e ${gdfn} ]; then
-cat >> cmdfile850  << EOF
-GDFILE  = ${gdfn} 
-LINE    = 13/2/2/0
-GDATTIM = F${fcsthr}
-TITLE   = 13/-8/~ ? ${cyc}Z DGEX|~${name}
-run
+				cat >> cmdfile850  <<- EOF
+					GDFILE  = ${gdfn} 
+					LINE    = 13/2/2/0
+					GDATTIM = F${fcsthr}
+					TITLE   = 13/-8/~ ? ${cyc}Z DGEX|~${name}
+					run
 
-EOF
+					EOF
 
             fi
 

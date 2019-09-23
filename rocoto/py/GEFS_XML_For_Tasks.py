@@ -20,6 +20,17 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "getcfssst"
 
+        if dicBase['RUN_WAVE_PREP'].upper()[0] == "Y":
+            # ---wave init
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "gwes_init"
+
+            # ---wave prep
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "gwes_prep"
+
         # #   <!-- initial jobs -->
         if dicBase['RUN_INIT'].upper() == "GSM_RELOC":
             # ---enkf_track
@@ -111,6 +122,12 @@ def config_tasknames(dicBase):
 
             # ---post_high
             iTaskName_Num = Add_Subjobs_to_dicBase(dicBase, iTaskName_Num, taskname="post_high", sNSubJobs='N_SUBJOBS_POST_HIGH')
+
+            if dicBase['cplwav'] == ".true.":
+                # ---wave_post
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "gwes_post"
 
             # ---prdgen_high
             iTaskName_Num += 1
@@ -618,6 +635,31 @@ def write_to_ent(taskname, dicBase, GenTaskEnt=False):
     fh.close()
     # print("exit")
 
+# =======================================================
+def calc_fcst_resources(dicBase):
+    import math
+
+    layout_x = int(dicBase['layout_x'.upper()])
+    layout_y = int(dicBase['layout_y'.upper()])
+    WRITE_GROUP = int(dicBase['WRITE_GROUP'.upper()])
+    WRTTASK_PER_GROUP = int(dicBase['WRTTASK_PER_GROUP'.upper()])
+    parallel_threads = int(dicBase['parallel_threads'.upper()])
+
+    ncores_per_node = Get_NCORES_PER_NODE(dicBase)
+
+    dicBase['COREPERNODE'] = ncores_per_node
+
+    iTotal_Tasks = layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP
+
+    if dicBase['cplwav'] == ".true.":
+        iWaveThreads = int(dicBase['NPE_WAV'])
+        iTotal_Tasks = iTotal_Tasks + iWaveThreads
+
+    iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
+    iNodes = int(math.ceil( iTotal_Tasks * 1.0 / iPPN))
+    iTPP = parallel_threads
+
+    return iTotal_Tasks, iNodes, iPPN, iTPP
 
 # =======================================================
 def get_param_of_task(dicBase, taskname):
@@ -729,6 +771,8 @@ def get_param_of_task(dicBase, taskname):
                     sDep += '\n\t<taskdep task="init_fv3chgrs_#member#"/>'
                 elif DoesTaskExist(dicBase, "copy_init"):
                     sDep += '\n\t<taskdep task="copy_init_#member#"/>'
+                elif DoesTaskExist(dicBase, "gwes_prep"): # Wave prep
+                    sDep += '\n\t<taskdep task="gwes_prep_#member#"/>'
 
                 if sDep == '<and>':
                     sDep = ""
@@ -917,22 +961,11 @@ def get_param_of_task(dicBase, taskname):
 
     # Forecast can be derive from the parm items
     if taskname == 'forecast_high' or taskname == 'forecast_low':
-        layout_x = int(dicBase['layout_x'.upper()])
-        layout_y = int(dicBase['layout_y'.upper()])
-        WRITE_GROUP = int(dicBase['WRITE_GROUP'.upper()])
-        WRTTASK_PER_GROUP = int(dicBase['WRTTASK_PER_GROUP'.upper()])
-        parallel_threads = int(dicBase['parallel_threads'.upper()])
+
+        iTotal_Tasks, iNodes, iPPN, iTPP = calc_fcst_resources(dicBase)
 
         WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
-
-        ncores_per_node = Get_NCORES_PER_NODE(dicBase)
-        dicBase['COREPERNODE'] = ncores_per_node
-        iNodes = int(math.ceil(
-            (layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) * 1.0 / (ncores_per_node / parallel_threads)))
-        iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
-
-        iTPP = parallel_threads
-
+        
         if WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
             sNodes = "{0}:ppn={1}".format(iNodes, iPPN)
         else:
@@ -1034,6 +1067,10 @@ def get_metatask_names(taskname=""):
     # prdgen
     metatask_names.append('prdgen_high')
     metatask_names.append('prdgen_low')
+    # gwes
+    metatask_names.append('gwes_prep')
+    metatask_names.append('gwes_post')
+    metatask_names.append('gwes_stats')
     # postsnd
     metatask_names.append('postsnd')
 
@@ -1132,6 +1169,7 @@ def get_ENV_VARS(sPre="\t\t"):
     dicENV_VARS['envir'] = 'dev'
     dicENV_VARS['RUN_ENVIR'] = 'dev'
     dicENV_VARS['gefsmpexec'] = 'mpirun.lsf'
+    dicENV_VARS['wavempexec'] = 'mpirun.lsf'
     dicENV_VARS['gefsmpexec_mpmd'] = 'mpirun.lsf'
     dicENV_VARS['WHERE_AM_I'] = '&WHERE_AM_I;'
     dicENV_VARS['GEFS_ROCOTO'] = '&GEFS_ROCOTO;'
@@ -1142,6 +1180,7 @@ def get_ENV_VARS(sPre="\t\t"):
     dicENV_VARS['INIT_DIR'] = '&INIT_DIR;'
     dicENV_VARS['DIRS_TO_KEEP'] = '&DIRS_TO_KEEP;'
     dicENV_VARS['DIRS_TO_ARCHIVE'] = '&DIRS_TO_ARCHIVE;'
+    dicENV_VARS['gefs_cych']= '&INCYC;'
     sENV_VARS = ""
 
     sENV_VARS += sPre + '<!-- Environment Variables -->\n'
