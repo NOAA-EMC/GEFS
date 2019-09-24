@@ -10,6 +10,7 @@ g_Rocoto_ForTest = ""
 
 import GEFS_UserConfig as gefs_config
 import GEFS_XML as gefs_xml
+import GEFS_XML_For_Tasks as gefs_xml_for_tasks
 import GEFS_Parm as gefs_parm
 import GEFS_Bin as gefs_bin
 import GEFS_Crontab as gefs_crontab
