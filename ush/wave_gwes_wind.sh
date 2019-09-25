@@ -258,7 +258,7 @@
   if [ "${modIE}" == "gwes00" ]
   then
     # Copy sst file to com for later archiving
-    cp sst.ww3 ${COMOUT}/${wavemodID}.${wndID}.t${cyc}z.sst
+    cp sst.ww3 ${COMOUT}/rundata/${wavemodID}.${wndID}.t${cyc}z.sst
   fi
 
   rm -f sst.ww3
