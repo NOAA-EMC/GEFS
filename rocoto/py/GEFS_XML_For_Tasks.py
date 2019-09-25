@@ -333,6 +333,8 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
         strings += sPre_2 + '<native>-cwd &tmpnwprd;</native>\n'
     elif WHERE_AM_I.upper() == "Theia".upper():
         strings += ""
+    elif WHERE_AM_I.upper() == "hera".upper():
+        strings += ""
     elif WHERE_AM_I.upper() == "wcoss_ibm".upper():
         strings += ""
     elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
@@ -352,6 +354,8 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
         else:
             strings += sPre_2 + '<native>-extsched "CRAYLINUX[]"</native>\n'
     elif WHERE_AM_I.upper() == "Theia".upper():
+        strings += ""  # \n
+    elif WHERE_AM_I.upper() == "Hera".upper():
         strings += ""  # \n
     elif WHERE_AM_I.upper() == "wcoss_ibm".upper():
         strings += ""

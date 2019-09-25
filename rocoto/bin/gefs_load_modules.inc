@@ -65,7 +65,7 @@ elif [[ "$WHERE_AM_I" == theia ]]; then
 
 elif [[ "$WHERE_AM_I" == hera ]]; then
     echo "Loading modules for hera"
-    #. /apps/lmod/lmod/init/ksh
+    . /apps/lmod/lmod/init/ksh
     module purge
     module load contrib
     module load hpss
