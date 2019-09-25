@@ -35,7 +35,9 @@ Method 1:
      bb) link the "fix" to the "gefs-fixed"
      cc) Generate 'gefs.xml' (and/or tasks .ent), 'parm/gefs_dev.parm' and 'forecast_high.sh' in bin file and 'cron_rocoto'
     > ./compile_install_all.sh -c yes -r yes -f user_full.conf
-    
+    # For wave component
+    > ./compile_install_all.sh -r yes -f gwes.conf   
+ 
   4) rocoto run
     > rocotorun -w gefs.xml -d gefs.db
     # Queries the job scheduler and updates the rocoto SQL database, then submits any new jobs that are ready to run. This will start your job immediately.
@@ -85,6 +87,7 @@ Method 2:
 
       b) Compile source codes of GEFS    
        > ./compile_install_all.sh -c yes 
+       # For wave component
           OR     
        > cd nwdev/sorc
        ## mkdir folds

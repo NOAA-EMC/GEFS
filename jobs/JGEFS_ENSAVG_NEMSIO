@@ -209,8 +209,7 @@ echo
 env | sort
 echo
 
-if [[ -n $SUBJOB ]] ;
-then
+if [[ -n $SUBJOB ]]; then
     J1=`echo $SUBJOB | cut -c1-1` 
     J2=`echo $SUBJOB | cut -c2-2` 
     iJ2=`printf '%d\n' "'$J2"`

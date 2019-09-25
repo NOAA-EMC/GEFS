@@ -20,6 +20,17 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "getcfssst"
 
+        if dicBase['RUN_WAVE_PREP'].upper()[0] == "Y":
+            # ---wave init
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "gwes_init"
+
+            # ---wave prep
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "gwes_prep"
+
         # #   <!-- initial jobs -->
         if dicBase['RUN_INIT'].upper() == "GSM_RELOC":
             # ---enkf_track
@@ -111,6 +122,12 @@ def config_tasknames(dicBase):
 
             # ---post_high
             iTaskName_Num = Add_Subjobs_to_dicBase(dicBase, iTaskName_Num, taskname="post_high", sNSubJobs='N_SUBJOBS_POST_HIGH')
+
+            if dicBase['cplwav'] == ".true.":
+                # ---wave_post
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "gwes_post"
 
             # ---prdgen_high
             iTaskName_Num += 1
@@ -216,22 +233,36 @@ def config_tasknames(dicBase):
 
         # #    <!-- RUN_CLEANUP -->
         if dicBase['RUN_CLEANUP'].upper()[0] == "Y":
-            # ---keep_data
+            # ---keep_data_atm
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "keep_data"
-            # ---archive
+            dicBase[sTaskName.upper()] = "keep_data_atm"
+            if dicBase['cplwav'] == ".true.":
+                # ---keep_data_wave
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "keep_data_wave"
+            # ---archive_atm
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "archive"
-            # ---cleanup
+            dicBase[sTaskName.upper()] = "archive_atm"
+            if dicBase['cplwav'] == ".true.":
+                # ---archive_wave
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "archive_wave"
+            # ---cleanup_atm
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "cleanup"
+            dicBase[sTaskName.upper()] = "cleanup_atm"
+            if dicBase['cplwav'] == ".true.":
+                # ---cleanup_wave
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "cleanup_wave"
 
         # final
         dicBase[sVarName] = iTaskName_Num
-
 
 # =======================================================
 def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEnt=False):
@@ -349,7 +380,7 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
 
     # -------------------Native-------------------
     if WHERE_AM_I.upper() == "cray".upper():
-        if taskname == "archive":
+        if taskname in [ "archive_atm", "archive_wave" ]:
             strings += ""
         else:
             strings += sPre_2 + '<native>-extsched "CRAYLINUX[]"</native>\n'
@@ -386,9 +417,9 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     # -------------------Other envar and command-------------------
     if taskname in ['keep_init', 'copy_init']:
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/{0}.py</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['keep_data', 'archive', 'cleanup']:
-        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/{0}.py</cyclestr></command>\n'.format(taskname)
+        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/../py/{0}.py</cyclestr></command>\n'.format(taskname)
+    elif taskname in ['keep_data_atm', 'archive_atm', 'cleanup_atm', 'keep_data_wave', 'archive_wave', 'cleanup_wave']:
+        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/../py/{0}.py</cyclestr></command>\n'.format(taskname)
     elif taskname in ['prdgen_high']:
         strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
         strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
@@ -622,6 +653,31 @@ def write_to_ent(taskname, dicBase, GenTaskEnt=False):
     fh.close()
     # print("exit")
 
+# =======================================================
+def calc_fcst_resources(dicBase):
+    import math
+
+    layout_x = int(dicBase['layout_x'.upper()])
+    layout_y = int(dicBase['layout_y'.upper()])
+    WRITE_GROUP = int(dicBase['WRITE_GROUP'.upper()])
+    WRTTASK_PER_GROUP = int(dicBase['WRTTASK_PER_GROUP'.upper()])
+    parallel_threads = int(dicBase['parallel_threads'.upper()])
+
+    ncores_per_node = Get_NCORES_PER_NODE(dicBase)
+
+    dicBase['COREPERNODE'] = ncores_per_node
+
+    iTotal_Tasks = layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP
+
+    if dicBase['cplwav'] == ".true.":
+        iWaveThreads = int(dicBase['NPE_WAV'])
+        iTotal_Tasks = iTotal_Tasks + iWaveThreads
+
+    iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
+    iNodes = int(math.ceil( iTotal_Tasks * 1.0 / iPPN))
+    iTPP = parallel_threads
+
+    return iTotal_Tasks, iNodes, iPPN, iTPP
 
 # =======================================================
 def get_param_of_task(dicBase, taskname):
@@ -733,6 +789,8 @@ def get_param_of_task(dicBase, taskname):
                     sDep += '\n\t<taskdep task="init_fv3chgrs_#member#"/>'
                 elif DoesTaskExist(dicBase, "copy_init"):
                     sDep += '\n\t<taskdep task="copy_init_#member#"/>'
+                elif DoesTaskExist(dicBase, "gwes_prep"): # Wave prep
+                    sDep += '\n\t<taskdep task="gwes_prep_#member#"/>'
 
                 if sDep == '<and>':
                     sDep = ""
@@ -826,8 +884,8 @@ def get_param_of_task(dicBase, taskname):
                 else:
                     sDep += '\n</and>'
 
-            # For 'keep_data' and 'archive' tasks
-            if taskname.lower() == "keep_data" or taskname.lower() == "archive":
+            # For 'keep_data_atm' and 'archive_atm' tasks
+            if taskname.lower() == "keep_data_atm" or taskname.lower() == "archive_atm":
                 sDep = '<and>'
                 if DoesTaskExist(dicBase, "enspost"):
                     sDep += '\n\t<taskdep task="enspost"/>'
@@ -855,20 +913,36 @@ def get_param_of_task(dicBase, taskname):
                 else:
                     sDep += '\n</and>'
 
+            if taskname.lower() in [ "keep_data_wave", "archive_wave" ]:                
+                if DoesTaskExist(dicBase, "gwes_post"):
+                    sDep = '<metataskdep metatask="gwes_post"/>'
+                else:
+                    sDep = ""
+
             # For keep_init
             if taskname.lower() == "keep_init":
                 if DoesTaskExist(dicBase, "init_recenter"):
                     sDep = '<taskdep task="init_recenter"/>'
 
             # Don't clean up if keep_init isn't finished
-            if taskname.lower() == "cleanup":
+            if taskname.lower() == "cleanup_atm":
                 sDep = '<and>'
                 if DoesTaskExist(dicBase, "keep_init"):
                     sDep += '\n\t<metataskdep metatask="keep_init"/>'
-                if DoesTaskExist(dicBase, "keep_data"):
-                    sDep += '\n\t<taskdep task="keep_data"/>'
-                if DoesTaskExist(dicBase, "archive"):
-                    sDep += '\n\t<taskdep task="archive"/>'
+                if DoesTaskExist(dicBase, "keep_data_atm"):
+                    sDep += '\n\t<taskdep task="keep_data_atm"/>'
+                if DoesTaskExist(dicBase, "archive_atm"):
+                    sDep += '\n\t<taskdep task="archive_atm"/>'
+                if sDep == '<and>':
+                    sDep = ""
+                else:
+                    sDep += '\n</and>'
+
+            if taskname.lower() == "cleanup_wave":
+                sDep = '<and>'
+                for t in [ "keep_data_wave, archive_wave" ]:
+                    if DoesTaskExist(dicBase, t):
+                        sDep += '\n\t<taskdep task="{task}"/>'.format(task=t)
                 if sDep == '<and>':
                     sDep = ""
                 else:
@@ -921,22 +995,11 @@ def get_param_of_task(dicBase, taskname):
 
     # Forecast can be derive from the parm items
     if taskname == 'forecast_high' or taskname == 'forecast_low':
-        layout_x = int(dicBase['layout_x'.upper()])
-        layout_y = int(dicBase['layout_y'.upper()])
-        WRITE_GROUP = int(dicBase['WRITE_GROUP'.upper()])
-        WRTTASK_PER_GROUP = int(dicBase['WRTTASK_PER_GROUP'.upper()])
-        parallel_threads = int(dicBase['parallel_threads'.upper()])
+
+        iTotal_Tasks, iNodes, iPPN, iTPP = calc_fcst_resources(dicBase)
 
         WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
-
-        ncores_per_node = Get_NCORES_PER_NODE(dicBase)
-        dicBase['COREPERNODE'] = ncores_per_node
-        iNodes = int(math.ceil(
-            (layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) * 1.0 / (ncores_per_node / parallel_threads)))
-        iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
-
-        iTPP = parallel_threads
-
+        
         if WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
             sNodes = "{0}:ppn={1}".format(iNodes, iPPN)
         else:
@@ -944,50 +1007,133 @@ def get_param_of_task(dicBase, taskname):
 
     # For gempak
     if taskname == "gempak":
-        if (sVarName_nodes not in dicBase) and (sVarName_ppn not in dicBase):
+        iTotal_Tasks, iNodes, iPPN, iTPP = calc_gempak_resources(dicBase)
+        #if (sVarName_nodes not in dicBase) and (sVarName_ppn not in dicBase):
 
-            ncores_per_node = Get_NCORES_PER_NODE(dicBase)
-            WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
-            npert = int(dicBase["NPERT"])
-            Total_tasks = npert + 1
-            nGEMPAK_RES = 1
-            if "GEMPAK_RES" in dicBase:
-                nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
-                Total_tasks *= nGEMPAK_RES
-
-            if (npert + 1) <= ncores_per_node:
-                iNodes = nGEMPAK_RES
-                iPPN = (npert + 1)
-            else:
-                if npert == 30 and WHERE_AM_I.upper() == "THEIA":
-                    iPPN = 3
-                    iNodes = 31
-                else:
-                    iPPN = ncores_per_node
-                    iNodes = int(Total_tasks / (iPPN * 1.0) + 0.5)
-            iTPP = 1
-            sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
+        #    ncores_per_node = Get_NCORES_PER_NODE(dicBase)
+        #    WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
+        #    npert = int(dicBase["NPERT"])
+        #    Total_tasks = npert + 1
+        #    nGEMPAK_RES = 1
+        #    if "GEMPAK_RES" in dicBase:
+        #        nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
+        #        Total_tasks *= nGEMPAK_RES
+        #
+        #    if (npert + 1) <= ncores_per_node:
+        #        iNodes = nGEMPAK_RES
+        #        iPPN = (npert + 1)
+        #    else:
+        #        if npert == 30 and WHERE_AM_I.upper() == "THEIA":
+        #            iPPN = 3
+        #            iNodes = 31
+        #        else:
+        #            if WHERE_AM_I.upper() == "CRAY":
+        #                iNodes = Total_tasks
+        #                iPPN = 1
+        #            else:
+        #                iPPN = ncores_per_node
+        #                iNodes = int(Total_tasks / (iPPN * 1.0) + 0.5)
+        #    iTPP = 1
+        sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
     # For avgspr_gempak
     if taskname == "avgspr_gempak":
-        if (sVarName_nodes not in dicBase) and (sVarName_ppn not in dicBase):
-
-            ncores_per_node = Get_NCORES_PER_NODE(dicBase)
-            WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
-            npert = int(dicBase["NPERT"])
-            Total_tasks = 2
-            nGEMPAK_RES = 1
-            if "GEMPAK_RES" in dicBase:
-                nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
-                Total_tasks *= nGEMPAK_RES
-
-            iNodes = 1
-            iPPN = Total_tasks
-            iTPP = 1
-            sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
+        iTotal_Tasks, iNodes, iPPN, iTPP = calc_avgspr_gempak_resources(dicBase)
+        #if (sVarName_nodes not in dicBase) and (sVarName_ppn not in dicBase):
+        #
+        #    ncores_per_node = Get_NCORES_PER_NODE(dicBase)
+        #    WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
+        #    npert = int(dicBase["NPERT"])
+        #    Total_tasks = 2
+        #    nGEMPAK_RES = 1
+        #    if "GEMPAK_RES" in dicBase:
+        #        nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
+        #        Total_tasks *= nGEMPAK_RES
+        #
+        #    if WHERE_AM_I.upper() == "CRAY":
+        #        iNodes = Total_tasks
+        #        iPPN = 1
+        #    else:
+        #        iNodes = 1
+        #        iPPN = Total_tasks
+        #
+        #    iTPP = 1
+        sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
     return sWalltime, sNodes, sMemory, sJoin, sDep, sQueue, sPartition
 
+
+# =======================================================
+def calc_avgspr_gempak_resources(dicBase):
+    ncores_per_node = Get_NCORES_PER_NODE(dicBase)
+    WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
+    npert = int(dicBase["NPERT"])
+    
+    iTotal_Tasks = 2
+    nGEMPAK_RES = 1
+    if "GEMPAK_RES" in dicBase:
+        nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
+        iTotal_Tasks *= nGEMPAK_RES
+
+    iTPP = 1
+    if WHERE_AM_I.upper() == "CRAY":
+        iNodes = iTotal_Tasks
+        iPPN = 1
+        
+    else:
+        iNodes = iTotal_Tasks
+        iPPN = 1
+
+    return iTotal_Tasks, iNodes, iPPN, iTPP
+
+# =======================================================
+def calc_gempak_resources(dicBase):
+    import math
+    ncores_per_node = Get_NCORES_PER_NODE(dicBase)
+    WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
+    npert = int(dicBase["NPERT"])
+    iTotal_Tasks = npert + 1
+    nGEMPAK_RES = 1
+    if "GEMPAK_RES" in dicBase:
+        nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
+        iTotal_Tasks *= nGEMPAK_RES
+
+    iTPP = 1
+    if WHERE_AM_I.upper() == "CRAY":
+        iNodes = iTotal_Tasks
+        iPPN = 1
+        
+    elif WHERE_AM_I.upper() == "THEIA":
+        if (npert + 1) <= ncores_per_node:
+            iNodes = nGEMPAK_RES
+            iPPN = (npert + 1)
+        elif nGEMPAK_RES <= ncores_per_node:
+            iNodes = (npert + 1)
+            iPPN = nGEMPAK_RES
+        else:
+            iNodes = (npert + 1)
+            iPPN = nGEMPAK_RES
+            
+    elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
+        if (npert + 1) <= ncores_per_node:
+            iNodes = nGEMPAK_RES
+            iPPN = (npert + 1)
+        else:
+            iPPN = ncores_per_node
+            iNodes = math.ceil(iTotal_Tasks / (iPPN * 1.0))
+
+    else:
+        if (npert + 1) <= ncores_per_node:
+            iNodes = nGEMPAK_RES
+            iPPN = (npert + 1)
+        elif nGEMPAK_RES <= ncores_per_node:
+            iNodes = (npert + 1)
+            iPPN = nGEMPAK_RES
+        else:
+            iNodes = (npert + 1)
+            iPPN = nGEMPAK_RES
+
+    return iTotal_Tasks, iNodes, iPPN, iTPP
 
 # =======================================================
 def Get_NCORES_PER_NODE(dicBase):
@@ -1038,6 +1184,10 @@ def get_metatask_names(taskname=""):
     # prdgen
     metatask_names.append('prdgen_high')
     metatask_names.append('prdgen_low')
+    # gwes
+    metatask_names.append('gwes_prep')
+    metatask_names.append('gwes_post')
+    metatask_names.append('gwes_stats')
     # postsnd
     metatask_names.append('postsnd')
 
@@ -1136,6 +1286,7 @@ def get_ENV_VARS(sPre="\t\t"):
     dicENV_VARS['envir'] = 'dev'
     dicENV_VARS['RUN_ENVIR'] = 'dev'
     dicENV_VARS['gefsmpexec'] = 'mpirun.lsf'
+    dicENV_VARS['wavempexec'] = 'mpirun.lsf'
     dicENV_VARS['gefsmpexec_mpmd'] = 'mpirun.lsf'
     dicENV_VARS['WHERE_AM_I'] = '&WHERE_AM_I;'
     dicENV_VARS['GEFS_ROCOTO'] = '&GEFS_ROCOTO;'
@@ -1146,6 +1297,7 @@ def get_ENV_VARS(sPre="\t\t"):
     dicENV_VARS['INIT_DIR'] = '&INIT_DIR;'
     dicENV_VARS['DIRS_TO_KEEP'] = '&DIRS_TO_KEEP;'
     dicENV_VARS['DIRS_TO_ARCHIVE'] = '&DIRS_TO_ARCHIVE;'
+    dicENV_VARS['gefs_cych']= '&INCYC;'
     sENV_VARS = ""
 
     sENV_VARS += sPre + '<!-- Environment Variables -->\n'

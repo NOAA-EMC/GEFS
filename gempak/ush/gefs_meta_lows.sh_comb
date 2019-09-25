@@ -212,56 +212,57 @@ do
         fi
 
 
-cat > cmdfilelows  << EOF
-DEVICE  = ${device}
-PANEL   = 0
-TEXT    = s/22/1/1/hw
-CONTUR  = 2
-MAP     = 1
-CLEAR   = yes
-GAREA   = ${garea}
-PROJ    = ${proj}
-LATLON  = 1/10/1/2/10;10
+		cat > cmdfilelows  <<- EOF
+			DEVICE  = ${device}
+			PANEL   = 0
+			TEXT    = s/22/1/1/hw
+			CONTUR  = 2
+			MAP     = 1
+			CLEAR   = yes
+			GAREA   = ${garea}
+			PROJ    = ${proj}
+			LATLON  = 1/10/1/2/10;10
 
-GLEVEL  = 0
-GVCORD  = none
-SKIP    = 0
-SCALE   = 0
-GDPFUN  = sm5s(pmsl)
-TYPE    = c
-!CINT    = 4/1/8
-CINT    = 4
-LINE    = 0
-FINT    =
-FLINE   =
-HILO    = 25/L${num}/900-1016/5/50/y
-HLSYM   = l/22/3/hw
-CLRBAR  = 0
-WIND    = 0
-REFVEC  =
+			GLEVEL  = 0
+			GVCORD  = none
+			SKIP    = 0
+			SCALE   = 0
+			GDPFUN  = sm5s(pmsl)
+			TYPE    = c
+			!CINT    = 4/1/8
+			CINT    = 4
+			LINE    = 0
+			FINT    =
+			FLINE   =
+			HILO    = 25/L${num}/900-1016/5/50/y
+			HLSYM   = l/22/3/hw
+			CLRBAR  = 0
+			WIND    = 0
+			REFVEC  =
 
-EOF
+			EOF
 
         WrottenZERO=0
 
         # ----- gfs -----
         gdfn=gfs # gd file name
         if [ -e ${gdfn} ]; then
-cat >> cmdfilelows  << EOF
-GDFILE  = ${gdfn}
-HILO    = 22/L${num}/900-1016/5/50/y
-TITLE   = 22/-2/~ ? GFS ${cyc}Z|~${name}
-GDATTIM = F${fcsthr}
-run
+			cat >> cmdfilelows  <<- EOF
+				GDFILE  = ${gdfn}
+				HILO    = 22/L${num}/900-1016/5/50/y
+				TITLE   = 22/-2/~ ? GFS ${cyc}Z|~${name}
+				GDATTIM = F${fcsthr}
+				run
 
-EOF
+				EOF
+
             if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilelows  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+			cat >> cmdfilelows  <<- EOF
+				MAP     = 0
+				LATLON  = 0
+				CLEAR   = no
 
-EOF
+				EOF
             fi
             WrottenZERO=1
         fi 
@@ -269,21 +270,21 @@ EOF
         # ----- gfs_6 -----
         gdfn=gfs_6
         if [ -e ${gdfn} ]; then
-cat >> cmdfilelows  << EOF
-GDFILE  = ${gdfn}
-HILO    = 21/L${num}/900-1016/5/50/y
-TITLE   = 21/-1/~ ? GFS6 ${cyc_6}Z|~${name}
-GDATTIM = F${fcsthr_6}
-run
+			cat >> cmdfilelows  <<- EOF
+				GDFILE  = ${gdfn}
+				HILO    = 21/L${num}/900-1016/5/50/y
+				TITLE   = 21/-1/~ ? GFS6 ${cyc_6}Z|~${name}
+				GDATTIM = F${fcsthr_6}
+				run
 
-EOF
+				EOF
             if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilelows  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+				cat >> cmdfilelows  <<- EOF
+					MAP     = 0
+					LATLON  = 0
+					CLEAR   = no
 
-EOF
+					EOF
 
             fi
             WrottenZERO=1
@@ -295,21 +296,21 @@ EOF
             # ----- gridl_6 -----
             gdfn=${gridl}_6 
             if [ -e ${gdfn} ]; then
-cat >> cmdfilelows  << EOF
-GDFILE  = ${gdfn}
-HILO    = 25/L${num}/900-1016/5/50/y
-TITLE   = 25/+1/~ ? ${cyc_6}Z ENS MEMBERS|~${name}
-GDATTIM = F${fcsthr_6}
-run
+				cat >> cmdfilelows  <<- EOF
+					GDFILE  = ${gdfn}
+					HILO    = 25/L${num}/900-1016/5/50/y
+					TITLE   = 25/+1/~ ? ${cyc_6}Z ENS MEMBERS|~${name}
+					GDATTIM = F${fcsthr_6}
+					run
 
-EOF
+					EOF
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilelows  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+					cat >> cmdfilelows  <<- EOF
+						MAP     = 0
+						LATLON  = 0
+						CLEAR   = no
 
-EOF
+						EOF
                 fi
                 WrottenZERO=1
             fi 
@@ -335,22 +336,23 @@ EOF
             # ----- gridl -----
             gdfn=${gridl} # gd file name
             if [ -e ${gdfn} ]; then
-cat >> cmdfilelows  << EOF
-!GDFILE  = \$COMIN/ge${gridl}_${PDY}${cyc}f${fcsthr}
-GDFILE  = ${gdfn}
-HILO    = ${color_number}/L${num}/900-1016/5/50/y
-TITLE   = ${color_number}/+${line_count}/~ ? ${gdfn} ${cyc}Z ${grid}|~${name}
-GDATTIM = F${fcsthr}
-run
+				cat >> cmdfilelows  <<- EOF
+					!GDFILE  = \$COMIN/ge${gridl}_${PDY}${cyc}f${fcsthr}
+					GDFILE  = ${gdfn}
+					HILO    = ${color_number}/L${num}/900-1016/5/50/y
+					TITLE   = ${color_number}/+${line_count}/~ ? ${gdfn} ${cyc}Z ${grid}|~${name}
+					GDATTIM = F${fcsthr}
+					run
 
-EOF
+					EOF
+
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilelows  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+					cat >> cmdfilelows  <<- EOF
+						MAP     = 0
+						LATLON  = 0
+						CLEAR   = no
 
-EOF
+						EOF
                 fi
                 WrottenZERO=1
             fi 
@@ -361,21 +363,22 @@ EOF
         # ----- ukmet -----
         gdfn=ukmet # gd file name
         if [ -e ${gdfn} ]; then
-cat >> cmdfilelows  << EOF
-GDFILE  = ${gdfn}
-GDATTIM = F${fcsthr_ecm}
-HILO    = 7/L${num}/900-1016/5/50/y
-TITLE   = 7/-5/~ ? UKMET ${ECM_cyc}Z|~${name}
-run
+			cat >> cmdfilelows  <<- EOF
+				GDFILE  = ${gdfn}
+				GDATTIM = F${fcsthr_ecm}
+				HILO    = 7/L${num}/900-1016/5/50/y
+				TITLE   = 7/-5/~ ? UKMET ${ECM_cyc}Z|~${name}
+				run
 
-EOF
+				EOF
+
             if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilelows  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+				cat >> cmdfilelows  <<- EOF
+					MAP     = 0
+					LATLON  = 0
+					CLEAR   = no
 
-EOF
+					EOF
             fi
             WrottenZERO=1
         fi 
@@ -383,21 +386,22 @@ EOF
         # ----- ecmwf -----
         gdfn=ecmwf # gd file name
         if [ -e ${gdfn} ]; then
-cat >> cmdfilelows  << EOF
-GDFILE  = ${gdfn}
-GDATTIM = F${fcsthr_ecm}
-HILO    = 6/L${num}/900-1016/5/50/y
-TITLE   = 6/-4/~ ? ECMWF ${ECM_cyc}Z|~${name}
-run
+			cat >> cmdfilelows  <<- EOF
+				GDFILE  = ${gdfn}
+				GDATTIM = F${fcsthr_ecm}
+				HILO    = 6/L${num}/900-1016/5/50/y
+				TITLE   = 6/-4/~ ? ECMWF ${ECM_cyc}Z|~${name}
+				run
 
-EOF
+				EOF
+
             if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilelows  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+				cat >> cmdfilelows  <<- EOF
+					MAP     = 0
+					LATLON  = 0
+					CLEAR   = no
 
-EOF
+					EOF
             fi
             WrottenZERO=1
         fi 
@@ -405,21 +409,22 @@ EOF
         # ----- gefs_avg -----
         gdfn=gefs_avg # gd file name
         if [ -e ${gdfn} ]; then
-cat >> cmdfilelows  << EOF
-GDFILE  = ${gdfn}
-HILO    = 1/L${num}/900-1016/5/50/y
-TITLE   = 1/-7/~ ? ENSMEAN ${cyc}Z       |~${name}
-GDATTIM = F${fcsthr}
-run
+			cat >> cmdfilelows  <<- EOF
+				GDFILE  = ${gdfn}
+				HILO    = 1/L${num}/900-1016/5/50/y
+				TITLE   = 1/-7/~ ? ENSMEAN ${cyc}Z       |~${name}
+				GDATTIM = F${fcsthr}
+				run
 
-EOF
+				EOF
+
             if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilelows  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+				cat >> cmdfilelows  <<- EOF
+					MAP     = 0
+					LATLON  = 0
+					CLEAR   = no
 
-EOF
+					EOF
             fi
             WrottenZERO=1
         fi 
@@ -427,21 +432,22 @@ EOF
         # ----- gefs_avg_6 -----
         gdfn=gefs_avg_6 # gd file name
         if [ -e ${gdfn} ]; then
-cat >> cmdfilelows  << EOF
-GDFILE  = ${gdfn}
-HILO    = 31/L${num}/900-1016/5/50/y
-TITLE   = 31/-6/~ ? ENSMEAN6 ${cyc_6}Z|~${name}
-GDATTIM = F${fcsthr_6}
-run
+			cat >> cmdfilelows  <<- EOF
+				GDFILE  = ${gdfn}
+				HILO    = 31/L${num}/900-1016/5/50/y
+				TITLE   = 31/-6/~ ? ENSMEAN6 ${cyc_6}Z|~${name}
+				GDATTIM = F${fcsthr_6}
+				run
 
-EOF
+				EOF
+
             if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilelows  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+				cat >> cmdfilelows  <<- EOF
+					MAP     = 0
+					LATLON  = 0
+					CLEAR   = no
 
-EOF
+					EOF
             fi
             WrottenZERO=1
         fi 
@@ -449,14 +455,14 @@ EOF
         # ----- dgex -----
         gdfn=dgex # gd file name
         if [ -e ${gdfn} ]; then
-cat >> cmdfilelows  << EOF
-GDFILE  = ${gdfn} 
-GDATTIM = F${fcsthr}
-HILO    = 13/L${num}/900-1016/5/50/y
-TITLE   = 13/-8/~ ? ${cyc}Z DGEX|~${name}
-run
+			cat >> cmdfilelows  <<- EOF
+				GDFILE  = ${gdfn} 
+				GDATTIM = F${fcsthr}
+				HILO    = 13/L${num}/900-1016/5/50/y
+				TITLE   = 13/-8/~ ? ${cyc}Z DGEX|~${name}
+				run
 
-EOF
+				EOF
         fi 
 
     cat cmdfilelows

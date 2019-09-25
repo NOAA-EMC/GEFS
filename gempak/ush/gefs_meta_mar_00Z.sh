@@ -116,33 +116,34 @@ do
 
             export pgm=gdplot2_nc;. prep_step; startmsg
 
-cat > cmdfilemar  << EOF
-DEVICE	= ${device}
-PANEL	= 0
-TEXT	= m/22/1/1/hw
-CONTUR	= 2
-MAP	= 1
-CLEAR	= yes
-GAREA   = ${garea}
-PROJ    = ${proj}
-LATLON  = 1/10/1/2/10;10
+			cat > cmdfilemar  <<- EOF
+				DEVICE	= ${device}
+				PANEL	= 0
+				TEXT	= m/22/1/1/hw
+				CONTUR	= 2
+				MAP	= 1
+				CLEAR	= yes
+				GAREA   = ${garea}
+				PROJ    = ${proj}
+				LATLON  = 1/10/1/2/10;10
 
-GLEVEL  = 500 
-GVCORD  = pres 
-SKIP    = 0 
-SCALE   = -1 
-GDPFUN  = sm9s(hght)
-TYPE    = c
-CINT    = ${level}
-FINT    =
-FLINE   =
-HILO    = 0
-HLSYM   = 0
-CLRBAR  = 0
-WIND    = 0
-REFVEC  =
+				GLEVEL  = 500 
+				GVCORD  = pres 
+				SKIP    = 0 
+				SCALE   = -1 
+				GDPFUN  = sm9s(hght)
+				TYPE    = c
+				CINT    = ${level}
+				FINT    =
+				FLINE   =
+				HILO    = 0
+				HLSYM   = 0
+				CLRBAR  = 0
+				WIND    = 0
+				REFVEC  =
 
-EOF
+				EOF
+
             WrottenZERO=0
             grids=${memberlist}
             line_count=2
@@ -201,21 +202,21 @@ EOF
 
                 if [ -e ${gdfn} ]; then
 
-cat >> cmdfilemar  << EOF
-GDFILE  = ${gdfn}
-LINE    = ${color_number}/1/1/0
-TITLE   = ${color_number}/${sline_count}/~ ? ${gdfn} ${sCNTL} |~${metaarea} ${level} DM
-GDATTIM = F${fcsthr}
-run
+					cat >> cmdfilemar  <<- EOF
+						GDFILE  = ${gdfn}
+						LINE    = ${color_number}/1/1/0
+						TITLE   = ${color_number}/${sline_count}/~ ? ${gdfn} ${sCNTL} |~${metaarea} ${level} DM
+						GDATTIM = F${fcsthr}
+						run
 
-EOF
+						EOF
                     if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilemar  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+						cat >> cmdfilemar  <<- EOF
+							MAP     = 0
+							LATLON  = 0
+							CLEAR   = no
 
-EOF
+							EOF
                     fi
                     WrottenZERO=1
                 fi
@@ -226,21 +227,21 @@ EOF
             # ----- gfs -----
             gdfn=gfs 
             if [ -e ${gdfn} ]; then
-cat >> cmdfilemar  << EOF
-GDFILE	= ${gdfn}
-LINE    = 3/1/3/0
-GDATTIM	= F${fcsthrsgfs}
-TITLE   = 3/+11/~ ? ${gdfn} 12Z YEST|~${metaarea} ${level} DM
-run
+				cat >> cmdfilemar  <<- EOF
+					GDFILE	= ${gdfn}
+					LINE    = 3/1/3/0
+					GDATTIM	= F${fcsthrsgfs}
+					TITLE   = 3/+11/~ ? ${gdfn} 12Z YEST|~${metaarea} ${level} DM
+					run
 
-EOF
+					EOF
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilemar  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+					cat >> cmdfilemar  <<- EOF
+						MAP     = 0
+						LATLON  = 0
+						CLEAR   = no
 
-EOF
+						EOF
                 fi
                 WrottenZERO=1
             fi
@@ -248,21 +249,21 @@ EOF
             # ----- ecmwf -----
             gdfn=ecmwf 
             if [ -e ${gdfn} ]; then
-cat >> cmdfilemar  << EOF
-GDFILE	= ${gdfn}
-LINE    = 31/1/2/0
-GDATTIM	= F${fcsthrsgfs}
-TITLE   = 31/+12/~ ? ECMWF 12Z YEST|~${metaarea} ${level} DM
-run
+				cat >> cmdfilemar  <<- EOF
+					GDFILE	= ${gdfn}
+					LINE    = 31/1/2/0
+					GDATTIM	= F${fcsthrsgfs}
+					TITLE   = 31/+12/~ ? ECMWF 12Z YEST|~${metaarea} ${level} DM
+					run
 
-EOF
+					EOF
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilemar  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+					cat >> cmdfilemar  <<- EOF
+						MAP     = 0
+						LATLON  = 0
+						CLEAR   = no
 
-EOF
+						EOF
                 fi
                 WrottenZERO=1
             fi
@@ -270,14 +271,14 @@ EOF
             # ----- ukmet -----
             gdfn=ukmet 
             if [ -e ${gdfn} ]; then
-cat >> cmdfilemar  << EOF
-GDFILE	= ${gdfn}
-LINE    = 26/2/2/0
-GDATTIM	= F${fcsthr}
-TITLE   = 26/+13/~ ? UKMET 00Z|~${metaarea} ${level} DM
-run
+				cat >> cmdfilemar  <<- EOF
+					GDFILE	= ${gdfn}
+					LINE    = 26/2/2/0
+					GDATTIM	= F${fcsthr}
+					TITLE   = 26/+13/~ ? UKMET 00Z|~${metaarea} ${level} DM
+					run
 
-EOF
+					EOF
             fi
 
             cat cmdfilemar
@@ -333,34 +334,34 @@ EOF
 
         export pgm=gdplot2_nc;. prep_step; startmsg
 
-cat > cmdfilemar_low  << EOF
-DEVICE	= ${device}
-PANEL	= 0
-TEXT	= s/22/1/1/hw
-CONTUR	= 2
-MAP	= 1
-CLEAR	= yes
-GAREA   = ${garea}
-PROJ    = ${proj}
-LATLON  = 1/10/1/2/10;10
+		cat > cmdfilemar_low  <<- EOF
+			DEVICE	= ${device}
+			PANEL	= 0
+			TEXT	= s/22/1/1/hw
+			CONTUR	= 2
+			MAP	= 1
+			CLEAR	= yes
+			GAREA   = ${garea}
+			PROJ    = ${proj}
+			LATLON  = 1/10/1/2/10;10
 
-GLEVEL  = 0 
-GVCORD  = none 
-SKIP    = 0 
-SCALE   = 0 
-GDPFUN  = pmsl
-TYPE    = c
-CINT    = 4/1/8
-LINE    = 0
-FINT    =
-FLINE   =
+			GLEVEL  = 0 
+			GVCORD  = none 
+			SKIP    = 0 
+			SCALE   = 0 
+			GDPFUN  = pmsl
+			TYPE    = c
+			CINT    = 4/1/8
+			LINE    = 0
+			FINT    =
+			FLINE   =
 
-HLSYM   = l/22/3/hw
-CLRBAR  = 0
-WIND    = 0
-REFVEC  =
+			HLSYM   = l/22/3/hw
+			CLRBAR  = 0
+			WIND    = 0
+			REFVEC  =
 
-EOF
+			EOF
         WrottenZERO=0
         grids=${memberlist}
         line_count=2
@@ -418,21 +419,21 @@ EOF
             fi
 
             if [ -e ${gdfn} ]; then
-cat >> cmdfilemar_low  << EOF
-GDFILE  = ${gdfn}
-HILO    = ${color_number}/L${num}/900-1016/5/50/y
-TITLE   = ${color_number}/${sline_count}/~ ? ${gdfn} ${sCNTL} |~${metaarea} ${metashname}
-GDATTIM	= F${fcsthr}
-run
+				cat >> cmdfilemar_low  <<- EOF
+					GDFILE  = ${gdfn}
+					HILO    = ${color_number}/L${num}/900-1016/5/50/y
+					TITLE   = ${color_number}/${sline_count}/~ ? ${gdfn} ${sCNTL} |~${metaarea} ${metashname}
+					GDATTIM	= F${fcsthr}
+					run
 
-EOF
+					EOF
                 if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilemar_low  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+					cat >> cmdfilemar_low  <<- EOF
+						MAP     = 0
+						LATLON  = 0
+						CLEAR   = no
 
-EOF
+						EOF
                 fi
                 WrottenZERO=1
             fi
@@ -442,21 +443,21 @@ EOF
         # ----- gfs -----
         gdfn=gfs 
         if [ -e ${gdfn} ]; then
-cat >> cmdfilemar_low  << EOF
-GDFILE	= ${gdfn}
-HILO    = 3/L${num}/900-1016/5/50/y
-TITLE   = 3/+11/~ ? ${gdfn} 12Z YEST|~${metaarea} ${metashname}
-GDATTIM	= F${fcsthrsgfs}
-run
+			cat >> cmdfilemar_low  <<- EOF
+				GDFILE	= ${gdfn}
+				HILO    = 3/L${num}/900-1016/5/50/y
+				TITLE   = 3/+11/~ ? ${gdfn} 12Z YEST|~${metaarea} ${metashname}
+				GDATTIM	= F${fcsthrsgfs}
+				run
 
-EOF
+				EOF
             if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilemar_low  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+				cat >> cmdfilemar_low  <<- EOF
+					MAP     = 0
+					LATLON  = 0
+					CLEAR   = no
 
-EOF
+					EOF
             fi
             WrottenZERO=1
         fi
@@ -465,21 +466,21 @@ EOF
         # ----- ecmwf -----
         gdfn=ecmwf 
         if [ -e ${gdfn} ]; then
-cat >> cmdfilemar_low  << EOF
-GDFILE	= ${gdfn}
-HILO    = 31/L${num}/900-1016/5/50/y
-TITLE   = 31/+12/~ ? ${gdfn} 12Z YEST|~${metaarea} ${metashname}
-GDATTIM	= F${fcsthrsgfs}
-run
+			cat >> cmdfilemar_low  <<- EOF
+				GDFILE	= ${gdfn}
+				HILO    = 31/L${num}/900-1016/5/50/y
+				TITLE   = 31/+12/~ ? ${gdfn} 12Z YEST|~${metaarea} ${metashname}
+				GDATTIM	= F${fcsthrsgfs}
+				run
 
-EOF
+				EOF
             if [ $WrottenZERO -eq 0 ]; then            
-cat >> cmdfilemar_low  << EOF
-MAP     = 0
-LATLON  = 0
-CLEAR   = no
+				cat >> cmdfilemar_low  <<- EOF
+					MAP     = 0
+					LATLON  = 0
+					CLEAR   = no
 
-EOF
+					EOF
             fi
             WrottenZERO=1
         fi
@@ -487,14 +488,14 @@ EOF
         # ----- ukmet -----
         gdfn=ukmet 
         if [ -e ${gdfn} ]; then
-cat >> cmdfilemar_low  << EOF
-GDFILE	= ${gdfn}
-HILO    = 26/L${num}/900-1016/5/50/y
-TITLE   = 26/+13/~ ? ${gdfn} 00Z|~${metaarea} ${metashname}
-GDATTIM	= F${fcsthr}
-run
+			cat >> cmdfilemar_low  <<- EOF
+				GDFILE	= ${gdfn}
+				HILO    = 26/L${num}/900-1016/5/50/y
+				TITLE   = 26/+13/~ ? ${gdfn} 00Z|~${metaarea} ${metashname}
+				GDATTIM	= F${fcsthr}
+				run
 
-EOF
+				EOF
         fi
 
         cat cmdfilemar_low

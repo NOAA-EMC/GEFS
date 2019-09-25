@@ -78,16 +78,21 @@ def rw_bin_avgspr_gempak(taskname, dicBase):
         print("Please check whether you have the 'PRDGEN_STREAMS' variable in your user_full.conf and gefs_dev.parm")
         return
 
-    Total_tasks = 2
-    nGEMPAK_RES = 1
-    if "GEMPAK_RES" in dicBase:
-        nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
-        Total_tasks *= nGEMPAK_RES
+    iTotal_Tasks, iNodes, iPPN, iTPP = gefs_xml_for_tasks.calc_avgspr_gempak_resources(dicBase)
+    #Total_tasks = 2
+    #nGEMPAK_RES = 1
+    #if "GEMPAK_RES" in dicBase:
+    #    nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
+    #    Total_tasks *= nGEMPAK_RES
 
     WHERE_AM_I = dicBase['WHERE_AM_I'].lower()
 
-    iPPN = Total_tasks
-    iNodes = 1
+    #if WHERE_AM_I == "cray":
+    #    iNodes = Total_tasks
+    #    iPPN = 1
+    #else:
+    #    iPPN = Total_tasks
+    #    iNodes = 1
 
     sLines = ""
     with open(sInput_File, "r") as f:
@@ -97,7 +102,7 @@ def rw_bin_avgspr_gempak(taskname, dicBase):
 
             if WHERE_AM_I == "cray":
                 if sLine1.startswith("export total_tasks="):
-                    sLine = 'export total_tasks={0}\n'.format(Total_tasks)
+                    sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
                 if sLine1.startswith("export taskspernode="):
                     sLine = 'export taskspernode={0}\n'.format(iPPN)
 
@@ -106,13 +111,13 @@ def rw_bin_avgspr_gempak(taskname, dicBase):
 
             elif WHERE_AM_I == "wcoss_dell_p3":
                 if sLine1.startswith("export total_tasks="):
-                    sLine = 'export total_tasks={0}\n'.format(Total_tasks)
+                    sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
                 if sLine1.startswith("export taskspernode="):
                     sLine = 'export taskspernode={0}\n'.format(iPPN)
 
             elif WHERE_AM_I == "wcoss_ibm":
                 if sLine1.startswith("export total_tasks="):
-                    sLine = 'export total_tasks={0}\n'.format(Total_tasks)
+                    sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
                 if sLine1.startswith("export taskspernode="):
                     sLine = 'export taskspernode={0}\n'.format(iPPN)
 
@@ -143,30 +148,35 @@ def rw_bin_gempak(taskname, dicBase):
         print("Please check whether you have the input file: " + sInput_File)
         return
 
-    if "PRDGEN_STREAMS" not in dicBase:
-        print("Please check whether you have the 'PRDGEN_STREAMS' variable in your user_full.conf and gefs_dev.parm")
-        return
+    #if "PRDGEN_STREAMS" not in dicBase:
+    #    print("Please check whether you have the 'PRDGEN_STREAMS' variable in your user_full.conf and gefs_dev.parm")
+    #    return
 
-    ncores_per_node = gefs_xml_for_tasks.Get_NCORES_PER_NODE(dicBase)
-    npert = int(dicBase["NPERT"])
-    Total_tasks = npert + 1
-    nGEMPAK_RES = 1
-    if "GEMPAK_RES" in dicBase:
-        nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
-        Total_tasks *= nGEMPAK_RES
+    iTotal_Tasks, iNodes, iPPN, iTPP = gefs_xml_for_tasks.calc_gempak_resources(dicBase)
+    #ncores_per_node = gefs_xml_for_tasks.Get_NCORES_PER_NODE(dicBase)
+    ##npert = int(dicBase["NPERT"])
+    #Total_tasks = npert + 1
+    #nGEMPAK_RES = 1
+    #if "GEMPAK_RES" in dicBase:
+    #    nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
+    #    Total_tasks *= nGEMPAK_RES
 
     WHERE_AM_I = dicBase['WHERE_AM_I'].lower()
 
-    if (npert + 1) <= ncores_per_node:
-        iNodes = nGEMPAK_RES
-        iPPN = (npert + 1)
-    else:
-        if npert == 30 and WHERE_AM_I.upper() == "THEIA":
-            iPPN = 3
-            iNodes = 31
-        else:
-            iPPN = ncores_per_node
-            iNodes = int(Total_tasks / (iPPN * 1.0) + 0.5)
+    #if (npert + 1) <= ncores_per_node:
+    #    iNodes = nGEMPAK_RES
+    #    iPPN = (npert + 1)
+    #else:
+    #    if npert == 30 and WHERE_AM_I.upper() == "THEIA":
+    #        iPPN = 3
+    #        iNodes = 31
+    #    else:
+    #        if WHERE_AM_I.upper() == "CRAY":
+    #            iNodes = Total_tasks
+    #            iPPN = 1
+    #        else:
+    #            iPPN = ncores_per_node
+    #            iNodes = int(Total_tasks / (iPPN * 1.0) + 0.5)
 
     sLines = ""
     with open(sInput_File, "r") as f:
@@ -176,7 +186,7 @@ def rw_bin_gempak(taskname, dicBase):
 
             if WHERE_AM_I == "cray":
                 if sLine1.startswith("export total_tasks="):
-                    sLine = 'export total_tasks={0}\n'.format(Total_tasks)
+                    sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
                 if sLine1.startswith("export taskspernode="):
                     sLine = 'export taskspernode={0}\n'.format(iPPN)
 
@@ -185,13 +195,13 @@ def rw_bin_gempak(taskname, dicBase):
 
             elif WHERE_AM_I == "wcoss_dell_p3":
                 if sLine1.startswith("export total_tasks="):
-                    sLine = 'export total_tasks={0}\n'.format(Total_tasks)
+                    sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
                 if sLine1.startswith("export taskspernode="):
                     sLine = 'export taskspernode={0}\n'.format(iPPN)
 
             elif WHERE_AM_I == "wcoss_ibm":
                 if sLine1.startswith("export total_tasks="):
-                    sLine = 'export total_tasks={0}\n'.format(Total_tasks)
+                    sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
                 if sLine1.startswith("export taskspernode="):
                     sLine = 'export taskspernode={0}\n'.format(iPPN)
 
@@ -333,22 +343,9 @@ def rw_bin_forecast_high(taskname, dicBase):
         print("Please check whether you have the input file: " + sInput_File)
         return
 
-    layout_x = int(dicBase['layout_x'.upper()])
-    layout_y = int(dicBase['layout_y'.upper()])
-    WRITE_GROUP = int(dicBase['WRITE_GROUP'.upper()])
-    WRTTASK_PER_GROUP = int(dicBase['WRTTASK_PER_GROUP'.upper()])
-    parallel_threads = int(dicBase['parallel_threads'.upper()])
-
     WHERE_AM_I = dicBase['WHERE_AM_I']
 
-    ncores_per_node = gefs_xml_for_tasks.Get_NCORES_PER_NODE(dicBase)
-
-    # PPN: Processes per node
-    # TPP: Threads per process
-    iTotal_Tasks = layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP
-    iNodes = int((layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP) / (ncores_per_node / parallel_threads))
-    iPPN = int((ncores_per_node / parallel_threads))
-    iTPP = parallel_threads
+    iTotal_Tasks, iNodes, iPPN, iTPP = gefs_xml_for_tasks.calc_fcst_resources(dicBase)
 
     # sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 

@@ -23,6 +23,7 @@ elif [[ "$WHERE_AM_I" == cray ]] ; then
     echo "Loading modules for WCOSS cray"
     . /opt/modules/default/init/ksh
     module purge
+    module use /opt/cray/ari/modulefiles
     module load modules/3.2.10.3
     module load ncep/1.0
     module load PrgEnv-intel ESMF-intel-haswell/3_1_0rp5 cfp-intel-sandybridge iobuf craype-hugepages2M craype-haswell
@@ -37,7 +38,11 @@ elif [[ "$WHERE_AM_I" == cray ]] ; then
     module load g2tmpl-intel/1.5.0
     module load python/3.6.3
     module load xt-lsfhpc
-    export PATH=$PATH:.
+    # wave modules
+    module load HDF5-serial-intel-sandybridge/1.8.9
+    module load NetCDF-intel-sandybridge/4.2
+    # theend wave modules 
+	export PATH=$PATH:.
 elif [[ "$WHERE_AM_I" == theia ]]; then
     echo "Loading modules for theia"
     . /apps/lmod/lmod/init/ksh
@@ -48,14 +53,13 @@ elif [[ "$WHERE_AM_I" == theia ]]; then
     module load hdf5parallel/1.8.14
     module load netcdf
     module load intelpython/3.6.1.0
-
     module use -a /scratch3/NCEPDEV/nwprod/lib/modulefiles
     module load prod_util/v1.1.0
     module load g2tmpl/v1.5.0
-
+    module load prod_util/v1.1.0
+    module load g2tmpl/v1.5.0
     module use -a /scratch3/NCEPDEV/nwprod/modulefiles
     module load grib_util/v1.1.0
-
     module load gempak/7.4.2
 
     export PATH=/scratch4/NCEPDEV/ensemble/save/common/anaconda3/bin:$PATH:./
@@ -110,4 +114,7 @@ elif [[ "$WHERE_AM_I" == wcoss_dell_p3 ]] ; then
     module load python/3.6.3
     export USE_CFP=YES
     export PATH=$PATH:.
+
+    # Temporary setting to test common settings
+    . $GEFS_ROCOTO/bin/wcoss_dell_p3/common.sh
 fi

@@ -3,10 +3,10 @@
 
 # EXPORT list here
 set -x
-export NODES=4
+# export NODES=4
 export IOBUF_PARAMS=
-export FORT_BUFFERED=TRUE
-export MKL_CBWR=AVX
+# export FORT_BUFFERED=TRUE
+# export MKL_CBWR=AVX
 ulimit -s unlimited
 ulimit -a
 
@@ -19,11 +19,8 @@ export MPICH_ENV_DISPLAY=1
 export MPICH_VERSION_DISPLAY=1
 export MPICH_CPUMASK_DISPLAY=1
 
-export KMP_STACKSIZE=1024m
+# export KMP_STACKSIZE=1024m
 export OMP_NUM_THREADS=2
-export KMP_AFFINITY=disabled
-
-#export OMP_NUM_THREADS=4
 export KMP_AFFINITY=disabled
 
 export MP_EUIDEVICE=sn_all
@@ -35,9 +32,9 @@ export MEMORY_AFFINITY=core:2
 module load NetCDF-intel-haswell/4.2
 module load nco-gnu-sandybridge/4.4.4
 
-export total_tasks=48
+# export total_tasks=48
 export OMP_NUM_THREADS=2
-export taskspernode=12
+# export taskspernode=12
 
 #export total_tasks=756
 
@@ -49,13 +46,13 @@ export taskspernode=12
 export FORECAST_SEGMENT=hr
 
 # export for development runs only begin
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
-export gefsmachine=cray
-export gefsmpexec=" mpirun -n $total_tasks "
-export gefsmpexec_mpmd="  mpirun -n 756 cfp mpmd_cmdfile"
-export APRUNC="mpirun"
-export aprun_gec00="mpirun -n 1"
+# export envir=${envir:-dev}
+# export RUN_ENVIR=${RUN_ENVIR:-dev}
+# export gefsmachine=cray
+# export gefsmpexec=" mpirun -n $total_tasks "
+# export gefsmpexec_mpmd="  mpirun -n 756 cfp mpmd_cmdfile"
+# export APRUNC="mpirun"
+# export aprun_gec00="mpirun -n 1"
 export NTHREADS_SIGCHGRS=6
 
 cd $SOURCEDIR/control
