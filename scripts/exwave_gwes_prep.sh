@@ -142,12 +142,12 @@
 
   for grdID in $grdINP $waveGRD
   do
-    if [ -f "$COMIN/${wavemodID}.mod_def.${grdID}" ]
+    if [ -f "$COMIN/rundata/${wavemodID}.mod_def.${grdID}" ]
     then
       set +x
-      echo " Mod def file for $grdID found in $COMIN. copying ...."
+      echo " Mod def file for $grdID found in ${COMIN}/rundata. copying ...."
       [[ "$LOUD" = YES ]] && set -x
-      cp $COMIN/${wavemodID}.mod_def.${grdID} mod_def.$grdID
+      cp $COMIN/rundata/${wavemodID}.mod_def.${grdID} mod_def.$grdID
 
     else
       msg="FATAL ERROR: NO MODEL DEFINITION FILE"
@@ -830,7 +830,7 @@
   if [ -f ww3_multi.inp ]
   then
     echo " Copying file ww3_multi.${wavemodTAG}.inp to $COMOUT "
-    cp ww3_multi.inp ${COMOUT}/ww3_multi.${wavemodTAG}.$cycle.inp
+    cp ww3_multi.inp ${COMOUT}/rundata/ww3_multi.${wavemodTAG}.$cycle.inp
   else
     echo "FATAL ERROR: file ww3_multi.${wavemodTAG}.$cycle.inp NOT CREATED, ABORTING"
     err=12;export err;${errchk}
@@ -848,12 +848,12 @@
     do
       set +x
       echo ' '
-      echo "   Saving wind.$grdID as $COMOUT/${wavemodTAG}.$grdID.$PDY$cyc.wind"
-      echo "   Saving times.$grdID file as $COMOUT/${wavemodTAG}.$grdID.$PDY$cyc.$grdID.wind.times"
+      echo "   Saving wind.$grdID as $COMOUT/rundata/${wavemodTAG}.$grdID.$PDY$cyc.wind"
+      echo "   Saving times.$grdID file as $COMOUT/rundata/${wavemodTAG}.$grdID.$PDY$cyc.$grdID.wind.times"
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      cp wind.$grdID $COMOUT/${wavemodTAG}.$grdID.$PDY$cyc.wind
-      cp times.$grdID $COMOUT/${wavemodTAG}.$grdID.$PDY$cyc.$grdID.wind.times
+      cp wind.$grdID $COMOUT/rundata/${wavemodTAG}.$grdID.$PDY$cyc.wind
+      cp times.$grdID $COMOUT/rundata/${wavemodTAG}.$grdID.$PDY$cyc.$grdID.wind.times
     done
    fi
 
@@ -863,10 +863,10 @@
     do
       set +x
       echo ' '
-      echo "   Saving current.$grdID as $COMOUT/${wavemodTAG}.$grdID.$PDY$cyc.curr"
+      echo "   Saving current.$grdID as $COMOUT/rundata/${wavemodTAG}.$grdID.$PDY$cyc.curr"
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      cp curr.$grdID $COMOUT/${wavemodTAG}.$grdID.$PDY$cyc.curr
+      cp curr.$grdID $COMOUT/rundata/${wavemodTAG}.$grdID.$PDY$cyc.curr
     done
    fi
   fi 

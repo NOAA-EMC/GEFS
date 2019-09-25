@@ -149,10 +149,10 @@
     if [ ! -f out_grd.$grdID ]
     then
       set +x
-      echo "   Copying $wavemodTAG.out_grd.$grdID.$PDY$cyc from $COMIN to out_grd.$grdID"
+      echo "   Copying $wavemodTAG.out_grd.$grdID.$PDY$cyc from ${COMIN}/rundata to out_grd.$grdID"
       [[ "$LOUD" = YES ]] && set -x
 
-      echo  "cp $COMIN/$wavemodTAG.out_grd.$grdID.$PDY$cyc out_grd.$grdID"  >> cmdfile
+      echo  "cp $COMIN/rundata/$wavemodTAG.out_grd.$grdID.$PDY$cyc out_grd.$grdID"  >> cmdfile
     fi 
 
   done
@@ -160,9 +160,9 @@
   if [ ! -f out_pnt.ww3 ]
   then
     set +x
-    echo "   Copying $COMIN/$wavemodTAG.out_pnt.${buoy}.$PDY$cyc to out_pnt.ww3"
+    echo "   Copying $COMIN/rundata/$wavemodTAG.out_pnt.${buoy}.$PDY$cyc to out_pnt.ww3"
     [[ "$LOUD" = YES ]] && set -x
-    echo "cp $COMIN/$wavemodTAG.out_pnt.${buoy}.$PDY$cyc out_pnt.ww3" >> cmdfile
+    echo "cp $COMIN/rundata/$wavemodTAG.out_pnt.${buoy}.$PDY$cyc out_pnt.ww3" >> cmdfile
   fi
 
 # Set number of processes for mpmd
@@ -254,17 +254,17 @@
 
   for grdID in $waveGRD $sbsGRD $postGRD $interpGRD $buoy
   do
-    if [ -f "$COMIN/${wavemodID}.mod_def.${grdID}" ]
+    if [ -f "$COMIN/rundata/${wavemodID}.mod_def.${grdID}" ]
     then
       set +x
-      echo " Mod def file for $grdID found in $COMIN. copying ...."
+      echo " Mod def file for $grdID found in ${COMIN}/rundata. copying ...."
       [[ "$LOUD" = YES ]] && set -x
 
-      cp $COMIN/${wavemodID}.mod_def.${grdID} mod_def.$grdID
+      cp $COMIN/rundata/${wavemodID}.mod_def.${grdID} mod_def.$grdID
 
     else
       set +x
-      echo " Mod def file for $grdID not found in $COMIN. Exiting ..."
+      echo " Mod def file for $grdID not found in ${COMIN}/rundata. Exiting ..."
       msg="ABNORMAL EXIT: NO mod_def FILE for grid $grdID"
       postmsg "$jlogfile" "$msg"
       set +x

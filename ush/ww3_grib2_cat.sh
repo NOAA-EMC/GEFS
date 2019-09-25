@@ -105,11 +105,11 @@
 
 
   set +x
-  echo "   Catting grib2 files ${COMOUT}/$wavemodTAG.$grdID.$cycle.f???.grib2"
+  echo "   Catting grib2 files ${COMOUT}/gridded/$wavemodTAG.$grdID.$cycle.f???.grib2"
   [[ "$LOUD" = YES ]] && set -x
 
   ln -sf ../$wavemodTAG.$grdID.$cycle.grib2 gribfile
-  cat ${COMOUT}/$wavemodTAG.$grdID.$cycle.f???.grib2 >> gribfile
+  cat ${COMOUT}/gridded/$wavemodTAG.$grdID.$cycle.f???.grib2 >> gribfile
   err=$?
 
   if [ "$err" != '0' ]
@@ -130,11 +130,11 @@
   if [ "$SENDCOM" = 'YES' ]
   then
     set +x
-    echo "   Saving GRIB file as $COMOUT/$wavemodTAG.$grdID.$cycle.grib2"
+    echo "   Saving GRIB file as $COMOUT/gridded/$wavemodTAG.$grdID.$cycle.grib2"
     [[ "$LOUD" = YES ]] && set -x
-    cp gribfile $COMOUT/$wavemodTAG.$grdID.$cycle.grib2
+    cp gribfile $COMOUT/gridded/$wavemodTAG.$grdID.$cycle.grib2
     
-    if [ ! -f $COMOUT/$wavemodTAG.$grdID.$cycle.grib2 ]
+    if [ ! -f $COMOUT/gridded/$wavemodTAG.$grdID.$cycle.grib2 ]
     then
       set +x
       echo ' '
@@ -149,17 +149,17 @@
       exit 4
     fi
 
-    echo "   Creating wgrib index of $COMOUT/$wavemodTAG.$grdID.$cycle.grib2"
-    $WGRIB2 -s $COMOUT/$wavemodTAG.$grdID.$cycle.grib2 > $COMOUT/$wavemodTAG.$grdID.$cycle.grib2.idx
+    echo "   Creating wgrib index of $COMOUT/gridded/$wavemodTAG.$grdID.$cycle.grib2"
+    $WGRIB2 -s $COMOUT/gridded/$wavemodTAG.$grdID.$cycle.grib2 > $COMOUT/gridded/$wavemodTAG.$grdID.$cycle.grib2.idx
 
     if [ "$SENDDBN" = 'YES' ]
     then
       set +x
-      echo "   Alerting GRIB file as $COMOUT/$wavemodTAG.$grdID.$cycle.grib2"
-      echo "   Alerting GRIB index file as $COMOUT/$wavemodTAG.$grdID.$cycle.grib2.idx"
+      echo "   Alerting GRIB file as $COMOUT/gridded/$wavemodTAG.$grdID.$cycle.grib2"
+      echo "   Alerting GRIB index file as $COMOUT/gridded/$wavemodTAG.$grdID.$cycle.grib2.idx"
       [[ "$LOUD" = YES ]] && set -x
-      $DBNROOT/bin/dbn_alert MODEL WAVE_GRIB_GB2 $job $COMOUT/$wavemodTAG.$grdID.$cycle.grib2
-      $DBNROOT/bin/dbn_alert MODEL WAVE_GRIB_GB2_WIDX $job $COMOUT/$wavemodTAG.$grdID.$cycle.grib2.idx
+      $DBNROOT/bin/dbn_alert MODEL WAVE_GRIB_GB2 $job $COMOUT/gridded/$wavemodTAG.$grdID.$cycle.grib2
+      $DBNROOT/bin/dbn_alert MODEL WAVE_GRIB_GB2_WIDX $job $COMOUT/gridded/$wavemodTAG.$grdID.$cycle.grib2.idx
     fi
   fi 
 
