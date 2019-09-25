@@ -35,6 +35,8 @@ elif [ $machine = "dell" ]; then
     FIX_DIR="/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gefs/fix_sst721"
 elif [ $machine = "theia" ]; then
     FIX_DIR="/scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix_sst721"
+elif [ $machine = "hera" ]; then
+    FIX_DIR="/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix_sst721"
 fi
 
 # Delete Fix folder and relink/recopy it

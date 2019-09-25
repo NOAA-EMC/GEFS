@@ -117,6 +117,7 @@ fi # for CleanAll
 if [ $RunRocoto = "yes" ]; then
     cd $sWS
     if [ $machine = "hera" ]; then
+        module load intel/18.0.5.274
         module load rocoto/1.3.1
         module load contrib
         module load anaconda/anaconda3-5.3.1
