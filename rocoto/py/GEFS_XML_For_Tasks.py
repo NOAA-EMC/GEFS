@@ -973,50 +973,133 @@ def get_param_of_task(dicBase, taskname):
 
     # For gempak
     if taskname == "gempak":
-        if (sVarName_nodes not in dicBase) and (sVarName_ppn not in dicBase):
+        iTotal_Tasks, iNodes, iPPN, iTPP = calc_gempak_resources(dicBase)
+        #if (sVarName_nodes not in dicBase) and (sVarName_ppn not in dicBase):
 
-            ncores_per_node = Get_NCORES_PER_NODE(dicBase)
-            WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
-            npert = int(dicBase["NPERT"])
-            Total_tasks = npert + 1
-            nGEMPAK_RES = 1
-            if "GEMPAK_RES" in dicBase:
-                nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
-                Total_tasks *= nGEMPAK_RES
-
-            if (npert + 1) <= ncores_per_node:
-                iNodes = nGEMPAK_RES
-                iPPN = (npert + 1)
-            else:
-                if npert == 30 and WHERE_AM_I.upper() == "THEIA":
-                    iPPN = 3
-                    iNodes = 31
-                else:
-                    iPPN = ncores_per_node
-                    iNodes = int(Total_tasks / (iPPN * 1.0) + 0.5)
-            iTPP = 1
-            sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
+        #    ncores_per_node = Get_NCORES_PER_NODE(dicBase)
+        #    WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
+        #    npert = int(dicBase["NPERT"])
+        #    Total_tasks = npert + 1
+        #    nGEMPAK_RES = 1
+        #    if "GEMPAK_RES" in dicBase:
+        #        nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
+        #        Total_tasks *= nGEMPAK_RES
+        #
+        #    if (npert + 1) <= ncores_per_node:
+        #        iNodes = nGEMPAK_RES
+        #        iPPN = (npert + 1)
+        #    else:
+        #        if npert == 30 and WHERE_AM_I.upper() == "THEIA":
+        #            iPPN = 3
+        #            iNodes = 31
+        #        else:
+        #            if WHERE_AM_I.upper() == "CRAY":
+        #                iNodes = Total_tasks
+        #                iPPN = 1
+        #            else:
+        #                iPPN = ncores_per_node
+        #                iNodes = int(Total_tasks / (iPPN * 1.0) + 0.5)
+        #    iTPP = 1
+        sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
     # For avgspr_gempak
     if taskname == "avgspr_gempak":
-        if (sVarName_nodes not in dicBase) and (sVarName_ppn not in dicBase):
-
-            ncores_per_node = Get_NCORES_PER_NODE(dicBase)
-            WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
-            npert = int(dicBase["NPERT"])
-            Total_tasks = 2
-            nGEMPAK_RES = 1
-            if "GEMPAK_RES" in dicBase:
-                nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
-                Total_tasks *= nGEMPAK_RES
-
-            iNodes = 1
-            iPPN = Total_tasks
-            iTPP = 1
-            sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
+        iTotal_Tasks, iNodes, iPPN, iTPP = calc_avgspr_gempak_resources(dicBase)
+        #if (sVarName_nodes not in dicBase) and (sVarName_ppn not in dicBase):
+        #
+        #    ncores_per_node = Get_NCORES_PER_NODE(dicBase)
+        #    WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
+        #    npert = int(dicBase["NPERT"])
+        #    Total_tasks = 2
+        #    nGEMPAK_RES = 1
+        #    if "GEMPAK_RES" in dicBase:
+        #        nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
+        #        Total_tasks *= nGEMPAK_RES
+        #
+        #    if WHERE_AM_I.upper() == "CRAY":
+        #        iNodes = Total_tasks
+        #        iPPN = 1
+        #    else:
+        #        iNodes = 1
+        #        iPPN = Total_tasks
+        #
+        #    iTPP = 1
+        sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
     return sWalltime, sNodes, sMemory, sJoin, sDep, sQueue, sPartition
 
+
+# =======================================================
+def calc_avgspr_gempak_resources(dicBase):
+    ncores_per_node = Get_NCORES_PER_NODE(dicBase)
+    WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
+    npert = int(dicBase["NPERT"])
+    
+    iTotal_Tasks = 2
+    nGEMPAK_RES = 1
+    if "GEMPAK_RES" in dicBase:
+        nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
+        iTotal_Tasks *= nGEMPAK_RES
+
+    iTPP = 1
+    if WHERE_AM_I.upper() == "CRAY":
+        iNodes = iTotal_Tasks
+        iPPN = 1
+        
+    else:
+        iNodes = iTotal_Tasks
+        iPPN = 1
+
+    return iTotal_Tasks, iNodes, iPPN, iTPP
+
+# =======================================================
+def calc_gempak_resources(dicBase):
+    import math
+    ncores_per_node = Get_NCORES_PER_NODE(dicBase)
+    WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
+    npert = int(dicBase["NPERT"])
+    iTotal_Tasks = npert + 1
+    nGEMPAK_RES = 1
+    if "GEMPAK_RES" in dicBase:
+        nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
+        iTotal_Tasks *= nGEMPAK_RES
+
+    iTPP = 1
+    if WHERE_AM_I.upper() == "CRAY":
+        iNodes = iTotal_Tasks
+        iPPN = 1
+        
+    elif WHERE_AM_I.upper() == "THEIA":
+        if (npert + 1) <= ncores_per_node:
+            iNodes = nGEMPAK_RES
+            iPPN = (npert + 1)
+        elif nGEMPAK_RES <= ncores_per_node:
+            iNodes = (npert + 1)
+            iPPN = nGEMPAK_RES
+        else:
+            iNodes = (npert + 1)
+            iPPN = nGEMPAK_RES
+            
+    elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
+        if (npert + 1) <= ncores_per_node:
+            iNodes = nGEMPAK_RES
+            iPPN = (npert + 1)
+        else:
+            iPPN = ncores_per_node
+            iNodes = math.ceil(iTotal_Tasks / (iPPN * 1.0))
+
+    else:
+        if (npert + 1) <= ncores_per_node:
+            iNodes = nGEMPAK_RES
+            iPPN = (npert + 1)
+        elif nGEMPAK_RES <= ncores_per_node:
+            iNodes = (npert + 1)
+            iPPN = nGEMPAK_RES
+        else:
+            iNodes = (npert + 1)
+            iPPN = nGEMPAK_RES
+
+    return iTotal_Tasks, iNodes, iPPN, iTPP
 
 # =======================================================
 def Get_NCORES_PER_NODE(dicBase):

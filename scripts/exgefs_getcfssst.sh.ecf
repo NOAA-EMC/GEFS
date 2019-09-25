@@ -330,7 +330,7 @@ ERR=$?
 if [ $ERR -eq 0 ] ; then 
     echo "2-tiered sst generation finished!!!"
     $NCP $fn_anom_fc $COMOUTcfssst/TMPsfc.${PDY}${cyc}.24hr.anom.grb
-    $ERR=$?
+    ERR=$?
     if [ $ERR -eq 0 ]; then
         exit 0
     else

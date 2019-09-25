@@ -356,7 +356,7 @@ do
 
 					EOF
                 if [ $WrottenZERO -eq 0 ]; then            
-					cat >> cmdfilesam  << EOF
+					cat >> cmdfilesam <<- EOF
 						MAP     = 0
 						LATLON  = 0
 						CLEAR   = no
