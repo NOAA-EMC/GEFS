@@ -1144,7 +1144,7 @@ def Get_NCORES_PER_NODE(dicBase):
     elif WHERE_AM_I == "theia".upper():
         ncores_per_node = 24
     elif WHERE_AM_I == "hera".upper():
-        ncores_per_node = 24
+        ncores_per_node = 40
     elif WHERE_AM_I == "wcoss_dell_p3".upper():
         ncores_per_node = 28
     else:
