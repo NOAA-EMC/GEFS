@@ -77,6 +77,7 @@ elif [[ "$WHERE_AM_I" == hera ]]; then
     module load impi/2018.0.4
     module load hdf5parallel/1.10.5
     module load netcdf
+    module load hdf5/1.10.4
     module load anaconda/anaconda3-5.3.1
 
     module use -a /scratch2/NCEPDEV/nwprod/NCEPLIBS/modulefiles
