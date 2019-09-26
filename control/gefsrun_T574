@@ -250,6 +250,7 @@ echo expid=$expid id=$id
    (dell) gefsmpexec="mpirun" ;;
   esac
 
+#  (dell) gefsmpexec="mpirun -n \$total_tasks" ;;
 export gefsmachine
 echo gefsmachine=$gefsmachine
 export gefsmpexec
@@ -341,6 +342,7 @@ echo `date` $0 $*                                            set directory tree 
 echo
 
 cwd=`dirname $0`
+#cwd=/gpfs/dell2/emc/retros/noscrub/Bo.Cui/GEFS_V11.3.0/nwdev/control
 
 . $cwd/setbase
 
@@ -1459,10 +1461,10 @@ wall_clock_limit_fcst_long="1:29"
 wall_clock_limit_fcst_short="00:20"
   fi
 
-if [[ $gefsmachine = dell ]]; then                       
-  wall_clock_limit_fcst_long="2:35"
-  wall_clock_limit_fcst_short="00:40"
-fi
+  if [[ $gefsmachine = dell ]]; then                       
+wall_clock_limit_fcst_long="1:29"
+wall_clock_limit_fcst_short="00:20"
+  fi
 
 echo wall_clock_limit_fcst_long=$wall_clock_limit_fcst_long
 echo wall_clock_limit_fcst_short=$wall_clock_limit_fcst_short
@@ -1902,13 +1904,10 @@ case $taskname in
 
   if [[ $gefsmachine = dell ]]; then
      if [[ $fcstjoblength = long ]]; then
-#      (( taskspermem = 66 ))
-       (( taskspermem = 30 ))
+       (( taskspermem = 66 ))
      else
-#      (( taskspermem = 32 ))
-       (( taskspermem = 16 ))
+       (( taskspermem = 32 ))
      fi
-#      wall_clock_limit="02:30"
        parallel_threads=4
        task_affinity="core(1)"
        (( taskspernode = COREPERNODE / parallel_threads )) # for T574SL P2/P1
@@ -1917,10 +1916,17 @@ case $taskname in
     MP_SHARED_MEMORY=yes
   fi
 
+    echo "BOCUI taskspermem" $taskspermem   
+    echo "BOCUI npert" $npert
+    echo "BOCUI taskpernode" $taskpernode
+    echo "BOCUI COREPERNODE" $COREPERNODE
+    echo "BOCUI RUN_CONCURRENT" $RUN_CONCURRENT
+
      RUN=
      if [[ $RUN_CONCURRENT = yes ]]; then
        if [[ $cyc = $cyc_fcst ]]; then
          (( total_tasks = taskspermem * (npert + 1) ))
+          echo "BOCUI total_tasks" $total_tasks
        else
          (( total_tasks = taskspermem * npert ))
        fi
@@ -1931,6 +1937,8 @@ case $taskname in
      fi
      (( node = ( total_tasks + taskspernode - 1 ) / taskspernode ))
 
+     echo BOCUI test node $node
+     echo BOCUI test $total_tasks
   ;;
   (forecast_lr)
     FORECAST_SEGMENT=lr
@@ -2029,8 +2037,7 @@ case $taskname in
     MP_SHARED_MEMORY=yes
   fi
   if [[ $gefsmachine = dell ]]; then                       
-#      (( taskspermem = 36 ))
-       (( taskspermem = 18 ))
+       (( taskspermem = 36 ))
        parallel_threads=4
        task_affinity="core(1)"
        (( taskspernode = COREPERNODE / parallel_threads )) # for T574SL P2/P1
@@ -2713,7 +2720,6 @@ case $taskname in
     if (( taskspernode > total_tasks )); then
      taskspernode=$total_tasks
     fi
-    node=1
   ;;
   (genesis.gfs)
     ################################# production variables
@@ -3055,7 +3061,6 @@ case $taskname in
     if (( taskspernode > total_tasks )); then
      taskspernode=$total_tasks
     fi
-    node=1
   fi  
   ;;
 

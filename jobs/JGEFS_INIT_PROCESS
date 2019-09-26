@@ -68,7 +68,7 @@ export RUN=${RUN:-gefs}
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-${COMROOT}/logs/jlogfiles/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile}
 
 ####################################
 # Determine Job Output Name on System
@@ -84,7 +84,7 @@ export pgmerr=errfile
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
-export HOMEenkf=${HOMEenkf:-$NWROOTp1/enkf.${enkf_ver}}
+export HOMEenkf=${HOMEenkf:-$NWROOT/enkf.${enkf_ver}}
 
 export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
 export USHgsm=${USHgsm:-$HOMEgsm/ush}

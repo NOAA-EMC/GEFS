@@ -22,7 +22,7 @@ cd $DATA
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile}
 
 ####################################
 # Determine Job Output Name on System
@@ -66,7 +66,7 @@ export DBN_ALERT_TYPE=GEFS_GEMPAK
 #
 # Now set up GEMPAK/NTRANS environment
 #
-. ${NWROOTp1}/gempak/.gempak
+# JY . ${NWROOTp1}/gempak/.gempak
 
 
 ###################################
@@ -82,7 +82,7 @@ sh $utilscript/setup.sh
 setpdy.sh
 . PDY
 
-export COM=${COMROOT}/${NET}/${envir}
+export COM=${COMROOT}/${NET}/${envir_in:-$envir}
 # export COMIN=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/pgrba
 export COMIN=${COM}/${RUN}.${PDY}/${cyc}/pgrb2a
 export COMIN_P5=${COM}/${RUN}.${PDY}/${cyc}/pgrb2ap5
@@ -127,7 +127,8 @@ export MP_CMDFILE=$DATA/poescript
 
 ## Execute the script.
 
-mpirun -n 2 cfp $MP_CMDFILE
+#mpirun -n 2 cfp $MP_CMDFILE
+mpirun -n 4 cfp $MP_CMDFILE
 
 #cat $pgmout
 

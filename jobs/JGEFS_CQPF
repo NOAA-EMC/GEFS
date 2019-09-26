@@ -21,8 +21,6 @@ export APRUN=${gefsmpexec:-mpirun}
 ####################################
 # Load the grib module
 ####################################
-# JY . /usrx/local/Modules/default/init/ksh
-# JY module load grib_util/v1.0.1
 export CNVGRIB=$CNVGRIB
 
 ####################################
@@ -48,7 +46,7 @@ export RUN=cqpf
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile}
 
 ####################################
 # Determine Job Output Name on System
@@ -65,6 +63,7 @@ export pgmerr=errfile
 
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
+  export UTILgefs=${UTILgefs:-$HOMEgefs/util}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
@@ -82,10 +81,17 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
+if [ $envir != prod ]; then
+# export COMIN=${COMROOT}/${NET}/prod
+  export COMIN=${COMIN:-${COMROOT}/${NET}/prod}
+  export COMINstat=${COMROOT}/${NET}/${envir}
+fi
 
 export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}}
 export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}/${cyc}/ensstat
-export COMINGEST=${COMINGEST:-$COMROOTp1/ingest/prod}
+export COMINshef=${COMINshef:-${DCOMROOT}/prod/shef_pefiles}
+#export COMINshef=${COMINshef:-/gpfs/dell1/nco/ops/dcom/prod/shef_pefiles}
+export COMINstat=${COMINstat:-$COMIN}
 
 mkdir -m 775 -p $COMOUT
 

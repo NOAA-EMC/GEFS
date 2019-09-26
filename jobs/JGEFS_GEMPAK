@@ -23,7 +23,7 @@ cd $DATA
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile}
 
 ####################################
 # Determine Job Output Name on System
@@ -67,10 +67,9 @@ export DBN_ALERT_TYPE=GEFS_GEMPAK
 setpdy.sh
 . PDY
 
-. ${NWROOTp1}/gempak/.gempak
 set -x
 
-export COM=${COMROOT}/${NET}/${envir}
+export COM=${COMROOT}/${NET}/${envir_in:-$envir}
 export COMIN_RAW=${COM}/${RUN}.${PDY}/${cyc}/pgrb2a
 export COMIN_P5=${COM}/${RUN}.${PDY}/${cyc}/pgrb2ap5
 export COMIN_B=${COM}/${RUN}.${PDY}/${cyc}/pgrb2b
@@ -109,7 +108,8 @@ export MP_CMDFILE=$DATA/poescript
 
 ## Execute the script.
 
-mpirun -n 21 cfp $MP_CMDFILE
+#mpirun -n 21 cfp $MP_CMDFILE
+mpirun -n 42 cfp $MP_CMDFILE
 
 #for member in c00 p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 p11 p12 p13 p14 \
 #              p15 p16 p17 p18 p19 p20

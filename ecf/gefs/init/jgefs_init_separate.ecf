@@ -1,26 +1,38 @@
 #BSUB -J %E%gefs_init_separate_%CYC%
-#BSUB -o /%COM%/output/%ENVIR%/today/gefs_init_separate_%CYC%.o%J
-#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_init_separate_%CYC%.o%J
-#BSUB -cwd /tmpnwprd
+#BSUB -o %COM%/output/%ENVIR%/today/gefs_init_separate_%CYC%.o%J
+#BSUB -cwd /tmp
 #BSUB -R span[ptile=4]
-#BSUB -R affinity[core(6)]
+#BSUB -R affinity[core(7):distribute=balance]
 #BSUB -n 40
-#BSUB -x
 #BSUB -q %QUEUE%
 #BSUB -W 00:30
 #BSUB -L /bin/sh
-#BSUB -P %PROJ%
-#BSUB -a poe
+#BSUB -P %PROJ%-%PROJENVIR%
 
 %include <head.h>
-%include <envir-p2.h>
+%include <envir-p3.h>
+
+export model=gefs
+%include <model_ver.h>
 
 
 # EXPORT list here
 set -x
 
-export OMP_NUM_THREADS=6
-export MP_TASK_AFFINITY=cpu:6
+ulimit -s unlimited
+ulimit -a
+
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+export MP_SHARED_MEMORY=yes
+export MEMORY_AFFINITY=core:7 
+
+export total_tasks=40
+export taskspernode=4      
+export NODES=10
+
+export OMP_NUM_THREADS=7
+export MP_TASK_AFFINITY=cpu:7
 export MP_USE_BULK_XFER=yes
 export MP_STDOUTMODE=unordered
 export MPICH_ALLTOALL_THROTTLE=0
@@ -35,18 +47,19 @@ export cyc_fcst=%CYC%
 
 
 # CALL executable job script here
-VERSION_FILE=$NWROOT/versions/gefs.ver
-if [ -f $VERSION_FILE ]; then
-  . $VERSION_FILE
-else
-  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
-  ecflow_client --abort
-  exit
-fi
 
-module load util_shared/${util_shared_ver}
+#module load util_shared/${util_shared_ver}
+. /usrx/local/prod/lmod/lmod/init/ksh
+module load grib_util/$grib_util_ver
+module load util_shared/$util_shared_ver
 
-$NWROOT/gefs.${gefs_ver}/jobs/JGEFS_INIT_SEPARATE
+module load ips/$ips_ver
+module load lsf/$lsf_ver
+module load impi/$impi_ver
+module load CFP/$cfp_ver
+export USE_CFP=YES
+
+${HOMEgefs}/jobs/JGEFS_INIT_SEPARATE
 
 %include <tail.h>
 %manual

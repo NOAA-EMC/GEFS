@@ -13,7 +13,6 @@ set -x
 export PS4='mar_00Z:$SECONDS + '
 mkdir $DATA/mar_00Z
 cd $DATA/mar_00Z
-sh $utilscript/setup.sh
 cp $FIXgempak/datatype.tbl datatype.tbl
 
 mdl=gefs
@@ -29,8 +28,8 @@ if [ ${cyc} != "00" ] ; then
 fi
 
 # DEFINE YESTERDAY
-yesterday=`/nwprod/util/exec/ndate -24 ${PDY}${cyc} | cut -c -8`
-shrtyesterday=`/nwprod/util/exec/ndate -24 ${PDY}${cyc} | cut -c3-8`
+yesterday=`${NDATE} -24 ${PDY}${cyc} | cut -c -8`
+shrtyesterday=`${NDATE} -24 ${PDY}${cyc} | cut -c3-8`
 
 # SET GFS PARAMETERS
 gfscyc="12"
@@ -199,7 +198,8 @@ LINE    = 18/1/1/0
 TITLE   = 18/+20/~ ? P20|~${metaarea} ${level} DM
 run
 
-GDFILE	= \$COMINs/gfs.${yesterday}/gfs_${yesterday}${gfscyc}f${fcsthrsgfs}
+#GDFILE	= \$COMINs/gfs.${yesterday}/gfs_${yesterday}${gfscyc}f${fcsthrsgfs}
+GDFILE	= \$COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${yesterday}${gfscyc}f${fcsthrsgfs}
 LINE    = 3/1/3/0
 GDATTIM	= F${fcsthrsgfs}
 TITLE   = 3/+11/~ ? GFS 12Z YEST|~${metaarea} ${level} DM
@@ -372,7 +372,7 @@ HILO    = 18/L${num}/900-1016/5/50/y
 TITLE   = 18/+20/~ ? P20|~${metaarea} ${metashname}
 run
 
-GDFILE	= \$COMINs/gfs.${yesterday}/gfs_${yesterday}${gfscyc}f${fcsthrsgfs}
+GDFILE	= \$COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${yesterday}${gfscyc}f${fcsthrsgfs}
 HILO    = 3/L${num}/900-1016/5/50/y
 GDATTIM	= F${fcsthrsgfs}
 TITLE   = 3/+11/~ ? GFS 12Z YEST|~${metaarea} ${metashname}

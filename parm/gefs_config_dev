@@ -8,9 +8,9 @@ export envir=${envir:-dev}
 export SENDDBN=${SENDDBN:-%SENDDBN:NO%}
 export SENDDBN_NTC=${SENDDBN_NTC:-%SENDDBN_NTC:NO%}
 
-export KEEPDATA=NO
-export SENDCOM=YES
-export SENDECF=NO
+#export KEEPDATA=NO
+#export SENDCOM=YES
+#export SENDECF=NO
 
 export PARAFLAG=${PARAFLAG:-YES}
 export SENDECF=${SENDECF:-NO}
@@ -159,8 +159,9 @@ elif [[ ${jobscript} = JGEFS_NCEPPOST ]] ; then
 # Define COMIN for JGEFS_CQPF for dev test, which needs previous 16 day forecast
  
 elif [[ ${jobscript} = JGEFS_CQPF ]] ; then
-  export COMIN=/gpfs/tp2/nco/ops/com/gens/prod
- 
+  #export COMIN=/gpfs/tp2/nco/ops/com/gens/prod
+  export COMIN=/gpfs/dell2/nco/ops/com/gens/prod
+  export COMIN=$COMIN 
 else
 
   export GFSbase=/gpfs/dell1/nco/ops/com/gfs/para
