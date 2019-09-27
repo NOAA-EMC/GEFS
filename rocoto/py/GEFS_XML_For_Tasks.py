@@ -787,9 +787,10 @@ def get_param_of_task(dicBase, taskname):
 
                 elif DoesTaskExist(dicBase, "init_fv3chgrs"):  # *_Reloc
                     sDep += '\n\t<taskdep task="init_fv3chgrs_#member#"/>'
-                elif DoesTaskExist(dicBase, "copy_init"):
+
+                if DoesTaskExist(dicBase, "copy_init"):
                     sDep += '\n\t<taskdep task="copy_init_#member#"/>'
-                elif DoesTaskExist(dicBase, "gwes_prep"): # Wave prep
+                if DoesTaskExist(dicBase, "gwes_prep"): # Wave prep
                     sDep += '\n\t<taskdep task="gwes_prep_#member#"/>'
 
                 if sDep == '<and>':
