@@ -278,7 +278,7 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     # --------------------------
 
     cycledef = "gefs"
-    maxtries = 1
+    maxtries = 3
 
     strings = ""
 

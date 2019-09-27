@@ -8,11 +8,6 @@ export IOBUF_PARAMS=
 ulimit -s unlimited
 ulimit -a
 
-
-
-
-export OMP_NUM_THREADS=6
-
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:6
 

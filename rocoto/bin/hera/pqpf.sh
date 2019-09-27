@@ -4,16 +4,8 @@
 set -x
 export IOBUF_PARAMS=
 
-
 ulimit -s unlimited
 ulimit -a
-
-
-
-
-export OMP_NUM_THREADS=1
-
-#export OMP_NUM_THREADS=1
 
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:1

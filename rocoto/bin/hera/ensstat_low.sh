@@ -8,14 +8,6 @@ export IOBUF_PARAMS=cfi*:size=64M:count=4:verbose
 ulimit -s unlimited
 ulimit -a
 
-
-
-
-
-export OMP_NUM_THREADS=4
-
-#export OMP_NUM_THREADS=4
-
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:4
 

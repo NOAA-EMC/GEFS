@@ -9,10 +9,6 @@ export IOBUF_PARAMS=
 ulimit -s unlimited
 ulimit -a
 
-
-
-
-
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:2
 

@@ -20,10 +20,6 @@ export FORECAST_SEGMENT=hr
 
 export NTHREADS_SIGCHGRS=6
 
-. $GEFS_ROCOTO/parm/setbase
-. $GEFS_ROCOTO/parm/gefs_config
-. $GEFS_ROCOTO/parm/gefs_dev.parm
-
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_ENSAVG_NEMSIO
 

@@ -28,7 +28,7 @@ DeleteCrontabFromMyCrontab=${DeleteCrontabFromMyCrontab:-no}
 if [ $machine = "nomachine" ]; then
     if [ -d /scratch1/NCEPDEV ]; then
         machine=hera
-    elif [ -d /scratch4/NCEPDEV ]; then
+    elif [ -d /scratch3/NCEPDEV ]; then
         machine=theia
     elif [[ -d /gpfs/hps3 && -e /etc/SuSE-release ]]; then # Luna or Surge
         machine=cray

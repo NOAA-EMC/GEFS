@@ -17,9 +17,6 @@ export total_tasks=$SLURM_NTASKS
 export OMP_NUM_THREADS=1
 export taskspernode=$SLURM_CPUS_ON_NODE
 
-. $GEFS_ROCOTO/parm/setbase
-. $GEFS_ROCOTO/parm/gefs_config
-. $GEFS_ROCOTO/parm/gefs_dev.parm
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_GEMPAK

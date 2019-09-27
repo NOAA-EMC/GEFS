@@ -154,9 +154,9 @@ def get_WHERE_AM_I(dicBase):
     sVarName = 'WHERE_AM_I'
     import os
     if sVarName not in dicBase:
-        if os.path.exists('/scratch1'):
+        if os.path.exists('/scratch1/NCEPDEV'):
             dicBase[sVarName] = 'hera'
-        elif os.path.exists('/scratch4'):
+        elif os.path.exists('/scratch3/NCEPDEV'):
             dicBase[sVarName] = 'theia'
         elif os.path.exists('/gpfs') and os.path.exists('/etc/SuSE-release'):
             dicBase[sVarName] = 'cray'

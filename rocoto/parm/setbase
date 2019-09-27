@@ -64,11 +64,22 @@ if [ -d /scratch2/NCEPDEV ]; then
     NOSCRUB=/scratch2/NCEPDEV/ensemble/noscrub
     export machine='HERA'
     
-    export HOMEDIR=/scratch2/NCEPDEV/ensemble/Bing.Fu/git/ccpp #/scratch2/NCEPDEV/ensemble/Bing.Fu/git/fv3gfs_hera #/scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gfs/fv3gefs_f0b283bd_20190517
+    export HOMEDIR=/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gfs/fv3gefs_port2hera_0345c37d_20190926 
     export HOMEDIR1=$HOMEDIR
     export HOMERFC=/scratch2/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
 
-    export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/common
+    #export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/common
+    export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/Walter.Kolczynski/gefs_input
+    export COMINenkf_base=$HOMEdata/gfs_15/enkfgdas.
+    export COMINgfs_base=$HOMEdata/gfs_15/gfs.
+    export COMINcfs_base=$HOMEdata/cfs_2_sst/cfs.
+
+    # Location of WW3 executables
+    export EXECcode=$HOMEDIR/sorc/fv3gfs.fd/WW3/model/exe
+    # Wave model settings: ice data dir
+    # export COMICE=/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod
+    export COMICE=$HOMEdata/sea_ice
+
     export COMROOThps=${HOMEdata}
     export COMROOTp1=/scratch2/NCEPDEV/rstprod/com 
     export PATH=$PATH:/scratch2/NCEPDEV/nwprod/NCEPLIBS/util/prod_util.v1.1.0/ush
