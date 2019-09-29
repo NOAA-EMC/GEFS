@@ -54,7 +54,7 @@ export COMIN=${COMIN:-${COMINwave}/${RUN}.${PDY}/${cyc}}
 export COMOUT=${COMOUT:-${COMOUTwave}/${RUN}.${PDY}/${cyc}}
 
 if [ $SENDCOM = YES ]; then
-  mkdir -p $COMOUT
+  mkdir -p $COMOUT/rundata
 fi
 
 export wavelog=${COMOUTwave}/wave.log
