@@ -73,7 +73,9 @@ export COMWND=${COMWND:-${COMROOT}/gfs/prod}
 export COMCUR=${COMCUR:-${COMROOTp2}/rtofs/prod}
 
 if [ $SENDCOM = YES ]; then
-  mkdir -p $COMOUT
+  mkdir -p $COMOUT/gridded
+  mkdir -p $COMOUT/station
+  mkdir -p $COMOUT/stats
 fi
 
 export wavelog=${COMOUTwave}/wave.log
