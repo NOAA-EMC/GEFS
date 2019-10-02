@@ -937,7 +937,7 @@ def get_param_of_task(dicBase, taskname):
 
             if taskname.lower() == "cleanup_wave":
                 sDep = '<and>'
-                for t in [ "keep_data_wave, archive_wave" ]:
+                for t in [ "keep_data_wave", "archive_wave" ]:
                     if DoesTaskExist(dicBase, t):
                         sDep += '\n\t<taskdep task="{task}"/>'.format(task=t)
                 if sDep == '<and>':
