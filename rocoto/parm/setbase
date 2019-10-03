@@ -56,17 +56,50 @@ echo
 echo `date` $0 set ROOT directory tree locations
 echo
 
-
-if [ -d /scratch1/NCEPDEV ]; then
+if [ -d /scratch2/NCEPDEV ]; then 
     echo "Using settings for Hera"
+    PTMP=/scratch2/NCEPDEV/stmp3
+    STMP=/scratch2/NCEPDEV/stmp3
+    SAVE=/scratch2/NCEPDEV/ensemble/save
+    NOSCRUB=/scratch2/NCEPDEV/ensemble/noscrub
     export machine='HERA'
-    # Placeholder for Hera
+    
+    export HOMEDIR=/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gfs/fv3gefs_port2hera_0345c37d_20190926 
+    export HOMEDIR1=$HOMEDIR
+    export HOMERFC=/scratch2/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
+
+    #export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/common
+    export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/Walter.Kolczynski/gefs_input
+    export COMINenkf_base=$HOMEdata/gfs_15/enkfgdas.
+    export COMINgfs_base=$HOMEdata/gfs_15/gfs.
+    export COMINcfs_base=$HOMEdata/cfs_2_sst/cfs.
+
+    # Location of WW3 executables
+    export EXECcode=$HOMEDIR/sorc/fv3gfs.fd/WW3/model/exe
+    # Wave model settings: ice data dir
+    # export COMICE=/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod
+    export COMICE=$HOMEdata/sea_ice
+
+    export COMROOThps=${HOMEdata}
+    export COMROOTp1=/scratch2/NCEPDEV/rstprod/com 
+    export PATH=$PATH:/scratch2/NCEPDEV/nwprod/NCEPLIBS/util/prod_util.v1.1.0/ush
+#    export EXECutil=${EXECutil:-/scratch4/NCEPDEV/global/save/glopara/nwpara/util/exec}
+    #export PATH=$PATH:$EXECutil #:/scratch3/NCEPDEV/nwprod/lib/prod_util/v1.1.0/ush
+
+#    export EXECgrib=${EXECutil}
+    #export NDATE=${NDATE:-$EXECgrib/ndate}
+#    export utilscript=$USHutil
+#    export SUPVIT=${SUPVIT:-${EXECutil}/supvit}
 
 elif [ -d /scratch4/NCEPDEV ]; then
     echo "Using settings for Theia"
     export machine='THEIA'
+
+    #export HOMEDIR=/scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gfs/fv3gefs_f0b283bd_20190517
     export HOMEDIR=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/global-workflow/lgan_fv3_ww3_esmf_bs47  # Copuled version
-    export HOMEtrak=/scratch4/NCEPDEV/ensemble/save/common/ens_tracker/ens_tracker.v1.1.8 # Outdated version    
+    export HOMEDIR1=$HOMEDIR
+    export HOMERFC=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
+    
     export HOMEdata=/scratch4/NCEPDEV/ensemble/noscrub/common
 
     export COMROOThps=${HOMEdata}

@@ -130,6 +130,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             sVarValue = "/gpfs/HPS_PTMP/ptmp/First.Last/o/&EXPID;"
         elif WHERE_AM_I.lower() == 'theia':
             sVarValue = "/scratch4/NCEPDEV/stmp4/First.Last/o/&EXPID;"
+        elif WHERE_AM_I.lower() == 'hera':
+            sVarValue = "/scratch2/NCEPDEV/stmp3/First.Last/o/&EXPID;"
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
@@ -143,8 +145,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
     if sVarValue.endswith("/o"):
         sVarValue += '/&EXPID;'
-    #else: # this means WORKDIR has assigned a specific path, so you don't need to modify it
-    #    sVarValue += '/o/&EXPID;'
+    else:
+        sVarValue += '/o/&EXPID;'
     sVarValue = sVarValue.replace('&EXPID;', dicBase['EXPID'])
     dicBase[sVarName] = sVarValue
 
@@ -158,6 +160,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'theia':
             sVarValue = "/scratch4/NCEPDEV/stmp4/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'hera':
+            sVarValue = "/scratch2/NCEPDEV/stmp3/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
             sVarValue = "/gpfs/dell2/emc/retros/noscrub/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wins':
@@ -226,6 +230,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             sVarValue = "/ensemble/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         elif WHERE_AM_I.lower() == 'theia':
             sVarValue = "/scratch4/NCEPDEV/stmp4/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
+        elif WHERE_AM_I.lower() == 'hera':
+            sVarValue = "/scratch2/NCEPDEV/stmp3/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
             sVarValue = "/gpfs/dell2/emc/retros/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         elif WHERE_AM_I.lower() == 'wins':

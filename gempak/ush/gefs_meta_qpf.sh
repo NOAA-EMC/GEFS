@@ -26,6 +26,21 @@ while (( imem < npert+1 )); do
     (( imem = imem + 1 ))
 done # while (( imem < npert ))
 echo memberlist=$memberlist
+
+echo "==========================="
+memberlist_l=""
+(( imem = 0 ))
+while (( imem < npert+1 )); do
+    if (( imem == 0 )); then
+        smem=c$(printf %02i $imem)
+    else
+        smem=p$(printf %02i $imem)
+    fi
+    memberlist_l="$memberlist_l $smem"
+    (( imem = imem + 1 ))
+done # while (( imem < npert ))
+echo memberlist_l=$memberlist_l
+
 ########################################################
 ## Get member list
 ########################################################
@@ -46,9 +61,11 @@ else
 fi
 
 if [ ${cyc} = "00" ]; then
-    grids="GFS $memberlist EC" #"GFS C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20 EC"
+    grids="GFS $memberlist" # EC" #"GFS C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20 EC"
+    grids_l="gfs $memberlist_l"
 elif [ ${cyc} = "12" ]; then
     grids="GFS $memberlist" #"GFS C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20 "
+    grids_l="gfs $memberlist_l"
 fi
 
 for area in us sam us24 us12
@@ -61,8 +78,10 @@ do
 
         if [ ${cyc} = "00" ]; then
             gdattim="f132"
+            fcsthrs="132"
         else
             gdattim="f120"
+            fcsthrs="120"
         fi
 
         garea="us"
@@ -81,9 +100,12 @@ do
         scale="0"
         clrbar="1"
         name2="48-HR PCPN"
+        fcmdfile=cmdfileqpf_medr
+
     # GENERATE 24 HR PCPN TOTALS FOR QPF.
     elif [ ${area} = "us24" ]; then
         gdattim="f24-f216-12"
+        fcsthrs="024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204 216"
         garea="us"
         proj=" "
         glevel="0"
@@ -102,9 +124,12 @@ do
         name2="24-HR PCPN"
         metaname="gefs_${PDY}_${cyc}_qpf"
         device="nc | $metaname"
+        fcmdfile=cmdfileqpf
+
     # GENERATE 12 HR PCPN TOTALS FOR QPF.
     elif [ ${area} = "us12" ]; then
         gdattim="f12-f216-12"
+        fcsthrs="012 024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204 216"
         garea="us"
         proj=" "
         glevel="0"
@@ -123,6 +148,8 @@ do
         name2="12-HR PCPN"
         metaname="gefs_${PDY}_${cyc}_qpf"
         device="nc | $metaname"
+        fcmdfile=cmdfileqpf
+
     # GENERATE 24 HR PCPN TOTALS FOR SAM QPF.
     elif [ ${area} = "sam" ]; then
         metaname="gefs_${PDY}_${cyc}_samqpf"
@@ -132,8 +159,10 @@ do
 
         if [ ${cyc} = "00" ]; then
             gdattim="f24-f144-12"
+            fcsthrs="024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204 216"
         else
             gdattim="f24-f144-12"
+            fcsthrs="024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204 216"
         fi
         glevel="0"
         gvcord="none"
@@ -149,32 +178,63 @@ do
         scale="0"
         clrbar="1"
         name2="24-HR PCPN"
-    fi   
-    for grid in ${grids}
+        fcmdfile=cmdfilesamqpf
+    fi
+    
+    for fcsthr in ${fcsthrs}
+    do
+        for fn in `echo $memberlist_l`
+        do
+            rm -rf $fn 
+            if [ -r $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} ]; then
+                ln -s $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} $fn
+            fi
+        done
+
+        fn=gfs
+        rm -rf ${fn}
+        if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ]; then
+            #  ln -s $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} gfs
+            ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ${fn}
+        fi
+
+ #       fn=ecmwf
+ #       rm -rf ${fn}
+ #       if [ -r $COMINs/ecmwf.${ecmwfdate}/ecmwf_glob_${ecmwfdate}${ecmwfcyc} ]; then
+  #          ln -s $COMINs/ecmwf.${ecmwfdate}/ecmwf_glob_${ecmwfdate}${ecmwfcyc} ${fn}
+  #      fi
+    
+
+
+    for grid in ${grids_l}
     do
         name="${grid} ${name2}"
         title="1/0/~ ? ${name}|~${name}"
-        if [ ${grid} = "GFS" ]; then
-            GDFILE="F-GFS | ${ddate}/${cyc}00"
-            COMINtmp=$COMIN
-            export COMIN=$COMINgfs/gfs.${PDY}/${cyc}/gempak/
-        elif [ ${grid} = "EC" ]; then
-            if [ $cyc = "12" ]; then
-               COMINtmp=$COMIN
-               export COMIN=$COMINecmwf
-               GDFILE="$COMIN/ecmwf_glob_${PDY}$cycm12"
-            else
-               COMINtmp=$COMIN
-               export COMIN=$COMINm1ecmwf
-               GDFILE="$COMIN/ecmwf_glob_${PDYm1}$cycm12"
-            fi
-            if [ ${area} = "us" ]; then
-                gdattim="f144"
-            fi
-        else
-            GDFILE="F-GEFS$grid | ${ddate}/${cyc}00"
-            COMINtmp=$COMIN
-        fi
+#        if [ ${grid} = "GFS" ]; then
+#            GDFILE="F-GFS | ${ddate}/${cyc}00"
+#            COMINtmp=$COMIN
+#            export COMIN=$COMINgfs/gfs.${PDY}/${cyc}/gempak/
+#        elif [ ${grid} = "EC" ]; then
+#            if [ $cyc = "12" ]; then
+#               COMINtmp=$COMIN
+#               export COMIN=$COMINecmwf
+#               GDFILE="$COMIN/ecmwf_glob_${PDY}$cycm12"
+#            else
+#               COMINtmp=$COMIN
+#               export COMIN=$COMINm1ecmwf
+#               GDFILE="$COMIN/ecmwf_glob_${PDYm1}$cycm12"
+#            fi
+#            if [ ${area} = "us" ]; then
+#                gdattim="f144"
+#            fi
+#        else
+#            GDFILE="F-GEFS$grid | ${ddate}/${cyc}00"
+#            COMINtmp=$COMIN
+#        fi
+
+        GDFILE=$grid
+        
+        gdattim=F${fcsthr}
 
 		gdplot2_nc <<- EOF 
 			GDFILE	= ${GDFILE}
@@ -209,9 +269,14 @@ do
 
 			exit
 			EOF
+            
+        export err=$?;export pgm="GEMPAK CHECK FILE";err_chk
 
-    export COMIN=$COMINtmp
-done
+
+        export COMIN=$COMINtmp
+    done
+
+    done
 
 if [ $SENDCOM = "YES" ] ; then
     mv ${metaname} ${COMOUT}/$metaname
@@ -222,35 +287,42 @@ fi
 
 done
 
-for grid in ${grids}
+for grid in ${grids_l}
 do
     name2="500 & PMSL"
     name="${grid} ${name2}"
     title="1/-1/~ ? ${name}|~${name}"
     metaname="gefs_${PDY}_${cyc}_nam"
     device="nc | $metaname"
-    if [ ${grid} = "GFS" ]; then
-        GDFILE="F-GFS | ${ddate}/${cyc}00"
-        COMINtmp=$COMIN
-        export COMIN=$COMINgfs/gfs.${PDY}/${cyc}/gempak/
-    elif [ ${grid} = "EC" ]; then
-        if [ $cyc = "12" ]; then
-           COMINtmp=$COMIN
-           export COMIN=$COMINecmwf
-           GDFILE="$COMIN/ecmwf_glob_${PDY}$cycm12"
-        else
-           COMINtmp=$COMIN
-           export COMIN=$COMINm1ecmwf
-           GDFILE="$COMIN/ecmwf_glob_${PDYm1}$cycm12"
-        fi
-    else
-        GDFILE="F-GEFS${grid} | ${ddate}/${cyc}00"
-        COMINtmp=$COMIN
-    fi
+#    if [ ${grid} = "GFS" ]; then
+#        GDFILE="F-GFS | ${ddate}/${cyc}00"
+#        COMINtmp=$COMIN
+#        export COMIN=$COMINgfs/gfs.${PDY}/${cyc}/gempak/
+#    elif [ ${grid} = "EC" ]; then
+#        if [ $cyc = "12" ]; then
+#           COMINtmp=$COMIN
+#           export COMIN=$COMINecmwf
+#           GDFILE="$COMIN/ecmwf_glob_${PDY}$cycm12"
+#        else
+#           COMINtmp=$COMIN
+#           export COMIN=$COMINm1ecmwf
+#           GDFILE="$COMIN/ecmwf_glob_${PDYm1}$cycm12"
+#        fi
+#    else
+#        GDFILE="F-GEFS${grid} | ${ddate}/${cyc}00"
+#        COMINtmp=$COMIN
+#    fi
+    GDFILE=$grid
+
+    fcsthrs="024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204"
+
+    for fcsthr in ${fcsthrs}
+    do
+        gdattim=F${fcsthr}
 
 	gdplot2_nc <<- EOF
 		GDFILE	= ${GDFILE}
-		GDATTIM	= f24-f204-12
+		GDATTIM	= ${gdattim}
 		DEVICE	= ${device}
 		PANEL	= 0
 		TEXT	= 1/22/1/1/hw
@@ -279,6 +351,9 @@ do
 		exit
 		EOF
 
+    done
+    
+    export err=$?;export pgm="GEMPAK CHECK FILE";err_chk
     export COMIN=$COMINtmp
 
 done
@@ -291,4 +366,4 @@ if [ $SENDCOM = "YES" ] ; then
 fi
 
 
-exit
+exit $err
