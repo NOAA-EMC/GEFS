@@ -78,7 +78,8 @@ elif [[ "$WHERE_AM_I" == hera ]]; then
     module load hdf5parallel/1.10.5
     module load netcdf/4.7.0
     module load hdf5/1.10.5
-    module load anaconda/anaconda3-5.3.1
+    #module load anaconda/anaconda3-5.3.1
+    module load anaconda/latest
 
     module use -a /scratch2/NCEPDEV/nwprod/NCEPLIBS/modulefiles
     module load prod_util/1.1.0
@@ -86,6 +87,8 @@ elif [[ "$WHERE_AM_I" == hera ]]; then
     module load grib_util/1.1.1
 
     module load gempak/7.4.2
+
+    export PATH=$PATH:.
 
     # Temporary setting to test common settings
     . $GEFS_ROCOTO/bin/hera/common.sh

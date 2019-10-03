@@ -355,7 +355,7 @@ if test $SHOUR -le $FHOUR; then
     export POSTGPVARS=$POSTGPVARS_HIGH
 
     $HOMEgefs/scripts/exgefs_nceppost.sh.ecf $SHOUR $FHOUR $FHOUT_HF $FHOUT_LF $FHMAX_HF $SHOUR_LF
-    ERR=$?
+    ERR=$err  # try get the err from HOMEgefs/scripts/exgefs_nceppost.sh.ecf
     if [ $ERR -ne 0 ]; then
         msg="FATAL ERROR: ex-script of GEFS_NCEPPOST failed!"
         postmsg "$jlogfile" "$msg"
