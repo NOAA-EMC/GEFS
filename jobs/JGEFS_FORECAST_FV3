@@ -238,13 +238,13 @@ mac=`hostname |cut -c1`
 
 NEMS=YES
 if [ $machine = WCOSS ]; then
- EXPDIR=/global/save/$LOGNAME/para_gfs/pr$PSLOT
+	EXPDIR=/global/save/$LOGNAME/para_gfs/pr$PSLOT
 elif [ $machine = WCOSS_C ]; then
- EXPDIR=$HOMEgefs/parm
+	EXPDIR=$HOMEgefs/parm
 elif [ $machine = THEIA ]; then
-IO_IN=.true.
-NEMSIO_OUT=.true.
-IPD4=YES
+	IO_IN=.true.
+	NEMSIO_OUT=.true.
+	IPD4=YES
 fi
 # ----------------------------------
 # user account 
@@ -269,71 +269,71 @@ export SET_STP_SEED=${SET_STP_SEED:-"YES"}
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 
-if [[ $DO_SPPT = YES ]] ; then
-	export SPPT=$SPPT_hr
-	export ISEED_SPPT=$ISEED_SPPT_hr
-	export SPPT_LOGIT=$SPPT_LOGIT_hr
-	export SPPT_TAU=$SPPT_TAU_hr
-	export SPPT_LSCALE=$SPPT_LSCALE_hr
-	export sppt_sfclimit=$sppt_sfclimit_hr
-#	export sppt_sigtop1=$sppt_sigtop1_hr
-#	export sppt_sigtop2=$sppt_sigtop2_hr
-fi
+	if [[ $DO_SPPT = YES ]] ; then
+		export SPPT=$SPPT_hr
+		export ISEED_SPPT=$ISEED_SPPT_hr
+		export SPPT_LOGIT=$SPPT_LOGIT_hr
+		export SPPT_TAU=$SPPT_TAU_hr
+		export SPPT_LSCALE=$SPPT_LSCALE_hr
+		export sppt_sfclimit=$sppt_sfclimit_hr
+	#	export sppt_sigtop1=$sppt_sigtop1_hr
+	#	export sppt_sigtop2=$sppt_sigtop2_hr
+	fi
 
-if [[ $DO_SHUM = YES ]] ; then
-	export SHUM=$SHUM_hr
-	export ISEED_SHUM=$ISEED_SHUM_hr
-	export SHUM_TAU=$SHUM_TAU_hr
-	export SHUM_LSCALE=$SHUM_LSCALE_hr
-#	export shum_sigefold=$shum_sigefold_hr
-fi
+	if [[ $DO_SHUM = YES ]] ; then
+		export SHUM=$SHUM_hr
+		export ISEED_SHUM=$ISEED_SHUM_hr
+		export SHUM_TAU=$SHUM_TAU_hr
+		export SHUM_LSCALE=$SHUM_LSCALE_hr
+	#	export shum_sigefold=$shum_sigefold_hr
+	fi
 
-if [[ $DO_SKEB = YES ]] ; then
-	export SKEB=$SKEB_hr
-	export ISEED_SKEB=$ISEED_SKEB_hr
-	export SKEB_TAU=$SKEB_TAU_hr
-	export SKEB_LSCALE=$SKEB_LSCALE_hr
-	export SKEBNORM=${SKEBNORM:-"1"}
-#	export SKEB_VFILT=$SKEB_VFILT_hr
-#	export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr
-#	export skeb_sigtop1=$skeb_sigtop1_hr
-#	export skeb_sigtop2=$skeb_sigtop2_hr
-fi
+	if [[ $DO_SKEB = YES ]] ; then
+		export SKEB=$SKEB_hr
+		export ISEED_SKEB=$ISEED_SKEB_hr
+		export SKEB_TAU=$SKEB_TAU_hr
+		export SKEB_LSCALE=$SKEB_LSCALE_hr
+		export SKEBNORM=${SKEBNORM:-"1"}
+	#	export SKEB_VFILT=$SKEB_VFILT_hr
+	#	export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr
+	#	export skeb_sigtop1=$skeb_sigtop1_hr
+	#	export skeb_sigtop2=$skeb_sigtop2_hr
+	fi
 
 fi
 
 if [[ $FORECAST_SEGMENT = lr ]] ; then
 
-if [[ $DO_SPPT = YES ]] ; then
-	export SPPT=$SPPT_hr
-	export ISEED_SPPT=$ISEED_SPPT_hr
-	export SPPT_LOGIT=$SPPT_LOGIT_hr
-	export SPPT_TAU=$SPPT_TAU_hr
-	export SPPT_LSCALE=$SPPT_LSCALE_hr
-	export sppt_sfclimit=$sppt_sfclimit_hr
-#	export sppt_sigtop1=$sppt_sigtop1_hr
-#	export sppt_sigtop2=$sppt_sigtop2_hr
-fi
+	if [[ $DO_SPPT = YES ]] ; then
+		export SPPT=$SPPT_hr
+		export ISEED_SPPT=$ISEED_SPPT_hr
+		export SPPT_LOGIT=$SPPT_LOGIT_hr
+		export SPPT_TAU=$SPPT_TAU_hr
+		export SPPT_LSCALE=$SPPT_LSCALE_hr
+		export sppt_sfclimit=$sppt_sfclimit_hr
+	#	export sppt_sigtop1=$sppt_sigtop1_hr
+	#	export sppt_sigtop2=$sppt_sigtop2_hr
+	fi
 
-if [[ $DO_SHUM = YES ]] ; then
-	export SHUM=$SHUM_hr
-	export ISEED_SHUM=$ISEED_SHUM_hr
-	export SHUM_TAU=$SHUM_TAU_hr
-	export SHUM_LSCALE=$SHUM_LSCALE_hr
-#	export shum_sigefold=$shum_sigefold_hr
-fi
+	if [[ $DO_SHUM = YES ]] ; then
+		export SHUM=$SHUM_hr
+		export ISEED_SHUM=$ISEED_SHUM_hr
+		export SHUM_TAU=$SHUM_TAU_hr
+		export SHUM_LSCALE=$SHUM_LSCALE_hr
+	#	export shum_sigefold=$shum_sigefold_hr
+	fi
 
-if [[ $DO_SKEB = YES ]] ; then
-	export SKEB=$SKEB_hr
-	export ISEED_SKEB=$ISEED_SKEB_hr
-	export SKEB_TAU=$SKEB_TAU_hr
-	export SKEB_LSCALE=$SKEB_LSCALE_hr
-	export SKEBNORM=${SKEBNORM:-"1"}
-#	export SKEB_VFILT=$SKEB_VFILT_hr
-#	export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr
-#	export skeb_sigtop1=$skeb_sigtop1_hr
-#	export skeb_sigtop2=$skeb_sigtop2_hr
-fi
+	if [[ $DO_SKEB = YES ]] ; then
+		export SKEB=$SKEB_hr
+		export ISEED_SKEB=$ISEED_SKEB_hr
+		export SKEB_TAU=$SKEB_TAU_hr
+		export SKEB_LSCALE=$SKEB_LSCALE_hr
+		export SKEBNORM=${SKEBNORM:-"1"}
+	#	export SKEB_VFILT=$SKEB_VFILT_hr
+	#	export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr
+	#	export skeb_sigtop1=$skeb_sigtop1_hr
+	#	export skeb_sigtop2=$skeb_sigtop2_hr
+	fi
 
 fi
 
