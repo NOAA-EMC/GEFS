@@ -186,7 +186,7 @@
     echo "   Moving tar file ${file_name} to $COMOUT ..."
     [[ "$LOUD" = YES ]] && set -x
 
-    cp ${file_name} $COMOUT/.
+    cp ${file_name} $COMOUT/station/.
 
     exit=$?
 
@@ -207,10 +207,10 @@
     then
       set +x
       echo ' '
-      echo "   Alerting TAR file as $COMOUT/${file_name}"
+      echo "   Alerting TAR file as $COMOUT/station/${file_name}"
       echo ' '
       [[ "$LOUD" = YES ]] && set -x
-      $DBNROOT/bin/dbn_alert MODEL OMBWAVE $job $COMOUT/${file_name}
+      $DBNROOT/bin/dbn_alert MODEL OMBWAVE $job $COMOUT/station/${file_name}
     fi
   fi
 

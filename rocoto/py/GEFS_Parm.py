@@ -1,11 +1,12 @@
-#------
+# ------
 def create_parm(sConfig, dicBase):
     # For gets_dev.parm
     lstBaseParm = get_lstParm(sConfig, dicBase)
     assign_default_for_gets_dev_parm(dicBase, lstBaseParm)
     create_gets_dev_parm(dicBase, lstBaseParm)
 
-#=======================================================
+
+# =======================================================
 def get_lstParm(sConfig, dicBase):
     dicBaseParm = read_dicParm(sConfig)
     WHERE_AM_I = dicBase["WHERE_AM_I"]
@@ -13,7 +14,8 @@ def get_lstParm(sConfig, dicBase):
 
     return list(dicBaseParm.keys())
 
-#=======================================================
+
+# =======================================================
 def read_dicParm(sConfig):
     # read config file
     from collections import OrderedDict
@@ -63,7 +65,8 @@ def read_dicParm(sConfig):
 
     return dicBaseParm
 
-#=======================================================
+
+# =======================================================
 def get_and_merge_default_dicParm(dicParm, WHERE_AM_I):
     import os, sys
     sSep = "/"
@@ -82,9 +85,9 @@ def get_and_merge_default_dicParm(dicParm, WHERE_AM_I):
             if sDic not in dicParm:
                 dicParm[sDic] = dicParm_Default[sDic]
 
-#------
-def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
 
+# ------
+def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
     # ==
     sVarName = "First"
     if sVarName not in lstBaseParm:
@@ -131,12 +134,11 @@ def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
     if sVarName not in lstBaseParm:
         lstBaseParm.append(sVarName)
 
-    # # ==
+    # ==
     sVarName = "cplwav"
     if sVarName not in lstBaseParm:
         lstBaseParm.append(sVarName)
 
-#------
 def create_gets_dev_parm(dicBase, listBaseParm):
     import sys
     import os

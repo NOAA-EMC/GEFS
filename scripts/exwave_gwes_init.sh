@@ -92,16 +92,16 @@
 
   for grdID in ${grdALL}
   do
-    if [ -f "$COMIN/${wavemodID}.mod_def.${grdID}" ]
+    if [ -f "$COMIN/rundata/${wavemodID}.mod_def.${grdID}" ]
     then
       set +x
-      echo " Mod def file for $grdID found in $COMIN. copying ...."
+      echo " Mod def file for $grdID found in ${COMIN}/rundata. copying ...."
       [[ "$LOUD" = YES ]] && set -x
-      cp $COMIN/${wavemodID}.mod_def.${grdID} mod_def.$grdID
+      cp $COMIN/rundata/${wavemodID}.mod_def.${grdID} mod_def.$grdID
 
     else
       set +x
-      echo " Mod def file for $grdID not found in $COMIN. Setting up to generate ..."
+      echo " Mod def file for $grdID not found in ${COMIN}/rundata. Setting up to generate ..."
       [[ "$LOUD" = YES ]] && set -x
       if [ -f $FIXwave/ww3_$grdID.inp ]
       then

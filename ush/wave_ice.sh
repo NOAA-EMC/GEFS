@@ -211,9 +211,9 @@
   if [ "$SENDCOM" = 'YES' ]
   then
     set $setoff
-    echo "   Saving ice.ww3 as $COMOUT/${icefile}"
+    echo "   Saving ice.ww3 as $COMOUT/rundata/${icefile}"
     set $seton
-    cp ice.ww3 $COMOUT/${icefile}
+    cp ice.ww3 $COMOUT/rundata/${icefile}
   fi 
 
   rm -f ice.ww3

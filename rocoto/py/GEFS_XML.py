@@ -1,4 +1,4 @@
-#=======================================================
+# =======================================================
 def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     import sys
     import os
@@ -28,7 +28,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         import os
         sVarValue = os.environ.get("USER")
         if sVarValue in ['emc.enspara', 'emc.enspara1']:
-            sVarValue = os.environ.get("SUDO_USER")    
+            sVarValue = os.environ.get("SUDO_USER")
         if "." in sVarValue:
             sVarValue = sVarValue.split(".")[0]
         dicBase[sVarName] = sVarValue
@@ -112,12 +112,12 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
                             sVarValue = sPathTem
                         else:
                             print("Please check your SOURCEDIR - {0}".format(sVarValue))
-                            exit(-6)    
+                            exit(-6)
             else:
                 sPathTem = sVarValue + sSep + "nwdev"
                 if os.path.exists(sPathTem) and os.path.exists(sPathTem + sSep + "parm") and os.path.exists(sPathTem + sSep + "sorc"):
                     sVarValue = sPathTem
-                    #sVarValue += "/&EXPID;/nwdev"
+                    # sVarValue += "/&EXPID;/nwdev"
 
     dicBase[sVarName] = sVarValue
     # ===
@@ -130,6 +130,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             sVarValue = "/gpfs/HPS_PTMP/ptmp/First.Last/o/&EXPID;"
         elif WHERE_AM_I.lower() == 'theia':
             sVarValue = "/scratch4/NCEPDEV/stmp4/First.Last/o/&EXPID;"
+        elif WHERE_AM_I.lower() == 'hera':
+            sVarValue = "/scratch2/NCEPDEV/stmp3/First.Last/o/&EXPID;"
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
@@ -145,7 +147,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sVarValue += '/&EXPID;'
     else:
         sVarValue += '/o/&EXPID;'
-    sVarValue = sVarValue.replace('&EXPID;',dicBase['EXPID'])
+    sVarValue = sVarValue.replace('&EXPID;', dicBase['EXPID'])
     dicBase[sVarName] = sVarValue
 
     # ===
@@ -158,6 +160,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'theia':
             sVarValue = "/scratch4/NCEPDEV/stmp4/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'hera':
+            sVarValue = "/scratch2/NCEPDEV/stmp3/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
             sVarValue = "/gpfs/dell2/emc/retros/noscrub/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wins':
@@ -167,12 +171,12 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
 
         dicBase[sVarName] = sVarValue
     else:
-        sVarValue = dicBase[sVarName] + "/&EXPID;"    
+        sVarValue = dicBase[sVarName] + "/&EXPID;"
         dicBase[sVarName] = sVarValue
- 
+
     sVarValue = replace_First_Last(dicBase, sVarName)
     sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
-    if sVarValue.endswith("/&EXPID;"): 
+    if sVarValue.endswith("/&EXPID;"):
         sVarValue = sVarValue.replace('&EXPID;', dicBase['EXPID'])
     else:
         sVarValue += dicBase['EXPID']
@@ -203,7 +207,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     else:
         sVarValue = dicBase[sVarName] + "/&EXPID;"
         dicBase[sVarName] = sVarValue
-    
+
     sVarValue = replace_First_Last(dicBase, sVarName)
     sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
     if sVarValue.endswith("/&EXPID;"):
@@ -213,9 +217,9 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
 
     if not sVarValue.endswith(dicBase['EXPID']):
         sVarValue += dicBase['EXPID']
-    
+
     dicBase[sVarName] = sVarValue
-    
+
     # ===
     sVarName = "INIT_DIR".upper()
     sVarValue = ""
@@ -226,19 +230,21 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             sVarValue = "/ensemble/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         elif WHERE_AM_I.lower() == 'theia':
             sVarValue = "/scratch4/NCEPDEV/stmp4/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
+        elif WHERE_AM_I.lower() == 'hera':
+            sVarValue = "/scratch2/NCEPDEV/stmp3/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
             sVarValue = "/gpfs/dell2/emc/retros/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         else:
             sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
-        
+
         dicBase[sVarName] = sVarValue
 
     sVarValue = replace_First_Last(dicBase, sVarName)
     sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
     dicBase[sVarName] = sVarValue
-   
+
     # ===
     sVarName = "DIRS_TO_KEEP".upper()
     if sVarName not in dicBase:
@@ -329,6 +335,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarValue = "&WORKDIR;/com/gens/dev"
     if sVarName not in dicBase:
         dicBase[sVarName] = sVarValue
+
     # -----------------------------------------------------------------------------------------------
     if WHERE_AM_I.lower() == "wcoss":
         sVarName = "ACCOUNT".upper()
@@ -351,6 +358,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         if sVarName not in dicBase:
             dicBase[sVarName] = sVarValue
         # ===
+
     elif WHERE_AM_I.lower() == "cray":
         sVarName = "ACCOUNT".upper()
         sVarValue = "GEN-T2O"
@@ -371,6 +379,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sVarValue = "lsfcray"
         if sVarName not in dicBase:
             dicBase[sVarName] = sVarValue
+
     elif WHERE_AM_I.lower() == "theia":
         sVarName = "ACCOUNT".upper()
         sVarValue = "fv3-cpu"
@@ -391,6 +400,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sVarValue = "slurm"
         if sVarName not in dicBase:
             dicBase[sVarName] = sVarValue
+
     elif WHERE_AM_I.lower() == "wcoss_dell_p3":
         sVarName = "ACCOUNT".upper()
         sVarValue = "GEN-T2O"
@@ -433,7 +443,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         if sVarName not in dicBase:
             dicBase[sVarName] = sVarValue
 
-#=======================================================
+
+# =======================================================
 def replace_First_Last(dicBase, sVarName):
     # to replace the first and last names in the strValue
     # Modified on 10/17/2018 to avoid the path has individual "First" or "Last" to be replaced by mistake. If just replace the "First.Last", it will be safer.
@@ -442,14 +453,14 @@ def replace_First_Last(dicBase, sVarName):
     GroupNames = ['emc.enspara', 'emc.enspara1']
     if sUSER in GroupNames:
         sVarValue = str(dicBase[sVarName]).replace("First.Last", sUSER + "/" + dicBase["FIRST"] + "." + dicBase["LAST"])
-        sVarValue = sVarValue.replace("retros", "verification") # temporary
+        sVarValue = sVarValue.replace("retros", "verification")  # temporary
     else:
         sVarValue = str(dicBase[sVarName]).replace("First.Last", dicBase["FIRST"] + "." + dicBase["LAST"])
-    
+
     return sVarValue
 
 
-#=======================================================
+# =======================================================
 def create_xml(dicBase):
     # print("..Generating XML file ...")
     preamble = get_preamble()
@@ -475,7 +486,8 @@ def create_xml(dicBase):
 
     # print("..Generated XML file!")
 
-#=======================================================
+
+# =======================================================
 def get_preamble():
     '''
         Generate preamble for XML
@@ -501,7 +513,8 @@ def get_preamble():
 
     return ''.join(strings)
 
-#=======================================================
+
+# =======================================================
 def get_definitions(dicBase):
     '''
         Create entities related to the experiment
@@ -517,8 +530,6 @@ def get_definitions(dicBase):
     sVarName = "MEMLIST"
     sVarValue = dicBase[sVarName.upper()]
     strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    # strings.append('\t<!-- <!ENTITY MEMLIST "p01 p02 p03 p04c00">  -->\n')
 
     sVarName = "CYCLE_THROTTLE"
     sVarValue = dicBase[sVarName.upper()]
@@ -629,16 +640,13 @@ def get_definitions(dicBase):
 
         # -----------------------------------------------------------------------------------------------
         strings.append('\t<!-- External entities -->\n')
-        strings.append(
-            '\t<!ENTITY ENV_VARS   SYSTEM "{0}{1}tasks{1}env_vars.ent">\n'.format(dicBase['GEFS_ROCOTO'], sSep))
-        strings.append(
-            '\t<!ENTITY DATE_VARS   SYSTEM "{0}{1}tasks{1}date_vars.ent">\n'.format(dicBase['GEFS_ROCOTO'], sSep))
+        strings.append('\t<!ENTITY ENV_VARS   SYSTEM "{0}{1}tasks{1}env_vars.ent">\n'.format(dicBase['GEFS_ROCOTO'], sSep))
+        strings.append('\t<!ENTITY DATE_VARS   SYSTEM "{0}{1}tasks{1}date_vars.ent">\n'.format(dicBase['GEFS_ROCOTO'], sSep))
         strings.append('\n')
 
         # -----------------------------------------------------------------------------------------------
         strings.append('\t<!-- External parameter entities -->\n')
-        strings.append(
-            '\t<!ENTITY % TASKS    SYSTEM "{0}{1}tasks{1}all.ent">\n'.format(dicBase['GEFS_ROCOTO'], sSep))
+        strings.append('\t<!ENTITY % TASKS    SYSTEM "{0}{1}tasks{1}all.ent">\n'.format(dicBase['GEFS_ROCOTO'], sSep))
         strings.append('\t%TASKS;\n')
         strings.append('\n')
 
@@ -668,7 +676,8 @@ def get_definitions(dicBase):
 
     return ''.join(strings)
 
-#=======================================================
+
+# =======================================================
 def get_workflow_body(dicBase):
     '''
         Create the workflow body
@@ -678,13 +687,15 @@ def get_workflow_body(dicBase):
 
     GenTaskEnt = get_GenTaskEnt(dicBase)
 
+    print("---Config your tasks...")
+    gefs_xml_for_tasks.config_tasknames(dicBase)
+
     gefs_xml_for_tasks.write_to_all_ent(GenTaskEnt, dicBase)
 
     strings = []
 
     strings.append('\n')
-    strings.append(
-        '<workflow realtime="F" cyclethrottle="&CYCLE_THROTTLE;" scheduler="&SCHEDULER;" taskthrottle="&TASK_THROTTLE;">\n')
+    strings.append('<workflow realtime="F" cyclethrottle="&CYCLE_THROTTLE;" scheduler="&SCHEDULER;" taskthrottle="&TASK_THROTTLE;">\n')
     strings.append('\n')
     strings.append('\t<log><cyclestr>&WORKFLOW_LOG_DIR;/gefs@Y@m@d@H.log</cyclestr></log>\n')
     strings.append('\n')
@@ -696,9 +707,6 @@ def get_workflow_body(dicBase):
     strings.append(sPre + '<!--- init jobs -->\n')
 
     taskname_num = int(dicBase['taskname_num'.upper()])
-
-    WHERE_AM_I = dicBase['WHERE_AM_I'.upper()]
-
     for k in range(taskname_num):
         sTaskName = "taskname_{0}".format(k + 1).upper()
         if sTaskName not in dicBase:
@@ -711,15 +719,15 @@ def get_workflow_body(dicBase):
             strings.append(sPre + "&{0};\n".format(taskname))
             gefs_xml_for_tasks.write_to_ent(taskname, dicBase, GenTaskEnt=GenTaskEnt)
         else:
-            strings.append(gefs_xml_for_tasks.create_metatask_task(dicBase, taskname=taskname, sPre=sPre, \
-                                                GenTaskEnt=GenTaskEnt))
+            strings.append(gefs_xml_for_tasks.create_metatask_task(dicBase, taskname=taskname, sPre=sPre, GenTaskEnt=GenTaskEnt))
 
     strings.append('\n')
     strings.append('</workflow>\n')
 
     return ''.join(strings)
 
-#=======================================================
+
+# =======================================================
 def get_MEMLIST(dicBase):
     ### npert
     ### npert means Number of Perturbation, default value is 20
@@ -742,10 +750,8 @@ def get_MEMLIST(dicBase):
 
         npert = int(dicBase[sVarName_Num])
 
-    #if npert%2 != 0:
-    #    print("please select the right number of memebers!")
-    #    import sys
-    #    sys.exit(1)
+    if npert < 2:
+        print("Please note that because of npert<2, so some tasks may not run!\n Especially enstat_high and enstat_low!")
 
     if bltGenerateMEMLIST:
         MEMLIST_Value = ""
@@ -755,7 +761,8 @@ def get_MEMLIST(dicBase):
         # print(MEMLIST_Value)
         dicBase[sVarName_List] = MEMLIST_Value
 
-#=======================================================
+
+# =======================================================
 def get_GenTaskEnt(dicBase):
     sVarName = "GenTaskEnt".upper()
     if sVarName in dicBase:
@@ -769,4 +776,3 @@ def get_GenTaskEnt(dicBase):
         GenTaskEnt = False
 
     return GenTaskEnt
-
