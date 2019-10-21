@@ -354,7 +354,13 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
 
     # -------------------sNodes-------------------
     if sNodes != "":
-        strings += sPre_2 + '<nodes>{0}</nodes>\n'.format(sNodes)
+       if WHERE_AM_I.upper() == "cray".upper():
+         if sQueue.upper() == "&TRANSFER_QUEUE;":
+          strings += sPre_2 + '<nodes>{0}</nodes><shared></shared>\n'.format(sNodes)
+         else:
+          strings += sPre_2 + '<nodes>{0}</nodes>\n'.format(sNodes)
+       else:
+          strings += sPre_2 + '<nodes>{0}</nodes>\n'.format(sNodes)
         if WHERE_AM_I.upper() == "wcoss_ibm".upper():
             if sQueue.upper() == "&TRANSFER_QUEUE;":
                 strings += sPre_2 + '<native>-R "affinity[core]"</native>'
