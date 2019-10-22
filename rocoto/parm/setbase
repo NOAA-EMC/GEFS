@@ -140,7 +140,7 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     echo "Using settings for WCOSS DELL Phase III"
     export machine='WCOSS_DELL_P3'
     export JOBPHASE=
-    export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/save/global-workflow/gefs_v12_retro2
+    export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/save/global-workflow/aerosol
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
     # export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
     export HOMEdata=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/gefs_input
@@ -159,6 +159,10 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     # Wave model settings: ice data dir
     # export COMICE=/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod
     export COMICE=$HOMEdata/sea_ice
+
+    # Locations for aerosols
+    export COMIN_EMISSIONS="/gpfs/dell2/emc/modeling/noscrub/Li.Pan/emi_"
+
 
     # Test post with GFS Chem
     # export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Lin.Gan/git/gefs_gsdchem_fcstchem
