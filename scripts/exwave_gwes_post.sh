@@ -545,17 +545,17 @@
     do
 
       case $grdID in
-        glo_15m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_15m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        ao_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        ao_30m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        so_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        so_30m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        glo_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_30m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        glo_15mxt) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_15mxt) gribFL=\'${OUTPARS}\';
                   GRIDNR=11  ; MODNR=255 ; dtgrib=10800. ; ngrib=181 ;;
-        glo_30mxt) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_30mxt) gribFL=\'${OUTPARS}\';
                   GRIDNR=11  ; MODNR=11  ; dtgrib=3600. ; ngrib=181 ;;
       esac
 
@@ -638,17 +638,17 @@
     do
 
       case $grdID in
-        glo_15m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_15m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        ao_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        ao_30m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        so_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        so_30m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        glo_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_30m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        glo_15mxt) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_15mxt) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255 ; dtgrib=10800. ; ngrib=181 ;;
-        glo_30mxt) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_30mxt) gribFL=\'${OUTPARS}\';
                   GRIDNR=11  ; MODNR=11  ; dtgrib=3600. ; ngrib=181 ;;
       esac
 
