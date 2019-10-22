@@ -37,8 +37,8 @@ export DTFLD=10800
 export DTPNT=3600
 
 # Selected output parameters (gridded)
-export OUTPARS='WND ICE HS T01 T02 FP DIR DP PHS PTP PDIR CHAR'
-# GFS # export OUTPARS='WND CUR ICE HS T01 T02 FP DIR DP PHS PTP PDIR CHAR'
+export OUTPARS='WND ICE HS T01 T02 DIR FP DP PHS PTP PDIR CHAR'
+# GFS # export OUTPARS='WND CUR ICE HS T01 T02 DIR FP DP PHS PTP PDIR CHAR'
 
 # The start time reflects the number of hindcast hours prior to the cycle initial time
 export HINDH=0
