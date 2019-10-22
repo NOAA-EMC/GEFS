@@ -97,11 +97,11 @@
     set $setoff
     echo ' '
     echo '************************************** '
-    echo "*** ERROR : NO ICE FILE $file ***  "
+    echo "*** FATAL ERROR: NO ICE FILE $file ***  "
     echo '************************************** '
     echo ' '
     set $seton
-    postmsg "$jlogfile" "NON-FATAL ERROR - NO ICE FILE (GFS GRIB)"
+    postmsg "$jlogfile" "FATAL ERROR - NO ICE FILE (GFS GRIB)"
     exit 0
   fi
 
@@ -157,7 +157,7 @@
     echo '**************************************** '
     echo ' '
     set $seton
-    postmsg "$jlogfile" "NON-FATAL ERROR IN UNPACKING GRIB ICE FILE."
+    postmsg "$jlogfile" "ERROR IN UNPACKING GRIB ICE FILE."
     exit 0
   fi
 
