@@ -63,9 +63,9 @@
 
   if [ "$INDRUN" = 'no' ]
   then
-    lsth=${lsth:-3}
+    wavlsth=${wavlsth:-3}
   else
-    lsth=${lsth:-180}
+    wavlsth=${wavlsth:-384}
   fi
 
 # 0.b Date and time stuff
@@ -76,7 +76,7 @@
   ymdh_beg=`$NDATE -$HINDH $YMDH`
   time_beg="`echo $ymdh_beg | cut -c1-8` `echo $ymdh_beg | cut -c9-10`0000"
 
-  ymdh_end=`$NDATE $lsth $YMDH`
+  ymdh_end=`$NDATE $wavlsth $YMDH`
   time_end="`echo $ymdh_end | cut -c1-8` `echo $ymdh_end | cut -c9-10`0000"
 
 # Restart file times 
@@ -266,14 +266,15 @@
     
       if [ -d ice ]
       then
-        postmsg "$jlogfile" "NON-FATAL ERROR in ice field (will be trapped by fcst)."
+        postmsg "$jlogfile" "FATAL ERROR ice field not generated."
         set +x
         echo ' '
-        echo '      Error in ice field (not fatal, will be trapped by fcst).'
+        echo '      FATAL ERROR: ice field not generated '
         echo ' '
         sed "s/^/ice.out : /g" ice.out
         echo ' '
         [[ "$LOUD" = YES ]] && set -x
+        err=5;export err;${errchk}
       else
         mv -f ice.out $DATA/outtmp
         rm -f ww3_prep.$iceID.tmpl mod_def.$iceID
@@ -453,7 +454,7 @@
         echo $msg
         [[ "$LOUD" = YES ]] && set -x
         echo "$wavemodTAG prep $date $cycle : fatal error in grib2 wind files." >> $wavelog
-        err=5;export err;${errchk}
+        err=6;export err;${errchk}
       fi
   
       rm -f cmdfile
@@ -480,7 +481,7 @@
         echo ' '
         [[ "$LOUD" = YES ]] && set -x
         echo "$wavemodTAG prep $date $cycle : no wind files found." >> $wavelog
-        err=6;export err;${errchk}
+        err=7;export err;${errchk}
       fi
   
       rm -f gfs.wind
@@ -527,7 +528,7 @@
           echo ' '
           [[ "$LOUD" = YES ]] && set -x
           echo "$wavemodTAG prep $grdID $date $cycle : error in waveprnc." >> $wavelog
-          err=7;export err;${errchk}
+          err=8;export err;${errchk}
         fi
   
         if [ ! -f wind.ww3 ]
@@ -544,7 +545,7 @@
           echo ' '
           [[ "$LOUD" = YES ]] && set -x
           echo "$wavemodTAG prep $grdID $date $cycle : wind.ww3 missing." >> $wavelog
-          err=8;export err;${errchk}
+          err=9;export err;${errchk}
         fi
 
         rm -f mod_def.ww3
@@ -587,7 +588,7 @@
           echo ' '
           [[ "$LOUD" = YES ]] && set -x
           echo "$wavemodTAG prep $grdID $date $cycle : error in wind increment." >> $wavelog
-          err=9;export err;${errchk}
+          err=10;export err;${errchk}
         fi
     
       done
@@ -641,7 +642,7 @@
         echo ' '
         [[ "$LOUD" = YES ]] && set -x
         echo "$wavemodTAG prep $date $cycle : no current files found." >> $wavelog
-        err=10;export err;${errchk}
+        err=11;export err;${errchk}
       fi
 
       rm -f curr.${curID}
@@ -690,7 +691,7 @@
     echo "${wavemodTAG} fcst $date $cycle : ww3_multi file missing." >> $wavelog
     echo $msg
     [[ "$LOUD" = YES ]] && set -x
-    err=11;export err;${errchk}
+    err=12;export err;${errchk}
   fi
 
 # 5.b Buoy location file
@@ -833,7 +834,7 @@
     cp ww3_multi.inp ${COMOUT}/rundata/ww3_multi.${wavemodTAG}.$cycle.inp
   else
     echo "FATAL ERROR: file ww3_multi.${wavemodTAG}.$cycle.inp NOT CREATED, ABORTING"
-    err=12;export err;${errchk}
+    err=13;export err;${errchk}
   fi 
 
 # --------------------------------------------------------------------------- #

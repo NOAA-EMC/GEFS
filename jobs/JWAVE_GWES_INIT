@@ -69,6 +69,7 @@ export wave_mpmd=${wave_mpmd:-"cfp"}
 # Set parameters using gwes_init.parm
 ##############################################
 
+. $PARMwave/gefs.parm
 . $PARMwave/gwes.parm
 . $PARMwave/gwes_init.parm
 

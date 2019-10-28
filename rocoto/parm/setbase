@@ -58,13 +58,9 @@ echo
 
 if [ -d /scratch2/NCEPDEV ]; then 
     echo "Using settings for Hera"
-    PTMP=/scratch2/NCEPDEV/stmp3
-    STMP=/scratch2/NCEPDEV/stmp3
-    SAVE=/scratch2/NCEPDEV/ensemble/save
-    NOSCRUB=/scratch2/NCEPDEV/ensemble/noscrub
     export machine='HERA'
     
-    export HOMEDIR=/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gfs/fv3gefs_port2hera_0345c37d_20190926 
+    export HOMEDIR=/scratch2/NCEPDEV/ensemble/save/Walter.Kolczynski/global-workflow/gefs_v12_retro2
     export HOMEDIR1=$HOMEDIR
     export HOMERFC=/scratch2/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
 
@@ -132,7 +128,7 @@ elif [[ -d /gpfs/hps && -e /etc/SuSE-release ]] ; then
     echo "Using settings for WCOSS Cray"
     export machine='WCOSS_C'
     export JOBPHASE=
-    export HOMEDIR=/gpfs/hps3/emc/ensemble/save/Walter.Kolczynski/global-workflow/lgan_fv3_ww3_hera
+    export HOMEDIR=/gpfs/hps3/emc/ensemble/save/Walter.Kolczynski/global-workflow/gefs_v12_retro2
     export HOMEtrak=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
     export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
     
@@ -144,7 +140,7 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     echo "Using settings for WCOSS DELL Phase III"
     export machine='WCOSS_DELL_P3'
     export JOBPHASE=
-    export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/save/global-workflow/lgan_fv3_ww3_hera
+    export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/save/global-workflow/gefs_v12_retro2
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
     # export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
     export HOMEdata=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/gefs_input

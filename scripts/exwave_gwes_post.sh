@@ -121,7 +121,7 @@
    gribOK='yes'
   grintOK='yes'
    specOK='yes'
-   bullOK='yes'
+   bullOK='no '
 
   exit_code=0
 
@@ -545,24 +545,24 @@
     do
 
       case $grdID in
-        glo_15m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_15m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        ao_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        ao_30m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        so_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        so_30m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        glo_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_30m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        glo_15mxt) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_15mxt) gribFL=\'${OUTPARS}\';
                   GRIDNR=11  ; MODNR=255 ; dtgrib=10800. ; ngrib=181 ;;
-        glo_30mxt) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_30mxt) gribFL=\'${OUTPARS}\';
                   GRIDNR=11  ; MODNR=11  ; dtgrib=3600. ; ngrib=181 ;;
       esac
 
-# Recalculate ngrib based on lsth (TODO: add new interval if changes to dtgrib after given forecast hour)
+# Recalculate ngrib based on wavlsth (TODO: add new interval if changes to dtgrib after given forecast hour)
       dtgi=`echo ${dtgrib} | sed 's/\.//g'`
       dtgh=`expr ${dtgi} / 3600`
-      ngrib=`expr ${lsth} / ${dtgh} + 1`
+      ngrib=`expr ${wavlsth} / ${dtgh} + 1`
 
       echo "$USHwave/ww3_grib2_cat.sh $grdID $dtgrib $ngrib $GRIDNR $MODNR $gribFL > grib_$grdID.out 2>&1"               >> cmdfile
 
@@ -638,24 +638,24 @@
     do
 
       case $grdID in
-        glo_15m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_15m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        ao_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        ao_30m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        so_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        so_30m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        glo_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_30m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        glo_15mxt) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_15mxt) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255 ; dtgrib=10800. ; ngrib=181 ;;
-        glo_30mxt) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_30mxt) gribFL=\'${OUTPARS}\';
                   GRIDNR=11  ; MODNR=11  ; dtgrib=3600. ; ngrib=181 ;;
       esac
 
-# Recalculate ngrib based on lsth (TODO: add new interval if changes to dtgrib after given forecast hour)
+# Recalculate ngrib based on wavlsth (TODO: add new interval if changes to dtgrib after given forecast hour)
       dtgi=`echo ${dtgrib} | sed 's/\.//g'`
       dtgh=`expr ${dtgi} / 3600`
-      ngrib=`expr ${lsth} / ${dtgh} + 1`
+      ngrib=`expr ${wavlsth} / ${dtgh} + 1`
 
       echo "$USHwave/ww3_grib2.sh $grdID $dtgrib $ngrib $GRIDNR $MODNR $gribFL > grib_$grdID.out 2>&1"  >> cmdfile
 

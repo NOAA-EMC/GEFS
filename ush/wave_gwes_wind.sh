@@ -95,7 +95,7 @@
 
   CYCrun=${cycle}
 
-  while [ "$fhour" -le "$lsth" ]
+  while [ "$fhour" -le "$wavlsth" ]
   do
     if [ "${fhour}" -lt 0 ]
     then
