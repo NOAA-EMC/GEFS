@@ -35,6 +35,8 @@ export FHOUT_LF=${4:-${FHOUT_LF}}
 export FHMAX_HF=${5:-${FHMAX_HF}}
 export SHOUR_LF=${6:-${SHOUR_LF}}
 
+err=0
+
 # Get RUN_HOURS
 typeset -a RUN_HOURS
 iHour=0
@@ -591,7 +593,16 @@ done # for fhr in RUN_HOURS # while (( fhr <= FHOUR ))
 
 cat $pgmout
 
-msg='ENDED NORMALLY.'
-postmsg "$jlogfile" "$msg"
+if [ $err -eq 0 ] ; then
+    msg="ENDED NORMALLY!!!"
+    echo "`date`    $msg"
+    postmsg "$jlogfile" "$msg"
+    exit 0
+else
+    msg="FATAL ERROR: FAILED to do the post!!!"
+    echo "`date`    $msg"
+    postmsg "$jlogfile" "$msg"
+    exit $err
+fi
 
 ################## END OF SCRIPT #######################
