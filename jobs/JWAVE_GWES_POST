@@ -58,6 +58,9 @@ sh ./PDY
 
 # Set wave model ID tag to include member number 
 # if ensemble; waveMEMB var empty in deterministic
+membTAG='p'
+if [ "${waveMEMB}" == "00" ]; then membTAG='c'; fi
+export membTAG
 export wavemodTAG=${wavemodID}${waveMEMB}
 
 ###################################

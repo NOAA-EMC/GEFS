@@ -25,9 +25,9 @@ export wndID=
 
 # Grids for output fields 
 export buoy=points
-export sbsGRD=''  # grids that have output generated as wave model runs and writes to com
-export postGRD='glo_15m ao_20m so_20m glo_15mxt'
 export interpGRD='glo_15mxt' # Grids that need to be interpolated from native 
+export sbsGRD=''  # side-by-side grids generated as wave model runs, writes to com
+export postGRD='glo_15mxt' # Grids generated in the sequential post step
 
 # Output stride
 export HOUR_INC=3      # This value should match with the one used in 

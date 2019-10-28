@@ -121,7 +121,7 @@
    gribOK='yes'
   grintOK='yes'
    specOK='yes'
-   bullOK='yes'
+   bullOK='no '
 
   exit_code=0
 
