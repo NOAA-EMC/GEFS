@@ -354,14 +354,15 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
 
     # -------------------sNodes-------------------
     if sNodes != "":
-        if WHERE_AM_I.upper() == "cray".upper() and (taskname == "archive_atm" or taskname == "archive_wave"):
-            strings += sPre_2 + '\t' + '<nodes>{0}</nodes><shared></shared>\n'.format(sNodes)
-        strings += sPre_2 + '<nodes>{0}</nodes>\n'.format(sNodes)
-        if WHERE_AM_I.upper() == "wcoss_ibm".upper():
-            if sQueue.upper() == "&TRANSFER_QUEUE;":
-                strings += sPre_2 + '<native>-R "affinity[core]"</native>'
-            else:
-                strings += sPre_2 + '<native>-a poe</native>'
+        if WHERE_AM_I.upper() == "cray".upper() and sQueue.upper() == "&TRANSFER_QUEUE;":
+            strings += sPre_2 + '<nodes>{0}</nodes><shared></shared>\n'.format(sNodes)
+        else:
+            strings += sPre_2 + '<nodes>{0}</nodes>\n'.format(sNodes)
+            if WHERE_AM_I.upper() == "wcoss_ibm".upper():
+                if sQueue.upper() == "&TRANSFER_QUEUE;":
+                    strings += sPre_2 + '<native>-R "affinity[core]"</native>'
+                else:
+                    strings += sPre_2 + '<native>-a poe</native>'
     # -------------------sNodes-------------------
 
     if WHERE_AM_I.upper() == "cray".upper():
