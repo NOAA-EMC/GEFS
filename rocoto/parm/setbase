@@ -130,7 +130,12 @@ elif [[ -d /gpfs/hps && -e /etc/SuSE-release ]] ; then
     export JOBPHASE=
     export HOMEDIR=/gpfs/hps3/emc/ensemble/save/Walter.Kolczynski/global-workflow/gefs_v12_retro2
     export HOMEtrak=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
-    export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
+    export HOMEdata=/gpfs/hps2/nco/storage/fv3gefs/emc.enspara/common
+    export COMINenkf_base=$HOMEdata/fv3init/enkfgdas.
+    export COMINgfs_base=$HOMEdata/fv3init/gfs.
+    export COMINcfs_base=$HOMEdata/cfs_2_sst/cfs.
+    export SSTDIR=$HOMEdata/2tsst
+    export COMICE=$HOMEdata/sea_ice
     
     # Location of WW3 executables
     export EXECcode=$HOMEDIR/sorc/fv3gfs.fd/WW3/model/exe
