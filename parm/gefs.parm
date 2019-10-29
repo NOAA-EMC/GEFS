@@ -22,6 +22,7 @@ export fhmax06=${fhmax06:-$fhmax}
 export fhmax12=${fhmax12:-$fhmax}
 export fhmax18=${fhmax18:-$fhmax}
 export fhmax_ext=${fhmax_ext:-840}
+export fhcplwave=${fhcplwave:-384}
 
 #OUTPUT frequency
 export FHMAXHF=${FHMAXHF:-240}
