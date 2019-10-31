@@ -974,15 +974,22 @@
 
 # 6.e Execute fourth command file
 
+# Set number of processes for mpmd
+    wavenproc=`wc -l cmdfile | awk '{print $1}'`
+    wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
+
+# 1.a.3 Execute the serial or parallel cmdfile
+
   set +x
-  echo "   Executing tar command file at : `date`"
-  echo '   -------------------------------'
+  echo ' '
+  echo "   Executing the tar command file at : `date`"
+  echo '   ------------------------------------'
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
 
   if [ "$wavenproc" -gt '1' ]
   then
-    ${wave_mpmd} cmdfile
+    ${wavempexec} ${wavenproc} ${wave_mpmd} cmdfile
     exit=$?
   else
     ./cmdfile
@@ -995,12 +1002,13 @@
   then
     set +x
     echo ' '
-    echo '**************************************'
-    echo '*** CMD FAILURE DURING TAR PROCESS ***'
-    echo '**************************************'
+    echo '***************************************************'
+    echo '*** FATAL ERROR: CMD FAILURE DURING TAR PROCESS ***'
+    echo '***************************************************'
     echo '     See Details Below '
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
+    err=5; export err;${errchk}
   fi
 
 
