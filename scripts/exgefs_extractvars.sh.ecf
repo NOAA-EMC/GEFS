@@ -44,14 +44,14 @@ PARMgefs=${PARMgefs}
 COMIN=$COMIN  # GEFS Output Folder
 #enslist = "${MEMLIST} avg spr"
 
-if [[ $npert -eq 10 ]];then
-    enslist="p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 c00 ${enslistend}" # avg spr"
-elif [[ $npert -eq 4 ]]; then
-    enslist="p01 p02 p03 p04 c00 ${enslistend}" # avg spr"
-else
-    echo "npert ($npert) not currently supported. Exiting..."
-    exit
-fi
+#if [[ $npert -eq 10 ]];then
+#    enslist="p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 c00 ${enslistend}" # avg spr"
+#elif [[ $npert -eq 4 ]]; then
+#    enslist="p01 p02 p03 p04 c00 ${enslistend}" # avg spr"
+#else
+#    echo "npert ($npert) not currently supported. Exiting..."
+#    exit
+#fi
 
 outdirpre_2d=${REFCST}/$yyyy/$mm/$dd/f2d #directory where we want to save the extracted files
 outdirpre_3d=${REFCST}/$yyyy/$mm/$dd/f3d #directory where we want to save the extracted files
