@@ -17,7 +17,7 @@ NCP=${NCP:-"/bin/cp -p"}
 NLN=${NLN:-"/bin/ln -sf"}
 NMV=${NMV:-"/bin/mv -uv"}
 
-REFCST=${RFHOME}/REFCST
+REFCST=${RFHOME}/RETRO
 
 CDATE=$PDY$cyc
 
