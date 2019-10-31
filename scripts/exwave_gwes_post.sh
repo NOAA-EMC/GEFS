@@ -53,22 +53,14 @@
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
 
-# Script will run serial only if not LSB or pre-defined NTASKS
+# Script will run only if pre-defined NTASKS
 #     The actual work is distributed over these tasks.
-  nfile=
-  x=1
-  if [ -z ${LSB_MCPU_HOSTS+x} ] && [ -z ${NTASKS+x} ]        
+  if [ -z ${NTASKS} ]        
   then
-    echo " Scripts requires LSB_MCPU_HOSTS or NTASKS to be set "
+    echo "FATAL ERROR: requires NTASKS to be set "
     err=999; export err;${errchk}
-  elif [ ! -z ${LSB_MCPU_HOSTS+x} ]
-  then
-    nppn=`echo $LSB_MCPU_HOSTS | awk '{ print $2}'`
-    nnod=`echo $LSB_MCPU_HOSTS | wc -w | awk '{ print $1}'`
-    nnod=`expr ${nnod} / 2`
-    nfile=`expr $nnod \* $nppn`
   fi
-  NTASKS=${NTASKS:-$nfile}
+
 # 0.b Date and time stuff
 
   export date=$PDY
@@ -982,15 +974,22 @@
 
 # 6.e Execute fourth command file
 
+# Set number of processes for mpmd
+    wavenproc=`wc -l cmdfile | awk '{print $1}'`
+    wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
+
+# 1.a.3 Execute the serial or parallel cmdfile
+
   set +x
-  echo "   Executing tar command file at : `date`"
-  echo '   -------------------------------'
+  echo ' '
+  echo "   Executing the tar command file at : `date`"
+  echo '   ------------------------------------'
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
 
   if [ "$wavenproc" -gt '1' ]
   then
-    ${wave_mpmd} cmdfile
+    ${wavempexec} ${wavenproc} ${wave_mpmd} cmdfile
     exit=$?
   else
     ./cmdfile
@@ -1003,12 +1002,13 @@
   then
     set +x
     echo ' '
-    echo '**************************************'
-    echo '*** CMD FAILURE DURING TAR PROCESS ***'
-    echo '**************************************'
+    echo '***************************************************'
+    echo '*** FATAL ERROR: CMD FAILURE DURING TAR PROCESS ***'
+    echo '***************************************************'
     echo '     See Details Below '
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
+    err=5; export err;${errchk}
   fi
 
 

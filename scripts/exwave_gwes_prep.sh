@@ -102,22 +102,13 @@
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
 
-# Script will run serial only if not LSB or pre-defined NTASKS
+# Script will run only if pre-defined NTASKS
 #     The actual work is distributed over these tasks.
-  nfile=
-  x=1
-  if [ -z ${LSB_MCPU_HOSTS+x} ] && [ -z ${NTASKS+x} ]        
+  if [ -z ${NTASKS} ]        
   then
-    echo " Scripts requires LSB_MCPU_HOSTS or NTASKS to be set "
+    echo "FATAL ERROR: Requires NTASKS to be set "
     err=999; export err;${errchk}
-  elif [ ! -z ${LSB_MCPU_HOSTS+x} ]
-  then
-    nppn=`echo $LSB_MCPU_HOSTS | awk '{ print $2}'`
-    nnod=`echo $LSB_MCPU_HOSTS | wc -w | awk '{ print $1}'`
-    nnod=`expr ${nnod} / 2`
-    nfile=`expr $nnod \* $nppn`
   fi
-  NTASKS=${NTASKS:-$nfile}
 
 # --------------------------------------------------------------------------- #
 # 1.  Get files that are used by most child scripts
