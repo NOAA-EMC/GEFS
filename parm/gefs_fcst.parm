@@ -102,6 +102,27 @@ if [[ $cplwav = ".true." ]]; then
 	export coupling_interval_sec=${coupling_interval_sec:-3600}
 fi
 
+if [[ $RUNMEM = "geaer" ]]; then
+	export cplchm=".true."
+else
+	export cplchm=${cplchm:-.false.}
+fi
+
+if [[ $cplchm = ".true." ]]; then
+	export fhmaxh=$fhmax_aer
+	export fhmax=$fhmax_aer
+	export restart_interval=$gefs_cych  # temporary until capability to output just at 6 h is added to FV3
+
+	export EMITYPE=${EMITYPE:-2}  # 1:MODIS, 2:GBBEPx
+	export EMIDIR=${EMIDIR:-/gpfs/dell2/emc/modeling/noscrub/Li.Pan/emi_} # WCK revist this
+
+	export DIAG_TABLE=${DIAG_TABLE:-$BASE_GSM/parm/parm_fv3diag/chm_diag_table}
+
+	export lgfdlmprad=".true."
+	export effr_in=".true."
+	export USE_COUPLER_RES="YES"
+fi
+
 #gfs_physics
 export FHZERO=${FHZER:-6}
 export idiag3d=
@@ -171,7 +192,11 @@ elif [[ $imp_physics = 8 ]]; then # Thompson
     export nwat=6
 elif [[ $imp_physics = 11 ]]; then # GFDL
     export ncld=5
-    export FIELD_TABLE="$BASE_GSM/parm/parm_fv3diag/field_table_gfdl"
+    if [[ $cplchm = ".true." ]]; then
+    	export FIELD_TABLE="$BASE_GSM/parm/parm_fv3diag/chm_field_table_gfdl"
+    else
+    	export FIELD_TABLE="$BASE_GSM/parm/parm_fv3diag/field_table_gfdl"
+	fi
     export nwat=6
     export dnats=1
     export cal_pre=".false."

@@ -153,6 +153,7 @@ export LOGSCRIPT=startmsg
 echo set parameters using gefs.parm
 ##############################################
 . $PARMgefs/gefs.parm
+. $PARMgefs/gefs_fcst.parm
 . $PARMgefs/gwes.parm
 
 if [[ $FORECAST_SEGMENT = lr ]] ; then
@@ -166,27 +167,27 @@ if [[ $RERUN = RERUN ]] ; then
 		FHINI=${FHINI:-$fhmaxh}
 	else
 		FORECAST_SEGMENT=$FORECAST_SEGMENT is not supported !
-		stop
+		exit 9
 	fi	
 fi
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 	#CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$fhouth;FHZER=$fhzerh;                        
-	CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$FHOUTLF;FHZER=6;
-	MTNRSL=$MTNRSLFV;LONB=$LONBFV;LATB=$LATBFV;
-	FHMAX_HF=$FHMAXHF;FHOUT_HF=$FHOUTHF; 
+	CASE=$CASEHR; FHMAX=$fhmaxh; FHOUT=$FHOUTLF; FHZER=6;
+	MTNRSL=$MTNRSLFV; LONB=$LONBFV; LATB=$LATBFV;
+	FHMAX_HF=$FHMAXHF; FHOUT_HF=$FHOUTHF; 
 	FHINI=$FHINI;
 	(( LEVS = LEVSHR + 1 ))
 elif [[ $FORECAST_SEGMENT = lr ]] ; then
 	#CASE=$casel;FHMAX=$fhmax;FHOUT=$fhoutl;FHZER=$fhzerl;
-	CASE=$CASELR;FHMAX=$fhmax;FHOUT=$FHOUTLF;FHZER=6;
- 	MTNRSL=$MTNRSLLR;LONB=$LONBLR;LATB=$LATBLR;
-	FHMAX_HF=$FHMAXHF;FHOUT_HF=$FHOUTHF;
+	CASE=$CASELR; FHMAX=$fhmax; FHOUT=$FHOUTLF; FHZER=6;
+ 	MTNRSL=$MTNRSLLR; LONB=$LONBLR; LATB=$LATBLR;
+	FHMAX_HF=$FHMAXHF; FHOUT_HF=$FHOUTHF;
 	FHINI=$FHINI;
 	(( LEVS = LEVSLR + 1 ))
 else
 	FORECAST_SEGMENT=$FORECAST_SEGMENT is not supported !
-	stop
+	exit 9
 fi
 
 export FHMIN=$FHINI
@@ -213,7 +214,6 @@ export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 #
 # Forecast Input Variables
 #
-. $PARMgefs/gefs_fcst.parm
 
 if [[ $RERUN = RESTART ]] ; then
 	export warm_start=.true.
@@ -222,35 +222,6 @@ if [[ $RERUN = RESTART ]] ; then
 	export output_1st_tstep_rst=.true.
 fi
 
-#
-# Forecast Input Variables
-#
-#--------------------------------------------
-export KMP_AFFINITY=disabled
-export OMP_STACKSIZE=1024m
-export MP_LABELIO=yes
-
-#--------------------------------------------
-# Configuration file for running NEMS FV3GFS 
-#--------------------------------------------
-#--------------------------------------------
-mac=`hostname |cut -c1`
-
-NEMS=YES
-if [ $machine = WCOSS ]; then
-	EXPDIR=/global/save/$LOGNAME/para_gfs/pr$PSLOT
-elif [ $machine = WCOSS_C ]; then
-	EXPDIR=$HOMEgefs/parm
-elif [ $machine = THEIA ]; then
-	IO_IN=.true.
-	NEMSIO_OUT=.true.
-	IPD4=YES
-fi
-# ----------------------------------
-# user account 
-# ----------------------------------
-
-#if [[ $mem = c00 ]] ;then 
 if [[ $mem = c00 ]] ;then 
 	MEMBER=$((npert+1))
 	WAV_MEMBER="00"
@@ -260,10 +231,6 @@ else
 fi
 export MEMBER=$MEMBER
 memchar=mem$(printf %03i $MEMBER)
-
-# 	export do_sppt=$STOC_SPPT
-# 	export do_shum=$STOC_SHUM
-# 	export do_skeb=$STOC_SKEB
 
 export SET_STP_SEED=${SET_STP_SEED:-"YES"}
 
@@ -337,28 +304,10 @@ if [[ $FORECAST_SEGMENT = lr ]] ; then
 
 fi
 
-#case $CASE in
-#  C48)   DELTIM=3600; layout_x=4  ; layout_y=8  ;;
-#  C96)   DELTIM=1800; layout_x=4  ; layout_y=8  ;;
-##  C192)  DELTIM=900 ; layout_x=4  ; layout_y=8  ;;
-#  C192)  DELTIM=600 ; layout_x=4  ; layout_y=8  ;;
-#  C384)  DELTIM=450 ; layout_x=4  ; layout_y=8  ;;
-#  C768)  DELTIM=225 ; layout_x=8  ; layout_y=16 ;;
-#  C1152) DELTIM=150 ; layout_x=8  ; layout_y=16 ;;
-#  C3072) DELTIM=90  ; layout_x=16 ; layout_y=32 ;;
-#  *)     echo "grid $CASE not supported, exit"
-#         exit ;;
-#esac
-
 #
 # Forecast Input Variables
 #
-# . $PARMgefs/gefs_nstfv3.parm
-#APRUN and FCSTEXEC are defined in gefs_nstfv3.parm
 
-#export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nems.sh.ecf
-#export FCSTEXEC=$EXECgsm/global_fcst
-#export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nemsfv3gfs_sp.sh
 export fcstscript=${fcstscript:-$HOMEgfs/scripts/exglobal_fcst_nemsfv3gfs.sh}
 export FORECASTSH=$fcstscript
 export FCSTEXECDIR=${FCSTEXECDIR:-$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin}
@@ -367,7 +316,6 @@ export ROTDIR=${ROTDIR:-$DATA}
 
 export APRUN=${APRUN:-""}
 export EXECDIR=$EXECgfs
-#export FCSTEXECDIR=$BASE_SVN/NEMSfv3gfs/stochy/NEMS/exe
 export FCSTEXECDIR=${FCSTEXECDIR:-$EXECDIR}
 
 echo $fcstscript
@@ -378,8 +326,6 @@ echo $PARM_FV3DIAG
 echo $APRUN
 
 NCP="/bin/cp -p"
-
-restart_interval=${fhrestart:-1000}
 
 #USE_RESTART=NO                      #use restart file under COMROT/RESTART if run is interruptted
 #FHSTRT=6                            #restart from a given hour if USE_RESTART=YES
@@ -422,7 +368,7 @@ if [ $OUTPUT_GRID = "gaussian_grid" ]; then
 
 	# Link output files
 	hr=$FHINI
-	while (( hr < FHMAX_HF )); do
+	while (( hr < FHMAX_HF && hr <= FHMAX )); do
 		fhr=$(printf "%03.0f" $hr)
 		ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $memdir/$CDUMP.${cycle}.atmf$fhr.nemsio
 		ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $memdir/$CDUMP.${cycle}.sfcf$fhr.nemsio
@@ -454,6 +400,16 @@ if [[ $cplwav = ".true." ]]; then
 	export COMOUTWW3=$COMROOT/${NET}/${envir}
 fi # [[ $cplwav = ".true." ]]
 
+if [[ $cplchm = ".true." ]]; then
+	# Link aerosol tracer data for next cycle
+	next_date=$($NDATE +$restart_interval $CDATE)
+    next_PDY=$(echo $next_date | cut -c1-8)
+    next_cyc=$(echo $next_date | cut -c9-10)
+    for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
+		ln -s $RESTDIR/${next_PDY}.${next_cyc}0000.fv_tracer.res.${tile}.nc $DATA/RESTART/${next_PDY}.${next_cyc}0000.fv_tracer.res.${tile}.nc
+	done
+fi
+
 mkdir -p $memdir
 
 export FIX_DIR=$FIXgfs
@@ -462,4 +418,4 @@ export FIX_AM=$FIX_AM
 export assim_freq=6
 export increment=$ICSDIR/fv3_increment.nc
 
-$FORECASTSH
+. $FORECASTSH

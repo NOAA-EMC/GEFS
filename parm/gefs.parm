@@ -22,6 +22,7 @@ export fhmax06=${fhmax06:-$fhmax}
 export fhmax12=${fhmax12:-$fhmax}
 export fhmax18=${fhmax18:-$fhmax}
 export fhmax_ext=${fhmax_ext:-840}
+export fhmax_aer=${fhmax_aer:-120}
 export fhcplwave=${fhcplwave:-384}
 
 #OUTPUT frequency
@@ -54,7 +55,7 @@ esac
 export fhmax
 # DHOU, 08/26/2010, added this block to modify fhmaxh fhmax3 and fhmaxhres
 if (( fhmax <= fhmaxh )); then
-        export fhmaxh=$fhmax
+    export fhmaxh=$fhmax
 fi
 
 # HOUTSPS=12: output after SPS 12 hours before fhmaxh, so that digital filtering can be applied after resolution change export HOUTSPS=12

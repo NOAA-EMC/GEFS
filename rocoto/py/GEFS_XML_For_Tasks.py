@@ -280,7 +280,7 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     # --------------------------
 
     cycledef = "gefs"
-    maxtries = 3
+    maxtries = 1
 
     strings = ""
 
@@ -413,6 +413,8 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     # -------------------RUNMEM-------------------
     if taskname in metatask_names:
         strings += (create_envar(name="RUNMEM", value="ge#member#", sPre=sPre_2))
+    elif taskname == "forecast_aerosol":
+        strings += (create_envar(name="RUNMEM", value="geaer", sPre=sPre_2))
     else:
         if taskname in ["prdgen_gfs"]:
             strings += (create_envar(name="RUNMEM", value="gegfs", sPre=sPre_2))
@@ -432,6 +434,8 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
         strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
     elif taskname in ['prdgen_gfs']:
         strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/prdgen_high.sh</cyclestr></command>\n'
+    elif taskname in ['forecast_aerosol']:
+        strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/forecast_high.sh</cyclestr></command>\n'
     elif taskname in ['ensstat_high', 'ensstat_low']:
         strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
     elif taskname.startswith("post_high_"):
@@ -779,7 +783,7 @@ def get_param_of_task(dicBase, taskname):
                     sDep = ""
 
             # For 'forecast_high' task
-            if taskname.lower() == "forecast_high":
+            if taskname.lower() == "forecast_high" :
                 sDep = '<and>'
                 if DoesTaskExist(dicBase, "getcfssst"):
                     sDep += '\n\t<taskdep task="getcfssst"/>'
@@ -822,6 +826,25 @@ def get_param_of_task(dicBase, taskname):
                             sDep = '<and>\n\t<taskdep task="getcfssst"/>\n</and>'
                         else:
                             sDep = ''
+
+            # For 'forecast_aerosol' task
+            if taskname.lower() == "forecast_aerosol" :
+                sDep = '<and>'
+                if DoesTaskExist(dicBase, "getcfssst"):
+                    sDep += '\n\t<taskdep task="getcfssst"/>'
+
+                if DoesTaskExist(dicBase, "init_aerosol"):  # Cold Restart
+                    sDep += '\n\t<taskdep task="init_aerosol"/>'
+                else:  # Warm Start  ???
+                    sDep += '\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
+
+                if DoesTaskExist(dicBase, "prep_emissions"):
+                    sDep += '\n\t<taskdep task="prep_emissions"/>'
+
+                if sDep == '<and>':
+                    sDep = ""
+                else:
+                    sDep += '\n</and>'
 
             # For ensavg_nemsio
             if taskname.lower() == "ensavg_nemsio":
@@ -999,7 +1022,10 @@ def get_param_of_task(dicBase, taskname):
                     sDep = ''
 
     # Forecast can be derive from the parm items
-    if taskname == 'forecast_high' or taskname == 'forecast_low':
+    if taskname in ['forecast_high', 'forecast_low', 'forecast_aerosol']:
+
+        if taskname == 'forecast_aerosol':
+            dicBase['cplwav'] = ".false."
 
         iTotal_Tasks, iNodes, iPPN, iTPP = calc_fcst_resources(dicBase)
 
