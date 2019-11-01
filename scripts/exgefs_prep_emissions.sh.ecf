@@ -1,0 +1,99 @@
+#!/bin/ksh -x
+
+###############################################################
+## Abstract:
+## Create biomass burning emissions for FV3-CHEM
+## PREPCHEM_TARGET : Main area where IC,PREP files located
+###############################################################
+
+export NCP="/bin/cp -p"
+export NMV="/bin/mv"
+export NLN="/bin/ln -sf"
+export CHGRP_CMD="chgrp rstprod"
+export NEMSIOGET="$HOMEgfs/exec/nemsio_get"
+export CASE=${CASE:-C384}
+
+SYEAR=${SYEAR:-`echo $PDY$cyc|cut -c1-4`}
+SMONTH=${SMONTH:-`echo $PDY$cyc|cut -c5-6`}
+SDAY=${SDAY:-`echo $PDY$cyc|cut -c7-8`}
+SHOUR=${SHOUR:-`echo $PDY$cyc|cut -c9-10`}
+
+if [[ ! -d $ICSDIR ]]; then mkdir -p $ICSDIR; fi
+cd $ICSDIR || exit 10
+mkdir -p prep
+cd prep
+
+for x in prep_chem_sources_template.inp prep_chem_dell3_sources; do
+	$NCP ${COMIN_EMISSIONS}${CASE}/$x .
+done
+print "in FV3_fim_emission_setup:"
+emiss_date="$SYEAR-$SMONTH-$SDAY-$SHOUR" # default value for branch testing      
+print "emiss_date: $emiss_date"
+print "yr: $SYEAR mm: $SMONTH dd: $SDAY hh: $SHOUR"
+
+# put date in input file
+sed "s/fv3_hh/$SHOUR/g;
+s/fv3_dd/$SDAY/g;
+s/fv3_mm/$SMONTH/g;
+s/fv3_yy/$SYEAR/g" prep_chem_sources_template.inp > prep_chem_sources.inp
+
+$APRUN ./prep_chem_dell3_sources
+status=$?
+if [[ $status -ne 0 ]]; then
+	echo "error prep_chem_dell3_sources failed $status"
+	exit $status
+fi
+
+emiss_date1="$SYEAR$SMONTH$SDAY"
+print "emiss_date: $emiss_date1"
+for n in $(seq 1 6); do
+	tiledir=tile${n}
+	cd $tiledir
+	pwd
+	
+	$NLN ${CASE}-T-${emiss_date}0000-BBURN3-bb.bin ebu_pm_10.dat
+	$NLN ${CASE}-T-${emiss_date}0000-SO4-bb.bin ebu_sulf.dat
+	$NLN ${CASE}-T-${emiss_date}0000-plume.bin plumestuff.dat
+	$NLN $COMIN_GB/GBBEPx.bc.${emiss_date1}.FV3.${CASE}Grid.$tiledir.bin  ebu_bc.dat
+	$NLN $COMIN_GB/GBBEPx.oc.${emiss_date1}.FV3.${CASE}Grid.$tiledir.bin  ebu_oc.dat
+	$NLN $COMIN_GB/GBBEPx.so2.${emiss_date1}.FV3.${CASE}Grid.$tiledir.bin  ebu_so2.dat
+	$NLN $COMIN_GB/GBBEPx.pm25.${emiss_date1}.FV3.${CASE}Grid.$tiledir.bin  ebu_pm_25.dat
+	$NLN $COMIN_GB/meanFRP.${emiss_date1}.FV3.${CASE}Grid.$tiledir.bin  plumefrp.dat
+
+	rm ${CASE}-T-${emiss_date}0000-OC-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-BC-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-BBURN2-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-SO2-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-ALD-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-ASH-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-CO-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-CSL-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-DMS-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-ETH-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-HC3-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-HC5-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-HC8-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-HCHO-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-ISO-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-KET-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-NH3-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-NO2-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-NO-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-OLI-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-OLT-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-ORA2-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-TOL-bb.bin
+	rm ${CASE}-T-${emiss_date}0000-XYL-bb.bin
+	rm *-ab.bin
+	cd ..
+	rm *-g${n}.ctl *-g${n}.vfm *-g${n}.gra
+done
+rc=$?
+if [ $rc -ne 0 ]; then
+	echo "error prepchem $rc "
+	exit $rc
+fi
+###############################################################
+
+###############################################################
+# Exit cleanly

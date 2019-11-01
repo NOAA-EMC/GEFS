@@ -1,0 +1,124 @@
+#!/bin/ksh 
+
+echo `date` $0 `date -u` begin
+
+set -xa
+export PS4='$SECONDS + '
+date
+
+export gefsmpexec=${gefsmpexec:-mpirun}
+# export APRUN=${gefsmpexec:-mpirun}
+export APRUN=${aprun_gec00:-mpirun}
+export RUNMEM=${RUNMEM:-geaer}
+export mem=`echo $RUNMEM|cut -c3-5`
+export ENS_NUM=1
+echo "ENS_NUM=$ENS_NUM"
+
+####################################
+# obtain unique process id (pid) and make working directory
+####################################
+export pid=$$
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+mkdir -p $DATA
+cd $DATA
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-${COMROOT}/logs/jlogfiles/jlogfile.${job}.${pid}}
+
+####################################
+# Configure Sending variables
+####################################
+export SENDCOM="${SENDCOM:-YES}"
+export SENDDBN="${SENDDBN:-NO}"
+export SENDECF="${SENDECF:-NO}"
+
+############################
+# Set up cycle varaible
+############################
+export cycle=${cycle:-t${cyc}z}
+export CDATE=$PDY$cyc
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# Specify Execution Areas
+####################################
+export HOMEgfs=${HOMEgfs:-${NWROOT}/gfs.${gefs_ver}}
+export PARMgfs=$HOMEgfs/parm
+export FIXgfs=$HOMEgfs/fix
+export USHgfs=$HOMEgfs/ush
+export UTILgfs=$HOMEgfs/util
+export EXECgfs=$HOMEgfs/exec
+export SCRgfs=$HOMEgfs/scripts
+export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
+####################################
+# Run setpdy and initialize PDY variables
+####################################
+setpdy.sh
+. ./PDY
+
+##############################################
+echo "set parameters using gefs.parm"
+##############################################
+. $PARMgefs/gefs.parm
+# . $PARMgefs/gefs_aerosol.parm
+
+
+export CDUMP=${CDUMP:-gfs} 
+
+##############################################
+# Define COM OUT directories
+##############################################
+export COMOUT=${COMOUT:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}}
+export GESIN=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
+ICSDIR_template=${ICSDIR_template:-$GESIN/$mem}
+ICSDIR=$(eval echo $ICSDIR_template)
+
+export COMIN_EMISSIONS=${COMIN_EMISSIONS:-/gpfs/dell2/emc/modeling/noscrub/Li.Pan/emi_}
+export COMIN_GB=${COMIN_GB:-/gpfs/dell2/emc/retros/noscrub/Li.Pan/data/GBBEPx}
+##############################################
+echo "list environment before running script"
+##############################################
+
+env | sort
+
+#############################################################
+# Execute the script
+$HOMEgefs/scripts/exgefs_prep_emissions.sh.ecf
+#############################################################
+ERR=$?
+
+if [ $ERR = 0 ]; then
+    msg="JOB COMPLETED NORMALLY"
+else
+    msg="JOB FAILED!"
+fi
+
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+echo $DATA
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
+
+exit $ERR
+
