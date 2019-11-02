@@ -35,7 +35,7 @@
 
   grdID=$1 
   gribDIR=${grdID}_grib 
-  rm -rfd ${gribDIR}
+  rm -rf ${gribDIR}
   mkdir ${gribDIR}
   err=$?
   if [ $err != 0 ]
