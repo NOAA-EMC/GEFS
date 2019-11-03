@@ -34,7 +34,7 @@ export RUN=${RUN:-gefs}
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${COMROOT}/logs/jlogfiles/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -59,7 +59,9 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 # Define COM OUT directories
 ##############################################
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}
-#export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}
+export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
+
 
 ##############################################
 echo list environment before running script
