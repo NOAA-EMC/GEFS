@@ -280,7 +280,7 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     # --------------------------
 
     cycledef = "gefs"
-    maxtries = 3
+    maxtries = 1
 
     strings = ""
 
@@ -358,11 +358,20 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
             strings += sPre_2 + '<nodes>{0}</nodes><shared></shared>\n'.format(sNodes)
         else:
             strings += sPre_2 + '<nodes>{0}</nodes>\n'.format(sNodes)
-            if WHERE_AM_I.upper() == "wcoss_ibm".upper():
-                if sQueue.upper() == "&TRANSFER_QUEUE;":
-                    strings += sPre_2 + '<native>-R "affinity[core]"</native>'
-                else:
-                    strings += sPre_2 + '<native>-a poe</native>'
+        
+        # ---    
+        if WHERE_AM_I.upper() == "wcoss_ibm".upper():
+            if sQueue.upper() == "&TRANSFER_QUEUE;":
+                strings += sPre_2 + '<native>-R "affinity[core]"</native>'
+            else:
+                strings += sPre_2 + '<native>-a poe</native>'
+
+        elif WHERE_AM_I.upper() in ["wcoss_dell_p3".upper()]: #, "cray".upper()]:
+            if taskname in ["prdgen_high"]:
+                if sQueue.endswith("_shared"):
+                    strings += sPre_2 + '<native>-R "affinity[core(4):distribute=pack]"</native>\n'
+                    strings += sPre_2 + '<native>-R "rusage[mem=4608]"</native>\n'
+
     # -------------------sNodes-------------------
 
     if WHERE_AM_I.upper() == "cray".upper():
@@ -1305,6 +1314,8 @@ def get_ENV_VARS(sPre="\t\t"):
     dicENV_VARS['INIT_DIR'] = '&INIT_DIR;'
     dicENV_VARS['DIRS_TO_KEEP'] = '&DIRS_TO_KEEP;'
     dicENV_VARS['DIRS_TO_ARCHIVE'] = '&DIRS_TO_ARCHIVE;'
+    dicENV_VARS['DIRS_TO_KEEP_WAVE'] = '&DIRS_TO_KEEP_WAVE;'
+    dicENV_VARS['DIRS_TO_ARCHIVE_WAVE'] = '&DIRS_TO_ARCHIVE_WAVE;'
     dicENV_VARS['gefs_cych']= '&INCYC;'
     sENV_VARS = ""
 

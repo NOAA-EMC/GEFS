@@ -20,7 +20,7 @@ export MPICH_CPUMASK_DISPLAY=1
 
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
-
+export NTASKS=24
 # Set NCO messaging proxies
 export jlogfile=/dev/null
 export jobid=${job}.$$

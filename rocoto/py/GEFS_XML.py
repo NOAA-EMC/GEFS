@@ -624,6 +624,14 @@ def get_definitions(dicBase):
     sVarValue = dicBase[sVarName.upper()]
     strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
 
+    sVarName = "DIRS_TO_KEEP_WAVE"
+    sVarValue = dicBase[sVarName.upper()]
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+    sVarName = "DIRS_TO_ARCHIVE_WAVE"
+    sVarValue = dicBase[sVarName.upper()]
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
     strings.append('\n')
 
     # # -----------------------------------------------------------------------------------------------

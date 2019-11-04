@@ -59,6 +59,7 @@
   then
     echo "FATAL ERROR: requires NTASKS to be set "
     err=999; export err;${errchk}
+    exit $err
   fi
 
 # 0.b Date and time stuff
@@ -158,6 +159,8 @@
   fi
 
 # Set number of processes for mpmd
+    cat cmdfile
+
     wavenproc=`wc -l cmdfile | awk '{print $1}'`
     wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
 
@@ -269,6 +272,8 @@
       [[ "$LOUD" = YES ]] && set -x
       echo "$wavemodID post $date $cycle : mod_def.$grdID missing." >> $wavelog
       exit_code=2
+      err=$exit_code;export err;${errchk}
+      exit $err
     fi
 
   done
@@ -454,6 +459,7 @@
       err=1;export err;${errchk}
       specOK='no'
       bullOK='no'
+      exit $err
     fi
 
 # Create new buoy_log.ww3 excluding all IBP files
@@ -578,6 +584,8 @@
   fi
 
 # Determine number of processes needed for mpmd
+  cat cmdfile
+
   wavenproc=`wc -l cmdfile | awk '{print $1}'`
   wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
 
@@ -610,6 +618,9 @@
     echo '     See Details Below '
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
+    exit_code=$exit
+    err=$exit_code;export err;${errchk}
+    exit $err
   fi
 
 # --------------------------------------------------------------------------- #
@@ -658,6 +669,8 @@
 # 3.c Run mpmd cmdfile
 
 # Determine number of processes needed for mpmd
+  cat cmdfile
+
   wavenproc=`wc -l cmdfile | awk '{print $1}'`
   wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
 
@@ -688,6 +701,8 @@
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
     err=2;export err;${errchk}
+    exit_code=$exit
+    exit $err
   fi
 
 # --------------------------------------------------------------------------- #
@@ -735,6 +750,8 @@
 # 4.d Execute point output cmd file
 
 # Determine number of processes needed for mpmd
+  cat cmdfile
+
   wavenproc=`wc -l cmdfile | awk '{print $1}'`
   wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
 
@@ -764,7 +781,9 @@
     echo '***********************************************************'
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
+    exit_code=$exit
     err=3;export err;${errchk}
+    exit $err
   fi
 
 # --------------------------------------------------------------------------- #
@@ -975,8 +994,10 @@
 # 6.e Execute fourth command file
 
 # Set number of processes for mpmd
-    wavenproc=`wc -l cmdfile | awk '{print $1}'`
-    wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
+  cat cmdfile
+
+  wavenproc=`wc -l cmdfile | awk '{print $1}'`
+  wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
 
 # 1.a.3 Execute the serial or parallel cmdfile
 
@@ -1008,7 +1029,9 @@
     echo '     See Details Below '
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
+    exit_code=$exit
     err=5; export err;${errchk}
+    exit $err
   fi
 
 
@@ -1089,6 +1112,7 @@
       echo ' '
       sed "s/^/$file : /g" $file
     done
+    exit $err
   fi
 
 # --------------------------------------------------------------------------- #
@@ -1118,15 +1142,16 @@
 
   if [ "$exit_code" -ne '0' ]
   then
-     msg="ABNORMAL EXIT: Problem in MWW3 POST"
-     postmsg "$jlogfile" "$msg"
-     echo $msg
-     err=6; export err;${errchk}
+    msg="ABNORMAL EXIT: Problem in MWW3 POST"
+    postmsg "$jlogfile" "$msg"
+    echo $msg
+    err=6; export err;${errchk}
+    exit $err
   else
-     echo " Wave Post Completed Normally "
+    echo " Wave Post Completed Normally "
+    msg="$job completed normally"
+    postmsg "$jlogfile" "$msg"
+    exit 0
   fi
-
-  msg="$job completed normally"
-  postmsg "$jlogfile" "$msg"
 
 # End of MWW3 prostprocessor script ---------------------------------------- #
