@@ -17,7 +17,6 @@ NCP=${NCP:-"/bin/cp -p"}
 NLN=${NLN:-"/bin/ln -sf"}
 NMV=${NMV:-"/bin/mv -uv"}
 
-REFCST=${RFHOME}/REFCST
 
 CDATE=$PDY$cyc
 
@@ -27,7 +26,7 @@ dd=$(echo   $CDATE | cut -c7-8)
 hh=$(echo  $CDATE | cut -c9-10)
 
 npert=${npert}
-if [ $npert <=0 ]; then
+if [[ $npert -lt 0 ]]; then
     echo "WARNING: npert <=0"
     exit 8
 fi
@@ -44,17 +43,9 @@ PARMgefs=${PARMgefs}
 COMIN=$COMIN  # GEFS Output Folder
 #enslist = "${MEMLIST} avg spr"
 
-if [[ $npert -eq 10 ]];then
-    enslist="p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 c00 ${enslistend}" # avg spr"
-elif [[ $npert -eq 4 ]]; then
-    enslist="p01 p02 p03 p04 c00 ${enslistend}" # avg spr"
-else
-    echo "npert ($npert) not currently supported. Exiting..."
-    exit
-fi
 
-outdirpre_2d=${REFCST}/$yyyy/$mm/$dd/f2d #directory where we want to save the extracted files
-outdirpre_3d=${REFCST}/$yyyy/$mm/$dd/f3d #directory where we want to save the extracted files
+outdirpre_2d=$COMOUT/f2d #directory where we want to save the extracted files
+outdirpre_3d=$COMOUT/f3d #directory where we want to save the extracted files
 
 varlist_2d=${PARMgefs}/gefs_shortparmlist_2d.parm
 varlist_3d=${PARMgefs}/gefs_shortparmlist_3d.parm
@@ -65,25 +56,40 @@ mkdir -p $outdirpre_3d/
 rm -f $outdirpre_2d/*
 rm -f $outdirpre_3d/*
 
+ls -al poescript*
+rm -rf poescript*
 
-for outtype in "f2d" "f3d"; do
+start=0
+for ensname in $(eval echo "{$start..$npert}"); do
+    cmem=$(printf %02i $ensname)
+    if [[ $cmem -eq 00 ]]; then
+        censname=c$cmem
+    else
+        censname=p$cmem
+    fi
+    echo 'echo `date` ############ poescript'" $censname begin">>poescript.$censname
 
-    if [[ "$outtype" == "f2d" ]];then
+    cat  >> poescript.$censname<< EOF
+
+    for outtype in "f2d" "f3d"; do
+
+    if [[ "\$outtype" == "f2d" ]];then
         varlist=$varlist_2d
         outdirpre=$outdirpre_2d
-    elif [[ "$outtype" == "f3d" ]];then 
+    elif [[ "\$outtype" == "f3d" ]];then 
         varlist=$varlist_3d
         outdirpre=$outdirpre_3d
     fi
 
     nh=0
-    while [[ $nh -le $fhmax ]];do
-        fnh=`printf "%3.3d" ${nh}`
-        echo "extracting f${fnh}"
+    while [[ \$nh -le $fhmax ]];do
+        fnh=\`printf "%3.3d" \${nh}\`
+        echo "extracting f\${fnh}"
 
-        if [[ $nh -le $FHMAXHF ]];then
+        if [[ \$nh -le $FHMAXHF ]] && [[ "\$outtype" == "f2d" ]];then
             outres="0p25"
-            indirpres=$COMIN/pgrb2p25
+            indirpresa=$COMIN/pgrb2ap25
+            indirpresb=$COMIN/pgrb2bp25
 
             #if [[ "$outtype" == "f2d" ]];then
             #    outres="0p25"
@@ -94,42 +100,65 @@ for outtype in "f2d" "f3d"; do
             #fi
         else
             outres="0p50"
-            indirpres=$COMIN/pgrb2p5
+            indirpresa=$COMIN/pgrb2ap5
+            indirpresb=$COMIN/pgrb2bp5
         fi
 
 
-        if [[ $nh -lt $FHMAXHF ]];then
+        if [[ \$nh -lt $FHMAXHF ]];then
             outfreq=$FHOUTHF
         else
             outfreq=$FHOUTLF
         fi
 
         #Extract individual member files
-        for ensname in $enslist; do
-            echo $ensname ==============
-            infile=$indirpres/ge${ensname}.t00z.pgrb2.$outres.f${fnh}
-            oufile=$outdirpre/ge${ensname}.t00z.pgrb2.$outres.f${fnh}
+            echo \$censname ==============
+            infilea=\$indirpresa/ge${censname}.t00z.pgrb2a.\$outres.f\${fnh}
+            infileb=\$indirpresb/ge${censname}.t00z.pgrb2b.\$outres.f\${fnh}
+            oufile=\$outdirpre/ge${censname}.t00z.pgrb2.\$outres
             
-            echo $infile
-            echo $oufile
+            echo \$infilea
+            echo \$oufile
             
-            if [ -f $infile ]; then #check if input file exists before extraction
-                rm -f $oufile #remove outfile if it already exists before extraction   
-                $WGRIB2 $infile | grep -F -f $varlist | $WGRIB2 -i $infile -append -grib $oufile>/dev/null
+            if [ -f \$infilea ]; then #check if input file exists before extraction
+                $WGRIB2 \$infilea | grep -F -f \$varlist | $WGRIB2 -i \$infilea -append -grib \$oufile>/dev/null
             else
-                echo "$infile does not exist"
+                echo "$infilea does not exist"
+                echo "Please check it"
+                #exit 9
+            fi 
+            if [ -f \$infileb ]; then #check if input file exists before extraction
+                $WGRIB2 \$infileb | grep -F -f \$varlist | $WGRIB2 -i \$infileb -append -grib \$oufile>/dev/null
+            else
+                echo "\$infileb does not exist"
                 echo "Please check it"
                 #exit 9
             fi 
 
-        done #member
 
-        nh=$(($nh + $outfreq))
+        nh=\$((\$nh + \$outfreq))
     done #fhr
 
-done #f2d,f3d
+	done #f2d,f3d
+EOF
+    chmod 755 poescript.$censname
+    echo "sh poescript.$censname>extra.$censname" >>poescript
 
-exit 0
+done #member
+        
+export MP_CMDFILE=poescript
+export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
+export MP_LABELIO=yes
+export MP_INFOLEVEL=3
+export MP_STDOUTMODE=unordered
+echo APRUN=$APRUN
+export MP_PGMMODEL=mpmd
+rm mpmd_cmdfile
+ln -s $MP_CMDFILE mpmd_cmdfile
+$APRUN
+err=$?
+
+exit $err
 
 
 

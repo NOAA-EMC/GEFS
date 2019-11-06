@@ -54,7 +54,7 @@ export RUN=${RUN:-gefs}
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -69,9 +69,13 @@ export pgmerr=errfile
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
-export HOMEgfs=$HOMEgsm
+# export HOMEgfs=$HOMEgsm
+export FIXfv3=${FIXfv3:-$HOMEgsm/fix/fix_fv3_gmted2010}
+export FIXam=${FIXam:-$HOMEgsm/fix/fix_am}
+export HOMEgfs=$HOMEgsm/sorc/ufs_utils.fd # Override to point to UFS Utils location
 
-export USHgsm=${USHgsm:-$HOMEgsm/ush}
+export USHgsm=${USHgsm:-$HOMEgfs/ush}
+
 
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 

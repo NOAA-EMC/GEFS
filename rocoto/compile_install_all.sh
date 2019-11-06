@@ -26,7 +26,9 @@ AddCrontabToMyCrontab=${AddCrontabToMyCrontab:-no}
 DeleteCrontabFromMyCrontab=${DeleteCrontabFromMyCrontab:-no}
 
 if [ $machine = "nomachine" ]; then
-    if [ -d /scratch4/NCEPDEV ]; then
+    if [ -d /scratch1/NCEPDEV ]; then
+        machine=hera
+    elif [ -d /scratch3/NCEPDEV ]; then
         machine=theia
     elif [[ -d /gpfs/hps3 && -e /etc/SuSE-release ]]; then # Luna or Surge
         machine=cray
@@ -56,6 +58,8 @@ if [ $CompileCode = "yes" ]; then
     cd $sWS/../sorc
     if [ $machine = "theia" ]; then
         ./link_gefs.sh -e emc -m theia
+    elif [ $machine = "hera" ]; then
+        ./link_gefs.sh -e emc -m hera
     elif [ $machine = "cray" ]; then
         ./link_gefs.sh -e emc -m cray
     elif [ $machine = "wcoss_ibm" ]; then
@@ -112,9 +116,15 @@ fi # for CleanAll
 
 if [ $RunRocoto = "yes" ]; then
     cd $sWS
-    if [ $machine = "theia" ]; then
-        module load rocoto/1.3.0-RC3
-        module load intelpython
+    if [ $machine = "hera" ]; then
+        module load intel/18.0.5.274
+        module load rocoto/1.3.1
+        module load contrib
+        module load anaconda/anaconda3-5.3.1
+ 
+    elif [ $machine = "theia" ]; then
+        module load rocoto/1.3.1
+        module load intelpython/3.6.1.0
 
     elif [ $machine = "wcoss_ibm" ]; then
         module load ibmpe ics lsf
@@ -146,7 +156,7 @@ fi # For RunRocoto
 # For Crontab
 if [ $AddCrontabToMyCrontab = "yes" ]; then
     cd $sWS
-    if [ $machine = "theia" ]; then
+    if [ $machine = "hera" ]; then
         if [ -f $HOME/cron/mycrontab ]; then
             echo "Adding crontab to $HOME/cron/mycrontab!" 
         else 
@@ -154,6 +164,18 @@ if [ $AddCrontabToMyCrontab = "yes" ]; then
             touch $HOME/cron/mycrontab
         fi
     
+        py/add_crontab.py
+        crontab $HOME/cron/mycrontab
+        echo "Added crontab to $HOME/cron/mycrontab!"
+
+    elif [ $machine = "theia" ]; then
+        if [ -f $HOME/cron/mycrontab ]; then
+            echo "Adding crontab to $HOME/cron/mycrontab!" 
+        else
+            mkdir $HOME/cron
+            touch $HOME/cron/mycrontab
+        fi
+   
         py/add_crontab.py
         crontab $HOME/cron/mycrontab
         echo "Added crontab to $HOME/cron/mycrontab!"

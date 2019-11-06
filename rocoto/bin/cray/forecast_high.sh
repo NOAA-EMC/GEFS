@@ -38,7 +38,7 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 
 
-export gefsmpexec=" aprun -b -j1 -n240 -N12 -d2 -cc depth "
+export gefsmpexec=" aprun -b -j1 -n528 -N24 -d1 -cc depth "
 export NTHREADS_SIGCHGRS=2
 
 

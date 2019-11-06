@@ -1,3 +1,6 @@
+#   Imported Shell Variables:
+#     SIGINP        Input sigma file
+
 #####################################################################
 echo "-----------------------------------------------------"
 echo " exgefs_nceppost_master.sh.sms" 
@@ -12,6 +15,8 @@ echo " Dec 14 - Hou - updated to grib2 format and add grib2 ensemble messages"
 echo " Feb 18 - Hou - updated to process FV3 based nemsio files"
 echo " Jun 18 - Hou - replaced hard-wired output frequency with FHOUT_HF and FHOUT"
 echo " Jul 18 - Hou - removed variables related to cyc_fcst (Breeding) "
+echo " Jul 26 - Xue - Add RUN_HOURS to avoid modifying two loop and make it fore flexiable"
+echo "                Add list of variables for future reference"
 echo "-----------------------------------------------------"
 #####################################################################
 
@@ -21,6 +26,46 @@ cd $DATA
 
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
+export SHOUR=${1:-${SHOUR}}
+export FHOUR=${2:-${FHOUR}}
+export FHOUT_HF=${3:-${FHOUT_HF}}
+export FHOUT_LF=${4:-${FHOUT_LF}}
+export FHMAX_HF=${5:-${FHMAX_HF}}
+export SHOUR_LF=${6:-${SHOUR_LF}}
+
+err=0
+
+# Get RUN_HOURS
+typeset -a RUN_HOURS
+iHour=0
+(( fhr=SHOUR ))
+while [ $fhr -le $FHOUR ]; do  #(( fhr <= FHOUR )); do
+    fhr=$(printf %03i $fhr)
+    echo $fhr
+    RUN_HOURS[iHour]=$fhr
+
+    if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
+        FHINC=$FHOUT_HF
+    else
+        FHINC=$FHOUT_LF
+    fi
+
+
+    export fhrtest=`expr $fhr + $FHINC`
+    if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF -a $fhrtest -ge $FHMAX_HF ]; then
+        export FHINC=$FHOUT_LF
+        export fhr=`expr $SHOUR_LF`
+    else
+        export fhr=`expr $fhr + $FHINC`
+    fi
+    #RUN_HOURS[iHour]=$fhr
+    iHour=$((iHour+1))
+done # while (( fhr <= FHOUR ))
+
+echo
+echo ${RUN_HOURS[@]}
+# Get RUN_HOURS
+
 
 export MP_LABELIO=YES
 #poe hostname
@@ -41,7 +86,7 @@ export nemsioget=$nemsioget
 R1=`echo $RUNMEM|cut -c1-3`
 R2=`echo $RUNMEM|cut -c4-5`
 mem=`echo $RUNMEM|cut -c3-5`
-e3=20
+e3=$npert
 case $R1 in
     (gec)
         if (( R2 == 0 )); then 
@@ -154,15 +199,15 @@ if [ $DOANALYSIS = YES ]; then
 
 fi
 
-(( fhr=SHOUR))
-
-while (( fhr <= FHOUR )); do
-    fhr=$(printf %03i $fhr)
-    if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
-        FHINC=$FHOUT_HF
-    else
-        FHINC=$FHOUT
-    fi
+#(( fhr=SHOUR))
+#while (( fhr <= FHOUR )); do
+for fhr in ${RUN_HOURS[@]}; do
+    #fhr=$(printf %03i $fhr)
+    #if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
+    #    FHINC=$FHOUT_HF
+    #else
+    #    FHINC=$FHOUT
+    #fi
 
     mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr$cfsuffix
 
@@ -203,15 +248,15 @@ while (( fhr <= FHOUR )); do
         done # for submc in prd0p5 prd1p0 prd2p5
     fi # [[ ! -s $mcfile ]]
 
-    export fhrtest=`expr $fhr + $FHINC`
-    if [ $FHMAXHF -gt 0 -a $FHOUTHF -gt 0 -a $fhrtest -ge $FHMAXHF -a $fhr -lt $FHMAXHF ]; then
-        export FHINC=$FHOUT
-        export fhr=`expr $FHMAX_HF`
-    else
-        export fhr=`expr $fhr + $FHINC`
-    fi
+    #export fhrtest=`expr $fhr + $FHINC`
+    #if [ $FHMAXHF -gt 0 -a $FHOUTHF -gt 0 -a $fhrtest -ge $FHMAXHF -a $fhr -lt $FHMAXHF ]; then
+    #    export FHINC=$FHOUT
+    #    export fhr=`expr $FHMAX_HF`
+    #else
+    #    export fhr=`expr $fhr + $FHINC`
+    #fi
 
-done # while (( fhr <= FHOUR ))
+done # for fhr in RUN_HOURS  # while (( fhr <= FHOUR ))
 
 if [ $DOANALYSIS = YES ]; then
     mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.anl$cfsuffix
@@ -352,18 +397,19 @@ fi # [ $DOANALYSIS = YES ]
 
 SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
-(( fhr=SHOUR ))
-
 ############################################################
 # Loop Through the Post Forecast Files 
 ############################################################
-while (( fhr <= FHOUR )); do
-    export fhr=$(printf %03i $fhr)
-    if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
-        FHINC=$FHOUT_HF
-    else
-        FHINC=$FHOUT
-    fi
+#(( fhr=SHOUR ))
+#while (( fhr <= FHOUR )); do
+for fhr in ${RUN_HOURS[@]}
+do
+    #export fhr=$(printf %03i $fhr)
+    #if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
+    #    FHINC=$FHOUT_HF
+    #else
+    #    FHINC=$FHOUT
+    #fi
 
     mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr$cfsuffix
 
@@ -532,20 +578,29 @@ while (( fhr <= FHOUR )); do
         fi # test $SENDCOM = "YES"
     fi # [[ ! -s $mcfile ]]
 
-    #export fhr=`expr $fhr + $FHINC`
-    export fhrtest=`expr $fhr + $FHINC`
-    if [ $FHMAXHF -gt 0 -a $FHOUTHF -gt 0 -a $fhrtest -ge $FHMAXHF -a $fhr -lt $FHMAXHF ]; then
-        export FHINC=$FHOUT
-        export fhr=`expr $FHMAX_HF`
-    else
-        export fhr=`expr $fhr + $FHINC`
-    fi
+    ##export fhr=`expr $fhr + $FHINC`
+    #export fhrtest=`expr $fhr + $FHINC`
+    #if [ $FHMAXHF -gt 0 -a $FHOUTHF -gt 0 -a $fhrtest -ge $FHMAXHF -a $fhr -lt $FHMAXHF ]; then
+    #    export FHINC=$FHOUT
+    #    export fhr=`expr $FHMAX_HF`
+    #else
+    #    export fhr=`expr $fhr + $FHINC`
+    #fi
 
-done # while (( fhr <= FHOUR ))
+done # for fhr in RUN_HOURS # while (( fhr <= FHOUR ))
 
 cat $pgmout
 
-msg='ENDED NORMALLY.'
-postmsg "$jlogfile" "$msg"
+if [ $err -eq 0 ] ; then
+    msg="ENDED NORMALLY!!!"
+    echo "`date`    $msg"
+    postmsg "$jlogfile" "$msg"
+    exit 0
+else
+    msg="FATAL ERROR: FAILED to do the post!!!"
+    echo "`date`    $msg"
+    postmsg "$jlogfile" "$msg"
+    exit $err
+fi
 
 ################## END OF SCRIPT #######################
