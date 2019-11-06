@@ -29,7 +29,7 @@ ulimit -a
 
 # export NODES=1
 # export total_tasks=6
-export OMP_NUM_THREADS=1
+export OMP_NUM_THREADS=4
 # export taskspernode=6
 
 export DO_LOW_RES=

@@ -91,12 +91,13 @@ if [[ $GFSArchivedData == "yes" ]]; then
         export COMINenkf_base=$HOMEdata/enkf.gdas.
         export COMINgfs_base=$HOMEdata/gfs.
         export COMINcfs_base=/ensemble/noscrub/Walter.Kolczynski/gefs_input/cfs_2_sst/cfs.
+        export COMICE=${COMICE:-/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod}
     else
         export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
         export COMINgfs_base=$HOMEdata/fv3init/gfs.
         export COMINcfs_base=$HOMEdata/cfs/cfs.
+        export COMICE=$HOMEdata/sea_ice
     fi # [[ -d /dcom && -d /hwrf ]] #WCOSS
-    export COMICE=${COMICE:-/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod}
 else
     export COMINgfs_base=$(compath.py gfs/prod)/gfs.
     export COMINenkf_base=$(compath.py gfs/prod)/enkfgdas.

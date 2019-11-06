@@ -13,10 +13,6 @@ export MPICH_VERSION_DISPLAY=1
 export MPICH_CPUMASK_DISPLAY=1
 
 export KMP_STACKSIZE=1024m
-export OMP_NUM_THREADS=2
-export KMP_AFFINITY=disabled
-
-#export OMP_NUM_THREADS=4
 export KMP_AFFINITY=disabled
 
 export MP_EUIDEVICE=sn_all
