@@ -41,7 +41,7 @@ export RUN=${RUN:-gefs}
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -209,8 +209,7 @@ echo
 env | sort
 echo
 
-if [[ -n $SUBJOB ]] ;
-then
+if [[ -n $SUBJOB ]]; then
     J1=`echo $SUBJOB | cut -c1-1` 
     J2=`echo $SUBJOB | cut -c2-2` 
     iJ2=`printf '%d\n' "'$J2"`

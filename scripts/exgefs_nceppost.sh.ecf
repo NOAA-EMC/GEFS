@@ -1,5 +1,3 @@
-#!/bin/bash
-
 #   Imported Shell Variables:
 #     SIGINP        Input sigma file
 
@@ -34,6 +32,8 @@ export FHOUT_HF=${3:-${FHOUT_HF}}
 export FHOUT_LF=${4:-${FHOUT_LF}}
 export FHMAX_HF=${5:-${FHMAX_HF}}
 export SHOUR_LF=${6:-${SHOUR_LF}}
+
+err=0
 
 # Get RUN_HOURS
 typeset -a RUN_HOURS
@@ -86,7 +86,7 @@ export nemsioget=$nemsioget
 R1=`echo $RUNMEM|cut -c1-3`
 R2=`echo $RUNMEM|cut -c4-5`
 mem=`echo $RUNMEM|cut -c3-5`
-e3=20
+e3=$npert
 case $R1 in
     (gec)
         if (( R2 == 0 )); then 
@@ -201,8 +201,7 @@ fi
 
 #(( fhr=SHOUR))
 #while (( fhr <= FHOUR )); do
-for fhr in ${RUN_HOURS[@]}
-do
+for fhr in ${RUN_HOURS[@]}; do
     #fhr=$(printf %03i $fhr)
     #if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
     #    FHINC=$FHOUT_HF
@@ -592,7 +591,16 @@ done # for fhr in RUN_HOURS # while (( fhr <= FHOUR ))
 
 cat $pgmout
 
-msg='ENDED NORMALLY.'
-postmsg "$jlogfile" "$msg"
+if [ $err -eq 0 ] ; then
+    msg="ENDED NORMALLY!!!"
+    echo "`date`    $msg"
+    postmsg "$jlogfile" "$msg"
+    exit 0
+else
+    msg="FATAL ERROR: FAILED to do the post!!!"
+    echo "`date`    $msg"
+    postmsg "$jlogfile" "$msg"
+    exit $err
+fi
 
 ################## END OF SCRIPT #######################

@@ -7,7 +7,7 @@ set -x
 ulimit -s unlimited
 ulimit -a
 
-export OMP_NUM_THREADS=6
+export OMP_NUM_THREADS=2
 
 # export for development runs only begin
 export envir=${envir:-dev}

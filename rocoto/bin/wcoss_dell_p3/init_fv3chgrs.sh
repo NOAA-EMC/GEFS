@@ -34,24 +34,18 @@ ulimit -a
 #module load NetCDF-intel-haswell/4.2
 #module load nco-gnu-sandybridge/4.4.4
 
-export NODES=1
-export total_tasks=1
+# export NODES=1
+# export total_tasks=1
 export OMP_NUM_THREADS_CH=28
-export taskspernode=1
+# export taskspernode=1
 
 export FORECAST_SEGMENT=hr
 
 # export for development runs only begin
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
+# export envir=${envir:-dev}
+# export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 # CALL executable job script here
-
-
-export APRUNC="mpirun -n $total_tasks"
-
-
-
-
+# export APRUNC="mpirun -n $total_tasks"
 
 $SOURCEDIR/jobs/JGEFS_INIT_FV3CHGRS

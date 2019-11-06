@@ -41,7 +41,7 @@ export RUN=${RUN:-gefs}
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -110,8 +110,8 @@ export CHGRESEXEC=$EXECgsm/global_chgres
 #export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
 export POSTGPSH=${POSTGPSH:-$USHpost/gfs_nceppost.sh}
 # RLW 20150622 test new version of post executable
-export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
-#export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/gfs_ncep_post}
+# export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
+export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/gfs_ncep_post}
 export nemsioget=$EXECgsm/nemsio_get
 export SIGHDR=$nemsioget
 #echo in $0: POSTGPSH=$POSTGPSH
@@ -346,6 +346,7 @@ echo
 env | sort
 echo
 
+ERR=0
 #################################
 # Run from $SHOUR to $FHOUR
 #################################
