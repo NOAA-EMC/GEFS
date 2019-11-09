@@ -131,7 +131,9 @@ export cal_pre=.false.
 export REDRAG=.true.
 export DSPHEAT=.true.
 export HYBEDMF=.true.
-export lheatstrg=.true.
+export lheatstrg=${lheatstrg:-".false."}
+export lgfdlmprad=${lgfdlmprad:-".true."}
+export effr_in=${effr_in:-".true."}
 
 export random_clds=.false.
 export trans_trac=.true.
