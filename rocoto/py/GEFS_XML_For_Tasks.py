@@ -1035,9 +1035,6 @@ def get_param_of_task(dicBase, taskname):
     # Forecast can be derive from the parm items
     if taskname in ['forecast_high', 'forecast_low', 'forecast_aerosol']:
 
-        if taskname == 'forecast_aerosol':
-            dicBase['cplwav'] = ".false."
-
         iTotal_Tasks, iNodes, iPPN, iTPP = calc_fcst_resources(dicBase)
 
         WHERE_AM_I = dicBase['WHERE_AM_I'].upper()

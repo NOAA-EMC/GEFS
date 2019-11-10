@@ -52,15 +52,17 @@ case $cyc in
 		;;
 esac
 
-if [[ $RUNMEM = "geaer" ]]; then
+if [[ $RUNMEM = "geaer" ]]; then cplchm=".true."; fi
+
+export cplchm=${cplchm:-.false.}
+
+if [[ $cplchm = ".true." ]]; then
 	# Override forecast length
 	export fhmaxh=$fhmax_aer
 	export fhmax=$fhmax_aer
 
-	export cplchm=".true."
+	export cplwav=".false."
 fi
-
-export cplchm=${cplchm:-.false.}
 
 export fhmax
 # DHOU, 08/26/2010, added this block to modify fhmaxh fhmax3 and fhmaxhres
