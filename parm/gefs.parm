@@ -52,11 +52,21 @@ case $cyc in
 		;;
 esac
 
+if [[ $RUNMEM = "geaer" ]]; then
+	# Override forecast length
+	export fhmaxh=$fhmax_aer
+	export fhmax=$fhmax_aer
+
+	export cplchm=".true."
+fi
+
+export cplchm=${cplchm:-.false.}
+
 export fhmax
 # DHOU, 08/26/2010, added this block to modify fhmaxh fhmax3 and fhmaxhres
-if (( fhmax <= fhmaxh )); then
-    export fhmaxh=$fhmax
-fi
+if (( fhmax <= fhmaxh )); then export fhmaxh=$fhmax; fi
+if (( FHMAXHF > fhmaxh )); then export FHMAXHF=$fhmaxh; fi
+
 
 # HOUTSPS=12: output after SPS 12 hours before fhmaxh, so that digital filtering can be applied after resolution change export HOUTSPS=12
 export HOUTSPS=${HOUTSPS:-0}

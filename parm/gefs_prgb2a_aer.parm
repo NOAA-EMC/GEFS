@@ -1,0 +1,38 @@
+:ACPCP:surface:
+:AOTK:entire atmosphere:
+:ASYSFK:entire atmosphere:
+:COLMD:entire atmosphere:
+:CPRAT:surface:
+:O3MR:1 mb:
+:O3MR:10 mb:
+:O3MR:100 mb:
+:O3MR:1000 mb:
+:O3MR:125 mb:
+:O3MR:15 mb:
+:O3MR:150 mb:
+:O3MR:2 mb:
+:O3MR:20 mb:
+:O3MR:200 mb:
+:O3MR:250 mb:
+:O3MR:3 mb:
+:O3MR:30 mb:
+:O3MR:300 mb:
+:O3MR:350 mb:
+:O3MR:40 mb:
+:O3MR:400 mb:
+:O3MR:5 mb:
+:O3MR:50 mb:
+:O3MR:500 mb:
+:O3MR:7 mb:
+:O3MR:70 mb:
+:O3MR:700 mb:
+:O3MR:850 mb:
+:PMTC:1 hybrid level:
+:PMTC:surface:
+:PMTF:1 hybrid level:
+:PMTF:surface:
+:REFC:entire atmosphere:
+:REFD:1000 m above ground:
+:SCTAOTK:entire atmosphere:
+:SSALBK:entire atmosphere:
+:TOZNE:entire atmosphere (considered as a single layer):

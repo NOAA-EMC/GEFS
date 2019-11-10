@@ -162,19 +162,6 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
 
     # Locations for aerosols
     export COMIN_EMISSIONS="/gpfs/dell2/emc/modeling/noscrub/Li.Pan/emi_"
-
-
-    # Test post with GFS Chem
-    # export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Lin.Gan/git/gefs_gsdchem_fcstchem
-    export HOMEpost=/gpfs/dell2/emc/modeling/noscrub/Lin.Gan/git/gefs-post/lgan-esrl-post/gfs_post.fd
-    export PARMpost=${HOMEpost}/parm
-    export POSTGPEXEC=$HOMEpost/exec/ncep_post
-    export FLTFILEGFSF00=$PARMpost/postxconfig-NT-GFS-F00-FV3CHEM.txt
-    export FLTFILEGFS=$PARMpost/postxconfig-NT-GFS-FV3CHEM.txt
-    export FLTFILEGFSF001=$PARMpost/postxconfig-NT-GFS-F00-FV3CHEM.txt
-    export FLTFILEGFS1=$PARMpost/postxconfig-NT-GFS-FV3CHEM.txt
-    export ESRL_CHEM=YES
-    
 fi
 
 # Uncomment below to run from real-time production data

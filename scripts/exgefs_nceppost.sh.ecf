@@ -161,7 +161,7 @@ if [ $DOANALYSIS = YES ]; then
     mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.anl$cfsuffix
 
     if [[ ! -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix ]]; then
-        rm $mcfile
+        if [[ -f $mcfile ]]; then rm $mcfile; fi
     fi
 
     if [ $GRIBVERSION = grib1 ]; then
@@ -179,21 +179,21 @@ if [ $DOANALYSIS = YES ]; then
                 echo skip creation of $fileout
             else
                 echo fileouti=$fileouti IS MISSING
-                rm $mcfile
+                if [[ -f $mcfile ]]; then rm $mcfile; fi
             fi # [[ -s $fileouti ]]
         else
             echo fileout=$fileout IS MISSING
-            rm $mcfile
+            if [[ -f $mcfile ]]; then rm $mcfile; fi
         fi # [[ -s $fileout ]]
     fi # [[ -s $mcfile ]]
 
     if [[ ! -s $mcfile ]]; then
         # 20150622 RLW disable this temporarily to test the new post code
-        rm $fileout
-        rm $fileouti
+        if [[ -f $fileout ]]; then rm $fileout; fi
+        if [[ -f $fileouti ]]; then rm $fileouti; fi
         for submc in prd0p5 prd1p0 prd2p5; do
             pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.anl$cfsuffix
-            rm $pcfile
+            if [[ -f $pcfile ]]; then rm $pcfile; fi
         done
     fi # [[ ! -s $mcfile ]]
 
@@ -212,7 +212,7 @@ for fhr in ${RUN_HOURS[@]}; do
     mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr$cfsuffix
 
     if [[ ! -f $restart_file$fhr$cfsuffix\.nemsio ]]; then
-        rm $mcfile
+        if [[ -f $mcfile ]]; then rm $mcfile; fi
     fi
 
     if [ $GRIBVERSION = grib1 ]; then
@@ -230,21 +230,21 @@ for fhr in ${RUN_HOURS[@]}; do
                 echo skip creation of $fileout
             else
                 echo fileouti=$fileouti IS MISSING
-                rm $mcfile
+                if [[ -f $mcfile ]]; then rm $mcfile; fi
             fi # [[ -s $fileouti ]]
         else
             echo fileout=$fileout IS MISSING
-            rm $mcfile
+            if [[ -f $mcfile ]]; then rm $mcfile; fi
         fi # [[ -s $fileout ]]
     fi # [[ -s $mcfile ]]
 
     if [[ ! -s $mcfile ]]; then
         # 20150622 RLW disable this temporarily to test the new post code
-        rm $fileout
-        rm $fileouti
+        if [[ -f $fileout ]]; then rm $fileout; fi
+        if [[ -f $fileouti ]]; then rm $fileouti; fi
         for submc in prd0p5 prd1p0 prd2p5; do
             pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr$cfsuffix
-            rm $pcfile
+            if [[ -f $pcfile ]]; then rm $pcfile; fi
         done # for submc in prd0p5 prd1p0 prd2p5
     fi # [[ ! -s $mcfile ]]
 
@@ -317,7 +317,7 @@ if [ $DOANALYSIS = YES ]; then
 
 #           cat $CTLFILE
 
-            rm -rf sigfile.anl$cfsuffix
+            if [[ -f sigfile.anl$cfsuffix ]]; then rm -rf sigfile.anl$cfsuffix; fi
             ln -s $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix sigfile.anl$cfsuffix
 #               ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf00$cfsuffix sigfile.anl$cfsuffix
 
@@ -329,7 +329,8 @@ if [ $DOANALYSIS = YES ]; then
             export SFCINPUT=
             export FLXINP=
             export FLXIOUT=
-            rm -rf pgbfout pgbifout
+            if [[ -f pgbfout ]]; then rm -rf pgbfout; fi
+            if [[ -f pgbifout ]]; then rm -rf pgbifout; fi
             if [ $GRIBVERSION = grib1 ]; then
                 ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbanl$cfsuffix pgbfout
                 ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbianl$cfsuffix pgbifout
@@ -448,7 +449,8 @@ do
         ###############################
         # link sigma and flux files
         ###############################
-        rm -rf sigfile flxfile
+        if [[ -f sigfile ]]; then rm -rf sigfile; fi
+        if [[ -f flxfile ]]; then rm -rf flxfile; fi
 #       ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sigfile.f$fhr$cfsuffix
 #       ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
 #       ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix flxfile.f$fhr$cfsuffix
@@ -509,7 +511,8 @@ do
 
         export FLXINP=flxfile.f$fhr$cfsuffix
         export FLXIOUT=flxifile.f$fhr$cfsuffix
-        rm -rf pgbfout pgbifout
+        if [[ -f pgbfout ]]; then rm -rf pgbfout; fi
+        if [[ -f pgbifout ]]; then rm -rf pgbifout; fi
         # ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbf$fhr$cfsuffix pgbfout
         # ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbif$fhr$cfsuffix pgbifout
         ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr$cfsuffix pgbfout

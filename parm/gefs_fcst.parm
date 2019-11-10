@@ -102,17 +102,9 @@ if [[ $cplwav = ".true." ]]; then
 	export coupling_interval_sec=${coupling_interval_sec:-3600}
 fi
 
-if [[ $RUNMEM = "geaer" ]]; then
-	export cplchm=".true."
-else
-	export cplchm=${cplchm:-.false.}
-fi
-
 if [[ $cplchm = ".true." ]]; then
-	export fhmaxh=$fhmax_aer
-	export fhmax=$fhmax_aer
 	export restart_interval=$gefs_cych  # temporary until capability to output just at 6 h is added to FV3
-
+	
 	export EMITYPE=${EMITYPE:-2}  # 1:MODIS, 2:GBBEPx
 	export EMIDIR=${EMIDIR:-/gpfs/dell2/emc/modeling/noscrub/Li.Pan/emi_} # WCK revist this
 

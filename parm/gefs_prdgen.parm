@@ -30,6 +30,10 @@ fi
 # Establish an array of stream names which will establish the number and be used as keys for the associative arrays
 #
 typeset -a PRDGEN_STREAMS=${PRDGEN_STREAMS:-res_2p50 res_1p00 res_0p50 res_0p25_s1 res_0p25_s2 res_0p25_s3}
+if [[ $cplchm == ".true." ]]; then
+	PRDGEN_STREAMS=${PRDGEN_STREAMS_AER:-aer_0p25_s1 aer_0p25_s2 aer_0p25_s3}
+	makepgrb2b="no"
+fi
 export PRDGEN_STREAMS
 
 #
@@ -122,6 +126,39 @@ PRDGEN_A_DIR[res_0p25_s3]=${PRDGEN_A_DIR[res_0p25_s3]:-"pgrb2ap25"}
 PRDGEN_B_DIR[res_0p25_s3]=${PRDGEN_B_DIR[res_0p25_s3]:-"pgrb2bp25"}
 PRDGEN_A_PREFIX[res_0p25_s3]=${PRDGEN_A_PREFIX[res_0p25_s3]:-"pgrb2a.0p25."}
 PRDGEN_B_PREFIX[res_0p25_s3]=${PRDGEN_B_PREFIX[res_0p25_s3]:-"pgrb2b.0p25."}
+
+# Aerosol Stream 1 [0.25°]
+PRDGEN_GRID[aer_0p25_s1]=${PRDGEN_GRID[aer_0p25_s1]:-"0p25"}
+PRDGEN_GRID[aer_0p25_s1]=${PRDGEN_GRID[aer_0p25_s1]:-"0p25"}
+PRDGEN_GRID_SPEC[aer_0p25_s1]=${PRDGEN_GRID_SPEC[aer_0p25_s1]:-"latlon 0:1440:0.25 90:721:-0.25"}
+PRDGEN_HOURS[aer_0p25_s1]=${PRDGEN_HOURS[aer_0p25_s1]:-"{0..${FHMAXHF}..$(( ${FHOUTHF} * 3 ))}"}
+PRDGEN_SUBMC[aer_0p25_s1]=${PRDGEN_SUBMC[aer_0p25_s1]:-"prd0p25"}
+PRDGEN_A_DIR[aer_0p25_s1]=${PRDGEN_A_DIR[aer_0p25_s1]:-"pgrb2ap25_aer"}
+PRDGEN_B_DIR[aer_0p25_s1]=${PRDGEN_B_DIR[aer_0p25_s1]:-"pgrb2ap25_aer"}
+PRDGEN_A_PREFIX[aer_0p25_s1]=${PRDGEN_A_PREFIX[aer_0p25_s1]:-"pgrb2a.0p25."}
+PRDGEN_B_PREFIX[aer_0p25_s1]=${PRDGEN_B_PREFIX[aer_0p25_s1]:-"pgrb2b.0p25."}
+
+# Aerosol Stream 2 [0.25°]
+PRDGEN_GRID[aer_0p25_s2]=${PRDGEN_GRID[aer_0p25_s2]:-"0p25"}
+PRDGEN_GRID[aer_0p25_s2]=${PRDGEN_GRID[aer_0p25_s2]:-"0p25"}
+PRDGEN_GRID_SPEC[aer_0p25_s2]=${PRDGEN_GRID_SPEC[aer_0p25_s2]:-"latlon 0:1440:0.25 90:721:-0.25"}
+PRDGEN_HOURS[aer_0p25_s2]=${PRDGEN_HOURS[aer_0p25_s2]:-"{${FHOUTHF}..${FHMAXHF}..$(( ${FHOUTHF} * 3 ))}"}
+PRDGEN_SUBMC[aer_0p25_s2]=${PRDGEN_SUBMC[aer_0p25_s2]:-"prd0p25"}
+PRDGEN_A_DIR[aer_0p25_s2]=${PRDGEN_A_DIR[aer_0p25_s2]:-"pgrb2ap25_aer"}
+PRDGEN_B_DIR[aer_0p25_s2]=${PRDGEN_B_DIR[aer_0p25_s2]:-"pgrb2ap25_aer"}
+PRDGEN_A_PREFIX[aer_0p25_s2]=${PRDGEN_A_PREFIX[aer_0p25_s2]:-"pgrb2a.0p25."}
+PRDGEN_B_PREFIX[aer_0p25_s2]=${PRDGEN_B_PREFIX[aer_0p25_s2]:-"pgrb2b.0p25."}
+
+# Aerosol Stream 3 [0.25°]
+PRDGEN_GRID[aer_0p25_s3]=${PRDGEN_GRID[aer_0p25_s3]:-"0p25"}
+PRDGEN_GRID[aer_0p25_s3]=${PRDGEN_GRID[aer_0p25_s3]:-"0p25"}
+PRDGEN_GRID_SPEC[aer_0p25_s3]=${PRDGEN_GRID_SPEC[aer_0p25_s3]:-"latlon 0:1440:0.25 90:721:-0.25"}
+PRDGEN_HOURS[aer_0p25_s3]=${PRDGEN_HOURS[aer_0p25_s3]:-"{$(( ${FHOUTHF} * 2 ))..${FHMAXHF}..$(( ${FHOUTHF} * 3 ))}"}
+PRDGEN_SUBMC[aer_0p25_s3]=${PRDGEN_SUBMC[aer_0p25_s3]:-"prd0p25"}
+PRDGEN_A_DIR[aer_0p25_s3]=${PRDGEN_A_DIR[aer_0p25_s3]:-"pgrb2ap25_aer"}
+PRDGEN_B_DIR[aer_0p25_s3]=${PRDGEN_B_DIR[aer_0p25_s3]:-"pgrb2ap25_aer"}
+PRDGEN_A_PREFIX[aer_0p25_s3]=${PRDGEN_A_PREFIX[aer_0p25_s3]:-"pgrb2a.0p25."}
+PRDGEN_B_PREFIX[aer_0p25_s3]=${PRDGEN_B_PREFIX[aer_0p25_s3]:-"pgrb2b.0p25."}
 
 export PRDGEN_GRID
 export PRDGEN_GRID_SPEC
