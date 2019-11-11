@@ -55,7 +55,7 @@ from functools import partial
 print = partial(print, flush=True)
 
 # Output directories that need to be removed
-output_dirs = ["cfssst", "ensstat", "init", "misc", "pgrb2alr", "sflux", "genesis", "master",
+output_dirs = ["f2d", "f3d", "cfssst", "ensstat", "init", "misc", "pgrb2alr", "sflux", "genesis", "master",
 				"pgrb2ap25", "pgrb2bp25", "pgrb2ap5", "pgrb2bp5", "pgrb2a2p5", "pgrb2b2p5", "pgrb2a1p0",
 				"pgrb2b1p0", "pgrb2a", "sfcsig", "tctrack", "bufr", "gempak", "wmo"]
 output_dirs_last_cyc = ["sfcsig_enkf", "track_enkf"]
