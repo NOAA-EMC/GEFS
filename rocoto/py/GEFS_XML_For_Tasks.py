@@ -142,6 +142,12 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "ensstat_high"
 
+        if dicBase['RUN_AEROSOL_MEMBER'].upper()[0] == "Y":
+            for task in ['prep_emissions', 'init_aerosol', 'forecast_aerosol', 'post_aerosol', 'prdgen_aerosol']:
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = task
+
         # #    <!-- CHGRES jobs -->
         if dicBase['RUN_CHGRES'].upper()[0] == "Y":
             # ---sigchgres
@@ -792,6 +798,18 @@ def get_param_of_task(dicBase, taskname):
                     sDep = '<metataskdep metatask="init_fv3chgrs"/>'
                 else:
                     sDep = ""
+
+            # For 'init_aerosol' task
+            if taskname.lower() == "init_aerosol":
+                sDep = "<and>"
+                for task in ["prep_emissions", "init_recenter"]:
+                    if DoesTaskExist(dicBase, task):
+                        sDep += "\n\t<taskdep task=\"{task}\"/>".format(task=task)
+                        
+                if sDep == "<and>":
+                    sDep = ""
+                else:
+                    sDep += "\n</and>"
 
             # For 'forecast_high' task
             if taskname.lower() == "forecast_high" :
