@@ -14,7 +14,7 @@ from functools import partial
 # Constants
 atm_base_pattern = "{ges_root}/{envir}/gefs.%Y%m%d/%H/{member}"
 atm_file_pattern = "{path}/gfs_data.{tile}.nc"
-tracer_base_pattern = "{com_root}/${net}/${envir}/${run}.%Y%m%d/%H/restart/{member}"  # Time of previous run
+tracer_base_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/restart/{member}"  # Time of previous run
 tracer_file_pattern = "{tracer_base}/%Y%m%d.%H0000.fv_tracer.res.{tile}.nc"           # Time when restart is valid (current run)
 tracer_list_file_pattern = "{parm_gefs}/gefs_aerosol_tracer_list.parm"
 merge_script_pattern = "{ush_gfs}/merge_fv3_chem_tile.py"
@@ -27,7 +27,7 @@ max_lookback = 4
 #   print statments may be out-of-order with subprocess output
 print = partial(print, flush=True)
 
-tiles = map(lambda t: "tile{t}".format(t=t), range(1, n_tiles))
+tiles = list(map(lambda t: "tile{t}".format(t=t), range(1, n_tiles)))
 
 
 def main() -> None:
@@ -110,11 +110,11 @@ def get_tracer_files(time: datetime, incr: int, max_lookback: int, com_root: str
 
 # Merge tracer data into atmospheric data
 def merge_tracers(merge_script: str, atm_files: typing.List[str], tracer_files: typing.List[str], tracer_list_file: str) -> None:
-	if(atm_files.len() != tracer_files.len()):
+	if(len(atm_files) != len(tracer_files)):
 		print("FATAL: atmosphere file list and tracer file list are not the same length")
 		exit(102)
 
-	for atm_file, tracer_file in atm_files, tracer_files:
+	for atm_file, tracer_file in zip(atm_files, tracer_files):
 		subprocess.call([merge_script, atm_file, tracer_file, tracer_list_file])
 
 
