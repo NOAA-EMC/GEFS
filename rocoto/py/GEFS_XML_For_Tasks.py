@@ -964,6 +964,8 @@ def get_param_of_task(dicBase, taskname):
                     sDep += '\n\t<metataskdep metatask="postsnd"/>'
                 if DoesTaskExist(dicBase, "getcfssst"):
                     sDep += '\n\t<taskdep task="getcfssst"/>'
+                if DoesTaskExist(dicBase, "prdgen_aerosol"):
+                    sDep += '\n\t<taskdep task="prdgen_aerosol"/>'                    
 
                 if sDep == '<and>':
                     sDep = ""

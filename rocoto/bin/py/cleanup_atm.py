@@ -33,8 +33,8 @@ Outputs:
 		<WORKDIR>/nwges/dev/gefs.<PDY>/<cyc>
 		<WORKDIR>/com/logs/jlogfiles/jlogfile.<EXPID><PDY><cyc>*
 
-	Additionally, the following directories for the from the previous cycle (6 hours previous)
-	and all files contained within will be deleted:
+	Additionally, the following directories for the from the previous cycle
+	  (6 hours previous) and all files contained within will be deleted:
 		<WORKDIR>/com/gens/dev/gefs.<PDY_last>/<cyc_last>/sfcsig_enkf
 		<WORKDIR>/com/gens/dev/gefs.<PDY_last>/<cyc_last>/track_enkf
 
@@ -56,9 +56,9 @@ print = partial(print, flush=True)
 
 # Output directories that need to be removed
 output_dirs = ["cfssst", "ensstat", "init", "misc", "pgrb2alr", "sflux", "genesis", "master",
-				"pgrb2ap25", "pgrb2bp25", "pgrb2ap5", "pgrb2bp5", "pgrb2a2p5", "pgrb2b2p5", "pgrb2a1p0",
-				"pgrb2b1p0", "pgrb2a", "sfcsig", "tctrack", "bufr", "gempak", "wmo"]
-output_dirs_last_cyc = ["sfcsig_enkf", "track_enkf"]
+				"pgrb2ap25", "pgrb2bp25", "pgrb2ap5", "pgrb2bp5", "pgrb2a2p5", "pgrb2b2p5", 
+				"pgrb2a1p0", "pgrb2b1p0", "pgrb2a", "sfcsig", "tctrack", "bufr", "gempak", "wmo"]
+output_dirs_last_cyc = ["restart", "sfcsig_enkf", "track_enkf"]
 output_dir_pattern = "{work_dir}/com/gens/dev/gefs.%Y%m%d/%H/{output_dir}"
 
 # Read in environment variables and make sure they exist
