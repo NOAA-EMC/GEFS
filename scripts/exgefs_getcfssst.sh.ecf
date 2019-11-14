@@ -216,7 +216,7 @@ cat $rawgb >> $fn_rawfc
 # Model climatology
 # daily one-season forecast must be trimmed to 35 days every 24h
 # Files do not include f00h
-CFSv2_clim_dir=${CFSv2_clim_dir:-$HOMEgefs/fix/sstclim}
+CFSv2_clim_dir=${CFSv2_clim_dir:-${FIXgefs}/sstclim}
 
 climmgb2trim=${CFSv2_clim_dir}/${hh}/tmpsfc.$mm.$dd.${hh}Z.mean.clim.daily.grb2
 if [ ! -s $climmgb2trim ] ; then
@@ -248,7 +248,7 @@ echo "$anlfileout:"$anlfileout
 $WGRIB $anlfileout -d all -ieee -o fort.$un_rtgan
 #
 # CFSR must be trimmed to the 35 days of the forecasts
-climogb2trim=${climogb2trim:-$HOMEgefs/fix/sstclim/cfsr/tmpsfc.cfsr.mean.clim.daily.1999.2010.grb2}
+climogb2trim=${climogb2trim:-${FIXgefs}/sstclim/cfsr/tmpsfc.cfsr.mean.clim.daily.1999.2010.grb2}
 if [ ! -s $climogb2trim ] ; then
     echo "FAILED: $climogb2trim does not exist!"
     exit 90

@@ -49,6 +49,7 @@ export pgmerr=errfile
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
 
 ##############################################
 # Define COM directories
