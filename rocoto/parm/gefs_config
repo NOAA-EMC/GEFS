@@ -53,19 +53,19 @@ export PARMglobal=$HOMEgsm/parm
 # export EXECgrib=$GRIBROOT/exec
 
 #Check and verify the most importand environment variables
-  export NDATE=${NDATE:-$USHutil/ndate}
+export NDATE=${NDATE:-$USHutil/ndate}
 
-  export WGRIB=${WGRIB:-$EXECgrib/wgrib}
-  export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
-  export COPYGB=${COPYGB:-$EXECgrib/copygb}
-  export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
-  export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
-  export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
-  export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
-  export CNVGRIB21_GFS=${CNVGRIB21_GFS:-$EXECgrib/cnvgrib21_gfs}
-  export SUPVIT=$SUPVIT
-  
-  export NET=gens
+export WGRIB=${WGRIB:-$EXECgrib/wgrib}
+export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
+export COPYGB=${COPYGB:-$EXECgrib/copygb}
+export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
+export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
+export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
+export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
+export CNVGRIB21_GFS=${CNVGRIB21_GFS:-$EXECgrib/cnvgrib21_gfs}
+export SUPVIT=$SUPVIT
+
+export NET=gens
 # export RUN=$RUN
 # export RUNMEM=$RUNMEM
 
@@ -91,21 +91,36 @@ if [[ $GFSArchivedData == "yes" ]]; then
         export COMINenkf_base=$HOMEdata/enkf.gdas.
         export COMINgfs_base=$HOMEdata/gfs.
         export COMINcfs_base=/ensemble/noscrub/Walter.Kolczynski/gefs_input/cfs_2_sst/cfs.
+        export COMICE=${COMICE:-/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod}
     else
         export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
         export COMINgfs_base=$HOMEdata/fv3init/gfs.
         export COMINcfs_base=$HOMEdata/cfs/cfs.
-    fi
-fi
+        export COMICE=$HOMEdata/sea_ice
+    fi # [[ -d /dcom && -d /hwrf ]] #WCOSS
+else
+    export COMINgfs_base=$(compath.py gfs/prod)/gfs.
+    export COMINenkf_base=$(compath.py gfs/prod)/enkfgdas.
+    export COMINcfs_base=$(compath.py cfs/prod)/cfs/cfs.
+    export COMICE=/gpfs/dell1/nco/ops/com/omb/prod # No compath.py alias yet
+fi # [[ $GFSArchivedData == "yes" ]]
 
-  export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc}
-  export COMINenkf=${COMINenkf:-${COMINenkf_base}}
-  export COMINcfs=${COMINcfs:-${COMINcfs_base}}
-  
+export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc}
+export COMINenkf=${COMINenkf:-${COMINenkf_base}}
+export COMINcfs=${COMINcfs:-${COMINcfs_base}}
+
+# Paths for WaveWatch3
+export HOMEwave=$basesource
+export CODEwave=${CODEwave:-${HOMEgsm}/sorc/fv3gfs.fd/WW3/model}
+export EXECwave=${CODEwave}/exe
+#export COMICE=${COMICE:-/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod}
+# export COMWND=${COMWND:-/scratch4/NCEPDEV/rstprod/com/gens/prod}
+
 # export ROTDIR=${ROTDIR:-$HOMEdata/fv3init}   #for pre-generated warm start files, otherwise comment out
 #
 # #for pre-generated 2tsst files, otherwise comment this line out 
 # export SSTDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/data/tfcfs/outdata       
 
 # Using exglobal_fcst script from HOMEgefs instead of HOMEgsm
-  export fcstscript=$HOMEgefs/scripts/exglobal_fcst_nemsfv3gfs.sh
+# export fcstscript=$HOMEgefs/scripts/exglobal_fcst_nemsfv3gfs.sh
+

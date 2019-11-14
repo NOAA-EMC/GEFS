@@ -27,7 +27,7 @@ export NTHREADS_SIGCHGRS=2
 
 export FORECAST_SEGMENT=hr
 
-export memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc'
+# export memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc'
 
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}

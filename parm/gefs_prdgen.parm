@@ -66,7 +66,7 @@ export PRDGEN_STREAMS
 # 2.50°
 PRDGEN_GRID[res_2p50]=${PRDGEN_GRID[res_2p50]:-"2p5"}
 PRDGEN_GRID_SPEC[res_2p50]=${PRDGEN_GRID_SPEC[res_2p50]:-"latlon 0:144:2.5 90:73:-2.5"}
-PRDGEN_HOURS[res_2p50]=${PRDGEN_HOURS[res_2p50]:-"{0..${FHMAXHF}..${FHOUTHF}} {$(( $FHMAXHF + ${FHOUTLF}))..${fhmax}..${FHOUTLF}}"}
+PRDGEN_HOURS[res_2p50]=${PRDGEN_HOURS[res_2p50]:-"{0..${FHMAXHF}..${FHOUTLF}} {$(( $FHMAXHF + ${FHOUTLF}))..${fhmax}..${FHOUTLF}}"}
 PRDGEN_SUBMC[res_2p50]=${PRDGEN_SUBMC[res_2p50]:-"prd2p5"}
 PRDGEN_A_DIR[res_2p50]=${PRDGEN_A_DIR[res_2p50]:-"pgrb2a2p5"}
 PRDGEN_B_DIR[res_2p50]=${PRDGEN_B_DIR[res_2p50]:-"pgrb2b2p5"}
@@ -76,7 +76,7 @@ PRDGEN_B_PREFIX[res_2p50]=${PRDGEN_B_PREFIX[res_2p50]:-"pgrb2b.2p50."}
 # 1.00°
 PRDGEN_GRID[res_1p00]=${PRDGEN_GRID[res_1p00]:-"1p0"}
 PRDGEN_GRID_SPEC[res_1p00]=${PRDGEN_GRID_SPEC[res_1p00]:-"latlon 0:360:1.0 90:181:-1.0"}
-PRDGEN_HOURS[res_1p00]=${PRDGEN_HOURS[res_1p00]:-"{0..${FHMAXHF}..${FHOUTHF}} {$(( $FHMAXHF + ${FHOUTLF} ))..${fhmax}..${FHOUTLF}}"}
+PRDGEN_HOURS[res_1p00]=${PRDGEN_HOURS[res_1p00]:-"{0..${FHMAXHF}..${FHOUTLF}} {$(( $FHMAXHF + ${FHOUTLF} ))..${fhmax}..${FHOUTLF}}"}
 PRDGEN_SUBMC[res_1p00]=${PRDGEN_SUBMC[res_1p00]:-"prd1p0"}
 PRDGEN_A_DIR[res_1p00]=${PRDGEN_A_DIR[res_1p00]:-"pgrb2a1p0"}
 PRDGEN_B_DIR[res_1p00]=${PRDGEN_B_DIR[res_1p00]:-"pgrb2b1p0"}

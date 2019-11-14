@@ -49,7 +49,7 @@ def create_crontab(dicBase, OnlyForTest=False, cronint=5):
 
     rocotorun_args = rocotoruncmd + ' -d ' + sRocotoPath + '/' + sDB_FileName \
                      + ' -w ' + sRocotoPath + '/' + sXML_FileName
-    if system == 'theia' or system == 'wins':
+    if system == 'theia' or system == 'wins' or system == 'hera':
         crontab_string += crontab_usage
         crontab_string += crontab_time + rocotorun_args
     elif system == 'wcoss_ibm':
@@ -71,17 +71,17 @@ def create_crontab(dicBase, OnlyForTest=False, cronint=5):
         crontab_string += rocotorun_args
         crontab_string += ') > /dev/null 2>&1'
     elif system == "wcoss_dell_p3":
-        #crontab_string += crontab_usage
+        # crontab_string += crontab_usage
         import os
         if not os.path.exists(sRocotoPath + "/logs"):
             os.mkdir(sRocotoPath + "/logs")
         sBashFile = sRocotoPath + "/logs/crontab.sh"
         sLogFile = sRocotoPath + "/logs/crontab.log"
-        
+
         bash_file = open(sBashFile, 'w')
         bash_file.write("#!/bin/ksh --login\n")
         bash_file.write("set -x\n")
-        
+
         bash_file.write("\n")
         bash_file.write(". $MODULESHOME/init/bash                          2>/dev/null\n")
         bash_file.write("module load lsf/10.1                              2>/dev/null\n")
@@ -95,11 +95,11 @@ def create_crontab(dicBase, OnlyForTest=False, cronint=5):
         os.chmod(sBashFile, 0o755)
         crontab_string = ""
         crontab_string += crontab_time
-        #crontab_string += ' (. /usrx/local/prod/lmod/lmod/init/sh; ' \
+        # crontab_string += ' (. /usrx/local/prod/lmod/lmod/init/sh; ' \
         #                  'module use /gpfs/dell3/usrx/local/dev/emc_rocoto/modulefiles; ' \
         #                  'module load lsf/10.1; module load ruby/2.5.1 rocoto/complete;'
-        #crontab_string += rocotorun_args
-        #crontab_string += ') 1>>{0} 2>&1'.format(sRocotoPath + "/logs/crontab.log")
+        # crontab_string += rocotorun_args
+        # crontab_string += ') 1>>{0} 2>&1'.format(sRocotoPath + "/logs/crontab.log")
         crontab_string += sBashFile
         crontab_string += ' 1>>{0} 2>&1'.format(sRocotoPath + "/logs/crontab.log")
     else:
@@ -112,4 +112,3 @@ def create_crontab(dicBase, OnlyForTest=False, cronint=5):
     crontab_file.close()
 
     return
-

@@ -24,11 +24,11 @@ export KMP_AFFINITY=disabled
 #export MP_SHARED_MEMORY=no
 #export MEMORY_AFFINITY=core:1
 
-export gefsmpexec_mpmd="  mpirun -n 40 cfp mpmd_cmdfile"
+# export gefsmpexec_mpmd="  mpirun -n 40 cfp mpmd_cmdfile"
 
 # export for development runs only begin
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
+# export envir=${envir:-dev}
+# export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 
 # CALL executable job script here
