@@ -463,3 +463,15 @@ export assim_freq=6
 export increment=$ICSDIR/fv3_increment.nc
 
 $FORECASTSH
+ERR=$?
+
+if [ $ERR = 0 ]; then
+    msg="$job completed normally!"
+else
+    msg="FATAL ERROR: $job failed!"
+fi
+postmsg "$jlogfile" "$msg"
+
+echo `date` $0 `date -u` end
+
+exit $ERR
