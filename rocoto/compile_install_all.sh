@@ -108,12 +108,11 @@ if [ $CleanAll = "yes" ]; then
     cd ${sWS}/../sorc
     rm -rf ../exec
     rm -rf ../util/exec
-    rm -f ../fix
+    rm -f ../fix/fix_gefs
 
 fi # for CleanAll
 
 # for rocoto
-
 if [ $RunRocoto = "yes" ]; then
     cd $sWS
     if [ $machine = "hera" ]; then

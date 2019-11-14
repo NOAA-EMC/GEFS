@@ -30,23 +30,23 @@ pwd=$(pwd -P)
 #--model fix fields
 #------------------------------
 if [ $machine == "cray" ]; then
-    FIX_DIR="/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gefs/fix_sst721"
+    FIX_DIR="/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gefs/fix_sst721_short"
 elif [ $machine = "dell" ]; then
-    FIX_DIR="/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gefs/fix_sst721"
+    FIX_DIR="/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gefs/fix_sst721_short"
 elif [ $machine = "theia" ]; then
     FIX_DIR="/scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix_sst721"
 elif [ $machine = "hera" ]; then
-    FIX_DIR="/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix_sst721"
+    FIX_DIR="/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix_sst721_short"
 fi
 
 # Delete Fix folder and relink/recopy it
 cd ${pwd}/../
-if [[ -d fix ]]; then
+if [[ -d fix/fix_gefs ]]; then
     echo "Fix folder exists, deleting it..."
-    rm -f fix
+    rm -f fix/fix_gefs
 fi
 
-$LINK $FIX_DIR fix
+$LINK $FIX_DIR fix/fix_gefs
 
 exit 0
 

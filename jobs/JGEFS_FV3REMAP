@@ -96,7 +96,7 @@ export PARM_FV3DIAG=$PARMgsm/parm_fv3diag
 
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 export USHgefs=${USHgefs:-$HOMEgefs/ush}
-export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 # Run setpdy and initialize PDY variables

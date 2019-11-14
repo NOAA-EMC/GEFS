@@ -73,7 +73,7 @@ export FIXGLOBAL=$FIXgsm
 
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 export USHgefs=${USHgefs:-$HOMEgefs/ush}
-export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 
