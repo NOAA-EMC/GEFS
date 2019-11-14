@@ -40,7 +40,7 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 export gefsmpexec=" mpirun -n $total_tasks "
 export NTHREADS_SIGCHGRS=6
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec:-mpirun}
 export APRUN_CHGRES=${APRUN_CHGRES:-"mpirun -n 1 "}
 export APRUN_RECENT=${APRUN_RECENT:-"mpirun -n $total_tasks "}
 

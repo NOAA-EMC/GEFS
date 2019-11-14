@@ -36,10 +36,9 @@ export total_tasks=6
 export OMP_NUM_THREADS=4
 export taskspernode=6
 
-export FORECAST_SEGMENT=hr
 export DO_LOW_RES=
 
-export gefsmpexec_mpmd="  aprun -b -j1 -n6 -N6 -d4 -cc depth  cfp mpmd_cmdfile"
+export gefsmpexec_mpmd="  aprun -b -j1 -n${total_tasks} -N${taskspernode} -d${OMP_NUM_THREADS} -cc depth  cfp mpmd_cmdfile"
 
 # export for development runs only begin
 export envir=${envir:-dev}
@@ -48,4 +47,4 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 export RERUN=NO
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_PRDGEN
+. $SOURCEDIR/jobs/JGEFS_PRDGEN

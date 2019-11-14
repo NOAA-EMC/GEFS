@@ -1,0 +1,16 @@
+#%Module#####################################################
+## gefs_anom2_fcst component - Theia
+#############################################################
+module use /scratch3/NCEPDEV/nwprod/lib/modulefiles
+
+module load intel/18.1.163
+
+module load g2/v3.1.0
+module load w3nco/v2.0.6
+module load bacio/v2.0.1
+
+##
+export FCMP=ifort
+export LDFLAGSM=
+export OMPFLAGM=
+

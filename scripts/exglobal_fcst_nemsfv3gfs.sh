@@ -530,7 +530,7 @@ use_hyper_thread:        ${hyperthread:-".false."}
 ncores_per_node:         $cores_per_node
 restart_interval:        $restart_interval
 restart_run:             ${restart_run:-".false."}
-output_1st_tstep:        ${output_1st_tstep:-".false."}
+output_1st_tstep_rst:        ${output_1st_tstep_rst:-".false."}
 restart_hour:            ${restart_hour:-0}
 
 quilting:                $QUILTING
@@ -717,6 +717,7 @@ cat > input.nml <<EOF
   redrag       = ${redrag:-".true."}
   dspheat      = ${dspheat:-".true."}
   hybedmf      = ${hybedmf:-".true."}
+  lheatstrg      = ${lheatstrg:-".false."}
   random_clds  = ${random_clds:-".true."}
   trans_trac   = ${trans_trac:-".true."}
   cnvcld       = ${cnvcld:-".true."}
@@ -731,6 +732,8 @@ cat > input.nml <<EOF
   nst_anl      = $nst_anl
   psautco      = ${psautco:-"0.0008,0.0005"}
   prautco      = ${prautco:-"0.00015,0.00015"}
+  lgfdlmprad   = ${lgfdlmprad:-".true."}
+  effr_in      = ${effr_in:-".true."}
   $gfs_physics_nml
 /
 
