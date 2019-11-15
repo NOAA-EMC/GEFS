@@ -88,12 +88,12 @@ if [[ $GFSArchivedData == "yes" ]]; then
     # export HOMEdata=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common
 
     if [[ -d /dcom && -d /hwrf ]]; then #WCOSS
-        export COMINenkf_base=$HOMEdata/enkf.gdas.
+        export COMINenkf_base=$HOMEdata/enkfgdas.
         export COMINgfs_base=$HOMEdata/gfs.
         export COMINcfs_base=/ensemble/noscrub/Walter.Kolczynski/gefs_input/cfs_2_sst/cfs.
         export COMICE=${COMICE:-/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod}
     else
-        export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
+        export COMINenkf_base=$HOMEdata/fv3init/enkfgdas.
         export COMINgfs_base=$HOMEdata/fv3init/gfs.
         export COMINcfs_base=$HOMEdata/cfs/cfs.
         export COMICE=$HOMEdata/sea_ice

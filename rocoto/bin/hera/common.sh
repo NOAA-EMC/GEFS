@@ -20,13 +20,18 @@ export MP_EUILIB=us
 
 export KMP_STACKSIZE=1024m
 export KMP_AFFINITY=disabled
-#export SLURM_NTASKS=1
-export gefsmpexec="srun -n $SLURM_NTASKS"
-export gefsmpexec_mpmd="srun -n $SLURM_NTASKS /scratch2/NCEPDEV/ensemble/noscrub/common/soft/mpiserial.cd/mpiserial" 
-# /scratch3/NCEPDEV/nwprod/util/exec/mpiserial"
+
+export NTASKS=$SLURM_NTASKS
+
+export gefsmpexec="srun -n $NTASKS"
+export gefsmpexec_mpmd="srun -n $NTASKS /scratch2/NCEPDEV/ensemble/noscrub/common/soft/mpiserial.cd/mpiserial"
+export wavempexec="srun -n" 
+export wave_mpmd="/scratch2/NCEPDEV/ensemble/noscrub/common/soft/mpiserial.cd/mpiserial" # -m"
+
+#export errchk="eval if [[ \$err != 0 ]]; then exit \$err; fi"
 
 export APRUNC="srun -n 1"
-export APRUN_RECENT="srun -n $SLURM_NTASKS"
+export APRUN_RECENT="srun -n $NTASKS"
 export APRUN_CHGRES="srun -n 1"
 export aprun_gec00="srun -n 1"
 export APRUN_CALCINC="srun -n 1"

@@ -149,6 +149,8 @@ export nst_anl=${nst_anl:-".true."}
 export nstf_name=${nstf_name:-"2,0,0,0,0"}
 export psautco=${psautco:-"0.0008,0.0005"}
 export prautco=${prautco:-"0.00015,0.00015"}
+export lgfdlmprad=.true.
+export effr_in=.true.
 
 #FV3 imp_microphysics
 export dnats=0

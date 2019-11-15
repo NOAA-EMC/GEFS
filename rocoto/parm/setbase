@@ -60,25 +60,24 @@ if [ -d /scratch2/NCEPDEV ]; then
     echo "Using settings for Hera"
     export machine='HERA'
     
-    export HOMEDIR=/scratch2/NCEPDEV/ensemble/save/Walter.Kolczynski/global-workflow/gefs_v12_retro2
-    export HOMEDIR1=$HOMEDIR
+    export HOMEDIR=/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gfs/lgan_fv3_ww3_fb95cd3c_20191105
     export HOMERFC=/scratch2/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
 
-    #export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/common
-    export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/Walter.Kolczynski/gefs_input
-    export COMINenkf_base=$HOMEdata/gfs_15/enkfgdas.
-    export COMINgfs_base=$HOMEdata/gfs_15/gfs.
-    export COMINcfs_base=$HOMEdata/cfs_2_sst/cfs.
+    export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/common
+    # export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/Walter.Kolczynski/gefs_input
+    # export COMINenkf_base=$HOMEdata/gfs_15/enkfgdas.
+    # export COMINgfs_base=$HOMEdata/gfs_15/gfs.
+    # export COMINcfs_base=$HOMEdata/cfs_2_sst/cfs.
 
     # Location of WW3 executables
     export EXECcode=$HOMEDIR/sorc/fv3gfs.fd/WW3/model/exe
     # Wave model settings: ice data dir
     # export COMICE=/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod
-    export COMICE=$HOMEdata/sea_ice
+    # export COMICE=$HOMEdata/sea_ice
 
     export COMROOThps=${HOMEdata}
     export COMROOTp1=/scratch2/NCEPDEV/rstprod/com 
-    export PATH=$PATH:/scratch2/NCEPDEV/nwprod/NCEPLIBS/util/prod_util.v1.1.0/ush
+    export PATH=$PATH:/scratch2/NCEPDEV/nwprod/NCEPLIBS/utils/prod_util.v1.1.0/ush
 #    export EXECutil=${EXECutil:-/scratch4/NCEPDEV/global/save/glopara/nwpara/util/exec}
     #export PATH=$PATH:$EXECutil #:/scratch3/NCEPDEV/nwprod/lib/prod_util/v1.1.0/ush
 
@@ -92,7 +91,6 @@ elif [ -d /scratch4/NCEPDEV ]; then
     export machine='THEIA'
 
     export HOMEDIR=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/global-workflow/lgan_fv3_ww3_hera # Copuled version
-    export HOMEDIR1=$HOMEDIR
     export HOMERFC=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
     
     export HOMEdata=/scratch4/NCEPDEV/ensemble/noscrub/common
@@ -128,7 +126,7 @@ elif [[ -d /gpfs/hps && -e /etc/SuSE-release ]] ; then
     echo "Using settings for WCOSS Cray"
     export machine='WCOSS_C'
     export JOBPHASE=
-    export HOMEDIR=/gpfs/hps3/emc/ensemble/save/Walter.Kolczynski/global-workflow/gefs_v12_retro2
+    export HOMEDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gfs/lgan_fv3_ww3_fb95cd3c_20191105
     export HOMEtrak=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
     export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
     
@@ -140,19 +138,19 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     echo "Using settings for WCOSS DELL Phase III"
     export machine='WCOSS_DELL_P3'
     export JOBPHASE=
-    export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/save/global-workflow/gefs_v12_retro2
+    export HOMEDIR=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gfs/lgan_fv3_ww3_fb95cd3c_20191105
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
-    # export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
-    export HOMEdata=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/gefs_input
-    export COMINenkf_base=$HOMEdata/gfs_15/enkfgdas.
-    export COMINgfs_base=$HOMEdata/gfs_15/gfs.
-    export COMINcfs_base=$HOMEdata/cfs_2_sst/cfs.
+    export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
+    #export HOMEdata=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/gefs_input
+    #export COMINenkf_base=$HOMEdata/gfs_15/enkfgdas.
+    #export COMINgfs_base=$HOMEdata/gfs_15/gfs.
+    #export COMINcfs_base=$HOMEdata/cfs_2_sst/cfs.
 
     # Location of WW3 executables
     export EXECcode=$HOMEDIR/sorc/fv3gfs.fd/WW3/model/exe
     # Wave model settings: ice data dir
     # export COMICE=/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod
-    export COMICE=$HOMEdata/sea_ice
+    # export COMICE=$HOMEdata/sea_ice
     
 fi
 

@@ -93,6 +93,13 @@ env | sort
 ###################################
 
 $HOMEwave/scripts/exwave_gwes_prep.sh
+err=$?
+if [ $err -ne 0 ]; then
+    msg="FATAL ERROR: ex-script of GWES_PREP failed!"
+else
+    msg="$job completed normally!"
+fi
+postmsg "$jlogfile" "$msg"
 
 ###################################
 # Remove temp directories
@@ -104,3 +111,4 @@ if [ "$KEEPDATA" != "YES" ]; then
 fi
 date
 
+exit $err
