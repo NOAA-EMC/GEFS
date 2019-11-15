@@ -42,9 +42,6 @@ export gefsmpexec=" aprun -b -j1 -n528 -N24 -d1 -cc depth "
 export NTHREADS_SIGCHGRS=2
 
 
-
-
-
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_FORECAST_FV3
 
