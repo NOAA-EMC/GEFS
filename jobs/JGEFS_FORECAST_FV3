@@ -98,6 +98,8 @@ if [[ $FORECAST_SEGMENT = hr ]] ; then
 elif [[ $FORECAST_SEGMENT = lr ]] ; then
 	echo "Integrate the model for the Longer Range segment"
 	FHINI=$fhmaxh
+    export fhrestart=$fhmaxh
+    export cplwav=.false.
 else
 	msg="FATAL ERROR:  Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
 	echo "`date`   $msg"
@@ -151,9 +153,6 @@ if [[ $FORECAST_SEGMENT = lr ]] ; then
 	export RERUN="YES"
 	FHINI=${FHINI:-$fhmaxh}
 	export CDATE_RST=$($NDATE +$fhmaxh $PDY$cyc)
-fi
-if [[ $FORECAST_SEGMENT = lr ]] ; then
-	export cplwav=".false."
 fi
 if [[ $RERUN = RERUN ]] ; then
 	if [[ $FORECAST_SEGMENT = hr ]] ; then
