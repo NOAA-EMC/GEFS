@@ -152,6 +152,9 @@ if [[ $FORECAST_SEGMENT = lr ]] ; then
 	FHINI=${FHINI:-$fhmaxh}
 	export CDATE_RST=$($NDATE +$fhmaxh $PDY$cyc)
 fi
+if [[ $FORECAST_SEGMENT = lr ]] ; then
+	export cplwav=".false."
+fi
 if [[ $RERUN = RERUN ]] ; then
 	if [[ $FORECAST_SEGMENT = hr ]] ; then
 		FHINI=${FHINI:-0}
