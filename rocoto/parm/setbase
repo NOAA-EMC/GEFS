@@ -150,10 +150,6 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
 
     export COMROOThps=${HOMEdata}
 
-    export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
-    export COMINgfs_base=$HOMEdata/fv3init/gfs.
-    export COMINcfs_base=$HOMEdata/cfs/cfs.
-
     # Location of WW3 executables
     export EXECcode=$HOMEDIR/sorc/fv3gfs.fd/WW3/model/exe
     # Wave model settings: ice data dir
