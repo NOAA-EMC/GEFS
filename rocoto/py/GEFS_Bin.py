@@ -345,7 +345,7 @@ def rw_bin_forecast_high(taskname, dicBase):
 
     WHERE_AM_I = dicBase['WHERE_AM_I']
 
-    iTotal_Tasks, iNodes, iPPN, iTPP = gefs_xml_for_tasks.calc_fcst_resources(dicBase)
+    iTotal_Tasks, iNodes, iPPN, iTPP = gefs_xml_for_tasks.calc_fcst_resources(dicBase, taskname=taskname)
 
     # sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
@@ -359,19 +359,19 @@ def rw_bin_forecast_high(taskname, dicBase):
                 if sLine1.startswith("export gefsmpexec="):
                     sLine = 'export gefsmpexec=" aprun -b -j1 -n{0} -N{1} -d{2} -cc depth "\n'.format(iTotal_Tasks, iPPN, iTPP)
 
-            elif WHERE_AM_I == "theia":
-                if sLine1.startswith("export total_tasks="):
-                    sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
-
-                if sLine1.startswith("export OMP_NUM_THREADS="):
-                    sLine = 'export OMP_NUM_THREADS={0}\n'.format(iTPP)
-
-                if sLine1.startswith("export taskspernode"):
-                    sLine = 'export taskspernode={0}\n'.format(iPPN)
-
-            elif WHERE_AM_I == "wcoss_dell_p3":
-                if sLine1.startswith("export gefsmpexec="):
-                    sLine = 'export gefsmpexec=" mpirun -n {0} "\n'.format(iTotal_Tasks)
+            #elif WHERE_AM_I == "theia":
+            #    if sLine1.startswith("export total_tasks="):
+            #        sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
+            #
+            #    if sLine1.startswith("export OMP_NUM_THREADS="):
+            #        sLine = 'export OMP_NUM_THREADS={0}\n'.format(iTPP)
+            #
+            #    if sLine1.startswith("export taskspernode"):
+            #        sLine = 'export taskspernode={0}\n'.format(iPPN)
+            #
+            #elif WHERE_AM_I == "wcoss_dell_p3":
+            #    if sLine1.startswith("export gefsmpexec="):
+            #        sLine = 'export gefsmpexec=" mpirun -n {0} "\n'.format(iTotal_Tasks)
 
             sLines += sLine
             # fh.write(sLine)

@@ -123,11 +123,11 @@ def config_tasknames(dicBase):
             # ---post_high
             iTaskName_Num = Add_Subjobs_to_dicBase(dicBase, iTaskName_Num, taskname="post_high", sNSubJobs='N_SUBJOBS_POST_HIGH')
 
-            if dicBase['cplwav'] == ".true.":
-                # ---wave_post
-                iTaskName_Num += 1
-                sTaskName = "taskname_{0}".format(iTaskName_Num)
-                dicBase[sTaskName.upper()] = "gwes_post"
+            #if dicBase['cplwav'] == ".true.":
+            #    # ---wave_post
+            #    iTaskName_Num += 1
+            #    sTaskName = "taskname_{0}".format(iTaskName_Num)
+            #    dicBase[sTaskName.upper()] = "gwes_post"
 
             # ---prdgen_high
             iTaskName_Num += 1
@@ -138,6 +138,12 @@ def config_tasknames(dicBase):
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "ensstat_high"
+
+            if dicBase['cplwav'] == ".true.":
+                # ---wave_post
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "gwes_post"
 
         # #    <!-- CHGRES jobs -->
         if dicBase['RUN_CHGRES'].upper()[0] == "Y":
@@ -434,18 +440,35 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
         strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/../py/{0}.py</cyclestr></command>\n'.format(taskname)
     elif taskname in ['keep_data_atm', 'archive_atm', 'cleanup_atm', 'keep_data_wave', 'archive_wave', 'cleanup_wave']:
         strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/../py/{0}.py</cyclestr></command>\n'.format(taskname)
+    elif taskname in ['forecast_high']:
+        strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
+        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
+    elif taskname in ['forecast_low']:
+        strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
+        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/forecast_high.sh</cyclestr></command>\n'.format(taskname)
     elif taskname in ['prdgen_high']:
         strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
         strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
     elif taskname in ['prdgen_low']:
         strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
+        strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/prdgen_high.sh</cyclestr></command>\n'.format(taskname)
     elif taskname in ['prdgen_gfs']:
         strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/prdgen_high.sh</cyclestr></command>\n'
-    elif taskname in ['ensstat_high', 'ensstat_low']:
+    elif taskname in ['post_high']:
+        strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
+        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
+    elif taskname in ['post_low']:
+        strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
+        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/post_high.sh</cyclestr></command>\n'.format(taskname)
+    elif taskname in ['ensstat_high']:
+        strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
         strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
+    elif taskname in ['ensstat_low']:
+        strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
+        strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/ensstat_high.sh</cyclestr></command>\n'.format(taskname)
     elif taskname.startswith("post_high_"):
         strings += (create_envar(name="SUBJOB", value=taskname.replace("post_high_", ""), sPre=sPre_2))
+        strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
         strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format("post_high")
     elif taskname.startswith("ensavg_nemsio_"):
         strings += (create_envar(name="SUBJOB", value=taskname.replace("ensavg_nemsio_", ""), sPre=sPre_2))
@@ -668,7 +691,7 @@ def write_to_ent(taskname, dicBase, GenTaskEnt=False):
     # print("exit")
 
 # =======================================================
-def calc_fcst_resources(dicBase):
+def calc_fcst_resources(dicBase, taskname="forecast_high"):
     import math
 
     layout_x = int(dicBase['layout_x'.upper()])
@@ -684,8 +707,9 @@ def calc_fcst_resources(dicBase):
     iTotal_Tasks = layout_x * layout_y * 6 + WRITE_GROUP * WRTTASK_PER_GROUP
 
     if dicBase['cplwav'] == ".true.":
-        iWaveThreads = int(dicBase['NPE_WAV'])
-        iTotal_Tasks = iTotal_Tasks + iWaveThreads
+        if taskname == "forecast_high":
+            iWaveThreads = int(dicBase['NPE_WAV'])
+            iTotal_Tasks = iTotal_Tasks + iWaveThreads
 
     iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
     iNodes = int(math.ceil( iTotal_Tasks * 1.0 / iPPN))
@@ -855,9 +879,20 @@ def get_param_of_task(dicBase, taskname):
             if taskname.lower() == "ensstat_low":
                 npert = int(dicBase["NPERT"])
                 sDep = '<and>'
+                ifhmaxh = int(dicBase["fhmaxh".upper()])
+                iFHOUTHF = int(dicBase["FHOUTHF"])
+                iFHOUTLF = int(dicBase["FHOUTLF"])
+                iFHMAXHF = int(dicBase["FHMAXHF"])
+
+                iStartHourLF = 0
+                if iFHMAXHF >= ifhmaxh:
+                    iStartHourLF = ifhmaxh + iFHOUTHF
+                else:
+                    iStartHourLF = ifhmaxh + iFHOUTLF
+
                 for i in range(npert):
-                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.prdgen.control.f{1:03}</cyclestr></datadep>'.format(i + 1, int(dicBase["fhmaxh".upper()]) + int(dicBase["FHOUTHF"]))
-                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.prdgen.control.f{0:03}</cyclestr></datadep>'.format(int(dicBase["fhmaxh".upper()]) + int(dicBase["FHOUTHF"]))
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.prdgen.control.f{1:03}</cyclestr></datadep>'.format(i + 1, iStartHourLF)
+                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.prdgen.control.f{0:03}</cyclestr></datadep>'.format(iStartHourLF)
                 sDep += '\n</and>'
 
             # For extractvars
@@ -1011,7 +1046,7 @@ def get_param_of_task(dicBase, taskname):
     # Forecast can be derive from the parm items
     if taskname == 'forecast_high' or taskname == 'forecast_low':
 
-        iTotal_Tasks, iNodes, iPPN, iTPP = calc_fcst_resources(dicBase)
+        iTotal_Tasks, iNodes, iPPN, iTPP = calc_fcst_resources(dicBase, taskname=taskname)
 
         WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
         

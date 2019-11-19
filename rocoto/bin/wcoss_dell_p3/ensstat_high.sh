@@ -19,7 +19,6 @@ export MPICH_VERSION_DISPLAY=1
 export MPICH_CPUMASK_DISPLAY=1
 
 # export KMP_STACKSIZE=1024m
-export OMP_NUM_THREADS=4
 export KMP_AFFINITY=disabled
 
 export MP_EUIDEVICE=sn_all
@@ -31,7 +30,7 @@ export MEMORY_AFFINITY=core:4
 export OMP_NUM_THREADS=4
 # export taskspernode=6
 
-export FORECAST_SEGMENT=hr
+#export FORECAST_SEGMENT=hr
 
 # export for development runs only begin
 # export envir=${envir:-dev}

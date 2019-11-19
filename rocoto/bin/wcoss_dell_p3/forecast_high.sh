@@ -11,7 +11,7 @@ ulimit -a
 export KMP_STACKSIZE=2048M #Overrides common.sh
 export KMP_AFFINITY=scatter
 
-export FORECAST_SEGMENT=hr
+#export FORECAST_SEGMENT=hr
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_FORECAST_FV3

@@ -35,7 +35,7 @@ export OMP_NUM_THREADS=2
 # export taskspernode=12
 export POSTGRB2TBL=$G2TMPL_SRC/params_grib2_tbl_new
 
-export FORECAST_SEGMENT=hr
+#export FORECAST_SEGMENT=hr
 
 # export envir=${envir:-dev}
 # export RUN_ENVIR=${RUN_ENVIR:-dev}
