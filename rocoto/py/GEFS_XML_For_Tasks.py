@@ -1052,18 +1052,18 @@ def get_param_of_task(dicBase, taskname):
 
             # For GEMPAK
             if taskname.lower() == "gempak":
-                if DoesTaskExist(dicBase, "prdgen_low"):
-                    sDep = '<metataskdep metatask="prdgen_low"/>'
-                elif DoesTaskExist(dicBase, "prdgen_high"):
+                #if DoesTaskExist(dicBase, "prdgen_low"):
+                #    sDep = '<metataskdep metatask="prdgen_low"/>'
+                if DoesTaskExist(dicBase, "prdgen_high"):
                     sDep = '<metataskdep metatask="prdgen_high"/>'
                 else:
                     sDep = ''
 
             # For AVGSPR_GEMPAK
             if taskname.lower() == "avgspr_gempak":
-                if DoesTaskExist(dicBase, "ensstat_low"):
-                    sDep = '<taskdep task="ensstat_low"/>'
-                elif DoesTaskExist(dicBase, "ensstat_high"):
+                #if DoesTaskExist(dicBase, "ensstat_low"):
+                #    sDep = '<taskdep task="ensstat_low"/>'
+                if DoesTaskExist(dicBase, "ensstat_high"):
                     sDep = '<taskdep task="ensstat_high"/>'
                 else:
                     sDep = ''
