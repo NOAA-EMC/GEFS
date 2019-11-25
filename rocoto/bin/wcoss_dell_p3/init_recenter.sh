@@ -3,7 +3,7 @@
 
 # EXPORT list here
 set -x
-export NODES=7
+#export NODES=7
 
 ulimit -s unlimited
 ulimit -a
@@ -11,7 +11,7 @@ ulimit -a
 export KMP_AFFINITY=disabled
 
 # export total_tasks=6
-export OMP_NUM_THREADS=7
+#export OMP_NUM_THREADS=${GEFS_TPP:-7}
 # export taskspernode=4
 
 # export for development runs only begin
@@ -24,7 +24,7 @@ export OMP_NUM_THREADS=7
 # export APRUN_CHGRES="mpirun -n 1"
 
 # export aprun_gec00="mpirun -n 1 "
-export NTHREADS_SIGCHGRS=6
+export NTHREADS_SIGCHGRS=${GEFS_TPP:-6}
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_INIT_RECENTER

@@ -21,24 +21,17 @@ export MPICH_CPUMASK_DISPLAY=1
 export KMP_STACKSIZE=1024m
 export KMP_AFFINITY=disabled
 
-#export OMP_NUM_THREADS=4
-export KMP_AFFINITY=disabled
-
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:2
 
-export FORECAST_SEGMENT=hr
 
 # export for development runs only begin
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
+#export envir=${envir:-dev}
+#export RUN_ENVIR=${RUN_ENVIR:-dev}
 
-
-
-
-export gefsmpexec=" aprun -b -j1 -n528 -N24 -d1 -cc depth "
+#export gefsmpexec=" aprun -b -j1 -n408 -N24 -d1 -cc depth "
 export NTHREADS_SIGCHGRS=2
 
 

@@ -18,7 +18,6 @@ export MPICH_VERSION_DISPLAY=1
 export MPICH_CPUMASK_DISPLAY=1
 
 # export KMP_STACKSIZE=1024m
-export OMP_NUM_THREADS=1
 export KMP_AFFINITY=disabled
 
 export MP_EUIDEVICE=sn_all
@@ -28,7 +27,7 @@ export MEMORY_AFFINITY=core:1
 
 # export NODES=20
 # export total_tasks=40
-export OMP_NUM_THREADS=1
+#export OMP_NUM_THREADS=${GEFS_TPP:-1}
 # export taskspernode=2
 
 # export gefsmpexec_mpmd="  mpirun -n $total_tasks cfp mpmd_cmdfile"

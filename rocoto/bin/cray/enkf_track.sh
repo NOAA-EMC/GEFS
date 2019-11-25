@@ -24,13 +24,7 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:1
 
-export gefsmpexec_mpmd="  aprun -b -j1 -n40 -N20 -d1 -cc depth  cfp mpmd_cmdfile"
-
-# export for development runs only begin
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
-
+#export gefsmpexec_mpmd="  aprun -b -j1 -n40 -N20 -d1 -cc depth  cfp mpmd_cmdfile"
 
 # CALL executable job script here
-
 $SOURCEDIR/jobs/JGEFS_ENKF_TRACK

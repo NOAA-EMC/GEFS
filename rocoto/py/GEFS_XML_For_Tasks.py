@@ -434,6 +434,10 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
             strings += (create_envar(name="RUNMEM", value="gegfs", sPre=sPre_2))
     # -------------------RUNMEM-------------------
 
+    #\/ -------------------Add Source Vars----------
+    strings += AddSourceVarsToXML_ENT(sNodes, dicBase, taskname, sPre_2)
+    #/\ -------------------Add Source Vars----------
+
     # -------------------Other envar and command-------------------
     if taskname in ['keep_init', 'copy_init']:
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
@@ -500,6 +504,54 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
 
     return strings
 
+# =======================================================
+def AddSourceVarsToXML_ENT(sNodes, dicBase, taskname, sPre_2):
+    #print(sNodes)
+    #print(taskname)
+    
+    strings = ""
+    GEFS_NODES = 1
+    GEFS_PPN = 1
+    GEFS_TPP = 1
+    
+    sNodes_3 = sNodes.split(":")
+    if len(sNodes_3) == 1:
+        if sNodes_3[0].startswith("ppn="):
+            GEFS_PPN = int(sNodes_3[0].split("ppn=")[1])
+        elif sNodes_3[0].startswith("tpp="):
+            GEFS_TPP = int(sNodes_3[0].split("tpp=")[1])
+        else:
+            GEFS_NODES = int(sNodes_3[0])
+    elif len(sNodes_3) == 2:
+        GEFS_NODES = int(sNodes_3[0])
+        if sNodes_3[1].startswith("ppn="):
+            GEFS_PPN = int(sNodes_3[1].split("ppn=")[1])
+        if sNodes_3[1].startswith("tpp="):
+            GEFS_TPP = int(sNodes_3[1].split("tpp=")[1])
+    elif len(sNodes_3) == 3:
+        GEFS_NODES = int(sNodes_3[0])
+        if sNodes_3[1].startswith("ppn="):
+            GEFS_PPN = int(sNodes_3[1].split("ppn=")[1])
+        if sNodes_3[2].startswith("tpp="):
+            GEFS_TPP = int(sNodes_3[2].split("tpp=")[1])
+    else:
+        print("Please check the format of your sNodes")
+        strings = "Wrong Format"
+        return strings
+       
+    if taskname in ["forecast_high", "forecast_low"]:
+        GEFS_TPP = int(dicBase['parallel_threads'.upper()])
+
+    GEFS_NTASKS = GEFS_NODES * GEFS_PPN
+    GEFS_NCORES_PER_NODE = GEFS_PPN * GEFS_TPP
+ 
+    strings += (create_envar(name="GEFS_NTASKS", value="{0}".format(GEFS_NTASKS), sPre=sPre_2))
+    strings += (create_envar(name="GEFS_NCORES_PER_NODE", value="{0}".format(GEFS_NCORES_PER_NODE), sPre=sPre_2))
+    strings += (create_envar(name="GEFS_TPP", value="{0}".format(GEFS_TPP), sPre=sPre_2))
+    strings += (create_envar(name="GEFS_PPN", value="{0}".format(GEFS_PPN), sPre=sPre_2))
+    strings += (create_envar(name="GEFS_NODES", value="{0}".format(GEFS_NODES), sPre=sPre_2))
+
+    return strings
 
 # =======================================================
 def GetIndexOfTask(dicBase, taskname):
@@ -1058,56 +1110,11 @@ def get_param_of_task(dicBase, taskname):
     # For gempak
     if taskname == "gempak":
         iTotal_Tasks, iNodes, iPPN, iTPP = calc_gempak_resources(dicBase)
-        #if (sVarName_nodes not in dicBase) and (sVarName_ppn not in dicBase):
-
-        #    ncores_per_node = Get_NCORES_PER_NODE(dicBase)
-        #    WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
-        #    npert = int(dicBase["NPERT"])
-        #    Total_tasks = npert + 1
-        #    nGEMPAK_RES = 1
-        #    if "GEMPAK_RES" in dicBase:
-        #        nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
-        #        Total_tasks *= nGEMPAK_RES
-        #
-        #    if (npert + 1) <= ncores_per_node:
-        #        iNodes = nGEMPAK_RES
-        #        iPPN = (npert + 1)
-        #    else:
-        #        if npert == 30 and WHERE_AM_I.upper() == "THEIA":
-        #            iPPN = 3
-        #            iNodes = 31
-        #        else:
-        #            if WHERE_AM_I.upper() == "CRAY":
-        #                iNodes = Total_tasks
-        #                iPPN = 1
-        #            else:
-        #                iPPN = ncores_per_node
-        #                iNodes = int(Total_tasks / (iPPN * 1.0) + 0.5)
-        #    iTPP = 1
         sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
     # For avgspr_gempak
     if taskname == "avgspr_gempak":
         iTotal_Tasks, iNodes, iPPN, iTPP = calc_avgspr_gempak_resources(dicBase)
-        #if (sVarName_nodes not in dicBase) and (sVarName_ppn not in dicBase):
-        #
-        #    ncores_per_node = Get_NCORES_PER_NODE(dicBase)
-        #    WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
-        #    npert = int(dicBase["NPERT"])
-        #    Total_tasks = 2
-        #    nGEMPAK_RES = 1
-        #    if "GEMPAK_RES" in dicBase:
-        #        nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
-        #        Total_tasks *= nGEMPAK_RES
-        #
-        #    if WHERE_AM_I.upper() == "CRAY":
-        #        iNodes = Total_tasks
-        #        iPPN = 1
-        #    else:
-        #        iNodes = 1
-        #        iPPN = Total_tasks
-        #
-        #    iTPP = 1
         sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
     return sWalltime, sNodes, sMemory, sJoin, sDep, sQueue, sPartition
