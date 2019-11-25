@@ -86,7 +86,7 @@ export GEMPAKgefs=${GEMPAKgefs:-$HOMEgefs/gempak}
 # Set up model and cycle specific variables
 ############################################
 export fstart=${fstart:-0}
-export fend=${fhmax:-384}
+export fend=${fhmaxh:-384}
 export finc=${finc:-6}
 export finc_0p50=${finc_0p50:-3}
 
@@ -150,10 +150,10 @@ do
     do
         if [ $resolution = "1p00" ]; then
             export COMIN_Folder=pgrb2a1p0
-            export fend=${fhmax:-384}
+            export fend=${fhmaxh:-384}
         elif [ $resolution = "0p50" ]; then
             export COMIN_Folder=pgrb2ap5
-            export fend=${fhmax:-384}
+            export fend=${fhmaxh:-384}
         elif [ $resolution = "0p25" ]; then
             export COMIN_Folder=pgrb2ap25
             export fend=${FHMAXHF:-240}

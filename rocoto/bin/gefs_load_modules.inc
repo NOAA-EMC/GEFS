@@ -43,6 +43,9 @@ elif [[ "$WHERE_AM_I" == cray ]] ; then
     module load NetCDF-intel-sandybridge/4.2
     # theend wave modules 
 	export PATH=$PATH:.
+    
+    . $GEFS_ROCOTO/bin/cray/common.sh
+
 elif [[ "$WHERE_AM_I" == theia ]]; then
     echo "Loading modules for theia"
     . /apps/lmod/lmod/init/ksh

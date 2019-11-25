@@ -30,7 +30,9 @@ fi
 # Establish an array of stream names which will establish the number and be used as keys for the associative arrays
 #
 typeset -a PRDGEN_STREAMS=${PRDGEN_STREAMS:-res_2p50 res_1p00 res_0p50 res_0p25_s1 res_0p25_s2 res_0p25_s3}
+typeset -a PRDGEN_STREAMS_LR=${PRDGEN_STREAMS_LR:-res_2p50 res_1p00 res_0p50}
 export PRDGEN_STREAMS
+export PRDGEN_STREAMS_LR
 
 #
 # Establish associative arrays for needed variables. 

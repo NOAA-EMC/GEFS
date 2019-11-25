@@ -10,7 +10,7 @@ export IOBUF_PARAMS=
 ulimit -s unlimited
 ulimit -a
 
-export OMP_NUM_THREADS=2
+#export OMP_NUM_THREADS=2
 
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:2
@@ -19,9 +19,9 @@ export MEMORY_AFFINITY=core:2
 module load NetCDF-intel-haswell/4.2
 module load nco-gnu-sandybridge/4.4.4
 
-export total_tasks=48
-export OMP_NUM_THREADS=2
-export taskspernode=12
+#export total_tasks=48
+#export OMP_NUM_THREADS=2
+#export taskspernode=12
 
 export FORECAST_SEGMENT=hr
 
