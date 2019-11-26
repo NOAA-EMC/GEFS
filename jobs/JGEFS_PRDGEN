@@ -117,7 +117,7 @@ case $FORECAST_SEGMENT in
 		;;
 	*)
 		start_hour=0
-		end_hour=${fhmax}
+		end_hour=${fhmaxh}
 		;;
 esac # $FORECAST_SEGMENT in
 
