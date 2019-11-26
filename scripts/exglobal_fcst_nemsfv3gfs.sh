@@ -955,6 +955,8 @@ if [ $MEMBER -gt 0 ]; then
   ntrunc = $JCAP_STP
   lon_s = $LONB_STP
   lat_s = $LATB_STP
+  fhstoch = ${fhstoch:-"-999.0"} 
+  stochini = ${stochini:-".false."}
 EOF
 
   if [ $DO_SKEB = "YES" ]; then

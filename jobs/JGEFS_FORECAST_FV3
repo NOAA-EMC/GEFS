@@ -22,6 +22,7 @@ echo "ENS_NUM=$ENS_NUM"
 export pid=$$
 export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
+mkdir -p $DATA/INPUT
 cd $DATA
 
 ############################
@@ -134,6 +135,7 @@ mkdir -m 775 -p $COMOUT/$cyc/misc/fcst
 mkdir -m 775 -p $COMOUT/$cyc/restart/$mem
 
 mkdir -m 755 -p $GESIN/$mem/RESTART
+
 #ln -s $GESOUT/$mem/RESTART $DATA/RESTART
 
 export ERRSCRIPT=err_chk
@@ -202,12 +204,22 @@ export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 # Forecast Input Variables
 #
 . $PARMgefs/gefs_fcst.parm
+export fhstoch=$FHMAX
+
+if [[ $FORECAST_SEGMENT = hr ]] ; then
+#	(( FHMAX = FHMAX + FHOUTLF ))
+	(( FHMAX = FHMAX + 1 ))
+fi
+
+export fhstoch=${fhstoch:-"-999.0"}  # forecast hour to dump random patterns
+export stochini=${stochini:-".false."}  # true= read in pattern, false=initialize from seed
 
 if [[ $RERUN = "YES" ]] ; then
 	export warm_start=.true.
 	export restart_hour=$FHMIN
 	export restart_run=.true.    
 	export output_1st_tstep=.true.
+	export stochini=.true.
 fi
 #
 # Forecast Input Variables
@@ -414,8 +426,20 @@ export FIX_AM=$FIX_AM
 export assim_freq=6
 export increment=$ICSDIR/fv3_increment.nc
 
+if [[ $FORECAST_SEGMENT = lr ]] ; then
+	cp -pr $GESIN/$mem/RESTART/stoch_out.F* $DATA/stoch_ini 
+fi
+
 $FORECASTSH
 ERR=$?
+
+if [[ $FORECAST_SEGMENT = hr ]] ; then
+	cp -pr $DATA/stoch_out.F* $GESIN/$mem/RESTART  
+# 	fhr=$(printf "%03.0f" $FHMAX)
+#	mv $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio_hr
+#	mv $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio_hr
+#	mv $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio_hr
+fi
 
 if [ $ERR = 0 ]; then
     msg="$job completed normally!"
