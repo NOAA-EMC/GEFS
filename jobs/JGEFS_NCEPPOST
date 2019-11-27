@@ -41,7 +41,7 @@ export RUN=${RUN:-gefs}
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -110,8 +110,8 @@ export CHGRESEXEC=$EXECgsm/global_chgres
 #export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
 export POSTGPSH=${POSTGPSH:-$USHpost/gfs_nceppost.sh}
 # RLW 20150622 test new version of post executable
-export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
-#export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/gfs_ncep_post}
+# export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
+export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/gfs_ncep_post}
 export nemsioget=$EXECgsm/nemsio_get
 export SIGHDR=$nemsioget
 #echo in $0: POSTGPSH=$POSTGPSH
@@ -262,9 +262,6 @@ export FHMAXHF=${FHMAXHF:-240}
 export FHOUTHF=${FHOUTHF:-3}
 export FHOUTLF=${FHOUTLF:-6}
 
-J1=`echo $SUBJOB | cut -c1-1` 
-J2=`echo $SUBJOB | cut -c2-2` 
-
 export DOANALYSIS=NO
 case $FORECAST_SEGMENT in
     (hr)
@@ -280,40 +277,36 @@ case $FORECAST_SEGMENT in
 esac
 
 export SHOUR=$SHOUR
+export FHOUR=$FHOUR
 export FHMAX_HF=$FHMAXHF
 export FHOUT_HF=$FHOUTHF
-export FHOUT=$FHOUTLF
+export FHOUT_LF=$FHOUTLF
+export SHOUR_LF=$FHMAX_HF
 
-case $J1 in
-    (2) 
-        export FHOUT_HF=$(($FHOUTHF+$FHOUTHF));
-        export FHOUT=$(($FHOUTLF+$FHOUTLF));;
-    (3) 
-        export FHOUT_HF=$(($FHOUTHF+$FHOUTHF+$FHOUTHF));
-        export FHOUT=$(($FHOUTLF+$FHOUTLF+$FHOUTLF));;
-    (*)
-        ;;
-esac
-case $J2 in
-    (A) 
-        export SHOUR=$SHOUR;
-        export FHMAX_HF=$FHMAXHF;;
-    (B) 
-        export SHOUR=$(($SHOUR+$FHOUTHF));
-        export FHMAX_HF=$(($FHMAXHF+$FHOUTLF));;
-    (C) 
-        export SHOUR=$(($SHOUR+$FHOUTHF+$FHOUTHF));
-        export FHMAX_HF=$(($FHMAXHF+$FHOUTLF+$FHOUTLF));;
-esac
+if [[ -n $SUBJOB ]]; then
+    J1=`echo $SUBJOB | cut -c1-1`
+    J2=`echo $SUBJOB | cut -c2-2`
+    iJ2=`printf '%d\n' "'$J2"`
+    iJ2=$((iJ2-65))
+
+    export FHOUT_HF=$((FHOUTHF*J1))
+    export FHOUT_LF=$(($FHOUTLF*J1))
+
+    export SHOUR=$(($SHOUR+$FHOUTHF*iJ2))
+    #export FHMAX_HF=$(($FHMAXHF+$FHOUTLF*iJ2))
+    export SHOUR_LF=$(($FHMAXHF+$FHOUTLF*iJ2))
+fi
 
 echo FORECAST_SEGMENT=$FORECAST_SEGMENT
 echo SUBJOB=$SUBJOB
 echo DOANALYSIS=$DOANALYSIS
+
 echo SHOUR=$SHOUR
 echo FHOUR=$FHOUR
-echo FHOUT=$FHOUT
 echo FHOUT_HF=$FHOUT_HF
+echo FHOUT_LF=$FHOUT_LF
 echo FHMAX_HF=$FHMAX_HF
+echo SHOUR_LF=$SHOUR_LF
 
 export DO_HD_PGRB=NO
 export HDMAX=00
@@ -353,6 +346,7 @@ echo
 env | sort
 echo
 
+ERR=0
 #################################
 # Run from $SHOUR to $FHOUR
 #################################
@@ -361,7 +355,7 @@ if test $SHOUR -le $FHOUR; then
     export DO_LOW_RES=YES 
     export POSTGPVARS=$POSTGPVARS_HIGH
 
-    $HOMEgefs/scripts/exgefs_nceppost.sh.ecf
+    $HOMEgefs/scripts/exgefs_nceppost.sh.ecf $SHOUR $FHOUR $FHOUT_HF $FHOUT_LF $FHMAX_HF $SHOUR_LF
     ERR=$?
     if [ $ERR -ne 0 ]; then
         msg="FATAL ERROR: ex-script of GEFS_NCEPPOST failed!"

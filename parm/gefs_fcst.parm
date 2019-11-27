@@ -10,14 +10,14 @@ if [[ $FORECAST_SEGMENT = lr ]]; then
 fi
 
 #FV3 
-layout_x=${layout_x:-4}
+layout_x=${layout_x:-8}
 layout_y=${layout_y:-8}
 export LEVS=${LEVS:-65}
 
 #Writing out 
 export QUILTING=.true.
-export WRITE_GROUP=${WRITE_GROUP:-2}
-export WRTTASK_PER_GROUP=${WRTTASK_PER_GROUP:-24}
+export WRITE_GROUP=${WRITE_GROUP:-1}
+export WRTTASK_PER_GROUP=${WRTTASK_PER_GROUP:-64}
 export NUM_FILES=2
 export OUTPUT_GRID=${FV3OUT_GRID:-"gaussian_grid"}
 export WRITE_NEMSIOFILE=.true.
@@ -29,12 +29,9 @@ export NSOUT=0
 
 # CPU geopmetry
 export ntiles=${ntiles:-6}
-npes=$(( ${layout_x} * ${layout_y} * 6 + ${WRITE_GROUP} * ${WRTTASK_PER_GROUP} ))
-tasks=$npes
-export NTASKS_FV3=$tasks
-export npe_fv3=$tasks
+export NTASKS_FV3=$(( ${layout_x} * ${layout_y} * 6 + ${WRITE_GROUP} * ${WRTTASK_PER_GROUP} ))
+export npe_fv3=$NTASKS_FV3
 export npe_node_max
-export npe_fv3
 
 #PE geometry
 export hyperthread=${hyperthread:-".false."}
@@ -57,31 +54,30 @@ else
    export hyperthread=".false."
    export j_opt="-j 1"
 fi
-#APRUN="aprun -n $tasks -N $task_per_node -d $nth_fv3 $j_opt -cc depth"
-# APRUN="aprun -n $NTASKS_FV3 -N $cores_per_node -d $NTHREADS_FV3 $j_opt -cc depth"
 
 # add two tiered SST options
 export sst2tier=${sst2tier:-YES}
 if [[ $sst2tier = YES ]]; then
-export nstf_name="2,0,5,0,0"
-export FTSFS=0
-export FNTSFA=$SSTDIR/TMPsfc.$PDY$cyc.24hr.anom.grb
+	export nstf_name="2,0,5,0,0"
+	export FTSFS=0
+	export FNTSFA=$SSTDIR/TMPsfc.$PDY$cyc.24hr.anom.grb
 fi
 
-export FCSTEXEC=${FCSTEXEC:-fv3_gfs_${TYPE}.${COMP}.${MODE}.x}
+# export FCSTEXEC=${FCSTEXEC:-fv3_gfs_${TYPE}.${COMP}.${MODE}.x}
+export FCSTEXEC=${FCSTEXEC:-global_fv3gfs.x}
 
 export APRUN=${APRUN:-""}
 
 # set fixed k_split and n_split for dt=450s and 300s
 if [[ $DELTIM = 450 ]]; then
-export k_split=2
-export n_split=6
+	export k_split=2
+	export n_split=6
 elif [[ $DELTIM = 300 ]]; then
-export k_split=1
-export n_split=8
+	export k_split=1
+	export n_split=8
 else 
-export k_split=${k_split:-2}
-export n_split=${n_split:-6}
+	export k_split=${k_split:-2}
+	export n_split=${n_split:-6}
 fi
 
 # OTHER FV# FCST related environment
@@ -91,6 +87,20 @@ REMAP_GRID=none     # temporay setting, to void the latlon default
 export REMAP_GRID=${REMAP_GRID:-latlon}        #gaussian or latlon for using fregrid or regrid_nemsio for remapping
 #export DIAG_TABLE=${DIAG_TABLE:-$HOMEgfs/parm/parm_fv3diag/diag_table}
 # export FIELD_TABLE=${FIELD_TABLE:-$HOMEgfs/parm/parm_fv3diag/field_table_gfdl}
+
+# Settings for coupling with Wavewatch III
+export cplwav=${cplwav:-.true.}
+if [[ $cplwav = ".true." ]]; then
+	export cpl=".true."
+	export WAV_MOD_ID=${WAV_MOD_ID:-gwes}
+	export npe_wav=${npe_wav:-84}
+	export npe_fcst_wav=$(( npe_fv3 + npe_wav ))
+	export atm_petlist_bounds=" 0 $((npe_fv3-1))"
+	export wav_petlist_bounds=" $((npe_fv3)) $((npe_fcst_wav-1))"
+	export npe_fv3=$npe_fcst_wav
+	export NTASKS_FV3=$npe_fv3
+	export coupling_interval_sec=${coupling_interval_sec:-3600}
+fi
 
 #gfs_physics
 export FHZERO=${FHZER:-6}
@@ -139,6 +149,8 @@ export nst_anl=${nst_anl:-".true."}
 export nstf_name=${nstf_name:-"2,0,0,0,0"}
 export psautco=${psautco:-"0.0008,0.0005"}
 export prautco=${prautco:-"0.00015,0.00015"}
+export lgfdlmprad=.true.
+export effr_in=.true.
 
 #FV3 imp_microphysics
 export dnats=0
@@ -148,7 +160,7 @@ export random_clds=".true."
 export cnvcld=".true."
 export imp_physics=${imp_physics:-"11"}
 if [[ $imp_physics = 99 ]]; then # ZhaoCarr
-export ncld=1
+	export ncld=1
     export FIELD_TABLE="$BASE_GSM/parm/parm_fv3diag/field_table_zhaocarr"
     export nwat=2
 elif [[ $imp_physics = 6 ]]; then # WSM6
@@ -195,7 +207,7 @@ export LATB_STP=${LATB_STP:-$LATBFV}
 MEMBER=`echo $RUNMEM|cut -c4-5`
 CDATE=$PDY$cyc
 
-# Turn of stochastic physics for control member
+# Turn off stochastic physics for control member
 if [[ $RUNMEM = "gec00" ]]; then
 	export DO_SPPT="NO"
 	export DO_SHUM="NO"

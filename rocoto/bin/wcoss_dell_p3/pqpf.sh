@@ -3,8 +3,8 @@
 # EXPORT list here
 set -x
 export IOBUF_PARAMS=
-export FORT_BUFFERED=TRUE
-export MKL_CBWR=AVX
+# export FORT_BUFFERED=TRUE
+# export MKL_CBWR=AVX
 ulimit -s unlimited
 ulimit -a
 
@@ -21,25 +21,21 @@ export KMP_STACKSIZE=1024m
 export OMP_NUM_THREADS=1
 export KMP_AFFINITY=disabled
 
-#export OMP_NUM_THREADS=1
-export KMP_AFFINITY=disabled
-
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:1
 
 # export for development runs only begin
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
+# export envir=${envir:-dev}
+# export RUN_ENVIR=${RUN_ENVIR:-dev}
 
-
-export NODES=1
-export total_tasks=16
+# export NODES=1
+# export total_tasks=16
 export OMP_NUM_THREADS=1
-export taskspernode=16
+# export taskspernode=16
 
-export gefsmpexec=" mpirun -n $total_tasks "
+# export gefsmpexec=" mpirun -n $total_tasks "
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_CQPF
