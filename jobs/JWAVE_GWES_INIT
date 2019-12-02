@@ -8,14 +8,8 @@ set -x -e
 export NET=${NET:-gens}
 export RUN=${RUN:-gwes}
 
-export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
-export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
-
 # Add default errchk = err_chk
 export errchk=${errchk:-err_chk}
-
-# Set HOMEwave to HOMEgefs
-HOMEwave=${HOMEwave:-${HOMEgefs}} 
 
 export DATA=${DATA:-${DATAROOT:?}/${jobid}}
 mkdir -p $DATA
@@ -31,14 +25,19 @@ export MP_PULSE=0
 ####################################
 # Path to HOME Directory
 ####################################
+export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
-export CODEwave=${CODEwave:-${NWROOT}/${NET}_code.${wave_code_ver}/${code_pkg}}
+export HOMEgsm=${HOMEgsm:-$HOMEgefs}
+export HOMEgfs=$HOMEgsm
 
+export HOMEwave=${HOMEwave:-${HOMEgefs}}
 export EXECwave=${EXECwave:-$HOMEwave/exec}
-export FIXwave=${FIXwave:-$HOMEwave/fix_wave}
+export FIXwave=${FIXwave:-$HOMEwave/fix/fix_wave}
 export PARMwave=${PARMwave:-$HOMEwave/parm}
 export USHwave=${USHwave:-$HOMEwave/ush}
-export EXECcode=${EXECcode:-$CODEwave/exec}
+
+export EXECcode=${EXECcode:-$EXECwave}
 
 # Set PDY
 setpdy.sh
@@ -69,7 +68,7 @@ export wave_mpmd=${wave_mpmd:-"cfp"}
 # Set parameters using gwes_init.parm
 ##############################################
 
-. $PARMwave/gefs.parm
+. $PARMgefs/gefs.parm
 . $PARMwave/gwes.parm
 . $PARMwave/gwes_init.parm
 

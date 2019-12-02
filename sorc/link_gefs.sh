@@ -71,6 +71,13 @@ if [[ -d global-workflow.fd ]] ; then
     fi
     $LINK $FIX_DIR_FV3/$sFolder $sFolder
 
+    # fix_wave
+    sFolder=fix_wave
+    if [[ -d $sFolder ]]; then
+        rm -rf $sFolder
+    fi
+    $LINK ${pwd}/../${sFolder} ${sFolder}    
+
     cd ${pwd}
 fi
 
@@ -89,8 +96,14 @@ fi
 if [[ -d global-workflow.fd ]] ; then
     $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/nemsio_read ../exec/
     $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/global_chgres ../exec/
-fi
 
+    sPath=../sorc/global-workflow.fd/sorc/fv3gfs.fd/WW3/model/exe
+    for sFile in ${sPath}/ww3_*
+    do
+        echo $sFile
+    done
+    $LINK ${sPath}/ww3_* ../exec/
+fi
 
 # Copy/Link ush files
 if [[ -d global-workflow.fd ]] ; then

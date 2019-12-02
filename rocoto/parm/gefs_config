@@ -38,12 +38,18 @@ export HOMEgsm=${HOMEgsm:-$HOMEDIR}
 export HOMEgfs=${HOMEgsm:-$HOMEDIR}
 export HOMEgsi=${HOMEgsm:-$HOMEDIR}
 
+export HOMEwave=${HOMEwave:-$HOMEgefs}
+
 #FCST exec is from a different directory
 export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe}
 
 export HOMEpost=${HOMEpost:-$HOMEDIR}             #April 2018
 
 export PARMglobal=$HOMEgsm/parm
+
+if [[ ! -d $SOURCEDIR/sorc/global_workflow.fd ]] ; then
+    export EXECwave=${HOMEgfs}/sorc/fv3gfs.fd/WW3/model/exe
+fi
 
 # This section is optional, using path to define utility files
 # export UTILROOT=/nwprod2/prod_util.v1.0.0  
@@ -110,9 +116,9 @@ export COMINenkf=${COMINenkf:-${COMINenkf_base}}
 export COMINcfs=${COMINcfs:-${COMINcfs_base}}
 
 # Paths for WaveWatch3
-export HOMEwave=$basesource
-export CODEwave=${CODEwave:-${HOMEgsm}/sorc/fv3gfs.fd/WW3/model}
-export EXECwave=${CODEwave}/exe
+#export HOMEwave=$basesource
+#export CODEwave=${CODEwave:-${HOMEgsm}/sorc/fv3gfs.fd/WW3/model}
+#export EXECwave=${CODEwave}/exe
 #export COMICE=${COMICE:-/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod}
 # export COMWND=${COMWND:-/scratch4/NCEPDEV/rstprod/com/gens/prod}
 
