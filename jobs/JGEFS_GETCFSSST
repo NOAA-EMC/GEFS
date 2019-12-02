@@ -51,6 +51,10 @@ export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
 
+export HOMEgsm=${HOMEgsm:-$HOMEgefs}
+export HOMEgfs=$HOMEgsm
+export EXECgfs=$HOMEgfs/exec
+
 ##############################################
 # Define COM directories
 ##############################################

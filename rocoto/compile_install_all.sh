@@ -4,7 +4,7 @@ set -eu
 sWS=`pwd`
 echo $sWS
 
-while getopts c:a:r:m:f:b:e:s: option
+while getopts c:a:r:m:f:b:e:s:l: option
 do
     case "${option}"
     in
@@ -16,6 +16,7 @@ do
         b) AddCrontabToMyCrontab=${OPTARG};;
         e) RunEnvir=${OPTARG};;
         s) Structure=${OPTARG};;
+        l) Link=${OPTARG};;
     esac
 done
 
@@ -28,6 +29,7 @@ AddCrontabToMyCrontab=${AddCrontabToMyCrontab:-no}
 DeleteCrontabFromMyCrontab=${DeleteCrontabFromMyCrontab:-no}
 RunEnvir=${RunEnvir:-emc}
 Structure=${Structure:-no} # dev (use HOMEDIR to link), prod (clone global-workflow from vlab), no (use the original structure)
+Link=${Link:-no}
 
 if [ $machine = "nomachine" ]; then
     if [ -d /scratch1/NCEPDEV ]; then
@@ -53,6 +55,7 @@ echo $machine
 echo $userConfigFile
 echo $RunEnvir
 echo ${Structure}
+echo ${Link}
 
 if [ $CompileCode = "yes" ]; then
     cd $sWS/../sorc
@@ -84,7 +87,26 @@ if [ $CompileCode = "yes" ]; then
     ## Build the code and install
     ./build_all.sh
 
+    Link=yes
+    #cd $sWS/../sorc
+    #if [ $machine = "theia" ]; then
+    #    ./link_gefs.sh -e $RunEnvir -m theia
+    #elif [ $machine = "hera" ]; then
+    #    ./link_gefs.sh -e $RunEnvir -m hera
+    #elif [ $machine = "cray" ]; then
+    #    ./link_gefs.sh -e $RunEnvir -m cray
+    #elif [ $machine = "wcoss_ibm" ]; then
+    #    ./link_gefs.sh -e $RunEnvir -m ibm
+    #elif [ $machine = "wcoss_dell_p3" ]; then
+    #    ./link_gefs.sh -e $RunEnvir -m dell
+    #fi
+fi
+
+
+# for Link
+if [ $Link = "yes" ]; then
     cd $sWS/../sorc
+    
     if [ $machine = "theia" ]; then
         ./link_gefs.sh -e $RunEnvir -m theia
     elif [ $machine = "hera" ]; then

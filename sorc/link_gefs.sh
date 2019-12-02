@@ -49,30 +49,55 @@ if [[ -d fix_gefs ]]; then
     rm -f fix_gefs
 fi
 $LINK $FIX_DIR fix_gefs
+cd ${pwd}
 
 if [[ -d global-workflow.fd ]] ; then
+    cd ${pwd}/../fix
     # fix_am
     sFolder=fix_am
-    [[ -d $sFolder ]] && rm -rf $sFolder
+    if [[ -d $sFolder ]]; then
+         rm -rf $sFolder
+    fi
     $LINK $FIX_DIR_FV3/$sFolder $sFolder
 
     # fix_fv3_gmted2010/C384
     sFolder=fix_fv3_gmted2010/C384
-    [[ -d $sFolder ]] && rm -rf $sFolder
+    if [[ -d $sFolder ]]; then
+        rm -rf $sFolder
+    fi
     sFolder2=fix_fv3_gmted2010
-    [[ -z $sFolder2 ]] && mkdir $sFolder2
+    if [[ ! -d $sFolder2 ]]; then
+         mkdir $sFolder2
+    fi
     $LINK $FIX_DIR_FV3/$sFolder $sFolder
+
+    cd ${pwd}
 fi
 
 # global-workflow
 cd $pwd
 if [[ -d global-workflow.fd ]] ; then
-    echo "folder"
     if [[ ! -L global-workflow.fd ]] ; then
         echo "not link"
         cd global-workflow.fd/sorc
         ./link_fv3gfs.sh $RUN_ENVIR $machine
+        cd ../../
     fi
 fi
+
+# copy/link exec files
+if [[ -d global-workflow.fd ]] ; then
+    $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/nemsio_read ../exec/
+    $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/global_chgres ../exec/
+fi
+
+
+# Copy/Link ush files
+if [[ -d global-workflow.fd ]] ; then
+    $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/ush/global_chgres_driver.sh ../ush/
+    $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/ush/global_chgres.sh ../ush/
+fi
+
+
 
 exit 0
