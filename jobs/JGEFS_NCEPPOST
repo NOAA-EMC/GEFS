@@ -78,9 +78,14 @@ echo current setting RERUN=$RERUN
 
 # Specify Execution Areas
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
-export HOMEpost=${HOMEpost:-${NWROOT}/ncep_post.${post_ver}}
-export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
 
+export HOMEgsm=${HOMEgsm:-$HOMEgefs}
+export HOMEgfs=$HOMEgsm
+
+#export HOMEpost=${HOMEpost:-${NWROOT}/ncep_post.${post_ver}}
+#export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
+
+export HOMEpost=${HOMEpost:-${HOMEgfs}}
 export USHpost=${HOMEpost}/ush
 export EXECpost=${HOMEpost}/exec
 export FIXpost=${HOMEpost}/fix
@@ -90,6 +95,7 @@ export FIXgfs=${HOMEgsm}/fix
 export PARMpost=${HOMEpost}/parm/post   # for the flat structure
 # PARMPOST (instead of PARMpost) is used in the post ush script
 export PARMPOST=${PARMpost}
+
 # GRBINDEX2 (instead of GRB2INDEX) is used in the post ush script
 export GRBINDEX2=${GRB2INDEX}
 
@@ -209,7 +215,7 @@ export IGEN_FCST=107
 if [ $GRIBVERSION = grib2 ]; then
     export CAT_FLX_TO_PGB=${CAT_FLX_TO_PGB:-YES}
     export OUTTYP=${OUTTYP:-3}
-    export POSTAVBLFLD=$HOMEpost/parm/post_avblflds.xml
+    export POSTAVBLFLD=$PARMpost/post_avblflds.xml
     export POSTGRB2TBL=${POSTGRB2TBL:-/nwprod/lib/sorc/g2tmpl/params_grib2_tbl_new}
     export CTLFILEGFSANL=${CTLFILEGFSANL:-$PARMpost/postcntrl_gfs.xml}
     export CTLFILEGFSF00=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}

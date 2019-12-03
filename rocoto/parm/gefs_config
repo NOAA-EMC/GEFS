@@ -41,14 +41,17 @@ export HOMEgsi=${HOMEgsm:-$HOMEDIR}
 export HOMEwave=${HOMEwave:-$HOMEgefs}
 
 #FCST exec is from a different directory
-export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe}
+#export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe}
 
 export HOMEpost=${HOMEpost:-$HOMEDIR}             #April 2018
 
-export PARMglobal=$HOMEgsm/parm
+#export PARMglobal=$HOMEgsm/parm
 
-if [[ ! -d $SOURCEDIR/sorc/global_workflow.fd ]] ; then
+if [[ ! -d $SOURCEDIR/sorc/global-workflow.fd ]] ; then
     export EXECwave=${HOMEgfs}/sorc/fv3gfs.fd/WW3/model/exe
+
+    export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe}
+    export FIXwave=${FIXwave:-$HOMEwave/fix_wave}
 fi
 
 # This section is optional, using path to define utility files

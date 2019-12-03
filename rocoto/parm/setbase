@@ -12,52 +12,51 @@ echo `date` $0 set environment and experiment id
 echo
 
 #DHOU, 01/03/2013 add this block to generate the machine name related variables
-machl=`uname -n | cut -c1`
+#machl=`uname -n | cut -c1`
 
-if [[ $machl = r ]]; then
-  machl=f
-fi
-if [[ $machl = n ]]; then
-  machl=l
-fi
+#if [[ $machl = r ]]; then
+#  machl=f
+#fi
+#if [[ $machl = n ]]; then
+#  machl=l
+#fi
 
 echo envir=$envir
 
 echo expid=${expid}
 
 id=`echo $expid|cut -c3-4`
-echo expid=$expid
 echo id=$id
 
-echo
-echo USER to prescribe user ID and JOB queue infirmation
-echo
-PROJECT=ensemble
-LOGNAME=$LOGNAME
-SUBNAME=
-JOBPRIO=      
-JOBQUEUE=dev
-JOBPHASE=
+#echo
+#echo USER to prescribe user ID and JOB queue infirmation
+#echo
+#PROJECT=ensemble
+#LOGNAME=$LOGNAME
+#SUBNAME=
+#JOBPRIO=      
+#JOBQUEUE=dev
+#JOBPHASE=
 #Please make sure you have the correct account information
-export account=GEN-T2O
+#export account=GEN-T2O
 
-if [[ "$LOGNAME" = "emc.enspara" || "$LOGNAME" = "emc.enspara1" ]]; then
-    SUBNAME=/XX    #members of the enspara/enspara1 group accounts need to define e.g SUBNAME=/dc
-    JOBPRIO=high       #(default; it could be high/max)
-fi
+#if [[ "$LOGNAME" = "emc.enspara" || "$LOGNAME" = "emc.enspara1" ]]; then
+#    SUBNAME=/XX    #members of the enspara/enspara1 group accounts need to define e.g SUBNAME=/dc
+#    JOBPRIO=high       #(default; it could be high/max)
+#fi
 
-echo USER info: $PROJECT $LOGNAME $SUBNAME $JOBPRIO
+#echo USER info: $PROJECT $LOGNAME $SUBNAME $JOBPRIO
 
-echo JOB QUEUE info prescribed: $JOBQUEUE $JOBPHASE $JOBPRIO
+#echo JOB QUEUE info prescribed: $JOBQUEUE $JOBPHASE $JOBPRIO
 
-echo ACCOUNT info: $account
+#echo ACCOUNT info: $account
 
-echo
-echo `date` $0 set ROOT directory tree locations
-echo
+#echo
+#echo `date` $0 set ROOT directory tree locations
+#echo
 
 # For virtical structure
-if [[ -d $SOURCEDIR/sorc/global_workflow.fd ]] ; then
+if [[ -d $SOURCEDIR/sorc/global-workflow.fd ]] ; then
     export HOMEDIR=$SOURCEDIR
 fi
 
@@ -134,16 +133,16 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
 fi
 
 
-export JOBQUEUE=$JOBQUEUE$JOBPRIO$JOBPHASE
-echo JOB QUEUE info: $JOBQUEUE 
+#export JOBQUEUE=$JOBQUEUE$JOBPRIO$JOBPHASE
+#echo JOB QUEUE info: $JOBQUEUE 
 
-echo ROOT DIRECTORY info:
-echo $machine  jobqueue=$JOBQUEUE
-echo homedir: $HOMEDIR
+#echo ROOT DIRECTORY info:
+#echo $machine  jobqueue=$JOBQUEUE
+#echo homedir: $HOMEDIR
 
-echo
-echo `date` $0 set user base directory tree locations
-echo
+#echo
+#echo `date` $0 set user base directory tree locations
+#echo
 
 export basesource=$SOURCEDIR
 export baseoutput=$WORKDIR

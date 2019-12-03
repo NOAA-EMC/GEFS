@@ -5,7 +5,7 @@
 # EXPORT list here
 set -x
 
-export IOBUF_PARAMS=
+#export IOBUF_PARAMS=
 ulimit -s unlimited
 ulimit -a
 

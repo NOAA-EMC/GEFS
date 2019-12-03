@@ -1,24 +1,51 @@
 #!/bin/bash
 
-date
+echo `date` $0 `date -u` begin
+
+set -xa
 export PS4=' $SECONDS + '
-set -x -e
+date
 
-# PATH for working directory
-export NET=${NET:-gens}
-export RUN=${RUN:-gwes}
+############################
+# Set up cycle varaible
+############################
+cyc=${cyc:-00}
+export cycle=${cycle:-t${cyc}z}
 
-# Add default errchk = err_chk
-export errchk=${errchk:-err_chk}
-
-export DATA=${DATA:-${DATAROOT:?}/${jobid}}
+####################################
+# obtain unique process id (pid) and make working directory
+####################################
+export pid=$$
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
 
-cyc=${cyc:-00}
-export cycle=${cycle:-t${cyc}z}
- 
-export pgmout=OUTPUT.$$
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gwes}
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+
+# Add default errchk = err_chk
+export errchk=${errchk:-err_chk}
 
 export MP_PULSE=0
 
@@ -38,10 +65,6 @@ export PARMwave=${PARMwave:-$HOMEwave/parm}
 export USHwave=${USHwave:-$HOMEwave/ush}
 
 export EXECcode=${EXECcode:-$EXECwave}
-
-# Set PDY
-setpdy.sh
-sh ./PDY
 
 ###################################
 # Set COM Paths and GETGES environment
