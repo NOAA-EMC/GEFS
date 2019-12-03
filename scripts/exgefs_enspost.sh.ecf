@@ -51,7 +51,7 @@ export iens_msg=1
 #export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
 #export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
 #export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
-#export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
+#export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib}
 
 export ENSPPF=$USHgefs/global_ensppf.sh
 export ENSSTAT=$EXECgefs/gefs_ensstat
@@ -89,13 +89,13 @@ if [[ $envir = dev ]]; then
 fi
 
 (( imem = 0 ))
-while (( imem < npair * 2 )); do
+while (( imem < npert )); do
 	(( imem = imem + 1 ))
 	if (( imem < 10 )); then
 		imem=0$imem
 	fi
 	memberlist="$memberlist p$imem"
-done # while (( imem < npair * 2 ))
+done # while (( imem < npert ))
 echo memberlist=$memberlist
 
 

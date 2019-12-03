@@ -5,6 +5,8 @@ set -x
 msg="JOB $job HAS BEGUN"
 postmsg "$jlogfile" "$msg"
 
+numproc=${numproc:-1}
+
 cd $DATA
 rm $DATA/poescript
 typeset -Z2 fhr
@@ -34,10 +36,13 @@ cat poescript
 chmod 775 $DATA/poescript
 export MP_PGMMODEL=mpmd
 export MP_CMDFILE=$DATA/poescript
-
+export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
+rm -f mpmd_cmdfile
+ln -s $MP_CMDFILE mpmd_cmdfile
 # Execute the script.
 
-mpirun.lsf
+#mpirun -n $num cfp $MP_CMDFILE
+$APRUN
 export err=$?; err_chk
 
 #####################################################################

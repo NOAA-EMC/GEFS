@@ -6,9 +6,9 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
-export APRUN=${gefsmpexec_mpmd:-mpirun.lsf}
-export CNVGRIB=$CNVGRIB21_GFS
+export gefsmpexec=${gefsmpexec:-mpirun}
+export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
+export CNVGRIB=$CNVGRIB
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -35,7 +35,7 @@ export RUN=${RUN:-gefs}
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -84,7 +84,7 @@ setpdy.sh
 # Define COM directories
 ##############################################
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.${PDY}/$cyc}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
 # 20150622 RLW change to "yes" to remake prdgen when post is remade
@@ -113,10 +113,11 @@ case $FORECAST_SEGMENT in
 	lr)
 		start_hour=$((${fhmaxh}+1))
 		end_hour=${fhmax}
+		PRDGEN_STREAMS=$PRDGEN_STREAMS_LR
 		;;
 	*)
 		start_hour=0
-		end_hour=${fhmax}
+		end_hour=${fhmaxh}
 		;;
 esac # $FORECAST_SEGMENT in
 
@@ -254,7 +255,7 @@ export MP_PGMMODEL=mpmd
 rm -f mpmd_cmdfile
 ln -s $MP_CMDFILE mpmd_cmdfile
 
-$APRUN
+$APRUN 
 
 rc=$?
 if [[ $rc -ne 0 ]]; then

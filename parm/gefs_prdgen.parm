@@ -11,21 +11,27 @@ export makepgrb2b=${makepgrb2b:-yes}
 export option1=${option1:-' -set_grib_type same -new_grid_winds earth '}
 export option21=${option21:-' -new_grid_interpolation bilinear  -if '}
 export option22=${option22:-":(LAND|CSNOW|CRAIN|CFRZR|CICEP|ICSEV):"}
-export option23=${option3:-' -new_grid_interpolation neighbor -fi '}
+export option23=${option23:-' -new_grid_interpolation neighbor -fi '}
+export option24=${option24:-' -set_bitmap 1 -set_grib_max_bits 16 -if '}
+export option25=${option25:-":(APCP|ACPCP|NCPCP|PRATE|CPRAT):"}
+export option26=${option26:-' -set_grib_max_bits 25 -fi -if '}
+export option27=${option27:-":(APCP|ACPCP|NCPCP|PRATE|CPRAT|DZDT):"}
+export option28=${option28:-' -new_grid_interpolation budget -fi '}
 
 # fhoroglist is the list of additional hours at which surface height should be included in pgrba
 # this is normally fhmaxh + 12 to include the next gfs output time after the resolution change
-if (( fhmaxh < fhmax )); then
-  export fhoroglist=$(( fhmaxh + 12 ))
-else
-  export fhoroglist=
-fi
+export fhoroglist=
+#if (( fhmaxh < fhmax )); then
+#  export fhoroglist=$(( fhmaxh + 12 ))
+#fi
 
 #
 # Establish an array of stream names which will establish the number and be used as keys for the associative arrays
 #
 typeset -a PRDGEN_STREAMS=${PRDGEN_STREAMS:-res_2p50 res_1p00 res_0p50 res_0p25_s1 res_0p25_s2 res_0p25_s3}
+typeset -a PRDGEN_STREAMS_LR=${PRDGEN_STREAMS_LR:-res_2p50 res_1p00 res_0p50}
 export PRDGEN_STREAMS
+export PRDGEN_STREAMS_LR
 
 #
 # Establish associative arrays for needed variables. 
@@ -61,7 +67,7 @@ export PRDGEN_STREAMS
 # 2.50°
 PRDGEN_GRID[res_2p50]=${PRDGEN_GRID[res_2p50]:-"2p5"}
 PRDGEN_GRID_SPEC[res_2p50]=${PRDGEN_GRID_SPEC[res_2p50]:-"latlon 0:144:2.5 90:73:-2.5"}
-PRDGEN_HOURS[res_2p50]=${PRDGEN_HOURS[res_2p50]:-"{0..${FHMAXHF}..${FHOUTHF}} {$(( $FHMAXHF + ${FHOUTLF}))..${fhmax}..${FHOUTLF}}"}
+PRDGEN_HOURS[res_2p50]=${PRDGEN_HOURS[res_2p50]:-"{0..${FHMAXHF}..${FHOUTLF}} {$(( $FHMAXHF + ${FHOUTLF}))..${fhmax}..${FHOUTLF}}"}
 PRDGEN_SUBMC[res_2p50]=${PRDGEN_SUBMC[res_2p50]:-"prd2p5"}
 PRDGEN_A_DIR[res_2p50]=${PRDGEN_A_DIR[res_2p50]:-"pgrb2a2p5"}
 PRDGEN_B_DIR[res_2p50]=${PRDGEN_B_DIR[res_2p50]:-"pgrb2b2p5"}
@@ -71,7 +77,7 @@ PRDGEN_B_PREFIX[res_2p50]=${PRDGEN_B_PREFIX[res_2p50]:-"pgrb2b.2p50."}
 # 1.00°
 PRDGEN_GRID[res_1p00]=${PRDGEN_GRID[res_1p00]:-"1p0"}
 PRDGEN_GRID_SPEC[res_1p00]=${PRDGEN_GRID_SPEC[res_1p00]:-"latlon 0:360:1.0 90:181:-1.0"}
-PRDGEN_HOURS[res_1p00]=${PRDGEN_HOURS[res_1p00]:-"{0..${FHMAXHF}..${FHOUTHF}} {$(( $FHMAXHF + ${FHOUTLF} ))..${fhmax}..${FHOUTLF}}"}
+PRDGEN_HOURS[res_1p00]=${PRDGEN_HOURS[res_1p00]:-"{0..${FHMAXHF}..${FHOUTLF}} {$(( $FHMAXHF + ${FHOUTLF} ))..${fhmax}..${FHOUTLF}}"}
 PRDGEN_SUBMC[res_1p00]=${PRDGEN_SUBMC[res_1p00]:-"prd1p0"}
 PRDGEN_A_DIR[res_1p00]=${PRDGEN_A_DIR[res_1p00]:-"pgrb2a1p0"}
 PRDGEN_B_DIR[res_1p00]=${PRDGEN_B_DIR[res_1p00]:-"pgrb2b1p0"}

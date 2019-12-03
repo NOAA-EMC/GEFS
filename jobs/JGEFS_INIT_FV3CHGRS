@@ -6,9 +6,26 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export APRUN=${gefsmpexec:-mpirun.lsf}
+export APRUN=${gefsmpexec:-mpirun}
 export RUNMEM=$RUNMEM
 export mem=`echo $RUNMEM|cut -c 3-`
+export nmem=`echo $RUNMEM|cut -c 4-`
+nmem=${nmem#0}
+export pdyp=`echo $pdycycp|cut -c1-8`
+export cycp=`echo $pdycycp|cut -c9-10`
+
+case $cyc in
+        00) memshift=0;;
+        06) memshift=20;;
+        12) memshift=40;;
+        18) memshift=60;;
+esac
+        (( cmem = nmem + memshift ))
+        if (( cmem > 80 )); then
+                (( cmem = cmem - 80 ))
+        fi
+        memchar_shift="mem"$(printf %03i $cmem)
+
 ############################
 # Set up cycle varaible
 ############################
@@ -21,14 +38,12 @@ export pid=$$
 export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
-#export DATA=$DATAROOT/gefs_fv3chgrs_$PDY$cyc.$envir.save/$mem
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
 setpdy.sh
 . PDY
-
 
 ####################################
 # Specify NET and RUN Name and model
@@ -39,7 +54,7 @@ export RUN=${RUN:-gefs}
 ####################################
 # File To Log Msgs
 ####################################
-export jlogfile=${jlogfile:-$COMROOT/logs/jlogfiles/jlogfile.${job}.${pid}}
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
 
 ####################################
 # Determine Job Output Name on System
@@ -54,19 +69,15 @@ export pgmerr=errfile
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
+# export HOMEgfs=$HOMEgsm
+export FIXfv3=${FIXfv3:-$HOMEgsm/fix/fix_fv3_gmted2010}
+export FIXam=${FIXam:-$HOMEgsm/fix/fix_am}
+export HOMEgfs=$HOMEgsm/sorc/ufs_utils.fd # Override to point to UFS Utils location
 
-export EXECgsm=${EXECgsm:-$HOMEgsm/exec}
-export USHgsm=${USHgsm:-$HOMEgsm/ush}
-export FIXgsm=${FIXgsm:-$HOMEgsm/fix/fix_am}
-export PARMgsm=${PARMgsm:-$HOMEgsm/parm}
+export USHgsm=${USHgsm:-$HOMEgfs/ush}
 
-export FIXGLOBAL=$FIXgsm
 
-export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
-export USHgefs=${USHgefs:-$HOMEgefs/ush}
-export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
-
 
 ##############################################
 echo set parameters using gefs.parm
@@ -78,11 +89,6 @@ echo set parameters using gefs.parm
 (( LEVS=LEVSHR+1 ))
 export LEVS=$LEVS
 export CASE=$CASEHR
-env | sort
-##############################################
-# for global_chgres.sh
-##############################################
-#export SLMASK=/dev/null
 
 ##############################################
 # Define COM directories
@@ -91,65 +97,86 @@ export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
 export COMIN=${COMIN:-${COM_IN}/${RUN}.${PDY}}
 export COMOUT=${COMOUT:-${COM_OUT}/${RUN}.${PDY}}
+mkdir -p $COMOUT/$cyc/init
 
 ##############################################
 # Define GES directories
 ##############################################
 export GESOUT=${GESOUT:-$GESROOT/${envir}}
 export GESOUT=$GESOUT/gefs.${PDY}
-#export FV3GESOUT=$GESOUT/${cyc}/$mem/${CASE}_$PDY$cyc
-export FV3GESOUT=$GESOUT/${cyc}/$mem
-mkdir -p $FV3GESOUT
-#export FV3GESOUT=$GESROOT/${envir}/fv3gefs.${PDY}
+
 ##############################################
 echo list environment before running script
 ##############################################
-
 env | sort
 
-#--------------------------------------------------------------------------------
-
-#. $MODULESHOME/init/sh  2>>/dev/null
-#module load prod_util hpss >>/dev/null
-#export workflow_ver=v15.0.0
-export BASE_SVN=$HOMEDIR1/fv3gfs
-export BASE_GSM=$HOMEgsm
-export HOMEgfs=$HOMEgsm
-#export CASE=$CASEHR
-#-- create ICs using operational GFS initial conditions
-
-#--start from operational GFS initial conditions
-
 set -eux
-#-------------------------------------------------------------------------------------------------
 
 echo `date` $0 begin
 
 set -x
+export COMINgfs=${COMINgfs:-${COMROOThps}/gfs/prod/gfs.${PDY}}
+export COMINenkf=${COMINenkf:-${COMROOThps}/gfs/prod/enkf.}
+
+export pdycycp=`$NDATE -$fhrp $PDY$cyc`
+export pdyp=`echo $pdycycp|cut -c1-8`
+export cycp=`echo $pdycycp|cut -c9-10`
+
 export INIDIR=$DATA
 export CDATE=$PDY$cyc
-#export OUTDIR=$FV3GESOUT/$mem/${CASE}_$CDATE
-export OUTDIR=$FV3GESOUT
 export ictype=nemsgfs
-#0=FV3NEMSIO, 2=GFS NEMSIO, 3=SIGIO
-if [ $inflag = 0 ] ; then
-    export ictype=fv3gfs
-    export NTRAC=7
-    cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
-    cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
+
+if [[ ! -f $GESOUT/ge$mem.t$cyc\z.sanl ]]; then
+	export ictype=fv3gfs
+	export NTRAC=7
+
+	export FV3GESOUT=$COMOUT/$cyc/init/$mem
+	mkdir -p $FV3GESOUT
+	export OUTDIR=$FV3GESOUT
+
+	if [[ $mem = c00 ]] ;then
+		cp $COMINgfs/gfs.t${cyc}z.atmanl.nemsio $INIDIR/gfnanl.gfs.$PDY$cyc
+		cp $COMINgfs/gfs.t${cyc}z.sfcanl.nemsio $INIDIR/sfnanl.gfs.$PDY$cyc
+	else
+		cp $COMINenkf$pdyp/$cycp/$memchar_shift/gdas.t${cycp}z.atmf006.nemsio $INIDIR/gfnanl.gfs.$PDY$cyc
+		cp $COMINgfs/gfs.t${cyc}z.sfcanl.nemsio $INIDIR/sfnanl.gfs.$PDY$cyc
+	fi
 else
-    cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
-    cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
-    cp $GESOUT/ge$mem.t$cyc\z.nsnanl $INIDIR/nsnanl.gfs.$PDY$cyc
+	export FV3GESOUT=$GESOUT/${cyc}/$mem
+	mkdir -p $FV3GESOUT
+	export OUTDIR=$FV3GESOUT
+	if [ $inflag = 0 ] ; then
+		export ictype=fv3gfs
+        	export NTRAC=7
+		cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
+		cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
+	else
+		cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
+		cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
+		cp $GESOUT/ge$mem.t$cyc\z.nsnanl $INIDIR/nsnanl.gfs.$PDY$cyc
+	fi
 fi
 
-testfile=$INIDIR/sfnanl.gfs.$PDY$cyc                       
-nsleep=0; tsleep=120;  msleep=50 
-while test ! -s $testfile -a $nsleep -lt $msleep;do
-    sleep $tsleep; nsleep=`expr $nsleep + 1`
-done
 $USHgsm/global_chgres_driver.sh
+ERR=$?
 
-#.......................................................
+echo $ERR
 
-exit
+cat $pgmout
+
+if [ $ERR = 0 ]; then
+    msg="JOB COMPLETED NORMALLY"
+else
+    msg="JOB FAILED!"
+fi
+
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
+
+echo `date` $0 `date -u` end

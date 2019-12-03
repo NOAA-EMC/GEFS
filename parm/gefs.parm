@@ -8,7 +8,7 @@
 # Number of pairs to run (normally 10 pairs)
 ##############################################
 export npair=${npair:-15}
-export npert=$((2*npair))
+export npert=${npert:-30}
 export navg_min=${navg_min:-10}
 export nhrpair=${nhrpair:-$npair}
 export nstinit=${nstinit:-yes}
@@ -22,6 +22,7 @@ export fhmax06=${fhmax06:-$fhmax}
 export fhmax12=${fhmax12:-$fhmax}
 export fhmax18=${fhmax18:-$fhmax}
 export fhmax_ext=${fhmax_ext:-840}
+export fhcplwave=${fhcplwave:-384}
 
 #OUTPUT frequency
 export FHMAXHF=${FHMAXHF:-240}
@@ -31,6 +32,7 @@ export FHOUTLF=${FHOUTLF:-6}
 # Frequency of initializations
 export fhrp=${fhrp:-06}
 #export fhrp=24
+export gefs_cych=${gefs_cych:-6}
 
 case $cyc in
 	(00)

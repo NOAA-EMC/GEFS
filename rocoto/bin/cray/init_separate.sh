@@ -19,10 +19,6 @@ export MPICH_CPUMASK_DISPLAY=1
 
 export KMP_STACKSIZE=1024m
 export KMP_AFFINITY=disabled
-export OMP_NUM_THREADS=6
-
-#export OMP_NUM_THREADS=6
-export KMP_AFFINITY=disabled
 
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
@@ -37,23 +33,20 @@ export MP_COREFILE_FORMAT=core.txt
 export OMP_STACKSIZE=3G
 export MP_COMPILER=intel
 
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
+#export envir=${envir:-dev}
+#export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 
-export NODES=10
-export total_tasks=40
-export OMP_NUM_THREADS=6
-export taskspernode=4
+#export NODES=10
+#export total_tasks=40
+#export OMP_NUM_THREADS=6
+#export taskspernode=4
 
-export gefsmpexec_mpmd="  aprun -b -j1 -n40 -N4 -d6 -cc depth  cfp mpmd_cmdfile"
-export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
-export APRUNC="aprun"
+#export gefsmpexec_mpmd="  aprun -b -j1 -n40 -N4 -d6 -cc depth  cfp mpmd_cmdfile"
+#export aprun_gec00="aprun -b -j1 -n1 -N1 -d24 -cc depth"
+#export APRUNC="aprun"
 
 # export for development runs only begin
-
-
-
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_INIT_SEPARATE

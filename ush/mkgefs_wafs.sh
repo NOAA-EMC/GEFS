@@ -92,7 +92,7 @@ do
       fi
 
       # Convert to GRIB2 format:
-      $CNVGRIB21_GFS -g12 -p40 wafs${grid}.${cycle}.ens${hr} wafs${grid}.${cycle}.ens${hr}.grib2
+      $CNVGRIB -g12 -p40 wafs${grid}.${cycle}.ens${hr} wafs${grid}.${cycle}.ens${hr}.grib2
       $GRB2INDEX wafs${grid}.${cycle}.ens${hr}.grib2 wafs${grid}.${cycle}.ens${hr}.grib2.idx
 
       if test $SENDCOM = 'YES'

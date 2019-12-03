@@ -4,7 +4,7 @@
 # Load Intel environment
 module load PrgEnv-intel
           
-module load g2-intel/2.5.0
+module load g2-intel/3.1.0
 module load w3nco-intel/2.0.6
 module load bacio-intel/2.0.1
 

@@ -92,7 +92,7 @@ nemsioget=${nemsioget:-${HOMEgsi}/exec/nemsio_get}
 export APRUN_RECENT=${APRUN_RECENT:-"aprun -j 1 -n $total_tasks -N $taskspernode -d $OMP_NUM_THREADS -cc depth"}
 
 # global_chgres stuff
-export CHGRESEXEC=${CHGRESEXEC-$HOMEgsm/exec/chgres_recenter.exe}
+export CHGRESEXEC=${CHGRESEXEC:-$HOMEgsm/exec/chgres_recenter.exe}
 NTHREADS_CHGRES=${NTHREADS_CHGRES:-24}
 CHGRESVARS_ENKF=${CHGRESVARS_ENKF:-""}
 APRUN_CHGRES=${APRUN_CHGRES:-""}

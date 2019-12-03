@@ -16,6 +16,7 @@
 # 2017-03-24  Fanglin Yang   Updated to use NEMS FV3GFS with IPD4
 # 2017-05-24  Rahul Mahajan  Updated for cycling with NEMS FV3GFS
 # 2017-09-13  Fanglin Yang   Updated for using GFDL MP and Write Component
+# 2019-03-21  Fanglin Yang   Add restart capability for running gfs fcst from a break point.
 #
 # $Id$
 #
@@ -34,7 +35,7 @@ fi
 machine=${machine:-"WCOSS_C"}
 machine=$(echo $machine | tr '[a-z]' '[A-Z]')
 
-# Cycling and forecast hour specific parameters
+# Cycling and forecast hour specific parameters 
 CASE=${CASE:-C768}
 CDATE=${CDATE:-2017032500}
 CDUMP=${CDUMP:-gdas}
@@ -48,6 +49,9 @@ FHOUT_HF=${FHOUT_HF:-1}
 NSOUT=${NSOUT:-"-1"}
 FDIAG=$FHOUT
 if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 ]; then FDIAG=$FHOUT_HF; fi
+
+PDY=$(echo $CDATE | cut -c1-8)
+cyc=$(echo $CDATE | cut -c9-10)
 
 # Directories.
 pwd=$(pwd)
@@ -117,30 +121,68 @@ fi
 
 #-------------------------------------------------------
 if [ ! -d $ROTDIR ]; then mkdir -p $ROTDIR; fi
-if [ ! -d $DATA ]; then mkdir -p $DATA ;fi
-mkdir -p $DATA/RESTART $DATA/INPUT
+mkdata=NO
+if [ ! -d $DATA ]; then
+   mkdata=YES
+   mkdir -p $DATA
+fi
 cd $DATA || exit 8
+mkdir -p $DATA/INPUT
+if [ $CDUMP = "gfs" -a $restart_interval -gt 0 ]; then
+    RSTDIR_TMP=${RSTDIR:-$ROTDIR}/${CDUMP}.${PDY}/${cyc}/RERUN_RESTART
+    if [ ! -d $RSTDIR_TMP ]; then mkdir -p $RSTDIR_TMP ; fi
+    $NLN $RSTDIR_TMP RESTART
+elif [ $(echo $CDUMP | cut -c1-2) = "ge" ]; then
+    $NLN $RSTDIR_TMP RESTART
+else
+    mkdir -p $DATA/RESTART
+fi
+
+#-------------------------------------------------------
+# determine if restart IC exists to continue from a previous forecast
+if [ $CDUMP = "gfs" -a $restart_interval -gt 0 -a $FHMAX -gt $restart_interval -a $filecount -gt 10 ]; then
+RERUN="NO"
+filecount=$(find $RSTDIR_TMP -type f | wc -l) 
+    SDATE=$($NDATE +$FHMAX $CDATE)
+    EDATE=$($NDATE +$restart_interval $CDATE)
+    while [ $SDATE -gt $EDATE ]; do
+        PDYS=$(echo $SDATE | cut -c1-8)
+        cycs=$(echo $SDATE | cut -c9-10)
+        flag1=$RSTDIR_TMP/${PDYS}.${cycs}0000.coupler.res
+        flag2=$RSTDIR_TMP/coupler.res
+        if [ -s $flag1 ]; then
+            mv $flag1 ${flag1}.old
+            if [ -s $flag2 ]; then mv $flag2 ${flag2}.old ;fi
+            RERUN="YES"
+            CDATE_RST=$($NDATE -$restart_interval $SDATE)
+            break
+        fi 
+        SDATE=$($NDATE -$restart_interval $SDATE)
+    done
+fi
 
 #-------------------------------------------------------
 # member directory
-if [ $MEMBER -lt 0 ]; then
+if [ $(echo $CDUMP | cut -c1-2) = "ge" ]; then
+  prefix=$CDUMP
+  rprefix=$rCDUMP
+  memchar=""
+elif [ $MEMBER -lt 0 ]; then
   prefix=$CDUMP
   rprefix=$rCDUMP
   memchar=""
 else
-  prefix=enkf.$CDUMP
-  rprefix=enkf.$rCDUMP
+  prefix=enkf$CDUMP
+  rprefix=enkf$rCDUMP
   memchar=mem$(printf %03i $MEMBER)
 fi
-PDY=$(echo $CDATE | cut -c1-8)
-cyc=$(echo $CDATE | cut -c9-10)
 memdir=${memdir:-$ROTDIR/${prefix}.$PDY/$cyc/$memchar}
 if [ ! -d $memdir ]; then mkdir -p $memdir; fi
 
 GDATE=$($NDATE -$assim_freq $CDATE)
 gPDY=$(echo $GDATE | cut -c1-8)
 gcyc=$(echo $GDATE | cut -c9-10)
-gmemdir=$ROTDIR/${rprefix}.$gPDY/$gcyc/$memchar
+gmemdir=${gmemdir:-$ROTDIR/${rprefix}.$gPDY/$gcyc/$memchar}
 
 #-------------------------------------------------------
 # initial conditions
@@ -149,13 +191,16 @@ read_increment=${read_increment:-".false."}
 restart_interval=${restart_interval:-0}
 
 # Determine if this is a warm start or cold start
-#if [ -f $gmemdir/RESTART/${PDY}.${cyc}0000.coupler.res ]; then
-#  export warm_start=".true."
-#fi
+if [ -f $gmemdir/RESTART/${PDY}.${cyc}0000.coupler.res ]; then
+  export warm_start=".true."
+fi
 
-if [ $RERUN != "RESTART" ]; then
-
-if [ $warm_start = ".true." ]; then
+#-------------------------------------------------------
+if [ $warm_start = ".true." -o $RERUN = "YES" ]; then
+#-------------------------------------------------------
+#.............................
+  if [ $RERUN = "NO" ]; then
+#.............................
 
   # Link all (except sfc_data) restart files from $gmemdir
   for file in $gmemdir/RESTART/${PDY}.${cyc}0000.*.nc; do
@@ -190,8 +235,7 @@ if [ $warm_start = ".true." ]; then
     $NLN $file $DATA/INPUT/$file2
   fi
 
-  #increment_file=$memdir/${CDUMP}.t${cyc}z.atminc.nc
-  increment_file=${increment_file:-$memdir/${CDUMP}.t${cyc}z.atminc.nc}
+  increment_file=$memdir/${CDUMP}.t${cyc}z.atminc.nc
   if [ -f $increment_file ]; then
     $NLN $increment_file $DATA/INPUT/fv3_increment.nc
     read_increment=".true."
@@ -201,10 +245,23 @@ if [ $warm_start = ".true." ]; then
     res_latlon_dynamics="''"
   fi
 
+#.............................
+  else  ##RERUN                         
+
+    PDYT=$(echo $CDATE_RST | cut -c1-8)
+    cyct=$(echo $CDATE_RST | cut -c9-10)
+    for file in $RSTDIR_TMP/${PDYT}.${cyct}0000.*; do
+      file2=$(echo $(basename $file))
+      file2=$(echo $file2 | cut -d. -f3-) 
+      $NLN $file $DATA/INPUT/$file2
+    done
+
+  fi
+#.............................
+
 else ## cold start                            
 
-  #for file in $memdir/INPUT/*.nc; do
-  #for file in $ICSDIR/INPUT/*.nc; do
+# for file in $memdir/INPUT/*.nc; do
   for file in $ICSDIR/*.nc; do
     file2=$(echo $(basename $file))
     fsuf=$(echo $file2 | cut -c1-3)
@@ -213,34 +270,16 @@ else ## cold start
     fi
   done
 
+#-------------------------------------------------------
 fi 
+#-------------------------------------------------------
 
-else   #RERUN=RESTART
-
-#for file in $COMOUT/$cyc/restart/$mem/*.nc; do
-#    file2=$(echo $(basename $file))
-#      $NLN $file $DATA/INPUT/$file2
-#done
-#$NLN $COMOUT/$cyc/restart/$mem/coupler.res $DATA/INPUT/coupler.res
-  if [ $RFNDATE == YES ]; then
-    RDATE=$($NDATE +$restart_hour $CDATE)
-    rPDY=$(echo $RDATE | cut -c1-8)
-    rcyc=$(echo $RDATE | cut -c9-10)
-    for file in RESTART/${rPDY}.${rcyc}0000.* ; do
-    file2=$(echo $(basename $file))
-    file2=$(echo $file2 | cut -d. -f3-) # remove the date from file
-      $NCP $file INPUT/$file2
-    done
-  else
-    for file in coupler.res fv* phy* sfc* ; do
-      $NCP RESTART/$file INPUT
-    done
-  fi
-fi
 
 nfiles=$(ls -1 $DATA/INPUT/* | wc -l)
 if [ $nfiles -le 0 ]; then
   echo "Initial conditions must exist in $DATA/INPUT, ABORT!"
+  msg=”"Initial conditions must exist in $DATA/INPUT, ABORT!"
+  postmsg "$jlogfile" "$msg"
   exit 1
 fi
 
@@ -285,6 +324,35 @@ if [ $IAER -gt 0 ] ; then
     $NLN $file $DATA/$(echo $(basename $file) | sed -e "s/global_//g")
   done
 fi
+
+#### Copy over WW3 inputs
+# At this time only test gfs but this change need to be tested on gdas, enkf, and gfs
+if [ $cplwav = ".true." ]; then
+# Link WW3 files
+  $NLN $COMINWW3/${WAV_MOD_ID}.${PDY}/${cyc}/rundata/ww3_multi.${WAV_MOD_ID}${WAV_MEMBER}.${cycle}.inp $DATA/ww3_multi.inp
+        # Check for expected wave grids for this run
+  array=($curID $iceID $wndID $buoy $waveGRD $sbsGRD $postGRD $interpGRD)
+  grdALL=`printf "%s\n" "${array[@]}" | sort -u | tr '\n' ' '`
+  for wavGRD in ${grdALL}; do
+    # Wave IC (restart) file must exist for warm start on this cycle, if not wave model starts from flat ocean
+    $NLN $COMINWW3/${WAV_MOD_ID}.${PDY}/${cyc}/restart/${WAV_MOD_ID}${WAV_MEMBER}.restart.${wavGRD}.${PDY}${cyc} $DATA/restart.${wavGRD}
+    $NLN $COMINWW3/${WAV_MOD_ID}.${PDY}/${cyc}/rundata/${WAV_MOD_ID}.mod_def.$wavGRD $DATA/mod_def.$wavGRD
+
+    # Link wave IC for the next cycle
+    # Wave IC (restart) interval controlled by gfs_cyc parameter (default: 4 cyc/day gfs_cyc=4)
+    gfs_cyc=${gfs_cyc:-4}
+    gfs_cych=`expr 24 / ${gfs_cyc}`
+    WRDATE=`$NDATE ${gfs_cych} $CDATE`
+    WRPDY=`echo $WRDATE | cut -c1-8`
+    WRcyc=`echo $WRDATE | cut -c9-10`
+    WRDIR=$COMOUTWW3/${WAV_MOD_ID}.${WRPDY}/${WRcyc}/restart
+    [[ -d $WRDIR ]] || mkdir -p $WRDIR
+    $NLN $COMOUTWW3/${WAV_MOD_ID}.${WRPDY}/${WRcyc}/restart/${WAV_MOD_ID}${WAV_MEMBER}.restart.${wavGRD}.${WRDATE} $DATA/restart001.${wavGRD}
+  done
+  $NLN $COMINWW3/${WAV_MOD_ID}.${PDY}/${cyc}/rundata/${WAV_MOD_ID}.${iceID}.${cycle}.ice $DATA/ice.${iceID}
+
+fi
+
 #------------------------------------------------------------------
 # changeable parameters
 # dycore definitions
@@ -506,6 +574,45 @@ runSeq::
 ::
 EOF
 
+#### ww3 version of nems.configure
+if [ $cplwav = ".true." ]; then
+####  atm_petlist_bounds=" 0 $((NTASKS_FV3-1))"
+####  wav_petlist_bounds=" $((NTASKS_FV3)) $((NTASKS_FV3+npe_wav))"
+####  atm_petlist_bounds=" 0   311"
+  atm_petlist_bounds=$atm_petlist_bounds
+####  wav_petlist_bounds=" 312 431"
+  wav_petlist_bounds=$wav_petlist_bounds
+  coupling_interval_sec=${coupling_interval_sec:-1800}
+  rm -f nems.configure
+cat > nems.configure <<EOF
+EARTH_component_list: ATM WAV
+EARTH_attributes::
+  Verbosity = 0
+::
+
+ATM_model:                      fv3
+ATM_petlist_bounds:             ${atm_petlist_bounds}
+ATM_attributes::
+  Verbosity = 0
+  DumpFields = false
+::
+
+WAV_model:                      ww3
+WAV_petlist_bounds:             ${wav_petlist_bounds}
+WAV_attributes::
+  Verbosity = 0
+::
+
+runSeq::
+  @${coupling_interval_sec}
+    ATM -> WAV
+    ATM
+    WAV
+  @
+::
+EOF
+fi
+
 rm -f model_configure
 cat > model_configure <<EOF
 total_member:            $ENS_NUM
@@ -529,9 +636,6 @@ atmos_nthreads:          $NTHREADS_FV3
 use_hyper_thread:        ${hyperthread:-".false."}
 ncores_per_node:         $cores_per_node
 restart_interval:        $restart_interval
-restart_run:             ${restart_run:-".false."}
-output_1st_tstep:        ${output_1st_tstep:-".false."}
-restart_hour:            ${restart_hour:-0}
 
 quilting:                $QUILTING
 write_groups:            ${WRITE_GROUP:-1}
@@ -540,6 +644,7 @@ num_files:               ${NUM_FILES:-2}
 filename_base:           'atm' 'sfc'
 output_grid:             $OUTPUT_GRID
 output_file:             $OUTPUT_FILE
+output_1st_tstep_rst:    ${output_1st_tstep_rst:-".false."}
 write_nemsioflip:        $WRITE_NEMSIOFLIP
 write_fsyncflag:         $WRITE_FSYNCFLAG
 imo:                     $LONB_IMO
@@ -731,6 +836,9 @@ cat > input.nml <<EOF
   nst_anl      = $nst_anl
   psautco      = ${psautco:-"0.0008,0.0005"}
   prautco      = ${prautco:-"0.00015,0.00015"}
+  lgfdlmprad   = ${lgfdlmprad:-".false."}
+  effr_in      = ${effr_in:-".false."}
+  cplwav       = ${cplwav:-".false."}
   $gfs_physics_nml
 /
 
@@ -847,6 +955,8 @@ if [ $MEMBER -gt 0 ]; then
   ntrunc = $JCAP_STP
   lon_s = $LONB_STP
   lat_s = $LATB_STP
+  fhstoch = ${fhstoch:-"-999.0"} 
+  stochini = ${stochini:-".false."}
 EOF
 
   if [ $DO_SKEB = "YES" ]; then
@@ -885,6 +995,7 @@ EOF
 /
 EOF
 
+
     cat >> input.nml << EOF
 &nam_sfcperts
   $nam_sfcperts_nml
@@ -905,9 +1016,8 @@ fi
 
 #------------------------------------------------------------------
 # make symbolic links to write forecast files directly in memdir
+FCSTDIR=${FCSTDIR:-$memdir}
 cd $DATA
-  memdir=${FCSTDIR:-$memdir}
-  CDUMP=${RUNMEM:-$CDUMP}
 if [ $QUILTING = ".true." -a $OUTPUT_GRID = "gaussian_grid" ]; then
   fhr=$FHMIN
   while [ $fhr -le $FHMAX ]; do
@@ -915,9 +1025,9 @@ if [ $QUILTING = ".true." -a $OUTPUT_GRID = "gaussian_grid" ]; then
     atmi=atmf${FH3}.$OUTPUT_FILE
     sfci=sfcf${FH3}.$OUTPUT_FILE
     logi=logf${FH3}
-    atmo=$memdir/${CDUMP}.t${cyc}z.atmf${FH3}.$OUTPUT_FILE
-    sfco=$memdir/${CDUMP}.t${cyc}z.sfcf${FH3}.$OUTPUT_FILE
-    logo=$memdir/${CDUMP}.t${cyc}z.logf${FH3}.$OUTPUT_FILE
+    atmo=$FCSTDIR/${CDUMP}.t${cyc}z.atmf${FH3}.$OUTPUT_FILE
+    sfco=$FCSTDIR/${CDUMP}.t${cyc}z.sfcf${FH3}.$OUTPUT_FILE
+    logo=$FCSTDIR/${CDUMP}.t${cyc}z.logf${FH3}.$OUTPUT_FILE
     eval $NLN $atmo $atmi
     eval $NLN $sfco $sfci
     eval $NLN $logo $logi
@@ -929,11 +1039,11 @@ if [ $QUILTING = ".true." -a $OUTPUT_GRID = "gaussian_grid" ]; then
   done
 else
   for n in $(seq 1 $ntiles); do
-    eval $NLN nggps2d.tile${n}.nc       $memdir/nggps2d.tile${n}.nc
-    eval $NLN nggps3d.tile${n}.nc       $memdir/nggps3d.tile${n}.nc
-    eval $NLN grid_spec.tile${n}.nc     $memdir/grid_spec.tile${n}.nc
-    eval $NLN atmos_static.tile${n}.nc  $memdir/atmos_static.tile${n}.nc
-    eval $NLN atmos_4xdaily.tile${n}.nc $memdir/atmos_4xdaily.tile${n}.nc
+    eval $NLN nggps2d.tile${n}.nc       $FCSTDIR/nggps2d.tile${n}.nc
+    eval $NLN nggps3d.tile${n}.nc       $FCSTDIR/nggps3d.tile${n}.nc
+    eval $NLN grid_spec.tile${n}.nc     $FCSTDIR/grid_spec.tile${n}.nc
+    eval $NLN atmos_static.tile${n}.nc  $FCSTDIR/atmos_static.tile${n}.nc
+    eval $NLN atmos_4xdaily.tile${n}.nc $FCSTDIR/atmos_4xdaily.tile${n}.nc
   done
 fi
 
@@ -949,39 +1059,38 @@ $ERRSCRIPT || exit $err
 
 #------------------------------------------------------------------
 if [ $SEND = "YES" ]; then
-  # Copy model restart files
-  cd $DATA/RESTART
-  mkdir -p $memdir/RESTART
 
-  # Only save restarts at single time in RESTART directory
-  # Either at restart_interval or at end of the forecast
-  if [ $restart_interval -eq 0 -o $restart_interval -eq $FHMAX ]; then
+  # Copy gdas and enkf memebr restart files
+  if [ $CDUMP = "gdas" -a $restart_interval -gt 0 ]; then
+    cd $DATA/RESTART
+    mkdir -p $memdir/RESTART
 
-    # Add time-stamp to restart files at FHMAX
-    RDATE=$($NDATE +$FHMAX $CDATE)
-    rPDY=$(echo $RDATE | cut -c1-8)
-    rcyc=$(echo $RDATE | cut -c9-10)
-    for file in $(ls * | grep -v 0000); do
-      $NMV $file ${rPDY}.${rcyc}0000.$file
-    done
-
-  else
-
-    # time-stamp exists at restart_interval time, just copy
     RDATE=$($NDATE +$restart_interval $CDATE)
     rPDY=$(echo $RDATE | cut -c1-8)
     rcyc=$(echo $RDATE | cut -c9-10)
     for file in ${rPDY}.${rcyc}0000.* ; do
       $NCP $file $memdir/RESTART/$file
     done
-
   fi
 
 fi
 
 #------------------------------------------------------------------
+#### ww3 output
+if [ $cplwav = ".true." ]; then
+  for wavGRD in $waveGRD
+   do
+     $NCP out_grd.${wavGRD} $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/rundata/${WAV_MOD_ID}${WAV_MEMBER}.out_grd.${wavGRD}.${PDY}${cyc}
+     $NCP log.${wavGRD} $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/rundata/${WAV_MOD_ID}${WAV_MEMBER}.log.${wavGRD}.${PDY}${cyc}
+   done
+   $NCP out_pnt.${buoy} $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/rundata/${WAV_MOD_ID}${WAV_MEMBER}.out_pnt.${buoy}.${PDY}${cyc}
+   $NCP log.mww3 $COMOUTWW3/${WAV_MOD_ID}.${PDY}/${cyc}/rundata/${WAV_MOD_ID}${WAV_MEMBER}.log.mww3.${PDY}${cyc}
+
+fi
+
+#------------------------------------------------------------------
 # Clean up before leaving
-if [ $KEEPDATA = "NO" ]; then rm -rf $DATA; fi
+if [ $mkdata = "YES" ]; then rm -rf $DATA; fi
 
 #------------------------------------------------------------------
 set +x

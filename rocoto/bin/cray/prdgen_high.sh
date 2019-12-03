@@ -20,10 +20,6 @@ export MPICH_VERSION_DISPLAY=1
 export MPICH_CPUMASK_DISPLAY=1
 
 export KMP_STACKSIZE=1024m
-export OMP_NUM_THREADS=4
-export KMP_AFFINITY=disabled
-
-#export OMP_NUM_THREADS=4
 export KMP_AFFINITY=disabled
 
 export MP_EUIDEVICE=sn_all
@@ -31,18 +27,18 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:4
 
-export NODES=1
-export total_tasks=6
-export OMP_NUM_THREADS=4
-export taskspernode=6
+#export NODES=1
+#export total_tasks=6
+#export OMP_NUM_THREADS=4
+#export taskspernode=6
 
 export DO_LOW_RES=
 
-export gefsmpexec_mpmd="  aprun -b -j1 -n6 -N6 -d4 -cc depth  cfp mpmd_cmdfile"
+#export gefsmpexec_mpmd="  aprun -b -j1 -n${total_tasks} -N${taskspernode} -d${OMP_NUM_THREADS} -cc depth  cfp mpmd_cmdfile"
 
 # export for development runs only begin
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
+#export envir=${envir:-dev}
+#export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 export RERUN=NO
 

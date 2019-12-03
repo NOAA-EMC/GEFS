@@ -18,10 +18,6 @@ export MPICH_VERSION_DISPLAY=1
 export MPICH_CPUMASK_DISPLAY=1
 
 export KMP_STACKSIZE=1024m
-export OMP_NUM_THREADS=1
-export KMP_AFFINITY=disabled
-
-#export OMP_NUM_THREADS=1
 export KMP_AFFINITY=disabled
 
 export MP_EUIDEVICE=sn_all
@@ -29,22 +25,16 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:1
 
-export NODES=5
-export total_tasks=20
-export OMP_NUM_THREADS=1
-export taskspernode=4
+#export NODES=5
+#export total_tasks=20
+#export OMP_NUM_THREADS=1
+#export taskspernode=4
 
-export gefsmpexec_mpmd="  aprun -b -j1 -n40 -N2 -d1 -cc depth  cfp mpmd_cmdfile"
+#export gefsmpexec_mpmd="  aprun -b -j1 -n40 -N2 -d1 -cc depth  cfp mpmd_cmdfile"
 
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
+#export envir=${envir:-dev}
+#export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 # CALL executable job script here
-
-
-
-
-
-
 $SOURCEDIR/jobs/JGEFS_INIT_COMBINE
 
