@@ -157,8 +157,6 @@ if [[ -d global-workflow.fd ]] ; then
 
     $LINK ../sorc/global-workflow.fd/sorc/gfs_post.fd/ush/gfs_nceppost.sh ../ush/
 
-    $LINK ../sorc/global-workflow.fd/ush/gfs_bfr2gpk.sh ../ush/
-    $LINK ../sorc/global-workflow.fd/ush/gfs_sndp.sh ../ush/
 fi
 
 
