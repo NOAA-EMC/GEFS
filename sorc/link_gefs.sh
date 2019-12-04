@@ -51,6 +51,16 @@ fi
 $LINK $FIX_DIR fix_gefs
 cd ${pwd}
 
+cd ${pwd}/../fix
+# fix_wave
+sFolder=fix_wave
+if [[ -d $sFolder ]]; then
+    rm -rf $sFolder
+fi
+$LINK ${pwd}/../${sFolder} ${sFolder}
+cd ${pwd}
+
+
 if [[ -d global-workflow.fd ]] ; then
     cd ${pwd}/../fix
     # fix_am
@@ -71,12 +81,12 @@ if [[ -d global-workflow.fd ]] ; then
     fi
     $LINK $FIX_DIR_FV3/$sFolder $sFolder
 
-    # fix_wave
-    sFolder=fix_wave
+    # product
+    sFolder=product
     if [[ -d $sFolder ]]; then
         rm -rf $sFolder
     fi
-    $LINK ${pwd}/../${sFolder} ${sFolder}    
+    $LINK ${pwd}/../sorc/global-workflow.fd/fix/${sFolder} ${sFolder}
 
     cd ${pwd}
 fi
@@ -95,6 +105,7 @@ fi
 # copy/link exec files
 if [[ -d global-workflow.fd ]] ; then
     $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/nemsio_read ../exec/
+    $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/nemsio_get ../exec/
     $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/global_chgres ../exec/
 
     sPath=../sorc/global-workflow.fd/sorc/fv3gfs.fd/WW3/model/exe
@@ -103,12 +114,51 @@ if [[ -d global-workflow.fd ]] ; then
         echo $sFile
     done
     $LINK ${sPath}/ww3_* ../exec/
+
+
+    sPath=../sorc/global-workflow.fd/sorc/fv3gfs.fd/NEMS/exe
+    $LINK ${sPath}/global_fv3gfs.* ../exec/
+
+    sPath=../sorc/global-workflow.fd/sorc/gfs_post.fd/exec
+    $LINK ${sPath}/ncep_post ../exec/gfs_ncep_post
+
+    sPath=../sorc/global-workflow.fd/sorc/gsi.fd/exec
+    $LINK ${sPath}/getsigensmeanp_smooth.* ../exec/
+    $LINK ${sPath}/getsfcensmeanp.* ../exec/
+
+    sPath=../sorc/global-workflow.fd/exec
+    $LINK ${sPath}/gfs_bufr ../exec/
+    $LINK ${sPath}/tocsbufr ../exec/
+
+fi
+
+# Copy/Link para files
+if [[ -d global-workflow.fd ]] ; then
+    if [[ -d ../parm/parm_fv3diag ]]; then
+        rm -rf ../parm/parm_fv3diag
+    fi
+    $LINK ../sorc/global-workflow.fd/parm/parm_fv3diag ../parm/
+
+    if [[ -d ../parm/post ]]; then
+        rm -rf ../parm/post
+    fi
+    $LINK ../sorc/global-workflow.fd/sorc/gfs_post.fd/parm ../parm/post
+
+    if [[ -d ../parm/product ]]; then
+        rm -rf ../parm/product
+    fi
+    $LINK ../sorc/global-workflow.fd/parm/product ../parm/
 fi
 
 # Copy/Link ush files
 if [[ -d global-workflow.fd ]] ; then
     $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/ush/global_chgres_driver.sh ../ush/
     $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/ush/global_chgres.sh ../ush/
+
+    $LINK ../sorc/global-workflow.fd/sorc/gfs_post.fd/ush/gfs_nceppost.sh ../ush/
+
+    $LINK ../sorc/global-workflow.fd/ush/gfs_bfr2gpk.sh ../ush/
+    $LINK ../sorc/global-workflow.fd/ush/gfs_sndp.sh ../ush/
 fi
 
 
