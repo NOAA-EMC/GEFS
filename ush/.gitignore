@@ -1,5 +1,3 @@
 global_chgres.sh
 global_chgres_driver.sh
 gfs_nceppost.sh
-gfs_bfr2gpk.sh
-gfs_sndp.sh
