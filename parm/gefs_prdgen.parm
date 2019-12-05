@@ -20,11 +20,10 @@ export option28=${option28:-' -new_grid_interpolation budget -fi '}
 
 # fhoroglist is the list of additional hours at which surface height should be included in pgrba
 # this is normally fhmaxh + 12 to include the next gfs output time after the resolution change
-if (( fhmaxh < fhmax )); then
-  export fhoroglist=$(( fhmaxh + 12 ))
-else
-  export fhoroglist=
-fi
+export fhoroglist=
+#if (( fhmaxh < fhmax )); then
+#  export fhoroglist=$(( fhmaxh + 12 ))
+#fi
 
 #
 # Establish an array of stream names which will establish the number and be used as keys for the associative arrays
