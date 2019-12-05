@@ -58,6 +58,11 @@ echo ${Structure}
 echo ${Link}
 
 if [ $CompileCode = "yes" ]; then
+    Link=yes
+fi
+
+
+if [ $CompileCode = "yes" ]; then
     cd $sWS/../sorc
 
     if [[ $Structure == "dev" ]]; then
@@ -87,19 +92,6 @@ if [ $CompileCode = "yes" ]; then
     ## Build the code and install
     ./build_all.sh
 
-    Link=yes
-    #cd $sWS/../sorc
-    #if [ $machine = "theia" ]; then
-    #    ./link_gefs.sh -e $RunEnvir -m theia
-    #elif [ $machine = "hera" ]; then
-    #    ./link_gefs.sh -e $RunEnvir -m hera
-    #elif [ $machine = "cray" ]; then
-    #    ./link_gefs.sh -e $RunEnvir -m cray
-    #elif [ $machine = "wcoss_ibm" ]; then
-    #    ./link_gefs.sh -e $RunEnvir -m ibm
-    #elif [ $machine = "wcoss_dell_p3" ]; then
-    #    ./link_gefs.sh -e $RunEnvir -m dell
-    #fi
 fi
 
 
@@ -166,6 +158,15 @@ if [ $CleanAll = "yes" ]; then
     rm -rf ../exec
     rm -rf ../util/exec
     rm -rf ../fix/fix_*
+
+    # Clean the new links
+    rm -rf global-workflow.fd
+    rm -rf ../parm/parm_fv3diag
+    rm -rf ../parm/post
+    rm -rf ../parm/product
+    rm ../ush/gfs_nceppost.sh
+    rm ../ush/global_chgres.sh
+    rm ../ush/global_chgres_driver.sh
 
 fi # for CleanAll
 
