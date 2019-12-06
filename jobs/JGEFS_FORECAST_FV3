@@ -6,11 +6,10 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export gefsmpexec=${gefsmpexec:-mpirun}
-
 export machine=$machine
-#export nemsioget=$nemsioget
+export gefsmpexec=${gefsmpexec:-mpirun}
 export APRUN=${gefsmpexec:-mpirun}
+
 export RUNMEM=$RUNMEM
 export mem=`echo $RUNMEM|cut -c3-5`
 
@@ -23,6 +22,7 @@ echo "ENS_NUM=$ENS_NUM"
 export pid=$$
 export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
+mkdir -p $DATA/INPUT
 cd $DATA
 
 ############################
@@ -50,13 +50,6 @@ export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
-if [[ $RUN_CONCURRENT = yes ]]; then
-	export PGMOUT=FCOUT.o$pid
-	export PGMERR=
-	export REDOUT=' | tee -a '
-	export REDERR=' 2>&1 '
-fi
-
 ####################################
 # Define RERUN Parameter: default to RESTART if not previously set
 #
@@ -70,32 +63,32 @@ fi
 ####################################
 echo "input setting RERUN=$RERUN"
 
-export RERUN=${RERUN:-RERUN}
+export RERUN=${RERUN:-NO}
 #
-# export RERUN=RESTART
-# export RERUN=YES
 echo "current setting RERUN=$RERUN"
 
 # Specify Execution Areas
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
+export HOMEgsm=${HOMEgsm:-$HOMEgefs}
 export HOMEgfs=$HOMEgsm
 export EXECgfs=$HOMEgfs/exec
 export USHgfs=$HOMEgfs/ush
 export FIXgfs=$HOMEgfs/fix
 export PARMgfs=$HOMEgfs/parm
 
+export HOMEwave=${HOMEwave:-${HOMEgefs}}
+export PARMwave=${PARMwave:-$HOMEwave/parm}
+
 #Names used in exglobal_fv3.sh
 export BASE_GSM=${BASE_GSM:-$HOMEgfs}
 export FIX_DIR=$FIXgfs
 export FIX_AM=$FIX_DIR/fix_am
 export FIXfv3=$FIX_DIR/fix_fv3_gmted2010
-
-export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
-export USHgefs=${USHgefs:-$HOMEgefs/ush}
-export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
-export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
-
 
 # Run setpdy and initialize PDY variables
 setpdy.sh
@@ -104,14 +97,13 @@ setpdy.sh
 # Define COM and GES directories
 ##############################################
 if [[ $FORECAST_SEGMENT = hr ]] ; then
-	echo "Integrate the model for the high resolution segment"
-	fhresini=0
+	echo "Integrate the model for the Half-Month range segment"
+	FHINI=0
 elif [[ $FORECAST_SEGMENT = lr ]] ; then
-	echo "Integrate the model for the low resolution segment"
-	fhresini=$fhmaxh
-elif [[ $FORECAST_SEGMENT = hl ]] ; then
-	echo "Integrate the model for both high and low resolution segments, including chgres"
-	fhresini=0
+	echo "Integrate the model for the Longer Range segment"
+	FHINI=$fhmaxh
+    export fhrestart=$fhmaxh
+    export cplwav=.false.
 else
 	msg="FATAL ERROR:  Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
 	echo "`date`   $msg"
@@ -123,28 +115,31 @@ else
 fi # [[ $FORECAST_SEGMENT = hr ]]
 
 echo FORECAST_SEGMENT = $FORECAST_SEGMENT
-echo fhresini=$fhresini
+echo FHINI=$FHINI
 echo ENS_SPS = $ENS_SPS
 echo RUN_CONCURRENT = $RUN_CONCURRENT
 
 export GESIN=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
 export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 export SSTDIR=${SSTDIR:-$COMIN/${cyc}/cfssst}
 
-#export FV3GESOUT=$GESROOT/${envir}/fv3gefs.${PDY}
-#export SFCSIG=$COMOUT/$cyc/sfcsig
+#export memdir=$COMOUT/$cyc/sfcsig
+export memdir=$GESIN/$mem
+export gmemdir=$GESIN/$mem
+export ICSDIR=$GESIN/$mem
+export FCSTDIR=$COMOUT/$cyc/sfcsig
+export RSTDIR=$GESIN/$mem/RESTART
+export RSTDIR_TMP=$RSTDIR
 
 mkdir -m 775 -p $COMOUT/$cyc/sfcsig
 mkdir -m 775 -p $COMOUT/$cyc/misc/fcst
 mkdir -m 775 -p $COMOUT/$cyc/restart/$mem
 
-mkdir -m 755 -p $GESOUT/$mem/RESTART
+mkdir -m 755 -p $GESIN/$mem/RESTART
 
-export FCSTDIR=$COMOUT/$cyc/sfcsig
-export RESTDIR=$COMOUT/$cyc/restart/$mem
-ln -s $GESOUT/$mem/RESTART $DATA/RESTART
+#ln -s $GESOUT/$mem/RESTART $DATA/RESTART
 
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
@@ -153,11 +148,16 @@ export LOGSCRIPT=startmsg
 echo set parameters using gefs.parm
 ##############################################
 . $PARMgefs/gefs.parm
-. $PARMgefs/gwes.parm
+. $PARMwave/gwes.parm
 
+if [[ $FORECAST_SEGMENT = hr ]] ; then
+	export RERUN="NO"
+	FHINI=${FHINI:-0}
+fi
 if [[ $FORECAST_SEGMENT = lr ]] ; then
-	export RERUN=${RERUN:-RESTART}
-	export FHINI=${FHINI:-$fhmaxh}
+	export RERUN="YES"
+	FHINI=${FHINI:-$fhmaxh}
+	export CDATE_RST=$($NDATE +$fhmaxh $PDY$cyc)
 fi
 if [[ $RERUN = RERUN ]] ; then
 	if [[ $FORECAST_SEGMENT = hr ]] ; then
@@ -171,14 +171,12 @@ if [[ $RERUN = RERUN ]] ; then
 fi
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
-	#CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$fhouth;FHZER=$fhzerh;                        
 	CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$FHOUTLF;FHZER=6;
 	MTNRSL=$MTNRSLFV;LONB=$LONBFV;LATB=$LATBFV;
 	FHMAX_HF=$FHMAXHF;FHOUT_HF=$FHOUTHF; 
 	FHINI=$FHINI;
 	(( LEVS = LEVSHR + 1 ))
 elif [[ $FORECAST_SEGMENT = lr ]] ; then
-	#CASE=$casel;FHMAX=$fhmax;FHOUT=$fhoutl;FHZER=$fhzerl;
 	CASE=$CASELR;FHMAX=$fhmax;FHOUT=$FHOUTLF;FHZER=6;
  	MTNRSL=$MTNRSLLR;LONB=$LONBLR;LATB=$LATBLR;
 	FHMAX_HF=$FHMAXHF;FHOUT_HF=$FHOUTHF;
@@ -201,11 +199,6 @@ export FNALBC2=$FIX_AM/global_albedo4.1x1.grb
 export FNSMCC=$FIX_AM/global_soilmgldas.t$MTNRSL.grb
 export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 
-#export SIGHDR=${EXECgsm}/global_sighdr
-#export SFCHDR=${EXECgsm}/global_sfchdr
-#export SIGHDR=$nemsioget
-#export SFCHDR=$nemsioget
-
 ####################################
 # Create member list
 ####################################
@@ -214,14 +207,23 @@ export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 # Forecast Input Variables
 #
 . $PARMgefs/gefs_fcst.parm
+export fhstoch=$FHMAX
 
-if [[ $RERUN = RESTART ]] ; then
+if [[ $FORECAST_SEGMENT = hr ]] ; then
+#	(( FHMAX = FHMAX + FHOUTLF ))
+	(( FHMAX = FHMAX + 1 ))
+fi
+
+export fhstoch=${fhstoch:-"-999.0"}  # forecast hour to dump random patterns
+export stochini=${stochini:-".false."}  # true= read in pattern, false=initialize from seed
+
+if [[ $RERUN = "YES" ]] ; then
 	export warm_start=.true.
 	export restart_hour=$FHMIN
 	export restart_run=.true.    
 	export output_1st_tstep=.true.
+	export stochini=.true.
 fi
-
 #
 # Forecast Input Variables
 #
@@ -234,18 +236,18 @@ export MP_LABELIO=yes
 # Configuration file for running NEMS FV3GFS 
 #--------------------------------------------
 #--------------------------------------------
-mac=`hostname |cut -c1`
+#mac=`hostname |cut -c1`
 
-NEMS=YES
-if [ $machine = WCOSS ]; then
-	EXPDIR=/global/save/$LOGNAME/para_gfs/pr$PSLOT
-elif [ $machine = WCOSS_C ]; then
-	EXPDIR=$HOMEgefs/parm
-elif [ $machine = THEIA ]; then
-	IO_IN=.true.
-	NEMSIO_OUT=.true.
-	IPD4=YES
-fi
+#NEMS=YES
+#if [ $machine = WCOSS ]; then
+#	EXPDIR=/global/save/$LOGNAME/para_gfs/pr$PSLOT
+#elif [ $machine = WCOSS_C ]; then
+#	EXPDIR=$HOMEgefs/parm
+#elif [ $machine = THEIA ]; then
+#	IO_IN=.true.
+#	NEMSIO_OUT=.true.
+#	IPD4=YES
+#fi
 # ----------------------------------
 # user account 
 # ----------------------------------
@@ -294,10 +296,6 @@ if [[ $FORECAST_SEGMENT = hr ]] ; then
 		export SKEB_TAU=$SKEB_TAU_hr
 		export SKEB_LSCALE=$SKEB_LSCALE_hr
 		export SKEBNORM=${SKEBNORM:-"1"}
-	#	export SKEB_VFILT=$SKEB_VFILT_hr
-	#	export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr
-	#	export skeb_sigtop1=$skeb_sigtop1_hr
-	#	export skeb_sigtop2=$skeb_sigtop2_hr
 	fi
 
 fi
@@ -329,24 +327,22 @@ if [[ $FORECAST_SEGMENT = lr ]] ; then
 		export SKEB_TAU=$SKEB_TAU_hr
 		export SKEB_LSCALE=$SKEB_LSCALE_hr
 		export SKEBNORM=${SKEBNORM:-"1"}
-	#	export SKEB_VFILT=$SKEB_VFILT_hr
-	#	export SKEB_DISS_SMOOTH=$SKEB_DISS_SMOOTH_hr
-	#	export skeb_sigtop1=$skeb_sigtop1_hr
-	#	export skeb_sigtop2=$skeb_sigtop2_hr
 	fi
 
 fi
 
-export fcstscript=${fcstscript:-$HOMEgfs/scripts/exglobal_fcst_nemsfv3gfs.sh}
+export fcstscript=${fcstscript:-$HOMEgefs/scripts/exglobal_fcst_nemsfv3gfs.sh}
+#export fcstscript=${fcstscript:-$HOMEgfs/scripts/exglobal_fcst_nemsfv3gfs.sh}
 export FORECASTSH=$fcstscript
-export FCSTEXECDIR=${FCSTEXECDIR:-$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin}
+export FCSTEXECDIR=${FCSTEXECDIR:-$EXECgfs} #-$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin}
+export FCSTEXEC=${FCSTEXEC:-global_fv3gfs.x}
 export PARM_FV3DIAG=${PARM_FV3DIAG:-$PARMgfs/parm_fv3diag}
 export ROTDIR=${ROTDIR:-$DATA}
 
 export APRUN=${APRUN:-""}
-export EXECDIR=$EXECgfs
+#export EXECDIR=$EXECgfs
 #export FCSTEXECDIR=$BASE_SVN/NEMSfv3gfs/stochy/NEMS/exe
-export FCSTEXECDIR=${FCSTEXECDIR:-$EXECDIR}
+#export FCSTEXECDIR=${FCSTEXECDIR:-$EXECDIR}
 
 echo $fcstscript
 echo $FORECASTSH
@@ -364,54 +360,33 @@ restart_interval=${fhrestart:-1000}
 SEND=NO    
 export VERBOSE=YES
 
-#echo "-----end of $CONFIG in $0 --------"
 #echo "-----end of CONFIG in $0 --------"
-#echo DATA=$DATA
 
 ################################################################################
 export CDATE=$PDY$cyc
-export rCDUMP=gdas
-export CDUMP=gdas
-#ICSDIR=/gpfs/hps/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/FV3EXP/INIT/fv3gefs.20160910/$mem
-#Temporal setting reading from Kate Zhou's archive
+export rCDUMP=$RUNMEM
+export CDUMP=$RUNMEM
 
-# To be consistent to the requirement of the exglobal script, temperal setting
-# To be consistent to the requirement of the exglobal script, temperal setting
+#ICSDIR_template=${ICSDIR_template:-$GESIN/$mem}
+#ICSDIR=`eval echo $ICSDIR_template`
 
-# Global script puts output in this location based on $ROTDIR, so we create symlinks to where we really want it
-# Use some bash trickery to do delayed variable expansion
-# For unmodified global script, use memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc' (must be single-quotes)
-#memdir_template=${memdir_template:-$GESIN/$mem/$CASE\_$CDATE}
-#memdir=`eval echo $memdir_template`
-#ICSDIR_template=${ICSDIR_template:-$GESIN/$mem/$CASE\_$CDATE}
-memdir=$ROTDIR/enkf$CDUMP.$PDY/$cyc/$memchar
-
-ICSDIR_template=${ICSDIR_template:-$GESIN/$mem}
-ICSDIR=`eval echo $ICSDIR_template`
-#mkdir -p $ICSDIR/INPUT
-#ln -s $ICSDIR/*.nc $ICSDIR/INPUT/. 
-# We need to make the directory structure above memdir, but memdir needs to actually be a symlink
-# So create the tree using mkdir -p, then remove the last product
-
+LINK=NO   # link is done in the $FORECASa scriptT
+if [ $LINK = "YES" ]; then
 if [ $OUTPUT_GRID = "gaussian_grid" ]; then
-	# Link init directory
-	ln -s $ICSDIR $DATA/INPUT
-	mkdir -p "$memdir"
-
 	# Link output files
 	hr=$FHINI
 	while (( hr < FHMAX_HF )); do
 		fhr=$(printf "%03.0f" $hr)
-		ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $memdir/$CDUMP.${cycle}.atmf$fhr.nemsio
-		ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $memdir/$CDUMP.${cycle}.sfcf$fhr.nemsio
-		ln -s $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $memdir/$CDUMP.${cycle}.logf$fhr.nemsio
+		ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $DATA/$CDUMP.${cycle}.atmf$fhr.nemsio
+		ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $DATA/$CDUMP.${cycle}.sfcf$fhr.nemsio
+		ln -s $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $DATA/$CDUMP.${cycle}.logf$fhr.nemsio
 		export hr=$(expr $hr + $FHOUT_HF)
 	done
 	while (( hr <= FHMAX )); do
 		fhr=$(printf "%03.0f" $hr)
-		ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $memdir/$CDUMP.${cycle}.atmf$fhr.nemsio
-		ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $memdir/$CDUMP.${cycle}.sfcf$fhr.nemsio
-		ln -s $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $memdir/$CDUMP.${cycle}.logf$fhr.nemsio
+		ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $DATA/$CDUMP.${cycle}.atmf$fhr.nemsio
+		ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $DATA/$CDUMP.${cycle}.sfcf$fhr.nemsio
+		ln -s $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $DATA/$CDUMP.${cycle}.logf$fhr.nemsio
 		export hr=$(expr $hr + $FHOUT)
 	done
 else
@@ -425,6 +400,7 @@ else
 		done
 	done
 fi # [ $OUTPUT_GRID = "gaussian_grid" ]
+fi # $LINK
 
 if [[ $cplwav = ".true." ]]; then
 	# Settings for Wavewatch III
@@ -432,16 +408,26 @@ if [[ $cplwav = ".true." ]]; then
 	export COMOUTWW3=$COMROOT/${NET}/${envir}
 fi # [[ $cplwav = ".true." ]]
 
-mkdir -p $memdir
-
 export FIX_DIR=$FIXgfs
 export FIX_AM=$FIX_AM
 
 export assim_freq=6
 export increment=$ICSDIR/fv3_increment.nc
 
+if [[ $FORECAST_SEGMENT = lr ]] ; then
+	cp -pr $GESIN/$mem/RESTART/stoch_out.F* $DATA/stoch_ini 
+fi
+
 $FORECASTSH
 ERR=$?
+
+if [[ $FORECAST_SEGMENT = hr ]] ; then
+	cp -pr $DATA/stoch_out.F* $GESIN/$mem/RESTART  
+# 	fhr=$(printf "%03.0f" $FHMAX)
+#	mv $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio_hr
+#	mv $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio_hr
+#	mv $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio_hr
+fi
 
 if [ $ERR = 0 ]; then
     msg="$job completed normally!"
@@ -449,6 +435,11 @@ else
     msg="FATAL ERROR: $job failed!"
 fi
 postmsg "$jlogfile" "$msg"
+
+if [[ $KEEPDATA != "YES" ]]; then
+    cd $DATAROOT
+    rm -rf $DATA
+fi
 
 echo `date` $0 `date -u` end
 

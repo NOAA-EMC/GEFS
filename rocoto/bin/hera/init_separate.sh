@@ -19,10 +19,10 @@ export MP_COREFILE_FORMAT=core.txt
 export OMP_STACKSIZE=3G
 export MP_COMPILER=intel
 
-export NODES=10
-export total_tasks=22
-export OMP_NUM_THREADS=6
-export taskspernode=4
+#export NODES=10
+#export total_tasks=22
+#export OMP_NUM_THREADS=6
+#export taskspernode=4
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_INIT_SEPARATE

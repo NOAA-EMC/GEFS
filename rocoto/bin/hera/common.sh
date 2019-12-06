@@ -21,6 +21,10 @@ export MP_EUILIB=us
 export KMP_STACKSIZE=1024m
 export KMP_AFFINITY=disabled
 
+export total_tasks=${GEFS_NTASKS}
+export OMP_NUM_THREADS=${GEFS_TPP}
+export taskspernode=${GEFS_PPN}
+
 export NTASKS=$SLURM_NTASKS
 
 export gefsmpexec="srun -n $NTASKS"

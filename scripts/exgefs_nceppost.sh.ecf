@@ -492,7 +492,7 @@ do
         export PGBOUT=pgbfout
         export PGIOUT=pgbifout
         export ANOMCATSH=${USHGSM}/global_anomcat.sh
-        FILTER=1
+        export FILTER=1
 
         # RLW 20100910 add cleanup to prevent problems with overparm
         echo

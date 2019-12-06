@@ -26,15 +26,15 @@ ulimit -a
 #export MP_SHARED_MEMORY=no
 #export MEMORY_AFFINITY=core:4
 
-export total_tasks=93
-export OMP_NUM_THREADS=1
-export taskspernode=1
+#export total_tasks=93
+#export OMP_NUM_THREADS=1
+#export taskspernode=1
 
 # export for development runs only begin
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
+#export envir=${envir:-dev}
+#export RUN_ENVIR=${RUN_ENVIR:-dev}
 
-export gefsmpexec_mpmd="aprun -b -j1 -n${total_tasks} -N${taskspernode} -d${OMP_NUM_THREADS} -cc depth cfp mpmd_cmdfile" #mpirun -n $total_tasks cfp mpmd_cmdfile"
+#export gefsmpexec_mpmd="aprun -b -j1 -n${total_tasks} -N${taskspernode} -d${OMP_NUM_THREADS} -cc depth cfp mpmd_cmdfile" #mpirun -n $total_tasks cfp mpmd_cmdfile"
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_GEMPAK

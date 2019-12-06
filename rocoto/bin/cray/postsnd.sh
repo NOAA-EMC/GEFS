@@ -27,18 +27,18 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:2
 
-export NODES=1
-export total_tasks=9
-export OMP_NUM_THREADS=2
-export taskspernode=${total_tasks}
+#export NODES=1
+#export total_tasks=9
+#export OMP_NUM_THREADS=2
+#export taskspernode=${total_tasks}
 
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
+#export envir=${envir:-dev}
+#export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 
-export gefsmpexec=" aprun -b -j1 -n${total_tasks} -N${taskspernode} -d2 -cc depth "
+###export gefsmpexec=" aprun -b -j1 -n${total_tasks} -N${taskspernode} -d2 -cc depth "
 #export gefsmpexec=" mpirun -n $total_tasks "
 #export gefsmpexec_mpmd='aprun -n 10 cfp'
-export gefsmpexec_mpmd=" aprun -b -j1 -n9 -N9 -d2 -cc depth  cfp "
+###export gefsmpexec_mpmd=" aprun -b -j1 -n9 -N9 -d2 -cc depth  cfp "
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_POSTSND

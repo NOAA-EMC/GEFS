@@ -171,6 +171,17 @@ echo " .... Building getnsttf - 18 .... "
 ./build_getnsttf.sh > $logs_dir/build_getnsttf.log 2>&1
 }
 
+#------------------------------------
+# build global-workflow
+#------------------------------------
+if [[ -d global-workflow.fd ]] ; then
+    if [[ -L global-workflow.fd ]] ; then
+        echo " ... You don't need to build global-workflow because global-workflow.fd was linked from other directiory!"
+    else
+        echo " .... Building global-workflow .... "
+        ./build_global-workflow.sh > $logs_dir/build_global-workflow.log 2>&1
+    fi
+fi
 echo;echo " .... Build system finished .... "
 
 exit 0

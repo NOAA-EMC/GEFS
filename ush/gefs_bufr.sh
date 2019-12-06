@@ -1,11 +1,11 @@
 #!/bin/ksh
 #
-#  UTILITY SCRIPT NAME :  gfsbufr.sh
+#  UTILITY SCRIPT NAME :  gefsbufr.sh from gfs_bufr.sh
 #               AUTHOR :  Hua-Lu Pan
 #         DATE WRITTEN :  02/03/97
 #
 #  Abstract:  This utility script produces BUFR file of
-#             station forecasts from the GFS suite.
+#             station forecasts from the GEFS suite.
 #
 #     Input:  none
 # Script History Log:

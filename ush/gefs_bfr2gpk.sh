@@ -1,13 +1,13 @@
 #!/bin/sh
 #########################################################################
-#                                   #
-# Script:  gfs_bfr2gpk                          #
-#                                   #
-#  This script reads GFS BUFR output and transfers it into GEMPAK   #
-#  surface and sounding data files.                 #
-#                                   #
-# Log:                                  #
-# K. Brill/HPC      04/12/05                    #
+#                                           #
+# Script:  gefs_bfr2gpk form gfs_bfr2gpk.sh #
+#                                           #
+#  This script reads GEFS BUFR output and transfers it into GEMPAK   #
+#  surface and sounding data files.         #
+#                                           #
+# Log:                                      #
+# K. Brill/HPC      04/12/05                #
 #########################################################################  
 set -x
 

@@ -71,7 +71,7 @@ export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.$gefs_ver}
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 export USHgefs=${USHgefs:-$HOMEgefs/ush}
 export UTILgefs=${UTILgefs:-$HOMEgefs/util}
-export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 ##############################################
