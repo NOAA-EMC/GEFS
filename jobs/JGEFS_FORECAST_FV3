@@ -337,28 +337,6 @@ if [[ $FORECAST_SEGMENT = lr ]] ; then
 
 fi
 
-#case $CASE in
-#  C48)   DELTIM=3600; layout_x=4  ; layout_y=8  ;;
-#  C96)   DELTIM=1800; layout_x=4  ; layout_y=8  ;;
-##  C192)  DELTIM=900 ; layout_x=4  ; layout_y=8  ;;
-#  C192)  DELTIM=600 ; layout_x=4  ; layout_y=8  ;;
-#  C384)  DELTIM=450 ; layout_x=4  ; layout_y=8  ;;
-#  C768)  DELTIM=225 ; layout_x=8  ; layout_y=16 ;;
-#  C1152) DELTIM=150 ; layout_x=8  ; layout_y=16 ;;
-#  C3072) DELTIM=90  ; layout_x=16 ; layout_y=32 ;;
-#  *)     echo "grid $CASE not supported, exit"
-#         exit ;;
-#esac
-
-#
-# Forecast Input Variables
-#
-# . $PARMgefs/gefs_nstfv3.parm
-#APRUN and FCSTEXEC are defined in gefs_nstfv3.parm
-
-#export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nems.sh.ecf
-#export FCSTEXEC=$EXECgsm/global_fcst
-#export fcstscript=$HOMEgsm/scripts/exglobal_fcst_nemsfv3gfs_sp.sh
 export fcstscript=${fcstscript:-$HOMEgfs/scripts/exglobal_fcst_nemsfv3gfs.sh}
 export FORECASTSH=$fcstscript
 export FCSTEXECDIR=${FCSTEXECDIR:-$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin}

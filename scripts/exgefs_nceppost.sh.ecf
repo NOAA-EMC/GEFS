@@ -199,15 +199,7 @@ if [ $DOANALYSIS = YES ]; then
 
 fi
 
-#(( fhr=SHOUR))
-#while (( fhr <= FHOUR )); do
 for fhr in ${RUN_HOURS[@]}; do
-    #fhr=$(printf %03i $fhr)
-    #if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
-    #    FHINC=$FHOUT_HF
-    #else
-    #    FHINC=$FHOUT
-    #fi
 
     mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr$cfsuffix
 
@@ -247,14 +239,6 @@ for fhr in ${RUN_HOURS[@]}; do
             rm $pcfile
         done # for submc in prd0p5 prd1p0 prd2p5
     fi # [[ ! -s $mcfile ]]
-
-    #export fhrtest=`expr $fhr + $FHINC`
-    #if [ $FHMAXHF -gt 0 -a $FHOUTHF -gt 0 -a $fhrtest -ge $FHMAXHF -a $fhr -lt $FHMAXHF ]; then
-    #    export FHINC=$FHOUT
-    #    export fhr=`expr $FHMAX_HF`
-    #else
-    #    export fhr=`expr $fhr + $FHINC`
-    #fi
 
 done # for fhr in RUN_HOURS  # while (( fhr <= FHOUR ))
 
@@ -400,17 +384,8 @@ SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 ############################################################
 # Loop Through the Post Forecast Files 
 ############################################################
-#(( fhr=SHOUR ))
-#while (( fhr <= FHOUR )); do
 for fhr in ${RUN_HOURS[@]}
 do
-    #export fhr=$(printf %03i $fhr)
-    #if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
-    #    FHINC=$FHOUT_HF
-    #else
-    #    FHINC=$FHOUT
-    #fi
-
     mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr$cfsuffix
 
     if [[ ! -s $mcfile ]]; then
@@ -577,15 +552,6 @@ do
             echo
         fi # test $SENDCOM = "YES"
     fi # [[ ! -s $mcfile ]]
-
-    ##export fhr=`expr $fhr + $FHINC`
-    #export fhrtest=`expr $fhr + $FHINC`
-    #if [ $FHMAXHF -gt 0 -a $FHOUTHF -gt 0 -a $fhrtest -ge $FHMAXHF -a $fhr -lt $FHMAXHF ]; then
-    #    export FHINC=$FHOUT
-    #    export fhr=`expr $FHMAX_HF`
-    #else
-    #    export fhr=`expr $fhr + $FHINC`
-    #fi
 
 done # for fhr in RUN_HOURS # while (( fhr <= FHOUR ))
 
