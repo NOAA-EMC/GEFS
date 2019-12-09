@@ -28,7 +28,7 @@ export PCOMROOT=$baseoutput/pcom/$envir
 mkdir -p  $COMROOT/logs/jlogfiles
 
 export GESROOTp1=$GESROOTp1
-export archsyndir=$COMROOTp1/arch/prod/syndat
+export archsyndir=${archsyndir:-$COMROOTp1/arch/prod/syndat}
 export DBNROOT=
 
 export HOMEDIR=$HOMEDIR
