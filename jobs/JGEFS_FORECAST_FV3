@@ -99,8 +99,7 @@ if [[ $FORECAST_SEGMENT = hr ]] ; then
 elif [[ $FORECAST_SEGMENT = lr ]] ; then
 	echo "Integrate the model for the Longer Range segment"
 	FHINI=$fhmaxh
-    export fhrestart=$fhmaxh
-    export cplwav=.false.
+	export cplwav=.false.
 else
 	msg="FATAL ERROR:  Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
 	echo "`date`   $msg"
@@ -204,13 +203,15 @@ export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 # Forecast Input Variables
 #
 . $PARMgefs/gefs_fcst.parm
-export fhstoch=$FHMAX
+export restart_interval=${fhrestart:-1000}
+export fhstoch=$restart_interval
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 #	(( FHMAX = FHMAX + FHOUTLF ))
 	(( FHMAX = FHMAX + 1 ))
 fi
 
+export other_restart_time=${other_restart_time:-6}
 export fhstoch=${fhstoch:-"-999.0"}  # forecast hour to dump random patterns
 export stochini=${stochini:-".false."}  # true= read in pattern, false=initialize from seed
 
@@ -328,8 +329,24 @@ if [[ $FORECAST_SEGMENT = lr ]] ; then
 
 fi
 
+#case $CASE in
+#  C48)   DELTIM=3600; layout_x=4  ; layout_y=8  ;;
+#  C96)   DELTIM=1800; layout_x=4  ; layout_y=8  ;;
+##  C192)  DELTIM=900 ; layout_x=4  ; layout_y=8  ;;
+#  C192)  DELTIM=600 ; layout_x=4  ; layout_y=8  ;;
+#  C384)  DELTIM=450 ; layout_x=4  ; layout_y=8  ;;
+#  C768)  DELTIM=225 ; layout_x=8  ; layout_y=16 ;;
+#  C1152) DELTIM=150 ; layout_x=8  ; layout_y=16 ;;
+#  C3072) DELTIM=90  ; layout_x=16 ; layout_y=32 ;;
+#  *)     echo "grid $CASE not supported, exit"
+#         exit ;;
+#esac
+
+#
+# Forecast Input Variables
+#
 export fcstscript=${fcstscript:-$HOMEgefs/scripts/exglobal_fcst_nemsfv3gfs.sh}
-#export fcstscript=${fcstscript:-$HOMEgfs/scripts/exglobal_fcst_nemsfv3gfs.sh}
+#export fcstscript=${fcstscript:-$HOMEgsm/scripts/exglobal_fcst_nemsfv3gfs.sh}
 export FORECASTSH=$fcstscript
 export FCSTEXECDIR=${FCSTEXECDIR:-$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin}
 export PARM_FV3DIAG=${PARM_FV3DIAG:-$PARMgfs/parm_fv3diag}
@@ -348,8 +365,6 @@ echo $PARM_FV3DIAG
 echo $APRUN
 
 NCP="/bin/cp -p"
-
-restart_interval=${fhrestart:-1000}
 
 #USE_RESTART=NO                      #use restart file under COMROT/RESTART if run is interruptted
 #FHSTRT=6                            #restart from a given hour if USE_RESTART=YES
@@ -411,19 +426,14 @@ export assim_freq=6
 export increment=$ICSDIR/fv3_increment.nc
 
 if [[ $FORECAST_SEGMENT = lr ]] ; then
-	cp -pr $GESIN/$mem/RESTART/stoch_out.F* $DATA/stoch_ini 
+	fhr=$(printf "%03.0f" $fhmaxh)
+	cp -pr $GESIN/$mem/RESTART/stoch_out.F000$fhr $DATA/stoch_ini 
 fi
 
 $FORECASTSH
 ERR=$?
 
-if [[ $FORECAST_SEGMENT = hr ]] ; then
-	cp -pr $DATA/stoch_out.F* $GESIN/$mem/RESTART  
-# 	fhr=$(printf "%03.0f" $FHMAX)
-#	mv $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio_hr
-#	mv $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio_hr
-#	mv $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio_hr
-fi
+cp -pr $DATA/stoch_out.F* $GESIN/$mem/RESTART  
 
 if [ $ERR = 0 ]; then
     msg="$job completed normally!"

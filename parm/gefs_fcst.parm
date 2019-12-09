@@ -24,7 +24,8 @@ export WRITE_NEMSIOFILE=.true.
 export WRITE_NEMSIOFLIP=.true.
 export LONB=$LONB
 export LATB=$LATB
-export restart_interval=${fhrestart:-420}
+export restart_interval=${fhrestart:-48}
+export other_restart_time=${other_restart_time:-6}
 export NSOUT=0
 
 # CPU geopmetry
