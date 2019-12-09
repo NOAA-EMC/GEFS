@@ -22,8 +22,8 @@ export wavempexec="aprun -b -j1 -cc depth -n"
 export wave_mpmd="cfp"
 
 export APRUNC="$gefsmpexec"
-export APRUN_CHGRES="aprun -j1 -n$total_tasks -N$taskspernode -d$OMP_NUM_THREADS -cc depth"
-export APRUN_RECENT="$APRUN_CHGRES"
-export aprun_gec00="$gefsmpexec"
-export APRUN_CALCINC="$gefsmpexec"
+#export APRUN_CHGRES="aprun -j1 -n$total_tasks -N$taskspernode -d$OMP_NUM_THREADS -cc depth"
+#export APRUN_RECENT="$APRUN_CHGRES"
+#export aprun_gec00="$gefsmpexec"
+#export APRUN_CALCINC="$gefsmpexec"
 
