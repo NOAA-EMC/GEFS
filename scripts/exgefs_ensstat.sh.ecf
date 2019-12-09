@@ -318,7 +318,7 @@ for hour in $hours; do
 				mv ${run}.${cycle}.$pgapre${ffhr}.idx $COMOUT/$cyc/$pgad
 			fi # [[ -s ${run}.${cycle}.$pgapre${ffhr} ]]
 			if [[ "$SENDDBN" = 'YES' ]]; then
-				if [[ ! -n "$cfsuffix" && ! -n "$lr" ]]; then
+				if [[ ! -n "$lr" ]]; then
 					if [[ "$run" = "geavg" ]]; then
 						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_AVG $job $COMOUT/$cyc/$pgad/${run}.${cycle}.$pgapre${ffhr}
 						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_AVG_WIDX $job
@@ -329,8 +329,8 @@ for hour in $hours; do
 						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_SPR_WIDX $job 
 						$COMOUT/$cyc/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
 					fi # [[ "$run" = "gespr" ]]
-				fi # [[ ! -n "$cfsuffix" && ! -n "$lr" ]]
-				if [[ ! -n "$cfsuffix" &&  -n "$lr" ]]; then
+				fi # [[ ! -n "$lr" ]]
+				if [[  -n "$lr" ]]; then
 					if [[ "$run" = "geavg" ]]; then
 						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG $job $COMOUT/$cyc/$pgad/${run}.${cycle}.$pgapre${ffhr}
 						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG_WIDX $job $COMOUT/$cyc/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
@@ -338,7 +338,7 @@ for hour in $hours; do
 					if [[ "$run" = "gespr" ]]; then
 						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR $job ${COMOUT}/${cyc}/pgrb2a$lr/gespr.$COMOUT/$cyc/$pgad/${run}.${cycle}.$pgapre${ffhr}
 					fi
-				fi # [[ ! -n "$cfsuffix" &&  -n "$lr" ]]
+				fi # [[ -n "$lr" ]]
 			fi # [[] "$SENDDBN" = 'YES' ]]
 		done
 	fi # [ $SENDCOM = "YES" ]
