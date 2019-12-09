@@ -51,7 +51,6 @@ echo cyc=$cyc cyc_fcst=$cyc_fcst
 echo cycle=$cycle cycle_fcst=$cycle_fcst
 echo fcstlong=$fcstlong
 echo cycsuffix=$cycsuffix
-echo cfsuffix=$cfsuffix
 echo ensshort=$ensshort
 
 export pdycycp=`$NDATE -$fhrp $PDY$cyc`

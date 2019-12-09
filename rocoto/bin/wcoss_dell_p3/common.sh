@@ -24,7 +24,7 @@ export gefsmpexec_mpmd="mpirun -n $NTASKS cfp mpmd_cmdfile"
 export wavempexec="mpirun -n"
 export wave_mpmd="cfp"
 
-export APRUNC="$gefsmpexec"
+#export APRUNC="$gefsmpexec"
 #export APRUN_RECENT="$gefsmpexec"
 #export APRUN_CHGRES="mpirun -n 1"
 #export aprun_gec00="mpirun -n 1"
