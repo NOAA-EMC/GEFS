@@ -81,13 +81,12 @@ export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
 export USHgefs=${USHgefs:-${HOMEgefs}/ush}
 export PARMgefs=$HOMEgefs/parm
 
-export HOMEgsm=${HOMEgsm:-$HOMEgefs}
-export HOMEgfs=$HOMEgsm
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
 
-export FIXglobal=${HOMEgsm}/fix
-export FIXgfs=${HOMEgsm}/fix
-export USHgsm=$HOMEgsm/ush
-export EXECgsm=$HOMEgsm/exec
+export FIXglobal=${HOMEgfs}/fix
+export FIXgfs=${HOMEgfs}/fix
+export USHgsm=$HOMEgfs/ush
+export EXECgsm=$HOMEgfs/exec
 
 #export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/gfs_ncep_post}
 export nemsioget=$EXECgsm/nemsio_get

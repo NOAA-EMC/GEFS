@@ -82,8 +82,7 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 export HOMEpost=${HOMEpost:-${HOMEgefs}}
 
-export HOMEgsm=${HOMEgsm:-$HOMEgefs}
-export HOMEgfs=${HOMEgsm}
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
 
 ###################################
 # Set up the UTILITIES

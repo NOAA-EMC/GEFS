@@ -34,23 +34,22 @@ export DBNROOT=
 export HOMEDIR=$HOMEDIR
 export HOMEgefs=$basesource
 export HOMEtrak=${HOMEtrak:-$HOMERFC/ens_tracker.v1.1.13}
-export HOMEgsm=${HOMEgsm:-$HOMEDIR}
-export HOMEgfs=${HOMEgsm:-$HOMEDIR}
-export HOMEgsi=${HOMEgsm:-$HOMEDIR}
+export HOMEgfs=${HOMEgfs:-$HOMEDIR}
+export HOMEgsi=${HOMEgfs:-$HOMEDIR}
 
 export HOMEwave=${HOMEwave:-$HOMEgefs}
 
 #FCST exec is from a different directory
-#export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe}
+#export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgfs/sorc/fv3gfs.fd/NEMS/exe}
 
 export HOMEpost=${HOMEpost:-$HOMEDIR}             #April 2018
 
-#export PARMglobal=$HOMEgsm/parm
+#export PARMglobal=$HOMEgfs/parm
 
 if [[ ! -d $SOURCEDIR/sorc/global-workflow.fd ]] ; then
     export EXECwave=${HOMEgfs}/sorc/fv3gfs.fd/WW3/model/exe
 
-    export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe}
+    export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgfs/sorc/fv3gfs.fd/NEMS/exe}
     export FIXwave=${FIXwave:-$HOMEwave/fix_wave}
 fi
 
@@ -120,7 +119,7 @@ export COMINcfs=${COMINcfs:-${COMINcfs_base}}
 
 # Paths for WaveWatch3
 #export HOMEwave=$basesource
-#export CODEwave=${CODEwave:-${HOMEgsm}/sorc/fv3gfs.fd/WW3/model}
+#export CODEwave=${CODEwave:-${HOMEgfs}/sorc/fv3gfs.fd/WW3/model}
 #export EXECwave=${CODEwave}/exe
 #export COMICE=${COMICE:-/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod}
 # export COMWND=${COMWND:-/scratch4/NCEPDEV/rstprod/com/gens/prod}
@@ -130,6 +129,6 @@ export COMINcfs=${COMINcfs:-${COMINcfs_base}}
 # #for pre-generated 2tsst files, otherwise comment this line out 
 # export SSTDIR=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/Xiaqiong.Zhou/data/tfcfs/outdata       
 
-# Using exglobal_fcst script from HOMEgefs instead of HOMEgsm
+# Using exglobal_fcst script from HOMEgefs instead of HOMEgfs
 # export fcstscript=$HOMEgefs/scripts/exglobal_fcst_nemsfv3gfs.sh
 

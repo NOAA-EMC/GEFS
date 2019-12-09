@@ -54,8 +54,7 @@ export MP_PULSE=0
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
-export HOMEgsm=${HOMEgsm:-$HOMEgefs}
-export HOMEgfs=$HOMEgsm
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
 
 export HOMEwave=${HOMEwave:-${HOMEgefs}}
 export EXECwave=${EXECwave:-$HOMEwave/exec}

@@ -68,8 +68,7 @@ export pgmerr=errfile
 # Specify Execution Areas
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
-export HOMEgsm=${HOMEgsm:-${HOMEgefs}}
-export HOMEgfs=${HOMEgsm}
+export HOMEgfs=${HOMEgfs:-${HOMEgefs}}
 export FIXgfs=$HOMEgfs/fix
 export USHgfs=$HOMEgfs/ush
 
