@@ -86,6 +86,8 @@ ENS_NUM=${ENS_NUM:-1}  # Single executable runs multiple members (e.g. GEFS)
 # Model specific stuff
 FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgfs/sorc/fv3gfs.fd/NEMS/exe}
 FCSTEXEC=${FCSTEXEC:-fv3_gfs.x}
+#FCSTEXECDIR=/gpfs/dell2/emc/retros/noscrub/Dingchen.Hou/GEFS/BF_global-workflow/sorc/fv3gfs.fd/NEMS/exe
+#FCSTEXEC=global_fv3gfs.x
 PARM_FV3DIAG=${PARM_FV3DIAG:-$HOMEgfs/parm/parm_fv3diag}
 
 # Model config options
@@ -636,6 +638,7 @@ atmos_nthreads:          $NTHREADS_FV3
 use_hyper_thread:        ${hyperthread:-".false."}
 ncores_per_node:         $cores_per_node
 restart_interval:        $restart_interval
+other_restart_time:      $other_restart_time
 
 quilting:                $QUILTING
 write_groups:            ${WRITE_GROUP:-1}
