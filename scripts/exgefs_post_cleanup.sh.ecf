@@ -50,14 +50,14 @@ while test $fhr -le $FHOUR; do
 		####################################
 
 		if [[ $fhr -gt $fhsave ]]; then
-			rm $COMOUT/$cyc/sfcsig/${RUN}.${cycle}.sf$fhr$cfsuffix
-			rm $COMOUT/$cyc/sfcsig/${RUN}.${cycle}.bf$fhr$cfsuffix
-			rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbf$fhr$cfsuffix
-			rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhr$cfsuffix
+			rm $COMOUT/$cyc/sfcsig/${RUN}.${cycle}.sf$fhr
+			rm $COMOUT/$cyc/sfcsig/${RUN}.${cycle}.bf$fhr
+			rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbf$fhr
+			rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhr
 		else
 			if [[ $cycsuffix = true ]]; then
-				rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbf$fhr$cfsuffix
-				rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhr$cfsuffix
+				rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbf$fhr
+				rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhr
 			fi
 		fi # [[ $fhr -gt $fhsave ]]
 	fi # test "$SENDCOM" = "YES"

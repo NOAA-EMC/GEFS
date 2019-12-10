@@ -28,23 +28,9 @@ cd $DATA
 # Set up cycle varaible
 ############################
 export cycle=t${cyc}z
-export cycle_fcst=t${cyc_fcst}z
 
-echo cyc=$cyc cyc_fcst=$cyc_fcst
-echo cycle=$cycle cycle_fcst=$cycle_fcst
-
-if (( cyc == cyc_fcst )); then
-	export fcstlong=true
-	export cfsuffix=""
-	export cycsuffix=false
-else
-	export fcstlong=false
-	export cfsuffix=".cycfs$cyc_fcst"
-	export cycsuffix=true
-fi # (( cyc == cyc_fcst ))
-
-export fcstlong
-echo fcstlong=$fcstlong
+echo cyc=$cyc 
+echo cycle=$cycle
 
 ####################################
 # Specify NET and RUN Name and model
