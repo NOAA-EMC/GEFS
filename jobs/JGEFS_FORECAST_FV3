@@ -74,8 +74,7 @@ export USHgefs=${USHgefs:-$HOMEgefs/ush}
 export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
-export HOMEgsm=${HOMEgsm:-$HOMEgefs}
-export HOMEgfs=$HOMEgsm
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
 export EXECgfs=$HOMEgfs/exec
 export USHgfs=$HOMEgfs/ush
 export FIXgfs=$HOMEgfs/fix
@@ -349,7 +348,7 @@ fi
 # Forecast Input Variables
 #
 export fcstscript=${fcstscript:-$HOMEgefs/scripts/exglobal_fcst_nemsfv3gfs.sh}
-#export fcstscript=${fcstscript:-$HOMEgsm/scripts/exglobal_fcst_nemsfv3gfs.sh}
+#export fcstscript=${fcstscript:-$HOMEgfs/scripts/exglobal_fcst_nemsfv3gfs.sh}
 export FORECASTSH=$fcstscript
 export FCSTEXECDIR=${FCSTEXECDIR:-$EXECgfs} #-$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin}
 export FCSTEXEC=${FCSTEXEC:-global_fv3gfs.x}

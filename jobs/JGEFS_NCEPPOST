@@ -79,18 +79,14 @@ echo current setting RERUN=$RERUN
 # Specify Execution Areas
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
 
-export HOMEgsm=${HOMEgsm:-$HOMEgefs}
-export HOMEgfs=$HOMEgsm
-
-#export HOMEpost=${HOMEpost:-${NWROOT}/ncep_post.${post_ver}}
-#export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
 
 export HOMEpost=${HOMEpost:-${HOMEgfs}}
 export USHpost=${HOMEpost}/ush
 export EXECpost=${HOMEpost}/exec
 export FIXpost=${HOMEpost}/fix
-export FIXglobal=${HOMEgsm}/fix
-export FIXgfs=${HOMEgsm}/fix
+export FIXglobal=${HOMEgfs}/fix
+export FIXgfs=${HOMEgfs}/fix
 #export PARMpost=${HOMEpost}/parm
 export PARMpost=${HOMEpost}/parm/post   # for the flat structure
 # PARMPOST (instead of PARMpost) is used in the post ush script
@@ -99,8 +95,8 @@ export PARMPOST=${PARMpost}
 # GRBINDEX2 (instead of GRB2INDEX) is used in the post ush script
 export GRBINDEX2=${GRB2INDEX}
 
-export USHgsm=$HOMEgsm/ush
-export EXECgsm=$HOMEgsm/exec
+export USHgsm=$HOMEgfs/ush
+export EXECgsm=$HOMEgfs/exec
 
 export USHgefs=${USHgefs:-${HOMEgefs}/ush}
 export PARMgefs=$HOMEgefs/parm
