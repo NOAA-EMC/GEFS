@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ksh
 
 echo `date` $0 `date -u` begin
 
@@ -6,7 +6,7 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export APRUN=${gefsmpexec:-mpirun}
+export APRUNC=${gefsmpexec:-mpirun}
 export RUNMEM=$RUNMEM
 export mem=`echo $RUNMEM|cut -c 3-`
 export nmem=`echo $RUNMEM|cut -c 4-`
