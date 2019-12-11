@@ -86,29 +86,6 @@ if [ -d /scratch2/NCEPDEV ]; then
 #    export utilscript=$USHutil
 #    export SUPVIT=${SUPVIT:-${EXECutil}/supvit}
 
-elif [ -d /scratch4/NCEPDEV ]; then
-    echo "Using settings for Theia"
-    export machine='THEIA'
-
-    export HOMEDIR=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/global-workflow/lgan_fv3_ww3_hera # Copuled version
-    export HOMERFC=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
-    
-    export HOMEdata=/scratch4/NCEPDEV/ensemble/noscrub/common
-
-    export COMROOThps=${HOMEdata}
-    export COMROOTp1=/scratch4/NCEPDEV/rstprod/com
-
-    export EXECutil=${EXECutil:-/scratch4/NCEPDEV/global/save/glopara/nwpara/util/exec}
-
-    export EXECgrib=${EXECutil}
-    export utilscript=$USHutil
-    export SUPVIT=${SUPVIT:-${EXECutil}/supvit}
-
-    # Location of WW3 executables
-    export EXECcode=$HOMEDIR/sorc/fv3gfs.fd/WW3/model/exe
-    # Wave model settings: ice data dir
-    export COMICE=/scratch4/NCEPDEV/rstprod/com/omb/prod
-
 elif [[ -d /dcom && -d /hwrf ]] ; then
     echo "Using settings for WCOSS Phase II"
     export machine='WCOSS'

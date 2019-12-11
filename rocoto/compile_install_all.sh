@@ -28,8 +28,6 @@ DeleteCrontabFromMyCrontab=${DeleteCrontabFromMyCrontab:-no}
 if [ $machine = "nomachine" ]; then
     if [ -d /scratch1/NCEPDEV ]; then
         machine=hera
-    elif [ -d /scratch3/NCEPDEV ]; then
-        machine=theia
     elif [[ -d /gpfs/hps3 && -e /etc/SuSE-release ]]; then # Luna or Surge
         machine=cray
     elif [[ -d /dcom && -d /hwrf ]] ; then # Tide or Gyre
@@ -56,9 +54,7 @@ if [ $CompileCode = "yes" ]; then
     ./build_all.sh
 
     cd $sWS/../sorc
-    if [ $machine = "theia" ]; then
-        ./link_gefs.sh -e emc -m theia
-    elif [ $machine = "hera" ]; then
+    if [ $machine = "hera" ]; then
         ./link_gefs.sh -e emc -m hera
     elif [ $machine = "cray" ]; then
         ./link_gefs.sh -e emc -m cray
@@ -122,10 +118,6 @@ if [ $RunRocoto = "yes" ]; then
         module load contrib
         module load anaconda/anaconda3-5.3.1
  
-    elif [ $machine = "theia" ]; then
-        module load rocoto/1.3.1
-        module load intelpython/3.6.1.0
-
     elif [ $machine = "wcoss_ibm" ]; then
         module load ibmpe ics lsf
         module load python/3.6.3
@@ -164,18 +156,6 @@ if [ $AddCrontabToMyCrontab = "yes" ]; then
             touch $HOME/cron/mycrontab
         fi
     
-        py/add_crontab.py
-        crontab $HOME/cron/mycrontab
-        echo "Added crontab to $HOME/cron/mycrontab!"
-
-    elif [ $machine = "theia" ]; then
-        if [ -f $HOME/cron/mycrontab ]; then
-            echo "Adding crontab to $HOME/cron/mycrontab!" 
-        else
-            mkdir $HOME/cron
-            touch $HOME/cron/mycrontab
-        fi
-   
         py/add_crontab.py
         crontab $HOME/cron/mycrontab
         echo "Added crontab to $HOME/cron/mycrontab!"
