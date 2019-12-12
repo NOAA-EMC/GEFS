@@ -77,7 +77,7 @@ if [ $CleanAll = "yes" ]; then
 
     rm -rf logs
 
-    for dir in gefs_vortex_separate.fd gefs_vortex_combine.fd global_sigzvd.fd  global_ensadd.fd  global_enspqpf.fd  gefs_ensstat.fd  global_ensppf.fd ; do
+    for dir in global_ensadd.fd  global_enspqpf.fd  gefs_ensstat.fd  global_ensppf.fd ; do
         cd $dir
         make clean
         cd ..
@@ -89,7 +89,7 @@ if [ $CleanAll = "yes" ]; then
         cd ..
     done
 
-    for dir in ../util/sorc/gettrk.fd ../util/sorc/overenstr.grib.fd ../util/sorc/getnsttf.fd; do
+    for dir in ../util/sorc/overenstr.grib.fd; do
         cd $dir
         make clean
         cd ../../../sorc
