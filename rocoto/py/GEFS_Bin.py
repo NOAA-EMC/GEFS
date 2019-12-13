@@ -109,9 +109,6 @@ def rw_bin_avgspr_gempak(taskname, dicBase):
                 if sLine1.startswith("export taskspernode="):
                     sLine = 'export taskspernode={0}\n'.format(iPPN)
 
-            elif WHERE_AM_I == "theia":
-                pass
-
             #elif WHERE_AM_I == "wcoss_dell_p3":
             #    if sLine1.startswith("export total_tasks="):
             #        sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
@@ -156,30 +153,8 @@ def rw_bin_gempak(taskname, dicBase):
     #    return
 
     iTotal_Tasks, iNodes, iPPN, iTPP = gefs_xml_for_tasks.calc_gempak_resources(dicBase)
-    #ncores_per_node = gefs_xml_for_tasks.Get_NCORES_PER_NODE(dicBase)
-    ##npert = int(dicBase["NPERT"])
-    #Total_tasks = npert + 1
-    #nGEMPAK_RES = 1
-    #if "GEMPAK_RES" in dicBase:
-    #    nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
-    #    Total_tasks *= nGEMPAK_RES
 
     WHERE_AM_I = dicBase['WHERE_AM_I'].lower()
-
-    #if (npert + 1) <= ncores_per_node:
-    #    iNodes = nGEMPAK_RES
-    #    iPPN = (npert + 1)
-    #else:
-    #    if npert == 30 and WHERE_AM_I.upper() == "THEIA":
-    #        iPPN = 3
-    #        iNodes = 31
-    #    else:
-    #        if WHERE_AM_I.upper() == "CRAY":
-    #            iNodes = Total_tasks
-    #            iPPN = 1
-    #        else:
-    #            iPPN = ncores_per_node
-    #            iNodes = int(Total_tasks / (iPPN * 1.0) + 0.5)
 
     sLines = ""
     with open(sInput_File, "r") as f:
@@ -192,9 +167,6 @@ def rw_bin_gempak(taskname, dicBase):
                     sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
                 if sLine1.startswith("export taskspernode="):
                     sLine = 'export taskspernode={0}\n'.format(iPPN)
-
-            elif WHERE_AM_I == "theia":
-                pass
 
             #elif WHERE_AM_I == "wcoss_dell_p3":
             #    if sLine1.startswith("export total_tasks="):
@@ -252,9 +224,6 @@ def rw_bin_ensstat(taskname, dicBase):
                 if sLine1.startswith("export total_tasks="):
                     sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
 
-            elif WHERE_AM_I == "theia":
-                pass
-
             #elif WHERE_AM_I == "wcoss_dell_p3":
             #    if sLine1.startswith("export total_tasks="):
             #        sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
@@ -310,9 +279,6 @@ def rw_bin_prdgen(taskname, dicBase):
                 if sLine1.startswith("export total_tasks="):
                     sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
 
-            elif WHERE_AM_I == "theia":
-                pass
-
             #elif WHERE_AM_I == "wcoss_dell_p3":
             #    if sLine1.startswith("export total_tasks="):
             #        sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
@@ -366,16 +332,6 @@ def rw_bin_forecast_high(taskname, dicBase):
                 if sLine1.startswith("export gefsmpexec="):
                     sLine = 'export gefsmpexec=" aprun -b -j1 -n{0} -N{1} -d{2} -cc depth "\n'.format(iTotal_Tasks, iPPN, iTPP)
 
-            #elif WHERE_AM_I == "theia":
-            #    if sLine1.startswith("export total_tasks="):
-            #        sLine = 'export total_tasks={0}\n'.format(iTotal_Tasks)
-            #
-            #    if sLine1.startswith("export OMP_NUM_THREADS="):
-            #        sLine = 'export OMP_NUM_THREADS={0}\n'.format(iTPP)
-            #
-            #    if sLine1.startswith("export taskspernode"):
-            #        sLine = 'export taskspernode={0}\n'.format(iPPN)
-            #
             #elif WHERE_AM_I == "wcoss_dell_p3":
             #    if sLine1.startswith("export gefsmpexec="):
             #        sLine = 'export gefsmpexec=" mpirun -n {0} "\n'.format(iTotal_Tasks)

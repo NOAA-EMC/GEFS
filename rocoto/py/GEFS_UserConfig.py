@@ -156,8 +156,6 @@ def get_WHERE_AM_I(dicBase):
     if sVarName not in dicBase:
         if os.path.exists('/scratch1/NCEPDEV'):
             dicBase[sVarName] = 'hera'
-        elif os.path.exists('/scratch3/NCEPDEV'):
-            dicBase[sVarName] = 'theia'
         elif os.path.exists('/gpfs') and os.path.exists('/etc/SuSE-release'):
             dicBase[sVarName] = 'cray'
         elif os.path.exists('/dcom') and os.path.exists('/hwrf'):

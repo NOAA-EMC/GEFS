@@ -12,7 +12,7 @@ Options:
  - c: "yes" means you want to compile and install all GEFS source code and link the fix to gefs-fixed
  - r: "yes" means you want to run the rocoto
  - f: "filename.conf" means you don't want to use filename.conf instead of the default configure file (user_full.conf)
- - m: "cray" or "theia", however the script can identify which machine you are using, so you may not need this option
+ - m: "cray" however the script can identify which machine you are using, so you may not need this option
  - a: "yes" means "make clean"
 
 Method 1:
@@ -98,13 +98,10 @@ Method 2:
        > module use ./
        > module load Module_gefs_v12_wcoss (wcoss) or 
          module load Module_gefs_v12_cray (cray) or
-         module load Module_gefs_v12_theia (theia)
        ## Build the code
        > ./build.sh  
        ## Install GEFS
        > ./install.sh
-       > # For Theia
-       > /bin/ln -sf /scratch4/NCEPDEV/ensemble/noscrub/Xianwu.Xue/common/gefs-fixed fix 
        > # For cray
        > /bin/ln -sf /gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/gefs-fixed fix
 
@@ -137,7 +134,6 @@ Method 2:
               While there is a rocotoviewer in the GFS pacakage, it needs a modification for the GEFS workflow that hasn't been added to GFS yet.
               Use the following versions (it is recommended you set an alias to this to avoid typing is out all the time):
                 WCOSS: /gpfs/hps3/emc/ensemble/save/Walter.Kolczynski/fv3gfs/gfs_workflow.v15.0.0/ush/rocoto_viewer.py
-                Theia: /scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/rocoto_viewer.py
 
                 Assuming an alias to rv:
                 > rv -w gefs.xml -d gefs.db
@@ -174,7 +170,7 @@ Appendix: Set up ROCOTO and python environment on CRAY
      or
    >module use -a /gpfs/hps3/emc/ensemble/noscrub/Xiaqiong.Zhou/modulefiles    (LUNA)
    >module load pyprodutil
-   (python2 is already loaded by default on Theia)
+   (python2 is already loaded by default on hera)
 
    rocoto (WCOSS):
    >module use -a /gpfs/hps3/emc/hwrf/noscrub/soft/modulefiles
@@ -187,5 +183,3 @@ Appendix: Set up ROCOTO and python environment on CRAY
    module use /gpfs/hps/usrx/local/emc_rocoto/modulefiles
    module load rocoto/1.2.4-RC3
 
-   rocoto (Theia):
-   >module load rocoto (default version is 1.2.4)

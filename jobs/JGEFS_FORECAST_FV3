@@ -22,7 +22,7 @@ echo "ENS_NUM=$ENS_NUM"
 export pid=$$
 export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
-mkdir -p $DATA/INPUT
+mkdir $DATA/INPUT
 cd $DATA
 
 ############################
@@ -157,16 +157,6 @@ if [[ $FORECAST_SEGMENT = lr ]] ; then
 	FHINI=${FHINI:-$fhmaxh}
 	export CDATE_RST=$($NDATE +$fhmaxh $PDY$cyc)
 fi
-if [[ $RERUN = RERUN ]] ; then
-	if [[ $FORECAST_SEGMENT = hr ]] ; then
-		FHINI=${FHINI:-0}
-	elif [[ $FORECAST_SEGMENT = lr ]] ; then
-		FHINI=${FHINI:-$fhmaxh}
-	else
-		FORECAST_SEGMENT=$FORECAST_SEGMENT is not supported !
-		stop
-	fi	
-fi
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 	CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$FHOUTLF;FHZER=6;
@@ -232,22 +222,6 @@ export KMP_AFFINITY=disabled
 export OMP_STACKSIZE=1024m
 export MP_LABELIO=yes
 
-#--------------------------------------------
-# Configuration file for running NEMS FV3GFS 
-#--------------------------------------------
-#--------------------------------------------
-#mac=`hostname |cut -c1`
-
-#NEMS=YES
-#if [ $machine = WCOSS ]; then
-#	EXPDIR=/global/save/$LOGNAME/para_gfs/pr$PSLOT
-#elif [ $machine = WCOSS_C ]; then
-#	EXPDIR=$HOMEgefs/parm
-#elif [ $machine = THEIA ]; then
-#	IO_IN=.true.
-#	NEMSIO_OUT=.true.
-#	IPD4=YES
-#fi
 # ----------------------------------
 # user account 
 # ----------------------------------
@@ -386,34 +360,34 @@ export CDUMP=$RUNMEM
 
 LINK=NO   # link is done in the $FORECASa scriptT
 if [ $LINK = "YES" ]; then
-if [ $OUTPUT_GRID = "gaussian_grid" ]; then
-	# Link output files
-	hr=$FHINI
-	while (( hr < FHMAX_HF )); do
-		fhr=$(printf "%03.0f" $hr)
-		ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $DATA/$CDUMP.${cycle}.atmf$fhr.nemsio
-		ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $DATA/$CDUMP.${cycle}.sfcf$fhr.nemsio
-		ln -s $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $DATA/$CDUMP.${cycle}.logf$fhr.nemsio
-		export hr=$(expr $hr + $FHOUT_HF)
-	done
-	while (( hr <= FHMAX )); do
-		fhr=$(printf "%03.0f" $hr)
-		ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $DATA/$CDUMP.${cycle}.atmf$fhr.nemsio
-		ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $DATA/$CDUMP.${cycle}.sfcf$fhr.nemsio
-		ln -s $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $DATA/$CDUMP.${cycle}.logf$fhr.nemsio
-		export hr=$(expr $hr + $FHOUT)
-	done
-else
-	for n in `seq 1 $ntiles`; do
-		for file in atmos_4xdaily. atmos_static. fv3_history. fv3_history2d. grid_spec. nggps2d. nggps3d.; do
-			# ln -s $ROTDIR/$file\tile$n.nc $DATA/$file\tile$n.nc
+    if [ $OUTPUT_GRID = "gaussian_grid" ]; then
+	    # Link output files
+	    hr=$FHINI
+	    while (( hr < FHMAX_HF )); do
+		    fhr=$(printf "%03.0f" $hr)
+		    ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $DATA/$CDUMP.${cycle}.atmf$fhr.nemsio
+		    ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $DATA/$CDUMP.${cycle}.sfcf$fhr.nemsio
+		    ln -s $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $DATA/$CDUMP.${cycle}.logf$fhr.nemsio
+		    export hr=$(expr $hr + $FHOUT_HF)
+	    done
+	    while (( hr <= FHMAX )); do
+		    fhr=$(printf "%03.0f" $hr)
+		    ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $DATA/$CDUMP.${cycle}.atmf$fhr.nemsio
+		    ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $DATA/$CDUMP.${cycle}.sfcf$fhr.nemsio
+		    ln -s $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $DATA/$CDUMP.${cycle}.logf$fhr.nemsio
+		    export hr=$(expr $hr + $FHOUT)
+	    done
+    else
+	    for n in `seq 1 $ntiles`; do
+		    for file in atmos_4xdaily. atmos_static. fv3_history. fv3_history2d. grid_spec. nggps2d. nggps3d.; do
+			    # ln -s $ROTDIR/$file\tile$n.nc $DATA/$file\tile$n.nc
 
-			# touch $SFCSIG/$mem/$file\tile$n.nc
-			# ln -s $SFCSIG/$mem/$file\tile$n.nc $memdir/$file\tile$n.nc
-			;
-		done
-	done
-fi # [ $OUTPUT_GRID = "gaussian_grid" ]
+			    # touch $SFCSIG/$mem/$file\tile$n.nc
+			    # ln -s $SFCSIG/$mem/$file\tile$n.nc $memdir/$file\tile$n.nc
+			    ;
+		    done
+	    done
+    fi # [ $OUTPUT_GRID = "gaussian_grid" ]
 fi # $LINK
 
 if [[ $cplwav = ".true." ]]; then
@@ -428,7 +402,7 @@ export FIX_AM=$FIX_AM
 export assim_freq=6
 export increment=$ICSDIR/fv3_increment.nc
 
-if [[ $FORECAST_SEGMENT = lr ]] ; then
+if [[ $RERUN = "YES" ]]; then
 	fhr=$(printf "%03.0f" $fhmaxh)
 	cp -pr $GESIN/$mem/RESTART/stoch_out.F000$fhr $DATA/stoch_ini 
 fi
