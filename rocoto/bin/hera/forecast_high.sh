@@ -12,9 +12,9 @@ ulimit -a
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:2
 
-export NTHREADS_SIGCHGRS=2
+#export NTHREADS_SIGCHGRS=2
 
-export FORECAST_SEGMENT=hr
+#export FORECAST_SEGMENT=hr
 
 export memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc'
 

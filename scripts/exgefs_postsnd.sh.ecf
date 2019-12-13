@@ -108,7 +108,8 @@ done
 # Tar and gzip the individual bufr files and send them to /com
 ##############################################################
 cd ${COMOUT}/bufr/${mem}
-tar -cf - . | /usr/bin/gzip > ${RUNMEM}.${cycle}.bufrsnd.tar.gz
+#tar -cf - . | /usr/bin/gzip > ${RUNMEM}.${cycle}.bufrsnd.tar.gz
+tar -cf - bufr.* | /usr/bin/gzip > ${RUNMEM}.${cycle}.bufrsnd.tar.gz
 cd $DATA
 
 ########################################
@@ -144,13 +145,14 @@ else
         echo "sh $USHgefs/gfs_sndp.sh $m " >> poe_col
     done
 
-    mv poe_col cmdfile
+    mv poe_col mpmd_cmdfile
 
-    cat cmdfile
-    chmod +x cmdfile
+    cat mpmd_cmdfile
+    chmod +x mpmd_cmdfile
 
     ##mpirun -n 10 cfp cmdfile
-    ${APRUN_POSTSNDCFP} cmdfile
+#   ${APRUN_POSTSNDCFP} cmdfile
+    ${APRUN_POSTSNDCFP} 
     ERR=$?
 fi
 

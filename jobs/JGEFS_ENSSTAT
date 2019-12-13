@@ -131,6 +131,7 @@ case $FORECAST_SEGMENT in
 	lr)
 		start_hour=$((${fhmaxh}+1))
 		end_hour=${fhmax}
+		PRDGEN_STREAMS=$PRDGEN_STREAMS_LR
 		;;
 	*)
 		start_hour=0

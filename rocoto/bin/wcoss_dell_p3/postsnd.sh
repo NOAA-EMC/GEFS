@@ -6,8 +6,6 @@
 set -x
 
 export IOBUF_PARAMS=
-# export FORT_BUFFERED=TRUE
-# export MKL_CBWR=AVX
 ulimit -s unlimited
 ulimit -a
 
@@ -28,16 +26,7 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:2
 
-# export NODES=1
-# export total_tasks=5
-export OMP_NUM_THREADS=2
-# export taskspernode=12
-
-# export envir=${envir:-dev}
-# export RUN_ENVIR=${RUN_ENVIR:-dev}
-
-# export gefsmpexec=" mpirun -n $total_tasks "
-# export gefsmpexec_mpmd='mpirun -n 10 cfp'
+#export OMP_NUM_THREADS=${GEFS_TPP:-2}
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_POSTSND

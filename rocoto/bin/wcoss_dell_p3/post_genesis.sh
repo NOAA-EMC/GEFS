@@ -17,25 +17,15 @@ export MPICH_ENV_DISPLAY=1
 export MPICH_VERSION_DISPLAY=1
 export MPICH_CPUMASK_DISPLAY=1
 
-# export KMP_STACKSIZE=1024m
-export OMP_NUM_THREADS=1
 export KMP_AFFINITY=disabled
-
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:1
 
-# export total_tasks=21
-export OMP_NUM_THREADS=1
-# export taskspernode=7
+#export OMP_NUM_THREADS=${GEFS_TPP:-1}
 
 export FORECAST_SEGMENT=lr
-
-# export gefsmpexec_mpmd="  mpirun -n $total_tasks cfp mpmd_cmdfile"
-# # export for development runs only begin
-# export envir=${envir:-dev}
-# export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_POST_GENESIS

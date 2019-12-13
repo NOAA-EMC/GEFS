@@ -43,30 +43,6 @@ echo " .... Building gefs_nstgen - 02.... "
 }
 
 #------------------------------------
-# build gefs_vortex_separate
-#------------------------------------
-$Build_gefs_vortex_separate && {
-echo " .... Building gefs_vortex_separate - 03 .... "
-./build_gefs_vortex_separate.sh > $logs_dir/build_gefs_vortex_separate.log 2>&1
-}
-
-#------------------------------------
-# build gefs_vortex_combine
-#------------------------------------
-$Build_gefs_vortex_combine && {
-echo " .... Building gefs_vortex_combine - 04 .... "
-./build_gefs_vortex_combine.sh > $logs_dir/build_gefs_vortex_combine.log 2>&1
-}
-
-#------------------------------------
-# build global_sigzvd
-#------------------------------------
-$Build_global_sigzvd && {
-echo " .... Building global_sigzvd - 05 .... "
-./build_global_sigzvd.sh > $logs_dir/build_global_sigzvd.log 2>&1
-}
-
-#------------------------------------
 # build global_ensadd
 #------------------------------------
 $Build_global_ensadd && {
@@ -147,28 +123,11 @@ echo " .... Building global_ensrfmat - 15 .... "
 }
 
 #------------------------------------
-# build gettrk 
-#------------------------------------
-$Build_gettrk && {
-echo " .... Building gettrk - 16 .... "
-./build_gettrk.sh > $logs_dir/build_gettrk.log 2>&1
-}
-
-
-#------------------------------------
 # build overenstr_grib
 #------------------------------------
 $Build_overenstr_grib && {
 echo " .... Building overenstr_grib - 17 .... "
 ./build_overenstr_grib.sh > $logs_dir/build_overenstr_grib.log 2>&1
-}
-
-#------------------------------------
-# build getnsttf
-#------------------------------------
-$Build_getnsttf && {
-echo " .... Building getnsttf - 18 .... "
-./build_getnsttf.sh > $logs_dir/build_getnsttf.log 2>&1
 }
 
 echo;echo " .... Build system finished .... "

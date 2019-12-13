@@ -18,10 +18,6 @@ export MPICH_VERSION_DISPLAY=1
 export MPICH_CPUMASK_DISPLAY=1
 
 export KMP_STACKSIZE=1024m
-export OMP_NUM_THREADS=1
-export KMP_AFFINITY=disabled
-
-#export OMP_NUM_THREADS=1
 export KMP_AFFINITY=disabled
 
 export MP_EUIDEVICE=sn_all
@@ -29,20 +25,17 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:1
 
-export NODES=3
-export total_tasks=21
-export OMP_NUM_THREADS=1
-export taskspernode=7
+#export NODES=3
+#export total_tasks=21
+#export OMP_NUM_THREADS=1
+#export taskspernode=7
 
 # export for development runs only begin
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
+#export envir=${envir:-dev}
+#export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 
-export gefsmpexec_mpmd="  aprun -b -j1 -n21 -N7 -d1 -cc depth  cfp mpmd_cmdfile"
+#export gefsmpexec_mpmd="  aprun -b -j1 -n21 -N7 -d1 -cc depth  cfp mpmd_cmdfile"
 
 # CALL executable job script here
-
-
-
 $SOURCEDIR/jobs/JGEFS_POST_TRACK
