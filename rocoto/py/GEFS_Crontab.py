@@ -49,7 +49,7 @@ def create_crontab(dicBase, OnlyForTest=False, cronint=5):
 
     rocotorun_args = rocotoruncmd + ' -d ' + sRocotoPath + '/' + sDB_FileName \
                      + ' -w ' + sRocotoPath + '/' + sXML_FileName
-    if system == 'theia' or system == 'wins' or system == 'hera':
+    if system == 'wins' or system == 'hera':
         crontab_string += crontab_usage
         crontab_string += crontab_time + rocotorun_args
     elif system == 'wcoss_ibm':

@@ -77,24 +77,6 @@ if [ -d /scratch2/NCEPDEV ]; then
     export COMROOTp1=/scratch2/NCEPDEV/rstprod/com 
     export PATH=$PATH:/scratch2/NCEPDEV/nwprod/NCEPLIBS/utils/prod_util.v1.1.0/ush
 
-elif [ -d /scratch4/NCEPDEV ]; then
-    echo "Using settings for Theia"
-    export machine='THEIA'
-
-    export HOMEDIR=${HOMEDIR:-/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/global-workflow/lgan_fv3_ww3_hera}
-    export HOMERFC=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
-    
-    export HOMEdata=/scratch4/NCEPDEV/ensemble/noscrub/common
-
-    export COMROOThps=${HOMEdata}
-    export COMROOTp1=/scratch4/NCEPDEV/rstprod/com
-
-    export EXECutil=${EXECutil:-/scratch4/NCEPDEV/global/save/glopara/nwpara/util/exec}
-
-    export EXECgrib=${EXECutil}
-    export utilscript=$USHutil
-    export SUPVIT=${SUPVIT:-${EXECutil}/supvit}
-
 elif [[ -d /dcom && -d /hwrf ]] ; then
     echo "Using settings for WCOSS Phase II"
     export machine='WCOSS'

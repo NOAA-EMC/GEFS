@@ -194,8 +194,8 @@ def config_tasknames(dicBase):
             dicBase[sTaskName.upper()] = "avgspr_gempak"
 
             WHERE_AM_I = dicBase['WHERE_AM_I']
-            if WHERE_AM_I.upper() not in [ "Theia".upper(), "hera".upper()]:
-                # ---avg_gempak_vgf There is no gdplot2_vg on hera and theia, so this task can not run.
+            if WHERE_AM_I.upper() not in [ "hera".upper()]:
+                # ---avg_gempak_vgf There is no gdplot2_vg on hera, so this task can not run.
                 iTaskName_Num += 1
                 sTaskName = "taskname_{0}".format(iTaskName_Num)
                 dicBase[sTaskName.upper()] = "avg_gempak_vgf"
@@ -337,8 +337,6 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
 
         if WHERE_AM_I.upper().startswith("WCOSS"):
             sJoin += ".%J"
-        elif WHERE_AM_I.upper() == "THEIA":
-            sJoin += ".%j"  # %PBS_JOBID
         else:
             sJoin += ".%J"
 
@@ -382,8 +380,6 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
 
     if WHERE_AM_I.upper() == "cray".upper():
         strings += sPre_2 + '<native>-cwd &tmpnwprd;</native>\n'
-    elif WHERE_AM_I.upper() == "Theia".upper():
-        strings += ""
     elif WHERE_AM_I.upper() == "hera".upper():
         strings += ""
     elif WHERE_AM_I.upper() == "wcoss_ibm".upper():
@@ -404,8 +400,6 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
             strings += ""
         else:
             strings += sPre_2 + '<native>-extsched "CRAYLINUX[]"</native>\n'
-    elif WHERE_AM_I.upper() == "Theia".upper():
-        strings += ""  # \n
     elif WHERE_AM_I.upper() == "Hera".upper():
         strings += ""  # \n
     elif WHERE_AM_I.upper() == "wcoss_ibm".upper():
@@ -1163,7 +1157,7 @@ def calc_gempak_resources(dicBase):
         iNodes = iTotal_Tasks
         iPPN = 1
         
-    elif WHERE_AM_I.upper() == "THEIA":
+    elif WHERE_AM_I.upper() == "HERA":
         if (npert + 1) <= ncores_per_node:
             iNodes = nGEMPAK_RES
             iPPN = (npert + 1)
@@ -1200,8 +1194,6 @@ def Get_NCORES_PER_NODE(dicBase):
     WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
 
     if WHERE_AM_I == 'cray'.upper():
-        ncores_per_node = 24
-    elif WHERE_AM_I == "theia".upper():
         ncores_per_node = 24
     elif WHERE_AM_I == "hera".upper():
         ncores_per_node = 40
