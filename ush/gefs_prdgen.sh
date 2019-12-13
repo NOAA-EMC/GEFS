@@ -95,15 +95,15 @@ else
 		grep -v -F $excludestring | \
 		$WGRIB2 -s pgb2file.$ffhr -i -grib pgb2afile.$ffhr
 	if [[ $RUNMEM = "gegfs" ]]; then
-	if (( fhr >= 3 )); then 
-		rm exlist
-		$WGRIB2 -s pgb2afile.$ffhr | grep -e CSN -e CIC -e CFR -e CRA | grep "hour fcst" > exlist 
-		if (( fhr > 6 )); then 
-			$WGRIB2 -s pgb2afile.$ffhr | grep "APCP" | grep ":0-" >> exlist
-		fi
-		$WGRIB2 -s pgb2afile.$ffhr | grep -v -f exlist | $WGRIB2 -i pgb2afile.$ffhr -grib tmpfile 
-		mv tmpfile pgb2afile.$ffhr
-	fi
+	    if (( fhr >= 3 )); then 
+		    rm exlist
+		    $WGRIB2 -s pgb2afile.$ffhr | grep -e CSN -e CIC -e CFR -e CRA | grep "hour fcst" > exlist 
+		    if (( fhr > 6 )); then 
+			    $WGRIB2 -s pgb2afile.$ffhr | grep "APCP" | grep ":0-" >> exlist
+		    fi
+		    $WGRIB2 -s pgb2afile.$ffhr | grep -v -f exlist | $WGRIB2 -i pgb2afile.$ffhr -grib tmpfile 
+		    mv tmpfile pgb2afile.$ffhr
+	    fi
 	fi
 	if [[ x$fhoroglist != x ]]; then
 		for fhorog in $fhoroglist; do
