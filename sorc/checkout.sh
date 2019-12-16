@@ -19,6 +19,25 @@ if [[ ! -d global-workflow.fd ]] ; then
     cd sorc
     ./checkout.sh
     ERR=$?
+    if [ $ERR = 0 ]; then
+        msg="Checkout global-workflow-1 normally"
+    else
+        msg="Checkout global-workflow-1 failed!"
+    fi
+
+    cd fv3gfs.fd/FV3
+    git checkout 6a95e93
+    ERR=$?
+    if [ $ERR = 0 ]; then
+        msg="Checkout global-workflow-2 normally"
+    else
+        msg="Checkout global-workflow-2 failed!"
+    fi
+
+
+    cd ../../gfs_post.fd
+    git checkout 8d5deeab0b2acce369af5617956f2b07a51cc342
+    ERR=$?    
 
     if [ $ERR = 0 ]; then
         msg="Checkout global-workflow normally"
