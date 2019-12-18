@@ -90,6 +90,7 @@ export BASE_GSM=${BASE_GSM:-$HOMEgfs}
 export FIX_DIR=$FIXgfs
 export FIX_AM=$FIX_DIR/fix_am
 export FIXfv3=$FIX_DIR/fix_fv3_gmted2010
+export FIXchem=$FIX_DIR/fix_chem/fimdata_chem/fimdata_chem_G6_Li
 
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 export USHgefs=${USHgefs:-$HOMEgefs/ush}
@@ -401,7 +402,7 @@ if [[ $cplwav = ".true." ]]; then
 fi # [[ $cplwav = ".true." ]]
 
 if [[ $cplchm = ".true." ]]; then
-	# Link aerosol tracer data for next cycle
+    # Link aerosol tracer data for next cycle
 	next_date=$($NDATE +$restart_interval $CDATE)
     next_PDY=$(echo $next_date | cut -c1-8)
     next_cyc=$(echo $next_date | cut -c9-10)
@@ -411,9 +412,6 @@ if [[ $cplchm = ".true." ]]; then
 fi
 
 mkdir -p $memdir
-
-export FIX_DIR=$FIXgfs
-export FIX_AM=$FIX_AM
 
 export assim_freq=6
 export increment=$ICSDIR/fv3_increment.nc

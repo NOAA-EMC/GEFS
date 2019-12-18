@@ -157,7 +157,7 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     export COMICE=$HOMEdata/sea_ice
 
     # Locations for aerosols
-    export COMIN_EMISSIONS="/gpfs/dell2/emc/modeling/noscrub/Li.Pan/emi_"
+    export EMIDIR="/gpfs/dell2/emc/modeling/noscrub/Li.Pan/emi_"
 fi
 
 # Uncomment below to run from real-time production data

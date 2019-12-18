@@ -98,7 +98,7 @@ elif [[ "$WHERE_AM_I" == wcoss_dell_p3 ]] ; then
     . /usrx/local/prod/lmod/lmod/init/ksh
     module load EnvVars/1.0.2
     module load ips/18.0.1.163
-    module load prod_envir/1.0.2
+    module load prod_envir/1.0.3
     module load grib_util/1.1.0
     module load prod_util/1.1.0
     module load HPSS/5.0.2.5
