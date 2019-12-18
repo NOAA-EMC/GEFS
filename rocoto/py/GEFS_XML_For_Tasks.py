@@ -146,12 +146,6 @@ def config_tasknames(dicBase):
                 dicBase[sTaskName.upper()] = "gwes_post"
 
         # #    <!-- CHGRES jobs -->
-        if dicBase['RUN_CHGRES'].upper()[0] == "Y":
-            # ---sigchgres
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "sigchgres"
-
         # #    <!-- RUN_PRDGEN_GFS jobs -->
         if dicBase['RUN_PRDGEN_GFS'].upper()[0] == "Y":
             # ---sigchgres
