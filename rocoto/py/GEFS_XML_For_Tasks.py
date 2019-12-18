@@ -802,7 +802,7 @@ def get_param_of_task(dicBase, taskname):
             # For 'init_aerosol' task
             if taskname.lower() == "init_aerosol":
                 sDep = "<and>"
-                for task in ["prep_emissions", "init_recenter"]:
+                for task in ["prep_emissions", "init_recenter", "copy_init"]:
                     if DoesTaskExist(dicBase, task):
                         sDep += "\n\t<taskdep task=\"{task}\"/>".format(task=task)
                         
