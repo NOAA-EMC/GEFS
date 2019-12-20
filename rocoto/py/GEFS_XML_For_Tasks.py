@@ -32,59 +32,7 @@ def config_tasknames(dicBase):
             dicBase[sTaskName.upper()] = "gwes_prep"
 
         # #   <!-- initial jobs -->
-        if dicBase['RUN_INIT'].upper() == "GSM_RELOC":
-            # ---enkf_track
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "enkf_track"
-
-            # ---init_separate
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_separate"
-
-            # ---init_process
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_process"
-
-            # ---init_combine
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_combine"
-
-            # ---init_fv3chgrs
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_fv3chgrs"
-
-        elif dicBase['RUN_INIT'].upper() == "FV3_RELOC":
-            # ---enkf_track
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "enkf_track"
-
-            # ---init_separate
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_separate"
-
-            # ---init_process
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_process"
-
-            # ---init_combine
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_combine"
-
-            # ---init_fv3chgrs
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_fv3chgrs"
-
-        elif dicBase['RUN_INIT'].upper() == "FV3_COLD":
+        if dicBase['RUN_INIT'].upper() == "FV3_COLD":
             # ---init_fv3chgrs
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
@@ -123,12 +71,6 @@ def config_tasknames(dicBase):
             # ---post_high
             iTaskName_Num = Add_Subjobs_to_dicBase(dicBase, iTaskName_Num, taskname="post_high", sNSubJobs='N_SUBJOBS_POST_HIGH')
 
-            #if dicBase['cplwav'] == ".true.":
-            #    # ---wave_post
-            #    iTaskName_Num += 1
-            #    sTaskName = "taskname_{0}".format(iTaskName_Num)
-            #    dicBase[sTaskName.upper()] = "gwes_post"
-
             # ---prdgen_high
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
@@ -145,7 +87,6 @@ def config_tasknames(dicBase):
                 sTaskName = "taskname_{0}".format(iTaskName_Num)
                 dicBase[sTaskName.upper()] = "gwes_post"
 
-        # #    <!-- CHGRES jobs -->
         # #    <!-- RUN_PRDGEN_GFS jobs -->
         if dicBase['RUN_PRDGEN_GFS'].upper()[0] == "Y":
             # ---sigchgres
