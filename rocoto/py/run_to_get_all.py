@@ -12,7 +12,7 @@ import GEFS_UserConfig as gefs_config
 import GEFS_XML as gefs_xml
 import GEFS_XML_For_Tasks as gefs_xml_for_tasks
 import GEFS_Parm as gefs_parm
-import GEFS_Bin as gefs_bin
+#import GEFS_Bin as gefs_bin
 import GEFS_Crontab as gefs_crontab
 
 def main():
@@ -62,9 +62,6 @@ def main():
     print("--Create folders for the output...")
     gefs_config.create_folders(dicBase)
 
-    # print("--Config your tasks...")
-    # gefs_xml_for_tasks.config_tasknames(dicBase)
-
     print("--Generating XML file ...")
     gefs_xml.create_xml(dicBase)
     print("--Generated XML file!")
@@ -77,15 +74,6 @@ def main():
             print("--Generating files for parm...")
             gefs_parm.create_parm(sConfig, dicBase)
             print("--Generated files for parm!")
-
-    # ---
-    sVarName = "GenBinSH".upper()
-    if sVarName in dicBase:
-        sValue = dicBase[sVarName]
-        if sValue == 'YES' or sValue[0] == 'Y':
-            # check gets_dev_parm items in configure file
-            print("--Modify bin files...")
-            gefs_bin.create_bin_file(dicBase)
 
     print("--Generating crontab file...")
     gefs_crontab.create_crontab(dicBase, cronint=5, OnlyForTest=g_OnlyForTest)
