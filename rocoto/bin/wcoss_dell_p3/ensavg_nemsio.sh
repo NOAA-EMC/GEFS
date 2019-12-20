@@ -12,7 +12,7 @@ ulimit -a
 
 #export OMP_NUM_THREADS=${GEFS_TPP:-6}
 
-export FORECAST_SEGMENT=hr
+#export FORECAST_SEGMENT=hr
 
 # export gefsmpexec_mpmd="  mpirun -n $total_tasks cfp mpmd_cmdfile"
 # export gefsmpexec=mpirun 
