@@ -5,6 +5,9 @@ echo `date` $0 `date -u` begin
 set -xa
 export PS4='$SECONDS + '
 date
+
+export FORECAST_SEGMENT=${FORECAST_SEGMENT:-hr}
+
 export MODEL_OUT_FORM=binarynemsiompiio
 
 export gefsmpexec=${gefsmpexec:-mpirun}

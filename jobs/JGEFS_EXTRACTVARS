@@ -6,6 +6,8 @@ set -xa
 export PS4='$SECONDS + '
 date
 
+export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
+
 ############################
 # Set up cycle varaible
 ############################
@@ -60,9 +62,6 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 ##############################################
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}
-export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
-
-
 ##############################################
 echo list environment before running script
 ##############################################
