@@ -20,7 +20,7 @@ export WGREP=$USHgefs/global_enswgrp.sh
 
 INITIME=0
 
-export APRUN=${gefsmpexec:-mpirun}
+export APRUN=${APRUN:-mpirun}
 
 ###
 ### forecast precipitation file name like this
