@@ -1,0 +1,53 @@
+#BSUB -J %E%gefs_mos_gempak_%CYC%
+#BSUB -o /%COM%/output/%ENVIR%/today/gefs_mos_gempak_%CYC%.o%J
+#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_mos_gempak_%CYC%.o%J
+#BSUB -cwd /tmpnwprd
+#BSUB -q %QUEUESERV%
+#BSUB -n 1
+#BSUB -R affinity[core]
+#BSUB -R rusage[mem=1000]
+#BSUB -W 00:30
+#BSUB -L /bin/sh
+#BSUB -P %PROJ%
+
+%include <head.h>
+%include <envir-p2.h>
+
+
+# EXPORT list here
+set -x
+
+
+export cyc=%CYC%
+#export cyc_fcst=%CYC%
+
+
+
+# CALL executable job script here
+VERSION_FILE=$NWROOT/versions/gefs_mos.ver
+if [ -f $VERSION_FILE ]; then
+  . $VERSION_FILE
+else
+  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+  ecflow_client --abort
+  exit
+fi
+
+$NWROOT/gefs_mos.${gefs_mos_ver}/jobs/JGEFS_MOS_GEMPAK
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose:
+# to process GEFS MOS gempak grib.
+#
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end
