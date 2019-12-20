@@ -84,6 +84,9 @@ if [ $CompileCode = "yes" ]; then
 
     elif [[ $Structure == "prod" ]]; then
         # Checkout the global-workflow if needed
+        if [[ -d global-workflow.fd ]] ; then
+            rm -rf global-workflow.fd
+        fi
         ./checkout.sh
     fi
 
