@@ -7,22 +7,22 @@ set -x
 ulimit -s unlimited
 ulimit -a
 
-export MPICH_ABORT_ON_ERROR=1
-export MPICH_ENV_DISPLAY=1
-export MPICH_VERSION_DISPLAY=1
-export MPICH_CPUMASK_DISPLAY=1
+#export MPICH_ABORT_ON_ERROR=1
+#export MPICH_ENV_DISPLAY=1
+#export MPICH_VERSION_DISPLAY=1
+#export MPICH_CPUMASK_DISPLAY=1
 
-export KMP_STACKSIZE=1024m
-export KMP_AFFINITY=disabled
+#export KMP_STACKSIZE=1024m
+#export KMP_AFFINITY=disabled
 
-export MP_EUIDEVICE=sn_all
-export MP_EUILIB=us
-export MP_SHARED_MEMORY=yes
-export MEMORY_AFFINITY=core:2
+#export MP_EUIDEVICE=sn_all
+#export MP_EUILIB=us
+#export MP_SHARED_MEMORY=yes
+#export MEMORY_AFFINITY=core:2
 
-. /opt/modules/default/init/ksh
-module load NetCDF-intel-haswell/4.2
-module load nco-gnu-sandybridge/4.4.4
+#. /opt/modules/default/init/ksh
+#module load NetCDF-intel-haswell/4.2
+#module load nco-gnu-sandybridge/4.4.4
 
 
 #export NODES=2
