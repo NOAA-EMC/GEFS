@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ksh
 
 echo `date` $0 `date -u` begin
 
@@ -6,7 +6,7 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export APRUN=${gefsmpexec:-mpirun}
+export APRUNC=${gefsmpexec:-mpirun}
 export RUNMEM=$RUNMEM
 export mem=`echo $RUNMEM|cut -c 3-`
 export nmem=`echo $RUNMEM|cut -c 4-`
@@ -68,14 +68,12 @@ export pgmerr=errfile
 # Specify Execution Areas
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
-export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
-# export HOMEgfs=$HOMEgsm
-export FIXfv3=${FIXfv3:-$HOMEgsm/fix/fix_fv3_gmted2010}
-export FIXam=${FIXam:-$HOMEgsm/fix/fix_am}
-export HOMEgfs=$HOMEgsm/sorc/ufs_utils.fd # Override to point to UFS Utils location
+export HOMEgfs=${HOMEgfs:-${HOMEgefs}}
+export FIXgfs=$HOMEgfs/fix
+export USHgfs=$HOMEgfs/ush
 
-export USHgsm=${USHgsm:-$HOMEgfs/ush}
-
+export FIXfv3=${FIXfv3:-$FIXgfs/fix_fv3_gmted2010}
+export FIXam=${FIXam:-$FIXgfs/fix_am}
 
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
@@ -157,7 +155,7 @@ else
 	fi
 fi
 
-$USHgsm/global_chgres_driver.sh
+$USHgfs/global_chgres_driver.sh
 ERR=$?
 
 echo $ERR

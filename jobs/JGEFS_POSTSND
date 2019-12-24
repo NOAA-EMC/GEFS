@@ -79,15 +79,16 @@ export VERBOSE=${VERBOSE:-NO}
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
 export USHgefs=${USHgefs:-$HOMEgefs/ush}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
-export HOMEpost=${HOMEpost:-${NWROOT}/ncep_post.${post_ver}}
-export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
-export HOMEgfs=${HOMEgsm}
+
+export HOMEpost=${HOMEpost:-${HOMEgefs}}
+
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
 
 ###################################
 # Set up the UTILITIES
 ###################################
 
-export HOMEbufrsnd=${HOMEgfs:-$NWROOT/gfs.${gfs_ver}}
+export HOMEbufrsnd=${HOMEgfs:-$HOMEgefs}
 export EXECbufrsnd=${EXECgfs:-$HOMEgfs/exec}
 export FIXbufrsnd=${FIXgfs:-$HOMEgfs/fix/product}
 export PARMbufrsnd=${PARMgfs:-$HOMEgfs/parm/product}

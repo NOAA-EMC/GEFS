@@ -41,6 +41,8 @@ elif [[ "$WHERE_AM_I" == cray ]] ; then
     # wave modules
     module load HDF5-serial-intel-sandybridge/1.8.9
     module load NetCDF-intel-sandybridge/4.2
+    # module load NetCDF-intel-haswell/4.2
+    module load nco-gnu-sandybridge/4.4.4
     # theend wave modules 
 	export PATH=$PATH:.
     

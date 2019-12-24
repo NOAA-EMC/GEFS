@@ -146,12 +146,6 @@ def config_tasknames(dicBase):
                 dicBase[sTaskName.upper()] = "gwes_post"
 
         # #    <!-- CHGRES jobs -->
-        if dicBase['RUN_CHGRES'].upper()[0] == "Y":
-            # ---sigchgres
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "sigchgres"
-
         # #    <!-- RUN_PRDGEN_GFS jobs -->
         if dicBase['RUN_PRDGEN_GFS'].upper()[0] == "Y":
             # ---sigchgres
@@ -879,7 +873,7 @@ def get_param_of_task(dicBase, taskname):
                     sDep += '\n\t<taskdep task="copy_init_#member#"/>'
                 if DoesTaskExist(dicBase, "gwes_prep"): # Wave prep
                     sDep += '\n\t<taskdep task="gwes_prep_#member#"/>'
-
+                    sDep += '\n\t<taskdep task="gwes_prep_c00"/>'
                 if sDep == '<and>':
                     sDep = ""
                 else:

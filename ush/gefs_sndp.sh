@@ -1,7 +1,7 @@
 #!/bin/ksh
 ################################################################
-# Script Name:          gfs_sndp.sh
-# Script Description:   Format GFS BUFR sounding files for AWIPS
+# Script Name:          gefs_sndp.sh
+# Script Description:   Format GEFS BUFR sounding files for AWIPS
 # Script History Log:
 #   1) 2004-09-10       Steve Gilbert       First Implementation
 ################################################################

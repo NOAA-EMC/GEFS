@@ -78,19 +78,18 @@ echo current setting RERUN=$RERUN
 
 # Specify Execution Areas
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
-export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
-
-export FIXglobal=${HOMEgsm}/fix
-export FIXgfs=${HOMEgsm}/fix
-
-export USHgsm=$HOMEgsm/ush
-export EXECgsm=$HOMEgsm/exec
-
 export USHgefs=${USHgefs:-${HOMEgefs}/ush}
 export PARMgefs=$HOMEgefs/parm
 
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
+
+export FIXglobal=${HOMEgfs}/fix
+export FIXgfs=${HOMEgfs}/fix
+export USHgfs=$HOMEgfs/ush
+export EXECgfs=$HOMEgfs/exec
+
 #export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/gfs_ncep_post}
-export nemsioget=$EXECgsm/nemsio_get
+export nemsioget=$EXECgfs/nemsio_get
 
 export ERRSCRIPT=${ERRSCRIPT:-err_chk}
 export LOGSCRIPT=startmsg
