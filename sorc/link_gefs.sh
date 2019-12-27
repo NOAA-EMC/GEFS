@@ -132,7 +132,7 @@ if [[ -d global-workflow.fd ]] ; then
 
 fi
 
-# Copy/Link para files
+# Copy/Link parm files
 if [[ -d global-workflow.fd ]] ; then
     if [[ -d ../parm/parm_fv3diag ]]; then
         rm -rf ../parm/parm_fv3diag
