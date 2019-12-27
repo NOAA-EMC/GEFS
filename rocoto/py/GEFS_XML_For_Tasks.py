@@ -368,44 +368,37 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     #/\ -------------------Add Source Vars----------
 
     # -------------------Other envar and command-------------------
+    ## Add new envir
     if taskname in ['keep_init', 'copy_init']:
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/../py/{0}.py</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['keep_data_atm', 'archive_atm', 'cleanup_atm', 'keep_data_wave', 'archive_wave', 'cleanup_wave']:
-        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/../py/{0}.py</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['forecast_high']:
+
+    ## For FORECAST_SEGMENT
+    if (taskname in ['forecast_high', 'prdgen_high', 'post_high', 'ensstat_high']) or taskname.startswith("post_high_"):
         strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['forecast_low']:
+    elif taskname in ['forecast_low', 'prdgen_low', 'post_low', 'ensstat_low']:
         strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/forecast_high.sh</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['prdgen_high']:
-        strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['prdgen_low']:
-        strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/prdgen_high.sh</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['prdgen_gfs']:
-        strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/prdgen_high.sh</cyclestr></command>\n'
-    elif taskname in ['post_high']:
-        strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['post_low']:
-        strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/post_high.sh</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['ensstat_high']:
-        strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['ensstat_low']:
-        strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/ensstat_high.sh</cyclestr></command>\n'.format(taskname)
+	
+    ## For SUBJOB
     elif taskname.startswith("post_high_"):
         strings += (create_envar(name="SUBJOB", value=taskname.replace("post_high_", ""), sPre=sPre_2))
-        strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format("post_high")
     elif taskname.startswith("ensavg_nemsio_"):
         strings += (create_envar(name="SUBJOB", value=taskname.replace("ensavg_nemsio_", ""), sPre=sPre_2))
-        strings += sPre + '\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format("ensavg_nemsio")
+        
+    ## Add command
+    if taskname in ['keep_init', 'copy_init', 'keep_data_atm', 'archive_atm', 'cleanup_atm', 'keep_data_wave', 'archive_wave', 'cleanup_wave']:
+        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/../py/{0}.py</cyclestr></command>\n'.format(taskname)
+    elif taskname in ['forecast_high', 'forecast_low']:
+        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format("forecast_high")
+    elif taskname in ['prdgen_high', 'prdgen_low', 'prdgen_gfs']:
+        strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format("prdgen_high")
+    elif taskname in ['post_high', 'post_low']:
+        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format("post_high")
+    elif taskname in ['ensstat_high', 'ensstat_low']:
+        strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format("ensstat_high")
+    elif taskname.startswith("post_high_"):
+        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format("post_high")
+    elif taskname.startswith("ensavg_nemsio_"):
+        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format("ensavg_nemsio")
     else:
         strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
     # -------------------Other envar and command-------------------
@@ -1274,9 +1267,9 @@ def get_ENV_VARS(sPre="\t\t"):
     dicENV_VARS = {}
     dicENV_VARS['envir'] = 'dev'
     dicENV_VARS['RUN_ENVIR'] = 'dev'
-    dicENV_VARS['gefsmpexec'] = 'mpirun.lsf'
-    dicENV_VARS['wavempexec'] = 'mpirun.lsf'
-    dicENV_VARS['gefsmpexec_mpmd'] = 'mpirun.lsf'
+    #dicENV_VARS['gefsmpexec'] = 'mpirun.lsf'
+    #dicENV_VARS['wavempexec'] = 'mpirun.lsf'
+    #dicENV_VARS['gefsmpexec_mpmd'] = 'mpirun.lsf'
     dicENV_VARS['WHERE_AM_I'] = '&WHERE_AM_I;'
     dicENV_VARS['GEFS_ROCOTO'] = '&GEFS_ROCOTO;'
     dicENV_VARS['WORKDIR'] = '&WORKDIR;'
