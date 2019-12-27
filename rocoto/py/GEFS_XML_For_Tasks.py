@@ -814,7 +814,7 @@ def get_param_of_task(dicBase, taskname):
                     sDep += '\n\t<taskdep task="copy_init_#member#"/>'
                 if DoesTaskExist(dicBase, "gwes_prep"): # Wave prep
                     sDep += '\n\t<taskdep task="gwes_prep_#member#"/>'
-
+                    sDep += '\n\t<taskdep task="gwes_prep_c00"/>'
                 if sDep == '<and>':
                     sDep = ""
                 else:
