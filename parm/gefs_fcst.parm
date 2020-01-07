@@ -103,7 +103,8 @@ if [[ $cplwav = ".true." ]]; then
 fi
 
 if [[ $cplchm = ".true." ]]; then
-	export restart_interval=$gefs_cych  # temporary until capability to output just at 6 h is added to FV3
+	export restart_interval=${restart_interval_aer:-24}
+	export other_restart_time=${other_restart_time:-$gefs_cych}
 	
 	export EMITYPE=${EMITYPE:-2}  # 1:MODIS, 2:GBBEPx
 	export EMIDIR=${EMIDIR:-/gpfs/dell2/emc/modeling/noscrub/Li.Pan/emi_} # WCK revist this
