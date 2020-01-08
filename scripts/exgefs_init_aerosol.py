@@ -27,7 +27,7 @@ max_lookback = 4
 #   print statments may be out-of-order with subprocess output
 print = partial(print, flush=True)
 
-tiles = list(map(lambda t: "tile{t}".format(t=t), range(1, n_tiles)))
+tiles = list(map(lambda t: "tile{t}".format(t=t), range(1, n_tiles + 1)))
 
 
 def main() -> None:
