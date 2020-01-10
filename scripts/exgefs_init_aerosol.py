@@ -66,6 +66,7 @@ def main() -> None:
 	if (tracer_files is not None):
 		merge_tracers(merge_script, atm_files, tracer_files, tracer_list_file)
 
+	shutil.rmtree(com_path, ignore_errors=True)
 	shutil.copytree(destination_path, com_path)  # Copy data to COM
 
 	return
