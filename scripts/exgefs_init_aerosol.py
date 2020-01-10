@@ -14,6 +14,7 @@ from functools import partial
 # Constants
 atm_base_pattern = "{ges_root}/{envir}/gefs.%Y%m%d/%H/{member}"
 atm_file_pattern = "{path}/gfs_data.{tile}.nc"
+com_base_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/init/{member}"
 tracer_base_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/restart/{member}"  # Time of previous run
 tracer_file_pattern = "{tracer_base}/%Y%m%d.%H0000.fv_tracer.res.{tile}.nc"           # Time when restart is valid (current run)
 tracer_list_file_pattern = "{parm_gefs}/gefs_aerosol_tracer_list.parm"
@@ -51,8 +52,8 @@ def main() -> None:
 	time = datetime.strptime(cdate, "%Y%m%d%H")
 	atm_source_path = time.strftime(atm_base_pattern.format(ges_root=ges_root, envir=envir, member="c00"))
 	destination_path = time.strftime(atm_base_pattern.format(ges_root=ges_root, envir=envir, member="aer"))
+	com_path = time.strftime(com_base_pattern.format(com_root=com_root, envir=envir, net=net, run=run, member="aer"))
 
-	# shutil.copytree(atm_source_path, destination_path)
 	os.makedirs(destination_path, exist_ok=True)
 	for file_name in os.listdir(atm_source_path):
 		full_file_name = os.path.join(atm_source_path, file_name)
@@ -64,6 +65,8 @@ def main() -> None:
 
 	if (tracer_files is not None):
 		merge_tracers(merge_script, atm_files, tracer_files, tracer_list_file)
+
+	shutil.copytree(destination_path, com_path)  # Copy data to COM
 
 	return
 
