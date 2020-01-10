@@ -707,6 +707,7 @@ def calc_fcst_resources(dicBase):
 # =======================================================
 def get_param_of_task(dicBase, taskname):
     import math
+    import textwrap
     sWalltime = ""
     sNodes = ""
     sMemory = ""
@@ -805,14 +806,30 @@ def get_param_of_task(dicBase, taskname):
                 for task in ["prep_emissions", "init_recenter", "copy_init"]:
                     if DoesTaskExist(dicBase, task):
                         sDep += "\n\t<taskdep task=\"{task}\"/>".format(task=task)
-                        
+
+                for task in ["forecast_aerosol"]:
+                    if DoesTaskExist(dicBase, task):
+                        # sDep += "\n\t<or>\n\t\t<not><cycleexistdep cycle_offset=\"-&INCYC;:00:00\"/></not>\n\t\t<taskdep task=\"{task}\" cycle_offset=\"-&INCYC;:00:00\"/>\n\t</or>".format(task=task)
+                        sDep += '\t'.join(textwrap.dedent("""
+                        <or>
+                            <not><cycleexistdep cycle_offset=\"-&INCYC;:00:00\"/></not>
+                            <and>
+                                <datadep age="120" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile1.nc</cyclestr></datadep>
+                                <datadep age="120" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile2.nc</cyclestr></datadep>
+                                <datadep age="120" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile3.nc</cyclestr></datadep>
+                                <datadep age="120" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile4.nc</cyclestr></datadep>
+                                <datadep age="120" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile5.nc</cyclestr></datadep>
+                                <datadep age="120" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile6.nc</cyclestr></datadep>
+                            </and>
+                        </or>""".format(task=task)).splitlines(True))
+
                 if sDep == "<and>":
                     sDep = ""
                 else:
                     sDep += "\n</and>"
 
             # For 'forecast_high' task
-            if taskname.lower() == "forecast_high" :
+            if taskname.lower() == "forecast_high":
                 sDep = '<and>'
                 if DoesTaskExist(dicBase, "getcfssst"):
                     sDep += '\n\t<taskdep task="getcfssst"/>'
@@ -827,7 +844,7 @@ def get_param_of_task(dicBase, taskname):
 
                 if DoesTaskExist(dicBase, "copy_init"):
                     sDep += '\n\t<taskdep task="copy_init_#member#"/>'
-                if DoesTaskExist(dicBase, "gwes_prep"): # Wave prep
+                if DoesTaskExist(dicBase, "gwes_prep"):  # Wave prep
                     sDep += '\n\t<taskdep task="gwes_prep_#member#"/>'
 
                 if sDep == '<and>':
