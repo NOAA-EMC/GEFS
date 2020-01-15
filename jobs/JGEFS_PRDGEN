@@ -243,12 +243,13 @@ fi
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-ksh $utilscript/setup.sh
+#ksh $utilscript/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $utilscript/setpdy.sh
+#sh $utilscript/setpdy.sh
+setpdy.sh
 
 . PDY
 

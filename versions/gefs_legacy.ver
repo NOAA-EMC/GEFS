@@ -1,3 +1,15 @@
-export gefs_legacy_ver=v10.3.6
-export gsm_ver=v12.0.2
+export gefs_legacy_ver=v10.5.0
 #export gsm_ver=`cat /nwprod/versions/gfs.ver|grep gsm_ver|awk -F"=" '{print $2}'`
+#versions from GEFS
+export gsm_ver=v12.1.6
+export post_ver=v5.1.3
+export enkf_ver=v2.0.4
+export grib_util_ver=1.1.0
+export util_shared_ver=1.1.0
+export prod_util_ver=1.1.0
+export ips_ver=18.0.5.274
+export lsf_ver=10.1
+export impi_ver=18.0.1
+export cfp_ver=2.0.1
+export gempak_ver=7.3.1
+

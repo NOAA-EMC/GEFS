@@ -890,7 +890,9 @@ subroutine read_ana(ir,jcap,lrec,nrec1,levs,levsp,ilat,ilon,cofo_1,g_ana,head)
   cofo_1 = 0.0
   cofo_1(:) = data%hs(:)
   cofo(:) = data%ps(:)
+  print *, 'before sptez ',jcap,ilon,ilat,cofo(1),grid(1,1)
   call sptez(0,jcap,4,ilon,ilat,cofo,grid,+1)
+  print *, 'after sptez ',jcap,ilon,ilat,cofo(1),grid(1,1)
   g_ana(:,:,1) = grid(:,:)
   ! read temp
   print *, '---------------  In read_ana  --------  '

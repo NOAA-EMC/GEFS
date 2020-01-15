@@ -1,0 +1,3 @@
+ Returned values from ArraySpec:
+ rank =           2
+ PASS: ESMF_ArraySpecEx.F90

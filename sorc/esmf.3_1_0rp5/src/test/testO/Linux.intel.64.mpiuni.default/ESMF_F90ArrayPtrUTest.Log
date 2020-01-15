@@ -1,0 +1,12 @@
+20190610 112230.065939 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112230.066213 INFO     PET0  Beginning Test, file ESMF_F90ArrayPtrUTest.F90, line         249
+20190610 112230.066231 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112230.066269 INFO     PET0  PASS  1D Integer array pointer size test, ESMF_F90ArrayPtrUTest.F90, line         260
+20190610 112230.066291 INFO     PET0  PASS  2D Integer array pointer size test, ESMF_F90ArrayPtrUTest.F90, line         271
+20190610 112230.066303 INFO     PET0  PASS  3D Integer array pointer size test, ESMF_F90ArrayPtrUTest.F90, line         282
+20190610 112230.068618 INFO     PET0  PASS  4D Integer array pointer size test, ESMF_F90ArrayPtrUTest.F90, line         293
+20190610 112230.068631 INFO     PET0  PASS  5D Integer array pointer size test, ESMF_F90ArrayPtrUTest.F90, line         304
+20190610 112230.068641 INFO     PET0  PASS  6D Integer array pointer size test, ESMF_F90ArrayPtrUTest.F90, line         315
+20190610 112230.068651 INFO     PET0  PASS  7D Integer array pointer size test, ESMF_F90ArrayPtrUTest.F90, line         326
+20190610 112230.068735 INFO     PET0  Number of failed tests:           0
+20190610 112230.068742 INFO     PET0  Ending Test, file ESMF_F90ArrayPtrUTest.F90, line         578

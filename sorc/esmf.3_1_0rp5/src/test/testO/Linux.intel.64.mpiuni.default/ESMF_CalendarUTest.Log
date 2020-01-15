@@ -1,0 +1,7 @@
+20190610 112232.493360 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112232.493640 INFO     PET0  Beginning Test, file ESMF_CalendarUTest.F90, line          92
+20190610 112232.493658 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112232.493671 INFO     PET0  PASS  Create Gregorian Type Calendar Test, ESMF_CalendarUTest.F90, line         103
+20190610 112232.493693 INFO     PET0  PASS  Destroy Gregorian Type Calendar Test, ESMF_CalendarUTest.F90, line         114
+20190610 112232.493699 INFO     PET0  Number of failed tests:           0
+20190610 112232.493705 INFO     PET0  Ending Test, file ESMF_CalendarUTest.F90, line        1451

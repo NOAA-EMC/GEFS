@@ -1,0 +1,33 @@
+  Beginning Test, file ESMF_VMUTest.F90, line         979
+  NUMBER_OF_PROCESSORS           1
+  PASS  VM Get before initialization Test, ESMF_VMUTest.F90, line         987
+  PASS  VM validate Test before valid VM, ESMF_VMUTest.F90, line         994
+  PASS  VM Get Global Test, ESMF_VMUTest.F90, line        1001
+  PASS  VM Get Test, ESMF_VMUTest.F90, line        1008
+  PASS  VM print Test, ESMF_VMUTest.F90, line        1015
+  PASS  VM validate Test, ESMF_VMUTest.F90, line        1022
+  Number of failed tests:           0
+  Ending Test, file ESMF_VMUTest.F90, line        1093
+--- ESMCI::VM::print() start ---
+ESMCI::VMIdPrint:
+vmID located at: 0x782760
+  vmKey=0x80000000
+  localID: 0
+--- VMK::print() start ---
+vm located at: 0xbdd060
+npets = 1, mypet=0
+  pth_mutex =		 0xc04860
+  pth_finish_count =	 (nil)
+MPI_Group_size: 1
+MPI_Comm_size: 1
+MPI_Comm_rank in local MPI communicator: 0
+MPI_Comm_rank in MPI_COMM_WORLD: 0
+MPI thread level support: 0
+mpi_mutex_flag: 1
+mpionly: 0
+nothreadsflag: 1
+  lpid[0]=0, tid[0]=0, vas[0]=0, ncpet[0]=1, cid[0][0]=0
+ncores = 1
+  cpuid[0]=0, ssiid[0]=0
+--- VMK::print() end ---
+--- ESMCI::VM::print() end ---

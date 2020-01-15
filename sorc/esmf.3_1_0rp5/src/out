@@ -1,0 +1,536 @@
+gmake ACTION=tree_clean tree
+gmake[1]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src
+gmake[2]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/prologue
+gmake[3]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/prologue'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/prologue/tests
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/prologue/tests'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_StringUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_WordsizeUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_F90ArrayPtrUTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/prologue/tests'
+gmake[3]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/prologue'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure
+gmake[3]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/stubs
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/stubs'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/stubs/mpiuni
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/stubs/mpiuni'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/stubs/mpiuni'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/stubs'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Util
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Util'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Util/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Util/src'
+rm -rf ESMF_FortranWordsize.F90 ESMF_TypeKindGet.F90 ../doc/ESMF_FortranWordsize_fapi.tex ../doc/ESMF_TypeKindGet_fapi.tex *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Util/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Util/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Util/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Util/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Util/tests
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Util/tests'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_UtilUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_FortranWordsizeUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_TypeKindGetUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_InitMacrosUTest  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Util/tests'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Util/examples
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Util/examples'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Util/examples'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Util'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Base
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Base'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Base/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Base/src'
+rm -rf   *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Base/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Base/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Base/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Base/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Base/tests
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Base/tests'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_BaseUTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Base/tests'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Base'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/IOSpec
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/IOSpec'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/IOSpec/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/IOSpec/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/IOSpec/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/IOSpec/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/IOSpec/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/IOSpec/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/IOSpec/tests
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/IOSpec/tests'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_IOSpecUTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/IOSpec/tests'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/IOSpec'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LogErr
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LogErr'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LogErr/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LogErr/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LogErr/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LogErr/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LogErr/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LogErr/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LogErr/examples
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LogErr/examples'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_LogErrEx *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LogErr/examples'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LogErr/tests
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LogErr/tests'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_LogErrUTest Log* *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LogErr/tests'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LogErr'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/IO
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/IO'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/IO'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/TimeMgr
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/TimeMgr'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/TimeMgr/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/TimeMgr/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/TimeMgr/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/TimeMgr/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/TimeMgr/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/TimeMgr/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/TimeMgr/examples
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/TimeMgr/examples'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_TimeEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_TimeIntervalEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_CalendarEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_ClockEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_AlarmEx *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/TimeMgr/examples'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/TimeMgr/tests
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/TimeMgr/tests'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_AlarmUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_ClockUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_CalendarUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_CalRangeUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_TimeIntervalUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_TimeUTest   *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/TimeMgr/tests'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/TimeMgr'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/VM
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/VM'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/VM/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/VM/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/VM/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/VM/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/VM/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/VM/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/VM/examples
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/VM/examples'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_VMDefaultBasicsEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_VMGetMPICommunicatorEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_VMUserMpiEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_VMUserMpiCommEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_VMSendVMRecvEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_VMScatterVMGatherEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_VMAllFullReduceEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_VMComponentEx *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/VM/examples'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/VM/tests
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/VM/tests'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_VMUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_VMUserMpiInitUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_VMSendVMRecvUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_VMSendNbVMRecvNbUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_VMSendRecvUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_VMSendRecvNbUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_VMScatterUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_VMGatherUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_VMAllGatherUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_VMAllGatherVUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_VMBroadcastUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_VMAllToAllVUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_VMBarrierUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_VMComponentUTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/VM/tests'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/VM'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DELayout
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DELayout'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DELayout/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DELayout/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DELayout/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DELayout/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DELayout/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DELayout/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DELayout/tests
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DELayout/tests'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_DELayoutUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_DELayoutWorkQueueUTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DELayout/tests'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DELayout/examples
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DELayout/examples'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_DELayoutEx *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DELayout/examples'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DELayout'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Config
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Config'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Config/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Config/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Config/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Config/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Config/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Config/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Config/examples
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Config/examples'
+rm -rf foo.nc /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_ConfigOverviewEx 0 1 2 3 *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Config/examples'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Config/tests
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Config/tests'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_ConfigUTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Config/tests'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Config'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternDG
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternDG'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternDG/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternDG/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternDG/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternDG/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternDG/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternDG/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternDG/examples
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternDG/examples'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternDG/examples'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternDG'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArraySpec
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArraySpec'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArraySpec/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArraySpec/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArraySpec/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArraySpec/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArraySpec/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArraySpec/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArraySpec/examples
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArraySpec/examples'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_ArraySpecEx *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArraySpec/examples'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArraySpec'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LocalArray
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LocalArray'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LocalArray/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LocalArray/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LocalArray/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LocalArray/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LocalArray/interface'
+rm -rf ESMF_LocalArrayCreate.F90 ESMF_LocalArrayGet.F90 *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LocalArray/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LocalArray/tests
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LocalArray/tests'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_LocalArrayDataUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_LocalArrayUTest  TestArrayData *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LocalArray/tests'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/LocalArray'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternArray
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternArray'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternArray/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternArray/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternArray/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternArray/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternArray/interface'
+rm -rf ESMF_InternArrayCreate.F90 ESMF_InternArrayGet.F90 ../doc/ESMF_InternArrayCreate_fapi.tex ../doc/ESMF_InternArrayGet_fapi.tex *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternArray/interface'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/InternArray'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Route
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Route'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Route/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Route/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Route/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Route/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Route/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Route/interface'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Route'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DistGrid
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DistGrid'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DistGrid/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DistGrid/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DistGrid/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DistGrid/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DistGrid/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DistGrid/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DistGrid/tests
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DistGrid/tests'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_DistGridCreateGetUTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DistGrid/tests'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DistGrid/examples
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DistGrid/examples'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_DistGridEx *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DistGrid/examples'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/DistGrid'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Array
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Array'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Array/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Array/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Array/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Array/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Array/interface'
+rm -rf ESMF_ArrayCreate.F90 ESMF_ArrayGet.F90 ESMF_ArrayGather.F90 ESMF_ArrayScatter.F90 *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Array/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Array/tests
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Array/tests'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_ArrayCreateGetUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_ArrayDataUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_ArrayScatterUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_ArrayArbIdxSMMUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_ArrayRedistUTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Array/tests'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Array/examples
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Array/examples'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_ArrayFarrayEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_ArrayFarrayHaloEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_ArrayLarrayEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_ArrayEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_ArrayScatterGatherEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_ArrayRedistEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_ArraySparseMatMulEx *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Array/examples'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Array'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArrayBundle
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArrayBundle'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArrayBundle/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArrayBundle/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArrayBundle/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArrayBundle/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArrayBundle/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArrayBundle/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArrayBundle/tests
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArrayBundle/tests'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_ArrayBundleCreateUTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArrayBundle/tests'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArrayBundle/examples
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArrayBundle/examples'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_ArrayBundleEx *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArrayBundle/examples'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/ArrayBundle'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/GridUtil
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/GridUtil'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/GridUtil/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/GridUtil/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/GridUtil/src'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/GridUtil'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Grid
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Grid'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Grid/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Grid/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Grid/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Grid/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Grid/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Grid/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Grid/tests
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Grid/tests'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_GridCreateUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_GridCoordUTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Grid/tests'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Grid/examples
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Grid/examples'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_GridUsageEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_GridCreateRegFromDGEx *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Grid/examples'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Grid'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Field
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Field'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Field/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Field/src'
+rm -rf ESMF_FieldGet.F90 ESMF_FieldSet.F90 ESMF_FieldCreate.F90 ../doc/ESMF_FieldGet_fapi.tex ../doc/ESMF_FieldSet_fapi.tex ../doc/ESMF_FieldCreate_fapi.tex *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Field/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Field/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Field/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Field/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Field/tests
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Field/tests'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_FieldUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_FieldCreateGetUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_FieldStressUTest  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Field/tests'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Field/examples
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Field/examples'
+rm -rf foo.nc /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_FieldCreateEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_FieldEx 0 1 2 3 *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Field/examples'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Field'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/FieldBundle
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/FieldBundle'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/FieldBundle/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/FieldBundle/src'
+rm -rf   *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/FieldBundle/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/FieldBundle/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/FieldBundle/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/FieldBundle/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/FieldBundle/tests
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/FieldBundle/tests'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_FieldBundleUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_FieldBundleCrGetUTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/FieldBundle/tests'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/FieldBundle/examples
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/FieldBundle/examples'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_FieldBundleCreateEx  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/FieldBundle/examples'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/FieldBundle'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Attribute
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Attribute'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure/Attribute'
+gmake[3]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Infrastructure'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure
+gmake[3]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/State
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/State'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/State/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/State/src'
+rm -rf   ESMF_LogFile *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/State/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/State/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/State/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/State/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/State/doc
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/State/doc'
+rm -rf  ESMC_State_chapi.tex  ESMF_State_fapi.tex ESMF_StateReconcile_fapi.tex ESMF_StateTypes_fapi.tex   ESMF_StateGet_fapi.tex ESMC_StateEx_ccapi.tex  ESMF_StateEx_fapi.tex ESMF_StateReconcileEx_fapi.tex   *.aux *.bbl *.blg *.log *.toc *.dvi *.ORIG State_refdoc.tex /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/doc/State_refdoc.pdf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/State/doc'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/State/tests
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/State/tests'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_StateCreateUTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/State/tests'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/State'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/Component
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/Component'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/Component/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/Component/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/Component/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/Component/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/Component/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/Component/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/Component/examples
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/Component/examples'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_AppMainEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_CplEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_GCompEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMF_InternalStateEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMC_AppMainEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMC_CplEx /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/examples/examplesO/Unicos.intel.64.mpi.default/ESMC_GCompEx *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/Component/examples'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/Component/tests
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/Component/tests'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_ComponentUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_GridCompCreateUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_CompSetServUTest /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_CplCompCreateUTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/Component/tests'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/Component/doc
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/Component/doc'
+rm -rf ESMC_FTable_ccapi.tex ESMC_Comp_chapi.tex ESMC_CplComp_chapi.tex ESMC_FTable_chapi.tex ESMC_GridComp_chapi.tex  ESMF_Comp_fapi.tex ESMF_CplComp_fapi.tex ESMF_GridComp_fapi.tex   ESMC_Comp_ccapi.tex ESMC_Comp_F_ccapi.tex ESMC_CplComp_ccapi.tex ESMC_FTable_F_ccapi.tex ESMC_GridComp_ccapi.tex ESMF_Comp_C_fapi.tex ESMF_CplCompSetServ_fapi.tex ESMF_GridCompSetServ_fapi.tex ESMC_AppMainEx_ccapi.tex ESMC_CplEx_ccapi.tex ESMC_GCompEx_ccapi.tex  ESMF_AppMainEx_fapi.tex ESMF_CplEx_fapi.tex ESMF_GCompEx_fapi.tex ESMF_InternalStateEx_fapi.tex   *.aux *.bbl *.blg *.log *.toc *.dvi *.ORIG Component_refdoc.tex /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/doc/Component_refdoc.pdf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/Component/doc'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/Component'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/AttributeAPI
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/AttributeAPI'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/AttributeAPI/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/AttributeAPI/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/AttributeAPI/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/AttributeAPI/doc
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/AttributeAPI/doc'
+rm -rf         ESMF_Attribute_fapi.tex        *.aux *.bbl *.blg *.log *.toc *.dvi *.ORIG  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/AttributeAPI/doc'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/AttributeAPI'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/ESMFMod
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/ESMFMod'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/ESMFMod/src
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/ESMFMod/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/ESMFMod/src'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/ESMFMod/interface
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/ESMFMod/interface'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/ESMFMod/interface'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/ESMFMod/examples
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/ESMFMod/examples'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/ESMFMod/examples'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/ESMFMod/doc
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/ESMFMod/doc'
+rm -rf  ESMC_chapi.tex ESMCI_chapi.tex ESMCI_Init_chapi.tex ESMC_Init_chapi.tex  ESMF_fapi.tex ESMF_Init_fapi.tex ESMF_Overloads_fapi.tex   ESMCI_Init_ccapi.tex ESMC_Init_ccapi.tex ESMF_Init_C_fapi.tex      *.aux *.bbl *.blg *.log *.toc *.dvi *.ORIG ESMFMod_refdoc.tex /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/doc/ESMFMod_refdoc.pdf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/ESMFMod/doc'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/ESMFMod'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/AppDriver
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/AppDriver'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/AppDriver/doc
+gmake[5]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/AppDriver/doc'
+rm -rf AppDriverSeqPrF_fapi.tex ChangeMeSeqPrF_fapi.tex CplCompTemplateSeqPrF_fapi.tex GridComp1TemplateSeqPrF_fapi.tex GridComp2TemplateSeqPrF_fapi.tex ParentGridCompTemplateSeqPrF_fapi.tex *.aux *.bbl *.blg *.log *.toc *.dvi *.ORIG AppDriver_refdoc.tex /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/doc/AppDriver_refdoc.pdf   *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[5]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/AppDriver/doc'
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure/AppDriver'
+gmake[3]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/Superstructure'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/epilogue
+gmake[3]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/epilogue'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/epilogue/src
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/epilogue/src'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/epilogue/src'
+gmake[3]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/epilogue'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests
+gmake[3]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests'
+rm -rf  *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_CompCreate
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_CompCreate'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_CompCreateSTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_CompCreate'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_RecursiveComponent
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_RecursiveComponent'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_RecursiveComponentSTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_RecursiveComponent'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_ArrayScatterGather
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_ArrayScatterGather'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_ArrayScatterGatherSTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_ArrayScatterGather'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_ArraySparseMatMul
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_ArraySparseMatMul'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_ArraySparseMatMulSTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_ArraySparseMatMul'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_ArrayRedist
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_ArrayRedist'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_ArrayRedistSTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_ArrayRedist'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_ArrayRedistMPMD
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_ArrayRedistMPMD'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_ArrayRedistSTestA /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_ArrayRedistSTestB *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_ArrayRedistMPMD'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_DirectCoupling
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_DirectCoupling'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_DirectCouplingSTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_DirectCoupling'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_ArrayBundleSparseMatMul
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_ArrayBundleSparseMatMul'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_ArrayBundleSparseMatMulSTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_ArrayBundleSparseMatMul'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_DistDir
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_DistDir'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_DistDirSTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_DistDir'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_FieldSparseMatMul
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_FieldSparseMatMul'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_FieldSparseMatMulSTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_FieldSparseMatMul'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_ConcurrentComponent
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_ConcurrentComponent'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_ConcurrentCompSTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_ConcurrentComponent'
+tree_clean in: /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_FieldBundleSMM
+gmake[4]: Entering directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_FieldBundleSMM'
+rm -rf /usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/test/testO/Unicos.intel.64.mpi.default/ESMF_FieldBundleSMMSTest *.o *.mod *.txt core ESM*.stdout ESM*.Log PET*.Log *ESMF_LogFile
+gmake[4]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests/ESMF_FieldBundleSMM'
+gmake[3]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src/system_tests'
+gmake[2]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src/src'
+gmake[1]: Leaving directory `/gpfs/hps/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src'

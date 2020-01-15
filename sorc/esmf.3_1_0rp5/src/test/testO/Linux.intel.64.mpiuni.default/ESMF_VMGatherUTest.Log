@@ -1,0 +1,23 @@
+20190610 112233.797901 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112233.798150 INFO     PET0  Beginning Test, file ESMF_VMGatherUTest.F90, line          67
+20190610 112233.798167 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112233.798208 INFO     PET0  PASS  Gather() Test for Integer, ESMF_VMGatherUTest.F90, line         108
+20190610 112233.798218 INFO     PET0  PASS  Verifying array1 data after Gather() Test for Integer, ESMF_VMGatherUTest.F90, line         125
+20190610 112233.800561 INFO     PET0  PASS  Verifying array2 data after Gather() Test for Integer, ESMF_VMGatherUTest.F90, line         142
+20190610 112233.800570 INFO     PET0  PASS  Gather() Test for ESMF_KIND_R8, ESMF_VMGatherUTest.F90, line         153
+20190610 112233.800591 INFO     PET0  PASS  Verifying farray1 data after Gather() Test for ESMF_KIND_R8, ESMF_VMGatherUTest.F90, line         170
+20190610 112233.800665 INFO     PET0  PASS  Verifying farray2 data after Gather() Test for ESMF_KIND_R8, ESMF_VMGatherUTest.F90, line         192
+20190610 112233.800673 INFO     PET0  PASS  Gather() Test for ESMF_KIND_R4, ESMF_VMGatherUTest.F90, line         203
+20190610 112233.800754 INFO     PET0  PASS  Verifying f4array1 data after Gather() Test for ESMF_KIND_R4, ESMF_VMGatherUTest.F90, line         220
+20190610 112233.800831 INFO     PET0  PASS  Verifying f4array2 data after Gather() Test for ESMF_KIND_R4, ESMF_VMGatherUTest.F90, line         242
+20190610 112233.800840 INFO     PET0  PASS  GatherV() Test for Integer, ESMF_VMGatherUTest.F90, line         284
+20190610 112233.800850 INFO     PET0  PASS  Verifying array1 data after GatherV() Test for Integer, ESMF_VMGatherUTest.F90, line         301
+20190610 112233.800879 INFO     PET0  PASS  Verifying array2 data after GatherV() Test for Integer, ESMF_VMGatherUTest.F90, line         318
+20190610 112233.800890 INFO     PET0  PASS  GatherV() Test for ESMF_KIND_R8, ESMF_VMGatherUTest.F90, line         329
+20190610 112233.800899 INFO     PET0  PASS  Verifying farray1 data after GatherV() Test for ESMF_KIND_R8, ESMF_VMGatherUTest.F90, line         346
+20190610 112233.800932 INFO     PET0  PASS  Verifying farray2 data after GatherV() Test for ESMF_KIND_R8, ESMF_VMGatherUTest.F90, line         368
+20190610 112233.800950 INFO     PET0  PASS  GatherV() Test for ESMF_KIND_R4, ESMF_VMGatherUTest.F90, line         379
+20190610 112233.800960 INFO     PET0  PASS  Verifying f4array1 data after GatherV() Test for ESMF_KIND_R4, ESMF_VMGatherUTest.F90, line         396
+20190610 112233.801007 INFO     PET0  PASS  Verifying f4array2 data after GatherV() Test for ESMF_KIND_R4, ESMF_VMGatherUTest.F90, line         418
+20190610 112233.801024 INFO     PET0  Number of failed tests:           0
+20190610 112233.801031 INFO     PET0  Ending Test, file ESMF_VMGatherUTest.F90, line         431

@@ -1,0 +1,8 @@
+  Beginning Test, file ESMF_CalendarUTest.F90, line          92
+  NUMBER_OF_PROCESSORS           1
+  PASS  Create Gregorian Type Calendar Test, ESMF_CalendarUTest.F90, line       
+   103
+  PASS  Destroy Gregorian Type Calendar Test, ESMF_CalendarUTest.F90, line      
+    114
+  Number of failed tests:           0
+  Ending Test, file ESMF_CalendarUTest.F90, line        1451

@@ -1,0 +1,8 @@
+  Beginning Test, file ESMF_GridCompCreateUTest.F90, line          67
+  NUMBER_OF_PROCESSORS           1
+  PASS  Creating a Component Test, ESMF_GridCompCreateUTest.F90, line          8
+ 0
+  PASS  Destroying a Component Test, ESMF_GridCompCreateUTest.F90, line         
+  92
+  Number of failed tests:           0
+  Ending Test, file ESMF_GridCompCreateUTest.F90, line         218

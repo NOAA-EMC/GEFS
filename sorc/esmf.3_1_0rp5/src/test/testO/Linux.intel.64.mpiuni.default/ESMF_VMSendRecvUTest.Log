@@ -1,0 +1,13 @@
+20190610 112233.519426 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112233.519689 INFO     PET0  Beginning Test, file ESMF_VMSendRecvUTest.F90, line          80
+20190610 112233.519706 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112233.519760 INFO     PET0  PASS  Sending local data Test, ESMF_VMSendRecvUTest.F90, line         151
+20190610 112233.519786 INFO     PET0  PASS  Verify local data after receive Test, ESMF_VMSendRecvUTest.F90, line         162
+20190610 112233.522651 INFO     PET0  PASS  Sending local data Test, ESMF_VMSendRecvUTest.F90, line         172
+20190610 112233.522719 INFO     PET0  PASS  Verify local data after receive Test, ESMF_VMSendRecvUTest.F90, line         184
+20190610 112233.522728 INFO     PET0  PASS  Sending local data Test, ESMF_VMSendRecvUTest.F90, line         194
+20190610 112233.522796 INFO     PET0  PASS  Verify local data after receive Test, ESMF_VMSendRecvUTest.F90, line         206
+20190610 112233.522813 INFO     PET0  PASS  Sending local data Test, ESMF_VMSendRecvUTest.F90, line         216
+20190610 112233.522920 INFO     PET0  PASS  Verify local data after receive Test, ESMF_VMSendRecvUTest.F90, line         237
+20190610 112233.522926 INFO     PET0  Number of failed tests:           0
+20190610 112233.522940 INFO     PET0  Ending Test, file ESMF_VMSendRecvUTest.F90, line         239

@@ -1,0 +1,113 @@
+  Beginning Test, file ESMF_GridCoordUTest.F90, line          66
+  NUMBER_OF_PROCESSORS           1
+  PASS  Set/Get Coordinates from Array, ESMF_GridCoordUTest.F90, line         14
+ 1
+  PASS  Set/Get Coordinates from Array check distgridToArrayMap matching, ESMF_G
+ ridCoordUTest.F90, line         248
+  PASS  Get fortran pointer from coordinate array, ESMF_GridCoordUTest.F90, line
+          296
+  PASS  Test ESMF_StaggerLocSet, ESMF_GridCoordUTest.F90, line         351
+  PASS  Test StaggerLoc .eq. and .ne., ESMF_GridCoordUTest.F90, line         369
+  PASS  Test StaggerLocString, ESMF_GridCoordUTest.F90, line         387
+  PASS  Test 2D GridAddCoord, by allocating coordinates for every stagger, ESMF_
+ GridCoordUTest.F90, line         435
+  PASS  Test 2D CoordAlloc and GridGetCoord, by making sure default CENTER bound
+ s are as expected, ESMF_GridCoordUTest.F90, line         470
+  PASS  Test 2D CoordAlloc and GridGetCoord, by making sure default EDGE1 bounds
+  are as expected, ESMF_GridCoordUTest.F90, line         506
+  PASS  Test 2D CoordAlloc and GridGetCoord, by making sure default EDGE2 bounds
+  are as expected, ESMF_GridCoordUTest.F90, line         542
+  PASS  Test 2D CoordAlloc and GridGetCoord, by making sure default CORNER bound
+ s are as expected, ESMF_GridCoordUTest.F90, line         583
+  PASS  Test 2D GridAddCoord with staggerWidths, by allocating coordinates for e
+ very stagger with different widths, ESMF_GridCoordUTest.F90, line         632
+  PASS  Test 2D CoordAlloc and GridGetCoord, by making sure set CENTER bounds ar
+ e as expected, ESMF_GridCoordUTest.F90, line         669
+  PASS  Test 2D CoordAlloc and GridGetCoord, by making sure set EDGE1 bounds are
+  as expected, ESMF_GridCoordUTest.F90, line         706
+  PASS  Test 2D CoordAlloc and GridGetCoord, by making sure set EDGE2 bounds are
+  as expected, ESMF_GridCoordUTest.F90, line         743
+  PASS  Test 2D CoordAlloc and GridGetCoord, by making sure set CORNER bounds ar
+ e as expected, ESMF_GridCoordUTest.F90, line         784
+  PASS  Test 2D coordDep, by flipping coord2 and allocating CENTER and CORNER st
+ aggers, ESMF_GridCoordUTest.F90, line         826
+  PASS  Test 2D CoordDep, by making sure set CENTER bounds are as expected, ESMF
+ _GridCoordUTest.F90, line         864
+  PASS  Test 2D CoordDep, by making sure default CORNER bounds are as expected, 
+ ESMF_GridCoordUTest.F90, line         904
+  PASS  Test 2D plus 1 GridAddCoord, by allocating coordinates for every stagger
+ , ESMF_GridCoordUTest.F90, line         968
+  PASS  Test 2D PLUS 1 CoordAlloc and GridGetCoord, by making sure default CENTE
+ R_VCENTER bounds are as expected, ESMF_GridCoordUTest.F90, line        1014
+  PASS  Test 2D PLUS 1 CoordAlloc and GridGetCoord, by making sure default EDGE1
+ _VCENTER bounds are as expected, ESMF_GridCoordUTest.F90, line        1062
+  PASS  Test 2D PLUS 1 CoordAlloc and GridGetCoord, by making sure default EDGE2
+ _VCENTER bounds are as expected, ESMF_GridCoordUTest.F90, line        1108
+  PASS  Test 2D PLUS 1 CoordAlloc and GridGetCoord, by making sure default CORNE
+ R_VCENTER bounds are as expected, ESMF_GridCoordUTest.F90, line        1154
+  PASS  Test 2D PLUS 1 CoordAlloc and GridGetCoord, by making sure default CENTE
+ R_VFACE bounds are as expected, ESMF_GridCoordUTest.F90, line        1201
+  PASS  Test 2D PLUS 1 CoordAlloc and GridGetCoord, by making sure default EDGE1
+ _VFACE bounds are as expected, ESMF_GridCoordUTest.F90, line        1249
+  PASS  Test 2D PLUS 1 CoordAlloc and GridGetCoord, by making sure default EDGE2
+ _VFACE bounds are as expected, ESMF_GridCoordUTest.F90, line        1295
+  PASS  Test 2D PLUS 1 CoordAlloc and GridGetCoord, by making sure default CORNE
+ R_VFACE bounds are as expected, ESMF_GridCoordUTest.F90, line        1346
+  PASS  Test 2D plus 1 GridAddCoord with non-default stagger widths, by allocati
+ ng coordinates for every stagger, ESMF_GridCoordUTest.F90, line        1415
+  PASS  Test 2D PLUS 1 CoordAlloc and GridGetCoord, by making sure user set CENT
+ ER_VCENTER bounds are as expected, ESMF_GridCoordUTest.F90, line        1464
+  PASS  Test 2D PLUS 1 CoordAlloc and GridGetCoord, by making sure user set EDGE
+ 1_VCENTER bounds are as expected, ESMF_GridCoordUTest.F90, line        1517
+  PASS  Test 2D PLUS 1 CoordAlloc and GridGetCoord, by making sure user set EDGE
+ 2_VCENTER bounds are as expected, ESMF_GridCoordUTest.F90, line        1567
+  PASS  Test 2D PLUS 1 CoordAlloc and GridGetCoord, by making sure user set CORN
+ ER_VCENTER bounds are as expected, ESMF_GridCoordUTest.F90, line        1615
+  PASS  Test 2D PLUS 1 CoordAlloc and GridGetCoord, by making sure user set CENT
+ ER_VFACE bounds are as expected, ESMF_GridCoordUTest.F90, line        1664
+  PASS  Test 2D PLUS 1 CoordAlloc and GridGetCoord, by making sure default EDGE1
+ _VFACE bounds are as expected, ESMF_GridCoordUTest.F90, line        1714
+  PASS  Test 2D PLUS 1 CoordAlloc and GridGetCoord, by making sure default EDGE2
+ _VFACE bounds are as expected, ESMF_GridCoordUTest.F90, line        1765
+  PASS  Test 2D PLUS 1 CoordAlloc and GridGetCoord, by making sure default CORNE
+ R_VFACE bounds are as expected, ESMF_GridCoordUTest.F90, line        1821
+  PASS  Test 2D plus 1 GridAddCoord with non-default stagger widths and non-defa
+ ults coordDep, ESMF_GridCoordUTest.F90, line        1884
+  PASS  Test 2D PLUS 1 GridGetCoord with non-default coordDep, by making sure ED
+ GE1_VFACE bounds are as expected, ESMF_GridCoordUTest.F90, line        1937
+  PASS  Test 2D PLUS 1 GridGetCoord with non-default coordDep, by making sure ED
+ GE2_VFACE bounds are as expected, ESMF_GridCoordUTest.F90, line        1989
+  PASS  Test 2D PLUS 1 GridGetCoord with non-default coordDep, by making sure CO
+ RNER_VFACE bounds are as expected, ESMF_GridCoordUTest.F90, line        2045
+  PASS  Test 2D plus 1 GridAddCoord with DELOCAL Index, ESMF_GridCoordUTest.F90,
+  line        2099
+  PASS  Test 2D PLUS 1 GridGetCoord with ESMF_INDEX_DELOCAL, ESMF_GridCoordUTest
+ .F90, line        2146
+  PASS  Test 2D plus 1 GridAddCoord with ESMF_INDEX_USER, ESMF_GridCoordUTest.F9
+ 0, line        2201
+  PASS  Test 2D PLUS 1 GridGetCoord with ESMF_INDEX_USER and allocated coords, E
+ SMF_GridCoordUTest.F90, line        2249
+  PASS  Test 2D PLUS 1 GridGetCoord with ESMF_INDEX_USER and un-allocated coords
+ , ESMF_GridCoordUTest.F90, line        2297
+  PASS  Test ESMF_GridGet getting bounds from grid, ESMF_GridCoordUTest.F90, lin
+ e        2367
+  PASS  Test ESMF_GridGet getting bounds from grid with ESMF_INDEX_USER, ESMF_Gr
+ idCoordUTest.F90, line        2496
+  PASS  Test ESMF_GridGet getting computationalEdgeWidths and bounds from grid, 
+ ESMF_GridCoordUTest.F90, line        2563
+  PASS  Test 2D Grid Bounds with Factorized Coordinate Arrays, ESMF_GridCoordUTe
+ st.F90, line        2626
+  PASS  Test 3D Grid Bounds with 2D plus 1 Factorized Coordinate Arrays, ESMF_Gr
+ idCoordUTest.F90, line        2704
+  PASS  Test 2D plus 1 GridCreateShapeTileReg Bounds, ESMF_GridCoordUTest.F90, l
+ ine        2757
+  PASS  Test 2D plus 1 GridCreateShapeTileReg Bounds with even cell division, ES
+ MF_GridCoordUTest.F90, line        2808
+  PASS  Test 2D plus 1 SetCommitShapeTileReg Bounds with even cell division, ESM
+ F_GridCoordUTest.F90, line        2865
+  PASS  Test 2D plus 1 GridCreateArray, ESMF_GridCoordUTest.F90, line        293
+ 7
+  PASS  Test 3D GridAddCoord, by allocating coordinates and then getting fortran
+  pointer, ESMF_GridCoordUTest.F90, line        2972
+  Number of failed tests:           0
+  Ending Test, file ESMF_GridCoordUTest.F90, line        2980

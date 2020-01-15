@@ -1,0 +1,12 @@
+20190610 112231.953073 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112231.953183 INFO     PET0  Beginning Test, file ESMF_LogErrUTest.F90, line          86
+20190610 112231.953192 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112231.953351 INFO     PET0  PASS  Open Log Test, ESMF_LogErrUTest.F90, line          95
+20190610 112231.953493 INFO     PET0  PASS  Open ESMF_LOG_SINGLE Log Test, ESMF_LogErrUTest.F90, line         105
+20190610 112231.953525 INFO     PET0  PASS  Write to Single Log Test, ESMF_LogErrUTest.F90, line         116
+20190610 112231.956054 INFO     PET0  PASS  Open ESMF_LOG_NONE Log of opened file Test, ESMF_LogErrUTest.F90, line         126
+20190610 112231.956067 INFO     PET0  PASS  Open ESMF_LOG_NONE Log Test, ESMF_LogErrUTest.F90, line         136
+20190610 112231.956078 INFO     PET0  PASS  Use of separate log Test, ESMF_LogErrUTest.F90, line         147
+20190610 112231.956228 INFO     PET0  PASS  Close Log Test, ESMF_LogErrUTest.F90, line         156
+20190610 112231.956262 INFO     PET0  Number of failed tests:           0
+20190610 112231.956277 INFO     PET0  Ending Test, file ESMF_LogErrUTest.F90, line         520

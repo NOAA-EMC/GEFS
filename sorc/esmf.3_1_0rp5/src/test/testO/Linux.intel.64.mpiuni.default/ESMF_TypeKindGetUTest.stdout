@@ -1,0 +1,34 @@
+  Beginning Test, file ESMF_TypeKindGetUTest.F90, line          74
+  NUMBER_OF_PROCESSORS           1
+  PASS   Getting ESMF_TypeKind parameter of default integer, ESMF_TypeKindGetUTe
+ st.F90, line          83
+ The typekind of default integer is           3
+  PASS   Getting ESMF_TypeKind parameter of ESMF_KIND_I1 integer, ESMF_TypeKindG
+ etUTest.F90, line          94
+  PASS  Checking ESMF_TypeKind parameter for ESMF_KIND_I1 integer, ESMF_TypeKind
+ GetUTest.F90, line         105
+  PASS   Getting ESMF_TypeKind parameter of ESMF_KIND_I2 integer, ESMF_TypeKindG
+ etUTest.F90, line         118
+  PASS  Checking ESMF_TypeKind parameter for ESMF_KIND_I2 integer, ESMF_TypeKind
+ GetUTest.F90, line         129
+  PASS   Getting ESMF_TypeKind parameter of ESMF_KIND_I4 integer, ESMF_TypeKindG
+ etUTest.F90, line         141
+  PASS  Checking ESMF_TypeKind parameter for ESMF_KIND_I4 integer, ESMF_TypeKind
+ GetUTest.F90, line         147
+  PASS  Getting ESMF_TypeKind parameter of ESMF_KIND_I8 integer, ESMF_TypeKindGe
+ tUTest.F90, line         155
+  PASS  Checking ESMF_TypeKind parameter for ESMF_KIND_I8 integer, ESMF_TypeKind
+ GetUTest.F90, line         161
+  PASS  Getting ESMF_TypeKind parameter of  real, ESMF_TypeKindGetUTest.F90, lin
+ e         173
+ The typekind of real is           5
+  PASS  Getting ESMF_TypeKind parameter of ESMF_KIND_R4 real, ESMF_TypeKindGetUT
+ est.F90, line         183
+  PASS  Checking ESMF_TypeKind parameter for ESMF_KIND_R4 real, ESMF_TypeKindGet
+ UTest.F90, line         189
+  PASS  Getting ESMF_TypeKind parameter of ESMF_KIND_R8 real, ESMF_TypeKindGetUT
+ est.F90, line         197
+  PASS  Checking ESMF_TypeKind parameter for ESMF_KIND_R8 real, ESMF_TypeKindGet
+ UTest.F90, line         203
+  Number of failed tests:           0
+  Ending Test, file ESMF_TypeKindGetUTest.F90, line         205

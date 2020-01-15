@@ -329,6 +329,7 @@ if [[ $envir = dev ]]; then
   export locchgresush=zeus
   export locchgresush=prod
   export locchgresush=wcoss
+  export locchgresexec=$basesource/nwdev/gefs_legacy.${gefs_legacy_ver}/ush/global_chgres.sh
 
   export locchgresexec=test
   export locchgresexec=local
@@ -337,6 +338,7 @@ if [[ $envir = dev ]]; then
   export locchgresexec=zeus
   export locchgresexec=prod
   export locchgresexec=wcoss
+  export locchgresexec=$basesource/nwdev/gefs_legacy.${gefs_legacy_ver}/exec/global_chgres
 
   export locfcstconchome=local
   export locfcstconchome=para

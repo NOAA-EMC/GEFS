@@ -1,0 +1,27 @@
+  Beginning Test, file ESMF_VMSendRecvUTest.F90, line          80
+  NUMBER_OF_PROCESSORS           1
+  PASS  Sending local data Test, ESMF_VMSendRecvUTest.F90, line         151
+           0  After rcv i_recvData is            1           2 ( should be 
+           1           2  )
+  PASS  Verify local data after receive Test, ESMF_VMSendRecvUTest.F90, line    
+      162
+  PASS  Sending local data Test, ESMF_VMSendRecvUTest.F90, line         172
+           0 After recv r4_recvData is    1.000000       2.000000     
+ ( should be    1.000000       2.000000      )
+  PASS  Verify local data after receive Test, ESMF_VMSendRecvUTest.F90, line    
+      184
+  PASS  Sending local data Test, ESMF_VMSendRecvUTest.F90, line         194
+           0 After recv r8_recvData is    1.00000000000000     
+   2.00000000000000      ( Should be    1.00000000000000     
+   2.00000000000000       )
+  PASS  Verify local data after receive Test, ESMF_VMSendRecvUTest.F90, line    
+      206
+  PASS  Sending local data Test, ESMF_VMSendRecvUTest.F90, line         216
+           0 After recv: Recv_Logical(1) is False
+           0 After recv: Recv_Logical(2) is True
+           0 After recv: Logical_soln(1) is False
+           0 After recv: logical_soln(2) is True
+  PASS  Verify local data after receive Test, ESMF_VMSendRecvUTest.F90, line    
+      237
+  Number of failed tests:           0
+  Ending Test, file ESMF_VMSendRecvUTest.F90, line         239

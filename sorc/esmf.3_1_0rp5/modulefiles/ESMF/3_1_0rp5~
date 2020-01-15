@@ -1,0 +1,21 @@
+#%Module1.0
+##
+## modulefile
+##
+
+#-------resolve conflicts if needed
+conflict ESMF/4_0_0rp2
+conflict ESMF/7_0_0
+conflict ESMF/7_1_0r
+
+#-------set relevant paths
+set	prodtop	"/gpfs/dell1/ibm/noscrub/James.R.Taft/TICKETS/ESMF/3_1_0rp5"
+
+setenv  ESMF_SRC      $prodtop
+setenv  ESMF_LIB     "$prodtop/lib/libO/Linux.intel.64.intelmpi.default -lesmf -lstdc++"
+setenv  ESMF_MOD      $prodtop/mod/modO/Linux.intel.64.intelmpi.default 
+setenv  ESMF_VER      3_1_0rp5
+setenv  ESMFMKFILE    $prodtop/lib/libO/Linux.intel.64.intelmpi.default/esmf.mk
+
+prepend-path  LD_LIBRARY_PATH "$prodtop/lib/libO/Linux.intel.64.intelmpi.default"
+

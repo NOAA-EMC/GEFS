@@ -1,0 +1,13 @@
+20190610 112233.989559 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112233.989813 INFO     PET0  Beginning Test, file ESMF_VMAllGatherVUTest.F90, line          69
+20190610 112233.989831 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112233.989885 INFO     PET0  PASS  AllGatherV Integer Test, ESMF_VMAllGatherVUTest.F90, line         143
+20190610 112233.989896 INFO     PET0  PASS  Verifying array1 integer data after allgatherv Test, ESMF_VMAllGatherVUTest.F90, line         154
+20190610 112233.992665 INFO     PET0  PASS  AllGatherV 4-Byte Integer Test, ESMF_VMAllGatherVUTest.F90, line         172
+20190610 112233.992680 INFO     PET0  PASS  Verifying i4array1 4 byte integer data after allgatherv Test, ESMF_VMAllGatherVUTest.F90, line         183
+20190610 112233.992734 INFO     PET0  PASS  AllGatherV R8 Test, ESMF_VMAllGatherVUTest.F90, line         201
+20190610 112233.992745 INFO     PET0  PASS  Verifying farray1 R8 data after allgatherv Test, ESMF_VMAllGatherVUTest.F90, line         212
+20190610 112233.992800 INFO     PET0  PASS  AllGatherV R4 Test, ESMF_VMAllGatherVUTest.F90, line         231
+20190610 112233.992890 INFO     PET0  PASS  Verifying f4array1 R4 data after allgatherv Test, ESMF_VMAllGatherVUTest.F90, line         242
+20190610 112233.992912 INFO     PET0  Number of failed tests:           0
+20190610 112233.992919 INFO     PET0  Ending Test, file ESMF_VMAllGatherVUTest.F90, line         249

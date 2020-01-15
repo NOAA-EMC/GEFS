@@ -1,0 +1,6 @@
+  Beginning Test, file ESMF_TimeIntervalUTest.F90, line          83
+  NUMBER_OF_PROCESSORS           1
+  PASS  Gregorian Calendar Interval increment 1/29/2004 by mm=1 Test, ESMF_TimeI
+ ntervalUTest.F90, line         115
+  Number of failed tests:           0
+  Ending Test, file ESMF_TimeIntervalUTest.F90, line        3403

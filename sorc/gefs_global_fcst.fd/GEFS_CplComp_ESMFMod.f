@@ -59,7 +59,8 @@
 ! !ARGUMENTS:
 !------------
 
- TYPE(ESMF_CplComp),  INTENT(inout) :: CplGEFS ! gridded component
+!rlw jaa TYPE(ESMF_CplComp),  INTENT(inout) :: CplGEFS ! gridded component
+ TYPE(ESMF_CplComp) :: CplGEFS ! gridded component
  INTEGER,             INTENT(out)   :: rc      ! return code
      
 ! !DESCRIPTION: Set services (register) for the GFS Ensemble Coupler
@@ -145,10 +146,15 @@
 ! !INPUT/OUTPUT VARIABLES AND PARAMETERS:
 !----------------------------------------
 
- TYPE(ESMF_CplComp), INTENT(inout)     :: CplGEFS 
- TYPE(ESMF_State),   INTENT(inout)     :: impGEFS
- TYPE(ESMF_State),   INTENT(inout)     :: expGEFS
- TYPE(ESMF_Clock),   INTENT(inout)     :: clock
+!rlw jaa TYPE(ESMF_CplComp), INTENT(inout)     :: CplGEFS 
+!rlw jaa TYPE(ESMF_State),   INTENT(inout)     :: impGEFS
+!rlw jaa TYPE(ESMF_State),   INTENT(inout)     :: expGEFS
+!rlw jaa TYPE(ESMF_Clock),   INTENT(inout)     :: clock
+
+ TYPE(ESMF_CplComp)      :: CplGEFS 
+ TYPE(ESMF_State)        :: impGEFS
+ TYPE(ESMF_State)        :: expGEFS
+ TYPE(ESMF_Clock)        :: clock
 
 !
 ! !OUTPUT VARIABLES AND PARAMETERS:
@@ -530,13 +536,23 @@ endif
 !
 ! !INPUT VARIABLES AND PARAMETERS:
 !---------------------------------
- TYPE(ESMF_CplComp), INTENT(inout)     :: CplGEFS   
- TYPE(ESMF_State),   INTENT(in)        :: impGEFS 
+!rlw jaa TYPE(ESMF_CplComp), INTENT(inout)     :: CplGEFS   
+!rlw jaa TYPE(ESMF_State),   INTENT(in)        :: impGEFS 
  
 ! !OUTPUT VARIABLES AND PARAMETERS:
 !----------------------------------
- TYPE(ESMF_Clock),   INTENT(inout)     :: clock
- TYPE(ESMF_State),   INTENT(inout)     :: expGEFS
+!rlw jaa TYPE(ESMF_Clock),   INTENT(inout)     :: clock
+!rlw jaa TYPE(ESMF_State),   INTENT(inout)     :: expGEFS
+!
+! !INPUT VARIABLES AND PARAMETERS:
+!---------------------------------
+ TYPE(ESMF_CplComp)   :: CplGEFS   
+ TYPE(ESMF_State)     :: impGEFS 
+ 
+! !OUTPUT VARIABLES AND PARAMETERS:
+!----------------------------------
+ TYPE(ESMF_Clock)    :: clock
+ TYPE(ESMF_State)    :: expGEFS
  INTEGER,            INTENT(out)       :: rcfinal 
 !
 !EOP
@@ -650,10 +666,15 @@ endif
 !
 ! !INPUT VARIABLES AND PARAMETERS:
 !---------------------------------
- TYPE(ESMF_CplComp), INTENT(inout)  :: CplGEFS
- TYPE(ESMF_State),   INTENT(inout)  :: impGEFS
- TYPE(ESMF_State),   INTENT(inout)  :: expGEFS
- TYPE(ESMF_Clock),   INTENT(inout)  :: clock
+!rlw jaa TYPE(ESMF_CplComp), INTENT(inout)  :: CplGEFS
+!rlw jaa TYPE(ESMF_State),   INTENT(inout)  :: impGEFS
+!rlw jaa TYPE(ESMF_State),   INTENT(inout)  :: expGEFS
+!rlw jaa TYPE(ESMF_Clock),   INTENT(inout)  :: clock
+
+ TYPE(ESMF_CplComp)     :: CplGEFS
+ TYPE(ESMF_State)       :: impGEFS
+ TYPE(ESMF_State)       :: expGEFS
+ TYPE(ESMF_Clock)       :: clock
 
 ! !OUTPUT VARIABLES AND PARAMETERS:
 !----------------------------------

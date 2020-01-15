@@ -1,0 +1,354 @@
+  Beginning Test, file ESMF_ArrayDataUTest.F90, line          65
+  NUMBER_OF_PROCESSORS           1
+  PASS  Creating an Array from allocated F90 array pointer, ESMF_ArrayDataUTest.
+ F90, line          89
+  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataU
+ Test.F90, line          97
+  PASS  Obtaining access to data in Array via F90 array pointer, ESMF_ArrayDataU
+ Test.F90, line         105
+      -12000      -12000
+      -11000      -11000
+      -10000      -10000
+       -9000       -9000
+       -8000       -8000
+       -7000       -7000
+       -6000       -6000
+  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTes
+ t.F90, line         118
+  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataU
+ Test.F90, line         133
+      -11943      -11943
+      -10943      -10943
+       -9943       -9943
+       -8943       -8943
+       -7943       -7943
+       -6943       -6943
+       -5943       -5943
+  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTes
+ t.F90, line         146
+  PASS  Destroying Array created from an allocated F90 array pointer, ESMF_Array
+ DataUTest.F90, line         155
+  PASS  Creating an Array from allocated F90 array pointer using ESMF_DATA_COPY,
+  ESMF_ArrayDataUTest.F90, line         164
+  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataU
+ Test.F90, line         172
+  PASS  Obtaining access to data in Array via F90 array pointer, ESMF_ArrayDataU
+ Test.F90, line         180
+      -11943      -11943
+      -10943      -10943
+       -9943       -9943
+       -8943       -8943
+       -7943       -7943
+       -6943       -6943
+       -5943       -5943
+  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTes
+ t.F90, line         193
+  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataU
+ Test.F90, line         208
+      -11943      -11886
+      -10943      -10886
+       -9943       -9886
+       -8943       -8886
+       -7943       -7886
+       -6943       -6886
+       -5943       -5886
+  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTes
+ t.F90, line         221
+  PASS  Destroying Array created from an allocated F90 array pointer, ESMF_Array
+ DataUTest.F90, line         230
+  PASS  Creating an Array from allocated F90 array pointer slice, ESMF_ArrayData
+ UTest.F90, line         242
+  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataU
+ Test.F90, line         250
+  PASS  Obtaining access to data in Array via F90 array pointer, ESMF_ArrayDataU
+ Test.F90, line         258
+      -11886      -11886
+      -10886      -10886
+       -9886       -9886
+       -8886       -8886
+       -7886       -7886
+       -6886       -6886
+       -5886       -5886
+  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTes
+ t.F90, line         271
+  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataU
+ Test.F90, line         286
+      -11829      -11829
+      -10829      -10829
+       -9829       -9829
+       -8829       -8829
+       -7829       -7829
+       -6829       -6829
+       -5829       -5829
+  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTes
+ t.F90, line         299
+  PASS  Destroying Array created from an allocated F90 array pointer, ESMF_Array
+ DataUTest.F90, line         308
+  PASS  Creating an Array from allocated F90 array pointer, ESMF_ArrayDataUTest.
+ F90, line         325
+  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataU
+ Test.F90, line         333
+  PASS  Obtaining access to data in Array via F90 array pointer, ESMF_ArrayDataU
+ Test.F90, line         341
+      -12000      -12000
+      -11000      -11000
+      -10000      -10000
+       -9000       -9000
+       -8000       -8000
+       -7000       -7000
+       -6000       -6000
+  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTes
+ t.F90, line         354
+  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataU
+ Test.F90, line         369
+      -11943      -11943
+      -10943      -10943
+       -9943       -9943
+       -8943       -8943
+       -7943       -7943
+       -6943       -6943
+       -5943       -5943
+  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTes
+ t.F90, line         382
+  PASS  Destroying Array created from an allocated F90 array pointer, ESMF_Array
+ DataUTest.F90, line         391
+  PASS  Creating an Array from allocated F90 array pointer, ESMF_ArrayDataUTest.
+ F90, line         400
+  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataU
+ Test.F90, line         408
+  PASS  Obtaining access to data in Array via F90 array pointer, ESMF_ArrayDataU
+ Test.F90, line         416
+      -11943      -11943
+      -10943      -10943
+       -9943       -9943
+       -8943       -8943
+       -7943       -7943
+       -6943       -6943
+       -5943       -5943
+  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTes
+ t.F90, line         429
+  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataU
+ Test.F90, line         444
+      -11943      -11886
+      -10943      -10886
+       -9943       -9886
+       -8943       -8886
+       -7943       -7886
+       -6943       -6886
+       -5943       -5886
+  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTes
+ t.F90, line         457
+  PASS  Destroying Array created from an allocated F90 array pointer, ESMF_Array
+ DataUTest.F90, line         466
+  Number of failed tests:           0
+  Ending Test, file ESMF_ArrayDataUTest.F90, line         476
+--- ESMCI::Array::print start ---
+   Number of Attributes: 0
+Array typekind/rank: Integer*4 / 1 
+~ lower class' values ~
+DistGrid dimCount = 1
+deCount = 1
+localDeCount = 1
+~ local data in LocalArray for DE 0 ~
+LocalArrayPrint: Array at address 0x01bd1ec0:
+            rank = 1, kind = 3, base_addr = 0x01bd0fe0
+            dim[0] = 7  
+  Integer, *4, Dim 1, Data values:
+( 1) =  -12000
+( 2) =  -11000
+( 3) =  -10000
+( 4) =  -9000
+( 5) =  -8000
+( 6) =  -7000
+( 7) =  -6000
+dim 1: [0]: [1 [1 [1, 7] 7] 7]
+--- ESMCI::Array::print end ---
+--- ESMCI::Array::print start ---
+   Number of Attributes: 0
+Array typekind/rank: Integer*4 / 1 
+~ lower class' values ~
+DistGrid dimCount = 1
+deCount = 1
+localDeCount = 1
+~ local data in LocalArray for DE 0 ~
+LocalArrayPrint: Array at address 0x01bd1ec0:
+            rank = 1, kind = 3, base_addr = 0x01bd0fe0
+            dim[0] = 7  
+  Integer, *4, Dim 1, Data values:
+( 1) =  -11943
+( 2) =  -10943
+( 3) =  -9943
+( 4) =  -8943
+( 5) =  -7943
+( 6) =  -6943
+( 7) =  -5943
+dim 1: [0]: [1 [1 [1, 7] 7] 7]
+--- ESMCI::Array::print end ---
+--- ESMCI::Array::print start ---
+   Number of Attributes: 0
+Array typekind/rank: Integer*4 / 1 
+~ lower class' values ~
+DistGrid dimCount = 1
+deCount = 1
+localDeCount = 1
+~ local data in LocalArray for DE 0 ~
+LocalArrayPrint: Array at address 0x01bd1f50:
+            rank = 1, kind = 3, base_addr = 0x01bd22c0
+            dim[0] = 7  
+  Integer, *4, Dim 1, Data values:
+( 1) =  -11943
+( 2) =  -10943
+( 3) =  -9943
+( 4) =  -8943
+( 5) =  -7943
+( 6) =  -6943
+( 7) =  -5943
+dim 1: [0]: [1 [1 [1, 7] 7] 7]
+--- ESMCI::Array::print end ---
+--- ESMCI::Array::print start ---
+   Number of Attributes: 0
+Array typekind/rank: Integer*4 / 1 
+~ lower class' values ~
+DistGrid dimCount = 1
+deCount = 1
+localDeCount = 1
+~ local data in LocalArray for DE 0 ~
+LocalArrayPrint: Array at address 0x01bd1f50:
+            rank = 1, kind = 3, base_addr = 0x01bd22c0
+            dim[0] = 7  
+  Integer, *4, Dim 1, Data values:
+( 1) =  -11943
+( 2) =  -10943
+( 3) =  -9943
+( 4) =  -8943
+( 5) =  -7943
+( 6) =  -6943
+( 7) =  -5943
+dim 1: [0]: [1 [1 [1, 7] 7] 7]
+--- ESMCI::Array::print end ---
+--- ESMCI::Array::print start ---
+   Number of Attributes: 0
+Array typekind/rank: Integer*4 / 1 
+~ lower class' values ~
+DistGrid dimCount = 1
+deCount = 1
+localDeCount = 1
+~ local data in LocalArray for DE 0 ~
+LocalArrayPrint: Array at address 0x01bd2300:
+            rank = 1, kind = 3, base_addr = 0x01bd0fe0
+            dim[0] = 7  
+  Integer, *4, Dim 1, Data values:
+( 1) =  -11886
+( 2) =  -10886
+( 3) =  -9886
+( 4) =  -8886
+( 5) =  -7886
+( 6) =  -6886
+( 7) =  -5886
+dim 1: [0]: [1 [1 [1, 7] 7] 7]
+--- ESMCI::Array::print end ---
+--- ESMCI::Array::print start ---
+   Number of Attributes: 0
+Array typekind/rank: Integer*4 / 1 
+~ lower class' values ~
+DistGrid dimCount = 1
+deCount = 1
+localDeCount = 1
+~ local data in LocalArray for DE 0 ~
+LocalArrayPrint: Array at address 0x01bd2300:
+            rank = 1, kind = 3, base_addr = 0x01bd0fe0
+            dim[0] = 7  
+  Integer, *4, Dim 1, Data values:
+( 1) =  -11829
+( 2) =  -10829
+( 3) =  -9829
+( 4) =  -8829
+( 5) =  -7829
+( 6) =  -6829
+( 7) =  -5829
+dim 1: [0]: [1 [1 [1, 7] 7] 7]
+--- ESMCI::Array::print end ---
+--- ESMCI::Array::print start ---
+   Number of Attributes: 0
+Array typekind/rank: Integer*4 / 1 
+~ lower class' values ~
+DistGrid dimCount = 1
+deCount = 1
+localDeCount = 1
+~ local data in LocalArray for DE 0 ~
+LocalArrayPrint: Array at address 0x01bd2300:
+            rank = 1, kind = 3, base_addr = 0x01bd17c0
+            dim[0] = 7  
+  Integer, *4, Dim 1, Data values:
+( 1) =  -12000
+( 2) =  -11000
+( 3) =  -10000
+( 4) =  -9000
+( 5) =  -8000
+( 6) =  -7000
+( 7) =  -6000
+dim 1: [0]: [1 [1 [1, 7] 7] 7]
+--- ESMCI::Array::print end ---
+--- ESMCI::Array::print start ---
+   Number of Attributes: 0
+Array typekind/rank: Integer*4 / 1 
+~ lower class' values ~
+DistGrid dimCount = 1
+deCount = 1
+localDeCount = 1
+~ local data in LocalArray for DE 0 ~
+LocalArrayPrint: Array at address 0x01bd2300:
+            rank = 1, kind = 3, base_addr = 0x01bd17c0
+            dim[0] = 7  
+  Integer, *4, Dim 1, Data values:
+( 1) =  -11943
+( 2) =  -10943
+( 3) =  -9943
+( 4) =  -8943
+( 5) =  -7943
+( 6) =  -6943
+( 7) =  -5943
+dim 1: [0]: [1 [1 [1, 7] 7] 7]
+--- ESMCI::Array::print end ---
+--- ESMCI::Array::print start ---
+   Number of Attributes: 0
+Array typekind/rank: Integer*4 / 1 
+~ lower class' values ~
+DistGrid dimCount = 1
+deCount = 1
+localDeCount = 1
+~ local data in LocalArray for DE 0 ~
+LocalArrayPrint: Array at address 0x01bd2300:
+            rank = 1, kind = 3, base_addr = 0x01bd1080
+            dim[0] = 7  
+  Integer, *4, Dim 1, Data values:
+( 1) =  -11943
+( 2) =  -10943
+( 3) =  -9943
+( 4) =  -8943
+( 5) =  -7943
+( 6) =  -6943
+( 7) =  -5943
+dim 1: [0]: [1 [1 [1, 7] 7] 7]
+--- ESMCI::Array::print end ---
+--- ESMCI::Array::print start ---
+   Number of Attributes: 0
+Array typekind/rank: Integer*4 / 1 
+~ lower class' values ~
+DistGrid dimCount = 1
+deCount = 1
+localDeCount = 1
+~ local data in LocalArray for DE 0 ~
+LocalArrayPrint: Array at address 0x01bd2300:
+            rank = 1, kind = 3, base_addr = 0x01bd1080
+            dim[0] = 7  
+  Integer, *4, Dim 1, Data values:
+( 1) =  -11943
+( 2) =  -10943
+( 3) =  -9943
+( 4) =  -8943
+( 5) =  -7943
+( 6) =  -6943
+( 7) =  -5943
+dim 1: [0]: [1 [1 [1, 7] 7] 7]
+--- ESMCI::Array::print end ---

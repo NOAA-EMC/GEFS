@@ -1,0 +1,25 @@
+  Beginning Test, file ESMF_F90ArrayPtrUTest.F90, line         249
+  NUMBER_OF_PROCESSORS           1
+  PASS  1D Integer array pointer size test, ESMF_F90ArrayPtrUTest.F90, line     
+     260
+  PASS  2D Integer array pointer size test, ESMF_F90ArrayPtrUTest.F90, line     
+     271
+  PASS  3D Integer array pointer size test, ESMF_F90ArrayPtrUTest.F90, line     
+     282
+  PASS  4D Integer array pointer size test, ESMF_F90ArrayPtrUTest.F90, line     
+     293
+  PASS  5D Integer array pointer size test, ESMF_F90ArrayPtrUTest.F90, line     
+     304
+  PASS  6D Integer array pointer size test, ESMF_F90ArrayPtrUTest.F90, line     
+     315
+  PASS  7D Integer array pointer size test, ESMF_F90ArrayPtrUTest.F90, line     
+     326
+  Number of failed tests:           0
+  Ending Test, file ESMF_F90ArrayPtrUTest.F90, line         578
+Match: rank 1 Fortran 90 pointer is 72 bytes, matches computed size ok
+Match: rank 2 Fortran 90 pointer is 96 bytes, matches computed size ok
+Match: rank 3 Fortran 90 pointer is 120 bytes, matches computed size ok
+Match: rank 4 Fortran 90 pointer is 144 bytes, matches computed size ok
+Match: rank 5 Fortran 90 pointer is 168 bytes, matches computed size ok
+Match: rank 6 Fortran 90 pointer is 192 bytes, matches computed size ok
+Match: rank 7 Fortran 90 pointer is 216 bytes, matches computed size ok

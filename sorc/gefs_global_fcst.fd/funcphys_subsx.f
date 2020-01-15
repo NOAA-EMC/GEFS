@@ -2,10 +2,14 @@
       use machine , only : kind_phys
       implicit none
  
-      integer nx
+!     integer nx
+      integer
+     &, nx
       parameter(nx=7501)
-      real(kind=kind_phys) tbpxs(nx), tbpxs0(nx), tbpxsi(nx),
-     &                     c1xpxs, c2xpxs
+!     real(kind=kind_phys) tbpxs(nx), tbpxs0(nx), tbpxsi(nx),
+!    &                     c1xpxs, c2xpxs
+      real(kind=kind_phys) tbpxs(nx), tbpxs0(nx), tbpxsi(nx)
+     &,                    c1xpxs, c2xpxs
       common/compxs/ c1xpxs,c2xpxs,tbpxs,tbpxs0,tbpxsi
       real(kind=kind_phys) xmin, xmax, xinc, t, x, fpxsx, fpxsx0, fpxsxi
       integer jx

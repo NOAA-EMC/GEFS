@@ -1,0 +1,24 @@
+  Beginning Test, file ESMF_DELayoutWorkQueueUTest.F90, line         186
+  NUMBER_OF_PROCESSORS           1
+  PASS  GridCompCreate() - round 1, ESMF_DELayoutWorkQueueUTest.F90, line       
+   203
+ *** hi from mygcomp_register ***
+  PASS  GridCompSetServices() - round 1, ESMF_DELayoutWorkQueueUTest.F90, line  
+        209
+  PASS  Run work queue - round 1, ESMF_DELayoutWorkQueueUTest.F90, line         
+ 217
+ <round 1> PET            0  time:   9.202957153320312E-005
+  PASS  Run work queue - round 1, ESMF_DELayoutWorkQueueUTest.F90, line         
+ 225
+  PASS  GridCompCreate() - round 2, ESMF_DELayoutWorkQueueUTest.F90, line       
+   234
+ *** hi from mygcomp_register ***
+  PASS  GridCompSetServices() - round 2, ESMF_DELayoutWorkQueueUTest.F90, line  
+        244
+  PASS  Run work queue - round 2, ESMF_DELayoutWorkQueueUTest.F90, line         
+ 252
+ <round 2> PET            0  time:   5.102157592773438E-005
+  PASS  Run work queue - round 2, ESMF_DELayoutWorkQueueUTest.F90, line         
+ 260
+  Number of failed tests:           0
+  Ending Test, file ESMF_DELayoutWorkQueueUTest.F90, line         264

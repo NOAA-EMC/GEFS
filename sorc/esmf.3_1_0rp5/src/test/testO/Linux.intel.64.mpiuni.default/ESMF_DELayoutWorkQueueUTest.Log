@@ -1,0 +1,13 @@
+20190610 112235.788205 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112235.788482 INFO     PET0  Beginning Test, file ESMF_DELayoutWorkQueueUTest.F90, line         186
+20190610 112235.788507 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112235.788619 INFO     PET0  PASS  GridCompCreate() - round 1, ESMF_DELayoutWorkQueueUTest.F90, line         203
+20190610 112235.788699 INFO     PET0  PASS  GridCompSetServices() - round 1, ESMF_DELayoutWorkQueueUTest.F90, line         209
+20190610 112235.791753 INFO     PET0  PASS  Run work queue - round 1, ESMF_DELayoutWorkQueueUTest.F90, line         217
+20190610 112235.791852 INFO     PET0  PASS  Run work queue - round 1, ESMF_DELayoutWorkQueueUTest.F90, line         225
+20190610 112235.791868 INFO     PET0  PASS  GridCompCreate() - round 2, ESMF_DELayoutWorkQueueUTest.F90, line         234
+20190610 112235.791991 INFO     PET0  PASS  GridCompSetServices() - round 2, ESMF_DELayoutWorkQueueUTest.F90, line         244
+20190610 112235.792056 INFO     PET0  PASS  Run work queue - round 2, ESMF_DELayoutWorkQueueUTest.F90, line         252
+20190610 112235.792196 INFO     PET0  PASS  Run work queue - round 2, ESMF_DELayoutWorkQueueUTest.F90, line         260
+20190610 112235.792216 INFO     PET0  Number of failed tests:           0
+20190610 112235.792222 INFO     PET0  Ending Test, file ESMF_DELayoutWorkQueueUTest.F90, line         264

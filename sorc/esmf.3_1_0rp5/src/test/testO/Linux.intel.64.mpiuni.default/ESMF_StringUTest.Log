@@ -1,0 +1,9 @@
+20190610 112229.881551 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112229.881804 INFO     PET0  Beginning Test, file ESMF_StringUTest.F90, line          35
+20190610 112229.881823 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112229.881865 INFO     PET0  PASS  Calling f90ints() directly from F90, ESMF_StringUTest.F90, line          57
+20190610 112229.884776 INFO     PET0  PASS  Calling f90string2() directly from F90, ESMF_StringUTest.F90, line          64
+20190610 112229.884809 INFO     PET0  PASS  Calling f90string3() directly from F90, ESMF_StringUTest.F90, line          71
+20190610 112229.884984 INFO     PET0  PASS  Calling c_strings with fstr, ESMF_StringUTest.F90, line          78
+20190610 112229.885000 INFO     PET0  Number of failed tests:           0
+20190610 112229.885006 INFO     PET0  Ending Test, file ESMF_StringUTest.F90, line         101

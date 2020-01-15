@@ -1,0 +1,8 @@
+20190610 112233.335168 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112233.335276 INFO     PET0  Beginning Test, file ESMF_VMUserMpiInitUTest.F90, line         549
+20190610 112233.335285 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112233.335303 INFO     PET0  PASS  VM Get Global Test, ESMF_VMUserMpiInitUTest.F90, line         556
+20190610 112233.335311 INFO     PET0  PASS  VM Get Test, ESMF_VMUserMpiInitUTest.F90, line         563
+20190610 112233.335356 INFO     PET0  PASS  VM print Test, ESMF_VMUserMpiInitUTest.F90, line         570
+20190610 112233.338283 INFO     PET0  Number of failed tests:           0
+20190610 112233.338297 INFO     PET0  Ending Test, file ESMF_VMUserMpiInitUTest.F90, line         628

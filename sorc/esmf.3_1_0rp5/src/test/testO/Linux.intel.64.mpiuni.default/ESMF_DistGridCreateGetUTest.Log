@@ -1,0 +1,66 @@
+20190610 112237.815336 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112237.815632 INFO     PET0  Beginning Test, file ESMF_DistGridCreateGetUTest.F90, line          79
+20190610 112237.815651 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112237.815758 INFO     PET0  PASS  DistGridCreate() - 1D Single Patch Default, ESMF_DistGridCreateGetUTest.F90, line          94
+20190610 112237.815785 INFO     PET0  PASS  DistGridGet() - dimCount, patchCount, regDecompFlag, DELayout, ESMF_DistGridCreateGetUTest.F90, line         102
+20190610 112237.818267 INFO     PET0  PASS  Verify dimCount, ESMF_DistGridCreateGetUTest.F90, line         109
+20190610 112237.818278 INFO     PET0  PASS  Verify patchCount, ESMF_DistGridCreateGetUTest.F90, line         116
+20190610 112237.818286 INFO     PET0  PASS  Verify regDecompFlag, ESMF_DistGridCreateGetUTest.F90, line         123
+20190610 112237.818313 INFO     PET0  PASS  DELayoutGet() - deCount, localDeCount, ESMF_DistGridCreateGetUTest.F90, line         131
+20190610 112237.818328 INFO     PET0  PASS  Verify deCount, ESMF_DistGridCreateGetUTest.F90, line         138
+20190610 112237.818417 INFO     PET0  PASS  Verify localDeCount, ESMF_DistGridCreateGetUTest.F90, line         145
+20190610 112237.818431 INFO     PET0  PASS  DistGridGet() - minIndexPDimPPatch(:,:), ESMF_DistGridCreateGetUTest.F90, line         153
+20190610 112237.818440 INFO     PET0  PASS  Verify minIndexPDimPPatch(:,:), ESMF_DistGridCreateGetUTest.F90, line         160
+20190610 112237.818451 INFO     PET0  PASS  DistGridGet() - maxIndexPDimPPatch(:,:), ESMF_DistGridCreateGetUTest.F90, line         169
+20190610 112237.818460 INFO     PET0  PASS  Verify maxIndexPDimPPatch(:,:), ESMF_DistGridCreateGetUTest.F90, line         176
+20190610 112237.818471 INFO     PET0  PASS  DistGridGet() - elementCountPPatch(:), ESMF_DistGridCreateGetUTest.F90, line         185
+20190610 112237.818480 INFO     PET0  PASS  Verify elementCountPPatch(:), ESMF_DistGridCreateGetUTest.F90, line         192
+20190610 112237.818505 INFO     PET0  PASS  DistGridGet() - minIndexPDimPDe(:,:), ESMF_DistGridCreateGetUTest.F90, line         201
+20190610 112237.818516 INFO     PET0  PASS  Verify minIndexPDimPDe(:,:), ESMF_DistGridCreateGetUTest.F90, line         208
+20190610 112237.818526 INFO     PET0  PASS  DistGridGet() - maxIndexPDimPDe(:,:), ESMF_DistGridCreateGetUTest.F90, line         217
+20190610 112237.818551 INFO     PET0  PASS  Verify maxIndexPDimPDe(:,:), ESMF_DistGridCreateGetUTest.F90, line         224
+20190610 112237.818562 INFO     PET0  PASS  DistGridGet() - elementCountPDe(:), ESMF_DistGridCreateGetUTest.F90, line         233
+20190610 112237.818572 INFO     PET0  PASS  Verify elementCountPDe(:), ESMF_DistGridCreateGetUTest.F90, line         246
+20190610 112237.818582 INFO     PET0  PASS  DistGridGet() - patchListPDe(:), ESMF_DistGridCreateGetUTest.F90, line         254
+20190610 112237.818592 INFO     PET0  PASS  Verify patchListPDe(:), ESMF_DistGridCreateGetUTest.F90, line         265
+20190610 112237.818612 INFO     PET0  PASS  DistGridGet() - indexCountPDimPDe(:,:), ESMF_DistGridCreateGetUTest.F90, line         274
+20190610 112237.818622 INFO     PET0  PASS  Verify indexCountPDimPDe(:,:), ESMF_DistGridCreateGetUTest.F90, line         287
+20190610 112237.818632 INFO     PET0  PASS  DELayoutGet() - localDeList, ESMF_DistGridCreateGetUTest.F90, line         295
+20190610 112237.818639 INFO     PET0  PASS  Verify localDeList, ESMF_DistGridCreateGetUTest.F90, line         302
+20190610 112237.818674 INFO     PET0  PASS  DistGridGet() - indexList(:), ESMF_DistGridCreateGetUTest.F90, line         310
+20190610 112237.818754 INFO     PET0  PASS  DistGridGet() - seqIndexList(:), ESMF_DistGridCreateGetUTest.F90, line         320
+20190610 112237.818773 INFO     PET0  PASS  Verify seqIndexList(:), ESMF_DistGridCreateGetUTest.F90, line         332
+20190610 112237.818783 INFO     PET0  PASS  DistGridMatch() - identical DistGrids, ESMF_DistGridCreateGetUTest.F90, line         342
+20190610 112237.818793 INFO     PET0  PASS  DistGridMatch() - identical DistGrids - matchResult, ESMF_DistGridCreateGetUTest.F90, line         348
+20190610 112237.818803 ERROR    PET0 ESMF_DistGrid.F90 2476 ESMF_DistGridMatch() Object being used before creation Bad Object
+20190610 112237.818814 INFO     PET0  PASS  DistGridMatch() - invalid DistGrid object, ESMF_DistGridCreateGetUTest.F90, line         355
+20190610 112237.818823 INFO     PET0  PASS  DistGridMatch() - identical DistGrids, ESMF_DistGridCreateGetUTest.F90, line         363
+20190610 112237.818832 INFO     PET0  PASS  DistGridMatch() - identical DistGrids - matchResult, ESMF_DistGridCreateGetUTest.F90, line         369
+20190610 112237.818854 INFO     PET0  PASS  DistGridCreate() - 1D Single Patch Default, ESMF_DistGridCreateGetUTest.F90, line         376
+20190610 112237.818865 INFO     PET0  PASS  DistGridMatch() - different DistGrids that are the same, ESMF_DistGridCreateGetUTest.F90, line         383
+20190610 112237.818889 INFO     PET0  PASS  DistGridMatch() - different DistGrids that are the same - matchResult, ESMF_DistGridCreateGetUTest.F90, line         389
+20190610 112237.818924 INFO     PET0  PASS  DistGridDestroy(), ESMF_DistGridCreateGetUTest.F90, line         396
+20190610 112237.818943 INFO     PET0  PASS  DistGridCreate() - 1D Single Patch Default, ESMF_DistGridCreateGetUTest.F90, line         403
+20190610 112237.818953 INFO     PET0  PASS  DistGridMatch() - different DistGrids, ESMF_DistGridCreateGetUTest.F90, line         410
+20190610 112237.818962 INFO     PET0  PASS  DistGridMatch() - different DistGrids - matchResult, ESMF_DistGridCreateGetUTest.F90, line         416
+20190610 112237.818971 INFO     PET0  PASS  DistGridDestroy(), ESMF_DistGridCreateGetUTest.F90, line         423
+20190610 112237.818990 INFO     PET0  PASS  DistGridDestroy(), ESMF_DistGridCreateGetUTest.F90, line         430
+20190610 112237.819008 INFO     PET0  PASS  DistGridCreate() - 1D Single Patch Default - multiple of 4, ESMF_DistGridCreateGetUTest.F90, line         437
+20190610 112237.819076 INFO     PET0  PASS  DistGridPrint(), ESMF_DistGridCreateGetUTest.F90, line         444
+20190610 112237.819087 INFO     PET0  PASS  DistGridDestroy(), ESMF_DistGridCreateGetUTest.F90, line         451
+20190610 112237.819118 INFO     PET0  PASS  DistGridCreate() - 1D Single Patch Default - no multiple of 4, ESMF_DistGridCreateGetUTest.F90, line         460
+20190610 112237.819141 INFO     PET0  PASS  DistGridPrint(), ESMF_DistGridCreateGetUTest.F90, line         467
+20190610 112237.819149 INFO     PET0  PASS  DistGridDestroy(), ESMF_DistGridCreateGetUTest.F90, line         474
+20190610 112237.819185 ERROR    PET0 ESMCI_DistGrid.C 673 ESMCI::DistGrid:create() Argument sizes do not match - deBlockList must provide deCount elements in third dimension
+20190610 112237.819193 ERROR    PET0 ESMCI_DistGrid_F.C 107 c_esmc_distgridcreatedb() Argument sizes do not match Internal subroutine call returned Error
+20190610 112237.819195 ERROR    PET0 ESMF_DistGrid.F90 592 ESMF_DistGridCreateDB() Argument sizes do not match Internal subroutine call returned Error
+20190610 112237.819207 INFO     PET0  PASS  DistGridCreate() - 1D Single Patch w/ deBlockList incorrect deCount, ESMF_DistGridCreateGetUTest.F90, line         484
+20190610 112237.819216 ERROR    PET0 ESMCI_DistGrid.C 752 ESMCI::DistGrid:create() Value unrecognized or out of range - deBlockList contains out-of-bounds elements
+20190610 112237.819217 ERROR    PET0 ESMCI_DistGrid_F.C 107 c_esmc_distgridcreatedb() Value unrecognized or out of range Internal subroutine call returned Error
+20190610 112237.819219 ERROR    PET0 ESMF_DistGrid.F90 592 ESMF_DistGridCreateDB() Value unrecognized or out of range Internal subroutine call returned Error
+20190610 112237.819311 INFO     PET0  PASS  DistGridCreate() - 1D Single Patch w/ deBlockList out-of-range, ESMF_DistGridCreateGetUTest.F90, line         498
+20190610 112237.819331 INFO     PET0  PASS  DistGridCreate() - 1D Single Patch w/ deBlockList, ESMF_DistGridCreateGetUTest.F90, line         512
+20190610 112237.819358 INFO     PET0  PASS  DistGridPrint(), ESMF_DistGridCreateGetUTest.F90, line         520
+20190610 112237.819368 INFO     PET0  PASS  DistGridDestroy(), ESMF_DistGridCreateGetUTest.F90, line         527
+20190610 112237.819386 INFO     PET0  Number of failed tests:           0
+20190610 112237.819392 INFO     PET0  Ending Test, file ESMF_DistGridCreateGetUTest.F90, line         531

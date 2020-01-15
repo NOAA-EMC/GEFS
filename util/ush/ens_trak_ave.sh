@@ -222,15 +222,11 @@ fi
 if [ ${SENDCOM} = 'YES' ]
 then
 
-     #disable for legacy run
-     if (( 0 == 1 )); then
   glatuxarch=${glatuxarch:-${gltrkdir}/tracks.atcfunix.${yy}}
   cat ${DATA}/trak.${amodel}.atcfunix.${ymdh}           >>${glatuxarch}
 
   glmodearch=${glmodearch:-${gltrkdir}/tracks.ens_mode.atcfunix.${yy}}
   cat ${DATA}/trak.${amodel}.mode.${ymdh}               >>${glmodearch}
-     #disable for legacy run
-     fi
 
   cp ${DATA}/trak.${amodel}.atcfunix.${ymdh} ${COM}/${amodel}.t${CYL}z.cyclone.trackatcfunix
   cp ${DATA}/trak.${amodel}.spread.${ymdh}   ${COM}/${amodel}.t${CYL}z.cyclone.trackspread
@@ -238,8 +234,6 @@ then
   cp ${DATA}/${amodel}.trkprob.*${ymdh}*.ieee             ${COM}/.
   cp ${DATA}/${amodel}.trkprob.${ymdh}.${dt}.ctlinfo.txt  ${COM}/.
 
-     #disable for legacy run
-     if (( 0 == 1 )); then
   export SENDDBN=${SENDDBN:-NO}
   export SENDTRACKER=${SENDTRACKER:-NO}
   if [ ${SENDDBN} = 'YES' -o ${SENDTRACKER} = 'YES' ]
@@ -247,8 +241,6 @@ then
     if [ $cmodel != 'ece' ]; then
       $DBNROOT/bin/dbn_alert ATCFUNIX GFS_NAVY $job ${COM}/${amodel}.t${CYL}z.cyclone.trackatcfunix
     fi
-     #disable for legacy run
-     fi
   fi  
 
   # We need to parse apart the atcfunix file and distribute the forecasts to
@@ -260,8 +252,6 @@ then
   # file in the storm trackers directory and dump the atcfunix records for that storm
   # in there.
 
-     #disable for legacy run
-     if (( 0 == 1 )); then
   auxfile=${DATA}/trak.${amodel}.atcfunix.${PDY}${cyc}
   sort -k6 ${auxfile} | sort -k1 -k2 -k12  >atcfunix.sorted
 
@@ -306,8 +296,6 @@ then
       fi
     done
   fi
-     #disable for legacy run
-     fi
 
   cat ${DATA}/ens_trak_ave.${ymdh}.${dt}.fout
 

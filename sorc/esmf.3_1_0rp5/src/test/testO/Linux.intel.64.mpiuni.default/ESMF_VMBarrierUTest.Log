@@ -1,0 +1,7 @@
+20190610 112234.267782 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112234.268045 INFO     PET0  Beginning Test, file ESMF_VMBarrierUTest.F90, line          66
+20190610 112234.268062 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112234.268204 INFO     PET0  PASS  Timer Precision test, ESMF_VMBarrierUTest.F90, line          86
+20190610 112235.271045 INFO     PET0  PASS  Barrier Test, ESMF_VMBarrierUTest.F90, line         121
+20190610 112235.271068 INFO     PET0  Number of failed tests:           0
+20190610 112235.271075 INFO     PET0  Ending Test, file ESMF_VMBarrierUTest.F90, line         123

@@ -1,0 +1,28 @@
+20190610 112237.132940 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112237.133223 INFO     PET0  Beginning Test, file ESMF_LocalArrayUTest.F90, line          49
+20190610 112237.133241 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112237.133350 INFO     PET0  PASS  Creating a Local Array with Integer 1D Data Test, ESMF_LocalArrayUTest.F90, line          67
+20190610 112237.135095 INFO     PET0  PASS  Local Array Destroy Test, ESMF_LocalArrayUTest.F90, line          74
+20190610 112237.135133 ERROR    PET0 ESMF_LocalArrayCreate.F90 634 ESMF_LocalArrayCreateByTKR Unrecognized option string - lbounds and ubounds must be present when counts argument is not present
+20190610 112237.135148 INFO     PET0  PASS  Creating a LocalArray from TKR without counts, lbounds, ubounds, ESMF_LocalArrayUTest.F90, line          83
+20190610 112237.135180 INFO     PET0  PASS  Creating a LocalArray from TKR with counts and without lbounds, ubounds, ESMF_LocalArrayUTest.F90, line          92
+20190610 112237.135218 INFO     PET0  PASS  Local Array Destroy Test, ESMF_LocalArrayUTest.F90, line          99
+20190610 112237.135232 INFO     PET0  PASS  Creating a LocalArray from TKR with counts and lbounds and without ubounds, ESMF_LocalArrayUTest.F90, line         109
+20190610 112237.135329 INFO     PET0  PASS  Local Array Destroy Test, ESMF_LocalArrayUTest.F90, line         116
+20190610 112237.135343 INFO     PET0  PASS  Creating a LocalArray from TKR with counts and ubounds and without lbounds, ESMF_LocalArrayUTest.F90, line         126
+20190610 112237.135351 INFO     PET0  PASS  Local Array Destroy Test, ESMF_LocalArrayUTest.F90, line         133
+20190610 112237.135363 INFO     PET0  PASS  Creating a LocalArray from TKR with matching counts, lbounds and ubounds, ESMF_LocalArrayUTest.F90, line         144
+20190610 112237.135371 INFO     PET0  PASS  Local Array Destroy Test, ESMF_LocalArrayUTest.F90, line         151
+20190610 112237.135374 ERROR    PET0 ESMF_LocalArrayCreate.F90 683 ESMF_LocalArrayCreateByTKR Value unrecognized or out of range - counts and bounds mismatch detected
+20190610 112237.135383 INFO     PET0  PASS  Creating a LocalArray from TKR with mis-matching counts, lbounds and ubounds, ESMF_LocalArrayUTest.F90, line         162
+20190610 112237.135387 ERROR    PET0 ESMF_LocalArrayCreate.F90 644 ESMF_LocalArrayCreateByTKR Argument sizes do not match - lbounds argument must be of size rank
+20190610 112237.135395 INFO     PET0  PASS  Creating a LocalArray from TKR with rank that does not match bounds, ESMF_LocalArrayUTest.F90, line         173
+20190610 112237.135407 INFO     PET0  PASS  Creating a LocalArray from TKR without counts, ESMF_LocalArrayUTest.F90, line         183
+20190610 112237.135473 INFO     PET0  PASS  Creating a LocalArray as a Copy of existing LocalArray, ESMF_LocalArrayUTest.F90, line         190
+20190610 112237.135482 INFO     PET0  PASS  Local Array Destroy Test, ESMF_LocalArrayUTest.F90, line         197
+20190610 112237.135548 INFO     PET0  PASS  Printing LocalArray Copy after original LocalArray destroy, ESMF_LocalArrayUTest.F90, line         204
+20190610 112237.135562 INFO     PET0  PASS  Local Array Copy Destroy Test, ESMF_LocalArrayUTest.F90, line         211
+20190610 112237.135574 ERROR    PET0 ESMF_LocalArrayCreate.F90 5780 ESMF_LocalArrCreateByPtr Unrecognized option string - docopy argument is only allowed with associated fptr argument
+20190610 112237.135587 INFO     PET0  PASS  Creating a LocalArray from unassociated Fortran pointer with docpy argument, ESMF_LocalArrayUTest.F90, line         219
+20190610 112237.135604 INFO     PET0  Number of failed tests:           0
+20190610 112237.135612 INFO     PET0  Ending Test, file ESMF_LocalArrayUTest.F90, line         918

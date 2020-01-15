@@ -1,0 +1,18 @@
+#!/bin/ksh
+
+source $MODULESHOME/etc/modules.sh
+module load PrgEnv-intel
+module unload craype-haswell 
+module load craype-sandybridge
+
+export ESMF_DIR=`pwd`
+export ESMF_OS=Unicos
+export ESMF_COMPILER=intel
+export ESMF_SITE=default
+
+gmake clean > out
+gmake > make.log
+
+exit
+
+

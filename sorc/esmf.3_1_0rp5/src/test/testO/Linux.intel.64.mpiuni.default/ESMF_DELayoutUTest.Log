@@ -1,0 +1,9 @@
+20190610 112235.696425 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112235.696716 INFO     PET0  Beginning Test, file ESMF_DELayoutUTest.F90, line          69
+20190610 112235.696734 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112235.696792 INFO     PET0  PASS  Default OLDSTYLE DELayout Create Test, ESMF_DELayoutUTest.F90, line          83
+20190610 112235.696826 INFO     PET0  PASS  Default OLDSTYLE DELayout Destroy Test, ESMF_DELayoutUTest.F90, line         191
+20190610 112235.696847 INFO     PET0  PASS  Default DELayout Create Test, ESMF_DELayoutUTest.F90, line         204
+20190610 112235.699575 INFO     PET0  PASS  Default DELayout Destroy Test, ESMF_DELayoutUTest.F90, line         214
+20190610 112235.699596 INFO     PET0  Number of failed tests:           0
+20190610 112235.699603 INFO     PET0  Ending Test, file ESMF_DELayoutUTest.F90, line         351

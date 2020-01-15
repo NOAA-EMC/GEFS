@@ -1,0 +1,8 @@
+  Beginning Test, file ESMF_CplCompCreateUTest.F90, line          70
+  NUMBER_OF_PROCESSORS           1
+  PASS  Creating a Coupler Component Test, ESMF_CplCompCreateUTest.F90, line    
+       81
+  PASS  Destroying a Component Test, ESMF_CplCompCreateUTest.F90, line          
+ 93
+  Number of failed tests:           0
+  Ending Test, file ESMF_CplCompCreateUTest.F90, line         310

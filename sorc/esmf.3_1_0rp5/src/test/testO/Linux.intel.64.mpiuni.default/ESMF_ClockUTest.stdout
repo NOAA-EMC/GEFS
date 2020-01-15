@@ -1,0 +1,10 @@
+  Beginning Test, file ESMF_ClockUTest.F90, line          91
+  NUMBER_OF_PROCESSORS           1
+  PASS  Set Time Interval Initialization Test, ESMF_ClockUTest.F90, line        
+  129
+  PASS  Set Start Time Initialization Test, ESMF_ClockUTest.F90, line         14
+ 1
+  PASS  Clock Initialization Test, ESMF_ClockUTest.F90, line         151
+  PASS  Clock Destroy Test, ESMF_ClockUTest.F90, line         161
+  Number of failed tests:           0
+  Ending Test, file ESMF_ClockUTest.F90, line        2322

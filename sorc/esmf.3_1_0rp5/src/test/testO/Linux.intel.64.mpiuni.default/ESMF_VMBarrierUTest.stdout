@@ -1,0 +1,10 @@
+  Beginning Test, file ESMF_VMBarrierUTest.F90, line          66
+  NUMBER_OF_PROCESSORS           1
+ timing precision is:   1.192092895507812E-006
+ max timing precision is:   1.192092895507812E-006
+  PASS  Timer Precision test, ESMF_VMBarrierUTest.F90, line          86
+ slow Pet=           0 Pet=           0 time delay =    1.00000500679016      
+ [  -- should be >=    1.00000000000000      --  ]
+  PASS  Barrier Test, ESMF_VMBarrierUTest.F90, line         121
+  Number of failed tests:           0
+  Ending Test, file ESMF_VMBarrierUTest.F90, line         123

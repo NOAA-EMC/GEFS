@@ -1,0 +1,6 @@
+  Beginning Test, file ESMF_ConfigUTest.F90, line        1415
+  NUMBER_OF_PROCESSORS           1
+  PASS  Config Create Test, ESMF_ConfigUTest.F90, line        1423
+  PASS  Config Destroy Test, ESMF_ConfigUTest.F90, line        1431
+  Number of failed tests:           0
+  Ending Test, file ESMF_ConfigUTest.F90, line        1532

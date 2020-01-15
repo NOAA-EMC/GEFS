@@ -1,0 +1,12 @@
+  Beginning Test, file ESMF_InitMacrosUTest.F90, line          78
+  NUMBER_OF_PROCESSORS           1
+  PASS  Testing ESMF_INIT_CHECK_SHALLOW, ESMF_InitMacrosUTest.F90, line         
+  88
+  PASS  Testing undefined object in ESMF_INIT_CHECK_DEEP, ESMF_InitMacrosUTest.F
+ 90, line          98
+  PASS  Testing created object in ESMF_INIT_CHECK_DEEP, ESMF_InitMacrosUTest.F90
+ , line         107
+  PASS  Testing deleted object in ESMF_INIT_CHECK_DEEP, ESMF_InitMacrosUTest.F90
+ , line         116
+  Number of failed tests:           0
+  Ending Test, file ESMF_InitMacrosUTest.F90, line         127

@@ -1,0 +1,42 @@
+20190610 112238.204827 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112238.205099 INFO     PET0  Beginning Test, file ESMF_ArrayDataUTest.F90, line          65
+20190610 112238.205117 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112238.205451 INFO     PET0  PASS  Creating an Array from allocated F90 array pointer, ESMF_ArrayDataUTest.F90, line          89
+20190610 112238.205579 INFO     PET0  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataUTest.F90, line          97
+20190610 112238.207744 INFO     PET0  PASS  Obtaining access to data in Array via F90 array pointer, ESMF_ArrayDataUTest.F90, line         105
+20190610 112238.207780 INFO     PET0  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTest.F90, line         118
+20190610 112238.207797 INFO     PET0  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataUTest.F90, line         133
+20190610 112238.207829 INFO     PET0  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTest.F90, line         146
+20190610 112238.207860 INFO     PET0  PASS  Destroying Array created from an allocated F90 array pointer, ESMF_ArrayDataUTest.F90, line         155
+20190610 112238.208005 INFO     PET0  PASS  Creating an Array from allocated F90 array pointer using ESMF_DATA_COPY, ESMF_ArrayDataUTest.F90, line         164
+20190610 112238.208024 INFO     PET0  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataUTest.F90, line         172
+20190610 112238.208042 INFO     PET0  PASS  Obtaining access to data in Array via F90 array pointer, ESMF_ArrayDataUTest.F90, line         180
+20190610 112238.208074 INFO     PET0  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTest.F90, line         193
+20190610 112238.208089 INFO     PET0  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataUTest.F90, line         208
+20190610 112238.208130 INFO     PET0  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTest.F90, line         221
+20190610 112238.208148 ERROR    PET0 ESMF_LocalArrayCreate.F90 22588 ESMF_LocalArrayF90Deallocate Unable to allocate requested memory LocalArray Deallocation
+20190610 112238.208161 INFO     PET0  PASS  Destroying Array created from an allocated F90 array pointer, ESMF_ArrayDataUTest.F90, line         230
+20190610 112238.208183 INFO     PET0  PASS  Creating an Array from allocated F90 array pointer slice, ESMF_ArrayDataUTest.F90, line         242
+20190610 112238.208199 INFO     PET0  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataUTest.F90, line         250
+20190610 112238.208234 INFO     PET0  PASS  Obtaining access to data in Array via F90 array pointer, ESMF_ArrayDataUTest.F90, line         258
+20190610 112238.208266 INFO     PET0  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTest.F90, line         271
+20190610 112238.208281 INFO     PET0  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataUTest.F90, line         286
+20190610 112238.208324 INFO     PET0  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTest.F90, line         299
+20190610 112238.208336 INFO     PET0  PASS  Destroying Array created from an allocated F90 array pointer, ESMF_ArrayDataUTest.F90, line         308
+20190610 112238.208357 INFO     PET0  PASS  Creating an Array from allocated F90 array pointer, ESMF_ArrayDataUTest.F90, line         325
+20190610 112238.208373 INFO     PET0  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataUTest.F90, line         333
+20190610 112238.208390 INFO     PET0  PASS  Obtaining access to data in Array via F90 array pointer, ESMF_ArrayDataUTest.F90, line         341
+20190610 112238.208422 INFO     PET0  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTest.F90, line         354
+20190610 112238.208451 INFO     PET0  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataUTest.F90, line         369
+20190610 112238.208497 INFO     PET0  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTest.F90, line         382
+20190610 112238.208517 INFO     PET0  PASS  Destroying Array created from an allocated F90 array pointer, ESMF_ArrayDataUTest.F90, line         391
+20190610 112238.208541 INFO     PET0  PASS  Creating an Array from allocated F90 array pointer, ESMF_ArrayDataUTest.F90, line         400
+20190610 112238.208557 INFO     PET0  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataUTest.F90, line         408
+20190610 112238.208574 INFO     PET0  PASS  Obtaining access to data in Array via F90 array pointer, ESMF_ArrayDataUTest.F90, line         416
+20190610 112238.208606 INFO     PET0  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTest.F90, line         429
+20190610 112238.208621 INFO     PET0  PASS  Printing Array created from allocated F90 array pointer, ESMF_ArrayDataUTest.F90, line         444
+20190610 112238.208652 INFO     PET0  PASS  Verifying data in Array via F90 array pointer access, ESMF_ArrayDataUTest.F90, line         457
+20190610 112238.208656 ERROR    PET0 ESMF_LocalArrayCreate.F90 22588 ESMF_LocalArrayF90Deallocate Unable to allocate requested memory LocalArray Deallocation
+20190610 112238.208666 INFO     PET0  PASS  Destroying Array created from an allocated F90 array pointer, ESMF_ArrayDataUTest.F90, line         466
+20190610 112238.208710 INFO     PET0  Number of failed tests:           0
+20190610 112238.208725 INFO     PET0  Ending Test, file ESMF_ArrayDataUTest.F90, line         476

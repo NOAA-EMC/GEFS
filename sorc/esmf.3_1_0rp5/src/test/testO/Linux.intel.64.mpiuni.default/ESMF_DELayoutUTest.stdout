@@ -1,0 +1,10 @@
+  Beginning Test, file ESMF_DELayoutUTest.F90, line          69
+  NUMBER_OF_PROCESSORS           1
+  PASS  Default OLDSTYLE DELayout Create Test, ESMF_DELayoutUTest.F90, line     
+      83
+  PASS  Default OLDSTYLE DELayout Destroy Test, ESMF_DELayoutUTest.F90, line    
+      191
+  PASS  Default DELayout Create Test, ESMF_DELayoutUTest.F90, line         204
+  PASS  Default DELayout Destroy Test, ESMF_DELayoutUTest.F90, line         214
+  Number of failed tests:           0
+  Ending Test, file ESMF_DELayoutUTest.F90, line         351

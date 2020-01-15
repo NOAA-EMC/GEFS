@@ -1,0 +1,7 @@
+20190610 112320.657442 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112320.661074 ERROR    PET0 ESMF_Grid.F90 4085 ? Object being used before creation Bad Object
+20190610 112320.661086 ERROR    PET0 ESMF_FieldPr.F90 189 ESMF_FieldPrint Object being used before creation Internal subroutine call returned Error
+20190610 112320.661171 ERROR    PET0 ESMF_Grid.F90 4085 ? Object being used before creation Bad Object
+20190610 112320.661173 ERROR    PET0 ESMF_FieldPr.F90 189 ESMF_FieldPrint Object being used before creation Internal subroutine call returned Error
+20190610 112320.661254 ERROR    PET0 ESMF_Grid.F90 4085 ? Object being used before creation Bad Object
+20190610 112320.661255 ERROR    PET0 ESMF_FieldPr.F90 189 ESMF_FieldPrint Object being used before creation Internal subroutine call returned Error

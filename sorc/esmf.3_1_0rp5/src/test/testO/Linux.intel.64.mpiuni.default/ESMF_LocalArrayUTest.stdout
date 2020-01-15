@@ -1,0 +1,53 @@
+  Beginning Test, file ESMF_LocalArrayUTest.F90, line          49
+  NUMBER_OF_PROCESSORS           1
+ first 10 intptr data =           55          66          77          88
+          99         110         121         132         143         154
+         165
+  PASS  Creating a Local Array with Integer 1D Data Test, ESMF_LocalArrayUTest.F
+ 90, line          67
+  PASS  Local Array Destroy Test, ESMF_LocalArrayUTest.F90, line          74
+  PASS  Creating a LocalArray from TKR without counts, lbounds, ubounds, ESMF_Lo
+ calArrayUTest.F90, line          83
+  PASS  Creating a LocalArray from TKR with counts and without lbounds, ubounds,
+  ESMF_LocalArrayUTest.F90, line          92
+  PASS  Local Array Destroy Test, ESMF_LocalArrayUTest.F90, line          99
+  PASS  Creating a LocalArray from TKR with counts and lbounds and without uboun
+ ds, ESMF_LocalArrayUTest.F90, line         109
+  PASS  Local Array Destroy Test, ESMF_LocalArrayUTest.F90, line         116
+  PASS  Creating a LocalArray from TKR with counts and ubounds and without lboun
+ ds, ESMF_LocalArrayUTest.F90, line         126
+  PASS  Local Array Destroy Test, ESMF_LocalArrayUTest.F90, line         133
+  PASS  Creating a LocalArray from TKR with matching counts, lbounds and ubounds
+ , ESMF_LocalArrayUTest.F90, line         144
+  PASS  Local Array Destroy Test, ESMF_LocalArrayUTest.F90, line         151
+  PASS  Creating a LocalArray from TKR with mis-matching counts, lbounds and ubo
+ unds, ESMF_LocalArrayUTest.F90, line         162
+  PASS  Creating a LocalArray from TKR with rank that does not match bounds, ESM
+ F_LocalArrayUTest.F90, line         173
+  PASS  Creating a LocalArray from TKR without counts, ESMF_LocalArrayUTest.F90,
+  line         183
+  PASS  Creating a LocalArray as a Copy of existing LocalArray, ESMF_LocalArrayU
+ Test.F90, line         190
+  PASS  Local Array Destroy Test, ESMF_LocalArrayUTest.F90, line         197
+  PASS  Printing LocalArray Copy after original LocalArray destroy, ESMF_LocalAr
+ rayUTest.F90, line         204
+  PASS  Local Array Copy Destroy Test, ESMF_LocalArrayUTest.F90, line         21
+ 1
+  PASS  Creating a LocalArray from unassociated Fortran pointer with docpy argum
+ ent, ESMF_LocalArrayUTest.F90, line         219
+  Number of failed tests:           0
+  Ending Test, file ESMF_LocalArrayUTest.F90, line         918
+LocalArrayPrint: Array at address 0x019bfce0:
+            rank = 1, kind = 3, base_addr = 0x019bfbe0
+            dim[0] = 10  
+  Integer, *4, Dim 1, Data values:
+(-5) =  0
+(-4) =  0
+(-3) =  0
+(-2) =  0
+(-1) =  0
+( 0) =  0
+( 1) =  0
+( 2) =  0
+( 3) =  0
+( 4) =  0

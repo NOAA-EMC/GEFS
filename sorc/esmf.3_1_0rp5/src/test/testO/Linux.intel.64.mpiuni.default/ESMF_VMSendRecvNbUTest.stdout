@@ -1,0 +1,65 @@
+  Beginning Test, file ESMF_VMSendRecvNbUTest.F90, line          84
+  NUMBER_OF_PROCESSORS           1
+  PASS  SendRecvNb local I4 data Test, ESMF_VMSendRecvNbUTest.F90, line         
+ 168
+  PASS  SendRecvNb local R4 data Test, ESMF_VMSendRecvNbUTest.F90, line         
+ 179
+  PASS  SendRecvNb local R8 data Test, ESMF_VMSendRecvNbUTest.F90, line         
+ 190
+  PASS  SendRecvNb local LOGICAL data Test, ESMF_VMSendRecvNbUTest.F90, line    
+      201
+  PASS  Waiting for I4 SendRecvNb, ESMF_VMSendRecvNbUTest.F90, line         212
+           0  After rcv i_recvData is            1           2 ( should be 
+           1           2  )
+  PASS  Verify local I4 data after receive Test, ESMF_VMSendRecvNbUTest.F90, lin
+ e         223
+  PASS  Waiting for R4 SendRecvNb, ESMF_VMSendRecvNbUTest.F90, line         233
+           0 After recv r4_recvData is    1.000000       2.000000     
+ ( should be    1.000000       2.000000      )
+  PASS  Verify local R4 data after receive Test, ESMF_VMSendRecvNbUTest.F90, lin
+ e         245
+  PASS  Waiting for R8 SendRecvNb, ESMF_VMSendRecvNbUTest.F90, line         255
+           0 After recv r8_recvData is    1.00000000000000     
+   2.00000000000000      ( Should be    1.00000000000000     
+   2.00000000000000       )
+  PASS  Verify local R8 data after receive Test, ESMF_VMSendRecvNbUTest.F90, lin
+ e         267
+  PASS  Waiting for LOGICAL SendRecvNb, ESMF_VMSendRecvNbUTest.F90, line        
+  277
+           0 After recv: Recv_Logical(1) is False
+           0 After recv: Recv_Logical(2) is True
+           0 After recv: Logical_soln(1) is False
+           0 After recv: logical_soln(2) is True
+  PASS  Verify local LOGICAL data after receive Test, ESMF_VMSendRecvNbUTest.F90
+ , line         298
+  PASS  SendRecvNb local I4 data Test, ESMF_VMSendRecvNbUTest.F90, line         
+ 341
+  PASS  SendRecvNb local R4 data Test, ESMF_VMSendRecvNbUTest.F90, line         
+ 352
+  PASS  SendRecvNb local R8 data Test, ESMF_VMSendRecvNbUTest.F90, line         
+ 363
+  PASS  SendRecvNb local LOGICAL data Test, ESMF_VMSendRecvNbUTest.F90, line    
+      374
+  PASS  Waiting for all queued non-blocking comms in VM, ESMF_VMSendRecvNbUTest.
+ F90, line         385
+           0  After rcv i_recvData is            1           2 ( should be 
+           1           2  )
+  PASS  Verify local I4 data after receive Test, ESMF_VMSendRecvNbUTest.F90, lin
+ e         399
+           0 After recv r4_recvData is    1.000000       2.000000     
+ ( should be    1.000000       2.000000      )
+  PASS  Verify local R4 data after receive Test, ESMF_VMSendRecvNbUTest.F90, lin
+ e         413
+           0 After recv r8_recvData is    1.00000000000000     
+   2.00000000000000      ( Should be    1.00000000000000     
+   2.00000000000000       )
+  PASS  Verify local R8 data after receive Test, ESMF_VMSendRecvNbUTest.F90, lin
+ e         427
+           0 After recv: Recv_Logical(1) is False
+           0 After recv: Recv_Logical(2) is True
+           0 After recv: Logical_soln(1) is False
+           0 After recv: logical_soln(2) is True
+  PASS  Verify local LOGICAL data after receive Test, ESMF_VMSendRecvNbUTest.F90
+ , line         450
+  Number of failed tests:           0
+  Ending Test, file ESMF_VMSendRecvNbUTest.F90, line         453

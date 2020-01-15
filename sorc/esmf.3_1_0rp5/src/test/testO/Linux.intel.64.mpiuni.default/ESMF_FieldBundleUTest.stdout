@@ -1,0 +1,7 @@
+  Beginning Test, file ESMF_FieldBundleUTest.F90, line          74
+  NUMBER_OF_PROCESSORS           1
+  PASS  Creating Empty FieldBundle Test, ESMF_FieldBundleUTest.F90, line        
+   81
+  PASS  FieldBundle Destroy Test, ESMF_FieldBundleUTest.F90, line          92
+  Number of failed tests:           0
+  Ending Test, file ESMF_FieldBundleUTest.F90, line         717

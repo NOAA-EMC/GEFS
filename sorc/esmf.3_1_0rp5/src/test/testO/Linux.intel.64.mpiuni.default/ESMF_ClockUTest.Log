@@ -1,0 +1,9 @@
+20190610 112232.582740 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112232.583018 INFO     PET0  Beginning Test, file ESMF_ClockUTest.F90, line          91
+20190610 112232.583036 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112232.583105 INFO     PET0  PASS  Set Time Interval Initialization Test, ESMF_ClockUTest.F90, line         129
+20190610 112232.583149 INFO     PET0  PASS  Set Start Time Initialization Test, ESMF_ClockUTest.F90, line         141
+20190610 112232.583200 INFO     PET0  PASS  Clock Initialization Test, ESMF_ClockUTest.F90, line         151
+20190610 112232.586124 INFO     PET0  PASS  Clock Destroy Test, ESMF_ClockUTest.F90, line         161
+20190610 112232.586148 INFO     PET0  Number of failed tests:           0
+20190610 112232.586154 INFO     PET0  Ending Test, file ESMF_ClockUTest.F90, line        2322

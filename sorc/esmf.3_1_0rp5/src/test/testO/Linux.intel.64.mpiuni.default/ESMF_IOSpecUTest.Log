@@ -1,0 +1,10 @@
+20190610 112231.557787 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112231.558043 INFO     PET0  Beginning Test, file ESMF_IOSpecUTest.F90, line          66
+20190610 112231.558061 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112231.558083 INFO     PET0  PASS  IOSpec Set Test, ESMF_IOSpecUTest.F90, line          77
+20190610 112231.558091 INFO     PET0  PASS  Get IOSpec File Name Test, ESMF_IOSpecUTest.F90, line          85
+20190610 112231.558099 INFO     PET0  PASS  Verify IOSpec Filename Test, ESMF_IOSpecUTest.F90, line          92
+20190610 112231.560288 INFO     PET0  PASS  Get IOSpec File Format Test, ESMF_IOSpecUTest.F90, line         101
+20190610 112231.560297 INFO     PET0  PASS  Verify IOSpec File Format  Test, ESMF_IOSpecUTest.F90, line         108
+20190610 112231.560314 INFO     PET0  Number of failed tests:           0
+20190610 112231.560320 INFO     PET0  Ending Test, file ESMF_IOSpecUTest.F90, line         118

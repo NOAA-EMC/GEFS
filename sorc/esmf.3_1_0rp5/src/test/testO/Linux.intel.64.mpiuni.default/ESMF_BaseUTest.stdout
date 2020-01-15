@@ -1,0 +1,6 @@
+  Beginning Test, file ESMF_BaseUTest.F90, line          71
+  NUMBER_OF_PROCESSORS           1
+  PASS  ESMF_BaseCreate, ESMF_BaseUTest.F90, line          80
+  PASS  ESMF_Destroy, ESMF_BaseUTest.F90, line          89
+  Number of failed tests:           0
+  Ending Test, file ESMF_BaseUTest.F90, line         232

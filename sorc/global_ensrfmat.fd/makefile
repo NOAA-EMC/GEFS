@@ -1,0 +1,42 @@
+SHELL=  /bin/bash
+CMD=	global_ensrfmat  
+#FC=     ncepxlf
+#FC=     ifort
+#FOPTS=  -qsmp=noauto
+FFLAGS=  -traceback -list -convert big_endian -assume byterecl
+LDFLAGS=
+INCS=
+SRCS=	REFORMAT.f      
+OBJS=   $(SRCS:.f=.o)
+#LIBS    = -L/nwprod/lib -lbacio_v2.0.1_4 -lw3nco_v2.0.6_4 -lip_v2.0.0_4 -lsp_v2.0.2_4 
+#LIBS    =
+
+#$(CMD): $(SRCS)
+#	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o $(CMD)
+#global_ensrfmat: $(SRCS)
+#	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o rfmat
+
+# Lines from here on down should not need to be changed.  They are the
+# actual rules which make uses to build a.out.
+#
+all:    $(CMD)
+
+$(CMD): $(OBJS)
+	$(FC) $(LDFLAGS) $(FFLAGS) -o $(@) $(OBJS) $(LIBS)
+
+$(OBJS):        $(SRCS)
+	$(FC) $(FFLAGS) $(INCS) -c $(SRCS)
+
+$(OBJS):        makefile
+
+allclean:       clean all
+
+clean:
+	-rm -f $(OBJS)
+
+clobber:        clean
+	-rm -f $(CMD)
+
+install:
+	mv $(CMD) ../../exec/$(CMD)
+

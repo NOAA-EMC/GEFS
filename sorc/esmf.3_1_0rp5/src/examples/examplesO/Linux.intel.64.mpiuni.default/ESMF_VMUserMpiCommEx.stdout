@@ -1,0 +1,2 @@
+ ESMF application on MPI rank:           0
+ PASS: ESMF_VMUserMpiCommEx.F90

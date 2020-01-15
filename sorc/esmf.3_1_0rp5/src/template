@@ -1,0 +1,66 @@
+#%Module1.0
+##
+## modulefile
+##
+
+#-------set up ESMF directories
+set     name  "ESMF"
+set     name1 "ESMF-intel-sandybridge"
+set     name2 "ESMF-intel-haswell"
+set     name3 "ESMF-cray-sandybridge"
+set     name4 "ESMF-cray-haswell"
+
+#-------3_1_0rp5, intel, and sandybridge are set by master script "makmod"
+set     version "3_1_0rp5"
+set	prodtop	"/usrx/local/prod/ESMF/3_1_0rp5/intel/sandybridge/src"
+
+set     ptype   [ uname machine ]
+set     desc    "$name1 $name2 $name3 $name4 $version"
+set     userlocation $env(SITE)
+
+#-------rssolve conflicts, if any
+if { [catch {conflict $name1}] } {
+      puts stderr "******************************************************************"
+      puts stderr "Module $name/$version could not be loaded because of a conflict"
+      puts stderr "with another $name modulefile."
+      puts stderr "Please unload conflicting module before loading $name/$version."
+      puts stderr "******************************************************************"
+      exit 1
+} 
+
+if { [catch {conflict $name2}] } {
+      puts stderr "******************************************************************"
+      puts stderr "Module $name/$version could not be loaded because of a conflict"
+      puts stderr "with another $name modulefile."
+      puts stderr "Please unload conflicting module before loading $name/$version."
+      puts stderr "******************************************************************"
+      exit 1
+} 
+
+if { [catch {conflict $name3}] } {
+      puts stderr "******************************************************************"
+      puts stderr "Module $name/$version could not be loaded because of a conflict"
+      puts stderr "with another $name modulefile."
+      puts stderr "Please unload conflicting module before loading $name/$version."
+      puts stderr "******************************************************************"
+      exit 1
+} 
+
+if { [catch {conflict $name4}] } {
+      puts stderr "******************************************************************"
+      puts stderr "Module $name/$version could not be loaded because of a conflict"
+      puts stderr "with another $name modulefile."
+      puts stderr "Please unload conflicting module before loading $name/$version."
+      puts stderr "******************************************************************"
+      exit 1
+} 
+
+#-----set relevant paths
+      setenv ESMF_SRC      $prodtop
+      setenv ESMF_LIB     "$prodtop/lib/libO/Unicos.intel.64.mpi.default -lesmf -lstdc++"
+      setenv ESMF_MOD      $prodtop/mod/modO/Unicos.intel.64.mpi.default
+      setenv ESMF_VER      $version
+      setenv ESMFMKFILE    $prodtop/lib/libO/Unicos.intel.64.mpi.default/esmf.mk
+
+      prepend-path  LD_LIBRARY_PATH "$prodtop/lib/libO/Unicos.intel.64.mpi.default -lesmf -lstdc++"
+

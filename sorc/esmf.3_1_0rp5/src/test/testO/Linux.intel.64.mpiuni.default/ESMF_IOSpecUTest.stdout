@@ -1,0 +1,12 @@
+  Beginning Test, file ESMF_IOSpecUTest.F90, line          66
+  NUMBER_OF_PROCESSORS           1
+  PASS  IOSpec Set Test, ESMF_IOSpecUTest.F90, line          77
+  PASS  Get IOSpec File Name Test, ESMF_IOSpecUTest.F90, line          85
+  PASS  Verify IOSpec Filename Test, ESMF_IOSpecUTest.F90, line          92
+  File name = 
+ testFilename                                                                   
+                                                  
+  PASS  Get IOSpec File Format Test, ESMF_IOSpecUTest.F90, line         101
+  PASS  Verify IOSpec File Format  Test, ESMF_IOSpecUTest.F90, line         108
+  Number of failed tests:           0
+  Ending Test, file ESMF_IOSpecUTest.F90, line         118

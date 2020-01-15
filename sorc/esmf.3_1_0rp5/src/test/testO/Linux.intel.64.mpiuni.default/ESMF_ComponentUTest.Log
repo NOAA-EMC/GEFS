@@ -1,0 +1,8 @@
+20190610 112240.841468 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112240.841758 INFO     PET0  Beginning Test, file ESMF_ComponentUTest.F90, line          44
+20190610 112240.841775 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112240.843277 INFO     PET0  PASS  Creating a Gridded Component, ESMF_ComponentUTest.F90, line          54
+20190610 112240.843322 INFO     PET0  PASS  Printing a Gridded Component, ESMF_ComponentUTest.F90, line          62
+20190610 112240.846282 INFO     PET0  PASS  Destroying a Gridded Component, ESMF_ComponentUTest.F90, line          70
+20190610 112240.846292 INFO     PET0  Number of failed tests:           0
+20190610 112240.846308 INFO     PET0  Ending Test, file ESMF_ComponentUTest.F90, line         213

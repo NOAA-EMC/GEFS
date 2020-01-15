@@ -1,0 +1,4 @@
+ gregorianCalendar is of type ESMF_CAL_GREGORIAN.
+ Gregorian date 2004/4/17 is                2453113 
+  days in the Julian Day calendar.
+ PASS: ESMF_CalendarEx.F90

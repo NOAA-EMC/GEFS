@@ -1,0 +1,7 @@
+20190610 112240.939593 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112240.939860 INFO     PET0  Beginning Test, file ESMF_GridCompCreateUTest.F90, line          67
+20190610 112240.939877 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112240.941335 INFO     PET0  PASS  Creating a Component Test, ESMF_GridCompCreateUTest.F90, line          80
+20190610 112240.941513 INFO     PET0  PASS  Destroying a Component Test, ESMF_GridCompCreateUTest.F90, line          92
+20190610 112240.941522 INFO     PET0  Number of failed tests:           0
+20190610 112240.941527 INFO     PET0  Ending Test, file ESMF_GridCompCreateUTest.F90, line         218

@@ -1,0 +1,9 @@
+  Beginning Test, file ESMF_CompSetServUTest.F90, line          68
+  NUMBER_OF_PROCESSORS           1
+  PASS  Creating a Component Test, ESMF_CompSetServUTest.F90, line          81
+  PASS  Setting Component Services, ESMF_CompSetServUTest.F90, line          93
+ User initialize 1 routine called
+  PASS  Calling Component Init, ESMF_CompSetServUTest.F90, line         105
+  PASS  Destroying a Component Test, ESMF_CompSetServUTest.F90, line         224
+  Number of failed tests:           0
+  Ending Test, file ESMF_CompSetServUTest.F90, line         227

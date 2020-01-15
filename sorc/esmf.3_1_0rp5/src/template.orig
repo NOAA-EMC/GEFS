@@ -1,0 +1,70 @@
+#%Module1.0
+##
+## modulefile
+##
+
+# for Tcl scripts use only
+set     name    "esmf"
+set     dirname "esmf"
+set     version "3_1_0rp5"
+set	prodtop	"/gpfs/hps/usrx/local/prod"
+set	comp	"intel"
+set 	arch	"sandy"
+set	rhelos		[ system test -s "/etc/redhat-release" ]
+# 0 if true (operating system type)
+set	suseos		[ system test -s "/etc/SuSE-release" ]
+# 1 if false
+set     ptype   [ uname machine ]
+set     desc    "$name $version"
+set userlocation $env(SITE)
+
+##
+## set module action.
+## this will inherit the command 
+## action from the user module load unload
+## good for unloading and loading 
+## additional modules required as dependencies.
+##
+set     action    [module-info mode]
+
+proc ModulesHelp { } {
+        global name
+        global desc
+        puts stderr "This modulesfile sets up the environment for $desc.\n"
+}
+
+module-whatis   "Sets the environment for $desc"
+
+set             root   $prodtop/$dirname/$version/$comp/$arch
+
+if { [catch {conflict $name}] } {
+        puts stderr "******************************************************************"
+        puts stderr "Module $name/$version could not be loaded because of a conflict"
+        puts stderr "with another $name modulefile."
+        puts stderr "Please unload conflicting module before loading $name/$version."
+        puts stderr "******************************************************************"
+        exit 1
+} else {
+        ##
+        ## env setup starts here...
+        ##
+        setenv          VERSIONENV              $version
+	##
+	## path assignment edit
+	##
+        prepend-path    PATH                    $root/$version/$ptype/bin
+	append-path	MANPATH			$root/$version/man
+	remove-path	PATH 			$root/$version/$ptype/bin
+	##
+	## alias (for commands)
+	##
+	set-alias 	command			$env(VERSIONENV)/aliasedcommand
+	##
+	## Run a command externally
+	##
+	setenv 	kernelrelease			[ system /bin/uname -r ]
+	##
+	## and easier way to get this information is the built in uname command
+	##
+	setenv kernelrelease			"[uname release]"
+}

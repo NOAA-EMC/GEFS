@@ -1,0 +1,23 @@
+20190610 112233.704986 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112233.705240 INFO     PET0  Beginning Test, file ESMF_VMScatterUTest.F90, line          67
+20190610 112233.705258 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112233.705303 INFO     PET0  PASS  Scatter() Test for Integer, ESMF_VMScatterUTest.F90, line         108
+20190610 112233.705323 INFO     PET0  PASS  Verifying array1 data after Scatter() Test for Interger, ESMF_VMScatterUTest.F90, line         119
+20190610 112233.707606 INFO     PET0  PASS  Verifying array2 data after Scatter() Test for Interger, ESMF_VMScatterUTest.F90, line         135
+20190610 112233.707628 INFO     PET0  PASS  Scatter() Test for ESMF_KIND_R8, ESMF_VMScatterUTest.F90, line         152
+20190610 112233.707638 INFO     PET0  PASS  Verifying farray1 data after Scatter() Test for ESMF_KIND_R8, ESMF_VMScatterUTest.F90, line         163
+20190610 112233.707726 INFO     PET0  PASS  Verifying farray2 data after Scatter() Test for ESMF_KIND_R8, ESMF_VMScatterUTest.F90, line         180
+20190610 112233.707747 INFO     PET0  PASS  Scatter() Test for ESMF_KIND_R4, ESMF_VMScatterUTest.F90, line         196
+20190610 112233.707835 INFO     PET0  PASS  Verifying f4array1 data after Scatter() Test for ESMF_KIND_R4, ESMF_VMScatterUTest.F90, line         207
+20190610 112233.707884 INFO     PET0  PASS  Verifying f4array2 data after Scatter() Test for ESMF_KIND_R4, ESMF_VMScatterUTest.F90, line         224
+20190610 112233.707918 INFO     PET0  PASS  ScatterV() Test for Integer, ESMF_VMScatterUTest.F90, line         273
+20190610 112233.707928 INFO     PET0  PASS  Verifying array1 data after ScatterV() Test for Interger, ESMF_VMScatterUTest.F90, line         284
+20190610 112233.707946 INFO     PET0  PASS  Verifying array2 data after ScatterV() Test for Interger, ESMF_VMScatterUTest.F90, line         300
+20190610 112233.707973 INFO     PET0  PASS  ScatterV() Test for ESMF_KIND_R8, ESMF_VMScatterUTest.F90, line         318
+20190610 112233.707983 INFO     PET0  PASS  Verifying farray1 data after ScatterV() Test for ESMF_KIND_R8, ESMF_VMScatterUTest.F90, line         329
+20190610 112233.708002 INFO     PET0  PASS  Verifying farray2 data after ScatterV() Test for ESMF_KIND_R8, ESMF_VMScatterUTest.F90, line         346
+20190610 112233.708021 INFO     PET0  PASS  ScatterV() Test for ESMF_KIND_R4, ESMF_VMScatterUTest.F90, line         363
+20190610 112233.708030 INFO     PET0  PASS  Verifying f4array1 data after ScatterV() Test for ESMF_KIND_R4, ESMF_VMScatterUTest.F90, line         374
+20190610 112233.708066 INFO     PET0  PASS  Verifying f4array2 data after ScatterV() Test for ESMF_KIND_R4, ESMF_VMScatterUTest.F90, line         391
+20190610 112233.708084 INFO     PET0  Number of failed tests:           0
+20190610 112233.708099 INFO     PET0  Ending Test, file ESMF_VMScatterUTest.F90, line         410

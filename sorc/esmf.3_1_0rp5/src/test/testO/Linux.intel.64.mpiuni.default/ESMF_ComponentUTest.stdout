@@ -1,0 +1,10 @@
+  Beginning Test, file ESMF_ComponentUTest.F90, line          44
+  NUMBER_OF_PROCESSORS           1
+  PASS  Creating a Gridded Component, ESMF_ComponentUTest.F90, line          54
+ Gridded Component:
+  Component name = Atmosphere - default context
+  PASS  Printing a Gridded Component, ESMF_ComponentUTest.F90, line          62
+  PASS  Destroying a Gridded Component, ESMF_ComponentUTest.F90, line          7
+ 0
+  Number of failed tests:           0
+  Ending Test, file ESMF_ComponentUTest.F90, line         213

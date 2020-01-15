@@ -1,0 +1,74 @@
+  Beginning Test, file ESMF_VMScatterUTest.F90, line          67
+  NUMBER_OF_PROCESSORS           1
+  PASS  Scatter() Test for Integer, ESMF_VMScatterUTest.F90, line         108
+  PASS  Verifying array1 data after Scatter() Test for Interger, ESMF_VMScatterU
+ Test.F90, line         119
+ contents after scatter:
+           0  array1:            1
+           0  array1:            2
+  PASS  Verifying array2 data after Scatter() Test for Interger, ESMF_VMScatterU
+ Test.F90, line         135
+ contents after scatter:
+           0  array2:            1
+           0  array2:            2
+  PASS  Scatter() Test for ESMF_KIND_R8, ESMF_VMScatterUTest.F90, line         1
+ 52
+  PASS  Verifying farray1 data after Scatter() Test for ESMF_KIND_R8, ESMF_VMSca
+ tterUTest.F90, line         163
+ contents after scatter:
+           0  farray1:    1.00000000000000     
+           0  farray1:    2.00000000000000     
+  PASS  Verifying farray2 data after Scatter() Test for ESMF_KIND_R8, ESMF_VMSca
+ tterUTest.F90, line         180
+ contents after scatter:
+           0  farray2:    1.00000000000000     
+           0  farray2:    2.00000000000000     
+  PASS  Scatter() Test for ESMF_KIND_R4, ESMF_VMScatterUTest.F90, line         1
+ 96
+  PASS  Verifying f4array1 data after Scatter() Test for ESMF_KIND_R4, ESMF_VMSc
+ atterUTest.F90, line         207
+ contents after scatter:
+           0  f4array1:    1.000000    
+           0  f4array1:    2.000000    
+  PASS  Verifying f4array2 data after Scatter() Test for ESMF_KIND_R4, ESMF_VMSc
+ atterUTest.F90, line         224
+ contents after scatter:
+           0  f4array2:    1.000000    
+           0  f4array2:    2.000000    
+  PASS  ScatterV() Test for Integer, ESMF_VMScatterUTest.F90, line         273
+  PASS  Verifying array1 data after ScatterV() Test for Interger, ESMF_VMScatter
+ UTest.F90, line         284
+ contents after scatter:
+           0  array1:            1
+           0  array1:            2
+  PASS  Verifying array2 data after ScatterV() Test for Interger, ESMF_VMScatter
+ UTest.F90, line         300
+ contents after scatter:
+           0  array2:            1
+           0  array2:            2
+  PASS  ScatterV() Test for ESMF_KIND_R8, ESMF_VMScatterUTest.F90, line         
+ 318
+  PASS  Verifying farray1 data after ScatterV() Test for ESMF_KIND_R8, ESMF_VMSc
+ atterUTest.F90, line         329
+ contents after scatter:
+           0  farray1:    1.00000000000000     
+           0  farray1:    2.00000000000000     
+  PASS  Verifying farray2 data after ScatterV() Test for ESMF_KIND_R8, ESMF_VMSc
+ atterUTest.F90, line         346
+ contents after scatter:
+           0  farray2:    1.00000000000000     
+           0  farray2:    2.00000000000000     
+  PASS  ScatterV() Test for ESMF_KIND_R4, ESMF_VMScatterUTest.F90, line         
+ 363
+  PASS  Verifying f4array1 data after ScatterV() Test for ESMF_KIND_R4, ESMF_VMS
+ catterUTest.F90, line         374
+ contents after scatter:
+           0  f4array1:    1.000000    
+           0  f4array1:    2.000000    
+  PASS  Verifying f4array2 data after ScatterV() Test for ESMF_KIND_R4, ESMF_VMS
+ catterUTest.F90, line         391
+ contents after scatter:
+           0  f4array2:    1.000000    
+           0  f4array2:    2.000000    
+  Number of failed tests:           0
+  Ending Test, file ESMF_VMScatterUTest.F90, line         410

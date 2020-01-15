@@ -1,0 +1,179 @@
+#######################################################
+# This file defines the various input varibles for the
+# GEFS model run
+#######################################################
+ 
+export RUN_ENVIR=${RUN_ENVIR:-dev}
+export envir=${envir:-dev}
+export SENDDBN=${SENDDBN:-%SENDDBN:NO%}
+export SENDDBN_NTC=${SENDDBN_NTC:-%SENDDBN_NTC:NO%}
+
+export KEEPDATA=NO
+export SENDCOM=YES
+export SENDECF=NO
+
+#export PARAFLAG=${PARAFLAG:-YES}
+export PARAFLAG=${PARAFLAG:-NO}
+export SENDECF=${SENDECF:-NO}
+export SENDCOM=${SENDCOM:-YES}
+export KEEPDATA=${KEEPDATA:-%KEEPDATA:NO%}
+
+export COMROOT=$baseoutput/com
+export GESROOT=$baseoutput/nwges
+export DATAROOT=$baseoutput/tmpnwprd
+export DCOMROOT=${DCOMROOT:-/dcom}
+
+mkdir -p  $COMROOT/logs/jlogfiles
+
+# Bo Cui, 20190315, comment the line of archsyndir setting,
+# archsyndir comes from $COMINatcfsyn in jobs/JGEFS_ENKF_TRACK
+  
+# archsyndir=/com/arch/prod/syndat on wcoss 
+# archsyndir=/gpfs/tp1/nco/ops/com/arch/prod/syndat on dell
+ 
+export GESROOTp1=/nwges
+export DBNROOT=
+
+export NWROOT=/nwprod2
+export NWROOTprod=/nwprod2
+export NWROOTp1=/nwprod
+ 
+#export PCOMROOT=$baseoutput/pcom2/${envir}
+#export PCOM=$PCOMROOT/gefs                
+ 
+export COMROOThps=/gpfs/hps/nco/ops/com
+
+HOMEDIR=/ensemble/save/emc.enspara/RFC
+HOMEDIR=/nwprod2
+export gefsmachine=${gefsmachine:-dell}
+
+#  export HOMEgefs=$HOMEDIR/gefs.v11.1.1
+#  export HOMEgefs=$basesource/nwdev
+  export HOMEgefs=$basesource/nw${envir}/gefs_legacy.${gefs_legacy_ver}
+
+	if (( 0 == 0 )); then
+  #export HOMEgsm=$HOMEDIR/gsm.v12.1.3
+# export HOMEgsm=/gpfs/dell2/emc/retros/noscrub/Xianwu.Xue/z_GSM/GEFS_gsm      
+# export HOMEgsm=/gpfs/dell2/emc/retros/noscrub/Bo.Cui/z_GSM/GEFS_gsm      
+  export HOMEgsm=$basesource/fix
+  #export HOMEpost=$HOMEDIR/ncep_post.v5.1.2
+# export HOMEpost=/gpfs/dell2/emc/retros/noscrub/Xianwu.Xue/z_GSM/GEFS_ncep_post      
+# export HOMEpost=/gpfs/dell2/emc/retros/noscrub/Bo.Cui/z_GSM/GEFS_ncep_post      
+  export HOMEpost=/scripts/GEFS_ncep_post      
+#  export HOMEenkf=$HOMEDIR/enkf.v2.0.3
+#  export HOMEenkf=/nwprod/enkf.v2.0.3
+  export HOMEenkf=/gpfs/dell2/emc/retros/noscrub/Xianwu.Xue/z_GSM/GEFS_ENKF
+  export HOMEtrak=$HOMEDIR/ens_tracker.v1.1.8
+	fi
+
+# export APRUN=$gefsmpexec
+
+# This section is optional, using path to define utility files
+# export UTILROOT=/gpfs/dell1/nco/ops/nwprod/prod_util.v1.0.0  for dell
+# export GRIBROOT=/gpfs/dell1/nco/ops/nwprod/grib_util.v1.0.1  for dell
+# export EXECutil=$UTILROOT/exec
+# export USHutil=$UTILROOT/ush
+# export EXECgrib=$GRIBROOT/exec
+
+  . /usrx/local/prod/lmod/lmod/init/ksh
+  module use /gpfs/dell1/nco/ops/nwprod/modulefiles
+  module load prod_util/1.1.0
+  module load grib_util/1.1.0
+  module load util_shared/1.1.0
+  
+  module load EnvVars/1.0.2
+  module load ips/18.0.1.163
+  module load lsf/10.1
+  module load impi/18.0.1
+  module load CFP/2.0.1
+  export USE_CFP=YES
+# export PATH=$PATH:.
+
+  export NDATE=${NDATE:-$USHutil/ndate}
+
+  export WGRIB=${WGRIB:-$EXECgrib/wgrib}
+  export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
+  export COPYGB=${COPYGB:-$EXECgrib/copygb}
+  export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
+  export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
+  export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
+  export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib}
+# export CNVGRIB21_GFS=${CNVGRIB21_GFS:-$EXECgrib/cnvgrib21_gfs}
+# export CNVGRIB=$CNVGRIB21_GFS
+
+  export NET=gens
+# export RUN=$RUN
+# export RUNMEM=$RUNMEM
+
+# Temperay setting for testing some special jobs, comment them out for real time dev test
+# export COMINGEST=/ensemble/noscrub/Yan.Luo/com-ingest-prod  #temporary testing of CQPF job
+# export COMIN=/ensemble/noscrub/emc.enspara/xz/T574L64SL/EK0 #temporary testing of CQPF job
+ 
+# export p_post=/com2/gfs/prod/gfs.$PDY
+# export COMINenkf=/com2/gfs/prod/enkf.
+#
+# Define COMINgfs and alike for the enkf_track job 
+ 
+if [[ ${jobscript} = JGEFS_ENKF_TRACK ]] ; then
+
+  d6ahead_ymdh=${PDY}${cyc}
+  d_hour_ymdh=` $NDATE -6 ${PDY}${cyc}`
+  d6ago_ymdh=` $NDATE -12 ${PDY}${cyc}`
+  export d6ahead_ymd=`echo $d6ahead_ymdh|cut -c1-8`
+  export d6ahead_hh=`echo $d6ahead_ymdh|cut -c9-10`
+  export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
+  export d6ago_hh=`echo $d6ago_ymdh|cut -c9-10`
+  export d_hour_ymd=`echo $d_hour_ymdh|cut -c1-8`
+  export d_hour_hh=`echo $d_hour_ymdh|cut -c9-10`
+
+  export GFSbase=/gpfs/dell1/nco/ops/com/gfs/para
+  export GFSbase=/gpfs/dell1/nco/ops/com/gfs/prod
+
+  export COMINgfs=${GFSbase}/gfs.${d_hour_ymd}/${d_hour_hh}
+  export COMINgfs6ago=${GFSbase}/gfs.${d6ago_ymd}/${d6ago_hh}
+  export COMINgfs6ahead=${GFSbase}/gfs.${d6ahead_ymd}/${d6ahead_hh}
+  export COMINenkf=${GFSbase}/enkfgdas.
+
+# Define COMINgfs and alike for the gefs_init_separate job 
+ 
+elif [[ ${jobscript} = JGEFS_INIT_SEPARATE ]] ; then
+
+  d6ahead_ymdh=` $NDATE 6 ${PDY}${cyc}`
+  d6ago_ymdh=` $NDATE -6 ${PDY}${cyc}`
+  export d6ahead_ymd=`echo $d6ahead_ymdh|cut -c1-8`
+  export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
+
+  export GFSbase=/gpfs/dell1/nco/ops/com/gfs/para
+  export GFSbase=/gpfs/dell1/nco/ops/com/gfs/prod
+
+  export COMINgfs=${GFSbase}/gfs.$PDY/$cyc
+  export COMINgfs6ago=${GFSbase}/gfs.$d6ago_ymd
+  export COMINgfs6ahead=${GFSbase}/gfs.$d6ahead_ymd
+  export COMINenkf=${GFSbase}/enkfgdas.
+
+# Define POSTGRB2TBL for JGEFS_NCEPPOST
+# POSTGRB2TBL=${POSTGRB2TBL:-/nwprod/lib/sorc/g2tmpl/params_grib2_tbl_new}
+ 
+elif [[ ${jobscript} = JGEFS_NCEPPOST ]] ; then
+# export POSTGRB2TBL=/gpfs/dell1/nco/ops/nwprod/lib/g2tmpl/v1.5.0/unit_test/params_grib2_tbl_new
+  export POSTGRB2TBL=/gpfs/dell1/nco/ops/nwprod/lib/g2tmpl/v1.5.0/src/params_grib2_tbl_new
+
+# Define USHPOST for ush/gfs_downstream.sh in GEFS_ncep_post 
+# In GEFS_ncep_post USHPOST=$HOMEPOST/ush is from /nw${envir}/ncep_post.$post_ver,
+# which is not available now on Dell
+# Comment the line is because DOWNSTREAM=NO, no ush was actually needed 
+# export USHPOST=$HOMEpost/ush
+  
+# Define COMIN for JGEFS_CQPF for dev test, which needs previous 16 day forecast
+ 
+elif [[ ${jobscript} = JGEFS_CQPF ]] ; then
+  export COMIN=/gpfs/tp2/nco/ops/com/gens/prod
+ 
+else
+
+  export GFSbase=/gpfs/dell1/nco/ops/com/gfs/para
+  export GFSbase=/gpfs/dell1/nco/ops/com/gfs/prod
+  export COMINgfs=${GFSbase}/gfs.${PDY}/$cyc
+
+fi
+

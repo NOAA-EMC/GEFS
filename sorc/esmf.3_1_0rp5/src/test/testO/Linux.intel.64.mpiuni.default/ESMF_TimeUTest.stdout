@@ -1,0 +1,9 @@
+  Beginning Test, file ESMF_TimeUTest.F90, line          83
+  NUMBER_OF_PROCESSORS           1
+  PASS  Set Time Initialization Test, ESMF_TimeUTest.F90, line         111
+  PASS  Get Time Test 1, ESMF_TimeUTest.F90, line         123
+ startTime = 
+ 2004-01-29T12:17:58                                                            
+                                                  
+  Number of failed tests:           0
+  Ending Test, file ESMF_TimeUTest.F90, line         901

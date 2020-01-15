@@ -145,6 +145,7 @@ else
   # RLW 20141008 modify to obtain and use version for vertical structure
   . $basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/parm/gefs.parm
   . $basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/parm/gefs_init.parm
+  . $basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/parm/gefs_config_dev
 fi
 
 echo
@@ -161,12 +162,13 @@ export utilscript=/nwprod/util/ush
 # Run setup to initialize working directory and utility scripts
 ##############################
 
-sh $utilscript/setup.sh
+#sh $utilscript/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $utilscript/setpdy.sh
+#sh $utilscript/setpdy.sh
+setpdy.sh
 
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \

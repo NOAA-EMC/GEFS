@@ -1,0 +1,19 @@
+20190610 112230.751964 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112230.752208 INFO     PET0  Beginning Test, file ESMF_TypeKindGetUTest.F90, line          74
+20190610 112230.752225 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112230.752247 INFO     PET0  PASS   Getting ESMF_TypeKind parameter of default integer, ESMF_TypeKindGetUTest.F90, line          83
+20190610 112230.752261 INFO     PET0  PASS   Getting ESMF_TypeKind parameter of ESMF_KIND_I1 integer, ESMF_TypeKindGetUTest.F90, line          94
+20190610 112230.754102 INFO     PET0  PASS  Checking ESMF_TypeKind parameter for ESMF_KIND_I1 integer, ESMF_TypeKindGetUTest.F90, line         105
+20190610 112230.754114 INFO     PET0  PASS   Getting ESMF_TypeKind parameter of ESMF_KIND_I2 integer, ESMF_TypeKindGetUTest.F90, line         118
+20190610 112230.754123 INFO     PET0  PASS  Checking ESMF_TypeKind parameter for ESMF_KIND_I2 integer, ESMF_TypeKindGetUTest.F90, line         129
+20190610 112230.754132 INFO     PET0  PASS   Getting ESMF_TypeKind parameter of ESMF_KIND_I4 integer, ESMF_TypeKindGetUTest.F90, line         141
+20190610 112230.754141 INFO     PET0  PASS  Checking ESMF_TypeKind parameter for ESMF_KIND_I4 integer, ESMF_TypeKindGetUTest.F90, line         147
+20190610 112230.754233 INFO     PET0  PASS  Getting ESMF_TypeKind parameter of ESMF_KIND_I8 integer, ESMF_TypeKindGetUTest.F90, line         155
+20190610 112230.754244 INFO     PET0  PASS  Checking ESMF_TypeKind parameter for ESMF_KIND_I8 integer, ESMF_TypeKindGetUTest.F90, line         161
+20190610 112230.754253 INFO     PET0  PASS  Getting ESMF_TypeKind parameter of  real, ESMF_TypeKindGetUTest.F90, line         173
+20190610 112230.754265 INFO     PET0  PASS  Getting ESMF_TypeKind parameter of ESMF_KIND_R4 real, ESMF_TypeKindGetUTest.F90, line         183
+20190610 112230.754274 INFO     PET0  PASS  Checking ESMF_TypeKind parameter for ESMF_KIND_R4 real, ESMF_TypeKindGetUTest.F90, line         189
+20190610 112230.754283 INFO     PET0  PASS  Getting ESMF_TypeKind parameter of ESMF_KIND_R8 real, ESMF_TypeKindGetUTest.F90, line         197
+20190610 112230.754292 INFO     PET0  PASS  Checking ESMF_TypeKind parameter for ESMF_KIND_R8 real, ESMF_TypeKindGetUTest.F90, line         203
+20190610 112230.754306 INFO     PET0  Number of failed tests:           0
+20190610 112230.754312 INFO     PET0  Ending Test, file ESMF_TypeKindGetUTest.F90, line         205

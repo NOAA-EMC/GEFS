@@ -126,12 +126,13 @@ export EXECUTIL=$HOMEUTIL/exec
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-ksh $utilscript/setup.sh
+#ksh $utilscript/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-ksh $utilscript/setpdy.sh
+#ksh $utilscript/setpdy.sh
+setpdy.sh
 . PDY
 
 ##############################################

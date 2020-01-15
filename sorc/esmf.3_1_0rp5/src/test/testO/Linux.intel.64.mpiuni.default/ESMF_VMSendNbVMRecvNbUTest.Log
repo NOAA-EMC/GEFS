@@ -1,0 +1,36 @@
+20190610 112233.427296 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112233.427559 INFO     PET0  Beginning Test, file ESMF_VMSendNbVMRecvNbUTest.F90, line          87
+20190610 112233.427577 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112233.427593 INFO     PET0  First round: src=           0  dst=           0
+20190610 112233.427637 INFO     PET0  PASS  Sending local I4 data Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         170
+20190610 112233.427670 INFO     PET0  PASS  Receiving local I4 data Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         181
+20190610 112233.429834 INFO     PET0  PASS  Sending local R4 data Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         192
+20190610 112233.429898 INFO     PET0  PASS  Receiving local R4 data Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         203
+20190610 112233.429909 INFO     PET0  PASS  Sending local R8 data Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         214
+20190610 112233.429981 INFO     PET0  PASS  Receiving local R8 data Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         225
+20190610 112233.430065 INFO     PET0  PASS  Sending local LOGICAL data Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         236
+20190610 112233.430084 INFO     PET0  PASS  Receiving local LOGICAL data Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         250
+20190610 112233.430113 INFO     PET0  PASS  Waiting for I4 RecvNb, ESMF_VMSendNbVMRecvNbUTest.F90, line         261
+20190610 112233.430127 INFO     PET0  PASS  Verify local I4 data after receive Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         271
+20190610 112233.430134 INFO     PET0  PASS  Waiting for R4 RecvNb, ESMF_VMSendNbVMRecvNbUTest.F90, line         281
+20190610 112233.430149 INFO     PET0  PASS  Verify local R4 data after receive Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         292
+20190610 112233.430156 INFO     PET0  PASS  Waiting for R8 RecvNb, ESMF_VMSendNbVMRecvNbUTest.F90, line         302
+20190610 112233.430174 INFO     PET0  PASS  Verify local R8 data after receive Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         313
+20190610 112233.430183 INFO     PET0  PASS  Waiting for LOGICAL RecvNb, ESMF_VMSendNbVMRecvNbUTest.F90, line         323
+20190610 112233.430216 INFO     PET0  PASS  Verify local LOGICAL data after receive Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         342
+20190610 112233.430243 INFO     PET0  Second round: src=           0  dst=           0
+20190610 112233.430255 INFO     PET0  PASS  Sending local I4 data Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         386
+20190610 112233.430268 INFO     PET0  PASS  Receiving local I4 data Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         397
+20190610 112233.430278 INFO     PET0  PASS  Sending local R4 data Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         408
+20190610 112233.430292 INFO     PET0  PASS  Receiving local R4 data Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         419
+20190610 112233.430301 INFO     PET0  PASS  Sending local R8 data Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         430
+20190610 112233.430319 INFO     PET0  PASS  Receiving local R8 data Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         441
+20190610 112233.430329 INFO     PET0  PASS  Sending local LOGICAL data Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         452
+20190610 112233.430345 INFO     PET0  PASS  Receiving local LOGICAL data Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         466
+20190610 112233.430356 INFO     PET0  PASS  Waiting for all queued non-blocking comms in VM, ESMF_VMSendNbVMRecvNbUTest.F90, line         477
+20190610 112233.430382 INFO     PET0  PASS  Verify local I4 data after receive Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         490
+20190610 112233.430395 INFO     PET0  PASS  Verify local R4 data after receive Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         503
+20190610 112233.430412 INFO     PET0  PASS  Verify local R8 data after receive Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         516
+20190610 112233.430435 INFO     PET0  PASS  Verify local LOGICAL data after receive Test, ESMF_VMSendNbVMRecvNbUTest.F90, line         537
+20190610 112233.430441 INFO     PET0  Number of failed tests:           0
+20190610 112233.430456 INFO     PET0  Ending Test, file ESMF_VMSendNbVMRecvNbUTest.F90, line         540

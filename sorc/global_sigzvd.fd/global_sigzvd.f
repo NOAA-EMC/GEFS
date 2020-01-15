@@ -14,7 +14,7 @@ c
       character*8  cfnamei
       character*8  cfnameo
       character*8  cfnamel
-      character*80 label
+      character*255 label
       integer   lui
       integer   luo
       integer   lul

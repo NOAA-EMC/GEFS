@@ -121,7 +121,8 @@ echo cycsuffix=$cycsuffix
 echo cfsuffix=$cfsuffix
 echo ensshort=$ensshort
 
-export pdycycp=`/nwprod/util/exec/ndate -$fhrp $PDY$cyc`
+#export pdycycp=`/nwprod/util/exec/ndate -$fhrp $PDY$cyc`
+export pdycycp=`$NDATE -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
 export cycp=`echo $pdycycp|cut -c9-10`
 
@@ -180,9 +181,11 @@ if (( nhrpair < npair )); then
 
   export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,use_ufo=.true.,IALB=0,idvc=2,idvt=21,idsl=1,IDVM=0"
 
-  if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio && -f $COMINgfs/gfs.$cycle.nstanl.nemsio ]]; then
+  #if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio && -f $COMINgfs/gfs.$cycle.nstanl.nemsio ]]; then
+  if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
     export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
-    $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
+    #$getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
+    $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
     getnsttfrc=$?
     if (( getnsttfrc == 0 )); then
       echo `date` $getnsttf after
@@ -198,7 +201,8 @@ if (( nhrpair < npair )); then
 
   else
     echo !!!! FATAL ERROR !!!!
-    echo $COMINgfs/gfs.$cycle.atmanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio CANNOT BE FOUND
+    #echo $COMINgfs/gfs.$cycle.atmanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio CANNOT BE FOUND
+    echo $COMINgfs/gfs.$cycle.atmanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio CANNOT BE FOUND
     export pgm=$getnsttf
     export err=9
     err_chk
@@ -338,9 +342,11 @@ if (( nhrpair > 0 )); then
 
   export CHGRESVARS="NTRAC=$NTRACjR,NVCOORD=$NVCOORD,use_ufo=.true.,IALB=0,idvc=2,idvt=21,idsl=1,IDVM=0"
 
-  if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio && -f $COMINgfs/gfs.$cycle.nstanl.nemsio ]]; then
+  #if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio && -f $COMINgfs/gfs.$cycle.nstanl.nemsio ]]; then
+  if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
     export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
-    $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
+    #$getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
+    $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
     getnsttfrc=$?
     if (( getnsttfrc == 0 )); then
       echo `date` $getnsttf after
@@ -356,7 +362,8 @@ if (( nhrpair > 0 )); then
 
   else
     echo !!!! FATAL ERROR !!!!
-    echo $COMINgfs/gfs.$cycle.atmanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio CANNOT BE FOUND
+    #echo $COMINgfs/gfs.$cycle.atmanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio CANNOT BE FOUND
+    echo $COMINgfs/gfs.$cycle.atmanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio CANNOT BE FOUND
     export pgm=$getnsttf
     export err=9
     err_chk
@@ -824,9 +831,12 @@ ls -ablp
 echo
 echo DATA=$DATA before poe
 #### kate 4/24/2012 #####
-echo "gefsmpexec=$gefsmpexec"
-$gefsmpexec
+#echo "gefsmpexec=$gefsmpexec"
+#$gefsmpexec
 #### kate 4/24/2012 ##############
+
+echo APRUN=$APRUN
+$APRUN cfp poescript
 
 echo DATA=$DATA after poe
 pwd

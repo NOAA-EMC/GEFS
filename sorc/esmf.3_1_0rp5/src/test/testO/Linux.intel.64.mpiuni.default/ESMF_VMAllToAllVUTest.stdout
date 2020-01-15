@@ -1,0 +1,22 @@
+  Beginning Test, file ESMF_VMAllToAllVUTest.F90, line          69
+  NUMBER_OF_PROCESSORS           1
+  PASS  AllToAllV Test iarray1 -> iarray2, ESMF_VMAllToAllVUTest.F90, line      
+    122
+  PASS  AllToAllV Test iarray2 -> iarray3, ESMF_VMAllToAllVUTest.F90, line      
+    131
+  PASS  Verify iarray3 data against iarray1 after alltoallv, ESMF_VMAllToAllVUTe
+ st.F90, line         145
+  PASS  AllToAllV Test f4array1 -> f4array2, ESMF_VMAllToAllVUTest.F90, line    
+      157
+  PASS  AllToAllV Test f4array2 -> f4array3, ESMF_VMAllToAllVUTest.F90, line    
+      166
+  PASS  Verify f4array3 data against f4array1 after alltoallv, ESMF_VMAllToAllVU
+ Test.F90, line         180
+  PASS  AllToAllV Test f8array1 -> f8array2, ESMF_VMAllToAllVUTest.F90, line    
+      192
+  PASS  AllToAllV Test f8array2 -> f8array3, ESMF_VMAllToAllVUTest.F90, line    
+      201
+  PASS  Verify f8array3 data against f8array1 after alltoallv, ESMF_VMAllToAllVU
+ Test.F90, line         215
+  Number of failed tests:           0
+  Ending Test, file ESMF_VMAllToAllVUTest.F90, line         218

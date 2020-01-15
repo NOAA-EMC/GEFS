@@ -1,0 +1,12 @@
+20190610 112229.973929 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112229.974183 INFO     PET0  Beginning Test, file ESMF_WordsizeUTest.F90, line          60
+20190610 112229.974201 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112229.976812 INFO     PET0  PASS  Getting C int/float word sizes, ESMF_WordsizeUTest.F90, line         108
+20190610 112229.976821 INFO     PET0  PASS  Verifying F90 I1 matches C I1, ESMF_WordsizeUTest.F90, line         117
+20190610 112229.976828 INFO     PET0  PASS  Verifying F90 I2 matches C I2, ESMF_WordsizeUTest.F90, line         128
+20190610 112229.976834 INFO     PET0  PASS  Verifying F90 I4 matches C I4, ESMF_WordsizeUTest.F90, line         138
+20190610 112229.976841 INFO     PET0  PASS  Verifying F90 I8 matches C I8, ESMF_WordsizeUTest.F90, line         144
+20190610 112229.976847 INFO     PET0  PASS  Verifying F90 R4 matches C R4, ESMF_WordsizeUTest.F90, line         150
+20190610 112229.976853 INFO     PET0  PASS  Verifying F90 R8 matches C R8, ESMF_WordsizeUTest.F90, line         156
+20190610 112229.976939 INFO     PET0  Number of failed tests:           0
+20190610 112229.976946 INFO     PET0  Ending Test, file ESMF_WordsizeUTest.F90, line         175

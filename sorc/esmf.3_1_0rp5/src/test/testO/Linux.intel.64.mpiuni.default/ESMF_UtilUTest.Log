@@ -1,0 +1,5 @@
+20190610 112230.571646 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112230.571898 INFO     PET0  Beginning Test, file ESMF_UtilUTest.F90, line          68
+20190610 112230.571916 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112230.571935 INFO     PET0  Number of failed tests:           0
+20190610 112230.571941 INFO     PET0  Ending Test, file ESMF_UtilUTest.F90, line          80

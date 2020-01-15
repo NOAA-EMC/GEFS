@@ -1,0 +1,133 @@
+ System Test CompCreate:
+ Gridded Component:
+  Component name = System Test CompCreate
+ Comp Create finished, name = System Test CompCreate
+ In user register routine
+ Registered Initialize, Run, and Finalize routines
+ Registered local datablock
+  initial data =          13  0.6600000              25
+ Comp Register finished, rc=            0
+ first init routine called
+ Comp Initialize 1 finished
+ User Comp Init 2 starting
+ Gridded Component:
+  Component name = System Test CompCreate
+ StatePrint: 
+   State name = igrid export state
+   Export State
+   Number of members:            0
+ init, ready to call get data ptr
+ init, back from data ptr
+ init, data =           13  0.6600000              25
+ StatePrint: 
+   State name = igrid export state
+   Export State
+   Number of members:            1
+   Item            1 :
+     Name= humidity, type Field, marked as needed.
+ User Comp Init returning
+ Comp Initialize 2 finished
+ User Comp Run starting
+ in run, ready to get data block
+ run, local data =          13  0.6600000              25
+ StatePrint: 
+   State name = igrid import state
+   Import State
+   Number of members:            1
+   Item            1 :
+     Name= humidity, type Field, marked as needed.
+ Field Print Starts ====>
+ Field status = Ready
+   Name = 'humidity'
+ Grid status = Uninitialized
+ Data status = Uninitialized
+ StaggerLoc Print Begins =====>
+    staggerloc =            0
+ StaggerLoc Print Ends   =====>
+ StatePrint: 
+   State name = igrid export state
+   Export State
+   Number of members:            1
+   Item            1 :
+     Name= humidity, type Field, marked as needed.
+ User Comp Run returning
+ Comp Run returned first time
+ User Comp Run starting
+ in run, ready to get data block
+ run, local data =          13  0.6600000              25
+ StatePrint: 
+   State name = igrid import state
+   Import State
+   Number of members:            1
+   Item            1 :
+     Name= humidity, type Field, marked as needed.
+ Field Print Starts ====>
+ Field status = Ready
+   Name = 'humidity'
+ Grid status = Uninitialized
+ Data status = Uninitialized
+ StaggerLoc Print Begins =====>
+    staggerloc =            0
+ StaggerLoc Print Ends   =====>
+ StatePrint: 
+   State name = igrid export state
+   Export State
+   Number of members:            1
+   Item            1 :
+     Name= humidity, type Field, marked as needed.
+ User Comp Run returning
+ Comp Run returned second time
+ User Comp Run starting
+ in run, ready to get data block
+ run, local data =          13  0.6600000              25
+ StatePrint: 
+   State name = igrid import state
+   Import State
+   Number of members:            1
+   Item            1 :
+     Name= humidity, type Field, marked as needed.
+ Field Print Starts ====>
+ Field status = Ready
+   Name = 'humidity'
+ Grid status = Uninitialized
+ Data status = Uninitialized
+ StaggerLoc Print Begins =====>
+    staggerloc =            0
+ StaggerLoc Print Ends   =====>
+ StatePrint: 
+   State name = igrid export state
+   Export State
+   Number of members:            1
+   Item            1 :
+     Name= humidity, type Field, marked as needed.
+ User Comp Run returning
+ Comp Run returned third time
+ User Comp Final starting
+ final, ready to call get data ptr
+ final, local data =          13  0.6600000              25
+ User Comp Final returning
+ -----------------------------------------------------------------
+ -----------------------------------------------------------------
+ Test finished, my_pet =            0
+ -----------------------------------------------------------------
+ -----------------------------------------------------------------
+ Comp Finalize returned
+ All Destroy routines done
+ System Test CompCreate complete
+  PASS: ESMF_CompCreateSTest.F90         168
+   Number of Attributes: 0
+   Number of Attributes: 0
+   Number of Attributes: 0
+   Number of Attributes: 0
+   Number of Attributes: 0
+   Number of Attributes: 0
+   Number of Attributes: 0
+   Number of Attributes: 0
+   Number of Attributes: 0
+   Number of Attributes: 0
+   Number of Attributes: 0
+PASS: 
+ 
+  System Test CompCreate: Component Create Test
+  SUCCESS: Component Create complete.
+ 

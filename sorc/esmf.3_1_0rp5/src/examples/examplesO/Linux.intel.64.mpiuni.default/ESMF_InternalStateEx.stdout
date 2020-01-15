@@ -1,0 +1,2 @@
+ got same values back from GetInternalState as original
+ PASS: ESMF_InternalStateEx.F90

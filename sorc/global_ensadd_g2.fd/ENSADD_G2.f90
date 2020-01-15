@@ -98,7 +98,7 @@ do
 
   ! gfldo%idsect(2): Identification of originating
   ! gfldo%idsect(2)=2: NCEP Ensemble Products
-  ! Original GFS has gfldo%idsect(2)=0, c ange it to be 2
+  ! Original GFS has gfldo%idsect(2)=0, change it to be 2
 
   gfldo%idsect(2)=2
 

@@ -1,0 +1,13 @@
+  Beginning Test, file ESMF_AlarmUTest.F90, line          83
+  NUMBER_OF_PROCESSORS           1
+  PASS  Set Time Interval Initialization Test, ESMF_AlarmUTest.F90, line        
+  118
+  PASS  Set Start Time Initialization Test, ESMF_AlarmUTest.F90, line         13
+ 0
+  PASS  Stop Time Initialization Test, ESMF_AlarmUTest.F90, line         140
+  PASS  Alarm Time Initialization Test, ESMF_AlarmUTest.F90, line         149
+  PASS  Clock Initialization Test, ESMF_AlarmUTest.F90, line         159
+  PASS  Create Alarm Test, ESMF_AlarmUTest.F90, line         168
+  PASS  Destroy Alarm Test, ESMF_AlarmUTest.F90, line         175
+  Number of failed tests:           0
+  Ending Test, file ESMF_AlarmUTest.F90, line        2908

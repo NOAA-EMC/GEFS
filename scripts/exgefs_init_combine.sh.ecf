@@ -121,7 +121,8 @@ echo cycsuffix=$cycsuffix
 echo cfsuffix=$cfsuffix
 echo ensshort=$ensshort
 
-export pdycycp=`/nwprod/util/exec/ndate -$fhrp $PDY$cyc`
+#export pdycycp=`/nwprod/util/exec/ndate -$fhrp $PDY$cyc`
+export pdycycp=`$NDATE -$fhrp $PDY$cyc`
 #export pdycycp=`ndate -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
 export cycp=`echo $pdycycp|cut -c9-10`

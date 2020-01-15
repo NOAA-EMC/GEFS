@@ -1,0 +1,9 @@
+20190610 112241.033931 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112241.034210 INFO     PET0  Beginning Test, file ESMF_CompSetServUTest.F90, line          68
+20190610 112241.034226 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112241.035456 INFO     PET0  PASS  Creating a Component Test, ESMF_CompSetServUTest.F90, line          81
+20190610 112241.035518 INFO     PET0  PASS  Setting Component Services, ESMF_CompSetServUTest.F90, line          93
+20190610 112241.035534 INFO     PET0  PASS  Calling Component Init, ESMF_CompSetServUTest.F90, line         105
+20190610 112241.039031 INFO     PET0  PASS  Destroying a Component Test, ESMF_CompSetServUTest.F90, line         224
+20190610 112241.039057 INFO     PET0  Number of failed tests:           0
+20190610 112241.039063 INFO     PET0  Ending Test, file ESMF_CompSetServUTest.F90, line         227

@@ -1,0 +1,53 @@
+#!/bin/bash
+echo "`date`   `pwd`   $0 $*   begin"
+
+if [[ $LOGNAME != emc.enspara ]]; then
+  echo wrong user=$LOGNAME
+  exit
+fi
+
+dir=`dirname $0`
+if [[ "$dir" = '.' ]]; then
+  dir=`pwd`
+fi
+ddir=`dirname $dir`
+dddir=`dirname $ddir`
+ddddir=`dirname $dddir`
+expid=`basename $ddddir`
+echo expid=$expid
+
+case $expid in
+  (rwrc)
+    jb=000
+    je=012
+    echo jb=$jb
+    echo je=$je
+    #gefsrun 2020010812$jb 2020010812$je
+    #gefsrun 2020010912$jb 2020010912$je
+    je=013
+    echo je=$je
+    gefsrun 2020011012$jb 2020011012$je
+  ;;
+  (rwrd)
+    jb=100
+    je=100
+    echo jb=$jb
+    echo je=$je
+    gefsrun 2020010812$jb 2020010812$je
+    #gefsrun 2020010912$jb 2020010912$je
+    #gefsrun 2020011012$jb 2020011012$je
+  ;;
+  (rwre)
+    jb=102
+    je=102
+    echo jb=$jb
+    echo je=$je
+    gefsrun 2020010812$jb 2020010812$je
+    #gefsrun 2020010912$jb 2020010912$je
+    #gefsrun 2020011012$jb 2020011012$je
+  ;;
+  (*)
+    echo expid=$expid not recognized
+  ;;
+esac
+echo "`date`   `pwd`   $0 $*   end"

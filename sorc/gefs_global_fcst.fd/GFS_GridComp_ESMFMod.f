@@ -60,7 +60,8 @@
 ! !ARGUMENTS:
 !------------
 
- TYPE(ESMF_GridComp), INTENT(inout)  :: gcGFS ! gridded component
+!rlw-jaa TYPE(ESMF_GridComp), INTENT(inout)  :: gcGFS ! gridded component
+ TYPE(ESMF_GridComp)                 :: gcGFS ! gridded component
  INTEGER,             INTENT(out)    :: rc    ! return code
      
 ! !DESCRIPTION: Set services (register) for the GFS Stand Alone
@@ -157,10 +158,14 @@
 ! !INPUT/OUTPUT VARIABLES AND PARAMETERS:
 !----------------------------------------
 
- TYPE(ESMF_GridComp), INTENT(inout) :: gcGFS 
- TYPE(ESMF_State),    INTENT(inout) :: impGFS
- TYPE(ESMF_State),    INTENT(inout) :: expGFS
- TYPE(ESMF_Clock),    INTENT(inout) :: clock
+!rlw-jaa TYPE(ESMF_GridComp), INTENT(inout) :: gcGFS 
+!rlw-jaa TYPE(ESMF_State),    INTENT(inout) :: impGFS
+!rlw-jaa TYPE(ESMF_State),    INTENT(inout) :: expGFS
+!rlw-jaa TYPE(ESMF_Clock),    INTENT(inout) :: clock
+ TYPE(ESMF_GridComp) :: gcGFS 
+ TYPE(ESMF_State) :: impGFS
+ TYPE(ESMF_State) :: expGFS
+ TYPE(ESMF_Clock) :: clock
 
 !
 ! !OUTPUT VARIABLES AND PARAMETERS:
@@ -433,7 +438,7 @@ CALL DistGrid_ESMFCreate1(vm_local, Int_State, distgrid1, rc1)
 ! Put the grid1 local array size into the internal state and print it out.
 !-------------------------------------------------------------------------
  Int_State%lnt2_s = i2(1, Int_State%me + 1)
- PRINT*, 'Local number of the Grid1', i2(:, Int_State%me + 1)
+!rlw-jaa PRINT*, 'Local number of the Grid1', i2(:, Int_State%me + 1)
 
 !-----------------------------------------------------------------
  i2 = 0
@@ -443,7 +448,7 @@ CALL DistGrid_ESMFCreate1(vm_local, Int_State, distgrid1, rc1)
 !-------------------------------------------------------------------------
  Int_State%lonr_s = i2(1, Int_State%me + 1)
  Int_State%latr_s = i2(2, Int_State%me + 1)
- PRINT*, 'Local number of the Grid3', i2(:, Int_State%me + 1)
+!rlw-jaa PRINT*, 'Local number of the Grid3', i2(:, Int_State%me + 1)
 
  CALL ESMF_DistGridDestroy(distgrid1, rc = rc1)
  CALL ESMF_DistGridDestroy(distgrid3, rc = rc1)
@@ -560,14 +565,27 @@ CALL DistGrid_ESMFCreate1(vm_local, Int_State, distgrid1, rc1)
 !
 ! !INPUT VARIABLES AND PARAMETERS:
 !---------------------------------
- TYPE(ESMF_GridComp), INTENT(inout) :: gcGFS   
- TYPE(ESMF_State),    INTENT(in)    :: impGFS 
+!rlw-jaa TYPE(ESMF_GridComp), INTENT(inout) :: gcGFS   
+!rlw-jaa TYPE(ESMF_State),    INTENT(in)    :: impGFS 
  
 ! !OUTPUT VARIABLES AND PARAMETERS:
 !----------------------------------
- TYPE(ESMF_Clock),    INTENT(inout) :: clock
- TYPE(ESMF_State),    INTENT(inout) :: expGFS
- INTEGER,             INTENT(out)   :: rc   
+!rlw-jaa TYPE(ESMF_Clock),    INTENT(inout) :: clock
+!rlw-jaa TYPE(ESMF_State),    INTENT(inout) :: expGFS
+!rlw-jaa INTEGER,             INTENT(out)   :: rc   
+!
+! !INPUT VARIABLES AND PARAMETERS:
+!---------------------------------
+!jaa TYPE(ESMF_GridComp), INTENT(inout) :: gcGFS
+ TYPE(ESMF_GridComp) :: gcGFS
+ TYPE(ESMF_State)    :: impGFS
+
+! !OUTPUT VARIABLES AND PARAMETERS:
+!----------------------------------
+ TYPE(ESMF_Clock) :: clock
+ TYPE(ESMF_State) :: expGFS
+ INTEGER,             INTENT(out)   :: rc
+
 !
 !EOP
 !-------------------------------------------------------------------------
@@ -691,10 +709,17 @@ CALL DistGrid_ESMFCreate1(vm_local, Int_State, distgrid1, rc1)
 !
 ! !INPUT VARIABLES AND PARAMETERS:
 !---------------------------------
- TYPE(ESMF_GridComp), INTENT(inout)  :: gcGFS
- TYPE(ESMF_State),    INTENT(inout)  :: impGFS
- TYPE(ESMF_State),    INTENT(inout)  :: expGFS
- TYPE(ESMF_Clock),    INTENT(inout)  :: clock
+!rlw-jaa TYPE(ESMF_GridComp), INTENT(inout)  :: gcGFS
+!rlw-jaa TYPE(ESMF_State),    INTENT(inout)  :: impGFS
+!rlw-jaa TYPE(ESMF_State),    INTENT(inout)  :: expGFS
+!rlw-jaa TYPE(ESMF_Clock),    INTENT(inout)  :: clock
+!
+! !INPUT VARIABLES AND PARAMETERS:
+!---------------------------------
+ TYPE(ESMF_GridComp)  :: gcGFS
+ TYPE(ESMF_State)     :: impGFS
+ TYPE(ESMF_State)     :: expGFS
+ TYPE(ESMF_Clock)     :: clock
 
 ! !OUTPUT VARIABLES AND PARAMETERS:
 !----------------------------------

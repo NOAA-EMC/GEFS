@@ -1,0 +1,45 @@
+#!/bin/bash 
+
+module purge
+module load ips/18.0.1.163
+module load impi/18.0.1  
+module load NetCDF/4.5.0
+module list
+
+export ESMF_F90COMPILER=mpiifort
+export ESMF_F90LINKER=mpiifort
+
+
+export ESMF_NETCDF=split
+export ESMF_NETCDF_INCLUDE=$NETCDF_INC
+export ESMF_NETCDF_LIBPATH=$NETCDF_LIB
+export ESMF_F90COMPILEOPTS="-fp-model precise"
+export ESMF_CXXCOMPILEOPTS="-fp-model precise"
+
+export ESMF_DIR=`pwd`
+export ESMF_OS=Linux
+export ESMF_MACHINE=x86_64
+export ESMF_ABI=64
+export ESMF_COMPILER=intel
+export ESMF_BOPT=O
+export ESMF_COMM=intelmpi
+export ESMF_SITE=default
+export ESMF_PTHREADS=OFF
+export ESMF_ARRAY_LITE=FALSE
+export ESMF_NO_INTEGER_1_BYTE=FALSE
+export ESMF_NO_INTEGER_2_BYTE=FALSE
+export ESMF_FORTRANSYMBOLS=default
+export ESMF_TESTEXHAUSTIVE=OFF
+export ESMF_TESTWITHTHREADS=OFF
+export ESMF_TESTMPMD=OFF
+export ESMF_OPENMP=OFF
+
+rm -rf lib/*
+rm -rf mod/*
+rm -rf obj/*
+
+gmake 
+
+exit
+
+

@@ -2,6 +2,7 @@
 echo `date` $0 $* between production and archive/cleanup jobs begin
 echo
 pwd
+NDATE=${NDATE:-/gpfs/dell1/nco/ops/nwprod/prod_util.v1.1.1/exec/ips/ndate}
 echo
 echo env sort before
 env|sort
@@ -18,7 +19,7 @@ if [[ -d $dircrontask ]]; then
   if (( $runarchcyc > 0 )); then
     (( fhrpm = fhrp * runarchcyc ))
     echo fhrp=$fhrp runarchcyc=$runarchcyc fhrpm=$fhrpm
-    dtgprev=`/nwprod/util/exec/ndate -$fhrpm $PDY$cyc`
+    dtgprev=`$NDATE -$fhrpm $PDY$cyc`
     echo dtgprev=$dtgprev
 
     yyyymmddp=`echo $dtgprev | cut -c1-8`
@@ -167,7 +168,7 @@ if [[ -d $dircrontask ]]; then
   if (( $runcleancyc > 0 )); then
     (( fhrpm = fhrp * runcleancyc ))
     echo fhrp=$fhrp runcleancyc=$runcleancyc fhrpm=$fhrpm
-    dtgprev=`/nwprod/util/exec/ndate -$fhrpm $PDY$cyc`
+    dtgprev=`$NDATE -$fhrpm $PDY$cyc`
     echo dtgprev=$dtgprev
 
     crontasktemp=clean.$expid.temp.$dtgprev

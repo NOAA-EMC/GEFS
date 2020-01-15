@@ -1,0 +1,31 @@
+  Beginning Test, file ESMF_VMBroadcastUTest.F90, line          74
+  NUMBER_OF_PROCESSORS           1
+  PASS  Broadcasting  data Test, ESMF_VMBroadcastUTest.F90, line         128
+           0  After Broadcast  LocalData is            1           2 ( Should be
+             1           2  )
+  PASS  Verify local data after broadcast Test, ESMF_VMBroadcastUTest.F90, line 
+         141
+  PASS  Broadcasting local data Test, ESMF_VMBroadcastUTest.F90, line         15
+ 2
+           0 After Broadcast: R4_LocalData is    1.000000       2.000000     
+ ( Should be    1.000000       2.000000      )
+           0 After Broadcast r4_LocalData is    1.000000       2.000000    
+  PASS  Verify local data after Broadcast Test, ESMF_VMBroadcastUTest.F90, line 
+         168
+  PASS  Broadcasting local data Test, ESMF_VMBroadcastUTest.F90, line         17
+ 9
+           0 After Broadcast: R8_LocalData is    1.00000000000000     
+   2.00000000000000       (Should be   1.00000000000000     
+   2.00000000000000       )
+  PASS  Verify local data after Broadcast Test, ESMF_VMBroadcastUTest.F90, line 
+         193
+  PASS  Broadcasting local data Test, ESMF_VMBroadcastUTest.F90, line         20
+ 4
+           0 after broadcast: Local_Logical(1) is False
+           0 after broadcast: Local_Logical(2) is True
+           0 After broadcast: logical_soln(1) is False
+           0 After broadcast: logical_soln(2) is True
+  PASS  Verify local data after broadcast Test, ESMF_VMBroadcastUTest.F90, line 
+         224
+  Number of failed tests:           0
+  Ending Test, file ESMF_VMBroadcastUTest.F90, line         226

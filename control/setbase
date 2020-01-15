@@ -11,6 +11,7 @@ echo
 echo `date` $0 set environment and experiment id
 echo
 
+NDATE=${NDATE:-/gpfs/dell1/nco/ops/nwprod/prod_util.v1.1.1/exec/ips/ndate}
 #DHOU, 01/03/2013 add this block to generate the machine name related variables
   machl=`uname -n | cut -c1`
   if [[ $machl = r ]]; then
@@ -22,15 +23,30 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
 # STMP=stmp
   PTMP=/ptmpd2
   STMP=/stmpd2
+
+  envir=$(basename $(dirname $(dirname $(pwd) ) ) | cut -c3-)
+  echo envir=$envir
+
+  expid=$(basename $(dirname $(dirname $(dirname $(pwd) ) ) ) )
+  id=`echo $expid|cut -c3-4`
+  echo expid=$expid
+  echo id=$id
 fi
 
-envir=$(basename $(dirname $(dirname $(pwd) ) ) | cut -c3-)
-echo envir=$envir
+if [[ $machl = v ]] || [[ $machl = m ]]; then
+# PTMP=ptmp
+# STMP=stmp
+  PTMP=/gpfs/dell3/ptmp
+  STMP=/gpfs/dell3/stmp
 
-expid=$(basename $(dirname $(dirname $(dirname $(pwd) ) ) ) )
-id=`echo $expid|cut -c3-4`
-echo expid=$expid
-echo id=$id
+  envir=$(basename $(dirname $(dirname $(pwd) ) ) | cut -c3-)
+  echo envir=$envir
+
+  expid=$(basename $(dirname $(dirname $(dirname $(pwd) ) ) ) )
+  id=`echo $expid|cut -c3-4`
+  echo expid=$expid
+  echo id=$id
+fi
 
 #echo $LOGNAME
 #exit
@@ -144,6 +160,28 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
   export TMPCOM=/com2
 fi
 #For WCOSS end
+#For iDELL
+if [[ $machl = v ]] || [[ $machl = m ]]; then
+  export PTMP=/gpfs/dell3/ptmp
+  export STMP=/gpfs/dell3/stmp
+  group=emc/modeling
+  group=`pwd|cut -d'/' -f2`
+  export basesource=/gpfs/dell2/$group/noscrub/$LOGNAME/WCOSS/$expid
+  export baseoutput=$PTMP/$LOGNAME/o/$expid
+  export basetmp=$STMP/$LOGNAME/o/$expid
+  export baseptmp=$PTMP/$LOGNAME/o/$expid
+  export baselog=$PTMP/$LOGNAME/o/$expid
+# export basedgfs=/$group/noscrub/$LOGNAME/o
+# export basedgfs=
+  export basedgfs=/gpfs/dell2/$group/noscrub/$LOGNAME  #Use this line as alternative when gfs data is missing from /com_p6/
+# MISSINGGFS!!! see above line
+
+# export TMPCOM=/com_canned
+# export TMPCOM=/com_p6
+# export TMPCOM=/com
+  export TMPCOM=/gpfs/dell1/nco/ops/com
+fi
+#For WCOSS end
 
   export account=GEN-T2O
   export group=g01
@@ -187,7 +225,7 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
       zq_setbase_runhigh=no
       zq_setbase_runhigh=yes   # default
       zq_setbase_testc=`date +%Y%m%d`
-      zq_setbase_testc=`/nwprod/util/exec/ndate -24`
+      zq_setbase_testc=`$NDATE -24`
       echo zq_setbase_testc=$zq_setbase_testc
       zq_setbase_testj=`echo ${LSB_JOBNAME}333333333333 | cut -c3-12`
       echo zq_setbase_testj=$zq_setbase_testj
@@ -224,6 +262,64 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
   export basedgfs=
   export basewait=$baseoutput/wait
 # For WCOSS end
+fi
+
+if [[ $machl = v ]] || [[ $machl = m ]]; then
+# For DELL
+  export account=GEN-T2O
+  export group=emc/modeling
+  # RLW 20140903 modify selected settings for emc.enspara on WCOSS
+  if [[ "$LOGNAME" = "emc.enspara" ]]; then
+    userin="Richard.Wobus"
+    userout="emc.enspara"
+    usergfs="Richard.Wobus"
+    zq_setbase_hh=`date +%H`
+    echo zq_setbase_hh=$zq_setbase_hh
+    zq_setbase_runhigh=no      # default
+    zq_setbase_runhigh=yes
+    if (( zq_setbase_hh > 23 )) || (( zq_setbase_hh < 10 )) ; then
+      zq_setbase_runhigh=no
+      zq_setbase_runhigh=yes   # default
+      zq_setbase_testc=`date +%Y%m%d`
+      zq_setbase_testc=`$NDATE -24`
+      echo zq_setbase_testc=$zq_setbase_testc
+      zq_setbase_testj=`echo ${LSB_JOBNAME}333333333333 | cut -c3-12`
+      echo zq_setbase_testj=$zq_setbase_testj
+      if [[ "$zq_setbase_testj" > "$zq_setbase_testc" ]]; then
+        zq_setbase_runhigh=no  # default
+        zq_setbase_runhigh=yes
+      fi
+    fi
+    echo zq_setbase_runhigh=$zq_setbase_runhigh
+    if [[ "$zq_setbase_runhigh" =  "yes" ]]; then
+      export classs=devhigh_shared
+      export classp=devhigh
+    else
+      export classs=dev_shared
+      export classp=dev
+    fi
+  else
+    userin=$LOGNAME
+    userout=$LOGNAME
+    usergfs="Richard.Wobus"
+    export classs=dev_shared
+    export classp=dev
+  fi
+  # RLW 20141008 modify to obtain and use version for vertical structure
+  . /gpfs/dell2/$group/noscrub/$userin/s/$expid/nw$envir/gefs_legacy.v*/versions/gefs_legacy.ver
+  echo gefs_legacy_ver=${gefs_legacy_ver}
+  export basesource=/gpfs/dell2/$group/noscrub/$userin/s/$expid
+  export basebin=$basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/control
+  export baseoutput=$PTMP/$userout/o/$expid
+  export basetmp=$STMP/$userout/o/$expid
+  export basetmp=$PTMP/$userout/o/$expid
+  export baseptmp=$PTMP/$userout/o/$expid
+  export basedgfs=/$group/noscrub/$usergfs/o
+# RLW 20141010 use NCO parallel/prod for gfs testing
+  export basedgfs=
+  export basedgfs=/gpfs/td1/emc/ensemble/noscrub/$usergfs/o
+  export basewait=$baseoutput/wait
+# For DELL end
 fi  
 
 fi

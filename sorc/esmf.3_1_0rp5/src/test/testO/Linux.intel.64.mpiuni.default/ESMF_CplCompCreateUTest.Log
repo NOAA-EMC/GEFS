@@ -1,0 +1,7 @@
+20190610 112241.132813 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112241.133088 INFO     PET0  Beginning Test, file ESMF_CplCompCreateUTest.F90, line          70
+20190610 112241.133105 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112241.133209 INFO     PET0  PASS  Creating a Coupler Component Test, ESMF_CplCompCreateUTest.F90, line          81
+20190610 112241.133224 INFO     PET0  PASS  Destroying a Component Test, ESMF_CplCompCreateUTest.F90, line          93
+20190610 112241.133238 INFO     PET0  Number of failed tests:           0
+20190610 112241.133243 INFO     PET0  Ending Test, file ESMF_CplCompCreateUTest.F90, line         310

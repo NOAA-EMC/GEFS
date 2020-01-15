@@ -1,0 +1,6 @@
+20190610 112232.764765 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112232.765030 INFO     PET0  Beginning Test, file ESMF_TimeIntervalUTest.F90, line          83
+20190610 112232.765049 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112232.765195 INFO     PET0  PASS  Gregorian Calendar Interval increment 1/29/2004 by mm=1 Test, ESMF_TimeIntervalUTest.F90, line         115
+20190610 112232.765211 INFO     PET0  Number of failed tests:           0
+20190610 112232.765230 INFO     PET0  Ending Test, file ESMF_TimeIntervalUTest.F90, line        3403

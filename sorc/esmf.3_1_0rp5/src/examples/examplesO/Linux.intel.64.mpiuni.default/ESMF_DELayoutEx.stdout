@@ -1,0 +1,7 @@
+ I am PET           0  and I am offering service for DE            0
+ I am PET           0 , service offer for DE            0  was accepted.
+ I am PET           0  and I am offering service for DE            1
+ I am PET           0 , service offer for DE            1  was accepted.
+ I am PET           0  and I am offering service for DE            2
+ I am PET           0 , service offer for DE            2  was accepted.
+ PASS: ESMF_DELayoutEx.F90

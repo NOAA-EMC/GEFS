@@ -17,7 +17,8 @@ export PS4='$SECONDS + '
 
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
 export gefsmachine=${gefsmachine:-wcoss}
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+# for dell
+export APRUN=${gefsmpexec:-mpirun}
 
 ###########################################
 # Run gefs_config to get input parameters
@@ -28,7 +29,8 @@ if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
   # RLW 20141008 modify to obtain and use version for vertical structure
   . $basesource/nw$envir/*/versions/gefs_legacy.ver
-  . $basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/parm/gefs_config
+  #. $basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/parm/gefs_config
+  . $basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/parm/gefs_config_dev
 fi
 
 ####################################
@@ -127,7 +129,8 @@ fi
 ####################################
 export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
 export EXECGLOBAL=$HOMEGLOBAL/exec
-export FIXGLOBAL=$HOMEGLOBAL/fix
+#export FIXGLOBAL=$HOMEGLOBAL/fix
+export FIXGLOBAL=${FIXSUBDA:-$HOMEGLOBAL/fix/fix_am}
 export PARMGLOBAL=$HOMEGLOBAL/parm
 export USHGLOBAL=$HOMEGLOBAL/ush
 
@@ -149,6 +152,7 @@ if [[ $envir = dev ]]; then
     export USHGLOBAL=$HOMEgefs/ush
  fi
   export UTILgefs=${UTILgefs:-$HOMEgefs/util}
+  export FIXgefs=$HOMEgefs/fix
 
 else
 
@@ -199,12 +203,13 @@ export utilscript=/nwprod/util/ush
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-ksh $utilscript/setup.sh
+#ksh $utilscript/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $utilscript/setpdy.sh
+#sh $utilscript/setpdy.sh
+setpdy.sh
 
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
@@ -310,7 +315,9 @@ else
     (para)  export sighdrexec=$HOMEgsm/exec/global_sighdr ;;
     (test)  export sighdrexec=$HOMEgsm/exec/global_sighdr ;;
     (zeus)  export sighdrexec=$EXECglobal/global_sighdr ;;
-    (wcoss)  export sighdrexec=$HOMEgsm/exec/global_sighdr ;;
+    #(wcoss)  export sighdrexec=$HOMEgsm/exec/global_sighdr ;;
+    #(wcoss)  export sighdrexec=$basesource/exec/global_sighdr ;;
+    (wcoss)  export sighdrexec=/gpfs/dell1/nco/ops/nwprod/gsm.v12.1.6/exec/global_sighdr ;;
     (local)  case $envir in
                (prod)  export sighdrexec=/nw$envir/exec/global_sighdr ;;
                (para)  export sighdrexec=/nw$envir/exec/global_sighdr ;;
@@ -380,13 +387,13 @@ echo FIXgsm=$FIXgsm
 export CHGRESEXEC_SAVE=$CHGRESEXEC
 export chgresush_save=$chgresush
 export FIXgsm_save=$FIXgsm
-unset CHGRESEXEC
-unset chgresush
-unset FIXgsm
-. /usrx/local/Modules/default/init/ksh
+#unset CHGRESEXEC
+#unset chgresush
+#unset FIXgsm
+#. /usrx/local/Modules/default/init/ksh
 # module use /nwtest2/modulefiles
-  module use /nwprod2/modulefiles
-  module load util_shared/v1.0.5
+#  module use /nwprod2/modulefiles
+#  module load util_shared/v1.0.5
 
   echo before set chgresush
   export FIXgsm=${FIXSUBDA:-$HOMEgsm/fix/fix_am}

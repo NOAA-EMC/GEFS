@@ -1,0 +1,11 @@
+20190610 112230.842745 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112230.843007 INFO     PET0  Beginning Test, file ESMF_InitMacrosUTest.F90, line          78
+20190610 112230.843024 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112230.843036 INFO     PET0  PASS  Testing ESMF_INIT_CHECK_SHALLOW, ESMF_InitMacrosUTest.F90, line          88
+20190610 112230.843053 ERROR    PET0 ESMF_InitMacrosUTest.F90 138 ESMF_InitMacrosUTest Object being used before creation Bad Object
+20190610 112230.843065 INFO     PET0  PASS  Testing undefined object in ESMF_INIT_CHECK_DEEP, ESMF_InitMacrosUTest.F90, line          98
+20190610 112230.844574 INFO     PET0  PASS  Testing created object in ESMF_INIT_CHECK_DEEP, ESMF_InitMacrosUTest.F90, line         107
+20190610 112230.844577 ERROR    PET0 ESMF_InitMacrosUTest.F90 138 ESMF_InitMacrosUTest Object being used after deletion Bad Object
+20190610 112230.844590 INFO     PET0  PASS  Testing deleted object in ESMF_INIT_CHECK_DEEP, ESMF_InitMacrosUTest.F90, line         116
+20190610 112230.844606 INFO     PET0  Number of failed tests:           0
+20190610 112230.844691 INFO     PET0  Ending Test, file ESMF_InitMacrosUTest.F90, line         127

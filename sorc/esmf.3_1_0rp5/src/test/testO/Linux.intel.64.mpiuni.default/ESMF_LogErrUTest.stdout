@@ -1,0 +1,21 @@
+ Starting LogErr Tests
+  Beginning Test, file ESMF_LogErrUTest.F90, line          86
+  NUMBER_OF_PROCESSORS           1
+  PASS  Open Log Test, ESMF_LogErrUTest.F90, line          95
+  rc =            0
+  PASS  Open ESMF_LOG_SINGLE Log Test, ESMF_LogErrUTest.F90, line         105
+  rc =            0
+  PASS  Write to Single Log Test, ESMF_LogErrUTest.F90, line         116
+  rc =            0
+ This ESMF_Log is already open with file 'Single_Log_File'
+  PASS  Open ESMF_LOG_NONE Log of opened file Test, ESMF_LogErrUTest.F90, line  
+        126
+  rc =           -1
+  PASS  Open ESMF_LOG_NONE Log Test, ESMF_LogErrUTest.F90, line         136
+  rc =            0
+  PASS  Use of separate log Test, ESMF_LogErrUTest.F90, line         147
+  rc =            0
+  PASS  Close Log Test, ESMF_LogErrUTest.F90, line         156
+  rc =            0
+  Number of failed tests:           0
+  Ending Test, file ESMF_LogErrUTest.F90, line         520

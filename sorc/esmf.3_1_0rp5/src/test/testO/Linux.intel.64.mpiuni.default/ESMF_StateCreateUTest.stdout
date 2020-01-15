@@ -1,0 +1,31 @@
+  Beginning Test, file ESMF_StateCreateUTest.F90, line          69
+  NUMBER_OF_PROCESSORS           1
+  PASS  Creating an empty State Test, ESMF_StateCreateUTest.F90, line          7
+ 9
+ StatePrint: 
+   State name = Atmosphere Import
+   Import State
+   Number of members:            0
+  PASS  Printing an empty State Test, ESMF_StateCreateUTest.F90, line          8
+ 7
+ testName: 
+ Atmosphere Import                                                              
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                     
+  PASS  Getting name from an empty State Test, ESMF_StateCreateUTest.F90, line  
+         96
+  PASS  Destroying an empty State Test, ESMF_StateCreateUTest.F90, line         
+ 104
+  Number of failed tests:           0
+  Ending Test, file ESMF_StateCreateUTest.F90, line         385
+   Number of Attributes: 0

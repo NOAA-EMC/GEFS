@@ -1,0 +1,13 @@
+20190610 112230.660157 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112230.660413 INFO     PET0  Beginning Test, file ESMF_FortranWordsizeUTest.F90, line          76
+20190610 112230.660431 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112230.660465 INFO     PET0  PASS  Getting size of default integer, ESMF_FortranWordsizeUTest.F90, line          86
+20190610 112230.663382 INFO     PET0  PASS  Getting size of ESMF_KIND_I1 integer, ESMF_FortranWordsizeUTest.F90, line          96
+20190610 112230.663401 INFO     PET0  PASS  Getting size of ESMF_KIND_I2 integer, ESMF_FortranWordsizeUTest.F90, line         109
+20190610 112230.663414 INFO     PET0  PASS  Getting size of ESMF_KIND_I4 integer, ESMF_FortranWordsizeUTest.F90, line         122
+20190610 112230.663427 INFO     PET0  PASS  Getting size of ESMF_KIND_I8 integer, ESMF_FortranWordsizeUTest.F90, line         131
+20190610 112230.663440 INFO     PET0  PASS  Getting size of default real, ESMF_FortranWordsizeUTest.F90, line         141
+20190610 112230.663453 INFO     PET0  PASS  Getting size of ESMF_KIND_R4 real, ESMF_FortranWordsizeUTest.F90, line         150
+20190610 112230.663540 INFO     PET0  PASS  Getting size of ESMF_KIND_R8 real, ESMF_FortranWordsizeUTest.F90, line         159
+20190610 112230.663557 INFO     PET0  Number of failed tests:           0
+20190610 112230.663564 INFO     PET0  Ending Test, file ESMF_FortranWordsizeUTest.F90, line         161

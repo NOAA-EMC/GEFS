@@ -1,0 +1,30 @@
+ This PET is localPet:            0
+ of a total of            1  PETs in this VM.
+ There are            1  PEs referenced by this VM
+ This PET is executing in virtual address space (VAS)            0
+ located on single system image (SSI)            0
+ and is associated with            1  PEs.
+ PASS: ESMF_VMDefaultBasicsEx.F90
+--- ESMCI::VM::print() start ---
+ESMCI::VMIdPrint:
+vmID located at: 0x76d9c0
+  vmKey=0x80000000
+  localID: 0
+--- VMK::print() start ---
+vm located at: 0x1e4d060
+npets = 1, mypet=0
+  pth_mutex =		 0x1e74860
+  pth_finish_count =	 (nil)
+MPI_Group_size: 1
+MPI_Comm_size: 1
+MPI_Comm_rank in local MPI communicator: 0
+MPI_Comm_rank in MPI_COMM_WORLD: 0
+MPI thread level support: 0
+mpi_mutex_flag: 1
+mpionly: 0
+nothreadsflag: 1
+  lpid[0]=0, tid[0]=0, vas[0]=0, ncpet[0]=1, cid[0][0]=0
+ncores = 1
+  cpuid[0]=0, ssiid[0]=0
+--- VMK::print() end ---
+--- ESMCI::VM::print() end ---

@@ -1,0 +1,74 @@
+ *** hi from mygcomp_register ***
+ *** hi from mygcomp_init ***
+ *** hi from mygcomp_run ***
+ *** hi from mygcomp_final ***
+ PASS: ESMF_VMComponentEx.F90
+--- ESMCI::VM::print() start ---
+ESMCI::VMIdPrint:
+vmID located at: 0xb38cf0
+  vmKey=0x80000000
+  localID: 1
+--- VMK::print() start ---
+vm located at: 0x190a400
+npets = 1, mypet=0
+  pth_mutex =		 0x190d280
+  pth_finish_count =	 0x190d230
+MPI_Group_size: 1
+MPI_Comm_size: 1
+MPI_Comm_rank in local MPI communicator: 0
+MPI_Comm_rank in MPI_COMM_WORLD: 0
+MPI thread level support: 0
+mpi_mutex_flag: 1
+mpionly: 0
+nothreadsflag: 1
+  lpid[0]=0, tid[0]=0, vas[0]=0, ncpet[0]=1, cid[0][0]=0
+ncores = 1
+  cpuid[0]=0, ssiid[0]=0
+--- VMK::print() end ---
+--- ESMCI::VM::print() end ---
+--- ESMCI::VM::print() start ---
+ESMCI::VMIdPrint:
+vmID located at: 0xb38cf0
+  vmKey=0x80000000
+  localID: 1
+--- VMK::print() start ---
+vm located at: 0x190a400
+npets = 1, mypet=0
+  pth_mutex =		 0x190d280
+  pth_finish_count =	 0x190d230
+MPI_Group_size: 1
+MPI_Comm_size: 1
+MPI_Comm_rank in local MPI communicator: 0
+MPI_Comm_rank in MPI_COMM_WORLD: 0
+MPI thread level support: 0
+mpi_mutex_flag: 1
+mpionly: 0
+nothreadsflag: 1
+  lpid[0]=0, tid[0]=0, vas[0]=0, ncpet[0]=1, cid[0][0]=0
+ncores = 1
+  cpuid[0]=0, ssiid[0]=0
+--- VMK::print() end ---
+--- ESMCI::VM::print() end ---
+--- ESMCI::VM::print() start ---
+ESMCI::VMIdPrint:
+vmID located at: 0xb38cf0
+  vmKey=0x80000000
+  localID: 1
+--- VMK::print() start ---
+vm located at: 0x190a400
+npets = 1, mypet=0
+  pth_mutex =		 0x190d280
+  pth_finish_count =	 0x190d230
+MPI_Group_size: 1
+MPI_Comm_size: 1
+MPI_Comm_rank in local MPI communicator: 0
+MPI_Comm_rank in MPI_COMM_WORLD: 0
+MPI thread level support: 0
+mpi_mutex_flag: 1
+mpionly: 0
+nothreadsflag: 1
+  lpid[0]=0, tid[0]=0, vas[0]=0, ncpet[0]=1, cid[0][0]=0
+ncores = 1
+  cpuid[0]=0, ssiid[0]=0
+--- VMK::print() end ---
+--- ESMCI::VM::print() end ---

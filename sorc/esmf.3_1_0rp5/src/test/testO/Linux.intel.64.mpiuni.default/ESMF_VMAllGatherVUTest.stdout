@@ -1,0 +1,25 @@
+  Beginning Test, file ESMF_VMAllGatherVUTest.F90, line          69
+  NUMBER_OF_PROCESSORS           1
+  PASS  AllGatherV Integer Test, ESMF_VMAllGatherVUTest.F90, line         143
+  PASS  Verifying array1 integer data after allgatherv Test, ESMF_VMAllGatherVUT
+ est.F90, line         154
+ contents after allgather (should be /1,1,2,1,2,3,1,2,3,4/)
+           0  array1:            1
+  PASS  AllGatherV 4-Byte Integer Test, ESMF_VMAllGatherVUTest.F90, line        
+  172
+  PASS  Verifying i4array1 4 byte integer data after allgatherv Test, ESMF_VMAll
+ GatherVUTest.F90, line         183
+ contents after allgather (should be /1,1,2,1,2,3,1,2,3,4/)
+           0  i4array1:    1.000000    
+  PASS  AllGatherV R8 Test, ESMF_VMAllGatherVUTest.F90, line         201
+  PASS  Verifying farray1 R8 data after allgatherv Test, ESMF_VMAllGatherVUTest.
+ F90, line         212
+ contents after allgather (should be /1,3,4,5,6,7,7,8,9,10/)
+           0  farray1:    1.00000000000000     
+  PASS  AllGatherV R4 Test, ESMF_VMAllGatherVUTest.F90, line         231
+  PASS  Verifying f4array1 R4 data after allgatherv Test, ESMF_VMAllGatherVUTest
+ .F90, line         242
+ contents after allgather (should be /1,3,4,5,6,7,7,8,9,10/)
+           0  f4array1:    1.000000    
+  Number of failed tests:           0
+  Ending Test, file ESMF_VMAllGatherVUTest.F90, line         249

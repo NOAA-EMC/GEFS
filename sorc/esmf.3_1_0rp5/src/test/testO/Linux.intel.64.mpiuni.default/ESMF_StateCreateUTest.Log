@@ -1,0 +1,9 @@
+20190610 112240.449147 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112240.449433 INFO     PET0  Beginning Test, file ESMF_StateCreateUTest.F90, line          69
+20190610 112240.449450 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112240.449534 INFO     PET0  PASS  Creating an empty State Test, ESMF_StateCreateUTest.F90, line          79
+20190610 112240.449602 INFO     PET0  PASS  Printing an empty State Test, ESMF_StateCreateUTest.F90, line          87
+20190610 112240.451799 INFO     PET0  PASS  Getting name from an empty State Test, ESMF_StateCreateUTest.F90, line          96
+20190610 112240.451814 INFO     PET0  PASS  Destroying an empty State Test, ESMF_StateCreateUTest.F90, line         104
+20190610 112240.451831 INFO     PET0  Number of failed tests:           0
+20190610 112240.451837 INFO     PET0  Ending Test, file ESMF_StateCreateUTest.F90, line         385

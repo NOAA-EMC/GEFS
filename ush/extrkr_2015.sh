@@ -1,4 +1,5 @@
 #!/bin/ksh
+echo "entering extrkr_2015.sh"
 
 loopnum=$1
 cmodel=$2
@@ -165,9 +166,11 @@ export archsyndir=${archsyndir:-/com/arch/prod/syndat}
 cp /com/date/t${CYL}z ncepdate
 export CENT=` cut -c7-8 ncepdate `
 
-if [ -s /nwprod/util/exec/wgrib2 ]
+#if [ -s /nwprod/util/exec/wgrib2 ]
+if [ -s $WGRIB2 ]
 then
-  wgrib2=/nwprod/util/exec/wgrib2
+  #wgrib2=/nwprod/util/exec/wgrib2
+  wgrib2=$WGRIB2
 else
   set +x
   echo " "
@@ -1585,3 +1588,4 @@ else
   err_exit " FAILED ${jobid} - ERROR RUNNING GETTRK IN TRACKER SCRIPT- ABNORMAL EXIT"
 
 fi
+echo "leaving extrkr_2015.sh"

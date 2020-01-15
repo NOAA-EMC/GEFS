@@ -1,0 +1,6 @@
+ data array1:
+           0  array1:            1
+           0  array1:            2
+ Global sum:
+           0  result:            3
+ PASS: ESMF_VMAllFullReduceEx.F90

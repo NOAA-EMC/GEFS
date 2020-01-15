@@ -1,0 +1,14 @@
+20190610 112234.174490 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112234.174740 INFO     PET0  Beginning Test, file ESMF_VMAllToAllVUTest.F90, line          69
+20190610 112234.174757 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112234.174802 INFO     PET0  PASS  AllToAllV Test iarray1 -> iarray2, ESMF_VMAllToAllVUTest.F90, line         122
+20190610 112234.174812 INFO     PET0  PASS  AllToAllV Test iarray2 -> iarray3, ESMF_VMAllToAllVUTest.F90, line         131
+20190610 112234.177684 INFO     PET0  PASS  Verify iarray3 data against iarray1 after alltoallv, ESMF_VMAllToAllVUTest.F90, line         145
+20190610 112234.177702 INFO     PET0  PASS  AllToAllV Test f4array1 -> f4array2, ESMF_VMAllToAllVUTest.F90, line         157
+20190610 112234.177711 INFO     PET0  PASS  AllToAllV Test f4array2 -> f4array3, ESMF_VMAllToAllVUTest.F90, line         166
+20190610 112234.177720 INFO     PET0  PASS  Verify f4array3 data against f4array1 after alltoallv, ESMF_VMAllToAllVUTest.F90, line         180
+20190610 112234.177729 INFO     PET0  PASS  AllToAllV Test f8array1 -> f8array2, ESMF_VMAllToAllVUTest.F90, line         192
+20190610 112234.177810 INFO     PET0  PASS  AllToAllV Test f8array2 -> f8array3, ESMF_VMAllToAllVUTest.F90, line         201
+20190610 112234.177821 INFO     PET0  PASS  Verify f8array3 data against f8array1 after alltoallv, ESMF_VMAllToAllVUTest.F90, line         215
+20190610 112234.177836 INFO     PET0  Number of failed tests:           0
+20190610 112234.177842 INFO     PET0  Ending Test, file ESMF_VMAllToAllVUTest.F90, line         218

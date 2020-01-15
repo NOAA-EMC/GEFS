@@ -1,0 +1,13 @@
+20190610 112234.082746 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112234.083010 INFO     PET0  Beginning Test, file ESMF_VMBroadcastUTest.F90, line          74
+20190610 112234.083028 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112234.083063 INFO     PET0  PASS  Broadcasting  data Test, ESMF_VMBroadcastUTest.F90, line         128
+20190610 112234.083080 INFO     PET0  PASS  Verify local data after broadcast Test, ESMF_VMBroadcastUTest.F90, line         141
+20190610 112234.085422 INFO     PET0  PASS  Broadcasting local data Test, ESMF_VMBroadcastUTest.F90, line         152
+20190610 112234.085497 INFO     PET0  PASS  Verify local data after Broadcast Test, ESMF_VMBroadcastUTest.F90, line         168
+20190610 112234.085527 INFO     PET0  PASS  Broadcasting local data Test, ESMF_VMBroadcastUTest.F90, line         179
+20190610 112234.085585 INFO     PET0  PASS  Verify local data after Broadcast Test, ESMF_VMBroadcastUTest.F90, line         193
+20190610 112234.085596 INFO     PET0  PASS  Broadcasting local data Test, ESMF_VMBroadcastUTest.F90, line         204
+20190610 112234.085684 INFO     PET0  PASS  Verify local data after broadcast Test, ESMF_VMBroadcastUTest.F90, line         224
+20190610 112234.085699 INFO     PET0  Number of failed tests:           0
+20190610 112234.085706 INFO     PET0  Ending Test, file ESMF_VMBroadcastUTest.F90, line         226

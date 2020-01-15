@@ -1,0 +1,7 @@
+20190610 112239.886639 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112239.886902 INFO     PET0  Beginning Test, file ESMF_FieldBundleUTest.F90, line          74
+20190610 112239.886920 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112239.886978 INFO     PET0  PASS  Creating Empty FieldBundle Test, ESMF_FieldBundleUTest.F90, line          81
+20190610 112239.886997 INFO     PET0  PASS  FieldBundle Destroy Test, ESMF_FieldBundleUTest.F90, line          92
+20190610 112239.887012 INFO     PET0  Number of failed tests:           0
+20190610 112239.887018 INFO     PET0  Ending Test, file ESMF_FieldBundleUTest.F90, line         717

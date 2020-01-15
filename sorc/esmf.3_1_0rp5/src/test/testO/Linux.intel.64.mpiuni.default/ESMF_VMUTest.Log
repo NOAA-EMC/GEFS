@@ -1,0 +1,13 @@
+20190610 112233.241961 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112233.242215 INFO     PET0  Beginning Test, file ESMF_VMUTest.F90, line         979
+20190610 112233.242232 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112233.242253 ERROR    PET0 ESMF_VM.F90 2788 ESMF_VMGet() Object being used before creation Bad Object
+20190610 112233.242274 INFO     PET0  PASS  VM Get before initialization Test, ESMF_VMUTest.F90, line         987
+20190610 112233.242285 ERROR    PET0 ESMF_VM.F90 5168 ESMF_VMValidate() Object being used before creation Bad Object
+20190610 112233.242292 INFO     PET0  PASS  VM validate Test before valid VM, ESMF_VMUTest.F90, line         994
+20190610 112233.242299 INFO     PET0  PASS  VM Get Global Test, ESMF_VMUTest.F90, line        1001
+20190610 112233.242305 INFO     PET0  PASS  VM Get Test, ESMF_VMUTest.F90, line        1008
+20190610 112233.245180 INFO     PET0  PASS  VM print Test, ESMF_VMUTest.F90, line        1015
+20190610 112233.245263 INFO     PET0  PASS  VM validate Test, ESMF_VMUTest.F90, line        1022
+20190610 112233.245280 INFO     PET0  Number of failed tests:           0
+20190610 112233.245286 INFO     PET0  Ending Test, file ESMF_VMUTest.F90, line        1093

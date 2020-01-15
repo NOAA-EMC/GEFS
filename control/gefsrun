@@ -9,7 +9,6 @@ echo
 echo `date` $0 $*                                                         check arguments
 echo
 
-PTMP=/ptmpd2
 goodargs=yes
 nextflag=no
 tseqflag=no
@@ -19,6 +18,7 @@ testflag=yes
 testflag=no
 joblistflag=no
 whenrun=neither
+NDATE=${NDATE:-/gpfs/dell1/nco/ops/nwprod/prod_util.v1.1.1/exec/ips/ndate}
 # special section for testing only
 if (( 0 == 0 )); then
   echo
@@ -205,6 +205,8 @@ echo expid=$expid id=$id
    (f) gefsmachine=zeus ;;
    (t) gefsmachine=wcoss ;;
    (g) gefsmachine=wcoss ;;
+   (v) gefsmachine=dell ;;
+   (m) gefsmachine=dell ;;
   esac 
   if [[ $machl = r ]]; then                       
        machl=f
@@ -213,7 +215,22 @@ echo expid=$expid id=$id
    (ccs) gefsmpexec= ;;
    (zeus) gefsmpexec="mpiexec_mpt -np \$total_tasks" ;;
    (wcoss) gefsmpexec="mpirun.lsf" ;;
+   (dell) gefsmpexec="mpirun" ;;
   esac
+
+case $gefsmachine in
+  (dell)
+    PTMP=/gpfs/dell3/ptmp
+    STMP=/gpfs/dell3/ptmp
+    COREPERNODE=28
+  ;;
+  (*)
+    PTMP=/ptmpd2
+    STMP=/ptmpd2
+    COREPERNODE=16 
+  ;;
+esac
+
 
 export gefsmachine
 echo gefsmachine=$gefsmachine
@@ -317,6 +334,8 @@ echo baseoutput=$baseoutput
 echo baseinitarch=$baseinitarch
 echo basetmp=$basetmp
 
+if [[ $gefsmachine = wcoss ]]; then
+
 jobdir=$basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/jobs
 echo jobdir=$jobdir
 
@@ -325,6 +344,21 @@ echo controldir=$controldir
 
 parmdir=$basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/parm
 echo parmdir=$parmdir
+
+fi
+
+if [[ $gefsmachine = dell ]]; then
+
+jobdir=$basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/jobs
+echo jobdir=$jobdir
+
+controldir=$basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/control
+echo controldir=$controldir
+
+parmdir=$basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/parm
+echo parmdir=$parmdir
+
+fi
 
 echo
 echo `date` $0 $*                                                            define parms
@@ -888,7 +922,7 @@ if [[ $nextflag = yes ]]; then
       (900) jjjb=999 ;;
       (999)
 	jjjb=000
-	yyyymmddccb=`ndate +$fhrp $yyyymmddccc`
+	yyyymmddccb=`$NDATE +$fhrp $yyyymmddccc`
       ;;
       (*) 
 	echo
@@ -940,14 +974,14 @@ cyc=`echo $yyyymmddcc | cut -c9-10`
 echo PDY=$PDY "  " cyc=$cyc
 echo `date` $0 create date and time variables
 echo
-PDYp2=`ndate +48 $yyyymmddcc|cut -c1-8`
-PDYp1=`ndate +24 $yyyymmddcc|cut -c1-8`
+PDYp2=`$NDATE +48 $yyyymmddcc|cut -c1-8`
+PDYp1=`$NDATE +24 $yyyymmddcc|cut -c1-8`
 PDY=$yyyymmdd
-PDYm1=`ndate -24 $yyyymmddcc|cut -c1-8`
-PDYm2=`ndate -48 $yyyymmddcc|cut -c1-8`
-PDYm3=`ndate -72 $yyyymmddcc|cut -c1-8`
-PDYm4=`ndate -96 $yyyymmddcc|cut -c1-8`
-PDYm5=`ndate -120 $yyyymmddcc|cut -c1-8`
+PDYm1=`$NDATE -24 $yyyymmddcc|cut -c1-8`
+PDYm2=`$NDATE -48 $yyyymmddcc|cut -c1-8`
+PDYm3=`$NDATE -72 $yyyymmddcc|cut -c1-8`
+PDYm4=`$NDATE -96 $yyyymmddcc|cut -c1-8`
+PDYm5=`$NDATE -120 $yyyymmddcc|cut -c1-8`
 
 echo
 echo PDYp2=$PDYp2
@@ -1277,6 +1311,10 @@ wall_clock_limit_fcst_short="00:10"
 wall_clock_limit_fcst_short="00:15"
 wall_clock_limit_fcst_short="00:20"
   fi
+  if [[ $gefsmachine = dell ]]; then                       
+wall_clock_limit_fcst_long="3:30"
+wall_clock_limit_fcst_short="00:40"
+  fi
 
 echo wall_clock_limit_fcst_long=$wall_clock_limit_fcst_long
 echo wall_clock_limit_fcst_short=$wall_clock_limit_fcst_short
@@ -1356,6 +1394,12 @@ case $taskname in
     resources=1650
     MP_SHARED_MEMORY=yes
   fi  
+  if [[ $gefsmachine = dell ]]; then                       
+    wall_clock_limit="00:10"
+    resources=1650
+    MP_SHARED_MEMORY=yes
+    RUN=
+  fi  
   ;;
   (init.separate)
     ################################# production variables
@@ -1398,6 +1442,14 @@ case $taskname in
     task_affinity="core(2)"
     OMP_NUM_THREADS=2
   fi  
+  if [[ $gefsmachine = dell ]]; then                       
+    wall_clock_limit="02:50"
+    total_tasks=40
+    taskspernode=8
+    node=5
+    OMP_NUM_THREADS=2
+    MP_SHARED_MEMORY=no
+  fi  
   ;;
   (init.et)
     ################################# production variables
@@ -1438,6 +1490,14 @@ case $taskname in
     OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=no
   fi  
+  if [[ $gefsmachine = dell ]]; then                       
+    wall_clock_limit="02:50"
+    total_tasks=120
+    taskspernode=5 
+    node=24
+    OMP_NUM_THREADS=1
+    MP_SHARED_MEMORY=no
+  fi  
 
   ;;
   (init.combine)
@@ -1472,6 +1532,14 @@ case $taskname in
   if [[ $gefsmachine = wcoss ]]; then                       
     wall_clock_limit="01:50"
     taskspernode=10
+    OMP_NUM_THREADS=1
+    MP_SHARED_MEMORY=no
+  fi  
+  if [[ $gefsmachine = dell ]]; then                       
+    wall_clock_limit="01:50"
+    total_tasks=40
+    taskspernode=10
+    node=4
     OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=no
   fi  
@@ -1578,7 +1646,22 @@ case $taskname in
      fi  
        parallel_threads=1
        task_affinity="core(1)"
-       (( taskspernode = 16 / parallel_threads ))
+       (( taskspernode = $COREPERNODE / parallel_threads ))
+       export taskspernode=$taskspernode
+       export OMP_NUM_THREADS=$parallel_threads
+       MP_SHARED_MEMORY=no
+  fi
+  if [[ $gefsmachine = dell ]]; then                       
+     if [[ $fcstjoblength = long ]]; then
+#      (( taskspermem = 96 ))
+#      (( taskspermem = 100 ))
+       (( taskspermem = 80 ))
+     else  
+       (( taskspermem = 32 ))
+     fi  
+       parallel_threads=1
+       task_affinity="core(1)"
+       (( taskspernode = $COREPERNODE / parallel_threads ))
        export taskspernode=$taskspernode
        export OMP_NUM_THREADS=$parallel_threads
        MP_SHARED_MEMORY=no
@@ -1683,7 +1766,17 @@ case $taskname in
        (( taskspermem = 32 ))
        parallel_threads=1
        task_affinity="core(1)"
-       (( taskspernode = 16 / parallel_threads ))
+       (( taskspernode = $COREPERNODE / parallel_threads ))
+       export taskspernode=$taskspernode
+       export OMP_NUM_THREADS=$parallel_threads
+       MP_SHARED_MEMORY=no
+  fi
+  if [[ $gefsmachine = dell ]]; then                       
+#      (( taskspermem = 48 ))
+       (( taskspermem = 32 ))
+       parallel_threads=1
+       task_affinity="core(1)"
+       (( taskspernode = $COREPERNODE / parallel_threads ))
        export taskspernode=$taskspernode
        export OMP_NUM_THREADS=$parallel_threads
        MP_SHARED_MEMORY=no
@@ -2551,11 +2644,20 @@ else
     plcomgfs=$basedgfs/com2/gfs/para/gfs.$PDY
     clcomgfs=/com2/gfs/para/gfs.$PDY
     clcomgfs=/gpfs/hps/nco/ops/com/gfs/prod/gfs.$PDY
+    clcomgfs=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.$PDY
+    clcomgfs=/gpfs/td1/emc/noscrub/Richard.Wobus/o/com/gfs/prod/gfs.$PDY
   else
     plcomgfs=$basedgfs/com2/gfs/prod/gfs.$PDY
     clcomgfs=/com2/gfs/prod/gfs.$PDY
     clcomgfs=/gpfs/hps/nco/ops/com/gfs/prod/gfs.$PDY
+    clcomgfs=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.$PDY
+    clcomgfs=/gpfs/td1/emc/noscrub/Richard.Wobus/o/com/gfs/prod/gfs.$PDY
   fi
+  # RLW 20180907 for parallel gfs testing with FV3
+  plcomgfs=$basedgfs/com/gfs/para/gfs.$PDY/$cyc
+  # RLW 20190613 for parallel gfs testing with FV3
+  plcomgfs=$basedgfs/com/gfs/prod/gfs.$PDY/$cyc
+
 # d="$d $plcomgfs"
 #DHOU 01/28/2013, remove this temporally 
   plcomgens=$baseoutput/com/$NET/$envir/gefs_legacy.$PDY
@@ -2938,7 +3040,7 @@ else
     if [[ $during_previous_job = no ]]; then
       jobtest1=$id$PDY$cyc
 #DH   pdycycprev=`/nwprod/util/exec/ndate -$fhrp $PDY$cyc`
-      pdycycprev=`ndate -$fhrp $PDY$cyc`
+      pdycycprev=`$NDATE -$fhrp $PDY$cyc`
       jobtest2=$id$pdycycprev
       echo jobtest1=$jobtest1 pdycycprev=$pdycycprev jobtest2=$jobtest2 miwait=$miwait waitflag=$waitflag before
       numcurrent=`echo "$llqstring" | grep -c -e $jobtest1 -e $jobtest2`
@@ -2989,7 +3091,7 @@ else
     (( mi = mi + miwait ))
     while (( mi > 59 ))
     do
-      yyyymmddhh=`ndate +1 $yyyymmddhh`
+      yyyymmddhh=`$NDATE +1 $yyyymmddhh`
       (( mi = mi - 60 ))
     done
     if (( mi < 10 )); then

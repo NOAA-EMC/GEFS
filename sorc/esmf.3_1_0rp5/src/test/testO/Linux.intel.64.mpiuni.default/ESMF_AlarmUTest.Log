@@ -1,0 +1,12 @@
+20190610 112232.400494 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112232.400781 INFO     PET0  Beginning Test, file ESMF_AlarmUTest.F90, line          83
+20190610 112232.400799 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112232.400880 INFO     PET0  PASS  Set Time Interval Initialization Test, ESMF_AlarmUTest.F90, line         118
+20190610 112232.400925 INFO     PET0  PASS  Set Start Time Initialization Test, ESMF_AlarmUTest.F90, line         130
+20190610 112232.400933 INFO     PET0  PASS  Stop Time Initialization Test, ESMF_AlarmUTest.F90, line         140
+20190610 112232.403461 INFO     PET0  PASS  Alarm Time Initialization Test, ESMF_AlarmUTest.F90, line         149
+20190610 112232.403605 INFO     PET0  PASS  Clock Initialization Test, ESMF_AlarmUTest.F90, line         159
+20190610 112232.403653 INFO     PET0  PASS  Create Alarm Test, ESMF_AlarmUTest.F90, line         168
+20190610 112232.403672 INFO     PET0  PASS  Destroy Alarm Test, ESMF_AlarmUTest.F90, line         175
+20190610 112232.403748 INFO     PET0  Number of failed tests:           0
+20190610 112232.403755 INFO     PET0  Ending Test, file ESMF_AlarmUTest.F90, line        2908

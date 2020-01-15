@@ -1,0 +1,28 @@
+  Beginning Test, file ESMF_FortranWordsizeUTest.F90, line          76
+  NUMBER_OF_PROCESSORS           1
+ Size of default integer:            4  bytes
+  PASS  Getting size of default integer, ESMF_FortranWordsizeUTest.F90, line    
+       86
+ Size of ESMF_KIND_I1 integer:            1  bytes
+  PASS  Getting size of ESMF_KIND_I1 integer, ESMF_FortranWordsizeUTest.F90, lin
+ e          96
+ Size of ESMF_KIND_I2 integer:            2  bytes
+  PASS  Getting size of ESMF_KIND_I2 integer, ESMF_FortranWordsizeUTest.F90, lin
+ e         109
+ Size of ESMF_KIND_I4 integer:            4  bytes
+  PASS  Getting size of ESMF_KIND_I4 integer, ESMF_FortranWordsizeUTest.F90, lin
+ e         122
+ Size of ESMF_KIND_I8 integer:            8  bytes
+  PASS  Getting size of ESMF_KIND_I8 integer, ESMF_FortranWordsizeUTest.F90, lin
+ e         131
+ Size of default real:            4  bytes
+  PASS  Getting size of default real, ESMF_FortranWordsizeUTest.F90, line       
+   141
+ Size of ESMF_KIND_R4 real:            4  bytes
+  PASS  Getting size of ESMF_KIND_R4 real, ESMF_FortranWordsizeUTest.F90, line  
+        150
+ Size of ESMF_KIND_R8 real:            8  bytes
+  PASS  Getting size of ESMF_KIND_R8 real, ESMF_FortranWordsizeUTest.F90, line  
+        159
+  Number of failed tests:           0
+  Ending Test, file ESMF_FortranWordsizeUTest.F90, line         161

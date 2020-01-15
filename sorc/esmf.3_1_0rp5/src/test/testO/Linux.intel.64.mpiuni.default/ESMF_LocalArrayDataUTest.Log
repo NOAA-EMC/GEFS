@@ -1,0 +1,53 @@
+20190610 112237.038399 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112237.038674 INFO     PET0  Beginning Test, file ESMF_LocalArrayDataUTest.F90, line          75
+20190610 112237.038693 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112237.038792 INFO     PET0  PASS  Creating a LocalArray from an allocated F90 array pointer, ESMF_LocalArrayDataUTest.F90, line          90
+20190610 112237.038853 INFO     PET0  PASS  Printing LocalArray created from allocated F90 array pointer, ESMF_LocalArrayDataUTest.F90, line          98
+20190610 112237.042112 INFO     PET0  PASS  Obtaining access to data in LocalArray via F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         106
+20190610 112237.042128 INFO     PET0  PASS  Verifying data in LocalArray via F90 array pointer access, ESMF_LocalArrayDataUTest.F90, line         117
+20190610 112237.042153 INFO     PET0  PASS  Obtaining access to data in LocalArray via F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         132
+20190610 112237.042164 INFO     PET0  PASS  Verifying that original data was not overridden by copy, ESMF_LocalArrayDataUTest.F90, line         143
+20190610 112237.042173 INFO     PET0  PASS  Verifying data in LocalArray via F90 array pointer access, ESMF_LocalArrayDataUTest.F90, line         154
+20190610 112237.042291 INFO     PET0  PASS  Destroying LocalArray created from an allocated F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         163
+20190610 112237.042307 INFO     PET0  PASS  Creating a LocalArray from an allocated F90 Pointer within derived type, ESMF_LocalArrayDataUTest.F90, line         186
+20190610 112237.042322 INFO     PET0  PASS  Printing LocalArray created from an allocated F90 Pointer within derived type, ESMF_LocalArrayDataUTest.F90, line         195
+20190610 112237.042333 INFO     PET0  PASS  Obtaining access to data in LocalArray via F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         203
+20190610 112237.042343 INFO     PET0  PASS  Verifying data in LocalArray via F90 array pointer access, ESMF_LocalArrayDataUTest.F90, line         214
+20190610 112237.042352 INFO     PET0  PASS  Obtaining access to data in LocalArray via F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         229
+20190610 112237.042372 INFO     PET0  PASS  Verifying data in LocalArray via F90 array pointer access, ESMF_LocalArrayDataUTest.F90, line         240
+20190610 112237.042382 INFO     PET0  PASS  Verifying that original data was overridden by reference, ESMF_LocalArrayDataUTest.F90, line         251
+20190610 112237.042393 INFO     PET0  PASS  Destroying LocalArray created from an allocated F90 Pointer within derived type, ESMF_LocalArrayDataUTest.F90, line         260
+20190610 112237.042430 INFO     PET0  PASS  Creating a LocalArray from an allocated F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         284
+20190610 112237.042467 INFO     PET0  PASS  Printing LocalArray created from allocated F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         292
+20190610 112237.042488 INFO     PET0  PASS  Obtaining access to data in LocalArray via F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         300
+20190610 112237.042514 INFO     PET0  PASS  Verifying data in LocalArray via F90 array pointer access, ESMF_LocalArrayDataUTest.F90, line         313
+20190610 112237.042525 INFO     PET0  PASS  Obtaining access to data in LocalArray via F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         330
+20190610 112237.042535 INFO     PET0  PASS  Verifying data in LocalArray via F90 array pointer access, ESMF_LocalArrayDataUTest.F90, line         343
+20190610 112237.042554 INFO     PET0  PASS  Verifying that original data was overridden by reference, ESMF_LocalArrayDataUTest.F90, line         356
+20190610 112237.042565 INFO     PET0  PASS  Destroying LocalArray created from an allocated F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         365
+20190610 112237.042596 INFO     PET0  PASS  Creating a LocalArray from an allocated F90 array pointer slice (:,:), ESMF_LocalArrayDataUTest.F90, line         395
+20190610 112237.042615 INFO     PET0  PASS  Printing LocalArray created from allocated F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         403
+20190610 112237.042625 INFO     PET0  PASS  Obtaining access to data in LocalArray via F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         411
+20190610 112237.042652 INFO     PET0  PASS  Verifying data in LocalArray via F90 array pointer access, ESMF_LocalArrayDataUTest.F90, line         424
+20190610 112237.042674 INFO     PET0  PASS  Obtaining access to data in LocalArray via F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         441
+20190610 112237.042689 INFO     PET0  PASS  Verifying data in LocalArray via F90 array pointer access, ESMF_LocalArrayDataUTest.F90, line         454
+20190610 112237.042703 INFO     PET0  PASS  Verifying that original data was overridden by reference, ESMF_LocalArrayDataUTest.F90, line         467
+20190610 112237.042713 INFO     PET0  PASS  Destroying LocalArray created from an allocated F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         476
+20190610 112237.042725 INFO     PET0  PASS  Creating a LocalArray from an allocated F90 array pointer slice (:,:), ESMF_LocalArrayDataUTest.F90, line         490
+20190610 112237.042743 INFO     PET0  PASS  Printing LocalArray created from allocated F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         498
+20190610 112237.042753 INFO     PET0  PASS  Obtaining access to data in LocalArray via F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         506
+20190610 112237.042763 INFO     PET0  PASS  Verifying data in LocalArray via F90 array pointer access, ESMF_LocalArrayDataUTest.F90, line         519
+20190610 112237.042772 INFO     PET0  PASS  Obtaining access to data in LocalArray via F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         536
+20190610 112237.042804 INFO     PET0  PASS  Verifying data in LocalArray via F90 array pointer access, ESMF_LocalArrayDataUTest.F90, line         549
+20190610 112237.042815 INFO     PET0  PASS  Verifying that original data was overridden by reference, ESMF_LocalArrayDataUTest.F90, line         562
+20190610 112237.042825 INFO     PET0  PASS  Destroying LocalArray created from an allocated F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         571
+20190610 112237.042836 INFO     PET0  PASS  Creating a LocalArray from an allocated F90 array pointer slice (:,:), ESMF_LocalArrayDataUTest.F90, line         584
+20190610 112237.042854 INFO     PET0  PASS  Printing LocalArray created from allocated F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         592
+20190610 112237.042864 INFO     PET0  PASS  Obtaining access to data in LocalArray via F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         600
+20190610 112237.042874 INFO     PET0  PASS  Verifying data in LocalArray via F90 array pointer access, ESMF_LocalArrayDataUTest.F90, line         613
+20190610 112237.042884 INFO     PET0  PASS  Obtaining access to data in LocalArray via F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         630
+20190610 112237.042895 INFO     PET0  PASS  Verifying data in LocalArray via F90 array pointer access, ESMF_LocalArrayDataUTest.F90, line         643
+20190610 112237.042915 INFO     PET0  PASS  Verifying that original data was overridden by reference, ESMF_LocalArrayDataUTest.F90, line         656
+20190610 112237.043000 INFO     PET0  PASS  Destroying LocalArray created from an allocated F90 array pointer, ESMF_LocalArrayDataUTest.F90, line         665
+20190610 112237.043019 INFO     PET0  Number of failed tests:           0
+20190610 112237.043026 INFO     PET0  Ending Test, file ESMF_LocalArrayDataUTest.F90, line         672

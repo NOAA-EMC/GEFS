@@ -1,0 +1,59 @@
+20190610 112239.008884 INFO     PET0 Running with ESMF Version 3.1.0rp5
+20190610 112239.009159 INFO     PET0  Beginning Test, file ESMF_GridCreateUTest.F90, line          79
+20190610 112239.009176 INFO     PET0  NUMBER_OF_PROCESSORS           1
+20190610 112239.009304 ERROR    PET0 ESMF_Grid.F90 9438 ESMF_GridValidate() Object being used before creation Bad Object
+20190610 112239.009424 INFO     PET0  PASS  Testing Grid Validate, ESMF_GridCreateUTest.F90, line         119
+20190610 112239.009466 INFO     PET0  PASS  Testing Grid Match, ESMF_GridCreateUTest.F90, line         168
+20190610 112239.009486 INFO     PET0  PASS  Creating a Grid with only a distgrid and the rest defaults, ESMF_GridCreateUTest.F90, line         204
+20190610 112239.012379 INFO     PET0  PASS  Destroying a Grid, ESMF_GridCreateUTest.F90, line         212
+20190610 112239.012412 INFO     PET0  PASS  Creating a Grid with a non-default name, ESMF_GridCreateUTest.F90, line         239
+20190610 112239.012428 INFO     PET0  PASS  Creating a Grid with non-default coordTypeKind, ESMF_GridCreateUTest.F90, line         263
+20190610 112239.012529 INFO     PET0  PASS  Creating a Grid with non-default coordDimCount, ESMF_GridCreateUTest.F90, line         289
+20190610 112239.012548 INFO     PET0  PASS  Creating a Grid with non-default coordDimMap, ESMF_GridCreateUTest.F90, line         319
+20190610 112239.012565 INFO     PET0  PASS  Creating a Grid with non-default distgridToGridMap, ESMF_GridCreateUTest.F90, line         344
+20190610 112239.012594 INFO     PET0  PASS  Creating a Grid with non-default indexflag, ESMF_GridCreateUTest.F90, line         370
+20190610 112239.012613 INFO     PET0  PASS  Creating a Grid with non-default EdgeWidths and Aligns, ESMF_GridCreateUTest.F90, line         399
+20190610 112239.012802 INFO     PET0  PASS  Creating a 2D distributed Grid with CreateShapeTileIrreg, ESMF_GridCreateUTest.F90, line         431
+20190610 112239.012870 INFO     PET0  PASS  Creating a 3D distributed Grid with CreateShapeTileIrreg, ESMF_GridCreateUTest.F90, line         462
+20190610 112239.012903 INFO     PET0  PASS  Creating a 1 DE 3D  Grid with CreateShapeTileIrreg, ESMF_GridCreateUTest.F90, line         493
+20190610 112239.012917 ERROR    PET0 ESMF_Grid.F90 6715 ESMF_GridGetStatus Object being used after deletion Bad Object
+20190610 112239.013040 INFO     PET0  PASS  Test GetGridStatus, ESMF_GridCreateUTest.F90, line         529
+20190610 112239.013094 INFO     PET0  PASS  Creating a 1 DE 3D  Grid with SetCommitShapeTileIrreg, ESMF_GridCreateUTest.F90, line         564
+20190610 112239.013137 INFO     PET0  PASS  Creating a 2D distributed Grid with 1 non-distributed dim. with CreateShapeTileIrreg, ESMF_GridCreateUTest.F90, line         596
+20190610 112239.013173 INFO     PET0  PASS  Creating a Grid with non-default coordDeps, ESMF_GridCreateUTest.F90, line         636
+20190610 112239.013218 INFO     PET0  PASS  Creating a 2D distributed Grid with 1 undistributed dim. with CreateShapeTileIrreg and no-default gridEdgeWidths, ESMF_GridCreateUTest.F90, line         673
+20190610 112239.013280 INFO     PET0  PASS  Creating a Grid with default coordDeps, ESMF_GridCreateUTest.F90, line         711
+20190610 112239.013293 INFO     PET0  PASS  Creating/Destroying an Empty Grid, ESMF_GridCreateUTest.F90, line         728
+20190610 112239.013372 INFO     PET0  PASS  Creating a 2D  Grid with all defaults with CreateShapeTileReg, ESMF_GridCreateUTest.F90, line         757
+20190610 112239.013404 INFO     PET0  PASS  Creating a 2D  Grid with non-default 1D regDecomp with CreateShapeTileReg, ESMF_GridCreateUTest.F90, line         786
+20190610 112239.013435 INFO     PET0  PASS  Creating a 2D  Grid with non-default 2D regDecomp with CreateShapeTileReg, ESMF_GridCreateUTest.F90, line         813
+20190610 112239.013462 INFO     PET0  PASS  Creating a 2D  1 DE Grid with CreateShapeTileReg, ESMF_GridCreateUTest.F90, line         840
+20190610 112239.013528 INFO     PET0  PASS  Creating a Grid with CreateShapeTileReg and non-default gridEdgeWidths, ESMF_GridCreateUTest.F90, line         878
+20190610 112239.013562 INFO     PET0  PASS  Creating a 3D  Grid with non-default minIndex and non-default regDecomp with CreateShapeTileReg, ESMF_GridCreateUTest.F90, line         906
+20190610 112239.013645 INFO     PET0  PASS  Creating a 2D  Grid with all defaults with SetCommitShapeTileReg, ESMF_GridCreateUTest.F90, line         940
+20190610 112239.013698 INFO     PET0  PASS  Test getting minIndex and maxIndex for 2D Grid, ESMF_GridCreateUTest.F90, line        1009
+20190610 112239.013743 INFO     PET0  PASS  Test getting minIndex and maxIndex for 3D Grid, ESMF_GridCreateUTest.F90, line        1075
+20190610 112239.014036 INFO     PET0  PASS  Test ArrayCreateFromGrid with only distributed bounds, ESMF_GridCreateUTest.F90, line        1123
+20190610 112239.014133 INFO     PET0  PASS  Test ArrayCreateFromGrid with non-default ungriddedBounds, ESMF_GridCreateUTest.F90, line        1174
+20190610 112239.014228 INFO     PET0  PASS  Test ArrayCreateFromGrid with replicated dims, ESMF_GridCreateUTest.F90, line        1227
+20190610 112239.014271 INFO     PET0  PASS  Test GridGetArrayInfo with replicated dims, ESMF_GridCreateUTest.F90, line        1297
+20190610 112239.014292 INFO     PET0  PASS  Test GridGetArrayInfo with replicated dims and non-default distgridToGridMap, ESMF_GridCreateUTest.F90, line        1362
+20190610 112239.014440 INFO     PET0  PASS  Test Serialize and Deserialize, ESMF_GridCreateUTest.F90, line        1441
+20190610 112239.014472 INFO     PET0  PASS  Getting Attribute count from a Grid with no Attributes, ESMF_GridCreateUTest.F90, line        1462
+20190610 112239.014495 INFO     PET0  PASS  Adding Attribute to a Grid, ESMF_GridCreateUTest.F90, line        1471
+20190610 112239.014511 INFO     PET0  PASS  Getting Attribute count from a Grid with Attribute, ESMF_GridCreateUTest.F90, line        1489
+20190610 112239.014521 INFO     PET0  PASS  Getting Attribute info from a Grid, ESMF_GridCreateUTest.F90, line        1506
+20190610 112239.014531 INFO     PET0  PASS  Getting an Integer Attribute back from a Grid, ESMF_GridCreateUTest.F90, line        1524
+20190610 112239.014541 INFO     PET0  PASS  Getting a second Integer Attribute back from a Grid, ESMF_GridCreateUTest.F90, line        1547
+20190610 112239.014555 ERROR    PET0 Value unrecognized or out of range attribute not found
+20190610 112239.014557 ERROR    PET0 Value unrecognized or out of range failed getting attribute type and count
+20190610 112239.014565 ERROR    PET0 ESMF_Grid.F90 9928 ESMF_GridGetInt4Attr Value unrecognized or out of range Internal subroutine call returned Error
+20190610 112239.014591 INFO     PET0  PASS  Getting a non-existant Integer Attribute from a Grid, ESMF_GridCreateUTest.F90, line        1562
+20190610 112239.014602 INFO     PET0  PASS  Getting an Integer List Attribute back from a Grid, ESMF_GridCreateUTest.F90, line        1587
+20190610 112239.014613 INFO     PET0  PASS  Getting a Real Attribute back from a Grid, ESMF_GridCreateUTest.F90, line        1610
+20190610 112239.014626 INFO     PET0  PASS  Getting a Real List Attribute back from a Grid, ESMF_GridCreateUTest.F90, line        1634
+20190610 112239.014636 INFO     PET0  PASS  Getting a Logical Attribute back from a Grid, ESMF_GridCreateUTest.F90, line        1657
+20190610 112239.014647 INFO     PET0  PASS  Getting a Logical List Attribute back from a Grid, ESMF_GridCreateUTest.F90, line        1681
+20190610 112239.014668 INFO     PET0  PASS  Getting a Character Attribute back from a Grid, ESMF_GridCreateUTest.F90, line        1704
+20190610 112239.014685 INFO     PET0  Number of failed tests:           0
+20190610 112239.014691 INFO     PET0  Ending Test, file ESMF_GridCreateUTest.F90, line        1712
