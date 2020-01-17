@@ -407,7 +407,7 @@ if [[ $cplchm = ".true." ]]; then
     next_PDY=$(echo $next_date | cut -c1-8)
     next_cyc=$(echo $next_date | cut -c9-10)
     for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
-		ln -s $RESTDIR/${next_PDY}.${next_cyc}0000.fv_tracer.res.${tile}.nc $DATA/RESTART/${next_PDY}.${next_cyc}0000.fv_tracer.res.${tile}.nc
+		ln -sf $RESTDIR/${next_PDY}.${next_cyc}0000.fv_tracer.res.${tile}.nc $DATA/RESTART/${next_PDY}.${next_cyc}0000.fv_tracer.res.${tile}.nc
 	done
 fi
 
