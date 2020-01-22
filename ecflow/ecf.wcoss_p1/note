@@ -1,0 +1,28 @@
+/gpfs/tp1/nco/ops/nwprod/gefs_legacy.v10.4.1/ecf/
+
+    gefs_legacy  (have the script for init job and gefs_prdgen_gfs)
+    gefs_legacy00
+    gefs_legacy06
+    gefs_legacy12
+    gefs_legacy18
+
+    3. Suggestion for ecflow scripts: when you transition to phase3, it
+    would be better if you can remove the cycles, and combine all the cycles
+    for the same job into one same script, and use the %cyc variable like it
+    does in the gefs ecflow scripts
+    (/gpfs/dell1/nco/ops/nwprod/gefs.v11.3.9/ecf/gefs)
+
+1. production gefs:
+
+/gpfs/dell1/nco/ops/nwprod/gefs.v11.3.9
+
+ecflow script is under ecf/gefs/ subdirectory.
+
+2. production gefs_legacy:
+
+/nwprod/gefs_legacy.v10.4.1
+
+ecflow script is under ecf/ subdirectory.
+
+
+Please feel free to come down for any questions when you work on the ecflow scripts for gefs_legacy.  I think the gefs_legacy may need one more variable in addition to %cyc% (for the cyc after "cf") , may call %subcyc% something like that, or whatever you prefer.
