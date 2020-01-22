@@ -19,7 +19,7 @@ na=`basename $0`
 
 cd $DATA
 
-$utilscript/setup.sh
+#$utilscript/setup.sh
 
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
@@ -37,9 +37,10 @@ echo fcstlong=$fcstlong
 echo cycsuffix=$cycsuffix
 echo cfsuffix=$cfsuffix
 
-WGRIB=${EXECUTIL}/wgrib
+#WGRIB=${EXECUTIL}/wgrib
 echo GRBINDEX=$GRBINDEX
-export GRBIDX=${EXECUTIL}/grbindex
+#export GRBIDX=${EXECUTIL}/grbindex
+export GRBIDX=$GRBINDEX
 
 ############################################################
 # clean up missing markers from previous run

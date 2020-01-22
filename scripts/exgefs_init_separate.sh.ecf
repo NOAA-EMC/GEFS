@@ -293,7 +293,7 @@ if (( nhrpair < npair )); then
     echo `date` timing lr chgres before
     export FIXGLOBAL=$HOMEgsm/fix/fix_am
     $chgresush >>$pgmout
-    export FIXGLOBAL=/nwprod/fix
+    export FIXGLOBAL=$HOMEgefs/fix
     echo `date` timing lr chgres after
   else
     cp -fp $SIGINP $SIGOUT
@@ -469,7 +469,8 @@ if (( nhrpair > 0 )); then
     export FIXGLOBAL=$HOMEgsm/fix/fix_am
    fi
     $chgresush >>$pgmout
-    export FIXGLOBAL=/nwprod/fix
+    #export FIXGLOBAL=/nwprod/fix
+    export FIXGLOBAL=$HOMEgefs/fix
     echo `date` timing hr chgres after
   else
     cp -fp $SIGINP $SIGOUT

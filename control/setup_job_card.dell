@@ -93,7 +93,11 @@ module load ics
 eofCAT
     if [[ ${job_type} = parallel ]] ; then
      cat <<eofCAT >>$jobcontrol
-module load ibmpe
+  module load EnvVars/1.0.2
+  module load lsf/10.1    # loads blaunch)
+  module load ips/18.0.1.163
+  module load impi/18.0.1
+
 eofCAT
     fi
 

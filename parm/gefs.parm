@@ -14,7 +14,7 @@ export GFS_VERSION=gefs_fcst
 #export npair=3
 #export npair=6
 #export npair=2
-export npair=10
+ export npair=10
 export nhrpair=$npair
 
 #################################################
@@ -314,31 +314,29 @@ if [[ $envir = dev ]]; then
 
   export locsighdrexec=test
   export locsighdrexec=local
-  export locsighdrexec=/global/save/wx23sm/gsm/f2007/global_sighdr.fd/global_sighdr
   export locsighdrexec=para
   export locsighdrexec=prod
 #DHOU 03/29/2012 Add this for ZEUS
   export locsighdrexec=zeus
 #DHOU 01/18/2013 Add this for WCOSS
   export locsighdrexec=wcoss
+  export locsighdrexec=dell
 
   export locchgresush=test
   export locchgresush=local
-  export locchgresush=/nwprod/ush/global_chgres.sh
   export locchgresush=para
   export locchgresush=zeus
   export locchgresush=prod
   export locchgresush=wcoss
-  export locchgresexec=$basesource/nwdev/gefs_legacy.${gefs_legacy_ver}/ush/global_chgres.sh
+  export locchgresush=dell
 
   export locchgresexec=test
   export locchgresexec=local
-  export locchgresexec=/global/save/wx23sm/2jif/f2007_oct/global_chgres.fd/global_chgres
   export locchgresexec=para
   export locchgresexec=zeus
   export locchgresexec=prod
   export locchgresexec=wcoss
-  export locchgresexec=$basesource/nwdev/gefs_legacy.${gefs_legacy_ver}/exec/global_chgres
+  export locchgresexec=dell
 
   export locfcstconchome=local
   export locfcstconchome=para

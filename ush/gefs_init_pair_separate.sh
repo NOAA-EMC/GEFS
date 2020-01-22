@@ -201,7 +201,7 @@ echo DATALOCAL=$DATALOCAL
 echo DATA=$DATA
 echo DATAPARENT=$DATAPARENT
 
-sh $utilscript/setup.sh
+#sh $utilscript/setup.sh
 
 # check for cold start
 coldstartflag=0
@@ -440,7 +440,8 @@ echo
 ###teste
       export FIXGLOBAL=$HOMEgsm/fix/fix_am
       $chgresush >>$pgmout
-      export FIXGLOBAL=/nwprod/fix
+      #export FIXGLOBAL=/nwprod/fix
+      export FIXGLOBAL=$HOMEgefs/fix
     else
       cp -fp $SIGINP $SIGOUT
     fi
@@ -496,7 +497,8 @@ echo
 ###teste
       export FIXGLOBAL=$HOMEgsm/fix/fix_am
       $chgresush >>$pgmout
-      export FIXGLOBAL=/nwprod/fix
+      #export FIXGLOBAL=/nwprod/fix
+      export FIXGLOBAL=$HOMEgefs/fix
     else
       cp -fp $SIGINP $SIGOUT
     fi
@@ -776,7 +778,8 @@ echo
 ###teste
     export FIXGLOBAL=$HOMEgsm/fix/fix_am
     $chgresush >>$pgmout
-    export FIXGLOBAL=/nwprod/fix
+    #export FIXGLOBAL=/nwprod/fix
+    export FIXGLOBAL=$HOMEgefs/fix
   else
     cp -fp $SIGINP $SIGOUT
   fi

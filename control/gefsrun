@@ -871,10 +871,10 @@ if [[ $nextflag = yes ]]; then
       ;;
 
       ($jjjg00) jjjb=$jjjf00 ;;
-      ($jjjf00) jjjb=$jjjp00 ;;
+      #($jjjf00) jjjb=$jjjp00 ;;
       #                                     when running 6-hour cycling only
       #                                     use next line to skip the restart copy job
-      #($jjjf00) (( jjjb=jjjp00 + 1 )) ;;
+      ($jjjf00) (( jjjb=jjjp00 + 1 )) ;;
       ($jjje00) jjjb=$jjjs00 ;;
       ($jjjs00)
 	if (( fcst_segments == 2 )); then
@@ -884,9 +884,9 @@ if [[ $nextflag = yes ]]; then
 	fi
       ;;
       ($jjjz00) jjjb=$jjjf00l ;;
-      ($jjjf00l) jjjb=$jjjp00l ;;
+      #($jjjf00l) jjjb=$jjjp00l ;;
       #                                       when skipping re-start copy
-      #($jjjf00l) (( jjjb=jjjp00l + 1 )) ;;
+      ($jjjf00l) (( jjjb=jjjp00l + 1 )) ;;
       #        
       ($jjje00l) jjjb=$jjjs00l ;;
       ($jjjs00l) jjjb=$jjjo00 ;;
@@ -916,7 +916,8 @@ if [[ $nextflag = yes ]]; then
 
       ($jjjf18) (( jjjb=jjjp18 + 1 )) ;;
       ($jjje18) jjjb=$jjjt18 ;;
-      ($jjjt18) jjjb=$jjjc18 ;;
+      #($jjjt18) jjjb=$jjjc18 ;;
+      ($jjjt18) jjjb=900 ;;
 
       ($jjjc18) jjjb=900 ;;
       (900) jjjb=999 ;;
@@ -1492,9 +1493,9 @@ case $taskname in
   fi  
   if [[ $gefsmachine = dell ]]; then                       
     wall_clock_limit="02:50"
-    total_tasks=120
-    taskspernode=5 
-    node=24
+    total_tasks=160
+    taskspernode=10 
+    node=16
     OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=no
   fi  
@@ -1655,7 +1656,8 @@ case $taskname in
      if [[ $fcstjoblength = long ]]; then
 #      (( taskspermem = 96 ))
 #      (( taskspermem = 100 ))
-       (( taskspermem = 80 ))
+#      (( taskspermem = 80 ))
+       (( taskspermem = 32 ))
      else  
        (( taskspermem = 32 ))
      fi  
@@ -1843,6 +1845,21 @@ case $taskname in
     OMP_NUM_THREADS=4
     resources=1000
    fi
+  if [[ $gefsmachine = dell ]]; then                       
+#DHOU 03/29/2012   chgres is a non-mpi program
+    job_type=parallel
+    total_tasks=1 
+    (( taskspernode = 28 / NTHREADS_SIGCHGRS ))
+    export taskspernode=$taskspernode
+    export OMP_NUM_THREADS=$NTHREADS_SIGCHGRS
+    echo NTHREADS_SIGCHRS=$NTHREADS_SIGCHGRS
+    wall_clock_limit="00:20"
+    MP_SHARED_MEMORY=yes
+    total_tasks=1
+    taskspernode=1
+    OMP_NUM_THREADS=4
+    resources=1000
+   fi
   ;;
   (restart_copy_hr)
     FORECAST_SEGMENT=hr
@@ -1982,6 +1999,12 @@ case $taskname in
 	MP_SHARED_MEMORY=yes
 	resources="2000"
       ;;
+      (dell)
+        taskspernode=$total_tasks
+	OMP_NUM_THREADS=1
+	MP_SHARED_MEMORY=yes
+	resources="2000"
+      ;;
     esac
   ;;
   (nceppost_lr)
@@ -2019,6 +2042,12 @@ case $taskname in
     total_tasks=8
     case $gefsmachine in
       (wcoss)
+        taskspernode=$total_tasks
+	OMP_NUM_THREADS=1
+	MP_SHARED_MEMORY=yes
+	resources="2000"
+      ;;
+      (dell)
         taskspernode=$total_tasks
 	OMP_NUM_THREADS=1
 	MP_SHARED_MEMORY=yes
@@ -2065,6 +2094,10 @@ case $taskname in
 	MP_SHARED_MEMORY=yes
 	resources="200"
       ;;
+      (dell)
+	MP_SHARED_MEMORY=yes
+	resources="200"
+      ;;
     esac
   ;;
   (post.prdgen_lr)
@@ -2107,6 +2140,10 @@ case $taskname in
 	MP_SHARED_MEMORY=yes
 	resources="200"
       ;;
+      (dell)
+	MP_SHARED_MEMORY=yes
+	resources="200"
+      ;;
     esac
   ;;
   (prdgen.gfs)
@@ -2130,6 +2167,11 @@ case $taskname in
     fi
     case $gefsmachine in
       (wcoss)
+	MP_SHARED_MEMORY=yes
+	resources="1000"
+	resources="2000"     # RLW 20170315 ran out of memory for next GFS
+      ;;
+      (dell)
 	MP_SHARED_MEMORY=yes
 	resources="1000"
 	resources="2000"     # RLW 20170315 ran out of memory for next GFS
@@ -2168,6 +2210,11 @@ case $taskname in
       MP_SHARED_MEMORY=yes
       resources=100
   fi
+  if [[ $gefsmachine = dell ]]; then                       
+      total_tasks=1
+      MP_SHARED_MEMORY=yes
+      resources=100
+  fi
   ;;
   (ensstat_lr)
     FORECAST_SEGMENT=lr
@@ -2201,6 +2248,11 @@ case $taskname in
       MP_SHARED_MEMORY=yes
       resources=100
   fi
+  if [[ $gefsmachine = dell ]]; then                       
+      total_tasks=1
+      MP_SHARED_MEMORY=yes
+      resources=100
+  fi
   ;;
   (enspost)
     ################################# production variables
@@ -2226,6 +2278,11 @@ case $taskname in
       wall_clock_limit="$wall_clock_limit_fcst_short"
     fi
   if [[ $gefsmachine = wcoss ]]; then                       
+      total_tasks=1
+      MP_SHARED_MEMORY=yes
+      resources=100
+  fi
+  if [[ $gefsmachine = dell ]]; then                       
       total_tasks=1
       MP_SHARED_MEMORY=yes
       resources=100
@@ -2263,6 +2320,13 @@ case $taskname in
     MP_SHARED_MEMORY=no
     total_tasks=1
   fi  
+  if [[ $gefsmachine = dell ]]; then                       
+    wall_clock_limit="01:30"
+    taskspernode=1
+    OMP_NUM_THREADS=1
+    MP_SHARED_MEMORY=no
+    total_tasks=1
+  fi  
   ;;
   (track.ave)
     ################################# production variables
@@ -2290,6 +2354,14 @@ case $taskname in
     wall_clock_limit="01:10"
     MP_SHARED_MEMORY=yes
     resources=100
+  fi  
+  if [[ $gefsmachine = dell ]]; then                       
+    wall_clock_limit="01:30"
+    taskspernode=1
+    OMP_NUM_THREADS=1
+    MP_SHARED_MEMORY=yes
+    total_tasks=1
+    resources=1000
   fi  
   ;;
  (post.cqpf)
@@ -2341,6 +2413,11 @@ case $taskname in
     MP_SHARED_MEMORY=yes
     resources=1000
   fi  
+  if [[ $gefsmachine = dell ]]; then                       
+    wall_clock_limit="00:30"
+    MP_SHARED_MEMORY=yes
+    resources=1000
+  fi  
   ;;
   (r900)
     ################################# development variables
@@ -2358,6 +2435,11 @@ case $taskname in
     MP_SHARED_MEMORY=yes
     resources=1000
   fi  
+  if [[ $gefsmachine = dell ]]; then                       
+    wall_clock_limit="00:10"
+    MP_SHARED_MEMORY=yes
+    resources=1000
+  fi  
   ;;
   (r999)
     ################################# development variables
@@ -2370,6 +2452,11 @@ case $taskname in
 #   resources="ConsumableCpus(1) ConsumableMemory(1650 MB)"
     resources="1650M"
   if [[ $gefsmachine = wcoss ]]; then                       
+    wall_clock_limit="00:10"
+    MP_SHARED_MEMORY=yes
+    resources=1000
+  fi  
+  if [[ $gefsmachine = dell ]]; then                       
     wall_clock_limit="00:10"
     MP_SHARED_MEMORY=yes
     resources=1000

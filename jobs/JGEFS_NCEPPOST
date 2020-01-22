@@ -17,8 +17,8 @@ export PS4='$SECONDS + '
 ####################################
 
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
-export gefsmachine=${gefsmachine:-wcoss}
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export gefsmachine=${gefsmachine:-dell}
+export gefsmpexec=${gefsmpexec:-mpirun}
 
 ###########################################
 # Run gefs_config to get input parameters
@@ -72,13 +72,9 @@ export NET=gens
 if [ "$RUN_ENVIR" = dev ]     ### For Developers
 then
    export jlogfile=$baselog/com/logs/jlogfile
-else                        ### For Operations
- if [[ $envir = "prod" ]]; then
-   export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.$$}
- else
-   export jlogfile=/com/logs/${envir}/jlogfile
- fi
 fi
+
+export jlogfile=${jlogfile:-${DATA}/jlogfile}
 
 ####################################
 # Determine Job Output Name on System
@@ -168,6 +164,10 @@ else                             ### For Operations
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 fi
 
+export SIGHDR=${EXECGLOBAL}/global_sighdr
+export SFCHDR=${EXECGLOBAL}/global_sfchdr
+export PARMPOST=${PARMGLOBAL}
+
 ###############################################################
 # Specify locations of the following scripts and executables
 ###############################################################
@@ -217,6 +217,11 @@ export POSTGPSH=$USHgefs/gefs_nceppost.sh
 export POSTGPEXEC=$HOMEgefs/exec/gefs_ncep_post
 export ENSADD=$USHgefs/global_ensadd.sh
   ;;
+  (dell)
+export POSTGPSH=$USHgefs/gefs_nceppost.sh
+export POSTGPEXEC=$HOMEgefs/exec/gefs_ncep_post
+export ENSADD=$USHgefs/global_ensadd.sh
+  ;;
 esac
 echo in $0: POSTGPSH=$POSTGPSH
 echo in $0: POSTGPEXEC=$POSTGPEXEC
@@ -231,6 +236,11 @@ export EXECUTIL=$HOMEUTIL/exec
 export FIXUTIL=$HOMEUTIL/fix
   ;;
   (wcoss)
+export HOMEUTIL=$HOMEGLOBAL/util
+export EXECUTIL=$HOMEUTIL/exec
+export FIXUTIL=$HOMEUTIL/fix
+  ;;
+  (dell)
 export HOMEUTIL=$HOMEGLOBAL/util
 export EXECUTIL=$HOMEUTIL/exec
 export FIXUTIL=$HOMEUTIL/fix

@@ -80,14 +80,11 @@ export RUN=enstr
 ####################################
 # File To Log Msgs
 ####################################
-if [[ $envir = prod ]]; then
-  export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.${pid}}
-elif [[ $envir = para ]] || \
-     [[ $envir = test ]]; then
-  export jlogfile=/com/logs/${envir}/jlogfile
-else
+if [[ $envir = dev ]]; then
   export jlogfile=$baselog/com/logs/jlogfile
 fi
+
+jlogfile=${jlogfile:-${DATA}/jlogfile}
 
 ####################################
 # Determine Job Output Name on System
@@ -151,8 +148,15 @@ if [[ $envir = dev ]]; then
     export PARMGLOBAL=$HOMEgefs/parm
     export USHGLOBAL=$HOMEgefs/ush
  fi
+ if [[ $gefsmachine = dell ]]; then
+    export EXECGLOBAL=$HOMEgefs/exec
+    export FIXGLOBAL=$HOMEgefs/fix
+    export PARMGLOBAL=$HOMEgefs/parm
+    export USHGLOBAL=$HOMEgefs/ush
+ fi
   export UTILgefs=${UTILgefs:-$HOMEgefs/util}
   export FIXgefs=$HOMEgefs/fix
+  export USHgefs=$HOMEgefs/ush
 
 else
 
@@ -165,7 +169,7 @@ else
 
 fi
 
-export HOMEgsm=${HOMEgsm:-/nwprod/gsm.${gsm_ver}}
+export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
 #export HOMEgsm=${HOMEgsm:-/nw${envir}/gsm.${gsm_ver}}
 
 export ERRSCRIPT=err_chk
@@ -315,9 +319,10 @@ else
     (para)  export sighdrexec=$HOMEgsm/exec/global_sighdr ;;
     (test)  export sighdrexec=$HOMEgsm/exec/global_sighdr ;;
     (zeus)  export sighdrexec=$EXECglobal/global_sighdr ;;
-    #(wcoss)  export sighdrexec=$HOMEgsm/exec/global_sighdr ;;
+    (wcoss)  export sighdrexec=$HOMEgsm/exec/global_sighdr ;;
+    (dell)  export sighdrexec=$HOMEgsm/exec/global_sighdr ;;
     #(wcoss)  export sighdrexec=$basesource/exec/global_sighdr ;;
-    (wcoss)  export sighdrexec=/gpfs/dell1/nco/ops/nwprod/gsm.v12.1.6/exec/global_sighdr ;;
+    #(wcoss)  export sighdrexec=/gpfs/dell1/nco/ops/nwprod/gsm.v12.1.6/exec/global_sighdr ;;
     (local)  case $envir in
                (prod)  export sighdrexec=/nw$envir/exec/global_sighdr ;;
                (para)  export sighdrexec=/nw$envir/exec/global_sighdr ;;
@@ -343,6 +348,7 @@ else
     (test)  export chgresush=$HOMEgsm/ush/global_chgres.sh ;;
     (zeus)  export chgresush=$USHglobal/global_chgres.sh ;;
     (wcoss)  export chgresush=$HOMEgsm/ush/global_chgres.sh ;;
+    (dell)  export chgresush=$HOMEgsm/ush/global_chgres.sh ;;
 #   (zeus)  export chgresush=$basesource/nw$envir/ush/global_chgres.sh ;;
     (local)  case $envir in
                (prod)  export chgresush=/nw$envir/ush/global_chgres.sh ;;
@@ -361,7 +367,7 @@ else
     (test)  export CHGRESEXEC=$HOMEgsm/exec/global_chgres ;;
     (zeus)  export CHGRESEXEC=$EXECglobal/global_chgres ;;
     (wcoss)  export CHGRESEXEC=$HOMEgsm/exec/global_chgres ;;
-#               (zeus)  export CHGRESEXEC=$basesource/nw$envir/exec/global_chgres ;;
+    (dell)  export CHGRESEXEC=$HOMEgsm/exec/global_chgres ;;
     (local)  case $envir in
                (prod)  export CHGRESEXEC=/nw$envir/exec/global_chgres_thread ;;
                (para)  export CHGRESEXEC=/nw$envir/exec/global_chgres_thread ;;
@@ -374,6 +380,8 @@ else
   export getnsttf=$UTILgefs/exec/getnsttf
 fi
 
+#QUESTION: this block should be placed later, at the position of the module load util_shared,
+#Now we have a proble, two set of global_chgres, When to load the util_shared is a problem.???????? 
 echo chgresush=$chgresush
 echo CHGRESEXEC=$CHGRESEXEC
 echo getnsttf=$getnsttf
@@ -394,6 +402,11 @@ export FIXgsm_save=$FIXgsm
 # module use /nwtest2/modulefiles
 #  module use /nwprod2/modulefiles
 #  module load util_shared/v1.0.5
+   module load util_shared/1.1.0
+
+  if [[ $gefsmachine = dell ]]; then
+  CHGRESEXEC=/gpfs/dell1/nco/ops/nwprod/util_shared.v1.1.0/global_chgres.v15.0.0/exec/global_chgres
+  fi
 
   echo before set chgresush
   export FIXgsm=${FIXSUBDA:-$HOMEgsm/fix/fix_am}

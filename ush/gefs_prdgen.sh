@@ -20,12 +20,13 @@ anlflag=$anlflag
 ffhr=$ffhr
 fhr=$fhr
 
-export WGRIB=${WGRIB:-/nwprod/util/exec/wgrib}
-export GRBIDX=${GRBIDX:-/nwprod/util/exec/grbindex}
+#export WGRIB=${WGRIB:-/nwprod/util/exec/wgrib}
+#export GRBIDX=${GRBIDX:-/nwprod/util/exec/grbindex}
 export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
-export CNVGRIB=${CNVGRIB:-/nwprod/util/exec/cnvgrib}
-export COPYGB=${COPYGB:-/nwprod/util/exec/copygb}
-export WGRIB2=${WGRIB2:-/nwprod/util/exec/wgrib2}
+#export CNVGRIB=${CNVGRIB:-/nwprod/util/exec/cnvgrib}
+#export COPYGB=${COPYGB:-/nwprod/util/exec/copygb}
+#export WGRIB2=${WGRIB2:-/nwprod/util/exec/wgrib2}
+export GRBIDX=$GRBINDEX
 
 echo settings in $0 gefsmachine=$gefsmachine
 echo settings in $0 WGRIB=$WGRIB
@@ -229,6 +230,9 @@ fi
 echo `date` pgrba 1x1 sendcom $ffhr completed
 
   case $gefsmachine in
+    (dell)
+      fmakegb2=1
+    ;;
     (wcoss)
       fmakegb2=1
     ;;

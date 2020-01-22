@@ -54,13 +54,9 @@ export NET=gens
 if [ "$RUN_ENVIR" = dev ]     ### For Developers
 then
    export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
-else                          ### For Operations
- if [[ $envir = "prod" ]]; then
-   export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.$$}
- else
-   export jlogfile=/com/logs/${envir}/jlogfile
- fi
 fi
+
+export jlogfile=${jlogfile:-${DATA}/jlogfile}
 
 ####################################
 # Determine Job Output Name on System
@@ -131,12 +127,13 @@ export utilscript=/nwprod/util/ush
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-ksh $utilscript/setup.sh
+#ksh $utilscript/setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $utilscript/setpdy.sh
+#sh $utilscript/setpdy.sh
+sh setpdy.sh
 . PDY
 
 ##############################################

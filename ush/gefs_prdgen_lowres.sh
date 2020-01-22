@@ -22,13 +22,14 @@ fhr=$fhr
 
 gefsmachine=wcoss  # WCOSS Temporary
 
-export WGRIB=/nwprod/util/exec/wgrib
-export GRBIDX=/nwprod/util/exec/grbindex
-export COPYGB=/nwprod/util/exec/copygb
-export WGRIB2=/nwprod/util/exec/wgrib2
+#export WGRIB=/nwprod/util/exec/wgrib
+#export GRBIDX=/nwprod/util/exec/grbindex
+#export COPYGB=/nwprod/util/exec/copygb
+#export WGRIB2=/nwprod/util/exec/wgrib2
 
+export GRBIDX=$GRBINDEX 
 export ENSADD=$USHgefs/global_ensadd.sh
-export CNVGRIB=/nwprod/util/exec/cnvgrib
+#xport CNVGRIB=/nwprod/util/exec/cnvgrib
 
 echo settings in $0 gefsmachine=$gefsmachine
 echo settings in $0 WGRIB=$WGRIB

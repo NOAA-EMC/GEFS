@@ -275,7 +275,7 @@ echo DATA=$DATA before poe
 #mpiexec_mpt -np $initcombinetasks $execpoe
 #fi
 echo "gefsmpexec=$gefsmpexec"
-$gefsmpexec
+$gefsmpexec cfp poescript
 ###############################################kate  05/01/2012
 
 

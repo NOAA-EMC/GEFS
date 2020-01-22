@@ -43,15 +43,17 @@ export iens_msg=1
 #####################################
 # Define Script/Exec Variables
 #####################################
-export WGRIB=$EXECUTIL/wgrib
-export GRBIDX=$EXECUTIL/grbindex
-export COPYGB=$EXECUTIL/copygb
-export CNVGRIB=$EXECUTIL/cnvgrib
+#export WGRIB=$EXECUTIL/wgrib
+#export GRBIDX=$EXECUTIL/grbindex
+export GRBIDX=$GRBINDEX
+#export COPYGB=$EXECUTIL/copygb
+#xport CNVGRIB=$EXECUTIL/cnvgrib
 ################################################## RLW 20110722 CNVGRIB TEMPORARY
 #export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib #DHOU 20130123, removed it for WCOSS
 ################################################## RLW 20110722 CNVGRIB TEMPORARY
-export GRB2IDX=$EXECUTIL/grb2index
-export WGRIB2=$EXECUTIL/wgrib2
+#export GRB2IDX=$EXECUTIL/grb2index
+export GRB2IDX=$GRB2INDEX
+#export WGRIB2=$EXECUTIL/wgrib2
 
 export ENSPPF=$USHGLOBAL/global_ensppf.sh
 export ENSSTAT=$EXECGLOBAL/gefs_ensstat

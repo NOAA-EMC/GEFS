@@ -11,8 +11,10 @@ set -xa
 ####################################
 
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
-export gefsmachine=${gefsmachine:-wcoss}
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+#export gefsmachine=${gefsmachine:-wcoss}
+#export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export gefsmachine=${gefsmachine:-dell}
+export gefsmpexec=${gefsmpexec:-mpirun}
 
 ###########################################
 # Run gefs_config to get input parameters
@@ -73,14 +75,11 @@ export NET=gens
 ####################################
 # File To Log Msgs
 ####################################
-if [[ $envir = prod ]]; then
-  export jlogfile=/com/logs/jlogfiles/jlogfile.${job}.$$
-elif [[ $envir = para ]] || \
-     [[ $envir = test ]]; then
-  export jlogfile=/com/logs/$envir/jlogfile
-else
+if [[ $envir = dev ]]; then
   export jlogfile=$baselog/com/logs/jlogfile
 fi
+
+export jlogfile=${jlogfile:-${DATA}/jlogfile}
 ###teste
 
 ####################################
@@ -114,7 +113,7 @@ fi
 ####################################
 # Specify Execution Areas
 ####################################
-export GRBINDEX=/nwprod/util/exec/grbindex
+#export GRBINDEX=/nwprod/util/exec/grbindex
 #DHOU 04/05/2012 for Zeus
  if [[ $gefsmachine = zeus ]]; then
 export GRBINDEX=$HOMEglobal/util/exec/grbindex
@@ -144,7 +143,7 @@ export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
 # Set up the UTILITIES
 ##############################
 export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
-export utilscript=/nwprod/util/ush
+#export utilscript=/nwprod/util/ush
 #DHOU 04/05/2012 for ZEUS
  if [[ $gefsmachine = zeus ]]; then
    export utilscript=$HOMEglobal/util/ush
@@ -156,12 +155,14 @@ export utilscript=/nwprod/util/ush
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
-ksh $utilscript/setup.sh
+#ksh $utilscript/setup.sh
+setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $utilscript/setpdy.sh
+#sh $utilscript/setpdy.sh
+setpdy.sh
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
@@ -188,6 +189,9 @@ if [[ $envir = prod ]] || \
 else
   export COMOUT=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
 fi
+
+export gfsvitdir=${gfsvitdir:-${COMROOThps}/gfs/prod/gfs.$PDY}
+export namvitdir=${namvitdir:-${COMROOTp2}/nam/prod/nam.$PDY}
 
 export ensdir=$COMOUT/$cyc/pgrba
 export COM=$COMOUT/$cyc/track
@@ -247,6 +251,12 @@ DATAHOLD=$DATA
 if [[ $envir = dev ]]; then
   if [[ $gefsmachine = wcoss ]]; then
     export archsyndir=$TMPCOM/arch/prod/syndat
+  fi
+  if [[ $gefsmachine = dell ]]; then
+    export archsyndir=$TMPCOM/arch/prod/syndat
+    #export archsyndir=/gpfs/dell1/nco/ops/com/gfs/prod/syndat/syndat_tcvitals.2020
+    export archsyndir=/gpfs/dell1/nco/ops/com/gfs/prod/syndat
+    export archsyndir=${archsyndir:-$(compath.py gfs/prod/syndat)}
   fi
 fi
 
@@ -339,7 +349,7 @@ do
     sh $HOMEgefs/util/ush/extrkr.sh
   else
     # sh $basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/util/ush/extrkr.sh
-    if [[ $gefsmachine = wcoss ]]; then
+    if [[ $gefsmachine = dell ]]; then
       sh $HOMEgefs/util/ush/extrkr.sh
     else
       # RLW 20141008 modify to obtain and use version for vertical structure

@@ -4,8 +4,8 @@ set -xa
 ####################################
 
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
-export gefsmachine=${gefsmachine:-wcoss}
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export gefsmachine=${gefsmachine:-dell}
+export gefsmpexec=${gefsmpexec:-mpirun}
 
 # #### 08/28/2006 #############################
 # THIS GEFS ENSEMBLE POST JOB IS SPECIFICALLY
@@ -53,13 +53,9 @@ export RUN=trakave
 ####################################
 if [[ "$RUN_ENVIR" = dev ]]; then
   export jlogfile=$baselog/com/logs/jlogfile
-else
- if [[ $envir = "prod" ]]; then
-   export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.$$}
- else
-   export jlogfile=/com/logs/${envir}/jlogfile
- fi
 fi
+
+export jlogfile=${jlogfile:-${DATA}/jlogfile}
 
 ####################################
 # Determine Job Output Name on System
@@ -209,9 +205,11 @@ if [[ $envir = dev ]]; then
      exectrkdir=$basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/util/exec
     $basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/util/ush/ens_trak_ave.sh
  else
+  exectrkdir=$HOMEgefs/util/exec
   $HOMEgefs/util/ush/ens_trak_ave.sh
  fi
 else
+  exectrkdir=$HOMEgefs/util/exec
   $HOMEgefs/util/ush/ens_trak_ave.sh
 fi
 #############################################################

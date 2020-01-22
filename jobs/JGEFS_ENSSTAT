@@ -16,8 +16,8 @@ export PS4='$SECONDS + '
 ####################################
 
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
-export gefsmachine=${gefsmachine:-wcoss}
-export gefsmpexec=${gefsmpexec:-mpirun.lsf}
+export gefsmachine=${gefsmachine:-dell}
+export gefsmpexec=${gefsmpexec:-mpirun}
 
 ###########################################
 # Run gefs_config to get input parameters
@@ -62,13 +62,9 @@ export RUN=stat
 if [ "$RUN_ENVIR" = dev ]     ### For Developers
 then
    export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
-else                        ### For Operations
- if [[ $envir = "prod" ]]; then
-   export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.$$}
- else
-   export jlogfile=/com/logs/${envir}/jlogfile
- fi
 fi
+
+export jlogfile=${jlogfile:-${DATA}/jlogfile}
 
 ####################################
 # Determine Job Output Name on System

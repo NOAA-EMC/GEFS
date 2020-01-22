@@ -269,7 +269,8 @@ do
   # add new environmental variables for running new ncep post
   # Validation date
 
-  export VDATE=`${EXECUTIL}/ndate +${fhr} ${PDY}${cyc}`
+  #export VDATE=`${EXECUTIL}/ndate +${fhr} ${PDY}${cyc}`
+  export VDATE=`$NDATE +${fhr} ${PDY}${cyc}`
   
   # set outtyp to 1 because we need to run chgres in the post before model start running chgres
   # otherwise set to 0, then chgres will not be executed in global_nceppost.sh
