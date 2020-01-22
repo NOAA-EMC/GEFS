@@ -117,6 +117,10 @@ then
   export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
   export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
     ;;
+    (dell)
+  export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
+  export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
+    ;;
   esac
 
   # RLW 20141008 modify to obtain and use version for vertical structure
@@ -164,9 +168,18 @@ else                             ### For Operations
   export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 fi
 
+# Add post and gsm as external packages, the next 5 lines following gefs v11
+export HOMEpost=${HOMEpost:-${NWROOT}/ncep_post.${post_ver}}
+export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
+
+export USHpost=${HOMEpost}/ush
+export EXECpost=${HOMEpost}/exec
+export FIXpost=${HOMEpost}/fix
+export PARMPOST=${PARMgefs}
+#export PARMpost=${HOMEpost}/parm
+
 export SIGHDR=${EXECGLOBAL}/global_sighdr
 export SFCHDR=${EXECGLOBAL}/global_sfchdr
-export PARMPOST=${PARMGLOBAL}
 
 ###############################################################
 # Specify locations of the following scripts and executables
@@ -218,8 +231,8 @@ export POSTGPEXEC=$HOMEgefs/exec/gefs_ncep_post
 export ENSADD=$USHgefs/global_ensadd.sh
   ;;
   (dell)
-export POSTGPSH=$USHgefs/gefs_nceppost.sh
-export POSTGPEXEC=$HOMEgefs/exec/gefs_ncep_post
+export POSTGPSH=$USHpost/global_nceppost.sh
+export POSTGPEXEC=$EXECpost/ncep_post
 export ENSADD=$USHgefs/global_ensadd.sh
   ;;
 esac
