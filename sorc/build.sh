@@ -229,6 +229,7 @@ for bdir in $utillist ; do
  cd $dir
  make clean 
  make -f Makefile
+ make install
  rc=$?
  msgstring="$msgstring
   $rc   $dir"
