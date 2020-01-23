@@ -18,7 +18,7 @@ LDFLAGS = -mkl -lmkl_scalapack_lp64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core
 all:    $(CMD)
 
 $(CMD): $(OBJS)
-	$(FC) $(LDFLAGS) $(FFLAGS) -o $(@) $(OBJS) $(LIBS_INIT)
+	$(FC) $(LDFLAGS) $(FFLAGS) -o $(@) $(OBJS) $(LIBS_INIT_ET)
 
 $(OBJS):        $(SRCS)
 	$(FC) $(FFLAGS) -I $(INCS) -c $(SRCS)

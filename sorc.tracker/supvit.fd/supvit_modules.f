@@ -29,12 +29,12 @@ c
       end module inparms
 c
       module date_checks
-        integer, save  :: ymd_now,hhmm_now,ymd_old,hhmm_old
-     &                   ,ymd_future,hhmm_future
+        integer, save  :: ymd_now,hhmm_now,ymd_6ago,hhmm_6ago
+     &                   ,ymd_6ahead,hhmm_6ahead
       end module date_checks
 c
       module set_max_parms
-        integer, parameter :: maxstorm=400  ! max # of storms pgm can
+        integer, parameter :: maxstorm=200  ! max # of storms pgm can
                                             ! handle
       end module set_max_parms
 c

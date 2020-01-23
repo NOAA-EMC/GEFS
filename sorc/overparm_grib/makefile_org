@@ -1,0 +1,4 @@
+LIBS =    -L/nwprod/lib -lw3nco_v2.0.3_4 -lbacio_4
+overparm_grib:overparm_grib.f
+	ifort -o overparm_grib overparm_grib.f $(LIBS)
+

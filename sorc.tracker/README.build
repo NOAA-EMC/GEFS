@@ -1,17 +1,11 @@
-Library variables are defined in setlibs.rc.
+Libraries are defined in:
+Module_ens_tracker.v1.1.15_for_Dell
+Module_ens_tracker.v1.1.15_for_Cray
 
-To build codes one at a time:
-  In sh-like shell:
-     source setlibs.rc
-  This adds the library variables to the current shell environment.
-  Then proceed to each directory:
-     make clean
-     make
+To build codes:
 
-To build all codes:
-  sh build.sh
+    cd /XXXX/sorc
+     1) module use .
+     2) module load Module_ens_tracker.v1.1.15_for_Dell
+     3) ./build.sh
 
-To install all builds (creating exec dir if necessary):
-  sh install.sh
-
-Can use load_libs.rc in place of setlibs.rc when library modules are available.

@@ -115,17 +115,17 @@ if [ ! -d $DATA ]
 then
    mkdir -p $DATA
    cd $DATA
-   /nwprod/util/ush/setup.sh
+#  /nwprod/util/ush/setup.sh
 fi
 cd $DATA
 
-if [ ${PARAFLAG} = 'YES' ]
-then 
-  /nwprod/util/ush/setup.sh
-else
-#TM take out this else part for operations.....
-  /nwprod/util/ush/setup.sh
-fi
+#if [ ${PARAFLAG} = 'YES' ]
+#then 
+#  /nwprod/util/ush/setup.sh
+#else
+##TM take out this else part for operations.....
+#  /nwprod/util/ush/setup.sh
+#fi
 
 if [ ${#PDY} -eq 0 -o ${#CYL} -eq 0 -o ${#cmodel} -eq 0 ]
 then
@@ -955,7 +955,6 @@ awk '
 
 mv ${DATA}/vitals.${atcfout}.${PDY}${CYL}.y4 ${DATA}/vitals.${atcfout}.${PDY}${CYL}
 
-cp -pr /gpfs/dell1/nco/ops/nwprod/util_shared.v1.1.0/exec/supvit .
 export pgm=supvit
 . prep_step
 
@@ -966,7 +965,7 @@ msg="$pgm start for $atcfout at ${CYL}z"
 postmsg "$jlogfile" "$msg"
 
 #${exectrkdir}/supvit <${DATA}/suv_input.${atcfout}.${PDY}${CYL}
-supvit <${DATA}/suv_input.${atcfout}.${PDY}${CYL}
+$SUPVIT <${DATA}/suv_input.${atcfout}.${PDY}${CYL}
 suvrcc=$?
 
 if [ ${suvrcc} -eq 0 ]

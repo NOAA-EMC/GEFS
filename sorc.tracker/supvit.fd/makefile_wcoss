@@ -2,7 +2,7 @@ SHELL=  /bin/sh
 ISIZE = 4
 RSIZE = 8
 COMP=   ifort
-FFLAGS= -O3 -g -traceback -convert big_endian -i$(ISIZE) -r$(RSIZE)
+FFLAGS= -O2 -g -check bounds -check format -i$(ISIZE) -r$(RSIZE)
 
 supvit:     supvit_main.f supvit_modules.o
 	@echo " "

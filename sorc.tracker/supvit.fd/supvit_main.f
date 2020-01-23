@@ -9,21 +9,20 @@ c ABSTRACT: This program searches through the TC Vitals file and reads
 c   the records for a particular dtg.  It contains logic to eliminate
 c   duplicate records and only keep the most recent one (see further
 c   documentation below).  It also searches to see if a storm was
-c   included in the Vitals file 6 hours earlier (or 3 hours earlier 
-c   if we're tracking with the off-synoptic-time SREF) but is missing 
-c   from the current Vitals records.  In this case, the program assumes
+c   included in the Vitals file 6 hours earlier but is missing from
+c   the current Vitals records.  In this case, the program assumes
 c   that the regional forecasting center was late in reporting the
-c   current position, and it includes the old Vitals record with
+c   current position, and it includes the 6h-old Vitals record with
 c   the current Vitals records.  This program will also take the
-c   position and heading from that old vitals record and extrapolate the
+c   position and heading from that 6h-old record and extrapolate the
 c   information to get a current first guess estimate of the storm's
-c   position.  By the way, if a storm was found 3 or 6 hours earlier, 
-c   logic is also included to eliminate any duplicate records of that 
-c   storm in those old records.  Finally, if it turns out that the 
-c   reason an old vitals is no longer on the current records is that 
-c   the storm has dissipated, don't worry about including it to be 
-c   passed into the tracking program; the tracking program will not be 
-c   able to track it and that'll be the end of it.
+c   position.  By the way, if a storm was found 6 hours earlier, logic
+c   is also included to eliminate any duplicate records of that storm
+c   in those 6h-old records.  Finally, if it turns out that the reason
+c   a 6h-old storm is no longer on the current records is that the
+c   storm has dissipated, don't worry about including it to be passed
+c   into the tracking program; the tracking program will not be able
+c   to track it and that'll be the end of it.
 c
 c Program history log:
 c   98-03-26  Marchok - Original operational version.
@@ -33,16 +32,10 @@ c                       instead of as a 2-digit integer.
 c   00-06-13  Marchok - Modified code to be able to read vitals from 6h
 c                       ahead (this is for use in the GDAS tropical 
 c                       cyclone relocation system).
-c   04-05-27  Marchok - Modified code to be able to read vitals from 3h
-c                       ago.  This is for tracking with the 09z and 21z
-c                       SREF ensemble.  Since there are no vitals at
-c                       these offtimes, we need to update vitals from
-c                       the synoptic times 3h earlier.
 c
 c Input files:
 c   unit   31    Text file containing all vitals (including duplicates)
-c                for current time and time from 3 or 6 hours ago and 
-c                3 or 6 hours ahead.
+c                for current time and time from 6 hours ago.
 c Output files:
 c   unit   51    Text file containing sorted, updated vitals (without
 c                any duplicates) valid at the current time only.
@@ -51,13 +44,13 @@ c Subprograms called:
 c   read_nlists  Read input namelists for input dates
 c   read_tcv_file Read TC vitals file to get initial storm positions
 c   delete_dups  Delete duplicate TC vitals records from current time
-c   delete_old  Delete records from 6h ago if current record exists
-c   delete_old_dups  Delete duplicate records from 6h ago time
-c   update_old_vits  Update position of storms from 6h ago positions
+c   delete_6ago  Delete records from 6h ago if current record exists
+c   delete_6ago_dups  Delete duplicate records from 6h ago time
+c   update_6ago_vits  Update position of storms from 6h ago positions
 c   output       Output 1 record for each updated vitals record
 c
 c Attributes:
-c   Language: Fortran_90
+c   Language: CRAY Fortran_90
 c
 c$$$
 c
@@ -68,10 +61,9 @@ c
       USE trig_vals
 c
       type (tcvcard) storm(maxstorm)
-      type (datecard) dnow, dold, dfuture
+      type (datecard) dnow, d6ago, d6ahead
 
       logical  okstorm(maxstorm)
-      integer  vit_hr_incr
 c
       call w3tagb('SUPVIT  ',1999,0104,0058,'NP22   ')
 c
@@ -84,7 +76,7 @@ c
 c     -----------------------------------------
 c     Read namelists to get date information
 c
-      call read_nlists (dnow,dold,dfuture,vit_hr_incr)
+      call read_nlists (dnow,d6ago,d6ahead)
 c
 c     -----------------------------------------------------------
 c     Read in storm cards for current time and delete duplicates
@@ -98,41 +90,41 @@ c
       else
         print *,' '
         print *,'!!! No storms on tcv card for current time.'
-        print *,'!!! A check will be made for old tcv storm cards,'
+        print *,'!!! A check will be made for 6h-old tcv storm cards,'
         print *,'!!! and if any exist, the positions will be updated'
         print *,'!!! (extrapolated) to get a first guess position for'
         print *,'!!! the current time.'
         print *,'!!! Current forecast time = ',ymd_now,hhmm_now
-        print *,'!!! Old forecast time = ',ymd_old,hhmm_old
+        print *,'!!! 6h-ago forecast time = ',ymd_6ago,hhmm_6ago
       endif
 c
 c     -----------------------------------------------------------
-c     Read in storm cards for 3h or 6h ago and delete duplicates
+c     Read in storm cards for 6h ago and delete duplicates
 c
       rewind (31)
       itempct = inowct
-      call read_tcv_file (storm,ymd_old,hhmm_old,itempct,okstorm)
-      ioldct = itempct - inowct
+      call read_tcv_file (storm,ymd_6ago,hhmm_6ago,itempct,okstorm)
+      i6agoct = itempct - inowct
  
-      if (ioldct > 0) then
+      if (i6agoct > 0) then
         if (inowct > 0) then
-          call delete_old (storm,inowct,ioldct,okstorm)
+          call delete_6ago (storm,inowct,i6agoct,okstorm)
         endif
-        call delete_old_dups (storm,inowct,ioldct,okstorm)
+        call delete_6ago_dups (storm,inowct,i6agoct,okstorm)
       endif
  
 c     ----------------------------------------------------------------
-c     Now update any vitals records left from 3h or 6h ago by 
-c     extrapolating their positions ahead to the current time.
+c     Now update any vitals records left from 6h ago by extrapolating
+c     their positions 6h ahead to the current time.
  
-      if (ioldct > 0) then
-        call update_old_vits (storm,inowct,ioldct,okstorm,vit_hr_incr)
+      if (i6agoct > 0) then
+        call update_6ago_vits (storm,inowct,i6agoct,okstorm)
       endif
 
 
 c     --------------------------------------------------------------
-c     Read in storm cards for 3h or 6h ahead and delete duplicates.  
-c     This is used for Qingfu's vortex relocation purposes.  If he is
+c     Read in storm cards for 6h ahead and delete duplicates.  This
+c     is used for Qingfu's vortex relocation purposes.  If he is 
 c     doing the analysis/relocation for, say, 12z, he looks at the
 c     first guess files from the 06z cycle and tracks from there.
 c     But suppose there is a storm whose first tcvitals card is 
@@ -147,36 +139,35 @@ c     records read in so far.  In that read routine, itempct is
 c     incremented for every valid record read for the input time.
 
       rewind (31)
-      iprevct = inowct + ioldct
-      call read_tcv_file (storm,ymd_future,hhmm_future,itempct,okstorm)
-      ifuturect = itempct - iprevct
+      iprevct = inowct + i6agoct
+      call read_tcv_file (storm,ymd_6ahead,hhmm_6ahead,itempct,okstorm)
+      i6aheadct = itempct - iprevct
 
-      print *,'before d6a if, ifuturect = ',ifuturect,' iprevct= '
+      print *,'before d6a if, i6aheadct = ',i6aheadct,' iprevct= '
      &       ,iprevct
-      print *,'before d6a if, inowct = ',inowct,' ioldct= ',ioldct
+      print *,'before d6a if, inowct = ',inowct,' i6agoct= ',i6agoct
 
-      if (ifuturect > 0) then
+      if (i6aheadct > 0) then
         if (iprevct > 0) then
-          call delete_future (storm,iprevct,ifuturect,okstorm)
+          call delete_6ahead (storm,iprevct,i6aheadct,okstorm)
         endif
-        call delete_future_dups (storm,iprevct,ifuturect,okstorm)
+        call delete_6ahead_dups (storm,iprevct,i6aheadct,okstorm)
       endif
 
 c     ----------------------------------------------------------------
-c     Now update any vitals records not filtered out from 3h or 6h
-c     ahead by extrapolating their future positions *backwards* to 
-c     the current time.
+c     Now update any vitals records not filtered out from 6h-ahead by
+c     extrapolating their positions 6h-ahead *backwards* to the 
+c     current time.
  
-      if (ifuturect > 0) then
-        call update_future_vits (storm,iprevct,ifuturect,okstorm
-     &                          ,vit_hr_incr)
+      if (i6aheadct > 0) then
+        call update_6ahead_vits (storm,iprevct,i6aheadct,okstorm)
       endif
 
  
 c     ---------------------------------------------------------
 c     Now output all of the sorted, updated TC Vitals records
  
-      itotalct = inowct + ioldct + ifuturect
+      itotalct = inowct + i6agoct + i6aheadct
       call output (storm,itotalct,okstorm)
 c
       call w3tage('SUPVIT  ')
@@ -251,7 +242,7 @@ c
       USE def_vitals; USE set_max_parms; USE inparms
 c
       type (tcvcard) storm(maxstorm)
-      type (datecard) dnow, dold, dfuture
+      type (datecard) dnow, d6ago, d6ahead
 
       logical  okstorm(maxstorm)
 c
@@ -292,30 +283,28 @@ c
 c---------------------------------------------------------------------
 c
 c---------------------------------------------------------------------
-      subroutine update_old_vits (storm,inowct,ioldct,okstorm
-     &                           ,vit_hr_incr)
+      subroutine update_6ago_vits (storm,inowct,i6agoct,okstorm)
 c
-c     ABSTRACT: This subroutine updates the vitals from 3h or 6h ago.
+c     ABSTRACT: This subroutine updates the vitals from 6 hours ago.
 c     It uses the heading and direction values listed in the vitals
 c     record (see Module def_vitals for specfics on where to find 
 c     heading & direction in the vitals record) to get a new
-c     position for the current time by extrapolating out 3h or 6h.
+c     position for the current time by extrapolating out 6 hours.
 c
       USE def_vitals; USE set_max_parms; USE inparms; USE date_checks
       USE trig_vals
 c
       type (tcvcard) storm(maxstorm)
-      type (datecard) dnow, dold
+      type (datecard) dnow, d6ago
 
       logical  okstorm(maxstorm)
-      integer  vit_hr_incr
 c
       ist  = inowct + 1
-      iend = inowct + ioldct
+      iend = inowct + i6agoct
       do while (ist <= iend)
 
-        if (okstorm(ist) .and. storm(ist)%tcv_yymmdd == ymd_old .and.
-     &                         storm(ist)%tcv_hhmm == hhmm_old) then
+        if (okstorm(ist) .and. storm(ist)%tcv_yymmdd == ymd_6ago .and.
+     &                         storm(ist)%tcv_hhmm == hhmm_6ago) then
 
           rlat = float(storm(ist)%tcv_lat) / 10.
           rlon = float(storm(ist)%tcv_lon) / 10.
@@ -325,7 +314,7 @@ c
 c         ------------------------------------------
 c         This first part updates the positions by simply
 c         extrapolating the current motion along the current
-c         heading at the current speed for 3h or 6h.  Be
+c         heading at the current speed for 6 hours.  Be
 c         careful with adding and subtracting these distances
 c         in the different hemispheres (see the if statements).
 c         Remember: In the storm message file, there are NO
@@ -336,7 +325,7 @@ c         but will be distinguished by the 'S'.
           strmucomp = rspd * sin(dtr*rhdg)
           strmvcomp = rspd * cos(dtr*rhdg)
 c
-          vdistdeg = (strmvcomp * secphr * vit_hr_incr) / dtk
+          vdistdeg = (strmvcomp * secphr * 6) / dtk
           if (storm(ist)%tcv_latns == 'N') then
             rnewlat = rlat + vdistdeg
           else
@@ -345,7 +334,7 @@ c
 c
           avglat = 0.5 * (rlat + rnewlat)
           cosfac = cos(dtr * avglat)
-          udistdeg = (strmucomp * secphr * vit_hr_incr) / (dtk * cosfac)
+          udistdeg = (strmucomp * secphr * 6) / (dtk * cosfac)
           if (storm(ist)%tcv_lonew == 'W') then
             rnewlon = rlon - udistdeg
           else
@@ -405,31 +394,29 @@ c
 c---------------------------------------------------------------------
 c
 c---------------------------------------------------------------------
-      subroutine update_future_vits (storm,iprevct,ifuturect,okstorm
-     &                              ,vit_hr_incr)
+      subroutine update_6ahead_vits (storm,iprevct,i6aheadct,okstorm)
 c
-c     ABSTRACT: This subroutine updates the vitals from 3h or 6h ahead.
+c     ABSTRACT: This subroutine updates the vitals from 6 hours ahead.
 c     It uses the heading and direction values listed in the vitals
 c     record (see Module def_vitals for specfics on where to find 
 c     heading & direction in the vitals record) to get a new
 c     position for the current time by extrapolating *BACKWARDS*
-c     3h or 6h to the current time.
+c     6 hours to the current time.
 c
       USE def_vitals; USE set_max_parms; USE inparms; USE date_checks
       USE trig_vals
 c
       type (tcvcard) storm(maxstorm)
-      type (datecard) dnow, dold, dfuture
+      type (datecard) dnow, d6ago, d6ahead
 
       logical  okstorm(maxstorm)
-      integer  vit_hr_incr
 c
       ist  = iprevct + 1
-      iend = iprevct + ifuturect
+      iend = iprevct + i6aheadct
       do while (ist <= iend)
 
-        if (okstorm(ist) .and. storm(ist)%tcv_yymmdd == ymd_future .and.
-     &                         storm(ist)%tcv_hhmm == hhmm_future) then
+        if (okstorm(ist) .and. storm(ist)%tcv_yymmdd == ymd_6ahead .and.
+     &                         storm(ist)%tcv_hhmm == hhmm_6ahead) then
 
           rlat = float(storm(ist)%tcv_lat) / 10.
           rlon = float(storm(ist)%tcv_lon) / 10.
@@ -462,7 +449,7 @@ c         but will be distinguished by the 'S'.
           strmucomp = rspd * sin(dtr*rhdg)
           strmvcomp = rspd * cos(dtr*rhdg)
 c
-          vdistdeg = (strmvcomp * secphr * vit_hr_incr) / dtk
+          vdistdeg = (strmvcomp * secphr * 6) / dtk
           if (storm(ist)%tcv_latns == 'N') then
             rnewlat = rlat + vdistdeg
           else
@@ -471,7 +458,7 @@ c
 c
           avglat = 0.5 * (rlat + rnewlat)
           cosfac = cos(dtr * avglat)
-          udistdeg = (strmucomp * secphr * vit_hr_incr) / (dtk * cosfac)
+          udistdeg = (strmucomp * secphr * 6) / (dtk * cosfac)
           if (storm(ist)%tcv_lonew == 'W') then
             rnewlon = rlon - udistdeg
           else
@@ -531,10 +518,10 @@ c
 c---------------------------------------------------------------------
 c
 c---------------------------------------------------------------------
-      subroutine delete_old_dups (storm,inowct,ioldct,okstorm)
+      subroutine delete_6ago_dups (storm,inowct,i6agoct,okstorm)
 c
 c     ABSTRACT: The purpose of this subroutine is to loop through the
-c     list of storms for the dtg from 3h or 6h ago to eliminate any 
+c     list of storms for the dtg from 6h ago to eliminate any 
 c     duplicates.  Be sure to sort based on storm identifier (e.g.,
 c     13L) instead of storm name, since the name may change (e.g., 
 c     from "THIRTEEN" to "IRIS") for an upgrade in intensity, but the
@@ -549,7 +536,7 @@ c
       character found_dup*1
 c
       ist  = inowct + 1
-      iend = inowct + ioldct
+      iend = inowct + i6agoct
       do while (ist < iend)
 
         isortnum  = ist + 1
@@ -580,8 +567,8 @@ c     NOTE: The last member of the array to be checked is okay,
 c     since all potential duplicates for this record were eliminated
 c     in the previous sort while loop just completed, and, further,
 c     the last member of this array is either already FALSE (from 
-c     being checked off in delete_old), or it's TRUE because it
-c     didn't get checked off in delete_old, so keep it.
+c     being checked off in delete_6ago), or it's TRUE because it
+c     didn't get checked off in delete_6ago, so keep it.
 
       return
       end
@@ -589,12 +576,12 @@ c
 c---------------------------------------------------------------------
 c
 c---------------------------------------------------------------------
-      subroutine delete_old (storm,inowct,ioldct,okstorm)
+      subroutine delete_6ago (storm,inowct,i6agoct,okstorm)
 c
-c     ABSTRACT: This subroutine compares the list of storm card entries
-c     from 3h or 6h ago to those from the current time to eliminate
+c     ABSTRACT: This subroutine compares the list of storm card 
+c     entries from 6h ago to those from the current time to eliminate
 c     any matching storms (i.e., if we've got a current record for a 
-c     storm, we obviously don't need the old one).
+c     storm, we obviously don't need the 6h-old one).
 c
       USE def_vitals; USE set_max_parms
 c
@@ -604,7 +591,7 @@ c
       character found_dup*1 
 c
       ist  = inowct + 1
-      iend = inowct + ioldct
+      iend = inowct + i6agoct
       do while (ist <= iend)
 
         isortnum = 1
@@ -633,13 +620,13 @@ c
 c---------------------------------------------------------------------
 c
 c---------------------------------------------------------------------
-      subroutine delete_future (storm,iprevct,ifuturect,okstorm)
+      subroutine delete_6ahead (storm,iprevct,i6aheadct,okstorm)
 c
-c     ABSTRACT: This subroutine compares the list of storm card entries
-c     from 3h or 6h ahead to those from the current time and from 3h or
+c     ABSTRACT: This subroutine compares the list of storm card
+c     entries from 6h ahead to those from the current time and from 
 c     6h ago to eliminate any matching storms (i.e., we only need the
-c     record for the future time if we don't have either a current time
-c     record or an old record that we've updated).
+c     record for 6h ahead if we don't have either a current time
+c     record or a 6h-old record that we've updated).
 c
       USE def_vitals; USE set_max_parms
 c
@@ -649,7 +636,7 @@ c
       character found_dup*1
 c
       ist  = iprevct + 1
-      iend = iprevct + ifuturect
+      iend = iprevct + i6aheadct
       do while (ist <= iend)
 
         isortnum = 1
@@ -679,10 +666,10 @@ c
 c---------------------------------------------------------------------
 c
 c---------------------------------------------------------------------
-      subroutine delete_future_dups (storm,iprevct,ifuturect,okstorm)
+      subroutine delete_6ahead_dups (storm,iprevct,i6aheadct,okstorm)
 c
 c     ABSTRACT: The purpose of this subroutine is to loop through the
-c     list of storms for the dtg from 3h or 6h ahead to eliminate any
+c     list of storms for the dtg from 6h ahead to eliminate any
 c     duplicates.  Be sure to sort based on storm identifier (e.g.,
 c     13L) instead of storm name, since the name may change (e.g.,
 c     from "THIRTEEN" to "IRIS") for an upgrade in intensity, but the
@@ -697,7 +684,7 @@ c
       character found_dup*1
 c
       ist  = iprevct + 1
-      iend = iprevct + ifuturect
+      iend = iprevct + i6aheadct
       do while (ist < iend)
 
         isortnum  = ist + 1
@@ -728,8 +715,8 @@ c     NOTE: The last member of the array to be checked is okay,
 c     since all potential duplicates for this record were eliminated
 c     in the previous sort while loop just completed, and, further,
 c     the last member of this array is either already FALSE (from
-c     being checked off in delete_future), or it's TRUE because it
-c     didn't get checked off in delete_future, so keep it.
+c     being checked off in delete_6ahead), or it's TRUE because it
+c     didn't get checked off in delete_6ahead, so keep it.
 
       return
       end
@@ -789,40 +776,35 @@ c
 c---------------------------------------------------------------------
 c
 c---------------------------------------------------------------------
-      subroutine read_nlists (dnow,dold,dfuture,vit_hr_incr)
+      subroutine read_nlists (dnow,d6ago,d6ahead)
 c
 c     ABSTRACT:  Read in the namelists that contain the date for the
-c     current time, the time from 3h or 6h ago, and the time from 3h
-c     or 6h ahead .  It also converts the input dates for the current 
-c     time, the old time and the future time into a format that can 
-c     be easily compared against the dates in the TC Vitals file.
+c     current time and the time from 6 hours ago.  It also converts
+c     the input dates for the current time, the 6 hour-ago time and
+c     the 6 hour-ahead time into a format that can be easily compared
+c     against the dates in the TC Vitals file.
 c
       USE inparms; USE date_checks
 c
-      type (datecard) dnow,dold,dfuture
-c
-      integer   vit_hr_incr
+      type (datecard) dnow,d6ago,d6ahead
 c
       namelist/datenowin/dnow
-      namelist/dateoldin/dold
-      namelist/datefuturein/dfuture
-      namelist/hourinfo/vit_hr_incr
+      namelist/date6agoin/d6ago
+      namelist/date6aheadin/d6ahead
 c
       read (5,NML=datenowin,END=801)
   801 continue
-      read (5,NML=dateoldin,END=803)
+      read (5,NML=date6agoin,END=803)
   803 continue
-      read (5,NML=datefuturein,END=805)
+      read (5,NML=date6aheadin,END=805)
   805 continue
-      read (5,NML=hourinfo,END=807)
-  807 continue
 c
       ymd_now     = dnow%yy * 10000 + dnow%mm * 100 + dnow%dd
       hhmm_now    = dnow%hh * 100
-      ymd_old     = dold%yy * 10000 + dold%mm * 100 + dold%dd
-      hhmm_old    = dold%hh * 100
-      ymd_future  = dfuture%yy * 10000 + dfuture%mm * 100 + dfuture%dd
-      hhmm_future = dfuture%hh * 100
+      ymd_6ago    = d6ago%yy * 10000 + d6ago%mm * 100 + d6ago%dd
+      hhmm_6ago   = d6ago%hh * 100
+      ymd_6ahead  = d6ahead%yy * 10000 + d6ahead%mm * 100 + d6ahead%dd
+      hhmm_6ahead = d6ahead%hh * 100
 c
       return
       end
