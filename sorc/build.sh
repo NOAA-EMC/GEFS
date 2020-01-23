@@ -106,52 +106,54 @@ fi
 
 set +x
 
-sorclist="gefs_ensstat      gefs_vortex_combine gefs_vortex_separate     global_ensadd global_ensadd_g2     global_sigzvd"
-sorclist="gefs_init_et_p"
+#sorclist="gefs_ensstat      gefs_vortex_combine gefs_vortex_separate     global_ensadd global_ensadd_g2     global_sigzvd"
+#sorclist="gefs_init_et_p"
 
-sorclist="gefs_vortex_separate gefs_vortex_combine global_sigzvd  global_ensadd  global_ensadd_g2 global_enspqpf  gefs_ensstat  global_ensppf global_enscvprcp  global_enspvrfy  global_enssrbias global_enscqpf  global_enscvt24h  global_ensrfmat" 
+#sorclist="gefs_vortex_separate gefs_vortex_combine global_sigzvd  global_ensadd  global_ensadd_g2 global_enspqpf  gefs_ensstat  global_ensppf global_enscvprcp  global_enspvrfy  global_enssrbias global_enscqpf  global_enscvt24h  global_ensrfmat" 
 
+
+#sorclist="\
+#  gefs_ensstat\
+#  gefs_init_et_p\
+#  gefs_vortex_combine\
+#  gefs_vortex_separate\
+#  global_ensadd\
+#  global_ensadd_g2\
+#  global_enscqpf\
+#  global_enscvprcp\
+#  global_enscvt24h\
+#  global_ensppf\
+#  global_enspqpf\
+#  global_enspvrfy\
+#  global_ensrfmat\
+#  global_enssrbias\
+#  global_sigzvd\
+#"
 
 sorclist="\
+  global_ensadd\
+  global_ensadd_g2\
+  global_enscqpf\
+  global_enscvprcp\
+  global_enscvt24h\
+  global_ensppf\
+  global_enspqpf\
+  global_enspvrfy\
+  global_ensrfmat\
+  global_enssrbias\
+  global_sigzvd\
+  global_enssrbias\
+  gefs_vortex_combine\
+  gefs_vortex_separate\
+  gefs_init_et_p\
   gefs_ensstat\
-  gefs_init_et_p\
-  gefs_vortex_combine\
-  gefs_vortex_separate\
-  global_ensadd\
-  global_ensadd_g2\
-  global_enscqpf\
-  global_enscvprcp\
-  global_enscvt24h\
-  global_ensppf\
-  global_enspqpf\
-  global_enspvrfy\
-  global_ensrfmat\
-  global_enssrbias\
-  global_sigzvd\
-"
-
-sorclist="\
-  global_ensadd\
-  global_ensadd_g2\
-  global_enscqpf\
-  global_enscvprcp\
-  global_enscvt24h\
-  global_ensppf\
-  global_enspqpf\
-  global_enspvrfy\
-  global_ensrfmat\
-  global_enssrbias\
-  global_sigzvd\
-  global_enssrbias\
-  gefs_vortex_combine\
-  gefs_vortex_separate\
-  gefs_init_et_p\
+  overparm_grib\
 "
 
 
 
-utillist="gettrk overenstr.grib getnsttf"
-utillist=
+#utillist="gettrk overenstr.grib getnsttf"
+utillist="getnsttf"
 
 nemslist="nemsio_get"
 nemslist=

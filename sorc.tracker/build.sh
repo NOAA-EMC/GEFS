@@ -49,6 +49,7 @@ for dir in *.fd; do
   make clean
   make -f makefile
   make install
+  make clean
   cd ..
 done
 
