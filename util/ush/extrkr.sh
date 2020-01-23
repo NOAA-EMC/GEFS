@@ -751,7 +751,7 @@ then
   #FAF  synvit6ahead_file=gfs.t${d6ahead_hh}z.syndata.tcvitals.tm00
   #synvitdir=/com2/gfs/prod/gfs.${PDY}
   #synvitdir=$(compath.py gfs/prod)/gfs.${PDY}
-  synvitdir=$(compath.py gfs/prod)/gfs.${PDY}/${cyc}}
+  synvitdir=$(compath.py gfs/prod)/gfs.${PDY}/${cyc}
   synvitfile=gfs.t${CYL}z.syndata.tcvitals.tm00
   synvit6ago_dir=$(compath.py gfs/prod)/gfs.${d6ago_4ymd}/${d6ago_hh}
   synvit6ago_file=gfs.t${d6ago_hh}z.syndata.tcvitals.tm00
@@ -965,7 +965,9 @@ msg="$pgm start for $atcfout at ${CYL}z"
 postmsg "$jlogfile" "$msg"
 
 #${exectrkdir}/supvit <${DATA}/suv_input.${atcfout}.${PDY}${CYL}
-$SUPVIT <${DATA}/suv_input.${atcfout}.${PDY}${CYL}
+#$SUPVIT <${DATA}/suv_input.${atcfout}.${PDY}${CYL}
+cp -pr /gpfs/dell1/nco/ops/nwprod/util_shared.v1.1.0/exec/supvit .
+supvit <${DATA}/suv_input.${atcfout}.${PDY}${CYL}
 suvrcc=$?
 
 if [ ${suvrcc} -eq 0 ]
