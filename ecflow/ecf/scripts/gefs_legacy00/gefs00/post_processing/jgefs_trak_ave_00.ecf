@@ -1,0 +1,54 @@
+#BSUB -J %E%gefs_legacy_trak_ave_00
+#BSUB -o /com/output/%ENVIR%/today/gefs_legacy_trak_ave_00.o%J
+#BSUB -e  /com/output/%ENVIR%/today/gefs_legacy_trak_ave_00.o%J
+#BSUB -q %QUEUE%_shared
+#BSUB -cwd /tmpnwprd
+#BSUB -L /bin/sh
+#BSUB -W 00:30
+#BSUB -P %PROJ%
+#BSUB -R rusage[mem=500]
+#BSUB -R affinity[core]
+
+
+%include <head.h>
+%include <envir-p1.h>
+
+
+# EXPORT list here
+set -x
+
+
+export cyc=00
+export cyc_fcst=00
+export job=gefs_legacy_trak_ave_${cyc}
+
+
+
+# CALL executable job script here
+VERSION_FILE=/nw${envir}/versions/gefs_legacy.ver
+if [ -f $VERSION_FILE ]; then
+  . $VERSION_FILE
+else
+  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+  ecflow_client --abort
+  exit
+fi
+
+/nw${envir}/gefs_legacy.${gefs_legacy_ver}/jobs/JGEFS_ENS_TRAK_AVE
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose: cleanup gefs post working directory
+#
+#
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end
