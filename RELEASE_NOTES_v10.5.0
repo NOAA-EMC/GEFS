@@ -118,24 +118,61 @@ v10.5.0 to be released on 01/24/2020
 . This release is based on V10.4.1 with the following changes to work on DELL for production:
 
 
-
 . Updated files include:
+jobs/JGEFS_CQPF 
+jobs/JGEFS_ENSPOST 
+jobs/JGEFS_ENSSTAT 
+jobs/JGEFS_ENS_TRAK_AVE 
+jobs/JGEFS_FORECAST 
+jobs/JGEFS_INIT_COMBINE 
+jobs/JGEFS_INIT_ET 
+jobs/JGEFS_INIT_SEPARATE 
+jobs/JGEFS_NCEPPOST 
+jobs/JGEFS_POST_CLEANUP 
+jobs/JGEFS_POST_TRACK 
+jobs/JGEFS_PRDGEN 
+jobs/JGEFS_PRDGEN_GFS 
+jobs/JGEFS_RESTART_COPY 
+jobs/JGEFS_SIGCHGRES 
 
+scripts/exgefs_enspost.sh.ecf 
+scripts/exgefs_ensstat.sh.ecf 
+scripts/exgefs_init_combine.sh.ecf 
+scripts/exgefs_init_et.sh.ecf 
+scripts/exgefs_init_separate.sh.ecf 
+scripts/exgefs_nceppost.sh.ecf 
+scripts/exgefs_prdgen_gfs_grb2.sh.ecf 
+scripts/exgefs_prdgen_gfs.sh.ecf 
+scripts/exgefs_prdgen.sh.ecf 
+
+ush/extrkr_2015.sh 
+ush/gefs_init_pair_combine.sh 
+ush/gefs_init_pair_separate.sh 
+ush/gefs_prdgen_lowres.sh 
+ush/gefs_prdgen.sh 
+
+util/ush/ens_trak_ave.sh 
+util/ush/extrkr.sh 
+
+parm/gefs_config 
 
 . Added folder/files
+ush/global_chgres.sh
+parm/nam_micro_lookup.dat
 
+sorc/esmf.3_1_0rp5
+sorc/global_chgres.fd
+sorc/global_sighdr.fd
+sorc/global_sfchdr.fd
+sorc/oerparm_grib.fd
 
-. New VLAB tags:
+. New VLAB tag:
     . https://vlab.ncep.noaa.gov/code-review/#/admin/projects/GEFS,tags
       checkout the tag named gefs_legacy_v10.5.0
-    . https://vlab.ncep.noaa.gov/code-review/#/admin/projects/GEFS-ncep_post,tags
-      checkout the tag named v5.1.3
 
 . Implementation instructions
+    . Make sure ncep_post.v5.1.3 installed on DELL p3
+    . Make sure gsm.v12.1.6 installed on DELL p3
     . Copy versions/gefs_legacy.ver to ~/nwprod   (nwtest for testing)
     . Copy the gefs_legacy gefs_legacy_v10.5.0 tag to ~/nwprod  and rename it gefs_legacy_v10.5.0
-    . Copy the gefs_ncep_post v5.1.3 tag to ~/nwprod  and rename it ncep_post.v5.1.3 
-    . build codes: in sorc directory of each tag, follow the directions in the release note README.build
-
-
-    
+    . build codes: in sorc directory of new tag, follow the directions in the release note README.build
