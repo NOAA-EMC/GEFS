@@ -2,8 +2,9 @@
 #BSUB -o /com/output/%ENVIR%/today/gefs_legacy_forecast_cf18_00.o%J
 #BSUB -e  /com/output/%ENVIR%/today/gefs_legacy_forecast_cf18_00.o%J
 #BSUB -cwd /tmpnwprd
-#BSUB -R span[ptile=16]
-#BSUB -n 640
+#BSUB -R span[ptile=28]
+#BSUB -R affinity[core(1)]
+#BSUB -n 672
 #BSUB -q %QUEUE%
 #BSUB -W 00:15
 #BSUB -L /bin/sh
@@ -12,8 +13,19 @@
 #BSUB -a poe
 
 %include <head.h>
-%include <envir-p1.h>
+%include <envir-p3.h>
 
+export model=gefs_legacy
+%include <model_ver.h>
+
+. /usrx/local/prod/lmod/lmod/init/ksh
+module load ics
+module load EnvVars/$EnvVars_ver
+module load lsf/$lsf_ver   # loads blaunch)
+module load ips/$ips_ver
+module load impi/$impi_ver
+
+module list
 
 # EXPORT list here
 set -x
@@ -22,8 +34,16 @@ export OMP_NUM_THREADS=1
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
 export MP_SHARED_MEMORY=no
-export MEMORY_AFFINITY=core:1
+export MEMORY_AFFINITY=core:1 
 
+export total_tasks=672
+export OMP_STACKSIZE=256000
+#env >envv
+export MP_EAGER_LIMIT=65535
+export MP_EUIDEVELOP=min
+export MP_MPILIB=mpich2
+export MP_USE_BULK_XFER=yes
+export MP_TASK_AFFINITY=core:1
 
 export cyc=00
 export cyc_fcst=18
@@ -33,14 +53,14 @@ export FORECAST_SEGMENT=hr
 
 
 # CALL executable job script here
-VERSION_FILE=/nw${envir}/versions/gefs_legacy.ver
-if [ -f $VERSION_FILE ]; then
-  . $VERSION_FILE
-else
-  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
-  ecflow_client --abort
-  exit
-fi
+#VERSION_FILE=/nw${envir}/versions/gefs_legacy.ver
+#if [ -f $VERSION_FILE ]; then
+#  . $VERSION_FILE
+#else
+#  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+#  ecflow_client --abort
+#  exit
+#fi
 
 /nw${envir}/gefs_legacy.${gefs_legacy_ver}/jobs/JGEFS_FORECAST
 
