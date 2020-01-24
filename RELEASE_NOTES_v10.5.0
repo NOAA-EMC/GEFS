@@ -175,4 +175,4 @@ v10.5.0 to be released on 01/24/2020
     . Make sure gsm.v12.1.6 installed on DELL p3
     . Copy versions/gefs_legacy.ver to ~/nwprod   (nwtest for testing)
     . Copy the gefs_legacy gefs_legacy_v10.5.0 tag to ~/nwprod  and rename it gefs_legacy_v10.5.0
-    . build codes: in sorc directory of new tag, follow the directions in the release note README.build
+    . Build codes: in sorc directory of new tag, follow the directions in the release note README.build
