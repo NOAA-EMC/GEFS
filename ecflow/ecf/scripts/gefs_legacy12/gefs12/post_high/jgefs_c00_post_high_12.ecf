@@ -2,19 +2,30 @@
 #BSUB -o /com/output/%ENVIR%/today/gefs_legacy_c00_post_high_12.o%J
 #BSUB -e  /com/output/%ENVIR%/today/gefs_legacy_c00_post_high_12.o%J
 #BSUB -cwd /tmpnwprd
-#BSUB -n 5
-#BSUB -R span[ptile=5]
+#BSUB -R span[ptile=8]
+#BSUB -n 8
 #BSUB -q %QUEUE%_shared 
 #BSUB -W  01:30
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%
 #BSUB -R rusage[mem=2000]
-#BSUB -R affinity[core]
+#BSUB -R affinity[core(1)]
 #BSUB -a poe
 
 %include <head.h>
-%include <envir-p1.h>
+%include <envir-p3.h>
 
+export model=gefs_legacy
+%include <model_ver.h>
+
+. /usrx/local/prod/lmod/lmod/init/ksh
+module load ics
+module load EnvVars/$EnvVars_ver
+module load lsf/$lsf_ver   # loads blaunch)
+module load ips/$ips_ver
+module load impi/$impi_ver
+
+module list
 
 # EXPORT list here
 set -x
@@ -22,8 +33,8 @@ set -x
 export OMP_NUM_THREADS=1
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
-# JY export MP_SHARED_MEMORY=no 
-export MEMORY_AFFINITY=core:1
+export MP_SHARED_MEMORY=yes
+export MEMORY_AFFINITY=core:1 
 
 
 export cyc=12
@@ -34,14 +45,14 @@ export FORECAST_SEGMENT=hr
 
 
 # CALL executable job script here
-VERSION_FILE=/nw${envir}/versions/gefs_legacy.ver
-if [ -f $VERSION_FILE ]; then
-  . $VERSION_FILE
-else
-  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
-  ecflow_client --abort
-  exit
-fi
+#VERSION_FILE=/nw${envir}/versions/gefs_legacy.ver
+#if [ -f $VERSION_FILE ]; then
+#  . $VERSION_FILE
+#else
+#  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+#  ecflow_client --abort
+#  exit
+#fi
 
 /nw${envir}/gefs_legacy.${gefs_legacy_ver}/jobs/JGEFS_NCEPPOST
 
