@@ -26,6 +26,15 @@ echo "`date`   `pwd`   $0 $*   begin log"
 pwd
 dirsaved=`pwd`
 
+echo ".....Download fix from HPSS..."
+cd ../
+if [ -d "../fix" ]; then
+  echo "Deleting ../fix folder"
+  rm -rf ../fix
+fi
+htar -xvf /NCEPDEV/emc-ensemble/5year/Xianwu.Xue/ForOperation/GEFS_legacy/fix_20200124.tar
+cd $dirsaved
+
 echo ".....Compiling gefs_global_fcst ..."
 ./build.fcst.log.sh
 

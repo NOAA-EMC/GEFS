@@ -17,7 +17,7 @@ echo "`date`   `pwd`   Compiling esmf.3.1.0rp5    after"
 cd ../../
 
 
-for dir in gefs_global_fcst.fd ; do  #global_chgres.fd global_cycle.fd  global_sfchdr.fd  global_sighdr.fd gefs_global_fcst.fd ; do
+for dir in global_chgres.fd global_sfchdr.fd  global_sighdr.fd gefs_global_fcst.fd ; do  #global_chgres.fd global_cycle.fd  global_sfchdr.fd  global_sighdr.fd gefs_global_fcst.fd ; do
     cd $dir
     echo "`date`   `pwd`   Compiling $dir   before"
     ./makefile.sh

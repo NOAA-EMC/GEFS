@@ -22,4 +22,4 @@ clean:
 	-rm -f  *.o  *.mod
 
 install:
-	mv $(CMD) ../../exec/$(CMD)
+	mv $(CMD) ../../util/exec/$(CMD)
