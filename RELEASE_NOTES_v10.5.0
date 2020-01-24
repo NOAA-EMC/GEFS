@@ -1,0 +1,141 @@
+Release Note: GEFS LEGACY v.10.3.6
+
+v10.0.0 . released Feb 1, 2012
+. Implementation on CCS
+
+v10.1.0 . released July 25, 2013
+. Modified model to run on WCOSS
+
+v10.2.0 . released Oct 16, 2014 (The first version in EE structure, but contains only part of the
+package: GEFS_INIT jobs and GEFS_PRDGEN_GFS)
+. Modified initialization to run downstream of GFS implementation
+
+v10.2.1 . released Jan 1, 2015
+. As implemented with GFS implementation Jan 14, 2015
+
+v10.3.0 -- released August 12, 2015
+. Legacy GEFS to continue uncalibrated GEFS v10 products for users who calibrate them using
+the GEFS V10 reforecasts
+. Minimal changes from current production, including the following:
+. Remaining GEFS jobs have been converted to vertical structure
+. Bug fixes that change the products slightly:
+. Forecast model bug (that caused crashes in 201410 and 201506) is fixed
+. Relocation code bugs discovered during V11 development are fixed
+. /COM and /NWGES directories are renamed to gefs_legacy
+. Version file is renamed to gefs_legacy.ver to avoid name collision with gefs.ver
+. pgrb2c, pgrbd, and pgrb2d products and their DBN alerts are turned off
+. CQPF job has been removed because it provides calibrated products
+. forecasts for 06Z, 12Z, and 18Z are shortened to 6 hours
+. all dbn alerts for these forecasts are turned off
+. the only known downstream user of these forecasts is the wave ensemble
+. ENSPOST and ENSSTAT jobs do not need to be run for these cycles
+. error checking developed for V11 has been added to the INIT, POST, and
+PRDGEN jobs
+. resources and runtimes are unchanged except for the shortened 06Z, 12Z, and 18Z forecasts
+. the RESTART_COPY job is optional; it only needs to be done if crashed forecasts need to be
+rerun from the latest restart files instead of being rerun from the beginning
+. To implement:
+. check out into /nw$envir/gefs.v10.3.0
+. in sorc subdirectory (to build and install codes in sorc, sorc.tracker, and util/sorc):
+. sh build.sh
+. sh install.sh
+. copy the version file to the directory /nw$envir/versions
+. There is a test run for comparison:
+. source: /ensemble/save/Richard.Wobus/s/rwik/nwdev/gefs.v10.3.0
+. products: /ptmpd2/emc.enspara/o/rwik/com/gens/dev
+. To run identically to this test run, copy the sfcsig and track subdirectories from
+one cycle and start running the next cycle.
+
+v10.3.1 released August 18, 2015
+. Correct directories used for scripts and codes
+. Turn off transmission of hurricane tracks to archives
+. Implementation instructions are unchanged from v10.3.0
+. The new test run for comparison is:
+. source: /ensemble/save/Richard.Wobus/s/rwio/nwdev/gefs.v10.3.0
+. products: /ptmpd2/emc.enspara/o/rwio/com/gens/dev
+
+v10.3.2 released September 4, 2015
+. merge changes from v10.2.1 as run in production
+. remove obsolete options from j-jobs
+. turn off unneeded DBN alerts and track archives
+. Implementation instructions are unchanged from v10.3.0
+. The new test run for comparison is:
+. source: /ensemble/save/Richard.Wobus/s/rwir/nwdev/gefs.v10.3.2
+. products: /ptmpd2/emc.enspara/o/rwir/com/gens/dev
+
+v10.3.3 released September 27, 2015
+. disable long track products a*trackatcfunix for 06Z, 12Z, and 18Z cycles
+. modify all DBN alerts to a standard model name for the GEFS Legacy system
+. modify file location specifications to run under gefs_legacy.v10.3.* instead of gefs.v10.3.*
+. To implement:
+. check out into /nw$envir/gefs_legacy.v10.3.3
+. remaining instructions are unchanged from gefs.v10.3.0
+. There is a test run on gyre for comparison:
+. source: /ensemble/save/Richard.Wobus/s/rwiu/nwdev/gefs_legacy.v10.3.3
+. products: /ptmpd2/emc.enspara/o/rwiu/com/gens/dev
+. To run identically to this test run, copy the sfcsig and track subdirectories from
+one cycle and start running the next cycle.
+
+v10.3.4 released December 21, 2015
+. modify post cleanup job to save all 00Z sfcsig and sflux files
+. mirror these files for downstream applications
+. implementation instructions:
+. use new tag: https://svnemc.ncep.noaa.gov/projects/gefs/tags/gefs_legacy.v10.3.4
+. check out into /nw$envir/gefs_legacy.v10.3.4
+. add 00Z sfcsig and sflux files to the mirror to theia
+. add 378h sfcsig and sflux files to the mirror to the dev machine
+. remaining instructions are unchanged from gefs.v10.3.0
+. There will be a test run on gyre for comparison:
+. source: /ensemble/save/Richard.Wobus/s/rwja/nwdev/gefs_legacy.v10.3.4
+. products: /ptmpd2/Richard.Wobus/o/rwja/com/gens/dev/gefs.v20151218/12
+. To run identically to this test run, copy the sfcsig and track subdirectories from
+the previous cycle of the test run or the production legacy GEFS and then run
+the test cycle
+
+V10.3.5 released March 20, 2016
+. Modify J-jobs to take GFS data from new location on /com2
+
+V10.3.6 released March 17, 2017
+. Modify parm/gefs_init.parm and jobs/GEFS_INIT_SEPARATE to specify and process GFS analysis
+in NEMSIO format
+. Increase memory for GEFS_PRDGEN_GFS job to process higher-resolution master post files
+. Cleanup
+  . remove obsolete job_cards directory
+  . add ecf directory including memory change for GEFS_PRDGEN_GFS job
+. implementation instructions:
+  . use new tag: https://svnemc.ncep.noaa.gov/projects/gefs/tags/gefs_legacy.v10.3.6
+  . check out into /nw$envir/gefs_legacy.v10.3.6
+  . modify ecf script for GEFS_PRDGEN_GFS to increase memory to 2000
+  . remaining instructions are unchanged from gefs.v10.3.0
+  . There is a test run on the dev WCOSS phase 1 machine for comparison:
+    . source: /ensemble/save/Richard.Wobus/s/rwme/nwdev/gefs_legacy.v10.3.6
+    . products: /ptmpd2/emc.enspara/o/rwme/com/gens/dev/
+    . To run identically to this test run, copy the sfcsig and track subdirectories from
+the previous cycle of the test run
+
+v10.5.0 to be released on 01/24/2020
+
+. This release is based on V10.4.1 with the following changes to work on DELL for production:
+
+
+
+. Updated files include:
+
+
+. Added folder/files
+
+
+. New VLAB tags:
+    . https://vlab.ncep.noaa.gov/code-review/#/admin/projects/GEFS,tags
+      checkout the tag named gefs_legacy_v10.5.0
+    . https://vlab.ncep.noaa.gov/code-review/#/admin/projects/GEFS-ncep_post,tags
+      checkout the tag named v5.1.3
+
+. Implementation instructions
+    . Copy versions/gefs_legacy.ver to ~/nwprod   (nwtest for testing)
+    . Copy the gefs_legacy gefs_legacy_v10.5.0 tag to ~/nwprod  and rename it gefs_legacy_v10.5.0
+    . Copy the gefs_ncep_post v5.1.3 tag to ~/nwprod  and rename it ncep_post.v5.1.3 
+    . build codes: in sorc directory of each tag, follow the directions in the release note README.build
+
+
+    
