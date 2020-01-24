@@ -119,52 +119,52 @@ v10.5.0 to be released on 01/24/2020
 
 
 . Updated files include:
-jobs/JGEFS_CQPF 
-jobs/JGEFS_ENSPOST 
-jobs/JGEFS_ENSSTAT 
-jobs/JGEFS_ENS_TRAK_AVE 
-jobs/JGEFS_FORECAST 
-jobs/JGEFS_INIT_COMBINE 
-jobs/JGEFS_INIT_ET 
-jobs/JGEFS_INIT_SEPARATE 
-jobs/JGEFS_NCEPPOST 
-jobs/JGEFS_POST_CLEANUP 
-jobs/JGEFS_POST_TRACK 
-jobs/JGEFS_PRDGEN 
-jobs/JGEFS_PRDGEN_GFS 
-jobs/JGEFS_RESTART_COPY 
-jobs/JGEFS_SIGCHGRES 
+    jobs/JGEFS_CQPF 
+    jobs/JGEFS_ENSPOST 
+    jobs/JGEFS_ENSSTAT 
+    jobs/JGEFS_ENS_TRAK_AVE 
+    jobs/JGEFS_FORECAST 
+    jobs/JGEFS_INIT_COMBINE 
+    jobs/JGEFS_INIT_ET 
+    jobs/JGEFS_INIT_SEPARATE 
+    jobs/JGEFS_NCEPPOST 
+    jobs/JGEFS_POST_CLEANUP 
+    jobs/JGEFS_POST_TRACK 
+    jobs/JGEFS_PRDGEN 
+    jobs/JGEFS_PRDGEN_GFS 
+    jobs/JGEFS_RESTART_COPY 
+    jobs/JGEFS_SIGCHGRES 
 
-scripts/exgefs_enspost.sh.ecf 
-scripts/exgefs_ensstat.sh.ecf 
-scripts/exgefs_init_combine.sh.ecf 
-scripts/exgefs_init_et.sh.ecf 
-scripts/exgefs_init_separate.sh.ecf 
-scripts/exgefs_nceppost.sh.ecf 
-scripts/exgefs_prdgen_gfs_grb2.sh.ecf 
-scripts/exgefs_prdgen_gfs.sh.ecf 
-scripts/exgefs_prdgen.sh.ecf 
+    scripts/exgefs_enspost.sh.ecf 
+    scripts/exgefs_ensstat.sh.ecf 
+    scripts/exgefs_init_combine.sh.ecf 
+    scripts/exgefs_init_et.sh.ecf 
+    scripts/exgefs_init_separate.sh.ecf 
+    scripts/exgefs_nceppost.sh.ecf 
+    scripts/exgefs_prdgen_gfs_grb2.sh.ecf 
+    scripts/exgefs_prdgen_gfs.sh.ecf 
+    scripts/exgefs_prdgen.sh.ecf 
 
-ush/extrkr_2015.sh 
-ush/gefs_init_pair_combine.sh 
-ush/gefs_init_pair_separate.sh 
-ush/gefs_prdgen_lowres.sh 
-ush/gefs_prdgen.sh 
+    ush/extrkr_2015.sh 
+    ush/gefs_init_pair_combine.sh 
+    ush/gefs_init_pair_separate.sh 
+    ush/gefs_prdgen_lowres.sh 
+    ush/gefs_prdgen.sh 
 
-util/ush/ens_trak_ave.sh 
-util/ush/extrkr.sh 
+    util/ush/ens_trak_ave.sh 
+    util/ush/extrkr.sh 
 
-parm/gefs_config 
+    parm/gefs_config 
 
 . Added folder/files
-ush/global_chgres.sh
-parm/nam_micro_lookup.dat
+    ush/global_chgres.sh
+    parm/nam_micro_lookup.dat
 
-sorc/esmf.3_1_0rp5
-sorc/global_chgres.fd
-sorc/global_sighdr.fd
-sorc/global_sfchdr.fd
-sorc/oerparm_grib.fd
+    sorc/esmf.3_1_0rp5
+    sorc/global_chgres.fd
+    sorc/global_sighdr.fd
+    sorc/global_sfchdr.fd
+    sorc/oerparm_grib.fd
 
 . New VLAB tag:
     . https://vlab.ncep.noaa.gov/code-review/#/admin/projects/GEFS,tags
