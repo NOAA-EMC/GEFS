@@ -8,6 +8,11 @@ mac2=$(hostname | cut -c1-2)
 #export CLEAN=NO                       # uncomment this if you don't want to clean before compiling
 export USE_MKL=YES
 export ICS_VERSION=14.0.1
+
+if [ ! -d "../../exec" ]; then
+    echo "Creating ../../exec folder"
+    mkdir ../../exec
+fi
  
 #---------------------------------------------------------
 if [ $mac = t -o $mac = g ] ; then # For WCOSS
@@ -210,7 +215,7 @@ if [ $machine = zeus -o $machine = wcoss -o $machine = dell3 ] ; then
         fi
         export OPTSBT=$OPTSB
         export OPTSBTX=$OPTSBX
-        export EXECM=global_fcst # $exec_dir/global_fcst
+        export EXECM=gefs_global_fcst # $exec_dir/global_fcst
     fi
 
     if [ $machine = dell3 ]; then

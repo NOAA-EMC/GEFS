@@ -26,6 +26,10 @@ echo "`date`   `pwd`   $0 $*   begin log"
 pwd
 dirsaved=`pwd`
 
+echo ".....Compiling gefs_global_fcst ..."
+./build.fcst.log.sh
+
+# For building and installing all GEFS programs
 module purge
 module use ./
 module load Module_gefs_legacy_v10.5.0
@@ -33,11 +37,6 @@ module load Module_gefs_legacy_v10.5.0
 echo "`date`   build.sh $*   before"
 sh build.sh $*
 echo "`date`   build.sh $*   after"
-
-echo ".....Compiling esmf.3.1.0rp5 ..."
-cd ${dirsaved}/esmf.3_1_0rp5/src
-./makeit
-cd ${dirsaved}
 
 echo ".....Installing..."
 ./install.sh

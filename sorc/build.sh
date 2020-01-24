@@ -132,7 +132,6 @@ set +x
 
 sorclist="\
   global_ensadd\
-  global_ensadd_g2\
   global_enscqpf\
   global_enscvprcp\
   global_enscvt24h\
@@ -150,10 +149,8 @@ sorclist="\
   overparm_grib\
 "
 
-
-
 #utillist="gettrk overenstr.grib getnsttf"
-utillist="getnsttf"
+utillist="overenstr.grib getnsttf"
 
 nemslist="nemsio_get"
 nemslist=
@@ -222,6 +219,7 @@ for bdir in $sorclist ; do
 done
 msgstring="$msgstring
 "
+
 #for dir in ../util/sorc/gettrk.fd ../util/sorc/overenstr.grib.fd ../util/sorc/getnsttf.fd; do
 for bdir in $utillist ; do
  dir=../util/sorc/$bdir.fd

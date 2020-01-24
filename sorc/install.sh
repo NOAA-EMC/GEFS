@@ -69,7 +69,14 @@ if [[ -d ../exec ]]; then
 	      mv $filex ../../exec
 	      ls -al ../../exec/$filex
 	    else
-	      echo filex=$fileex DOES NOT EXIST AS A FILE
+          filex=`basename $dir | sed -e"s/\.fd$//"`.x
+          ls -al $filex
+          if [[ -s $filex ]]; then
+            mv $filex ../../exec
+            ls -al ../../exec/$filex
+          else
+	        echo filex=$fileex DOES NOT EXIST AS A FILE
+          fi
 	    fi
 	    #mkdir -p ../../exec
 	    #if [[ -d ../../exec ]]; then
