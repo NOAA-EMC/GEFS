@@ -1,12 +1,12 @@
-#BSUB -J %E%gefs_prdgen_gfs_%CYC%
-#BSUB -o /com/output/%ENVIR%/today/gefs_prdgen_gfs_%CYC%.o%J
-#BSUB -e  /com/output/%ENVIR%/today/gefs_prdgen_gfs_%CYC%.o%J
+#BSUB -J %E%gefs_legacy_ensstat_low_%CYC%
+#BSUB -o /com/output/%ENVIR%/today/gefs_legacy_ensstat_low_%CYC%.o%J
+#BSUB -e  /com/output/%ENVIR%/today/gefs_legacy_ensstat_low_%CYC%.o%J
 #BSUB -q %QUEUE%_shared
 #BSUB -cwd /tmpnwprd
-#BSUB -W 00:45
 #BSUB -L /bin/sh
+#BSUB -W 02:00
 #BSUB -P %PROJ%
-#BSUB -R rusage[mem=2000]
+#BSUB -R rusage[mem=500]
 #BSUB -R affinity[core]
 
 %include <head.h>
@@ -15,31 +15,29 @@
 export model=gefs_legacy
 %include <model_ver.h>
 
+
 # EXPORT list here
 set -x
 
+
 export cyc=%CYC%
 export cyc_fcst=%CYC_FCST%
-export job=gefs_prdgen_gfs_${cyc}
+export job=gefs_legacy_ensstat_low_${cyc}
+export FORECAST_SEGMENT=lr
 
 
+
+# CALL executable job script here
 #VERSION_FILE=/nw${envir}/versions/gefs_legacy.ver
 #if [ -f $VERSION_FILE ]; then
 #  . $VERSION_FILE
 #else
-#  ecflow_client --msg="***JOB ${ECF_NAME} ERROR: Version File $VERSION_FILE does not exist ***"
+#  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
 #  ecflow_client --abort
 #  exit
 #fi
 
-# CALL executable job script here
-/nw${envir}/gefs_legacy.${gefs_legacy_ver}/jobs/JGEFS_PRDGEN_GFS
-
-if [ $? -ne 0 ]; then
-   ecflow_client --msg="***JOB ${ECF_NAME} ERROR RUNNING J-SCRIPT ***"
-   ecflow_client --abort
-   exit
-fi
+/nw${envir}/gefs_legacy.${gefs_legacy_ver}/jobs/JGEFS_ENSSTAT
 
 %include <tail.h>
 %manual
