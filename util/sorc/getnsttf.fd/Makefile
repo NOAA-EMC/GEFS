@@ -120,7 +120,7 @@ include $(MAKE_CONF)
 # Load module
 # -----------
 
-  EXE_FILE = getnsttf.x
+  EXE_FILE = getnsttf
 
 
 # --------------------
@@ -130,7 +130,7 @@ include $(MAKE_CONF)
   INSTALL_DIR = ../../exec
 
 
-# --------
+#-------
 # Log file
 # --------
 

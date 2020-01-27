@@ -1444,10 +1444,11 @@ case $taskname in
     OMP_NUM_THREADS=2
   fi  
   if [[ $gefsmachine = dell ]]; then                       
-    wall_clock_limit="02:50"
+    wall_clock_limit="01:50"
     total_tasks=40
     taskspernode=8
-    node=5
+    taskspernode=14
+    node=3
     OMP_NUM_THREADS=2
     MP_SHARED_MEMORY=no
   fi  
@@ -1492,10 +1493,10 @@ case $taskname in
     MP_SHARED_MEMORY=no
   fi  
   if [[ $gefsmachine = dell ]]; then                       
-    wall_clock_limit="02:50"
+    wall_clock_limit="01:50"
     total_tasks=160
-    taskspernode=10 
-    node=16
+    taskspernode=20 
+    node=8
     OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=no
   fi  
@@ -1539,9 +1540,9 @@ case $taskname in
   if [[ $gefsmachine = dell ]]; then                       
     wall_clock_limit="01:50"
     total_tasks=40
-    taskspernode=10
-    node=4
-    OMP_NUM_THREADS=1
+    taskspernode=20
+    node=2
+    OMP_NUM_THREADS=2
     MP_SHARED_MEMORY=no
   fi  
   ;;
@@ -1657,9 +1658,9 @@ case $taskname in
 #      (( taskspermem = 96 ))
 #      (( taskspermem = 100 ))
 #      (( taskspermem = 80 ))
-       (( taskspermem = 32 ))
+       (( taskspermem = 40 ))
      else  
-       (( taskspermem = 32 ))
+       (( taskspermem = 18 ))
      fi  
        parallel_threads=1
        task_affinity="core(1)"
@@ -1775,7 +1776,7 @@ case $taskname in
   fi
   if [[ $gefsmachine = dell ]]; then                       
 #      (( taskspermem = 48 ))
-       (( taskspermem = 32 ))
+       (( taskspermem = 18 ))
        parallel_threads=1
        task_affinity="core(1)"
        (( taskspernode = $COREPERNODE / parallel_threads ))

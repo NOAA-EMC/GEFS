@@ -326,7 +326,7 @@ fi
 
 #  The VEGTYPE fix file:
 # DHOU 01/07/2013 comment out this 
- if [[ $gefsmachine != wcoss ]]; then
+ if [[ $gefsmachine != dell ]]; then
 export FNVETC=$FIXgefs/global_vegtype.1x1.grb
  fi
 
