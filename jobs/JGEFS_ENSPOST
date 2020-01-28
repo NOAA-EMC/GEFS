@@ -166,9 +166,12 @@ then
   export COMINm1=$COM_IN/gefs_legacy.${PDYm1}
   export COMOUT=$COM_OUT/gefs_legacy.${PDY}
 else                              ### For Operations
-  export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
-  export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
-  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  #export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  #export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
+  #export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMIN=$COMROOT/${NET}/${envir}/gefs_lagacy.${PDY}
+  export COMINm1=$COMROOT/${NET}/${envir}/gefs_lagacy.${PDYm1}
+  export COMOUT=$COMROOT/${NET}/${envir}/gefs_lagacy.${PDY}
 fi
 
 mkdir -m 775 -p $COMOUT/$cyc/ensstat

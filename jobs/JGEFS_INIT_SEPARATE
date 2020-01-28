@@ -16,7 +16,7 @@ export PS4='$SECONDS + '
 ####################################
 
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
-export gefsmachine=${gefsmachine:-wcoss}
+export gefsmachine=${gefsmachine:-dell}
 # for dell
 export APRUN=${gefsmpexec:-mpirun}
 
@@ -236,7 +236,8 @@ if [[ $NEMSIO_IN = .true. ]]; then
   if [[ $envir = prod ]] || \
      [[ $envir = para ]] || \
      [[ $envir = test ]]; then
-    export COMINgfs=${COMINgfs:-$COMROOThps/gfs/$envir/gfs.$PDY}
+    #export COMINgfs=${COMINgfs:-$COMROOThps/gfs/$envir/gfs.$PDY}
+    export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
   else
     export COMROOThps=/gpfs/hps/nco/ops/com
     export COMINgfs=${COMINgfs:-$COMROOThps/gfs/prod/gfs.$PDY}
@@ -284,7 +285,7 @@ fi
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMOUT=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
 else
   export COMOUT=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
 fi

@@ -318,10 +318,15 @@ then
   mkdir -m 775 -p $COMOUT/$cyc/stats
 
 else                              ### Fir Operations
-  export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
-  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
-  export gespath=/nwges/${envir}
-  export ENS_COM=$COMOUT
+ #export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
+ #export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+ #export gespath=/nwges/${envir}
+ 
+ export COMIN=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
+ export COMOUT=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
+ export gespath=${gespath:-$GESROOT/${envir}}
+ export ENS_COM=$COMOUT
+
 fi
 
 export GESdir=$gespath/gefs_legacy.${PDY}

@@ -149,7 +149,7 @@ export HOMEUTIL=/nwprod/util
 export utilscript=$HOMEUTIL/ush
 export EXECUTIL=$HOMEUTIL/exec
 export FIXUTIL=$HOMEUTIL/fix
-export GRBINDEX=/nwprod/util/exec/grbindex
+#export GRBINDEX=/nwprod/util/exec/grbindex
 
  if [[ $gefsmachine = zeus ]]; then
 #DHOU 03/26/2012 for ZEUS
@@ -175,7 +175,7 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=/com2/gfs/prod/gfs.${PDY}
+#export COMINgfs=/com2/gfs/prod/gfs.${PDY}
 
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
@@ -186,9 +186,12 @@ then
   export COMINm1=$COM_IN/gefs_legacy.${PDYm1}
   export COMOUT=$COM_OUT/gefs_legacy.${PDY}
 else                              ### For Operations
-  export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
-  export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
-  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  #export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  #export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
+  #export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMIN=$COMROOT/${NET}/${envir}/gefs_lagacy.${PDY}
+  export COMINm1=$COMROOT/${NET}/${envir}/gefs_lagacy.${PDYm1}
+  export COMOUT=$COMROOT/${NET}/${envir}/gefs_lagacy.${PDY}
 fi
 
 mkdir -m 775 -p $COMOUT/$cyc/pgrba

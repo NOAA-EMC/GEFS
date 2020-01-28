@@ -246,9 +246,10 @@ then
   export COMINgfs=$GFS_IN/gfs.${PDY}
   export COMOUT=$COM_OUT/gefs_legacy.${PDY}
 else                              ### For Operations
-  export COMINgfs=/com2/gfs/prod/gfs.${PDY}
-  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
-  export gespath=/nwges/${envir}
+  #export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMOUT=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
+  #export gespath=/nwges/${envir}
+  gespath=${gespath:-$GESROOT/${envir}}
 fi
 
 mkdir -m 775 -p $COMOUT/$cyc/sfcsig

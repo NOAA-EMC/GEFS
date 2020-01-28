@@ -134,9 +134,12 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=/com2/gfs/prod/gfs.$PDY
-export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
-export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
+#export COMINgfs=/com2/gfs/prod/gfs.$PDY
+#export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
+#export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
+export COMIN=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
+export COMINm1=$COMROOT/${NET}/${envir}/gefs_legacy.${PDYm1}
 
 if [[ $envir = dev ]]; then
   export COMIN=$baseoutput$COMIN
@@ -149,7 +152,8 @@ mkdir -m 775 -p $COMIN/$cyc/track
 
 #############################################################
 
-export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+#export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+export COMIN=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
 
 if [[ $envir = dev ]]; then
 export COMOUT=$baseoutput/$COMOUT

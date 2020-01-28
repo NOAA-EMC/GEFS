@@ -216,15 +216,18 @@ then
       export COMIN=/gpfs/hps/ptmp/emc.glopara/com2/gfs/para/gfs.${PDY}
     ;;
   esac
+  #export COMIN=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${PDY}/${cyc}
+  export COMIN=${COMIN:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
   export COMOUT=$COM_OUT/gefs_legacy.${PDY}
   export ENS_COM=$COMOUT
 else                              ### For Operations
   #TODO: Use COMINgfs instead of COMIN
-  export COMIN=/com2/gfs/prod/gfs.${PDY}
-  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  #export COMIN=/com2/gfs/prod/gfs.${PDY}
+  #export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMIN=${COMIN:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
+  export COMOUT=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
   export ENS_COM=$COMOUT
 fi
-export COMIN=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${PDY}/${cyc}
 
 mkdir -m 775 -p $COMOUT/$cyc/pgrba
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2a

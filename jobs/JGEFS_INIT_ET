@@ -173,7 +173,8 @@ export SLMASK=/dev/null
 # Define COM directories
 ##############################################
 if [[ $envir = prod ]]; then
-  export COMINgfs=/com2/gfs/${envir}/gfs.$PDY
+  #export COMINgfs=/com2/gfs/${envir}/gfs.$PDY
+  export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
 elif [[ $envir = para ]] || [[ $envir = test ]]; then
   gfssource=prod
   if [[ "$gfssource" = para ]]; then
@@ -194,7 +195,7 @@ fi
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-  export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMIN=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
   export COM=/com/${NET}/${envir}
   export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
   export COMINm2=/com/${NET}/${envir}/gefs_legacy.${PDYm2}
@@ -212,7 +213,7 @@ fi
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMOUT=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
 else
   export COMOUT=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
 fi

@@ -11,8 +11,6 @@ set -xa
 ####################################
 
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
-#export gefsmachine=${gefsmachine:-wcoss}
-#export gefsmpexec=${gefsmpexec:-mpirun.lsf}
 export gefsmachine=${gefsmachine:-dell}
 export gefsmpexec=${gefsmpexec:-mpirun}
 
@@ -179,7 +177,8 @@ fi
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-  export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  #export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMIN=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
 else
   export COMIN=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
 fi
@@ -187,13 +186,16 @@ fi
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  #export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMOUT=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
 else
   export COMOUT=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
 fi
 
-export gfsvitdir=${gfsvitdir:-${COMROOThps}/gfs/prod/gfs.$PDY}
-export namvitdir=${namvitdir:-${COMROOTp2}/nam/prod/nam.$PDY}
+#export gfsvitdir=${gfsvitdir:-${COMROOThps}/gfs/prod/gfs.$PDY}
+#export namvitdir=${namvitdir:-${COMROOTp2}/nam/prod/nam.$PDY}
+export gfsvitdir=${gfsvitdir:-$(compath.py gfs/prod)}/gfs.$PDY/$cyc
+export namvitdir=${namvitdir:-$(compath.py nam/prod)}/nam.$PDY/$cyc
 
 export ensdir=$COMOUT/$cyc/pgrba
 export COM=$COMOUT/$cyc/track
@@ -255,12 +257,10 @@ if [[ $envir = dev ]]; then
     export archsyndir=$TMPCOM/arch/prod/syndat
   fi
   if [[ $gefsmachine = dell ]]; then
-    export archsyndir=$TMPCOM/arch/prod/syndat
-    #export archsyndir=/gpfs/dell1/nco/ops/com/gfs/prod/syndat/syndat_tcvitals.2020
-    export archsyndir=/gpfs/dell1/nco/ops/com/gfs/prod/syndat
     export archsyndir=${archsyndir:-$(compath.py gfs/prod/syndat)}
   fi
 fi
+export archsyndir=${archsyndir:-$(compath.py gfs/prod/syndat)}
 
 echo
 env | sort

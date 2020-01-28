@@ -146,8 +146,8 @@ then
   export COMIN=$COM_IN/gefs_legacy.${PDY}
   export COMOUT=$COM_OUT/gefs_legacy.${PDY}
 else                              ### For Operations
-  export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
-  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMIN=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMOUT=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
 fi
 
 ##############################################
