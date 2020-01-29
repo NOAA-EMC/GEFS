@@ -1,11 +1,11 @@
 #BSUB -J %E%gefs_legacy_post_cleanup_%CYC%
 #BSUB -o /com/output/%ENVIR%/today/gefs_legacy_post_cleanup_%CYC%.o%J
 #BSUB -e  /com/output/%ENVIR%/today/gefs_legacy_post_cleanup_%CYC%.o%J
-#BSUB -cwd /tmpnwprd
+#BSUB -cwd /tmp
 #BSUB -q %QUEUESERV%
 #BSUB -W  01:30
 #BSUB -L /bin/sh
-#BSUB -P %PROJ%
+#BSUB -P %PROJ%-%PROJENVIR%
 #BSUB -R rusage[mem=2000]
 #BSUB -R affinity[core]
 
@@ -19,6 +19,14 @@ export model=gefs_legacy
 # EXPORT list here
 set -x
 
+export OMP_NUM_THREADS=2
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+export MP_SHARED_MEMORY=no
+export MEMORY_AFFINITY=core:2 
+
+export total_tasks=40
+
 
 export cyc=%CYC%
 export cyc_fcst=%CYC_FCST%
@@ -26,16 +34,7 @@ export job=gefs_legacy_post_cleanup_${cyc}
 
 
 # CALL executable job script here
-#VERSION_FILE=/nw${envir}/versions/gefs_legacy.ver
-#if [ -f $VERSION_FILE ]; then
-#  . $VERSION_FILE
-#else
-#  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
-#  ecflow_client --abort
-#  exit
-#fi
-
-/nw${envir}/gefs_legacy.${gefs_legacy_ver}/jobs/JGEFS_POST_CLEANUP
+${HOMEgefs_legacy}/jobs/JGEFS_POST_CLEANUP
 
 %include <tail.h>
 %manual

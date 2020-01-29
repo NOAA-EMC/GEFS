@@ -1,7 +1,6 @@
 #BSUB -J %E%gefs_legacy_%MEM%_sigchgres_%CYC%
 #BSUB -o /com/output/%ENVIR%/today/gefs_legacy_%MEM%_sigchgres_%CYC%.o%J
-#BSUB -e  /com/output/%ENVIR%/today/gefs_legacy_%MEM%_sigchgres_%CYC%.o%J
-#BSUB -cwd /tmpnwprd
+#BSUB -cwd /tmp
 #BSUB -q %QUEUE%_shared
 #BSUB -n 1
 #BSUB -R span[ptile=1]
@@ -9,7 +8,7 @@
 #BSUB -R affinity[core]
 #BSUB -W  00:15
 #BSUB -L /bin/sh
-#BSUB -P %PROJ%
+#BSUB -P %PROJ%-%PROJENVIR%
 #BSUB -a poe
 
 %include <head.h>
@@ -34,16 +33,7 @@ export job=gefs_legacy_%MEM%_sigchgres_${cyc}
 export RUN=ge%MEM%
 
 # CALL executable job script here
-#VERSION_FILE=/nw${envir}/versions/gefs_legacy.ver
-#if [ -f $VERSION_FILE ]; then
-#  . $VERSION_FILE
-#else
-#  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
-#  ecflow_client --abort
-#  exit
-#fi
-
-/nw${envir}/gefs_legacy.${gefs_legacy_ver}/jobs/JGEFS_SIGCHGRES
+${HOMEgefs_legacy}/jobs/JGEFS_SIGCHGRES
 
 %include <tail.h>
 %manual

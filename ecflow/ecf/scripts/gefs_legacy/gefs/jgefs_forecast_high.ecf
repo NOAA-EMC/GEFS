@@ -1,21 +1,21 @@
 #BSUB -J %E%gefs_legacy_forecast_high_%CYC%
 #BSUB -o /com/output/%ENVIR%/today/gefs_legacy_forecast_high_%CYC%.o%J
-#BSUB -e  /com/output/%ENVIR%/today/gefs_legacy_forecast_high_%CYC%.o%J
-#BSUB -cwd /tmpnwprd
+#BSUB -cwd /tmp
 ##BSUB -n 2100
-#BSUB -n 672
+#BSUB -n 840
 #BSUB -R span[ptile=28]
 #BSUB -R affinity[core(1)]
 #BSUB -q %QUEUE%
 ##BSUB -W 01:00
 #BSUB -W 01:30
 #BSUB -L /bin/sh
-#BSUB -P %PROJ%
-#BSUB -x  
+#BSUB -P %PROJ%-%PROJENVIR%
+##BSUB -x  
 ##BSUB -a poe
 
 %include <head.h>
 %include <envir-p3.h>
+set -x
 
 export model=gefs_legacy
 %include <model_ver.h>
@@ -30,15 +30,13 @@ module load impi/$impi_ver
 module list
 
 # EXPORT list here
-set -x
-
 export OMP_NUM_THREADS=1
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:1 
 
-export total_tasks=672
+export total_tasks=840
 export OMP_STACKSIZE=256000
 #env >envv
 export MP_EAGER_LIMIT=65535
@@ -53,22 +51,8 @@ export cyc_fcst=%CYC_FCST%
 export job=gefs_legacy_forecast_high_${cyc}
 export FORECAST_SEGMENT=hr
 
-# export total_tasks=2100 # will see if need this - JY
-# export gefsmachine=wcoss
-# export gefsmpexec=mpirun.lsf
-
-
 # CALL executable job script here
-#VERSION_FILE=/nw${envir}/versions/gefs_legacy.ver
-#if [ -f $VERSION_FILE ]; then
-#  . $VERSION_FILE
-#else
-#  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
-#  ecflow_client --abort
-#  exit
-#fi
-
-/nw${envir}/gefs_legacy.${gefs_legacy_ver}/jobs/JGEFS_FORECAST
+${HOMEgefs_legacy}/jobs/JGEFS_FORECAST
 
 %include <tail.h>
 %manual
