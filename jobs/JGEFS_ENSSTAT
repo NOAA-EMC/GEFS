@@ -43,7 +43,8 @@ then
 else                       ### For Operations
    export DATA_IN=$DATAROOT
 fi
-export DATA=$DATA_IN/${job}.${pid}
+#export DATA=$DATA_IN/${job}.${pid}
+export DATA=${DATA:-$DATA_IN/${job}.${pid}}
 
 mkdir -p $DATA
 cd $DATA
@@ -124,13 +125,18 @@ else                             ### For Operations
   fi
 
   # Specify Execution Areas
-  export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
+  export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  export HOMEGLOBAL=${HOMEGLOBAL:-$HOMEgefs}
+  export HOMEglobal=${HOMEglobal:-$HOMEgefs}
+
+  #export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
   export EXECGLOBAL=${EXECGLOBAL:-$HOMEGLOBAL/exec}
   export USHGLOBAL=${USHGLOBAL:-$HOMEGLOBAL/ush}
   export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
   export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
 
-  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  #export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  #export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}

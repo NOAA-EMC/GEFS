@@ -36,7 +36,8 @@ then
 else                         ### For Operations
    export DATA_IN=$DATAROOT
 fi
-export DATA=$DATA_IN/${job}.${pid}
+#export DATA=$DATA_IN/${job}.${pid}
+export DATA=${DATA:-$DATA_IN/${job}.${pid}}
 
 mkdir -p $DATA
 cd $DATA

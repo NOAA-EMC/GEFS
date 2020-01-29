@@ -48,6 +48,7 @@ else
   export DATA=$basetmp/tmpnwprd1/gefs_legacy_init_$PDY$cyc.$envir.save
   echo DATA=$DATA
 fi
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 if [[ -d $DATA ]]; then
   rm -rf $DATA
 fi

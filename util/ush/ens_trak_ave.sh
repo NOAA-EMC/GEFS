@@ -69,8 +69,8 @@ cd $DATA
 
 #/nwprod/util/ush/setup.sh
 #DHOU 04/13/2012   changed for ZEUS/WCOSS and portability
-export utilscript=${utilscript:-/nwprod/util/exec}
-ksh $utilscript/setup.sh
+#export utilscript=${utilscript:-/nwprod/util/exec}
+#ksh $utilscript/setup.sh
 
 case ${cmodel} in
 
