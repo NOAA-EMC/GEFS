@@ -1,6 +1,5 @@
 #BSUB -J %E%gefs_prdgen_gfs_%CYC%
 #BSUB -o /com/output/%ENVIR%/today/gefs_prdgen_gfs_%CYC%.o%J
-#BSUB -e  /com/output/%ENVIR%/today/gefs_prdgen_gfs_%CYC%.o%J
 #BSUB -q %QUEUE%_shared
 #BSUB -cwd /tmp
 #BSUB -W 00:45

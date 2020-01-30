@@ -25,6 +25,10 @@ module load impi/$impi_ver
 module load CFP/$cfp_ver
 export USE_CFP=YES
 
+module load grib_util/$grib_util_ver
+module load util_shared/$util_shared_ver
+module load prod_util/$prod_util_ver
+
 module list
 
 # EXPORT list here

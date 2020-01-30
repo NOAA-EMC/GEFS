@@ -1,6 +1,5 @@
 #BSUB -J %E%gefs_legacy_post_cleanup_%CYC%
 #BSUB -o /com/output/%ENVIR%/today/gefs_legacy_post_cleanup_%CYC%.o%J
-#BSUB -e  /com/output/%ENVIR%/today/gefs_legacy_post_cleanup_%CYC%.o%J
 #BSUB -cwd /tmp
 #BSUB -q %QUEUESERV%
 #BSUB -W  01:30
