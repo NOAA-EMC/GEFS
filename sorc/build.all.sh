@@ -32,7 +32,12 @@ if [ -d "../fix" ]; then
   echo "Deleting ../fix folder"
   rm -rf ../fix
 fi
-htar -xvf /NCEPDEV/emc-ensemble/5year/Xianwu.Xue/ForOperation/GEFS_legacy/fix_20200124.tar
+if [ -d "/gpfs/tp1/nco/ops/nwprod/gefs_legacy.v10.4.1/fix" ]; then
+    cp -rfp /gpfs/tp1/nco/ops/nwprod/gefs_legacy.v10.4.1/fix .
+else
+    module load HPSS/5.0.2.5 
+    htar -xvf /NCEPDEV/emc-ensemble/5year/Xianwu.Xue/ForOperation/GEFS_legacy/fix_20200124.tar
+fi
 cd $dirsaved
 
 echo ".....Compiling gefs_global_fcst ..."
