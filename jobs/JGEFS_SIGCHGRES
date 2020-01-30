@@ -44,7 +44,8 @@ then
 else                         ### For Operations
    export DATA_IN=$DATAROOT
 fi
-export DATA=$DATA_IN/${job}.${pid}
+#export DATA=$DATA_IN/${job}.${pid}
+export DATA=${DATA:-$DATA_IN/${job}.${pid}}
 
 mkdir -p $DATA
 cd $DATA
@@ -80,10 +81,11 @@ if [ "$RUN_ENVIR" = dev ]     ### For Developers
 then
    export jlogfile=${jlogfile:-$baselog/com/logs/jlogfile}
 else                        ### For Operations
- if [[ $envir = "prod" ]]; then
-   export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.$$}
- else
-   export jlogfile=/com/logs/${envir}/jlogfile
+   export jlogfile=${jlogfile:-${DATA}/jlogfile}
+#if [[ $envir = "prod" ]]; then
+#  export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.$$}
+#else
+#  export jlogfile=/com/logs/${envir}/jlogfile
  fi
 fi
 
@@ -154,14 +156,19 @@ else                             ### For Operations
   export RERUN=NO
 
   # Specify Execution Areas
-  export HOMEGLOBAL=/nwprod
+  export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  export HOMEGLOBAL=${HOMEGLOBAL:-$HOMEgefs}
+
+  #export HOMEGLOBAL=/nwprod
   export EXECGLOBAL=$HOMEGLOBAL/exec
   export USHGLOBAL=$HOMEGLOBAL/ush
   export FIXGLOBAL=$HOMEGLOBAL/fix
   export PARMGLOBAL=$HOMEGLOBAL/parm
 
   # RLW 20141008 modify to obtain and use version for vertical structure
-  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  #export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  #export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+
   export EXECgefs=$HOMEgefs/exec
   export USHgefs=$HOMEgefs/ush
   export FIXgefs=$HOMEgefs/fix
@@ -174,7 +181,7 @@ export LOGSCRIPT=startmsg
 ##############################
 # Set up the UTILITIES
 ##############################
-export utilscript=/nwprod/util/ush
+#export utilscript=/nwprod/util/ush
 
 ##############################
 # Run setup to initialize working directory and utility scripts
@@ -210,9 +217,11 @@ then
   export COMINgfs=$GFS_IN/gfs.${PDY}
   export COMOUT=$COM_OUT/gefs_legacy.${PDY}
 else                              ### For Operations
-  export COMINgfs=/com2/gfs/prod/gfs.${PDY}
-  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
-  export gespath=/nwges/${envir}
+  #export COMINgfs=/com2/gfs/prod/gfs.${PDY}
+  #export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  #export gespath=/nwges/${envir}
+  export COMOUT=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
+  export gespath=${gespath:-$GESROOT/${envir}}
 fi
 
 #DHOU  these are not needed ???
@@ -259,8 +268,8 @@ export FNVETC=$FIXGLOBAL/global_vegtype.1x1.grb
 
 #  For Post Processing
 #export POSTGPSH=$USHGLOBAL/global_nceppost.sh
-export POSTGPSH=$USHglobal/global_nceppost.sh
-export POSTGPEXEC=$EXECglobal/exec/ncep_post
+#export POSTGPSH=$USHglobal/global_nceppost.sh
+#export POSTGPEXEC=$EXECglobal/exec/ncep_post
 
 #export HOMEUTIL=$HOMEUTIL
 export HOMEUTIL=/nwprod/util

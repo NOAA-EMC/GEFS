@@ -32,7 +32,8 @@ fi
 # obtain unique process id (pid) and make temp directory
 ####################################
 export pid=$$
-export DATA=$DATAROOT/${job}.${pid}
+#export DATA=$DATAROOT/${job}.${pid}
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 if [[ $envir = dev ]]; then
   #export DATA=$basetmp/tmpnwprd1/${job}.${pid}.$PDY$cyc$jjj
   export DATA=$basetmp/tmpnwprd1/${job}.${pid}
@@ -80,8 +81,12 @@ fi
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMEGLOBAL=/nw${envir}
-export HOMEgefs=/nw${envir}/gefs_legacy.${gefs_legacy_ver}
+  export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  export HOMEGLOBAL=${HOMEGLOBAL:-$HOMEgefs}
+  export HOMEglobal=${HOMEglobal:-$HOMEgefs}
+
+#export HOMEGLOBAL=/nw${envir}
+#export HOMEgefs=/nw${envir}/gefs_legacy.${gefs_legacy_ver}
 if [[ $envir = dev ]]; then
   HOMEgefs=$basesource/$HOMEgefs
 fi
@@ -134,9 +139,12 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMINgfs=/com2/gfs/prod/gfs.$PDY
-export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
-export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
+#export COMINgfs=/com2/gfs/prod/gfs.$PDY
+#export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
+#export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
+export COMIN=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
+export COMINm1=$COMROOT/${NET}/${envir}/gefs_legacy.${PDYm1}
 
 if [[ $envir = dev ]]; then
   export COMIN=$baseoutput$COMIN
@@ -149,7 +157,8 @@ mkdir -m 775 -p $COMIN/$cyc/track
 
 #############################################################
 
-export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+#export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+export COMIN=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
 
 if [[ $envir = dev ]]; then
 export COMOUT=$baseoutput/$COMOUT
@@ -224,4 +233,8 @@ postmsg "$jlogfile" "$msg"
 ##############################
 cd /tmpnwprd1
 rm -rf $DATA
+
+<   export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+<   export HOMEGLOBAL=${HOMEGLOBAL:-$HOMEgefs}
+<   export HOMEglobal=${HOMEglobal:-$HOMEgefs}
 

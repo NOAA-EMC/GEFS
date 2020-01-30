@@ -28,6 +28,7 @@ else
   export DATA=$basetmp/tmpnwprd1/gefs_legacy_init_$PDY$cyc.$envir.save
 echo DATA=$DATA
 fi
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 cd $DATA
 
 export cycle=t${cyc}z
@@ -186,7 +187,8 @@ export SLMASK=/dev/null
 ##############################################
 
 if [[ $envir = prod ]] ; then
-  export COMINgfs=/com2/gfs/${envir}/gfs.$PDY
+  #export COMINgfs=/com2/gfs/${envir}/gfs.$PDY
+  export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
 elif [[ $envir = para ]] || \
      [[ $envir = test ]]; then
   gfssource=prod
@@ -226,7 +228,7 @@ fi
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMOUT=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
 else
   export COMOUT=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
 fi
@@ -241,7 +243,7 @@ mkdir -m 775 -p $COMOUT/$cyc/sflux
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-  gespath=/nwges/${envir}
+  gespath=$GESROOT/${envir}
 else
   gespath=$baseoutput/nwges/${envir}
 fi

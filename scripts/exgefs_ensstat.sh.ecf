@@ -51,7 +51,7 @@ export iens_msg=1
 ################################################## RLW 20110722 CNVGRIB TEMPORARY
 #export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib  # RLW 20150811 disabled as in enspost
 ################################################## RLW 20110722 CNVGRIB TEMPORARY
-$export GRB2IDX=$EXECUTIL/grb2index
+#export GRB2IDX=$EXECUTIL/grb2index
 export GRB2IDX=$GRB2INDEX
 #export WGRIB2=$EXECUTIL/wgrib2
 

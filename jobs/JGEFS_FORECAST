@@ -45,7 +45,8 @@ then
 else                         ### For Operations
    export DATA_IN=$DATAROOT
 fi
-export DATA=$DATA_IN/${job}.${pid}
+#export DATA=$DATA_IN/${job}.${pid}
+export DATA=${DATA:-$DATA_IN/${job}.${pid}}
 
 mkdir -p $DATA
 cd $DATA
@@ -152,14 +153,17 @@ else                             ### For Operations
   export RERUN=NO
 
   # Specify Execution Areas
-  export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
+  export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+
+  export HOMEGLOBAL=${HOMEGLOBAL:-$HOMEgefs}
   export EXECGLOBAL=${EXECGLOBAL:-$HOMEGLOBAL/exec}
   export USHGLOBAL=${USHGLOBAL:-$HOMEGLOBAL/ush}
   export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
   export PARMGLOBAL=${USHGLOBAL:-$HOMEGLOBAL/parm}
 
   # RLW 20141008 modify to obtain and use version for vertical structure
-  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  #export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+# export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
@@ -172,7 +176,7 @@ export LOGSCRIPT=startmsg
 ##############################
 # Set up the UTILITIES
 ##############################
-export utilscript=/nwprod/util/ush
+#export utilscript=/nwprod/util/ush
 
 ##############################
 # Run setup to initialize working directory and utility scripts
@@ -246,9 +250,10 @@ then
   export COMINgfs=$GFS_IN/gfs.${PDY}
   export COMOUT=$COM_OUT/gefs_legacy.${PDY}
 else                              ### For Operations
-  export COMINgfs=/com2/gfs/prod/gfs.${PDY}
-  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
-  export gespath=/nwges/${envir}
+  #export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMOUT=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
+  #export gespath=/nwges/${envir}
+  gespath=${gespath:-$GESROOT/${envir}}
 fi
 
 mkdir -m 775 -p $COMOUT/$cyc/sfcsig
@@ -326,7 +331,7 @@ fi
 
 #  The VEGTYPE fix file:
 # DHOU 01/07/2013 comment out this 
- if [[ $gefsmachine != wcoss ]]; then
+ if [[ $gefsmachine != dell ]]; then
 export FNVETC=$FIXgefs/global_vegtype.1x1.grb
  fi
 

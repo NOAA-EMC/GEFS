@@ -1,5 +1,6 @@
 #!/bin/ksh
 
+
 #####################################################################
 # 9/20/2009, Julia Zhu   Scripts are modified to be sharable
 #                        between EMC and NCO
@@ -35,7 +36,8 @@ then
 else                       ### For Operations
    export TMPhome=$DATAROOT
 fi
-export DATA=$TMPhome/${job}.${pid}
+#export DATA=$TMPhome/${job}.${pid}
+export DATA=${DATA:-$TMPhome/${job}.${pid}}
 
 mkdir -p $DATA
 cd $DATA
@@ -113,13 +115,18 @@ else                             ### For Operations
   export RERUN=NO
 
   # Specify Execution Areas
-  export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
+  export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  export HOMEGLOBAL=${HOMEGLOBAL:-$HOMEgefs}
+  export HOMEglobal=${HOMEglobal:-$HOMEgefs}
+
+  #export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
   export EXECGLOBAL=${EXECGLOBAL:-$HOMEGLOBAL/exec}
   export USHGLOBAL=${USHGLOBAL:-$HOMEGLOBAL/ush}
   export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
   export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
 
-  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  #export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  #export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
@@ -216,15 +223,18 @@ then
       export COMIN=/gpfs/hps/ptmp/emc.glopara/com2/gfs/para/gfs.${PDY}
     ;;
   esac
+  #export COMIN=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${PDY}/${cyc}
+  export COMIN=${COMIN:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
   export COMOUT=$COM_OUT/gefs_legacy.${PDY}
   export ENS_COM=$COMOUT
 else                              ### For Operations
   #TODO: Use COMINgfs instead of COMIN
-  export COMIN=/com2/gfs/prod/gfs.${PDY}
-  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  #export COMIN=/com2/gfs/prod/gfs.${PDY}
+  #export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMIN=${COMIN:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
+  export COMOUT=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
   export ENS_COM=$COMOUT
 fi
-export COMIN=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${PDY}/${cyc}
 
 mkdir -m 775 -p $COMOUT/$cyc/pgrba
 mkdir -m 775 -p $COMOUT/$cyc/pgrb2a

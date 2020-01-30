@@ -32,8 +32,10 @@ echo fcstlong=$fcstlong
 echo cycsuffix=$cycsuffix
 echo cfsuffix=$cfsuffix
 
-export WGRIB=${WGRIB:-${EXECUTIL}/wgrib}
-export GRBIDX=${GRBIDX:-${EXECUTIL}/grbindex}
+#export WGRIB=${WGRIB:-${EXECUTIL}/wgrib}
+#export GRBIDX=${GRBINDEX:-${EXECUTIL}/grbindex}
+export WGRIB=${WGRIB}
+export GRBIDX=${GRBINDEX}
 export ENSADD=${ENSADD:-$USHGLOBAL/global_ensadd.sh}
 export POSTGPSH=${POSTGPSH:-$USHGLOBAL/global_nceppost.sh}
 

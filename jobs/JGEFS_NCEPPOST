@@ -42,7 +42,8 @@ else                       ### For Operations
    export DATA_IN=$DATAROOT
 fi
 
-export DATA=$DATA_IN/${job}.${pid}
+#export DATA=$DATA_IN/${job}.${pid}
+export DATA=${DATA:-$DATA_IN/${job}.${pid}}
 
 mkdir -p $DATA
 cd $DATA
@@ -148,7 +149,11 @@ else                             ### For Operations
   export RERUN=NO
 
   # Specify Execution Areas
-  export HOMEglobal=${HOMEglobal:-/nwprod}
+  export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  export HOMEGLOBAL=${HOMEGLOBAL:-$HOMEgefs}
+  export HOMEglobal=${HOMEglobal:-$HOMEgefs}
+
+  #export HOMEglobal=${HOMEglobal:-/nwprod}
   export EXECglobal=${EXECglobal:-$HOMEglobal/exec}
   export USHglobal=${USHglobal:-$HOMEglobal/ush}
   export FIXglobal=${FIXglobal:-$HOMEglobal/fix}
@@ -161,7 +166,8 @@ else                             ### For Operations
   export FIXGLOBAL=${FIXglobal:-$HOMEglobal/fix}
   export PARMGLOBAL=${PARMglobal:-$HOMEglobal/parm}
 
-  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  #export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  #export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
@@ -180,13 +186,13 @@ export PARMPOST=${PARMgefs}
 
 export SIGHDR=${EXECGLOBAL}/global_sighdr
 export SFCHDR=${EXECGLOBAL}/global_sfchdr
+export OVERPARMEXEC=$EXECGLOBAL/overparm_grib
 
 ###############################################################
 # Specify locations of the following scripts and executables
 ###############################################################
 #export CHGRESTHREAD=2
 export CHGRESTHREAD=1
-#export OVERPARMEXEC=$EXECGLOBAL/overparm_grib
 #DHOU 03/21/2012 for ZEUS
 case $gefsmachine in
   (zeus)
@@ -234,6 +240,7 @@ export ENSADD=$USHgefs/global_ensadd.sh
 export POSTGPSH=$USHpost/global_nceppost.sh
 export POSTGPEXEC=$EXECpost/ncep_post
 export ENSADD=$USHgefs/global_ensadd.sh
+export ANOMCATSH=${USHgefs}/global_anomcat.sh
   ;;
 esac
 echo in $0: POSTGPSH=$POSTGPSH
@@ -253,11 +260,11 @@ export HOMEUTIL=$HOMEGLOBAL/util
 export EXECUTIL=$HOMEUTIL/exec
 export FIXUTIL=$HOMEUTIL/fix
   ;;
-  (dell)
-export HOMEUTIL=$HOMEGLOBAL/util
-export EXECUTIL=$HOMEUTIL/exec
-export FIXUTIL=$HOMEUTIL/fix
-  ;;
+#  (dell)
+#export HOMEUTIL=$HOMEGLOBAL/util
+#export EXECUTIL=$HOMEUTIL/exec
+#export FIXUTIL=$HOMEUTIL/fix
+#  ;;
 esac
 
 #export GRBINDEX=/nwprod/util/exec/grbindex
@@ -280,14 +287,14 @@ export REDERR='2>'
 # Set up the UTILITIES
 ##############################
 #DHOU 03/14/2012 for ZEUS
-case $gefsmachine in
-  (zeus)
-export utilscript=$HOMEglobal/util/ush
-  ;;
-  (*)
-export utilscript=/nwprod/util/ush
-  ;;
-esac
+#case $gefsmachine in
+#  (zeus)
+#export utilscript=$HOMEglobal/util/ush
+#  ;;
+#  (*)
+#export utilscript=/nwprod/util/ush
+#  ;;
+#esac
 
 ##############################
 # Run setup to initialize working directory and utility scripts
@@ -318,10 +325,15 @@ then
   mkdir -m 775 -p $COMOUT/$cyc/stats
 
 else                              ### Fir Operations
-  export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
-  export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
-  export gespath=/nwges/${envir}
-  export ENS_COM=$COMOUT
+ #export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
+ #export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+ #export gespath=/nwges/${envir}
+ 
+ export COMIN=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
+ export COMOUT=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
+ export gespath=${gespath:-$GESROOT/${envir}}
+ export ENS_COM=$COMOUT
+
 fi
 
 export GESdir=$gespath/gefs_legacy.${PDY}
