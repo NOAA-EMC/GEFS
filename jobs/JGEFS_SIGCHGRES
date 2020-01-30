@@ -86,7 +86,7 @@ else                        ### For Operations
 #  export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.$$}
 #else
 #  export jlogfile=/com/logs/${envir}/jlogfile
- fi
+#fi
 fi
 
 #DHOU, Please modify this block
