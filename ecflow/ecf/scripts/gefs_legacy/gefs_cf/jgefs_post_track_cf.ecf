@@ -2,6 +2,7 @@
 #BSUB -o /com/output/%ENVIR%/today/gefs_legacy_post_track_cf%CYC_FCST%_%CYC%.o%J
 #BSUB -cwd /tmp
 #BSUB -R span[ptile=1]
+#BSUB -R affinity[cpu(2)]
 #BSUB -n 1
 ##BSUB -x  
 #BSUB -q %QUEUE%
