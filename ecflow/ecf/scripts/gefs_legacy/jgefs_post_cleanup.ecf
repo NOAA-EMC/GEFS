@@ -1,8 +1,8 @@
-#BSUB -J %E%gefs_prdgen_gfs_%CYC%
-#BSUB -o /com/output/%ENVIR%/today/gefs_prdgen_gfs_%CYC%.o%J
-#BSUB -q %QUEUE%_shared
+#BSUB -J %E%gefs_legacy_post_cleanup_%CYC%
+#BSUB -o /com/output/%ENVIR%/today/gefs_legacy_post_cleanup_%CYC%.o%J
 #BSUB -cwd /tmp
-#BSUB -W 00:45
+#BSUB -q %QUEUESERV%
+#BSUB -W  01:30
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%-%PROJENVIR%
 #BSUB -R rusage[mem=2000]
@@ -14,27 +14,31 @@
 export model=gefs_legacy
 %include <model_ver.h>
 
+
 # EXPORT list here
 set -x
 
+export OMP_NUM_THREADS=2
+export MP_EUIDEVICE=sn_all
+export MP_EUILIB=us
+export MP_SHARED_MEMORY=no
+export MEMORY_AFFINITY=core:2 
+
+export total_tasks=40
+
+
 export cyc=%CYC%
 export cyc_fcst=%CYC_FCST%
-export job=gefs_prdgen_gfs_${cyc}
+export job=gefs_legacy_post_cleanup_${cyc}
 
 
 # CALL executable job script here
-${HOMEgefs_legacy}/jobs/JGEFS_PRDGEN_GFS
-
-if [ $? -ne 0 ]; then
-   ecflow_client --msg="***JOB ${ECF_NAME} ERROR RUNNING J-SCRIPT ***"
-   ecflow_client --abort
-   exit
-fi
+${HOMEgefs_legacy}/jobs/JGEFS_POST_CLEANUP
 
 %include <tail.h>
 %manual
 ######################################################################
-# Purpose: cleanup gefs post working directory
+# Purpose: post-process GEFS to generate pgrb.
 #
 #
 ######################################################################

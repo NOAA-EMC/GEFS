@@ -1,14 +1,14 @@
-#BSUB -J %E%gefs_legacy_init_combine_%CYC%
-#BSUB -o /com/output/%ENVIR%/today/gefs_legacy_init_combine_%CYC%.o%J
+#BSUB -J %E%gefs_legacy_forecast_cf%CYC_FCST%_%CYC%
+#BSUB -o /com/output/%ENVIR%/today/gefs_legacy_forecast_cf%CYC_FCST%_%CYC%.o%J
 #BSUB -cwd /tmp
-#BSUB -R span[ptile=20]
+#BSUB -R span[ptile=28]
 #BSUB -R affinity[core(1)]
-#BSUB -n 40
-##BSUB -x
+#BSUB -n 672
 #BSUB -q %QUEUE%
-#BSUB -W 00:30
+#BSUB -W 00:15
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%-%PROJENVIR%
+#BSUB -x   
 ##BSUB -a poe
 
 %include <head.h>
@@ -32,31 +32,36 @@ module load prod_util/$prod_util_ver
 module list
 
 # EXPORT list here
-export OMP_NUM_THREADS=2
+export OMP_NUM_THREADS=1
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
 export MP_SHARED_MEMORY=no
-export MEMORY_AFFINITY=core:2 
+export MEMORY_AFFINITY=core:1 
 
-export total_tasks=40
+export total_tasks=672
+export OMP_STACKSIZE=256000
+#env >envv
+export MP_EAGER_LIMIT=65535
+export MP_EUIDEVELOP=min
+export MP_MPILIB=mpich2
+export MP_USE_BULK_XFER=yes
+export MP_TASK_AFFINITY=core:1
+
 
 export cyc=%CYC%
-export cyc_fcst=%CYC%
-export job=gefs_legacy_init_combine_${cyc}
+export cyc_fcst=%CYC_FCST%
+export job=gefs_legacy_forecast_cf${cyc_fcst}_${cyc}
+export FORECAST_SEGMENT=hr
+
+
 
 # CALL executable job script here
-${HOMEgefs_legacy}/jobs/JGEFS_INIT_COMBINE
-
-if [ $? -ne 0 ]; then
-   ecflow_client --msg="***JOB ${ECF_NAME} ERROR RUNNING J-SCRIPT ***"
-   ecflow_client --abort
-   exit
-fi
+${HOMEgefs_legacy}/jobs/JGEFS_FORECAST
 
 %include <tail.h>
 %manual
 ######################################################################
-# Purpose: process global ensemble init system (GEFS) init
+# Purpose: process global ensemble forecast system (GEFS) forecast_high
 #          model
 #
 #
