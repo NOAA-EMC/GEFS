@@ -196,7 +196,7 @@ fi
 #export gfsvitdir=${gfsvitdir:-${COMROOThps}/gfs/prod/gfs.$PDY}
 #export namvitdir=${namvitdir:-${COMROOTp2}/nam/prod/nam.$PDY}
 export gfsvitdir=${gfsvitdir:-$(compath.py gfs/prod)}/gfs.$PDY/$cyc
-export namvitdir=${namvitdir:-$(compath.py nam/prod)}/nam.$PDY/$cyc
+export namvitdir=${namvitdir:-$(compath.py nam/prod)}/nam.$PDY
 
 export ensdir=$COMOUT/$cyc/pgrba
 export COM=$COMOUT/$cyc/track

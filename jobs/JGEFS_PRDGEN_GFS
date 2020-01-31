@@ -217,7 +217,8 @@ then
   export COMIN=$COM_IN/gfs.${PDY}
   case $gfssource in
     (prod)
-      export COMIN=/com2/gfs/prod/gfs.${PDY}
+      #export COMIN=/com2/gfs/prod/gfs.${PDY}
+      export COMIN=$(compath.py gfs/prod/gfs.${PDY})/$cyc
     ;;
     (para)
       export COMIN=/gpfs/hps/ptmp/emc.glopara/com2/gfs/para/gfs.${PDY}

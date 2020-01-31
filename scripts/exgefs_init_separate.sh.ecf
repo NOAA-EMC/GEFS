@@ -121,7 +121,6 @@ echo cycsuffix=$cycsuffix
 echo cfsuffix=$cfsuffix
 echo ensshort=$ensshort
 
-#export pdycycp=`/nwprod/util/exec/ndate -$fhrp $PDY$cyc`
 export pdycycp=`$NDATE -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
 export cycp=`echo $pdycycp|cut -c9-10`
@@ -181,10 +180,8 @@ if (( nhrpair < npair )); then
 
   export CHGRESVARS="NTRAC=$NTRACLR,NVCOORD=$NVCOORD,use_ufo=.true.,IALB=0,idvc=2,idvt=21,idsl=1,IDVM=0"
 
-  #if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio && -f $COMINgfs/gfs.$cycle.nstanl.nemsio ]]; then
   if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
     export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
-    #$getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
     $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
     getnsttfrc=$?
     if (( getnsttfrc == 0 )); then
@@ -201,8 +198,7 @@ if (( nhrpair < npair )); then
 
   else
     echo !!!! FATAL ERROR !!!!
-    #echo $COMINgfs/gfs.$cycle.atmanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio CANNOT BE FOUND
-    echo $COMINgfs/gfs.$cycle.atmanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio CANNOT BE FOUND
+    echo $COMINgfs/gfs.$cycle.atmanl.nemsio and $COMINgfs/gfs.$cycle.sfcanl.nemsio CANNOT BE FOUND
     export pgm=$getnsttf
     export err=9
     err_chk
@@ -342,10 +338,8 @@ if (( nhrpair > 0 )); then
 
   export CHGRESVARS="NTRAC=$NTRACjR,NVCOORD=$NVCOORD,use_ufo=.true.,IALB=0,idvc=2,idvt=21,idsl=1,IDVM=0"
 
-  #if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio && -f $COMINgfs/gfs.$cycle.nstanl.nemsio ]]; then
   if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
     export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
-    #$getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
     $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
     getnsttfrc=$?
     if (( getnsttfrc == 0 )); then
@@ -362,8 +356,7 @@ if (( nhrpair > 0 )); then
 
   else
     echo !!!! FATAL ERROR !!!!
-    #echo $COMINgfs/gfs.$cycle.atmanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio CANNOT BE FOUND
-    echo $COMINgfs/gfs.$cycle.atmanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio CANNOT BE FOUND
+    echo $COMINgfs/gfs.$cycle.atmanl.nemsio and $COMINgfs/gfs.$cycle.sfcanl.nemsio CANNOT BE FOUND
     export pgm=$getnsttf
     export err=9
     err_chk
@@ -469,7 +462,6 @@ if (( nhrpair > 0 )); then
     export FIXGLOBAL=$HOMEgsm/fix/fix_am
    fi
     $chgresush >>$pgmout
-    #export FIXGLOBAL=/nwprod/fix
     export FIXGLOBAL=$HOMEgefs/fix
     echo `date` timing hr chgres after
   else
@@ -593,6 +585,20 @@ if (( relocpertflag == 1 )); then
 	  else
 	    touch trackatcfunix.in
 	  fi
+        else
+          # RLW 20180827 add alternative source for retrospective fv3 runs
+          if [[ -e $COMINgfs/avn.${cycle}.cyclone.trackatcfunix ]]; then
+            cat $COMINgfs/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
+          elif [[ -e $basedgfs$COMINgfs/avn.${cycle}.cyclone.trackatcfunix ]]; then
+            cat $basedgfs$COMINgfs/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
+          elif [[ -e $COMINgfs/avno.${cycle}.cyclone.trackatcfunix ]]; then
+            cat $COMINgfs/avno.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
+          elif [[ -e $basedgfs$COMINgfs/avno.${cycle}.cyclone.trackatcfunix ]]; then
+            cat $basedgfs$COMINgfs/avno.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
+          else
+            echo $basedgfs$COMINgfs/avn.${cycle}.cyclone.trackatcfunix DOES NOT EXIST
+            touch trackatcfunix.in
+          fi
 	fi
         echo search for existiong track file for $gfsgribedition end
       fi
@@ -832,12 +838,9 @@ ls -ablp
 echo
 echo DATA=$DATA before poe
 #### kate 4/24/2012 #####
-#echo "gefsmpexec=$gefsmpexec"
-#$gefsmpexec
+echo "gefsmpexec=$gefsmpexec"
+$gefsmpexec cfp poescript
 #### kate 4/24/2012 ##############
-
-echo APRUN=$APRUN
-$APRUN cfp poescript
 
 echo DATA=$DATA after poe
 pwd

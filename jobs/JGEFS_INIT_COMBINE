@@ -28,7 +28,6 @@ else
   export DATA=$basetmp/tmpnwprd1/gefs_legacy_init_$PDY$cyc.$envir.save
 echo DATA=$DATA
 fi
-export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 cd $DATA
 
 export cycle=t${cyc}z
@@ -187,35 +186,34 @@ export SLMASK=/dev/null
 ##############################################
 
 if [[ $envir = prod ]] ; then
-  #export COMINgfs=/com2/gfs/${envir}/gfs.$PDY
   export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
 elif [[ $envir = para ]] || \
      [[ $envir = test ]]; then
   gfssource=prod
   if [[ "$gfssource" = para ]]; then
-    export COMINgfs=/com2/gfs/para/gfs.$PDY
+    export COMINgfs=$(compath.py gfs/para/gfs.$PDY)/$cyc
   else
-    export COMINgfs=/com2/gfs/prod/gfs.$PDY
+    export COMINgfs=$(compath.py gfs/prod/gfs.$PDY)/$cyc
   fi
 else
   if [[ "$gfssource" = para ]]; then
-    export COMINgfs=/com2/gfs/para/gfs.$PDY
+    export COMINgfs=$(compath.py gfs/para/gfs.$PDY)/$cyc
   elif [[ "$gfssource" = prod ]]; then
-    export COMINgfs=/com2/gfs/prod/gfs.$PDY
+    export COMINgfs=$(compath.py gfs/prod/gfs.$PDY)/$cyc
   else
-    export COMINgfs=$baseptmp/com/gfs/${envir}/gfs.$PDY
+    export COMINgfs=$baseptmp/com/gfs/${envir}/gfs.$PDY/$cyc
   fi
 fi
 
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
-  export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
-  export COM=/com/${NET}/${envir}
-  export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
-  export COMINm2=/com/${NET}/${envir}/gefs_legacy.${PDYm2}
-  export COMINm3=/com/${NET}/${envir}/gefs_legacy.${PDYm3}
-  export COMINm4=/com/${NET}/${envir}/gefs_legacy.${PDYm4}
+  export COMIN=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
+  export COM=$COMROOT/${NET}/${envir}
+  export COMINm1=$COMROOT/${NET}/${envir}/gefs_legacy.${PDYm1}
+  export COMINm2=$COMROOT/${NET}/${envir}/gefs_legacy.${PDYm2}
+  export COMINm3=$COMROOT/${NET}/${envir}/gefs_legacy.${PDYm3}
+  export COMINm4=$COMROOT/${NET}/${envir}/gefs_legacy.${PDYm4}
 else
   export COMIN=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
   export COM=$baseoutput/com/${NET}/${envir}
@@ -266,7 +264,7 @@ if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \
    [[ $envir = test ]]; then
   # RLW 20141008 modify to obtain and use version for vertical structure
-  /nw${envir}/gefs_legacy.${gefs_legacy_ver}/scripts/exgefs_init_combine.sh.ecf
+  $HOMEgefs/scripts/exgefs_init_combine.sh.ecf
 else
   # RLW 20141008 modify to obtain and use version for vertical structure
   $basesource/nw${envir}/gefs_legacy.${gefs_legacy_ver}/scripts/exgefs_init_combine.sh.ecf
