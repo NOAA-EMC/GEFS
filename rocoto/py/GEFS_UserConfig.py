@@ -65,6 +65,25 @@ def get_config_file(OnlyForTest=False):
     sRocoto_WS = os.path.abspath(sRocoto_WS)
     return sConfig, sRocoto_WS
 
+# =======================================================
+def get_config_file2(sConfigFile="user_full.conf"):
+    import os, sys
+
+    sSep = "/"
+    if sys.platform == 'win32':
+        sSep = r'\\'
+
+    sRocoto_WS = os.getcwd()
+    sConfig = sRocoto_WS + sSep + sConfigFile
+    if not os.path.exists(sConfig):
+        sRocoto_WS = os.getcwd() + sSep + ".."
+        sConfig = sRocoto_WS + sSep + sConfigFile
+        if not os.path.exists(sConfig):
+            print("Please check whether you have config file in your rocoto path!")
+            sys.exit(-5)
+
+    sRocoto_WS = os.path.abspath(sRocoto_WS)
+    return sConfig, sRocoto_WS
 
 # =======================================================
 def read_config(sConfig):
