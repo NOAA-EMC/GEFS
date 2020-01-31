@@ -57,7 +57,36 @@ eofCAT
 ##BSUB -a poe
 #BSUB -n $total_tasks
 #BSUB -R span[ptile=$taskspernode]
+eofCAT
 
+    fi
+    
+cat <<eofCAT >>$jobcontrol
+if [ ! -z $MODULESHOME ]; then
+    . $MODULESHOME/init/bash
+else
+    . /opt/modules/default/init/bash
+fi
+
+#module load ics
+module purge
+module load ips/18.0.1.163
+#module load EnvVars/1.0.2
+module load prod_envir/1.0.3
+module load prod_util/1.1.0
+module load grib_util/1.1.1
+module load lsf/10.1    # loads blaunch)
+
+eofCAT
+    if [[ ${job_type} = parallel ]] ; then
+     cat <<eofCAT >>$jobcontrol
+  module load impi/18.0.1
+
+eofCAT
+    fi
+
+    if [[ ${job_type} = parallel ]] ; then
+    cat <<eofCAT >>$jobcontrol
 export OMP_NUM_THREADS=$OMP_NUM_THREADS
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
@@ -85,19 +114,6 @@ export MP_TASK_AFFINITY=core:1
 #export MP_COLLECTIVE_OFFLOAD=yes
 #export KMP_STACKSIZE=1024m
 #export MEMORY_AFFINITY=core:1
-eofCAT
-    fi
-
-    cat <<eofCAT >>$jobcontrol
-module load ics
-eofCAT
-    if [[ ${job_type} = parallel ]] ; then
-     cat <<eofCAT >>$jobcontrol
-  module load EnvVars/1.0.2
-  module load lsf/10.1    # loads blaunch)
-  module load ips/18.0.1.163
-  module load impi/18.0.1
-
 eofCAT
     fi
 

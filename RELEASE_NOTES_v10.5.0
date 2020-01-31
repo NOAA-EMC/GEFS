@@ -115,60 +115,144 @@ the previous cycle of the test run
 
 v10.5.0 to be released on 01/24/2020
 
-. This release is based on V10.4.1 with the following changes to work on DELL for production:
+. Transition from Tide/Gyre phase 1 to Mars/Venus
 
-
-. Updated files include:
-    jobs/JGEFS_CQPF 
-    jobs/JGEFS_ENSPOST 
-    jobs/JGEFS_ENSSTAT 
-    jobs/JGEFS_ENS_TRAK_AVE 
-    jobs/JGEFS_FORECAST 
-    jobs/JGEFS_INIT_COMBINE 
-    jobs/JGEFS_INIT_ET 
-    jobs/JGEFS_INIT_SEPARATE 
-    jobs/JGEFS_NCEPPOST 
-    jobs/JGEFS_POST_CLEANUP 
-    jobs/JGEFS_POST_TRACK 
-    jobs/JGEFS_PRDGEN 
-    jobs/JGEFS_PRDGEN_GFS 
-    jobs/JGEFS_RESTART_COPY 
-    jobs/JGEFS_SIGCHGRES 
-
-    scripts/exgefs_enspost.sh.ecf 
-    scripts/exgefs_ensstat.sh.ecf 
-    scripts/exgefs_init_combine.sh.ecf 
-    scripts/exgefs_init_et.sh.ecf 
-    scripts/exgefs_init_separate.sh.ecf 
-    scripts/exgefs_nceppost.sh.ecf 
-    scripts/exgefs_prdgen_gfs_grb2.sh.ecf 
-    scripts/exgefs_prdgen_gfs.sh.ecf 
-    scripts/exgefs_prdgen.sh.ecf 
-
-    ush/extrkr_2015.sh 
-    ush/gefs_init_pair_combine.sh 
-    ush/gefs_init_pair_separate.sh 
-    ush/gefs_prdgen_lowres.sh 
-    ush/gefs_prdgen.sh 
-
-    util/ush/ens_trak_ave.sh 
-    util/ush/extrkr.sh 
-
-    parm/gefs_config 
-
-. Added folder/files
-    ush/global_chgres.sh
-    parm/nam_micro_lookup.dat
-
-    sorc/esmf.3_1_0rp5
-    sorc/global_chgres.fd
-    sorc/global_sighdr.fd
-    sorc/global_sfchdr.fd
-    sorc/oerparm_grib.fd
+. This release is based on GEFS_legacy V10.4.1:
 
 . New VLAB tag:
     . https://vlab.ncep.noaa.gov/code-review/#/admin/projects/GEFS,tags
       checkout the tag named gefs_legacy_v10.5.0
+
+. Updated files include:
+    . jobs/JGEFS_CQPF 
+    . jobs/JGEFS_ENSPOST 
+    . jobs/JGEFS_ENSSTAT 
+    . jobs/JGEFS_ENS_TRAK_AVE 
+    . jobs/JGEFS_FORECAST 
+    . jobs/JGEFS_INIT_COMBINE 
+    . jobs/JGEFS_INIT_ET 
+    . jobs/JGEFS_INIT_SEPARATE 
+    . jobs/JGEFS_NCEPPOST 
+    . jobs/JGEFS_POST_CLEANUP 
+    . jobs/JGEFS_POST_TRACK 
+    . jobs/JGEFS_PRDGEN 
+    . jobs/JGEFS_PRDGEN_GFS 
+    . jobs/JGEFS_RESTART_COPY 
+    . jobs/JGEFS_SIGCHGRES 
+
+    . scripts/exgefs_enspost.sh.ecf 
+    . scripts/exgefs_ensstat.sh.ecf 
+    . scripts/exgefs_init_combine.sh.ecf 
+    . scripts/exgefs_init_et.sh.ecf 
+    . scripts/exgefs_init_separate.sh.ecf 
+    . scripts/exgefs_nceppost.sh.ecf 
+    . scripts/exgefs_prdgen_gfs_grb2.sh.ecf 
+    . scripts/exgefs_prdgen_gfs.sh.ecf 
+    . scripts/exgefs_prdgen.sh.ecf 
+
+    . ush/extrkr_2015.sh 
+    . ush/gefs_init_pair_combine.sh 
+    . ush/gefs_init_pair_separate.sh 
+    . ush/gefs_prdgen_lowres.sh 
+    . ush/gefs_prdgen.sh 
+
+    . util/ush/ens_trak_ave.sh 
+    . util/ush/extrkr.sh 
+
+    . parm/gefs_config 
+
+. Added folder/files
+    . ush/global_chgres.sh
+    . parm/nam_micro_lookup.dat
+
+    . sorc/esmf.3_1_0rp5
+    . sorc/global_chgres.fd
+    . sorc/global_sighdr.fd
+    . sorc/global_sfchdr.fd
+    . sorc/oerparm_grib.fd
+
+. Changes made to the code/scripts to support new architecture
+    . compile codes with new versions of compiler and libraries
+    . replace /nwprod/exec and /nwprod/ush with utility locations in production libraries and dell versions of gsm and post
+
+. Changes not related to the transition
+    . none
+
+. Changes to incoming data
+    . none
+
+. Changes to output file names
+    . none
+
+. Compute resource information
+
+    . init_separate    	    40 tasks,  3 nodes
+    . init_et              160 tasks,  8 nodes            
+    . init_combine          40 tasks,  2 nodes  
+
+    . forecast_high (00Z), 840 tasks, 30 nodes
+    . forecast_low  (00Z), 378 tasks, 14 nodes
+    . 6-hour forecasts, 378 tasks/14 nodes and 360 tasks/13 nodes
+ 
+    . sigchgres              1 task,   1 node   not shared
+ 
+    . post high		         8 tasks,  1 node   not shared
+    . prdgen high           				shared  core  mem=200
+    . post low		         8 tasks,  1 node   not shared
+    . prdgen low		   				shared  core  mem=200
+ 
+    . ensstat		     				shared  core  mem=100
+    . enspost		     				shared  core  mem=100
+    . tracker		         1 task,   1 node   not shared
+    . track_ave						shared  core  mem=1000
+	
+. Runtimes
+    . initialization and forecast are tuned for runtimes similar to phase 1
+    . forecast (but not init) runtime can be adjusted by changing nodes and tasks
+
+    . init_separate        ~6 min for 3 storms
+        . varies significantly with  number of storms
+    . init_et		   ~3 min
+    . init_combine         ~2 min for 3 storms
+        . varies slightly with number of storms
+    . forecast high (00z) ~30 min
+    . forecast low  (00Z) ~30 min
+    . 6-hour forecasts     ~3 min
+    . sigchgres            <1 min
+    . postprocessing jobs depend on the corresponding forecast
+        . post high        ~30 min
+        . prdgen high      ~30 min
+        . ensstat high     ~30 min
+        . post low         ~30 min
+        . prdgen low       ~30 min
+        . enstat low       ~30 min
+        . enspost          ~20 min 
+        . 6-hour post       ~3 min
+        . 6-hour prdgen     ~3 min
+    . tracker (3 storms)	~2 min
+    . trak_ave  (3 storms)    <1 min
+    . 6-hour tracker (3 st)   <1 min
+
+. Disk space per cycle
+    . no significant change
+    . /com space needed before internal cleanup
+        00Z             ~515 GB
+        06Z, 12Z, 18Z   ~75 GB each
+    . /nwges
+        each cycle	    ~12 GB
+	
+. Dissemination
+    . No change
+
+. HPSS archiving
+    . No Change
+
+. Upstream Dependencies
+    . GFS
+
+. Downstream Dependencies
+    . none
+
 
 . Implementation instructions
     . Make sure ncep_post.v5.1.3 installed on DELL p3

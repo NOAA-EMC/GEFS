@@ -3,12 +3,12 @@
 #BSUB -cwd /tmp
 #BSUB -R span[ptile=28]
 #BSUB -R affinity[core(1)]
-#BSUB -n 672
+#BSUB -n 378
 #BSUB -q %QUEUE%
 #BSUB -W 00:15
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%-%PROJENVIR%
-#BSUB -x   
+##BSUB -x   
 ##BSUB -a poe
 
 %include <head.h>
@@ -38,7 +38,7 @@ export MP_EUILIB=us
 export MP_SHARED_MEMORY=no
 export MEMORY_AFFINITY=core:1 
 
-export total_tasks=672
+export total_tasks=378
 export OMP_STACKSIZE=256000
 #env >envv
 export MP_EAGER_LIMIT=65535
