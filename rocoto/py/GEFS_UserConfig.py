@@ -65,6 +65,7 @@ def get_config_file(OnlyForTest=False):
     sRocoto_WS = os.path.abspath(sRocoto_WS)
     return sConfig, sRocoto_WS
 
+
 # =======================================================
 def get_config_file2(sConfigFile="user_full.conf"):
     import os, sys
@@ -84,6 +85,7 @@ def get_config_file2(sConfigFile="user_full.conf"):
 
     sRocoto_WS = os.path.abspath(sRocoto_WS)
     return sConfig, sRocoto_WS
+
 
 # =======================================================
 def read_config(sConfig):
@@ -186,3 +188,23 @@ def get_WHERE_AM_I(dicBase):
         else:
             print('workflow is currently only supported on: %s' % ' '.join('other'))
             raise NotImplementedError('Cannot auto-detect platform, ABORT!')
+            
+            
+# =======================================================
+def get_dicBase_from_Config(sConfigFile="user_full.conf"):
+
+    print("--Getting database from User Configuration File: {0}".format(sConfigFile))
+    
+    # Read User Configuration File
+    print("----Getting user config file!")
+    sConfig, sRocoto_WS = get_config_file2(sConfigFile=args.ConfigFile)
+    
+    print("----Reading user config file...")
+    dicBase = read_config(sConfig)
+    
+    # Get the default value
+    print("----Getting default values from default user config file!")
+    get_and_merge_default_config(dicBase)
+    
+    return sConfig, sRocoto_WS, dicBase
+    

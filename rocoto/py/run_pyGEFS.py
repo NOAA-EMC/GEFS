@@ -32,21 +32,10 @@ def main():
 
     print("--Starting to generate all files you need!")
 
-    print("--Getting user config file!")
-    sConfig, sRocoto_WS = gefs_config.get_config_file2(sConfigFile=args.ConfigFile)
-
-    print(sConfig)
-    print(sRocoto_WS)
-    exit()
-
-    print("--Reading user config file...")
-
-    dicBase = gefs_config.read_config(sConfig)
-
-    # Get the default value
-    print("--Getting default values from default user config file!")
-    gefs_config.get_and_merge_default_config(dicBase)
-
+    # Getting database from User Configuration File
+    sConfig, sRocoto_WS, dicBase = gefs_config.get_dicBase_from_Config(sConfigFile=args.ConfigFile)
+    
+    # Checking MUST parameters
     print("--Checking the must parameters for the config file")
     sMust_Items = ['SDATE', 'EDATE']
     for sMust_Item in sMust_Items:
@@ -62,29 +51,31 @@ def main():
         else:
             dicBase['cplwav'] = ".false."
 
-    print("--Assign default values for the config file")
-    gefs_xml.assign_default_for_xml_def(dicBase, sRocoto_WS=sRocoto_WS)
+    if args.Rocoto.lower() == "yes":
+        print("--Assign default values for the config file")
+        gefs_xml.assign_default_for_xml_def(dicBase, sRocoto_WS=sRocoto_WS)
 
-    print("--Create folders for the output...")
-    gefs_config.create_folders(dicBase)
+        print("--Create folders for the output...")
+        gefs_config.create_folders(dicBase)
 
-    print("--Generating XML file ...")
-    gefs_xml.create_xml(dicBase)
-    print("--Generated XML file!")
+        print("--Generating XML file ...")
+        gefs_xml.create_xml(dicBase)
+        print("--Generated XML file!")
 
-    sVarName = "GenParm".upper()
-    if sVarName in dicBase:
-        sValue = dicBase[sVarName]
-        if sValue == 'YES' or sValue[0] == 'Y':
-            # check gets_dev_parm items in configure file
-            print("--Generating files for parm...")
-            gefs_parm.create_parm(sConfig, dicBase)
-            print("--Generated files for parm!")
+        sVarName = "GenParm".upper()
+        if sVarName in dicBase:
+            sValue = dicBase[sVarName]
+            if sValue == 'YES' or sValue[0] == 'Y':
+                # check gets_dev_parm items in configure file
+                print("--Generating files for parm...")
+                gefs_parm.create_parm(sConfig, dicBase)
+                print("--Generated files for parm!")
 
-    print("--Generating crontab file...")
-    gefs_crontab.create_crontab(dicBase, cronint=5)
-    print("--Generated crotab file!")
+        print("--Generating crontab file...")
+        gefs_crontab.create_crontab(dicBase, cronint=5)
+        print("--Generated crotab file!")
 
+    
 
 if __name__ == '__main__':
     import sys
