@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu
+set -eux
 
 sWS=`pwd`
 echo $sWS

@@ -113,8 +113,8 @@ set -eux
 echo `date` $0 begin
 
 set -x
-export COMINgfs=${COMINgfs:-${COMROOThps}/gfs/prod/gfs.${PDY}}
-export COMINenkf=${COMINenkf:-${COMROOThps}/gfs/prod/enkf.}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}}
+export COMINenkf=${COMINenkf:-$(compath.py gfs/prod)/enkfgdas.}
 
 export pdycycp=`$NDATE -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
