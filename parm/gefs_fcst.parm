@@ -59,7 +59,7 @@ fi
 # add two tiered SST options
 export sst2tier=${sst2tier:-YES}
 if [[ $sst2tier = YES ]]; then
-	export nstf_name="2,0,5,0,0"
+	export nstf_name="2,0,0,0,0"
 	export FTSFS=0
 	export FNTSFA=$SSTDIR/TMPsfc.$PDY$cyc.24hr.anom.grb
 fi
@@ -132,7 +132,7 @@ export cal_pre=.false.
 export REDRAG=.true.
 export DSPHEAT=.true.
 export HYBEDMF=.true.
-export lheatstrg=.true.
+export lheatstrg=.false.
 
 export random_clds=.false.
 export trans_trac=.true.

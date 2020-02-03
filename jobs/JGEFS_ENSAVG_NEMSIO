@@ -85,11 +85,11 @@ export HOMEgfs=${HOMEgfs:-$HOMEgefs}
 
 export FIXglobal=${HOMEgfs}/fix
 export FIXgfs=${HOMEgfs}/fix
-export USHgsm=$HOMEgfs/ush
-export EXECgsm=$HOMEgfs/exec
+export USHgfs=$HOMEgfs/ush
+export EXECgfs=$HOMEgfs/exec
 
 #export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/gfs_ncep_post}
-export nemsioget=$EXECgsm/nemsio_get
+export nemsioget=$EXECgfs/nemsio_get
 
 export ERRSCRIPT=${ERRSCRIPT:-err_chk}
 export LOGSCRIPT=startmsg

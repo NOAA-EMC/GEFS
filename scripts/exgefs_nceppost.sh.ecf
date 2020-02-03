@@ -80,7 +80,7 @@ echo cycle=$cycle
 #export NDATE=${NDATE:-${EXECutil}/ndate}
 #
 export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
-export SIGHDR=${SIGHDR:-$EXECgsm/global_sighdr}
+export SIGHDR=${SIGHDR:-$EXECgfs/global_sighdr}
 export nemsioget=$nemsioget
 
 R1=`echo $RUNMEM|cut -c1-3`
