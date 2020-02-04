@@ -197,7 +197,7 @@ def get_dicBase_from_Config(sConfigFile="user_full.conf"):
     
     # Read User Configuration File
     print("----Getting user config file!")
-    sConfig, sRocoto_WS = get_config_file2(sConfigFile=args.ConfigFile)
+    sConfig, sRocoto_WS = get_config_file2(sConfigFile=sConfigFile)
     
     print("----Reading user config file...")
     dicBase = read_config(sConfig)
