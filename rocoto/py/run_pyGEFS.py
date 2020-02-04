@@ -21,11 +21,10 @@ def main():
     import argparse
     parser = argparse.ArgumentParser(description='pyGEFS: Python-Based Workflow Management of NCEP Global Ensemble Forecast System!')
     parser.add_argument("-r", "--Rocoto", default="yes", type=str, help="Generate rocoto xml related files! [yes|no]")
-    parser.add_argument("-o", "--Operation", default="no", type=str, help="Generate operation workflow related files! [rocoto|ecflow|no]")
+    parser.add_argument("-o", "--Operation", default="no", type=str, help="Generate operation workflow related files! [rocoto|devecf|ecflow|no]")
     parser.add_argument("-f", "--ConfigFile", default="user_full.conf", type=str, help="User configure file name!")
 
     args = parser.parse_args()
-
     print(args)
 
     print("=========================================")
@@ -60,20 +59,13 @@ def main():
 
         print("--Generating XML file ...")
         gefs_xml.create_xml(dicBase)
-        print("--Generated XML file!")
+        #print("--Generated XML file!")
 
-        sVarName = "GenParm".upper()
-        if sVarName in dicBase:
-            sValue = dicBase[sVarName]
-            if sValue == 'YES' or sValue[0] == 'Y':
-                # check gets_dev_parm items in configure file
-                print("--Generating files for parm...")
-                gefs_parm.create_parm(sConfig, dicBase)
-                print("--Generated files for parm!")
+        # For gefs_dev.parm
+        gefs_parm.create_parm2(sConfig, dicBase)
 
         print("--Generating crontab file...")
         gefs_crontab.create_crontab(dicBase, cronint=5)
-        print("--Generated crotab file!")
 
     
 

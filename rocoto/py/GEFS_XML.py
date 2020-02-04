@@ -662,7 +662,7 @@ def get_workflow_body(dicBase):
 
     GenTaskEnt = get_GenTaskEnt(dicBase)
 
-    print("---Config your tasks...")
+    # print("---Config your tasks...")
     gefs_xml_for_tasks.config_tasknames(dicBase)
 
     gefs_xml_for_tasks.write_to_all_ent(GenTaskEnt, dicBase)

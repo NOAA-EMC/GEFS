@@ -11,10 +11,10 @@ def get_and_merge_default_config(dicBase):
     sDefaultConfig_File = sys.path[0] + sSep + "user_{0}.conf".format(WHERE_AM_I)
 
     if os.path.exists(sDefaultConfig_File):
-        print("---Default User Configure file was found! Reading ...")
+        print("----Default User Configure file was found! Reading ...")
         dicBase_Default = read_config(sDefaultConfig_File)
 
-        print("---Merging ...")
+        print("----Merging ...")
         for sDic in dicBase_Default:
             if sDic not in dicBase:
                 dicBase[sDic] = dicBase_Default[sDic]

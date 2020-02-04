@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eux
+set -eu #x
 
 sWS=`pwd`
 echo $sWS
@@ -200,8 +200,8 @@ if [ $RunRocoto = "yes" ]; then
         module load rocoto/complete
         module load python/3.6.3       
     fi
-    ./py/run_to_get_all.py  $userConfigFile
-    
+    #./py/run_to_get_all.py  $userConfigFile
+    ./py/run_pyGEFS.py -r yes -f $userConfigFile
     echo "Generated xml and/or ent and updated bin file!"
 fi # For RunRocoto
 
