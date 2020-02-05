@@ -391,14 +391,8 @@ unset chgresush
 unset FIXgsm
 #. /usrx/local/Modules/default/init/ksh
 . /usrx/local/prod/lmod/lmod/init/ksh
-# module use /nwtest2/modulefiles
-# module load util_shared/v1.0.5
   module use /gpfs/dell1/nco/ops/nwprod/modulefiles
-module list
-  #module load EnvVars/1.0.2
   module load util_shared/1.1.0
-  #module load CFP/2.0.1
-module list
 
   echo before set chgresush
   export FIXgsm=${FIXSUBDA:-$HOMEgsm/fix/fix_am}
