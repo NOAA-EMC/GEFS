@@ -237,6 +237,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
     dicBase[sVarName] = sVarValue
 
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     # ===
     sVarName = "DIRS_TO_KEEP".upper()
     if sVarName not in dicBase:
@@ -487,126 +488,24 @@ def get_definitions(dicBase):
         Create entities related to the experiment
     '''
 
+    lstEntity = ["MEMLIST", "CYCLE_THROTTLE", "TASK_THROTTLE", "SDATE", "EDATE", \
+                 "INCYC", "WHERE_AM_I", "GEFS_ROCOTO", "BIN", "PRE", \
+                 "WORKFLOW_LOG_DIR", "LOG_DIR", "tmpnwprd", "DATA_DIR", "EXPID", \
+                 "PSLOT", "SOURCEDIR", "WORKDIR", "KEEP_DIR", "INIT_DIR", \
+                 "HPSS_DIR", "DIRS_TO_KEEP", "DIRS_TO_ARCHIVE", "DIRS_TO_KEEP_WAVE", "DIRS_TO_ARCHIVE_WAVE", \
+                 "ACCOUNT", "CUE2RUN", "TRANSFER_QUEUE", "SCHEDULER"]
+
     strings = []
-
     strings.append('\n')
-    # # if base['INTERVAL'] is None:
-    # #     print('cycle INTERVAL cannot be None')
-    # #     sys.exit(1)
 
-    sVarName = "MEMLIST"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "CYCLE_THROTTLE"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "TASK_THROTTLE"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "SDATE"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "EDATE"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "INCYC"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    # =====
-    sVarName = "WHERE_AM_I"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    # =====
-    sVarName = "GEFS_ROCOTO"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    # ===== Default, you don't need to change them
-    sVarName = "BIN"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    # =====
-    sVarName = "PRE"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    # =====
-    sVarName = "WORKFLOW_LOG_DIR"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "LOG_DIR"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "tmpnwprd"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "DATA_DIR"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "EXPID"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "PSLOT"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "SOURCEDIR"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "WORKDIR"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "KEEP_DIR"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "INIT_DIR"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "HPSS_DIR"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "DIRS_TO_KEEP"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "DIRS_TO_ARCHIVE"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "DIRS_TO_KEEP_WAVE"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "DIRS_TO_ARCHIVE_WAVE"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+    for sVarName in lstEntity:
+        sVarValue = dicBase[sVarName.upper()]
+        strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
 
     strings.append('\n')
 
-    # # -----------------------------------------------------------------------------------------------
-    # strings.append('\t<!--  <!ENTITY INIT_FHR "9 12 15"> -->\n')
-    # strings.append('\n')
 
     GenTaskEnt = get_GenTaskEnt(dicBase)
-
     if GenTaskEnt:
         import sys
         sSep = "/"
@@ -624,27 +523,6 @@ def get_definitions(dicBase):
         strings.append('\t<!ENTITY % TASKS    SYSTEM "{0}{1}tasks{1}all.ent">\n'.format(dicBase['GEFS_ROCOTO'], sSep))
         strings.append('\t%TASKS;\n')
         strings.append('\n')
-
-    # -----------------------------------------------------------------------------------------------
-    strings.append('\t<!-- Machine related entities -->\n')
-
-    sVarName = "ACCOUNT"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "CUE2RUN"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "TRANSFER_QUEUE"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "SCHEDULER"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    strings.append('\n')
 
     strings.append('\t<!-- END: Resource requirements for the workflow -->\n')
     strings.append(']>\n')
@@ -746,8 +624,8 @@ def get_GenTaskEnt(dicBase):
     sVarName = "GenTaskEnt".upper()
     if sVarName in dicBase:
         sGenTaskEnt = dicBase[sVarName]
-
-        if str(sGenTaskEnt).upper() == "YES" or str(sGenTaskEnt)[0].upper() == "Y":
+        sValue = str(sGenTaskEnt)
+        if sValue.upper().startswith('Y'): #str(sGenTaskEnt).upper() == "YES" or str(sGenTaskEnt)[0].upper() == "Y":
             GenTaskEnt = True
         else:
             GenTaskEnt = False
