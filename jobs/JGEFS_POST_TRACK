@@ -87,9 +87,6 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-##export COMINgfs=${COMINgfs:-${COMROOThps}/gfs/prod/gfs.${PDY}}
-##export COMINsyn=${COMINsyn:-${COMROOTp1}/arch/prod/syndat}
-
 export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/gefs.${PDY}/${cyc}}
 export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/tctrack}
 
