@@ -6,21 +6,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sSep = "/"
     if sys.platform == 'win32':
         sSep = r'\\'
-
-    sVarName = "XML".upper()
-    sVarValue = 'gefs.xml'
-    if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
     # ==
-    sVarName = "db".upper()
-    sVarValue = 'gefs.db'
-    if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
-    # ==
-    sVarName = "crontab".upper()
-    sVarValue = 'cron_rocoto'
-    if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
+    get_MEMLIST(dicBase)
     # ==
     sVarName = "First".upper()
     sVarValue = 'Xianwu'
@@ -43,27 +30,10 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         if "." in sVarValue:
             sVarValue = sVarValue.split(".")[1]
         dicBase[sVarName] = sVarValue
-    # ==
-    sVarName = "HPS_PTMP".upper()
-    sVarValue = 'hps'
-    if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
-    # ==
-    sVarName = "WHERE_AM_I".upper()
-    sVarValue = "hera"
-    if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
-    WHERE_AM_I = dicBase[sVarName]
-    # ==
-    sVarName = "SDATE".upper()
-    sVarValue = "2018012900"
-    if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
-    # ==
-    sVarName = "EDATE".upper()
-    sVarValue = "2018013000"
-    if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
+
+
+    WHERE_AM_I = dicBase["WHERE_AM_I".upper()]
+
     # ===
     sVarName = "GEFS_ROCOTO".upper()
     sVarValue = ""
@@ -213,7 +183,6 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sVarValue += dicBase['EXPID']
 
     dicBase[sVarName] = sVarValue
-
     # ===
     sVarName = "INIT_DIR".upper()
     sVarValue = ""
@@ -237,7 +206,116 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
     dicBase[sVarName] = sVarValue
 
+# =======================================================
+def NotUsed(dicBase, sRocoto_WS=""):
+    import os
+    import sys
+
+    sSep = "/"
+    if sys.platform == 'win32':
+        sSep = r'\\'
+
+    WHERE_AM_I = dicBase["WHERE_AM_I".upper()]
+    # ===
+    sVarName = "KEEP_DIR".upper()
+    sVarValue = ""
+    if sVarName not in dicBase:
+        if WHERE_AM_I.lower() == "cray":
+            sVarValue = "/gpfs/hps3/emc/ensemble/noscrub/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'wcoss':
+            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'hera':
+            sVarValue = "/scratch2/NCEPDEV/stmp3/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
+            sVarValue = "/gpfs/dell2/emc/retros/noscrub/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'wins':
+            sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
+        else:
+            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS/&EXPID;"
+
+        dicBase[sVarName] = sVarValue
+    else:
+        sVarValue = dicBase[sVarName] + "/&EXPID;"
+        dicBase[sVarName] = sVarValue
+
+    sVarValue = replace_First_Last(dicBase, sVarName)
+    sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
+    if sVarValue.endswith("/&EXPID;"):
+        sVarValue = sVarValue.replace('&EXPID;', dicBase['EXPID'])
+    else:
+        sVarValue += dicBase['EXPID']
+
+    if not sVarValue.endswith(dicBase['EXPID']):
+        sVarValue += dicBase['EXPID']
+
+    dicBase[sVarName] = sVarValue
+
+    # ===
+    sVarName = "HPSS_DIR".upper()
+    if sVarName not in dicBase:
+        sVarValue = ""
+        if WHERE_AM_I.lower() == "cray":
+            sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'wcoss':
+            sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
+            sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'wins':
+            sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
+        else:
+            sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
+
+        dicBase[sVarName] = sVarValue
+    else:
+        sVarValue = dicBase[sVarName] + "/&EXPID;"
+        dicBase[sVarName] = sVarValue
+
+    sVarValue = replace_First_Last(dicBase, sVarName)
+    sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
+    if sVarValue.endswith("/&EXPID;"):
+        sVarValue = sVarValue.replace('&EXPID;', dicBase['EXPID'])
+    else:
+        sVarValue += dicBase['EXPID']
+
+    if not sVarValue.endswith(dicBase['EXPID']):
+        sVarValue += dicBase['EXPID']
+
+    dicBase[sVarName] = sVarValue
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    sVarName = "XML".upper()
+    sVarValue = 'gefs.xml'
+    if sVarName not in dicBase:
+        dicBase[sVarName] = sVarValue
+    # ==
+    sVarName = "db".upper()
+    sVarValue = 'gefs.db'
+    if sVarName not in dicBase:
+        dicBase[sVarName] = sVarValue
+    # ==
+    sVarName = "crontab".upper()
+    sVarValue = 'cron_rocoto'
+    if sVarName not in dicBase:
+        dicBase[sVarName] = sVarValue
+    # ==
+    sVarName = "HPS_PTMP".upper()
+    sVarValue = 'hps'
+    if sVarName not in dicBase:
+        dicBase[sVarName] = sVarValue
+    # ==
+    sVarName = "WHERE_AM_I".upper()
+    sVarValue = "hera"
+    if sVarName not in dicBase:
+        dicBase[sVarName] = sVarValue
+    # ==
+    sVarName = "SDATE".upper()
+    sVarValue = "2018012900"
+    if sVarName not in dicBase:
+        dicBase[sVarName] = sVarValue
+    # ==
+    sVarName = "EDATE".upper()
+    sVarValue = "2018013000"
+    if sVarName not in dicBase:
+        dicBase[sVarName] = sVarValue
     # ===
     sVarName = "DIRS_TO_KEEP".upper()
     if sVarName not in dicBase:
@@ -277,8 +355,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         dicBase[sVarName] = sVarValue
 
     # ===== Default, you don't need to change them
-    # ==
-    get_MEMLIST(dicBase)
+
     # ===
     sVarName = "MEMLIST".upper()
     sVarValue = "p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 c00"
