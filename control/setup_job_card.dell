@@ -62,13 +62,13 @@ eofCAT
     fi
     
 cat <<eofCAT >>$jobcontrol
+set -x
 if [ ! -z $MODULESHOME ]; then
     . $MODULESHOME/init/bash
 else
     . /opt/modules/default/init/bash
 fi
 
-#module load ics
 module purge
 module load ips/18.0.1.163
 #module load EnvVars/1.0.2
@@ -81,12 +81,13 @@ eofCAT
     if [[ ${job_type} = parallel ]] ; then
      cat <<eofCAT >>$jobcontrol
   module load impi/18.0.1
-
+  module load CFP/2.0.1
 eofCAT
     fi
 
     if [[ ${job_type} = parallel ]] ; then
     cat <<eofCAT >>$jobcontrol
+module list
 export OMP_NUM_THREADS=$OMP_NUM_THREADS
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us

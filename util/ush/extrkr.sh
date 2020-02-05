@@ -965,9 +965,9 @@ msg="$pgm start for $atcfout at ${CYL}z"
 postmsg "$jlogfile" "$msg"
 
 #${exectrkdir}/supvit <${DATA}/suv_input.${atcfout}.${PDY}${CYL}
-#$SUPVIT <${DATA}/suv_input.${atcfout}.${PDY}${CYL}
-cp -pr /gpfs/dell1/nco/ops/nwprod/util_shared.v1.1.0/exec/supvit .
-supvit <${DATA}/suv_input.${atcfout}.${PDY}${CYL}
+ $SUPVIT <${DATA}/suv_input.${atcfout}.${PDY}${CYL}
+#cp -pr /gpfs/dell1/nco/ops/nwprod/util_shared.v1.1.0/exec/supvit .
+#supvit <${DATA}/suv_input.${atcfout}.${PDY}${CYL}
 suvrcc=$?
 
 if [ ${suvrcc} -eq 0 ]

@@ -373,8 +373,6 @@ else
   export getnsttf=$UTILgefs/exec/getnsttf
 fi
 
-#QUESTION: this block should be placed later, at the position of the module load util_shared,
-#Now we have a proble, two set of global_chgres, When to load the util_shared is a problem.???????? 
 echo chgresush=$chgresush
 echo CHGRESEXEC=$CHGRESEXEC
 echo getnsttf=$getnsttf
@@ -388,24 +386,24 @@ echo FIXgsm=$FIXgsm
 export CHGRESEXEC_SAVE=$CHGRESEXEC
 export chgresush_save=$chgresush
 export FIXgsm_save=$FIXgsm
-#unset CHGRESEXEC
-#unset chgresush
-#unset FIXgsm
+unset CHGRESEXEC
+unset chgresush
+unset FIXgsm
 #. /usrx/local/Modules/default/init/ksh
+. /usrx/local/prod/lmod/lmod/init/ksh
 # module use /nwtest2/modulefiles
-#  module use /nwprod2/modulefiles
-#  module load util_shared/v1.0.5
-   module load util_shared/1.1.0
-
-# if [[ $gefsmachine = dell ]]; then
-# CHGRESEXEC=/gpfs/dell1/nco/ops/nwprod/util_shared.v1.1.0/global_chgres.v15.0.0/exec/global_chgres
-# fi
+# module load util_shared/v1.0.5
+  module use /gpfs/dell1/nco/ops/nwprod/modulefiles
+module list
+  #module load EnvVars/1.0.2
+  module load util_shared/1.1.0
+  #module load CFP/2.0.1
+module list
 
   echo before set chgresush
   export FIXgsm=${FIXSUBDA:-$HOMEgsm/fix/fix_am}
   export chgresush=$GLOBALCHGRES
   echo after set chgresush
-
 
   echo chgresush=$chgresush
   echo CHGRESEXEC=$CHGRESEXEC

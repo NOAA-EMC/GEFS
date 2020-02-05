@@ -11,10 +11,19 @@ set -xa
 ####################################
 
 # 01/28/2013 New variables added for WCOSS and cross-machine unfication
+#module list
+
 export gefsmachine=${gefsmachine:-dell}
 export gefsmpexec=${gefsmpexec:-mpirun}
 
+if [ ! -z $MODULESHOME ]; then
+    . $MODULESHOME/init/bash
+else
+    . /opt/modules/default/init/bash
+fi
 module load util_shared/1.1.0
+
+#module list
 
 ###########################################
 # Run gefs_config to get input parameters
@@ -307,7 +316,7 @@ do
   fi
   cd $DATA
 
-  ksh $utilscript/setup.sh
+# ksh $utilscript/setup.sh
 
   ###################################
   # Run the tropical cyclone tracker
