@@ -19,5 +19,5 @@ export HDF5_serial_ver=1.10.1
 
 export python_ver=3.6.3
 
-export USE_CFP=YES
+#export USE_CFP=YES
 export PATH=$PATH:.
