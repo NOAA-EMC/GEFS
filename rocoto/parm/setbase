@@ -11,49 +11,12 @@ echo
 echo `date` $0 set environment and experiment id
 echo
 
-#DHOU, 01/03/2013 add this block to generate the machine name related variables
-#machl=`uname -n | cut -c1`
-
-#if [[ $machl = r ]]; then
-#  machl=f
-#fi
-#if [[ $machl = n ]]; then
-#  machl=l
-#fi
-
 echo envir=$envir
 
 echo expid=${expid}
 
 id=`echo $expid|cut -c3-4`
 echo id=$id
-
-#echo
-#echo USER to prescribe user ID and JOB queue infirmation
-#echo
-#PROJECT=ensemble
-#LOGNAME=$LOGNAME
-#SUBNAME=
-#JOBPRIO=      
-#JOBQUEUE=dev
-#JOBPHASE=
-#Please make sure you have the correct account information
-#export account=GEN-T2O
-
-#if [[ "$LOGNAME" = "emc.enspara" || "$LOGNAME" = "emc.enspara1" ]]; then
-#    SUBNAME=/XX    #members of the enspara/enspara1 group accounts need to define e.g SUBNAME=/dc
-#    JOBPRIO=high       #(default; it could be high/max)
-#fi
-
-#echo USER info: $PROJECT $LOGNAME $SUBNAME $JOBPRIO
-
-#echo JOB QUEUE info prescribed: $JOBQUEUE $JOBPHASE $JOBPRIO
-
-#echo ACCOUNT info: $account
-
-#echo
-#echo `date` $0 set ROOT directory tree locations
-#echo
 
 # For virtical structure
 if [[ -d $SOURCEDIR/sorc/global-workflow.fd ]] ; then
@@ -67,11 +30,6 @@ if [ -d /scratch2/NCEPDEV ]; then
     export HOMEDIR=${HOMEDIR:-/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gfs/gefs_wave_fb95cd3c_20191105_newfv3upp}
     export HOMERFC=/scratch2/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
     export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/common
-
-    # export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/Walter.Kolczynski/gefs_input
-    # export COMINenkf_base=$HOMEdata/gfs_15/enkfgdas.
-    # export COMINgfs_base=$HOMEdata/gfs_15/gfs.
-    # export COMINcfs_base=$HOMEdata/cfs_2_sst/cfs.
 
     export COMROOThps=${HOMEdata}
     export COMROOTp1=/scratch2/NCEPDEV/rstprod/com 
@@ -108,25 +66,7 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
     export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
     export archsyndir=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/TCvitalData/syndat
-
-    #export HOMEdata=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/gefs_input
-    #export COMINenkf_base=$HOMEdata/gfs_15/enkfgdas.
-    #export COMINgfs_base=$HOMEdata/gfs_15/gfs.
-    #export COMINcfs_base=$HOMEdata/cfs_2_sst/cfs.
-
 fi
-
-
-#export JOBQUEUE=$JOBQUEUE$JOBPRIO$JOBPHASE
-#echo JOB QUEUE info: $JOBQUEUE 
-
-#echo ROOT DIRECTORY info:
-#echo $machine  jobqueue=$JOBQUEUE
-#echo homedir: $HOMEDIR
-
-#echo
-#echo `date` $0 set user base directory tree locations
-#echo
 
 export basesource=$SOURCEDIR
 export baseoutput=$WORKDIR
