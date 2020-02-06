@@ -241,6 +241,14 @@ export POSTGPSH=$USHpost/global_nceppost.sh
 export POSTGPEXEC=$EXECpost/ncep_post
 export ENSADD=$USHgefs/global_ensadd.sh
 export ANOMCATSH=${USHgefs}/global_anomcat.sh
+# module used by anomcat
+if [ ! -z $MODULESHOME ]; then
+  . $MODULESHOME/init/bash
+else
+  . /opt/modules/default/init/bash
+fi
+module use /gpfs/dell1/nco/ops/nwprod/modulefiles
+module load util_shared/1.1.1
   ;;
 esac
 echo in $0: POSTGPSH=$POSTGPSH

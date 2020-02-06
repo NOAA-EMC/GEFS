@@ -1,7 +1,6 @@
 # Ignore compiled binaries
 exec/
 fix/
-fix
 !gempak/fix/
 util/exec/
 
