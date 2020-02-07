@@ -10,8 +10,7 @@ ulimit -a
 . $SOURCEDIR/versions/gefs_wcoss_dell_p3.ver
 
 # Load modules
-#. /usrx/local/prod/lmod/lmod/init/ksh
-. /usrx/local/prod/lmod/lmod/init/profile
+. /usrx/local/prod/lmod/lmod/init/ksh
 module list
 
 module load EnvVars/$EnvVars_ver
