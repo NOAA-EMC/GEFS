@@ -6,8 +6,6 @@ set -x
 ulimit -s unlimited
 ulimit -a
 
-
-
 # module_ver.h
 . $SOURCEDIR/versions/gefs_wcoss_dell_p3.ver
 
