@@ -1,6 +1,6 @@
 export gefs_ver=v12
 
-export envvars_ver=1.0.2
+export EnvVars_ver=1.0.2
 export ips_ver=18.0.1.163
 export impi_ver=18.0.1
 export lsf_ver=10.1
@@ -11,7 +11,7 @@ export prod_util_ver=1.1.0
 export util_shared_ver=1.1.0
 export g2tmpl_ver=1.5.0
 
-export cfp_ver=2.0.1
+export CFP_ver=2.0.1
 export gempak_ver=7.3.1
 
 export NetCDF_ver=4.5.0
