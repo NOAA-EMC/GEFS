@@ -123,9 +123,9 @@
       DIMENSION thresh(numthr),ananat(ji),anan80(ji)
       DIMENSION thresh2(numthr),fcold(ji)
 
-      character gdso(400),FNAME*80,fnamei*80,MDLNAM*10,FMASK(numreg)*4
+      character gdso(400),FNAME*255,fnamei*255,MDLNAM*10,FMASK(numreg)*4
       character datestr*15,month(12)*3,mdlverf*10
-      character datcmd*18,fname2*80,fname2i*80
+      character datcmd*18,fname2*255,fname2i*255
       CHARACTER*255 CPGBA,CPGBF,CPGIF,PCPDA,CMASK,DMASK,CTMPD
 
       data thresh/0.2,2.,5.,10.,15.,25.,35.,50.,75./
