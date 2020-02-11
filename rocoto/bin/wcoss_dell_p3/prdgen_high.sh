@@ -4,16 +4,36 @@
 # EXPORT list here
 set -x
 
-#export IOBUF_PARAMS=*:size=64M:count=4:verbose
 ulimit -s unlimited
 ulimit -a
 
-#export OMP_NUM_THREADS=${GEFS_TPP:-4}
+# module_ver.h
+. $SOURCEDIR/versions/gefs_wcoss_dell_p3.ver
 
-#export DO_LOW_RES=
+# Load modules
+. /usrx/local/prod/lmod/lmod/init/ksh
+module list
 
-# export gefsmpexec_mpmd="  mpirun -n $total_tasks cfp mpmd_cmdfile"
+module load EnvVars/$EnvVars_ver
+module load ips/$ips_ver
+module load impi/$impi_ver
+module load prod_util/$prod_util_ver
+module load prod_envir/$prod_envir_ver
+module load grib_util/$grib_util_ver
+#module load NetCDF/$NetCDF_ver
+#module load HDF5-serial/$HDF5_serial_ver
 
+module load lsf/$lsf_ver
+
+module load CFP/$CFP_ver
+export USE_CFP=YES
+
+module list
+
+# For Development
+. $GEFS_ROCOTO/bin/wcoss_dell_p3/common.sh
+
+# Export List
 #export RERUN=NO
 
 # CALL executable job script here
