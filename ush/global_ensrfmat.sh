@@ -12,17 +12,17 @@ echo "         ####  CONVERT RFC DATA FORMAT !!!!!  #### "
 echo "         ######################################### "
 
 
-cat <<-namEOF >input_reformat 
-	&namin
-	iymd=$OBSYMD,
-	fname1='$FIXgefs/ingest_nwsli.uniq',
-	fname2='$DATA/rfc24-uniq-early',
-	fname3='$DATA/usa-dlyprcp-$OBSYMD',
-	/
-	namEOF
+cat <<namEOF >input_reformat 
+&namin
+iymd=$OBSYMD,
+fname1='$FIXgefs/ingest_nwsli.uniq',
+fname2='$DATA/rfc24-uniq-early',
+fname3='$DATA/usa-dlyprcp-$OBSYMD',
+/
+namEOF
 
 if [ -s usa-dlyprcp-$OBSYMD ]; then
-	rm usa-dlyprcp-$OBSYMD
+ rm usa-dlyprcp-$OBSYMD
 fi
 
 export pgm=global_ensrfmat

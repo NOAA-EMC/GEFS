@@ -345,7 +345,7 @@ use params
         gfldo%fld(1:jpoint)=f(1:jpoint)
         call putgb2(51,gfldo,iret)
        enddo
-       call gf_free(gfld)
+!      call gf_free(gfld)
 !cc
 !cc    calculate the CPQPF
 !cc
@@ -435,7 +435,7 @@ use params
 
       call putgb2(52,gfldo,iret)
        enddo    ! for k = 1, istd
-      call gf_free(gfldo)
+!     call gf_free(gfldo)
       enddo     ! for n loop
  990  format (69x)
  991  format (6x,i6,57x)
