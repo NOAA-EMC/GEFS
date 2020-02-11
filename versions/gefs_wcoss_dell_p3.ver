@@ -5,7 +5,7 @@ export ips_ver=18.0.1.163
 export impi_ver=18.0.1
 export lsf_ver=10.1
 
-export prod_envir_ver=1.0.2
+export prod_envir_ver=1.0.3
 export grib_util_ver=1.1.0
 export prod_util_ver=1.1.0
 export util_shared_ver=1.1.0
