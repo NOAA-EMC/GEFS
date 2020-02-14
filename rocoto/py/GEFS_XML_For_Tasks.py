@@ -916,6 +916,14 @@ def get_param_of_task(dicBase, taskname):
                 else:
                     sDep += '\n</and>'
 
+            # For "cqpf" task
+            if taskname.lower() == "cqpf":
+                if DoesTaskExist(dicBase, "enspost"):
+                    sDep = '<taskdep task="enspost"/>'
+                else:
+                    sDep = ""
+                
+
             # For 'keep_data_atm' and 'archive_atm' tasks
             if taskname.lower() == "keep_data_atm" or taskname.lower() == "archive_atm":
                 sDep = '<and>'
