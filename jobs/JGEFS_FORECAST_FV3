@@ -311,13 +311,12 @@ fi
 
 export fcstscript=${fcstscript:-$HOMEgfs/scripts/exglobal_fcst_nemsfv3gfs.sh}
 export FORECASTSH=$fcstscript
-export FCSTEXECDIR=${FCSTEXECDIR:-$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin}
+export EXECDIR=$EXECgfs
+export FCSTEXECDIR=${FCSTEXECDIR:-$EXECDIR}
 export PARM_FV3DIAG=${PARM_FV3DIAG:-$PARMgfs/parm_fv3diag}
 export ROTDIR=${ROTDIR:-$DATA}
 
 export APRUN=${APRUN:-""}
-export EXECDIR=$EXECgfs
-export FCSTEXECDIR=${FCSTEXECDIR:-$EXECDIR}
 
 echo $fcstscript
 echo $FORECASTSH
@@ -363,8 +362,8 @@ ICSDIR=`eval echo $ICSDIR_template`
 # So create the tree using mkdir -p, then remove the last product
 
 if [ $OUTPUT_GRID = "gaussian_grid" ]; then
-	# Link init directory
-	ln -s $ICSDIR $DATA/INPUT
+	# Copy init directory
+	cp -rf $ICSDIR $DATA/INPUT
 	mkdir -p "$memdir"
 
 	# Link output files
@@ -401,19 +400,32 @@ if [[ $cplwav = ".true." ]]; then
 	export COMOUTWW3=$COMROOT/${NET}/${envir}
 fi # [[ $cplwav = ".true." ]]
 
-if [[ $cplchm = ".true." ]]; then
-    # Link aerosol tracer data for next cycle
-	next_date=$($NDATE +$other_restart_time $CDATE)
+if [[ $cplchm = ".true." && $warm_start = ".true." ]]; then
+    # Link restart files for next cycle
+	next_date=$($NDATE +$gefs_cych $CDATE)
+	# next_date=$($NDATE +$restart_interval $CDATE)
     next_PDY=$(echo $next_date | cut -c1-8)
     next_cyc=$(echo $next_date | cut -c9-10)
-    for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
-		ln -sf $RESTDIR/${next_PDY}.${next_cyc}0000.fv_tracer.res.${tile}.nc $DATA/RESTART/${next_PDY}.${next_cyc}0000.fv_tracer.res.${tile}.nc
+	ln -sf $RESTDIR/${next_PDY}.${next_cyc}0000.coupler.res $DATA/RESTART/${next_PDY}.${next_cyc}0000.coupler.res
+	ln -sf $RESTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc $DATA/RESTART/${next_PDY}.${next_cyc}0000.fv_core.res.nc
+	for kind in fv_tracer.res fv_core.res fv_srf_wnd.res phy_data sfc_data; do
+		for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
+			ln -sf $RESTDIR/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc $DATA/RESTART/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc
+		done
 	done
+
+fi # [[ $cplchm = ".true." && $warm_start = ".true." ]]
+
+export gmemdir=$ICSDIR
+export increment_file=$ICSDIR/fv3_increment.nc
+
+if [[ $RERUN = "RERUN" && $warm_start = ".true." ]]; then
+	# Make sure increment file exists before using warm start
+	if [[ ! -f $increment_file ]]; then
+		echo "WARNING: Warm-start requested but no increment file present, reverting to cold-start!"
+		export warm_start=".false."
+		export read_increment=".false."
+	fi
 fi
-
-mkdir -p $memdir
-
-export assim_freq=6
-export increment=$ICSDIR/fv3_increment.nc
 
 . $FORECASTSH

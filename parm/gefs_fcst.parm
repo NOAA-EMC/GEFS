@@ -58,7 +58,6 @@ fi
 # add two tiered SST options
 export sst2tier=${sst2tier:-YES}
 if [[ $sst2tier = YES ]]; then
-	export nstf_name="2,0,5,0,0"
 	export FTSFS=0
 	export FNTSFA=$SSTDIR/TMPsfc.$PDY$cyc.24hr.anom.grb
 fi
@@ -76,6 +75,20 @@ export REMAP_GRID=${REMAP_GRID:-latlon}        #gaussian or latlon for using fre
 #export DIAG_TABLE=${DIAG_TABLE:-$HOMEgfs/parm/parm_fv3diag/diag_table}
 # export FIELD_TABLE=${FIELD_TABLE:-$HOMEgfs/parm/parm_fv3diag/field_table_gfdl}
 
+# set fixed k_split and n_split for dt=450s and 300s
+if [[ $DELTIM = 450 ]]; then
+	export k_split=2
+	export n_split=6
+elif [[ $DELTIM = 300 ]]; then
+	export k_split=1
+	export n_split=8
+else 
+	export k_split=${k_split:-2}
+	export n_split=${n_split:-6}
+fi
+
+export assim_freq=$gefs_cych
+
 # Settings for coupling with Wavewatch III
 export cplwav=${cplwav:-.true.}
 if [[ $cplwav = ".true." ]]; then
@@ -92,30 +105,28 @@ fi
 
 if [[ $cplchm = ".true." ]]; then
 	export restart_interval=${restart_interval_aer:-24}
+	# export restart_interval=$gefs_cych
+	export AEROSOL_INIT_TYPE=${AEROSOL_INIT_TYPE:-"warm"}
+	export DELTIM=300 # Needed to match setting used by GSD
 	export other_restart_time=${other_restart_time:-$gefs_cych}
-	
-	export EMITYPE=${EMITYPE:-2}  # 1:MODIS, 2:GBBEPx
-	export EMIDIR=${EMIDIR:-/gpfs/dell2/emc/modeling/noscrub/Li.Pan/emi_} # WCK revist this
 
-	export DIAG_TABLE=${DIAG_TABLE:-$BASE_GSM/parm/parm_fv3diag/chm_diag_table}
+	if [[ $AEROSOL_INIT_TYPE == "warm" ]]; then
+		export warm_start=".true."
+		export read_increment=".true."
+		export CALCINCEXEC=${CALCINCEXEC:-$HOMEgfs/exec/calc_increment_ens_gsdchem.x}
+	fi
+
+	# TODO Update to determine emission type
+	export EMITYPE=${EMITYPE:-2}  # 1:MODIS, 2:GBBEPx
+	# TODO Copy data to a fix_aerosol
+	export EMIDIR=${EMIDIR:-/gpfs/dell2/emc/modeling/noscrub/Li.Pan/emi_}
+
+	export DIAG_TABLE=${DIAG_TABLE:-$HOMEgfs/parm/parm_fv3diag/chm_diag_table}
 
 	export lgfdlmprad=".true."
 	export effr_in=".true."
 	export USE_COUPLER_RES="YES"
 
-	export DELTIM=300 # Needed to match setting used by GSD
-fi
-
-# set fixed k_split and n_split for dt=450s and 300s
-if [[ $DELTIM = 450 ]]; then
-	export k_split=2
-	export n_split=6
-elif [[ $DELTIM = 300 ]]; then
-	export k_split=1
-	export n_split=8
-else 
-	export k_split=${k_split:-2}
-	export n_split=${n_split:-6}
 fi
 
 #gfs_physics
@@ -147,7 +158,6 @@ export cal_pre=.false.
 export REDRAG=.true.
 export DSPHEAT=.true.
 export HYBEDMF=.true.
-export lheatstrg=.true.
 
 export random_clds=.false.
 export trans_trac=.true.

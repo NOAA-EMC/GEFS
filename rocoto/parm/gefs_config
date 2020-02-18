@@ -39,7 +39,7 @@ export HOMEgfs=${HOMEgsm:-$HOMEDIR}
 export HOMEgsi=${HOMEgsm:-$HOMEDIR}
 
 #FCST exec is from a different directory
-export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgsm/sorc/fv3gfs.fd/NEMS/exe}
+export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgfs/exec}
 
 export HOMEpost=${HOMEpost:-$HOMEDIR}             #April 2018
 
