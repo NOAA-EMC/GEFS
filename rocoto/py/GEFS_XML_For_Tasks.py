@@ -173,6 +173,11 @@ def config_tasknames(dicBase):
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "enspost"
+            
+            # ---cqpf
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "cqpf"
 
         # #    <!-- RUN_CLEANUP -->
         if dicBase['RUN_CLEANUP'].upper()[0] == "Y":
@@ -918,11 +923,21 @@ def get_param_of_task(dicBase, taskname):
                 else:
                     sDep += '\n</and>'
 
+            # For "cqpf" task
+            if taskname.lower() == "cqpf":
+                if DoesTaskExist(dicBase, "enspost"):
+                    sDep = '<taskdep task="enspost"/>'
+                else:
+                    sDep = ""
+                
+
             # For 'keep_data_atm' and 'archive_atm' tasks
             if taskname.lower() == "keep_data_atm" or taskname.lower() == "archive_atm":
                 sDep = '<and>'
                 if DoesTaskExist(dicBase, "enspost"):
                     sDep += '\n\t<taskdep task="enspost"/>'
+                if DoesTaskExist(dicBase, "cqpf"):
+                    sDep += '\n\t<taskdep task="cqpf"/>'
                 if DoesTaskExist(dicBase, "post_track"):
                     sDep += '\n\t<taskdep task="post_track"/>'
                 if DoesTaskExist(dicBase, "post_genesis"):
