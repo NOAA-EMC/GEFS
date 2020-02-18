@@ -59,7 +59,8 @@ export cyc=${hh}
 #ndate=/nwprod/util/exec/ndate
 #DHOU 04/13/2012  for ZEUS/WCOSS portability
 export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
-ndate=$HOMEGLOBAL/util/exec/ndate
+#ndate=$HOMEGLOBAL/util/exec/ndate
+ndate=$NDATE
 
 export exectrkdir=${exectrkdir:-/nwprod/util/exec}
 export gltrkdir=${gltrkdir:-/com/hur/${envir}/global}

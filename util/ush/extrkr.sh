@@ -169,8 +169,10 @@ export exectrkdir=${exectrkdir:-${homesyndir}/exec}
 export ushtrkdir=${ushtrkdir:-${homesyndir}/ush}
 export archsyndir=${archsyndir:-$(compath.py gfs/prod/syndat)}
 
-cp /com/date/t${CYL}z ncepdate
-export CENT=` cut -c7-8 ncepdate `
+# JY - change the following 02/10/2020 
+#cp /com/date/t${CYL}z ncepdate
+#export CENT=` cut -c7-8 ncepdate `
+export CENT=` cut -c1-2 $PDY `
 export CENT=20
 
 wgrib=$WGRIB

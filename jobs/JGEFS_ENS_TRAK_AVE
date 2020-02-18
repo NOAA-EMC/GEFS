@@ -33,11 +33,12 @@ fi
 ####################################
 export pid=$$
 #export DATA=$DATAROOT/${job}.${pid}
-export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 if [[ $envir = dev ]]; then
   #export DATA=$basetmp/tmpnwprd1/${job}.${pid}.$PDY$cyc$jjj
+  export DATAROOT=$basetmp/tmpnwprd1
   export DATA=$basetmp/tmpnwprd1/${job}.${pid}
 fi
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
 
@@ -76,20 +77,21 @@ export SENDCOM=YES
 export SENDDBN=NO
 if [[ $envir = dev ]]; then
   export SENDDBN=NO
+  export HOMEgefs_legacy=${HOMEgefs}
 fi
 
 ####################################
 # Specify Execution Areas
 ####################################
-  export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  export HOMEgefs=${HOMEgefs_legacy:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
   export HOMEGLOBAL=${HOMEGLOBAL:-$HOMEgefs}
   export HOMEglobal=${HOMEglobal:-$HOMEgefs}
 
 #export HOMEGLOBAL=/nw${envir}
 #export HOMEgefs=/nw${envir}/gefs_legacy.${gefs_legacy_ver}
-if [[ $envir = dev ]]; then
-  HOMEgefs=$basesource/$HOMEgefs
-fi
+#if [[ $envir = dev ]]; then
+#  HOMEgefs=$basesource/$HOMEgefs
+#fi
 export PARMgefs=$HOMEgefs/parm
 export EXECGLOBAL=$HOMEGLOBAL/exec
 export USHGLOBAL=$HOMEGLOBAL/ush
@@ -115,14 +117,14 @@ export REDERR='2>'
 ##############################
 # Set up the UTILITIES
 ##############################
-export HOMEUTIL=/nwprod/util
+#export HOMEUTIL=/nwprod/util
 if [[ $envir = dev ]]; then
  if [[ $gefsmachine = zeus ]]; then
 export HOMEUTIL=$HOMEglobal/util
  fi
 fi
-export utilscript=$HOMEUTIL/ush
-export EXECUTIL=$HOMEUTIL/exec
+#export utilscript=$HOMEUTIL/ush
+#export EXECUTIL=$HOMEUTIL/exec
 
 ##############################
 # Run setup to initialize working directory and utility scripts
@@ -142,13 +144,14 @@ setpdy.sh
 #export COMINgfs=/com2/gfs/prod/gfs.$PDY
 #export COMIN=/com/${NET}/${envir}/gefs_legacy.${PDY}
 #export COMINm1=/com/${NET}/${envir}/gefs_legacy.${PDYm1}
+export COMROOT=${COMROOT:-${baseoutput}}
 export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
 export COMIN=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
 export COMINm1=$COMROOT/${NET}/${envir}/gefs_legacy.${PDYm1}
 
 if [[ $envir = dev ]]; then
-  export COMIN=$baseoutput$COMIN
-  export COMINm1=$baseoutput$COMINm1
+  export COMIN=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMINm1=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDYm1}
 fi
 
 mkdir -m 775 -p $COMIN/$cyc/pgrba
@@ -157,11 +160,11 @@ mkdir -m 775 -p $COMIN/$cyc/track
 
 #############################################################
 
-#export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
+export COMOUT=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
 export COMIN=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
 
 if [[ $envir = dev ]]; then
-export COMOUT=$baseoutput/$COMOUT
+export COMOUT=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
 fi
 
 mkdir -m 775 -p $COMOUT/$cyc/ensstat
@@ -231,10 +234,6 @@ postmsg "$jlogfile" "$msg"
 ##############################
 # Remove the Temporary working directory
 ##############################
-cd /tmpnwprd1
+cd $DATAROOT
 rm -rf $DATA
-
-<   export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
-<   export HOMEGLOBAL=${HOMEGLOBAL:-$HOMEgefs}
-<   export HOMEglobal=${HOMEglobal:-$HOMEgefs}
 

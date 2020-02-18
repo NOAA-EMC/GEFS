@@ -191,10 +191,10 @@ if [[ $envir = prod ]]; then
 elif [[ $envir = para ]] || [[ $envir = test ]]; then
   if (( ipairh > nhrpair )); then
     # RLW 20141008 modify to obtain and use version for vertical structure
-    echo "/nw$envir/gefs_legacy.${gefs_legacy_ver}/ush/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>poescript.$itask
+    echo "$USHGLOBAL/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPLR $LEVSLR $LATBLR $LONBLR $NTRACLR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>poescript.$itask
   else
     # RLW 20141008 modify to obtain and use version for vertical structure
-    echo "/nw$envir/gefs_legacy.${gefs_legacy_ver}/ush/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>poescript.$itask
+    echo "$USHGLOBAL/gefs_init_pair_combine.sh $ipair $npairt $nhrpair $JCAPHR $LEVSHR $LATBHR $LONBHR $NTRACHR $fhrp $inflag $outflag $relocfact >ushout.combine.$ipair 2>&1" >>poescript.$itask
   fi
 else
   if (( ipairh > nhrpair )); then

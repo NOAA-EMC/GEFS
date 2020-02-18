@@ -123,7 +123,9 @@ fi
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMEGLOBAL=${HOMEGLOBAL:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+export HOMEgefs=${HOMEgefs_legacy:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+export HOMEGLOBAL=${HOMEgefs}
+#export HOMEGLOBAL=${HOMEGLOBAL:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
 export EXECGLOBAL=$HOMEGLOBAL/exec
 export FIXGLOBAL=$HOMEGLOBAL/fix
 #export FIXGLOBAL=${FIXSUBDA:-$HOMEGLOBAL/fix/fix_am}
@@ -159,7 +161,7 @@ if [[ $envir = dev ]]; then
 
 else
 
-  export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  export HOMEgefs=${HOMEgefs_legacy:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
   export EXECgefs=$HOMEgefs/exec
   export FIXgefs=$HOMEgefs/fix
   export PARMgefs=$HOMEgefs/parm
@@ -169,7 +171,6 @@ else
 fi
 
 export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
-#export HOMEgsm=${HOMEgsm:-/nw${envir}/gsm.${gsm_ver}}
 
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg

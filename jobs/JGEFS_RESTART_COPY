@@ -86,7 +86,7 @@ then
   export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
 
   # RLW 20141008 modify to obtain and use version for vertical structure
-  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
@@ -96,34 +96,34 @@ else                             ### For Operations
   export SENDDBN=NO
   export SENDECF=YES
 
-  # Specify Execution Areas
-  export HOMEGLOBAL=/nwprod
-  export EXECGLOBAL=$HOMEGLOBAL/exec
-  export USHGLOBAL=$HOMEGLOBAL/ush
-  export FIXGLOBAL=$HOMEGLOBAL/fix
-  export PARMGLOBAL=$HOMEGLOBAL/parm
-
   # RLW 20141008 modify to obtain and use version for vertical structure
-  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  export HOMEgefs=${HOMEgefs_legacy:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
   export EXECgefs=$HOMEgefs/exec
   export USHgefs=$HOMEgefs/ush
   export FIXgefs=$HOMEgefs/fix
   export PARMgefs=$HOMEgefs/parm
+
+  # Specify Execution Areas
+  export HOMEGLOBAL=${HOMEGLOBAL:-${HOMEgefs}}
+  export EXECGLOBAL=$HOMEGLOBAL/exec
+  export USHGLOBAL=$HOMEGLOBAL/ush
+  export FIXGLOBAL=$HOMEGLOBAL/fix
+  export PARMGLOBAL=$HOMEGLOBAL/parm
 fi
 
 ####################################
 # Specify Execution Areas
 ####################################
-export GRBINDEX=/nwprod/util/exec/grbindex
+#export GRBINDEX=/nwprod/util/exec/grbindex
 
-export HOMEUTIL=/nwprod/util
-export EXECUTIL=$HOMEUTIL/exec
-export FIXUTIL=$HOMEUTIL/fix
+#export HOMEUTIL=/nwprod/util
+#export EXECUTIL=$HOMEUTIL/exec
+#export FIXUTIL=$HOMEUTIL/fix
 
 ##############################
 # Set up the UTILITIES
 ##############################
-export utilscript=/nwprod/util/ush
+#export utilscript=/nwprod/util/ush
 
 ##############################
 # Run setup to initialize working directory and utility scripts
@@ -149,7 +149,7 @@ then
   export COMOUT=$COM_OUT/gefs_legacy.${PDY}
 else                              ### For Operations
   export COMIN=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
-  export COMOUT=COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
+  export COMOUT=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
 fi
 
 ##############################################
