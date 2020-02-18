@@ -263,7 +263,7 @@ ls -al | grep -e finn -e finp
 if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
 ###teste
 # RLW 20141008 modify to obtain and use version for vertical structure
-export exe_dir=/nw${envir}/gefs_legacy.${gefs_legacy_ver}/exec
+export exe_dir=$EXECGLOBAL
 ###testb
 else
   # RLW 20141008 modify to obtain and use version for vertical structure
@@ -284,7 +284,7 @@ echo using mask of $FIXGLOBAL/gefs.geogr.monthly
 ###testb
 elif [[ $envir = para ]] || [[ $envir = test ]]; then
 # RLW 20141008 modify to obtain and use version for vertical structure
-cp -f  /nw${envir}/gefs_legacy.${gefs_legacy_ver}/fix/gefs.geogr.monthly  fort.48
+cp -f  $FIXGLOBAL/gefs.geogr.monthly  fort.48
 echo using mask of /nw${envir}/gefs_legacy.${gefs_legacy_ver}/fix/gefs.geogr.monthly
 else
 # RLW 20141008 modify to obtain and use version for vertical structure

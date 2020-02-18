@@ -572,7 +572,7 @@ execseparate=$EXECGLOBAL/gefs_vortex_separate
 ###testb
 elif [[ $envir = para ]] || [[ $envir = test ]]; then
 # RLW 20141008 modify to obtain and use version for vertical structure
-execseparate=/nw$envir/gefs_legacy.${gefs_legacy_ver}/exec/gefs_vortex_separate
+execseparate=$EXECGLOBAL/gefs_vortex_separate
 else
 # RLW 20141008 modify to obtain and use version for vertical structure
 execseparate=$basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/exec/gefs_vortex_separate

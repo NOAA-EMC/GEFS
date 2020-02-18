@@ -110,7 +110,7 @@ then
   export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
 
   # RLW 20141008 modify to obtain and use version for vertical structure
-  export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
@@ -138,7 +138,7 @@ else                             ### For Operations
   export RERUN=NO
 
   # Specify Execution Areas
-  export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  export HOMEgefs=${HOMEgefs_legacy:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
   export HOMEGLOBAL=${HOMEGLOBAL:-$HOMEgefs}
   export HOMEglobal=${HOMEglobal:-$HOMEgefs}
 

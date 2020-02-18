@@ -20,14 +20,15 @@ export MP_LABELIO=YES
 echo cyc=$cyc
 echo cycle=$cycle
 
-export WGRIB=${EXECUTIL}/wgrib
-export COPYGB=$EXECUTIL/copygb
-export CNVGRIB=${EXECUTIL}/cnvgrib
+# JY - remove the following 02/07
+#export WGRIB=${EXECUTIL}/wgrib
+#export COPYGB=$EXECUTIL/copygb
+#export CNVGRIB=${EXECUTIL}/cnvgrib
 ################################################## RLW 20110722 CNVGRIB TEMPORARY
 #export CNVGRIB=$basesource/nw$envir/util/exec/cnvgrib
 ################################################## RLW 20110722 CNVGRIB TEMPORARY
-export GRBIDX=${EXECUTIL}/grbindex
-export GRB2INDEX=${EXECUTIL}/grb2index
+export GRBIDX=${GRBINDEX:-${EXECUTIL}/grbindex}
+#export GRB2INDEX=${EXECUTIL}/grb2index
 export ENSADD=$USHGLOBAL/global_ensadd.sh
 export TRANSG=$USHGLOBAL/gefs_transfer_gfs.sh
 ##DHOU 03/22/2012 for ZEUS
