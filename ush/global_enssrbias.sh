@@ -36,13 +36,13 @@ set +x
 
 if [ $inew -eq 1 ]; then
  echo " &namin " >input_stat
- echo " cfile(1)='$DATA/DAY_NEWS.dat',"   >>input_stat
- echo " cfile(2)='$DATA/OLD_STAT.dat',"   >>input_stat
- echo " ifile(1)=$inew,"                  >>input_stat
- echo " ifile(2)=$iold,"                  >>input_stat
- echo " ofile(1)='$DATA/NEW_STAT.dat',"   >>input_stat
- echo " iymd=$OBSYMD,"                    >>input_stat
- echo " idday=30,"                        >>input_stat
+ echo " cfile(1)='DAY_NEWS.dat',"   >>input_stat
+ echo " cfile(2)='OLD_STAT.dat',"   >>input_stat
+ echo " ifile(1)=$inew,"            >>input_stat
+ echo " ifile(2)=$iold,"            >>input_stat
+ echo " ofile(1)='NEW_STAT.dat',"   >>input_stat
+ echo " iymd=$OBSYMD,"              >>input_stat
+ echo " idday=30,"                  >>input_stat
  echo " /" >>input_stat
  cat input_stat
 

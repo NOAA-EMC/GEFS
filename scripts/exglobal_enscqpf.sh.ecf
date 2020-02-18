@@ -208,8 +208,8 @@ fi
 if [ -s $COMIN/gefs.$YMD/00/ensstat/enspost_grb2.${cycle}.prcp ]; then
  echo " $COMIN/gefs.$YMD/00/ensstat/enspost_grb2.${cycle}.prcp is available "
  cp $COMIN/gefs.$YMD/00/ensstat/enspost_grb2.${cycle}.prcp $DATA/precip.${YMD}${cyc}
- $USHgefs/global_enscvprcp.sh $DATA/precip.${YMD}${cyc} $DATA/precipt.${YMD}${cyc} $YMD
- mv $DATA/precipt.${YMD}${cyc} $DATA/precip.${YMD}${cyc}
+ $USHgefs/global_enscvprcp.sh precip.${YMD}${cyc} precipt.${YMD}${cyc} $YMD
+ mv precipt.${YMD}${cyc} precip.${YMD}${cyc}
 #$GBINDX $DATA/precip.${YMD}${cyc} $DATA/precipi.${YMD}${cyc}
 else
  echo " ***** Missing today's precipitation forecast *****"
@@ -230,13 +230,13 @@ $USHgefs/global_enssrbias.sh ctl
 ### STEP-TWO:
 ### TO RUN CALIBRATION SCHEME
 ###
-
+cp ${FIXgefs}/box_tab.dat .
 cat <<namEOF >input_cqpf
 &namin
-cindx='${FIXgefs}/box_tab.dat',
-cpgrb='$DATA/precip.$YMDH',
-clmrf='$DATA/STAT_RM_BIAS_gfs.$YMD',
-clctl='$DATA/STAT_RM_BIAS_ctl.$YMD',
+cindx='box_tab.dat',
+cpgrb='precip.$YMDH',
+clmrf='STAT_RM_BIAS_gfs.$YMD',
+clctl='STAT_RM_BIAS_ctl.$YMD',
 copts='precip_bf.$YMDH.grib2',
 coptm='precip_bf_pqpf.$YMDH.grib2',
 icyc=$cyc,

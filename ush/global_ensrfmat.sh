@@ -11,13 +11,13 @@ echo "         ####  CONVERT RFC DATA FORMAT !!!!!  #### "
 echo "         ####  CONVERT RFC DATA FORMAT !!!!!  #### "
 echo "         ######################################### "
 
-
+cp $FIXgefs/ingest_nwsli.uniq .
 cat <<namEOF >input_reformat 
 &namin
 iymd=$OBSYMD,
-fname1='$FIXgefs/ingest_nwsli.uniq',
-fname2='$DATA/rfc24-uniq-early',
-fname3='$DATA/usa-dlyprcp-$OBSYMD',
+fname1='ingest_nwsli.uniq',
+fname2='rfc24-uniq-early',
+fname3='usa-dlyprcp-$OBSYMD',
 /
 namEOF
 

@@ -68,11 +68,11 @@ do
  # 4   PATH TO PCP ANALYSIS FILE
  # 5   PATH TO PCP DATA FILE
  # 6   FACTER FOR MRF CTL FORECAST ( Default:1.0 )
-
+cp -rfp $FIXgefs/pcpmask* .
 cat <<nameEOF >input_runv
 model_info_file
-$FIXgefs/pcpmask                                
-$DATA                   
+pcpmask                      
+./              
 $PRECIP_ANALYSIS_FILE
 $PRECIP_DATA_FILE
 1.0
