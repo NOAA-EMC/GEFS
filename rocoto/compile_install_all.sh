@@ -1,10 +1,10 @@
 #!/bin/bash
-set -eu
+set -eu #x
 
 sWS=`pwd`
 echo $sWS
 
-while getopts c:a:r:m:f:b:e:s:l: option
+while getopts c:a:r:m:f:b:e:s:l:o: option
 do
     case "${option}"
     in
@@ -17,6 +17,7 @@ do
         e) RunEnvir=${OPTARG};;
         s) Structure=${OPTARG};;
         l) Link=${OPTARG};;
+        o) Operation=${OPTARG};;
     esac
 done
 
@@ -30,6 +31,7 @@ DeleteCrontabFromMyCrontab=${DeleteCrontabFromMyCrontab:-no}
 RunEnvir=${RunEnvir:-emc}
 Structure=${Structure:-no} # dev (use HOMEDIR to link), prod (clone global-workflow from vlab), no (use the original structure)
 Link=${Link:-no}
+Operation=${Operation:-no} # ecflow, rocoto, lsf
 
 if [ $machine = "nomachine" ]; then
     if [ -d /scratch1/NCEPDEV ]; then
@@ -198,8 +200,8 @@ if [ $RunRocoto = "yes" ]; then
         module load rocoto/complete
         module load python/3.6.3       
     fi
-    ./py/run_to_get_all.py  $userConfigFile
-    
+    #./py/run_to_get_all.py  $userConfigFile
+    ./py/run_pyGEFS.py -r yes -f $userConfigFile
     echo "Generated xml and/or ent and updated bin file!"
 fi # For RunRocoto
 
