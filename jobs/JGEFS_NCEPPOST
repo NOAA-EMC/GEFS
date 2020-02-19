@@ -5,6 +5,8 @@ echo `date` $0 `date -u` begin
 set -xa
 export PS4='$SECONDS + '
 date
+export RERUN=${RERUN:-NO}
+
 export MODEL_OUT_FORM=binarynemsiompiio
 
 export gefsmpexec=${gefsmpexec:-mpirun}
@@ -212,7 +214,7 @@ if [ $GRIBVERSION = grib2 ]; then
     export CAT_FLX_TO_PGB=${CAT_FLX_TO_PGB:-YES}
     export OUTTYP=${OUTTYP:-3}
     export POSTAVBLFLD=$PARMpost/post_avblflds.xml
-    export POSTGRB2TBL=${POSTGRB2TBL:-/nwprod/lib/sorc/g2tmpl/params_grib2_tbl_new}
+    export POSTGRB2TBL=${POSTGRB2TBL:-${G2TMPL_SRC}/params_grib2_tbl_new}
     export CTLFILEGFSANL=${CTLFILEGFSANL:-$PARMpost/postcntrl_gfs.xml}
     export CTLFILEGFSF00=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
     export CTLFILEGFS=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml}

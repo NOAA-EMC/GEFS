@@ -32,59 +32,7 @@ def config_tasknames(dicBase):
             dicBase[sTaskName.upper()] = "gwes_prep"
 
         # #   <!-- initial jobs -->
-        if dicBase['RUN_INIT'].upper() == "GSM_RELOC":
-            # ---enkf_track
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "enkf_track"
-
-            # ---init_separate
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_separate"
-
-            # ---init_process
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_process"
-
-            # ---init_combine
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_combine"
-
-            # ---init_fv3chgrs
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_fv3chgrs"
-
-        elif dicBase['RUN_INIT'].upper() == "FV3_RELOC":
-            # ---enkf_track
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "enkf_track"
-
-            # ---init_separate
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_separate"
-
-            # ---init_process
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_process"
-
-            # ---init_combine
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_combine"
-
-            # ---init_fv3chgrs
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_fv3chgrs"
-
-        elif dicBase['RUN_INIT'].upper() == "FV3_COLD":
+        if dicBase['RUN_INIT'].upper() == "FV3_COLD":
             # ---init_fv3chgrs
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
@@ -123,12 +71,6 @@ def config_tasknames(dicBase):
             # ---post_high
             iTaskName_Num = Add_Subjobs_to_dicBase(dicBase, iTaskName_Num, taskname="post_high", sNSubJobs='N_SUBJOBS_POST_HIGH')
 
-            #if dicBase['cplwav'] == ".true.":
-            #    # ---wave_post
-            #    iTaskName_Num += 1
-            #    sTaskName = "taskname_{0}".format(iTaskName_Num)
-            #    dicBase[sTaskName.upper()] = "gwes_post"
-
             # ---prdgen_high
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
@@ -145,7 +87,6 @@ def config_tasknames(dicBase):
                 sTaskName = "taskname_{0}".format(iTaskName_Num)
                 dicBase[sTaskName.upper()] = "gwes_post"
 
-        # #    <!-- CHGRES jobs -->
         # #    <!-- RUN_PRDGEN_GFS jobs -->
         if dicBase['RUN_PRDGEN_GFS'].upper()[0] == "Y":
             # ---sigchgres
@@ -232,6 +173,11 @@ def config_tasknames(dicBase):
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "enspost"
+            
+            # ---cqpf
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "cqpf"
 
         # #    <!-- RUN_CLEANUP -->
         if dicBase['RUN_CLEANUP'].upper()[0] == "Y":
@@ -427,46 +373,46 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     #/\ -------------------Add Source Vars----------
 
     # -------------------Other envar and command-------------------
+    ## Add new envir
     if taskname in ['keep_init', 'copy_init']:
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/../py/{0}.py</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['keep_data_atm', 'archive_atm', 'cleanup_atm', 'keep_data_wave', 'archive_wave', 'cleanup_wave']:
-        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/../py/{0}.py</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['forecast_high']:
+
+    ## For FORECAST_SEGMENT
+    if (taskname in ['forecast_high', 'prdgen_high', 'post_high', 'ensstat_high']) or taskname.startswith("post_high_"):
         strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['forecast_low']:
+    elif taskname in ['forecast_low', 'prdgen_low', 'post_low', 'ensstat_low']:
         strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/forecast_high.sh</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['prdgen_high']:
-        strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['prdgen_low']:
-        strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/prdgen_high.sh</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['prdgen_gfs']:
-        strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/prdgen_high.sh</cyclestr></command>\n'
-    elif taskname in ['post_high']:
-        strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['post_low']:
-        strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/post_high.sh</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['ensstat_high']:
-        strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
-    elif taskname in ['ensstat_low']:
-        strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; . &BIN;/ensstat_high.sh</cyclestr></command>\n'.format(taskname)
+	
+    ## For SUBJOB
     elif taskname.startswith("post_high_"):
         strings += (create_envar(name="SUBJOB", value=taskname.replace("post_high_", ""), sPre=sPre_2))
-        strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
-        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format("post_high")
     elif taskname.startswith("ensavg_nemsio_"):
         strings += (create_envar(name="SUBJOB", value=taskname.replace("ensavg_nemsio_", ""), sPre=sPre_2))
-        strings += sPre + '\t' + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format("ensavg_nemsio")
+        
+    ## Add command
+    sPRE = "&PRE; "
+    if WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
+        sPRE = ""
+
+    if taskname in ['keep_init', 'copy_init', 'keep_data_atm', 'archive_atm', 'cleanup_atm', 'keep_data_wave', 'archive_wave', 'cleanup_wave']:
+        if WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
+            strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format(taskname, sPRE)
+        else:
+            strings += sPre_2 + '<command><cyclestr>{1}&BIN;/../py/{0}.py</cyclestr></command>\n'.format(taskname, sPRE)
+    elif taskname in ['forecast_high', 'forecast_low']:
+        strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("forecast_high", sPRE)
+    elif taskname in ['prdgen_high', 'prdgen_low', 'prdgen_gfs']:
+        strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("prdgen_high", sPRE)
+    elif taskname in ['post_high', 'post_low']:
+        strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("post_high", sPRE)
+    elif taskname in ['ensstat_high', 'ensstat_low']:
+        strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("ensstat_high", sPRE)
+    elif taskname.startswith("post_high_"):
+        strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("post_high", sPRE)
+    elif taskname.startswith("ensavg_nemsio_"):
+        strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("ensavg_nemsio", sPRE)
     else:
-        strings += sPre_2 + '<command><cyclestr>&PRE; &BIN;/{0}.sh</cyclestr></command>\n'.format(taskname)
+        strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format(taskname, sPRE)
     # -------------------Other envar and command-------------------
 
     # -------------------Dependency-------------------
@@ -977,11 +923,21 @@ def get_param_of_task(dicBase, taskname):
                 else:
                     sDep += '\n</and>'
 
+            # For "cqpf" task
+            if taskname.lower() == "cqpf":
+                if DoesTaskExist(dicBase, "enspost"):
+                    sDep = '<taskdep task="enspost"/>'
+                else:
+                    sDep = ""
+                
+
             # For 'keep_data_atm' and 'archive_atm' tasks
             if taskname.lower() == "keep_data_atm" or taskname.lower() == "archive_atm":
                 sDep = '<and>'
                 if DoesTaskExist(dicBase, "enspost"):
                     sDep += '\n\t<taskdep task="enspost"/>'
+                if DoesTaskExist(dicBase, "cqpf"):
+                    sDep += '\n\t<taskdep task="cqpf"/>'
                 if DoesTaskExist(dicBase, "post_track"):
                     sDep += '\n\t<taskdep task="post_track"/>'
                 if DoesTaskExist(dicBase, "post_genesis"):
@@ -1292,6 +1248,7 @@ def read_jobid_config(sConfig):
                 else:
                     # print(sLine)
                     a, b = sLine.split("=", 1)
+                    b = b.split(" #", 1)[0]
 
                     a = str(a).strip()
                     b = str(b).strip()
@@ -1333,9 +1290,9 @@ def get_ENV_VARS(sPre="\t\t"):
     dicENV_VARS = {}
     dicENV_VARS['envir'] = 'dev'
     dicENV_VARS['RUN_ENVIR'] = 'dev'
-    dicENV_VARS['gefsmpexec'] = 'mpirun.lsf'
-    dicENV_VARS['wavempexec'] = 'mpirun.lsf'
-    dicENV_VARS['gefsmpexec_mpmd'] = 'mpirun.lsf'
+    #dicENV_VARS['gefsmpexec'] = 'mpirun.lsf'
+    #dicENV_VARS['wavempexec'] = 'mpirun.lsf'
+    #dicENV_VARS['gefsmpexec_mpmd'] = 'mpirun.lsf'
     dicENV_VARS['WHERE_AM_I'] = '&WHERE_AM_I;'
     dicENV_VARS['GEFS_ROCOTO'] = '&GEFS_ROCOTO;'
     dicENV_VARS['WORKDIR'] = '&WORKDIR;'

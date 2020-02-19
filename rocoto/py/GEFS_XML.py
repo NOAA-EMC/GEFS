@@ -6,21 +6,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sSep = "/"
     if sys.platform == 'win32':
         sSep = r'\\'
-
-    sVarName = "XML".upper()
-    sVarValue = 'gefs.xml'
-    if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
     # ==
-    sVarName = "db".upper()
-    sVarValue = 'gefs.db'
-    if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
-    # ==
-    sVarName = "crontab".upper()
-    sVarValue = 'cron_rocoto'
-    if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
+    get_MEMLIST(dicBase)
     # ==
     sVarName = "First".upper()
     sVarValue = 'Xianwu'
@@ -43,27 +30,10 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         if "." in sVarValue:
             sVarValue = sVarValue.split(".")[1]
         dicBase[sVarName] = sVarValue
-    # ==
-    sVarName = "HPS_PTMP".upper()
-    sVarValue = 'hps'
-    if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
-    # ==
-    sVarName = "WHERE_AM_I".upper()
-    sVarValue = "hera"
-    if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
-    WHERE_AM_I = dicBase[sVarName]
-    # ==
-    sVarName = "SDATE".upper()
-    sVarValue = "2018012900"
-    if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
-    # ==
-    sVarName = "EDATE".upper()
-    sVarValue = "2018013000"
-    if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
+
+
+    WHERE_AM_I = dicBase["WHERE_AM_I".upper()]
+
     # ===
     sVarName = "GEFS_ROCOTO".upper()
     sVarValue = ""
@@ -213,7 +183,6 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sVarValue += dicBase['EXPID']
 
     dicBase[sVarName] = sVarValue
-
     # ===
     sVarName = "INIT_DIR".upper()
     sVarValue = ""
@@ -237,6 +206,116 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
     dicBase[sVarName] = sVarValue
 
+# =======================================================
+def NotUsed(dicBase, sRocoto_WS=""):
+    import os
+    import sys
+
+    sSep = "/"
+    if sys.platform == 'win32':
+        sSep = r'\\'
+
+    WHERE_AM_I = dicBase["WHERE_AM_I".upper()]
+    # ===
+    sVarName = "KEEP_DIR".upper()
+    sVarValue = ""
+    if sVarName not in dicBase:
+        if WHERE_AM_I.lower() == "cray":
+            sVarValue = "/gpfs/hps3/emc/ensemble/noscrub/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'wcoss':
+            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'hera':
+            sVarValue = "/scratch2/NCEPDEV/stmp3/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
+            sVarValue = "/gpfs/dell2/emc/retros/noscrub/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'wins':
+            sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
+        else:
+            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS/&EXPID;"
+
+        dicBase[sVarName] = sVarValue
+    else:
+        sVarValue = dicBase[sVarName] + "/&EXPID;"
+        dicBase[sVarName] = sVarValue
+
+    sVarValue = replace_First_Last(dicBase, sVarName)
+    sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
+    if sVarValue.endswith("/&EXPID;"):
+        sVarValue = sVarValue.replace('&EXPID;', dicBase['EXPID'])
+    else:
+        sVarValue += dicBase['EXPID']
+
+    if not sVarValue.endswith(dicBase['EXPID']):
+        sVarValue += dicBase['EXPID']
+
+    dicBase[sVarName] = sVarValue
+
+    # ===
+    sVarName = "HPSS_DIR".upper()
+    if sVarName not in dicBase:
+        sVarValue = ""
+        if WHERE_AM_I.lower() == "cray":
+            sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'wcoss':
+            sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
+            sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'wins':
+            sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
+        else:
+            sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
+
+        dicBase[sVarName] = sVarValue
+    else:
+        sVarValue = dicBase[sVarName] + "/&EXPID;"
+        dicBase[sVarName] = sVarValue
+
+    sVarValue = replace_First_Last(dicBase, sVarName)
+    sVarValue = sVarValue.replace("HPS_PTMP", dicBase["HPS_PTMP"])
+    if sVarValue.endswith("/&EXPID;"):
+        sVarValue = sVarValue.replace('&EXPID;', dicBase['EXPID'])
+    else:
+        sVarValue += dicBase['EXPID']
+
+    if not sVarValue.endswith(dicBase['EXPID']):
+        sVarValue += dicBase['EXPID']
+
+    dicBase[sVarName] = sVarValue
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    sVarName = "XML".upper()
+    sVarValue = 'gefs.xml'
+    if sVarName not in dicBase:
+        dicBase[sVarName] = sVarValue
+    # ==
+    sVarName = "db".upper()
+    sVarValue = 'gefs.db'
+    if sVarName not in dicBase:
+        dicBase[sVarName] = sVarValue
+    # ==
+    sVarName = "crontab".upper()
+    sVarValue = 'cron_rocoto'
+    if sVarName not in dicBase:
+        dicBase[sVarName] = sVarValue
+    # ==
+    sVarName = "HPS_PTMP".upper()
+    sVarValue = 'hps'
+    if sVarName not in dicBase:
+        dicBase[sVarName] = sVarValue
+    # ==
+    sVarName = "WHERE_AM_I".upper()
+    sVarValue = "hera"
+    if sVarName not in dicBase:
+        dicBase[sVarName] = sVarValue
+    # ==
+    sVarName = "SDATE".upper()
+    sVarValue = "2018012900"
+    if sVarName not in dicBase:
+        dicBase[sVarName] = sVarValue
+    # ==
+    sVarName = "EDATE".upper()
+    sVarValue = "2018013000"
+    if sVarName not in dicBase:
+        dicBase[sVarName] = sVarValue
     # ===
     sVarName = "DIRS_TO_KEEP".upper()
     if sVarName not in dicBase:
@@ -276,8 +355,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         dicBase[sVarName] = sVarValue
 
     # ===== Default, you don't need to change them
-    # ==
-    get_MEMLIST(dicBase)
+
     # ===
     sVarName = "MEMLIST".upper()
     sVarValue = "p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 c00"
@@ -487,126 +565,24 @@ def get_definitions(dicBase):
         Create entities related to the experiment
     '''
 
+    lstEntity = ["MEMLIST", "CYCLE_THROTTLE", "TASK_THROTTLE", "SDATE", "EDATE", \
+                 "INCYC", "WHERE_AM_I", "GEFS_ROCOTO", "BIN", "PRE", \
+                 "WORKFLOW_LOG_DIR", "LOG_DIR", "tmpnwprd", "DATA_DIR", "EXPID", \
+                 "PSLOT", "SOURCEDIR", "WORKDIR", "KEEP_DIR", "INIT_DIR", \
+                 "HPSS_DIR", "DIRS_TO_KEEP", "DIRS_TO_ARCHIVE", "DIRS_TO_KEEP_WAVE", "DIRS_TO_ARCHIVE_WAVE", \
+                 "ACCOUNT", "CUE2RUN", "TRANSFER_QUEUE", "SCHEDULER"]
+
     strings = []
-
     strings.append('\n')
-    # # if base['INTERVAL'] is None:
-    # #     print('cycle INTERVAL cannot be None')
-    # #     sys.exit(1)
 
-    sVarName = "MEMLIST"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "CYCLE_THROTTLE"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "TASK_THROTTLE"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "SDATE"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "EDATE"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "INCYC"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    # =====
-    sVarName = "WHERE_AM_I"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    # =====
-    sVarName = "GEFS_ROCOTO"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    # ===== Default, you don't need to change them
-    sVarName = "BIN"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    # =====
-    sVarName = "PRE"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    # =====
-    sVarName = "WORKFLOW_LOG_DIR"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "LOG_DIR"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "tmpnwprd"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "DATA_DIR"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "EXPID"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "PSLOT"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "SOURCEDIR"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "WORKDIR"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "KEEP_DIR"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "INIT_DIR"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "HPSS_DIR"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "DIRS_TO_KEEP"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "DIRS_TO_ARCHIVE"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "DIRS_TO_KEEP_WAVE"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "DIRS_TO_ARCHIVE_WAVE"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+    for sVarName in lstEntity:
+        sVarValue = dicBase[sVarName.upper()]
+        strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
 
     strings.append('\n')
 
-    # # -----------------------------------------------------------------------------------------------
-    # strings.append('\t<!--  <!ENTITY INIT_FHR "9 12 15"> -->\n')
-    # strings.append('\n')
 
     GenTaskEnt = get_GenTaskEnt(dicBase)
-
     if GenTaskEnt:
         import sys
         sSep = "/"
@@ -625,27 +601,6 @@ def get_definitions(dicBase):
         strings.append('\t%TASKS;\n')
         strings.append('\n')
 
-    # -----------------------------------------------------------------------------------------------
-    strings.append('\t<!-- Machine related entities -->\n')
-
-    sVarName = "ACCOUNT"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "CUE2RUN"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "TRANSFER_QUEUE"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    sVarName = "SCHEDULER"
-    sVarValue = dicBase[sVarName.upper()]
-    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
-
-    strings.append('\n')
-
     strings.append('\t<!-- END: Resource requirements for the workflow -->\n')
     strings.append(']>\n')
 
@@ -662,7 +617,7 @@ def get_workflow_body(dicBase):
 
     GenTaskEnt = get_GenTaskEnt(dicBase)
 
-    print("---Config your tasks...")
+    # print("---Config your tasks...")
     gefs_xml_for_tasks.config_tasknames(dicBase)
 
     gefs_xml_for_tasks.write_to_all_ent(GenTaskEnt, dicBase)
@@ -746,8 +701,8 @@ def get_GenTaskEnt(dicBase):
     sVarName = "GenTaskEnt".upper()
     if sVarName in dicBase:
         sGenTaskEnt = dicBase[sVarName]
-
-        if str(sGenTaskEnt).upper() == "YES" or str(sGenTaskEnt)[0].upper() == "Y":
+        sValue = str(sGenTaskEnt)
+        if sValue.upper().startswith('Y'): #str(sGenTaskEnt).upper() == "YES" or str(sGenTaskEnt)[0].upper() == "Y":
             GenTaskEnt = True
         else:
             GenTaskEnt = False

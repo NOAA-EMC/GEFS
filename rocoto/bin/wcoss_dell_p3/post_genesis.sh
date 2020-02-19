@@ -1,31 +1,36 @@
 #!/bin/ksh
 
-# EXPORT list here
 set -x
-#export IOBUF_PARAMS=*:size=32M:count=4:verbose
-# export FORT_BUFFERED=TRUE
-# export MKL_CBWR=AVX
 ulimit -s unlimited
 ulimit -a
 
-#export ATP_ENABLED=0
-#export MALLOC_MMAP_MAX_=0
-#export MALLOC_TRIM_THRESHOLD_=134217728
+# module_ver.h
+. $SOURCEDIR/versions/gefs_wcoss_dell_p3.ver
 
-#export MPICH_ABORT_ON_ERROR=1
-#export MPICH_ENV_DISPLAY=1
-#export MPICH_VERSION_DISPLAY=1
-#export MPICH_CPUMASK_DISPLAY=1
+# Load modules
+. /usrx/local/prod/lmod/lmod/init/ksh
+module list
+module purge
 
-#export KMP_AFFINITY=disabled
-#export MP_EUIDEVICE=sn_all
-#export MP_EUILIB=us
-#export MP_SHARED_MEMORY=no
-#export MEMORY_AFFINITY=core:1
+module load EnvVars/$EnvVars_ver
+module load ips/$ips_ver
+module load impi/$impi_ver
+module load prod_util/$prod_util_ver
+module load prod_envir/$prod_envir_ver
+module load grib_util/$grib_util_ver
+module load NetCDF/$NetCDF_ver
 
-#export OMP_NUM_THREADS=${GEFS_TPP:-1}
+module load lsf/$lsf_ver
 
-export FORECAST_SEGMENT=lr
+module load CFP/$CFP_ver
+export USE_CFP=YES
+
+module list
+
+# For Development
+. $GEFS_ROCOTO/bin/wcoss_dell_p3/common.sh
+
+# Export List
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_POST_GENESIS

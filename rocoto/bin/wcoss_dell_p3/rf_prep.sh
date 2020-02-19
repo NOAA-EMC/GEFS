@@ -1,9 +1,6 @@
 #!/bin/ksh
-#
 
-# EXPORT list here
 set -x
-
 ulimit -s unlimited
 ulimit -a
 
