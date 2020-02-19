@@ -80,7 +80,9 @@ export makegrb2i=no
 # Post Analysis Files before starting the Forecast Post
 ############################################################
 #if test -f $COMIN/${RUN}.t${cyc}z.master.grbanl -a ${SHOUR} -eq 0
-if test -f $COMIN/${RUN}.t${cyc}z.master.grb2anl -a ${SHOUR} -eq 0
+#if test -f $COMIN/${RUN}.t${cyc}z.master.grb2anl -a ${SHOUR} -eq 0
+if test -f $COMIN/${RUN}.t${cyc}z.pgrb2.0p25.anl -a ${SHOUR} -eq 0
+
 then
 
    # RLW 20110725 more complete cleanup of temporary files
@@ -90,7 +92,8 @@ then
    rm -f pgb2afile pgb2aifile
 
    parmlist=$PARMgefs/gefs_pgrba_f00.parm_grb2
-   ln -s $COMIN/${RUN}.t${cyc}z.master.grb2anl master_grb2file
+   #ln -s $COMIN/${RUN}.t${cyc}z.master.grb2anl master_grb2file
+   ln -s $COMIN/${RUN}.t${cyc}z.pgrb2.0p25.anl master_grb2file
    $WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile
    $COPYGB2 -g "${grid1p0}" -i0 -x tmpfile pgb2afile
 #  $GRB2INDEX pgb2afile pgb2aifile
@@ -248,9 +251,28 @@ do
       parmlistC=$PARMgefs/gefs_pgrba_fhh.parm_grb2-C
     fi
 
-    ln -s $COMIN/${RUN}.t${cyc}z.master.grb2f${ffhr} master_grb2file
+    #ln -s $COMIN/${RUN}.t${cyc}z.master.grb2f${ffhr} master_grb2file
+    ln -s $COMIN/${RUN}.t${cyc}z.pgrb2.0p25.f${ffhr} master_grb2file
+    # RLW 20180827 for fv3 begin
+    if [ $fhr -gt 0 ]
+    then
+      parmapcpa=`$WGRIB2 -s master_grb2file |grep -F -f $parmlist | grep APCP | head -1`
+      echo parmapcpa=$parmapcpa
+      parmapcpb=`$WGRIB2 -s master_grb2file |grep -F -f $parmlist | grep APCP | tail -1`
+      echo parmapcpb=$parmapcpb
+      if [[ x$parmapcpa != x$parmapcpb ]]; then
+        parmskip=$parmapcpb
+      else
+        parmskip="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      fi
+    else
+      parmskip="yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"
+    fi
+    echo parmskip=$parmskip
+    # RLW 20180827 for fv3 end
 
-    $WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile
+    #$WGRIB2 -s master_grb2file |grep -F -f $parmlist |$WGRIB2 master_grb2file -i -grib tmpfile
+    $WGRIB2 -s master_grb2file |grep -F -f $parmlist | grep -v "$parmskip" |$WGRIB2 master_grb2file -i -grib tmpfile
     if [ $fhr -gt 0 ]
     then
      $WGRIB2 -s master_grb2file |grep -F -f $parmlistC |grep ave |$WGRIB2 master_grb2file -i -append -grib tmpfile 

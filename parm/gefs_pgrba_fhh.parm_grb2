@@ -24,7 +24,7 @@ TCDC:entire atmosphere
 TMAX:2 m above ground
 TMIN:2 m above ground
 TMP:1000 mb
-TMP:2 m above ground
+:TMP:2 m above ground
 TMP:200 mb
 TMP:250 mb
 TMP:500 mb
