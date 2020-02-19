@@ -1,9 +1,6 @@
 #!/bin/ksh
 
-# EXPORT list here
 set -x
-
-#export IOBUF_PARAMS=cfi*:size=64M:count=4:verbose
 ulimit -s unlimited
 ulimit -a
 
@@ -13,6 +10,7 @@ ulimit -a
 # Load modules
 . /usrx/local/prod/lmod/lmod/init/ksh
 module list
+module purge
 
 module load EnvVars/$EnvVars_ver
 module load ips/$ips_ver
@@ -24,9 +22,6 @@ module load NetCDF/$NetCDF_ver
 module load HDF5-serial/$HDF5_serial_ver
 
 module load lsf/$lsf_ver
-
-    #module load util_shared/1.1.0
-    #module load g2tmpl/1.5.0
 
 module load CFP/$CFP_ver
 export USE_CFP=YES

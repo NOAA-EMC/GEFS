@@ -1,8 +1,6 @@
 #!/bin/bash
 
-# EXPORT list here
 set -x
-
 ulimit -s unlimited
 ulimit -a
 
@@ -12,6 +10,7 @@ ulimit -a
 # Load modules
 . /usrx/local/prod/lmod/lmod/init/ksh
 module list
+module purge
 
 module load EnvVars/$EnvVars_ver
 module load ips/$ips_ver
