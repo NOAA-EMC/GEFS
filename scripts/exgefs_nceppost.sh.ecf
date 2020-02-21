@@ -506,7 +506,7 @@ do
         ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr pgbifout
         export PGBOUT=pgbfout
         export PGIOUT=pgbifout
-        export ANOMCATSH=${USHGSM}/global_anomcat.sh
+        #export ANOMCATSH=${USHgfs}/global_anomcat.sh
         export FILTER=1
 
         # RLW 20100910 add cleanup to prevent problems with overparm

@@ -18,13 +18,8 @@ module load impi/$impi_ver
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
 module load grib_util/$grib_util_ver
-module load NetCDF/$NetCDF_ver
-module load HDF5-serial/$HDF5_serial_ver
 
 module load lsf/$lsf_ver
-
-#    $module load util_shared/1.1.0
-module load g2tmpl/$g2tmpl_ver
 
 module load CFP/$CFP_ver
 export USE_CFP=YES
@@ -35,7 +30,6 @@ module list
 . $GEFS_ROCOTO/bin/wcoss_dell_p3/common.sh
 
 # Export List
-#export POSTGRB2TBL=$G2TMPL_SRC/params_grib2_tbl_new
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_NCEPPOST
+$SOURCEDIR/jobs/JGEFS_CQPF

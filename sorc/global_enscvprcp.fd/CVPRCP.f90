@@ -151,10 +151,11 @@
          else
           ncnt=ncnt+1
           if ( ncnt.le.1 ) then
-           print *,' n=',n,' iret=',iret
+           print *,' n=',n,' iret=',iret, ' in enscvprcp'
+
           endif
          endif
-        enddo
+        enddo !n loop
  101    continue
         if (ncnt.ne.0) goto 102
         jpds13 = itu
@@ -177,7 +178,7 @@
        enddo
  102   continue
         call gf_free(gfld) 
-        call gf_free(gfldo)
+!       call gf_free(gfldo)
       enddo
 
       call baclose(11,iretb)
