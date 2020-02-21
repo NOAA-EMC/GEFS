@@ -33,14 +33,10 @@ export LIBSM="${G2_LIB4} ${W3NCO_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${
 GetOriginal=${GetOriginal:-false}
 
 if $GetOriginal; then
-    if [ $target == theia ]; then
-        echo "This is on theia"
-    elif [ $target == wcoss_cray ]; then
+    if [ $target == wcoss_cray ]; then
         echo "This is on wcoss_cray"
         export INCSM="-I ${G2_INC4} -I/opt/cray/iobuf/2.0.5/include"
         export LIBSM="${G2_LIB4} ${W3NCO_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB} -Wl,/opt/cray/iobuf/2.0.5/lib/iobuf.o"
-    elif [ $target == wcoss ]; then
-        echo "This is on wcoss"
     elif [ $target == wcoss_dell_p3 ]; then
         echo "This is on wcoss_dell_p3"
     fi

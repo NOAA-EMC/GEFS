@@ -303,13 +303,6 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
         else:
             strings += sPre_2 + '<nodes>{0}</nodes>\n'.format(sNodes)
         
-        # ---    
-        if WHERE_AM_I.upper() == "wcoss_ibm".upper():
-            if sQueue.upper() == "&TRANSFER_QUEUE;":
-                strings += sPre_2 + '<native>-R "affinity[core]"</native>'
-            else:
-                strings += sPre_2 + '<native>-a poe</native>'
-
         elif WHERE_AM_I.upper() in ["wcoss_dell_p3".upper()]: #, "cray".upper()]:
             if taskname in ["prdgen_high"]:
                 if sQueue.endswith("_shared"):
@@ -321,8 +314,6 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     if WHERE_AM_I.upper() == "cray".upper():
         strings += sPre_2 + '<native>-cwd &tmpnwprd;</native>\n'
     elif WHERE_AM_I.upper() == "hera".upper():
-        strings += ""
-    elif WHERE_AM_I.upper() == "wcoss_ibm".upper():
         strings += ""
     elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
         strings += ""
@@ -342,8 +333,6 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
             strings += sPre_2 + '<native>-extsched "CRAYLINUX[]"</native>\n'
     elif WHERE_AM_I.upper() == "Hera".upper():
         strings += ""  # \n
-    elif WHERE_AM_I.upper() == "wcoss_ibm".upper():
-        strings += ""
     elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
         if taskname in metatask_names:
             strings += ""

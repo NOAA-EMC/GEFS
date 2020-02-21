@@ -34,9 +34,6 @@ if [ $machine == "cray" ]; then
 elif [ $machine = "dell" ]; then
     FIX_DIR="/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gefs/fix_sst721_short"
     FIX_DIR_FV3="/gpfs/dell2/emc/modeling/noscrub/emc.glopara/git/fv3gfs/fix"
-elif [ $machine = "theia" ]; then
-    FIX_DIR="/scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix_sst721"
-    FIX_DIR_FV3="/scratch4/NCEPDEV/global/save/glopara/git/fv3gfs/fix"
 elif [ $machine = "hera" ]; then
     FIX_DIR="/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix_sst721_short"
     FIX_DIR_FV3="/scratch1/NCEPDEV/global/glopara/fix"
