@@ -402,11 +402,17 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     elif taskname in ['forecast_high', 'forecast_low']:
         strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("forecast_high", sPRE)
     elif taskname in ['prdgen_high', 'prdgen_low', 'prdgen_gfs']:
-        strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("prdgen_high", sPRE)
+        if WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
+            strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("prdgen_high", sPRE)
+        else:
+            strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("prdgen_high", sPRE)
     elif taskname in ['post_high', 'post_low']:
         strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("post_high", sPRE)
     elif taskname in ['ensstat_high', 'ensstat_low']:
-        strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("ensstat_high", sPRE)
+        if WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
+            strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("ensstat_high", sPRE)
+        else:
+            strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("ensstat_high", sPRE)
     elif taskname.startswith("post_high_"):
         strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("post_high", sPRE)
     elif taskname.startswith("ensavg_nemsio_"):
