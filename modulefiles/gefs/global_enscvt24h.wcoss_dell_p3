@@ -1,14 +1,14 @@
 #%Module#####################################################
 ## global_enscvt24h component - wcoss_dell_p3
 #############################################################
-module load ips/18.0.1.163
+module load ips/${ips_ver}
 
-module load g2/3.1.0
-module load w3nco/2.0.6
-module load bacio/2.0.2
-module load jasper/1.900.1
-module load libpng/1.2.59
-module load zlib/1.2.11
+module load g2/${g2_ver}
+module load w3nco/${w3nco_ver}
+module load bacio/${bacio_ver}
+module load jasper/${jasper_ver}
+module load libpng/${libpng_ver}
+module load zlib/${zlib_ver}
 
 ##
 export FCMP=ifort
