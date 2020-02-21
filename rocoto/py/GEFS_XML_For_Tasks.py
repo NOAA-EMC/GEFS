@@ -303,7 +303,7 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
         else:
             strings += sPre_2 + '<nodes>{0}</nodes>\n'.format(sNodes)
         
-        elif WHERE_AM_I.upper() in ["wcoss_dell_p3".upper()]: #, "cray".upper()]:
+        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper()]: #, "cray".upper()]:
             if taskname in ["prdgen_high"]:
                 if sQueue.endswith("_shared"):
                     strings += sPre_2 + '<native>-R "affinity[core(4):distribute=pack]"</native>\n'
