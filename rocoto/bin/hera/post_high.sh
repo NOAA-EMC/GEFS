@@ -14,7 +14,7 @@ export MEMORY_AFFINITY=core:2
 
 export NODES=3
 export total_tasks=36
-export OMP_NUM_THREADS=2
+export OMP_NUM_THREADS=1
 export taskspernode=12
 export POSTGRB2TBL=$G2TMPL_SRC/params_grib2_tbl_new
 

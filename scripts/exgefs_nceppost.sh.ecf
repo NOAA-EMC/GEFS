@@ -463,8 +463,8 @@ do
         ###################################3
         # Create Master Post File
         ###################################3
-        if (( fhr > 0 )); then 
-            export IGEN=$IGEN_FCST 
+        if (( 10#$fhr > 0 )); then 
+            export IGEN=$IGEN_FCST
         else 
             export IGEN=$IGEN_ANL
         fi

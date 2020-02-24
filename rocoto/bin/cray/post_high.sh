@@ -20,7 +20,7 @@ export MPICH_VERSION_DISPLAY=1
 export MPICH_CPUMASK_DISPLAY=1
 
 export KMP_STACKSIZE=1024m
-export OMP_NUM_THREADS=2
+export OMP_NUM_THREADS=1
 export KMP_AFFINITY=disabled
 
 #export OMP_NUM_THREADS=2
@@ -33,7 +33,7 @@ export MEMORY_AFFINITY=core:2
 
 export NODES=2
 export total_tasks=24
-export OMP_NUM_THREADS=2
+export OMP_NUM_THREADS=1
 export taskspernode=12
 export POSTGRB2TBL=$G2TMPL_SRC/params_grib2_tbl_new
 
