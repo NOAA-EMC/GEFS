@@ -122,7 +122,10 @@ def main() -> None:
 
         restart_files = get_all_restart_files(time=time, incr=incr, max_lookback=max_lookback, com_root=com_root, net=net, envir=envir, run=run)
 
-        if(restart_files is not None):
+        files_exist = restart_files is not None and analysis_filename is not None and prev_fcst_file is not None
+
+        if(files_exist):
+            # Link restart files
             os.makedirs("{path}/RESTART".format(path=destination_path), exist_ok=True)
             for file in restart_files:
                 basename = os.path.basename(file)
@@ -131,15 +134,15 @@ def main() -> None:
                     os.unlink(link)
                 os.symlink(file, link)
 
-        if(analysis_filename is not None and prev_fcst_file is not None):
+            # Calculate increment
             success = calc_increment(calcinc_aprun=calcinc_aprun, calcinc_exec=calcinc_exec, forecast_filename=prev_fcst_file, increment_filename=increment_filename, imp_physics=imp_physics)
 
-        if(analysis_filename is None or prev_fcst_file is None or not success):
+        if(not files_exist or not success):
             print("WARNING: Could not calculate increment (previous forecast may be missing), reverting to cold start")
-            # exit(100)
             init_type = "cold"
 
     if(init_type == "cold"):
+
         merge_script = merge_script_pattern.format(ush_gfs=ush_gfs)
         tracer_list_file = tracer_list_file_pattern.format(parm_gefs=parm_gefs)
 
@@ -150,7 +153,9 @@ def main() -> None:
             merge_tracers(merge_script, atm_filenames, restart_files, tracer_list_file)
 
     shutil.rmtree(com_path, ignore_errors=True)
-    shutil.copytree(destination_path, com_path, ignore_dangling_symlinks=True)  # Copy data to COM
+    # Suppress error for missing files due to possibility of dangling symlinks (ignore_dangling_symlinks doesn't work properly; Python Issue 38523)
+    with contextlib.suppress(FileNotFoundError):
+        shutil.copytree(destination_path, com_path, ignore_dangling_symlinks=True)  # Copy data to COM
 
     return
 
