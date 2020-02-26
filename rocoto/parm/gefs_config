@@ -5,17 +5,13 @@
 # Define DEVELOPMENT Enviorenmenat variables related to the TYPE of test 
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export envir=${envir:-dev}
-export SENDDBN=${SENDDBN:-%SENDDBN:NO%}
-export SENDDBN_NTC=${SENDDBN_NTC:-%SENDDBN_NTC:NO%}
-
-export KEEPDATA=YES
-export SENDCOM=YES
-export SENDECF=NO
+export SENDDBN=${SENDDBN:-NO}
+export SENDDBN_NTC=${SENDDBN_NTC:-NO}
 
 export PARAFLAG=${PARAFLAG:-YES}
 export SENDECF=${SENDECF:-NO}
 export SENDCOM=${SENDCOM:-YES}
-export KEEPDATA=${KEEPDATA:-%KEEPDATA:NO%}
+export KEEPDATA=${KEEPDATA:-YES}
 
 # Enviorenmenat variables related to Development work place and output files
 #
@@ -32,9 +28,9 @@ export DBNROOT=
 export HOMEgefs=$basesource
 export HOMEtrak=${HOMEtrak:-$HOMERFC/ens_tracker.v1.1.13}
 export HOMEgfs=${HOMEgfs:-$HOMEgefs}
-export HOMEgsi=${HOMEgfs:-$HOMEgefs}
-export HOMEwave=${HOMEwave:-$HOMEgefs}
-export HOMEpost=${HOMEpost:-$HOMEgefs}
+export HOMEgsi=${HOMEgfs:-$HOMEgfs}
+export HOMEwave=${HOMEwave:-$HOMEgfs}
+export HOMEpost=${HOMEpost:-$HOMEgfs}
 
 if [[ ! -d $SOURCEDIR/sorc/global-workflow.fd ]] ; then
     export EXECwave=${HOMEgfs}/sorc/fv3gfs.fd/WW3/model/exe

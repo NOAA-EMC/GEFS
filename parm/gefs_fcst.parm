@@ -17,7 +17,7 @@ export LEVS=${LEVS:-65}
 #Writing out 
 export QUILTING=.true.
 export WRITE_GROUP=${WRITE_GROUP:-1}
-export WRTTASK_PER_GROUP=${WRTTASK_PER_GROUP:-64}
+export WRTTASK_PER_GROUP=${WRTTASK_PER_GROUP:-36}
 export NUM_FILES=2
 export OUTPUT_GRID=${FV3OUT_GRID:-"gaussian_grid"}
 export WRITE_NEMSIOFILE=.true.

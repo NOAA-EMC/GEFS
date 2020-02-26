@@ -197,7 +197,7 @@ export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 # Forecast Input Variables
 #
 . $PARMgefs/gefs_fcst.parm
-export restart_interval=${fhrestart:-1000}
+export restart_interval=${restart_interval:-${fhrestart:-1000}}
 export fhstoch=$restart_interval
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
