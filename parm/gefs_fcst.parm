@@ -36,13 +36,13 @@ export npe_node_max
 
 #PE geometry
 export hyperthread=${hyperthread:-".false."}
-export NTHREADS_FV3=${parallel_threads:-2}
+export NTHREADS_FV3=${parallel_threads:-1}
 COREPERNODE=${COREPERNODE:-28}
 export cores_per_node=$COREPERNODE
 
 #FV dynamics parameters
-export TYPE=${TYPE:-"hydro"}    # choices:  nh, hydro
-export MONO=${MONO:-mono}
+export TYPE=${TYPE:-"nh"}    # choices:  nh, hydro
+export MONO=${MONO:-"non-mono"}
 export MODE=32bit           # choices:  32bit, 64bit
 export COMP="prod"          # choices:  debug, repro, prod
 

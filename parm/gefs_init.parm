@@ -24,15 +24,15 @@ export relocflagana=${relocflagana:-0}
 #        2  GSM SIGIO
 export inflag=${inflag:-0}
 export outflag=6
-	export nmem_enkf=80    #number of ENKF members
-        (( num_pair_enkf = nmem_enkf / 2 ))
-        export num_pair_enkf=$num_pair_enkf
-	#(( recentmem = npair * 2 ))
-	(( recentmem = npert ))
-	export recentmem=$recentmem
-        (( npair = num_pair_enkf / 4 ))
-	export npair=$npair
-        export nhrpair=$npair
+#export nmem_enkf=80    #number of ENKF members
+#(( num_pair_enkf = nmem_enkf / 2 ))
+#export num_pair_enkf=$num_pair_enkf
+#(( recentmem = npert ))
+(( recentmem = npert ))
+export recentmem=$recentmem
+#(( npair = num_pair_enkf / 4 ))
+export npert=$npert
+#export nhrpair=$((npert/2))
 
 
 # task and node assignments
