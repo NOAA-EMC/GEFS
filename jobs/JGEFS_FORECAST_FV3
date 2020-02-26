@@ -6,9 +6,11 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export machine=$machine
-export gefsmpexec=${gefsmpexec:-mpirun}
-export APRUN=${gefsmpexec:-mpirun}
+export machine=${machine:-"WCOSS_DELL_P3"}
+
+export total_tasks=${total_tasks:-532}
+export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
+export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
 
 export RUNMEM=$RUNMEM
 export mem=`echo $RUNMEM|cut -c3-5`

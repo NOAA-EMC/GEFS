@@ -8,7 +8,8 @@ date
 
 export RERUN=${RERUN:-NO}
 
-export gefsmpexec=${gefsmpexec:-mpirun}
+export total_tasks=${total_tasks:-6}
+export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
 export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
 export CNVGRIB=$CNVGRIB
 

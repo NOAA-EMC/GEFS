@@ -6,6 +6,8 @@ set -xa
 export PS4=' $SECONDS + '
 date
 
+export NTASKS=${total_tasks:-20}
+
 ############################
 # Set up cycle varaible
 ############################

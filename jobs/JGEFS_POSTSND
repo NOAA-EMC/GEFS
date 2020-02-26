@@ -7,11 +7,10 @@ export PS4='$SECONDS + '
 date
 export MODEL_OUT_FORM=binarynemsiompiio
 
-#export gefsmpexec=${gefsmpexec:-mpirun}
-
-#export APRUN=${gefsmpexec:-'mpirun -n 4'}
+export total_tasks=${total_tasks:-10}
+export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
 export APRUN_POSTSND=${gefsmpexec:-'mpirun -n $total_tasks'}
-export APRUN_POSTSNDCFP=${gefsmpexec_mpmd:-'mpirun -n 10 cfp'}
+export APRUN_POSTSNDCFP=${gefsmpexec_mpmd:-'mpirun -n $total_tasks cfp'}
 
 ########################################
 # Runs GFS BUFR SOUNDINGS

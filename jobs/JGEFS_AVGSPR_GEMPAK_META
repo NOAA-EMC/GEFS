@@ -11,6 +11,7 @@ set -xa
 export PS4='$SECONDS + ' 
 date
 
+export total_tasks=${total_tasks:-1}
 export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
 
 ####################################

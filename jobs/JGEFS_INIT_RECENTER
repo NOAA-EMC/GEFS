@@ -6,7 +6,9 @@ set -xa
 export PS4='$SECONDS + '
 date
 
+export total_tasks=${total_tasks:-6}
 export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
+export warm_start=${warm_start:-".false."}
 
 ############################
 # Set up cycle varaible

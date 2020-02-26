@@ -10,9 +10,9 @@ export FORECAST_SEGMENT=${FORECAST_SEGMENT:-hr}
 
 export MODEL_OUT_FORM=binarynemsiompiio
 
-export gefsmpexec=${gefsmpexec:-mpirun}
-
-export APRUN=${gefsmpexec:-mpirun}
+export total_tasks=${total_tasks:-30}
+export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
+export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
 
 export GRIBVERSION=${GRIBVERSION:-grib2}
 
