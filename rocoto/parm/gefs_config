@@ -29,13 +29,12 @@ export GESROOTp1=$GESROOTp1
 export archsyndir=${archsyndir:-$COMROOTp1/arch/prod/syndat}
 export DBNROOT=
 
-export HOMEDIR=$HOMEDIR
 export HOMEgefs=$basesource
 export HOMEtrak=${HOMEtrak:-$HOMERFC/ens_tracker.v1.1.13}
-export HOMEgfs=${HOMEgfs:-$HOMEDIR}
-export HOMEgsi=${HOMEgfs:-$HOMEDIR}
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
+export HOMEgsi=${HOMEgfs:-$HOMEgefs}
 export HOMEwave=${HOMEwave:-$HOMEgefs}
-export HOMEpost=${HOMEpost:-$HOMEDIR}
+export HOMEpost=${HOMEpost:-$HOMEgefs}
 
 if [[ ! -d $SOURCEDIR/sorc/global-workflow.fd ]] ; then
     export EXECwave=${HOMEgfs}/sorc/fv3gfs.fd/WW3/model/exe
@@ -64,17 +63,10 @@ if [[ $GFSArchivedData == "yes" ]]; then
     # HOMEdata, COMINgfs_base, COMINenkf_base and COMINcfs_base are defined in setbase, pointing to the NCO  gfs.v15 parallel
     # However, if you use gfs/enkf data from archived data, you may speficfy them in this "if" block and make GFSArchivedData=yes
 
-    if [[ -d /dcom && -d /hwrf ]]; then #WCOSS
-        export COMINenkf_base=$HOMEdata/enkfgdas.
-        export COMINgfs_base=$HOMEdata/gfs.
-        export COMINcfs_base=/ensemble/noscrub/Walter.Kolczynski/gefs_input/cfs_2_sst/cfs.
-        export COMICE=${COMICE:-/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod}
-    else
-        export COMINenkf_base=$HOMEdata/fv3init/enkfgdas.
-        export COMINgfs_base=$HOMEdata/fv3init/gfs.
-        export COMINcfs_base=$HOMEdata/cfs/cfs.
-        export COMICE=$HOMEdata/sea_ice
-    fi # [[ -d /dcom && -d /hwrf ]] #WCOSS
+    export COMINenkf_base=$HOMEdata/fv3init/enkfgdas.
+    export COMINgfs_base=$HOMEdata/fv3init/gfs.
+    export COMINcfs_base=$HOMEdata/cfs/cfs.
+    export COMICE=$HOMEdata/sea_ice
 else
     export COMINgfs_base=$(compath.py gfs/prod)/gfs.
     export COMINenkf_base=$(compath.py gfs/prod)/enkfgdas.
