@@ -54,10 +54,13 @@ export MP_PULSE=0
 ####################################
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
 ####################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDDBN=${SENDDBN:-YES}
 export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
 
 ####################################
 # Path to HOME Directory

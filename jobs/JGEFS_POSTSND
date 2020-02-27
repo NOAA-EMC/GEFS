@@ -67,12 +67,13 @@ export pgmerr=errfile
 ####################################
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
-# VERBOSE  - Specify Verbose Output in global_postgp.sh
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
 ####################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDDBN=${SENDDBN:-YES}
 export SENDECF=${SENDECF:-YES}
-export VERBOSE=${VERBOSE:-NO}
+export VERBOSE=${VERBOSE:-YES}
 
 # Specify Execution Areas
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
