@@ -92,6 +92,8 @@ export FIXgfs=${HOMEgfs}/fix
 export USHgfs=$HOMEgfs/ush
 export EXECgfs=$HOMEgfs/exec
 
+export HOMEgsi=${HOMEgsi:-$HOMEgfs}
+
 #export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/gfs_ncep_post}
 export nemsioget=$EXECgfs/nemsio_get
 

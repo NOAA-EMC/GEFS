@@ -16,7 +16,7 @@ if [[ ! -d global-workflow.fd ]] ; then
     #git clone --recursive gerrit:global-workflow global-workflow.fd >>  ${logs_dir}/checkout-global-workflow.log 2>&1
     git clone --recursive git@github.com:WalterKolczynski-NOAA/global-workflow.git global-workflow.fd >>  ${logs_dir}/checkout-global-workflow.log 2>&1
     cd global-workflow.fd
-    git checkout b994a87
+    git checkout 6b2eacf
     cd sorc
     ./checkout.sh
     ERR=$?
