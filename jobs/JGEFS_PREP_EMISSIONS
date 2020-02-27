@@ -102,7 +102,6 @@ env | sort
 
 #############################################################
 # Execute the script
-# $HOMEgefs/scripts/exgefs_prep_emissions.sh.ecf
 $gefsmpexec $HOMEchem/scripts/exglobal_prep_chem.bash
 #############################################################
 ERR=$?
