@@ -303,7 +303,7 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
         else:
             strings += sPre_2 + '<nodes>{0}</nodes>\n'.format(sNodes)
         
-        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper()]: #, "cray".upper()]:
+        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]: #, "cray".upper()]:
             if taskname in ["prdgen_high"]:
                 if sQueue.endswith("_shared"):
                     strings += sPre_2 + '<native>-R "affinity[core(4):distribute=pack]"</native>\n'
@@ -315,7 +315,7 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
         strings += sPre_2 + '<native>-cwd &tmpnwprd;</native>\n'
     elif WHERE_AM_I.upper() == "hera".upper():
         strings += ""
-    elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
+    elif WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
         strings += ""
     else:
         strings += sPre_2 + '<native>-cwd &tmpnwprd;</native>\n'
@@ -333,7 +333,7 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
             strings += sPre_2 + '<native>-extsched "CRAYLINUX[]"</native>\n'
     elif WHERE_AM_I.upper() == "Hera".upper():
         strings += ""  # \n
-    elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
+    elif WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
         if taskname in metatask_names:
             strings += ""
         else:
@@ -380,25 +380,25 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
         
     ## Add command
     sPRE = "&PRE; "
-    if WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
+    if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
         sPRE = ""
 
     if taskname in ['keep_init', 'copy_init', 'keep_data_atm', 'archive_atm', 'cleanup_atm', 'keep_data_wave', 'archive_wave', 'cleanup_wave']:
-        if WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
+        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format(taskname, sPRE)
         else:
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/../py/{0}.py</cyclestr></command>\n'.format(taskname, sPRE)
     elif taskname in ['forecast_high', 'forecast_low']:
         strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("forecast_high", sPRE)
     elif taskname in ['prdgen_high', 'prdgen_low', 'prdgen_gfs']:
-        if WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
+        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("prdgen_high", sPRE)
         else:
             strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("prdgen_high", sPRE)
     elif taskname in ['post_high', 'post_low']:
         strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("post_high", sPRE)
     elif taskname in ['ensstat_high', 'ensstat_low']:
-        if WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
+        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("ensstat_high", sPRE)
         else:
             strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("ensstat_high", sPRE)
@@ -1044,7 +1044,7 @@ def get_param_of_task(dicBase, taskname):
 
         WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
         
-        if WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
+        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
             sNodes = "{0}:ppn={1}".format(iNodes, iPPN)
         else:
             sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
@@ -1113,7 +1113,7 @@ def calc_gempak_resources(dicBase):
             iNodes = (npert + 1)
             iPPN = nGEMPAK_RES
             
-    elif WHERE_AM_I.upper() == "wcoss_dell_p3".upper():
+    elif WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
         if (npert + 1) <= ncores_per_node:
             iNodes = nGEMPAK_RES
             iPPN = (npert + 1)
@@ -1144,6 +1144,8 @@ def Get_NCORES_PER_NODE(dicBase):
         ncores_per_node = 40
     elif WHERE_AM_I == "wcoss_dell_p3".upper():
         ncores_per_node = 28
+    elif WHERE_AM_I == "wcoss_dell_p35".upper():
+        ncores_per_node = 40
     else:
         ncores_per_node = 24
 
