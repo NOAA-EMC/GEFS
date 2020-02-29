@@ -12,17 +12,15 @@ ulimit -a
 module list
 module purge
 
-module load EnvVars/$EnvVars_ver
-module load ips/$ips_ver
-module load impi/$impi_ver
-module load prod_util/$prod_util_ver
-module load prod_envir/$prod_envir_ver
+#module load EnvVars/$EnvVars_ver
+#module load ips/$ips_ver
+#module load impi/$impi_ver
+#module load prod_util/$prod_util_ver
+#module load prod_envir/$prod_envir_ver
 
-module load lsf/$lsf_ver
+#module load lsf/$lsf_ver
 module load python/$python_ver
-
-module load CFP/$CFP_ver
-export USE_CFP=YES
+module load HPSS/$HPSS_ver
 
 module list
 
@@ -33,4 +31,4 @@ module list
 #export NTHREADS_SIGCHGRS=${GEFS_TPP:-6}
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_INIT_RECENTER
+$GEFS_ROCOTO/bin/py/archive_wave.py

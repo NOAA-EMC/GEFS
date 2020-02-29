@@ -12,17 +12,14 @@ ulimit -a
 module list
 module purge
 
-module load EnvVars/$EnvVars_ver
-module load ips/$ips_ver
-module load impi/$impi_ver
-module load prod_util/$prod_util_ver
-module load prod_envir/$prod_envir_ver
-module load gempak/$gempak_ver
+#module load EnvVars/$EnvVars_ver
+#module load ips/$ips_ver
+#module load impi/$impi_ver
+#module load prod_util/$prod_util_ver
+#module load prod_envir/$prod_envir_ver
 
-module load lsf/$lsf_ver
-
-module load CFP/$CFP_ver
-export USE_CFP=YES
+#module load lsf/$lsf_ver
+module load python/$python_ver
 
 module list
 
@@ -30,7 +27,7 @@ module list
 . $GEFS_ROCOTO/bin/wcoss_dell_p3/common.sh
 
 # Export List
+#export NTHREADS_SIGCHGRS=${GEFS_TPP:-6}
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_AVG_GEMPAK_VGF
-
+$GEFS_ROCOTO/bin/py/copy_init.py
