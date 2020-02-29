@@ -42,31 +42,12 @@ elif [[ "$WHERE_AM_I" == cray ]] ; then
     module load HDF5-serial-intel-sandybridge/1.8.9
     module load nco-gnu-sandybridge/4.4.4
     module load NetCDF-intel-sandybridge/4.2
+    # module load NetCDF-intel-haswell/4.2
+    module load nco-gnu-sandybridge/4.4.4
     # theend wave modules 
 	export PATH=$PATH:.
-elif [[ "$WHERE_AM_I" == theia ]]; then
-    echo "Loading modules for theia"
-    . /apps/lmod/lmod/init/ksh
-    module purge
-    module load hpss
-    module load intel/18.0.1.163
-    module load impi/2018.0.1
-    module load hdf5parallel/1.8.14
-    module load netcdf
-    module load intelpython/3.6.1.0
-    module use -a /scratch3/NCEPDEV/nwprod/lib/modulefiles
-    module load prod_util/v1.1.0
-    module load g2tmpl/v1.5.0
-    module load prod_util/v1.1.0
-    module load g2tmpl/v1.5.0
-    module use -a /scratch3/NCEPDEV/nwprod/modulefiles
-    module load grib_util/v1.1.0
-    module load gempak/7.4.2
-
-    export PATH=/scratch4/NCEPDEV/ensemble/save/common/anaconda3/bin:$PATH:./
-
-    # Temporary setting to test common settings
-    . $GEFS_ROCOTO/bin/theia/common.sh
+    
+    . $GEFS_ROCOTO/bin/cray/common.sh
 
 elif [[ "$WHERE_AM_I" == hera ]]; then
     echo "Loading modules for hera"

@@ -1,48 +1,69 @@
 #!/bin/bash
 
-date
+echo `date` $0 `date -u` begin
+
+set -xa
 export PS4=' $SECONDS + '
-set -x -e
+date
 
-# PATH for working directory
-export NET=${NET:-gens}
-export RUN=${RUN:-gwes}
+############################
+# Set up cycle varaible
+############################
+cyc=${cyc:-00}
+export cycle=${cycle:-t${cyc}z}
 
-export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
-export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
-
-# Add default errchk = err_chk
-export errchk=${errchk:-err_chk}
-
-# Set HOMEwave to HOMEgefs
-HOMEwave=${HOMEwave:-${HOMEgefs}} 
-
-export DATA=${DATA:-${DATAROOT:?}/${jobid}}
+####################################
+# obtain unique process id (pid) and make working directory
+####################################
+export pid=$$
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
 
-cyc=${cyc:-00}
-export cycle=${cycle:-t${cyc}z}
- 
-export pgmout=OUTPUT.$$
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gwes}
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+
+# Add default errchk = err_chk
+export errchk=${errchk:-err_chk}
 
 export MP_PULSE=0
 
 ####################################
 # Path to HOME Directory
 ####################################
+export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
-export CODEwave=${CODEwave:-${NWROOT}/${NET}_code.${wave_code_ver}/${code_pkg}}
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
 
+export HOMEwave=${HOMEwave:-${HOMEgefs}}
 export EXECwave=${EXECwave:-$HOMEwave/exec}
-export FIXwave=${FIXwave:-$HOMEwave/fix_wave}
+export FIXwave=${FIXwave:-$HOMEwave/fix/fix_wave}
 export PARMwave=${PARMwave:-$HOMEwave/parm}
 export USHwave=${USHwave:-$HOMEwave/ush}
-export EXECcode=${EXECcode:-$CODEwave/exec}
 
-# Set PDY
-setpdy.sh
-sh ./PDY
+export EXECcode=${EXECcode:-$EXECwave}
 
 ###################################
 # Set COM Paths and GETGES environment
@@ -69,7 +90,7 @@ export wave_mpmd=${wave_mpmd:-"cfp"}
 # Set parameters using gwes_init.parm
 ##############################################
 
-. $PARMwave/gefs.parm
+. $PARMgefs/gefs.parm
 . $PARMwave/gwes.parm
 . $PARMwave/gwes_init.parm
 
@@ -80,6 +101,13 @@ env | sort
 ###################################
 
 $HOMEwave/scripts/exwave_gwes_init.sh
+err=$?
+if [ $err -ne 0 ]; then
+    msg="FATAL ERROR: ex-script of GWES_INIT failed!"
+else
+    msg="$job completed normally!"
+fi
+postmsg "$jlogfile" "$msg"
 
 ###################################
 # Remove temp directories
@@ -91,3 +119,4 @@ if [ "$KEEPDATA" != "YES" ]; then
 fi
 date
 
+exit $err

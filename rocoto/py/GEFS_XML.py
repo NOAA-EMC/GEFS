@@ -50,7 +50,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         dicBase[sVarName] = sVarValue
     # ==
     sVarName = "WHERE_AM_I".upper()
-    sVarValue = "theia"
+    sVarValue = "hera"
     if sVarName not in dicBase:
         dicBase[sVarName] = sVarValue
     WHERE_AM_I = dicBase[sVarName]
@@ -128,8 +128,6 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             sVarValue = "/gpfs/HPS_PTMP/ptmp/First.Last/o/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss':
             sVarValue = "/gpfs/HPS_PTMP/ptmp/First.Last/o/&EXPID;"
-        elif WHERE_AM_I.lower() == 'theia':
-            sVarValue = "/scratch4/NCEPDEV/stmp4/First.Last/o/&EXPID;"
         elif WHERE_AM_I.lower() == 'hera':
             sVarValue = "/scratch2/NCEPDEV/stmp3/First.Last/o/&EXPID;"
         elif WHERE_AM_I.lower() == 'wins':
@@ -158,8 +156,6 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             sVarValue = "/gpfs/hps3/emc/ensemble/noscrub/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss':
             sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS/&EXPID;"
-        elif WHERE_AM_I.lower() == 'theia':
-            sVarValue = "/scratch4/NCEPDEV/stmp4/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'hera':
             sVarValue = "/scratch2/NCEPDEV/stmp3/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
@@ -194,8 +190,6 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss':
             sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
-        elif WHERE_AM_I.lower() == 'theia':
-            sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
             sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wins':
@@ -228,8 +222,6 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             sVarValue = "/gpfs/hps3/emc/ensemble/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         elif WHERE_AM_I.lower() == 'wcoss':
             sVarValue = "/ensemble/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
-        elif WHERE_AM_I.lower() == 'theia':
-            sVarValue = "/scratch4/NCEPDEV/stmp4/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         elif WHERE_AM_I.lower() == 'hera':
             sVarValue = "/scratch2/NCEPDEV/stmp3/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
@@ -253,8 +245,6 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
         elif WHERE_AM_I.lower() == 'wcoss':
             sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
-        elif WHERE_AM_I.lower() == 'theia':
-            sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
             sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
         elif WHERE_AM_I.lower() == 'wins':
@@ -270,8 +260,6 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         if WHERE_AM_I.lower() == "cray":
             sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
         elif WHERE_AM_I.lower() == 'wcoss':
-            sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
-        elif WHERE_AM_I.lower() == 'theia':
             sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
             sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
@@ -377,27 +365,6 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         # ===
         sVarName = "SCHEDULER".upper()
         sVarValue = "lsfcray"
-        if sVarName not in dicBase:
-            dicBase[sVarName] = sVarValue
-
-    elif WHERE_AM_I.lower() == "theia":
-        sVarName = "ACCOUNT".upper()
-        sVarValue = "fv3-cpu"
-        if sVarName not in dicBase:
-            dicBase[sVarName] = sVarValue
-        # ===
-        sVarName = "CUE2RUN".upper()
-        sVarValue = "batch"
-        if sVarName not in dicBase:
-            dicBase[sVarName] = sVarValue
-        # ===
-        sVarName = "TRANSFER_QUEUE".upper()
-        sVarValue = "service"
-        if sVarName not in dicBase:
-            dicBase[sVarName] = sVarValue
-        # ===
-        sVarName = "SCHEDULER".upper()
-        sVarValue = "slurm"
         if sVarName not in dicBase:
             dicBase[sVarName] = sVarValue
 
@@ -621,6 +588,14 @@ def get_definitions(dicBase):
     strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
 
     sVarName = "DIRS_TO_ARCHIVE"
+    sVarValue = dicBase[sVarName.upper()]
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+    sVarName = "DIRS_TO_KEEP_WAVE"
+    sVarValue = dicBase[sVarName.upper()]
+    strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
+
+    sVarName = "DIRS_TO_ARCHIVE_WAVE"
     sVarValue = dicBase[sVarName.upper()]
     strings.append('\t<!ENTITY {0} "{1}">\n'.format(sVarName, sVarValue))
 

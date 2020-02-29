@@ -120,17 +120,13 @@ echo `date` GRIB file test before cleanup begin
 # RLW disable checking for all hours except the current cycle"
 for cyc_check in $cyc; do
 
-	echo cyc=$cyc cyc_check=$cyc_check
+	echo cyc=$cyc
 
 	if (( cyc == cyc_check )); then
 		export fcstlong=true
-		export cfsuffix=""
-		export cycsuffix=false
 		memberlisttest="$memberlist c00"
 	else
 		export fcstlong=false
-		export cfsuffix=".cycfs$cyc_check"
-		export cycsuffix=true
 		memberlisttest="$memberlist"
 	fi # (( cyc == cyc_check ))
 
@@ -152,16 +148,16 @@ for cyc_check in $cyc; do
 
 
 		filelist="\
-		$COMIN/$cyc/master/ge$member.$cycle.master.grb2anl$cfsuffix \
-		$COMIN/$cyc/master/ge$member.$cycle.master.grb2ianl$cfsuffix \
-		$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2aanl$cfsuffix \
-		$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2aanl$cfsuffix.idx \
-		$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.anl$cfsuffix \
-		$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.anl$cfsuffix.idx \
-		$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2banl$cfsuffix \
-		$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2banl$cfsuffix.idx \
-		$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.anl$cfsuffix \
-		$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.anl$cfsuffix.idx \
+		$COMIN/$cyc/master/ge$member.$cycle.master.grb2anl \
+		$COMIN/$cyc/master/ge$member.$cycle.master.grb2ianl \
+		$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2aanl \
+		$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2aanl.idx \
+		$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.anl \
+		$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.anl.idx \
+		$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2banl \
+		$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2banl.idx \
+		$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.anl \
+		$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.anl.idx \
 		"
 		for file in $filelist; do
 			if [[ ! -s $file ]]; then
@@ -188,23 +184,23 @@ for cyc_check in $cyc; do
 				FHP5=$FH
 			fi
 			filelist="\
-			$COMIN/$cyc/master/ge$member.$cycle.master.grb2f$FH$cfsuffix \
-			$COMIN/$cyc/master/ge$member.$cycle.master.grb2if$FH$cfsuffix \
-			$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2af$FH$cfsuffix \
-			$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2af$FH$cfsuffix.idx \
-			$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FHP5$cfsuffix \
-			$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FHP5$cfsuffix.idx \
-			$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2bf$FH$cfsuffix \
-			$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2bf$FH$cfsuffix.idx \
-			$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.f$FHP5$cfsuffix \
-			$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.f$FHP5$cfsuffix.idx \
-			$COMIN/$cyc/pgrb2alr/ge$member.$cycle.pgrb2af$FH.2$cfsuffix \
-			$COMIN/$cyc/pgrb2alr/ge$member.$cycle.pgrb2af$FH.2$cfsuffix.idx \
-			$COMIN/$cyc/pgrb2blr/ge$member.$cycle.pgrb2bf$FH.2$cfsuffix \
-			$COMIN/$cyc/pgrb2blr/ge$member.$cycle.pgrb2bf$FH.2$cfsuffix.idx \
-			$COMIN/$cyc/sfcsig/ge$member.$cycle.bf$FH$cfsuffix \
-			$COMIN/$cyc/sfcsig/ge$member.$cycle.sf$FH$cfsuffix \
-			$COMIN/$cyc/sflux/ge$member.$cycle.sfluxgrbf$FH$cfsuffix \
+			$COMIN/$cyc/master/ge$member.$cycle.master.grb2f$FH \
+			$COMIN/$cyc/master/ge$member.$cycle.master.grb2if$FH \
+			$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2af$FH \
+			$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2af$FH.idx \
+			$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FHP5 \
+			$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FHP5.idx \
+			$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2bf$FH \
+			$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2bf$FH.idx \
+			$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.f$FHP5 \
+			$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.f$FHP5.idx \
+			$COMIN/$cyc/pgrb2alr/ge$member.$cycle.pgrb2af$FH.2 \
+			$COMIN/$cyc/pgrb2alr/ge$member.$cycle.pgrb2af$FH.2.idx \
+			$COMIN/$cyc/pgrb2blr/ge$member.$cycle.pgrb2bf$FH.2 \
+			$COMIN/$cyc/pgrb2blr/ge$member.$cycle.pgrb2bf$FH.2.idx \
+			$COMIN/$cyc/sfcsig/ge$member.$cycle.bf$FH \
+			$COMIN/$cyc/sfcsig/ge$member.$cycle.sf$FH \
+			$COMIN/$cyc/sflux/ge$member.$cycle.sfluxgrbf$FH \
 			"
 			if (( FH > 0 )) && (( FH <= fhmaxh )); then
 				(( FP = FH - 3 ))
@@ -217,11 +213,11 @@ for cyc_check in $cyc; do
 					FPP5=$FP
 				fi
 				filelist="$filelist
-				$COMIN/$cyc/sfcsig/ge$member.$cycle.bf$FP$cfsuffix \
-				$COMIN/$cyc/sfcsig/ge$member.$cycle.sf$FP$cfsuffix \
-				$COMIN/$cyc/sflux/ge$member.$cycle.sfluxgrbf$FP$cfsuffix \
-				$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FPP5$cfsuffix \
-				$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FPP5$cfsuffix.idx \
+				$COMIN/$cyc/sfcsig/ge$member.$cycle.bf$FP \
+				$COMIN/$cyc/sfcsig/ge$member.$cycle.sf$FP \
+				$COMIN/$cyc/sflux/ge$member.$cycle.sfluxgrbf$FP \
+				$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FPP5 \
+				$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FPP5.idx \
 				"
 			fi # (( FH > 0 )) && (( FH <= fhmaxh ))
 			for file in $filelist; do
@@ -261,13 +257,9 @@ else # (( nmissing > 0 ))
 		if [[ $savecycle = false ]]; then
 			if (( cyc == cyc_check )); then
 				export fcstlong=true
-				export cfsuffix=""
-				export cycsuffix=false
 				memberlisttest="$memberlist c00"
 			else
 				export fcstlong=false
-				export cfsuffix=".cycfs$cyc_check"
-				export cycsuffix=true
 				memberlisttest="$memberlist"
 			fi # (( cyc == cyc_check ))
 			for member in $memberlisttest; do

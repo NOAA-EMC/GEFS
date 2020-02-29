@@ -89,7 +89,7 @@ export USHgempak=${USHgempak:-$GEMPAKgefs/ush}
 # Set up model and cycle specific variables
 ############################################
 export fhbeg=${fhbeg:-0}
-export fhend=${fhmax:-384}
+export fhend=${fhmaxh:-384}
 export fhinc=${fhinc:-12}
 
 export FHMAXHF=${FHMAXHF:-240}

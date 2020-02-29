@@ -9,10 +9,10 @@ ulimit -a
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:4
 
-export NODES=$SLURM_JOB_NUM_NODES
-export total_tasks=$SLURM_NTASKS
-export OMP_NUM_THREADS=4
-export taskspernode=$SLURM_CPUS_ON_NODE
+#export NODES=$SLURM_JOB_NUM_NODES
+#export total_tasks=$SLURM_NTASKS
+#export OMP_NUM_THREADS=4
+#export taskspernode=$SLURM_CPUS_ON_NODE
 
 export DO_LOW_RES=
 

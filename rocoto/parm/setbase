@@ -12,57 +12,62 @@ echo `date` $0 set environment and experiment id
 echo
 
 #DHOU, 01/03/2013 add this block to generate the machine name related variables
-machl=`uname -n | cut -c1`
+#machl=`uname -n | cut -c1`
 
-if [[ $machl = r ]]; then
-  machl=f
-fi
-if [[ $machl = n ]]; then
-  machl=l
-fi
+#if [[ $machl = r ]]; then
+#  machl=f
+#fi
+#if [[ $machl = n ]]; then
+#  machl=l
+#fi
 
 echo envir=$envir
 
 echo expid=${expid}
 
 id=`echo $expid|cut -c3-4`
-echo expid=$expid
 echo id=$id
 
-echo
-echo USER to prescribe user ID and JOB queue infirmation
-echo
-PROJECT=ensemble
-LOGNAME=$LOGNAME
-SUBNAME=
-JOBPRIO=      
-JOBQUEUE=dev
-JOBPHASE=
+#echo
+#echo USER to prescribe user ID and JOB queue infirmation
+#echo
+#PROJECT=ensemble
+#LOGNAME=$LOGNAME
+#SUBNAME=
+#JOBPRIO=      
+#JOBQUEUE=dev
+#JOBPHASE=
 #Please make sure you have the correct account information
-export account=GEN-T2O
+#export account=GEN-T2O
 
-if [[ "$LOGNAME" = "emc.enspara" || "$LOGNAME" = "emc.enspara1" ]]; then
-    SUBNAME=/XX    #members of the enspara/enspara1 group accounts need to define e.g SUBNAME=/dc
-    JOBPRIO=high       #(default; it could be high/max)
+#if [[ "$LOGNAME" = "emc.enspara" || "$LOGNAME" = "emc.enspara1" ]]; then
+#    SUBNAME=/XX    #members of the enspara/enspara1 group accounts need to define e.g SUBNAME=/dc
+#    JOBPRIO=high       #(default; it could be high/max)
+#fi
+
+#echo USER info: $PROJECT $LOGNAME $SUBNAME $JOBPRIO
+
+#echo JOB QUEUE info prescribed: $JOBQUEUE $JOBPHASE $JOBPRIO
+
+#echo ACCOUNT info: $account
+
+#echo
+#echo `date` $0 set ROOT directory tree locations
+#echo
+
+# For virtical structure
+if [[ -d $SOURCEDIR/sorc/global-workflow.fd ]] ; then
+    export HOMEDIR=$SOURCEDIR
 fi
-
-echo USER info: $PROJECT $LOGNAME $SUBNAME $JOBPRIO
-
-echo JOB QUEUE info prescribed: $JOBQUEUE $JOBPHASE $JOBPRIO
-
-echo ACCOUNT info: $account
-
-echo
-echo `date` $0 set ROOT directory tree locations
-echo
 
 if [ -d /scratch2/NCEPDEV ]; then 
     echo "Using settings for Hera"
     export machine='HERA'
     
     export HOMEDIR=/scratch2/NCEPDEV/ensemble/save/Walter.Kolczynski/global-workflow/aerosol_20200131_8a64097c
-    export HOMEDIR1=$HOMEDIR
+
     export HOMERFC=/scratch2/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
+    export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/common
 
     #export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/common
     export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/Walter.Kolczynski/gefs_input
@@ -87,35 +92,11 @@ if [ -d /scratch2/NCEPDEV ]; then
     export gbbepx_list="GBBEPx.bc GBBEPx.oc GBBEPx.so2 GBBEPx.pm25 meanFRP"
     export inout_list="BBURN3-bb,ebu_pm_10 SO4-bb,ebu_sulf plume,plumestuff GBBEPx.bc,ebu_bc GBBEPx.oc,ebu_oc GBBEPx.so2,ebu_so2 GBBEPx.pm25,ebu_pm_25 meanFRP,plumefrp"
 
-elif [ -d /scratch4/NCEPDEV ]; then
-    echo "Using settings for Theia"
-    export machine='THEIA'
-
-    export HOMEDIR=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/global-workflow/lgan_fv3_ww3_hera # Copuled version
-    export HOMEDIR1=$HOMEDIR
-    export HOMERFC=/scratch4/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
-    
-    export HOMEdata=/scratch4/NCEPDEV/ensemble/noscrub/common
-
-    export COMROOThps=${HOMEdata}
-    export COMROOTp1=/scratch4/NCEPDEV/rstprod/com
-
-    export EXECutil=${EXECutil:-/scratch4/NCEPDEV/global/save/glopara/nwpara/util/exec}
-
-    export EXECgrib=${EXECutil}
-    export utilscript=$USHutil
-    export SUPVIT=${SUPVIT:-${EXECutil}/supvit}
-
-    # Location of WW3 executables
-    export EXECcode=$HOMEDIR/sorc/fv3gfs.fd/WW3/model/exe
-    # Wave model settings: ice data dir
-    export COMICE=/scratch4/NCEPDEV/rstprod/com/omb/prod
-
 elif [[ -d /dcom && -d /hwrf ]] ; then
     echo "Using settings for WCOSS Phase II"
     export machine='WCOSS'
     export JOBPHASE=2
-    export HOMEDIR=/ensemble/save/Walter.Kolczynski/global-workflow/fv3gefs_f0b283bd_20190517
+    export HOMEDIR=${HOMEDIR:-/ensemble/save/Walter.Kolczynski/global-workflow/fv3gefs_f0b283bd_20190517}
     export HOMEtrak=/gpfs/hps3/emc/ensemble/save/emc.enspara/RFC/ens_tracker.v1.1.8 # Outdated version    
     export HOMEdata=/ensemble/noscrub/Walter.Kolczynski/gefs_input/gfs_15_para
     export COMINenkf_base=$HOMEdata/enkf.gdas.
@@ -128,21 +109,21 @@ elif [[ -d /gpfs/hps && -e /etc/SuSE-release ]] ; then
     echo "Using settings for WCOSS Cray"
     export machine='WCOSS_C'
     export JOBPHASE=
-    export HOMEDIR=/gpfs/hps3/emc/ensemble/save/Walter.Kolczynski/global-workflow/gefs_v12_retro2
+    export HOMEDIR=${HOMEDIR:-/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gfs/gefs_wave_fb95cd3c_20191105_newfv3upp}
     export HOMEtrak=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
     export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
-    
-    # Location of WW3 executables
-    export EXECcode=$HOMEDIR/sorc/fv3gfs.fd/WW3/model/exe
+    export archsyndir=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/TCvitalData/syndat
     
 elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     # We are on NOAA Venus or Mars
     echo "Using settings for WCOSS DELL Phase III"
     export machine='WCOSS_DELL_P3'
     export JOBPHASE=
-    export HOMEDIR=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/save/global-workflow/aerosol
+    # export HOMEDIR=${HOMEDIR:-/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gfs/gefs_wave_fb95cd3c_20191105_newfv3upp}
+    export HOMEDIR=${HOMEDIR:-/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/save/global-workflow/aerosol}
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
     # export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
+    export archsyndir=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/TCvitalData/syndat
     export HOMEdata=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/gefs_input
     export COMINenkf_base=$HOMEdata/gfs_15/enkfgdas.
     export COMINgfs_base=$HOMEdata/gfs_15/gfs.
@@ -160,25 +141,17 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     export EMIDIR="/gpfs/dell2/emc/modeling/noscrub/Li.Pan/emi_"
 fi
 
-# Uncomment below to run from real-time production data
-# if [[ $machine == WCOSS* ]]; then
-#     # fv3gfs data from NCO prod run
-#     export COMINgfs_base=$(compath.py gfs/prod)/gfs.
-#     export COMINenkf_base=$(compath.py gfs/prod)/enkfgdas.
-#     export COMINcfs_base=$(compath.py cfs/prod)/cfs/cfs.
-#     export COMICE=/gpfs/dell1/nco/ops/com/omb/prod # No compath.py alias yet
-# fi
 
-export JOBQUEUE=$JOBQUEUE$JOBPRIO$JOBPHASE
-echo JOB QUEUE info: $JOBQUEUE 
+#export JOBQUEUE=$JOBQUEUE$JOBPRIO$JOBPHASE
+#echo JOB QUEUE info: $JOBQUEUE 
 
-echo ROOT DIRECTORY info:
-echo $machine  jobqueue=$JOBQUEUE
-echo homedir: $HOMEDIR
+#echo ROOT DIRECTORY info:
+#echo $machine  jobqueue=$JOBQUEUE
+#echo homedir: $HOMEDIR
 
-echo
-echo `date` $0 set user base directory tree locations
-echo
+#echo
+#echo `date` $0 set user base directory tree locations
+#echo
 
 export basesource=$SOURCEDIR
 export baseoutput=$WORKDIR
