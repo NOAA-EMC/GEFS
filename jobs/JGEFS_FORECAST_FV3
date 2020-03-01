@@ -124,7 +124,6 @@ export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 export SSTDIR=${SSTDIR:-$COMIN/${cyc}/cfssst}
 
-#export memdir=$COMOUT/$cyc/sfcsig
 export memdir=$GESIN/$mem
 export gmemdir=$GESIN/$mem
 export ICSDIR=$GESIN/$mem
@@ -391,7 +390,6 @@ if [[ $cplchm = ".true." && $warm_start = ".true." ]]; then
 
 fi # [[ $cplchm = ".true." && $warm_start = ".true." ]]
 
-export gmemdir=$ICSDIR
 export increment_file=$ICSDIR/fv3_increment.nc
 
 export FIX_DIR=$FIXgfs
