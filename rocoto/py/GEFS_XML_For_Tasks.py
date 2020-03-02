@@ -675,11 +675,24 @@ def write_to_ent(taskname, dicBase, GenTaskEnt=False):
 def calc_fcst_resources(dicBase, taskname="forecast_high"):
     import math
 
-    layout_x = int(dicBase['layout_x'.upper()])
-    layout_y = int(dicBase['layout_y'.upper()])
-    WRITE_GROUP = int(dicBase['WRITE_GROUP'.upper()])
-    WRTTASK_PER_GROUP = int(dicBase['WRTTASK_PER_GROUP'.upper()])
-    parallel_threads = int(dicBase['parallel_threads'.upper()])
+    if taskname == "forecast_high":
+        layout_x = int(dicBase['layout_x'.upper()])
+        layout_y = int(dicBase['layout_y'.upper()])
+        WRITE_GROUP = int(dicBase['WRITE_GROUP'.upper()])
+        WRTTASK_PER_GROUP = int(dicBase['WRTTASK_PER_GROUP'.upper()])
+        parallel_threads = int(dicBase['parallel_threads'.upper()])
+    elif taskname == "forecast_low":
+        layout_x = int(dicBase['layout_x_lr'.upper()])
+        layout_y = int(dicBase['layout_y_lr'.upper()])
+        WRITE_GROUP = int(dicBase['WRITE_GROUP_lr'.upper()])
+        WRTTASK_PER_GROUP = int(dicBase['WRTTASK_PER_GROUP_lr'.upper()])
+        parallel_threads = int(dicBase['parallel_threads_lr'.upper()])
+    else:
+        layout_x = int(dicBase['layout_x'.upper()])
+        layout_y = int(dicBase['layout_y'.upper()])
+        WRITE_GROUP = int(dicBase['WRITE_GROUP'.upper()])
+        WRTTASK_PER_GROUP = int(dicBase['WRTTASK_PER_GROUP'.upper()])
+        parallel_threads = int(dicBase['parallel_threads'.upper()])
 
     ncores_per_node = Get_NCORES_PER_NODE(dicBase)
 
