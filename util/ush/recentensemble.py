@@ -178,7 +178,7 @@ def getMems_mean(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
         nc_fid.close
 
     #print("  Reading Control Member Data ...")
-    sCFile = sInWS + "/c00/{1}{2}.nc".format(iPert + 1, sFileName, iTile)
+    sCFile = sInWS + "/c00/{1}{2}.nc".format(Npert + 1, sFileName, iTile)
     #print(sCFile)
     nc_fid = Dataset(sCFile, 'r')
     for k in range(len(sVars)):
