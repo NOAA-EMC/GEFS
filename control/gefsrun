@@ -2785,7 +2785,7 @@ else
   fi
 
   ############### if task is init.separate, then check for gfs analysis
-  if [[ $taskname = init.separate ]]; then
+  if [[ $taskname = Xnit.separate ]]; then
     filelist=
     filelist="$filelist gfs.$cycle.sanl"
     filelist="$filelist gfs.$cycle.sfcanl"

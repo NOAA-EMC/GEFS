@@ -549,50 +549,50 @@ if (( relocpertflag == 1 )); then
       fi
     ;;
     (2)
-      ####### temporary reference from EMC parallel ############################################################################
-      #filegfs00=/ensemble/noscrub/Richard.Wobus/o/com/gfs/para/gfs.$PDY/gfs.${cycle}.master.grbf00
-      filegfs00=$COMINgfs/gfs.${cycle}.pgrb2.0p25.f000
-      if [[ -s $filegfs00 ]]; then
+      # Defined in job script
+      # gfstrkdir=${gfstrkdir:-$(compath.py ens_tracker/prod/gfs.${PDY})/$cyc/tctrack}
+#      filegfs00=$COMINgfs/gfs.${cycle}.pgrb2.0p25.f000
+#     if [[ -s $filegfs00 ]]; then
         echo analysis tracking for gfsgribedition=$gfsgribedition begin
-	# f00 gfs tracking for relocation
-	export pertlist="p01"
-	for npert in $pertlist
-	do
-	  export cmodel=gfs
-	  export ATCFNAME=zgfs
-	  export TRACK_OUT=$COMIN/$cyc/track
-	  extrkrsh2=$HOMEgefs/ush/extrkr_2015.sh
-	  export homesyndir=`dirname $extrkrsh2`
-	  export homesyndir=`dirname $homesyndir`
-	  export loopnum=1
-	  export ymdh=${PDY}${cyc}
-	  outdir=$DATA
-	  COM_HOLD=$COM
-	  export COM=$COMOUT/$cyc/init
-	  echo `date` $extrkrsh2 before
-	  $extrkrsh2 $loopnum $cmodel $ymdh $npert $outdir >${outdir}/trkr.$ymdh.out 2>&1
-	  echo `date` $extrkrsh2 after
-	  COM=$COM_HOLD
-	done
-        cat $COMIN/$cyc/init/gfso.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
-        echo analysis tracking for gfsgribedition=$gfsgribedition end
-      else
+ # f00 gfs tracking for relocation
+#export pertlist="p01"
+#	for npert in $pertlist
+#	do
+#	  export cmodel=gfs
+#	  export ATCFNAME=zgfs
+#	  export TRACK_OUT=$COMIN/$cyc/track
+#	  extrkrsh2=$HOMEgefs/ush/extrkr_2015.sh
+#	  export homesyndir=`dirname $extrkrsh2`
+#	  export homesyndir=`dirname $homesyndir`
+#	  export loopnum=1
+#	  export ymdh=${PDY}${cyc}
+#	  outdir=$DATA
+#	  COM_HOLD=$COM
+#	  export COM=$COMOUT/$cyc/init
+#	  echo `date` $extrkrsh2 before
+#	  $extrkrsh2 $loopnum $cmodel $ymdh $npert $outdir >${outdir}/trkr.$ymdh.out 2>&1
+#	  echo `date` $extrkrsh2 after
+#	  COM=$COM_HOLD
+#	done
+#        cat $COMIN/$cyc/init/gfso.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
+#        echo analysis tracking for gfsgribedition=$gfsgribedition end
+#      else
         echo search for existiong track file for $gfsgribedition begin
 	# replaced by f00 gfs tracking above but retained for retrospective runs
 	if [[ $envir = prod ]] || [[ $envir = para ]] || [[ $envir = test ]]; then
-	  if [[ -e $COMINgfs/avn.${cycle}.cyclone.trackatcfunix ]]; then
-	    cat $COMINgfs/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
+	  if [[ -e $gfstrkdir/avn.${cycle}.cyclone.trackatcfunix ]]; then
+	    cat $gfstrkdir/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
 	  else
 	    touch trackatcfunix.in
 	  fi
         else
           # RLW 20180827 add alternative source for retrospective fv3 runs
-          if [[ -e $COMINgfs/avn.${cycle}.cyclone.trackatcfunix ]]; then
-            cat $COMINgfs/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
+          if [[ -e $gfstrkdir/avn.${cycle}.cyclone.trackatcfunix ]]; then
+            cat $gfstrkdir/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
           elif [[ -e $basedgfs$COMINgfs/avn.${cycle}.cyclone.trackatcfunix ]]; then
             cat $basedgfs$COMINgfs/avn.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
-          elif [[ -e $COMINgfs/avno.${cycle}.cyclone.trackatcfunix ]]; then
-            cat $COMINgfs/avno.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
+          elif [[ -e $gfstrkdir/avno.${cycle}.cyclone.trackatcfunix ]]; then
+            cat $gfstrkdir/avno.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
           elif [[ -e $basedgfs$COMINgfs/avno.${cycle}.cyclone.trackatcfunix ]]; then
             cat $basedgfs$COMINgfs/avno.${cycle}.cyclone.trackatcfunix >trackatcfunix.in
           else
@@ -601,7 +601,7 @@ if (( relocpertflag == 1 )); then
           fi
 	fi
         echo search for existiong track file for $gfsgribedition end
-      fi
+#      fi
     ;;
   esac
     ls -al trackatcfunix.in
