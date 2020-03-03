@@ -49,10 +49,10 @@ echo "AUTHOR: Dingchen Hou (wx20dh)"
 ### To submit this job for T00Z cycle only !!!!!!
 
 if [ $cyc -ne "00" ]; then
-	echo " cyc = $cyc "
-	echo " This job is only handling 00Z cycle "
-	export err=8;err_chk
-fi # [ $cyc -ne "00" ]
+ echo " cyc = $cyc "
+ echo " This job is only handling 00Z cycle "
+ export err=8;err_chk
+fi
 
 ### Working directory: $DATA=/gpfstmp/wx20yz/cqpf.$CDATE
 ### to call this script: export CDATE={yyyymmddhh};global_enscqpf.sh
@@ -109,102 +109,113 @@ export YMDM4=`$NDATE -96 $YMDH | cut -c1-8`
 export OBSYMDH=`$NDATE -12 $YMDH `
 export OBSYMD=`$NDATE -24 $YMDH | cut -c1-8 `
 
-if [ -s $COMIN/gefs.$YMDM1/00/ensstat/STAT_RM_BIAS_gfs.dat ]; then
-	cp $COMIN/gefs.$YMDM1/00/ensstat/STAT_RM_BIAS_gfs.dat \
-	$DATA/STAT_RM_BIAS_gfs.dat
-elif [ -s $COMIN/gefs.$YMDM2/00/ensstat/STAT_RM_BIAS_gfs.dat ]; then
-	cp $COMIN/gefs.$YMDM2/00/ensstat/STAT_RM_BIAS_gfs.dat \
-	$DATA/STAT_RM_BIAS_gfs.dat
-elif [ -s $COMIN/gefs.$YMDM3/00/ensstat/STAT_RM_BIAS_gfs.dat ]; then
-	cp $COMIN/gefs.$YMDM3/00/ensstat/STAT_RM_BIAS_gfs.dat \
-	$DATA/STAT_RM_BIAS_gfs.dat
-elif [ -s $COMIN/gefs.$YMDM4/00/ensstat/STAT_RM_BIAS_gfs.dat ]; then
-	cp $COMIN/gefs.$YMDM4/00/ensstat/STAT_RM_BIAS_gfs.dat \
-	$DATA/STAT_RM_BIAS_gfs.dat
+if [ -s $COMINstat/gefs.$YMDM1/00/ensstat/STAT_RM_BIAS_gfs.dat ]; then
+ cp $COMINstat/gefs.$YMDM1/00/ensstat/STAT_RM_BIAS_gfs.dat \
+     $DATA/STAT_RM_BIAS_gfs.dat
+elif [ -s $COMINstat/gefs.$YMDM2/00/ensstat/STAT_RM_BIAS_gfs.dat ]; then
+ cp $COMINstat/gefs.$YMDM2/00/ensstat/STAT_RM_BIAS_gfs.dat \
+     $DATA/STAT_RM_BIAS_gfs.dat
+elif [ -s $COMINstat/gefs.$YMDM3/00/ensstat/STAT_RM_BIAS_gfs.dat ]; then
+ cp $COMINstat/gefs.$YMDM3/00/ensstat/STAT_RM_BIAS_gfs.dat \
+     $DATA/STAT_RM_BIAS_gfs.dat
+elif [ -s $COMINstat/gefs.$YMDM4/00/ensstat/STAT_RM_BIAS_gfs.dat ]; then
+ cp $COMINstat/gefs.$YMDM4/00/ensstat/STAT_RM_BIAS_gfs.dat \
+     $DATA/STAT_RM_BIAS_gfs.dat
 else
-	cp ${FIXgefs}/STAT_RM_BIAS_MONTHLY-${MM}_gfs \
-	$DATA/STAT_RM_BIAS_gfs.dat
-fi # [ -s $COMIN/gefs.$YMDM1/00/ensstat/STAT_RM_BIAS_gfs.dat ]
+ cp ${FIXgefs}/STAT_RM_BIAS_MONTHLY-${MM}_gfs \
+     $DATA/STAT_RM_BIAS_gfs.dat
+fi
 
-if [ -s $COMIN/gefs.$YMDM1/00/ensstat/STAT_RM_BIAS_ctl.dat ]; then
-	cp $COMIN/gefs.$YMDM1/00/ensstat/STAT_RM_BIAS_ctl.dat \
-	$DATA/STAT_RM_BIAS_ctl.dat
-elif [ -s $COMIN/gefs.$YMDM2/00/ensstat/STAT_RM_BIAS_ctl.dat ]; then
-	cp $COMIN/gefs.$YMDM2/00/ensstat/STAT_RM_BIAS_ctl.dat \
-	$DATA/STAT_RM_BIAS_ctl.dat
-elif [ -s $COMIN/gefs.$YMDM3/00/ensstat/STAT_RM_BIAS_ctl.dat ]; then
-	cp $COMIN/gefs.$YMDM3/00/ensstat/STAT_RM_BIAS_ctl.dat \
-	$DATA/STAT_RM_BIAS_ctl.dat
-elif [ -s $COMIN/gefs.$YMDM4/00/ensstat/STAT_RM_BIAS_ctl.dat ]; then
-	cp $COMIN/gefs.$YMDM4/00/ensstat/STAT_RM_BIAS_ctl.dat \
-	$DATA/STAT_RM_BIAS_ctl.dat
+if [ -s $COMINstat/gefs.$YMDM1/00/ensstat/STAT_RM_BIAS_ctl.dat ]; then
+ cp $COMINstat/gefs.$YMDM1/00/ensstat/STAT_RM_BIAS_ctl.dat \
+     $DATA/STAT_RM_BIAS_ctl.dat
+elif [ -s $COMINstat/gefs.$YMDM2/00/ensstat/STAT_RM_BIAS_ctl.dat ]; then
+ cp $COMINstat/gefs.$YMDM2/00/ensstat/STAT_RM_BIAS_ctl.dat \
+     $DATA/STAT_RM_BIAS_ctl.dat
+elif [ -s $COMINstat/gefs.$YMDM3/00/ensstat/STAT_RM_BIAS_ctl.dat ]; then
+ cp $COMINstat/gefs.$YMDM3/00/ensstat/STAT_RM_BIAS_ctl.dat \
+     $DATA/STAT_RM_BIAS_ctl.dat
+elif [ -s $COMINstat/gefs.$YMDM4/00/ensstat/STAT_RM_BIAS_ctl.dat ]; then
+ cp $COMINstat/gefs.$YMDM4/00/ensstat/STAT_RM_BIAS_ctl.dat \
+     $DATA/STAT_RM_BIAS_ctl.dat
 else
-	cp $FIXgefs/STAT_RM_BIAS_MONTHLY-${MM}_ctl \
-	$DATA/STAT_RM_BIAS_ctl.dat
-fi # [ -s $COMIN/gefs.$YMDM1/00/ensstat/STAT_RM_BIAS_ctl.dat ]
+ cp $FIXgefs/STAT_RM_BIAS_MONTHLY-${MM}_ctl \
+     $DATA/STAT_RM_BIAS_ctl.dat
+fi
 
 ###
 ### PRE-STEP:
 ### Check OBS preciptation data and today's forecast data
 ###
 echo "SEARCHING FOR OBS"
-ls -l $COMINGEST/shf.$OBSYMD/rfc24-uniq-early
-if [ -s $COMINGEST/shf.$OBSYMD/rfc24-uniq-early ]; then
-	echo " $COMINGEST/shf.$OBSYMD/rfc24-uniq-early is available "
-	echo " We need to re-format this data to usa-dlyprcp format "
-	##### ADDED BY YAN LUO, 2013-07-15##############
-	echo " Search all of the rfc24 reports for the date: " $OBSYMD
-	space=" "
-	YYO=`$NDATE -24  $CDATE | cut -c1-4`
-	MMO=`$NDATE -24  $CDATE | cut -c5-6`
-	DDO=`$NDATE -24  $CDATE | cut -c7-8`
-	if [ $MMO -lt 10 ]; then
-		MMO=`$NDATE -24  $CDATE | cut -c6-6`
-		MMO=${space}${MMO}
-	else
-		MMO=${MMO}
-	fi # [ $MMO -lt 10 ]
-	if [ $DDO -lt 10 ]; then
-		DDO=`$NDATE -24  $CDATE | cut -c8-8`
-		DDO=${space}${DDO}
-	else
-		DDO=${DDO}
-	fi # [ $DDO -lt 10 ]
-	obsdate=${YYO}${space}${MMO}${space}${DDO}${space}12
-	grep "$obsdate"  $COMINGEST/shf.$OBSYMD/rfc24-uniq-early >  $DATA/rfc24-uniq-early
-	filesize=`  cat $DATA/rfc24-uniq-early | wc -l `
-	abortatend=no
-	if [ $filesize -ne 0 -a $filesize -le 20000 ]; then
-		$USHgefs/global_ensrfmat.sh      >ensrfmat_output
-		$USHgefs/global_enspvrfy.sh      >enspvrfy_output
-	else
-		echo " ***** Observation data format/content has a problem, please check!!! *****"
-		echo " ***** Skip precipitation verify step    *****"
-		msg=" ERROR:  ***** Observation data format/content has a problem, please check!!! *****"
-		postmsg "$jlogfile" "$msg"
-		msg=" ERROR: ***** Skip precipitation verify step    *****"
-		postmsg "$jlogfile" "$msg"
-		msg=" ERROR: This job may be rerun after the input file problem is fixed"
-		postmsg "$jlogfile" "$msg"
-		abortatend=yes
-	fi # [ $filesize -ne 0 -a $filesize -le 20000 ]
-	##### END OF ADD,  2013-07-15##############
+ls -l $COMINshef/$OBSYMD.pe
+if [ -s $COMINshef/$OBSYMD.pe ]; then
+ echo " $COMINshef/$OBSYMD.pe is available "
+ echo " We need to re-format this data to get rfc24-uniq-early file "
+
+ PDYshef=$OBSYMD
+ cp -pr ${COMINshef}/${OBSYMD}.pe SHEFOUT1
+ $USHgefs/gefs_exishef.sh
+fi
+
+ls -l rfc24-uniq-early-shef
+
+if [ -s rfc24-uniq-early-shef ]; then
+ echo " rfc24-uniq-early-shef is available "
+ echo " We need to re-format this data to usa-dlyprcp format "
+ ##### ADDED BY YAN LUO, 2013-07-15##############
+ echo " Search all of the rfc24 reports for the date: " $OBSYMD
+ space=" "
+ YYO=`$NDATE -24  $CDATE | cut -c1-4`
+ MMO=`$NDATE -24  $CDATE | cut -c5-6`
+ DDO=`$NDATE -24  $CDATE | cut -c7-8`
+ if [ $MMO -lt 10 ]; then
+  MMO=`$NDATE -24  $CDATE | cut -c6-6`
+  MMO=${space}${MMO}
+ else
+  MMO=${MMO}
+ fi
+ if [ $DDO -lt 10 ]; then
+  DDO=`$NDATE -24  $CDATE | cut -c8-8`
+  DDO=${space}${DDO}
+ else
+  DDO=${DDO}
+ fi
+ obsdate=${YYO}${space}${MMO}${space}${DDO}${space}12
+ grep "$obsdate"  $DATA/rfc24-uniq-early-shef >  $DATA/rfc24-uniq-early
+ filesize=`  cat $DATA/rfc24-uniq-early | wc -l `
+ abortatend=no
+ if [ $filesize -ne 0 -a $filesize -le 20000 ]; then
+  $USHgefs/global_ensrfmat.sh      >ensrfmat_output
+  $USHgefs/global_enspvrfy.sh      >enspvrfy_output
+ else
+  echo " ***** Observation data format/content has a problem, please check!!! *****"
+  echo " ***** Skip precipitation verify step    *****"
+  msg=" ERROR:  ***** Observation data format/content has a problem, please check!!! *****"
+  postmsg "$jlogfile" "$msg"
+  msg=" ERROR: ***** Skip precipitation verify step    *****"
+  postmsg "$jlogfile" "$msg"
+  msg=" ERROR: This job may be rerun after the input file problem is fixed"
+  postmsg "$jlogfile" "$msg"
+  abortatend=yes
+ fi
+ ##### END OF ADD,  2013-07-15##############
 else
-	echo " ***** Observation data is not available *****"
-	echo " ***** Skip precipitation verify step    *****"
-fi # [ -s $COMINGEST/shf.$OBSYMD/rfc24-uniq-early ]
+ echo " ***** Observation data is not available *****"
+ echo " ***** Skip precipitation verify step    *****"
+fi
 
 if [ -s $COMIN/gefs.$YMD/00/ensstat/enspost_grb2.${cycle}.prcp ]; then
-	echo " $COMIN/gefs.$YMD/00/ensstat/enspost_grb2.${cycle}.prcp is available "
-	cp $COMIN/gefs.$YMD/00/ensstat/enspost_grb2.${cycle}.prcp $DATA/precip.${YMD}${cyc}
-	$USHgefs/global_enscvprcp.sh $DATA/precip.${YMD}${cyc} $DATA/precipt.${YMD}${cyc} $YMD
-	mv $DATA/precipt.${YMD}${cyc} $DATA/precip.${YMD}${cyc}
-	#$GBINDX $DATA/precip.${YMD}${cyc} $DATA/precipi.${YMD}${cyc}
+ echo " $COMIN/gefs.$YMD/00/ensstat/enspost_grb2.${cycle}.prcp is available "
+ cp $COMIN/gefs.$YMD/00/ensstat/enspost_grb2.${cycle}.prcp $DATA/precip.${YMD}${cyc}
+ $USHgefs/global_enscvprcp.sh precip.${YMD}${cyc} precipt.${YMD}${cyc} $YMD
+ mv precipt.${YMD}${cyc} precip.${YMD}${cyc}
+#$GBINDX $DATA/precip.${YMD}${cyc} $DATA/precipi.${YMD}${cyc}
 else
-	echo " ***** Missing today's precipitation forecast *****"
-	echo " ***** Program must be stoped here !!!!!!!!!! *****"
-	export err=8;err_chk
-fi # [ -s $COMIN/gefs.$YMD/00/ensstat/enspost_grb2.${cycle}.prcp ]
+ echo " ***** Missing today's precipitation forecast *****"
+ echo " ***** Program must be stoped here !!!!!!!!!! *****"
+ export err=8;err_chk
+fi
 
 ###
 ### STEP-ONE:
@@ -219,24 +230,22 @@ $USHgefs/global_enssrbias.sh ctl
 ### STEP-TWO:
 ### TO RUN CALIBRATION SCHEME
 ###
+cp ${FIXgefs}/box_tab.dat .
+cat <<namEOF >input_cqpf
+&namin
+cindx='box_tab.dat',
+cpgrb='precip.$YMDH',
+clmrf='STAT_RM_BIAS_gfs.$YMD',
+clctl='STAT_RM_BIAS_ctl.$YMD',
+copts='precip_bf.$YMDH.grib2',
+coptm='precip_bf_pqpf.$YMDH.grib2',
+icyc=$cyc,
+/
+namEOF
 
-cat <<-namEOF >input_cqpf
-	&namin
-	cindx='${FIXgefs}/box_tab.dat',
-	cpgrb='$DATA/precip.$YMDH',
-	clmrf='$DATA/STAT_RM_BIAS_gfs.$YMD',
-	clctl='$DATA/STAT_RM_BIAS_ctl.$YMD',
-	copts='precip_bf.$YMDH.grib2',
-	coptm='precip_bf_pqpf.$YMDH.grib2',
-	icyc=$cyc,
-	/
-	namEOF
-
-if [ -s precip_bf_grads.$YMDH.grib2 ]; then 
-	rm precip_bf_grads.$YMDH.grib2
-fi
-if [ -s precip_bf.$YMDH.grib2 ]; then
-	rm precip_bf.$YMDH.grib2
+if [ -s precip_bf_grads.$YMDH.grib2 ]; then rm precip_bf_grads.$YMDH.grib2; fi
+if [ -s precip_bf.$YMDH.grib2 ]; then  
+ rm precip_bf.$YMDH.grib2
 fi
 
 ###
@@ -268,39 +277,43 @@ $WGRIB precip_bf_pqpf.$YMDH -s > precip_bf_pqpfi.$YMDH
 #$WGRIB2 precip_bf.$YMDH.grib2 -s >precip_bf.$YMDH.grib2.idx
 #$WGRIB2 precip_bf_pqpf.$YMDH.grib2 -s > precip_bf_pqpf.$YMDH.grib2.idx
 
-if [ "$SENDCOM" = "YES" ]; then
-	$GRB2INDEX precip_bf.$YMDH.grib2      precip_bf.$YMDH.grib2.idx
-	$GRB2INDEX precip_bf_pqpf.$YMDH.grib2 precip_bf_pqpf.$YMDH.grib2.idx
-	#  $GBINDX precip_bf.$YMDH      precip_bfi.$YMDH
-	#  $GBINDX precip_bf_pqpf.$YMDH precip_bf_pqpfi.$YMDH
-	cp precip_bf.$YMDH           $COMOUT/enspost.${cycle}.prcp_24hbc
-	cp precip_bfi.$YMDH          $COMOUT/enspost.${cycle}.prcpi_24hbc
-	cp precip_bf_pqpf.$YMDH      $COMOUT/ensstat.${cycle}.pqpf_24hbc
-	cp precip_bf_pqpfi.$YMDH     $COMOUT/ensstat.${cycle}.pqpfi_24hbc
+if [ "$SENDCOM" = "YES" ]
+then
 
-	cp precip_bf_pqpf.$YMDH.grib2 $COMOUT/ensstat.${cycle}.pqpf_24hbc.grib2
-	cp precip_bf_pqpf.$YMDH.grib2.idx $COMOUT/ensstat.${cycle}.pqpf_24hbc.grib2.idx
-	cp precip_bf.$YMDH.grib2 $COMOUT/enspost.${cycle}.prcp_24hbc.grib2
-	cp precip_bf.$YMDH.grib2.idx $COMOUT/enspost.${cycle}.prcp_24hbc.grib2.idx
+   $GRB2INDEX precip_bf.$YMDH.grib2      precip_bf.$YMDH.grib2.idx
+   $GRB2INDEX precip_bf_pqpf.$YMDH.grib2 precip_bf_pqpf.$YMDH.grib2.idx
+#  $GBINDX precip_bf.$YMDH      precip_bfi.$YMDH
+#  $GBINDX precip_bf_pqpf.$YMDH precip_bf_pqpfi.$YMDH
+   cp precip_bf.$YMDH           $COMOUT/enspost.${cycle}.prcp_24hbc
+   cp precip_bfi.$YMDH          $COMOUT/enspost.${cycle}.prcpi_24hbc
+   cp precip_bf_pqpf.$YMDH      $COMOUT/ensstat.${cycle}.pqpf_24hbc
+   cp precip_bf_pqpfi.$YMDH     $COMOUT/ensstat.${cycle}.pqpfi_24hbc
 
-	### save verification results for next calibration
-	cp STAT_RM_BIAS_gfs.$YMD     $COMOUT/STAT_RM_BIAS_gfs.dat
-	cp STAT_RM_BIAS_ctl.$YMD     $COMOUT/STAT_RM_BIAS_ctl.dat
-	cp rain_gfs.$YMDM1           $COMOUT/rain_vrfy_gfs.dat
-	cp rain_ctl.$YMDM1           $COMOUT/rain_vrfy_ctl.dat
+   cp precip_bf_pqpf.$YMDH.grib2 $COMOUT/ensstat.${cycle}.pqpf_24hbc.grib2
+   cp precip_bf_pqpf.$YMDH.grib2.idx $COMOUT/ensstat.${cycle}.pqpf_24hbc.grib2.idx
+   cp precip_bf.$YMDH.grib2 $COMOUT/enspost.${cycle}.prcp_24hbc.grib2
+   cp precip_bf.$YMDH.grib2.idx $COMOUT/enspost.${cycle}.prcp_24hbc.grib2.idx
 
-	if [ "$SENDDBN" = "YES" ]; then
-		$DBNROOT/bin/dbn_alert MODEL ENS_POST_GB2 $job $COMOUT/enspost.${cycle}.prcp_24hbc.grib2
-		$DBNROOT/bin/dbn_alert MODEL ENS_POST_GB2 $job $COMOUT/ensstat.${cycle}.pqpf_24hbc.grib2
-		$DBNROOT/bin/dbn_alert MODEL ENS_POST_GB2_WIDX $job $COMOUT/ensstat.${cycle}.pqpf_24hbc.grib2.idx
-		$DBNROOT/bin/dbn_alert MODEL ENS_POST_GB2_WIDX $job $COMOUT/enspost.${cycle}.prcp_24hbc.grib2.idx
-	fi # [ "$SENDDBN" = "YES" ]
-fi # [ "$SENDCOM" = "YES" ]
+   ### save verification results for next calibration
+   cp STAT_RM_BIAS_gfs.$YMD     $COMOUT/STAT_RM_BIAS_gfs.dat
+   cp STAT_RM_BIAS_ctl.$YMD     $COMOUT/STAT_RM_BIAS_ctl.dat
+   cp rain_gfs.$YMDM1           $COMOUT/rain_vrfy_gfs.dat
+   cp rain_ctl.$YMDM1           $COMOUT/rain_vrfy_ctl.dat
+
+   if [ "$SENDDBN" = "YES" ]
+   then
+      $DBNROOT/bin/dbn_alert MODEL ENS_POST_GB2 $job $COMOUT/enspost.${cycle}.prcp_24hbc.grib2
+      $DBNROOT/bin/dbn_alert MODEL ENS_POST_GB2 $job $COMOUT/ensstat.${cycle}.pqpf_24hbc.grib2
+      $DBNROOT/bin/dbn_alert MODEL ENS_POST_GB2_WIDX $job $COMOUT/ensstat.${cycle}.pqpf_24hbc.grib2.idx
+      $DBNROOT/bin/dbn_alert MODEL ENS_POST_GB2_WIDX $job $COMOUT/enspost.${cycle}.prcp_24hbc.grib2.idx
+   fi
+
+fi
 if [[ $abortatend = yes ]]; then
-	export pgm=cqpf
-	export err=1
-	err_chk
-fi # [[ $abortatend = yes ]]
+  export pgm=cqpf
+  export err=1
+  err_chk
+fi
 
 #####################################################################
 # GOOD RUN

@@ -52,7 +52,7 @@ export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
 
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 export USHgefs=${USHgefs:-$HOMEgefs/ush}
-export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 export REDOUT='1>>'
@@ -131,6 +131,7 @@ case $FORECAST_SEGMENT in
 	lr)
 		start_hour=$((${fhmaxh}+1))
 		end_hour=${fhmax}
+		PRDGEN_STREAMS=$PRDGEN_STREAMS_LR
 		;;
 	*)
 		start_hour=0

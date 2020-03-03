@@ -1,25 +1,34 @@
 #!/bin/ksh
-#
 
-# EXPORT list here
 set -x
-export NODES=5
-
 ulimit -s unlimited
 ulimit -a
 
-export KMP_AFFINITY=disabled
+# module_ver.h
+. $SOURCEDIR/versions/gefs_wcoss_dell_p3.ver
 
-export OMP_NUM_THREADS=6
+# Load modules
+. /usrx/local/prod/lmod/lmod/init/ksh
+module list
+module purge
 
-# export for development runs only begin
-# export envir=${envir:-dev}
-# export RUN_ENVIR=${RUN_ENVIR:-dev}
+module load EnvVars/$EnvVars_ver
+module load ips/$ips_ver
+module load impi/$impi_ver
+module load prod_util/$prod_util_ver
+module load prod_envir/$prod_envir_ver
 
-export FORECAST_SEGMENT=hr
+module load lsf/$lsf_ver
 
-# export gefsmpexec_mpmd="  mpirun -n $total_tasks cfp mpmd_cmdfile"
-# export gefsmpexec=mpirun 
+module load CFP/$CFP_ver
+export USE_CFP=YES
+
+module list
+
+# For Development
+. $GEFS_ROCOTO/bin/wcoss_dell_p3/common.sh
+
+# Export List
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_ENSAVG_NEMSIO

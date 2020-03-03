@@ -49,12 +49,16 @@ export pgmerr=errfile
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
+
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
+export EXECgfs=$HOMEgfs/exec
 
 ##############################################
 # Define COM directories
 ##############################################
 export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/$cyc}
-export COMINcfs=${COMINcfs:-$COMROOTp1/cfs/prod/cfs/cfs.}
+export COMINcfs=${COMINcfs:-$(compath.py cfs/prod)/cfs/cfs.}
 
 ##############################################
 # Define COM OUT directories

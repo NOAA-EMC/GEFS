@@ -95,6 +95,7 @@ if [ $warm_start = ".false." ]; then
 		cp -pr $FILEINPATH/p$member/sfc*  $FILEOUTPATH/p$member/.
 	done
 
+    if [ $npert -gt 0 ]; then
         rm -rf poescript*
 
         (( itile = 1 ))
@@ -126,6 +127,7 @@ if [ $warm_start = ".false." ]; then
         
         err=$?
         echo $err
+    fi
 
 fi # if warm_start
 

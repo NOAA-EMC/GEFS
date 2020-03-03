@@ -1,0 +1,53 @@
+#BSUB -J %E%dvgefs_rtma_prob_avgspr_ak_%CYC%
+#BSUB -o /%COM%/output/%ENVIR%/today/dvgefs_rtma_prob_avgspr_ak_%CYC%.o%J
+#BSUB -e  /%COM%/output/%ENVIR%/today/dvgefs_rtma_prob_avgspr_ak_%CYC%.o%J
+#BSUB -cwd /tmpnwprd
+#BSUB -q %QUEUE%
+#BSUB -W  00:40
+#BSUB -L /bin/sh
+#BSUB -R span[ptile=6]
+#BSUB -n 6
+#BSUB -x    # not_shared
+#BSUB -P %PROJ%
+#BSUB -a poe
+
+%include <head.h>
+%include <envir-p2.h>
+
+
+# EXPORT list here
+set -x
+
+
+export cyc=%CYC%
+export job=dvgefs_rtma_prob_avgspr_ak_${cyc}
+
+
+
+# CALL executable job script here
+VERSION_FILE=$NWROOT/versions/naefs.ver
+if [ -f $VERSION_FILE ]; then
+  . $VERSION_FILE
+else
+  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+  ecflow_client --abort
+  exit
+fi
+
+$NWROOT/naefs.${naefs_ver}/jobs/JDVGEFS_RTMA_PROB_AVGSPR_ALASKA
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose: Generate downscaling vectors between RTMA and NCEP operational
+#          analysis.
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end

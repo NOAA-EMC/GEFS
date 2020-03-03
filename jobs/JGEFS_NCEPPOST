@@ -5,6 +5,8 @@ echo `date` $0 `date -u` begin
 set -xa
 export PS4='$SECONDS + '
 date
+export RERUN=${RERUN:-NO}
+
 export MODEL_OUT_FORM=binarynemsiompiio
 
 export gefsmpexec=${gefsmpexec:-mpirun}
@@ -78,23 +80,25 @@ echo current setting RERUN=$RERUN
 
 # Specify Execution Areas
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
-export HOMEpost=${HOMEpost:-${NWROOT}/ncep_post.${post_ver}}
-export HOMEgsm=${HOMEgsm:-${NWROOT}/gsm.${gsm_ver}}
 
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
+
+export HOMEpost=${HOMEpost:-${HOMEgfs}}
 export USHpost=${HOMEpost}/ush
 export EXECpost=${HOMEpost}/exec
 export FIXpost=${HOMEpost}/fix
-export FIXglobal=${HOMEgsm}/fix
-export FIXgfs=${HOMEgsm}/fix
+export FIXglobal=${HOMEgfs}/fix
+export FIXgfs=${HOMEgfs}/fix
 #export PARMpost=${HOMEpost}/parm
 export PARMpost=${HOMEpost}/parm/post   # for the flat structure
 # PARMPOST (instead of PARMpost) is used in the post ush script
 export PARMPOST=${PARMpost}
+
 # GRBINDEX2 (instead of GRB2INDEX) is used in the post ush script
 export GRBINDEX2=${GRB2INDEX}
 
-export USHgsm=$HOMEgsm/ush
-export EXECgsm=$HOMEgsm/exec
+export USHgfs=$HOMEgfs/ush
+export EXECgfs=$HOMEgfs/exec
 
 export USHgefs=${USHgefs:-${HOMEgefs}/ush}
 export PARMgefs=$HOMEgefs/parm
@@ -104,15 +108,15 @@ export PARMgefs=$HOMEgefs/parm
 ###############################################################
 export CHGRESTHREAD=1
 export OVERPARMEXEC=                        #Optional input in the post ush script
-export CHGRESSH=$USHgsm/global_chgres.sh
-export CHGRESEXEC=$EXECgsm/global_chgres
+export CHGRESSH=$USHgfs/global_chgres.sh
+export CHGRESEXEC=$EXECgfs/global_chgres
 
 #export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
 export POSTGPSH=${POSTGPSH:-$USHpost/gfs_nceppost.sh}
 # RLW 20150622 test new version of post executable
 # export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
 export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/gfs_ncep_post}
-export nemsioget=$EXECgsm/nemsio_get
+export nemsioget=$EXECgfs/nemsio_get
 export SIGHDR=$nemsioget
 #echo in $0: POSTGPSH=$POSTGPSH
 #echo in $0: POSTGPEXEC=$POSTGPEXEC
@@ -209,8 +213,8 @@ export IGEN_FCST=107
 if [ $GRIBVERSION = grib2 ]; then
     export CAT_FLX_TO_PGB=${CAT_FLX_TO_PGB:-YES}
     export OUTTYP=${OUTTYP:-3}
-    export POSTAVBLFLD=$HOMEpost/parm/post_avblflds.xml
-    export POSTGRB2TBL=${POSTGRB2TBL:-/nwprod/lib/sorc/g2tmpl/params_grib2_tbl_new}
+    export POSTAVBLFLD=$PARMpost/post_avblflds.xml
+    export POSTGRB2TBL=${POSTGRB2TBL:-${G2TMPL_SRC}/params_grib2_tbl_new}
     export CTLFILEGFSANL=${CTLFILEGFSANL:-$PARMpost/postcntrl_gfs.xml}
     export CTLFILEGFSF00=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
     export CTLFILEGFS=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml}
@@ -269,9 +273,9 @@ case $FORECAST_SEGMENT in
         export FHOUR=$fhmaxh;;
     (lr)
         if (( FHMAX_HF > fhmaxh )); then
-            export SHOUR=$(( $fhmaxh + $FHOUT_HF ))
+            export SHOUR=$(( $fhmaxh + $FHOUTHF ))
         else
-            export SHOUR=$(( $fhmaxh + $FHOUT ))
+            export SHOUR=$(( $fhmaxh + $FHOUTLF ))
         fi
         export FHOUR=$fhmax;;
 esac

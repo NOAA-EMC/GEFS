@@ -1,30 +1,36 @@
 #!/bin/ksh
-#
 
-# EXPORT list here
 set -x
-export NODES=7
-
 ulimit -s unlimited
 ulimit -a
 
-export KMP_AFFINITY=disabled
+# module_ver.h
+. $SOURCEDIR/versions/gefs_wcoss_dell_p3.ver
 
-# export total_tasks=6
-export OMP_NUM_THREADS=7
-# export taskspernode=4
+# Load modules
+. /usrx/local/prod/lmod/lmod/init/ksh
+module list
+module purge
 
-# export for development runs only begin
-# export envir=${envir:-dev}
-# export RUN_ENVIR=${RUN_ENVIR:-dev}
+module load EnvVars/$EnvVars_ver
+module load ips/$ips_ver
+module load impi/$impi_ver
+module load prod_util/$prod_util_ver
+module load prod_envir/$prod_envir_ver
 
-# export gefsmpexec_mpmd="  mpirun -n $total_tasks cfp mpmd_cmdfile"
-# export APRUNC="mpirun"
-# export APRUN_RECENT="mpirun -n $total_tasks"
-# export APRUN_CHGRES="mpirun -n 1"
+module load lsf/$lsf_ver
+module load python/$python_ver
 
-# export aprun_gec00="mpirun -n 1 "
-export NTHREADS_SIGCHGRS=6
+module load CFP/$CFP_ver
+export USE_CFP=YES
+
+module list
+
+# For Development
+. $GEFS_ROCOTO/bin/wcoss_dell_p3/common.sh
+
+# Export List
+#export NTHREADS_SIGCHGRS=${GEFS_TPP:-6}
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_INIT_RECENTER

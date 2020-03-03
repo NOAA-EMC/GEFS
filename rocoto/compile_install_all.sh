@@ -1,10 +1,10 @@
 #!/bin/bash
-set -eu
+set -eu #x
 
 sWS=`pwd`
 echo $sWS
 
-while getopts c:a:r:m:f:b: option
+while getopts c:a:r:m:f:b:e:s:l:o: option
 do
     case "${option}"
     in
@@ -14,6 +14,10 @@ do
         m) machine=${OPTARG};;
         f) userConfigFile=${OPTARG};;
         b) AddCrontabToMyCrontab=${OPTARG};;
+        e) RunEnvir=${OPTARG};;
+        s) Structure=${OPTARG};;
+        l) Link=${OPTARG};;
+        o) Operation=${OPTARG};;
     esac
 done
 
@@ -24,12 +28,14 @@ machine=${machine:-nomachine}
 userConfigFile=${userConfigFile:-user_full.conf}
 AddCrontabToMyCrontab=${AddCrontabToMyCrontab:-no}
 DeleteCrontabFromMyCrontab=${DeleteCrontabFromMyCrontab:-no}
+RunEnvir=${RunEnvir:-emc}
+Structure=${Structure:-no} # dev (use HOMEDIR to link), prod (clone global-workflow from vlab), no (use the original structure)
+Link=${Link:-no}
+Operation=${Operation:-no} # ecflow, rocoto, lsf
 
 if [ $machine = "nomachine" ]; then
     if [ -d /scratch1/NCEPDEV ]; then
         machine=hera
-    elif [ -d /scratch3/NCEPDEV ]; then
-        machine=theia
     elif [[ -d /gpfs/hps3 && -e /etc/SuSE-release ]]; then # Luna or Surge
         machine=cray
     elif [[ -d /dcom && -d /hwrf ]] ; then # Tide or Gyre
@@ -47,25 +53,62 @@ echo $CleanAll
 echo $RunRocoto
 echo $machine
 echo $userConfigFile
+echo $RunEnvir
+echo ${Structure}
+echo ${Link}
+
+if [ $CompileCode = "yes" ]; then
+    Link=yes
+fi
 
 
 if [ $CompileCode = "yes" ]; then
     cd $sWS/../sorc
 
+    if [[ $Structure == "dev" ]]; then
+        echo "...working on it ..."
+        if [[ $machine == "wcoss_dell_p3" ]]; then
+            sHeader='/gpfs/dell'
+        elif [[ $machine == "cray" ]]; then
+            sHeader='/gpfs/hps'
+        elif [[ $machine == "hera" ]]; then
+            sHeader='/scratch2/NCEPDEV/ensemble'
+        fi
+        sHOMEDIR=`grep 'export HOMEDIR=${HOMEDIR:-'${sHeader} -r ${sWS}/parm/setbase | sed 's/export HOMEDIR=${HOMEDIR:-//g'| sed 's/}//g'`
+        echo $sHOMEDIR
+
+        if [[ -L global-workflow.fd ]] ; then
+            rm global-workflow.fd
+        elif [[ -d global-workflow.fd ]] ; then
+            rm -rf global-workflow.fd
+        fi
+        ln -sf $sHOMEDIR global-workflow.fd
+
+    elif [[ $Structure == "prod" ]]; then
+        # Checkout the global-workflow if needed
+        if [[ -d global-workflow.fd ]] ; then
+            rm -rf global-workflow.fd
+        fi
+        ./checkout.sh
+    fi
+
     ## Build the code and install
     ./build_all.sh
 
+fi
+
+
+# for Link
+if [ $Link = "yes" ]; then
     cd $sWS/../sorc
-    if [ $machine = "theia" ]; then
-        ./link_gefs.sh -e emc -m theia
-    elif [ $machine = "hera" ]; then
+    if [ $machine = "hera" ]; then
         ./link_gefs.sh -e emc -m hera
     elif [ $machine = "cray" ]; then
-        ./link_gefs.sh -e emc -m cray
+        ./link_gefs.sh -e $RunEnvir -m cray
     elif [ $machine = "wcoss_ibm" ]; then
-        ./link_gefs.sh -e emc -m ibm
+        ./link_gefs.sh -e $RunEnvir -m ibm
     elif [ $machine = "wcoss_dell_p3" ]; then
-        ./link_gefs.sh -e emc -m dell
+        ./link_gefs.sh -e $RunEnvir -m dell
     fi
 fi
 
@@ -81,7 +124,13 @@ if [ $CleanAll = "yes" ]; then
 
     rm -rf logs
 
-    for dir in gefs_vortex_separate.fd gefs_vortex_combine.fd global_sigzvd.fd  global_ensadd.fd  global_enspqpf.fd  gefs_ensstat.fd  global_ensppf.fd ; do
+    if [[ -L global-workflow.fd ]] ; then
+        rm global-workflow.fd
+    elif [[ -d global-workflow.fd ]] ; then
+        rm -rf global-workflow.fd
+    fi
+    
+    for dir in global_ensadd.fd  global_enspqpf.fd  gefs_ensstat.fd  global_ensppf.fd ; do
         cd $dir
         make clean
         cd ..
@@ -93,7 +142,7 @@ if [ $CleanAll = "yes" ]; then
         cd ..
     done
 
-    for dir in ../util/sorc/gettrk.fd ../util/sorc/overenstr.grib.fd ../util/sorc/getnsttf.fd; do
+    for dir in ../util/sorc/overenstr.grib.fd; do
         cd $dir
         make clean
         cd ../../../sorc
@@ -108,12 +157,20 @@ if [ $CleanAll = "yes" ]; then
     cd ${sWS}/../sorc
     rm -rf ../exec
     rm -rf ../util/exec
-    rm -f ../fix
+    rm -rf ../fix/fix_*
+
+    # Clean the new links
+    rm -rf global-workflow.fd
+    rm -rf ../parm/parm_fv3diag
+    rm -rf ../parm/post
+    rm -rf ../parm/product
+    rm ../ush/gfs_nceppost.sh
+    rm ../ush/global_chgres.sh
+    rm ../ush/global_chgres_driver.sh
 
 fi # for CleanAll
 
 # for rocoto
-
 if [ $RunRocoto = "yes" ]; then
     cd $sWS
     if [ $machine = "hera" ]; then
@@ -122,10 +179,6 @@ if [ $RunRocoto = "yes" ]; then
         module load contrib
         module load anaconda/anaconda3-5.3.1
  
-    elif [ $machine = "theia" ]; then
-        module load rocoto/1.3.1
-        module load intelpython/3.6.1.0
-
     elif [ $machine = "wcoss_ibm" ]; then
         module load ibmpe ics lsf
         module load python/3.6.3
@@ -147,8 +200,8 @@ if [ $RunRocoto = "yes" ]; then
         module load rocoto/complete
         module load python/3.6.3       
     fi
-    ./py/run_to_get_all.py  $userConfigFile
-    
+    #./py/run_to_get_all.py  $userConfigFile
+    ./py/run_pyGEFS.py -r yes -f $userConfigFile
     echo "Generated xml and/or ent and updated bin file!"
 fi # For RunRocoto
 
@@ -164,18 +217,6 @@ if [ $AddCrontabToMyCrontab = "yes" ]; then
             touch $HOME/cron/mycrontab
         fi
     
-        py/add_crontab.py
-        crontab $HOME/cron/mycrontab
-        echo "Added crontab to $HOME/cron/mycrontab!"
-
-    elif [ $machine = "theia" ]; then
-        if [ -f $HOME/cron/mycrontab ]; then
-            echo "Adding crontab to $HOME/cron/mycrontab!" 
-        else
-            mkdir $HOME/cron
-            touch $HOME/cron/mycrontab
-        fi
-   
         py/add_crontab.py
         crontab $HOME/cron/mycrontab
         echo "Added crontab to $HOME/cron/mycrontab!"

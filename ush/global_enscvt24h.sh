@@ -15,27 +15,27 @@ IYMDHM12=`$NDATE -12 $IYMDH `
 IYMDM1=`$NDATE -24 $IYMDH | cut -c1-8`
 
 if [ -s $COMIN/gefs.$IYMD/00/ensstat/enspost_grb2.t00z.prcp ]; then
-	cat $COMIN/gefs.$IYMD/00/ensstat/enspost_grb2.t00z.prcp    >precip.$IYMDH
-	$USHgefs/global_enscvprcp.sh precip.$IYMDH precipt.$IYMDH $IYMDH
-	mv precipt.$IYMDH precip.$IYMDH
+ cat $COMIN/gefs.$IYMD/00/ensstat/enspost_grb2.t00z.prcp    >precip.$IYMDH
+ $USHgefs/global_enscvprcp.sh precip.$IYMDH precipt.$IYMDH $IYMDH
+ mv precipt.$IYMDH precip.$IYMDH
 else
-	echo " No either $COMIN/gefs.$IYMD/00/ensstat/enspost.t00z.prcp"
-	echo " Missing preciptation data detected, quit "
-	#export err=8;err_chk
-fi # [ -s $COMIN/gefs.$IYMD/00/ensstat/enspost_grb2.t00z.prcp ]
+ echo " No either $COMIN/gefs.$IYMD/00/ensstat/enspost.t00z.prcp"
+ echo " Missing preciptation data detected, quit "
+ #export err=8;err_chk
+fi
 
 echo "         ######################################### "
 echo "         **** We start to make 24 hour acc prcip** "
 echo "         ****        Please  wait !!!!!!!      *** "
 echo "         ######################################### "
 
-cat <<-namEOF >input_c24h_$IYMDH
-	&namin
-	cpgb='precip.$IYMDH',
-	pgb71='qpf_gfs.$IYMDH',
-	pgb72='qpf_ctl.$IYMDH',
-	/
-	namEOF
+cat <<namEOF >input_c24h_$IYMDH
+&namin
+cpgb='precip.$IYMDH',
+pgb71='qpf_gfs.$IYMDH',
+pgb72='qpf_ctl.$IYMDH',
+/
+namEOF
 
 export pgm=global_enscvt24h
 . prep_step

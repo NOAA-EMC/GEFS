@@ -1,13 +1,35 @@
 #!/bin/ksh
 
-# EXPORT list here
 set -x
-export IOBUF_PARAMS=*pgrb2*:size=64M:count=4:verbose,*enspost_grb2*:size=64M:count=4:verbose,*ensstat_grb2*:size=64M:count=4:verbose,*pq?f*:size=64M:count=4:verbose
-# export FORT_BUFFERED=TRUE
+ulimit -s unlimited
+ulimit -a
 
-# export for development runs only begin
-# export envir=${envir:-dev}
-# export RUN_ENVIR=${RUN_ENVIR:-dev}
+# module_ver.h
+. $SOURCEDIR/versions/gefs_wcoss_dell_p3.ver
+
+# Load modules
+. /usrx/local/prod/lmod/lmod/init/ksh
+module list
+module purge
+
+module load EnvVars/$EnvVars_ver
+module load ips/$ips_ver
+module load impi/$impi_ver
+module load prod_util/$prod_util_ver
+module load prod_envir/$prod_envir_ver
+module load grib_util/$grib_util_ver
+
+module load lsf/$lsf_ver
+
+module load CFP/$CFP_ver
+export USE_CFP=YES
+
+module list
+
+# For Development
+. $GEFS_ROCOTO/bin/wcoss_dell_p3/common.sh
+
+# Export List
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_ENSPOST

@@ -1,21 +1,27 @@
 #!/bin/ksh
-#
 
-# EXPORT list here
 set -x
-
 ulimit -s unlimited
 ulimit -a
 
-export OMP_NUM_THREADS=6
+# module_ver.h
+. $SOURCEDIR/versions/gefs_wcoss_dell_p3.ver
 
-# export for development runs only begin
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
+# Load modules
+. /usrx/local/prod/lmod/lmod/init/ksh
+module list
+module purge
 
-. $GEFS_ROCOTO/parm/setbase
-. $GEFS_ROCOTO/parm/gefs_config
-. $GEFS_ROCOTO/parm/gefs_dev.parm
+module load ips/$ips_ver
+module load grib_util/$grib_util_ver
+module load prod_util/$prod_util_ver
+module load prod_envir/$prod_envir_ver
+
+module list
+
+# For Development
+. $GEFS_ROCOTO/bin/wcoss_dell_p3/common.sh
+
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_GETCFSSST

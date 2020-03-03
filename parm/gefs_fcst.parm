@@ -24,7 +24,8 @@ export WRITE_NEMSIOFILE=.true.
 export WRITE_NEMSIOFLIP=.true.
 export LONB=$LONB
 export LATB=$LATB
-export restart_interval=${fhrestart:-420}
+export restart_interval=${fhrestart:-48}
+export other_restart_time=${other_restart_time:-6}
 export NSOUT=0
 
 # CPU geopmetry
@@ -58,7 +59,7 @@ fi
 # add two tiered SST options
 export sst2tier=${sst2tier:-YES}
 if [[ $sst2tier = YES ]]; then
-	export nstf_name="2,0,5,0,0"
+	export nstf_name="2,0,0,0,0"
 	export FTSFS=0
 	export FNTSFA=$SSTDIR/TMPsfc.$PDY$cyc.24hr.anom.grb
 fi
@@ -131,7 +132,7 @@ export cal_pre=.false.
 export REDRAG=.true.
 export DSPHEAT=.true.
 export HYBEDMF=.true.
-export lheatstrg=.true.
+export lheatstrg=.false.
 
 export random_clds=.false.
 export trans_trac=.true.
@@ -149,6 +150,8 @@ export nst_anl=${nst_anl:-".true."}
 export nstf_name=${nstf_name:-"2,0,0,0,0"}
 export psautco=${psautco:-"0.0008,0.0005"}
 export prautco=${prautco:-"0.00015,0.00015"}
+export lgfdlmprad=.true.
+export effr_in=.true.
 
 #FV3 imp_microphysics
 export dnats=0

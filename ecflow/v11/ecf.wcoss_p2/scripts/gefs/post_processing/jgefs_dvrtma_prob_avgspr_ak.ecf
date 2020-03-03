@@ -1,0 +1,52 @@
+#BSUB -J %E%gefs_dvrtma_prob_avgspr_ak_%CYC%
+#BSUB -o /%COM%/output/%ENVIR%/today/gefs_dvrtma_prob_avgspr_ak_%CYC%.o%J
+#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_dvrtma_prob_avgspr_ak_%CYC%.o%J
+#BSUB -cwd /tmpnwprd
+#BSUB -q %QUEUE%
+#BSUB -W  00:40
+#BSUB -L /bin/sh
+#BSUB -R span[ptile=8]
+#BSUB -n 64
+#BSUB -x    # not_shared
+#BSUB -P %PROJ%
+#BSUB -a poe
+
+%include <head.h>
+%include <envir-p2.h>
+
+
+# EXPORT list here
+set -x
+
+export cyc=%CYC%
+
+
+# CALL executable job script here
+# versions file for naefs sets $gefs_ver and $code_ver
+VERSION_FILE=$NWROOT/versions/naefs.ver
+if [ -f $VERSION_FILE ]; then
+   . $VERSION_FILE
+else
+   ecflow_client --msg="***JOB ${SMSNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+   ecflow_client --abort
+   exit
+fi
+
+$NWROOT/naefs.${naefs_ver}/jobs/JNAEFS_GEFS_DVRTMA_PROB_AVGSPR_AK
+
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose: Generate downscaling vectors between RTMA and NCEP operational
+#          analysis for AK.
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end
