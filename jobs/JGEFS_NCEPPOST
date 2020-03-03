@@ -5,6 +5,8 @@ echo `date` $0 `date -u` begin
 set -xa
 export PS4='$SECONDS + '
 date
+export RERUN=${RERUN:-NO}
+
 export MODEL_OUT_FORM=binarynemsiompiio
 
 export gefsmpexec=${gefsmpexec:-mpirun}

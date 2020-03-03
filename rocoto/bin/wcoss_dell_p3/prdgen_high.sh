@@ -14,7 +14,7 @@ ulimit -a
 
 # export gefsmpexec_mpmd="  mpirun -n $total_tasks cfp mpmd_cmdfile"
 
-export RERUN=NO
+#export RERUN=NO
 
 # CALL executable job script here
 . $SOURCEDIR/jobs/JGEFS_PRDGEN

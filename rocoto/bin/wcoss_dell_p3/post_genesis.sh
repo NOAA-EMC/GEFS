@@ -25,7 +25,7 @@ ulimit -a
 
 #export OMP_NUM_THREADS=${GEFS_TPP:-1}
 
-export FORECAST_SEGMENT=lr
+#export FORECAST_SEGMENT=lr
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_POST_GENESIS

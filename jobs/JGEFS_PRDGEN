@@ -6,6 +6,8 @@ set -xa
 export PS4='$SECONDS + '
 date
 
+export RERUN=${RERUN:-NO}
+
 export gefsmpexec=${gefsmpexec:-mpirun}
 export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
 export CNVGRIB=$CNVGRIB

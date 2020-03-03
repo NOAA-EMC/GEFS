@@ -1,0 +1,2 @@
+from /gpfs/gp1/nco/ops/nwprod/ecflow/defs/prod??.def
+The above defs contain the definition for the entire cycle production suite. if you search for "family gefs" then you'll see the definition specifically for gefs.

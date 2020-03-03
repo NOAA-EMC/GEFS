@@ -1,0 +1,53 @@
+#BSUB -J %E%dvgefs_rtma_prob_avgspr_gempak_%CYC%
+#BSUB -o /%COM%/output/%ENVIR%/today/dvgefs_rtma_prob_avgspr_gempak_%CYC%.o%J
+#BSUB -e  /%COM%/output/%ENVIR%/today/dvgefs_rtma_prob_avgspr_gempak_%CYC%.o%J
+#BSUB -cwd /tmpnwprd
+#BSUB -q %QUEUESERV%
+#BSUB -W 01:00
+#BSUB -L /bin/sh
+#BSUB -P %PROJ%
+#BSUB -R rusage[mem=500]
+#BSUB -R affinity[core]
+
+%include <head.h>
+%include <envir-p2.h>
+
+
+# EXPORT list here
+set -x
+
+
+export cyc=%CYC%
+export job=dvgefs_rtma_prob_avgspr_gempak_${cyc}
+
+
+
+# CALL executable job script here
+VERSION_FILE=$NWROOT/versions/gefs.ver
+if [ -f $VERSION_FILE ]; then
+  . $VERSION_FILE
+else
+  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+  ecflow_client --abort
+  exit
+fi
+
+$NWROOT/gefs.${gefs_ver}/jobs/JDVGEFS_RTMA_PROB_AVGSPR_GEMPAK
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose: Create gempak files for the gefs rtma downscaled ensemble
+#          probability forecast, average, and spread.
+#
+#
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end
