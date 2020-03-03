@@ -6,6 +6,9 @@ cwd=`pwd`
 
 progname=overenstr.grib
 
+if [ -f ../modulefiles/gefs/gefs_$target.ver ]; then
+    source ../modulefiles/gefs/gefs_$target.ver
+fi
 source ../modulefiles/gefs/${progname}.$target             > /dev/null 2>&1
 
 cd ../util/sorc/

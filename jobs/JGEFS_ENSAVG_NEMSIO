@@ -10,9 +10,9 @@ export FORECAST_SEGMENT=${FORECAST_SEGMENT:-hr}
 
 export MODEL_OUT_FORM=binarynemsiompiio
 
-export gefsmpexec=${gefsmpexec:-mpirun}
-
-export APRUN=${gefsmpexec:-mpirun}
+export total_tasks=${total_tasks:-30}
+export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
+export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
 
 export GRIBVERSION=${GRIBVERSION:-grib2}
 
@@ -57,12 +57,13 @@ export pgmerr=errfile
 ####################################
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
-# VERBOSE  - Specify Verbose Output in global_postgp.sh
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
 ####################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDDBN=${SENDDBN:-YES}
 export SENDECF=${SENDECF:-YES}
-export VERBOSE=${VERBOSE:-NO}
+export VERBOSE=${VERBOSE:-YES}
 
 ####################################
 # Define RERUN Parameter: default to RESTART if not previously set
@@ -90,6 +91,8 @@ export FIXglobal=${HOMEgfs}/fix
 export FIXgfs=${HOMEgfs}/fix
 export USHgfs=$HOMEgfs/ush
 export EXECgfs=$HOMEgfs/exec
+
+export HOMEgsi=${HOMEgsi:-$HOMEgfs}
 
 #export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/gfs_ncep_post}
 export nemsioget=$EXECgfs/nemsio_get

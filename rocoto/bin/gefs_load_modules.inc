@@ -2,24 +2,7 @@
 # every job.  It initializes the environment for various clusters so
 # that the rest of the GEFS or Rocoto can run properly.
 
-if [[ "$WHERE_AM_I" == wcoss_ibm ]] ; then
-    echo "Loading modules for WCOSS IBM"
-    . /usrx/local/Modules/default/init/ksh
-    module use /nwprod2/modulefiles
-    module purge
-    module load ics/17.0.3
-    module load lsf
-    module load prod_envir
-    module load prod_util/v1.0.24
-    module load util_shared/v1.0.7
-    module load grib_util/v1.0.5
-    module load ibmpe/1.3.0.12
-    module load NetCDF/4.2/serial
-    module load python/2.7.14
-    module load hpss
-    module load g2tmpl/v1.5.0
-    export PATH=$PATH:.
-elif [[ "$WHERE_AM_I" == cray ]] ; then
+if [[ "$WHERE_AM_I" == cray ]] ; then
     echo "Loading modules for WCOSS cray"
     . /opt/modules/default/init/ksh
     module purge
