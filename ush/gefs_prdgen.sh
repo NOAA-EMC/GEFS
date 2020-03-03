@@ -89,7 +89,11 @@ else
 
 	excludestring=${excludestring:-'372-384hr'}
 
-	parmlist=$PARMgefs/gefs_pgrb2a_f${hsuffix}.parm
+	if [[ $cplchm == ".true." ]]; then
+		parmlist=$PARMgefs/gefs_prgb2a_aer.parm
+	else
+		parmlist=$PARMgefs/gefs_pgrb2a_f${hsuffix}.parm
+	fi
 	$WGRIB2 -s pgb2file.$ffhr | \
 		grep -F -f $parmlist | \
 		grep -v -F $excludestring | \

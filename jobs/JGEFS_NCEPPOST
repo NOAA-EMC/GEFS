@@ -166,6 +166,21 @@ esac
 export OUTTYP=4     # For nemsio files from forecast model (input to post)
 export OUTTYP=$OUTTYP
 
+if [[ $cplchm = ".true." ]]; then
+    # Alternate post settings
+    export FLTFILEGFSF00=$PARMpost/postxconfig-NT-gefs-aerosol.txt
+    export FLTFILEGFS=$PARMpost/postxconfig-NT-gefs-aerosol.txt
+    export FLTFILEGFSF001=$PARMpost/postxconfig-NT-gefs-aerosol.txt
+    export FLTFILEGFS1=$PARMpost/postxconfig-NT-gefs-aerosol.txt
+    export CTLFILEGFSF00=$PARMpost/postcntrl_gefs_aerosol.xml
+    export CTLFILEGFS=$PARMpost/postcntrl_gefs_aerosol.xml
+    export POSTGRB2TBL=$PARMpost/params_grib2_tbl_new
+    export POSTGPVARS_HIGH="KPO=50,PO=1000.,975.,950.,925.,900.,875.,850.,825.,800.,775.,750.,725.,700.,675.,650.,625.,600.,575.,550.,525.,500.,475.,450.,425.,400.,375.,350.,325.,300.,275.,250.,225.,200.,175.,150.,125.,100.,70.,50.,40.,30.,20.,15.,10.,7.,5.,3.,2.,1, gocart_on=.true."
+
+    export AeroFile=$PARMPOST/optics_luts_*.dat
+    cp $AeroFile $DATA/
+fi
+
 if [[ $REMAP_GRID = latlon ]]; then
 
     if [[ $FORECAST_SEGMENT = hr ]]; then
@@ -213,7 +228,7 @@ export IGEN_FCST=107
 if [ $GRIBVERSION = grib2 ]; then
     export CAT_FLX_TO_PGB=${CAT_FLX_TO_PGB:-YES}
     export OUTTYP=${OUTTYP:-3}
-    export POSTAVBLFLD=$PARMpost/post_avblflds.xml
+    export POSTAVBLFLD=${POSTAVBLFLD:-$PARMpost/post_avblflds.xml}
     export POSTGRB2TBL=${POSTGRB2TBL:-/nwprod/lib/sorc/g2tmpl/params_grib2_tbl_new}
     export CTLFILEGFSANL=${CTLFILEGFSANL:-$PARMpost/postcntrl_gfs.xml}
     export CTLFILEGFSF00=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
@@ -230,7 +245,7 @@ if [ $GRIBVERSION = grib2 ]; then
 fi # [ $GRIBVERSION = grib2 ]
 
 
-export POSTGPVARS_HIGH="KPO=47,PO=1000.,975.,950.,925.,900.,875.,850.,825.,800.,775.,750.,725.,700.,675.,650.,625.,600.,575.,550.,525.,500.,475.,450.,425.,400.,375.,350.,325.,300.,275.,250.,225.,200.,175.,150.,125.,100.,70.,50.,30.,20.,10.,7.,5.,3.,2.,1.,"
+export POSTGPVARS_HIGH=${POSTGPVARS_HIGH:-"KPO=47,PO=1000.,975.,950.,925.,900.,875.,850.,825.,800.,775.,750.,725.,700.,675.,650.,625.,600.,575.,550.,525.,500.,475.,450.,425.,400.,375.,350.,325.,300.,275.,250.,225.,200.,175.,150.,125.,100.,70.,50.,30.,20.,10.,7.,5.,3.,2.,1.,"}
 export POSTGPVARS_LOW=$POSTGPVARS_HIGH
 
 ####################################
@@ -294,7 +309,7 @@ if [[ -n $SUBJOB ]]; then
     iJ2=$((iJ2-65))
 
     export FHOUT_HF=$((FHOUTHF*J1))
-    export FHOUT_LF=$(($FHOUTLF*J1))
+    export FHOUT_LF=$((FHOUTLF*J1))
 
     export SHOUR=$(($SHOUR+$FHOUTHF*iJ2))
     #export FHMAX_HF=$(($FHMAXHF+$FHOUTLF*iJ2))
@@ -320,19 +335,19 @@ if (( 0 == 1 )) ; then
 # Check if this is a restart
 ####################################
     mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control
-    if test -f $mcfile; then
+    if [[ -f $mcfile ]]; then
         # modelrecvy=`cat < $COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control`
         modelrecvy=`cat < $mcfile`
         recvy_pdy=`echo $modelrecvy | cut -c1-8`
         recvy_cyc=`echo $modelrecvy | cut -c9-10`
         recvy_shour=`echo $modelrecvy | cut -c11-13`
-        if test $RERUN = "RESTART"; then
-            if test $recvy_shour -ge $FHOUR; then
+        if [[ $RERUN = "RESTART" ]]; then
+            if [[ $recvy_shour -ge $FHOUR ]]; then
                 msg="Forecast Post Already Completed to $recvy_shour"
                 postmsg "$jlogfile" "$msg"
                 SHOUR=$recvy_shour
             else
-                if test $recvy_shour -ge $FHOUR; then
+                if [[ $recvy_shour -ge $FHOUR ]]; then
                     SHOUR=`expr $recvy_shour + $FHINC`
                 else
                     SHOUR=`expr $recvy_shour + $FHINC`
@@ -354,7 +369,7 @@ ERR=0
 #################################
 # Run from $SHOUR to $FHOUR
 #################################
-if test $SHOUR -le $FHOUR; then
+if [[ $SHOUR -le $FHOUR ]]; then
     export FHOUR=$FHOUR
     export DO_LOW_RES=YES 
     export POSTGPVARS=$POSTGPVARS_HIGH

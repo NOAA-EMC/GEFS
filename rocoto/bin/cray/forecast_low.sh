@@ -18,20 +18,25 @@ export MPICH_ENV_DISPLAY=1
 export MPICH_VERSION_DISPLAY=1
 export MPICH_CPUMASK_DISPLAY=1
 
+export KMP_STACKSIZE=1024m
+export KMP_AFFINITY=disabled
+
+#export OMP_NUM_THREADS=4
+export KMP_AFFINITY=disabled
+
 export MP_EUIDEVICE=sn_all
 export MP_EUILIB=us
 export MP_SHARED_MEMORY=yes
 export MEMORY_AFFINITY=core:2
 
-export NTHREADS_SIGCHGRS=2
-
 export FORECAST_SEGMENT=lr
 
-# export memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc'
-
+# export for development runs only begin
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
-export gefsmpexec="mpirun.lsf"
+
+export gefsmpexec=" aprun -b -j1 -n240 -N12 -d2 -cc depth "
+export NTHREADS_SIGCHGRS=2
 
 # For Restart
 export RERUN=RESTART  #(the J-job script has default value "RERUN"

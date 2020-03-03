@@ -26,8 +26,8 @@ export wave_mpmd="cfp"
 
 #export APRUNC="$gefsmpexec"
 #export APRUN_RECENT="$gefsmpexec"
-#export APRUN_CHGRES="mpirun -n 1"
+export APRUN_CHGRES="mpirun -n 1"
 #export aprun_gec00="mpirun -n 1"
-#export APRUN_CALCINC="mpirun -n 1"
+export APRUN_CALCINC="mpirun -n 1"
 
 #export errchk="eval if [[ \$err != 0 ]]; then exit \$err; fi"

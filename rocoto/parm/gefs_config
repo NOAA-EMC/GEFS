@@ -40,7 +40,7 @@ export HOMEgsi=${HOMEgfs:-$HOMEDIR}
 export HOMEwave=${HOMEwave:-$HOMEgefs}
 
 #FCST exec is from a different directory
-#export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgfs/sorc/fv3gfs.fd/NEMS/exe}
+#export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgfs/exec}
 
 export HOMEpost=${HOMEpost:-$HOMEDIR}             #April 2018
 
