@@ -10,4 +10,4 @@ ulimit -a
 #export jlogfile=/dev/null
 #export jobid=${job}.$$
 
-$SOURCEDIR/jobs/JWAVE_GWES_INIT
+$SOURCEDIR/jobs/JWAVE_PREP
