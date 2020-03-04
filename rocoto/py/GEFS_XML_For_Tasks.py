@@ -96,6 +96,11 @@ def config_tasknames(dicBase):
                 sTaskName = "taskname_{0}".format(iTaskName_Num)
                 dicBase[sTaskName.upper()] = "wave_post"
 
+                # ---wave_stats
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "wave_stats"
+
         # #    <!-- RUN_PRDGEN_GFS jobs -->
         if dicBase['RUN_PRDGEN_GFS'].upper()[0] == "Y":
             # ---sigchgres
@@ -1046,9 +1051,15 @@ def get_param_of_task(dicBase, taskname):
                 else:
                     sDep += '\n</and>'
 
-            if taskname.lower() in [ "keep_data_wave", "archive_wave" ]:                
+            if taskname.lower() in [ "wave_stats" ]:
                 if DoesTaskExist(dicBase, "wave_post"):
                     sDep = '<metataskdep metatask="wave_post"/>'
+                else:
+                    sDep = ""
+
+            if taskname.lower() in [ "keep_data_wave", "archive_wave" ]:
+                if DoesTaskExist(dicBase, "wave_stats"):
+                    sDep = '<taskdep task="wave_stats"/>'
                 else:
                     sDep = ""
 
@@ -1275,7 +1286,7 @@ def get_metatask_names(taskname=""):
     # wave
     metatask_names.append('wave_prep')
     metatask_names.append('wave_post')
-    metatask_names.append('wave_stats')
+    metatask_names.append('wave_statss')
     # postsnd
     metatask_names.append('postsnd')
 
