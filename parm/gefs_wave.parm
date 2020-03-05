@@ -80,7 +80,7 @@ export WAV_CUR_CDO_SMOOTH="NO"
 export nback=
 
 # Restart file config
-if [ $RUN = gens ]
+if [ $RUN = gefs ]
 then
   gfs_cyc=`expr 24 / ${gefs_cych}`
   WAVNCYC=$gfs_cyc

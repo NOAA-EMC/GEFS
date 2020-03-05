@@ -37,7 +37,7 @@ export HOMEtrak=${HOMEtrak:-$HOMERFC/ens_tracker.v1.1.13}
 export HOMEgfs=${HOMEgfs:-$HOMEDIR}
 export HOMEgsi=${HOMEgfs:-$HOMEDIR}
 
-export HOMEwave=${HOMEwave:-$HOMEgefs}
+export HOMEwave=${HOMEwave:-$HOMEgfs}
 
 #FCST exec is from a different directory
 #export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgfs/exec}
@@ -50,7 +50,7 @@ if [[ ! -d $SOURCEDIR/sorc/global-workflow.fd ]] ; then
     export EXECwave=${HOMEgfs}/sorc/fv3gfs.fd/WW3/model/exe
 
     export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgfs/sorc/fv3gfs.fd/NEMS/exe}
-    export FIXwave=${FIXwave:-$HOMEwave/fix_wave}
+    export FIXwave=${FIXwave:-$HOMEgefs/fix_wave}
 fi
 
 # This section is optional, using path to define utility files
