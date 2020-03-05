@@ -78,7 +78,7 @@ if [ -d /scratch2/NCEPDEV ]; then
     # Location of WW3 executables
     export EXECcode=$HOMEDIR/sorc/fv3gfs.fd/WW3/model/exe
     # Wave model settings: ice data dir
-    export COMICE=$HOMEdata/sea_ice
+    export COMIN_WAV_ICE=$HOMEdata/sea_ice
 
     export COMROOThps=${HOMEdata}
     export COMROOTp1=/scratch2/NCEPDEV/rstprod/com 
@@ -120,22 +120,22 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     export machine='WCOSS_DELL_P3'
     export JOBPHASE=
     # export HOMEDIR=${HOMEDIR:-/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gfs/gefs_wave_fb95cd3c_20191105_newfv3upp}
-    export HOMEDIR=${HOMEDIR:-/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/save/global-workflow/gefs_20200301_66f65198}
+    export HOMEDIR=${HOMEDIR:-/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/save/global-workflow/wave}
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
     # export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
     export archsyndir=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/TCvitalData/syndat
-    export HOMEdata=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/gefs_input
-    export COMINenkf_base=$HOMEdata/gfs_15/enkfgdas.
-    export COMINgfs_base=$HOMEdata/gfs_15/gfs.
-    export COMINcfs_base=$HOMEdata/cfs_2_sst/cfs.
+    # export HOMEdata=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/gefs_input
+    # export COMINenkf_base=$HOMEdata/gfs_15/enkfgdas.
+    # export COMINgfs_base=$HOMEdata/gfs_15/gfs.
+    # export COMINcfs_base=$HOMEdata/cfs_2_sst/cfs.
 
-    export COMROOThps=${HOMEdata}
+    # export COMROOThps=${HOMEdata}
 
     # Location of WW3 executables
     export EXECcode=$HOMEDIR/sorc/fv3gfs.fd/WW3/model/exe
     # Wave model settings: ice data dir
-    # export COMICE=/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod
-    export COMICE=$HOMEdata/sea_ice
+    # export COMIN_WAV_ICE=/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod
+    # export COMIN_WAV_ICE=$HOMEdata/sea_ice
 
     # Locations for aerosols
     export EMIDIR="/gpfs/dell2/emc/modeling/noscrub/Li.Pan/emi_"

@@ -4,14 +4,79 @@ date
 export PS4=' $SECONDS + '
 set -x -e
 
+####################################
+# obtain unique process id (pid) and make temp directory
+####################################
+export pid=$$
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+mkdir -p $DATA
+mkdir $DATA/INPUT
+cd $DATA
+
+############################
+# Set up cycle varaible
+############################
+export cycle=t${cyc}z
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
+export COMPONENTwave=${COMPONENTwave:-${RUN}wave}
+#export NTHREADS=1
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+# Specify Execution Areas
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
+export EXECgfs=$HOMEgfs/exec
+export USHgfs=$HOMEgfs/ush
+export FIXgfs=$HOMEgfs/fix
+export PARMgfs=$HOMEgfs/parm
+
+# Path to HOME Directory
+export HOMEwave=${HOMEwave:-${HOMEgfs}}
+export PARMwave=${PARMwave:-$HOMEwave/parm}
+export CODEwave=${CODEwave:-${HOMEfv3gfs}/WW3/model}
+export EXECwave=${EXECwave:-$HOMEwave/exec}
+export FIXwave=${FIXwave:-$FIXgefs/fix_wave}
+export PARMwave=${PARMwave:-$HOMEwave/parm/wave}
+export USHwave=${USHwave:-$HOMEwave/ush}
+export EXECcode=${EXECcode:-$CODEwave/exe}
+
+# Set COM Paths and GETGES environment
+export COMINwave=${COMINwave:-${COMROOT:?}/${NET}/${envir}}
+export COMOUTwave=${COMOUTwave:-${COMROOT:?}/${NET}/${envir}}
+export COMIN=${COMIN:-${COMINwave}/${COMPONENTwave}.${PDY}/${cyc}}
+export COMOUT=${COMOUT:-${COMOUTwave}/${COMPONENTwave}.${PDY}/${cyc}}
+
+export CDUMP=$RUNMEM
+
 #############################
 # Source relevant config files
 #############################
-configs="base wave waveprep"
-export EXPDIR=${EXPDIR:-$HOMEgfs/parm/config}
-config_path=${EXPDIR:-$NWROOT/gfs.${gfs_ver}/parm/config}
+configs="gefs gefs_wave gefs_wave_prep"
+config_path=${PARMgefs:-$NWROOT/gfs.${gfs_ver}/parm/config}
 for config in $configs; do
-    . $config_path/config.$config
+    . $config_path/$config.parm
     status=$?
     [[ $status -ne 0 ]] && exit $status
 done
@@ -23,18 +88,8 @@ done
 status=$?
 [[ $status -ne 0 ]] && exit $status
 
-# PATH for working directory
-export NET=${NET:-gfs}
-export RUN=${RUN:-gfs}
-export COMPONENTwave=${COMPONENTwave:-${RUN}wave}
-
-export HOMEgfs=${HOMEgfs:-$NWROOT/gfs.${gfs_ver}}
-
 # Add default errchk = err_chk
 export errchk=${errchk:-err_chk}
-
-# Set HOMEwave to HOMEgfs
-HOMEwave=${HOMEwave:-${HOMEgfs}} 
 
 # Set resources to propagate NTASKS across cfp call
 NTASKS=${NTASKS:-${npe_node_waveprep}}
@@ -60,37 +115,19 @@ export MP_PULSE=0
 # export CDO=${COMROOTp2}/nwprod/rtofs_glo.v1.2.0/bin/cdo
 export CDO=/gpfs/dell2/emc/verification/noscrub/Todd.Spindler/CDO/bin/cdo
 
-# Path to HOME Directory
-export CODEwave=${CODEwave:-${HOMEfv3gfs}/WW3/model}
-export EXECwave=${EXECwave:-$HOMEwave/exec}
-export FIXwave=${FIXwave:-$HOMEwave/fix/fix_wave_${NET}}
-export PARMwave=${PARMwave:-$HOMEwave/parm/wave}
-export USHwave=${USHwave:-$HOMEwave/ush}
-export EXECcode=${EXECcode:-$CODEwave/exe}
+# export ROTDIR=
 
-###################################
-# Set COM Paths and GETGES environment
-###################################
-# Set COM Paths and GETGES environment
-export COMINwave=${COMINwave:-${ROTDIR:?}}
-export COMOUTwave=${COMOUTwave:-${ROTDIR:?}}
-export COMIN=${COMIN:-${COMINwave}/${COMPONENTwave}.${PDY}/${cyc}}
-export COMOUT=${COMOUT:-${COMOUTwave}/${COMPONENTwave}.${PDY}/${cyc}}
 [[ ! -d $COMOUT ]] && mkdir -m 775 -p $COMOUT
 
 if [ $RUN_ENVIR = "nco" ]; then
   export COMIN_WAV_ICE=${COMIN_WAV_ICE:-$(compath.py gfs/prod)}/${CDUMP}.${PDY}/${cyc}
   export COMIN_WAV_WND=${COMIN_WAV_WND:-$(compath.py gfs/prod)}/${CDUMP}.${PDY}/${cyc}
   export COMIN_WAV_CUR=${COMIN_WAV_CUR:-$(compath.py ${WAVECUR_DID}/prod)}/${WAVECUR_DID}.$PDY
-else 
-  if [ ! -L $ROTDIR/${WAVECUR_DID}.${PDY} ]; then # Check if symlink already exists in ROTDIR
-    $NLN $DMPDIR/${WAVECUR_DID}.${PDY} $ROTDIR/${WAVECUR_DID}.${PDY}
-    $NLN $DMPDIR/$CDUMP.${PDY}/$cyc/${WAVICEFILE} $ROTDIR/$CDUMP.${PDY}/$cyc/${WAVICEFILE}
-  fi
-  export COMIN_OBS=${COMIN_OBS:-$ROTDIR/$RUN.$PDY/$cyc}
-  export COMIN_WAV_ICE=${COMIN_OBS}
-  export COMIN_WAV_WND=${COMIN_OBS}
-  export COMIN_WAV_CUR=${ROTDIR}/${WAVECUR_DID}.${PDY}
+else
+  export COMIN_OBS=${COMIN_OBS:-${COMINwave}}
+  export COMIN_WAV_ICE=${COMIN_WAV_ICE:-${COMIN_OBS}}
+  export COMIN_WAV_WND=${COMIN_WAV_WND:-${COMIN_OBS}}
+  export COMIN_WAV_CUR=${COMIN_WAV_CUR:-${COMIN_OBS}}
 fi
 
 if [ $SENDCOM = YES ]; then

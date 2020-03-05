@@ -16,3 +16,6 @@ export PNTSRV='1'
 export FPNTPROC='T'
 # Flag for grids sharing dedicated output processes
 export FGRDPROC='F'
+
+export USE_WAV_RMP="NO"
+export IAU_OFFSET=0

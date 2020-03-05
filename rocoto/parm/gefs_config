@@ -98,19 +98,19 @@ if [[ $GFSArchivedData == "yes" ]]; then
     if [[ -d /dcom && -d /hwrf ]]; then #WCOSS
         export COMINenkf_base=$HOMEdata/enkfgdas.
         export COMINgfs_base=$HOMEdata/gfs.
-        export COMINcfs_base=/ensemble/noscrub/Walter.Kolczynski/gefs_input/cfs_2_sst/cfs.
-        export COMICE=${COMICE:-/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod}
+        export COMINcfs_base=$HOMEdata/cfs/cfs.
+        export COMIN_WAV_ICE==$HOMEdata/sea_ice
     else
         export COMINenkf_base=$HOMEdata/fv3init/enkfgdas.
         export COMINgfs_base=$HOMEdata/fv3init/gfs.
         export COMINcfs_base=$HOMEdata/cfs/cfs.
-        export COMICE=$HOMEdata/sea_ice
+        export COMIN_WAV_ICE=$HOMEdata/sea_ice
     fi # [[ -d /dcom && -d /hwrf ]] #WCOSS
 else
     export COMINgfs_base=$(compath.py gfs/prod)/gfs.
     export COMINenkf_base=$(compath.py gfs/prod)/enkfgdas.
     export COMINcfs_base=$(compath.py cfs/prod)/cfs/cfs.
-    export COMICE=/gpfs/dell1/nco/ops/com/omb/prod # No compath.py alias yet
+    export COMIN_WAV_ICE=$(compath.py gfs/prod)/gdas.${PDY}/${cyc}
 fi # [[ $GFSArchivedData == "yes" ]]
 
 export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc}
@@ -121,7 +121,7 @@ export COMINcfs=${COMINcfs:-${COMINcfs_base}}
 #export HOMEwave=$basesource
 #export CODEwave=${CODEwave:-${HOMEgfs}/sorc/fv3gfs.fd/WW3/model}
 #export EXECwave=${CODEwave}/exe
-#export COMICE=${COMICE:-/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod}
+#export COMIN_WAV_ICE=${COMIN_WAV_ICE:-/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod}
 # export COMWND=${COMWND:-/scratch4/NCEPDEV/rstprod/com/gens/prod}
 
 # export ROTDIR=${ROTDIR:-$HOMEdata/fv3init}   #for pre-generated warm start files, otherwise comment out
