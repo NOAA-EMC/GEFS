@@ -121,7 +121,7 @@ def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
         lstBaseParm.append(sVarName)
 
     # ==
-    if gefs_xml_for_tasks.DoesTaskExist(dicBase, "forecast_high") or gefs_xml_for_tasks.DoesTaskExist(dicBase, "forecast_low"):
+    if gefs_xml_for_tasks.DoesTaskExist(dicBase, "forecast_hr") or gefs_xml_for_tasks.DoesTaskExist(dicBase, "forecast_lr"):
         sVarName = "COREPERNODE"
         if sVarName not in lstBaseParm:
             lstBaseParm.append(sVarName)

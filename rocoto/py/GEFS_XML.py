@@ -716,7 +716,7 @@ def get_MEMLIST(dicBase):
     # import sys
     # sys.exit(1)
     if npert < 2:
-        print("Please note that because of npert<2, so some tasks may not run!\n Especially enstat_high and enstat_low!")
+        print("Please note that because of npert<2, so some tasks may not run!\n Especially enstat_hr and enstat_lr!")
 
     if bltGenerateMEMLIST:
         MEMLIST_Value = ""
