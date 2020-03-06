@@ -5,7 +5,7 @@ ulimit -s unlimited
 ulimit -a
 
 # module_ver.h
-. $SOURCEDIR/versions/gefs_wcoss_dell_p35.ver
+. $SOURCEDIR/versions/gefs_wcoss_dell_p3.ver
 
 # Load modules
 . /usrx/local/prod/lmod/lmod/init/ksh
@@ -17,7 +17,10 @@ module load ips/$ips_ver
 module load impi/$impi_ver
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
-module load gempak/$gempak_ver
+module load grib_util/$grib_util_ver
+
+module load NetCDF/$NetCDF_ver
+module load HDF5-serial/$HDF5_serial_ver
 
 module load lsf/$lsf_ver
 
@@ -32,5 +35,4 @@ module list
 # Export List
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_AVG_GEMPAK_VGF
-
+$SOURCEDIR/jobs/JGEFS_PREP_EMISSIONS

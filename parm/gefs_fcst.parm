@@ -84,6 +84,14 @@ export FCSTEXEC=${FCSTEXEC:-global_fv3gfs.x}
 
 export APRUN=${APRUN:-""}
 
+# OTHER FV# FCST related environment
+export warm_start=${warm_start:-".false."}
+export BASE_GSM=$HOMEgfs
+REMAP_GRID=none     # temporay setting, to void the latlon default
+export REMAP_GRID=${REMAP_GRID:-latlon}        #gaussian or latlon for using fregrid or regrid_nemsio for remapping
+#export DIAG_TABLE=${DIAG_TABLE:-$HOMEgfs/parm/parm_fv3diag/diag_table}
+# export FIELD_TABLE=${FIELD_TABLE:-$HOMEgfs/parm/parm_fv3diag/field_table_gfdl}
+
 # set fixed k_split and n_split for dt=450s and 300s
 if [[ $DELTIM = 450 ]]; then
 	export k_split=2
@@ -96,13 +104,7 @@ else
 	export n_split=${n_split:-6}
 fi
 
-# OTHER FV# FCST related environment
-export warm_start=${warm_start:-".false."}
-export BASE_GSM=$HOMEgfs
-REMAP_GRID=none     # temporay setting, to void the latlon default
-export REMAP_GRID=${REMAP_GRID:-latlon}        #gaussian or latlon for using fregrid or regrid_nemsio for remapping
-#export DIAG_TABLE=${DIAG_TABLE:-$HOMEgfs/parm/parm_fv3diag/diag_table}
-# export FIELD_TABLE=${FIELD_TABLE:-$HOMEgfs/parm/parm_fv3diag/field_table_gfdl}
+export assim_freq=$gefs_cych
 
 # Settings for coupling with Wavewatch III
 export cplwav=${cplwav:-.true.}
@@ -116,6 +118,32 @@ if [[ $cplwav = ".true." ]]; then
 	export npe_fv3=$npe_fcst_wav
 	export NTASKS_FV3=$npe_fv3
 	export coupling_interval_sec=${coupling_interval_sec:-3600}
+fi
+
+if [[ $cplchm = ".true." ]]; then
+	export restart_interval=${restart_interval_aer:-24}
+	# export restart_interval=$gefs_cych
+	export AEROSOL_INIT_TYPE=${AEROSOL_INIT_TYPE:-"warm"}
+	export DELTIM=300 # Needed to match setting used by GSD
+	export other_restart_time=${other_restart_time:-$gefs_cych}
+
+	if [[ $AEROSOL_INIT_TYPE == "warm" ]]; then
+		export warm_start=".true."
+		export read_increment=".true."
+		export CALCINCEXEC=${CALCINCEXEC:-$HOMEgfs/exec/calc_increment_ens_gsdchem.x}
+	fi
+
+	# TODO Update to determine emission type
+	export EMITYPE=${EMITYPE:-2}  # 1:MODIS, 2:GBBEPx
+	# TODO Copy data to a fix_aerosol
+	export EMIDIR=${EMIDIR:-/gpfs/dell2/emc/modeling/noscrub/Li.Pan/emi_}
+
+	export DIAG_TABLE=${DIAG_TABLE:-$HOMEgfs/parm/parm_fv3diag/chm_diag_table}
+
+	export lgfdlmprad=".true."
+	export effr_in=".true."
+	export USE_COUPLER_RES="YES"
+
 fi
 
 #gfs_physics
@@ -189,7 +217,11 @@ elif [[ $imp_physics = 8 ]]; then # Thompson
     export nwat=6
 elif [[ $imp_physics = 11 ]]; then # GFDL
     export ncld=5
-    export FIELD_TABLE="$BASE_GSM/parm/parm_fv3diag/field_table_gfdl"
+    if [[ $cplchm = ".true." ]]; then
+    	export FIELD_TABLE="$BASE_GSM/parm/parm_fv3diag/chm_field_table_gfdl"
+    else
+    	export FIELD_TABLE="$BASE_GSM/parm/parm_fv3diag/field_table_gfdl"
+	fi
     export nwat=6
     export dnats=1
     export cal_pre=".false."

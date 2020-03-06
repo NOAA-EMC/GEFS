@@ -101,6 +101,7 @@ export BASE_GSM=${BASE_GSM:-$HOMEgfs}
 export FIX_DIR=$FIXgfs
 export FIX_AM=$FIX_DIR/fix_am
 export FIXfv3=$FIX_DIR/fix_fv3_gmted2010
+export FIXchem=$FIX_DIR/fix_chem/fimdata_chem/fimdata_chem_G6_Li
 
 # Run setpdy and initialize PDY variables
 setpdy.sh
@@ -136,7 +137,6 @@ export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 export SSTDIR=${SSTDIR:-$COMIN/${cyc}/cfssst}
 
-#export memdir=$COMOUT/$cyc/sfcsig
 export memdir=$GESIN/$mem
 export gmemdir=$GESIN/$mem
 export ICSDIR=$GESIN/$mem
@@ -165,6 +165,7 @@ if [[ $FORECAST_SEGMENT = hr ]] ; then
 	export RERUN="NO"
 	FHINI=${FHINI:-0}
 fi
+
 if [[ $FORECAST_SEGMENT = lr ]] ; then
 	export RERUN="YES"
 	FHINI=${FHINI:-$fhmaxh}
@@ -172,20 +173,20 @@ if [[ $FORECAST_SEGMENT = lr ]] ; then
 fi
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
-	CASE=$CASEHR;FHMAX=$fhmaxh;FHOUT=$FHOUTLF;FHZER=6;
-	MTNRSL=$MTNRSLFV;LONB=$LONBFV;LATB=$LATBFV;
-	FHMAX_HF=$FHMAXHF;FHOUT_HF=$FHOUTHF; 
+	CASE=$CASEHR; FHMAX=$fhmaxh; FHOUT=$FHOUTLF; FHZER=6;
+	MTNRSL=$MTNRSLFV; LONB=$LONBFV; LATB=$LATBFV;
+	FHMAX_HF=$FHMAXHF; FHOUT_HF=$FHOUTHF; 
 	FHINI=$FHINI;
 	(( LEVS = LEVSHR + 1 ))
 elif [[ $FORECAST_SEGMENT = lr ]] ; then
-	CASE=$CASELR;FHMAX=$fhmax;FHOUT=$FHOUTLF;FHZER=6;
- 	MTNRSL=$MTNRSLLR;LONB=$LONBLR;LATB=$LATBLR;
-	FHMAX_HF=$FHMAXHF;FHOUT_HF=$FHOUTHF;
+	CASE=$CASELR; FHMAX=$fhmax; FHOUT=$FHOUTLF; FHZER=6;
+ 	MTNRSL=$MTNRSLLR; LONB=$LONBLR; LATB=$LATBLR;
+	FHMAX_HF=$FHMAXHF; FHOUT_HF=$FHOUTHF;
 	FHINI=$FHINI;
 	(( LEVS = LEVSLR + 1 ))
 else
 	FORECAST_SEGMENT=$FORECAST_SEGMENT is not supported !
-	stop
+	exit 9
 fi
 
 export FHMIN=$FHINI
@@ -227,6 +228,7 @@ if [[ $RERUN = "YES" ]] ; then
 	export output_1st_tstep=.true.
 	export stochini=.true.
 fi
+
 #
 # Forecast Input Variables
 #
@@ -239,7 +241,6 @@ export MP_LABELIO=yes
 # user account 
 # ----------------------------------
 
-#if [[ $mem = c00 ]] ;then 
 if [[ $mem = c00 ]] ;then 
 	MEMBER=$((npert+1))
 	WAV_MEMBER="00"
@@ -249,10 +250,6 @@ else
 fi
 export MEMBER=$MEMBER
 memchar=mem$(printf %03i $MEMBER)
-
-# 	export do_sppt=$STOC_SPPT
-# 	export do_shum=$STOC_SHUM
-# 	export do_skeb=$STOC_SKEB
 
 export SET_STP_SEED=${SET_STP_SEED:-"YES"}
 
@@ -318,34 +315,16 @@ if [[ $FORECAST_SEGMENT = lr ]] ; then
 
 fi
 
-#case $CASE in
-#  C48)   DELTIM=3600; layout_x=4  ; layout_y=8  ;;
-#  C96)   DELTIM=1800; layout_x=4  ; layout_y=8  ;;
-##  C192)  DELTIM=900 ; layout_x=4  ; layout_y=8  ;;
-#  C192)  DELTIM=600 ; layout_x=4  ; layout_y=8  ;;
-#  C384)  DELTIM=450 ; layout_x=4  ; layout_y=8  ;;
-#  C768)  DELTIM=225 ; layout_x=8  ; layout_y=16 ;;
-#  C1152) DELTIM=150 ; layout_x=8  ; layout_y=16 ;;
-#  C3072) DELTIM=90  ; layout_x=16 ; layout_y=32 ;;
-#  *)     echo "grid $CASE not supported, exit"
-#         exit ;;
-#esac
-
 #
 # Forecast Input Variables
 #
-export fcstscript=${fcstscript:-$HOMEgefs/scripts/exglobal_fcst_nemsfv3gfs.sh}
-#export fcstscript=${fcstscript:-$HOMEgfs/scripts/exglobal_fcst_nemsfv3gfs.sh}
+export fcstscript=${fcstscript:-$HOMEgfs/scripts/exglobal_fcst_nemsfv3gfs.sh}
 export FORECASTSH=$fcstscript
-export FCSTEXECDIR=${FCSTEXECDIR:-$EXECgfs} #-$BASE_GSM/sorc/fv3gfs.fd/BUILD/bin}
-export FCSTEXEC=${FCSTEXEC:-global_fv3gfs.x}
+export FCSTEXECDIR=${FCSTEXECDIR:-$EXECgefs}
 export PARM_FV3DIAG=${PARM_FV3DIAG:-$PARMgfs/parm_fv3diag}
 export ROTDIR=${ROTDIR:-$DATA}
 
 export APRUN=${APRUN:-""}
-#export EXECDIR=$EXECgfs
-#export FCSTEXECDIR=$BASE_SVN/NEMSfv3gfs/stochy/NEMS/exe
-#export FCSTEXECDIR=${FCSTEXECDIR:-$EXECDIR}
 
 echo $fcstscript
 echo $FORECASTSH
@@ -368,10 +347,7 @@ export CDATE=$PDY$cyc
 export rCDUMP=$RUNMEM
 export CDUMP=$RUNMEM
 
-#ICSDIR_template=${ICSDIR_template:-$GESIN/$mem}
-#ICSDIR=`eval echo $ICSDIR_template`
-
-LINK=NO   # link is done in the $FORECASa scriptT
+LINK=NO   # link is done in the $FORECAST script
 if [ $LINK = "YES" ]; then
     if [ $OUTPUT_GRID = "gaussian_grid" ]; then
 	    # Link output files
@@ -409,11 +385,37 @@ if [[ $cplwav = ".true." ]]; then
 	export COMOUTWW3=$COMROOT/${NET}/${envir}
 fi # [[ $cplwav = ".true." ]]
 
+if [[ $cplchm = ".true." && $warm_start = ".true." ]]; then
+    # Link restart files for next cycle
+	next_date=$($NDATE +$gefs_cych $CDATE)
+	# next_date=$($NDATE +$restart_interval $CDATE)
+    next_PDY=$(echo $next_date | cut -c1-8)
+    next_cyc=$(echo $next_date | cut -c9-10)
+	last_rstdir=$COMOUT/$cyc/restart/$mem
+    if [[ ! -d $DATA/RESTART ]]; then mkdir -p $DATA/RESTART; fi
+	ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.coupler.res $DATA/RESTART/${next_PDY}.${next_cyc}0000.coupler.res
+	ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.fv_core.res.nc $DATA/RESTART/${next_PDY}.${next_cyc}0000.fv_core.res.nc
+	for kind in fv_tracer.res fv_core.res fv_srf_wnd.res phy_data sfc_data; do
+		for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
+			ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc $DATA/RESTART/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc
+		done
+	done
+
+fi # [[ $cplchm = ".true." && $warm_start = ".true." ]]
+
+export increment_file=$ICSDIR/fv3_increment.nc
+
 export FIX_DIR=$FIXgfs
 export FIX_AM=$FIX_AM
 
-export assim_freq=6
-export increment=$ICSDIR/fv3_increment.nc
+if [[ $read_increment = ".true." && $warm_start = ".true." ]]; then
+	# Make sure increment file exists before using warm start
+	if [[ ! -f $increment_file ]]; then
+		echo "WARNING: Warm-start requested but no increment file present, reverting to cold-start!"
+		export warm_start=".false."
+		export read_increment=".false."
+	fi
+fi
 
 if [[ $RERUN = "YES" ]]; then
 	fhr=$(printf "%03.0f" $fhmaxh)

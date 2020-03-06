@@ -27,9 +27,9 @@ export DBNROOT=
 
 export HOMEgefs=$basesource
 export HOMEtrak=${HOMEtrak:-$HOMERFC/ens_tracker.v1.1.13}
-export HOMEgfs=${HOMEgfs:-$HOMEgefs}
+export HOMEgfs=${HOMEgfs:-${HOMEDIR:-${HOMEgefs}}}
 export HOMEgsi=${HOMEgfs:-$HOMEgfs}
-export HOMEwave=${HOMEwave:-$HOMEgfs}
+export HOMEwave=${HOMEwave:-$HOMEgefs}
 export HOMEpost=${HOMEpost:-$HOMEgfs}
 
 if [[ ! -d $SOURCEDIR/sorc/global-workflow.fd ]] ; then
