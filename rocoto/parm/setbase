@@ -34,7 +34,6 @@ if [ -d /scratch2/NCEPDEV ]; then
     export COMROOThps=${HOMEdata}
     export COMROOTp1=/scratch2/NCEPDEV/rstprod/com 
     export PATH=$PATH:/scratch2/NCEPDEV/nwprod/NCEPLIBS/util/prod_util.v1.1.0/ush
-
     export EMIDIR=/scratch2/NCEPDEV/ensemble/noscrub/Walter.Kolczynski/fix_chem/
 
     export GBBEPX_DATA_DIR=$HOMEdata/GBBEPx
@@ -61,6 +60,9 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
     export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
     export archsyndir=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/TCvitalData/syndat
+
+    # Locations for aerosols
+    export EMIDIR="/gpfs/dell2/emc/modeling/noscrub/Li.Pan/emi_"
 
 fi
 

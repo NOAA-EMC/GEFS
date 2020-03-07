@@ -701,6 +701,12 @@ def calc_fcst_resources(dicBase, taskname="forecast_hr"):
         WRITE_GROUP = int(dicBase['WRITE_GROUP_lr'.upper()])
         WRTTASK_PER_GROUP = int(dicBase['WRTTASK_PER_GROUP_lr'.upper()])
         parallel_threads = int(dicBase['parallel_threads_lr'.upper()])
+    elif taskname == "forecast_aerosol":
+        layout_x = int(dicBase['layout_x_chem'.upper()])
+        layout_y = int(dicBase['layout_y_chem'.upper()])
+        WRITE_GROUP = int(dicBase['WRITE_GROUP_chem'.upper()])
+        WRTTASK_PER_GROUP = int(dicBase['WRTTASK_PER_GROUP_chem'.upper()])
+        parallel_threads = int(dicBase['parallel_threads_chem'.upper()])
     else:
         layout_x = int(dicBase['layout_x'.upper()])
         layout_y = int(dicBase['layout_y'.upper()])
@@ -1143,7 +1149,6 @@ def get_param_of_task(dicBase, taskname):
 
     # Forecast can be derive from the parm items
     if taskname in ['forecast_hr', 'forecast_lr', 'forecast_aerosol']:
-
         iTotal_Tasks, iNodes, iPPN, iTPP = calc_fcst_resources(dicBase, taskname=taskname)
 
         WHERE_AM_I = dicBase['WHERE_AM_I'].upper()

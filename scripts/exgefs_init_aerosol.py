@@ -284,13 +284,16 @@ def regrid_analysis(time: datetime, regrid_aprun: str, regrid_exec: str, max_loo
     namelist_file.write(regrid_namelist.format(n_lon=n_lon, n_lat=n_lat, analysis_file=analysis_file, terrain_file=terrain_file, vert_coord_file=vert_coord_file, output_file=output_file))
     namelist_file.close()
     if (subprocess.call("{regrid_aprun} {regrid_exec}".format(regrid_aprun=regrid_aprun, regrid_exec=regrid_exec), shell=True) == 0):
+        print("Regrid analysis successful")
         return output_file
     else:
+        print("Regrid analysis failed")
         return None
 
 
 # Calculate increment for warm-start
 def calc_increment(calcinc_aprun: str, calcinc_exec: str, forecast_filename: str, increment_filename: str, imp_physics: str) -> bool:
+    print("Calculating increment...")
     analysis_filename = "atmanl"
     forecast_basename = os.path.basename(forecast_filename)
     increment_basename = os.path.basename(increment_filename)
@@ -299,8 +302,12 @@ def calc_increment(calcinc_aprun: str, calcinc_exec: str, forecast_filename: str
     namelist_file = open("calc_increment.nml", "w")
     namelist_file.write(calcinc_namelist.format(imp_physics=imp_physics, analysis_filename=analysis_filename, forecast_filename=forecast_basename, increment_filename=increment_basename))
     namelist_file.close()
-    return subprocess.call("{calcinc_aprun} {calcinc_exec}".format(calcinc_aprun=calcinc_aprun, calcinc_exec=calcinc_exec), shell=True) == 0
-
+    if (subprocess.call("{calcinc_aprun} {calcinc_exec}".format(calcinc_aprun=calcinc_aprun, calcinc_exec=calcinc_exec), shell=True) == 0):
+        print("Calculate increment completed successfully")
+        return True
+    else:
+        print("Calculate increment failed!")
+        return False
 
 if __name__ == "__main__":
     main()
