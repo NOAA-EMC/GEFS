@@ -35,6 +35,7 @@ export cycle=t${cyc}z
 ####################################
 export NET=${NET:-gens}
 export RUN=${RUN:-gefs}
+export COMPONENTwave=${COMPONENTwave:-${RUN}wave}
 #export NTHREADS=1
 
 ####################################
@@ -80,8 +81,21 @@ export USHgfs=$HOMEgfs/ush
 export FIXgfs=$HOMEgfs/fix
 export PARMgfs=$HOMEgfs/parm
 
-export HOMEwave=${HOMEwave:-${HOMEgefs}}
-export PARMwave=${PARMwave:-$HOMEwave/parm}
+# Path to HOME Directory
+export HOMEwave=${HOMEwave:-${HOMEgfs}}
+export PARMwave=${PARMwave:-$HOMEgefs/parm}
+export CODEwave=${CODEwave:-${HOMEgfs}/WW3/model}
+export EXECwave=${EXECwave:-$HOMEwave/exec}
+export FIXwave=${FIXwave:-$FIXgefs/fix_wave}
+export PARMwave=${PARMwave:-$HOMEwave/parm/wave}
+export USHwave=${USHwave:-$HOMEwave/ush}
+export EXECcode=${EXECcode:-$CODEwave/exe}
+
+# Set COM Paths and GETGES environment
+export COMINwave=${COMINwave:-${COMROOT:?}/${NET}/${envir}}
+export COMOUTwave=${COMOUTwave:-${COMROOT:?}/${NET}/${envir}}
+export COMIN=${COMIN:-${COMINwave}/${COMPONENTwave}.${PDY}/${cyc}}
+export COMOUT=${COMOUT:-${COMOUTwave}/${COMPONENTwave}.${PDY}/${cyc}}
 
 #Names used in exglobal_fv3.sh
 export BASE_GSM=${BASE_GSM:-$HOMEgfs}
@@ -146,7 +160,8 @@ export LOGSCRIPT=startmsg
 echo set parameters using gefs.parm
 ##############################################
 . $PARMgefs/gefs.parm
-. $PARMwave/gwes.parm
+. $PARMwave/gefs_wave.parm
+
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 	export RERUN="NO"

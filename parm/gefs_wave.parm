@@ -59,9 +59,9 @@ export FHOUT_HF_WAV=${FHOUT_HF_WAV:-3}
 export WAV_WND_HOUR_INC=1      # This value should match with the one used in
                          # the wind update script
 # gridded and point output rate
-export DTFLD_WAV=`expr $FHOUT_HF_WAV \* 3600`
-export DTPNT_WAV=3600
-export FHINCP_WAV=`expr $DTPNT_WAV / 3600`
+export DTFLD_WAV=$(( $FHOUT_HF_WAV * 3600 ))
+export DTPNT_WAV=${DTPNT_WAV:-3600}
+export FHINCP_WAV=$(( $DTPNT_WAV / 3600 ))
 
 # Selected output parameters (gridded)
 export OUTPARS_WAV="WND CUR ICE HS T01 T02 DIR FP DP PHS PTP PDIR CHAR"
