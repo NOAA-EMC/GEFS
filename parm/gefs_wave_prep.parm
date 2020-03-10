@@ -17,5 +17,6 @@ export FPNTPROC='T'
 # Flag for grids sharing dedicated output processes
 export FGRDPROC='F'
 
-export USE_WAV_RMP="NO"
-export IAU_OFFSET=0
+export GOFILETYPE=1     # GOFILETYPE=1 one gridded file per output step
+export POFILETYPE=1     # POFILETYPE=1 one point file per output step
+
