@@ -37,6 +37,8 @@ if [[ ! -d $SOURCEDIR/sorc/global-workflow.fd ]] ; then
 
     export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgfs/sorc/fv3gfs.fd/NEMS/exe}
     export FIXwave=${FIXwave:-$HOMEwave/fix_wave}
+
+    export HOMEchem=${HOMEchem:-$HOMEgfs/sorc/gsd_prep_chem.fd/workflow/emc-global}
 fi
 
 #Check and verify the most importand environment variables

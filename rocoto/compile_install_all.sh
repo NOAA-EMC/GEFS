@@ -166,6 +166,9 @@ if [ $CleanAll = "yes" ]; then
     rm ../ush/global_chgres.sh
     rm ../ush/global_chgres_driver.sh
 
+    rm ../parm/prep_chem_sources.inp.IN
+    rm ../scripts/exglobal_prep_chem.bash
+
 fi # for CleanAll
 
 # for rocoto
