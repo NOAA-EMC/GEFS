@@ -91,6 +91,12 @@ export PARMwave=${PARMwave:-$HOMEwave/parm/wave}
 export USHwave=${USHwave:-$HOMEwave/ush}
 export EXECcode=${EXECcode:-$CODEwave/exe}
 
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
 # Set COM Paths and GETGES environment
 export COMINwave=${COMINwave:-${COMROOT:?}/${NET}/${envir}}
 export COMOUTwave=${COMOUTwave:-${COMROOT:?}/${NET}/${envir}}
@@ -104,9 +110,6 @@ export FIX_AM=$FIX_DIR/fix_am
 export FIXfv3=$FIX_DIR/fix_fv3_gmted2010
 export FIXchem=$FIX_DIR/fix_chem/fimdata_chem/fimdata_chem_G6_Li
 
-# Run setpdy and initialize PDY variables
-setpdy.sh
-. PDY
 ##############################################
 # Define COM and GES directories
 ##############################################

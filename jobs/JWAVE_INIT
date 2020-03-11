@@ -62,6 +62,12 @@ export PARMwave=${PARMwave:-$HOMEwave/parm/wave}
 export USHwave=${USHwave:-$HOMEwave/ush}
 export EXECcode=${EXECcode:-$CODEwave/exe}
 
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
 # Set COM Paths and GETGES environment
 export COMINwave=${COMINwave:-${COMROOT:?}/${NET}/${envir}}
 export COMOUTwave=${COMOUTwave:-${COMROOT:?}/${NET}/${envir}}
