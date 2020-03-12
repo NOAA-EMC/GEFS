@@ -10,13 +10,14 @@ import typing
 import shutil
 import itertools
 import contextlib
+import re
 from datetime import datetime, timedelta
 from functools import partial
 from inspect import cleandoc
 
 # Constants
 init_path_pattern = "{ges_root}/{envir}/gefs.%Y%m%d/%H/{member}"
-init_file_pattern = "{path}/gfs_data.{tile}.nc"
+init_file_pattern = "{path}/{kind}.{tile}.nc"
 increment_file_pattern = "{path}/fv3_increment.nc"
 restart_dest_pattern = "{path}/RESTART/{filename}"
 
@@ -27,7 +28,6 @@ restart_coupler_file_pattern = "{restart_base}/%Y%m%d.%H0000.fv_core.res.nc"    
 tracer_list_file_pattern = "{parm_gefs}/gefs_aerosol_tracer_list.parm"
 merge_script_pattern = "{ush_gfs}/merge_fv3_chem_tile.py"
 n_tiles = 6
-
 
 analysis_file_pattern = "{com_gfs}/gfs.t%Hz.atmanl.nemsio"
 fcst_file_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/sfcsig/ge{member}.t%Hz.atmf{forecast_hour:03}.nemsio"
@@ -120,9 +120,11 @@ def main() -> None:
         prev_fcst_file = get_previous_forecast(time=time, incr=incr, max_lookback=max_lookback, com_root=com_root, net=net, envir=envir, run=run)
         increment_filename = increment_file_pattern.format(path=destination_path)
 
+        sfc_files = get_init_files(path=destination_path, kind="sfc_data")
+
         restart_files = get_all_restart_files(time=time, incr=incr, max_lookback=max_lookback, com_root=com_root, net=net, envir=envir, run=run)
 
-        files_exist = restart_files is not None and analysis_filename is not None and prev_fcst_file is not None
+        files_exist = restart_files is not None and analysis_filename is not None and prev_fcst_file is not None and sfc_files is not None
 
         if(files_exist):
             # Link restart files
@@ -137,6 +139,14 @@ def main() -> None:
             # Calculate increment
             success = calc_increment(calcinc_aprun=calcinc_aprun, calcinc_exec=calcinc_exec, forecast_filename=prev_fcst_file, increment_filename=increment_filename, imp_physics=imp_physics)
 
+            for file in sfc_files:
+                tile = re.search('tile(\d)', file).group(0)
+                basename = os.path.basename(time.strftime(restart_file_pattern.format(restart_base="", kind="sfcanl_data", tile=tile)))
+                link = restart_dest_pattern.format(path=destination_path, filename=basename)
+                with contextlib.suppress(FileNotFoundError):
+                    os.unlink(link)
+                os.symlink(file, link)
+
         if(not files_exist or not success):
             print("WARNING: Could not calculate increment (previous forecast may be missing), reverting to cold start")
             init_type = "cold"
@@ -146,7 +156,7 @@ def main() -> None:
         merge_script = merge_script_pattern.format(ush_gfs=ush_gfs)
         tracer_list_file = tracer_list_file_pattern.format(parm_gefs=parm_gefs)
 
-        atm_filenames = get_init_files(destination_path)
+        atm_filenames = get_init_files(path=destination_path, kind="gfs_data")
         restart_files = get_tracer_restart_files(time=time, incr=incr, max_lookback=max_lookback, com_root=com_root, net=net, envir=envir, run=run)
 
         if (restart_files is not None):
@@ -175,9 +185,9 @@ def get_env_var(varname: str, fail_on_missing: bool=True, default_value: str=Non
     return(var)
 
 
-# Check if atm files exist
-def get_init_files(path: str) -> typing.List[str]:
-    files = list(map(lambda tile: init_file_pattern.format(tile=tile, path=path), tiles))
+# Check if init files exist
+def get_init_files(path: str, kind: str) -> typing.List[str]:
+    files = list(map(lambda tile: init_file_pattern.format(tile=tile, path=path, kind=kind), tiles))
     for file_name in files:
         print(file_name)
         if(not os.path.isfile(file_name)):
@@ -223,7 +233,7 @@ def get_all_restart_files(time: datetime, incr: int, max_lookback: int, com_root
     for lookback in map(lambda i: incr * (i + 1), range(max_lookback)):
         last_time = time - timedelta(hours=lookback)
         restart_base = last_time.strftime(restart_base_pattern.format(com_root=com_root, net=net, envir=envir, run=run, member="aer"))
-        kinds = ["fv_tracer.res", "fv_core.res", "fv_srf_wnd.res", "phy_data", "sfc_data"]
+        kinds = ["fv_tracer.res", "fv_core.res", "fv_srf_wnd.res", "phy_data"]
         files = list(time.strftime(restart_file_pattern.format(restart_base=restart_base, lookback=lookback, tile=tile, kind=kind)) for (tile, kind) in itertools.product(tiles, kinds))
         core_res_file = time.strftime(restart_core_res_file_pattern.format(restart_base=restart_base, lookback=lookback))
         coupler_file = time.strftime(restart_coupler_file_pattern.format(restart_base=restart_base, lookback=lookback))
@@ -274,13 +284,16 @@ def regrid_analysis(time: datetime, regrid_aprun: str, regrid_exec: str, max_loo
     namelist_file.write(regrid_namelist.format(n_lon=n_lon, n_lat=n_lat, analysis_file=analysis_file, terrain_file=terrain_file, vert_coord_file=vert_coord_file, output_file=output_file))
     namelist_file.close()
     if (subprocess.call("{regrid_aprun} {regrid_exec}".format(regrid_aprun=regrid_aprun, regrid_exec=regrid_exec), shell=True) == 0):
+        print("Regrid analysis successful")
         return output_file
     else:
+        print("Regrid analysis failed")
         return None
 
 
 # Calculate increment for warm-start
 def calc_increment(calcinc_aprun: str, calcinc_exec: str, forecast_filename: str, increment_filename: str, imp_physics: str) -> bool:
+    print("Calculating increment...")
     analysis_filename = "atmanl"
     forecast_basename = os.path.basename(forecast_filename)
     increment_basename = os.path.basename(increment_filename)
@@ -289,8 +302,12 @@ def calc_increment(calcinc_aprun: str, calcinc_exec: str, forecast_filename: str
     namelist_file = open("calc_increment.nml", "w")
     namelist_file.write(calcinc_namelist.format(imp_physics=imp_physics, analysis_filename=analysis_filename, forecast_filename=forecast_basename, increment_filename=increment_basename))
     namelist_file.close()
-    return subprocess.call("{calcinc_aprun} {calcinc_exec}".format(calcinc_aprun=calcinc_aprun, calcinc_exec=calcinc_exec), shell=True) == 0
-
+    if (subprocess.call("{calcinc_aprun} {calcinc_exec}".format(calcinc_aprun=calcinc_aprun, calcinc_exec=calcinc_exec), shell=True) == 0):
+        print("Calculate increment completed successfully")
+        return True
+    else:
+        print("Calculate increment failed!")
+        return False
 
 if __name__ == "__main__":
     main()

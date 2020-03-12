@@ -1,0 +1,53 @@
+#BSUB -J %E%gefs_gempak_%CYC%
+#BSUB -o /%COM%/output/%ENVIR%/today/gefs_gempak_%CYC%.o%J
+#BSUB -e  /%COM%/output/%ENVIR%/today/gefs_gempak_%CYC%.o%J
+#BSUB -cwd /tmpnwprd
+#BSUB -q %QUEUE%
+#BSUB -n 42
+#BSUB -R span[ptile=21]
+#BSUB -x   
+#BSUB -W 01:30
+#BSUB -L /bin/sh
+#BSUB -P %PROJ%
+#BSUB -a poe
+
+%include <head.h>
+%include <envir-p2.h>
+
+
+# EXPORT list here
+set -x
+
+
+export cyc=%CYC%
+export cyc_fcst=%CYC%
+
+
+# CALL executable job script here
+VERSION_FILE=$NWROOT/versions/gefs.ver
+if [ -f $VERSION_FILE ]; then
+  . $VERSION_FILE
+else
+  ecflow_client --msg="***JOB ${ECFNAME} ERROR: Version File $VERSION_FILE does not exist ***"
+  ecflow_client --abort
+  exit
+fi
+
+$NWROOT/gefs.${gefs_ver}/jobs/JGEFS_GEMPAK
+
+%include <tail.h>
+%manual
+######################################################################
+# Purpose: Do 14 members of gefs ens gempak post processing.
+#
+#
+######################################################################
+
+######################################################################
+# Job specific troubleshooting instructions:
+#  see generic troubleshoot manual page
+#
+######################################################################
+
+# include manual page below
+%end

@@ -55,7 +55,7 @@ from functools import partial
 print = partial(print, flush=True)
 
 # Output directories that need to be removed
-output_dirs = ["cfssst", "ensstat", "init", "misc", "pgrb2alr", "sflux", "genesis", "master",
+output_dirs = ["f2d", "f3d", "cfssst", "ensstat", "init", "misc", "pgrb2alr", "sflux", "genesis", "master",
 				"pgrb2ap25", "pgrb2bp25", "pgrb2ap5", "pgrb2bp5", "pgrb2a2p5", "pgrb2b2p5",
 				"pgrb2a1p0", "pgrb2b1p0", "pgrb2ap25_aer", "pgrb2a", "sfcsig", "tctrack",
 				"bufr", "gempak", "wmo"]
@@ -97,7 +97,7 @@ time_last_cyc = time + timedelta(hours=-6)
 dirs_to_remove = []
 
 # Working directories
-dirs_to_remove.append(time.strftime("{work_dir}/tmpnwprd/{exp_id}_%Y%m%d%H*".format(work_dir=work_dir, exp_id=exp_id)))
+dirs_to_remove.append(time.strftime("{work_dir}/tmpnwprd/{exp_id}_%Y%m%d%H_*".format(work_dir=work_dir, exp_id=exp_id)))
 dirs_to_remove.append(time.strftime("{work_dir}/tmpnwprd/gefs_init_%Y%m%d%H.dev.save".format(work_dir=work_dir)))
 
 # Last cycle enkf directories

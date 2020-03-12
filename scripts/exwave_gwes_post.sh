@@ -53,22 +53,15 @@
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
 
-# Script will run serial only if not LSB or pre-defined NTASKS
+# Script will run only if pre-defined NTASKS
 #     The actual work is distributed over these tasks.
-  nfile=
-  x=1
-  if [ -z ${LSB_MCPU_HOSTS+x} ] && [ -z ${NTASKS+x} ]        
+  if [ -z ${NTASKS} ]        
   then
-    echo " Scripts requires LSB_MCPU_HOSTS or NTASKS to be set "
+    echo "FATAL ERROR: requires NTASKS to be set "
     err=999; export err;${errchk}
-  elif [ ! -z ${LSB_MCPU_HOSTS+x} ]
-  then
-    nppn=`echo $LSB_MCPU_HOSTS | awk '{ print $2}'`
-    nnod=`echo $LSB_MCPU_HOSTS | wc -w | awk '{ print $1}'`
-    nnod=`expr ${nnod} / 2`
-    nfile=`expr $nnod \* $nppn`
+    exit $err
   fi
-  NTASKS=${NTASKS:-$nfile}
+
 # 0.b Date and time stuff
 
   export date=$PDY
@@ -121,7 +114,7 @@
    gribOK='yes'
   grintOK='yes'
    specOK='yes'
-   bullOK='yes'
+   bullOK='no '
 
   exit_code=0
 
@@ -166,6 +159,8 @@
   fi
 
 # Set number of processes for mpmd
+    cat cmdfile
+
     wavenproc=`wc -l cmdfile | awk '{print $1}'`
     wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
 
@@ -277,6 +272,8 @@
       [[ "$LOUD" = YES ]] && set -x
       echo "$wavemodID post $date $cycle : mod_def.$grdID missing." >> $wavelog
       exit_code=2
+      err=$exit_code;export err;${errchk}
+      exit $err
     fi
 
   done
@@ -462,6 +459,7 @@
       err=1;export err;${errchk}
       specOK='no'
       bullOK='no'
+      exit $err
     fi
 
 # Create new buoy_log.ww3 excluding all IBP files
@@ -545,17 +543,17 @@
     do
 
       case $grdID in
-        glo_15m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_15m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        ao_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        ao_30m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        so_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        so_30m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        glo_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_30m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        glo_15mxt) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_15mxt) gribFL=\'${OUTPARS}\';
                   GRIDNR=11  ; MODNR=255 ; dtgrib=10800. ; ngrib=181 ;;
-        glo_30mxt) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_30mxt) gribFL=\'${OUTPARS}\';
                   GRIDNR=11  ; MODNR=11  ; dtgrib=3600. ; ngrib=181 ;;
       esac
 
@@ -586,6 +584,8 @@
   fi
 
 # Determine number of processes needed for mpmd
+  cat cmdfile
+
   wavenproc=`wc -l cmdfile | awk '{print $1}'`
   wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
 
@@ -618,6 +618,9 @@
     echo '     See Details Below '
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
+    exit_code=$exit
+    err=$exit_code;export err;${errchk}
+    exit $err
   fi
 
 # --------------------------------------------------------------------------- #
@@ -638,17 +641,17 @@
     do
 
       case $grdID in
-        glo_15m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_15m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        ao_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        ao_30m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        so_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        so_30m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        glo_30m) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_30m) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255  ; dtgrib=10800. ;;
-        glo_15mxt) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_15mxt) gribFL=\'${OUTPARS}\';
                   GRIDNR=255  ; MODNR=255 ; dtgrib=10800. ; ngrib=181 ;;
-        glo_30mxt) gribFL=\''WND CUR ICE HS T01 T02 FP DIR SPR DP PHS PTP PDIR'\';
+        glo_30mxt) gribFL=\'${OUTPARS}\';
                   GRIDNR=11  ; MODNR=11  ; dtgrib=3600. ; ngrib=181 ;;
       esac
 
@@ -666,6 +669,8 @@
 # 3.c Run mpmd cmdfile
 
 # Determine number of processes needed for mpmd
+  cat cmdfile
+
   wavenproc=`wc -l cmdfile | awk '{print $1}'`
   wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
 
@@ -696,6 +701,8 @@
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
     err=2;export err;${errchk}
+    exit_code=$exit
+    exit $err
   fi
 
 # --------------------------------------------------------------------------- #
@@ -743,6 +750,8 @@
 # 4.d Execute point output cmd file
 
 # Determine number of processes needed for mpmd
+  cat cmdfile
+
   wavenproc=`wc -l cmdfile | awk '{print $1}'`
   wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
 
@@ -772,7 +781,9 @@
     echo '***********************************************************'
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
+    exit_code=$exit
     err=3;export err;${errchk}
+    exit $err
   fi
 
 # --------------------------------------------------------------------------- #
@@ -982,15 +993,24 @@
 
 # 6.e Execute fourth command file
 
+# Set number of processes for mpmd
+  cat cmdfile
+
+  wavenproc=`wc -l cmdfile | awk '{print $1}'`
+  wavenproc=`echo $((${wavenproc}<${NTASKS}?${wavenproc}:${NTASKS}))`
+
+# 1.a.3 Execute the serial or parallel cmdfile
+
   set +x
-  echo "   Executing tar command file at : `date`"
-  echo '   -------------------------------'
+  echo ' '
+  echo "   Executing the tar command file at : `date`"
+  echo '   ------------------------------------'
   echo ' '
   [[ "$LOUD" = YES ]] && set -x
 
   if [ "$wavenproc" -gt '1' ]
   then
-    ${wave_mpmd} cmdfile
+    ${wavempexec} ${wavenproc} ${wave_mpmd} cmdfile
     exit=$?
   else
     ./cmdfile
@@ -1003,12 +1023,15 @@
   then
     set +x
     echo ' '
-    echo '**************************************'
-    echo '*** CMD FAILURE DURING TAR PROCESS ***'
-    echo '**************************************'
+    echo '***************************************************'
+    echo '*** FATAL ERROR: CMD FAILURE DURING TAR PROCESS ***'
+    echo '***************************************************'
     echo '     See Details Below '
     echo ' '
     [[ "$LOUD" = YES ]] && set -x
+    exit_code=$exit
+    err=5; export err;${errchk}
+    exit $err
   fi
 
 
@@ -1089,6 +1112,7 @@
       echo ' '
       sed "s/^/$file : /g" $file
     done
+    exit $err
   fi
 
 # --------------------------------------------------------------------------- #
@@ -1118,15 +1142,16 @@
 
   if [ "$exit_code" -ne '0' ]
   then
-     msg="ABNORMAL EXIT: Problem in MWW3 POST"
-     postmsg "$jlogfile" "$msg"
-     echo $msg
-     err=6; export err;${errchk}
+    msg="ABNORMAL EXIT: Problem in MWW3 POST"
+    postmsg "$jlogfile" "$msg"
+    echo $msg
+    err=6; export err;${errchk}
+    exit $err
   else
-     echo " Wave Post Completed Normally "
+    echo " Wave Post Completed Normally "
+    msg="$job completed normally"
+    postmsg "$jlogfile" "$msg"
+    exit 0
   fi
-
-  msg="$job completed normally"
-  postmsg "$jlogfile" "$msg"
 
 # End of MWW3 prostprocessor script ---------------------------------------- #

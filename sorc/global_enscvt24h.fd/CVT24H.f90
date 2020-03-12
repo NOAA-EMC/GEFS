@@ -98,7 +98,7 @@
         else
           ncnt=ncnt+1
           if ( ncnt.le.1 ) then
-           print *,' n=',n,' iret=',iret
+           print *,' n=',n,' iret=',iret, ' in enscvt24h'
           endif
         endif
       endif
@@ -140,7 +140,7 @@
        enddo
       enddo           ! for n loop
       call gf_free(gfld)   
-      call gf_free(gfldo)
+!     call gf_free(gfldo)
 
       call baclose(11,iretb)
       call baclose(71,iret)

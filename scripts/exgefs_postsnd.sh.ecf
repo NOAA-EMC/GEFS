@@ -97,7 +97,7 @@ do
     if [ $FEND -gt $NEND1 ]; then
         export FINT=$NINT3
     fi
-    $USHgefs/gfs_bufr.sh
+    $USHgefs/gefs_bufr.sh
     ERR=$?
     export FSTART=$FEND
 done
@@ -108,7 +108,8 @@ done
 # Tar and gzip the individual bufr files and send them to /com
 ##############################################################
 cd ${COMOUT}/bufr/${mem}
-tar -cf - . | /usr/bin/gzip > ${RUNMEM}.${cycle}.bufrsnd.tar.gz
+#tar -cf - . | /usr/bin/gzip > ${RUNMEM}.${cycle}.bufrsnd.tar.gz
+tar -cf - bufr.* | /usr/bin/gzip > ${RUNMEM}.${cycle}.bufrsnd.tar.gz
 cd $DATA
 
 ########################################
@@ -128,29 +129,30 @@ collect=' 1 2 3 4 5 6 7 8 9'
 if [ $machine == "THEIA" -o  $machine == "JET" ]; then
     for m in ${collect}
     do
-        sh $USHgefs/gfs_sndp.sh $m
+        sh $USHgefs/gefs_sndp.sh $m
     done
 
     ################################################
     # Convert the bufr soundings into GEMPAK files
     ################################################
-    sh $USHgefs/gfs_bfr2gpk.sh
+    sh $USHgefs/gefs_bfr2gpk.sh
     ERR=$?
 else
     rm -rf poe_col
-    echo "sh $USHgefs/gfs_bfr2gpk.sh " >> poe_col
+    echo "sh $USHgefs/gefs_bfr2gpk.sh " >> poe_col
     for m in ${collect}
     do
-        echo "sh $USHgefs/gfs_sndp.sh $m " >> poe_col
+        echo "sh $USHgefs/gefs_sndp.sh $m " >> poe_col
     done
 
-    mv poe_col cmdfile
+    mv poe_col mpmd_cmdfile
 
-    cat cmdfile
-    chmod +x cmdfile
+    cat mpmd_cmdfile
+    chmod +x mpmd_cmdfile
 
     ##mpirun -n 10 cfp cmdfile
-    ${APRUN_POSTSNDCFP} cmdfile
+#   ${APRUN_POSTSNDCFP} cmdfile
+    ${APRUN_POSTSNDCFP} 
     ERR=$?
 fi
 

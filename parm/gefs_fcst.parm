@@ -24,7 +24,8 @@ export WRITE_NEMSIOFILE=.true.
 export WRITE_NEMSIOFLIP=.true.
 export LONB=$LONB
 export LATB=$LATB
-export restart_interval=${fhrestart:-420}
+export restart_interval=${fhrestart:-48}
+export other_restart_time=${other_restart_time:-6}
 export NSOUT=0
 
 # CPU geopmetry
@@ -58,6 +59,7 @@ fi
 # add two tiered SST options
 export sst2tier=${sst2tier:-YES}
 if [[ $sst2tier = YES ]]; then
+	export nstf_name="2,0,0,0,0"
 	export FTSFS=0
 	export FNTSFA=$SSTDIR/TMPsfc.$PDY$cyc.24hr.anom.grb
 fi
@@ -69,7 +71,6 @@ export APRUN=${APRUN:-""}
 
 # OTHER FV# FCST related environment
 export warm_start=${warm_start:-".false."}
-export BASE_GSM=$HOMEgfs
 REMAP_GRID=none     # temporay setting, to void the latlon default
 export REMAP_GRID=${REMAP_GRID:-latlon}        #gaussian or latlon for using fregrid or regrid_nemsio for remapping
 #export DIAG_TABLE=${DIAG_TABLE:-$HOMEgfs/parm/parm_fv3diag/diag_table}
@@ -158,6 +159,7 @@ export cal_pre=.false.
 export REDRAG=.true.
 export DSPHEAT=.true.
 export HYBEDMF=.true.
+export lheatstrg=.false.
 
 export random_clds=.false.
 export trans_trac=.true.
@@ -175,6 +177,8 @@ export nst_anl=${nst_anl:-".true."}
 export nstf_name=${nstf_name:-"2,0,0,0,0"}
 export psautco=${psautco:-"0.0008,0.0005"}
 export prautco=${prautco:-"0.00015,0.00015"}
+export lgfdlmprad=.true.
+export effr_in=.true.
 
 #FV3 imp_microphysics
 export dnats=0
@@ -185,22 +189,22 @@ export cnvcld=".true."
 export imp_physics=${imp_physics:-"11"}
 if [[ $imp_physics = 99 ]]; then # ZhaoCarr
 	export ncld=1
-    export FIELD_TABLE="$BASE_GSM/parm/parm_fv3diag/field_table_zhaocarr"
+    export FIELD_TABLE="$HOMEgfs/parm/parm_fv3diag/field_table_zhaocarr"
     export nwat=2
 elif [[ $imp_physics = 6 ]]; then # WSM6
     export ncld=2
-    export FIELD_TABLE="$BASE_GSM/parm/parm_fv3diag/field_table_wsm6"
+    export FIELD_TABLE="$HOMEgfs/parm/parm_fv3diag/field_table_wsm6"
     export nwat=6
 elif [[ $imp_physics = 8 ]]; then # Thompson
     export ncld=2
-    export FIELD_TABLE="$BASE_GSM/parm/parm_fv3diag/field_table_thompson"
+    export FIELD_TABLE="$HOMEgfs/parm/parm_fv3diag/field_table_thompson"
     export nwat=6
 elif [[ $imp_physics = 11 ]]; then # GFDL
     export ncld=5
     if [[ $cplchm = ".true." ]]; then
-    	export FIELD_TABLE="$BASE_GSM/parm/parm_fv3diag/chm_field_table_gfdl"
+    	export FIELD_TABLE="$HOMEgfs/parm/parm_fv3diag/chm_field_table_gfdl"
     else
-    	export FIELD_TABLE="$BASE_GSM/parm/parm_fv3diag/field_table_gfdl"
+    	export FIELD_TABLE="$HOMEgfs/parm/parm_fv3diag/field_table_gfdl"
 	fi
     export nwat=6
     export dnats=1

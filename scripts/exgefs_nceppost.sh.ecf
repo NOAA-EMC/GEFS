@@ -1,5 +1,3 @@
-#!/bin/bash
-
 #   Imported Shell Variables:
 #     SIGINP        Input sigma file
 
@@ -34,6 +32,8 @@ export FHOUT_HF=${3:-${FHOUT_HF}}
 export FHOUT_LF=${4:-${FHOUT_LF}}
 export FHMAX_HF=${5:-${FHMAX_HF}}
 export SHOUR_LF=${6:-${SHOUR_LF}}
+
+err=0
 
 # Get RUN_HOURS
 typeset -a RUN_HOURS
@@ -80,13 +80,13 @@ echo cycle=$cycle
 #export NDATE=${NDATE:-${EXECutil}/ndate}
 #
 export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
-export SIGHDR=${SIGHDR:-$EXECgsm/global_sighdr}
+export SIGHDR=${SIGHDR:-$EXECgfs/global_sighdr}
 export nemsioget=$nemsioget
 
 R1=`echo $RUNMEM|cut -c1-3`
 R2=`echo $RUNMEM|cut -c4-5`
 mem=`echo $RUNMEM|cut -c3-5`
-e3=20
+e3=$npert
 case $R1 in
     (gec)
         if (( R2 == 0 )); then 
@@ -158,18 +158,18 @@ fi # [ $res = "p125" ]
 #DOANALYSIS=NO
 if [ $DOANALYSIS = YES ]; then
 
-    mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.anl$cfsuffix
+    mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.anl
 
-    if [[ ! -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix ]]; then
+    if [[ ! -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl ]]; then
         if [[ -f $mcfile ]]; then rm $mcfile; fi
     fi
 
     if [ $GRIBVERSION = grib1 ]; then
-        fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbanl$cfsuffix
-        fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbianl$cfsuffix
+        fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbanl
+        fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbianl
     elif [ $GRIBVERSION = grib2 ]; then
-        fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl$cfsuffix
-        fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl$cfsuffix
+        fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl
+        fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl
     fi # [ $GRIBVERSION = grib1 ]
 
     if [[ -s $mcfile ]]; then
@@ -192,7 +192,7 @@ if [ $DOANALYSIS = YES ]; then
         if [[ -f $fileout ]]; then rm $fileout; fi
         if [[ -f $fileouti ]]; then rm $fileouti; fi
         for submc in prd0p5 prd1p0 prd2p5; do
-            pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.anl$cfsuffix
+            pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.anl
             if [[ -f $pcfile ]]; then rm $pcfile; fi
         done
     fi # [[ ! -s $mcfile ]]
@@ -209,18 +209,18 @@ for fhr in ${RUN_HOURS[@]}; do
     #    FHINC=$FHOUT
     #fi
 
-    mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr$cfsuffix
+    mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr
 
-    if [[ ! -f $restart_file$fhr$cfsuffix\.nemsio ]]; then
+    if [[ ! -f $restart_file$fhr\.nemsio ]]; then
         if [[ -f $mcfile ]]; then rm $mcfile; fi
     fi
 
     if [ $GRIBVERSION = grib1 ]; then
-        fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbf$fhr$cfsuffix
-        fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbif$fhr$cfsuffix
+        fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbf$fhr
+        fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbif$fhr
     elif [ $GRIBVERSION = grib2 ]; then
-        fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr$cfsuffix
-        fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr$cfsuffix
+        fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr
+        fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr
     fi # [ $GRIBVERSION = grib1 ]
 
     if [[ -s $mcfile ]]; then
@@ -243,7 +243,7 @@ for fhr in ${RUN_HOURS[@]}; do
         if [[ -f $fileout ]]; then rm $fileout; fi
         if [[ -f $fileouti ]]; then rm $fileouti; fi
         for submc in prd0p5 prd1p0 prd2p5; do
-            pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr$cfsuffix
+            pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr
             if [[ -f $pcfile ]]; then rm $pcfile; fi
         done # for submc in prd0p5 prd1p0 prd2p5
     fi # [[ ! -s $mcfile ]]
@@ -259,7 +259,7 @@ for fhr in ${RUN_HOURS[@]}; do
 done # for fhr in RUN_HOURS  # while (( fhr <= FHOUR ))
 
 if [ $DOANALYSIS = YES ]; then
-    mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.anl$cfsuffix
+    mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.anl
 
     if [[ ! -s $mcfile ]]; then
 
@@ -271,12 +271,12 @@ if [ $DOANALYSIS = YES ]; then
         export pgm="postcheck"
         ic=0
         while [ $ic -le $SLEEP_LOOP_MAX ]; do
-            if test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix; then
+            if test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl; then
                 break
             else
                 ic=`expr $ic + 1`
                 sleep $SLEEP_INT
-            fi # test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix
+            fi # test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl
             ###############################
             # If we reach this point assume
             # fcst job never reached restart 
@@ -291,7 +291,7 @@ if [ $DOANALYSIS = YES ]; then
             fi
         done  #while [ $ic -le $SLEEP_LOOP_MAX ]
 
-        if test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix; then
+        if test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl; then
             # add new environmental variables for running new ncep post
             # Validation date
 
@@ -301,7 +301,7 @@ if [ $DOANALYSIS = YES ]; then
             # if model already runs gfs io, make sure GFSOUT is linked to the gfsio file
             # new imported variable for global_nceppost.sh
 
-            export GFSOUT=${RUNMEM}.${cycle}.gfsioanl$cfsuffix
+            export GFSOUT=${RUNMEM}.${cycle}.gfsioanl
 
             # specify smaller control file for GDAS because GDAS does not
             # produce flux file, the default will be /nwprod/parm/gfs_master_fhh.parm
@@ -311,32 +311,30 @@ if [ $DOANALYSIS = YES ]; then
                 export CTLFILE=$PARMgefs/gefs_master_f00.parm
             elif [ $GRIBVERSION = grib2 ]; then
                 export IGEN=$IGEN_ANL
-#               export CTLFILE=${CTLFILEGFSANL:-$PARMpost/postcntrl_gefs_anl.xml}
                 export PostFlatFile=${FLTFILEGFSANL:-$PARMPOST/postxconfig-NT-GEFS-ANL.txt}
             fi # [ $GRIBVERSION = grib1 ]
 
 #           cat $CTLFILE
 
-            if [[ -f sigfile.anl$cfsuffix ]]; then rm -rf sigfile.anl$cfsuffix; fi
-            ln -s $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix sigfile.anl$cfsuffix
-#               ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf00$cfsuffix sigfile.anl$cfsuffix
+            if [[ -f sigfile.anl ]]; then rm -rf sigfile.anl; fi
+            ln -s $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl sigfile.anl
 
             ####################################
             # Create Master Post File 
             ####################################
-            export SIGINP=sigfile.anl$cfsuffix
-            export NEMSINP=sigfile.anl$cfsuffix
+            export SIGINP=sigfile.anl
+            export NEMSINP=sigfile.anl
             export SFCINPUT=
             export FLXINP=
             export FLXIOUT=
             if [[ -f pgbfout ]]; then rm -rf pgbfout; fi
             if [[ -f pgbifout ]]; then rm -rf pgbifout; fi
             if [ $GRIBVERSION = grib1 ]; then
-                ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbanl$cfsuffix pgbfout
-                ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbianl$cfsuffix pgbifout
+                ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbanl pgbfout
+                ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbianl pgbifout
             elif [ $GRIBVERSION = grib2 ]; then
-                ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl$cfsuffix pgbfout
-                ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl$cfsuffix pgbifout
+                ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl pgbfout
+                ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl pgbifout
             fi # [ $GRIBVERSION = grib1 ]
             export PGBOUT=pgbfout
             export PGIOUT=pgbifout
@@ -392,7 +390,7 @@ if [ $DOANALYSIS = YES ]; then
                 ecflow_client --event anl_done
                 echo
             fi # test $SENDCOM = "YES"
-        fi # test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl$cfsuffix
+        fi # test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl
     fi # [[ ! -s $mcfile ]]
 fi # [ $DOANALYSIS = YES ]
 
@@ -412,7 +410,7 @@ do
     #    FHINC=$FHOUT
     #fi
 
-    mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr$cfsuffix
+    mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr
 
     if [[ ! -s $mcfile ]]; then
         ###############################
@@ -423,12 +421,12 @@ do
         ic=1
 
         while [ $ic -le $SLEEP_LOOP_MAX ]; do
-            if test -f $restart_file$fhr$cfsuffix\.nemsio; then
+            if test -f $restart_file$fhr\.nemsio; then
                 break
             else
                 ic=`expr $ic + 1`
                 sleep $SLEEP_INT
-            fi # test -f $restart_file$fhr$cfsuffix
+            fi # test -f $restart_file$fhr
             ###############################
             # If we reach this point assume
             # fcst job never reached restart 
@@ -451,13 +449,7 @@ do
         ###############################
         if [[ -f sigfile ]]; then rm -rf sigfile; fi
         if [[ -f flxfile ]]; then rm -rf flxfile; fi
-#       ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sigfile.f$fhr$cfsuffix
-#       ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
-#       ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix flxfile.f$fhr$cfsuffix
-        #ln -s $COMIN/$cyc/sfcsig/$mem/${RUNMEM}.t${cyc}z.atmf$fhr.nemsio sigfile.f$fhr
         ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.atmf$fhr.nemsio sigfile.f$fhr
-#       ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sf$fhr$cfsuffix sfcfile.f$fhr$cfsuffix
-        #ln -s $COMIN/$cyc/sfcsig/$mem/${RUNMEM}.t${cyc}z.sfcf$fhr.nemsio flxfile.f$fhr
         ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sfcf$fhr.nemsio flxfile.f$fhr
 
         ###################################3
@@ -505,22 +497,20 @@ do
 #       cat $CTLFILE
 #       cat $PostFlatFile
 
-        export SIGINP=sigfile.f$fhr$cfsuffix
-        export NEMSINP=sigfile.f$fhr$cfsuffix
-        export SFCINPUT=sfcfile.f$fhr$cfsuffix
+        export SIGINP=sigfile.f$fhr
+        export NEMSINP=sigfile.f$fhr
+        export SFCINPUT=sfcfile.f$fhr
 
-        export FLXINP=flxfile.f$fhr$cfsuffix
-        export FLXIOUT=flxifile.f$fhr$cfsuffix
+        export FLXINP=flxfile.f$fhr
+        export FLXIOUT=flxifile.f$fhr
         if [[ -f pgbfout ]]; then rm -rf pgbfout; fi
         if [[ -f pgbifout ]]; then rm -rf pgbifout; fi
-        # ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbf$fhr$cfsuffix pgbfout
-        # ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbif$fhr$cfsuffix pgbifout
-        ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr$cfsuffix pgbfout
-        ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr$cfsuffix pgbifout
+        ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr pgbfout
+        ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr pgbifout
         export PGBOUT=pgbfout
         export PGIOUT=pgbifout
         export ANOMCATSH=${USHGSM}/global_anomcat.sh
-        FILTER=1
+        export FILTER=1
 
         # RLW 20100910 add cleanup to prevent problems with overparm
         echo
@@ -594,7 +584,16 @@ done # for fhr in RUN_HOURS # while (( fhr <= FHOUR ))
 
 cat $pgmout
 
-msg='ENDED NORMALLY.'
-postmsg "$jlogfile" "$msg"
+if [ $err -eq 0 ] ; then
+    msg="ENDED NORMALLY!!!"
+    echo "`date`    $msg"
+    postmsg "$jlogfile" "$msg"
+    exit 0
+else
+    msg="FATAL ERROR: FAILED to do the post!!!"
+    echo "`date`    $msg"
+    postmsg "$jlogfile" "$msg"
+    exit $err
+fi
 
 ################## END OF SCRIPT #######################
