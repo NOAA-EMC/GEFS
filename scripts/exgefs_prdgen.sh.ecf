@@ -26,16 +26,9 @@ cd $DATA
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
 
-if [[ "$cycsuffix" = "true" ]]; then
-	export cfsuffix=".cycfs$cyc_fcst"
-else
-	export cfsuffix=""
-fi
-echo cyc=$cyc cyc_fcst=$cyc_fcst
 echo cycle=$cycle cycle_fcst=$cycle_fcst
 echo fcstlong=$fcstlong
 echo cycsuffix=$cycsuffix
-echo cfsuffix=$cfsuffix
 
 export jobdir="${1}"                   # ${DATA}/${stream}
 export stream="${2}"                   # PRDGEN_STREAMS
@@ -108,16 +101,16 @@ for hour in $hours; do
 			export mcfile=""
 			export makepgrb2b="no"
 		else
-			export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl$cfsuffix
-			export mifile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl$cfsuffix
-			export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.anl$cfsuffix
+			export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl
+			export mifile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl
+			export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.anl
 		fi # [[ $RUNMEM = "gegfs" ]]
 
-		export pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.$cycle.prdgen.control.anl$cfsuffix
-		export fileaout=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf$cfsuffix
-		export fileaouti=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf$cfsuffix.idx
-		export filebout=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf$cfsuffix
-		export filebouti=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf$cfsuffix.idx
+		export pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.$cycle.prdgen.control.anl
+		export fileaout=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf
+		export fileaouti=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf.idx
+		export filebout=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf
+		export filebouti=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf.idx
 
 		ic=1
 		while [ $ic -le $SLEEP_LOOP_MAX ]; do
@@ -154,7 +147,7 @@ for hour in $hours; do
 			# indicate missing data
 			###############################
 			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-				date >$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.anl$cfsuffix.missing
+				date >$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.anl.missing
 				echo "$(date) $sname $member post data missing for analysis"
 				msg="$member MISSING POST DATA for analysis"
 				postmsg "$jlogfile" "$msg"
@@ -209,16 +202,16 @@ for hour in $hours; do
 		export mcfile=""
 		export makepgrb2b="no"
 	else 
-		export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr$cfsuffix
-		export mifile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr$cfsuffix
-		export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.f$fhr$cfsuffix
+		export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr
+		export mifile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr
+		export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.f$fhr
 	fi # [[ $RUNMEM = "gegfs" ]]
 
-	export pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr$cfsuffix
-	export fileaout=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}$pgasuf$cfsuffix
-	export fileaouti=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}$pgasuf$cfsuffix.idx
-	export filebout=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}$pgasuf$cfsuffix
-	export filebouti=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}$pgasuf$cfsuffix.idx
+	export pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr
+	export fileaout=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}$pgasuf
+	export fileaouti=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}$pgasuf.idx
+	export filebout=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}$pgasuf
+	export filebouti=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}$pgasuf.idx
 
 	if [[ $save_pgrb2_p5 = YES ]] && (( FHOUR > FHMAXHF )); then
 		export mafile_p5=$COMOUT/$cyc/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.f${fhr}
@@ -272,7 +265,7 @@ for hour in $hours; do
 		# period and error exit
 		###############################
 		if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-			date >$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.f$fhr$cfsuffix.missing
+			date >$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.f$fhr.missing
 			echo "$(date) $sname $member missing post data for hour $fhr"
 			msg="$member MISSING POST DATA for hour $fhr"
 			postmsg "$jlogfile" "$msg"

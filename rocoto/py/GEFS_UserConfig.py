@@ -11,10 +11,10 @@ def get_and_merge_default_config(dicBase):
     sDefaultConfig_File = sys.path[0] + sSep + "user_{0}.conf".format(WHERE_AM_I)
 
     if os.path.exists(sDefaultConfig_File):
-        print("---Default User Configure file was found! Reading ...")
+        print("----Default User Configure file was found! Reading ...")
         dicBase_Default = read_config(sDefaultConfig_File)
 
-        print("---Merging ...")
+        print("----Merging ...")
         for sDic in dicBase_Default:
             if sDic not in dicBase:
                 dicBase[sDic] = dicBase_Default[sDic]
@@ -61,6 +61,27 @@ def get_config_file(OnlyForTest=False):
                         sys.exit(-5)
                     else:
                         sRocoto_WS = os.getcwd() + sSep + ".."
+
+    sRocoto_WS = os.path.abspath(sRocoto_WS)
+    return sConfig, sRocoto_WS
+
+
+# =======================================================
+def get_config_file2(sConfigFile="user_full.conf"):
+    import os, sys
+
+    sSep = "/"
+    if sys.platform == 'win32':
+        sSep = r'\\'
+
+    sRocoto_WS = os.getcwd()
+    sConfig = sRocoto_WS + sSep + sConfigFile
+    if not os.path.exists(sConfig):
+        sRocoto_WS = os.getcwd() + sSep + ".."
+        sConfig = sRocoto_WS + sSep + sConfigFile
+        if not os.path.exists(sConfig):
+            print("Please check whether you have config file in your rocoto path!")
+            sys.exit(-5)
 
     sRocoto_WS = os.path.abspath(sRocoto_WS)
     return sConfig, sRocoto_WS
@@ -156,8 +177,6 @@ def get_WHERE_AM_I(dicBase):
     if sVarName not in dicBase:
         if os.path.exists('/scratch1/NCEPDEV'):
             dicBase[sVarName] = 'hera'
-        elif os.path.exists('/scratch3/NCEPDEV'):
-            dicBase[sVarName] = 'theia'
         elif os.path.exists('/gpfs') and os.path.exists('/etc/SuSE-release'):
             dicBase[sVarName] = 'cray'
         elif os.path.exists('/dcom') and os.path.exists('/hwrf'):
@@ -169,3 +188,23 @@ def get_WHERE_AM_I(dicBase):
         else:
             print('workflow is currently only supported on: %s' % ' '.join('other'))
             raise NotImplementedError('Cannot auto-detect platform, ABORT!')
+            
+            
+# =======================================================
+def get_dicBase_from_Config(sConfigFile="user_full.conf"):
+
+    print("--Getting database from User Configuration File: {0}".format(sConfigFile))
+    
+    # Read User Configuration File
+    print("----Getting user config file!")
+    sConfig, sRocoto_WS = get_config_file2(sConfigFile=sConfigFile)
+    
+    print("----Reading user config file...")
+    dicBase = read_config(sConfig)
+    
+    # Get the default value
+    print("----Getting default values from default user config file!")
+    get_and_merge_default_config(dicBase)
+    
+    return sConfig, sRocoto_WS, dicBase
+    

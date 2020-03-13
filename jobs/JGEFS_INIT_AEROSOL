@@ -1,0 +1,131 @@
+#!/bin/ksh 
+
+echo `date` $0 `date -u` begin
+
+set -xa
+export PS4='$SECONDS + '
+date
+
+export APRUN_CALCINC=${APRUN_CALCINC:-"mpirun -n 1"}
+export APRUN_CHGRES=${APRUN_CHGRES:-"mpirun -n 1"}
+
+####################################
+# obtain unique process id (pid) and make working directory
+####################################
+export pid=$$
+export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
+mkdir -p $DATA
+cd $DATA
+
+############################
+# Set up cycle varaible
+############################
+export cycle=${cycle:-t${cyc}z}
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
+
+###########################
+# Set up cycle varaible
+############################
+export cycle=${cycle:-t${cyc}z}
+export CDATE=$PDY$cyc
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
+
+####################################
+# Specify Execution Areas
+####################################
+export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
+export HOMEgfs=${HOMEgfs:-${HOMEgefs}}
+export FIXgfs=$HOMEgfs/fix
+export USHgfs=$HOMEgfs/ush
+
+export REGRIDEXEC=${REGRIDEXEC:-$HOMEgfs/exec/chgres_recenter.exe}
+export CALCINCEXEC=${CALCINCEXEC:-$HOMEgfs/exec/calc_increment_ens_gsdchem.x}
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+##############################################
+echo "set parameters using gefs.parm"
+##############################################
+. $PARMgefs/gefs.parm
+. $PARMgefs/gefs_fcst.parm
+
+##############################################
+# Define COM OUT directories
+##############################################
+export COMIN=${COMIN:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/$cyc}
+export COMOUT=${COMOUT:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}}
+export GESIN=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
+ICSDIR_template=${ICSDIR_template:-$GESIN/$mem}
+ICSDIR=$(eval echo $ICSDIR_template)
+
+export gefs_cych=${gefs_cych:-6}
+
+##############################################
+echo "list environment before running script"
+##############################################
+
+env | sort
+
+#############################################################
+# Execute the script
+# $HOMEgefs/scripts/exgefs_init_chem.ecf
+$HOMEgefs/scripts/exgefs_init_aerosol.py
+#############################################################
+ERR=$?
+
+if [ $ERR = 0 ]; then
+    msg="JOB COMPLETED NORMALLY"
+else
+    msg="JOB FAILED!"
+fi
+
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+ICSDIR=${ICSDIR:-$DATA}
+echo $ICSDIR
+echo $DATA
+if [ ${KEEPDATA:-NO} = NO ]; then 
+  rm -rf $DATA $ICSDIR
+fi
+
+exit $ERR
+

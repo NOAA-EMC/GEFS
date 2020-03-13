@@ -22,6 +22,7 @@ export fhmax06=${fhmax06:-$fhmax}
 export fhmax12=${fhmax12:-$fhmax}
 export fhmax18=${fhmax18:-$fhmax}
 export fhmax_ext=${fhmax_ext:-840}
+export fhmax_aer=${fhmax_aer:-120}
 export fhcplwave=${fhcplwave:-384}
 
 #OUTPUT frequency
@@ -51,11 +52,23 @@ case $cyc in
 		;;
 esac
 
+if [[ $RUNMEM = "geaer" ]]; then cplchm=".true."; fi
+
+export cplchm=${cplchm:-.false.}
+
+if [[ $cplchm = ".true." ]]; then
+	# Override forecast length
+	export fhmaxh=$fhmax_aer
+	export fhmax=$fhmax_aer
+
+	export cplwav=".false."
+fi
+
 export fhmax
 # DHOU, 08/26/2010, added this block to modify fhmaxh fhmax3 and fhmaxhres
-if (( fhmax <= fhmaxh )); then
-        export fhmaxh=$fhmax
-fi
+if (( fhmax <= fhmaxh )); then export fhmaxh=$fhmax; fi
+if (( FHMAXHF > fhmaxh )); then export FHMAXHF=$fhmaxh; fi
+
 
 # HOUTSPS=12: output after SPS 12 hours before fhmaxh, so that digital filtering can be applied after resolution change export HOUTSPS=12
 export HOUTSPS=${HOUTSPS:-0}

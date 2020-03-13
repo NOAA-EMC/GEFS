@@ -40,35 +40,14 @@ elif [[ "$WHERE_AM_I" == cray ]] ; then
     module load xt-lsfhpc
     # wave modules
     module load HDF5-serial-intel-sandybridge/1.8.9
+    module load nco-gnu-sandybridge/4.4.4
     module load NetCDF-intel-sandybridge/4.2
+    # module load NetCDF-intel-haswell/4.2
+    module load nco-gnu-sandybridge/4.4.4
     # theend wave modules 
 	export PATH=$PATH:.
     
     . $GEFS_ROCOTO/bin/cray/common.sh
-
-elif [[ "$WHERE_AM_I" == theia ]]; then
-    echo "Loading modules for theia"
-    . /apps/lmod/lmod/init/ksh
-    module purge
-    module load hpss
-    module load intel/18.0.1.163
-    module load impi/2018.0.1
-    module load hdf5parallel/1.8.14
-    module load netcdf
-    module load intelpython/3.6.1.0
-    module use -a /scratch3/NCEPDEV/nwprod/lib/modulefiles
-    module load prod_util/v1.1.0
-    module load g2tmpl/v1.5.0
-    module load prod_util/v1.1.0
-    module load g2tmpl/v1.5.0
-    module use -a /scratch3/NCEPDEV/nwprod/modulefiles
-    module load grib_util/v1.1.0
-    module load gempak/7.4.2
-
-    export PATH=/scratch4/NCEPDEV/ensemble/save/common/anaconda3/bin:$PATH:./
-
-    # Temporary setting to test common settings
-    . $GEFS_ROCOTO/bin/theia/common.sh
 
 elif [[ "$WHERE_AM_I" == hera ]]; then
     echo "Loading modules for hera"
@@ -80,6 +59,7 @@ elif [[ "$WHERE_AM_I" == hera ]]; then
     module load impi/2018.0.4
     module load hdf5parallel/1.10.5
     module load netcdf/4.7.0
+    module load nco/4.7.0
     module load hdf5/1.10.5
     #module load anaconda/anaconda3-5.3.1
     module load anaconda/latest
@@ -101,7 +81,7 @@ elif [[ "$WHERE_AM_I" == wcoss_dell_p3 ]] ; then
     . /usrx/local/prod/lmod/lmod/init/ksh
     module load EnvVars/1.0.2
     module load ips/18.0.1.163
-    module load prod_envir/1.0.2
+    module load prod_envir/1.0.3
     module load grib_util/1.1.0
     module load prod_util/1.1.0
     module load HPSS/5.0.2.5
@@ -112,6 +92,7 @@ elif [[ "$WHERE_AM_I" == wcoss_dell_p3 ]] ; then
     module load gempak/7.3.1
 
     module load NetCDF/4.5.0
+    module load NCO/4.7.0
     module load HDF5-serial/1.10.1
     module load impi/18.0.1
     module load CFP/2.0.1

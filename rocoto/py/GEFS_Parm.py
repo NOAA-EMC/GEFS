@@ -1,4 +1,4 @@
-# ------
+# =======================================================
 def create_parm(sConfig, dicBase):
     # For gets_dev.parm
     lstBaseParm = get_lstParm(sConfig, dicBase)
@@ -45,6 +45,7 @@ def read_dicParm(sConfig):
 
                     # they are the parameter for param
                     a, b = sLine.split("=", 1)
+                    b = b.split(" #", 1)[0]
 
                     a = str(a).strip()
                     b = str(b).strip()
@@ -77,17 +78,20 @@ def get_and_merge_default_dicParm(dicParm, WHERE_AM_I):
     sDefaultConfig_File = sys.path[0] + sSep + "user_{0}.conf".format(WHERE_AM_I)
 
     if os.path.exists(sDefaultConfig_File):
-        print("---Default User Configure file was found! Reading ...")
+        #print("----Getting default parameters' value ...")
+        #print("----Default User Configure file was found! Reading ...")
         dicParm_Default = read_dicParm(sDefaultConfig_File)
 
-        print("---Merging ...")
+        #print("----Merging ...")
         for sDic in dicParm_Default:
             if sDic not in dicParm:
                 dicParm[sDic] = dicParm_Default[sDic]
 
 
-# ------
+# =======================================================
 def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
+    import GEFS_XML_For_Tasks as gefs_xml_for_tasks
+
     # ==
     sVarName = "First"
     if sVarName not in lstBaseParm:
@@ -96,17 +100,10 @@ def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
     sVarName = "Last"
     if sVarName not in lstBaseParm:
         lstBaseParm.insert(1, sVarName)
-    # ==
-    sVarName_Num = "npert".upper()
-    npert = int(dicBase[sVarName_Num])
 
-    sVarName = "npair"
-    dicBase[sVarName.upper()] = int(npert / 2)
-    if sVarName not in lstBaseParm:
-        lstBaseParm.append(sVarName)
     # ==
     sVarName = "npert"
-    dicBase[sVarName.upper()] = npert
+    npert = int(dicBase[sVarName.upper()])
     if sVarName not in lstBaseParm:
         lstBaseParm.append(sVarName)
 
@@ -124,7 +121,7 @@ def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
         lstBaseParm.append(sVarName)
 
     # ==
-    if ("forecast_high".upper() in dicBase) or ("forecast_low".upper() in dicBase):
+    if gefs_xml_for_tasks.DoesTaskExist(dicBase, "forecast_high") or gefs_xml_for_tasks.DoesTaskExist(dicBase, "forecast_low"):
         sVarName = "COREPERNODE"
         if sVarName not in lstBaseParm:
             lstBaseParm.append(sVarName)
@@ -139,6 +136,34 @@ def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
     if sVarName not in lstBaseParm:
         lstBaseParm.append(sVarName)
 
+
+# =======================================================
+def get_lstParm2(sConfig, dicBase):
+    dicDevParm = read_dicParm(sConfig)
+    
+    WHERE_AM_I = dicBase["WHERE_AM_I"]
+    get_and_merge_default_dicParm(dicDevParm, WHERE_AM_I)
+
+    lstDevParm = list(dicDevParm.keys())
+
+    assign_default_for_gets_dev_parm(dicBase, lstDevParm)
+
+    return lstDevParm
+
+# =======================================================
+def create_parm2(sConfig, dicBase):
+    # For gets_dev.parm
+
+    sVarName = "GenParm".upper()
+    if sVarName in dicBase:
+        sValue = dicBase[sVarName]
+        if sValue.upper().startswith('Y'):
+            # check gets_dev_parm items in configure file
+            print("--Generating gefs_dev.parm ...")
+            lstDevParm = get_lstParm2(sConfig, dicBase)
+            create_gets_dev_parm(dicBase, lstDevParm)
+
+# =======================================================
 def create_gets_dev_parm(dicBase, listBaseParm):
     import sys
     import os
