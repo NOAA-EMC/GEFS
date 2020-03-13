@@ -95,8 +95,8 @@ export COMOUTatcf=${COMOUTatcf:-${COMROOT}/nhc/${envir}/atcf}
 
 mkdir -m 775 -p $COMOUT $COMOUThur $COMOUTatcf
 
-export ensdira=$COMIN/pgrb2ap25
-export ensdirb=$COMIN/pgrb2bp25
+export ensdira=$COMIN/pgrb2sp25
+export ensdirb=$COMIN/pgrb2p25
 
 ##############################################
 echo set parameters using gefs.parm

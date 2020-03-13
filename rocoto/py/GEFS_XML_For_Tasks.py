@@ -942,8 +942,8 @@ def get_param_of_task(dicBase, taskname):
                 npert = int(dicBase["NPERT"])
                 sDep = '<and>'
                 for i in range(npert):
-                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.prdgen.control.f000</cyclestr></datadep>'.format(i + 1)
-                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.prdgen.control.f000</cyclestr></datadep>'
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gep{0:02}.t@Hz.prdgen.control.f000</cyclestr></datadep>'.format(i + 1)
+                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gec00.t@Hz.prdgen.control.f000</cyclestr></datadep>'
                 sDep += '\n</and>'
 
             # For ensstat_low
@@ -962,8 +962,8 @@ def get_param_of_task(dicBase, taskname):
                     iStartHourLF = ifhmaxh + iFHOUTLF
 
                 for i in range(npert):
-                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.prdgen.control.f{1:03}</cyclestr></datadep>'.format(i + 1, iStartHourLF)
-                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.prdgen.control.f{0:03}</cyclestr></datadep>'.format(iStartHourLF)
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gep{0:02}.t@Hz.prdgen.control.f{1:03}</cyclestr></datadep>'.format(i + 1, iStartHourLF)
+                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gec00.t@Hz.prdgen.control.f{0:03}</cyclestr></datadep>'.format(iStartHourLF)
                 sDep += '\n</and>'
 
             # For extractvars
