@@ -240,12 +240,12 @@ MEMBER=`echo $RUNMEM|cut -c4-5`
 CDATE=$PDY$cyc
 
 # Turn off stochastic physics for control member
-if [[ $RUNMEM = "gec00" ]]; then
+if [[ $RUNMEM = "gec00" || $RUNMEM = "geaer" ]]; then
 	export DO_SPPT="NO"
 	export DO_SHUM="NO"
 	export DO_SKEB="NO"
 	export DO_VC="NO"
-fi # [[ $RUNMEM = "gec00" ]]
+fi # [[ $RUNMEM = "gec00" || $RUNMEM = "geaer" ]]
 
 # Stochastically Perturbed Physics Tendency
 if [[ $DO_SPPT = YES ]]; then
