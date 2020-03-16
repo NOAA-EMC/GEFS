@@ -8,6 +8,7 @@ date
 
 export total_tasks=${total_tasks:-1}
 export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
+export OMP_NUM_THREADS_CH=${OMP_NUM_THREADS_CH:-40}
 
 export RUNMEM=$RUNMEM
 export mem=`echo $RUNMEM|cut -c 3-`

@@ -166,6 +166,9 @@ if [ $CleanAll = "yes" ]; then
     rm ../ush/global_chgres.sh
     rm ../ush/global_chgres_driver.sh
 
+    rm ../parm/prep_chem_sources.inp.IN
+    rm ../scripts/exglobal_prep_chem.bash
+
 fi # for CleanAll
 
 # for rocoto
@@ -224,7 +227,6 @@ if [ $AddCrontabToMyCrontab = "yes" ]; then
         py/add_crontab.py
         crontab $HOME/cron/mycrontab
         echo "Added crontab to $HOME/cron/mycrontab!"
-
     elif [ $machine = "wcoss_dell_p3" ]; then
         py/add_crontab.py
         echo "Added crontab to $HOME/cron/mycrontab!"

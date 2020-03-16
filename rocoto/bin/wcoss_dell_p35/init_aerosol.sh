@@ -14,17 +14,18 @@ module purge
 
 module load EnvVars/$EnvVars_ver
 module load ips/$ips_ver
-module load impi/$impi_ver
+#module load impi/$impi_ver
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
-module load grib_util/$grib_util_ver
-#module load NetCDF/$NetCDF_ver
-#module load HDF5-serial/$HDF5_serial_ver
+#module load grib_util/$grib_util_ver
+
+module load NCO/$NCO_ver
+module load python/$python_ver
 
 module load lsf/$lsf_ver
 
-module load CFP/$CFP_ver
-export USE_CFP=YES
+#module load CFP/$CFP_ver
+#export USE_CFP=YES
 
 module list
 
@@ -32,7 +33,6 @@ module list
 . $GEFS_ROCOTO/bin/wcoss_dell_p35/common.sh
 
 # Export List
-#export RERUN=NO
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_PRDGEN
+$SOURCEDIR/jobs/JGEFS_INIT_AEROSOL
