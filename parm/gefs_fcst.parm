@@ -117,8 +117,6 @@ if [[ $cplchm = ".true." ]]; then
 		export CALCINCEXEC=${CALCINCEXEC:-$HOMEgfs/exec/calc_increment_ens_gsdchem.x}
 	fi
 
-	# TODO Update to determine emission type
-	export EMITYPE=${EMITYPE:-2}  # 1:MODIS, 2:GBBEPx
 	# TODO Copy data to a fix_aerosol
 	export EMIDIR=${EMIDIR:-/gpfs/dell2/emc/modeling/noscrub/Li.Pan/emi_}
 
