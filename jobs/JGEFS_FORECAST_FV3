@@ -388,9 +388,12 @@ if [[ $cplchm = ".true." ]]; then
 
 	if (( gbbepx_found == 6 )); then
 		# Using GBBEPx
+		echo "GBBEPx smoke emissions detected and will be used"
 		export EMITYPE=2
 	elif (( any_found == 6 )); then
 		# Using MODIS
+		echo "WARNING: missing or complete GBBEPx emissions, failing over to MODIS-style inputs"
+		echo "   Check $CHEMIN if this is not expected."
 		export EMITYPE=1
 	else
 		echo "FATAL: cplchm is .true. but smoke emissions are not available!"
