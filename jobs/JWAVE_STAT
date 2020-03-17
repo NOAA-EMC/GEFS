@@ -7,47 +7,58 @@ set -x -e
 #############################
 # Source relevant config files
 #############################
-configs="base wave wavestats"
-export EXPDIR=${EXPDIR:-$HOMEgfs/parm/config}
-config_path=${EXPDIR:-$NWROOT/gfs.${gfs_ver}/parm/config}
-for config in $configs; do
-    . $config_path/config.$config
-    status=$?
-    [[ $status -ne 0 ]] && exit $status
-done
-
+#XXX
+#configs="base wave wavestats"
+#export EXPDIR=${EXPDIR:-$HOMEgfs/parm/config}
+#config_path=${EXPDIR:-$NWROOT/gfs.${gfs_ver}/parm/config}
+#for config in $configs; do
+#    . $config_path/config.$config
+#    status=$?
+#    [[ $status -ne 0 ]] && exit $status
+#done
+#XXX
 ##########################################
 # Source machine runtime environment
 ##########################################
-. $HOMEgfs/env/${machine}.env wavestat
-status=$?
-[[ $status -ne 0 ]] && exit $status
+#XXX. $HOMEgfs/env/${machine}.env wavestat
+#XXXstatus=$?
+#XXX [[ $status -ne 0 ]] && exit $status
 
 # PATH for working directory
-export NET=${NET:-gfs}
-export RUN=${RUN:-gfs}
-export COMPONENTwave=${COMPONENTwave:-${RUN}wave}
-
+export NET=${NET:-gefs}
+export RUN=${RUN:-gefs}
+export MDC=${MDC:-${RUN}wave}
+export modIE=${modIE:-gefs}
+export grdID=${grdID:-global.0p25}
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export HOMEgfs=${HOMEgfs:-$NWROOT/gfs.${gfs_ver}}
+
+echo "NET RUN MDC modIE grdID KEEPDATA"
+echo $NET $RUN $MDC $modIE $grdID $KEEPDATA
+
+
+
 
 # Add default errchk = err_chk
 export errchk=${errchk:-err_chk}
 
 # Set HOMEwave to HOMEgfs
-HOMEwave=${HOMEwave:-${HOMEgfs}} 
+HOMEwave=${HOMEwave:-${HOMEgefs}} 
 
 # Create and go to DATA directory
 export DATA=${DATA:-${DATAROOT:?}/${jobid}}
 mkdir -p $DATA
 cd $DATA
 
-cyc=${cyc:-00}
+export cyc=${cyc:-00}
 export cycle=${cycle:-t${cyc}z}
- 
-# Set PDY
-setpdy.sh
-sh ./PDY
+
+
+# Run setup to initialize working directory and utility scripts
+#sh $utilscript/setup.sh
+# Run setpdy and initialize PDY variables
+sh $utilscript/setpdy.sh
+. PDY
 
 export pgmout=OUTPUT.$$
 
@@ -64,12 +75,12 @@ export EXECcode=${EXECcode:-$CODEwave/exe}
 # Set COM Paths and GETGES environment
 export COMINwave=${COMINwave:-${COMROOT:?}/${NET}/${envir}}
 export COMOUTwave=${COMOUTwave:-${COMROOT:?}/${NET}/${envir}}
-export COMIN=${COMIN:-${COMINwave}/${COMPONENTwave}.${PDY}/${cyc}}
-export COMOUT=${COMOUT:-${COMOUTwave}/${COMPONENTwave}.${PDY}/${cyc}}
+export COMIN=${COMIN:-${COMINwave}/${MDC}.${PDY}/${cyc}}
+export COMOUT=${COMOUT:-${COMOUTwave}/${MDC}.${PDY}/${cyc}}
 
 export COMINice=${COMINice:-${COMROOTp2}/omb/prod}
 export COMINwnd=${COMINwnd:-${COMROOT}/gfs/prod}
-export COMIN_WAV_CUR=${COMIN_WAV_CUR:-${COMROOTp2}/rtofs/prod}
+export COMINcur=${COMINcur:-${COMROOTp2}/rtofs/prod}
 
 if [ $SENDCOM = YES ]; then
   mkdir -p $COMOUT/gridded
@@ -77,7 +88,7 @@ if [ $SENDCOM = YES ]; then
   mkdir -p $COMOUT/stats
 fi
 
-export wavelog=${COMOUTwave}/wave.log
+export wavelog=${wavelog:-${COMOUTwave}/wave.log}
 
 # Set mpi serial command
 export wavempexec=${wavempexec:-"mpirun"}
@@ -93,8 +104,8 @@ elif [ "${NET}" == "gfs" ]
 then
   echo 'Placeholder for GFS config'
 fi
-. $PARMwave/wave.parm.${NET}
-. $PARMwave/wave_stat.parm.${NET}
+#XXX. $PARMwave/wave.parm.${NET}
+#XXX. $PARMwave/wave_stat.parm.${NET}
 
 # Set wave model ID tag to include member number 
 # if ensemble; waveMEMB var empty in deterministic
@@ -103,12 +114,12 @@ fi
 membTAG='p'
 if [ "${waveMEMB}" == "00" ]; then membTAG='c'; fi
 export membTAG
-export WAV_MOD_TAG=${COMPONENTwave}${waveMEMB}
+export WAV_MOD_TAG=${MDC}${waveMEMB}
 
 export CFP_VERBOSE=1
 
 # Execute the Script  
-$HOMEwave/scripts/exwave_stat.sh
+$HOMEwave/scripts/exwave_stats.sh
 err=$?
 if [ $err -ne 0 ]; then
   msg="FATAL ERROR: ex-script of GWES_STAT failed!"
@@ -118,9 +129,9 @@ fi
 postmsg "$jlogfile" "$msg"
 
 # Remove temp directories
-if [ "$KEEPDATA" != "YES" ]; then
-  cd $DATAROOT
-  rm -rf $DATA
-fi
+ if [ "$KEEPDATA" != "YES" ]; then
+   cd $DATAROOT
+   rm -rf $DATA
+ fi
 date
 
