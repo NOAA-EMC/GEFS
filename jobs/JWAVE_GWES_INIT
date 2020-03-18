@@ -6,6 +6,8 @@ set -xa
 export PS4=' $SECONDS + '
 date
 
+export NTASKS=${total_tasks:-24}
+
 ############################
 # Set up cycle varaible
 ############################
@@ -50,6 +52,17 @@ export errchk=${errchk:-err_chk}
 export MP_PULSE=0
 
 ####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
+
+####################################
 # Path to HOME Directory
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
@@ -83,7 +96,7 @@ export wavelog=${COMOUTwave}/wave.log
 ##################################
 # Set mpi serial command
 #################################
-export wavempexec=${wavempexec:-"mpirun"}
+export wavempexec=${wavempexec:-"mpirun -n"}
 export wave_mpmd=${wave_mpmd:-"cfp"}
 
 ##############################################

@@ -105,8 +105,6 @@ if [ $Link = "yes" ]; then
         ./link_gefs.sh -e emc -m hera
     elif [ $machine = "cray" ]; then
         ./link_gefs.sh -e $RunEnvir -m cray
-    elif [ $machine = "wcoss_ibm" ]; then
-        ./link_gefs.sh -e $RunEnvir -m ibm
     elif [ $machine = "wcoss_dell_p3" ]; then
         ./link_gefs.sh -e $RunEnvir -m dell
     fi
@@ -168,6 +166,9 @@ if [ $CleanAll = "yes" ]; then
     rm ../ush/global_chgres.sh
     rm ../ush/global_chgres_driver.sh
 
+    rm ../parm/prep_chem_sources.inp.IN
+    rm ../scripts/exglobal_prep_chem.bash
+
 fi # for CleanAll
 
 # for rocoto
@@ -179,19 +180,13 @@ if [ $RunRocoto = "yes" ]; then
         module load contrib
         module load anaconda/anaconda3-5.3.1
  
-    elif [ $machine = "wcoss_ibm" ]; then
-        module load ibmpe ics lsf
-        module load python/3.6.3
-        module use /usrx/local/emc_rocoto/modulefiles
-        module load rocoto
-
     elif [ $machine = "cray" ]; then
         . /opt/modules/3.2.10.3/init/sh
         module use /usrx/local/emc_rocoto/modulefiles
         module load xt-lsfhpc
         module load rocoto
         module load python/3.6.3
-
+    
     elif [ $machine = "wcoss_dell_p3" ]; then
         . /usrx/local/prod/lmod/lmod/init/sh
         module use /gpfs/dell3/usrx/local/dev/emc_rocoto/modulefiles
@@ -217,18 +212,6 @@ if [ $AddCrontabToMyCrontab = "yes" ]; then
             touch $HOME/cron/mycrontab
         fi
     
-        py/add_crontab.py
-        crontab $HOME/cron/mycrontab
-        echo "Added crontab to $HOME/cron/mycrontab!"
-
-    elif [ $machine = "wcoss_ibm" ]; then
-        if [ -f $HOME/cron/mycrontab ]; then
-            echo "Adding crontab to $HOME/cron/mycrontab!" 
-        else
-            mkdir $HOME/cron
-            touch $HOME/cron/mycrontab
-        fi
-
         py/add_crontab.py
         crontab $HOME/cron/mycrontab
         echo "Added crontab to $HOME/cron/mycrontab!"

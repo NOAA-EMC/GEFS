@@ -6,6 +6,9 @@ cwd=`pwd`
 
 progname=global_enscqpf
 
+if [ -f ../modulefiles/gefs/gefs_$target.ver ]; then
+    source ../modulefiles/gefs/gefs_$target.ver
+fi
 source ../modulefiles/gefs/${progname}.$target             > /dev/null 2>&1
 
 # Check final exec folder exists
@@ -33,15 +36,8 @@ export LIBSM="${G2_LIB4} ${W3NCO_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${
 GetOriginal=${GetOriginal:-false}
 
 if $GetOriginal; then
-    if [ $target == theia ]; then
-        echo "This is on theia"
-    elif [ $target == wcoss_cray ]; then
+    if [ $target == wcoss_cray ]; then
         echo "This is on wcoss_cray"
-        echo "Please make sure you have modified the Makefile!"
-        echo 'Comment the statement end with "# New and concise method"'
-        echo '  and Uncomment the statement end with "# To get the original size of executable file"'
-    elif [ $target == wcoss ]; then
-        echo "This is on wcoss"
         echo "Please make sure you have modified the Makefile!"
         echo 'Comment the statement end with "# New and concise method"'
         echo '  and Uncomment the statement end with "# To get the original size of executable file"'

@@ -8,9 +8,9 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export gefsmpexec=${gefsmpexec:-mpirun}
-
-export APRUN=${gefsmpexec:-mpirun}
+export total_tasks=${total_tasks:-21}
+export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
+export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
 #export APRUNTRACK="aprun -j1 -n1 -N1 -d1"
 #export NODES=1
 #export IOBUF_PARAMS="*:size=32M:count=4:verbose"
@@ -53,10 +53,13 @@ export pgmerr=errfile
 ####################################
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
 ####################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDDBN=${SENDDBN:-YES}
 export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
 
 ####################################
 # Specify Execution Areas

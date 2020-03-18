@@ -6,8 +6,8 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export gefsmpexec=${gefsmpexec:-mpirun}
-
+export total_tasks=${total_tasks:-6}
+export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
 export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
 
 export CNVGRIB=$CNVGRIB
@@ -44,6 +44,17 @@ export outid="LL$job"
 export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
+
+####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
 
 ####################################
 # Specify Execution Areas
