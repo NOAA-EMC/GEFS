@@ -174,8 +174,8 @@ if [[ -d global-workflow.fd ]] ; then
     if [[ -e ../scripts/$sFile ]]; then
         if [[ -L ../scripts/$sFile ]]; then
             rm ../scripts/$sFile
+            $LINK ../sorc/global-workflow.fd/scripts/$sFile ../scripts/
         fi
-        $LINK ../sorc/global-workflow.fd/scripts/$sFile ../scripts/
     else
         $LINK ../sorc/global-workflow.fd/scripts/$sFile ../scripts/
     fi
