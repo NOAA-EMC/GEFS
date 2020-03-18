@@ -88,8 +88,8 @@ for ensname in $(eval echo "{$start..$npert}"); do
 
         if [[ \$nh -le $FHMAXHF ]] && [[ "\$outtype" == "f2d" ]];then
             outres="0p25"
-            indirpresa=$COMIN/pgrb2ap25
-            indirpresb=$COMIN/pgrb2bp25
+            indirpresa=$COMIN/pgrb2sp25
+            indirpresb=$COMIN/pgrb2p25
 
             #if [[ "$outtype" == "f2d" ]];then
             #    outres="0p25"

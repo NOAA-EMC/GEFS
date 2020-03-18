@@ -317,7 +317,7 @@ fi
 #
 # Forecast Input Variables
 #
-export fcstscript=${fcstscript:-$HOMEgefs/scripts/exglobal_fcst_nemsfv3gfs.sh}
+export fcstscript=${fcstscript:-$HOMEgfs/scripts/exglobal_fcst_nemsfv3gfs.sh}
 export FORECASTSH=$fcstscript
 export FCSTEXECDIR=${FCSTEXECDIR:-$EXECgefs}
 export PARM_FV3DIAG=${PARM_FV3DIAG:-$PARMgfs/parm_fv3diag}

@@ -16,9 +16,7 @@ Outputs:
         <WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/ensstat
         <WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/init
         <WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/misc
-        <WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2a1p0
         <WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2alr
-        <WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2b1p0
         <WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2bp5
         <WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/sflux
         <WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/genesis

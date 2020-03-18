@@ -16,9 +16,7 @@ Outputs:
 		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/ensstat
 		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/init
 		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/misc
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2a1p0
 		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2alr
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2b1p0
 		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2bp5
 		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/sflux
 		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/genesis
@@ -56,8 +54,8 @@ print = partial(print, flush=True)
 
 # Output directories that need to be removed
 output_dirs = ["f2d", "f3d", "cfssst", "ensstat", "init", "misc", "pgrb2alr", "sflux", "genesis", "master",
-				"pgrb2ap25", "pgrb2bp25", "pgrb2ap5", "pgrb2bp5", "pgrb2a2p5", "pgrb2b2p5",
-				"pgrb2a1p0", "pgrb2b1p0", "pgrb2ap25_aer", "pgrb2a", "sfcsig", "tctrack",
+				"pgrb2sp25", "pgrb2p25", "pgrb2ap5", "pgrb2bp5", "pgrb2a2p5", "pgrb2b2p5",
+				"pgrb2ap25_aer", "pgrb2a", "sfcsig", "tctrack",
 				"bufr", "gempak", "wmo"]
 output_dirs_last_cyc = ["restart", "sfcsig_enkf", "track_enkf"]
 output_dir_pattern = "{work_dir}/com/gens/dev/gefs.%Y%m%d/%H/{output_dir}"

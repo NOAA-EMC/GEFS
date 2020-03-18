@@ -327,17 +327,17 @@ def NotUsed(dicBase, sRocoto_WS=""):
     if sVarName not in dicBase:
         sVarValue = ""
         if WHERE_AM_I.lower() == "cray":
-            sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
+            sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
         elif WHERE_AM_I.lower() == 'wcoss':
-            sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
+            sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
-            sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
+            sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p35':
-            sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
+            sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
         elif WHERE_AM_I.lower() == 'wins':
-            sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
+            sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
         else:
-            sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
+            sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
 
         dicBase[sVarName] = sVarValue
     # ===
@@ -345,17 +345,17 @@ def NotUsed(dicBase, sRocoto_WS=""):
     if sVarName not in dicBase:
         sVarValue = ""
         if WHERE_AM_I.lower() == "cray":
-            sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
+            sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
         elif WHERE_AM_I.lower() == 'wcoss':
-            sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
+            sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
-            sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
+            sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p35':
-            sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
+            sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
         elif WHERE_AM_I.lower() == 'wins':
-            sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
+            sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
         else:
-            sVarValue = "ensstat,pgrb2a1p0,pgrb2a2p5,pgrb2ap5,tctrack"
+            sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
 
         dicBase[sVarName] = sVarValue
     # ==
