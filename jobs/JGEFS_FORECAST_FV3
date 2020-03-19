@@ -6,9 +6,11 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export machine=$machine
-export gefsmpexec=${gefsmpexec:-mpirun}
-export APRUN=${gefsmpexec:-mpirun}
+export machine=${machine:-"WCOSS_DELL_P3"}
+
+export total_tasks=${total_tasks:-532}
+export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
+export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
 
 export RUNMEM=$RUNMEM
 export mem=`echo $RUNMEM|cut -c3-5`
@@ -66,6 +68,17 @@ echo "input setting RERUN=$RERUN"
 export RERUN=${RERUN:-NO}
 #
 echo "current setting RERUN=$RERUN"
+
+####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
 
 # Specify Execution Areas
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
@@ -195,7 +208,7 @@ export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 # Forecast Input Variables
 #
 . $PARMgefs/gefs_fcst.parm
-export restart_interval=${fhrestart:-1000}
+export restart_interval=${restart_interval:-${fhrestart:-1000}}
 export fhstoch=$restart_interval
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
@@ -404,8 +417,8 @@ if [[ $cplchm = ".true." ]]; then
 
 	# Link restart files for next cycle
 	next_date=$($NDATE +$gefs_cych $CDATE)
-	next_PDY=$(echo $next_date | cut -c1-8)
-	next_cyc=$(echo $next_date | cut -c9-10)
+    next_PDY=$(echo $next_date | cut -c1-8)
+    next_cyc=$(echo $next_date | cut -c9-10)
 	last_rstdir=$COMOUT/$cyc/restart/$mem
 	if [[ ! -d $DATA/RESTART ]]; then mkdir -p $DATA/RESTART; fi
 	ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.coupler.res $DATA/RESTART/${next_PDY}.${next_cyc}0000.coupler.res
@@ -420,6 +433,9 @@ fi # [[ $cplchm = ".true." ]]
 
 export increment_file=$ICSDIR/fv3_increment.nc
 
+export FIX_DIR=$FIXgfs
+export FIX_AM=$FIX_AM
+
 if [[ $read_increment = ".true." && $warm_start = ".true." ]]; then
 	# Make sure increment file exists before using warm start
 	if [[ ! -f $increment_file ]]; then
@@ -427,7 +443,6 @@ if [[ $read_increment = ".true." && $warm_start = ".true." ]]; then
 		export warm_start=".false."
 		export read_increment=".false."
 	fi
-
 fi
 
 if [[ $RERUN = "YES" ]]; then

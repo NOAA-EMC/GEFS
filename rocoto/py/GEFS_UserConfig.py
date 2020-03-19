@@ -174,13 +174,16 @@ def create_folders(dicBase):
 def get_WHERE_AM_I(dicBase):
     sVarName = 'WHERE_AM_I'
     import os
+    
+    sCPath = os.getcwd()
+    if sCPath.startswith("/gpfs/dell6"):
+        dicBase[sVarName] = 'wcoss_dell_p35'
+    
     if sVarName not in dicBase:
         if os.path.exists('/scratch1/NCEPDEV'):
             dicBase[sVarName] = 'hera'
         elif os.path.exists('/gpfs') and os.path.exists('/etc/SuSE-release'):
             dicBase[sVarName] = 'cray'
-        elif os.path.exists('/dcom') and os.path.exists('/hwrf'):
-            dicBase[sVarName] = 'wcoss_ibm'
         elif os.path.lexists('/usrx') and os.path.realpath('/usrx').startswith('/gpfs/dell'):
             dicBase[sVarName] = 'wcoss_dell_p3'
         elif os.path.exists('c:'):
