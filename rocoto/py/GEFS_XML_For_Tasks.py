@@ -7,6 +7,9 @@ def config_tasknames(dicBase):
         if DoesTaskExist(dicBase, "post_hr"):
             Replace_task_UsingSubjobs(dicBase, "post_hr", sNSubJobs='N_SUBJOBS_POST_HR')
 
+        if DoesTaskExist(dicBase, "post_aerosol"):
+            Replace_task_UsingSubjobs(dicBase, "post_aerosol", sNSubJobs='N_SUBJOBS_POST_AEROSOL')
+
         if DoesTaskExist(dicBase, "ensavg_nemsio"):
             Replace_task_UsingSubjobs(dicBase, "ensavg_nemsio", sNSubJobs='N_SUBJOBS_ENSAVG_NEMSIO')
 
@@ -60,6 +63,12 @@ def config_tasknames(dicBase):
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "keep_init"
+
+        if dicBase['RUN_AEROSOL_MEMBER'].upper()[0] == "Y":
+            for task in ['prep_emissions', 'init_aerosol', 'forecast_aerosol', 'post_aerosol', 'prdgen_aerosol']:
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = task
 
         # #    <!-- Half-month Range forecast and post process jobs -->
         if dicBase['RUN_FORECAST_HR'].upper()[0] == "Y":
@@ -129,7 +138,7 @@ def config_tasknames(dicBase):
             dicBase[sTaskName.upper()] = "avgspr_gempak"
 
             WHERE_AM_I = dicBase['WHERE_AM_I']
-            if WHERE_AM_I.upper() not in [ "hera".upper()]:
+            if WHERE_AM_I.upper() not in ["hera".upper()]:
                 # ---avg_gempak_vgf There is no gdplot2_vg on hera, so this task can not run.
                 iTaskName_Num += 1
                 sTaskName = "taskname_{0}".format(iTaskName_Num)
@@ -352,6 +361,8 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     # -------------------RUNMEM-------------------
     if taskname in metatask_names:
         strings += (create_envar(name="RUNMEM", value="ge#member#", sPre=sPre_2))
+    elif taskname in ["forecast_aerosol", "post_aerosol", "prdgen_aerosol"]:
+        strings += (create_envar(name="RUNMEM", value="geaer", sPre=sPre_2))
     else:
         if taskname in ["prdgen_gfs"]:
             strings += (create_envar(name="RUNMEM", value="gegfs", sPre=sPre_2))
@@ -367,14 +378,17 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
 
     ## For FORECAST_SEGMENT
-    if (taskname in ['forecast_hr', 'prdgen_hr', 'post_hr', 'ensstat_hr']) or taskname.startswith("post_hr_"):
+    if (taskname in ['forecast_hr', 'prdgen_hr', 'post_hr', 'ensstat_hr', 'forecast_aerosol', 'post_aerosol', 'prdgen_aerosol']) \
+     or taskname.startswith("post_hr_") or taskname.startswith('post_aerosol_'):
         strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
     elif taskname in ['forecast_lr', 'prdgen_lr', 'post_lr', 'ensstat_lr']:
         strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
 	
     ## For SUBJOB
-    elif taskname.startswith("post_hr_"):
+    if taskname.startswith("post_hr_"):
         strings += (create_envar(name="SUBJOB", value=taskname.replace("post_hr_", ""), sPre=sPre_2))
+    elif taskname.startswith("post_aerosol_"):
+        strings += (create_envar(name="SUBJOB", value=taskname.replace("post_aerosol_", ""), sPre=sPre_2))
     elif taskname.startswith("ensavg_nemsio_"):
         strings += (create_envar(name="SUBJOB", value=taskname.replace("ensavg_nemsio_", ""), sPre=sPre_2))
         
@@ -388,14 +402,14 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format(taskname, sPRE)
         else:
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/../py/{0}.py</cyclestr></command>\n'.format(taskname, sPRE)
-    elif taskname in ['forecast_hr', 'forecast_lr']:
+    elif taskname in ['forecast_hr', 'forecast_lr', 'forecast_aerosol']:
         strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("forecast_hr", sPRE)
-    elif taskname in ['prdgen_hr', 'prdgen_lr', 'prdgen_gfs']:
+    elif taskname in ['prdgen_hr', 'prdgen_lr', 'prdgen_gfs', 'prdgen_aerosol']:
         if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("prdgen_hr", sPRE)
         else:
             strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("prdgen_hr", sPRE)
-    elif taskname in ['post_hr', 'post_lr']:
+    elif taskname in ['post_hr', 'post_lr', 'post_aerosol']:
         strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("post_hr", sPRE)
     elif taskname in ['ensstat_hr', 'ensstat_lr']:
         if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
@@ -687,6 +701,12 @@ def calc_fcst_resources(dicBase, taskname="forecast_hr"):
         WRITE_GROUP = int(dicBase['WRITE_GROUP_lr'.upper()])
         WRTTASK_PER_GROUP = int(dicBase['WRTTASK_PER_GROUP_lr'.upper()])
         parallel_threads = int(dicBase['parallel_threads_lr'.upper()])
+    elif taskname == "forecast_aerosol":
+        layout_x = int(dicBase['layout_x_chem'.upper()])
+        layout_y = int(dicBase['layout_y_chem'.upper()])
+        WRITE_GROUP = int(dicBase['WRITE_GROUP_chem'.upper()])
+        WRTTASK_PER_GROUP = int(dicBase['WRTTASK_PER_GROUP_chem'.upper()])
+        parallel_threads = int(dicBase['parallel_threads_chem'.upper()])
     else:
         layout_x = int(dicBase['layout_x'.upper()])
         layout_y = int(dicBase['layout_y'.upper()])
@@ -714,6 +734,7 @@ def calc_fcst_resources(dicBase, taskname="forecast_hr"):
 # =======================================================
 def get_param_of_task(dicBase, taskname):
     import math
+    import textwrap
     sWalltime = ""
     sNodes = ""
     sMemory = ""
@@ -809,6 +830,61 @@ def get_param_of_task(dicBase, taskname):
                 else:
                     sDep = ""
 
+            # For 'init_aerosol' task
+            if taskname.lower() == "init_aerosol":
+                sDep = "<and>"
+                for task in ["prep_emissions", "init_recenter", "copy_init"]:
+                    if DoesTaskExist(dicBase, task):
+                        sDep += "\n\t<taskdep task=\"{task}\"/>".format(task=task)
+
+                for task in ["forecast_aerosol"]:
+                    if DoesTaskExist(dicBase, task):
+                        aerosol_init_type = dicBase['AEROSOL_INIT_TYPE']
+                        gefs_cych = int(dicBase['INCYC'])
+                        if aerosol_init_type == "warm":
+                            sDep += '\t'.join(textwrap.dedent("""
+                            <or>
+                                <not><cycleexistdep cycle_offset=\"-&INCYC;:00:00\"/></not>
+                                <and>
+                                    <datadep><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/sfcsig/geaer.t@Hz.logf{gefs_cych:03}.nemsio</cyclestr></datadep>
+                                    <datadep minsize="670M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/sfcsig/geaer.t@Hz.atmf{gefs_cych:03}.nemsio</cyclestr></datadep>
+                                    <datadep age="60"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.coupler.res</cyclestr></datadep>
+                                    <datadep age="60"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_core.res.nc</cyclestr></datadep>
+                            """.format(gefs_cych=gefs_cych)).splitlines(True))
+
+                            for kind in ["fv_tracer.res", "fv_core.res", "fv_srf_wnd.res", "phy_data", "sfc_data"]:
+                                for tile in map(lambda t: "tile" + str(t), range(1, 7)):
+                                    sDep += '\t\t\t'.join(textwrap.dedent("""
+                                    <datadep age="60"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.{kind}.{tile}.nc</cyclestr></datadep>""".format(kind=kind, tile=tile)).splitlines(True))
+
+                            sDep += '\t'.join(textwrap.dedent("""
+                                </and>
+                            </or>
+                            """).splitlines(True))
+
+                        elif aerosol_init_type == "cold":
+                            # sDep += "\n\t<or>\n\t\t<not><cycleexistdep cycle_offset=\"-&INCYC;:00:00\"/></not>\n\t\t<taskdep task=\"{task}\" cycle_offset=\"-&INCYC;:00:00\"/>\n\t</or>".format(task=task)
+                            sDep += '\t'.join(textwrap.dedent("""
+                            <or>
+                                <not><cycleexistdep cycle_offset=\"-&INCYC;:00:00\"/></not>
+                                <and>
+                                    <datadep age="60" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile1.nc</cyclestr></datadep>
+                                    <datadep age="60" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile2.nc</cyclestr></datadep>
+                                    <datadep age="60" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile3.nc</cyclestr></datadep>
+                                    <datadep age="60" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile4.nc</cyclestr></datadep>
+                                    <datadep age="60" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile5.nc</cyclestr></datadep>
+                                    <datadep age="60" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile6.nc</cyclestr></datadep>
+                                </and>
+                            </or>""").splitlines(True))
+                        else:
+                            print("FATAL: AEROSOL_INIT_TYPE {aerosol_init_type} not recognized, can't determine dependency".format(aerosol_init_type=aerosol_init_type))
+                            exit(105)
+
+                if sDep == "<and>":
+                    sDep = ""
+                else:
+                    sDep += "\n</and>"
+
             # For 'forecast_hr' task
             if taskname.lower() == "forecast_hr":
                 sDep = '<and>'
@@ -825,7 +901,7 @@ def get_param_of_task(dicBase, taskname):
 
                 if DoesTaskExist(dicBase, "copy_init"):
                     sDep += '\n\t<taskdep task="copy_init_#member#"/>'
-                if DoesTaskExist(dicBase, "gwes_prep"): # Wave prep
+                if DoesTaskExist(dicBase, "gwes_prep"):  # Wave prep
                     sDep += '\n\t<taskdep task="gwes_prep_#member#"/>'
                     sDep += '\n\t<taskdep task="gwes_prep_c00"/>'
                 if sDep == '<and>':
@@ -854,6 +930,25 @@ def get_param_of_task(dicBase, taskname):
                         else:
                             sDep = ''
 
+            # For 'forecast_aerosol' task
+            if taskname.lower() == "forecast_aerosol" :
+                sDep = '<and>'
+                if DoesTaskExist(dicBase, "getcfssst"):
+                    sDep += '\n\t<taskdep task="getcfssst"/>'
+
+                if DoesTaskExist(dicBase, "init_aerosol"):  # Cold Restart
+                    sDep += '\n\t<taskdep task="init_aerosol"/>'
+                else:  # Warm Start  ???
+                    sDep += '\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
+
+                if DoesTaskExist(dicBase, "prep_emissions"):
+                    sDep += '\n\t<taskdep task="prep_emissions"/>'
+
+                if sDep == '<and>':
+                    sDep = ""
+                else:
+                    sDep += '\n</and>'
+
             # For ensavg_nemsio
             if taskname.lower() == "ensavg_nemsio":
                 npert = int(dicBase["NPERT"])
@@ -868,8 +963,8 @@ def get_param_of_task(dicBase, taskname):
                 npert = int(dicBase["NPERT"])
                 sDep = '<and>'
                 for i in range(npert):
-                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.prdgen.control.f000</cyclestr></datadep>'.format(i + 1)
-                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.prdgen.control.f000</cyclestr></datadep>'
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gep{0:02}.t@Hz.prdgen.control.f000</cyclestr></datadep>'.format(i + 1)
+                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gec00.t@Hz.prdgen.control.f000</cyclestr></datadep>'
                 sDep += '\n</and>'
 
             # For ensstat_lr
@@ -888,8 +983,8 @@ def get_param_of_task(dicBase, taskname):
                     iStartHourLF = ifhmaxh + iFHOUTLF
 
                 for i in range(npert):
-                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gep{0:02}.t@Hz.prdgen.control.f{1:03}</cyclestr></datadep>'.format(i + 1, iStartHourLF)
-                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd1p0/gec00.t@Hz.prdgen.control.f{0:03}</cyclestr></datadep>'.format(iStartHourLF)
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gep{0:02}.t@Hz.prdgen.control.f{1:03}</cyclestr></datadep>'.format(i + 1, iStartHourLF)
+                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gec00.t@Hz.prdgen.control.f{0:03}</cyclestr></datadep>'.format(iStartHourLF)
                 sDep += '\n</and>'
 
             # For extractvars
@@ -964,6 +1059,8 @@ def get_param_of_task(dicBase, taskname):
                     sDep += '\n\t<metataskdep metatask="postsnd"/>'
                 if DoesTaskExist(dicBase, "getcfssst"):
                     sDep += '\n\t<taskdep task="getcfssst"/>'
+                if DoesTaskExist(dicBase, "prdgen_aerosol"):
+                    sDep += '\n\t<taskdep task="prdgen_aerosol"/>'                    
 
                 if sDep == '<and>':
                     sDep = ""
@@ -1051,8 +1148,7 @@ def get_param_of_task(dicBase, taskname):
                     sDep = ''
 
     # Forecast can be derive from the parm items
-    if taskname == 'forecast_hr' or taskname == 'forecast_lr':
-
+    if taskname in ['forecast_hr', 'forecast_lr', 'forecast_aerosol']:
         iTotal_Tasks, iNodes, iPPN, iTPP = calc_fcst_resources(dicBase, taskname=taskname)
 
         WHERE_AM_I = dicBase['WHERE_AM_I'].upper()

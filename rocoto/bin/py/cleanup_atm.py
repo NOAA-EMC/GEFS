@@ -16,9 +16,7 @@ Outputs:
 		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/ensstat
 		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/init
 		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/misc
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2a1p0
 		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2alr
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2b1p0
 		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2bp5
 		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/sflux
 		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/genesis
@@ -33,8 +31,8 @@ Outputs:
 		<WORKDIR>/nwges/dev/gefs.<PDY>/<cyc>
 		<WORKDIR>/com/logs/jlogfiles/jlogfile.<EXPID><PDY><cyc>*
 
-	Additionally, the following directories for the from the previous cycle (6 hours previous)
-	and all files contained within will be deleted:
+	Additionally, the following directories for the from the previous cycle
+	  (6 hours previous) and all files contained within will be deleted:
 		<WORKDIR>/com/gens/dev/gefs.<PDY_last>/<cyc_last>/sfcsig_enkf
 		<WORKDIR>/com/gens/dev/gefs.<PDY_last>/<cyc_last>/track_enkf
 
@@ -56,29 +54,30 @@ print = partial(print, flush=True)
 
 # Output directories that need to be removed
 output_dirs = ["f2d", "f3d", "cfssst", "ensstat", "init", "misc", "pgrb2alr", "sflux", "genesis", "master",
-				"pgrb2ap25", "pgrb2bp25", "pgrb2ap5", "pgrb2bp5", "pgrb2a2p5", "pgrb2b2p5", "pgrb2a1p0",
-				"pgrb2b1p0", "pgrb2a", "sfcsig", "tctrack", "bufr", "gempak", "wmo"]
-output_dirs_last_cyc = ["sfcsig_enkf", "track_enkf"]
+				"pgrb2sp25", "pgrb2p25", "pgrb2ap5", "pgrb2bp5", "pgrb2a2p5", "pgrb2b2p5",
+				"pgrb2ap25_aer", "pgrb2a", "sfcsig", "tctrack",
+				"bufr", "gempak", "wmo"]
+output_dirs_last_cyc = ["restart", "sfcsig_enkf", "track_enkf"]
 output_dir_pattern = "{work_dir}/com/gens/dev/gefs.%Y%m%d/%H/{output_dir}"
 
 # Read in environment variables and make sure they exist
 work_dir = os.environ.get("WORKDIR")
-if( work_dir is None ):
+if(work_dir is None):
 	print("FATAL: Environment variable WORKDIR not set")
 	quit(-100)
 
 exp_id = os.environ.get("EXPID")
-if( exp_id is None ):
+if(exp_id is None):
 	print("FATAL: Environment variable EXPID not set")
 	quit(-100)
 
 pdy = os.environ.get("PDY")
-if( pdy is None ):
+if(pdy is None):
 	print("FATAL: Environment variable PDY not set")
 	quit(-100)
 
 cycle = os.environ.get("cyc")
-if( cycle is None ):
+if(cycle is None):
 	print("FATAL: Environment variable cyc not set")
 	quit(-100)
 
@@ -96,16 +95,16 @@ time_last_cyc = time + timedelta(hours=-6)
 dirs_to_remove = []
 
 # Working directories
-dirs_to_remove.append( time.strftime("{work_dir}/tmpnwprd/{exp_id}_%Y%m%d%H_*".format(work_dir=work_dir, exp_id=exp_id)) )
-dirs_to_remove.append( time.strftime("{work_dir}/tmpnwprd/gefs_init_%Y%m%d%H.dev.save".format(work_dir=work_dir)) )
+dirs_to_remove.append(time.strftime("{work_dir}/tmpnwprd/{exp_id}_%Y%m%d%H_*".format(work_dir=work_dir, exp_id=exp_id)))
+dirs_to_remove.append(time.strftime("{work_dir}/tmpnwprd/gefs_init_%Y%m%d%H.dev.save".format(work_dir=work_dir)))
 
 # Last cycle enkf directories
 for output_dir in output_dirs_last_cyc:
-	dirs_to_remove.append( time_last_cyc.strftime(output_dir_pattern.format(work_dir=work_dir, output_dir=output_dir) ) )
+	dirs_to_remove.append(time_last_cyc.strftime(output_dir_pattern.format(work_dir=work_dir, output_dir=output_dir)))
 
 # Output directories
 for output_dir in output_dirs:
-	dirs_to_remove.append( time.strftime(output_dir_pattern.format(work_dir=work_dir, output_dir=output_dir) ) )
+	dirs_to_remove.append(time.strftime(output_dir_pattern.format(work_dir=work_dir, output_dir=output_dir)))
 
 # Other init directories
 dirs_to_remove.append(time.strftime("{work_dir}/nwges/dev/gefs.%Y%m%d/*.t%Hz.*".format(work_dir=work_dir)))
@@ -115,7 +114,7 @@ dirs_to_remove.append(time.strftime("{work_dir}/nwges/dev/gefs.%Y%m%d/%H".format
 # dirs_to_remove.append(work_dir + "/com/output/dev/" + pdy + "/*_" + cycle + ".*.bqs3")
 
 # jlog directory
-dirs_to_remove.append( time.strftime("{work_dir}/com/logs/jlogfiles/jlogfile.{exp_id}_%Y%m%d%H*".format(work_dir=work_dir, exp_id=exp_id) ) )
+dirs_to_remove.append(time.strftime("{work_dir}/com/logs/jlogfiles/jlogfile.{exp_id}%Y%m%d%H*".format(work_dir=work_dir, exp_id=exp_id)))
 
 for path in dirs_to_remove:
 	# print(path)
