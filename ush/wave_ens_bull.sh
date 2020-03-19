@@ -17,8 +17,8 @@
 # - Jose-Henrique Alves, Jan 2014                               
 #                                                                       
 # Changes:                                                              
-# -                                                                       
-#                                                                       
+# - Roberto Padilla-Hernandez & Jose-Henrique Alves, March 2020                               
+#           Add bulletins to GFES-WAVES
 #                                                                       
 ################################################################################
 #

@@ -81,6 +81,7 @@ export COMOUT=${COMOUT:-${COMOUTwave}/${MDC}.${PDY}/${cyc}}
 export COMINice=${COMINice:-${COMROOTp2}/omb/prod}
 export COMINwnd=${COMINwnd:-${COMROOT}/gfs/prod}
 export COMINcur=${COMINcur:-${COMROOTp2}/rtofs/prod}
+export GRIB2TABLE=${FIXwave}/wave_grib2table
 
 if [ $SENDCOM = YES ]; then
   mkdir -p $COMOUT/gridded
