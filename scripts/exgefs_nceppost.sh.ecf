@@ -191,7 +191,7 @@ if [ $DOANALYSIS = YES ]; then
         # 20150622 RLW disable this temporarily to test the new post code
         if [[ -f $fileout ]]; then rm $fileout; fi
         if [[ -f $fileouti ]]; then rm $fileouti; fi
-        for submc in prd0p5 prd1p0 prd2p5; do
+        for submc in  prd0p25 prd0p5 prd2p5; do
             pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.anl
             if [[ -f $pcfile ]]; then rm $pcfile; fi
         done
@@ -242,7 +242,7 @@ for fhr in ${RUN_HOURS[@]}; do
         # 20150622 RLW disable this temporarily to test the new post code
         if [[ -f $fileout ]]; then rm $fileout; fi
         if [[ -f $fileouti ]]; then rm $fileouti; fi
-        for submc in prd0p5 prd1p0 prd2p5; do
+        for submc in prd0p25 prd0p5 prd2p5; do
             pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr
             if [[ -f $pcfile ]]; then rm $pcfile; fi
         done # for submc in prd0p5 prd1p0 prd2p5
