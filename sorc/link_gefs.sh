@@ -188,6 +188,7 @@ if [[ -d global-workflow.fd ]]; then
     $LINK ../sorc/global-workflow.fd/sorc/gsd_prep_chem.fd/workflow/emc-global/parm/prep_chem_sources.inp.IN ../parm/
 
     # for init_aerosol
+    $LINK ../sorc/global-workflow.fd/ush/merge_fv3_chem_tile.py ../ush/
     $LINK ../sorc/global-workflow.fd/exec/chgres_recenter.exe ../exec/
     $LINK ../sorc/global-workflow.fd/sorc/gsi.fd/exec/calc_increment_ens_gsdchem.x ../exec/
 fi
