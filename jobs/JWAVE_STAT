@@ -57,7 +57,7 @@ export cycle=${cycle:-t${cyc}z}
 # Run setup to initialize working directory and utility scripts
 #sh $utilscript/setup.sh
 # Run setpdy and initialize PDY variables
-sh $utilscript/setpdy.sh
+setpdy.sh
 . PDY
 
 export pgmout=OUTPUT.$$
