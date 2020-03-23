@@ -406,7 +406,7 @@ if [[ $cplchm = ".true." ]]; then
 	elif (( any_found == 6 )); then
 		# Using MODIS
 		echo "WARNING: missing or complete GBBEPx emissions, failing over to MODIS-style inputs"
-		echo "   Check $CHEMIN if this is not expected."
+		echo "   Check $CHEMIN and your prep emission job if this is not expected."
 		export EMITYPE=1
 	else
 		echo "FATAL: cplchm is .true. but smoke emissions are not available!"
@@ -420,12 +420,12 @@ if [[ $cplchm = ".true." ]]; then
     next_PDY=$(echo $next_date | cut -c1-8)
     next_cyc=$(echo $next_date | cut -c9-10)
 	last_rstdir=$COMOUT/$cyc/restart/$mem
-	if [[ ! -d $DATA/RESTART ]]; then mkdir -p $DATA/RESTART; fi
-	ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.coupler.res $DATA/RESTART/${next_PDY}.${next_cyc}0000.coupler.res
-	ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.fv_core.res.nc $DATA/RESTART/${next_PDY}.${next_cyc}0000.fv_core.res.nc
+	if [[ ! -d $RSTDIR ]]; then mkdir -p $RSTDIR; fi
+	ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.coupler.res $RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res
+	ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.fv_core.res.nc $RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc
 	for kind in fv_tracer.res fv_core.res fv_srf_wnd.res phy_data sfc_data; do
 		for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
-			ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc $DATA/RESTART/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc
+			ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc $RSTDIR/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc
 		done
 	done
 
@@ -453,7 +453,9 @@ fi
 $FORECASTSH
 ERR=$?
 
-cp -pr $DATA/stoch_out.F* $GESIN/$mem/RESTART  
+if [[ $DO_SPPT = "YES" || $DO_SHUM = "YES" || $DO_SKEB = "YES" ]]; then
+	cp -pr $DATA/stoch_out.F* $GESIN/$mem/RESTART
+fi
 
 if [ $ERR = 0 ]; then
 	msg="$job completed normally!"
