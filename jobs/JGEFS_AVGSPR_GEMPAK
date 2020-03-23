@@ -142,10 +142,11 @@ do
             /usrx/local/mio/tools/bin/miostats -X0 #\
         fi
     
-        #if [ $resolution = "1p00" ]; then
-        #    export COMIN_Folder=pgrb2a1p0
-        #    export fend=${fhmaxh:-384}
-        if [ $resolution = "0p50" ]; then
+        if [ $resolution = "1p00" ]; then
+            export COMIN_Folder=pgrb2a1p0
+            export pdgrbType=pgrb2a
+            export fend=${fhmaxh:-384}
+        elif [ $resolution = "0p50" ]; then
             export COMIN_Folder=pgrb2ap5
             export pdgrbType=pgrb2a
             export fend=${fhmaxh:-384}
