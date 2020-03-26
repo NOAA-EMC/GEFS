@@ -7,22 +7,13 @@ set -x -e
 #############################
 # Source relevant config files
 #############################
-#XXX
-#configs="base wave wavestats"
-#export EXPDIR=${EXPDIR:-$HOMEgfs/parm/config}
-#config_path=${EXPDIR:-$NWROOT/gfs.${gfs_ver}/parm/config}
-#for config in $configs; do
-#    . $config_path/config.$config
-#    status=$?
-#    [[ $status -ne 0 ]] && exit $status
-#done
-#XXX
-##########################################
-# Source machine runtime environment
-##########################################
-#XXX. $HOMEgfs/env/${machine}.env wavestat
-#XXXstatus=$?
-#XXX [[ $status -ne 0 ]] && exit $status
+configs="gefs gefs_wave gefs_wave_stat"
+config_path=${PARMgefs:-$NWROOT/gfs.${gfs_ver}/parm/config}
+for config in $configs; do
+    . $config_path/$config.parm
+    status=$?
+    [[ $status -ne 0 ]] && exit $status
+done
 
 # PATH for working directory
 export NET=${NET:-gefs}
@@ -32,12 +23,6 @@ export modIE=${modIE:-gefs}
 export grdID=${grdID:-global.0p25}
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export HOMEgfs=${HOMEgfs:-$NWROOT/gfs.${gfs_ver}}
-
-echo "NET RUN MDC modIE grdID KEEPDATA"
-echo $NET $RUN $MDC $modIE $grdID $KEEPDATA
-
-
-
 
 # Add default errchk = err_chk
 export errchk=${errchk:-err_chk}
@@ -50,8 +35,8 @@ export DATA=${DATA:-${DATAROOT:?}/${jobid}}
 mkdir -p $DATA
 cd $DATA
 
-export cyc=${cyc:-00}
-export cycle=${cycle:-t${cyc}z}
+#export cyc=${cyc:-00}
+#export cycle=${cycle:-t${cyc}z}
 
 
 # Run setup to initialize working directory and utility scripts
@@ -96,17 +81,6 @@ export wavempexec=${wavempexec:-"mpirun"}
 export wave_mpmd=${wave_mpmd:-"cfp"}
 
 env | sort
-
-# Set parameters using gwes_stat.parm
-if [ "${NET}" == "gens" ]
-then
-  . ${HOMEgefs}/parm/gefs.parm
-elif [ "${NET}" == "gfs" ]
-then
-  echo 'Placeholder for GFS config'
-fi
-#XXX. $PARMwave/wave.parm.${NET}
-#XXX. $PARMwave/wave_stat.parm.${NET}
 
 # Set wave model ID tag to include member number 
 # if ensemble; waveMEMB var empty in deterministic
