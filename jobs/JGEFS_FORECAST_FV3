@@ -453,10 +453,6 @@ fi
 $FORECASTSH
 ERR=$?
 
-if [[ $DO_SPPT = "YES" || $DO_SHUM = "YES" || $DO_SKEB = "YES" ]]; then
-	cp -pr $DATA/stoch_out.F* $GESIN/$mem/RESTART
-fi
-
 if [ $ERR = 0 ]; then
 	msg="$job completed normally!"
 else
