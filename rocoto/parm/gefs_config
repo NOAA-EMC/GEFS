@@ -119,8 +119,7 @@ export COMINcfs=${COMINcfs:-${COMINcfs_base}}
 
 # Paths for WaveWatch3
 #export HOMEwave=$basesource
-#export CODEwave=${CODEwave:-${HOMEgfs}/sorc/fv3gfs.fd/WW3/model}
-#export EXECwave=${CODEwave}/exe
+#export EXECwave=${HOMEgfs}/exec
 #export COMIN_WAV_ICE=${COMIN_WAV_ICE:-/gpfs/dell2/emc/modeling/noscrub/Henrique.Alves/input_archive/omb/prod}
 # export COMWND=${COMWND:-/scratch4/NCEPDEV/rstprod/com/gens/prod}
 

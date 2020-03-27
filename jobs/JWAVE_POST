@@ -50,21 +50,16 @@ export USHgefs=${USHgefs:-$HOMEgefs/ush}
 export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
-export HOMEgfs=${HOMEgfs:-$HOMEgefs}
 export EXECgfs=$HOMEgfs/exec
 export USHgfs=$HOMEgfs/ush
 export FIXgfs=$HOMEgfs/fix
 export PARMgfs=$HOMEgfs/parm
 
 # Path to HOME Directory
-export HOMEwave=${HOMEwave:-${HOMEgfs}}
-export PARMwave=${PARMwave:-$HOMEwave/parm}
-export CODEwave=${CODEwave:-${HOMEfv3gfs}/WW3/model}
-export EXECwave=${EXECwave:-$HOMEwave/exec}
+export EXECwave=${EXECwave:-$HOMEgefs/exec}
 export FIXwave=${FIXwave:-$FIXgefs/fix_wave}
-export PARMwave=${PARMwave:-$HOMEwave/parm/wave}
-export USHwave=${USHwave:-$HOMEwave/ush}
-export EXECcode=${EXECcode:-$CODEwave/exe}
+export USHwave=${USHwave:-$HOMEgfs/ush}
+export EXECcode=${EXECcode:-$HOMEgfs/exec}
 
 ##############################
 # Run setpdy and initialize PDY variables
