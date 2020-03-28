@@ -121,8 +121,8 @@ export COMIN=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/gempak
 # COMINecmwf path is broken and data is not available - 08/16/2019 JY
 # may change to : export COMINecmwf=$(compath.py nawips/prod/ecmwf)
 # and need to fix the gempak/ush scripts for ecmwf
-export COMINecmwf=$(compath.py nawips/prod/ecmwf.${PDY})
-export COMINm1ecmwf=$(compath.py nawips/prod/ecmwf.${PDYm1})
+export COMINecmwf=$(compath.py ecmwf/prod/ecmwf) #/ecmwf.${PDY})
+export COMINm1ecmwf=$(compath.py ecmwf/prod/ecmwf) #/ecmwf.${PDYm1})
 
 # Add the following COMIN for possible future fix to the path of nam and ukmet - 08/16/2019 JY
 # Need to change the gempak/ush scripts:

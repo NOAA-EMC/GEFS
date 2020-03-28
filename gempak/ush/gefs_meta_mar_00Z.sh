@@ -32,6 +32,8 @@ echo memberlist=$memberlist
 ## Get member list
 ########################################################
 
+sGrid=0p50_
+
 mkdir $DATA/mar_00Z
 cd $DATA/mar_00Z
 cp $FIXgempak/datatype.tbl datatype.tbl
@@ -81,14 +83,16 @@ do
         for fcsthr in ${fcsthrs}
         do
             fcsthrsgfs=`expr ${fcsthr} + 12`
-            typeset -Z3 fcsthrsgfs
+            #typeset -Z3 fcsthrsgfs
+
+            fcsthrsgfs=$(printf %03i $fcsthrsgfs)
 
             grids=${memberlist}
             for fn in `echo $grids`
             do
                 rm -rf $fn 
-                if [ -r $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} ]; then
-                    ln -s $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} $fn
+                if [ -r $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
+                    ln -s $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} $fn
                 fi
             done
 
@@ -96,21 +100,21 @@ do
             rm -rf ${fn}
             #f [ -r $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} ]
             # \$COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${yesterday}${gfscyc}f${fcsthrsgfs}
-            if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
+            if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${sGrid}${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
                 #  ln -s $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} gfs
-                ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
+                ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${sGrid}${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
             fi
 
             fn=ecmwf
             rm -rf ${fn}
-            if [ -r $COMINs/ecmwf.${ecmwfdate}/ecmwf_glob_${ecmwfdate}${ecmwfcyc} ]; then
-                ln -s $COMINs/ecmwf.${ecmwfdate}/ecmwf_glob_${ecmwfdate}${ecmwfcyc} ${fn}
+            if [ -r $COMINm1ecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ]; then
+                ln -s $COMINm1ecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ${fn}
             fi
 
             fn=ukmet
             rm -rf ${fn}
-            if [ -r $COMINs_p1/ukmet.${PDY}/ukmet_${PDY}${cyc}f${fcsthr} ]; then
-                ln -s $COMINs_p1/ukmet.${PDY}/ukmet_${PDY}${cyc}f${fcsthr} ${fn}
+            if [ -r ${COMINukmet}.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ]; then
+                ln -s ${COMINukmet}.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ${fn}
             fi
 
 
@@ -296,16 +300,19 @@ do
     for fcsthr in ${fcsthrs}
     do
         fcsthrsgfs=`expr ${fcsthr} + 12`
-        typeset -Z3 fcsthrsgfs
+        #typeset -Z3 fcsthrsgfs
+        fcsthrsgfs=$(printf %03i $fcsthrsgfs)
+
         fcsthrsgfs2=`expr ${fcsthr} - 6`
-        typeset -Z3 fcsthrsgfs2
+        #typeset -Z3 fcsthrsgfs2
+        fcsthrsgfs2=$(printf %03i $fcsthrsgfs2)
 
         grids=${memberlist}
         for fn in `echo $grids`
         do
             rm -rf $fn 
-            if [ -r $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} ]; then
-                ln -s $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} $fn
+            if [ -r $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
+                ln -s $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} $fn
             fi
         done
 
@@ -313,21 +320,21 @@ do
         rm -rf ${fn}
         #f [ -r $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} ]
         # \$COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${yesterday}${gfscyc}f${fcsthrsgfs}
-        if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
+        if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${sGrid}${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
             #  ln -s $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} gfs
-            ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
+            ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${sGrid}${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
         fi
 
         fn=ecmwf
         rm -rf ${fn}
-        if [ -r $COMINs/ecmwf.${ecmwfdate}/ecmwf_glob_${ecmwfdate}${ecmwfcyc} ]; then
-            ln -s $COMINs/ecmwf.${ecmwfdate}/ecmwf_glob_${ecmwfdate}${ecmwfcyc} ${fn}
+        if [ -r $COMINm1ecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ]; then
+            ln -s $COMINm1ecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ${fn}
         fi
 
         fn=ukmet
         rm -rf ${fn}
-        if [ -r $COMINs_p1/ukmet.${PDY}/ukmet_${PDY}${cyc}f${fcsthr} ]; then
-            ln -s $COMINs_p1/ukmet.${PDY}/ukmet_${PDY}${cyc}f${fcsthr} ${fn}
+        if [ -r $COMINukmet.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ]; then
+            ln -s $COMINukmet.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ${fn}
         fi
 
 
@@ -516,9 +523,9 @@ do
     export err=$?;export pgm="GEMPAK CHECK FILE";err_chk
 
     if [ $SENDCOM = "YES" ] ; then
-        mv ${metaname} ${COMOUT}/gefs_${PDY}_${cyc}_${metatype}
+        mv ${metaname} ${COMOUT}/gefs_${sGrid}${PDY}_${cyc}_${metatype}
         if [ $SENDDBN = "YES" ] ; then
-            $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job ${COMOUT}/gefs_${PDY}_${cyc}_${metatype}
+            $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job ${COMOUT}/gefs_${sGrid}${PDY}_${cyc}_${metatype}
         fi
     fi
 done
