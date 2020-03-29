@@ -1057,9 +1057,15 @@ def get_param_of_task(dicBase, taskname):
                 else:
                     sDep += '\n</and>'
 
-            if taskname.lower() in [ "wave_stat", "wave_gempak" ]:
+            if taskname.lower() in [ "wave_stat" ]:
                 if DoesTaskExist(dicBase, "wave_post"):
                     sDep = '<metataskdep metatask="wave_post"/>'
+                else:
+                    sDep = ""
+
+            if taskname.lower() in [ "wave_gempak" ]:
+                if DoesTaskExist(dicBase, "wave_post"):
+                    sDep = '<taskdep task="wave_post_#member#"/>'
                 else:
                     sDep = ""
 
@@ -1068,7 +1074,7 @@ def get_param_of_task(dicBase, taskname):
                 if DoesTaskExist(dicBase, "wave_stat"):
                     sDep = '<taskdep task="wave_stat"/>'
                 if DoesTaskExist(dicBase, "wave_gempak"):
-                    sDep = '<taskdep task="wave_gempak"/>'
+                    sDep = '<metataskdep task="wave_gempak"/>'
                 if sDep == '<and>':
                     sDep = ""
                 else:
@@ -1297,6 +1303,7 @@ def get_metatask_names(taskname=""):
     # wave
     metatask_names.append('wave_prep')
     metatask_names.append('wave_post')
+    metatask_names.append('wave_gempak')
     # postsnd
     metatask_names.append('postsnd')
 
