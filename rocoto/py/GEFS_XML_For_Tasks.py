@@ -159,6 +159,12 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "gempak_meta"
 
+            if dicBase['cplwav'] == ".true.":
+                # ---wave_gempak
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "wave_gempak"
+
         # #    <!-- postsnd  Post Sound -->
         if dicBase['RUN_POSTSND'].upper()[0] == "Y":
             # ---ensavg_nemsio
@@ -1051,17 +1057,22 @@ def get_param_of_task(dicBase, taskname):
                 else:
                     sDep += '\n</and>'
 
-            if taskname.lower() in [ "wave_stat" ]:
+            if taskname.lower() in [ "wave_stat", "wave_gempak" ]:
                 if DoesTaskExist(dicBase, "wave_post"):
                     sDep = '<metataskdep metatask="wave_post"/>'
                 else:
                     sDep = ""
 
             if taskname.lower() in [ "keep_data_wave", "archive_wave" ]:
+                sDep = '<and>'
                 if DoesTaskExist(dicBase, "wave_stat"):
                     sDep = '<taskdep task="wave_stat"/>'
-                else:
+                if DoesTaskExist(dicBase, "wave_gempak"):
+                    sDep = '<taskdep task="wave_gempak"/>'
+                if sDep == '<and>':
                     sDep = ""
+                else:
+                    sDep += '\n</and>'
 
             # For keep_init
             if taskname.lower() == "keep_init":
@@ -1286,7 +1297,6 @@ def get_metatask_names(taskname=""):
     # wave
     metatask_names.append('wave_prep')
     metatask_names.append('wave_post')
-    metatask_names.append('wave_stats')
     # postsnd
     metatask_names.append('postsnd')
 
