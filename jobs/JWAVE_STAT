@@ -118,7 +118,7 @@ export CFP_VERBOSE=1
 $HOMEwave/scripts/exwave_stat.sh
 err=$?
 if [ $err -ne 0 ]; then
-  msg="FATAL ERROR: ex-script of GWES_STAT failed!"
+  msg="FATAL ERROR: ex-script of WAVE_STAT failed!"
 else
   msg="$job completed normally!"
 fi

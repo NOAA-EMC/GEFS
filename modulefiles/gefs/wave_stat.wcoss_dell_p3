@@ -4,19 +4,6 @@
 ##                                                
 ## GWES.v3.0.9
 ##_____________________________________________________
-proc ModulesHelp { } {
-puts stderr "Set environment for waves_gwes.v3.0.9 "
-puts stderr "codes in the sorc directory.            "
-puts stderr "This module initializes the environment "
-puts stderr "for the DELL implementation.  \n"
-}
-module-whatis " GWES sorc codes build whatis description"
-
-set ver v3.0.9
-setenv COMP ifort
-
-set sys [uname sysname]
-
 module load EnvVars/1.0.2
 module load ips/18.0.1.163
 module load impi/18.0.1
@@ -31,3 +18,7 @@ module load sigio/2.1.0
 module load sp/2.0.2
 module load bufr/11.2.0
 
+##
+export FCMP=ifort
+export LDFLAGSM=
+export OMPFLAGM=
