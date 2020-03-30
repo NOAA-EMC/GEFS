@@ -17,8 +17,8 @@ if [[ ! -d global-workflow.fd ]] ; then
     #git clone --recursive git@github.com:WalterKolczynski-NOAA/global-workflow.git global-workflow.fd >>  ${logs_dir}/checkout-global-workflow.log 2>&1
     git clone --recursive https://github.com/WalterKolczynski-NOAA/global-workflow.git global-workflow.fd >>  ${logs_dir}/checkout-global-workflow.log 2>&1
     cd global-workflow.fd
-    git checkout d25d299
-    cd sorc
+    git checkout 9b1637ea
+	cd sorc
     ./checkout.sh
     ERR=$?
 
