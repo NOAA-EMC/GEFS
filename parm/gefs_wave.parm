@@ -64,7 +64,7 @@ export DTPNT_WAV=${DTPNT_WAV:-3600}
 export FHINCP_WAV=$(( $DTPNT_WAV / 3600 ))
 
 # Selected output parameters (gridded)
-export OUTPARS_WAV="WND CUR ICE HS T01 T02 DIR FP DP PHS PTP PDIR CHAR"
+export OUTPARS_WAV="WND ICE HS T01 T02 DIR FP DP PHS PTP PDIR"
 # GFS # export OUTPARS_WAV='WND CUR ICE HS T01 T02 DIR FP DP PHS PTP PDIR CHAR'
 
 # Options for output control

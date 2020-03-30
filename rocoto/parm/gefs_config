@@ -47,7 +47,7 @@ export HOMEpost=${HOMEpost:-$HOMEDIR}             #April 2018
 #export PARMglobal=$HOMEgfs/parm
 
 if [[ ! -d $SOURCEDIR/sorc/global-workflow.fd ]] ; then
-    export EXECwave=${HOMEgfs}/sorc/fv3gfs.fd/WW3/model/exe
+    export EXECwave=${HOMEgefs}/exec
 
     export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgfs/sorc/fv3gfs.fd/NEMS/exe}
     export FIXwave=${FIXwave:-$HOMEgefs/fix_wave}
