@@ -39,16 +39,6 @@ elif [[ -d /scratch1/NCEPDEV ]] ; then
     target=hera
     module purge
     module use -a /scratch2/NCEPDEV/nwprod/NCEPLIBS/modulefiles
-elif [[ -d /scratch3/NCEPDEV ]] ; then
-    # We are on NOAA Theia
-    if ( ! eval module help > /dev/null 2>&1 ) ; then
-	echo load the module command 1>&2
-        source /apps/lmod/lmod/init/$__ms_shell
-    fi
-    target=theia
-    module purge
-    module use /scratch3/NCEPDEV/nwprod/modulefiles/
-    module use /scratch3/NCEPDEV/nwprod/lib/modulefiles
 elif [[ -d /gpfs/hps && -e /etc/SuSE-release ]] ; then
     # We are on NOAA Luna or Surge
     if ( ! eval module help > /dev/null 2>&1 ) ; then
@@ -93,14 +83,6 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     module purge 
     module use /usrx/local/dev/modulefiles
 
-elif [[ -d /dcom && -d /hwrf ]] ; then
-    # We are on NOAA Tide or Gyre
-    if ( ! eval module help > /dev/null 2>&1 ) ; then
-	echo load the module command 1>&2
-        source /usrx/local/Modules/default/init/$__ms_shell
-    fi
-    target=wcoss
-    module purge
 elif [[ -d /glade ]] ; then
     # We are on NCAR Yellowstone
     if ( ! eval module help > /dev/null 2>&1 ) ; then

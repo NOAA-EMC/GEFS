@@ -6,9 +6,11 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export machine=$machine
-export gefsmpexec=${gefsmpexec:-mpirun}
-export APRUN=${gefsmpexec:-mpirun}
+export machine=${machine:-"WCOSS_DELL_P3"}
+
+export total_tasks=${total_tasks:-532}
+export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
+export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
 
 export RUNMEM=$RUNMEM
 export mem=`echo $RUNMEM|cut -c3-5`
@@ -68,6 +70,17 @@ export RERUN=${RERUN:-NO}
 #
 echo "current setting RERUN=$RERUN"
 
+####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
+
 # Specify Execution Areas
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
@@ -104,7 +117,6 @@ export COMIN=${COMIN:-${COMINwave}/${COMPONENTwave}.${PDY}/${cyc}}
 export COMOUT=${COMOUT:-${COMOUTwave}/${COMPONENTwave}.${PDY}/${cyc}}
 
 #Names used in exglobal_fv3.sh
-export BASE_GSM=${BASE_GSM:-$HOMEgfs}
 export FIX_DIR=$FIXgfs
 export FIX_AM=$FIX_DIR/fix_am
 export FIXfv3=$FIX_DIR/fix_fv3_gmted2010
@@ -185,7 +197,7 @@ if [[ $FORECAST_SEGMENT = hr ]] ; then
 	(( LEVS = LEVSHR + 1 ))
 elif [[ $FORECAST_SEGMENT = lr ]] ; then
 	CASE=$CASELR; FHMAX=$fhmax; FHOUT=$FHOUTLF; FHZER=6;
- 	MTNRSL=$MTNRSLLR; LONB=$LONBLR; LATB=$LATBLR;
+	MTNRSL=$MTNRSLLR; LONB=$LONBLR; LATB=$LATBLR;
 	FHMAX_HF=$FHMAXHF; FHOUT_HF=$FHOUTHF;
 	FHINI=$FHINI;
 	(( LEVS = LEVSLR + 1 ))
@@ -214,7 +226,7 @@ export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 # Forecast Input Variables
 #
 . $PARMgefs/gefs_fcst.parm
-export restart_interval=${fhrestart:-1000}
+export restart_interval=${restart_interval:-${fhrestart:-1000}}
 export fhstoch=$restart_interval
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
@@ -354,34 +366,34 @@ export CDUMP=$RUNMEM
 
 LINK=NO   # link is done in the $FORECAST script
 if [ $LINK = "YES" ]; then
-    if [ $OUTPUT_GRID = "gaussian_grid" ]; then
-	    # Link output files
-	    hr=$FHINI
-	    while (( hr < FHMAX_HF )); do
-		    fhr=$(printf "%03.0f" $hr)
-		    ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $DATA/$CDUMP.${cycle}.atmf$fhr.nemsio
-		    ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $DATA/$CDUMP.${cycle}.sfcf$fhr.nemsio
-		    ln -s $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $DATA/$CDUMP.${cycle}.logf$fhr.nemsio
-		    export hr=$(expr $hr + $FHOUT_HF)
-	    done
-	    while (( hr <= FHMAX )); do
-		    fhr=$(printf "%03.0f" $hr)
-		    ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $DATA/$CDUMP.${cycle}.atmf$fhr.nemsio
-		    ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $DATA/$CDUMP.${cycle}.sfcf$fhr.nemsio
-		    ln -s $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $DATA/$CDUMP.${cycle}.logf$fhr.nemsio
-		    export hr=$(expr $hr + $FHOUT)
-	    done
-    else
-	    for n in `seq 1 $ntiles`; do
-		    for file in atmos_4xdaily. atmos_static. fv3_history. fv3_history2d. grid_spec. nggps2d. nggps3d.; do
-			    # ln -s $ROTDIR/$file\tile$n.nc $DATA/$file\tile$n.nc
+	if [ $OUTPUT_GRID = "gaussian_grid" ]; then
+		# Link output files
+		hr=$FHINI
+		while (( hr < FHMAX_HF )); do
+			fhr=$(printf "%03.0f" $hr)
+			ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $DATA/$CDUMP.${cycle}.atmf$fhr.nemsio
+			ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $DATA/$CDUMP.${cycle}.sfcf$fhr.nemsio
+			ln -s $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $DATA/$CDUMP.${cycle}.logf$fhr.nemsio
+			export hr=$(expr $hr + $FHOUT_HF)
+		done
+		while (( hr <= FHMAX )); do
+			fhr=$(printf "%03.0f" $hr)
+			ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $DATA/$CDUMP.${cycle}.atmf$fhr.nemsio
+			ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $DATA/$CDUMP.${cycle}.sfcf$fhr.nemsio
+			ln -s $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $DATA/$CDUMP.${cycle}.logf$fhr.nemsio
+			export hr=$(expr $hr + $FHOUT)
+		done
+	else
+		for n in `seq 1 $ntiles`; do
+			for file in atmos_4xdaily. atmos_static. fv3_history. fv3_history2d. grid_spec. nggps2d. nggps3d.; do
+				# ln -s $ROTDIR/$file\tile$n.nc $DATA/$file\tile$n.nc
 
-			    # touch $SFCSIG/$mem/$file\tile$n.nc
-			    # ln -s $SFCSIG/$mem/$file\tile$n.nc $memdir/$file\tile$n.nc
-			    ;
-		    done
-	    done
-    fi # [ $OUTPUT_GRID = "gaussian_grid" ]
+				# touch $SFCSIG/$mem/$file\tile$n.nc
+				# ln -s $SFCSIG/$mem/$file\tile$n.nc $memdir/$file\tile$n.nc
+				;
+			done
+		done
+	fi # [ $OUTPUT_GRID = "gaussian_grid" ]
 fi # $LINK
 
 if [[ $cplwav = ".true." ]]; then
@@ -390,23 +402,52 @@ if [[ $cplwav = ".true." ]]; then
 	export COMOUTWW3=$COMROOT/${NET}/${envir}
 fi # [[ $cplwav = ".true." ]]
 
-if [[ $cplchm = ".true." && $warm_start = ".true." ]]; then
-    # Link restart files for next cycle
+if [[ $cplchm = ".true." ]]; then
+	CHEMIN=${CHEMIN:-$memdir/chem}
+	if [[ ! -d $CHEMIN ]]; then
+		echo "FATAL: cplchm is .true. but there is no chem input directry at $CHEMIN"
+		exit 200
+	fi
+
+	# Check which smoke emissions we are using
+	gbbepx_found=0
+	any_found=0
+	for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
+		if [[ -f $CHEMIN/$tile/plumefrp.dat ]]; then (( gbbepx_found = gbbepx_found + 1 )); fi
+		if [[ -f $CHEMIN/$tile/plumestuff.dat ]]; then (( any_found = any_found + 1 )); fi
+	done
+
+	if (( gbbepx_found == 6 )); then
+		# Using GBBEPx
+		echo "GBBEPx smoke emissions detected and will be used"
+		export EMITYPE=2
+	elif (( any_found == 6 )); then
+		# Using MODIS
+		echo "WARNING: missing or complete GBBEPx emissions, failing over to MODIS-style inputs"
+		echo "   Check $CHEMIN and your prep emission job if this is not expected."
+		export EMITYPE=1
+	else
+		echo "FATAL: cplchm is .true. but smoke emissions are not available!"
+		echo "  Check input directory $CHEMIN"
+		err=10
+		err_chk || exit $err
+	fi
+
+	# Link restart files for next cycle
 	next_date=$($NDATE +$gefs_cych $CDATE)
-	# next_date=$($NDATE +$restart_interval $CDATE)
     next_PDY=$(echo $next_date | cut -c1-8)
     next_cyc=$(echo $next_date | cut -c9-10)
 	last_rstdir=$COMOUT/$cyc/restart/$mem
-    if [[ ! -d $DATA/RESTART ]]; then mkdir -p $DATA/RESTART; fi
-	ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.coupler.res $DATA/RESTART/${next_PDY}.${next_cyc}0000.coupler.res
-	ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.fv_core.res.nc $DATA/RESTART/${next_PDY}.${next_cyc}0000.fv_core.res.nc
+	if [[ ! -d $RSTDIR ]]; then mkdir -p $RSTDIR; fi
+	ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.coupler.res $RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res
+	ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.fv_core.res.nc $RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc
 	for kind in fv_tracer.res fv_core.res fv_srf_wnd.res phy_data sfc_data; do
 		for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
-			ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc $DATA/RESTART/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc
+			ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc $RSTDIR/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc
 		done
 	done
 
-fi # [[ $cplchm = ".true." && $warm_start = ".true." ]]
+fi # [[ $cplchm = ".true." ]]
 
 export increment_file=$ICSDIR/fv3_increment.nc
 
@@ -430,18 +471,16 @@ fi
 $FORECASTSH
 ERR=$?
 
-cp -pr $DATA/stoch_out.F* $GESIN/$mem/RESTART  
-
 if [ $ERR = 0 ]; then
-    msg="$job completed normally!"
+	msg="$job completed normally!"
 else
-    msg="FATAL ERROR: $job failed!"
+	msg="FATAL ERROR: $job failed!"
 fi
 postmsg "$jlogfile" "$msg"
 
 if [[ $KEEPDATA != "YES" ]]; then
-    cd $DATAROOT
-    rm -rf $DATA
+	cd $DATAROOT
+	rm -rf $DATA
 fi
 
 echo `date` $0 `date -u` end

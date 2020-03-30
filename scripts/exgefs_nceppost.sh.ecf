@@ -191,7 +191,7 @@ if [ $DOANALYSIS = YES ]; then
         # 20150622 RLW disable this temporarily to test the new post code
         if [[ -f $fileout ]]; then rm $fileout; fi
         if [[ -f $fileouti ]]; then rm $fileouti; fi
-        for submc in prd0p5 prd1p0 prd2p5; do
+        for submc in  prd0p25 prd0p5 prd2p5; do
             pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.anl
             if [[ -f $pcfile ]]; then rm $pcfile; fi
         done
@@ -242,7 +242,7 @@ for fhr in ${RUN_HOURS[@]}; do
         # 20150622 RLW disable this temporarily to test the new post code
         if [[ -f $fileout ]]; then rm $fileout; fi
         if [[ -f $fileouti ]]; then rm $fileouti; fi
-        for submc in prd0p5 prd1p0 prd2p5; do
+        for submc in prd0p25 prd0p5 prd2p5; do
             pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr
             if [[ -f $pcfile ]]; then rm $pcfile; fi
         done # for submc in prd0p5 prd1p0 prd2p5
@@ -509,7 +509,7 @@ do
         ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr pgbifout
         export PGBOUT=pgbfout
         export PGIOUT=pgbifout
-        export ANOMCATSH=${USHGSM}/global_anomcat.sh
+        #export ANOMCATSH=${USHgfs}/global_anomcat.sh
         export FILTER=1
 
         # RLW 20100910 add cleanup to prevent problems with overparm

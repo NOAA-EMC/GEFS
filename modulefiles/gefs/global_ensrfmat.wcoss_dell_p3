@@ -1,7 +1,7 @@
 #%Module#####################################################
 ## global_ensrfmat component - wcoss_dell_p3
 #############################################################
-module load ips/18.0.1.163
+module load ips/${ips_ver}
 
 ##
 export FCMP=ifort

@@ -6,6 +6,9 @@ cwd=`pwd`
 
 progname=global_enssrbias
 
+if [ -f ../modulefiles/gefs/gefs_$target.ver ]; then
+    source ../modulefiles/gefs/gefs_$target.ver
+fi
 source ../modulefiles/gefs/${progname}.$target             > /dev/null 2>&1
 
 # Check final exec folder exists
