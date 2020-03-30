@@ -7,12 +7,12 @@ Instructions for building up the gefs system:
         ./build_XXXXX.sh               #this builds the XXXXX program
 
     3) To link or copy the fix files with options for environment and machine
-        ./link_gefs.sh [-e emc/nco ][ -m theia/cray/ibm/dell/hera ]
+        ./link_gefs.sh [-e emc/nco ][ -m cray/dell/hera ]
           emc and dell are used as default
           ibm is for WCOSS P1/P2; dell is for WCOSS_DELL_P3
 
     4) The following files are used before and saved here for reference
-        Module_gefs_vxx_XXXX     ( xx=11 or 12, XXXX=cray or wcoss or theia, or wcoss_dell_p3)
+        Module_gefs_vxx_XXXX     ( xx=11 or 12, XXXX=cray or hera, or wcoss_dell_p3)
 
 
 Instructions for building up the global_workflow

@@ -52,16 +52,6 @@ def create_crontab(dicBase, OnlyForTest=False, cronint=5):
     if system == 'wins' or system == 'hera':
         crontab_string += crontab_usage
         crontab_string += crontab_time + rocotorun_args
-    elif system == 'wcoss_ibm':
-        hosts = ''
-        for host in ('g10a1', 'g10a2', 'g14a1', 'g14a2', 't10a1', 't10a2', 't14a1', 't14a2'):
-            hosts += host + ' '
-        crontab_string += '# When on ' + system + ' you can only run cron on the hosts: ' + hosts + '\n'
-        crontab_string += crontab_usage
-        crontab_string += crontab_time + '(. /usrx/local/Modules/default/init/sh; module load lsf; ' \
-                                         'module use /usrx/local/emc_rocoto/modulefiles ;' \
-                                         ' module load rocoto ;' \
-                          + rocotorun_args + ') > /dev/null 2>&1\n'
     elif system == "cray":
         crontab_string += crontab_usage
         crontab_string += crontab_time
@@ -70,7 +60,7 @@ def create_crontab(dicBase, OnlyForTest=False, cronint=5):
                           'module load xt-lsfhpc; module load rocoto;'
         crontab_string += rocotorun_args
         crontab_string += ') > /dev/null 2>&1'
-    elif system == "wcoss_dell_p3":
+    elif system in ["wcoss_dell_p3", "wcoss_dell_p35"]:
         # crontab_string += crontab_usage
         import os
         if not os.path.exists(sRocotoPath + "/logs"):

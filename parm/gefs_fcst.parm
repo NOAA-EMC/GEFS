@@ -9,15 +9,36 @@ if [[ $FORECAST_SEGMENT = lr ]]; then
 	export DELTIM=$DELTIMLR
 fi
 
-#FV3 
-layout_x=${layout_x:-8}
-layout_y=${layout_y:-8}
+#FV3
+if [[ $FORECAST_SEGMENT = lr ]]; then
+    layout_x=${layout_x_lr:-6}
+    layout_y=${layout_y_lr:-8}
+else
+    if [[ $cplchm = ".true." ]]; then
+        layout_x=${layout_x_chem:-6}
+        layout_y=${layout_y_chem:-8}
+    else
+        layout_x=${layout_x:-6}
+        layout_y=${layout_y:-6}
+    fi
+fi
 export LEVS=${LEVS:-65}
 
 #Writing out 
 export QUILTING=.true.
-export WRITE_GROUP=${WRITE_GROUP:-1}
-export WRTTASK_PER_GROUP=${WRTTASK_PER_GROUP:-64}
+
+if [[ $FORECAST_SEGMENT = lr ]]; then
+    export WRITE_GROUP=${WRITE_GROUP_lr:-1}
+    export WRTTASK_PER_GROUP=${WRTTASK_PER_GROUP_lr:-32}
+else
+    if [[ $cplchm = ".true." ]]; then
+        export WRITE_GROUP=${WRITE_GROUP_chem:-1}
+        export WRTTASK_PER_GROUP=${WRTTASK_PER_GROUP_chem:-32}
+    else
+        export WRITE_GROUP=${WRITE_GROUP:-1}
+        export WRTTASK_PER_GROUP=${WRTTASK_PER_GROUP:-36}
+    fi
+fi
 export NUM_FILES=2
 export OUTPUT_GRID=${FV3OUT_GRID:-"gaussian_grid"}
 export WRITE_NEMSIOFILE=.true.
@@ -36,13 +57,21 @@ export npe_node_max
 
 #PE geometry
 export hyperthread=${hyperthread:-".false."}
-export NTHREADS_FV3=${parallel_threads:-2}
+if [[ $FORECAST_SEGMENT = lr ]]; then
+    export NTHREADS_FV3=${parallel_threads_lr:-1}
+else
+    if [[ $cplchm = ".true." ]]; then
+        export NTHREADS_FV3=${parallel_threads_chem:-1}
+    else
+        export NTHREADS_FV3=${parallel_threads:-1}
+    fi
+fi
 COREPERNODE=${COREPERNODE:-28}
 export cores_per_node=$COREPERNODE
 
 #FV dynamics parameters
-export TYPE=${TYPE:-"hydro"}    # choices:  nh, hydro
-export MONO=${MONO:-mono}
+export TYPE=${TYPE:-"nh"}    # choices:  nh, hydro
+export MONO=${MONO:-"non-mono"}
 export MODE=32bit           # choices:  32bit, 64bit
 export COMP="prod"          # choices:  debug, repro, prod
 
@@ -95,7 +124,7 @@ export cplwav=${cplwav:-.true.}
 if [[ $cplwav = ".true." ]]; then
 	export cpl=".true."
 	export WAV_MOD_ID=${WAV_MOD_ID:-gwes}
-	export npe_wav=${npe_wav:-84}
+	export npe_wav=${npe_wav:-108}
 	export npe_fcst_wav=$(( npe_fv3 + npe_wav ))
 	export atm_petlist_bounds=" 0 $((npe_fv3-1))"
 	export wav_petlist_bounds=" $((npe_fv3)) $((npe_fcst_wav-1))"
@@ -117,8 +146,6 @@ if [[ $cplchm = ".true." ]]; then
 		export CALCINCEXEC=${CALCINCEXEC:-$HOMEgfs/exec/calc_increment_ens_gsdchem.x}
 	fi
 
-	# TODO Update to determine emission type
-	export EMITYPE=${EMITYPE:-2}  # 1:MODIS, 2:GBBEPx
 	# TODO Copy data to a fix_aerosol
 	export EMIDIR=${EMIDIR:-/gpfs/dell2/emc/modeling/noscrub/Li.Pan/emi_}
 
@@ -163,6 +190,7 @@ export lheatstrg=.false.
 
 export random_clds=.false.
 export trans_trac=.true.
+
 export cnvcld=.false.
 export NVCLD=.false.
 export imfshalcnv=2
@@ -240,12 +268,12 @@ MEMBER=`echo $RUNMEM|cut -c4-5`
 CDATE=$PDY$cyc
 
 # Turn off stochastic physics for control member
-if [[ $RUNMEM = "gec00" ]]; then
+if [[ $RUNMEM = "gec00" || $RUNMEM = "geaer" ]]; then
 	export DO_SPPT="NO"
 	export DO_SHUM="NO"
 	export DO_SKEB="NO"
 	export DO_VC="NO"
-fi # [[ $RUNMEM = "gec00" ]]
+fi # [[ $RUNMEM = "gec00" || $RUNMEM = "geaer" ]]
 
 # Stochastically Perturbed Physics Tendency
 if [[ $DO_SPPT = YES ]]; then

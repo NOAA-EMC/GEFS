@@ -9,8 +9,8 @@ set -xa
 export PS4=' + $SECONDS $na $LINENO: '
 date
 
-export gefsmpexec=${gefsmpexec:-mpirun}
-
+export total_tasks=${total_tasks:-21}
+export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
 export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
 #export APRUNTRACK="aprun -j1 -n21 -N7 -d1"
 #export NODES=3
@@ -54,10 +54,13 @@ export pgmerr=errfile
 ####################################
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
 ####################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDDBN=${SENDDBN:-YES}
 export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
 
 ####################################
 # Specify Execution Areas
@@ -95,8 +98,8 @@ export COMOUTatcf=${COMOUTatcf:-${COMROOT}/nhc/${envir}/atcf}
 
 mkdir -m 775 -p $COMOUT $COMOUThur $COMOUTatcf
 
-export ensdira=$COMIN/pgrb2ap25
-export ensdirb=$COMIN/pgrb2bp25
+export ensdira=$COMIN/pgrb2sp25
+export ensdirb=$COMIN/pgrb2p25
 
 ##############################################
 echo set parameters using gefs.parm

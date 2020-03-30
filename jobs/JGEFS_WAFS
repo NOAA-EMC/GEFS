@@ -6,11 +6,9 @@ set -xa
 export PS4='$SECONDS + '
 date -u
 
-fi
-
-export gefsmpexec=${gefsmpexec:-mpirun}
-
-export APRUN=${gefsmpexec:-mpirun}
+export total_tasks=${total_tasks:-1}
+export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
+export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
 
 export CNVGRIB=$CNVGRIB
 
@@ -67,6 +65,17 @@ export pgmerr=errfile
 
 #export DBNROOT=${DBNROOT:-/iodprod/dbnet_siphon}
 #export KEEPDATA=${KEEPDATA:-NO}
+
+####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
 
 ####################################
 # Specify Execution Areas

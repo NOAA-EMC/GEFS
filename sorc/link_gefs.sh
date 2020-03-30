@@ -34,9 +34,6 @@ if [ $machine == "cray" ]; then
 elif [ $machine = "dell" ]; then
     FIX_DIR="/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gefs/fix_sst721_short"
     FIX_DIR_FV3="/gpfs/dell2/emc/modeling/noscrub/emc.glopara/git/fv3gfs/fix"
-elif [ $machine = "theia" ]; then
-    FIX_DIR="/scratch4/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix_sst721"
-    FIX_DIR_FV3="/scratch4/NCEPDEV/global/save/glopara/git/fv3gfs/fix"
 elif [ $machine = "hera" ]; then
     FIX_DIR="/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix_sst721_short"
     FIX_DIR_FV3="/scratch1/NCEPDEV/global/glopara/fix"
@@ -88,6 +85,13 @@ if [[ -d global-workflow.fd ]] ; then
     fi
     $LINK ${pwd}/../sorc/global-workflow.fd/fix/${sFolder} ${sFolder}
 
+    # chem_prep_emissions
+    sFolder=fix_chem
+    if [[ -d $sFolder ]]; then
+        rm -rf $sFolder
+    fi
+    $LINK ${FIX_DIR_FV3}/${sFolder} ${sFolder}
+
     cd ${pwd}
 fi
 
@@ -131,6 +135,10 @@ if [[ -d global-workflow.fd ]] ; then
     $LINK ${sPath}/gfs_bufr ../exec/
     $LINK ${sPath}/tocsbufr ../exec/
 
+    # chem_prep_emissions
+    sPath=../sorc/global-workflow.fd/sorc/gsd_prep_chem.fd/workflow/emc-global/exec
+    $LINK ${sPath}/prep_chem_sources_RADM_FV3_SIMPLE.exe ../exec/
+
 fi
 
 # Copy/Link parm files
@@ -160,6 +168,30 @@ if [[ -d global-workflow.fd ]] ; then
 
 fi
 
+# For Forecast
+if [[ -d global-workflow.fd ]] ; then
+    sFile=exglobal_fcst_nemsfv3gfs.sh
+    if [[ -e ../scripts/$sFile ]]; then
+        if [[ -L ../scripts/$sFile ]]; then
+            rm ../scripts/$sFile
+            $LINK ../sorc/global-workflow.fd/scripts/$sFile ../scripts/
+        fi
+    else
+        $LINK ../sorc/global-workflow.fd/scripts/$sFile ../scripts/
+    fi
+fi
+
+# for CHEM
+if [[ -d global-workflow.fd ]]; then
+    # for chem_prep_emissions
+    $LINK ../sorc/global-workflow.fd/sorc/gsd_prep_chem.fd/workflow/emc-global/scripts/exglobal_prep_chem.bash ../scripts/
+    $LINK ../sorc/global-workflow.fd/sorc/gsd_prep_chem.fd/workflow/emc-global/parm/prep_chem_sources.inp.IN ../parm/
+
+    # for init_aerosol
+    $LINK ../sorc/global-workflow.fd/ush/merge_fv3_chem_tile.py ../ush/
+    $LINK ../sorc/global-workflow.fd/exec/chgres_recenter.exe ../exec/
+    $LINK ../sorc/global-workflow.fd/sorc/gsi.fd/exec/calc_increment_ens_gsdchem.x ../exec/
+fi
 
 
 exit 0
