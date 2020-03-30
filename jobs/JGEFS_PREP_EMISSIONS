@@ -74,7 +74,7 @@ export UTILgfs=$HOMEgfs/util
 export EXECgfs=$HOMEgfs/exec
 export SCRgfs=$HOMEgfs/scripts
 
-export HOMEchem=${HOMEchem:-$HOMEgfs} #/sorc/gsd_prep_chem.fd/workflow/emc-global}
+export HOMEchem=${HOMEchem:-$HOMEgfs}
 export PARMchem=${PARMchem:-$HOMEchem/parm}
 export EXECchem=${EXECchem:-$HOMEchem/exec}
 export FIXchem=${FIXchem:-$FIXgfs/fix_chem}

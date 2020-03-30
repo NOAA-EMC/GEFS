@@ -111,7 +111,9 @@ def main() -> None:
         if os.path.isfile(full_file_name):
             shutil.copy(full_file_name, destination_path)
 
-    os.makedirs(destination_path, exist_ok=True)
+    # Even with exist_ok=True, makedirs sometimes throws a FileExistsError
+    with contextlib.suppress(FileExistsError):
+        os.makedirs(destination_path, exist_ok=True)
 
     if (init_type == "warm"):
         analysis_filename = regrid_analysis(time=time, regrid_aprun=regrid_aprun, regrid_exec=regrid_exec, max_lookback=max_lookback,
@@ -128,7 +130,9 @@ def main() -> None:
 
         if(files_exist):
             # Link restart files
-            os.makedirs("{path}/RESTART".format(path=destination_path), exist_ok=True)
+            # Even with exist_ok=True, makedirs sometimes throws a FileExistsError
+            with contextlib.suppress(FileExistsError):
+                os.makedirs("{path}/RESTART".format(path=destination_path), exist_ok=True)
             for file in restart_files:
                 basename = os.path.basename(file)
                 link = restart_dest_pattern.format(path=destination_path, filename=basename)
