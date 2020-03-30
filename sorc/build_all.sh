@@ -130,7 +130,13 @@ echo " .... Building overenstr_grib - 13 .... "
 ./build_overenstr_grib.sh > $logs_dir/build_overenstr_grib.log 2>&1
 }
 
-
+#------------------------------------
+# build overenstr_grib
+#------------------------------------
+$Build_wave_stat && {
+echo " .... Building wave_stat - 14 .... "
+./build_wave_stat.sh > $logs_dir/build_wave_stat.log 2>&1
+}
 
 #------------------------------------
 # build global-workflow

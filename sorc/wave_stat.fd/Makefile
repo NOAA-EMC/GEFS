@@ -1,7 +1,7 @@
 SHELL=/bin/sh
 #
-SRCS=	grbit2.f90  gwes_stats.f90
-OBJS=	 grbit2.o  gwes_stats.o
+SRCS=	grbit2.f90  wave_stat.f90
+OBJS=	 grbit2.o  wave_stat.o
 
 # Tunable parameters
 #
@@ -24,7 +24,7 @@ FFLAGS =        -O -xHost -list -auto -I $(INC)
 ##LIBS = -L/nwprod/lib -lg2_4 -lw3nco_v2.0.3_4 -lbacio_4 \
 ##        -ljasper -lpng -lz
 ##
-##CMD =   gwes_stats	
+##CMD =   wave_stat	
 ##PROFLIB =  
 
 LDFLAGS = 
@@ -33,7 +33,7 @@ LIBS = $(G2_LIB4) $(W3NCO_LIB4) $(BACIO_LIB4) $(JASPER_LIB) $(PNG_LIB) $(Z_LIB)
 #       /usrx/local/prod/packages/ips/19.0.5/serial/zlib/1.2.11/lib/libz.a
 #$(Z_LIB) $(Z_LIBa)
 
-CMD =   gwes_stats
+CMD =   wave_stat
 PROFLIB =  	
 #
 # Lines from here on down should not need to be changed.  They are the
@@ -44,8 +44,8 @@ all:		$(CMD)
 $(CMD):		$(OBJS)
 	$(FC) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
 
-gwes_stats.o:	gwes_stats.f90
-	$(FC) -c $(FFLAGS) gwes_stats.f90
+wave_stat.o:	wave_stat.f90
+	$(FC) -c $(FFLAGS) wave_stat.f90
 
 grbit2.o:   grbit2.f90 
 	$(FC) -c $(FFLAGS) grbit2.f90

@@ -1,7 +1,0 @@
- Making gwes_stats 
-ifort -c -O -xHost -list -auto -I /gpfs/dell1/nco/ops/nwprod/lib/g2/v3.1.0/ips/18.0.1/include/g2_v3.1.0_4  grbit2.f90
-ifort -c -O -xHost -list -auto -I /gpfs/dell1/nco/ops/nwprod/lib/g2/v3.1.0/ips/18.0.1/include/g2_v3.1.0_4  gwes_stats.f90
-ifort  -o gwes_stats grbit2.o  gwes_stats.o /gpfs/dell1/nco/ops/nwprod/lib/g2/v3.1.0/ips/18.0.1/libg2_v3.1.0_4.a /gpfs/dell1/nco/ops/nwprod/lib/w3nco/v2.0.6/ips/18.0.1/libw3nco_v2.0.6_4.a /gpfs/dell1/nco/ops/nwprod/lib/bacio/v2.0.2/ips/18.0.1/libbacio_v2.0.2_4.a /usrx/local/prod/packages/gnu/4.8.5/jasper/1.900.29/lib/libjasper.a /usrx/local/prod/packages/gnu/4.8.5/libpng/1.2.59/lib/libpng.a /usrx/local/prod/packages/ips/18.0.1/zlib/1.2.11/lib/libz.a
- Moving gwes_stats to exec
- Cleaning up gwes_stats directory
- 
