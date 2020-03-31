@@ -856,7 +856,7 @@ def get_param_of_task(dicBase, taskname):
                         aerosol_init_type = dicBase['AEROSOL_INIT_TYPE']
                         gefs_cych = int(dicBase['INCYC'])
                         if aerosol_init_type == "warm":
-                            sDep += '\t'.join(textwrap.dedent("""
+                            sDep += '\n\t'.join(textwrap.dedent("""
                             <or>
                                 <not><cycleexistdep cycle_offset=\"-&INCYC;:00:00\"/></not>
                                 <and>
@@ -878,7 +878,7 @@ def get_param_of_task(dicBase, taskname):
 
                         elif aerosol_init_type == "cold":
                             # sDep += "\n\t<or>\n\t\t<not><cycleexistdep cycle_offset=\"-&INCYC;:00:00\"/></not>\n\t\t<taskdep task=\"{task}\" cycle_offset=\"-&INCYC;:00:00\"/>\n\t</or>".format(task=task)
-                            sDep += '\t'.join(textwrap.dedent("""
+                            sDep += '\n\t'.join(textwrap.dedent("""
                             <or>
                                 <not><cycleexistdep cycle_offset=\"-&INCYC;:00:00\"/></not>
                                 <and>
@@ -1089,7 +1089,7 @@ def get_param_of_task(dicBase, taskname):
 
             if taskname.lower() in [ "wave_gempak" ]:
                 if DoesTaskExist(dicBase, "wave_post"):
-                    sDep = '<taskdep task="wave_post_#member#"/>'
+                    sDep = '<datadep><cyclestr>&DATA_DIR;/gefswave.@Y@m@d/@H/gridded/gefswave.t@Hz.#member#.global.0p25.f000.grib2</cyclestr></datadep>'
                 else:
                     sDep = ""
 
