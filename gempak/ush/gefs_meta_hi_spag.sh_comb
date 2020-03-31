@@ -35,12 +35,14 @@ echo memberlist=$memberlist
 ## Get member list
 ########################################################
 
+sGrid=0p50_
+
 mkdir $DATA/gefs_meta_hi_spag
 cd $DATA/gefs_meta_hi_spag
-cp $FIXgempak/datatype.tbl datatype.tbl
+#cp $FIXgempak/datatype.tbl datatype.tbl
 
-mdl=gefs
-MDL=GEFS
+#mdl=gefs
+#MDL=GEFS
 
 #ddate=`echo $PDY | cut -c3-8`
 #ddatem1=`echo $PDYm1 | cut -c3-8`
@@ -85,7 +87,7 @@ case $cyc in
    ;;
 esac
 
-metaname="gefs_${PDY}_${cyc}_hi_spag"
+metaname="gefs_${sGrid}${PDY}_${cyc}_meta_hi_spag"
 device="nc|$metaname"
 
 garea="-16;173;34;-67"
@@ -130,57 +132,57 @@ do
         do
             rm -rf $fn ${fn}_6
 
-            if [ -r $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} ]; then
-                ln -s $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} $fn
+            if [ -r $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
+                ln -s $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} $fn
             fi
 
             #  if [ -r $COMINs/gefs.${PDY_6}/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ]
-            if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
+            if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/ge${fn}_${sGrid}${PDY_6}${cyc_6}f${fcsthr_6} ]; then
                 #  ln -s $COMINs/gefs.${PDY_6}/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}_6
-                ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}_6
+                ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/ge${fn}_${sGrid}${PDY_6}${cyc_6}f${fcsthr_6} ${fn}_6
             fi
         done
 
         fn=gefs_avg
         rm -rf ${fn}
-        if [ -r $COMIN/geavg_${PDY}${cyc}f${fcsthr} ]; then
-            ln -s $COMIN/geavg_${PDY}${cyc}f${fcsthr} ${fn}
+        if [ -r $COMIN/geavg_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
+            ln -s $COMIN/geavg_${sGrid}${PDY}${cyc}f${fcsthr} ${fn}
         fi
 
         fn=gefs_avg_6
         rm -rf ${fn}
         #if [ -r $COMINs/gefs.${PDY_6}/geavg_${PDY_6}${cyc_6}f${fcsthr_6} ]
-        if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/geavg_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
+        if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/geavg_${sGrid}${PDY_6}${cyc_6}f${fcsthr_6} ]; then
             #  ln -s $COMINs/gefs.${PDY_6}/geavg_${PDY_6}${cyc_6}f${fcsthr_6} gefs_avg_6
-            ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/geavg_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
+            ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/geavg_${sGrid}${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
         fi
 
         fn=gfs
         rm -rf ${fn}
         #f [ -r $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} ]
-        if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ]; then
+        if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
             #  ln -s $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} gfs
-            ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ${fn}
+            ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${sGrid}${PDY}${cyc}f${fcsthr} ${fn}
         fi
 
         fn=gfs_6
         rm -rf ${fn}
         #if [ -r $COMINs/gfs.${PDY_6}/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ]
-        if [ -r $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
+        if [ -r $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs_${sGrid}${PDY_6}${cyc_6}f${fcsthr_6} ]; then
             #  ln -s $COMINs/gfs.${PDY_6}/gfs_${PDY_6}${cyc_6}f${fcsthr_6} gfs_6
-            ln -s $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
+            ln -s $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs_${sGrid}${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
         fi
 
         fn=ecmwf
         rm -rf ${fn}
-        if [ -r $COMINs/ecmwf.${ECM_PDY}/ecmwf_glob_${ECM_PDY}${ECM_cyc} ]; then
-            ln -s $COMINs/ecmwf.${ECM_PDY}/ecmwf_glob_${ECM_PDY}${ECM_cyc} ${fn}
+        if [ -r ${COMINecmwf}.${ECM_PDY}/gempak/ecmwf_hr_${ECM_PDY}${ECM_cyc}f${fcsthr} ]; then
+            ln -s ${COMINecmwf}.${ECM_PDY}/gempak/ecmwf_hr_${ECM_PDY}${ECM_cyc}f${fcsthr} ${fn}
         fi
 
         fn=ukmet
         rm -rf ${fn}
-        if [ -r $COMINs_p1/ukmet.${ECM_PDY}/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ]; then
-            ln -s $COMINs_p1/ukmet.${ECM_PDY}/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ${fn}
+        if [ -r ${COMINukmet}.${ECM_PDY}/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ]; then
+            ln -s ${COMINukmet}.${ECM_PDY}/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ${fn}
         fi
 
         #fn=cmc
@@ -328,6 +330,14 @@ do
                 # ----- gridl -----
                 gdfn=${gridl}
                 if [ -e ${gdfn} ]; then
+					if [ ${gdfn} == c00 ]; then
+	                    color_number=6
+	                    #line_count=-2
+	                else
+	                    color_number=`echo $gdfn | cut -c2-`
+	                    #line_count=${color_number}
+	                fi
+
 					cat >> cmdfilehi  <<- EOF
 						!GDFILE  = \$COMIN/ge${gridl}_${PDY}${cyc}f${fcsthr}
 						GDFILE  = ${gdfn}
@@ -351,7 +361,7 @@ do
                 fi
 
                 let line_count=$line_count+1
-                let color_number=$color_number+1
+                #let color_number=$color_number+1
             done
 
             # ----- ukmet -----
