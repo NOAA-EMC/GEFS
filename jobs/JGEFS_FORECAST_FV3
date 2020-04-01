@@ -54,10 +54,9 @@ export pgmerr=errfile
 
 ####################################
 # Define RERUN Parameter: default to RESTART if not previously set
-#
-# Set RERUN=RESTART to find the last set of complete SFCSIG files and restart the forecast at that point
-# (corresponds to previous setting RERUN=NO)
-# Set RERUN=YES to remove all forecast products and log files, if any, and start over from the conditions
+# FOR FV3 based forecast job,
+#       RERUN=YES means pick up from the latest available (or specific) set of restart files 
+#       RERUN=NO means ignore  the available set of restart files valid later than FHINI (00h or fhmaxh)
 #
 # In case of FORECAST failure, set RERUN=RESTART if necessary in FORECAST, NCEPPOST, and PRDGEN jobs
 # In case of NCEPPOST failure, set RERUN=RESTART if necessary in NCEPPOST, and PRDGEN jobs
@@ -212,7 +211,6 @@ export restart_interval=${restart_interval:-${fhrestart:-1000}}
 export fhstoch=$restart_interval
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
-#	(( FHMAX = FHMAX + FHOUTLF ))
 	(( FHMAX = FHMAX + 1 ))
 fi
 
@@ -261,8 +259,6 @@ if [[ $FORECAST_SEGMENT = hr ]] ; then
 		export SPPT_TAU=$SPPT_TAU_hr
 		export SPPT_LSCALE=$SPPT_LSCALE_hr
 		export sppt_sfclimit=$sppt_sfclimit_hr
-	#	export sppt_sigtop1=$sppt_sigtop1_hr
-	#	export sppt_sigtop2=$sppt_sigtop2_hr
 	fi
 
 	if [[ $DO_SHUM = YES ]] ; then
@@ -270,7 +266,6 @@ if [[ $FORECAST_SEGMENT = hr ]] ; then
 		export ISEED_SHUM=$ISEED_SHUM_hr
 		export SHUM_TAU=$SHUM_TAU_hr
 		export SHUM_LSCALE=$SHUM_LSCALE_hr
-	#	export shum_sigefold=$shum_sigefold_hr
 	fi
 
 	if [[ $DO_SKEB = YES ]] ; then
@@ -292,8 +287,6 @@ if [[ $FORECAST_SEGMENT = lr ]] ; then
 		export SPPT_TAU=$SPPT_TAU_hr
 		export SPPT_LSCALE=$SPPT_LSCALE_hr
 		export sppt_sfclimit=$sppt_sfclimit_hr
-	#	export sppt_sigtop1=$sppt_sigtop1_hr
-	#	export sppt_sigtop2=$sppt_sigtop2_hr
 	fi
 
 	if [[ $DO_SHUM = YES ]] ; then
@@ -301,7 +294,6 @@ if [[ $FORECAST_SEGMENT = lr ]] ; then
 		export ISEED_SHUM=$ISEED_SHUM_hr
 		export SHUM_TAU=$SHUM_TAU_hr
 		export SHUM_LSCALE=$SHUM_LSCALE_hr
-	#	export shum_sigefold=$shum_sigefold_hr
 	fi
 
 	if [[ $DO_SKEB = YES ]] ; then
@@ -334,8 +326,6 @@ echo $APRUN
 
 NCP="/bin/cp -p"
 
-#USE_RESTART=NO                      #use restart file under COMROT/RESTART if run is interruptted
-#FHSTRT=6                            #restart from a given hour if USE_RESTART=YES
 SEND=NO    
 export VERBOSE=YES
 
@@ -417,8 +407,8 @@ if [[ $cplchm = ".true." ]]; then
 
 	# Link restart files for next cycle
 	next_date=$($NDATE +$gefs_cych $CDATE)
-    next_PDY=$(echo $next_date | cut -c1-8)
-    next_cyc=$(echo $next_date | cut -c9-10)
+	next_PDY=$(echo $next_date | cut -c1-8)
+	next_cyc=$(echo $next_date | cut -c9-10)
 	last_rstdir=$COMOUT/$cyc/restart/$mem
 	if [[ ! -d $RSTDIR ]]; then mkdir -p $RSTDIR; fi
 	ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.coupler.res $RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res

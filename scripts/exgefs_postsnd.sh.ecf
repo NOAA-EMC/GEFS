@@ -75,7 +75,8 @@ do
     fi
 
     ic=0
-    while [ $ic -lt 1000 ]
+#   while [ $ic -lt 1000 ]
+    while [ $ic -lt 100 ]
     do
         if [ ! -f $COMIN/sfcsig/${RUNMEM}.${cycle}.logf$FEND.nemsio ]
         then
