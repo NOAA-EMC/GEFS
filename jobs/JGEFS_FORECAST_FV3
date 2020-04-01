@@ -109,10 +109,8 @@ setpdy.sh
 ##############################################
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 	echo "Integrate the model for the Half-Month range segment"
-	FHINI=0
 elif [[ $FORECAST_SEGMENT = lr ]] ; then
 	echo "Integrate the model for the Longer Range segment"
-	FHINI=$fhmaxh
 	export cplwav=.false.
 else
 	msg="FATAL ERROR:  Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
@@ -125,9 +123,6 @@ else
 fi # [[ $FORECAST_SEGMENT = hr ]]
 
 echo FORECAST_SEGMENT = $FORECAST_SEGMENT
-echo FHINI=$FHINI
-echo ENS_SPS = $ENS_SPS
-echo RUN_CONCURRENT = $RUN_CONCURRENT
 
 export GESIN=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
 export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
@@ -143,7 +138,6 @@ export RSTDIR=$GESIN/$mem/RESTART
 export RSTDIR_TMP=$RSTDIR
 
 mkdir -m 775 -p $COMOUT/$cyc/sfcsig
-mkdir -m 775 -p $COMOUT/$cyc/misc/fcst
 mkdir -m 775 -p $COMOUT/$cyc/restart/$mem
 
 mkdir -m 755 -p $GESIN/$mem/RESTART
@@ -167,8 +161,9 @@ fi
 if [[ $FORECAST_SEGMENT = lr ]] ; then
 	export RERUN="YES"
 	FHINI=${FHINI:-$fhmaxh}
-	export CDATE_RST=$($NDATE +$fhmaxh $PDY$cyc)
 fi
+
+export CDATE_RST=${CDATE_RST:-$($NDATE +$FHINI $PDY$cyc)}
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 	CASE=$CASEHR; FHMAX=$fhmaxh; FHOUT=$FHOUTLF; FHZER=6;
