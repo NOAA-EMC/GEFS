@@ -53,7 +53,7 @@ elif [ ${cyc} = "12" ]; then
     grids="gfs $memberlist" #"GFS C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20 "
 fi
 
-for area in us sam us24 us12
+for area in us #sam us24 us12
 do
     # GENERATE 48 HR PCPN TOTALS FOR THE MEDIUM RANGE FORECASTER.
     if [ ${area} = "us" ]; then
@@ -62,10 +62,10 @@ do
         device="nc | $metaname"
 
         if [ ${cyc} = "00" ]; then
-            gdattim="f132"
+            #gdattim="f132"
             fcsthrs="132"
         else
-            gdattim="f120"
+            #gdattim="f120"
             fcsthrs="120"
         fi
 
@@ -92,7 +92,7 @@ do
         metaname="gefs_${sGrid}${PDY}_${cyc}_meta_qpf_us24"
         device="nc | $metaname"
 
-        gdattim="f24-f216-12"
+        #gdattim="f24-f216-12"
         fcsthrs="024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204 216"
         garea="us"
         proj=" "
@@ -117,7 +117,7 @@ do
         metaname="gefs_${sGrid}${PDY}_${cyc}_meta_qpf_us12"
         device="nc | $metaname"
 
-        gdattim="f12-f216-12"
+        #gdattim="f12-f216-12"
         fcsthrs="012 024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204 216"
         garea="us"
         proj=" "
@@ -143,10 +143,10 @@ do
         device="nc | $metaname"
 
         if [ ${cyc} = "00" ]; then
-            gdattim="f24-f144-12"
+            #gdattim="f24-f144-12"
             fcsthrs="024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204 216"
         else
-            gdattim="f24-f144-12"
+            #gdattim="f24-f144-12"
             fcsthrs="024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204 216"
         fi
         garea="-28.2;-140.5;14.1;-32.6"
@@ -180,9 +180,9 @@ do
 
         fn=gfs
         rm -rf ${fn}
-        if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
+        if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ]; then
             #  ln -s $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} gfs
-            ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${sGrid}${PDY}${cyc}f${fcsthr} ${fn}
+            ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ${fn}
         fi
 
         if [ ${cyc} = "00" ]; then
@@ -193,8 +193,43 @@ do
             fi
         fi
 
+        cat > $fcmdfile  <<- EOF 
+			GDATTIM	= F${fcsthr}
+			DEVICE	= ${device}
+			PANEL	= 0
+			TEXT	= 1/22/1/1/hw
+			MAP		= 11 !0
+			CLEAR	= yes
+			GAREA   = ${garea}
+			PROJ    = ${proj}
+			LATLON  = 11/10/1/1/20;20 !0
+
+			GLEVEL  = ${glevel}
+			GVCORD  = ${gvcord}
+			SKIP    = 0
+			SCALE   = ${scale}
+			GDPFUN  = ${gdpfun}
+			TYPE    = ${type}
+
+			CONTUR  = ${contur}
+
+			CINT    = ${cint}
+			LINE    = ${line}
+			FINT    = ${fint}
+			FLINE   = ${fline}
+			HILO    = ${hilo}
+			HLSYM   = ${hlsym}
+			CLRBAR  = ${clrbar}
+			WIND    = 0
+			REFVEC  =
+
+			EOF
+
+
+        WrottenZERO=0
+
         for grid in ${grids}
-   	    do
+        do
             name="${grid} ${name2}"
             title="1/0/~ ? ${name}|~${name}"
 
@@ -203,76 +238,37 @@ do
                     gdattim="f144"
                 fi
             fi
-#        if [ ${grid} = "GFS" ]; then
-#            GDFILE="F-GFS | ${ddate}/${cyc}00"
-#            COMINtmp=$COMIN
-#            export COMIN=$COMINgfs/gfs.${PDY}/${cyc}/gempak/
-#        elif [ ${grid} = "EC" ]; then
-#            if [ $cyc = "12" ]; then
-#               COMINtmp=$COMIN
-#               export COMIN=$COMINecmwf
-#               GDFILE="$COMIN/ecmwf_glob_${PDY}$cycm12"
-#            else
-#               COMINtmp=$COMIN
-#               export COMIN=$COMINm1ecmwf
-#               GDFILE="$COMIN/ecmwf_glob_${PDYm1}$cycm12"
-#            fi
-#            if [ ${area} = "us" ]; then
-#                gdattim="f144"
-#            fi
-#        else
-#            GDFILE="F-GEFS$grid | ${ddate}/${cyc}00"
-#            COMINtmp=$COMIN
-#        fi
-
-            GDFILE=$grid
-        
-            gdattim=F${fcsthr}
-
-			cat > $fcmdfile  <<- EOF 
-				GDFILE	= ${GDFILE}
-				GDATTIM	= ${gdattim}
-				DEVICE	= ${device}
-				PANEL	= 0
-				TEXT	= 1/22/1/1/hw
-				MAP	= 11!0
-				CLEAR	= yes
-				GAREA   = ${garea}
-				PROJ    = ${proj}
-				LATLON  = 11/10/1/1/20;20!0
-
-				GLEVEL  = ${glevel}
-				GVCORD  = ${gvcord}
-				GDPFUN  = ${gdpfun}
-				TYPE    = ${type}
-				CONTUR  = ${contur}
-				CINT    = ${cint}
-				LINE    = ${line}
-				FINT    = ${fint}
-				FLINE   = ${fline}
-				HILO    = ${hilo}
-				HLSYM   = ${hlsym}
-				SKIP    = 0
-				SCALE   = ${scale}
-				CLRBAR  = ${clrbar}
-				WIND    = 0
-				REFVEC  =
-				TITLE   = ${title}
-				run
-
-				exit
-				EOF
-            
-
-            cat $fcmdfile
-
-            gdplot2_nc < $fcmdfile
-
-            export err=$?;export pgm="GEMPAK CHECK FILE";err_chk
 
 
-            export COMIN=$COMINtmp
+            gdfn=$grid
+
+            if [ -e ${gdfn} ]; then
+				cat >> $fcmdfile  <<- EOF
+					GDFILE  = ${gdfn}
+					LINE    = {line}
+					TITLE   = ${title}
+					GDATTIM = F${fcsthr}
+					run
+
+					EOF
+                
+                if [ $WrottenZERO -eq 0 ]; then            
+					cat >> $fcmdfile  <<- EOF
+						MAP     = 0
+						LATLON  = 0
+						CLEAR   = no
+
+						EOF
+										
+                fi
+                WrottenZERO=1
+            fi
+
         done
+
+        cat $fcmdfile
+
+        gdplot2_nc < $fcmdfile
 
     done
 
@@ -284,6 +280,8 @@ do
     fi
 
 done
+
+exit $err
 
 for grid in ${grids}
 do
@@ -365,3 +363,4 @@ fi
 
 
 exit $err
+
