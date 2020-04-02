@@ -33,9 +33,11 @@ echo memberlist=$memberlist
 ## Get member list
 ########################################################
 
+sGrid=0p50_
+
 mkdir $DATA/mar_12Z
 cd $DATA/mar_12Z
-cp $FIXgempak/datatype.tbl datatype.tbl
+#cp $FIXgempak/datatype.tbl datatype.tbl
 
 mdl=gefs
 MDL=GEFS
@@ -69,38 +71,39 @@ do
         garea="15;-100;70;5"
         proj="mer"
     fi
-    metatype="${metaarea}_mar"
-    metaname="${mdl}_${metatype}_${cyc}.meta"
+    metatype="mar_${metaarea}"
+    metaname="gefs_${sGrid}${PDY}_${cyc}_meta_${metatype}"
     device="nc | ${metaname}"
     for level in ${levels}
     do
         for fcsthr in ${fcsthrs}
         do
             fcsthrsgfs=`expr ${fcsthr} + 12` 
-            typeset -Z3 fcsthrsgfs
+            #typeset -Z3 fcsthrsgfs
+            fcsthrsgfs=$(printf %03i $fcsthrsgfs)
 
             grids=${memberlist}
             for fn in `echo $grids`
             do
                 rm -rf $fn 
-                if [ -r $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} ]; then
-                    ln -s $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} $fn
+                if [ -r $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
+                    ln -s $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} $fn
                 fi
             done
 
             fn=gfs
             rm -rf ${fn}
-            if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ]; then
-                ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ${fn}
+            if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
+                ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${sGrid}${PDY}${cyc}f${fcsthr} ${fn}
             fi
 
             fn=nam
             rm -rf ${fn}
-            if [ -r $COMINs_p1/nam.${PDY}/nam_${PDY}${cyc}f${fcsthr} ]; then
-                ln -s $COMINs_p1/nam.${PDY}/nam_${PDY}${cyc}f${fcsthr} ${fn}
+            if [ -r $COMINnam/nam.${PDY}/gempak/nam_${PDY}${cyc}f${fcsthr} ]; then
+                ln -s $COMINnam/nam.${PDY}/gempak/nam_${PDY}${cyc}f${fcsthr} ${fn}
             fi
 
-            export pgm=gdplot2_nc;. prep_step; startmsg
+            #export pgm=gdplot2_nc;. prep_step; startmsg
 
 			cat > cmdfilemar  <<- EOF
 				DEVICE	= ${device}
@@ -139,146 +142,27 @@ do
                 # ----- gridl -----
                 gdfn=${gridl} 
                 
-				case ${gdfn} in
+                if [ ${gdfn} == c00 ]; then
+                    color_number=6
+                    sline_count="-1"
+                    wLine=2
+                    sCNTL="(CNTL)"
 
-					(c00)
-						color_number=6
-                    	sline_count="-1"
-                    	sCNTL="(CNTL)"
-						;;
-					(p01)
-						color_number=14
-                    	sline_count="-2"
-                    	sCNTL=""
-						;;
-					((p02)
-                        color_number=2
-                        line_count=1
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-                    (p03)
-                        color_number=3
-                        line_count=2
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-                    (p04)
-                        color_number=4
-                        line_count=3
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-                    (p05)
-                        color_number=12
-                        line_count=4
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-                    (p06)
-                        color_number=11
-                        line_count=5
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-                    (p07)
-                        color_number=7
-                        line_count=6
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-                    (p08)
-                        color_number=8
-                        line_count=7
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-                    (p09)
-                        color_number=9
-                        line_count=8
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-                    (p10)
-                        color_number=10
-                        line_count=9
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-                    (p11)
-                        color_number=11
-                        line_count=10
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-                    (p12)
-                        color_number=12
-                        line_count=11
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-                    (p13)
-                        color_number=13
-                        line_count=12
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-                    (p14)
-                        color_number=14
-                        line_count=13
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-                    (p15)
-                        color_number=15
-                        line_count=13
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-                    (p16)
-                        color_number=16
-                        line_count=13
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-                    (p17)
-                        color_number=17
-                        line_count=13
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-                    (p18)
-                        color_number=18
-                        line_count=13
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-                    (p19)
-                        color_number=19
-                        line_count=13
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-                    (p20)
-                        color_number=20
-                        line_count=13
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-					(*)
-						color_number=`echo $gdfn | cut -c2-`
-                        line_count=13
-						sline_count="+${line_count}"
-                		sCNTL=""
-						;;
-				esac
-				
+                else
+                    color_number=`echo $gdfn | cut -c2-`
+                    line_count=$color_number
+                    wLine=1
+                    sCNTL=""
+                    sline_count="+${line_count}"
+
+                    #let line_count=$line_count+1
+                fi
 
                 # ----- gridl -----
                 if [ -e ${gdfn} ]; then
 					cat >> cmdfilemar  <<- EOF
 						GDFILE  = ${gdfn}
-						LINE    = ${color_number}/1/2/0
+						LINE    = ${color_number}/1/${wLine}/0
 						TITLE   = ${color_number}/${sline_count}/~ ? ${gdfn} ${sCNTL} |~${level} DM - ${metaarea}
 						GDATTIM = F${fcsthr}
 						run
@@ -304,18 +188,18 @@ do
 				cat >> cmdfilemar  <<- EOF
 					GDFILE  = ${gdfn}
 					LINE    = 31/2/3/0
-					TITLE   = 31/+10/~ ? ${gdfn} (DASHED) |~${level} DM - ${metaarea}
+					TITLE   = 31/-3/~ ? ${gdfn} (DASHED) |~${level} DM - ${metaarea}
 					GDATTIM = F${fcsthr}
 					run
 
 					EOF
                 if [ $WrottenZERO -eq 0 ]; then            
-				cat >> cmdfilemar  <<- EOF
-					MAP     = 0
-					LATLON  = 0
-					CLEAR   = no
+					cat >> cmdfilemar  <<- EOF
+						MAP     = 0
+						LATLON  = 0
+						CLEAR   = no
 
-					EOF
+						EOF
                 fi
                 WrottenZERO=1
             fi
@@ -326,7 +210,7 @@ do
 				cat >> cmdfilemar  <<- EOF
 					GDFILE  = ${gdfn}
 					LINE    = 5/2/3/0
-					TITLE   = 5/+12/~ ? ${gdfn} (DASHED) |~${level} DM - ${metaarea}
+					TITLE   = 5/-4/~ ? ${gdfn} (DASHED) |~${level} DM - ${metaarea}
 					GDATTIM = F${fcsthr}
 					run
 
@@ -347,30 +231,31 @@ do
     for fcsthr in ${fcsthrs}
     do
         fcsthrsgfs=`expr ${fcsthr} + 12`
-        typeset -Z3 fcsthrsgfs
+        #typeset -Z3 fcsthrsgfs
+        fcsthrsgfs=$(printf %03i $fcsthrsgfs)
 
         grids=${memberlist}
         for fn in `echo $grids`
         do
             rm -rf $fn 
-            if [ -r $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} ]; then
-                ln -s $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} $fn
+            if [ -r $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
+                ln -s $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} $fn
             fi
         done
 
         fn=gfs
         rm -rf ${fn}
-        if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ]; then
-            ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ${fn}
+        if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
+            ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${sGrid}${PDY}${cyc}f${fcsthr} ${fn}
         fi
 
         fn=nam
         rm -rf ${fn}
-        if [ -r $COMINs_p1/nam.${PDY}/nam_${PDY}${cyc}f${fcsthr} ]; then
-            ln -s $COMINs_p1/nam.${PDY}/nam_${PDY}${cyc}f${fcsthr} ${fn}
+        if [ -r $COMINnam/nam.${PDY}/gempak/nam_${PDY}${cyc}f${fcsthr} ]; then
+            ln -s $COMINnam/nam.${PDY}/gempak/nam_${PDY}${cyc}f${fcsthr} ${fn}
         fi
 
-        export pgm=gdplot2_nc;. prep_step; startmsg
+        #export pgm=gdplot2_nc;. prep_step; startmsg
 
 		cat > cmdfilemar_low  <<- EOF
 			GDATTIM	= F${fcsthr}
@@ -399,7 +284,7 @@ do
 
 			EOF
 
-        WrottenZERO = 0
+        WrottenZERO=0
         grids=${memberlist}
         line_count=2
         color_number=9
@@ -408,144 +293,27 @@ do
             # ----- gridl -----
             gdfn=${gridl} 
             
-			case ${gdfn} in
+        if [ ${gdfn} == c00 ]; then
+                color_number=6
+                sline_count="-1"
+                sCNTL="(CNTL)"
+                wLine=2
 
-				(c00)
-					color_number=6
-                	sline_count="-1"
-                	sCNTL="(CNTL)"
-					;;
-				(p01)
-					color_number=14
-                	sline_count="-2"
-                	sCNTL=""
-					;;
-				((p02)
-                    color_number=2
-                    line_count=1
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-                (p03)
-                    color_number=3
-                    line_count=2
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-                (p04)
-                    color_number=4
-                    line_count=3
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-                (p05)
-                    color_number=12
-                    line_count=4
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-                (p06)
-                    color_number=11
-                    line_count=5
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-                (p07)
-                    color_number=7
-                    line_count=6
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-                (p08)
-                    color_number=8
-                    line_count=7
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-                (p09)
-                    color_number=9
-                    line_count=8
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-                (p10)
-                    color_number=10
-                    line_count=9
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-                (p11)
-                    color_number=11
-                    line_count=10
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-                (p12)
-                    color_number=12
-                    line_count=11
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-                (p13)
-                    color_number=13
-                    line_count=12
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-                (p14)
-                    color_number=14
-                    line_count=13
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-                (p15)
-                    color_number=15
-                    line_count=13
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-                (p16)
-                    color_number=16
-                    line_count=13
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-                (p17)
-                    color_number=17
-                    line_count=13
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-                (p18)
-                    color_number=18
-                    line_count=13
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-                (p19)
-                    color_number=19
-                    line_count=13
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-                (p20)
-                    color_number=20
-                    line_count=13
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-				(*)
-					color_number=`echo $gdfn | cut -c2-`
-                    line_count=13
-					sline_count="+${line_count}"
-            		sCNTL=""
-					;;
-			esac
+            else
+                color_number=`echo $gdfn | cut -c2-`
+                line_count=$color_number
+               
+                sline_count="+${line_count}"
+                sCNTL=""
+                wLine=1
+
+                #let line_count=$line_count+1
+            fi
 
             if [ -e ${gdfn} ]; then
 				cat >> cmdfilemar_low  <<- EOF
 					GDFILE  = ${gdfn}
-					LINE    = ${color_number}/1/2/0
+					LINE    = ${color_number}/1/${wLine}/0
 					HILO    = ${color_number}//L#/900-1016/5/50/y
 					TITLE   = ${color_number}/${sline_count}/~ ? ${gdfn} ${sCNTL} |~${metaarea} ${metashname}
 					GDATTIM	= F${fcsthr}
@@ -575,7 +343,7 @@ do
 				GDFILE	= ${gdfn}
 				LINE    = 31/2/3/0
 				HILO    = 31/L#/900-1016/5/50/y
-				TITLE   = 31/+10/~ ? ${gdfn} |~${metaarea} ${metashname}
+				TITLE   = 31/-3/~ ? ${gdfn} |~${metaarea} ${metashname}
 				run
 
 				EOF
@@ -597,7 +365,7 @@ do
 				GDFILE	= ${gdfn}
 				LINE    = 5/2/3/0
 				HILO    = 5/L#/900-1016/5/50/y
-				TITLE   = 5/+12/~ ? ${gdfn} |~${metaarea} ${metashname}
+				TITLE   = 5/-4/~ ? ${gdfn} |~${metaarea} ${metashname}
 				run
 
 				EOF
@@ -618,10 +386,11 @@ do
     export err=$?;export pgm="GEMPAK CHECK FILE";err_chk
 
     if [ $SENDCOM = "YES" ] ; then
-        mv ${metaname} ${COMOUT}/gefs_${PDY}_${cyc}_${metatype}
+        mv ${metaname} ${COMOUT}/ #gefs_${PDY}_${cyc}_${metatype}
         if [ $SENDDBN = "YES" ] ; then
-            $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job ${COMOUT}/gefs_${PDY}_${cyc}_${metatype}
+            $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job ${COMOUT}/${metaname}
         fi
     fi
 done
 exit
+
