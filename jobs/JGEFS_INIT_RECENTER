@@ -66,6 +66,7 @@ export VERBOSE=${VERBOSE:-YES}
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
+NCP=${NCP:-"/bin/cp -p"}
 ##############################################
 echo set parameters using gefs.parm
 ##############################################
@@ -111,6 +112,15 @@ $HOMEgefs/scripts/exgefs_init_recenter.sh.ecf
 #############################################################
 ERR=$?
 echo $ERR
+
+if [ $SENDCOM = YES ]; then
+	mem=01	
+	while [ $mem -le $npert ]; do
+       		smem=p$(printf %02i $mem)
+		$NCP $GESOUT/$cyc/$smem/gfs* $COMOUT/$cyc/init/$smem
+		((  mem = mem +1 ))
+	done
+fi
 
 cat $pgmout
 
