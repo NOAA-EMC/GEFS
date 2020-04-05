@@ -193,26 +193,23 @@ do
             fi
         fi
 
-        cat > $fcmdfile  <<- EOF 
-			GDATTIM	= F${fcsthr}
-			DEVICE	= ${device}
-			PANEL	= 0
-			TEXT	= 1/22/1/1/hw
-			MAP		= 11 !0
-			CLEAR	= yes
+		cat > $fcmdfile  <<- EOF 
+			GDATTIM = F${fcsthr}
+			DEVICE  = ${device}
+			PANEL   = 0
+			TEXT    = 1/22/1/1/hw
+			MAP     = 11 !0
+			CLEAR   = yes
 			GAREA   = ${garea}
 			PROJ    = ${proj}
 			LATLON  = 11/10/1/1/20;20 !0
-
 			GLEVEL  = ${glevel}
 			GVCORD  = ${gvcord}
 			SKIP    = 0
 			SCALE   = ${scale}
 			GDPFUN  = ${gdpfun}
 			TYPE    = ${type}
-
 			CONTUR  = ${contur}
-
 			CINT    = ${cint}
 			LINE    = ${line}
 			FINT    = ${fint}
@@ -259,7 +256,7 @@ do
 						CLEAR   = no
 
 						EOF
-										
+                                        
                 fi
                 WrottenZERO=1
             fi
@@ -281,76 +278,89 @@ do
 
 done
 
-exit $err
+####
+mkdir $DATA/gefs_meta_qpf_nam
+cd $DATA/gefs_meta_qpf_nam
 
-for grid in ${grids}
+name2="500 & PMSL"
+metaname="gefs_${sGrid}${PDY}_${cyc}_nam"
+device="nc | $metaname"
+fcsthrs="024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204"
+
+for fcsthr in ${fcsthrs}
 do
-    name2="500 & PMSL"
-    name="${grid} ${name2}"
-    title="1/-1/~ ? ${name}|~${name}"
-    metaname="gefs_${PDY}_${cyc}_nam"
-    device="nc | $metaname"
-#    if [ ${grid} = "GFS" ]; then
-#        GDFILE="F-GFS | ${ddate}/${cyc}00"
-#        COMINtmp=$COMIN
-#        export COMIN=$COMINgfs/gfs.${PDY}/${cyc}/gempak/
-#    elif [ ${grid} = "EC" ]; then
-#        if [ $cyc = "12" ]; then
-#           COMINtmp=$COMIN
-#           export COMIN=$COMINecmwf
-#           GDFILE="$COMIN/ecmwf_glob_${PDY}$cycm12"
-#        else
-#           COMINtmp=$COMIN
-#           export COMIN=$COMINm1ecmwf
-#           GDFILE="$COMIN/ecmwf_glob_${PDYm1}$cycm12"
-#        fi
-#    else
-#        GDFILE="F-GEFS${grid} | ${ddate}/${cyc}00"
-#        COMINtmp=$COMIN
-#    fi
-    GDFILE=$grid
 
-    fcsthrs="024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204"
-
-    for fcsthr in ${fcsthrs}
+    for fn in `echo $memberlist`
     do
-        gdattim=F${fcsthr}
+        rm -rf $fn 
+        if [ -r $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
+            ln -s $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} $fn
+        fi
+    done
 
-		gdplot2_nc <<- EOF
-			GDFILE	= ${GDFILE}
-			GDATTIM	= ${gdattim}
-			DEVICE	= ${device}
-			PANEL	= 0
-			TEXT	= 1/22/1/1/hw
-			MAP	= 11!0
-			CLEAR	= yes
-			GAREA   = 2;-139;27;-22
-			PROJ    = STR/90;-105;0
-			LATLON  = 11/10/1/1/20;20!0
-			glevel  = 0              !500
-			gvcord  = none           !pres
-			gdpfun  = sm5s(pmsl)     !sm9s(hght)
-			type    = c              !c
-			contur  = 2
-			skip    = 0
-			cint    = 8              !6
-			line    = 19/1/3/1       !2/2/3/1
-			scale   = 0              !-1
-			fint    = 0
-			fline   = 0
-			hilo    = 19/H#;L#/1020-1070;900-1012 !0
-			hlsym   = 1;1//22;22/2;2/hw           !0
-			clrbar  = 0
-			TITLE   = ${title}
-			run
+    fn=gfs
+    rm -rf ${fn}
+    if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
+        ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${sGrid}${PDY}${cyc}f${fcsthr} ${fn}
+    fi
 
-			exit
-			EOF
+    if [ ${cyc} = "00" ]; then
+        fn=ecmwf
+        rm -rf ${fn}
+        if [ -r $COMINecmwf.${PDYm1}/gempak/ecmwf_hr_${PDYm1}${cycm12}f${fcsthr} ]; then
+            ln -s $COMINecmwf.${PDYm1}/gempak/ecmwf_hr_${PDYm1}${cycm12}f${fcsthr} ${fn}
+        fi
+    fi
+
+
+    for grid in ${grids}
+    do
+        gdfn=$grid
+        name="${grid} ${name2}"
+        title="1/-1/~ ? ${name}|~${name}"
+
+        if [ -e ${gdfn} ]; then
+
+ 			cat > cmdfile_meta_nam <<- EOF 
+				DEVICE  = ${device}
+				PANEL   = 0
+				TEXT    = 1/22/1/1/hw
+				MAP     = 11 !0
+				CLEAR   = yes
+				GAREA   = 2;-139;27;-22
+				PROJ    = STR/90;-105;0
+				LATLON  = 11/10/1/1/20;20!0
+				GLEVEL  = 0              !500
+				GVCORD  = none           !pres
+				SKIP    = 0
+				SCALE   = 0              !-1
+				GDPFUN  = sm5s(pmsl)     !sm9s(hght)
+				TYPE    = c              !c
+				CONTUR  = 2
+				CINT    = 8              !6
+				LINE    = 19/1/3/1       !2/2/3/1
+				FINT    = 0
+				FLINE   = 0
+				HILO    = 19/H#;L#/1020-1070;900-1012 !0
+				HLSYM   = 1;1//22;22/2;2/hw           !0
+				CLRBAR  = 0
+
+				GDFILE  = ${gdfn}
+				LINE    = 19/1/3/1       !2/2/3/1
+				TITLE   = ${title}
+				GDATTIM = F${fcsthr}
+				run
+
+				EOF
+
+            cat cmdfile_meta_nam
+
+            gdplot2_nc < cmdfile_meta_nam
+        fi
 
     done
-    
+
     export err=$?;export pgm="GEMPAK CHECK FILE";err_chk
-    export COMIN=$COMINtmp
 
 done
 
@@ -360,7 +370,6 @@ if [ $SENDCOM = "YES" ] ; then
         $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job ${COMOUT}/$metaname
     fi
 fi
-
 
 exit $err
 
