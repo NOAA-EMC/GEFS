@@ -53,7 +53,7 @@ export PARMgfs=$HOMEgfs/parm
 
 # Path to HOME Directory
 export EXECwave=${EXECwave:-$HOMEgefs/exec}
-export FIXwave=${FIXwave:-$FIXgefs/fix_wave}
+export FIXwave=${FIXwave:-$HOMEgefs/fix/fix_wave}
 export USHwave=${USHwave:-$HOMEgfs/ush}
 export EXECcode=${EXECcode:-$HOMEgfs/exec}
 

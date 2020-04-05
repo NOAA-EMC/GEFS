@@ -103,6 +103,8 @@ export PARMwave=${PARMwave:-$HOMEwave/parm/wave}
 export USHwave=${USHwave:-$HOMEwave/ush}
 export EXECcode=${EXECcode:-$CODEwave/exe}
 
+export FIXemi=${FIXemi:-$HOMEgefs/fix/fix_emission/emi_}
+
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
