@@ -20,7 +20,7 @@ mkdir $DATA/gefs_avgspr
 cd $DATA/gefs_avgspr
 #cp $FIXgempak/datatype.tbl datatype.tbl
 
-sGrid=0p50_
+sGrid=_0p50
 
 mdl=gefs_avgspr
 MDL=GEFS_AVGSPR
@@ -36,7 +36,7 @@ do
     garea=${area}
     proj=" "
 
-    metaname="gefs_avgspr_${sGrid}${PDY}_${cyc}_meta_${area}"
+    metaname="gefs_avgspr${sGrid}_${PDY}_${cyc}_meta_${area}"
     device="nc | ${metaname}"
 
     #export pgm=gdplot2_nc;. prep_step; startmsg
@@ -47,8 +47,8 @@ do
         for fn in avg spr
         do
             rm -rf $fn
-            if [ -r $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
-                ln -s $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} $fn
+            if [ -r $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
+                ln -s $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} $fn
             fi
         done
 
@@ -86,7 +86,7 @@ do
 			list
 			run
 
-			gdfile   = spr
+			gdfile   = spr        !avg
 			gdpfun   = sm5s(hght) !sm5s(hght)
 			glevel   = 500        !500
 			gvcord   = pres       !pres
@@ -151,6 +151,7 @@ done
 
 
 # Make metafiles for North and South America...as well as Alaska.
+ln -s $COMIN/geavg${sGrid}_${PDY}${cyc}f* ./
 
 for area in nam sam ak
 do
@@ -216,7 +217,7 @@ do
         f216="f216"
         F240="F240"
     fi
-    metaname="gefs_avgspr_${sGrid}${PDY}_${cyc}_meta_${area}"
+    metaname="gefs_avgspr${sGrid}_${PDY}_${cyc}_meta_${area}"
     device="nc | ${metaname}"
 
     #export pgm=gdplot2_nc;. prep_step; startmsg
@@ -228,8 +229,8 @@ do
         for fn in avg spr
         do
             rm -rf $fn
-            if [ -r $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
-                ln -s $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} $fn
+            if [ -r $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
+                ln -s $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} $fn
             fi
         done
 
@@ -269,7 +270,7 @@ do
 
 			garea    = ${garea}
 			proj     = ${proj}
-			gdfile   = spr
+			gdfile   = spr        !avg
 			gdpfun   = sm5s(pmsl) !sm5s(pmsl)
 			glevel   = 0          !0
 			gvcord   = none       !none
@@ -293,7 +294,7 @@ do
 
 			garea    = ${garea}
 			proj     = ${proj}
-			gdfile   = spr
+			gdfile   = spr        !avg
 			gdpfun   = sm5s(hght) !sm5s(hght)
 			glevel   = 500        !500
 			gvcord   = pres       !pres
@@ -380,8 +381,81 @@ do
 
     done
 
+    
+    # =====
+    #ln -s $COMIN/geavg${sGrid}_${PDY}${cyc}f* ./
+    COMINtemp=$COMIN
+    export COMIN=./
+   
+    cp $FIXgempak/datatype${sGrid}.tbl datatype.tbl
+	cat > cmdfile_meta <<- EOF
+		device   = ${device}
+		gdfile   = F-GEFSAVG | ${PDY2}/${cyc}00
+		garea    = ${garea2}
+		proj     = ${proj2}
+		TEXT     = 1/21//hw
+		wind     = bk0
+		GLEVEL   = 0
+		LATLON   = 0
+		gvcord   = none
+		type     = f
+		cint     = 0.1;0.25
+		line     = 32//1/0
+		fint     = ${fint}
+		fline    = ${fline}
+		HILO     = ${hilo}
+		HLSYM    = 1.5
+		glevel   = 0
+		scale    = 0
+		refvec   =
+		CLEAR    = yes
+
+		GDATTIM  = f12-${f216}-06
+		gdpfun   = p12${parm}
+		title    = 5/-2/~ ? GEFS MEAN 12-HR PCPN|~12-HR PCPN
+		${run2}
+
+		GDATTIM  = f24-${f216}-06
+		gdpfun   = p24${parm}
+		title    = 5/-2/~ ? GEFS MEAN 24-HR PCPN|~24-HR PCPN
+		${run}
+
+		GDATTIM  = f48-${f216}-06
+		gdpfun   = p48${parm}
+		title    = 5/-2/~ ? GEFS MEAN 48-HR PCPN|~48-HR PCPN
+		${run2}
+
+		GDATTIM  = f72-${f216}-06
+		gdpfun   = p72${parm}
+		title    = 5/-2/~ ? GEFS MEAN 72-HR PCPN|~72-HR PCPN
+		${run2}
+
+		GDATTIM  = f120-${f216}-06
+		gdpfun   = p120${parm}
+		title    = 5/-2/~ ? GEFS MEAN 120-HR PCPN|~120-HR PCPN
+		${run2}
+
+		garea    = ${garea}
+		proj     = ${proj}
+		gdattim  = ${gdattim_6to10}
+		gdpfun   = p114${parm}
+		title    = 5/-2/~ ? GEFS MEAN 6-10 DAY PCPN|~6-10 DAY PCPN
+		${run6to10}
+
+		gdattim  = ${gdattim_8to14}
+		gdpfun   = p162${parm}
+		title    = 5/-2/~ ? GEFS MEAN 8-14 DAY PCPN|~8-14 DAY PCPN
+		${run8to14}
+
+		exit
+		EOF
+
+    cat cmdfile_meta
+    gdplot2_nc < cmdfile_meta
+    
     export err=$?;err_chk
 
+    export COMIN=$COMINtemp
     #####################################################
     # GEMPAK DOES NOT ALWAYS HAVE A NON ZERO RETURN CODE
     # WHEN IT CAN NOT PRODUCE THE DESIRED GRID.  CHECK

@@ -97,7 +97,7 @@ export DBN_ALERT_TYPE=${DBN_ALERT_TYPE:-GEFS_METAFILE}
 #
 # Now set up GEMPAK/NTRANS environment
 
-cp $FIXgempak/datatype.tbl datatype.tbl
+#cp $FIXgempak/datatype.tbl datatype.tbl
 
 ##############################################
 # Define COM directories

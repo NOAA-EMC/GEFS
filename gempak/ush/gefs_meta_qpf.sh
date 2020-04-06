@@ -30,10 +30,10 @@ echo memberlist=$memberlist
 ## Get member list
 ########################################################
 
-sGrid=0p50_
+sGrid=_0p50
 
-mkdir $DATA/gefs_meta_qpf
-cd $DATA/gefs_meta_qpf
+#mkdir $DATA/gefs_meta_qpf
+#cd $DATA/gefs_meta_qpf
 #cp $FIXgempak/datatype.tbl datatype.tbl
 
 #mdl=gefs
@@ -53,19 +53,22 @@ elif [ ${cyc} = "12" ]; then
     grids="gfs $memberlist" #"GFS C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20 "
 fi
 
-for area in us #sam us24 us12
+for area in us sam us24 us12
 do
     # GENERATE 48 HR PCPN TOTALS FOR THE MEDIUM RANGE FORECASTER.
     if [ ${area} = "us" ]; then
+        mkdir $DATA/gefs_meta_qpf_us
+        cd $DATA/gefs_meta_qpf_us
+        cp $FIXgempak/datatype${sGrid}.tbl datatype.tbl
 
-        metaname="gefs_${sGrid}${PDY}_${cyc}_meta_qpf_medr"
+        metaname="gefs${sGrid}_${PDY}_${cyc}_meta_qpf_medr"
         device="nc | $metaname"
 
         if [ ${cyc} = "00" ]; then
-            #gdattim="f132"
+            gdattim="f132"
             fcsthrs="132"
         else
-            #gdattim="f120"
+            gdattim="f120"
             fcsthrs="120"
         fi
 
@@ -89,10 +92,14 @@ do
 
     # GENERATE 24 HR PCPN TOTALS FOR QPF.
     elif [ ${area} = "us24" ]; then
-        metaname="gefs_${sGrid}${PDY}_${cyc}_meta_qpf_us24"
+        mkdir $DATA/gefs_meta_qpf_us24
+        cd $DATA/gefs_meta_qpf_us24
+        cp $FIXgempak/datatype${sGrid}.tbl datatype.tbl
+
+        metaname="gefs${sGrid}_${PDY}_${cyc}_meta_qpf_us24"
         device="nc | $metaname"
 
-        #gdattim="f24-f216-12"
+        gdattim="f24-f216-12"
         fcsthrs="024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204 216"
         garea="us"
         proj=" "
@@ -114,10 +121,14 @@ do
 
     # GENERATE 12 HR PCPN TOTALS FOR QPF.
     elif [ ${area} = "us12" ]; then
-        metaname="gefs_${sGrid}${PDY}_${cyc}_meta_qpf_us12"
+        mkdir $DATA/gefs_meta_qpf_us12
+        cd $DATA/gefs_meta_qpf_us12
+        cp $FIXgempak/datatype${sGrid}.tbl datatype.tbl
+
+        metaname="gefs${sGrid}_${PDY}_${cyc}_meta_qpf_us12"
         device="nc | $metaname"
 
-        #gdattim="f12-f216-12"
+        gdattim="f12-f216-12"
         fcsthrs="012 024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204 216"
         garea="us"
         proj=" "
@@ -139,15 +150,19 @@ do
 
     # GENERATE 24 HR PCPN TOTALS FOR SAM QPF.
     elif [ ${area} = "sam" ]; then
-        metaname="gefs_${sGrid}${PDY}_${cyc}_meta_samqpf"
+        mkdir $DATA/gefs_meta_qpf_sam
+        cd $DATA/gefs_meta_qpf_sam
+        cp $FIXgempak/datatype${sGrid}.tbl datatype.tbl
+
+        metaname="gefs${sGrid}_${PDY}_${cyc}_meta_samqpf"
         device="nc | $metaname"
 
         if [ ${cyc} = "00" ]; then
-            #gdattim="f24-f144-12"
-            fcsthrs="024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204 216"
+            gdattim="f24-f144-12"
+            fcsthrs="024 036 048 060 072 084 096 108 120 132 144"
         else
-            #gdattim="f24-f144-12"
-            fcsthrs="024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204 216"
+            gdattim="f24-f144-12"
+            fcsthrs="024 036 048 060 072 084 096 108 120 132 144"
         fi
         garea="-28.2;-140.5;14.1;-32.6"
         proj="str/-85;-70;0"
@@ -168,41 +183,52 @@ do
         fcmdfile=cmdfile_meta_samqpf
     fi
     
-    for fcsthr in ${fcsthrs}
+    ln -s $COMIN/ge*${sGrid}_${PDY}${cyc}f* ./
+    ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f* ./
+    ln -s $COMINecmwf.${PDYm1}/gempak/ecmwf_hr_${PDYm1}${cycm12}f* ./
+    ln -s $COMINecmwf.${PDY}/gempak/ecmwf_hr_${PDY}${cycm12}f* ./
+    for grid in ${grids}
     do
-        for fn in `echo $memberlist`
-        do
-            rm -rf $fn 
-            if [ -r $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
-                ln -s $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} $fn
+        grid=`echo $grid | tr [a-z] [A-Z]`
+        name="${grid} ${name2}"
+        title="1/0/~ ? ${name}|~${name}"
+        #grid=`echo $grid | tr [a-z] [A-Z]`
+        if [ ${grid} = "GFS" ]; then
+            GDFILE="F-GFS | ${ddate}/${cyc}00"
+            COMINtmp=$COMIN
+            #export COMIN=$COMINsgfs/gfs.${PDY}/${cyc}/gempak
+            export COMIN=./
+        elif [ ${grid} = "ECMWF" ]; then
+            if [ $cyc = "12" ]; then
+                COMINtmp=$COMIN
+                #export COMIN=$COMINecmwf.${PDY}/gempak
+                export COMIN=./
+                GDFILE="F-ECMWF | ${ddate}/${cycm12}00"
+            else
+                COMINtmp=$COMIN
+                #export COMIN=$COMINecmwf.${PDYm1}/gempak
+                export COMIN=./
+                GDFILE="F-ECMWF | ${ddatem1}/${cycm12}00"
             fi
-        done
-
-        fn=gfs
-        rm -rf ${fn}
-        if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ]; then
-            #  ln -s $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} gfs
-            ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ${fn}
-        fi
-
-        if [ ${cyc} = "00" ]; then
-            fn=ecmwf
-            rm -rf ${fn}
-            if [ -r $COMINecmwf.${PDYm1}/gempak/ecmwf_hr_${PDYm1}${cycm12}f${fcsthr} ]; then
-                ln -s $COMINecmwf.${PDYm1}/gempak/ecmwf_hr_${PDYm1}${cycm12}f${fcsthr} ${fn}
+            if [ ${area} = "us" ]; then
+                gdattim="f144"
             fi
+        else
+            GDFILE="F-GEFS$grid | ${ddate}/${cyc}00"
+            COMINtmp=$COMIN
+            export COMIN=./
         fi
 
 		cat > $fcmdfile  <<- EOF 
-			GDATTIM = F${fcsthr}
 			DEVICE  = ${device}
 			PANEL   = 0
 			TEXT    = 1/22/1/1/hw
-			MAP     = 11 !0
+			MAP     = 11!0
 			CLEAR   = yes
 			GAREA   = ${garea}
 			PROJ    = ${proj}
-			LATLON  = 11/10/1/1/20;20 !0
+			LATLON  = 11/10/1/1/20;20!0
+
 			GLEVEL  = ${glevel}
 			GVCORD  = ${gvcord}
 			SKIP    = 0
@@ -220,54 +246,22 @@ do
 			WIND    = 0
 			REFVEC  =
 
+			GDFILE  = ${GDFILE}
+			GDATTIM = ${gdattim}
+			LINE    = ${line}
+			TITLE   = ${title}
+			run
+
 			EOF
-
-
-        WrottenZERO=0
-
-        for grid in ${grids}
-        do
-            name="${grid} ${name2}"
-            title="1/0/~ ? ${name}|~${name}"
-
-            if [[ ${area} == "us" ]]; then
-                if [[ ${grid} == "ecmwf" ]]; then 
-                    gdattim="f144"
-                fi
-            fi
-
-
-            gdfn=$grid
-
-            if [ -e ${gdfn} ]; then
-				cat >> $fcmdfile  <<- EOF
-					GDFILE  = ${gdfn}
-					LINE    = {line}
-					TITLE   = ${title}
-					GDATTIM = F${fcsthr}
-					run
-
-					EOF
-                
-                if [ $WrottenZERO -eq 0 ]; then            
-					cat >> $fcmdfile  <<- EOF
-						MAP     = 0
-						LATLON  = 0
-						CLEAR   = no
-
-						EOF
-                                        
-                fi
-                WrottenZERO=1
-            fi
-
-        done
 
         cat $fcmdfile
 
         gdplot2_nc < $fcmdfile
 
+        
+        export COMIN=$COMINtmp
     done
+
 
     if [ $SENDCOM = "YES" ] ; then
         mv ${metaname} ${COMOUT}/$metaname
@@ -278,12 +272,13 @@ do
 
 done
 
+
 ####
 mkdir $DATA/gefs_meta_qpf_nam
 cd $DATA/gefs_meta_qpf_nam
 
 name2="500 & PMSL"
-metaname="gefs_${sGrid}${PDY}_${cyc}_nam"
+metaname="gefs${sGrid}_${PDY}_${cyc}_meta_nam"
 device="nc | $metaname"
 fcsthrs="024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204"
 
@@ -293,15 +288,15 @@ do
     for fn in `echo $memberlist`
     do
         rm -rf $fn 
-        if [ -r $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
-            ln -s $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} $fn
+        if [ -r $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
+            ln -s $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} $fn
         fi
     done
 
     fn=gfs
     rm -rf ${fn}
-    if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
-        ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${sGrid}${PDY}${cyc}f${fcsthr} ${fn}
+    if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
+        ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ${fn}
     fi
 
     if [ ${cyc} = "00" ]; then
@@ -365,7 +360,7 @@ do
 done
 
 if [ $SENDCOM = "YES" ] ; then
-    mv ${metaname} ${COMOUT}/$metaname
+    mv ${metaname} ${COMOUT}/ #$metaname
     if [ $SENDDBN = "YES" ] ; then
         $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job ${COMOUT}/$metaname
     fi
