@@ -130,14 +130,15 @@ export LONB=${LONBFV:-1536}
 
 export STARTHOUR=${STARTHOUR:-00}
 export ENDHOUR=${ENDHOUR:-180}
+if (( ENDHOUR > fhmaxh )); then
+        export ENDHOUR=$fhmaxh
+fi
+
 export NINT3=$FHOUTLF     ##second period time interval
 export NZERO=6
-export NEND1=${NEND1:-180} #${FHMAXHF}   ##first period length with time interval = NINT1
+export NEND1=${NEND1:-${FHMAXHF}}   ##first period length with time interval = NINT1
 export NINT1=$FHOUTHF 
 
-if (( fhmax <= ENDHOUR )); then
-        export ENDHOUR=$fhmax
-fi
 if (( NEND1 >= ENDHOUR )); then
         export NEND1=$ENDHOUR
 fi
