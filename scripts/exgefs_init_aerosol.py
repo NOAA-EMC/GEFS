@@ -167,10 +167,17 @@ def main() -> None:
             merge_tracers(merge_script, atm_filenames, restart_files, tracer_list_file)
 
     shutil.rmtree(com_path, ignore_errors=True)
-    # Suppress error for missing files due to possibility of dangling symlinks (ignore_dangling_symlinks doesn't work properly; Python Issue 38523)
-    with contextlib.suppress(FileNotFoundError):
+    # Handle error for missing files due to possibility of dangling symlinks (ignore_dangling_symlinks doesn't work properly; Python Issue 38523)
+    try:
         shutil.copytree(destination_path, com_path, ignore_dangling_symlinks=True)  # Copy data to COM
-
+    except shutil.Error as err:
+        # shutil.Error from copytree are tuples of src, dest, err
+        tuples = [t for t in err.args[0]]
+        exceptionStrings = [t[2] for t in tuples]
+        if all(e.startswith('[Errno 2] No such file or directory:') for e in exceptionStrings):
+            pass
+        else:
+            raise err
     return
 
 
