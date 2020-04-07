@@ -42,7 +42,7 @@ postmsg "$jlogfile" "$msg"
 cp $GEMPAKgefs/fix/*.tbl .
 
 NAGRIB_TABLE=${NAGRIB_TABLE:-${GEMPAKgefs}/fix/nagrib.tbl}
-NAGRIB=nagrib2
+NAGRIB=nagrib2_nc
 #
 
 entry=`grep "^$RUNM " $NAGRIB_TABLE | awk 'index($1,"#") != 1 {print $0}'`
@@ -65,7 +65,7 @@ else
     grdarea=
     proj=
     output=T
-fi  
+fi
 pdsext=no
 
 # for gefs
@@ -180,12 +180,12 @@ while [ $fhcnt -le $fend ] ; do
 #  esac
 
     if [ "$model" = "ensemble" ]; then
-        export pgm="nagrib2 $RUNM"
+        export pgm="nagrib2_nc $RUNM"
     else
-        export pgm="nagrib2 F$fhr"
+        export pgm="nagrib2_nc F$fhr"
     fi
 
-    # export pgm="nagrib2 F$fhr"
+    # export pgm="nagrib2_nc F$fhr"
     startmsg
 
 	$GEMEXE/$NAGRIB <<- EOF
@@ -221,7 +221,7 @@ while [ $fhcnt -le $fend ] ; do
         err_chk
     fi
 
-    if [ "$NAGRIB" = "nagrib2" ]; then
+    if [ "$NAGRIB" = "nagrib2_nc" ]; then
         gpend
     fi
     if [ $SENDCOM = "YES" ]; then

@@ -7,7 +7,8 @@
 # Luke Lin         02/15/2006     point to new gefs
 # C. Magee/NCO     10/06/2008     Changed to use COMINs and COMIN for input
 #                                 file locations (to make testing easier).
-# Xianwu Xue       03/28/2020     Modify to use the new path and 0p50 gempak data
+# Xianwu Xue/EMC   03/28/2020     Modify to use the new path and 0p50 gempak data
+# Xianwu Xue/EMC   04/06/2020     Modified for GEFS v12
 #
 # Set Up Local Variables
 #
@@ -34,14 +35,11 @@ echo memberlist=$memberlist
 ## Get member list
 ########################################################
 
-sGrid=0p50_
+sGrid=${sGrid} #:-"_0p50"}
 
 mkdir $DATA/mar_00Z
 cd $DATA/mar_00Z
-#cp $FIXgempak/datatype.tbl datatype.tbl
 
-#mdl=gefs
-#MDL=GEFS
 PDY2=`echo $PDY | cut -c3-`
 
 if [ ${cyc} != "00" ] ; then
@@ -78,7 +76,7 @@ do
         proj="mer"
     fi
     metatype="meta_mar_${metaarea}"
-    metaname="gefs_${sGrid}${PDY}_${cyc}_${metatype}"
+    metaname="gefs${sGrid}_${PDY}_${cyc}_${metatype}"
     device="nc | ${metaname}"
     for level in ${levels}
     do
@@ -93,15 +91,15 @@ do
             for fn in `echo $grids`
             do
                 rm -rf $fn
-                if [ -r $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
-                    ln -s $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} $fn
+                if [ -r $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
+                    ln -s $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} $fn
                 fi
             done
 
             fn=gfs
             rm -rf ${fn}
-            if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${sGrid}${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
-                ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${sGrid}${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
+            if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
+                ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
             fi
 
             fn=ecmwf
@@ -159,7 +157,7 @@ do
                 if [ ${gdfn} == c00 ]; then
                     color_number=2
                     sline_count="-1"
-					wLine=2
+					wLine=3
                     sCNTL="(CNTL)"
 
                 else
@@ -204,7 +202,7 @@ do
             if [ -e ${gdfn} ]; then
                 cat >> cmdfilemar  <<- EOF
                     GDFILE  = ${gdfn}
-                    LINE    = 22/2/2/0
+                    LINE    = 22/2/3/0
                     GDATTIM = F${fcsthrsgfs}
                     TITLE   = 22/-3/~ ? ${gdfn} 12Z YEST (DASHED)|~${metaarea} ${level} DM
                     run
@@ -226,7 +224,7 @@ do
             if [ -e ${gdfn} ]; then
                 cat >> cmdfilemar  <<- EOF
                     GDFILE  = ${gdfn}
-                    LINE    = 6/2/2/0
+                    LINE    = 6/2/3/0
                     GDATTIM = F${fcsthrsgfs}
                     TITLE   = 6/-5/~ ? ECMWF 12Z YEST (DASHED)|~${metaarea} ${level} DM
                     run
@@ -248,7 +246,7 @@ do
             if [ -e ${gdfn} ]; then
                 cat >> cmdfilemar  <<- EOF
                     GDFILE  = ${gdfn}
-                    LINE    = 7/2/2/0
+                    LINE    = 7/2/3/0
                     GDATTIM = F${fcsthr}
                     TITLE   = 7/-6/~ ? UKMET 00Z (DASHED)|~${metaarea} ${level} DM
                     run
@@ -282,15 +280,15 @@ do
         for fn in `echo $grids`
         do
             rm -rf $fn
-            if [ -r $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} ]; then
-                ln -s $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthr} $fn
+            if [ -r $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
+                ln -s $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} $fn
             fi
         done
 
         fn=gfs
         rm -rf ${fn}
-        if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${sGrid}${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
-            ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${sGrid}${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
+        if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
+            ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
         fi
 
         fn=ecmwf
@@ -457,9 +455,9 @@ do
     export err=$?;export pgm="GEMPAK CHECK FILE";err_chk
 
     if [ $SENDCOM = "YES" ] ; then
-        mv ${metaname} ${COMOUT}/gefs_${sGrid}${PDY}_${cyc}_${metatype}
+        mv ${metaname} ${COMOUT}/
         if [ $SENDDBN = "YES" ] ; then
-            $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job ${COMOUT}/gefs_${sGrid}${PDY}_${cyc}_${metatype}
+            $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job ${COMOUT}/${metaname}
         fi
     fi
 done

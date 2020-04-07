@@ -4,6 +4,7 @@
 #
 # Log :
 # J. Carr/HPC    12/12/2003    Moved over from IBM.
+# Xianwu Xue/EMC 04/06/2020    Modified for GEFS v12
 #
 # Set Up Local Variables
 #
@@ -30,14 +31,7 @@ echo memberlist=$memberlist
 ## Get member list
 ########################################################
 
-sGrid=_0p50
-
-#mkdir $DATA/gefs_meta_qpf
-#cd $DATA/gefs_meta_qpf
-#cp $FIXgempak/datatype.tbl datatype.tbl
-
-#mdl=gefs
-#MDL=GEFS
+sGrid=${sGrid} #:-"_0p50"}
 
 ddate=`echo $PDY | cut -c3-8`
 ddatem1=`echo $PDYm1 | cut -c3-8`
@@ -48,9 +42,9 @@ else
 fi
 
 if [ ${cyc} = "00" ]; then
-    grids="gfs $memberlist ecmwf" # EC" #"GFS C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20 EC"
+    grids="gfs $memberlist ecmwf"
 elif [ ${cyc} = "12" ]; then
-    grids="gfs $memberlist" #"GFS C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20 "
+    grids="gfs $memberlist"
 fi
 
 for area in us sam us24 us12

@@ -6,6 +6,7 @@
 # J. Carr/PMB      12/25/2004     Pushed into production.
 # A. Robson/HPC    07/06/2005     Changed map line thickness to 1.
 # Luke Lin/NCO     02/22/2006     Modified for gefs
+# Xianwu Xue/EMC   04/06/2020     Modified for GEFS v12
 #
 # Set Up Local Variables
 #
@@ -13,12 +14,9 @@ set -x
 export PS4='gefs_avg_vgf:$SECONDS + '
 mkdir $DATA/gefs_avg_vgf
 cd $DATA/gefs_avg_vgf
-#cp $FIXgempak/datatype.tbl datatype.tbl
 
-sGrid=0p50_
+sGrid=${sGrid} #"_0p50"
 
-mdl=gefs_avg_vgf
-MDL=GEFS_AVG_VGF
 PDY2=`echo $PDY | cut -c3-`
 
 # MAKE VG FILES FOR OPC
@@ -29,12 +27,10 @@ do
     do
         ocean=`echo ${area} | cut -c2-`
 
-        #export pgm=gdplot2_vg;. prep_step; startmsg
-
         fn=avg
         rm -rf $fn
-        if [ -r $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthrs} ]; then
-            ln -s $COMIN/ge${fn}_${sGrid}${PDY}${cyc}f${fcsthrs} $fn
+        if [ -r $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthrs} ]; then
+            ln -s $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthrs} $fn
         fi
 
 		cat > cmdfile_vgf <<- EOF
@@ -42,7 +38,7 @@ do
 			GDATTIM = F${fcsthrs}
 			GAREA   = ${area}
 			PROJ    =
-			DEVICE  = vg | gefs_avg500_${sGrid}${PDY2}_${cyc}_F${fcsthrs}_${ocean}.vgf
+			DEVICE  = vg | gefs_avg500${sGrid}_${PDY2}_${cyc}_F${fcsthrs}_${ocean}.vgf
 			GLEVEL  = 500
 			GVCORD  = PRES
 			PANEL   = 0
@@ -91,7 +87,7 @@ do
 			run
 
 			CLEAR   = yes
-			DEVICE  = vg|gefs_avgPMSL_${sGrid}${PDY2}_${cyc}_F${fcsthrs}_${ocean}.vgf
+			DEVICE  = vg|gefs_avgPMSL${sGrid}_${PDY2}_${cyc}_F${fcsthrs}_${ocean}.vgf
 			GLEVEL  = 0
 			GVCORD  = none
 			SCALE   = 0
@@ -116,8 +112,8 @@ do
         if [ $SENDCOM = "YES" ] ; then
             mv *.vgf ${COMOUT}
             if [ $SENDDBN = "YES" ] ; then
-                ${DBNROOT}/bin/dbn_alert VGF OPC $job ${COMOUT}/${ocean}_gefs_avgPMSL_${sGrid}${PDY2}_${cyc}_F${fcsthrs}.vgf
-                ${DBNROOT}/bin/dbn_alert VGF OPC $job ${COMOUT}/${ocean}_gefs_avg500_${sGrid}${PDY2}_${cyc}_F${fcsthrs}.vgf
+                ${DBNROOT}/bin/dbn_alert VGF OPC $job ${COMOUT}/gefs_avgPMSL${sGrid}_${PDY2}_${cyc}_F${fcsthrs}_${ocean}.vgf
+                ${DBNROOT}/bin/dbn_alert VGF OPC $job ${COMOUT}/gefs_avg500${sGrid}_${PDY2}_${cyc}_F${fcsthrs}_${ocean}.vgf
             fi
         fi
     done

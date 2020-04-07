@@ -11,6 +11,7 @@
 #                                 Also modify order of parameters written for nam and sam area.
 # M. Klein/HPC     01/22/2008     Add larger GAREA for Alaska desk support.
 # M. Klein/WPC     10/30/2013     For CPC, add the 6-10 and 8-14 day QPFs.
+# Xianwu Xue/EMC   04/06/2020     Modified for GEFS v12
 #
 # Set Up Local Variables
 #
@@ -18,12 +19,9 @@ set -x
 export PS4='gefs_avgspr:$SECONDS + '
 mkdir $DATA/gefs_avgspr
 cd $DATA/gefs_avgspr
-#cp $FIXgempak/datatype.tbl datatype.tbl
 
-sGrid=_0p50
+sGrid=${sGrid} #_0p50
 
-mdl=gefs_avgspr
-MDL=GEFS_AVGSPR
 PDY2=`echo $PDY | cut -c3-`
 
 gdattim_6to10=""
@@ -38,8 +36,6 @@ do
 
     metaname="gefs_avgspr${sGrid}_${PDY}_${cyc}_meta_${area}"
     device="nc | ${metaname}"
-
-    #export pgm=gdplot2_nc;. prep_step; startmsg
 
     for fcsthr in ${fcsthrs}
     do
@@ -142,7 +138,7 @@ do
     export err=$?;export pgm="GEMPAK META CHECK FILE";err_chk
 
     if [ $SENDCOM = "YES" ] ; then
-        mv ${metaname} ${COMOUT}/ #gefs_avgspr_${sGrid}${PDY}_${cyc}_${area}
+        mv ${metaname} ${COMOUT}/
         if [ $SENDDBN = "YES" ] ; then
             $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job ${COMOUT}/${metaname}
         fi
@@ -184,6 +180,7 @@ do
         fi
         f216="f384"
         F240="F384"
+        fcsthrs="000 006 012 018 024 030 036 042 048 054 060 066 072 078 084 090 096 102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192 198 204 210 216 222 228 234 240 246 252 258 264 270 276 282 288 294 300 306 312 318 324 330 336 342 348 354 360 366 372 378 384"
     elif [ ${area} = "sam" ] ; then
         garea="-66;-127;14.5;-19"
         proj="mer"
@@ -199,7 +196,8 @@ do
         run6to10=""
         run8to14=""
         f216="f216"
-        F240="F240"
+        #F240="F240"
+        fcsthrs="000 006 012 018 024 030 036 042 048 054 060 066 072 078 084 090 096 102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192 198 204 210 216 222 228 234 240"
     else
         garea="35.0;178.0;78.0;-94.0"
         proj="NPS"
@@ -215,14 +213,12 @@ do
         run6to10=""
         run8to14=""
         f216="f216"
-        F240="F240"
+        #F240="F240"
+        fcsthrs="000 006 012 018 024 030 036 042 048 054 060 066 072 078 084 090 096 102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192 198 204 210 216 222 228 234 240"
     fi
     metaname="gefs_avgspr${sGrid}_${PDY}_${cyc}_meta_${area}"
     device="nc | ${metaname}"
 
-    #export pgm=gdplot2_nc;. prep_step; startmsg
-
-	fcsthrs="000 006 012 018 024 030 036 042 048 054 060 066 072 078 084 090 096 102 108 114 120 124 132 138 144 150 156 162 168 172 180 186 192 198 204 210 216 212 228 234 240"
     for fcsthr in ${fcsthrs}
     do
 
@@ -318,63 +314,6 @@ do
 
 			EOF
 
-			# gdfile   = F-GEFSAVG | ${PDY2}/${cyc}00
-			# garea    = ${garea2}
-			# proj     = ${proj2}
-			# GDATTIM  = f12-${f216}-06
-			# wind     = bk0
-			# GLEVEL   = 0
-			# LATLON   = 0
-			# gvcord   = none
-			# type     = f
-			# cint     = 0.1;0.25
-			# line     = 32//1/0
-			# fint     = ${fint}
-			# fline    = ${fline}
-			# HILO     = ${hilo}
-			# HLSYM    = 1.5
-			# glevel   = 0
-			# scale    = 0
-			# gdpfun   = p12${parm}
-			# refvec   =
-			# title    = 5/-2/~ ? GEFS MEAN 12-HR PCPN|~12-HR PCPN
-			# ${run2}
-
-			# GDATTIM  = f24-${f216}-06
-			# gdpfun   = p24${parm}
-			# title    = 5/-2/~ ? GEFS MEAN 24-HR PCPN|~24-HR PCPN
-			# ${run}
-
-			# GDATTIM  = f48-${f216}-06
-			# gdpfun   = p48${parm}
-			# title    = 5/-2/~ ? GEFS MEAN 48-HR PCPN|~48-HR PCPN
-			# ${run2}
-
-			# GDATTIM  = f72-${f216}-06
-			# gdpfun   = p72${parm}
-			# title    = 5/-2/~ ? GEFS MEAN 72-HR PCPN|~72-HR PCPN
-			# ${run2}
-
-			# GDATTIM  = f120-${f216}-06
-			# gdpfun   = p120${parm}
-			# title    = 5/-2/~ ? GEFS MEAN 120-HR PCPN|~120-HR PCPN
-			# ${run2}
-
-			# garea    = ${garea}
-			# proj     = ${proj}
-			# gdattim  = ${gdattim_6to10}
-			# gdpfun   = p114${parm}
-			# title    = 5/-2/~ ? GEFS MEAN 6-10 DAY PCPN|~6-10 DAY PCPN
-			# ${run6to10}
-
-			# gdattim  = ${gdattim_8to14}
-			# gdpfun   = p162${parm}
-			# title    = 5/-2/~ ? GEFS MEAN 8-14 DAY PCPN|~8-14 DAY PCPN
-			# ${run8to14}
-
-			# exit
-			# EOF
-
         cat cmdfile_meta
 
         gdplot2_nc < cmdfile_meta
@@ -383,7 +322,6 @@ do
 
     
     # =====
-    #ln -s $COMIN/geavg${sGrid}_${PDY}${cyc}f* ./
     COMINtemp=$COMIN
     export COMIN=./
    
@@ -466,7 +404,7 @@ do
     export err=$?;export pgm="GEMPAK META CHECK FILE";err_chk
 
     if [ $SENDCOM = "YES" ] ; then
-        mv ${metaname} ${COMOUT}/ #gefs_avgspr_${sGrid}${PDY}_${cyc}_${area}
+        mv ${metaname} ${COMOUT}/
         if [ $SENDDBN = "YES" ] ; then
             $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job ${COMOUT}/${metaname}
         fi

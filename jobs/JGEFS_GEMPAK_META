@@ -13,6 +13,7 @@ date
 
 export total_tasks=${total_tasks:-8}
 export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
+export sGrid=${sGrid:-"_0p50"} # empty for 1p00, _0p50
 
 ####################################
 # obtain unique process id (pid) and make working directory
