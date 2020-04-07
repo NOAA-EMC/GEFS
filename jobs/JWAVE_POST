@@ -104,7 +104,6 @@ export MP_PULSE=0
 
 mkdir -p $COMOUT/gridded
 mkdir -p $COMOUT/station
-mkdir -p $COMOUT/stats
 
 export wavelog=${COMOUTwave}/wave.log
 
