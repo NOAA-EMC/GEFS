@@ -37,10 +37,14 @@ export grid_spec="${4}"                # PRDGEN_GRID_SPEC[$stream]
 typeset -a hours="${5}"                # PRDGEN_HOURS[$stream]
 export submc="${6}"                    # PRDGEN_SUBMC[$stream]
 export pgad="${7}"                     # PRDGEN_A_DIR[$stream]
-export pgbd="${8}"                     # PRDGEN_B_DIR[$stream]
-export pgapre="${9}"                   # PRDGEN_A_PREFIX[$stream]
-export pgbpre="${10}"                  # PRDGEN_B_PREFIX[$stream]
-export do_analysis="${11}"             # PRDGEN_DO_ANALYSIS[$stream]
+export pgapre="${8}"                   # PRDGEN_A_PREFIX[$stream]
+export parmlist_a00="${9}"             # PRDGEN_A_LIST_F00[$stream]
+export parmlist_ahh="${10}"            # PRDGEN_A_LIST_FHH[$stream]
+export pgbd="${11}"                    # PRDGEN_B_DIR[$stream]
+export pgbpre="${12}"                  # PRDGEN_B_PREFIX[$stream]
+export parmlist_b00="${13}"             # PRDGEN_B_LIST_F00[$stream]
+export parmlist_bhh="${14}"            # PRDGEN_B_LIST_FHH[$stream]
+export do_analysis="${15}"             # PRDGEN_DO_ANALYSIS[$stream]
 
 # mem=$(echo $RUNMEM|cut -c3-5)
 
@@ -50,16 +54,20 @@ cat <<-EOF
 	  cyc: $cyc
 	  DATA: $DATA
   
-  	  jobdir: $jobdir
-  	  stream: $stream
-  	  jobgrid: $jobgrid
-  	  grid_spec: $grid_spec
-  	  hours: ($hours)
-  	  submc: $submc
-  	  pgad: $pgad
-  	  pgbd: $pgbd
-  	  pgapre: $pgapre
-  	  pgbpre: $pgbpre
+	  jobdir: $jobdir
+	  stream: $stream
+	  jobgrid: $jobgrid
+	  grid_spec: $grid_spec
+	  hours: ($hours)
+	  submc: $submc
+	  pgad: $pgad
+	  pgapre: $pgapre
+	  parmlist_a00: $parmlist_a00
+	  parmlist_ahh: $parmlist_ahh
+	  pgbd: $pgbd
+	  pgbpre: $pgbpre
+	  parmlist_b00: $parmlist_n00
+	  parmlist_bhh: $parmlist_nhh
 	  do_analysis: $do_analysis
 
 EOF
@@ -92,10 +100,6 @@ for hour in $hours; do
 		export fhr=000
 
 		if [[ $RUNMEM = "gegfs" ]]; then
-			if [[ jobgrid = "2p5" ]]; then
-				# Don't run for GFS analysis on 2.5° grid
-				break;
-			fi
 			export mafile=$COMINgfs/gfs.$cycle.master.grb2anl
 			export mifile=$COMINgfs/gfs.$cycle.master.grb2ianl
 			export mcfile=""
@@ -104,6 +108,11 @@ for hour in $hours; do
 			export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl
 			export mifile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl
 			export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.anl
+			if [[ -z "$pgbd" ]]; then
+				export makepgrb2b="no"
+			else
+				export makepgrb2b="yes"
+			fi
 		fi # [[ $RUNMEM = "gegfs" ]]
 
 		export pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.$cycle.prdgen.control.anl
@@ -176,6 +185,8 @@ for hour in $hours; do
 		fi # [[ -s $pcfile ]]
 
 		if [[ ! -s $pcfile ]]; then
+			export parmlist_a=$parmlist_a00
+			export parmlist_b=$parmlist_b00
 			$USHgefs/gefs_prdgen.sh
 
 			####################################
@@ -205,8 +216,10 @@ for hour in $hours; do
 		export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr
 		export mifile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr
 		export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.f$fhr
-		if [[ $jobgrid = "2p5" ]]; then
+		if [[ -z "$pgbd" ]]; then
 			export makepgrb2b="no"
+		else
+			export makepgrb2b="yes"
 		fi
 	fi # [[ $RUNMEM = "gegfs" ]]
 
@@ -302,6 +315,8 @@ for hour in $hours; do
 		fi # [[ -s $pcfile ]]
 
 		if [[ ! -s $pcfile ]]; then
+			export parmlist_a=$parmlist_ahh
+			export parmlist_b=$parmlist_bhh
 			$USHgefs/gefs_prdgen.sh
 
 			# Check for error
