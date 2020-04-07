@@ -81,8 +81,8 @@ PRDGEN_A_LIST_F00[res_2p50]=${PRDGEN_A_F00_LIST[res_2p50]:-"gefs_pgrb2a_f00.parm
 PRDGEN_A_LIST_FHH[res_2p50]=${PRDGEN_A_FHH_LIST[res_2p50]:-"gefs_pgrb2a_fhh.parm_2p5"}
 PRDGEN_B_DIR[res_2p50]=${PRDGEN_B_DIR[res_2p50]:-""}
 PRDGEN_B_PREFIX[res_2p50]=${PRDGEN_B_PREFIX[res_2p50]:-""}
-PRDGEN_B_LIST_F00[res_2p50]=${PRDGEN_A_F00_LIST[res_2p50]:-"gefs_pgrb2ab_f00.parm"}
-PRDGEN_B_LIST_FHH[res_2p50]=${PRDGEN_A_FHH_LIST[res_2p50]:-"gefs_pgrb2ab_fhh.parm"}
+PRDGEN_B_LIST_F00[res_2p50]=${PRDGEN_B_F00_LIST[res_2p50]:-"gefs_pgrb2ab_f00.parm"}
+PRDGEN_B_LIST_FHH[res_2p50]=${PRDGEN_B_FHH_LIST[res_2p50]:-"gefs_pgrb2ab_fhh.parm"}
 
 # 1.00°
 PRDGEN_GRID[res_1p00]=${PRDGEN_GRID[res_1p00]:-"1p0"}
@@ -95,8 +95,8 @@ PRDGEN_A_LIST_F00[res_1p00]=${PRDGEN_A_F00_LIST[res_1p00]:-"gefs_pgrb2a_f00.parm
 PRDGEN_A_LIST_FHH[res_1p00]=${PRDGEN_A_FHH_LIST[res_1p00]:-"gefs_pgrb2a_fhh.parm"}
 PRDGEN_B_DIR[res_1p00]=${PRDGEN_B_DIR[res_1p00]:-"pgrb2b1p0"}
 PRDGEN_B_PREFIX[res_1p00]=${PRDGEN_B_PREFIX[res_1p00]:-"pgrb2b.1p00."}
-PRDGEN_B_LIST_F00[res_1p00]=${PRDGEN_A_F00_LIST[res_1p00]:-"gefs_pgrb2ab_f00.parm"}
-PRDGEN_B_LIST_FHH[res_1p00]=${PRDGEN_A_FHH_LIST[res_1p00]:-"gefs_pgrb2ab_fhh.parm"}
+PRDGEN_B_LIST_F00[res_1p00]=${PRDGEN_B_F00_LIST[res_1p00]:-"gefs_pgrb2ab_f00.parm"}
+PRDGEN_B_LIST_FHH[res_1p00]=${PRDGEN_B_FHH_LIST[res_1p00]:-"gefs_pgrb2ab_fhh.parm"}
 
 # 0.50°
 PRDGEN_GRID[res_0p50]=${PRDGEN_GRID[res_0p50]:-"0p5"}
@@ -109,8 +109,8 @@ PRDGEN_A_LIST_F00[res_0p50]=${PRDGEN_A_F00_LIST[res_0p50]:-"gefs_pgrb2a_f00.parm
 PRDGEN_A_LIST_FHH[res_0p50]=${PRDGEN_A_FHH_LIST[res_0p50]:-"gefs_pgrb2a_fhh.parm"}
 PRDGEN_B_DIR[res_0p50]=${PRDGEN_B_DIR[res_0p50]:-"pgrb2bp5"}
 PRDGEN_B_PREFIX[res_0p50]=${PRDGEN_B_PREFIX[res_0p50]:-"pgrb2b.0p50."}
-PRDGEN_B_LIST_F00[res_0p50]=${PRDGEN_A_F00_LIST[res_0p50]:-"gefs_pgrb2ab_f00.parm"}
-PRDGEN_B_LIST_FHH[res_0p50]=${PRDGEN_A_FHH_LIST[res_0p50]:-"gefs_pgrb2ab_fhh.parm"}
+PRDGEN_B_LIST_F00[res_0p50]=${PRDGEN_B_F00_LIST[res_0p50]:-"gefs_pgrb2ab_f00.parm"}
+PRDGEN_B_LIST_FHH[res_0p50]=${PRDGEN_B_FHH_LIST[res_0p50]:-"gefs_pgrb2ab_fhh.parm"}
 
 # 0.25° Stream 1
 PRDGEN_GRID[res_0p25_s1]=${PRDGEN_GRID[res_0p25_s1]:-"0p25"}
@@ -123,8 +123,8 @@ PRDGEN_A_LIST_F00[res_0p25_s1]=${PRDGEN_A_F00_LIST[res_0p25_s1]:-"gefs_pgrb2a_f0
 PRDGEN_A_LIST_FHH[res_0p25_s1]=${PRDGEN_A_FHH_LIST[res_0p25_s1]:-"gefs_pgrb2a_fhh.parm_0p25"}
 PRDGEN_B_DIR[res_0p25_s1]=${PRDGEN_B_DIR[res_0p25_s1]:-"pgrb2p25"}
 PRDGEN_B_PREFIX[res_0p25_s1]=${PRDGEN_B_PREFIX[res_0p25_s1]:-"pgrb2.0p25."}
-PRDGEN_B_LIST_F00[res_0p25_s1]=${PRDGEN_A_F00_LIST[res_0p25_s1]:-"gefs_pgrb2ab_f00.parm"}
-PRDGEN_B_LIST_FHH[res_0p25_s1]=${PRDGEN_A_FHH_LIST[res_0p25_s1]:-"gefs_pgrb2ab_fhh.parm"}
+PRDGEN_B_LIST_F00[res_0p25_s1]=${PRDGEN_B_F00_LIST[res_0p25_s1]:-"gefs_pgrb2ab_f00.parm"}
+PRDGEN_B_LIST_FHH[res_0p25_s1]=${PRDGEN_B_FHH_LIST[res_0p25_s1]:-"gefs_pgrb2ab_fhh.parm"}
 
 # 0.25° Stream 2
 PRDGEN_GRID[res_0p25_s2]=${PRDGEN_GRID[res_0p25_s2]:-"0p25"}
@@ -137,8 +137,8 @@ PRDGEN_A_LIST_F00[res_0p25_s2]=${PRDGEN_A_F00_LIST[res_0p25_s2]:-"gefs_pgrb2a_f0
 PRDGEN_A_LIST_FHH[res_0p25_s2]=${PRDGEN_A_FHH_LIST[res_0p25_s2]:-"gefs_pgrb2a_fhh.parm_0p25"}
 PRDGEN_B_DIR[res_0p25_s2]=${PRDGEN_B_DIR[res_0p25_s2]:-"pgrb2p25"}
 PRDGEN_B_PREFIX[res_0p25_s2]=${PRDGEN_B_PREFIX[res_0p25_s2]:-"pgrb2.0p25."}
-PRDGEN_B_LIST_F00[res_0p25_s2]=${PRDGEN_A_F00_LIST[res_0p25_s2]:-"gefs_pgrb2ab_f00.parm"}
-PRDGEN_B_LIST_FHH[res_0p25_s2]=${PRDGEN_A_FHH_LIST[res_0p25_s2]:-"gefs_pgrb2ab_fhh.parm"}
+PRDGEN_B_LIST_F00[res_0p25_s2]=${PRDGEN_B_F00_LIST[res_0p25_s2]:-"gefs_pgrb2ab_f00.parm"}
+PRDGEN_B_LIST_FHH[res_0p25_s2]=${PRDGEN_B_FHH_LIST[res_0p25_s2]:-"gefs_pgrb2ab_fhh.parm"}
 
 # 0.25° Stream 3
 PRDGEN_GRID[res_0p25_s3]=${PRDGEN_GRID[res_0p25_s3]:-"0p25"}
@@ -151,8 +151,8 @@ PRDGEN_A_LIST_F00[res_0p25_s3]=${PRDGEN_A_F00_LIST[res_0p25_s3]:-"gefs_pgrb2a_f0
 PRDGEN_A_LIST_FHH[res_0p25_s3]=${PRDGEN_A_FHH_LIST[res_0p25_s3]:-"gefs_pgrb2a_fhh.parm_0p25"}
 PRDGEN_B_DIR[res_0p25_s3]=${PRDGEN_B_DIR[res_0p25_s3]:-"pgrb2bp25"}
 PRDGEN_B_PREFIX[res_0p25_s3]=${PRDGEN_B_PREFIX[res_0p25_s3]:-"pgrb2b.0p25."}
-PRDGEN_B_LIST_F00[res_0p25_s3]=${PRDGEN_A_F00_LIST[res_0p25_s3]:-"gefs_pgrb2ab_f00.parm"}
-PRDGEN_B_LIST_FHH[res_0p25_s3]=${PRDGEN_A_FHH_LIST[res_0p25_s3]:-"gefs_pgrb2ab_fhh.parm"}
+PRDGEN_B_LIST_F00[res_0p25_s3]=${PRDGEN_B_F00_LIST[res_0p25_s3]:-"gefs_pgrb2ab_f00.parm"}
+PRDGEN_B_LIST_FHH[res_0p25_s3]=${PRDGEN_B_FHH_LIST[res_0p25_s3]:-"gefs_pgrb2ab_fhh.parm"}
 
 # Aerosol Stream 1 [0.25°]
 PRDGEN_GRID[aer_0p25_s1]=${PRDGEN_GRID[aer_0p25_s1]:-"0p25"}
@@ -166,8 +166,8 @@ PRDGEN_A_LIST_F00[aer_0p25_s1]=${PRDGEN_A_F00_LIST[aer_0p25_s1]:-"gefs_prgb2a_ae
 PRDGEN_A_LIST_FHH[aer_0p25_s1]=${PRDGEN_A_FHH_LIST[aer_0p25_s1]:-"gefs_prgb2a_aer.parm"}
 PRDGEN_B_DIR[aer_0p25_s1]=${PRDGEN_B_DIR[aer_0p25_s1]:-""}
 PRDGEN_B_PREFIX[aer_0p25_s1]=${PRDGEN_B_PREFIX[aer_0p25_s1]:-"pgrb2b.0p25."}
-PRDGEN_B_LIST_F00[aer_0p25_s1]=${PRDGEN_A_F00_LIST[aer_0p25_s1]:-""}
-PRDGEN_B_LIST_FHH[aer_0p25_s1]=${PRDGEN_A_FHH_LIST[aer_0p25_s1]:-""}
+PRDGEN_B_LIST_F00[aer_0p25_s1]=${PRDGEN_B_F00_LIST[aer_0p25_s1]:-""}
+PRDGEN_B_LIST_FHH[aer_0p25_s1]=${PRDGEN_B_FHH_LIST[aer_0p25_s1]:-""}
 
 # Aerosol Stream 2 [0.25°]
 PRDGEN_GRID[aer_0p25_s2]=${PRDGEN_GRID[aer_0p25_s2]:-"0p25"}
@@ -181,8 +181,8 @@ PRDGEN_A_LIST_F00[aer_0p25_s2]=${PRDGEN_A_F00_LIST[aer_0p25_s2]:-"gefs_prgb2a_ae
 PRDGEN_A_LIST_FHH[aer_0p25_s2]=${PRDGEN_A_FHH_LIST[aer_0p25_s2]:-"gefs_prgb2a_aer.parm"}
 PRDGEN_B_DIR[aer_0p25_s2]=${PRDGEN_B_DIR[aer_0p25_s2]:-""}
 PRDGEN_B_PREFIX[aer_0p25_s2]=${PRDGEN_B_PREFIX[aer_0p25_s2]:-"pgrb2b.0p25."}
-PRDGEN_B_LIST_F00[aer_0p25_s2]=${PRDGEN_A_F00_LIST[aer_0p25_s2]:-""}
-PRDGEN_B_LIST_FHH[aer_0p25_s2]=${PRDGEN_A_FHH_LIST[aer_0p25_s2]:-""}
+PRDGEN_B_LIST_F00[aer_0p25_s2]=${PRDGEN_B_F00_LIST[aer_0p25_s2]:-""}
+PRDGEN_B_LIST_FHH[aer_0p25_s2]=${PRDGEN_B_FHH_LIST[aer_0p25_s2]:-""}
 
 # Aerosol Stream 3 [0.25°]
 PRDGEN_GRID[aer_0p25_s3]=${PRDGEN_GRID[aer_0p25_s3]:-"0p25"}
@@ -196,8 +196,8 @@ PRDGEN_A_LIST_F00[aer_0p25_s3]=${PRDGEN_A_F00_LIST[aer_0p25_s3]:-"gefs_prgb2a_ae
 PRDGEN_A_LIST_FHH[aer_0p25_s3]=${PRDGEN_A_FHH_LIST[aer_0p25_s3]:-"gefs_prgb2a_aer.parm"}
 PRDGEN_B_DIR[aer_0p25_s3]=${PRDGEN_B_DIR[aer_0p25_s3]:-""}
 PRDGEN_B_PREFIX[aer_0p25_s3]=${PRDGEN_B_PREFIX[aer_0p25_s3]:-"pgrb2b.0p25."}
-PRDGEN_B_LIST_F00[aer_0p25_s3]=${PRDGEN_A_F00_LIST[aer_0p25_s3]:-""}
-PRDGEN_B_LIST_FHH[aer_0p25_s3]=${PRDGEN_A_FHH_LIST[aer_0p25_s3]:-""}
+PRDGEN_B_LIST_F00[aer_0p25_s3]=${PRDGEN_B_F00_LIST[aer_0p25_s3]:-""}
+PRDGEN_B_LIST_FHH[aer_0p25_s3]=${PRDGEN_B_FHH_LIST[aer_0p25_s3]:-""}
 
 export PRDGEN_GRID
 export PRDGEN_GRID_SPEC
