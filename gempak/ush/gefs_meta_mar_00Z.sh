@@ -1,11 +1,14 @@
 #!/bin/sh
 #
+# Metafile Script : gefs_meta_mar_00Z.sh
 #
 # Log :
 # J. Carr/PMB      12/15/2004     Pushed into production
 # Luke Lin         02/15/2006     point to new gefs
-# C. Magee/NCO     10/06/2008     Changed to use COMINs and COMIN for input 
+# C. Magee/NCO     10/06/2008     Changed to use COMINs and COMIN for input
 #                                 file locations (to make testing easier).
+# Xianwu Xue/EMC   03/28/2020     Modify to use the new path and 0p50 gempak data
+# Xianwu Xue/EMC   04/06/2020     Modified for GEFS v12
 #
 # Set Up Local Variables
 #
@@ -32,12 +35,11 @@ echo memberlist=$memberlist
 ## Get member list
 ########################################################
 
+sGrid=${sGrid} #:-"_0p50"}
+
 mkdir $DATA/mar_00Z
 cd $DATA/mar_00Z
-cp $FIXgempak/datatype.tbl datatype.tbl
 
-mdl=gefs
-MDL=GEFS
 PDY2=`echo $PDY | cut -c3-`
 
 if [ ${cyc} != "00" ] ; then
@@ -73,64 +75,63 @@ do
         garea="15;-100;70;5"
         proj="mer"
     fi
-    metatype="${metaarea}_mar"
-    metaname="${mdl}_${metatype}_${cyc}.meta"
+    metatype="meta_mar_${metaarea}"
+    metaname="gefs${sGrid}_${PDY}_${cyc}_${metatype}"
     device="nc | ${metaname}"
     for level in ${levels}
     do
         for fcsthr in ${fcsthrs}
         do
             fcsthrsgfs=`expr ${fcsthr} + 12`
-            typeset -Z3 fcsthrsgfs
+            #typeset -Z3 fcsthrsgfs
+
+            fcsthrsgfs=$(printf %03i $fcsthrsgfs)
 
             grids=${memberlist}
             for fn in `echo $grids`
             do
-                rm -rf $fn 
-                if [ -r $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} ]; then
-                    ln -s $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} $fn
+                rm -rf $fn
+                if [ -r $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
+                    ln -s $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} $fn
                 fi
             done
 
             fn=gfs
             rm -rf ${fn}
-            #f [ -r $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} ]
-            # \$COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${yesterday}${gfscyc}f${fcsthrsgfs}
-            if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
-                #  ln -s $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} gfs
-                ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
+            if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
+                ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
             fi
 
             fn=ecmwf
             rm -rf ${fn}
-            if [ -r $COMINs/ecmwf.${ecmwfdate}/ecmwf_glob_${ecmwfdate}${ecmwfcyc} ]; then
-                ln -s $COMINs/ecmwf.${ecmwfdate}/ecmwf_glob_${ecmwfdate}${ecmwfcyc} ${fn}
+            if [ -r $COMINecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ]; then
+                ln -s $COMINecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ${fn}
             fi
 
             fn=ukmet
             rm -rf ${fn}
-            if [ -r $COMINs_p1/ukmet.${PDY}/ukmet_${PDY}${cyc}f${fcsthr} ]; then
-                ln -s $COMINs_p1/ukmet.${PDY}/ukmet_${PDY}${cyc}f${fcsthr} ${fn}
+            if [ -r ${COMINukmet}.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ]; then
+                ln -s ${COMINukmet}.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ${fn}
             fi
 
 
             export pgm=gdplot2_nc;. prep_step; startmsg
 
 			cat > cmdfilemar  <<- EOF
-				DEVICE	= ${device}
-				PANEL	= 0
-				TEXT	= m/22/1/1/hw
-				CONTUR	= 2
-				MAP	= 1
-				CLEAR	= yes
+				DEVICE  = ${device}
+				PANEL   = 0
+				TEXT    = m/22/1/1/hw
+				CONTUR  = 2
+				MAP = 1
+				CLEAR   = yes
 				GAREA   = ${garea}
 				PROJ    = ${proj}
 				LATLON  = 1/10/1/2/10;10
 
-				GLEVEL  = 500 
-				GVCORD  = pres 
-				SKIP    = 0 
-				SCALE   = -1 
+				GLEVEL  = 500
+				GVCORD  = pres
+				SKIP    = 0
+				SCALE   = -1
 				GDPFUN  = sm9s(hght)
 				TYPE    = c
 				CINT    = ${level}
@@ -151,66 +152,38 @@ do
             for gridl in ${grids}
             do
                 # ----- gridl -----
-                gdfn=${gridl} 
-                
+                gdfn=${gridl}
+
                 if [ ${gdfn} == c00 ]; then
-                    color_number=6
-                    sline_count="-2"
+                    color_number=2
+                    sline_count="-1"
+                    wLine=3
                     sCNTL="(CNTL)"
 
                 else
-        
-                    if [[ ${gdfn} == p01 ]]; then
-                        color_number=17
-                    elif [[ ${gdfn} == p02 ]]; then
-                        color_number=2
-                    elif [[ ${gdfn} == p03 ]]; then
-                        color_number=4
-                    elif [[ ${gdfn} == p04 ]]; then
-                        color_number=7
-                    elif [[ ${gdfn} == p05 ]]; then
-                        color_number=8
-                    elif [[ ${gdfn} == p06 ]]; then
-                        color_number=9
-                    elif [[ ${gdfn} == p07 ]]; then
-                        color_number=10
-                    elif [[ ${gdfn} == p08 ]]; then
-                        color_number=11
-                    elif [[ ${gdfn} == p09 ]]; then
-                        color_number=12
-                    elif [[ ${gdfn} == p10 ]]; then
-                        color_number=14
-                    elif [[ ${gdfn} == p11 ]]; then
-                        color_number=15
-                    elif [[ ${gdfn} == p12 ]]; then
-                        color_number=16
-                    elif [[ ${gdfn} == p13 ]]; then
-                        color_number=17
-                    elif [[ ${gdfn} == p14 ]]; then
-                        color_number=18
-                    elif [[ ${gdfn} == p15 ]]; then
-                        color_number=2
-                    else
-                        color_number=18
-                    fi
+
+                    color_number=`echo $gdfn | cut -c2-`
+                    line_count=$color_number
 
                     sline_count="+${line_count}"
+
+                    wLine=1
                     sCNTL=""
 
-                    let line_count=$line_count+1
+                    #let line_count=$line_count+1
                 fi
 
                 if [ -e ${gdfn} ]; then
-
 					cat >> cmdfilemar  <<- EOF
 						GDFILE  = ${gdfn}
-						LINE    = ${color_number}/1/1/0
+						LINE    = ${color_number}/1/${wLine}/0
 						TITLE   = ${color_number}/${sline_count}/~ ? ${gdfn} ${sCNTL} |~${metaarea} ${level} DM
 						GDATTIM = F${fcsthr}
 						run
 
 						EOF
-                    if [ $WrottenZERO -eq 0 ]; then            
+
+                    if [ $WrottenZERO -eq 0 ]; then
 						cat >> cmdfilemar  <<- EOF
 							MAP     = 0
 							LATLON  = 0
@@ -225,17 +198,17 @@ do
             done
 
             # ----- gfs -----
-            gdfn=gfs 
+            gdfn=gfs
             if [ -e ${gdfn} ]; then
 				cat >> cmdfilemar  <<- EOF
-					GDFILE	= ${gdfn}
-					LINE    = 3/1/3/0
-					GDATTIM	= F${fcsthrsgfs}
-					TITLE   = 3/+11/~ ? ${gdfn} 12Z YEST|~${metaarea} ${level} DM
+					GDFILE  = ${gdfn}
+					LINE    = 22/2/3/0
+					GDATTIM = F${fcsthrsgfs}
+					TITLE   = 22/-3/~ ? ${gdfn} 12Z YEST (DASHED)|~${metaarea} ${level} DM
 					run
 
 					EOF
-                if [ $WrottenZERO -eq 0 ]; then            
+                if [ $WrottenZERO -eq 0 ]; then
 					cat >> cmdfilemar  <<- EOF
 						MAP     = 0
 						LATLON  = 0
@@ -247,35 +220,35 @@ do
             fi
 
             # ----- ecmwf -----
-            gdfn=ecmwf 
+            gdfn=ecmwf
             if [ -e ${gdfn} ]; then
 				cat >> cmdfilemar  <<- EOF
-					GDFILE	= ${gdfn}
-					LINE    = 31/1/2/0
-					GDATTIM	= F${fcsthrsgfs}
-					TITLE   = 31/+12/~ ? ECMWF 12Z YEST|~${metaarea} ${level} DM
+					GDFILE  = ${gdfn}
+					LINE    = 6/2/3/0
+					GDATTIM = F${fcsthrsgfs}
+					TITLE   = 6/-5/~ ? ECMWF 12Z YEST (DASHED)|~${metaarea} ${level} DM
 					run
 
 					EOF
-                if [ $WrottenZERO -eq 0 ]; then            
+                if [ $WrottenZERO -eq 0 ]; then
 					cat >> cmdfilemar  <<- EOF
-						MAP     = 0
-						LATLON  = 0
-						CLEAR   = no
+				MAP     = 0
+				LATLON  = 0
+				CLEAR   = no
 
-						EOF
+				EOF
                 fi
                 WrottenZERO=1
             fi
 
             # ----- ukmet -----
-            gdfn=ukmet 
+            gdfn=ukmet
             if [ -e ${gdfn} ]; then
 				cat >> cmdfilemar  <<- EOF
-					GDFILE	= ${gdfn}
-					LINE    = 26/2/2/0
-					GDATTIM	= F${fcsthr}
-					TITLE   = 26/+13/~ ? UKMET 00Z|~${metaarea} ${level} DM
+					GDFILE  = ${gdfn}
+					LINE    = 7/2/3/0
+					GDATTIM = F${fcsthr}
+					TITLE   = 7/-6/~ ? UKMET 00Z (DASHED)|~${metaarea} ${level} DM
 					run
 
 					EOF
@@ -296,59 +269,57 @@ do
     for fcsthr in ${fcsthrs}
     do
         fcsthrsgfs=`expr ${fcsthr} + 12`
-        typeset -Z3 fcsthrsgfs
+        #typeset -Z3 fcsthrsgfs
+        fcsthrsgfs=$(printf %03i $fcsthrsgfs)
+
         fcsthrsgfs2=`expr ${fcsthr} - 6`
-        typeset -Z3 fcsthrsgfs2
+        #typeset -Z3 fcsthrsgfs2
+        fcsthrsgfs2=$(printf %03i $fcsthrsgfs2)
 
         grids=${memberlist}
         for fn in `echo $grids`
         do
-            rm -rf $fn 
-            if [ -r $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} ]; then
-                ln -s $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} $fn
+            rm -rf $fn
+            if [ -r $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
+                ln -s $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} $fn
             fi
         done
 
         fn=gfs
         rm -rf ${fn}
-        #f [ -r $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} ]
-        # \$COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${yesterday}${gfscyc}f${fcsthrsgfs}
-        if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
-            #  ln -s $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} gfs
-            ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs_${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
+        if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
+            ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
         fi
 
         fn=ecmwf
         rm -rf ${fn}
-        if [ -r $COMINs/ecmwf.${ecmwfdate}/ecmwf_glob_${ecmwfdate}${ecmwfcyc} ]; then
-            ln -s $COMINs/ecmwf.${ecmwfdate}/ecmwf_glob_${ecmwfdate}${ecmwfcyc} ${fn}
+        if [ -r $COMINecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ]; then
+            ln -s $COMINecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ${fn}
         fi
 
         fn=ukmet
         rm -rf ${fn}
-        if [ -r $COMINs_p1/ukmet.${PDY}/ukmet_${PDY}${cyc}f${fcsthr} ]; then
-            ln -s $COMINs_p1/ukmet.${PDY}/ukmet_${PDY}${cyc}f${fcsthr} ${fn}
+        if [ -r $COMINukmet.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ]; then
+            ln -s $COMINukmet.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ${fn}
         fi
-
-
 
         export pgm=gdplot2_nc;. prep_step; startmsg
 
 		cat > cmdfilemar_low  <<- EOF
-			DEVICE	= ${device}
-			PANEL	= 0
-			TEXT	= s/22/1/1/hw
-			CONTUR	= 2
-			MAP	= 1
-			CLEAR	= yes
+			DEVICE  = ${device}
+			PANEL   = 0
+			TEXT    = s/22/1/1/hw
+			CONTUR  = 2
+			MAP = 1
+			CLEAR   = yes
 			GAREA   = ${garea}
 			PROJ    = ${proj}
 			LATLON  = 1/10/1/2/10;10
 
-			GLEVEL  = 0 
-			GVCORD  = none 
-			SKIP    = 0 
-			SCALE   = 0 
+			GLEVEL  = 0
+			GVCORD  = none
+			SKIP    = 0
+			SCALE   = 0
 			GDPFUN  = pmsl
 			TYPE    = c
 			CINT    = 4/1/8
@@ -362,6 +333,7 @@ do
 			REFVEC  =
 
 			EOF
+
         WrottenZERO=0
         grids=${memberlist}
         line_count=2
@@ -369,53 +341,21 @@ do
         for gridl in ${grids}
         do
             # ----- gridl -----
-            gdfn=${gridl} 
-            
+            gdfn=${gridl}
+
             if [ ${gdfn} == c00 ]; then
-                color_number=6
-                sline_count="-2"
+                color_number=2
+                sline_count="-1"
                 sCNTL="(CNTL)"
 
             else
-    
-                if [[ ${gdfn} == p01 ]]; then
-                    color_number=17
-                elif [[ ${gdfn} == p02 ]]; then
-                    color_number=2
-                elif [[ ${gdfn} == p03 ]]; then
-                    color_number=4
-                elif [[ ${gdfn} == p04 ]]; then
-                    color_number=7
-                elif [[ ${gdfn} == p05 ]]; then
-                    color_number=8
-                elif [[ ${gdfn} == p06 ]]; then
-                    color_number=9
-                elif [[ ${gdfn} == p07 ]]; then
-                    color_number=10
-                elif [[ ${gdfn} == p08 ]]; then
-                    color_number=11
-                elif [[ ${gdfn} == p09 ]]; then
-                    color_number=12
-                elif [[ ${gdfn} == p10 ]]; then
-                    color_number=14
-                elif [[ ${gdfn} == p11 ]]; then
-                    color_number=15
-                elif [[ ${gdfn} == p12 ]]; then
-                    color_number=16
-                elif [[ ${gdfn} == p13 ]]; then
-                    color_number=17
-                elif [[ ${gdfn} == p14 ]]; then
-                    color_number=18
-                elif [[ ${gdfn} == p15 ]]; then
-                    color_number=2
-                else
-                    color_number=18
-                fi
-
+                color_number=`echo $gdfn | cut -c2-`
+                line_count=$color_number
+               
                 sline_count="+${line_count}"
                 sCNTL=""
 
-                let line_count=$line_count+1
+                #let line_count=$line_count+1
             fi
 
             if [ -e ${gdfn} ]; then
@@ -423,11 +363,11 @@ do
 					GDFILE  = ${gdfn}
 					HILO    = ${color_number}/L${num}/900-1016/5/50/y
 					TITLE   = ${color_number}/${sline_count}/~ ? ${gdfn} ${sCNTL} |~${metaarea} ${metashname}
-					GDATTIM	= F${fcsthr}
+					GDATTIM = F${fcsthr}
 					run
 
 					EOF
-                if [ $WrottenZERO -eq 0 ]; then            
+                if [ $WrottenZERO -eq 0 ]; then
 					cat >> cmdfilemar_low  <<- EOF
 						MAP     = 0
 						LATLON  = 0
@@ -441,17 +381,17 @@ do
         done
 
         # ----- gfs -----
-        gdfn=gfs 
+        gdfn=gfs
         if [ -e ${gdfn} ]; then
 			cat >> cmdfilemar_low  <<- EOF
-				GDFILE	= ${gdfn}
+				GDFILE  = ${gdfn}
 				HILO    = 3/L${num}/900-1016/5/50/y
-				TITLE   = 3/+11/~ ? ${gdfn} 12Z YEST|~${metaarea} ${metashname}
-				GDATTIM	= F${fcsthrsgfs}
+				TITLE   = 3/-3/~ ? ${gdfn} 12Z YEST|~${metaarea} ${metashname}
+				GDATTIM = F${fcsthrsgfs}
 				run
 
 				EOF
-            if [ $WrottenZERO -eq 0 ]; then            
+            if [ $WrottenZERO -eq 0 ]; then
 				cat >> cmdfilemar_low  <<- EOF
 					MAP     = 0
 					LATLON  = 0
@@ -462,19 +402,18 @@ do
             WrottenZERO=1
         fi
 
-
         # ----- ecmwf -----
-        gdfn=ecmwf 
+        gdfn=ecmwf
         if [ -e ${gdfn} ]; then
 			cat >> cmdfilemar_low  <<- EOF
-				GDFILE	= ${gdfn}
+				GDFILE  = ${gdfn}
 				HILO    = 31/L${num}/900-1016/5/50/y
-				TITLE   = 31/+12/~ ? ${gdfn} 12Z YEST|~${metaarea} ${metashname}
-				GDATTIM	= F${fcsthrsgfs}
+				TITLE   = 31/-5/~ ? ${gdfn} 12Z YEST|~${metaarea} ${metashname}
+				GDATTIM = F${fcsthrsgfs}
 				run
 
 				EOF
-            if [ $WrottenZERO -eq 0 ]; then            
+            if [ $WrottenZERO -eq 0 ]; then
 				cat >> cmdfilemar_low  <<- EOF
 					MAP     = 0
 					LATLON  = 0
@@ -486,13 +425,13 @@ do
         fi
 
         # ----- ukmet -----
-        gdfn=ukmet 
+        gdfn=ukmet
         if [ -e ${gdfn} ]; then
 			cat >> cmdfilemar_low  <<- EOF
-				GDFILE	= ${gdfn}
+				GDFILE  = ${gdfn}
 				HILO    = 26/L${num}/900-1016/5/50/y
-				TITLE   = 26/+13/~ ? ${gdfn} 00Z|~${metaarea} ${metashname}
-				GDATTIM	= F${fcsthr}
+				TITLE   = 26/-6/~ ? ${gdfn} 00Z|~${metaarea} ${metashname}
+				GDATTIM = F${fcsthr}
 				run
 
 				EOF
@@ -516,11 +455,12 @@ do
     export err=$?;export pgm="GEMPAK CHECK FILE";err_chk
 
     if [ $SENDCOM = "YES" ] ; then
-        mv ${metaname} ${COMOUT}/gefs_${PDY}_${cyc}_${metatype}
+        mv ${metaname} ${COMOUT}/
         if [ $SENDDBN = "YES" ] ; then
-            $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job ${COMOUT}/gefs_${PDY}_${cyc}_${metatype}
+            $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job ${COMOUT}/${metaname}
         fi
     fi
 done
 
 exit
+

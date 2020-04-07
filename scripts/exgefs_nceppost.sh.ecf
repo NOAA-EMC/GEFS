@@ -245,7 +245,7 @@ for fhr in ${RUN_HOURS[@]}; do
         for submc in prd0p25 prd0p5 prd2p5; do
             pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr
             if [[ -f $pcfile ]]; then rm $pcfile; fi
-        done # for submc in prd0p5 prd1p0 prd2p5
+        done # for submc in prd0p25 prd0p5 prd2p5
     fi # [[ ! -s $mcfile ]]
 
     #export fhrtest=`expr $fhr + $FHINC`
