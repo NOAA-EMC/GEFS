@@ -1060,7 +1060,17 @@ def get_param_of_task(dicBase, taskname):
                 if DoesTaskExist(dicBase, "getcfssst"):
                     sDep += '\n\t<taskdep task="getcfssst"/>'
                 if DoesTaskExist(dicBase, "prdgen_aerosol"):
-                    sDep += '\n\t<taskdep task="prdgen_aerosol"/>'                    
+                    sDep += '\n\t<taskdep task="prdgen_aerosol"/>'
+                if DoesTaskExist(dicBase, "gempak"):
+                    sDep += '\n\t<taskdep task="gempak"/>'
+                if DoesTaskExist(dicBase, "avgspr_gempak"):
+                    sDep += '\n\t<taskdep task="avgspr_gempak"/>'
+                if DoesTaskExist(dicBase, "gempak_meta"):
+                    sDep += '\n\t<taskdep task="gempak_meta"/>'        
+                if DoesTaskExist(dicBase, "avgspr_gempak_meta"):
+                    sDep += '\n\t<taskdep task="avgspr_gempak_meta"/>'
+                if DoesTaskExist(dicBase, "avg_gempak_vgf"):
+                    sDep += '\n\t<taskdep task="avg_gempak_vgf"/>'
 
                 if sDep == '<and>':
                     sDep = ""
