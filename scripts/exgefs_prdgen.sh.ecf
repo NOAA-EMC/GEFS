@@ -315,8 +315,15 @@ for hour in $hours; do
 		fi # [[ -s $pcfile ]]
 
 		if [[ ! -s $pcfile ]]; then
-			export parmlist_a=$parmlist_ahh
-			export parmlist_b=$parmlist_bhh
+			if (( hour == 0 )); then
+				parmlist_a=$parmlist_a00
+				parmlist_b=$parmlist_b00
+			else
+				parmlist_a=$parmlist_ahh
+				parmlist_b=$parmlist_bhh
+			fi
+			export parmlist_a
+			export parmlist_b
 			$USHgefs/gefs_prdgen.sh
 
 			# Check for error
