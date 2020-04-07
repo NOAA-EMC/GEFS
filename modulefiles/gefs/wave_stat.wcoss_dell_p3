@@ -6,17 +6,12 @@
 ##_____________________________________________________
 module load EnvVars/${EnvVars_ver}
 module load ips/${ips_ver}
-module load impi/${impi_ver}
 module load w3nco/${w3nco_ver}
 module load bacio/${bacio_ver}
 module load jasper/${jasper_ver}
 module load libpng/${libpng_ver}
 module load zlib/${zlib_ver}
 module load g2/${g2_ver}
-module load w3emc/${w3emc_ver}
-module load sigio/${sigio_ver}
-module load sp/${sp_ver}
-module load bufr/${bufr_ver}
 
 ##
 export FCMP=ifort
