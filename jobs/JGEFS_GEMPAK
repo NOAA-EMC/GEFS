@@ -99,7 +99,7 @@ export GRIB=
 export EXT=""
 export DBN_ALERT_TYPE=${DBN_ALERT_TYPE:-GEFS_GEMPAK}
 
-export GEMPAK_RES=${GEMPAK_RES:-"1p00 0p50"}
+export GEMPAK_RES=${GEMPAK_RES:-"0p50 0p25"}
 
 ##############################################
 # Define COM directories
@@ -151,12 +151,15 @@ do
     do
         if [ $resolution = "1p00" ]; then
             export COMIN_Folder=pgrb2a1p0
+            export pdgrbType=pgrb2a
             export fend=${fhmaxh:-384}
         elif [ $resolution = "0p50" ]; then
             export COMIN_Folder=pgrb2ap5
+            export pdgrbType=pgrb2a
             export fend=${fhmaxh:-384}
         elif [ $resolution = "0p25" ]; then
-            export COMIN_Folder=pgrb2ap25
+            export COMIN_Folder=pgrb2sp25
+            export pdgrbType=pgrb2s
             export fend=${FHMAXHF:-240}
         else
             echo "GEMPAK does not support this resolution!"
@@ -164,7 +167,7 @@ do
             exit $err
         fi
         
-        echo "$HOMEgefs/scripts/exgefs_nawips.sh.ecf $RUNM $member $resolution ${GEMPAKgefs} ${COMIN}/${COMIN_Folder} ${COMOUT} ${fstart} ${fend} ${finc} ${finc_0p50}" >> poescript
+        echo "$HOMEgefs/scripts/exgefs_nawips.sh.ecf $RUNM $member $resolution ${GEMPAKgefs} ${COMIN}/${COMIN_Folder} ${COMOUT} ${fstart} ${fend} ${finc} ${finc_0p50} ${pdgrbType}" >> poescript
     done
 done
 ########################################################

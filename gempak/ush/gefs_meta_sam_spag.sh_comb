@@ -9,6 +9,7 @@
 #                               (previous run) from pXX_06 to pXX_6
 # C. Magee/NCO  10/06/2008      Changed to use COMINs and COMIN for input file
 #                               locations (to make testing easier).
+# Xianwu Xue/EMC 04/06/2020     Modified for GEFS v12
 #
 # Set Up Local Variables
 #
@@ -35,12 +36,10 @@ echo memberlist=$memberlist
 ## Get member list
 ########################################################
 
+sGrid=${sGrid} #:-"_0p50"}
+
 mkdir $DATA/gefs_meta_sam_spag
 cd $DATA/gefs_meta_sam_spag
-cp $FIXgempak/datatype.tbl datatype.tbl
-
-mdl=gefs
-MDL=GEFS
 
 #ddate=`echo $PDY | cut -c3-8`
 #ddatem1=`echo $PDYm1 | cut -c3-8`
@@ -109,7 +108,7 @@ if [ ${month} -gt 8 -a ${month} -le 11 ]; then
    levels="528 540 546 552 558 564 570 582"
 fi
 
-metaname="gefs_${PDY}_${cyc}_sam_spag"
+metaname="gefs${sGrid}_${PDY}_${cyc}_meta_sam_spag"
 device="nc|$metaname"
 
 garea="sam"
@@ -144,73 +143,61 @@ do
             fcsthr_ecm="0${fcsthr_ecm}"
         fi
         
-        #rm -rf gefs_avg gefs_avg_6 gfs gfs_6 ecmwf ukmet dgex
-        #rm -f p0* p1* p2* c00*
-        #rm -rf gefs_avg gefs_avg_6 gfs gfs_6 ecmwf ukmet cmc nogaps dgex
-
-        grids=${memberlist} #"p01 p02 p03 p04 p05 p06 p07 p08 p09 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 c00"
+        grids=${memberlist}
         for fn in `echo $grids`
         do
            rm -rf $fn ${fn}_6
 
-           if [ -r $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} ]
+           if [ -r $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]
            then
-              ln -s $COMIN/ge${fn}_${PDY}${cyc}f${fcsthr} $fn
+              ln -s $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} $fn
            fi
-           #if [ -r $COMINs/gefs.${PDY_6}/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ]
-           if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ]
+           if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/ge${fn}${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ]
            then
-           #  ln -s $COMINs/gefs.${PDY_6}/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}_6
-              ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/ge${fn}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}_6
+              ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/ge${fn}${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}_6
            fi
         done
 
         fn=gefs_avg
         rm -rf ${fn}
-        if [ -r $COMIN/geavg_${PDY}${cyc}f${fcsthr} ]
+        if [ -r $COMIN/geavg${sGrid}_${PDY}${cyc}f${fcsthr} ]
         then
-           ln -s $COMIN/geavg_${PDY}${cyc}f${fcsthr} ${fn}
+           ln -s $COMIN/geavg${sGrid}_${PDY}${cyc}f${fcsthr} ${fn}
         fi
 
         fn=gefs_avg_6
         rm -rf ${fn}
-        #if [ -r $COMINs/gefs.${PDY_6}/geavg_${PDY_6}${cyc_6}f${fcsthr_6} ]
-        if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/geavg_${PDY_6}${cyc_6}f${fcsthr_6} ]
+        if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/geavg${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ]
         then
-        #  ln -s $COMINs/gefs.${PDY_6}/geavg_${PDY_6}${cyc_6}f${fcsthr_6} gefs_avg_6
-           ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/geavg_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
+           ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/geavg${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
         fi
 
         fn=gfs
         rm -rf ${fn}
-        #if [ -r $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} ]
-        if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ]
+        if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ]
         then
-        #  ln -s $COMINs/gfs.${PDY}/gfs_${PDY}${cyc}f${fcsthr} gfs
-           ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs_${PDY}${cyc}f${fcsthr} ${fn}
+           ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ${fn}
         fi
 
         fn=gfs_6
         rm -rf ${fn}
-        #if [ -r $COMINs/gfs.${PDY_6}/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ]
-        if [ -r $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ]
+        if [ -r $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ]
         then
-        #   ln -s $COMINs/gfs.${PDY_6}/gfs_${PDY_6}${cyc_6}f${fcsthr_6} gfs_6
-           ln -s $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
+           ln -s $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
         fi
 
         fn=ecmwf
         rm -rf ${fn}
-        if [ -r $COMINs/ecmwf.${ECM_PDY}/ecmwf_glob_${ECM_PDY}${ECM_cyc} ]
+        if [ -r $COMINs/ecmwf.${ECM_PDY}/gempak/ecmwf_hr_${ECM_PDY}${ECM_cyc}f${fcsthr} ]
         then
-           ln -s $COMINs/ecmwf.${ECM_PDY}/ecmwf_glob_${ECM_PDY}${ECM_cyc} ${fn}
+           ln -s $COMINs/ecmwf.${ECM_PDY}/gempak/ecmwf_hr_${ECM_PDY}${ECM_cyc}f${fcsthr} ${fn}
         fi
 
         fn=ukmet
         rm -rf ${fn}
-        if [ -r $COMINs_p1/ukmet.${ECM_PDY}/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ]
+        if [ -r ${COMINecmwf}.${ECM_PDY}/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ]
         then
-           ln -s $COMINs_p1/ukmet.${ECM_PDY}/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ${fn}
+           ln -s ${COMINecmwf}.${ECM_PDY}/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ${fn}
         fi
 
         fn=dgex
@@ -308,7 +295,7 @@ do
 					!GDFILE  = \$COMIN/ge${gridl}_${PDY}${cyc}f${fcsthr}
 					GDFILE  = ${gdfn}
 					LINE    = 25/1/1/0
-					TITLE   = 25/+1/~ ? ${cyc_6}Z ENS MEMBERS|~${name} ${level} DM
+					TITLE   = 25/-9/~ ? ${cyc_6}Z ENS MEMBERS|~${name} ${level} DM
 					GDATTIM = F${fcsthr_6}
 					run
 
@@ -325,18 +312,7 @@ do
             fi
         done
 
-#GDFILE  = p01_6 ! p02_6 ! p03_6 ! p04_6 ! p05_6 ! p06_6 ! p07_6 ! p08_6 ! p09_6 ! p10_6
-#LINE    = 25/1/1/0
-#TITLE   = 25/+1/~ ? ${cyc_6}Z ENS MEMBERS|~${name} ${level} DM
-#GDATTIM = F${fcsthr_6}
-#run
-
-#GDFILE  = p11_6 ! p12_6 ! p13_6 ! p14_6 ! p15_6 ! p16_6 ! p17_6 ! p18_6 ! p19_6 ! p20_6 ! c00_6
-#run
-
-#EOF
-
-        grids=${memberlist} #"C00 P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20"
+        grids=${memberlist}
         line_count=2
         color_number=9
         for gridl in ${grids}
@@ -346,6 +322,13 @@ do
             # ----- gridl -----
             gdfn=${gridl} # gd file name
             if [ -e ${gdfn} ]; then
+				#if [ ${gdfn} == c00 ]; then
+                #    color_number=6
+                #    line_count=0
+                #else
+                color_number=`echo $gdfn | cut -c2-`
+                line_count=${color_number}
+                #fi
 				cat >> cmdfilesam  <<- EOF
 					!GDFILE  = \$COMIN/ge${gridl}_${PDY}${cyc}f${fcsthr}
 					GDFILE  = ${gdfn}
@@ -367,7 +350,7 @@ do
             fi
 
             let line_count=$line_count+1
-            let color_number=$color_number+1
+            #let color_number=$color_number+1
         done
 
         # ----- ukmet -----
