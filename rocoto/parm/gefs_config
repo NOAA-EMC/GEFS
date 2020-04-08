@@ -67,7 +67,7 @@ else
     export COMINgfs_base=$(compath.py gfs/prod)/gfs.
     export COMINenkf_base=$(compath.py gfs/prod)/enkfgdas.
     export COMINcfs_base=$(compath.py cfs/prod)/cfs/cfs.
-    export COMIN_WAV_ICE=$(compath.py gfs/prod)/gdas.${PDY}/${cyc}
+    export COMIN_WAV_ICE=$(compath.py gfs/prod)/gfs.${PDY}/${cyc}
 fi # [[ $GFSArchivedData == "yes" ]]
 
 export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc}

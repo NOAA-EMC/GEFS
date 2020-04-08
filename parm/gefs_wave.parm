@@ -132,7 +132,8 @@ export WW3ICEINP='YES'
 export WW3CURINP='NO'
 
 if [ "${WW3ICEINP}" = "YES" ]; then
-  export WAVICEFILE=gdas.t${cyc}z.seaice.5min.grib2
+  export WAVICEPRFX='gfs'
+  export WAVICEFILE=${WAVICEPRFX}.t${cyc}z.seaice.5min.grib2
 fi
 
 # Determine if input is from perturbed ensemble (T) or single input file (F) for all members
