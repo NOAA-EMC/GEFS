@@ -57,7 +57,7 @@ cd $DATA/gefs_meta_qpf_nam
 name2="500 & PMSL"
 metaname="gefs${sGrid}_${PDY}_${cyc}_meta_nam"
 device="nc | $metaname"
-fcsthrs="024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204"
+fcsthrs="036 048 060 072 084 096 108 120 132 144 156 168 180 192 204" # shorten making starthour from 024 to 036 due to 500 frame limit
 
 for fcsthr in ${fcsthrs}
 do
