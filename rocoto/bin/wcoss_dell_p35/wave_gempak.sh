@@ -18,7 +18,7 @@ module load impi/$impi_ver
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
 module load grib_util/$grib_util_ver
-
+module load gempak/$gempak_ver
 module load lsf/$lsf_ver
 
 module load CFP/$CFP_ver
