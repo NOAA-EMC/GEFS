@@ -29,15 +29,13 @@ export HOMEgefs=$basesource
 export HOMEtrak=${HOMEtrak:-$HOMERFC/ens_tracker.v1.1.13}
 export HOMEgfs=${HOMEgfs:-${HOMEDIR:-${HOMEgefs}}}
 export HOMEgsi=${HOMEgfs:-$HOMEgfs}
-export HOMEwave=${HOMEwave:-$HOMEgefs}
+export HOMEwave=${HOMEwave:-$HOMEgfs}
 export HOMEpost=${HOMEpost:-$HOMEgfs}
 
 if [[ ! -d $SOURCEDIR/sorc/global-workflow.fd ]] ; then
-    export EXECwave=${HOMEgfs}/sorc/fv3gfs.fd/WW3/model/exe
+    export EXECwave=${HOMEgefs}/exec
 
     export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgfs/sorc/fv3gfs.fd/NEMS/exe}
-    export FIXwave=${FIXwave:-$HOMEwave/fix_wave}
-
     export HOMEchem=${HOMEchem:-$HOMEgfs/sorc/gsd_prep_chem.fd/workflow/emc-global}
 fi
 
@@ -69,10 +67,9 @@ else
     export COMINgfs_base=$(compath.py gfs/prod)/gfs.
     export COMINenkf_base=$(compath.py gfs/prod)/enkfgdas.
     export COMINcfs_base=$(compath.py cfs/prod)/cfs/cfs.
-    export COMICE=/gpfs/dell1/nco/ops/com/omb/prod # No compath.py alias yet
+    export COMIN_WAV_ICE=$(compath.py gfs/prod)/gfs.${PDY}/${cyc}
 fi # [[ $GFSArchivedData == "yes" ]]
 
 export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc}
 export COMINenkf=${COMINenkf:-${COMINenkf_base}}
 export COMINcfs=${COMINcfs:-${COMINcfs_base}}
-

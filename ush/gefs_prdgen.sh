@@ -41,6 +41,9 @@ cat <<-EOF
 	  mcfile: $mcfile
 	  pcfile: $pcfile
 
+	  parmlist_a: $parmlist_a
+	  parmlist_b: $parmlist_b
+
 	  fileaout: $fileaout
 	  fileaouti: $fileaouti
 	  filebout: $filebout
@@ -89,16 +92,8 @@ else
 
 	excludestring=${excludestring:-'372-384hr'}
 
-	if [[ $cplchm == ".true." ]]; then
-		parmlist=$PARMgefs/gefs_prgb2a_aer.parm
-	else
-		parmlist=$PARMgefs/gefs_pgrb2a_f${hsuffix}.parm
-		if [[ $jobgrid != "0p5" ]]; then
-			parmlist=$parmlist\_$jobgrid
-		fi
-	fi
 	$WGRIB2 -s pgb2file.$ffhr | \
-		grep -F -f $parmlist | \
+		grep -F -f $parmlist_a | \
 		grep -v -F $excludestring | \
 		$WGRIB2 -s pgb2file.$ffhr -i -grib pgb2afile.$ffhr
 	if [[ $RUNMEM = "gegfs" ]]; then
@@ -127,10 +122,9 @@ else
 	fi # [[ $RUNMEM = "gegfs" ]]
 
 	if [[ $makepgrb2b = "yes" ]]; then
-		parmlist2=$PARMgefs/gefs_pgrb2ab_f${hsuffix}.parm
 		$WGRIB2 -s pgb2file.$ffhr | \
-			grep -F -f $parmlist2 | \
-			grep -v -F -f $parmlist | \
+			grep -F -f $parmlist_b | \
+			grep -v -F -f $parmlist_a | \
 			grep -v -F $excludestring | \
 			$WGRIB2 pgb2file.$ffhr -s -i -grib pgb2bfile.$ffhr
 		$WGRIB2 -s pgb2bfile.$ffhr > pgb2bfile.${ffhr}.idx
