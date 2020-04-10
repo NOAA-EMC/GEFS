@@ -1149,6 +1149,13 @@ def get_param_of_task(dicBase, taskname):
                 #    sDep = '<metataskdep metatask="prdgen_lr"/>'
                 if DoesTaskExist(dicBase, "prdgen_hr"):
                     sDep = '<metataskdep metatask="prdgen_hr"/>'
+
+                    #npert = int(dicBase["NPERT"])
+                    #sDep = '<and>'
+                    #for i in range(npert):
+                    #    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gep{0:02}.t@Hz.prdgen.control.f000</cyclestr></datadep>'.format(i + 1)
+                    #sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gec00.t@Hz.prdgen.control.f000</cyclestr></datadep>'
+                    #sDep += '\n</and>'
                 else:
                     sDep = ''
 
@@ -1158,6 +1165,11 @@ def get_param_of_task(dicBase, taskname):
                 #    sDep = '<taskdep task="ensstat_lr"/>'
                 if DoesTaskExist(dicBase, "ensstat_hr"):
                     sDep = '<taskdep task="ensstat_hr"/>'
+
+                    #sDep = '<and>'
+                    #sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/geavg.t@Hz.prdgen.control.f000</cyclestr></datadep>'
+                    #sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gespr.t@Hz.prdgen.control.f000</cyclestr></datadep>'
+                    #sDep += '\n</and>'
                 else:
                     sDep = ''
 
