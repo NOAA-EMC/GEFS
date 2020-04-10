@@ -87,7 +87,6 @@ if [[ -d global-workflow.fd ]] ; then
     done
     $LINK ${sPath}/ww3_* ../exec/
 
-
     sPath=../sorc/global-workflow.fd/sorc/fv3gfs.fd/NEMS/exe
     $LINK ${sPath}/global_fv3gfs.* ../exec/
 
@@ -146,6 +145,19 @@ if [[ -d global-workflow.fd ]] ; then
     else
         $LINK ../sorc/global-workflow.fd/scripts/$sFile ../scripts/
     fi
+fi
+
+# For wave
+if [[ -d global-workflow.fd ]]; then
+    lScripts="exwave_init.sh exwave_nawips.sh exwave_post_sbs.sh exwave_prep.sh exwave_stat.sh"
+    for sFile in $lScripts; do
+        $LINK ../sorc/global-workflow.fd/scripts/$sFile ../scripts/
+    done
+
+    lUsh="wave_ens_bull.sh wave_ens_stat.sh wave_grib2_cat.sh wave_grib2_sbs.sh wave_grid_interp.sh wave_grid_interp_sbs.sh wave_grid_moddef.sh wave_outp_spec.sh wave_prnc_cur.sh wave_prnc_ice.sh wave_tar.sh"
+    for sFile in $lUsh; do
+        $LINK ../sorc/global-workflow.fd/ush/$sFile ../ush/
+    done
 fi
 
 # for CHEM
