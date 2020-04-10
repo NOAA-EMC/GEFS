@@ -86,8 +86,6 @@ export GEMPAKgefs=${GEMPAKgefs:-$HOMEgefs/gempak}
 ############################################
 export fstart=${fstart:-0}
 export fend=${fhmaxh:-384}
-export finc=${finc:-6}
-export finc_0p50=${finc_0p50:-3}
 
 export FHMAXHF=${FHMAXHF:-240}
 export FHOUTHF=${FHOUTHF:-3}
@@ -98,16 +96,11 @@ export EXT=""
 export DBN_ALERT_TYPE=${DBN_ALERT_TYPE:-GEFS_GEMPAK}
 
 export GEMPAK_RES=${GEMPAK_RES:-"0p50 0p25"}
+export model=ensemble
 
 ##############################################
 # Define COM directories
 ##############################################
-#export COM=${COMROOT}/${NET}/${envir}
-# export COMIN=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/pgrba
-#export COMIN=${COM}/${RUN}.${PDY}/${cyc}/pgrb2a
-#export COMIN_P5=${COM}/${RUN}.${PDY}/${cyc}/pgrb2ap5
-#export COMOUT=${COMROOT}/nawips/${envir}/${RUN}.${PDY}
-
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/gempak
 
@@ -119,25 +112,12 @@ env
 
 ########################################################
 # Execute the script.
-#export COMIN=$COMIN_RAW
-export model=ensemble
-
-########################################################
-# Execute the script.
 for member in avg spr
 do
     export member
     export RUNM=ge${member}
     for resolution in ${GEMPAK_RES}
     do
-        #if [ $GET_IOPROFILE = YES ]; then
-        #   /usrx/local/mio/tools/bin/miostats -X0 \
-        #  # JY  ${NWROOT}/scripts/exnawips.sh.ecf
-        #   echo "$HOMEgefs/scripts/exgefs_nawips.sh.ecf $RUN $member $resolution" >> poescript
-        #else
-        #   # JY ${NWROOT}/scripts/exnawips.sh.ecf
-        #   echo "$HOMEgefs/scripts/exgefs_nawips.sh.ecf $RUN $member $resolution" >> poescript
-        #fi
         if [ $GET_IOPROFILE = YES ]; then
             /usrx/local/mio/tools/bin/miostats -X0 #\
         fi
@@ -160,7 +140,7 @@ do
             exit $err
         fi
         
-        echo "$HOMEgefs/scripts/exgefs_nawips.sh.ecf $RUNM $member $resolution ${GEMPAKgefs} ${COMIN}/${COMIN_Folder} ${COMOUT} ${fstart} ${fend} ${finc} ${finc_0p50} ${pdgrbType}" >> poescript
+        echo "$HOMEgefs/scripts/exgefs_nawips.sh.ecf $RUNM $member $resolution ${GEMPAKgefs} ${COMIN}/${COMIN_Folder} ${COMOUT} ${fstart} ${fend} ${FHMAXHF} ${FHOUTHF} ${FHOUTLF} ${pdgrbType}" >> poescript
     done
 done
 ########################################################
