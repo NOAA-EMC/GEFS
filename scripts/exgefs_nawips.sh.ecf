@@ -22,10 +22,10 @@ COMIN=${5:-${COMIN}}
 COMOUT=${6:-${COMOUT}}
 fstart=${7:-${fstart}}
 fend=${8:-${fend}}
-finc=${9:-${finc}}
-finc_0p50=${10:-${finc_0p50}}
-
-pgrdbType=${11:-${pdgrbType}} #:-pgrb2a}
+FHMAXHF=${9:-${FHMAXHF}}
+FHOUTHF=${10:-${FHOUTHF}}
+FHOUTLF=${11:-${FHOUTLF}}
+pgrdbType=${12:-${pdgrbType}} #:-pgrb2a}
 
 DATA_member=$DATA/${member}/$resolution
 mkdir -p $DATA_member
@@ -75,24 +75,12 @@ maxtries=180
 fhcnt=$fstart
 while [ $fhcnt -le $fend ] ; do
 
-    # only if resolution is 0p50
-    #if [ $fhcnt -ge 100 ] || [ $resolution = "0p50" ]; then
-    #    typeset -Z3 fhr
-    #else
-    #    typeset -Z3 fhr
-    #fi
-    
     fhr=$(printf %03i $fhcnt)
     
-    #fhr=$fhcnt
-    #fhcnt3=`expr $fhr % 3`
-    #fhr3=$fhcnt
-    #typeset -Z3 fhr3
-    
-    GRIBIN=$COMIN/${model}.${cycle}.${GRIB}${fhr}${EXT}
-    GEMGRD=${RUNM}_${PDY}${cyc}f${fhr3}
-
-    finc1=finc
+    finc1=${FHOUTHF}
+    if [ $fhcnt -ge ${FHMAXHF} ]; then
+        finc1=${FHOUTLF}
+    fi
     case $RUNM in
     ens*)  
         GRIBIN=$COMIN/${model}.${member}.${PDY}.${cyc}
@@ -121,12 +109,6 @@ while [ $fhcnt -le $fend ] ; do
             GEMGRD=${RUNM}${model}_${PDY}${cyc}f${fhr3}
         else
             # This is for gefs
-            if [ $resolution = "0p50" ]; then
-                if [ $fhcnt -lt 192 ]; then 
-                    finc1=finc_0p50
-                fi
-            fi
-
             GRIBIN=${COMIN}/${RUNM}.${cycle}.${pgrdbType}.${resolution}.f${fhr}
             if [ $resolution = "1p00" ]; then
             #if [ $resolution = "0p50" ]; then
@@ -136,9 +118,12 @@ while [ $fhcnt -le $fend ] ; do
             fi
         fi
         ;;
+
+    *) 
+        GRIBIN=$COMIN/${model}.${cycle}.${GRIB}${fhr}${EXT}
+        GEMGRD=${RUNM}_${PDY}${cyc}f${fhr3} 
     esac
 
-    # GRIBIN_chk=$GRIBIN
     GRIBIN_chk=${GRIBIN}.idx
 
     icnt=1
@@ -155,38 +140,7 @@ while [ $fhcnt -le $fend ] ; do
         fi
     done
 
-    cp $GRIBIN grib$fhr
-
-#DHOU: 12/27/2016 With the number of variables in pgrb2a/pgrb2ap5 increased from 83/42 to 85, the case block is replaced by the line above
-#  case $RUNM in
-#    ge*)  if test "$model" = "bc" -o "$model" = "me" -o "$model" = "an" -o "$model" = "wt" -o "$model" = "glbanl" -o "$model" = "ndgd" -o "$model" = "anv"
-#          then
-#             cp $GRIBIN grib$fhr
-#          else
-#             if [ $resolution = "0p50" ]
-#             then
-#               # pgrb2bp5/gep10.t00z.pgrb2b.0p50.f384
-#               GRIBIN_B=$COMIN_B_P5/${RUNM}.${cycle}.pgrb2b.0p50.f${fhr}
-#            /nwprod/util/exec/wgrib2 -s $GRIBIN_B | grep -f ${PARMgefs}/gefs_gempak_0p50_b.parm | /nwprod/util/exec/wgrib2 -i -grib temp $GRIBIN_B
-#             else
-#               GRIBIN_B=$COMIN_B/${RUNM}.${cycle}.pgrb2bf${fhr}
-#            /nwprod/util/exec/wgrib2 -s $GRIBIN_B | grep "HGT:300 mb" | /nwprod/util/exec/wgrib2 -i -grib temp $GRIBIN_B
-#             fi
-#             cat $GRIBIN temp > grib$fhr
-#          fi
-#     ;;
-#   *)
-#     cp $GRIBIN grib$fhr
-#  esac
-
-    if [ "$model" = "ensemble" ]; then
-        export pgm="nagrib2_nc $RUNM"
-    else
-        export pgm="nagrib2_nc F$fhr"
-    fi
-
-    # export pgm="nagrib2_nc F$fhr"
-    startmsg
+    ln -s $GRIBIN grib$fhr
 
 	$GEMEXE/$NAGRIB <<- EOF
 		GBFILE   = grib$fhr
@@ -206,7 +160,7 @@ while [ $fhcnt -le $fend ] ; do
 		r
 		EOF
     
-    export err=$? #;err_chk
+    export err=$?;err_chk
 
     #####################################################
     # GEMPAK DOES NOT ALWAYS HAVE A NON ZERO RETURN CODE
@@ -234,7 +188,6 @@ while [ $fhcnt -le $fend ] ; do
         fi
     fi
 
-    # JY let fhcnt=fhcnt+finc
     let fhcnt=fhcnt+finc1
 done
 
