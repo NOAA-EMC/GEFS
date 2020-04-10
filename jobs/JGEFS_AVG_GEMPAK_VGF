@@ -13,6 +13,7 @@ date
 
 export total_tasks=${total_tasks:-1}
 export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
+export sGrid=${sGrid:-"_0p50"} # empty for 1p00, _0p50
 
 ####################################
 # obtain unique process id (pid) and make working directory
@@ -97,7 +98,7 @@ export DBN_ALERT_TYPE=${DBN_ALERT_TYPE:-GEFS_METAFILE}
 #
 # Now set up GEMPAK/NTRANS environment
 
-cp $FIXgempak/datatype.tbl datatype.tbl
+#cp $FIXgempak/datatype.tbl datatype.tbl
 
 ##############################################
 # Define COM directories

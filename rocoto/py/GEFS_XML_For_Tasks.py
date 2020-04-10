@@ -1060,7 +1060,17 @@ def get_param_of_task(dicBase, taskname):
                 if DoesTaskExist(dicBase, "getcfssst"):
                     sDep += '\n\t<taskdep task="getcfssst"/>'
                 if DoesTaskExist(dicBase, "prdgen_aerosol"):
-                    sDep += '\n\t<taskdep task="prdgen_aerosol"/>'                    
+                    sDep += '\n\t<taskdep task="prdgen_aerosol"/>'
+                if DoesTaskExist(dicBase, "gempak"):
+                    sDep += '\n\t<taskdep task="gempak"/>'
+                if DoesTaskExist(dicBase, "avgspr_gempak"):
+                    sDep += '\n\t<taskdep task="avgspr_gempak"/>'
+                if DoesTaskExist(dicBase, "gempak_meta"):
+                    sDep += '\n\t<taskdep task="gempak_meta"/>'        
+                if DoesTaskExist(dicBase, "avgspr_gempak_meta"):
+                    sDep += '\n\t<taskdep task="avgspr_gempak_meta"/>'
+                if DoesTaskExist(dicBase, "avg_gempak_vgf"):
+                    sDep += '\n\t<taskdep task="avg_gempak_vgf"/>'
 
                 if sDep == '<and>':
                     sDep = ""
@@ -1187,10 +1197,12 @@ def calc_avgspr_gempak_resources(dicBase):
     if WHERE_AM_I.upper() == "CRAY":
         iNodes = iTotal_Tasks
         iPPN = 1
-        
+    elif WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
+        iNodes = 1
+        iPPN = iTotal_Tasks        
     else:
-        iNodes = iTotal_Tasks
-        iPPN = 1
+        iNodes = 1
+        iPPN = iTotal_Tasks
 
     return iTotal_Tasks, iNodes, iPPN, iTPP
 
