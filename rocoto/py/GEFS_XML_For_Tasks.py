@@ -10,6 +10,9 @@ def config_tasknames(dicBase):
         if DoesTaskExist(dicBase, "post_aerosol"):
             Replace_task_UsingSubjobs(dicBase, "post_aerosol", sNSubJobs='N_SUBJOBS_POST_AEROSOL')
 
+        if DoesTaskExist(dicBase, "post_aerosol"):
+            Replace_task_UsingSubjobs(dicBase, "post_aerosol", sNSubJobs='N_SUBJOBS_POST_HIGH')
+
         if DoesTaskExist(dicBase, "ensavg_nemsio"):
             Replace_task_UsingSubjobs(dicBase, "ensavg_nemsio", sNSubJobs='N_SUBJOBS_ENSAVG_NEMSIO')
 
@@ -27,12 +30,12 @@ def config_tasknames(dicBase):
             # ---wave init
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "gwes_init"
+            dicBase[sTaskName.upper()] = "wave_init"
 
             # ---wave prep
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "gwes_prep"
+            dicBase[sTaskName.upper()] = "wave_prep"
 
         # #   <!-- initial jobs -->
         if dicBase['RUN_INIT'].upper() == "FV3_COLD":
@@ -94,7 +97,12 @@ def config_tasknames(dicBase):
                 # ---wave_post
                 iTaskName_Num += 1
                 sTaskName = "taskname_{0}".format(iTaskName_Num)
-                dicBase[sTaskName.upper()] = "gwes_post"
+                dicBase[sTaskName.upper()] = "wave_post"
+
+                # ---wave_stat
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "wave_stat"
 
         # #    <!-- RUN_PRDGEN_GFS jobs -->
         if dicBase['RUN_PRDGEN_GFS'].upper()[0] == "Y":
@@ -153,6 +161,12 @@ def config_tasknames(dicBase):
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "gempak_meta"
+
+            if dicBase['cplwav'] == ".true.":
+                # ---wave_gempak
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "wave_gempak"
 
         # #    <!-- postsnd  Post Sound -->
         if dicBase['RUN_POSTSND'].upper()[0] == "Y":
@@ -842,7 +856,7 @@ def get_param_of_task(dicBase, taskname):
                         aerosol_init_type = dicBase['AEROSOL_INIT_TYPE']
                         gefs_cych = int(dicBase['INCYC'])
                         if aerosol_init_type == "warm":
-                            sDep += '\t'.join(textwrap.dedent("""
+                            sDep += '\n\t'.join(textwrap.dedent("""
                             <or>
                                 <not><cycleexistdep cycle_offset=\"-&INCYC;:00:00\"/></not>
                                 <and>
@@ -864,7 +878,7 @@ def get_param_of_task(dicBase, taskname):
 
                         elif aerosol_init_type == "cold":
                             # sDep += "\n\t<or>\n\t\t<not><cycleexistdep cycle_offset=\"-&INCYC;:00:00\"/></not>\n\t\t<taskdep task=\"{task}\" cycle_offset=\"-&INCYC;:00:00\"/>\n\t</or>".format(task=task)
-                            sDep += '\t'.join(textwrap.dedent("""
+                            sDep += '\n\t'.join(textwrap.dedent("""
                             <or>
                                 <not><cycleexistdep cycle_offset=\"-&INCYC;:00:00\"/></not>
                                 <and>
@@ -901,9 +915,9 @@ def get_param_of_task(dicBase, taskname):
 
                 if DoesTaskExist(dicBase, "copy_init"):
                     sDep += '\n\t<taskdep task="copy_init_#member#"/>'
-                if DoesTaskExist(dicBase, "gwes_prep"):  # Wave prep
-                    sDep += '\n\t<taskdep task="gwes_prep_#member#"/>'
-                    sDep += '\n\t<taskdep task="gwes_prep_c00"/>'
+                if DoesTaskExist(dicBase, "wave_prep"):  # Wave prep
+                    sDep += '\n\t<taskdep task="wave_prep_#member#"/>'
+                    sDep += '\n\t<taskdep task="wave_prep_c00"/>'
                 if sDep == '<and>':
                     sDep = ""
                 else:
@@ -1077,11 +1091,28 @@ def get_param_of_task(dicBase, taskname):
                 else:
                     sDep += '\n</and>'
 
-            if taskname.lower() in [ "keep_data_wave", "archive_wave" ]:                
-                if DoesTaskExist(dicBase, "gwes_post"):
-                    sDep = '<metataskdep metatask="gwes_post"/>'
+            if taskname.lower() in [ "wave_stat" ]:
+                if DoesTaskExist(dicBase, "wave_post"):
+                    sDep = '<metataskdep metatask="wave_post"/>'
                 else:
                     sDep = ""
+
+            if taskname.lower() in [ "wave_gempak" ]:
+                if DoesTaskExist(dicBase, "wave_post"):
+                    sDep = '<datadep><cyclestr>&DATA_DIR;/gefswave.@Y@m@d/@H/gridded/gefswave.t@Hz.#member#.global.0p25.f000.grib2</cyclestr></datadep>'
+                else:
+                    sDep = ""
+
+            if taskname.lower() in [ "keep_data_wave", "archive_wave" ]:
+                sDep = '<and>'
+                if DoesTaskExist(dicBase, "wave_stat"):
+                    sDep = '<taskdep task="wave_stat"/>'
+                if DoesTaskExist(dicBase, "wave_gempak"):
+                    sDep = '<metataskdep task="wave_gempak"/>'
+                if sDep == '<and>':
+                    sDep = ""
+                else:
+                    sDep += '\n</and>'
 
             # For keep_init
             if taskname.lower() == "keep_init":
@@ -1306,10 +1337,10 @@ def get_metatask_names(taskname=""):
     # prdgen
     metatask_names.append('prdgen_hr')
     metatask_names.append('prdgen_lr')
-    # gwes
-    metatask_names.append('gwes_prep')
-    metatask_names.append('gwes_post')
-    metatask_names.append('gwes_stats')
+    # wave
+    metatask_names.append('wave_prep')
+    metatask_names.append('wave_post')
+    metatask_names.append('wave_gempak')
     # postsnd
     metatask_names.append('postsnd')
 

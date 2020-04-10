@@ -1,0 +1,144 @@
+#!/bin/ksh -x
+
+########## config.wave ##########
+# Wave steps specific
+
+# Parameters that are common to all wave model steps
+
+# System and version
+export wave_sys_ver=v1.0.0
+
+# General runtime labels
+# export WAV_MOD_ID=${WAV_MOD_ID:-wave} # generic modID=wave valid for GFSv16 and beyond
+# COMPONENTwave stands for model component, in addition to NET/RUN for coupled systems
+export COMPONENTwave=${COMPONENTwave:-${RUN}wave}
+
+# In GFS/GDAS, restart files are generated/read from gdas runs
+# Can I use rCDUMP here????
+export COMPONENTRSTwave=${COMPONENTRSTwave:-$COMPONENTwave}
+
+# Grids for wave model
+export waveGRD='glo_15m ao_20m so_20m'
+export waveGRDN='1 2 3' # gridnumber for ww3_multi
+export waveGRDG='10 20 30' # gridgroup for ww3_multi
+
+# ESMF input grid
+export waveesmfGRD='glo_15mxt' # input grid
+
+# Grids for input fields
+export WAVEICE_DID=sice
+export WAVEICE_FID=icean_5m
+export WAVECUR_DID=
+export WAVECUR_FID=
+export WAVEWND_DID=
+export WAVEWND_FID=
+
+# Grids for output fields
+export waveuoutpGRD=points
+export waveinterpGRD='glo_15mxt' # Grids that need to be interpolated from native
+                             # in POST will generate grib unless gribOK not set
+export wavesbsGRD=''  # side-by-side grids generated as wave model runs, writes to com
+export wavepostGRD='' # Native grids that will be post-processed (grib2)
+
+# CDATE
+export CDATE=${PDY}${cyc}
+
+# The start time reflects the number of hindcast hours prior to the cycle initial time
+if [ "$CDUMP" = "gdas" ]
+then
+  export FHMAX_WAV=${FHMAX_WAV:-9}
+fi
+export WAVHINDH=${WAVHINDH:-0}
+export FHMIN_WAV=${FHMIN_WAV:-0}
+export FHOUT_WAV=${FHOUT_WAV:-6}
+export FHMAX_WAV=${FHMAX_WAV:-384}
+export FHMAX_HF_WAV=${FHMAX_HF_WAV:-240}
+export FHOUT_HF_WAV=${FHOUT_HF_WAV:-3}
+
+# Output stride
+export WAV_WND_HOUR_INC=1      # This value should match with the one used in
+                         # the wind update script
+# gridded and point output rate
+export DTFLD_WAV=$(( $FHOUT_HF_WAV * 3600 ))
+export DTPNT_WAV=${DTPNT_WAV:-3600}
+export FHINCP_WAV=$(( $DTPNT_WAV / 3600 ))
+
+# Selected output parameters (gridded)
+export OUTPARS_WAV="WND ICE HS T01 T02 DIR FP DP PHS PTP PDIR"
+# GFS # export OUTPARS_WAV='WND CUR ICE HS T01 T02 DIR FP DP PHS PTP PDIR CHAR'
+
+# Options for output control
+export DOIBP_WAV='NO'
+export DOFLD_WAV='YES' # Field data
+export DOPNT_WAV='YES' # Station data
+export DOGRB_WAV='YES' # Create grib2 files
+export DOGRI_WAV='YES' # Create interpolated grids
+export DOSPC_WAV='YES' # Spectral post
+export DOBLL_WAV='YES' # Bulletin post
+
+# Intake currents settings
+export WAV_CUR_DT=${WAV_CUR_DT:-3}
+export WAV_CUR_HF_DT=${WAV_CUR_HF_DT:-1}
+export WAV_CUR_HF_FH=${WAV_CUR_HF_FH:-72}
+export WAV_CUR_CDO_SMOOTH="NO"
+
+# Number of cycles to look back for restart files
+export nback=
+
+# Restart file config
+if [ $RUN = gefs ]
+then
+  gfs_cyc=`expr 24 / ${gefs_cych}`
+  WAVNCYC=$gfs_cyc
+  WAVHCYC=$gefs_cych
+elif [ "$CDUMP" = "gdas" ]
+then
+  WAVNCYC=4
+  WAVHCYC=6
+  FHMAX_WAV_CUR=${FHMAX_WAV_CUR:-48} # RTOFS forecasts only out to 8 days
+elif [ ${gfs_cyc} -ne 0 ]
+then 
+  FHMAX_WAV_CUR=${FHMAX_WAV_CUR:-192} # RTOFS forecasts only out to 8 days
+  WAVHCYC=`expr 24 / ${gfs_cyc}`
+else
+  WAVHCYC=0
+  FHMAX_WAV_CUR=${FHMAX_WAV_CUR:-192} # RTOFS forecasts only out to 8 days
+fi
+export gfs_cyc FHMAX_WAV_CUR WAVHCYC WAVNCYC
+
+# Restart timing business
+export RSTTYPE_WAV='T' # generate second tier of restart files
+export DT_1_RST_WAV=$(( 3600 * $gefs_cych )) # time between restart files
+export DT_2_RST_WAV=${restart_interval:-172800}  # restart stride for checkpointing restart
+export RSTIOFF_WAV=0 # first restart file offset relative to model start
+export RST2IOFF_WAV=0 # 2nd restart file offset relative to model start
+#
+# Set runmember to default value if not GEFS cpl run
+#  (for a GFS coupled run, RUNMEN would be unset, this should default to -1)
+export RUNMEM=${RUNMEM:--1}
+# Set wave model member tags if ensemble run
+# -1: no suffix, deterministic; xxxNN: extract two last digits to make ofilename prefix=gwesNN
+if [ $RUNMEM = -1 ]; then
+# No suffix added to model ID in case of deterministic run
+  export waveMEMB=
+else
+# Extract member number only
+  export waveMEMB=`echo $RUNMEM | grep -o '..$'`
+fi
+
+# Determine if wave component needs input and/or is coupled
+export WW3ATMINP='CPL'
+export WW3ICEINP='YES'
+export WW3CURINP='NO'
+
+if [ "${WW3ICEINP}" = "YES" ]; then
+  export WAVICEPRFX='gfs'
+  export WAVICEFILE=${WAVICEPRFX}.t${cyc}z.seaice.5min.grib2
+fi
+
+# Determine if input is from perturbed ensemble (T) or single input file (F) for all members
+export WW3ATMIENS='F'
+export WW3ICEIENS='F'
+export WW3CURIENS='F'
+
+echo "END: config.waveprep"

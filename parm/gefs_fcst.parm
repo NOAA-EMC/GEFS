@@ -146,15 +146,11 @@ if [[ $cplchm = ".true." ]]; then
 		export CALCINCEXEC=${CALCINCEXEC:-$HOMEgfs/exec/calc_increment_ens_gsdchem.x}
 	fi
 
-	# TODO Copy data to a fix_aerosol
-	export EMIDIR=${EMIDIR:-/gpfs/dell2/emc/modeling/noscrub/Li.Pan/emi_}
-
 	export DIAG_TABLE=${DIAG_TABLE:-$HOMEgfs/parm/parm_fv3diag/chm_diag_table}
 
 	export lgfdlmprad=".true."
 	export effr_in=".true."
 	export USE_COUPLER_RES="YES"
-
 fi
 
 #gfs_physics

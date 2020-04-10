@@ -1,0 +1,134 @@
+#!/bin/bash
+
+date
+export PS4=' $SECONDS + '
+set -x -e
+
+####################################
+# obtain unique process id (pid) and make temp directory
+####################################
+export pid=$$
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+mkdir -p $DATA
+mkdir $DATA/INPUT
+cd $DATA
+
+############################
+# Set up cycle varaible
+############################
+export cycle=t${cyc}z
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gens}
+export RUN=${RUN:-gefs}
+export COMPONENTwave=${COMPONENTwave:-${RUN}wave}
+#export NTHREADS=1
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+# Specify Execution Areas
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
+export EXECgfs=$HOMEgfs/exec
+export USHgfs=$HOMEgfs/ush
+export FIXgfs=$HOMEgfs/fix
+export PARMgfs=$HOMEgfs/parm
+
+# Path to HOME Directory
+export EXECwave=${EXECwave:-$HOMEgefs/exec}
+export FIXwave=${FIXwave:-$HOMEgefs/fix/fix_wave}
+export USHwave=${USHwave:-$HOMEgfs/ush}
+export EXECcode=${EXECcode:-$HOMEgfs/exec}
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+# Set COM Paths and GETGES environment
+export COMINwave=${COMINwave:-${COMROOT:?}/${NET}/${envir}}
+export COMOUTwave=${COMOUTwave:-${COMROOT:?}/${NET}/${envir}}
+export COMIN=${COMIN:-${COMINwave}/${COMPONENTwave}.${PDY}/${cyc}}
+export COMOUT=${COMOUT:-${COMOUTwave}/${COMPONENTwave}.${PDY}/${cyc}}
+
+#############################
+# Source relevant config files
+#############################
+configs="gefs gefs_wave gefs_wave_init"
+config_path=${PARMgefs:-$NWROOT/gfs.${gfs_ver}/parm/config}
+for config in $configs; do
+    . $config_path/$config.parm
+    status=$?
+    [[ $status -ne 0 ]] && exit $status
+done
+
+##########################################
+# Source machine runtime environment
+##########################################
+. $HOMEgfs/env/${machine}.env waveinit
+status=$?
+[[ $status -ne 0 ]] && exit $status
+
+# Add default errchk = err_chk
+export errchk=${errchk:-err_chk}
+
+# Create and go to DATA directory
+export DATA=${DATA:-${DATAROOT:?}/${jobid}}
+mkdir -p $DATA
+cd $DATA
+
+cyc=${cyc:-00}
+export cycle=${cycle:-t${cyc}z}
+ 
+# Set PDY
+setpdy.sh
+sh ./PDY
+
+export pgmout=OUTPUT.$$
+
+export MP_PULSE=0
+
+# Set resources to propagate NTASKS across cfp call
+NTASKS=${NTASKS:-${npe_node_waveinit}}
+export NTASKS=${NTASKS:?NTASKS required to be set}
+
+[[ ! -d $COMOUT ]] && mkdir -m 775 -p $COMOUT
+
+if [ $SENDCOM = YES ]; then
+  mkdir -p $COMOUT/rundata
+fi
+
+export wavelog=${COMOUTwave}/wave.log
+
+# Set mpi serial command
+export wavempexec=${wavempexec:-"mpirun -n"}
+export wave_mpmd=${wave_mpmd:-"cfp"}
+
+# Execute the Script  
+$HOMEwave/scripts/exwave_init.sh
+
+# Remove temp directories
+if [ "$KEEPDATA" != "YES" ]; then
+  cd $DATAROOT
+  rm -rf $DATA
+fi
+date
+
