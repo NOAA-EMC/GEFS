@@ -158,6 +158,15 @@ if [[ -d global-workflow.fd ]]; then
     for sFile in $lUsh; do
         $LINK ../sorc/global-workflow.fd/ush/$sFile ../ush/
     done
+
+    if [[ -e ../env ]]; then
+        if [[ -L ../env ]]; then
+            rm ../env
+            $LINK sorc/global-workflow.fd/env ../
+        fi
+    else
+        $LINK sorc/global-workflow.fd/env ../
+    fi
 fi
 
 # for CHEM
