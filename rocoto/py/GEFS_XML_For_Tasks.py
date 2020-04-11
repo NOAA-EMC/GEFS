@@ -327,10 +327,10 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
             strings += sPre_2 + '<nodes>{0}</nodes>\n'.format(sNodes)
         
         if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]: #, "cray".upper()]:
-            if taskname in ["prdgen_hr"]:
-                if sQueue.endswith("_shared"):
-                    strings += sPre_2 + '<native>-R "affinity[core(4):distribute=pack]"</native>\n'
-                    strings += sPre_2 + '<native>-R "rusage[mem=4608]"</native>\n'
+            #if taskname in ["prdgen_hr", "ensstat_hr", "wave_gempak"]:
+            if sQueue.endswith("_shared"):
+                strings += sPre_2 + '<native>-R "affinity[core(4):distribute=pack]"</native>\n'
+                strings += sPre_2 + '<native>-R "rusage[mem=4608]"</native>\n'
 
     # -------------------sNodes-------------------
 
