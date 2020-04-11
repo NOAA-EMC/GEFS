@@ -226,23 +226,26 @@ for stream in ${PRDGEN_STREAMS[@]}; do
 	if [ ! -d ${subdata} ]; then
 		mkdir -p ${subdata};
 	fi
+	infile=${subdata}/${stream}.in
 	outfile=${subdata}/${stream}.out
 
-	jobgrid="${PRDGEN_GRID[$stream]}"
-	grid_spec="${PRDGEN_GRID_SPEC[$stream]}"
-	hours="${PRDGEN_HOURS[$stream]}"
-	submc="${PRDGEN_SUBMC[$stream]}"
-	pgad="${PRDGEN_A_DIR[$stream]}"
-	pgapre="${PRDGEN_A_PREFIX[$stream]}"
-	parmlist_a00=$PARMgefs/${PRDGEN_A_LIST_F00[$stream]}
-	parmlist_ahh=$PARMgefs/${PRDGEN_A_LIST_FHH[$stream]}
-	pgbd="${PRDGEN_B_DIR[$stream]}"
-	pgbpre="${PRDGEN_B_PREFIX[$stream]}"
-	parmlist_b00=$PARMgefs/${PRDGEN_B_LIST_F00[$stream]}
-	parmlist_bhh=$PARMgefs/${PRDGEN_B_LIST_FHH[$stream]}
-	do_analysis="${PRDGEN_DO_ANALYSIS[$stream]:-NO}"
+	cat > ${infile} <<-EOF
+		jobgrid="${PRDGEN_GRID[$stream]}"
+		grid_spec="${PRDGEN_GRID_SPEC[$stream]}"
+		hours="${PRDGEN_HOURS[$stream]}"
+		submc="${PRDGEN_SUBMC[$stream]}"
+		pgad="${PRDGEN_A_DIR[$stream]}"
+		pgapre="${PRDGEN_A_PREFIX[$stream]}"
+		parmlist_a00=$PARMgefs/${PRDGEN_A_LIST_F00[$stream]}
+		parmlist_ahh=$PARMgefs/${PRDGEN_A_LIST_FHH[$stream]}
+		pgbd="${PRDGEN_B_DIR[$stream]}"
+		pgbpre="${PRDGEN_B_PREFIX[$stream]}"
+		parmlist_b00=$PARMgefs/${PRDGEN_B_LIST_F00[$stream]}
+		parmlist_bhh=$PARMgefs/${PRDGEN_B_LIST_FHH[$stream]}
+		do_analysis="${PRDGEN_DO_ANALYSIS[$stream]:-NO}"
+	EOF
 
-	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf $subdata \"$stream\" \"$jobgrid\" \"$grid_spec\" \"$hours\" \"$submc\" \"$pgad\" \"$pgapre\" \"$parmlist_a00\" \"$parmlist_ahh\" \"$pgbd\" \"$pgbpre\" \"$parmlist_b00\" \"$parmlist_bhh\" \"$do_analysis\" 2>&1 >${outfile}" >> prdgen.cmdfile
+	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf $subdata \"$infile\" 2>&1 >${outfile}" >> prdgen.cmdfile
 
 done
 

@@ -31,22 +31,25 @@ echo fcstlong=$fcstlong
 echo cycsuffix=$cycsuffix
 
 export jobdir="${1}"                   # ${DATA}/${stream}
-export stream="${2}"                   # PRDGEN_STREAMS
-export jobgrid="${3}"                  # PRDGEN_GRID[$stream]
-export grid_spec="${4}"                # PRDGEN_GRID_SPEC[$stream]
-typeset -a hours="${5}"                # PRDGEN_HOURS[$stream]
-export submc="${6}"                    # PRDGEN_SUBMC[$stream]
-export pgad="${7}"                     # PRDGEN_A_DIR[$stream]
-export pgapre="${8}"                   # PRDGEN_A_PREFIX[$stream]
-export parmlist_a00="${9}"             # PRDGEN_A_LIST_F00[$stream]
-export parmlist_ahh="${10}"            # PRDGEN_A_LIST_FHH[$stream]
-export pgbd="${11}"                    # PRDGEN_B_DIR[$stream]
-export pgbpre="${12}"                  # PRDGEN_B_PREFIX[$stream]
-export parmlist_b00="${13}"             # PRDGEN_B_LIST_F00[$stream]
-export parmlist_bhh="${14}"            # PRDGEN_B_LIST_FHH[$stream]
-export do_analysis="${15}"             # PRDGEN_DO_ANALYSIS[$stream]
+export infile="${2}"                   # ${DATA}/${stream}/${stream}.in
 
-# mem=$(echo $RUNMEM|cut -c3-5)
+. ${infile}
+
+# Input file:
+# stream=                   # PRDGEN_STREAMS
+# jobgrid=                  # PRDGEN_GRID[$stream]
+# grid_spec=                # PRDGEN_GRID_SPEC[$stream]
+# hours=                    # PRDGEN_HOURS[$stream]
+# submc=                    # PRDGEN_SUBMC[$stream]
+# pgad=                     # PRDGEN_A_DIR[$stream]
+# pgapre=                   # PRDGEN_A_PREFIX[$stream]
+# parmlist_a00=             # PRDGEN_A_LIST_F00[$stream]
+# parmlist_ahh=             # PRDGEN_A_LIST_FHH[$stream]
+# pgbd=                     # PRDGEN_B_DIR[$stream]
+# pgbpre=                   # PRDGEN_B_PREFIX[$stream]
+# parmlist_b00=             # PRDGEN_B_LIST_F00[$stream]
+# parmlist_bhh=             # PRDGEN_B_LIST_FHH[$stream]
+# do_analysis=              # PRDGEN_DO_ANALYSIS[$stream]
 
 cat <<-EOF
 	Settings for $0:
