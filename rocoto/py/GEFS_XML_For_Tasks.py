@@ -93,6 +93,11 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "ensstat_hr"
 
+            # ---enspost_hr
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "enspost_hr"
+
             if dicBase['cplwav'] == ".true.":
                 # ---wave_post
                 iTaskName_Num += 1
@@ -132,6 +137,11 @@ def config_tasknames(dicBase):
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "ensstat_lr"
+
+            # ---enspost_lr
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "enspost_lr"
 
         # #    <!-- gempak jobs -->
         if dicBase['RUN_GEMPAK'].upper()[0] == "Y":
@@ -192,11 +202,6 @@ def config_tasknames(dicBase):
 
         # #    <!-- other jobs -->
         if dicBase['RUN_OTHERS'].upper()[0] == "Y":
-            # ---enspost
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "enspost"
-            
             # ---cqpf
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
@@ -360,7 +365,10 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
         if taskname in metatask_names:
             strings += ""
         else:
-            strings += sPre_2 + "<native>-R 'affinity[core(1)]'</native>\n"
+            if sQueue.endswith("_shared") and taskname in ['ensstat_hr', 'enspost_hr', 'ensstat_lr', 'enspost_lr']:
+                strings += ""
+            else:
+                strings += sPre_2 + "<native>-R 'affinity[core(1)]'</native>\n"
     else:
         strings += sPre_2 + '<native>-extsched "CRAYLINUX[]"</native>\n'
     # -------------------Native-------------------
@@ -392,10 +400,10 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
 
     ## For FORECAST_SEGMENT
-    if (taskname in ['forecast_hr', 'prdgen_hr', 'post_hr', 'ensstat_hr', 'forecast_aerosol', 'post_aerosol', 'prdgen_aerosol']) \
+    if (taskname in ['forecast_hr', 'prdgen_hr', 'post_hr', 'ensstat_hr', 'enspost_hr', 'forecast_aerosol', 'post_aerosol', 'prdgen_aerosol']) \
      or taskname.startswith("post_hr_") or taskname.startswith('post_aerosol_'):
         strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
-    elif taskname in ['forecast_lr', 'prdgen_lr', 'post_lr', 'ensstat_lr']:
+    elif taskname in ['forecast_lr', 'prdgen_lr', 'post_lr', 'ensstat_lr', 'enspost_lr']:
         strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
 	
     ## For SUBJOB
@@ -430,6 +438,11 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("ensstat_hr", sPRE)
         else:
             strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("ensstat_hr", sPRE)
+    elif taskname in ['enspost_hr', 'enspost_lr']:
+        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
+            strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("enspost", sPRE)
+        else:
+            strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("enspost", sPRE)
     elif taskname.startswith("post_hr_"):
         strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("post_hr", sPRE)
     elif taskname.startswith("ensavg_nemsio_"):
@@ -792,7 +805,7 @@ def get_param_of_task(dicBase, taskname):
                 ppn = len(dicBase["PRDGEN_STREAMS"].split())
             # print(ppn)
         elif taskname.lower() in ["prdgen_lr", "ensstat_lr"]:
-            ppn = 3
+            ppn = 2
 
         if sNodes != "":
             sNodes += ":ppn={0}".format(ppn)
@@ -1023,14 +1036,11 @@ def get_param_of_task(dicBase, taskname):
                     start_hr_lr = fhmaxh + FHOUTHF
                 sDep = dicBase[sVarName].replace("fXXX", "f{0:03d}".format(start_hr_lr))
 
-            # For 'enspost' task
-            if taskname.lower() == "enspost":
+            
+             # For 'enspost_hr' task
+            if taskname.lower() == "enspost_hr":
                 sDep = '<and>'
-                if DoesTaskExist(dicBase, "prdgen_lr"):
-                    sDep += '\n\t<metataskdep metatask="prdgen_lr"/>'
-                    if DoesTaskExist(dicBase, "prdgen_gfs"):
-                        sDep += '\n\t<taskdep task="prdgen_gfs"/>'
-                elif DoesTaskExist(dicBase, "prdgen_hr"):
+                if DoesTaskExist(dicBase, "prdgen_hr"):
                     sDep += '\n\t<metataskdep metatask="prdgen_hr"/>'
                     if DoesTaskExist(dicBase, "prdgen_gfs"):
                         sDep += '\n\t<taskdep task="prdgen_gfs"/>'
@@ -1040,19 +1050,33 @@ def get_param_of_task(dicBase, taskname):
                 else:
                     sDep += '\n</and>'
 
+            # For 'enspost_lr' task
+            if taskname.lower() == "enspost_lr":
+                if DoesTaskExist(dicBase, "prdgen_lr"):
+                    sDep = '\n\t<metataskdep metatask="prdgen_lr"/>'
+                else:
+                    sDep = ''
+
             # For "cqpf" task
             if taskname.lower() == "cqpf":
-                if DoesTaskExist(dicBase, "enspost"):
-                    sDep = '<taskdep task="enspost"/>'
+                sDep = '<and>'
+                if DoesTaskExist(dicBase, "enspost_hr"):
+                    sDep += '<taskdep task="enspost_hr"/>'
+                if DoesTaskExist(dicBase, "enspost_lr"):
+                    sDep += '<taskdep task="enspost_lr"/>'
+ 
+                if sDep == '<and>':
+                     sDep = ""
                 else:
-                    sDep = ""
-                
+                    sDep += '\n</and>'
 
             # For 'keep_data_atm' and 'archive_atm' tasks
             if taskname.lower() == "keep_data_atm" or taskname.lower() == "archive_atm":
                 sDep = '<and>'
-                if DoesTaskExist(dicBase, "enspost"):
-                    sDep += '\n\t<taskdep task="enspost"/>'
+                if DoesTaskExist(dicBase, "enspost_hr"):
+                    sDep += '\n\t<taskdep task="enspost_hr"/>'
+                if DoesTaskExist(dicBase, "enspost_lr"):
+                    sDep += '\n\t<taskdep task="enspost_lr"/>'
                 if DoesTaskExist(dicBase, "cqpf"):
                     sDep += '\n\t<taskdep task="cqpf"/>'
                 if DoesTaskExist(dicBase, "post_track"):

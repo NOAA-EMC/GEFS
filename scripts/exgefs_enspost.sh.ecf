@@ -82,11 +82,17 @@ if test "$SENDCOM" = 'YES'; then
 	done # for file in enspost${ext_h} ensstat${ext_h}
 fi # test "$SENDCOM" = 'YES'
 
-memberlist="gfs c00"
-#DHOU 04/19/2012 Add this block to avoid gfs for "dev" jobs
-if [[ $envir = dev ]]; then
-	memberlist="c00"
+if [[ ${FORECAST_SEGMENT} == hr ]]; then
+    memberlist="gfs c00"
+else
+    memberlist="c00"
 fi
+
+#memberlist="gfs c00"
+#DHOU 04/19/2012 Add this block to avoid gfs for "dev" jobs
+#if [[ $envir = dev ]]; then
+#	memberlist="c00"
+#fi
 
 (( imem = 0 ))
 while (( imem < npert )); do
