@@ -21,7 +21,8 @@ init_file_pattern = "{path}/{kind}.{tile}.nc"
 increment_file_pattern = "{path}/fv3_increment.nc"
 restart_dest_pattern = "{path}/RESTART/{filename}"
 
-restart_base_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/restart/{member}"  # Time of previous run
+#restart_base_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/restart/{member}"  # Time of previous run
+restart_base_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/chem/restart/{member}"  # Time of previous run
 restart_file_pattern = "{restart_base}/%Y%m%d.%H0000.{kind}.{tile}.nc"        # Time when restart is valid (current run)
 restart_core_res_file_pattern = "{restart_base}/%Y%m%d.%H0000.coupler.res"        # Time when restart is valid (current run)
 restart_coupler_file_pattern = "{restart_base}/%Y%m%d.%H0000.fv_core.res.nc"        # Time when restart is valid (current run)
@@ -33,7 +34,8 @@ analysis_file_pattern = "{com_gfs}/gfs.t%Hz.atmanl.nemsio"
 fcst_file_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/sfcsig/ge{member}.t%Hz.atmf{forecast_hour:03}.nemsio"
 vert_coord_file_pattern = "{fix_gfs}/fix_am/global_hyblev.l{n_levels}.txt"
 
-com_base_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/init/{member}"
+#com_base_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/init/{member}"
+com_base_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/chem/init/{member}"
 max_lookback = 1
 
 regrid_namelist = cleandoc("""

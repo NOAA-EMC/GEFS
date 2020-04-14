@@ -9,6 +9,7 @@ date
 export APRUN_CALCINC=${APRUN_CALCINC:-"mpirun -n 1"}
 export APRUN_CHGRES=${APRUN_CHGRES:-"mpirun -n 1"}
 
+export COMPONENT=chem
 ####################################
 # obtain unique process id (pid) and make working directory
 ####################################
@@ -86,12 +87,14 @@ echo "set parameters using gefs.parm"
 ##############################################
 # Define COM OUT directories
 ##############################################
-export COMIN=${COMIN:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}}
 export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/$cyc}
-export COMOUT=${COMOUT:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}}
+export COMIN=${COMIN:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}}/$cyc/atmos/init
+export COMOUT=${COMOUT:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}}/$cyc/$COMPONENT/init
 export GESIN=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
 ICSDIR_template=${ICSDIR_template:-$GESIN/$mem}
 ICSDIR=$(eval echo $ICSDIR_template)
+
+mkdir -p $COMOUT
 
 export gefs_cych=${gefs_cych:-6}
 
