@@ -64,10 +64,8 @@ setpdy.sh
 . PDY
 
 # Set COM Paths and GETGES environment
-export COMINwave=${COMINwave:-${COMROOT:?}/${NET}/${envir}}
-export COMOUTwave=${COMOUTwave:-${COMROOT:?}/${NET}/${envir}}
-export COMIN=${COMIN:-${COMINwave}/${COMPONENTwave}.${PDY}/${cyc}}
-export COMOUT=${COMOUT:-${COMOUTwave}/${COMPONENTwave}.${PDY}/${cyc}}
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/wave
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/wave
 
 export CDUMP=$RUNMEM
 
