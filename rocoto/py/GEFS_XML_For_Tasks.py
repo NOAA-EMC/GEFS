@@ -860,16 +860,16 @@ def get_param_of_task(dicBase, taskname):
                             <or>
                                 <not><cycleexistdep cycle_offset=\"-&INCYC;:00:00\"/></not>
                                 <and>
-                                    <datadep><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/sfcsig/geaer.t@Hz.logf{gefs_cych:03}.nemsio</cyclestr></datadep>
-                                    <datadep minsize="670M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/sfcsig/geaer.t@Hz.atmf{gefs_cych:03}.nemsio</cyclestr></datadep>
-                                    <datadep age="60"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.coupler.res</cyclestr></datadep>
-                                    <datadep age="60"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_core.res.nc</cyclestr></datadep>
+                                    <datadep><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/chem/sfcsig/geaer.t@Hz.logf{gefs_cych:03}.nemsio</cyclestr></datadep>
+                                    <datadep minsize="670M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/chem/sfcsig/geaer.t@Hz.atmf{gefs_cych:03}.nemsio</cyclestr></datadep>
+                                    <datadep age="60"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/chem/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.coupler.res</cyclestr></datadep>
+                                    <datadep age="60"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/chem/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_core.res.nc</cyclestr></datadep>
                             """.format(gefs_cych=gefs_cych)).splitlines(True))
 
                             for kind in ["fv_tracer.res", "fv_core.res", "fv_srf_wnd.res", "phy_data", "sfc_data"]:
                                 for tile in map(lambda t: "tile" + str(t), range(1, 7)):
                                     sDep += '\t\t\t'.join(textwrap.dedent("""
-                                    <datadep age="60"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.{kind}.{tile}.nc</cyclestr></datadep>""".format(kind=kind, tile=tile)).splitlines(True))
+                                    <datadep age="60"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/chem/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.{kind}.{tile}.nc</cyclestr></datadep>""".format(kind=kind, tile=tile)).splitlines(True))
 
                             sDep += '\t'.join(textwrap.dedent("""
                                 </and>
@@ -882,12 +882,12 @@ def get_param_of_task(dicBase, taskname):
                             <or>
                                 <not><cycleexistdep cycle_offset=\"-&INCYC;:00:00\"/></not>
                                 <and>
-                                    <datadep age="60" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile1.nc</cyclestr></datadep>
-                                    <datadep age="60" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile2.nc</cyclestr></datadep>
-                                    <datadep age="60" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile3.nc</cyclestr></datadep>
-                                    <datadep age="60" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile4.nc</cyclestr></datadep>
-                                    <datadep age="60" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile5.nc</cyclestr></datadep>
-                                    <datadep age="60" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile6.nc</cyclestr></datadep>
+                                    <datadep age="60" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/chem/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile1.nc</cyclestr></datadep>
+                                    <datadep age="60" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/chem/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile2.nc</cyclestr></datadep>
+                                    <datadep age="60" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/chem/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile3.nc</cyclestr></datadep>
+                                    <datadep age="60" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/chem/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile4.nc</cyclestr></datadep>
+                                    <datadep age="60" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/chem/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile5.nc</cyclestr></datadep>
+                                    <datadep age="60" minsize="1000M"><cyclestr offset=\"-&INCYC;:00:00\">&DATA_DIR;/gefs.@Y@m@d/@H/chem/restart/aer/</cyclestr><cyclestr>@Y@m@d.@H@M@S.fv_tracer.res.tile6.nc</cyclestr></datadep>
                                 </and>
                             </or>""").splitlines(True))
                         else:
@@ -968,8 +968,8 @@ def get_param_of_task(dicBase, taskname):
                 npert = int(dicBase["NPERT"])
                 sDep = '<and>'
                 for i in range(npert):
-                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/sfcsig/gep{0:02}.t@Hz.logf000.nemsio</cyclestr></datadep>'.format(i + 1)
-                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/sfcsig/gec00.t@Hz.logf000.nemsio</cyclestr></datadep>'
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/sfcsig/gep{0:02}.t@Hz.logf000.nemsio</cyclestr></datadep>'.format(i + 1)
+                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/sfcsig/gec00.t@Hz.logf000.nemsio</cyclestr></datadep>'
                 sDep += '\n</and>'
 
             # For ensstat_hr
@@ -977,8 +977,8 @@ def get_param_of_task(dicBase, taskname):
                 npert = int(dicBase["NPERT"])
                 sDep = '<and>'
                 for i in range(npert):
-                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gep{0:02}.t@Hz.prdgen.control.f000</cyclestr></datadep>'.format(i + 1)
-                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gec00.t@Hz.prdgen.control.f000</cyclestr></datadep>'
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/misc/prd0p5/gep{0:02}.t@Hz.prdgen.control.f000</cyclestr></datadep>'.format(i + 1)
+                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/misc/prd0p5/gec00.t@Hz.prdgen.control.f000</cyclestr></datadep>'
                 sDep += '\n</and>'
 
             # For ensstat_lr
@@ -997,8 +997,8 @@ def get_param_of_task(dicBase, taskname):
                     iStartHourLF = ifhmaxh + iFHOUTLF
 
                 for i in range(npert):
-                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gep{0:02}.t@Hz.prdgen.control.f{1:03}</cyclestr></datadep>'.format(i + 1, iStartHourLF)
-                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gec00.t@Hz.prdgen.control.f{0:03}</cyclestr></datadep>'.format(iStartHourLF)
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/misc/prd0p5/gep{0:02}.t@Hz.prdgen.control.f{1:03}</cyclestr></datadep>'.format(i + 1, iStartHourLF)
+                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/misc/prd0p5/gec00.t@Hz.prdgen.control.f{0:03}</cyclestr></datadep>'.format(iStartHourLF)
                 sDep += '\n</and>'
 
             # For extractvars
@@ -1099,7 +1099,7 @@ def get_param_of_task(dicBase, taskname):
 
             if taskname.lower() in [ "wave_gempak" ]:
                 if DoesTaskExist(dicBase, "wave_post"):
-                    sDep = '<datadep><cyclestr>&DATA_DIR;/gefswave.@Y@m@d/@H/gridded/gefswave.t@Hz.#member#.global.0p25.f000.grib2</cyclestr></datadep>'
+                    sDep = '<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/wave/gridded/gefswave.t@Hz.#member#.global.0p25.f000.grib2</cyclestr></datadep>'
                 else:
                     sDep = ""
 
