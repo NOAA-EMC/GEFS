@@ -112,10 +112,13 @@ setpdy.sh
 . PDY
 
 # Set COM Paths and GETGES environment
-export COMINwave=${COMINwave:-${COMROOT:?}/${NET}/${envir}}
-export COMOUTwave=${COMOUTwave:-${COMROOT:?}/${NET}/${envir}}
-export COMIN=${COMIN:-${COMINwave}/${COMPONENTwave}.${PDY}/${cyc}}
-export COMOUT=${COMOUT:-${COMOUTwave}/${COMPONENTwave}.${PDY}/${cyc}}
+export GESIN=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
+export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc
+export SSTDIR=${SSTDIR:-$COMIN/atmos/cfssst}
+export COMINWW3=${COMINWW3:-${COMIN}/wave}
+export COMOUTWW3=${COMOUTWW3:-${COMIN}/wave}
 
 #Names used in exglobal_fv3.sh
 export FIX_DIR=$FIXgfs
@@ -143,26 +146,6 @@ fi # [[ $FORECAST_SEGMENT = hr ]]
 
 echo FORECAST_SEGMENT = $FORECAST_SEGMENT
 
-export GESIN=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
-export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export SSTDIR=${SSTDIR:-$COMIN/${cyc}/cfssst}
-
-export memdir=$GESIN/$mem
-export gmemdir=$GESIN/$mem
-export ICSDIR=$GESIN/$mem
-export FCSTDIR=$COMOUT/$cyc/sfcsig
-export RSTDIR=$GESIN/$mem/RESTART
-export RSTDIR_TMP=$RSTDIR
-
-mkdir -m 775 -p $COMOUT/$cyc/sfcsig
-mkdir -m 775 -p $COMOUT/$cyc/restart/$mem
-
-mkdir -m 755 -p $GESIN/$mem/RESTART
-
-#ln -s $GESOUT/$mem/RESTART $DATA/RESTART
-
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
 
@@ -171,6 +154,23 @@ echo set parameters using gefs.parm
 ##############################################
 . $PARMgefs/gefs.parm
 . $PARMwave/gefs_wave.parm
+
+if [[ $cplchm = ".true." ]]; then
+	COMPONENT="chem"
+fi
+export COMPONENT=${COMPONENT:-atmos}
+
+export memdir=$GESIN/$mem
+export gmemdir=$GESIN/$mem
+export ICSDIR=$GESIN/$mem
+export FCSTDIR=$COMOUT/$COMPONENT/sfcsig
+export RSTDIR=$GESIN/$mem/RESTART
+export RSTDIR_TMP=$RSTDIR
+
+mkdir -m 775 -p $FCSTDIR
+mkdir -m 775 -p $COMOUT/$COMPONENT/restart/$mem
+
+mkdir -m 755 -p $GESIN/$mem/RESTART
 
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
@@ -351,43 +351,13 @@ export CDATE=$PDY$cyc
 export rCDUMP=$RUNMEM
 export CDUMP=$RUNMEM
 
-LINK=NO   # link is done in the $FORECAST script
-if [ $LINK = "YES" ]; then
-	if [ $OUTPUT_GRID = "gaussian_grid" ]; then
-		# Link output files
-		hr=$FHINI
-		while (( hr < FHMAX_HF )); do
-			fhr=$(printf "%03.0f" $hr)
-			ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $DATA/$CDUMP.${cycle}.atmf$fhr.nemsio
-			ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $DATA/$CDUMP.${cycle}.sfcf$fhr.nemsio
-			ln -s $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $DATA/$CDUMP.${cycle}.logf$fhr.nemsio
-			export hr=$(expr $hr + $FHOUT_HF)
-		done
-		while (( hr <= FHMAX )); do
-			fhr=$(printf "%03.0f" $hr)
-			ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $DATA/$CDUMP.${cycle}.atmf$fhr.nemsio
-			ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $DATA/$CDUMP.${cycle}.sfcf$fhr.nemsio
-			ln -s $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $DATA/$CDUMP.${cycle}.logf$fhr.nemsio
-			export hr=$(expr $hr + $FHOUT)
-		done
-	else
-		for n in `seq 1 $ntiles`; do
-			for file in atmos_4xdaily. atmos_static. fv3_history. fv3_history2d. grid_spec. nggps2d. nggps3d.; do
-				# ln -s $ROTDIR/$file\tile$n.nc $DATA/$file\tile$n.nc
-
-				# touch $SFCSIG/$mem/$file\tile$n.nc
-				# ln -s $SFCSIG/$mem/$file\tile$n.nc $memdir/$file\tile$n.nc
-				;
-			done
-		done
-	fi # [ $OUTPUT_GRID = "gaussian_grid" ]
-fi # $LINK
-
 if [[ $cplwav = ".true." ]]; then
-	# Settings for Wavewatch III
-	export COMINWW3=${COMINWW3:-${COMROOT:?}/${NET}/${envir}}
-	export COMOUTWW3=$COMROOT/${NET}/${envir}
-fi # [[ $cplwav = ".true." ]]
+	# Set location of wave restart from last cycle
+	last_date=$($NDATE -$WAVHCYC $CDATE)
+	last_PDY=$(echo $last_date | cut -c1-8)
+	last_cyc=$(echo $last_date | cut -c9-10)
+	export WRDIR=$COMROOT/${NET}/${envir}/${RUN}.${last_PDY}/$last_cyc/wave/restart
+fi
 
 if [[ $cplchm = ".true." ]]; then
 	CHEMIN=${CHEMIN:-$memdir/chem}
@@ -424,13 +394,13 @@ if [[ $cplchm = ".true." ]]; then
 	next_date=$($NDATE +$gefs_cych $CDATE)
 	next_PDY=$(echo $next_date | cut -c1-8)
 	next_cyc=$(echo $next_date | cut -c9-10)
-	last_rstdir=$COMOUT/$cyc/restart/$mem
+	COM_RSTDIR=$COMOUT/$COMPONENT/restart/$mem
 	if [[ ! -d $RSTDIR ]]; then mkdir -p $RSTDIR; fi
-	ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.coupler.res $RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res
-	ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.fv_core.res.nc $RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc
+	ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res $RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res
+	ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc $RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc
 	for kind in fv_tracer.res fv_core.res fv_srf_wnd.res phy_data sfc_data; do
 		for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
-			ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc $RSTDIR/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc
+			ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc $RSTDIR/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc
 		done
 	done
 
