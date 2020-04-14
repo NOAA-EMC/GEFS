@@ -351,6 +351,14 @@ export CDATE=$PDY$cyc
 export rCDUMP=$RUNMEM
 export CDUMP=$RUNMEM
 
+if [[ $cplwav = ".true." ]]; then
+	# Set location of wave restart from last cycle
+	last_date=$($NDATE -$WAVHCYC $CDATE)
+	last_PDY=$(echo $last_date | cut -c1-8)
+	last_cyc=$(echo $last_date | cut -c9-10)
+	export WRDIR=$COMROOT/${NET}/${envir}/${RUN}.${last_PDY}/$last_cyc/wave/restart
+fi
+
 if [[ $cplchm = ".true." ]]; then
 	CHEMIN=${CHEMIN:-$memdir/chem}
 	if [[ ! -d $CHEMIN ]]; then
