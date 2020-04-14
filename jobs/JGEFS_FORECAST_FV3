@@ -99,7 +99,6 @@ export PARMwave=${PARMwave:-$HOMEgefs/parm}
 export CODEwave=${CODEwave:-${HOMEgfs}/WW3/model}
 export EXECwave=${EXECwave:-$HOMEwave/exec}
 export FIXwave=${FIXwave:-$FIXgefs/fix_wave}
-export PARMwave=${PARMwave:-$HOMEwave/parm/wave}
 export USHwave=${USHwave:-$HOMEwave/ush}
 export EXECcode=${EXECcode:-$CODEwave/exe}
 
@@ -153,6 +152,7 @@ export LOGSCRIPT=startmsg
 echo set parameters using gefs.parm
 ##############################################
 . $PARMgefs/gefs.parm
+. $PARMgefs/gefs_fcst.parm
 . $PARMwave/gefs_wave.parm
 
 if [[ $cplchm = ".true." ]]; then
@@ -221,16 +221,12 @@ export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 #
 # Forecast Input Variables
 #
-. $PARMgefs/gefs_fcst.parm
-export restart_interval=${restart_interval:-${fhrestart:-1000}}
 export fhstoch=$restart_interval
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 	(( FHMAX = FHMAX + 1 ))
 fi
 
-export other_restart_time=${other_restart_time:-6}
-export fhstoch=${fhstoch:-"-999.0"}  # forecast hour to dump random patterns
 export stochini=${stochini:-".false."}  # true= read in pattern, false=initialize from seed
 
 if [[ $RERUN = "YES" ]] ; then

@@ -109,7 +109,8 @@ export gfs_cyc FHMAX_WAV_CUR WAVHCYC WAVNCYC
 # Restart timing business
 export RSTTYPE_WAV='T' # generate second tier of restart files
 export DT_1_RST_WAV=$(( 3600 * $gefs_cych )) # time between restart files
-export DT_2_RST_WAV=${restart_interval:-172800}  # restart stride for checkpointing restart
+restart_interval_sec = $(( 3600 * restart_interval ))
+export DT_2_RST_WAV=${restart_interval_sec:-172800}  # restart stride for checkpointing restart
 export RSTIOFF_WAV=0 # first restart file offset relative to model start
 export RST2IOFF_WAV=0 # 2nd restart file offset relative to model start
 #
