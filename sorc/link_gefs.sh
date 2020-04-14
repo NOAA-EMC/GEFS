@@ -59,6 +59,14 @@ if [[ -d global-workflow.fd ]] ; then
         $LINK $FIX_DIR_FV3/$gw_dir $gw_dir
     done
 
+    # product
+    sFolder=product
+    if [[ -d $sFolder ]]; then
+        rm -rf $sFolder
+    fi
+    $LINK ${pwd}/../sorc/global-workflow.fd/fix/${sFolder} ${sFolder}  
+
+
     cd ${pwd}
 fi
 
