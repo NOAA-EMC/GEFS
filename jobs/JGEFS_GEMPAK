@@ -103,8 +103,8 @@ export model=ensemble
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/gempak
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/atmos
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/atmos/gempak
 
 if [ ! -f $COMOUT ] ; then
     mkdir -p -m 775 $COMOUT

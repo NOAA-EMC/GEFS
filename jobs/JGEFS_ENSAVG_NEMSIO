@@ -91,10 +91,10 @@ setpdy.sh
 ##############################################
 # Define COM and GES directories
 ##############################################
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/atmos
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/atmos
 
-mkdir -m 775 -p $COMOUT/$cyc/misc/ensavg_nemsio
+mkdir -m 775 -p $COMOUT/misc/ensavg_nemsio
 ############################################
 # Run gefs.parm to get input variables
 ############################################
@@ -164,7 +164,7 @@ export ensavg_nemsio_log=$DATA/ensavg_nemsio.$FORECAST_SEGMENT.log
 $HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf $DATA $SHOUR $FHOUT_HF $FHOUT_LF $FHMAXHF $FHOUR $ensavg_nemsio_log
 ERR=$?
 
-mv $ensavg_nemsio_log $COMOUT/$cyc/misc/ensavg_nemsio
+mv $ensavg_nemsio_log $COMOUT/misc/ensavg_nemsio
 
 ################# lines between these markers have been modified for dev begin
 echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN

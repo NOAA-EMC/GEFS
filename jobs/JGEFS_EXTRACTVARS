@@ -72,8 +72,8 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 ##############################################
 # Define COM OUT directories
 ##############################################
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/atmos
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/atmos
 ##############################################
 echo list environment before running script
 ##############################################

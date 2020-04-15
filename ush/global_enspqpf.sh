@@ -17,19 +17,19 @@ export ext_h=${ext_h:-""}
 cd $DATA
 
 # Specify the input/output file names:
-export CPGB=$COMIN/ensstat/enspost_grb2${ext_h}.t${ICYC}z.prcp
+export CPGB=$COMIN/atmos/ensstat/enspost_grb2${ext_h}.t${ICYC}z.prcp
 #export CPGI=$COMIN/ensstat/enspost_grb2${ext_h}.t${ICYC}z.prcp.idx
 export CPGO=$DATA/pqpf   
-export CRAIN=$COMIN/ensstat/enspost_grb2${ext_h}.t${ICYC}z.rain
+export CRAIN=$COMIN/atmos/ensstat/enspost_grb2${ext_h}.t${ICYC}z.rain
 #export CRAINI=$COMIN/ensstat/enspost_grb2${ext_h}.t${ICYC}z.rain.idx
 export CRAINO=$DATA/pqrf
-export CFRZR=$COMIN/ensstat/enspost_grb2${ext_h}.t${ICYC}z.frzr
+export CFRZR=$COMIN/atmos/ensstat/enspost_grb2${ext_h}.t${ICYC}z.frzr
 #export CFRZRI=$COMIN/ensstat/enspost_grb2${ext_h}.t${ICYC}z.frzr.idx
 export CFRZRO=$DATA/pqff
-export CICEP=$COMIN/ensstat/enspost_grb2${ext_h}.t${ICYC}z.icep
+export CICEP=$COMIN/atmos/ensstat/enspost_grb2${ext_h}.t${ICYC}z.icep
 #export CICEPI=$COMIN/ensstat/enspost_grb2${ext_h}.t${ICYC}z.icep.idx
 export CICEPO=$DATA/pqif 
-export CSNOW=$COMIN/ensstat/enspost_grb2${ext_h}.t${ICYC}z.snow
+export CSNOW=$COMI/atmosN/ensstat/enspost_grb2${ext_h}.t${ICYC}z.snow
 #export CSNOWI=$COMIN/ensstat/enspost_grb2${ext_h}.t${ICYC}z.snow.idx
 export CSNOWO=$DATA/pqsf  
 

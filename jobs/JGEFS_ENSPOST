@@ -82,10 +82,10 @@ echo set parameters using gefs.parm
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/atmos
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/atmos
 
-mkdir -m 775 -p $COMOUT/$cyc/ensstat
+mkdir -m 775 -p $COMOUT/ensstat
 
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
