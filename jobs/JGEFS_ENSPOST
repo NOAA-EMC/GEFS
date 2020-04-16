@@ -108,7 +108,7 @@ export FHINC=${FHOUTLF:-6}
 #env | sort
 
 # Execute the script
-export FORECAST_SEGMENT=${FORECAST_SEGMENa:-"hr"}
+export FORECAST_SEGMENT=${FORECAST_SEGMENT:-"hr"}
 case $FORECAST_SEGMENT in
         hr)
 		export ext_h=""
