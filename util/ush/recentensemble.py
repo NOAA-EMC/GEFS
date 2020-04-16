@@ -14,9 +14,12 @@
 #recenensemble.py $Npert $NTile $sFileName $sInWS $sOutWS [$iTile]
 ##
 import sys
+import datetime as dt
 
 def main():
-    
+    print(dt.datetime.now())
+    sys.stdout.flush()
+ 
     sVars = []
     sVars.append('ps')
     sVars.append('w')
@@ -154,9 +157,12 @@ def getMems_mean(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
     print("Working on the Tile {0}  Calculating Ensemble Mean ...".format(iTile))
     sys.stdout.flush()
     
+    print(dt.datetime.now())
+    sys.stdout.flush()
+
     for iPert in range(Npert):
-        print("Working on the Tile {0} for the Pert {1}".format(iTile, iPert))
-        sys.stdout.flush()
+        #print("Working on the Tile {0} for the Pert {1}".format(iTile, iPert))
+        #sys.stdout.flush()
         
         sPath = sOutWS + "/p{0:02}".format(iPert + 1)
         if not os.path.exists(sPath):
@@ -167,18 +173,18 @@ def getMems_mean(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
         call(["cp", sInFile, sOutFile])
 
         nc_fid = Dataset(sInFile, 'r')
-        print(nc_fid.variables.keys())
-        sys.stdout.flush()
+        #print(nc_fid.variables.keys())
+        #sys.stdout.flush()
         for k in range(len(sVars)):
             sVar = sVars[k]
-            print("  working on vaiable: {0} on iTile {1}".format(sVar, iTile))
-            sys.stdout.flush()
+            #print("  working on vaiable: {0} on iTile {1}".format(sVar, iTile))
+            #sys.stdout.flush()
             wmeans[k] = calValue(nc_fid, sVar, wmeans[k], iPert, Npert=Npert)
 
         nc_fid.close
 
     #print("  Reading Control Member Data ...")
-    sCFile = sInWS + "/c00/{1}{2}.nc".format(iPert + 1, sFileName, iTile)
+    sCFile = sInWS + "/c00/{1}{2}.nc".format(Npert + 1, sFileName, iTile)
     #print(sCFile)
     nc_fid = Dataset(sCFile, 'r')
     for k in range(len(sVars)):
@@ -189,14 +195,17 @@ def getMems_mean(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
 
     print("Working on the Tile {0} -  Writing to netCDF files ...".format(iTile))
     sys.stdout.flush()
+    print(dt.datetime.now())
+    sys.stdout.flush()
+
     
     for iPert in range(Npert):
         #print(iTile, " - ", iPert)
         #sys.stdout.flush()
         
         sOutFile = sOutWS + "/p{0:02}/{1}{2}.nc".format(iPert + 1, sFileName, iTile)
-        print("Working on the Tile {0} - ".format(iTile) + sOutFile)
-        sys.stdout.flush()
+        #print("Working on the Tile {0} - ".format(iTile) + sOutFile)
+        #sys.stdout.flush()
         
         nc_fid = Dataset(sOutFile, 'a')
         #print("----")
@@ -212,6 +221,9 @@ def getMems_mean(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
             #print(w_c[k][:].shape)
 
         nc_fid.close
+
+    print(dt.datetime.now())
+    sys.stdout.flush()
 
     return
 

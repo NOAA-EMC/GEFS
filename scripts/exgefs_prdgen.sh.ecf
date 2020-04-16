@@ -31,18 +31,25 @@ echo fcstlong=$fcstlong
 echo cycsuffix=$cycsuffix
 
 export jobdir="${1}"                   # ${DATA}/${stream}
-export stream="${2}"                   # PRDGEN_STREAMS
-export jobgrid="${3}"                  # PRDGEN_GRID[$stream]
-export grid_spec="${4}"                # PRDGEN_GRID_SPEC[$stream]
-typeset -a hours="${5}"                # PRDGEN_HOURS[$stream]
-export submc="${6}"                    # PRDGEN_SUBMC[$stream]
-export pgad="${7}"                     # PRDGEN_A_DIR[$stream]
-export pgbd="${8}"                     # PRDGEN_B_DIR[$stream]
-export pgapre="${9}"                   # PRDGEN_A_PREFIX[$stream]
-export pgbpre="${10}"                  # PRDGEN_B_PREFIX[$stream]
-export do_analysis="${11}"             # PRDGEN_DO_ANALYSIS[$stream]
+export infile="${2}"                   # ${DATA}/${stream}/${stream}.in
 
-# mem=$(echo $RUNMEM|cut -c3-5)
+. ${infile}
+
+# Input file:
+# stream=                   # PRDGEN_STREAMS
+# jobgrid=                  # PRDGEN_GRID[$stream]
+# grid_spec=                # PRDGEN_GRID_SPEC[$stream]
+# hours=                    # PRDGEN_HOURS[$stream]
+# submc=                    # PRDGEN_SUBMC[$stream]
+# pgad=                     # PRDGEN_A_DIR[$stream]
+# pgapre=                   # PRDGEN_A_PREFIX[$stream]
+# parmlist_a00=             # PRDGEN_A_LIST_F00[$stream]
+# parmlist_ahh=             # PRDGEN_A_LIST_FHH[$stream]
+# pgbd=                     # PRDGEN_B_DIR[$stream]
+# pgbpre=                   # PRDGEN_B_PREFIX[$stream]
+# parmlist_b00=             # PRDGEN_B_LIST_F00[$stream]
+# parmlist_bhh=             # PRDGEN_B_LIST_FHH[$stream]
+# do_analysis=              # PRDGEN_DO_ANALYSIS[$stream]
 
 cat <<-EOF
 	Settings for $0:
@@ -50,16 +57,20 @@ cat <<-EOF
 	  cyc: $cyc
 	  DATA: $DATA
   
-  	  jobdir: $jobdir
-  	  stream: $stream
-  	  jobgrid: $jobgrid
-  	  grid_spec: $grid_spec
-  	  hours: ($hours)
-  	  submc: $submc
-  	  pgad: $pgad
-  	  pgbd: $pgbd
-  	  pgapre: $pgapre
-  	  pgbpre: $pgbpre
+	  jobdir: $jobdir
+	  stream: $stream
+	  jobgrid: $jobgrid
+	  grid_spec: $grid_spec
+	  hours: ($hours)
+	  submc: $submc
+	  pgad: $pgad
+	  pgapre: $pgapre
+	  parmlist_a00: $parmlist_a00
+	  parmlist_ahh: $parmlist_ahh
+	  pgbd: $pgbd
+	  pgbpre: $pgbpre
+	  parmlist_b00: $parmlist_n00
+	  parmlist_bhh: $parmlist_nhh
 	  do_analysis: $do_analysis
 
 EOF
@@ -70,14 +81,14 @@ export GRID=$jobgrid   # GRID is part of the DBN message
 ############################################################
 # clean up missing markers from previous run
 ############################################################
-mkdir -m 775 -p $COMOUT/$cyc/misc/$submc
-cd $COMOUT/$cyc/misc/$submc
+mkdir -m 775 -p $COMOUT/misc/$submc
+cd $COMOUT/misc/$submc
 rc=$?
 if (( rc == 0 )); then
 	for file in $RUNMEM.*.missing; do
 		if [[ -f $file ]]; then
-			echo "$(date) removing $COMOUT/$cyc/misc/$submc/$file"
-			rm -f $COMOUT/$cyc/misc/$submc/$file
+			echo "$(date) removing $COMOUT/misc/$submc/$file"
+			rm -f $COMOUT/misc/$submc/$file
 		fi
 	done # for file in $RUNMEM.*.missing
 fi # (( rc == 0 ))
@@ -92,25 +103,26 @@ for hour in $hours; do
 		export fhr=000
 
 		if [[ $RUNMEM = "gegfs" ]]; then
-			if [[ jobgrid = "2p5" ]]; then
-				# Don't run for GFS analysis on 2.5° grid
-				break;
-			fi
 			export mafile=$COMINgfs/gfs.$cycle.master.grb2anl
 			export mifile=$COMINgfs/gfs.$cycle.master.grb2ianl
 			export mcfile=""
 			export makepgrb2b="no"
 		else
-			export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl
-			export mifile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl
-			export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.anl
+			export mafile=$COMOUT/master/$RUNMEM.$cycle.master.grb2anl
+			export mifile=$COMOUT/master/$RUNMEM.$cycle.master.grb2ianl
+			export mcfile=$COMOUT/misc/post/$RUNMEM.$cycle.master.control.anl
+			if [[ -z "$pgbd" ]]; then
+				export makepgrb2b="no"
+			else
+				export makepgrb2b="yes"
+			fi
 		fi # [[ $RUNMEM = "gegfs" ]]
 
-		export pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.$cycle.prdgen.control.anl
-		export fileaout=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf
-		export fileaouti=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf.idx
-		export filebout=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf
-		export filebouti=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf.idx
+		export pcfile=$COMOUT/misc/$submc/${RUNMEM}.$cycle.prdgen.control.anl
+		export fileaout=$COMOUT/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf
+		export fileaouti=$COMOUT/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf.idx
+		export filebout=$COMOUT/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf
+		export filebouti=$COMOUT/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf.idx
 
 		ic=1
 		while [ $ic -le $SLEEP_LOOP_MAX ]; do
@@ -147,7 +159,7 @@ for hour in $hours; do
 			# indicate missing data
 			###############################
 			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-				date >$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.anl.missing
+				date >$COMOUT/misc/$submc/${RUNMEM}.t${cyc}z.anl.missing
 				echo "$(date) $sname $member post data missing for analysis"
 				msg="$member MISSING POST DATA for analysis"
 				postmsg "$jlogfile" "$msg"
@@ -176,6 +188,8 @@ for hour in $hours; do
 		fi # [[ -s $pcfile ]]
 
 		if [[ ! -s $pcfile ]]; then
+			export parmlist_a=$parmlist_a00
+			export parmlist_b=$parmlist_b00
 			$USHgefs/gefs_prdgen.sh
 
 			####################################
@@ -202,24 +216,29 @@ for hour in $hours; do
 		export mcfile=""
 		export makepgrb2b="no"
 	else 
-		export mafile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr
-		export mifile=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr
-		export mcfile=$COMOUT/$cyc/misc/post/$RUNMEM.$cycle.master.control.f$fhr
+		export mafile=$COMOUT/master/$RUNMEM.$cycle.master.grb2f$fhr
+		export mifile=$COMOUT/master/$RUNMEM.$cycle.master.grb2if$fhr
+		export mcfile=$COMOUT/misc/post/$RUNMEM.$cycle.master.control.f$fhr
+		if [[ -z "$pgbd" ]]; then
+			export makepgrb2b="no"
+		else
+			export makepgrb2b="yes"
+		fi
 	fi # [[ $RUNMEM = "gegfs" ]]
 
-	export pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr
-	export fileaout=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}$pgasuf
-	export fileaouti=$COMOUT/$cyc/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}$pgasuf.idx
-	export filebout=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}$pgasuf
-	export filebouti=$COMOUT/$cyc/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}$pgasuf.idx
+	export pcfile=$COMOUT/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr
+	export fileaout=$COMOUT/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}$pgasuf
+	export fileaouti=$COMOUT/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}$pgasuf.idx
+	export filebout=$COMOUT/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}$pgasuf
+	export filebouti=$COMOUT/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}$pgasuf.idx
 
 	if [[ $save_pgrb2_p5 = YES ]] && (( FHOUR > FHMAXHF )); then
-		export mafile_p5=$COMOUT/$cyc/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.f${fhr}
-		export mifile_p5=$COMOUT/$cyc/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.f${fhr}.idx
+		export mafile_p5=$COMOUT/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.f${fhr}
+		export mifile_p5=$COMOUT/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.f${fhr}.idx
 	fi
 	if [[ $save_pgrb2_p25 = YES ]] && (( FHOUR <= FHMAXHF )); then
-		export mafile_p25=$COMOUT/$cyc/pgrb2p25/$RUNMEM.$cycle.pgrb2.0p25.f${fhr}
-		export mifile_p25=$COMOUT/$cyc/pgrb2p25/$RUNMEM.$cycle.pgrb2.0p25.f${fhr}.idx
+		export mafile_p25=$COMOUT/pgrb2p25/$RUNMEM.$cycle.pgrb2.0p25.f${fhr}
+		export mifile_p25=$COMOUT/pgrb2p25/$RUNMEM.$cycle.pgrb2.0p25.f${fhr}.idx
 	fi
 
 	ic=1
@@ -265,7 +284,7 @@ for hour in $hours; do
 		# period and error exit
 		###############################
 		if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-			date >$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.f$fhr.missing
+			date >$COMOUT/misc/$submc/${RUNMEM}.t${cyc}z.f$fhr.missing
 			echo "$(date) $sname $member missing post data for hour $fhr"
 			msg="$member MISSING POST DATA for hour $fhr"
 			postmsg "$jlogfile" "$msg"
@@ -299,6 +318,15 @@ for hour in $hours; do
 		fi # [[ -s $pcfile ]]
 
 		if [[ ! -s $pcfile ]]; then
+			if (( hour == 0 )); then
+				parmlist_a=$parmlist_a00
+				parmlist_b=$parmlist_b00
+			else
+				parmlist_a=$parmlist_ahh
+				parmlist_b=$parmlist_bhh
+			fi
+			export parmlist_a
+			export parmlist_b
 			$USHgefs/gefs_prdgen.sh
 
 			# Check for error

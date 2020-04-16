@@ -60,7 +60,7 @@ def create_crontab(dicBase, OnlyForTest=False, cronint=5):
                           'module load xt-lsfhpc; module load rocoto;'
         crontab_string += rocotorun_args
         crontab_string += ') > /dev/null 2>&1'
-    elif system == "wcoss_dell_p3":
+    elif system in ["wcoss_dell_p3", "wcoss_dell_p35"]:
         # crontab_string += crontab_usage
         import os
         if not os.path.exists(sRocotoPath + "/logs"):

@@ -156,6 +156,7 @@ if [ $CleanAll = "yes" ]; then
     rm -rf ../exec
     rm -rf ../util/exec
     rm -rf ../fix/fix_*
+    rm -rf ../fix/product
 
     # Clean the new links
     rm -rf global-workflow.fd
@@ -165,6 +166,9 @@ if [ $CleanAll = "yes" ]; then
     rm ../ush/gfs_nceppost.sh
     rm ../ush/global_chgres.sh
     rm ../ush/global_chgres_driver.sh
+
+    rm ../parm/prep_chem_sources.inp.IN
+    rm ../scripts/exglobal_prep_chem.bash
 
 fi # for CleanAll
 
@@ -183,7 +187,7 @@ if [ $RunRocoto = "yes" ]; then
         module load xt-lsfhpc
         module load rocoto
         module load python/3.6.3
-
+    
     elif [ $machine = "wcoss_dell_p3" ]; then
         . /usrx/local/prod/lmod/lmod/init/sh
         module use /gpfs/dell3/usrx/local/dev/emc_rocoto/modulefiles
@@ -224,7 +228,6 @@ if [ $AddCrontabToMyCrontab = "yes" ]; then
         py/add_crontab.py
         crontab $HOME/cron/mycrontab
         echo "Added crontab to $HOME/cron/mycrontab!"
-
     elif [ $machine = "wcoss_dell_p3" ]; then
         py/add_crontab.py
         echo "Added crontab to $HOME/cron/mycrontab!"

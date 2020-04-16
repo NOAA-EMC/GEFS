@@ -9,18 +9,16 @@
 ##############################################
 export npert=${npert:-30}
 export navg_min=${navg_min:-10}
-#export nhrpair=${nhrpair:-$((npert/2))}
 export nstinit=${nstinit:-yes}
 #################################################
 # Forecast Hour: fhmax and fhmaxh and fhmax_ext
 #################################################
-#export fhmax=${fhmax:-384}
 export fhmaxh=${fhmaxh:-384}
 export fhmax00=${fhmax00:-${fhmax:-840}}
 export fhmax06=${fhmax06:-${fhmax:-384}}
 export fhmax12=${fhmax12:-${fhmax:-384}}
 export fhmax18=${fhmax18:-${fhmax:-384}}
-#export fhmax_ext=${fhmax_ext:-840}
+export fhmax_aer=${fhmax_aer:-120}
 export fhcplwave=${fhcplwave:-384}
 
 #OUTPUT frequency
@@ -30,7 +28,6 @@ export FHOUTLF=${FHOUTLF:-6}
 
 # Frequency of initializations
 export fhrp=${fhrp:-06}
-#export fhrp=24
 export gefs_cych=${gefs_cych:-6}
 
 case $cyc in
@@ -50,78 +47,33 @@ case $cyc in
 		;;
 esac
 
+if [[ $RUNMEM = "geaer" ]]; then cplchm=".true."; fi
+
+export cplchm=${cplchm:-.false.}
+
+if [[ $cplchm = ".true." ]]; then
+	# Override forecast length
+	export fhmaxh=$fhmax_aer
+	export fhmax=$fhmax_aer
+
+	export cplwav=".false."
+fi
+
 export fhmax
-# DHOU, 08/26/2010, added this block to modify fhmaxh fhmax3 and fhmaxhres
-if (( fhmax <= fhmaxh )); then
-        export fhmaxh=$fhmax
-fi
+if (( fhmax <= fhmaxh )); then export fhmaxh=$fhmax; fi
+if (( FHMAXHF > fhmaxh )); then export FHMAXHF=$fhmaxh; fi
 
-# HOUTSPS=12: output after SPS 12 hours before fhmaxh, so that digital filtering can be applied after resolution change export HOUTSPS=12
-export HOUTSPS=${HOUTSPS:-0}
-export fhmaxhres=`expr $fhmaxh - $HOUTSPS`
-
-#########################################################################################
-# Parameters to control the digital filter at the beginning of the forecast
-# and after the resolution change
-#########################################################################################
-export fhdfihires=${fhdfihires:-3}
-export fhdfilores=${fhdfilores:-3}
-echo fhdfihires=$fhdfihires
-echo fhdfilores=$fhdfilores
-
-export sigzvd=${sigzvd:-no}
-
-#########################################################################################
-# This section defines the control variables for the Concurrent run
-# RUN_CONCURRENT,FH_INC=6 and ADVANCECOUNT_SETUP(=0 for current setting)
-#########################################################################################
-export FH_INC=${FH_INC:-6}
-export ADVANCECOUNT_SETUP=${ADVANCECOUNT_SETUP:-0}
-
-# RUN_CONCURRENT controls concurrent execution of forecasts
-if (( npert < 1 )); then
-	export RUN_CONCURRENT=no
-else
-	export RUN_CONCURRENT=${RUN_CONCURRENT:-yes}
-fi
-
-# ENS_NUM,MEMBER_NAMES to be calculated later based on npert and RUN_CONCURRENT
-
-########################################
-# STTP
-########################################
-# if multiple forecasts are to be run concurrently, ENS_SPS controls whether stochastic forcing is used
-export ENS_SPS=${ENS_SPS:-.false.}
-if (( npert < 1 )); then
-  export ENS_SPS=.false.
-fi
-
-################################################################################
-# number of threads to use in the job JGEFS_SIGCHGRS
-################################################################################
-NTHREADS_SIGCHGRS=${NTHREADS_SIGCHGRS:-8}
-export NTHREADS_SIGCHGRS
-
-################################################################################
-# USESUBDIR controls whether to use sub dir in the forecast working directory
-################################################################################
-# note this does not work with GFS_VERSION=gfs_fcst
-export USESUBDIR=${USESUBDIR:-YES}
+#pass these variables to gefs_wave.parm
+export FHMIN_WAV=${FHMIN_WAV:-0}
+export FHOUT_WAV=${FHOUTLF:-6}
+export FHMAX_WAV=${fhmaxh:-384}
+export FHMAX_HF_WAV=${FHMAXHF:-240}
+export FHOUT_HF_WAV=${FHOUTHF:-3}
 
 #######################################
 # This section defines the resolution
 #######################################
-#temporay setting for INIT nemsio files from current GEFS prod (v11)
-# export JCAPHR=${JCAPHR:-574}
-# export LEVSHR=${LEVSHR:-64}
-# export LONBHR=${LONBHR:-1152}
-# export LATBHR=${LATBHR:-576}
-# export NTRACHR=${NTRACHR:-3}
-# export MTNRSL=${MTNRSL:-574.1152.576}
-# export DELTIM=${DELTIM:-900}
-# export DTPHYS=${DTPHYS:-450}
-
-#For the higher resolution part of FV3 forecast
+#For the half-month range part of FV3 based forecast
 export CASEHR=${CASEHR:-C384}
 export LEVSHR=${LEVSHR:-64}
 export DELTIM=${DELTIM:-450}
@@ -130,7 +82,7 @@ export LATBFV=${LATBFV:-768}
 export LONBFV=${LONBFV:-1536}
 export MTNRSLFV=${MTNRSLFV:-766.1536.768}
 
-#Lower resolution part
+#For the longer range part of FV3 based forecast
 export CASELR=${CASELR:-C384}
 export LEVSLR=${LEVSLR:-64}
 export DELTIMLR=${DELTIMLR:-450}
@@ -149,8 +101,7 @@ export IDVC=${IDVC:-2}
 ########################################
 export FV3OUT_GRID="gaussian_grid"
 export GRIBVERSION=grib2
-REMAP_GRID=none     # temporay setting, to void the latlon default
-export REMAP_GRID=${REMAP_GRID:-latlon}        #gaussian or latlon for using fregrid or regrid_nemsio for remapping
+export REMAP_GRID=${REMAP_GRID:-latlon}  #gaussian or latlon for using regrid or regrid_nemsio for remapping
 
 export gfsfhmaxh=240
 export gfsfhoroglist=252
@@ -158,13 +109,5 @@ export gfsfhoroglist=252
 # The following options are fore re-forecast
 export save_pgrb2_p5=${save_pgrb2_p5:-NO} 
 export save_pgrb2_p25=${save_pgrb2_p25:-NO} 
-
-# export submit_post_together=${submit_post_together:-no}
-# export submit_chgres_together=${submit_chgres_together:-yes}
-
-# if (( npert < 1 )); then
-#  export submit_post_together=no
-#  export submit_chgres_together=no
-# fi
 
 echo `date` $0 end
