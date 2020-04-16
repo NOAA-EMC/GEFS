@@ -5,19 +5,19 @@
 Copies specified directories of GEFS output from temporary location to another location.
 
 Inputs (via environment variables):
-	WORKDIR         : The base GEFS output directory (usually in ptmp)
-	KEEP_DIR        : The base directory to store GEFS output (usually in noscrub)
-	DIRS_TO_KEEP    : A comma-separated list of directories to retain
-	PDY             : Initialization date in YYYYMMDD form
-	cyc             : Initialization hour in HH form
+	WORKDIR           : The base GEFS output directory (usually in ptmp)
+	KEEP_DIR          : The base directory to store GEFS output (usually in noscrub)
+	DIRS_TO_KEEP_CHEM : A comma-separated list of directories to retain
+	PDY               : Initialization date in YYYYMMDD form
+	cyc               : Initialization hour in HH form
 
 	GEFS output must be located in the WORKDIR com directory as such:
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/atmos/<directory>
+		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/chem/<directory>
 
 Outputs:
 	For each directory in DIRS_TO_KEEP, that directory will be copied to the KEEP_DIR in
 		the following location:
-			<KEEP_DIR>/gefs.<PDY>/<cyc>/atmos/<directory>
+			<KEEP_DIR>/gefs.<PDY>/<cyc>/chem/<directory>
 
 Error Codes:
 	-100 : Required environment variable not defined
@@ -29,8 +29,8 @@ import os
 import shutil
 from functools import partial
 
-destination_pattern = "{keep_dir}/gefs.{pdy}/{cycle}/atmos"
-output_pattern = "{work_dir}/com/gens/dev/gefs.{pdy}/{cycle}/atmos"
+destination_pattern = "{keep_dir}/gefs.{pdy}/{cycle}/chem"
+output_pattern = "{work_dir}/com/gens/dev/gefs.{pdy}/{cycle}/chem"
 
 clobber = True
 
@@ -49,9 +49,9 @@ if( keep_dir is None ):
 	print("FATAL: Environment variable KEEP_DIR not set")
 	quit(-100)
 
-dirs_to_keep_string = os.environ.get("DIRS_TO_KEEP")
+dirs_to_keep_string = os.environ.get("DIRS_TO_KEEP_CHEM")
 if( dirs_to_keep_string is None ):
-	print("FATAL: Environment variable DIRS_TO_KEEP not set")
+	print("FATAL: Environment variable DIRS_TO_KEEP_CHEM not set")
 	quit(-100)
 # Convert to array using commas and removing whitespace
 dirs_to_keep = [x.strip() for x in dirs_to_keep_string.split(',')]

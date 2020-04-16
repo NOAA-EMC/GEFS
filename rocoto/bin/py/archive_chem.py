@@ -7,17 +7,17 @@ Archives specified directories of GEFS output to HPSS for long-term storage.
 Inputs (via environment variables):
     WORKDIR              : The base GEFS output directory (usually in ptmp)
     HPSS_DIR             : The base HPSS directory in which to store tar files
-    DIRS_TO_ARCHIVE_WAVE : A comma-separated list of directories to archive
+    DIRS_TO_ARCHIVE_CHEM : A comma-separated list of directories to archive
     PDY                  : Initialization date in YYYYMMDD form
     cyc                  : Initialization hour in HH form
 
     GEFS output must be located in the WORKDIR com directory as such:
-        <WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/wave/<directory>
+        <WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/chem/<directory>
 
 Outputs:
     For each directory in DIRS_TO_ARCHIVE, a tar file will be created in the following
     location on HPSS:
-        <HPSS_DIR>/<YYYY>/<YYYY><MM>/<YYYY><MM><DD>/gwes.<YYYY><MM><DD>_<HH>.wave.<directory>.tar
+        <HPSS_DIR>/<YYYY>/<YYYY><MM>/<YYYY><MM><DD>/gefs.<YYYY><MM><DD>_<HH>.chem.<directory>.tar
 
 Error Codes:
     -100 : Required environment variable not defined
@@ -28,14 +28,12 @@ Error Codes:
 import os
 import subprocess
 from datetime import datetime
-from datetime import timedelta
 from functools import partial
 
 # File patterns
-workdir_pattern = "{work_dir}/com/gens/dev/gwes.%Y%m%d/%H/wave"
+workdir_pattern = "{work_dir}/com/gens/dev/gefs.%Y%m%d/%H/chem"
 destination_pattern = "{hpss_path}/%Y/%Y%m/%Y%m%d"
-tarfile_pattern = "{destination_path}/gwes.%Y%m%d_%H.wave.{directory}.tar"
-tarfile_pattern_restart = "{destination_path}/gwes.%Y%m%d_%H+{interval:02d}.wave.{directory}.tar"
+tarfile_pattern = "{destination_path}/gefs.%Y%m%d_%H.chem.{directory}.tar"
 
 # Make sure print statements are flushed immediately, otherwise
 #   print statments may be out-of-order with subprocess output
@@ -52,9 +50,9 @@ if( hpss_path is None ):
     print("FATAL: Environment variable HPSS_DIR not set")
     quit(-100)
 
-dirs_to_archive_string = os.environ.get("DIRS_TO_ARCHIVE_WAVE")
+dirs_to_archive_string = os.environ.get("DIRS_TO_ARCHIVE_CHEM")
 if( dirs_to_archive_string is None ):
-    print("FATAL: Environment variable DIRS_TO_ARCHIVE_WAVE not set")
+    print("FATAL: Environment variable DIRS_TO_ARCHIVE_CHEM not set")
     quit(-100)
 # Convert to array using commas and removing whitespace
 dirs_to_archive = [x.strip() for x in dirs_to_archive_string.split(',')]
@@ -69,13 +67,7 @@ if( cycle is None ):
     print("FATAL: Environment variable cyc not set")
     quit(-100)
 
-interval = int(os.environ.get("gefs_cych"))
-if( interval is None ):
-    print("FATAL: Environment variable gefs_cych not set")
-    quit(-100)
-
 time = datetime.strptime("{pdy}{cycle}".format(pdy=pdy, cycle=cycle), "%Y%m%d%H")
-time_next = time + timedelta(hours=interval)
 
 print("Starting GEFS archive with the following settings:")
 print("Source directory              : {work_dir}".format(work_dir=work_dir))
@@ -84,41 +76,24 @@ print("Directories to Archive        : {dirs_to_archive}".format(dirs_to_archive
 print(time.strftime("Date/Cycle                    : %Y%m%d_%H"))
 
 destination_path = time.strftime(destination_pattern.format(hpss_path=hpss_path))
+output_path = time.strftime( workdir_pattern.format( work_dir=work_dir ) )
 
 # Create directory on HPSS
 err_code = subprocess.run(["hsi", "mkdir", "-p", destination_path]).returncode
 if(err_code != 0):
-    print("FATAL: Could not create destination directory {destination_path} on HPSS, error code: {err_code}".format(
-        destination_path=destination_path,
-        err_code=str(err_code)
-    ))
+    print("FATAL: Could not create destination directory " + destination_path + " on HPSS, error code: " + str(err_code))
     quit(-101)
 
 # Archive directories
+os.chdir(output_path)
 for directory in dirs_to_archive:
-    if directory == "restart":
-        tar_file = time_next.strftime(tarfile_pattern_restart.format(
-            destination_path=destination_path,
-            directory=directory,
-            interval=interval
-        ) )
-        output_path = time_next.strftime( workdir_pattern.format( work_dir=work_dir ) )
-    else:
+    if os.path.exists("{output_path}/{directory}".format(output_path=output_path, directory=directory)):
         tar_file = time.strftime(tarfile_pattern.format(
             destination_path=destination_path,
-            directory=directory)
-        )
-        output_path = time.strftime( workdir_pattern.format( work_dir=work_dir ) )
-
-    output_dir = "{output_path}/{directory}".format(output_path=output_path, directory=directory)
-    print("output_dir = {output_dir}".format(output_dir=output_dir))
-    if os.path.exists(output_dir):
-        os.chdir(output_path)
+            directory=directory) )
         print("Creating tar on HPSS for {directory}".format(directory=directory))
         print("    From {output_path}/{directory} to {tar_file}".format(output_path=output_path, directory=directory, tar_file=tar_file))
         err_code = subprocess.call(["htar", "-cvf", tar_file, directory])
         if(err_code != 0):
             print("FATAL: Could not create {tar_file} on HPSS, error code: {err_code}".format(tar_file=tar_file, err_code=str(err_code)))
             quit(-101)
-    else:
-        print("WARNING: {output_dir} does not exist, skipping".format(output_dir=output_dir))

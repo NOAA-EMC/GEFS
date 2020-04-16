@@ -644,6 +644,10 @@ def get_workflow_body(dicBase):
         Create the workflow body
     '''
 
+    import datetime as dt
+    StartDate = dt.datetime.strptime(dicBase['SDATE'][0:10], "%Y%m%d%H")
+    EndDate = dt.datetime.strptime(dicBase['EDATE'][0:10], "%Y%m%d%H")
+
     import GEFS_XML_For_Tasks as gefs_xml_for_tasks
 
     GenTaskEnt = get_GenTaskEnt(dicBase)
@@ -661,6 +665,14 @@ def get_workflow_body(dicBase):
     strings.append('\t<log><cyclestr>&WORKFLOW_LOG_DIR;/gefs@Y@m@d@H.log</cyclestr></log>\n')
     strings.append('\n')
     strings.append('\t<cycledef group="gefs">&SDATE;00 &EDATE;00 &INCYC;:00:00</cycledef>\n')
+
+    for t in range(0,19,6):
+        C_Date = dt.datetime(StartDate.year,StartDate.month,StartDate.day,t,0,0)
+        if C_Date < StartDate:
+            C_Date = C_Date + dt.timedelta(days=1)
+        if C_Date <= EndDate:
+            strings.append('\t<cycledef group="gefs_{0:02d}z">{1}00 &EDATE;00 24:00:00</cycledef>\n'.format(t,C_Date.strftime('%Y%m%d%H')))
+
     strings.append('\n')
 
     sPre = "\t"
@@ -681,6 +693,13 @@ def get_workflow_body(dicBase):
             gefs_xml_for_tasks.write_to_ent(taskname, dicBase, GenTaskEnt=GenTaskEnt)
         else:
             strings.append(gefs_xml_for_tasks.create_metatask_task(dicBase, taskname=taskname, sPre=sPre, GenTaskEnt=GenTaskEnt))
+
+        if taskname in ['keep_data_atm', 'archive_atm', 'cleanup_atm']:
+            if GenTaskEnt:
+                strings.append(sPre + "&{0}_no00z;\n".format(taskname))
+                gefs_xml_for_tasks.write_to_ent(taskname+"_no00z", dicBase, GenTaskEnt=GenTaskEnt)
+            else:
+                strings.append(gefs_xml_for_tasks.create_metatask_task(dicBase, taskname=taskname+"_no00z", sPre=sPre, GenTaskEnt=GenTaskEnt))
 
     strings.append('\n')
     strings.append('</workflow>\n')

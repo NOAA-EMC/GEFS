@@ -31,5 +31,4 @@ module list
 #export NTHREADS_SIGCHGRS=${GEFS_TPP:-6}
 
 # CALL executable job script here
-#$GEFS_ROCOTO/bin/py/archive_wave.py
 $GEFS_ROCOTO/bin/py/archive_chem.py

@@ -5,7 +5,7 @@ ulimit -s unlimited
 ulimit -a
 
 # module_ver.h
-. $SOURCEDIR/versions/gefs_wcoss_dell_p35.ver
+. $SOURCEDIR/versions/gefs_wcoss_dell_p3.ver
 
 # Load modules
 . /usrx/local/prod/lmod/lmod/init/ksh
@@ -20,16 +20,14 @@ module purge
 
 #module load lsf/$lsf_ver
 module load python/$python_ver
-module load HPSS/$HPSS_ver
 
 module list
 
 # For Development
-. $GEFS_ROCOTO/bin/wcoss_dell_p35/common.sh
+. $GEFS_ROCOTO/bin/wcoss_dell_p3/common.sh
 
 # Export List
 #export NTHREADS_SIGCHGRS=${GEFS_TPP:-6}
 
 # CALL executable job script here
-#$GEFS_ROCOTO/bin/py/archive_wave.py
-$GEFS_ROCOTO/bin/py/archive_chem.py
+$GEFS_ROCOTO/bin/py/cleanup_chem.py
