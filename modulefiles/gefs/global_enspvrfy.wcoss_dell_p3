@@ -1,19 +1,19 @@
 #%Module#####################################################
 ## global_enspvrfy component - wcoss_dell_p3
 #############################################################
-module load ips/18.0.1.163
+module load ips/${ips_ver}
 
-module load g2/3.1.0
-module load w3nco/2.0.6
-module load bacio/2.0.2
-module load sp/2.0.2
+module load g2/${g2_ver}
+module load w3nco/${w3nco_ver}
+module load bacio/${bacio_ver}
+module load sp/${sp_ver}
 
 export IP_LIBd=/gpfs/dell1/nco/ops/nwtest/lib.p2/ip/v2.0.0/libip_v2.0.0_d.a
 #export IP_LIBd=/gpfs/dell1/nco/ops/nwtest/lib.p2/ip/v3.0.0/libip_v3.0.0_d.a
 #module load ip/3.0.1
-module load jasper/1.900.1
-module load libpng/1.2.59
-module load zlib/1.2.11
+module load jasper/${jasper_ver}
+module load libpng/${libpng_ver}
+module load zlib/${zlib_ver}
 
 ##
 export FCMP=ifort

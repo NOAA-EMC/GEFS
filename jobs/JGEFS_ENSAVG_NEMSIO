@@ -10,9 +10,9 @@ export FORECAST_SEGMENT=${FORECAST_SEGMENT:-hr}
 
 export MODEL_OUT_FORM=binarynemsiompiio
 
-export gefsmpexec=${gefsmpexec:-mpirun}
-
-export APRUN=${gefsmpexec:-mpirun}
+export total_tasks=${total_tasks:-30}
+export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
+export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
 
 export GRIBVERSION=${GRIBVERSION:-grib2}
 
@@ -29,11 +29,6 @@ cd $DATA
 # Set up the cycle variable
 ######################################
 export cycle=t${cyc}z
-
-######################################
-# Define parameters for ENSAVG_NEMSIO
-######################################
-export SUBJOB=${SUBJOB:-""}
 
 ####################################
 # Specify NET and RUN Name and model
@@ -57,27 +52,13 @@ export pgmerr=errfile
 ####################################
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
-# VERBOSE  - Specify Verbose Output in global_postgp.sh
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
 ####################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDDBN=${SENDDBN:-YES}
 export SENDECF=${SENDECF:-YES}
-export VERBOSE=${VERBOSE:-NO}
-
-####################################
-# Define RERUN Parameter: default to RESTART if not previously set
-#
-# Set RERUN=RESTART to find the last set of complete SFCSIG files and restart the forecast at that point
-# (corresponds to previous setting RERUN=NO)
-# Set RERUN=YES to remove all forecast products and log files, if any, and start over from the conditions
-#
-# In case of FORECAST failure, set RERUN=RESTART if necessary in FORECAST, NCEPPOST, and PRDGEN jobs
-# In case of NCEPPOST failure, set RERUN=RESTART if necessary in NCEPPOST, and PRDGEN jobs
-# In case of PRDGEN   failure, set RERUN=RESTART if necessary in PRDGEN jobs
-####################################
-echo input setting RERUN=$RERUN
-export RERUN=${RERUN:-RESTART}
-echo current setting RERUN=$RERUN
+export VERBOSE=${VERBOSE:-YES}
 
 # Specify Execution Areas
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
@@ -91,18 +72,14 @@ export FIXgfs=${HOMEgfs}/fix
 export USHgfs=$HOMEgfs/ush
 export EXECgfs=$HOMEgfs/exec
 
-#export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/gfs_ncep_post}
+export HOMEgsi=${HOMEgsi:-$HOMEgfs}
+
 export nemsioget=$EXECgfs/nemsio_get
 
 export ERRSCRIPT=${ERRSCRIPT:-err_chk}
 export LOGSCRIPT=startmsg
 export REDOUT='1>>'
 export REDERR='2>'
-
-##############################
-# Run setup to initialize working directory and utility scripts
-##############################
-#ksh setup.sh
 
 ##############################
 # Run setpdy and initialize PDY variables
@@ -114,10 +91,10 @@ setpdy.sh
 ##############################################
 # Define COM and GES directories
 ##############################################
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/atmos
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/atmos
 
-mkdir -m 775 -p $COMOUT/$cyc/misc/ensavg_nemsio
+mkdir -m 775 -p $COMOUT/misc/ensavg_nemsio
 ############################################
 # Run gefs.parm to get input variables
 ############################################
@@ -134,9 +111,6 @@ while (( imem < npert )); do
     memberlist="$memberlist $imem"
 done # while (( imem < npert ))
 echo memberlist=$memberlist
-
-# set outtyp to 1 because we need to run chgres in the post before model start running chgres
-# otherwise set to 0, then chgres will not be executed in global_nceppost.sh
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
     LEVS=$LEVSHR 
@@ -167,39 +141,13 @@ export SLEEP_INT=5
 ####################################
 
 export SHOUR=${SHOUR:-00}
+export FHOUR=${FHOUR:-180}
+if (( FHOUR > fhmaxh )); then
+	export FHOUR=$fhmaxh
+fi
 export FHOUT_HF=${FHOUTHF:-3}
 export FHOUT_LF=${FHOUTLF:-6}
 export FHMAX_HF=${FHMAXHF:-240}
-export FHOUR=${FHOUR:-180}
-
-##### RLW 20110704 note that only _HIGH is currently used
-case $FORECAST_SEGMENT in
-    (hr)
-        export FHOUR=180 #$fhmaxh
-        if (( 180 > fhmaxh )); then
-            export FHOUR=$fhmaxh
-        fi
-        ;;
-    (lr)
-        # low resolution segment
-        if (( FHMAX_HF > fhmaxh )); then
-            export SHOUR=$(( $fhmaxh + $FHOUT_HF ))
-        else
-            export SHOUR=$(( $fhmaxh + $FHOUT_LF ))
-        fi
-        export FHOUR=$fhmax
-        if (( 180 > fhmax )); then
-            export FHOUR=$fhmax
-        fi
-        ;;
-    (*)
-        export SHOUR=${SHOUR:-00}
-        export FHOUR=$fhmax
-        if (( 180 > fhmax )); then
-            export FHOUR=$fhmax
-        fi
-        ;;
-esac # $FORECAST_SEGMENT
 
 echo SHOUR=$SHOUR
 echo FHOUR=$FHOUR
@@ -211,24 +159,12 @@ echo
 env | sort
 echo
 
-if [[ -n $SUBJOB ]]; then
-    J1=`echo $SUBJOB | cut -c1-1` 
-    J2=`echo $SUBJOB | cut -c2-2` 
-    iJ2=`printf '%d\n' "'$J2"`
-    iJ2=$((iJ2-65))
-
-    export FHOUT_HF=$(($FHOUTHF*J1))
-    export FHOUT_LF=$(($FHOUTLF*J1))
-
-    export SHOUR=$((SHOUR+FHOUTHF*iJ2))
-fi
-
-export ensavg_nemsio_log=$DATA/ensavg_nemsio_$SUBJOB.$FORECAST_SEGMENT.log
+export ensavg_nemsio_log=$DATA/ensavg_nemsio.$FORECAST_SEGMENT.log
 
 $HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf $DATA $SHOUR $FHOUT_HF $FHOUT_LF $FHMAXHF $FHOUR $ensavg_nemsio_log
 ERR=$?
 
-mv $ensavg_nemsio_log $COMOUT/$cyc/misc/ensavg_nemsio
+mv $ensavg_nemsio_log $COMOUT/misc/ensavg_nemsio
 
 ################# lines between these markers have been modified for dev begin
 echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN
@@ -237,16 +173,16 @@ ls -al $DATA
 echo `date` TEST LISTING OF WORKING DIRECTORY END
 ################# lines between these markers have been modified for dev end
 if [ $ERR = 0 ]; then
-    msg="$job completed normally!"
+	msg="$job completed normally!"
 else
-    msg="FATAL ERROR: $job failed!"
+	msg="FATAL ERROR: $job failed!"
 fi
 
 postmsg "$jlogfile" "$msg"
 
 if [[ $KEEPDATA != "YES" ]]; then
-    cd $DATAROOT
-    rm -rf $DATA
+	cd $DATAROOT
+	rm -rf $DATA
 fi
 
 echo `date` $0 `date -u` end

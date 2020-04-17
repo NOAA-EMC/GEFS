@@ -6,9 +6,9 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export gefsmpexec=${gefsmpexec:-mpirun}
-
-export APRUN=${gefsmpexec:-mpirun}
+export total_tasks=${total_tasks:-1}
+export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
+export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
 
 ####################################
 # obtain unique process id (pid) and make temp directory
@@ -44,6 +44,17 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 ####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
+
+####################################
 # Specify Execution Areas
 ####################################
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
@@ -71,11 +82,10 @@ echo set parameters using gefs.parm
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export COMINm1=$COMROOT/${NET}/${envir}/${RUN}.${PDYm1}
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/atmos
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/atmos
 
-mkdir -m 775 -p $COMOUT/$cyc/ensstat
+mkdir -m 775 -p $COMOUT/ensstat
 
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
@@ -92,33 +102,28 @@ export SLEEP_TIME=900
 export SLEEP_INT=5
 
 export NTHREADS=1
-####################################
-# Specify Forecast Hour Range
-####################################
-# allow different forecast lengths in different cycles
-if [[ $envir = dev ]]; then
-	case $cyc in
-		(00) FHOUR=$fhmax00 ;;
-		(06) FHOUR=$fhmax06 ;;
-		(12) FHOUR=$fhmax12 ;;
-		(18) FHOUR=$fhmax18 ;;
-		(*)
-			echo cyc=$cyc IS UNDEFINED 
-			export pgm=JGEFS_ENSSTAT
-			export err=111
-			;;
-	esac # $cyc
-fi # [[ $envir = dev ]]
 
-export SHOUR=00
-export FHINC=${FHOUTLF:-06}
-export FHOUR=$fhmax
+export FHINC=${FHOUTLF:-6}
 
-env | sort
+#env | sort
 
 # Execute the script
-
-export ext_h=""
+export FORECAST_SEGMENT=${FORECAST_SEGMENT:-"hr"}
+case $FORECAST_SEGMENT in
+        hr)
+		export ext_h=""
+		export SHOUR=00
+		export FHOUR=$fhmaxh
+                ;;
+        lr)
+		export ext_h=ss
+		(( SHOUR = fhmaxh + FHOUTLF ))
+		export SHOUR=$SHOUR 
+		export FHOUR=$fhmax
+                ;;
+        *)
+                ;;
+esac # $FORECAST_SEGMENT in
 
 $HOMEgefs/scripts/exgefs_enspost.sh.ecf
 

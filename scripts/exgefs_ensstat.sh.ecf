@@ -150,7 +150,7 @@ for hour in $hours; do
 		previncr=no
 		for mem in $memberlist; do
 			(( nmem = nmem + 1 ))
-			testfile=$COMIN/$cyc/$pgad/ge${mem}.${cycle}.$pgapre${ffhr}.idx
+			testfile=$COMIN/$pgad/ge${mem}.${cycle}.$pgapre${ffhr}.idx
 
 			if [[ -f $testfile ]]; then
 				echo "testfile=$testfile found"
@@ -251,7 +251,7 @@ for hour in $hours; do
 
 		if [[ $iskip = 0 ]]; then
 			rm cfipg$ifile.$jobgrid
-			ln -s $COMIN/$cyc/$pgad/ge${mem}.${cycle}.$pgapre${ffhr} cfipg$ifile.$jobgrid
+			ln -s $COMIN/$pgad/ge${mem}.${cycle}.$pgapre${ffhr} cfipg$ifile.$jobgrid
 		fi # [[ $iskip = 0 ]]
 
 		echo " cfipg($ifile)"=\"cfipg$ifile.$jobgrid\", >>namin
@@ -314,29 +314,29 @@ for hour in $hours; do
 				$WGRIB2 -s ${run}.${cycle}.$pgapre${ffhr} >${run}.${cycle}.$pgapre${ffhr}.idx
 			fi
 			if [[ -s ${run}.${cycle}.$pgapre${ffhr} ]]; then
-				mv ${run}.${cycle}.$pgapre${ffhr} $COMOUT/$cyc/$pgad
-				mv ${run}.${cycle}.$pgapre${ffhr}.idx $COMOUT/$cyc/$pgad
+				mv ${run}.${cycle}.$pgapre${ffhr} $COMOUT/$pgad
+				mv ${run}.${cycle}.$pgapre${ffhr}.idx $COMOUT/$pgad
 			fi # [[ -s ${run}.${cycle}.$pgapre${ffhr} ]]
 			if [[ "$SENDDBN" = 'YES' ]]; then
 				if [[ ! -n "$lr" ]]; then
 					if [[ "$run" = "geavg" ]]; then
-						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_AVG $job $COMOUT/$cyc/$pgad/${run}.${cycle}.$pgapre${ffhr}
+						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_AVG $job $COMOUT/$pgad/${run}.${cycle}.$pgapre${ffhr}
 						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_AVG_WIDX $job
-						$COMOUT/$cyc/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
+						$COMOUT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
 					fi # [[ "$run" = "geavg" ]]
 					if [[ "$run" = "gespr" ]]; then
-						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_SPR $job $COMOUT/$cyc/$pgad/${run}.${cycle}.$pgapre${ffhr}
+						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_SPR $job $COMOUT/$pgad/${run}.${cycle}.$pgapre${ffhr}
 						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_SPR_WIDX $job 
-						$COMOUT/$cyc/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
+						$COMOUT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
 					fi # [[ "$run" = "gespr" ]]
 				fi # [[ ! -n "$lr" ]]
 				if [[  -n "$lr" ]]; then
 					if [[ "$run" = "geavg" ]]; then
-						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG $job $COMOUT/$cyc/$pgad/${run}.${cycle}.$pgapre${ffhr}
-						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG_WIDX $job $COMOUT/$cyc/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
+						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG $job $COMOUT/$pgad/${run}.${cycle}.$pgapre${ffhr}
+						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG_WIDX $job $COMOUT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
 					fi # [[ "$run" = "geavg" ]]
 					if [[ "$run" = "gespr" ]]; then
-						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR $job ${COMOUT}/${cyc}/pgrb2a$lr/gespr.$COMOUT/$cyc/$pgad/${run}.${cycle}.$pgapre${ffhr}
+						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR $job ${COMOUT}/${cyc}/pgrb2a$lr/gespr.$COMOUT/$pgad/${run}.${cycle}.$pgapre${ffhr}
 					fi
 				fi # [[ -n "$lr" ]]
 			fi # [[] "$SENDDBN" = 'YES' ]]

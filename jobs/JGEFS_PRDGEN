@@ -8,7 +8,8 @@ date
 
 export RERUN=${RERUN:-NO}
 
-export gefsmpexec=${gefsmpexec:-mpirun}
+export total_tasks=${total_tasks:-6}
+export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
 export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
 export CNVGRIB=$CNVGRIB
 
@@ -63,6 +64,17 @@ export RERUN=${RERUN:-RESTART}
 echo current setting RERUN=$RERUN
 
 ####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
+
+####################################
 # Specify Execution Areas
 ####################################
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
@@ -81,30 +93,35 @@ export PARMgfs=${PARMgfs:-$HOMEgfs/parm}
 setpdy.sh
 . PDY
 
-##############################################
-# Define COM directories
-##############################################
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 
-# 20150622 RLW change to "yes" to remake prdgen when post is remade
-#export overwrite=no
-export overwrite=yes
-
-
-if [[ $save_pgrb2_p5 == YES ]]; then
-	mkdir -m 775 -p $COMOUT/$cyc/pgrb2p5
-fi
-if [[ $save_pgrb2_p25 == YES ]]; then
-	mkdir -m 775 -p $COMOUT/$cyc/pgrb2p25 
-fi
 
 ##############################################
 echo set parameters using gefs.parm
 ##############################################
 . $PARMgefs/gefs.parm
 . $PARMgefs/gefs_prdgen.parm
+
+##############################################
+# Define COM directories
+##############################################
+if [[ $cplchm == ".true." ]]; then
+    COMPONENT="chem"
+fi
+export COMPONENT=${COMPONENT:-atmos}
+
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/$COMPONENT
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/$COMPONENT
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
+
+# 20150622 RLW change to "yes" to remake prdgen when post is remade
+export overwrite=yes
+
+if [[ $save_pgrb2_p5 == YES ]]; then
+	mkdir -m 775 -p $COMOUT/pgrb2p5
+fi
+if [[ $save_pgrb2_p25 == YES ]]; then
+	mkdir -m 775 -p $COMOUT/pgrb2p25 
+fi
 
 case $FORECAST_SEGMENT in
 	hr)
@@ -136,38 +153,14 @@ for stream in ${PRDGEN_STREAMS[@]}; do
 	PRDGEN_HOURS[$stream]="${hours[@]}"
 	unset hours
 
-	if [[ -z ${PRDGEN_GRID[$stream]} ]]; then
-		echo "FATAL ERROR in $0: PRDGEN_GRID not defined for $stream"
-		exit -1
-	fi
-	if [[ -z ${PRDGEN_GRID_SPEC[$stream]} ]]; then
-		echo "FATAL ERROR in $0: PRDGEN_GRID_SPEC not defined for $stream"
-		exit -1
-	fi
-	if [[ -z ${PRDGEN_HOURS[$stream]} ]]; then
-		echo "FATAL ERROR in $0: PRDGEN_HOURS not defined for $stream"
-		exit -1
-	fi
-	if [[ -z ${PRDGEN_SUBMC[$stream]} ]]; then
-		echo "FATAL ERROR in $0: PRDGEN_SUBMC not defined for $stream"
-		exit -1
-	fi
-	if [[ -z ${PRDGEN_A_DIR[$stream]} ]]; then
-		echo "FATAL ERROR in $0: PRDGEN_A_DIR not defined for $stream"
-		exit -1
-	fi
-	if [[ -z ${PRDGEN_B_DIR[$stream]} ]]; then
-		echo "FATAL ERROR in $0: PRDGEN_B_DIR not defined for $stream"
-		exit -1
-	fi
-	if [[ -z ${PRDGEN_A_PREFIX[$stream]} ]]; then
-		echo "FATAL ERROR in $0: PRDGEN_A_PREFIX not defined for $stream"
-		exit -1
-	fi
-	if [[ -z ${PRDGEN_B_PREFIX[$stream]} ]]; then
-		echo "FATAL ERROR in $0: PRDGEN_B_PREFIX not defined for $stream"
-		exit -1
-	fi
+	# Ensure required variables are defined
+	for var in PRDGEN_GRID PRDGEN_GRID_SPEC PRDGEN_HOURS PRDGEN_SUBMC PRDGEN_A_DIR PRDGEN_A_PREFIX PRDGEN_A_LIST_F00 PRDGEN_A_LIST_FHH; do
+		pointer="$var[$stream]"
+		if [[ -z ${!pointer} ]]; then
+			echo "FATAL ERROR in $0: $var not defined for $stream"
+			exit -1
+		fi
+	done
 
 	# Print out settings for this stream
 	cat <<-EOF
@@ -178,8 +171,12 @@ for stream in ${PRDGEN_STREAMS[@]}; do
 			submc: ${PRDGEN_SUBMC[$stream]}
 			A Dir: ${PRDGEN_A_DIR[$stream]}
 			A Prefix: ${PRDGEN_A_PREFIX[$stream]}
-			B Dir: ${PRDGEN_B_DIR[$stream]}
-			B Prefix: ${PRDGEN_B_PREFIX[$stream]}
+			A Parmlist f00: ${PRDGEN_A_LIST_F00[$stream]}
+			A Parmlist fhh: ${PRDGEN_A_LIST_FHH[$stream]}
+			B Dir: ${PRDGEN_B_DIR[$stream]:-""}
+			B Prefix: ${PRDGEN_B_PREFIX[$stream]:-""}			
+			B Parmlist f00: ${PRDGEN_B_LIST_F00[$stream]:-""}
+			B Parmlist fhh: ${PRDGEN_B_LIST_FHH[$stream]:-""}
 			Do Anaylsis: ${PRDGEN_DO_ANALYSIS[$stream]:-"NO (default)"}
 
 	EOF
@@ -225,26 +222,35 @@ fi
 #################################
 rm -f prdgen.cmdfile
 for stream in ${PRDGEN_STREAMS[@]}; do
-	mkdir -m 755 -p $COMOUT/$cyc/${PRDGEN_A_DIR[${stream}]}
-	mkdir -m 755 -p $COMOUT/$cyc/${PRDGEN_B_DIR[${stream}]}
+	mkdir -m 775 -p $COMOUT/${PRDGEN_A_DIR[${stream}]}
+	if [[ ! -z ${PRDGEN_B_DIR[$stream]} ]]; then
+		mkdir -m 775 -p $COMOUT/${PRDGEN_B_DIR[${stream}]}
+	fi
 
 	subdata=${DATA}/${stream}
 	if [ ! -d ${subdata} ]; then
 		mkdir -p ${subdata};
 	fi
+	infile=${subdata}/${stream}.in
 	outfile=${subdata}/${stream}.out
 
-	jobgrid="${PRDGEN_GRID[$stream]}"
-	grid_spec="${PRDGEN_GRID_SPEC[$stream]}"
-	hours="${PRDGEN_HOURS[$stream]}"
-	submc="${PRDGEN_SUBMC[$stream]}"
-	pgad="${PRDGEN_A_DIR[$stream]}"
-	pgbd="${PRDGEN_B_DIR[$stream]}"
-	pgapre="${PRDGEN_A_PREFIX[$stream]}"
-	pgbpre="${PRDGEN_B_PREFIX[$stream]}"
-	do_analysis="${PRDGEN_DO_ANALYSIS[$stream]:-NO}"
+	cat > ${infile} <<-EOF
+		jobgrid="${PRDGEN_GRID[$stream]}"
+		grid_spec="${PRDGEN_GRID_SPEC[$stream]}"
+		hours="${PRDGEN_HOURS[$stream]}"
+		submc="${PRDGEN_SUBMC[$stream]}"
+		pgad="${PRDGEN_A_DIR[$stream]}"
+		pgapre="${PRDGEN_A_PREFIX[$stream]}"
+		parmlist_a00=$PARMgefs/${PRDGEN_A_LIST_F00[$stream]}
+		parmlist_ahh=$PARMgefs/${PRDGEN_A_LIST_FHH[$stream]}
+		pgbd="${PRDGEN_B_DIR[$stream]}"
+		pgbpre="${PRDGEN_B_PREFIX[$stream]}"
+		parmlist_b00=$PARMgefs/${PRDGEN_B_LIST_F00[$stream]}
+		parmlist_bhh=$PARMgefs/${PRDGEN_B_LIST_FHH[$stream]}
+		do_analysis="${PRDGEN_DO_ANALYSIS[$stream]:-NO}"
+	EOF
 
-	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf $subdata \"$stream\" \"$jobgrid\" \"$grid_spec\" \"$hours\" \"$submc\" \"$pgad\" \"$pgbd\" \"$pgapre\" \"$pgbpre\" \"$do_analysis\" 2>&1 >${outfile}" >> prdgen.cmdfile
+	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf $subdata \"$infile\" 2>&1 >${outfile}" >> prdgen.cmdfile
 
 done
 

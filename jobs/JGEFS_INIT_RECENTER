@@ -6,12 +6,15 @@ set -xa
 export PS4='$SECONDS + '
 date
 
+export total_tasks=${total_tasks:-6}
 export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
+export warm_start=${warm_start:-".false."}
 
 ############################
 # Set up cycle varaible
 ############################
 export cycle=t${cyc}z
+COMPONENT=atmos
 
 ####################################
 # obtain unique process id (pid) and make working directory
@@ -48,11 +51,23 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 ####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
+
+####################################
 # Specify Execution Areas
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
+NCP=${NCP:-"/bin/cp -p"}
 ##############################################
 echo set parameters using gefs.parm
 ##############################################
@@ -70,6 +85,8 @@ env | sort
 ##############################################
 export COMIN=${COMIN:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}}
 export COMOUT=${COMOUT:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}}
+export COMIN=$COMIN/$cyc/$COMPONENT/init 
+export COMOUT=$COMOUT/$cyc/$COMPONENT/init
 
 export pdycycp=`$NDATE -$fhrp $PDY$cyc`
 export pdyp=`echo $pdycycp|cut -c1-8`
@@ -79,7 +96,7 @@ export cycp=`echo $pdycycp|cut -c9-10`
 # Define GES directories
 ##############################################
 export GESOUT=${GESOUT:-$GESROOT/${envir}}
-export GESOUT=$GESOUT/gefs.${PDY}
+export GESOUT=$GESOUT/gefs.${PDY}/$cyc
 mkdir -m 775 -p $GESOUT
 
 ##############################################
@@ -98,6 +115,15 @@ $HOMEgefs/scripts/exgefs_init_recenter.sh.ecf
 #############################################################
 ERR=$?
 echo $ERR
+
+if [ $SENDCOM = YES ]; then
+	mem=01	
+	while [ $mem -le $npert ]; do
+       		smem=p$(printf %02i $mem)
+		$NCP $GESOUT/$smem/gfs* $COMOUT/$smem
+		((  mem = mem +1 ))
+	done
+fi
 
 cat $pgmout
 

@@ -70,23 +70,29 @@ if test "$SENDCOM" = 'YES'; then
 	for file in enspost${ext_h} ensstat${ext_h}; do
 		#   for FIELD in $varlboth $varlnostat $varlout
 		for FIELD in $epnamhr $epnamlr $varlout; do
-			if [ -s $COMOUT/$cyc/ensstat/$file.${cycle}.${FIELD} ]; then
-				rm $COMOUT/$cyc/ensstat/$file.${cycle}.${FIELD}
-				rm $COMOUT/$cyc/ensstat/$file.${cycle}.${FIELD}i
+			if [ -s $COMOUT/ensstat/$file.${cycle}.${FIELD} ]; then
+				rm $COMOUT/ensstat/$file.${cycle}.${FIELD}
+				rm $COMOUT/ensstat/$file.${cycle}.${FIELD}i
 			fi
-			if [ -s $COMOUT/$cyc/ensstat/$file.${cycle}.${FIELD}hr ]; then
-				rm $COMOUT/$cyc/ensstat/$file.${cycle}.${FIELD}hr
-				rm $COMOUT/$cyc/ensstat/$file.${cycle}.${FIELD}hri
+			if [ -s $COMOUT/ensstat/$file.${cycle}.${FIELD}hr ]; then
+				rm $COMOUT/ensstat/$file.${cycle}.${FIELD}hr
+				rm $COMOUT/ensstat/$file.${cycle}.${FIELD}hri
 			fi
 		done # for FIELD in $epnamhr $epnamlr $varlout
 	done # for file in enspost${ext_h} ensstat${ext_h}
 fi # test "$SENDCOM" = 'YES'
 
-memberlist="gfs c00"
-#DHOU 04/19/2012 Add this block to avoid gfs for "dev" jobs
-if [[ $envir = dev ]]; then
-	memberlist="c00"
+if [[ ${FORECAST_SEGMENT} == hr ]]; then
+    memberlist="gfs c00"
+else
+    memberlist="c00"
 fi
+
+#memberlist="gfs c00"
+#DHOU 04/19/2012 Add this block to avoid gfs for "dev" jobs
+#if [[ $envir = dev ]]; then
+#	memberlist="c00"
+#fi
 
 (( imem = 0 ))
 while (( imem < npert )); do
@@ -139,7 +145,7 @@ while test $fh -le $FHOUR; do
 			EXT=
 			FXT=.2p50.
 			lr=2p5
-			ext_h=
+			ext_h=$ext_h
 			nenspost=$nenspostlr
 			lfm=$lfmlr
 			set -A enspostnam x $epnamlr
@@ -185,7 +191,7 @@ while test $fh -le $FHOUR; do
 			previncr=no
 			for mem in $memberlist; do
 				(( nmem = nmem + 1 ))
-				testfile=$COMIN/$cyc/pgrb2a$lr/ge${mem}.${cycle}.pgrb2a$FXT\f$fh$EXT.idx
+				testfile=$COMIN/pgrb2$lr/ge${mem}.${cycle}.pgrb2$FXT\f$fh$EXT.idx
 				if test -f $testfile; then
 					echo testfile=$testfile found
 					(( nfiles = nfiles + 1 ))
@@ -278,7 +284,7 @@ while test $fh -le $FHOUR; do
 		for mem in $memberlist; do
 			#DHOU, 20141028, select required variables from pgrb2a files
 			if [[ "$mem" != "gfs" || $fh -le $gfsfhmaxh || ` expr $fh % 12 ` -eq 0 ]]; then
-				pgtem=$COMIN/$cyc/pgrb2a$lr/ge${mem}.${cycle}.pgrb2a$FXT\f$fh$EXT
+				pgtem=$COMIN/pgrb2$lr/ge${mem}.${cycle}.pgrb2$FXT\f$fh$EXT
 				$WGRIB2 -s $pgtem | grep -F -f $parmlist | $WGRIB2 $pgtem -s -i -grib pgrb2a_$mem 
 				#DHOU 20141028
 				(( ifile = ifile + 1 ))
@@ -404,8 +410,8 @@ done # for file in $postvarlist
 
 if [ "$SENDCOM" = "YES" ]; then
 	for file in $postvarlist; do
-		mv enspost_grb2${ext_h}.$cycle.${file}  $COMOUT/$cyc/ensstat/enspost_grb2${ext_h}.${cycle}.${file}
-		mv ensstat_grb2${ext_h}.$cycle.${file}  $COMOUT/$cyc/ensstat/ensstat_grb2${ext_h}.${cycle}.${file}
+		mv enspost_grb2${ext_h}.$cycle.${file}  $COMOUT/ensstat/enspost_grb2${ext_h}.${cycle}.${file}
+		mv ensstat_grb2${ext_h}.$cycle.${file}  $COMOUT/ensstat/ensstat_grb2${ext_h}.${cycle}.${file}
 	done # for file in $postvarlist
 fi # [ "$SENDCOM" = "YES" ]
 
@@ -424,7 +430,7 @@ ecflow_client --event enspost_grb2_ready
 if test "$cycle" = "skipthis"; then
 #if test "$cycle" = "t00z"; then
 	#  $ENSPPF $COMOUT/$cyc/ensstat/enspost.$cycle.prcp $COMOUT/$cyc/ensstat/enspost${ext_h}.$cycle.prcpi ensppf${ext_h}.$PDY$cyc
-	$ENSPPF $COMOUT/$cyc/ensstat/enspost_grb2.$cycle.prcp ensppf${ext_h}.$PDY$cyc.grib2  $npert
+	$ENSPPF $COMOUT/ensstat/enspost_grb2.$cycle.prcp ensppf${ext_h}.$PDY$cyc.grib2  $npert
 	$WGRIB2 ensppf${ext_h}.$PDY$cyc.grib2 -s >ensppf${ext_h}.$PDY$cyc.grib2.idx 
 
 	###########################
@@ -446,15 +452,15 @@ if test "$cycle" = "skipthis"; then
 	fi # [[ -s ensppf${ext_h}.$PDY$cyc.grib2 ]]
 
 	if [ $SENDCOM = "YES" ]; then
-		cp ensppf${ext_h}.$PDY$cyc $COMOUT/$cyc/ensstat/ensstat${ext_h}.$cycle.pqpf_24h
-		cp ensppf${ext_h}i.$PDY$cyc $COMOUT/$cyc/ensstat/ensstat${ext_h}.$cycle.pqpfi_24h
+		cp ensppf${ext_h}.$PDY$cyc $COMOUT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h
+		cp ensppf${ext_h}i.$PDY$cyc $COMOUT/ensstat/ensstat${ext_h}.$cycle.pqpfi_24h
 
-		cp ensppf${ext_h}.$PDY$cyc.grib2 $COMOUT/$cyc/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2
-		cp ensppf${ext_h}.$PDY$cyc.grib2.idx $COMOUT/$cyc/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2.idx
+		cp ensppf${ext_h}.$PDY$cyc.grib2 $COMOUT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2
+		cp ensppf${ext_h}.$PDY$cyc.grib2.idx $COMOUT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2.idx
 	fi  #[ $SENDCOM = "YES" ]
 	if [ "$SENDDBN" = "YES" ]; then
-		$DBNROOT/bin/dbn_alert MODEL ENS_STAT_GB2 $job $COMOUT/$cyc/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2
-		$DBNROOT/bin/dbn_alert MODEL ENS_STAT_GB2_WIDX $job $COMOUT/$cyc/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2.idx
+		$DBNROOT/bin/dbn_alert MODEL ENS_STAT_GB2 $job $COMOUT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2
+		$DBNROOT/bin/dbn_alert MODEL ENS_STAT_GB2_WIDX $job $COMOUT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2.idx
 	fi # [ "$SENDDBN" = "YES" ]
 fi # test "$cycle" = "t00z"
 
@@ -484,8 +490,8 @@ export CDATE=$PDY$cyc;
 ############################################################################
 
 for file in $postvarlist; do
-	ln -s $COMOUT/$cyc/ensstat/enspost_grb2${ext_h}.${cycle}.${file} enspost_grb2${ext_h}.$cycle.${file}
-	ln -s $COMOUT/$cyc/ensstat/ensstat_grb2${ext_h}.${cycle}.${file} ensstat_grb2${ext_h}.$cycle.${file}
+	ln -s $COMOUT/ensstat/enspost_grb2${ext_h}.${cycle}.${file} enspost_grb2${ext_h}.$cycle.${file}
+	ln -s $COMOUT/ensstat/ensstat_grb2${ext_h}.${cycle}.${file} ensstat_grb2${ext_h}.$cycle.${file}
 
 	$WGRIB2 enspost_grb2${ext_h}.$cycle.${file} -s > enspost_grb2${ext_h}.$cycle.${file}.idx
 	$WGRIB2 ensstat_grb2${ext_h}.$cycle.${file} -s > ensstat_grb2${ext_h}.$cycle.${file}.idx
@@ -496,13 +502,13 @@ for file in $postvarlist; do
 
 	if [ "$SENDCOM" = "YES" ]; then
 		#    mv enspost_grb2${ext_h}.$cycle.${file}  $COMOUT/$cyc/ensstat/enspost_grb2${ext_h}.${cycle}.${file}
-		mv enspost_grb2${ext_h}.$cycle.${file}.idx $COMOUT/$cyc/ensstat/enspost_grb2${ext_h}.${cycle}.${file}.idx
+		mv enspost_grb2${ext_h}.$cycle.${file}.idx $COMOUT/ensstat/enspost_grb2${ext_h}.${cycle}.${file}.idx
 		#    mv ensstat_grb2${ext_h}.$cycle.${file}  $COMOUT/$cyc/ensstat/ensstat_grb2${ext_h}.${cycle}.${file}
-		mv ensstat_grb2${ext_h}.$cycle.${file}.idx $COMOUT/$cyc/ensstat/ensstat_grb2${ext_h}.${cycle}.${file}.idx
-		mv enspost${ext_h}.$cycle.${file}  $COMOUT/$cyc/ensstat/enspost${ext_h}.${cycle}.${file}
-		mv enspost${ext_h}.$cycle.${file}i $COMOUT/$cyc/ensstat/enspost${ext_h}.${cycle}.${file}i
-		mv ensstat${ext_h}.$cycle.${file}  $COMOUT/$cyc/ensstat/ensstat${ext_h}.${cycle}.${file}
-		mv ensstat${ext_h}.$cycle.${file}i $COMOUT/$cyc/ensstat/ensstat${ext_h}.${cycle}.${file}i
+		mv ensstat_grb2${ext_h}.$cycle.${file}.idx $COMOUT/ensstat/ensstat_grb2${ext_h}.${cycle}.${file}.idx
+		mv enspost${ext_h}.$cycle.${file}  $COMOUT/ensstat/enspost${ext_h}.${cycle}.${file}
+		mv enspost${ext_h}.$cycle.${file}i $COMOUT/ensstat/enspost${ext_h}.${cycle}.${file}i
+		mv ensstat${ext_h}.$cycle.${file}  $COMOUT/ensstat/ensstat${ext_h}.${cycle}.${file}
+		mv ensstat${ext_h}.$cycle.${file}i $COMOUT/ensstat/ensstat${ext_h}.${cycle}.${file}i
 	fi # [ "$SENDCOM" = "YES" ]
 done # for file in $postvarlist
 

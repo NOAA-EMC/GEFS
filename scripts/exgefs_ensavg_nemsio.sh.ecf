@@ -63,9 +63,9 @@ do
         mem2=$(printf %02i $mem)
         ic=0
         while [ $ic -le $SLEEP_LOOP_MAX ]; do
-            if test -f  $COMIN/$cyc/sfcsig/gep${mem2}.${cycle}.logf${fhr}.nemsio; then
-                $NLN $COMIN/$cyc/sfcsig/gep${mem2}.${cycle}.atmf${fhr}.nemsio ./atm_mem$mem
-                $NLN $COMIN/$cyc/sfcsig/gep${mem2}.${cycle}.sfcf${fhr}.nemsio ./sfc_mem$mem
+            if test -f  $COMIN/sfcsig/gep${mem2}.${cycle}.logf${fhr}.nemsio; then
+                $NLN $COMIN/sfcsig/gep${mem2}.${cycle}.atmf${fhr}.nemsio ./atm_mem$mem
+                $NLN $COMIN/sfcsig/gep${mem2}.${cycle}.sfcf${fhr}.nemsio ./sfc_mem$mem
                 break
             else
                 ic=`expr $ic + 1`
@@ -85,8 +85,8 @@ do
         $ERRSCRIPT || exit $ERR
     fi # [ $ic
     
-    $NLN $COMOUT/$cyc/sfcsig/geavg.${cycle}.atmf${fhr}.nemsio ./atm_ensmean
-    $NLN $COMOUT/$cyc/sfcsig/geavg.${cycle}.sfcf${fhr}.nemsio ./sfc_ensmean
+    $NLN $COMOUT/sfcsig/geavg.${cycle}.atmf${fhr}.nemsio ./atm_ensmean
+    $NLN $COMOUT/sfcsig/geavg.${cycle}.sfcf${fhr}.nemsio ./sfc_ensmean
     $APRUN ${DATA}/$(basename $GETATMENSMEANEXEC) ./ atm_ensmean atm $nfile
     $APRUN ${DATA}/$(basename $GETSFCENSMEANEXEC) ./ sfc_ensmean sfc $nfile
     
@@ -94,7 +94,7 @@ do
     
     export ERR=$?
     $R || exit 2
-    echo completed fv3gfs average fhour= $fhr > $COMOUT/$cyc/sfcsig/geavg.${cycle}.logf${fhr}.nemsio         
+    echo completed fv3gfs average fhour= $fhr > $COMOUT/sfcsig/geavg.${cycle}.logf${fhr}.nemsio         
     if [ $fhr -ge $FHMAXFH ]
     then
         FHINC=$FHOUTLF

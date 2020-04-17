@@ -167,6 +167,7 @@ F-GEFSP50    $COMIN                    gep50_YYYYMMDDHHfFFF      CAT_GRD  SCAT_F
 F-GEFSGFS    $COMIN                    gegfs_YYYYMMDDHHfFFF      CAT_GRD  SCAT_FCT   -1     -1     -1
 F-GEFSAVG    $COMIN                    geavg_YYYYMMDDHHfFFF      CAT_GRD  SCAT_FCT   -1     -1     -1
 F-GEFSSPR    $COMIN                    gespr_YYYYMMDDHHfFFF      CAT_GRD  SCAT_FCT   -1     -1     -1
+F-ECMWF      $COMIN                    ecmwf_hr_YYYYMMDDHHfFFF   CAT_GRD  SCAT_FCT   -1     -1     -1
 !-----------------------------------------------------------------------------------------------------
 ECMWFG       $MODEL/ecmwf              ecmwf_YYMMDDHH_global     CAT_GRD  SCAT_FCT   -1     -1     -1
 ECMWFT       $MODEL/ecmwf              ecmwf_YYMMDDHH_tropical   CAT_GRD  SCAT_FCT   -1     -1     -1

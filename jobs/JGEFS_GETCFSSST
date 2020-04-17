@@ -10,6 +10,7 @@ date
 # Set up cycle varaible
 ############################
 export cycle=t${cyc}z
+export COMPONENT=atmos
 
 ####################################
 # obtain unique process id (pid) and make working directory
@@ -45,6 +46,17 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 ####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
+
+####################################
 # Specify Execution Areas
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
@@ -68,7 +80,7 @@ export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 ##############################################
 # Define CFSSST directories
 ##############################################
-export COMOUTcfssst=${SSTDIR:-$COMOUT/$cyc/cfssst}
+export COMOUTcfssst=${SSTDIR:-$COMOUT/$cyc/$COMPONENT/cfssst}
 mkdir -m 775 -p $COMOUTcfssst
 
 ##############################################

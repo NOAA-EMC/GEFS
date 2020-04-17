@@ -205,9 +205,9 @@ else
  echo " ***** Skip precipitation verify step    *****"
 fi
 
-if [ -s $COMIN/gefs.$YMD/00/ensstat/enspost_grb2.${cycle}.prcp ]; then
- echo " $COMIN/gefs.$YMD/00/ensstat/enspost_grb2.${cycle}.prcp is available "
- cp $COMIN/gefs.$YMD/00/ensstat/enspost_grb2.${cycle}.prcp $DATA/precip.${YMD}${cyc}
+if [ -s $COMIN/gefs.$YMD/00/atmos/ensstat/enspost_grb2.${cycle}.prcp ]; then
+ echo " $COMIN/gefs.$YMD/00/atmos/ensstat/enspost_grb2.${cycle}.prcp is available "
+ cp $COMIN/gefs.$YMD/00/atmos/ensstat/enspost_grb2.${cycle}.prcp $DATA/precip.${YMD}${cyc}
  $USHgefs/global_enscvprcp.sh precip.${YMD}${cyc} precipt.${YMD}${cyc} $YMD
  mv precipt.${YMD}${cyc} precip.${YMD}${cyc}
 #$GBINDX $DATA/precip.${YMD}${cyc} $DATA/precipi.${YMD}${cyc}

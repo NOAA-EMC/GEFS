@@ -6,7 +6,11 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export APRUNC=${gefsmpexec:-mpirun}
+export COMPONENT=atmos
+export total_tasks=${total_tasks:-1}
+export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
+export OMP_NUM_THREADS_CH=${OMP_NUM_THREADS_CH:-40}
+
 export RUNMEM=$RUNMEM
 export mem=`echo $RUNMEM|cut -c 3-`
 export nmem=`echo $RUNMEM|cut -c 4-`
@@ -65,6 +69,17 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 ####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
+
+####################################
 # Specify Execution Areas
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
@@ -82,7 +97,6 @@ echo set parameters using gefs.parm
 ##############################################
 
 . $PARMgefs/gefs.parm
-. $PARMgefs/gefs_init.parm
 
 (( LEVS=LEVSHR+1 ))
 export LEVS=$LEVS
@@ -95,13 +109,17 @@ export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
 export COMIN=${COMIN:-${COM_IN}/${RUN}.${PDY}}
 export COMOUT=${COMOUT:-${COM_OUT}/${RUN}.${PDY}}
-mkdir -p $COMOUT/$cyc/init
+export OUTDIR=$COMOUT/$cyc/$COMPONENT/init/$mem
+mkdir -p $OUTDIR
 
 ##############################################
 # Define GES directories
 ##############################################
 export GESOUT=${GESOUT:-$GESROOT/${envir}}
 export GESOUT=$GESOUT/gefs.${PDY}
+mkdir -m 775 -p $GESOUT/$cyc/$mem
+
+NCP=${NCP:-"/bin/cp -p"}
 
 ##############################################
 echo list environment before running script
@@ -113,7 +131,7 @@ set -eux
 echo `date` $0 begin
 
 set -x
-export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/${cyc}}
 export COMINenkf=${COMINenkf:-$(compath.py gfs/prod)/enkfgdas.}
 
 export pdycycp=`$NDATE -$fhrp $PDY$cyc`
@@ -124,35 +142,15 @@ export INIDIR=$DATA
 export CDATE=$PDY$cyc
 export ictype=nemsgfs
 
-if [[ ! -f $GESOUT/ge$mem.t$cyc\z.sanl ]]; then
-	export ictype=fv3gfs
-	export NTRAC=7
+export ictype=fv3gfs
+export NTRAC=7
 
-	export FV3GESOUT=$COMOUT/$cyc/init/$mem
-	mkdir -p $FV3GESOUT
-	export OUTDIR=$FV3GESOUT
-
-	if [[ $mem = c00 ]] ;then
-		cp $COMINgfs/gfs.t${cyc}z.atmanl.nemsio $INIDIR/gfnanl.gfs.$PDY$cyc
-		cp $COMINgfs/gfs.t${cyc}z.sfcanl.nemsio $INIDIR/sfnanl.gfs.$PDY$cyc
-	else
-		cp $COMINenkf$pdyp/$cycp/$memchar_shift/gdas.t${cycp}z.atmf006.nemsio $INIDIR/gfnanl.gfs.$PDY$cyc
-		cp $COMINgfs/gfs.t${cyc}z.sfcanl.nemsio $INIDIR/sfnanl.gfs.$PDY$cyc
-	fi
+if [[ $mem = c00 ]] ;then
+	$NCP $COMINgfs/gfs.t${cyc}z.atmanl.nemsio $INIDIR/gfnanl.gfs.$PDY$cyc
+	$NCP $COMINgfs/gfs.t${cyc}z.sfcanl.nemsio $INIDIR/sfnanl.gfs.$PDY$cyc
 else
-	export FV3GESOUT=$GESOUT/${cyc}/$mem
-	mkdir -p $FV3GESOUT
-	export OUTDIR=$FV3GESOUT
-	if [ $inflag = 0 ] ; then
-		export ictype=fv3gfs
-        	export NTRAC=7
-		cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
-		cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
-	else
-		cp $GESOUT/ge$mem.t$cyc\z.sanl $INIDIR/gfnanl.gfs.$PDY$cyc
-		cp $GESOUT/ge$mem.t$cyc\z.sfcanl $INIDIR/sfnanl.gfs.$PDY$cyc
-		cp $GESOUT/ge$mem.t$cyc\z.nsnanl $INIDIR/nsnanl.gfs.$PDY$cyc
-	fi
+	$NCP $COMINenkf$pdyp/$cycp/$memchar_shift/gdas.t${cycp}z.atmf006.nemsio $INIDIR/gfnanl.gfs.$PDY$cyc
+	$NCP $COMINgfs/gfs.t${cyc}z.sfcanl.nemsio $INIDIR/sfnanl.gfs.$PDY$cyc
 fi
 
 $USHgfs/global_chgres_driver.sh
@@ -161,6 +159,9 @@ ERR=$?
 echo $ERR
 
 cat $pgmout
+
+$NCP $OUTDIR/sfc* $GESOUT/$cyc/$mem
+$NCP $OUTDIR/gfs_ctrl.nc $GESOUT/$cyc/$mem
 
 if [ $ERR = 0 ]; then
     msg="JOB COMPLETED NORMALLY"

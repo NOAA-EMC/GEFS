@@ -11,7 +11,9 @@ set -xa
 export PS4='$SECONDS + ' 
 date
 
+export total_tasks=${total_tasks:-1}
 export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
+export sGrid=${sGrid:-"_0p50"} # empty for 1p00, _0p50
 
 ####################################
 # obtain unique process id (pid) and make working directory
@@ -55,12 +57,12 @@ export pgmout="OUTPUT.${pid}"
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 # SENDECF  - Flag Events on ECF
-# VERBOSE  - Specify Verbose Output in global_postgp.sh
+# VERBOSE  - Specify Verbose Output
 ####################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDECF=${SENDECF:-YES}
 export SENDDBN=${SENDDBN:-YES}
-export VERBOSE=${VERBOSE:-NO}
+export VERBOSE=${VERBOSE:-YES}
 
 ################################
 # Set up the HOME directory
@@ -96,7 +98,7 @@ export DBN_ALERT_TYPE=${DBN_ALERT_TYPE:-GEFS_METAFILE}
 #
 # Now set up GEMPAK/NTRANS environment
 
-cp $FIXgempak/datatype.tbl datatype.tbl
+#cp $FIXgempak/datatype.tbl datatype.tbl
 
 ##############################################
 # Define COM directories
@@ -104,8 +106,8 @@ cp $FIXgempak/datatype.tbl datatype.tbl
 #export COMIN=${COMROOT}/nawips/${envir}/${RUN}.${PDY}
 #export COMOUT=${COMROOT}/nawips/${envir}/${RUN}.${PDY}/meta
 
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/gempak
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/gempak/meta
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/atmos/gempak
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/atmos/gempak/meta
 
 if [ ! -d $COMOUT ] ; then
     mkdir -p -m 775 $COMOUT

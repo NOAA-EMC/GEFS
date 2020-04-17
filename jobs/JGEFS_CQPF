@@ -6,8 +6,9 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export gefsmpexec=${gefsmpexec:-mpirun}
-export APRUN=${gefsmpexec:-mpirun}
+export total_tasks=${total_tasks:-1}
+export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
+export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
 
 ####################################
 # Load the grib module
@@ -48,6 +49,17 @@ export pgmout="OUTPUT.${pid}"
 export pgmerr=errfile
 
 ####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
+
+####################################
 # Specify Execution Areas
 ####################################
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
@@ -73,7 +85,7 @@ setpdy.sh
 # Define COM directories
 ##############################################
 export COMIN=${COMROOT}/${NET}/${envir}
-export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}/${cyc}/ensstat
+export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}/${cyc}/atmos/ensstat
 export COMINshef=${COMINshef:-${DCOMROOT}/prod/shef_pefiles}
 #export COMINshef=${COMINshef:-/gpfs/dell1/nco/ops/dcom/prod/shef_pefiles}
 export COMINstat=${COMINstat:-$COMIN}

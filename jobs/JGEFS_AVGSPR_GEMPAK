@@ -11,6 +11,7 @@ set -xa
 export PS4='$SECONDS + ' 
 date
 
+export total_tasks=${total_tasks:-4}
 export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
 
 ####################################
@@ -55,13 +56,13 @@ export pgmout="OUTPUT.${pid}"
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 # SENDECF  - Flag Events on ECF
-# VERBOSE  - Specify Verbose Output in global_postgp.sh
+# VERBOSE  - Specify Verbose Output
 # GET_IOPROFILE - Run I/O statistics
 ####################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDECF=${SENDECF:-YES}
 export SENDDBN=${SENDDBN:-YES}
-export VERBOSE=${VERBOSE:-NO}
+export VERBOSE=${VERBOSE:-YES}
 export GET_IOPROFILE=${GET_IOPROFILE:-NO}
 
 ################################
@@ -85,8 +86,6 @@ export GEMPAKgefs=${GEMPAKgefs:-$HOMEgefs/gempak}
 ############################################
 export fstart=${fstart:-0}
 export fend=${fhmaxh:-384}
-export finc=${finc:-6}
-export finc_0p50=${finc_0p50:-3}
 
 export FHMAXHF=${FHMAXHF:-240}
 export FHOUTHF=${FHOUTHF:-3}
@@ -96,19 +95,14 @@ export GRIB=
 export EXT=""
 export DBN_ALERT_TYPE=${DBN_ALERT_TYPE:-GEFS_GEMPAK}
 
-export GEMPAK_RES=${GEMPAK_RES:-"1p00 0p50"}
+export GEMPAK_RES=${GEMPAK_RES:-"0p50 0p25"}
+export model=ensemble
 
 ##############################################
 # Define COM directories
 ##############################################
-#export COM=${COMROOT}/${NET}/${envir}
-# export COMIN=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/pgrba
-#export COMIN=${COM}/${RUN}.${PDY}/${cyc}/pgrb2a
-#export COMIN_P5=${COM}/${RUN}.${PDY}/${cyc}/pgrb2ap5
-#export COMOUT=${COMROOT}/nawips/${envir}/${RUN}.${PDY}
-
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/gempak
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/atmos
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/atmos/gempak
 
 if [ ! -f $COMOUT ] ; then
     mkdir -p -m 775 $COMOUT
@@ -118,37 +112,27 @@ env
 
 ########################################################
 # Execute the script.
-#export COMIN=$COMIN_RAW
-export model=ensemble
-
-########################################################
-# Execute the script.
 for member in avg spr
 do
     export member
     export RUNM=ge${member}
     for resolution in ${GEMPAK_RES}
     do
-        #if [ $GET_IOPROFILE = YES ]; then
-        #   /usrx/local/mio/tools/bin/miostats -X0 \
-        #  # JY  ${NWROOT}/scripts/exnawips.sh.ecf
-        #   echo "$HOMEgefs/scripts/exgefs_nawips.sh.ecf $RUN $member $resolution" >> poescript
-        #else
-        #   # JY ${NWROOT}/scripts/exnawips.sh.ecf
-        #   echo "$HOMEgefs/scripts/exgefs_nawips.sh.ecf $RUN $member $resolution" >> poescript
-        #fi
         if [ $GET_IOPROFILE = YES ]; then
             /usrx/local/mio/tools/bin/miostats -X0 #\
         fi
     
         if [ $resolution = "1p00" ]; then
             export COMIN_Folder=pgrb2a1p0
+            export pdgrbType=pgrb2a
             export fend=${fhmaxh:-384}
         elif [ $resolution = "0p50" ]; then
             export COMIN_Folder=pgrb2ap5
+            export pdgrbType=pgrb2a
             export fend=${fhmaxh:-384}
         elif [ $resolution = "0p25" ]; then
-            export COMIN_Folder=pgrb2ap25
+            export COMIN_Folder=pgrb2sp25
+            export pdgrbType=pgrb2s
             export fend=${FHMAXHF:-240}
         else
             echo "GEMPAK does not support this resolution!"
@@ -156,7 +140,7 @@ do
             exit $err
         fi
         
-        echo "$HOMEgefs/scripts/exgefs_nawips.sh.ecf $RUNM $member $resolution ${GEMPAKgefs} ${COMIN}/${COMIN_Folder} ${COMOUT} ${fstart} ${fend} ${finc} ${finc_0p50}" >> poescript
+        echo "$HOMEgefs/scripts/exgefs_nawips.sh.ecf $RUNM $member $resolution ${GEMPAKgefs} ${COMIN}/${COMIN_Folder} ${COMOUT} ${fstart} ${fend} ${FHMAXHF} ${FHOUTHF} ${FHOUTLF} ${pdgrbType}" >> poescript
     done
 done
 ########################################################
