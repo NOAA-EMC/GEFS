@@ -63,6 +63,14 @@ export fhmax
 if (( fhmax <= fhmaxh )); then export fhmaxh=$fhmax; fi
 if (( FHMAXHF > fhmaxh )); then export FHMAXHF=$fhmaxh; fi
 
+export restart_interval=${fhrestart:-48}
+export other_restart_time=${other_restart_time:-6}
+
+if [[ $cplchm = ".true." ]]; then
+	export restart_interval=${restart_interval_aer:-24}
+	export other_restart_time=${other_restart_time:-$gefs_cych}
+fi
+
 #pass these variables to gefs_wave.parm
 export FHMIN_WAV=${FHMIN_WAV:-0}
 export FHOUT_WAV=${FHOUTLF:-6}
