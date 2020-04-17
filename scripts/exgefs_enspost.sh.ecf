@@ -145,7 +145,7 @@ while test $fh -le $FHOUR; do
 			EXT=
 			FXT=.2p50.
 			lr=2p5
-			ext_h=
+			ext_h=$ext_h
 			nenspost=$nenspostlr
 			lfm=$lfmlr
 			set -A enspostnam x $epnamlr

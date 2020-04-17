@@ -116,7 +116,7 @@ case $FORECAST_SEGMENT in
 		export FHOUR=$fhmaxh
                 ;;
         lr)
-		export ext_h=lr
+		export ext_h=ss
 		(( SHOUR = fhmaxh + FHOUTLF ))
 		export SHOUR=$SHOUR 
 		export FHOUR=$fhmax
