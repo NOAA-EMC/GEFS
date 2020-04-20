@@ -294,10 +294,6 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
         cycledef = "gefs_00z"    
     elif taskname == "avg_gempak_vgf":
         cycledef = "gefs_00z,gefs_12z"
-    elif taskname in ['keep_data_atm', 'archive_atm', 'cleanup_atm']:
-        cycledef = "gefs_00z"
-    elif taskname in ['keep_data_atm_no00z', 'archive_atm_no00z', 'cleanup_atm_no00z']:
-        cycledef = "gefs_06z,gefs_12z,gefs_18z"
  
     maxtries = 1
 
@@ -464,14 +460,11 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
         sPRE = ""
 
-    if taskname in ['keep_init', 'copy_init', 'keep_data_atm', 'archive_atm', 'cleanup_atm', 'keep_data_atm_no00z', 'archive_atm_no00z', 'cleanup_atm_no00z', 'keep_data_wave', 'archive_wave', 'cleanup_wave', 'keep_data_chem', 'archive_chem', 'cleanup_chem']:
-        taskname_2 = taskname
-        if taskname.endswith("_no00z"):
-            taskname_2 = taskname.replace("_no00z","")
+    if taskname in ['keep_init', 'copy_init', 'keep_data_atm', 'archive_atm', 'cleanup_atm', 'keep_data_wave', 'archive_wave', 'cleanup_wave', 'keep_data_chem', 'archive_chem', 'cleanup_chem']:
         if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
-            strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format(taskname_2, sPRE)
+            strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format(taskname, sPRE)
         else:
-            strings += sPre_2 + '<command><cyclestr>{1}&BIN;/../py/{0}.py</cyclestr></command>\n'.format(taskname_2, sPRE)
+            strings += sPre_2 + '<command><cyclestr>{1}&BIN;/../py/{0}.py</cyclestr></command>\n'.format(taskname, sPRE)
     elif taskname in ['forecast_hr', 'forecast_lr', 'forecast_aerosol']:
         strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("forecast_hr", sPRE)
     elif taskname in ['prdgen_hr', 'prdgen_lr', 'prdgen_gfs', 'prdgen_aerosol']:
@@ -710,8 +703,6 @@ def write_to_all_ent(GenTaskEnt, dicBase):
             taskname = dicBase[sTaskName]
 
             fh.write('<!ENTITY {0}\tSYSTEM\t"{0}.ent">\n'.format(taskname))
-            if taskname in ['keep_data_atm', 'archive_atm', 'cleanup_atm']:
-                fh.write('<!ENTITY {0}\tSYSTEM\t"{0}.ent">\n'.format(taskname+"_no00z"))
 
         fh.flush()
         fh.close()
@@ -825,8 +816,6 @@ def get_param_of_task(dicBase, taskname):
         taskname = "post_hr"
     elif taskname.startswith("ensavg_nemsio_"):
         taskname = "ensavg_nemsio"
-    elif taskname.endswith("_no00z"):
-        taskname = taskname_org.replace("_no00z","")
 
     sVarName = "{0}_walltime".format(taskname).upper()
     if sVarName in dicBase:
@@ -1123,7 +1112,7 @@ def get_param_of_task(dicBase, taskname):
                     sDep += '\n</and>'
 
             # For 'keep_data_atm' and 'archive_atm' tasks
-            if taskname_org.lower() in ["keep_data_atm", "archive_atm", "keep_data_atm_no00z", "archive_atm_no00z"]:
+            if taskname_org.lower() in ["keep_data_atm", "archive_atm"]:
                 sDep = '<and>'
                
                 for s in ["prdgen_hr","ensstat_hr","enspost_hr","post_track","post_genesis","extractvars","postsnd","getcfssst","gempak","avgspr_gempak","gempak_meta","avgspr_gempak_meta"]:
@@ -1133,14 +1122,22 @@ def get_param_of_task(dicBase, taskname):
                         else:
                             sDep += '\n\t<taskdep task="{0}"/>'.format(s)
 
-                if not taskname_org.lower().endswith("_no00z"): # For 00Z
-                        for s in ["prdgen_lr","ensstat_lr","enspost_lr","cqpf","avg_gempak_vgf"]:
-                            if DoesTaskExist(dicBase, s):
-                                if s in get_metatask_names():
-                                    sDep += '\n\t<metataskdep metatask="{0}"/>'.format(s)
-                                else:
-                                    sDep += '\n\t<taskdep task="{0}"/>'.format(s)
-
+                # For 00z
+                sDep_2 = ""
+                for s in ["prdgen_lr","ensstat_lr","enspost_lr","cqpf","avg_gempak_vgf"]:
+                    if DoesTaskExist(dicBase, s):
+                        if s in get_metatask_names():
+                            sDep_2 += '\n\t\t\t<metataskdep metatask="{0}"/>'.format(s)
+                        else:
+                            sDep_2 += '\n\t\t\t<taskdep task="{0}"/>'.format(s)
+                if sDep_2 != "":
+                    sDep += '\n\t<or>'
+                    sDep += "\n\t\t<not><sh><cyclestr>[[ @H = 00 ]]</cyclestr></sh></not>"
+                    sDep += '\n\t\t<and>'
+                    sDep += sDep_2
+                    sDep += '\n\t\t</and>'
+                    sDep += '\n\t</or>'
+                    
                 if sDep == '<and>':
                     sDep = ""
                 else:
@@ -1176,17 +1173,14 @@ def get_param_of_task(dicBase, taskname):
                     sDep = '<taskdep task="init_recenter"/>'
 
             # Don't clean up if keep_init isn't finished
-            if taskname_org.lower() in ["cleanup_atm","cleanup_atm_no00z"]:
-                sPostfix = ""
-                if taskname_org.lower().endswith("_no00z"):
-                        sPostfix = "_no00z"
+            if taskname_org.lower() in ["cleanup_atm"]:
                 sDep = '<and>'
                 if DoesTaskExist(dicBase, "keep_init"):
                     sDep += '\n\t<metataskdep metatask="keep_init"/>'
                 if DoesTaskExist(dicBase, "keep_data_atm"):
-                    sDep += '\n\t<taskdep task="keep_data_atm{0}"/>'.format(sPostfix)
+                    sDep += '\n\t<taskdep task="keep_data_atm"/>'
                 if DoesTaskExist(dicBase, "archive_atm"):
-                    sDep += '\n\t<taskdep task="archive_atm{0}"/>'.format(sPostfix)
+                    sDep += '\n\t<taskdep task="archive_atm"/>'
                 if sDep == '<and>':
                     sDep = ""
                 else:

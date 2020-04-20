@@ -694,13 +694,6 @@ def get_workflow_body(dicBase):
         else:
             strings.append(gefs_xml_for_tasks.create_metatask_task(dicBase, taskname=taskname, sPre=sPre, GenTaskEnt=GenTaskEnt))
 
-        if taskname in ['keep_data_atm', 'archive_atm', 'cleanup_atm']:
-            if GenTaskEnt:
-                strings.append(sPre + "&{0}_no00z;\n".format(taskname))
-                gefs_xml_for_tasks.write_to_ent(taskname+"_no00z", dicBase, GenTaskEnt=GenTaskEnt)
-            else:
-                strings.append(gefs_xml_for_tasks.create_metatask_task(dicBase, taskname=taskname+"_no00z", sPre=sPre, GenTaskEnt=GenTaskEnt))
-
     strings.append('\n')
     strings.append('</workflow>\n')
 
