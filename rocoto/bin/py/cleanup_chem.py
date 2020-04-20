@@ -52,8 +52,8 @@ from functools import partial
 print = partial(print, flush=True)
 
 # Output directories that need to be removed
-output_dirs = ["pgrb2ap25_aer", "pgrb2ap50_aer", "sfcsig", "misc", "master", "init"]
-output_dirs_last_cyc = ["restart"]
+output_dirs = ["pgrb2ap25_aer", "pgrb2ap50_aer", "misc", "master", "init"]
+output_dirs_last_cyc = ["restart", "sfcsig"]
 output_dir_pattern = "{work_dir}/com/gens/dev/gefs.%Y%m%d/%H/chem/{output_dir}"
 
 # Read in environment variables and make sure they exist
@@ -104,7 +104,7 @@ for output_dir in output_dirs:
 
 # Other init directories
 #dirs_to_remove.append(time.strftime("{work_dir}/nwges/dev/gefs.%Y%m%d/*.t%Hz.*".format(work_dir=work_dir)))
-#dirs_to_remove.append(time.strftime("{work_dir}/nwges/dev/gefs.%Y%m%d/%H".format(work_dir=work_dir)))
+dirs_to_remove.append(time.strftime("{work_dir}/nwges/dev/gefs.%Y%m%d/%H/aer".format(work_dir=work_dir)))
 
 # Log directory (probably want to keep these)
 # dirs_to_remove.append(work_dir + "/com/output/dev/" + pdy + "/*_" + cycle + ".*.bqs3")
