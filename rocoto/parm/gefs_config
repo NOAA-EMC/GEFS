@@ -62,7 +62,7 @@ if [[ $GFSArchivedData == "yes" ]]; then
     export COMINenkf_base=$HOMEdata/fv3init/enkfgdas.
     export COMINgfs_base=$HOMEdata/fv3init/gfs.
     export COMINcfs_base=$HOMEdata/cfs/cfs.
-    export COMICE=$HOMEdata/sea_ice
+    export COMIN_WAV_ICE=$HOMEdata/sea_ice
 else
     export COMINgfs_base=$(compath.py gfs/prod)/gfs.
     export COMINenkf_base=$(compath.py gfs/prod)/enkfgdas.
