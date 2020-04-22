@@ -177,7 +177,7 @@ def create_gets_dev_parm(dicBase, listBaseParm):
     strings.append('#!/bin/ksh\n')
     strings.append('\n')
     strings.append('#############################################################################\n')
-    strings.append('# This section is some parameter setup for for development testing only\n')
+    strings.append('# This section is some parameter setup for development testing only\n')
     strings.append('##############################################################################\n')
     strings.append('echo `date` $0 test section begin\n')
     strings.append('\n')
