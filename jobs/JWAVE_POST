@@ -71,9 +71,9 @@ setpdy.sh
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/wave
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/wave
 
-export COMINice=${COMINice:-${COMROOTp2}/omb/prod}
-export COMINwnd=${COMINwnd:-${COMROOT}/gfs/prod}
-export COMIN_WAV_CUR=${COMIN_WAV_CUR:-${COMROOTp2}/rtofs/prod}
+export COMINice=${COMINice:-$(compath.py omb/prod)}
+export COMINwnd=${COMINwnd:-$(compath.py gfs/prod)}
+export COMIN_WAV_CUR=${COMIN_WAV_CUR:-$(compath.py rtofs/prod)}
 
 #############################
 # Source relevant config files
