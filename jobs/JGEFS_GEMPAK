@@ -167,12 +167,19 @@ export MP_CMDFILE=$DATA/poescript
 export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
 rm -f mpmd_cmdfile
 ln -s $MP_CMDFILE mpmd_cmdfile
-########################################################
 
+########################################################
 ## Execute the script.
 $APRUN
+#############################################################
 err=$?
-echo $err
+
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
+else
+    msg="FATAL ERROR: $job failed!"
+fi
+postmsg "$jlogfile" "$msg"
 
 ##############################
 # Remove the Temporary working directory
@@ -180,6 +187,6 @@ echo $err
 cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-echo `date` $0 `date -u` end
+echo "$(date) $0 $(date -u) end"
 
 exit $err

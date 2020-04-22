@@ -101,15 +101,26 @@ env | sort
 # Execute the script
 if (( cyc == 00 )); then
     $HOMEgefs/scripts/exglobal_enscqpf.sh.ecf
+    err=$?
+	echo $err
 else
     echo "skip cqpf processing in development for cyc=$cyc"
 fi
 #############################################################
 
-msg="JOB COMPLETED NORMALLY"
+if [ ${err:-0} = 0 ]; then
+    msg="$job completed normally!"
+else
+    msg="FATAL ERROR: $job failed!"
+fi
 postmsg "$jlogfile" "$msg"
 
 ##############################
 # Remove the Temporary working directory
 ##############################
+cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
+
+echo "$(date) $0 $(date -u) end"
+
+exit $err

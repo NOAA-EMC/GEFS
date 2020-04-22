@@ -360,7 +360,7 @@ echo
 env | sort
 echo
 
-ERR=0
+err=0
 #################################
 # Run from $SHOUR to $FHOUR
 #################################
@@ -370,38 +370,30 @@ if [[ $SHOUR -le $FHOUR ]]; then
     export POSTGPVARS=$POSTGPVARS_HIGH
 
     $HOMEgefs/scripts/exgefs_nceppost.sh.ecf $SHOUR $FHOUR $FHOUT_HF $FHOUT_LF $FHMAX_HF $SHOUR_LF
-    ERR=$?
-    if [ $ERR -ne 0 ]; then
-        msg="FATAL ERROR: ex-script of GEFS_NCEPPOST failed!"
+    err=$?
+    if [ $err -ne 0 ]; then
+        msg="FATAL ERROR: $job failed!"
         postmsg "$jlogfile" "$msg"
-        exit $ERR
+        exit $err
     fi
-    
-    export SHOUR=`expr $FHOUR_HIGH + $FHINC_HIGH`
+    export SHOUR=$(expr $FHOUR_HIGH + $FHINC_HIGH)
 fi # test $SHOUR -le $FHOUR_HIGH
 
 mv $post_log $COMOUT/misc/post
 
-################# lines between these markers have been modified for dev begin
-echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN
-echo DATA=$DATA
-ls -al $DATA
-echo `date` TEST LISTING OF WORKING DIRECTORY END
-################# lines between these markers have been modified for dev end
-if [ $ERR = 0 ]; then
+if [ $err = 0 ]; then
     msg="$job completed normally!"
 else
     msg="FATAL ERROR: $job failed!"
 fi
 postmsg "$jlogfile" "$msg"
 
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-if [[ $KEEPDATA != "YES" ]]; then
-    cd $DATAROOT
-    rm -rf $DATA
-fi
+echo "$(date) $0 $(date -u) end"
 
-echo `date` $0 `date -u` end
-
-exit $ERR
-
+exit $err

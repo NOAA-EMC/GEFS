@@ -113,8 +113,7 @@ env | sort
 # Execute the script
 $HOMEgefs/scripts/exgefs_init_recenter.sh.ecf
 #############################################################
-ERR=$?
-echo $ERR
+err=$?
 
 if [ $SENDCOM = YES ]; then
 	mem=01	
@@ -127,11 +126,10 @@ fi
 
 cat $pgmout
 
-#We should check error message here  ---- Dingchen
-if [ $ERR = 0 ]; then
-    msg="JOB COMPLETED NORMALLY"
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
 else
-    msg="JOB FAILED!"
+    msg="FATAL ERROR: $job failed!"
 fi
 postmsg "$jlogfile" "$msg"
 
@@ -139,10 +137,9 @@ postmsg "$jlogfile" "$msg"
 # Remove the Temporary working directory
 ##############################
 cd $DATAROOT
-
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-echo `date` $0 `date -u` end
+echo "$(date) $0 $(date -u) end"
 
-exit $ERR
+exit $err
 

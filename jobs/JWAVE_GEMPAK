@@ -133,8 +133,7 @@ env
 
 chmod 775 poescript
 
-if [ $nfile -gt 1 ]
-then
+if [ $nfile -gt 1 ]; then
   export MP_PGMMODEL=mpmd
   export MP_CMDFILE=poescript
   mpirun -n $nfile cfp $MP_CMDFILE
@@ -142,19 +141,22 @@ then
 else
   poescript
 fi
-err=$?
-if [ $err -ne 0 ]; then
-  msg="FATAL ERROR: ex-script of JWAVE_GEMPAK failed!"
+
+if [ ${err:-0} = 0 ]; then
+    msg="$job completed normally!"
 else
-  msg="$job completed normally!"
+    msg="FATAL ERROR: $job failed!"
 fi
 postmsg "$jlogfile" "$msg"
 
-# Remove temp directories
-if [ "$KEEPDATA" != "YES" ]; then
-  cd $DATAROOT
-##  rm -rf $DATA
-fi
-date
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
+
+echo "$(date) $0 $(date -u) end"
+
+exit $err
 
 

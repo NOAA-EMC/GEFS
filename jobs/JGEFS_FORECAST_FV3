@@ -421,21 +421,25 @@ if [[ $RERUN = "YES" ]]; then
 	cp -pr $GESIN/$mem/RESTART/stoch_out.F000$fhr $DATA/stoch_ini 
 fi
 
+########################################################
+## Execute the script.
 $FORECASTSH
-ERR=$?
+#############################################################
+err=$?
 
-if [ $ERR = 0 ]; then
-	msg="$job completed normally!"
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
 else
-	msg="FATAL ERROR: $job failed!"
+    msg="FATAL ERROR: $job failed!"
 fi
 postmsg "$jlogfile" "$msg"
 
-if [[ $KEEPDATA != "YES" ]]; then
-	cd $DATAROOT
-	rm -rf $DATA
-fi
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-echo `date` $0 `date -u` end
+echo "$(date) $0 $(date -u) end"
 
-exit $ERR
+exit $err

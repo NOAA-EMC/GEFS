@@ -106,29 +106,24 @@ env | sort
 
 #############################################################
 # Execute the script
-# $HOMEgefs/scripts/exgefs_init_chem.ecf
 $HOMEgefs/scripts/exgefs_init_aerosol.py
 #############################################################
-ERR=$?
+err=$?
 
-if [ $ERR = 0 ]; then
-    msg="JOB COMPLETED NORMALLY"
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
 else
-    msg="JOB FAILED!"
+    msg="FATAL ERROR: $job failed!"
 fi
-
 postmsg "$jlogfile" "$msg"
 
 ##############################
 # Remove the Temporary working directory
 ##############################
 cd $DATAROOT
-ICSDIR=${ICSDIR:-$DATA}
-echo $ICSDIR
-echo $DATA
-if [ ${KEEPDATA:-NO} = NO ]; then 
-  rm -rf $DATA $ICSDIR
-fi
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-exit $ERR
+echo "$(date) $0 $(date -u) end"
+
+exit $err
 

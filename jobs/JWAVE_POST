@@ -119,20 +119,25 @@ export WAV_MOD_TAG=${COMPONENTwave}${waveMEMB}
 
 export CFP_VERBOSE=1
 
-# Execute the Script  
+#############################################################
+# Execute the script
 $HOMEwave/scripts/exwave_post_sbs.sh
+#############################################################
 err=$?
-if [ $err -ne 0 ]; then
-  msg="FATAL ERROR: ex-script of GWES_POST failed!"
+
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
 else
-  msg="$job completed normally!"
+    msg="FATAL ERROR: $job failed!"
 fi
 postmsg "$jlogfile" "$msg"
 
-# Remove temp directories
-if [ "$KEEPDATA" != "YES" ]; then
-  cd $DATAROOT
-  rm -rf $DATA
-fi
-date
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
+echo "$(date) $0 $(date -u) end"
+
+exit $err

@@ -140,11 +140,14 @@ postmsg "$jlogfile" "$msg"
 ########################################################
 # Execute the script.
 $HOMEgefs/scripts/exgefs_gempak_meta.sh.ecf
+#############################################################
 err=$?
-echo $err
-########################################################
 
-msg="job has ended"
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
+else
+    msg="FATAL ERROR: $job failed!"
+fi
 postmsg "$jlogfile" "$msg"
 
 cat $pgmout
@@ -155,6 +158,6 @@ cat $pgmout
 cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-echo `date` $0 `date -u` end
+echo "$(date) $0 $(date -u) end"
 
 exit $err

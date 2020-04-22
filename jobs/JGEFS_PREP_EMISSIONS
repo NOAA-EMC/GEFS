@@ -113,22 +113,22 @@ env | sort
 # Execute the script
 $gefsmpexec $HOMEchem/scripts/exglobal_prep_chem.bash
 #############################################################
-ERR=$?
+err=$?
 
-if [ $ERR = 0 ]; then
-    msg="JOB COMPLETED NORMALLY"
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
 else
-    msg="JOB FAILED!"
+    msg="FATAL ERROR: $job failed!"
 fi
-
 postmsg "$jlogfile" "$msg"
 
 ##############################
 # Remove the Temporary working directory
 ##############################
 cd $DATAROOT
-echo $DATA
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-exit $ERR
+echo "$(date) $0 $(date -u) end"
+
+exit $err
 

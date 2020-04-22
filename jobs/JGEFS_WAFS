@@ -106,25 +106,29 @@ postmsg "$jlogfile" "$msg"
 
 # Execute the ex-script
 
+#############################################################
+# Execute the script
 $HOMEgefs/scripts/exgefs_wafs.sh.ecf
-export err=?; err_chk
+#############################################################
+err=$?
 
-msg="JOB $job HAS COMPLETED NORMALLY"
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
+else
+    msg="FATAL ERROR: $job failed!"
+fi
 postmsg "$jlogfile" "$msg"
 
-###################################
-# Print exec output
-###################################
 if [ -e "$pgmout" ]; then
-cat $pgmout
+	cat $pgmout
 fi
 
-###################################
-# Remove temp directories
-###################################
-if [ "$KEEPDATA" != "YES" ] ; then
-  cd $DATAROOT
-  rm -rf $DATA
-fi
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-date
+echo "$(date) $0 $(date -u) end"
+
+exit $err

@@ -262,30 +262,25 @@ export MP_PGMMODEL=mpmd
 rm -f mpmd_cmdfile
 ln -s $MP_CMDFILE mpmd_cmdfile
 
-$APRUN 
+#############################################################
+# Execute the script
+$APRUN
+#############################################################
+err=$?
 
-rc=$?
-if [[ $rc -ne 0 ]]; then
-	msg="FATAL ERROR: $0 failed!"
-	echo "`date`    $msg"
-	postmsg "$jlogfile" "$msg"
-	export err=1
-	err_chk
-	exit $err
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
+else
+    msg="FATAL ERROR: $job failed!"
 fi
-
-msg="$job completed normally"
 postmsg "$jlogfile" "$msg"
-
-echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN
-echo DATA=$DATA
-ls -al $DATA
-echo `date` TEST LISTING OF WORKING DIRECTORY END
-
-echo `date` $job completed
 
 ##############################
 # Remove the Temporary working directory
 ##############################
 cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
+
+echo "$(date) $0 $(date -u) end"
+
+exit $err

@@ -125,12 +125,25 @@ case $FORECAST_SEGMENT in
                 ;;
 esac # $FORECAST_SEGMENT in
 
+#############################################################
+# Execute the script
 $HOMEgefs/scripts/exgefs_enspost.sh.ecf
+#############################################################
+err=$?
 
-msg="JOB COMPLETED NORMALLY"
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
+else
+    msg="FATAL ERROR: $job failed!"
+fi
 postmsg "$jlogfile" "$msg"
 
 ##############################
 # Remove the Temporary working directory
 ##############################
+cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
+
+echo "$(date) $0 $(date -u) end"
+
+exit $err

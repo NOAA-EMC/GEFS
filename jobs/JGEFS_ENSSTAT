@@ -245,9 +245,17 @@ export MP_PGMMODEL=mpmd
 rm -f mpmd_cmdfile
 ln -s $MP_CMDFILE mpmd_cmdfile
 
-$APRUN 
+#############################################################
+# Execute the script
+$APRUN
+#############################################################
+err=$?
 
-msg="JOB COMPLETED NORMALLY"
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
+else
+    msg="FATAL ERROR: $job failed!"
+fi
 postmsg "$jlogfile" "$msg"
 
 ##############################
@@ -255,3 +263,7 @@ postmsg "$jlogfile" "$msg"
 ##############################
 cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
+
+echo "$(date) $0 $(date -u) end"
+
+exit $err

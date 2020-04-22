@@ -150,20 +150,29 @@ export F00FLAG=YES
 
 env
 
-########################################################
+#############################################################
 # Execute the script.
 $HOMEgefs/scripts/exgefs_postsnd.sh.ecf
-########################################################
+#############################################################
+err=$?
+
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
+else
+    msg="FATAL ERROR: $job failed!"
+fi
+postmsg "$jlogfile" "$msg"
 
 if [ -e "$pgmout" ] ; then
   cat $pgmout
 fi
 
-##########################################
+##############################
 # Remove the Temporary working directory
-##########################################
+##############################
 cd $DATAROOT
-[[ $KEEPDATA = "NO" ]] && rm -rf $DATA
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-date
-exit 0
+echo "$(date) $0 $(date -u) end"
+
+exit $err
