@@ -73,10 +73,6 @@ setpdy.sh
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/wave
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/wave
 
-export COMINice=${COMINice:-${COMROOTp2}/omb/prod}
-export COMINwnd=${COMINwnd:-${COMROOT}/gfs/prod}
-export COMIN_WAV_CUR=${COMIN_WAV_CUR:-${COMROOTp2}/rtofs/prod}
-
 #############################
 # Source relevant config files
 #############################
@@ -87,7 +83,6 @@ for config in $configs; do
     status=$?
     [[ $status -ne 0 ]] && exit $status
 done
-
 
 # Add default errchk = err_chk
 export errchk=${errchk:-err_chk}
