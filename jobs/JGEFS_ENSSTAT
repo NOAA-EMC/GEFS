@@ -89,9 +89,8 @@ export FHOUT=$FHOUTLF
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export COMINm1=$COMROOT/${NET}/${envir}/${RUN}.${PDYm1}
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/atmos
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/atmos
 
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
@@ -231,7 +230,7 @@ for stream in ${PRDGEN_STREAMS[@]}; do
 	pgapre="${PRDGEN_A_PREFIX[$stream]}"
 	pgbpre="${PRDGEN_B_PREFIX[$stream]}"
 	do_analysis="${PRDGEN_DO_ANALYSIS[$stream]:-NO}"
-	if [ ! -d ${pgad} ]; then mkdir -m 775 -p $COMOUT/$cyc/${pgad}; fi
+	if [ ! -d ${pgad} ]; then mkdir -m 775 -p $COMOUT/${pgad}; fi
 	
 	echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $subdata \"$stream\" \"$jobgrid\" \"$hours\" \"$pgad\" \"$pgapre\" 2>&1 >${outfile}" >> ensstat.cmdfile
 

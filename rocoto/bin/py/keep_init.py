@@ -26,8 +26,8 @@ import os
 import shutil
 from functools import partial
 
-destination_base = "{init_dir}/{pdy}/{cycle}/{member}"
-destination_pattern = "{init_dir}/{pdy}/{cycle}/{member}"
+destination_base = "{init_dir}/{pdy}/{cycle}/atmos/{member}"
+destination_pattern = "{init_dir}/{pdy}/{cycle}/atmos/{member}"
 source_pattern = "{work_dir}/nwges/dev/gefs.{pdy}/{cycle}/{member}"
 clobber = True
 

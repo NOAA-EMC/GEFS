@@ -82,11 +82,10 @@ echo set parameters using gefs.parm
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export COMINm1=$COMROOT/${NET}/${envir}/${RUN}.${PDYm1}
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/atmos
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/atmos
 
-mkdir -m 775 -p $COMOUT/$cyc/ensstat
+mkdir -m 775 -p $COMOUT/ensstat
 
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
@@ -103,33 +102,28 @@ export SLEEP_TIME=900
 export SLEEP_INT=5
 
 export NTHREADS=1
-####################################
-# Specify Forecast Hour Range
-####################################
-# allow different forecast lengths in different cycles
-if [[ $envir = dev ]]; then
-	case $cyc in
-		(00) FHOUR=$fhmax00 ;;
-		(06) FHOUR=$fhmax06 ;;
-		(12) FHOUR=$fhmax12 ;;
-		(18) FHOUR=$fhmax18 ;;
-		(*)
-			echo cyc=$cyc IS UNDEFINED 
-			export pgm=JGEFS_ENSSTAT
-			export err=111
-			;;
-	esac # $cyc
-fi # [[ $envir = dev ]]
 
-export SHOUR=00
-export FHINC=${FHOUTLF:-06}
-export FHOUR=$fhmax
+export FHINC=${FHOUTLF:-6}
 
-env | sort
+#env | sort
 
 # Execute the script
-
-export ext_h=""
+export FORECAST_SEGMENT=${FORECAST_SEGMENT:-"hr"}
+case $FORECAST_SEGMENT in
+        hr)
+		export ext_h=""
+		export SHOUR=00
+		export FHOUR=$fhmaxh
+                ;;
+        lr)
+		export ext_h=ss
+		(( SHOUR = fhmaxh + FHOUTLF ))
+		export SHOUR=$SHOUR 
+		export FHOUR=$fhmax
+                ;;
+        *)
+                ;;
+esac # $FORECAST_SEGMENT in
 
 $HOMEgefs/scripts/exgefs_enspost.sh.ecf
 

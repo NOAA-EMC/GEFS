@@ -136,22 +136,26 @@ export REDERR='2>'
 # Run setpdy and initialize PDY variables
 ##############################
 setpdy.sh
-
 . PDY
-
-##############################################
-# Define COM and GES directories
-##############################################
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-
-mkdir -m 775 -p $COMOUT/$cyc/master
-mkdir -m 775 -p $COMOUT/$cyc/misc/post
 
 ############################################
 # Run gefs.parm to get input variables
 ############################################
 . $PARMgefs/gefs.parm
+
+##############################################
+# Define COM and GES directories
+##############################################
+if [[ $cplchm == ".true." ]]; then
+    COMPONENT="chem"
+fi
+export COMPONENT=${COMPONENT:-atmos}
+
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/$COMPONENT
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/$COMPONENT
+
+mkdir -m 775 -p $COMOUT/master
+mkdir -m 775 -p $COMOUT/misc/post
 
 case $cyc in
     00) export fhmax=$fhmax00;;
@@ -159,7 +163,6 @@ case $cyc in
     12) export fhmax=$fhmax12;;
     18) export fhmax=$fhmax18;;
 esac
-
 
 # set outtyp to 1 because we need to run chgres in the post before model start running chgres
 # otherwise set to 0, then chgres will not be executed in global_nceppost.sh
@@ -169,12 +172,12 @@ export OUTTYP=$OUTTYP
 
 if [[ $cplchm = ".true." ]]; then
     # Alternate post settings
-    export FLTFILEGFSF00=$PARMpost/postxconfig-NT-gefs-aerosol.txt
-    export FLTFILEGFS=$PARMpost/postxconfig-NT-gefs-aerosol.txt
-    export FLTFILEGFSF001=$PARMpost/postxconfig-NT-gefs-aerosol.txt
-    export FLTFILEGFS1=$PARMpost/postxconfig-NT-gefs-aerosol.txt
-    export CTLFILEGFSF00=$PARMpost/postcntrl_gefs_aerosol.xml
-    export CTLFILEGFS=$PARMpost/postcntrl_gefs_aerosol.xml
+    export FLTFILEGFSF00=$PARMpost/postxconfig-NT-GEFS-CHEM.txt
+    export FLTFILEGFS=$PARMpost/postxconfig-NT-GEFS-CHEM.txt
+    export FLTFILEGFSF001=$PARMpost/postxconfig-NT-GEFS-CHEM.txt
+    export FLTFILEGFS1=$PARMpost/postxconfig-NT-GEFS-CHEM.txt
+    export CTLFILEGFSF00=$PARMpost/postcntrl_gefs_chem.xml
+    export CTLFILEGFS=$PARMpost/postcntrl_gefs_chem.xml
     export POSTGRB2TBL=$PARMpost/params_grib2_tbl_new
     export POSTGPVARS_HIGH="KPO=50,PO=1000.,975.,950.,925.,900.,875.,850.,825.,800.,775.,750.,725.,700.,675.,650.,625.,600.,575.,550.,525.,500.,475.,450.,425.,400.,375.,350.,325.,300.,275.,250.,225.,200.,175.,150.,125.,100.,70.,50.,40.,30.,20.,15.,10.,7.,5.,3.,2.,1, gocart_on=.true."
 
@@ -253,9 +256,7 @@ fi
 ####################################
 # Specify Restart File Name to Key Off
 ####################################
-#restart_file=$COMIN/$cyc/misc/fcst/${RUNMEM}.t${cyc}z.logf
-restart_file=$COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.logf
-#restart_file=$COMIN/$cyc/sfcsig/$mem/${RUNMEM}.t${cyc}z.logf
+restart_file=$COMIN/sfcsig/${RUNMEM}.t${cyc}z.logf
 
 ####################################
 # Specify Timeout Behavior of Post
@@ -329,9 +330,8 @@ if (( 0 == 1 )) ; then
 ####################################
 # Check if this is a restart
 ####################################
-    mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control
+    mcfile=$COMOUT/misc/post/${RUNMEM}.t${cyc}z.master.control
     if [[ -f $mcfile ]]; then
-        # modelrecvy=`cat < $COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control`
         modelrecvy=`cat < $mcfile`
         recvy_pdy=`echo $modelrecvy | cut -c1-8`
         recvy_cyc=`echo $modelrecvy | cut -c9-10`
@@ -380,7 +380,7 @@ if [[ $SHOUR -le $FHOUR ]]; then
     export SHOUR=`expr $FHOUR_HIGH + $FHINC_HIGH`
 fi # test $SHOUR -le $FHOUR_HIGH
 
-mv $post_log $COMOUT/$cyc/misc/post
+mv $post_log $COMOUT/misc/post
 
 ################# lines between these markers have been modified for dev begin
 echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN

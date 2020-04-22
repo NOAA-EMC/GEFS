@@ -8,6 +8,7 @@ def get_and_merge_default_config(dicBase):
     # To get the WHERE_AM_I from dicBase or identify it using default methode
     get_WHERE_AM_I(dicBase)
     WHERE_AM_I = dicBase["WHERE_AM_I"]
+    print("----*You are working on machine: {0}".format(WHERE_AM_I))
     sDefaultConfig_File = sys.path[0] + sSep + "user_{0}.conf".format(WHERE_AM_I)
 
     if os.path.exists(sDefaultConfig_File):
@@ -175,11 +176,16 @@ def get_WHERE_AM_I(dicBase):
     sVarName = 'WHERE_AM_I'
     import os
     
-    sCPath = os.getcwd()
-    if sCPath.startswith("/gpfs/dell6"):
-        dicBase[sVarName] = 'wcoss_dell_p35'
+    #sCPath = os.getcwd()
+    #if sCPath.startswith("/gpfs/dell6"):
+    #    dicBase[sVarName] = 'wcoss_dell_p35'
     
     if sVarName not in dicBase:
+        sCPath = os.getcwd()
+        if sCPath.startswith("/gpfs/dell6"):
+            dicBase[sVarName] = 'wcoss_dell_p35'
+            return
+
         if os.path.exists('/scratch1/NCEPDEV'):
             dicBase[sVarName] = 'hera'
         elif os.path.exists('/gpfs') and os.path.exists('/etc/SuSE-release'):

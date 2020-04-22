@@ -10,6 +10,7 @@ date
 # Set up cycle varaible
 ############################
 export cycle=t${cyc}z
+export COMPONENT=atmos
 
 ####################################
 # obtain unique process id (pid) and make working directory
@@ -79,7 +80,7 @@ export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
 ##############################################
 # Define CFSSST directories
 ##############################################
-export COMOUTcfssst=${SSTDIR:-$COMOUT/$cyc/cfssst}
+export COMOUTcfssst=${SSTDIR:-$COMOUT/$cyc/$COMPONENT/cfssst}
 mkdir -m 775 -p $COMOUTcfssst
 
 ##############################################

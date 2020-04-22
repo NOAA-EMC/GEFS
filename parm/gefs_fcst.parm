@@ -45,8 +45,6 @@ export WRITE_NEMSIOFILE=.true.
 export WRITE_NEMSIOFLIP=.true.
 export LONB=$LONB
 export LATB=$LATB
-export restart_interval=${fhrestart:-48}
-export other_restart_time=${other_restart_time:-6}
 export NSOUT=0
 
 # CPU geopmetry
@@ -134,11 +132,8 @@ if [[ $cplwav = ".true." ]]; then
 fi
 
 if [[ $cplchm = ".true." ]]; then
-	export restart_interval=${restart_interval_aer:-24}
-	# export restart_interval=$gefs_cych
 	export AEROSOL_INIT_TYPE=${AEROSOL_INIT_TYPE:-"warm"}
 	export DELTIM=300 # Needed to match setting used by GSD
-	export other_restart_time=${other_restart_time:-$gefs_cych}
 
 	if [[ $AEROSOL_INIT_TYPE == "warm" ]]; then
 		export warm_start=".true."
@@ -146,17 +141,11 @@ if [[ $cplchm = ".true." ]]; then
 		export CALCINCEXEC=${CALCINCEXEC:-$HOMEgfs/exec/calc_increment_ens_gsdchem.x}
 	fi
 
-	# TODO Update to determine emission type
-	export EMITYPE=${EMITYPE:-2}  # 1:MODIS, 2:GBBEPx
-	# TODO Copy data to a fix_aerosol
-	export EMIDIR=${EMIDIR:-/gpfs/dell2/emc/modeling/noscrub/Li.Pan/emi_}
-
 	export DIAG_TABLE=${DIAG_TABLE:-$HOMEgfs/parm/parm_fv3diag/chm_diag_table}
 
 	export lgfdlmprad=".true."
 	export effr_in=".true."
 	export USE_COUPLER_RES="YES"
-
 fi
 
 #gfs_physics
@@ -270,12 +259,12 @@ MEMBER=`echo $RUNMEM|cut -c4-5`
 CDATE=$PDY$cyc
 
 # Turn off stochastic physics for control member
-if [[ $RUNMEM = "gec00" ]]; then
+if [[ $RUNMEM = "gec00" || $RUNMEM = "geaer" ]]; then
 	export DO_SPPT="NO"
 	export DO_SHUM="NO"
 	export DO_SKEB="NO"
 	export DO_VC="NO"
-fi # [[ $RUNMEM = "gec00" ]]
+fi # [[ $RUNMEM = "gec00" || $RUNMEM = "geaer" ]]
 
 # Stochastically Perturbed Physics Tendency
 if [[ $DO_SPPT = YES ]]; then

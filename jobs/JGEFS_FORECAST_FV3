@@ -37,6 +37,7 @@ export cycle=t${cyc}z
 ####################################
 export NET=${NET:-gens}
 export RUN=${RUN:-gefs}
+export COMPONENTwave=${COMPONENTwave:-${RUN}wave}
 #export NTHREADS=1
 
 ####################################
@@ -54,10 +55,9 @@ export pgmerr=errfile
 
 ####################################
 # Define RERUN Parameter: default to RESTART if not previously set
-#
-# Set RERUN=RESTART to find the last set of complete SFCSIG files and restart the forecast at that point
-# (corresponds to previous setting RERUN=NO)
-# Set RERUN=YES to remove all forecast products and log files, if any, and start over from the conditions
+# FOR FV3 based forecast job,
+#       RERUN=YES means pick up from the latest available (or specific) set of restart files 
+#       RERUN=NO means ignore  the available set of restart files valid later than FHINI (00h or fhmaxh)
 #
 # In case of FORECAST failure, set RERUN=RESTART if necessary in FORECAST, NCEPPOST, and PRDGEN jobs
 # In case of NCEPPOST failure, set RERUN=RESTART if necessary in NCEPPOST, and PRDGEN jobs
@@ -93,8 +93,31 @@ export USHgfs=$HOMEgfs/ush
 export FIXgfs=$HOMEgfs/fix
 export PARMgfs=$HOMEgfs/parm
 
-export HOMEwave=${HOMEwave:-${HOMEgefs}}
-export PARMwave=${PARMwave:-$HOMEwave/parm}
+# Path to HOME Directory
+export HOMEwave=${HOMEwave:-${HOMEgfs}}
+export PARMwave=${PARMwave:-$HOMEgefs/parm}
+export CODEwave=${CODEwave:-${HOMEgfs}/WW3/model}
+export EXECwave=${EXECwave:-$HOMEwave/exec}
+export FIXwave=${FIXwave:-$FIXgefs/fix_wave}
+export USHwave=${USHwave:-$HOMEwave/ush}
+export EXECcode=${EXECcode:-$CODEwave/exe}
+
+export FIXemi=${FIXemi:-$HOMEgefs/fix/fix_emission/emi_}
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+# Set COM Paths and GETGES environment
+export GESIN=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
+export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc
+export SSTDIR=${SSTDIR:-$COMIN/atmos/cfssst}
+export COMINWW3=${COMINWW3:-${COMIN}/wave}
+export COMOUTWW3=${COMOUTWW3:-${COMIN}/wave}
 
 #Names used in exglobal_fv3.sh
 export FIX_DIR=$FIXgfs
@@ -102,18 +125,13 @@ export FIX_AM=$FIX_DIR/fix_am
 export FIXfv3=$FIX_DIR/fix_fv3_gmted2010
 export FIXchem=$FIX_DIR/fix_chem/fimdata_chem/fimdata_chem_G6_Li
 
-# Run setpdy and initialize PDY variables
-setpdy.sh
-. PDY
 ##############################################
 # Define COM and GES directories
 ##############################################
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 	echo "Integrate the model for the Half-Month range segment"
-	FHINI=0
 elif [[ $FORECAST_SEGMENT = lr ]] ; then
 	echo "Integrate the model for the Longer Range segment"
-	FHINI=$fhmaxh
 	export cplwav=.false.
 else
 	msg="FATAL ERROR:  Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
@@ -126,30 +144,6 @@ else
 fi # [[ $FORECAST_SEGMENT = hr ]]
 
 echo FORECAST_SEGMENT = $FORECAST_SEGMENT
-echo FHINI=$FHINI
-echo ENS_SPS = $ENS_SPS
-echo RUN_CONCURRENT = $RUN_CONCURRENT
-
-export GESIN=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
-export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export SSTDIR=${SSTDIR:-$COMIN/${cyc}/cfssst}
-
-export memdir=$GESIN/$mem
-export gmemdir=$GESIN/$mem
-export ICSDIR=$GESIN/$mem
-export FCSTDIR=$COMOUT/$cyc/sfcsig
-export RSTDIR=$GESIN/$mem/RESTART
-export RSTDIR_TMP=$RSTDIR
-
-mkdir -m 775 -p $COMOUT/$cyc/sfcsig
-mkdir -m 775 -p $COMOUT/$cyc/misc/fcst
-mkdir -m 775 -p $COMOUT/$cyc/restart/$mem
-
-mkdir -m 755 -p $GESIN/$mem/RESTART
-
-#ln -s $GESOUT/$mem/RESTART $DATA/RESTART
 
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
@@ -158,7 +152,26 @@ export LOGSCRIPT=startmsg
 echo set parameters using gefs.parm
 ##############################################
 . $PARMgefs/gefs.parm
-. $PARMwave/gwes.parm
+. $PARMgefs/gefs_fcst.parm
+. $PARMwave/gefs_wave.parm
+
+if [[ $cplchm = ".true." ]]; then
+	COMPONENT="chem"
+fi
+export COMPONENT=${COMPONENT:-atmos}
+
+export memdir=$GESIN/$mem
+export gmemdir=$GESIN/$mem
+export ICSDIR=$GESIN/$mem
+export FCSTDIR=$COMOUT/$COMPONENT/sfcsig
+export RSTDIR=$GESIN/$mem/RESTART
+export RSTDIR_TMP=$RSTDIR
+
+mkdir -m 775 -p $FCSTDIR
+mkdir -m 775 -p $COMOUT/$COMPONENT/restart/$mem
+
+mkdir -m 755 -p $GESIN/$mem/RESTART
+
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 	export RERUN="NO"
@@ -168,8 +181,9 @@ fi
 if [[ $FORECAST_SEGMENT = lr ]] ; then
 	export RERUN="YES"
 	FHINI=${FHINI:-$fhmaxh}
-	export CDATE_RST=$($NDATE +$fhmaxh $PDY$cyc)
 fi
+
+export CDATE_RST=${CDATE_RST:-$($NDATE +$FHINI $PDY$cyc)}
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
 	CASE=$CASEHR; FHMAX=$fhmaxh; FHOUT=$FHOUTLF; FHZER=6;
@@ -179,7 +193,7 @@ if [[ $FORECAST_SEGMENT = hr ]] ; then
 	(( LEVS = LEVSHR + 1 ))
 elif [[ $FORECAST_SEGMENT = lr ]] ; then
 	CASE=$CASELR; FHMAX=$fhmax; FHOUT=$FHOUTLF; FHZER=6;
- 	MTNRSL=$MTNRSLLR; LONB=$LONBLR; LATB=$LATBLR;
+	MTNRSL=$MTNRSLLR; LONB=$LONBLR; LATB=$LATBLR;
 	FHMAX_HF=$FHMAXHF; FHOUT_HF=$FHOUTHF;
 	FHINI=$FHINI;
 	(( LEVS = LEVSLR + 1 ))
@@ -207,17 +221,12 @@ export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 #
 # Forecast Input Variables
 #
-. $PARMgefs/gefs_fcst.parm
-export restart_interval=${restart_interval:-${fhrestart:-1000}}
 export fhstoch=$restart_interval
 
 if [[ $FORECAST_SEGMENT = hr ]] ; then
-#	(( FHMAX = FHMAX + FHOUTLF ))
 	(( FHMAX = FHMAX + 1 ))
 fi
 
-export other_restart_time=${other_restart_time:-6}
-export fhstoch=${fhstoch:-"-999.0"}  # forecast hour to dump random patterns
 export stochini=${stochini:-".false."}  # true= read in pattern, false=initialize from seed
 
 if [[ $RERUN = "YES" ]] ; then
@@ -261,8 +270,6 @@ if [[ $FORECAST_SEGMENT = hr ]] ; then
 		export SPPT_TAU=$SPPT_TAU_hr
 		export SPPT_LSCALE=$SPPT_LSCALE_hr
 		export sppt_sfclimit=$sppt_sfclimit_hr
-	#	export sppt_sigtop1=$sppt_sigtop1_hr
-	#	export sppt_sigtop2=$sppt_sigtop2_hr
 	fi
 
 	if [[ $DO_SHUM = YES ]] ; then
@@ -270,7 +277,6 @@ if [[ $FORECAST_SEGMENT = hr ]] ; then
 		export ISEED_SHUM=$ISEED_SHUM_hr
 		export SHUM_TAU=$SHUM_TAU_hr
 		export SHUM_LSCALE=$SHUM_LSCALE_hr
-	#	export shum_sigefold=$shum_sigefold_hr
 	fi
 
 	if [[ $DO_SKEB = YES ]] ; then
@@ -292,8 +298,6 @@ if [[ $FORECAST_SEGMENT = lr ]] ; then
 		export SPPT_TAU=$SPPT_TAU_hr
 		export SPPT_LSCALE=$SPPT_LSCALE_hr
 		export sppt_sfclimit=$sppt_sfclimit_hr
-	#	export sppt_sigtop1=$sppt_sigtop1_hr
-	#	export sppt_sigtop2=$sppt_sigtop2_hr
 	fi
 
 	if [[ $DO_SHUM = YES ]] ; then
@@ -301,7 +305,6 @@ if [[ $FORECAST_SEGMENT = lr ]] ; then
 		export ISEED_SHUM=$ISEED_SHUM_hr
 		export SHUM_TAU=$SHUM_TAU_hr
 		export SHUM_LSCALE=$SHUM_LSCALE_hr
-	#	export shum_sigefold=$shum_sigefold_hr
 	fi
 
 	if [[ $DO_SKEB = YES ]] ; then
@@ -334,8 +337,6 @@ echo $APRUN
 
 NCP="/bin/cp -p"
 
-#USE_RESTART=NO                      #use restart file under COMROT/RESTART if run is interruptted
-#FHSTRT=6                            #restart from a given hour if USE_RESTART=YES
 SEND=NO    
 export VERBOSE=YES
 
@@ -346,61 +347,60 @@ export CDATE=$PDY$cyc
 export rCDUMP=$RUNMEM
 export CDUMP=$RUNMEM
 
-LINK=NO   # link is done in the $FORECAST script
-if [ $LINK = "YES" ]; then
-    if [ $OUTPUT_GRID = "gaussian_grid" ]; then
-	    # Link output files
-	    hr=$FHINI
-	    while (( hr < FHMAX_HF )); do
-		    fhr=$(printf "%03.0f" $hr)
-		    ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $DATA/$CDUMP.${cycle}.atmf$fhr.nemsio
-		    ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $DATA/$CDUMP.${cycle}.sfcf$fhr.nemsio
-		    ln -s $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $DATA/$CDUMP.${cycle}.logf$fhr.nemsio
-		    export hr=$(expr $hr + $FHOUT_HF)
-	    done
-	    while (( hr <= FHMAX )); do
-		    fhr=$(printf "%03.0f" $hr)
-		    ln -s $FCSTDIR/${RUNMEM}.${cycle}.atmf$fhr.nemsio $DATA/$CDUMP.${cycle}.atmf$fhr.nemsio
-		    ln -s $FCSTDIR/${RUNMEM}.${cycle}.sfcf$fhr.nemsio $DATA/$CDUMP.${cycle}.sfcf$fhr.nemsio
-		    ln -s $FCSTDIR/${RUNMEM}.${cycle}.logf$fhr.nemsio $DATA/$CDUMP.${cycle}.logf$fhr.nemsio
-		    export hr=$(expr $hr + $FHOUT)
-	    done
-    else
-	    for n in `seq 1 $ntiles`; do
-		    for file in atmos_4xdaily. atmos_static. fv3_history. fv3_history2d. grid_spec. nggps2d. nggps3d.; do
-			    # ln -s $ROTDIR/$file\tile$n.nc $DATA/$file\tile$n.nc
-
-			    # touch $SFCSIG/$mem/$file\tile$n.nc
-			    # ln -s $SFCSIG/$mem/$file\tile$n.nc $memdir/$file\tile$n.nc
-			    ;
-		    done
-	    done
-    fi # [ $OUTPUT_GRID = "gaussian_grid" ]
-fi # $LINK
-
 if [[ $cplwav = ".true." ]]; then
-	# Settings for Wavewatch III
-	export COMINWW3=${COMINWW3:-${COMROOT:?}/${NET}/${envir}}
-	export COMOUTWW3=$COMROOT/${NET}/${envir}
-fi # [[ $cplwav = ".true." ]]
+	# Set location of wave restart from last cycle
+	last_date=$($NDATE -$WAVHCYC $CDATE)
+	last_PDY=$(echo $last_date | cut -c1-8)
+	last_cyc=$(echo $last_date | cut -c9-10)
+	export WRDIR=$COMROOT/${NET}/${envir}/${RUN}.${last_PDY}/$last_cyc/wave/restart
+fi
 
-if [[ $cplchm = ".true." && $warm_start = ".true." ]]; then
-    # Link restart files for next cycle
+if [[ $cplchm = ".true." ]]; then
+	CHEMIN=${CHEMIN:-$memdir/chem}
+	if [[ ! -d $CHEMIN ]]; then
+		echo "FATAL: cplchm is .true. but there is no chem input directry at $CHEMIN"
+		exit 200
+	fi
+
+	# Check which smoke emissions we are using
+	gbbepx_found=0
+	any_found=0
+	for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
+		if [[ -f $CHEMIN/$tile/plumefrp.dat ]]; then (( gbbepx_found = gbbepx_found + 1 )); fi
+		if [[ -f $CHEMIN/$tile/plumestuff.dat ]]; then (( any_found = any_found + 1 )); fi
+	done
+
+	if (( gbbepx_found == 6 )); then
+		# Using GBBEPx
+		echo "GBBEPx smoke emissions detected and will be used"
+		export EMITYPE=2
+	elif (( any_found == 6 )); then
+		# Using MODIS
+		echo "WARNING: missing or complete GBBEPx emissions, failing over to MODIS-style inputs"
+		echo "   Check $CHEMIN and your prep emission job if this is not expected."
+		export EMITYPE=1
+	else
+		echo "FATAL: cplchm is .true. but smoke emissions are not available!"
+		echo "  Check input directory $CHEMIN"
+		err=10
+		err_chk || exit $err
+	fi
+
+	# Link restart files for next cycle
 	next_date=$($NDATE +$gefs_cych $CDATE)
-	# next_date=$($NDATE +$restart_interval $CDATE)
-    next_PDY=$(echo $next_date | cut -c1-8)
-    next_cyc=$(echo $next_date | cut -c9-10)
-	last_rstdir=$COMOUT/$cyc/restart/$mem
-    if [[ ! -d $DATA/RESTART ]]; then mkdir -p $DATA/RESTART; fi
-	ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.coupler.res $DATA/RESTART/${next_PDY}.${next_cyc}0000.coupler.res
-	ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.fv_core.res.nc $DATA/RESTART/${next_PDY}.${next_cyc}0000.fv_core.res.nc
+	next_PDY=$(echo $next_date | cut -c1-8)
+	next_cyc=$(echo $next_date | cut -c9-10)
+	COM_RSTDIR=$COMOUT/$COMPONENT/restart/$mem
+	if [[ ! -d $RSTDIR ]]; then mkdir -p $RSTDIR; fi
+	ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res $RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res
+	ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc $RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc
 	for kind in fv_tracer.res fv_core.res fv_srf_wnd.res phy_data sfc_data; do
 		for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
-			ln -sf $last_rstdir/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc $DATA/RESTART/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc
+			ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc $RSTDIR/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc
 		done
 	done
 
-fi # [[ $cplchm = ".true." && $warm_start = ".true." ]]
+fi # [[ $cplchm = ".true." ]]
 
 export increment_file=$ICSDIR/fv3_increment.nc
 
@@ -424,18 +424,16 @@ fi
 $FORECASTSH
 ERR=$?
 
-cp -pr $DATA/stoch_out.F* $GESIN/$mem/RESTART  
-
 if [ $ERR = 0 ]; then
-    msg="$job completed normally!"
+	msg="$job completed normally!"
 else
-    msg="FATAL ERROR: $job failed!"
+	msg="FATAL ERROR: $job failed!"
 fi
 postmsg "$jlogfile" "$msg"
 
 if [[ $KEEPDATA != "YES" ]]; then
-    cd $DATAROOT
-    rm -rf $DATA
+	cd $DATAROOT
+	rm -rf $DATA
 fi
 
 echo `date` $0 `date -u` end
