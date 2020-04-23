@@ -5,6 +5,8 @@ exec/
 !gempak/fix/
 util/exec/
 
+env
+
 # Ignore compiled objects in sorc directories
 rocoto/py/*.pyc
 sorc/*/*.o

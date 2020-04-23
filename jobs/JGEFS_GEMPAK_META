@@ -111,7 +111,7 @@ if [ -n $COMINgfs ]; then
 fi
 export COMINsgfs=${COMINgfs:-$(compath.py gfs/prod)}
 export COMINs_p1=${COMROOTp1}/nawips/prod
-export COMIN=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/gempak
+export COMIN=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/atmos/gempak
 #export COMINgfs=$(compath.py gfs/prod/gfs.$PDY)/$cyc/gempak
 
 # COMINecmwf path is broken and data is not available - 08/16/2019 JY
@@ -126,8 +126,8 @@ export COMINecmwf=$(compath.py ecmwf/prod/ecmwf) #/ecmwf.${PDY})
 export COMINukmet=$(compath.py nawips/prod/ukmet)
 export COMINnam=$(compath.py nam/prod)
 
-export COMINm1=${COMROOT}/${NET}/${envir}/${RUN}.${PDYm1}/$cyc/gempak
-export COMOUT=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/gempak/meta
+export COMINm1=${COMROOT}/${NET}/${envir}/${RUN}.${PDYm1}/$cyc/atmos/gempak
+export COMOUT=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/atmos/gempak/meta
 if [ ! -d $COMOUT ] ; then
     mkdir -p -m 775 $COMOUT
 fi

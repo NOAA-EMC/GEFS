@@ -29,68 +29,43 @@ pwd=$(pwd -P)
 #--model fix fields
 #------------------------------
 if [ $machine == "cray" ]; then
-    FIX_DIR="/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gefs/fix_sst721_short"
+    FIX_DIR="/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gefs/fix_20200403"
     FIX_DIR_FV3="/gpfs/hps3/emc/global/noscrub/emc.glopara/git/fv3gfs/fix"
 elif [ $machine = "dell" ]; then
-    FIX_DIR="/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gefs/fix_sst721_short"
+    FIX_DIR="/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gefs/fix_20200403"
     FIX_DIR_FV3="/gpfs/dell2/emc/modeling/noscrub/emc.glopara/git/fv3gfs/fix"
 elif [ $machine = "hera" ]; then
-    FIX_DIR="/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix_sst721_short"
+    FIX_DIR="/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix_20200403"
     FIX_DIR_FV3="/scratch1/NCEPDEV/global/glopara/fix"
 fi
 
 # Delete Fix folder and relink/recopy it
 cd ${pwd}/../fix
-if [[ -d fix_gefs ]]; then
-    echo "Fix folder exists, deleting it..."
-    rm -rf fix_gefs
-fi
-$LINK $FIX_DIR fix_gefs
+for dir in fix_gefs fix_wave fix_emission; do
+    if [[ -d $dir ]]; then
+        echo "Fix folder exists, deleting it..."
+        rm -rf $dir
+    fi
+    $LINK $FIX_DIR/$dir $dir
+done
 cd ${pwd}
-
-cd ${pwd}/../fix
-# fix_wave
-sFolder=fix_wave
-if [[ -d $sFolder ]]; then
-    rm -rf $sFolder
-fi
-$LINK ${pwd}/../${sFolder} ${sFolder}
-cd ${pwd}
-
 
 if [[ -d global-workflow.fd ]] ; then
     cd ${pwd}/../fix
-    # fix_am
-    sFolder=fix_am
-    if [[ -d $sFolder ]]; then
-         rm -rf $sFolder
-    fi
-    $LINK $FIX_DIR_FV3/$sFolder $sFolder
 
-    # fix_fv3_gmted2010/C384
-    sFolder=fix_fv3_gmted2010/C384
-    if [[ -d $sFolder ]]; then
-        rm -rf $sFolder
-    fi
-    sFolder2=fix_fv3_gmted2010
-    if [[ ! -d $sFolder2 ]]; then
-         mkdir $sFolder2
-    fi
-    $LINK $FIX_DIR_FV3/$sFolder $sFolder
+    for gw_dir in fix_am fix_fv3_gmted2010/C384 fix_chem; do
+        if [[ -d $gw_dir ]]; then rm -Rf $gw_dir; fi
+        mkdir -p $(dirname $gw_dir)
+        $LINK $FIX_DIR_FV3/$gw_dir $gw_dir
+    done
 
     # product
     sFolder=product
     if [[ -d $sFolder ]]; then
         rm -rf $sFolder
     fi
-    $LINK ${pwd}/../sorc/global-workflow.fd/fix/${sFolder} ${sFolder}
+    $LINK ${pwd}/../sorc/global-workflow.fd/fix/${sFolder} ${sFolder}  
 
-    # chem_prep_emissions
-    sFolder=fix_chem
-    if [[ -d $sFolder ]]; then
-        rm -rf $sFolder
-    fi
-    $LINK ${FIX_DIR_FV3}/${sFolder} ${sFolder}
 
     cd ${pwd}
 fi
@@ -119,7 +94,6 @@ if [[ -d global-workflow.fd ]] ; then
         echo $sFile
     done
     $LINK ${sPath}/ww3_* ../exec/
-
 
     sPath=../sorc/global-workflow.fd/sorc/fv3gfs.fd/NEMS/exe
     $LINK ${sPath}/global_fv3gfs.* ../exec/
@@ -178,6 +152,28 @@ if [[ -d global-workflow.fd ]] ; then
         fi
     else
         $LINK ../sorc/global-workflow.fd/scripts/$sFile ../scripts/
+    fi
+fi
+
+# For wave
+if [[ -d global-workflow.fd ]]; then
+    lScripts="exwave_init.sh exwave_nawips.sh exwave_post_sbs.sh exwave_prep.sh exwave_stat.sh"
+    for sFile in $lScripts; do
+        $LINK ../sorc/global-workflow.fd/scripts/$sFile ../scripts/
+    done
+
+    lUsh="wave_ens_bull.sh wave_ens_stat.sh wave_grib2_cat.sh wave_grib2_sbs.sh wave_grid_interp.sh wave_grid_interp_sbs.sh wave_grid_moddef.sh wave_outp_spec.sh wave_prnc_cur.sh wave_prnc_ice.sh wave_tar.sh"
+    for sFile in $lUsh; do
+        $LINK ../sorc/global-workflow.fd/ush/$sFile ../ush/
+    done
+
+    if [[ -e ../env ]]; then
+        if [[ -L ../env ]]; then
+            rm ../env
+            $LINK sorc/global-workflow.fd/env ../
+        fi
+    else
+        $LINK sorc/global-workflow.fd/env ../
     fi
 fi
 

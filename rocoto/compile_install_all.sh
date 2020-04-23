@@ -156,6 +156,7 @@ if [ $CleanAll = "yes" ]; then
     rm -rf ../exec
     rm -rf ../util/exec
     rm -rf ../fix/fix_*
+    rm -rf ../fix/product
 
     # Clean the new links
     rm -rf global-workflow.fd

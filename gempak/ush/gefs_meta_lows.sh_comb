@@ -153,8 +153,8 @@ do
                 ln -s $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} $fn
             fi
 
-            if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/ge${fn}${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
-                ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/ge${fn}${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}_6
+            if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/atmos/gempak/ge${fn}${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
+                ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/atmos/gempak/ge${fn}${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}_6
             fi
         done
 
@@ -166,8 +166,8 @@ do
 
         fn=gefs_avg_6
         rm -rf ${fn}
-        if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/geavg${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
-            ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/gempak/geavg${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
+        if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/atmos/gempak/geavg${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
+            ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/atmos/gempak/geavg${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
         fi
 
         fn=gfs

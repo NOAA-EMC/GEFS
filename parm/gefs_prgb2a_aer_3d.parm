@@ -1,0 +1,244 @@
+############################# sorted pgrb2a 201408
+:ACPCP:surface:
+:APCP:surface:
+:CAPE:180-0 mb above ground:
+:CFRZR:surface:
+:CICEP:surface:
+:CIN:180-0 mb above ground:
+:CPRAT:surface:
+:CRAIN:surface:
+:CSNOW:surface:
+:DLWRF:surface:
+:DSWRF:surface:
+:HGT:10 mb:
+:HGT:100 mb:
+:HGT:1000 mb:
+:HGT:200 mb:
+:HGT:250 mb:
+:HGT:300 mb:
+:HGT:50 mb:
+:HGT:500 mb:
+:HGT:700 mb:
+:HGT:850 mb:
+:HGT:925 mb:
+:ICETK:surface:
+:LHTFL:surface:
+:O3MR:1 mb:
+:O3MR:10 mb:
+:O3MR:100 mb:
+:O3MR:1000 mb:
+:O3MR:125 mb:
+:O3MR:15 mb:
+:O3MR:150 mb:
+:O3MR:2 mb:
+:O3MR:20 mb:
+:O3MR:200 mb:
+:O3MR:250 mb:
+:O3MR:3 mb:
+:O3MR:30 mb:
+:O3MR:300 mb:
+:O3MR:350 mb:
+:O3MR:40 mb:
+:O3MR:400 mb:
+:O3MR:5 mb:
+:O3MR:50 mb:
+:O3MR:500 mb:
+:O3MR:7 mb:
+:O3MR:70 mb:
+:O3MR:700 mb:
+:O3MR:850 mb:
+:PMTC:1 hybrid level:
+:PMTC:2 hybrid level:
+:PMTC:3 hybrid level:
+:PMTC:4 hybrid level:
+:PMTC:5 hybrid level:
+:PMTC:6 hybrid level:
+:PMTC:7 hybrid level:
+:PMTC:8 hybrid level:
+:PMTC:9 hybrid level:
+:PMTC:10 hybrid level:
+:PMTC:11 hybrid level:
+:PMTC:12 hybrid level:
+:PMTC:13 hybrid level:
+:PMTC:14 hybrid level:
+:PMTC:15 hybrid level:
+:PMTC:16 hybrid level:
+:PMTC:17 hybrid level:
+:PMTC:18 hybrid level:
+:PMTC:19 hybrid level:
+:PMTC:20 hybrid level:
+:PMTC:21 hybrid level:
+:PMTC:22 hybrid level:
+:PMTC:23 hybrid level:
+:PMTC:24 hybrid level:
+:PMTC:25 hybrid level:
+:PMTC:26 hybrid level:
+:PMTC:27 hybrid level:
+:PMTC:28 hybrid level:
+:PMTC:29 hybrid level:
+:PMTC:30 hybrid level:
+:PMTC:31 hybrid level:
+:PMTC:32 hybrid level:
+:PMTC:33 hybrid level:
+:PMTC:34 hybrid level:
+:PMTC:35 hybrid level:
+:PMTC:36 hybrid level:
+:PMTC:37 hybrid level:
+:PMTC:38 hybrid level:
+:PMTC:39 hybrid level:
+:PMTC:40 hybrid level:
+:PMTC:41 hybrid level:
+:PMTC:42 hybrid level:
+:PMTC:43 hybrid level:
+:PMTC:44 hybrid level:
+:PMTC:45 hybrid level:
+:PMTC:46 hybrid level:
+:PMTC:47 hybrid level:
+:PMTC:48 hybrid level:
+:PMTC:49 hybrid level:
+:PMTC:50 hybrid level:
+:PMTC:51 hybrid level:
+:PMTC:52 hybrid level:
+:PMTC:53 hybrid level:
+:PMTC:54 hybrid level:
+:PMTC:55 hybrid level:
+:PMTC:56 hybrid level:
+:PMTC:57 hybrid level:
+:PMTC:58 hybrid level:
+:PMTC:59 hybrid level:
+:PMTC:60 hybrid level:
+:PMTC:61 hybrid level:
+:PMTC:62 hybrid level:
+:PMTC:63 hybrid level:
+:PMTC:64 hybrid level:
+:PMTF:1 hybrid level:
+:PMTF:2 hybrid level:
+:PMTF:3 hybrid level:
+:PMTF:4 hybrid level:
+:PMTF:5 hybrid level:
+:PMTF:6 hybrid level:
+:PMTF:7 hybrid level:
+:PMTF:8 hybrid level:
+:PMTF:9 hybrid level:
+:PMTF:10 hybrid level:
+:PMTF:11 hybrid level:
+:PMTF:12 hybrid level:
+:PMTF:13 hybrid level:
+:PMTF:14 hybrid level:
+:PMTF:15 hybrid level:
+:PMTF:16 hybrid level:
+:PMTF:17 hybrid level:
+:PMTF:18 hybrid level:
+:PMTF:19 hybrid level:
+:PMTF:20 hybrid level:
+:PMTF:21 hybrid level:
+:PMTF:22 hybrid level:
+:PMTF:23 hybrid level:
+:PMTF:24 hybrid level:
+:PMTF:25 hybrid level:
+:PMTF:26 hybrid level:
+:PMTF:27 hybrid level:
+:PMTF:28 hybrid level:
+:PMTF:29 hybrid level:
+:PMTF:30 hybrid level:
+:PMTF:31 hybrid level:
+:PMTF:32 hybrid level:
+:PMTF:33 hybrid level:
+:PMTF:34 hybrid level:
+:PMTF:35 hybrid level:
+:PMTF:36 hybrid level:
+:PMTF:37 hybrid level:
+:PMTF:38 hybrid level:
+:PMTF:39 hybrid level:
+:PMTF:40 hybrid level:
+:PMTF:41 hybrid level:
+:PMTF:42 hybrid level:
+:PMTF:43 hybrid level:
+:PMTF:44 hybrid level:
+:PMTF:45 hybrid level:
+:PMTF:46 hybrid level:
+:PMTF:47 hybrid level:
+:PMTF:48 hybrid level:
+:PMTF:49 hybrid level:
+:PMTF:50 hybrid level:
+:PMTF:51 hybrid level:
+:PMTF:52 hybrid level:
+:PMTF:53 hybrid level:
+:PMTF:54 hybrid level:
+:PMTF:55 hybrid level:
+:PMTF:56 hybrid level:
+:PMTF:57 hybrid level:
+:PMTF:58 hybrid level:
+:PMTF:59 hybrid level:
+:PMTF:60 hybrid level:
+:PMTF:61 hybrid level:
+:PMTF:62 hybrid level:
+:PMTF:63 hybrid level:
+:PMTF:64 hybrid level:
+:PRES:surface:
+:PRMSL:mean sea level:
+:PWAT:entire atmosphere (considered as a single layer):
+:REFC:entire atmosphere:
+:REFD:1000 m above ground:
+:RH:10 mb:
+:RH:100 mb:
+:RH:1000 mb:
+:RH:2 m above ground:
+:RH:200 mb:
+:RH:250 mb:
+:RH:50 mb:
+:RH:500 mb:
+:RH:700 mb:
+:RH:850 mb:
+:RH:925 mb:
+:SHTFL:surface:
+:SNOD:surface:
+:SOILW:0-0.1 m below ground:
+:TCDC:entire atmosphere:
+:TMAX:2 m above ground:
+:TMIN:2 m above ground:
+:TMP:10 mb:
+:TMP:100 mb:
+:TMP:1000 mb:
+:TMP:2 m above ground:
+:TMP:200 mb:
+:TMP:250 mb:
+:TMP:50 mb:
+:TMP:500 mb:
+:TMP:700 mb:
+:TMP:850 mb:
+:TMP:925 mb:
+:TOZNE:entire atmosphere (considered as a single layer):
+:TSOIL:0-0.1 m below ground:
+:UGRD:10 m above ground:
+:UGRD:10 mb:
+:UGRD:100 mb:
+:UGRD:1000 mb:
+:UGRD:200 mb:
+:UGRD:250 mb:
+:UGRD:300 mb:
+:UGRD:400 mb:
+:UGRD:50 mb:
+:UGRD:500 mb:
+:UGRD:700 mb:
+:UGRD:850 mb:
+:UGRD:925 mb:
+:ULWRF:surface:
+:ULWRF:top of atmosphere:
+:USWRF:surface:
+:VGRD:10 m above ground:
+:VGRD:10 mb:
+:VGRD:100 mb:
+:VGRD:1000 mb:
+:VGRD:200 mb:
+:VGRD:250 mb:
+:VGRD:300 mb:
+:VGRD:400 mb:
+:VGRD:50 mb:
+:VGRD:500 mb:
+:VGRD:700 mb:
+:VGRD:850 mb:
+:VGRD:925 mb:
+:VVEL:850 mb:
+:WEASD:surface:
+;############################ do not leave a blank line at the end

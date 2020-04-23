@@ -78,8 +78,8 @@ RECENATMPY=${RECENATMPY:-$HOMEgefs/util/ush/recentensemble.py}
 err=0
 if [ $warm_start = ".false." ]; then
 	export FILENAME='gfs_data.tile'
-	export FILEINPATH=$COMOUT/$cyc/init
-	export FILEOUTPATH=$GESOUT/$cyc
+	export FILEINPATH=$COMOUT
+	export FILEOUTPATH=$GESOUT
  	$NCP $FILEINPATH/c00/gfs*  $FILEOUTPATH/c00/.
 
     if [ $npert -gt 0 ]; then

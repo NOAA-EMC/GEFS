@@ -42,10 +42,16 @@ def main():
             print("You need assign value of {0}".format(sMust_Item))
             exit(-1)
 
+    ifhmaxh = int(dicBase["fhmaxh".upper()])
+    ifhmax = int(dicBase["fhmax".upper()])
+    if ifhmaxh > ifhmax:
+        print("FATAL Error: fhmax ({0}) must be larger than fhmaxh ({1})!".format(ifhmax, ifhmaxh))
+        exit(-1)
+
     # Automatically turns on coupled forecast if wave prep is run
     #   unless it has already been defined
     if not 'cplwav' in dicBase:
-        if dicBase['RUN_WAVE_PREP'].upper()[0] == "Y" or gefs_xml_for_tasks.DoesTaskExist(dicBase, "gwes_prep"):
+        if dicBase['RUN_WAVE_PREP'].upper()[0] == "Y" or gefs_xml_for_tasks.DoesTaskExist(dicBase, "wave_prep"):
             dicBase['cplwav'] = ".true."
         else:
             dicBase['cplwav'] = ".false."
