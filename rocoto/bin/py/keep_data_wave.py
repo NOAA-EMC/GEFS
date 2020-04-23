@@ -12,7 +12,7 @@ Inputs (via environment variables):
     cyc                  : Initialization hour in HH form
 
     GEFS output must be located in the WORKDIR com directory as such:
-        <WORKDIR>/com/gens/dev/gwes.<PDY>/<cyc>/<directory>
+        <WORKDIR>/com/gefs/dev/gwes.<PDY>/<cyc>/<directory>
 
 Outputs:
     For each directory in DIRS_TO_KEEP_WAVE, that directory will be copied to the KEEP_DIR in
@@ -31,7 +31,7 @@ from datetime import datetime
 from datetime import timedelta
 from functools import partial
 
-output_pattern = "{work_dir}/com/gens/dev/gwes.%Y%m%d/%H"
+output_pattern = "{work_dir}/com/gefs/dev/gwes.%Y%m%d/%H"
 destination_pattern = "{keep_dir}/gwes.%Y%m%d/%H"
 
 clobber = True

@@ -225,7 +225,7 @@ case ${cmodel} in
        PERT=` echo ${pert} | tr '[a-z]' '[A-Z]'`        ;
        echo " "                                         ;
        set -x                                           ;
-       COM=${COM:-$COMROOT/gens/${envir}/gefs.${PDY}/$cyc/track}                                ;
+       COM=${COM:-$COMROOT/gefs/${envir}/gefs.${PDY}/$cyc/track}                                ;
        fcstlen=6                                        ;
        fcsthrs=' 00 06 99 99 99 99 99 99 99 99 99 99 99 99 
                  99 99 99 99 99 99 99 99 99 99 99 99 99 99 

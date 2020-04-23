@@ -5,6 +5,8 @@
 # Define DEVELOPMENT Enviorenmenat variables related to the TYPE of test 
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export envir=${envir:-dev}
+export NET=${NET:-gefs}
+export RUN=${RUN:-gefs}
 export SENDDBN=${SENDDBN:-NO}
 export SENDDBN_NTC=${SENDDBN_NTC:-NO}
 
@@ -38,21 +40,6 @@ if [[ ! -d $SOURCEDIR/sorc/global-workflow.fd ]] ; then
     export FCSTEXECDIR=${FCSTEXECDIR:-$HOMEgfs/sorc/fv3gfs.fd/NEMS/exe}
     export HOMEchem=${HOMEchem:-$HOMEgfs/sorc/gsd_prep_chem.fd/workflow/emc-global}
 fi
-
-#Check and verify the most importand environment variables
-# export NDATE=${NDATE:-$USHutil/ndate}
-
-# export WGRIB=${WGRIB:-$EXECgrib/wgrib}
-# export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
-# export COPYGB=${COPYGB:-$EXECgrib/copygb}
-# export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
-# export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
-# export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
-# export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib21_gfs}
-# export CNVGRIB21_GFS=${CNVGRIB21_GFS:-$EXECgrib/cnvgrib21_gfs}
-# export SUPVIT=$SUPVIT
-
-export NET=gens
 
 GFSArchivedData=no
 if [[ $GFSArchivedData == "yes" ]]; then
