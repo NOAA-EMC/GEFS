@@ -28,7 +28,6 @@ postmsg "$jlogfile" "$msg"
 
 echo cycle=$cycle cycle_fcst=$cycle_fcst
 echo fcstlong=$fcstlong
-echo cycsuffix=$cycsuffix
 
 export jobdir="${1}"                   # ${DATA}/${stream}
 export infile="${2}"                   # ${DATA}/${stream}/${stream}.in
