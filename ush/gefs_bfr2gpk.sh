@@ -26,7 +26,6 @@ export BPATH
 
 #  Set output directory:
 
-#COMAWP=${COMAWP:-$COMROOT/nawips/${envir}/${RUN}.${PDY}}
 OUTDIR=$COMAWP
 
 outfilbase=${RUNMEM}_${PDY}${cyc}

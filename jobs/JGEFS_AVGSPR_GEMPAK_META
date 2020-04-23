@@ -105,8 +105,6 @@ export DBN_ALERT_TYPE=${DBN_ALERT_TYPE:-GEFS_METAFILE}
 ##############################################
 # Define COM directories
 ##############################################
-#export COMIN=${COMROOT}/nawips/${envir}/${RUN}.${PDY}
-#export COMOUT=${COMROOT}/nawips/${envir}/${RUN}.${PDY}/meta
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/atmos/gempak
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/atmos/gempak/meta
 if [ ! -d $COMOUT ] ; then

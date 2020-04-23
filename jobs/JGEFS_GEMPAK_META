@@ -110,7 +110,7 @@ if [ -n $COMINgfs ]; then
     fi
 fi
 export COMINsgfs=${COMINgfs:-$(compath.py gfs/prod)}
-export COMINs_p1=${COMROOTp1}/nawips/prod
+export COMINs_p1=${COMINs_p1:-$(compath.py nawips/prod)}
 export COMIN=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/atmos/gempak
 #export COMINgfs=$(compath.py gfs/prod/gfs.$PDY)/$cyc/gempak
 
