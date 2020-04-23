@@ -37,4 +37,4 @@ export FORECAST_SEGMENT=lr
 #export RUN_ENVIR=${RUN_ENVIR:-dev}
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_POST_GENESIS
+$SOURCEDIR/rocoto/bin/sh/JGEFS_POST_GENESIS

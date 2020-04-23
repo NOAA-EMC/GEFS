@@ -32,4 +32,4 @@ module list
 # Export List
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_CQPF
+$SOURCEDIR/rocoto/bin/sh/JGEFS_CQPF
