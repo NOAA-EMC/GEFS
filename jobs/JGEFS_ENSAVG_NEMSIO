@@ -100,18 +100,6 @@ mkdir -m 775 -p $COMOUT/misc/ensavg_nemsio
 ############################################
 . $PARMgefs/gefs.parm
 
-(( imem = 0 ))
-while (( imem < npert )); do
-    (( imem = imem + 1 ))
-    if (( imem >= 10 )); then
-        imem=0$imem
-    else
-        imem=00$imem
-    fi
-    memberlist="$memberlist $imem"
-done # while (( imem < npert ))
-echo memberlist=$memberlist
-
 if [[ $FORECAST_SEGMENT = hr ]] ; then
     LEVS=$LEVSHR 
 elif [[ $FORECAST_SEGMENT = lr ]]; then

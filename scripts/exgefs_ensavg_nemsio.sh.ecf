@@ -49,7 +49,18 @@ SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
 # Compute ensemble mean 
 export OMP_NUM_THREADS=4
-echo memberlist=${memberlist}
+(( imem = 0 ))
+while (( imem < npert )); do
+    (( imem = imem + 1 ))
+    if (( imem >= 10 )); then
+        imem=0$imem
+    else
+        imem=00$imem
+    fi
+    memberlist="$memberlist $imem"
+done # while (( imem < npert ))
+echo memberlist=$memberlist
+
 $NCP $GETATMENSMEANEXEC $DATA
 $NCP $GETSFCENSMEANEXEC $DATA
 

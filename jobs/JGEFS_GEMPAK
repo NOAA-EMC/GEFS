@@ -113,65 +113,9 @@ fi
 env
 
 ########################################################
-## Get member list
-########################################################
-memberlist=""
-(( imem = 0 ))
-while (( imem < npert+1 )); do
-    if (( imem == 0 )); then
-        smem=c$(printf %02i $imem)
-    else
-        smem=p$(printf %02i $imem)
-    fi
-    memberlist="$memberlist $smem"
-    (( imem = imem + 1 ))
-done # while (( imem < npert ))
-echo memberlist=$memberlist
-
-########################################################
-## Generate poescript
-########################################################
-for member in $memberlist
-do
-    export RUNM=ge${member}
-    for resolution in ${GEMPAK_RES}
-    do
-        if [ $resolution = "1p00" ]; then
-            export COMIN_Folder=pgrb2a1p0
-            export pdgrbType=pgrb2a
-            export fend=${fhmaxh:-384}
-        elif [ $resolution = "0p50" ]; then
-            export COMIN_Folder=pgrb2ap5
-            export pdgrbType=pgrb2a
-            export fend=${fhmaxh:-384}
-        elif [ $resolution = "0p25" ]; then
-            export COMIN_Folder=pgrb2sp25
-            export pdgrbType=pgrb2s
-            export fend=${FHMAXHF:-240}
-        else
-            echo "GEMPAK does not support this resolution!"
-            err=5
-            exit $err
-        fi
-        
-        echo "$HOMEgefs/scripts/exgefs_nawips.sh.ecf $RUNM $member $resolution ${GEMPAKgefs} ${COMIN}/${COMIN_Folder} ${COMOUT} ${fstart} ${fend} ${FHMAXHF} ${FHOUTHF} ${FHOUTLF} ${pdgrbType}" >> poescript
-    done
-done
-########################################################
-
-cat poescript
-
-chmod 775 $DATA/poescript
-export MP_PGMMODEL=mpmd
-export MP_CMDFILE=$DATA/poescript
-export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
-rm -f mpmd_cmdfile
-ln -s $MP_CMDFILE mpmd_cmdfile
-
-########################################################
 ## Execute the script.
-$APRUN
-#############################################################
+$HOMEgefs/scripts/exgefs_gempak.sh.ecf
+########################################################
 err=$?
 
 if [ $err = 0 ]; then
