@@ -1,4 +1,15 @@
 # =======================================================
+def IsCoupleCHEM(dicBase):
+    if dicBase['RUN_AEROSOL_MEMBER'].upper()[0] == "Y":
+        return True
+
+    for task in ['prep_emissions', 'init_aerosol', 'forecast_aerosol', 'post_aerosol', 'prdgen_aerosol']:
+        if DoesTaskExist(dicBase, task):
+            return True
+
+    return False
+
+# =======================================================
 def config_tasknames(dicBase):
     sVarName = 'taskname_num'.upper()
     iTaskName_Num = int(dicBase[sVarName])
@@ -202,8 +213,8 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "cqpf"
 
-        # #    <!-- RUN_CLEANUP -->
-        if dicBase['RUN_CLEANUP'].upper()[0] == "Y":
+        # #    <!-- RUN_KEEPDATA -->
+        if dicBase['RUN_KEEPDATA'].upper()[0] == "Y":
             # ---keep_data_atm
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
@@ -213,6 +224,15 @@ def config_tasknames(dicBase):
                 iTaskName_Num += 1
                 sTaskName = "taskname_{0}".format(iTaskName_Num)
                 dicBase[sTaskName.upper()] = "keep_data_wave"
+
+            if IsCoupleCHEM(dicBase):
+                # ---keep_data_chem
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "keep_data_chem"
+
+        # #    <!-- RUN_ARCHIVE -->
+        if dicBase['RUN_ARCHIVE'].upper()[0] == "Y":
             # ---archive_atm
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
@@ -222,6 +242,15 @@ def config_tasknames(dicBase):
                 iTaskName_Num += 1
                 sTaskName = "taskname_{0}".format(iTaskName_Num)
                 dicBase[sTaskName.upper()] = "archive_wave"
+
+            if IsCoupleCHEM(dicBase):
+                # ---archive_chem
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "archive_chem"
+
+        # #    <!-- RUN_CLEANUP -->
+        if dicBase['RUN_CLEANUP'].upper()[0] == "Y":
             # ---cleanup_atm
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
@@ -232,6 +261,12 @@ def config_tasknames(dicBase):
                 sTaskName = "taskname_{0}".format(iTaskName_Num)
                 dicBase[sTaskName.upper()] = "cleanup_wave"
 
+            if IsCoupleCHEM(dicBase):
+                # ---cleanup_chem
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "cleanup_chem"
+
         # final
         dicBase[sVarName] = iTaskName_Num
 
@@ -239,6 +274,7 @@ def config_tasknames(dicBase):
 def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEnt=False):
     # --------------------------
     WHERE_AM_I = dicBase['WHERE_AM_I']
+
     sWalltime, sNodes, sMemory, sJoin, sDep, sQueue, sPartition = get_param_of_task(dicBase, taskname)
 
     metatask_names = get_metatask_names(taskname=taskname)
@@ -249,6 +285,11 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     # --------------------------
 
     cycledef = "gefs"
+    if taskname in ["forecast_lr", "post_lr", "prdgen_lr", "ensstat_lr", "enspost_lr", "cqpf"]:
+        cycledef = "gefs_00z"    
+    elif taskname == "avg_gempak_vgf":
+        cycledef = "gefs_00z,gefs_12z"
+ 
     maxtries = 1
 
     strings = ""
@@ -350,7 +391,7 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
 
     # -------------------Native-------------------
     if WHERE_AM_I.upper() == "cray".upper():
-        if taskname in [ "archive_atm", "archive_wave" ]:
+        if taskname in [ "archive_atm", "archive_wave", "archive_chem" ]:
             strings += ""
         else:
             strings += sPre_2 + '<native>-extsched "CRAYLINUX[]"</native>\n'
@@ -414,7 +455,7 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
     if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
         sPRE = ""
 
-    if taskname in ['keep_init', 'copy_init', 'keep_data_atm', 'archive_atm', 'cleanup_atm', 'keep_data_wave', 'archive_wave', 'cleanup_wave']:
+    if taskname in ['keep_init', 'copy_init', 'keep_data_atm', 'archive_atm', 'cleanup_atm', 'keep_data_wave', 'archive_wave', 'cleanup_wave', 'keep_data_chem', 'archive_chem', 'cleanup_chem']:
         if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format(taskname, sPRE)
         else:
@@ -1066,42 +1107,31 @@ def get_param_of_task(dicBase, taskname):
                     sDep += '\n</and>'
 
             # For 'keep_data_atm' and 'archive_atm' tasks
-            if taskname.lower() == "keep_data_atm" or taskname.lower() == "archive_atm":
+            if taskname_org.lower() in ["keep_data_atm", "archive_atm"]:
                 sDep = '<and>'
-                if DoesTaskExist(dicBase, "enspost_hr"):
-                    sDep += '\n\t<taskdep task="enspost_hr"/>'
-                if DoesTaskExist(dicBase, "enspost_lr"):
-                    sDep += '\n\t<taskdep task="enspost_lr"/>'
-                if DoesTaskExist(dicBase, "cqpf"):
-                    sDep += '\n\t<taskdep task="cqpf"/>'
-                if DoesTaskExist(dicBase, "post_track"):
-                    sDep += '\n\t<taskdep task="post_track"/>'
-                if DoesTaskExist(dicBase, "post_genesis"):
-                    sDep += '\n\t<taskdep task="post_genesis"/>'
-                if DoesTaskExist(dicBase, "extractvars"):
-                    sDep += '\n\t<taskdep task="extractvars"/>'
-                if DoesTaskExist(dicBase, "ensstat_lr"):
-                    sDep += '\n\t<taskdep task="ensstat_lr"/>'
-                if DoesTaskExist(dicBase, "prdgen_lr"):
-                    sDep += '\n\t<metataskdep metatask="prdgen_lr"/>'
-                if DoesTaskExist(dicBase, "ensstat_hr"):
-                    sDep += '\n\t<taskdep task="ensstat_hr"/>'
-                if DoesTaskExist(dicBase, "prdgen_hr"):
-                    sDep += '\n\t<metataskdep metatask="prdgen_hr"/>'
-                if DoesTaskExist(dicBase, "postsnd"):
-                    sDep += '\n\t<metataskdep metatask="postsnd"/>'
-                if DoesTaskExist(dicBase, "getcfssst"):
-                    sDep += '\n\t<taskdep task="getcfssst"/>'
-                if DoesTaskExist(dicBase, "prdgen_aerosol"):
-                    sDep += '\n\t<taskdep task="prdgen_aerosol"/>'
-                if DoesTaskExist(dicBase, "gempak"):
-                    sDep += '\n\t<taskdep task="gempak"/>'
-                if DoesTaskExist(dicBase, "gempak_meta"):
-                    sDep += '\n\t<taskdep task="gempak_meta"/>'        
-                if DoesTaskExist(dicBase, "avgspr_gempak_meta"):
-                    sDep += '\n\t<taskdep task="avgspr_gempak_meta"/>'
-                if DoesTaskExist(dicBase, "avg_gempak_vgf"):
-                    sDep += '\n\t<taskdep task="avg_gempak_vgf"/>'
+               
+                for s in ["prdgen_hr","ensstat_hr","enspost_hr","post_track","post_genesis","extractvars","postsnd","getcfssst","gempak","gempak_meta","avgspr_gempak_meta"]:
+                    if DoesTaskExist(dicBase, s):
+                        if s in get_metatask_names():
+                            sDep += '\n\t<metataskdep metatask="{0}"/>'.format(s)
+                        else:
+                            sDep += '\n\t<taskdep task="{0}"/>'.format(s)
+
+                # For 00z
+                sDep_2 = ""
+                for s in ["prdgen_lr","ensstat_lr","enspost_lr","cqpf","avg_gempak_vgf"]:
+                    if DoesTaskExist(dicBase, s):
+                        if s in get_metatask_names():
+                            sDep_2 += '\n\t\t\t<metataskdep metatask="{0}"/>'.format(s)
+                        else:
+                            sDep_2 += '\n\t\t\t<taskdep task="{0}"/>'.format(s)
+                if sDep_2 != "":
+                    sDep += '\n\t<or>'
+                    sDep += "\n\t\t<not><sh><cyclestr>[[ @H = 00 ]]</cyclestr></sh></not>"
+                    sDep += '\n\t\t<and>'
+                    sDep += sDep_2
+                    sDep += '\n\t\t</and>'
+                    sDep += '\n\t</or>'
 
                 if sDep == '<and>':
                     sDep = ""
@@ -1123,9 +1153,10 @@ def get_param_of_task(dicBase, taskname):
             if taskname.lower() in [ "keep_data_wave", "archive_wave" ]:
                 sDep = '<and>'
                 if DoesTaskExist(dicBase, "wave_stat"):
-                    sDep = '<taskdep task="wave_stat"/>'
+                    sDep += '\n\t<taskdep task="wave_stat"/>'
                 if DoesTaskExist(dicBase, "wave_gempak"):
-                    sDep = '<metataskdep task="wave_gempak"/>'
+                    sDep += '\n\t<metataskdep metatask="wave_gempak"/>'
+
                 if sDep == '<and>':
                     sDep = ""
                 else:
@@ -1137,7 +1168,7 @@ def get_param_of_task(dicBase, taskname):
                     sDep = '<taskdep task="init_recenter"/>'
 
             # Don't clean up if keep_init isn't finished
-            if taskname.lower() == "cleanup_atm":
+            if taskname_org.lower() in ["cleanup_atm"]:
                 sDep = '<and>'
                 if DoesTaskExist(dicBase, "keep_init"):
                     sDep += '\n\t<metataskdep metatask="keep_init"/>'
@@ -1153,6 +1184,28 @@ def get_param_of_task(dicBase, taskname):
             if taskname.lower() == "cleanup_wave":
                 sDep = '<and>'
                 for t in [ "keep_data_wave", "archive_wave" ]:
+                    if DoesTaskExist(dicBase, t):
+                        sDep += '\n\t<taskdep task="{task}"/>'.format(task=t)
+                if sDep == '<and>':
+                    sDep = ""
+                else:
+                    sDep += '\n</and>'
+
+            if taskname.lower() in ["keep_data_chem", "archive_chem"]:
+                sDep = '<and>'
+                if DoesTaskExist(dicBase, "prdgen_aerosol"):
+                    sDep += '\n\t<taskdep task="prdgen_aerosol"/>'
+                if DoesTaskExist(dicBase, "post_aerosol"):
+                    sDep += '\n\t<taskdep task="post_aerosol"/>'
+
+                if sDep == '<and>':
+                    sDep = ""
+                else:
+                    sDep += '\n</and>'
+
+            if taskname.lower() == "cleanup_chem":
+                sDep = '<and>'
+                for t in [ "keep_data_chem", "archive_chem" ]:
                     if DoesTaskExist(dicBase, t):
                         sDep += '\n\t<taskdep task="{task}"/>'.format(task=t)
                 if sDep == '<and>':

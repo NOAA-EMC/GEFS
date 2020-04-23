@@ -11,25 +11,29 @@ Inputs (via environment variables):
 
 Outputs:
 	The following files/directories in WORKDIR and all files contained within will all be deleted:
-		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/ensstat
-		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/init
-		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/misc
-		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/pgrb2alr
-		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/pgrb2bp5
-		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/sflux
-		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/genesis
-		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/master
-		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/pgrb2a
-		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/pgrb2a2p5
-		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/pgrb2ap5
-		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/pgrb2b2p5
-		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/sfcsig
-		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/tctrack
+		<WORKDIR>/tmpnwprd/<EXPID><PDY><cyc>*
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/ensstat
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/init
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/misc
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/pgrb2alr
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/pgrb2bp5
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/sflux
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/genesis
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/master
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/pgrb2a
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/pgrb2a2p5
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/pgrb2ap5
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/pgrb2b2p5
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/sfcsig
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/tctrack
+		<WORKDIR>/nwges/dev/gefs.<PDY>/*.t<cyc>z.*
+		<WORKDIR>/nwges/dev/gefs.<PDY>/<cyc>
+		<WORKDIR>/com/logs/jlogfiles/jlogfile.<EXPID><PDY><cyc>*
 
 	Additionally, the following directories for the from the previous cycle
 	  (6 hours previous) and all files contained within will be deleted:
-		<WORKDIR>/com/gefs/dev/gefs.<PDY_last>/<cyc_last>/atmos/sfcsig_enkf
-		<WORKDIR>/com/gefs/dev/gefs.<PDY_last>/<cyc_last>/atmos/track_enkf
+		<WORKDIR>/com/gefs/dev/gefs.<PDY_last>/<cyc_last>/sfcsig_enkf
+		<WORKDIR>/com/gefs/dev/gefs.<PDY_last>/<cyc_last>/track_enkf
 
 Error Codes:
 	-100 : Required environment variable not defined
@@ -48,9 +52,9 @@ from functools import partial
 print = partial(print, flush=True)
 
 # Output directories that need to be removed
-output_dirs = ["gridded", "station", "stats", "rundata", "gempak"]
-output_dirs_last_cyc = ["restart"]
-output_dir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/wave/{output_dir}"
+output_dirs = ["pgrb2ap25_aer", "pgrb2ap50_aer", "misc", "master", "init"]
+output_dirs_last_cyc = ["restart", "sfcsig"]
+output_dir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/chem/{output_dir}"
 
 # Read in environment variables and make sure they exist
 work_dir = os.environ.get("WORKDIR")
@@ -100,7 +104,7 @@ for output_dir in output_dirs:
 
 # Other init directories
 #dirs_to_remove.append(time.strftime("{work_dir}/nwges/dev/gefs.%Y%m%d/*.t%Hz.*".format(work_dir=work_dir)))
-#dirs_to_remove.append(time.strftime("{work_dir}/nwges/dev/gefs.%Y%m%d/%H".format(work_dir=work_dir)))
+dirs_to_remove.append(time.strftime("{work_dir}/nwges/dev/gefs.%Y%m%d/%H/aer".format(work_dir=work_dir)))
 
 # Log directory (probably want to keep these)
 # dirs_to_remove.append(work_dir + "/com/output/dev/" + pdy + "/*_" + cycle + ".*.bqs3")
