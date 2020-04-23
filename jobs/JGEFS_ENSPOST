@@ -105,24 +105,22 @@ export NTHREADS=1
 
 export FHINC=${FHOUTLF:-6}
 
-#env | sort
-
 # Execute the script
 export FORECAST_SEGMENT=${FORECAST_SEGMENT:-"hr"}
 case $FORECAST_SEGMENT in
-        hr)
-		export ext_h=""
-		export SHOUR=00
-		export FHOUR=$fhmaxh
-                ;;
-        lr)
-		export ext_h=ss
-		(( SHOUR = fhmaxh + FHOUTLF ))
-		export SHOUR=$SHOUR 
-		export FHOUR=$fhmax
-                ;;
-        *)
-                ;;
+    hr)
+	export ext_h=""
+	export SHOUR=00
+	export FHOUR=$fhmaxh
+            ;;
+    lr)
+	export ext_h=ss
+	(( SHOUR = fhmaxh + FHOUTLF ))
+	export SHOUR=$SHOUR 
+	export FHOUR=$fhmax
+            ;;
+    *)
+            ;;
 esac # $FORECAST_SEGMENT in
 
 #############################################################
