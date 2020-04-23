@@ -150,11 +150,6 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "gempak"
 
-            # ---avgspr_gempak
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "avgspr_gempak"
-
             WHERE_AM_I = dicBase['WHERE_AM_I']
             if WHERE_AM_I.upper() not in ["hera".upper()]:
                 # ---avg_gempak_vgf There is no gdplot2_vg on hera, so this task can not run.
@@ -1101,8 +1096,6 @@ def get_param_of_task(dicBase, taskname):
                     sDep += '\n\t<taskdep task="prdgen_aerosol"/>'
                 if DoesTaskExist(dicBase, "gempak"):
                     sDep += '\n\t<taskdep task="gempak"/>'
-                if DoesTaskExist(dicBase, "avgspr_gempak"):
-                    sDep += '\n\t<taskdep task="avgspr_gempak"/>'
                 if DoesTaskExist(dicBase, "gempak_meta"):
                     sDep += '\n\t<taskdep task="gempak_meta"/>'        
                 if DoesTaskExist(dicBase, "avgspr_gempak_meta"):
@@ -1183,24 +1176,10 @@ def get_param_of_task(dicBase, taskname):
                 else:
                     sDep = ''
 
-            # For AVGSPR_GEMPAK
-            if taskname.lower() == "avgspr_gempak":
-                #if DoesTaskExist(dicBase, "ensstat_lr"):
-                #    sDep = '<taskdep task="ensstat_lr"/>'
-                if DoesTaskExist(dicBase, "ensstat_hr"):
-                    sDep = '<taskdep task="ensstat_hr"/>'
-
-                    #sDep = '<and>'
-                    #sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/geavg.t@Hz.prdgen.control.f000</cyclestr></datadep>'
-                    #sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gespr.t@Hz.prdgen.control.f000</cyclestr></datadep>'
-                    #sDep += '\n</and>'
-                else:
-                    sDep = ''
-
             # For avg_gempak_vgf
             if taskname.lower() == "avg_gempak_vgf":
-                if DoesTaskExist(dicBase, "avgspr_gempak"):
-                    sDep = '<taskdep task="avgspr_gempak"/>'
+                if DoesTaskExist(dicBase, "gempak"):
+                    sDep = '<taskdep task="gempak"/>'
                 else:
                     sDep = ''
 
@@ -1209,8 +1188,6 @@ def get_param_of_task(dicBase, taskname):
                 sDep = '<and>'
                 if DoesTaskExist(dicBase, "gempak"):
                     sDep += '\n\t<taskdep task="gempak"/>'
-                if DoesTaskExist(dicBase, "avgspr_gempak"):
-                    sDep += '\n\t<taskdep task="avgspr_gempak"/>'
 
                 if sDep == '<and>':
                     sDep = ""
@@ -1219,8 +1196,8 @@ def get_param_of_task(dicBase, taskname):
 
             # For avgsgempak_meta
             if taskname.lower() == "avgspr_gempak_meta":
-                if DoesTaskExist(dicBase, "avgspr_gempak"):
-                    sDep = '<taskdep task="avgspr_gempak"/>'
+                if DoesTaskExist(dicBase, "gempak"):
+                    sDep = '<taskdep task="gempak"/>'
                 else:
                     sDep = ''
 
@@ -1240,38 +1217,7 @@ def get_param_of_task(dicBase, taskname):
         iTotal_Tasks, iNodes, iPPN, iTPP = calc_gempak_resources(dicBase)
         sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
-    # For avgspr_gempak
-    if taskname == "avgspr_gempak":
-        iTotal_Tasks, iNodes, iPPN, iTPP = calc_avgspr_gempak_resources(dicBase)
-        sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
-
     return sWalltime, sNodes, sMemory, sJoin, sDep, sQueue, sPartition
-
-
-# =======================================================
-def calc_avgspr_gempak_resources(dicBase):
-    ncores_per_node = Get_NCORES_PER_NODE(dicBase)
-    WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
-    npert = int(dicBase["NPERT"])
-    
-    iTotal_Tasks = 2
-    nGEMPAK_RES = 1
-    if "GEMPAK_RES" in dicBase:
-        nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())
-        iTotal_Tasks *= nGEMPAK_RES
-
-    iTPP = 1
-    if WHERE_AM_I.upper() == "CRAY":
-        iNodes = iTotal_Tasks
-        iPPN = 1
-    elif WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
-        iNodes = 1
-        iPPN = iTotal_Tasks        
-    else:
-        iNodes = 1
-        iPPN = iTotal_Tasks
-
-    return iTotal_Tasks, iNodes, iPPN, iTPP
 
 # =======================================================
 def calc_gempak_resources(dicBase):
@@ -1279,7 +1225,7 @@ def calc_gempak_resources(dicBase):
     ncores_per_node = Get_NCORES_PER_NODE(dicBase)
     WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
     npert = int(dicBase["NPERT"])
-    iTotal_Tasks = npert + 1
+    iTotal_Tasks = npert + 3
     nGEMPAK_RES = 1
     if "GEMPAK_RES" in dicBase:
         nGEMPAK_RES = len(dicBase["GEMPAK_RES"].split())

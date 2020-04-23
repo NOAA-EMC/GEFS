@@ -29,6 +29,7 @@ while (( imem < npert+1 )); do
     memberlist="$memberlist $smem"
     (( imem = imem + 1 ))
 done # while (( imem < npert ))
+memberlist="$memberlist avg spr"
 echo memberlist=$memberlist
 
 ########################################################
