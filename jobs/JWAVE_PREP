@@ -21,10 +21,12 @@ export cycle=t${cyc}z
 ####################################
 # Specify NET and RUN Name and model
 ####################################
+export NTASKS=${total_tasks:-16}
 export NET=${NET:-gens}
 export RUN=${RUN:-gefs}
 export COMPONENTwave=${COMPONENTwave:-${RUN}wave}
 #export NTHREADS=1
+export machine=${machine:-"WCOSS_DELL_P3"}
 
 ####################################
 # File To Log Msgs
@@ -46,13 +48,15 @@ export USHgefs=${USHgefs:-$HOMEgefs/ush}
 export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
 export EXECgfs=$HOMEgfs/exec
 export USHgfs=$HOMEgfs/ush
 export FIXgfs=$HOMEgfs/fix
 export PARMgfs=$HOMEgfs/parm
 
 # Path to HOME Directory
-export EXECwave=${EXECwave:-$HOMEgefs/exec}
+export HOMEwave=${HOMEwave:-${HOMEgfs}}
+export EXECwave=${EXECwave:-$HOMEwave/exec}
 export FIXwave=${FIXwave:-$HOMEgefs/fix/fix_wave}
 export USHwave=${USHwave:-$HOMEgfs/ush}
 export EXECcode=${EXECcode:-$HOMEgfs/exec}
@@ -118,16 +122,16 @@ export CDO=/gpfs/dell2/emc/verification/noscrub/Todd.Spindler/CDO/bin/cdo
 
 [[ ! -d $COMOUT ]] && mkdir -m 775 -p $COMOUT
 
-if [ $RUN_ENVIR = "nco" ]; then
-  export COMIN_WAV_ICE=${COMIN_WAV_ICE:-$(compath.py gfs/prod)}/${WAVICEPRFX}.${PDY}/${cyc}
-  export COMIN_WAV_WND=${COMIN_WAV_WND:-$(compath.py gfs/prod)}/${CDUMP}.${PDY}/${cyc}
-  export COMIN_WAV_CUR=${COMIN_WAV_CUR:-$(compath.py ${WAVECUR_DID}/prod)}/${WAVECUR_DID}.$PDY
-else
-  export COMIN_OBS=${COMIN_OBS:-${COMINwave}}
-  export COMIN_WAV_ICE=${COMIN_WAV_ICE:-${COMIN_OBS}}
-  export COMIN_WAV_WND=${COMIN_WAV_WND:-${COMIN_OBS}}
-  export COMIN_WAV_CUR=${COMIN_WAV_CUR:-${COMIN_OBS}}
-fi
+#if [ $RUN_ENVIR = "nco" ]; then
+export COMIN_WAV_ICE=${COMIN_WAV_ICE:-$(compath.py gfs/prod)}/${WAVICEPRFX}.${PDY}/${cyc}
+#export COMIN_WAV_WND=${COMIN_WAV_WND:-$(compath.py gfs/prod)}/${CDUMP}.${PDY}/${cyc}
+#export COMIN_WAV_CUR=${COMIN_WAV_CUR:-$(compath.py ${WAVECUR_DID}/prod)}/${WAVECUR_DID}.$PDY
+#else
+#  export COMIN_OBS=${COMIN_OBS:-${COMINwave}}
+#  export COMIN_WAV_ICE=${COMIN_WAV_ICE:-${COMIN_OBS}}
+#  export COMIN_WAV_WND=${COMIN_WAV_WND:-${COMIN_OBS}}
+#  export COMIN_WAV_CUR=${COMIN_WAV_CUR:-${COMIN_OBS}}
+#fi
 
 if [ $SENDCOM = YES ]; then
   mkdir -p $COMOUT
