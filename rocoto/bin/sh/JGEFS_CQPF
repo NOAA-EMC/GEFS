@@ -1,6 +1,6 @@
 #!/bin/ksh 
 
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
 export PS4='$SECONDS + '
@@ -92,7 +92,7 @@ export COMINstat=${COMINstat:-$COMIN}
 
 mkdir -m 775 -p $COMOUT
 
-msg="HAS BEGUN on `hostname`"
+msg="HAS BEGUN on $(hostname)"
 postmsg "$jlogfile" "$msg"
 
 env | sort

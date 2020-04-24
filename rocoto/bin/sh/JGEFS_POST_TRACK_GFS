@@ -2,7 +2,7 @@
 #####################################################################
 #1/13/2015, Jiayi Peng and Dingchen Hou, created following JGEFS_POST_TRACK, for GFS tracks (up to 240hrs forecasts)
 ####################################################################
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
 export PS4='$SECONDS + '
@@ -162,4 +162,4 @@ if [[ $KEEPDATA != "YES" ]]; then
 	rm -rf $DATA
 fi
 
-`date` $0 `date -u` end
+$(date) $0 $(date -u) end

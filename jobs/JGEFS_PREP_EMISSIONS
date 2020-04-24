@@ -1,6 +1,6 @@
 #!/bin/ksh 
 
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
 export PS4='$SECONDS + '
@@ -11,7 +11,7 @@ export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
 export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
 
 export RUNMEM=${RUNMEM:-geaer}
-export mem=`echo $RUNMEM|cut -c3-5`
+export mem=$(echo $RUNMEM|cut -c3-5)
 export ENS_NUM=1
 echo "ENS_NUM=$ENS_NUM"
 

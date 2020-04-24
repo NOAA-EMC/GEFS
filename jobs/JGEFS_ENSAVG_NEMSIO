@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
 export PS4='$SECONDS + '

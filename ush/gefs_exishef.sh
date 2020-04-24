@@ -6,7 +6,7 @@ echo "History: Aug 2019 - First implementation of this new script in GEFS transi
 echo "   Following Sid Kats and Ying Lin's example "
 echo "AUTHOR: Dingchen Hou (wx20dh)"
 
-#DATA=`pwd`
+#DATA=$(pwd)
 #UTILgefs=../..
 #INPUTshef=/gpfs/dell1/nco/ops/dcom/prod/shef_pefiles
 #PDYshef=$1

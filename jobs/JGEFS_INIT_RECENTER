@@ -1,6 +1,6 @@
 #!/bin/ksh 
 
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
 export PS4='$SECONDS + '
@@ -88,9 +88,9 @@ export COMOUT=${COMOUT:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}}
 export COMIN=$COMIN/$cyc/$COMPONENT/init 
 export COMOUT=$COMOUT/$cyc/$COMPONENT/init
 
-export pdycycp=`$NDATE -$fhrp $PDY$cyc`
-export pdyp=`echo $pdycycp|cut -c1-8`
-export cycp=`echo $pdycycp|cut -c9-10`
+export pdycycp=$($NDATE -$fhrp $PDY$cyc)
+export pdyp=$(echo $pdycycp|cut -c1-8)
+export cycp=$(echo $pdycycp|cut -c9-10)
 
 ##############################################
 # Define GES directories

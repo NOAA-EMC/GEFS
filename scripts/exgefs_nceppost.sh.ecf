@@ -24,7 +24,7 @@ set -x
 
 cd $DATA
 
-msg="HAS BEGUN on `hostname`"
+msg="HAS BEGUN on $(hostname)"
 postmsg "$jlogfile" "$msg"
 export SHOUR=${1:-${SHOUR}}
 export FHOUR=${2:-${FHOUR}}
@@ -51,12 +51,12 @@ while [ $fhr -le $FHOUR ]; do  #(( fhr <= FHOUR )); do
     fi
 
 
-    export fhrtest=`expr $fhr + $FHINC`
+    export fhrtest=$(expr $fhr + $FHINC)
     if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF -a $fhrtest -ge $FHMAX_HF ]; then
         export FHINC=$FHOUT_LF
-        export fhr=`expr $SHOUR_LF`
+        export fhr=$(expr $SHOUR_LF)
     else
-        export fhr=`expr $fhr + $FHINC`
+        export fhr=$(expr $fhr + $FHINC)
     fi
     #RUN_HOURS[iHour]=$fhr
     iHour=$((iHour+1))
@@ -83,9 +83,9 @@ export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
 export SIGHDR=${SIGHDR:-$EXECgfs/global_sighdr}
 export nemsioget=$nemsioget
 
-R1=`echo $RUNMEM|cut -c1-3`
-R2=`echo $RUNMEM|cut -c4-5`
-mem=`echo $RUNMEM|cut -c3-5`
+R1=$(echo $RUNMEM|cut -c1-3)
+R2=$(echo $RUNMEM|cut -c4-5)
+mem=$(echo $RUNMEM|cut -c3-5)
 e3=$npert
 case $R1 in
     (gec)
@@ -248,7 +248,7 @@ if [ $DOANALYSIS = YES ]; then
         ############################################################
         # Post Analysis Files before starting the Forecast Post
         ############################################################
-        SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
+        SLEEP_LOOP_MAX=$(expr $SLEEP_TIME / $SLEEP_INT)
 
         export pgm="postcheck"
         ic=0
@@ -256,7 +256,7 @@ if [ $DOANALYSIS = YES ]; then
             if test -f $COMIN/init/${RUNMEM}.t${cyc}z.sanl; then
                 break
             else
-                ic=`expr $ic + 1`
+                ic=$(expr $ic + 1)
                 sleep $SLEEP_INT
             fi # test -f $COMIN/init/${RUNMEM}.t${cyc}z.sanl
             ###############################
@@ -266,7 +266,7 @@ if [ $DOANALYSIS = YES ]; then
             ###############################
             if [ $ic -eq $SLEEP_LOOP_MAX ]; then
                 msg="FATAL ERROR: $RUNMEM FORECAST MISSING for hour anl"
-                echo "`date`    $msg"
+                echo "$(date)    $msg"
                 postmsg "$jlogfile" "$msg"
                 export err=9
                 err_chk
@@ -334,25 +334,25 @@ if [ $DOANALYSIS = YES ]; then
                 echo pgm=$pgm completed successfully
             else
                 msg="FATAL ERROR: $pgm FAILED for member $RUNMEM hour anl"
-                echo "`date`    $msg"
+                echo "$(date)    $msg"
                 postmsg "$jlogfile" "$msg"
                 export err=$rc
                 err_chk
             fi # (( rc == 0 ))
 
-            pgbfoutd=`readlink -nf pgbfout`
+            pgbfoutd=$(readlink -nf pgbfout)
             if [[ ! -s $pgbfoutd ]]; then
                 msg="FATAL ERROR: $pgbfoutd WAS NOT WRITTEN"
-                echo "`date`    $msg"
+                echo "$(date)    $msg"
                 postmsg "$jlogfile" "$msg"
                 export err=1
                 err_chk
             fi # [[ ! -s $pgbfoutd ]];
 
-            pgbifoutd=`readlink -nf pgbifout`
+            pgbifoutd=$(readlink -nf pgbifout)
             if [[ ! -s $pgbifoutd ]]; then
                 msg="FATAL ERROR: $pgbifoutd WAS NOT WRITTEN"
-                echo "`date`    $msg"
+                echo "$(date)    $msg"
                 postmsg "$jlogfile" "$msg"
                 export err=1
                 err_chk
@@ -368,7 +368,7 @@ if [ $DOANALYSIS = YES ]; then
                 ls -al  $mcfile
                 cat  $mcfile
                 echo "anl_done" >> $post_log
-                # ecflow_client --label info "`cat $post_log`"
+                # ecflow_client --label info "$(cat $post_log)"
                 ecflow_client --event anl_done
                 echo
             fi # test $SENDCOM = "YES"
@@ -376,7 +376,7 @@ if [ $DOANALYSIS = YES ]; then
     fi # [[ ! -s $mcfile ]]
 fi # [ $DOANALYSIS = YES ]
 
-SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
+SLEEP_LOOP_MAX=$(expr $SLEEP_TIME / $SLEEP_INT)
 
 ############################################################
 # Loop Through the Post Forecast Files 
@@ -406,7 +406,7 @@ do
             if test -f $restart_file$fhr\.nemsio; then
                 break
             else
-                ic=`expr $ic + 1`
+                ic=$(expr $ic + 1)
                 sleep $SLEEP_INT
             fi # test -f $restart_file$fhr
             ###############################
@@ -415,7 +415,7 @@ do
             # period and error exit
             ###############################
             if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-                echo "`date` forecast $RUNMEM missing for hour $fhr" 
+                echo "$(date) forecast $RUNMEM missing for hour $fhr" 
                 msg="$RUNMEM FORECAST MISSING for hour $fhr"
                 postmsg "$jlogfile" "$msg"
                 export err=9
@@ -446,8 +446,8 @@ do
         # add new environmental variables for running new ncep post
         # Validation date
 
-        # export VDATE=`${EXECutil}/ndate +${fhr} ${PDY}${cyc}`
-        export VDATE=`$NDATE +${fhr} ${PDY}${cyc}`
+        # export VDATE=$(${EXECutil}/ndate +${fhr} ${PDY}${cyc})
+        export VDATE=$($NDATE +${fhr} ${PDY}${cyc})
 
         # specify output file name from chgres which is input file name to nceppost
         # if model already runs gfs io, make sure GFSOUT is linked to the gfsio file
@@ -515,24 +515,24 @@ do
             echo pgm=$pgm completed successfully
         else
             msg="FATAL ERROR: $pgm FAILED for member $RUNMEM hour $fhr"
-            echo "`date`    $msg"
+            echo "$(date)    $msg"
             postmsg "$jlogfile" "$msg"
             export err=$rc
             err_chk
         fi # (( rc == 0 ))
 
-        pgbfoutd=`readlink -nf pgbfout`
+        pgbfoutd=$(readlink -nf pgbfout)
         if [[ ! -s $pgbfoutd ]]; then
             msg="FATAL ERROR: $pgbfoutd WAS NOT WRITTEN"
-            echo "`date`    $msg"
+            echo "$(date)    $msg"
             postmsg "$jlogfile" "$msg"
             export err=1
             err_chk
         fi # [[ ! -s $pgbfoutd ]]
-        pgbifoutd=`readlink -nf pgbifout`
+        pgbifoutd=$(readlink -nf pgbifout)
         if [[ ! -s $pgbifoutd ]]; then
             msg="FATAL ERROR: $pgbifoutd WAS NOT WRITTEN"
-            echo "`date`    $msg"
+            echo "$(date)    $msg"
             postmsg "$jlogfile" "$msg"
             export err=1
             err_chk
@@ -547,19 +547,19 @@ do
             ls -al  $mcfile
             cat  $mcfile
             echo "f${fhr}_done" >> $post_log
-            # ecflow_client --label info "`cat $post_log`"
+            # ecflow_client --label info "$(cat $post_log)"
             ecflow_client --event f${fhr}_done
             echo
         fi # test $SENDCOM = "YES"
     fi # [[ ! -s $mcfile ]]
 
-    ##export fhr=`expr $fhr + $FHINC`
-    #export fhrtest=`expr $fhr + $FHINC`
+    ##export fhr=$(expr $fhr + $FHINC)
+    #export fhrtest=$(expr $fhr + $FHINC)
     #if [ $FHMAXHF -gt 0 -a $FHOUTHF -gt 0 -a $fhrtest -ge $FHMAXHF -a $fhr -lt $FHMAXHF ]; then
     #    export FHINC=$FHOUT
-    #    export fhr=`expr $FHMAX_HF`
+    #    export fhr=$(expr $FHMAX_HF)
     #else
-    #    export fhr=`expr $fhr + $FHINC`
+    #    export fhr=$(expr $fhr + $FHINC)
     #fi
 
 done # for fhr in RUN_HOURS # while (( fhr <= FHOUR ))
@@ -568,12 +568,12 @@ cat $pgmout
 
 if [ $err -eq 0 ] ; then
     msg="ENDED NORMALLY!!!"
-    echo "`date`    $msg"
+    echo "$(date)    $msg"
     postmsg "$jlogfile" "$msg"
     exit 0
 else
     msg="FATAL ERROR: FAILED to do the post!!!"
-    echo "`date`    $msg"
+    echo "$(date)    $msg"
     postmsg "$jlogfile" "$msg"
     exit $err
 fi

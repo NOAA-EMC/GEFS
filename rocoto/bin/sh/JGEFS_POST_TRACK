@@ -3,7 +3,7 @@
 # 1/7/2014, Jiayi Peng and Dingchen Hou   Scripts are modified to be vertical structure 
 ####################################################################
 
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
 export PS4=' + $SECONDS $na $LINENO: '
@@ -204,4 +204,4 @@ if [[ $KEEPDATA != "YES" ]]; then
 	rm -rf $DATA
 fi
 
-echo `date` $job completed
+echo $(date) $job completed

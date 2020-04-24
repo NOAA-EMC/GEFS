@@ -13,7 +13,7 @@ echo "         ####        RUNNING ID = " $1 "       #### "
 echo "         ######################################### "
 
 RID=$1
-IYMDP1=`$NDATE +24 $OBSYMD\00 | cut -c1-8`
+IYMDP1=$($NDATE +24 $OBSYMD\00 | cut -c1-8)
 
 
 #set -x

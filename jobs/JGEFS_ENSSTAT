@@ -1,6 +1,6 @@
 #!/bin/ksh 
 
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
 export PS4='$SECONDS + '
@@ -92,7 +92,7 @@ export FHOUT=$FHOUTLF
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/atmos
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/atmos
 
-msg="HAS BEGUN on `hostname`"
+msg="HAS BEGUN on $(hostname)"
 postmsg "$jlogfile" "$msg"
 
 ####################################

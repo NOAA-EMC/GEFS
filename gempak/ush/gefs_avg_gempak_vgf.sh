@@ -17,7 +17,7 @@ cd $DATA/gefs_avg_vgf
 
 sGrid=${sGrid} #"_0p50"
 
-PDY2=`echo $PDY | cut -c3-`
+PDY2=$(echo $PDY | cut -c3-)
 
 # MAKE VG FILES FOR OPC
 
@@ -25,7 +25,7 @@ for fcsthrs in 096 108
 do
     for area in NATL MPAC
     do
-        ocean=`echo ${area} | cut -c2-`
+        ocean=$(echo ${area} | cut -c2-)
 
         fn=avg
         rm -rf $fn

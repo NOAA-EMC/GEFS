@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
 export PS4='$SECONDS + '
@@ -37,7 +37,7 @@ mkdir -p $DATA
 cd $DATA
 
 # Define MASTERRES for master file grid, default being Gaussian with alternatives of  p125/p25/p5
-export mem=`echo $RUNMEM|cut -c3-5`
+export mem=$(echo $RUNMEM|cut -c3-5)
 
 ######################################
 # Set up the cycle variable

@@ -1,6 +1,6 @@
 #!/bin/ksh 
 
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
 export PS4='$SECONDS + '
@@ -101,7 +101,7 @@ export PCOM=${PCOM:-${PCOMROOT}/${RUN}}
 mkdir -m 775 -p $PCOM
 mkdir -m 775 -p $COMOUT
 
-msg="HAS BEGUN on `hostname`"
+msg="HAS BEGUN on $(hostname)"
 postmsg "$jlogfile" "$msg"
 
 # Execute the ex-script

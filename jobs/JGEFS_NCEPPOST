@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
 export PS4='$SECONDS + '
@@ -27,7 +27,7 @@ cd $DATA
 export MASTERRES=        
 export res=$MASTERRES
 export SUBJOB=$SUBJOB
-export mem=`echo $RUNMEM|cut -c3-5`
+export mem=$(echo $RUNMEM|cut -c3-5)
 
 ######################################
 # Set up the cycle variable
@@ -299,9 +299,9 @@ export FHOUT_LF=$FHOUTLF
 export SHOUR_LF=$FHMAX_HF
 
 if [[ -n $SUBJOB ]]; then
-    J1=`echo $SUBJOB | cut -c1-1`
-    J2=`echo $SUBJOB | cut -c2-2`
-    iJ2=`printf '%d\n' "'$J2"`
+    J1=$(echo $SUBJOB | cut -c1-1)
+    J2=$(echo $SUBJOB | cut -c2-2)
+    iJ2=$(printf '%d\n' "'$J2")
     iJ2=$((iJ2-65))
 
     export FHOUT_HF=$((FHOUTHF*J1))
@@ -332,10 +332,10 @@ if (( 0 == 1 )) ; then
 ####################################
     mcfile=$COMOUT/misc/post/${RUNMEM}.t${cyc}z.master.control
     if [[ -f $mcfile ]]; then
-        modelrecvy=`cat < $mcfile`
-        recvy_pdy=`echo $modelrecvy | cut -c1-8`
-        recvy_cyc=`echo $modelrecvy | cut -c9-10`
-        recvy_shour=`echo $modelrecvy | cut -c11-13`
+        modelrecvy=$(cat < $mcfile)
+        recvy_pdy=$(echo $modelrecvy | cut -c1-8)
+        recvy_cyc=$(echo $modelrecvy | cut -c9-10)
+        recvy_shour=$(echo $modelrecvy | cut -c11-13)
         if [[ $RERUN = "RESTART" ]]; then
             if [[ $recvy_shour -ge $FHOUR ]]; then
                 msg="Forecast Post Already Completed to $recvy_shour"
@@ -343,9 +343,9 @@ if (( 0 == 1 )) ; then
                 SHOUR=$recvy_shour
             else
                 if [[ $recvy_shour -ge $FHOUR ]]; then
-                    SHOUR=`expr $recvy_shour + $FHINC`
+                    SHOUR=$(expr $recvy_shour + $FHINC)
                 else
-                    SHOUR=`expr $recvy_shour + $FHINC`
+                    SHOUR=$(expr $recvy_shour + $FHINC)
                 fi
                 msg="Starting: PDY=$PDY cycle=t${recvy_cyc}z SHOUR=$SHOUR   ."
                 postmsg "$jlogfile" "$msg"

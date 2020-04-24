@@ -40,7 +40,7 @@ sGrid=${sGrid} #:-"_0p50"}
 mkdir $DATA/mar_00Z
 cd $DATA/mar_00Z
 
-PDY2=`echo $PDY | cut -c3-`
+PDY2=$(echo $PDY | cut -c3-)
 
 if [ ${cyc} != "00" ] ; then
     echo " "
@@ -51,8 +51,8 @@ if [ ${cyc} != "00" ] ; then
 fi
 
 # DEFINE YESTERDAY
-yesterday=`${NDATE} -24 ${PDY}${cyc} | cut -c -8`
-shrtyesterday=`${NDATE} -24 ${PDY}${cyc} | cut -c3-8`
+yesterday=$(${NDATE} -24 ${PDY}${cyc} | cut -c -8)
+shrtyesterday=$(${NDATE} -24 ${PDY}${cyc} | cut -c3-8)
 
 # SET GFS PARAMETERS
 gfscyc="12"
@@ -82,13 +82,13 @@ do
     do
         for fcsthr in ${fcsthrs}
         do
-            fcsthrsgfs=`expr ${fcsthr} + 12`
+            fcsthrsgfs=$(expr ${fcsthr} + 12)
             #typeset -Z3 fcsthrsgfs
 
             fcsthrsgfs=$(printf %03i $fcsthrsgfs)
 
             grids=${memberlist}
-            for fn in `echo $grids`
+            for fn in $(echo $grids)
             do
                 rm -rf $fn
                 if [ -r $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
@@ -162,7 +162,7 @@ do
 
                 else
 
-                    color_number=`echo $gdfn | cut -c2-`
+                    color_number=$(echo $gdfn | cut -c2-)
                     line_count=$color_number
 
                     sline_count="+${line_count}"
@@ -268,16 +268,16 @@ do
     metashname="LOW CNTRS"
     for fcsthr in ${fcsthrs}
     do
-        fcsthrsgfs=`expr ${fcsthr} + 12`
+        fcsthrsgfs=$(expr ${fcsthr} + 12)
         #typeset -Z3 fcsthrsgfs
         fcsthrsgfs=$(printf %03i $fcsthrsgfs)
 
-        fcsthrsgfs2=`expr ${fcsthr} - 6`
+        fcsthrsgfs2=$(expr ${fcsthr} - 6)
         #typeset -Z3 fcsthrsgfs2
         fcsthrsgfs2=$(printf %03i $fcsthrsgfs2)
 
         grids=${memberlist}
-        for fn in `echo $grids`
+        for fn in $(echo $grids)
         do
             rm -rf $fn
             if [ -r $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
@@ -349,7 +349,7 @@ do
                 sCNTL="(CNTL)"
 
             else
-                color_number=`echo $gdfn | cut -c2-`
+                color_number=$(echo $gdfn | cut -c2-)
                 line_count=$color_number
                
                 sline_count="+${line_count}"

@@ -3,7 +3,7 @@
 # control parameters for gefs
 # execute this script in gefs job scripts  (. $HOMEgefs/gefs_init.parm)
 # execute this script after  (. $HOMEgefs/gefs.parm)
-echo `date` $0 begin
+echo $(date) $0 begin
 
 # ----------------------------------
 # options for NEMSIO
@@ -45,4 +45,4 @@ export initcombinetasks=40
 # run parallel or serial et code
 export parallelinit=no
 export parallelinit=yes
-echo `date` $0 end
+echo $(date) $0 end

@@ -57,7 +57,7 @@ EOF
 hh=$FSTART
 if test $hh -lt 100
 then
-    hh1=`echo "${hh#"${hh%??}"}"`
+    hh1=$(echo "${hh#"${hh%??}"}")
     hh=$hh1
 fi
 
@@ -78,7 +78,7 @@ do
         if [ ! -f $COMIN/sfcsig/${RUNMEM}.${cycle}.logf${hh2}.nemsio ]
         then
             sleep 10
-            ic=`expr $ic + 1`
+            ic=$(expr $ic + 1)
         else
           break
         fi
@@ -94,7 +94,7 @@ do
     ln -sf $COMIN/sfcsig/${RUNMEM}.${cycle}.atmf${hh2}.nemsio sigf${hh} 
     ln -sf $COMIN/sfcsig/${RUNMEM}.${cycle}.${SFCF}f${hh2}.nemsio flxf${hh}
 
-    hh=` expr $hh + $FINT `
+    hh=$( expr $hh + $FINT )
     if test $hh -lt 10
     then
         hh=0$hh

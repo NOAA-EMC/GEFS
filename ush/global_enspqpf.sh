@@ -6,8 +6,8 @@
 set -x
 
 export CDATE=$CDATE
-ICYC=`echo $CDATE | cut -c9-10`
-YYYYMMDD=`echo $CDATE | cut -c1-8`
+ICYC=$(echo $CDATE | cut -c9-10)
+YYYYMMDD=$(echo $CDATE | cut -c1-8)
 
 #export enspqpf=$EXECGLOBAL/global_enspqpf
 #DHOU 03/27/2012 For ZEUS

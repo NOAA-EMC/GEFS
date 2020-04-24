@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
 export PS4='$SECONDS + '
@@ -13,7 +13,7 @@ export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
 export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
 
 export RUNMEM=$RUNMEM
-export mem=`echo $RUNMEM|cut -c3-5`
+export mem=$(echo $RUNMEM|cut -c3-5)
 
 export ENS_NUM=1
 echo "ENS_NUM=$ENS_NUM"
@@ -135,7 +135,7 @@ elif [[ $FORECAST_SEGMENT = lr ]] ; then
 	export cplwav=.false.
 else
 	msg="FATAL ERROR:  Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
-	echo "`date`   $msg"
+	echo "$(date)   $msg"
 	echo "The Forecast job will be aborted!!!!"
 	postmsg "$jlogfile" "$msg"
 	export pgm=JENS_FCST
@@ -245,7 +245,7 @@ if [[ $mem = c00 ]] ;then
 	MEMBER=$((npert+1))
 	WAV_MEMBER="00"
 else
-	MEMBER=`echo $mem|cut -c2-3`
+	MEMBER=$(echo $mem|cut -c2-3)
 	WAV_MEMBER=$MEMBER
 fi
 export MEMBER=$MEMBER
