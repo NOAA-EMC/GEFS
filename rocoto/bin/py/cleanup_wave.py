@@ -11,25 +11,25 @@ Inputs (via environment variables):
 
 Outputs:
 	The following files/directories in WORKDIR and all files contained within will all be deleted:
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/ensstat
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/init
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/misc
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2alr
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2bp5
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/sflux
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/genesis
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/master
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2a
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2a2p5
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2ap5
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2b2p5
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/sfcsig
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/tctrack
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/ensstat
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/init
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/misc
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/pgrb2alr
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/pgrb2bp5
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/sflux
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/genesis
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/master
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/pgrb2a
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/pgrb2a2p5
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/pgrb2ap5
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/pgrb2b2p5
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/sfcsig
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/tctrack
 
 	Additionally, the following directories for the from the previous cycle
 	  (6 hours previous) and all files contained within will be deleted:
-		<WORKDIR>/com/gens/dev/gefs.<PDY_last>/<cyc_last>/sfcsig_enkf
-		<WORKDIR>/com/gens/dev/gefs.<PDY_last>/<cyc_last>/track_enkf
+		<WORKDIR>/com/gefs/dev/gefs.<PDY_last>/<cyc_last>/atmos/sfcsig_enkf
+		<WORKDIR>/com/gefs/dev/gefs.<PDY_last>/<cyc_last>/atmos/track_enkf
 
 Error Codes:
 	-100 : Required environment variable not defined
@@ -50,7 +50,7 @@ print = partial(print, flush=True)
 # Output directories that need to be removed
 output_dirs = ["gridded", "station", "stats", "rundata", "gempak"]
 output_dirs_last_cyc = ["restart"]
-output_dir_pattern = "{work_dir}/com/gens/dev/gefs.%Y%m%d/%H/wave/{output_dir}"
+output_dir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/wave/{output_dir}"
 
 # Read in environment variables and make sure they exist
 work_dir = os.environ.get("WORKDIR")

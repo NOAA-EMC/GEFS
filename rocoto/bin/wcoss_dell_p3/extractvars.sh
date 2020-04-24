@@ -32,5 +32,5 @@ module list
 # Export List
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_EXTRACTVARS
+$SOURCEDIR/rocoto/bin/sh/JGEFS_EXTRACTVARS
 

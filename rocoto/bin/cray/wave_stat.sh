@@ -3,4 +3,4 @@
 ulimit -s unlimited
 ulimit -a
 
-$SOURCEDIR/jobs/JWAVE_STAT
+$SOURCEDIR/jobs/JGEFS_WAVE_STAT

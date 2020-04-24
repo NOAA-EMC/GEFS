@@ -32,5 +32,5 @@ module list
 # Export List
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_AVGSPR_GEMPAK
+$SOURCEDIR/jobs/JGEFS_ATMOS_AVGSPR_GEMPAK
 

@@ -36,5 +36,5 @@ export NTHREADS_SIGCHGRS=2
 
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_FORECAST_FV3
+$SOURCEDIR/jobs/JGEFS_FORECAST
 

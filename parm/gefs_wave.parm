@@ -88,7 +88,7 @@ export nback=
 # Restart file config
 if [ $RUN = gefs ]
 then
-  gfs_cyc=`expr 24 / ${gefs_cych}`
+  gfs_cyc=$(expr 24 / ${gefs_cych})
   WAVNCYC=$gfs_cyc
   WAVHCYC=$gefs_cych
 elif [ "$CDUMP" = "gdas" ]
@@ -99,7 +99,7 @@ then
 elif [ ${gfs_cyc} -ne 0 ]
 then 
   FHMAX_WAV_CUR=${FHMAX_WAV_CUR:-192} # RTOFS forecasts only out to 8 days
-  WAVHCYC=`expr 24 / ${gfs_cyc}`
+  WAVHCYC=$(expr 24 / ${gfs_cyc})
 else
   WAVHCYC=0
   FHMAX_WAV_CUR=${FHMAX_WAV_CUR:-192} # RTOFS forecasts only out to 8 days
@@ -124,7 +124,7 @@ if [ $RUNMEM = -1 ]; then
   export waveMEMB=
 else
 # Extract member number only
-  export waveMEMB=`echo $RUNMEM | grep -o '..$'`
+  export waveMEMB=$(echo $RUNMEM | grep -o '..$')
 fi
 
 # Determine if wave component needs input and/or is coupled

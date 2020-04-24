@@ -61,5 +61,5 @@ export NTHREADS_SIGCHGRS=6
 #. $GEFS_ROCOTO/parm/gefs_dev.parm
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_INIT_RECENTER
+$SOURCEDIR/jobs/JGEFS_ATMOS_INIT_RECENTER
 

@@ -24,5 +24,5 @@ module list
 
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_GETCFSSST
+$SOURCEDIR/jobs/JGEFS_ATMOS_GETCFSSST
 

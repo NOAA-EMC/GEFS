@@ -4,18 +4,18 @@
 # execute with dot
 #
 echo
-echo `date` $0 $* setbase begin
+echo $(date) $0 $* setbase begin
 echo
 
 echo
-echo `date` $0 set environment and experiment id
+echo $(date) $0 set environment and experiment id
 echo
 
 echo envir=$envir
 
 echo expid=${expid}
 
-id=`echo $expid|cut -c3-4`
+id=$(echo $expid|cut -c3-4)
 echo id=$id
 
 # For virtical structure
@@ -75,5 +75,5 @@ echo SOURCE: $basesource
 echo OUT: $baseoutput
 
 echo
-echo `date` $0 $* setbase end
+echo $(date) $0 $* setbase end
 echo

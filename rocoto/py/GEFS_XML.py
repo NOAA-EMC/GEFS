@@ -408,7 +408,7 @@ def NotUsed(dicBase, sRocoto_WS=""):
         dicBase[sVarName] = sVarValue
     # ===
     sVarName = "DATA_DIR".upper()
-    sVarValue = "&WORKDIR;/com/gens/dev"
+    sVarValue = "&WORKDIR;/com/gefs/dev"
     if sVarName not in dicBase:
         dicBase[sVarName] = sVarValue
 

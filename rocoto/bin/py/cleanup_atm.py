@@ -13,28 +13,28 @@ Outputs:
 	The following files/directories in WORKDIR and all files contained within will all be deleted:
 		<WORKDIR>/tmpnwprd/<EXPID><PDY><cyc>*
 		<WORKDIR>/tmpnwprd/gefs_init_<PDY><cyc>.dev.save
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/ensstat
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/init
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/misc
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2alr
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2bp5
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/sflux
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/genesis
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/master
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2a
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2a2p5
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2ap5
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/pgrb2b2p5
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/sfcsig
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/tctrack
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/ensstat
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/init
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/misc
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/pgrb2alr
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/pgrb2bp5
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/sflux
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/genesis
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/master
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/pgrb2a
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/pgrb2a2p5
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/pgrb2ap5
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/pgrb2b2p5
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/sfcsig
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/tctrack
 		<WORKDIR>/nwges/dev/gefs.<PDY>/*.t<cyc>z.*
 		<WORKDIR>/nwges/dev/gefs.<PDY>/<cyc>
 		<WORKDIR>/com/logs/jlogfiles/jlogfile.<EXPID><PDY><cyc>*
 
 	Additionally, the following directories for the from the previous cycle
 	  (6 hours previous) and all files contained within will be deleted:
-		<WORKDIR>/com/gens/dev/gefs.<PDY_last>/<cyc_last>/sfcsig_enkf
-		<WORKDIR>/com/gens/dev/gefs.<PDY_last>/<cyc_last>/track_enkf
+		<WORKDIR>/com/gefs/dev/gefs.<PDY_last>/<cyc_last>/sfcsig_enkf
+		<WORKDIR>/com/gefs/dev/gefs.<PDY_last>/<cyc_last>/track_enkf
 
 Error Codes:
 	-100 : Required environment variable not defined
@@ -57,7 +57,7 @@ output_dirs = ["f2d", "f3d", "cfssst", "ensstat", "init", "misc", "sflux", "gene
 				"pgrb2sp25", "pgrb2p25", "pgrb2ap5", "pgrb2bp5", "pgrb22p5", "sfcsig", 
                 "tctrack", "bufr", "wmo"]
 output_dirs_last_cyc = ["restart", "sfcsig_enkf", "track_enkf", "gempak"]
-output_dir_pattern = "{work_dir}/com/gens/dev/gefs.%Y%m%d/%H/atmos/{output_dir}"
+output_dir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/atmos/{output_dir}"
 
 # Read in environment variables and make sure they exist
 work_dir = os.environ.get("WORKDIR")

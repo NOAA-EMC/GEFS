@@ -1,0 +1,136 @@
+#!/bin/sh
+#
+########################################
+# GEFS GEMPAK PRODUCT GENERATION
+########################################
+
+set -xa
+# #### 08/25/1999 ###################
+# SET SHELL PROCESSING VARIABLES
+# ###################################
+export PS4='$SECONDS + ' 
+date
+
+export total_tasks=${total_tasks:-66}
+export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
+
+############
+#export MP_IOAGENT_CNT=all
+#export MP_IO_BUFFER_SIZE=8M
+
+####################################
+# obtain unique process id (pid) and make working directory
+####################################
+export pid=$$
+export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
+mkdir -p $DATA
+cd $DATA
+
+######################################
+# Set up the cycle variable
+######################################
+export cycle=${cycle:-t${cyc}z}
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gefs}
+export RUN=${RUN:-gefs}
+export model=${model:-ensemble}
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+
+####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDECF=${SENDECF:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export VERBOSE=${VERBOSE:-YES}
+
+################################
+# Set up the HOME directory
+################################
+export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
+######################################
+# Set up the GEMPAK directory
+#######################################
+export GEMPAKgefs=${GEMPAKgefs:-$HOMEgefs/gempak}
+
+############################################
+# Run gefs.parm to get input variables
+############################################
+. $PARMgefs/gefs.parm
+
+############################################
+# Set up model and cycle specific variables
+############################################
+export fstart=${fstart:-0}
+export fend=${fhmaxh:-384}
+
+export FHMAXHF=${FHMAXHF:-240}
+export FHOUTHF=${FHOUTHF:-3}
+export FHOUTLF=${FHOUTLF:-6}
+
+export GRIB=
+export EXT=""
+export DBN_ALERT_TYPE=${DBN_ALERT_TYPE:-GEFS_GEMPAK}
+
+export GEMPAK_RES=${GEMPAK_RES:-"0p50 0p25"}
+export model=ensemble
+
+##############################################
+# Define COM directories
+##############################################
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/atmos
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/${cyc}/atmos/gempak
+
+if [ ! -f $COMOUT ] ; then
+    mkdir -p -m 775 $COMOUT
+fi
+
+env
+
+########################################################
+## Execute the script.
+$HOMEgefs/scripts/exgefs_gempak.sh.ecf
+########################################################
+err=$?
+
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
+else
+    msg="FATAL ERROR: $job failed!"
+fi
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
+
+echo "$(date) $0 $(date -u) end"
+
+exit $err

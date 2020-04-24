@@ -117,10 +117,10 @@ echo memberlist=$memberlist
 
 
 echo
-echo "`date`  ==== START OF HOURLY PROCESSING OF PGB FORECAST FILES ====="
+echo "$(date)  ==== START OF HOURLY PROCESSING OF PGB FORECAST FILES ====="
 echo
 
-SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
+SLEEP_LOOP_MAX=$(expr $SLEEP_TIME / $SLEEP_INT)
 
 export fh=$SHOUR
 #export (( fh = SHOUR ))
@@ -181,7 +181,7 @@ for hour in $hours; do
 			break
 		else # [[ $foundall = yes ]]
 			if (( nfiles < nfilesprev )) then
-				ic=`expr $ic + 1`
+				ic=$(expr $ic + 1)
 				sleep $SLEEP_INT
 			else
 				if [[ $previncr = yes ]]; then
@@ -272,15 +272,15 @@ for hour in $hours; do
 	cat namin
 	echo
 
-	echo "####################### `date` $fhr $jobgrid ensstat begin" >$pgmout.$jobgrid.$pfhr
+	echo "####################### $(date) $fhr $jobgrid ensstat begin" >$pgmout.$jobgrid.$pfhr
 	$ENSSTAT <namin | fold -w 2000 >$pgmout.$jobgrid.$pfhr
 	export err=$?; err_chk
-	echo "####################### `date` $fhr $jobgrid ensstat end">>$pgmout.$jobgrid.$pfhr
+	echo "####################### $(date) $fhr $jobgrid ensstat end">>$pgmout.$jobgrid.$pfhr
 	for fhout in $statoutfhlist; do
 		if (( fhr == fhout )); then
 			cat $pgmout.$jobgrid.$pfhr >> $pgmout
 		else
-			lines=`cat $pgmout.$jobgrid.$pfhr| wc -l`
+			lines=$(cat $pgmout.$jobgrid.$pfhr| wc -l)
 			lobeg=5
 			loend=40
 			echo lines=$lines lobeg=$lobeg loend=$loend
@@ -294,7 +294,7 @@ for hour in $hours; do
 			fi # (( lskip > 100 ))
 		fi # (( fh == fhout ))
 	done # for fhout in $statoutfhlist
-	echo "`date` check for missing or zero-length output files"
+	echo "$(date) check for missing or zero-length output files"
 
 	for run in geavg gespr; do
 		if [[ -s ${run}.${cycle}.$pgapre${ffhr} ]]; then
@@ -306,7 +306,7 @@ for hour in $hours; do
 		fi # [[ -s ${run}.${cycle}.$pgapre${ffhr} ]]
 	done # for run in geavg gespr
 
-	echo "`date` send $pgapre output begin"
+	echo "$(date) send $pgapre output begin"
 
 	if [ $SENDCOM = "YES" ]; then
 		for run in geavg gespr; do
@@ -343,16 +343,16 @@ for hour in $hours; do
 		done
 	fi # [ $SENDCOM = "YES" ]
 
-	echo "`date` send pgrb2a output end"
+	echo "$(date) send pgrb2a output end"
 	
 done #hour in $hours
 
-echo ###############################`date` cat $pgmout begin
+echo ###############################$(date) cat $pgmout begin
 cat $pgmout
-echo ###############################`date` cat $pgmout end
+echo ###############################$(date) cat $pgmout end
 
 echo
-echo "`date`  ==== END  OF  HOURLY PROCESSING OF PGB FORECAST FILES ====="
+echo "$(date)  ==== END  OF  HOURLY PROCESSING OF PGB FORECAST FILES ====="
 echo
 
 ############################################################################

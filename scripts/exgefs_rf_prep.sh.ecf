@@ -1,5 +1,5 @@
 #!/bin/ksh
-echo `date` $0 begin
+echo $(date) $0 begin
 ################################################################################
 #   Script:    exgefs_getcfssst.sh.sms
 #

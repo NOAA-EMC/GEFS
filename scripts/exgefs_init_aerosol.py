@@ -106,14 +106,14 @@ def main() -> None:
     destination_path = time.strftime(init_path_pattern.format(ges_root=ges_root, envir=envir, member="aer"))
     com_path = time.strftime(com_base_pattern.format(com_root=com_root, envir=envir, net=net, run=run, member="aer", component="chem"))
 
+    # Even with exist_ok=True, makedirs sometimes throws a FileExistsError
+    with contextlib.suppress(FileExistsError):
+        os.makedirs(destination_path, exist_ok=True)
+
     for file_name in os.listdir(atm_source_path):
         full_file_name = os.path.join(atm_source_path, file_name)
         if os.path.isfile(full_file_name):
             shutil.copy(full_file_name, destination_path)
-
-    # Even with exist_ok=True, makedirs sometimes throws a FileExistsError
-    with contextlib.suppress(FileExistsError):
-        os.makedirs(destination_path, exist_ok=True)
 
     if (init_type == "warm"):
         analysis_filename = regrid_analysis(time=time, regrid_aprun=regrid_aprun, regrid_exec=regrid_exec, max_lookback=max_lookback,

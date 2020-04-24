@@ -4,4 +4,4 @@
 export jlogfile=/dev/null
 export jobid=${job}.$$
 
-$SOURCEDIR/jobs/JWAVE_POST
+$SOURCEDIR/jobs/JGEFS_WAVE_POST

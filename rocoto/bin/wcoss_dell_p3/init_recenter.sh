@@ -33,4 +33,4 @@ module list
 #export NTHREADS_SIGCHGRS=${GEFS_TPP:-6}
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_INIT_RECENTER
+$SOURCEDIR/jobs/JGEFS_ATMOS_INIT_RECENTER

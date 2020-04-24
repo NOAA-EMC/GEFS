@@ -10,9 +10,9 @@ echo "AUTHOR: Yan Luo (wx22lu)"
 
 IYMDH=$1             
 
-IYMD=`echo $IYMDH | cut -c1-8`
-IYMDHM12=`$NDATE -12 $IYMDH `
-IYMDM1=`$NDATE -24 $IYMDH | cut -c1-8`
+IYMD=$(echo $IYMDH | cut -c1-8)
+IYMDHM12=$($NDATE -12 $IYMDH )
+IYMDM1=$($NDATE -24 $IYMDH | cut -c1-8)
 
 if [ -s $COMIN/gefs.$IYMD/00/atmos/ensstat/enspost_grb2.t00z.prcp ]; then
  cat $COMIN/gefs.$IYMD/00/atmos/ensstat/enspost_grb2.t00z.prcp    >precip.$IYMDH

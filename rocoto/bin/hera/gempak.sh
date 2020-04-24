@@ -19,5 +19,5 @@ export MEMORY_AFFINITY=core:6
 
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_GEMPAK
+$SOURCEDIR/jobs/JGEFS_ATMOS_GEMPAK
 

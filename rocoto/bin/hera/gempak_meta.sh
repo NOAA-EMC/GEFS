@@ -25,5 +25,5 @@ ulimit -a
 #. $GEFS_ROCOTO/parm/gefs_dev.parm
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_GEMPAK_META
+$SOURCEDIR/jobs/JGEFS_ATMOS_GEMPAK_META
 

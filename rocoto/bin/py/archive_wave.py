@@ -12,12 +12,12 @@ Inputs (via environment variables):
     cyc                  : Initialization hour in HH form
 
     GEFS output must be located in the WORKDIR com directory as such:
-        <WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/wave/<directory>
+        <WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/wave/<directory>
 
 Outputs:
     For each directory in DIRS_TO_ARCHIVE, a tar file will be created in the following
     location on HPSS:
-        <HPSS_DIR>/<YYYY>/<YYYY><MM>/<YYYY><MM><DD>/gwes.<YYYY><MM><DD>_<HH>.wave.<directory>.tar
+        <HPSS_DIR>/<YYYY>/<YYYY><MM>/<YYYY><MM><DD>/gefs.<YYYY><MM><DD>_<HH>.wave.<directory>.tar
 
 Error Codes:
     -100 : Required environment variable not defined
@@ -32,10 +32,10 @@ from datetime import timedelta
 from functools import partial
 
 # File patterns
-workdir_pattern = "{work_dir}/com/gens/dev/gwes.%Y%m%d/%H/wave"
+workdir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/wave"
 destination_pattern = "{hpss_path}/%Y/%Y%m/%Y%m%d"
-tarfile_pattern = "{destination_path}/gwes.%Y%m%d_%H.wave.{directory}.tar"
-tarfile_pattern_restart = "{destination_path}/gwes.%Y%m%d_%H+{interval:02d}.wave.{directory}.tar"
+tarfile_pattern = "{destination_path}/gefs.%Y%m%d_%H.wave.{directory}.tar"
+tarfile_pattern_restart = "{destination_path}/gefs.%Y%m%d_%H+{interval:02d}.wave.{directory}.tar"
 
 # Make sure print statements are flushed immediately, otherwise
 #   print statments may be out-of-order with subprocess output

@@ -12,10 +12,10 @@ echo "-----------------------------------------------------"
 #####################################################################
 
 set -x
-na=`basename $0`
+na=$(basename $0)
 export PS4=' + $SECONDS $RUN $na $LINENO: '
 
-msg="HAS BEGUN on `hostname`"
+msg="HAS BEGUN on $(hostname)"
 postmsg "$jlogfile" "$msg"
 
 export MP_LABELIO=YES
@@ -38,9 +38,9 @@ export fhr
 # Loop Through the Post Forecast Files 
 ############################################################
 while test $fhr -le $FHOUR; do
-	echo `date` f$fhr begin
+	echo $(date) f$fhr begin
 
-	if test "$SENDCOM" = "YES"; then
+	if [ "$SENDCOM" = "YES" ]; then
 		#
 		# Save Pressure and SFLUX GRIB/GRIB Index files
 		#
@@ -54,21 +54,16 @@ while test $fhr -le $FHOUR; do
 			rm $COMOUT/$cyc/sfcsig/${RUN}.${cycle}.bf$fhr
 			rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbf$fhr
 			rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhr
-		else
-			if [[ $cycsuffix = true ]]; then
-				rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbf$fhr
-				rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhr
-			fi
 		fi # [[ $fhr -gt $fhsave ]]
 	fi # test "$SENDCOM" = "YES"
-	echo `date` save or remove sf, bf, and sflux files f$fhr completed
+	echo $(date) save or remove sf, bf, and sflux files f$fhr completed
 
 	if (( fhr < fhmaxh )); then
-		export fhr=`expr $fhr + $FHINCH`
+		export fhr=$(expr $fhr + $FHINCH)
 	else
-		export fhr=`expr $fhr + $FHINC`
+		export fhr=$(expr $fhr + $FHINC)
 	fi
-	if test $fhr -lt 10; then
+	if [ $fhr -lt 10 ]; then
 		export fhr="0$fhr"
 	fi
 done # while test $fhr -le $FHOUR

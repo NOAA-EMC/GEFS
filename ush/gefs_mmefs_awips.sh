@@ -42,7 +42,7 @@ set -x
 
 export SLEEP_TIME=900
 export SLEEP_INT=5
-export SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
+export SLEEP_LOOP_MAX=$(expr $SLEEP_TIME / $SLEEP_INT)
 export type=pgrb2a
 
 for id in  gec00 gep01 gep02 gep03 gep04 gep05 gep06 gep07 gep08  gep09 gep10 \
@@ -64,11 +64,11 @@ do
     ic=1
     while [ $ic -le $SLEEP_LOOP_MAX ]
     do
-       if test -f ${COMIN}/${type}_bc/${id}.t${cyc}z.${type}_bcf${hr}
+       if [ -f ${COMIN}/${type}_bc/${id}.t${cyc}z.${type}_bcf${hr} ]
        then
           break
        else
-          ic=`expr $ic + 1`
+          ic=$(expr $ic + 1)
           sleep $SLEEP_INT
        fi
        ###############################

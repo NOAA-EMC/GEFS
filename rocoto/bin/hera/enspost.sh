@@ -10,5 +10,5 @@ export IOBUF_PARAMS=*pgrb2*:size=64M:count=4:verbose,*enspost_grb2*:size=64M:cou
 ulimit -s unlimited
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_ENSPOST
+$SOURCEDIR/jobs/JGEFS_ATMOS_ENSPOST
 

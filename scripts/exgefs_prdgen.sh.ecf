@@ -1,7 +1,7 @@
 #!/bin/ksh
 export VERBOSE=yes
-sname=`basename $0`
-echo `date` $sname $member begin
+sname=$(basename $0)
+echo $(date) $sname $member begin
 #####################################################################
 echo "-----------------------------------------------------"
 echo " exgefs_prdgen.sh.sms" 
@@ -19,16 +19,15 @@ echo "-----------------------------------------------------"
 export PS4='+ $SECONDS $sname $member $LINENO: '
 
 set -xa
-na=`basename $0`
+na=$(basename $0)
 
 cd $DATA
 
-msg="HAS BEGUN on `hostname`"
+msg="HAS BEGUN on $(hostname)"
 postmsg "$jlogfile" "$msg"
 
 echo cycle=$cycle cycle_fcst=$cycle_fcst
 echo fcstlong=$fcstlong
-echo cycsuffix=$cycsuffix
 
 export jobdir="${1}"                   # ${DATA}/${stream}
 export infile="${2}"                   # ${DATA}/${stream}/${stream}.in
@@ -95,7 +94,7 @@ fi # (( rc == 0 ))
 #cd $DATA
 cd $jobdir
 
-SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
+SLEEP_LOOP_MAX=$(expr $SLEEP_TIME / $SLEEP_INT)
 
 for hour in $hours; do
 	if [[ $do_analysis = YES ]] && (( hour == 0 )); then
@@ -135,10 +134,10 @@ for hour in $hours; do
 				# Check if control file has been created, to make sure file is complete before using
 				testfhr=-1
 				if [[ -f $mcfile ]]; then
-					teststring=`cat $mcfile|head -1`
+					teststring=$(cat $mcfile|head -1)
 					if [[ $teststring != '' ]]; then
 						if [[ -f $mifile ]]; then
-							testfhr=`echo $teststring | cut -c11-13`
+							testfhr=$(echo $teststring | cut -c11-13)
 						fi
 					fi # [[ $teststring != '' ]]
 				fi # [[ -f $mcfile ]]
@@ -149,7 +148,7 @@ for hour in $hours; do
 				fi # (( testfhr >= fhr ))
 			fi
 
-			ic=`expr $ic + 1`
+			ic=$(expr $ic + 1)
 			sleep $SLEEP_INT
 
 			###############################
@@ -195,7 +194,7 @@ for hour in $hours; do
 			####################################
 			# send control files to misc
 			####################################
-			if test $SENDCOM = "YES"; then
+			if [ $SENDCOM = "YES" ]; then
 				echo "$PDY$cyc$fhr" > $pcfile
 			fi # test $SENDCOM = "YES"
 		fi # [[ ! -s $pcfile ]]
@@ -260,10 +259,10 @@ for hour in $hours; do
 			# Check if control file has been created, to make sure file is complete before using
 			testfhr=-1
 			if [[ -f $mcfile ]]; then
-				teststring=`cat $mcfile|head -1`
+				teststring=$(cat $mcfile|head -1)
 				if [[ $teststring != '' ]]; then
 					if [[ -f $mifile ]]; then
-						testfhr=`echo $teststring | cut -c11-13`
+						testfhr=$(echo $teststring | cut -c11-13)
 					fi
 				fi # [[ $teststring != '' ]]
 			fi # [[ -f $mcfile ]]
@@ -275,7 +274,7 @@ for hour in $hours; do
 			fi # (( testfhr >= fhr ))
 		fi # [[ $RUNMEM = "gegfs" ]]
 
-		ic=`expr $ic + 1`
+		ic=$(expr $ic + 1)
 		sleep $SLEEP_INT
 
 		###############################

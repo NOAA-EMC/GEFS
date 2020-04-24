@@ -41,8 +41,8 @@ sGrid=${sGrid} #:-"_0p50"}
 mkdir $DATA/gefs_meta_nam_spag
 cd $DATA/gefs_meta_nam_spag
 
-#ddate=`echo $PDY | cut -c3-8`
-#ddatem1=`echo $PDYm1 | cut -c3-8`
+#ddate=$(echo $PDY | cut -c3-8)
+#ddatem1=$(echo $PDYm1 | cut -c3-8)
 
 fcsthrs="012 024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204"
 
@@ -76,7 +76,7 @@ case $cyc in
 esac
 
 #grab month for season defined levels
-month=`echo $PDY | cut -c5-6`
+month=$(echo $PDY | cut -c5-6)
 
 # for the winter months
 if [ ${month} -eq 12 -o ${month} -le 2 ]; then
@@ -120,8 +120,8 @@ do
     echo $level
     for fcsthr in ${fcsthrs}
     do
-        fcsthr_6=`expr ${fcsthr} + 6`
-        fcsthr_ecm=`expr ${fcsthr} + $ECM_fcsthrs`
+        fcsthr_6=$(expr ${fcsthr} + 6)
+        fcsthr_ecm=$(expr ${fcsthr} + $ECM_fcsthrs)
         if [ ${fcsthr_6} -lt 10 ]; then
             fcsthr_6="00${fcsthr_6}"
         elif [ ${fcsthr_6} -lt 100 ]; then
@@ -135,7 +135,7 @@ do
         
 
         grids=${memberlist}
-        for fn in `echo $grids`
+        for fn in $(echo $grids)
         do
             rm -rf $fn ${fn}_6
 
@@ -300,7 +300,7 @@ do
         color_number=9
         for gridl in ${grids}
         do
-            #gridl=${grid} #`echo $grid | tr [A-Z] [a-z]`
+            #gridl=${grid} #$(echo $grid | tr [A-Z] [a-z])
             # ----- gridl -----
             gdfn=${gridl} 
             if [ -e ${gdfn} ]; then
@@ -308,7 +308,7 @@ do
                 #    line_count=0
                 #    color_number=6
                 #else
-                color_number=`echo $gdfn | cut -c2-`
+                color_number=$(echo $gdfn | cut -c2-)
                 line_count=$color_number
                 #fi
 				cat >> cmdfilenam  <<- EOF
