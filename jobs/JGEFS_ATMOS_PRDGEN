@@ -13,9 +13,6 @@ export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
 export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
 export CNVGRIB=$CNVGRIB
 
-export save_pgrb2_p5=${save_pgrb2_p5:-NO}
-export save_pgrb2_p25=${save_pgrb2_p25:-NO}
-
 ####################################
 # obtain unique process id (pid) and make temp directory
 ####################################

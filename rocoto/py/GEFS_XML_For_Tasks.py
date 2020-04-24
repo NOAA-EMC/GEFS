@@ -1212,19 +1212,32 @@ def get_param_of_task(dicBase, taskname):
 
             # For GEMPAK
             if taskname.lower() == "gempak":
-                #if DoesTaskExist(dicBase, "prdgen_lr"):
-                #    sDep = '<metataskdep metatask="prdgen_lr"/>'
-                if DoesTaskExist(dicBase, "prdgen_hr"):
-                    sDep = '<metataskdep metatask="prdgen_hr"/>'
+                sDep = '<and>'
+                
+                IsDataDep = True
 
-                    #npert = int(dicBase["NPERT"])
-                    #sDep = '<and>'
-                    #for i in range(npert):
-                    #    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gep{0:02}.t@Hz.prdgen.control.f000</cyclestr></datadep>'.format(i + 1)
-                    #sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gec00.t@Hz.prdgen.control.f000</cyclestr></datadep>'
-                    #sDep += '\n</and>'
+                if IsDataDep:
+
+                    npert = int(dicBase["NPERT"])
+                    for i in range(npert):
+                        sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/misc/prd0p5/gep{0:02}.t@Hz.prdgen.control.f000</cyclestr></datadep>'.format(i + 1)
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/misc/prd0p5/gec00.t@Hz.prdgen.control.f000</cyclestr></datadep>'
+                    #sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/geavg.t@Hz.prdgen.control.f000</cyclestr></datadep>'
+                    #sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gespr.t@Hz.prdgen.control.f000</cyclestr></datadep>'
+
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/pgrb2ap5/geavg.t@Hz.pgrb2a.0p50.f000</cyclestr></datadep>'
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/pgrb2ap5/gespr.t@Hz.pgrb2a.0p50.f000</cyclestr></datadep>'
+
                 else:
-                    sDep = ''
+                    if DoesTaskExist(dicBase, "prdgen_hr"):
+                        sDep += '\n\t<metataskdep metatask="prdgen_hr"/>'
+                    if DoesTaskExist(dicBase, "ensstat_hr"):
+                        sDep += '\n\t<taskdep task=ensstat_hr/>'
+
+                if sDep == '<and>':
+                    sDep = ""
+                else:
+                    sDep += '\n</and>'
 
             # For avg_gempak_vgf
             if taskname.lower() == "avg_gempak_vgf":
@@ -1300,7 +1313,7 @@ def calc_gempak_resources(dicBase):
     elif WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
         if (npert + 1) <= ncores_per_node:
             iNodes = nGEMPAK_RES
-            iPPN = (npert + 1)
+            iPPN = (npert + 1 + 2)
         else:
             iPPN = ncores_per_node
             iNodes = math.ceil(iTotal_Tasks / (iPPN * 1.0))

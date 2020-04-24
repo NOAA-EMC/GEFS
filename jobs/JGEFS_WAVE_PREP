@@ -123,7 +123,7 @@ export CDO=/gpfs/dell2/emc/verification/noscrub/Todd.Spindler/CDO/bin/cdo
 [[ ! -d $COMOUT ]] && mkdir -m 775 -p $COMOUT
 
 #if [ $RUN_ENVIR = "nco" ]; then
-export COMIN_WAV_ICE=${COMIN_WAV_ICE:-$(compath.py gfs/prod)}/${WAVICEPRFX}.${PDY}/${cyc}
+export COMIN_WAV_ICE=${COMIN_WAV_ICE:-$(compath.py gfs/prod)/${WAVICEPRFX}.${PDY}/${cyc}}
 #export COMIN_WAV_WND=${COMIN_WAV_WND:-$(compath.py gfs/prod)}/${CDUMP}.${PDY}/${cyc}
 #export COMIN_WAV_CUR=${COMIN_WAV_CUR:-$(compath.py ${WAVECUR_DID}/prod)}/${WAVECUR_DID}.$PDY
 #else
