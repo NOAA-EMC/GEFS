@@ -22,7 +22,7 @@ cd $DATA/gefs_avgspr
 
 sGrid=${sGrid} #_0p50
 
-PDY2=`echo $PDY | cut -c3-`
+PDY2=$(echo $PDY | cut -c3-)
 
 gdattim_6to10=""
 gdattim_8to14=""

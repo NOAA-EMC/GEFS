@@ -19,16 +19,16 @@ typeset -Z2 fhr
 #
 ################################################################
 
-for script in `cat $FIXgempak/gefs_avg_vgf_${cyc}`
+for script in $(cat $FIXgempak/gefs_avg_vgf_${cyc})
 do
     eval "echo $script" >> $DATA/poescript
 done
 
-num=`cat $DATA/poescript |wc -l` 
+num=$(cat $DATA/poescript |wc -l) 
 
 while [ $num -lt $numproc ] ; do
     echo "hostname" >>poescript
-    num=`expr $num + 1`
+    num=$(expr $num + 1)
 done
 
 cat poescript

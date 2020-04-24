@@ -83,7 +83,7 @@ else
 		export err=1
 		err_chk
 	fi
-	echo `date` pgrb2 $jobgrid grbfile $ffhr completed
+	echo $(date) pgrb2 $jobgrid grbfile $ffhr completed
 
 	######################################################
 	# Split the pgb2 file into pgrb2a, pgrb2b and pgrb2d parts
@@ -133,14 +133,14 @@ else
 	##############################################
 	# Save the master files at 0p5 grid for fcst beyond day 10
 	##############################################
-	if test "$save_pgrb2_p5" = 'YES' -a "$jobgrid" = '0p5'; then
+	if [ "$save_pgrb2_p5" = 'YES' -a "$jobgrid" = '0p5' ]; then
 		if (( fhr > FHMAXHF )); then
 			$WGRIB2 -s pgb2file.$ffhr > pgb2file.${ffhr}.idx
 			mv pgb2file.${ffhr} $mafile_p5 
 			mv pgb2file.${ffhr}.idx $mifile_p5
 		fi
 	fi
-	if test "$save_pgrb2_p25" = 'YES' -a "$jobgrid" = '0p25'; then
+	if [ "$save_pgrb2_p25" = 'YES' -a "$jobgrid" = '0p25' ]; then
 		if (( fhr <= FHMAXHF )); then
 			$WGRIB2 -s pgb2file.$ffhr > pgb2file.${ffhr}.idx
 			mv pgb2file.${ffhr} $mafile_p25 
@@ -205,33 +205,33 @@ else
 		# Send DBNet alerts for PGB2A at 6 hour increments for all forecast hours
 		# Do for 00, 06, 12, and 18Z cycles.
 		###############################################################################
-		if [[ "$SENDDBN" = 'YES' && "$NET" = 'gens' && ` expr $cyc % 6 ` -eq 0 ]]; then
-			if [[ `echo $RUNMEM | cut -c1-2` = "ge" ]]; then
-				MEMBER=`echo $RUNMEM | cut -c3-5 | tr '[a-z]' '[A-Z]'`
-				if [[ $fhr -ge 0 && $fhr -le $fhmax && ` expr $fhr % 6 ` -eq 0 ]]; then
+		if [[ "$SENDDBN" = 'YES' && "$NET" = 'gefs' && $( expr $cyc % 6 ) -eq 0 ]]; then
+			if [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]; then
+				MEMBER=$(echo $RUNMEM | cut -c3-5 | tr '[a-z]' '[A-Z]')
+				if [[ $fhr -ge 0 && $fhr -le $fhmax && $( expr $fhr % 6 ) -eq 0 ]]; then
 					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_$GRID\_$MEMBER $job $fileaout
 					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_$GRID\_${MEMBER}_WIDX $job $fileaouti
 				fi
-			fi # [[ `echo $RUNMEM | cut -c1-2` = "ge" ]]
-		fi # [[ "$SENDDBN" = 'YES' && "$NET" = 'gens' && ` expr $cyc % 6 ` -eq 0 ]]
+			fi # [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]
+		fi # [[ "$SENDDBN" = 'YES' && "$NET" = 'gefs' && $( expr $cyc % 6 ) -eq 0 ]]
 
 		###############################################################################
 		# Send DBNet alerts for PGB2B at 6 hour increments for up to 84 hours
 		# Do for 00Z and 12Z only
 		###############################################################################
-		if [[ "$SENDDBN" = 'YES' && "$NET" = 'gens' ]]; then
-			if [[ `echo $RUNMEM | cut -c1-2` = "ge" ]]; then
-				MEMBER=`echo $RUNMEM | cut -c3-5 | tr '[a-z]' '[A-Z]'`
+		if [[ "$SENDDBN" = 'YES' && "$NET" = 'gefs' ]]; then
+			if [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]; then
+				MEMBER=$(echo $RUNMEM | cut -c3-5 | tr '[a-z]' '[A-Z]')
 				$DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_$GRID\_$MEMBER $job $filebout
 				$DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_$GRID\_${MEMBER}_WIDX $job $filebouti
-			fi # [[ `echo $RUNMEM | cut -c1-2` = "ge" ]]
-		fi # [[ "$SENDDBN" = 'YES' && "$NET" = 'gens' ]]
+			fi # [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]
+		fi # [[ "$SENDDBN" = 'YES' && "$NET" = 'gefs' ]]
 	fi # [[ "$SENDCOM" = 'YES' ]]
-	echo `date` pgrb2a 1x1 sendcom $ffhr completed
+	echo $(date) pgrb2a 1x1 sendcom $ffhr completed
 fi # [[ -s $DATA/pgrb2$ffhr ]] && [[ $overwrite = no ]]
 
 ########################################################
-echo `date` $sname $member $partltr $fsuffix 1x1 GRIB end on machine=`uname -n`
+echo $(date) $sname $member $partltr $fsuffix 1x1 GRIB end on machine=$(uname -n)
 msg='ENDED NORMALLY.'
 postmsg "$jlogfile" "$msg"
 ################## END OF SCRIPT #######################

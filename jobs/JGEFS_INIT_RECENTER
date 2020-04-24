@@ -1,6 +1,6 @@
 #!/bin/ksh 
 
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
 export PS4='$SECONDS + '
@@ -34,7 +34,7 @@ setpdy.sh
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=${NET:-gens}
+export NET=${NET:-gefs}
 export RUN=${RUN:-gefs}
 
 ####################################
@@ -88,9 +88,9 @@ export COMOUT=${COMOUT:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}}
 export COMIN=$COMIN/$cyc/$COMPONENT/init 
 export COMOUT=$COMOUT/$cyc/$COMPONENT/init
 
-export pdycycp=`$NDATE -$fhrp $PDY$cyc`
-export pdyp=`echo $pdycycp|cut -c1-8`
-export cycp=`echo $pdycycp|cut -c9-10`
+export pdycycp=$($NDATE -$fhrp $PDY$cyc)
+export pdyp=$(echo $pdycycp|cut -c1-8)
+export cycp=$(echo $pdycycp|cut -c9-10)
 
 ##############################################
 # Define GES directories
@@ -113,8 +113,7 @@ env | sort
 # Execute the script
 $HOMEgefs/scripts/exgefs_init_recenter.sh.ecf
 #############################################################
-ERR=$?
-echo $ERR
+err=$?
 
 if [ $SENDCOM = YES ]; then
 	mem=01	
@@ -127,11 +126,10 @@ fi
 
 cat $pgmout
 
-#We should check error message here  ---- Dingchen
-if [ $ERR = 0 ]; then
-    msg="JOB COMPLETED NORMALLY"
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
 else
-    msg="JOB FAILED!"
+    msg="FATAL ERROR: $job failed!"
 fi
 postmsg "$jlogfile" "$msg"
 
@@ -139,10 +137,9 @@ postmsg "$jlogfile" "$msg"
 # Remove the Temporary working directory
 ##############################
 cd $DATAROOT
-
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-echo `date` $0 `date -u` end
+echo "$(date) $0 $(date -u) end"
 
-exit $ERR
+exit $err
 

@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-echo `date` $0 begin
+echo $(date) $0 begin
 
 set -xa
 
@@ -45,11 +45,22 @@ nemsioget=${nemsioget:-${NWPROD}/exec/nemsio_get}
 GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-$HOMEgsi/exec/getsigensmeanp_smooth.x}
 GETSFCENSMEANEXEC=${GETSFCENSMEANEXEC:-$HOMEgsi/exec/getsfcensmeanp.x}
 
-SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
+SLEEP_LOOP_MAX=$(expr $SLEEP_TIME / $SLEEP_INT)
 
 # Compute ensemble mean 
 export OMP_NUM_THREADS=4
-echo memberlist=${memberlist}
+(( imem = 0 ))
+while (( imem < npert )); do
+    (( imem = imem + 1 ))
+    if (( imem >= 10 )); then
+        imem=0$imem
+    else
+        imem=00$imem
+    fi
+    memberlist="$memberlist $imem"
+done # while (( imem < npert ))
+echo memberlist=$memberlist
+
 $NCP $GETATMENSMEANEXEC $DATA
 $NCP $GETSFCENSMEANEXEC $DATA
 
@@ -63,22 +74,22 @@ do
         mem2=$(printf %02i $mem)
         ic=0
         while [ $ic -le $SLEEP_LOOP_MAX ]; do
-            if test -f  $COMIN/sfcsig/gep${mem2}.${cycle}.logf${fhr}.nemsio; then
+            if [ -f  $COMIN/sfcsig/gep${mem2}.${cycle}.logf${fhr}.nemsio ]; then
                 $NLN $COMIN/sfcsig/gep${mem2}.${cycle}.atmf${fhr}.nemsio ./atm_mem$mem
                 $NLN $COMIN/sfcsig/gep${mem2}.${cycle}.sfcf${fhr}.nemsio ./sfc_mem$mem
                 break
             else
-                ic=`expr $ic + 1`
+                ic=$(expr $ic + 1)
                 sleep $SLEEP_INT
             fi
             if [ $ic -eq $SLEEP_LOOP_MAX ]; then
                 (( nfile = nfile - 1 ))
-                echo "WARNING: `date` forecast gep${mem2} missing for hour $fhr"
+                echo "WARNING: $(date) forecast gep${mem2} missing for hour $fhr"
             fi # [ $ic 
         done
     done
     if [ $nfile -le 1 ]; then
-        echo "`date` Not enough forecast files for average at  hour $fhr"
+        echo "$(date) Not enough forecast files for average at  hour $fhr"
         msg="FATAL ERROR: Not enough forecast files for average at  hour $fhr"
         postmsg "$jlogfile" "$msg"
         export ERR=1
@@ -90,7 +101,7 @@ do
     $APRUN ${DATA}/$(basename $GETATMENSMEANEXEC) ./ atm_ensmean atm $nfile
     $APRUN ${DATA}/$(basename $GETSFCENSMEANEXEC) ./ sfc_ensmean sfc $nfile
     
-    echo "f${fhr}_done --- `date -u`" >> $ensavg_nemsio_log
+    echo "f${fhr}_done --- $(date -u)" >> $ensavg_nemsio_log
     
     export ERR=$?
     $R || exit 2

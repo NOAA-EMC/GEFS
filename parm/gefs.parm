@@ -8,7 +8,7 @@
 # Number of pairs to run (normally 10 pairs)
 ##############################################
 export npert=${npert:-30}
-export navg_min=${navg_min:-10}
+export navg_min=${navg_min:-20}
 export nstinit=${nstinit:-yes}
 #################################################
 # Forecast Hour: fhmax and fhmaxh and fhmax_ext
@@ -118,4 +118,4 @@ export gfsfhoroglist=252
 export save_pgrb2_p5=${save_pgrb2_p5:-NO} 
 export save_pgrb2_p25=${save_pgrb2_p25:-NO} 
 
-echo `date` $0 end
+echo $(date) $0 end

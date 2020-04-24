@@ -41,8 +41,8 @@ sGrid=${sGrid} #:-"_0p50"}
 mkdir $DATA/gefs_meta_850_spag
 cd $DATA/gefs_meta_850_spag
 
-#ddate=`echo $PDY | cut -c3-8`
-#ddatem1=`echo $PDYm1 | cut -c3-8`
+#ddate=$(echo $PDY | cut -c3-8)
+#ddatem1=$(echo $PDYm1 | cut -c3-8)
 
 # SET VARIOUS TIME/DATE PARAMETERS
 case $cyc in
@@ -115,9 +115,9 @@ do
         name="${name1} 850 MB ${tempc}C"
         for fcsthr in ${fcsthrs}
         do
-            fcsthr_6=`expr ${fcsthr} + 6`
-            fcsthr_ecm=`expr ${fcsthr} + $ECM_fcsthrs`
-#            fcsthr_cmc=`expr ${fcsthr} + $CMC_fcsthrs`
+            fcsthr_6=$(expr ${fcsthr} + 6)
+            fcsthr_ecm=$(expr ${fcsthr} + $ECM_fcsthrs)
+#            fcsthr_cmc=$(expr ${fcsthr} + $CMC_fcsthrs)
             if [ ${fcsthr_6} -lt 10 ]; then
                 fcsthr_6="00${fcsthr_6}"
             elif [ ${fcsthr_6} -lt 100 ]; then
@@ -130,7 +130,7 @@ do
             fi
         
             grids=${memberlist}
-            for fn in `echo $grids`
+            for fn in $(echo $grids)
             do
                 rm -rf $fn ${fn}_6
 
@@ -304,7 +304,7 @@ do
                     #    line_count=$color_number
 					#else
 						#line_count=-2
-                    color_number=`echo $gdfn | cut -c2-`
+                    color_number=$(echo $gdfn | cut -c2-)
                     line_count=$color_number
 					#fi
 					cat >> cmdfile850  <<- EOF

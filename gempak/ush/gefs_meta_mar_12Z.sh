@@ -39,7 +39,7 @@ sGrid=${sGrid} #:-"_0p50"}
 mkdir $DATA/mar_12Z
 cd $DATA/mar_12Z
 
-PDY2=`echo $PDY | cut -c3-`
+PDY2=$(echo $PDY | cut -c3-)
 
 if [ ${cyc} != "12" ] ; then
     echo " "
@@ -50,8 +50,8 @@ if [ ${cyc} != "12" ] ; then
 fi
 
 # DEFINE YESTERDAY
-yesterday=`${NDATE} -24 ${PDY}${cyc} | cut -c -8`
-shrtyesterday=`${NDATE} -24 ${PDY}${cyc} | cut -c3-8`
+yesterday=$(${NDATE} -24 ${PDY}${cyc} | cut -c -8)
+shrtyesterday=$(${NDATE} -24 ${PDY}${cyc} | cut -c3-8)
 
 fcsthrs="000 012 024 036 048 060 072 084 096 108 120"
 levels="534 540 546 552 558 564 570"
@@ -73,12 +73,12 @@ do
     do
         for fcsthr in ${fcsthrs}
         do
-            fcsthrsgfs=`expr ${fcsthr} + 12` 
+            fcsthrsgfs=$(expr ${fcsthr} + 12) 
             #typeset -Z3 fcsthrsgfs
             fcsthrsgfs=$(printf %03i $fcsthrsgfs)
 
             grids=${memberlist}
-            for fn in `echo $grids`
+            for fn in $(echo $grids)
             do
                 rm -rf $fn 
                 if [ -r $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
@@ -142,7 +142,7 @@ do
                     sCNTL="(CNTL)"
 
                 else
-                    color_number=`echo $gdfn | cut -c2-`
+                    color_number=$(echo $gdfn | cut -c2-)
                     line_count=$color_number
                     wLine=1
                     sCNTL=""
@@ -223,12 +223,12 @@ do
 
     for fcsthr in ${fcsthrs}
     do
-        fcsthrsgfs=`expr ${fcsthr} + 12`
+        fcsthrsgfs=$(expr ${fcsthr} + 12)
         #typeset -Z3 fcsthrsgfs
         fcsthrsgfs=$(printf %03i $fcsthrsgfs)
 
         grids=${memberlist}
-        for fn in `echo $grids`
+        for fn in $(echo $grids)
         do
             rm -rf $fn 
             if [ -r $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
@@ -293,7 +293,7 @@ do
                 wLine=3
 
             else
-                color_number=`echo $gdfn | cut -c2-`
+                color_number=$(echo $gdfn | cut -c2-)
                 line_count=$color_number
                
                 sline_count="+${line_count}"

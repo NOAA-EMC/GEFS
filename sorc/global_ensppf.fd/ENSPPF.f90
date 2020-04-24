@@ -100,9 +100,6 @@ idisc=-1;  ipdtn=-1;   igdtn=-1
 call init_parm(ipdtn,ipdt,igdtn,igdt,idisc,iids)
 call getgb2(11,0,jskp,jdisc,jids,jpdtn,jpdt,jgdtn,jgdt,unpack,jskp,gfld,iret)
 
-if(iret.ne.0) then; print*,' getgbeh, cannot get maxgrd ';endif
-if(iret.ne.0) goto 1020
-
 if(iret.eq.0) then
 
   ijd=gfld%ngrdpts
@@ -128,91 +125,89 @@ if(iret.eq.0) then
      print *, ' Length of time range is not 6 hours '; print *, ' '
   endif
 
-endif
+  call gf_free(gfld)
 
-call gf_free(gfld)
+  allocate(ff(ijd,mem),pp(ijd,mem),ss(ijd,mem),aa(ijd))
+  allocate(gg(ijd,mem),hh(ijd,mem))
 
-allocate(ff(ijd,mem),pp(ijd,mem),ss(ijd,mem),aa(ijd))
-allocate(gg(ijd,mem),hh(ijd,mem))
+  ncnt=0
 
-ncnt=0
+  do n = 1, len         !### len=steps
 
-do n = 1, len         !### len=steps 
+  ! Part I: get ctl + 20 ensemble members precipitation data
 
-! Part I: get ctl + 20 ensemble members precipitation data
+    icnt=0
+    ff=0.0
+    do m=1, mem
 
-  icnt=0
-  ff=0.0
-  do m=1, mem  
+      iids=-9999;ipdt=-9999; igdt=-9999
+      idisc=-1;  ipdtn=-1;   igdtn=-1
 
-    iids=-9999;ipdt=-9999; igdt=-9999
-    idisc=-1;  ipdtn=-1;   igdtn=-1
-  
-    ! read and process input ensemble member
+      ! read and process input ensemble member
 
-    ! read in control member for m=1                  
+      ! read in control member for m=1
 
-    if(m.eq.1) then
-      ipdt(16)=1           ! type of ensemble forecast          
-      ipdt(17)=0           ! perturbation number               
-    else
-      ipdt(16)=3           ! type of ensemble forecast          
-      ipdt(17)=m-1           ! perturbation number                 
-    endif
-
-!   ipdt(8)=1            ! time unit: 1 hour  - kpds(13) in grib1
-
-    ! gfld%ipdtmpl(9): forecast time in units
-
-    ipdt(9)=int((n-1)*6) 
-
-    ! gfld%ipdtmpl(29): indicator of unit of time ranga for process
-    ! 11: 6 hours; 1: hour; 10: 3 hour; 12: 12 hours
-
-    ipdt(29)=1           ! time unit: 1 for 1 hour
-
-    ! check gfld%ipdtmpl(30) for PDT number 4.11
-    ! length of the time range in units defined by the previous octet
-
-    ipdt(30)=6           ! length of the time range is 6 hours
-
-    ipdtn=11; igdtn=-1
-
-    call init_parm(ipdtn,ipdt,igdtn,igdt,idisc,iids)
-    call getgb2(11,0,jskp,jdisc,jids,jpdtn,jpdt,jgdtn,jgdt,unpack,jskp,gfld,iret)
-
-    if(iret.ne.0) print *, 'there is no varibale for member ',m
-
-    if(iret.eq.0) then
-      icnt=icnt + 1
-      print *, '----- Input Data for Current Time ------'
-      call printinfr(gfld,m)
-      do ii=1,ijd   
-        ff(ii,icnt)=gfld%fld(ii)
-      enddo
-    else
-      ncnt=ncnt+1
-      if(ncnt.le.1) then
-        print *,' n=',n,' iret=',iret
+      if(m.eq.1) then
+        ipdt(16)=1           ! type of ensemble forecast
+        ipdt(17)=0           ! perturbation number
+      else
+        ipdt(16)=3           ! type of ensemble forecast
+        ipdt(17)=m-1           ! perturbation number
       endif
-    endif  ! end of iret.eq.0
 
-    if(icnt.eq.1) then
-      if (n.ge.4.and.mod(n,2).eq.0) then
-        gfldo=gfld
+  !   ipdt(8)=1            ! time unit: 1 hour  - kpds(13) in grib1
+
+      ! gfld%ipdtmpl(9): forecast time in units
+
+      ipdt(9)=int((n-1)*6)
+
+      ! gfld%ipdtmpl(29): indicator of unit of time ranga for process
+      ! 11: 6 hours; 1: hour; 10: 3 hour; 12: 12 hours
+
+      ipdt(29)=1           ! time unit: 1 for 1 hour
+
+      ! check gfld%ipdtmpl(30) for PDT number 4.11
+      ! length of the time range in units defined by the previous octet
+
+      ipdt(30)=6           ! length of the time range is 6 hours
+
+      ipdtn=11; igdtn=-1
+
+      call init_parm(ipdtn,ipdt,igdtn,igdt,idisc,iids)
+      call getgb2(11,0,jskp,jdisc,jids,jpdtn,jpdt,jgdtn,jgdt,unpack,jskp,gfld,iret)
+
+      if(iret.ne.0) print *, 'there is no varibale for member ',m
+
+      if(iret.eq.0) then
+        icnt=icnt + 1
+        print *, '----- Input Data for Current Time ------'
+        call printinfr(gfld,m)
+        do ii=1,ijd
+          ff(ii,icnt)=gfld%fld(ii)
+        enddo
+      else
+        ncnt=ncnt+1
+        if(ncnt.le.1) then
+          print *,' n=',n,' iret=',iret
+        endif
+      endif  ! end of iret.eq.0
+
+      if(icnt.eq.1) then
+        if (n.ge.4.and.mod(n,2).eq.0) then
+          gfldo=gfld
+        else
+          call gf_free(gfld)
+        endif
       else
         call gf_free(gfld)
       endif
-    else
-      call gf_free(gfld)
-    endif
 
-  enddo   !### for m = 1, mem
-!
-!   
-!   PART II: to calculate the probability scores
-!   
-!   skip n=1-3 and other odd steps, when you calculate 24-hour interval
+    enddo   !### for m = 1, mem
+    !
+    !
+    !   PART II: to calculate the probability scores
+    !
+    !   skip n=1-3 and other odd steps, when you calculate 24-hour interval
 
     if (n.ge.4.and.mod(n,2).eq.0) then
 
@@ -297,49 +292,52 @@ do n = 1, len         !### len=steps
           endif
         enddo
 
-!  
-!       testing print
-!  
-!        if (n.eq.2.and.k.eq.2) then
-!         write(*,999) (aa(ii),ii=1001,1100)
-!        endif
-!999     format (10f8.1)
+        !
+        !       testing print
+        !
+        !        if (n.eq.2.and.k.eq.2) then
+        !         write(*,999) (aa(ii),ii=1001,1100)
+        !        endif
+        !999     format (10f8.1)
 
-      print *, '----- Output for Current Time ------'
+        print *, '----- Output for Current Time ------'
 
-      ! gfldo%ipdtmpl(22): Scaled value of upper limit
+        ! gfldo%ipdtmpl(22): Scaled value of upper limit
 
-      gfldo%ipdtmpl(22)=rk(k)*(10**gfldo%ipdtmpl(21))
+        gfldo%ipdtmpl(22)=rk(k)*(10**gfldo%ipdtmpl(21))
 
-      gfldo%fld(1:ijd)=aa(1:ijd)
+        gfldo%fld(1:ijd)=aa(1:ijd)
 
-      call printinfr(gfldo,k)
-      call putgb2(51,gfldo,iret)
+        call printinfr(gfldo,k)
+        call putgb2(51,gfldo,iret)
 
-    enddo    !### for k = 1, 9
+      enddo    !### for k = 1, 9
 
-    call gf_free(gfldo)
+      call gf_free(gfldo)
 
-  endif
+    endif
 
-  if (icnt.gt.0) then
-    do ii = 1, ijd   
-      do jj = 1, mem
-        hh(ii,jj)=gg(ii,jj)
-        gg(ii,jj)=pp(ii,jj)
-        pp(ii,jj)=ff(ii,jj)
+    if (icnt.gt.0) then
+      do ii = 1, ijd
+        do jj = 1, mem
+          hh(ii,jj)=gg(ii,jj)
+          gg(ii,jj)=pp(ii,jj)
+          pp(ii,jj)=ff(ii,jj)
+        enddo
       enddo
-    enddo
-  endif
+    endif
 
-enddo     !### for n = 1, len
+  enddo     !### for n = 1, len
 
-call baclose(11,iretb)
-call baclose(51,irete)
+  call baclose(11,iretb)
+  call baclose(51,irete)
 
-CALL W3TAGE('ENSPPF')
+  CALL W3TAGE('ENSPPF')
 
-stop    
+  stop
+else
+  print*,' getgbeh, cannot get maxgrd '
+endif
 
 1020 Continue
 
@@ -348,4 +346,5 @@ print *,'Wrong Data Input, Output or Wrong Message Input'
 stop
 
 end
+
 

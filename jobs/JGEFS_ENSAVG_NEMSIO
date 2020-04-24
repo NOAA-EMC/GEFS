@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
 export PS4='$SECONDS + '
@@ -33,7 +33,7 @@ export cycle=t${cyc}z
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=${NET:-gens}
+export NET=${NET:-gefs}
 export RUN=${RUN:-gefs}
 
 ####################################
@@ -100,18 +100,6 @@ mkdir -m 775 -p $COMOUT/misc/ensavg_nemsio
 ############################################
 . $PARMgefs/gefs.parm
 
-(( imem = 0 ))
-while (( imem < npert )); do
-    (( imem = imem + 1 ))
-    if (( imem >= 10 )); then
-        imem=0$imem
-    else
-        imem=00$imem
-    fi
-    memberlist="$memberlist $imem"
-done # while (( imem < npert ))
-echo memberlist=$memberlist
-
 if [[ $FORECAST_SEGMENT = hr ]] ; then
     LEVS=$LEVSHR 
 elif [[ $FORECAST_SEGMENT = lr ]]; then
@@ -161,30 +149,27 @@ echo
 
 export ensavg_nemsio_log=$DATA/ensavg_nemsio.$FORECAST_SEGMENT.log
 
+#############################################################
+# Execute the script
 $HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf $DATA $SHOUR $FHOUT_HF $FHOUT_LF $FHMAXHF $FHOUR $ensavg_nemsio_log
-ERR=$?
+#############################################################
+err=$?
 
 mv $ensavg_nemsio_log $COMOUT/misc/ensavg_nemsio
 
-################# lines between these markers have been modified for dev begin
-echo `date` TEST LISTING OF WORKING DIRECTORY BEGIN
-echo DATA=$DATA
-ls -al $DATA
-echo `date` TEST LISTING OF WORKING DIRECTORY END
-################# lines between these markers have been modified for dev end
-if [ $ERR = 0 ]; then
-	msg="$job completed normally!"
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
 else
-	msg="FATAL ERROR: $job failed!"
+    msg="FATAL ERROR: $job failed!"
 fi
-
 postmsg "$jlogfile" "$msg"
 
-if [[ $KEEPDATA != "YES" ]]; then
-	cd $DATAROOT
-	rm -rf $DATA
-fi
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-echo `date` $0 `date -u` end
+echo "$(date) $0 $(date -u) end"
 
-exit $ERR
+exit $err

@@ -9,7 +9,7 @@ echo "AUTHOR: Yan Luo (wx22lu)"
 
 set -x
 
-IYMD=`echo $1 | cut -c1-8`    
+IYMD=$(echo $1 | cut -c1-8)    
 FHOUR=$2
 ICYC=$3      # 1, 24 hours : 2, every 12 hours : 4, every 6 hours
 RUNID=$4
@@ -18,7 +18,7 @@ RUNID=$4
   FLUX=$DATA/qpf_$RUNID.$IYMD\00                   
   $WGRIB2 -match "12-36 hour"  $FLUX -grib precip.$RUNID
  else
-  IYMD1=`$NDATE -$FHOUR $IYMD\12 | cut -c1-8`
+  IYMD1=$($NDATE -$FHOUR $IYMD\12 | cut -c1-8)
   case $FHOUR in
    36) outime=12_36;  grptime=12-36;;
    60) outime=36_60;  grptime=36-60;;

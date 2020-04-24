@@ -1,6 +1,6 @@
 #!/bin/ksh 
 
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
 export PS4='$SECONDS + '
@@ -10,6 +10,8 @@ export APRUN_CALCINC=${APRUN_CALCINC:-"mpirun -n 1"}
 export APRUN_CHGRES=${APRUN_CHGRES:-"mpirun -n 1"}
 
 export COMPONENT=chem
+export AEROSOL_INIT_TYPE=${AEROSOL_INIT_TYPE:-warm}
+
 ####################################
 # obtain unique process id (pid) and make working directory
 ####################################
@@ -26,7 +28,7 @@ export cycle=${cycle:-t${cyc}z}
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=${NET:-gens}
+export NET=${NET:-gefs}
 export RUN=${RUN:-gefs}
 
 ####################################
@@ -106,29 +108,24 @@ env | sort
 
 #############################################################
 # Execute the script
-# $HOMEgefs/scripts/exgefs_init_chem.ecf
 $HOMEgefs/scripts/exgefs_init_aerosol.py
 #############################################################
-ERR=$?
+err=$?
 
-if [ $ERR = 0 ]; then
-    msg="JOB COMPLETED NORMALLY"
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
 else
-    msg="JOB FAILED!"
+    msg="FATAL ERROR: $job failed!"
 fi
-
 postmsg "$jlogfile" "$msg"
 
 ##############################
 # Remove the Temporary working directory
 ##############################
 cd $DATAROOT
-ICSDIR=${ICSDIR:-$DATA}
-echo $ICSDIR
-echo $DATA
-if [ ${KEEPDATA:-NO} = NO ]; then 
-  rm -rf $DATA $ICSDIR
-fi
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-exit $ERR
+echo "$(date) $0 $(date -u) end"
+
+exit $err
 

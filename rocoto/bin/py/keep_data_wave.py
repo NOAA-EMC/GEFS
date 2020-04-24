@@ -12,12 +12,12 @@ Inputs (via environment variables):
     cyc                  : Initialization hour in HH form
 
     GEFS output must be located in the WORKDIR com directory as such:
-        <WORKDIR>/com/gens/dev/gwes.<PDY>/<cyc>/wave/<directory>
+        <WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/wave/<directory>
 
 Outputs:
     For each directory in DIRS_TO_KEEP_WAVE, that directory will be copied to the KEEP_DIR in
         the following location:
-            <KEEP_DIR>/gwes.<PDY>/<cyc>/wave/<directory>
+            <KEEP_DIR>/gefs.<PDY>/<cyc>/wave/<directory>
 
 Error Codes:
     -100 : Required environment variable not defined
@@ -31,8 +31,8 @@ from datetime import datetime
 from datetime import timedelta
 from functools import partial
 
-output_pattern = "{work_dir}/com/gens/dev/gwes.%Y%m%d/%H/wave"
-destination_pattern = "{keep_dir}/gwes.%Y%m%d/%H/wave"
+output_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/wave"
+destination_pattern = "{keep_dir}/gefs.%Y%m%d/%H/wave"
 
 clobber = True
 

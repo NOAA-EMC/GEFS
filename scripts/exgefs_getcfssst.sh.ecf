@@ -1,5 +1,5 @@
 #!/bin/ksh
-echo `date` $0 begin
+echo $(date) $0 begin
 ################################################################################
 #   Script:    exgefs_getcfssst.sh.sms
 #
@@ -51,8 +51,8 @@ HFcfsMax=120  # 5 day backword search for cfs fcst
 HFcfs=24
 PDYcfs=$PDY
 while [ $HFcfs -le $HFcfsMax ] ; do
-    PDYcfscfc=`$NDATE -${HFcfs} ${PDY}${cyc}`
-    PDYcfs=`echo $PDYcfscfc | cut -c1-8`
+    PDYcfscfc=$($NDATE -${HFcfs} ${PDY}${cyc})
+    PDYcfs=$(echo $PDYcfscfc | cut -c1-8)
 
     COMINcfs2=${COMINcfs}${PDYcfs}/${cyc}
     if [ -d $COMINcfs2 ]; then
@@ -65,7 +65,7 @@ while [ $HFcfs -le $HFcfsMax ] ; do
 
     echo ${PDYcfs} ${HFcfs}h
 
-    HFcfs=`expr $HFcfs + 24` 
+    HFcfs=$(expr $HFcfs + 24) 
 done
 
 if [ $HFcfs -gt $HFcfsMax ];  then
@@ -77,10 +77,10 @@ fi
 #Link Real-time nst file
 sFile=$COMINgfs/gfs.${cycle}.sfcanl.nemsio
 if [[ -f $sFile ]]; then
-    test_tref=`$nemsioread $sFile | grep tref`
+    test_tref=$($nemsioread $sFile | grep tref)
     if [ -z $test_tref ]; then
         sFile=$COMINgfs/gfs.${cycle}.nstanl.nemsio
-        test_tref=`$nemsioread $sFile | grep tref`
+        test_tref=$($nemsioread $sFile | grep tref)
         if [ -z $test_tref ]; then
             echo " Real-time nst does not exist: $gfs.${cycle}.nstanl.nemsio or gfs.${cycle}.sfcanl.nemsio"
             exit 93
@@ -90,7 +90,7 @@ if [[ -f $sFile ]]; then
 else
     sFile=$COMINgfs/gfs.${cycle}.nstanl.nemsio
     if [[ -f $sFile ]]; then
-        test_tref=`$nemsioread $sFile | grep tref`
+        test_tref=$($nemsioread $sFile | grep tref)
         if [ -z $test_tref ]; then
             echo " Real-time nst does not include tref varilable: $sFile"
             exit 93
@@ -158,9 +158,9 @@ export option1=' -set_grib_type same -new_grid_winds earth '
 export option21=' -new_grid_interpolation bilinear'
 
 #   -------------------- Main Loop -------------------------------
-mm=`echo ${PDY} | cut -c5-6`
-dd=`echo ${PDY} | cut -c7-8`
-#hh=`echo ${PDY}${cyc} | cut -c9-10`
+mm=$(echo ${PDY} | cut -c5-6)
+dd=$(echo ${PDY} | cut -c7-8)
+#hh=$(echo ${PDY}${cyc} | cut -c9-10)
 hh=${cyc}
 echo ${PDY}${cyc}
 
@@ -203,12 +203,12 @@ if [ -s $rawgb2 ] ; then
     rm -f $rawgb2
 fi
 #FH=24
-FH=`expr 24 + ${HFcfs}`
-NFHcfs=`expr ${HFcfs} + ${NFH}`
+FH=$(expr 24 + ${HFcfs})
+NFHcfs=$(expr ${HFcfs} + ${NFH})
 echo $FH
 until [ $FH -gt $NFHcfs ] ; do
     $WGRIB2 $rawgb2trim -append -if "TMP:surface:$FH hour fcst:" -grib $rawgb2 > /dev/null
-    FH=`expr $FH + 24`
+    FH=$(expr $FH + 24)
 done
 # convert from grib2 to grib and change resolution
 rawgb=$tmpraw/TMPsfc.${PDY}${cyc}.fcs.grb
@@ -233,7 +233,7 @@ fi
 FH=24
 until [ $FH -gt $NFH ] ; do
     $WGRIB2 $climmgb2trim -append -if "TMP:surface:$FH hour fcst:" -grib $climmgb2 > /dev/null
-    FH=`expr $FH + 24`
+    FH=$(expr $FH + 24)
 done
 
 climmgb=$tmpclim/tmpsfc.${PDY}${cyc}.mean.clim.daily.grb
@@ -264,13 +264,13 @@ fi
 FH=0
 until [ $FH -gt $NFH ] ; do
     $WGRIB2 $climogb2trim -append -if ":d=$cfsr_date:" -grib $climogb2 > /dev/null
-    FH=`expr $FH + 24`
-    cfsr_date=`$NDATE +24 $cfsr_date`
-    yyn=`echo $cfsr_date | cut -c1-4`
+    FH=$(expr $FH + 24)
+    cfsr_date=$($NDATE +24 $cfsr_date)
+    yyn=$(echo $cfsr_date | cut -c1-4)
     #      echo " reanalysis: year $yyn "
     if [ $yyn = 2001 ] ; then
-        mmn=`echo $cfsr_date | cut -c5-6`
-        ddn=`echo $cfsr_date | cut -c7-8`
+        mmn=$(echo $cfsr_date | cut -c5-6)
+        ddn=$(echo $cfsr_date | cut -c7-8)
         cfsr_date=2000${mmn}${ddn}${hh}
     fi
 done
@@ -292,15 +292,15 @@ fi
 kdate=${PDY}${cyc}
 FH=0
 until [ $FH -gt $NFH ] ; do
-    #     kdate=`$NDATE +24 $kdate`
-    kcc=`echo $kdate | cut -c1-2`
-    kyy=`echo $kdate | cut -c3-4`
-    kpds8=`echo $kdate | cut -c3-4`
+    #     kdate=$($NDATE +24 $kdate)
+    kcc=$(echo $kdate | cut -c1-2)
+    kyy=$(echo $kdate | cut -c3-4)
+    kpds8=$(echo $kdate | cut -c3-4)
     if [ "$kpds8" -eq "00" ] ; then
         kpds8="100"
     fi
-    kpds9=`echo $kdate | cut -c5-6`
-    kpds10=`echo $kdate | cut -c7-8`
+    kpds9=$(echo $kdate | cut -c5-6)
+    kpds10=$(echo $kdate | cut -c7-8)
 
     if [ "$kcc" -eq "19" ] ; then
         kpds21="20"
@@ -314,9 +314,9 @@ until [ $FH -gt $NFH ] ; do
 
     echo $kpds8 $kpds9 $kpds10 $kpds21 >> $kpdsfile
 
-    kdate=`$NDATE +24 $kdate`
+    kdate=$($NDATE +24 $kdate)
 
-    FH=`expr $FH + 24`
+    FH=$(expr $FH + 24)
 done
 echo "$kpdsfile:"$kpdsfile
 #

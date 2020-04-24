@@ -1,6 +1,6 @@
 # control parameters for gefs ensstat
 # execute this script in gefs ensstat job script  (. $PARMGLOBAL/gefs_ensstat.parm)
-echo `date` $0 begin
+echo $(date) $0 begin
 
 export lfmhr=66000
 export lfmlr=11000
@@ -149,4 +149,4 @@ export eplevlr
 # For grib2 version
 postvarlist='z500 z1000 t850 t2m u10m v10m u250 v250 u850 v850 rh700 prcp snow rain icep frzr prmsl u200 v200 olr'
 export postvarlist
-echo `date` $0 end
+echo $(date) $0 end
