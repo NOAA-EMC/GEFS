@@ -6,7 +6,10 @@ set -xa
 export PS4='$SECONDS + '
 date
 
-export total_tasks=${total_tasks:-6}
+
+export total_tasks=${total_tasks:-4}
+export OMP_NUM_THREADS=${OMP_NUM_THREADS:-2}
+
 export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
 export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
 

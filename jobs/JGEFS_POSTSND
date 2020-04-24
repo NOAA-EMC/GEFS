@@ -9,8 +9,10 @@ export MODEL_OUT_FORM=binarynemsiompiio
 
 export total_tasks=${total_tasks:-10}
 export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
-export APRUN_POSTSND=${gefsmpexec:-'mpirun -n $total_tasks'}
-export APRUN_POSTSNDCFP=${gefsmpexec_mpmd:-'mpirun -n $total_tasks cfp'}
+export gefsmpexec_mpmd=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
+export APRUN_POSTSND=${gefsmpexec:-"mpirun -n $total_tasks"}
+export APRUN_POSTSNDCFP=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp"}
+export machine=${machine:-"WCOSS_DELL_P3"}
 
 ########################################
 # Runs GFS BUFR SOUNDINGS
