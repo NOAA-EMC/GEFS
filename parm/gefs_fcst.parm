@@ -255,7 +255,7 @@ export JCAP_STP=${JCAP_STP:-$JCAPFV}
 export LONB_STP=${LONB_STP:-$LONBFV}
 export LATB_STP=${LATB_STP:-$LATBFV}
 
-MEMBER=`echo $RUNMEM|cut -c4-5`
+MEMBER=$(echo $RUNMEM|cut -c4-5)
 CDATE=$PDY$cyc
 
 # Turn off stochastic physics for control member

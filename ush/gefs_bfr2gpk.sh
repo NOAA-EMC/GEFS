@@ -26,7 +26,6 @@ export BPATH
 
 #  Set output directory:
 
-#COMAWP=${COMAWP:-$COMROOT/nawips/${envir}/${RUN}.${PDY}}
 OUTDIR=$COMAWP
 
 outfilbase=${RUNMEM}_${PDY}${cyc}
@@ -34,7 +33,7 @@ outfilbase=${RUNMEM}_${PDY}${cyc}
 #  Get the list of individual station files.
 
 date
-##filelist=`/bin/ls -1 $BPATH | grep bufr`
+##filelist=$(/bin/ls -1 $BPATH | grep bufr)
 ##rm -f bufr.combined
 ##for file in $filelist; do
 ##  cat $BPATH/$file >> bufr.combined

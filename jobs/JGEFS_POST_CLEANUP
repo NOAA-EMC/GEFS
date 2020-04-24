@@ -7,10 +7,10 @@
 # 3/27/2015 Dingchen Hou, Vertical structure and WCOSS phase 2 statndard
 ######################################################################
 
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
-na=`basename $0`
+na=$(basename $0)
 export PS4=' + $SECONDS $na $LINENO: '
 date
 
@@ -30,7 +30,7 @@ export cycle=t${cyc}z
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=${NET:-gens}
+export NET=${NET:-gefs}
 export RUN=${RUN:-gefs}
 
 ####################################
@@ -117,7 +117,7 @@ env | sort
 echo
 
 # Test GRIB files before cleaning up
-echo `date` GRIB file test before cleanup begin
+echo $(date) GRIB file test before cleanup begin
 (( nmissing = 0 ))
 
 #for cyc_check in 00 06 12 18; do
@@ -239,15 +239,15 @@ for cyc_check in $cyc; do
 	done # member in $memberlisttest
 done # cyc_check in 00 06 12 18
 echo nmissing=$nmissing
-echo `date` GRIB file test before cleanup end
+echo $(date) GRIB file test before cleanup end
 if (( nmissing > 0 )); then
 	msg="GRIB file test before cleanup IDENTIFIED $nmissing MISSING FILES"
-	echo "`date`    $msg"
+	echo "$(date)    $msg"
 	postmsg "$jlogfile" "$msg"
 	export err=99
 	err_chk
 else # (( nmissing > 0 ))
-	echo `date` sfcsig sflux cleanup begin
+	echo $(date) sfcsig sflux cleanup begin
 	#for cyc_check in 00 06 12 18
 	for cyc_check in $cyc; do
 		savecycle=false
@@ -302,11 +302,11 @@ else # (( nmissing > 0 ))
 			echo "sfcsig files are saved for cyc=$cyc"
 		fi # [[ $savecycle = false ]]
 	done # cyc_check in $cyc
-	echo `date` "sfcsig sflux cleanup end"
+	echo $(date) "sfcsig sflux cleanup end"
 	########################################################
 	# remove master post subdirectory
 	########################################################
-	echo `date` "before master cleanup"
+	echo $(date) "before master cleanup"
 	savecycle=false
 	for cycsave in $cycsavelistmaster; do
 		if (( cyc == cycsave )); then
@@ -319,7 +319,7 @@ else # (( nmissing > 0 ))
 	else
 		echo "master files are saved for cyc=$cyc"
 	fi
-	echo `date` after master cleanup
+	echo $(date) after master cleanup
 fi # (( nmissing > 0 ))
 
 ########################################################
@@ -331,4 +331,4 @@ export PS4=' + $SECONDS $na $LINENO: '
 cd $DATAROOT
 rm -rf $DATA
 
-echo `date` $0 `date -u` end
+echo $(date) $0 $(date -u) end

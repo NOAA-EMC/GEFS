@@ -66,7 +66,7 @@ varlout=" \
 ensppf pqpf  pqsf  pqff  pqrf  pqif \
 "
 
-if test "$SENDCOM" = 'YES'; then
+if [ "$SENDCOM" = 'YES' ]; then
 	for file in enspost${ext_h} ensstat${ext_h}; do
 		#   for FIELD in $varlboth $varlnostat $varlout
 		for FIELD in $epnamhr $epnamlr $varlout; do
@@ -106,17 +106,17 @@ echo memberlist=$memberlist
 
 
 echo
-echo "`date`  ==== START OF HOURLY PROCESSING OF PGB FORECAST FILES ====="
+echo "$(date)  ==== START OF HOURLY PROCESSING OF PGB FORECAST FILES ====="
 echo
 
-SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
+SLEEP_LOOP_MAX=$(expr $SLEEP_TIME / $SLEEP_INT)
 
 export fh=$SHOUR
 #export  (( fh = SHOUR ))
-if test $fh -lt 10 -a $fh -gt 0; then
+if [ $fh -lt 10 -a $fh -gt 0 ]; then
 	export fhr="0$fh"
 fi
-#if test $fh -lt 100 -a $fh -gt 0
+#if [ $fh -lt 100 -a $fh -gt 0 ]
 #then
 #   export fhr="0$fh"
 #fi
@@ -132,7 +132,7 @@ while test $fh -le $FHOUR; do
 	# for res in lr hr p5
 
         #Change the $fh value from 2 digit to 3 digit 
-	if test $fh -lt 100; then
+	if [ $fh -lt 100 ]; then
 		export fh="0$fh"
 	fi
 
@@ -221,7 +221,7 @@ while test $fh -le $FHOUR; do
 				break
 			else # [[ $foundall = yes ]]
 				if (( nfiles < nfilesprev )); then
-					ic=`expr $ic + 1`
+					ic=$(expr $ic + 1)
 					sleep $SLEEP_INT
 				else
 					if [[ $previncr = yes ]]; then
@@ -283,7 +283,7 @@ while test $fh -le $FHOUR; do
 		ifile=0
 		for mem in $memberlist; do
 			#DHOU, 20141028, select required variables from pgrb2a files
-			if [[ "$mem" != "gfs" || $fh -le $gfsfhmaxh || ` expr $fh % 12 ` -eq 0 ]]; then
+			if [[ "$mem" != "gfs" || $fh -le $gfsfhmaxh || $( expr $fh % 12 ) -eq 0 ]]; then
 				pgtem=$COMIN/pgrb2$lr/ge${mem}.${cycle}.pgrb2$FXT\f$fh$EXT
 				$WGRIB2 -s $pgtem | grep -F -f $parmlist | $WGRIB2 $pgtem -s -i -grib pgrb2a_$mem 
 				#DHOU 20141028
@@ -291,7 +291,7 @@ while test $fh -le $FHOUR; do
 				iskip=0
 				echo " cfipg($ifile)"="pgrb2a_$mem", >>namin
 				echo " iskip($ifile)"=$iskip, >>namin
-			fi # [[ "$mem" != "gfs" || $fh -le $gfsfhmaxh || ` expr $fh % 12 ` -eq 0 ]]
+			fi # [[ "$mem" != "gfs" || $fh -le $gfsfhmaxh || $( expr $fh % 12 ) -eq 0 ]]
 		done # for mem in $memberlist
 
 		echo " nfiles=$ifile", >>namin
@@ -321,10 +321,10 @@ while test $fh -le $FHOUR; do
 		cat namin
 		echo
 
-		echo "####################### `date` $fh $res ensstat begin" >$pgmout.$res$fh
+		echo "####################### $(date) $fh $res ensstat begin" >$pgmout.$res$fh
 		$ENSSTAT <namin | fold -w 2000 >$pgmout.$res$fh
 		export err=$?; err_chk
-		echo "####################### `date` $fh $res ensstat end">>$pgmout.$res$fh
+		echo "####################### $(date) $fh $res ensstat end">>$pgmout.$res$fh
 		#DHOU 20141028 Separate the enspost variables in to individual files
 		for var in $postvarlist; do
 			case $var in
@@ -364,7 +364,7 @@ while test $fh -le $FHOUR; do
 			if (( fh == fhout )); then
 				cat $pgmout.$res$fh >> $pgmout
 			else
-				lines=`cat $pgmout.$res$fh| wc -l`
+				lines=$(cat $pgmout.$res$fh| wc -l)
 				lobeg=5
 				loend=40
 				echo lines=$lines lobeg=$lobeg loend=$loend
@@ -380,18 +380,18 @@ while test $fh -le $FHOUR; do
 		done # for fhout in $statoutfhlist
 	done # for res in lr
 
-	export fh=`expr $fh + $FHINC`
+	export fh=$(expr $fh + $FHINC)
 	if [ $fh -lt 10 ]; then
 		export fh="0$fh"
 	fi
 done # while test $fh -le $FHOUR
 
-echo ###############################`date` cat $pgmout begin
+echo ###############################$(date) cat $pgmout begin
 cat $pgmout
-echo ###############################`date` cat $pgmout end
+echo ###############################$(date) cat $pgmout end
 
 echo
-echo "`date`  ==== END  OF  HOURLY PROCESSING OF PGB FORECAST FILES ====="
+echo "$(date)  ==== END  OF  HOURLY PROCESSING OF PGB FORECAST FILES ====="
 echo
 
 # check for missing or zero-length output files
@@ -427,7 +427,7 @@ ecflow_client --event enspost_grb2_ready
 ## write out with ensemble extended messages
 ##
 #
-#if test "$cycle" = "skipthis"; then
+#if [ "$cycle" = "skipthis" ]; then
 if [[ "$cycle" == "t00z" ]] && [[ -z $ext_h ]]; then
 	#  $ENSPPF $COMOUT/$cyc/ensstat/enspost.$cycle.prcp $COMOUT/$cyc/ensstat/enspost${ext_h}.$cycle.prcpi ensppf${ext_h}.$PDY$cyc
 	#$ENSPPF $COMOUT/ensstat/enspost_grb2.$cycle.prcp ensppf${ext_h}.$PDY$cyc.grib2  $npert

@@ -3,7 +3,7 @@
 export PS4=' + extrkr.sh line $LINENO: '
 
 set +x
-echo "TIMING: Time at beginning of extrkr.sh for pert= $pert is `date`"
+echo "TIMING: Time at beginning of extrkr.sh for pert= $pert is $(date)"
 set -x
 
 set +x
@@ -42,7 +42,7 @@ echo " "
 echo "                    In the event of a crash, you can contact Tim "
 echo "                    Marchok at GFDL at (609) 452-6534 or timothy.marchok@noaa.gov"
 echo " "
-echo "Current time is: `date`"
+echo "Current time is: $(date)"
 echo " "
 ##############################################################################
 set -x
@@ -156,12 +156,12 @@ else
   set -x
 fi
 
-syy=`echo ${PDY} | cut -c3-4`
-smm=`echo ${PDY} | cut -c5-6`
-sdd=`echo ${PDY} | cut -c7-8`
+syy=$(echo ${PDY} | cut -c3-4)
+smm=$(echo ${PDY} | cut -c5-6)
+sdd=$(echo ${PDY} | cut -c7-8)
 shh=${CYL}
-symd=`echo ${PDY} | cut -c3-8`
-syyyy=`echo ${PDY} | cut -c1-4`
+symd=$(echo ${PDY} | cut -c3-8)
+syyyy=$(echo ${PDY} | cut -c1-4)
 
 export gfsvitdir=${gfsvitdir:-$COMINgfs}
 
@@ -170,7 +170,7 @@ export exectrkdir=${exectrkdir:-${homesyndir}/exec}
 export archsyndir=${archsyndir:-$COMINatcfsyn}
 
 #cp /com/date/t${CYL}z ncepdate
-#export CENT=` cut -c7-8 ncepdate `
+#export CENT=$( cut -c7-8 ncepdate )
 export CENT=20
 wgrib=$WGRIB
 
@@ -214,18 +214,18 @@ export maxtime=65    # Max number of forecast time levels
 # difference between them....
 #----------------------------------------------------------------#
 
-cmodel=`echo ${cmodel} | tr "[A-Z]" "[a-z]"`
+cmodel=$(echo ${cmodel} | tr "[A-Z]" "[a-z]")
 
 case ${cmodel} in 
 
   enkf) set +x                                          ;
        echo " "                                         ;
        echo " ++ EnKF 6hr fcst (relocation) ensemble member ${pert} chosen";
-       pert=` echo ${pert} | tr '[A-Z]' '[a-z]'`        ;
-       PERT=` echo ${pert} | tr '[a-z]' '[A-Z]'`        ;
+       pert=$( echo ${pert} | tr '[A-Z]' '[a-z]')        ;
+       PERT=$( echo ${pert} | tr '[a-z]' '[A-Z]')        ;
        echo " "                                         ;
        set -x                                           ;
-       COM=${COM:-$COMROOT/gens/${envir}/gefs.${PDY}/$cyc/track}                                ;
+       COM=${COM:-$COMROOT/gefs/${envir}/gefs.${PDY}/$cyc/track}                                ;
        fcstlen=6                                        ;
        fcsthrs=' 00 06 99 99 99 99 99 99 99 99 99 99 99 99 
                  99 99 99 99 99 99 99 99 99 99 99 99 99 99 
@@ -273,16 +273,16 @@ esac
 # deal; this script will exit just a little further down once it
 # realizes there are not any storms to process.
 
-d6ago_ymdh=` $NDATE -6 ${PDY}${CYL}`
-d6ago_4ymd=` echo ${d6ago_ymdh} | cut -c1-8`
-d6ago_ymd=` echo ${d6ago_ymdh} | cut -c3-8`
-d6ago_hh=`  echo ${d6ago_ymdh} | cut -c9-10`
+d6ago_ymdh=$( $NDATE -6 ${PDY}${CYL})
+d6ago_4ymd=$( echo ${d6ago_ymdh} | cut -c1-8)
+d6ago_ymd=$( echo ${d6ago_ymdh} | cut -c3-8)
+d6ago_hh=$(  echo ${d6ago_ymdh} | cut -c9-10)
 d6ago_str="${d6ago_ymd} ${d6ago_hh}00"
 
-d6ahead_ymdh=` $NDATE 6 ${PDY}${CYL}`
-d6ahead_4ymd=` echo ${d6ahead_ymdh} | cut -c1-8`
-d6ahead_ymd=` echo ${d6ahead_ymdh} | cut -c3-8`
-d6ahead_hh=`  echo ${d6ahead_ymdh} | cut -c9-10`
+d6ahead_ymdh=$( $NDATE 6 ${PDY}${CYL})
+d6ahead_4ymd=$( echo ${d6ahead_ymdh} | cut -c1-8)
+d6ahead_ymd=$( echo ${d6ahead_ymdh} | cut -c3-8)
+d6ahead_hh=$(  echo ${d6ahead_ymdh} | cut -c9-10)
 d6ahead_str="${d6ahead_ymd} ${d6ahead_hh}00"
 
 
@@ -386,18 +386,18 @@ cat ${DATA}/tmprawvit.${atcfout}.${PDY}${CYL} ${DATA}/tmpsynvit.${atcfout}.${PDY
 # tracking program.
 #--------------------------------------------------------------#
 
-ymdh6ago=` $NDATE -6 ${PDY}${CYL}`
-syy6=`echo ${ymdh6ago} | cut -c3-4`
-smm6=`echo ${ymdh6ago} | cut -c5-6`
-sdd6=`echo ${ymdh6ago} | cut -c7-8`
-shh6=`echo ${ymdh6ago} | cut -c9-10`
+ymdh6ago=$( $NDATE -6 ${PDY}${CYL})
+syy6=$(echo ${ymdh6ago} | cut -c3-4)
+smm6=$(echo ${ymdh6ago} | cut -c5-6)
+sdd6=$(echo ${ymdh6ago} | cut -c7-8)
+shh6=$(echo ${ymdh6ago} | cut -c9-10)
 symd6=${syy6}${smm6}${sdd6}
 
-ymdh6ahead=` $NDATE 6 ${PDY}${CYL}`
-syyp6=`echo ${ymdh6ahead} | cut -c3-4`
-smmp6=`echo ${ymdh6ahead} | cut -c5-6`
-sddp6=`echo ${ymdh6ahead} | cut -c7-8`
-shhp6=`echo ${ymdh6ahead} | cut -c9-10`
+ymdh6ahead=$( $NDATE 6 ${PDY}${CYL})
+syyp6=$(echo ${ymdh6ahead} | cut -c3-4)
+smmp6=$(echo ${ymdh6ahead} | cut -c5-6)
+sddp6=$(echo ${ymdh6ahead} | cut -c7-8)
+shhp6=$(echo ${ymdh6ahead} | cut -c9-10)
 symdp6=${syyp6}${smmp6}${sddp6}
 
 echo "&datenowin   dnow%yy=${syy}, dnow%mm=${smm},"       >${DATA}/suv_input.${atcfout}.${PDY}${CYL}
@@ -407,7 +407,7 @@ echo "             d6ago%dd=${sdd6}, d6ago%hh=${shh6}/"  >>${DATA}/suv_input.${a
 echo "&date6aheadin  d6ahead%yy=${syyp6}, d6ahead%mm=${smmp6},"  >>${DATA}/suv_input.${atcfout}.${PDY}${CYL}
 echo "               d6ahead%dd=${sddp6}, d6ahead%hh=${shhp6}/"  >>${DATA}/suv_input.${atcfout}.${PDY}${CYL}
 
-numvitrecs=`cat ${DATA}/vitals.${atcfout}.${PDY}${CYL} | wc -l`
+numvitrecs=$(cat ${DATA}/vitals.${atcfout}.${PDY}${CYL} | wc -l)
 if [ ${numvitrecs} -eq 0 ]
 then
   set +x
@@ -495,7 +495,7 @@ fi
 # then exit.
 #------------------------------------------------------------------#
 
-numvitrecs=`cat ${DATA}/vitals.upd.${atcfout}.${PDY}${CYL} | wc -l`
+numvitrecs=$(cat ${DATA}/vitals.upd.${atcfout}.${PDY}${CYL} | wc -l)
 if [ ${numvitrecs} -eq 0 ]
 then
   set +x
@@ -525,7 +525,7 @@ do
 done
 
 dtg_current="${symd} ${CYL}00"
-stormmax=` grep "${dtg_current}" ${DATA}/vitals.upd.${atcfout}.${PDY}${CYL} | wc -l`
+stormmax=$( grep "${dtg_current}" ${DATA}/vitals.upd.${atcfout}.${PDY}${CYL} | wc -l)
 
 if [ ${stormmax} -gt 15 ]
 then
@@ -565,12 +565,12 @@ done
 ifh=1
 while [ $ifh -le ${maxtime} ]
 do
-  fh[${ifh}]=` echo ${fcsthrs} | awk '{print $n}' n=$ifh`
+  fh[${ifh}]=$( echo ${fcsthrs} | awk '{print $n}' n=$ifh)
   let ifh=ifh+1
 done
 
 namelist=${DATA}/input.${atcfout}.${PDY}${CYL}
-ATCFNAME=` echo "${atcfname}" | tr '[a-z]' '[A-Z]'`
+ATCFNAME=$( echo "${atcfname}" | tr '[a-z]' '[A-Z]')
   
 echo "&datein inp%byy=${syy},inp%bmm=${smm},inp%bdd=${sdd},"    >${namelist}
 echo "        inp%bhh=${shh}, inp%model=${model}/"             >>${namelist}
@@ -633,7 +633,7 @@ ${exectrkdir}/gettrk <${namelist}
 gettrk_rcc=$?
 export err=$?; err_chk
 
-echo "TIMING: Time in extrkr.sh after gettrk for pert= $pert is `date`"
+echo "TIMING: Time in extrkr.sh after gettrk for pert= $pert is $(date)"
 set -x
 
 #--------------------------------------------------------------#

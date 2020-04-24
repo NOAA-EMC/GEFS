@@ -51,7 +51,7 @@ EOF
            "$ens_id" = "gep08" || "$ens_id" = "gep09"  || \
            "$ens_id" = "gep10" ]] ;
      then
-       nens_id=`echo $ens_id | cut -c4-5 | sed 's/^0*//'`
+       nens_id=$(echo $ens_id | cut -c4-5 | sed 's/^0*//')
        DATA2=$DATA/ens_${ens_id}_${hr}
        cd $DATA2
        let new_id=$nens_id-5

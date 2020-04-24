@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
 export PS4='$SECONDS + '
@@ -39,7 +39,7 @@ mkdir -p $DATA
 cd $DATA
 
 # Define MASTERRES for master file grid, default being Gaussian with alternatives of  p125/p25/p5
-export mem=`echo $RUNMEM|cut -c3-5`
+export mem=$(echo $RUNMEM|cut -c3-5)
 
 ######################################
 # Set up the cycle variable
@@ -49,7 +49,7 @@ export cycle=t${cyc}z
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=${NET:-gens}
+export NET=${NET:-gefs}
 export RUN=${RUN:-gefs}
 export model=${model:-gfs}
 
@@ -152,20 +152,29 @@ export F00FLAG=YES
 
 env
 
-########################################################
+#############################################################
 # Execute the script.
 $HOMEgefs/scripts/exgefs_postsnd.sh.ecf
-########################################################
+#############################################################
+err=$?
+
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
+else
+    msg="FATAL ERROR: $job failed!"
+fi
+postmsg "$jlogfile" "$msg"
 
 if [ -e "$pgmout" ] ; then
   cat $pgmout
 fi
 
-##########################################
+##############################
 # Remove the Temporary working directory
-##########################################
+##############################
 cd $DATAROOT
-[[ $KEEPDATA = "NO" ]] && rm -rf $DATA
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-date
-exit 0
+echo "$(date) $0 $(date -u) end"
+
+exit $err

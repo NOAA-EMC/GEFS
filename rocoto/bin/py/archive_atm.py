@@ -12,7 +12,7 @@ Inputs (via environment variables):
     cyc             : Initialization hour in HH form
 
     GEFS output must be located in the WORKDIR com directory as such:
-        <WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/atmos/<directory>
+        <WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/<directory>
 
 Outputs:
     For each directory in DIRS_TO_ARCHIVE, a tar file will be created in the following
@@ -31,7 +31,7 @@ from datetime import datetime
 from functools import partial
 
 # File patterns
-workdir_pattern = "{work_dir}/com/gens/dev/gefs.%Y%m%d/%H/atmos"
+workdir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/atmos"
 destination_pattern = "{hpss_path}/%Y/%Y%m/%Y%m%d"
 tarfile_pattern = "{destination_path}/gefs.%Y%m%d_%H.atmos.{directory}.tar"
 

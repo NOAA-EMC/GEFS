@@ -33,4 +33,4 @@ module list
 # Export List
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_POST_GENESIS
+$SOURCEDIR/rocoto/bin/sh/JGEFS_POST_GENESIS

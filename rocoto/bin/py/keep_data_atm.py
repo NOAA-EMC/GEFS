@@ -12,7 +12,7 @@ Inputs (via environment variables):
 	cyc             : Initialization hour in HH form
 
 	GEFS output must be located in the WORKDIR com directory as such:
-		<WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/atmos/<directory>
+		<WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/<directory>
 
 Outputs:
 	For each directory in DIRS_TO_KEEP, that directory will be copied to the KEEP_DIR in
@@ -30,7 +30,7 @@ import shutil
 from functools import partial
 
 destination_pattern = "{keep_dir}/gefs.{pdy}/{cycle}/atmos"
-output_pattern = "{work_dir}/com/gens/dev/gefs.{pdy}/{cycle}/atmos"
+output_pattern = "{work_dir}/com/gefs/dev/gefs.{pdy}/{cycle}/atmos"
 
 clobber = True
 

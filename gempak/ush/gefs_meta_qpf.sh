@@ -36,8 +36,8 @@ echo memberlist=$memberlist
 
 sGrid=${sGrid} #:-"_0p50"}
 
-ddate=`echo $PDY | cut -c3-8`
-ddatem1=`echo $PDYm1 | cut -c3-8`
+ddate=$(echo $PDY | cut -c3-8)
+ddatem1=$(echo $PDYm1 | cut -c3-8)
 if [ ${cyc} = "00" ];then
    cycm12=12
 else
@@ -62,7 +62,7 @@ fcsthrs="036 048 060 072 084 096 108 120 132 144 156 168 180 192 204" # shorten 
 for fcsthr in ${fcsthrs}
 do
 
-    for fn in `echo $memberlist`
+    for fn in $(echo $memberlist)
     do
         rm -rf $fn 
         if [ -r $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
@@ -287,10 +287,10 @@ do
     #ln -s $COMINecmwf.${PDY}/gempak/ecmwf_hr_${PDY}${cycm12}f* ./
     for grid in ${grids}
     do
-        grid=`echo $grid | tr [a-z] [A-Z]`
+        grid=$(echo $grid | tr [a-z] [A-Z])
         name="${grid} ${name2}"
         title="1/0/~ ? ${name}|~${name}"
-        #grid=`echo $grid | tr [a-z] [A-Z]`
+        #grid=$(echo $grid | tr [a-z] [A-Z])
         if [ ${grid} = "GFS" ]; then
             GDFILE="F-GFS | ${ddate}/${cyc}00"
             COMINtmp=$COMIN

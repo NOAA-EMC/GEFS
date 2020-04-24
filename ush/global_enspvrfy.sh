@@ -34,9 +34,9 @@ for fhour in $hourlist
 do
  
  if [ $fhour -eq 00 ]; then
-  CYMDH=`$NDATE -$fhour $OBSYMD\00`
+  CYMDH=$($NDATE -$fhour $OBSYMD\00)
  else
-  CYMDH=`$NDATE -$fhour $OBSYMD\12`
+  CYMDH=$($NDATE -$fhour $OBSYMD\12)
  fi
 
  echo "$CVT24H $CYMDH" >>cvt24h.cmdfile

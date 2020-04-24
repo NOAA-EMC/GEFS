@@ -1,6 +1,6 @@
 #!/bin/ksh 
 
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
 export PS4='$SECONDS + '
@@ -28,7 +28,7 @@ setpdy.sh
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=${NET:-gens}
+export NET=${NET:-gefs}
 export RUN=${RUN:-gefs}
 
 ####################################
@@ -81,19 +81,14 @@ env | sort
 # Execute the script
 $HOMEgefs/scripts/exgefs_rf_prep.sh.ecf
 #############################################################
-ERR=$?
+err=$?
 
-#echo $ERR
-
-if [ $ERR = 0 ]; then
-    msg="JOB COMPLETED NORMALLY"
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
 else
-    msg="JOB FAILED!"
+    msg="FATAL ERROR: $job failed!"
 fi
-
 postmsg "$jlogfile" "$msg"
-
-echo `date` $0 `date -u` end
 
 ##############################
 # Remove the Temporary working directory
@@ -101,5 +96,7 @@ echo `date` $0 `date -u` end
 cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-exit $ERR
+echo "$(date) $0 $(date -u) end"
+
+exit $err
 

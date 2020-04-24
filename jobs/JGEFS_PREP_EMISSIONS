@@ -1,6 +1,6 @@
 #!/bin/ksh 
 
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
 export PS4='$SECONDS + '
@@ -11,7 +11,7 @@ export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
 export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
 
 export RUNMEM=${RUNMEM:-geaer}
-export mem=`echo $RUNMEM|cut -c3-5`
+export mem=$(echo $RUNMEM|cut -c3-5)
 export ENS_NUM=1
 echo "ENS_NUM=$ENS_NUM"
 
@@ -28,7 +28,7 @@ cd $DATA
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=${NET:-gens}
+export NET=${NET:-gefs}
 export RUN=${RUN:-gefs}
 
 ####################################
@@ -113,22 +113,22 @@ env | sort
 # Execute the script
 $gefsmpexec $HOMEchem/scripts/exglobal_prep_chem.bash
 #############################################################
-ERR=$?
+err=$?
 
-if [ $ERR = 0 ]; then
-    msg="JOB COMPLETED NORMALLY"
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
 else
-    msg="JOB FAILED!"
+    msg="FATAL ERROR: $job failed!"
 fi
-
 postmsg "$jlogfile" "$msg"
 
 ##############################
 # Remove the Temporary working directory
 ##############################
 cd $DATAROOT
-echo $DATA
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-exit $ERR
+echo "$(date) $0 $(date -u) end"
+
+exit $err
 

@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-echo `date` $0 begin
+echo $(date) $0 begin
 
 ################################################################################
 #   Script:	exgefs_init_recenter.sh.sms
@@ -32,7 +32,7 @@ echo " ------------------------------------------------------------"
 echo "  "
 echo "            GLOBAL ENSEMBLE INITIALIZATION "
 echo "  "
-echo "                `date`     "
+echo "                $(date)     "
 echo "  "
 echo "                   JOB  $job  "
 echo "  "
@@ -130,7 +130,7 @@ fi
 
 postmsg "$jlogfile" "$msg"
 
-echo `date` $0 `date -u` end
+echo $(date) $0 $(date -u) end
 
 set +x
 if [ $VERBOSE = "YES" ]; then

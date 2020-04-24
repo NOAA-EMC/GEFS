@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-echo `date` $0 `date -u` begin
+echo $(date) $0 $(date -u) begin
 
 set -xa
 export PS4='$SECONDS + '
@@ -13,7 +13,7 @@ export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
 export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
 
 export RUNMEM=$RUNMEM
-export mem=`echo $RUNMEM|cut -c3-5`
+export mem=$(echo $RUNMEM|cut -c3-5)
 
 export ENS_NUM=1
 echo "ENS_NUM=$ENS_NUM"
@@ -35,7 +35,7 @@ export cycle=t${cyc}z
 ####################################
 # Specify NET and RUN Name and model
 ####################################
-export NET=${NET:-gens}
+export NET=${NET:-gefs}
 export RUN=${RUN:-gefs}
 export COMPONENTwave=${COMPONENTwave:-${RUN}wave}
 #export NTHREADS=1
@@ -135,7 +135,7 @@ elif [[ $FORECAST_SEGMENT = lr ]] ; then
 	export cplwav=.false.
 else
 	msg="FATAL ERROR:  Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
-	echo "`date`   $msg"
+	echo "$(date)   $msg"
 	echo "The Forecast job will be aborted!!!!"
 	postmsg "$jlogfile" "$msg"
 	export pgm=JENS_FCST
@@ -214,10 +214,6 @@ export FNALBC2=$FIX_AM/global_albedo4.1x1.grb
 export FNSMCC=$FIX_AM/global_soilmgldas.t$MTNRSL.grb
 export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 
-####################################
-# Create member list
-####################################
-
 #
 # Forecast Input Variables
 #
@@ -245,15 +241,11 @@ export KMP_AFFINITY=disabled
 export OMP_STACKSIZE=1024m
 export MP_LABELIO=yes
 
-# ----------------------------------
-# user account 
-# ----------------------------------
-
 if [[ $mem = c00 ]] ;then 
 	MEMBER=$((npert+1))
 	WAV_MEMBER="00"
 else
-	MEMBER=`echo $mem|cut -c2-3`
+	MEMBER=$(echo $mem|cut -c2-3)
 	WAV_MEMBER=$MEMBER
 fi
 export MEMBER=$MEMBER
@@ -421,21 +413,25 @@ if [[ $RERUN = "YES" ]]; then
 	cp -pr $GESIN/$mem/RESTART/stoch_out.F000$fhr $DATA/stoch_ini 
 fi
 
+########################################################
+## Execute the script.
 $FORECASTSH
-ERR=$?
+#############################################################
+err=$?
 
-if [ $ERR = 0 ]; then
-	msg="$job completed normally!"
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
 else
-	msg="FATAL ERROR: $job failed!"
+    msg="FATAL ERROR: $job failed!"
 fi
 postmsg "$jlogfile" "$msg"
 
-if [[ $KEEPDATA != "YES" ]]; then
-	cd $DATAROOT
-	rm -rf $DATA
-fi
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-echo `date` $0 `date -u` end
+echo "$(date) $0 $(date -u) end"
 
-exit $ERR
+exit $err
