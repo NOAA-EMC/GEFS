@@ -43,5 +43,5 @@ ulimit -a
 
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_EXTRACTVARS
+$SOURCEDIR/rocoto/bin/sh/JGEFS_EXTRACTVARS
 

@@ -18,5 +18,5 @@ ulimit -a
 #. $GEFS_ROCOTO/parm/gefs_dev.parm
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_RF_PREP
+$SOURCEDIR/rocoto/bin/sh/JGEFS_RF_PREP
 
