@@ -9,10 +9,5 @@ set -x
 #export envir=${envir:-dev}
 #export RUN_ENVIR=${RUN_ENVIR:-dev}
 
-
 # CALL executable job script here
-
-
-
-
-$SOURCEDIR/jobs/JGEFS_ENSPOST
+$SOURCEDIR/jobs/JGEFS_ATMOS_ENSPOST

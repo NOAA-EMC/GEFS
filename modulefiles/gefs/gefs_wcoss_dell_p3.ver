@@ -10,3 +10,8 @@ export zlib_ver=1.2.11
 export sfcio_ver=1.0.0
 export sp_ver=2.0.2
 export nemsio_ver=2.2.3
+
+export EnvVars_ver=1.0.2
+export w3emc_ver=2.3.0
+export sigio_ver=2.1.0
+export bufr_ver=11.2.0

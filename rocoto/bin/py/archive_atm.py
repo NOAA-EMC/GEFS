@@ -12,12 +12,12 @@ Inputs (via environment variables):
     cyc             : Initialization hour in HH form
 
     GEFS output must be located in the WORKDIR com directory as such:
-        <WORKDIR>/com/gens/dev/gefs.<PDY>/<cyc>/<directory>
+        <WORKDIR>/com/gefs/dev/gefs.<PDY>/<cyc>/atmos/<directory>
 
 Outputs:
     For each directory in DIRS_TO_ARCHIVE, a tar file will be created in the following
     location on HPSS:
-        <HPSS_DIR>/<YYYY>/<YYYY><MM>/<YYYY><MM><DD>/gefs.<YYYY><MM><DD>_<HH>.<directory>.tar
+        <HPSS_DIR>/<YYYY>/<YYYY><MM>/<YYYY><MM><DD>/gefs.<YYYY><MM><DD>_<HH>.atmos.<directory>.tar
 
 Error Codes:
     -100 : Required environment variable not defined
@@ -31,9 +31,9 @@ from datetime import datetime
 from functools import partial
 
 # File patterns
-workdir_pattern = "{work_dir}/com/gens/dev/gefs.%Y%m%d/%H"
+workdir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/atmos"
 destination_pattern = "{hpss_path}/%Y/%Y%m/%Y%m%d"
-tarfile_pattern = "{destination_path}/gefs.%Y%m%d_%H.{directory}.tar"
+tarfile_pattern = "{destination_path}/gefs.%Y%m%d_%H.atmos.{directory}.tar"
 
 # Make sure print statements are flushed immediately, otherwise
 #   print statments may be out-of-order with subprocess output
@@ -52,7 +52,7 @@ if( hpss_path is None ):
 
 dirs_to_archive_string = os.environ.get("DIRS_TO_ARCHIVE")
 if( dirs_to_archive_string is None ):
-    print("FATAL: Environment variable HPSS_DIR not set")
+    print("FATAL: Environment variable DIRS_TO_ARCHIVE not set")
     quit(-100)
 # Convert to array using commas and removing whitespace
 dirs_to_archive = [x.strip() for x in dirs_to_archive_string.split(',')]

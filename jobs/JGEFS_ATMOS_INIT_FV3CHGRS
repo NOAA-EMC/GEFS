@@ -1,0 +1,182 @@
+#!/bin/ksh
+
+echo $(date) $0 $(date -u) begin
+
+set -xa
+export PS4='$SECONDS + '
+date
+
+export COMPONENT=atmos
+export total_tasks=${total_tasks:-1}
+export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
+export OMP_NUM_THREADS_CH=${OMP_NUM_THREADS_CH:-40}
+
+export RUNMEM=$RUNMEM
+export mem=$(echo $RUNMEM|cut -c 3-)
+export nmem=$(echo $RUNMEM|cut -c 4-)
+nmem=${nmem#0}
+export pdyp=$(echo $pdycycp|cut -c1-8)
+export cycp=$(echo $pdycycp|cut -c9-10)
+
+case $cyc in
+    00) memshift=0;;
+    06) memshift=20;;
+    12) memshift=40;;
+    18) memshift=60;;
+esac
+    (( cmem = nmem + memshift ))
+    if (( cmem > 80 )); then
+            (( cmem = cmem - 80 ))
+    fi
+    memchar_shift="mem"$(printf %03i $cmem)
+
+############################
+# Set up cycle varaible
+############################
+export cycle=t${cyc}z
+
+####################################
+# obtain unique process id (pid) and identify working directory
+####################################
+export pid=$$
+export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+mkdir -p $DATA
+cd $DATA
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gefs}
+export RUN=${RUN:-gefs}
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
+
+####################################
+# Specify Execution Areas
+####################################
+export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
+export HOMEgfs=${HOMEgfs:-${HOMEgefs}}
+export FIXgfs=$HOMEgfs/fix
+export USHgfs=$HOMEgfs/ush
+
+export FIXfv3=${FIXfv3:-$FIXgfs/fix_fv3_gmted2010}
+export FIXam=${FIXam:-$FIXgfs/fix_am}
+
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+
+. $PARMgefs/gefs.parm
+
+(( LEVS=LEVSHR+1 ))
+export LEVS=$LEVS
+export CASE=$CASEHR
+
+##############################################
+# Define COM directories
+##############################################
+export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
+export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
+export COMIN=${COMIN:-${COM_IN}/${RUN}.${PDY}}
+export COMOUT=${COMOUT:-${COM_OUT}/${RUN}.${PDY}}
+export OUTDIR=$COMOUT/$cyc/$COMPONENT/init/$mem
+mkdir -p $OUTDIR
+
+##############################################
+# Define GES directories
+##############################################
+export GESOUT=${GESOUT:-$GESROOT/${envir}}
+export GESOUT=$GESOUT/gefs.${PDY}
+mkdir -m 775 -p $GESOUT/$cyc/$mem
+
+NCP=${NCP:-"/bin/cp -p"}
+
+##############################################
+echo list environment before running script
+##############################################
+env | sort
+
+set -eux
+
+echo $(date) $0 begin
+
+set -x
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/${cyc}}
+export COMINenkf=${COMINenkf:-$(compath.py gfs/prod)/enkfgdas.}
+
+export pdycycp=$($NDATE -$fhrp $PDY$cyc)
+export pdyp=$(echo $pdycycp|cut -c1-8)
+export cycp=$(echo $pdycycp|cut -c9-10)
+
+export INIDIR=$DATA
+export CDATE=$PDY$cyc
+export ictype=nemsgfs
+
+export ictype=fv3gfs
+export NTRAC=7
+
+if [[ $mem = c00 ]] ;then
+	$NCP $COMINgfs/gfs.t${cyc}z.atmanl.nemsio $INIDIR/gfnanl.gfs.$PDY$cyc
+	$NCP $COMINgfs/gfs.t${cyc}z.sfcanl.nemsio $INIDIR/sfnanl.gfs.$PDY$cyc
+else
+	$NCP $COMINenkf$pdyp/$cycp/$memchar_shift/gdas.t${cycp}z.atmf006.nemsio $INIDIR/gfnanl.gfs.$PDY$cyc
+	$NCP $COMINgfs/gfs.t${cyc}z.sfcanl.nemsio $INIDIR/sfnanl.gfs.$PDY$cyc
+fi
+
+#############################################################
+# Execute the script
+$USHgfs/global_chgres_driver.sh
+#############################################################
+err=$?
+
+cat $pgmout
+
+$NCP $OUTDIR/sfc* $GESOUT/$cyc/$mem
+$NCP $OUTDIR/gfs_ctrl.nc $GESOUT/$cyc/$mem
+
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
+else
+    msg="FATAL ERROR: $job failed!"
+fi
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
+
+echo "$(date) $0 $(date -u) end"
+
+exit $err

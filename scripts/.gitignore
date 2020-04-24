@@ -1,2 +1,3 @@
 exglobal_prep_chem.bash
 exglobal_fcst_nemsfv3gfs.sh
+exwave_*.sh

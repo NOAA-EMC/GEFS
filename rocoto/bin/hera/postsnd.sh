@@ -23,4 +23,4 @@ export ERRSCRIPT=" "
 # export for development runs only begin
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_POSTSND
+$SOURCEDIR/jobs/JGEFS_ATMOS_POSTSND

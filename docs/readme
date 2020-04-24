@@ -48,8 +48,8 @@ Default file locations:
 /ptmp/$LOGNAME/o/$expid/com/output/dev    
    output as in /com/output/prod
 
-/ptmp/$LOGNAME/o/$expid/com/gens/dev    
-   GEFS output as in /com/gens/prod
+/ptmp/$LOGNAME/o/$expid/com/gefs/dev    
+   GEFS output as in /com/gefs/prod
 
 /ptmp/$LOGNAME/o/$expid/com/logs    
    jlogfile location as in /com/logs

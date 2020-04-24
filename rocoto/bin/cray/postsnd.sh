@@ -41,4 +41,4 @@ ulimit -a
 #export gefsmpexec_mpmd='aprun -n 10 cfp'
 ###export gefsmpexec_mpmd=" aprun -b -j1 -n9 -N9 -d2 -cc depth  cfp "
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_POSTSND
+$SOURCEDIR/jobs/JGEFS_ATMOS_POSTSND

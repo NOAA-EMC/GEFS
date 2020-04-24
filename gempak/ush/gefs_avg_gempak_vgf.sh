@@ -6,6 +6,7 @@
 # J. Carr/PMB      12/25/2004     Pushed into production.
 # A. Robson/HPC    07/06/2005     Changed map line thickness to 1.
 # Luke Lin/NCO     02/22/2006     Modified for gefs
+# Xianwu Xue/EMC   04/06/2020     Modified for GEFS v12
 #
 # Set Up Local Variables
 #
@@ -13,28 +14,31 @@ set -x
 export PS4='gefs_avg_vgf:$SECONDS + '
 mkdir $DATA/gefs_avg_vgf
 cd $DATA/gefs_avg_vgf
-cp $FIXgempak/datatype.tbl datatype.tbl
 
-mdl=gefs_avg_vgf
-MDL=GEFS_AVG_VGF
-PDY2=`echo $PDY | cut -c3-`
+sGrid=${sGrid} #"_0p50"
+
+PDY2=$(echo $PDY | cut -c3-)
 
 # MAKE VG FILES FOR OPC
 
-for fcsthrs in 96 108
+for fcsthrs in 096 108
 do
-	for area in NATL MPAC
-	do
-		ocean=`echo ${area} | cut -c2-`
+    for area in NATL MPAC
+    do
+        ocean=$(echo ${area} | cut -c2-)
 
-		export pgm=gdplot2_vg;. prep_step; startmsg
+        fn=avg
+        rm -rf $fn
+        if [ -r $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthrs} ]; then
+            ln -s $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthrs} $fn
+        fi
 
-		gdplot2_vg <<- EOF
-			GDFILE  = F-GEFSAVG | ${PDY2}/${cyc}00
+		cat > cmdfile_vgf <<- EOF
+			GDFILE  = avg
 			GDATTIM = F${fcsthrs}
 			GAREA   = ${area}
 			PROJ    =
-			DEVICE  = vg|${ocean}_gefs_avg500_${PDY2}_${cyc}_F${fcsthrs}.vgf
+			DEVICE  = vg | gefs_avg500${sGrid}_${PDY2}_${cyc}_F${fcsthrs}_${ocean}.vgf
 			GLEVEL  = 500
 			GVCORD  = PRES
 			PANEL   = 0
@@ -69,7 +73,7 @@ do
 			LATLON  = 0
 			STNPLT  =
 			list
-			ru
+			run
 
 			CLEAR   = no
 			GDPFUN  = hght!vge(kntv(wnd),30)
@@ -80,10 +84,10 @@ do
 			HILO    =
 			HLSYM   =
 			list
-			ru
+			run
 
 			CLEAR   = yes
-			DEVICE  = vg|${ocean}_gefs_avgPMSL_${PDY2}_${cyc}_F${fcsthrs}.vgf
+			DEVICE  = vg|gefs_avgPMSL${sGrid}_${PDY2}_${cyc}_F${fcsthrs}_${ocean}.vgf
 			GLEVEL  = 0
 			GVCORD  = none
 			SCALE   = 0
@@ -95,20 +99,26 @@ do
 			WIND    =
 			TEXT    = 1.3/21/2/hw
 			list
-			ru
+			run
+
 			EOF
 
-		export err=$?;err_chk
+        cat cmdfile_vgf
 
-       	if [ $SENDCOM = "YES" ] ; then
-           	mv *.vgf ${COMOUT}
-           	if [ $SENDDBN = "YES" ] ; then
-               	${DBNROOT}/bin/dbn_alert VGF OPC $job ${COMOUT}/${ocean}_gefs_avgPMSL_${PDY2}_${cyc}_F${fcsthrs}.vgf
-               $	{DBNROOT}/bin/dbn_alert VGF OPC $job ${COMOUT}/${ocean}_gefs_avg500_${PDY2}_${cyc}_F${fcsthrs}.vgf
-           fi
-       fi
-   done
+        gdplot2_vg < cmdfile_vgf
+
+        export err=$?;err_chk
+
+        if [ $SENDCOM = "YES" ] ; then
+            mv *.vgf ${COMOUT}
+            if [ $SENDDBN = "YES" ] ; then
+                ${DBNROOT}/bin/dbn_alert VGF OPC $job ${COMOUT}/gefs_avgPMSL${sGrid}_${PDY2}_${cyc}_F${fcsthrs}_${ocean}.vgf
+                ${DBNROOT}/bin/dbn_alert VGF OPC $job ${COMOUT}/gefs_avg500${sGrid}_${PDY2}_${cyc}_F${fcsthrs}_${ocean}.vgf
+            fi
+        fi
+    done
 done
 
-exit
+exit $err
+
 

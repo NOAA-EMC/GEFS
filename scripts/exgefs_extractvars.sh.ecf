@@ -1,5 +1,5 @@
 #!/bin/ksh
-echo `date` $0 begin
+echo $(date) $0 begin
 ################################################################################
 #   Script:    
 #
@@ -67,7 +67,7 @@ for ensname in $(eval echo "{$start..$npert}"); do
     else
         censname=p$cmem
     fi
-    echo 'echo `date` ############ poescript'" $censname begin">>poescript.$censname
+    echo 'echo $(date) ############ poescript'" $censname begin">>poescript.$censname
 
     cat  >> poescript.$censname<< EOF
 
@@ -83,7 +83,7 @@ for ensname in $(eval echo "{$start..$npert}"); do
 
     nh=0
     while [[ \$nh -le $fhmax ]];do
-        fnh=\`printf "%3.3d" \${nh}\`
+        fnh=\$(printf "%3.3d" \${nh}\)
         echo "extracting f\${fnh}"
 
         if [[ \$nh -le $FHMAXHF ]] && [[ "\$outtype" == "f2d" ]];then

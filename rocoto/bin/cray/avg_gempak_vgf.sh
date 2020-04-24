@@ -17,5 +17,5 @@ ulimit -a
 #export gefsmpexec_mpmd="aprun -b -j1 -n${total_tasks} -N${taskspernode} -d${OMP_NUM_THREADS} -cc depth cfp mpmd_cmdfile" #mpirun -n $total_tasks cfp mpmd_cmdfile"
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_AVG_GEMPAK_VGF
+$SOURCEDIR/jobs/JGEFS_ATMOS_AVG_GEMPAK_VGF
 

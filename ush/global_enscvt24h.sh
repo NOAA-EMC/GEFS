@@ -10,16 +10,16 @@ echo "AUTHOR: Yan Luo (wx22lu)"
 
 IYMDH=$1             
 
-IYMD=`echo $IYMDH | cut -c1-8`
-IYMDHM12=`$NDATE -12 $IYMDH `
-IYMDM1=`$NDATE -24 $IYMDH | cut -c1-8`
+IYMD=$(echo $IYMDH | cut -c1-8)
+IYMDHM12=$($NDATE -12 $IYMDH )
+IYMDM1=$($NDATE -24 $IYMDH | cut -c1-8)
 
-if [ -s $COMIN/gefs.$IYMD/00/ensstat/enspost_grb2.t00z.prcp ]; then
- cat $COMIN/gefs.$IYMD/00/ensstat/enspost_grb2.t00z.prcp    >precip.$IYMDH
+if [ -s $COMIN/gefs.$IYMD/00/atmos/ensstat/enspost_grb2.t00z.prcp ]; then
+ cat $COMIN/gefs.$IYMD/00/atmos/ensstat/enspost_grb2.t00z.prcp    >precip.$IYMDH
  $USHgefs/global_enscvprcp.sh precip.$IYMDH precipt.$IYMDH $IYMDH
  mv precipt.$IYMDH precip.$IYMDH
 else
- echo " No either $COMIN/gefs.$IYMD/00/ensstat/enspost.t00z.prcp"
+ echo " No either $COMIN/gefs.$IYMD/00/atmos/ensstat/enspost.t00z.prcp"
  echo " Missing preciptation data detected, quit "
  #export err=8;err_chk
 fi

@@ -21,7 +21,7 @@ init_file_pattern = "{path}/{kind}.{tile}.nc"
 increment_file_pattern = "{path}/fv3_increment.nc"
 restart_dest_pattern = "{path}/RESTART/{filename}"
 
-restart_base_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/restart/{member}"  # Time of previous run
+restart_base_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/{component}/restart/{member}"  # Time of previous run
 restart_file_pattern = "{restart_base}/%Y%m%d.%H0000.{kind}.{tile}.nc"        # Time when restart is valid (current run)
 restart_core_res_file_pattern = "{restart_base}/%Y%m%d.%H0000.coupler.res"        # Time when restart is valid (current run)
 restart_coupler_file_pattern = "{restart_base}/%Y%m%d.%H0000.fv_core.res.nc"        # Time when restart is valid (current run)
@@ -30,10 +30,10 @@ merge_script_pattern = "{ush_gfs}/merge_fv3_chem_tile.py"
 n_tiles = 6
 
 analysis_file_pattern = "{com_gfs}/gfs.t%Hz.atmanl.nemsio"
-fcst_file_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/sfcsig/ge{member}.t%Hz.atmf{forecast_hour:03}.nemsio"
+fcst_file_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/{component}/sfcsig/ge{member}.t%Hz.atmf{forecast_hour:03}.nemsio"
 vert_coord_file_pattern = "{fix_gfs}/fix_am/global_hyblev.l{n_levels}.txt"
 
-com_base_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/init/{member}"
+com_base_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/{component}/init/{member}"
 max_lookback = 1
 
 regrid_namelist = cleandoc("""
@@ -104,16 +104,16 @@ def main() -> None:
 
     atm_source_path = time.strftime(init_path_pattern.format(ges_root=ges_root, envir=envir, member="c00"))
     destination_path = time.strftime(init_path_pattern.format(ges_root=ges_root, envir=envir, member="aer"))
-    com_path = time.strftime(com_base_pattern.format(com_root=com_root, envir=envir, net=net, run=run, member="aer"))
+    com_path = time.strftime(com_base_pattern.format(com_root=com_root, envir=envir, net=net, run=run, member="aer", component="chem"))
+
+    # Even with exist_ok=True, makedirs sometimes throws a FileExistsError
+    with contextlib.suppress(FileExistsError):
+        os.makedirs(destination_path, exist_ok=True)
 
     for file_name in os.listdir(atm_source_path):
         full_file_name = os.path.join(atm_source_path, file_name)
         if os.path.isfile(full_file_name):
             shutil.copy(full_file_name, destination_path)
-
-    # Even with exist_ok=True, makedirs sometimes throws a FileExistsError
-    with contextlib.suppress(FileExistsError):
-        os.makedirs(destination_path, exist_ok=True)
 
     if (init_type == "warm"):
         analysis_filename = regrid_analysis(time=time, regrid_aprun=regrid_aprun, regrid_exec=regrid_exec, max_lookback=max_lookback,
@@ -167,10 +167,17 @@ def main() -> None:
             merge_tracers(merge_script, atm_filenames, restart_files, tracer_list_file)
 
     shutil.rmtree(com_path, ignore_errors=True)
-    # Suppress error for missing files due to possibility of dangling symlinks (ignore_dangling_symlinks doesn't work properly; Python Issue 38523)
-    with contextlib.suppress(FileNotFoundError):
+    # Handle error for missing files due to possibility of dangling symlinks (ignore_dangling_symlinks doesn't work properly; Python Issue 38523)
+    try:
         shutil.copytree(destination_path, com_path, ignore_dangling_symlinks=True)  # Copy data to COM
-
+    except shutil.Error as err:
+        # shutil.Error from copytree are tuples of src, dest, err
+        tuples = [t for t in err.args[0]]
+        exceptionStrings = [t[2] for t in tuples]
+        if all(e.startswith('[Errno 2] No such file or directory:') for e in exceptionStrings):
+            pass
+        else:
+            raise err
     return
 
 
@@ -204,7 +211,7 @@ def get_init_files(path: str, kind: str) -> typing.List[str]:
 def get_previous_forecast(time: datetime, incr: int, max_lookback: int, com_root: str, net: str, envir: str, run: str) -> str:
     for lookback in map(lambda i: incr * (i + 1), range(max_lookback)):
         last_time = time - timedelta(hours=lookback)
-        prev_fcst_file = last_time.strftime(fcst_file_pattern.format(com_root=com_root, net=net, envir=envir, run=run, member="aer", forecast_hour=lookback))
+        prev_fcst_file = last_time.strftime(fcst_file_pattern.format(com_root=com_root, net=net, envir=envir, run=run, member="aer", component="chem", forecast_hour=lookback))
         found = os.path.isfile(prev_fcst_file)
         if(found):
             return prev_fcst_file
@@ -220,7 +227,7 @@ def get_previous_forecast(time: datetime, incr: int, max_lookback: int, com_root
 def get_tracer_restart_files(time: datetime, incr: int, max_lookback: int, com_root: str, net: str, envir: str, run: str) -> typing.List[str]:
     for lookback in map(lambda i: incr * (i + 1), range(max_lookback)):
         last_time = time - timedelta(hours=lookback)
-        restart_base = last_time.strftime(restart_base_pattern.format(com_root=com_root, net=net, envir=envir, run=run, member="aer"))
+        restart_base = last_time.strftime(restart_base_pattern.format(com_root=com_root, net=net, envir=envir, run=run, member="aer", component="chem"))
         files = list(time.strftime(restart_file_pattern.format(restart_base=restart_base, lookback=lookback, tile=tile, kind="fv_tracer.res")) for tile in tiles)
         found = [file for file in files if os.path.isfile(file)]
         if(found):
@@ -236,7 +243,7 @@ def get_tracer_restart_files(time: datetime, incr: int, max_lookback: int, com_r
 def get_all_restart_files(time: datetime, incr: int, max_lookback: int, com_root: str, net: str, envir: str, run: str) -> typing.List[str]:
     for lookback in map(lambda i: incr * (i + 1), range(max_lookback)):
         last_time = time - timedelta(hours=lookback)
-        restart_base = last_time.strftime(restart_base_pattern.format(com_root=com_root, net=net, envir=envir, run=run, member="aer"))
+        restart_base = last_time.strftime(restart_base_pattern.format(com_root=com_root, net=net, envir=envir, run=run, member="aer", component="chem"))
         kinds = ["fv_tracer.res", "fv_core.res", "fv_srf_wnd.res", "phy_data"]
         files = list(time.strftime(restart_file_pattern.format(restart_base=restart_base, lookback=lookback, tile=tile, kind=kind)) for (tile, kind) in itertools.product(tiles, kinds))
         core_res_file = time.strftime(restart_core_res_file_pattern.format(restart_base=restart_base, lookback=lookback))
@@ -276,7 +283,7 @@ def regrid_analysis(time: datetime, regrid_aprun: str, regrid_exec: str, max_loo
     output_file = "atmanl_mem001"
     for lookback in map(lambda i: incr * (i + 1), range(max_lookback)):
         last_time = time - timedelta(hours=lookback)
-        terrain_file = last_time.strftime(fcst_file_pattern.format(com_root=com_root, net=net, envir=envir, run=run, member="aer", forecast_hour=0))
+        terrain_file = last_time.strftime(fcst_file_pattern.format(com_root=com_root, net=net, envir=envir, run=run, member="aer", component="chem", forecast_hour=0))
         if(os.path.isfile(terrain_file)):
             break
         terrain_file = None

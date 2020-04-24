@@ -41,5 +41,5 @@ ulimit -a
 #. $GEFS_ROCOTO/parm/gefs_dev.parm
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_AVG_GEMPAK_VGF
+$SOURCEDIR/jobs/JGEFS_ATMOS_AVG_GEMPAK_VGF
 

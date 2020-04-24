@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eu #x
 
-sWS=`pwd`
+sWS=$(pwd)
 echo $sWS
 
 while getopts c:a:r:m:f:b:e:s:l:o: option
@@ -74,7 +74,7 @@ if [ $CompileCode = "yes" ]; then
         elif [[ $machine == "hera" ]]; then
             sHeader='/scratch2/NCEPDEV/ensemble'
         fi
-        sHOMEDIR=`grep 'export HOMEDIR=${HOMEDIR:-'${sHeader} -r ${sWS}/parm/setbase | sed 's/export HOMEDIR=${HOMEDIR:-//g'| sed 's/}//g'`
+        sHOMEDIR=$(grep 'export HOMEDIR=${HOMEDIR:-'${sHeader} -r ${sWS}/parm/setbase | sed 's/export HOMEDIR=${HOMEDIR:-//g'| sed 's/}//g')
         echo $sHOMEDIR
 
         if [[ -L global-workflow.fd ]] ; then
@@ -156,6 +156,7 @@ if [ $CleanAll = "yes" ]; then
     rm -rf ../exec
     rm -rf ../util/exec
     rm -rf ../fix/fix_*
+    rm -rf ../fix/product
 
     # Clean the new links
     rm -rf global-workflow.fd

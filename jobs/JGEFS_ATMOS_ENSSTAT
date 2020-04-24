@@ -1,0 +1,272 @@
+#!/bin/ksh 
+
+echo $(date) $0 $(date -u) begin
+
+set -xa
+export PS4='$SECONDS + '
+date
+
+
+export total_tasks=${total_tasks:-4}
+export OMP_NUM_THREADS=${OMP_NUM_THREADS:-2}
+
+export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
+export APRUN=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
+
+export CNVGRIB=$CNVGRIB
+
+####################################
+# obtain unique process id (pid) and make temp directory
+####################################
+export pid=$$
+export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
+
+mkdir -p $DATA
+cd $DATA
+
+######################################
+# Set up the cycle variable
+######################################
+export cycle=t${cyc}z
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gefs}
+export RUN=${RUN:-gefs}
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
+
+####################################
+# Specify Execution Areas
+####################################
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
+export REDOUT='1>>'
+export REDERR='2>'
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+. $PARMgefs/gefs.parm
+. $PARMgefs/gefs_prdgen.parm
+. $PARMgefs/gefs_ensstat.parm
+
+export FHMAX_HF=$FHMAXHF
+export FHOUT_HF=$FHOUTHF
+export FHOUT=$FHOUTLF
+
+##############################################
+# Define COM directories
+##############################################
+export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/atmos
+export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/atmos
+
+msg="HAS BEGUN on $(hostname)"
+postmsg "$jlogfile" "$msg"
+
+####################################
+# Specify Timeout Behavior of Post
+#
+# SLEEP_TIME - Amount of time to wait for
+#              a restart file before exiting
+# SLEEP_INT  - Amount of time to wait between
+#              checking for restart files
+####################################
+export SLEEP_TIME=900
+export SLEEP_INT=5
+
+export NTHREADS=1
+####################################
+# Specify Forecast Hour Range
+####################################
+# allow different forecast lengths in different cycles
+if [[ $envir = dev ]]; then
+	case $cyc in
+		(00) fhmax=$fhmax00 ;;
+		(06) fhmax=$fhmax06 ;;
+		(12) fhmax=$fhmax12 ;;
+		(18) fhmax=$fhmax18 ;;
+		(*)
+			echo cyc=$cyc IS UNDEFINED 
+			export pgm=JGEFS_ENSSTAT
+			export err=111
+			;;
+	esac
+fi # [[ $envir = dev ]]
+if (( fhmaxh > fhmax )); then
+  fhmaxh=$fhmax
+fi
+
+# FHINC is the interval for 1.0/2.5 grid files
+export FHINC=${FHOUTLF:-06}
+# FHINCP5 defined later is the interval for 0.5 grid files
+
+fcstlong=true
+case $FORECAST_SEGMENT in
+	hr)
+		start_hour=0
+		end_hour=${fhmaxh}
+		;;
+	lr)
+		start_hour=$((${fhmaxh}+1))
+		end_hour=${fhmax}
+		PRDGEN_STREAMS=$PRDGEN_STREAMS_LR
+		;;
+	*)
+		start_hour=0
+		end_hour=${fhmax}
+		;;
+esac # $FORECAST_SEGMENT in
+
+for stream in ${PRDGEN_STREAMS[@]}; do
+	# Filter out hours based on forecast segment
+	typeset -a hours=($(echo ${PRDGEN_HOURS[$stream]}))
+	echo "hours = $hours"
+	for i in "${!hours[@]}"; do
+		hour=${hours[i]}
+		echo "i = $i  hour = $hour"
+		if [[ $hour -lt $start_hour || $hour -gt $end_hour ]]; then
+			unset 'hours[i]'
+		fi
+	done
+	PRDGEN_HOURS[$stream]="${hours[@]}"
+	unset hours
+
+	if [[ -z ${PRDGEN_GRID[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_GRID not defined for $stream"
+		exit -1
+	fi
+	if [[ -z ${PRDGEN_GRID_SPEC[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_GRID_SPEC not defined for $stream"
+		exit -1
+	fi
+	if [[ -z ${PRDGEN_HOURS[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_HOURS not defined for $stream"
+		exit -1
+	fi
+	if [[ -z ${PRDGEN_SUBMC[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_SUBMC not defined for $stream"
+		exit -1
+	fi
+	if [[ -z ${PRDGEN_A_DIR[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_A_DIR not defined for $stream"
+		exit -1
+	fi
+#	if [[ -z ${PRDGEN_B_DIR[$stream]} ]]; then
+#		echo "FATAL ERROR in $0: PRDGEN_B_DIR not defined for $stream"
+#		exit -1
+#	fi
+	if [[ -z ${PRDGEN_A_PREFIX[$stream]} ]]; then
+		echo "FATAL ERROR in $0: PRDGEN_A_PREFIX not defined for $stream"
+		exit -1
+	fi
+#	if [[ -z ${PRDGEN_B_PREFIX[$stream]} ]]; then
+#		echo "FATAL ERROR in $0: PRDGEN_B_PREFIX not defined for $stream"
+#		exit -1
+#	fi
+
+	# Print out settings for this stream
+	cat <<-EOF
+		Settings for prgden stream $stream:
+			Grid: ${PRDGEN_GRID[$stream]}
+			Grid Spec: ${PRDGEN_GRID_SPEC[$stream]}
+			Hours: (${PRDGEN_HOURS[$stream]})
+			submc: ${PRDGEN_SUBMC[$stream]}
+			A Dir: ${PRDGEN_A_DIR[$stream]}
+			A Prefix: ${PRDGEN_A_PREFIX[$stream]}
+			B Dir: ${PRDGEN_B_DIR[$stream]}
+			B Prefix: ${PRDGEN_B_PREFIX[$stream]}
+			Do Anaylsis: ${PRDGEN_DO_ANALYSIS[$stream]:-"NO (default)"}
+	EOF
+done
+
+env | sort
+
+# Execute the script
+
+for stream in ${PRDGEN_STREAMS[@]}; do
+
+	subdata=${DATA}/${stream}
+	if [ ! -d ${subdata} ]; then mkdir -p ${subdata}; fi
+	outfile=${subdata}/${stream}.out
+
+	jobgrid="${PRDGEN_GRID[$stream]}"
+	grid_spec="${PRDGEN_GRID_SPEC[$stream]}"
+	hours="${PRDGEN_HOURS[$stream]}"
+	submc="${PRDGEN_SUBMC[$stream]}"
+	pgad="${PRDGEN_A_DIR[$stream]}"
+	pgbd="${PRDGEN_B_DIR[$stream]}"
+	pgapre="${PRDGEN_A_PREFIX[$stream]}"
+	pgbpre="${PRDGEN_B_PREFIX[$stream]}"
+	do_analysis="${PRDGEN_DO_ANALYSIS[$stream]:-NO}"
+	if [ ! -d ${pgad} ]; then mkdir -m 775 -p $COMOUT/${pgad}; fi
+	
+	echo "$HOMEgefs/scripts/exgefs_ensstat.sh.ecf $subdata \"$stream\" \"$jobgrid\" \"$hours\" \"$pgad\" \"$pgapre\" 2>&1 >${outfile}" >> ensstat.cmdfile
+
+done
+
+cat ensstat.cmdfile
+chmod 775 ensstat.cmdfile
+export MP_CMDFILE=${DATA}/ensstat.cmdfile
+export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
+export MP_PGMMODEL=mpmd
+
+rm -f mpmd_cmdfile
+ln -s $MP_CMDFILE mpmd_cmdfile
+
+#############################################################
+# Execute the script
+$APRUN
+#############################################################
+err=$?
+
+if [ $err = 0 ]; then
+    msg="$job completed normally!"
+else
+    msg="FATAL ERROR: $job failed!"
+fi
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
+
+echo "$(date) $0 $(date -u) end"
+
+exit $err

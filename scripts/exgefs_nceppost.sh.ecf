@@ -24,7 +24,7 @@ set -x
 
 cd $DATA
 
-msg="HAS BEGUN on `hostname`"
+msg="HAS BEGUN on $(hostname)"
 postmsg "$jlogfile" "$msg"
 export SHOUR=${1:-${SHOUR}}
 export FHOUR=${2:-${FHOUR}}
@@ -51,12 +51,12 @@ while [ $fhr -le $FHOUR ]; do  #(( fhr <= FHOUR )); do
     fi
 
 
-    export fhrtest=`expr $fhr + $FHINC`
+    export fhrtest=$(expr $fhr + $FHINC)
     if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF -a $fhrtest -ge $FHMAX_HF ]; then
         export FHINC=$FHOUT_LF
-        export fhr=`expr $SHOUR_LF`
+        export fhr=$(expr $SHOUR_LF)
     else
-        export fhr=`expr $fhr + $FHINC`
+        export fhr=$(expr $fhr + $FHINC)
     fi
     #RUN_HOURS[iHour]=$fhr
     iHour=$((iHour+1))
@@ -83,9 +83,9 @@ export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
 export SIGHDR=${SIGHDR:-$EXECgfs/global_sighdr}
 export nemsioget=$nemsioget
 
-R1=`echo $RUNMEM|cut -c1-3`
-R2=`echo $RUNMEM|cut -c4-5`
-mem=`echo $RUNMEM|cut -c3-5`
+R1=$(echo $RUNMEM|cut -c1-3)
+R2=$(echo $RUNMEM|cut -c4-5)
+mem=$(echo $RUNMEM|cut -c3-5)
 e3=$npert
 case $R1 in
     (gec)
@@ -158,18 +158,18 @@ fi # [ $res = "p125" ]
 #DOANALYSIS=NO
 if [ $DOANALYSIS = YES ]; then
 
-    mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.anl
+    mcfile=$COMOUT/misc/post/${RUNMEM}.t${cyc}z.master.control.anl
 
-    if [[ ! -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl ]]; then
+    if [[ ! -f $COMIN/init/${RUNMEM}.t${cyc}z.sanl ]]; then
         if [[ -f $mcfile ]]; then rm $mcfile; fi
     fi
 
     if [ $GRIBVERSION = grib1 ]; then
-        fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbanl
-        fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbianl
+        fileout=$COMOUT/master/$RUNMEM.$cycle.master.grbanl
+        fileouti=$COMOUT/master/$RUNMEM.$cycle.master.grbianl
     elif [ $GRIBVERSION = grib2 ]; then
-        fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl
-        fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl
+        fileout=$COMOUT/master/$RUNMEM.$cycle.master.grb2anl
+        fileouti=$COMOUT/master/$RUNMEM.$cycle.master.grb2ianl
     fi # [ $GRIBVERSION = grib1 ]
 
     if [[ -s $mcfile ]]; then
@@ -192,35 +192,26 @@ if [ $DOANALYSIS = YES ]; then
         if [[ -f $fileout ]]; then rm $fileout; fi
         if [[ -f $fileouti ]]; then rm $fileouti; fi
         for submc in  prd0p25 prd0p5 prd2p5; do
-            pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.anl
+            pcfile=$COMOUT/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.anl
             if [[ -f $pcfile ]]; then rm $pcfile; fi
         done
     fi # [[ ! -s $mcfile ]]
 
 fi
 
-#(( fhr=SHOUR))
-#while (( fhr <= FHOUR )); do
 for fhr in ${RUN_HOURS[@]}; do
-    #fhr=$(printf %03i $fhr)
-    #if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
-    #    FHINC=$FHOUT_HF
-    #else
-    #    FHINC=$FHOUT
-    #fi
-
-    mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr
+    mcfile=$COMOUT/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr
 
     if [[ ! -f $restart_file$fhr\.nemsio ]]; then
         if [[ -f $mcfile ]]; then rm $mcfile; fi
     fi
 
     if [ $GRIBVERSION = grib1 ]; then
-        fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbf$fhr
-        fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbif$fhr
+        fileout=$COMOUT/master/$RUNMEM.$cycle.master.grbf$fhr
+        fileouti=$COMOUT/master/$RUNMEM.$cycle.master.grbif$fhr
     elif [ $GRIBVERSION = grib2 ]; then
-        fileout=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr
-        fileouti=$COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr
+        fileout=$COMOUT/master/$RUNMEM.$cycle.master.grb2f$fhr
+        fileouti=$COMOUT/master/$RUNMEM.$cycle.master.grb2if$fhr
     fi # [ $GRIBVERSION = grib1 ]
 
     if [[ -s $mcfile ]]; then
@@ -243,40 +234,31 @@ for fhr in ${RUN_HOURS[@]}; do
         if [[ -f $fileout ]]; then rm $fileout; fi
         if [[ -f $fileouti ]]; then rm $fileouti; fi
         for submc in prd0p25 prd0p5 prd2p5; do
-            pcfile=$COMOUT/$cyc/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr
+            pcfile=$COMOUT/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr
             if [[ -f $pcfile ]]; then rm $pcfile; fi
-        done # for submc in prd0p5 prd1p0 prd2p5
+        done # for submc in prd0p25 prd0p5 prd2p5
     fi # [[ ! -s $mcfile ]]
-
-    #export fhrtest=`expr $fhr + $FHINC`
-    #if [ $FHMAXHF -gt 0 -a $FHOUTHF -gt 0 -a $fhrtest -ge $FHMAXHF -a $fhr -lt $FHMAXHF ]; then
-    #    export FHINC=$FHOUT
-    #    export fhr=`expr $FHMAX_HF`
-    #else
-    #    export fhr=`expr $fhr + $FHINC`
-    #fi
-
 done # for fhr in RUN_HOURS  # while (( fhr <= FHOUR ))
 
 if [ $DOANALYSIS = YES ]; then
-    mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.anl
+    mcfile=$COMOUT/misc/post/${RUNMEM}.t${cyc}z.master.control.anl
 
     if [[ ! -s $mcfile ]]; then
 
         ############################################################
         # Post Analysis Files before starting the Forecast Post
         ############################################################
-        SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
+        SLEEP_LOOP_MAX=$(expr $SLEEP_TIME / $SLEEP_INT)
 
         export pgm="postcheck"
         ic=0
         while [ $ic -le $SLEEP_LOOP_MAX ]; do
-            if test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl; then
+            if [ -f $COMIN/init/${RUNMEM}.t${cyc}z.sanl ]; then
                 break
             else
-                ic=`expr $ic + 1`
+                ic=$(expr $ic + 1)
                 sleep $SLEEP_INT
-            fi # test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl
+            fi # test -f $COMIN/init/${RUNMEM}.t${cyc}z.sanl
             ###############################
             # If we reach this point assume
             # fcst job never reached restart 
@@ -284,14 +266,14 @@ if [ $DOANALYSIS = YES ]; then
             ###############################
             if [ $ic -eq $SLEEP_LOOP_MAX ]; then
                 msg="FATAL ERROR: $RUNMEM FORECAST MISSING for hour anl"
-                echo "`date`    $msg"
+                echo "$(date)    $msg"
                 postmsg "$jlogfile" "$msg"
                 export err=9
                 err_chk
             fi
         done  #while [ $ic -le $SLEEP_LOOP_MAX ]
 
-        if test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl; then
+        if [ -f $COMIN/init/${RUNMEM}.t${cyc}z.sanl ]; then
             # add new environmental variables for running new ncep post
             # Validation date
 
@@ -317,7 +299,7 @@ if [ $DOANALYSIS = YES ]; then
 #           cat $CTLFILE
 
             if [[ -f sigfile.anl ]]; then rm -rf sigfile.anl; fi
-            ln -s $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl sigfile.anl
+            ln -s $COMIN/init/${RUNMEM}.t${cyc}z.sanl sigfile.anl
 
             ####################################
             # Create Master Post File 
@@ -330,11 +312,11 @@ if [ $DOANALYSIS = YES ]; then
             if [[ -f pgbfout ]]; then rm -rf pgbfout; fi
             if [[ -f pgbifout ]]; then rm -rf pgbifout; fi
             if [ $GRIBVERSION = grib1 ]; then
-                ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbanl pgbfout
-                ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grbianl pgbifout
+                ln -s $COMOUT/master/$RUNMEM.$cycle.master.grbanl pgbfout
+                ln -s $COMOUT/master/$RUNMEM.$cycle.master.grbianl pgbifout
             elif [ $GRIBVERSION = grib2 ]; then
-                ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2anl pgbfout
-                ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2ianl pgbifout
+                ln -s $COMOUT/master/$RUNMEM.$cycle.master.grb2anl pgbfout
+                ln -s $COMOUT/master/$RUNMEM.$cycle.master.grb2ianl pgbifout
             fi # [ $GRIBVERSION = grib1 ]
             export PGBOUT=pgbfout
             export PGIOUT=pgbifout
@@ -352,32 +334,32 @@ if [ $DOANALYSIS = YES ]; then
                 echo pgm=$pgm completed successfully
             else
                 msg="FATAL ERROR: $pgm FAILED for member $RUNMEM hour anl"
-                echo "`date`    $msg"
+                echo "$(date)    $msg"
                 postmsg "$jlogfile" "$msg"
                 export err=$rc
                 err_chk
             fi # (( rc == 0 ))
 
-            pgbfoutd=`readlink -nf pgbfout`
+            pgbfoutd=$(readlink -nf pgbfout)
             if [[ ! -s $pgbfoutd ]]; then
                 msg="FATAL ERROR: $pgbfoutd WAS NOT WRITTEN"
-                echo "`date`    $msg"
+                echo "$(date)    $msg"
                 postmsg "$jlogfile" "$msg"
                 export err=1
                 err_chk
             fi # [[ ! -s $pgbfoutd ]];
 
-            pgbifoutd=`readlink -nf pgbifout`
+            pgbifoutd=$(readlink -nf pgbifout)
             if [[ ! -s $pgbifoutd ]]; then
                 msg="FATAL ERROR: $pgbifoutd WAS NOT WRITTEN"
-                echo "`date`    $msg"
+                echo "$(date)    $msg"
                 postmsg "$jlogfile" "$msg"
                 export err=1
                 err_chk
             fi # [[ ! -s $pgbifoutd ]]
 
             # 20100730 create a separate log file for the analysis for use by prdgen job
-            if test $SENDCOM = "YES"; then
+            if [ $SENDCOM = "YES" ]; then
                 echo
                 ls -al $PGBOUT $PGBIOUT
                 echo
@@ -386,15 +368,15 @@ if [ $DOANALYSIS = YES ]; then
                 ls -al  $mcfile
                 cat  $mcfile
                 echo "anl_done" >> $post_log
-                # ecflow_client --label info "`cat $post_log`"
+                # ecflow_client --label info "$(cat $post_log)"
                 ecflow_client --event anl_done
                 echo
             fi # test $SENDCOM = "YES"
-        fi # test -f $COMIN/$cyc/init/${RUNMEM}.t${cyc}z.sanl
+        fi # test -f $COMIN/init/${RUNMEM}.t${cyc}z.sanl
     fi # [[ ! -s $mcfile ]]
 fi # [ $DOANALYSIS = YES ]
 
-SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
+SLEEP_LOOP_MAX=$(expr $SLEEP_TIME / $SLEEP_INT)
 
 ############################################################
 # Loop Through the Post Forecast Files 
@@ -410,7 +392,7 @@ do
     #    FHINC=$FHOUT
     #fi
 
-    mcfile=$COMOUT/$cyc/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr
+    mcfile=$COMOUT/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr
 
     if [[ ! -s $mcfile ]]; then
         ###############################
@@ -421,10 +403,10 @@ do
         ic=1
 
         while [ $ic -le $SLEEP_LOOP_MAX ]; do
-            if test -f $restart_file$fhr\.nemsio; then
+            if [ -f $restart_file$fhr\.nemsio ]; then
                 break
             else
-                ic=`expr $ic + 1`
+                ic=$(expr $ic + 1)
                 sleep $SLEEP_INT
             fi # test -f $restart_file$fhr
             ###############################
@@ -433,7 +415,7 @@ do
             # period and error exit
             ###############################
             if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-                echo "`date` forecast $RUNMEM missing for hour $fhr" 
+                echo "$(date) forecast $RUNMEM missing for hour $fhr" 
                 msg="$RUNMEM FORECAST MISSING for hour $fhr"
                 postmsg "$jlogfile" "$msg"
                 export err=9
@@ -449,8 +431,8 @@ do
         ###############################
         if [[ -f sigfile ]]; then rm -rf sigfile; fi
         if [[ -f flxfile ]]; then rm -rf flxfile; fi
-        ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.atmf$fhr.nemsio sigfile.f$fhr
-        ln -s $COMIN/$cyc/sfcsig/${RUNMEM}.t${cyc}z.sfcf$fhr.nemsio flxfile.f$fhr
+        ln -s $COMIN/sfcsig/${RUNMEM}.t${cyc}z.atmf$fhr.nemsio sigfile.f$fhr
+        ln -s $COMIN/sfcsig/${RUNMEM}.t${cyc}z.sfcf$fhr.nemsio flxfile.f$fhr
 
         ###################################3
         # Create Master Post File
@@ -464,14 +446,14 @@ do
         # add new environmental variables for running new ncep post
         # Validation date
 
-        # export VDATE=`${EXECutil}/ndate +${fhr} ${PDY}${cyc}`
-        export VDATE=`$NDATE +${fhr} ${PDY}${cyc}`
+        # export VDATE=$(${EXECutil}/ndate +${fhr} ${PDY}${cyc})
+        export VDATE=$($NDATE +${fhr} ${PDY}${cyc})
 
         # specify output file name from chgres which is input file name to nceppost
         # if model already runs gfs io, make sure GFSOUT is linked to the gfsio file
         # new imported variable for global_nceppost.sh
 
-        if test $fhr -gt 0; then
+        if [ $fhr -gt 0 ]; then
             export IGEN=$IGEN_FCST
         else
             export IGEN=$IGEN_ANL
@@ -479,11 +461,11 @@ do
         if [ $GRIBVERSION = grib1 ]; then
             export CTLFILE=$PARMgefs/gefs_master_fhh.parm
         else
-            if test $fhr -eq 0; then
+            if [ $fhr -eq 0 ]; then
 #               export CTLFILE=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
                 export PostFlatFile=${FLTFILEGFSF00:-$PARMPOST/postxconfig-NT-GEFS-F00.txt}
             else
-                if test $fhr -le 96; then
+                if [ $fhr -le 96 ]; then
 #                   export CTLFILE=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml_long}
                     export PostFlatFile=${FLTFILEGFS:-$PARMPOST/postxconfig-NT-GEFS.txt}
                 else
@@ -505,8 +487,8 @@ do
         export FLXIOUT=flxifile.f$fhr
         if [[ -f pgbfout ]]; then rm -rf pgbfout; fi
         if [[ -f pgbifout ]]; then rm -rf pgbifout; fi
-        ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2f$fhr pgbfout
-        ln -s $COMOUT/$cyc/master/$RUNMEM.$cycle.master.grb2if$fhr pgbifout
+        ln -s $COMOUT/master/$RUNMEM.$cycle.master.grb2f$fhr pgbfout
+        ln -s $COMOUT/master/$RUNMEM.$cycle.master.grb2if$fhr pgbifout
         export PGBOUT=pgbfout
         export PGIOUT=pgbifout
         #export ANOMCATSH=${USHgfs}/global_anomcat.sh
@@ -533,30 +515,30 @@ do
             echo pgm=$pgm completed successfully
         else
             msg="FATAL ERROR: $pgm FAILED for member $RUNMEM hour $fhr"
-            echo "`date`    $msg"
+            echo "$(date)    $msg"
             postmsg "$jlogfile" "$msg"
             export err=$rc
             err_chk
         fi # (( rc == 0 ))
 
-        pgbfoutd=`readlink -nf pgbfout`
+        pgbfoutd=$(readlink -nf pgbfout)
         if [[ ! -s $pgbfoutd ]]; then
             msg="FATAL ERROR: $pgbfoutd WAS NOT WRITTEN"
-            echo "`date`    $msg"
+            echo "$(date)    $msg"
             postmsg "$jlogfile" "$msg"
             export err=1
             err_chk
         fi # [[ ! -s $pgbfoutd ]]
-        pgbifoutd=`readlink -nf pgbifout`
+        pgbifoutd=$(readlink -nf pgbifout)
         if [[ ! -s $pgbifoutd ]]; then
             msg="FATAL ERROR: $pgbifoutd WAS NOT WRITTEN"
-            echo "`date`    $msg"
+            echo "$(date)    $msg"
             postmsg "$jlogfile" "$msg"
             export err=1
             err_chk
         fi # [[ ! -s $pgbifoutd ]]
 
-        if test $SENDCOM = "YES"; then
+        if [ $SENDCOM = "YES" ]; then
             echo
             ls -al $PGBOUT $PGBIOUT
             echo
@@ -565,19 +547,19 @@ do
             ls -al  $mcfile
             cat  $mcfile
             echo "f${fhr}_done" >> $post_log
-            # ecflow_client --label info "`cat $post_log`"
+            # ecflow_client --label info "$(cat $post_log)"
             ecflow_client --event f${fhr}_done
             echo
         fi # test $SENDCOM = "YES"
     fi # [[ ! -s $mcfile ]]
 
-    ##export fhr=`expr $fhr + $FHINC`
-    #export fhrtest=`expr $fhr + $FHINC`
+    ##export fhr=$(expr $fhr + $FHINC)
+    #export fhrtest=$(expr $fhr + $FHINC)
     #if [ $FHMAXHF -gt 0 -a $FHOUTHF -gt 0 -a $fhrtest -ge $FHMAXHF -a $fhr -lt $FHMAXHF ]; then
     #    export FHINC=$FHOUT
-    #    export fhr=`expr $FHMAX_HF`
+    #    export fhr=$(expr $FHMAX_HF)
     #else
-    #    export fhr=`expr $fhr + $FHINC`
+    #    export fhr=$(expr $fhr + $FHINC)
     #fi
 
 done # for fhr in RUN_HOURS # while (( fhr <= FHOUR ))
@@ -586,12 +568,12 @@ cat $pgmout
 
 if [ $err -eq 0 ] ; then
     msg="ENDED NORMALLY!!!"
-    echo "`date`    $msg"
+    echo "$(date)    $msg"
     postmsg "$jlogfile" "$msg"
     exit 0
 else
     msg="FATAL ERROR: FAILED to do the post!!!"
-    echo "`date`    $msg"
+    echo "$(date)    $msg"
     postmsg "$jlogfile" "$msg"
     exit $err
 fi

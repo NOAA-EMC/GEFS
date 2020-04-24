@@ -10,6 +10,7 @@
                        "Build_global_enscqpf" "Build_global_enscvt24h" \
                        "Build_global_ensrfmat" "Build_gettrk" \
                        "Build_overenstr_grib" "Build_getnsttf" \
+                       "Build_wave_stat" "Build_wave_stat" \
                        "Build_libs" "Build_fv3gfs" \
                        "Build_gsi" "Build_ncep_post" \
                        "Build_gfs_wafs" \

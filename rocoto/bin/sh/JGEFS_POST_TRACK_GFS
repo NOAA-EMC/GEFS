@@ -1,0 +1,165 @@
+#!/bin/ksh 
+#####################################################################
+#1/13/2015, Jiayi Peng and Dingchen Hou, created following JGEFS_POST_TRACK, for GFS tracks (up to 240hrs forecasts)
+####################################################################
+echo $(date) $0 $(date -u) begin
+
+set -xa
+export PS4='$SECONDS + '
+date
+
+export total_tasks=${total_tasks:-21}
+export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
+export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
+#export APRUNTRACK="aprun -j1 -n1 -N1 -d1"
+#export NODES=1
+#export IOBUF_PARAMS="*:size=32M:count=4:verbose"
+
+####################################
+# obtain unique process id (pid) and make temp directory
+####################################
+export pid=$$
+export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
+mkdir -p $DATA
+cd $DATA
+
+############################
+# Set up cycle varaible
+############################
+export cycle=t${cyc}z
+
+echo cyc=$cyc
+echo cycle=$cycle 
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gefs}
+export RUN=${RUN:-gefs}
+
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
+
+####################################
+# Specify Execution Areas
+####################################
+export HOMEtrak=${HOMEtrak:-${NWROOT}/ens_tracker.${tracker_ver}}
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+
+export EXECens_tracker=${EXECtrak:-$HOMEtrak/exec}
+export USHens_tracker=${USHtrak:-$HOMEtrak/ush}
+export FIXens_tracker=${FIXtrak:-$HOMEtrak/fix}
+export SCRIPTSens_tracker=${SCRIPTSens_tracker:-$HOMEtrak/scripts}
+
+export PARMgefs=$HOMEgefs/parm
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+#ksh setup.sh
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+setpdy.sh
+. PDY
+#export PDY=20160709
+
+##############################################
+# Define COM directories
+##############################################
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}}
+export COMINsyn=${COMINsyn:-$(compath.py arch/prod/syndat)}
+
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/tctrack}
+export COMOUThur=${COMOUThur:-${COMROOTp1}/hur/${envir}/global}
+export COMOUTatcf=${COMOUTatcf:-${COMROOTp1}/nhc/${envir}/atcf}
+mkdir -m 775 -p $COMOUT $COMOUThur $COMOUTatcf
+
+##############################################
+#echo set parameters using gefs.parm, if needed
+##############################################
+#. $PARMgefs/gefs.parm
+
+export homesyndir=$HOMEtrak
+
+echo
+env | sort
+echo
+
+########################################################
+# Execute the tracking script.
+export cmodel=gfs
+export loopnum=1
+export ymdh=${PDY}${cyc}
+
+export gfsdir=${COMINgfs}
+
+export pert="p01"
+pertdir=${DATA}/${cmodel}/${pert}
+mkdir -p $pertdir
+
+#-----------input data checking -----------------
+${USHens_tracker}/data_check.sh
+#------------------------------------------------
+
+outfile=${pertdir}/trkr.${cmodel}.${pert}.${ymdh}.out
+$APRUN ${USHens_tracker}/extrkr_g2.sh ${loopnum} ${cmodel} ${ymdh} ${pert} ${pertdir} 2>&1 >${outfile}
+export err=$?; err_chk
+
+#if [ ${SENDCOM} = 'NO' ]; then
+#  cp ${pertdir}/trak.avnx.atcfunix.${PDY}${cyc} ${COMOUT}/avnx.t${cyc}z.cyclone.trackatcfunix
+#fi
+
+if [ "$SENDCOM" = 'YES' ]; then
+  cp ${pertdir}/vitals.upd.avnx.${PDY}${cyc} ${COMOUT}/
+  cp ${pertdir}/vitals.upd.avnx.${PDY}${cyc} ${COMOUT}/vitals.upd.gfsx.${PDY}${cyc}
+
+  #cp ${pertdir}/trak.avnx.atcfunix.${PDY}${cyc} ${COMOUT}/trak.gfsx.atcfunix.${PDY}${cyc}
+  #cat ${COMOUT}/trak.gfsx.atcfunix.${PDY}${cyc} | \
+  cat ${pertdir}/trak.avnx.atcfunix.${PDY}${cyc} | \
+      sed s:AVNX:GFSX:g \
+    > ${COMOUT}/gfsx.t${cyc}z.cyclone.trackatcfunix
+  #rm -f ${COMOUT}/trak.gfsx.atcfunix.${PDY}${cyc}
+fi
+
+cd $DATA
+rm -rf ${DATA}/${cmodel}
+
+${USHens_tracker}/atcf_2_cxml.sh ${cmodel} ${ymdh} ${COMOUT} ${DATA} 
+export err=$?; err_chk
+
+################################
+msg="JOB COMPLETED NORMALLY"
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Remove the Temporary working directory
+##############################
+if [[ $KEEPDATA != "YES" ]]; then
+	cd $DATAROOT
+	rm -rf $DATA
+fi
+
+$(date) $0 $(date -u) end

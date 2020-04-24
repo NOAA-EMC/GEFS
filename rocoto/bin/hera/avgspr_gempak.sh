@@ -18,5 +18,5 @@ export MEMORY_AFFINITY=core:6
 #export taskspernode=$SLURM_CPUS_ON_NODE
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_AVGSPR_GEMPAK
+$SOURCEDIR/jobs/JGEFS_ATMOS_AVGSPR_GEMPAK
 

@@ -29,7 +29,7 @@ cd $DATA/$m
       WMOHEAD=JUSX4$m
     fi
 
-    for stn in `cat $file_list`
+    for stn in $(cat $file_list)
     do
        cp ${COMOUT}/bufr/$mem/bufr.$stn.$PDY$cyc ${DATA}/${m}/bufrin
        export pgm=tocsbufr
@@ -59,7 +59,7 @@ EOF
        rm $DATA/${m}/bufrout
     done
 
-    if test $SENDCOM = 'YES'
+    if [ $SENDCOM = 'YES' ]
     then 
       if [ $SENDDBN = 'YES' ] ; then
          cp $DATA/${m}/${RUNMEM}_collective$m.fil $pcom/${RUNMEM}_collective$m.postsnd_$cyc
