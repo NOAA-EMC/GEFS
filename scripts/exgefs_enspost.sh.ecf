@@ -192,7 +192,7 @@ while test $fh -le $FHOUR; do
 			for mem in $memberlist; do
 				(( nmem = nmem + 1 ))
 				testfile=$COMIN/pgrb2$lr/ge${mem}.${cycle}.pgrb2$FXT\f$fh$EXT.idx
-				if test -f $testfile; then
+				if [ -f $testfile ]; then
 					echo testfile=$testfile found
 					(( nfiles = nfiles + 1 ))
 					if [[ $mem = gfs ]]; then
@@ -345,9 +345,9 @@ while test $fh -le $FHOUR; do
 				rain) TEXT='CRAIN:surface';;
 				icep) TEXT='CICEP:surface';;
 				frzr) TEXT='CFRZR:surface';;
-                                u200) TEXT='UGRD:200 mb';;
-                                v200) TEXT='VGRD:200 mb';;
-                                olr) TEXT='ULWRF:top of atmosphere';;
+                u200) TEXT='UGRD:200 mb';;
+                v200) TEXT='VGRD:200 mb';;
+                olr) TEXT='ULWRF:top of atmosphere';;
 			esac # $var
 			echo $var  $TEXT  
 			for mem in $memberlist; do
@@ -381,7 +381,7 @@ while test $fh -le $FHOUR; do
 	done # for res in lr
 
 	export fh=`expr $fh + $FHINC`
-	if test $fh -lt 10; then
+	if [ $fh -lt 10 ]; then
 		export fh="0$fh"
 	fi
 done # while test $fh -le $FHOUR
@@ -427,10 +427,11 @@ ecflow_client --event enspost_grb2_ready
 ## write out with ensemble extended messages
 ##
 #
-if test "$cycle" = "skipthis"; then
-#if test "$cycle" = "t00z"; then
+#if test "$cycle" = "skipthis"; then
+if [[ "$cycle" == "t00z" ]] && [[ -z $ext_h ]]; then
 	#  $ENSPPF $COMOUT/$cyc/ensstat/enspost.$cycle.prcp $COMOUT/$cyc/ensstat/enspost${ext_h}.$cycle.prcpi ensppf${ext_h}.$PDY$cyc
-	$ENSPPF $COMOUT/ensstat/enspost_grb2.$cycle.prcp ensppf${ext_h}.$PDY$cyc.grib2  $npert
+	#$ENSPPF $COMOUT/ensstat/enspost_grb2.$cycle.prcp ensppf${ext_h}.$PDY$cyc.grib2  $npert
+    $ENSPPF $COMOUT/ensstat/enspost_grb2${ext_h}.$cycle.prcp ensppf${ext_h}.$PDY$cyc.grib2  $npert
 	$WGRIB2 ensppf${ext_h}.$PDY$cyc.grib2 -s >ensppf${ext_h}.$PDY$cyc.grib2.idx 
 
 	###########################
