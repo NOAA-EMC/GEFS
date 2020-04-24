@@ -32,5 +32,5 @@ module list
 # Export List
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_GEMPAK_META
+$SOURCEDIR/jobs/JGEFS_ATMOS_GEMPAK_META
 

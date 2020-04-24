@@ -31,4 +31,4 @@ module list
 # Export List
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JWAVE_INIT
+$SOURCEDIR/jobs/JGEFS_WAVE_INIT

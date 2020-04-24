@@ -35,4 +35,4 @@ module list
 # Export List
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_INIT_AEROSOL
+$SOURCEDIR/jobs/JGEFS_CHEM_INIT

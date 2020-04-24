@@ -16,4 +16,4 @@ export POSTGRB2TBL=$G2TMPL_SRC/params_grib2_tbl_new
 export ERRSCRIPT=" "
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_NCEPPOST
+$SOURCEDIR/jobs/JGEFS_ATMOS_POST

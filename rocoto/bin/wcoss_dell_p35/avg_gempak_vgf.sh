@@ -32,5 +32,5 @@ module list
 # Export List
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_AVG_GEMPAK_VGF
+$SOURCEDIR/jobs/JGEFS_ATMOS_AVG_GEMPAK_VGF
 

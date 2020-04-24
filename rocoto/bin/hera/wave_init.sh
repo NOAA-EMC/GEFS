@@ -4,4 +4,4 @@
 export jlogfile=/dev/null
 export jobid=${job}.$$
 
-$SOURCEDIR/jobs/JWAVE_INIT
+$SOURCEDIR/jobs/JGEFS_WAVE_INIT

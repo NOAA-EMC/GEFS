@@ -20,5 +20,5 @@ export memdir_template='$ROTDIR/enkf.$CDUMP.$PDY/$cyc'
 
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_FORECAST_FV3
+$SOURCEDIR/jobs/JGEFS_FORECAST
 

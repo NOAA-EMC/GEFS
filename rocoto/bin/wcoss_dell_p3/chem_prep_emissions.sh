@@ -35,4 +35,4 @@ module list
 # Export List
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_PREP_EMISSIONS
+$SOURCEDIR/jobs/JGEFS_CHEM_PREP_EMISSIONS

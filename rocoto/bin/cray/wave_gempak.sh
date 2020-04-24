@@ -5,5 +5,4 @@ ulimit -a
 
 module load gempak/7.3.1
 
-
-$SOURCEDIR/jobs/JWAVE_GEMPAK
+$SOURCEDIR/jobs/JGEFS_WAVE_GEMPAK

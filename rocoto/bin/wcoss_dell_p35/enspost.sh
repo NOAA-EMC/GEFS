@@ -32,4 +32,4 @@ module list
 # Export List
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_ENSPOST
+$SOURCEDIR/jobs/JGEFS_ATMOS_ENSPOST

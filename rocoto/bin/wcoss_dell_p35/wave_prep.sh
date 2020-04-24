@@ -32,4 +32,4 @@ module list
 # Export List
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JWAVE_PREP
+$SOURCEDIR/jobs/JGEFS_WAVE_PREP
