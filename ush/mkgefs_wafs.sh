@@ -27,7 +27,7 @@ gid="$1"
 sid="$2"
 num=$#
 
-if test $num -eq 2
+if [ $num -eq 2 ]
 then
    echo ""
    echo " Appropriate number of arguments were passed"
@@ -95,7 +95,7 @@ do
       $CNVGRIB -g12 -p40 wafs${grid}.${cycle}.ens${hr} wafs${grid}.${cycle}.ens${hr}.grib2
       $GRB2INDEX wafs${grid}.${cycle}.ens${hr}.grib2 wafs${grid}.${cycle}.ens${hr}.grib2.idx
 
-      if test $SENDCOM = 'YES'
+      if [ $SENDCOM = 'YES' ]
       then
          cpfs wafs${grid}.${cycle}.ens${hr} $COMOUT/wafs${grid}.${cycle}.ens${hr}
          cpfs wafs${grid}.${cycle}.ens${hr}.grib2 $COMOUT/wafs${grid}.${cycle}.ens${hr}.grib2

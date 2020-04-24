@@ -133,14 +133,14 @@ else
 	##############################################
 	# Save the master files at 0p5 grid for fcst beyond day 10
 	##############################################
-	if test "$save_pgrb2_p5" = 'YES' -a "$jobgrid" = '0p5'; then
+	if [ "$save_pgrb2_p5" = 'YES' -a "$jobgrid" = '0p5' ]; then
 		if (( fhr > FHMAXHF )); then
 			$WGRIB2 -s pgb2file.$ffhr > pgb2file.${ffhr}.idx
 			mv pgb2file.${ffhr} $mafile_p5 
 			mv pgb2file.${ffhr}.idx $mifile_p5
 		fi
 	fi
-	if test "$save_pgrb2_p25" = 'YES' -a "$jobgrid" = '0p25'; then
+	if [ "$save_pgrb2_p25" = 'YES' -a "$jobgrid" = '0p25' ]; then
 		if (( fhr <= FHMAXHF )); then
 			$WGRIB2 -s pgb2file.$ffhr > pgb2file.${ffhr}.idx
 			mv pgb2file.${ffhr} $mafile_p25 

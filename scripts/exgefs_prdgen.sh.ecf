@@ -194,7 +194,7 @@ for hour in $hours; do
 			####################################
 			# send control files to misc
 			####################################
-			if test $SENDCOM = "YES"; then
+			if [ $SENDCOM = "YES" ]; then
 				echo "$PDY$cyc$fhr" > $pcfile
 			fi # test $SENDCOM = "YES"
 		fi # [[ ! -s $pcfile ]]

@@ -253,7 +253,7 @@ if [ $DOANALYSIS = YES ]; then
         export pgm="postcheck"
         ic=0
         while [ $ic -le $SLEEP_LOOP_MAX ]; do
-            if test -f $COMIN/init/${RUNMEM}.t${cyc}z.sanl; then
+            if [ -f $COMIN/init/${RUNMEM}.t${cyc}z.sanl ]; then
                 break
             else
                 ic=$(expr $ic + 1)
@@ -273,7 +273,7 @@ if [ $DOANALYSIS = YES ]; then
             fi
         done  #while [ $ic -le $SLEEP_LOOP_MAX ]
 
-        if test -f $COMIN/init/${RUNMEM}.t${cyc}z.sanl; then
+        if [ -f $COMIN/init/${RUNMEM}.t${cyc}z.sanl ]; then
             # add new environmental variables for running new ncep post
             # Validation date
 
@@ -359,7 +359,7 @@ if [ $DOANALYSIS = YES ]; then
             fi # [[ ! -s $pgbifoutd ]]
 
             # 20100730 create a separate log file for the analysis for use by prdgen job
-            if test $SENDCOM = "YES"; then
+            if [ $SENDCOM = "YES" ]; then
                 echo
                 ls -al $PGBOUT $PGBIOUT
                 echo
@@ -403,7 +403,7 @@ do
         ic=1
 
         while [ $ic -le $SLEEP_LOOP_MAX ]; do
-            if test -f $restart_file$fhr\.nemsio; then
+            if [ -f $restart_file$fhr\.nemsio ]; then
                 break
             else
                 ic=$(expr $ic + 1)
@@ -453,7 +453,7 @@ do
         # if model already runs gfs io, make sure GFSOUT is linked to the gfsio file
         # new imported variable for global_nceppost.sh
 
-        if test $fhr -gt 0; then
+        if [ $fhr -gt 0 ]; then
             export IGEN=$IGEN_FCST
         else
             export IGEN=$IGEN_ANL
@@ -461,11 +461,11 @@ do
         if [ $GRIBVERSION = grib1 ]; then
             export CTLFILE=$PARMgefs/gefs_master_fhh.parm
         else
-            if test $fhr -eq 0; then
+            if [ $fhr -eq 0 ]; then
 #               export CTLFILE=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
                 export PostFlatFile=${FLTFILEGFSF00:-$PARMPOST/postxconfig-NT-GEFS-F00.txt}
             else
-                if test $fhr -le 96; then
+                if [ $fhr -le 96 ]; then
 #                   export CTLFILE=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml_long}
                     export PostFlatFile=${FLTFILEGFS:-$PARMPOST/postxconfig-NT-GEFS.txt}
                 else
@@ -538,7 +538,7 @@ do
             err_chk
         fi # [[ ! -s $pgbifoutd ]]
 
-        if test $SENDCOM = "YES"; then
+        if [ $SENDCOM = "YES" ]; then
             echo
             ls -al $PGBOUT $PGBIOUT
             echo

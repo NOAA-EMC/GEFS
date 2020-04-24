@@ -59,7 +59,7 @@ EOF
        rm $DATA/${m}/bufrout
     done
 
-    if test $SENDCOM = 'YES'
+    if [ $SENDCOM = 'YES' ]
     then 
       if [ $SENDDBN = 'YES' ] ; then
          cp $DATA/${m}/${RUNMEM}_collective$m.fil $pcom/${RUNMEM}_collective$m.postsnd_$cyc

@@ -58,7 +58,7 @@ awk ' $14 !~/-9*/ {print $0}' > rfc24-xuniq
 #     In GEFS prod, the cqpf job rus at about 00Z+5:30 and the SHEF file
 #     used if for previous day, which would be frozen after 00Z today. 
 zh1=19
-if test $zh1 -gt 12
+if [ $zh1 -gt 12 ]
 then
 	cp -pr rfc24-xuniq $DATA/rfc24-uniq-early-shef
 else

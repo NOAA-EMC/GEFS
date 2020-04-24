@@ -74,7 +74,7 @@ do
         mem2=$(printf %02i $mem)
         ic=0
         while [ $ic -le $SLEEP_LOOP_MAX ]; do
-            if test -f  $COMIN/sfcsig/gep${mem2}.${cycle}.logf${fhr}.nemsio; then
+            if [ -f  $COMIN/sfcsig/gep${mem2}.${cycle}.logf${fhr}.nemsio ]; then
                 $NLN $COMIN/sfcsig/gep${mem2}.${cycle}.atmf${fhr}.nemsio ./atm_mem$mem
                 $NLN $COMIN/sfcsig/gep${mem2}.${cycle}.sfcf${fhr}.nemsio ./sfc_mem$mem
                 break

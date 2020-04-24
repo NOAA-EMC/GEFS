@@ -40,7 +40,7 @@ export fhr
 while test $fhr -le $FHOUR; do
 	echo $(date) f$fhr begin
 
-	if test "$SENDCOM" = "YES"; then
+	if [ "$SENDCOM" = "YES" ]; then
 		#
 		# Save Pressure and SFLUX GRIB/GRIB Index files
 		#
@@ -63,7 +63,7 @@ while test $fhr -le $FHOUR; do
 	else
 		export fhr=$(expr $fhr + $FHINC)
 	fi
-	if test $fhr -lt 10; then
+	if [ $fhr -lt 10 ]; then
 		export fhr="0$fhr"
 	fi
 done # while test $fhr -le $FHOUR

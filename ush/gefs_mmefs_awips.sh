@@ -64,7 +64,7 @@ do
     ic=1
     while [ $ic -le $SLEEP_LOOP_MAX ]
     do
-       if test -f ${COMIN}/${type}_bc/${id}.t${cyc}z.${type}_bcf${hr}
+       if [ -f ${COMIN}/${type}_bc/${id}.t${cyc}z.${type}_bcf${hr} ]
        then
           break
        else

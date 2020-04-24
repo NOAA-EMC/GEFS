@@ -20,7 +20,7 @@ echo "History: February 2003 - First implementation of this utility script"
 
 set -ax
 
-if test "$F00FLAG" = "YES"
+if [ "$F00FLAG" = "YES" ]
 then
     f00flag=".true."
 else
@@ -30,7 +30,7 @@ fi
 export pgm=gfs_bufr
 #. prep_step
 
-if test "$MAKEBUFR" = "YES"
+if [ "$MAKEBUFR" = "YES" ]
 then
     bufrflag=".true."
 else
@@ -55,7 +55,7 @@ cat << EOF > gfsparm
 EOF
 
 hh=$FSTART
-if test $hh -lt 100
+if [ $hh -lt 100 ]
 then
     hh1=$(echo "${hh#"${hh%??}"}")
     hh=$hh1
@@ -63,7 +63,7 @@ fi
 
 while  test $hh -le $FEND
 do  
-    if test $hh -lt 100
+    if [ $hh -lt 100 ]
     then
         hh2=0$hh
     else
@@ -95,7 +95,7 @@ do
     ln -sf $COMIN/sfcsig/${RUNMEM}.${cycle}.${SFCF}f${hh2}.nemsio flxf${hh}
 
     hh=$( expr $hh + $FINT )
-    if test $hh -lt 10
+    if [ $hh -lt 10 ]
     then
         hh=0$hh
     fi

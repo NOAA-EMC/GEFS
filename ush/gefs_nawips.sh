@@ -94,7 +94,7 @@ while [ $fhcnt -le $fend ] ; do
             # create subdirectory for the bc and an gefs files, -- 05/16/2013
             # so that the mag system can only take the expected gefs files
             # COMOUT_hold=$COMOUT
-            if test "$model" = "bc" -o "$model" = "an"; then
+            if [ "$model" = "bc" -o "$model" = "an" ]; then
                 COMOUT=${COMOUT_hold}/${model}
                 mkdir -p -m 775 $COMOUT
              fi

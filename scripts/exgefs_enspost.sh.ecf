@@ -66,7 +66,7 @@ varlout=" \
 ensppf pqpf  pqsf  pqff  pqrf  pqif \
 "
 
-if test "$SENDCOM" = 'YES'; then
+if [ "$SENDCOM" = 'YES' ]; then
 	for file in enspost${ext_h} ensstat${ext_h}; do
 		#   for FIELD in $varlboth $varlnostat $varlout
 		for FIELD in $epnamhr $epnamlr $varlout; do
@@ -113,10 +113,10 @@ SLEEP_LOOP_MAX=$(expr $SLEEP_TIME / $SLEEP_INT)
 
 export fh=$SHOUR
 #export  (( fh = SHOUR ))
-if test $fh -lt 10 -a $fh -gt 0; then
+if [ $fh -lt 10 -a $fh -gt 0 ]; then
 	export fhr="0$fh"
 fi
-#if test $fh -lt 100 -a $fh -gt 0
+#if [ $fh -lt 100 -a $fh -gt 0 ]
 #then
 #   export fhr="0$fh"
 #fi
@@ -132,7 +132,7 @@ while test $fh -le $FHOUR; do
 	# for res in lr hr p5
 
         #Change the $fh value from 2 digit to 3 digit 
-	if test $fh -lt 100; then
+	if [ $fh -lt 100 ]; then
 		export fh="0$fh"
 	fi
 
@@ -192,7 +192,7 @@ while test $fh -le $FHOUR; do
 			for mem in $memberlist; do
 				(( nmem = nmem + 1 ))
 				testfile=$COMIN/pgrb2$lr/ge${mem}.${cycle}.pgrb2$FXT\f$fh$EXT.idx
-				if test -f $testfile; then
+				if [ -f $testfile ]; then
 					echo testfile=$testfile found
 					(( nfiles = nfiles + 1 ))
 					if [[ $mem = gfs ]]; then
@@ -381,7 +381,7 @@ while test $fh -le $FHOUR; do
 	done # for res in lr
 
 	export fh=$(expr $fh + $FHINC)
-	if test $fh -lt 10; then
+	if [ $fh -lt 10 ]; then
 		export fh="0$fh"
 	fi
 done # while test $fh -le $FHOUR
@@ -427,8 +427,8 @@ ecflow_client --event enspost_grb2_ready
 ## write out with ensemble extended messages
 ##
 #
-if test "$cycle" = "skipthis"; then
-#if test "$cycle" = "t00z"; then
+if [ "$cycle" = "skipthis" ]; then
+#if [ "$cycle" = "t00z" ]; then
 	#  $ENSPPF $COMOUT/$cyc/ensstat/enspost.$cycle.prcp $COMOUT/$cyc/ensstat/enspost${ext_h}.$cycle.prcpi ensppf${ext_h}.$PDY$cyc
 	$ENSPPF $COMOUT/ensstat/enspost_grb2.$cycle.prcp ensppf${ext_h}.$PDY$cyc.grib2  $npert
 	$WGRIB2 ensppf${ext_h}.$PDY$cyc.grib2 -s >ensppf${ext_h}.$PDY$cyc.grib2.idx 
