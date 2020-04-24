@@ -9,7 +9,7 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 export total_tasks=${GEFS_NTASKS}
 export OMP_NUM_THREADS=${GEFS_TPP}
 export taskspernode=${GEFS_PPN}
-export NET=gens
+export NET=${NET:-gefs}
 
 # Calculate the number of tasks based on the task geometry
 #(( NTASKS=$(echo $LSB_PJL_TASK_GEOMETRY | grep -Po "\d+" | sort -n | tail -1) + 1 ))
