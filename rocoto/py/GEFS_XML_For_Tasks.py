@@ -398,7 +398,7 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
         if taskname in metatask_names:
             strings += ""
         else:
-            if sQueue.endswith("_shared") and taskname in ['ensstat_hr', 'enspost_hr', 'ensstat_lr', 'enspost_lr']:
+            if sQueue.endswith("_shared") and taskname in ['ensstat_hr', 'enspost_hr', 'ensstat_lr', 'enspost_lr', 'gempak']:
                 strings += ""
             else:
                 strings += sPre_2 + "<native>-R 'affinity[core(1)]'</native>\n"
