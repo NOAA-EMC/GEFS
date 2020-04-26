@@ -27,7 +27,7 @@ if [ -d /scratch2/NCEPDEV ]; then
     echo "Using settings for Hera"
     export machine='HERA'
     
-    export HOMEDIR=${HOMEDIR:-/scratch2/NCEPDEV/ensemble/noscrub/common/git/global_workflow/gefs_wave_20200414_b93bb070}
+    export HOMEDIR=${HOMEDIR:-/scratch2/NCEPDEV/ensemble/noscrub/common/git/global_workflow/gefs_v12_20200425_8e71be78}
     export HOMERFC=/scratch2/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
     export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/common
 
@@ -35,7 +35,8 @@ if [ -d /scratch2/NCEPDEV ]; then
     export COMROOTp1=/scratch2/NCEPDEV/rstprod/com 
     export PATH=$PATH:/scratch2/NCEPDEV/nwprod/NCEPLIBS/util/prod_util.v1.1.0/ush
 
-    export GBBEPX_DATA_DIR=$HOMEdata/GBBEPx
+    export GBBEPX_DATA_DIR_TODAY=$HOMEdata/GBBEPx
+    export GBBEPX_DATA_DIR_YESTERDAY=$HOMEdata/GBBEPx
     export gbbepx_pattern='$GBBEPX_DATA_DIR/${local_name}.${day}.FV3.${CASE}Grid.${tiledir}.bin' # single-quotes required
     export gbbepx_days='$PDYm1' # single-quotes required
     export gbbepx_list="GBBEPx.bc GBBEPx.oc GBBEPx.so2 GBBEPx.pm25 meanFRP"
@@ -45,7 +46,7 @@ elif [[ -d /gpfs/hps && -e /etc/SuSE-release ]] ; then
     echo "Using settings for WCOSS Cray"
     export machine='WCOSS_C'
     export JOBPHASE=
-    export HOMEDIR=${HOMEDIR:-/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/global_workflow/gefs_wave_20200414_b93bb070}
+    export HOMEDIR=${HOMEDIR:-/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/global_workflow/gefs_v12_20200425_8e71be78}
     export HOMEtrak=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
     export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
     export archsyndir=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/TCvitalData/syndat
@@ -55,7 +56,7 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     echo "Using settings for WCOSS DELL Phase III"
     export machine='WCOSS_DELL_P3'
     export JOBPHASE=
-    export HOMEDIR=${HOMEDIR:-/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/global_workflow/gefs_wave_20200414_b93bb070}
+    export HOMEDIR=${HOMEDIR:-/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/global_workflow/gefs_v12_20200425_8e71be78}
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
     # export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
     export archsyndir=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/TCvitalData/syndat
