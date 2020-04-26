@@ -367,7 +367,7 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
         if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]: #, "cray".upper()]:
             #if taskname in ["prdgen_hr", "ensstat_hr", "wave_gempak"]:
             if sQueue.endswith("_shared"):
-                strings += sPre_2 + '<native>-R "affinity[core(4):distribute=pack]"</native>\n'
+                strings += sPre_2 + '<native>-R "affinity[core(1):distribute=pack]"</native>\n'
                 strings += sPre_2 + '<native>-R "rusage[mem=4608]"</native>\n'
 
     # -------------------sNodes-------------------
@@ -398,7 +398,7 @@ def create_metatask_task(dicBase, taskname="init_fv3chgrs", sPre="\t", GenTaskEn
         if taskname in metatask_names:
             strings += ""
         else:
-            if sQueue.endswith("_shared") and taskname in ['ensstat_hr', 'enspost_hr', 'ensstat_lr', 'enspost_lr', 'gempak']:
+            if sQueue.endswith("_shared") and taskname in ['ensstat_hr', 'enspost_hr', 'ensstat_lr', 'enspost_lr', 'gempak', 'gempak_meta', 'avgspr_gempak_meta', 'ensavg_nemsio', 'postsnd']:
                 strings += ""
             else:
                 strings += sPre_2 + "<native>-R 'affinity[core(1)]'</native>\n"
