@@ -94,7 +94,7 @@ def read_config(sConfig):
     from collections import OrderedDict
     dicBase = OrderedDict()
     iTaskName_Num = 0
-    with open(sConfig, "r")as f:
+    with open(sConfig, "r") as f:
         for sLine in f:
             # print(sLine)
             sLine = sLine.strip()

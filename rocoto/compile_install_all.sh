@@ -163,12 +163,17 @@ if [ $CleanAll = "yes" ]; then
     rm -rf ../parm/parm_fv3diag
     rm -rf ../parm/post
     rm -rf ../parm/product
-    rm ../ush/gfs_nceppost.sh
-    rm ../ush/global_chgres.sh
-    rm ../ush/global_chgres_driver.sh
+    rm -f ../ush/gfs_nceppost.sh
+    rm -f ../ush/global_chgres.sh
+    rm -f ../ush/global_chgres_driver.sh
+    rm -f ../ush/wave_*
+    rm -f ../ush/merge_fv3_chem_tile.py
 
-    rm ../parm/prep_chem_sources.inp.IN
-    rm ../scripts/exglobal_prep_chem.bash
+    rm -f ../parm/prep_chem_sources.inp.IN
+    rm -f ../scripts/exglobal_prep_chem.bash
+    rm -f ../scripts/exwave_*
+    rm -f ../scripts/exglobal_fcst_nemsfv3gfs.sh
+    rm -rf ../env
 
 fi # for CleanAll
 

@@ -116,6 +116,7 @@ if [[ -d global-workflow.fd ]] ; then
 fi
 
 # Copy/Link parm files
+cd $pwd
 if [[ -d global-workflow.fd ]] ; then
     if [[ -d ../parm/parm_fv3diag ]]; then
         rm -rf ../parm/parm_fv3diag
@@ -134,6 +135,7 @@ if [[ -d global-workflow.fd ]] ; then
 fi
 
 # Copy/Link ush files
+cd $pwd
 if [[ -d global-workflow.fd ]] ; then
     $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/ush/global_chgres_driver.sh ../ush/
     $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/ush/global_chgres.sh ../ush/
@@ -143,6 +145,7 @@ if [[ -d global-workflow.fd ]] ; then
 fi
 
 # For Forecast
+cd $pwd
 if [[ -d global-workflow.fd ]] ; then
     sFile=exglobal_fcst_nemsfv3gfs.sh
     if [[ -e ../scripts/$sFile ]]; then
@@ -156,6 +159,8 @@ if [[ -d global-workflow.fd ]] ; then
 fi
 
 # For wave
+echo $pwd
+cd $pwd
 if [[ -d global-workflow.fd ]]; then
     lScripts="exwave_init.sh exwave_nawips.sh exwave_post_sbs.sh exwave_prep.sh exwave_stat.sh"
     for sFile in $lScripts; do
@@ -170,10 +175,10 @@ if [[ -d global-workflow.fd ]]; then
     if [[ -e ../env ]]; then
         if [[ -L ../env ]]; then
             rm ../env
-            $LINK sorc/global-workflow.fd/env ../
+            $LINK ${pwd}/global-workflow.fd/env ../
         fi
     else
-        $LINK sorc/global-workflow.fd/env ../
+        $LINK ${pwd}/global-workflow.fd/env ../
     fi
 fi
 
