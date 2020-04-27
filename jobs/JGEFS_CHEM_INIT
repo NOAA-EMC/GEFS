@@ -96,7 +96,9 @@ export GESIN=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
 ICSDIR_template=${ICSDIR_template:-$GESIN/$mem}
 ICSDIR=$(eval echo $ICSDIR_template)
 
-mkdir -p $COMOUT
+if [[ $SENDCOM == "YES" ]]; then
+	mkdir -p $COMOUT
+fi
 
 export gefs_cych=${gefs_cych:-6}
 

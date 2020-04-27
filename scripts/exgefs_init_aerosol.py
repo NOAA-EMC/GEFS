@@ -22,9 +22,9 @@ increment_file_pattern = "{path}/fv3_increment.nc"
 restart_dest_pattern = "{path}/RESTART/{filename}"
 
 restart_base_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/{component}/restart/{member}"  # Time of previous run
-restart_file_pattern = "{restart_base}/%Y%m%d.%H0000.{kind}.{tile}.nc"        # Time when restart is valid (current run)
-restart_core_res_file_pattern = "{restart_base}/%Y%m%d.%H0000.coupler.res"        # Time when restart is valid (current run)
-restart_coupler_file_pattern = "{restart_base}/%Y%m%d.%H0000.fv_core.res.nc"        # Time when restart is valid (current run)
+restart_file_pattern = "{restart_base}/%Y%m%d.%H0000.{kind}.{tile}.nc"                          # Time when restart is valid (current run)
+restart_core_res_file_pattern = "{restart_base}/%Y%m%d.%H0000.coupler.res"                      # Time when restart is valid (current run)
+restart_coupler_file_pattern = "{restart_base}/%Y%m%d.%H0000.fv_core.res.nc"                    # Time when restart is valid (current run)
 tracer_list_file_pattern = "{parm_gefs}/gefs_aerosol_tracer_list.parm"
 merge_script_pattern = "{ush_gfs}/merge_fv3_chem_tile.py"
 n_tiles = 6
@@ -34,8 +34,9 @@ fcst_file_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/{component}/sfcsig
 vert_coord_file_pattern = "{fix_gfs}/fix_am/global_hyblev.l{n_levels}.txt"
 
 com_base_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/{component}/init/{member}"
-max_lookback = 1
+max_lookback = 1  # Maximum number of cycles backwards to search for files
 
+# Namelist used by regrid
 regrid_namelist = cleandoc("""
     &nam_setup
         i_output={n_lon}
@@ -47,6 +48,7 @@ regrid_namelist = cleandoc("""
     /
     """)
 
+# Namelist used to calculate increment
 calcinc_namelist = cleandoc("""
     &setup
         datapath = './'
@@ -63,7 +65,7 @@ calcinc_namelist = cleandoc("""
     /
     """)
 
-# End configurable settings
+# End constant settings
 
 # Make sure print statements are flushed immediately, otherwise
 #   print statments may be out-of-order with subprocess output
@@ -72,6 +74,7 @@ print = partial(print, flush=True)
 tiles = list(map(lambda t: "tile{t}".format(t=t), range(1, n_tiles + 1)))
 
 
+# Main entry point when called as script on command line
 def main() -> None:
     # Read in environment variables and make sure they exist
     cdate = get_env_var("CDATE")
@@ -93,6 +96,7 @@ def main() -> None:
     calcinc_aprun = get_env_var('APRUN_CALCINC')
     imp_physics = get_env_var('imp_physics')
     resolution = get_env_var("CASE", fail_on_missing=False, default_value="C384")
+    send_com = get_env_var("SENDCOM", fail_on_missing=False, default_value="YES") == "YES"
 
     if (init_type not in ["warm", "cold"]):
         print("FATAL: Invalid AEROSOL_INIT_TYPE specified, aborting")
@@ -104,7 +108,6 @@ def main() -> None:
 
     atm_source_path = time.strftime(init_path_pattern.format(ges_root=ges_root, envir=envir, member="c00"))
     destination_path = time.strftime(init_path_pattern.format(ges_root=ges_root, envir=envir, member="aer"))
-    com_path = time.strftime(com_base_pattern.format(com_root=com_root, envir=envir, net=net, run=run, member="aer", component="chem"))
 
     # Even with exist_ok=True, makedirs sometimes throws a FileExistsError
     with contextlib.suppress(FileExistsError):
@@ -156,7 +159,6 @@ def main() -> None:
             init_type = "cold"
 
     if(init_type == "cold"):
-
         merge_script = merge_script_pattern.format(ush_gfs=ush_gfs)
         tracer_list_file = tracer_list_file_pattern.format(parm_gefs=parm_gefs)
 
@@ -166,18 +168,24 @@ def main() -> None:
         if (restart_files is not None):
             merge_tracers(merge_script, atm_filenames, restart_files, tracer_list_file)
 
-    shutil.rmtree(com_path, ignore_errors=True)
-    # Handle error for missing files due to possibility of dangling symlinks (ignore_dangling_symlinks doesn't work properly; Python Issue 38523)
-    try:
-        shutil.copytree(destination_path, com_path, ignore_dangling_symlinks=True)  # Copy data to COM
-    except shutil.Error as err:
-        # shutil.Error from copytree are tuples of src, dest, err
-        tuples = [t for t in err.args[0]]
-        exceptionStrings = [t[2] for t in tuples]
-        if all(e.startswith('[Errno 2] No such file or directory:') for e in exceptionStrings):
-            pass
-        else:
-            raise err
+    if(send_com):
+        # Copy init files to COM
+        com_path = time.strftime(com_base_pattern.format(com_root=com_root, envir=envir, net=net, run=run, member="aer", component="chem"))
+        shutil.rmtree(com_path, ignore_errors=True)
+
+        # Handle error for missing files due to possibility of dangling symlinks (ignore_dangling_symlinks doesn't work properly; Python Issue 38523)
+        try:
+            shutil.copytree(destination_path, com_path, ignore_dangling_symlinks=True)  # Copy data to COM
+        except shutil.Error as err:
+            # shutil.Error from copytree are tuples of src, dest, err
+            tuples = [t for t in err.args[0]]
+            exceptionStrings = [t[2] for t in tuples]
+            # Ignore any no such file errors, raise any others
+            if all(e.startswith('[Errno 2] No such file or directory:') for e in exceptionStrings):
+                pass
+            else:
+                raise err
+
     return
 
 
@@ -196,7 +204,7 @@ def get_env_var(varname: str, fail_on_missing: bool=True, default_value: str=Non
     return(var)
 
 
-# Check if init files exist
+# Check if init files from the control exist
 def get_init_files(path: str, kind: str) -> typing.List[str]:
     files = list(map(lambda tile: init_file_pattern.format(tile=tile, path=path, kind=kind), tiles))
     for file_name in files:
@@ -240,6 +248,7 @@ def get_tracer_restart_files(time: datetime, incr: int, max_lookback: int, com_r
         return None
 
 
+# Find last cycle with all needed restart files and return a list of those files
 def get_all_restart_files(time: datetime, incr: int, max_lookback: int, com_root: str, net: str, envir: str, run: str) -> typing.List[str]:
     for lookback in map(lambda i: incr * (i + 1), range(max_lookback)):
         last_time = time - timedelta(hours=lookback)
@@ -263,7 +272,7 @@ def get_all_restart_files(time: datetime, incr: int, max_lookback: int, com_root
         return None
 
 
-# Merge tracer data into atmospheric data
+# Merge tracer data into atmospheric data (cold start)
 def merge_tracers(merge_script: str, atm_filenames: typing.List[str], restart_files: typing.List[str], tracer_list_file: str) -> None:
     if(len(atm_filenames) != len(restart_files)):
         print("FATAL: atmosphere file list and tracer file list are not the same length")
@@ -273,7 +282,7 @@ def merge_tracers(merge_script: str, atm_filenames: typing.List[str], restart_fi
         subprocess.call([merge_script, atm_file, tracer_file, tracer_list_file])
 
 
-# Regrid analysis file to ensemble resolution
+# Regrid analysis file to ensemble resolution to create warm-start increment
 def regrid_analysis(time: datetime, regrid_aprun: str, regrid_exec: str, max_lookback: int, com_root: str, com_gfs: str, fix_gfs: str, net: str, envir: str, run: str, destination_path: str, resolution: str, incr: int) -> str:
     n_lon = int(resolution[1:]) * 4
     n_lat = int(resolution[1:]) * 2
@@ -319,6 +328,7 @@ def calc_increment(calcinc_aprun: str, calcinc_exec: str, forecast_filename: str
     else:
         print("Calculate increment failed!")
         return False
+
 
 if __name__ == "__main__":
     main()
