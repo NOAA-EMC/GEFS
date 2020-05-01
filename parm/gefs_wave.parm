@@ -44,7 +44,7 @@ export wavepostGRD='' # Native grids that will be post-processed (grib2)
 export CDATE=${PDY}${cyc}
 
 # The start time reflects the number of hindcast hours prior to the cycle initial time
-if [ "$CDUMP" = "gdas" ]
+if [ "${CDUMP:-gefs}" = "gdas" ]; 
 then
   export FHMAX_WAV=${FHMAX_WAV:-9}
 fi
@@ -91,7 +91,7 @@ then
   gfs_cyc=$(expr 24 / ${gefs_cych})
   WAVNCYC=$gfs_cyc
   WAVHCYC=$gefs_cych
-elif [ "$CDUMP" = "gdas" ]
+elif [ "${CDUMP:-gefs}" = "gdas" ]
 then
   WAVNCYC=4
   WAVHCYC=6

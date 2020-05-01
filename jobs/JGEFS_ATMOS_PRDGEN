@@ -22,8 +22,6 @@ export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
 mkdir -p $DATA
 cd $DATA
 
-export jobgrid=$jobgrid
-
 ######################################
 # Set up the cycle variable
 ######################################
@@ -248,7 +246,7 @@ for stream in ${PRDGEN_STREAMS[@]}; do
 		do_analysis="${PRDGEN_DO_ANALYSIS[$stream]:-NO}"
 	EOF
 
-	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf $subdata \"$infile\" 2>&1 >${outfile}" >> prdgen.cmdfile
+	echo "$HOMEgefs/scripts/exgefs_prdgen.sh.ecf $stream $subdata \"$infile\" 2>&1 >${outfile}" >> prdgen.cmdfile
 
 done
 

@@ -93,8 +93,6 @@ export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/$cyc}
 export COMIN=${COMIN:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}}/$cyc/atmos/init
 export COMOUT=${COMOUT:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}}/$cyc/$COMPONENT/init
 export GESIN=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
-ICSDIR_template=${ICSDIR_template:-$GESIN/$mem}
-ICSDIR=$(eval echo $ICSDIR_template)
 
 if [[ $SENDCOM == "YES" ]]; then
 	mkdir -p $COMOUT

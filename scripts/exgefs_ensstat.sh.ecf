@@ -25,14 +25,6 @@ echo "Modified by: Bo Cui and Dingchen Hou change to grib2 operations  ---- Nov.
 
 ### need pass the values of CYC, YMD, DATA, COMIN and COMOUT
 
-# export gridlist="${1//,/ }"		# replace commas with spaces
-# export FHOUT=$2
-# export subdata=$3
-# export dataset=$4  # a or b
-# export FHOUT_HF=$5
-# export FHMAX_HF=$6
-# export FHOUR=$7
-
 export subdata="${1}"                  # ${DATA}/${stream}
 export stream="${2}"                   # PRDGEN_STREAMS
 export jobgrid="${3}"                  # PRDGEN_GRID[$stream]
@@ -122,14 +114,9 @@ echo
 
 SLEEP_LOOP_MAX=$(expr $SLEEP_TIME / $SLEEP_INT)
 
-export fh=$SHOUR
-#export (( fh = SHOUR ))
 ############################################################
 # Loop Through the Post Forecast Files
 ############################################################
-export gridlist=$gridlist
-reslist=$gridlist
-
 (( nfilesprev = 9999 ))
 foundgfs=no
 
@@ -235,7 +222,7 @@ for hour in $hours; do
 	echo " &namdim" >namin
 	#   echo " nmemdim=100", >>namin
 	#   echo " nenspostdim=100", >>namin
-	echo " lfdim=${lfm}", >>namin
+	echo " lfdim=${lfm:-''}", >>namin
 	echo " /" >>namin
 	echo " &namens" >>namin
 
@@ -250,7 +237,7 @@ for hour in $hours; do
 		done # for nskip in $statskiplist
 
 		if [[ $iskip = 0 ]]; then
-			rm cfipg$ifile.$jobgrid
+			if [[ -a cfipg$ifile.$jobgrid ]]; then rm cfipg$ifile.$jobgrid; fi
 			ln -s $COMIN/$pgad/ge${mem}.${cycle}.$pgapre${ffhr} cfipg$ifile.$jobgrid
 		fi # [[ $iskip = 0 ]]
 
@@ -292,7 +279,7 @@ for hour in $hours; do
 			else
 				cat $pgmout$jobgrid.$fhr >> $pgmout
 			fi # (( lskip > 100 ))
-		fi # (( fh == fhout ))
+		fi # (( fhr == fhout ))
 	done # for fhout in $statoutfhlist
 	echo "$(date) check for missing or zero-length output files"
 

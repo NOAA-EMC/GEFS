@@ -43,8 +43,8 @@ export NUM_FILES=2
 export OUTPUT_GRID=${FV3OUT_GRID:-"gaussian_grid"}
 export WRITE_NEMSIOFILE=.true.
 export WRITE_NEMSIOFLIP=.true.
-export LONB=$LONB
-export LATB=$LATB
+# export LONB=$LONB
+# export LATB=$LATB
 export NSOUT=0
 
 # CPU geopmetry
@@ -98,6 +98,7 @@ export APRUN=${APRUN:-""}
 
 # OTHER FV# FCST related environment
 export warm_start=${warm_start:-".false."}
+export read_increment=${read_increment:-".false."}
 REMAP_GRID=none     # temporay setting, to void the latlon default
 export REMAP_GRID=${REMAP_GRID:-latlon}        #gaussian or latlon for using fregrid or regrid_nemsio for remapping
 #export DIAG_TABLE=${DIAG_TABLE:-$HOMEgfs/parm/parm_fv3diag/diag_table}
