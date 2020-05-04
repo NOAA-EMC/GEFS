@@ -45,7 +45,7 @@ echo " Home directory is ............................ $HOMEgefs"
 echo " Processing directory for files.. ............. $DATA"
 echo "  "
 echo " Network id is ................................ $NET"
-echo " Run id for $com processing is ................ $RUN"
+echo " Run id for com processing is ................. $RUN"
 echo "  "
 echo " standard output in file ...................... $pgmout"
 echo " unique processing id for run ................. $pid"
@@ -93,7 +93,7 @@ if [ $warm_start = ".false." ]; then
 
         echo
         chmod 755 poescript
-        ls -al $poescript
+        ls -al poescript
         echo
         cat poescript
         export MP_HOLDTIME=1000

@@ -150,8 +150,6 @@ else
 fi
 postmsg "$jlogfile" "$msg"
 
-cat $pgmout
-
 ##############################
 # Remove the Temporary working directory
 ##############################

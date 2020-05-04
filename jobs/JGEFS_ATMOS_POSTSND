@@ -74,6 +74,7 @@ export pgmerr=errfile
 ####################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDDBN=${SENDDBN:-YES}
+export SENDDBN=${SENDDBN_NTC:-YES}
 export SENDECF=${SENDECF:-YES}
 export VERBOSE=${VERBOSE:-YES}
 

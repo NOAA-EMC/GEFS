@@ -1,7 +1,8 @@
 #!/bin/ksh
 export VERBOSE=yes
 sname=$(basename $0)
-echo $(date) $sname $member begin
+export stream=${1}
+echo $(date) $sname $stream begin
 #####################################################################
 echo "-----------------------------------------------------"
 echo " exgefs_prdgen.sh.sms" 
@@ -16,7 +17,7 @@ echo "                  and 0.5) files. "
 echo " Sep 18 - Cui   - add option for 0.25d grids "
 echo "-----------------------------------------------------"
 #####################################################################
-export PS4='+ $SECONDS $sname $member $LINENO: '
+export PS4='+ $SECONDS $(basename $0) $stream $LINENO: '
 
 set -xa
 na=$(basename $0)
@@ -26,16 +27,14 @@ cd $DATA
 msg="HAS BEGUN on $(hostname)"
 postmsg "$jlogfile" "$msg"
 
-echo cycle=$cycle cycle_fcst=$cycle_fcst
-echo fcstlong=$fcstlong
+echo cycle=$cycle
 
-export jobdir="${1}"                   # ${DATA}/${stream}
-export infile="${2}"                   # ${DATA}/${stream}/${stream}.in
+export jobdir="${2}"                   # ${DATA}/${stream}
+export infile="${3}"                   # ${DATA}/${stream}/${stream}.in
 
 . ${infile}
 
 # Input file:
-# stream=                   # PRDGEN_STREAMS
 # jobgrid=                  # PRDGEN_GRID[$stream]
 # grid_spec=                # PRDGEN_GRID_SPEC[$stream]
 # hours=                    # PRDGEN_HOURS[$stream]
@@ -68,8 +67,8 @@ cat <<-EOF
 	  parmlist_ahh: $parmlist_ahh
 	  pgbd: $pgbd
 	  pgbpre: $pgbpre
-	  parmlist_b00: $parmlist_n00
-	  parmlist_bhh: $parmlist_nhh
+	  parmlist_b00: $parmlist_b00
+	  parmlist_bhh: $parmlist_bhh
 	  do_analysis: $do_analysis
 
 EOF
@@ -118,10 +117,10 @@ for hour in $hours; do
 		fi # [[ $RUNMEM = "gegfs" ]]
 
 		export pcfile=$COMOUT/misc/$submc/${RUNMEM}.$cycle.prdgen.control.anl
-		export fileaout=$COMOUT/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf
-		export fileaouti=$COMOUT/$pgad/$RUNMEM.$cycle.${pgapre}anl$pgasuf.idx
-		export filebout=$COMOUT/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf
-		export filebouti=$COMOUT/$pgbd/$RUNMEM.$cycle.${pgbpre}anl$pgasuf.idx
+		export fileaout=$COMOUT/$pgad/$RUNMEM.$cycle.${pgapre}anl
+		export fileaouti=$COMOUT/$pgad/$RUNMEM.$cycle.${pgapre}anl.idx
+		export filebout=$COMOUT/$pgbd/$RUNMEM.$cycle.${pgbpre}anl
+		export filebouti=$COMOUT/$pgbd/$RUNMEM.$cycle.${pgbpre}anl.idx
 
 		ic=1
 		while [ $ic -le $SLEEP_LOOP_MAX ]; do
@@ -159,8 +158,8 @@ for hour in $hours; do
 			###############################
 			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
 				date >$COMOUT/misc/$submc/${RUNMEM}.t${cyc}z.anl.missing
-				echo "$(date) $sname $member post data missing for analysis"
-				msg="$member MISSING POST DATA for analysis"
+				echo "$(date) $sname $stream post data missing for analysis"
+				msg="$stream MISSING POST DATA for analysis"
 				postmsg "$jlogfile" "$msg"
 				export err=1; err_chk
 			fi # [ $ic -eq $SLEEP_LOOP_MAX ]
@@ -226,10 +225,10 @@ for hour in $hours; do
 	fi # [[ $RUNMEM = "gegfs" ]]
 
 	export pcfile=$COMOUT/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr
-	export fileaout=$COMOUT/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}$pgasuf
-	export fileaouti=$COMOUT/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}$pgasuf.idx
-	export filebout=$COMOUT/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}$pgasuf
-	export filebouti=$COMOUT/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}$pgasuf.idx
+	export fileaout=$COMOUT/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}
+	export fileaouti=$COMOUT/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}.idx
+	export filebout=$COMOUT/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}
+	export filebouti=$COMOUT/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}.idx
 
 	if [[ $save_pgrb2_p5 = YES ]] && (( FHOUR > FHMAXHF )); then
 		export mafile_p5=$COMOUT/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.f${fhr}
@@ -284,8 +283,8 @@ for hour in $hours; do
 		###############################
 		if [ $ic -eq $SLEEP_LOOP_MAX ]; then
 			date >$COMOUT/misc/$submc/${RUNMEM}.t${cyc}z.f$fhr.missing
-			echo "$(date) $sname $member missing post data for hour $fhr"
-			msg="$member MISSING POST DATA for hour $fhr"
+			echo "$(date) $sname $stream missing post data for hour $fhr"
+			msg="$stream MISSING POST DATA for hour $fhr"
 			postmsg "$jlogfile" "$msg"
 			export err=1; err_chk
 			exit $err
@@ -351,7 +350,7 @@ for hour in $hours; do
 		#DHOU, 09/17/2015, added this block for global wave ensemble trigger
 		#0p5 only
 		#####################################################################
-		if [[ "$jobgrid" = "0p5" ]] && [[ $fhr -eq 240 ]]; then
+		if [[ $SENDECF = "YES" && "$jobgrid" = "0p5" && $fhr -eq 240 ]]; then
 			ecflow_client --event pgrb2ap5_f240_ready
 		fi
 	fi # [[ $found = "yes" ]]

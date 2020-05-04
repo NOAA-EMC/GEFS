@@ -122,8 +122,6 @@ $HOMEgefs/scripts/exgefs_avgspr_gempak_meta.sh.ecf
 #############################################################
 err=$?
 
-cat $pgmout
-
 if [ $err = 0 ]; then
     msg="$job completed normally!"
 else

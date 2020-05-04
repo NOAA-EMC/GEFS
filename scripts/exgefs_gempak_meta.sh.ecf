@@ -8,7 +8,7 @@ postmsg "$jlogfile" "$msg"
 numproc=${numproc:-8}
 
 cd $DATA
-rm $DATA/poescript
+if [[ -s poescript ]]; then rm $DATA/poescript; fi
 typeset -Z2 fhr
 
 ################################################################

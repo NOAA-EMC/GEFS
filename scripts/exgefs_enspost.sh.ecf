@@ -285,12 +285,14 @@ while test $fh -le $FHOUR; do
 			#DHOU, 20141028, select required variables from pgrb2a files
 			if [[ "$mem" != "gfs" || $fh -le $gfsfhmaxh || $( expr $fh % 12 ) -eq 0 ]]; then
 				pgtem=$COMIN/pgrb2$lr/ge${mem}.${cycle}.pgrb2$FXT\f$fh$EXT
-				$WGRIB2 -s $pgtem | grep -F -f $parmlist | $WGRIB2 $pgtem -s -i -grib pgrb2a_$mem 
-				#DHOU 20141028
-				(( ifile = ifile + 1 ))
-				iskip=0
-				echo " cfipg($ifile)"="pgrb2a_$mem", >>namin
-				echo " iskip($ifile)"=$iskip, >>namin
+				if [[ -s $pgtem ]]; then
+					$WGRIB2 -s $pgtem | grep -F -f $parmlist | $WGRIB2 $pgtem -s -i -grib pgrb2a_$mem 
+					#DHOU 20141028
+					(( ifile = ifile + 1 ))
+					iskip=0
+					echo " cfipg($ifile)"="pgrb2a_$mem", >>namin
+					echo " iskip($ifile)"=$iskip, >>namin
+				fi
 			fi # [[ "$mem" != "gfs" || $fh -le $gfsfhmaxh || $( expr $fh % 12 ) -eq 0 ]]
 		done # for mem in $memberlist
 
@@ -416,7 +418,9 @@ if [ "$SENDCOM" = "YES" ]; then
 fi # [ "$SENDCOM" = "YES" ]
 
 #DHOU, 05/13/2015, added this block for gefs_cqpf trigger
-ecflow_client --event enspost_grb2_ready
+if [[ $SENDECF = "YES" ]]; then
+	ecflow_client --event enspost_grb2_ready
+fi
 
 #
 # create pqpf 24h and probabilistic precip forecast files

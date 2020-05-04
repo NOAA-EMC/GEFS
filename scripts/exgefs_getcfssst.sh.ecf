@@ -39,7 +39,7 @@ cd $DATA || exit 99
 #################################################################################
 # Run
 #=====
-echo real-time data link begins at $date
+echo "real-time data link begins at $(date)"
 
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 export filenamein_CFSv2=tmpsfc.grb2 #tmpsfc.01.$PDY$cyc.daily.grb2
@@ -102,27 +102,27 @@ else
     fi
 
 fi
-ERR=$?
-if (( ERR != 0 )); then
+err=$?
+if (( err != 0 )); then
     echo "link sst FAILED!"
     exit 93
 fi
-echo real-time data link ends at $date
+echo "real-time data link ends at $(date)"
 
-echo read nst file to save tref begin
+echo "read nst file to save tref begin"
 
 $GEFS_NSTGEN  $filenamein_nst $filenameout_nst
 
-ERR=$?
-if (( ERR !=0 )); then
+err=$?
+if (( err !=0 )); then
     echo "Reading NST file to save tref FAILED!"
     exit 94
 fi
 
-echo read nst file to save tref end!!!
+echo "read nst file to save tref end!!!"
 
 #==============================================================================================
-echo 2-tiered sst generation begin
+echo "2-tiered sst generation begin"
 
 export sstoutdir="outdata"
 mkdir -p $sstoutdir
@@ -172,8 +172,8 @@ echo ${PDY}${cyc}
 # RTG analysis for initial time required by GFS
 anlfileout=anl_sst_grb_latlon.$PDY
 $COPYGB -g"$grid" -x $filenameout_nst $anlfileout
-ERR=$?
-if (( ERR !=0 )); then
+err=$?
+if (( err !=0 )); then
     echo "FAILED to COPYGB: $filenameout_nst; $anlfileout!"
     exit 96
 fi
@@ -191,8 +191,8 @@ if [ ! -f $rawgb2trim  ]; then
     #$COPYGB2 -g "$grid_new" -x  $filenamein_CFSv2 $rawgb2trim
     $WGRIB2 $filenamein_CFSv2 -for_n 1:150 -grib $rawgb2trim_short
     $WGRIB2  $rawgb2trim_short $option1 $option21 -new_grid $grid0p25 $rawgb2trim
-    ERR=$?
-    if (( ERR !=0 )); then
+    err=$?
+    if (( err !=0 )); then
         echo "FAILED to WGRIB2: $filenamein_CFSv2; $rawgb2trim!"
         exit 96
     fi
@@ -278,7 +278,7 @@ climogb=$tmpcfsr/tmpsfc.cfsr.${PDY}${cyc}.clim.daily.grb
 $CNVGRIB -g21 $climogb2 $climogb
 echo "climogb:"$climogb
 $WGRIB $climogb -d all -ieee -o fort.$un_climo
-ERR=$?
+err=$?
 if [ $? -eq 0 ] ;
     then rm -f $climmgb2
 else
@@ -329,12 +329,12 @@ fi
 
 echo $fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile
 $GEFS_ANOM2_FCST $fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile $HFcfs
-ERR=$?
-if [ $ERR -eq 0 ] ; then 
+err=$?
+if [ $err -eq 0 ] ; then 
     echo "2-tiered sst generation finished!!!"
     $NCP $fn_anom_fc $COMOUTcfssst/TMPsfc.${PDY}${cyc}.24hr.anom.grb
-    ERR=$?
-    if [ $ERR -eq 0 ]; then
+    err=$?
+    if [ $err -eq 0 ]; then
         exit 0
     else
         echo "FAILED when copy $fn_anom_fc to $COMOUTcfssst"
@@ -343,6 +343,6 @@ if [ $ERR -eq 0 ] ; then
     exit 0
 else
     echo "FAILED to do the bias correction: $GEFS_ANOM2_FCST"
-    exit $ERR
+    exit $err
 fi
 

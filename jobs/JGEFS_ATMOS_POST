@@ -26,7 +26,7 @@ cd $DATA
 # Define MASTERRES for master file grid, default being Gaussian with alternatives of  p125/p25/p5 
 export MASTERRES=        
 export res=$MASTERRES
-export SUBJOB=$SUBJOB
+export SUBJOB=${SUBJOB:-""}
 export mem=$(echo $RUNMEM|cut -c3-5)
 
 ######################################
@@ -283,7 +283,7 @@ case $FORECAST_SEGMENT in
         export SHOUR=00;
         export FHOUR=$fhmaxh;;
     (lr)
-        if (( FHMAX_HF > fhmaxh )); then
+        if (( FHMAXHF > fhmaxh )); then
             export SHOUR=$(( $fhmaxh + $FHOUTHF ))
         else
             export SHOUR=$(( $fhmaxh + $FHOUTLF ))
@@ -379,7 +379,9 @@ if [[ $SHOUR -le $FHOUR ]]; then
     export SHOUR=$(expr $FHOUR_HIGH + $FHINC_HIGH)
 fi # test $SHOUR -le $FHOUR_HIGH
 
-mv $post_log $COMOUT/misc/post
+if [[ -z $post_log ]]; then
+    mv $post_log $COMOUT/misc/post
+fi
 
 if [ $err = 0 ]; then
     msg="$job completed normally!"

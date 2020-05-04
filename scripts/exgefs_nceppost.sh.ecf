@@ -73,53 +73,37 @@ export MP_LABELIO=YES
 echo cyc=$cyc
 echo cycle=$cycle
 
-#export WGRIB2=${WGRIB2:-${EXECgrib}/wgrib2}
-#export COPYGB2=${COPYGB2:-${EXECgrib}/copygb2}
-#export GRBINDEX=${GRBINDEX:-${EXECgrib}/grbindex}
-#export GRBINDEX2=${GRB2INDEX:-${EXECgrib}/grb2index}
-#export NDATE=${NDATE:-${EXECutil}/ndate}
-#
 export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
 export SIGHDR=${SIGHDR:-$EXECgfs/global_sighdr}
 export nemsioget=$nemsioget
 
-R1=$(echo $RUNMEM|cut -c1-3)
 R2=$(echo $RUNMEM|cut -c4-5)
 mem=$(echo $RUNMEM|cut -c3-5)
-e3=$npert
-case $R1 in
-    (gec)
-        if (( R2 == 0 )); then 
-            (( e1 = 1 ))
-            (( e2 = R2 ))
-            ens_pert_type='unpert_lo_res_ctrl_fcst'
-        else   
-            echo unrecognized RUNMEM=$RUNMEM R1=$R1 R2=$R2 
-        fi
+case $RUNMEM in
+    (gec00 | geaer)
+        ens_pert_type='unpert_lo_res_ctrl_fcst'
+        (( ens_pert_numb = 0 ))
+        (( e1 = 1 ))
         ;;
-    (gen)
-        (( e1 = 2 ))
-        ens_pert_type='negatively_pert_fcst'
-        (( e2 = R2 ))
-        ;;
-    (gep)
-        (( e1 = 3 ))
+    (gep[0-9][0-9])
         ens_pert_type='pos_pert_fcst'
-        (( e2 = R2 ))
+        (( ens_pert_numb = $R2 ))
+        (( e1 = 3 ))
         ;;
     (*)
-        (( e1 = 0 ))
-        (( e2 = 0 ))
-        echo unrecognized RUNMEM=$RUNMEM R1=$R1 R2=$R2
+        echo "FATAL: Unrecognized RUNMEM $RUNMEM, unable to determine pert type"
+        export err=200
+        err_chk; exit $err
         ;;
-esac # $R1 
-export e1=$e1
-export e2=$e2
-export e3=$e3
-export ens_pert_type=$ens_pert_type
-export ens_pert_numb=$e2
+esac # $RUNMEM
+export ens_pert_type
+export ens_pert_numb
 export ens=YES
-echo "ens_pert_type,ens_pert_numb,ens"= $ens_pert_type $ens_pert_numb $ens 
+# e1,e2,e3 are used to set the grib ensemble information
+export e1=$e1
+export e2=$R2
+export e3=$npert
+echo "ens_pert_type,ens_pert_numb,ens"= $ens_pert_type $ens_pert_numb $ens
 
 res=Gaus
 if [ $res = "p125" ] ; then # 0.125 deg
@@ -368,8 +352,9 @@ if [ $DOANALYSIS = YES ]; then
                 ls -al  $mcfile
                 cat  $mcfile
                 echo "anl_done" >> $post_log
-                # ecflow_client --label info "$(cat $post_log)"
-                ecflow_client --event anl_done
+                if [[ $SENDECF = "YES" ]]; then
+                    ecflow_client --event anl_done
+                fi
                 echo
             fi # test $SENDCOM = "YES"
         fi # test -f $COMIN/init/${RUNMEM}.t${cyc}z.sanl
@@ -381,17 +366,7 @@ SLEEP_LOOP_MAX=$(expr $SLEEP_TIME / $SLEEP_INT)
 ############################################################
 # Loop Through the Post Forecast Files 
 ############################################################
-#(( fhr=SHOUR ))
-#while (( fhr <= FHOUR )); do
-for fhr in ${RUN_HOURS[@]}
-do
-    #export fhr=$(printf %03i $fhr)
-    #if [ $FHMAX_HF -gt 0 -a $FHOUT_HF -gt 0 -a $fhr -lt $FHMAX_HF ]; then
-    #    FHINC=$FHOUT_HF
-    #else
-    #    FHINC=$FHOUT
-    #fi
-
+for fhr in ${RUN_HOURS[@]}; do
     mcfile=$COMOUT/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr
 
     if [[ ! -s $mcfile ]]; then
@@ -446,7 +421,6 @@ do
         # add new environmental variables for running new ncep post
         # Validation date
 
-        # export VDATE=$(${EXECutil}/ndate +${fhr} ${PDY}${cyc})
         export VDATE=$($NDATE +${fhr} ${PDY}${cyc})
 
         # specify output file name from chgres which is input file name to nceppost
@@ -462,22 +436,15 @@ do
             export CTLFILE=$PARMgefs/gefs_master_fhh.parm
         else
             if [ $fhr -eq 0 ]; then
-#               export CTLFILE=${CTLFILEGFSF00:-$PARMpost/postcntrl_gefs_f00.xml}
                 export PostFlatFile=${FLTFILEGFSF00:-$PARMPOST/postxconfig-NT-GEFS-F00.txt}
             else
                 if [ $fhr -le 96 ]; then
-#                   export CTLFILE=${CTLFILEGFS:-$PARMpost/postcntrl_gefs.xml_long}
                     export PostFlatFile=${FLTFILEGFS:-$PARMPOST/postxconfig-NT-GEFS.txt}
                 else
-#                   export CTLFILE=${CTLFILEGFS1:-$PARMpost/postcntrl_gefs.xml}
                     export PostFlatFile=${FLTFILEGFS1:-$PARMPOST/postxconfig-NT-GEFS.txt}
                 fi
             fi # test $fhr -eq 0
         fi # [ $GRIBVERSION = grib1 ]
-
-#       export CTLFILE=$PARMgefs/gefs_master_fhh.parm
-#       cat $CTLFILE
-#       cat $PostFlatFile
 
         export SIGINP=sigfile.f$fhr
         export NEMSINP=sigfile.f$fhr
@@ -491,13 +458,12 @@ do
         ln -s $COMOUT/master/$RUNMEM.$cycle.master.grb2if$fhr pgbifout
         export PGBOUT=pgbfout
         export PGIOUT=pgbifout
-        #export ANOMCATSH=${USHgfs}/global_anomcat.sh
         export FILTER=1
 
         # RLW 20100910 add cleanup to prevent problems with overparm
         echo
         for file in fort.11 fort.51 h5wav prmsl tfile; do
-            ls -al $file
+            # ls -al $file
             if [[ -L $file || -f $file ]]; then
                 rm -f $file
                 echo $file removed from working directory
@@ -540,31 +506,21 @@ do
 
         if [ $SENDCOM = "YES" ]; then
             echo
-            ls -al $PGBOUT $PGBIOUT
+            ls -al $PGBOUT $PGIOUT
             echo
             echo "$PDY$cyc$fhr" > $mcfile
             echo
             ls -al  $mcfile
             cat  $mcfile
             echo "f${fhr}_done" >> $post_log
-            # ecflow_client --label info "$(cat $post_log)"
-            ecflow_client --event f${fhr}_done
+            if [[ $SENDECF = "YES" ]]; then
+                ecflow_client --event f${fhr}_done
+            fi
             echo
         fi # test $SENDCOM = "YES"
     fi # [[ ! -s $mcfile ]]
 
-    ##export fhr=$(expr $fhr + $FHINC)
-    #export fhrtest=$(expr $fhr + $FHINC)
-    #if [ $FHMAXHF -gt 0 -a $FHOUTHF -gt 0 -a $fhrtest -ge $FHMAXHF -a $fhr -lt $FHMAXHF ]; then
-    #    export FHINC=$FHOUT
-    #    export fhr=$(expr $FHMAX_HF)
-    #else
-    #    export fhr=$(expr $fhr + $FHINC)
-    #fi
-
 done # for fhr in RUN_HOURS # while (( fhr <= FHOUR ))
-
-cat $pgmout
 
 if [ $err -eq 0 ] ; then
     msg="ENDED NORMALLY!!!"
