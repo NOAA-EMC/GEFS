@@ -158,12 +158,12 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "gempak"
 
-            WHERE_AM_I = dicBase['WHERE_AM_I']
-            if WHERE_AM_I.upper() not in ["hera".upper()]:
-                # ---avg_gempak_vgf There is no gdplot2_vg on hera, so this task can not run.
-                iTaskName_Num += 1
-                sTaskName = "taskname_{0}".format(iTaskName_Num)
-                dicBase[sTaskName.upper()] = "avg_gempak_vgf"
+            #WHERE_AM_I = dicBase['WHERE_AM_I']
+            #if WHERE_AM_I.upper() not in ["hera".upper()]:
+            #    # ---avg_gempak_vgf There is no gdplot2_vg on hera, so this task can not run.
+            #    iTaskName_Num += 1
+            #    sTaskName = "taskname_{0}".format(iTaskName_Num)
+            #    dicBase[sTaskName.upper()] = "avg_gempak_vgf"
 
             # ---avgspr_gempak_meta
             iTaskName_Num += 1
