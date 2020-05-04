@@ -124,8 +124,6 @@ if [ $SENDCOM = YES ]; then
 	done
 fi
 
-cat $pgmout
-
 if [ $err = 0 ]; then
     msg="$job completed normally!"
 else

@@ -47,7 +47,7 @@ case $cyc in
 		;;
 esac
 
-if [[ $RUNMEM = "geaer" ]]; then cplchm=".true."; fi
+if [[ ${RUNMEM:-none} = "geaer" ]]; then cplchm=".true."; fi
 
 export cplchm=${cplchm:-.false.}
 

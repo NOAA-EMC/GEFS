@@ -99,7 +99,7 @@ export pgmout=OUTPUT.$$
 
 export MP_PULSE=0
 
-export wavelog=${COMOUTwave}/wave.log
+export wavelog=${COMOUT}/wave.log
 
 
 env | sort

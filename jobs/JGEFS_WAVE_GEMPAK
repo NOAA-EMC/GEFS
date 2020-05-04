@@ -106,7 +106,7 @@ mkdir -p $COMOUT/station
 mkdir -p $COMOUT/gempak
 export DATAout=$COMOUT/gempak
 
-export wavelog=${COMOUTwave}/wave.log
+export wavelog=${COMOUT}/wave.log
 
 env | sort
 
@@ -143,6 +143,7 @@ if [ $nfile -gt 1 ]; then
   export err=$?; err_chk
 else
   poescript
+  export err=$?; err_chk
 fi
 
 if [ ${err:-0} = 0 ]; then
@@ -161,5 +162,3 @@ if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 echo "$(date) $0 $(date -u) end"
 
 exit $err
-
-

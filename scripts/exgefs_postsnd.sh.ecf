@@ -19,7 +19,7 @@
 #   9) 2019-06-05       Xianwu Xue reformatted it and add checked the errors        
 ################################################################
 set -xa
-export PS4='+t+$SECONDS exgefs_postsnd.sh.ecf:LINENO -- '
+export PS4='+t+$SECONDS exgefs_postsnd.sh.ecf:$LINENO -- '
 
 cd $DATA
 ########################################
@@ -89,8 +89,8 @@ do
         if [ $ic -ge 360 ]
         then
             err_exit "FATAL ERROR: COULD NOT LOCATE logf$FEND file AFTER 1 HOUR"
-            ERR=-5
-            exit $ERR
+            err=-5
+            exit $err
         fi
     done
 
@@ -99,7 +99,7 @@ do
         export FINT=$NINT3
     fi
     $USHgefs/gefs_bufr.sh
-    ERR=$?
+    err=$?
     export FSTART=$FEND
 done
 
@@ -137,7 +137,7 @@ if [ $machine == "THEIA" -o  $machine == "JET" ]; then
     # Convert the bufr soundings into GEMPAK files
     ################################################
     sh $USHgefs/gefs_bfr2gpk.sh
-    ERR=$?
+    err=$?
 else
     rm -rf poe_col
     echo "sh $USHgefs/gefs_bfr2gpk.sh " >> poe_col
@@ -154,19 +154,19 @@ else
     ##mpirun -n 10 cfp cmdfile
 #   ${APRUN_POSTSNDCFP} cmdfile
     ${APRUN_POSTSNDCFP} 
-    ERR=$?
+    err=$?
 fi
 
 #fi #if [ "NO" = 'YES' ]
 
 #####################################################################
-if [ $ERR -eq 0 ] ; then
+if [ $err -eq 0 ] ; then
     msg='HAS GERERATED GFS BUFR SOUNDING NORMALLY!'
     #postmsg "$jlogfile" "$msg"
     exit 0
 else
     echo "FATAL ERROR: FAILED to Generate GFS BUFR sounding!"
-    exit $ERR
+    exit $err
 fi
 
 ############## END OF SCRIPT #######################

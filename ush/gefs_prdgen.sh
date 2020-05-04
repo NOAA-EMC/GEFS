@@ -231,7 +231,7 @@ else
 fi # [[ -s $DATA/pgrb2$ffhr ]] && [[ $overwrite = no ]]
 
 ########################################################
-echo $(date) $sname $member $partltr $fsuffix 1x1 GRIB end on machine=$(uname -n)
+echo $(date) $(basename $0) $stream 1x1 GRIB end on machine=$(uname -n)
 msg='ENDED NORMALLY.'
 postmsg "$jlogfile" "$msg"
 ################## END OF SCRIPT #######################

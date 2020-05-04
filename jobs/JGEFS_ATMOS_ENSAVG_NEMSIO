@@ -111,7 +111,6 @@ else
     exit $ERR
 fi
 #(( LEVS = LEVS -1 ))
-echo $LEVS $LATB $LONB
 
 ####################################
 # Specify Timeout Behavior of Post

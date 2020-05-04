@@ -63,7 +63,7 @@ export pgmerr=errfile
 # In case of NCEPPOST failure, set RERUN=RESTART if necessary in NCEPPOST, and PRDGEN jobs
 # In case of PRDGEN   failure, set RERUN=RESTART if necessary in PRDGEN jobs
 ####################################
-echo "input setting RERUN=$RERUN"
+echo "input setting RERUN=${RERUN:-not set}"
 
 export RERUN=${RERUN:-NO}
 #
@@ -408,9 +408,9 @@ if [[ $read_increment = ".true." && $warm_start = ".true." ]]; then
 	fi
 fi
 
-if [[ $RERUN = "YES" ]]; then
+if [[ $RERUN = "YES" && ( $DO_SPPT = "YES" || $DO_SHUM = "YES" || $DO_SKEB = "YES" ) ]]; then
 	fhr=$(printf "%03.0f" $fhmaxh)
-	cp -pr $GESIN/$mem/RESTART/stoch_out.F000$fhr $DATA/stoch_ini 
+	cp -pr $GESIN/$mem/RESTART/stoch_out.F000$fhr $DATA/stoch_ini
 fi
 
 ########################################################

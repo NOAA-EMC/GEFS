@@ -36,7 +36,7 @@ export CASE=${CASE:-384}
 ntiles=${ntiles:-6}
 
 # Utilities
-ERRSCRIPT=${ERRSCRIPT:-'eval [[ $ERR = 0 ]]'}
+ERRSCRIPT=${ERRSCRIPT:-'eval [[ $err = 0 ]]'}
 NCP=${NCP:-"/bin/cp -p"}
 NLN=${NLN:-"/bin/ln -sf"}
 NMV=${NMV:-"/bin/mv -uv"}
@@ -57,7 +57,7 @@ while (( imem < npert )); do
     else
         imem=00$imem
     fi
-    memberlist="$memberlist $imem"
+    memberlist="${memberlist:-""} $imem"
 done # while (( imem < npert ))
 echo memberlist=$memberlist
 
@@ -92,8 +92,8 @@ do
         echo "$(date) Not enough forecast files for average at  hour $fhr"
         msg="FATAL ERROR: Not enough forecast files for average at  hour $fhr"
         postmsg "$jlogfile" "$msg"
-        export ERR=1
-        $ERRSCRIPT || exit $ERR
+        export err=1
+        $ERRSCRIPT || exit $err
     fi # [ $ic
     
     $NLN $COMOUT/sfcsig/geavg.${cycle}.atmf${fhr}.nemsio ./atm_ensmean
@@ -103,8 +103,8 @@ do
     
     echo "f${fhr}_done --- $(date -u)" >> $ensavg_nemsio_log
     
-    export ERR=$?
-    $R || exit 2
+    export err=$?
+    $ERRSCRIPT || exit $err
     echo completed fv3gfs average fhour= $fhr > $COMOUT/sfcsig/geavg.${cycle}.logf${fhr}.nemsio         
     if [ $fhr -ge $FHMAXFH ]
     then
@@ -118,7 +118,7 @@ done
 
 set +x
 if [ $VERBOSE = "YES" ]; then
-    echo $(date) EXITING $0 with return code $ERR >&2
+    echo $(date) EXITING $0 with return code $err >&2
 fi
 
-exit $ERR
+exit $err
