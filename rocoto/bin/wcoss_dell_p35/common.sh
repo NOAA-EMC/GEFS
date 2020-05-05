@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-RocotoGen=${RocotoGen:-0}
+RocotoGen=${RocotoGen:-1}
 
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}

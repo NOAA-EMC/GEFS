@@ -20,4 +20,4 @@ export MEMORY_AFFINITY=core:2
 export FORECAST_SEGMENT=hr
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_ATMOS_INIT_FV3CHGRS
+$SOURCEDIR/jobs/JGEFS_ATMOS_PREP
