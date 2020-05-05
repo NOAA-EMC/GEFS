@@ -1,4 +1,12 @@
 #!/bin/bash
 
+# Downstream directory settings
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
+export FIXwave=${FIXwave:-$HOMEgefs/fix/fix_wave}
+export EXECcode=${EXECcode:-$HOMEgfs/exec}
+export USHwave=${USHwave:-$HOMEgfs/ush}
+
+export MP_PULSE=0
+
 # Step label
 export sigMODE=${sigMODE:-init}
