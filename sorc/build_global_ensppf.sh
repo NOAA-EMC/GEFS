@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 set -eux
 
-source ./machine-setup.sh > /dev/null 2>&1
+source ./machine-setup.sh #> /dev/null 2>&1
 cwd=`pwd`
 
 progname=global_ensppf
@@ -9,14 +9,13 @@ progname=global_ensppf
 if [ -f ../modulefiles/gefs/gefs_$target.ver ]; then
     source ../modulefiles/gefs/gefs_$target.ver
 fi
-source ../modulefiles/gefs/${progname}.$target             > /dev/null 2>&1
+source ../modulefiles/gefs/${progname}.$target #> /dev/null 2>&1
 
 # Check final exec folder exists
 if [ ! -d "../exec" ]; then
   mkdir ../exec
 fi
 
-#
 #
 cd ${progname}.fd
 
@@ -31,19 +30,6 @@ export OMPFLAGM=${OMPFLAGM:-""}
 export INCSM="-I ${G2_INC4}"
 
 export LIBSM="${G2_LIB4} ${W3NCO_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}"
-
-# If you want to get the original size of excutable file, 
-GetOriginal=${GetOriginal:-false}
-
-if $GetOriginal; then
-    if [ $target == wcoss_cray ]; then
-        echo "This is on wcoss_cray"
-        export INCSM="-I ${G2_INC4} -I/opt/cray/iobuf/2.0.5/include"
-        export LIBSM="${G2_LIB4} ${W3NCO_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB} -Wl,/opt/cray/iobuf/2.0.5/lib/iobuf.o"
-    elif [ $target == wcoss_dell_p3 ]; then
-        echo "This is on wcoss_dell_p3"
-    fi
-fi
 
 make -f Makefile clobber
 make -f Makefile

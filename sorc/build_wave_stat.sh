@@ -1,4 +1,6 @@
 #!/bin/bash
+set -eux
+
 ###############################################################################
 #                                                                             #
 # Compiles all codes, moves executables to exec and cleans up                 #
@@ -9,7 +11,7 @@
 #
 # --------------------------------------------------------------------------- #
 
-source ./machine-setup.sh > /dev/null 2>&1
+source ./machine-setup.sh #> /dev/null 2>&1
 cwd=`pwd`
 
 progname=wave_stat
@@ -17,14 +19,13 @@ progname=wave_stat
 if [ -f ../modulefiles/gefs/gefs_$target.ver ]; then
     source ../modulefiles/gefs/gefs_$target.ver
 fi
-source ../modulefiles/gefs/${progname}.$target             > /dev/null 2>&1
+source ../modulefiles/gefs/${progname}.$target #> /dev/null 2>&1
 
 # Check final exec folder exists
 if [ ! -d "../exec" ]; then
   mkdir ../exec
 fi
 
-#
 #
 cd ${progname}.fd
 
