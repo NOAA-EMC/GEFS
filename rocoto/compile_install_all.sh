@@ -129,26 +129,34 @@ if [ $CleanAll = "yes" ]; then
     fi
     
     for dir in global_ensadd.fd  global_enspqpf.fd  gefs_ensstat.fd  global_ensppf.fd ; do
-        cd $dir
-        make clean
-        cd ..
+        if [ -f $dir ]; then
+            cd $dir
+            make clean
+            cd ..
+        fi
     done
 
     for dir in global_enscvprcp.fd  global_enspvrfy.fd  global_enssrbias.fd global_enscqpf.fd  global_enscvt24h.fd  global_ensrfmat.fd ; do
-        cd $dir
-        make clean
-        cd ..
+        if [ -f $dir ]; then
+            cd $dir
+            make clean
+            cd ..
+        fi
     done
 
     for dir in ../util/sorc/overenstr.grib.fd; do
-        cd $dir
-        make clean
-        cd ../../../sorc
+        if [ -f $dir ]; then
+            cd $dir
+            make clean
+            cd ../../../sorc
+        fi
     done
     for dir in gefs_anom2_fcst.fd gefs_nstgen.fd ; do
-        cd $dir
-        make clean
-        cd ..
+        if [ -f $dir ]; then
+            cd $dir
+            make clean
+            cd ..
+        fi
     done    
 
 

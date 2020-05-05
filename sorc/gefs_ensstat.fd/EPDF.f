@@ -240,10 +240,10 @@ c
       do i = 1, m
        if (qq.lt.q(i)) then
         k=i-1
-        goto 101
+        exit
        endif
       enddo
- 101  continue
+c 101  continue
 
       if (k.eq.0) then
        ww = w(1)*(qq - qlt)/(q(1)-qlt)
@@ -298,10 +298,10 @@ c
        do i = 1, m
         if (qq.lt.qa(i)) then
          k=i-1
-         goto 102
+         exit
         endif
        enddo
-  102  continue
+c  102  continue
 
 c
 c      to solve the quadratic equation ( ax2 + bx + c = 0 )

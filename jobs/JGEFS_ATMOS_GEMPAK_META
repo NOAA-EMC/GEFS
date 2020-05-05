@@ -104,11 +104,11 @@ export DBN_ALERT_TYPE=${DBN_ALERT_TYPE:-GEFS_METAFILE}
 # Define COM directories
 ##############################################
 export COMINs=${COMINs:-${COMROOT}/${NET}/${envir}}
-if [ -n $COMINgfs ]; then
-    if [[ $COMINgfs == *${cyc} ]]; then
-        COMINgfs=$(dirname $(dirname $COMINgfs))
-    fi
-fi
+#if [ -n $COMINgfs ]; then
+#    if [[ $COMINgfs == *${cyc} ]]; then
+#        COMINgfs=$(dirname $(dirname $COMINgfs))
+#    fi
+#fi
 export COMINsgfs=${COMINgfs:-$(compath.py gfs/prod)}
 export COMINs_p1=${COMINs_p1:-$(compath.py nawips/prod)}
 export COMIN=${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/atmos/gempak

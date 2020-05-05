@@ -1,9 +1,10 @@
 #
 # define the array of the name of build program
 #
- declare -a Build_prg=("Build_gefs_anom2_fcst" "Build_gefs_nstgen"  \
-                       "Build_global_ensadd" "Build_gefs_ensstat" \
-                       "Build_global_ensppf" "Build_wave_stat")
+ declare -a Build_prg=("Build_global_enspqpf" "Build_global_enscvprcp" \
+                       "Build_global_enspvrfy" "Build_global_enssrbias" \
+                       "Build_global_enscqpf" "Build_global_enscvt24h" \
+                       "Build_global_ensrfmat" "Build_overenstr_grib")
 
 #
 # function parse_cfg: read config file and retrieve the values
