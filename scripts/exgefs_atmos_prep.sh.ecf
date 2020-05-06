@@ -14,6 +14,8 @@ export FIXgfs=$HOMEgfs/fix
 export FIXfv3=${FIXfv3:-$FIXgfs/fix_fv3_gmted2010}
 export FIXam=${FIXam:-$FIXgfs/fix_am}
 
+export INIDIR=$DATA
+
 export OUTDIR=$GESOUT/enkf/$mem
 mkdir -p $OUTDIR
 
@@ -83,7 +85,9 @@ cat $pgmout
 
 if [[ $SENDCOM == "YES" ]]; then
     mkdir -p $COMOUT/init/$mem
+    mkdir -p $GESOUT/init/$mem
     $NCP $OUTDIR/sfc* $COMOUT/init/$mem
+    $NCP $OUTDIR/sfc* $GESOUT/init/$mem
     $NCP $OUTDIR/gfs_ctrl.nc $COMOUT/init/$mem
     if [[ $mem == "c00" ]]; then
         $NCP $OUTDIR/gfs_data*.nc $COMOUT/init/$mem
