@@ -11,7 +11,7 @@ set -eux
 #
 # --------------------------------------------------------------------------- #
 
-source ./machine-setup.sh #> /dev/null 2>&1
+source ./machine-setup.sh
 cwd=`pwd`
 
 progname=wave_stat
@@ -19,7 +19,7 @@ progname=wave_stat
 if [ -f ../modulefiles/gefs/gefs_$target.ver ]; then
     source ../modulefiles/gefs/gefs_$target.ver
 fi
-source ../modulefiles/gefs/${progname}.$target #> /dev/null 2>&1
+source ../modulefiles/gefs/${progname}.$target
 
 # Check final exec folder exists
 if [ ! -d "../exec" ]; then

@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 set -eux
 
-source ./machine-setup.sh #> /dev/null 2>&1
+source ./machine-setup.sh
 cwd=`pwd`
 
 progname=gefs_anom2_fcst
@@ -9,7 +9,7 @@ progname=gefs_anom2_fcst
 if [ -f ../modulefiles/gefs/gefs_$target.ver ]; then
     source ../modulefiles/gefs/gefs_$target.ver
 fi
-source ../modulefiles/gefs/${progname}.$target #> /dev/null 2>&1
+source ../modulefiles/gefs/${progname}.$target
 
 
 # Check final exec folder exists
@@ -23,7 +23,6 @@ cd ${progname}.fd
 export FCMP=${FCMP:-ifort}
 export FCMP95=$FCMP
 
-#export FFLAGSM="-i4 -O3 -r8  -convert big_endian -fp-model precise"
 export FFLAGSM="-O3 -g -convert big_endian"
 export RECURS=
 export LDFLAGSM=${LDFLAGSM:-""}
