@@ -7,7 +7,7 @@ if [[ ${STRICT:-NO} == "YES" ]]; then
 	# Turn on strict bash error checking
 	set -eu
 fi
-export PS4='$SECONDS + $0[$LINENO]'
+export PS4='$SECONDS + $(basename $0)[$LINENO] '
 
 ####################################
 # Determine Job Output Name on System
