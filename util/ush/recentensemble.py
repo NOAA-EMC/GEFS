@@ -224,20 +224,9 @@ def calValue(ensmem, sVar,  mem_mean, memno, Npert=20):
 
 
 if __name__ == '__main__':
-    import sys
     import traceback
     from subprocess import call
 
     print("Starting {__file__}")
-
-    try:
-        main()
-    except Exception as err:
-        print(f"FATAL ERROR in {__file__}: Uncaught exception during recenter!")
-        print(traceback.format_exc())
-        call('err=100; err_chk', shell=True)
-        exit(100)
-
+    main()
     print("{__file__} completed successfully")
-  
-
