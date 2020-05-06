@@ -14,7 +14,7 @@ export FIXgfs=$HOMEgfs/fix
 export FIXfv3=${FIXfv3:-$FIXgfs/fix_fv3_gmted2010}
 export FIXam=${FIXam:-$FIXgfs/fix_am}
 
-export OUTDIR=$COMOUT/init/$mem
+export OUTDIR=$GESOUT/enkf/$mem
 mkdir -p $OUTDIR
 
 # Surface file must always be from current GFS cycle
@@ -81,9 +81,14 @@ fi
 
 cat $pgmout
 
-mkdir -p $GESOUT/$cyc/$mem
-$NCP $OUTDIR/sfc* $GESOUT/$cyc/$mem
-$NCP $OUTDIR/gfs_ctrl.nc $GESOUT/$cyc/$mem
+if [[ $SENDCOM == "YES" ]]; then
+    mkdir -p $COMOUT/init/$mem
+    $NCP $OUTDIR/sfc* $COMOUT/init/$mem
+    $NCP $OUTDIR/gfs_ctrl.nc $COMOUT/init/$mem
+    if [[ $mem == "c00" ]]; then
+        $NCP $OUTDIR/gfs_data*.nc $COMOUT/init/$mem
+    fi
+fi
 
 echo "$(date) $0 $(date -u) end"
 

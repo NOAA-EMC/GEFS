@@ -15,10 +15,12 @@
 ##
 import sys
 import datetime as dt
+from functools import partial
+
+print = partial(print, flush=True)
 
 def main():
     print(dt.datetime.now())
-    sys.stdout.flush()
  
     sVars = []
     sVars.append('ps')
@@ -54,18 +56,12 @@ def main():
         sOutWS = sys.argv[5]
 
         print("Npert = {0}".format(Npert))
-        sys.stdout.flush()
         print("NTiles = {0}".format(NTiles))
-        sys.stdout.flush()
         print("sFileName = {0}".format(sFileName))
-        sys.stdout.flush()
         print("Input Workspace: {0}".format(sInWS))
-        sys.stdout.flush()
         print("Output Workspace: {0}".format(sOutWS))
-        sys.stdout.flush()
 
         print("Cheking variables ...")
-        sys.stdout.flush()
 
         RemoveUnusedVars(sInWS,sFileName,sVars)
 
@@ -74,7 +70,6 @@ def main():
         
     elif len(sys.argv) == 7:
         print(sys.argv)
-        sys.stdout.flush()
         
         Npert = int(sys.argv[1])
         NTiles = int(sys.argv[2])
@@ -84,20 +79,13 @@ def main():
         iTile = int(sys.argv[6])
 
         print("\nWorking on the Tile {1} - Npert = {0}".format(Npert, iTile))
-        sys.stdout.flush()
         print("Working on the Tile {1} - NTiles = {0}".format(NTiles, iTile))
-        sys.stdout.flush()
         print("Working on the Tile {1} - sFileName = {0}".format(sFileName, iTile))
-        sys.stdout.flush()
         print("Working on the Tile {1} - Input Workspace: {0}".format(sInWS, iTile))
-        sys.stdout.flush()
         print("Working on the Tile {1} - Output Workspace: {0}".format(sOutWS, iTile))
-        sys.stdout.flush()
         print("Working on the Tile {1} - iTile: {0}\n".format(iTile, iTile))
-        sys.stdout.flush()
         
         print("Working on the Tile {0} - Cheking variables ...".format(iTile))
-        sys.stdout.flush()
         
         RemoveUnusedVars(sInWS,sFileName,sVars,iTile)
  
@@ -149,28 +137,29 @@ def getMems_mean(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
     from netCDF4 import Dataset
     import numpy as np
     import sys, os
+    import shutil
     from netCDF4 import num2date, date2num, date2index
     from subprocess import call
+    from contextlib import suppress
+
     wmeans = [None] * len(sVars)
     w_c = [None] * len(sVars)
 
     print("Working on the Tile {0}  Calculating Ensemble Mean ...".format(iTile))
-    sys.stdout.flush()
     
     print(dt.datetime.now())
-    sys.stdout.flush()
 
     for iPert in range(Npert):
         #print("Working on the Tile {0} for the Pert {1}".format(iTile, iPert))
         #sys.stdout.flush()
         
         sPath = sOutWS + "/p{0:02}".format(iPert + 1)
-        if not os.path.exists(sPath):
+        with suppress(FileExistsError):
             os.mkdir(sPath)
 
         sInFile = sInWS + "/p{0:02}/{1}{2}.nc".format(iPert + 1, sFileName, iTile)
         sOutFile = sOutWS + "/p{0:02}/{1}{2}.nc".format(iPert + 1, sFileName, iTile)
-        call(["cp", sInFile, sOutFile])
+        shutil.copyfile(sInFile, sOutFile)
 
         nc_fid = Dataset(sInFile, 'r')
         #print(nc_fid.variables.keys())
@@ -194,9 +183,7 @@ def getMems_mean(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
     nc_fid.close
 
     print("Working on the Tile {0} -  Writing to netCDF files ...".format(iTile))
-    sys.stdout.flush()
     print(dt.datetime.now())
-    sys.stdout.flush()
 
     
     for iPert in range(Npert):
@@ -223,7 +210,6 @@ def getMems_mean(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
         nc_fid.close
 
     print(dt.datetime.now())
-    sys.stdout.flush()
 
     return
 
@@ -239,10 +225,19 @@ def calValue(ensmem, sVar,  mem_mean, memno, Npert=20):
 
 if __name__ == '__main__':
     import sys
+    import traceback
+    from subprocess import call
 
-    main()
+    print("Starting {__file__}")
 
-    print("--Done!")
-    sys.stdout.flush()
-    
+    try:
+        main()
+    except Exception as err:
+        print(f"FATAL ERROR in {__file__}: Uncaught exception during recenter!")
+        print(traceback.format_exc())
+        call('err=100; err_chk', shell=True)
+        exit(100)
+
+    print("{__file__} completed successfully")
+  
 

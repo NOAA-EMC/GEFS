@@ -53,7 +53,6 @@ echo " Network id is ................................ $NET"
 echo " Run id for com processing is ................. $RUN"
 echo "  "
 echo " standard output in file ...................... $pgmout"
-echo " unique processing id for run ................. $pid"
 echo " YES SENDCOM means save com files ............. $SENDCOM"
 echo " ------------------------------------------------------------"
 
@@ -83,8 +82,10 @@ RECENATMPY=${RECENATMPY:-$HOMEgefs/util/ush/recentensemble.py}
 err=0
 if [ $warm_start = ".false." ]; then
 	export FILENAME='gfs_data.tile'
-	export FILEINPATH=$COMIN/init
-	export FILEOUTPATH=$GESOUT
+	export FILEINPATH=$GESIN/enkf
+	export FILEOUTPATH=$GESOUT/init
+
+    mkdir -p $FILEOUTPATH/c00
  	$NCP $FILEINPATH/c00/gfs*  $FILEOUTPATH/c00/.
 
     if [ $npert -gt 0 ]; then
@@ -92,8 +93,8 @@ if [ $warm_start = ".false." ]; then
 
         (( itile = 1 ))
         while (( itile <= ntiles  )); do
-		echo "$RECENATMPY $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH $itile" >>poescript
-        (( itile = itile + 1 ))
+    		echo "$RECENATMPY $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH $itile" >>poescript
+            (( itile = itile + 1 ))
         done # while (( itask < npert ))
 
         chmod 755 poescript
@@ -125,12 +126,13 @@ else
     exit 1
 fi # $warm_start = ".false."
 
-if [ $SENDCOM = YES ]; then
+if [[ $SENDCOM == YES ]]; then
     mem=01
     while [ $mem -le $npert ]; do
         smem=p$(printf %02i $mem)
-        $NCP $GESOUT/$smem/gfs* $COMOUT/$smem
-        ((  mem = mem +1 ))
+        mkdir -p $COMOUT/$smem
+        $NCP $GESOUT/enkf/$smem/gfs* $COMOUT/$smem
+        (( mem = mem +1 ))
     done
 fi
 
