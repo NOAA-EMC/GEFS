@@ -1,6 +1,11 @@
 #!/bin/ksh
 
-echo $(date) $0 begin
+echo "$(date) $0 $(date -u) begin"
+
+if [[ ${STRICT:-NO} == "YES" ]]; then
+    # Turn on strict bash error checking
+    set -eu
+fi
 
 ################################################################################
 #   Script:	exgefs_init_recenter.sh.sms
@@ -54,12 +59,12 @@ echo " ------------------------------------------------------------"
 
 export warm_start=${warm_start:-"false"}
 
-echo DATA=$DATA
+echo "DATA=$DATA"
 
 # Set environment.
 VERBOSE=${VERBOSE:-"YES"}
 if [ $VERBOSE = "YES" ]; then
-   echo $(date) EXECUTING $0 $* >&2
+   echo "$(date) EXECUTING $0 $*" >&2
    set -x
 fi
 
@@ -78,7 +83,7 @@ RECENATMPY=${RECENATMPY:-$HOMEgefs/util/ush/recentensemble.py}
 err=0
 if [ $warm_start = ".false." ]; then
 	export FILENAME='gfs_data.tile'
-	export FILEINPATH=$COMOUT
+	export FILEINPATH=$COMIN/init
 	export FILEOUTPATH=$GESOUT
  	$NCP $FILEINPATH/c00/gfs*  $FILEOUTPATH/c00/.
 
@@ -87,14 +92,12 @@ if [ $warm_start = ".false." ]; then
 
         (( itile = 1 ))
         while (( itile <= ntiles  )); do
-		echo $RECENATMPY $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH $itile >>poescript
+		echo "$RECENATMPY $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH $itile" >>poescript
         (( itile = itile + 1 ))
         done # while (( itask < npert ))
 
-        echo
         chmod 755 poescript
         ls -al poescript
-        echo
         cat poescript
         export MP_HOLDTIME=1000
 
@@ -103,38 +106,34 @@ if [ $warm_start = ".false." ]; then
         export MP_LABELIO=yes
         export MP_INFOLEVEL=3
         export MP_STDOUTMODE=unordered
-        echo APRUN=$APRUN
         export MP_PGMMODEL=mpmd
 
         if [ -f mpmd_cmdfile ]; then 
             rm mpmd_cmdfile
         fi
         ln -s $MP_CMDFILE mpmd_cmdfile
-        $APRUN
+        $APRUN_MPMD
         
         err=$?
-        echo $err
+        if [[ $err != 0 ]]; then
+            echo "FATAL ERROR in $0: One or more recenter jobs in $MP_CMDFILE failed!"
+            exit $err
+        fi
     fi
 else
-	echo $(date) init_recenter works only for cold start 
-        err=1
-fi # if warm_start
+	echo "FATAL ERROR in $0: init_recenter only works for cold start"
+    exit 1
+fi # $warm_start = ".false."
 
-#NCP $FILEOUTPATH/c00/gfs*  $FILEINPATH/c00/.
-
-if [ $err = 0 ]; then
-	msg="$job completed normally"
-else
-	msg="JOB FAILED!"
+if [ $SENDCOM = YES ]; then
+    mem=01
+    while [ $mem -le $npert ]; do
+        smem=p$(printf %02i $mem)
+        $NCP $GESOUT/$smem/gfs* $COMOUT/$smem
+        ((  mem = mem +1 ))
+    done
 fi
 
-postmsg "$jlogfile" "$msg"
+echo "$(date) $0 $(date -u) end"
 
-echo $(date) $0 $(date -u) end
-
-set +x
-if [ $VERBOSE = "YES" ]; then
-	echo $(date) EXITING $0 with return code $err >&2
-fi
-
-exit $err
+exit 0
