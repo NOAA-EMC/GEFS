@@ -47,10 +47,10 @@ def config_tasknames(dicBase):
 
         # #   <!-- initial jobs -->
         if dicBase['RUN_INIT'].upper() == "FV3_COLD":
-            # ---prep
+            # ---atmos_prep
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "prep"
+            dicBase[sTaskName.upper()] = "atmos_prep"
 
             # ---init_recenter
             iTaskName_Num += 1
@@ -268,7 +268,7 @@ def config_tasknames(dicBase):
         dicBase[sVarName] = iTaskName_Num
 
 # =======================================================
-def create_metatask_task(dicBase, taskname="prep", sPre="\t", GenTaskEnt=False):
+def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=False):
     # --------------------------
     WHERE_AM_I = dicBase['WHERE_AM_I']
 
@@ -876,8 +876,8 @@ def get_param_of_task(dicBase, taskname):
         sDep = dicBase[sVarName.upper()]
         if sDep.strip() != "":  # identify whether include 'init_recenter' or not
 
-            # For 'prep' task
-            if taskname.lower() == "prep":
+            # For 'atmos_prep' task
+            if taskname.lower() == "atmos_prep":
                 if DoesTaskExist(dicBase, "init_combine"):
                     sDep = '<taskdep task="init_combine"/>'
                 else:
@@ -885,8 +885,8 @@ def get_param_of_task(dicBase, taskname):
 
             # For 'init_recenter' task
             if taskname.lower() == "init_recenter":
-                if DoesTaskExist(dicBase, "prep"):
-                    sDep = '<metataskdep metatask="prep"/>'
+                if DoesTaskExist(dicBase, "atmos_prep"):
+                    sDep = '<metataskdep metatask="atmos_prep"/>'
                 else:
                     sDep = ""
 
@@ -951,13 +951,13 @@ def get_param_of_task(dicBase, taskname):
                 if DoesTaskExist(dicBase, "getcfssst"):
                     sDep += '\n\t<taskdep task="getcfssst"/>'
                 if DoesTaskExist(dicBase, "init_recenter"):
-                    if DoesTaskExist(dicBase, "prep"):  # Cold Restart
+                    if DoesTaskExist(dicBase, "atmos_prep"):  # Cold Restart
                         sDep += '\n\t<taskdep task="init_recenter"/>'
                     else:  # Warm Start  ???
                         sDep += '\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
 
-                #elif DoesTaskExist(dicBase, "prep"):  # *_Reloc
-                #    sDep += '\n\t<taskdep task="prep_#member#"/>'
+                #elif DoesTaskExist(dicBase, "atmos_prep"):  # *_Reloc
+                #    sDep += '\n\t<taskdep task="atmos_prep_#member#"/>'
 
                 if DoesTaskExist(dicBase, "copy_init"):
                     sDep += '\n\t<taskdep task="copy_init_#member#"/>'
@@ -974,11 +974,11 @@ def get_param_of_task(dicBase, taskname):
                 if DoesTaskExist(dicBase, "forecast_hr"):
                     sDep = '<taskdep task="forecast_hr_#member#"/>'
                 else:
-                    if DoesTaskExist(dicBase, "prep"):
+                    if DoesTaskExist(dicBase, "atmos_prep"):
                         if DoesTaskExist(dicBase, "getcfssst"):
-                            sDep = '<and>\n\t<taskdep task="prep_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+                            sDep = '<and>\n\t<taskdep task="atmos_prep_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
                         else:
-                            sDep = '<taskdep task="prep_#member#"/>'
+                            sDep = '<taskdep task="atmos_prep_#member#"/>'
                     elif DoesTaskExist(dicBase, "rf_prep"):
                         if DoesTaskExist(dicBase, "getcfssst"):
                             sDep = '<and>\n\t<taskdep task="rf_prep"/>\n\t<taskdep task="getcfssst"/>\n</and>'
@@ -1367,7 +1367,7 @@ def DoesTaskExist(dicBase, taskname):
 # =======================================================
 def get_metatask_names(taskname=""):
     metatask_names = []
-    metatask_names.append('prep')
+    metatask_names.append('atmos_prep')
     metatask_names.append('keep_init')
     metatask_names.append('copy_init')
     # forecast
