@@ -56,7 +56,9 @@ if [[ $cplchm = ".true." ]]; then
 	export fhmaxh=$fhmax_aer
 	export fhmax=$fhmax_aer
 
-	export cplwav=".false."
+	export AEROSOL_INIT_TYPE=${AEROSOL_INIT_TYPE:-"warm"}
+
+	export cplwav=".false." # Running both chem and waves is not yet supported
 fi
 
 export fhmax
@@ -103,6 +105,8 @@ export NTRACLR=${NTRACLR:-3}
 #for new vertical coordinate
 export IDVC=${IDVC:-2}
 #export IDVM=32
+
+export imp_physics=${imp_physics:-"11"}
 
 ########################################
 # This section defines the output flags for ncep_post + prdgen
