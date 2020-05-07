@@ -1,24 +1,12 @@
-#####################################################################
-echo "-----------------------------------------------------"
-echo " exgefs_post_cleanup.sh.sms" 
-echo " based on exglobal_post.sh.sms" 
-echo " Apr 99 - Michaud - Generated to post global forecast"
-echo " Mar 03 - Zhu - Add post for 0.5x0.5 degree"
-echo " Jul 05 - Wobus - 6-hour breeding, ensemble only"
-echo " Jul 07 - Wobus - interpolate master post file"
-echo " Jul 07 - Wobus - separate cleanup from rest of job"
-echo " Jul 11 - Wobus - unified cleanup job"
-echo "-----------------------------------------------------"
-#####################################################################
+#! /bin/ksh
 
-set -x
-na=$(basename $0)
-export PS4=' + $SECONDS $RUN $na $LINENO: '
+echo "$(date) $0 $(date -u) begin"
 
-msg="HAS BEGUN on $(hostname)"
-postmsg "$jlogfile" "$msg"
-
-export MP_LABELIO=YES
+set -xa
+if [[ ${STRICT:-NO} == "YES" ]]; then
+    # Turn on strict bash error checking
+    set -eu
+fi
 
 ############################################################
 #  Define Variables:
@@ -31,45 +19,231 @@ export MP_LABELIO=YES
 #  SLEEP_INT    is the number of seconds to sleep between restrt file checks.
 ############################################################
 
-fhr=$SHOUR
-export fhr
+##############################################
+# set last forecast hour to save sfcsig files
+# set cycles to save sfcsig or master files
+##############################################
+fhsave=${fhsave:-240}
+cycsavelistsfcsig=${cycsavelistsfcsig:-"00"}
+cycsavelistmaster=${cycsavelistmaster:-""}
+echo fhsave=$fhsave
+echo cycsavelistsfcsig="$cycsavelistsfcsig"
+echo cycsavelistmaster="$cycsavelistmaster"
 
-############################################################
-# Loop Through the Post Forecast Files 
-############################################################
-while test $fhr -le $FHOUR; do
-	echo $(date) f$fhr begin
+####################################
+# Create member list
+####################################
+memberlist=""
+for ((imem = 1; imem <= $npert; imem++)); do
+    memberlist="$memberlist p$(printf %02i $imem)"
+done
+export memberlist
 
-	if [ "$SENDCOM" = "YES" ]; then
-		#
-		# Save Pressure and SFLUX GRIB/GRIB Index files
-		#
+echo
+env | sort
+echo
 
-		####################################
-		# Remove sigma and sfc fcst and sflux files
-		####################################
+# Test GRIB files before cleaning up
+echo "$(date) GRIB file test before cleanup begin"
+((nmissing = 0))
 
-		if [[ $fhr -gt $fhsave ]]; then
-			rm $COMOUT/$cyc/sfcsig/${RUN}.${cycle}.sf$fhr
-			rm $COMOUT/$cyc/sfcsig/${RUN}.${cycle}.bf$fhr
-			rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbf$fhr
-			rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhr
-		fi # [[ $fhr -gt $fhsave ]]
-	fi # test "$SENDCOM" = "YES"
-	echo $(date) save or remove sf, bf, and sflux files f$fhr completed
+#for cyc_check in 00 06 12 18; do
+# RLW disable checking for all hours except the current cycle"
+for cyc_check in $cyc; do
 
-	if (( fhr < fhmaxh )); then
-		export fhr=$(expr $fhr + $FHINCH)
-	else
-		export fhr=$(expr $fhr + $FHINC)
-	fi
-	if [ $fhr -lt 10 ]; then
-		export fhr="0$fhr"
-	fi
-done # while test $fhr -le $FHOUR
+    echo cyc=$cyc
 
-########################################################
-msg='ENDED NORMALLY.'
-postmsg "$jlogfile" "$msg"
+    if ((cyc == cyc_check)); then
+        export fcstlong=true
+        memberlisttest="$memberlist c00"
+    else
+        export fcstlong=false
+        memberlisttest="$memberlist"
+    fi # (( cyc == cyc_check ))
 
-################## END OF SCRIPT #######################
+    for member in $memberlisttest; do
+
+        ####################################
+        # Specify the Ensemble Member
+        ####################################
+        export RUNMEM=ge${member}
+
+        export PS4=' + $SECONDS $na $RUNMEM R $LINENO: '
+
+        ####################################
+        # Specify Forecast Hour Range
+        ####################################
+        export FHINC=06
+
+        export SHOUR=00
+
+        filelist="\
+		$COMIN/master/ge$member.$cycle.master.grb2anl \
+		$COMIN/master/ge$member.$cycle.master.grb2ianl \
+		$COMIN/pgrb2a/ge$member.$cycle.pgrb2aanl \
+		$COMIN/pgrb2a/ge$member.$cycle.pgrb2aanl.idx \
+		$COMIN/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.anl \
+		$COMIN/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.anl.idx \
+		$COMIN/pgrb2b/ge$member.$cycle.pgrb2banl \
+		$COMIN/pgrb2b/ge$member.$cycle.pgrb2banl.idx \
+		$COMIN/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.anl \
+		$COMIN/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.anl.idx \
+		"
+        for file in $filelist; do
+            if [[ ! -s $file ]]; then
+                ((nmissing = nmissing + 1))
+                echo "nmissing=$nmissing file=$file IS MISSING"
+            fi
+        done # file in $filelist
+
+        if [[ $fcstlong == true ]]; then
+            export FHOUR=$fhmax
+            if ((FHOUR < 10)); then
+                FHOUR=0$FHOUR
+            fi
+            export FHOUR
+        else
+            export FHOUR=06
+        fi # [[ $fcstlong = true ]]
+
+        FH=$SHOUR
+        while ((FH <= FHOUR)); do
+            if ((FH < 100)); then
+                FHP5=0$FH
+            else
+                FHP5=$FH
+            fi
+            filelist="\
+			$COMIN/$cyc/master/ge$member.$cycle.master.grb2f$FH \
+			$COMIN/$cyc/master/ge$member.$cycle.master.grb2if$FH \
+			$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2af$FH \
+			$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2af$FH.idx \
+			$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FHP5 \
+			$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FHP5.idx \
+			$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2bf$FH \
+			$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2bf$FH.idx \
+			$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.f$FHP5 \
+			$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.f$FHP5.idx \
+			$COMIN/$cyc/pgrb2alr/ge$member.$cycle.pgrb2af$FH.2 \
+			$COMIN/$cyc/pgrb2alr/ge$member.$cycle.pgrb2af$FH.2.idx \
+			$COMIN/$cyc/pgrb2blr/ge$member.$cycle.pgrb2bf$FH.2 \
+			$COMIN/$cyc/pgrb2blr/ge$member.$cycle.pgrb2bf$FH.2.idx \
+			$COMIN/$cyc/sfcsig/ge$member.$cycle.bf$FH \
+			$COMIN/$cyc/sfcsig/ge$member.$cycle.sf$FH \
+			$COMIN/$cyc/sflux/ge$member.$cycle.sfluxgrbf$FH \
+			"
+            if ((FH > 0)) && ((FH <= fhmaxh)); then
+                ((FP = FH - 3))
+                if ((FP < 10)); then
+                    FP=0$FP
+                fi
+                if ((FP < 100)); then
+                    FPP5=0$FP
+                else
+                    FPP5=$FP
+                fi
+                filelist="$filelist
+				$COMIN/$cyc/sfcsig/ge$member.$cycle.bf$FP \
+				$COMIN/$cyc/sfcsig/ge$member.$cycle.sf$FP \
+				$COMIN/$cyc/sflux/ge$member.$cycle.sfluxgrbf$FP \
+				$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FPP5 \
+				$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FPP5.idx \
+				"
+            fi # (( FH > 0 )) && (( FH <= fhmaxh ))
+            for file in $filelist; do
+                if [[ ! -s $file ]]; then
+                    ((nmissing = nmissing + 1))
+                    echo "nmissing=$nmissing file=$file IS MISSING"
+                fi
+            done # file in $filelist
+
+            ((FH = FH + FHINC))
+            if ((FH < 10)); then
+                FH=0$FH
+            fi
+        done # (( FH <= FHOUR ))
+    done # member in $memberlisttest
+done # cyc_check in 00 06 12 18
+echo nmissing=$nmissing
+echo $(date) GRIB file test before cleanup end
+if ((nmissing > 0)); then
+    msg="GRIB file test before cleanup IDENTIFIED $nmissing MISSING FILES"
+    echo "$(date)    $msg"
+    postmsg "$jlogfile" "$msg"
+    export err=99
+    err_chk
+else # (( nmissing > 0 ))
+    echo $(date) sfcsig sflux cleanup begin
+    #for cyc_check in 00 06 12 18
+    for cyc_check in $cyc; do
+        savecycle=false
+        for cycsave in $cycsavelistsfcsig; do
+            if ((cyc == cycsave)); then
+                savecycle=true
+            fi
+        done # cycsave in $cycsavelistsfcsig
+
+        echo "cyc=$cyc cyc_check=$cyc_check savecycle=$savecycle"
+        if [[ $savecycle == false ]]; then
+            if ((cyc == cyc_check)); then
+                export fcstlong=true
+                memberlisttest="$memberlist c00"
+            else
+                export fcstlong=false
+                memberlisttest="$memberlist"
+            fi # (( cyc == cyc_check ))
+            for member in $memberlisttest; do
+                ####################################
+                # Specify the Ensemble Member
+                ####################################
+                export RUNMEM=ge${member}
+                export PS4=' + $SECONDS $na $RUNMEM R $LINENO: '
+
+                ####################################
+                # Specify Forecast Hour Range
+                ####################################
+                export FHINCH=03
+                export FHINC=06
+                export SHOUR=00
+
+                if [[ $fcstlong == true ]]; then
+                    if [[ x$HOUTSPS == x ]]; then
+                        export FHOUR=$fhmax
+                    else
+                        ((FHOUR = fhmax - HOUTSPS - FHINC))
+                    fi
+                    if ((FHOUR < 10)); then
+                        FHOUR=0$FHOUR
+                    fi
+                    export FHOUR
+                else
+                    export FHOUR=06
+                fi # [[ $fcstlong = true ]]
+                ###########################################################
+                # remove sigma, surface, and flux files
+                ###########################################################
+                $HOMEgefs/ush/exgefs_post_cleanup.sh.ecf
+            done # member in $memberlisttest
+        else # [[ $savecycle = false ]]
+            echo "sfcsig files are saved for cyc=$cyc"
+        fi # [[ $savecycle = false ]]
+    done # cyc_check in $cyc
+    echo $(date) "sfcsig sflux cleanup end"
+    ########################################################
+    # remove master post subdirectory
+    ########################################################
+    echo $(date) "before master cleanup"
+    savecycle=false
+    for cycsave in $cycsavelistmaster; do
+        if ((cyc == cycsave)); then
+            savecycle=true
+        fi
+    done # cycsave in $cycsavelistmaster
+    echo "cyc=$cyc cyc_check=$cyc_check savecycle=$savecycle"
+    if [[ $savecycle == false ]]; then
+        rm -rf $COMIN/$cyc/master
+    else
+        echo "master files are saved for cyc=$cyc"
+    fi
+    echo $(date) after master cleanup
+fi # (( nmissing > 0 ))
