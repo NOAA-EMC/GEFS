@@ -1,430 +1,108 @@
-#!/bin/ksh
+#!/bin/bash
 
-echo $(date) $0 $(date -u) begin
+echo "$(date) $0 $(date -u) begin"
 
 set -xa
-export PS4='$SECONDS + '
-date
-
-export machine=${machine:-"WCOSS_DELL_P3"}
-
-export total_tasks=${total_tasks:-360}
-export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
-export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
-
-export RUNMEM=$RUNMEM
-export mem=$(echo $RUNMEM|cut -c3-5)
-
-export ENS_NUM=1
-echo "ENS_NUM=$ENS_NUM"
+if [[ ${STRICT:-NO} == "YES" ]]; then
+	# Turn on strict bash error checking
+	set -eu
+fi
+export PS4='$SECONDS + $(basename $0)[$LINENO] '
 
 ####################################
-# obtain unique process id (pid) and make temp directory
+# Determine Job Output Name on System
 ####################################
-export pid=$$
-export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+export jobid=${jobid:-"$job.$LSB_JOBID"}
+export pgmout="OUTPUT.${LSB_JOBID}"
+export pgmerr=errfile
+
+####################################
+# Specify and create working directory
+####################################
+export DATA=${DATA:-${DATAROOT}/${jobid}}
 mkdir -p $DATA
-mkdir $DATA/INPUT
 cd $DATA
 
-############################
-# Set up cycle varaible
-############################
-export cycle=t${cyc}z
+######################################
+# Set up compute resources
+######################################
+export total_tasks=${total_tasks:-360}
+export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
 
 ####################################
 # Specify NET and RUN Name and model
 ####################################
 export NET=${NET:-gefs}
+export envir=${envir:-prod}
 export RUN=${RUN:-gefs}
-export COMPONENTwave=${COMPONENTwave:-${RUN}wave}
-#export NTHREADS=1
 
-####################################
-# File To Log Msgs
-####################################
-export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
-
-####################################
-# Determine Job Output Name on System
-####################################
-export outid="LL$job"
-export jobid="${outid}.o${pid}"
-export pgmout="OUTPUT.${pid}"
-export pgmerr=errfile
-
-####################################
-# Define RERUN Parameter: default to RESTART if not previously set
-# FOR FV3 based forecast job,
-#       RERUN=YES means pick up from the latest available (or specific) set of restart files 
-#       RERUN=NO means ignore  the available set of restart files valid later than FHINI (00h or fhmaxh)
-#
-# In case of FORECAST failure, set RERUN=RESTART if necessary in FORECAST, NCEPPOST, and PRDGEN jobs
-# In case of NCEPPOST failure, set RERUN=RESTART if necessary in NCEPPOST, and PRDGEN jobs
-# In case of PRDGEN   failure, set RERUN=RESTART if necessary in PRDGEN jobs
-####################################
-echo "input setting RERUN=${RERUN:-not set}"
-
-export RERUN=${RERUN:-NO}
-#
-echo "current setting RERUN=$RERUN"
-
-####################################
+######################################
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 # SENDECF  - Flag Events on ECF
 # VERBOSE  - Specify Verbose Output
-####################################
+######################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDDBN=${SENDDBN:-YES}
 export SENDECF=${SENDECF:-YES}
 export VERBOSE=${VERBOSE:-YES}
 
+######################################
+# Set up the date information
+######################################
+export cycle=t${cyc}z
+setpdy.sh
+source PDY
+
+####################################
 # Specify Execution Areas
+####################################
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 export USHgefs=${USHgefs:-$HOMEgefs/ush}
 export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
-export HOMEgfs=${HOMEgfs:-$HOMEgefs}
-export EXECgfs=$HOMEgfs/exec
-export USHgfs=$HOMEgfs/ush
-export FIXgfs=$HOMEgfs/fix
-export PARMgfs=$HOMEgfs/parm
-
-# Path to HOME Directory
-export HOMEwave=${HOMEwave:-${HOMEgfs}}
-export PARMwave=${PARMwave:-$HOMEgefs/parm}
-export CODEwave=${CODEwave:-${HOMEgfs}/WW3/model}
-export EXECwave=${EXECwave:-$HOMEwave/exec}
-export FIXwave=${FIXwave:-$FIXgefs/fix_wave}
-export USHwave=${USHwave:-$HOMEwave/ush}
-export EXECcode=${EXECcode:-$CODEwave/exe}
-
-export FIXemi=${FIXemi:-$HOMEgefs/fix/fix_emission/emi_}
-
-##############################
-# Run setpdy and initialize PDY variables
-##############################
-setpdy.sh
-. PDY
-
-# Set COM Paths and GETGES environment
+##############################################
+# Define COM directories
+##############################################
+export COMIN=${COMIN:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc}
 export GESIN=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
 export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc
-export SSTDIR=${SSTDIR:-$COMIN/atmos/cfssst}
-export COMINWW3=${COMINWW3:-${COMIN}/wave}
-export COMOUTWW3=${COMOUTWW3:-${COMIN}/wave}
 
-#Names used in exglobal_fv3.sh
-export FIX_DIR=$FIXgfs
-export FIX_AM=$FIX_DIR/fix_am
-export FIXfv3=$FIX_DIR/fix_fv3_gmted2010
-export FIXchem=$FIX_DIR/fix_chem/fimdata_chem/fimdata_chem_G6_Li
-
-##############################################
-# Define COM and GES directories
-##############################################
-if [[ $FORECAST_SEGMENT = hr ]] ; then
-	echo "Integrate the model for the Half-Month range segment"
-elif [[ $FORECAST_SEGMENT = lr ]] ; then
-	echo "Integrate the model for the Longer Range segment"
-	export cplwav=.false.
-else
-	msg="FATAL ERROR:  Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
-	echo "$(date)   $msg"
-	echo "The Forecast job will be aborted!!!!"
-	postmsg "$jlogfile" "$msg"
-	export pgm=JENS_FCST
-	export err=911
-	err_chk
-fi # [[ $FORECAST_SEGMENT = hr ]]
-
-echo FORECAST_SEGMENT = $FORECAST_SEGMENT
-
-export ERRSCRIPT=err_chk
-export LOGSCRIPT=startmsg
-
-##############################################
-echo set parameters using gefs.parm
-##############################################
-. $PARMgefs/gefs.parm
-. $PARMgefs/gefs_fcst.parm
-. $PARMwave/gefs_wave.parm
+#############################
+# Source relevant config files
+#############################
+configs="gefs gefs_wave gefs_fcst"
+config_path=$PARMgefs
+for config in $configs; do
+    . $config_path/$config.parm
+    err=$?
+    if [[ $err != 0 ]]; then
+    	echo "FATAL ERROR in $0: Error while loading parm file $config_path"
+    	exit $err
+    fi
+done
 
 if [[ $cplchm = ".true." ]]; then
-	COMPONENT="chem"
+    COMPONENT="chem"
 fi
 export COMPONENT=${COMPONENT:-atmos}
 
-export memdir=$GESIN/$mem
-export gmemdir=$GESIN/$mem
-export ICSDIR=$GESIN/$mem
-export FCSTDIR=$COMOUT/$COMPONENT/sfcsig
-export RSTDIR=$GESIN/$mem/RESTART
-export RSTDIR_TMP=$RSTDIR
+echo "Environment before calling script"
+env | sort
 
-mkdir -m 775 -p $FCSTDIR
-mkdir -m 775 -p $COMOUT/$COMPONENT/restart/$mem
-
-mkdir -m 755 -p $GESIN/$mem/RESTART
-
-
-if [[ $FORECAST_SEGMENT = hr ]] ; then
-	export RERUN="NO"
-	FHINI=${FHINI:-0}
-fi
-
-if [[ $FORECAST_SEGMENT = lr ]] ; then
-	export RERUN="YES"
-	FHINI=${FHINI:-$fhmaxh}
-fi
-
-export CDATE_RST=${CDATE_RST:-$($NDATE +$FHINI $PDY$cyc)}
-
-if [[ $FORECAST_SEGMENT = hr ]] ; then
-	CASE=$CASEHR; FHMAX=$fhmaxh; FHOUT=$FHOUTLF; FHZER=6;
-	MTNRSL=$MTNRSLFV; LONB=$LONBFV; LATB=$LATBFV;
-	FHMAX_HF=$FHMAXHF; FHOUT_HF=$FHOUTHF; 
-	FHINI=$FHINI;
-	(( LEVS = LEVSHR + 1 ))
-elif [[ $FORECAST_SEGMENT = lr ]] ; then
-	CASE=$CASELR; FHMAX=$fhmax; FHOUT=$FHOUTLF; FHZER=6;
-	MTNRSL=$MTNRSLLR; LONB=$LONBLR; LATB=$LATBLR;
-	FHMAX_HF=$FHMAXHF; FHOUT_HF=$FHOUTHF;
-	FHINI=$FHINI;
-	(( LEVS = LEVSLR + 1 ))
-else
-	FORECAST_SEGMENT=$FORECAST_SEGMENT is not supported !
-	exit 9
-fi
-
-export FHMIN=$FHINI
-
-#  The VEGTYPE fix file:
-export FNVETC=${FNVETC:-${FIX_AM}/global_vegtype.igbp.t$MTNRSL.rg.grb}
-export FNTSFC=${FNTSFC:-${FIX_AM}/RTGSST.1982.2012.monthly.clim.grb}
-export FNAISC=${FNAISC:-${FIX_AM}/CFSR.SEAICE.1982.2012.monthly.clim.grb}
-export FNABSC=${FNABSC:-${FIX_AM}/global_mxsnoalb.uariz.t$MTNRSL.rg.grb}
-export FNALBC=$FIX_AM/global_snowfree_albedo.bosu.t$MTNRSL.rg.grb
-export FNALBC2=$FIX_AM/global_albedo4.1x1.grb
-export FNSMCC=$FIX_AM/global_soilmgldas.t$MTNRSL.grb
-export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
-
-#
-# Forecast Input Variables
-#
-export fhstoch=$restart_interval
-
-if [[ $FORECAST_SEGMENT = hr ]] ; then
-	(( FHMAX = FHMAX + 1 ))
-fi
-
-export stochini=${stochini:-".false."}  # true= read in pattern, false=initialize from seed
-
-if [[ $RERUN = "YES" ]] ; then
-	export warm_start=.true.
-	export restart_hour=$FHMIN
-	export restart_run=.true.    
-	export output_1st_tstep=.true.
-	export stochini=.true.
-fi
-
-#
-# Forecast Input Variables
-#
-#--------------------------------------------
-export KMP_AFFINITY=disabled
-export OMP_STACKSIZE=1024m
-export MP_LABELIO=yes
-
-if [[ $mem = c00 ]] ;then 
-	MEMBER=$((npert+1))
-	WAV_MEMBER="00"
-else
-	MEMBER=$(echo $mem|cut -c2-3)
-	WAV_MEMBER=$MEMBER
-fi
-export MEMBER=$MEMBER
-memchar=mem$(printf %03i $MEMBER)
-
-export SET_STP_SEED=${SET_STP_SEED:-"YES"}
-
-if [[ $FORECAST_SEGMENT = hr ]] ; then
-
-	if [[ $DO_SPPT = YES ]] ; then
-		export SPPT=$SPPT_hr
-		export ISEED_SPPT=$ISEED_SPPT_hr
-		export SPPT_LOGIT=$SPPT_LOGIT_hr
-		export SPPT_TAU=$SPPT_TAU_hr
-		export SPPT_LSCALE=$SPPT_LSCALE_hr
-		export sppt_sfclimit=$sppt_sfclimit_hr
-	fi
-
-	if [[ $DO_SHUM = YES ]] ; then
-		export SHUM=$SHUM_hr
-		export ISEED_SHUM=$ISEED_SHUM_hr
-		export SHUM_TAU=$SHUM_TAU_hr
-		export SHUM_LSCALE=$SHUM_LSCALE_hr
-	fi
-
-	if [[ $DO_SKEB = YES ]] ; then
-		export SKEB=$SKEB_hr
-		export ISEED_SKEB=$ISEED_SKEB_hr
-		export SKEB_TAU=$SKEB_TAU_hr
-		export SKEB_LSCALE=$SKEB_LSCALE_hr
-		export SKEBNORM=${SKEBNORM:-"1"}
-	fi
-
-fi
-
-if [[ $FORECAST_SEGMENT = lr ]] ; then
-
-	if [[ $DO_SPPT = YES ]] ; then
-		export SPPT=$SPPT_hr
-		export ISEED_SPPT=$ISEED_SPPT_hr
-		export SPPT_LOGIT=$SPPT_LOGIT_hr
-		export SPPT_TAU=$SPPT_TAU_hr
-		export SPPT_LSCALE=$SPPT_LSCALE_hr
-		export sppt_sfclimit=$sppt_sfclimit_hr
-	fi
-
-	if [[ $DO_SHUM = YES ]] ; then
-		export SHUM=$SHUM_hr
-		export ISEED_SHUM=$ISEED_SHUM_hr
-		export SHUM_TAU=$SHUM_TAU_hr
-		export SHUM_LSCALE=$SHUM_LSCALE_hr
-	fi
-
-	if [[ $DO_SKEB = YES ]] ; then
-		export SKEB=$SKEB_hr
-		export ISEED_SKEB=$ISEED_SKEB_hr
-		export SKEB_TAU=$SKEB_TAU_hr
-		export SKEB_LSCALE=$SKEB_LSCALE_hr
-		export SKEBNORM=${SKEBNORM:-"1"}
-	fi
-
-fi
-
-#
-# Forecast Input Variables
-#
-export fcstscript=${fcstscript:-$HOMEgfs/scripts/exglobal_fcst_nemsfv3gfs.sh}
-export FORECASTSH=$fcstscript
-export FCSTEXECDIR=${FCSTEXECDIR:-$EXECgefs}
-export PARM_FV3DIAG=${PARM_FV3DIAG:-$PARMgfs/parm_fv3diag}
-export ROTDIR=${ROTDIR:-$DATA}
-
-export APRUN=${APRUN:-""}
-
-echo $fcstscript
-echo $FORECASTSH
-echo $FCSTEXECDIR
-echo $FCSTEXEC
-echo $PARM_FV3DIAG
-echo $APRUN
-
-NCP="/bin/cp -p"
-
-SEND=NO    
-export VERBOSE=YES
-
-#echo "-----end of CONFIG in $0 --------"
-
-################################################################################
-export CDATE=$PDY$cyc
-export rCDUMP=$RUNMEM
-export CDUMP=$RUNMEM
-
-if [[ $cplwav = ".true." ]]; then
-	# Set location of wave restart from last cycle
-	last_date=$($NDATE -$WAVHCYC $CDATE)
-	last_PDY=$(echo $last_date | cut -c1-8)
-	last_cyc=$(echo $last_date | cut -c9-10)
-	export WRDIR=$COMROOT/${NET}/${envir}/${RUN}.${last_PDY}/$last_cyc/wave/restart
-fi
-
-if [[ $cplchm = ".true." ]]; then
-	CHEMIN=${CHEMIN:-$memdir/chem}
-	if [[ ! -d $CHEMIN ]]; then
-		echo "FATAL: cplchm is .true. but there is no chem input directry at $CHEMIN"
-		exit 200
-	fi
-
-	# Check which smoke emissions we are using
-	gbbepx_found=0
-	any_found=0
-	for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
-		if [[ -f $CHEMIN/$tile/plumefrp.dat ]]; then (( gbbepx_found = gbbepx_found + 1 )); fi
-		if [[ -f $CHEMIN/$tile/plumestuff.dat ]]; then (( any_found = any_found + 1 )); fi
-	done
-
-	if (( gbbepx_found == 6 )); then
-		# Using GBBEPx
-		echo "GBBEPx smoke emissions detected and will be used"
-		export EMITYPE=2
-	elif (( any_found == 6 )); then
-		# Using MODIS
-		echo "WARNING: missing or complete GBBEPx emissions, failing over to MODIS-style inputs"
-		echo "   Check $CHEMIN and your prep emission job if this is not expected."
-		export EMITYPE=1
-	else
-		echo "FATAL: cplchm is .true. but smoke emissions are not available!"
-		echo "  Check input directory $CHEMIN"
-		err=10
-		err_chk || exit $err
-	fi
-
-	# Link restart files for next cycle
-	next_date=$($NDATE +$gefs_cych $CDATE)
-	next_PDY=$(echo $next_date | cut -c1-8)
-	next_cyc=$(echo $next_date | cut -c9-10)
-	COM_RSTDIR=$COMOUT/$COMPONENT/restart/$mem
-	if [[ ! -d $RSTDIR ]]; then mkdir -p $RSTDIR; fi
-	ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res $RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res
-	ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc $RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc
-	for kind in fv_tracer.res fv_core.res fv_srf_wnd.res phy_data sfc_data; do
-		for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
-			ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc $RSTDIR/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc
-		done
-	done
-
-fi # [[ $cplchm = ".true." ]]
-
-export increment_file=$ICSDIR/fv3_increment.nc
-
-export FIX_DIR=$FIXgfs
-export FIX_AM=$FIX_AM
-
-if [[ $read_increment = ".true." && $warm_start = ".true." ]]; then
-	# Make sure increment file exists before using warm start
-	if [[ ! -f $increment_file ]]; then
-		echo "WARNING: Warm-start requested but no increment file present, reverting to cold-start!"
-		export warm_start=".false."
-		export read_increment=".false."
-	fi
-fi
-
-if [[ $RERUN = "YES" && ( $DO_SPPT = "YES" || $DO_SHUM = "YES" || $DO_SKEB = "YES" ) ]]; then
-	fhr=$(printf "%03.0f" $fhmaxh)
-	cp -pr $GESIN/$mem/RESTART/stoch_out.F000$fhr $DATA/stoch_ini
-fi
-
-########################################################
-## Execute the script.
-$FORECASTSH
 #############################################################
+# Execute the script
+$HOMEgefs/scripts/exgefs_ens_forecast.sh.ecf
 err=$?
-
-if [ $err = 0 ]; then
-    msg="$job completed normally!"
+if [[ $err == 0 ]]; then
+    echo "$job completed normally!"
 else
-    msg="FATAL ERROR: $job failed!"
+    echo "FATAL ERROR: $job failed!"
 fi
-postmsg "$jlogfile" "$msg"
+#############################################################
 
 ##############################
 # Remove the Temporary working directory

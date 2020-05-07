@@ -1,5 +1,7 @@
 #!/bin/ksh
 
+
+
 #
 # Forecast Input Variables
 #
@@ -85,13 +87,7 @@ fi
 
 # add two tiered SST options
 export sst2tier=${sst2tier:-YES}
-if [[ $sst2tier = YES ]]; then
-	export nstf_name="2,0,0,0,0"
-	export FTSFS=0
-	export FNTSFA=$SSTDIR/TMPsfc.$PDY$cyc.24hr.anom.grb
-fi
 
-# export FCSTEXEC=${FCSTEXEC:-fv3_gfs_${TYPE}.${COMP}.${MODE}.x}
 export FCSTEXEC=${FCSTEXEC:-global_fv3gfs.x}
 
 export APRUN=${APRUN:-""}
@@ -101,8 +97,6 @@ export warm_start=${warm_start:-".false."}
 export read_increment=${read_increment:-".false."}
 REMAP_GRID=none     # temporay setting, to void the latlon default
 export REMAP_GRID=${REMAP_GRID:-latlon}        #gaussian or latlon for using fregrid or regrid_nemsio for remapping
-#export DIAG_TABLE=${DIAG_TABLE:-$HOMEgfs/parm/parm_fv3diag/diag_table}
-# export FIELD_TABLE=${FIELD_TABLE:-$HOMEgfs/parm/parm_fv3diag/field_table_gfdl}
 
 # set fixed k_split and n_split for dt=450s and 300s
 if [[ $DELTIM = 450 ]]; then
@@ -191,7 +185,6 @@ export prslrd0=
 export ivegsrc=
 export isot=
 export debug=${gfs_phys_debug:-".false."}
-#export nstf_name="$NST_FCST,$NST_SPINUP,$NST_RESERVED,$ZSEA1,$ZSEA2"
 export nst_anl=${nst_anl:-".true."}
 export nstf_name=${nstf_name:-"2,0,0,0,0"}
 export psautco=${psautco:-"0.0008,0.0005"}
@@ -317,7 +310,7 @@ if [[ $DO_SKEB = YES ]]; then
 	export ISEED_SKEB_hr=${ISEED_SKEB_hr:-$((CDATE*1000 + MEMBER*10 + 1))}             # Seed for SKEB pattern
 	export SKEB_TAU_hr=${SKEB_TAU_hr:-"2.16E4,1.728E5,2.592E6,7.776E6,3.1536E7"}       # Time scale in seconds
 	export SKEB_LSCALE_hr=${SKEB_LSCALE_hr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
-        export SKEBNORM=${SKEBNORM:-1}
+    export SKEBNORM=${SKEBNORM:-1}
 
 #	export SKEB_VFILT_hr=${SKEB_VFILT_hr:-40}                                          # number of iterations of a 1-2-1 filter of the random pattern in the vertical
 #	export SKEB_DISS_SMOOTH_hr=${SKEB_DISS_SMOOTH_hr:-12}                              # number of iterations of smoothing the dissipation estimate in the horizontal
