@@ -1,8 +1,26 @@
-export gefs_ver=v11.2.0
-export gsm_ver=v12.1.3
-export post_ver=v5.1.2
-export enkf_ver=v2.0.3
-export grib_util_ver=v1.0.1
-export util_shared_ver=v1.0.5
-#export enkf_ver=`cat $NWROOTp1/versions/gfs.ver |grep enkf_ver |awk -F"=" '{print $2}'`
-#export post_ver=`cat $NWROOTp1/versions/gfs.ver |grep post_ver |awk -F"=" '{print $2}'`
+export gefs_ver=v12.0.0.0
+
+export EnvVars_ver=1.0.3
+export ips_ver=18.0.1.163
+export impi_ver=18.0.1
+export lsf_ver=10.1
+
+export prod_envir_ver=1.0.3
+export grib_util_ver=1.1.0
+export prod_util_ver=1.1.0
+export util_shared_ver=1.1.0
+export g2tmpl_ver=1.5.0
+
+export CFP_ver=2.0.1
+export gempak_ver=7.3.1
+
+export NetCDF_ver=4.5.0
+export HDF5_serial_ver=1.10.1
+export NCO_ver=4.7.0
+
+export python_ver=3.6.3
+
+export HPSS_ver=5.0.2.5
+
+#export USE_CFP=YES
+export PATH=$PATH:.

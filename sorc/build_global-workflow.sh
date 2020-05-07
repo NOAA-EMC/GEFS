@@ -3,9 +3,8 @@ set -eux
 
 cwd=`pwd`
 
-
 progname=global-workflow
-#
+
 #
 cd ${progname}.fd
 cd sorc
