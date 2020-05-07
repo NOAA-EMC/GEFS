@@ -5,7 +5,7 @@ ulimit -s unlimited
 ulimit -a
 
 # module_ver.h
-. $SOURCEDIR/versions/gefs_wcoss_dell_p35.ver
+. $SOURCEDIR/versions/gefs_wcoss_dell_p3.ver
 
 # Load modules
 . /usrx/local/prod/lmod/lmod/init/ksh
@@ -24,10 +24,10 @@ module load lsf/$lsf_ver
 module list
 
 # For Development
-. $GEFS_ROCOTO/bin/wcoss_dell_p35/common.sh
+. $GEFS_ROCOTO/bin/wcoss_dell_p3/common.sh
 
 # Export List
-export OMP_NUM_THREADS_CH=${GEFS_TPP:-40}
+export OMP_NUM_THREADS_CH=${GEFS_TPP:-28}
 
 
-$SOURCEDIR/jobs/JGEFS_ATMOS_INIT_FV3CHGRS
+$SOURCEDIR/jobs/JGEFS_ATMOS_PREP

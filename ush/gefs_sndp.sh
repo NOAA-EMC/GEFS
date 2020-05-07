@@ -61,7 +61,7 @@ EOF
 
     if [ $SENDCOM = 'YES' ]
     then 
-      if [ $SENDDBN = 'YES' ] ; then
+      if [ $SENDDBN_NTC = 'YES' ] ; then
          cp $DATA/${m}/${RUNMEM}_collective$m.fil $pcom/${RUNMEM}_collective$m.postsnd_$cyc
          $DBNROOT/bin/dbn_alert NTC_LOW BUFR $job $pcom/${RUNMEM}_collective$m.postsnd_$cyc
       fi
