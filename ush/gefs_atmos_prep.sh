@@ -89,6 +89,7 @@ if [[ $SENDCOM == "YES" ]]; then
     $NCP $OUTDIR/sfc* $COMOUT/init/$mem
     $NCP $OUTDIR/sfc* $GESOUT/init/$mem
     $NCP $OUTDIR/gfs_ctrl.nc $COMOUT/init/$mem
+    $NCP $OUTDIR/gfs_ctrl.nc $GESOUT/init/$mem
     if [[ $mem == "c00" ]]; then
         $NCP $OUTDIR/gfs_data*.nc $COMOUT/init/$mem
     fi
