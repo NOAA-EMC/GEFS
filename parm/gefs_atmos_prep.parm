@@ -1,0 +1,24 @@
+#!/bin/ksh
+
+case $cyc in
+    00) memshift=0;;
+    06) memshift=20;;
+    12) memshift=40;;
+    18) memshift=60;;
+esac
+
+export pdycycp=$($NDATE -$fhrp $PDY$cyc)
+export pdyp=$(echo $pdycycp|cut -c1-8)
+export cycp=$(echo $pdycycp|cut -c9-10)
+
+export CDATE=$PDY$cyc
+
+export MAX_ENKF_SEARCHES=${MAX_ENKF_SEARCHES:-3}
+export ENKF_SEARCH_LEAP=${ENKF_SEARCH_LEAP:-30}
+
+export ictype=fv3gfs
+export NTRAC=7
+
+(( LEVS=LEVSHR+1 ))
+export LEVS=$LEVS
+export CASE=$CASEHR

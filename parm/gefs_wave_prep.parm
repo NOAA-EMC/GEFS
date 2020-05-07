@@ -1,6 +1,15 @@
 #!/bin/bash
 # Wave component parm file for PREP step
 
+# Downstream directory settings
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
+export EXECcode=${EXECcode:-$HOMEgfs/exec}
+export USHwave=${USHwave:-$HOMEgfs/ush}
+
+export CDUMP=$RUNMEM
+export MP_PULSE=0
+export WAV_MOD_TAG=${COMPONENTwave}${waveMEMB}
+
 # Step label
 export sigMODE=${sigMODE:-prep}
 

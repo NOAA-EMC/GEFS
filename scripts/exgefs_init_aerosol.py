@@ -16,7 +16,7 @@ from functools import partial
 from inspect import cleandoc
 
 # Constants
-init_path_pattern = "{ges_root}/{envir}/gefs.%Y%m%d/%H/{member}"
+init_path_pattern = "{ges_inout}/init/{member}"
 init_file_pattern = "{path}/{kind}.{tile}.nc"
 increment_file_pattern = "{path}/fv3_increment.nc"
 restart_dest_pattern = "{path}/RESTART/{filename}"
@@ -30,11 +30,13 @@ merge_script_pattern = "{ush_gfs}/merge_fv3_chem_tile.py"
 n_tiles = 6
 
 analysis_file_pattern = "{com_gfs}/gfs.t%Hz.atmanl.nemsio"
+com_base_pattern = "{com_out}/init/{member}"
 fcst_file_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/{component}/sfcsig/ge{member}.t%Hz.atmf{forecast_hour:03}.nemsio"
 vert_coord_file_pattern = "{fix_gfs}/fix_am/global_hyblev.l{n_levels}.txt"
 
-com_base_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/{component}/init/{member}"
 max_lookback = 1  # Maximum number of cycles backwards to search for files
+
+mail_recipients = 'Dingchen.Hou@noaa.gov,Walter.Kolczynski@noaa.gov,Xianwu.Xue@noaa.gov' # comma-separated list, no spaces
 
 # Namelist used by regrid
 regrid_namelist = cleandoc("""
@@ -79,8 +81,11 @@ def main() -> None:
     # Read in environment variables and make sure they exist
     cdate = get_env_var("CDATE")
     incr = int(get_env_var('gefs_cych'))
-    ges_root = get_env_var('GESROOT')
+    job = get_env_var('job')
+    ges_in = get_env_var('GESIN')
+    ges_out = get_env_var('GESOUT')
     com_root = get_env_var('COMROOT')
+    com_out = get_env_var('COMOUT')
     com_gfs = get_env_var('COMINgfs')
     envir = get_env_var('envir')
     data = get_env_var('DATA')
@@ -96,18 +101,19 @@ def main() -> None:
     calcinc_aprun = get_env_var('APRUN_CALCINC')
     imp_physics = get_env_var('imp_physics')
     resolution = get_env_var("CASE", fail_on_missing=False, default_value="C384")
-    send_com = get_env_var("SENDCOM", fail_on_missing=False, default_value="YES") == "YES"
+    send_com = get_env_var("SENDCOM") == "YES"
+    send_ecf = get_env_var("SENDECF") == "YES"
 
     if (init_type not in ["warm", "cold"]):
-        print("FATAL: Invalid AEROSOL_INIT_TYPE specified, aborting")
+        print(f"FATAL ERROR in {__file__}: Invalid AEROSOL_INIT_TYPE specified, aborting")
         exit(103)
 
     os.chdir(data)
 
     time = datetime.strptime(cdate, "%Y%m%d%H")
 
-    atm_source_path = time.strftime(init_path_pattern.format(ges_root=ges_root, envir=envir, member="c00"))
-    destination_path = time.strftime(init_path_pattern.format(ges_root=ges_root, envir=envir, member="aer"))
+    atm_source_path = time.strftime(init_path_pattern.format(ges_inout=ges_in, envir=envir, member="c00"))
+    destination_path = time.strftime(init_path_pattern.format(ges_inout=ges_out, envir=envir, member="aer"))
 
     # Even with exist_ok=True, makedirs sometimes throws a FileExistsError
     with contextlib.suppress(FileExistsError):
@@ -156,6 +162,9 @@ def main() -> None:
 
         if(not files_exist or not success):
             print("WARNING: Could not calculate increment (previous forecast may be missing), reverting to cold start")
+            print("    If this is the first cycle, you can safely ignore this warning.")
+            message = f"WARNING: {job} could not calculate the forecast increment to warm start the chem member. Will use cold start, but foreacst may be degraded!"
+            subprocess.call(f'echo {message} | mail.py -c {mail_recipients}', shell=True)
             init_type = "cold"
 
     if(init_type == "cold"):
@@ -170,23 +179,26 @@ def main() -> None:
 
     if(send_com):
         # Copy init files to COM
-        com_path = time.strftime(com_base_pattern.format(com_root=com_root, envir=envir, net=net, run=run, member="aer", component="chem"))
+        com_path = time.strftime(com_base_pattern.format(com_out=com_out, envir=envir, net=net, run=run, member="aer", component="chem"))
         shutil.rmtree(com_path, ignore_errors=True)
-
-        # Handle error for missing files due to possibility of dangling symlinks (ignore_dangling_symlinks doesn't work properly; Python Issue 38523)
-        try:
-            shutil.copytree(destination_path, com_path, ignore_dangling_symlinks=True)  # Copy data to COM
-        except shutil.Error as err:
-            # shutil.Error from copytree are tuples of src, dest, err
-            tuples = [t for t in err.args[0]]
-            exceptionStrings = [t[2] for t in tuples]
-            # Ignore any no such file errors, raise any others
-            if all(e.startswith('[Errno 2] No such file or directory:') for e in exceptionStrings):
-                pass
-            else:
-                raise err
+        safe_copytree(destination_path, com_path)  # Copy data to COM
 
     return
+
+
+# Handle error for missing files due to possibility of dangling symlinks (ignore_dangling_symlinks doesn't work properly; Python Issue 38523)
+def safe_copytree(source: str, destination: str) -> None:
+    try:
+        shutil.copytree(source, destination, ignore_dangling_symlinks=True)
+    except shutil.Error as err:
+        # shutil.Error from copytree are tuples of src, dest, err
+        tuples = [t for t in err.args[0]]
+        exceptionStrings = [t[2] for t in tuples]
+        # Ignore any no such file errors, raise any others
+        if all(e.startswith('[Errno 2] No such file or directory:') for e in exceptionStrings):
+            pass
+        else:
+            raise err
 
 
 # Retrieve environment variable and exit or print warning if not defined
@@ -194,12 +206,12 @@ def get_env_var(varname: str, fail_on_missing: bool=True, default_value: str=Non
     var = os.environ.get(varname)
     if(var is None):
         if(fail_on_missing is True):
-            print("FATAL: Environment variable {varname} not set".format(varname=varname))
+            print(f"FATAL ERROR in {__file__}: Environment variable {varname} not set")
             exit(100)
         elif(default_value is None):
-            print("WARNING: Environment variable {varname} not set, continuing using None".format(varname=varname))
+            print(f"Environment variable {varname} not set, continuing using None")
         else:
-            print("WARNING: Environment variable {varname} not set, continuing using default of {default_value}".format(varname=varname, default_value=default_value))
+            print(f"Environment variable {varname} not set, continuing using default of {default_value}")
             var = default_value
     return(var)
 
@@ -210,7 +222,7 @@ def get_init_files(path: str, kind: str) -> typing.List[str]:
     for file_name in files:
         print(file_name)
         if(not os.path.isfile(file_name)):
-            print("FATAL: Atmosphere file {file_name} not found".format(file_name=file_name))
+            print(f"FATAL ERROR in {__file__}: Atmosphere file {file_name} not found")
             exit(101)
     return files
 
@@ -275,7 +287,7 @@ def get_all_restart_files(time: datetime, incr: int, max_lookback: int, com_root
 # Merge tracer data into atmospheric data (cold start)
 def merge_tracers(merge_script: str, atm_filenames: typing.List[str], restart_files: typing.List[str], tracer_list_file: str) -> None:
     if(len(atm_filenames) != len(restart_files)):
-        print("FATAL: atmosphere file list and tracer file list are not the same length")
+        print(f"FATAL ERROR in {__file__}: atmosphere file list and tracer file list are not the same length")
         exit(102)
 
     for atm_file, tracer_file in zip(atm_filenames, restart_files):

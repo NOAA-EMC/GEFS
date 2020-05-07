@@ -133,7 +133,6 @@ if [[ $cplwav = ".true." ]]; then
 fi
 
 if [[ $cplchm = ".true." ]]; then
-	export AEROSOL_INIT_TYPE=${AEROSOL_INIT_TYPE:-"warm"}
 	export DELTIM=300 # Needed to match setting used by GSD
 
 	if [[ $AEROSOL_INIT_TYPE == "warm" ]]; then
@@ -206,7 +205,8 @@ export cal_pre=".true."
 export do_sat_adj=".false."
 export random_clds=".true."
 export cnvcld=".true."
-export imp_physics=${imp_physics:-"11"}
+# export imp_physics=${imp_physics:-"11"}
+# imp_physics is set in gefs.parm because it is needed in other jobs
 if [[ $imp_physics = 99 ]]; then # ZhaoCarr
 	export ncld=1
     export FIELD_TABLE="$HOMEgfs/parm/parm_fv3diag/field_table_zhaocarr"

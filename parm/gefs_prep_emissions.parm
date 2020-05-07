@@ -1,5 +1,23 @@
 #!/bin/bash
 
+export HOMEgfs=${HOMEgfs:-${HOMEgefs}}
+export FIXgfs=$HOMEgfs/fix
+
+export FIXchem=${FIXchem:-$FIXgfs/fix_chem}
+export HOMEchem=${HOMEchem:-$HOMEgfs}
+export EXECchem=${EXECchem:-$HOMEchem/exec}
+export PARMchem=${PARMchem:-$HOMEchem/parm}
+
+export RUNMEM=${RUNMEM:-geaer}
+export mem=$(echo $RUNMEM|cut -c3-5)
+
+export COMOUTchem=${COMOUTchem:-$GESOUT/init/$mem}
+export CHEM_OUTPUT_FORMAT=${CHEM_OUTPUT_FORMAT:-chem/tile%TILE%/%INPUT%.dat}
+
+export CDATE=$PDY$cyc
+
+export CASE=${CASEHR:-C384}
+
 export GBBEPX_DATA_DIR_TODAY=${GBBEPX_DATA_DIR_TODAY:-$DCOMROOT/dev/$PDY/firewx}
 export GBBEPX_DATA_DIR_YESTERDAY=${GBBEPX_DATA_DIR_YESTERDAY:-$DCOMROOT/dev/$PDYm1/firewx}
 export BBEM_MODIS_DIR_TODAY=${BBEM_MODIS_DIR_TODAY:-$DCOMROOT/prod/$PDY/modis_fire}

@@ -9,6 +9,7 @@ def IsCoupleCHEM(dicBase):
 
     return False
 
+
 # =======================================================
 def config_tasknames(dicBase):
     sVarName = 'taskname_num'.upper()
@@ -47,10 +48,10 @@ def config_tasknames(dicBase):
 
         # #   <!-- initial jobs -->
         if dicBase['RUN_INIT'].upper() == "FV3_COLD":
-            # ---prep
+            # ---atmos_prep
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "prep"
+            dicBase[sTaskName.upper()] = "atmos_prep"
 
             # ---init_recenter
             iTaskName_Num += 1
@@ -158,13 +159,6 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "gempak"
 
-            #WHERE_AM_I = dicBase['WHERE_AM_I']
-            #if WHERE_AM_I.upper() not in ["hera".upper()]:
-            #    # ---avg_gempak_vgf There is no gdplot2_vg on hera, so this task can not run.
-            #    iTaskName_Num += 1
-            #    sTaskName = "taskname_{0}".format(iTaskName_Num)
-            #    dicBase[sTaskName.upper()] = "avg_gempak_vgf"
-
             # ---avgspr_gempak_meta
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
@@ -267,8 +261,9 @@ def config_tasknames(dicBase):
         # final
         dicBase[sVarName] = iTaskName_Num
 
+
 # =======================================================
-def create_metatask_task(dicBase, taskname="prep", sPre="\t", GenTaskEnt=False):
+def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=False):
     # --------------------------
     WHERE_AM_I = dicBase['WHERE_AM_I']
 
@@ -283,10 +278,10 @@ def create_metatask_task(dicBase, taskname="prep", sPre="\t", GenTaskEnt=False):
 
     cycledef = "gefs"
     if taskname in ["forecast_lr", "post_lr", "prdgen_lr", "ensstat_lr", "enspost_lr", "cqpf"]:
-        cycledef = "gefs_00z"    
+        cycledef = "gefs_00z"
     elif taskname == "avg_gempak_vgf":
         cycledef = "gefs_00z,gefs_12z"
- 
+
     maxtries = 1
 
     strings = ""
@@ -363,9 +358,8 @@ def create_metatask_task(dicBase, taskname="prep", sPre="\t", GenTaskEnt=False):
             strings += sPre_2 + '<nodes>{0}</nodes><shared></shared>\n'.format(sNodes)
         else:
             strings += sPre_2 + '<nodes>{0}</nodes>\n'.format(sNodes)
-        
-        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]: #, "cray".upper()]:
-            #if taskname in ["prdgen_hr", "ensstat_hr", "wave_gempak"]:
+
+        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
             if sQueue.endswith("_shared"):
                 strings += sPre_2 + '<native>-R "affinity[core(1):distribute=pack]"</native>\n'
                 strings += sPre_2 + '<native>-R "rusage[mem=4608]"</native>\n'
@@ -388,7 +382,7 @@ def create_metatask_task(dicBase, taskname="prep", sPre="\t", GenTaskEnt=False):
 
     # -------------------Native-------------------
     if WHERE_AM_I.upper() == "cray".upper():
-        if taskname in [ "archive_atm", "archive_wave", "archive_chem" ]:
+        if taskname in ["archive_atm", "archive_wave", "archive_chem"]:
             strings += ""
         else:
             strings += sPre_2 + '<native>-extsched "CRAYLINUX[]"</native>\n'
@@ -423,31 +417,31 @@ def create_metatask_task(dicBase, taskname="prep", sPre="\t", GenTaskEnt=False):
             strings += (create_envar(name="RUNMEM", value="gegfs", sPre=sPre_2))
     # -------------------RUNMEM-------------------
 
-    #\/ -------------------Add Source Vars----------
+    # \/ -------------------Add Source Vars----------
     strings += AddSourceVarsToXML_ENT(sNodes, dicBase, taskname, sPre_2)
-    #/\ -------------------Add Source Vars----------
+    # /\ -------------------Add Source Vars----------
 
     # -------------------Other envar and command-------------------
-    ## Add new envir
+    # Add new envir
     if taskname in ['keep_init', 'copy_init']:
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
 
-    ## For FORECAST_SEGMENT
+    # For FORECAST_SEGMENT
     if (taskname in ['forecast_hr', 'prdgen_hr', 'post_hr', 'ensstat_hr', 'enspost_hr', 'chem_forecast', 'chem_post', 'chem_prdgen']) \
      or taskname.startswith("post_hr_") or taskname.startswith('chem_post_'):
         strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
     elif taskname in ['forecast_lr', 'prdgen_lr', 'post_lr', 'ensstat_lr', 'enspost_lr']:
         strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
-	
-    ## For SUBJOB
+
+    # For SUBJOB
     if taskname.startswith("post_hr_"):
         strings += (create_envar(name="SUBJOB", value=taskname.replace("post_hr_", ""), sPre=sPre_2))
     elif taskname.startswith("chem_post_"):
         strings += (create_envar(name="SUBJOB", value=taskname.replace("chem_post_", ""), sPre=sPre_2))
     elif taskname.startswith("ensavg_nemsio_"):
         strings += (create_envar(name="SUBJOB", value=taskname.replace("ensavg_nemsio_", ""), sPre=sPre_2))
-        
-    ## Add command
+
+    # Add command
     sPRE = "&PRE; "
     if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
         sPRE = ""
@@ -507,16 +501,17 @@ def create_metatask_task(dicBase, taskname="prep", sPre="\t", GenTaskEnt=False):
 
     return strings
 
+
 # =======================================================
 def AddSourceVarsToXML_ENT(sNodes, dicBase, taskname, sPre_2):
-    #print(sNodes)
-    #print(taskname)
-    
+    # print(sNodes)
+    # print(taskname)
+
     strings = ""
     GEFS_NODES = 1
     GEFS_PPN = 1
     GEFS_TPP = 1
-    
+
     sNodes_3 = sNodes.split(":")
     if len(sNodes_3) == 1:
         if sNodes_3[0].startswith("ppn="):
@@ -541,13 +536,13 @@ def AddSourceVarsToXML_ENT(sNodes, dicBase, taskname, sPre_2):
         print("Please check the format of your sNodes")
         strings = "Wrong Format"
         return strings
-       
+
     if taskname in ["forecast_hr", "forecast_lr"]:
         GEFS_TPP = int(dicBase['parallel_threads'.upper()])
 
     GEFS_NTASKS = GEFS_NODES * GEFS_PPN
     GEFS_NCORES_PER_NODE = GEFS_PPN * GEFS_TPP
- 
+
     strings += (create_envar(name="GEFS_NTASKS", value="{0}".format(GEFS_NTASKS), sPre=sPre_2))
     strings += (create_envar(name="GEFS_NCORES_PER_NODE", value="{0}".format(GEFS_NCORES_PER_NODE), sPre=sPre_2))
     strings += (create_envar(name="GEFS_TPP", value="{0}".format(GEFS_TPP), sPre=sPre_2))
@@ -555,6 +550,7 @@ def AddSourceVarsToXML_ENT(sNodes, dicBase, taskname, sPre_2):
     strings += (create_envar(name="GEFS_NODES", value="{0}".format(GEFS_NODES), sPre=sPre_2))
 
     return strings
+
 
 # =======================================================
 def GetIndexOfTask(dicBase, taskname):
@@ -668,7 +664,8 @@ def Add_Subjobs_to_dicBase(dicBase, iTaskName_Num, taskname="post_hr", sNSubJobs
 # =======================================================
 def write_to_all_ent(GenTaskEnt, dicBase):
     if GenTaskEnt:
-        import os, sys
+        import os
+        import sys
         # sPath = dicBase["GEFS_ROCOTO"] + r"/tasks/" + dicBase["WHERE_AM_I"] + r"/"
 
         sSep = "/"
@@ -745,6 +742,7 @@ def write_to_ent(taskname, dicBase, GenTaskEnt=False):
     fh.close()
     # print("exit")
 
+
 # =======================================================
 def calc_fcst_resources(dicBase, taskname="forecast_hr"):
     import math
@@ -786,14 +784,14 @@ def calc_fcst_resources(dicBase, taskname="forecast_hr"):
             iTotal_Tasks = iTotal_Tasks + iWaveThreads
 
     iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
-    iNodes = int(math.ceil( iTotal_Tasks * 1.0 / iPPN))
+    iNodes = int(math.ceil(iTotal_Tasks * 1.0 / iPPN))
     iTPP = parallel_threads
 
     return iTotal_Tasks, iNodes, iPPN, iTPP
 
+
 # =======================================================
 def get_param_of_task(dicBase, taskname):
-    import math
     import textwrap
     sWalltime = ""
     sNodes = ""
@@ -876,8 +874,8 @@ def get_param_of_task(dicBase, taskname):
         sDep = dicBase[sVarName.upper()]
         if sDep.strip() != "":  # identify whether include 'init_recenter' or not
 
-            # For 'prep' task
-            if taskname.lower() == "prep":
+            # For 'atmos_prep' task
+            if taskname.lower() == "atmos_prep":
                 if DoesTaskExist(dicBase, "init_combine"):
                     sDep = '<taskdep task="init_combine"/>'
                 else:
@@ -885,8 +883,8 @@ def get_param_of_task(dicBase, taskname):
 
             # For 'init_recenter' task
             if taskname.lower() == "init_recenter":
-                if DoesTaskExist(dicBase, "prep"):
-                    sDep = '<metataskdep metatask="prep"/>'
+                if DoesTaskExist(dicBase, "atmos_prep"):
+                    sDep = '<taskdep task="atmos_prep"/>'
                 else:
                     sDep = ""
 
@@ -951,13 +949,13 @@ def get_param_of_task(dicBase, taskname):
                 if DoesTaskExist(dicBase, "getcfssst"):
                     sDep += '\n\t<taskdep task="getcfssst"/>'
                 if DoesTaskExist(dicBase, "init_recenter"):
-                    if DoesTaskExist(dicBase, "prep"):  # Cold Restart
+                    if DoesTaskExist(dicBase, "atmos_prep"):  # Cold Restart
                         sDep += '\n\t<taskdep task="init_recenter"/>'
                     else:  # Warm Start  ???
                         sDep += '\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
 
-                #elif DoesTaskExist(dicBase, "prep"):  # *_Reloc
-                #    sDep += '\n\t<taskdep task="prep_#member#"/>'
+                # elif DoesTaskExist(dicBase, "atmos_prep"):  # *_Reloc
+                #    sDep += '\n\t<taskdep task="atmos_prep"/>'
 
                 if DoesTaskExist(dicBase, "copy_init"):
                     sDep += '\n\t<taskdep task="copy_init_#member#"/>'
@@ -974,11 +972,11 @@ def get_param_of_task(dicBase, taskname):
                 if DoesTaskExist(dicBase, "forecast_hr"):
                     sDep = '<taskdep task="forecast_hr_#member#"/>'
                 else:
-                    if DoesTaskExist(dicBase, "prep"):
+                    if DoesTaskExist(dicBase, "atmos_prep"):
                         if DoesTaskExist(dicBase, "getcfssst"):
-                            sDep = '<and>\n\t<taskdep task="prep_#member#"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+                            sDep = '<and>\n\t<taskdep task="atmos_prep"/>\n\t<taskdep task="getcfssst"/>\n</and>'
                         else:
-                            sDep = '<taskdep task="prep_#member#"/>'
+                            sDep = '<taskdep task="atmos_prep"/>'
                     elif DoesTaskExist(dicBase, "rf_prep"):
                         if DoesTaskExist(dicBase, "getcfssst"):
                             sDep = '<and>\n\t<taskdep task="rf_prep"/>\n\t<taskdep task="getcfssst"/>\n</and>'
@@ -991,7 +989,7 @@ def get_param_of_task(dicBase, taskname):
                             sDep = ''
 
             # For 'chem_forecast' task
-            if taskname.lower() == "chem_forecast" :
+            if taskname.lower() == "chem_forecast":
                 sDep = '<and>'
                 if DoesTaskExist(dicBase, "getcfssst"):
                     sDep += '\n\t<taskdep task="getcfssst"/>'
@@ -1069,8 +1067,7 @@ def get_param_of_task(dicBase, taskname):
                     start_hr_lr = fhmaxh + FHOUTHF
                 sDep = dicBase[sVarName].replace("fXXX", "f{0:03d}".format(start_hr_lr))
 
-            
-             # For 'enspost_hr' task
+            # For 'enspost_hr' task
             if taskname.lower() == "enspost_hr":
                 sDep = '<and>'
                 if DoesTaskExist(dicBase, "prdgen_hr"):
@@ -1097,17 +1094,17 @@ def get_param_of_task(dicBase, taskname):
                     sDep += '<taskdep task="enspost_hr"/>'
                 if DoesTaskExist(dicBase, "enspost_lr"):
                     sDep += '<taskdep task="enspost_lr"/>'
- 
+
                 if sDep == '<and>':
-                     sDep = ""
+                    sDep = ""
                 else:
                     sDep += '\n</and>'
 
             # For 'keep_data_atm' and 'archive_atm' tasks
             if taskname_org.lower() in ["keep_data_atm", "archive_atm"]:
                 sDep = '<and>'
-               
-                for s in ["prdgen_hr","ensstat_hr","enspost_hr","post_track","post_genesis","extractvars","postsnd","getcfssst","gempak","gempak_meta","avgspr_gempak_meta"]:
+
+                for s in ["prdgen_hr", "ensstat_hr", "enspost_hr", "post_track", "post_genesis", "extractvars", "postsnd", "getcfssst", "gempak", "gempak_meta", "avgspr_gempak_meta"]:
                     if DoesTaskExist(dicBase, s):
                         if s in get_metatask_names():
                             sDep += '\n\t<metataskdep metatask="{0}"/>'.format(s)
@@ -1116,7 +1113,7 @@ def get_param_of_task(dicBase, taskname):
 
                 # For 00z
                 sDep_2 = ""
-                for s in ["prdgen_lr","ensstat_lr","enspost_lr","cqpf","avg_gempak_vgf"]:
+                for s in ["prdgen_lr", "ensstat_lr", "enspost_lr", "cqpf", "avg_gempak_vgf"]:
                     if DoesTaskExist(dicBase, s):
                         if s in get_metatask_names():
                             sDep_2 += '\n\t\t\t<metataskdep metatask="{0}"/>'.format(s)
@@ -1135,19 +1132,19 @@ def get_param_of_task(dicBase, taskname):
                 else:
                     sDep += '\n</and>'
 
-            if taskname.lower() in [ "wave_stat" ]:
+            if taskname.lower() in ["wave_stat"]:
                 if DoesTaskExist(dicBase, "wave_post"):
                     sDep = '<metataskdep metatask="wave_post"/>'
                 else:
                     sDep = ""
 
-            if taskname.lower() in [ "wave_gempak" ]:
+            if taskname.lower() in ["wave_gempak"]:
                 if DoesTaskExist(dicBase, "wave_post"):
                     sDep = '<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/wave/gridded/gefswave.t@Hz.#member#.global.0p25.f000.grib2</cyclestr></datadep>'
                 else:
                     sDep = ""
 
-            if taskname.lower() in [ "keep_data_wave", "archive_wave" ]:
+            if taskname.lower() in ["keep_data_wave", "archive_wave"]:
                 sDep = '<and>'
                 if DoesTaskExist(dicBase, "wave_stat"):
                     sDep += '\n\t<taskdep task="wave_stat"/>'
@@ -1180,7 +1177,7 @@ def get_param_of_task(dicBase, taskname):
 
             if taskname.lower() == "cleanup_wave":
                 sDep = '<and>'
-                for t in [ "keep_data_wave", "archive_wave" ]:
+                for t in ["keep_data_wave", "archive_wave"]:
                     if DoesTaskExist(dicBase, t):
                         sDep += '\n\t<taskdep task="{task}"/>'.format(task=t)
                 if sDep == '<and>':
@@ -1202,7 +1199,7 @@ def get_param_of_task(dicBase, taskname):
 
             if taskname.lower() == "cleanup_chem":
                 sDep = '<and>'
-                for t in [ "keep_data_chem", "archive_chem" ]:
+                for t in ["keep_data_chem", "archive_chem"]:
                     if DoesTaskExist(dicBase, t):
                         sDep += '\n\t<taskdep task="{task}"/>'.format(task=t)
                 if sDep == '<and>':
@@ -1213,7 +1210,7 @@ def get_param_of_task(dicBase, taskname):
             # For GEMPAK
             if taskname.lower() == "gempak":
                 sDep = '<and>'
-                
+
                 IsDataDep = True
 
                 if IsDataDep:
@@ -1222,8 +1219,8 @@ def get_param_of_task(dicBase, taskname):
                     for i in range(npert):
                         sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/misc/prd0p5/gep{0:02}.t@Hz.prdgen.control.f000</cyclestr></datadep>'.format(i + 1)
                     sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/misc/prd0p5/gec00.t@Hz.prdgen.control.f000</cyclestr></datadep>'
-                    #sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/geavg.t@Hz.prdgen.control.f000</cyclestr></datadep>'
-                    #sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gespr.t@Hz.prdgen.control.f000</cyclestr></datadep>'
+                    # sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/geavg.t@Hz.prdgen.control.f000</cyclestr></datadep>'
+                    # sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gespr.t@Hz.prdgen.control.f000</cyclestr></datadep>'
 
                     sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/pgrb2ap5/geavg.t@Hz.pgrb2a.0p50.f000</cyclestr></datadep>'
                     sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/pgrb2ap5/gespr.t@Hz.pgrb2a.0p50.f000</cyclestr></datadep>'
@@ -1269,11 +1266,15 @@ def get_param_of_task(dicBase, taskname):
         iTotal_Tasks, iNodes, iPPN, iTPP = calc_fcst_resources(dicBase, taskname=taskname)
 
         WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
-        
+
         if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
             sNodes = "{0}:ppn={1}".format(iNodes, iPPN)
         else:
             sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
+
+    if taskname == "atmos_prep":
+        iTotal_Tasks, iNodes, iPPN, iTPP = calc_atmos_prep_resources(dicBase)
+        sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)        
 
     # For gempak
     if taskname == "gempak":
@@ -1281,6 +1282,20 @@ def get_param_of_task(dicBase, taskname):
         sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
     return sWalltime, sNodes, sMemory, sJoin, sDep, sQueue, sPartition
+
+
+# =======================================================
+def calc_atmos_prep_resources(dicBase):
+    import math
+    ncores_per_node = Get_NCORES_PER_NODE(dicBase)
+    npert = int(dicBase["NPERT"])
+    iTotal_Tasks = npert + 1
+    iTPP = ncores_per_node
+    iPPN = math.floor(ncores_per_node / iTPP)
+    iNodes = iPPN * iTotal_Tasks
+
+    return iTotal_Tasks, iNodes, iPPN, iTPP
+
 
 # =======================================================
 def calc_gempak_resources(dicBase):
@@ -1298,7 +1313,7 @@ def calc_gempak_resources(dicBase):
     if WHERE_AM_I.upper() == "CRAY":
         iNodes = iTotal_Tasks
         iPPN = 1
-        
+
     elif WHERE_AM_I.upper() == "HERA":
         if (npert + 1) <= ncores_per_node:
             iNodes = nGEMPAK_RES
@@ -1309,7 +1324,7 @@ def calc_gempak_resources(dicBase):
         else:
             iNodes = (npert + 1)
             iPPN = nGEMPAK_RES
-            
+
     elif WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
         if (npert + 1) <= ncores_per_node:
             iNodes = nGEMPAK_RES
@@ -1330,6 +1345,7 @@ def calc_gempak_resources(dicBase):
             iPPN = nGEMPAK_RES
 
     return iTotal_Tasks, iNodes, iPPN, iTPP
+
 
 # =======================================================
 def Get_NCORES_PER_NODE(dicBase):
@@ -1367,7 +1383,6 @@ def DoesTaskExist(dicBase, taskname):
 # =======================================================
 def get_metatask_names(taskname=""):
     metatask_names = []
-    metatask_names.append('prep')
     metatask_names.append('keep_init')
     metatask_names.append('copy_init')
     # forecast
@@ -1394,7 +1409,8 @@ def get_metatask_names(taskname=""):
 
 # =======================================================
 def get_jobname(taskname):
-    import os, sys
+    import os
+    import sys
     sSep = "/"
     if sys.platform == 'win32':
         sSep = r'\\'
@@ -1484,9 +1500,6 @@ def get_ENV_VARS(sPre="\t\t"):
     dicENV_VARS = {}
     dicENV_VARS['envir'] = 'dev'
     dicENV_VARS['RUN_ENVIR'] = 'dev'
-    #dicENV_VARS['gefsmpexec'] = 'mpirun.lsf'
-    #dicENV_VARS['wavempexec'] = 'mpirun.lsf'
-    #dicENV_VARS['gefsmpexec_mpmd'] = 'mpirun.lsf'
     dicENV_VARS['WHERE_AM_I'] = '&WHERE_AM_I;'
     dicENV_VARS['GEFS_ROCOTO'] = '&GEFS_ROCOTO;'
     dicENV_VARS['WORKDIR'] = '&WORKDIR;'
@@ -1498,7 +1511,7 @@ def get_ENV_VARS(sPre="\t\t"):
     dicENV_VARS['DIRS_TO_ARCHIVE'] = '&DIRS_TO_ARCHIVE;'
     dicENV_VARS['DIRS_TO_KEEP_WAVE'] = '&DIRS_TO_KEEP_WAVE;'
     dicENV_VARS['DIRS_TO_ARCHIVE_WAVE'] = '&DIRS_TO_ARCHIVE_WAVE;'
-    dicENV_VARS['gefs_cych']= '&INCYC;'
+    dicENV_VARS['gefs_cych'] = '&INCYC;'
     sENV_VARS = ""
 
     sENV_VARS += sPre + '<!-- Environment Variables -->\n'
