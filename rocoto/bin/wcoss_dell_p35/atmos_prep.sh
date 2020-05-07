@@ -21,6 +21,9 @@ module load NetCDF/$NetCDF_ver
 
 module load lsf/$lsf_ver
 
+module load CFP/$CFP_ver
+export USE_CFP=YES
+
 module list
 
 # For Development

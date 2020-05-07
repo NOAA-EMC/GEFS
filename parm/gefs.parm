@@ -47,6 +47,12 @@ case $cyc in
 		;;
 esac
 
+memberlist="c00"
+for (( imem=1; imem<=$npert; imem++ )); do
+	memberlist="$memberlist p$(printf %02i $imem)"
+done
+export memberlist
+
 if [[ ${RUNMEM:-none} = "geaer" ]]; then cplchm=".true."; fi
 
 export cplchm=${cplchm:-.false.}
