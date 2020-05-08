@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-echo "$(date -u) begin $0"
+echo "$(date -u) begin ${.sh.file}"
 export PS4="${PS4}${1}: "
 
 set -xa
@@ -26,7 +26,7 @@ SFCFILE=$COMINgfs/gfs.t${cyc}z.sfcanl.nemsio
 if [[ -f $SFCFILE ]]; then
     $NCP $SFCFILE $INIDIR/sfnanl.gfs.$PDY$cyc
 else
-    msg="FATAL ERROR in $0: GFS surfce analysis $SFCFILE not found!"
+    msg="FATAL ERROR in ${.sh.file}: GFS surfce analysis $SFCFILE not found!"
     echo $msg
     err=100
     err_chk || exit $err
@@ -38,7 +38,7 @@ if [[ $mem = c00 ]] ;then
     if [[ -f $ATMFILE ]]; then
         $NCP $ATMFILE $INIDIR/gfnanl.gfs.$PDY$cyc
     else
-        msg="FATAL ERROR in $0: GFS atmospheric analysis file $ATMFILE not found!"
+        msg="FATAL ERROR in ${.sh.file}: GFS atmospheric analysis file $ATMFILE not found!"
         echo "$msg"
         err=101
         err_chk || exit $err
@@ -64,7 +64,7 @@ else
                 echo "EnKF atmospheric file $ATMFILE not found, trying different member"
                 (( cmem = cmem + ENKF_SEARCH_LEAP ))
             else
-                msg="FATAL ERROR in $0: Unable to find EnKF atmospheric file after $MAX_ENKF_SEARCHES attempts"
+                msg="FATAL ERROR in ${.sh.file}: Unable to find EnKF atmospheric file after $MAX_ENKF_SEARCHES attempts"
                 echo $msg
                 err=102
                 err_chk || exit $err
@@ -78,7 +78,7 @@ fi
 $USHgfs/global_chgres_driver.sh
 err=$?
 if [[ $err != 0 ]]; then
-    echo "FATAL ERROR in $0: global_chgres_driver failed!"
+    echo "FATAL ERROR in ${.sh.file}: global_chgres_driver failed!"
     exit $err
 fi
 #############################################################
@@ -95,6 +95,6 @@ if [[ $SENDCOM == "YES" ]]; then
     fi
 fi
 
-echo "$(date -u) end $0"
+echo "$(date -u) end ${.sh.file}"
 
 exit $err

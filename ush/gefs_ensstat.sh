@@ -25,7 +25,7 @@
 
 ### need pass the values of CYC, YMD, DATA, COMIN and COMOUT
 
-echo "$(date -u) begin ${0##*/}"
+echo "$(date -u) begin ${.sh.file}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -74,7 +74,7 @@ export ENSPPF=$USHgefs/global_ensppf.sh
 export ENSSTAT=$EXECgefs/gefs_ensstat
 export ENSPQPF=$USHgefs/global_enspqpf.sh
 
-echo settings in ${0##*/} WGRIB2=$WGRIB2
+echo settings in ${.sh.file} WGRIB2=$WGRIB2
 parmlist=$PARMgefs/gefs_pgrb2a_fhh.parm
 
 echo
@@ -169,27 +169,23 @@ for hour in $hours; do
 
 			if (( nfiles < nfilesmin )); then
 				echo <<- EOF
-					FATAL ERROR in ${0##*/} ($stream): Insufficient members found for f${fhr} to calculate stats at $(date) after ${SLEEP_TIME}s!
+					FATAL ERROR in ${.sh.file} ($stream): Insufficient members found for f${fhr} to calculate stats at $(date) after ${SLEEP_TIME}s!
 						Total members:         $nmem
 						Min members for stats: $nfilesmin
 						Members found:         $nfiles
 					EOF
-				echo "Search process FAILS nfilesprev=$nfilesprev foundgfs=$foundgfs foundall=$foundall previncr=$previncr ic=$ic fhr=$fhr"
-				echo "$nfiles IS FEWER THAN $nfilesmin MEMBERS"
 				export err=9
 				err_chk
 			else
 				if (( nfiles < nmem )); then
 					echo <<- EOF
-						WARNING in ${0##*/} ($stream): Some members still missing for f{fhr} at $(date) after ${SLEEP_TIME}s
+						WARNING in ${.sh.file} ($stream): Some members still missing for f{fhr} at $(date) after ${SLEEP_TIME}s
 							Will continue with $nfiles members, but products may be degraded.
 						EOF
 						msg="WARNING: {job}, stream ${stream} did not find all ensemble member for f{fhr}! Will continue with fewer members, but products may be degraded."
 					mail.py $msg -c $MAIL_LIST
 				fi
 				(( nfilesprev = nfiles ))
-				echo "Search process ends nfilesprev=$nfilesprev foundgfs=$foundgfs foundall=$foundall previncr=$previncr ic=$ic fhr=$fhr"
-				echo "Continue after timeout with $nfiles members"
 				break
 			fi # (( nfiles < nfilesmin ))
 		fi # [ $ic -eq $SLEEP_LOOP_MAX ]
@@ -237,7 +233,6 @@ for hour in $hours; do
 
 			navg_min=${navg_min}
 		/
-
 		EOF
 	echo
 	cat namin
@@ -248,7 +243,7 @@ for hour in $hours; do
 	export err=$?
 	if [[ $err != 0 ]]; then
 		echo <<- EOF
-			FATAL ERROR in ${0##*/} ($stream): $ENSSTAT returned a non-zero error code for f${fhr}!
+			FATAL ERROR in ${.sh.file} ($stream): $ENSSTAT returned a non-zero error code for f${fhr}!
 				Namelist namin was used and had the following contents:
 					$(cat namin)
 			EOF
@@ -334,6 +329,6 @@ if [[ -s $pgmout ]]; then
 	cat $pgmout
 	echo ###############################$(date) cat $pgmout end
 fi
-echo "$(date -u) end ${0##*/}"
+echo "$(date -u) end ${.sh.file}"
 
 exit 0

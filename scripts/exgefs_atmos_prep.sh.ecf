@@ -1,6 +1,6 @@
 #! /bin/ksh
 
-echo "$(date -u) begin $0"
+echo "$(date -u) begin ${.sh.file}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -34,11 +34,11 @@ export MP_PGMMODEL=mpmd
 $APRUN_MPMD
 err=$?
 if [[ $err != 0 ]]; then
-    echo "FATAL ERROR in $0: One or more atmos_prep jobs in $MP_CMDFILE failed!"
+    echo "FATAL ERROR in ${.sh.file}: One or more atmos_prep jobs in $MP_CMDFILE failed!"
     exit $err
 fi
 #############################################################
 
-echo "$(date -u) end $0"
+echo "$(date -u) end ${.sh.file}"
 
 exit $err

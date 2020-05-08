@@ -15,7 +15,7 @@ echo " "
 set -x
 
 if [[ $# != 4 ]];then
-	echo "Usage: $0 ienst iensi gribin gribout"
+	echo "Usage: ${.sh.file} ienst iensi gribin gribout"
 	echo " inserts ensemble PDS extensions in GRIB2 file"
 	exit 1
 fi # [[ $# != 4 ]]

@@ -1,6 +1,6 @@
 #! /bin/ksh
 
-echo "$(date -u) begin $0"
+echo "$(date -u) begin ${.sh.file}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -23,10 +23,10 @@ if [[ $save_pgrb2_p5 == YES ]]; then
 	mkdir -m 775 -p $COMOUT/$COMPONENT/pgrb2p5
 fi
 if [[ $save_pgrb2_p25 == YES ]]; then
-	mkdir -m 775 -p $COMOUT/$COMPONENT/pgrb2p25 
+	mkdir -m 775 -p $COMOUT/$COMPONENT/pgrb2p25
 fi
 
-case $FORECAST_SEGMENT in
+case ${FORECAST_SEGMENT:-none} in
 	hr)
 		start_hour=0
 		end_hour=${fhmaxh}
@@ -60,7 +60,7 @@ for stream in ${PRDGEN_STREAMS[@]}; do
 	for var in PRDGEN_GRID PRDGEN_GRID_SPEC PRDGEN_HOURS PRDGEN_SUBMC PRDGEN_A_DIR PRDGEN_A_PREFIX PRDGEN_A_LIST_F00 PRDGEN_A_LIST_FHH; do
 		pointer="$var[$stream]"
 		if [[ -z ${!pointer} ]]; then
-			echo "FATAL ERROR in $0: $var not defined for $stream"
+			echo "FATAL ERROR in ${.sh.file}: $var not defined for $stream"
 			exit -1
 		fi
 	done
@@ -92,8 +92,6 @@ export NTHREADS=1
 ####################################
 export IGEN_ANL=107
 export IGEN_FCST=107
-
-echo FORECAST_SEGMENT=$FORECAST_SEGMENT
 
 export DO_HD_PGRB=NO
 export HDMAX=00
@@ -149,11 +147,11 @@ $APRUN_MPMD
 err=$?
 
 if [[ $err != 0 ]]; then
-	echo "FATAL ERROR in $0: One or more prdgen streams in $MP_CMDFILE failed!"
+	echo "FATAL ERROR in ${.sh.file}: One or more prdgen streams in $MP_CMDFILE failed!"
 	exit $err
 fi
 #############################################################
 
-echo "$(date -u) end $0"
+echo "$(date -u) end ${.sh.file}"
 
 exit $err

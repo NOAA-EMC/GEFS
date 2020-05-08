@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-echo $(date) $0 begin
+echo $(date -u) begin ${.sh.file}
 
 set -xa
 
@@ -8,7 +8,7 @@ echo DATA=$DATA
 
 VERBOSE=${VERBOSE:-"YES"}
 if [ $VERBOSE = "YES" ]; then
-   echo $(date) EXECUTING $0 $* >&2
+   echo $(date) EXECUTING ${.sh.file} $* >&2
    set -x
 fi
 
@@ -118,7 +118,7 @@ done
 
 set +x
 if [ $VERBOSE = "YES" ]; then
-    echo $(date) EXITING $0 with return code $err >&2
+    echo $(date) EXITING ${.sh.file} with return code $err >&2
 fi
 
 exit $err

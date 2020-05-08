@@ -1,13 +1,13 @@
-#!/bin/bash
+!/bin/ksh
 
-echo "$(date -u) begin $0"
+echo "$(date -u) begin ${.sh.file}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
 	# Turn on strict bash error checking
 	set -eu
 fi
-export PS4='$SECONDS + $(basename $0)[$LINENO] '
+export PS4='$SECONDS + $(basename ${.sh.file})[$LINENO] '
 
 ####################################
 # Determine Job Output Name on System
@@ -80,7 +80,7 @@ for config in $configs; do
     . $config_path/$config.parm
     err=$?
     if [[ $err != 0 ]]; then
-    	echo "FATAL ERROR in $0: Error while loading parm file $config_path"
+    	echo "FATAL ERROR in ${.sh.file}: Error while loading parm file $config_path"
     	exit $err
     fi
 done
@@ -110,6 +110,6 @@ fi
 cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-echo "$(date -u) end $0"
+echo "$(date -u) end ${.sh.file}"
 
 exit $err
