@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-echo "$(date) $0 $(date -u) begin"
+echo "$(date -u) begin $0"
 
 set -x
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -334,6 +334,6 @@ if [[ $err != 0 ]]; then
     exit $err
 fi
 
-echo "$(date) $0 $(date -u) end"
+echo "$(date -u) end $0"
 
 exit 0

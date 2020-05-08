@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-echo "$(date) $0 $(date -u) begin"
+echo "$(date -u) begin $0"
 
 if [[ ${STRICT:-NO} == "YES" ]]; then
     # Turn on strict bash error checking
@@ -136,6 +136,6 @@ if [[ $SENDCOM == YES ]]; then
     done
 fi
 
-echo "$(date) $0 $(date -u) end"
+echo "$(date -u) end $0"
 
 exit 0

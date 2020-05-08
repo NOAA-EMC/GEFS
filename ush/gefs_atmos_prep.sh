@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-echo "$(date) $0 $(date -u) begin"
+echo "$(date -u) begin $0"
 export PS4="${PS4}${1}: "
 
 set -xa
@@ -95,6 +95,6 @@ if [[ $SENDCOM == "YES" ]]; then
     fi
 fi
 
-echo "$(date) $0 $(date -u) end"
+echo "$(date -u) end $0"
 
 exit $err
