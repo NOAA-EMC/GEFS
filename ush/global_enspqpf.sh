@@ -1,60 +1,69 @@
-#!/bin/sh
+#!/bin/ksh
 ###############################################################
 # This script generates the 6-hourly pqpf pqif pqrf pqff pqsf grib files
 # 10/31/2014, script is adopted to process grib2 files
 ###############################################################
-set -x
+echo "$(date -u) begin ${0##*/}"
+
+set -xa
+if [[ ${STRICT:-NO} == "YES" ]]; then
+	# Turn on strict bash error checking
+	set -eu
+fi
 
 export CDATE=$CDATE
 ICYC=$(echo $CDATE | cut -c9-10)
 YYYYMMDD=$(echo $CDATE | cut -c1-8)
 
-#export enspqpf=$EXECGLOBAL/global_enspqpf
-#DHOU 03/27/2012 For ZEUS
 export enspqpf=$EXECgefs/global_enspqpf
 export ext_h=${ext_h:-""}
 
 cd $DATA
 
 # Specify the input/output file names:
-export CPGB=$COMIN/atmos/ensstat/enspost_grb2${ext_h}.t${ICYC}z.prcp
-#export CPGI=$COMIN/ensstat/enspost_grb2${ext_h}.t${ICYC}z.prcp.idx
+export CPGB=$COMIN/$COMPONENT/ensstat/enspost_grb2${ext_h}.t${ICYC}z.prcp
 export CPGO=$DATA/pqpf   
-export CRAIN=$COMIN/atmos/ensstat/enspost_grb2${ext_h}.t${ICYC}z.rain
-#export CRAINI=$COMIN/ensstat/enspost_grb2${ext_h}.t${ICYC}z.rain.idx
+export CRAIN=$COMIN/$COMPONENT/ensstat/enspost_grb2${ext_h}.t${ICYC}z.rain
 export CRAINO=$DATA/pqrf
-export CFRZR=$COMIN/atmos/ensstat/enspost_grb2${ext_h}.t${ICYC}z.frzr
-#export CFRZRI=$COMIN/ensstat/enspost_grb2${ext_h}.t${ICYC}z.frzr.idx
+export CFRZR=$COMIN/$COMPONENT/ensstat/enspost_grb2${ext_h}.t${ICYC}z.frzr
 export CFRZRO=$DATA/pqff
-export CICEP=$COMIN/atmos/ensstat/enspost_grb2${ext_h}.t${ICYC}z.icep
-#export CICEPI=$COMIN/ensstat/enspost_grb2${ext_h}.t${ICYC}z.icep.idx
+export CICEP=$COMIN/$COMPONENT/ensstat/enspost_grb2${ext_h}.t${ICYC}z.icep
 export CICEPO=$DATA/pqif 
-export CSNOW=$COMI/atmosN/ensstat/enspost_grb2${ext_h}.t${ICYC}z.snow
-#export CSNOWI=$COMIN/ensstat/enspost_grb2${ext_h}.t${ICYC}z.snow.idx
+export CSNOW=$COMIN/$COMPONENT/ensstat/enspost_grb2${ext_h}.t${ICYC}z.snow
 export CSNOWO=$DATA/pqsf  
 
-echo "&namin"                                            >inputpqpf
-echo "icyc=$ICYC"                                       >>inputpqpf
-echo "cpgb='$CPGB',cpge='$CPGO'"       >>inputpqpf
-echo "crain='$CRAIN',craino='$CRAINO'" >>inputpqpf
-echo "cfrzr='$CFRZR',cfrzro='$CFRZRO'" >>inputpqpf
-echo "cicep='$CICEP',cicepo='$CICEPO'" >>inputpqpf
-echo "csnow='$CSNOW',csnowo='$CSNOWO'" >>inputpqpf
-#echo "cpgb='$CPGB',cpgi='$CPGI',cpge='$CPGO'"           >>inputpqpf
-#echo "crain='$CRAIN',craini='$CRAINI',craino='$CRAINO'" >>inputpqpf
-#echo "cfrzr='$CFRZR',cfrzri='$CFRZRI',cfrzro='$CFRZRO'" >>inputpqpf
-#echo "cicep='$CICEP',cicepi='$CICEPI',cicepo='$CICEPO'" >>inputpqpf
-#echo "csnow='$CSNOW',csnowi='$CSNOWI',csnowo='$CSNOWO'" >>inputpqpf
-echo "/"                                                >>inputpqpf
+cat <<- EOF >inputpqpf
+	&namin
+		icyc=$ICYC
+		cpgb='$CPGB',cpge='$CPGO'
+		crain='$CRAIN',craino='$CRAINO'
+		cfrzr='$CFRZR',cfrzro='$CFRZRO'
+		cicep='$CICEP',cicepo='$CICEPO'
+		csnow='$CSNOW',csnowo='$CSNOWO'
+	/
+	EOF
 
 cat inputpqpf
 
 rm $CPGO $CRAINO $CFRZRO $CICEPO $CSNOWO
 
-export pgm=global_enspqpf
-. prep_step
+export pgm=$enspqpf
+source prep_step
 
 startmsg
-$enspqpf  <inputpqpf 
-export err=$?;err_chk
+$enspqpf < inputpqpf 
 
+export err=$?;
+if [[ $err != 0 ]]; then
+	echo <<- EOF
+		FATAL ERROR in ${0##*/}: $enspqpf returned a non-zero error!"
+		  Namelist file inputpqpf contained:
+		  	$(cat inputpqpf)
+		EOF
+	err_chk
+	exit $err
+fi
+
+echo "$(date -u) end ${0##*/}"
+
+exit $err

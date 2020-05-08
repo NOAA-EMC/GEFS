@@ -1,6 +1,16 @@
 # control parameters for gefs ensstat
 # execute this script in gefs ensstat job script  (. $PARMGLOBAL/gefs_ensstat.parm)
-echo $(date) $0 begin
+
+####################################
+# Specify Timeout Behavior of Post
+#
+# SLEEP_TIME - Amount of time to wait for
+#              a restart file before exiting
+# SLEEP_INT  - Amount of time to wait between
+#              checking for restart files
+####################################
+export SLEEP_TIME=900
+export SLEEP_INT=5
 
 export lfmhr=66000
 export lfmlr=11000
