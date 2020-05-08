@@ -18,6 +18,17 @@ export option26=${option26:-' -set_grib_max_bits 25 -fi -if '}
 export option27=${option27:-":(APCP|ACPCP|NCPCP|PRATE|CPRAT|DZDT):"}
 export option28=${option28:-' -new_grid_interpolation budget -fi '}
 
+####################################
+# Specify Timeout Behavior of Post
+#
+# SLEEP_TIME - Amount of time to wait for
+#              a restart file before exiting
+# SLEEP_INT  - Amount of time to wait between
+#              checking for restart files
+####################################
+export SLEEP_TIME=900
+export SLEEP_INT=5
+
 # fhoroglist is the list of additional hours at which surface height should be included in pgrba
 # this is normally fhmaxh + 12 to include the next gfs output time after the resolution change
 export fhoroglist=

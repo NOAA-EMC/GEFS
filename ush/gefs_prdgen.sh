@@ -1,35 +1,30 @@
 #!/bin/ksh
 #####################################################################
-echo "-----------------------------------------------------"
-echo " Script: gefs_prdgen.sh" 
-echo " "
-echo " Purpose - Perform interpolation and GRIB2 conversion"
-echo "           on master GRIB files"
-echo "           for one member and one time step."
-echo "           Move posted files to /com"
-echo "           Alert posted files to DBNet"
-echo " "
-echo " History - "
-echo "    Wobus   - 8/28/07 - New "
-echo "    Wobus   - 7/30/10 - move 180-192hr products to pgrbd"
-echo "    Hou     - 7/31/14 - adopted for grib2 based processing "
-echo "    Meng    - 11/17/16 - Use neighbor interpolation for ICSEV "
-echo "    Meng    - 03/09/17 - Remove grib1, PGRBC and PGRBD generation, "
-echo "                         and use the same ush script to generate all grids"
-echo "    B. Fu   - XX/XX/17 - Replace COPYGB2 with WGRIB2"
-echo "-----------------------------------------------------"
+# -----------------------------------------------------
+#  Script: gefs_prdgen.sh
+#  
+#  Purpose - Perform interpolation and GRIB2 conversion
+#            on master GRIB files
+#            for one member and one time step.
+#            Move posted files to /com
+#            Alert posted files to DBNet
+#  
+#  History - 
+#     Wobus   - 8/28/07 - New 
+#     Wobus   - 7/30/10 - move 180-192hr products to pgrbd
+#     Hou     - 7/31/14 - adopted for grib2 based processing 
+#     Meng    - 11/17/16 - Use neighbor interpolation for ICSEV 
+#     Meng    - 03/09/17 - Remove grib1, PGRBC and PGRBD generation, 
+#                          and use the same ush script to generate all grids
+#     B. Fu   - XX/XX/17 - Replace COPYGB2 with WGRIB2
+# -----------------------------------------------------
 #####################################################################
+
+echo "$(date -u) begin $0"
+
 set -xa
 
-# These are already set in gefs_prdgen.parm
-# export option1=${option1:-' -set_grib_type same -new_grid_winds earth '}
-# export option21=${option21:-' -new_grid_interpolation bilinear  -if '}
-# export option22=${option22:-":(LAND|CSNOW|CRAIN|CFRZR|CICEP|ICSEV):"}
-# export option23=${option23:-' -new_grid_interpolation neighbor -fi '}
 export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
-
-msg="Starting post for member=$RUNMEM ffhr=$ffhr"
-postmsg "$jlogfile" "$msg"
 
 cat <<-EOF
 	Settings for $0:
@@ -72,22 +67,19 @@ fi
 ####################################
 # Step I: Create pgrb2 files 
 ####################################
-if [[ -s $DATA/pgrb2$ffhr ]] && \ 
-   [[ $overwrite = no ]]; then
-	echo "$(date) $jobgrid  pgrb2 processing skipped for $RUNMEM $ffhr"
+if [[ -s $DATA/pgrb2$ffhr && $overwrite = no ]]; then
+	echo "$jobgrid pgrb2 processing skipped for $RUNMEM $ffhr"
 else
 	$WGRIB2 $mafile $option1 $option21 $option22 $option23 $option24 \
 			$option25 $option26 $option27 $option28 \
 			-new_grid $grid_spec pgb2file.$ffhr
-	rc=$?
-	if [[ $rc -ne 0 ]]; then
-		msg="FATAL ERROR: wgrib2 for $mafile failed!"
-		echo "$(date)    $msg"
-		postmsg "$jlogfile" "$msg"
+	err=$?
+	if [[ $err -ne 0 ]]; then
+		echo "FATAL ERROR in $0 ($stream): wgrib2 for $mafile failed!"
 		export err=1
-		err_chk
+		err_chk || exit $err
 	fi
-	echo $(date) pgrb2 $jobgrid grbfile $ffhr completed
+	echo "$(date) pgrb2 $jobgrid grbfile $ffhr completed"
 
 	######################################################
 	# Split the pgb2 file into pgrb2a, pgrb2b and pgrb2d parts
@@ -162,22 +154,18 @@ else
 		mv pgb2afile.$ffhr $fileaout
 		testfile=$fileaout
 		if [[ ! -s $testfile ]]; then
-			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-			echo "$(date)    $msg"
-			postmsg "$jlogfile" "$msg"
+			echo "FATAL ERROR in $0 ($stream): $testfile WAS NOT WRITTEN"
 			export err=1
-			err_chk
+			err_chk || exit $err
 		fi # [[ ! -s $testfile ]]
 
 		if [[ "$makegrb2i" = "yes" ]]; then
 			mv pgb2afile.$ffhr.idx $fileaouti
 			testfile=$fileaouti
 			if [[ ! -s $testfile ]]; then
-				msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-				echo "$(date)    $msg"
-				postmsg "$jlogfile" "$msg"
+				echo "FATAL ERROR in $0 ($stream): $testfile WAS NOT WRITTEN"
 				export err=1
-				err_chk
+				err_chk || exit $err
 			fi # [[ ! -s $testfile ]]
 		fi
 
@@ -185,22 +173,18 @@ else
 			mv pgb2bfile.$ffhr $filebout
 			testfile=$filebout
 			if [[ ! -s $testfile ]]; then
-				msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-				echo "$(date)    $msg"
-				postmsg "$jlogfile" "$msg"
+				echo "FATAL ERROR in $0 ($stream): $testfile WAS NOT WRITTEN"
 				export err=1
-				err_chk
+				err_chk || exit $err
 			fi # [[ ! -s $testfile ]]
 
 			if [[ "$makegrb2i" = "yes" ]]; then
 				mv pgb2bfile.$ffhr.idx $filebouti
 				testfile=$filebouti
 				if [[ ! -s $testfile ]]; then
-					msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-					echo "$(date)    $msg"
-					postmsg "$jlogfile" "$msg"
+					echo "FATAL ERROR in $0 ($stream): $testfile WAS NOT WRITTEN"
 					export err=1
-					err_chk
+					err_chk || exit $err
 				fi # [[ ! -s $testfile ]]
 			fi # [[ "$makegrb2i" = "yes" ]]
 		fi # [[ $makepgrb2b = "yes" ]]
@@ -234,8 +218,7 @@ else
 	echo $(date) pgrb2a 1x1 sendcom $ffhr completed
 fi # [[ -s $DATA/pgrb2$ffhr ]] && [[ $overwrite = no ]]
 
-########################################################
-echo $(date) $(basename $0) $stream 1x1 GRIB end on machine=$(uname -n)
-msg='ENDED NORMALLY.'
-postmsg "$jlogfile" "$msg"
-################## END OF SCRIPT #######################
+echo "$(date -u) end $0"
+
+exit 0
+
