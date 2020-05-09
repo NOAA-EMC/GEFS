@@ -1,13 +1,13 @@
-#!/bin/ksh
+#!/bin/bash
 
-echo "$(date -u) begin ${.sh.file}"
+echo "$(date -u) begin $(basename $BASH_SOURCE)"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
 	# Turn on strict bash error checking
 	set -eu
 fi
-export PS4='$SECONDS + $(basename ${.sh.file})[$LINENO] '
+export PS4='$SECONDS + $(basename $(basename $BASH_SOURCE))[$LINENO] '
 
 ####################################
 # Determine Job Output Name on System
@@ -67,6 +67,7 @@ export FIXwave=${FIXwave:-$HOMEgefs/fix/fix_wave}
 ##############################################
 # Define COM directories
 ##############################################
+# Have to include $COMPONENT in COM paths for downstream scripts
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/wave
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/wave
 if [[ $SENDCOM = YES ]]; then
@@ -84,7 +85,7 @@ for config in $configs; do
     . $config_path/$config.parm
     err=$?
     if [[ $err -ne 0 ]]; then
-    	echo "FATAL ERROR in ${.sh.file}: Error while loading parm file $config_path"
+    	echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file $config_path"
     	exit $err
     fi
 done
@@ -112,6 +113,6 @@ fi
 cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-echo "$(date -u) end ${.sh.file}"
+echo "$(date -u) end $(basename $BASH_SOURCE)"
 
 exit $err
