@@ -82,7 +82,7 @@ case $FORECAST_SEGMENT in
 		else
 			export SHOUR=$(( $fhmaxh + $FHOUTLF ))
 		fi
-		export FHOUR=$ens_pert_type;;
+		export FHOUR=$fhmax;;
 esac
 
 export SHOUR=$SHOUR
