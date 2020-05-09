@@ -159,4 +159,4 @@ export eplevlr
 # For grib2 version
 postvarlist='z500 z1000 t850 t2m u10m v10m u250 v250 u850 v850 rh700 prcp snow rain icep frzr prmsl u200 v200 olr'
 export postvarlist
-echo $(date) $0 end
+echo $(date) ${.sh.file} end
