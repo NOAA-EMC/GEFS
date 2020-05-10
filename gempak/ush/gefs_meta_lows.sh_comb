@@ -31,10 +31,10 @@ cd $DATA/gefs_meta_lows_spag
 
 # SET VARIOUS TIME/DATE PARAMETERS
 case $cyc in
-	(00) fcsthrs="12 24 36 48 60 72 84 96 108 120 132 144 156 168 180 192 204" ;;
-	(06) fcsthrs="12 24 36 48 60 72 84 96 108 120 132 144 156 168 180 192 204" ;;
-	(12) fcsthrs="12 24 36 48 60 72 84 96 108 120 132 144 156 168 180 192 204 216 228" ;;
-	(18) fcsthrs="12 24 36 48 60 72 84 96 108 120 132 144 156 168 180 192 204" ;;
+	(00) fcsthrs="012 024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204" ;;
+	(06) fcsthrs="012 024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204" ;;
+	(12) fcsthrs="012 024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204 216 228" ;;
+	(18) fcsthrs="012 024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204" ;;
 esac
 
 metaname="gefs${sGrid}_${PDY}_${cyc}_meta_lows"
@@ -79,10 +79,9 @@ for area in nam us trop sam hi; do
 
 # START PRODUCTION OF METAFILE
 
-	for fcsthr in ${fcsthrs}
-	do
-		fcsthr_6=$( printf %03i $(( ${fcsthr} + 6 )) )
-		fcsthr_ecm=$( printf %03i $(( ${fcsthr} + $ECM_fcsthrs )) )
+	for fcsthr in ${fcsthrs}; do
+		fcsthr_6=$( printf %03i $(( 10#${fcsthr} + 6 )) )
+		fcsthr_ecm=$( printf %03i $(( 10#${fcsthr} + $ECM_fcsthrs )) )
 		
 		rm -rf gefs_avg gefs_avg_6 gfs gfs_6 ecmwf ukmet dgex
 

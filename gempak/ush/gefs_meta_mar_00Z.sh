@@ -49,7 +49,7 @@ ecmwfdate="${yesterday}"
 ukmetcyc="12"
 ukmetdate="${yesterday}"
 
-fcsthrs="0 12 24 36 48 60 72 84 96 108 120"
+fcsthrs="000 012 024 036 048 060 072 084 096 108 120"
 levels="528 534 540 546 552 564 576"
 
 for metaarea in pac atl; do
@@ -66,7 +66,7 @@ for metaarea in pac atl; do
 	device="nc | ${metaname}"
 	for level in ${levels}; do
 		for fcsthr in ${fcsthrs}; do
-			fcsthrsgfs=$((${fcsthr} + 12))
+			fcsthrsgfs=$((10#${fcsthr} + 12))
 			fcsthrsgfs=$(printf %03i $fcsthrsgfs)
 
 			grids=${memberlist}
@@ -250,10 +250,10 @@ for metaarea in pac atl; do
 	num=" "
 	metashname="LOW CNTRS"
 	for fcsthr in ${fcsthrs}; do
-		fcsthrsgfs=$((${fcsthr} + 12))
+		fcsthrsgfs=$((10#${fcsthr} + 12))
 		fcsthrsgfs=$(printf %03i $fcsthrsgfs)
 
-		fcsthrsgfs2=$((${fcsthr} - 6))
+		fcsthrsgfs2=$((10#${fcsthr} - 6))
 		fcsthrsgfs2=$(printf %03i $fcsthrsgfs2)
 
 		grids=${memberlist}

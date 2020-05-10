@@ -29,10 +29,10 @@ mkdir $DATA/gefs_meta_nam_spag
 cd $DATA/gefs_meta_nam_spag
 
 case $cyc in
-	(00) fcsthrs="12 24 36 48 60 72 84 96 108 120 132 144 156 168 180 192 204" ;;
-	(06) fcsthrs="12 24 36 48 60 72 84 96 108 120 132 144 156 168 180 192 204" ;;
-	(12) fcsthrs="12 24 36 48 60 72 84 96 108 120 132 144 156 168 180 192 204 216 228" ;;
-	(18) fcsthrs="12 24 36 48 60 72 84 96 108 120 132 144 156 168 180 192 204" ;;
+	(00) fcsthrs="012 024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204" ;;
+	(06) fcsthrs="012 024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204" ;;
+	(12) fcsthrs="012 024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204 216 228" ;;
+	(18) fcsthrs="012 024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204" ;;
 esac
 
 #grab month for season defined levels
@@ -78,8 +78,8 @@ name="NAM"
 for level in ${levels}; do
 	echo $level
 	for fcsthr in ${fcsthrs}; do
-		fcsthr_6=$( printf %03i $(( ${fcsthr} + 6 )) )
-		fcsthr_ecm=$( printf %03i $(( ${fcsthr} + $ECM_fcsthrs )) )        
+		fcsthr_6=$( printf %03i $(( 10#${fcsthr} + 6 )) )
+		fcsthr_ecm=$( printf %03i $(( 10#${fcsthr} + $ECM_fcsthrs )) )
 
 		grids=${memberlist}
 		for fn in $(echo $grids); do

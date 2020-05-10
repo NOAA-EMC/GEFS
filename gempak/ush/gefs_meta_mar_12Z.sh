@@ -40,7 +40,7 @@ fi
 yesterday=$(${NDATE} -24 ${PDY}${cyc} | cut -c -8)
 shrtyesterday=$(${NDATE} -24 ${PDY}${cyc} | cut -c3-8)
 
-fcsthrs="0 12 24 36 48 60 72 84 96 108 120"
+fcsthrs="000 012 024 036 048 060 072 084 096 108 120"
 levels="534 540 546 552 558 564 570"
 
 for metaarea in pac atl; do
@@ -56,7 +56,7 @@ for metaarea in pac atl; do
 	device="nc | ${metaname}"
 	for level in ${levels}; do
 		for fcsthr in ${fcsthrs}; do
-			fcsthrsgfs=$((${fcsthr} + 12))
+			fcsthrsgfs=$((10#${fcsthr} + 12))
 			#typeset -Z3 fcsthrsgfs
 			fcsthrsgfs=$(printf %03i $fcsthrsgfs)
 
@@ -203,7 +203,7 @@ for metaarea in pac atl; do
 	metashname="LOW CNTRS"
 
 	for fcsthr in ${fcsthrs}; do
-		fcsthrsgfs=$((${fcsthr} + 12))
+		fcsthrsgfs=$((10#${fcsthr} + 12))
 		fcsthrsgfs=$(printf %03i $fcsthrsgfs)
 
 		grids=${memberlist}
