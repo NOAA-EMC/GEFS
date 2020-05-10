@@ -1,34 +1,23 @@
 #!/bin/ksh
 
-echo "$(date) $0 begin"
+echo "$(date -u) begin ${.sh.file}"
 
 set -xa
-
-VERBOSE=${VERBOSE:-"YES"}
-if [ $VERBOSE = "YES" ]; then
-   echo $(date) EXECUTING $0 $* >&2
-   set -x
+if [[ ${STRICT:-NO} == "YES" ]]; then
+    # Turn on strict bash error checking
+    set -eu
 fi
 
 # Print inherited environmnent variables
-for var in DATA npert GEMPAK_RES COMIN COMOUT fstart fend FHMAXHF FHOUTHF FHOUTLF pdgrbType; do
+for var in DATA npert GEMPAK_RES COMIN COMOUT COMPONENT fstart fend FHMAXHF FHOUTHF FHOUTLF pdgrbType; do
 	echo "$var = ${!var}"
 done
+
+gempak_out=${COMOUT}/$COMPONENT/gempak
 
 ########################################################
 ## Get member list
 ########################################################
-memberlist=""
-(( imem = 0 ))
-while (( imem < npert+1 )); do
-    if (( imem == 0 )); then
-        smem=c$(printf %02i $imem)
-    else
-        smem=p$(printf %02i $imem)
-    fi
-    memberlist="$memberlist $smem"
-    (( imem = imem + 1 ))
-done # while (( imem < npert ))
 memberlist="$memberlist avg spr"
 echo memberlist=$memberlist
 
@@ -38,25 +27,30 @@ echo memberlist=$memberlist
 for member in $memberlist; do
     export RUNM=ge${member}
     for resolution in ${GEMPAK_RES}; do
-        if [ $resolution = "1p00" ]; then
-            export COMIN_Folder=pgrb2a1p0
-            export pdgrbType=pgrb2a
-            export fend=${fhmaxh:-384}
-        elif [ $resolution = "0p50" ]; then
-            export COMIN_Folder=pgrb2ap5
-            export pdgrbType=pgrb2a
-            export fend=${fhmaxh:-384}
-        elif [ $resolution = "0p25" ]; then
-            export COMIN_Folder=pgrb2sp25
-            export pdgrbType=pgrb2s
-            export fend=${FHMAXHF:-240}
-        else
-            echo "GEMPAK does not support this resolution!"
-            err=5
-            exit $err
-        fi
+        case $resolution in
+            (1p00)
+                gempak_in=$COMIN/$COMPONENT/pgrb2a1p0
+                export pdgrbType=pgrb2a
+                export fend=${fhmaxh:-384}
+                ;;
+            (0p50)
+                gempak_in=$COMIN/$COMPONENT/pgrb2ap5
+                export pdgrbType=pgrb2a
+                export fend=${fhmaxh:-384}
+                ;;
+            (0p25)
+                gempak_in=$COMIN/$COMPONENT/pgrb2sp25
+                export pdgrbType=pgrb2s
+                export fend=${FHMAXHF:-240}
+                ;;
+            (*)
+                echo "FATAL ERROR in ${.sh.file}: resolution $resoltion not supported!"
+                export err=5
+                exit $err
+                ;;
+        esac
         
-        echo "$HOMEgefs/ush/gefs_nawips.sh $RUNM $member $resolution ${GEMPAKgefs} ${COMIN}/${COMIN_Folder} ${COMOUT} ${fstart} ${fend} ${FHMAXHF} ${FHOUTHF} ${FHOUTLF} ${pdgrbType}" >> poescript
+        echo "$HOMEgefs/ush/gefs_nawips.sh $RUNM $member $resolution ${GEMPAKgefs} ${gempak_in} ${gempak_out} ${fstart} ${fend} ${FHMAXHF} ${FHOUTHF} ${FHOUTLF} ${pdgrbType}" >> poescript
     done
 done
 
@@ -69,9 +63,17 @@ export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
 rm -f mpmd_cmdfile
 ln -s $MP_CMDFILE mpmd_cmdfile
 
-$APRUN
-export err=$?; err_chk
+#############################################################
+# Execute the script
+$APRUN_MPMD
+err=$?
 
-echo "$(date) $0 end"
+if [[ $err != 0 ]]; then
+    echo "FATAL ERROR in ${.sh.file}: One or more gempak resolutions in $MP_CMDFILE failed!"
+    exit $err
+fi
+#############################################################
+
+echo "$(date -u) end ${.sh.file}"
 
 exit $err

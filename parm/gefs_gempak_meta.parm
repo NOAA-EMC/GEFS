@@ -1,0 +1,56 @@
+#!/bin/bash
+
+export USHgempak=${USHgempak:-$GEMPAKgefs/ush}
+
+export fhbeg=${fhbeg:-0}
+export fhend=${fhmaxh:-384}
+export fhinc=${fhinc:-12}
+
+export FHMAXHF=${FHMAXHF:-240}
+export FHOUTHF=${FHOUTHF:-3}
+export FHOUTLF=${FHOUTLF:-6}
+
+export sGrid=${sGrid:-"_0p50"} # empty for 1p00, _0p50
+export model=${model:-ensemble}
+
+export DBN_ALERT_TYPE=${DBN_ALERT_TYPE:-GEFS_METAFILE}
+
+# SET VARIOUS TIME/DATE PARAMETERS
+case $cyc in
+	(00)
+		export cyc_6=18
+		export PDY_6=$PDYm1
+		export ECM_cyc=12
+		export ECM_PDY=$PDYm1
+		export ECM_fcsthrs=12
+		# export CMC_cyc=00
+		# export CMC_fcsthrs=00
+		;;
+	(06)
+		export cyc_6=00
+		export PDY_6=$PDY
+		export ECM_cyc=12
+		export ECM_PDY=$PDYm1
+		export ECM_fcsthrs=18
+		# export CMC_cyc=00
+		# export CMC_fcsthrs=06
+		;;
+	(12)
+		export cyc_6=06
+		export PDY_6=$PDY
+		export ECM_cyc=00
+		export ECM_PDY=$PDY
+		export ECM_fcsthrs=12
+		# export CMC_cyc=12
+		# export CMC_fcsthrs=00
+		;;
+	(18)
+		export cyc_6=12
+		export PDY_6=$PDY
+		export ECM_cyc=00
+		export ECM_PDY=$PDY
+		export ECM_fcsthrs=18
+		# export CMC_cyc=12
+		# export CMC_fcsthrs=06
+		;;
+esac

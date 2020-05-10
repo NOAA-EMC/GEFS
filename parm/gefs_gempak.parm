@@ -1,0 +1,26 @@
+#!/bin/ksh
+
+export fstart=${fstart:-0}
+export fend=${fhmaxh:-384}
+
+export FHMAXHF=${FHMAXHF:-240}
+export FHOUTHF=${FHOUTHF:-3}
+export FHOUTLF=${FHOUTLF:-6}
+
+export GRIB=
+export EXT=""
+export DBN_ALERT_TYPE=${DBN_ALERT_TYPE:-GEFS_GEMPAK}
+
+export GEMPAK_RES=${GEMPAK_RES:-"0p50 0p25"}
+export model=ensemble
+
+####################################
+# Specify Timeout Behavior of Post
+#
+# SLEEP_TIME - Amount of time to wait for
+#              a restart file before exiting
+# SLEEP_INT  - Amount of time to wait between
+#              checking for restart files
+####################################
+export SLEEP_TIME=3600
+export SLEEP_INT=20

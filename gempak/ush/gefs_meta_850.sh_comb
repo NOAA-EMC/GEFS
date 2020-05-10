@@ -13,75 +13,27 @@
 #
 # Set Up Local Variables
 #
-set -x
-export PS4='gefs_850_spag:$SECONDS + '
+echo "$(date -u) begin $(basename $BASH_SOURCE)"
 
-########################################################
-## Get member list
-########################################################
-export npert=${npert:-30}
-memberlist=""
-(( imem = 0 ))
-while (( imem < npert+1 )); do
-    if (( imem == 0 )); then
-        smem=c$(printf %02i $imem)
-    else
-        smem=p$(printf %02i $imem)
-    fi
-    memberlist="$memberlist $smem"
-    (( imem = imem + 1 ))
-done # while (( imem < npert ))
-echo memberlist=$memberlist
-########################################################
-## Get member list
-########################################################
+set -xa
+if [[ ${STRICT:-NO} == "YES" ]]; then
+	# Turn on strict bash error checking
+	set -eu
+fi
+
+echo "memberlist=$memberlist"
 
 sGrid=${sGrid} #:-"_0p50"}
 
 mkdir $DATA/gefs_meta_850_spag
 cd $DATA/gefs_meta_850_spag
 
-#ddate=$(echo $PDY | cut -c3-8)
-#ddatem1=$(echo $PDYm1 | cut -c3-8)
-
 # SET VARIOUS TIME/DATE PARAMETERS
 case $cyc in
-   00)cyc_6=18
-      PDY_6=$PDYm1
-      ECM_cyc=12
-      ECM_PDY=$PDYm1
-      ECM_fcsthrs=12
-#      CMC_cyc=00
-#      CMC_fcsthrs=00
-      fcsthrs="012 024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204"
-   ;;
-   06)cyc_6=00
-      PDY_6=$PDY
-      ECM_cyc=12
-      ECM_PDY=$PDYm1
-      ECM_fcsthrs=18
-#      CMC_cyc=00
-#      CMC_fcsthrs=06
-      fcsthrs="012 024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204"
-   ;;
-   12)cyc_6=06
-      PDY_6=$PDY
-      ECM_cyc=00
-      ECM_PDY=$PDY
-      ECM_fcsthrs=12
-#      CMC_cyc=12
-#      CMC_fcsthrs=00
-      fcsthrs="012 024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204 216 228"
-   ;;
-   18)cyc_6=12
-      PDY_6=$PDY
-      ECM_cyc=00
-      ECM_PDY=$PDY
-      ECM_fcsthrs=18
-#      CMC_cyc=12
-#      CMC_fcsthrs=06
-      fcsthrs="012 024 036 048 060 072 084 096 108 120 132 144 156 168 180 192 204"
-   ;;
+   (00) fcsthrs="12 24 36 48 6 72 84 96 108 120 132 144 156 168 180 192 204" ;;
+   (06) fcsthrs="12 24 36 48 6 72 84 96 108 120 132 144 156 168 180 192 204" ;;
+   (12) fcsthrs="12 24 36 48 6 72 84 96 108 120 132 144 156 168 180 192 204 216 228" ;;
+   (18) fcsthrs="12 24 36 48 6 72 84 96 108 120 132 144 156 168 180 192 204" ;;
 esac
 
 temps="00 10 15"
@@ -89,101 +41,86 @@ temps="00 10 15"
 metaname="gefs${sGrid}_${PDY}_${cyc}_meta_850"
 device="nc|$metaname"
 
-for area in us sam
-do 
-    proj=" "
-    if [ ${area} = "us" ]; then
-        garea="bwus"
-        proj=" "
-        name1="US"        
-    else
-        garea="sam"
-        proj=" "
-        name1="SAM"
-    fi
+for area in us sam; do 
+	proj=" "
+	if [ ${area} = "us" ]; then
+		garea="bwus"
+		proj=" "
+		name1="US"        
+	else
+		garea="sam"
+		proj=" "
+		name1="SAM"
+	fi
 
-############################################### 
-# for testing only, restrict to one lvl and fcsthr. will comment these out 
-# when implementing.
-#    fcsthrs="024 048"
-############################################### 
+	############################################### 
+	# for testing only, restrict to one lvl and fcsthr. will comment these out 
+	# when implementing.
+	#    fcsthrs="024 048"
+	############################################### 
 
-# START PRODUCTION OF METAFILE
+	# START PRODUCTION OF METAFILE
 
-    for tempc in ${temps}
-    do
-        name="${name1} 850 MB ${tempc}C"
-        for fcsthr in ${fcsthrs}
-        do
-            fcsthr_6=$(expr ${fcsthr} + 6)
-            fcsthr_ecm=$(expr ${fcsthr} + $ECM_fcsthrs)
-#            fcsthr_cmc=$(expr ${fcsthr} + $CMC_fcsthrs)
-            if [ ${fcsthr_6} -lt 10 ]; then
-                fcsthr_6="00${fcsthr_6}"
-            elif [ ${fcsthr_6} -lt 100 ]; then
-                fcsthr_6="0${fcsthr_6}"
-            fi
-            if [ ${fcsthr_ecm} -lt 10 ]; then
-                fcsthr_ecm="00${fcsthr_ecm}"
-            elif [ ${fcsthr_ecm} -lt 100 ]; then
-                fcsthr_ecm="0${fcsthr_ecm}"
-            fi
-        
-            grids=${memberlist}
-            for fn in $(echo $grids)
-            do
-                rm -rf $fn ${fn}_6
+	for tempc in ${temps}; do
+		name="${name1} 850 MB ${tempc}C"
+		for fcsthr in ${fcsthrs}; do
+			fcsthr_6=$( printf %03i $(( ${fcsthr} + 6 )) )
+			fcsthr_ecm=$( printf %03i $(( ${fcsthr} + $ECM_fcsthrs )) )
+		
+			grids=${memberlist}
+			for fn in $(echo $grids); do
+				rm -rf $fn ${fn}_6
 
-                if [ -r $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
-                    ln -s $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} $fn
-                fi
+				if [ -r $COMIN/$COMPONENT/gempak/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
+					ln -s $COMIN/$COMPONENT/gempak/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} $fn
+				fi
 
-                if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/atmos/gempak/ge${fn}${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
-                    ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/atmos/gempak/ge${fn}${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}_6
-                fi
-            done
+				if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/atmos/gempak/ge${fn}${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
+					ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/atmos/gempak/ge${fn}${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}_6
+				fi
+			done
 
-            fn=gefs_avg
-            rm -rf ${fn}
-            if [ -r $COMIN/geavg${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
-                ln -s $COMIN/geavg${sGrid}_${PDY}${cyc}f${fcsthr} ${fn}
-            fi
+			fn=gefs_avg
+			rm -rf ${fn}
+			if [ -r $COMIN/$COMPONENT/gempak/geavg${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
+				ln -s $COMIN/$COMPONENT/gempak/geavg${sGrid}_${PDY}${cyc}f${fcsthr} ${fn}
+			fi
 
-            fn=gefs_avg_6
-            rm -rf ${fn}
-            if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/atmos/gempak/geavg${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
-                ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/atmos/gempak/geavg${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
-            fi
+			fn=gefs_avg_6
+			rm -rf ${fn}
+			if [ -r $COMINs/gefs.${PDY_6}/${cyc_6}/atmos/gempak/geavg${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
+				ln -s $COMINs/gefs.${PDY_6}/${cyc_6}/atmos/gempak/geavg${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
+			fi
 
-            fn=gfs
-            rm -rf ${fn}
-            if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
-                ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ${fn}
-            fi
+			fn=gfs
+			rm -rf ${fn}
+			if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
+				ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ${fn}
+			fi
 
-            fn=gfs_6
-            rm -rf ${fn}
-            if [ -r $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
-                ln -s $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
-            fi
+			fn=gfs_6
+			rm -rf ${fn}
+			if [ -r $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
+				ln -s $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
+			fi
 
-            fn=ecmwf
-            rm -rf ${fn}
-            if [ -r ${COMINecmwf}.${ECM_PDY}/gempak/ecmwf_hr_${ECM_PDY}${ECM_cyc}f${fcsthr} ]; then
-                ln -s ${COMINecmwf}.${ECM_PDY}/gempak/ecmwf_hr_${ECM_PDY}${ECM_cyc}f${fcsthr} ${fn}
-            fi
+			fn=ecmwf
+			rm -rf ${fn}
+			if [ -r ${COMINecmwf}.${ECM_PDY}/gempak/ecmwf_hr_${ECM_PDY}${ECM_cyc}f${fcsthr} ]; then
+				ln -s ${COMINecmwf}.${ECM_PDY}/gempak/ecmwf_hr_${ECM_PDY}${ECM_cyc}f${fcsthr} ${fn}
+			fi
 
-            fn=ukmet
-            rm -rf ${fn}
-            if [ -r ${COMINukmet}.${ECM_PDY}/ukmet_hr_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ]; then
-                ln -s ${COMINukmet}.${ECM_PDY}/ukmet_hr_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ${fn}
-            fi
+			fn=ukmet
+			rm -rf ${fn}
+			if [ -r ${COMINukmet}.${ECM_PDY}/ukmet_hr_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ]; then
+				ln -s ${COMINukmet}.${ECM_PDY}/ukmet_hr_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ${fn}
+			fi
 
-            fn=dgex
-            rm -rf ${fn}
-            if [ -r $COMINs_p1/dgex.${PDY}/dgex_${PDY}${cyc}f${fcsthr} ]; then
-                ln -s $COMINs_p1/dgex.${PDY}/dgex_${PDY}${cyc}f${fcsthr} ${fn}
-            fi
+			fn=dgex
+			rm -rf ${fn}
+			if [ -r $COMINnawips/dgex.${PDY}/dgex_${PDY}${cyc}f${fcsthr} ]; then
+				ln -s $COMINnawips/dgex.${PDY}/dgex_${PDY}${cyc}f${fcsthr} ${fn}
+			fi
 
 			cat > cmdfile850  <<- EOF
 				DEVICE  = ${device}
@@ -213,11 +150,11 @@ do
 
 				EOF
 
-            WrottenZERO=0
+			WrottenZERO=0
 
-            # ----- gfs -----
-            gdfn=gfs # gd file name
-            if [ -e ${gdfn} ]; then
+			# ----- gfs -----
+			gdfn=gfs # gd file name
+			if [ -e ${gdfn} ]; then
 				cat >> cmdfile850  <<- EOF
 					GDFILE  = ${gdfn}
 					LINE    = 22/2/2/0
@@ -227,20 +164,20 @@ do
 
 					EOF
 
-                if [ $WrottenZERO -eq 0 ]; then            
+				if [ $WrottenZERO -eq 0 ]; then            
 					cat >> cmdfile850  <<- EOF
 						MAP     = 0
 						LATLON  = 0
 						CLEAR   = no
 
 						EOF
-                fi
-                WrottenZERO=1
-            fi
+				fi
+				WrottenZERO=1
+			fi
 
-            # ----- gfs_6 -----
-            gdfn=gfs_6 # gd file name
-            if [ -e ${gdfn} ]; then
+			# ----- gfs_6 -----
+			gdfn=gfs_6 # gd file name
+			if [ -e ${gdfn} ]; then
 				cat >> cmdfile850  <<- EOF
 					GDFILE  = ${gdfn}
 					LINE    = 21/2/2/0
@@ -250,24 +187,22 @@ do
 
 					EOF
 
-                if [ $WrottenZERO -eq 0 ]; then            
+				if [ $WrottenZERO -eq 0 ]; then            
 					cat >> cmdfile850  <<- EOF
 						MAP     = 0
 						LATLON  = 0
 						CLEAR   = no
 
 						EOF
-                fi
-                WrottenZERO=1
-            fi
+				fi
+				WrottenZERO=1
+			fi
 
-            grids=${memberlist}
-            for gridl in ${grids}
-            do
-            
-                # ----- gridl -----
-                gdfn=${gridl}_6 # gd file name
-                if [ -e ${gdfn} ]; then
+			grids=${memberlist}
+			for gridl in ${grids}; do			
+				# ----- gridl -----
+				gdfn=${gridl}_6 # gd file name
+				if [ -e ${gdfn} ]; then
 					cat >> cmdfile850  <<- EOF
 						GDFILE  = ${gdfn}
 						LINE    = 25/1/1/0
@@ -277,64 +212,62 @@ do
 
 						EOF
 
-                    if [ $WrottenZERO -eq 0 ]; then            
+					if [ $WrottenZERO -eq 0 ]; then            
 						cat >> cmdfile850  <<- EOF
 							MAP     = 0
 							LATLON  = 0
 							CLEAR   = no
 
 							EOF
-                    fi
-                    WrottenZERO=1
-                fi
-            done
+					fi
+					WrottenZERO=1
+				fi
+			done
 
-            grids=${memberlist}
-            line_count=1
-            color_number=9
-            for gridl in ${grids}
-            do
-            
-                # ----- gridl -----
-                gdfn=${gridl} # gd file name
-                if [ -e ${gdfn} ]; then
+			grids=${memberlist}
+			line_count=1
+			color_number=9
+			for gridl in ${grids}; do			
+				# ----- gridl -----
+				gdfn=${gridl} # gd file name
+				if [ -e ${gdfn} ]; then
 					#if [ ${gdfn} == c00 ]; then
 						#line_count=-2
-            		#	color_number=6
-                    #    line_count=$color_number
+					#	color_number=6
+					#    line_count=$color_number
 					#else
 						#line_count=-2
-                    color_number=$(echo $gdfn | cut -c2-)
-                    line_count=$color_number
+					color_number=$(echo $gdfn | cut -c2-)
+					line_count=$color_number
 					#fi
 					cat >> cmdfile850  <<- EOF
-						!GDFILE  = \$COMIN/ge${gridl}_${PDY}${cyc}f${fcsthr}
+						!GDFILE  = \$COMIN/$COMPONENT/gempak/ge${gridl}_${PDY}${cyc}f${fcsthr}
 						GDFILE  = ${gdfn}
 						LINE    = ${color_number}/1/1/0
-						TITLE   = ${color_number}/+${line_count}/~ ? ${gdfn} ${cyc}Z ${grid}|~${name}
+						TITLE   = ${color_number}/+${line_count}/~ ? ${gdfn} ${cyc}Z ${gridl}|~${name}
 						GDATTIM = F${fcsthr}
 						run
 
 						EOF
 
-                    if [ $WrottenZERO -eq 0 ]; then            
+					if [ $WrottenZERO -eq 0 ]; then            
 						cat >> cmdfile850  <<- EOF
 							MAP     = 0
 							LATLON  = 0
 							CLEAR   = no
 
 							EOF
-                    fi
-                    WrottenZERO=1
-                fi
+					fi
+					WrottenZERO=1
+				fi
 
-                #let line_count=$line_count+1
-                #let color_number=$color_number+1
-            done
+				#let line_count=$line_count+1
+				#let color_number=$color_number+1
+			done
 
-            # ----- ukmet -----
-            gdfn=ukmet # gd file name
-            if [ -e ${gdfn} ]; then
+			# ----- ukmet -----
+			gdfn=ukmet # gd file name
+			if [ -e ${gdfn} ]; then
 				cat >> cmdfile850 <<- EOF
 					GDFILE  = ${gdfn}
 					LINE    = 7/2/2/0
@@ -343,20 +276,20 @@ do
 					run
 
 					EOF
-                if [ $WrottenZERO -eq 0 ]; then            
+				if [ $WrottenZERO -eq 0 ]; then            
 					cat >> cmdfile850  <<- EOF
 						MAP     = 0
 						LATLON  = 0
 						CLEAR   = no
 
 						EOF
-                fi
-                WrottenZERO=1
-            fi
-            
-            # ----- ecmwf -----
-            gdfn=ecmwf # gd file name
-            if [ -e ${gdfn} ]; then
+				fi
+				WrottenZERO=1
+			fi
+			
+			# ----- ecmwf -----
+			gdfn=ecmwf # gd file name
+			if [ -e ${gdfn} ]; then
 				cat >> cmdfile850  <<- EOF
 					GDFILE  = ${gdfn}
 					LINE    = 6/2/2/0
@@ -366,20 +299,20 @@ do
 
 					EOF
 
-                if [ $WrottenZERO -eq 0 ]; then            
+				if [ $WrottenZERO -eq 0 ]; then            
 					cat >> cmdfile850  <<- EOF
 						MAP     = 0
 						LATLON  = 0
 						CLEAR   = no
 
 						EOF
-                fi
-                WrottenZERO=1
-            fi
+				fi
+				WrottenZERO=1
+			fi
 
-            # ----- gefs_avg -----
-            gdfn=gefs_avg # gd file name
-            if [ -e ${gdfn} ]; then
+			# ----- gefs_avg -----
+			gdfn=gefs_avg # gd file name
+			if [ -e ${gdfn} ]; then
 				cat >> cmdfile850  <<- EOF
 					GDFILE  = ${gdfn}
 					LINE    = 1/2/2/0
@@ -388,20 +321,20 @@ do
 					run
 
 					EOF
-                if [ $WrottenZERO -eq 0 ]; then            
+				if [ $WrottenZERO -eq 0 ]; then            
 					cat >> cmdfile850  <<- EOF
 						MAP     = 0
 						LATLON  = 0
 						CLEAR   = no
 
 						EOF
-                fi
-                WrottenZERO=1
-            fi
+				fi
+				WrottenZERO=1
+			fi
 
-            # ----- gefs_avg_6 -----
-            gdfn=gefs_avg_6 # gd file name
-            if [ -e ${gdfn} ]; then
+			# ----- gefs_avg_6 -----
+			gdfn=gefs_avg_6 # gd file name
+			if [ -e ${gdfn} ]; then
 				cat >> cmdfile850  <<- EOF
 					GDFILE  = ${gdfn}
 					LINE    = 31/2/3/0
@@ -411,20 +344,20 @@ do
 
 					EOF
 
-                if [ $WrottenZERO -eq 0 ]; then            
+				if [ $WrottenZERO -eq 0 ]; then            
 					cat >> cmdfile850  <<- EOF
 						MAP     = 0
 						LATLON  = 0
 						CLEAR   = no
 
 						EOF
-                fi
-                WrottenZERO=1
-            fi
+				fi
+				WrottenZERO=1
+			fi
 
-            # ----- dgex -----
-            gdfn=dgex # gd file name
-            if [ -e ${gdfn} ]; then
+			# ----- dgex -----
+			gdfn=dgex # gd file name
+			if [ -e ${gdfn} ]; then
 				cat >> cmdfile850  <<- EOF
 					GDFILE  = ${gdfn} 
 					LINE    = 13/2/2/0
@@ -434,24 +367,47 @@ do
 
 					EOF
 
-            fi
+			fi
 
-            cat cmdfile850
-            gdplot2_nc < cmdfile850
-        
-        done
-    done
+			cat cmdfile850
+			gdplot2_nc < cmdfile850
+			err=$?
+
+			if [[ $err != 0 ]]; then
+				echo "FATAL ERROR in $(basename $BASH_SOURCE): gdplot2_nc failed using cmdfile850!"
+				err_chk
+				exit $err
+			fi
+		
+		done
+	done
 done
 
+#####################################################
+# GEMPAK DOES NOT ALWAYS HAVE A NON ZERO RETURN CODE
+# WHEN IT CAN NOT PRODUCE THE DESIRED GRID.  CHECK
+# FOR THIS CASE HERE.
+#####################################################
+
+ls -l ${metaname}
+err=$?
+
+if [[ $err != 0 ]]; then
+	echo "FATAL ERROR in $(basename $BASH_SOURCE): metafile ${metaname} not created!"
+	err_chk
+	exit $err
+fi
+
 if [ $SENDCOM = "YES" ] ; then
-    mv ${metaname} ${COMOUT}/$metaname
-    if [ $SENDDBN = "YES" ] ; then
-        $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job ${COMOUT}/$metaname
-    fi
+	mv ${metaname} ${COMOUT}/$COMPONENT/gempak/meta/$metaname
+	if [ $SENDDBN = "YES" ] ; then
+		$DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job ${COMOUT}/$COMPONENT/gempak/meta/$metaname
+	fi
 fi
 
 gpend
 rm gemglb.nts last.nts
 
-exit
+echo "$(date -u) end $(basename $BASH_SOURCE)"
 
+exit 0

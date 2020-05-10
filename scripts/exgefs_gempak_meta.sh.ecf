@@ -1,15 +1,17 @@
-#!/bin/ksh
+#!/bin/bash
 
 set -x
 
-msg="JOB $job HAS BEGUN"
-postmsg "$jlogfile" "$msg"
+echo "$(date -u) begin $(basename $BASH_SOURCE)"
 
-numproc=${numproc:-8}
+set -xa
+if [[ ${STRICT:-NO} == "YES" ]]; then
+    # Turn on strict bash error checking
+    set -eu
+fi
 
 cd $DATA
-if [[ -s poescript ]]; then rm $DATA/poescript; fi
-typeset -Z2 fhr
+if [[ -s poescript ]]; then rm poescript; fi
 
 ################################################################
 # Create a script to be poe'd
@@ -19,16 +21,16 @@ typeset -Z2 fhr
 #
 ################################################################
 
-for script in $(cat $FIXgempak/gefs_meta_${cyc})
-do
-    eval "echo $script" >> $DATA/poescript
+for script in $(cat $FIXgempak/gefs_meta_${cyc}); do
+    echo "$script" >> $DATA/poescript
 done
 
 num=$(cat $DATA/poescript |wc -l) 
 
-while [ $num -lt $numproc ] ; do
-   echo "hostname" >>poescript
-   num=$(expr $num + 1)
+# Add dummy lines to execute if there are fewer scripts than tasks
+while [ $num -lt $total_tasks ] ; do
+   echo "hostname" >> poescript
+   num=$(($num + 1))
 done
 
 cat poescript
@@ -41,19 +43,17 @@ rm -f mpmd_cmdfile
 ln -s $MP_CMDFILE mpmd_cmdfile
 # Execute the script.
 
-#mpirun -n $num cfp $MP_CMDFILE
-$APRUN
-export err=$?; err_chk
+#############################################################
+# Execute the script
+$APRUN_MPMD
+err=$?
 
-#####################################################################
-# GOOD RUN
-set +x
-echo "**************JOB GEFS_META COMPLETED NORMALLY on the IBM-SP"
-echo "**************JOB GEFS_META COMPLETED NORMALLY on the IBM-SP"
-echo "**************JOB GEFS_META COMPLETED NORMALLY on the IBM-SP"
-set -x
-#####################################################################
+if [[ $err != 0 ]]; then
+    echo "FATAL ERROR in $(basename $BASH_SOURCE): One or more gempak scripts in $MP_CMDFILE failed!"
+    exit $err
+fi
+#############################################################
 
-echo EXITING $0
-exit
-#
+echo "$(date -u) end $(basename $BASH_SOURCE)"
+
+exit $err
