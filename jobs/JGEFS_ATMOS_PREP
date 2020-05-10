@@ -1,4 +1,4 @@
-!/bin/ksh
+#!/bin/ksh
 
 echo "$(date -u) begin ${.sh.file}"
 
