@@ -1,6 +1,21 @@
 #!/bin/bash
 # Wave component parm file for STAT step
 
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
+export HOMEwave=${HOMEwave:-${HOMEgfs}}
+
+export DATAout=$COMOUT/gempak
+
+export MP_PULSE=0
+export CFP_VERBOSE=1
+
 # Step label
 export sigMODE=${sigMODE:-gempak}
+
+# Set wave model ID tag to include member number
+# if ensemble; waveMEMB var empty in deterministic
+membTAG='p'
+if [ "${waveMEMB}" == "00" ]; then membTAG='c'; fi
+export membTAG
+export WAV_MOD_TAG=${COMPONENTwave}${waveMEMB}
 
