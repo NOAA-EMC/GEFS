@@ -70,6 +70,10 @@ export EXECcode=${EXECcode:-$HOMEgfs/exec}
 setpdy.sh
 . PDY
 
+# Set CDATE_RST and RERUN
+export RERUN=${RERUN:-NO}
+export CDATE_RST=${CDATE_RST:-CDATE}
+
 # Set COM Paths and GETGES environment
 export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/wave
 export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/wave
