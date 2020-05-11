@@ -254,7 +254,7 @@ if [[ $cplchm = ".true." ]]; then
 		echo "WARNING: Detected missing of incomplete GBBEPx emisssions. Will use alternate emissions but forecast may be degraded!"
 		echo "  Check $CHEMIN and your prep emission job if this is unexpected."
 		msg="WARNING: ${job} detected incomplete GBBEPx emissions, will continue with alternate emissions but forecast may be degraded!"
-		mail.py $msg -c Dingchen.Hou@noaa.gov,Walter.Kolczynski@noaa.gov,Xianwu.Xue@noaa.gov
+		echo "$msg" | mail.py -c $MAIL_LIST
 		export EMITYPE=1
 	else
 		echo "FATAL ERROR in ${.sh.file}: cplchm is .true. but smoke emissions are not available!"

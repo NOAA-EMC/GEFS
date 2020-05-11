@@ -12,7 +12,7 @@ echo "-----------------------------------------------------"
 #####################################################################
 
 set -x
-na=$(basename ${0##*/})
+na=$(basename ${.sh.file})
 export PS4=' + $SECONDS $RUN $na $LINENO: '
 
 msg="HAS BEGUN on $(hostname)"

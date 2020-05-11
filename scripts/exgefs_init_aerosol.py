@@ -36,8 +36,6 @@ vert_coord_file_pattern = "{fix_gfs}/fix_am/global_hyblev.l{n_levels}.txt"
 
 max_lookback = 1  # Maximum number of cycles backwards to search for files
 
-mail_recipients = 'Dingchen.Hou@noaa.gov,Walter.Kolczynski@noaa.gov,Xianwu.Xue@noaa.gov' # comma-separated list, no spaces
-
 # Namelist used by regrid
 regrid_namelist = cleandoc("""
     &nam_setup
@@ -103,6 +101,7 @@ def main() -> None:
     resolution = get_env_var("CASE", fail_on_missing=False, default_value="C384")
     send_com = get_env_var("SENDCOM") == "YES"
     send_ecf = get_env_var("SENDECF") == "YES"
+    mail_recipients = get_env_var("MAIL_LIST")
 
     if (init_type not in ["warm", "cold"]):
         print(f"FATAL ERROR in {__file__}: Invalid AEROSOL_INIT_TYPE specified, aborting")

@@ -183,7 +183,7 @@ for hour in $hours; do
 							Will continue with $nfiles members, but products may be degraded.
 						EOF
 						msg="WARNING: {job}, stream ${stream} did not find all ensemble member for f{fhr}! Will continue with fewer members, but products may be degraded."
-					mail.py $msg -c $MAIL_LIST
+					echo "$msg" | mail.py -c $MAIL_LIST
 				fi
 				(( nfilesprev = nfiles ))
 				break

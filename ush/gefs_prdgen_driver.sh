@@ -91,7 +91,7 @@ fi # (( rc == 0 ))
 
 cd $jobdir
 
-SLEEP_LOOP_MAX=$(expr $SLEEP_TIME / $SLEEP_INT)
+SLEEP_LOOP_MAX=$(($SLEEP_TIME / $SLEEP_INT))
 
 for hour in $hours; do
 	if [[ $do_analysis = YES ]] && (( hour == 0 )); then
