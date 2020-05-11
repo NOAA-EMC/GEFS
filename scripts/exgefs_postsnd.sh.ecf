@@ -18,18 +18,23 @@
 #   8) 2019-05-27       Bo Cui modify to generate GEFS BUFR sounding files
 #   9) 2019-06-05       Xianwu Xue reformatted it and add checked the errors        
 ################################################################
+echo "$(date -u) begin ${.sh.file}"
+
 set -xa
-export PS4='+t+$SECONDS exgefs_postsnd.sh.ecf:$LINENO -- '
+if [[ ${STRICT:-NO} == "YES" ]]; then
+	# Turn on strict bash error checking
+	set -eu
+fi
 
 cd $DATA
-########################################
-msg="HAS BEGUN"
-#postmsg "$jlogfile" "$msg"
-########################################
 
 ###################################################
 ## Run meteogram generator for T574
 ###################################################
+export FHMAX_HF=$FHMAXHF
+export FHOUT_HF=$FHOUTHF
+export FHOUT=$FHOUTLF
+
 export JCAP=${JCAP:-766}
 export LEVS=${LEVS:-64}
 export LATB=${LATB:-768}
@@ -41,85 +46,106 @@ export NEND1=${NEND1:-180} #$FHMAXHF        ##first period length with time inte
 export NINT1=$FHOUTHF        ##first period time interval
 export NINT3=$FHOUTLF        ##second period time interval
 
+export STARTHOUR=${STARTHOUR:-00}
+export ENDHOUR=${ENDHOUR:-180}
+if (( ENDHOUR > fhmaxh )); then
+	export ENDHOUR=$fhmaxh
+fi
+if (( NEND1 >= ENDHOUR )); then
+	export NEND1=$ENDHOUR
+fi
+
 export NZERO=6
 export INCREMENT=${INCREMENT:-12}
 export OUTFILE=meteomrf
 export MAKEBUFR=NO
 export F00FLAG=YES
+export MODEL_OUT_FORM=binarynemsiompiio
 
 # Extract number of vertical levels from $STARTHOUR atmospheric file
 export NEMSIOGET=${NEMSIOGET:-$EXECbufrsnd/nemsio_get}
 fhr3=$(printf %03i $STARTHOUR)
-ATMFCS=$COMIN/sfcsig/${RUNMEM}.${cycle}.atmf${fhr3}.nemsio
+ATMFCS=$COMIN/$COMPONENT/sfcsig/${RUNMEM}.${cycle}.atmf${fhr3}.nemsio
 export LEVS=$($NEMSIOGET $ATMFCS dimz | awk '{print $2}')
+export mem=$(echo $RUNMEM|cut -c3-5)
+
+mkdir -p $COMOUT/$COMPONENT
+mkdir -p $COMOUT/$COMPONENT/wmo
+mkdir -p $COMOUT/$COMPONENT/gempak
+
+if [ -e $COMOUT/$COMPONENT/bufr/$mem ]; then
+    rm -rf $COMOUT/$COMPONENT/bufr/$mem
+fi
+mkdir -m 775 -p $COMOUT/$COMPONENT/bufr/$mem
+mkdir -m 775 -p $COMOUT/$COMPONENT/misc/bufr
 
 ### Loop for the hour and wait for the sigma and surface flux file:
 export FSTART=$STARTHOUR
-#
-while [ $FSTART -lt $ENDHOUR ]
-do
-    export FINT=$NINT1
-    # Define the end hour for the input
-    export FEND=$(expr $FSTART + $INCREMENT) 
-    if [ $FEND -lt 100 ]; then FEND=0$FEND; fi 
-    if [ $FSTART -eq 00 ]
-    then 
-        export F00FLAG=YES
-    else
-        export F00FLAG=NO
-    fi
+
+SLEEP_LOOP_MAX=$(($SLEEP_TIME / $SLEEP_INT))
+
+while [ $FSTART -lt $ENDHOUR ]; do
+	export FINT=$NINT1
+	# Define the end hour for the input
+	export FEND=$(printf %03i $((10#$FSTART + $INCREMENT)))
+	if [ $FSTART -eq 00 ]; then 
+		export F00FLAG=YES
+	else
+		export F00FLAG=NO
+	fi
    
-    if [ $FEND -eq $ENDHOUR ]
-    then
-        export MAKEBUFR=YES
-    fi
+	if [ $FEND -eq $ENDHOUR ]; then
+		export MAKEBUFR=YES
+	fi
 
-    ic=0
-#   while [ $ic -lt 1000 ]
-    while [ $ic -lt 100 ]
-    do
-        if [ ! -f $COMIN/sfcsig/${RUNMEM}.${cycle}.logf$FEND.nemsio ]
-        then
-            sleep 10
-            ic=$(expr $ic + 1)
-        else
-            break
-        fi
+	ic=0
+	while [ $ic -lt $SLEEP_LOOP_MAX ]; do
+		fcstchk=$COMIN/$COMPONENT/sfcsig/${RUNMEM}.${cycle}.logf$FEND.nemsio
+		if [ ! -f $fcstchk ]; then
+			ic=$(($ic + 1))
+			sleep $SLEEP_INT
+		else
+			break
+		fi
 
-        if [ $ic -ge 360 ]
-        then
-            err_exit "FATAL ERROR: COULD NOT LOCATE logf$FEND file AFTER 1 HOUR"
-            err=-5
-            exit $err
-        fi
-    done
+		if [ $ic -ge SLEEP_LOOP_MAX ]; then
+			echo <<- EOF
+				FATAL ERROR in ${.sh.file}: Unable to find forecast output $fcstchk at $(date -u) after waiting ${SLEEP_TIME}s!
+				EOF
+			err=5
+			err_chk
+			exit $err
+		fi
+	done
 
-    ## 1-hourly output before $NEND1, 3-hourly output after
-    if [ $FEND -gt $NEND1 ]; then
-        export FINT=$NINT3
-    fi
-    $USHgefs/gefs_bufr.sh
-    err=$?
-    export FSTART=$FEND
+	## 1-hourly output before $NEND1, 3-hourly output after
+	if [ $FEND -gt $NEND1 ]; then
+		export FINT=$NINT3
+	fi
+	$USHgefs/gefs_bufr.sh
+	err=$?
+	if [[ $err != 0 ]]; then
+		echo "FATAL ERROR in ${.sh.file}: gefs_bufr failed for f$FSTART!"
+		err_chk
+		exit $err
+	fi
+
+	export FSTART=$FEND
 done
 
-#if [ 'NO' = 'YES' ]
-#then
 ##############################################################
 # Tar and gzip the individual bufr files and send them to /com
 ##############################################################
-cd ${COMOUT}/bufr/${mem}
-#tar -cf - . | /usr/bin/gzip > ${RUNMEM}.${cycle}.bufrsnd.tar.gz
+cd ${COMOUT}/$COMPONENT/bufr/${mem}
 tar -cf - bufr.* | /usr/bin/gzip > ${RUNMEM}.${cycle}.bufrsnd.tar.gz
 cd $DATA
 
 ########################################
 # Send the single tar file to OSO
 ########################################
-if [ "$SENDDBN" = 'YES' ]
-then
-    $DBNROOT/bin/dbn_alert MODEL GFS_BUFRSND_TAR $job \
-    $COMOUT/${RUNMEM}.${cycle}.bufrsnd.tar.gz
+if [ "$SENDDBN" = 'YES' ]; then
+	$DBNROOT/bin/dbn_alert MODEL GFS_BUFRSND_TAR $job \
+	$COMOUT/$COMPONENT/${RUNMEM}.${cycle}.bufrsnd.tar.gz
 fi
 
 ########################################
@@ -127,47 +153,32 @@ fi
 # add appropriate WMO Headers.
 ########################################
 collect=' 1 2 3 4 5 6 7 8 9'
-if [ $machine == "THEIA" -o  $machine == "JET" ]; then
-    for m in ${collect}
-    do
-        sh $USHgefs/gefs_sndp.sh $m
-    done
 
-    ################################################
-    # Convert the bufr soundings into GEMPAK files
-    ################################################
-    sh $USHgefs/gefs_bfr2gpk.sh
-    err=$?
-else
-    rm -rf poe_col
-    echo "sh $USHgefs/gefs_bfr2gpk.sh " >> poe_col
-    for m in ${collect}
-    do
-        echo "sh $USHgefs/gefs_sndp.sh $m " >> poe_col
-    done
+rm -rf mpmd_cmdfile
+echo "$USHgefs/gefs_bfr2gpk.sh " >> mpmd_cmdfile
+for m in ${collect}; do
+	echo "$USHgefs/gefs_sndp.sh $m " >> mpmd_cmdfile
+done
 
-    mv poe_col mpmd_cmdfile
+cat mpmd_cmdfile
+chmod 775 mpmd_cmdfile
+export MP_CMDFILE=${DATA}/mpmd_cmdfile
+export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
+export MP_PGMMODEL=mpmd
 
-    cat mpmd_cmdfile
-    chmod +x mpmd_cmdfile
+#############################################################
+# Execute the script
+$APRUN_MPMD
+err=$?
 
-    ##mpirun -n 10 cfp cmdfile
-#   ${APRUN_POSTSNDCFP} cmdfile
-    ${APRUN_POSTSNDCFP} 
-    err=$?
+if [[ $err != 0 ]]; then
+	echo "FATAL ERROR in ${.sh.file}: One or more BUFR regions in $MP_CMDFILE failed!"
+	exit $err
 fi
+#############################################################
 
-#fi #if [ "NO" = 'YES' ]
+echo "$(date -u) end ${.sh.file}"
 
-#####################################################################
-if [ $err -eq 0 ] ; then
-    msg='HAS GERERATED GFS BUFR SOUNDING NORMALLY!'
-    #postmsg "$jlogfile" "$msg"
-    exit 0
-else
-    echo "FATAL ERROR: FAILED to Generate GFS BUFR sounding!"
-    exit $err
-fi
+exit $err
 
-############## END OF SCRIPT #######################
 

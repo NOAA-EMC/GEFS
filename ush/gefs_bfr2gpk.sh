@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ksh
 #########################################################################
 #                                           #
 # Script:  gefs_bfr2gpk form gfs_bfr2gpk.sh #
@@ -9,7 +9,13 @@
 # Log:                                      #
 # K. Brill/HPC      04/12/05                #
 #########################################################################  
-set -x
+echo "$(date -u) begin ${.sh.file}"
+
+set -xa
+if [[ ${STRICT:-NO} == "YES" ]]; then
+	# Turn on strict bash error checking
+	set -eu
+fi
 
 # Set GEMPAK paths.
 
@@ -21,50 +27,61 @@ cd $DATA
 
 #  Set input directory name.
 
-BPATH=$COMOUT/bufr/${mem}     
+BPATH=$COMOUT/$COMPONENT/bufr/${mem}
 export BPATH
 
 #  Set output directory:
 
-OUTDIR=$COMAWP
+OUTDIR=$COMOUT/$COMPONENT/gempak
 
 outfilbase=${RUNMEM}_${PDY}${cyc}
 
-#  Get the list of individual station files.
-
-date
-##filelist=$(/bin/ls -1 $BPATH | grep bufr)
-##rm -f bufr.combined
-##for file in $filelist; do
-##  cat $BPATH/$file >> bufr.combined
-##done
 cat $BPATH/bufr.*.${PDY}${cyc} > bufr.combined
 
 date
-namsnd << EOF > /dev/null
-SNBUFR   = bufr.combined
-SNOUTF   = ${outfilbase}.snd
-SFOUTF   = ${outfilbase}.sfc
-SNPRMF   = sngfs.prm
-SFPRMF   = sfgfs.prm
-TIMSTN   = 170/2100
-r
+namsnd <<- EOF > /dev/null
+	SNBUFR   = bufr.combined
+	SNOUTF   = ${outfilbase}.snd
+	SFOUTF   = ${outfilbase}.sfc
+	SNPRMF   = sngfs.prm
+	SFPRMF   = sfgfs.prm
+	TIMSTN   = 170/2100
+	r
 
-ex
-EOF
+	ex
+	EOF
+
+err=$?
+if [[ $err != 0 ]]; then
+	echo <<- EOF
+		FATAL ERROR in ${.sh.file}: namsnd failed with the following settings:
+			SNBUFR   = bufr.combined
+			SNOUTF   = ${outfilbase}.snd
+			SFOUTF   = ${outfilbase}.sfc
+			SNPRMF   = sngfs.prm
+			SFPRMF   = sfgfs.prm
+			TIMSTN   = 170/2100
+			r
+
+			ex
+		EOF
+	err_chk
+	exit $err
+fi
 date
 
 /bin/rm *.nts
 
 snd=${outfilbase}.snd
 sfc=${outfilbase}.sfc
-cp $snd $OUTDIR/.$snd
-cp $sfc $OUTDIR/.$sfc
-mv $OUTDIR/.$snd $OUTDIR/$snd
-mv $OUTDIR/.$sfc $OUTDIR/$sfc
+if [[ $SENDCOM == "YES" ]]; then
+	cp $snd $OUTDIR/.$snd
+	cp $sfc $OUTDIR/.$sfc
+	mv $OUTDIR/.$snd $OUTDIR/$snd
+	mv $OUTDIR/.$sfc $OUTDIR/$sfc
+fi
 
-if [ $SENDDBN = "YES" ]
-then
+if [ $SENDDBN = "YES" ]; then
     $DBNROOT/bin/dbn_alert MODEL GFS_PTYP_SFC $job $OUTDIR/$sfc
     $DBNROOT/bin/dbn_alert MODEL GFS_PTYP_SND $job $OUTDIR/$snd
 fi
