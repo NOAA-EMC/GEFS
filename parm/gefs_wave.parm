@@ -70,11 +70,11 @@ export OUTPARS_WAV="WND ICE HS T01 T02 DIR FP DP PHS PTP PDIR"
 # Options for output control
 export DOIBP_WAV='NO'
 export DOFLD_WAV='YES' # Field data
-export DOPNT_WAV='YES' # Station data
+export DOPNT_WAV='NO ' # Station data
 export DOGRB_WAV='YES' # Create grib2 files
 export DOGRI_WAV='YES' # Create interpolated grids
-export DOSPC_WAV='YES' # Spectral post
-export DOBLL_WAV='YES' # Bulletin post
+export DOSPC_WAV='NO ' # Spectral post
+export DOBLL_WAV='NO ' # Bulletin post
 
 # Intake currents settings
 export WAV_CUR_DT=${WAV_CUR_DT:-3}
