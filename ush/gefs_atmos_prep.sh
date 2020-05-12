@@ -83,13 +83,14 @@ if [[ $err != 0 ]]; then
 fi
 #############################################################
 
+mkdir -p $GESOUT/init/$mem
+$NCP $OUTDIR/sfc* $GESOUT/init/$mem
+$NCP $OUTDIR/gfs_ctrl.nc $GESOUT/init/$mem
+
 if [[ $SENDCOM == "YES" ]]; then
     mkdir -p $COMOUT/init/$mem
-    mkdir -p $GESOUT/init/$mem
     $NCP $OUTDIR/sfc* $COMOUT/init/$mem
-    $NCP $OUTDIR/sfc* $GESOUT/init/$mem
     $NCP $OUTDIR/gfs_ctrl.nc $COMOUT/init/$mem
-    $NCP $OUTDIR/gfs_ctrl.nc $GESOUT/init/$mem
     if [[ $mem == "c00" ]]; then
         $NCP $OUTDIR/gfs_data*.nc $COMOUT/init/$mem
     fi

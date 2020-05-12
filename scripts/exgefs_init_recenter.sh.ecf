@@ -131,7 +131,7 @@ if [[ $SENDCOM == YES ]]; then
     while [ $mem -le $npert ]; do
         smem=p$(printf %02i $mem)
         mkdir -p $COMOUT/init/$smem
-        $NCP $GESOUT/enkf/$smem/gfs* $COMOUT/init/$smem
+        $NCP $GESOUT/init/$smem/gfs* $COMOUT/init/$smem
         (( mem = mem +1 ))
     done
 fi
