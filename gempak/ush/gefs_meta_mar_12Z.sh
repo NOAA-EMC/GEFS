@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/sh
 #
 # Metafile Script : gefs_meta_mar_12Z.sh
 #
