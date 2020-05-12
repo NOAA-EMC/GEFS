@@ -99,7 +99,8 @@ err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"
 else
-    echo "FATAL ERROR: $job failed!"
+    echo "FATAL ERROR in $(basename $BASH_SOURCE): $job failed!"
+    exit $err
 fi
 #############################################################
 

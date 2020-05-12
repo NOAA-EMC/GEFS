@@ -100,7 +100,8 @@ err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"
 else
-    echo "FATAL ERROR: $job failed!"
+    echo "FATAL ERROR in ${.sh.file}: $job failed!"
+    exit $err
 fi
 #############################################################
 
