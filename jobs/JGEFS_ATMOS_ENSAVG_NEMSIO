@@ -88,7 +88,7 @@ env | sort
 
 #############################################################
 # Execute the script
-$HOMEgefs/scripts/exgefs_ensavg_nemsio.sh.ecf
+$HOMEgefs/scripts/exgefs_atmos_ensavg_nemsio.sh.ecf
 err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"
