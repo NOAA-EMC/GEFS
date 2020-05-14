@@ -1,7 +1,7 @@
 #####################################################################
 echo "-----------------------------------------------------"
-echo " exgefs_post_cleanup.sh.sms" 
-echo " based on exglobal_post.sh.sms" 
+echo " exgefs_post_cleanup.sh.sms"
+echo " based on exglobal_post.sh.sms"
 echo " Apr 99 - Michaud - Generated to post global forecast"
 echo " Mar 03 - Zhu - Add post for 0.5x0.5 degree"
 echo " Jul 05 - Wobus - 6-hour breeding, ensemble only"
@@ -35,7 +35,7 @@ fhr=$SHOUR
 export fhr
 
 ############################################################
-# Loop Through the Post Forecast Files 
+# Loop Through the Post Forecast Files
 ############################################################
 while test $fhr -le $FHOUR; do
 	echo $(date) f$fhr begin
