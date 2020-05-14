@@ -75,7 +75,7 @@ env | sort
 
 #############################################################
 # Execute the script
-$HOMEgefs/scripts/exgefs_getcfssst.sh
+$HOMEgefs/scripts/exgefs_atmos_getcfssst.sh
 export err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"

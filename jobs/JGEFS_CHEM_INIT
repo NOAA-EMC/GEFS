@@ -92,7 +92,7 @@ env | sort
 
 #############################################################
 # Execute the script
-$HOMEgefs/scripts/exgefs_init_aerosol.py
+$HOMEgefs/scripts/exgefs_chem_init.py
 export err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"
