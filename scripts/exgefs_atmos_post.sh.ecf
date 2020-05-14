@@ -47,7 +47,7 @@ if [[ $REMAP_GRID = latlon ]]; then
 			;;
 		(*)
 			echo "FATAL ERROR in ${.sh.file}: FORECAST_SEGMENT $FORECAST_SEGMENT unsupported!"
-			err=100
+			export err=100
 			exit $err
 			;;
 	esac
@@ -124,7 +124,7 @@ export post_log=$DATA/post.$FORECAST_SEGMENT.log$SUBJOB\_${RUNMEM}
 postsh="$HOMEgefs/ush/gefs_atmos_post.sh $SHOUR $FHOUR $FHOUT_HF $FHOUT_LF $FHMAX_HF $SHOUR_LF"
 
 $postsh
-err=$?
+export err=$?
 if [ $err -ne 0 ]; then
 	echo "FATAL ERROR in ${.sh.file}: received a non-zero return code from $postsh"
 	exit $err

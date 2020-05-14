@@ -72,7 +72,7 @@ env | sort
 #############################################################
 # Execute the script
 $HOMEgefs/scripts/exgefs_getcfssst.sh.ecf
-err=$?
+export err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"
 else

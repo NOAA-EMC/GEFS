@@ -105,7 +105,7 @@ while [[ $fhr -le $FHOUR ]]; do
 		$NLN $COMOUT/$COMPONENT/sfcsig/geavg.${cycle}.sfcf${fhr}.nemsio ./sfc_ensmean
 	fi
 	$APRUN ${DATA}/$(basename $GETATMENSMEANEXEC) ./ atm_ensmean atm $nfile
-	err=$?
+	export err=$?
 
 	if [[ $err != 0 ]]; then
 		echo "FATAL ERROR in ${.sh.file}: $(basename $GETATMENSMEANEXEC) failed for f${fhr}!"
@@ -114,7 +114,7 @@ while [[ $fhr -le $FHOUR ]]; do
 	fi
 
 	$APRUN ${DATA}/$(basename $GETSFCENSMEANEXEC) ./ sfc_ensmean sfc $nfile
-	err=$?
+	export err=$?
 
 	if [[ $err != 0 ]]; then
 		echo "FATAL ERROR in ${.sh.file}: $(basename $GETSFCENSMEANEXEC) failed for f${fhr}!"

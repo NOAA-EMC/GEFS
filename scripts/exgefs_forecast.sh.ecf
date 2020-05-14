@@ -259,7 +259,7 @@ if [[ $cplchm = ".true." ]]; then
 	else
 		echo "FATAL ERROR in ${.sh.file}: cplchm is .true. but smoke emissions are not available!"
 		echo "  Check input directory $CHEMIN"
-		err=10
+		export err=10
 		exit $err
 	fi
 
@@ -301,7 +301,7 @@ fi
 ########################################################
 ## Execute the script.
 $FORECASTSH
-err=$?
+export err=$?
 if [[ $err != 0 ]]; then
 	echo "FATAL ERROR in ${.sh.file}: received a non-zero return code from $FORECASTSH"
 	exit $err

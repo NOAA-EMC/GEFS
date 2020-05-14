@@ -33,7 +33,7 @@ export FHOUT_LF=${4:-${FHOUT_LF}}
 export FHMAX_HF=${5:-${FHMAX_HF}}
 export SHOUR_LF=${6:-${SHOUR_LF}}
 
-err=0
+export err=0
 
 # Get RUN_HOURS
 typeset -a RUN_HOURS
@@ -268,7 +268,7 @@ if [ $DOANALYSIS = YES ]; then
 			if [[ -f $jlogfile ]]; then rm $jlogfile; fi
 
 			$POSTGPSH
-			err=$?
+			export err=$?
 
 			cat $jlogfile
 
@@ -417,7 +417,7 @@ for fhr in ${RUN_HOURS[@]}; do
 		if [[ -f $jlogfile ]]; then rm $jlogfile; fi
 
 		$POSTGPSH
-		err=$?
+		export err=$?
 
 		cat $jlogfile
 

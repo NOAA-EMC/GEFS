@@ -51,7 +51,7 @@ namsnd <<- EOF > /dev/null
 	ex
 	EOF
 
-err=$?
+export err=$?
 if [[ $err != 0 ]]; then
 	echo <<- EOF
 		FATAL ERROR in ${.sh.file}: namsnd failed with the following settings:

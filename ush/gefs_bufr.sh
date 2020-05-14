@@ -84,7 +84,7 @@ while [ $hh -le $FEND ]; do
 			echo <<- EOF
 				FATAL ERROR in ${.sh.file}: Unable to find forecast output $fcstchk at $(date -u) after waiting ${SLEEP_TIME}s!
 				EOF
-			err=6
+			export err=6
 			err_chk
 			exit $err
 		fi

@@ -79,7 +79,7 @@ NMV=${NMV:-"/bin/mv -uv"}
 # Scripts
 RECENATMPY=${RECENATMPY:-$HOMEgefs/util/ush/recentensemble.py}
 
-err=0
+export err=0
 if [ $warm_start = ".false." ]; then
 	export FILENAME='gfs_data.tile'
 	export FILEINPATH=$GESIN/enkf
@@ -115,7 +115,7 @@ if [ $warm_start = ".false." ]; then
         ln -s $MP_CMDFILE mpmd_cmdfile
         $APRUN_MPMD
         
-        err=$?
+        export err=$?
         if [[ $err != 0 ]]; then
             echo "FATAL ERROR in ${.sh.file}: One or more recenter jobs in $MP_CMDFILE failed!"
             exit $err

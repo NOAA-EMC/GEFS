@@ -80,7 +80,7 @@ configs="gefs gefs_wave gefs_wave_init"
 config_path=$PARMgefs
 for config in $configs; do
     . $config_path/$config.parm
-    err=$?
+    export err=$?
     if [[ $err != 0 ]]; then
     	echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file $config_path"
     	exit $err
@@ -96,7 +96,7 @@ env | sort
 #############################################################
 # Execute the script
 $HOMEwave/scripts/exwave_init.sh
-err=$?
+export err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"
 else

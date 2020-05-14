@@ -196,7 +196,7 @@ for hour in $hours; do
 			$USHgefs/gefs_prdgen.sh
 
 			# Check for error
-			err=$?
+			export err=$?
 			if [[ $err != 0 ]]; then
 				echo "FATAL ERROR in ${.sh.file} ($stream): Creation of product failed for analysis!"
 				err_chk
@@ -345,7 +345,7 @@ for hour in $hours; do
 			$USHgefs/gefs_prdgen.sh
 
 			# Check for error
-			err=$?
+			export err=$?
 			if [[ $err -ne 0 ]]; then
 				echo "FATAL ERROR in ${.sh.file} ($stream): Creation of product failed at f${fhr}!"
 				err_chk

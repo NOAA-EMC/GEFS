@@ -16,7 +16,7 @@ elif [[ $FORECAST_SEGMENT = lr ]]; then
     LEVS=$LEVSLR 
 else
 	echo "FATAL ERROR in ${.sh.file}: FORECAST_SEGMENT ${FORECAST_SEGMENT} is not supported!"
-	err=9
+	export err=9
 	exit $err
 fi
 
@@ -36,7 +36,7 @@ export ensavg_nemsio_log=$DATA/ensavg_nemsio.$FORECAST_SEGMENT.log
 #############################################################
 # Execute the script
 $HOMEgefs/ush/gefs_ensavg_nemsio.sh $DATA $SHOUR $FHOUT_HF $FHOUT_LF $FHMAXHF $FHOUR $ensavg_nemsio_log
-err=$?
+export err=$?
 mv $ensavg_nemsio_log $COMOUT/$COMPONENT/misc/ensavg_nemsio
 
 if [[ $err != 0 ]]; then

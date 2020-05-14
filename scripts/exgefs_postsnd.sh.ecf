@@ -112,7 +112,7 @@ while [ $FSTART -lt $ENDHOUR ]; do
 			echo <<- EOF
 				FATAL ERROR in ${.sh.file}: Unable to find forecast output $fcstchk at $(date -u) after waiting ${SLEEP_TIME}s!
 				EOF
-			err=5
+			export err=5
 			err_chk
 			exit $err
 		fi
@@ -123,7 +123,7 @@ while [ $FSTART -lt $ENDHOUR ]; do
 		export FINT=$NINT3
 	fi
 	$USHgefs/gefs_bufr.sh
-	err=$?
+	export err=$?
 	if [[ $err != 0 ]]; then
 		echo "FATAL ERROR in ${.sh.file}: gefs_bufr failed for f$FSTART!"
 		err_chk
@@ -169,7 +169,7 @@ export MP_PGMMODEL=mpmd
 #############################################################
 # Execute the script
 $APRUN_MPMD
-err=$?
+export err=$?
 
 if [[ $err != 0 ]]; then
 	echo "FATAL ERROR in ${.sh.file}: One or more BUFR regions in $MP_CMDFILE failed!"

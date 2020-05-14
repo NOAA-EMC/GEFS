@@ -32,7 +32,7 @@ export MP_PGMMODEL=mpmd
 
 #############################################################
 $APRUN_MPMD
-err=$?
+export err=$?
 if [[ $err != 0 ]]; then
     echo "FATAL ERROR in ${.sh.file}: One or more atmos_prep jobs in $MP_CMDFILE failed!"
     exit $err

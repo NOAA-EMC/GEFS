@@ -28,7 +28,7 @@ if [[ -f $SFCFILE ]]; then
 else
     msg="FATAL ERROR in ${.sh.file}: GFS surfce analysis $SFCFILE not found!"
     echo $msg
-    err=100
+    export err=100
     err_chk || exit $err
 fi
 
@@ -40,7 +40,7 @@ if [[ $mem = c00 ]] ;then
     else
         msg="FATAL ERROR in ${.sh.file}: GFS atmospheric analysis file $ATMFILE not found!"
         echo "$msg"
-        err=101
+        export err=101
         err_chk || exit $err
     fi
 else
@@ -66,7 +66,7 @@ else
             else
                 msg="FATAL ERROR in ${.sh.file}: Unable to find EnKF atmospheric file after $MAX_ENKF_SEARCHES attempts"
                 echo $msg
-                err=102
+                export err=102
                 err_chk || exit $err
             fi
         fi # [[ -f $ATMFILE ]]
@@ -76,7 +76,7 @@ fi
 #############################################################
 # Execute the script
 $USHgfs/global_chgres_driver.sh
-err=$?
+export err=$?
 if [[ $err != 0 ]]; then
     echo "FATAL ERROR in ${.sh.file}: global_chgres_driver failed!"
     exit $err

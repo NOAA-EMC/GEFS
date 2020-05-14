@@ -144,7 +144,7 @@ ln -s $MP_CMDFILE mpmd_cmdfile
 #############################################################
 # Execute the script
 $APRUN_MPMD
-err=$?
+export err=$?
 
 if [[ $err != 0 ]]; then
 	echo "FATAL ERROR in ${.sh.file}: One or more prdgen streams in $MP_CMDFILE failed!"

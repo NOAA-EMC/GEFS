@@ -78,7 +78,7 @@ configs="gefs gefs_chem_init"
 config_path=$PARMgefs
 for config in $configs; do
     . $config_path/$config.parm
-    err=$?
+    export err=$?
     if [[ $err != 0 ]]; then
     	echo "FATAL ERROR in ${.sh.file}: Error while loading parm file $config_path"
     	exit $err
@@ -91,7 +91,7 @@ env | sort
 #############################################################
 # Execute the script
 $HOMEgefs/scripts/exgefs_init_aerosol.py
-err=$?
+export err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"
 else

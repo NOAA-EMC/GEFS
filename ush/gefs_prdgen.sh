@@ -73,7 +73,7 @@ else
 	$WGRIB2 $mafile $option1 $option21 $option22 $option23 $option24 \
 			$option25 $option26 $option27 $option28 \
 			-new_grid $grid_spec pgb2file.$ffhr
-	err=$?
+	export err=$?
 	if [[ $err -ne 0 ]]; then
 		echo "FATAL ERROR in ${.sh.file} ($stream): wgrib2 for $mafile failed!"
 		export err=1

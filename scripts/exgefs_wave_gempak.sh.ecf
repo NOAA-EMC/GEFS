@@ -30,7 +30,7 @@ ln -s $MP_CMDFILE mpmd_cmdfile
 #############################################################
 # Execute the script
 $APRUN_MPMD
-err=$?
+export err=$?
 
 if [[ $err != 0 ]]; then
 	echo "FATAL ERROR in $(basename $BASH_SOURCE): One or more gempak jobs in $MP_CMDFILE failed!"
