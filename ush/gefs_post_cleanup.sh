@@ -12,20 +12,15 @@
 # -----------------------------------------------------
 #####################################################################
 
-set -x
+echo "$(date -u) begin ${.sh.file}"
+
+set -xa
+if [[ ${STRICT:-NO} == "YES" ]]; then
+	# Turn on strict bash error checking
+	set -eu
+fi
 
 export MP_LABELIO=YES
-
-############################################################
-#  Define Variables:
-#  -----------------
-#  SHOUR        is the starting forecast hour. normally 0 except for restarts.
-#  FHOUR        is the ending forecast hour.
-#  FHINC        is the increment hour for each forecast steps.
-#  FH           is the current forecast hour.
-#  SLEEP_TIME   is the number of seconds to sleep before exiting with error.
-#  SLEEP_INT    is the number of seconds to sleep between restrt file checks.
-############################################################
 
 fhr=$SHOUR
 export fhr
@@ -33,7 +28,7 @@ export fhr
 ############################################################
 # Loop Through the Post Forecast Files
 ############################################################
-while [[ $fhr <= $FHOUR ]]; do
+while [[ $fhr -le $FHOUR ]]; do
 	ffhr="f$(printf %03i $fhr)"
 
 	echo "$(date) $ffhr begin"

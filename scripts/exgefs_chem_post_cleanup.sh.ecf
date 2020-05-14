@@ -23,26 +23,26 @@ echo "cycsavelistmaster=$cycsavelistmaster"
 echo "$(date) GRIB file test before cleanup begin"
 ((nmissing = 0))
 
-member="aer"
+export member="aer"
 
 ####################################
 # Specify Forecast Hour Range
 ####################################
 SHOUR=0
 
-filelist="\
-	$COMIN/$COMPONENT/master/ge${member}.$cycle.master.grb2anl \
-	$COMIN/$COMPONENT/master/ge${member}.$cycle.master.grb2ianl \
-"
-for file in $filelist; do
-	if [[ ! -s $file ]]; then
-		((nmissing = nmissing + 1))
-		echo "nmissing=$nmissing file=$file IS MISSING"
-	fi
-done # file in $filelist
+# filelist="\
+# 	$COMIN/$COMPONENT/master/ge${member}.$cycle.master.grb2anl \
+# 	$COMIN/$COMPONENT/master/ge${member}.$cycle.master.grb2ianl \
+# "
+# for file in $filelist; do
+# 	if [[ ! -s $file ]]; then
+# 		((nmissing = nmissing + 1))
+# 		echo "nmissing=$nmissing file=$file IS MISSING"
+# 	fi
+# done # file in $filelist
 
 fhr=$SHOUR
-while (( fhr <= fhmax )); do
+while (( fhr <= fhmax_aer )); do
 
 	ffhr="f$(printf %03i $fhr)"
 
@@ -69,7 +69,7 @@ while (( fhr <= fhmax )); do
 	else
 		(( fhr = fhr + FHOUTLF ))
 	fi
-done # (( fhr <= fhmax ))
+done # (( fhr <= fhmax_aer ))
 
 echo "nmissing=$nmissing"
 echo "$(date) GRIB file test before cleanup end"
@@ -90,16 +90,16 @@ else # (( nmissing > 0 ))
 
 	echo "cyc=$cyc savecycle=$savecycle"
 	if [[ $savecycle == false ]]; then
-		if [[ x$HOUTSPS == x ]]; then
-			export FHOUR=$fhmax
+		if [[ -z ${HOUTSPS:-""} ]]; then
+			export FHOUR=$fhmax_aer
 		else
-			((FHOUR = fhmax - HOUTSPS - FHINC))
+			((FHOUR = fhmax_aer - HOUTSPS - FHINC))
 		fi
 		export FHOUR
 		###########################################################
 		# remove atm and sfc files
 		###########################################################
-		$HOMEgefs/ush/exgefs_post_cleanup.sh.ecf
+		$HOMEgefs/ush/gefs_post_cleanup.sh
 	else # [[ $savecycle = false ]]
 		echo "sfcsig files are saved for cyc=$cyc"
 	fi # [[ $savecycle = false ]]

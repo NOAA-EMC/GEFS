@@ -29,37 +29,35 @@ for member in $memberlist; do
 	####################################
 	SHOUR=0
 
-	filelist="\
-		$COMIN/$COMPONENT/master/ge${member}.$cycle.master.grb2anl \
-		$COMIN/$COMPONENT/master/ge${member}.$cycle.master.grb2ianl \
-		$COMIN/$COMPONENT/pgrb22p5/ge${member}.$cycle.pgrb2.2p50.anl \
-		$COMIN/$COMPONENT/pgrb22p5/ge${member}.$cycle.pgrb2.2p50.anl.idx \
-		$COMIN/$COMPONENT/pgrb2ap5/ge${member}.$cycle.pgrb2a.0p50.anl \
-		$COMIN/$COMPONENT/pgrb2ap5/ge${member}.$cycle.pgrb2a.0p50.anl.idx \
-		$COMIN/$COMPONENT/pgrb2bp5/ge${member}.$cycle.pgrb2b.0p50.anl \
-		$COMIN/$COMPONENT/pgrb2bp5/ge${member}.$cycle.pgrb2b.0p50.anl.idx \
-		$COMIN/$COMPONENT/pgrb2p25/ge${member}.$cycle.pgrb2.0p25.anl \
-		$COMIN/$COMPONENT/pgrb2p25/ge${member}.$cycle.pgrb2.0p25.anl.idx \
-		$COMIN/$COMPONENT/pgrb2sp25/ge${member}.$cycle.pgrb2s.0p25.anl \
-		$COMIN/$COMPONENT/pgrb2sp25/ge${member}.$cycle.pgrb2s.0p25.anl.idx \
-	"
-	for file in $filelist; do
-		if [[ ! -s $file ]]; then
-			((nmissing = nmissing + 1))
-			echo "nmissing=$nmissing file=$file IS MISSING"
-		fi
-	done # file in $filelist
+	# filelist="\
+	# 	$COMIN/$COMPONENT/master/ge${member}.$cycle.master.grb2anl \
+	# 	$COMIN/$COMPONENT/master/ge${member}.$cycle.master.grb2ianl \
+	# 	$COMIN/$COMPONENT/pgrb22p5/ge${member}.$cycle.pgrb2.2p50.anl \
+	# 	$COMIN/$COMPONENT/pgrb22p5/ge${member}.$cycle.pgrb2.2p50.anl.idx \
+	# 	$COMIN/$COMPONENT/pgrb2ap5/ge${member}.$cycle.pgrb2a.0p50.anl \
+	# 	$COMIN/$COMPONENT/pgrb2ap5/ge${member}.$cycle.pgrb2a.0p50.anl.idx \
+	# 	$COMIN/$COMPONENT/pgrb2bp5/ge${member}.$cycle.pgrb2b.0p50.anl \
+	# 	$COMIN/$COMPONENT/pgrb2bp5/ge${member}.$cycle.pgrb2b.0p50.anl.idx \
+	# 	$COMIN/$COMPONENT/pgrb2p25/ge${member}.$cycle.pgrb2.0p25.anl \
+	# 	$COMIN/$COMPONENT/pgrb2p25/ge${member}.$cycle.pgrb2.0p25.anl.idx \
+	# 	$COMIN/$COMPONENT/pgrb2sp25/ge${member}.$cycle.pgrb2s.0p25.anl \
+	# 	$COMIN/$COMPONENT/pgrb2sp25/ge${member}.$cycle.pgrb2s.0p25.anl.idx \
+	# "
+	# for file in $filelist; do
+	# 	if [[ ! -s $file ]]; then
+	# 		((nmissing = nmissing + 1))
+	# 		echo "nmissing=$nmissing file=$file IS MISSING"
+	# 	fi
+	# done # file in $filelist
 
 	fhr=$SHOUR
-	while (( fhr <= fhmax )); do
+	while (( fhr <= fhmaxh )); do
 
 		ffhr="f$(printf %03i $fhr)"
 
-		filelist="\
+		filelist=" \
 			$COMIN/$COMPONENT/master/ge${member}.$cycle.master.grb2${ffhr} \
 			$COMIN/$COMPONENT/master/ge${member}.$cycle.master.grb2i${ffhr} \
-			$COMIN/$COMPONENT/pgrb22p5/ge${member}.$cycle.pgrb2.2p50.${ffhr} \
-			$COMIN/$COMPONENT/pgrb22p5/ge${member}.$cycle.pgrb2.2p50.${ffhr}.idx \
 			$COMIN/$COMPONENT/pgrb2ap5/ge${member}.$cycle.pgrb2a.0p50.${ffhr} \
 			$COMIN/$COMPONENT/pgrb2ap5/ge${member}.$cycle.pgrb2a.0p50.${ffhr}.idx \
 			$COMIN/$COMPONENT/pgrb2bp5/ge${member}.$cycle.pgrb2b.0p50.${ffhr} \
@@ -68,8 +66,17 @@ for member in $memberlist; do
 			$COMIN/$COMPONENT/sfcsig/ge$member.$cycle.sfc${ffhr}.nemsio \
 		"
 
+		# 2p50 files only at FHOUTLF frequency
+		if (( fhr%FHOUTLF == 0 )); then
+			filelist="$filelist \
+				$COMIN/$COMPONENT/pgrb22p5/ge${member}.$cycle.pgrb2.2p50.${ffhr} \
+				$COMIN/$COMPONENT/pgrb22p5/ge${member}.$cycle.pgrb2.2p50.${ffhr}.idx \
+			"
+		fi
+
+		# 0p25 only during high-frequency period
 		if (( fhr <= FHMAXHF )); then
-			filelist="$filelist \            
+			filelist="$filelist \
 				$COMIN/$COMPONENT/pgrb2p25/ge${member}.$cycle.pgrb2.0p25.${ffhr} \
 				$COMIN/$COMPONENT/pgrb2p25/ge${member}.$cycle.pgrb2.0p25.${ffhr}.idx \
 				$COMIN/$COMPONENT/pgrb2sp25/ge${member}.$cycle.pgrb2s.0p25.${ffhr} \
@@ -89,7 +96,7 @@ for member in $memberlist; do
 		else
 			(( fhr = fhr + FHOUTLF ))
 		fi
-	done # (( fhr <= fhmax ))
+	done # (( fhr <= fhmaxh ))
 done # member in $memberlist
 
 echo "nmissing=$nmissing"
@@ -112,16 +119,17 @@ else # (( nmissing > 0 ))
 	echo "cyc=$cyc savecycle=$savecycle"
 	if [[ $savecycle == false ]]; then
 		for member in $memberlist; do
-			if [[ x$HOUTSPS == x ]]; then
-				export FHOUR=$fhmax
+			if [[ -z ${HOUTSPS:-""} ]]; then
+				export FHOUR=$fhmaxh
 			else
-				((FHOUR = fhmax - HOUTSPS - FHINC))
+				((FHOUR = fhmaxh - HOUTSPS - FHINC))
 			fi
 			export FHOUR
+			export member
 			###########################################################
 			# remove sigma, surface, and flux files
 			###########################################################
-			$HOMEgefs/ush/exgefs_post_cleanup.sh.ecf
+			$HOMEgefs/ush/gefs_post_cleanup.sh
 		done # member in $memberlisttest
 	else # [[ $savecycle = false ]]
 		echo "sfcsig files are saved for cyc=$cyc"
