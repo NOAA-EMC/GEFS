@@ -69,15 +69,13 @@ ATMFCS=$COMIN/$COMPONENT/sfcsig/${RUNMEM}.${cycle}.atmf${fhr3}.nemsio
 export LEVS=$($NEMSIOGET $ATMFCS dimz | awk '{print $2}')
 export mem=$(echo $RUNMEM|cut -c3-5)
 
-mkdir -p $COMOUT/$COMPONENT
-mkdir -p $COMOUT/$COMPONENT/wmo
-mkdir -p $COMOUT/$COMPONENT/gempak
+if [[ $SENDCOM == "YES" ]]; then
+	mkdir -p $COMOUT/$COMPONENT
+	mkdir -p $COMOUT/$COMPONENT/wmo
+	mkdir -p $COMOUT/$COMPONENT/gempak
 
-if [ -e $COMOUT/$COMPONENT/bufr/$mem ]; then
-    rm -rf $COMOUT/$COMPONENT/bufr/$mem
-fi
-mkdir -m 775 -p $COMOUT/$COMPONENT/bufr/$mem
-mkdir -m 775 -p $COMOUT/$COMPONENT/misc/bufr
+	mkdir -m 775 -p $COMOUT/$COMPONENT/bufr/$mem
+fi # [[ $SENDCOM == "YES" ]]
 
 ### Loop for the hour and wait for the sigma and surface flux file:
 export FSTART=$STARTHOUR
@@ -136,8 +134,10 @@ done
 ##############################################################
 # Tar and gzip the individual bufr files and send them to /com
 ##############################################################
-cd ${COMOUT}/$COMPONENT/bufr/${mem}
-tar -cf - bufr.* | /usr/bin/gzip > ${RUNMEM}.${cycle}.bufrsnd.tar.gz
+if [[ $SENDCOM == "YES" ]]; then
+	cd ${COMOUT}/$COMPONENT/bufr/${mem}
+	tar -cf - bufr.* | /usr/bin/gzip > ${RUNMEM}.${cycle}.bufrsnd.tar.gz
+fi
 cd $DATA
 
 ########################################
