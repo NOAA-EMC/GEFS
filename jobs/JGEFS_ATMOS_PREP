@@ -88,6 +88,7 @@ for config in $configs; do
 done
 
 NCP=${NCP:-"/bin/cp -p"}
+export jlogfile=${jlogfile:-$DATA/jlogfile}
 
 echo "Environment before calling script"
 env | sort

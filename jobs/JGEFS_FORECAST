@@ -90,6 +90,8 @@ if [[ $cplchm = ".true." ]]; then
 fi
 export COMPONENT=${COMPONENT:-atmos}
 
+export jlogfile=${jlogfile:-$DATA/jlogfile}
+
 echo "Environment before calling script"
 env | sort
 

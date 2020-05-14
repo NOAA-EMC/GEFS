@@ -85,6 +85,8 @@ for config in $configs; do
     fi
 done
 
+export jlogfile=${jlogfile:-$DATA/jlogfile}
+
 echo "Environment before calling script"
 env | sort
 

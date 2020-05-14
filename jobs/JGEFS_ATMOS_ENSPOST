@@ -91,6 +91,8 @@ fi
 export COMPONENT=${COMPONENT:-atmos}
 mkdir -m 775 -p $COMOUT/${COMPONENT}/ensstat
 
+export jlogfile=${jlogfile:-$DATA/jlogfile}
+
 echo "Environment before calling script"
 env | sort
 

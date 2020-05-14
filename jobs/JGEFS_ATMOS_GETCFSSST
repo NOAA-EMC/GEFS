@@ -66,6 +66,10 @@ mkdir -m 775 -p $SSTDIR
 export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/$cyc}
 export COMINcfs=${COMINcfs:-$(compath.py cfs/prod)/cfs/cfs.}
 
+
+
+export jlogfile=${jlogfile:-$DATA/jlogfile}
+
 echo "Environment before calling script"
 env | sort
 

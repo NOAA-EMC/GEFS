@@ -263,14 +263,8 @@ if [ $DOANALYSIS = YES ]; then
 			# run nceppost
 			export VERBOSE=YES
 			
-			# Global workflow scripts are still using jlogfile, so just create a temporary one and then cat it afterwards
-			export jlogfile=$DATA/jlogfile
-			if [[ -f $jlogfile ]]; then rm $jlogfile; fi
-
 			$POSTGPSH
 			export err=$?
-
-			cat $jlogfile
 
 			if (( err == 0 )); then
 				echo "$POSTGPSH completed successfully for anl"

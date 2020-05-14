@@ -94,6 +94,8 @@ done
 export COMPONENT=${COMPONENT:-atmos}
 if [[ ! -d $COMOUT/$COMPONENT/gempak/meta ]]; then mkdir -p -m 755 $COMOUT/$COMPONENT/gempak/meta; fi
 
+export jlogfile=${jlogfile:-$DATA/jlogfile}
+
 echo "Environment before calling script"
 env | sort
 

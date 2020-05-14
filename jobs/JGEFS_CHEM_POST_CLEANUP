@@ -83,6 +83,8 @@ for config in $configs; do
 done
 export COMPONENT="chem"
 
+export jlogfile=${jlogfile:-$DATA/jlogfile}
+
 echo "Environment before calling script"
 env | sort
 
