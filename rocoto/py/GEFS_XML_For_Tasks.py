@@ -240,6 +240,16 @@ def config_tasknames(dicBase):
                 sTaskName = "taskname_{0}".format(iTaskName_Num)
                 dicBase[sTaskName.upper()] = "archive_chem"
 
+        # #    <!-- POST_CLEANUP -->
+        if dicBase['RUN_POST_CLEANUP'].upper()[0] == "Y":
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "atmos_post_cleanup"
+
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "chem_post_cleanup"
+
         # #    <!-- RUN_CLEANUP -->
         if dicBase['RUN_CLEANUP'].upper()[0] == "Y":
             # ---cleanup_atm
@@ -1126,6 +1136,32 @@ def get_param_of_task(dicBase, taskname):
                     sDep += sDep_2
                     sDep += '\n\t\t</and>'
                     sDep += '\n\t</or>'
+
+                if sDep == '<and>':
+                    sDep = ""
+                else:
+                    sDep += '\n</and>'
+
+            if taskname.lower() == "atmos_post_cleanup":
+                sDep = '<and>'
+
+                for s in ["prdgen_hr", "ensstat_hr", "enspost_hr", "post_track", "post_genesis", "extractvars", "postsnd", "getcfssst", "gempak", "gempak_meta", "avgspr_gempak_meta"]:
+                    if DoesTaskExist(dicBase, s):
+                        if s in get_metatask_names():
+                            sDep += '\n\t<metataskdep metatask="{0}"/>'.format(s)
+                        else:
+                            sDep += '\n\t<taskdep task="{0}"/>'.format(s)
+
+                if sDep == '<and>':
+                    sDep = ""
+                else:
+                    sDep += '\n</and>'
+
+            if taskname.lower() == "chem_post_cleanup":
+                sDep = '<and>'
+
+                for s in ["chem_forecast", "chem_post", "chem_prdgen"]:
+                    sDep += '\n\t<taskdep task="{0}"/>'.format(s)
 
                 if sDep == '<and>':
                     sDep = ""
