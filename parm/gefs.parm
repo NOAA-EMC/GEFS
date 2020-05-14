@@ -71,7 +71,7 @@ export fhmax
 if (( fhmax <= fhmaxh )); then export fhmaxh=$fhmax; fi
 if (( FHMAXHF > fhmaxh )); then export FHMAXHF=$fhmaxh; fi
 
-export restart_interval=${fhrestart:-48}
+export restart_interval=${fhrestart:-24}
 export other_restart_time=${other_restart_time:-6}
 
 if [[ $cplchm = ".true." ]]; then

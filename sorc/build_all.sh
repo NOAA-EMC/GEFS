@@ -1,5 +1,5 @@
 #!/bin/sh
-set -ex
+set -eux
 
 build_dir=`pwd`
 logs_dir=$build_dir/logs

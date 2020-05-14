@@ -6,6 +6,10 @@ export HOMEwave=${HOMEwave:-${HOMEgfs}}
 export USHwave=${USHwave:-$HOMEgfs/ush}
 export EXECcode=${EXECcode:-$HOMEgfs/exec}
 
+# Set CDATE_RST and RERUN
+export RERUN=${RERUN:-NO}
+export CDATE_RST=${CDATE_RST:-CDATE}
+
 export WAV_MOD_TAG=${COMPONENTwave}${waveMEMB}
 export CFP_VERBOSE=1
 
