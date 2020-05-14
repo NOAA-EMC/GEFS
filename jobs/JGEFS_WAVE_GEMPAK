@@ -98,7 +98,7 @@ env | sort
 
 #############################################################
 # Execute the script
-source $HOMEgefs/scripts/exgefs_wave_gempak.sh.ecf
+source $HOMEgefs/scripts/exgefs_wave_gempak.sh
 export err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"

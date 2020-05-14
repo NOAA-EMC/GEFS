@@ -91,7 +91,7 @@ env | sort
 
 #############################################################
 # Execute the script
-$HOMEgefs/scripts/exgefs_atmos_postsnd.sh.ecf
+$HOMEgefs/scripts/exgefs_atmos_postsnd.sh
 export err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"

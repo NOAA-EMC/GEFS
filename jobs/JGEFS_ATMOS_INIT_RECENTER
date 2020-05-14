@@ -89,7 +89,7 @@ env | sort
 
 #############################################################
 # Execute the script
-$HOMEgefs/scripts/exgefs_init_recenter.sh.ecf
+$HOMEgefs/scripts/exgefs_init_recenter.sh
 export err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"
