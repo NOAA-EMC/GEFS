@@ -207,7 +207,7 @@ else
 		###############################################################################
 		# Send DBNet alerts for PGB2B 
 		###############################################################################
-		if [[ "$SENDDBN" = 'YES' && "$jobgrid" = '0p50' ]]; then
+		if [[ "$SENDDBN" = 'YES' && "$jobgrid" = '0p50' && "$makepgrb2b" = "yes" ]]; then
 			if [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]; then
 				MEMBER=$(echo $RUNMEM | cut -c3-5 | tr '[a-z]' '[A-Z]')
 				$DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_$GRID\_$MEMBER $job $filebout
