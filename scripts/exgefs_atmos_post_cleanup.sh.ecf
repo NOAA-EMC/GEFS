@@ -8,24 +8,6 @@ if [[ ${STRICT:-NO} == "YES" ]]; then
 	set -eu
 fi
 
-case $cyc in
-	00) export fhmax=$fhmax00 ;;
-	06) export fhmax=$fhmax06 ;;
-	12) export fhmax=$fhmax12 ;;
-	18) export fhmax=$fhmax18 ;;
-esac
-
-############################################################
-#  Define Variables:
-#  -----------------
-#  SHOUR        is the starting forecast hour. normally 0 except for restarts.
-#  FHOUR        is the ending forecast hour.
-#  FHINC        is the increment hour for each forecast steps.
-#  FH           is the current forecast hour.
-#  SLEEP_TIME   is the number of seconds to sleep before exiting with error.
-#  SLEEP_INT    is the number of seconds to sleep between restrt file checks.
-############################################################
-
 ##############################################
 # set last forecast hour to save sfcsig files
 # set cycles to save sfcsig or master files
@@ -135,9 +117,6 @@ else # (( nmissing > 0 ))
 			else
 				((FHOUR = fhmax - HOUTSPS - FHINC))
 			fi
-			if ((FHOUR < 10)); then
-				FHOUR=0$FHOUR
-			fi
 			export FHOUR
 			###########################################################
 			# remove sigma, surface, and flux files
@@ -163,7 +142,7 @@ else # (( nmissing > 0 ))
 	echo "cyc=$cyc savecycle=$savecycle"
 	if [[ $savecycle == false ]]; then
 		if [[ $SENDCOM == "YES" ]]; then
-			rm -rf $COMOUT/$COMPONENT/$cyc/master
+			rm -rf $COMOUT/$COMPONENT/master
 		fi
 	else
 		echo "master files are saved for cyc=$cyc"

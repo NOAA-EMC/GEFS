@@ -81,7 +81,7 @@ for config in $configs; do
     	exit $err
     fi
 done
-export COMPONENT="atmos"
+export COMPONENT="chem"
 
 echo "Environment before calling script"
 env | sort
