@@ -1,22 +1,18 @@
+#!/bin/ksh
 #####################################################################
-echo "-----------------------------------------------------"
-echo " exgefs_post_cleanup.sh.sms"
-echo " based on exglobal_post.sh.sms"
-echo " Apr 99 - Michaud - Generated to post global forecast"
-echo " Mar 03 - Zhu - Add post for 0.5x0.5 degree"
-echo " Jul 05 - Wobus - 6-hour breeding, ensemble only"
-echo " Jul 07 - Wobus - interpolate master post file"
-echo " Jul 07 - Wobus - separate cleanup from rest of job"
-echo " Jul 11 - Wobus - unified cleanup job"
-echo "-----------------------------------------------------"
+# -----------------------------------------------------
+#  exgefs_post_cleanup.sh.sms
+#  based on exglobal_post.sh.sms
+#  Apr 99 - Michaud - Generated to post global forecast
+#  Mar 03 - Zhu - Add post for 0.5x0.5 degree
+#  Jul 05 - Wobus - 6-hour breeding, ensemble only
+#  Jul 07 - Wobus - interpolate master post file
+#  Jul 07 - Wobus - separate cleanup from rest of job
+#  Jul 11 - Wobus - unified cleanup job
+# -----------------------------------------------------
 #####################################################################
 
 set -x
-na=$(basename ${.sh.file})
-export PS4=' + $SECONDS $RUN $na $LINENO: '
-
-msg="HAS BEGUN on $(hostname)"
-postmsg "$jlogfile" "$msg"
 
 export MP_LABELIO=YES
 
@@ -37,39 +33,28 @@ export fhr
 ############################################################
 # Loop Through the Post Forecast Files
 ############################################################
-while test $fhr -le $FHOUR; do
-	echo $(date) f$fhr begin
+while [[ $fhr <= $FHOUR ]]; do
+	ffhr="f$(printf %03i $fhr)"
 
-	if [ "$SENDCOM" = "YES" ]; then
-		#
-		# Save Pressure and SFLUX GRIB/GRIB Index files
-		#
+	echo "$(date) $ffhr begin"
 
+	if [[ "$SENDCOM" = "YES" ]]; then
 		####################################
-		# Remove sigma and sfc fcst and sflux files
+		# Remove nemsio fcst and sflux files
 		####################################
+		if [[ $fhr > $fhsave ]]; then
+			rm $COMOUT/$COMPONENT/sfcsig/ge$member.$cycle.atm${ffhr}.nemsio
+			rm $COMOUT/$COMPONENT/sfcsig/ge$member.$cycle.sfc${ffhr}.nemsio
+		fi # [[ $fhr > $fhsave ]]
+	fi # [[ "$SENDCOM" = "YES" ]]
 
-		if [[ $fhr -gt $fhsave ]]; then
-			rm $COMOUT/$cyc/sfcsig/${RUN}.${cycle}.sf$fhr
-			rm $COMOUT/$cyc/sfcsig/${RUN}.${cycle}.bf$fhr
-			rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbf$fhr
-			rm $COMOUT/$cyc/sflux/${RUN}.${cycle}.sfluxgrbif$fhr
-		fi # [[ $fhr -gt $fhsave ]]
-	fi # test "$SENDCOM" = "YES"
-	echo $(date) save or remove sf, bf, and sflux files f$fhr completed
-
-	if (( fhr < fhmaxh )); then
-		export fhr=$(expr $fhr + $FHINCH)
+	if (( fhr < FHMAXHF )); then
+		(( fhr = fhr + FHOUTHF ))
 	else
-		export fhr=$(expr $fhr + $FHINC)
+		(( fhr = fhr + FHOUTLF ))
 	fi
-	if [ $fhr -lt 10 ]; then
-		export fhr="0$fhr"
-	fi
-done # while test $fhr -le $FHOUR
+done # [[ $fhr -le $FHOUR ]]
 
-########################################################
-msg='ENDED NORMALLY.'
-postmsg "$jlogfile" "$msg"
+echo "$(date -u) end ${.sh.file}"
 
-################## END OF SCRIPT #######################
+exit 0

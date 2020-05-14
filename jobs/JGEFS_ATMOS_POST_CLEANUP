@@ -8,14 +8,14 @@
 # 05/07/2020 Xianwu Xue, Modify it for GEFS v12
 ######################################################################
 
-echo "$(date) $0 $(date -u) begin"
+echo "$(date -u) begin ${.sh.file}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
-    # Turn on strict bash error checking
-    set -eu
+	# Turn on strict bash error checking
+	set -eu
 fi
-export PS4='$SECONDS + $(basename $0)[$LINENO] '
+export PS4='$SECONDS + $(basename ${.sh.file})[$LINENO] '
 
 ####################################
 # Determine Job Output Name on System
@@ -37,11 +37,6 @@ cd $DATA
 export NET=${NET:-gefs}
 export envir=${envir:-prod}
 export RUN=${RUN:-gefs}
-
-####################################
-# File To Log Msgs
-####################################
-export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
 
 ####################################
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
@@ -70,26 +65,23 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 ##############################################
 # Define COM directories
 ##############################################
-export COMPONENT="atmos"
 export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/$COMPONENT}
 export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/$COMPONENT}
 
 ##############################################
 echo set parameters using gefs.parm
 ##############################################
-. $PARMgefs/gefs.parm
-err=$?
-if [[ $err != 0 ]]; then
-    echo "FATAL ERROR in $0: Error while loading parm file gefs.parm"
-    exit $err
-fi
-
-case $cyc in
-00) export fhmax=$fhmax00 ;;
-06) export fhmax=$fhmax06 ;;
-12) export fhmax=$fhmax12 ;;
-18) export fhmax=$fhmax18 ;;
-esac
+configs="gefs"
+config_path=$PARMgefs
+for config in $configs; do
+    . $config_path/$config.parm
+    err=$?
+    if [[ $err != 0 ]]; then
+    	echo "FATAL ERROR in ${.sh.file}: Error while loading parm file $config_path"
+    	exit $err
+    fi
+done
+export COMPONENT=${COMPONENT:-atmos}
 
 echo "Environment before calling script"
 env | sort
@@ -101,16 +93,18 @@ err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"
 else
-    echo "FATAL ERROR: $job failed!"
+    echo "FATAL ERROR in ${.sh.file}: $job failed!"
+    exit $err
 fi
 #############################################################
 
-##############################
+#############################
 # Remove the Temporary working directory
 ##############################
 cd $DATAROOT
-if [ ${KEEPDATA:-NO} = NO ]; then rm -rf $DATA; fi
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-echo "$(date) $0 $(date -u) end"
+echo "$(date -u) end ${.sh.file}"
 
 exit $err
+
