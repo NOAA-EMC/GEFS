@@ -22,7 +22,7 @@ fi
 echo "memberlist=$memberlist"
 
 # datatypes.tbl uses COMIN, so have to update it locally
-COMIN="$COMIN/$COMPONENT/atmos/gempak"
+COMIN="$COMIN/$COMPONENT/gempak"
 
 sGrid=${sGrid} #:-"_0p50"}
 
@@ -283,8 +283,8 @@ for area in us sam us12 us24; do
 		fcmdfile=cmdfile_meta_samqpf
 	fi
 	
-	ln -s $COMIN/$COMPONENT/gempak/ge*${sGrid}_${PDY}${cyc}f* ./
-	ln -s $COMINgfs/gempak/gfs${sGrid}_${PDY}${cyc}f* ./
+	ln -s $COMIN/ge*${sGrid}_${PDY}${cyc}f* ./
+	ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f* ./
 	#ln -s $COMINecmwf.${PDYm1}/gempak/ecmwf_hr_${PDYm1}${cycm12}f* ./
 	#ln -s $COMINecmwf.${PDY}/gempak/ecmwf_hr_${PDY}${cycm12}f* ./
 	for grid in ${grids}; do
