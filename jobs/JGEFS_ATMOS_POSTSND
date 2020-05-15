@@ -28,7 +28,7 @@ cd $DATA
 ######################################
 export total_tasks=${total_tasks:-10}
 export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
-export APRUN_MPMD=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp"}
+export APRUN_MPMD=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
 
 ####################################
 # Specify NET and RUN Name and model
