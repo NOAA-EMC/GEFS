@@ -4,6 +4,7 @@
 export HOMEgfs=${HOMEgfs:-$HOMEgefs}
 export HOMEwave=${HOMEwave:-${HOMEgfs}}
 export USHwave=${USHwave:-$HOMEgfs/ush}
+export EXECwave=${EXECwave:-$HOMEwave/exec}
 export EXECcode=${EXECcode:-$HOMEgfs/exec}
 
 # Set CDATE_RST and RERUN

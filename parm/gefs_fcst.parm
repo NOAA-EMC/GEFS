@@ -1,10 +1,10 @@
 #!/bin/ksh
 
-
-
 #
 # Forecast Input Variables
 #
+
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
 
 export DELTIM=$DELTIM
 if [[ $FORECAST_SEGMENT = lr ]]; then
