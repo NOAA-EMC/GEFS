@@ -3,6 +3,7 @@
 
 # Downstream directory settings
 export HOMEgfs=${HOMEgfs:-$HOMEgefs}
+export HOMEwave=${HOMEwave:-${HOMEgfs}}
 export EXECcode=${EXECcode:-$HOMEgfs/exec}
 export USHwave=${USHwave:-$HOMEgfs/ush}
 

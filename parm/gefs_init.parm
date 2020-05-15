@@ -7,6 +7,8 @@ export NEMSIO_IN=.true.
 export NEMSIO_OUT=.true.
 export nopdpvv=.true.
 
+export warm_start=".false."
+
 # parameters for relocation, 1 for yes, 0 for no, cold_start or warm_start
 #relocflagana is added for relocation TC for analysis 
 export relocfact=0.05

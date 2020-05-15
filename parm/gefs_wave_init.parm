@@ -2,6 +2,7 @@
 
 # Downstream directory settings
 export HOMEgfs=${HOMEgfs:-$HOMEgefs}
+export HOMEwave=${HOMEwave:-${HOMEgfs}}
 export FIXwave=${FIXwave:-$HOMEgefs/fix/fix_wave}
 export EXECcode=${EXECcode:-$HOMEgfs/exec}
 export USHwave=${USHwave:-$HOMEgfs/ush}

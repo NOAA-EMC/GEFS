@@ -74,7 +74,7 @@ if [[ $SENDCOM = YES ]]; then
   mkdir -p $COMOUT/rundata
 fi
 
-export COMIN_WAV_ICE=${COMIN_WAV_ICE:-$(compath.py gfs/prod)/${WAVICEPRFX}.${PDY}/${cyc}}
+export COMIN_WAV_ICE=${COMIN_WAV_ICE:-$(compath.py gfs/prod)/${WAVICEPRFX:-gfs}.${PDY}/${cyc}}
 
 #############################
 # Source relevant config files

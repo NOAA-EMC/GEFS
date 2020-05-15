@@ -420,7 +420,7 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
     # -------------------RUNMEM-------------------
     if taskname in metatask_names:
         strings += (create_envar(name="RUNMEM", value="ge#member#", sPre=sPre_2))
-    elif taskname in ["chem_forecast", "chem_post", "chem_prdgen"]:
+    elif taskname in ["chem_init", "chem_forecast", "chem_post", "chem_prdgen"]:
         strings += (create_envar(name="RUNMEM", value="geaer", sPre=sPre_2))
     else:
         if taskname in ["prdgen_gfs"]:
