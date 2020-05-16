@@ -1325,10 +1325,11 @@ def calc_atmos_prep_resources(dicBase):
     import math
     ncores_per_node = Get_NCORES_PER_NODE(dicBase)
     npert = int(dicBase["NPERT"])
+    cpu_per_task = 6
     iTotal_Tasks = npert + 1
-    iTPP = ncores_per_node
-    iPPN = math.floor(ncores_per_node / iTPP)
-    iNodes = iPPN * iTotal_Tasks
+    iPPN = math.floor(ncores_per_node / cpu_per_task)
+    iTPP = 1
+    iNodes = math.ceil(iTotal_Tasks / iPPN)
 
     return iTotal_Tasks, iNodes, iPPN, iTPP
 
