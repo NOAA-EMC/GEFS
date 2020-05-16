@@ -364,7 +364,7 @@ for area in us sam us12 us24; do
 			exit $err
 		fi
 		
-		# export COMIN=$COMINtmp
+		export COMIN=$COMINtmp
 	done
 
 	#####################################################
