@@ -38,8 +38,11 @@ export RSTDIR_TMP=$RSTDIR
 case $FORECAST_SEGMENT in
 	hr) 
 		echo "Integrate the model for the Half-Month range segment"
-		export RERUN="NO"
+		export RERUN=${RERUN:-"NO"}
 		FHINI=${FHINI:-0}
+	        if [[ $RERUN != "YES" ]] ; then
+			export CDATE_RST=$($NDATE +$FHINI $PDY$cyc)
+		fi
 		CASE=$CASEHR; FHMAX=$fhmaxh; FHOUT=$FHOUTLF; FHZER=6;
 		MTNRSL=$MTNRSLFV; LONB=$LONBFV; LATB=$LATBFV;
 		FHMAX_HF=$FHMAXHF; FHOUT_HF=$FHOUTHF; 
@@ -48,8 +51,11 @@ case $FORECAST_SEGMENT in
 		;;
 	lr)
 		echo "Integrate the model for the Longer Range segment"
-		export RERUN="YES"
 		FHINI=${FHINI:-$fhmaxh}
+	        if [[ $RERUN != "YES" ]] ; then
+			export CDATE_RST=$($NDATE +$FHINI $PDY$cyc)
+		fi
+		export RERUN="YES"
 		export cplwav=.false.
 		CASE=$CASELR; FHMAX=$fhmax; FHOUT=$FHOUTLF; FHZER=6;
 		MTNRSL=$MTNRSLLR; LONB=$LONBLR; LATB=$LATBLR;
@@ -68,7 +74,6 @@ mkdir -m 775 -p $FCSTDIR
 mkdir -m 775 -p $COMOUT/$COMPONENT/restart/$mem
 mkdir -m 755 -p $GESIN/init/$mem/RESTART
 
-export CDATE_RST=${CDATE_RST:-$($NDATE +$FHINI $PDY$cyc)}
 export RERUN=${RERUN:-NO}
 
 export FHMIN=$FHINI
@@ -291,11 +296,6 @@ if [[ $read_increment = ".true." && $warm_start = ".true." ]]; then
 		export warm_start=".false."
 		export read_increment=".false."
 	fi
-fi
-
-if [[ $RERUN = "YES" && ( $DO_SPPT = "YES" || $DO_SHUM = "YES" || $DO_SKEB = "YES" ) ]]; then
-	fhr=$(printf "%03.0f" $fhmaxh)
-	cp -pr $RSTDIR/stoch_out.F000$fhr $DATA/stoch_ini
 fi
 
 ########################################################
