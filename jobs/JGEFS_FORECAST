@@ -9,11 +9,6 @@ if [[ ${STRICT:-NO} == "YES" ]]; then
 fi
 export PS4='$SECONDS + $(basename ${.sh.file})[$LINENO] '
 
-#RERUN="YES"
-#export CDATE_RST=2020051300
-export RERUN=${RERUN:-"NO"}
-export  CDATE_RST=${CDATE_RST:-""}
-
 ####################################
 # Determine Job Output Name on System
 ####################################

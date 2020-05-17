@@ -76,7 +76,7 @@ export restart_interval_aer=${restart_interval_aer:-$restart_interval}
 export other_restart_time=${other_restart_time:-6}
 
 if [[ $cplchm = ".true." ]]; then
-	export restart_interval=${restart_interval_aer:-24}
+	export restart_interval=$restart_interval_aer
 	export other_restart_time=${other_restart_time:-$gefs_cych}
 fi
 

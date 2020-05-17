@@ -6,6 +6,9 @@
 
 export HOMEgfs=${HOMEgfs:-$HOMEgefs}
 
+export RERUN=${RERUN:-"NO"}
+export CDATE_RST=${CDATE_RST:-""}
+
 export DELTIM=$DELTIM
 if [[ $FORECAST_SEGMENT = lr ]]; then
 	export DELTIM=$DELTIMLR
