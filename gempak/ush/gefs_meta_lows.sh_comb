@@ -273,7 +273,7 @@ for area in nam us trop sam hi; do
 
 					EOF
 
-				if [ $WrottenZERO -eq 0 ]; then            
+				if [ $WrottenZERO -eq 0 ]; then
 					cat >> cmdfilelows  <<- EOF
 						MAP     = 0
 						LATLON  = 0
@@ -283,7 +283,7 @@ for area in nam us trop sam hi; do
 				fi
 				WrottenZERO=1
 			fi 
-			let line_count=$line_count+1
+			(( line_count = 10#line_count + 1 ))
 			#let color_number=$color_number+1
 		done
 

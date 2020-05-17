@@ -237,8 +237,8 @@ for level in ${levels}; do
 				fi
 				WrottenZERO=1
 			fi
-			let line_count=$line_count+1
-			let color_number=$color_number+1
+			(( line_count = 10#line_count + 1 ))
+			(( color_number = 10#color_number + 1 ))
 		done
 
 		grids=${memberlist}
