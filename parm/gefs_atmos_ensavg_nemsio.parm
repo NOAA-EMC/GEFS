@@ -1,0 +1,21 @@
+#!/bin/ksh
+
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
+export EXECgfs=$HOMEgfs/exec
+export HOMEgsi=${HOMEgsi:-$HOMEgfs}
+
+export ERRSCRIPT=${ERRSCRIPT:-err_chk}
+
+####################################
+# Specify Timeout Behavior of Post
+#
+# SLEEP_TIME - Amount of time to wait for
+#              a restart file before exiting
+# SLEEP_INT  - Amount of time to wait between
+#              checking for restart files
+####################################
+export SLEEP_TIME=600
+export SLEEP_INT=5
+
+export MODEL_OUT_FORM=binarynemsiompiio
+

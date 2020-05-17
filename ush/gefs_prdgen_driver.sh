@@ -1,34 +1,33 @@
 #!/bin/ksh
-export VERBOSE=yes
-sname=$(basename $0)
-export stream=${1}
-echo $(date) $sname $stream begin
+
 #####################################################################
-echo "-----------------------------------------------------"
-echo " exgefs_prdgen.sh.sms" 
-echo " based on exglobal_post.sh.sms and exglobal_post_pgrb2.sh.sms" 
-echo " interpolate master post files (GRIB2) and convert to GRIB1"
-echo " Sep 07 - Wobus - reorganized script"
-echo " Aug 10 - Wobus - added test for control file from post"
-echo " Jun 11 - Wobus - moved master post files to /com"
-echo " Jun 14 - Hou   - adopted to grb2 version master files as input"
-echo " Feb 17 - Meng  - Unify version for creating all grids(1.0, 2.5"
-echo "                  and 0.5) files. "
-echo " Sep 18 - Cui   - add option for 0.25d grids "
-echo "-----------------------------------------------------"
+# ----------------------------------------------------
+# exgefs_prdgen.sh.sms
+# based on exglobal_post.sh.sms and exglobal_post_pgrb2.sh.sms
+# interpolate master post files (GRIB2) and convert to GRIB1
+# Sep 07 - Wobus - reorganized script
+# Aug 10 - Wobus - added test for control file from post
+# Jun 11 - Wobus - moved master post files to /com
+# Jun 14 - Hou   - adopted to grb2 version master files as input
+# Feb 17 - Meng  - Unify version for creating all grids(1.0, 2.5
+#                  and 0.5) files. 
+# Sep 18 - Cui   - add option for 0.25d grids 
+# ----------------------------------------------------
 #####################################################################
-export PS4='+ $SECONDS $(basename $0) $stream $LINENO: '
+
+echo "$(date -u) begin ${.sh.file}"
+export PS4="${PS4}${1}: "
 
 set -xa
-na=$(basename $0)
+if [[ ${STRICT:-NO} == "YES" ]]; then
+	# Turn on strict bash error checking
+	set -eu
+fi
 
-cd $DATA
+export VERBOSE=yes
+sname=$(basename ${.sh.file})
 
-msg="HAS BEGUN on $(hostname)"
-postmsg "$jlogfile" "$msg"
-
-echo cycle=$cycle
-
+export stream="${1}"
 export jobdir="${2}"                   # ${DATA}/${stream}
 export infile="${3}"                   # ${DATA}/${stream}/${stream}.in
 
@@ -50,13 +49,12 @@ export infile="${3}"                   # ${DATA}/${stream}/${stream}.in
 # do_analysis=              # PRDGEN_DO_ANALYSIS[$stream]
 
 cat <<-EOF
-	Settings for $0:
+	Settings for $(basename ${.sh.file}) stream $stream:
 	  RUNMEM: $RUNMEM
 	  cyc: $cyc
 	  DATA: $DATA
   
 	  jobdir: $jobdir
-	  stream: $stream
 	  jobgrid: $jobgrid
 	  grid_spec: $grid_spec
 	  hours: ($hours)
@@ -79,21 +77,21 @@ export GRID=$jobgrid   # GRID is part of the DBN message
 ############################################################
 # clean up missing markers from previous run
 ############################################################
-mkdir -m 775 -p $COMOUT/misc/$submc
-cd $COMOUT/misc/$submc
+mkdir -m 775 -p $COMOUT/$COMPONENT/misc/$submc
+cd $COMOUT/$COMPONENT/misc/$submc
 rc=$?
 if (( rc == 0 )); then
 	for file in $RUNMEM.*.missing; do
 		if [[ -f $file ]]; then
-			echo "$(date) removing $COMOUT/misc/$submc/$file"
-			rm -f $COMOUT/misc/$submc/$file
+			echo "Removing $COMOUT/$COMPONENT/misc/$submc/$file"
+			rm -f $COMOUT/$COMPONENT/misc/$submc/$file
 		fi
 	done # for file in $RUNMEM.*.missing
 fi # (( rc == 0 ))
-#cd $DATA
+
 cd $jobdir
 
-SLEEP_LOOP_MAX=$(expr $SLEEP_TIME / $SLEEP_INT)
+SLEEP_LOOP_MAX=$(($SLEEP_TIME / $SLEEP_INT))
 
 for hour in $hours; do
 	if [[ $do_analysis = YES ]] && (( hour == 0 )); then
@@ -106,9 +104,9 @@ for hour in $hours; do
 			export mcfile=""
 			export makepgrb2b="no"
 		else
-			export mafile=$COMOUT/master/$RUNMEM.$cycle.master.grb2anl
-			export mifile=$COMOUT/master/$RUNMEM.$cycle.master.grb2ianl
-			export mcfile=$COMOUT/misc/post/$RUNMEM.$cycle.master.control.anl
+			export mafile=$COMIN/$COMPONENT/master/$RUNMEM.$cycle.master.grb2anl
+			export mifile=$COMIN/$COMPONENT/master/$RUNMEM.$cycle.master.grb2ianl
+			export mcfile=$COMIN/$COMPONENT/misc/post/$RUNMEM.$cycle.master.control.anl
 			if [[ -z "$pgbd" ]]; then
 				export makepgrb2b="no"
 			else
@@ -116,11 +114,11 @@ for hour in $hours; do
 			fi
 		fi # [[ $RUNMEM = "gegfs" ]]
 
-		export pcfile=$COMOUT/misc/$submc/${RUNMEM}.$cycle.prdgen.control.anl
-		export fileaout=$COMOUT/$pgad/$RUNMEM.$cycle.${pgapre}anl
-		export fileaouti=$COMOUT/$pgad/$RUNMEM.$cycle.${pgapre}anl.idx
-		export filebout=$COMOUT/$pgbd/$RUNMEM.$cycle.${pgbpre}anl
-		export filebouti=$COMOUT/$pgbd/$RUNMEM.$cycle.${pgbpre}anl.idx
+		export pcfile=$COMOUT/$COMPONENT/misc/$submc/${RUNMEM}.$cycle.prdgen.control.anl
+		export fileaout=$COMOUT/$COMPONENT/$pgad/$RUNMEM.$cycle.${pgapre}anl
+		export fileaouti=$COMOUT/$COMPONENT/$pgad/$RUNMEM.$cycle.${pgapre}anl.idx
+		export filebout=$COMOUT/$COMPONENT/$pgbd/$RUNMEM.$cycle.${pgbpre}anl
+		export filebouti=$COMOUT/$COMPONENT/$pgbd/$RUNMEM.$cycle.${pgbpre}anl.idx
 
 		ic=1
 		while [ $ic -le $SLEEP_LOOP_MAX ]; do
@@ -157,11 +155,17 @@ for hour in $hours; do
 			# indicate missing data
 			###############################
 			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-				date >$COMOUT/misc/$submc/${RUNMEM}.t${cyc}z.anl.missing
-				echo "$(date) $sname $stream post data missing for analysis"
-				msg="$stream MISSING POST DATA for analysis"
-				postmsg "$jlogfile" "$msg"
-				export err=1; err_chk
+				date >$COMOUT/$COMPONENT/misc/$submc/${RUNMEM}.t${cyc}z.anl.missing
+				cat <<-EOF
+					FATAL ERROR in ${.sh.file} ($stream): Post data still missing for analysis at $(date) after waiting ${SLEEP_TIME}s.
+						Looked for the following files:
+							$(set +x; if [[ $RUNMEM != "gegfs" ]]; then Control file: $mcfile $(if [[ -f $mcfile ]]; then echo "exists"; else; echo "doesn't exist"; fi); fi)
+							Grib file:    $mafile $(set +x; if [[ -f $mafile ]]; then echo "exists"; else; echo "doesn't exist"; fi)
+							Index file:   $mifile $(set +x; if [[ -f $mifile ]]; then echo "exists"; else; echo "doesn't exist"; fi)
+					EOF
+				export err=1;
+				err_chk
+				exit $err
 			fi # [ $ic -eq $SLEEP_LOOP_MAX ]
 
 		done # [ $ic -le $SLEEP_LOOP_MAX ]
@@ -174,11 +178,11 @@ for hour in $hours; do
 			nmissing=0
 			for file in $fileaout $fileaouti $filebout $filebouti; do
 				if [[ ! -s $file ]]; then
-					echo file=$file IS MISSING
+					echo "file=$file IS MISSING"
 					(( nmissing = nmissing + 1 ))
 				fi
 			done # for file in $fileaout $fileaouti $filebout $filebouti
-			if (( nmissing > 0 )); then
+			if (( nmissing > 0 )) || [[ $RERUN == "YES" ]]; then
 				rm $pcfile
 			fi
 		else
@@ -188,14 +192,23 @@ for hour in $hours; do
 		if [[ ! -s $pcfile ]]; then
 			export parmlist_a=$parmlist_a00
 			export parmlist_b=$parmlist_b00
+
 			$USHgefs/gefs_prdgen.sh
+
+			# Check for error
+			export err=$?
+			if [[ $err != 0 ]]; then
+				echo "FATAL ERROR in ${.sh.file} ($stream): Creation of product failed for analysis!"
+				err_chk
+				exit $err
+			fi
 
 			####################################
 			# send control files to misc
 			####################################
-			if [ $SENDCOM = "YES" ]; then
+			if [[ $SENDCOM == "YES" ]]; then
 				echo "$PDY$cyc$fhr" > $pcfile
-			fi # test $SENDCOM = "YES"
+			fi # [[ $SENDCOM == "YES" ]]
 		fi # [[ ! -s $pcfile ]]
 	fi # [[ $do_analysis = YES ]] && (( hour == 0 ))
 
@@ -214,9 +227,9 @@ for hour in $hours; do
 		export mcfile=""
 		export makepgrb2b="no"
 	else 
-		export mafile=$COMOUT/master/$RUNMEM.$cycle.master.grb2f$fhr
-		export mifile=$COMOUT/master/$RUNMEM.$cycle.master.grb2if$fhr
-		export mcfile=$COMOUT/misc/post/$RUNMEM.$cycle.master.control.f$fhr
+		export mafile=$COMIN/$COMPONENT/master/$RUNMEM.$cycle.master.grb2f$fhr
+		export mifile=$COMIN/$COMPONENT/master/$RUNMEM.$cycle.master.grb2if$fhr
+		export mcfile=$COMIN/$COMPONENT/misc/post/$RUNMEM.$cycle.master.control.f$fhr
 		if [[ -z "$pgbd" ]]; then
 			export makepgrb2b="no"
 		else
@@ -224,19 +237,19 @@ for hour in $hours; do
 		fi
 	fi # [[ $RUNMEM = "gegfs" ]]
 
-	export pcfile=$COMOUT/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr
-	export fileaout=$COMOUT/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}
-	export fileaouti=$COMOUT/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}.idx
-	export filebout=$COMOUT/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}
-	export filebouti=$COMOUT/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}.idx
+	export pcfile=$COMOUT/$COMPONENT/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr
+	export fileaout=$COMOUT/$COMPONENT/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}
+	export fileaouti=$COMOUT/$COMPONENT/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}.idx
+	export filebout=$COMOUT/$COMPONENT/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}
+	export filebouti=$COMOUT/$COMPONENT/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}.idx
 
 	if [[ $save_pgrb2_p5 = YES ]] && (( FHOUR > FHMAXHF )); then
-		export mafile_p5=$COMOUT/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.f${fhr}
-		export mifile_p5=$COMOUT/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.f${fhr}.idx
+		export mafile_p5=$COMOUT/$COMPONENT/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.f${fhr}
+		export mifile_p5=$COMOUT/$COMPONENT/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.f${fhr}.idx
 	fi
 	if [[ $save_pgrb2_p25 = YES ]] && (( FHOUR <= FHMAXHF )); then
-		export mafile_p25=$COMOUT/pgrb2p25/$RUNMEM.$cycle.pgrb2.0p25.f${fhr}
-		export mifile_p25=$COMOUT/pgrb2p25/$RUNMEM.$cycle.pgrb2.0p25.f${fhr}.idx
+		export mafile_p25=$COMOUT/$COMPONENT/pgrb2p25/$RUNMEM.$cycle.pgrb2.0p25.f${fhr}
+		export mifile_p25=$COMOUT/$COMPONENT/pgrb2p25/$RUNMEM.$cycle.pgrb2.0p25.f${fhr}.idx
 	fi
 
 	ic=1
@@ -249,7 +262,7 @@ for hour in $hours; do
 				break
 			else
 				# GFS output is only every 12 hours after 240
-				if (( fhr > 240 )) &&  (( fhr%12 == 6 )); then
+				if (( fhr > 240 )) && (( fhr%12 == 6 )); then
 					echo "fhr=$fhr not expected for GFS"
 					break
 				fi
@@ -273,7 +286,7 @@ for hour in $hours; do
 			fi # (( testfhr >= fhr ))
 		fi # [[ $RUNMEM = "gegfs" ]]
 
-		ic=$(expr $ic + 1)
+		ic=$((ic + 1))
 		sleep $SLEEP_INT
 
 		###############################
@@ -282,18 +295,22 @@ for hour in $hours; do
 		# period and error exit
 		###############################
 		if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-			date >$COMOUT/misc/$submc/${RUNMEM}.t${cyc}z.f$fhr.missing
-			echo "$(date) $sname $stream missing post data for hour $fhr"
-			msg="$stream MISSING POST DATA for hour $fhr"
-			postmsg "$jlogfile" "$msg"
-			export err=1; err_chk
+			date >$COMOUT/$COMPONENT/misc/$submc/${RUNMEM}.t${cyc}z.f$fhr.missing
+			cat <<-EOF
+				FATAL ERROR in ${.sh.file} ($stream): Post data still missing for f$fhr at $(date) after waiting ${SLEEP_TIME}s.
+					Looked for the following files:
+						Control file: $mcfile $(set -x; if [[ -f $mcfile ]]; then echo "exists"; else; echo "doesn't exist"; fi)
+						Grib file:    $mafile $(set -x; if [[ -f $mafile ]]; then echo "exists"; else; echo "doesn't exist"; fi)
+						Index file:   $mifile $(set -x; if [[ -f $mifile ]]; then echo "exists"; else; echo "doesn't exist"; fi)
+			EOF
+			export err=1;
+			err_chk
 			exit $err
 		fi # [ $ic -eq $SLEEP_LOOP_MAX ]
 	done # while [ $ic -le $SLEEP_LOOP_MAX ]
 
 	if [[ $found = "yes" ]]; then
-		msg="Starting post for fhr=$fhr"
-		postmsg "$jlogfile" "$msg"
+		echo "Starting post for fhr=$fhr"
 
 		#################################### 
 		# control the inclusion of perturbation identifiers
@@ -308,7 +325,7 @@ for hour in $hours; do
 					(( nmissing = nmissing + 1 ))
 				fi
 			done # for file in $fileaout $fileaouti $filebout $filebouti
-			if (( nmissing > 0 )); then
+			if (( nmissing > 0 )) || [[ $RERUN == "YES" ]]; then
 				rm $pcfile
 			fi
 		else
@@ -328,12 +345,9 @@ for hour in $hours; do
 			$USHgefs/gefs_prdgen.sh
 
 			# Check for error
-			rc=$?
-			if [[ $rc -ne 0 ]]; then
-				msg="FATAL ERROR: gefs_prdgen.sh failed!"
-				echo "$(date)    $msg"
-				postmsg "$jlogfile" "$msg"
-				export err=1
+			export err=$?
+			if [[ $err -ne 0 ]]; then
+				echo "FATAL ERROR in ${.sh.file} ($stream): Creation of product failed at f${fhr}!"
 				err_chk
 				exit $err
 			fi
@@ -343,7 +357,7 @@ for hour in $hours; do
 			####################################
 			if [[ $SENDCOM = "YES" ]]; then
 				echo "$PDY$cyc$fhr" > $pcfile
-			fi # test $SENDCOM = "YES"
+			fi
 		fi # [[ ! -s $pcfile ]]
 
 		#####################################################################
@@ -356,7 +370,6 @@ for hour in $hours; do
 	fi # [[ $found = "yes" ]]
 done # for hour in $hours
 
-msg='ENDED NORMALLY.'
-postmsg "$jlogfile" "$msg"
+echo "$(date -u) end ${.sh.file}"
 
-################## END OF SCRIPT #######################
+exit 0

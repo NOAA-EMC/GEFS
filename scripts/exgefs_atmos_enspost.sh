@@ -1,34 +1,38 @@
+#!/bin/ksh
+
 ########################### EXENSPOST ################################
-echo "------------------------------------------------"
-echo "Ensemble Postprocessing"
-echo "Create enspost ensstat ensppf files"
-echo "------------------------------------------------"
-echo "History: MAY 1997 - First implementation of this new script."
-echo "AUTHOR: Yuejian Zhu (wd20yz)"
-echo "Modified by: Mary Jacobs"
-echo "Modified by: Yuejian Zhu ---- October 1997"
-echo "Modified by: Maxine Brown for Yuejian Zhu ---- November 1997"
-echo "Modified by: David Michaud to port to IBM SP ---- September 1999"
-echo "Modified by: Larry Sager to add spaghetti ensembles -- Feb 2000"
-echo "Modified by: Yuejian Zhu to add high resolution archive---- June 2000"
-echo "Modified by: Richard Wobus to add ensstat statistics---- September 2001"
-echo "Modified by: Yuejian Zhu to add more vars, 6-hr interval fcst output,"
-echo "             apply to T00Z, T06Z, T12Z and T18Z cycles,               "
-echo "             no more ensppf production                                "
-echo "             move pqpf to ensstat process                ---- May 2003"
-echo "Modified by: Richard Wobus to add more variables ---- MARCH 2004"
-echo "Modified by: Richard Wobus to add 192hr zsfc  ---- August 2004"
-echo "Modified by: Richard Wobus reorganize by hour  ---- March 2006"
-echo "Modified by: Richard Wobus separate enspost from avg/spr ---- June 2011"
-echo "Modified by: Bo Cui and Dingchen Hou change to grib2 operations  ---- Nov. 2014":w
+# ------------------------------------------------
+# Ensemble Postprocessing
+# Create enspost ensstat ensppf files
+# ------------------------------------------------
+# History: MAY 1997 - First implementation of this new script.
+# AUTHOR: Yuejian Zhu (wd20yz)
+# Modified by: Mary Jacobs
+# Modified by: Yuejian Zhu ---- October 1997
+# Modified by: Maxine Brown for Yuejian Zhu ---- November 1997
+# Modified by: David Michaud to port to IBM SP ---- September 1999
+# Modified by: Larry Sager to add spaghetti ensembles -- Feb 2000
+# Modified by: Yuejian Zhu to add high resolution archive---- June 2000
+# Modified by: Richard Wobus to add ensstat statistics---- September 2001
+# Modified by: Yuejian Zhu to add more vars, 6-hr interval fcst output,
+#              apply to T00Z, T06Z, T12Z and T18Z cycles,               
+#              no more ensppf production                                
+#              move pqpf to ensstat process                ---- May 2003
+# Modified by: Richard Wobus to add more variables ---- MARCH 2004
+# Modified by: Richard Wobus to add 192hr zsfc  ---- August 2004
+# Modified by: Richard Wobus reorganize by hour  ---- March 2006
+# Modified by: Richard Wobus separate enspost from avg/spr ---- June 2011
+# Modified by: Bo Cui and Dingchen Hou change to grib2 operations  ---- Nov. 2014
 
 ### need pass the values of CYC, YMD, DATA, COMIN and COMOUT
 
-if [[ ! -d $DATA ]]; then
-	mkdir -p $DATA
-fi
+echo "$(date -u) begin ${.sh.file}"
 
-set -x
+set -xa
+if [[ ${STRICT:-NO} == "YES" ]]; then
+	# Turn on strict bash error checking
+	set -eu
+fi
 
 cd $DATA
 
@@ -44,18 +48,29 @@ export iens_msg=1
 #####################################
 # Define Script/Exec Variables
 #####################################
-
-#export WGRIB=${WGRIB:-$EXECgrib/wgrib}
-#export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
-#export COPYGB=${COPYGB:-$EXECgrib/copygb}
-#export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
-#export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
-#export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
-#export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib}
-
 export ENSPPF=$USHgefs/global_ensppf.sh
 export ENSSTAT=$EXECgefs/gefs_ensstat
 export ENSPQPF=$USHgefs/global_enspqpf.sh
+
+case $FORECAST_SEGMENT in
+    hr)
+		export ext_h=""
+		export SHOUR=00
+		export FHOUR=$fhmaxh
+        ;;
+    lr)
+		export ext_h=ss
+		(( SHOUR = fhmaxh + FHOUTLF ))
+		export SHOUR=$SHOUR 
+		export FHOUR=$fhmax
+        ;;
+    *)
+		echo "FATAL ERROR in ${.sh.file}: Unknown FORECAST_SEGMENT $FORECAST_SEGMENT!"
+		exit 100
+        ;;
+esac # $FORECAST_SEGMENT in
+
+export FHINC=${FHOUTLF:-6}
 
 #####################################
 # START TO DUMP DATA FOR $cycle CYCLE
@@ -66,82 +81,48 @@ varlout=" \
 ensppf pqpf  pqsf  pqff  pqrf  pqif \
 "
 
-if [ "$SENDCOM" = 'YES' ]; then
+if [[ "$SENDCOM" == 'YES' ]]; then
 	for file in enspost${ext_h} ensstat${ext_h}; do
 		#   for FIELD in $varlboth $varlnostat $varlout
 		for FIELD in $epnamhr $epnamlr $varlout; do
-			if [ -s $COMOUT/ensstat/$file.${cycle}.${FIELD} ]; then
-				rm $COMOUT/ensstat/$file.${cycle}.${FIELD}
-				rm $COMOUT/ensstat/$file.${cycle}.${FIELD}i
+			if [ -s $COMOUT/$COMPONENT/ensstat/$file.${cycle}.${FIELD} ]; then
+				rm $COMOUT/$COMPONENT/ensstat/$file.${cycle}.${FIELD}
+				rm $COMOUT/$COMPONENT/ensstat/$file.${cycle}.${FIELD}i
 			fi
-			if [ -s $COMOUT/ensstat/$file.${cycle}.${FIELD}hr ]; then
-				rm $COMOUT/ensstat/$file.${cycle}.${FIELD}hr
-				rm $COMOUT/ensstat/$file.${cycle}.${FIELD}hri
+			if [ -s $COMOUT/$COMPONENT/ensstat/$file.${cycle}.${FIELD}hr ]; then
+				rm $COMOUT/$COMPONENT/ensstat/$file.${cycle}.${FIELD}hr
+				rm $COMOUT/$COMPONENT/ensstat/$file.${cycle}.${FIELD}hri
 			fi
 		done # for FIELD in $epnamhr $epnamlr $varlout
 	done # for file in enspost${ext_h} ensstat${ext_h}
-fi # test "$SENDCOM" = 'YES'
+fi # [[ "$SENDCOM" == 'YES' ]]
 
 if [[ ${FORECAST_SEGMENT} == hr ]]; then
-    memberlist="gfs c00"
-else
-    memberlist="c00"
+    memberlist="gfs $memberlist"
 fi
-
-#memberlist="gfs c00"
-#DHOU 04/19/2012 Add this block to avoid gfs for "dev" jobs
-#if [[ $envir = dev ]]; then
-#	memberlist="c00"
-#fi
-
-(( imem = 0 ))
-while (( imem < npert )); do
-	(( imem = imem + 1 ))
-	if (( imem < 10 )); then
-		imem=0$imem
-	fi
-	memberlist="$memberlist p$imem"
-done # while (( imem < npert ))
-echo memberlist=$memberlist
-
 
 echo
 echo "$(date)  ==== START OF HOURLY PROCESSING OF PGB FORECAST FILES ====="
 echo
 
-SLEEP_LOOP_MAX=$(expr $SLEEP_TIME / $SLEEP_INT)
+SLEEP_LOOP_MAX=$((SLEEP_TIME / SLEEP_INT))
 
 export fh=$SHOUR
-#export  (( fh = SHOUR ))
-if [ $fh -lt 10 -a $fh -gt 0 ]; then
-	export fhr="0$fh"
-fi
-#if [ $fh -lt 100 -a $fh -gt 0 ]
-#then
-#   export fhr="0$fh"
-#fi
 
 ############################################################
 # Loop Through the Post Forecast Files
 ############################################################
 (( nfilesprev = 9999 ))
 foundgfs=no
-while test $fh -le $FHOUR; do
+while [[ $fh -le $FHOUR ]]; do
 	#  the order here should correspond to the order in
 	#  which the pgrb files are produced by the post
 	# for res in lr hr p5
 
-        #Change the $fh value from 2 digit to 3 digit 
-	if [ $fh -lt 100 ]; then
-		export fh="0$fh"
-	fi
+	export fh=$(printf %03i $fh)
 
 	for res in lr; do
 		if [[ $res = lr ]]; then
-			#EXT=".2"
-			#FXT=
-			#lr=lr
-			#ext_h=
 			EXT=
 			FXT=.2p50.
 			lr=2p5
@@ -175,7 +156,8 @@ while test $fh -le $FHOUR; do
 			set -A enspostlvt x $eplvtp5
 			set -A enspostlev x $eplevp5
 		else
-			echo res= $res, NOT expected
+			echo "FATAL ERROR in ${.sh.file}: Unknown res $res!"
+			exit 100
 		fi # [[ $res = lr ]]
 
 		###############################
@@ -191,14 +173,14 @@ while test $fh -le $FHOUR; do
 			previncr=no
 			for mem in $memberlist; do
 				(( nmem = nmem + 1 ))
-				testfile=$COMIN/pgrb2$lr/ge${mem}.${cycle}.pgrb2$FXT\f$fh$EXT.idx
+				testfile=$COMIN/$COMPONENT/pgrb2$lr/ge${mem}.${cycle}.pgrb2$FXT\f$fh$EXT.idx
 				if [ -f $testfile ]; then
 					echo testfile=$testfile found
 					(( nfiles = nfiles + 1 ))
 					if [[ $mem = gfs ]]; then
 						foundgfs=yes
 					fi
-					echo mem=$mem nfiles=$nfiles foundgfs=$foundgfs foundall=$foundall previncr=$previncr ic=$ic fh=$fh found
+					echo "mem=$mem nfiles=$nfiles foundgfs=$foundgfs foundall=$foundall previncr=$previncr ic=$ic fh=$fh found"
 				else # test -f $testfile
 					echo testfile=$testfile not found
 					if [[ $mem = gfs ]] && [[ $foundgfs = yes ]] && (( fh > 180 )) && (( fh % 12 > 0 )); then
@@ -206,7 +188,7 @@ while test $fh -le $FHOUR; do
 					else
 						foundall=no
 					fi
-					echo mem=$mem nfiles=$nfiles foundgfs=$foundgfs foundall=$foundall previncr=$previncr ic=$ic fh=$fh not found
+					echo "mem=$mem nfiles=$nfiles foundgfs=$foundgfs foundall=$foundall previncr=$previncr ic=$ic fh=$fh not found"
 				fi # test -f $testfile
 			done # for mem in $memberlist
 
@@ -216,12 +198,12 @@ while test $fh -le $FHOUR; do
 				else
 					(( nfilesprev = nfiles ))
 				fi
-				echo Search process ends nfilesprev=$nfilesprev foundgfs=$foundgfs foundall=$foundall previncr=$previncr ic=$ic fh=$fh
-				echo Process all $nfiles members
+				echo "Search process ends nfilesprev=$nfilesprev foundgfs=$foundgfs foundall=$foundall previncr=$previncr ic=$ic fh=$fh"
+				echo "Process all $nfiles members"
 				break
 			else # [[ $foundall = yes ]]
 				if (( nfiles < nfilesprev )); then
-					ic=$(expr $ic + 1)
+					ic=$(($ic + 1))
 					sleep $SLEEP_INT
 				else
 					if [[ $previncr = yes ]]; then
@@ -229,8 +211,8 @@ while test $fh -le $FHOUR; do
 					else
 						(( nfilesprev = nfiles ))
 					fi
-					echo Search process ends nfilesprev=$nfilesprev foundgfs=$foundgfs foundall=$foundall previncr=$previncr ic=$ic fh=$fh
-					echo Continue processing with $nfiles members
+					echo "Search process ends nfilesprev=$nfilesprev foundgfs=$foundgfs foundall=$foundall previncr=$previncr ic=$ic fh=$fh"
+					echo "Continue processing with $nfiles members"
 					break
 				fi # (( nfiles < nfilesprev ))
 			fi # [[ $foundall = yes ]]
@@ -252,39 +234,48 @@ while test $fh -le $FHOUR; do
 				(( nfilesmin = nmem - 1 ))
 
 				if (( nfiles < nfilesmin )); then
-					echo Search process FAILS nfilesprev=$nfilesprev foundgfs=$foundgfs foundall=$foundall previncr=$previncr ic=$ic fh=$fh
-					echo $nfiles IS FEWER THAN $nfilesmin MEMBERS
+					echo <<- EOF
+						FATAL ERROR in ${.sh.file}: Insufficient members found for f${fhr} to calculate stats at $(date) after ${SLEEP_TIME}s!
+							Total members:         $nmem
+							Min members for stats: $nfilesmin
+							Members found:         $nfiles
+						EOF
 					export err=9
 					err_chk
-				else # (( nfiles < nfilesmin ))
+				else
+					if (( nfiles < nmem )); then
+						echo <<- EOF
+							WARNING in ${.sh.file}: Some members still missing for f{fhr} at $(date) after ${SLEEP_TIME}s
+								Will continue with $nfiles members, but products may be degraded.
+							EOF
+						msg="WARNING: {job} did not find all ensemble member for f{fhr}! Will continue with fewer members, but products may be degraded."
+						echo "$msg" | mail.py -c $MAIL_LIST
+					fi
 					(( nfilesprev = nfiles ))
-					echo Search process ends nfilesprev=$nfilesprev foundgfs=$foundgfs foundall=$foundall previncr=$previncr ic=$ic fh=$fh
-					echo Continue after timeout with $nfiles members
 					break
 				fi # (( nfiles < nfilesmin ))
 			fi # [ $ic -eq $SLEEP_LOOP_MAX ]
 		done # while [ $ic -le $SLEEP_LOOP_MAX ]
 		set -x
 
-		msg="Starting ensstat generation for fhr=$fh"
-		postmsg "$jlogfile" "$msg"
+		echo "Starting ensstat generation for fhr=$fh"
 
 		#
 		#  Make namelist file
 		#
-		echo " &namdim" >namin
-		#   echo " nmemdim=100", >>namin
-		#   echo " nenspostdim=100", >>namin
-		echo " lfdim=${lfm}", >>namin
-		echo " /" >>namin
-		echo " &namens" >>namin
+		cat <<- EOF >namin
+			&namdim
+				lfdim=${lfm:-''}
+			/
+			&namens
+			EOF
 
 		parmlist=$PARMgefs/gefs_enspost_grb2.parm
 		ifile=0
 		for mem in $memberlist; do
 			#DHOU, 20141028, select required variables from pgrb2a files
-			if [[ "$mem" != "gfs" || $fh -le $gfsfhmaxh || $( expr $fh % 12 ) -eq 0 ]]; then
-				pgtem=$COMIN/pgrb2$lr/ge${mem}.${cycle}.pgrb2$FXT\f$fh$EXT
+			if [[ "$mem" != "gfs" || $fh -le $gfsfhmaxh || $(($fh % 12)) -eq 0 ]]; then
+				pgtem=$COMIN/$COMPONENT/pgrb2$lr/ge${mem}.${cycle}.pgrb2${FXT}f$fh$EXT
 				if [[ -s $pgtem ]]; then
 					$WGRIB2 -s $pgtem | grep -F -f $parmlist | $WGRIB2 $pgtem -s -i -grib pgrb2a_$mem 
 					#DHOU 20141028
@@ -293,7 +284,7 @@ while test $fh -le $FHOUR; do
 					echo " cfipg($ifile)"="pgrb2a_$mem", >>namin
 					echo " iskip($ifile)"=$iskip, >>namin
 				fi
-			fi # [[ "$mem" != "gfs" || $fh -le $gfsfhmaxh || $( expr $fh % 12 ) -eq 0 ]]
+			fi # [[ "$mem" != "gfs" || $fh -le $gfsfhmaxh || $(($fh % 12)) -eq 0 ]]
 		done # for mem in $memberlist
 
 		echo " nfiles=$ifile", >>namin
@@ -306,26 +297,43 @@ while test $fh -le $FHOUR; do
 			(( ienspost = ienspost + 1 ))
 			(( iunitouta = iunitouts + 1 ))
 			(( iunitouts = iunitouts + 2 ))
-			echo " ivar($ienspost)"=${enspostvar[$ienspost]}, >>namin
-			echo " ilev($ienspost)"=${enspostlev[$ienspost]}, >>namin
-			echo " ilvt($ienspost)"=${enspostlvt[$ienspost]}, >>namin
-			#     echo " cfopg($ienspost)"=\"enspost${ext_h}.$cycle.${enspostnam[$ienspost]}\", >>namin
-			echo " cfotg($ienspost)"=\"ensstat${ext_h}.$cycle.${enspostnam[$ienspost]}\", >>namin
+			cat <<- EOF >>namin
+
+					ivar($ienspost)=${enspostvar[$ienspost]},
+					ilev($ienspost)=${enspostlev[$ienspost]},
+					ilvt($ienspost)=${enspostlvt[$ienspost]},
+					cfopg($ienspost)="enspost${ext_h}.$cycle.${enspostnam[$ienspost]}",
+					cfotg($ienspost)="ensstat${ext_h}.$cycle.${enspostnam[$ienspost]}",
+				EOF
 		done # while (( ienspost < 0 ))
 
-		echo " cfopg1"="ensstat", >>namin
-		echo " cfopg2"="ensstat", >>namin
-                echo " navg_min"=${navg_min} >>namin
+		cat <<- EOF >>namin
 
-		echo ' /' >>namin
+				cfopg1="ensstat"
+				cfopg2="ensstat"
+
+				navg_min=${navg_min}
+			/
+			EOF
 
 		echo
 		cat namin
 		echo
 
 		echo "####################### $(date) $fh $res ensstat begin" >$pgmout.$res$fh
-		$ENSSTAT <namin | fold -w 2000 >$pgmout.$res$fh
-		export err=$?; err_chk
+		$ENSSTAT <namin >$pgmout.$res$fh.temp
+		export err=$?
+		if [[ $err != 0 ]]; then
+			echo <<- EOF
+				FATAL ERROR in ${.sh.file}: $ENSSTAT returned a non-zero error code for f${fhr}!
+					Namelist namin was used and had the following contents:
+						$(cat namin)
+				EOF
+			err_chk
+			exit $err
+		fi
+		cat $pgmout.$res$fh.temp | fold -w 2000 >$pgmout.$res$fh
+		rm $pgmout.$res$fh.temp
 		echo "####################### $(date) $fh $res ensstat end">>$pgmout.$res$fh
 		#DHOU 20141028 Separate the enspost variables in to individual files
 		for var in $postvarlist; do
@@ -351,7 +359,7 @@ while test $fh -le $FHOUR; do
 				v200) TEXT='VGRD:200 mb';;
 				olr) TEXT='ULWRF:top of atmosphere';;
 			esac # $var
-			echo $var  $TEXT  
+			echo "$var  $TEXT"
 			for mem in $memberlist; do
 				if [ -s pgrb2a_$mem ]; then
 					$WGRIB2 -s pgrb2a_$mem | grep "$TEXT" | $WGRIB2 pgrb2a_$mem -i -append -grib enspost_grb2${ext_h}.$cycle.$var 
@@ -369,7 +377,7 @@ while test $fh -le $FHOUR; do
 				lines=$(cat $pgmout.$res$fh| wc -l)
 				lobeg=5
 				loend=40
-				echo lines=$lines lobeg=$lobeg loend=$loend
+				echo "lines=$lines lobeg=$lobeg loend=$loend"
 				(( lskip = lines - lobeg - loend ))
 				if (( lskip > 100 )); then
 					head -$lobeg $pgmout.$res$fh >>$pgmout
@@ -382,38 +390,37 @@ while test $fh -le $FHOUR; do
 		done # for fhout in $statoutfhlist
 	done # for res in lr
 
-	export fh=$(expr $fh + $FHINC)
-	if [ $fh -lt 10 ]; then
-		export fh="0$fh"
-	fi
+	export fh=$(( fh + FHINC ))
+
 done # while test $fh -le $FHOUR
 
-echo ###############################$(date) cat $pgmout begin
-cat $pgmout
-echo ###############################$(date) cat $pgmout end
+if [[ -s $pgmout ]]; then
+	echo ###############################$(date) cat $pgmout begin
+	cat $pgmout
+	echo ###############################$(date) cat $pgmout end
+fi
 
 echo
 echo "$(date)  ==== END  OF  HOURLY PROCESSING OF PGB FORECAST FILES ====="
 echo
 
 # check for missing or zero-length output files
-
 for file in $postvarlist; do
 	if [[ -s enspost_grb2${ext_h}.$cycle.${file} ]]; then
 		ls -al enspost_grb2${ext_h}.$cycle.${file}
 	else
-		echo output file enspost_grb2${ext_h}.$cycle.${file} IS MISSING
+		echo "FATAL ERROR in ${.sh.file}: Output file enspost_grb2${ext_h}.$cycle.${file} is missing!"
 		export err=9
 		err_chk
+		exit $err
 	fi
 done # for file in $postvarlist
 
 # Moving  output files to /com directory
-
 if [ "$SENDCOM" = "YES" ]; then
 	for file in $postvarlist; do
-		mv enspost_grb2${ext_h}.$cycle.${file}  $COMOUT/ensstat/enspost_grb2${ext_h}.${cycle}.${file}
-		mv ensstat_grb2${ext_h}.$cycle.${file}  $COMOUT/ensstat/ensstat_grb2${ext_h}.${cycle}.${file}
+		mv enspost_grb2${ext_h}.$cycle.${file} $COMOUT/$COMPONENT/ensstat/enspost_grb2${ext_h}.${cycle}.${file}
+		mv ensstat_grb2${ext_h}.$cycle.${file} $COMOUT/$COMPONENT/ensstat/ensstat_grb2${ext_h}.${cycle}.${file}
 	done # for file in $postvarlist
 fi # [ "$SENDCOM" = "YES" ]
 
@@ -422,20 +429,8 @@ if [[ $SENDECF = "YES" ]]; then
 	ecflow_client --event enspost_grb2_ready
 fi
 
-#
-# create pqpf 24h and probabilistic precip forecast files
-#
-
-## part (1a): calculate PQPF (named ensppf ) for each 24 hours period,
-## for 23 ens members 
-## write out with ensemble extended messages
-##
-#
-#if [ "$cycle" = "skipthis" ]; then
 if [[ "$cycle" == "t00z" ]] && [[ -z $ext_h ]]; then
-	#  $ENSPPF $COMOUT/$cyc/ensstat/enspost.$cycle.prcp $COMOUT/$cyc/ensstat/enspost${ext_h}.$cycle.prcpi ensppf${ext_h}.$PDY$cyc
-	#$ENSPPF $COMOUT/ensstat/enspost_grb2.$cycle.prcp ensppf${ext_h}.$PDY$cyc.grib2  $npert
-	$ENSPPF $COMOUT/ensstat/enspost_grb2${ext_h}.$cycle.prcp ensppf${ext_h}.$PDY$cyc.grib2  $npert
+	$ENSPPF $COMOUT/$COMPONENT/ensstat/enspost_grb2${ext_h}.$cycle.prcp ensppf${ext_h}.$PDY$cyc.grib2  $npert
 	$WGRIB2 ensppf${ext_h}.$PDY$cyc.grib2 -s >ensppf${ext_h}.$PDY$cyc.grib2.idx 
 
 	###########################
@@ -457,33 +452,20 @@ if [[ "$cycle" == "t00z" ]] && [[ -z $ext_h ]]; then
 	fi # [[ -s ensppf${ext_h}.$PDY$cyc.grib2 ]]
 
 	if [ $SENDCOM = "YES" ]; then
-		cp ensppf${ext_h}.$PDY$cyc $COMOUT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h
-		cp ensppf${ext_h}i.$PDY$cyc $COMOUT/ensstat/ensstat${ext_h}.$cycle.pqpfi_24h
+		cp ensppf${ext_h}.$PDY$cyc $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h
+		cp ensppf${ext_h}i.$PDY$cyc $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.pqpfi_24h
 
-		cp ensppf${ext_h}.$PDY$cyc.grib2 $COMOUT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2
-		cp ensppf${ext_h}.$PDY$cyc.grib2.idx $COMOUT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2.idx
+		cp ensppf${ext_h}.$PDY$cyc.grib2 $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2
+		cp ensppf${ext_h}.$PDY$cyc.grib2.idx $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2.idx
 	fi  #[ $SENDCOM = "YES" ]
 	if [ "$SENDDBN" = "YES" ]; then
-		$DBNROOT/bin/dbn_alert MODEL ENS_STAT_GB2 $job $COMOUT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2
-		$DBNROOT/bin/dbn_alert MODEL ENS_STAT_GB2_WIDX $job $COMOUT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2.idx
+		$DBNROOT/bin/dbn_alert MODEL ENS_STAT_GB2 $job $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2
+		$DBNROOT/bin/dbn_alert MODEL ENS_STAT_GB2_WIDX $job $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2.idx
 	fi # [ "$SENDDBN" = "YES" ]
 fi # test "$cycle" = "t00z"
 
 # part (1b): probabilistic forecasts ( PQPF, PQRF, PQFF, PQSF and PQIF )
 export CDATE=$PDY$cyc; 
-#$ENSPQPF
-
-#for file in pqpf pqrf pqff pqsf pqif; do
-#	$CNVGRIB -g21 $DATA/$file $DATA/$file\_grb1
-#	$WGRIB2 $DATA/$file -s >$DATA/$file\.idx
-#	$GRBINDEX $DATA/$file\_grb1 $DATA/${file}i_grb1
-#	if [ $SENDCOM = "YES" ]; 	then
-#		mv $DATA/${file} $COMOUT/$cyc/ensstat/ensstat_grb2${ext_h}.$cycle.$file
-#		mv $DATA/${file}.idx $COMOUT/$cyc/ensstat/ensstat_grb2${ext_h}.$cycle.${file}.idx
-#		mv $DATA/${file}_grb1 $COMOUT/$cyc/ensstat/ensstat${ext_h}.$cycle.$file
-#		mv $DATA/${file}i_grb1 $COMOUT/$cyc/ensstat/ensstat${ext_h}.$cycle.${file}i
-#	fi # [ $SENDCOM = "YES" ]
-#done # for file in pqpf pqrf pqff pqsf pqif
 
 ############################################################################
 ###########  ADD DBN ALERTS FOR PPF AND PQPF FILES IF NEEDED  ##############
@@ -495,8 +477,8 @@ export CDATE=$PDY$cyc;
 ############################################################################
 
 for file in $postvarlist; do
-	ln -s $COMOUT/ensstat/enspost_grb2${ext_h}.${cycle}.${file} enspost_grb2${ext_h}.$cycle.${file}
-	ln -s $COMOUT/ensstat/ensstat_grb2${ext_h}.${cycle}.${file} ensstat_grb2${ext_h}.$cycle.${file}
+	ln -s $COMOUT/$COMPONENT/ensstat/enspost_grb2${ext_h}.${cycle}.${file} enspost_grb2${ext_h}.$cycle.${file}
+	ln -s $COMOUT/$COMPONENT/ensstat/ensstat_grb2${ext_h}.${cycle}.${file} ensstat_grb2${ext_h}.$cycle.${file}
 
 	$WGRIB2 enspost_grb2${ext_h}.$cycle.${file} -s > enspost_grb2${ext_h}.$cycle.${file}.idx
 	$WGRIB2 ensstat_grb2${ext_h}.$cycle.${file} -s > ensstat_grb2${ext_h}.$cycle.${file}.idx
@@ -506,16 +488,16 @@ for file in $postvarlist; do
 	$GRBINDEX ensstat${ext_h}.$cycle.${file}   ensstat${ext_h}.$cycle.${file}i
 
 	if [ "$SENDCOM" = "YES" ]; then
-		#    mv enspost_grb2${ext_h}.$cycle.${file}  $COMOUT/$cyc/ensstat/enspost_grb2${ext_h}.${cycle}.${file}
-		mv enspost_grb2${ext_h}.$cycle.${file}.idx $COMOUT/ensstat/enspost_grb2${ext_h}.${cycle}.${file}.idx
-		#    mv ensstat_grb2${ext_h}.$cycle.${file}  $COMOUT/$cyc/ensstat/ensstat_grb2${ext_h}.${cycle}.${file}
-		mv ensstat_grb2${ext_h}.$cycle.${file}.idx $COMOUT/ensstat/ensstat_grb2${ext_h}.${cycle}.${file}.idx
-		mv enspost${ext_h}.$cycle.${file}  $COMOUT/ensstat/enspost${ext_h}.${cycle}.${file}
-		mv enspost${ext_h}.$cycle.${file}i $COMOUT/ensstat/enspost${ext_h}.${cycle}.${file}i
-		mv ensstat${ext_h}.$cycle.${file}  $COMOUT/ensstat/ensstat${ext_h}.${cycle}.${file}
-		mv ensstat${ext_h}.$cycle.${file}i $COMOUT/ensstat/ensstat${ext_h}.${cycle}.${file}i
+		mv enspost_grb2${ext_h}.$cycle.${file}.idx $COMOUT/$COMPONENT/ensstat/enspost_grb2${ext_h}.${cycle}.${file}.idx
+		mv ensstat_grb2${ext_h}.$cycle.${file}.idx $COMOUT/$COMPONENT/ensstat/ensstat_grb2${ext_h}.${cycle}.${file}.idx
+		mv enspost${ext_h}.$cycle.${file}  $COMOUT/$COMPONENT/ensstat/enspost${ext_h}.${cycle}.${file}
+		mv enspost${ext_h}.$cycle.${file}i $COMOUT/$COMPONENT/ensstat/enspost${ext_h}.${cycle}.${file}i
+		mv ensstat${ext_h}.$cycle.${file}  $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.${cycle}.${file}
+		mv ensstat${ext_h}.$cycle.${file}i $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.${cycle}.${file}i
 	fi # [ "$SENDCOM" = "YES" ]
 done # for file in $postvarlist
 
-msg="HAS COMPLETED NORMALLY!"
-postmsg "$jlogfile" "$msg"
+echo "$(date -u) end ${.sh.file}"
+
+exit 0
+

@@ -1,16 +1,13 @@
 #!/bin/ksh
 
-# control parameters for gefs
-# execute this script in gefs job scripts  (. $HOMEgefs/gefs_init.parm)
-# execute this script after  (. $HOMEgefs/gefs.parm)
-echo $(date) $0 begin
-
 # ----------------------------------
 # options for NEMSIO
 # ----------------------------------
 export NEMSIO_IN=.true.
 export NEMSIO_OUT=.true.
 export nopdpvv=.true.
+
+export warm_start=".false."
 
 # parameters for relocation, 1 for yes, 0 for no, cold_start or warm_start
 #relocflagana is added for relocation TC for analysis 
@@ -45,4 +42,11 @@ export initcombinetasks=40
 # run parallel or serial et code
 export parallelinit=no
 export parallelinit=yes
-echo $(date) $0 end
+
+#cycles from fhrpstart back to fhrpend  (hr)
+export fhrpstart=$fhrp
+export fhrpend=96
+
+export pdycycp=$($NDATE -$fhrp $PDY$cyc)
+export pdyp=$(echo $pdycycp|cut -c1-8)
+export cycp=$(echo $pdycycp|cut -c9-10)

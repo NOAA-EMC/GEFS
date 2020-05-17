@@ -1,0 +1,112 @@
+#!/bin/ksh
+#####################################################################
+# 9/20/2009, Julia Zhu   Scripts are modified to be sharable
+#                        between EMC and NCO
+#         Please note that variable "RUN_ENVIR" is set and used
+#         in the development enviroment only.
+# 3/27/2015 Dingchen Hou, Vertical structure and WCOSS phase 2 statndard
+# 05/07/2020 Xianwu Xue, Modify it for GEFS v12
+######################################################################
+
+echo "$(date -u) begin ${.sh.file}"
+
+set -xa
+if [[ ${STRICT:-NO} == "YES" ]]; then
+	# Turn on strict bash error checking
+	set -eu
+fi
+export PS4='$SECONDS + $(basename ${.sh.file})[$LINENO] '
+
+####################################
+# Determine Job Output Name on System
+####################################
+export jobid=${jobid:-"$job.$LSB_JOBID"}
+export pgmout="OUTPUT.${LSB_JOBID}"
+export pgmerr=errfile
+
+####################################
+# Specify and create working directory
+####################################
+export DATA=${DATA:-${DATAROOT}/${jobid}}
+mkdir -p $DATA
+cd $DATA
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gefs}
+export envir=${envir:-prod}
+export RUN=${RUN:-gefs}
+
+####################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
+####################################
+export SENDCOM=${SENDCOM:-YES}
+export SENDDBN=${SENDDBN:-YES}
+export SENDECF=${SENDECF:-YES}
+export VERBOSE=${VERBOSE:-YES}
+
+######################################
+# Set up the date information
+######################################
+export cycle=t${cyc}z
+setpdy.sh
+source PDY
+
+####################################
+# Specify Execution Areas
+####################################
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
+##############################################
+# Define COM directories
+##############################################
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}}
+
+##############################################
+echo set parameters using gefs.parm
+##############################################
+configs="gefs"
+config_path=$PARMgefs
+for config in $configs; do
+    . $config_path/$config.parm
+    export err=$?
+    if [[ $err != 0 ]]; then
+    	echo "FATAL ERROR in ${.sh.file}: Error while loading parm file $config_path"
+    	exit $err
+    fi
+done
+export COMPONENT="chem"
+
+export jlogfile=${jlogfile:-$DATA/jlogfile}
+
+echo "Environment before calling script"
+env | sort
+
+#############################################################
+# Execute the script
+$HOMEgefs/scripts/exgefs_chem_post_cleanup.sh
+export err=$?
+if [[ $err == 0 ]]; then
+    echo "$job completed normally!"
+else
+    echo "FATAL ERROR in ${.sh.file}: $job failed!"
+    exit $err
+fi
+#############################################################
+
+#############################
+# Remove the Temporary working directory
+##############################
+cd $DATAROOT
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
+
+echo "$(date -u) end ${.sh.file}"
+
+exit $err
+

@@ -1,3 +1,4 @@
+#!/bin/ksh
 #######################################
 # Child script: ensppf.sh
 # ABSTRACT:  This script produces a gribindex of
@@ -6,36 +7,42 @@
 #            executable ensaddx.$xc
 #
 #######################################
-set +x
-echo " "
-echo "Entering sub script  ensppf.sh"
-echo " "
-set -x
+echo "$(date -u) begin ${.sh.file}"
+
+set -xa
+if [[ ${STRICT:-NO} == "YES" ]]; then
+	# Turn on strict bash error checking
+	set -eu
+fi
 
 cd $DATA
 
 if [[ $# != 3 ]]; then
-	echo "Usage: $0 gribin gribout npert"
+	echo "Usage: ${.sh.file} gribin gribout npert"
 	exit 1
 fi
 
-#$GRBIDX $1 $2
-
 export pgm=global_ensppf
-#$USHutil/prep_step
+source prep_step
 
 startmsg
-#eval $EXECGLOBAL/global_ensppf <<EOF 2>/dev/null
-#DHOU 03/26/2012 for Zeus
-eval $EXECgefs/global_ensppf <<-EOF 2>/dev/null
+$EXECgefs/global_ensppf <<-EOF 2>/dev/null
 	&namin
-	cpgb='$1',cpge='$2',npert=$3 /
+		cpgb='$1',cpge='$2',npert=$3 /
 	EOF
-export err=$?; err_chk
 
-set +x
-echo "         ======= END OF ENSPPF PROCESS  ========== "
-echo " "
-echo "Leaving sub script  ensppf.sh"
-echo " "
-set -x
+export err=$?;
+if [[ $err != 0 ]]; then
+	echo <<- EOF
+		FATAL ERROR in ${.sh.file}: $EXECgefs/global_ensppf returned a non-zero error!"
+		  Namelist file was provided directly and contained:
+		  		&namin
+					cpgb='$1',cpge='$2',npert=$3 /
+		EOF
+	err_chk
+	exit $err
+fi
+
+echo "$(date -u) end ${.sh.file}"
+
+exit $err

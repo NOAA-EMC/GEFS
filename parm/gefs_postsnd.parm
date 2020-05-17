@@ -1,0 +1,20 @@
+#!/bin/ksh
+
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
+
+export EXECbufrsnd=${EXECgfs:-$HOMEgfs/exec}
+export PARMbufrsnd=${PARMgfs:-$HOMEgfs/parm/product}
+export FIXbufrsnd=${FIXgfs:-$HOMEgfs/fix/product}
+
+####################################
+# Specify Timeout Behavior of Post
+#
+# SLEEP_TIME - Amount of time to wait for
+#              a restart file before exiting
+# SLEEP_INT  - Amount of time to wait between
+#              checking for restart files
+####################################
+export SLEEP_TIME=3600
+export SLEEP_INT=10
+
+export MODEL_OUT_FORM=binarynemsiompiio

@@ -1,50 +1,42 @@
-#!/bin/ksh 
+#!/bin/ksh
 #####################################################################
 # 9/20/2009, Julia Zhu   Scripts are modified to be sharable
 #                        between EMC and NCO
 #         Please note that variable "RUN_ENVIR" is set and used
 #         in the development enviroment only.
 # 3/27/2015 Dingchen Hou, Vertical structure and WCOSS phase 2 statndard
+# 05/07/2020 Xianwu Xue, Modify it for GEFS v12
 ######################################################################
 
-echo $(date) $0 $(date -u) begin
+echo "$(date -u) begin ${.sh.file}"
 
 set -xa
-na=$(basename $0)
-export PS4=' + $SECONDS $na $LINENO: '
-date
+if [[ ${STRICT:-NO} == "YES" ]]; then
+	# Turn on strict bash error checking
+	set -eu
+fi
+export PS4='$SECONDS + $(basename ${.sh.file})[$LINENO] '
 
 ####################################
-# obtain unique process id (pid) and make temp directory
+# Determine Job Output Name on System
 ####################################
-export pid=$$
-export DATA=${DATA:-$DATAROOT/${job}.${pid}}
+export jobid=${jobid:-"$job.$LSB_JOBID"}
+export pgmout="OUTPUT.${LSB_JOBID}"
+export pgmerr=errfile
+
+####################################
+# Specify and create working directory
+####################################
+export DATA=${DATA:-${DATAROOT}/${jobid}}
 mkdir -p $DATA
 cd $DATA
-
-######################################
-# Set up the cycle variable
-######################################
-export cycle=t${cyc}z
 
 ####################################
 # Specify NET and RUN Name and model
 ####################################
 export NET=${NET:-gefs}
+export envir=${envir:-prod}
 export RUN=${RUN:-gefs}
-
-####################################
-# File To Log Msgs
-####################################
-export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
-
-####################################
-# Determine Job Output Name on System
-####################################
-export outid="LL$job"
-export jobid="${outid}.o${pid}"
-export pgmout="OUTPUT.${pid}"
-export pgmerr=errfile
 
 ####################################
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
@@ -57,278 +49,64 @@ export SENDDBN=${SENDDBN:-YES}
 export SENDECF=${SENDECF:-YES}
 export VERBOSE=${VERBOSE:-YES}
 
+######################################
+# Set up the date information
+######################################
+export cycle=t${cyc}z
+setpdy.sh
+source PDY
+
+####################################
 # Specify Execution Areas
+####################################
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
-
-##############################
-# Run setpdy and initialize PDY variables
-##############################
-setpdy.sh
-. PDY
 
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}}
 
 ##############################################
 echo set parameters using gefs.parm
 ##############################################
-. $PARMgefs/gefs.parm
+configs="gefs"
+config_path=$PARMgefs
+for config in $configs; do
+    . $config_path/$config.parm
+    export err=$?
+    if [[ $err != 0 ]]; then
+    	echo "FATAL ERROR in ${.sh.file}: Error while loading parm file $config_path"
+    	exit $err
+    fi
+done
+export COMPONENT="atmos"
 
-case $cyc in
-	00) export fhmax=$fhmax00;;
-	06) export fhmax=$fhmax06;;
-	12) export fhmax=$fhmax12;;
-	18) export fhmax=$fhmax18;;
-esac
+export jlogfile=${jlogfile:-$DATA/jlogfile}
 
-##############################################
-# set last forecast hour to save sfcsig files
-# set cycles to save sfcsig or master files
-##############################################
-
-  fhsave=${fhsave:-198}
-  cycsavelistsfcsig=${cycsavelistsfcsig:-"00"}
-  cycsavelistmaster=${cycsavelistmaster:-""}
-  echo fhsave=$fhsave
-  echo cycsavelistsfcsig="$cycsavelistsfcsig"
-  echo cycsavelistmaster="$cycsavelistmaster"
-
-####################################
-# Create member list
-####################################
-memberlist=""
-
-(( imem = 0 ))
-while (( imem < npert )); do
-	(( imem = imem + 1 ))
-	if (( imem < 10 )); then
-		imem=0$imem
-	fi
-	memberlist="$memberlist p$imem"
-done # (( imem < npert )
-echo memberlist=$memberlist
-
-echo
+echo "Environment before calling script"
 env | sort
-echo
 
-# Test GRIB files before cleaning up
-echo $(date) GRIB file test before cleanup begin
-(( nmissing = 0 ))
+#############################################################
+# Execute the script
+$HOMEgefs/scripts/exgefs_atmos_post_cleanup.sh
+export err=$?
+if [[ $err == 0 ]]; then
+    echo "$job completed normally!"
+else
+    echo "FATAL ERROR in ${.sh.file}: $job failed!"
+    exit $err
+fi
+#############################################################
 
-#for cyc_check in 00 06 12 18; do
-# RLW disable checking for all hours except the current cycle"
-for cyc_check in $cyc; do
-
-	echo cyc=$cyc
-
-	if (( cyc == cyc_check )); then
-		export fcstlong=true
-		memberlisttest="$memberlist c00"
-	else
-		export fcstlong=false
-		memberlisttest="$memberlist"
-	fi # (( cyc == cyc_check ))
-
-	for member in $memberlisttest; do
-
-		####################################
-		# Specify the Ensemble Member
-		####################################
-		export RUNMEM=ge${member}
-
-		export PS4=' + $SECONDS $na $RUNMEM R $LINENO: '
-
-		####################################
-		# Specify Forecast Hour Range
-		####################################
-		export FHINC=06
-
-		export SHOUR=00
-
-
-		filelist="\
-		$COMIN/$cyc/master/ge$member.$cycle.master.grb2anl \
-		$COMIN/$cyc/master/ge$member.$cycle.master.grb2ianl \
-		$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2aanl \
-		$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2aanl.idx \
-		$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.anl \
-		$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.anl.idx \
-		$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2banl \
-		$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2banl.idx \
-		$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.anl \
-		$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.anl.idx \
-		"
-		for file in $filelist; do
-			if [[ ! -s $file ]]; then
-				(( nmissing = nmissing + 1 ))
-				echo "nmissing=$nmissing file=$file IS MISSING"
-			fi
-		done # file in $filelist
-
-		if [[ $fcstlong = true ]]; then
-			export FHOUR=$fhmax
-			if (( FHOUR < 10 )); then
-				FHOUR=0$FHOUR
-			fi
-			export FHOUR
-		else
-			export FHOUR=06
-		fi # [[ $fcstlong = true ]]
-
-		FH=$SHOUR
-		while (( FH <= FHOUR )); do
-			if (( FH < 100 )); then
-				FHP5=0$FH
-			else
-				FHP5=$FH
-			fi
-			filelist="\
-			$COMIN/$cyc/master/ge$member.$cycle.master.grb2f$FH \
-			$COMIN/$cyc/master/ge$member.$cycle.master.grb2if$FH \
-			$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2af$FH \
-			$COMIN/$cyc/pgrb2a/ge$member.$cycle.pgrb2af$FH.idx \
-			$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FHP5 \
-			$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FHP5.idx \
-			$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2bf$FH \
-			$COMIN/$cyc/pgrb2b/ge$member.$cycle.pgrb2bf$FH.idx \
-			$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.f$FHP5 \
-			$COMIN/$cyc/pgrb2bp5/ge$member.$cycle.pgrb2b.0p50.f$FHP5.idx \
-			$COMIN/$cyc/pgrb2alr/ge$member.$cycle.pgrb2af$FH.2 \
-			$COMIN/$cyc/pgrb2alr/ge$member.$cycle.pgrb2af$FH.2.idx \
-			$COMIN/$cyc/pgrb2blr/ge$member.$cycle.pgrb2bf$FH.2 \
-			$COMIN/$cyc/pgrb2blr/ge$member.$cycle.pgrb2bf$FH.2.idx \
-			$COMIN/$cyc/sfcsig/ge$member.$cycle.bf$FH \
-			$COMIN/$cyc/sfcsig/ge$member.$cycle.sf$FH \
-			$COMIN/$cyc/sflux/ge$member.$cycle.sfluxgrbf$FH \
-			"
-			if (( FH > 0 )) && (( FH <= fhmaxh )); then
-				(( FP = FH - 3 ))
-				if (( FP < 10 )); then
-					FP=0$FP
-				fi
-				if (( FP < 100 )); then
-					FPP5=0$FP
-				else
-					FPP5=$FP
-				fi
-				filelist="$filelist
-				$COMIN/$cyc/sfcsig/ge$member.$cycle.bf$FP \
-				$COMIN/$cyc/sfcsig/ge$member.$cycle.sf$FP \
-				$COMIN/$cyc/sflux/ge$member.$cycle.sfluxgrbf$FP \
-				$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FPP5 \
-				$COMIN/$cyc/pgrb2ap5/ge$member.$cycle.pgrb2a.0p50.f$FPP5.idx \
-				"
-			fi # (( FH > 0 )) && (( FH <= fhmaxh ))
-			for file in $filelist; do
-				if [[ ! -s $file ]]; then
-					(( nmissing = nmissing + 1 ))
-					echo "nmissing=$nmissing file=$file IS MISSING"
-				fi
-			done # file in $filelist
-
-			(( FH = FH + FHINC ))
-			if (( FH < 10 )); then
-				FH=0$FH
-			fi
-		done # (( FH <= FHOUR ))
-	done # member in $memberlisttest
-done # cyc_check in 00 06 12 18
-echo nmissing=$nmissing
-echo $(date) GRIB file test before cleanup end
-if (( nmissing > 0 )); then
-	msg="GRIB file test before cleanup IDENTIFIED $nmissing MISSING FILES"
-	echo "$(date)    $msg"
-	postmsg "$jlogfile" "$msg"
-	export err=99
-	err_chk
-else # (( nmissing > 0 ))
-	echo $(date) sfcsig sflux cleanup begin
-	#for cyc_check in 00 06 12 18
-	for cyc_check in $cyc; do
-		savecycle=false
-		for cycsave in $cycsavelistsfcsig; do
-			if (( cyc == cycsave )); then
-				savecycle=true
-			fi
-		done # cycsave in $cycsavelistsfcsig
-
-		echo "cyc=$cyc cyc_check=$cyc_check savecycle=$savecycle"
-		if [[ $savecycle = false ]]; then
-			if (( cyc == cyc_check )); then
-				export fcstlong=true
-				memberlisttest="$memberlist c00"
-			else
-				export fcstlong=false
-				memberlisttest="$memberlist"
-			fi # (( cyc == cyc_check ))
-			for member in $memberlisttest; do
-				####################################
-				# Specify the Ensemble Member
-				####################################
-				export RUNMEM=ge${member}
-				export PS4=' + $SECONDS $na $RUNMEM R $LINENO: '
-
-				####################################
-				# Specify Forecast Hour Range
-				####################################
-				export FHINCH=03
-				export FHINC=06
-				export SHOUR=00
-
-				if [[ $fcstlong = true ]]; then
-					if [[ x$HOUTSPS = x ]]; then
-						export FHOUR=$fhmax
-					else
-						(( FHOUR = fhmax - HOUTSPS - FHINC ))
-					fi       
-					if (( FHOUR < 10 )); then
-						FHOUR=0$FHOUR
-					fi
-					export FHOUR
-				else
-					export FHOUR=06
-				fi # [[ $fcstlong = true ]]
-				###########################################################
-				# remove sigma, surface, and flux files
-				###########################################################
-				$HOMEgefs/scripts/exgefs_post_cleanup.sh.ecf
-			done # member in $memberlisttest
-		else # [[ $savecycle = false ]]
-			echo "sfcsig files are saved for cyc=$cyc"
-		fi # [[ $savecycle = false ]]
-	done # cyc_check in $cyc
-	echo $(date) "sfcsig sflux cleanup end"
-	########################################################
-	# remove master post subdirectory
-	########################################################
-	echo $(date) "before master cleanup"
-	savecycle=false
-	for cycsave in $cycsavelistmaster; do
-		if (( cyc == cycsave )); then
-			savecycle=true
-		fi
-	done # cycsave in $cycsavelistmaster
-	echo "cyc=$cyc cyc_check=$cyc_check savecycle=$savecycle"
-	if [[ $savecycle = false ]]; then
-		rm -rf $COMIN/$cyc/master
-	else
-		echo "master files are saved for cyc=$cyc"
-	fi
-	echo $(date) after master cleanup
-fi # (( nmissing > 0 ))
-
-########################################################
-export PS4=' + $SECONDS $na $LINENO: '
-
-##############################
+#############################
 # Remove the Temporary working directory
 ##############################
 cd $DATAROOT
-rm -rf $DATA
+if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-echo $(date) $0 $(date -u) end
+echo "$(date -u) end ${.sh.file}"
+
+exit $err
+

@@ -33,6 +33,8 @@ elif [[ $RocotoGen == 1 ]]; then
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
     export archsyndir=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/TCvitalData/syndat
 
+	export STRICT="YES"
+
     export HOMEgefs=$SOURCEDIR
 
     export COMROOT=$WORKDIR/com

@@ -1,6 +1,24 @@
 #!/bin/bash
 # Wave component parm file for POST step
 
+export HOMEgfs=${HOMEgfs:-$HOMEgefs}
+export HOMEwave=${HOMEwave:-${HOMEgfs}}
+export USHwave=${USHwave:-$HOMEgfs/ush}
+export EXECwave=${EXECwave:-$HOMEwave/exec}
+export EXECcode=${EXECcode:-$HOMEgfs/exec}
+
+# Set CDATE_RST and RERUN
+export RERUN=${RERUN:-NO}
+export CDATE_RST=${CDATE_RST:-CDATE}
+
+export WAV_MOD_TAG=${COMPONENTwave}${waveMEMB}
+export CFP_VERBOSE=1
+
+# Set wave model ID tag to include member number
+# if ensemble; waveMEMB var empty in deterministic
+membTAG='p'
+if [ "${waveMEMB}" == "00" ]; then membTAG='c'; fi
+export membTAG
+
 # Step label
 export sigMODE=${sigMODE:-post}
-

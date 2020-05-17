@@ -15,101 +15,100 @@
 # 2018-03-22 Guang Ping Lou: Making it works for either 1 hourly or 3 hourly output
 # 2018-05-22 Guang Ping Lou: Making it work for both GFS and FV3GFS 
 # 2018-05-30  Guang Ping Lou: Make sure all files are available.
-echo "History: February 2003 - First implementation of this utility script"
-#
 
-set -ax
+echo "$(date -u) begin ${.sh.file}"
 
-if [ "$F00FLAG" = "YES" ]
-then
-    f00flag=".true."
+set -xa
+if [[ ${STRICT:-NO} == "YES" ]]; then
+	# Turn on strict bash error checking
+	set -eu
+fi
+
+if [ "$F00FLAG" = "YES" ]; then
+	f00flag=".true."
 else
-    f00flag=".false."
+	f00flag=".false."
 fi
 
 export pgm=gfs_bufr
 #. prep_step
 
-if [ "$MAKEBUFR" = "YES" ]
-then
-    bufrflag=".true."
+if [ "$MAKEBUFR" = "YES" ]; then
+	bufrflag=".true."
 else
-    bufrflag=".false."
+	bufrflag=".false."
 fi
 
-if [ -s ${COMIN}/sfcsig/${RUNMEM}.${cycle}.sfcf000.nemsio ]; then
-    SFCF="sfc"
-    CLASS="class1fv3"
+if [ -s ${COMIN}/$COMPONENT/sfcsig/${RUNMEM}.${cycle}.sfcf000.nemsio ]; then
+	SFCF="sfc"
+	CLASS="class1fv3"
 else
-    SFCF="flx"
-    CLASS="class1"
+	SFCF="flx"
+	CLASS="class1"
 fi 
-cat << EOF > gfsparm
- &NAMMET
-  iromb=0,maxwv=$JCAP,levs=$LEVS,makebufr=$bufrflag,
-  dird="$COMOUT/bufr/$mem/bufr",
-  nstart=$FSTART,nend=$FEND,nint=$FINT,
-  nend1=$NEND1,nint1=$NINT1,nint3=$NINT3,
-  nsfc=80,f00=$f00flag,
-/
-EOF
+cat <<- EOF > gfsparm
+	&NAMMET
+		iromb=0,maxwv=$JCAP,levs=$LEVS,makebufr=$bufrflag,
+		dird="$COMOUT/$COMPONENT/bufr/$mem/bufr",
+		nstart=$FSTART,nend=$FEND,nint=$FINT,
+		nend1=$NEND1,nint1=$NINT1,nint3=$NINT3,
+		nsfc=80,f00=$f00flag,
+	/
+	EOF
 
-hh=$FSTART
-if [ $hh -lt 100 ]
-then
-    hh1=$(echo "${hh#"${hh%??}"}")
-    hh=$hh1
-fi
+hh=$(printf %02i $FSTART)
+# hh=$FSTART
+# if [ $hh -lt 100 ]; then
+#     hh1=$(echo "${hh#"${hh%??}"}")
+#     hh=$hh1
+# fi
 
-while  test $hh -le $FEND
-do  
-    if [ $hh -lt 100 ]
-    then
-        hh2=0$hh
-    else
-        hh2=$hh
-    fi
+SLEEP_LOOP_MAX=$(($SLEEP_TIME / $SLEEP_INT))
 
-    #---------------------------------------------------------
-    # Make sure all files are available:
-    ic=0
-    while [ $ic -lt 1000 ]
-    do
-        if [ ! -f $COMIN/sfcsig/${RUNMEM}.${cycle}.logf${hh2}.nemsio ]
-        then
-            sleep 10
-            ic=$(expr $ic + 1)
-        else
-          break
-        fi
+while [ $hh -le $FEND ]; do
+	hh3=$(printf %03i $hh)
 
-        if [ $ic -ge 360 ]
-        then
-            err_exit "FATAL ERROR: COULD NOT LOCATE logf${hh2} file AFTER 1 HOUR"
-            err=-6
-            exit $err
-        fi
-    done
-    #------------------------------------------------------------------
-    ln -sf $COMIN/sfcsig/${RUNMEM}.${cycle}.atmf${hh2}.nemsio sigf${hh} 
-    ln -sf $COMIN/sfcsig/${RUNMEM}.${cycle}.${SFCF}f${hh2}.nemsio flxf${hh}
+	#---------------------------------------------------------
+	# Make sure all files are available:
+	ic=0
+	while [ $ic -lt $SLEEP_LOOP_MAX ]; do
+		fcstchk=$COMIN/$COMPONENT/sfcsig/${RUNMEM}.${cycle}.logf${hh3}.nemsio
+		if [ ! -f $fcstchk ]; then
+			sleep $SLEEP_INT
+			ic=$(($ic + 1))
+		else
+			break
+		fi        
 
-    hh=$( expr $hh + $FINT )
-    if [ $hh -lt 10 ]
-    then
-        hh=0$hh
-    fi
-done  
+		if [ $ic -ge SLEEP_LOOP_MAX ]; then
+			echo <<- EOF
+				FATAL ERROR in ${.sh.file}: Unable to find forecast output $fcstchk at $(date -u) after waiting ${SLEEP_TIME}s!
+				EOF
+			export err=6
+			err_chk
+			exit $err
+		fi
+	done
+	#------------------------------------------------------------------
+	ln -sf $COMIN/$COMPONENT/sfcsig/${RUNMEM}.${cycle}.atmf${hh3}.nemsio sigf${hh}
+	ln -sf $COMIN/$COMPONENT/sfcsig/${RUNMEM}.${cycle}.${SFCF}f${hh3}.nemsio flxf${hh}
+
+	hh=$(printf %02i $((10#$hh + $FINT)))
+done
 
 #  define input BUFR table file.
+# prep_step
 ln -sf $PARMbufrsnd/bufr_gfs_${CLASS}.tbl fort.1
 ln -sf ${STNLIST:-$PARMbufrsnd/bufr_stalist.meteo.gfs} fort.8
 
-#startmsg
-##export APRUN=${APRUN_POSTSND:-'aprun -n 12 -N 3 -j 1'}
-##${APRUN:-mpirun.lsf} ${GBUFR:-$EXECbufrsnd/gfs_bufr} < gfsparm > out_gfs_bufr_$FEND
-##mpirun $EXECbufrsnd/gfs_bufr < gfsparm > out_gfs_bufr_$FEND
-${APRUN_POSTSND} $EXECbufrsnd/gfs_bufr < gfsparm > out_gfs_bufr_$FEND
-export err=$?;err_chk
+$APRUN $EXECbufrsnd/gfs_bufr < gfsparm > out_gfs_bufr_$FEND
+export err=$?
+
+if [[ $err != 0 ]]; then
+	echo "FATAL ERROR in ${.sh.file}: gfs_bufr failed!"
+	err_chk
+	exit $err
+fi
+
 exit $err
 

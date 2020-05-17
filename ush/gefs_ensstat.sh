@@ -1,29 +1,37 @@
 #!/bin/ksh
 ########################### EXENSSTAT ################################
-echo "------------------------------------------------"
-echo "Ensemble Postprocessing"
-echo "create mean and spread members"
-echo "------------------------------------------------"
-echo "History: MAY 1997 - First implementation of this new script."
-echo "AUTHOR: Yuejian Zhu (wd20yz)"
-echo "Modified by: Mary Jacobs"
-echo "Modified by: Yuejian Zhu ---- October 1997"
-echo "Modified by: Maxine Brown for Yuejian Zhu ---- November 1997"
-echo "Modified by: David Michaud to port to IBM SP ---- September 1999"
-echo "Modified by: Larry Sager to add spaghetti ensembles -- Feb 2000"
-echo "Modified by: Yuejian Zhu to add high resolution archive---- June 2000"
-echo "Modified by: Richard Wobus to add ensstat statistics---- September 2001"
-echo "Modified by: Yuejian Zhu to add more vars, 6-hr interval fcst output,"
-echo "             apply to T00Z, T06Z, T12Z and T18Z cycles,               "
-echo "             no more ensppf production                                "
-echo "             move pqpf to ensstat process                ---- May 2003"
-echo "Modified by: Richard Wobus to add more variables ---- MARCH 2004"
-echo "Modified by: Richard Wobus to add 192hr zsfc  ---- August 2004"
-echo "Modified by: Richard Wobus reorganize by hour  ---- March 2006"
-echo "Modified by: Richard Wobus separate avg/spr from ensstat job  ---- June 2011"
-echo "Modified by: Bo Cui and Dingchen Hou change to grib2 operations  ---- Nov. 2014"
+# ------------------------------------------------
+# Ensemble Postprocessing
+# create mean and spread members
+# ------------------------------------------------
+# History: MAY 1997 - First implementation of this new script.
+# AUTHOR: Yuejian Zhu (wd20yz)
+# Modified by: Mary Jacobs
+# Modified by: Yuejian Zhu ---- October 1997
+# Modified by: Maxine Brown for Yuejian Zhu ---- November 1997
+# Modified by: David Michaud to port to IBM SP ---- September 1999
+# Modified by: Larry Sager to add spaghetti ensembles -- Feb 2000
+# Modified by: Yuejian Zhu to add high resolution archive---- June 2000
+# Modified by: Richard Wobus to add ensstat statistics---- September 2001
+# Modified by: Yuejian Zhu to add more vars, 6-hr interval fcst output,
+#              apply to T00Z, T06Z, T12Z and T18Z cycles,               
+#              no more ensppf production                                
+#              move pqpf to ensstat process                ---- May 2003
+# Modified by: Richard Wobus to add more variables ---- MARCH 2004
+# Modified by: Richard Wobus to add 192hr zsfc  ---- August 2004
+# Modified by: Richard Wobus reorganize by hour  ---- March 2006
+# Modified by: Richard Wobus separate avg/spr from ensstat job  ---- June 2011
+# Modified by: Bo Cui and Dingchen Hou change to grib2 operations  ---- Nov. 2014
 
 ### need pass the values of CYC, YMD, DATA, COMIN and COMOUT
+
+echo "$(date -u) begin ${.sh.file}"
+
+set -xa
+if [[ ${STRICT:-NO} == "YES" ]]; then
+	# Turn on strict bash error checking
+	set -eu
+fi
 
 export subdata="${1}"                  # ${DATA}/${stream}
 export stream="${2}"                   # PRDGEN_STREAMS
@@ -48,7 +56,6 @@ fi
 
 set -x
 
-#cd $DATA
 cd $subdata
 
 #####################################
@@ -63,56 +70,18 @@ export iens_msg=1
 #####################################
 # Define Script/Exec Variables
 #####################################
-
-#export WGRIB=${WGRIB:-$EXECgrib/wgrib}
-#export GRBINDEX=${GRBINDEX:-$EXECgrib/grbindex}
-#export COPYGB=${COPYGB:-$EXECgrib/copygb}
-#export WGRIB2=${WGRIB2:-$EXECgrib/wgrib2}
-#export GRB2INDEX=${GRB2INDEX:-$EXECgrib/grb2index}
-#export COPYGB2=${COPYGB2:-$EXECgrib/copygb2}
-#export CNVGRIB=${CNVGRIB:-$EXECgrib/cnvgrib}
-
 export ENSPPF=$USHgefs/global_ensppf.sh
 export ENSSTAT=$EXECgefs/gefs_ensstat
 export ENSPQPF=$USHgefs/global_enspqpf.sh
 
-echo settings in $0 WGRIB2=$WGRIB2
+echo settings in ${.sh.file} WGRIB2=$WGRIB2
 parmlist=$PARMgefs/gefs_pgrb2a_fhh.parm
-
-#####################################
-# START TO DUMP DATA FOR $cycle CYCLE
-# START TO DUMP DATA FROM PGB FORECAST FILES
-#####################################
-
-# case $dataset in
-# #a) memberlist="gfs c00";;
-#  b) memberlist="c00";;
-#  a) memberlist="c00";;
-# esac
-
-# # Skip gfs for "dev" jobs
-# if [[ $envir = dev ]]; then
-# 	memberlist="c00"
-# fi
-
-memberlist="c00"
-
-(( imem = 0 ))
-while (( imem < npert )); do
-	(( imem = imem + 1 ))
-	if (( imem < 10 )); then
-		imem=0$imem
-	fi
-	memberlist="$memberlist p$imem"
-done # while (( imem < npert ))
-echo memberlist=$memberlist
-
 
 echo
 echo "$(date)  ==== START OF HOURLY PROCESSING OF PGB FORECAST FILES ====="
 echo
 
-SLEEP_LOOP_MAX=$(expr $SLEEP_TIME / $SLEEP_INT)
+SLEEP_LOOP_MAX=$(($SLEEP_TIME / $SLEEP_INT))
 
 ############################################################
 # Loop Through the Post Forecast Files
@@ -121,7 +90,6 @@ SLEEP_LOOP_MAX=$(expr $SLEEP_TIME / $SLEEP_INT)
 foundgfs=no
 
 for hour in $hours; do
-
 	export fhr=$(printf "%02.0f" $hour)        # Zero-pad to two places
 	export pfhr=$(printf "%03.0f" $hour)       # Zero-pad to three places
 	export ffhr="f${pfhr}"
@@ -137,7 +105,7 @@ for hour in $hours; do
 		previncr=no
 		for mem in $memberlist; do
 			(( nmem = nmem + 1 ))
-			testfile=$COMIN/$pgad/ge${mem}.${cycle}.$pgapre${ffhr}.idx
+			testfile=$COMIN/$COMPONENT/$pgad/ge${mem}.${cycle}.$pgapre${ffhr}.idx
 
 			if [[ -f $testfile ]]; then
 				echo "testfile=$testfile found"
@@ -167,8 +135,8 @@ for hour in $hours; do
 			echo "Process all $nfiles members"
 			break
 		else # [[ $foundall = yes ]]
-			if (( nfiles < nfilesprev )) then
-				ic=$(expr $ic + 1)
+			if (( nfiles < nfilesprev )); then
+				ic=$(($ic + 1))
 				sleep $SLEEP_INT
 			else
 				if [[ $previncr = yes ]]; then
@@ -181,6 +149,7 @@ for hour in $hours; do
 				break
 			fi # (( nfiles < nfilesprev ))
 		fi # [[ $foundall = yes ]]
+
 		###############################
 		# If we reach this point assume
 		# fcst job never reached restart
@@ -199,33 +168,41 @@ for hour in $hours; do
 			(( nfilesmin = nmem - 1 ))
 
 			if (( nfiles < nfilesmin )); then
-				echo "Search process FAILS nfilesprev=$nfilesprev foundgfs=$foundgfs foundall=$foundall previncr=$previncr ic=$ic fhr=$fhr"
-				echo "$nfiles IS FEWER THAN $nfilesmin MEMBERS"
+				echo <<- EOF
+					FATAL ERROR in ${.sh.file} ($stream): Insufficient members found for f${fhr} to calculate stats at $(date) after ${SLEEP_TIME}s!
+						Total members:         $nmem
+						Min members for stats: $nfilesmin
+						Members found:         $nfiles
+					EOF
 				export err=9
 				err_chk
 			else
+				if (( nfiles < nmem )); then
+					echo <<- EOF
+						WARNING in ${.sh.file} ($stream): Some members still missing for f{fhr} at $(date) after ${SLEEP_TIME}s
+							Will continue with $nfiles members, but products may be degraded.
+						EOF
+						msg="WARNING: {job}, stream ${stream} did not find all ensemble member for f{fhr}! Will continue with fewer members, but products may be degraded."
+					echo "$msg" | mail.py -c $MAIL_LIST
+				fi
 				(( nfilesprev = nfiles ))
-				echo "Search process ends nfilesprev=$nfilesprev foundgfs=$foundgfs foundall=$foundall previncr=$previncr ic=$ic fhr=$fhr"
-				echo "Continue after timeout with $nfiles members"
 				break
 			fi # (( nfiles < nfilesmin ))
 		fi # [ $ic -eq $SLEEP_LOOP_MAX ]
 	done # [ $ic -le $SLEEP_LOOP_MAX ]
 	# set -x
 
-	msg="Starting ensstat generation for fhr=$fhr"
-	postmsg "$jlogfile" "$msg"
+	echo "Starting ensstat generation for fhr=$fhr"
 
 	#
 	#  Make namelist file
 	#
-	echo " &namdim" >namin
-	#   echo " nmemdim=100", >>namin
-	#   echo " nenspostdim=100", >>namin
-	echo " lfdim=${lfm:-''}", >>namin
-	echo " /" >>namin
-	echo " &namens" >>namin
-
+	cat <<- EOF >namin
+		&namdim
+			lfdim=${lfm:-''}
+		/
+		&namens
+		EOF
 	ifile=0
 	for mem in $memberlist; do
 		(( ifile = ifile + 1 ))
@@ -238,30 +215,43 @@ for hour in $hours; do
 
 		if [[ $iskip = 0 ]]; then
 			if [[ -a cfipg$ifile.$jobgrid ]]; then rm cfipg$ifile.$jobgrid; fi
-			ln -s $COMIN/$pgad/ge${mem}.${cycle}.$pgapre${ffhr} cfipg$ifile.$jobgrid
+			ln -s $COMIN/$COMPONENT/$pgad/ge${mem}.${cycle}.$pgapre${ffhr} cfipg$ifile.$jobgrid
 		fi # [[ $iskip = 0 ]]
 
-		echo " cfipg($ifile)"=\"cfipg$ifile.$jobgrid\", >>namin
-		echo " iskip($ifile)"=$iskip, >>namin
+		echo "	cfipg($ifile)"=\"cfipg$ifile.$jobgrid\", >>namin
+		echo "	iskip($ifile)"=$iskip, >>namin
 
 	done # for mem in $memberlist
 
-	echo " nfiles=$ifile", >>namin
-	echo " nenspost=$nenspost", >>namin
+	cat <<- EOF >>namin
 
-	echo " cfopg1"=\"geavg.${cycle}.$pgapre${ffhr}\", >>namin
-	echo " cfopg2"=\"gespr.${cycle}.$pgapre${ffhr}\", >>namin
+			nfiles=$ifile
+			nenspost=$nenspost
 
-	echo " navg_min"=${navg_min} >>namin
+			cfopg1="geavg.${cycle}.$pgapre${ffhr}"
+			cfopg2="gespr.${cycle}.$pgapre${ffhr}"
 
-	echo ' /' >>namin
+			navg_min=${navg_min}
+		/
+		EOF
 	echo
 	cat namin
 	echo
 
 	echo "####################### $(date) $fhr $jobgrid ensstat begin" >$pgmout.$jobgrid.$pfhr
-	$ENSSTAT <namin | fold -w 2000 >$pgmout.$jobgrid.$pfhr
-	export err=$?; err_chk
+	$ENSSTAT <namin >$pgmout.$jobgrid.$pfhr.temp
+	export err=$?
+	if [[ $err != 0 ]]; then
+		echo <<- EOF
+			FATAL ERROR in ${.sh.file} ($stream): $ENSSTAT returned a non-zero error code for f${fhr}!
+				Namelist namin was used and had the following contents:
+					$(cat namin)
+			EOF
+		err_chk
+		exit $err
+	fi
+	cat $pgmout.$jobgrid.$pfhr.temp | fold -w 2000 >$pgmout.$jobgrid.$pfhr
+	rm $pgmout.$jobgrid.$pfhr.temp
 	echo "####################### $(date) $fhr $jobgrid ensstat end">>$pgmout.$jobgrid.$pfhr
 	for fhout in $statoutfhlist; do
 		if (( fhr == fhout )); then
@@ -277,7 +267,7 @@ for hour in $hours; do
 				echo "####################### $lskip Lines Skipped">>$pgmout
 				tail -$loend $pgmout.$jobgrid.$pfhr >>$pgmout
 			else
-				cat $pgmout$jobgrid.$fhr >> $pgmout
+				cat $$pgmout.$jobgrid.$pfhr >> $pgmout
 			fi # (( lskip > 100 ))
 		fi # (( fhr == fhout ))
 	done # for fhout in $statoutfhlist
@@ -301,29 +291,29 @@ for hour in $hours; do
 				$WGRIB2 -s ${run}.${cycle}.$pgapre${ffhr} >${run}.${cycle}.$pgapre${ffhr}.idx
 			fi
 			if [[ -s ${run}.${cycle}.$pgapre${ffhr} ]]; then
-				mv ${run}.${cycle}.$pgapre${ffhr} $COMOUT/$pgad
-				mv ${run}.${cycle}.$pgapre${ffhr}.idx $COMOUT/$pgad
+				mv ${run}.${cycle}.$pgapre${ffhr} $COMOUT/$COMPONENT/$pgad
+				mv ${run}.${cycle}.$pgapre${ffhr}.idx $COMOUT/$COMPONENT/$pgad
 			fi # [[ -s ${run}.${cycle}.$pgapre${ffhr} ]]
 			if [[ "$SENDDBN" = 'YES' ]]; then
 				if [[ ! -n "$lr" ]]; then
 					if [[ "$run" = "geavg" ]]; then
-						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_AVG $job $COMOUT/$pgad/${run}.${cycle}.$pgapre${ffhr}
+						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_AVG $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}
 						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_AVG_WIDX $job
-						$COMOUT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
+						$COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
 					fi # [[ "$run" = "geavg" ]]
 					if [[ "$run" = "gespr" ]]; then
-						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_SPR $job $COMOUT/$pgad/${run}.${cycle}.$pgapre${ffhr}
+						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_SPR $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}
 						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_SPR_WIDX $job 
-						$COMOUT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
+						$COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
 					fi # [[ "$run" = "gespr" ]]
 				fi # [[ ! -n "$lr" ]]
 				if [[  -n "$lr" ]]; then
 					if [[ "$run" = "geavg" ]]; then
-						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG $job $COMOUT/$pgad/${run}.${cycle}.$pgapre${ffhr}
-						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG_WIDX $job $COMOUT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
+						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}
+						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG_WIDX $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
 					fi # [[ "$run" = "geavg" ]]
 					if [[ "$run" = "gespr" ]]; then
-						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR $job ${COMOUT}/${cyc}/pgrb2a$lr/gespr.$COMOUT/$pgad/${run}.${cycle}.$pgapre${ffhr}
+						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR $job ${COMOUT}/${cyc}/pgrb2a$lr/gespr.$COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}
 					fi
 				fi # [[ -n "$lr" ]]
 			fi # [[] "$SENDDBN" = 'YES' ]]
@@ -334,17 +324,11 @@ for hour in $hours; do
 	
 done #hour in $hours
 
-echo ###############################$(date) cat $pgmout begin
-cat $pgmout
-echo ###############################$(date) cat $pgmout end
+if [[ -s $pgmout ]]; then
+	echo ###############################$(date) cat $pgmout begin
+	cat $pgmout
+	echo ###############################$(date) cat $pgmout end
+fi
+echo "$(date -u) end ${.sh.file}"
 
-echo
-echo "$(date)  ==== END  OF  HOURLY PROCESSING OF PGB FORECAST FILES ====="
-echo
-
-############################################################################
-###########  ADD DBN ALERTS FOR PPF AND PQPF FILES IF NEEDED  ##############
-############################################################################
-
-msg="HAS COMPLETED NORMALLY!"
-postmsg "$jlogfile" "$msg"
+exit 0

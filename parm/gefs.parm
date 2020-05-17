@@ -47,6 +47,12 @@ case $cyc in
 		;;
 esac
 
+memberlist="c00"
+for (( imem=1; imem<=$npert; imem++ )); do
+	memberlist="$memberlist p$(printf %02i $imem)"
+done
+export memberlist
+
 if [[ ${RUNMEM:-none} = "geaer" ]]; then cplchm=".true."; fi
 
 export cplchm=${cplchm:-.false.}
@@ -56,7 +62,9 @@ if [[ $cplchm = ".true." ]]; then
 	export fhmaxh=$fhmax_aer
 	export fhmax=$fhmax_aer
 
-	export cplwav=".false."
+	export AEROSOL_INIT_TYPE=${AEROSOL_INIT_TYPE:-"warm"}
+
+	export cplwav=".false." # Running both chem and waves is not yet supported
 fi
 
 export fhmax
@@ -64,10 +72,11 @@ if (( fhmax <= fhmaxh )); then export fhmaxh=$fhmax; fi
 if (( FHMAXHF > fhmaxh )); then export FHMAXHF=$fhmaxh; fi
 
 export restart_interval=${fhrestart:-24}
+export restart_interval_aer=${restart_interval_aer:-$restart_interval}
 export other_restart_time=${other_restart_time:-6}
 
 if [[ $cplchm = ".true." ]]; then
-	export restart_interval=${restart_interval_aer:-24}
+	export restart_interval=$restart_interval_aer
 	export other_restart_time=${other_restart_time:-$gefs_cych}
 fi
 
@@ -104,6 +113,8 @@ export NTRACLR=${NTRACLR:-3}
 export IDVC=${IDVC:-2}
 #export IDVM=32
 
+export imp_physics=${imp_physics:-"11"}
+
 ########################################
 # This section defines the output flags for ncep_post + prdgen
 ########################################
@@ -116,6 +127,7 @@ export gfsfhoroglist=252
 
 # The following options are fore re-forecast
 export save_pgrb2_p5=${save_pgrb2_p5:-NO} 
-export save_pgrb2_p25=${save_pgrb2_p25:-NO} 
+export save_pgrb2_p25=${save_pgrb2_p25:-NO}
 
-echo $(date) $0 end
+# List of contacts to mail when there is mail sent by mail.py for product degredation
+export MAIL_LIST="Dingchen.Hou@noaa.gov,Walter.Kolczynski@noaa.gov,Xianwu.Xue@noaa.gov"
