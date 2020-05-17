@@ -19,6 +19,8 @@ echo "fhsave=$fhsave"
 echo "cycsavelistsfcsig=$cycsavelistsfcsig"
 echo "cycsavelistmaster=$cycsavelistmaster"
 
+FHINC=${FHINC:-0}
+
 # Test GRIB files before cleaning up
 echo "$(date) GRIB file test before cleanup begin"
 ((nmissing = 0))
@@ -29,6 +31,7 @@ for member in $memberlist; do
 	####################################
 	SHOUR=0
 
+	# Analysis files
 	# filelist="\
 	# 	$COMIN/$COMPONENT/master/ge${member}.$cycle.master.grb2anl \
 	# 	$COMIN/$COMPONENT/master/ge${member}.$cycle.master.grb2ianl \
@@ -148,6 +151,7 @@ else # (( nmissing > 0 ))
 		fi
 	done # cycsave in $cycsavelistmaster
 	echo "cyc=$cyc savecycle=$savecycle"
+
 	if [[ $savecycle == false ]]; then
 		if [[ $SENDCOM == "YES" ]]; then
 			rm -rf $COMOUT/$COMPONENT/master
