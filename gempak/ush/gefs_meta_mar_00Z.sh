@@ -12,28 +12,15 @@
 #
 # Set Up Local Variables
 #
-set -x
-export PS4='mar_00Z:$SECONDS + '
+echo "$(date -u) begin $(basename $BASH_SOURCE)"
 
-########################################################
-## Get member list
-########################################################
-export npert=${npert:-30}
-memberlist=""
-(( imem = 0 ))
-while (( imem < npert+1 )); do
-    if (( imem == 0 )); then
-        smem=c$(printf %02i $imem)
-    else
-        smem=p$(printf %02i $imem)
-    fi
-    memberlist="$memberlist $smem"
-    (( imem = imem + 1 ))
-done # while (( imem < npert ))
+set -xa
+if [[ ${STRICT:-NO} == "YES" ]]; then
+	# Turn on strict bash error checking
+	set -eu
+fi
+
 echo memberlist=$memberlist
-########################################################
-## Get member list
-########################################################
 
 sGrid=${sGrid} #:-"_0p50"}
 
@@ -43,11 +30,11 @@ cd $DATA/mar_00Z
 PDY2=$(echo $PDY | cut -c3-)
 
 if [ ${cyc} != "00" ] ; then
-    echo " "
-    echo "EXITING GEMPAK SCRIPT BECAUSE THIS SCRIPT DOES NOT EXECUTE"
-    echo "AT ANY OTHER TIME EXCEPT 00Z."
-    echo " "
-    exit
+	echo " "
+	echo "EXITING GEMPAK SCRIPT BECAUSE THIS SCRIPT DOES NOT EXECUTE"
+	echo "AT ANY OTHER TIME EXCEPT 00Z."
+	echo " "
+	exit
 fi
 
 # DEFINE YESTERDAY
@@ -65,57 +52,51 @@ ukmetdate="${yesterday}"
 fcsthrs="000 012 024 036 048 060 072 084 096 108 120"
 levels="528 534 540 546 552 564 576"
 
-for metaarea in pac atl
-do
-    if [ ${metaarea} == "pac" ] ; then
-        garea="MPAC"
-        proj=" "
+for metaarea in pac atl; do
+	if [ ${metaarea} == "pac" ] ; then
+		garea="MPAC"
+		proj=" "
 
-    else
-        garea="15;-100;70;5"
-        proj="mer"
-    fi
-    metatype="meta_mar_${metaarea}"
-    metaname="gefs${sGrid}_${PDY}_${cyc}_${metatype}"
-    device="nc | ${metaname}"
-    for level in ${levels}
-    do
-        for fcsthr in ${fcsthrs}
-        do
-            fcsthrsgfs=$(expr ${fcsthr} + 12)
-            #typeset -Z3 fcsthrsgfs
+	else
+		garea="15;-100;70;5"
+		proj="mer"
+	fi
+	metatype="meta_mar_${metaarea}"
+	metaname="gefs${sGrid}_${PDY}_${cyc}_${metatype}"
+	device="nc | ${metaname}"
+	for level in ${levels}; do
+		for fcsthr in ${fcsthrs}; do
+			fcsthrsgfs=$((10#${fcsthr} + 12))
+			fcsthrsgfs=$(printf %03i $fcsthrsgfs)
 
-            fcsthrsgfs=$(printf %03i $fcsthrsgfs)
+			grids=${memberlist}
+			for fn in $(echo $grids); do
+				rm -rf $fn
+				if [ -r $COMIN/$COMPONENT/gempak/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
+					ln -s $COMIN/$COMPONENT/gempak/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} $fn
+				fi
+			done
 
-            grids=${memberlist}
-            for fn in $(echo $grids)
-            do
-                rm -rf $fn
-                if [ -r $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
-                    ln -s $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} $fn
-                fi
-            done
+			fn=gfs
+			rm -rf ${fn}
+			if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
+				ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
+			fi
 
-            fn=gfs
-            rm -rf ${fn}
-            if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
-                ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
-            fi
+			fn=ecmwf
+			rm -rf ${fn}
+			if [ -r $COMINecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ]; then
+				ln -s $COMINecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ${fn}
+			fi
 
-            fn=ecmwf
-            rm -rf ${fn}
-            if [ -r $COMINecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ]; then
-                ln -s $COMINecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ${fn}
-            fi
-
-            fn=ukmet
-            rm -rf ${fn}
-            if [ -r ${COMINukmet}.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ]; then
-                ln -s ${COMINukmet}.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ${fn}
-            fi
+			fn=ukmet
+			rm -rf ${fn}
+			if [ -r ${COMINukmet}.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ]; then
+				ln -s ${COMINukmet}.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ${fn}
+			fi
 
 
-            export pgm=gdplot2_nc;. prep_step; startmsg
+			export pgm=gdplot2_nc;. prep_step; startmsg
 
 			cat > cmdfilemar  <<- EOF
 				DEVICE  = ${device}
@@ -145,35 +126,34 @@ do
 
 				EOF
 
-            WrottenZERO=0
-            grids=${memberlist}
-            line_count=2
-            color_number=9
-            for gridl in ${grids}
-            do
-                # ----- gridl -----
-                gdfn=${gridl}
+			WrottenZERO=0
+			grids=${memberlist}
+			line_count=2
+			color_number=9
+			for gridl in ${grids}; do
+				# ----- gridl -----
+				gdfn=${gridl}
 
-                if [ ${gdfn} == c00 ]; then
-                    color_number=2
-                    sline_count="-1"
-                    wLine=3
-                    sCNTL="(CNTL)"
+				if [ ${gdfn} == c00 ]; then
+					color_number=2
+					sline_count="-1"
+					wLine=3
+					sCNTL="(CNTL)"
 
-                else
+				else
 
-                    color_number=$(echo $gdfn | cut -c2-)
-                    line_count=$color_number
+					color_number=$(echo $gdfn | cut -c2-)
+					line_count=$color_number
 
-                    sline_count="+${line_count}"
+					sline_count="+${line_count}"
 
-                    wLine=1
-                    sCNTL=""
+					wLine=1
+					sCNTL=""
 
-                    #let line_count=$line_count+1
-                fi
+					#let line_count=$line_count+1
+				fi
 
-                if [ -e ${gdfn} ]; then
+				if [ -e ${gdfn} ]; then
 					cat >> cmdfilemar  <<- EOF
 						GDFILE  = ${gdfn}
 						LINE    = ${color_number}/1/${wLine}/0
@@ -183,23 +163,23 @@ do
 
 						EOF
 
-                    if [ $WrottenZERO -eq 0 ]; then
+					if [ $WrottenZERO -eq 0 ]; then
 						cat >> cmdfilemar  <<- EOF
 							MAP     = 0
 							LATLON  = 0
 							CLEAR   = no
 
 							EOF
-                    fi
-                    WrottenZERO=1
-                fi
+					fi
+					WrottenZERO=1
+				fi
 
 
-            done
+			done
 
-            # ----- gfs -----
-            gdfn=gfs
-            if [ -e ${gdfn} ]; then
+			# ----- gfs -----
+			gdfn=gfs
+			if [ -e ${gdfn} ]; then
 				cat >> cmdfilemar  <<- EOF
 					GDFILE  = ${gdfn}
 					LINE    = 22/2/3/0
@@ -208,20 +188,20 @@ do
 					run
 
 					EOF
-                if [ $WrottenZERO -eq 0 ]; then
+				if [ $WrottenZERO -eq 0 ]; then
 					cat >> cmdfilemar  <<- EOF
 						MAP     = 0
 						LATLON  = 0
 						CLEAR   = no
 
 						EOF
-                fi
-                WrottenZERO=1
-            fi
+				fi
+				WrottenZERO=1
+			fi
 
-            # ----- ecmwf -----
-            gdfn=ecmwf
-            if [ -e ${gdfn} ]; then
+			# ----- ecmwf -----
+			gdfn=ecmwf
+			if [ -e ${gdfn} ]; then
 				cat >> cmdfilemar  <<- EOF
 					GDFILE  = ${gdfn}
 					LINE    = 6/2/3/0
@@ -230,20 +210,20 @@ do
 					run
 
 					EOF
-                if [ $WrottenZERO -eq 0 ]; then
+				if [ $WrottenZERO -eq 0 ]; then
 					cat >> cmdfilemar  <<- EOF
 				MAP     = 0
 				LATLON  = 0
 				CLEAR   = no
 
 				EOF
-                fi
-                WrottenZERO=1
-            fi
+				fi
+				WrottenZERO=1
+			fi
 
-            # ----- ukmet -----
-            gdfn=ukmet
-            if [ -e ${gdfn} ]; then
+			# ----- ukmet -----
+			gdfn=ukmet
+			if [ -e ${gdfn} ]; then
 				cat >> cmdfilemar  <<- EOF
 					GDFILE  = ${gdfn}
 					LINE    = 7/2/3/0
@@ -252,58 +232,57 @@ do
 					run
 
 					EOF
-            fi
+			fi
 
-            cat cmdfilemar
-            gdplot2_nc < cmdfilemar
+			cat cmdfilemar
+			gdplot2_nc < cmdfilemar
+			err=$?
 
-            #echo "before first err chk"
-            export err=$?;err_chk
-            echo "after first err chk"
-        done
-    done
+			if [[ $err != 0 ]]; then
+				echo "FATAL ERROR in $(basename $BASH_SOURCE): gdplot2_nc failed using cmdfilemar!"
+				err_chk
+				exit $err
+			fi
+		done
+	done
 
-    # GENERATE THE PMSL LOW CENTERS
-    num=" "
-    metashname="LOW CNTRS"
-    for fcsthr in ${fcsthrs}
-    do
-        fcsthrsgfs=$(expr ${fcsthr} + 12)
-        #typeset -Z3 fcsthrsgfs
-        fcsthrsgfs=$(printf %03i $fcsthrsgfs)
+	# GENERATE THE PMSL LOW CENTERS
+	num=" "
+	metashname="LOW CNTRS"
+	for fcsthr in ${fcsthrs}; do
+		fcsthrsgfs=$((10#${fcsthr} + 12))
+		fcsthrsgfs=$(printf %03i $fcsthrsgfs)
 
-        fcsthrsgfs2=$(expr ${fcsthr} - 6)
-        #typeset -Z3 fcsthrsgfs2
-        fcsthrsgfs2=$(printf %03i $fcsthrsgfs2)
+		fcsthrsgfs2=$((10#${fcsthr} - 6))
+		fcsthrsgfs2=$(printf %03i $fcsthrsgfs2)
 
-        grids=${memberlist}
-        for fn in $(echo $grids)
-        do
-            rm -rf $fn
-            if [ -r $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
-                ln -s $COMIN/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} $fn
-            fi
-        done
+		grids=${memberlist}
+		for fn in $(echo $grids); do
+			rm -rf $fn
+			if [ -r $COMIN/$COMPONENT/gempak/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
+				ln -s $COMIN/$COMPONENT/gempak/ge${fn}${sGrid}_${PDY}${cyc}f${fcsthr} $fn
+			fi
+		done
 
-        fn=gfs
-        rm -rf ${fn}
-        if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
-            ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
-        fi
+		fn=gfs
+		rm -rf ${fn}
+		if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
+			ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/gempak/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
+		fi
 
-        fn=ecmwf
-        rm -rf ${fn}
-        if [ -r $COMINecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ]; then
-            ln -s $COMINecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ${fn}
-        fi
+		fn=ecmwf
+		rm -rf ${fn}
+		if [ -r $COMINecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ]; then
+			ln -s $COMINecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ${fn}
+		fi
 
-        fn=ukmet
-        rm -rf ${fn}
-        if [ -r $COMINukmet.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ]; then
-            ln -s $COMINukmet.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ${fn}
-        fi
+		fn=ukmet
+		rm -rf ${fn}
+		if [ -r $COMINukmet.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ]; then
+			ln -s $COMINukmet.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ${fn}
+		fi
 
-        export pgm=gdplot2_nc;. prep_step; startmsg
+		export pgm=gdplot2_nc;. prep_step; startmsg
 
 		cat > cmdfilemar_low  <<- EOF
 			DEVICE  = ${device}
@@ -334,31 +313,29 @@ do
 
 			EOF
 
-        WrottenZERO=0
-        grids=${memberlist}
-        line_count=2
-        color_number=9
-        for gridl in ${grids}
-        do
-            # ----- gridl -----
-            gdfn=${gridl}
+		WrottenZERO=0
+		grids=${memberlist}
+		line_count=2
+		color_number=9
+		for gridl in ${grids}; do
+			# ----- gridl -----
+			gdfn=${gridl}
 
-            if [ ${gdfn} == c00 ]; then
-                color_number=2
-                sline_count="-1"
-                sCNTL="(CNTL)"
+			if [ ${gdfn} == c00 ]; then
+				color_number=2
+				sline_count="-1"
+				sCNTL="(CNTL)"
+			else
+				color_number=$(echo $gdfn | cut -c2-)
+				line_count=$color_number
+			   
+				sline_count="+${line_count}"
+				sCNTL=""
 
-            else
-                color_number=$(echo $gdfn | cut -c2-)
-                line_count=$color_number
-               
-                sline_count="+${line_count}"
-                sCNTL=""
+				#let line_count=$line_count+1
+			fi
 
-                #let line_count=$line_count+1
-            fi
-
-            if [ -e ${gdfn} ]; then
+			if [ -e ${gdfn} ]; then
 				cat >> cmdfilemar_low  <<- EOF
 					GDFILE  = ${gdfn}
 					HILO    = ${color_number}/L${num}/900-1016/5/50/y
@@ -367,22 +344,23 @@ do
 					run
 
 					EOF
-                if [ $WrottenZERO -eq 0 ]; then
+
+				if [ $WrottenZERO -eq 0 ]; then
 					cat >> cmdfilemar_low  <<- EOF
 						MAP     = 0
 						LATLON  = 0
 						CLEAR   = no
 
 						EOF
-                fi
-                WrottenZERO=1
-            fi
+				fi
+				WrottenZERO=1
+			fi
 
-        done
+		done
 
-        # ----- gfs -----
-        gdfn=gfs
-        if [ -e ${gdfn} ]; then
+		# ----- gfs -----
+		gdfn=gfs
+		if [ -e ${gdfn} ]; then
 			cat >> cmdfilemar_low  <<- EOF
 				GDFILE  = ${gdfn}
 				HILO    = 3/L${num}/900-1016/5/50/y
@@ -391,20 +369,22 @@ do
 				run
 
 				EOF
-            if [ $WrottenZERO -eq 0 ]; then
+
+			if [ $WrottenZERO -eq 0 ]; then
 				cat >> cmdfilemar_low  <<- EOF
 					MAP     = 0
 					LATLON  = 0
 					CLEAR   = no
 
 					EOF
-            fi
-            WrottenZERO=1
-        fi
 
-        # ----- ecmwf -----
-        gdfn=ecmwf
-        if [ -e ${gdfn} ]; then
+			fi
+			WrottenZERO=1
+		fi
+
+		# ----- ecmwf -----
+		gdfn=ecmwf
+		if [ -e ${gdfn} ]; then
 			cat >> cmdfilemar_low  <<- EOF
 				GDFILE  = ${gdfn}
 				HILO    = 31/L${num}/900-1016/5/50/y
@@ -413,20 +393,21 @@ do
 				run
 
 				EOF
-            if [ $WrottenZERO -eq 0 ]; then
+
+			if [ $WrottenZERO -eq 0 ]; then
 				cat >> cmdfilemar_low  <<- EOF
 					MAP     = 0
 					LATLON  = 0
 					CLEAR   = no
 
 					EOF
-            fi
-            WrottenZERO=1
-        fi
+			fi
+			WrottenZERO=1
+		fi
 
-        # ----- ukmet -----
-        gdfn=ukmet
-        if [ -e ${gdfn} ]; then
+		# ----- ukmet -----
+		gdfn=ukmet
+		if [ -e ${gdfn} ]; then
 			cat >> cmdfilemar_low  <<- EOF
 				GDFILE  = ${gdfn}
 				HILO    = 26/L${num}/900-1016/5/50/y
@@ -435,32 +416,43 @@ do
 				run
 
 				EOF
-        fi
 
-        cat cmdfilemar_low
-        gdplot2_nc < cmdfilemar_low
+		fi
 
-        echo "before 2nd err chk"
-        export err=$?;err_chk
-        echo "after 2nd err chk"
-    done
+		cat cmdfilemar_low
+		gdplot2_nc < cmdfilemar_low
+		err=$?
 
-    #####################################################
-    # GEMPAK DOES NOT ALWAYS HAVE A NON ZERO RETURN CODE
-    # WHEN IT CAN NOT PRODUCE THE DESIRED GRID.  CHECK
-    # FOR THIS CASE HERE.
-    #####################################################
+		if [[ $err != 0 ]]; then
+			echo "FATAL ERROR in $(basename $BASH_SOURCE): gdplot2_nc failed using cmdfilemar_low!"
+			err_chk
+			exit $err
+		fi
+	done
 
-    ls -l ${metaname}
-    export err=$?;export pgm="GEMPAK CHECK FILE";err_chk
+	#####################################################
+	# GEMPAK DOES NOT ALWAYS HAVE A NON ZERO RETURN CODE
+	# WHEN IT CAN NOT PRODUCE THE DESIRED GRID.  CHECK
+	# FOR THIS CASE HERE.
+	#####################################################
 
-    if [ $SENDCOM = "YES" ] ; then
-        mv ${metaname} ${COMOUT}/
-        if [ $SENDDBN = "YES" ] ; then
-            $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job ${COMOUT}/${metaname}
-        fi
-    fi
+	ls -l ${metaname}
+	err=$?
+
+	if [[ $err != 0 ]]; then
+		echo "FATAL ERROR in $(basename $BASH_SOURCE): metafile ${metaname} not created!"
+		err_chk
+		exit $err
+	fi
+
+	if [ $SENDCOM = "YES" ] ; then
+		mv ${metaname} ${COMOUT}/$COMPONENT/gempak/meta/
+		if [ $SENDDBN = "YES" ] ; then
+			$DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job ${COMOUT}/$COMPONENT/gempak/meta/${metaname}
+		fi
+	fi
 done
 
-exit
+echo "$(date -u) end $(basename $BASH_SOURCE)"
 
+exit 0

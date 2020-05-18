@@ -6,70 +6,74 @@
 #   1) 2004-09-10       Steve Gilbert       First Implementation
 ################################################################
 
-set -x
+echo "$(date -u) begin ${.sh.file}"
 
-  #  Create "collectives" consisting of groupings of the soundings
-  #  into files designated by geographical region.   Each input
-  #  file gfs_collective*.list (1-9) contains the list of stations to
-  #  put in a particular collective output file. 
+set -xa
+if [[ ${STRICT:-NO} == "YES" ]]; then
+	# Turn on strict bash error checking
+	set -eu
+fi
+
+#  Create "collectives" consisting of groupings of the soundings
+#  into files designated by geographical region.   Each input
+#  file gfs_collective*.list (1-9) contains the list of stations to
+#  put in a particular collective output file. 
 export m=$1
 mkdir $DATA/$m
 cd $DATA/$m
-  cp $FIXbufrsnd/gfs_collective${m}.list $DATA/$m/. 
-  CCCC=KWBC
-    file_list=gfs_collective${m}.list
+cp $FIXbufrsnd/gfs_collective${m}.list $DATA/$m/. 
+CCCC=KWBC
+file_list=gfs_collective${m}.list
 
-    if [ $m -le 2 ]
-    then 
-      WMOHEAD=JUSA4$m
-    elif [ $m -le 6 ]
-    then 
-      WMOHEAD=JUSB4$m
-    else 
-      WMOHEAD=JUSX4$m
-    fi
+if [ $m -le 2 ]; then 
+	WMOHEAD=JUSA4$m
+elif [ $m -le 6 ]; then 
+	WMOHEAD=JUSB4$m
+else
+	WMOHEAD=JUSX4$m
+fi
 
-    for stn in $(cat $file_list)
-    do
-       cp ${COMOUT}/bufr/$mem/bufr.$stn.$PDY$cyc ${DATA}/${m}/bufrin
-       export pgm=tocsbufr
-       #. prep_step
-       export FORT11=$DATA/${m}/bufrin
-       export FORT51=./bufrout
-       # JY - Turn off the startmsg to reduce the update on jlogfile in this loop
-       # startmsg
-      $EXECbufrsnd/tocsbufr << EOF
- &INPUT
-  BULHED="$WMOHEAD",KWBX="$CCCC",
-  NCEP2STD=.TRUE.,
-  SEPARATE=.TRUE.,
-  MAXFILESIZE=600000
- /
-EOF
-       # JY export err=$?; err_chk
-       export err=$?; #err_chk
-       if [ $err -ne 0 ]
-       then
-          echo "ERROR in $pgm"
-          err_chk
-       fi
+for stn in $(cat $file_list); do
+	 cp ${COMIN}/$COMPONENT/bufr/$mem/bufr.$stn.$PDY$cyc ${DATA}/${m}/bufrin
+	 export pgm=tocsbufr
+	 #. prep_step
+	 export FORT11=$DATA/${m}/bufrin
+	 export FORT51=./bufrout
 
-       cat $DATA/${m}/bufrout >> $DATA/${m}/${RUNMEM}_collective$m.fil
-       rm $DATA/${m}/bufrin
-       rm $DATA/${m}/bufrout
-    done
+	$EXECbufrsnd/tocsbufr <<- EOF
+		&INPUT
+			BULHED="$WMOHEAD",KWBX="$CCCC",
+			NCEP2STD=.TRUE.,
+			SEPARATE=.TRUE.,
+			MAXFILESIZE=600000
+		/
+		EOF
 
-    if [ $SENDCOM = 'YES' ]
-    then 
-      if [ $SENDDBN = 'YES' ] ; then
-         cp $DATA/${m}/${RUNMEM}_collective$m.fil $pcom/${RUNMEM}_collective$m.postsnd_$cyc
-         $DBNROOT/bin/dbn_alert NTC_LOW BUFR $job $pcom/${RUNMEM}_collective$m.postsnd_$cyc
-      fi
-      cp $DATA/${m}/${RUNMEM}_collective$m.fil ${COMOUT}/bufr/$mem/.
-    fi
+	 export err=$?
+	 if [ $err -ne 0 ]; then
+			echo <<- EOF
+				FATAL ERROR in ${.sh.file}: $EXECbufrsnd/tocsbufr failed using the following namelist:
+					&INPUT
+						BULHED="$WMOHEAD",KWBX="$CCCC",
+						NCEP2STD=.TRUE.,
+						SEPARATE=.TRUE.,
+						MAXFILESIZE=600000
+					/
+				EOF
 
-##    let "m=m+1"
+			err_chk
+			exit $err
+	 fi
 
-##  done
+	 cat $DATA/${m}/bufrout >> $DATA/${m}/${RUNMEM}_collective$m.fil
+	 rm $DATA/${m}/bufrin
+	 rm $DATA/${m}/bufrout
+done
 
-#exit
+if [ $SENDCOM = 'YES' ]; then 
+	if [ $SENDDBN_NTC = 'YES' ] ; then
+		 cp $DATA/${m}/${RUNMEM}_collective$m.fil $pcom/${RUNMEM}_collective$m.postsnd_$cyc
+		 $DBNROOT/bin/dbn_alert NTC_LOW BUFR $job $pcom/${RUNMEM}_collective$m.postsnd_$cyc
+	fi
+	cp $DATA/${m}/${RUNMEM}_collective$m.fil ${COMOUT}/$COMPONENT/bufr/$mem/.
+fi

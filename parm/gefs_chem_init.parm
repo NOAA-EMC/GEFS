@@ -1,0 +1,14 @@
+#!/bin/ksh
+
+export HOMEgfs=${HOMEgfs:-${HOMEgefs}}
+export EXECgfs=$HOMEgfs/exec
+export FIXgfs=$HOMEgfs/fix
+export USHgfs=$HOMEgfs/ush
+
+export FORECAST_SEGMENT="hr"
+
+export CDATE=$PDY$cyc
+
+export REGRIDEXEC=${REGRIDEXEC:-$EXECgfs/chgres_recenter.exe}
+export CALCINCEXEC=${CALCINCEXEC:-$EXECgfs/calc_increment_ens_gsdchem.x}
+

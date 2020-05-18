@@ -33,6 +33,8 @@ elif [[ $RocotoGen == 1 ]]; then
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
     export archsyndir=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/TCvitalData/syndat
 
+	export STRICT="YES"
+
     export HOMEgefs=$SOURCEDIR
 
     export COMROOT=$WORKDIR/com
@@ -60,5 +62,14 @@ elif [[ $RocotoGen == 1 ]]; then
     export navg_min=1 
     #export fhmax="840"
     #export fhrestart="48"
+    ### For keep and arhive data
+    #export KEEP_DIR="/gpfs/dell6/emc/modeling/noscrub/emc.enspara/Xianwu.Xue/GEFS/GEFSv12_Test02"
+    #export HPSS_DIR="/NCEPDEV/emc-ensemble/2year/emc.enspara/Xianwu.Xue/GEFS_DELL35/GEFSv12_Test02"
+    export DIRS_TO_KEEP="bufr,ensstat,pgrb2sp25,pgrb2ap5,pgrb22p5,pgrb2p25,pgrb2bp5,cfssst,gempak,init"
+    export DIRS_TO_ARCHIVE="bufr,ensstat,pgrb2sp25,pgrb2ap5,pgrb22p5,pgrb2p25,pgrb2bp5,cfssst,gempak,init"
+    export DIRS_TO_KEEP_WAVE="gridded, station, restart, gempak"
+    export DIRS_TO_ARCHIVE_WAVE="gridded, station, restart, gempak"
+    export DIRS_TO_KEEP_CHEM="pgrb2ap50_aer,pgrb2ap25_aer,init,restart"
+    export DIRS_TO_ARCHIVE_CHEM="pgrb2ap50_aer,pgrb2ap25_aer,init,restart"
 
 fi

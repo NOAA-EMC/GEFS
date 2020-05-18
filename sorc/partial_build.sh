@@ -2,30 +2,8 @@
 # define the array of the name of build program
 #
  declare -a Build_prg=("Build_gefs_anom2_fcst" "Build_gefs_nstgen"  \
-                       "Build_gefs_vortex_separate" "Build_gefs_vortex_combine" \
-                       "Build_global_sigzvd" "Build_global_ensadd" \
-                       "Build_global_enspqpf" "Build_gefs_ensstat" \
-                       "Build_global_ensppf" "Build_global_enscvprcp" \
-                       "Build_global_enspvrfy" "Build_global_enssrbias" \
-                       "Build_global_enscqpf" "Build_global_enscvt24h" \
-                       "Build_global_ensrfmat" "Build_gettrk" \
-                       "Build_overenstr_grib" "Build_getnsttf" \
-                       "Build_wave_stat" "Build_wave_stat" \
-                       "Build_libs" "Build_fv3gfs" \
-                       "Build_gsi" "Build_ncep_post" \
-                       "Build_gfs_wafs" \
-                       "Build_gdas" "Build_nems_util" \
-                       "Build_chgres" "Build_cycle" \
-                       "Build_sfcanl_nsttfchg" \
-                       "Build_orog" "Build_tropcy" \
-                       "Build_nctools" "Build_enkf_chgres_recenter" \
-                       "Build_gfs_fbwndgfs" "Build_gfs_overpdtg2" \
-                       "Build_gfs_wintemv" \
-                       "Build_gfs_bufrsnd" "Build_emcsfc" \
-                       "Build_fv3nc2nemsio" "Build_regrid_nemsio" \
-                       "Build_gfs_util" \
-                       "Build_prod_util" \
-                       "Build_grib_util")
+                       "Build_global_ensadd" "Build_gefs_ensstat" \
+                       "Build_global_ensppf" "Build_wave_stat")
 
 #
 # function parse_cfg: read config file and retrieve the values

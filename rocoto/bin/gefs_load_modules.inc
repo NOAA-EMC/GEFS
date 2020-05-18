@@ -78,7 +78,7 @@ elif [[ "$WHERE_AM_I" == wcoss_dell_p3 ]] ; then
     module load NCO/4.7.0
     module load HDF5-serial/1.10.1
     module load impi/18.0.1
-    module load CFP/2.0.1
+    module load CFP/2.0.2
     module load python/3.6.3
     export USE_CFP=YES
     export PATH=$PATH:.

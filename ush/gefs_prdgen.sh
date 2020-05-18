@@ -1,38 +1,33 @@
 #!/bin/ksh
 #####################################################################
-echo "-----------------------------------------------------"
-echo " Script: gefs_prdgen.sh" 
-echo " "
-echo " Purpose - Perform interpolation and GRIB2 conversion"
-echo "           on master GRIB files"
-echo "           for one member and one time step."
-echo "           Move posted files to /com"
-echo "           Alert posted files to DBNet"
-echo " "
-echo " History - "
-echo "    Wobus   - 8/28/07 - New "
-echo "    Wobus   - 7/30/10 - move 180-192hr products to pgrbd"
-echo "    Hou     - 7/31/14 - adopted for grib2 based processing "
-echo "    Meng    - 11/17/16 - Use neighbor interpolation for ICSEV "
-echo "    Meng    - 03/09/17 - Remove grib1, PGRBC and PGRBD generation, "
-echo "                         and use the same ush script to generate all grids"
-echo "    B. Fu   - XX/XX/17 - Replace COPYGB2 with WGRIB2"
-echo "-----------------------------------------------------"
+# -----------------------------------------------------
+#  Script: gefs_prdgen.sh
+#  
+#  Purpose - Perform interpolation and GRIB2 conversion
+#            on master GRIB files
+#            for one member and one time step.
+#            Move posted files to /com
+#            Alert posted files to DBNet
+#  
+#  History - 
+#     Wobus   - 8/28/07 - New 
+#     Wobus   - 7/30/10 - move 180-192hr products to pgrbd
+#     Hou     - 7/31/14 - adopted for grib2 based processing 
+#     Meng    - 11/17/16 - Use neighbor interpolation for ICSEV 
+#     Meng    - 03/09/17 - Remove grib1, PGRBC and PGRBD generation, 
+#                          and use the same ush script to generate all grids
+#     B. Fu   - XX/XX/17 - Replace COPYGB2 with WGRIB2
+# -----------------------------------------------------
 #####################################################################
+
+echo "$(date -u) begin ${.sh.file}"
+
 set -xa
 
-# These are already set in gefs_prdgen.parm
-# export option1=${option1:-' -set_grib_type same -new_grid_winds earth '}
-# export option21=${option21:-' -new_grid_interpolation bilinear  -if '}
-# export option22=${option22:-":(LAND|CSNOW|CRAIN|CFRZR|CICEP|ICSEV):"}
-# export option23=${option23:-' -new_grid_interpolation neighbor -fi '}
 export ENSADD=${ENSADD:-$USHgefs/global_ensadd.sh}
 
-msg="Starting post for member=$RUNMEM ffhr=$ffhr"
-postmsg "$jlogfile" "$msg"
-
 cat <<-EOF
-	Settings for $0:
+	Settings for ${.sh.file}:
 	  RUNMEM: $RUNMEM
 	  DATA: $DATA
 
@@ -65,25 +60,26 @@ else
 	hsuffix="hh"
 fi
 
+if [ "$jobgrid" = '2p5' ]; then
+	SENDDBN=NO
+fi
+
 ####################################
 # Step I: Create pgrb2 files 
 ####################################
-if [[ -s $DATA/pgrb2$ffhr ]] && \ 
-   [[ $overwrite = no ]]; then
-	echo "$(date) $jobgrid  pgrb2 processing skipped for $RUNMEM $ffhr"
+if [[ -s $DATA/pgrb2$ffhr && $overwrite = no ]]; then
+	echo "$jobgrid pgrb2 processing skipped for $RUNMEM $ffhr"
 else
 	$WGRIB2 $mafile $option1 $option21 $option22 $option23 $option24 \
 			$option25 $option26 $option27 $option28 \
 			-new_grid $grid_spec pgb2file.$ffhr
-	rc=$?
-	if [[ $rc -ne 0 ]]; then
-		msg="FATAL ERROR: wgrib2 for $mafile failed!"
-		echo "$(date)    $msg"
-		postmsg "$jlogfile" "$msg"
+	export err=$?
+	if [[ $err -ne 0 ]]; then
+		echo "FATAL ERROR in ${.sh.file} ($stream): wgrib2 for $mafile failed!"
 		export err=1
-		err_chk
+		err_chk || exit $err
 	fi
-	echo $(date) pgrb2 $jobgrid grbfile $ffhr completed
+	echo "$(date) pgrb2 $jobgrid grbfile $ffhr completed"
 
 	######################################################
 	# Split the pgb2 file into pgrb2a, pgrb2b and pgrb2d parts
@@ -158,22 +154,18 @@ else
 		mv pgb2afile.$ffhr $fileaout
 		testfile=$fileaout
 		if [[ ! -s $testfile ]]; then
-			msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-			echo "$(date)    $msg"
-			postmsg "$jlogfile" "$msg"
+			echo "FATAL ERROR in ${.sh.file} ($stream): $testfile WAS NOT WRITTEN"
 			export err=1
-			err_chk
+			err_chk || exit $err
 		fi # [[ ! -s $testfile ]]
 
 		if [[ "$makegrb2i" = "yes" ]]; then
 			mv pgb2afile.$ffhr.idx $fileaouti
 			testfile=$fileaouti
 			if [[ ! -s $testfile ]]; then
-				msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-				echo "$(date)    $msg"
-				postmsg "$jlogfile" "$msg"
+				echo "FATAL ERROR in ${.sh.file} ($stream): $testfile WAS NOT WRITTEN"
 				export err=1
-				err_chk
+				err_chk || exit $err
 			fi # [[ ! -s $testfile ]]
 		fi
 
@@ -181,22 +173,18 @@ else
 			mv pgb2bfile.$ffhr $filebout
 			testfile=$filebout
 			if [[ ! -s $testfile ]]; then
-				msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-				echo "$(date)    $msg"
-				postmsg "$jlogfile" "$msg"
+				echo "FATAL ERROR in ${.sh.file} ($stream): $testfile WAS NOT WRITTEN"
 				export err=1
-				err_chk
+				err_chk || exit $err
 			fi # [[ ! -s $testfile ]]
 
 			if [[ "$makegrb2i" = "yes" ]]; then
 				mv pgb2bfile.$ffhr.idx $filebouti
 				testfile=$filebouti
 				if [[ ! -s $testfile ]]; then
-					msg="FATAL ERROR: $testfile WAS NOT WRITTEN"
-					echo "$(date)    $msg"
-					postmsg "$jlogfile" "$msg"
+					echo "FATAL ERROR in ${.sh.file} ($stream): $testfile WAS NOT WRITTEN"
 					export err=1
-					err_chk
+					err_chk || exit $err
 				fi # [[ ! -s $testfile ]]
 			fi # [[ "$makegrb2i" = "yes" ]]
 		fi # [[ $makepgrb2b = "yes" ]]
@@ -205,7 +193,8 @@ else
 		# Send DBNet alerts for PGB2A at 6 hour increments for all forecast hours
 		# Do for 00, 06, 12, and 18Z cycles.
 		###############################################################################
-		if [[ "$SENDDBN" = 'YES' && "$NET" = 'gefs' && $( expr $cyc % 6 ) -eq 0 ]]; then
+		#if [[ "$SENDDBN" = 'YES' && "$NET" = 'gefs' && $( expr $cyc % 6 ) -eq 0 ]]; then
+		if [[ "$SENDDBN" = 'YES' ]]; then
 			if [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]; then
 				MEMBER=$(echo $RUNMEM | cut -c3-5 | tr '[a-z]' '[A-Z]')
 				if [[ $fhr -ge 0 && $fhr -le $fhmax && $( expr $fhr % 6 ) -eq 0 ]]; then
@@ -213,25 +202,23 @@ else
 					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_$GRID\_${MEMBER}_WIDX $job $fileaouti
 				fi
 			fi # [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]
-		fi # [[ "$SENDDBN" = 'YES' && "$NET" = 'gefs' && $( expr $cyc % 6 ) -eq 0 ]]
+		fi # [[ "$SENDDBN" = 'YES' ]]
 
 		###############################################################################
-		# Send DBNet alerts for PGB2B at 6 hour increments for up to 84 hours
-		# Do for 00Z and 12Z only
+		# Send DBNet alerts for PGB2B 
 		###############################################################################
-		if [[ "$SENDDBN" = 'YES' && "$NET" = 'gefs' ]]; then
+		if [[ "$SENDDBN" = 'YES' && "$jobgrid" = '0p50' && "$makepgrb2b" = "yes" ]]; then
 			if [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]; then
 				MEMBER=$(echo $RUNMEM | cut -c3-5 | tr '[a-z]' '[A-Z]')
 				$DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_$GRID\_$MEMBER $job $filebout
 				$DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_$GRID\_${MEMBER}_WIDX $job $filebouti
 			fi # [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]
-		fi # [[ "$SENDDBN" = 'YES' && "$NET" = 'gefs' ]]
+		fi # [[ "$SENDDBN" = 'YES' ]]
 	fi # [[ "$SENDCOM" = 'YES' ]]
 	echo $(date) pgrb2a 1x1 sendcom $ffhr completed
 fi # [[ -s $DATA/pgrb2$ffhr ]] && [[ $overwrite = no ]]
 
-########################################################
-echo $(date) $sname $member $partltr $fsuffix 1x1 GRIB end on machine=$(uname -n)
-msg='ENDED NORMALLY.'
-postmsg "$jlogfile" "$msg"
-################## END OF SCRIPT #######################
+echo "$(date -u) end ${.sh.file}"
+
+exit 0
+

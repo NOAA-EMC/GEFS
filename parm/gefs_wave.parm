@@ -44,7 +44,7 @@ export wavepostGRD='' # Native grids that will be post-processed (grib2)
 export CDATE=${PDY}${cyc}
 
 # The start time reflects the number of hindcast hours prior to the cycle initial time
-if [ "$CDUMP" = "gdas" ]
+if [ "${CDUMP:-gefs}" = "gdas" ]; 
 then
   export FHMAX_WAV=${FHMAX_WAV:-9}
 fi
@@ -70,11 +70,11 @@ export OUTPARS_WAV="WND ICE HS T01 T02 DIR FP DP PHS PTP PDIR"
 # Options for output control
 export DOIBP_WAV='NO'
 export DOFLD_WAV='YES' # Field data
-export DOPNT_WAV='YES' # Station data
+export DOPNT_WAV='NO ' # Station data
 export DOGRB_WAV='YES' # Create grib2 files
 export DOGRI_WAV='YES' # Create interpolated grids
-export DOSPC_WAV='YES' # Spectral post
-export DOBLL_WAV='YES' # Bulletin post
+export DOSPC_WAV='NO ' # Spectral post
+export DOBLL_WAV='NO ' # Bulletin post
 
 # Intake currents settings
 export WAV_CUR_DT=${WAV_CUR_DT:-3}
@@ -91,7 +91,7 @@ then
   gfs_cyc=$(expr 24 / ${gefs_cych})
   WAVNCYC=$gfs_cyc
   WAVHCYC=$gefs_cych
-elif [ "$CDUMP" = "gdas" ]
+elif [ "${CDUMP:-gefs}" = "gdas" ]
 then
   WAVNCYC=4
   WAVHCYC=6
@@ -111,7 +111,7 @@ export RSTTYPE_WAV='T' # generate second tier of restart files
 export DT_1_RST_WAV=$(( 3600 * $gefs_cych )) # time between restart files
 restart_interval_sec=$(( 3600 * restart_interval ))
 export DT_2_RST_WAV=${restart_interval_sec:-172800}  # restart stride for checkpointing restart
-export RSTIOFF_WAV=0 # first restart file offset relative to model start
+export RSTIOFF_WAV=${RSTIOFF_WAV:-${WAVHCYC}} # first restart file offset relative to model start
 export RST2IOFF_WAV=0 # 2nd restart file offset relative to model start
 #
 # Set runmember to default value if not GEFS cpl run

@@ -1,399 +1,117 @@
 #!/bin/ksh
 
-echo $(date) $0 $(date -u) begin
+echo "$(date -u) begin ${.sh.file}"
 
 set -xa
-export PS4='$SECONDS + '
-date
-export RERUN=${RERUN:-NO}
-
-export MODEL_OUT_FORM=binarynemsiompiio
-
-export total_tasks=${total_tasks:-12}
-export gefsmpexec=${gefsmpexec:-"mpirun -n $total_tasks"}
-export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
-
-export GRIBVERSION=${GRIBVERSION:-grib2}
+if [[ ${STRICT:-NO} == "YES" ]]; then
+	# Turn on strict bash error checking
+	set -eu
+fi
+export PS4='$SECONDS + $(basename ${.sh.file})[$LINENO] '
 
 ####################################
-# obtain unique process id (pid) and make temp directory
-###################################
-export pid=$$
-export DATA=${DATA:-${DATAROOT}/${job}.${pid}}
+# Determine Job Output Name on System
+####################################
+export jobid=${jobid:-"$job.$LSB_JOBID"}
+export pgmout="OUTPUT.${LSB_JOBID}"
+export pgmerr=errfile
+
+####################################
+# Specify and create working directory
+####################################
+export DATA=${DATA:-${DATAROOT}/${jobid}}
 mkdir -p $DATA
 cd $DATA
 
-# Define MASTERRES for master file grid, default being Gaussian with alternatives of  p125/p25/p5 
-export MASTERRES=        
-export res=$MASTERRES
-export SUBJOB=$SUBJOB
-export mem=$(echo $RUNMEM|cut -c3-5)
-
 ######################################
-# Set up the cycle variable
+# Set up compute resources
 ######################################
-export cycle=t${cyc}z
+export total_tasks=${total_tasks:-12}
+export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
 
 ####################################
 # Specify NET and RUN Name and model
 ####################################
 export NET=${NET:-gefs}
+export envir=${envir:-prod}
 export RUN=${RUN:-gefs}
 
-####################################
-# File To Log Msgs
-####################################
-export jlogfile=${jlogfile:-${DATA}/jlogfile.${job}.${pid}}
-
-####################################
-# Determine Job Output Name on System
-####################################
-export outid="LL$job"
-export jobid="${outid}.o${pid}"
-export pgmout="OUTPUT.${pid}"
-export pgmerr=errfile
-
-####################################
+######################################
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 # SENDECF  - Flag Events on ECF
 # VERBOSE  - Specify Verbose Output
-####################################
+######################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDDBN=${SENDDBN:-YES}
 export SENDECF=${SENDECF:-YES}
 export VERBOSE=${VERBOSE:-YES}
 
-####################################
-# Define RERUN Parameter: default to RESTART if not previously set
-#
-# Set RERUN=RESTART to find the last set of complete SFCSIG files and restart the forecast at that point
-# (corresponds to previous setting RERUN=NO)
-# Set RERUN=YES to remove all forecast products and log files, if any, and start over from the conditions
-#
-# In case of FORECAST failure, set RERUN=RESTART if necessary in FORECAST, NCEPPOST, and PRDGEN jobs
-# In case of NCEPPOST failure, set RERUN=RESTART if necessary in NCEPPOST, and PRDGEN jobs
-# In case of PRDGEN   failure, set RERUN=RESTART if necessary in PRDGEN jobs
-####################################
-echo input setting RERUN=$RERUN
-export RERUN=${RERUN:-RESTART}
-echo current setting RERUN=$RERUN
-
-# Specify Execution Areas
-export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
-
-export HOMEgfs=${HOMEgfs:-$HOMEgefs}
-
-export HOMEpost=${HOMEpost:-${HOMEgfs}}
-export USHpost=${HOMEpost}/ush
-export EXECpost=${HOMEpost}/exec
-export FIXpost=${HOMEpost}/fix
-export FIXglobal=${HOMEgfs}/fix
-export FIXgfs=${HOMEgfs}/fix
-#export PARMpost=${HOMEpost}/parm
-export PARMpost=${HOMEpost}/parm/post   # for the flat structure
-# PARMPOST (instead of PARMpost) is used in the post ush script
-export PARMPOST=${PARMpost}
-
-# GRBINDEX2 (instead of GRB2INDEX) is used in the post ush script
-export GRBINDEX2=${GRB2INDEX}
-
-export USHgfs=$HOMEgfs/ush
-export EXECgfs=$HOMEgfs/exec
-
-export USHgefs=${USHgefs:-${HOMEgefs}/ush}
-export PARMgefs=$HOMEgefs/parm
-
-###############################################################
-# Specify locations of the following scripts and executables
-###############################################################
-export CHGRESTHREAD=1
-export OVERPARMEXEC=                        #Optional input in the post ush script
-export CHGRESSH=$USHgfs/global_chgres.sh
-export CHGRESEXEC=$EXECgfs/global_chgres
-
-#export POSTGPSH=${POSTGPSH:-$USHpost/global_nceppost.sh}
-export POSTGPSH=${POSTGPSH:-$USHpost/gfs_nceppost.sh}
-# RLW 20150622 test new version of post executable
-# export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/ncep_post}
-export POSTGPEXEC=${POSTGPEXEC:-$EXECpost/gfs_ncep_post}
-export nemsioget=$EXECgfs/nemsio_get
-export SIGHDR=$nemsioget
-#echo in $0: POSTGPSH=$POSTGPSH
-#echo in $0: POSTGPEXEC=$POSTGPEXEC
-
-export ERRSCRIPT=${ERRSCRIPT:-err_chk}
-export LOGSCRIPT=startmsg
-export REDOUT='1>>'
-export REDERR='2>'
-
-##############################
-# Run setup to initialize working directory and utility scripts
-##############################
-#ksh setup.sh
-
-##############################
-# Run setpdy and initialize PDY variables
-##############################
+######################################
+# Set up the date information
+######################################
+export cycle=t${cyc}z
 setpdy.sh
-. PDY
+source PDY
 
-############################################
-# Run gefs.parm to get input variables
-############################################
-. $PARMgefs/gefs.parm
+####################################
+# Specify Execution Areas
+####################################
+export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 ##############################################
-# Define COM and GES directories
+# Define COM directories
 ##############################################
-if [[ $cplchm == ".true." ]]; then
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
+
+#############################
+# Source relevant config files
+#############################
+configs="gefs gefs_post"
+config_path=$PARMgefs
+for config in $configs; do
+    . $config_path/$config.parm
+    export err=$?
+    if [[ $err != 0 ]]; then
+    	echo "FATAL ERROR in ${.sh.file}: Error while loading parm file $config_path"
+    	exit $err
+    fi
+done
+
+if [[ $cplchm = ".true." ]]; then
     COMPONENT="chem"
 fi
 export COMPONENT=${COMPONENT:-atmos}
 
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/$COMPONENT
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/$COMPONENT
+export jlogfile=${jlogfile:-$DATA/jlogfile}
 
-mkdir -m 775 -p $COMOUT/master
-mkdir -m 775 -p $COMOUT/misc/post
-
-case $cyc in
-    00) export fhmax=$fhmax00;;
-    06) export fhmax=$fhmax06;;
-    12) export fhmax=$fhmax12;;
-    18) export fhmax=$fhmax18;;
-esac
-
-# set outtyp to 1 because we need to run chgres in the post before model start running chgres
-# otherwise set to 0, then chgres will not be executed in global_nceppost.sh
-
-export OUTTYP=4     # For nemsio files from forecast model (input to post)
-export OUTTYP=$OUTTYP
-
-if [[ $cplchm = ".true." ]]; then
-    # Alternate post settings
-    export FLTFILEGFSF00=$PARMpost/postxconfig-NT-GEFS-CHEM.txt
-    export FLTFILEGFS=$PARMpost/postxconfig-NT-GEFS-CHEM.txt
-    export FLTFILEGFSF001=$PARMpost/postxconfig-NT-GEFS-CHEM.txt
-    export FLTFILEGFS1=$PARMpost/postxconfig-NT-GEFS-CHEM.txt
-    export CTLFILEGFSF00=$PARMpost/postcntrl_gefs_chem.xml
-    export CTLFILEGFS=$PARMpost/postcntrl_gefs_chem.xml
-    export POSTGRB2TBL=$PARMpost/params_grib2_tbl_new
-    export POSTGPVARS_HIGH="KPO=50,PO=1000.,975.,950.,925.,900.,875.,850.,825.,800.,775.,750.,725.,700.,675.,650.,625.,600.,575.,550.,525.,500.,475.,450.,425.,400.,375.,350.,325.,300.,275.,250.,225.,200.,175.,150.,125.,100.,70.,50.,40.,30.,20.,15.,10.,7.,5.,3.,2.,1, gocart_on=.true."
-
-    export AeroFile=$PARMPOST/optics_luts_*.dat
-    cp $AeroFile $DATA/
-fi
-
-if [[ $REMAP_GRID = latlon ]]; then
-
-    if [[ $FORECAST_SEGMENT = hr ]]; then
-        master_grid=0p25deg
-    elif [[ $FORECAST_SEGMENT = lr ]]; then
-        master_grid=0p50deg
-    else
-        echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supportted  
-        msg="FATAL ERROR: $job failed!"
-        postmsg "$jlogfile" "$msg"
-        exit $ERR
-    fi
-
-    case $master_grid in
-        0p25deg) LATB=720;LONB=1440;;
-        0p50deg) LATB=360;LONB=720;;
-    esac
-    export LATB
-    export LONB
-
-    if [[ $FORECAST_SEGMENT = hr ]] ; then
-        LEVS=$LEVSHR 
-    elif [[ $FORECAST_SEGMENT = lr ]]; then
-        LEVS=$LEVSLR 
-    else
-        echo FORECAST_SEGMENT= $FORECAST_SEGMENT is not supportted
-        msg="FATAL ERROR: $job failed!"
-        postmsg "$jlogfile" "$msg"
-        exit $ERR
-    fi
-    #(( LEVS = LEVS -1 ))
-    echo $LEVS $LATB $LONB
-else  #REMAP_GRID
-
-    export JCAP=$JCAPFV
-    export LATB=$LATBFV
-    export LONB=$LONBFV
-
-fi
-####################################
-# Specify Process ID for the products
-####################################
-export IGEN_ANL=107
-export IGEN_FCST=107
-if [ $GRIBVERSION = grib2 ]; then
-    export CAT_FLX_TO_PGB=${CAT_FLX_TO_PGB:-YES}
-    export OUTTYP=${OUTTYP:-3}
-    export POSTAVBLFLD=${POSTAVBLFLD:-$PARMpost/post_avblflds.xml}
-    export POSTGRB2TBL=${POSTGRB2TBL:-${G2TMPL_SRC}/params_grib2_tbl_new}
-    export FLTFILEGFSANL=${FLTFILEGFSANL:-$PARMpost/postxconfig-NT-GEFS-ANL.txt}
-    export FLTFILEGFSF00=${FLTFILEGFSF00:-$PARMpost/postxconfig-NT-GEFS-F00.txt}
-    export FLTFILEGFS=${FLTFILEGFS:-$PARMpost/postxconfig-NT-GEFS.txt}
-    export FLTFILEGFSANL1=${FLTFILEGFSANL1:-$PARMpost/postxconfig-NT-GEFS-ANL.txt}
-    export FLTFILEGFSF001=${FLTFILEGFSF001:-$PARMpost/postxconfig-NT-GEFS-F00.txt}
-    export FLTFILEGFS1=${FLTFILEGFS1:-$PARMpost/postxconfig-NT-GEFS.txt}
-fi # [ $GRIBVERSION = grib2 ]
-
-
-export POSTGPVARS_HIGH=${POSTGPVARS_HIGH:-"KPO=47,PO=1000.,975.,950.,925.,900.,875.,850.,825.,800.,775.,750.,725.,700.,675.,650.,625.,600.,575.,550.,525.,500.,475.,450.,425.,400.,375.,350.,325.,300.,275.,250.,225.,200.,175.,150.,125.,100.,70.,50.,30.,20.,10.,7.,5.,3.,2.,1.,"}
-export POSTGPVARS_LOW=$POSTGPVARS_HIGH
-
-####################################
-# If this is a rerun, remove all control files
-####################################
-if [[ $RERUN = YES ]]; then
-    $USHgefs/gefs_restart_cleanup.sh 00 $FHMAX post prd0p25 prd0p5 prd2p5
-fi
-
-####################################
-# Specify Restart File Name to Key Off
-####################################
-restart_file=$COMIN/sfcsig/${RUNMEM}.t${cyc}z.logf
-
-####################################
-# Specify Timeout Behavior of Post
-#
-# SLEEP_TIME - Amount of time to wait for
-#              a restart file before exiting
-# SLEEP_INT  - Amount of time to wait between
-#              checking for restart files
-####################################
-export SLEEP_TIME=900
-export SLEEP_INT=5
-
-####################################
-# Specify Forecast Hour Range
-####################################
-
-export FHMAXHF=${FHMAXHF:-240}
-export FHOUTHF=${FHOUTHF:-3}
-export FHOUTLF=${FHOUTLF:-6}
-
-export DOANALYSIS=NO
-case $FORECAST_SEGMENT in
-    (hr)
-        export SHOUR=00;
-        export FHOUR=$fhmaxh;;
-    (lr)
-        if (( FHMAX_HF > fhmaxh )); then
-            export SHOUR=$(( $fhmaxh + $FHOUTHF ))
-        else
-            export SHOUR=$(( $fhmaxh + $FHOUTLF ))
-        fi
-        export FHOUR=$fhmax;;
-esac
-
-export SHOUR=$SHOUR
-export FHOUR=$FHOUR
-export FHMAX_HF=$FHMAXHF
-export FHOUT_HF=$FHOUTHF
-export FHOUT_LF=$FHOUTLF
-export SHOUR_LF=$FHMAX_HF
-
-if [[ -n $SUBJOB ]]; then
-    J1=$(echo $SUBJOB | cut -c1-1)
-    J2=$(echo $SUBJOB | cut -c2-2)
-    iJ2=$(printf '%d\n' "'$J2")
-    iJ2=$((iJ2-65))
-
-    export FHOUT_HF=$((FHOUTHF*J1))
-    export FHOUT_LF=$((FHOUTLF*J1))
-
-    export SHOUR=$(($SHOUR+$FHOUTHF*iJ2))
-    #export FHMAX_HF=$(($FHMAXHF+$FHOUTLF*iJ2))
-    export SHOUR_LF=$(($FHMAXHF+$FHOUTLF*iJ2))
-fi
-
-echo FORECAST_SEGMENT=$FORECAST_SEGMENT
-echo SUBJOB=$SUBJOB
-echo DOANALYSIS=$DOANALYSIS
-
-echo SHOUR=$SHOUR
-echo FHOUR=$FHOUR
-echo FHOUT_HF=$FHOUT_HF
-echo FHOUT_LF=$FHOUT_LF
-echo FHMAX_HF=$FHMAX_HF
-echo SHOUR_LF=$SHOUR_LF
-
-export DO_HD_PGRB=NO
-export HDMAX=00
-
-if (( 0 == 1 )) ; then
-####################################
-# Check if this is a restart
-####################################
-    mcfile=$COMOUT/misc/post/${RUNMEM}.t${cyc}z.master.control
-    if [[ -f $mcfile ]]; then
-        modelrecvy=$(cat < $mcfile)
-        recvy_pdy=$(echo $modelrecvy | cut -c1-8)
-        recvy_cyc=$(echo $modelrecvy | cut -c9-10)
-        recvy_shour=$(echo $modelrecvy | cut -c11-13)
-        if [[ $RERUN = "RESTART" ]]; then
-            if [[ $recvy_shour -ge $FHOUR ]]; then
-                msg="Forecast Post Already Completed to $recvy_shour"
-                postmsg "$jlogfile" "$msg"
-                SHOUR=$recvy_shour
-            else
-                if [[ $recvy_shour -ge $FHOUR ]]; then
-                    SHOUR=$(expr $recvy_shour + $FHINC)
-                else
-                    SHOUR=$(expr $recvy_shour + $FHINC)
-                fi
-                msg="Starting: PDY=$PDY cycle=t${recvy_cyc}z SHOUR=$SHOUR   ."
-                postmsg "$jlogfile" "$msg"
-            fi # test $recvy_shour -ge $FHOUR
-        fi # test $RERUN = "RESTART"
-    fi # test -f $miscfile
-fi # (( 0 == 1 ))
-
-export post_log=$DATA/post.$FORECAST_SEGMENT.log$SUBJOB\_${RUNMEM}
-
-echo
+echo "Environment before calling script"
 env | sort
-echo
 
-err=0
-#################################
-# Run from $SHOUR to $FHOUR
-#################################
-if [[ $SHOUR -le $FHOUR ]]; then
-    export FHOUR=$FHOUR
-    export DO_LOW_RES=YES 
-    export POSTGPVARS=$POSTGPVARS_HIGH
-
-    $HOMEgefs/scripts/exgefs_nceppost.sh.ecf $SHOUR $FHOUR $FHOUT_HF $FHOUT_LF $FHMAX_HF $SHOUR_LF
-    err=$?
-    if [ $err -ne 0 ]; then
-        msg="FATAL ERROR: $job failed!"
-        postmsg "$jlogfile" "$msg"
-        exit $err
-    fi
-    export SHOUR=$(expr $FHOUR_HIGH + $FHINC_HIGH)
-fi # test $SHOUR -le $FHOUR_HIGH
-
-mv $post_log $COMOUT/misc/post
-
-if [ $err = 0 ]; then
-    msg="$job completed normally!"
+#############################################################
+# Execute the script
+$HOMEgefs/scripts/exgefs_atmos_post.sh
+export err=$?
+if [[ $err == 0 ]]; then
+    echo "$job completed normally!"
 else
-    msg="FATAL ERROR: $job failed!"
+    echo "FATAL ERROR in ${.sh.file}: $job failed!"
+    exit $err
 fi
-postmsg "$jlogfile" "$msg"
+#############################################################
 
-##############################
+#############################
 # Remove the Temporary working directory
 ##############################
 cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-echo "$(date) $0 $(date -u) end"
+echo "$(date -u) end ${.sh.file}"
 
 exit $err
