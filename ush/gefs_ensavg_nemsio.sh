@@ -126,7 +126,9 @@ while [[ $fhr -le $FHOUR ]]; do
 	
 	export err=$?
 	$ERRSCRIPT || exit $err
-	echo "completed fv3gfs average fhour= $fhr" > $COMOUT/$COMPONENT/sfcsig/geavg.${cycle}.logf${fhr}.nemsio         
+	if [[ $SENDCOM == "YES" ]]; then
+		echo "completed fv3gfs average fhour= $fhr" > $COMOUT/$COMPONENT/sfcsig/geavg.${cycle}.logf${fhr}.nemsio
+	fi
 	if [ $fhr -ge $FHMAXFH ]; then
 		FHINC=$FHOUTLF
 	fi

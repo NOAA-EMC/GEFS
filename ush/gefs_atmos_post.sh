@@ -172,18 +172,24 @@ function check_existing_post {
 	fi # [[ ! -s $mcfile ]]
 }
 
-if [ $DOANALYSIS = YES ]; then
-	check_existing_post anl
-fi
+if [[ $SENDCOM == "YES" ]]; then
+	if [ $DOANALYSIS = YES ]; then
+		check_existing_post anl
+	fi
 
-for fhr in ${RUN_HOURS[@]}; do
-	check_existing_post $fhr
-done # for fhr in RUN_HOURS
+	for fhr in ${RUN_HOURS[@]}; do
+		check_existing_post $fhr
+	done # for fhr in RUN_HOURS
+fi
 
 SLEEP_LOOP_MAX=$(( $SLEEP_TIME / $SLEEP_INT ))
 
 if [ $DOANALYSIS = YES ]; then
-	mcfile=$COMOUT/$COMPONENT/misc/post/${RUNMEM}.t${cyc}z.master.control.anl
+	if [[ $SENDCOM == "YES" ]]; then
+		mcfile=$COMOUT/$COMPONENT/misc/post/${RUNMEM}.t${cyc}z.master.control.anl
+	else
+		mcfile=$DATA/${RUNMEM}.t${cyc}z.master.control.anl
+	fi
 
 	if [[ ! -s $mcfile ]]; then
 		############################################################
@@ -246,13 +252,23 @@ if [ $DOANALYSIS = YES ]; then
 			export FLXIOUT=
 			if [[ -f pgbfout ]]; then rm -rf pgbfout; fi
 			if [[ -f pgbifout ]]; then rm -rf pgbifout; fi
-			if [ $GRIBVERSION = grib1 ]; then
-				ln -s $COMOUT/$COMPONENT/master/$RUNMEM.$cycle.master.grbanl pgbfout
-				ln -s $COMOUT/$COMPONENT/master/$RUNMEM.$cycle.master.grbianl pgbifout
-			elif [ $GRIBVERSION = grib2 ]; then
-				ln -s $COMOUT/$COMPONENT/master/$RUNMEM.$cycle.master.grb2anl pgbfout
-				ln -s $COMOUT/$COMPONENT/master/$RUNMEM.$cycle.master.grb2ianl pgbifout
-			fi # [ $GRIBVERSION = grib1 ]
+			if [[ $SENDCOM == "YES" ]]; then
+				if [ $GRIBVERSION = grib1 ]; then
+					ln -s $COMOUT/$COMPONENT/master/$RUNMEM.$cycle.master.grbanl pgbfout
+					ln -s $COMOUT/$COMPONENT/master/$RUNMEM.$cycle.master.grbianl pgbifout
+				elif [ $GRIBVERSION = grib2 ]; then
+					ln -s $COMOUT/$COMPONENT/master/$RUNMEM.$cycle.master.grb2anl pgbfout
+					ln -s $COMOUT/$COMPONENT/master/$RUNMEM.$cycle.master.grb2ianl pgbifout
+				fi # [ $GRIBVERSION = grib1 ]
+			else
+				if [ $GRIBVERSION = grib1 ]; then
+					ln -s $DATA/$RUNMEM.$cycle.master.grbanl pgbfout
+					ln -s $DATA/$RUNMEM.$cycle.master.grbianl pgbifout
+				elif [ $GRIBVERSION = grib2 ]; then
+					ln -s $DATA/$RUNMEM.$cycle.master.grb2anl pgbfout
+					ln -s $DATA/$RUNMEM.$cycle.master.grb2ianl pgbifout
+				fi # [ $GRIBVERSION = grib1 ]
+			fi
 			export PGBOUT=pgbfout
 			export PGIOUT=pgbifout
 			export IGEN=$IGEN_ANL
@@ -305,7 +321,11 @@ fi # [ $DOANALYSIS = YES ]
 # Loop Through the Post Forecast Files 
 ############################################################
 for fhr in ${RUN_HOURS[@]}; do
-	mcfile=$COMOUT/$COMPONENT/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr
+	if [[ $SENDCOM == "YES" ]]; then
+		mcfile=$COMOUT/$COMPONENT/misc/post/${RUNMEM}.t${cyc}z.master.control.f$fhr
+	else
+		mcfile=$DATA/${RUNMEM}.t${cyc}z.master.control.f$fhr
+	fi
 
 	if [[ ! -s $mcfile ]]; then
 		###############################
@@ -387,8 +407,13 @@ for fhr in ${RUN_HOURS[@]}; do
 		export FLXIOUT=flxifile.f$fhr
 		if [[ -f pgbfout ]]; then rm -rf pgbfout; fi
 		if [[ -f pgbifout ]]; then rm -rf pgbifout; fi
-		ln -s $COMOUT/$COMPONENT/master/$RUNMEM.$cycle.master.grb2f$fhr pgbfout
-		ln -s $COMOUT/$COMPONENT/master/$RUNMEM.$cycle.master.grb2if$fhr pgbifout
+		if [[ $SENDCOM == "YES" ]]; then
+			ln -s $COMOUT/$COMPONENT/master/$RUNMEM.$cycle.master.grb2f$fhr pgbfout
+			ln -s $COMOUT/$COMPONENT/master/$RUNMEM.$cycle.master.grb2if$fhr pgbifout
+		else
+			ln -s $DATA/$RUNMEM.$cycle.master.grb2f$fhr pgbfout
+			ln -s $DATA/$RUNMEM.$cycle.master.grb2if$fhr pgbifout
+		fi
 		export PGBOUT=pgbfout
 		export PGIOUT=pgbifout
 		export FILTER=1

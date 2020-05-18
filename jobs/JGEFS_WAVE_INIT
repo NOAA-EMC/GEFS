@@ -88,7 +88,11 @@ for config in $configs; do
 done
 
 export errchk=${errchk:-err_chk}
-export wavelog=${COMOUT}/wave.log
+if [[ $SENDCOM == "YES" ]]; then
+    export wavelog=${COMOUT}/wave.log
+else
+    export wavelog=${DATA}/wave.log
+fi
 export jlogfile=${jlogfile:-$DATA/jlogfile}
 
 echo "Environment before calling script"

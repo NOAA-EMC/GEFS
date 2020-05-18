@@ -14,6 +14,13 @@ if [ $VERBOSE = "YES" ]; then
     set -x
 fi
 
+if [[ $SENDCOM == "YES" ]]; then
+    export SSTDIR=${SSTDIR:-$COMOUT/cfssst}
+else
+    export SSTDIR=${SSTDIR:-$DATA/cfssst}
+fi
+mkdir -m 775 -p $SSTDIR
+
 # Utilities
 NCP=${NCP:-"/bin/cp -p"}
 NLN=${NLN:-"/bin/ln -sf"}

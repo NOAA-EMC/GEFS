@@ -77,17 +77,20 @@ export GRID=$jobgrid   # GRID is part of the DBN message
 ############################################################
 # clean up missing markers from previous run
 ############################################################
-mkdir -m 775 -p $COMOUT/$COMPONENT/misc/$submc
-cd $COMOUT/$COMPONENT/misc/$submc
-rc=$?
-if (( rc == 0 )); then
-	for file in $RUNMEM.*.missing; do
-		if [[ -f $file ]]; then
-			echo "Removing $COMOUT/$COMPONENT/misc/$submc/$file"
-			rm -f $COMOUT/$COMPONENT/misc/$submc/$file
-		fi
-	done # for file in $RUNMEM.*.missing
-fi # (( rc == 0 ))
+if [[ $SENDCOM == "YES" ]]; then
+	mkdir -m 775 -p $COMOUT/$COMPONENT/misc/$submc
+	cd $COMOUT/$COMPONENT/misc/$submc
+
+	rc=$?
+	if (( rc == 0 )); then
+		for file in $RUNMEM.*.missing; do
+			if [[ -f $file ]]; then
+				echo "Removing $COMOUT/$COMPONENT/misc/$submc/$file"
+				rm -f $COMOUT/$COMPONENT/misc/$submc/$file
+			fi
+		done # for file in $RUNMEM.*.missing
+	fi # (( rc == 0 ))
+fi
 
 cd $jobdir
 
@@ -114,11 +117,19 @@ for hour in $hours; do
 			fi
 		fi # [[ $RUNMEM = "gegfs" ]]
 
-		export pcfile=$COMOUT/$COMPONENT/misc/$submc/${RUNMEM}.$cycle.prdgen.control.anl
-		export fileaout=$COMOUT/$COMPONENT/$pgad/$RUNMEM.$cycle.${pgapre}anl
-		export fileaouti=$COMOUT/$COMPONENT/$pgad/$RUNMEM.$cycle.${pgapre}anl.idx
-		export filebout=$COMOUT/$COMPONENT/$pgbd/$RUNMEM.$cycle.${pgbpre}anl
-		export filebouti=$COMOUT/$COMPONENT/$pgbd/$RUNMEM.$cycle.${pgbpre}anl.idx
+		if [[ $SENDCOM == "YES" ]]; then
+			export pcfile=$COMOUT/$COMPONENT/misc/$submc/${RUNMEM}.$cycle.prdgen.control.anl
+			export fileaout=$COMOUT/$COMPONENT/$pgad/$RUNMEM.$cycle.${pgapre}anl
+			export fileaouti=$COMOUT/$COMPONENT/$pgad/$RUNMEM.$cycle.${pgapre}anl.idx
+			export filebout=$COMOUT/$COMPONENT/$pgbd/$RUNMEM.$cycle.${pgbpre}anl
+			export filebouti=$COMOUT/$COMPONENT/$pgbd/$RUNMEM.$cycle.${pgbpre}anl.idx
+		else
+			export pcfile=$DATA/$submc/${RUNMEM}.$cycle.prdgen.control.anl
+			export fileaout=$DATA/$RUNMEM.$cycle.${pgapre}anl
+			export fileaouti=$DATA/$RUNMEM.$cycle.${pgapre}anl.idx
+			export filebout=$DATA/$RUNMEM.$cycle.${pgbpre}anl
+			export filebouti=$DATA/$RUNMEM.$cycle.${pgbpre}anl.idx
+		fi
 
 		ic=1
 		while [ $ic -le $SLEEP_LOOP_MAX ]; do
@@ -155,7 +166,9 @@ for hour in $hours; do
 			# indicate missing data
 			###############################
 			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-				date >$COMOUT/$COMPONENT/misc/$submc/${RUNMEM}.t${cyc}z.anl.missing
+				if [[ $SENDCOM == "YES" ]]; then
+					date >$COMOUT/$COMPONENT/misc/$submc/${RUNMEM}.t${cyc}z.anl.missing
+				fi
 				cat <<-EOF
 					FATAL ERROR in ${.sh.file} ($stream): Post data still missing for analysis at $(date) after waiting ${SLEEP_TIME}s.
 						Looked for the following files:
@@ -237,17 +250,25 @@ for hour in $hours; do
 		fi
 	fi # [[ $RUNMEM = "gegfs" ]]
 
-	export pcfile=$COMOUT/$COMPONENT/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr
-	export fileaout=$COMOUT/$COMPONENT/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}
-	export fileaouti=$COMOUT/$COMPONENT/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}.idx
-	export filebout=$COMOUT/$COMPONENT/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}
-	export filebouti=$COMOUT/$COMPONENT/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}.idx
+	if [[ $SENDCOM == "YES" ]]; then
+		export pcfile=$COMOUT/$COMPONENT/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr
+		export fileaout=$COMOUT/$COMPONENT/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}
+		export fileaouti=$COMOUT/$COMPONENT/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}.idx
+		export filebout=$COMOUT/$COMPONENT/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}
+		export filebouti=$COMOUT/$COMPONENT/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}.idx
+	else
+		export pcfile=$DATA/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr
+		export fileaout=$DATA/$RUNMEM.$cycle.${pgapre}f${fhr}
+		export fileaouti=$DATA/$RUNMEM.$cycle.${pgapre}f${fhr}.idx
+		export filebout=$DATA/$RUNMEM.$cycle.${pgbpre}f${fhr}
+		export filebouti=$DATA/$RUNMEM.$cycle.${pgbpre}f${fhr}.idx
+	fi
 
-	if [[ $save_pgrb2_p5 = YES ]] && (( FHOUR > FHMAXHF )); then
+	if [[ $SENDCOM == "YES" && $save_pgrb2_p5 = YES ]] && (( FHOUR > FHMAXHF )); then
 		export mafile_p5=$COMOUT/$COMPONENT/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.f${fhr}
 		export mifile_p5=$COMOUT/$COMPONENT/pgrb2p5/$RUNMEM.$cycle.pgrb2.0p50.f${fhr}.idx
 	fi
-	if [[ $save_pgrb2_p25 = YES ]] && (( FHOUR <= FHMAXHF )); then
+	if [[ $SENDCOM == "YES" && $save_pgrb2_p25 = YES ]] && (( FHOUR <= FHMAXHF )); then
 		export mafile_p25=$COMOUT/$COMPONENT/pgrb2p25/$RUNMEM.$cycle.pgrb2.0p25.f${fhr}
 		export mifile_p25=$COMOUT/$COMPONENT/pgrb2p25/$RUNMEM.$cycle.pgrb2.0p25.f${fhr}.idx
 	fi
@@ -295,7 +316,9 @@ for hour in $hours; do
 		# period and error exit
 		###############################
 		if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-			date >$COMOUT/$COMPONENT/misc/$submc/${RUNMEM}.t${cyc}z.f$fhr.missing
+			if [[ $SENDCOM == "YES" ]]; then
+				date >$COMOUT/$COMPONENT/misc/$submc/${RUNMEM}.t${cyc}z.f$fhr.missing
+			fi
 			cat <<-EOF
 				FATAL ERROR in ${.sh.file} ($stream): Post data still missing for f$fhr at $(date) after waiting ${SLEEP_TIME}s.
 					Looked for the following files:

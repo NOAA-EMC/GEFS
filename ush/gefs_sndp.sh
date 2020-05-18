@@ -34,7 +34,7 @@ else
 fi
 
 for stn in $(cat $file_list); do
-	 cp ${COMOUT}/$COMPONENT/bufr/$mem/bufr.$stn.$PDY$cyc ${DATA}/${m}/bufrin
+	 cp ${COMIN}/$COMPONENT/bufr/$mem/bufr.$stn.$PDY$cyc ${DATA}/${m}/bufrin
 	 export pgm=tocsbufr
 	 #. prep_step
 	 export FORT11=$DATA/${m}/bufrin

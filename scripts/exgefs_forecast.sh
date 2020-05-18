@@ -31,9 +31,15 @@ export LOGSCRIPT=startmsg
 export memdir=$GESIN/init/$mem
 export gmemdir=$GESIN/init/$mem
 export ICSDIR=$GESIN/init/$mem
-export FCSTDIR=$COMOUT/$COMPONENT/sfcsig
 export RSTDIR=$GESIN/init/$mem/RESTART
 export RSTDIR_TMP=$RSTDIR
+
+if [[ $SENDCOM == "YES" ]]; then
+	export FCSTDIR=$COMOUT/$COMPONENT/sfcsig
+else
+	export FCSTDIR=$DATA
+fi
+
 
 case $FORECAST_SEGMENT in
 	hr) 
