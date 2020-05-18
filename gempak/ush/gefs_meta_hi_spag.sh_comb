@@ -263,7 +263,7 @@ for level in ${levels}; do
 				WrottenZERO=1
 			fi
 
-			(( line_count = 10#line_count + 1 ))
+			line_count=$(( 10#${line_count} + 1 ))
 			#let color_number=$color_number+1
 		done
 
