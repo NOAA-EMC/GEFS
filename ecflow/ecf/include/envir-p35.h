@@ -1,4 +1,4 @@
-# envir-p3.h
+# envir-p35.h
 export job=${job:-$LSB_JOBNAME} #Can't use $job in filenames!
 export jobid=${jobid:-$job.$LSB_JOBID}
 
@@ -6,8 +6,9 @@ export RUN_ENVIR=${RUN_ENVIR:-nco}
 export envir=%ENVIR%
 export SENDDBN=${SENDDBN:-%SENDDBN:YES%}
 export SENDDBN_NTC=${SENDDBN_NTC:-%SENDDBN_NTC:YES%}
-FILESYSTEMROOT=/gpfs/%FILESYSTEM:dell1%
+FILESYSTEMROOT=/gpfs/%FILESYSTEM:dell4%
 
+module load ips/%ips_ver:18.0.1.163%
 module load prod_envir/%prod_envir_ver% prod_util/%prod_util_ver% EnvVars/%EnvVars_ver%
 
 case $envir in
@@ -42,7 +43,7 @@ esac
 export COMROOT=${FILESYSTEMROOT}/nco/ops/com
 export GESROOT=${FILESYSTEMROOT}/nco/ops/nwges
 export COREROOT=${FILESYSTEMROOT}/ptmp/production.core/$jobid
-export NWROOT=/gpfs/dell1/nco/ops/nw${envir}
+export NWROOT=/gpfs/dell4/nco/ops/nw${envir}
 export SENDECF=${SENDECF:-YES}
 export SENDCOM=${SENDCOM:-YES}
 export KEEPDATA=${KEEPDATA:-%KEEPDATA:NO%}
