@@ -189,7 +189,11 @@ for hour in $hours; do
 		#
 		if [[ -s $pcfile ]]; then
 			nmissing=0
-			for file in $fileaout $fileaouti $filebout $filebouti; do
+			check_files="$fileaout $fileaouti"
+			if [[ makepgrb2b == "yes" ]]; then
+				check_files="$check_files $filebout $filebouti"
+			fi
+			for file in $check_files ; do
 				if [[ ! -s $file ]]; then
 					echo "file=$file IS MISSING"
 					(( nmissing = nmissing + 1 ))
@@ -342,7 +346,11 @@ for hour in $hours; do
 
 		if [[ -s $pcfile ]]; then
 			nmissing=0
-			for file in $fileaout $fileaouti $filebout $filebouti; do
+			check_files="$fileaout $fileaouti"
+			if [[ makepgrb2b == "yes" ]]; then
+				check_files="$check_files $filebout $filebouti"
+			fi
+			for file in $check_files ; do
 				if [[ ! -s $file ]]; then
 					echo "file=$file IS MISSING"
 					(( nmissing = nmissing + 1 ))
