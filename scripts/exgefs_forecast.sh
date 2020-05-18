@@ -31,9 +31,15 @@ export LOGSCRIPT=startmsg
 export memdir=$GESIN/init/$mem
 export gmemdir=$GESIN/init/$mem
 export ICSDIR=$GESIN/init/$mem
-export FCSTDIR=$COMOUT/$COMPONENT/sfcsig
 export RSTDIR=$GESIN/init/$mem/RESTART
 export RSTDIR_TMP=$RSTDIR
+
+if [[ $SENDCOM == "YES" ]]; then
+	export FCSTDIR=$COMOUT/$COMPONENT/sfcsig
+else
+	export FCSTDIR=$DATA
+fi
+
 
 case $FORECAST_SEGMENT in
 	hr) 
@@ -71,7 +77,6 @@ case $FORECAST_SEGMENT in
 esac
 
 mkdir -m 775 -p $FCSTDIR
-mkdir -m 775 -p $COMOUT/$COMPONENT/restart/$mem
 mkdir -m 755 -p $GESIN/init/$mem/RESTART
 
 export RERUN=${RERUN:-NO}
@@ -268,19 +273,23 @@ if [[ $cplchm = ".true." ]]; then
 		exit $err
 	fi
 
-	# Link restart files for next cycle
-	next_date=$($NDATE +$gefs_cych $CDATE)
-	next_PDY=$(echo $next_date | cut -c1-8)
-	next_cyc=$(echo $next_date | cut -c9-10)
-	COM_RSTDIR=$COMOUT/$COMPONENT/restart/$mem
-	if [[ ! -d $RSTDIR ]]; then mkdir -p $RSTDIR; fi
-	ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res $RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res
-	ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc $RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc
-	for kind in fv_tracer.res fv_core.res fv_srf_wnd.res phy_data sfc_data; do
-		for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
-			ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc $RSTDIR/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc
+	if [[ $SENDCOM == "YES" ]]; then
+		# Link restart files for next cycle
+		mkdir -m 775 -p $COMOUT/$COMPONENT/restart/$mem
+
+		next_date=$($NDATE +$gefs_cych $CDATE)
+		next_PDY=$(echo $next_date | cut -c1-8)
+		next_cyc=$(echo $next_date | cut -c9-10)
+		COM_RSTDIR=$COMOUT/$COMPONENT/restart/$mem
+		if [[ ! -d $RSTDIR ]]; then mkdir -p $RSTDIR; fi
+		ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res $RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res
+		ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc $RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc
+		for kind in fv_tracer.res fv_core.res fv_srf_wnd.res phy_data sfc_data; do
+			for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
+				ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc $RSTDIR/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc
+			done
 		done
-	done
+	fi
 
 fi # [[ $cplchm = ".true." ]]
 

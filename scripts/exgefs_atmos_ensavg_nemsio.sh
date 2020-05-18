@@ -37,7 +37,9 @@ export ensavg_nemsio_log=$DATA/ensavg_nemsio.$FORECAST_SEGMENT.log
 # Execute the script
 $HOMEgefs/ush/gefs_ensavg_nemsio.sh $DATA $SHOUR $FHOUT_HF $FHOUT_LF $FHMAXHF $FHOUR $ensavg_nemsio_log
 export err=$?
-mv $ensavg_nemsio_log $COMOUT/$COMPONENT/misc/ensavg_nemsio
+if [[ $SENDCOM == "YES" ]]; then
+	mv $ensavg_nemsio_log $COMOUT/$COMPONENT/misc/ensavg_nemsio
+fi
 
 if [[ $err != 0 ]]; then
     echo "FATAL ERROR in ${.sh.file}: gefs_ensavg_nemsio.sh returned a non-zero value!"

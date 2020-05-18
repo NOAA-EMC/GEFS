@@ -45,11 +45,18 @@ if [ -s ${COMIN}/$COMPONENT/sfcsig/${RUNMEM}.${cycle}.sfcf000.nemsio ]; then
 else
 	SFCF="flx"
 	CLASS="class1"
-fi 
+fi
+
+if [[ $SENDCOM == "YES" ]]; then
+	dird="$COMOUT/$COMPONENT/bufr/$mem/bufr"
+else
+	dird="$DATA/$mem/bufr"
+fi
+
 cat <<- EOF > gfsparm
 	&NAMMET
 		iromb=0,maxwv=$JCAP,levs=$LEVS,makebufr=$bufrflag,
-		dird="$COMOUT/$COMPONENT/bufr/$mem/bufr",
+		dird="$dird",
 		nstart=$FSTART,nend=$FEND,nint=$FINT,
 		nend1=$NEND1,nint1=$NINT1,nint3=$NINT3,
 		nsfc=80,f00=$f00flag,

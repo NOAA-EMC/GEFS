@@ -19,10 +19,10 @@ echo "PRDGEN_STREAMS = $PRDGEN_STREAMS"
 # 20150622 RLW change to "yes" to remake prdgen when post is remade
 export overwrite=yes
 
-if [[ $save_pgrb2_p5 == YES ]]; then
+if [[ $SENDCOM == "YES" && $save_pgrb2_p5 == YES ]]; then
 	mkdir -m 775 -p $COMOUT/$COMPONENT/pgrb2p5
 fi
-if [[ $save_pgrb2_p25 == YES ]]; then
+if [[ $SENDCOM == "YES" && $save_pgrb2_p25 == YES ]]; then
 	mkdir -m 775 -p $COMOUT/$COMPONENT/pgrb2p25
 fi
 
@@ -101,9 +101,11 @@ export HDMAX=00
 #################################
 rm -f prdgen.cmdfile
 for stream in ${PRDGEN_STREAMS[@]}; do
-	mkdir -m 775 -p $COMOUT/$COMPONENT/${PRDGEN_A_DIR[${stream}]}
-	if [[ ! -z ${PRDGEN_B_DIR[$stream]} ]]; then
-		mkdir -m 775 -p $COMOUT/$COMPONENT/${PRDGEN_B_DIR[${stream}]}
+	if [[ $SENDCOM == "YES" ]]; then
+		mkdir -m 775 -p $COMOUT/$COMPONENT/${PRDGEN_A_DIR[${stream}]}
+		if [[ ! -z ${PRDGEN_B_DIR[$stream]} ]]; then
+			mkdir -m 775 -p $COMOUT/$COMPONENT/${PRDGEN_B_DIR[${stream}]}
+		fi
 	fi
 
 	subdata=${DATA}/${stream}

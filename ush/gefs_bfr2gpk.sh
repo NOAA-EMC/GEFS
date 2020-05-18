@@ -27,13 +27,15 @@ cd $DATA
 
 #  Set input directory name.
 
-BPATH=$COMOUT/$COMPONENT/bufr/${mem}
-export BPATH
+if [[ $SENDCOM == "YES" ]]; then
+	export BPATH=$COMOUT/$COMPONENT/bufr/${mem}
+	OUTDIR=$COMOUT/$COMPONENT/gempak
+else
+	export BPATH=$DATA/${mem}
+	OUTDIR=$DATA/gempak
+fi
 
 #  Set output directory:
-
-OUTDIR=$COMOUT/$COMPONENT/gempak
-
 outfilbase=${RUNMEM}_${PDY}${cyc}
 
 cat $BPATH/bufr.*.${PDY}${cyc} > bufr.combined

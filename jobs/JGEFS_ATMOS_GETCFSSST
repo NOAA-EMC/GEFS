@@ -60,13 +60,9 @@ export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
 ##############################################
 export COMPONENT="atmos"
 export COMOUT=${COMOUT:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/$COMPONENT}
-export SSTDIR=${SSTDIR:-$COMOUT/cfssst}
-mkdir -m 775 -p $SSTDIR
 
 export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/$cyc}
 export COMINcfs=${COMINcfs:-$(compath.py cfs/prod)/cfs/cfs.}
-
-
 
 export jlogfile=${jlogfile:-$DATA/jlogfile}
 

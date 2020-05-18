@@ -32,8 +32,10 @@ export LOGSCRIPT=startmsg
 export REDOUT='1>>'
 export REDERR='2>'
 
-mkdir -m 775 -p $COMOUT/$COMPONENT/master
-mkdir -m 775 -p $COMOUT/$COMPONENT/misc/post
+if [[ $SENDCOM == "YES" ]]; then
+	mkdir -m 775 -p $COMOUT/$COMPONENT/master
+	mkdir -m 775 -p $COMOUT/$COMPONENT/misc/post
+fi
 
 if [[ $REMAP_GRID = latlon ]]; then
 	case $FORECAST_SEGMENT in
@@ -130,7 +132,7 @@ if [ $err -ne 0 ]; then
 	exit $err
 fi
 
-if [[ -z $post_log ]]; then
+if [[ $SENDCOM == "YES" && -z $post_log ]]; then
 	mv $post_log $COMOUT/$COMPONENT/misc/post
 fi
 

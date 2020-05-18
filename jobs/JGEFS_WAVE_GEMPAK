@@ -71,9 +71,11 @@ export COMPONENT=${COMPONENT:-wave}
 export COMIN=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/$COMPONENT}
 export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/$COMPONENT}
 
-mkdir -p $COMOUT/gridded
-mkdir -p $COMOUT/station
-mkdir -p $COMOUT/gempak
+if [[ $SENDCOM == "YES" ]]; then
+    mkdir -p $COMOUT/gridded
+    mkdir -p $COMOUT/station
+    mkdir -p $COMOUT/gempak
+fi
 
 #############################
 # Source relevant config files
@@ -90,7 +92,11 @@ for config in $configs; do
 done
 
 export errchk=${errchk:-err_chk}
-export wavelog=${COMOUT}/wave.log
+if [[ $SENDCOM == "YES" ]]; then
+    export wavelog=${COMOUT}/wave.log
+else
+    export wavelog=${DATA}/wave.log
+fi
 export jlogfile=${jlogfile:-$DATA/jlogfile}
 
 echo "Environment before calling script"

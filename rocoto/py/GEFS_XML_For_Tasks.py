@@ -1040,15 +1040,9 @@ def get_param_of_task(dicBase, taskname):
                 npert = int(dicBase["NPERT"])
                 sDep = '<and>'
                 ifhmaxh = int(dicBase["fhmaxh".upper()])
-                iFHOUTHF = int(dicBase["FHOUTHF"])
                 iFHOUTLF = int(dicBase["FHOUTLF"])
-                iFHMAXHF = int(dicBase["FHMAXHF"])
 
-                iStartHourLF = 0
-                if iFHMAXHF >= ifhmaxh:
-                    iStartHourLF = ifhmaxh + iFHOUTHF
-                else:
-                    iStartHourLF = ifhmaxh + iFHOUTLF
+                iStartHourLF = ifhmaxh + iFHOUTLF
 
                 for i in range(npert):
                     sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/misc/prd0p5/gep{0:02}.t@Hz.prdgen.control.f{1:03}</cyclestr></datadep>'.format(i + 1, iStartHourLF)
@@ -1066,15 +1060,10 @@ def get_param_of_task(dicBase, taskname):
 
             # For Longer Range
             if taskname.lower() == "post_lr" or taskname.lower() == "prdgen_lr":
-                FHOUTHF = int(dicBase["FHOUTHF".upper()])
                 FHOUTLF = int(dicBase["FHOUTLF".upper()])
                 fhmaxh = int(dicBase["fhmaxh".upper()])
-                FHMAXHF = int(dicBase["FHMAXHF".upper()])
 
-                if FHMAXHF <= fhmaxh:
-                    start_hr_lr = fhmaxh + FHOUTLF
-                else:
-                    start_hr_lr = fhmaxh + FHOUTHF
+                start_hr_lr = fhmaxh + FHOUTLF
                 sDep = dicBase[sVarName].replace("fXXX", "f{0:03d}".format(start_hr_lr))
 
             # For 'enspost_hr' task

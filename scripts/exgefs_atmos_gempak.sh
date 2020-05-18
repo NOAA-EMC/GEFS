@@ -13,7 +13,12 @@ for var in DATA npert GEMPAK_RES COMIN COMOUT COMPONENT fstart fend FHMAXHF FHOU
 	echo "$var = ${!var}"
 done
 
-gempak_out=${COMOUT}/$COMPONENT/gempak
+if [[ $SENDCOM == "YES" ]]; then
+    gempak_out=${COMOUT}/$COMPONENT/gempak
+else
+    gempak_out=${DATA}/gempak_out
+fi
+
 
 ########################################################
 ## Get member list
