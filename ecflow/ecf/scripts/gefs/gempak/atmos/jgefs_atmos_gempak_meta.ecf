@@ -5,7 +5,7 @@
 #BSUB -R span[ptile=8]
 #BSUB -R 'affinity[core(1)]'
 #BSUB -q %QUEUE%
-#BSUB -W 00:30
+#BSUB -W 01:00
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%-%PROJENVIR%
 
