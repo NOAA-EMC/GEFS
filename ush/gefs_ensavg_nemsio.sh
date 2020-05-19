@@ -63,6 +63,13 @@ FHINC=$FHOUTHF
 fhr=$SHOUR
 while [[ $fhr -le $FHOUR ]]; do
 	fhr=$(printf %03i $fhr)
+	logfile="$COMOUT/$COMPONENT/sfcsig/geavg.${cycle}.logf${fhr}.nemsio"
+	if [[ -f $logfile ]]; then
+		echo "NEMSIO average file $logfile exists, skipping."
+		(( fhr = fhr + FHINC ))
+		continue
+	fi
+
 	nfile=$npert
 	for mem in $memberlist; do
 		mem2=$(echo $mem | cut -c2-)
@@ -127,7 +134,7 @@ while [[ $fhr -le $FHOUR ]]; do
 	export err=$?
 	$ERRSCRIPT || exit $err
 	if [[ $SENDCOM == "YES" ]]; then
-		echo "completed fv3gfs average fhour= $fhr" > $COMOUT/$COMPONENT/sfcsig/geavg.${cycle}.logf${fhr}.nemsio
+		echo "completed fv3gfs average fhour= $fhr" > $logfile
 	fi
 	if [ $fhr -ge $FHMAXFH ]; then
 		FHINC=$FHOUTLF
