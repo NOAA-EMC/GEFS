@@ -298,6 +298,11 @@ export increment_file=$ICSDIR/fv3_increment.nc
 export FIX_DIR=$FIXgfs
 export FIX_AM=$FIX_AM
 
+# Increment is never used for a rerun
+if [[ $RERUN == "YES" ]]; then
+	export read_increment=".false."
+fi
+
 if [[ $read_increment = ".true." && $warm_start = ".true." ]]; then
 	# Make sure increment file exists before using warm start
 	if [[ ! -f $increment_file ]]; then
