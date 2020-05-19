@@ -66,6 +66,9 @@ while [[ $fhr -le $FHOUR ]]; do
 	logfile="$COMOUT/$COMPONENT/sfcsig/geavg.${cycle}.logf${fhr}.nemsio"
 	if [[ -f $logfile ]]; then
 		echo "NEMSIO average file $logfile exists, skipping."
+		if [ $fhr -ge $FHMAXFH ]; then
+			FHINC=$FHOUTLF
+		fi
 		(( fhr = fhr + FHINC ))
 		continue
 	fi
