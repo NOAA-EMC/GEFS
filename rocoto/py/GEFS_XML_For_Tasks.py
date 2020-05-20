@@ -246,9 +246,9 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "atmos_post_cleanup"
 
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "chem_post_cleanup"
+            #iTaskName_Num += 1
+            #sTaskName = "taskname_{0}".format(iTaskName_Num)
+            #dicBase[sTaskName.upper()] = "chem_post_cleanup"
 
         # #    <!-- RUN_CLEANUP -->
         if dicBase['RUN_CLEANUP'].upper()[0] == "Y":

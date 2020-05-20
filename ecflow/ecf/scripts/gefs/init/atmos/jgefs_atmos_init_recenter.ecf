@@ -1,0 +1,45 @@
+#BSUB -J %E%gefs_atmos_init_recenter_%CYC%
+#BSUB -o %COM%/output/%ENVIR%/today/gefs_atmos_init_recenter_%CYC%.o%J
+#BSUB -cwd /tmp
+#BSUB -n 6
+#BSUB -R span[ptile=6]
+#BSUB -R 'affinity[core(1)]'
+#BSUB -q %QUEUE%
+#BSUB -W 00:30
+#BSUB -L /bin/sh
+#BSUB -P %PROJ%-%PROJENVIR%
+
+set -x
+module purge
+
+%include <head.h>
+%include <envir-p35.h>
+
+export model=gefs
+%include <model_ver.h>
+
+module load ips/$ips_ver
+module load impi/$impi_ver
+module load lsf/$lsf_ver
+module load python/$python_ver
+module load CFP/$CFP_ver
+export USE_CFP=YES
+
+module list
+
+# EXPORT list here
+ulimit -s unlimited
+ulimit -a
+
+export cyc=%CYC%
+
+export total_tasks=6
+export taskspernode=6
+
+# CALL executable job script here
+${HOMEgefs}/jobs/JGEFS_ATMOS_INIT_RECENTER
+
+%include <tail.h>
+%manual
+# include manual page below
+%end

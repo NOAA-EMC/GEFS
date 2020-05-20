@@ -33,7 +33,7 @@ module list
 # Export List
 #export KMP_STACKSIZE=2048M #Overrides common.sh
 #export KMP_AFFINITY=scatter
-
+#export RERUN="YES"
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_FORECAST
 

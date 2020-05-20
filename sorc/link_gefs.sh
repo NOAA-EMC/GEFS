@@ -29,13 +29,13 @@ pwd=$(pwd -P)
 #--model fix fields
 #------------------------------
 if [ $machine == "cray" ]; then
-    FIX_DIR="/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gefs/fix_20200512"
+    FIX_DIR="/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gefs/fix_20200519"
     FIX_DIR_FV3="/gpfs/hps3/emc/global/noscrub/emc.glopara/git/fv3gfs/fix"
 elif [ $machine = "dell" ]; then
-    FIX_DIR="/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gefs/fix_20200512"
+    FIX_DIR="/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gefs/fix_20200519"
     FIX_DIR_FV3="/gpfs/dell2/emc/modeling/noscrub/emc.glopara/git/fv3gfs/fix"
 elif [ $machine = "hera" ]; then
-    FIX_DIR="/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix_20200512"
+    FIX_DIR="/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix_20200519"
     FIX_DIR_FV3="/scratch1/NCEPDEV/global/glopara/fix"
 fi
 
@@ -167,7 +167,7 @@ if [[ -d global-workflow.fd ]]; then
         $LINK ../sorc/global-workflow.fd/scripts/$sFile ../scripts/
     done
 
-    lUsh="wave_ens_bull.sh wave_ens_stat.sh wave_grib2_cat.sh wave_grib2_sbs.sh wave_grid_interp.sh wave_grid_interp_sbs.sh wave_grid_moddef.sh wave_outp_spec.sh wave_prnc_cur.sh wave_prnc_ice.sh wave_tar.sh"
+    lUsh="wave_ens_bull.sh wave_ens_stat.sh wave_grib2_sbs.sh wave_grid_interp_sbs.sh wave_grid_moddef.sh wave_outp_spec.sh wave_prnc_cur.sh wave_prnc_ice.sh wave_tar.sh"
     for sFile in $lUsh; do
         $LINK ../sorc/global-workflow.fd/ush/$sFile ../ush/
     done

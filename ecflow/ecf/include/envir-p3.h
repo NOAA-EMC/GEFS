@@ -46,6 +46,7 @@ export NWROOT=/gpfs/dell1/nco/ops/nw${envir}
 export SENDECF=${SENDECF:-YES}
 export SENDCOM=${SENDCOM:-YES}
 export KEEPDATA=${KEEPDATA:-%KEEPDATA:NO%}
+export TMPDIR=${TMPDIR:-${DATAROOT:?}}
 
 if [ -n "%PARATEST:%" ]; then export PARATEST=${PARATEST:-%PARATEST:%}; fi
 if [ -n "%PDY:%" ]; then export PDY=${PDY:-%PDY:%}; fi

@@ -22,7 +22,7 @@ cd ${progname}.fd
 export FCMP=${FCMP:-ifort}
 export FCMP95=$FCMP
 
-export FFLAGSM="-O3 -g -convert big_endian"
+export FFLAGSM="-O3 -convert big_endian"
 export RECURS=
 export LDFLAGSM=${LDFLAGSM:-""}
 export OMPFLAGM=${OMPFLAGM:-""}

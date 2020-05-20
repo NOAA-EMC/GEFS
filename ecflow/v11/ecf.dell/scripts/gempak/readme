@@ -1,9 +1,0 @@
-
-output
-
-gefs_avg_gempak_vgf_00.o4167275  gefs_avgspr_gempak_meta_00.o4167277  gefs_gempak_meta_00.o4167276
-gefs_avgspr_gempak_00.o4165978   gefs_gempak_00.o4164449           
-
-../../../jobs/JGEFS_AVG_GEMPAK_VGF  ../../../jobs/JGEFS_AVGSPR_GEMPAK_META  ../../../jobs/JGEFS_GEMPAK_META
-../../../jobs/JGEFS_AVGSPR_GEMPAK   ../../../jobs/JGEFS_GEMPAK
-

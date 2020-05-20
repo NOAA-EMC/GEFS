@@ -131,6 +131,9 @@ export MP_LABELIO=yes
 if [[ $mem = c00 ]] ;then 
 	MEMBER=$((npert+1))
 	WAV_MEMBER="00"
+elif [[ $mem = aer ]] ;then 
+	MEMBER="00"
+	WAV_MEMBER="00"
 else
 	MEMBER=$(echo $mem|cut -c2-3)
 	WAV_MEMBER=$MEMBER
@@ -297,6 +300,11 @@ export increment_file=$ICSDIR/fv3_increment.nc
 
 export FIX_DIR=$FIXgfs
 export FIX_AM=$FIX_AM
+
+# Increment is never used for a rerun
+if [[ $RERUN == "YES" ]]; then
+	export read_increment=".false."
+fi
 
 if [[ $read_increment = ".true." && $warm_start = ".true." ]]; then
 	# Make sure increment file exists before using warm start

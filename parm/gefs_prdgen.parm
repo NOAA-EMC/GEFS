@@ -26,7 +26,7 @@ export option28=${option28:-' -new_grid_interpolation budget -fi '}
 # SLEEP_INT  - Amount of time to wait between
 #              checking for restart files
 ####################################
-export SLEEP_TIME=900
+export SLEEP_TIME=1800
 export SLEEP_INT=5
 
 # fhoroglist is the list of additional hours at which surface height should be included in pgrba
