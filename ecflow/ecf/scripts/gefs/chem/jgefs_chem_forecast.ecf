@@ -38,6 +38,7 @@ export RUNMEM=geaer
 export total_tasks=240
 export taskspernode=40
 export FORECAST_SEGMENT=hr
+#export RERUN="YES"
 
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_FORECAST

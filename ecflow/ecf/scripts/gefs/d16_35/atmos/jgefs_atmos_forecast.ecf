@@ -5,7 +5,7 @@
 #BSUB -R span[ptile=40]
 #BSUB -R 'affinity[core(1)]'
 #BSUB -q %QUEUE%
-#BSUB -W 03:30
+#BSUB -W 04:30
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%-%PROJENVIR%
 
@@ -38,6 +38,7 @@ export RUNMEM=ge%MEMBER%
 export total_tasks=320
 export taskspernode=40
 export FORECAST_SEGMENT=lr
+#export RERUN="YES"
 
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_FORECAST
