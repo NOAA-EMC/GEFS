@@ -81,7 +81,7 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     fi
     target=wcoss_dell_p3
     module purge 
-    module use /usrx/local/dev/modulefiles
+    #module use /usrx/local/dev/modulefiles
 
 elif [[ -d /glade ]] ; then
     # We are on NCAR Yellowstone
