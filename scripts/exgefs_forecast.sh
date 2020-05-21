@@ -10,6 +10,7 @@ fi
 
 export RUNMEM=$RUNMEM
 export mem=$(echo $RUNMEM|cut -c3-5)
+export machine="WCOSS_D35"
 
 # Additional paths needed by child scripts
 export HOMEgfs=${HOMEgfs:-$HOMEgefs}
@@ -130,6 +131,9 @@ export MP_LABELIO=yes
 
 if [[ $mem = c00 ]] ;then 
 	MEMBER=$((npert+1))
+	WAV_MEMBER="00"
+elif [[ $mem = aer ]] ;then 
+	MEMBER="00"
 	WAV_MEMBER="00"
 else
 	MEMBER=$(echo $mem|cut -c2-3)
