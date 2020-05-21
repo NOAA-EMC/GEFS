@@ -10,6 +10,7 @@ fi
 
 export RUNMEM=$RUNMEM
 export mem=$(echo $RUNMEM|cut -c3-5)
+export machine="WCOSS_D35"
 
 # Additional paths needed by child scripts
 export HOMEgfs=${HOMEgfs:-$HOMEgefs}
