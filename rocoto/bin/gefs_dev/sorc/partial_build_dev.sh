@@ -153,7 +153,7 @@
 #
 # set default values for partial build
 #
-   parse_cfg 1 "config=gefs_build.cfg" ${Build_prg[@]}
+   parse_cfg 1 "config=gefs_build_dev.cfg" ${Build_prg[@]}
  else
 
 #

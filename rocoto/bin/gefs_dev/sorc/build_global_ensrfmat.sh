@@ -3,6 +3,7 @@ set -eux
 
 source ./machine-setup.sh > /dev/null 2>&1
 cwd=`pwd`
+export cwdm=${cwd}/
 
 progname=global_ensrfmat
 

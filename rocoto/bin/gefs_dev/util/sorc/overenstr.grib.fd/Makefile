@@ -34,6 +34,6 @@ clobber:	clean
 	-rm -f $(CMD)
 
 install:
-	cp $(CMD) ../../exec/$(CMD)
+	cp $(CMD) $(cwdm)../util/exec/$(CMD)
 
 

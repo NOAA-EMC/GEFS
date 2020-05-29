@@ -10,6 +10,11 @@ LIBS    =$(LIBSM)
 FFLAGS  =$(FFLAGSM)
 OMPFLAG	=$(OMPFLAGM)
 LDFLAGS =$(LDFLAGSM)
+ifdef cwdm
+    cwdmP = $(cwdm)
+else
+    cwdmP = ../
+endif
 
 SRCSf90	= 
 SRCSf	= STAT_RM_BIAS_30D.f
@@ -34,6 +39,6 @@ clobber:	clean
 	-rm -f $(CMD)
 
 install:
-	cp $(CMD) ../../exec/$(CMD)
+	cp $(CMD) $(cwdmP)../exec/$(CMD)
 
 
