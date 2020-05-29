@@ -4,7 +4,7 @@ set -eu #x
 sWS=$(pwd)
 echo $sWS
 
-while getopts c:a:r:m:f:b:e:s:l:o: option
+while getopts c:a:r:m:f:b:e:s:l:o:d: option
 do
     case "${option}"
     in
@@ -18,6 +18,7 @@ do
         s) Structure=${OPTARG};;
         l) Link=${OPTARG};;
         o) Operation=${OPTARG};;
+        d) Dev_gefs=${OPTARG};;
     esac
 done
 
@@ -32,6 +33,7 @@ RunEnvir=${RunEnvir:-emc}
 Structure=${Structure:-no} # dev (use HOMEDIR to link), prod (clone global-workflow from vlab), no (use the original structure)
 Link=${Link:-no}
 Operation=${Operation:-no} # ecflow, rocoto, lsf
+Dev_gefs=${Dev_gefs:-no}
 
 if [ $machine = "nomachine" ]; then
     if [ -d /scratch1/NCEPDEV ]; then
@@ -56,6 +58,11 @@ echo $userConfigFile
 echo $RunEnvir
 echo ${Structure}
 echo ${Link}
+
+if [ $Dev_gefs == "yes" ]; then
+    cd $sWS/bin/gefs_dev
+    ./link_cleanup.sh
+fi
 
 if [ $CompileCode = "yes" ]; then
     Link=yes
@@ -95,6 +102,9 @@ if [ $CompileCode = "yes" ]; then
     ## Build the code and install
     ./build_all.sh
 
+    if [ -L build_all_dev.sh ]; then
+        ./build_all_dev.sh
+    fi
 fi
 
 
@@ -182,6 +192,11 @@ if [ $CleanAll = "yes" ]; then
     rm -f ../scripts/exwave_*
     rm -f ../scripts/exglobal_fcst_nemsfv3gfs.sh
     rm -rf ../env
+    
+    cd ${sWS}/bin/gefs_dev
+    ./link_cleanup.sh -a yes
+
+    cd ${sWS}
 
 fi # for CleanAll
 
