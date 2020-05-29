@@ -36,4 +36,4 @@ ulimit -a
 
 #export gefsmpexec=" aprun -b -j1 -n16 -N16 -d1 -cc depth "
 # CALL executable job script here
-$SOURCEDIR/rocoto/bin/sh/JGEFS_CQPF
+$SOURCEDIR/jobs/JGEFS_CQPF

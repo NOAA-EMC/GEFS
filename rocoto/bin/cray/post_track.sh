@@ -38,4 +38,4 @@ ulimit -a
 #export gefsmpexec_mpmd="  aprun -b -j1 -n21 -N7 -d1 -cc depth  cfp mpmd_cmdfile"
 
 # CALL executable job script here
-$SOURCEDIR/rocoto/bin/sh/JGEFS_POST_TRACK
+$SOURCEDIR/jobs/JGEFS_POST_TRACK
