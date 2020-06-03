@@ -19,7 +19,7 @@ LINK="ln -fs"
 
 pwd=$(pwd -P)
 
-pwd0=$(readlink -e $pwd/../../../)
+pwd0=$(readlink -e $pwd/../)
 echo $pwd0
 
 for f0 in modulefiles/gefs sorc jobs ush scripts gempak/ush gempak/fix util/ush; do
@@ -48,7 +48,7 @@ for f0 in modulefiles/gefs sorc jobs ush scripts gempak/ush gempak/fix util/ush;
             elif [ $iNum -eq 5 ]; then
                 sPrefix="../../../../../"
             fi
-            $LINK ${sPrefix}rocoto/bin/gefs_dev/$f .
+            $LINK ${sPrefix}gefs_dev/$f .
 
             cd $pwd
         fi 
@@ -65,6 +65,6 @@ if [ $CleanAll = "yes" ]; then
     fi
 else
     cd $pwd0/$f0
-     $LINK ../rocoto/bin/gefs_dev/$f .
+     $LINK ../gefs_dev/$f .
     cd $pwd
 fi

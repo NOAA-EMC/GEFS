@@ -60,7 +60,7 @@ echo ${Structure}
 echo ${Link}
 
 if [ $Dev_gefs == "yes" ]; then
-    cd $sWS/bin/gefs_dev
+    cd $sWS/../gefs_dev
     ./link_cleanup.sh
 fi
 
@@ -193,7 +193,7 @@ if [ $CleanAll = "yes" ]; then
     rm -f ../scripts/exglobal_fcst_nemsfv3gfs.sh
     rm -rf ../env
     
-    cd ${sWS}/bin/gefs_dev
+    cd ${sWS}/../gefs_dev
     ./link_cleanup.sh -a yes
 
     cd ${sWS}
