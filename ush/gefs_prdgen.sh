@@ -197,7 +197,7 @@ else
 		if [[ "$SENDDBN" = 'YES' ]]; then
 			if [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]; then
 				MEMBER=$(echo $RUNMEM | cut -c3-5 | tr '[a-z]' '[A-Z]')
-				if [[ $fhr -ge 0 && $fhr -le $fhmax && $( expr $fhr % 6 ) -eq 0 ]]; then
+				if [[ $fhr -ge 0 && $fhr -le $fhmax ]]; then
 					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_$GRID\_$MEMBER $job $fileaout
 					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_$GRID\_${MEMBER}_WIDX $job $fileaouti
 				fi
