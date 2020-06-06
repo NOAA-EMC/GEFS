@@ -99,8 +99,8 @@ mkdir -p ${COMINgenvit}
 export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}}
 export COMINsyn=${COMINsyn:-$(compath.py arch/prod/syndat)}
 
-export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/gefs.${PDY}/${cyc}}
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/genesis}
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/gefs.${PDY}/${cyc}/atmos}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/atmos/genesis}
 mkdir -m 775 -p $COMOUT
 
 export ensdira=$COMIN/pgrb2ap5

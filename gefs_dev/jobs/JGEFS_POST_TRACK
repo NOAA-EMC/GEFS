@@ -90,8 +90,8 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/gefs.${PDY}/${cyc}}
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/tctrack}
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/gefs.${PDY}/${cyc}/atmos}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}/atmos/tctrack}
 
 export COMOUThur=${COMOUThur:-${COMROOT}/hur/${envir}/global}
 export COMOUTatcf=${COMOUTatcf:-${COMROOT}/nhc/${envir}/atcf}
