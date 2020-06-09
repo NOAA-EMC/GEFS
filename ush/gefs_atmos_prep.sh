@@ -91,8 +91,15 @@ if [[ $SENDCOM == "YES" ]]; then
     mkdir -p $COMOUT/init/$mem
     $NCP $OUTDIR/sfc* $COMOUT/init/$mem
     $NCP $OUTDIR/gfs_ctrl.nc $COMOUT/init/$mem
+    if [[ $SENDDBN = YES ]];then
+      $DBNROOT/bin/dbn_alert MODEL ENS_CTR_$mem $job $COMOUT/init/$mem/gfs_ctrl.nc
+      $DBNROOT/bin/dbn_alert MODEL ENS_MSC_$mem $job $COMOUT/init/$mem/sfc_data.tile6.nc
+    fi
     if [[ $mem == "c00" ]]; then
-        $NCP $OUTDIR/gfs_data*.nc $COMOUT/init/$mem
+      $NCP $OUTDIR/gfs_data*.nc $COMOUT/init/$mem
+      if [[ $SENDDBN = YES ]];then
+              $DBNROOT/bin/dbn_alert MODEL ENS_SA_$mem $job $COMOUT/init/$mem/gfs_data.tile6.nc
+      fi
     fi
 fi
 
