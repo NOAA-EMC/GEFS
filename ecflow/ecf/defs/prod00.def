@@ -30,7 +30,7 @@ suite prod00_1
       task jgefs_chem_init
         trigger jgefs_chem_prep_emissions eq complete and ../init/atmos/jgefs_atmos_init_recenter eq complete
       task jgefs_chem_forecast
-        trigger ../init/atmos/jgefs_atmos_getcfssst eq complete and jgefs_chem_prep_emissions eq complete
+        trigger ../init/atmos/jgefs_atmos_getcfssst eq complete and jgefs_chem_init eq complete
       task jgefs_chem_post
         trigger jgefs_chem_forecast eq active or jgefs_chem_forecast eq complete
       task jgefs_chem_prdgen

@@ -132,6 +132,9 @@ if [[ $SENDCOM == YES ]]; then
         smem=p$(printf %02i $mem)
         mkdir -p $COMOUT/init/$smem
         $NCP $GESOUT/init/$smem/gfs* $COMOUT/init/$smem
+	if [[ $SENDDBN = YES ]];then
+	      $DBNROOT/bin/dbn_alert MODEL ENS_SA_$mem $job $COMOUT/init/$mem/gfs_data.tile6.nc
+	fi		
         (( mem = mem +1 ))
     done
 fi

@@ -31,18 +31,13 @@ cd $DATA
 ###################################################
 ## Run meteogram generator for T574
 ###################################################
-export FHMAX_HF=$FHMAXHF
-export FHOUT_HF=$FHOUTHF
 export FHOUT=$FHOUTLF
 
 export JCAP=${JCAP:-766}
 export LEVS=${LEVS:-64}
 export LATB=${LATB:-768}
 export LONB=${LONB:-1536}
-export STARTHOUR=${STARTHOUR:-00}
-
-export ENDHOUR=${ENDHOUR:-180}                 
-export NEND1=${NEND1:-180} #$FHMAXHF        ##first period length with time interval = NINT1
+export NEND1=${NEND1:-180} #$FHMAXHF ##first period length with time interval = NINT1
 export NINT1=$FHOUTHF        ##first period time interval
 export NINT3=$FHOUTLF        ##second period time interval
 
@@ -54,19 +49,16 @@ fi
 if (( NEND1 >= ENDHOUR )); then
 	export NEND1=$ENDHOUR
 fi
+if (( NEND1 >= FHMAXHF )); then
+	export NEND1=$FHMAXHF
+fi
 
 export NZERO=6
 export INCREMENT=${INCREMENT:-12}
 export OUTFILE=meteomrf
 export MAKEBUFR=NO
-export F00FLAG=YES
 export MODEL_OUT_FORM=binarynemsiompiio
 
-# Extract number of vertical levels from $STARTHOUR atmospheric file
-export NEMSIOGET=${NEMSIOGET:-$EXECbufrsnd/nemsio_get}
-fhr3=$(printf %03i $STARTHOUR)
-ATMFCS=$COMIN/$COMPONENT/sfcsig/${RUNMEM}.${cycle}.atmf${fhr3}.nemsio
-export LEVS=$($NEMSIOGET $ATMFCS dimz | awk '{print $2}')
 export mem=$(echo $RUNMEM|cut -c3-5)
 
 if [[ $SENDCOM == "YES" ]]; then
@@ -106,7 +98,7 @@ while [ $FSTART -lt $ENDHOUR ]; do
 			break
 		fi
 
-		if [ $ic -ge SLEEP_LOOP_MAX ]; then
+		if [ $ic -ge $SLEEP_LOOP_MAX ]; then
 			echo <<- EOF
 				FATAL ERROR in ${.sh.file}: Unable to find forecast output $fcstchk at $(date -u) after waiting ${SLEEP_TIME}s!
 				EOF
@@ -136,7 +128,7 @@ done
 ##############################################################
 if [[ $SENDCOM == "YES" ]]; then
 	cd ${COMOUT}/$COMPONENT/bufr/${mem}
-	tar -cf - bufr.* | /usr/bin/gzip > ${RUNMEM}.${cycle}.bufrsnd.tar.gz
+	tar -cf - bufr.* | /usr/bin/gzip > ../${RUNMEM}.${cycle}.bufrsnd.tar.gz
 fi
 cd $DATA
 
@@ -144,8 +136,8 @@ cd $DATA
 # Send the single tar file to OSO
 ########################################
 if [ "$SENDDBN" = 'YES' ]; then
-	$DBNROOT/bin/dbn_alert MODEL GFS_BUFRSND_TAR $job \
-	$COMOUT/$COMPONENT/${RUNMEM}.${cycle}.bufrsnd.tar.gz
+	$DBNROOT/bin/dbn_alert MODEL GEFS_${RUNMEM}_BUFRSND_TAR $job \
+	$COMOUT/$COMPONENT/bufr/${RUNMEM}.${cycle}.bufrsnd.tar.gz
 fi
 
 ########################################

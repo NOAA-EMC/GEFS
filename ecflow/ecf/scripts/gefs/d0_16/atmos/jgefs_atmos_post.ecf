@@ -3,7 +3,6 @@
 #BSUB -cwd /tmp
 #BSUB -n 12
 #BSUB -R span[ptile=12]
-#BSUB -R 'affinity[core(1)]'
 #BSUB -q %QUEUE%
 #BSUB -W 04:30
 #BSUB -L /bin/sh
