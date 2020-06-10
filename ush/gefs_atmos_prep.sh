@@ -47,7 +47,7 @@ else
     i=0
     success="NO"
 	(( cmem = nmem + memshift ))
-    while [[ $success == "NO" && i < MAX_ENKF_SEARCHES ]]; do
+    while [[ $success == "NO" && $i < $MAX_ENKF_SEARCHES ]]; do
         if (( cmem > 80 )); then
             (( cmem = cmem - 80 ))
         fi
@@ -59,8 +59,8 @@ else
             $NCP $ATMFILE $INIDIR/gfnanl.gfs.$PDY$cyc
             success="YES"
         else
-            i=i+1
-            if [[ i < MAX_ENKF_SEARCHES ]]; then
+            (( i = i + 1 ))
+            if [[ $i < $MAX_ENKF_SEARCHES ]]; then
                 echo "EnKF atmospheric file $ATMFILE not found, trying different member"
                 (( cmem = cmem + ENKF_SEARCH_LEAP ))
             else
@@ -70,7 +70,7 @@ else
                 err_chk || exit $err
             fi
         fi # [[ -f $ATMFILE ]]
-    done # [[ success == "NO" && i < MAX_ENKF_SEARCHES ]]
+    done # [[ $success == "NO" && $i < $MAX_ENKF_SEARCHES ]]
 fi
 
 #############################################################
@@ -91,8 +91,15 @@ if [[ $SENDCOM == "YES" ]]; then
     mkdir -p $COMOUT/init/$mem
     $NCP $OUTDIR/sfc* $COMOUT/init/$mem
     $NCP $OUTDIR/gfs_ctrl.nc $COMOUT/init/$mem
+    if [[ $SENDDBN = YES ]];then
+      $DBNROOT/bin/dbn_alert MODEL ENS_CTR_$mem $job $COMOUT/init/$mem/gfs_ctrl.nc
+      $DBNROOT/bin/dbn_alert MODEL ENS_MSC_$mem $job $COMOUT/init/$mem/sfc_data.tile6.nc
+    fi
     if [[ $mem == "c00" ]]; then
-        $NCP $OUTDIR/gfs_data*.nc $COMOUT/init/$mem
+      $NCP $OUTDIR/gfs_data*.nc $COMOUT/init/$mem
+      if [[ $SENDDBN = YES ]];then
+              $DBNROOT/bin/dbn_alert MODEL ENS_SA_$mem $job $COMOUT/init/$mem/gfs_data.tile6.nc
+      fi
     fi
 fi
 

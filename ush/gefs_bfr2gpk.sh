@@ -84,8 +84,8 @@ if [[ $SENDCOM == "YES" ]]; then
 fi
 
 if [ $SENDDBN = "YES" ]; then
-    $DBNROOT/bin/dbn_alert MODEL GFS_PTYP_SFC $job $OUTDIR/$sfc
-    $DBNROOT/bin/dbn_alert MODEL GFS_PTYP_SND $job $OUTDIR/$snd
+    $DBNROOT/bin/dbn_alert MODEL GEFS_${RUNMEM}_PTYP_SFC $job $OUTDIR/$sfc
+    $DBNROOT/bin/dbn_alert MODEL GEFS_${RUNMEM}_PTYP_SND $job $OUTDIR/$snd
 fi
 echo done > $DATA/gembufr.done
 

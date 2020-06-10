@@ -33,6 +33,10 @@ if [[ ${STRICT:-NO} == "YES" ]]; then
 	set -eu
 fi
 
+if [ "$jobgrid" = '2p5' ]; then
+        SENDDBN=NO
+fi
+
 export subdata="${1}"                  # ${DATA}/${stream}
 export stream="${2}"                   # PRDGEN_STREAMS
 export jobgrid="${3}"                  # PRDGEN_GRID[$stream]
@@ -295,27 +299,14 @@ for hour in $hours; do
 				mv ${run}.${cycle}.$pgapre${ffhr}.idx $COMOUT/$COMPONENT/$pgad
 			fi # [[ -s ${run}.${cycle}.$pgapre${ffhr} ]]
 			if [[ "$SENDDBN" = 'YES' ]]; then
-				if [[ ! -n "$lr" ]]; then
-					if [[ "$run" = "geavg" ]]; then
-						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_AVG $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}
-						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_AVG_WIDX $job
-						$COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
-					fi # [[ "$run" = "geavg" ]]
-					if [[ "$run" = "gespr" ]]; then
-						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_SPR $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}
-						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_SPR_WIDX $job 
-						$COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
-					fi # [[ "$run" = "gespr" ]]
-				fi # [[ ! -n "$lr" ]]
-				if [[  -n "$lr" ]]; then
-					if [[ "$run" = "geavg" ]]; then
-						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}
-						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG_WIDX $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
-					fi # [[ "$run" = "geavg" ]]
-					if [[ "$run" = "gespr" ]]; then
-						$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR $job ${COMOUT}/${cyc}/pgrb2a$lr/gespr.$COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}
-					fi
-				fi # [[ -n "$lr" ]]
+				if [[ "$run" = "geavg" ]]; then
+					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}
+					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG_WIDX $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
+				fi # [[ "$run" = "geavg" ]]
+				if [[ "$run" = "gespr" ]]; then
+					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}
+					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG_WIDX $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
+				fi
 			fi # [[] "$SENDDBN" = 'YES' ]]
 		done
 	fi # [ $SENDCOM = "YES" ]
