@@ -45,7 +45,13 @@ fi
 case $FORECAST_SEGMENT in
 	hr) 
 		echo "Integrate the model for the Half-Month range segment"
-		export RERUN=${RERUN:-"NO"}
+		filecount=$(ls -l $RSTDIR/*coupler* | wc -l )
+		if (( filecount < 3 )); then
+			export RERUN="NO" 
+		else
+			export RERUN="YES"
+		fi
+
 		FHINI=${FHINI:-0}
 	        if [[ $RERUN != "YES" ]] ; then
 			export CDATE_RST=$($NDATE +$FHINI $PDY$cyc)
