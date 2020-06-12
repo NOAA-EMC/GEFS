@@ -45,9 +45,15 @@ fi
 case $FORECAST_SEGMENT in
 	hr) 
 		echo "Integrate the model for the Half-Month range segment"
-		export RERUN=${RERUN:-"NO"}
+		filecount=$(ls -l $RSTDIR/*coupler* | wc -l )
+		if (( filecount < 3 )); then
+			export RERUN="NO" 
+		else
+			export RERUN="YES"
+		fi
+
 		FHINI=${FHINI:-0}
-	        if [[ $RERUN != "YES" ]] ; then
+		 if [[ $RERUN != "YES" ]] ; then
 			export CDATE_RST=$($NDATE +$FHINI $PDY$cyc)
 		fi
 		CASE=$CASEHR; FHMAX=$fhmaxh; FHOUT=$FHOUTLF; FHZER=6;
@@ -59,8 +65,22 @@ case $FORECAST_SEGMENT in
 	lr)
 		echo "Integrate the model for the Longer Range segment"
 		FHINI=${FHINI:-$fhmaxh}
-	        if [[ $RERUN != "YES" ]] ; then
-			export CDATE_RST=$($NDATE +$FHINI $PDY$cyc)
+		CDATE_1=$($NDATE +$FHINI $PDY$cyc)
+		fRestart=$RSTDIR/$(echo $CDATE_1 | cut -c1-8).$(echo $CDATE_1 | cut -c9-10)0000.coupler.res
+		if [ -f $fRestart ]; then
+			(( FHINI_2 = fhmaxh + restart_interval ))
+			CDATE_2=$($NDATE +$FHINI_2 $PDY$cyc)
+			#fRestart=$RSTDIR/${CDATE_2}.${cyc}0000.coupler.res
+			fRestart=$RSTDIR/$(echo $CDATE_2 | cut -c1-8).$(echo $CDATE_2 | cut -c9-10)0000.coupler.res
+			if [ -f $fRestart ]; then
+				export CDATE_RST=
+			else
+				export CDATE_RST=$($NDATE +$FHINI $PDY$cyc)
+			fi
+		else
+			echo "FATAL ERROR in ${.sh.file}: There is no $fRestart" 
+			export err=101
+			exit $err
 		fi
 		export RERUN="YES"
 		export cplwav=.false.

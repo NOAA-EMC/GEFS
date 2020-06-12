@@ -139,6 +139,7 @@ if [[ $SENDCOM == YES ]]; then
     done
 fi
 
+rm -rf $GESOUT/enkf
 echo "$(date -u) end ${.sh.file}"
 
 exit 0
