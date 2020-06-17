@@ -204,11 +204,6 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "cqpf"
 
-            # ---avg_gempak_vgf
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "avg_gempak_vgf"
-
         # #    <!-- RUN_KEEPDATA -->
         if dicBase['RUN_KEEPDATA'].upper()[0] == "Y":
             # ---keep_data_atm
