@@ -1429,6 +1429,8 @@ def get_metatask_names(taskname=""):
     metatask_names.append('wave_gempak')
     # postsnd
     metatask_names.append('postsnd')
+    # fcst_post_manageq
+    metatask_names.append('fcst_post_manager')
 
     return metatask_names
 
