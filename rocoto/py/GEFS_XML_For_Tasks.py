@@ -437,7 +437,7 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
 
     # For FORECAST_SEGMENT
-    if (taskname in ['forecast_hr', 'prdgen_hr', 'post_hr', 'ensstat_hr', 'enspost_hr', 'chem_forecast', 'chem_post', 'chem_prdgen']) \
+    if (taskname in ['forecast_hr', 'prdgen_hr', 'post_hr', 'ensstat_hr', 'enspost_hr', 'chem_forecast', 'chem_post', 'chem_prdgen', 'fcst_post_manager']) \
      or taskname.startswith("post_hr_") or taskname.startswith('chem_post_'):
         strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
     elif taskname in ['forecast_lr', 'prdgen_lr', 'post_lr', 'ensstat_lr', 'enspost_lr']:
