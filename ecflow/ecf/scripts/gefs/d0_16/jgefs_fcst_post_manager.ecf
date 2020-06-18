@@ -1,0 +1,42 @@
+#BSUB -J %E%gefs_fcst_post_manager_%MEMBER%_%CYC%
+#BSUB -o %COM%/output/%ENVIR%/today/gefs_fcst_post_manager_%MEMBER%_%CYC%.o%J
+#BSUB -cwd /tmp
+#BSUB -n 1
+#BSUB -R span[ptile=1]
+#BSUB -R 'affinity[core(1)]'
+#BSUB -q %QUEUE%
+#BSUB -W 00:15
+#BSUB -L /bin/sh
+#BSUB -P %PROJ%-%PROJENVIR%
+
+set -x
+module purge
+
+%include <head.h>
+%include <envir-p35.h>
+
+export model=gefs
+%include <model_ver.h>
+
+module load ips/$ips_ver
+
+module list
+
+# EXPORT list here
+ulimit -s unlimited
+ulimit -a
+
+export cyc=%CYC%
+export RUNMEM=ge%MEMBER%
+
+export total_tasks=1
+export taskspernode=1
+export FORECAST_SEGMENT=hr
+
+# CALL executable job script here
+${HOMEgefs}/jobs/JGEFS_FCST_POST_MANAGER
+
+%include <tail.h>
+%manual
+# include manual page below
+%end

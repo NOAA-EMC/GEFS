@@ -45,21 +45,26 @@ suite prod00_1
               ../../../init/atmos/jgefs_atmos_getcfssst eq complete \
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p01
@@ -70,21 +75,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p02
@@ -95,21 +105,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p03
@@ -120,21 +135,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p04
@@ -145,21 +165,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p05
@@ -170,21 +195,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p06
@@ -195,21 +225,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p07
@@ -220,21 +255,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p08
@@ -245,21 +285,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p09
@@ -270,21 +315,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p10
@@ -295,21 +345,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p11
@@ -320,21 +375,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p12
@@ -345,21 +405,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p13
@@ -370,21 +435,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p14
@@ -395,21 +465,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p15
@@ -420,21 +495,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p16
@@ -445,21 +525,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p17
@@ -470,21 +555,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p18
@@ -495,21 +585,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p19
@@ -520,21 +615,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p20
@@ -545,21 +645,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p21
@@ -570,21 +675,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p22
@@ -595,21 +705,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p23
@@ -620,21 +735,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p24
@@ -645,21 +765,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p25
@@ -670,21 +795,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p26
@@ -695,21 +825,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p27
@@ -720,21 +855,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p28
@@ -745,21 +885,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p29
@@ -770,21 +915,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
         family p30
@@ -795,21 +945,26 @@ suite prod00_1
               and ../../../init/atmos/jgefs_atmos_init_recenter eq complete \
               and ../c00/wave/jgefs_wave_prep eq complete \
               and wave/jgefs_wave_prep eq complete 
+          task jgefs_fcst_post_manager
+            trigger jgefs_forecast eq active or jgefs_forecast eq complete
+            event 1 release_fcst
+            event 2 release_atmos_post
+            event 3 release_wave_post
           family atmos
             task jgefs_atmos_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_atmos_prdgen
-              trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_atmos_post
             task jgefs_atmos_postsnd
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
           endfamily
           family wave
             task jgefs_wave_prep
               trigger ../../../../init/wave/jgefs_wave_init eq complete
             task jgefs_wave_post
-              trigger ../jgefs_forecast eq active or ../jgefs_forecast eq complete
+              trigger ../jgefs_fcst_post_manager:release_fcst
             task jgefs_wave_gempak
-              trigger jgefs_wave_post eq active or jgefs_wave_post eq complete
+              trigger ../jgefs_fcst_post_manager:release_wave_post
           endfamily
         endfamily
       endfamily
@@ -978,37 +1133,37 @@ suite prod00_1
               and jgefs_atmos_prdgen_gfs eq complete
           task jgefs_atmos_ensavg_nemsio
             trigger \
-              ( ../../../members/d0_16/c00/jgefs_forecast eq active or ../../../members/d0_16/c00/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p01/jgefs_forecast eq active or ../../../members/d0_16/p01/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p02/jgefs_forecast eq active or ../../../members/d0_16/p02/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p03/jgefs_forecast eq active or ../../../members/d0_16/p03/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p04/jgefs_forecast eq active or ../../../members/d0_16/p04/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p05/jgefs_forecast eq active or ../../../members/d0_16/p05/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p06/jgefs_forecast eq active or ../../../members/d0_16/p06/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p07/jgefs_forecast eq active or ../../../members/d0_16/p07/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p08/jgefs_forecast eq active or ../../../members/d0_16/p08/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p09/jgefs_forecast eq active or ../../../members/d0_16/p09/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p10/jgefs_forecast eq active or ../../../members/d0_16/p10/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p11/jgefs_forecast eq active or ../../../members/d0_16/p11/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p12/jgefs_forecast eq active or ../../../members/d0_16/p12/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p13/jgefs_forecast eq active or ../../../members/d0_16/p13/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p14/jgefs_forecast eq active or ../../../members/d0_16/p14/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p15/jgefs_forecast eq active or ../../../members/d0_16/p15/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p16/jgefs_forecast eq active or ../../../members/d0_16/p16/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p17/jgefs_forecast eq active or ../../../members/d0_16/p17/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p18/jgefs_forecast eq active or ../../../members/d0_16/p18/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p19/jgefs_forecast eq active or ../../../members/d0_16/p19/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p20/jgefs_forecast eq active or ../../../members/d0_16/p20/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p21/jgefs_forecast eq active or ../../../members/d0_16/p21/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p22/jgefs_forecast eq active or ../../../members/d0_16/p22/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p23/jgefs_forecast eq active or ../../../members/d0_16/p23/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p24/jgefs_forecast eq active or ../../../members/d0_16/p24/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p25/jgefs_forecast eq active or ../../../members/d0_16/p25/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p26/jgefs_forecast eq active or ../../../members/d0_16/p26/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p27/jgefs_forecast eq active or ../../../members/d0_16/p27/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p28/jgefs_forecast eq active or ../../../members/d0_16/p28/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p29/jgefs_forecast eq active or ../../../members/d0_16/p29/jgefs_forecast eq complete ) \
-              and ( ../../../members/d0_16/p30/jgefs_forecast eq active or ../../../members/d0_16/p30/jgefs_forecast eq complete )
+              trigger ../../../members/d0_16/c00/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p01/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p02/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p03/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p04/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p05/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p06/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p07/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p08/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p09/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p10/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p11/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p12/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p13/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p14/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p15/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p16/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p17/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p18/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p19/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p20/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p21/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p22/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p23/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p24/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p25/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p26/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p27/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p28/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p29/jgefs_fcst_post_manager:release_fcst \
+              and trigger ../../../members/d0_16/p30/jgefs_fcst_post_manager:release_fcst
           task jgefs_atmos_avg_postsnd
             trigger jgefs_atmos_ensavg_nemsio eq active or jgefs_atmos_ensavg_nemsio eq complete
         endfamily
