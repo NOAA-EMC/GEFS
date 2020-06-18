@@ -1133,37 +1133,37 @@ suite prod00_1
               and jgefs_atmos_prdgen_gfs eq complete
           task jgefs_atmos_ensavg_nemsio
             trigger \
-              trigger ../../../members/d0_16/c00/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p01/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p02/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p03/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p04/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p05/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p06/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p07/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p08/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p09/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p10/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p11/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p12/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p13/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p14/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p15/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p16/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p17/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p18/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p19/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p20/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p21/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p22/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p23/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p24/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p25/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p26/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p27/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p28/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p29/jgefs_fcst_post_manager:release_fcst \
-              and trigger ../../../members/d0_16/p30/jgefs_fcst_post_manager:release_fcst
+              ../../../members/d0_16/c00/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p01/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p02/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p03/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p04/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p05/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p06/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p07/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p08/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p09/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p10/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p11/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p12/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p13/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p14/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p15/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p16/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p17/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p18/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p19/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p20/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p21/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p22/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p23/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p24/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p25/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p26/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p27/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p28/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p29/jgefs_fcst_post_manager:release_fcst \
+              and ../../../members/d0_16/p30/jgefs_fcst_post_manager:release_fcst
           task jgefs_atmos_avg_postsnd
             trigger jgefs_atmos_ensavg_nemsio eq active or jgefs_atmos_ensavg_nemsio eq complete
         endfamily
