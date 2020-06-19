@@ -58,9 +58,9 @@ while [ $ic -le $SLEEP_LOOP_MAX ]; do
         fhr3=$(printf %03i $fhr_atmos_fcst)
         if [ -s ${COMIN}/atmos/sfcsig/${RUNMEM}.t${cyc}z.logf${fhr3}.nemsio ]; then
             if [[ $SENDECF == "YES" ]]; then
-                ecflow_client --event release_fcst
+                ecflow_client --event release_post
             else
-                echo "release_fcst"
+                echo "release_post"
             fi
             (( icDone = icDone + 1 ))
             done_fcst=1
@@ -71,9 +71,9 @@ while [ $ic -le $SLEEP_LOOP_MAX ]; do
         fhr3=$(printf %03i $fhr_atmos_post)
         if [ -s ${COMIN}/atmos/misc/post/${RUNMEM}.t${cyc}z.master.control.f${fhr3} ]; then
             if [[ $SENDECF == "YES" ]]; then
-                ecflow_client --event release_atmos_post
+                ecflow_client --event release_atmos_prdgen
             else
-                echo "release_atmos_post"
+                echo "release_atmos_prdgen"
             fi
             (( icDone = icDone + 1 ))
             done_atmos_post=1
@@ -84,9 +84,9 @@ while [ $ic -le $SLEEP_LOOP_MAX ]; do
         fhr3=$(printf %03i $fhr_wave_post)
         if [ -s ${COMIN}/wave/gridded/gefswave.t${cyc}z.${mem}.global.0p25.f${fhr3}.grib2 ]; then
             if [[ $SENDECF == "YES" ]]; then
-                ecflow_client --event release_wave_post
+                ecflow_client --event release_wave_gempak
             else
-                echo "release_wave_post"
+                echo "release_wave_gempak"
             fi
             (( icDone = icDone + 1 ))
             done_wave_post=1

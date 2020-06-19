@@ -1,5 +1,5 @@
-#BSUB -J %E%gefs_chem_init_%MEMBER%_%CYC%
-#BSUB -o %COM%/output/%ENVIR%/today/gefs_chem_init_%MEMBER%_%CYC%.o%J
+#BSUB -J %E%gefs_chem_init_%CYC%
+#BSUB -o %COM%/output/%ENVIR%/today/gefs_chem_init_%CYC%.o%J
 #BSUB -cwd /tmp
 #BSUB -n 1
 #BSUB -R span[ptile=1]
