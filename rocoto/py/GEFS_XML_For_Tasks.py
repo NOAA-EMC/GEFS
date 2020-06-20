@@ -372,7 +372,12 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
             if sQueue.endswith("_shared"):
                 strings += sPre_2 + '<native>-R "affinity[core(1):distribute=pack]"</native>\n'
-                strings += sPre_2 + '<native>-R "rusage[mem=4608]"</native>\n'
+                if sMemory == "":
+                    strings += sPre_2 + '<native>-R "rusage[mem=4608]"</native>\n'
+                else:
+                    if sMemory.endswith("M"):
+                        iMemory = sMemory.replace("M","")
+                    strings += sPre_2 + '<native>-R "rusage[mem={0}]"</native>\n'.format(iMemory)
 
     # -------------------sNodes-------------------
 
@@ -402,7 +407,7 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         if taskname in metatask_names:
             strings += ""
         else:
-            if sQueue.endswith("_shared") and taskname in ['ensstat_hr', 'enspost_hr', 'ensstat_lr', 'enspost_lr', 'gempak', 'gempak_meta', 'avgspr_gempak_meta', 'ensavg_nemsio', 'postsnd']:
+            if sQueue.endswith("_shared") and taskname in ['ensstat_hr', 'enspost_hr', 'ensstat_lr', 'enspost_lr', 'gempak', 'gempak_meta', 'avgspr_gempak_meta', 'ensavg_nemsio', 'postsnd', "fcst_post_manager"]:
                 strings += ""
             else:
                 strings += sPre_2 + "<native>-R 'affinity[core(1)]'</native>\n"
