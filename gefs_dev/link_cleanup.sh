@@ -22,7 +22,7 @@ pwd=$(pwd -P)
 pwd0=$(readlink -e $pwd/../)
 echo $pwd0
 
-for f0 in modulefiles/gefs sorc jobs ush scripts gempak/ush gempak/fix util/ush; do
+for f0 in modulefiles/gefs sorc jobs ush scripts util/ush; do
 
     for f in $f0/*; do
         #echo $f
@@ -56,15 +56,3 @@ for f0 in modulefiles/gefs sorc jobs ush scripts gempak/ush gempak/fix util/ush;
 
 done
 
-f0=util
-f=${f0}/sorc
-if [ $CleanAll = "yes" ]; then
-    if [ -L $pwd0/$f ]; then
-        echo $pwd0/$f
-        rm -rf $pwd0/$f
-    fi
-else
-    cd $pwd0/$f0
-     $LINK ../gefs_dev/$f .
-    cd $pwd
-fi

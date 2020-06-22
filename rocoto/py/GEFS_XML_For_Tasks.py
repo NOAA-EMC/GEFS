@@ -199,10 +199,7 @@ def config_tasknames(dicBase):
 
         # #    <!-- other jobs -->
         if dicBase['RUN_OTHERS'].upper()[0] == "Y":
-            # ---cqpf
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "cqpf"
+            print("Currently, RUN_OTHERS is not used!")
 
         # #    <!-- RUN_KEEPDATA -->
         if dicBase['RUN_KEEPDATA'].upper()[0] == "Y":
