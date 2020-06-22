@@ -3,3 +3,9 @@ global_chgres_driver.sh
 gfs_nceppost.sh
 merge_fv3_chem_tile.py
 wave_*.sh
+
+# Ignore the ush scripts for developer use
+global_enspqpf_24h_cmc.sh
+global_ensprcpcv.sh
+syndataxtrack.sh
+

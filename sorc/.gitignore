@@ -2,3 +2,9 @@
 logs/
 global-workflow.fd
 
+# Ignore the files for developer use
+build_all_dev.sh
+partial_build_dev.sh
+gefs_build_dev.cfg
+build_global_enspqpf.sh
+global_enspqpf.fd
