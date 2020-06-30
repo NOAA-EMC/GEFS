@@ -75,6 +75,8 @@ export SCRIPTSens_tracker=${SCRIPTSens_tracker:-$HOMEtrak/scripts}
 
 export PARMgefs=$HOMEgefs/parm
 
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/${cyc}}
+
 ##############################
 # Run setup to initialize working directory and utility scripts
 ##############################
