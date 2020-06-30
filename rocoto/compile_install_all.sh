@@ -146,22 +146,7 @@ if [ $CleanAll = "yes" ]; then
         fi
     done
 
-    for dir in global_enscvprcp.fd  global_enspvrfy.fd  global_enssrbias.fd global_enscqpf.fd  global_enscvt24h.fd  global_ensrfmat.fd ; do
-        if [ -f $dir ]; then
-            cd $dir
-            make clean
-            cd ..
-        fi
-    done
-
-    for dir in ../util/sorc/overenstr.grib.fd; do
-        if [ -f $dir ]; then
-            cd $dir
-            make clean
-            cd ../../../sorc
-        fi
-    done
-    for dir in gefs_anom2_fcst.fd gefs_nstgen.fd ; do
+    for dir in gefs_anom2_fcst.fd gefs_nstgen.fd wave_stat.fd; do
         if [ -f $dir ]; then
             cd $dir
             make clean
