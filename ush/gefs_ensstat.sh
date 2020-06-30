@@ -33,16 +33,16 @@ if [[ ${STRICT:-NO} == "YES" ]]; then
 	set -eu
 fi
 
-if [ "$jobgrid" = '2p5' ]; then
-        SENDDBN=NO
-fi
-
 export subdata="${1}"                  # ${DATA}/${stream}
 export stream="${2}"                   # PRDGEN_STREAMS
 export jobgrid="${3}"                  # PRDGEN_GRID[$stream]
 typeset -a hours="${4}"                # PRDGEN_HOURS[$stream]
 export pgad="${5}"                     # PRDGEN_A_DIR[$stream]
 export pgapre="${6}"                   # PRDGEN_A_PREFIX[$stream]
+
+if [ "$jobgrid" = '2p5' ]; then
+        SENDDBN=NO
+fi
 
 cat <<-EOF
 	Settings for ensstat stream $stream:
