@@ -458,10 +458,6 @@ if [[ "$cycle" == "t00z" ]] && [[ -z $ext_h ]]; then
 		cp ensppf${ext_h}.$PDY$cyc.grib2 $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2
 		cp ensppf${ext_h}.$PDY$cyc.grib2.idx $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2.idx
 	fi  #[ $SENDCOM = "YES" ]
-	if [ "$SENDDBN" = "YES" ]; then
-		$DBNROOT/bin/dbn_alert MODEL ENS_STAT_GB2 $job $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2
-		$DBNROOT/bin/dbn_alert MODEL ENS_STAT_GB2_WIDX $job $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2.idx
-	fi # [ "$SENDDBN" = "YES" ]
 fi # test "$cycle" = "t00z"
 
 # part (1b): probabilistic forecasts ( PQPF, PQRF, PQFF, PQSF and PQIF )

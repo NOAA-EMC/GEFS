@@ -304,8 +304,8 @@ for hour in $hours; do
 					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG_WIDX $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
 				fi # [[ "$run" = "geavg" ]]
 				if [[ "$run" = "gespr" ]]; then
-					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}
-					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG_WIDX $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
+					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}
+					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
 				fi
 			fi # [[] "$SENDDBN" = 'YES' ]]
 		done
