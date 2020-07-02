@@ -66,13 +66,13 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 # Define COM directories
 ##############################################
 if [ $cyc = 00 ]; then
-  export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDYm1}/${cyc}}
-  export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDYm1}/${cyc}}
-  export GESOUT=${GESOUT:-${GESROOT}/$envir/${RUN}.${PDYm1}/${cyc}}
+    export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDYm1}/${cyc}}
+    export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDYm1}/${cyc}}
+    export GESOUT=${GESOUT:-${GESROOT}/$envir/${RUN}.${PDYm1}/${cyc}}
 else
-  export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}}
-  export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}}
-  export GESOUT=${GESOUT:-${GESROOT}/$envir/${RUN}.${PDY}/${cyc}}
+    export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}}
+    export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}}
+    export GESOUT=${GESOUT:-${GESROOT}/$envir/${RUN}.${PDY}/${cyc}}
 fi
 
 ##############################################
