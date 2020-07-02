@@ -133,7 +133,7 @@ if [[ $SENDCOM == YES ]]; then
         mkdir -p $COMOUT/init/$smem
         $NCP $GESOUT/init/$smem/gfs* $COMOUT/init/$smem
 	if [[ $SENDDBN = YES ]];then
-	      $DBNROOT/bin/dbn_alert MODEL ENS_SA_$mem $job $COMOUT/init/$mem/gfs_data.tile6.nc
+	    $DBNROOT/bin/dbn_alert MODEL ENS_SA_$smem $job $COMOUT/init/$smem/gfs_data.tile6.nc
 	fi		
         (( mem = mem +1 ))
     done
