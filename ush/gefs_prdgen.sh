@@ -190,17 +190,21 @@ else
 		fi # [[ $makepgrb2b = "yes" ]]
 
 		###############################################################################
-		# Send DBNet alerts for PGB2A at 6 hour increments for all forecast hours
-		# Do for 00, 06, 12, and 18Z cycles.
+		# Send DBNet alerts for PGB2A all forecast hours for 00, 06, 12, and 18Z cycles.
 		###############################################################################
-		#if [[ "$SENDDBN" = 'YES' && "$NET" = 'gefs' && $( expr $cyc % 6 ) -eq 0 ]]; then
+		MODCOM=$(echo ${NET}_${COMPONENT} | tr '[a-z]' '[A-Z]')
 		if [[ "$SENDDBN" = 'YES' ]]; then
-			if [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]; then
-				MEMBER=$(echo $RUNMEM | cut -c3-5 | tr '[a-z]' '[A-Z]')
-				if [[ $fhr -ge 0 && $fhr -le $fhmax ]]; then
-					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_$GRID\_$MEMBER $job $fileaout
-					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A_$GRID\_${MEMBER}_WIDX $job $fileaouti
+			DBNTYP=${MODCOM}_PGB2A
+			if [[ $(echo $RUNMEM | cut -c3-5) = "aer" ]]; then
+				if [[ "$jobgrid" = '0p50' ]]; then
+					DBNTYP=${MODCOM}_A3D_GB2
+				else
+					DBNTYP=${MODCOM}_A2D_GB2
 				fi
+			fi
+			if [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]; then
+				$DBNROOT/bin/dbn_alert MODEL ${DBNTYP}_$GRID $job $fileaout
+				$DBNROOT/bin/dbn_alert MODEL ${DBNTYP}_$GRID\_WIDX $job $fileaouti
 			fi # [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]
 		fi # [[ "$SENDDBN" = 'YES' ]]
 
@@ -208,14 +212,14 @@ else
 		# Send DBNet alerts for PGB2B 
 		###############################################################################
 		if [[ "$SENDDBN" = 'YES' && "$jobgrid" = '0p50' && "$makepgrb2b" = "yes" ]]; then
+			DBNTYP=${MODCOM}_PGB2B
 			if [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]; then
-				MEMBER=$(echo $RUNMEM | cut -c3-5 | tr '[a-z]' '[A-Z]')
-				$DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_$GRID\_$MEMBER $job $filebout
-				$DBNROOT/bin/dbn_alert MODEL ENS_PGB2B_$GRID\_${MEMBER}_WIDX $job $filebouti
+				$DBNROOT/bin/dbn_alert MODEL ${DBNTYP}_$GRID $job $filebout
+				$DBNROOT/bin/dbn_alert MODEL ${DBNTYP}_$GRID\_WIDX $job $filebouti
 			fi # [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]
 		fi # [[ "$SENDDBN" = 'YES' ]]
 	fi # [[ "$SENDCOM" = 'YES' ]]
-	echo $(date) pgrb2a 1x1 sendcom $ffhr completed
+	echo $(date) pgrb2a $jobgrid sendcom $ffhr completed
 fi # [[ -s $DATA/pgrb2$ffhr ]] && [[ $overwrite = no ]]
 
 echo "$(date -u) end ${.sh.file}"
