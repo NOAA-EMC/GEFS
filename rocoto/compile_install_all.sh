@@ -192,7 +192,7 @@ if [ $RunRocoto = "yes" ]; then
         module load intel/18.0.5.274
         module load rocoto/1.3.1
         module load contrib
-        module load anaconda/anaconda3-5.3.1
+        module load intelpython/3.6.8
  
     elif [ $machine = "cray" ]; then
         . /opt/modules/3.2.10.3/init/sh

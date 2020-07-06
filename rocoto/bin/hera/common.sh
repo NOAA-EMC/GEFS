@@ -27,6 +27,12 @@ export taskspernode=${GEFS_PPN}
 
 export NTASKS=$SLURM_NTASKS
 
+#\/ Only on Hera
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+#/\ Only for Hera
+
 export gefsmpexec="srun -n $NTASKS"
 export gefsmpexec_mpmd="srun -n $NTASKS /scratch2/NCEPDEV/ensemble/noscrub/common/soft/mpiserial.cd/mpiserial"
 export wavempexec="srun -n" 
