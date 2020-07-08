@@ -424,11 +424,6 @@ if [ "$SENDCOM" = "YES" ]; then
 	done # for file in $postvarlist
 fi # [ "$SENDCOM" = "YES" ]
 
-#DHOU, 05/13/2015, added this block for gefs_cqpf trigger
-if [[ $SENDECF = "YES" ]]; then
-	ecflow_client --event enspost_grb2_ready
-fi
-
 if [[ "$cycle" == "t00z" ]] && [[ -z $ext_h ]]; then
 	$ENSPPF $COMOUT/$COMPONENT/ensstat/enspost_grb2${ext_h}.$cycle.prcp ensppf${ext_h}.$PDY$cyc.grib2 $npert
 	$WGRIB2 ensppf${ext_h}.$PDY$cyc.grib2 -s >ensppf${ext_h}.$PDY$cyc.grib2.idx 

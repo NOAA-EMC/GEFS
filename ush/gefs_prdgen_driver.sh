@@ -391,13 +391,6 @@ for hour in $hours; do
 			fi
 		fi # [[ ! -s $pcfile ]]
 
-		#####################################################################
-		#DHOU, 09/17/2015, added this block for global wave ensemble trigger
-		#0p5 only
-		#####################################################################
-		if [[ $SENDECF = "YES" && "$jobgrid" = "0p5" && $fhr -eq 240 ]]; then
-			ecflow_client --event pgrb2ap5_f240_ready
-		fi
 	fi # [[ $found = "yes" ]]
 done # for hour in $hours
 

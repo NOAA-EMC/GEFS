@@ -308,9 +308,6 @@ if [ $DOANALYSIS = YES ]; then
 				ls -al  $mcfile
 				cat  $mcfile
 				echo "anl_done" >> $post_log
-				if [[ $SENDECF = "YES" ]]; then
-					ecflow_client --event anl_done
-				fi
 				echo
 			fi # test $SENDCOM = "YES"
 		fi # test -f $COMIN/$COMPONENT/init/${RUNMEM}.t${cyc}z.sanl
@@ -468,9 +465,6 @@ for fhr in ${RUN_HOURS[@]}; do
 			ls -al $mcfile
 			cat  $mcfile
 			echo "f${fhr}_done" >> $post_log
-			if [[ $SENDECF == "YES" ]]; then
-				ecflow_client --event f${fhr}_done
-			fi
 			echo
 		fi # [[ $SENDCOM == "YES" ]];
 	fi # [[ ! -s $mcfile ]]
