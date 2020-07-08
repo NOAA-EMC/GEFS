@@ -372,7 +372,12 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
             if sQueue.endswith("_shared"):
                 strings += sPre_2 + '<native>-R "affinity[core(1):distribute=pack]"</native>\n'
-                strings += sPre_2 + '<native>-R "rusage[mem=4608]"</native>\n'
+                if sMemory == "":
+                    strings += sPre_2 + '<native>-R "rusage[mem=4608]"</native>\n'
+                else:
+                    if sMemory.endswith("M"):
+                        iMemory = sMemory.replace("M","")
+                    strings += sPre_2 + '<native>-R "rusage[mem={0}]"</native>\n'.format(iMemory)
 
     # -------------------sNodes-------------------
 
@@ -402,7 +407,7 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         if taskname in metatask_names:
             strings += ""
         else:
-            if sQueue.endswith("_shared") and taskname in ['ensstat_hr', 'enspost_hr', 'ensstat_lr', 'enspost_lr', 'gempak', 'gempak_meta', 'avgspr_gempak_meta', 'ensavg_nemsio', 'postsnd']:
+            if sQueue.endswith("_shared") and taskname in ['ensstat_hr', 'enspost_hr', 'ensstat_lr', 'enspost_lr', 'gempak', 'gempak_meta', 'avgspr_gempak_meta', 'ensavg_nemsio', 'postsnd', "fcst_post_manager"]:
                 strings += ""
             else:
                 strings += sPre_2 + "<native>-R 'affinity[core(1)]'</native>\n"
@@ -437,7 +442,7 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
 
     # For FORECAST_SEGMENT
-    if (taskname in ['forecast_hr', 'prdgen_hr', 'post_hr', 'ensstat_hr', 'enspost_hr', 'chem_forecast', 'chem_post', 'chem_prdgen']) \
+    if (taskname in ['forecast_hr', 'prdgen_hr', 'post_hr', 'ensstat_hr', 'enspost_hr', 'chem_forecast', 'chem_post', 'chem_prdgen', 'fcst_post_manager']) \
      or taskname.startswith("post_hr_") or taskname.startswith('chem_post_'):
         strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
     elif taskname in ['forecast_lr', 'prdgen_lr', 'post_lr', 'ensstat_lr', 'enspost_lr']:
@@ -1429,6 +1434,8 @@ def get_metatask_names(taskname=""):
     metatask_names.append('wave_gempak')
     # postsnd
     metatask_names.append('postsnd')
+    # fcst_post_manageq
+    metatask_names.append('fcst_post_manager')
 
     return metatask_names
 
