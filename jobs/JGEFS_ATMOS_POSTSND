@@ -84,6 +84,7 @@ done
 
 export COMPONENT=${COMPONENT:-atmos}
 
+export COMOUTwmo=${COMOUTwmo:-${COMOUT}/${COMPONENT}/wmo}
 export jlogfile=${jlogfile:-$DATA/jlogfile}
 
 echo "Environment before calling script"

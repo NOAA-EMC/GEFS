@@ -70,15 +70,15 @@ for stn in $(cat $file_list); do
 	 rm $DATA/${m}/bufrout
 done
 
-SENDDBN_NTC=NO 
 if [ $SENDCOM = 'YES' ]; then 
 	cp $DATA/${m}/${RUNMEM}_collective$m.fil ${COMOUT}/$COMPONENT/bufr/$mem/.
 	if [ $SENDDBN = 'YES' ] ; then
-		$DBNROOT/bin/dbn_alert GEFS_${RUNMEM}_BUFR $job \
+		$DBNROOT/bin/dbn_alert MODEL GEFS_${RUNMEM}_BUFR $job \
 		${COMOUT}/$COMPONENT/bufr/$mem/${RUNMEM}_collective$m.fil
 	fi
-	if [ $SENDDBN_NTC = 'YES' ] ; then
-		cp $DATA/${m}/${RUNMEM}_collective$m.fil $pcom/${RUNMEM}_collective$m.postsnd_$cyc
-		$DBNROOT/bin/dbn_alert NTC_LOW BUFR $job $pcom/${RUNMEM}_collective$m.postsnd_$cyc
-	fi
+# No approval for adding header to SBN yet
+#	if [ $SENDDBN_NTC = 'YES' ] ; then
+#		cp $DATA/${m}/${RUNMEM}_collective$m.fil $COMOUTwmo/${RUNMEM}_collective$m.postsnd_$cyc
+#		$DBNROOT/bin/dbn_alert NTC_LOW BUFR $job $COMOUTwmo/${RUNMEM}_collective$m.postsnd_$cyc
+#	fi
 fi
