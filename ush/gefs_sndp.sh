@@ -73,7 +73,9 @@ done
 if [ $SENDCOM = 'YES' ]; then 
 	cp $DATA/${m}/${RUNMEM}_collective$m.fil ${COMOUT}/$COMPONENT/bufr/$mem/.
 	if [ $SENDDBN = 'YES' ] ; then
-		$DBNROOT/bin/dbn_alert MODEL GEFS_${RUNMEM}_BUFR $job \
+		MODCOM=$(echo ${NET}_${COMPONENT} | tr '[a-z]' '[A-Z]')
+		DBNTYP=${MODCOM}_BUFRSND_COL
+		$DBNROOT/bin/dbn_alert MODEL ${DBNTYP} $job \
 		${COMOUT}/$COMPONENT/bufr/$mem/${RUNMEM}_collective$m.fil
 	fi
 # No approval for adding header to SBN yet

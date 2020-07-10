@@ -291,6 +291,7 @@ for hour in $hours; do
 
 	if [ $SENDCOM = "YES" ]; then
 		MODCOM=$(echo ${NET}_${COMPONENT} | tr '[a-z]' '[A-Z]')
+		GRID=$(echo ${jobgrid} | tr '[a-z]' '[A-Z]')
 		for run in geavg gespr; do
 			if [[ "$makegrb2i" = "yes" ]]; then
 				$WGRIB2 -s ${run}.${cycle}.$pgapre${ffhr} >${run}.${cycle}.$pgapre${ffhr}.idx
@@ -301,9 +302,11 @@ for hour in $hours; do
 			fi # [[ -s ${run}.${cycle}.$pgapre${ffhr} ]]
 			if [[ "$SENDDBN" = 'YES' ]]; then
 				$DBNROOT/bin/dbn_alert MODEL ${MODCOM}_PGB2A_${GRID} $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}
-				$DBNROOT/bin/dbn_alert MODEL ${MODCOM}_PGB2A_${GRID}_WIDX $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
+				$DBNROOT/bin/dbn_alert MODEL ${MODCOM}_PGB2A_${GRID}_IDX $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
+			fi
 		done
 
+	fi
 	echo "$(date) send pgrb2a output end"
 	
 done #hour in $hours

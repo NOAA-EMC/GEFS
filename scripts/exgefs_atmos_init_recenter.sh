@@ -127,13 +127,17 @@ else
 fi # $warm_start = ".false."
 
 if [[ $SENDCOM == YES ]]; then
+    MODCOM=$(echo ${NET}_${COMPONENT} | tr '[a-z]' '[A-Z]')
+    DBNTYP=${MODCOM}_INIT
     mem=01
     while [ $mem -le $npert ]; do
         smem=p$(printf %02i $mem)
         mkdir -p $COMOUT/init/$smem
         $NCP $GESOUT/init/$smem/gfs* $COMOUT/init/$smem
 	if [[ $SENDDBN = YES ]];then
-	    $DBNROOT/bin/dbn_alert MODEL ENS_SA_$smem $job $COMOUT/init/$smem/gfs_data.tile6.nc
+          for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
+            $DBNROOT/bin/dbn_alert MODEL $DBNTYP $job $COMOUT/init/$smem/gfs_data.${tile}.nc
+          done
 	fi		
         (( mem = mem +1 ))
     done

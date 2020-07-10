@@ -88,17 +88,23 @@ $NCP $OUTDIR/sfc* $GESOUT/init/$mem
 $NCP $OUTDIR/gfs_ctrl.nc $GESOUT/init/$mem
 
 if [[ $SENDCOM == "YES" ]]; then
+    MODCOM=$(echo ${NET}_${COMPONENT} | tr '[a-z]' '[A-Z]')
+    DBNTYP=${MODCOM}_INIT
     mkdir -p $COMOUT/init/$mem
     $NCP $OUTDIR/sfc* $COMOUT/init/$mem
     $NCP $OUTDIR/gfs_ctrl.nc $COMOUT/init/$mem
     if [[ $SENDDBN = YES ]];then
-      $DBNROOT/bin/dbn_alert MODEL ENS_CTR_$mem $job $COMOUT/init/$mem/gfs_ctrl.nc
-      $DBNROOT/bin/dbn_alert MODEL ENS_MSC_$mem $job $COMOUT/init/$mem/sfc_data.tile6.nc
+      $DBNROOT/bin/dbn_alert MODEL $DBNTYP $job $COMOUT/init/$mem/gfs_ctrl.nc
+      for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
+              $DBNROOT/bin/dbn_alert MODEL $DBNTYP $job $COMOUT/init/$mem/sfc_data.${tile}.nc
+      done
     fi
     if [[ $mem == "c00" ]]; then
       $NCP $OUTDIR/gfs_data*.nc $COMOUT/init/$mem
       if [[ $SENDDBN = YES ]];then
-              $DBNROOT/bin/dbn_alert MODEL ENS_SA_$mem $job $COMOUT/init/$mem/gfs_data.tile6.nc
+        for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
+              $DBNROOT/bin/dbn_alert MODEL $DBNTYP $job $COMOUT/init/$mem/gfs_data.${tile}.nc
+        done
       fi
     fi
 fi

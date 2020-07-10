@@ -193,18 +193,19 @@ else
 		# Send DBNet alerts for PGB2A all forecast hours for 00, 06, 12, and 18Z cycles.
 		###############################################################################
 		MODCOM=$(echo ${NET}_${COMPONENT} | tr '[a-z]' '[A-Z]')
+		GRID=$(echo ${GRID} | tr '[a-z]' '[A-Z]')
 		if [[ "$SENDDBN" = 'YES' ]]; then
 			DBNTYP=${MODCOM}_PGB2A
-			if [[ $(echo $RUNMEM | cut -c3-5) = "aer" ]]; then
-				if [[ "$jobgrid" = '0p50' ]]; then
-					DBNTYP=${MODCOM}_A3D_GB2
-				else
-					DBNTYP=${MODCOM}_A2D_GB2
-				fi
-			fi
+			#if [[ $(echo $RUNMEM | cut -c3-5) = "aer" ]]; then
+			#	if [[ "$jobgrid" = '0p50' ]]; then
+			#		DBNTYP=${MODCOM}_A3D_GB2
+			#	else
+			#		DBNTYP=${MODCOM}_A2D_GB2
+			#	fi
+			#fi
 			if [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]; then
 				$DBNROOT/bin/dbn_alert MODEL ${DBNTYP}_$GRID $job $fileaout
-				$DBNROOT/bin/dbn_alert MODEL ${DBNTYP}_$GRID\_WIDX $job $fileaouti
+				$DBNROOT/bin/dbn_alert MODEL ${DBNTYP}_$GRID\_IDX $job $fileaouti
 			fi # [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]
 		fi # [[ "$SENDDBN" = 'YES' ]]
 
@@ -215,7 +216,7 @@ else
 			DBNTYP=${MODCOM}_PGB2B
 			if [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]; then
 				$DBNROOT/bin/dbn_alert MODEL ${DBNTYP}_$GRID $job $filebout
-				$DBNROOT/bin/dbn_alert MODEL ${DBNTYP}_$GRID\_WIDX $job $filebouti
+				$DBNROOT/bin/dbn_alert MODEL ${DBNTYP}_$GRID\_IDX $job $filebouti
 			fi # [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]
 		fi # [[ "$SENDDBN" = 'YES' ]]
 	fi # [[ "$SENDCOM" = 'YES' ]]
