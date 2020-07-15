@@ -90,45 +90,80 @@ if [ $warm_start = ".false." ]; then
 
     if [ $npert -gt 0 ]; then
         # To copy p01 data to init/
-        (( itile = 1 ))
-        while (( itile <= ntiles  )); do
-    	    ic=1
-            while [ $ic -le $SLEEP_LOOP_MAX ]; do
-        	    sInputFile=$FILEINPATH/p01/${FILENAME}${itile}.nc
-                echo $sInputFile
-                if [ -f ${sInputFile} ]; then
-                    break
-                else
-                    ic=$(( $ic + 1 ))
-                    echo "---" $ic $itile
-                    sleep $SLEEP_INT
-                fi # test -f $sInputFile
-                ###############################
-                # If we reach this point assume
-                # atmos_prep job is working on
-                ###############################
-                if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-                echo <<- EOF
-						FATAL ERROR in ${.sh.file}: Forecast missing for one tile of p01
-                        File $sInputFile still missing at $(date -u) after waiting ${SLEEP_TIME}s
-				EOF
-                    export err=9
-                    err_chk || exit $err
-                fi
-            done  #while [ $ic -le $SLEEP_LOOP_MAX ]
-            (( itile = itile + 1 ))
-        done
-        mkdir -p $FILEOUTPATH
- 	    $NCP $FILEINPATH/p01/${FILENAME}*  $FILEOUTPATH/.
+#        (( itile = 1 ))
+#        while (( itile <= ntiles  )); do
+#    	    ic=1
+#            while [ $ic -le $SLEEP_LOOP_MAX ]; do
+#        	    sInputFile=$FILEINPATH/p01/${FILENAME}${itile}.nc
+#                echo $sInputFile
+#                if [ -f ${sInputFile} ]; then
+#                    break
+#                else
+#                    ic=$(( $ic + 1 ))
+#                    echo "---" $ic $itile
+#                    sleep $SLEEP_INT
+#                fi # test -f $sInputFile
+#                ###############################
+#                # If we reach this point assume
+#                # atmos_prep job is working
+#                ###############################
+#                if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+#                	echo <<- EOF
+#							FATAL ERROR in ${.sh.file}: Forecast missing for one tile of p01
+#							File $sInputFile still missing at $(date -u) after waiting ${SLEEP_TIME}s
+#						EOF
+#                    export err=9
+#                    err_chk || exit $err
+#                fi
+#            done  #while [ $ic -le $SLEEP_LOOP_MAX ]
+#            (( itile = itile + 1 ))
+#        done
+#        mkdir -p $FILEOUTPATH
+# 	    $NCP $FILEINPATH/p01/${FILENAME}*  $FILEOUTPATH/.
 
 
         # To run recenter-prep
-    
+        for (( itile=1; itile <= $ntiles; itile++  )); do
+			for (( imem=1; imem<=$npert; imem++ )); do
+				sMem=p$(printf %02i $imem)
 
+#			(( itile = 1 ))
+#			while (( itile <= ntiles  )); do
+				ic=1
+				while [ $ic -le $SLEEP_LOOP_MAX ]; do
+					sInputFile=$FILEINPATH/${sMem}/${FILENAME}${itile}.nc
+					echo $sInputFile
+					if [ -f ${sInputFile} ]; then
+						break
+					else
+						ic=$(( $ic + 1 ))
+						echo "---" $ic $itile
+						sleep $SLEEP_INT
+					fi # test -f $sInputFile
+					###############################
+					# If we reach this point assume
+					# atmos_prep job is working
+					###############################
+					if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+						echo <<- EOF
+								FATAL ERROR in ${.sh.file}: Forecast missing for one tile of ${sMem}
+								File $sInputFile still missing at $(date -u) after waiting ${SLEEP_TIME}s
+							EOF
+						export err=9
+						err_chk || exit $err
+					fi
+				done  #while [ $ic -le $SLEEP_LOOP_MAX ]
+#				(( itile = itile + 1 ))
+			done
+#			mkdir -p $FILEOUTPATH
+#			$NCP $FILEINPATH/${sMem}/${FILENAME}*  $FILEOUTPATH/.
+		done # for (( imem=1; imem<=$npert; imem++ )); do
+
+		mkdir -p $FILEOUTPATH
+ 	    $NCP $FILEINPATH/p01/${FILENAME}*  $FILEOUTPATH/.
 
         rm -rf poescript*
 
-        
         (( itile = 1 ))
         while (( itile <= ntiles  )); do
             echo "$RECENATMPY_PREP $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH $itile" >>poescript
@@ -175,8 +210,7 @@ if [ $warm_start = ".false." ]; then
                 fi # test -f $sInputFile
                 ###############################
                 # If we reach this point assume
-                # fcst job never reached restart
-                # period and error exit
+                # atmos_prep job is working
                 ###############################
                 if [ $ic -eq $SLEEP_LOOP_MAX ]; then
 				echo <<- EOF
@@ -193,38 +227,38 @@ if [ $warm_start = ".false." ]; then
         mkdir -p $FILEOUTPATH/c00
  	    $NCP $FILEINPATH/c00/${FILENAME}*  $FILEOUTPATH/c00/.
         # Post
-        if [ $npert -gt 0 ]; then
-            rm -rf poescript*
+		rm -rf poescript*
 
-        (( itile = 1 ))
-        while (( itile <= ntiles  )); do
-    		echo "$RECENATMPY_POST $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH $itile" >>poescript
-            (( itile = itile + 1 ))
-        done # while (( itask < npert ))
+		(( itile = 1 ))
+		while (( itile <= ntiles  )); do
+			echo "$RECENATMPY_POST $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH $itile" >>poescript
+			(( itile = itile + 1 ))
+		done # while (( itask < npert ))
 
-        chmod 755 poescript
-        ls -al poescript
-        cat poescript
-        export MP_HOLDTIME=1000
+		chmod 755 poescript
+		ls -al poescript
+		cat poescript
+		export MP_HOLDTIME=1000
 
-        export MP_CMDFILE=poescript
-        export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
-        export MP_LABELIO=yes
-        export MP_INFOLEVEL=3
-        export MP_STDOUTMODE=unordered
-        export MP_PGMMODEL=mpmd
+		export MP_CMDFILE=poescript
+		export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
+		export MP_LABELIO=yes
+		export MP_INFOLEVEL=3
+		export MP_STDOUTMODE=unordered
+		export MP_PGMMODEL=mpmd
 
-        if [ -f mpmd_cmdfile ]; then
-            rm mpmd_cmdfile
-        fi
-        ln -s $MP_CMDFILE mpmd_cmdfile
-        $APRUN_MPMD
+		if [ -f mpmd_cmdfile ]; then
+			rm mpmd_cmdfile
+		fi
+		ln -s $MP_CMDFILE mpmd_cmdfile
+		$APRUN_MPMD
 
-        export err=$?
-        if [[ $err != 0 ]]; then
-            echo "FATAL ERROR in ${.sh.file}: One or more recenter jobs in $MP_CMDFILE failed!"
-            exit $err
-        fi
+		export err=$?
+		if [[ $err != 0 ]]; then
+			echo "FATAL ERROR in ${.sh.file}: One or more recenter jobs in $MP_CMDFILE failed!"
+			exit $err
+		fi
+
     fi
 else
 	echo "FATAL ERROR in ${.sh.file}: init_recenter only works for cold start"
@@ -248,4 +282,5 @@ fi
 echo "$(date -u) end ${.sh.file}"
 
 exit 0
+
 
