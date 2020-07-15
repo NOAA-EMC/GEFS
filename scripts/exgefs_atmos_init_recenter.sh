@@ -77,23 +77,61 @@ NLN=${NLN:-"/bin/ln -sf"}
 NMV=${NMV:-"/bin/mv -uv"}
 
 # Scripts
+RECENATMPY_PREP=${RECENATMPY:-$HOMEgefs/util/ush/recentensemble_prep.py}
+RECENATMPY_POST=${RECENATMPY:-$HOMEgefs/util/ush/recentensemble_post.py}
 RECENATMPY=${RECENATMPY:-$HOMEgefs/util/ush/recentensemble.py}
 
-export err=0
+SLEEP_LOOP_MAX=$((SLEEP_TIME / SLEEP_INT))
 if [ $warm_start = ".false." ]; then
 	export FILENAME='gfs_data.tile'
 	export FILEINPATH=$GESIN/enkf
 	export FILEOUTPATH=$GESOUT/init
 
-    mkdir -p $FILEOUTPATH/c00
- 	$NCP $FILEINPATH/c00/gfs*  $FILEOUTPATH/c00/.
 
     if [ $npert -gt 0 ]; then
-        rm -rf poescript*
-
+        # To copy p01 data to init/
         (( itile = 1 ))
         while (( itile <= ntiles  )); do
-    		echo "$RECENATMPY $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH $itile" >>poescript
+    	    ic=1
+            while [ $ic -le $SLEEP_LOOP_MAX ]; do
+        	    sInputFile=$FILEINPATH/p01/${FILENAME}${itile}.nc
+                echo $sInputFile
+                if [ -f ${sInputFile} ]; then
+                    break
+                else
+                    ic=$(( $ic + 1 ))
+                    echo "---" $ic $itile
+                    sleep $SLEEP_INT
+                fi # test -f $sInputFile
+                ###############################
+                # If we reach this point assume
+                # atmos_prep job is working on
+                ###############################
+                if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+                echo <<- EOF
+						FATAL ERROR in ${.sh.file}: Forecast missing for one tile of p01
+                        File $sInputFile still missing at $(date -u) after waiting ${SLEEP_TIME}s
+				EOF
+                    export err=9
+                    err_chk || exit $err
+                fi
+            done  #while [ $ic -le $SLEEP_LOOP_MAX ]
+            (( itile = itile + 1 ))
+        done
+        mkdir -p $FILEOUTPATH
+ 	    $NCP $FILEINPATH/p01/${FILENAME}*  $FILEOUTPATH/.
+
+
+        # To run recenter-prep
+    
+
+
+        rm -rf poescript*
+
+        
+        (( itile = 1 ))
+        while (( itile <= ntiles  )); do
+            echo "$RECENATMPY_PREP $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH $itile" >>poescript
             (( itile = itile + 1 ))
         done # while (( itask < npert ))
 
@@ -109,12 +147,79 @@ if [ $warm_start = ".false." ]; then
         export MP_STDOUTMODE=unordered
         export MP_PGMMODEL=mpmd
 
-        if [ -f mpmd_cmdfile ]; then 
+        if [ -f mpmd_cmdfile ]; then
             rm mpmd_cmdfile
         fi
         ln -s $MP_CMDFILE mpmd_cmdfile
         $APRUN_MPMD
-        
+
+        export err=$?
+        if [[ $err != 0 ]]; then
+            echo "FATAL ERROR in ${.sh.file}: One or more recenter jobs in $MP_CMDFILE failed!"
+            exit $err
+        fi
+    
+        # Ro run recenter-post
+        (( itile = 1 ))
+        while (( itile <= ntiles  )); do
+            ic=1
+            while [ $ic -le $SLEEP_LOOP_MAX ]; do
+                sInputFile=$FILEINPATH/c00/${FILENAME}${itile}.nc
+                echo $sInputFile
+                if [ -f ${sInputFile} ]; then
+                    break
+                else
+                    ic=$(( $ic + 1 ))
+                    echo "---" $ic $itile
+                    sleep $SLEEP_INT
+                fi # test -f $sInputFile
+                ###############################
+                # If we reach this point assume
+                # fcst job never reached restart
+                # period and error exit
+                ###############################
+                if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+				echo <<- EOF
+					FATAL ERROR in ${.sh.file}: Forecast missing for one tile of c00
+					File $sInputFile still missing at $(date -u) after waiting ${SLEEP_TIME}s
+				EOF
+                    export err=9
+                    err_chk || exit $err
+                fi
+            done  #while [ $ic -le $SLEEP_LOOP_MAX ]
+            (( itile = itile + 1 ))
+        done
+
+        mkdir -p $FILEOUTPATH/c00
+ 	    $NCP $FILEINPATH/c00/${FILENAME}*  $FILEOUTPATH/c00/.
+        # Post
+        if [ $npert -gt 0 ]; then
+            rm -rf poescript*
+
+        (( itile = 1 ))
+        while (( itile <= ntiles  )); do
+    		echo "$RECENATMPY_POST $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH $itile" >>poescript
+            (( itile = itile + 1 ))
+        done # while (( itask < npert ))
+
+        chmod 755 poescript
+        ls -al poescript
+        cat poescript
+        export MP_HOLDTIME=1000
+
+        export MP_CMDFILE=poescript
+        export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
+        export MP_LABELIO=yes
+        export MP_INFOLEVEL=3
+        export MP_STDOUTMODE=unordered
+        export MP_PGMMODEL=mpmd
+
+        if [ -f mpmd_cmdfile ]; then
+            rm mpmd_cmdfile
+        fi
+        ln -s $MP_CMDFILE mpmd_cmdfile
+        $APRUN_MPMD
+
         export err=$?
         if [[ $err != 0 ]]; then
             echo "FATAL ERROR in ${.sh.file}: One or more recenter jobs in $MP_CMDFILE failed!"
@@ -139,7 +244,8 @@ if [[ $SENDCOM == YES ]]; then
     done
 fi
 
-rm -rf $GESOUT/enkf
+#rm -rf $GESOUT/enkf
 echo "$(date -u) end ${.sh.file}"
 
 exit 0
+
