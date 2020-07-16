@@ -89,7 +89,8 @@ def main():
 
         RemoveUnusedVars(sInWS,sFileName,sVars,iTile)
 
-        getMems_mean(iTile, Npert, sInWS, sOutWS, sFileName, sVars)
+        do_Recenter(iTile, Npert, sInWS, sOutWS, sFileName, sVars)
+
     else:
         print('You should run "recentensemble.py Npert Ntiles filename sInWS sOutWS [iTile]"')
         exit(-1)
@@ -134,16 +135,16 @@ def DoAllTiles(Npert, NTiles, sFileName, sInWS, sOutWS, sVars):
         print("Dealing with Tile: {0}".format(iTile + 1))
         # sys.stdout.flush()
 
-        getMems_mean(iTile+1, Npert, sInWS, sOutWS, sFileName, sVars)
+        do_Recenter(iTile + 1, Npert, sInWS, sOutWS, sFileName, sVars)
 
-def getMems_mean(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
+def do_Recenter(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
     from netCDF4 import Dataset
-    import numpy as np
-    import sys, os
-    import shutil
-    from netCDF4 import num2date, date2num, date2index
-    from subprocess import call
-    from contextlib import suppress
+    # import numpy as np
+    # import sys, os
+    # import shutil
+    # from netCDF4 import num2date, date2num, date2index
+    # from subprocess import call
+    # from contextlib import suppress
 
     wmeans = [None] * len(sVars)
     w_c = [None] * len(sVars)
@@ -174,7 +175,7 @@ def getMems_mean(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
     nc_fid.close
 
     # ----
-    print("Working on the Tile {0} -  Writing to netCDF files ...".format(iTile))
+    print("  Working on the Tile {0} to write to netCDF files ...".format(iTile))
     print(dt.datetime.now())
 
     for iPert in range(Npert):
@@ -196,19 +197,10 @@ def getMems_mean(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
 
     return
 
-
-def calValue(ensmem, sVar,  mem_mean, memno, Npert=20):
-    VarValue = ensmem[sVar][:]
-    if memno == 0:
-        mem_mean = VarValue / float(Npert)
-    else:
-        mem_mean += VarValue / float(Npert)
-    return mem_mean
-
-
+#===============
 if __name__ == '__main__':
-    import traceback
-    from subprocess import call
+    # import traceback
+    # from subprocess import call
 
     print("Starting {__file__}")
     main()

@@ -90,6 +90,7 @@ def main():
         RemoveUnusedVars(sInWS,sFileName,sVars,iTile)
  
         getMems_mean(iTile, Npert, sInWS, sOutWS, sFileName, sVars)
+
     else:
         print('You should run "recentensemble.py Npert Ntiles filename sInWS sOutWS [iTile]"')
         exit(-1)
@@ -208,8 +209,8 @@ def calValue(ensmem, sVar,  mem_mean, memno, Npert=20):
 
 
 if __name__ == '__main__':
-    import traceback
-    from subprocess import call
+    # import traceback
+    # from subprocess import call
 
     print("Starting {__file__}")
     main()
