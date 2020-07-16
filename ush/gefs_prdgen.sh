@@ -196,13 +196,6 @@ else
 		GRID=$(echo ${GRID} | tr '[a-z]' '[A-Z]')
 		if [[ "$SENDDBN" = 'YES' ]]; then
 			DBNTYP=${MODCOM}_PGB2A
-			#if [[ $(echo $RUNMEM | cut -c3-5) = "aer" ]]; then
-			#	if [[ "$jobgrid" = '0p50' ]]; then
-			#		DBNTYP=${MODCOM}_A3D_GB2
-			#	else
-			#		DBNTYP=${MODCOM}_A2D_GB2
-			#	fi
-			#fi
 			if [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]; then
 				$DBNROOT/bin/dbn_alert MODEL ${DBNTYP}_$GRID $job $fileaout
 				$DBNROOT/bin/dbn_alert MODEL ${DBNTYP}_$GRID\_IDX $job $fileaouti
