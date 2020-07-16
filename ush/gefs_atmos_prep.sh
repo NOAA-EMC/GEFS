@@ -182,6 +182,7 @@ export FNALBC=$FIXam/global_snowfree_albedo.bosu.t${JCAP_CASE}.${LONB_SFC}.${LAT
   mv ${DATA}/gfs_data.tile*.nc  $OUTDIR/.
   mv ${DATA}/gfs_ctrl.nc        $OUTDIR/.
 
+  echo "$mem" > $OUTDIR/tile.log
 #---------------------------------------------------
 # Convert surface and nst files one tile at a time.
 #---------------------------------------------------

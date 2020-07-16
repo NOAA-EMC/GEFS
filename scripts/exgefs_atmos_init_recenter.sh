@@ -123,21 +123,18 @@ if [ $warm_start = ".false." ]; then
 
 
         # To run recenter-prep
-        for (( itile=1; itile <= $ntiles; itile++  )); do
 			for (( imem=1; imem<=$npert; imem++ )); do
 				sMem=p$(printf %02i $imem)
 
-#			(( itile = 1 ))
-#			while (( itile <= ntiles  )); do
 				ic=1
 				while [ $ic -le $SLEEP_LOOP_MAX ]; do
-					sInputFile=$FILEINPATH/${sMem}/${FILENAME}${itile}.nc
+					sInputFile=$FILEINPATH/${sMem}/tile.log
 					echo $sInputFile
 					if [ -f ${sInputFile} ]; then
 						break
 					else
 						ic=$(( $ic + 1 ))
-						echo "---" $ic $itile
+						echo "---" $ic $sMem
 						sleep $SLEEP_INT
 					fi # test -f $sInputFile
 					###############################
@@ -157,7 +154,7 @@ if [ $warm_start = ".false." ]; then
 			done
 #			mkdir -p $FILEOUTPATH
 #			$NCP $FILEINPATH/${sMem}/${FILENAME}*  $FILEOUTPATH/.
-		done # for (( imem=1; imem<=$npert; imem++ )); do
+		#done # for (( imem=1; imem<=$npert; imem++ )); do
 
 		mkdir -p $FILEOUTPATH
  	    $NCP $FILEINPATH/p01/${FILENAME}*  $FILEOUTPATH/.
@@ -195,17 +192,15 @@ if [ $warm_start = ".false." ]; then
         fi
     
         # Ro run recenter-post
-        (( itile = 1 ))
-        while (( itile <= ntiles  )); do
             ic=1
             while [ $ic -le $SLEEP_LOOP_MAX ]; do
-                sInputFile=$FILEINPATH/c00/${FILENAME}${itile}.nc
+                sInputFile=$FILEINPATH/c00/tile.log
                 echo $sInputFile
                 if [ -f ${sInputFile} ]; then
                     break
                 else
                     ic=$(( $ic + 1 ))
-                    echo "---" $ic $itile
+                    echo "---" $ic
                     sleep $SLEEP_INT
                 fi # test -f $sInputFile
                 ###############################
@@ -221,8 +216,6 @@ if [ $warm_start = ".false." ]; then
                     err_chk || exit $err
                 fi
             done  #while [ $ic -le $SLEEP_LOOP_MAX ]
-            (( itile = itile + 1 ))
-        done
 
         mkdir -p $FILEOUTPATH/c00
  	    $NCP $FILEINPATH/c00/${FILENAME}*  $FILEOUTPATH/c00/.
