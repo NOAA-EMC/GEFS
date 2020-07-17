@@ -75,7 +75,7 @@ fi
 
 #############################################################
 # Execute the script
-if [[ $mem = c00 ]] ;then
+if [[ $mem = c00 ]] && (( npert > 0 )); then
 	export DOSFC="NO"
 else
 	export DOSFC="YES"
@@ -91,7 +91,7 @@ fi
 
 mkdir -p $GESOUT/init/$mem
 $NCP $OUTDIR/gfs_ctrl.nc $GESOUT/init/$mem
-if [[ $mem == "c00" ]]; then
+if [[ $DOSFC = NO ]]; then
     $NCP $GESOUT/init/p01/sfc* $GESOUT/init/$mem
 else
     $NCP $OUTDIR/sfc* $GESOUT/init/$mem
@@ -100,7 +100,7 @@ fi
 if [[ $SENDCOM == "YES" ]]; then
     mkdir -p $COMOUT/init/$mem
     $NCP $OUTDIR/gfs_ctrl.nc $COMOUT/init/$mem
-    if [[ $mem == "c00" ]]; then
+    if [[ $DOSFC = NO ]]; then
       $NCP $GESOUT/init/p01/sfc* $COMOUT/init/$mem
     else
       $NCP $OUTDIR/sfc* $COMOUT/init/$mem
