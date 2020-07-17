@@ -105,7 +105,7 @@ def RemoveUnusedVars(sInWS,sFileName,sVars,iTile=-1):
 
         sVarsDel = []
         for sVar in sVars:
-            print(sVar)
+            # print(sVar)
 
             if sVar not in dset.variables.keys():
                 sVarsDel.append(sVar)
@@ -118,7 +118,7 @@ def RemoveUnusedVars(sInWS,sFileName,sVars,iTile=-1):
             else:
                 print("Removed '{0}' because it does not exist in the Variable list!".format(sVar))
 
-        print(sVars)
+        # print(sVars)
     else:
         print("The control file ({0}) does not exist!, therefore, you don't need to remove vars!".format(sControlFile))
 

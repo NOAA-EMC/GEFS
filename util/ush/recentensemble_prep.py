@@ -105,7 +105,7 @@ def RemoveUnusedVars(sInWS,sFileName,sVars,iTile=-1):
 
         sVarsDel = []
         for sVar in sVars:
-            print(sVar)
+            # print(sVar)
 
             if sVar not in dset.variables.keys():
                 sVarsDel.append(sVar)
@@ -118,7 +118,7 @@ def RemoveUnusedVars(sInWS,sFileName,sVars,iTile=-1):
             else:
                 print("Removed '{0}' because it does not exist in the Variable list!".format(sVar))
 
-        print(sVars)
+        #print(sVars)
     else:
         print("The control file ({0}) does not exist!, therefore, you don't need to remove vars!".format(sControlFile))
 
@@ -150,10 +150,10 @@ def getMems_mean(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
         sOutFile = sOutWS + "/p{0:02}/{1}{2}.nc".format(iPert + 1, sFileName, iTile)
         if not os.path.exists(sOutFile):
             shutil.copyfile(sInFile, sOutFile)
-            print("Copying file from {0} to {1}".format(sInFile, sOutFile))
+            # print("Copying file from {0} to {1}".format(sInFile, sOutFile))
 
         nc_fid = Dataset(sInFile, 'r')
-        #print(nc_fid.variables.keys())
+        # print(nc_fid.variables.keys())
         for k in range(len(sVars)):
             sVar = sVars[k]
             wmeans[k] = calValue(nc_fid, sVar, wmeans[k], iPert, Npert=Npert)
