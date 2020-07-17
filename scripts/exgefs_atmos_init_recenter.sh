@@ -79,7 +79,6 @@ NMV=${NMV:-"/bin/mv -uv"}
 # Scripts
 RECENATMPY_PREP=${RECENATMPY:-$HOMEgefs/util/ush/recentensemble_prep.py}
 RECENATMPY_POST=${RECENATMPY:-$HOMEgefs/util/ush/recentensemble_post.py}
-#RECENATMPY=${RECENATMPY:-$HOMEgefs/util/ush/recentensemble.py}
 
 err=0
 SLEEP_LOOP_MAX=$((SLEEP_TIME / SLEEP_INT))

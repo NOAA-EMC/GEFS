@@ -48,7 +48,7 @@ def main():
     
     if len(sys.argv) == 6:
         print(sys.argv)
-        # sys.stdout.flush()
+
         Npert = int(sys.argv[1])
         NTiles = int(sys.argv[2])
         sFileName = sys.argv[3]
@@ -102,30 +102,23 @@ def RemoveUnusedVars(sInWS,sFileName,sVars,iTile=-1):
     if os.path.exists(sControlFile):
         import netCDF4
         dset = netCDF4.Dataset(sControlFile)
-        # sys.stdout.flush()
 
         sVarsDel = []
         for sVar in sVars:
             print(sVar)
-            # sys.stdout.flush()
 
             if sVar not in dset.variables.keys():
                 sVarsDel.append(sVar)
                 print("Var: {0} will be removed".format(sVar))
-                # sys.stdout.flush()
 
         for sVar in sVarsDel:
-            #print(sVar)
             sVars.remove(sVar)
             if iTile != -1:
                 print("Working on the Tile {0} - Removed '{1}' because it does not exist in the Variable list!".format(iTile, sVar))
-                # sys.stdout.flush()
             else:
                 print("Removed '{0}' because it does not exist in the Variable list!".format(sVar))
-                # sys.stdout.flush()
 
         print(sVars)
-        # sys.stdout.flush()
     else:
         print("The control file ({0}) does not exist!, therefore, you don't need to remove vars!".format(sControlFile))
 
@@ -133,18 +126,11 @@ def DoAllTiles(Npert, NTiles, sFileName, sInWS, sOutWS, sVars):
 
     for iTile in range(NTiles):
         print("Dealing with Tile: {0}".format(iTile + 1))
-        # sys.stdout.flush()
 
         do_Recenter(iTile + 1, Npert, sInWS, sOutWS, sFileName, sVars)
 
 def do_Recenter(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
     from netCDF4 import Dataset
-    # import numpy as np
-    # import sys, os
-    # import shutil
-    # from netCDF4 import num2date, date2num, date2index
-    # from subprocess import call
-    # from contextlib import suppress
 
     wmeans = [None] * len(sVars)
     w_c = [None] * len(sVars)
@@ -180,11 +166,9 @@ def do_Recenter(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
 
     for iPert in range(Npert):
         #print(iTile, " - ", iPert)
-        #sys.stdout.flush()
 
         sOutFile = sOutWS + "/p{0:02}/{1}{2}.nc".format(iPert + 1, sFileName, iTile)
         #print("Working on the Tile {0} - ".format(iTile) + sOutFile)
-        #sys.stdout.flush()
 
         nc_fid = Dataset(sOutFile, 'a')
         for k in range(len(sVars)):
@@ -199,8 +183,6 @@ def do_Recenter(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
 
 #===============
 if __name__ == '__main__':
-    # import traceback
-    # from subprocess import call
 
     print("Starting {__file__}")
     main()
