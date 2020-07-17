@@ -16,6 +16,8 @@ export CDATE=$PDY$cyc
 export MAX_ENKF_SEARCHES=${MAX_ENKF_SEARCHES:-3}
 export ENKF_SEARCH_LEAP=${ENKF_SEARCH_LEAP:-30}
 
+export OMP_NUM_THREADS_CH=${OMP_NUM_THREADS_CH:-40}
+
 export ictype=fv3gfs
 export NTRAC=7
 

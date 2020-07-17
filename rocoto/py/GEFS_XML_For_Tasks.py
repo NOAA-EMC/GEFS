@@ -409,6 +409,8 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         else:
             if sQueue.endswith("_shared") and taskname in ['ensstat_hr', 'enspost_hr', 'ensstat_lr', 'enspost_lr', 'gempak', 'gempak_meta', 'avgspr_gempak_meta', 'ensavg_nemsio', 'postsnd', "fcst_post_manager"]:
                 strings += ""
+            elif taskname in ['atmos_prep']:
+                strings += sPre_2 + "<native>-R 'affinity[thread({cpu_per_task})]'</native>\n".format(cpu_per_task=dicBase['ATMOS_PREP_CPU_PER_TASK'])
             else:
                 strings += sPre_2 + "<native>-R 'affinity[core(1)]'</native>\n"
     else:
@@ -1304,7 +1306,7 @@ def get_param_of_task(dicBase, taskname):
 
     if taskname == "atmos_prep":
         iTotal_Tasks, iNodes, iPPN, iTPP = calc_atmos_prep_resources(dicBase)
-        sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)        
+        sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
     # For gempak
     if taskname == "gempak":
@@ -1319,7 +1321,7 @@ def calc_atmos_prep_resources(dicBase):
     import math
     ncores_per_node = Get_NCORES_PER_NODE(dicBase)
     npert = int(dicBase["NPERT"])
-    cpu_per_task = 6
+    cpu_per_task = int(dicBase['ATMOS_PREP_CPU_PER_TASK'])
     iTotal_Tasks = npert + 1
     iPPN = math.floor(ncores_per_node / cpu_per_task)
     iTPP = 1
