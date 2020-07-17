@@ -16,7 +16,7 @@ suite para18
         task jgefs_atmos_prep
           trigger /prod18/gfs/jgfs_analysis == complete
         task jgefs_atmos_init_recenter
-          trigger jgefs_atmos_prep eq complete
+          trigger jgefs_atmos_prep eq active or jgefs_atmos_prep eq complete
       endfamily
       family wave
         task jgefs_wave_init

@@ -75,7 +75,13 @@ fi
 
 #############################################################
 # Execute the script
-$USHgfs/global_chgres_driver.sh
+if [[ $mem = c00 ]] && (( npert > 0 )); then
+	export DOSFC="NO"
+else
+	export DOSFC="YES"
+fi
+	$USHgefs/global_chgres_driver_gefs.sh
+	#$USHgfs/global_chgres_driver.sh
 export err=$?
 if [[ $err != 0 ]]; then
     echo "FATAL ERROR in ${.sh.file}: global_chgres_driver failed!"
@@ -84,13 +90,21 @@ fi
 #############################################################
 
 mkdir -p $GESOUT/init/$mem
-$NCP $OUTDIR/sfc* $GESOUT/init/$mem
 $NCP $OUTDIR/gfs_ctrl.nc $GESOUT/init/$mem
+if [[ $DOSFC = NO ]]; then
+    $NCP $GESOUT/init/p01/sfc* $GESOUT/init/$mem
+else
+    $NCP $OUTDIR/sfc* $GESOUT/init/$mem
+fi
 
 if [[ $SENDCOM == "YES" ]]; then
     mkdir -p $COMOUT/init/$mem
-    $NCP $OUTDIR/sfc* $COMOUT/init/$mem
     $NCP $OUTDIR/gfs_ctrl.nc $COMOUT/init/$mem
+    if [[ $DOSFC = NO ]]; then
+      $NCP $GESOUT/init/p01/sfc* $COMOUT/init/$mem
+    else
+      $NCP $OUTDIR/sfc* $COMOUT/init/$mem
+    fi
     if [[ $SENDDBN = YES ]];then
       $DBNROOT/bin/dbn_alert MODEL ENS_CTR_$mem $job $COMOUT/init/$mem/gfs_ctrl.nc
       $DBNROOT/bin/dbn_alert MODEL ENS_MSC_$mem $job $COMOUT/init/$mem/sfc_data.tile6.nc
