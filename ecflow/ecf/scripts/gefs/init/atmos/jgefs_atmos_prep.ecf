@@ -3,7 +3,7 @@
 #BSUB -cwd /tmp
 #BSUB -n 31
 #BSUB -R span[ptile=1]
-#BSUB -R 'affinity[core(1)]'
+#BSUB -R 'affinity[thread(40)]'
 #BSUB -q %QUEUE%
 #BSUB -W 00:30
 #BSUB -L /bin/sh
