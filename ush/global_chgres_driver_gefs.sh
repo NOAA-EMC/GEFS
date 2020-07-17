@@ -230,10 +230,13 @@ if [ $REGIONAL -ne 2 ]; then           # REGIONAL -ne 2 is for uniform and regio
     mv ${DATA}/gfs_bndy.tile7.nc $OUTDIR/gfs_bndy.tile7.000.nc
   fi
 
+  echo "$mem" > $OUTDIR/tile.log
+
 #---------------------------------------------------
 # Convert surface and nst files one tile at a time.
 #---------------------------------------------------
 
+  if [ $DOSFC = YES ]; then
   export CHGRESVARS="use_ufo=.true.,idvc=2,nvcoord=2,idvt=21,idsl=1,IDVM=0,nopdpvv=$nopdpvv"
   export SIGINP=NULL
   export SFCINP=$SFCANL
@@ -264,6 +267,7 @@ if [ $REGIONAL -ne 2 ]; then           # REGIONAL -ne 2 is for uniform and regio
       tile=`expr $tile + 1 `
     done
   fi
+  fi #if [ $DOSFC = YES ]
 
 else # REGIONAL = 2, just generate boundary data
 
