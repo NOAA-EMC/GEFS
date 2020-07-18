@@ -205,7 +205,7 @@ else
 		###############################################################################
 		# Send DBNet alerts for PGB2B 
 		###############################################################################
-		if [[ "$SENDDBN" = 'YES' && "$jobgrid" = '0p50' && "$makepgrb2b" = "yes" ]]; then
+		if [[ "$SENDDBN" = 'YES' && "$jobgrid" = '0p5' && "$makepgrb2b" = "yes" ]]; then
 			DBNTYP=${MODCOM}_PGB2B
 			if [[ $(echo $RUNMEM | cut -c1-2) = "ge" ]]; then
 				$DBNROOT/bin/dbn_alert MODEL ${DBNTYP}_$GRID $job $filebout
