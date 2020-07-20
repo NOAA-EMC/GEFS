@@ -1,4 +1,7 @@
 #!/bin/ksh
+#####################################################################
+# 06/18/2020 Xianwu Xue, Added this job to send event for fcst and post
+######################################################################
 
 echo "$(date -u) begin ${.sh.file}"
 
@@ -23,12 +26,6 @@ export DATA=${DATA:-${DATAROOT}/${jobid}}
 mkdir -p $DATA
 cd $DATA
 
-######################################
-# Set up compute resources
-######################################
-export total_tasks=${total_tasks:-6}
-export APRUN_MPMD=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
-
 ####################################
 # Specify NET and RUN Name and model
 ####################################
@@ -36,12 +33,12 @@ export NET=${NET:-gefs}
 export envir=${envir:-prod}
 export RUN=${RUN:-gefs}
 
-######################################
+####################################
 # SENDCOM  - Copy Files From TMPDIR to $COMOUT
 # SENDDBN  - Issue DBNet Client Calls
 # SENDECF  - Flag Events on ECF
 # VERBOSE  - Specify Verbose Output
-######################################
+####################################
 export SENDCOM=${SENDCOM:-YES}
 export SENDDBN=${SENDDBN:-YES}
 export SENDECF=${SENDECF:-YES}
@@ -54,31 +51,22 @@ export cycle=t${cyc}z
 setpdy.sh
 source PDY
 
-if [ ${FORECAST_SEGMENT:-hr} = lr ]; then
-    export cyc=00
-    export cycle=t${cyc}z
-fi
-
 ####################################
 # Specify Execution Areas
 ####################################
 export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
-export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
-export USHgefs=${USHgefs:-$HOMEgefs/ush}
-export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc}
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc}
-export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}}
 
-#############################
-# Source relevant config files
-#############################
-configs="gefs gefs_prdgen"
+##############################################
+echo set parameters using gefs.parm
+##############################################
+configs="gefs"
 config_path=$PARMgefs
 for config in $configs; do
     . $config_path/$config.parm
@@ -89,11 +77,6 @@ for config in $configs; do
     fi
 done
 
-if [[ $cplchm = ".true." ]]; then
-    COMPONENT="chem"
-fi
-export COMPONENT=${COMPONENT:-atmos}
-
 export jlogfile=${jlogfile:-$DATA/jlogfile}
 
 echo "Environment before calling script"
@@ -101,7 +84,7 @@ env | sort
 
 #############################################################
 # Execute the script
-source $HOMEgefs/scripts/exgefs_atmos_prdgen.sh
+$HOMEgefs/scripts/exgefs_fcst_post_manager.sh
 export err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"
@@ -111,7 +94,7 @@ else
 fi
 #############################################################
 
-##############################
+#############################
 # Remove the Temporary working directory
 ##############################
 cd $DATAROOT
@@ -120,3 +103,4 @@ if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 echo "$(date -u) end ${.sh.file}"
 
 exit $err
+

@@ -135,7 +135,7 @@ for hour in $hours; do
 		while [ $ic -le $SLEEP_LOOP_MAX ]; do
 			if [[ $RUNMEM = "gegfs" ]]; then
 				# Assume GFS is complete
-				if [[ -f $mafile ]]; then
+				if [[ -f $mifile ]]; then
 					break
 				fi
 			else
@@ -231,6 +231,11 @@ for hour in $hours; do
 
 	export fhr=$(printf "%03.0f" $hour)        # Zero-pad to three places
 	export ffhr="f${fhr}"
+	# GFS output is only every 12 hours after 240, skip the unwanted hours
+	if [[ $RUNMEM = "gegfs" ]] && (( fhr > gfsfhmaxh )) && (( fhr%12 == 6 )); then
+		echo "fhr=$fhr not expected for GFS"
+		continue
+	fi
 
 	###############################
 	# Start Looping for the 
@@ -258,6 +263,10 @@ for hour in $hours; do
 		export pcfile=$COMOUT/$COMPONENT/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr
 		export fileaout=$COMOUT/$COMPONENT/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}
 		export fileaouti=$COMOUT/$COMPONENT/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}.idx
+		if [[ $RUNMEM = "geaer" ]]; then
+			export fileaout=$COMOUT/$COMPONENT/$pgad/${NET}.${COMPONENT}.$cycle.${pgapre}f${fhr}.grib2
+			export fileaouti=${fileaout}.idx
+		fi
 		export filebout=$COMOUT/$COMPONENT/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}
 		export filebouti=$COMOUT/$COMPONENT/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}.idx
 	else
@@ -281,16 +290,10 @@ for hour in $hours; do
 	found="no"
 	while [ $ic -le $SLEEP_LOOP_MAX ]; do
 		if [[ $RUNMEM = "gegfs" ]]; then
-			# Assume GFS is complete
-			if [[ -f $mafile ]]; then
+			# Check if index file has been created, to make sure file is complete before using
+			if [[ -f $mifile ]]; then
 				found="yes"
 				break
-			else
-				# GFS output is only every 12 hours after 240
-				if (( fhr > 240 )) && (( fhr%12 == 6 )); then
-					echo "fhr=$fhr not expected for GFS"
-					break
-				fi
 			fi # [[ -f $mafile ]]
 		else # [[ $RUNMEM = "gegfs" ]]
 			# Check if control file has been created, to make sure file is complete before using
