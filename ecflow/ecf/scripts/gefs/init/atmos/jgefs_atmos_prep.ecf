@@ -33,8 +33,8 @@ ulimit -a
 
 export cyc=%CYC%
 
-export total_tasks=36
-export taskspernode=6
+export total_tasks=31
+export taskspernode=1
 
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_ATMOS_PREP
