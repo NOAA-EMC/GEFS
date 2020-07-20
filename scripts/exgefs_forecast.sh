@@ -131,14 +131,14 @@ if [[ $FORECAST_SEGMENT = hr ]] ; then
 	(( FHMAX = FHMAX + 1 ))
 fi
 
-export stochini=${stochini:-".false."}  # true= read in pattern, false=initialize from seed
-
 if [[ $RERUN = "YES" ]] ; then
 	export warm_start=.true.
 	export restart_hour=$FHMIN
 	export restart_run=.true.    
 	export output_1st_tstep=.true.
-	export stochini=.true.
+	export stochini=${stochini:-".true."} #true=read in pattern, false=initialize from seed
+else
+	export stochini=${stochini:-".false."} #true=read in pattern, false=initialize from seed
 fi
 
 #
