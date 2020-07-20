@@ -80,8 +80,8 @@ if [[ $mem = c00 ]] && (( npert > 0 )); then
 else
 	export DOSFC="YES"
 fi
-	$USHgefs/global_chgres_driver_gefs.sh
-	#$USHgfs/global_chgres_driver.sh
+
+$USHgfs/global_chgres_driver.sh
 export err=$?
 if [[ $err != 0 ]]; then
     echo "FATAL ERROR in ${.sh.file}: global_chgres_driver failed!"
@@ -98,6 +98,8 @@ else
 fi
 
 if [[ $SENDCOM == "YES" ]]; then
+    MODCOM=$(echo ${NET}_${COMPONENT} | tr '[a-z]' '[A-Z]')
+    DBNTYP=${MODCOM}_INIT
     mkdir -p $COMOUT/init/$mem
     $NCP $OUTDIR/gfs_ctrl.nc $COMOUT/init/$mem
     if [[ $DOSFC = NO ]]; then
@@ -106,13 +108,17 @@ if [[ $SENDCOM == "YES" ]]; then
       $NCP $OUTDIR/sfc* $COMOUT/init/$mem
     fi
     if [[ $SENDDBN = YES ]];then
-      $DBNROOT/bin/dbn_alert MODEL ENS_CTR_$mem $job $COMOUT/init/$mem/gfs_ctrl.nc
-      $DBNROOT/bin/dbn_alert MODEL ENS_MSC_$mem $job $COMOUT/init/$mem/sfc_data.tile6.nc
+      $DBNROOT/bin/dbn_alert MODEL $DBNTYP $job $COMOUT/init/$mem/gfs_ctrl.nc
+      for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
+              $DBNROOT/bin/dbn_alert MODEL $DBNTYP $job $COMOUT/init/$mem/sfc_data.${tile}.nc
+      done
     fi
     if [[ $mem == "c00" ]]; then
       $NCP $OUTDIR/gfs_data*.nc $COMOUT/init/$mem
       if [[ $SENDDBN = YES ]];then
-              $DBNROOT/bin/dbn_alert MODEL ENS_SA_$mem $job $COMOUT/init/$mem/gfs_data.tile6.nc
+        for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
+              $DBNROOT/bin/dbn_alert MODEL $DBNTYP $job $COMOUT/init/$mem/gfs_data.${tile}.nc
+        done
       fi
     fi
 fi

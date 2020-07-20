@@ -55,7 +55,7 @@ elif [[ $RocotoGen == 1 ]]; then
     #export warm_start=".false."
     export KEEPDATA=YES     # ecflow NO
     export SENDECF=NO       # ecflow YES
-    export SENDDBN=NO       # ecflow YES
+    export SENDDBN=YES       # ecflow YES
     export SENDDBN_NTC=NO   # ecflow YES
 
     #export npert=2
@@ -73,4 +73,8 @@ elif [[ $RocotoGen == 1 ]]; then
     export DIRS_TO_KEEP_CHEM="pgrb2ap50_aer,pgrb2ap25_aer,init,restart"
     export DIRS_TO_ARCHIVE_CHEM="pgrb2ap50_aer,pgrb2ap25_aer,init,restart"
 
+    if [[ $SENDDBN == "YES" ]]; then
+        export DBNROOT=${UTILROOT}/fakedbn
+        export DBNLOG=YES
+    fi
 fi

@@ -263,6 +263,10 @@ for hour in $hours; do
 		export pcfile=$COMOUT/$COMPONENT/misc/$submc/${RUNMEM}.t${cyc}z.prdgen.control.f$fhr
 		export fileaout=$COMOUT/$COMPONENT/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}
 		export fileaouti=$COMOUT/$COMPONENT/$pgad/$RUNMEM.$cycle.${pgapre}f${fhr}.idx
+		if [[ $RUNMEM = "geaer" ]]; then
+			export fileaout=$COMOUT/$COMPONENT/$pgad/${NET}.${COMPONENT}.$cycle.${pgapre}f${fhr}.grib2
+			export fileaouti=${fileaout}.idx
+		fi
 		export filebout=$COMOUT/$COMPONENT/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}
 		export filebouti=$COMOUT/$COMPONENT/$pgbd/$RUNMEM.$cycle.${pgbpre}f${fhr}.idx
 	else

@@ -94,7 +94,7 @@ if [ $warm_start = ".false." ]; then
 
 			ic=1
 			while [ $ic -le $SLEEP_LOOP_MAX ]; do
-				sInputFile=$FILEINPATH/${sMem}/tile.log
+				sInputFile=$FILEINPATH/${sMem}/chgres_atm.log
 				echo $sInputFile
 				if [ -f ${sInputFile} ]; then
 					break
@@ -157,7 +157,7 @@ if [ $warm_start = ".false." ]; then
 		# Ro run recenter-post
 		ic=1
 		while [ $ic -le $SLEEP_LOOP_MAX ]; do
-			sInputFile=$FILEINPATH/c00/tile.log
+			sInputFile=$FILEINPATH/c00/chgres_atm.log
 			echo $sInputFile
 			if [ -f ${sInputFile} ]; then
 				break
@@ -222,21 +222,25 @@ else
 fi # $warm_start = ".false."
 
 if [[ $SENDCOM == YES ]]; then
-	mem=01
-	while [ $mem -le $npert ]; do
-		smem=p$(printf %02i $mem)
-		mkdir -p $COMOUT/init/$smem
-		$NCP $GESOUT/init/$smem/gfs* $COMOUT/init/$smem
-		export err=$?
-		if [[ $err != 0 ]]; then
-			echo "FATAL ERROR in ${.sh.file}: failed to copy data from GESOUT to COMOUT"
-			err_chk || exit $err
-		fi
-		if [[ $SENDDBN = YES ]];then
-			$DBNROOT/bin/dbn_alert MODEL ENS_SA_$smem $job $COMOUT/init/$smem/gfs_data.tile6.nc
-		fi
-		(( mem = mem +1 ))
-	done
+    MODCOM=$(echo ${NET}_${COMPONENT} | tr '[a-z]' '[A-Z]')
+    DBNTYP=${MODCOM}_INIT
+    mem=01
+    while [ $mem -le $npert ]; do
+        smem=p$(printf %02i $mem)
+        mkdir -p $COMOUT/init/$smem
+        $NCP $GESOUT/init/$smem/gfs* $COMOUT/init/$smem
+        export err=$?
+        if [[ $err != 0 ]]; then
+            echo "FATAL ERROR in ${.sh.file}: failed to copy data from GESOUT to COMOUT"
+            err_chk || exit $err
+        fi
+	    if [[ $SENDDBN = YES ]];then
+            for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
+                $DBNROOT/bin/dbn_alert MODEL $DBNTYP $job $COMOUT/init/$smem/gfs_data.${tile}.nc
+            done
+	    fi		
+        (( mem = mem +1 ))
+    done
 fi
 
 rm -rf $GESOUT/enkf
