@@ -94,7 +94,7 @@ if [ $warm_start = ".false." ]; then
 
 			ic=1
 			while [ $ic -le $SLEEP_LOOP_MAX ]; do
-				sInputFile=$FILEINPATH/${sMem}/tile.log
+				sInputFile=$FILEINPATH/${sMem}/chgres_atm.log
 				echo $sInputFile
 				if [ -f ${sInputFile} ]; then
 					break
@@ -157,7 +157,7 @@ if [ $warm_start = ".false." ]; then
 		# Ro run recenter-post
 		ic=1
 		while [ $ic -le $SLEEP_LOOP_MAX ]; do
-			sInputFile=$FILEINPATH/c00/tile.log
+			sInputFile=$FILEINPATH/c00/chgres_atm.log
 			echo $sInputFile
 			if [ -f ${sInputFile} ]; then
 				break

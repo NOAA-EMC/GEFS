@@ -80,8 +80,8 @@ if [[ $mem = c00 ]] && (( npert > 0 )); then
 else
 	export DOSFC="YES"
 fi
-	$USHgefs/global_chgres_driver_gefs.sh
-	#$USHgfs/global_chgres_driver.sh
+
+$USHgfs/global_chgres_driver.sh
 export err=$?
 if [[ $err != 0 ]]; then
     echo "FATAL ERROR in ${.sh.file}: global_chgres_driver failed!"
