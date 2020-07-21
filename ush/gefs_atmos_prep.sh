@@ -92,11 +92,7 @@ if [[ $err != 0 ]]; then
     exit $err
 fi
 #############################################################
-mkdir -p $GESOUT/init/$mem
-#$NCP $OUTDIR/sfc* $GESOUT/init/$mem
-$NCP $OUTDIR/gfs_ctrl.nc $GESOUT/init/$mem
         if [[ $mem = c00 ]] ;then
-  mv ${DATA}/gfs_ctrl.nc       $OUTDIR/.
 
   mv ${DATA}/out.atm.tile1.nc  $OUTDIR/gfs_data.tile1.nc
   mv ${DATA}/out.atm.tile2.nc  $OUTDIR/gfs_data.tile2.nc
@@ -113,8 +109,7 @@ $NCP $OUTDIR/gfs_ctrl.nc $GESOUT/init/$mem
   mv ${DATA}/out.sfc.tile6.nc $OUTDIR/sfc_data.tile6.nc
 
         else
-
-  mv ${DATA}/gfs_ctrl.nc       $OUTDIR/.
+  
   mv ${DATA}/out.atm.tile1.nc  $OUTDIR/gfs_data.tile1.nc
   mv ${DATA}/out.atm.tile2.nc  $OUTDIR/gfs_data.tile2.nc
   mv ${DATA}/out.atm.tile3.nc  $OUTDIR/gfs_data.tile3.nc
@@ -123,6 +118,10 @@ $NCP $OUTDIR/gfs_ctrl.nc $GESOUT/init/$mem
   mv ${DATA}/out.atm.tile6.nc  $OUTDIR/gfs_data.tile6.nc
         fi
 
+  mv ${DATA}/gfs_ctrl.nc       $OUTDIR/.
+#$NCP $OUTDIR/sfc* $GESOUT/init/$mem
+$NCP $OUTDIR/gfs_ctrl.nc $GESOUT/init/$mem
+SENDCOM=NO
 if [[ $SENDCOM == "YES" ]]; then
     mkdir -p $COMOUT/init/$mem
     $NCP $OUTDIR/sfc* $COMOUT/init/$mem

@@ -15,8 +15,9 @@ export FIXfv3=${FIXfv3:-$FIXgfs/fix_fv3_gmted2010}
 
 cd $DATA
 rm -rf mpmd_cmdfile*
-
 for mem in $memberlist; do
+mkdir -p $GESOUT/init/$mem
+mkdir -p $COMOUT/init/$mem
 	echo "$USHgefs/gefs_atmos_prep.sh $mem" >> mpmd_cmdfile
 done
 
