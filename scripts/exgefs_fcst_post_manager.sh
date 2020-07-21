@@ -108,14 +108,66 @@ while [ $ic -le $SLEEP_LOOP_MAX ]; do
     if [ $ic -eq $SLEEP_LOOP_MAX ]; then
         echo "FATAL ERROR in ${.sh.file}: Forecast and post missing of $RUNMEM File still missing at $(date -u) after waiting ${SLEEP_TIME}s"
         export err=9
-        err_chk || exit $err
+        err_chk
      fi
 
 done
 
+#
+#Check prdgen process
+#
+hour=00
+TEND=192
+TCP=195
+
+if [ -e prdgenhours ]; then
+   rm -f prdgenhours
+fi
+
+while [ $hour -lt $TCP ];
+do
+    hour=$(printf %03i $hour)
+    echo $hour >>prdgenhours
+    let "hour=hour+3"
+done
+prdgenhr=`cat prdgenhours`
+
+icnt=1
+while [ $icnt -lt 1000 ]
+do
+    for fhr in $prdgenhr
+    do
+        fhr3=`printf "%03d" $fhr`
+        if [ -s ${COMIN}/atmos/pgrb2ap5/${RUNMEM}.t${cyc}z.pgrb2a.0p50.f${fhr3}.idx -a -s ${COMIN}/atmos/pgrb2bp5/${RUNMEM}.t${cyc}z.pgrb2b.0p50.f${fhr3}.idx ]
+        then
+            # Remove current fhr from list
+            prdgenhr=`echo $prdgenhr | sed "s/${fhr}//"`
+            if [ $fhr -eq 192 ]; then
+                ecflow_client --event pgrb2abp5_f192_ready
+            fi
+        fi
+    done
+
+    result_check=`echo $prdgenhr | wc -w`
+    if [ $result_check -eq 0 ]
+    then
+        break
+    fi
+
+    sleep 10
+    icnt=$((icnt + 1))
+    if [ $icnt -ge 1080 ]
+    then
+        msg="FATAL ERROR: ABORTING after 3 hours of waiting for ${RUNMEM} PRDGEN hours $prdgenhr."
+        err_exit $msg
+    fi
+
+done
+
+
 if [[ $err != 0 ]]; then
 	echo "FATAL ERROR in ${.sh.file}: received a non-zero return code from jgefs_fcst_post_manager"
-	exit $err
+	err_chk
 fi
 
 echo "$(date -u) end ${.sh.file}"
