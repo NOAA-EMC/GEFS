@@ -13,7 +13,7 @@ export PS4='$SECONDS + $(basename ${.sh.file})[$LINENO] '
 # Determine Job Output Name on System
 ####################################
 export jobid=${jobid:-"$job.$LSB_JOBID"}
-export pgmout="OUTPUT.${LSB_JOBID}"
+export pgmout=${pgmout:-"OUTPUT.${LSB_JOBID}"}
 export pgmerr=errfile
 
 ####################################
