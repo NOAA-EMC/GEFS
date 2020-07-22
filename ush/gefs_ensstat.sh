@@ -290,6 +290,8 @@ for hour in $hours; do
 	echo "$(date) send $pgapre output begin"
 
 	if [ $SENDCOM = "YES" ]; then
+		MODCOM=$(echo ${NET}_${COMPONENT} | tr '[a-z]' '[A-Z]')
+		GRID=$(echo ${jobgrid} | tr '[a-z]' '[A-Z]')
 		for run in geavg gespr; do
 			if [[ "$makegrb2i" = "yes" ]]; then
 				$WGRIB2 -s ${run}.${cycle}.$pgapre${ffhr} >${run}.${cycle}.$pgapre${ffhr}.idx
@@ -299,18 +301,12 @@ for hour in $hours; do
 				mv ${run}.${cycle}.$pgapre${ffhr}.idx $COMOUT/$COMPONENT/$pgad
 			fi # [[ -s ${run}.${cycle}.$pgapre${ffhr} ]]
 			if [[ "$SENDDBN" = 'YES' ]]; then
-				if [[ "$run" = "geavg" ]]; then
-					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}
-					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_AVG_WIDX $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
-				fi # [[ "$run" = "geavg" ]]
-				if [[ "$run" = "gespr" ]]; then
-					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}
-					$DBNROOT/bin/dbn_alert MODEL ENS_PGB2A${GRID}_SPR_WIDX $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
-				fi
-			fi # [[] "$SENDDBN" = 'YES' ]]
+				$DBNROOT/bin/dbn_alert MODEL ${MODCOM}_PGB2A_${GRID} $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}
+				$DBNROOT/bin/dbn_alert MODEL ${MODCOM}_PGB2A_${GRID}_IDX $job $COMOUT/$COMPONENT/$pgad/${run}.${cycle}.$pgapre${ffhr}.idx
+			fi
 		done
-	fi # [ $SENDCOM = "YES" ]
 
+	fi
 	echo "$(date) send pgrb2a output end"
 	
 done #hour in $hours
