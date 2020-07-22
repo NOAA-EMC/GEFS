@@ -24,58 +24,61 @@ cd $INIDIR
 # Surface file must always be from current GFS cycle
 SFCFILE=$COMINgfs/gfs.t${cyc}z.sfcanl.nc
 if [[ -f $SFCFILE ]]; then
-    $NCP $SFCFILE $INIDIR
+	$NCP $SFCFILE $INIDIR
 else
-    msg="FATAL ERROR in ${.sh.file}: GFS surfce analysis $SFCFILE not found!"
-    echo $msg
-    export err=100
-    err_chk || exit $err
+	msg="FATAL ERROR in ${.sh.file}: GFS surfce analysis $SFCFILE not found!"
+	echo $msg
+	export err=100
+	err_chk || exit $err
 fi
 
 if [[ $mem = c00 ]] ;then
-    # Control intial conditions must be from current GFS cycle
-    ATMFILE=$COMINgfs/gfs.t${cyc}z.atmanl.nc
-    if [[ -f $ATMFILE ]]; then
-        $NCP $ATMFILE $INIDIR
-        export ATM_FILES_INPUT="gfs.t${cyc}z.atmanl.nc"
-        export SFC_FILES_INPUT="gfs.t${cyc}z.sfcanl.nc"
-    else
-        msg="FATAL ERROR in ${.sh.file}: GFS atmospheric analysis file $ATMFILE not found!"
-        echo "$msg"
-        export err=101
-        err_chk || exit $err
-    fi
-export CONVERT_SFC=".true."
-else
-    i=0
-    success="NO"
-	(( cmem = nmem + memshift ))
-    while [[ $success == "NO" && i < MAX_ENKF_SEARCHES ]]; do
-        if (( cmem > 80 )); then
-            (( cmem = cmem - 80 ))
-        fi
+	# Control intial conditions must be from current GFS cycle
+	ATMFILE=$COMINgfs/gfs.t${cyc}z.atmanl.nc
+	if [[ -f $ATMFILE ]]; then
+		$NCP $ATMFILE $INIDIR
+		export ATM_FILES_INPUT="gfs.t${cyc}z.atmanl.nc"
+		export SFC_FILES_INPUT="gfs.t${cyc}z.sfcanl.nc"
+	else
+		msg="FATAL ERROR in ${.sh.file}: GFS atmospheric analysis file $ATMFILE not found!"
+		echo "$msg"
+		export err=101
+		err_chk || exit $err
+	fi
+	export CONVERT_SFC=".true."
 
-        memchar="mem"$(printf %03i $cmem)
-        ATMFILE="$COMINenkf$pdyp/$cycp/$memchar/gdas.t${cycp}z.atmf006.nc"
-    
-        if [[ -f $ATMFILE ]]; then
-            $NCP $ATMFILE $INIDIR
-        export ATM_FILES_INPUT="gdas.t${cycp}z.atmf006.nc"
-            success="YES"
-        else
-            i=i+1
-            if [[ i < MAX_ENKF_SEARCHES ]]; then
-                echo "EnKF atmospheric file $ATMFILE not found, trying different member"
-                (( cmem = cmem + ENKF_SEARCH_LEAP ))
-            else
-                msg="FATAL ERROR in ${.sh.file}: Unable to find EnKF atmospheric file after $MAX_ENKF_SEARCHES attempts"
-                echo $msg
-                export err=102
-                err_chk || exit $err
-            fi
-        fi # [[ -f $ATMFILE ]]
-    done # [[ success == "NO" && i < MAX_ENKF_SEARCHES ]]
-export CONVERT_SFC=".false."
+else
+	i=0
+	success="NO"
+	(( cmem = nmem + memshift ))
+	while [[ $success == "NO" && $i < MAX_ENKF_SEARCHES ]]; do
+		if (( cmem > 80 )); then
+			(( cmem = cmem - 80 ))
+		fi
+
+		memchar="mem"$(printf %03i $cmem)
+		ATMFILE="$COMINenkf$pdyp/$cycp/$memchar/gdas.t${cycp}z.atmf006.nc"
+
+		if [[ -f $ATMFILE ]]; then
+			$NCP $ATMFILE $INIDIR
+			export ATM_FILES_INPUT="gdas.t${cycp}z.atmf006.nc"
+			success="YES"
+
+		else
+			(( i = i + 1 ))
+			if [[ $ < MAX_ENKF_SEARCHES ]]; then
+				echo "EnKF atmospheric file $ATMFILE not found, trying different member"
+				(( cmem = cmem + ENKF_SEARCH_LEAP ))
+
+			else
+				msg="FATAL ERROR in ${.sh.file}: Unable to find EnKF atmospheric file after $MAX_ENKF_SEARCHES attempts"
+				echo $msg
+				export err=102
+				err_chk || exit $err
+			fi
+		fi # [[ -f $ATMFILE ]]
+	done # [[ success == "NO" && $i < MAX_ENKF_SEARCHES ]]
+	export CONVERT_SFC=".false."
 fi
 export CRES=$(echo $CASEHR |cut -c2-5)
 export HOMEufs=$HOMEgfs/sorc/global-workflow.fd/sorc/ufs_utils.fd
@@ -88,47 +91,53 @@ export FIXsfc=$FIXfv3/fix_sfc
 $USHgfs/chgres_cube.sh
 export err=$?
 if [[ $err != 0 ]]; then
-    echo "FATAL ERROR in ${.sh.file}: global_chgres_driver failed!"
-    exit $err
+	echo "FATAL ERROR in ${.sh.file}: global_chgres_driver failed!"
+	exit $err
 fi
 #############################################################
-        if [[ $mem = c00 ]] ;then
+if [[ $mem = c00 ]] ;then
+	mv ${DATA}/out.atm.tile1.nc  $OUTDIR/gfs_data.tile1.nc
+	mv ${DATA}/out.atm.tile2.nc  $OUTDIR/gfs_data.tile2.nc
+	mv ${DATA}/out.atm.tile3.nc  $OUTDIR/gfs_data.tile3.nc
+	mv ${DATA}/out.atm.tile4.nc  $OUTDIR/gfs_data.tile4.nc
+	mv ${DATA}/out.atm.tile5.nc  $OUTDIR/gfs_data.tile5.nc
+	mv ${DATA}/out.atm.tile6.nc  $OUTDIR/gfs_data.tile6.nc
 
-  mv ${DATA}/out.atm.tile1.nc  $OUTDIR/gfs_data.tile1.nc
-  mv ${DATA}/out.atm.tile2.nc  $OUTDIR/gfs_data.tile2.nc
-  mv ${DATA}/out.atm.tile3.nc  $OUTDIR/gfs_data.tile3.nc
-  mv ${DATA}/out.atm.tile4.nc  $OUTDIR/gfs_data.tile4.nc
-  mv ${DATA}/out.atm.tile5.nc  $OUTDIR/gfs_data.tile5.nc
-  mv ${DATA}/out.atm.tile6.nc  $OUTDIR/gfs_data.tile6.nc
+	mv ${DATA}/out.sfc.tile1.nc $OUTDIR/sfc_data.tile1.nc
+	mv ${DATA}/out.sfc.tile2.nc $OUTDIR/sfc_data.tile2.nc
+	mv ${DATA}/out.sfc.tile3.nc $OUTDIR/sfc_data.tile3.nc
+	mv ${DATA}/out.sfc.tile4.nc $OUTDIR/sfc_data.tile4.nc
+	mv ${DATA}/out.sfc.tile5.nc $OUTDIR/sfc_data.tile5.nc
+	mv ${DATA}/out.sfc.tile6.nc $OUTDIR/sfc_data.tile6.nc
 
-  mv ${DATA}/out.sfc.tile1.nc $OUTDIR/sfc_data.tile1.nc
-  mv ${DATA}/out.sfc.tile2.nc $OUTDIR/sfc_data.tile2.nc
-  mv ${DATA}/out.sfc.tile3.nc $OUTDIR/sfc_data.tile3.nc
-  mv ${DATA}/out.sfc.tile4.nc $OUTDIR/sfc_data.tile4.nc
-  mv ${DATA}/out.sfc.tile5.nc $OUTDIR/sfc_data.tile5.nc
-  mv ${DATA}/out.sfc.tile6.nc $OUTDIR/sfc_data.tile6.nc
+else  
+	mv ${DATA}/out.atm.tile1.nc  $OUTDIR/gfs_data.tile1.nc
+	mv ${DATA}/out.atm.tile2.nc  $OUTDIR/gfs_data.tile2.nc
+	mv ${DATA}/out.atm.tile3.nc  $OUTDIR/gfs_data.tile3.nc
+	mv ${DATA}/out.atm.tile4.nc  $OUTDIR/gfs_data.tile4.nc
+	mv ${DATA}/out.atm.tile5.nc  $OUTDIR/gfs_data.tile5.nc
+	mv ${DATA}/out.atm.tile6.nc  $OUTDIR/gfs_data.tile6.nc
 
-        else
-  
-  mv ${DATA}/out.atm.tile1.nc  $OUTDIR/gfs_data.tile1.nc
-  mv ${DATA}/out.atm.tile2.nc  $OUTDIR/gfs_data.tile2.nc
-  mv ${DATA}/out.atm.tile3.nc  $OUTDIR/gfs_data.tile3.nc
-  mv ${DATA}/out.atm.tile4.nc  $OUTDIR/gfs_data.tile4.nc
-  mv ${DATA}/out.atm.tile5.nc  $OUTDIR/gfs_data.tile5.nc
-  mv ${DATA}/out.atm.tile6.nc  $OUTDIR/gfs_data.tile6.nc
-        fi
+fi
 
-  mv ${DATA}/gfs_ctrl.nc       $OUTDIR/.
+mv ${DATA}/gfs_ctrl.nc       $OUTDIR/.
 #$NCP $OUTDIR/sfc* $GESOUT/init/$mem
 $NCP $OUTDIR/gfs_ctrl.nc $GESOUT/init/$mem
-SENDCOM=NO
+
 if [[ $SENDCOM == "YES" ]]; then
-    mkdir -p $COMOUT/init/$mem
-    $NCP $OUTDIR/sfc* $COMOUT/init/$mem
-    $NCP $OUTDIR/gfs_ctrl.nc $COMOUT/init/$mem
-    if [[ $mem == "c00" ]]; then
-        $NCP $OUTDIR/gfs_data*.nc $COMOUT/init/$mem
+	mkdir -p $COMOUT/init/$mem
+	$NCP $OUTDIR/sfc* $COMOUT/init/$mem
+  $NCP $OUTDIR/gfs_ctrl.nc $COMOUT/init/$mem
+  if [[ $SENDDBN = YES ]];then
+    $DBNROOT/bin/dbn_alert MODEL ENS_CTR_$mem $job $COMOUT/init/$mem/gfs_ctrl.nc
+    $DBNROOT/bin/dbn_alert MODEL ENS_MSC_$mem $job $COMOUT/init/$mem/sfc_data.tile6.nc
+  fi
+	if [[ $mem == "c00" ]]; then
+    $NCP $OUTDIR/gfs_data*.nc $COMOUT/init/$mem
+    if [[ $SENDDBN = YES ]];then
+            $DBNROOT/bin/dbn_alert MODEL ENS_SA_$mem $job $COMOUT/init/$mem/gfs_data.tile6.nc
     fi
+	fi
 fi
 
 echo "$(date -u) end ${.sh.file}"
