@@ -33,6 +33,7 @@ ulimit -a
 
 export cyc=%CYC%
 export RUNMEM=gegfs
+export SENDDBN=NO
 
 export total_tasks=4
 export OMP_NUM_THREADS=4
