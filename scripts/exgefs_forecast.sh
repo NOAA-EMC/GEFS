@@ -24,7 +24,7 @@ export SSTDIR=${SSTDIR:-$COMIN/atmos/cfssst}
 
 export COMINWW3=${COMINWW3:-${COMIN}/wave}
 export COMOUTWW3=${COMOUTWW3:-${COMIN}/wave}
-export COMPONENTwave=${COMPONENTwave:-${RUN}wave}
+export COMPONENTwave=${COMPONENTwave:-${RUN}.wave}
 
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
