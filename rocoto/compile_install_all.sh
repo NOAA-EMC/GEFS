@@ -178,7 +178,7 @@ if [ $CleanAll = "yes" ]; then
     rm -f ../ush/merge_fv3_chem_tile.py
 
     rm -f ../parm/prep_chem_sources.inp.IN
-    rm -f ../scripts/exglobal_prep_chem.bash
+    rm -f ../scripts/exglobal_prep_chem.sh
     rm -f ../scripts/exwave_*
     rm -f ../scripts/exglobal_fcst_nemsfv3gfs.sh
     rm -rf ../env

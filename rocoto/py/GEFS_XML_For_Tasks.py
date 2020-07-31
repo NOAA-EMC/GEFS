@@ -1172,7 +1172,7 @@ def get_param_of_task(dicBase, taskname):
 
             if taskname.lower() in ["wave_gempak"]:
                 if DoesTaskExist(dicBase, "wave_post"):
-                    sDep = '<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/wave/gridded/gefswave.t@Hz.#member#.global.0p25.f000.grib2</cyclestr></datadep>'
+                    sDep = '<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/wave/gridded/gefs.wave.t@Hz.#member#.global.0p25.f000.grib2</cyclestr></datadep>'
                 else:
                     sDep = ""
 
