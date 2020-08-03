@@ -24,7 +24,7 @@ export SSTDIR=${SSTDIR:-$COMIN/atmos/cfssst}
 
 export COMINWW3=${COMINWW3:-${COMIN}/wave}
 export COMOUTWW3=${COMOUTWW3:-${COMIN}/wave}
-export COMPONENTwave=${COMPONENTwave:-${RUN}wave}
+export COMPONENTwave=${COMPONENTwave:-${RUN}.wave}
 
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
@@ -131,14 +131,14 @@ if [[ $FORECAST_SEGMENT = hr ]] ; then
 	(( FHMAX = FHMAX + 1 ))
 fi
 
-export stochini=${stochini:-".false."}  # true= read in pattern, false=initialize from seed
-
 if [[ $RERUN = "YES" ]] ; then
 	export warm_start=.true.
 	export restart_hour=$FHMIN
 	export restart_run=.true.    
 	export output_1st_tstep=.true.
-	export stochini=.true.
+	export stochini=${stochini:-".true."} #true=read in pattern, false=initialize from seed
+else
+	export stochini=${stochini:-".false."} #true=read in pattern, false=initialize from seed
 fi
 
 #
@@ -299,12 +299,12 @@ if [[ $cplchm = ".true." ]]; then
 
 	if [[ $SENDCOM == "YES" ]]; then
 		# Link restart files for next cycle
-		mkdir -m 775 -p $COMOUT/$COMPONENT/restart/$mem
+		mkdir -m 775 -p $COMOUT/$COMPONENT/restart
 
 		next_date=$($NDATE +$gefs_cych $CDATE)
 		next_PDY=$(echo $next_date | cut -c1-8)
 		next_cyc=$(echo $next_date | cut -c9-10)
-		COM_RSTDIR=$COMOUT/$COMPONENT/restart/$mem
+		COM_RSTDIR=$COMOUT/$COMPONENT/restart
 		if [[ ! -d $RSTDIR ]]; then mkdir -p $RSTDIR; fi
 		ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res $RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res
 		ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc $RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc

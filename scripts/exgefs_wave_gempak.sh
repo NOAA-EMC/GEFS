@@ -11,7 +11,8 @@ cd $DATA
 
 nfile=$LSB_DJOB_NUMPROC
 
-export DBN_ALERT_TYPE=WAVE_GEMPAK
+MODCOM=$(echo ${NET}_${COMPONENT} | tr '[a-z]' '[A-Z]')
+export DBN_ALERT_TYPE=${MODCOM}_GEMPAK
 export fstart=0
 grids='global.0p25'
 grdID=$grids

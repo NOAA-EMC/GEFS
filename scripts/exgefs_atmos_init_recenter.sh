@@ -3,8 +3,8 @@
 echo "$(date -u) begin ${.sh.file}"
 
 if [[ ${STRICT:-NO} == "YES" ]]; then
-    # Turn on strict bash error checking
-    set -eu
+	# Turn on strict bash error checking
+	set -eu
 fi
 
 ################################################################################
@@ -77,64 +77,168 @@ NLN=${NLN:-"/bin/ln -sf"}
 NMV=${NMV:-"/bin/mv -uv"}
 
 # Scripts
-RECENATMPY=${RECENATMPY:-$HOMEgefs/util/ush/recentensemble.py}
+RECENATMPY_PREP=${RECENATMPY:-$HOMEgefs/util/ush/recentensemble_prep.py}
+RECENATMPY_POST=${RECENATMPY:-$HOMEgefs/util/ush/recentensemble_post.py}
 
-export err=0
+err=0
+SLEEP_LOOP_MAX=$((SLEEP_TIME / SLEEP_INT))
 if [ $warm_start = ".false." ]; then
 	export FILENAME='gfs_data.tile'
 	export FILEINPATH=$GESIN/enkf
 	export FILEOUTPATH=$GESOUT/init
 
-    mkdir -p $FILEOUTPATH/c00
- 	$NCP $FILEINPATH/c00/gfs*  $FILEOUTPATH/c00/.
+	if [ $npert -gt 0 ]; then
+		# To run recenter-prep
+		for (( imem=1; imem<=$npert; imem++ )); do
+			sMem=p$(printf %02i $imem)
 
-    if [ $npert -gt 0 ]; then
-        rm -rf poescript*
+			ic=1
+			while [ $ic -le $SLEEP_LOOP_MAX ]; do
+				sInputFile=$FILEINPATH/${sMem}/chgres_atm.log
+				echo $sInputFile
+				if [ -f ${sInputFile} ]; then
+					break
+				else
+					ic=$(( $ic + 1 ))
+					echo "---" $ic $sMem
+					sleep $SLEEP_INT
+				fi # test -f $sInputFile
+				###############################
+				# If we reach this point assume
+				# atmos_prep job for pxx is working
+				###############################
+				if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+					echo <<- EOF
+							FATAL ERROR in ${.sh.file}: Forecast missing for one tile of ${sMem}
+							File $sInputFile still missing at $(date -u) after waiting ${SLEEP_TIME}s
+						EOF
+					export err=9
+					err_chk || exit $err
+				fi
+			done  # while [ $ic -le $SLEEP_LOOP_MAX ]
+		done # for (( imem=1; imem<=$npert; imem++ )); do
 
-        (( itile = 1 ))
-        while (( itile <= ntiles  )); do
-    		echo "$RECENATMPY $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH $itile" >>poescript
-            (( itile = itile + 1 ))
-        done # while (( itask < npert ))
+		# To copy p01 data to init/
+		mkdir -p $FILEOUTPATH
+		$NCP $FILEINPATH/p01/${FILENAME}*  $FILEOUTPATH/.
 
-        chmod 755 poescript
-        ls -al poescript
-        cat poescript
-        export MP_HOLDTIME=1000
+		rm -rf poescript*
 
-        export MP_CMDFILE=poescript
-        export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
-        export MP_LABELIO=yes
-        export MP_INFOLEVEL=3
-        export MP_STDOUTMODE=unordered
-        export MP_PGMMODEL=mpmd
+		(( itile = 1 ))
+		while (( itile <= ntiles  )); do
+			echo "$RECENATMPY_PREP $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH $itile" >>poescript
+			(( itile = itile + 1 ))
+		done # while (( itask < npert ))
 
-        if [ -f mpmd_cmdfile ]; then 
-            rm mpmd_cmdfile
-        fi
-        ln -s $MP_CMDFILE mpmd_cmdfile
-        $APRUN_MPMD
-        
-        export err=$?
-        if [[ $err != 0 ]]; then
-            echo "FATAL ERROR in ${.sh.file}: One or more recenter jobs in $MP_CMDFILE failed!"
-            exit $err
-        fi
-    fi
+		chmod 755 poescript
+		ls -al poescript
+		cat poescript
+		export MP_HOLDTIME=1000
+
+		export MP_CMDFILE=poescript
+		export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
+		export MP_LABELIO=yes
+		export MP_INFOLEVEL=3
+		export MP_STDOUTMODE=unordered
+		export MP_PGMMODEL=mpmd
+
+		if [ -f mpmd_cmdfile ]; then
+			rm mpmd_cmdfile
+		fi
+		ln -s $MP_CMDFILE mpmd_cmdfile
+		$APRUN_MPMD
+
+		export err=$?
+		if [[ $err != 0 ]]; then
+			echo "FATAL ERROR in ${.sh.file}: One or more recenter jobs in $MP_CMDFILE failed!"
+			exit $err
+		fi
+	
+		# Ro run recenter-post
+		ic=1
+		while [ $ic -le $SLEEP_LOOP_MAX ]; do
+			sInputFile=$FILEINPATH/c00/chgres_atm.log
+			echo $sInputFile
+			if [ -f ${sInputFile} ]; then
+				break
+			else
+				ic=$(( $ic + 1 ))
+				echo "---" $ic
+				sleep $SLEEP_INT
+			fi # test -f $sInputFile
+			###############################
+			# If we reach this point assume
+			# atmos_prep job for c00 is working
+			###############################
+			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+			echo <<- EOF
+				FATAL ERROR in ${.sh.file}: Forecast missing for one tile of c00
+				File $sInputFile still missing at $(date -u) after waiting ${SLEEP_TIME}s
+			EOF
+				export err=9
+				err_chk || exit $err
+			fi
+		done  # while [ $ic -le $SLEEP_LOOP_MAX ]
+
+		mkdir -p $FILEOUTPATH/c00
+		$NCP $FILEINPATH/c00/${FILENAME}*  $FILEOUTPATH/c00/.
+
+		rm -rf poescript*
+
+		(( itile = 1 ))
+		while (( itile <= ntiles  )); do
+			echo "$RECENATMPY_POST $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH $itile" >>poescript
+			(( itile = itile + 1 ))
+		done # while (( itask < npert ))
+
+		chmod 755 poescript
+		ls -al poescript
+		cat poescript
+		export MP_HOLDTIME=1000
+
+		export MP_CMDFILE=poescript
+		export SCR_CMDFILE=$MP_CMDFILE  # Used by mpiserial on Theia
+		export MP_LABELIO=yes
+		export MP_INFOLEVEL=3
+		export MP_STDOUTMODE=unordered
+		export MP_PGMMODEL=mpmd
+
+		if [ -f mpmd_cmdfile ]; then
+			rm mpmd_cmdfile
+		fi
+		ln -s $MP_CMDFILE mpmd_cmdfile
+		$APRUN_MPMD
+
+		export err=$?
+		if [[ $err != 0 ]]; then
+			echo "FATAL ERROR in ${.sh.file}: One or more recenter jobs in $MP_CMDFILE failed!"
+			exit $err
+		fi
+
+	fi
 else
 	echo "FATAL ERROR in ${.sh.file}: init_recenter only works for cold start"
-    exit 1
+	exit 1
 fi # $warm_start = ".false."
 
 if [[ $SENDCOM == YES ]]; then
+    MODCOM=$(echo ${NET}_${COMPONENT} | tr '[a-z]' '[A-Z]')
+    DBNTYP=${MODCOM}_INIT
     mem=01
     while [ $mem -le $npert ]; do
         smem=p$(printf %02i $mem)
         mkdir -p $COMOUT/init/$smem
         $NCP $GESOUT/init/$smem/gfs* $COMOUT/init/$smem
-	if [[ $SENDDBN = YES ]];then
-	      $DBNROOT/bin/dbn_alert MODEL ENS_SA_$mem $job $COMOUT/init/$mem/gfs_data.tile6.nc
-	fi		
+        export err=$?
+        if [[ $err != 0 ]]; then
+            echo "FATAL ERROR in ${.sh.file}: failed to copy data from GESOUT to COMOUT"
+            err_chk || exit $err
+        fi
+	    if [[ $SENDDBN = YES ]];then
+            for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
+                $DBNROOT/bin/dbn_alert MODEL $DBNTYP $job $COMOUT/init/$smem/gfs_data.${tile}.nc
+            done
+	    fi		
         (( mem = mem +1 ))
     done
 fi
@@ -142,4 +246,6 @@ fi
 rm -rf $GESOUT/enkf
 echo "$(date -u) end ${.sh.file}"
 
-exit 0
+exit $err
+
+
