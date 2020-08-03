@@ -46,4 +46,8 @@ export FORECAST_SEGMENT=hr
 #export APRUNC="aprun"
 #export APRUNC="aprun -b -j1 -n1 -N1 -d24 -cc depth"
 
+# Export List
+(( OMP_NUM_THREADS_CH = 24 / GEFS_PPN ))
+export OMP_NUM_THREADS_CH
+
 $SOURCEDIR/jobs/JGEFS_ATMOS_PREP

@@ -54,6 +54,11 @@ export cycle=t${cyc}z
 setpdy.sh
 source PDY
 
+if [ ${FORECAST_SEGMENT:-hr} = lr ]; then
+    export cyc=00
+    export cycle=t${cyc}z
+fi
+
 ####################################
 # Specify Execution Areas
 ####################################

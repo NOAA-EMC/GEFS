@@ -14,24 +14,13 @@ module purge
 
 module load EnvVars/$EnvVars_ver
 module load ips/$ips_ver
-module load impi/$impi_ver
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
-module load NetCDF/$NetCDF_ver
-
-module load lsf/$lsf_ver
-
-module load CFP/$CFP_ver
-export USE_CFP=YES
 
 module list
 
 # For Development
 . $GEFS_ROCOTO/bin/wcoss_dell_p3/common.sh
 
-# Export List
-(( OMP_NUM_THREADS_CH = 28 / GEFS_PPN ))
-export OMP_NUM_THREADS_CH
-
-
-$SOURCEDIR/jobs/JGEFS_ATMOS_PREP
+# CALL executable job script here
+$SOURCEDIR/jobs/JGEFS_FCST_POST_MANAGER

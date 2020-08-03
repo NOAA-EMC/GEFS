@@ -7,7 +7,7 @@ export lsf_ver=10.1
 
 export prod_envir_ver=1.1.0
 export grib_util_ver=1.1.0
-export prod_util_ver=1.1.3
+export prod_util_ver=1.1.4
 export util_shared_ver=1.1.0
 export g2tmpl_ver=1.5.0
 
