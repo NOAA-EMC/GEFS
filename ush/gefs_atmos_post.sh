@@ -1,3 +1,5 @@
+#! /bin/ksh
+
 #   Imported Shell Variables:
 #     SIGINP        Input sigma file
 

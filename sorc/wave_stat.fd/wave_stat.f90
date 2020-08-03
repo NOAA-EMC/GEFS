@@ -76,7 +76,7 @@
 !     -------------
 !      mean_out    - grib2 file containing combined ensemble mean
 !      spread_out  - grib2 file containing combined ensemble spread
-!      probab_out  - grib2 file containing combined ensemble probabilities of
+!      prob_out    - grib2 file containing combined ensemble probabilities of
 !                    Hs exceeding a given value
 !
 !     Method.
@@ -231,8 +231,8 @@
 ! ensemble probability.
 !
 !      if (statstype .eq. 'probab') then
-        call baopen(iu54,'probab_out',iret)
-        write(*,'("** After baopen for probab, iret = ",i5)') iret
+        call baopen(iu54,'prob_out',iret)
+        write(*,'("** After baopen for prob, iret = ",i5)') iret
         do l=1,nnsc
 !
           dumy1d(:)=0.0
@@ -273,7 +273,7 @@
       call baclose(iu53,iret)
       write(*,'("** After baclose for spread, iret= ",i5)') iret
       call baclose(iu54,iret)
-      write(*,'("** After baclose for probab, iret= ",i5)') iret
+      write(*,'("** After baclose for prob, iret= ",i5)') iret
       close(iu59)
 !
       STOP
