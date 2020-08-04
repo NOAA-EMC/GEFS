@@ -13,7 +13,7 @@ fi
 # set cycles to save sfcsig or master files
 ##############################################
 fhsave=${fhsave:-240}
-cycsavelistsfcsig=${cycsavelistsfcsig:-"00"}
+cycsavelistsfcsig=${cycsavelistsfcsig:-""}
 cycsavelistmaster=${cycsavelistmaster:-""}
 echo "fhsave=$fhsave"
 echo "cycsavelistsfcsig=$cycsavelistsfcsig"
@@ -133,6 +133,10 @@ else # (( nmissing > 0 ))
 			# remove sigma, surface, and flux files
 			###########################################################
 			$HOMEgefs/ush/gefs_post_cleanup.sh
+            ########################
+            # remove /nwges RESTART directory
+            ########################
+            rm -rf $GESOUT/init/$member/RESTART
 		done # member in $memberlisttest
 	else # [[ $savecycle = false ]]
 		echo "sfcsig files are saved for cyc=$cyc"

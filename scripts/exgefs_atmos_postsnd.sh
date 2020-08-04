@@ -136,7 +136,9 @@ cd $DATA
 # Send the single tar file to OSO
 ########################################
 if [ "$SENDDBN" = 'YES' ]; then
-	$DBNROOT/bin/dbn_alert MODEL GEFS_${RUNMEM}_BUFRSND_TAR $job \
+	MODCOM=$(echo ${NET}_${COMPONENT} | tr '[a-z]' '[A-Z]')
+	DBNTYP=${MODCOM}_BUFRSND_TAR
+	$DBNROOT/bin/dbn_alert MODEL ${DBNTYP} $job \
 	$COMOUT/$COMPONENT/bufr/${RUNMEM}.${cycle}.bufrsnd.tar.gz
 fi
 

@@ -1,3 +1,5 @@
+#! /bin/ksh
+
 ########################################################################
 # Script: ensadd_g2.sh
 # ABSTRACT:  This scripts inserts ensemble PDS extensions for grib2 data 

@@ -24,7 +24,7 @@ export SSTDIR=${SSTDIR:-$COMIN/atmos/cfssst}
 
 export COMINWW3=${COMINWW3:-${COMIN}/wave}
 export COMOUTWW3=${COMOUTWW3:-${COMIN}/wave}
-export COMPONENTwave=${COMPONENTwave:-${RUN}wave}
+export COMPONENTwave=${COMPONENTwave:-${RUN}.wave}
 
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
@@ -45,9 +45,15 @@ fi
 case $FORECAST_SEGMENT in
 	hr) 
 		echo "Integrate the model for the Half-Month range segment"
-		export RERUN=${RERUN:-"NO"}
+		filecount=$(ls -l $RSTDIR/*coupler* | wc -l )
+		if (( filecount < 3 )); then
+			export RERUN="NO" 
+		else
+			export RERUN="YES"
+		fi
+
 		FHINI=${FHINI:-0}
-	        if [[ $RERUN != "YES" ]] ; then
+		 if [[ $RERUN != "YES" ]] ; then
 			export CDATE_RST=$($NDATE +$FHINI $PDY$cyc)
 		fi
 		CASE=$CASEHR; FHMAX=$fhmaxh; FHOUT=$FHOUTLF; FHZER=6;
@@ -59,8 +65,22 @@ case $FORECAST_SEGMENT in
 	lr)
 		echo "Integrate the model for the Longer Range segment"
 		FHINI=${FHINI:-$fhmaxh}
-	        if [[ $RERUN != "YES" ]] ; then
-			export CDATE_RST=$($NDATE +$FHINI $PDY$cyc)
+		CDATE_1=$($NDATE +$FHINI $PDY$cyc)
+		fRestart=$RSTDIR/$(echo $CDATE_1 | cut -c1-8).$(echo $CDATE_1 | cut -c9-10)0000.coupler.res
+		if [ -f $fRestart ]; then
+			(( FHINI_2 = fhmaxh + restart_interval ))
+			CDATE_2=$($NDATE +$FHINI_2 $PDY$cyc)
+			#fRestart=$RSTDIR/${CDATE_2}.${cyc}0000.coupler.res
+			fRestart=$RSTDIR/$(echo $CDATE_2 | cut -c1-8).$(echo $CDATE_2 | cut -c9-10)0000.coupler.res
+			if [ -f $fRestart ]; then
+				export CDATE_RST=
+			else
+				export CDATE_RST=$($NDATE +$FHINI $PDY$cyc)
+			fi
+		else
+			echo "FATAL ERROR in ${.sh.file}: There is no $fRestart" 
+			export err=101
+			exit $err
 		fi
 		export RERUN="YES"
 		export cplwav=.false.
@@ -111,14 +131,14 @@ if [[ $FORECAST_SEGMENT = hr ]] ; then
 	(( FHMAX = FHMAX + 1 ))
 fi
 
-export stochini=${stochini:-".false."}  # true= read in pattern, false=initialize from seed
-
 if [[ $RERUN = "YES" ]] ; then
 	export warm_start=.true.
 	export restart_hour=$FHMIN
 	export restart_run=.true.    
 	export output_1st_tstep=.true.
-	export stochini=.true.
+	export stochini=${stochini:-".true."} #true=read in pattern, false=initialize from seed
+else
+	export stochini=${stochini:-".false."} #true=read in pattern, false=initialize from seed
 fi
 
 #
@@ -279,12 +299,12 @@ if [[ $cplchm = ".true." ]]; then
 
 	if [[ $SENDCOM == "YES" ]]; then
 		# Link restart files for next cycle
-		mkdir -m 775 -p $COMOUT/$COMPONENT/restart/$mem
+		mkdir -m 775 -p $COMOUT/$COMPONENT/restart
 
 		next_date=$($NDATE +$gefs_cych $CDATE)
 		next_PDY=$(echo $next_date | cut -c1-8)
 		next_cyc=$(echo $next_date | cut -c9-10)
-		COM_RSTDIR=$COMOUT/$COMPONENT/restart/$mem
+		COM_RSTDIR=$COMOUT/$COMPONENT/restart
 		if [[ ! -d $RSTDIR ]]; then mkdir -p $RSTDIR; fi
 		ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res $RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res
 		ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc $RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc

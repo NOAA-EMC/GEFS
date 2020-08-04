@@ -183,7 +183,7 @@ while [[ $fh -le $FHOUR ]]; do
 					echo "mem=$mem nfiles=$nfiles foundgfs=$foundgfs foundall=$foundall previncr=$previncr ic=$ic fh=$fh found"
 				else # test -f $testfile
 					echo testfile=$testfile not found
-					if [[ $mem = gfs ]] && [[ $foundgfs = yes ]] && (( fh > 180 )) && (( fh % 12 > 0 )); then
+					if [[ $mem = gfs ]] && [[ $foundgfs = yes ]] && (( fh > gfsfhmaxh )) && (( fh % 12 > 0 )); then
 						previncr=yes
 					else
 						foundall=no
@@ -229,13 +229,17 @@ while [[ $fh -le $FHOUR ]]; do
 				# ALLOW A DIFFERENT NUMBER OF
 				# MEMBERS TO BE MISSING
 				#
-				# CURRENTLY ALLOWS ONE MISSING
+				# CURRENTLY ALLOWS ONE MISSING,`
+				# but TWO at 246, 258, ..378h
 				###############################
 				(( nfilesmin = nmem - 1 ))
+				if (( fh > gfsfhmaxh )) && (( fh % 12 > 0 )); then
+					(( nfilesmin = nfilesmin - 1 ))
+				fi
 
 				if (( nfiles < nfilesmin )); then
 					echo <<- EOF
-						FATAL ERROR in ${.sh.file}: Insufficient members found for f${fhr} to calculate stats at $(date) after ${SLEEP_TIME}s!
+						FATAL ERROR in ${.sh.file}: Insufficient members found for f${fh} to calculate stats at $(date) after ${SLEEP_TIME}s!
 							Total members:         $nmem
 							Min members for stats: $nfilesmin
 							Members found:         $nfiles
@@ -245,10 +249,10 @@ while [[ $fh -le $FHOUR ]]; do
 				else
 					if (( nfiles < nmem )); then
 						echo <<- EOF
-							WARNING in ${.sh.file}: Some members still missing for f{fhr} at $(date) after ${SLEEP_TIME}s
+							WARNING in ${.sh.file}: Some members still missing for f${fh} at $(date) after ${SLEEP_TIME}s
 								Will continue with $nfiles members, but products may be degraded.
 							EOF
-						msg="WARNING: {job} did not find all ensemble member for f{fhr}! Will continue with fewer members, but products may be degraded."
+						msg="WARNING: {job} did not find all ensemble member for f${fh}! Will continue with fewer members, but products may be degraded."
 						echo "$msg" | mail.py -c $MAIL_LIST
 					fi
 					(( nfilesprev = nfiles ))
@@ -325,7 +329,7 @@ while [[ $fh -le $FHOUR ]]; do
 		export err=$?
 		if [[ $err != 0 ]]; then
 			echo <<- EOF
-				FATAL ERROR in ${.sh.file}: $ENSSTAT returned a non-zero error code for f${fhr}!
+				FATAL ERROR in ${.sh.file}: $ENSSTAT returned a non-zero error code for f${fh}!
 					Namelist namin was used and had the following contents:
 						$(cat namin)
 				EOF
@@ -424,11 +428,6 @@ if [ "$SENDCOM" = "YES" ]; then
 	done # for file in $postvarlist
 fi # [ "$SENDCOM" = "YES" ]
 
-#DHOU, 05/13/2015, added this block for gefs_cqpf trigger
-if [[ $SENDECF = "YES" ]]; then
-	ecflow_client --event enspost_grb2_ready
-fi
-
 if [[ "$cycle" == "t00z" ]] && [[ -z $ext_h ]]; then
 	$ENSPPF $COMOUT/$COMPONENT/ensstat/enspost_grb2${ext_h}.$cycle.prcp ensppf${ext_h}.$PDY$cyc.grib2 $npert
 	$WGRIB2 ensppf${ext_h}.$PDY$cyc.grib2 -s >ensppf${ext_h}.$PDY$cyc.grib2.idx 
@@ -458,10 +457,6 @@ if [[ "$cycle" == "t00z" ]] && [[ -z $ext_h ]]; then
 		cp ensppf${ext_h}.$PDY$cyc.grib2 $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2
 		cp ensppf${ext_h}.$PDY$cyc.grib2.idx $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2.idx
 	fi  #[ $SENDCOM = "YES" ]
-	if [ "$SENDDBN" = "YES" ]; then
-		$DBNROOT/bin/dbn_alert MODEL ENS_STAT_GB2 $job $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2
-		$DBNROOT/bin/dbn_alert MODEL ENS_STAT_GB2_WIDX $job $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.pqpf_24h.grib2.idx
-	fi # [ "$SENDDBN" = "YES" ]
 fi # test "$cycle" = "t00z"
 
 # part (1b): probabilistic forecasts ( PQPF, PQRF, PQFF, PQSF and PQIF )
