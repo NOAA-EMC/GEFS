@@ -82,7 +82,7 @@ while [ $ic -le $SLEEP_LOOP_MAX ]; do
 
     if [[ $done_wave_post == 0 && $cplwav = ".true." ]]; then
         fhr3=$(printf %03i $fhr_wave_post)
-        if [ -s ${COMIN}/wave/gridded/gefswave.t${cyc}z.${mem}.global.0p25.f${fhr3}.grib2 ]; then
+        if [ -s ${COMIN}/wave/gridded/gefs.wave.t${cyc}z.${mem}.global.0p25.f${fhr3}.grib2.idx ]; then
             if [[ $SENDECF == "YES" ]]; then
                 ecflow_client --event release_wave_gempak
             else
@@ -117,8 +117,8 @@ done
 #Check prdgen process
 #
 hour=00
-TEND=192
-TCP=195
+TEND=240
+TCP=243
 
 if [ -e prdgenhours ]; then
    rm -f prdgenhours
@@ -138,12 +138,15 @@ do
     for fhr in $prdgenhr
     do
         fhr3=`printf "%03d" $fhr`
-        if [ -s ${COMIN}/atmos/pgrb2ap5/${RUNMEM}.t${cyc}z.pgrb2a.0p50.f${fhr3}.idx -a -s ${COMIN}/atmos/pgrb2bp5/${RUNMEM}.t${cyc}z.pgrb2b.0p50.f${fhr3}.idx ]
+        if [ -s ${COMIN}/atmos/pgrb2ap5/${RUNMEM}.t${cyc}z.pgrb2a.0p50.f${fhr3}.idx -a -s ${COMIN}/atmos/pgrb2bp5/${RUNMEM}.t${cyc}z.pgrb2b.0p50.f${fhr3}.idx -a -s ${COMIN}/wave/gridded/gefs.wave.t${cyc}z.${mem}.global.0p25.f${fhr3}.grib2.idx ]
         then
             # Remove current fhr from list
             prdgenhr=`echo $prdgenhr | sed "s/${fhr}//"`
             if [ $fhr -eq 192 ]; then
                 ecflow_client --event pgrb2abp5_f192_ready
+            fi
+            if [ $fhr -eq 240 ]; then
+                ecflow_client --event gefswave_f240_ready
             fi
         fi
     done
