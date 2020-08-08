@@ -37,10 +37,12 @@ while [[ $fhr -le $FHOUR ]]; do
 		####################################
 		# Remove nemsio fcst and sflux files
 		####################################
-		if [[ $fhr > $fhsave ]]; then
+                echo $fhsave |grep $ffhr
+                err=$?
+		if [[ $err -ne 0 ]]; then
 			rm $COMOUT/$COMPONENT/sfcsig/ge$member.$cycle.atm${ffhr}.nemsio
 			rm $COMOUT/$COMPONENT/sfcsig/ge$member.$cycle.sfc${ffhr}.nemsio
-		fi # [[ $fhr > $fhsave ]]
+		fi # [[ $fhr -ne $hrsave ]]
 	fi # [[ "$SENDCOM" = "YES" ]]
 
 	if (( fhr < FHMAXHF )); then
