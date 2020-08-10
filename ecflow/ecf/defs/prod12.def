@@ -1,6 +1,5 @@
 extern /prod12/gfs/jgfs_analysis
 extern /prod12/gfs/post/jgfs_post_manager:release_post000
-extern /prod12/gfs/post/jgfs_post_manager:release_post012
 suite para12
   family gefs
     defstatus complete
@@ -52,6 +51,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -83,6 +83,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -114,6 +115,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -145,6 +147,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -176,6 +179,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -207,6 +211,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -238,6 +243,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -269,6 +275,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -300,6 +307,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -331,6 +339,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -362,6 +371,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -393,6 +403,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -424,6 +435,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -455,6 +467,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -486,6 +499,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -517,6 +531,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -548,6 +563,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -579,6 +595,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -610,6 +627,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -641,6 +659,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -672,6 +691,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -703,6 +723,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -734,6 +755,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -765,6 +787,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -796,6 +819,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -827,6 +851,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -858,6 +883,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -889,6 +915,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -920,6 +947,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -951,6 +979,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -982,6 +1011,7 @@ suite para12
             event 2 release_atmos_prdgen
             event 3 release_wave_gempak
             event 4 pgrb2abp5_f192_ready
+            event 5 gefswave_f240_ready
           family atmos
             task jgefs_atmos_post
               trigger ../jgefs_fcst_post_manager:release_post
@@ -1031,6 +1061,44 @@ suite para12
             p28/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and \
             p29/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and \
             p30/jgefs_fcst_post_manager:pgrb2abp5_f192_ready )
+          trigger c00 == complete and p01 == complete and p02 == complete and p03 == complete and p04 == complete and p05 == complete and \
+             p06 == complete and p07 == complete and p08 == complete and p09 == complete and p10 == complete and p11 == complete and \
+             p12 == complete and p13 == complete and p14 == complete and p15 == complete and p16 == complete and p17 == complete and \
+             p18 == complete and p19 == complete and p20 == complete and p21 == complete and p22 == complete and p23 == complete and \
+             p24 == complete and p25 == complete and p26 == complete and p27 == complete and p28 == complete and p29 == complete and \
+             p30 == complete
+        task jgefs_wave_f240_done
+          complete ( c00/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p01/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p02/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p03/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p04/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p05/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p06/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p07/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p08/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p09/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p10/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p11/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p12/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p13/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p14/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p15/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p16/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p17/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p18/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p19/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p20/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p21/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p22/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p23/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p24/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p25/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p26/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p27/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p28/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p29/jgefs_fcst_post_manager:gefswave_f240_ready and \
+            p30/jgefs_fcst_post_manager:gefswave_f240_ready )
           trigger c00 == complete and p01 == complete and p02 == complete and p03 == complete and p04 == complete and p05 == complete and \
              p06 == complete and p07 == complete and p08 == complete and p09 == complete and p10 == complete and p11 == complete and \
              p12 == complete and p13 == complete and p14 == complete and p15 == complete and p16 == complete and p17 == complete and \
