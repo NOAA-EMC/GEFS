@@ -82,7 +82,7 @@ env | sort
 
 #############################################################
 # Execute the script
-$HOMEchem/scripts/exglobal_prep_chem.bash
+$HOMEchem/scripts/exglobal_prep_chem.sh
 export err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"

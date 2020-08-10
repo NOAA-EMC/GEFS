@@ -1,11 +1,12 @@
-#BSUB -J %E%gefs_chem_prep_emissions_%CYC%
-#BSUB -o %COM%/output/%ENVIR%/today/gefs_chem_prep_emissions_%CYC%.o%J
+#BSUB -J %E%gefs_fcst_post_manager_%MEMBER%_%CYC%
+#BSUB -o %COM%/output/%ENVIR%/today/gefs_fcst_post_manager_%MEMBER%_%CYC%.o%J
 #BSUB -cwd /tmp
-#BSUB -n 28
-#BSUB -R span[ptile=28]
-#BSUB -R 'affinity[core(1)]'
-#BSUB -q %QUEUE%
-#BSUB -W 00:45
+#BSUB -n 1
+#BSUB -R span[ptile=1]
+#BSUB -R "affinity[core(1):distribute=pack]"
+#BSUB -R "rusage[mem=1000]"
+#BSUB -q %QUEUE%_shared
+#BSUB -W 03:30
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%-%PROJENVIR%
 
@@ -19,9 +20,6 @@ export model=gefs
 %include <model_ver.h>
 
 module load ips/$ips_ver
-module load NetCDF/$NetCDF_ver
-module load HDF5-serial/$HDF5_serial_ver
-module load lsf/$lsf_ver
 
 module list
 
@@ -30,13 +28,14 @@ ulimit -s unlimited
 ulimit -a
 
 export cyc=%CYC%
+export RUNMEM=ge%MEMBER%
 
 export total_tasks=1
-export OMP_NUM_THREADS=28
 export taskspernode=1
+export FORECAST_SEGMENT=hr
 
 # CALL executable job script here
-${HOMEgefs}/jobs/JGEFS_CHEM_PREP_EMISSIONS
+${HOMEgefs}/jobs/JGEFS_FCST_POST_MANAGER
 
 %include <tail.h>
 %manual

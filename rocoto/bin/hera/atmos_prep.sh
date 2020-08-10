@@ -19,5 +19,9 @@ export MEMORY_AFFINITY=core:2
 
 export FORECAST_SEGMENT=hr
 
+# Export List
+(( OMP_NUM_THREADS_CH = 40 / GEFS_PPN ))
+export OMP_NUM_THREADS_CH
+
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_ATMOS_PREP

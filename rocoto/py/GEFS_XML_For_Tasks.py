@@ -372,7 +372,12 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
             if sQueue.endswith("_shared"):
                 strings += sPre_2 + '<native>-R "affinity[core(1):distribute=pack]"</native>\n'
-                strings += sPre_2 + '<native>-R "rusage[mem=4608]"</native>\n'
+                if sMemory == "":
+                    strings += sPre_2 + '<native>-R "rusage[mem=4608]"</native>\n'
+                else:
+                    if sMemory.endswith("M"):
+                        iMemory = sMemory.replace("M","")
+                    strings += sPre_2 + '<native>-R "rusage[mem={0}]"</native>\n'.format(iMemory)
 
     # -------------------sNodes-------------------
 
@@ -402,8 +407,10 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         if taskname in metatask_names:
             strings += ""
         else:
-            if sQueue.endswith("_shared") and taskname in ['ensstat_hr', 'enspost_hr', 'ensstat_lr', 'enspost_lr', 'gempak', 'gempak_meta', 'avgspr_gempak_meta', 'ensavg_nemsio', 'postsnd']:
+            if sQueue.endswith("_shared") and taskname in ['ensstat_hr', 'enspost_hr', 'ensstat_lr', 'enspost_lr', 'gempak', 'gempak_meta', 'avgspr_gempak_meta', 'ensavg_nemsio', 'postsnd', "fcst_post_manager"]:
                 strings += ""
+            elif taskname in ['atmos_prep']:
+                strings += sPre_2 + "<native>-R 'affinity[thread({cpu_per_task})]'</native>\n".format(cpu_per_task=dicBase['ATMOS_PREP_CPU_PER_TASK'])
             else:
                 strings += sPre_2 + "<native>-R 'affinity[core(1)]'</native>\n"
     else:
@@ -437,7 +444,7 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
 
     # For FORECAST_SEGMENT
-    if (taskname in ['forecast_hr', 'prdgen_hr', 'post_hr', 'ensstat_hr', 'enspost_hr', 'chem_forecast', 'chem_post', 'chem_prdgen']) \
+    if (taskname in ['forecast_hr', 'prdgen_hr', 'post_hr', 'ensstat_hr', 'enspost_hr', 'chem_forecast', 'chem_post', 'chem_prdgen', 'fcst_post_manager']) \
      or taskname.startswith("post_hr_") or taskname.startswith('chem_post_'):
         strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
     elif taskname in ['forecast_lr', 'prdgen_lr', 'post_lr', 'ensstat_lr', 'enspost_lr']:
@@ -1165,7 +1172,7 @@ def get_param_of_task(dicBase, taskname):
 
             if taskname.lower() in ["wave_gempak"]:
                 if DoesTaskExist(dicBase, "wave_post"):
-                    sDep = '<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/wave/gridded/gefswave.t@Hz.#member#.global.0p25.f000.grib2</cyclestr></datadep>'
+                    sDep = '<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/wave/gridded/gefs.wave.t@Hz.#member#.global.0p25.f000.grib2</cyclestr></datadep>'
                 else:
                     sDep = ""
 
@@ -1299,7 +1306,7 @@ def get_param_of_task(dicBase, taskname):
 
     if taskname == "atmos_prep":
         iTotal_Tasks, iNodes, iPPN, iTPP = calc_atmos_prep_resources(dicBase)
-        sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)        
+        sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
     # For gempak
     if taskname == "gempak":
@@ -1314,7 +1321,7 @@ def calc_atmos_prep_resources(dicBase):
     import math
     ncores_per_node = Get_NCORES_PER_NODE(dicBase)
     npert = int(dicBase["NPERT"])
-    cpu_per_task = 6
+    cpu_per_task = int(dicBase['ATMOS_PREP_CPU_PER_TASK'])
     iTotal_Tasks = npert + 1
     iPPN = math.floor(ncores_per_node / cpu_per_task)
     iTPP = 1
@@ -1429,6 +1436,8 @@ def get_metatask_names(taskname=""):
     metatask_names.append('wave_gempak')
     # postsnd
     metatask_names.append('postsnd')
+    # fcst_post_manageq
+    metatask_names.append('fcst_post_manager')
 
     return metatask_names
 
