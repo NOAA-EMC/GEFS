@@ -37,11 +37,11 @@ fi
 
 export GEFS_ANOM2_FCST=${GEFS_ANOM2_FCST:-$EXECgefs/gefs_anom2_fcst}
 export GEFS_NSTGEN=${GEFS_NSTGEN:-$EXECgefs/gefs_nstgen}
-#export nemsioread=${nemsioread:-${EXECgfs}/nemsio_read}
-#if [ ! -f $nemsioread ]; then
-#    echo "FATAL ERROR in ${.sh.file}: nemsio_read ($nemsioread) missing!"
-#    exit 85
-#fi
+export nemsioread=${nemsioread:-${EXECgfs}/nemsio_read}
+if [ ! -f $nemsioread ]; then
+    echo "FATAL ERROR in ${.sh.file}: nemsio_read ($nemsioread) missing!"
+    exit 85
+fi
 ################################################################################
 # Preprocessing
 if [ ! -d $DATA ]; then mkdir -p $DATA; fi
@@ -86,32 +86,18 @@ sFile=$COMINgfs/gfs.${cycle}.sfcanl.nc
 if [[ -f $sFile ]]; then
     test_tref=$(ncdump -h $sFile | grep tref)
     if [ -z $test_tref ]; then
-        sFile=$COMINgfs/gfs.${cycle}.sfcanl.nc
-        test_tref=$($nemsioread $sFile | grep tref)
-        if [ -z $test_tref ]; then
-            echo "FATAL ERROR in ${.sh.file}: Real-time nst does not exist: gfs.${cycle}.sfcanl.nc"
-            exit 93
-        fi
+        echo "FATAL ERROR in ${.sh.file}: Real-time nst does not exist in $sFile"
+        exit 93
     fi
     $NLN $sFile $filenamein_nst
 else
-    sFile=$COMINgfs/gfs.${cycle}.sfcanl.nc
-    if [[ -f $sFile ]]; then
-        test_tref=$(ncdump -h $sFile | grep tref)
-        if [ -z $test_tref ]; then
-            echo " Real-time nst does not include tref varilable: $sFile"
-            exit 93
-        fi
-        $NLN $sFile $filenamein_nst
-    else
-        echo "FATAL ERROR in ${.sh.file}: Real-time nst does not exist: $sFile"
-        exit 93
-    fi
-
+    echo "FATAL ERROR in ${.sh.file}: gfs surface analysis $sFile does not exist"
+    exit 93
 fi
+
 export err=$?
 if (( err != 0 )); then
-    echo "FATAL ERROR in ${.sh.file}: link sst FAILED!"
+    echo "FATAL ERROR in ${.sh.file}: link sst files FAILED!"
     exit 93
 fi
 echo "real-time data link ends at $(date)"
