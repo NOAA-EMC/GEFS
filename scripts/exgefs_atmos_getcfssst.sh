@@ -37,11 +37,7 @@ fi
 
 export GEFS_ANOM2_FCST=${GEFS_ANOM2_FCST:-$EXECgefs/gefs_anom2_fcst}
 export GEFS_NSTGEN=${GEFS_NSTGEN:-$EXECgefs/gefs_nstgen}
-export nemsioread=${nemsioread:-${EXECgfs}/nemsio_read}
-if [ ! -f $nemsioread ]; then
-    echo "FATAL ERROR in ${.sh.file}: nemsio_read ($nemsioread) missing!"
-    exit 85
-fi
+
 ################################################################################
 # Preprocessing
 if [ ! -d $DATA ]; then mkdir -p $DATA; fi
