@@ -15,9 +15,8 @@ export FIXfv3=${FIXfv3:-$FIXgfs/fix_fv3_gmted2010}
 
 cd $DATA
 rm -rf mpmd_cmdfile*
+
 for mem in $memberlist; do
-	mkdir -p $GESOUT/init/$mem
-	mkdir -p $COMOUT/init/$mem
 	echo "$USHgefs/gefs_atmos_prep.sh $mem" >> mpmd_cmdfile
 done
 
@@ -35,8 +34,8 @@ export MP_PGMMODEL=mpmd
 $APRUN_MPMD
 export err=$?
 if [[ $err != 0 ]]; then
-	echo "FATAL ERROR in ${.sh.file}: One or more atmos_prep jobs in $MP_CMDFILE failed!"
-	exit $err
+    echo "FATAL ERROR in ${.sh.file}: One or more atmos_prep jobs in $MP_CMDFILE failed!"
+    exit $err
 fi
 #############################################################
 
