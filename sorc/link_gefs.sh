@@ -186,7 +186,7 @@ fi
 # for CHEM
 if [[ -d global-workflow.fd ]]; then
     # for chem_prep_emissions
-    $LINK ../sorc/global-workflow.fd/sorc/gsd_prep_chem.fd/workflow/emc-global/scripts/exglobal_prep_chem.bash ../scripts/
+    $LINK ../sorc/global-workflow.fd/sorc/gsd_prep_chem.fd/workflow/emc-global/scripts/exglobal_prep_chem.sh ../scripts/
     $LINK ../sorc/global-workflow.fd/sorc/gsd_prep_chem.fd/workflow/emc-global/parm/prep_chem_sources.inp.IN ../parm/
 
     # for init_aerosol

@@ -12,7 +12,7 @@ fi
 # set last forecast hour to save sfcsig files
 # set cycles to save sfcsig or master files
 ##############################################
-fhsave=${fhsave:-240}
+fhsave=${fhsave:-"f000 f192 f384 f390 f840"}
 cycsavelistsfcsig=${cycsavelistsfcsig:-""}
 cycsavelistmaster=${cycsavelistmaster:-""}
 echo "fhsave=$fhsave"

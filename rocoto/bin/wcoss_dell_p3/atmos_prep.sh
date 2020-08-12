@@ -30,7 +30,8 @@ module list
 . $GEFS_ROCOTO/bin/wcoss_dell_p3/common.sh
 
 # Export List
-export OMP_NUM_THREADS_CH=${GEFS_TPP:-28}
+(( OMP_NUM_THREADS_CH = 28 / GEFS_PPN ))
+export OMP_NUM_THREADS_CH
 
 
 $SOURCEDIR/jobs/JGEFS_ATMOS_PREP

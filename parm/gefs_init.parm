@@ -50,3 +50,14 @@ export fhrpend=96
 export pdycycp=$($NDATE -$fhrp $PDY$cyc)
 export pdyp=$(echo $pdycycp|cut -c1-8)
 export cycp=$(echo $pdycycp|cut -c9-10)
+
+####################################
+# Specify Timeout Behavior of Post
+#
+# SLEEP_TIME - Amount of time to wait for
+#              a restart file before exiting
+# SLEEP_INT  - Amount of time to wait between
+#              checking for restart files
+####################################
+export SLEEP_TIME=600
+export SLEEP_INT=5

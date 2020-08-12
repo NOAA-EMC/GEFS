@@ -88,6 +88,12 @@ export FIXfv3=$FIXgfs/fix_fv3_gmted2010/C$CRES
 export FIXsfc=$FIXfv3/fix_sfc
 #############################################################
 # Execute the script
+if [[ $mem = c00 ]] && (( npert > 0 )); then
+	export DOSFC="NO"
+else
+	export DOSFC="YES"
+fi
+
 $USHgfs/chgres_cube.sh
 export err=$?
 if [[ $err != 0 ]]; then
@@ -119,27 +125,43 @@ else
 	mv ${DATA}/out.atm.tile6.nc  $OUTDIR/gfs_data.tile6.nc
 
 fi
-
 mv ${DATA}/gfs_ctrl.nc       $OUTDIR/.
-#$NCP $OUTDIR/sfc* $GESOUT/init/$mem
+
+mkdir -p $GESOUT/init/$mem
 $NCP $OUTDIR/gfs_ctrl.nc $GESOUT/init/$mem
+if [[ $DOSFC = NO ]]; then
+    $NCP $GESOUT/init/p01/sfc* $GESOUT/init/$mem
+else
+    $NCP $OUTDIR/sfc* $GESOUT/init/$mem
+fi
 
 if [[ $SENDCOM == "YES" ]]; then
-	mkdir -p $COMOUT/init/$mem
-	$NCP $OUTDIR/sfc* $COMOUT/init/$mem
-  $NCP $OUTDIR/gfs_ctrl.nc $COMOUT/init/$mem
-  if [[ $SENDDBN = YES ]];then
-    $DBNROOT/bin/dbn_alert MODEL ENS_CTR_$mem $job $COMOUT/init/$mem/gfs_ctrl.nc
-    $DBNROOT/bin/dbn_alert MODEL ENS_MSC_$mem $job $COMOUT/init/$mem/sfc_data.tile6.nc
-  fi
-	if [[ $mem == "c00" ]]; then
-    $NCP $OUTDIR/gfs_data*.nc $COMOUT/init/$mem
-    if [[ $SENDDBN = YES ]];then
-            $DBNROOT/bin/dbn_alert MODEL ENS_SA_$mem $job $COMOUT/init/$mem/gfs_data.tile6.nc
+    MODCOM=$(echo ${NET}_${COMPONENT} | tr '[a-z]' '[A-Z]')
+    DBNTYP=${MODCOM}_INIT
+    mkdir -p $COMOUT/init/$mem
+    $NCP $OUTDIR/gfs_ctrl.nc $COMOUT/init/$mem
+    if [[ $DOSFC = NO ]]; then
+      $NCP $GESOUT/init/p01/sfc* $COMOUT/init/$mem
+    else
+      $NCP $OUTDIR/sfc* $COMOUT/init/$mem
     fi
-	fi
+    if [[ $SENDDBN = YES ]];then
+      $DBNROOT/bin/dbn_alert MODEL $DBNTYP $job $COMOUT/init/$mem/gfs_ctrl.nc
+      for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
+              $DBNROOT/bin/dbn_alert MODEL $DBNTYP $job $COMOUT/init/$mem/sfc_data.${tile}.nc
+      done
+    fi
+    if [[ $mem == "c00" ]]; then
+      $NCP $OUTDIR/gfs_data*.nc $COMOUT/init/$mem
+      if [[ $SENDDBN = YES ]];then
+        for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
+              $DBNROOT/bin/dbn_alert MODEL $DBNTYP $job $COMOUT/init/$mem/gfs_data.${tile}.nc
+        done
+      fi
+    fi
 fi
 
 echo "$(date -u) end ${.sh.file}"
 
 exit $err
+

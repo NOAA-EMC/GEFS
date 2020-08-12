@@ -17,5 +17,6 @@ export sigMODE=${sigMODE:-gempak}
 membTAG='p'
 if [ "${waveMEMB}" == "00" ]; then membTAG='c'; fi
 export membTAG
+export COMPONENTwave=${RUN}wave
 export WAV_MOD_TAG=${COMPONENTwave}${waveMEMB}
 

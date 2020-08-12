@@ -1,9 +1,9 @@
 #BSUB -J %E%gefs_atmos_prep_%CYC%
 #BSUB -o %COM%/output/%ENVIR%/today/gefs_atmos_prep_%CYC%.o%J
 #BSUB -cwd /tmp
-#BSUB -n 36
-#BSUB -R span[ptile=6]
-#BSUB -R 'affinity[core(1)]'
+#BSUB -n 31
+#BSUB -R span[ptile=1]
+#BSUB -R 'affinity[thread(40)]'
 #BSUB -q %QUEUE%
 #BSUB -W 00:30
 #BSUB -L /bin/sh
@@ -33,8 +33,8 @@ ulimit -a
 
 export cyc=%CYC%
 
-export total_tasks=36
-export taskspernode=6
+export total_tasks=31
+export taskspernode=1
 
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_ATMOS_PREP
