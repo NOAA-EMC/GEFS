@@ -443,6 +443,9 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
     if taskname in ['keep_init', 'copy_init']:
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
 
+    if taskname in ['atmos_prep']:
+        strings +=(create_envar(name="ATMOS_PREP_CPU_PER_TASK", value=f'{dicBase["ATMOS_PREP_CPU_PER_TASK"]}', sPre=sPre_2))
+
     # For FORECAST_SEGMENT
     if (taskname in ['forecast_hr', 'prdgen_hr', 'post_hr', 'ensstat_hr', 'enspost_hr', 'chem_forecast', 'chem_post', 'chem_prdgen', 'fcst_post_manager']) \
      or taskname.startswith("post_hr_") or taskname.startswith('chem_post_'):
@@ -1322,7 +1325,9 @@ def calc_atmos_prep_resources(dicBase):
     ncores_per_node = Get_NCORES_PER_NODE(dicBase)
     npert = int(dicBase["NPERT"])
     cpu_per_task = int(dicBase['ATMOS_PREP_CPU_PER_TASK'])
-    iTotal_Tasks = npert + 1
+    if cpu_per_task % 6 != 0:
+        print(f"FATAL ERROR: atmos_prep_cpu_per_task must be divisible by 6! Value given was {cpu_per_task}.")
+    iTotal_Tasks = npert + 2
     iPPN = math.floor(ncores_per_node / cpu_per_task)
     iTPP = 1
     iNodes = math.ceil(iTotal_Tasks / iPPN)

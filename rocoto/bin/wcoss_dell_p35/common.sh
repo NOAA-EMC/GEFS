@@ -16,6 +16,7 @@ export taskspernode=${GEFS_PPN}
 if [[ $RocotoGen == 0 ]]; then
     export gefsmpexec="mpirun -n $total_tasks"
     export gefsmpexec_mpmd="mpirun -n $total_tasks cfp mpmd_cmdfile"
+    export gefsmpexec_atmos_prep="mpirun -n $ATMOS_PREP_CPU_PER_TASK"
     export wavempexec="mpirun -n"
     export wave_mpmd="cfp"
 
