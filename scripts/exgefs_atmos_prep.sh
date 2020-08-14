@@ -18,7 +18,7 @@ cd $DATA
 rm -rf mpmd_cmdfile*
 
 echo "date" > mpmd_cmdfile
-# echo "$USHgefs/gefs_atmos_prep_sfc.sh" >> mpmd_cmdfile
+echo "$USHgefs/gefs_atmos_prep_sfc.sh" >> mpmd_cmdfile
 for mem in $memberlist; do
 	mkdir -p $GESOUT/init/$mem
 	mkdir -p $COMOUT/init/$mem

@@ -1327,7 +1327,7 @@ def calc_atmos_prep_resources(dicBase):
     cpu_per_task = int(dicBase['ATMOS_PREP_CPU_PER_TASK'])
     if cpu_per_task % 6 != 0:
         print(f"FATAL ERROR: atmos_prep_cpu_per_task must be divisible by 6! Value given was {cpu_per_task}.")
-    iTotal_Tasks = npert + 2
+    iTotal_Tasks = npert + 3
     iPPN = math.floor(ncores_per_node / cpu_per_task)
     iTPP = 1
     iNodes = math.ceil(iTotal_Tasks / iPPN)
