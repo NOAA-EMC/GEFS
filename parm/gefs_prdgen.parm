@@ -38,6 +38,7 @@ export fhoroglist=
 #
 typeset -a PRDGEN_STREAMS=${PRDGEN_STREAMS:-res_2p50 res_0p50 res_0p25_s1 res_0p25_s2}
 typeset -a PRDGEN_STREAMS_LR=${PRDGEN_STREAMS_LR:-res_2p50 res_0p50}
+typeset -a PRDGEN_STREAMS_GFS=${PRDGEN_STREAMS_GFS:-res_2p50 gfs_0p50_s1 gfs_0p50_s2 gfs_0p25_s1 gfs_0p25_s2 gfs_0p25_s3}
 
 if [[ $cplchm == ".true." ]]; then
 #	PRDGEN_STREAMS=${PRDGEN_STREAMS_AER:-aer_0p25_s1 aer_0p25_s2}
