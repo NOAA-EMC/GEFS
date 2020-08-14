@@ -142,6 +142,7 @@
    kpds(19) = 2                !VERSION NR OF PARAMETER TABLE
    kpds(20) = 0                !NR MISSING FROM AVERAGE/ACCUMULATION
    read(iyear(1:2),*) kpds(21) !CENTURY OF REFERENCE TIME OF DATA
+   kpds(21)=kpds(21)+1
    kpds(22) = 3                !UNITS DECIMAL SCALE FACTOR
    kpds(23:25) = 0             !SUBCENTER NUMBER;PDS BYTE 29, FOR NMC ENSEMBLE PRODUCTS; PDS BYTE 30, NOT USED
 
