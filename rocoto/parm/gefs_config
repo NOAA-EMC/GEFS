@@ -51,12 +51,15 @@ if [[ $GFSArchivedData == "yes" ]]; then
     export COMINcfs_base=$HOMEdata/cfs/cfs.
     export COMIN_WAV_ICE=$HOMEdata/sea_ice
 else
-    export COMINgfs_base=$(compath.py gfs/prod)/gfs.
+    export COMINgfs_base=/gpfs/dell3/ptmp/emc.glopara/ROTDIRS/v16rt2/gfs.
+    #export COMINgfs_base=$(compath.py gfs/prod)/gfs.
     export COMINenkf_base=$(compath.py gfs/prod)/enkfgdas.
     export COMINcfs_base=$(compath.py cfs/prod)/cfs/cfs.
-    export COMIN_WAV_ICE=$(compath.py gfs/prod)/gfs.${PDY}/${cyc}
+    export COMIN_WAV_ICE=$(compath.py gfs/prod)/gfs.${PDY}/${cyc}/atmos
 fi # [[ $GFSArchivedData == "yes" ]]
 
-export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc}
+#export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc/atmos}
+export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc} #temporary!!!
+export COMIN_WAV_ICE=$COMINgfs 
 export COMINenkf=${COMINenkf:-${COMINenkf_base}}
 export COMINcfs=${COMINcfs:-${COMINcfs_base}}
