@@ -27,10 +27,6 @@ elif [[ "$WHERE_AM_I" == hera ]]; then
 fi
 
 # to test and will be deleted after finalized all tasks
-. /usrx/local/prod/lmod/lmod/init/ksh
-module purge
-module list
-echo "XXW-gefs_pre_job.sh"
 
 #. $GEFS_ROCOTO/parm/setbase
 #. $GEFS_ROCOTO/parm/gefs_config
