@@ -29,7 +29,7 @@ else
 fi
 export LEVS=${LEVS:-65}
 
-export n_sponge=23
+export n_sponge=${n_sponge:-23}
 
 #Writing out 
 export QUILTING=.true.
