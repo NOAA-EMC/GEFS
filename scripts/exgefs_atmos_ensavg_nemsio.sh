@@ -33,6 +33,10 @@ export GRIBVERSION=${GRIBVERSION:-grib2}
 export nemsioget=$EXECgfs/nemsio_get
 export ensavg_nemsio_log=$DATA/ensavg_nemsio.$FORECAST_SEGMENT.log
 
+if [[ $SENDCOM == "YES" ]]; then
+    mkdir -m 775 -p $COMOUT/$COMPONENT/misc
+fi
+
 #############################################################
 # Execute the script
 $HOMEgefs/ush/gefs_ensavg_nemsio.sh $DATA $SHOUR $FHOUT_HF $FHOUT_LF $FHMAXHF $FHOUR $ensavg_nemsio_log
