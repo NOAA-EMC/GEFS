@@ -38,7 +38,7 @@ else
 	i=0
 	success="NO"
 	(( cmem = nmem + memshift ))
-	while [[ $success == "NO" && $i < MAX_ENKF_SEARCHES ]]; do
+	while [[ $success == "NO" && $i < $MAX_ENKF_SEARCHES ]]; do
 		if (( cmem > 80 )); then
 			(( cmem = cmem - 80 ))
 		fi
@@ -53,7 +53,7 @@ else
 
 		else
 			(( i = i + 1 ))
-			if [[ $ < MAX_ENKF_SEARCHES ]]; then
+			if [[ $i < $MAX_ENKF_SEARCHES ]]; then
 				echo "EnKF atmospheric file $ATMFILE not found, trying different member"
 				(( cmem = cmem + ENKF_SEARCH_LEAP ))
 
