@@ -27,15 +27,6 @@ if [[ $err != 0 ]]; then
 	echo "FATAL ERROR in $(basename $BASH_SOURCE): atmos_prep failed for $RUNMEM!"
 	exit $err
 fi
-
-# Run surface if this is the designated member for that
-if [[ $mem == $sfc_mem ]]; then
-	$USHgefs/gefs_atmos_prep_sfc.sh $mem
-	if [[ $err != 0 ]]; then
-		echo "FATAL ERROR in $(basename $BASH_SOURCE): atmos_prep failed processing surface (on $RUNMEM)!"
-		exit $err
-	fi
-fi
 #############################################################
 
 echo "$(date -u) end $(basename $BASH_SOURCE)"
