@@ -191,6 +191,6 @@ def calValue(ensmem, sVar,  mem_mean, memno, Npert=20):
 
 if __name__ == '__main__':
 
-    print("Starting {__file__}")
+    print(f"Starting {__file__}")
     main()
-    print("{__file__} completed successfully")
+    print(f"{__file__} completed successfully")

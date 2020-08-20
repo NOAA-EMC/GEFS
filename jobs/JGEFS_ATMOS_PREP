@@ -27,8 +27,7 @@ cd $DATA
 # Set up compute resources
 ######################################
 export total_tasks=${total_tasks:-31}
-export APRUN_MPMD=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
-export APRUN=${gefsmpexec_atmos_prep:-"mpirun -n 36"}
+export APRUN=${gefsmpexec:-"mpirun -n 36"} # Must be divisible number of tiles (6)
 
 ####################################
 # Specify NET and RUN Name and model
