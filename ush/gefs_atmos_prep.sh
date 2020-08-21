@@ -13,7 +13,6 @@ export mem=$1
 export nmem=$(echo $mem|cut -c 2-)
 nmem=${nmem#0}
 
-export DATA=$DATA/$mem
 export INIDIR=$DATA
 export OUTDIR=$GESOUT/enkf/$mem
 INITDIR=$GESOUT/init/$mem
@@ -47,7 +46,7 @@ else
 		fi
 
 		memchar="mem"$(printf %03i $cmem)
-		ATMFILE="$COMINenkf$pdyp/$cycp/$memchar/gdas.t${cycp}z.atmf006.nc"
+		ATMFILE="$COMINenkf$pdyp/$cycp/atmos/$memchar/gdas.t${cycp}z.atmf006.nc"
 
 		if [[ -f $ATMFILE ]]; then
 			$NCP $ATMFILE $INIDIR
@@ -99,7 +98,7 @@ if [[ $err != 0 ]]; then
 fi
 #############################################################
 
-# Move files to the guess directory
+# Move files to the nwges directory
 for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
 	mv ${DATA}/out.atm.${tile}.nc $OUTDIR/gfs_data.${tile}.nc
 done
@@ -108,7 +107,7 @@ mv ${DATA}/gfs_ctrl.nc $OUTDIR/.
 touch ${OUTDIR}/chgres_atm.log  # recenter can start now
 
 if [[ $CONVERT_SFC == ".true." ]]; then
-	# Copy sfc files to the guess directory for all members
+	# Copy sfc files to the nwges directory for all members
 	for mem2 in $memberlist; do
 		INITDIR2=$GESOUT/init/$mem2
 		mkdir -p $INITDIR2
