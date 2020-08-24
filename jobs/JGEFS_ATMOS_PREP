@@ -70,9 +70,6 @@ export COMPONENT="atmos"
 export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/$COMPONENT}
 export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
 
-export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/${cyc}/atmos}
-export COMINenkf=${COMINenkf:-$(compath.py gfs/prod)/enkfgdas.}
-
 #############################
 # Source relevant config files
 #############################
@@ -86,6 +83,9 @@ for config in $configs; do
     	exit $err
     fi
 done
+
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/${cyc}/atmos}
+export COMINenkf=${COMINenkf:-$(compath.py gfs/prod)/enkfgdas.${pdyp}/${cycp}/atmos}
 
 NCP=${NCP:-"/bin/cp -p"}
 export jlogfile=${jlogfile:-$DATA/jlogfile}

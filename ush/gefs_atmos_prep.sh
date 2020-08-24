@@ -46,7 +46,7 @@ else
 		fi
 
 		memchar="mem"$(printf %03i $cmem)
-		ATMFILE="$COMINenkf$pdyp/$cycp/atmos/$memchar/gdas.t${cycp}z.atmf006.nc"
+		ATMFILE="$COMINenkf/$memchar/gdas.t${cycp}z.atmf006.nc"
 
 		if [[ -f $ATMFILE ]]; then
 			$NCP $ATMFILE $INIDIR
