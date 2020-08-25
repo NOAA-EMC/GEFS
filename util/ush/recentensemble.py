@@ -227,6 +227,6 @@ if __name__ == '__main__':
     import traceback
     from subprocess import call
 
-    print("Starting {__file__}")
+    print(f"Starting {__file__}")
     main()
-    print("{__file__} completed successfully")
+    print(f"{__file__} completed successfully")

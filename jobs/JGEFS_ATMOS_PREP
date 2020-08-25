@@ -1,13 +1,13 @@
-#!/bin/ksh
+#!/bin/bash
 
-echo "$(date -u) begin ${.sh.file}"
+echo "$(date -u) begin $(basename $BASH_SOURCE)"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
 	# Turn on strict bash error checking
 	set -eu
 fi
-export PS4='$SECONDS + $(basename ${.sh.file})[$LINENO] '
+export PS4='$SECONDS + $(basename $(basename $BASH_SOURCE))[$LINENO] '
 
 ####################################
 # Determine Job Output Name on System
@@ -27,7 +27,7 @@ cd $DATA
 # Set up compute resources
 ######################################
 export total_tasks=${total_tasks:-31}
-export APRUN_MPMD=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
+export APRUN=${gefsmpexec:-"mpirun -n 36"} # Must be divisible number of tiles (6)
 
 ####################################
 # Specify NET and RUN Name and model
@@ -70,9 +70,6 @@ export COMPONENT="atmos"
 export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/$COMPONENT}
 export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
 
-export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/${cyc}}
-export COMINenkf=${COMINenkf:-$(compath.py gfs/prod)/enkfgdas.}
-
 #############################
 # Source relevant config files
 #############################
@@ -82,10 +79,13 @@ for config in $configs; do
     . $config_path/$config.parm
     export err=$?
     if [[ $err != 0 ]]; then
-    	echo "FATAL ERROR in ${.sh.file}: Error while loading parm file $config_path"
+    	echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file $config_path"
     	exit $err
     fi
 done
+
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/${cyc}/atmos}
+export COMINenkf=${COMINenkf:-$(compath.py gfs/prod)/enkfgdas.${pdyp}/${cycp}/atmos}
 
 NCP=${NCP:-"/bin/cp -p"}
 export jlogfile=${jlogfile:-$DATA/jlogfile}
@@ -100,7 +100,7 @@ export err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"
 else
-    echo "FATAL ERROR in ${.sh.file}: $job failed!"
+    echo "FATAL ERROR in $(basename $BASH_SOURCE): $job failed!"
     exit $err
 fi
 #############################################################
@@ -111,7 +111,7 @@ fi
 cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-echo "$(date -u) end ${.sh.file}"
+echo "$(date -u) end $(basename $BASH_SOURCE)"
 
 exit $err
 
