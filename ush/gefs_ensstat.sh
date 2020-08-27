@@ -186,7 +186,7 @@ for hour in $hours; do
 						WARNING in ${.sh.file} ($stream): Some members still missing for f{fhr} at $(date) after ${SLEEP_TIME}s
 							Will continue with $nfiles members, but products may be degraded.
 						EOF
-						msg="WARNING: {job}, stream ${stream} did not find all ensemble member for f{fhr}! Will continue with fewer members, but products may be degraded."
+						msg="WARNING: ${job}, stream ${stream} did not find all ensemble member for f{fhr}! Will continue with fewer members, but products may be degraded."
 					echo "$msg" | mail.py -c $MAIL_LIST
 				fi
 				(( nfilesprev = nfiles ))
