@@ -1,0 +1,18 @@
+#%Module#####################################################
+## gefs_nesio2nc component - wcoss_dell_p3
+#############################################################
+module load ips/${ips_ver}
+module load impi/${impi_ver}
+
+module load nemsio/${nemsio_ver}
+module load w3nco/${w3nco_ver}
+module load bacio/${bacio_ver}
+
+module use -a /usrx/local/nceplibs/dev/NCEPLIBS/modulefiles
+module load netcdf_parallel/4.7.4
+
+##
+export FCMP=ifort
+export LDFLAGSM=
+export OMPFLAGM=
+
