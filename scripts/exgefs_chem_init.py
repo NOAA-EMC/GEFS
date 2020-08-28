@@ -299,7 +299,7 @@ def regrid_analysis(time: datetime, regrid_aprun: str, regrid_exec: str, max_loo
     n_lat = int(resolution[1:]) * 2
 
     analysis_file = time.strftime(analysis_file_pattern.format(com_gfs=com_gfs))
-    vert_coord_file = vert_coord_file_pattern.format(fix_gfs=fix_gfs, n_levels=64)
+    vert_coord_file = vert_coord_file_pattern.format(fix_gfs=fix_gfs, n_levels=65)
     output_file = "atmanl_mem001"
     for lookback in map(lambda i: incr * (i + 1), range(max_lookback)):
         last_time = time - timedelta(hours=lookback)
