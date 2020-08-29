@@ -407,10 +407,8 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         if taskname in metatask_names:
             strings += ""
         else:
-            if sQueue.endswith("_shared") and taskname in ['ensstat_hr', 'enspost_hr', 'ensstat_lr', 'enspost_lr', 'gempak', 'gempak_meta', 'avgspr_gempak_meta', 'ensavg_nemsio', 'postsnd', "fcst_post_manager"]:
+            if sQueue.endswith("_shared") and taskname in ['ensstat_hr', 'enspost_hr', 'ensstat_lr', 'enspost_lr', 'gempak', 'gempak_meta', 'avgspr_gempak_meta', 'ensavg_nemsio', 'postsnd', "fcst_post_manager", 'atmos_prep']:
                 strings += ""
-            elif taskname in ['atmos_prep']:
-                strings += sPre_2 + "<native>-R 'affinity[thread({cpu_per_task})]'</native>\n".format(cpu_per_task=dicBase['ATMOS_PREP_CPU_PER_TASK'])
             else:
                 strings += sPre_2 + "<native>-R 'affinity[core(1)]'</native>\n"
     else:
@@ -901,7 +899,7 @@ def get_param_of_task(dicBase, taskname):
             # For 'init_recenter' task
             if taskname.lower() == "init_recenter":
                 if DoesTaskExist(dicBase, "atmos_prep"):
-                    sDep = '<taskdep task="atmos_prep"/>'
+                    sDep = '<metataskdep metatask="atmos_prep"/>'
                 else:
                     sDep = ""
 
@@ -991,9 +989,9 @@ def get_param_of_task(dicBase, taskname):
                 else:
                     if DoesTaskExist(dicBase, "atmos_prep"):
                         if DoesTaskExist(dicBase, "getcfssst"):
-                            sDep = '<and>\n\t<taskdep task="atmos_prep"/>\n\t<taskdep task="getcfssst"/>\n</and>'
+                            sDep = '<and>\n\t<metataskdep metatask="atmos_prep"/>\n\t<taskdep task="getcfssst"/>\n</and>'
                         else:
-                            sDep = '<taskdep task="atmos_prep"/>'
+                            sDep = '<metataskdep metatask="atmos_prep"/>'
                     elif DoesTaskExist(dicBase, "rf_prep"):
                         if DoesTaskExist(dicBase, "getcfssst"):
                             sDep = '<and>\n\t<taskdep task="rf_prep"/>\n\t<taskdep task="getcfssst"/>\n</and>'
@@ -1304,30 +1302,12 @@ def get_param_of_task(dicBase, taskname):
         else:
             sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
-    if taskname == "atmos_prep":
-        iTotal_Tasks, iNodes, iPPN, iTPP = calc_atmos_prep_resources(dicBase)
-        sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
-
     # For gempak
     if taskname == "gempak":
         iTotal_Tasks, iNodes, iPPN, iTPP = calc_gempak_resources(dicBase)
         sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
 
     return sWalltime, sNodes, sMemory, sJoin, sDep, sQueue, sPartition
-
-
-# =======================================================
-def calc_atmos_prep_resources(dicBase):
-    import math
-    ncores_per_node = Get_NCORES_PER_NODE(dicBase)
-    npert = int(dicBase["NPERT"])
-    cpu_per_task = int(dicBase['ATMOS_PREP_CPU_PER_TASK'])
-    iTotal_Tasks = npert + 1
-    iPPN = math.floor(ncores_per_node / cpu_per_task)
-    iTPP = 1
-    iNodes = math.ceil(iTotal_Tasks / iPPN)
-
-    return iTotal_Tasks, iNodes, iPPN, iTPP
 
 
 # =======================================================
@@ -1418,6 +1398,8 @@ def get_metatask_names(taskname=""):
     metatask_names = []
     metatask_names.append('keep_init')
     metatask_names.append('copy_init')
+    # atmos_prep
+    metatask_names.append('atmos_prep')
     # forecast
     metatask_names.append('forecast_hr')
     metatask_names.append('forecast_lr')

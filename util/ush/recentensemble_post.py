@@ -184,6 +184,6 @@ def do_Recenter(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
 #===============
 if __name__ == '__main__':
 
-    print("Starting {__file__}")
+    print(f"Starting {__file__}")
     main()
-    print("{__file__} completed successfully")
+    print(f"{__file__} completed successfully")
