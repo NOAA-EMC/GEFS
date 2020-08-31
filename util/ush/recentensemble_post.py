@@ -91,6 +91,31 @@ def main():
 
         do_Recenter(iTile, Npert, sInWS, sOutWS, sFileName, sVars)
 
+    elif len(sys.argv) == 8:
+        print(sys.argv)
+
+        Npert = int(sys.argv[1])
+        NTiles = int(sys.argv[2])
+        sFileName = sys.argv[3]
+        sInWS = sys.argv[4]
+        sOutWS = sys.argv[5]
+        iTile = int(sys.argv[6])
+        pert_scaling = float(sys.argv[7])
+
+        print("\nWorking on the Tile {1} - Npert = {0}".format(Npert, iTile))
+        print("Working on the Tile {1} - NTiles = {0}".format(NTiles, iTile))
+        print("Working on the Tile {1} - sFileName = {0}".format(sFileName, iTile))
+        print("Working on the Tile {1} - Input Workspace: {0}".format(sInWS, iTile))
+        print("Working on the Tile {1} - Output Workspace: {0}".format(sOutWS, iTile))
+        print("Working on the Tile {1} - iTile: {0}\n".format(iTile, iTile))
+
+        print("Working on the Tile {0} - Cheking variables ...".format(iTile))
+        print("Working on the perturbation scaling {0} - Cheking variables ...".format(pert_scaling))
+
+        RemoveUnusedVars(sInWS,sFileName,sVars,iTile)
+
+        do_Recenter(iTile, Npert, sInWS, sOutWS, sFileName, sVars, pert_scaling=pert_scaling)
+
     else:
         print('You should run "recentensemble.py Npert Ntiles filename sInWS sOutWS [iTile]"')
         exit(-1)
@@ -129,7 +154,7 @@ def DoAllTiles(Npert, NTiles, sFileName, sInWS, sOutWS, sVars):
 
         do_Recenter(iTile + 1, Npert, sInWS, sOutWS, sFileName, sVars)
 
-def do_Recenter(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
+def do_Recenter(iTile, Npert, sInWS, sOutWS, sFileName, sVars, pert_scaling=1.0):
     from netCDF4 import Dataset
 
     wmeans = [None] * len(sVars)
@@ -173,7 +198,7 @@ def do_Recenter(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
         nc_fid = Dataset(sOutFile, 'a')
         for k in range(len(sVars)):
             sVar = sVars[k]
-            nc_fid[sVar][:] = ( nc_fid[sVar][:] - wmeans[k][:] ) * 0.8 + w_c[k][:]
+            nc_fid[sVar][:] = ( nc_fid[sVar][:] - wmeans[k][:] ) * pert_scaling + w_c[k][:]
 
         nc_fid.close
 

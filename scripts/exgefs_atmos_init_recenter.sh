@@ -187,7 +187,7 @@ if [ $warm_start = ".false." ]; then
 
 		(( itile = 1 ))
 		while (( itile <= ntiles  )); do
-			echo "$RECENATMPY_POST $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH $itile" >>poescript
+			echo "$RECENATMPY_POST $npert $ntiles $FILENAME $FILEINPATH $FILEOUTPATH $itile $pert_scaling" >>poescript
 			(( itile = itile + 1 ))
 		done # while (( itask < npert ))
 
