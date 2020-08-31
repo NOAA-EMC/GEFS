@@ -173,7 +173,7 @@ def do_Recenter(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
         nc_fid = Dataset(sOutFile, 'a')
         for k in range(len(sVars)):
             sVar = sVars[k]
-            nc_fid[sVar][:] = nc_fid[sVar][:] - wmeans[k][:] + w_c[k][:]
+            nc_fid[sVar][:] = ( nc_fid[sVar][:] - wmeans[k][:] ) * 0.8 + w_c[k][:]
 
         nc_fid.close
 
