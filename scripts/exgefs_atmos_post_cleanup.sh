@@ -105,10 +105,14 @@ done # member in $memberlist
 echo "nmissing=$nmissing"
 echo "$(date) GRIB file test before cleanup end"
 if ((nmissing > 0)); then
-	echo "FATAL ERROR in ${.sh.file}: GRIB file test before cleanup IDENTIFIED $nmissing MISSING FILES"
-	export err=99
-	err_chk
-	exit $err
+	cat  > msg <<-EOF
+		WARNING: in ${.sh.file}: GRIB file test before cleanup IDENTIFIED $nmissing MISSING FILES
+		Will skip this cycle's cleanup.
+		If this is the first run or first 00z run after machine switch, then you can safely ignore it.
+		Otherwise please double check if the model missing any file.
+	EOF
+	cat msg |mail.py  -s "Skip $cycle GEFS cleanup." ncep.list.spa-helpdesk@noaa.gov
+	exit
 else # (( nmissing > 0 ))
 	echo "$(date) sfcsig sflux cleanup begin"
 
