@@ -27,6 +27,10 @@ module load lsf/$lsf_ver
 #module load CFP/$CFP_ver
 #export USE_CFP=YES
 
+module use /usrx/local/nceplibs/dev/NCEPLIBS/modulefiles
+module load hdf5_parallel/1.10.6
+module load netcdf_parallel/4.7.4
+
 module list
 
 # For Development

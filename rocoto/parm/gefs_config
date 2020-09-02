@@ -41,8 +41,8 @@ if [[ ! -d $SOURCEDIR/sorc/global-workflow.fd ]] ; then
     export HOMEchem=${HOMEchem:-$HOMEgfs/sorc/gsd_prep_chem.fd/workflow/emc-global}
 fi
 
-GFSArchivedData=yes
-#GFSArchivedData=no
+# GFSArchivedData=yes
+GFSArchivedData=no
 
 #Please check with parm/gefs_init.parm to make sure the next line matching
 fhrp=6

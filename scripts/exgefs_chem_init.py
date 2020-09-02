@@ -29,22 +29,21 @@ tracer_list_file_pattern = "{parm_gefs}/gefs_aerosol_tracer_list.parm"
 merge_script_pattern = "{ush_gfs}/merge_fv3_chem_tile.py"
 n_tiles = 6
 
-analysis_file_pattern = "{com_gfs}/gfs.t%Hz.atmanl.nemsio"
+analysis_file_pattern = "{com_gfs}/gfs.t%Hz.atmanl.nc"
 com_base_pattern = "{com_out}/init"
 fcst_file_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/{component}/sfcsig/ge{member}.t%Hz.atmf{forecast_hour:03}.nemsio"
-vert_coord_file_pattern = "{fix_gfs}/fix_am/global_hyblev.l{n_levels}.txt"
 
 max_lookback = 1  # Maximum number of cycles backwards to search for files
 
 # Namelist used by regrid
 regrid_namelist = cleandoc("""
-    &nam_setup
+    &chgres_setup
         i_output={n_lon}
         j_output={n_lat}
         input_file="{analysis_file}"
         output_file="{output_file}"
         terrain_file="{terrain_file}"
-        vcoord_file="{vert_coord_file}"
+        ref_file="{ref_file}"
     /
     """)
 
@@ -55,7 +54,7 @@ calcinc_namelist = cleandoc("""
         analysis_filename = '{analysis_filename}'
         firstguess_filename = '{forecast_filename}'
         increment_filename = '{increment_filename}'
-        debug = .false.
+        debug = .true.
         nens = 1
         imp_physics = {imp_physics}
     /
@@ -87,12 +86,12 @@ def main() -> None:
     com_gfs = get_env_var('COMINgfs')
     envir = get_env_var('envir')
     data = get_env_var('DATA')
-    fix_gfs = get_env_var('FIXgfs')
     ush_gfs = get_env_var('USHgfs')
     parm_gefs = get_env_var('PARMgefs')
     net = get_env_var('NET')
     run = get_env_var('RUN')
     init_type = get_env_var('AEROSOL_INIT_TYPE')
+    nemsio2nc_exec = get_env_var('NEMSIO2NC_EXEC')
     regrid_exec = get_env_var('REGRIDEXEC')
     calcinc_exec = get_env_var('CALCINCEXEC')
     regrid_aprun = get_env_var('APRUN_CHGRES')
@@ -100,7 +99,6 @@ def main() -> None:
     imp_physics = get_env_var('imp_physics')
     resolution = get_env_var("CASE", fail_on_missing=False, default_value="C384")
     send_com = get_env_var("SENDCOM") == "YES"
-    send_ecf = get_env_var("SENDECF") == "YES"
     mail_recipients = get_env_var("MAIL_LIST")
 
     if (init_type not in ["warm", "cold"]):
@@ -124,17 +122,20 @@ def main() -> None:
             shutil.copy(full_file_name, destination_path)
 
     if (init_type == "warm"):
-        analysis_filename = regrid_analysis(time=time, regrid_aprun=regrid_aprun, regrid_exec=regrid_exec, max_lookback=max_lookback,
-                                            com_root=com_root, com_gfs=com_gfs, fix_gfs=fix_gfs, net=net, envir=envir, run=run,
-                                            destination_path=destination_path, resolution=resolution, incr=incr)
         prev_fcst_file = get_previous_forecast(time=time, incr=incr, max_lookback=max_lookback, com_root=com_root, net=net, envir=envir, run=run)
+        prev_fcst_file_nc = convert_nemsio_to_nc(infile=prev_fcst_file, nemsio2nc_exec=nemsio2nc_exec)
+
+        analysis_filename = regrid_analysis(time=time, regrid_aprun=regrid_aprun, regrid_exec=regrid_exec,
+                                            com_root=com_root, com_gfs=com_gfs, net=net, envir=envir, run=run,
+                                            resolution=resolution, ref_file=prev_fcst_file_nc)
+
         increment_filename = increment_file_pattern.format(path=destination_path)
 
         sfc_files = get_init_files(path=destination_path, kind="sfc_data")
 
         restart_files = get_all_restart_files(time=time, incr=incr, max_lookback=max_lookback, com_root=com_root, net=net, envir=envir, run=run)
 
-        files_exist = restart_files is not None and analysis_filename is not None and prev_fcst_file is not None and sfc_files is not None
+        files_exist = restart_files is not None and analysis_filename is not None and prev_fcst_file_nc is not None and sfc_files is not None
 
         if(files_exist):
             # Link restart files
@@ -149,10 +150,10 @@ def main() -> None:
                 os.symlink(file, link)
 
             # Calculate increment
-            success = calc_increment(calcinc_aprun=calcinc_aprun, calcinc_exec=calcinc_exec, forecast_filename=prev_fcst_file, increment_filename=increment_filename, imp_physics=imp_physics)
+            success = calc_increment(calcinc_aprun=calcinc_aprun, calcinc_exec=calcinc_exec, analysis_filename=analysis_filename, forecast_filename=prev_fcst_file_nc, increment_filename=increment_filename, imp_physics=imp_physics)
 
             for file in sfc_files:
-                tile = re.search('tile(\d)', file).group(0)
+                tile = re.search(r'tile(\d)', file).group(0)
                 basename = os.path.basename(time.strftime(restart_file_pattern.format(restart_base="", kind="sfcanl_data", tile=tile)))
                 link = restart_dest_pattern.format(path=destination_path, filename=basename)
                 with contextlib.suppress(FileNotFoundError):
@@ -201,7 +202,7 @@ def safe_copytree(source: str, destination: str) -> None:
 
 
 # Retrieve environment variable and exit or print warning if not defined
-def get_env_var(varname: str, fail_on_missing: bool=True, default_value: str=None) -> str:
+def get_env_var(varname: str, fail_on_missing: bool = True, default_value: str = None) -> str:
     var = os.environ.get(varname)
     if(var is None):
         if(fail_on_missing is True):
@@ -239,6 +240,27 @@ def get_previous_forecast(time: datetime, incr: int, max_lookback: int, com_root
 
     if(not found):
         print("WARNING: Unable to find any previous forecast file, no increment will be produced. Will need to use cold start")
+        return None
+
+
+# Convert file from nemsio to NetCDF
+def convert_nemsio_to_nc(infile: str, nemsio2nc_exec: str) -> str:
+    if infile is None:
+        print("WARNING: Infile {infile} does not exist!")
+        return None
+
+    if infile.endswith('.nemsio'):
+        outfile = os.path.basename(infile).replace('.nemsio', '.nc')
+    else:
+        outfile = f"{os.path.basename(infile)}.nc"
+
+    if os.path.isfile(infile):
+        subprocess.call(f"{nemsio2nc_exec} {infile} {outfile}", shell=True)
+
+    if os.path.isfile(outfile):
+        return outfile
+    else:
+        print("WARNING: Could not convert nemsio file {infile} to NetCDF!")
         return None
 
 
@@ -294,27 +316,20 @@ def merge_tracers(merge_script: str, atm_filenames: typing.List[str], restart_fi
 
 
 # Regrid analysis file to ensemble resolution to create warm-start increment
-def regrid_analysis(time: datetime, regrid_aprun: str, regrid_exec: str, max_lookback: int, com_root: str, com_gfs: str, fix_gfs: str, net: str, envir: str, run: str, destination_path: str, resolution: str, incr: int) -> str:
+def regrid_analysis(time: datetime, regrid_aprun: str, regrid_exec: str, com_root: str, com_gfs: str, net: str, envir: str, run: str, resolution: str, ref_file: str) -> str:
     n_lon = int(resolution[1:]) * 4
     n_lat = int(resolution[1:]) * 2
 
     analysis_file = time.strftime(analysis_file_pattern.format(com_gfs=com_gfs))
-    vert_coord_file = vert_coord_file_pattern.format(fix_gfs=fix_gfs, n_levels=64)
-    output_file = "atmanl_mem001"
-    for lookback in map(lambda i: incr * (i + 1), range(max_lookback)):
-        last_time = time - timedelta(hours=lookback)
-        terrain_file = last_time.strftime(fcst_file_pattern.format(com_root=com_root, net=net, envir=envir, run=run, member="aer", component="chem", forecast_hour=0))
-        if(os.path.isfile(terrain_file)):
-            break
-        terrain_file = None
+    output_file = "atmanl.nc"
 
-    if(terrain_file is None or not os.path.isfile(analysis_file)):
+    if(ref_file is None or not os.path.isfile(analysis_file)):
         return False
 
-    namelist_file = open("fort.43", "w")
-    namelist_file.write(regrid_namelist.format(n_lon=n_lon, n_lat=n_lat, analysis_file=analysis_file, terrain_file=terrain_file, vert_coord_file=vert_coord_file, output_file=output_file))
+    namelist_file = open("regrid.nml", "w")
+    namelist_file.write(regrid_namelist.format(n_lon=n_lon, n_lat=n_lat, analysis_file=analysis_file, terrain_file=ref_file, ref_file=ref_file, output_file=output_file))
     namelist_file.close()
-    if (subprocess.call("{regrid_aprun} {regrid_exec}".format(regrid_aprun=regrid_aprun, regrid_exec=regrid_exec), shell=True) == 0):
+    if (subprocess.call(f"{regrid_aprun} {regrid_exec} regrid.nml", shell=True) == 0):
         print("Regrid analysis successful")
         return output_file
     else:
@@ -323,17 +338,19 @@ def regrid_analysis(time: datetime, regrid_aprun: str, regrid_exec: str, max_loo
 
 
 # Calculate increment for warm-start
-def calc_increment(calcinc_aprun: str, calcinc_exec: str, forecast_filename: str, increment_filename: str, imp_physics: str) -> bool:
+def calc_increment(calcinc_aprun: str, calcinc_exec: str, analysis_filename: str, forecast_filename: str, increment_filename: str, imp_physics: str) -> bool:
     print("Calculating increment...")
-    analysis_filename = "atmanl"
+    # analysis_filename = "atmanl_mem001"
     forecast_basename = os.path.basename(forecast_filename)
     increment_basename = os.path.basename(increment_filename)
+    shutil.copy(analysis_filename, "{basename}_mem001".format(basename=analysis_filename))
     shutil.copy(forecast_filename, "{basename}_mem001".format(basename=forecast_basename))
     os.symlink(increment_filename, "{basename}_mem001".format(basename=increment_basename))
     namelist_file = open("calc_increment.nml", "w")
     namelist_file.write(calcinc_namelist.format(imp_physics=imp_physics, analysis_filename=analysis_filename, forecast_filename=forecast_basename, increment_filename=increment_basename))
     namelist_file.close()
-    if (subprocess.call("{calcinc_aprun} {calcinc_exec}".format(calcinc_aprun=calcinc_aprun, calcinc_exec=calcinc_exec), shell=True) == 0):
+    return_code = subprocess.call("{calcinc_aprun} {calcinc_exec}".format(calcinc_aprun=calcinc_aprun, calcinc_exec=calcinc_exec), shell=True)
+    if return_code == 0 and os.path.isfile(increment_filename):
         print("Calculate increment completed successfully")
         return True
     else:
