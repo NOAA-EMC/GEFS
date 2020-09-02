@@ -61,8 +61,8 @@ while [ $HFcfs -le $HFcfsMax ] ; do
     PDYcfs=$(echo $PDYcfscfc | cut -c1-8)
 
     COMINcfs2=${COMINcfs}${PDYcfs}/${cyc}
+    sFile=${COMINcfs2}/time_grib_01/tmpsfc.01.${PDYcfs}${cyc}.daily.grb2
     if [ -d $COMINcfs2 ]; then
-        sFile=${COMINcfs2}/time_grib_01/tmpsfc.01.${PDYcfs}${cyc}.daily.grb2
         if [[ -f $sFile ]]; then
             $NLN $sFile $filenamein_CFSv2
             break
