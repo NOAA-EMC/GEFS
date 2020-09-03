@@ -9,6 +9,8 @@ export nopdpvv=.true.
 
 export warm_start=".false."
 
+export pert_scaling=${pert_scaling:-0.8}
+
 # parameters for relocation, 1 for yes, 0 for no, cold_start or warm_start
 #relocflagana is added for relocation TC for analysis 
 export relocfact=0.05
