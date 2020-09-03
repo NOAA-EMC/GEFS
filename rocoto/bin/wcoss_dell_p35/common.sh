@@ -70,8 +70,8 @@ elif [[ $RocotoGen == 1 ]]; then
     export DIRS_TO_ARCHIVE="bufr,ensstat,pgrb2sp25,pgrb2ap5,pgrb22p5,pgrb2p25,pgrb2bp5,cfssst,gempak,init"
     export DIRS_TO_KEEP_WAVE="gridded, station, restart, gempak"
     export DIRS_TO_ARCHIVE_WAVE="gridded, station, restart, gempak"
-    export DIRS_TO_KEEP_CHEM="pgrb2ap50_aer,pgrb2ap25_aer,init,restart"
-    export DIRS_TO_ARCHIVE_CHEM="pgrb2ap50_aer,pgrb2ap25_aer,init,restart"
+    export DIRS_TO_KEEP_CHEM="pgrb2ap50,pgrb2ap25,init,restart"
+    export DIRS_TO_ARCHIVE_CHEM="pgrb2ap50,pgrb2ap25,init,restart"
 
     if [[ $SENDDBN == "YES" ]]; then
         export DBNROOT=${UTILROOT}/fakedbn
