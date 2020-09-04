@@ -195,5 +195,10 @@ if [[ -d global-workflow.fd ]]; then
     $LINK ../sorc/global-workflow.fd/sorc/gsi.fd/exec/calc_increment_ens_gsdchem.x ../exec/
 fi
 
+# for atmos_prep for GFSv16
+if [[ -d global-workflow.fd ]]; then
+    $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/chgres_cube ../exec/
+fi
+
 
 exit 0
