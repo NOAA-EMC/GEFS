@@ -214,7 +214,9 @@ if [ $warm_start = ".false." ]; then
 			echo "FATAL ERROR in ${.sh.file}: One or more recenter jobs in $MP_CMDFILE failed!"
 			exit $err
 		fi
-
+	else # npert=0
+		mkdir -p $FILEOUTPATH/c00
+		$NCP $FILEINPATH/c00/${FILENAME}*  $FILEOUTPATH/c00/.
 	fi
 else
 	echo "FATAL ERROR in ${.sh.file}: init_recenter only works for cold start"
