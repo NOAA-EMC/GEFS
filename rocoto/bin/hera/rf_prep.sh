@@ -12,5 +12,5 @@ ulimit -a
 # export for development runs only begin
 
 # CALL executable job script here
-$SOURCEDIR/rocoto/bin/sh/JGEFS_RF_PREP
+$SOURCEDIR/jobs/JGEFS_RF_PREP
 

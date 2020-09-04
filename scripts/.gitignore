@@ -1,3 +1,8 @@
 exglobal_prep_chem.sh
 exglobal_fcst_nemsfv3gfs.sh
 exwave_*.sh
+
+#Ignore the ex-scripts for developer use
+exgefs_chem_post_cleanup.sh
+exgefs_extractvars.sh.ecf
+exgefs_rf_prep.sh.ecf
