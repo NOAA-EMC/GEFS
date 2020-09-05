@@ -82,12 +82,8 @@ sFile=$COMINgfs/gfs.${cycle}.sfcanl.nc
 if [[ -f $sFile ]]; then
     test_tref=$(ncdump -h $sFile | grep tref)
     if [ -z $test_tref ]; then
-        sFile=$COMINgfs/gfs.${cycle}.nstanl.nemsio
-        test_tref=$($nemsioread $sFile | grep tref)
-        if [ -z $test_tref ]; then
-            echo "FATAL ERROR in ${.sh.file}: Real-time nst does not exist: gfs.${cycle}.nstanl.nemsio or gfs.${cycle}.sfcanl.nemsio"
-            exit 93
-        fi
+        echo "FATAL ERROR in ${.sh.file}: Real-time nst does not exist in $sFile"
+        exit 93
     fi
     $NLN $sFile $filenamein_nst
 else
