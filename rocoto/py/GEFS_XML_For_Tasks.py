@@ -1182,6 +1182,10 @@ def get_param_of_task(dicBase, taskname):
                     sDep += '\n\t<taskdep task="keep_data_atm"/>'
                 if DoesTaskExist(dicBase, "archive_atm"):
                     sDep += '\n\t<taskdep task="archive_atm"/>'
+                if DoesTaskExist(dicBase, "cleanup_wave"):
+                    sDep += '\n\t<taskdep task="cleanup_wave"/>'
+                if DoesTaskExist(dicBase, "cleanup_chem"):
+                    sDep += '\n\t<taskdep task="cleanup_chem"/>'
                 if sDep == '<and>':
                     sDep = ""
                 else:
