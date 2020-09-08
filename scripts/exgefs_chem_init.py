@@ -141,7 +141,7 @@ def main() -> None:
             # Link restart files
             # Even with exist_ok=True, makedirs sometimes throws a FileExistsError
             with contextlib.suppress(FileExistsError):
-                os.makedirs("{path}/RESTART".format(path=destination_path), exist_ok=True)
+                os.makedirs(f"{destination_path}/RESTART", exist_ok=True)
             for file in restart_files:
                 basename = os.path.basename(file)
                 link = restart_dest_pattern.format(path=destination_path, filename=basename)
@@ -220,7 +220,6 @@ def get_env_var(varname: str, fail_on_missing: bool = True, default_value: str =
 def get_init_files(path: str, kind: str) -> typing.List[str]:
     files = list(map(lambda tile: init_file_pattern.format(tile=tile, path=path, kind=kind), tiles))
     for file_name in files:
-        print(file_name)
         if(not os.path.isfile(file_name)):
             print(f"FATAL ERROR in {__file__}: Atmosphere file {file_name} not found")
             exit(101)
@@ -246,7 +245,7 @@ def get_previous_forecast(time: datetime, incr: int, max_lookback: int, com_root
 # Convert file from nemsio to NetCDF
 def convert_nemsio_to_nc(infile: str, nemsio2nc_exec: str) -> str:
     if infile is None:
-        print("WARNING: Infile {infile} does not exist!")
+        print(f"WARNING: Infile {infile} does not exist!")
         return None
 
     if infile.endswith('.nemsio'):
@@ -260,7 +259,7 @@ def convert_nemsio_to_nc(infile: str, nemsio2nc_exec: str) -> str:
     if os.path.isfile(outfile):
         return outfile
     else:
-        print("WARNING: Could not convert nemsio file {infile} to NetCDF!")
+        print(f"WARNING: Could not convert nemsio file {infile} to NetCDF!")
         return None
 
 
@@ -298,7 +297,7 @@ def get_all_restart_files(time: datetime, incr: int, max_lookback: int, com_root
         else:
             print(last_time.strftime("Not all restart files found for %Y%m%d_%H"))
             for file in files:
-                print(file + ": " + str(os.path.isfile(file)))
+                print(f"{file}: {os.path.isfile(file)}")
 
     if(not found):
         print("WARNING: Missing some restart files, try cold start")
@@ -343,13 +342,13 @@ def calc_increment(calcinc_aprun: str, calcinc_exec: str, analysis_filename: str
     # analysis_filename = "atmanl_mem001"
     forecast_basename = os.path.basename(forecast_filename)
     increment_basename = os.path.basename(increment_filename)
-    shutil.copy(analysis_filename, "{basename}_mem001".format(basename=analysis_filename))
-    shutil.copy(forecast_filename, "{basename}_mem001".format(basename=forecast_basename))
-    os.symlink(increment_filename, "{basename}_mem001".format(basename=increment_basename))
+    shutil.copy(analysis_filename, f"{analysis_filename}_mem001")
+    shutil.copy(forecast_filename, f"{forecast_basename}_mem001")
+    os.symlink(increment_filename, f"{increment_basename}_mem001")
     namelist_file = open("calc_increment.nml", "w")
     namelist_file.write(calcinc_namelist.format(imp_physics=imp_physics, analysis_filename=analysis_filename, forecast_filename=forecast_basename, increment_filename=increment_basename))
     namelist_file.close()
-    return_code = subprocess.call("{calcinc_aprun} {calcinc_exec}".format(calcinc_aprun=calcinc_aprun, calcinc_exec=calcinc_exec), shell=True)
+    return_code = subprocess.call(f"{calcinc_aprun} {calcinc_exec}", shell=True)
     if return_code == 0 and os.path.isfile(increment_filename):
         print("Calculate increment completed successfully")
         return True
