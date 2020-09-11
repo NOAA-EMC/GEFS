@@ -35,9 +35,9 @@ export cyc=%CYC%
 export RUNMEM=gegfs
 export SENDDBN=NO
 
-export total_tasks=4
+export total_tasks=5
 export OMP_NUM_THREADS=4
-export taskspernode=4
+export taskspernode=5
 
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_ATMOS_PRDGEN
