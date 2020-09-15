@@ -97,7 +97,8 @@ def main() -> None:
     regrid_aprun = get_env_var('APRUN_CHGRES')
     calcinc_aprun = get_env_var('APRUN_CALCINC')
     imp_physics = get_env_var('imp_physics')
-    resolution = get_env_var("CASE", fail_on_missing=False, default_value="C384")
+    n_lat = int(get_env_var("LATBFV"))
+    n_lon = int(get_env_var("LONBFV"))
     send_com = get_env_var("SENDCOM") == "YES"
     mail_recipients = get_env_var("MAIL_LIST")
 
@@ -127,7 +128,7 @@ def main() -> None:
 
         analysis_filename = regrid_analysis(time=time, regrid_aprun=regrid_aprun, regrid_exec=regrid_exec,
                                             com_root=com_root, com_gfs=com_gfs, net=net, envir=envir, run=run,
-                                            resolution=resolution, ref_file=prev_fcst_file_nc)
+                                            n_lat=n_lat, n_lon=n_lon, ref_file=prev_fcst_file_nc)
 
         increment_filename = increment_file_pattern.format(path=destination_path)
 
@@ -315,10 +316,7 @@ def merge_tracers(merge_script: str, atm_filenames: typing.List[str], restart_fi
 
 
 # Regrid analysis file to ensemble resolution to create warm-start increment
-def regrid_analysis(time: datetime, regrid_aprun: str, regrid_exec: str, com_root: str, com_gfs: str, net: str, envir: str, run: str, resolution: str, ref_file: str) -> str:
-    n_lon = int(resolution[1:]) * 4
-    n_lat = int(resolution[1:]) * 2
-
+def regrid_analysis(time: datetime, regrid_aprun: str, regrid_exec: str, com_root: str, com_gfs: str, net: str, envir: str, run: str, n_lat: int, n_lon: int, ref_file: str) -> str:
     analysis_file = time.strftime(analysis_file_pattern.format(com_gfs=com_gfs))
     output_file = "atmanl.nc"
 
