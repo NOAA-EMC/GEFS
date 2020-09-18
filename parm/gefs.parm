@@ -130,4 +130,5 @@ export save_pgrb2_p5=${save_pgrb2_p5:-NO}
 export save_pgrb2_p25=${save_pgrb2_p25:-NO}
 
 # List of contacts to mail when there is mail sent by mail.py for product degredation
-export MAIL_LIST="Dingchen.Hou@noaa.gov,Walter.Kolczynski@noaa.gov,Xianwu.Xue@noaa.gov"
+export MAIL_LIST=${MAIL_LIST:-"Dingchen.Hou@noaa.gov,Walter.Kolczynski@noaa.gov,Xianwu.Xue@noaa.gov"}
+
