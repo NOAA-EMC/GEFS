@@ -26,8 +26,8 @@ cd $DATA
 ######################################
 # Set up compute resources
 ######################################
-export total_tasks=${total_tasks:-31}
-export APRUN=${gefsmpexec:-"mpirun -n 36"} # Must be divisible number of tiles (6)
+export total_tasks=${total_tasks:-36}  # Must be divisible number of tiles (6)
+export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
 
 ####################################
 # Specify NET and RUN Name and model
