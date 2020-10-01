@@ -83,7 +83,7 @@ if [[ $CONVERT_SFC == ".true." ]]; then
 	fi
 fi
 
-export CRES=$(echo $CASEHR |cut -c2-5)
+export CRES=$(echo $CASE |cut -c2-5)
 export COMIN=$INIDIR
 export INPUT_TYPE="gaussian_netcdf"
 export FIXfv3=$FIXgfs/fix_fv3_gmted2010/C$CRES

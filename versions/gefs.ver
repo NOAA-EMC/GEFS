@@ -16,6 +16,10 @@ export gempak_ver=7.3.1
 
 export NetCDF_ver=4.5.0
 export HDF5_serial_ver=1.10.1
+
+export HDF5_parallel_ver=1.10.6
+export NetCDF_parallel_ver=4.7.4
+
 export NCO_ver=4.7.0
 
 export python_ver=3.6.3
