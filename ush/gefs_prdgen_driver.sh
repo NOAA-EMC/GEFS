@@ -169,8 +169,9 @@ for hour in $hours; do
 				if [[ $SENDCOM == "YES" ]]; then
 					date >$COMOUT/$COMPONENT/misc/$submc/${RUNMEM}.t${cyc}z.anl.missing
 				fi
+				sDate=$(date)
 				cat <<-EOF
-					FATAL ERROR in ${.sh.file} ($stream): Post data still missing for analysis at $(date) after waiting ${SLEEP_TIME}s.
+					FATAL ERROR in ${.sh.file} ($stream): Post data still missing for analysis at $sDate after waiting ${SLEEP_TIME}s.
 						Looked for the following files:
 							$(set +x; if [[ $RUNMEM != "gegfs" ]]; then Control file: $mcfile $(if [[ -f $mcfile ]]; then echo "exists"; else; echo "doesn't exist"; fi); fi)
 							Grib file:    $mafile $(set +x; if [[ -f $mafile ]]; then echo "exists"; else; echo "doesn't exist"; fi)
@@ -326,12 +327,13 @@ for hour in $hours; do
 			if [[ $SENDCOM == "YES" ]]; then
 				date >$COMOUT/$COMPONENT/misc/$submc/${RUNMEM}.t${cyc}z.f$fhr.missing
 			fi
+			sDate=$(date)
 			cat <<-EOF
-				FATAL ERROR in ${.sh.file} ($stream): Post data still missing for f$fhr at $(date) after waiting ${SLEEP_TIME}s.
+				FATAL ERROR in ${.sh.file} ($stream): Post data still missing for f$fhr at $sDate after waiting ${SLEEP_TIME}s.
 					Looked for the following files:
-						Control file: $mcfile $(set -x; if [[ -f $mcfile ]]; then echo "exists"; else; echo "doesn't exist"; fi)
-						Grib file:    $mafile $(set -x; if [[ -f $mafile ]]; then echo "exists"; else; echo "doesn't exist"; fi)
-						Index file:   $mifile $(set -x; if [[ -f $mifile ]]; then echo "exists"; else; echo "doesn't exist"; fi)
+						Control file: $mcfile $(set +x; if [[ -f $mcfile ]]; then echo "exists"; else; echo "doesn't exist"; fi)
+						Grib file:    $mafile $(set +x; if [[ -f $mafile ]]; then echo "exists"; else; echo "doesn't exist"; fi)
+						Index file:   $mifile $(set +x; if [[ -f $mifile ]]; then echo "exists"; else; echo "doesn't exist"; fi)
 			EOF
 			export err=1;
 			err_chk
