@@ -98,6 +98,11 @@ for hour in $hours; do
 	export pfhr=$(printf "%03.0f" $hour)       # Zero-pad to three places
 	export ffhr="f${pfhr}"
 
+	if [[ -f $COMOUT/$COMPONENT/$pgad/geavg.${cycle}.$pgapre${ffhr}.idx ]]  && [[ -f $COMOUT/$COMPONENT/$pgad/gespr.${cycle}.$pgapre${ffhr}.idx ]]; then
+		echo "Skip geavg.${cycle}.$pgapre${ffhr} & gespr.${cycle}.$pgapre${ffhr}"
+		continue
+	fi
+
 	nenspost=0
 
 	# set +x
