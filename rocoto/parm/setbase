@@ -58,7 +58,7 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     echo "Using settings for WCOSS DELL Phase III"
     export machine='WCOSS_DELL_P3'
     export JOBPHASE=
-    export HOMEDIR=${HOMEDIR:-/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/global_workflow/gefs_gfsv16}
+    export HOMEDIR=${HOMEDIR:-/gpfs/dell6/emc/modeling/noscrub/Walter.Kolczynski/save/global-workflow/gefs_gfsv16_a49d6a9f}
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
     export archsyndir=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/TCvitalData/syndat
     export HOMEdata=/gpfs/hps2/nco/storage/fv3gefs/Bing.Fu/common
