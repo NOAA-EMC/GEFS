@@ -71,7 +71,7 @@ echo " .... Building wave_stat - 06 .... "
 #------------------------------------
 # build gefs_nemsio2nc
 #------------------------------------
-$Build_wave_stat && {
+$Build_gefs_nemsio2nc && {
 echo " .... Building gefs_nemsio2nc - 07 .... "
 ./build_gefs_nemsio2nc.sh > $logs_dir/build_gefs_nemsio2nc.log 2>&1
 }
