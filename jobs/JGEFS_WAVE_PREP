@@ -86,7 +86,7 @@ for config in $configs; do
     . $config_path/$config.parm
     export err=$?
     if [[ $err -ne 0 ]]; then
-    	echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file $config_path"
+    	echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file $config_path/$config.parm"
     	exit $err
     fi
 done
