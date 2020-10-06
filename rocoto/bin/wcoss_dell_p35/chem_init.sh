@@ -15,7 +15,6 @@ module purge
 module load EnvVars/$EnvVars_ver
 module load ips/$ips_ver
 module load impi/$impi_ver
-
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
 
