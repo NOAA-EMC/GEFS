@@ -139,6 +139,7 @@ cd $pwd
 if [[ -d global-workflow.fd ]] ; then
     $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/ush/global_chgres_driver.sh ../ush/
     $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/ush/global_chgres.sh ../ush/
+    $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/ush/chgres_cube.sh ../ush/
 
     $LINK ../sorc/global-workflow.fd/sorc/gfs_post.fd/ush/gfs_nceppost.sh ../ush/
 
@@ -190,8 +191,13 @@ if [[ -d global-workflow.fd ]]; then
 
     # for init_aerosol
     $LINK ../sorc/global-workflow.fd/ush/merge_fv3_chem_tile.py ../ush/
-    $LINK ../sorc/global-workflow.fd/exec/chgres_recenter.exe ../exec/
-    $LINK ../sorc/global-workflow.fd/sorc/gsi.fd/exec/calc_increment_ens_gsdchem.x ../exec/
+fi
+
+# for atmos_prep for GFSv16
+if [[ -d global-workflow.fd ]]; then
+    $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/chgres_cube ../exec/
+    $LINK ../sorc/global-workflow.fd/exec/chgres_recenter_ncio.exe ../exec/
+    $LINK ../sorc/global-workflow.fd/sorc/gsi.fd/exec/calc_increment_ens_ncio.x ../exec/
 fi
 
 

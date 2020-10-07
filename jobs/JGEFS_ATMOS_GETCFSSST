@@ -13,7 +13,7 @@ export PS4='$SECONDS + $(basename ${.sh.file})[$LINENO] '
 # Determine Job Output Name on System
 ####################################
 export jobid=${jobid:-"$job.$LSB_JOBID"}
-export pgmout="OUTPUT.${LSB_JOBID}"
+export pgmout=${pgmout:-"OUTPUT.${LSB_JOBID}"}
 export pgmerr=errfile
 
 ####################################
@@ -61,7 +61,7 @@ export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
 export COMPONENT="atmos"
 export COMOUT=${COMOUT:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/$COMPONENT}
 
-export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/$cyc}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/$cyc/atmos}
 export COMINcfs=${COMINcfs:-$(compath.py cfs/prod)/cfs/cfs.}
 
 export jlogfile=${jlogfile:-$DATA/jlogfile}

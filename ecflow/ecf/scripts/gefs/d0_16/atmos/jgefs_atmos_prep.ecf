@@ -1,9 +1,9 @@
-#BSUB -J %E%gefs_atmos_prep_%CYC%
-#BSUB -o %COM%/output/%ENVIR%/today/gefs_atmos_prep_%CYC%.o%J
+#BSUB -J %E%gefs_atmos_prep_%MEMBER%_%CYC%
+#BSUB -o %COM%/output/%ENVIR%/today/gefs_atmos_prep_%MEMBER%_%CYC%.o%J
 #BSUB -cwd /tmp
-#BSUB -n 31
-#BSUB -R span[ptile=1]
-#BSUB -R 'affinity[thread(40)]'
+#BSUB -n 36
+#BSUB -R span[ptile=36]
+#BSUB -R 'affinity[core(1)]'
 #BSUB -q %QUEUE%
 #BSUB -W 00:30
 #BSUB -L /bin/sh
@@ -20,7 +20,8 @@ export model=gefs
 
 module load ips/$ips_ver
 module load impi/$impi_ver
-module load NetCDF/$NetCDF_ver
+module load HDF5-parallel/$HDF5_parallel_ver
+module load NetCDF-parallel/$NetCDF_parallel_ver
 module load lsf/$lsf_ver
 module load CFP/$CFP_ver
 export USE_CFP=YES
@@ -32,9 +33,10 @@ ulimit -s unlimited
 ulimit -a
 
 export cyc=%CYC%
+export RUNMEM=ge%MEMBER%
 
-export total_tasks=31
-export taskspernode=1
+export total_tasks=36
+export taskspernode=36
 
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_ATMOS_PREP

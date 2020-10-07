@@ -74,7 +74,8 @@ if [[ $SENDCOM = YES ]]; then
   mkdir -p $COMOUT/rundata
 fi
 
-export COMIN_WAV_ICE=${COMIN_WAV_ICE:-$(compath.py gfs/prod)/${WAVICEPRFX:-gfs}.${PDY}/${cyc}}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/${cyc}/atmos}
+export COMIN_WAV_ICE=${COMINgfs:-$(compath.py gfs/prod)/${WAVICEPRFX:-gfs}.${PDY}/${cyc}/atmos}
 
 #############################
 # Source relevant config files
@@ -85,7 +86,7 @@ for config in $configs; do
     . $config_path/$config.parm
     export err=$?
     if [[ $err -ne 0 ]]; then
-    	echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file $config_path"
+    	echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file $config_path/$config.parm"
     	exit $err
     fi
 done

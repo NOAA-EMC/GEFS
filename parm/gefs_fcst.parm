@@ -128,7 +128,6 @@ if [[ $cplchm = ".true." ]]; then
 	if [[ $AEROSOL_INIT_TYPE == "warm" ]]; then
 		export warm_start=".true."
 		export read_increment=".true."
-		export CALCINCEXEC=${CALCINCEXEC:-$HOMEgfs/exec/calc_increment_ens_gsdchem.x}
 	fi
 
 	export DIAG_TABLE=${DIAG_TABLE:-$HOMEgfs/parm/parm_fv3diag/chm_diag_table}
