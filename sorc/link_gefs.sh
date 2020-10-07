@@ -191,7 +191,6 @@ if [[ -d global-workflow.fd ]]; then
 
     # for init_aerosol
     $LINK ../sorc/global-workflow.fd/ush/merge_fv3_chem_tile.py ../ush/
-    $LINK ../sorc/global-workflow.fd/exec/chgres_recenter.exe ../exec/
 fi
 
 # for atmos_prep for GFSv16
