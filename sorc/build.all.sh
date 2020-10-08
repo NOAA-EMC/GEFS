@@ -32,8 +32,10 @@ if [ -d "../fix" ]; then
   echo "Deleting ../fix folder"
   rm -rf ../fix
 fi
-if [ -d "/gpfs/tp1/nco/ops/nwprod/gefs_legacy.v10.4.1/fix" ]; then
-    cp -rfp /gpfs/tp1/nco/ops/nwprod/gefs_legacy.v10.4.1/fix .
+
+sFixPath=/gpfs/dell1/nco/ops/nwprod/gefs_legacy.v10.5.1/fix
+if [ -d $sFixPath ]; then
+    cp -rfp $sFixPath .
 else
     module load HPSS/5.0.2.5 
     htar -xvf /NCEPDEV/emc-ensemble/5year/Xianwu.Xue/ForOperation/GEFS_legacy/fix_20200124.tar
@@ -62,6 +64,11 @@ module load Module_ens_tracker.v1.1.15_for_Dell
 ./build.sh
 cd ${dirsaved}
 
+echo ".....Compiling global_chgres_nemsio..."
+cd global_chgres_nemsio.fd
+./build_chgres.sh
+cp -rfp exec/global_chgres_nemsio ${dirsaved}/../exec
+cd ${dirsaved}
 
 echo "`date`   `pwd`   $0 $*   end of log"
 ) 2>&1 | tee $logfiled
