@@ -86,7 +86,7 @@ then
   export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
   export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
 
-  export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  export HOMEgefs=${HOMEgefs_legacy:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
@@ -107,8 +107,8 @@ else                             ### For Operations
   export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
   export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
 
-  #export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
-  #export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  #export HOMEgefs=${HOMEgefs_legacy:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  #export HOMEgefs=${HOMEgefs_legacy:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}

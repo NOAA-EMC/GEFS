@@ -86,7 +86,7 @@ then
   export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
 
   # RLW 20141008 modify to obtain and use version for vertical structure
-  export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  export HOMEgefs=${HOMEgefs_legacy:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
@@ -97,23 +97,26 @@ else                             ### For Operations
   export SENDECF=YES
 
   # RLW 20141008 modify to obtain and use version for vertical structure
-  export HOMEgefs=${HOMEgefs_legacy:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  export HOMEgefs=${HOMEgefs_legacy:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
   export EXECgefs=$HOMEgefs/exec
   export USHgefs=$HOMEgefs/ush
   export FIXgefs=$HOMEgefs/fix
   export PARMgefs=$HOMEgefs/parm
-
+  
   # Specify Execution Areas
   export HOMEGLOBAL=${HOMEGLOBAL:-${HOMEgefs}}
   export EXECGLOBAL=$HOMEGLOBAL/exec
   export USHGLOBAL=$HOMEGLOBAL/ush
   export FIXGLOBAL=$HOMEGLOBAL/fix
   export PARMGLOBAL=$HOMEGLOBAL/parm
+
+  
 fi
 
 ####################################
 # Specify Execution Areas
 ####################################
+# JY -remove the following 02/07 ?
 #export GRBINDEX=/nwprod/util/exec/grbindex
 
 #export HOMEUTIL=/nwprod/util

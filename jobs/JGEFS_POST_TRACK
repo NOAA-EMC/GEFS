@@ -21,7 +21,6 @@ if [ ! -z $MODULESHOME ]; then
 else
     . /opt/modules/default/init/bash
 fi
-module load util_shared/1.1.0
 
 #module list
 
@@ -120,6 +119,13 @@ else
   export SENDDBN=NO
 fi
 
+
+export HOMEgefs=${HOMEgefs_legacy:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
+export USHgefs=${USHgefs:-$HOMEgefs/ush}
+export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
+
 ####################################
 # Specify Execution Areas
 ####################################
@@ -137,7 +143,7 @@ export EXECUTIL=$HOMEUTIL/exec
 export FIXUTIL=$HOMEUTIL/fix
  fi
 
-export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
+export HOMEGLOBAL=${HOMEGLOBAL:-$HOMEgefs}
 ###teste
 export USHGLOBAL=${USHGLOBAL:-$HOMEGLOBAL/ush}
 export EXECGLOBAL=${EXECGLOBAL:-$HOMEGLOBAL/exec}
@@ -152,7 +158,6 @@ export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
 ##############################
 # Set up the UTILITIES
 ##############################
-export HOMEgefs=${HOMEgefs:-/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
 #export utilscript=/nwprod/util/ush
 #DHOU 04/05/2012 for ZEUS
  if [[ $gefsmachine = zeus ]]; then
@@ -202,8 +207,6 @@ else
   export COMOUT=$baseoutput/com/${NET}/${envir}/gefs_legacy.${PDY}
 fi
 
-#export gfsvitdir=${gfsvitdir:-${COMROOThps}/gfs/prod/gfs.$PDY}
-#export namvitdir=${namvitdir:-${COMROOTp2}/nam/prod/nam.$PDY}
 export gfsvitdir=${gfsvitdir:-$(compath.py gfs/prod)}/gfs.$PDY/$cyc
 export namvitdir=${namvitdir:-$(compath.py nam/prod)}/nam.$PDY
 
@@ -219,11 +222,11 @@ echo set parameters using gefs.parm
 if [[ $envir = prod ]]; then
   #. $PARMGLOBAL/gefs.parm
   # RLW 20141008 modify to obtain and use version for vertical structure
-  . /nw$envir/gefs_legacy.${gefs_legacy_ver}/parm/gefs.parm
+  . $PARMgefs/gefs.parm
 elif [[ $envir = para ]] || \
      [[ $envir = test ]]; then
   # RLW 20141008 modify to obtain and use version for vertical structure
-  . /nw$envir/gefs_legacy.${gefs_legacy_ver}/parm/gefs.parm
+  . $PARMgefs/gefs.parm
 else
   # RLW 20141008 modify to obtain and use version for vertical structure
   . $basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/parm/gefs.parm
@@ -336,7 +339,7 @@ do
     elif [[ $envir = para ]] || \
 	 [[ $envir = test ]]; then
       # RLW 20141008 modify to obtain and use version for vertical structure
-      sh /nw$envir/gefs_legacy.${gefs_legacy_ver}/util/ush/extrkr.sh
+      sh $HOMEgefs/util/ush/extrkr.sh
     else
      #DHOU 01/19/2013, replace the line above with the following if-block for machine-specfic choice of ush script
      if [[ $gefsmachine = zeus ]]; then

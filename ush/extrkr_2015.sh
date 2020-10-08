@@ -101,14 +101,15 @@ if [ ! -d $DATA ]
 then
    mkdir -p $DATA
    cd $DATA
-   /nwprod/util/ush/setup.sh
+   # /nwprod/util/ush/setup.sh
 fi
 cd $DATA
 
-if [ ${PARAFLAG} = 'YES' ]
-then 
-  /nwprod/util/ush/setup.sh
-fi
+# JY -will remove 02/10
+#if [ ${PARAFLAG} = 'YES' ]
+#then 
+#  /nwprod/util/ush/setup.sh
+#fi
 
 if [ ${#PDY} -eq 0 -o ${#CYL} -eq 0 -o ${#cmodel} -eq 0 ]
 then
@@ -146,8 +147,7 @@ symd=`echo ${PDY} | cut -c3-8`
 syyyy=`echo ${PDY} | cut -c1-4`
 symdh=${PDY}${CYL}
 
-#export gfsvitdir=${gfsvitdir:-/com2/gfs/prod/gfs.$PDY}
-export gfsvitdir=${gfsvitdir:-/gpfs/dell1/nco/ops/com/gfs/prod/gfs.$PDY/$shh}
+export gfsvitdir=${gfsvitdir:-/com2/gfs/prod/gfs.$PDY}
 export namvitdir=${namvitdir:-/com/nam/prod/nam.$PDY}
 export gltrkdir=${gltrkdir:-/com/hur/${envir}/global}
 export TPCATdir=/tpcprd/atcf
@@ -162,12 +162,12 @@ export parmtrkdir=${parmtrkdir:-${homesyndir}/parm}
 echo parmtrkdir=$parmtrkdir
 
 export ushtrkdir=${ushtrkdir:-${homesyndir}/ush}
-export archsyndir=${archsyndir:-$(compath.py gfs/prod/syndat)}
+export archsyndir=${archsyndir:-/com/arch/prod/syndat}
 
+# JY - change following - 02/10
 #cp /com/date/t${CYL}z ncepdate
 #export CENT=` cut -c7-8 ncepdate `
-export CENT=` cut -c1-2 $PDY `
-export CENT=20
+export CENT=`echo $PDY|cut -c1-2`
 
 #if [ -s /nwprod/util/exec/wgrib2 ]
 if [ -s $WGRIB2 ]
@@ -219,7 +219,7 @@ case ${cmodel} in
        set -x                                       ;
 # RLW 20141010 modify gfsdir to generalize
        #gfsdir=/com/gfs/$envir/gfs.${PDY}              ;
-       #gfsdir=/com2/gfs/prod/gfs.${PDY}              ;
+       gfsdir=/com2/gfs/prod/gfs.${PDY}              ;
 #       gfsgfile=gfs.t${CYL}z.master.grbf            ;
 #       gfsifile=gfs.t${CYL}z.master.grbif           ;
 
@@ -248,7 +248,7 @@ fcsthrs=' 000  99  99  99  99  99  99  99  99  99  99  99  99  99
 	  (( cutlength = 4 + ( fcstlen * 4 ) / fcstint )) ;
 	  fcsthrs=`echo "$fcsthrs"|cut -c1-$cutlength`;
         atcfnum=15                                   ;
-	 COM=${COM:-${COMROOT}/gens/${envir}/gefs.${PDY}/$cyc/track} ;
+	 COM=${COM:-/com/gens/${envir}/gefs.${PDY}/$cyc/track} ;
 # RLW 20141010 modify atcf names to generalize
         atcfname="${ATCFNAMEIN:-gfso}"                              ;
         atcfout="${ATCFNAMEIN:-gfso}"                                ;
@@ -357,15 +357,13 @@ fi
 # deal; this script will exit just a little further down once it
 # realizes there are not any storms to process.
 
-#old_ymdh=` /nwprod/util/exec/ndate -${vit_incr} ${PDY}${CYL}`
-old_ymdh=` $NDATE -${vit_incr} ${PDY}${CYL}`
+old_ymdh=`$NDATE -${vit_incr} ${PDY}${CYL}`
 old_4ymd=` echo ${old_ymdh} | cut -c1-8`
 old_ymd=` echo ${old_ymdh} | cut -c3-8`
 old_hh=`  echo ${old_ymdh} | cut -c9-10`
 old_str="${old_ymd} ${old_hh}00"
 
-#future_ymdh=` /nwprod/util/exec/ndate ${vit_incr} ${PDY}${CYL}`
-future_ymdh=` $NDATE ${vit_incr} ${PDY}${CYL}`
+future_ymdh=`$NDATE ${vit_incr} ${PDY}${CYL}`
 future_4ymd=` echo ${future_ymdh} | cut -c1-8`
 future_ymd=` echo ${future_ymdh} | cut -c3-8`
 future_hh=`  echo ${future_ymdh} | cut -c9-10`
@@ -373,14 +371,12 @@ future_str="${future_ymd} ${future_hh}00"
 
 # NOTE: Change synvitdir to point to /com/nam for regional models.
 
-#synvitdir=/com2/gfs/prod/gfs.${PDY}
-synvitdir=${synvitdir:-/gpfs/dell1/nco/ops/com/gfs/prod/gfs.$PDY/$shh}
+# need to change here! JY 02/2020
+synvitdir=/com2/gfs/prod/gfs.${PDY}
 synvitfile=gfs.t${CYL}z.syndata.tcvitals.tm00
-#synvitold_dir=/com2/gfs/prod/gfs.${old_4ymd}
-synvitold_dir=${synvitold_dir:-/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${old_4ymd}/${old_hh}}
+synvitold_dir=/com2/gfs/prod/gfs.${old_4ymd}
 synvitold_file=gfs.t${old_hh}z.syndata.tcvitals.tm00
-#synvitfuture_dir=/com2/gfs/prod/gfs.${future_4ymd}
-synvitfuture_dir=${synvitfuture_dir:-/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${future_4ymd}/${future_hh}}
+synvitfuture_dir=/com2/gfs/prod/gfs.${future_4ymd}
 synvitfuture_file=gfs.t${future_hh}z.syndata.tcvitals.tm00
 
 #J.Peng-03-14-2014--------------------------------------------------
@@ -471,7 +467,6 @@ cat ${DATA}/tmprawvit.${atcfout}.${PDY}${CYL} ${DATA}/tmpsynvit.${atcfout}.${PDY
 # tracking program.
 #--------------------------------------------------------------#
 
-#oldymdh=` /nwprod/util/exec/ndate -${vit_incr} ${PDY}${CYL}`
 oldymdh=` $NDATE -${vit_incr} ${PDY}${CYL}`
 oldyy=`echo ${oldymdh} | cut -c3-4`
 oldmm=`echo ${oldymdh} | cut -c5-6`
@@ -479,7 +474,6 @@ olddd=`echo ${oldymdh} | cut -c7-8`
 oldhh=`echo ${oldymdh} | cut -c9-10`
 oldymd=${oldyy}${oldmm}${olddd}
 
-#futureymdh=` /nwprod/util/exec/ndate 6 ${PDY}${CYL}`
 futureymdh=` $NDATE 6 ${PDY}${CYL}`
 futureyy=`echo ${futureymdh} | cut -c3-4`
 futuremm=`echo ${futureymdh} | cut -c5-6`
@@ -769,14 +763,12 @@ done
 genvitdir=/gpfs/gd2/emc/hwrf/save/${userid}/gen/scripts
 genvitfile=${genvitdir}/genesis.vitals.${cmodel}.${atcfout}.${CENT}${syy}
 
-#d6ago_ymdh=` /nwprod/util/exec/ndate -6 ${PDY}${CYL}`
 d6ago_ymdh=` $NDATE -6 ${PDY}${CYL}`
 d6ago_4ymd=` echo ${d6ago_ymdh} | cut -c1-8`
 d6ago_ymd=` echo ${d6ago_ymdh} | cut -c3-8`
 d6ago_hh=`  echo ${d6ago_ymdh} | cut -c9-10`
 d6ago_str="${d6ago_ymd} ${d6ago_hh}00"
 
-#d6ahead_ymdh=` /nwprod/util/exec/ndate 6 ${PDY}${CYL}`
 d6ahead_ymdh=` $NDATE 6 ${PDY}${CYL}`
 d6ahead_4ymd=` echo ${d6ahead_ymdh} | cut -c1-8`
 d6ahead_ymd=` echo ${d6ahead_ymdh} | cut -c3-8`
@@ -893,10 +885,6 @@ echo " -----------------------------------------"
 echo " "
 set -x
 
-#gix=/nwprod/util/exec/grbindex
-#g2ix=/nwprod/util/exec/grb2index
-#cgb=/nwprod/util/exec/copygb
-#cgb2=/nwprod/util/exec/copygb2
 gix=$GRBINDEX
 g2ix=$GRB2INDEX
 cgb=$COPYGB
@@ -1275,7 +1263,6 @@ namelist=${DATA}/input.${atcfout}.${PDY}${CYL}
 ATCFNAME=` echo "${atcfname}" | tr '[a-z]' '[A-Z]'`
 
 if [ ${cmodel} = 'sref' ]; then
-  #export atcfymdh=` /nwprod/util/exec/ndate -3 ${scc}${syy}${smm}${sdd}${shh}`
   export atcfymdh=` $NDATE -3 ${scc}${syy}${smm}${sdd}${shh}`
 else
   export atcfymdh=${scc}${syy}${smm}${sdd}${shh}
@@ -1428,8 +1415,7 @@ echo "TIMING: Before call to gettrk at `date`"
 echo " "
 set -x
 
-#/usrx/local/bin/getrusage -a ${exectrkdir}/gettrk <${namelist}
-${UTILgefs}/exec/gettrk <${namelist}
+/usrx/local/bin/getrusage -a ${exectrkdir}/gettrk <${namelist}
 gettrk_rcc=$?
 
 set +x

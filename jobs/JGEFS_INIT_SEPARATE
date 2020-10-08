@@ -123,10 +123,8 @@ fi
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
-export HOMEgefs_legacy=${HOMEgefs_legacy:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
-export HOMEGLOBAL=${HOMEgefs}
-#export HOMEGLOBAL=${HOMEGLOBAL:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+export HOMEgefs=${HOMEgefs_legacy:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+export HOMEGLOBAL=${HOMEgefs_legacy:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
 export EXECGLOBAL=$HOMEGLOBAL/exec
 export FIXGLOBAL=$HOMEGLOBAL/fix
 #export FIXGLOBAL=${FIXSUBDA:-$HOMEGLOBAL/fix/fix_am}
@@ -232,6 +230,9 @@ export SLMASK=/dev/null
 # Define COM directories
 ##############################################
 
+# COMIN from ens_tracker
+export gfstrkdir=${gfstrkdir:-$(compath.py ens_tracker/prod/gfs.${PDY})/$cyc/tctrack}
+
 if [[ $NEMSIO_IN = .true. ]]; then
   if [[ $envir = prod ]] || \
      [[ $envir = para ]] || \
@@ -263,10 +264,6 @@ else
     fi
   fi
 fi
-
-# RLW 20180827 for FV3 begin
-    export GFSGRIBDIR=$COMINgfs
-# RLW 20180827 for FV3 end
 
 if [[ $envir = prod ]] || \
    [[ $envir = para ]] || \

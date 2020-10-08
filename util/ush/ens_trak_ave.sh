@@ -59,10 +59,11 @@ export cyc=${hh}
 #ndate=/nwprod/util/exec/ndate
 #DHOU 04/13/2012  for ZEUS/WCOSS portability
 export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
-#ndate=$HOMEGLOBAL/util/exec/ndate
 ndate=$NDATE
 
 export exectrkdir=${exectrkdir:-/nwprod/util/exec}
+
+# JY , what is the correct diretories in the following ? - 2/10
 export gltrkdir=${gltrkdir:-/com/hur/${envir}/global}
 export ATCFdir=${ATCFdir:-/com/tpc/prod/atcf}
 

@@ -88,15 +88,16 @@ then
   export SENDDBN_GB2=${SENDDBN_GB2:-NO}
   export RERUN=${RERUN:-NO}
 
+# JY - will remove the following? 02/07
   # Specify Execution Areas
-  export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
-  export EXECGLOBAL=${EXECGLOBAL:-$HOMEGLOBAL/exec}
-  export USHGLOBAL=${USHGLOBAL:-$HOMEGLOBAL/ush}
-  export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
-  export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
+#  export HOMEGLOBAL=${HOMEGLOBAL:-/nw${envir}}
+#  export EXECGLOBAL=${EXECGLOBAL:-$HOMEGLOBAL/exec}
+#  export USHGLOBAL=${USHGLOBAL:-$HOMEGLOBAL/ush}
+#  export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
+#  export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
 
   # RLW 20141008 modify to obtain and use version for vertical structure
-  export HOMEgefs=${HOMEgefs:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
+  export HOMEgefs=${HOMEgefs_legacy:-/gpfs/dell1/nco/ops/nw${envir}/gefs_legacy.${gefs_legacy_ver}}
   export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
   export USHgefs=${USHgefs:-$HOMEgefs/ush}
   export FIXgefs=${FIXgefs:-$HOMEgefs/fix}
@@ -135,6 +136,7 @@ fi
 ####################################
 #export GRBINDEX=/nwprod/util/exec/grbindex
 
+# JY - will remove - 02/07
 #export HOMEUTIL=/nwprod/util
 #export EXECUTIL=$HOMEUTIL/exec
 #export FIXUTIL=$HOMEUTIL/fix
@@ -175,7 +177,9 @@ export REDERR='2>'
 ##############################
 # Set up the UTILITIES
 ##############################
+# JY - will remove? 02/10
 #export utilscript=/nwprod/util/ush
+
 #DHOU 03/22/2012 for ZEUS/WCOSS
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then

@@ -250,7 +250,7 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
     export classp=dev
   fi
   # RLW 20141008 modify to obtain and use version for vertical structure
-  . /$group/save/$userin/s/$expid/nw$envir/gefs_legacy.v10.5.0/versions/gefs_legacy.ver
+  . /$group/save/$userin/s/$expid/nw$envir/gefs_legacy.v*/versions/gefs_legacy.ver
   echo gefs_legacy_ver=${gefs_legacy_ver}
   export basesource=/$group/save/$userin/s/$expid
   export basebin=$basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/control
@@ -306,9 +306,9 @@ if [[ $machl = v ]] || [[ $machl = m ]]; then
     export classp=dev
   fi
   # RLW 20141008 modify to obtain and use version for vertical structure
-  . /gpfs/dell2/$group/save/$userin/LGCY/$expid/nw$envir/gefs_legacy.v*/versions/gefs_legacy.ver
+  . /gpfs/dell2/$group/noscrub/$userin/s/$expid/nw$envir/gefs_legacy.v*/versions/gefs_legacy.ver
   echo gefs_legacy_ver=${gefs_legacy_ver}
-  export basesource=/gpfs/dell2/$group/save/$userin/LGCY/$expid
+  export basesource=/gpfs/dell2/$group/noscrub/$userin/s/$expid
   export basebin=$basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/control
   export baseoutput=$PTMP/$userout/o/$expid
   export basetmp=$STMP/$userout/o/$expid
