@@ -165,6 +165,7 @@ if [[ $machl = v ]] || [[ $machl = m ]]; then
   export PTMP=/gpfs/dell3/ptmp
   export STMP=/gpfs/dell3/stmp
   group=emc/modeling
+  group=emc/retros
   group=`pwd|cut -d'/' -f2`
   export basesource=/gpfs/dell2/$group/noscrub/$LOGNAME/WCOSS/$expid
   export baseoutput=$PTMP/$LOGNAME/o/$expid
@@ -180,6 +181,7 @@ if [[ $machl = v ]] || [[ $machl = m ]]; then
 # export TMPCOM=/com_p6
 # export TMPCOM=/com
   export TMPCOM=/gpfs/dell1/nco/ops/com
+#exit
 fi
 #For WCOSS end
 
@@ -268,6 +270,7 @@ if [[ $machl = v ]] || [[ $machl = m ]]; then
 # For DELL
   export account=GEN-T2O
   export group=emc/modeling
+  export group=emc/retros
   # RLW 20140903 modify selected settings for emc.enspara on WCOSS
   if [[ "$LOGNAME" = "emc.enspara" ]]; then
     userin="Richard.Wobus"

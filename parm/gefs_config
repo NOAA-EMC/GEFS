@@ -10,6 +10,7 @@ then
 ################# lines between these markers have been modified for dev begin
 # RLW 20141008 modify to obtain and use version for vertical structure
   export HOMEgefs=$basesource/nwdev/gefs_legacy.${gefs_legacy_ver}
+  export HOMEgefs_legacy=$basesource/nwdev/gefs_legacy.${gefs_legacy_ver}
 ################# lines between these markers have been modified for dev end
   export EXECgefs=$HOMEgefs/exec
   export FIXgefs=$HOMEgefs/fix

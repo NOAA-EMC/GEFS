@@ -157,6 +157,7 @@ if [[ $envir = dev ]]; then
   export UTILgefs=${UTILgefs:-$HOMEgefs/util}
   export FIXgefs=$HOMEgefs/fix
   export USHgefs=$HOMEgefs/ush
+  export EXECgefs=$HOMEgefs/exec
 
 else
 
@@ -237,11 +238,13 @@ if [[ $NEMSIO_IN = .true. ]]; then
   if [[ $envir = prod ]] || \
      [[ $envir = para ]] || \
      [[ $envir = test ]]; then
-    #export COMINgfs=${COMINgfs:-$COMROOThps/gfs/$envir/gfs.$PDY}
     export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
+    export COMINgefs=${COMINgefs:-$(compath.py gefs/prod/gefs.$PDY)/$cyc/atmos/sfcsig}
   else
-    export COMROOThps=/gpfs/hps/nco/ops/com
     export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.$PDY)/$cyc}
+    export COMINgefs=${COMINgefs:-$(compath.py gefs/prod/gefs.$PDY)/$cyc/atmos/sfcsig}
+    # For dev testing on dev machine
+    export COMINgefs=/gpfs/dell2/emc/retros/noscrub/Dingchen.Hou/s/DATA/$PDY/$cyc
   fi
 else
   if [[ $envir = prod ]] ; then
@@ -396,6 +399,9 @@ unset FIXgsm
 . /usrx/local/prod/lmod/lmod/init/ksh
   module use /gpfs/dell1/nco/ops/nwprod/modulefiles
   module load util_shared/1.1.0
+  # Redirecting CHGRESEXEC to GEFS exec 
+  CHGRESEXEC=$EXECgefs/global_chgres_nemsio
+  export CHGRESEXEC=$CHGRESEXEC
 
   echo before set chgresush
   export FIXgsm=${FIXSUBDA:-$HOMEgsm/fix/fix_am}

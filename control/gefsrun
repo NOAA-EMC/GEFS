@@ -349,6 +349,7 @@ fi
 
 if [[ $gefsmachine = dell ]]; then
 
+gefs_legacy_ver=v10.6.0
 jobdir=$basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/jobs
 echo jobdir=$jobdir
 
@@ -1589,7 +1590,7 @@ case $taskname in
 
    ############ DHOU, 08/20/2010, suggested resources for T254L42 on VAPOR dev mode
    ###### This section should be modified based on RESOLUTION and parallel_threads
-     export RERUN=YES
+     #export RERUN=YES
      node_usage=not_shared
      task_affinity="cpu(1)"     # DHOU, core(1) not run for thread=1
      parallel_threads=1         # DHOU, to get enough memory with less tasks
@@ -1905,6 +1906,12 @@ case $taskname in
     fi
     case $gefsmachine in
       (wcoss)
+	resources=1000
+	task_affinity="core(1)"
+	MP_SHARED_MEMORY=yes
+      ;;
+      (dell)
+	resources=500
 	resources=1000
 	task_affinity="core(1)"
 	MP_SHARED_MEMORY=yes
@@ -2831,6 +2838,7 @@ else
       waitflag=yes
     fi
   fi
+waitflag=no
 
   ############## if task is forecast, check for initial conditions begin ################
   ########## copied from later version

@@ -210,30 +210,14 @@ setpdy.sh
 ##############################################
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
-# export COM_IN=/com2/gfs/prod
-  export COM_IN=$TMPCOM/gfs/prod
-  export COM_IN=${COM_IN:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
+  export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc/atmos}
+  # dev testing with gfs v16 parallel
+  export COMINgfs=/gpfs/dell3/ptmp/emc.glopara/ROTDIRS/v16rt2/gfs/para/gfs.${PDY}/$cyc/atmos
   export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
-
-  export COMIN=$COM_IN/gfs.${PDY}
-  case $gfssource in
-    (prod)
-      #export COMIN=/com2/gfs/prod/gfs.${PDY}
-      export COMIN=$(compath.py gfs/prod/gfs.${PDY})/$cyc
-    ;;
-    (para)
-      export COMIN=/gpfs/hps/ptmp/emc.glopara/com2/gfs/para/gfs.${PDY}
-    ;;
-  esac
-  #export COMIN=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${PDY}/${cyc}
-  export COMIN=${COMIN:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
   export COMOUT=$COM_OUT/gefs_legacy.${PDY}
   export ENS_COM=$COMOUT
 else                              ### For Operations
-  #TODO: Use COMINgfs instead of COMIN
-  #export COMIN=/com2/gfs/prod/gfs.${PDY}
-  #export COMOUT=/com/${NET}/${envir}/gefs_legacy.${PDY}
-  export COMIN=${COMIN:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
+  export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc/atmos}
   export COMOUT=$COMROOT/${NET}/${envir}/gefs_legacy.${PDY}
   export ENS_COM=$COMOUT
 fi
@@ -260,12 +244,12 @@ export POSTGPVARS_LOW="IDRTC=0,IOC=144,JOC=73,IDRT=0,IO=144,JO=73,MOO=48,MOW=12,
 ####################################
 case $gfsgribedition in
   (1)
-    restart_file_a=$COMIN/${RUN}.t${cyc}z.pgrbf
-    restart_file_b=$COMIN/${RUN}.t${cyc}z.pgrbif
+    restart_file_a=$COMINgfs/${RUN}.t${cyc}z.pgrbf
+    restart_file_b=$COMINgfs/${RUN}.t${cyc}z.pgrbif
   ;;
   (2)
-    restart_file_a=$COMIN/${RUN}.t${cyc}z.pgrb2.0p25.f
-    restart_file_b=$COMIN/${RUN}.t${cyc}z.pgrb2.0p50.f
+    restart_file_a=$COMINgfs/${RUN}.t${cyc}z.pgrb2.0p25.f
+    restart_file_b=$COMINgfs/${RUN}.t${cyc}z.pgrb2.0p50.f
   ;;
 esac
 
