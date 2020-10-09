@@ -50,6 +50,7 @@ export gefsmachine=${gefsmachine:-dell}
 #  export HOMEgefs=$HOMEDIR/gefs.v11.1.1
 #  export HOMEgefs=$basesource/nwdev
   export HOMEgefs=$basesource/nw${envir}/gefs_legacy.${gefs_legacy_ver}
+  export HOMEgefs_legacy=$basesource/nw${envir}/gefs_legacy.${gefs_legacy_ver}
 
 	if (( 0 == 1 )); then
   #export HOMEgsm=$HOMEDIR/gsm.v12.1.3
