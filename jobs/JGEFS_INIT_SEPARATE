@@ -238,34 +238,22 @@ if [[ $NEMSIO_IN = .true. ]]; then
   if [[ $envir = prod ]] || \
      [[ $envir = para ]] || \
      [[ $envir = test ]]; then
-    export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc}
+    export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc/atmos}
     export COMINgefs=${COMINgefs:-$(compath.py gefs/prod/gefs.$PDY)/$cyc/atmos/sfcsig}
   else
-    export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.$PDY)/$cyc}
+    export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.$PDY)/$cyc/atmos}
+    #temporay testing for dev testing gfs v16 parallel
+    export COMINgfs=/gpfs/dell3/ptmp/emc.glopara/ROTDIRS/v16rt2/gfs/para/gfs.${PDY}/$cyc/atmos
     export COMINgefs=${COMINgefs:-$(compath.py gefs/prod/gefs.$PDY)/$cyc/atmos/sfcsig}
     # For dev testing on dev machine
     export COMINgefs=/gpfs/dell2/emc/retros/noscrub/Dingchen.Hou/s/DATA/$PDY/$cyc
   fi
 else
-  if [[ $envir = prod ]] ; then
-    export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.$PDY)/$cyc}
-  elif [[ $envir = para ]] || \
-       [[ $envir = test ]]; then
-    gfssource=prod
-    if [[ "$gfssource" = para ]]; then
-      export COMINgfs=${COMINgfs:-$(compath.py gfs/para/gfs.$PDY)/$cyc}
-    else
-      export COMINgfs=${COMINgfs:-$(compath.py gfs/para/gfs.$PDY)/$cyc}
-    fi
-  else
-    if [[ "$gfssource" = para ]]; then
-      export COMINgfs=$TMPCOM/gfs/para/gfs.$PDY
-    elif [[ "$gfssource" = prod ]]; then
-      export COMINgfs=$TMPCOM/gfs/prod/gfs.$PDY
-    else
-      export COMINgfs=$basedgfs/com/gfs/prod/gfs.$PDY
-    fi
-  fi
+    echo !!!! FATAL ERROR !!!!
+    echo NEMSIO_IN= $NEMSIO_IN = is not supported
+    export err=9
+    err_chk
+    exit
 fi
 
 if [[ $envir = prod ]] || \
