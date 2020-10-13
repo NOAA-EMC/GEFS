@@ -1,0 +1,71 @@
+Model: Global Ensemble Forecast System Legacy (GEFS_legacy)
+
+Release Notes: GEFS_legacy v10.6.0  - released to NCO on October 9th, 2020
+
+This release is prepared as a downstream update of the operational implementation of gfs v16. The code is based on gefs_lagacy V10.5.1 with the following change:
+Avoid gfs analysis files from gfs v16 (to be implemented in Q2 FY21), which are different from gfs v15 in the number of vertical layers (127 vs 64) and file format (netCDF vs nemsio, by using gefs (v12) 00h forecast files (nemsio format).
+Accept gfs pgrb2 files from gfs v16 with changed path
+Modest cleaning of unused lines in some scripts
+Modest effort to update scripts to EE2 request
+Updated jobs include:
+gefs_init_separate, scripts are modified to take gefs 00 hour forecast files as input. 
+jgefs_atmos_prdgen_gfs, changed the path of gfs pgrb2 files.
+
+Updated or newly added modules include
+None
+
+Newly added source code 
+sorc/global_chgres_nemsio.fd
+This new utility is used to process gefs 00h forecast nemsio files
+
+Updated script files include:
+Jobs
+JGEFS_INIT_SEPARATE
+Added $COMINgefs pointing to gefs/prod
+JGEFS_PRDGEN_GFS
+Modified path of gfs/prod pgrb2 data
+Replaced $COMIN with $COMINgfs following SPA request
+Scripts
+Exgefs_init_separate.sh.ecf
+Modified input analysis file names, using $COMINgefs
+Deleted unused sections dealing with non-nemsio input, and error messages are used. This is to reduce confusion.
+Exgefs_prdgen_gfs_grb2.sh.ecf
+Replaced $COMIN with $COMINgfs
+Parm (no impact to prod)
+parm/gefs_config
+parm/gefs_config_dev
+Control (no impact to prod)
+control/setup_job_card.dell
+control/control
+control/gefsrun
+Versions
+versions/gefs_legacy.ver
+Changed gefs version to v10.6.0
+
+New VLAB tags:
+https://vlab.ncep.noaa.gov/code-review/#/admin/projects/GEFS,tags, checkout the tag named gefs_legacy.v10.6.0-0
+
+
+Change in product files
+None
+
+Change in resources
+None. 
+
+Change in product timing
+None
+
+Implementation instructions
+cd $NWROOT
+git clone --recursive gerrit:GEFS gefs_legacy.v10.6.0
+cd gefs_legacy.v10.6.0
+git checkout gefs_legacy.v10.6.0-0
+cd sorc
+./build.all.sh
+
+JOB DEPENDENCIES & FLOW DIAGRAM
+GEFS_legacy is dependent on the following upstream models for input files:
+gfs, tcvital file gfs.tXXz.syndata.tcvitals.tm00
+gefs.v12.1.0, 00h forecast files from gefs_forecast_0_16d_c00 job 
+GEFS has no downstream dependent models (except for Water Center)
+GEFS flowchart is the same as in the prod.
