@@ -72,9 +72,9 @@ export DBN_ALERT_TYPE=GEFS_GEMPAK
 ###################################
 # Set up the UTILITIES
 ###################################
-export utilscript=${NWROOTp1}/util/ush
-export utilities=${NWROOTp1}/util/ush
-export utilexec=${NWROOTp1}/util/exec
+#export utilscript=${NWROOTp1}/util/ush
+#export utilities=${NWROOTp1}/util/ush
+#export utilexec=${NWROOTp1}/util/exec
 
 # Run setup to initialize working directory and utility scripts
 sh $utilscript/setup.sh

@@ -144,7 +144,7 @@ do
                GDFILE="$COMIN/ecmwf_glob_${PDY}$cycm12"
             else
                COMINtmp=$COMIN
-               export COMIN=$COMINm1ecmwf
+               export COMIN=$COMINm1ecmwf/gempak
                GDFILE="$COMIN/ecmwf_glob_${PDYm1}$cycm12"
             fi
             if [ ${area} = "us" ]; then
@@ -219,7 +219,7 @@ do
            GDFILE="$COMIN/ecmwf_glob_${PDY}$cycm12"
         else
            COMINtmp=$COMIN
-           export COMIN=$COMINm1ecmwf
+           export COMIN=$COMINm1ecmwf/gempak
            GDFILE="$COMIN/ecmwf_glob_${PDYm1}$cycm12"
         fi
     else

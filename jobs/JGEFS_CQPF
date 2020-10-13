@@ -82,15 +82,13 @@ setpdy.sh
 # Define COM directories
 ##############################################
 if [ $envir != prod ]; then
-# export COMIN=${COMROOT}/${NET}/prod
-  export COMIN=${COMIN:-${COMROOT}/${NET}/prod}
+  export COMIN=${COMROOT}/${NET}/prod
   export COMINstat=${COMROOT}/${NET}/${envir}
 fi
 
 export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}}
 export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}/${cyc}/ensstat
 export COMINshef=${COMINshef:-${DCOMROOT}/prod/shef_pefiles}
-#export COMINshef=${COMINshef:-/gpfs/dell1/nco/ops/dcom/prod/shef_pefiles}
 export COMINstat=${COMINstat:-$COMIN}
 
 mkdir -m 775 -p $COMOUT

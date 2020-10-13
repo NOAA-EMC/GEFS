@@ -351,7 +351,6 @@ ls -al $jobdir/$jobscript
 # CALL executable job script here
 export jobgrid=$jobgrid
 export jobscript=$jobscript
-export KEEPDATA=YES
 $jobdir/$jobscript
 #/usrx/local/bin/getrusage -rss $jobdir/$jobscript
 
