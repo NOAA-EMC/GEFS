@@ -14,6 +14,7 @@ module purge
 
 module load EnvVars/$EnvVars_ver
 module load ips/$ips_ver
+module load impi/$impi_ver
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
 
@@ -22,8 +23,8 @@ module load python/$python_ver
 
 module load lsf/$lsf_ver
 
-module load HDF5-parallel/1.10.6
-module load NetCDF-parallel/4.7.4
+module load HDF5-parallel/$HDF5_parallel_ver
+module load NetCDF-parallel/$NetCDF_parallel_ver
 
 module list
 

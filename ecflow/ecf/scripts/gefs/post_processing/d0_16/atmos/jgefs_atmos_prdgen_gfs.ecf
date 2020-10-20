@@ -1,8 +1,8 @@
 #BSUB -J %E%gefs_atmos_prdgen_gfs_%CYC%
 #BSUB -o %COM%/output/%ENVIR%/today/gefs_atmos_prdgen_gfs_%CYC%.o%J
 #BSUB -cwd /tmp
-#BSUB -n 16
-#BSUB -R span[ptile=16]
+#BSUB -n 20
+#BSUB -R span[ptile=20]
 #BSUB -R 'affinity[core(1)]'
 #BSUB -q %QUEUE%
 #BSUB -W 05:00

@@ -19,9 +19,12 @@ export model=gefs
 %include <model_ver.h>
 
 module load ips/$ips_ver
+module load impi/$impi_ver
 module load NCO/$NCO_ver
 module load python/$python_ver
 module load lsf/$lsf_ver
+module load HDF5-parallel/$HDF5_parallel_ver
+module load NetCDF-parallel/$NetCDF_parallel_ver
 
 module list
 

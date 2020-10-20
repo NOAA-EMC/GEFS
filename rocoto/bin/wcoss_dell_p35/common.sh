@@ -44,6 +44,7 @@ elif [[ $RocotoGen == 1 ]]; then
     # export DCOMROOT=${DCOMROOT:-/dcom} # CQPF
     # export PCOMROOT=$WORKDIR/pcom/$envir $For WAFS
 
+    export COMPATH=/gpfs/dell3/ptmp/emc.glopara/ROTDIRS/v16rt2/gfs/para
 
     ##export COMIN_WAV_ICE=/gpfs/dell1/nco/ops/com/omb/prod
 
