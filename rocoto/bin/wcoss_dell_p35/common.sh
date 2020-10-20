@@ -30,7 +30,7 @@ if [[ $RocotoGen == 0 ]]; then
     . $GEFS_ROCOTO/parm/gefs_dev.parm
 
 elif [[ $RocotoGen == 1 ]]; then
-    export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
+    export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2_xxw
     export archsyndir=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/TCvitalData/syndat
 
 	export STRICT="YES"

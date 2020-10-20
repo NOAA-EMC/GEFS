@@ -18,4 +18,4 @@ export MEMORY_AFFINITY=core:1
 # export for development runs only begin
 
 # CALL executable job script here
-$SOURCEDIR/rocoto/bin/sh/JGEFS_POST_TRACK
+$SOURCEDIR/jobs/JGEFS_POST_TRACK

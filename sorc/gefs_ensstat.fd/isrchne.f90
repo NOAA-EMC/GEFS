@@ -36,7 +36,7 @@
       IF(N.LE.0) RETURN
       IF(INCX.LT.0) J=1-(N-1)*INCX
       DO 100 I=1,N
-         IF(X(J).NE.TARGET) GO TO 200
+         IF(X(J).NE.TARGET) EXIT
          J=J+INCX
   100 CONTINUE
   200 ISRCHNE=I

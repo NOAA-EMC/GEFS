@@ -44,7 +44,6 @@ elif [[ "$WHERE_AM_I" == hera ]]; then
     module load netcdf/4.7.0
     module load nco/4.7.0
     module load hdf5/1.10.5
-    module load intelpython/3.6.8
 
     module use -a /scratch2/NCEPDEV/nwprod/NCEPLIBS/modulefiles
     module load prod_util/1.1.0
@@ -52,6 +51,9 @@ elif [[ "$WHERE_AM_I" == hera ]]; then
     module load grib_util/1.1.1
 
     module load gempak/7.4.2
+
+    module use -a /contrib/anaconda/modulefiles
+    module load anaconda/latest
 
     export PATH=$PATH:.
 
