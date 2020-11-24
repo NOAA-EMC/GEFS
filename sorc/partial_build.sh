@@ -2,7 +2,7 @@
 # define the array of the name of build program
 #
  declare -a Build_prg=("Build_gefs_anom2_fcst" "Build_gefs_nstgen"  \
-                       "Build_global_ensadd" "Build_gefs_ensstat" \
+                       "Build_global_ensadd" "Build_gefs_ensstat" "Build_global_enspqpf" \
                        "Build_global_ensppf" "Build_wave_stat" "Build_gefs_nemsio2nc")
 
 #
