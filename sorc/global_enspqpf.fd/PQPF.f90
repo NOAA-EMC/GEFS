@@ -146,9 +146,6 @@ idisc=-1;  ipdtn=-1;   igdtn=-1
 call init_parm(ipdtn,ipdt,igdtn,igdt,idisc,iids)
 call getgb2(11,0,jskp,jdisc,jids,jpdtn,jpdt,jgdtn,jgdt,unpack,jskp,gfldo,iret)
 
-if(iret.ne.0) then; print*,' getgbeh, cannot get maxgrd ';endif
-if(iret.ne.0) goto 1020
-
 if(iret.eq.0) then
 
   ijd=gfldo%ngrdpts
@@ -178,216 +175,218 @@ if(iret.eq.0) then
      print *, ' length of time range is not 6 hours, stop'; print *, ' '
   endif
 
-endif
+  call gf_free(gfldo)
 
-call gf_free(gfldo)
+  allocate(ff(ijd,mem),pp(ijd,mem),ss(ijd,mem),aa(ijd))
 
-allocate(ff(ijd,mem),pp(ijd,mem),ss(ijd,mem),aa(ijd))
+  ncnt=0
 
-ncnt=0
+  do n = 1, len         !### 16 (days) * 4 = 64 (6-hr)
+    do l = 1, 5          !### 5 categorical
 
-do n = 1, len         !### 16 (days) * 4 = 64 (6-hr)        
-  do l = 1, 5          !### 5 categorical
+    ! Part I: get ctl + 10  ensemble members precipitation data
 
-! Part I: get ctl + 10  ensemble members precipitation data
+      icnt=0
+      pp=0.0
+      imems=1
+      imem=mem
+      do m = imems, imem
 
-    icnt=0
-    pp=0.0
-    imems=1
-    imem=mem
-    do m = imems, imem
+        iids=-9999;ipdt=-9999; igdt=-9999
+        idisc=-1;  ipdtn=-1;   igdtn=-1
 
-      iids=-9999;ipdt=-9999; igdt=-9999
-      idisc=-1;  ipdtn=-1;   igdtn=-1
-  
-      ! read and process input ensemble member
+        ! read and process input ensemble member
 
-      ipdt(17)=m-1           ! perturbation number                 
+        ipdt(17)=m-1           ! perturbation number
 
-      ! read in control member                  
+        ! read in control member
 
-      if(m.eq.1) then
-        ipdt(16)=1           ! type of ensemble forecast          
-        ipdt(17)=0           ! perturbation number               
-      endif
-
-!     ipdt(8)=1            ! time unit: 1 hour  - kpds(13) in grib1
-
-      ! gfldo%ipdtmpl(9): forecast time in units
-
-      ipdt(9)=int((n-1)*6) ! forecast P2       - kpds(15) in grib1
-
-      ! gfldo%ipdtmpl(29): indicator of unit of time ranga for process
-      ! 11: 6 hours; 1: hour; 10: 3 hour; 12: 12 hours
-
-      ipdt(29)=1           ! time unit: 1 for 1 hour
-
-      ! check gfldo%ipdtmpl(30) for PDT number 4.11
-      ! length of the time range in units defined by the previous octet
-
-      ipdt(30)=6          ! length of the time range is 6 hours
-
-      ipdtn=11; igdtn=-1
-
-      call init_parm(ipdtn,ipdt,igdtn,igdt,idisc,iids)
-      call getgb2(10+l,0,jskp,jdisc,jids,jpdtn,jpdt,jgdtn,jgdt,unpack,jskp,gfldo,iret)
-
-      if(iret.ne.0) print *, 'there is no varibale for member ',m
-
-      if(iret.eq.0) then
-        icnt=icnt + 1
-        print *, '----- Input Data for Current Time ------'
-        call printinfr(gfldo,m)
-    
-        do ii=1,ijd   
-         if (l.eq.1) then
-           ff(ii,icnt)=gfldo%fld(ii)
-         else
-           pp(ii,icnt)=gfldo%fld(ii)
-         endif
-        enddo
-      else
-        ncnt=ncnt+1
-        if(ncnt.le.1) then
-          print *,' n=',n,' iret=',iret
+        if(m.eq.1) then
+          ipdt(16)=1           ! type of ensemble forecast
+          ipdt(17)=0           ! perturbation number
         endif
-      endif  ! end of iret.eq.0
 
-      if (m.ne.imem) call gf_free(gfldo)
+  !     ipdt(8)=1            ! time unit: 1 hour  - kpds(13) in grib1
 
-    enddo   !### for m = imems, imem
-!
-!  
-!   PART II: to calculate the probability scores
-!            icnt is a real read in members of ensemble
-!            l=1, for tatol precipitation
-!            l>1, for all categorical precipitation
-!  
+        ! gfldo%ipdtmpl(9): forecast time in units
 
-!   change grib2 pdt message for new ensemble products
+        ipdt(9)=int((n-1)*6) ! forecast P2       - kpds(15) in grib1
 
-    gfldo%idsect(2)=2  ! Identification of originating/generating subcenter
-                       ! 2: NCEP Ensemble Products
+        ! gfldo%ipdtmpl(29): indicator of unit of time ranga for process
+        ! 11: 6 hours; 1: hour; 10: 3 hour; 12: 12 hours
 
-    gfldo%idsect(13)=5 ! Type of processed data in this GRIB message       
-                       ! 5: Control and Perturbed Forecast Products
+        ipdt(29)=1           ! time unit: 1 for 1 hour
 
-    temp=-9999
+        ! check gfldo%ipdtmpl(30) for PDT number 4.11
+        ! length of the time range in units defined by the previous octet
 
-!   print *, 'gfldo%ipdtlen=',gfldo%ipdtlen
+        ipdt(30)=6          ! length of the time range is 6 hours
 
-    temp(1:gfldo%ipdtlen)=gfldo%ipdtmpl(1:gfldo%ipdtlen)
+        ipdtn=11; igdtn=-1
 
-    temp(3)=5               ! Type of generating process 
-                            ! 5: Probability Forecast
+        call init_parm(ipdtn,ipdt,igdtn,igdt,idisc,iids)
+        call getgb2(10+l,0,jskp,jdisc,jids,jpdtn,jpdt,jgdtn,jgdt,unpack,jskp,gfldo,iret)
 
-    deallocate (gfldo%ipdtmpl) 
+        if(iret.ne.0) print *, 'there is no varibale for member ',m
 
-    gfldo%ipdtnum=9         ! Probability forecasts from ensemble 
-    if(gfldo%ipdtnum.eq.9) gfldo%ipdtlen=36
-    if(gfldo%ipdtnum.eq.9) allocate (gfldo%ipdtmpl(gfldo%ipdtlen))
+        if(iret.eq.0) then
+          icnt=icnt + 1
+          print *, '----- Input Data for Current Time ------'
+          call printinfr(gfldo,m)
 
-    gfldo%ipdtmpl(1:15)=temp(1:15)
-
-    gfldo%ipdtmpl(1)=1      ! Parameter category : 1 Moisture
-    gfldo%ipdtmpl(2)=8      ! Parameter number : 8 Total Precipitation(APCP)
-
-    gfldo%ipdtmpl(16)=0     !?Forecast probability number 
-    gfldo%ipdtmpl(17)=mem   ! Total number of forecast probabilities
-    gfldo%ipdtmpl(18)=1     ! Probability Type
-                              ! 1: Probability of event above upper limit
-
-    gfldo%ipdtmpl(19)=0     ! Scale factor of lower limit
-    gfldo%ipdtmpl(20)=0     ! Scaled value of lower limit
-    gfldo%ipdtmpl(21)=3     ! Scale factor of upper limit
-
-    ! gfldo%ipdtmpl(22) will be set below
-
-    gfldo%ipdtmpl(23:36)=temp(19:32)
-
-!   start to calculate the probability scores
-
-    do k = 1, 10
-      aa=0.0
-      if(l.eq.1) then
-        do ii = 1, ijd   
-          do mm = 1, icnt
-            bb=ff(ii,mm)
-            if (bb.ge.rk(k,l)) then
-              aa(ii) = aa(ii) + 1.0
-            endif
+          do ii=1,ijd
+           if (l.eq.1) then
+             ff(ii,icnt)=gfldo%fld(ii)
+           else
+             pp(ii,icnt)=gfldo%fld(ii)
+           endif
           enddo
-        enddo
-        do ii = 1, ijd  
-          aa(ii) = aa(ii)*100.0/float(icnt)
-          if (aa(ii).ge.99.0) then
-            aa(ii) = 100.0
+        else
+          ncnt=ncnt+1
+          if(ncnt.le.1) then
+            print *,' n=',n,' iret=',iret
           endif
-        enddo
-      else
-        do ii = 1, ijd   
-          do mm = 1, icnt
-            bb=ff(ii,mm)
-            cc=pp(ii,mm)
-            if (cc.eq.1.0) then
+        endif  ! end of iret.eq.0
+
+        if (m.ne.imem) call gf_free(gfldo)
+
+      enddo   !### for m = imems, imem
+      !
+      !
+      !   PART II: to calculate the probability scores
+      !            icnt is a real read in members of ensemble
+      !            l=1, for tatol precipitation
+      !            l>1, for all categorical precipitation
+      !
+
+      !   change grib2 pdt message for new ensemble products
+
+      gfldo%idsect(2)=2  ! Identification of originating/generating subcenter
+                         ! 2: NCEP Ensemble Products
+
+      gfldo%idsect(13)=5 ! Type of processed data in this GRIB message
+                         ! 5: Control and Perturbed Forecast Products
+
+      temp=-9999
+
+      !   print *, 'gfldo%ipdtlen=',gfldo%ipdtlen
+
+      temp(1:gfldo%ipdtlen)=gfldo%ipdtmpl(1:gfldo%ipdtlen)
+
+      temp(3)=5               ! Type of generating process
+                              ! 5: Probability Forecast
+
+      deallocate (gfldo%ipdtmpl)
+
+      gfldo%ipdtnum=9         ! Probability forecasts from ensemble
+      if(gfldo%ipdtnum.eq.9) gfldo%ipdtlen=36
+      if(gfldo%ipdtnum.eq.9) allocate (gfldo%ipdtmpl(gfldo%ipdtlen))
+
+      gfldo%ipdtmpl(1:15)=temp(1:15)
+
+      gfldo%ipdtmpl(1)=1      ! Parameter category : 1 Moisture
+      gfldo%ipdtmpl(2)=8      ! Parameter number : 8 Total Precipitation(APCP)
+
+      gfldo%ipdtmpl(16)=0     !?Forecast probability number
+      gfldo%ipdtmpl(17)=mem   ! Total number of forecast probabilities
+      gfldo%ipdtmpl(18)=1     ! Probability Type
+                                ! 1: Probability of event above upper limit
+
+      gfldo%ipdtmpl(19)=0     ! Scale factor of lower limit
+      gfldo%ipdtmpl(20)=0     ! Scaled value of lower limit
+      gfldo%ipdtmpl(21)=3     ! Scale factor of upper limit
+
+      ! gfldo%ipdtmpl(22) will be set below
+
+      gfldo%ipdtmpl(23:36)=temp(19:32)
+
+      !   start to calculate the probability scores
+
+      do k = 1, 10
+        aa=0.0
+        if(l.eq.1) then
+          do ii = 1, ijd
+            do mm = 1, icnt
+              bb=ff(ii,mm)
               if (bb.ge.rk(k,l)) then
                 aa(ii) = aa(ii) + 1.0
               endif
+            enddo
+          enddo
+          do ii = 1, ijd
+            aa(ii) = aa(ii)*100.0/float(icnt)
+            if (aa(ii).ge.99.0) then
+              aa(ii) = 100.0
             endif
           enddo
-        enddo
-        do ii = 1, ijd  
-          aa(ii) = aa(ii)*100.0/float(icnt)
-          if (aa(ii).ge.99.0) then
-            aa(ii) = 100.0
-          endif
-        enddo
-      endif
+        else
+          do ii = 1, ijd
+            do mm = 1, icnt
+              bb=ff(ii,mm)
+              cc=pp(ii,mm)
+              if (cc.eq.1.0) then
+                if (bb.ge.rk(k,l)) then
+                  aa(ii) = aa(ii) + 1.0
+                endif
+              endif
+            enddo
+          enddo
+          do ii = 1, ijd
+            aa(ii) = aa(ii)*100.0/float(icnt)
+            if (aa(ii).ge.99.0) then
+              aa(ii) = 100.0
+            endif
+          enddo
+        endif
 
-!   
-!     testing print
-!  
-!     1250-1259 (70N, 115W-95W)
-!      if (n.eq.1.and.k.eq.2) then 
-!        write(*,999) l,n,(aa(ii),ii=1250,1259)
-!      endif
-!999   format (2i3,10f8.1)
+        !
+        !     testing print
+        !
+        !     1250-1259 (70N, 115W-95W)
+        !      if (n.eq.1.and.k.eq.2) then
+        !        write(*,999) l,n,(aa(ii),ii=1250,1259)
+        !      endif
+        !999   format (2i3,10f8.1)
 
-      print *, '----- Output for Current Time ------'
+        print *, '----- Output for Current Time ------'
 
-      ! gfldo%ipdtmpl(22): Scaled value of upper limit
+        ! gfldo%ipdtmpl(22): Scaled value of upper limit
 
-      gfldo%ipdtmpl(22)=rk(k,l)*(10**gfldo%ipdtmpl(21))
+        gfldo%ipdtmpl(22)=rk(k,l)*(10**gfldo%ipdtmpl(21))
 
-      gfldo%fld(1:ijd)=aa(1:ijd)
+        gfldo%fld(1:ijd)=aa(1:ijd)
 
-!     print *, 'gfldo%ipdtlen=',gfldo%ipdtlen
-!     print *, 'gfldo%ipdtmpl=',gfldo%ipdtmpl
+        !     print *, 'gfldo%ipdtlen=',gfldo%ipdtlen
+        !     print *, 'gfldo%ipdtmpl=',gfldo%ipdtmpl
 
-      call printinfr(gfldo,l)
-      call putgb2(50+l,gfldo,iret)
+        call printinfr(gfldo,l)
+        call putgb2(50+l,gfldo,iret)
 
-    enddo    !### for k = 1, 10
+      enddo    !### for k = 1, 10
 
-    call gf_free(gfldo)
+      call gf_free(gfldo)
 
-  enddo    !### for l=1,5
-enddo     !### for n = 1, len
+    enddo    !### for l=1,5
+  enddo     !### for n = 1, len
 
-call baclose(11,iretb)
-call baclose(51,irete)
-call baclose(12,iretb)
-call baclose(52,irete)
-call baclose(13,iretb)
-call baclose(53,irete)
-call baclose(14,iretb)
-call baclose(54,irete)
-call baclose(15,iretb)
-call baclose(55,irete)
+  call baclose(11,iretb)
+  call baclose(51,irete)
+  call baclose(12,iretb)
+  call baclose(52,irete)
+  call baclose(13,iretb)
+  call baclose(53,irete)
+  call baclose(14,iretb)
+  call baclose(54,irete)
+  call baclose(15,iretb)
+  call baclose(55,irete)
 
-CALL W3TAGE('PQPF')
+  CALL W3TAGE('PQPF')
 
-stop    
+  stop
+
+else
+  print*,' getgbeh, cannot get maxgrd '
+end if
 
 1020 Continue
 
