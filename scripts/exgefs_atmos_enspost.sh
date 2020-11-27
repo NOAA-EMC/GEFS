@@ -428,6 +428,14 @@ if [ "$SENDCOM" = "YES" ]; then
 	done # for file in $postvarlist
 fi # [ "$SENDCOM" = "YES" ]
 
+#
+# create pqpf 24h and probabilistic precip forecast files
+## write out with ensemble extended messages
+#
+
+## part (1a): calculate PQPF (named ensppf ) for each 24 hours period,
+#
+
 if [[ "$cycle" == "t00z" ]] && [[ -z $ext_h ]]; then
 	$ENSPPF $COMOUT/$COMPONENT/ensstat/enspost_grb2${ext_h}.$cycle.prcp ensppf${ext_h}.$PDY$cyc.grib2 $npert
 	$WGRIB2 ensppf${ext_h}.$PDY$cyc.grib2 -s >ensppf${ext_h}.$PDY$cyc.grib2.idx 
@@ -460,7 +468,24 @@ if [[ "$cycle" == "t00z" ]] && [[ -z $ext_h ]]; then
 fi # test "$cycle" = "t00z"
 
 # part (1b): probabilistic forecasts ( PQPF, PQRF, PQFF, PQSF and PQIF )
+if [[ -z $ext_h ]]; then
+
 export CDATE=$PDY$cyc; 
+$ENSPQPF
+
+for file in pqpf pqrf pqff pqsf pqif; do
+    $CNVGRIB -g21 $DATA/$file $DATA/$file\_grb1
+    $WGRIB2 $DATA/$file -s >$DATA/$file\.idx
+    $GRBINDEX $DATA/$file\_grb1 $DATA/${file}i_grb1
+     if [ $SENDCOM = "YES" ];        then
+             mv $DATA/${file} $COMOUT/$COMPONENT/ensstat/ensstat_grb2${ext_h}.$cycle.$file
+             mv $DATA/${file}.idx $COMOUT/$COMPONENT/ensstat/ensstat_grb2${ext_h}.$cycle.${file}.idx
+             mv $DATA/${file}_grb1 $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.$file
+             mv $DATA/${file}i_grb1 $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.${file}i
+     fi # [ $SENDCOM = "YES" ]
+done # for file in pqpf pqrf pqff pqsf pqif
+
+fi
 
 ############################################################################
 ###########  ADD DBN ALERTS FOR PPF AND PQPF FILES IF NEEDED  ##############

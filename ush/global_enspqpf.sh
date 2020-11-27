@@ -40,12 +40,13 @@ cat <<- EOF >inputpqpf
 		cfrzr='$CFRZR',cfrzro='$CFRZRO'
 		cicep='$CICEP',cicepo='$CICEPO'
 		csnow='$CSNOW',csnowo='$CSNOWO'
+		npert=$npert
 	/
 	EOF
 
 cat inputpqpf
 
-rm $CPGO $CRAINO $CFRZRO $CICEPO $CSNOWO
+#rm $CPGO $CRAINO $CFRZRO $CICEPO $CSNOWO
 
 export pgm=$enspqpf
 source prep_step

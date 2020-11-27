@@ -4,7 +4,7 @@ set -eu #x
 sWS=$(pwd)
 echo $sWS
 
-while getopts c:a:r:m:f:b:e:s:l:o: option
+while getopts c:a:r:m:f:b:e:s:l:o:d: option
 do
     case "${option}"
     in
@@ -18,6 +18,7 @@ do
         s) Structure=${OPTARG};;
         l) Link=${OPTARG};;
         o) Operation=${OPTARG};;
+        d) Dev_gefs=${OPTARG};;
     esac
 done
 
@@ -32,6 +33,7 @@ RunEnvir=${RunEnvir:-emc}
 Structure=${Structure:-no} # dev (use HOMEDIR to link), prod (clone global-workflow from vlab), no (use the original structure)
 Link=${Link:-no}
 Operation=${Operation:-no} # ecflow, rocoto, lsf
+Dev_gefs=${Dev_gefs:-no}
 
 if [ $machine = "nomachine" ]; then
     if [ -d /scratch1/NCEPDEV ]; then
@@ -56,6 +58,11 @@ echo $userConfigFile
 echo $RunEnvir
 echo ${Structure}
 echo ${Link}
+
+if [ $Dev_gefs == "yes" ]; then
+    cd $sWS/dev
+    ./link_cleanup.sh
+fi
 
 if [ $CompileCode = "yes" ]; then
     Link=yes
@@ -95,6 +102,9 @@ if [ $CompileCode = "yes" ]; then
     ## Build the code and install
     ./build_all.sh
 
+    if [ -L build_all_dev.sh ]; then
+        ./build_all_dev.sh
+    fi
 fi
 
 
@@ -136,22 +146,7 @@ if [ $CleanAll = "yes" ]; then
         fi
     done
 
-    for dir in global_enscvprcp.fd  global_enspvrfy.fd  global_enssrbias.fd global_enscqpf.fd  global_enscvt24h.fd  global_ensrfmat.fd ; do
-        if [ -f $dir ]; then
-            cd $dir
-            make clean
-            cd ..
-        fi
-    done
-
-    for dir in ../util/sorc/overenstr.grib.fd; do
-        if [ -f $dir ]; then
-            cd $dir
-            make clean
-            cd ../../../sorc
-        fi
-    done
-    for dir in gefs_anom2_fcst.fd gefs_nstgen.fd ; do
+    for dir in gefs_anom2_fcst.fd gefs_nstgen.fd wave_stat.fd; do
         if [ -f $dir ]; then
             cd $dir
             make clean
@@ -182,6 +177,11 @@ if [ $CleanAll = "yes" ]; then
     rm -f ../scripts/exwave_*
     rm -f ../scripts/exglobal_fcst_nemsfv3gfs.sh
     rm -rf ../env
+    
+    cd ${sWS}/../gefs_dev
+    ./link_cleanup.sh -a yes
+
+    cd ${sWS}
 
 fi # for CleanAll
 
@@ -192,7 +192,8 @@ if [ $RunRocoto = "yes" ]; then
         module load intel/18.0.5.274
         module load rocoto/1.3.1
         module load contrib
-        module load intelpython/3.6.8
+        module use -a /contrib/anaconda/modulefiles
+        module load anaconda/latest
  
     elif [ $machine = "cray" ]; then
         . /opt/modules/3.2.10.3/init/sh

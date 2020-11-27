@@ -199,10 +199,7 @@ def config_tasknames(dicBase):
 
         # #    <!-- other jobs -->
         if dicBase['RUN_OTHERS'].upper()[0] == "Y":
-            # ---cqpf
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "cqpf"
+            print("Currently, RUN_OTHERS is not used!")
 
         # #    <!-- RUN_KEEPDATA -->
         if dicBase['RUN_KEEPDATA'].upper()[0] == "Y":
@@ -287,10 +284,8 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
     # --------------------------
 
     cycledef = "gefs"
-    if taskname in ["forecast_lr", "post_lr", "prdgen_lr", "ensstat_lr", "enspost_lr", "cqpf"]:
+    if taskname in ["forecast_lr", "post_lr", "prdgen_lr", "ensstat_lr", "enspost_lr"]:
         cycledef = "gefs_00z"
-    elif taskname == "avg_gempak_vgf":
-        cycledef = "gefs_00z,gefs_12z"
 
     maxtries = 1
 
@@ -1094,19 +1089,6 @@ def get_param_of_task(dicBase, taskname):
                 else:
                     sDep = ''
 
-            # For "cqpf" task
-            if taskname.lower() == "cqpf":
-                sDep = '<and>'
-                if DoesTaskExist(dicBase, "enspost_hr"):
-                    sDep += '<taskdep task="enspost_hr"/>'
-                if DoesTaskExist(dicBase, "enspost_lr"):
-                    sDep += '<taskdep task="enspost_lr"/>'
-
-                if sDep == '<and>':
-                    sDep = ""
-                else:
-                    sDep += '\n</and>'
-
             # For 'keep_data_atm' and 'archive_atm' tasks
             if taskname_org.lower() in ["keep_data_atm", "archive_atm"]:
                 sDep = '<and>'
@@ -1120,7 +1102,7 @@ def get_param_of_task(dicBase, taskname):
 
                 # For 00z
                 sDep_2 = ""
-                for s in ["prdgen_lr", "ensstat_lr", "enspost_lr", "cqpf", "avg_gempak_vgf"]:
+                for s in ["prdgen_lr", "ensstat_lr", "enspost_lr"]:
                     if DoesTaskExist(dicBase, s):
                         if s in get_metatask_names():
                             sDep_2 += '\n\t\t\t<metataskdep metatask="{0}"/>'.format(s)
@@ -1203,6 +1185,10 @@ def get_param_of_task(dicBase, taskname):
                     sDep += '\n\t<taskdep task="keep_data_atm"/>'
                 if DoesTaskExist(dicBase, "archive_atm"):
                     sDep += '\n\t<taskdep task="archive_atm"/>'
+                if DoesTaskExist(dicBase, "cleanup_wave"):
+                    sDep += '\n\t<taskdep task="cleanup_wave"/>'
+                if DoesTaskExist(dicBase, "cleanup_chem"):
+                    sDep += '\n\t<taskdep task="cleanup_chem"/>'
                 if sDep == '<and>':
                     sDep = ""
                 else:
@@ -1268,13 +1254,6 @@ def get_param_of_task(dicBase, taskname):
                     sDep = ""
                 else:
                     sDep += '\n</and>'
-
-            # For avg_gempak_vgf
-            if taskname.lower() == "avg_gempak_vgf":
-                if DoesTaskExist(dicBase, "gempak"):
-                    sDep = '<taskdep task="gempak"/>'
-                else:
-                    sDep = ''
 
             # For gempak_meta
             if taskname.lower() == "gempak_meta":
