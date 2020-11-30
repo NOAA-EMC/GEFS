@@ -184,7 +184,7 @@ if(iret.eq.0) then
   do n = 1, len         !### 16 (days) * 4 = 64 (6-hr)
     do l = 1, 5          !### 5 categorical
 
-    ! Part I: get ctl + 10  ensemble members precipitation data
+    ! Part I: get ctl + npert  ensemble members precipitation data
 
       icnt=0
       pp=0.0

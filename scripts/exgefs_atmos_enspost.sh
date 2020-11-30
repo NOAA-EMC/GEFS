@@ -173,7 +173,7 @@ while [[ $fh -le $FHOUR ]]; do
 			previncr=no
 			for mem in $memberlist; do
 				(( nmem = nmem + 1 ))
-				testfile=$COMIN/$COMPONENT/pgrb2$lr/ge${mem}.${cycle}.pgrb2$FXT\f$fh$EXT.idx
+				testfile=$COMIN/$COMPONENT/pgrb2$lr/ge${mem}.${cycle}.pgrb2${FXT}f$fh$EXT.idx
 				if [ -f $testfile ]; then
 					echo testfile=$testfile found
 					(( nfiles = nfiles + 1 ))
@@ -470,20 +470,20 @@ fi # test "$cycle" = "t00z"
 # part (1b): probabilistic forecasts ( PQPF, PQRF, PQFF, PQSF and PQIF )
 if [[ -z $ext_h ]]; then
 
-export CDATE=$PDY$cyc; 
-$ENSPQPF
+	export CDATE=$PDY$cyc; 
+	$ENSPQPF
 
-for file in pqpf pqrf pqff pqsf pqif; do
-    $CNVGRIB -g21 $DATA/$file $DATA/$file\_grb1
-    $WGRIB2 $DATA/$file -s >$DATA/$file\.idx
-    $GRBINDEX $DATA/$file\_grb1 $DATA/${file}i_grb1
-     if [ $SENDCOM = "YES" ];        then
-             mv $DATA/${file} $COMOUT/$COMPONENT/ensstat/ensstat_grb2${ext_h}.$cycle.$file
-             mv $DATA/${file}.idx $COMOUT/$COMPONENT/ensstat/ensstat_grb2${ext_h}.$cycle.${file}.idx
-             mv $DATA/${file}_grb1 $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.$file
-             mv $DATA/${file}i_grb1 $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.${file}i
-     fi # [ $SENDCOM = "YES" ]
-done # for file in pqpf pqrf pqff pqsf pqif
+	for file in pqpf pqrf pqff pqsf pqif; do
+		$CNVGRIB -g21 $DATA/$file $DATA/${file}_grb1
+		$WGRIB2 $DATA/$file -s >$DATA/${file}.idx
+		$GRBINDEX $DATA/${file}_grb1 $DATA/${file}i_grb1
+		if [ $SENDCOM = "YES" ];        then
+			mv $DATA/${file} $COMOUT/$COMPONENT/ensstat/ensstat_grb2${ext_h}.$cycle.$file
+			mv $DATA/${file}.idx $COMOUT/$COMPONENT/ensstat/ensstat_grb2${ext_h}.$cycle.${file}.idx
+			mv $DATA/${file}_grb1 $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.$file
+			mv $DATA/${file}i_grb1 $COMOUT/$COMPONENT/ensstat/ensstat${ext_h}.$cycle.${file}i
+		fi # [ $SENDCOM = "YES" ]
+	done # for file in pqpf pqrf pqff pqsf pqif
 
 fi
 
