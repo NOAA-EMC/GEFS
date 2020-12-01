@@ -77,6 +77,14 @@ echo " .... Building gefs_nemsio2nc - 07 .... "
 }
 
 #------------------------------------
+# build global_enspqpf
+#------------------------------------
+$Build_global_enspqpf && {
+echo " .... Building global_enspqpf - 08 .... "
+./build_global_enspqpf.sh > $logs_dir/build_global_enspqpf.log 2>&1
+}
+
+#------------------------------------
 # build global-workflow
 #------------------------------------
 if [[ -d global-workflow.fd ]] ; then
