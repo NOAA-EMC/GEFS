@@ -1,4 +1,4 @@
-# 4.7.1
+# 4.17.0
 suite prod18
   repeat day 1
   edit ECF_TRIES '1'
@@ -11,11 +11,13 @@ suite prod18
   edit MACHINE_SITE 'production'
   
   family gefs_legacy
-    edit PROJ 'GEN-OPS'
-    edit QUEUESERV 'prod_serv2'
+    edit ECF_FILES '/ecf/ecfnets/scripts/gefs_legacy'
+    edit PROJ 'GEN'
+    edit COM '/gpfs/dell1/nco/ops/com'
+    edit FILESYSTEM 'dell2'
+    edit QUEUESERV 'prod_transfer'
     edit CYC_FCST '18'
     family init
-      edit ECF_FILES '/ecf/ecfnets/scripts/gefs_legacy/init'
       task jgefs_init_separate
         trigger /prod18/gfs/post/jgfs_post_f000 eq complete
         time 01:10
@@ -140,7 +142,7 @@ suite prod18
         task jgefs_p20_prdgen_high
           trigger /prod18/gefs_legacy/gefs/post_high/jgefs_p20_post_high eq active or /prod18/gefs_legacy/gefs/post_high/jgefs_p20_post_high eq complete
       endfamily
-      task jgefs_post_track_18
+      task jgefs_post_track
         trigger /prod18/gefs_legacy/gefs/prdgen_high eq complete
     endfamily
     family gefs_cf00
@@ -329,6 +331,7 @@ suite prod18
     endfamily
     family gefs_cf12
       edit CYC_FCST '12'
+      edit ECF_FILES '/ecf/ecfnets/scripts/gefs_legacy/gefs_cf'
       task jgefs_forecast_cf
         trigger /prod18/gefs_legacy/init eq complete and /prod18/gefs_legacy/gefs_cf06/jgefs_forecast_cf eq complete
       family post

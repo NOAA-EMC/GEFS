@@ -1,4 +1,4 @@
-# 4.7.1
+# 4.17.0
 extern /prod00/gfs/post/jgfs_post_f192
 extern /prod06/gfs/post/jgfs_post_f192
 extern /prod12/gfs/post/jgfs_post_f192
@@ -18,9 +18,10 @@ suite prod
     limit check_jobs 10
     family wcoss_1
       edit ECF_SCRIPT_CMD '/ecf/ecfnets/scripts/transfer/wcoss.ecf.sh %ECF_NAME% %MACHINE_PHASE:%'
-       
       family gefs_legacy
-        edit MACHINE_PHASE 'p1'
+        edit MACHINE_PHASE 'p3'
+        edit FILESYSTEM 'dell2'
+        edit PACKAGE 'gefs_legacy'
         task 00z
           label l ""
           meter P 0 100 100
@@ -51,18 +52,27 @@ suite prod
       edit REMOTEPATH '/scratch1/NCEPDEV/rstprod'
     
       family gefs
-        edit MACHINE_PHASE 'p3'
+        edit MACHINE_PHASE 'p35'
         edit PACKAGE 'gefs'
-        task gefs_1
+        task gefs_atmos
           label l ""
           cron 01:53 23:53 01:00
-        task gefs_2
+        task gefs_wave
           label l ""
           cron 01:56 23:56 01:00
-        task gefs_3
+        task gefs_chem_1
           label l ""
           cron 01:25 23:25 01:00
-        task gefs_4
+        task gefs_chem_2
+          label l ""
+          cron 01:29 23:29 01:00
+        task gefs_chem_3
+          label l ""
+          cron 01:25 23:25 01:00
+        task gefs_chem_4
+          label l ""
+          cron 01:29 23:29 01:00
+        task gefs_chem_5
           label l ""
           cron 01:29 23:29 01:00
       endfamily

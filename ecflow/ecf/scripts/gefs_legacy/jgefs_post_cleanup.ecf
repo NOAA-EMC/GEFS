@@ -1,5 +1,5 @@
 #BSUB -J %E%gefs_legacy_post_cleanup_%CYC%
-#BSUB -o /com/output/%ENVIR%/today/gefs_legacy_post_cleanup_%CYC%.o%J
+#BSUB -o %COM%/output/%ENVIR%/today/gefs_legacy_post_cleanup_%CYC%.o%J
 #BSUB -cwd /tmp
 #BSUB -q %QUEUESERV%
 #BSUB -W  01:30
@@ -29,7 +29,6 @@ export total_tasks=40
 
 export cyc=%CYC%
 export cyc_fcst=%CYC_FCST%
-export job=gefs_legacy_post_cleanup_${cyc}
 
 
 # CALL executable job script here

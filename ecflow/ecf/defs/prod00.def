@@ -1,4 +1,4 @@
-# 4.7.1
+# 4.17.0
 suite prod00
   repeat day 1
   edit ECF_TRIES '1'
@@ -11,11 +11,13 @@ suite prod00
   edit MACHINE_SITE 'production'
   
   family gefs_legacy
-    edit PROJ 'GEN-OPS'
-    edit QUEUESERV 'prod_serv2'
+    edit ECF_FILES '/ecf/ecfnets/scripts/gefs_legacy'
+    edit PROJ 'GEN'
+    edit COM '/gpfs/dell1/nco/ops/com'
+    edit FILESYSTEM 'dell2'
+    edit QUEUESERV 'prod_transfer'
     edit CYC_FCST '00'
     family init
-      edit ECF_FILES '/ecf/ecfnets/scripts/gefs_legacy/init'
       task jgefs_init_separate
         trigger /prod00/gfs/post/jgfs_post_f000 eq complete
         time 07:10
@@ -25,11 +27,10 @@ suite prod00
         trigger /prod00/gefs_legacy/init/jgefs_init_et eq complete
     endfamily
     family gefs
-      edit ECF_FILES '/ecf/ecfnets/scripts/gefs_legacy/gefs'
       task jgefs_restart_copy_high
         trigger /prod00/gefs_legacy/gefs/jgefs_forecast_high eq active or /prod00/gefs_legacy/gefs/jgefs_forecast_high eq complete
       task jgefs_forecast_high
-        trigger /prod00/gefs_legacy/init eq complete and /prod/gfs/post/jgfs_post_manager:release_post240
+        trigger /prod00/gefs_legacy/init eq complete and /prod00/gfs/post/jgfs_post_manager:release_post240
       family post_high
         task jgefs_c00_post_high
           trigger /prod00/gefs_legacy/gefs/jgefs_forecast_high eq active

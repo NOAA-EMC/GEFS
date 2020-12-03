@@ -1,5 +1,5 @@
 #BSUB -J %E%gefs_legacy_ensstat_high_%CYC%
-#BSUB -o /com/output/%ENVIR%/today/gefs_legacy_ensstat_high_%CYC%.o%J
+#BSUB -o %COM%/output/%ENVIR%/today/gefs_legacy_ensstat_high_%CYC%.o%J
 ##BSUB -q %QUEUE%ser
 #BSUB -q %QUEUE%_shared
 #BSUB -cwd /tmp
@@ -25,14 +25,12 @@ export USE_CFP=YES
 
 module load grib_util/$grib_util_ver
 module load util_shared/$util_shared_ver
-module load prod_util/$prod_util_ver
 
 module list
 
 # EXPORT list here
 export cyc=%CYC%
 export cyc_fcst=%CYC_FCST%
-export job=gefs_legacy_ensstat_high_${cyc}
 export FORECAST_SEGMENT=hr
 
 # CALL executable job script here

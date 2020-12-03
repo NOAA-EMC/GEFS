@@ -1,4 +1,4 @@
-# 4.7.1
+# 4.17.0
 suite prod06
   repeat day 1
   edit ECF_TRIES '1'
@@ -11,11 +11,13 @@ suite prod06
   edit MACHINE_SITE 'production'
 
   family gefs_legacy
-    edit PROJ 'GEN-OPS'
-    edit QUEUESERV 'prod_serv2'
+    edit PROJ 'GEN'
+    edit ECF_FILES '/ecf/ecfnets/scripts/gefs_legacy'
+    edit FILESYSTEM 'dell2'
+    edit QUEUESERV 'prod_transfer'
     edit CYC_FCST '06'
+    edit COM '/gpfs/dell1/nco/ops/com'
     family init
-      edit ECF_FILES '/ecf/ecfnets/scripts/gefs_legacy/init'
       task jgefs_init_separate
         trigger /prod06/gfs/post/jgfs_post_f000 eq complete
         time 13:10
@@ -25,7 +27,6 @@ suite prod06
         trigger /prod06/gefs_legacy/init/jgefs_init_separate eq complete and /prod06/gefs_legacy/init/jgefs_init_et eq complete
     endfamily
     family gefs
-      edit ECF_FILES '/ecf/ecfnets/scripts/gefs_legacy/gefs'
       task jgefs_forecast_high
         trigger /prod06/gefs_legacy/init eq complete and /prod06/gfs/post/jgfs_post_manager:release_post240
       task jgefs_restart_copy_high
@@ -145,277 +146,277 @@ suite prod06
     family gefs_cf12
       edit CYC_FCST '12'
       edit ECF_FILES '/ecf/ecfnets/scripts/gefs_legacy/gefs_cf'
-      task jgefs_forecast_cf12
+      task jgefs_forecast_cf
         trigger /prod06/gefs_legacy/init eq complete and /prod06/gefs_legacy/gefs/jgefs_forecast_high eq complete
       family post
-        task jgefs_p01_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p02_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p03_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p04_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p05_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p06_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p07_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p08_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p09_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p10_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p11_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p12_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p13_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p14_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p15_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p16_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p17_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p18_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p19_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p20_post_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
+        task jgefs_p01_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p02_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p03_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p04_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p05_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p06_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p07_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p08_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p09_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p10_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p11_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p12_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p13_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p14_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p15_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p16_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p17_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p18_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p19_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p20_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
       endfamily
       family prdgen
-        task jgefs_p01_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p02_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p03_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p04_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p05_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p06_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p07_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p08_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p09_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p10_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p11_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p12_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p13_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p14_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p15_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p16_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p17_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p18_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p19_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
-        task jgefs_p20_prdgen_cf12
-          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq active
+        task jgefs_p01_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p02_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p03_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p04_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p05_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p06_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p07_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p08_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p09_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p10_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p11_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p12_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p13_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p14_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p15_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p16_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p17_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p18_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p19_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
+        task jgefs_p20_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq active
       endfamily
-      task jgefs_post_track_cf12
+      task jgefs_post_track_cf
         trigger /prod06/gefs_legacy/gefs_cf12/prdgen eq complete
     endfamily
     family gefs_cf18
       edit CYC_FCST '18'
       edit ECF_FILES '/ecf/ecfnets/scripts/gefs_legacy/gefs_cf'
-      task jgefs_forecast_cf18
-        trigger /prod06/gefs_legacy/init eq complete and /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf12 eq complete
+      task jgefs_forecast_cf
+        trigger /prod06/gefs_legacy/init eq complete and /prod06/gefs_legacy/gefs_cf12/jgefs_forecast_cf eq complete
       family post
-        task jgefs_p01_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p02_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p03_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p04_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p05_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p06_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p07_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p08_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p09_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p10_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p11_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p12_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p13_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p14_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p15_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p16_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p17_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p18_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p19_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p20_post_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
+        task jgefs_p01_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p02_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p03_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p04_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p05_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p06_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p07_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p08_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p09_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p10_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p11_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p12_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p13_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p14_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p15_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p16_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p17_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p18_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p19_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p20_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
       endfamily
       family prdgen
-        task jgefs_p01_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p02_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p03_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p04_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p05_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p06_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p07_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p08_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p09_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p10_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p11_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p12_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p13_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p14_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p15_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p16_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p17_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p18_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p19_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
-        task jgefs_p20_prdgen_cf18
-          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq active
+        task jgefs_p01_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p02_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p03_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p04_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p05_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p06_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p07_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p08_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p09_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p10_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p11_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p12_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p13_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p14_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p15_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p16_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p17_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p18_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p19_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
+        task jgefs_p20_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq active
       endfamily
-      task jgefs_post_track_cf18
+      task jgefs_post_track_cf
         trigger /prod06/gefs_legacy/gefs_cf18/prdgen eq complete
     endfamily
     family gefs_cf00
       edit CYC_FCST '00'
       edit ECF_FILES '/ecf/ecfnets/scripts/gefs_legacy/gefs_cf'
-      task jgefs_forecast_cf00
-        trigger /prod06/gefs_legacy/init eq complete and /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf18 eq complete
+      task jgefs_forecast_cf
+        trigger /prod06/gefs_legacy/init eq complete and /prod06/gefs_legacy/gefs_cf18/jgefs_forecast_cf eq complete
       family post
-        task jgefs_p01_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p02_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p03_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p04_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p05_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p06_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p07_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p08_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p09_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p10_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p11_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p12_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p13_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p14_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p15_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p16_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p17_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p18_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p19_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p20_post_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
+        task jgefs_p01_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p02_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p03_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p04_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p05_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p06_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p07_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p08_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p09_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p10_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p11_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p12_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p13_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p14_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p15_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p16_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p17_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p18_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p19_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p20_post_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
       endfamily
       family prdgen
-        task jgefs_p01_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p02_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p03_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p04_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p05_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p06_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p07_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p08_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p09_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p10_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p11_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p12_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p13_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p14_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p15_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p16_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p17_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p18_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p19_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
-        task jgefs_p20_prdgen_cf00
-          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf00 eq active
+        task jgefs_p01_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p02_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p03_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p04_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p05_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p06_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p07_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p08_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p09_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p10_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p11_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p12_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p13_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p14_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p15_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p16_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p17_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p18_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p19_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
+        task jgefs_p20_prdgen_cf
+          trigger /prod06/gefs_legacy/gefs_cf00/jgefs_forecast_cf eq active
       endfamily
-      task jgefs_post_track_cf00
+      task jgefs_post_track_cf
         trigger /prod06/gefs_legacy/gefs_cf00/prdgen eq complete
     endfamily
     task jgefs_post_cleanup

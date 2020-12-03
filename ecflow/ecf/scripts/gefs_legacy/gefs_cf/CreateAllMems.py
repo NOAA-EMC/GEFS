@@ -11,6 +11,10 @@ def main():
         forEachTask(task)
 
 def forEachTask(task):
+    if task.endswith("_cf"):
+        task_folder = task.replace("_cf","")
+    else:
+        task_folder = task
     sFileName = "jgefs_{0}.ecf".format(task)
     if os.path.exists(sFileName):
         print(sFileName)
@@ -24,11 +28,11 @@ def forEachTask(task):
         #print(sLines)
         print(len(sLines))
 
-        if os.path.exists(task):
+        if os.path.exists(task_folder):
             import shutil
-            shutil.rmtree(task)
+            shutil.rmtree(task_folder)
     
-        os.makedirs(task)
+        os.makedirs(task_folder)
 
 
         for iMem in range(21):
@@ -37,7 +41,7 @@ def forEachTask(task):
             else:
                 sMem = "p{0:02d}".format(iMem)
     
-            sFileName_w = "{0}/jgefs_{1}_{0}.ecf".format(task, sMem)
+            sFileName_w = "{0}/jgefs_{2}_{1}.ecf".format(task_folder, task, sMem)
             fid = open(sFileName_w, "w")
             for j in range(len(sLines)):
                 sLine = sLines[j]

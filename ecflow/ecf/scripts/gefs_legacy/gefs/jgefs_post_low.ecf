@@ -1,5 +1,5 @@
 #BSUB -J %E%gefs_legacy_%MEM%_post_low_%CYC%
-#BSUB -o /com/output/%ENVIR%/today/gefs_legacy_%MEM%_post_low_%CYC%.o%J
+#BSUB -o %COM%/output/%ENVIR%/today/gefs_legacy_%MEM%_post_low_%CYC%.o%J
 #BSUB -cwd /tmp
 #BSUB -R span[ptile=8]
 #BSUB -n 8
@@ -9,7 +9,6 @@
 #BSUB -P %PROJ%-%PROJENVIR%
 #BSUB -R "rusage[mem=2000]"
 #BSUB -R affinity[core(1)]
-##BSUB -a poe
 
 %include <head.h>
 %include <envir-p3.h>
@@ -27,7 +26,6 @@ export USE_CFP=YES
 
 module load grib_util/$grib_util_ver
 module load util_shared/$util_shared_ver
-module load prod_util/$prod_util_ver
 
 module list
 
@@ -42,7 +40,6 @@ export total_tasks=8
 
 export cyc=%CYC%
 export cyc_fcst=%CYC_FCST%
-export job=gefs_legacy_%MEM%_post_low_${cyc}
 export RUN=ge%MEM%
 export FORECAST_SEGMENT=lr
 

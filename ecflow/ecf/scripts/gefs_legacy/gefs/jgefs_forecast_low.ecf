@@ -1,5 +1,5 @@
 #BSUB -J %E%gefs_legacy_forecast_low_%CYC%
-#BSUB -o /com/output/%ENVIR%/today/gefs_legacy_forecast_low_%CYC%.o%J
+#BSUB -o %COM%/output/%ENVIR%/today/gefs_legacy_forecast_low_%CYC%.o%J
 #BSUB -cwd /tmp
 ##BSUB -n 1008
 #BSUB -n 378
@@ -9,8 +9,6 @@
 #BSUB -W 01:00
 #BSUB -L /bin/sh
 #BSUB -P %PROJ%-%PROJENVIR%
-##BSUB -x    
-##BSUB -a poe
 
 %include <head.h>
 %include <envir-p3.h>
@@ -28,7 +26,6 @@ export USE_CFP=YES
 
 module load grib_util/$grib_util_ver
 module load util_shared/$util_shared_ver
-module load prod_util/$prod_util_ver
 
 module list
 
@@ -50,7 +47,6 @@ export MP_TASK_AFFINITY=core:1
 
 export cyc=%CYC%
 export cyc_fcst=%CYC_FCST%
-export job=gefs_legacy_forecast_low_${cyc}
 export FORECAST_SEGMENT=lr
 
 # CALL executable job script here
