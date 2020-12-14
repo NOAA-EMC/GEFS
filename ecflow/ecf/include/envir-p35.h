@@ -1,4 +1,4 @@
-# envir-xc40.h
+# envir-p35.h
 export job=${job:-$LSB_JOBNAME} #Can't use $job in filenames!
 export jobid=${jobid:-$job.$LSB_JOBID}
 
@@ -6,33 +6,38 @@ export RUN_ENVIR=${RUN_ENVIR:-nco}
 export envir=%ENVIR%
 export SENDDBN=${SENDDBN:-%SENDDBN:YES%}
 export SENDDBN_NTC=${SENDDBN_NTC:-%SENDDBN_NTC:YES%}
+FILESYSTEMROOT=/gpfs/%FILESYSTEM:dell4%
 
-module load prod_envir prod_util
+module load ips/%ips_ver:18.0.1.163%
+module load prod_envir/%prod_envir_ver% prod_util/%prod_util_ver% EnvVars/%EnvVars_ver%
+
+if [ -n "%PARATEST:%" ]; then export PARATEST=${PARATEST:-%PARATEST:%}; fi
 
 case $envir in
   prod)
-    export jlogfile=${jlogfile:-${COMROOT}/logs/jlogfiles/jlogfile.${jobid}}
-    export DATAROOT=${DATAROOT:-/gpfs/hps/nco/ops/tmpnwprd}
+    export DATAROOT=${DATAROOT:-${FILESYSTEMROOT}/nco/ops/tmpnwprd}
     if [ "$SENDDBN" == "YES" ]; then
-       export DBNROOT=/iodprod/dbnet_siphon  # previously set in .bash_profile
+       export DBNROOT=/iodprod_dell/dbnet_siphon
     else
        export DBNROOT=${UTILROOT}/fakedbn
     fi
     ;;
   eval)
     export envir=para
-    export jlogfile=${jlogfile:-${COMROOT}/logs/${envir}/jlogfile}
-    export DATAROOT=${DATAROOT:-/gpfs/hps/nco/ops/tmpnwprd}
+    export DATAROOT=${DATAROOT:-${FILESYSTEMROOT}/nco/ops/tmpnwprd}
     if [ "$SENDDBN" == "YES" ]; then
-       export DBNROOT=${UTILROOT}/para_dbn
+       if [ "$PARATEST" == "YES" ]; then
+         export DBNROOT=${UTILROOT}/fakedbn
+       else
+         export DBNROOT=${UTILROOT}/para_dbn
+       fi
        SENDDBN_NTC=NO
     else
        export DBNROOT=${UTILROOT}/fakedbn
     fi
     ;;
   para|test)
-    export jlogfile=${jlogfile:-${COMROOT}/logs/${envir}/jlogfile}
-    export DATAROOT=${DATAROOT:-/gpfs/hps/nco/ops/tmpnwprd}
+    export DATAROOT=${DATAROOT:-${FILESYSTEMROOT}/nco/ops/tmpnwprd}
     export DBNROOT=${UTILROOT}/fakedbn
     ;;
   *)
@@ -41,11 +46,14 @@ case $envir in
     ;;
 esac
 
-export NWROOT=/gpfs/hps/nco/ops/nw${envir}
-export PCOMROOT=$PCOMROOT/${envir}
+export COMROOT=${FILESYSTEMROOT}/nco/ops/com
+export GESROOT=${FILESYSTEMROOT}/nco/ops/nwges
+export COREROOT=${FILESYSTEMROOT}/ptmp/production.core/$jobid
+export NWROOT=/gpfs/dell4/nco/ops/nw${envir}
 export SENDECF=${SENDECF:-YES}
 export SENDCOM=${SENDCOM:-YES}
 export KEEPDATA=${KEEPDATA:-%KEEPDATA:NO%}
+export TMPDIR=${TMPDIR:-${DATAROOT:?}}
 
 if [ -n "%PDY:%" ]; then export PDY=${PDY:-%PDY:%}; fi
 if [ -n "%COMPATH:%" ]; then export COMPATH=${COMPATH:-%COMPATH:%}; fi
