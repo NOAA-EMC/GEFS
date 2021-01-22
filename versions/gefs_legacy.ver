@@ -1,4 +1,4 @@
-export gefs_legacy_ver=v10.6.1
+export gefs_legacy_ver=v10.6.0
 #export gsm_ver=`cat /nwprod/versions/gfs.ver|grep gsm_ver|awk -F"=" '{print $2}'`
 #versions from GEFS
 export gsm_ver=v12.1.6
