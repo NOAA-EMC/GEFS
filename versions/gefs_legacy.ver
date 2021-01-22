@@ -1,4 +1,4 @@
-export gefs_legacy_ver=v10.6.0
+export gefs_legacy_ver=v10.6.1
 #export gsm_ver=`cat /nwprod/versions/gfs.ver|grep gsm_ver|awk -F"=" '{print $2}'`
 #versions from GEFS
 export gsm_ver=v12.1.6
@@ -11,7 +11,7 @@ export ips_ver=18.0.5.274
 export lsf_ver=10.1
 export impi_ver=18.0.1
 export cfp_ver=2.0.2
-export EnvVars_ver=1.0.2
+export EnvVars_ver=1.0.3
 export NetCDF_ver=4.5.0
 
 export PATH=$PATH:.
