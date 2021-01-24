@@ -216,9 +216,9 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
   export group=ensemble
   # RLW 20140903 modify selected settings for emc.enspara on WCOSS
   if [[ "$LOGNAME" = "emc.enspara" ]]; then
-    userin="Richard.Wobus"
+    userin="Xianwu.Xue"
     userout="emc.enspara"
-    usergfs="Richard.Wobus"
+    usergfs="Xianwu.Xue"
     zq_setbase_hh=`date +%H`
     echo zq_setbase_hh=$zq_setbase_hh
     zq_setbase_runhigh=no      # default
@@ -247,7 +247,7 @@ if [[ $machl = t ]] || [[ $machl = g ]]; then
   else
     userin=$LOGNAME
     userout=$LOGNAME
-    usergfs="Richard.Wobus"
+    usergfs="Xianwu.Xue"
     export classs=dev_shared
     export classp=dev
   fi
@@ -269,13 +269,14 @@ fi
 if [[ $machl = v ]] || [[ $machl = m ]]; then
 # For DELL
   export account=GEN-T2O
-  export group=emc/modeling
-  export group=emc/retros
+  #export group=emc/modeling
+  #export group=emc/retros
+  export group=emc/verification
   # RLW 20140903 modify selected settings for emc.enspara on WCOSS
   if [[ "$LOGNAME" = "emc.enspara" ]]; then
-    userin="Richard.Wobus"
+    userin="emc.enspara/Xianwu.Xue"
     userout="emc.enspara"
-    usergfs="Richard.Wobus"
+    usergfs="Xianwu.Xue"
     zq_setbase_hh=`date +%H`
     echo zq_setbase_hh=$zq_setbase_hh
     zq_setbase_runhigh=no      # default
@@ -304,7 +305,7 @@ if [[ $machl = v ]] || [[ $machl = m ]]; then
   else
     userin=$LOGNAME
     userout=$LOGNAME
-    usergfs="Richard.Wobus"
+    usergfs="Xianwu.Xue"
     export classs=dev_shared
     export classp=dev
   fi

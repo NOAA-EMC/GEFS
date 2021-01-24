@@ -11,7 +11,7 @@ export ips_ver=18.0.5.274
 export lsf_ver=10.1
 export impi_ver=18.0.1
 export cfp_ver=2.0.2
-export EnvVars_ver=1.0.2
+export EnvVars_ver=1.0.3
 export NetCDF_ver=4.5.0
 
 export PATH=$PATH:.
