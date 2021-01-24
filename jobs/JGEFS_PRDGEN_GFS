@@ -211,8 +211,6 @@ setpdy.sh
 if [ "$RUN_ENVIR" = dev ]         ### For Developers
 then
   export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.${PDY})/$cyc/atmos}
-  # dev testing with gfs v16 parallel
-  export COMINgfs=/gpfs/dell3/ptmp/emc.glopara/ROTDIRS/v16rt2/gfs/para/gfs.${PDY}/$cyc/atmos
   export COM_OUT=${COM_OUT:-/global/noscrub/$LOGBAME/com/${NET}/${envir}}
   export COMOUT=$COM_OUT/gefs_legacy.${PDY}
   export ENS_COM=$COMOUT

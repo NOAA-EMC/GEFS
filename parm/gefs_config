@@ -125,6 +125,10 @@ echo jobscript= $jobscript
   #export COMINgfs=/gpfs/hps/ptmp/emc.glopara/com2/gfs/para/gfs.$PDY
   # 20170814 RLW use new COMROOThps variable as in production
   export COMROOThps=/gpfs/hps/nco/ops/com
+# Dingchen Hou 20210123, update COMINgfs to date 
+  export GFSbase=/gpfs/dell1/nco/ops/com/gfs/para
+  #export GFSbase=/gpfs/dell1/nco/ops/com/gfs/prod
+  export COMINgfs=${GFSbase}/gfs.$PDY/$cyc/atmos
 
 elif [ $RUN_ENVIR = prod ]
 then

@@ -242,11 +242,7 @@ if [[ $NEMSIO_IN = .true. ]]; then
     export COMINgefs=${COMINgefs:-$(compath.py gefs/prod/gefs.$PDY)/$cyc/atmos/sfcsig}
   else
     export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.$PDY)/$cyc/atmos}
-    #temporay testing for dev testing gfs v16 parallel
-    export COMINgfs=/gpfs/dell3/ptmp/emc.glopara/ROTDIRS/v16rt2/gfs/para/gfs.${PDY}/$cyc/atmos
     export COMINgefs=${COMINgefs:-$(compath.py gefs/prod/gefs.$PDY)/$cyc/atmos/sfcsig}
-    # For dev testing on dev machine
-    export COMINgefs=/gpfs/dell2/emc/retros/noscrub/Dingchen.Hou/s/DATA/$PDY/$cyc
   fi
 else
     echo !!!! FATAL ERROR !!!!

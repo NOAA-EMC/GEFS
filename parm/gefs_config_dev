@@ -145,12 +145,15 @@ elif [[ ${jobscript} = JGEFS_INIT_SEPARATE ]] ; then
   export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
 
   export GFSbase=/gpfs/dell1/nco/ops/com/gfs/para
-  export GFSbase=/gpfs/dell1/nco/ops/com/gfs/prod
+  #export GFSbase=/gpfs/dell1/nco/ops/com/gfs/prod
+  export GEFSbase=/gpfs/dell2/emc/retros/noscrub/Dingchen.Hou/s/DATA
 
-  export COMINgfs=${GFSbase}/gfs.$PDY/$cyc
+  export COMINgfs=${GFSbase}/gfs.$PDY/$cyc/atmos
   export COMINgfs6ago=${GFSbase}/gfs.$d6ago_ymd
   export COMINgfs6ahead=${GFSbase}/gfs.$d6ahead_ymd
   export COMINenkf=${GFSbase}/enkfgdas.
+  export COMINgefs=${GEFSbase}/gefs.$PDY/$cyc/atmos/sfcsig
+  export COMINgefs=${COMINgefs:-$(compath.py gefs/prod/gefs.$PDY)/$cyc/atmos/sfcsig}
 
 # Define POSTGRB2TBL for JGEFS_NCEPPOST
 # POSTGRB2TBL=${POSTGRB2TBL:-/nwprod/lib/sorc/g2tmpl/params_grib2_tbl_new}

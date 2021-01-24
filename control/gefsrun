@@ -349,7 +349,7 @@ fi
 
 if [[ $gefsmachine = dell ]]; then
 
-gefs_legacy_ver=v10.6.1
+gefs_legacy_ver=v10.6.0
 jobdir=$basesource/nw$envir/gefs_legacy.${gefs_legacy_ver}/jobs
 echo jobdir=$jobdir
 
