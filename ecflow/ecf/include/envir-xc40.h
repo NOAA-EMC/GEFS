@@ -6,20 +6,17 @@ export RUN_ENVIR=${RUN_ENVIR:-nco}
 export envir=%ENVIR%
 export SENDDBN=${SENDDBN:-%SENDDBN:YES%}
 export SENDDBN_NTC=${SENDDBN_NTC:-%SENDDBN_NTC:YES%}
-export ALERT_FROM_P3=${ALERT_FROM_P3:-%ALERT_FROM_P3:NO%}
 
 module load prod_envir prod_util
+
+if [ -n "%PARATEST:%" ]; then export PARATEST=${PARATEST:-%PARATEST:%}; fi
 
 case $envir in
   prod)
     export jlogfile=${jlogfile:-${COMROOT}/logs/jlogfiles/jlogfile.${jobid}}
     export DATAROOT=${DATAROOT:-/gpfs/hps2/nco/ops/tmpnwprd}
     if [ "$SENDDBN" == "YES" ]; then
-       if [ "${ALERT_FROM_P3^^}" == "YES" ]; then
-          export DBNROOT=/iodprod_dell/dbnet_siphon
-        else
-          export DBNROOT=/iodprod/dbnet_siphon
-        fi
+       export DBNROOT=/iodprod_dell/dbnet_siphon
     else
        export DBNROOT=${UTILROOT}/fakedbn
     fi
@@ -29,7 +26,11 @@ case $envir in
     export jlogfile=${jlogfile:-${COMROOT}/logs/${envir}/jlogfile}
     export DATAROOT=${DATAROOT:-/gpfs/hps2/nco/ops/tmpnwprd}
     if [ "$SENDDBN" == "YES" ]; then
-       export DBNROOT=${UTILROOT}/para_dbn
+       if [ "$PARATEST" == "YES" ]; then
+         export DBNROOT=${UTILROOT}/fakedbn
+       else
+         export DBNROOT=${UTILROOT}/para_dbn
+       fi
        SENDDBN_NTC=NO
     else
        export DBNROOT=${UTILROOT}/fakedbn
@@ -52,7 +53,6 @@ export SENDECF=${SENDECF:-YES}
 export SENDCOM=${SENDCOM:-YES}
 export KEEPDATA=${KEEPDATA:-%KEEPDATA:NO%}
 
-if [ -n "%PARATEST:%" ]; then export PARATEST=${PARATEST:-%PARATEST:%}; fi
 if [ -n "%PDY:%" ]; then export PDY=${PDY:-%PDY:%}; fi
 if [ -n "%COMPATH:%" ]; then export COMPATH=${COMPATH:-%COMPATH:%}; fi
 if [ -n "%MAILTO:%" ]; then export MAILTO=${MAILTO:-%MAILTO:%}; fi

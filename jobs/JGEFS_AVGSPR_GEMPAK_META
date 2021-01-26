@@ -73,9 +73,9 @@ cp $FIXgempak/datatype.tbl datatype.tbl
 ###################################
 # Set up the UTILITIES
 ###################################
-export utilscript=${NWROOTp1}/util/ush
-export utilities=${NWROOTp1}/util/ush
-export utilexec=${NWROOTp1}/util/exec
+#export utilscript=${NWROOTp1}/util/ush
+#export utilities=${NWROOTp1}/util/ush
+#export utilexec=${NWROOTp1}/util/exec
 
 # Run setpdy and initialize PDY variables
 setpdy.sh

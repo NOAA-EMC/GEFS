@@ -23,12 +23,11 @@
 # directory are included, so if no exclude patterns match that file, it will be
 # transferred.
 
-com/gens/_ENVIR_/gefs._PDY_/ /scratch4/NCEPDEV/rstprod/com/gens/_ENVIR_/gefs._PDY_/
+com/gens/_ENVIR_/gefs._PDY_/ _REMOTEPATH_/com/gens/_ENVIR_/gefs._PDY_/
 + /00/
 + /00/init/
 + /00/init/gec00.t00z.*
 + /00/init/gep??.t00z.sanl
-+ /00/sflux/***
 + /00/tctrack/***
 + /00/genesis/***
 + /00/ensstat/***
@@ -38,11 +37,6 @@ com/gens/_ENVIR_/gefs._PDY_/ /scratch4/NCEPDEV/rstprod/com/gens/_ENVIR_/gefs._PD
 + /06/init/
 + /06/init/gec00.t06z.*
 + /06/init/gep??.t06z.sanl
-+ /06/sflux/
-+ /06/sflux/*180
-+ /06/sflux/*192
-+ /06/sflux/*372
-+ /06/sflux/*384
 + /06/tctrack/***
 + /06/genesis/***
 + /06/ensstat/***
@@ -52,11 +46,6 @@ com/gens/_ENVIR_/gefs._PDY_/ /scratch4/NCEPDEV/rstprod/com/gens/_ENVIR_/gefs._PD
 + /12/init/
 + /12/init/gec00.t12z.*
 + /12/init/gep??.t12z.sanl
-+ /12/sflux/
-+ /12/sflux/*180
-+ /12/sflux/*192
-+ /12/sflux/*372
-+ /12/sflux/*384
 + /12/tctrack/***
 + /12/genesis/***
 + /12/ensstat/***
@@ -66,11 +55,6 @@ com/gens/_ENVIR_/gefs._PDY_/ /scratch4/NCEPDEV/rstprod/com/gens/_ENVIR_/gefs._PD
 + /18/init/
 + /18/init/gec00.t18z.*
 + /18/init/gep??.t18z.sanl
-+ /18/sflux/
-+ /18/sflux/*180
-+ /18/sflux/*192
-+ /18/sflux/*372
-+ /18/sflux/*384
 + /18/tctrack/***
 + /18/genesis/***
 + /18/ensstat/***

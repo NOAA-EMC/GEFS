@@ -23,7 +23,7 @@
 # directory are included, so if no exclude patterns match that file, it will be
 # transferred.
 
-com/gens/_ENVIR_/gefs._PDY_/ /scratch4/NCEPDEV/rstprod/com/gens/_ENVIR_/gefs._PDY_/
+com/gens/_ENVIR_/gefs._PDY_/ _REMOTEPATH_/com/gens/_ENVIR_/gefs._PDY_/
 + /00/
 + /00/pgrb2a/***
 + /00/pgrb2ap5/***

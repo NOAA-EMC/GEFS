@@ -86,15 +86,15 @@ export COMINsgfs=${COMINgfs:-$(compath.py gfs/prod)}
 #export COMINs=${COMROOT}/nawips/prod
 export COMINs_p1=${COMROOTp1}/nawips/prod
 #export COMIN=${COMROOT}/nawips/prod/${RUN}.${PDY}
-export COMIN=${COMROOT}/${NET}/${envir}/gefs.${PDY}/$cyc/gempak
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/gefs.${PDY}/$cyc/gempak}
 ## JY export COMINgfs=$(compath.py nawips/prod/gfs.${PDY})
 #export COMINgfs=$(compath.py gfs/prod/gfs.$PDY)/$cyc/gempak
 
 # COMINecmwf path is broken and data is not available - 08/16/2019 JY
 # may change to : export COMINecmwf=$(compath.py nawips/prod/ecmwf)
 # and need to fix the gempak/ush scripts for ecmwf
-export COMINecmwf=$(compath.py nawips/prod/ecmwf.${PDY})
-export COMINm1ecmwf=$(compath.py nawips/prod/ecmwf.${PDYm1})
+export COMINecmwf=$(compath.py ecmwf/prod/ecmwf.${PDY})
+export COMINm1ecmwf=$(compath.py ecmwf/prod/ecmwf.${PDYm1})
 #export COMINm1=${COMROOT}/nawips/prod/${RUN}.${PDYm1}
 
 # Add the following COMIN for possible future fix to the path of nam and ukmet - 08/16/2019 JY
@@ -104,7 +104,7 @@ export COMINm1ecmwf=$(compath.py nawips/prod/ecmwf.${PDYm1})
 export COMINukmet=$(compath.py nawips/prod/ukmet)
 export COMINnam=$(compath.py nam/prod)
 
-export COMINm1=${COMROOT}/${NET}/${envir}/gefs.${PDYm1}/$cyc/gempak
+export COMINm1=${COMINm1:-${COMROOT}/${NET}/${envir}/gefs.${PDYm1}/$cyc/gempak}
 #export COMOUT=${COMROOT}/nawips/${envir}/${RUN}.${PDY}/meta
 export COMOUT=${COMROOT}/${NET}/${envir}/gefs.${PDY}/$cyc/gempak/meta
 
