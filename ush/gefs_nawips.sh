@@ -209,7 +209,7 @@ while [ $fhcnt -le $fend ] ; do
 		gpend
 	fi
 	if [ $SENDCOM = "YES" ]; then
-		mv $GEMGRD $gempak_out/$GEMGRD
+		cpfs $GEMGRD $gempak_out/$GEMGRD
 		if [ $SENDDBN = "YES" ]; then
 			$DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job \
 			$gempak_out/$GEMGRD
