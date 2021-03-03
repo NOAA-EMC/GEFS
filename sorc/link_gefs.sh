@@ -30,13 +30,13 @@ pwd=$(pwd -P)
 #------------------------------
 if [ $machine == "cray" ]; then
     FIX_DIR="/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/fv3gefs/fix_20200927"
-    FIX_DIR_FV3="/gpfs/hps3/emc/global/noscrub/emc.glopara/git/fv3gfs/fix"
+    FIX_DIR_FV3="/gpfs/hps3/emc/global/noscrub/emc.glopara/git/fv3gfs/fix_nco_gfsv15"
 elif [ $machine = "dell" ]; then
     FIX_DIR="/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gefs/fix_20200927"
-    FIX_DIR_FV3="/gpfs/dell2/emc/modeling/noscrub/emc.glopara/git/fv3gfs/fix"
+    FIX_DIR_FV3="/gpfs/dell2/emc/modeling/noscrub/emc.glopara/git/fv3gfs/fix_nco_gfsv15"
 elif [ $machine = "hera" ]; then
     FIX_DIR="/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix_20200927"
-    FIX_DIR_FV3="/scratch1/NCEPDEV/global/glopara/fix"
+    FIX_DIR_FV3="/scratch1/NCEPDEV/global/glopara/fix_nco_gfsv15"
 fi
 
 # Delete Fix folder and relink/recopy it
