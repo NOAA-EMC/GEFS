@@ -104,6 +104,19 @@ elif [[ -d /lustre && -d /ncrc ]] ; then
     fi
     target=gaea
     module purge
+elif [[ -d /apps/prod ]]; then
+
+	target=acorn
+
+	module purge
+	source /apps/prod/lmodules/startLmod
+	module use -a /apps/prod/modules
+	# For gefs_nemsio2nc
+	module use /lfs/h1/ops/prod/libs/modulefiles/stack
+	module load hpc
+	module load hpc-intel
+	module load hpc-cray-mpich
+
 else
     echo WARNING: UNKNOWN PLATFORM 1>&2
 fi

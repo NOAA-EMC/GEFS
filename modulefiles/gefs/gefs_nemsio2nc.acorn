@@ -1,0 +1,19 @@
+#%Module#####################################################
+## gefs_nesio2nc component - acorn
+#############################################################
+module load intel/${ips_ver}
+module load cray-mpich/${impi_ver}
+
+module load nemsio/${nemsio_ver}
+module load w3nco/${w3nco_ver}
+module load bacio/${bacio_ver}
+
+module load netcdf/${NetCDF_ver}
+
+##
+export FCMP=ifort
+export LDFLAGSM=
+export OMPFLAGM=
+
+##
+export NETCDF_LDFLAGS_C="-L${NETCDF_LIB} -lnetcdf"

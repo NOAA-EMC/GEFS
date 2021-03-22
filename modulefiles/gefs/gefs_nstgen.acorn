@@ -1,0 +1,20 @@
+#%Module#####################################################
+## gefs_nstgen component - acorn
+#############################################################
+module load intel/${ips_ver}
+module load w3nco/${w3nco_ver}
+module load bacio/${bacio_ver}
+module load sfcio/${sfcio_ver}
+
+module load cray-mpich/${impi_ver}
+module load netcdf/${NetCDF_ver}
+
+##
+export FCMP=ifort
+export LDFLAGSM=
+export OMPFLAGM=
+
+##
+export SFCIO_INC4=$SFCIO_INC
+export SFCIO_LIB4=$SFCIO_LIB
+export NETCDF_LDFLAGS="-L${NETCDF_LIB}  -lnetcdff"
