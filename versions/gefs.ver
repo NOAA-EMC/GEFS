@@ -1,4 +1,4 @@
-export gefs_ver=v12.1.0-1
+export gefs_ver=v12.1.1
 
 export EnvVars_ver=1.0.3
 export ips_ver=18.0.1.163
@@ -8,11 +8,11 @@ export lsf_ver=10.1
 export prod_envir_ver=1.1.0
 export grib_util_ver=1.1.0
 export prod_util_ver=1.1.4
-export util_shared_ver=1.1.0
+export util_shared_ver=1.2.0
 export g2tmpl_ver=1.5.0
 
 export CFP_ver=2.0.2
-export gempak_ver=7.3.1
+export gempak_ver=7.3.3
 
 export NetCDF_ver=4.5.0
 export HDF5_serial_ver=1.10.1
@@ -21,10 +21,8 @@ export HDF5_parallel_ver=1.10.6
 export NetCDF_parallel_ver=4.7.4
 
 export NCO_ver=4.7.0
-
 export python_ver=3.6.3
-
 export HPSS_ver=5.0.2.5
 
-#export USE_CFP=YES
+export USE_CFP=YES
 export PATH=$PATH:.
