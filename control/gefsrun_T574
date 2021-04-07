@@ -1598,7 +1598,7 @@ case $taskname in
 #   jobscript=JGEFS_ENKF_TRACK.sms.$envir
     job_name=jgefs_enkf_track_$cyc
     job_type=parallel
-    total_tasks=40
+    total_tasks=15
     node=1
     wall_clock_limit="01:50:00"
     resources="ConsumableMemory(1500 MB)"
@@ -1633,7 +1633,7 @@ case $taskname in
     wall_clock_limit="01:50"
     node=10
     taskspernode=4
-    total_tasks=40
+    total_tasks=15
     OMP_NUM_THREADS=7
     MP_SHARED_MEMORY=yes
   fi  
@@ -1653,7 +1653,7 @@ case $taskname in
     node_resources="ConsumableMemory(110 GB)"
     task_affinity="core(1)"
     node=2   
-    total_tasks=40
+    total_tasks=15
     RUN=
   if [[ $gefsmachine = zeus ]]; then                       
     node=10
@@ -1670,7 +1670,7 @@ case $taskname in
   fi
   if [[ $gefsmachine = dell ]]; then                       
     wall_clock_limit="02:50"
-    total_tasks=40
+    total_tasks=15
     taskspernode=4
     node=10
     OMP_NUM_THREADS=7
@@ -1781,9 +1781,9 @@ case $taskname in
 
   if [[ $gefsmachine = dell ]]; then
     wall_clock_limit="01:50"
-    total_tasks=40
+    total_tasks=15
     taskspernode=10
-    node=4
+    node=1
     OMP_NUM_THREADS=1
     MP_SHARED_MEMORY=no
   fi

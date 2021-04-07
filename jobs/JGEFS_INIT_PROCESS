@@ -106,6 +106,7 @@ echo set parameters using gefs.parm
 
 . $PARMgefs/gefs.parm
 . $PARMgefs/gefs_init.parm
+export fhrp=00
 
 env | sort
 

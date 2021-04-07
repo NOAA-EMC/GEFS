@@ -1,0 +1,72 @@
+Release Notes 
+-------------
+
+Model: global_chgres.v15.0.0
+Version: 15.0.0
+Implementation date/time: To be determined.
+Purpose: To initialize the spectral version of the GFS by converting GFS or FV3GFS data 
+from one horizontal and/or vertical resolution to another. This a stand-alone version
+of global_chgres separate from the version under the GFS vertical structure.  It is intended
+to be used as a utility by any NCEP process that needs it.
+Developed by: NCEP/EMC   george.gayno@noaa.gov
+Runs on: The National Weather Service (NWS) Weather and Climate Operational Supercomputing System (WCOSS)
+Community software: None
+Input:
+  -GFS atmospheric restart files in sigio or nemsio format
+  -FV3GFS atmospheric history files (gaussian) in nemsio format
+  -GFS surface restart files in sfcio or nemsio format
+  -GFS NSST restart files in nstio or nemsio format
+  -FV3GFS surface/NSST history files (gaussian) in nemio format
+Output: Same file types as input but at the target resolution.
+Primary users: NAM, GEFS and any process outside the GFS.
+
+Changes being made for this release: Option to read gaussian history files
+from FV3GFS.  
+
+Implementation information
+
+Compute resources:
+  - Program runs with threads.
+  - Example here when converting from T1534 to T574 (a standard change of resoluton).
+  - Program runs in about 5 minutes
+  - Recommended lsf commands for running WCOSS Phase 1/2:
+     #BSUB -a openmp
+     #BSUB -n 24
+     #BSUB -R span[ptile=24]
+     #BSUB -x
+     #BSUB -W 00:05
+  - Recommended lsf commands for running WCOSS Cray:
+     #BSUB -M 2000
+     #BSUB -W 00:05
+     #BSUB -extsched 'CRAYLINUX[]'
+     export NODES=1
+     export KMP_AFFINITY=disabled
+     export OMP_NUM_THREADS=24
+  - Recommended lsf commands for running WCOSS Dell:
+     #BSUB -M 4000
+     #BSUB -n 14
+     #BSUB -R span[ptile=14]
+     #BSUB -W 00:05
+     export OMP_NUM_THREADS=14
+  - 8 Gb disk space per day required for T1534 output files
+  - Libraries used:  BACIO.v2.0.2; W3NCO.v2.0.6; IP.v3.0.0; SP.v2.0.2; LANDSFCUTIL.v2.1.0;
+                     SIGIO.v2.0.1; W3EMC.v2.2.0; NEMSIO.v2.2.2; NEMSIOGFS.v2.0.1; SFCIO.v1.0.0;
+                     GFSIO.v1.1.0
+  - Compiler:  Intel Fortran
+
+Pre-implementation testing requirements:
+  - Should be tested as part of Q2FY19 FV3GFS package.
+  - Evaluators: same as those for Q2FY19 FV3GFS package.
+  - May be implemented before Q2FY19 FV3GFS.
+
+Implementation Instructions:
+  - cd to appropriate directory
+  - Checkout code from git:  
+      git clone --recursive gerrit:NCEPLIBS-util_shared
+      git checkout global_chgres.v15.0.0
+  - Build global_chgres program:  $ build_chgres.sh
+  - Populate the ./fix subdirectory.  These files are
+    not stored in the git repository.  Copy them from
+    util_shared.v1.0.7 on Phase 2:
+      $ cd fix
+      $ cp -r /nwprod2/util_shared.v1.0.7/global_chgres.v14.1.1/fix/fix_am .

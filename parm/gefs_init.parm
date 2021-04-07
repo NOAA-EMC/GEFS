@@ -77,10 +77,12 @@ fi
 
 # task and node assignments
 export initseparatetasks=40
+export initseparatetasks=15
 export initmasktasks=80
 #export initseparatenodes=1
 export initcombinetasks=40
-#export initcombinenodes=1
+export initcombinetasks=15
+export initcombinenodes=1
 
 # run parallel or serial et code
 export parallelinit=no

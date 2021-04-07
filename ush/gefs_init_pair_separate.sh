@@ -237,8 +237,8 @@ inflaguse=0
 inflagt=$inflag
 
 (( fhr = $fhrpstart ))
-while (( fhr <= $fhrpend ))
-do
+#while (( fhr <= $fhrpend ))
+#do
   if (( fhr < 10 )); then
     fhr=0$fhr
   fi
@@ -408,8 +408,8 @@ do
     fi
   fi
   echo end loop for fhr=$fhr
-  (( fhr = fhr + fhrp ))
-done
+# (( fhr = fhr + fhrp ))
+#done
 
 wait
 else

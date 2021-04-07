@@ -120,11 +120,11 @@ if [[ ${jobscript} = JGEFS_ENKF_TRACK ]] ; then
   export d_hour_ymd=`echo $d_hour_ymdh|cut -c1-8`
   export d_hour_hh=`echo $d_hour_ymdh|cut -c9-10`
 
-  export GFSbase=/gpfs/dell1/nco/ops/com/gfs/para
+  export GEFSbase=/gpfs/dell4/nco/ops/com/gefs/prod
+  #export GEFSbase=/gpfs/dell2/ptmp/Dingchen.Hou/GEFSv12
+  export COMINgefs=${GEFSbase}/gefs.${d6ahead_ymd}
 
-  export COMINgfs=${GFSbase}/gfs.${d_hour_ymd}/${d_hour_hh}
-  export COMINgfs6ago=${GFSbase}/gfs.${d6ago_ymd}/${d6ago_hh}
-  export COMINgfs6ahead=${GFSbase}/gfs.${d6ahead_ymd}/${d6ahead_hh}
+  export GFSbase=/gpfs/dell1/nco/ops/com/gfs/prod
   export COMINenkf=${GFSbase}/enkfgdas.
 
 # Define COMINgfs and alike for the gefs_init_separate job 
@@ -136,11 +136,12 @@ elif [[ ${jobscript} = JGEFS_INIT_SEPARATE ]] ; then
   export d6ahead_ymd=`echo $d6ahead_ymdh|cut -c1-8`
   export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
 
-  export GFSbase=/gpfs/dell1/nco/ops/com/gfs/para
+  export GFSbase=/gpfs/dell1/nco/ops/com/gfs/prod
 
-  export COMINgfs=${GFSbase}/gfs.$PDY/$cyc
-  export COMINgfs6ago=${GFSbase}/gfs.$d6ago_ymd
-  export COMINgfs6ahead=${GFSbase}/gfs.$d6ahead_ymd
+  export GEFSbase=/gpfs/dell4/nco/ops/com/gefs/prod
+  #export GEFSbase=/gpfs/dell2/ptmp/Dingchen.Hou/GEFSv12
+  export COMINgefs=${GEFSbase}/gefs.${d6ahead_ymd}/$cyc/atmos/sfcsig
+
   export COMINenkf=${GFSbase}/enkfgdas.
 
 # Define POSTGRB2TBL for JGEFS_NCEPPOST
@@ -159,12 +160,11 @@ elif [[ ${jobscript} = JGEFS_NCEPPOST ]] ; then
 # Define COMIN for JGEFS_CQPF for dev test, which needs previous 16 day forecast
  
 elif [[ ${jobscript} = JGEFS_CQPF ]] ; then
-  #export COMIN=/gpfs/tp2/nco/ops/com/gens/prod
-  export COMIN=/gpfs/dell2/nco/ops/com/gens/prod
-  export COMIN=$COMIN 
+  export COMIN=/gpfs/tp2/nco/ops/com/gens/prod
+ 
 else
 
-  export GFSbase=/gpfs/dell1/nco/ops/com/gfs/para
+  export GFSbase=/gpfs/dell1/nco/ops/com/gfs/prod
   export COMINgfs=${GFSbase}/gfs.${PDY}/$cyc
 
 fi

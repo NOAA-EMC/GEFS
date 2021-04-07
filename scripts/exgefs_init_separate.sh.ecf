@@ -75,6 +75,7 @@ cd $DATA
 relocfact=$relocfact relocflag=$relocflag
 
 (( npairt = npair * 4 ))
+(( npairt = npair + 5 ))
 nlist=
 ipair=0
 while (( ipair < npairt ))
@@ -177,9 +178,12 @@ export SEA_ICE_THRESHLD_OUTPUT="0.50"
     export SIGLEVEL=$FIXgsm/global_hyblev.l${LEVS}.txt
   fi
   if [ $NEMSIO_IN = .true. ]; then
-    if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
-      export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
-      $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
+  if [[ -f $COMINgefs/gec00.$cycle.atmf000.nemsio && -f $COMINgefs/gec00.$cycle.sfcf000.nemsio ]]; then
+    export SIGINP=$COMINgefs/gec00.$cycle.atmf000.nemsio
+    $getnsttf $COMINgefs/gec00.$cycle.sfcf000.nemsio $COMINgefs/gec00.$cycle.sfcf000.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
+#   if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
+#     export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
+#     $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
       getnsttfrc=$?
       if (( getnsttfrc == 0 )); then
         echo `date` $getnsttf after
@@ -191,7 +195,8 @@ export SEA_ICE_THRESHLD_OUTPUT="0.50"
       fi
     else
       echo !!!! FATAL ERROR !!!!
-      echo $COMINgfs/gfs.$cycle.atmanl.nemsio,$COMINgfs/gfs.$cycle.sfcanl.nemsio and $COMINgfs/gfs.$cycle.nstanl.nemsio CANNOT BE FOUND
+      echo $COMINgefs/gec00.$cycle.atmf000.nemsio and $COMINgefs/gec00.$cycle.sfcf000.nemsio CANNOT BE FOUND
+#     echo $COMINgfs/gfs.$cycle.atmanl.nemsio,$COMINgfs/gfs.$cycle.sfcanl.nemsio and $COMINgfs/gfs.$cycle.nstanl.nemsio CANNOT BE FOUND
       exit
     fi
   else
@@ -310,9 +315,12 @@ export SEA_ICE_THRESHLD_OUTPUT="0.50"
   fi
 
   if [ $NEMSIO_IN = .true. ]; then
-    if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
-      export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
-      $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
+#   if [[ -f $COMINgfs/gfs.$cycle.atmanl.nemsio && -f $COMINgfs/gfs.$cycle.sfcanl.nemsio ]]; then
+#     export SIGINP=$COMINgfs/gfs.$cycle.atmanl.nemsio
+#     $getnsttf $COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.sfcanl.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
+  if [[ -f $COMINgefs/gec00.$cycle.atmf000.nemsio && -f $COMINgefs/gec00.$cycle.sfcf000.nemsio ]]; then
+    export SIGINP=$COMINgefs/gec00.$cycle.atmf000.nemsio
+    $getnsttf $COMINgefs/gec00.$cycle.sfcf000.nemsio $COMINgefs/gec00.$cycle.sfcf000.nemsio $DATA/gfs.$cycle.sfcanl.nemsio
       getnsttfrc=$?
       if (( getnsttfrc == 0 )); then
         echo `date` $getnsttf after 
@@ -325,7 +333,8 @@ export SEA_ICE_THRESHLD_OUTPUT="0.50"
 
     else
       echo !!!! FATAL ERROR !!!!
-      echo $COMINgfs/gfs.$cycle.atmanl.nemsio,$COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio CANNOT BE FOUND
+#     echo $COMINgfs/gfs.$cycle.atmanl.nemsio,$COMINgfs/gfs.$cycle.sfcanl.nemsio $COMINgfs/gfs.$cycle.nstanl.nemsio CANNOT BE FOUND
+      echo $COMINgefs/gec00.$cycle.atmf000.nemsio and $COMINgefs/gec00.$cycle.sfcf000.nemsio CANNOT BE FOUND
       exit
     fi
   else

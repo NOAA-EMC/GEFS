@@ -76,7 +76,8 @@ DATATMP=$DATA
 
 relocfact=$relocfact relocflag=$relocflag
 
-(( npairt = npair * 4 ))
+#(( npairt = npair * 4 ))
+(( npairt = npair + 5 ))
 nlist=
 ipair=0
 while (( ipair < npairt ))
@@ -115,6 +116,7 @@ export cycp=`echo $pdycycp|cut -c9-10`
 echo pdycycp=$pdycycp pdyp=$pdyp cycp=$cycp
 
 echo  COMINenkf=$COMINenkf
+echo  COMINgefs=$COMINgefs
 
 export COM=$COMOUTprevcyc/track_enkf
 mkdir -m 775 -p  $COM
@@ -156,12 +158,15 @@ export COMOUT=${COMOUT}
 if (( trackflag == 1 )); then
   # test for files necessary for relocation
 
-  if [[ ! -s ${COMINenkf}${pdyp}/${cycp}/${fenkffcst6hmean} ]]; then
+# if [[ ! -s ${COMINenkf}${pdyp}/${cycp}/${fenkffcst6hmean} ]]; then
+  if [[ ! -s ${COMINgefs}/gec00.$cycle.atmf`printf "%3.3d" $fhrp`.nemsio ]]; then
     export trackflag=0
-    echo  ${COMINenkf}${pdyp}/${cycp}/${fenkffcst6hmean} not found
+   #echo  ${COMINenkf}${pdyp}/${cycp}/${fenkffcst6hmean} not found
+    echo  ${COMINgefs}/gec00.$cycle.atmf`printf "%3.3d" $fhrp`.nemsio not found
   else
    mkdir $COMOUTprevcyc/sfcsig_enkf
-   export SIGINP=$COMINenkf${pdyp}/${cycp}/${fenkffcst6hmean}
+   #export SIGINP=$COMINenkf${pdyp}/${cycp}/${fenkffcst6hmean}
+   export SIGINP=${COMINgefs}/gec00.$cycle.atmf`printf "%3.3d" $fhrp`.nemsio
    export SIGOUT=$COMOUTprevcyc/sfcsig_enkf/gec00.t${cycp}z.sf${fhrp}
 
     export JCAP=$JCAPHR
@@ -235,9 +240,11 @@ fi
 if (( trackflag == 1 )); then
    echo  ${COMINenkf}${pdyp}/${cycp}/${fenkffcst6hmean}
   # test for files necessary for relocation
-  if [[ ! -s ${COMINenkf}${pdyp}/${cycp}/${fenkffcst6hmean} ]] ; then
+# if [[ ! -s ${COMINenkf}${pdyp}/${cycp}/${fenkffcst6hmean} ]] ; then
+  if [[ ! -s ${COMINgefs}/gec00.$cycle.atmf`printf "%3.3d" $fhrp`.nemsio ]]; then
     export trackflag=0
-    echo  ${COMINenkf}${pdyp}/${cycp}/${fenkffcst6hmean} not found
+   #echo  ${COMINenkf}${pdyp}/${cycp}/${fenkffcst6hmean} not found
+    echo  ${COMINgefs}/gec00.$cycle.atmf`printf "%3.3d" $fhrp`.nemsio not found
   else
     export cmodel=enkf
     export pert=ac00
@@ -317,9 +324,9 @@ do
   fi
 # loop to find enkf input files
      haveinput=no
-    (( fhr = $fhrp ))
-       while (( fhr <= $fhrpend ))
-           do
+     (( fhr = $fhrp ))
+#      while (( fhr <= $fhrpend ))
+#          do
          if (( fhr < 10 )); then
              fhr=0$fhr
          fi
@@ -331,8 +338,10 @@ do
          if [[ $haveinput = no ]]; then
             found=true
            if   [[ $NEMSIO_IN = .true. ]]; then
-                fcstinn=$COMINenkf${pdyp0}/${cycp0}/mem0${mmem}/gdas.t${cycp0}z.atmf`printf "%3.3d" $fhrp`.nemsio
-                fcstinp=$COMINenkf${pdyp0}/${cycp0}/mem0${pmem}/gdas.t${cycp0}z.atmf`printf "%3.3d" $fhrp`.nemsio
+                #fcstinn=$COMINenkf${pdyp0}/${cycp0}/mem0${mmem}/gdas.t${cycp0}z.atmf`printf "%3.3d" $fhrp`.nemsio
+                #fcstinp=$COMINenkf${pdyp0}/${cycp0}/mem0${pmem}/gdas.t${cycp0}z.atmf`printf "%3.3d" $fhrp`.nemsio
+		fcstinn=$COMINgefs/gep${mmem}.$cycle.atmf`printf "%3.3d" $fhrp`.nemsio
+		fcstinp=$COMINgefs/gep${pmem}.$cycle.atmf`printf "%3.3d" $fhrp`.nemsio
            else
                 fcstinn=$COMINenkf${pdyp0}/${cycp0}/sfg_${pdycycp0}_fhr${fhrp}_mem0${mmem}
                 fcstinp=$COMINenkf${pdyp0}/${cycp0}/sfg_${pdycycp0}_fhr${fhrp}_mem0${pmem}
@@ -450,9 +459,9 @@ do
 
          fi
 
-         (( fhr = fhr + fhrp ))
+#       (( fhr = fhr + fhrp ))
 
-       done
+#      done
 
 # end the loop to find enkf input files
 
@@ -468,6 +477,10 @@ export runchgres=$runchgres
 export trackflag=$trackflag
 export NEMSIO_IN=$NEMSIO_IN
 export haveinput=$haveinput
+export JCAP=$JCAPHR
+export LEVS=$LEVSHR
+export LONB=$LONBHR
+export LATB=$LATBHR
 if  [[ \$runchgres = yes ]] &&  [[ \$haveinput = yes ]] ; then
      export CHGRESVARS="use_ufo=.true.,idvt=21,idsl=1,idvm=$IDVM,idvc=$IDVC,OUTTYP=$OUTTYP,NTRAC=$NTRACLR,NVCOORD=$NVCOORD,IALB=0,nopdpvv=$nopdpvv"
     export SIGLEVEL=$SIGLEVEL

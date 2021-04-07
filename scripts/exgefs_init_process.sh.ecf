@@ -82,7 +82,8 @@ echo cycle=$cycle cycle_fcst=$cycle_fcst
 
 echo relocfact=$relocfact relocflag=$relocflag
 
-(( npairt = npair * 4 ))
+#(( npairt = npair * 4 ))
+(( npairt = npair + 5 ))
 nlist=
 ipair=0
 while (( ipair < npairt ))
@@ -245,15 +246,18 @@ cat et_namens
 #
 ip=1
 iip=0$ip
-for tz in t00z t06z t12z t18z;  do
+#for tz in t00z t06z t12z t18z;  do
+for tz in t00z t06z;  do
   np=01
   while (( np <= npair )); do
+   if (( iip <= npairt )); then
     if [[ ! -s finn.pair${iip}  ]]; then
       ln -s -f  gefs.pertback.${tz}.n${np}.pair${iip} finn.pair${iip}
     fi 
     if [[ ! -s finp.pair${iip}  ]]; then
       ln -s -f  gefs.pertback.${tz}.p${np}.pair${iip} finp.pair${iip}
     fi
+   fi
     (( ip = ip + 1 ))
     (( iip = ip ))
     if (( iip < 10 )); then

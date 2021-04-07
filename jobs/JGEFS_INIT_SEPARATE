@@ -12,6 +12,7 @@ if [ "$RUN_ENVIR" = dev ]   ### For Developers
 then
   . $basesource/nwdev/parm/gefs_config_dev
 fi
+
 export APRUN=${gefsmpexec:-mpirun}
 
 ############################
@@ -86,6 +87,7 @@ export pgmerr=errfile
 # Specify Execution Areas
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
+export HOMEgsm=/gpfs/dell1/nco/ops/nwprod/gsm.v12.1.6
 export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
 export HOMEenkf=${HOMEenkf:-$NWROOT/enkf.${enkf_ver}}
 
@@ -114,11 +116,13 @@ echo set parameters using gefs.parm
 ##############################################
 . $PARMgefs/gefs.parm
 . $PARMgefs/gefs_init.parm
+export fhrp=00
 
 ### echo Looking  the earlier EnKF  
 #cycles from fhrpstart back to fhrpend  (hr)
 export fhrpstart=$fhrp
-export fhrpend=96
+#export fhrpend=96
+export fhrpend=00
  
 env | sort
 
@@ -132,11 +136,12 @@ d6ago_ymdh=` $NDATE -6 ${PDY}${cyc}`
 export d6ahead_ymd=`echo $d6ahead_ymdh|cut -c1-8`
 export d6ago_ymd=`echo $d6ago_ymdh|cut -c1-8`
 
-export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.$PDY)/$cyc}
-export COMINgfs6ago=${COMINgfs6ago:-$(compath.py gfs/prod/gfs.$d6ago_ymd)}
-export COMINgfs6ahead=${COMINgfs6ahead:-$(compath.py gfs/prod/gfs.$d6ahead_ymd)}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/prod/gfs.$PDY)/$cyc}/atmos
+export COMINgfs6ago=${COMINgfs6ago:-$(compath.py gfs/prod/gfs.$d6ago_ymd)}/atmos
+export COMINgfs6ahead=${COMINgfs6ahead:-$(compath.py gfs/prod/gfs.$d6ahead_ymd)}/atmos
 export COMINenkf=${COMINenkf:-$(compath.py gfs/prod)/enkfgdas.}
 export COMINens_tracker_gfs=${COMINens_tracker_gfs:-$(compath.py ens_tracker/prod/gfs.$PDY)/$cyc/tctrack}
+export COMINgefs=${COMINgefs:-$(compath.py gefs/prod/gefs.$PDY)/$cyc/atmos/sfcsig}
 
 export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
@@ -160,6 +165,8 @@ export cycp=`echo $pdycycp|cut -c9-10`
   if (($inflag == 6)) ; then
   export COMSFCSIGP=$COM_IN/${RUN}.$pdyp/$cycp/sfcsig_enkf
   export COMTRACKP=$COM_IN/${RUN}.$pdyp/$cycp/track_enkf
+# export COMSFCSIGP=$COM_IN/${RUN}.$PDY/$cyc/sfcsig_enkf
+# export COMTRACKP=$COM_IN/${RUN}.$PDY/$cyc/track_enkf
   else
   export COMSFCSIGP=$COM_IN/${RUN}.$pdyp/$cycp/sfcsig
   export COMTRACKP=$COM_IN/${RUN}.$pdyp/$cycp/track
@@ -198,6 +205,9 @@ echo locations of scripts and executables
 ## ;;
 ##esac
 
+# Redirecting CHGRESEXEC to GEFS exec
+CHGRESEXEC=$EXECgefs/global_chgres_nemsio
+export CHGRESEXEC=$CHGRESEXEC
 
 ##############################################
 echo list environment before running script

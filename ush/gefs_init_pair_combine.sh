@@ -108,7 +108,8 @@ relocfact=${12}
 echo ipairi=$ipairi
 echo npairi=$npairi
 echo
-(( npairc = npairi / 4 ))
+#(( npairc = npairi / 4 ))
+(( npairc =  10 ))
 echo npairc=$npairc
 if (( ipairi <= npairc )); then
   ipair=ipairi
