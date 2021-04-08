@@ -19,7 +19,7 @@
 
 ### need pass the values of CYC, YMD, DATA, COMIN and COMOUT
 
-#echo "$(date -u) begin ${.sh.file}"
+echo "$(date -u) begin ${.sh.file}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -38,13 +38,14 @@ echo " ------------------------------------------"
 gridp25="-170:441:0.25 75:241:-0.25"
 gridp5="-170:221:0.50 75:121:-0.50"
 
+if [ ${FORECAST_SEGMENT} = hr ]; then
 ${USHgefs}/gefs_atmos_getsbn.sh avg apcp APCP pgrb2sp25 pgrb2s.0p25 0p25 003 240 3 "$gridp25"
 ${USHgefs}/gefs_atmos_getsbn.sh avg tmax TMAX pgrb2sp25 pgrb2s.0p25 0p25 003 240 3 "$gridp25" 
 ${USHgefs}/gefs_atmos_getsbn.sh avg tmin TMIN pgrb2sp25 pgrb2s.0p25 0p25 003 240 3 "$gridp25"
 ${USHgefs}/gefs_atmos_getsbn.sh avg apcp APCP pgrb2ap5 pgrb2a.0p50 0p50 246 384 6 "$gridp5"
 ${USHgefs}/gefs_atmos_getsbn.sh avg tmax TMAX pgrb2ap5 pgrb2a.0p50 0p50 246 384 6 "$gridp5"
 ${USHgefs}/gefs_atmos_getsbn.sh avg tmin TMIN pgrb2ap5 pgrb2a.0p50 0p50 246 384 6 "$gridp5"
-if [[ ${cyc} == "00" ]]; then
+else
 ${USHgefs}/gefs_atmos_getsbn.sh avg apcp APCP pgrb2ap5 pgrb2a.0p50 0p50 390 840 6 "$gridp5"
 ${USHgefs}/gefs_atmos_getsbn.sh avg tmax TMAX pgrb2ap5 pgrb2a.0p50 0p50 390 840 6 "$gridp5"
 ${USHgefs}/gefs_atmos_getsbn.sh avg tmin TMIN pgrb2ap5 pgrb2a.0p50 0p50 390 840 6 "$gridp5"
