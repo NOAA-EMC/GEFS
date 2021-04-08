@@ -74,7 +74,7 @@ cd $DATA
 
 relocfact=$relocfact relocflag=$relocflag
 
-(( npairt = npair * 4 ))
+#(( npairt = npair * 4 ))
 (( npairt = npair + 5 ))
 nlist=
 ipair=0

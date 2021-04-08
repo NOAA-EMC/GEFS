@@ -160,12 +160,8 @@ elif [[ ${jobscript} = JGEFS_NCEPPOST ]] ; then
 # Define COMIN for JGEFS_CQPF for dev test, which needs previous 16 day forecast
  
 elif [[ ${jobscript} = JGEFS_CQPF ]] ; then
-  export COMIN=/gpfs/tp2/nco/ops/com/gens/prod
- 
+  export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}}
 else
-
   export GFSbase=/gpfs/dell1/nco/ops/com/gfs/prod
   export COMINgfs=${GFSbase}/gfs.${PDY}/$cyc
-
 fi
-

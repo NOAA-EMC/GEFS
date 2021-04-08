@@ -87,7 +87,6 @@ export pgmerr=errfile
 # Specify Execution Areas
 ####################################
 export HOMEgefs=${HOMEgefs:-$NWROOT/gefs.${gefs_ver}}
-export HOMEgsm=/gpfs/dell1/nco/ops/nwprod/gsm.v12.1.6
 export HOMEgsm=${HOMEgsm:-$NWROOT/gsm.${gsm_ver}}
 export HOMEenkf=${HOMEenkf:-$NWROOT/enkf.${enkf_ver}}
 
