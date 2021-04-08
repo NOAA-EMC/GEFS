@@ -26,16 +26,12 @@
 
 set -x 
 
-echo " ------------------------------------------"
-echo "  BEGIN MAKING GEFS (MMEFS) GRIB2 PRODUCTS "
-echo " ------------------------------------------"
-
 set +x
 echo " "
 echo "#########################################"
 echo "                                         "
 echo "   Process GEFS (MMEFS) GRIB2 PRODUCTS   "
-echo "   FOR FORECAST HOURS 00 - 180.          "
+echo "   FOR FORECAST HOURS $7 - $8            "
 echo "                                         "
 echo "#########################################"
 echo " "
