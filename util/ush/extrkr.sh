@@ -753,11 +753,11 @@ then
   #FAF  synvit6ahead_file=gfs.t${d6ahead_hh}z.syndata.tcvitals.tm00
   #synvitdir=/com2/gfs/prod/gfs.${PDY}
   #synvitdir=$(compath.py gfs/prod)/gfs.${PDY}
-  synvitdir=$(compath.py gfs/prod)/gfs.${PDY}/${cyc}
+  synvitdir=$(compath.py gfs/prod)/gfs.${PDY}/${cyc}/atmos
   synvitfile=gfs.t${CYL}z.syndata.tcvitals.tm00
-  synvit6ago_dir=$(compath.py gfs/prod)/gfs.${d6ago_4ymd}/${d6ago_hh}
+  synvit6ago_dir=$(compath.py gfs/prod)/gfs.${d6ago_4ymd}/${d6ago_hh}/atmos
   synvit6ago_file=gfs.t${d6ago_hh}z.syndata.tcvitals.tm00
-  synvit6ahead_dir=$(compath.py gfs/prod)/gfs.${d6ahead_4ymd}/${d6ahead_hh}
+  synvit6ahead_dir=$(compath.py gfs/prod)/gfs.${d6ahead_4ymd}/${d6ahead_hh}/atmos
   synvit6ahead_file=gfs.t${d6ahead_hh}z.syndata.tcvitals.tm00
 
 else
