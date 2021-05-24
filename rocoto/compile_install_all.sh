@@ -42,6 +42,8 @@ if [ $machine = "nomachine" ]; then
         machine=wcoss
     elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then # We are on NOAA Mars or Venus
         machine=wcoss_dell_p3
+	elif [[ -d /apps/prod ]]; then # WCOSS2/Acorn
+		machine=acorn
     else
         echo "This is not supported by this script!"
         exit 55
@@ -207,7 +209,16 @@ if [ $RunRocoto = "yes" ]; then
         module load lsf/10.1
         module load ruby/2.5.1
         module load rocoto/complete
-        module load python/3.6.3       
+        module load python/3.6.3
+	elif [ $machine = "acorn" ]; then
+		source /apps/prod/lmodules/startLmod
+    	module load envvar/1.0
+
+    	module load intel/19.1.3.304 PrgEnv-intel #cpe-intel
+    	module load intel/19.1.3.304/cray-mpich/8.1.4
+	
+		module load python/3.8.6
+
     fi
     #./py/run_to_get_all.py  $userConfigFile
     ./py/run_pyGEFS.py -r yes -f $userConfigFile
