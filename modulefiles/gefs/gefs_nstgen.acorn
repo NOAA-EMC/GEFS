@@ -1,7 +1,7 @@
 #%Module#####################################################
 ## gefs_nstgen component - acorn
 #############################################################
-module load intel/${ips_ver}
+module load intel/${ips_ver} PrgEnv-intel
 module load w3nco/${w3nco_ver}
 module load bacio/${bacio_ver}
 module load sfcio/${sfcio_ver}

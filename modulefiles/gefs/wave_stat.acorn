@@ -5,7 +5,8 @@
 ## GWES.v3.0.9
 ##_____________________________________________________
 module load envvar/${EnvVars_ver}
-module load intel/${ips_ver}
+module load intel/${ips_ver} PrgEnv-intel
+
 module load w3nco/${w3nco_ver}
 module load bacio/${bacio_ver}
 module load jasper/${jasper_ver}

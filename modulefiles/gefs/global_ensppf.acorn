@@ -1,7 +1,7 @@
 #%Module#####################################################
 ## global_ensppf component - acorn
 #############################################################
-module load intel/${ips_ver}
+module load intel/${ips_ver} PrgEnv-intel
 
 module load g2/${g2_ver}
 module load w3nco/${w3nco_ver}

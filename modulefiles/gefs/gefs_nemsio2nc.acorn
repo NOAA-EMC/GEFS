@@ -1,8 +1,9 @@
 #%Module#####################################################
 ## gefs_nesio2nc component - acorn
 #############################################################
-module load intel/${ips_ver}
-module load cray-mpich/${impi_ver}
+module load intel/${ips_ver} PrgEnv-intel
+
+module load intel/${ips_ver}/cray-mpich/${impi_ver}
 
 module load nemsio/${nemsio_ver}
 module load w3nco/${w3nco_ver}
