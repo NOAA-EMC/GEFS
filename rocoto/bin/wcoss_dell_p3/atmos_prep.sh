@@ -17,7 +17,8 @@ module load ips/$ips_ver
 module load impi/$impi_ver
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
-module load NetCDF/$NetCDF_ver
+module load HDF5-parallel/$HDF5_parallel_ver
+module load NetCDF-parallel/$NetCDF_parallel_ver
 
 module load lsf/$lsf_ver
 

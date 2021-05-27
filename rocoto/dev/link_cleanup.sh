@@ -22,7 +22,7 @@ pwd=$(pwd -P)
 pwd0=$(readlink -e $pwd/../../)
 echo $pwd0
 
-for f0 in modulefiles/gefs sorc jobs ush scripts util/ush; do
+for f0 in jobs ush scripts util/ush; do #sorc modulefiles/gefs
 
     for f in $f0/*; do
         #echo $f
