@@ -1,4 +1,4 @@
-export gefs_ver=v12.1.1
+export gefs_ver=v12.1.2
 
 export EnvVars_ver=1.0.3
 export ips_ver=18.0.1.163
