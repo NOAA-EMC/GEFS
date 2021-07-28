@@ -33,6 +33,8 @@ fi
 #
 cd ${progname}.fd
 
+export FCMP=${FCMP:-ifort}
+
 make -f Makefile clobber
 make -f Makefile
 make -f Makefile install

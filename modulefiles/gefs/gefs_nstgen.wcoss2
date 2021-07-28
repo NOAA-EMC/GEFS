@@ -1,16 +1,19 @@
 #%Module#####################################################
 ## gefs_nstgen component - wcoss2
 #############################################################
-module load intel/${ips_ver} PrgEnv-intel
+module load intel/${intel_ver}
+module load PrgEnv-intel/${PrgEnv_intel_ver}
+
 module load w3nco/${w3nco_ver}
 module load bacio/${bacio_ver}
 module load sfcio/${sfcio_ver}
 
-module load cray-mpich/${impi_ver}
+module load craype/${craype_ver}
+module load cray-mpich/${cray_mpich_ver}
 module load netcdf/${NetCDF_ver}
 
 ##
-export FCMP=ifort
+export FCMP=ftn
 export LDFLAGSM=
 export OMPFLAGM=
 
