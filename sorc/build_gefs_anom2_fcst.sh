@@ -8,7 +8,12 @@ progname=gefs_anom2_fcst
 
 if [ -f ../modulefiles/gefs/gefs_$target.ver ]; then
     source ../modulefiles/gefs/gefs_$target.ver
+else
+    if [ -f ../versions/build.ver ]; then
+        source ../versions/build.ver
+    fi
 fi
+
 source ../modulefiles/gefs/${progname}.$target
 
 
