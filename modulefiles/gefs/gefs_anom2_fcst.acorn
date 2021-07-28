@@ -1,5 +1,5 @@
 #%Module#####################################################
-## gefs_anom2_fcst component - acorn
+## gefs_anom2_fcst component - wcoss2
 #############################################################
 module load intel/${ips_ver} PrgEnv-intel
 

@@ -42,8 +42,8 @@ if [ $machine = "nomachine" ]; then
         machine=wcoss
     elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then # We are on NOAA Mars or Venus
         machine=wcoss_dell_p3
-	elif [[ -d /apps/prod ]]; then # WCOSS2/Acorn
-		machine=acorn
+	elif [[ -d /apps/prod ]]; then # WCOSS2
+		machine=wcoss2
     else
         echo "This is not supported by this script!"
         exit 55
@@ -210,7 +210,7 @@ if [ $RunRocoto = "yes" ]; then
         module load ruby/2.5.1
         module load rocoto/complete
         module load python/3.6.3
-	elif [ $machine = "acorn" ]; then
+	elif [ $machine = "wcoss2" ]; then
 		source /apps/prod/lmodules/startLmod
     	module load envvar/1.0
 

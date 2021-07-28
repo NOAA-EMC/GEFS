@@ -1,5 +1,5 @@
 #%Module#####################################################
-## gefs_nstgen component - acorn
+## gefs_nstgen component - wcoss2
 #############################################################
 module load intel/${ips_ver} PrgEnv-intel
 module load w3nco/${w3nco_ver}

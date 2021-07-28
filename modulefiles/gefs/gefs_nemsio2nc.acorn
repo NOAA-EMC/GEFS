@@ -1,5 +1,5 @@
 #%Module#####################################################
-## gefs_nesio2nc component - acorn
+## gefs_nesio2nc component - wcoss2
 #############################################################
 module load intel/${ips_ver} PrgEnv-intel
 
