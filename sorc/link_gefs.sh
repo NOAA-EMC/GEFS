@@ -15,7 +15,7 @@ do
 done
 
 RUN_ENVIR=${RUN_ENVIR:-emc}
-machine=${machine:-dell}
+machine=${machine:-wcoss2} #dell
 
 echo $RUN_ENVIR
 echo $machine
@@ -37,6 +37,9 @@ elif [ $machine = "dell" ]; then
 elif [ $machine = "hera" ]; then
     FIX_DIR="/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix_20200927"
     FIX_DIR_FV3="/scratch1/NCEPDEV/global/glopara/fix"
+elif [ $machine == "wcoss2" ]; then
+    FIX_DIR="/lfs/h1/emc/ens/noscrub/common/git/gefs/fix_nco_gefsv12"
+    FIX_DIR_FV3="/lfs/h1/emc/ens/noscrub/common/git/gw/fix_nco_gfsv15"
 fi
 
 # Delete Fix folder and relink/recopy it

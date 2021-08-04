@@ -75,6 +75,8 @@ if [ $CompileCode = "yes" ]; then
             sHeader='/gpfs/hps'
         elif [[ $machine == "hera" ]]; then
             sHeader='/scratch2/NCEPDEV/ensemble'
+        elif [[ $machine == "wcoss2" ]]; then
+            sHeader='/lfs/h1'
         fi
         sHOMEDIR=$(grep 'export HOMEDIR=${HOMEDIR:-'${sHeader} -r ${sWS}/parm/setbase | sed 's/export HOMEDIR=${HOMEDIR:-//g'| sed 's/}//g')
         echo $sHOMEDIR
@@ -109,6 +111,8 @@ if [ $Link = "yes" ]; then
         ./link_gefs.sh -e $RunEnvir -m cray
     elif [ $machine = "wcoss_dell_p3" ]; then
         ./link_gefs.sh -e $RunEnvir -m dell
+    elif [ $machine = "wcoss2" ]; then
+        ./link_gefs.sh -e $RunEnvir -m wcoss2
     fi
 fi
 
@@ -210,12 +214,13 @@ if [ $RunRocoto = "yes" ]; then
         module load ruby/2.5.1
         module load rocoto/complete
         module load python/3.6.3
-	elif [ $machine = "wcoss2" ]; then
-		source /apps/prod/lmodules/startLmod
-    	module load envvar/1.0
+    elif [ $machine = "wcoss2" ]; then
+        module load envvar/1.0
 
-    	module load intel/19.1.3.304 PrgEnv-intel #cpe-intel
-    	module load intel/19.1.3.304/cray-mpich/8.1.4
+        module load PrgEnv-intel/8.1.0
+        module load craype/2.7.8
+        module load intel/19.1.3.304
+        module load cray-mpich/8.1.7
 	
 		module load python/3.8.6
 
