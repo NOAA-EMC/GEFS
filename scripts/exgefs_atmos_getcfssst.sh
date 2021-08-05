@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-echo "$(date -u) begin ${.sh.file}"
+echo "$(date -u) begin ${0}"
 
 set -x
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -10,7 +10,7 @@ fi
 # Set environment.
 VERBOSE=${VERBOSE:-"YES"}
 if [ $VERBOSE = "YES" ]; then
-    echo $(date) EXECUTING ${.sh.file} $* >&2
+    echo $(date) EXECUTING ${0} $* >&2
     set -x
 fi
 
@@ -31,7 +31,7 @@ export EXECgfs=$HOMEgfs/exec
 
 # Executables.
 if [[ -z "$EXECgefs" ]]; then
-    echo "FATAL ERROR in ${.sh.file}: GEFS executable directory $EXECgefs does not exist"
+    echo "FATAL ERROR in ${0}: GEFS executable directory $EXECgefs does not exist"
     exit 5
 fi
 
@@ -73,7 +73,7 @@ while [ $HFcfs -le $HFcfsMax ] ; do
 done
 
 if [ $HFcfs -gt $HFcfsMax ];  then
-    echo "FATAL ERROR in ${.sh.file}: Real-time CFSv2 does not exist: $sFile"
+    echo "FATAL ERROR in ${0}: Real-time CFSv2 does not exist: $sFile"
     exit 92
 fi
 
@@ -82,18 +82,18 @@ sFile=$COMINgfs/gfs.${cycle}.sfcanl.nc
 if [[ -f $sFile ]]; then
     test_tref=$(ncdump -h $sFile | grep tref)
     if [ -z $test_tref ]; then
-        echo "FATAL ERROR in ${.sh.file}: Real-time nst does not exist in $sFile"
+        echo "FATAL ERROR in ${0}: Real-time nst does not exist in $sFile"
         exit 93
     fi
     $NLN $sFile $filenamein_nst
 else
-    echo "FATAL ERROR in ${.sh.file}: gfs surface analysis $sFile does not exist"
+    echo "FATAL ERROR in ${0}: gfs surface analysis $sFile does not exist"
     exit 93
 fi
 
 export err=$?
 if (( err != 0 )); then
-    echo "FATAL ERROR in ${.sh.file}: link sst files FAILED!"
+    echo "FATAL ERROR in ${0}: link sst files FAILED!"
     exit 93
 fi
 echo "real-time data link ends at $(date)"
@@ -103,7 +103,7 @@ echo "read nst file to save tref begin"
 $GEFS_NSTGEN $filenamein_nst $filenameout_nst
 export err=$?
 if (( err !=0 )); then
-    echo "FATAL ERROR in ${.sh.file}: Reading sfcanl file $filenamein_nst to save tref to $filenameout_nst failed!"
+    echo "FATAL ERROR in ${0}: Reading sfcanl file $filenamein_nst to save tref to $filenameout_nst failed!"
     exit 94
 fi
 
@@ -155,7 +155,7 @@ anlfileout=anl_sst_grb_latlon.$PDY
 $COPYGB -g"$grid" -x $filenameout_nst $anlfileout
 export err=$?
 if (( err !=0 )); then
-    echo "FATAL ERROR in ${.sh.file}: $filenameout_nst; $anlfileout!"
+    echo "FATAL ERROR in ${0}: $filenameout_nst; $anlfileout!"
     exit 96
 fi
 cat $anlfileout > $fn_rawfc    # This is lead 0 forecast
@@ -173,7 +173,7 @@ if [ ! -f $rawgb2trim  ]; then
     $WGRIB2  $rawgb2trim_short $option1 $option21 -new_grid $grid0p25 $rawgb2trim
     export err=$?
     if (( err !=0 )); then
-        echo "FATAL ERROR in ${.sh.file}: WGRIB2 failed on $filenamein_CFSv2; $rawgb2trim!"
+        echo "FATAL ERROR in ${0}: WGRIB2 failed on $filenamein_CFSv2; $rawgb2trim!"
         exit 96
     fi
 fi
@@ -203,7 +203,7 @@ CFSv2_clim_dir=${CFSv2_clim_dir:-${FIXgefs}/sstclim}
 
 climmgb2trim=${CFSv2_clim_dir}/${hh}/tmpsfc.$mm.$dd.${hh}Z.mean.clim.daily.grb2
 if [ ! -s $climmgb2trim ] ; then
-    echo "FATAL ERROR in ${.sh.file}: $climmgb2trim does not exist!"
+    echo "FATAL ERROR in ${0}: $climmgb2trim does not exist!"
     exit 89
 fi
 climmgb2=$tmpclim/tmpsfc.${PDY}${cyc}.mean.clim.daily.grb2
@@ -233,7 +233,7 @@ $WGRIB $anlfileout -d all -ieee -o fort.$un_rtgan
 # CFSR must be trimmed to the 35 days of the forecasts
 climogb2trim=${climogb2trim:-${FIXgefs}/sstclim/cfsr/tmpsfc.cfsr.mean.clim.daily.1999.2010.grb2}
 if [ ! -s $climogb2trim ] ; then
-    echo "FATAL ERROR in ${.sh.file}: $climogb2trim does not exist!"
+    echo "FATAL ERROR in ${0}: $climogb2trim does not exist!"
     exit 90
 fi
 climogb2=$tmpcfsr/tmpsfc.cfsr.${PDY}${cyc}.clim.daily.grb2
@@ -262,7 +262,7 @@ export err=$?
 if [ $? -eq 0 ] ;
     then rm -f $climmgb2
 else
-    echo "FATAL ERROR in ${.sh.file}: CNVGRIB failed for $climogb"
+    echo "FATAL ERROR in ${0}: CNVGRIB failed for $climogb"
 fi
 
 #
@@ -311,7 +311,7 @@ echo "$fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile"
 $GEFS_ANOM2_FCST $fn_rawfc $un_climm $un_climo $un_rtgan $fn_anom_fc $kpdsfile $HFcfs
 export err=$?
 if [[ $err != 0 ]]; then
-    echo "FATAL ERROR in ${.sh.file}: Bias correction failed in $GEFS_ANOM2_FCST"
+    echo "FATAL ERROR in ${0}: Bias correction failed in $GEFS_ANOM2_FCST"
     exit $err
 fi
 
@@ -319,10 +319,10 @@ $NCP $fn_anom_fc $SSTDIR/TMPsfc.${PDY}${cyc}.24hr.anom.grb
 export err=$?
 
 if [[ $err != 0 ]]; then
-    echo "FATAL ERROR in ${.sh.file}: Could not copy $fn_anom_fc to $SSTDIR"
+    echo "FATAL ERROR in ${0}: Could not copy $fn_anom_fc to $SSTDIR"
     exit $err
 fi
 
-echo "$(date -u) end ${.sh.file}"
+echo "$(date -u) end ${0}"
 
 exit 0
