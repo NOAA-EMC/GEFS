@@ -3,7 +3,6 @@
 #BSUB -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_forecast_00.%J
 #BSUB -n 360
 #BSUB -R span[ptile=40]
-#BSUB -R 'affinity[core(1)]'
 #BSUB -q dev2
 #BSUB -W 04:30
 #BSUB -L /bin/sh
