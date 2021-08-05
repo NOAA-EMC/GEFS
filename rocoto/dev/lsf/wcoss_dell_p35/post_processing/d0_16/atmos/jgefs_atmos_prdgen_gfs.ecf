@@ -1,8 +1,8 @@
 #!/bin/sh
 #BSUB -J jgefs_atmos_prdgen_gfs_00
 #BSUB -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_prdgen_gfs_00.%J
-#BSUB -n 16
-#BSUB -R span[ptile=16]
+#BSUB -n 20
+#BSUB -R span[ptile=20]
 #BSUB -R 'affinity[core(1)]'
 #BSUB -q dev2
 #BSUB -W 05:00
@@ -49,10 +49,11 @@ export navg_min=1
 export cyc=00
 export PDY=20200509
 export RUNMEM=gegfs
+export SENDDBN=NO
 
-export total_tasks=4
+export total_tasks=5
 export OMP_NUM_THREADS=4
-export taskspernode=4
+export taskspernode=5
 
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_ATMOS_PRDGEN

@@ -4,7 +4,7 @@
 #BSUB -n 20
 #BSUB -R span[ptile=20]
 #BSUB -R "affinity[core(1):distribute=pack]"
-#BSUB -R "rusage[mem=4608]"
+#BSUB -R "rusage[mem=3000]"
 #BSUB -q dev2_shared
 #BSUB -W 04:30
 #BSUB -L /bin/sh
