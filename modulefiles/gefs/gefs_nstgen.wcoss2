@@ -6,7 +6,6 @@ module load PrgEnv-intel/${PrgEnv_intel_ver}
 
 module load w3nco/${w3nco_ver}
 module load bacio/${bacio_ver}
-module load sfcio/${sfcio_ver}
 
 module load craype/${craype_ver}
 module load cray-mpich/${cray_mpich_ver}
@@ -18,6 +17,6 @@ export LDFLAGSM=
 export OMPFLAGM=
 
 ##
-export SFCIO_INC4=$SFCIO_INC
-export SFCIO_LIB4=$SFCIO_LIB
+#export SFCIO_INC4=$SFCIO_INC
+#export SFCIO_LIB4=$SFCIO_LIB
 export NETCDF_LDFLAGS="-L${NETCDF_LIB}  -lnetcdff"
