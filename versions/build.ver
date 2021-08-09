@@ -8,7 +8,6 @@ export bacio_ver=2.4.1
 export jasper_ver=2.0.16
 export libpng_ver=1.6.37
 export zlib_ver=1.2.11
-export sfcio_ver=1.4.1
 export sp_ver=2.3.3
 export nemsio_ver=2.5.2
 export PrgEnv_intel_ver=8.1.0
