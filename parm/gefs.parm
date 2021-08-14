@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/ksh -l
 
 ###################################################################
 # This parm file defines the control variables for the GEFS model
@@ -48,8 +48,15 @@ case $cyc in
 esac
 
 memberlist="c00"
-for (( imem=1; imem<=$npert; imem++ )); do
-	memberlist="$memberlist p$(printf %02i $imem)"
+#for (( imem=1; imem<=$npert; imem++ )); do
+#	memberlist="$memberlist p$(printf %02i $imem)"
+#done
+
+imem=1
+while [[ imem -le $npert ]];
+do
+    memberlist="$memberlist p$(printf %02i $imem)"
+    (( imem++ ))
 done
 export memberlist
 

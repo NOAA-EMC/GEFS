@@ -1,19 +1,19 @@
-#!/bin/ksh
+#!/bin/ksh -l
 
-echo "$(date -u) begin ${.sh.file}"
+echo "$(date -u) begin ${0}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
 	# Turn on strict bash error checking
 	set -eu
 fi
-export PS4='$SECONDS + $(basename ${.sh.file})[$LINENO] '
+export PS4='$SECONDS + $(basename ${0})[$LINENO] '
 
 ####################################
 # Determine Job Output Name on System
 ####################################
-export jobid=${jobid:-"$job.$LSB_JOBID"}
-export pgmout="OUTPUT.${LSB_JOBID}"
+export jobid=${jobid:-"$job.$PBS_JOBID"}
+export pgmout="OUTPUT.${PBS_JOBID}"
 export pgmerr=errfile
 
 ####################################
@@ -77,8 +77,8 @@ for config in $configs; do
     . $config_path/$config.parm
     export err=$?
     if [[ $err != 0 ]]; then
-    	echo "FATAL ERROR in ${.sh.file}: Error while loading parm file $config_path/$config.parm"
-    	exit $err
+        echo "FATAL ERROR in ${0}: Error while loading parm file $config_path/$config.parm"
+        exit $err
     fi
 done
 
@@ -94,7 +94,7 @@ export err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"
 else
-    echo "FATAL ERROR in ${.sh.file}: $job failed!"
+    echo "FATAL ERROR in ${0}: $job failed!"
     exit $err
 fi
 #############################################################
@@ -105,6 +105,6 @@ fi
 cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-echo "$(date -u) end ${.sh.file}"
+echo "$(date -u) end ${0}"
 
 exit $err
