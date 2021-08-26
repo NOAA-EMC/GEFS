@@ -1,7 +1,7 @@
 #!/bin/sh
 #PBS -N jgefs_chem_prep_emissions_00
 #PBS -j oe
-##PBS -o /lfs/h1/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2/com/output/dev/20210731/jgefs_chem_prep_emissions_00.%J
+##PBS -o /lfs/h2/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2/com/output/dev/20210731/jgefs_chem_prep_emissions_00.%J
 #PBS -l select=1:ncpus=56:mem=50GB
 ##PBS -R span[ptile=28]
 ##PBS -R 'affinity[core(1)]'
@@ -16,7 +16,7 @@ cd $PBS_O_WORKDIR
 
 module purge
 
-export HOMEgefs=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/gefs/gefs_port2wcoss2
+export HOMEgefs=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/gefs_port2wcoss2
 export model=gefs
 . ${HOMEgefs}/versions/run.ver
 
@@ -49,7 +49,7 @@ export GEFS_ROCOTO=${HOMEgefs}/rocoto
 
 #. $GEFS_ROCOTO/bin/wcoss2/common.sh
 #====
-HOMEdata=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata/com
+HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata/com
 export COMINgfs_base=${HOMEdata}/gfs/prod/gfs.
 export COMINenkf_base=${HOMEdata}/gfs/prod/enkfgdas.
 export COMINcfs_base=${HOMEdata}/cfs/prod/cfs/cfs.
@@ -60,12 +60,12 @@ export COMIN_WAV_ICE=$COMINgfs
 export COMINenkf=${COMINenkf:-${COMINenkf_base}}
 export COMINcfs=${COMINcfs:-${COMINcfs_base}}
 
-export DCOMROOT=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata/dcom
+export DCOMROOT=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata/dcom
 #===
 
 export job=${job:-$PBS_JOBNAME}
-export HOMEgefs=${HOMEgefs:-/lfs/h1/emc/ens/noscrub/Xianwu.Xue/gefs/gefs_port2wcoss2}
-export WORKDIR=/lfs/h1/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2
+export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/gefs_port2wcoss2}
+export WORKDIR=/lfs/h2/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2
 export COMROOT=${WORKDIR}/com
 export GESROOT=${WORKDIR}/nwges
 export DATAROOT=${WORKDIR}/tmp

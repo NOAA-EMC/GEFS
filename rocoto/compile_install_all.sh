@@ -76,7 +76,7 @@ if [ $CompileCode = "yes" ]; then
         elif [[ $machine == "hera" ]]; then
             sHeader='/scratch2/NCEPDEV/ensemble'
         elif [[ $machine == "wcoss2" ]]; then
-            sHeader='/lfs/h1'
+            sHeader='/lfs/h'
         fi
         sHOMEDIR=$(grep 'export HOMEDIR=${HOMEDIR:-'${sHeader} -r ${sWS}/parm/setbase | sed 's/export HOMEDIR=${HOMEDIR:-//g'| sed 's/}//g')
         echo $sHOMEDIR

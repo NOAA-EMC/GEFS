@@ -1,7 +1,8 @@
 #!/bin/sh
 #PBS -N jgefs_wave_init_00
-##PBS -o /lfs/h1/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2/com/output/dev/20210731/jgefs_wave_init_00.%J
+##PBS -o /lfs/h2/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2/com/output/dev/20210731/jgefs_wave_init_00.%J
 #PBS -l select=1:ncpus=48:mem=50GB
+#PBS -j oe
 ##PBS -R span[ptile=24]
 ##PBS -R 'affinity[core(1)]'
 #PBS -q workq
@@ -15,7 +16,7 @@ cd $PBS_O_WORKDIR
 
 module purge
 
-export HOMEgefs=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/gefs/gefs_port2wcoss2
+export HOMEgefs=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/gefs_port2wcoss2
 export model=gefs
 . ${HOMEgefs}/versions/run.ver
 
@@ -46,7 +47,7 @@ export GEFS_ROCOTO=${HOMEgefs}/rocoto
 
 #. $GEFS_ROCOTO/bin/wcoss2/common.sh
 #====
-HOMEdata=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata/com
+HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata/com
 export COMINgfs_base=${HOMEdata}/gfs/prod/gfs.
 export COMINenkf_base=${HOMEdata}/gfs/prod/enkfgdas.
 export COMINcfs_base=${HOMEdata}/cfs/prod/cfs/cfs.
@@ -61,8 +62,8 @@ export COMINcfs=${COMINcfs:-${COMINcfs_base}}
 export OMP_NUM_THREADS=1
 
 export job=${job:-$PBS_JOBNAME}
-export HOMEgefs=${HOMEgefs:-/lfs/h1/emc/ens/noscrub/Xianwu.Xue/gefs/gefs_port2wcoss2}
-export WORKDIR=/lfs/h1/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2
+export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/gefs_port2wcoss2}
+export WORKDIR=/lfs/h2/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2
 export COMROOT=${WORKDIR}/com
 export GESROOT=${WORKDIR}/nwges
 export DATAROOT=${WORKDIR}/tmp
@@ -73,7 +74,7 @@ export KEEPDATA=YES     # ecflow NO
 export SENDECF=NO       # ecflow YES
 export SENDDBN=NO       # ecflow YES
 export SENDDBN_NTC=NO   # ecflow YES
-#export npert=2
+export npert=2
 #export navg_min=1
 #export cyc=00
 #export PDY=20200509
