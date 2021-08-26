@@ -430,14 +430,8 @@ for fhr in ${RUN_HOURS[@]}; do
 		done # for file in fort.11 fort.51 h5wav prmsl tfile
 		echo
 
-		# Global workflow scripts are still using jlogfile, so just create a temporary one and then cat it afterwards
-		export jlogfile=$DATA/jlogfile
-		if [[ -f $jlogfile ]]; then rm $jlogfile; fi
-
 		$POSTGPSH
 		export err=$?
-
-		cat $jlogfile
 
 		if (( err == 0 )); then
 			echo "$POSTGPSH completed successfully"

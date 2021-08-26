@@ -249,12 +249,6 @@ export rCDUMP=$RUNMEM
 export CDUMP=$RUNMEM
 
 if [[ $cplwav = ".true." ]]; then
-	# Set location of wave restart from last cycle
-	last_date=$($NDATE -$WAVHCYC $CDATE)
-	last_PDY=$(echo $last_date | cut -c1-8)
-	last_cyc=$(echo $last_date | cut -c9-10)
-	export WRDIR=$COMROOT/${NET}/${envir}/${RUN}.${last_PDY}/$last_cyc/wave/restart
-
 	# CPU partitioning
 	export npe_wav=${npe_wav:-120}
 	export npe_fcst_wav=$(( npe_fv3 + npe_wav ))
