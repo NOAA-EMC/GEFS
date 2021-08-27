@@ -6,7 +6,7 @@
 #   1) 2004-09-10       Steve Gilbert       First Implementation
 ################################################################
 
-echo "$(date -u) begin ${.sh.file}"
+echo "$(date -u) begin ${0}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -52,7 +52,7 @@ for stn in $(cat $file_list); do
 	 export err=$?
 	 if [ $err -ne 0 ]; then
 			echo <<- EOF
-				FATAL ERROR in ${.sh.file}: $EXECbufrsnd/tocsbufr failed using the following namelist:
+				FATAL ERROR in ${0}: $EXECbufrsnd/tocsbufr failed using the following namelist:
 					&INPUT
 						BULHED="$WMOHEAD",KWBX="$CCCC",
 						NCEP2STD=.TRUE.,

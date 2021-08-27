@@ -1,13 +1,13 @@
 #!/bin/bash
 
-echo "$(date -u) begin $(basename $BASH_SOURCE)"
+echo "$(date -u) begin $(basename ${0})"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
 	# Turn on strict bash error checking
 	set -eu
 fi
-export PS4='$SECONDS + $(basename $(basename $BASH_SOURCE))[$LINENO] '
+export PS4='$SECONDS + $(basename $(basename ${0}))[$LINENO] '
 
 ####################################
 # Determine Job Output Name on System
@@ -87,7 +87,7 @@ for config in $configs; do
     . $config_path/$config.parm
     export err=$?
     if [[ $err != 0 ]]; then
-    	echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file $config_path/$config.parm"
+    	echo "FATAL ERROR in $(basename ${0}): Error while loading parm file $config_path/$config.parm"
     	exit $err
     fi
 done
@@ -105,7 +105,7 @@ export err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"
 else
-    echo "FATAL ERROR in $(basename $BASH_SOURCE): $job failed!"
+    echo "FATAL ERROR in $(basename ${0}): $job failed!"
     exit $err
 fi
 #############################################################
@@ -116,6 +116,6 @@ fi
 cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-echo "$(date -u) end $(basename $BASH_SOURCE)"
+echo "$(date -u) end $(basename ${0})"
 
 exit $err

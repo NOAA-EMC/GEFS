@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "$(date -u) begin $(basename $BASH_SOURCE)"
+echo "$(date -u) begin $(basename ${0})"
 
 if [[ ${STRICT:-NO} == "YES" ]]; then
     # Turn on strict bash error checking
@@ -34,11 +34,11 @@ $APRUN_MPMD
 export err=$?
 
 if [[ $err != 0 ]]; then
-	echo "FATAL ERROR in $(basename $BASH_SOURCE): One or more gempak jobs in $MP_CMDFILE failed!"
+	echo "FATAL ERROR in $(basename ${0}): One or more gempak jobs in $MP_CMDFILE failed!"
 	exit $err
 fi
 #############################################################
 
-echo "$(date -u) end $(basename $BASH_SOURCE)"
+echo "$(date -u) end $(basename ${0})"
 
 exit $err

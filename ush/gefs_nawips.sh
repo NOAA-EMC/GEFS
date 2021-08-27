@@ -10,7 +10,7 @@
 # echo "C. Magee: 10/2013 - swap X and Y for rtgssthr Atl and Pac."
 #####################################################################
 
-echo "$(date -u) begin ${.sh.file}"
+echo "$(date -u) begin ${0}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -140,7 +140,7 @@ while [ $fhcnt -le $fend ] ; do
 			let "icnt=icnt+1"
 			if [ $icnt -eq $SLEEP_LOOP_MAX ]; then
 				cat <<-EOF
-					FATAL ERROR in ${.sh.file}: GRIB index file $GRIBIN_chk still not found at $(date) after waiting ${SLEEP_TIME}s.
+					FATAL ERROR in ${0}: GRIB index file $GRIBIN_chk still not found at $(date) after waiting ${SLEEP_TIME}s.
 					EOF
 				export err=1;
 				err_chk
@@ -175,7 +175,7 @@ while [ $fhcnt -le $fend ] ; do
 	export err=$?
 	if [ $err -ne 0 ]; then
 		echo <<- EOF
-			FATAL ERROR in ${.sh.file}: Gempak failed creating $GEMGRD for f${fhr} using the following settings:
+			FATAL ERROR in ${0}: Gempak failed creating $GEMGRD for f${fhr} using the following settings:
 				GBFILE   = grib$fhr
 				INDXFL   = 
 				GDOUTF   = $GEMGRD
@@ -222,11 +222,11 @@ while [ $fhcnt -le $fend ] ; do
 done
 
 if [[ $err != 0 ]]; then
-	echo "FATAL ERROR in ${.sh.file}: GRIB conversion failed!"
+	echo "FATAL ERROR in ${0}: GRIB conversion failed!"
 	err_chk
 	exit $err    
 fi
 
-echo "$(date -u) end ${.sh.file}"
+echo "$(date -u) end ${0}"
 
 exit $err

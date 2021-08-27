@@ -16,7 +16,7 @@
 # 2018-05-22 Guang Ping Lou: Making it work for both GFS and FV3GFS 
 # 2018-05-30  Guang Ping Lou: Make sure all files are available.
 
-echo "$(date -u) begin ${.sh.file}"
+echo "$(date -u) begin ${0}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -89,7 +89,7 @@ while [ $hh -le $FEND ]; do
 
 		if [ $ic -ge SLEEP_LOOP_MAX ]; then
 			echo <<- EOF
-				FATAL ERROR in ${.sh.file}: Unable to find forecast output $fcstchk at $(date -u) after waiting ${SLEEP_TIME}s!
+				FATAL ERROR in ${0}: Unable to find forecast output $fcstchk at $(date -u) after waiting ${SLEEP_TIME}s!
 				EOF
 			export err=6
 			err_chk
@@ -112,7 +112,7 @@ $APRUN $EXECbufrsnd/gfs_bufr < gfsparm > out_gfs_bufr_$FEND
 export err=$?
 
 if [[ $err != 0 ]]; then
-	echo "FATAL ERROR in ${.sh.file}: gfs_bufr failed!"
+	echo "FATAL ERROR in ${0}: gfs_bufr failed!"
 	err_chk
 	exit $err
 fi

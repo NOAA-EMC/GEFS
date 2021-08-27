@@ -1,6 +1,6 @@
 #! /bin/ksh
 
-echo "$(date -u) begin ${.sh.file}"
+echo "$(date -u) begin ${0}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -60,7 +60,7 @@ for stream in ${PRDGEN_STREAMS[@]}; do
 	for var in PRDGEN_GRID PRDGEN_GRID_SPEC PRDGEN_HOURS PRDGEN_SUBMC PRDGEN_A_DIR PRDGEN_A_PREFIX PRDGEN_A_LIST_F00 PRDGEN_A_LIST_FHH; do
 		pointer="$var[$stream]"
 		if [[ -z ${!pointer} ]]; then
-			echo "FATAL ERROR in ${.sh.file}: $var not defined for $stream"
+			echo "FATAL ERROR in ${0}: $var not defined for $stream"
 			exit -1
 		fi
 	done
@@ -149,11 +149,11 @@ $APRUN_MPMD
 export err=$?
 
 if [[ $err != 0 ]]; then
-	echo "FATAL ERROR in ${.sh.file}: One or more prdgen streams in $MP_CMDFILE failed!"
+	echo "FATAL ERROR in ${0}: One or more prdgen streams in $MP_CMDFILE failed!"
 	exit $err
 fi
 #############################################################
 
-echo "$(date -u) end ${.sh.file}"
+echo "$(date -u) end ${0}"
 
 exit $err

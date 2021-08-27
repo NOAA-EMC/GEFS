@@ -1,6 +1,6 @@
 #! /bin/ksh
 
-echo "$(date -u) begin ${.sh.file}"
+echo "$(date -u) begin ${0}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -29,7 +29,7 @@ case $FORECAST_SEGMENT in
         fhr_wave_post=0
 		;;
 	*)
-		echo "FATAL ERROR in ${.sh.file}: Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
+		echo "FATAL ERROR in ${0}: Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
 		export err=100
 		exit $err
 		;;
@@ -106,7 +106,7 @@ while [ $ic -le $SLEEP_LOOP_MAX ]; do
     # period and error exit
     ###############################
     if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-        echo "FATAL ERROR in ${.sh.file}: Forecast and post missing of $RUNMEM File still missing at $(date -u) after waiting ${SLEEP_TIME}s"
+        echo "FATAL ERROR in ${0}: Forecast and post missing of $RUNMEM File still missing at $(date -u) after waiting ${SLEEP_TIME}s"
         export err=9
         err_chk
      fi
@@ -169,10 +169,10 @@ done
 
 
 if [[ $err != 0 ]]; then
-	echo "FATAL ERROR in ${.sh.file}: received a non-zero return code from jgefs_fcst_post_manager"
+	echo "FATAL ERROR in ${0}: received a non-zero return code from jgefs_fcst_post_manager"
 	err_chk
 fi
 
-echo "$(date -u) end ${.sh.file}"
+echo "$(date -u) end ${0}"
 
 exit $err

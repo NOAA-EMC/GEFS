@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-echo "$(date -u) begin ${.sh.file}"
+echo "$(date -u) begin ${0}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -49,7 +49,7 @@ for member in $memberlist; do
                 export fend=${FHMAXHF:-240}
                 ;;
             (*)
-                echo "FATAL ERROR in ${.sh.file}: resolution $resoltion not supported!"
+                echo "FATAL ERROR in ${0}: resolution $resoltion not supported!"
                 export err=5
                 exit $err
                 ;;
@@ -74,11 +74,11 @@ $APRUN_MPMD
 export err=$?
 
 if [[ $err != 0 ]]; then
-    echo "FATAL ERROR in ${.sh.file}: One or more gempak resolutions in $MP_CMDFILE failed!"
+    echo "FATAL ERROR in ${0}: One or more gempak resolutions in $MP_CMDFILE failed!"
     exit $err
 fi
 #############################################################
 
-echo "$(date -u) end ${.sh.file}"
+echo "$(date -u) end ${0}"
 
 exit $err

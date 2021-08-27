@@ -1,6 +1,6 @@
 #! /bin/ksh
 
-echo "$(date -u) begin ${.sh.file}"
+echo "$(date -u) begin ${0}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -106,7 +106,7 @@ echo "nmissing=$nmissing"
 echo "$(date) GRIB file test before cleanup end"
 if ((nmissing > 0)); then
 	cat  > msg <<-EOF
-		WARNING: in ${.sh.file}: GRIB file test before cleanup IDENTIFIED $nmissing MISSING FILES
+		WARNING: in ${0}: GRIB file test before cleanup IDENTIFIED $nmissing MISSING FILES
 		Will skip this cycle's cleanup.
 		If this is the first run or first 00z run after machine switch, then you can safely ignore it.
 		Otherwise please double check if the model missing any file.
@@ -170,7 +170,7 @@ else # (( nmissing > 0 ))
 	echo "$(date) after master cleanup"
 fi # (( nmissing > 0 ))
 
-echo "$(date -u) end ${.sh.file}"
+echo "$(date -u) end ${0}"
 
 exit 0
 
