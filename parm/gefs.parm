@@ -139,3 +139,11 @@ export save_pgrb2_p25=${save_pgrb2_p25:-NO}
 # List of contacts to mail when there is mail sent by mail.py for product degredation
 export MAIL_LIST=${MAIL_LIST:-"Dingchen.Hou@noaa.gov,Walter.Kolczynski@noaa.gov,Xianwu.Xue@noaa.gov"}
 
+#version numbers of the models who's com data will be used in GEFS
+export ver_gefs=v12.2
+export ver_gfs=v16.2
+export ver_cfs=v2.3
+export ver_uk=v2.2    #uk
+export ver_ec=v2.1    #ecmwf
+export ver_na=v0.0    #nawips
+export ver_nam=v4.2   #nam

@@ -58,14 +58,15 @@ source PDY
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export HOMEgefs=${HOMEgefs:-${PACKAGEROOT}/gefs.${gefs_ver}}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc}
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc}
+ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
+export COMIN=${COMIN:-${COMROOT}/${NET}/${ver}/${RUN}.${PDY}/$cyc}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${ver}/${RUN}.${PDY}/$cyc}
 
 #############################
 # Source relevant config files
@@ -82,8 +83,6 @@ for config in $configs; do
 done
 
 export COMPONENT=${COMPONENT:-atmos}
-
-export jlogfile=${jlogfile:-$DATA/jlogfile}
 
 echo "Environment before calling script"
 env | sort
