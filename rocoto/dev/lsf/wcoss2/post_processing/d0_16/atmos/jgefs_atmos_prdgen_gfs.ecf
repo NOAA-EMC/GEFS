@@ -1,13 +1,15 @@
 #!/bin/sh
-#BSUB -J jgefs_atmos_prdgen_gfs_00
-#BSUB -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_prdgen_gfs_00.%J
-#BSUB -n 20
-#BSUB -R span[ptile=20]
-#BSUB -R 'affinity[core(1)]'
-#BSUB -q dev2
-#BSUB -W 05:00
-#BSUB -L /bin/sh
-#BSUB -P GEN-T2O
+#PBS -N jgefs_atmos_prdgen_gfs_00
+##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_prdgen_gfs_00.%J
+#PBS -j oe
+#PBS -l select=1:ncpus=40:mem=50GB # May need to be changed
+##PBS -n 20
+##PBS -R span[ptile=20]
+##PBS -R 'affinity[core(1)]'
+#PBS -q workq
+#PBS -l walltime=5:00:00
+##PBS -L /bin/sh
+#PBS -A GEN-T2O
 
 set -x
 module purge
