@@ -11,7 +11,7 @@ export cray_pals_ver=1.0.12
 export cray_libsci_ver=21.06.1.1
 
 export prod_envir_ver=2.0.4
-export prod_util_ver=2.0.5
+export prod_util_ver=2.0.8
 
 export grib_util_ver=1.2.2
 export wgrib2_ver=2.0.8
