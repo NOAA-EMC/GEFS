@@ -16,8 +16,8 @@ cd $PBS_O_WORKDIR
 
 module purge
 
-export HOMEgefs=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/gefs_port2wcoss2
 export model=gefs
+export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/gefs_port2wcoss2}
 . ${HOMEgefs}/versions/run.ver
 
 
