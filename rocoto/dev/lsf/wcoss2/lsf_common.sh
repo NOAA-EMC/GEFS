@@ -7,21 +7,6 @@ export PDY=20210731
 
 export npert=2
 
-#export pdyp=20210730
-#export cycp=18
-
-
-#export PATH=$PATH:/apps/ops/prod/nco/core/prod_util.v2.0.8/exec:/apps/ops/prod/nco/core/prod_util.v2.0.8/ush
-#NDATE=${NDATE:-/apps/ops/prod/nco/core/prod_util.v2.0.8/exec/ndate}
-#if [ -z $NDATE ]; then
-#	module load envvar/1.0
-#	module load prod_util/2.0.8
-#fi
-#fhrp=6
-#export pdycycp=$(NDATE -$fhrp $PDY$cyc)
-#export pdyp=$(echo $pdycycp|cut -c1-8)
-#export cycp=$(echo $pdycycp|cut -c9-10)
-
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export NET=${NET:-gefs}
@@ -35,52 +20,6 @@ export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/gefs_port2wc
 export WORKDIR=/lfs/h2/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2
 
 export GEFS_ROCOTO=${HOMEgefs}/rocoto
-
-#. $GEFS_ROCOTO/bin/wcoss2/common.sh
-#====
-UseData="keep_for_future_ref" #old, canned, new
-if [[ UseData == "old" ]]; then
-	HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata/com
-	export COMINgfs_base=${HOMEdata}/gfs/prod/gfs.
-	export COMINenkf_base=${HOMEdata}/gfs/prod/enkfgdas.
-	export COMINcfs_base=${HOMEdata}/cfs/prod/cfs/cfs.
-	export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc/atmos}
-	export COMINenkf=${COMINenkf:-${COMINenkf_base}${pdyp}/$cycp/atmos}
-
-	export COMIN_WAV_ICE=$COMINgfs
-	#export COMINenkf=${COMINenkf:-${COMINenkf_base}}
-	export COMINcfs=${COMINcfs:-${COMINcfs_base}}
-
-	export DCOMROOT=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata/dcom/prod
-elif [[ UseData == "canned" ]]; then
-	HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata
-	export COMPATH=$HOMEdata/canned/com/gfs:$HOMEdata/canned/com/cfs
-#	compath.py canned/com/gfs/${ver_gfs}
-#	compath.py canned/com/gfs/${ver_cfs}
-
-	export COMINgfs=$(compath.py canned/com/gfs/${ver_gfs})/gfs.${PDY}/${cyc}/atmos
-	export COMIN_WAV_ICE=$COMINgfs
-	export COMINenkf=$(compath.py compath.py canned/com/gfs/${ver_gfs})/enkfgdas.${pdyp}/${cycp}/atmos
-
-	export DCOMROOT=${HOMEdata}/canned/dcom
-	# /lfs/h1/ops/canned/com/
-	# export DCOMROOT=/lfs/h1/ops/canned/dcom
-	# export COMPATH=/lfs/h1/ops/canned/com/blend:/lfs/h1/ops/canned/com/gfs:/lfs/h1/ops/canned/com/gefs
-#	HOMEdata=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata/com
-#    export COMINgfs_base=${HOMEdata}/gfs/prod/gfs. #/gpfs/dell3/ptmp/emc.glopara/ROTDIRS/v16rt2/gfs/para/gfs.
-#    #export COMINgfs_base=$(compath.py gfs/prod)/gfs.
-#    export COMINenkf_base=${HOMEdata}/gfs/prod/enkfgdas.
-#    #export COMINenkf_base=$(compath.py gfs/prod)/enkfgdas.
-#    export COMINcfs_base=${HOMEdata}/cfs/prod/cfs/cfs.
-#    #export COMINcfs_base=$(compath.py cfs/prod)/cfs/cfs.
-#    export COMIN_WAV_ICE=${HOMEdata}/gfs/prod/gfs.${PDY}/${cyc}/atmos
-#    #export COMIN_WAV_ICE=$(compath.py gfs/prod)/gfs.${PDY}/${cyc}/atmos
-#    export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc/atmos}
-#    export COMINenkf=${COMINenkf:-${COMINenkf_base}${pdyp}/$cycp/atmos}
-fi
-
-#echo "DCOMROOT=$DCOMROOT"
-#echo "COMINgfs=$COMINgfs"
 
 export HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata
 export COMPATH=$HOMEdata/canned/com/gfs:$HOMEdata/canned/com/cfs
@@ -98,3 +37,51 @@ export KEEPDATA=YES     # ecflow NO
 export SENDECF=NO       # ecflow YES
 export SENDDBN=NO       # ecflow YES
 export SENDDBN_NTC=NO   # ecflow YES
+
+
+# ---------- Keep for future reference ---------
+##. $GEFS_ROCOTO/bin/wcoss2/common.sh
+##====
+#UseData="keep_for_future_ref" #old, canned, new
+#if [[ UseData == "old" ]]; then
+#	HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata/com
+#	export COMINgfs_base=${HOMEdata}/gfs/prod/gfs.
+#	export COMINenkf_base=${HOMEdata}/gfs/prod/enkfgdas.
+#	export COMINcfs_base=${HOMEdata}/cfs/prod/cfs/cfs.
+#	export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc/atmos}
+#	export COMINenkf=${COMINenkf:-${COMINenkf_base}${pdyp}/$cycp/atmos}
+#
+#	export COMIN_WAV_ICE=$COMINgfs
+#	#export COMINenkf=${COMINenkf:-${COMINenkf_base}}
+#	export COMINcfs=${COMINcfs:-${COMINcfs_base}}
+#
+#	export DCOMROOT=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata/dcom/prod
+#elif [[ UseData == "canned" ]]; then
+#	HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata
+#	export COMPATH=$HOMEdata/canned/com/gfs:$HOMEdata/canned/com/cfs
+##	compath.py canned/com/gfs/${ver_gfs}
+##	compath.py canned/com/gfs/${ver_cfs}
+#
+#	export COMINgfs=$(compath.py canned/com/gfs/${ver_gfs})/gfs.${PDY}/${cyc}/atmos
+#	export COMIN_WAV_ICE=$COMINgfs
+#	export COMINenkf=$(compath.py compath.py canned/com/gfs/${ver_gfs})/enkfgdas.${pdyp}/${cycp}/atmos
+#
+#	export DCOMROOT=${HOMEdata}/canned/dcom
+#	# /lfs/h1/ops/canned/com/
+#	# export DCOMROOT=/lfs/h1/ops/canned/dcom
+#	# export COMPATH=/lfs/h1/ops/canned/com/blend:/lfs/h1/ops/canned/com/gfs:/lfs/h1/ops/canned/com/gefs
+##	HOMEdata=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata/com
+##    export COMINgfs_base=${HOMEdata}/gfs/prod/gfs. #/gpfs/dell3/ptmp/emc.glopara/ROTDIRS/v16rt2/gfs/para/gfs.
+##    #export COMINgfs_base=$(compath.py gfs/prod)/gfs.
+##    export COMINenkf_base=${HOMEdata}/gfs/prod/enkfgdas.
+##    #export COMINenkf_base=$(compath.py gfs/prod)/enkfgdas.
+##    export COMINcfs_base=${HOMEdata}/cfs/prod/cfs/cfs.
+##    #export COMINcfs_base=$(compath.py cfs/prod)/cfs/cfs.
+##    export COMIN_WAV_ICE=${HOMEdata}/gfs/prod/gfs.${PDY}/${cyc}/atmos
+##    #export COMIN_WAV_ICE=$(compath.py gfs/prod)/gfs.${PDY}/${cyc}/atmos
+##    export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc/atmos}
+##    export COMINenkf=${COMINenkf:-${COMINenkf_base}${pdyp}/$cycp/atmos}
+#fi
+#
+##echo "DCOMROOT=$DCOMROOT"
+##echo "COMINgfs=$COMINgfs"

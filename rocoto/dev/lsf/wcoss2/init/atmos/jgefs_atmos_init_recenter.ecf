@@ -74,12 +74,8 @@ elif [[ -f "../../../$f" ]]; then
     source ../../../$f
 fi
 
+# ----
 export OMP_NUM_THREADS=1
-
-#export npert=2
-#export navg_min=1
-#export cyc=00
-#export PDY=20200509
 
 export total_tasks=6
 export taskspernode=6

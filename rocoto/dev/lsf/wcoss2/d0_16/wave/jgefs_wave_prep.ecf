@@ -15,7 +15,6 @@ set -x
 cd $PBS_O_WORKDIR
 
 #module purge
-
 export MEMBER=p02 #p02 #p01 #c00
 
 export model=gefs

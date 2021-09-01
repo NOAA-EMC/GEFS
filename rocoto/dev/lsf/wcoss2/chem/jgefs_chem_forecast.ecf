@@ -15,12 +15,27 @@ set -x
 
 cd $PBS_O_WORKDIR
 
-module purge
+#module purge
 
 export model=gefs
-export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/gefs_port2wcoss2}
+# to get HOMEgefs
+f=lsf_common.sh
+if [[ -f "$f" ]]; then
+    echo "$f exists."
+    source $f
+elif [[ -f "../$f" ]]; then
+    echo "../$f exists."
+    source ../$f
+elif [[ -f "../../$f" ]]; then
+    echo "../../$f exists."
+    source ../../$f
+elif [[ -f "../../../$f" ]]; then
+    echo "../../../$f exists."
+    source ../../../$f
+fi
 . ${HOMEgefs}/versions/run.ver
 
+module purge
 module load envvar/$envvar_ver
 module load PrgEnv-intel/$prgenv_intel_ver
 module load craype/$craype_ver
@@ -45,22 +60,21 @@ module list
 ulimit -s unlimited
 ulimit -a
 
-export job=${job:-$LSB_JOBNAME}
-export HOMEgefs=/gpfs/dell6/emc/modeling/noscrub/Xianwu.Xue/gefs_hub_ecf
-export COMROOT=/gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com
-export GESROOT=/gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/nwges
-export DATAROOT=/gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/tmpnwprd
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
-export SENDCOM=YES
-export KEEPDATA=YES     # ecflow NO
-export SENDECF=NO       # ecflow YES
-export SENDDBN=NO       # ecflow YES
-export SENDDBN_NTC=NO   # ecflow YES
-export npert=2
-export navg_min=1
-export cyc=00
-export PDY=20200509
+f=lsf_common.sh
+if [[ -f "$f" ]]; then
+    echo "$f exists."
+    source $f
+elif [[ -f "../$f" ]]; then
+    echo "../$f exists."
+    source ../$f
+elif [[ -f "../../$f" ]]; then
+    echo "../../$f exists."
+    source ../../$f
+elif [[ -f "../../../$f" ]]; then
+    echo "../../../$f exists."
+    source ../../../$f
+fi
+#export npert=2
 export RUNMEM=geaer
 
 export total_tasks=240
