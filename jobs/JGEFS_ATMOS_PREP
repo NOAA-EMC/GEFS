@@ -85,8 +85,8 @@ for config in $configs; do
     fi
 done
 
-export COMINgfs=${COMINgfs:-$(compath.py gfs/${ver_gfs})/gfs.${PDY}/${cyc}/atmos}
-export COMINenkf=${COMINenkf:-$(compath.py gfs/${ver_gfs})/enkfgdas.${pdyp}/${cycp}/atmos}
+export COMINgfs=${COMINgfs:-$(compath.py canned/com/gfs/${ver_gfs})/gfs.${PDY}/${cyc}/atmos}
+export COMINenkf=${COMINenkf:-$(compath.py canned/com/gfs/${ver_gfs})/enkfgdas.${pdyp}/${cycp}/atmos}
 
 NCP=${NCP:-"/bin/cp -p"}
 

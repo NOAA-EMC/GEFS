@@ -70,7 +70,7 @@ export COMOUT=${COMOUT:-${COMROOT}/${NET}/${ver}/${RUN}.${PDY}/$cyc/$COMPONENT}
 export GESIN=$COMROOT/${NET}/${ver}/${RUN}.${PDY}/$cyc/nwges
 export GESOUT=$COMROOT/${NET}/${ver}/${RUN}.${PDY}/$cyc/nwges
 
-export COMINgfs=${COMINgfs:-$(compath.py gfs/${ver_gfs})/gfs.${PDY}/$cyc/atmos}
+export COMINgfs=${COMINgfs:-$(compath.py canned/com/gfs/${ver_gfs})/gfs.${PDY}/$cyc/atmos}
 
 #############################
 # Source relevant config files
