@@ -6,7 +6,8 @@
 ##PBS -R span[ptile=28]
 ##PBS -R 'affinity[core(1)]'
 #PBS -q workq
-#PBS -l walltime=0:45:00
+#PBS -l walltime=0:15:00
+##45:00
 ##PBS -L /bin/sh
 #PBS -A GEN-T2O
 
@@ -14,12 +15,28 @@ set -x
 
 cd $PBS_O_WORKDIR
 
-module purge
+#module purge
 
 export model=gefs
-export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/gefs_port2wcoss2}
+
+# to get HOMEgefs
+f=lsf_common.sh
+if [[ -f "$f" ]]; then
+    echo "$f exists."
+    source $f
+elif [[ -f "../$f" ]]; then
+    echo "../$f exists."
+    source ../$f
+elif [[ -f "../../$f" ]]; then
+    echo "../../$f exists."
+    source ../../$f
+elif [[ -f "../../../$f" ]]; then
+    echo "../../../$f exists."
+    source ../../../$f
+fi
 . ${HOMEgefs}/versions/run.ver
 
+module purge
 module load envvar/$envvar_ver
 module load PrgEnv-intel/$prgenv_intel_ver
 module load craype/$craype_ver
@@ -38,44 +55,28 @@ module list
 ulimit -s unlimited
 ulimit -a
 
-export cyc=00
-export PDY=20210731
-
 export fhmaxh="96"
 export fhmax_aer="60"
 export fhrestart="9999"
 
-export GEFS_ROCOTO=${HOMEgefs}/rocoto
+f=lsf_common.sh
+if [[ -f "$f" ]]; then
+    echo "$f exists."
+    source $f
+elif [[ -f "../$f" ]]; then
+    echo "../$f exists."
+    source ../$f
+elif [[ -f "../../$f" ]]; then
+    echo "../../$f exists."
+    source ../../$f
+elif [[ -f "../../../$f" ]]; then
+    echo "../../../$f exists."
+    source ../../../$f
+fi
 
-#. $GEFS_ROCOTO/bin/wcoss2/common.sh
-#====
-HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata/com
-export COMINgfs_base=${HOMEdata}/gfs/prod/gfs.
-export COMINenkf_base=${HOMEdata}/gfs/prod/enkfgdas.
-export COMINcfs_base=${HOMEdata}/cfs/prod/cfs/cfs.
-export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc/atmos}
-export COMINenkf=${COMINenkf:-${COMINenkf_base}${pdyp}/$cycp/atmos}
+#HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata
+#export DCOMROOT=${HOMEdata}/canned/dcom
 
-export COMIN_WAV_ICE=$COMINgfs
-export COMINenkf=${COMINenkf:-${COMINenkf_base}}
-export COMINcfs=${COMINcfs:-${COMINcfs_base}}
-
-export DCOMROOT=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata/dcom
-#===
-
-export job=${job:-$PBS_JOBNAME}
-export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/gefs_port2wcoss2}
-export WORKDIR=/lfs/h2/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2
-export COMROOT=${WORKDIR}/com
-export GESROOT=${WORKDIR}/nwges
-export DATAROOT=${WORKDIR}/tmp
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
-export SENDCOM=YES
-export KEEPDATA=YES     # ecflow NO
-export SENDECF=NO       # ecflow YES
-export SENDDBN=NO       # ecflow YES
-export SENDDBN_NTC=NO   # ecflow YES
 #export npert=2
 #export navg_min=1
 #export cyc=00
