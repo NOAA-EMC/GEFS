@@ -105,8 +105,8 @@ if [[ -d global-workflow.fd ]] ; then
     $LINK ${sPath}/ncep_post ../exec/gfs_ncep_post
 
     sPath=../sorc/global-workflow.fd/sorc/gsi.fd/exec
-    $LINK ${sPath}/getsigensmeanp_smooth.* ../exec/
-    $LINK ${sPath}/getsfcensmeanp.* ../exec/
+    $LINK ${sPath}/getsigensmeanp_smooth.x ../exec/
+    $LINK ${sPath}/getsfcensmeanp.x ../exec/
 
     sPath=../sorc/global-workflow.fd/exec
     $LINK ${sPath}/gfs_bufr ../exec/
