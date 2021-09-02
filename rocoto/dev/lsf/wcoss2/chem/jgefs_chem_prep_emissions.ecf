@@ -5,7 +5,7 @@
 #PBS -l select=1:ncpus=56:mem=50GB
 ##PBS -R span[ptile=28]
 ##PBS -R 'affinity[core(1)]'
-#PBS -q workq
+#PBS -q dev
 #PBS -l walltime=0:15:00
 ##45:00
 ##PBS -L /bin/sh

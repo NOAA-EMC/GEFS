@@ -3,7 +3,8 @@
 export PS4='$SECONDS + $(basename ${0}))[$LINENO] '
 
 export cyc=00
-export PDY=20210731
+#export PDY=20210731
+export PDY=20210824
 
 export npert=2
 
@@ -21,7 +22,9 @@ export WORKDIR=/lfs/h2/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2
 
 export GEFS_ROCOTO=${HOMEgefs}/rocoto
 
-export HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata
+#export HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata
+export HOMEdata=/lfs/h1/ops
+
 export COMPATH=$HOMEdata/canned/com/gfs:$HOMEdata/canned/com/cfs
 export DCOMROOT=${HOMEdata}/canned/dcom
 
@@ -85,3 +88,4 @@ export SENDDBN_NTC=NO   # ecflow YES
 #
 ##echo "DCOMROOT=$DCOMROOT"
 ##echo "COMINgfs=$COMINgfs"
+

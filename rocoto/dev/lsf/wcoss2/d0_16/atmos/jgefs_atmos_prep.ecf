@@ -7,7 +7,7 @@
 ##PBS -n 36
 ##PBS -R span[ptile=36]
 ##PBS -R 'affinity[core(1)]'
-#PBS -q workq
+#PBS -q dev
 #PBS -l walltime=0:30:00
 ##PBS -L /bin/sh
 #PBS -A GEN-T2O
