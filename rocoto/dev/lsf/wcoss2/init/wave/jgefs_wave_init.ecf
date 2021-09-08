@@ -80,5 +80,6 @@ export npert=2
 export total_tasks=24
 export taskspernode=24
 
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_WAVE_INIT

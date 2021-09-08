@@ -89,5 +89,6 @@ export gefsmpexec="mpiexec -n $total_tasks -ppn 18"
 #"mpiexec -n $total_tasks"
 #mpirun -n $total_tasks"
 
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_ATMOS_PREP

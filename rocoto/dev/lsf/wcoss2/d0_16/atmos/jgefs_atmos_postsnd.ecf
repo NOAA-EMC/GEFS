@@ -77,5 +77,6 @@ export total_tasks=10
 export OMP_NUM_THREADS=2
 export taskspernode=10
 
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_ATMOS_POSTSND

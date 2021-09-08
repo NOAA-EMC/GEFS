@@ -1,8 +1,9 @@
 #!/bin/sh
-#PBS -N jgefs_atmos_forecast_16_35d_00
+#PBS -N jgefs_atmos_forecast_16_35d_00_c00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_forecast_00.%J
 #PBS -j oe
-#PBS -l place=vscatter,select=4:ncpus=108:mpiprocs=108
+#PBS -l place=vscatter,select=3:ncpus=128:mpiprocs=128
+##PBS -l place=vscatter,select=4:ncpus=108:mpiprocs=108
 ##PBS -n 320
 ##PBS -R span[ptile=40]
 #PBS -q dev
@@ -77,12 +78,25 @@ fi
 #---
 export RUNMEM=ge${MEMBER} #$MEMBER
 
-export total_tasks=432
+export layout_x_lr=6
+export layout_y_lr=8
+export WRITE_GROUP_lr=1
+export WRTTASK_PER_GROUP_lr=32
+export parallel_threads_lr=1
+
+#---
+#export KEEPDATA="YES"
+#export ESMF_RUNTIME_PROFILE=ON
+#export ESMF_RUNTIME_PROFILE_OUTPUT=SUMMARY
+#module load esmf/8.1.0.beta_snapshot_26
+
+export total_tasks=$((layout_x_lr * layout_y_lr * 6 + WRTTASK_PER_GROUP_lr * WRITE_GROUP_lr)) #320
 #export taskspernode=40
 export FORECAST_SEGMENT=lr
 #export RERUN="YES"
 
 export gefsmpexec="mpiexec -n $total_tasks" # -ppn 108"
 
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_FORECAST

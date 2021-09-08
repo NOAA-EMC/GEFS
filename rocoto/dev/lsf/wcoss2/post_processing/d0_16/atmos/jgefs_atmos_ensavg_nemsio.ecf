@@ -75,5 +75,6 @@ fi
 export total_tasks=30
 export taskspernode=6
 
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_ATMOS_ENSAVG_NEMSIO

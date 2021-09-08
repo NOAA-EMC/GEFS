@@ -79,5 +79,6 @@ export total_tasks=12
 export taskspernode=12
 export FORECAST_SEGMENT=lr
 
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_ATMOS_POST

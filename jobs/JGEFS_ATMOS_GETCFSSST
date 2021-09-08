@@ -60,10 +60,24 @@ export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
 ##############################################
 ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
 export COMPONENT="atmos"
-export COMOUT=${COMOUT:-$COMROOT/${NET}/${ver}/${RUN}.${PDY}/$cyc/$COMPONENT}
+export COMOUT=${COMOUT:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/$COMPONENT}
 
-export COMINgfs=${COMINgfs:-$(compath.py canned/com/gfs/${ver_gfs})/gfs.${PDY}/$cyc/atmos}
-export COMINcfs=${COMINcfs:-$(compath.py canned/com/cfs/${ver_cfs})/cfs.}
+#############################
+# Source relevant config files
+#############################
+configs="gefs"
+config_path=$PARMgefs
+for config in $configs; do
+    . $config_path/$config.parm
+    export err=$?
+    if [[ $err != 0 ]]; then
+        echo "FATAL ERROR in ${0}: Error while loading parm file $config_path/$config.parm"
+        exit $err
+    fi
+done
+
+export COMINgfs=${COMINgfs:-$(compath.py prod/com/gfs/${ver_gfs})/gfs.${PDY}/$cyc/atmos}
+export COMINcfs=${COMINcfs:-$(compath.py prod/com/cfs/${ver_cfs})/cfs.}
 
 echo "Environment before calling script"
 env | sort

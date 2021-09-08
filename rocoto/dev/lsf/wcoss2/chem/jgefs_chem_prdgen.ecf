@@ -78,5 +78,6 @@ export OMP_NUM_THREADS=2
 export taskspernode=3
 export FORECAST_SEGMENT=hr
 
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_ATMOS_PRDGEN

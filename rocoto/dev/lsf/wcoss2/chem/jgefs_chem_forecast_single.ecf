@@ -2,15 +2,13 @@
 #PBS -N jgefs_chem_forecast_00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_chem_forecast_00.%J
 #PBS -j oe
-##PBS -l place=vscatter,select=3:ncpus=110:mpiprocs=110
-##PBS -l place=vscatter,select=2:ncpus=120:mpiprocs=120
 #PBS -l place=vscatter,select=2:ncpus=128:mpiprocs=128
-##PBS -l select=2:ncpus=120:mem=50GB # Need to be changed
 ##PBS -n 240
 ##PBS -R span[ptile=40]
 ##PBS -R 'affinity[core(1)]'
 #PBS -q dev
 #PBS -l walltime=9:00:00
+##PBS -l walltime=3:00:00
 ##PBS -L /bin/sh
 #PBS -A GEN-T2O
 
@@ -22,20 +20,10 @@ cd $PBS_O_WORKDIR
 
 export model=gefs
 # to get HOMEgefs
-f=lsf_common.sh
-if [[ -f "$f" ]]; then
-    echo "$f exists."
-    source $f
-elif [[ -f "../$f" ]]; then
-    echo "../$f exists."
-    source ../$f
-elif [[ -f "../../$f" ]]; then
-    echo "../../$f exists."
-    source ../../$f
-elif [[ -f "../../../$f" ]]; then
-    echo "../../../$f exists."
-    source ../../../$f
-fi
+export EXPID=port2wcoss2_new
+export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/$EXPID}
+export WORKDIR=/lfs/h2/emc/ptmp/Xianwu.Xue/o/$EXPID
+
 . ${HOMEgefs}/versions/run.ver
 
 module purge
@@ -63,20 +51,33 @@ module list
 ulimit -s unlimited
 ulimit -a
 
-f=lsf_common.sh
-if [[ -f "$f" ]]; then
-    echo "$f exists."
-    source $f
-elif [[ -f "../$f" ]]; then
-    echo "../$f exists."
-    source ../$f
-elif [[ -f "../../$f" ]]; then
-    echo "../../$f exists."
-    source ../../$f
-elif [[ -f "../../../$f" ]]; then
-    echo "../../../$f exists."
-    source ../../../$f
-fi
+export cyc=00
+export PDY=20210824
+
+export npert=2
+
+export envir=${envir:-dev}
+export RUN_ENVIR=${RUN_ENVIR:-dev}
+export NET=${NET:-gefs}
+export RUN=${RUN:-gefs}
+
+export HOMEdata=/lfs/h1/ops
+export COMPATH=$HOMEdata/canned/com/gfs:$HOMEdata/canned/com/cfs:${WORKDIR}/$envir/com/${NET}
+export DCOMROOT=${HOMEdata}/canned/dcom
+
+#===
+export job=${job:-$PBS_JOBNAME}
+
+export COMROOT=${WORKDIR}/$envir/com
+export GESROOT=${WORKDIR}/nwges
+export DATAROOT=${WORKDIR}/tmp
+
+export SENDCOM=YES
+export KEEPDATA=YES     # ecflow NO
+export SENDECF=NO       # ecflow YES
+export SENDDBN=NO       # ecflow YES
+export SENDDBN_NTC=NO   # ecflow YES
+
 #---
 export RUNMEM=geaer
 

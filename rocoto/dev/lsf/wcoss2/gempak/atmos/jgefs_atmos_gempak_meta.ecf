@@ -76,5 +76,6 @@ fi
 export total_tasks=8
 export taskspernode=8
 
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_ATMOS_GEMPAK_META

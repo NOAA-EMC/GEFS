@@ -79,5 +79,6 @@ export PDY=20200509
 export total_tasks=1
 export taskspernode=1
 
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_ATMOS_AVGSPR_GEMPAK_META

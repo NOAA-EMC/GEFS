@@ -81,5 +81,6 @@ export RUNMEM=geaer
 export total_tasks=1
 export taskspernode=1
 
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_CHEM_INIT

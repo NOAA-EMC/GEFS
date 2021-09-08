@@ -66,8 +66,8 @@ export GEMPAKgefs=${GEMPAKgefs:-$HOMEgefs/gempak}
 # Define COM directories
 ##############################################
 ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
-export COMIN=${COMOUT:-${COMROOT}/${NET}/${ver}/${RUN}.${PDY}/$cyc}
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${ver}/${RUN}.${PDY}/$cyc}
+export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
+export COMOUT=${COMOUT:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
 
 #############################
 # Source relevant config files

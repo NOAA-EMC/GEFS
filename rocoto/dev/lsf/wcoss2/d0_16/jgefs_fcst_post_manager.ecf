@@ -74,5 +74,6 @@ export total_tasks=1
 export taskspernode=1
 export FORECAST_SEGMENT=hr
 
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_FCST_POST_MANAGER

@@ -77,5 +77,6 @@ fi
 export total_tasks=400
 export taskspernode=40
 
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_WAVE_STAT

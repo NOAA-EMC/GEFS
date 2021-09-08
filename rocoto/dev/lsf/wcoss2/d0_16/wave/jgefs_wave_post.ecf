@@ -78,5 +78,6 @@ export RUNMEM=ge${MEMBER} #$MEMBER
 export total_tasks=20
 export taskspernode=20
 
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_WAVE_POST

@@ -83,6 +83,6 @@ export taskspernode=6
 export gefsmpexec_mpmd="mpiexec -n $total_tasks --ppn $taskspernode cfp mpmd_cmdfile"
 # "mpirun -n $total_tasks cfp mpmd_cmdfile"
 
-
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_ATMOS_INIT_RECENTER
