@@ -99,6 +99,7 @@ export KEEPDATA="YES"
 export ESMF_RUNTIME_PROFILE=ON
 export ESMF_RUNTIME_PROFILE_OUTPUT=SUMMARY
 module load esmf/8.1.0.beta_snapshot_26
+export print_memory_usage=".true." #".false."
 
 export gefsmpexec="mpiexec -n $total_tasks" # -ppn 120"
 

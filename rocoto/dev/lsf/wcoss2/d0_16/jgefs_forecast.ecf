@@ -1,5 +1,5 @@
 #!/bin/sh
-#PBS -N jgefs_forecast_0_16d_00_c00
+#PBS -N jgefs_forecast_0_16d_00_p01
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_forecast_00.%J
 #PBS -j oe
 #PBS -l place=vscatter,select=3:ncpus=128:mpiprocs=128
@@ -18,7 +18,7 @@ set -x
 cd $PBS_O_WORKDIR
 
 #module purge
-export MEMBER=c00 #p02 #p01 #c00
+export MEMBER=p01 #p02 #p01 #c00
 
 export model=gefs
 # to get HOMEgefs
@@ -97,6 +97,7 @@ export KEEPDATA="YES"
 export ESMF_RUNTIME_PROFILE=ON
 export ESMF_RUNTIME_PROFILE_OUTPUT=SUMMARY
 module load esmf/8.1.0.beta_snapshot_26
+export print_memory_usage=".true." #".false."
 
 export total_tasks=$((layout_x * layout_y * 6 + WRTTASK_PER_GROUP * WRITE_GROUP + npe_wav)) #384
 export taskspernode=40
