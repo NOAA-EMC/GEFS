@@ -54,6 +54,7 @@ source PDY
 export HOMEgefs=${HOMEgefs:-${PACKAGEROOT}/gefs.${gefs_ver}}
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
+export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 ##############################################
 # Define COM directories

@@ -15,6 +15,7 @@ export machine="WCOSS_D35"
 # Additional paths needed by child scripts
 export HOMEgfs=${HOMEgfs:-$HOMEgefs}
 export PARMgfs=$HOMEgfs/parm
+export EXECgfs=$HOMEgfs/exec
 export FIXgfs=$HOMEgfs/fix
 export FIX_DIR=$FIXgfs
 export FIX_AM=$FIX_DIR/fix_am
@@ -223,7 +224,7 @@ fi
 #
 export fcstscript=${fcstscript:-$HOMEgfs/scripts/exglobal_fcst_nemsfv3gfs.sh}
 export FORECASTSH=$fcstscript
-export FCSTEXECDIR=${FCSTEXECDIR:-$EXECgefs}
+export FCSTEXECDIR=${FCSTEXECDIR:-$EXECgfs}
 export PARM_FV3DIAG=${PARM_FV3DIAG:-$PARMgfs/parm_fv3diag}
 export ROTDIR=${ROTDIR:-$DATA}
 
