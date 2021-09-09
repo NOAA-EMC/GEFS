@@ -20,8 +20,10 @@ cd $PBS_O_WORKDIR
 
 export model=gefs
 # to get HOMEgefs
-export EXPID=port2wcoss2_new
-export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/$EXPID}
+export EXPID=test_port2wcoss2_new
+#export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/$EXPID}
+export HOMEgefs=${HOMEgefs:-"/lfs/h2/emc/ens/noscrub/common/git/sorc/gefs/gefs_port2wcoss2_common"}
+export HOMEgfs=/lfs/h2/emc/ens/noscrub/common/git/sorc/gw/gw_port2wcoss2_common
 export WORKDIR=/lfs/h2/emc/ptmp/Xianwu.Xue/o/$EXPID
 
 . ${HOMEgefs}/versions/run.ver
@@ -96,10 +98,9 @@ export FORECAST_SEGMENT=hr
 #export RERUN="YES"
 
 #
-export KEEPDATA="YES"
-export ESMF_RUNTIME_PROFILE=ON
-export ESMF_RUNTIME_PROFILE_OUTPUT=SUMMARY
-module load esmf/8.1.0.beta_snapshot_26
+#export ESMF_RUNTIME_PROFILE=ON
+#export ESMF_RUNTIME_PROFILE_OUTPUT=SUMMARY
+#module load esmf/8.1.0.beta_snapshot_26
 
 export gefsmpexec="mpiexec -n $total_tasks" # -ppn 120"
 

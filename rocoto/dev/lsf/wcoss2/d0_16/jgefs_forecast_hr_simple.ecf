@@ -1,5 +1,5 @@
 #!/bin/sh
-#PBS -N jgefs_forecast_0_16d_00_p02
+#PBS -N jgefs_forecast_0_16d_00_c00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_forecast_00.%J
 #PBS -j oe
 #PBS -l place=vscatter,select=3:ncpus=128:mpiprocs=128
@@ -13,12 +13,13 @@ set -x
 cd $PBS_O_WORKDIR
 
 #module purge
-export MEMBER=p02 #p02 #p01 #c00
+export MEMBER=c00 #p02 #p01 #c00
 
 export model=gefs
 # to get HOMEgefs
-export EXPID=port2wcoss2_new
-export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/$EXPID}
+export EXPID=test_port2wcoss2_new
+export HOMEgefs=${HOMEgefs:-"/lfs/h2/emc/ens/noscrub/common/git/sorc/gefs/gefs_port2wcoss2_common"}
+export HOMEgfs=/lfs/h2/emc/ens/noscrub/common/git/sorc/gw/gw_port2wcoss2_common
 export WORKDIR=/lfs/h2/emc/ptmp/Xianwu.Xue/o/$EXPID
 
 . ${HOMEgefs}/versions/run.ver
@@ -91,7 +92,6 @@ export coupling_interval_sec=3600
 export cplwav=".true."
 
 #---
-export KEEPDATA="YES"
 export ESMF_RUNTIME_PROFILE=ON
 export ESMF_RUNTIME_PROFILE_OUTPUT=SUMMARY
 module load esmf/8.1.0.beta_snapshot_26
