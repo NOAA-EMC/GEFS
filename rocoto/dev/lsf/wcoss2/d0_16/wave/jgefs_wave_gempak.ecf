@@ -12,6 +12,7 @@
 #PBS -l walltime=4:30:00
 ##PBS -L /bin/sh
 #PBS -A GEN-T2O
+#PBS -l debug=true
 
 set -x
 
