@@ -7,16 +7,24 @@ export cyc=00
 export PDY=20210824
 
 export npert=2
+export COREPERNODE=128
+export fhmax=840
+export fhmaxh=384
+export fhmax_aer=120
+export FHMAXHF=240
+export FHOUTHF=3
+export FHOUTLF=6
+export VERBOSE=no
 
 export envir=${envir:-dev}
 export RUN_ENVIR=${RUN_ENVIR:-dev}
 export NET=${NET:-gefs}
 export RUN=${RUN:-gefs}
 
-export EXPID=test_port2wcoss2_new
-#export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/$EXPID}
-export HOMEgefs=/lfs/h2/emc/ens/noscrub/common/git/sorc/gefs/gefs_port2wcoss2_common
-export HOMEgfs=/lfs/h2/emc/ens/noscrub/common/git/sorc/gw/gw_port2wcoss2_common
+export EXPID=test_gefs_esmf_8_0_1 #test_port2wcoss2_new
+export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/test_gefs/$EXPID}
+#export HOMEgefs=/lfs/h2/emc/ens/noscrub/common/git/sorc/gefs/gefs_port2wcoss2_common
+#export HOMEgfs=/lfs/h2/emc/ens/noscrub/common/git/sorc/gw/gw_port2wcoss2_common
 export WORKDIR=/lfs/h2/emc/ptmp/Xianwu.Xue/o/$EXPID
 
 export GEFS_ROCOTO=${HOMEgefs}/rocoto
