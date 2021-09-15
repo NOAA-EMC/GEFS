@@ -11,7 +11,7 @@
 #PBS -l walltime=1:30:00
 #4:30:00
 ##PBS -L /bin/sh
-#PBS -A GEN-T2O
+#PBS -A GEFS-DEV
 #PBS -V
 ##PBS -W umask=022
 #PBS -l debug=true

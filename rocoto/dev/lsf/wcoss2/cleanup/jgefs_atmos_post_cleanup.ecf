@@ -7,7 +7,8 @@
 #BSUB -q dev2
 #BSUB -W 00:15
 #BSUB -L /bin/sh
-#BSUB -P GEN-T2O
+#BSUB -P GEFS-DEV
+#PBS -l debug=true
 
 set -x
 module purge
