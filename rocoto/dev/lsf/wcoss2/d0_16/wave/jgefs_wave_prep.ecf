@@ -1,5 +1,5 @@
 #!/bin/sh
-#PBS -N jgefs_wave_prep_00_p02
+#PBS -N jgefs_wave_prep_00_c00
 ##PBS -o /lfs/h2/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2/com/output/dev/20210731/jgefs_wave_prep_00.%J
 #PBS -j oe
 #PBS -l select=1:ncpus=32:mem=50GB
@@ -16,7 +16,7 @@ set -x
 cd $PBS_O_WORKDIR
 
 #module purge
-export MEMBER=p02 #p02 #p01 #c00
+export MEMBER=c00
 
 export model=gefs
 # to get HOMEgefs

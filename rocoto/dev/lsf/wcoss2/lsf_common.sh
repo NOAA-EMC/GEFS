@@ -21,8 +21,8 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 export NET=${NET:-gefs}
 export RUN=${RUN:-gefs}
 
-export EXPID=test_gefs_esmf_8_0_1 #test_port2wcoss2_new
-export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/test_gefs/$EXPID}
+export EXPID=gefs_test_wave_11
+export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gw/test_gw_wave/$EXPID}
 #export HOMEgefs=/lfs/h2/emc/ens/noscrub/common/git/sorc/gefs/gefs_port2wcoss2_common
 #export HOMEgfs=/lfs/h2/emc/ens/noscrub/common/git/sorc/gw/gw_port2wcoss2_common
 export WORKDIR=/lfs/h2/emc/ptmp/Xianwu.Xue/o/$EXPID

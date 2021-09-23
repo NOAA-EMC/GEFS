@@ -15,4 +15,4 @@ export PrgEnv_intel_ver=8.1.0
 export envvar_ver=1.0
 export w3emc_ver=2.7.3
 export sigio_ver=2.3.2
-export NetCDF_ver=4.7.4
+export netcdf_ver=4.7.4

@@ -52,8 +52,8 @@ module load python/$python_ver
 
 module load nco/$nco_ver
 #module load lsf/$lsf_ver
-module load hdf5-parallel/$hdf5_parallel_ver
-module load netcdf-hdf5parallel/$netcdf_parallel_ver
+module load hdf5/$hdf5_ver
+module load netcdf/$netcdf_ver
 
 module list
 

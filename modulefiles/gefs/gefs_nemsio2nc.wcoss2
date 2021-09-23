@@ -11,7 +11,7 @@ module load nemsio/${nemsio_ver}
 module load w3nco/${w3nco_ver}
 module load bacio/${bacio_ver}
 
-module load netcdf/${NetCDF_ver}
+module load netcdf/${netcdf_ver}
 
 ##
 export FCMP=ftn
