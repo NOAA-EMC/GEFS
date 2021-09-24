@@ -43,7 +43,10 @@ ln -s $MP_CMDFILE mpmd_cmdfile
 
 #############################################################
 # Execute the script
-$APRUN_MPMD
+#$APRUN_MPMD
+echo $USHgempak
+./mpmd_cmdfile
+
 export err=$?
 
 if [[ $err != 0 ]]; then

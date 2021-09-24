@@ -26,8 +26,8 @@ cd $DATA
 ######################################
 # Set up compute resources
 ######################################
-export wavempexec=${wavempexec:-"mpirun -n"}
-export wave_mpmd=${wave_mpmd:-"cfp"}
+export wavempexec=${wavempexec:-"mpiexec -cpu-bind core"}
+export wave_mpmd=${wave_mpmd:-"--configfile"}
 export NTASKS=${total_tasks:-400}
 
 ####################################

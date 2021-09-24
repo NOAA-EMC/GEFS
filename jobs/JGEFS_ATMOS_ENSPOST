@@ -28,7 +28,7 @@ cd $DATA
 ######################################
 export total_tasks=${total_tasks:-1}
 export OMP_NUM_THREADS=${OMP_NUM_THREADS:-2}
-export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
+export APRUN=${gefsmpexec:-"mpiexec -n $total_tasks"}
 
 ####################################
 # Specify NET and RUN Name and model
