@@ -1,11 +1,11 @@
 #!/bin/sh
-#PBS -N jgefs_atmos_postsnd_00
+#PBS -N jgefs_atmos_postsnd_00_c00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_postsnd_00.%J
 #PBS -j oe
-#PBS -l select=1:ncpus=40:mem=50GB # May need to be changed
+#PBS -l place=vscatter,select=1:ncpus=40:mem=60GB:mpiprocs=40
 ##PBS -n 20
 ##PBS -R span[ptile=20]
-#PBS -q workq
+#PBS -q dev
 #PBS -l walltime=3:30:00
 ##PBS -L /bin/sh
 #PBS -A GEFS-DEV
@@ -16,7 +16,7 @@ set -x
 cd $PBS_O_WORKDIR
 
 #module purge
-export MEMBER=c00 #p02 #p01 #c00
+export MEMBER=c00
 
 export model=gefs
 # to get HOMEgefs
@@ -76,7 +76,7 @@ export RUNMEM=ge${MEMBER} #$MEMBER
 
 export total_tasks=10
 export OMP_NUM_THREADS=2
-export taskspernode=10
+#export taskspernode=10
 
 export envir=prod
 # CALL executable job script here

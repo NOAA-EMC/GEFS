@@ -1,14 +1,15 @@
 #!/bin/sh
-#PBS -N jgefs_atmos_post_16_35d_00
+#PBS -N jgefs_atmos_post_16_35d_00_p01
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_post_00.%J
 #PBS -j oe
-#PBS -l select=1:ncpus=24:mem=50GB # May need to be changed
+#PBS -l place=vscatter,select=1:ncpus=24:mem=60GB:mpiprocs=24
 ##PBS -n 12
 ##PBS -R span[ptile=12]
 #PBS -q dev
 #PBS -l walltime=4:30:00
 ##PBS -L /bin/sh
 #PBS -A GEFS-DEV
+#PBS -V
 #PBS -l debug=true
 
 set -x
@@ -16,7 +17,7 @@ set -x
 cd $PBS_O_WORKDIR
 
 #module purge
-export MEMBER=c00 #p02 #p01 #c00
+export MEMBER=p01
 
 export model=gefs
 # to get HOMEgefs
@@ -42,9 +43,16 @@ module load PrgEnv-intel/$prgenv_intel_ver
 module load craype/$craype_ver
 module load intel/$intel_ver
 
+module load cray-pals/$cray_pals_ver
+module load cray-mpich/$cray_mpich_ver
+
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
+
+module load libjpeg/$libjpeg_ver
 module load grib_util/$grib_util_ver
+
+module load wgrib2/$wgrib2_ver
 
 module load netcdf/$netcdf_ver
 module load hdf5/$hdf5_ver
@@ -76,9 +84,13 @@ fi
 
 export RUNMEM=ge${MEMBER} #$MEMBER
 
-export total_tasks=12
-export taskspernode=12
+export total_tasks=24
+#export taskspernode=12
 export FORECAST_SEGMENT=lr
+
+export OMP_NUM_THREADS=1
+
+export gefsmpexec="mpiexec -n $total_tasks"
 
 export envir=prod
 # CALL executable job script here

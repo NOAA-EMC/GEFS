@@ -7,6 +7,7 @@ export cyc=00
 export PDY=20210824
 
 export npert=2
+export navg_min=1
 export COREPERNODE=128
 export fhmax=840
 export fhmaxh=384
