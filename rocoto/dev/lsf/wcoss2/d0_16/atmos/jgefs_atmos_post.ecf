@@ -2,7 +2,7 @@
 #PBS -N jgefs_atmos_post_0_16d_00_c00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_post_00.%J
 #PBS -j oe
-#PBS -l place=vscatter,select=1:ncpus=24:mem=60GB:mpiprocs=24
+#PBS -l place=vscatter,select=1:ncpus=24:mem=60GB:mpiprocs=12
 ##PBS -l place=vscatter,select=1:ncpus=24:mem=500GB:mpiprocs=24
 ##PBS -l select=1:ncpus=24:mem=500GB
 ##PBS -n 12
@@ -95,7 +95,7 @@ export FORECAST_SEGMENT=hr
 
 export OMP_NUM_THREADS=1
 
-export gefsmpexec="mpiexec -n $total_tasks"
+#export gefsmpexec="mpiexec -n $total_tasks"
 
 export envir=prod
 # CALL executable job script here

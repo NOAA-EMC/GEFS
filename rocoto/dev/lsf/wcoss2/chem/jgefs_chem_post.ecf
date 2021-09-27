@@ -90,7 +90,7 @@ export FORECAST_SEGMENT=hr
 
 export OMP_NUM_THREADS=1
 
-export gefsmpexec="mpiexec -n $total_tasks"
+#export gefsmpexec="mpiexec -n $total_tasks"
 
 export envir=prod
 # CALL executable job script here

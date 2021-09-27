@@ -1,5 +1,5 @@
 #!/bin/sh
-#PBS -N jgefs_forecast_0_16d_00_p02
+#PBS -N jgefs_forecast_0_16d_00_c00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_forecast_00.%J
 #PBS -j oe
 #PBS -l place=vscatter,select=3:ncpus=128:mpiprocs=128:mem=500GB
@@ -19,7 +19,7 @@ set -x
 cd $PBS_O_WORKDIR
 
 #module purge
-export MEMBER=p02
+export MEMBER=c00
 
 export model=gefs
 # to get HOMEgefs
@@ -105,7 +105,7 @@ export COREPERNODE=128
 export FORECAST_SEGMENT=hr
 #export RERUN="YES"
 
-export gefsmpexec="mpiexec -n $total_tasks"
+#export gefsmpexec="mpiexec -n $total_tasks"
 
 export envir=prod
 # CALL executable job script here

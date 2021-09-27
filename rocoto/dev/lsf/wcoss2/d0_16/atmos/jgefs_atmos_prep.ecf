@@ -85,7 +85,7 @@ export RUNMEM=ge${MEMBER} #$MEMBER
 export total_tasks=36
 export taskspernode=36
 
-export gefsmpexec="mpiexec -n $total_tasks -ppn 18"
+#export gefsmpexec="mpiexec -n $total_tasks -ppn 18"
 #"mpirun -n $total_tasks"
 #"mpiexec -n $total_tasks"
 #mpirun -n $total_tasks"

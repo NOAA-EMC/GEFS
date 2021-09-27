@@ -6,8 +6,8 @@ export cyc=00
 #export PDY=20210731
 export PDY=20210824
 
-export npert=2
-export navg_min=1
+export npert=30
+export navg_min=10
 export COREPERNODE=128
 export fhmax=840
 export fhmaxh=384
@@ -33,7 +33,7 @@ export GEFS_ROCOTO=${HOMEgefs}/rocoto
 #export HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata
 export HOMEdata=/lfs/h1/ops
 
-export COMPATH=$HOMEdata/canned/com/gfs:$HOMEdata/canned/com/cfs:${WORKDIR}/$envir/com/${NET}
+export COMPATH=$HOMEdata/canned/com/gfs:$HOMEdata/canned/com/cfs:$HOMEdata/canned/com/nawips:$HOMEdata/canned/com/ecmwf:$HOMEdata/canned/com/nam:${WORKDIR}/$envir/com/${NET}
 export DCOMROOT=${HOMEdata}/canned/dcom
 
 #===

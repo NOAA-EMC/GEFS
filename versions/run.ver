@@ -3,7 +3,6 @@ export gefs_ver=v12.2.0
 
 export ver_gfs=v16.2
 export ver_cfs=v2.3
-export ver_uk=v2.2    #uk
 export ver_ec=v2.1    #ecmwf
 export ver_na=v0.0    #nawips
 export ver_nam=v4.2   #nam

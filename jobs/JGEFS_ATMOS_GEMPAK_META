@@ -89,7 +89,7 @@ done
 export COMINsgfs=${COMINsgfs:-$(compath.py prod/com/gfs/${ver_gfs})}
 export COMINnawips=${COMINnawips:-$(compath.py prod/com/nawips/${ver_na})}
 export COMINecmwf=${COMINecmwf:-$(compath.py prod/com/ecmwf/${ver_ec})/ecmwf}
-export COMINukmet=${COMINukmet:-$(compath.py prod/com/nawips/${ver_uk})/ukmet}
+export COMINukmet=${COMINukmet:-$(compath.py prod/com/nawips/${ver_na})/ukmet}
 export COMINnam=${COMINnam:-$(compath.py prod/com/nam/${ver_nam})}
 
 export COMPONENT=${COMPONENT:-atmos}

@@ -2,7 +2,7 @@
 #PBS -N jgefs_wave_prep_00_c00
 ##PBS -o /lfs/h2/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2/com/output/dev/20210731/jgefs_wave_prep_00.%J
 #PBS -j oe
-#PBS -l select=1:ncpus=32:mem=50GB
+#PBS -l select=1:ncpus=32:mpiprocs=16:mem=50GB
 ##PBS -R span[ptile=16]
 ##PBS -R 'affinity[core(1)]'
 #PBS -q dev
