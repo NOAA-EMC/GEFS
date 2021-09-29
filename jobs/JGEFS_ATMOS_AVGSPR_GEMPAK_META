@@ -27,7 +27,7 @@ cd $DATA
 # Set up compute resources
 ######################################
 export total_tasks=${total_tasks:-1}
-export APRUN_MPMD=${gefsmpexec_mpmd:-"mpiexec --cpu-bind core --configfile mpmd_cmdfile"} #mpirun -n $total_tasks cfp mpmd_cmdfile"}
+export APRUN_MPMD=${gefsmpexec_mpmd:-"mpiexec -n $total_tasks cfp mpmd_cmdfile")
 
 ####################################
 # Specify NET and RUN Name and model
