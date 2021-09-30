@@ -2,7 +2,12 @@
 #PBS -N jgefs_wave_stat_00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_wave_stat_00.%J
 #PBS -j oe
-#PBS -l place=vscatter,select=1:ncpus=60:mem=60GB:mpiprocs=60
+#PBS -l place=vscatter,select=4:ncpus=128:mem=60GB:mpiprocs=128
+##PBS -l place=vscatter,select=4:ncpus=100:mem=60GB:mpiprocs=100
+##PBS -l place=vscatter,select=4:ncpus=128:mem=60GB:mpiprocs=128
+##PBS -l place=vscatter,select=4:ncpus=100:mem=60GB:mpiprocs=100 #32'
+##PBS -l place=vscatter,select=3:ncpus=128:mem=500GB:mpiprocs=128 #35'
+##PBS -l place=vscatter,select=1:ncpus=60:mem=60GB:mpiprocs=60 #36'
 ##PBS -n 400
 ##PBS -R span[ptile=40]
 ##PBS -R 'affinity[core(1)]'
@@ -51,6 +56,8 @@ module load prod_envir/$prod_envir_ver
 module load libjpeg/$libjpeg_ver
 module load grib_util/$grib_util_ver
 
+module load wgrib2/$wgrib2_ver
+
 #module load lsf/$lsf_ver
 module load cfp/$cfp_ver
 export USE_CFP=YES
@@ -77,8 +84,18 @@ elif [[ -f "../../../$f" ]]; then
 fi
 
 # ---
-export total_tasks=400
-export taskspernode=40
+export total_tasks=512 #400 #512 #400 #384 #60 #400
+export taskspernode=100 #128 #100 #128 #40
+
+#export wavempexec=${wavempexec:-"mpiexec -np"}
+#export wave_mpmd=${wave_mpmd:-"--cpu-bind verbose,core cfp"}
+
+#export wavempexec=${wavempexec:-"mpiexec -n"}
+#export wave_mpmd=${wave_mpmd:-"cfp"}
+
+#mpiexec -np $NTASKS --cpu-bind verbose,core cfp "}
+#mpiexec -np $NTASKS –cpu-bind core cfp "} #cfp "} #mpiexec -cpu-bind core"} #"mpiexec -n $total_tasks cfp "} #-cpu-bind core"} #mpiexec -n $total_tasks cfp mpmd_cmdfile
+#export wave_mpmd=${wave_mpmd:-"--cpu-bind verbose,core cfp"} #--configfile"} #--configfile"}
 
 export envir=prod
 # CALL executable job script here

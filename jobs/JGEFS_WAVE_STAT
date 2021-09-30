@@ -26,9 +26,9 @@ cd $DATA
 ######################################
 # Set up compute resources
 ######################################
-export wavempexec=${wavempexec:-"mpiexec -cpu-bind core"}
-export wave_mpmd=${wave_mpmd:-"--configfile"}
 export NTASKS=${total_tasks:-400}
+export wavempexec=${wavempexec:-"mpiexec -n"}
+export wave_mpmd=${wave_mpmd:-"cfp"}
 
 ####################################
 # Specify NET and RUN Name and model
