@@ -2,7 +2,7 @@
 #PBS -N jgefs_wave_stat_00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_wave_stat_00.%J
 #PBS -j oe
-#PBS -l place=vscatter,select=3:ncpus=128:mem=60GB:mpiprocs=128
+#PBS -l place=vscatter,select=3:ncpus=128:mem=60GB:mpiprocs=128:ompthreads=1
 ##PBS -l place=vscatter,select=4:ncpus=128:mem=60GB:mpiprocs=128
 ##PBS -l place=vscatter,select=4:ncpus=100:mem=60GB:mpiprocs=100
 ##PBS -l place=vscatter,select=4:ncpus=128:mem=60GB:mpiprocs=128

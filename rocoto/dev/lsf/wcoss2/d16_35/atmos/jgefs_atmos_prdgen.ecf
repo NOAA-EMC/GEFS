@@ -1,5 +1,5 @@
 #!/bin/sh
-#PBS -N jgefs_atmos_prdgen_16_35d_00_p02
+#PBS -N jgefs_atmos_prdgen_16_35d_00_c00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_prdgen_00.%J
 #PBS -j oe
 #PBS -l place=vscatter,select=1:ncpus=8:mem=60GB:mpiprocs=8
@@ -19,7 +19,7 @@ set -x
 cd $PBS_O_WORKDIR
 
 #module purge
-export MEMBER=p02
+export MEMBER=c00
 
 export model=gefs
 # to get HOMEgefs
