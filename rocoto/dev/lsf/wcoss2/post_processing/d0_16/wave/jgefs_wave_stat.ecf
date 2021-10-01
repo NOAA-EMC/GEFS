@@ -2,7 +2,8 @@
 #PBS -N jgefs_wave_stat_00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_wave_stat_00.%J
 #PBS -j oe
-#PBS -l place=vscatter,select=4:ncpus=128:mem=60GB:mpiprocs=128
+#PBS -l place=vscatter,select=3:ncpus=128:mem=60GB:mpiprocs=128
+##PBS -l place=vscatter,select=4:ncpus=128:mem=60GB:mpiprocs=128
 ##PBS -l place=vscatter,select=4:ncpus=100:mem=60GB:mpiprocs=100
 ##PBS -l place=vscatter,select=4:ncpus=128:mem=60GB:mpiprocs=128
 ##PBS -l place=vscatter,select=4:ncpus=100:mem=60GB:mpiprocs=100 #32'
@@ -84,8 +85,8 @@ elif [[ -f "../../../$f" ]]; then
 fi
 
 # ---
-export total_tasks=512 #400 #512 #400 #384 #60 #400
-export taskspernode=100 #128 #100 #128 #40
+export total_tasks=384 #512 #400 #512 #400 #384 #60 #400
+export taskspernode=128 #100 #128 #100 #128 #40
 
 #export wavempexec=${wavempexec:-"mpiexec -np"}
 #export wave_mpmd=${wave_mpmd:-"--cpu-bind verbose,core cfp"}
