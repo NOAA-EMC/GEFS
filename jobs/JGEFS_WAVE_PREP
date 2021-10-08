@@ -21,7 +21,7 @@ export pgmerr=errfile
 ######################################
 export wavempexec=${wavempexec:-"mpiexec -cpu-bind core"}
 export wave_mpmd=${wave_mpmd:-"--configfile"}
-export NTASKS=${total_tasks:-16}
+export NTASKS=${total_tasks:-1}
 
 ####################################
 # Specify and create working directory

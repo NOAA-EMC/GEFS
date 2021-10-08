@@ -2,7 +2,7 @@
 #PBS -N jgefs_chem_init_00
 ##PBS -o /lfs/h2/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2/com/output/dev/20210731/jgefs_chem_init_00.%J
 #PBS -j oe
-#PBS -l select=1:ncpus=2:mpiprocs=1:mem=50GB
+#PBS -l select=1:ncpus=1:mem=40GB
 ### May need to be changed
 ##PBS -R span[ptile=1]
 ##PBS -R 'affinity[core(1)]'

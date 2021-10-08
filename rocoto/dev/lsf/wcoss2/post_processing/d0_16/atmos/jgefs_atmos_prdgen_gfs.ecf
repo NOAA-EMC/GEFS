@@ -1,13 +1,15 @@
 #!/bin/sh
-#PBS -N jgefs_atmos_prdgen_gfs_00
-##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_prdgen_gfs_00.%J
+#PBS -N jgefs_atmos_prdgen_0_16d_00_gfs
+##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_prdgen_00.%J
 #PBS -j oe
-#PBS -l place=vscatter,select=1:ncpus=40:mem=60GB:mpiprocs=40
-##PBS -n 20
-##PBS -R span[ptile=20]
-##PBS -R 'affinity[core(1)]'
+#PBS -l place=vscatter,select=1:ncpus=5:mpiprocs=5:mem=4GB
+##PBS -n 5
+##PBS -R span[ptile=5]
+##PBS -R "affinity[core(1):distribute=pack]"
+##PBS -R "rusage[mem=4608]"
+##PBS -q dev2_shared
 #PBS -q dev
-#PBS -l walltime=5:00:00
+#PBS -l walltime=4:30:00
 ##PBS -L /bin/sh
 #PBS -A GEFS-DEV
 #PBS -V
@@ -78,12 +80,13 @@ elif [[ -f "../../../$f" ]]; then
     source ../../../$f
 fi
 
-#----
+#---
 export RUNMEM=gegfs
 
 export total_tasks=5
-export OMP_NUM_THREADS=4
+export OMP_NUM_THREADS=1
 #export taskspernode=5
+export FORECAST_SEGMENT=hr
 
 export envir=prod
 # CALL executable job script here
