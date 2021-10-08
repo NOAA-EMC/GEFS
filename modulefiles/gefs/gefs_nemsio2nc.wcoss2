@@ -19,4 +19,4 @@ export LDFLAGSM=
 export OMPFLAGM=
 
 ##
-export NETCDF_LDFLAGS_C="-L${NETCDF_LIB} -lnetcdf"
+export NETCDF_LDFLAGS_C="-L${NETCDF_LIBRARIES} -lnetcdf"

@@ -31,7 +31,7 @@ export RECURS=
 export LDFLAGSM=${LDFLAGSM:-""}
 export OMPFLAGM=${OMPFLAGM:-""}
 
-export INCSM="-I ${NETCDF_INC}"
+export INCSM="-I ${NETCDF_INCLUDES}"
 
 export LIBSM="${NETCDF_LDFLAGS} ${BACIO_LIB4} ${W3NCO_LIB4}"
 
