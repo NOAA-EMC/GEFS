@@ -2,14 +2,15 @@
 #PBS -N jgefs_chem_init_00
 ##PBS -o /lfs/h2/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2/com/output/dev/20210731/jgefs_chem_init_00.%J
 #PBS -j oe
-#PBS -l select=1:ncpus=2:mem=50GB
+#PBS -l select=1:ncpus=2:mpiprocs=1:mem=50GB
 ### May need to be changed
 ##PBS -R span[ptile=1]
 ##PBS -R 'affinity[core(1)]'
-#PBS -q workq
+#PBS -q dev
 #PBS -l walltime=0:30:00
 ##PBS -L /bin/sh
-#PBS -A GEN-T2O
+#PBS -A GEFS-DEV
+#PBS -l debug=true
 
 set -x
 
@@ -51,8 +52,8 @@ module load python/$python_ver
 
 module load nco/$nco_ver
 #module load lsf/$lsf_ver
-module load hdf5-parallel/$hdf5_parallel_ver
-module load netcdf-hdf5parallel/$netcdf_parallel_ver
+module load hdf5/$hdf5_ver
+module load netcdf/$netcdf_ver
 
 module list
 
@@ -81,5 +82,6 @@ export RUNMEM=geaer
 export total_tasks=1
 export taskspernode=1
 
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_CHEM_INIT

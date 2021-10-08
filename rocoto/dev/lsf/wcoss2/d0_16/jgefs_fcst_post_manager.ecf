@@ -10,7 +10,8 @@
 #PBS -q workq
 #PBS -l walltime=3:30:00
 ##PBS -L /bin/sh
-#PBS -A GEN-T2O
+#PBS -A GEFS-DEV
+#PBS -l debug=true
 
 set -x
 
@@ -74,5 +75,6 @@ export total_tasks=1
 export taskspernode=1
 export FORECAST_SEGMENT=hr
 
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_FCST_POST_MANAGER

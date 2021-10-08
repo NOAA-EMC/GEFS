@@ -42,7 +42,6 @@ if [[ $cplchm = ".true." ]]; then
     export FLTFILEGFS1=$PARMpost/postxconfig-NT-GEFS-CHEM.txt
     export CTLFILEGFSF00=$PARMpost/postcntrl_gefs_chem.xml
     export CTLFILEGFS=$PARMpost/postcntrl_gefs_chem.xml
-    export POSTGRB2TBL=$PARMpost/params_grib2_tbl_new
     export POSTGPVARS_HIGH="KPO=50,PO=1000.,975.,950.,925.,900.,875.,850.,825.,800.,775.,750.,725.,700.,675.,650.,625.,600.,575.,550.,525.,500.,475.,450.,425.,400.,375.,350.,325.,300.,275.,250.,225.,200.,175.,150.,125.,100.,70.,50.,40.,30.,20.,15.,10.,7.,5.,3.,2.,1, gocart_on=.true."
 
     export AeroFile=$PARMPOST/optics_luts_*.dat
@@ -58,7 +57,7 @@ if [ $GRIBVERSION = grib2 ]; then
     export CAT_FLX_TO_PGB=${CAT_FLX_TO_PGB:-YES}
     export OUTTYP=${OUTTYP:-3}
     export POSTAVBLFLD=${POSTAVBLFLD:-$PARMpost/post_avblflds.xml}
-    export POSTGRB2TBL=${POSTGRB2TBL:-${G2TMPL_SRC}/params_grib2_tbl_new}
+    export POSTGRB2TBL=${POSTGRB2TBL:-${g2tmpl_ROOT}/share/params_grib2_tbl_new}
     export FLTFILEGFSANL=${FLTFILEGFSANL:-$PARMpost/postxconfig-NT-GEFS-ANL.txt}
     export FLTFILEGFSF00=${FLTFILEGFSF00:-$PARMpost/postxconfig-NT-GEFS-F00.txt}
     export FLTFILEGFS=${FLTFILEGFS:-$PARMpost/postxconfig-NT-GEFS.txt}

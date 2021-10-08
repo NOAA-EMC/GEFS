@@ -5,11 +5,12 @@
 #PBS -l select=1:ncpus=56:mem=50GB
 ##PBS -R span[ptile=28]
 ##PBS -R 'affinity[core(1)]'
-#PBS -q workq
+#PBS -q dev
 #PBS -l walltime=0:15:00
 ##45:00
 ##PBS -L /bin/sh
-#PBS -A GEN-T2O
+#PBS -A GEFS-DEV
+#PBS -l debug=true
 
 set -x
 
@@ -82,5 +83,6 @@ export total_tasks=1
 export OMP_NUM_THREADS=28
 export taskspernode=1
 
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_CHEM_PREP_EMISSIONS

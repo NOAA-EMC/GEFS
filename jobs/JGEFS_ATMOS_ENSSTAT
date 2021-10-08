@@ -28,7 +28,7 @@ cd $DATA
 ######################################
 export total_tasks=${total_tasks:-4}
 export OMP_NUM_THREADS=${OMP_NUM_THREADS:-2}
-export APRUN_MPMD=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
+export APRUN_MPMD=${gefsmpexec_mpmd:-"mpiexec --cpu-bind core --configfile mpmd_cmdfile"} #mpirun -n $total_tasks cfp mpmd_cmdfile"}
 
 ####################################
 # Specify NET and RUN Name and model
@@ -73,8 +73,8 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 # Define COM directories
 ##############################################
 ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
-export COMIN=${COMOUT:-${COMROOT}/${NET}/${ver}/${RUN}.${PDY}/$cyc}
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${ver}/${RUN}.${PDY}/$cyc}
+export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
+export COMOUT=${COMOUT:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
 
 #############################
 # Source relevant config files

@@ -13,7 +13,7 @@ do
     esac
 done
 
-machine=${machine:-dell}
+machine=${machine:-wcoss2}
 RunEnvir=${RunEnvir:-nco}
 
 ./checkout.sh  > checkout.log 2>&1
@@ -28,5 +28,7 @@ elif [ $machine = "cray" ]; then
     ./link_gefs.sh -e $RunEnvir -m cray  > link_gefs.log 2>&1
 elif [ $machine = "dell" ]; then
     ./link_gefs.sh -e $RunEnvir -m dell  > link_gefs.log 2>&1
+elif [ $machine = "wcoss2" ]; then
+    ./link_gefs.sh -e $RunEnvir -m wcoss2 > link_gefs.log 2>&1
 fi
 

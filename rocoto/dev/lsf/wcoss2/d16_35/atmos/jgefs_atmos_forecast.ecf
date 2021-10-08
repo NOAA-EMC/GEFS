@@ -1,30 +1,58 @@
 #!/bin/sh
-#PBS -N jgefs_atmos_forecast_16_35d_00
+#PBS -N jgefs_atmos_forecast_16_35d_00_c00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_forecast_00.%J
-
-#PBS -n 320
-#PBS -R span[ptile=40]
-#PBS -q dev2
-#PBS -W 04:30
-#PBS -L /bin/sh
-#PBS -P GEN-T2O
+#PBS -j oe
+#PBS -l place=vscatter,select=3:ncpus=128:mpiprocs=128:mem=500GB
+##PBS -l place=vscatter,select=4:ncpus=108:mpiprocs=108
+##PBS -n 320
+##PBS -R span[ptile=40]
+#PBS -q dev
+#PBS -l walltime=4:30:00
+##PBS -L /bin/sh
+#PBS -A GEFS-DEV
+#PBS -l debug=true
 
 set -x
-module purge
+
+cd $PBS_O_WORKDIR
+
+#module purge
+export MEMBER=c00
 
 export model=gefs
-. /gpfs/dell6/emc/modeling/noscrub/Xianwu.Xue/gefs_hub_ecf/versions/gefs_wcoss_dell_p35.ver
+# to get HOMEgefs
+f=lsf_common.sh
+if [[ -f "$f" ]]; then
+    echo "$f exists."
+    source $f
+elif [[ -f "../$f" ]]; then
+    echo "../$f exists."
+    source ../$f
+elif [[ -f "../../$f" ]]; then
+    echo "../../$f exists."
+    source ../../$f
+elif [[ -f "../../../$f" ]]; then
+    echo "../../../$f exists."
+    source ../../../$f
+fi
+. ${HOMEgefs}/versions/run.ver
 
-. /usrx/local/prod/lmod/lmod/init/ksh
-module load EnvVars/$EnvVars_ver
-module load ips/$ips_ver
-module load impi/$impi_ver
+module purge
+module load envvar/$envvar_ver
+module load PrgEnv-intel/$prgenv_intel_ver
+module load craype/$craype_ver
+module load intel/$intel_ver
+
+module load cray-mpich/$cray_mpich_ver
+module load cray-pals/$cray_pals_ver
+
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
-module load NetCDF/$NetCDF_ver
-module load HDF5-serial/$HDF5_serial_ver
-module load lsf/$lsf_ver
-module load CFP/$CFP_ver
+
+module load netcdf/$netcdf_ver
+module load hdf5/$hdf5_ver
+#module load lsf/$lsf_ver
+module load cfp/$cfp_ver
 export USE_CFP=YES
 
 module list
@@ -33,28 +61,44 @@ module list
 ulimit -s unlimited
 ulimit -a
 
-export job=${job:-$LSB_JOBNAME}
-export HOMEgefs=/gpfs/dell6/emc/modeling/noscrub/Xianwu.Xue/gefs_hub_ecf
-export COMROOT=/gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com
-export GESROOT=/gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/nwges
-export DATAROOT=/gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/tmpnwprd
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
-export SENDCOM=YES
-export KEEPDATA=YES     # ecflow NO
-export SENDECF=NO       # ecflow YES
-export SENDDBN=NO       # ecflow YES
-export SENDDBN_NTC=NO   # ecflow YES
-export npert=2
-export navg_min=1
-export cyc=00
-export PDY=20200509
-export RUNMEM=ge%MEMBER%
+f=lsf_common.sh
+if [[ -f "$f" ]]; then
+    echo "$f exists."
+    source $f
+elif [[ -f "../$f" ]]; then
+    echo "../$f exists."
+    source ../$f
+elif [[ -f "../../$f" ]]; then
+    echo "../../$f exists."
+    source ../../$f
+elif [[ -f "../../../$f" ]]; then
+    echo "../../../$f exists."
+    source ../../../$f
+fi
 
-export total_tasks=320
-export taskspernode=40
+#---
+export RUNMEM=ge${MEMBER} #$MEMBER
+
+#---- 
+export layout_x_lr=6
+export layout_y_lr=8
+export WRITE_GROUP_lr=1
+export WRTTASK_PER_GROUP_lr=32
+export parallel_threads_lr=1
+
+#---
+export ESMF_RUNTIME_PROFILE=ON
+export ESMF_RUNTIME_PROFILE_OUTPUT=SUMMARY
+export print_memory_usage=".true." #".false."
+
+export total_tasks=$((layout_x_lr * layout_y_lr * 6 + WRTTASK_PER_GROUP_lr * WRITE_GROUP_lr)) #320
+#export taskspernode=40
+export COREPERNODE=128
 export FORECAST_SEGMENT=lr
 #export RERUN="YES"
 
+#export gefsmpexec="mpiexec -n $total_tasks" # -ppn 108"
+
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_FORECAST

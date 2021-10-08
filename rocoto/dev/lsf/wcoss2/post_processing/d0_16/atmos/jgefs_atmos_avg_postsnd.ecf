@@ -9,7 +9,8 @@
 #PBS -q workq
 #PBS -l walltime=2:30:00
 ##PBS -L /bin/sh
-#PBS -A GEN-T2O
+#PBS -A GEFS-DEV
+#PBS -l debug=true
 
 set -x
 
@@ -79,5 +80,6 @@ export total_tasks=10
 export OMP_NUM_THREADS=2
 export taskspernode=10
 
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_ATMOS_POSTSND

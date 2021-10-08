@@ -27,7 +27,7 @@ cd $DATA
 # Set up compute resources
 ######################################
 export total_tasks=${total_tasks:-8}
-export APRUN_MPMD=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
+export APRUN_MPMD=${gefsmpexec_mpmd:-"mpiexec -n $total_tasks cfp mpmd_cmdfile"}
 
 ####################################
 # Specify NET and RUN Name and model
@@ -68,15 +68,9 @@ export FIXgempak=${FIXgempak:-$GEMPAKgefs/fix}
 ##############################################
 # gefs_meta_qpf.sh overrides COMIN locally to work with datatype.tbl
 ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
-export COMIN=${COMOUT:-${COMROOT}/${NET}/${ver}/${RUN}.${PDY}/$cyc}
-export COMINs=${COMINs:-${COMROOT}/${NET}/${ver}}
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${ver}/${RUN}.${PDY}/$cyc}
-
-export COMINsgfs=${COMINsgfs:-$(compath.py canned/com/gfs/${ver_gfs})}
-export COMINnawips=${COMINnawips:-$(compath.py canned/com/nawips/${ver_na})}
-export COMINecmwf=${COMINecmwf:-$(compath.py canned/com/ecmwf/${ver_ec})/ecmwf}
-export COMINukmet=${COMINukmet:-$(compath.py canned/com/nawips/${ver_uk})/ukmet}
-export COMINnam=${COMINnam:-$(compath.py canned/com/nam/${ver_nam})}
+export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
+export COMINs=${COMINs:-$(compath.py $envir/com/$NET/${ver})}
+export COMOUT=${COMOUT:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
 
 #############################
 # Source relevant config files
@@ -92,6 +86,12 @@ for config in $configs; do
     fi
 done
 
+export COMINsgfs=${COMINsgfs:-$(compath.py prod/com/gfs/${ver_gfs})}
+export COMINnawips=${COMINnawips:-$(compath.py prod/com/nawips/${ver_na})}
+export COMINecmwf=${COMINecmwf:-$(compath.py prod/com/ecmwf/${ver_ec})/ecmwf}
+export COMINukmet=${COMINukmet:-$(compath.py prod/com/nawips/${ver_na})/ukmet}
+export COMINnam=${COMINnam:-$(compath.py prod/com/nam/${ver_nam})}
+
 export COMPONENT=${COMPONENT:-atmos}
 if [[ ! -d $COMOUT/$COMPONENT/gempak/meta ]]; then mkdir -p -m 755 $COMOUT/$COMPONENT/gempak/meta; fi
 
@@ -100,7 +100,7 @@ env | sort
 
 #############################################################
 # Execute the script
-source $HOMEgefs/scripts/exgefs_atmos_gempak_meta.sh
+$HOMEgefs/scripts/exgefs_atmos_gempak_meta.sh
 export err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"
