@@ -2,8 +2,7 @@
 #PBS -N jgefs_atmos_prep_00_c00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_prep_00.%J
 #PBS -j oe
-#PBS -l place=vscatter,select=1:ncpus=72:mem=144GB:mpiprocs=36
-##select=1:ncpus=2:mem=50GB # May need to be changed
+#PBS -l place=vscatter,select=1:ncpus=36:mem=108GB:mpiprocs=36
 ##PBS -n 36
 ##PBS -R span[ptile=36]
 ##PBS -R 'affinity[core(1)]'
@@ -84,11 +83,6 @@ export RUNMEM=ge${MEMBER} #$MEMBER
 
 export total_tasks=36
 export taskspernode=36
-
-#export gefsmpexec="mpiexec -n $total_tasks -ppn 18"
-#"mpirun -n $total_tasks"
-#"mpiexec -n $total_tasks"
-#mpirun -n $total_tasks"
 
 export envir=prod
 # CALL executable job script here

@@ -2,13 +2,13 @@
 #PBS -N jgefs_atmos_prdgen_16_35d_00_c00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_prdgen_00.%J
 #PBS -j oe
-#PBS -l place=vscatter,select=1:ncpus=8:mem=60GB:mpiprocs=8
-##PBS -n 4
-##PBS -R span[ptile=4]
+#PBS -l place=vscatter,select=1:ncpus=2:mem=6GB:mpiprocs=2
+##PBS -n 2
+##PBS -R span[ptile=2]
 ##PBS -R "affinity[core(1):distribute=pack]"
 ##PBS -R "rusage[mem=4608]"
 #PBS -q dev
-#PBS -l walltime=4:30:00
+#PBS -l walltime=3:30:00
 ##PBS -L /bin/sh
 #PBS -A GEFS-DEV
 #PBS -V
@@ -84,7 +84,7 @@ fi
 export RUNMEM=ge${MEMBER} #$MEMBER
 
 export total_tasks=2
-export OMP_NUM_THREADS=2
+export OMP_NUM_THREADS=1
 export taskspernode=2
 export FORECAST_SEGMENT=lr
 

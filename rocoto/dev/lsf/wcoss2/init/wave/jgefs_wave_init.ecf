@@ -1,9 +1,9 @@
 #!/bin/sh
 #PBS -N jgefs_wave_init_00
 ##PBS -o /lfs/h2/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2/com/output/dev/20210731/jgefs_wave_init_00.%J
-#PBS -l select=1:ncpus=48:mpiprocs=24:mem=50GB
+#PBS -l select=1:ncpus=6:mpiprocs=6:mem=20GB
 #PBS -j oe
-##PBS -R span[ptile=24]
+##PBS -R span[ptile=6]
 ##PBS -R 'affinity[core(1)]'
 #PBS -q dev
 #PBS -l walltime=0:05:00
@@ -76,8 +76,8 @@ fi
 #====
 export OMP_NUM_THREADS=1
 
-export total_tasks=24
-export taskspernode=24
+#export total_tasks=6
+export taskspernode=6
 
 export envir=prod
 # CALL executable job script here
