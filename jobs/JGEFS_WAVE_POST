@@ -28,7 +28,7 @@ cd $DATA
 ######################################
 export wavempexec=${wavempexec:-"mpiexec -cpu-bind core"}
 export wave_mpmd=${wave_mpmd:-"--configfile"}
-export NTASKS=${total_tasks:-20}
+export NTASKS=${total_tasks:-1}
 
 ####################################
 # Specify NET and RUN Name and model

@@ -2,7 +2,7 @@
 #PBS -N jgefs_chem_prep_emissions_00
 ##PBS -o /lfs/h2/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2/com/output/dev/20210731/jgefs_chem_prep_emissions_00.%J
 #PBS -j oe
-#PBS -l select=1:ncpus=56:mem=50GB
+#PBS -l select=1:ncpus=1:mem=3600MB
 ##PBS -R span[ptile=28]
 ##PBS -R 'affinity[core(1)]'
 #PBS -q dev
@@ -80,7 +80,7 @@ fi
 #export DCOMROOT=${HOMEdata}/canned/dcom
 
 export total_tasks=1
-export OMP_NUM_THREADS=28
+export OMP_NUM_THREADS=1
 export taskspernode=1
 
 export envir=prod

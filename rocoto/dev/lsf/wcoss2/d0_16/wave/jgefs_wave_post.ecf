@@ -2,7 +2,7 @@
 #PBS -N jgefs_wave_post_00_c00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_wave_post_00.%J
 #PBS -j oe
-#PBS -l place=vscatter,select=1:ncpus=40:mem=60GB:mpiprocs=40
+#PBS -l place=vscatter,select=1:ncpus=1:mem=3600MB:mpiprocs=1
 ##PBS -n 20
 ##PBS -R span[ptile=20]
 ##PBS -R "affinity[core(1):distribute=pack]"
@@ -48,14 +48,12 @@ module load intel/$intel_ver
 
 module load cray-pals/$cray_pals_ver
 module load cray-mpich/$cray_mpich_ver
+module load libjpeg/$libjpeg_ver
+module load wgrib2/$wgrib2_ver
 
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
-
-module load libjpeg/$libjpeg_ver
 module load grib_util/$grib_util_ver
-
-module load wgrib2/$wgrib2_ver
 #module load lsf/$lsf_ver
 module load cfp/$cfp_ver
 export USE_CFP=YES
@@ -83,9 +81,6 @@ fi
 
 #---
 export RUNMEM=ge${MEMBER} #$MEMBER
-
-export total_tasks=20
-export taskspernode=20
 
 export envir=prod
 # CALL executable job script here

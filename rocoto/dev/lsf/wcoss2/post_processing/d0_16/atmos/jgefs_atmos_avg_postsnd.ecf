@@ -2,11 +2,11 @@
 #PBS -N jgefs_atmos_avg_postsnd_00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_avg_postsnd_00.%J
 #PBS -j oe
-#PBS -l select=1:ncpus=2:mem=50GB # May need to be changed
-##PBS -n 20
-##PBS -R span[ptile=20]
+#PBS -l select=1:ncpus=10:mem=20GB 
+##PBS -n 10
+##PBS -R span[ptile=10]
 ##PBS -R 'affinity[core(1)]'
-#PBS -q workq
+#PBS -q dev
 #PBS -l walltime=2:30:00
 ##PBS -L /bin/sh
 #PBS -A GEFS-DEV
@@ -77,7 +77,7 @@ fi
 export RUNMEM=geavg
 
 export total_tasks=10
-export OMP_NUM_THREADS=2
+export OMP_NUM_THREADS=1
 export taskspernode=10
 
 export envir=prod

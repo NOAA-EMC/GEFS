@@ -2,12 +2,12 @@
 #PBS -N jgefs_chem_prdgen_00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_chem_prdgen_00.%J
 #PBS -j oe
-#PBS -l place=vscatter,select=1:ncpus=12:mpiprocs=12:mem=11GB
-##PBS -n 6
-##PBS -R span[ptile=6]
+#PBS -l place=vscatter,select=1:ncpus=3:mpiprocs=3:mem=4608MB
+##PBS -n 3
+##PBS -R span[ptile=3]
 ##PBS -R 'affinity[core(1)]'
 #PBS -q dev
-#PBS -l walltime=3:00:00
+#PBS -l walltime=3:30:00
 ##PBS -L /bin/sh
 #PBS -A GEFS-DEV
 #PBS -V
@@ -77,15 +77,13 @@ elif [[ -f "../../../$f" ]]; then
     source ../../../$f
 fi
 
-# -----
+#---
 export RUNMEM=geaer
 
 export total_tasks=3
-export OMP_NUM_THREADS=2
-#export taskspernode=3
+export OMP_NUM_THREADS=1
+export taskspernode=3
 export FORECAST_SEGMENT=hr
-
-#export gefsmpexec_mpmd='mpiexec --cpu-bind core --configfile mpmd_cmdfile'
 
 export envir=prod
 # CALL executable job script here

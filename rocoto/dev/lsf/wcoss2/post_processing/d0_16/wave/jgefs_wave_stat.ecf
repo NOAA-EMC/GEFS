@@ -2,18 +2,14 @@
 #PBS -N jgefs_wave_stat_00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_wave_stat_00.%J
 #PBS -j oe
-#PBS -l place=vscatter,select=3:ncpus=128:mem=60GB:mpiprocs=128:ompthreads=1
-##PBS -l place=vscatter,select=4:ncpus=128:mem=60GB:mpiprocs=128
-##PBS -l place=vscatter,select=4:ncpus=100:mem=60GB:mpiprocs=100
-##PBS -l place=vscatter,select=4:ncpus=128:mem=60GB:mpiprocs=128
-##PBS -l place=vscatter,select=4:ncpus=100:mem=60GB:mpiprocs=100 #32'
-##PBS -l place=vscatter,select=3:ncpus=128:mem=500GB:mpiprocs=128 #35'
-##PBS -l place=vscatter,select=1:ncpus=60:mem=60GB:mpiprocs=60 #36'
+#PBS -l place=vscatter,select=1:ncpus=128:mem=500GB:mpiprocs=128:ompthreads=1
+##PBS -l place=vscatter,select=2:ncpus=128:mem=500GB:mpiprocs=128:ompthreads=1
+##PBS -l place=vscatter,select=3:ncpus=128:mem=500GB:mpiprocs=128:ompthreads=1
 ##PBS -n 400
 ##PBS -R span[ptile=40]
 ##PBS -R 'affinity[core(1)]'
 #PBS -q dev
-#PBS -l walltime=1:50:00
+#PBS -l walltime=1:00:00
 ##PBS -L /bin/sh
 #PBS -A GEFS-DEV
 #PBS -l debug=true
@@ -85,8 +81,8 @@ elif [[ -f "../../../$f" ]]; then
 fi
 
 # ---
-export total_tasks=384 #512 #400 #512 #400 #384 #60 #400
-export taskspernode=128 #100 #128 #100 #128 #40
+export total_tasks=128 #256 384
+export taskspernode=128 
 
 #export wavempexec=${wavempexec:-"mpiexec -np"}
 #export wave_mpmd=${wave_mpmd:-"--cpu-bind verbose,core cfp"}

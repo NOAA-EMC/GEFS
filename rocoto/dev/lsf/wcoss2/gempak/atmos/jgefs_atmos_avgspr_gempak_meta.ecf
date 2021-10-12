@@ -2,7 +2,7 @@
 #PBS -N jgefs_atmos_avgspr_gempak_meta_00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_avgspr_gempak_meta_00.%J
 #PBS -j oe
-#PBS -l place=vscatter,select=1:ncpus=2:mem=60GB:mpiprocs=2
+#PBS -l place=vscatter,select=1:ncpus=1:mem=2GB:mpiprocs=1
 ##PBS -n 1
 ##PBS -R span[ptile=1]
 ##PBS -R 'affinity[core(1)]'
