@@ -74,7 +74,7 @@ elif [[ -d /apps/prod ]]; then
     echo "Using settings for WCOSS2"
     export machine='WCOSS2'
     export JOBPHASE=
-    export HOMEDIR=${HOMEDIR:-/lfs/h2/emc/ens/noscrub/common/git/sorc/gw/gw_port2wcoss2_common_Sep27_2021}
+    export HOMEDIR=${HOMEDIR:-/lfs/h2/emc/ens/noscrub/common/git/sorc/gw/gw_port2wcoss2_common_Oct15_2021_updateForNewNetCDF_HDF5}
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
     export archsyndir=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/TCvitalData/syndat
     export HOMEdata=/gpfs/hps2/nco/storage/fv3gefs/Bing.Fu/common
