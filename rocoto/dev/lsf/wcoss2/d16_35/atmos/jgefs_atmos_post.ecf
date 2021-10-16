@@ -90,8 +90,6 @@ export FORECAST_SEGMENT=lr
 
 export OMP_NUM_THREADS=1
 
-export gefsmpexec="mpiexec -n $total_tasks"
-
 export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_ATMOS_POST

@@ -8,7 +8,7 @@
 ##PBS -R "affinity[core(1):distribute=pack]"
 ##PBS -R "rusage[mem=4608]"
 #PBS -q dev
-#PBS -l walltime=3:30:00
+#PBS -l walltime=4:30:00
 ##PBS -L /bin/sh
 #PBS -A GEFS-DEV
 #PBS -V
