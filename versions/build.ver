@@ -19,13 +19,13 @@ export cmake_ver=3.20.2
 export ip_ver=3.3.3
 export sp_ver=2.3.3
 export w3emc_ver=2.7.3
-export sfcio_ver=1.4.1
 export bufr_ver=11.5.0
 export sigio_ver=2.3.2
 export crtm_ver=2.3.0
 export esmf_ver=8.0.1
 
 # -- For GSI
+export sfcio_ver=1.4.1
 export prod_util_ver=2.0.10
 export python_ver=3.8.6
 export curl_ver=7.72.0
@@ -37,6 +37,5 @@ export wrf_io_ver=1.2.0
 
 # -- For ufs_utils
 export landsfcutil_ver=2.4.1
-export nemsiogfs_ver=2.5.3
 export libjpeg_ver=9c
 export wgrib2_ver=2.0.7
