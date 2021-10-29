@@ -1,4 +1,13 @@
 #!/bin/sh
+#PBS -N jgefs_chem_forecast_00
+#PBS -j oe
+#PBS -S /bin/bash
+#PBS -q dev
+#PBS -A GEFS-DEV
+#PBS -l walltime=3:00:00
+#PBS -l place=vscatter,select=2:ncpus=128:mpiprocs=128:mem=500GB
+#PBS -l debug=true
+
 #PBS -N jgefs_forecast_0_16d_00_c00
 ##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_forecast_00.%J
 #PBS -j oe

@@ -1,17 +1,14 @@
 #!/bin/sh
 #PBS -N jgefs_chem_prdgen_00
-##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_chem_prdgen_00.%J
 #PBS -j oe
-#PBS -l place=vscatter,select=1:ncpus=3:mpiprocs=3:mem=4608MB
-##PBS -n 3
-##PBS -R span[ptile=3]
-##PBS -R 'affinity[core(1)]'
+#PBS -S /bin/bash
 #PBS -q dev
-#PBS -l walltime=3:30:00
-##PBS -L /bin/sh
 #PBS -A GEFS-DEV
-#PBS -V
+#PBS -l walltime=3:30:00
+#PBS -l place=vscatter,select=1:ncpus=3:mpiprocs=3:mem=4608MB
 #PBS -l debug=true
+
+#PBS -V
 
 set -x
 

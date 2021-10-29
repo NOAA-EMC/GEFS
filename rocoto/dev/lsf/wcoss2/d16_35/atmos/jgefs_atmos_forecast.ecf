@@ -1,17 +1,15 @@
 #!/bin/sh
 #PBS -N jgefs_atmos_forecast_16_35d_00_c00
-##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_forecast_00.%J
 #PBS -j oe
-##PBS -l place=vscatter,select=3:ncpus=128:mpiprocs=128:mem=500GB
-#PBS -l place=vscatter,select=2:ncpus=128:mpiprocs=128:mem=500GB+1:ncpus=64:mpiprocs=64:mem=250GB
-##PBS -l place=vscatter,select=4:ncpus=108:mpiprocs=108
-##PBS -n 320
-##PBS -R span[ptile=40]
+#PBS -S /bin/bash
 #PBS -q dev
-#PBS -l walltime=3:30:00
-##PBS -L /bin/sh
 #PBS -A GEFS-DEV
+#PBS -l walltime=3:30:00
+#PBS -l place=vscatter,select=2:ncpus=128:mpiprocs=128:mem=500GB+1:ncpus=64:mpiprocs=64:mem=250GB
 #PBS -l debug=true
+
+##PBS -l place=vscatter,select=3:ncpus=128:mpiprocs=128:mem=500GB
+##PBS -l place=vscatter,select=4:ncpus=108:mpiprocs=108
 
 set -x
 

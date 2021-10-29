@@ -1,16 +1,14 @@
 #!/bin/sh
 #PBS -N jgefs_atmos_post_16_35d_00_c00
-##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_post_00.%J
 #PBS -j oe
-#PBS -l place=vscatter,select=1:ncpus=12:mem=60GB:mpiprocs=12
-##PBS -n 12
-##PBS -R span[ptile=12]
+#PBS -S /bin/bash
 #PBS -q dev
-#PBS -l walltime=3:30:00
-##PBS -L /bin/sh
 #PBS -A GEFS-DEV
-#PBS -V
+#PBS -l walltime=3:30:00
+#PBS -l place=vscatter,select=1:ncpus=12:mem=60GB:mpiprocs=12
 #PBS -l debug=true
+
+#PBS -V
 
 set -x
 

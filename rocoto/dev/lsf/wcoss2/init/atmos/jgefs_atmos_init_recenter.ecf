@@ -1,14 +1,11 @@
 #!/bin/sh
 #PBS -N jgefs_atmos_init_recenter_00
-##PBS -o /lfs/h2/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2/com/output/dev/20210731/jgefs_atmos_init_recenter_00.%J
 #PBS -j oe
-#PBS -l select=1:ncpus=6:mpiprocs=6:mem=12GB
-##PBS -R span[ptile=6]
-##PBS -R 'affinity[core(1)]'
+#PBS -S /bin/bash
 #PBS -q dev
-#PBS -l walltime=0:30:00
-##PBS -L /bin/sh
 #PBS -A GEFS-DEV
+#PBS -l walltime=0:30:00
+#PBS -l place=vscatter,select=1:ncpus=6:mpiprocs=6:mem=12GB
 #PBS -l debug=true
 
 set -x

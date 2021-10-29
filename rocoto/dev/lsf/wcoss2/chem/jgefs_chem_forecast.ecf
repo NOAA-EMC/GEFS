@@ -1,19 +1,16 @@
 #!/bin/sh
 #PBS -N jgefs_chem_forecast_00
-##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_chem_forecast_00.%J
 #PBS -j oe
+#PBS -S /bin/bash
+#PBS -q dev
+#PBS -A GEFS-DEV
+#PBS -l walltime=3:00:00
+#PBS -l place=vscatter,select=2:ncpus=128:mpiprocs=128:mem=500GB
+#PBS -l debug=true
+
 ##PBS -l place=vscatter,select=3:ncpus=110:mpiprocs=110     #3M
 ##PBS -l place=vscatter,select=4:prepost=true:ncpus=64:mpiprocs=64    #4R
 ##PBS -l place=vscatter,select=2:ncpus=128:mpiprocs=128:mem=500GB+1:ncpus=64:mpiprocs=64:mem=250GB #2.5M
-#PBS -l place=vscatter,select=2:ncpus=128:mpiprocs=128:mem=500GB
-##PBS -n 256
-##PBS -R span[ptile=128]
-##PBS -R 'affinity[core(1)]'
-#PBS -q dev
-#PBS -l walltime=9:00:00
-##PBS -L /bin/sh
-#PBS -A GEFS-DEV
-#PBS -l debug=true
 
 set -x
 

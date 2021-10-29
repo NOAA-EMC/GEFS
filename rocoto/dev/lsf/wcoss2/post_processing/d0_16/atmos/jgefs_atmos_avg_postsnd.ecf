@@ -1,15 +1,11 @@
 #!/bin/sh
 #PBS -N jgefs_atmos_avg_postsnd_00
-##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_avg_postsnd_00.%J
 #PBS -j oe
-#PBS -l select=1:ncpus=10:mem=20GB 
-##PBS -n 10
-##PBS -R span[ptile=10]
-##PBS -R 'affinity[core(1)]'
+#PBS -S /bin/bash
 #PBS -q dev
-#PBS -l walltime=2:30:00
-##PBS -L /bin/sh
 #PBS -A GEFS-DEV
+#PBS -l walltime=2:30:00
+#PBS -l place=vscatter,select=1:ncpus=10:mem=20GB
 #PBS -l debug=true
 
 set -x

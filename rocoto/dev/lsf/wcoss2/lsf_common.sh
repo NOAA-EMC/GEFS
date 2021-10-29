@@ -22,7 +22,7 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 export NET=${NET:-gefs}
 export RUN=${RUN:-gefs}
 
-export EXPID=gefs_test_wave_11
+export EXPID=gefs_port2wcoss2_final2_wgrib2_2_0_7
 export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gw/test_gw_wave/$EXPID}
 #export HOMEgefs=/lfs/h2/emc/ens/noscrub/common/git/sorc/gefs/gefs_port2wcoss2_common
 #export HOMEgfs=/lfs/h2/emc/ens/noscrub/common/git/sorc/gw/gw_port2wcoss2_common
@@ -48,25 +48,4 @@ export KEEPDATA=YES     # ecflow NO
 export SENDECF=NO       # ecflow YES
 export SENDDBN=NO       # ecflow YES
 export SENDDBN_NTC=NO   # ecflow YES
-
-test=${test:-"test2"}
-if [[ $test == "test1" ]]; then
-	export layout_x=6
-	export layout_y=8
-	export WRITE_GROUP=1
-	export WRTTASK_PER_GROUP=32
-	export npe_wav=${npe_wav:-160}
-
-	export layout_x_chem=6
-	export layout_y_chem=8
-	export WRITE_GROUP_chem=${WRITE_GROUP_chem:-1}
-	export WRTTASK_PER_GROUP_chem=${WRTTASK_PER_GROUP_chem:-42}
-
-	export layout_x_lr=${layout_x_lr:-8}
-	export layout_y_lr=${layout_y_lr:-8}
-	export WRITE_GROUP_lr=${WRITE_GROUP_lr:-1}
-	export WRTTASK_PER_GROUP_lr=${WRTTASK_PER_GROUP_lr:-32} #or 42, 48
-
-fi
-echo $layout_x
 
