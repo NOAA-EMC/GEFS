@@ -5,7 +5,7 @@
 set -xa
 export PS4='$SECONDS + $(basename $(basename ${0}))[$LINENO] '
 
-npert=30
+npert=2 #30
   
 memberlist="c00"
 imem=1
@@ -64,7 +64,11 @@ imem=1
 for mem in $memberlist
 do
     sed -e "s/c00/$mem/g" ../d0_16/jgefs_forecast.ecf > jgefs_forecast.ecf_$mem
-    fcst[$imem]=$(qsub -W depend=afterok:$getcfssst:$atmos_init:${wave_prep[$imem]}:${wave_prep[1]} jgefs_forecast.ecf_$mem)
+	if [[ $imem == 1 ]]; then
+		fcst[$imem]=$(qsub -W depend=afterok:$getcfssst:$atmos_init:${wave_prep[$imem]} jgefs_forecast.ecf_$mem)
+	else
+		fcst[$imem]=$(qsub -W depend=afterok:$getcfssst:$atmos_init:${wave_prep[$imem]}:${wave_prep[1]} jgefs_forecast.ecf_$mem)
+	fi
 
     sed -e "s/c00/$mem/g" ../d0_16/atmos/jgefs_atmos_post.ecf > jgefs_atmos_post.ecf_$mem
     atmos_post[$imem]=$(qsub -W depend=after:${fcst[$imem]} jgefs_atmos_post.ecf_$mem)
