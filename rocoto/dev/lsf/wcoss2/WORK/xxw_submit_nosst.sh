@@ -5,7 +5,7 @@
 set -xa
 export PS4='$SECONDS + $(basename $(basename ${0}))[$LINENO] '
 
-export PDY=20210824
+export PDY=20210823
 export cyc=00
 export EXPID="gefs_wcoss2_canned_test"
 DoLR=yes
@@ -30,7 +30,7 @@ echo $memberlist
 
 #export PBS_O_WORKDIR=`pwd`/tmp
 
-getcfssst=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" ../init/atmos/jgefs_atmos_getcfssst.ecf)
+#getcfssst=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" ../init/atmos/jgefs_atmos_getcfssst.ecf)
 wave_init=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" ../init/wave/jgefs_wave_init.ecf)
 
 atmos_prep_dep=""
@@ -60,7 +60,7 @@ done
 # --- chem
 chem_prep=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" ../chem/jgefs_chem_prep_emissions.ecf)
 chem_init=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -W depend=afterok:$chem_prep:$atmos_init ../chem/jgefs_chem_init.ecf)
-chem_fcst=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -W depend=afterok:$chem_init:$getcfssst ../chem/jgefs_chem_forecast.ecf)
+chem_fcst=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -W depend=afterok:$chem_init ../chem/jgefs_chem_forecast.ecf)
 chem_post=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -W depend=after:$chem_fcst ../chem/jgefs_chem_post.ecf)
 chem_prdgen=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -W depend=after:$chem_post ../chem/jgefs_chem_prdgen.ecf)
 
@@ -76,20 +76,20 @@ do
     sed -e "s/c00/$mem/g" ../d0_16/jgefs_forecast.ecf > jgefs_forecast.ecf_$mem
     if [[ $DoAllMEMs == "yes" ]]; then
         if [[ $imem == 1 ]]; then
-            fcst[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -W depend=afterok:$getcfssst:$atmos_init:${wave_prep[$imem]} jgefs_forecast.ecf_$mem)
+            fcst[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -W depend=afterok:$atmos_init:${wave_prep[$imem]} jgefs_forecast.ecf_$mem)
         else
-            fcst[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -W depend=afterok:$getcfssst:$atmos_init:${wave_prep[$imem]}:${wave_prep[1]} jgefs_forecast.ecf_$mem)
+            fcst[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -W depend=afterok:$atmos_init:${wave_prep[$imem]}:${wave_prep[1]} jgefs_forecast.ecf_$mem)
         fi
     else
         num_mems_for_first_group=$(( mem_per_group + 1 ))
         if (( imem > num_mems_for_first_group )); then
             imem_adj=$(( imem - mem_per_group ))
-            fcst[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -W depend=afterok:$getcfssst:$atmos_init:${wave_prep[$imem]}:${wave_prep[1]}:${fcst[$imem_adj]} jgefs_forecast.ecf_$mem)
+            fcst[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -W depend=afterok:$atmos_init:${wave_prep[$imem]}:${wave_prep[1]}:${fcst[$imem_adj]} jgefs_forecast.ecf_$mem)
         else
             if [[ $imem == 1 ]]; then
-                fcst[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -W depend=afterok:$getcfssst:$atmos_init:${wave_prep[$imem]} jgefs_forecast.ecf_$mem)
+                fcst[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -W depend=afterok:$atmos_init:${wave_prep[$imem]} jgefs_forecast.ecf_$mem)
             else
-                fcst[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -W depend=afterok:$getcfssst:$atmos_init:${wave_prep[$imem]}:${wave_prep[1]} jgefs_forecast.ecf_$mem)
+                fcst[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -W depend=afterok:$atmos_init:${wave_prep[$imem]}:${wave_prep[1]} jgefs_forecast.ecf_$mem)
             fi
         fi
     fi
