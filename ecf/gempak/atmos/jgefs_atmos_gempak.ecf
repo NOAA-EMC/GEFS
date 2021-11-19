@@ -1,28 +1,34 @@
-#BSUB -J %E%gefs_atmos_gempak_%CYC%
-#BSUB -o %COM%/output/%ENVIR%/today/gefs_atmos_gempak_%CYC%.o%J
-#BSUB -cwd /tmp
-#BSUB -n 66
-#BSUB -R span[ptile=33]
-#BSUB -R 'affinity[core(1)]'
-#BSUB -q %QUEUE%
-#BSUB -W 04:30
-#BSUB -L /bin/sh
-#BSUB -P %PROJ%-%PROJENVIR%
+#PBS -N gefs_atmos_gempak_%CYC%
+#PBS -j oe
+#PBS -S /bin/bash
+#PBS -q %QUEUE%
+#PBS -A %PROJ%-%PROJENVIR%
+#PBS -l walltime=4:30:00
+#PBS -l place=vscatter,select=1:ncpus=33:mem=6GB:mpiprocs=33
+#PBS -l debug=true
 
 set -x
+
+cd $PBS_O_WORKDIR
+
 module purge
 
 %include <head.h>
-%include <envir-p35.h>
+%include <envir-p1.h>
 
 export model=gefs
-%include <model_ver.h>
 
-module load ips/$ips_ver
-module load impi/$impi_ver
+module load envvar/$envvar_ver
+module load PrgEnv-intel/$PrgEnv_intel_ver
+module load craype/$craype_ver
+module load intel/$intel_ver
+module load cray-pals/$cray_pals_ver
+module load cray-mpich/$cray_mpich_ver
+module load prod_util/$prod_util_ver
+module load prod_envir/$prod_envir_ver
 module load gempak/$gempak_ver
-module load lsf/$lsf_ver
-module load CFP/$CFP_ver
+module load cfp/$cfp_ver
+
 export USE_CFP=YES
 
 module list
@@ -33,7 +39,7 @@ ulimit -a
 
 export cyc=%CYC%
 
-export total_tasks=66
+export total_tasks=33
 export taskspernode=33
 
 # CALL executable job script here
