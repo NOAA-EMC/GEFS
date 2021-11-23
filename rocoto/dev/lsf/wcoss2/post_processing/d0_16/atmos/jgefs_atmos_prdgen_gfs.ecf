@@ -4,7 +4,7 @@
 #PBS -S /bin/bash
 #PBS -q dev
 #PBS -A GEFS-DEV
-#PBS -l walltime=4:30:00
+#PBS -l walltime=5:00:00
 #PBS -l place=vscatter,select=1:ncpus=5:mpiprocs=5:mem=4GB
 #PBS -l debug=true
 

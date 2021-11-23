@@ -15,7 +15,7 @@ set -x
 cd $PBS_O_WORKDIR
 
 #module purge
-export MEMBER=c00
+export MEMBER=${MEMBER:-c00}
 
 export model=gefs
 # to get HOMEgefs
@@ -77,6 +77,8 @@ fi
 
 #---
 export RUNMEM=ge${MEMBER} #$MEMBER
+
+export total_tasks=1
 
 export envir=prod
 # CALL executable job script here

@@ -4,7 +4,7 @@
 #PBS -S /bin/bash
 #PBS -q dev
 #PBS -A GEFS-DEV
-#PBS -l walltime=3:30:00
+#PBS -l walltime=2:30:00
 #PBS -l place=vscatter,select=1:ncpus=10:mem=20GB
 #PBS -l debug=true
 
@@ -13,7 +13,7 @@ set -x
 cd $PBS_O_WORKDIR
 
 #module purge
-export MEMBER=c00
+export MEMBER=${MEMBER:-c00}
 
 export model=gefs
 # to get HOMEgefs
@@ -73,6 +73,7 @@ fi
 #---
 export RUNMEM=ge${MEMBER} #$MEMBER
 
+export total_tasks=10
 export OMP_NUM_THREADS=1
 export taskspernode=10
 

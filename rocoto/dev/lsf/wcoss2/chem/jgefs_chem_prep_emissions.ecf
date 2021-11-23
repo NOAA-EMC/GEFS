@@ -4,7 +4,7 @@
 #PBS -S /bin/bash
 #PBS -q dev
 #PBS -A GEFS-DEV
-#PBS -l walltime=0:15:00
+#PBS -l walltime=0:45:00
 #PBS -l place=vscatter,select=1:ncpus=1:mem=3600MB
 #PBS -l debug=true
 
@@ -52,9 +52,9 @@ module list
 ulimit -s unlimited
 ulimit -a
 
-export fhmaxh="96"
-export fhmax_aer="60"
-export fhrestart="9999"
+#export fhmaxh="96"
+#export fhmax_aer="60"
+#export fhrestart="9999"
 
 f=lsf_common.sh
 if [[ -f "$f" ]]; then

@@ -73,10 +73,10 @@ elif [[ -f "../../../$f" ]]; then
 fi
 
 # ----
-export OMP_NUM_THREADS=1
-
 export total_tasks=6
 export taskspernode=6
+
+export OMP_NUM_THREADS=1
 
 #export gefsmpexec_mpmd="mpiexec -n $total_tasks --ppn $taskspernode cfp mpmd_cmdfile"
 # "mpirun -n $total_tasks cfp mpmd_cmdfile"

@@ -30,7 +30,7 @@ export WORKDIR=/lfs/h2/emc/ptmp/Xianwu.Xue/o/$EXPID
 
 export GEFS_ROCOTO=${HOMEgefs}/rocoto
 
-#export HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata
+#export HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/GEFS/HOMEdata
 export HOMEdata=/lfs/h1/ops
 
 export COMPATH=$HOMEdata/canned/com/gfs:$HOMEdata/canned/com/cfs:$HOMEdata/canned/com/nawips:$HOMEdata/canned/com/ecmwf:$HOMEdata/canned/com/nam:${WORKDIR}/$envir/com/${NET}

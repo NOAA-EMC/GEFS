@@ -12,7 +12,6 @@ DoLR=yes
 
 npert=30
 #mem_per_group=5
-#DoLR=yes
 DoAllMEMs=yes # "yes" means doing all members in one time
 if [[ $DoAllMEMs == no ]]; then
     mem_per_group=5

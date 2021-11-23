@@ -16,7 +16,7 @@ set -x
 cd $PBS_O_WORKDIR
 
 #module purge
-export MEMBER=c00
+export MEMBER=${MEMBER:-c00}
 
 export model=gefs
 # to get HOMEgefs
@@ -79,18 +79,19 @@ fi
 export RUNMEM=ge${MEMBER} #$MEMBER
 
 #---- 
-export layout_x_lr=6
-export layout_y_lr=8
-export WRITE_GROUP_lr=1
-export WRTTASK_PER_GROUP_lr=32
-export parallel_threads_lr=1
+#export layout_x_lr=6
+#export layout_y_lr=8
+#export WRITE_GROUP_lr=1
+#export WRTTASK_PER_GROUP_lr=32
+#export parallel_threads_lr=1
 
-#---
-export ESMF_RUNTIME_PROFILE=ON
-export ESMF_RUNTIME_PROFILE_OUTPUT=SUMMARY
-export print_memory_usage=".true." #".false."
+#---For Debug
+#export ESMF_RUNTIME_PROFILE=ON
+#export ESMF_RUNTIME_PROFILE_OUTPUT=SUMMARY
+#export print_memory_usage=".true." #".false."
 
-export total_tasks=$((layout_x_lr * layout_y_lr * 6 + WRTTASK_PER_GROUP_lr * WRITE_GROUP_lr)) #320
+#export total_tasks=$((layout_x_lr * layout_y_lr * 6 + WRTTASK_PER_GROUP_lr * WRITE_GROUP_lr)) #320
+export total_tasks=320
 #export taskspernode=40
 export COREPERNODE=128
 export FORECAST_SEGMENT=lr
