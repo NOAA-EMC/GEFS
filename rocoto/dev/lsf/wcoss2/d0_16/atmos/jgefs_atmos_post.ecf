@@ -1,5 +1,5 @@
 #!/bin/sh
-#PBS -N jgefs_atmos_post_0_16d_00_c00
+#PBS -N jgefs_atmos_post_0_16d_c00_00
 #PBS -j oe
 #PBS -S /bin/bash
 #PBS -q dev
@@ -81,7 +81,7 @@ elif [[ -f "../../../$f" ]]; then
     source ../../../$f
 fi
 
-export RUNMEM=ge${MEMBER} #$MEMBER
+export RUNMEM=ge${MEMBER}
 
 export total_tasks=12
 #export taskspernode=24

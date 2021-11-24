@@ -32,7 +32,7 @@ elif [[ -f "../../../$f" ]]; then
 fi
 . ${HOMEgefs}/versions/run.ver
 
-module load EnvVars/$EnvVars_ver
+module load envvar/$envvar_ver
 module load intel/$intel_ver
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver

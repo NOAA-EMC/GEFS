@@ -53,9 +53,8 @@ module load wgrib2/$wgrib2_ver
 
 module load netcdf/$netcdf_ver
 module load hdf5/$hdf5_ver
-
-#module load lsf/$lsf_ver
 module load cfp/$cfp_ver
+
 export USE_CFP=YES
 
 module list

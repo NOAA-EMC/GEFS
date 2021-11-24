@@ -1,5 +1,5 @@
 #!/bin/sh
-#PBS -N jgefs_wave_post_00_c00
+#PBS -N jgefs_wave_post_c00_00
 #PBS -j oe
 #PBS -S /bin/bash
 #PBS -q dev
@@ -76,7 +76,7 @@ elif [[ -f "../../../$f" ]]; then
 fi
 
 #---
-export RUNMEM=ge${MEMBER} #$MEMBER
+export RUNMEM=ge${MEMBER}
 
 export total_tasks=1
 
