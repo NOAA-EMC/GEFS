@@ -93,7 +93,7 @@ env | sort
 
 #############################################################
 # Execute the script
-source $HOMEgefs/scripts/exgefs_atmos_avgspr_gempak_meta.sh
+$HOMEgefs/scripts/exgefs_atmos_avgspr_gempak_meta.sh
 export err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"

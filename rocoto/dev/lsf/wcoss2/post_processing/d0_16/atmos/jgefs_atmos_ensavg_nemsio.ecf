@@ -1,17 +1,15 @@
 #!/bin/sh
 #PBS -N jgefs_atmos_ensavg_nemsio_00
-##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_ensavg_nemsio_00.%J
 #PBS -j oe
-#PBS -l place=vscatter,select=1:ncpus=30:mem=240GB:mpiprocs=30
-##PBS -n 30
-##PBS -R span[ptile=6]
-##PBS -R 'affinity[core(1)]'
+#PBS -S /bin/bash
 #PBS -q dev
-#PBS -l walltime=2:30:00
-##PBS -L /bin/sh
 #PBS -A GEFS-DEV
-#PBS -V
+#PBS -l walltime=2:30:00
+##PBS -l place=vscatter,select=1:ncpus=30:mpiprocs=30:mem=240GB
+#PBS -l place=vscatter,select=1:prepost=true:ncpus=30:mpiprocs=30:mem=240GB
 #PBS -l debug=true
+
+#PBS -V
 
 set -x
 
@@ -39,7 +37,7 @@ fi
 
 module purge
 module load envvar/$envvar_ver
-module load PrgEnv-intel/$prgenv_intel_ver
+module load PrgEnv-intel/$PrgEnv_intel_ver
 module load craype/$craype_ver
 module load intel/$intel_ver
 
@@ -50,8 +48,8 @@ module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
 
 module load netcdf/$netcdf_ver
-#module load lsf/$lsf_ver
 module load cfp/$cfp_ver
+
 export USE_CFP=YES
 
 module list

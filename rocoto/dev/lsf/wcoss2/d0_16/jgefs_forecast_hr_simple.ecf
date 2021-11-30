@@ -1,12 +1,11 @@
 #!/bin/sh
 #PBS -N jgefs_forecast_0_16d_00_c00
-##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_forecast_00.%J
 #PBS -j oe
-#PBS -l place=vscatter,select=3:ncpus=128:mpiprocs=128
+#PBS -S /bin/bash
 #PBS -q dev
-#PBS -l walltime=10:30:00
-##PBS -L /bin/sh
 #PBS -A GEFS-DEV
+#PBS -l walltime=4:30:00
+#PBS -l place=vscatter,select=3:ncpus=128:mpiprocs=128
 #PBS -l debug=true
 
 set -x
@@ -27,7 +26,7 @@ export WORKDIR=/lfs/h2/emc/ptmp/Xianwu.Xue/o/$EXPID
 
 module purge
 module load envvar/$envvar_ver
-module load PrgEnv-intel/$prgenv_intel_ver
+module load PrgEnv-intel/$PrgEnv_intel_ver
 module load craype/$craype_ver
 module load intel/$intel_ver
 

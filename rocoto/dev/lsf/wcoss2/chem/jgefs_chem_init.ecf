@@ -1,15 +1,12 @@
 #!/bin/sh
 #PBS -N jgefs_chem_init_00
-##PBS -o /lfs/h2/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2/com/output/dev/20210731/jgefs_chem_init_00.%J
 #PBS -j oe
-#PBS -l select=1:ncpus=1:mem=40GB
-### May need to be changed
-##PBS -R span[ptile=1]
-##PBS -R 'affinity[core(1)]'
+#PBS -S /bin/bash
 #PBS -q dev
-#PBS -l walltime=0:30:00
-##PBS -L /bin/sh
 #PBS -A GEFS-DEV
+#PBS -l walltime=0:30:00
+##PBS -l place=vscatter,select=1:ncpus=1:mem=40GB
+#PBS -l place=vscatter,select=1:prepost=true:ncpus=1:mem=40GB
 #PBS -l debug=true
 
 set -x
@@ -38,7 +35,7 @@ fi
 
 module purge
 module load envvar/$envvar_ver
-module load PrgEnv-intel/$prgenv_intel_ver
+module load PrgEnv-intel/$PrgEnv_intel_ver
 module load craype/$craype_ver
 module load intel/$intel_ver
 

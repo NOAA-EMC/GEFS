@@ -1,23 +1,21 @@
 #!/bin/sh
-#PBS -N jgefs_atmos_post_16_35d_00_c00
-##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_post_00.%J
+#PBS -N jgefs_atmos_post_16_35d_c00_00
 #PBS -j oe
-#PBS -l place=vscatter,select=1:ncpus=12:mem=60GB:mpiprocs=12
-##PBS -n 12
-##PBS -R span[ptile=12]
+#PBS -S /bin/bash
 #PBS -q dev
-#PBS -l walltime=3:30:00
-##PBS -L /bin/sh
 #PBS -A GEFS-DEV
-#PBS -V
+#PBS -l walltime=3:30:00
+#PBS -l place=vscatter,select=1:ncpus=12:mem=60GB:mpiprocs=12
 #PBS -l debug=true
+
+#PBS -V
 
 set -x
 
 cd $PBS_O_WORKDIR
 
 #module purge
-export MEMBER=c00
+export MEMBER=${MEMBER:-c00}
 
 export model=gefs
 # to get HOMEgefs
@@ -39,7 +37,7 @@ fi
 
 module purge
 module load envvar/$envvar_ver
-module load PrgEnv-intel/$prgenv_intel_ver
+module load PrgEnv-intel/$PrgEnv_intel_ver
 module load craype/$craype_ver
 module load intel/$intel_ver
 
@@ -56,9 +54,9 @@ module load wgrib2/$wgrib2_ver
 
 module load netcdf/$netcdf_ver
 module load hdf5/$hdf5_ver
-#module load lsf/$lsf_ver
 module load g2tmpl/$g2tmpl_ver
 module load cfp/$cfp_ver
+
 export USE_CFP=YES
 
 module list
@@ -82,7 +80,7 @@ elif [[ -f "../../../$f" ]]; then
     source ../../../$f
 fi
 
-export RUNMEM=ge${MEMBER} #$MEMBER
+export RUNMEM=ge${MEMBER}
 
 export total_tasks=12
 #export taskspernode=12

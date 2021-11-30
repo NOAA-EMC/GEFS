@@ -1,24 +1,39 @@
 #!/bin/sh
-#BSUB -J jgefs_atmos_post_cleanup_00
-#BSUB -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_post_cleanup_00.%J
-#BSUB -n 1
-#BSUB -R span[ptile=1]
-#BSUB -R 'affinity[core(1)]'
-#BSUB -q dev2
-#BSUB -W 00:15
-#BSUB -L /bin/sh
-#BSUB -P GEFS-DEV
+#PBS -N jgefs_atmos_post_cleanup_00
+#PBS -j oe
+#PBS -S /bin/bash
+#PBS -q dev
+#PBS -A GEFS-DEV
+#PBS -l walltime=0:15:00
+#PBS -l place=vscatter,select=1:ncpus=1:mem=100MB
 #PBS -l debug=true
 
 set -x
+
+cd $PBS_O_WORKDIR
+
 module purge
 
 export model=gefs
-. /gpfs/dell6/emc/modeling/noscrub/Xianwu.Xue/gefs_hub_ecf/versions/gefs_wcoss_dell_p35.ver
+# to get HOMEgefs
+f=lsf_common.sh
+if [[ -f "$f" ]]; then
+    echo "$f exists."
+    source $f
+elif [[ -f "../$f" ]]; then
+    echo "../$f exists."
+    source ../$f
+elif [[ -f "../../$f" ]]; then
+    echo "../../$f exists."
+    source ../../$f
+elif [[ -f "../../../$f" ]]; then
+    echo "../../../$f exists."
+    source ../../../$f
+fi
+. ${HOMEgefs}/versions/run.ver
 
-. /usrx/local/prod/lmod/lmod/init/ksh
-module load EnvVars/$EnvVars_ver
-module load ips/$ips_ver
+module load envvar/$envvar_ver
+module load intel/$intel_ver
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
 
@@ -28,25 +43,25 @@ module list
 ulimit -s unlimited
 ulimit -a
 
-export job=${job:-$LSB_JOBNAME}
-export HOMEgefs=/gpfs/dell6/emc/modeling/noscrub/Xianwu.Xue/gefs_hub_ecf
-export COMROOT=/gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com
-export GESROOT=/gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/nwges
-export DATAROOT=/gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/tmpnwprd
-export envir=${envir:-dev}
-export RUN_ENVIR=${RUN_ENVIR:-dev}
-export SENDCOM=YES
-export KEEPDATA=YES     # ecflow NO
-export SENDECF=NO       # ecflow YES
-export SENDDBN=NO       # ecflow YES
-export SENDDBN_NTC=NO   # ecflow YES
-export npert=2
-export navg_min=1
-export cyc=00
-export PDY=20200509
+f=lsf_common.sh
+if [[ -f "$f" ]]; then
+    echo "$f exists."
+    source $f
+elif [[ -f "../$f" ]]; then
+    echo "../$f exists."
+    source ../$f
+elif [[ -f "../../$f" ]]; then
+    echo "../../$f exists."
+    source ../../$f
+elif [[ -f "../../../$f" ]]; then
+    echo "../../../$f exists."
+    source ../../../$f
+fi
 
+# ----
 export total_tasks=1
 export taskspernode=1
 
+export envir=prod
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_ATMOS_POST_CLEANUP

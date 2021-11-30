@@ -38,8 +38,8 @@ elif [ $machine = "hera" ]; then
     FIX_DIR="/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix_20200927"
     FIX_DIR_FV3="/scratch1/NCEPDEV/global/glopara/fix"
 elif [ $machine == "wcoss2" ]; then
-    FIX_DIR="/lfs/h2/emc/ens/noscrub/common/git/gefs/fix_nco_gefsv12"
-    FIX_DIR_FV3="/lfs/h2/emc/ens/noscrub/common/git/gw/fix_nco_gfsv15"
+    FIX_DIR="/lfs/h2/emc/ens/noscrub/common/fix/gefs/fix_nco_gefsv12"
+    FIX_DIR_FV3="/lfs/h2/emc/global/noscrub/Kate.Friedman/glopara/FIX/fix_nco_gfsv15"
 fi
 
 # Delete Fix folder and relink/recopy it
@@ -87,9 +87,9 @@ fi
 # copy/link exec files
 cd $pwd
 if [[ -d global-workflow.fd ]] ; then
-    $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/nemsio_read ../exec/
-    $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/nemsio_get ../exec/
-    $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/global_chgres ../exec/
+    #$LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/nemsio_read ../exec/
+    #$LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/nemsio_get ../exec/
+    #$LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/global_chgres ../exec/
 
     sPath=../sorc/global-workflow.fd/sorc/fv3gfs.fd/WW3/model/exe
     for sFile in ${sPath}/ww3_*
@@ -140,8 +140,8 @@ fi
 # Copy/Link ush files
 cd $pwd
 if [[ -d global-workflow.fd ]] ; then
-    $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/ush/global_chgres_driver.sh ../ush/
-    $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/ush/global_chgres.sh ../ush/
+    #$LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/ush/global_chgres_driver.sh ../ush/
+    #$LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/ush/global_chgres.sh ../ush/
     $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/ush/chgres_cube.sh ../ush/
 
     $LINK ../sorc/global-workflow.fd/sorc/gfs_post.fd/ush/gfs_nceppost.sh ../ush/

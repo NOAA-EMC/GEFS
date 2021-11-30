@@ -1,26 +1,21 @@
 #!/bin/sh
-#PBS -N jgefs_wave_post_00_c00
-##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_wave_post_00.%J
+#PBS -N jgefs_wave_post_c00_00
 #PBS -j oe
-#PBS -l place=vscatter,select=1:ncpus=1:mem=3600MB:mpiprocs=1
-##PBS -n 20
-##PBS -R span[ptile=20]
-##PBS -R "affinity[core(1):distribute=pack]"
-##PBS -R "rusage[mem=3000]"
-##PBS -q dev2_shared
+#PBS -S /bin/bash
 #PBS -q dev
-#PBS -l walltime=4:30:00
-##PBS -L /bin/sh
 #PBS -A GEFS-DEV
-#PBS -V
+#PBS -l walltime=4:30:00
+#PBS -l place=vscatter,select=1:ncpus=1:mem=3600MB:mpiprocs=1
 #PBS -l debug=true
+
+#PBS -V
 
 set -x
 
 cd $PBS_O_WORKDIR
 
 #module purge
-export MEMBER=c00
+export MEMBER=${MEMBER:-c00}
 
 export model=gefs
 # to get HOMEgefs
@@ -42,7 +37,7 @@ fi
 
 module purge
 module load envvar/$envvar_ver
-module load PrgEnv-intel/$prgenv_intel_ver
+module load PrgEnv-intel/$PrgEnv_intel_ver
 module load craype/$craype_ver
 module load intel/$intel_ver
 
@@ -81,7 +76,9 @@ elif [[ -f "../../../$f" ]]; then
 fi
 
 #---
-export RUNMEM=ge${MEMBER} #$MEMBER
+export RUNMEM=ge${MEMBER}
+
+export total_tasks=1
 
 export envir=prod
 # CALL executable job script here

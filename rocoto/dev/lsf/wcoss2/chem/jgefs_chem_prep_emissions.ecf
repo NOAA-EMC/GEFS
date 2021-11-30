@@ -1,15 +1,11 @@
 #!/bin/sh
 #PBS -N jgefs_chem_prep_emissions_00
-##PBS -o /lfs/h2/emc/ptmp/Xianwu.Xue/o/gefs_port2wcoss2/com/output/dev/20210731/jgefs_chem_prep_emissions_00.%J
 #PBS -j oe
-#PBS -l select=1:ncpus=1:mem=3600MB
-##PBS -R span[ptile=28]
-##PBS -R 'affinity[core(1)]'
+#PBS -S /bin/bash
 #PBS -q dev
-#PBS -l walltime=0:15:00
-##45:00
-##PBS -L /bin/sh
 #PBS -A GEFS-DEV
+#PBS -l walltime=0:45:00
+#PBS -l place=vscatter,select=1:ncpus=1:mem=3600MB
 #PBS -l debug=true
 
 set -x
@@ -39,7 +35,7 @@ fi
 
 module purge
 module load envvar/$envvar_ver
-module load PrgEnv-intel/$prgenv_intel_ver
+module load PrgEnv-intel/$PrgEnv_intel_ver
 module load craype/$craype_ver
 module load intel/$intel_ver
 
@@ -56,9 +52,9 @@ module list
 ulimit -s unlimited
 ulimit -a
 
-export fhmaxh="96"
-export fhmax_aer="60"
-export fhrestart="9999"
+#export fhmaxh="96"
+#export fhmax_aer="60"
+#export fhrestart="9999"
 
 f=lsf_common.sh
 if [[ -f "$f" ]]; then

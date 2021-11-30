@@ -19,4 +19,4 @@ export OMPFLAGM=
 ##
 #export SFCIO_INC4=$SFCIO_INC
 #export SFCIO_LIB4=$SFCIO_LIB
-export NETCDF_LDFLAGS="-L${NETCDF_LIB}  -lnetcdff"
+export NETCDF_LDFLAGS="-L${NETCDF_LIBRARIES}  -lnetcdff"

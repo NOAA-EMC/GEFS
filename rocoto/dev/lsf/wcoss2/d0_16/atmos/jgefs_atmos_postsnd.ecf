@@ -1,14 +1,11 @@
 #!/bin/sh
-#PBS -N jgefs_atmos_postsnd_00_c00
-##PBS -o /gpfs/dell6/ptmp/Xianwu.Xue/o/gefs_hub_ecf/com/output/dev/20200509/jgefs_atmos_postsnd_00.%J
+#PBS -N jgefs_atmos_postsnd_c00_00
 #PBS -j oe
-#PBS -l select=1:ncpus=10:mem=20GB 
-##PBS -n 10
-##PBS -R span[ptile=10]
+#PBS -S /bin/bash
 #PBS -q dev
-#PBS -l walltime=3:30:00
-##PBS -L /bin/sh
 #PBS -A GEFS-DEV
+#PBS -l walltime=2:30:00
+#PBS -l place=vscatter,select=1:ncpus=10:mem=20GB
 #PBS -l debug=true
 
 set -x
@@ -16,7 +13,7 @@ set -x
 cd $PBS_O_WORKDIR
 
 #module purge
-export MEMBER=c00
+export MEMBER=${MEMBER:-c00}
 
 export model=gefs
 # to get HOMEgefs
@@ -38,7 +35,7 @@ fi
 
 module purge
 module load envvar/$envvar_ver
-module load PrgEnv-intel/$prgenv_intel_ver
+module load PrgEnv-intel/$PrgEnv_intel_ver
 module load craype/$craype_ver
 module load intel/$intel_ver
 
@@ -74,8 +71,9 @@ elif [[ -f "../../../$f" ]]; then
 fi
 
 #---
-export RUNMEM=ge${MEMBER} #$MEMBER
+export RUNMEM=ge${MEMBER}
 
+export total_tasks=10
 export OMP_NUM_THREADS=1
 export taskspernode=10
 

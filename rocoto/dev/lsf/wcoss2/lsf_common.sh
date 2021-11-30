@@ -2,9 +2,9 @@
 
 export PS4='$SECONDS + $(basename ${0}))[$LINENO] '
 
-export cyc=00
+export cyc=${cyc:-00}
 #export PDY=20210731
-export PDY=20210824
+export PDY=${PDY:-20210824}
 
 export npert=30
 export navg_min=10
@@ -22,15 +22,15 @@ export RUN_ENVIR=${RUN_ENVIR:-dev}
 export NET=${NET:-gefs}
 export RUN=${RUN:-gefs}
 
-export EXPID=gefs_test_wave_11
-export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gw/test_gw_wave/$EXPID}
-#export HOMEgefs=/lfs/h2/emc/ens/noscrub/common/git/sorc/gefs/gefs_port2wcoss2_common
+export EXPID=${EXPID:-gefs_wcoss2_canned_Nov16_2021}
+#export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gw/test_gw_wave/$EXPID}
+export HOMEgefs=/lfs/h2/emc/ens/noscrub/common/git/gefs/gefs_wcoss2_canned_Nov16_2021
 #export HOMEgfs=/lfs/h2/emc/ens/noscrub/common/git/sorc/gw/gw_port2wcoss2_common
 export WORKDIR=/lfs/h2/emc/ptmp/Xianwu.Xue/o/$EXPID
 
 export GEFS_ROCOTO=${HOMEgefs}/rocoto
 
-#export HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata
+#export HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/GEFS/HOMEdata
 export HOMEdata=/lfs/h1/ops
 
 export COMPATH=$HOMEdata/canned/com/gfs:$HOMEdata/canned/com/cfs:$HOMEdata/canned/com/nawips:$HOMEdata/canned/com/ecmwf:$HOMEdata/canned/com/nam:${WORKDIR}/$envir/com/${NET}
@@ -44,29 +44,8 @@ export GESROOT=${WORKDIR}/nwges
 export DATAROOT=${WORKDIR}/tmp
 
 export SENDCOM=YES
-export KEEPDATA=YES     # ecflow NO
+export KEEPDATA=NO     # ecflow NO
 export SENDECF=NO       # ecflow YES
 export SENDDBN=NO       # ecflow YES
 export SENDDBN_NTC=NO   # ecflow YES
-
-test=${test:-"test2"}
-if [[ $test == "test1" ]]; then
-	export layout_x=6
-	export layout_y=8
-	export WRITE_GROUP=1
-	export WRTTASK_PER_GROUP=32
-	export npe_wav=${npe_wav:-160}
-
-	export layout_x_chem=6
-	export layout_y_chem=8
-	export WRITE_GROUP_chem=${WRITE_GROUP_chem:-1}
-	export WRTTASK_PER_GROUP_chem=${WRTTASK_PER_GROUP_chem:-42}
-
-	export layout_x_lr=${layout_x_lr:-8}
-	export layout_y_lr=${layout_y_lr:-8}
-	export WRITE_GROUP_lr=${WRITE_GROUP_lr:-1}
-	export WRTTASK_PER_GROUP_lr=${WRTTASK_PER_GROUP_lr:-32} #or 42, 48
-
-fi
-echo $layout_x
 

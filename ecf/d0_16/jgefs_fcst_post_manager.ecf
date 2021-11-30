@@ -1,25 +1,26 @@
-#BSUB -J %E%gefs_fcst_post_manager_%MEMBER%_%CYC%
-#BSUB -o %COM%/output/%ENVIR%/today/gefs_fcst_post_manager_%MEMBER%_%CYC%.o%J
-#BSUB -cwd /tmp
-#BSUB -n 1
-#BSUB -R span[ptile=1]
-#BSUB -R "affinity[core(1):distribute=pack]"
-#BSUB -R "rusage[mem=1000]"
-#BSUB -q %QUEUE%_shared
-#BSUB -W 03:30
-#BSUB -L /bin/sh
-#BSUB -P %PROJ%-%PROJENVIR%
+#PBS -N gefs_fcst_post_manager_%MEMBER%_%CYC%
+#PBS -j oe
+#PBS -S /bin/bash
+#PBS -q %QUEUE%
+#PBS -A %PROJ%-%PROJENVIR%
+#PBS -l walltime=3:30:00
+#PBS -l place=vscatter,select=1:ncpus=1:mem=100MB
+#PBS -l debug=true
 
 set -x
+
+cd $PBS_O_WORKDIR
+
 module purge
 
 %include <head.h>
-%include <envir-p35.h>
+%include <envir-p1.h>
 
 export model=gefs
-%include <model_ver.h>
 
-module load ips/$ips_ver
+module load PrgEnv-intel/$PrgEnv_intel_ver
+module load craype/$craype_ver
+module load intel/$intel_ver
 
 module list
 

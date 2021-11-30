@@ -91,7 +91,6 @@ if [ $warm_start = ".false." ]; then
 		# To run recenter-prep
 		imem=1
 		while [[ imem -le $npert ]]; do
-		#for (( imem=1; imem<=$npert; imem++ )); do
 			sMem=p$(printf %02i $imem)
 
 			ic=1
@@ -119,7 +118,7 @@ if [ $warm_start = ".false." ]; then
 				fi
 			done  # while [ $ic -le $SLEEP_LOOP_MAX ]
             (( imem++ ))
-		done # for (( imem=1; imem<=$npert; imem++ )); do
+		done # while [[ imem -le $npert ]]; do
 
 		# To copy p01 data to init/
 		mkdir -p $FILEOUTPATH

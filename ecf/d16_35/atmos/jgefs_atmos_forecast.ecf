@@ -1,28 +1,32 @@
-#BSUB -J %E%gefs_atmos_forecast_16_35d_%MEMBER%_%CYC%
-#BSUB -o %COM%/output/%ENVIR%/today/gefs_atmos_forecast_16_35d_%MEMBER%_%CYC%.o%J
-#BSUB -cwd /tmp
-#BSUB -n 320
-#BSUB -R span[ptile=40]
-#BSUB -q %QUEUE%
-#BSUB -W 04:30
-#BSUB -L /bin/sh
-#BSUB -P %PROJ%-%PROJENVIR%
+#PBS -N gefs_atmos_forecast_16_35d_%MEMBER%_%CYC%
+#PBS -j oe
+#PBS -S /bin/bash
+#PBS -q %QUEUE%
+#PBS -A %PROJ%-%PROJENVIR%
+#PBS -l walltime=4:30:00
+#PBS -l place=vscatter,select=2:ncpus=128:mpiprocs=128:mem=500GB+1:ncpus=64:mpiprocs=64:mem=250GB
+#PBS -l debug=true
 
 set -x
+
+cd $PBS_O_WORKDIR
+
 module purge
 
 %include <head.h>
-%include <envir-p35.h>
+%include <envir-p1.h>
 
 export model=gefs
-%include <model_ver.h>
 
-module load ips/$ips_ver
-module load impi/$impi_ver
-module load NetCDF/$NetCDF_ver
-module load HDF5-serial/$HDF5_serial_ver
-module load lsf/$lsf_ver
-module load CFP/$CFP_ver
+module load PrgEnv-intel/$PrgEnv_intel_ver
+module load craype/$craype_ver
+module load intel/$intel_ver
+module load cray-mpich/$cray_mpich_ver
+module load cray-pals/$cray_pals_ver
+module load netcdf/$netcdf_ver
+module load hdf5/$hdf5_ver
+module load cfp/$cfp_ver
+
 export USE_CFP=YES
 
 module list
@@ -35,7 +39,7 @@ export cyc=%CYC%
 export RUNMEM=ge%MEMBER%
 
 export total_tasks=320
-export taskspernode=40
+export COREPERNODE=128
 export FORECAST_SEGMENT=lr
 #export RERUN="YES"
 

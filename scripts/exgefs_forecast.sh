@@ -251,7 +251,7 @@ export CDUMP=$RUNMEM
 
 if [[ $cplwav = ".true." ]]; then
 	# CPU partitioning
-	export npe_wav=${npe_wav:-120}
+	export npe_wav=${npe_wav:-88}
 	export npe_fcst_wav=$(( npe_fv3 + npe_wav ))
 	export atm_petlist_bounds=" 0 $((npe_fv3-1))"
 	export wav_petlist_bounds=" $((npe_fv3)) $((npe_fcst_wav-1))"
