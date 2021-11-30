@@ -15,12 +15,12 @@ export craype_ver=2.7.10
 export cray_pals_ver=1.0.17
 export cray_libsci_ver=21.08.1.2
 
-export prod_envir_ver=2.0.5
-export prod_util_ver=2.0.10
+export prod_envir_ver=2.0.6
+export prod_util_ver=2.0.12
 
 export libjpeg_ver=9c
 export grib_util_ver=1.2.3
-export wgrib2_ver=2.0.7 # #_mpi #2.0.8
+export wgrib2_ver=2.0.7
 export g2tmpl_ver=1.10.0
 export gempak_ver=7.14.1
 export netcdf_ver=4.7.4
