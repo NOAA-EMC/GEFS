@@ -99,7 +99,7 @@ export FORECAST_SEGMENT=hr
 #module load esmf/8.1.0.beta_snapshot_26
 #export print_memory_usage=".true." #".false."
 
-export gefsmpexec="mpiexec -n $total_tasks" # -ppn 120"
+#export gefsmpexec="mpiexec -n $total_tasks" # -ppn 120"
 
 export envir=prod
 # CALL executable job script here

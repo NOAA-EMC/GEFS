@@ -8,9 +8,9 @@ export PS4='$SECONDS + $(basename $(basename ${0}))[$LINENO] '
 export PDY=${PDY:-20210824}
 export cyc=${cyc:-00}
 export EXPID=${EXPID:-"gefs_wcoss2_canned_test"}
-DoLR=yes
+DoLR=${DoLR:-yes}
 
-npert=30
+npert=${npert:-30}
 #mem_per_group=5
 DoAllMEMs=yes # "yes" means doing all members in one time
 if [[ $DoAllMEMs == no ]]; then

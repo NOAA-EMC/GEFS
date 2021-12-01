@@ -5,7 +5,7 @@
 #PBS -q dev
 #PBS -A GEFS-DEV
 #PBS -l walltime=4:30:00
-#PBS -l place=vscatter,select=1:ncpus=33:mem=6GB:mpiprocs=33
+#PBS -l place=vscatter,select=1:ncpus=66:mem=6GB:mpiprocs=66
 #PBS -l debug=true
 
 #PBS -V
@@ -72,8 +72,8 @@ elif [[ -f "../../../$f" ]]; then
 fi
 
 # ---
-export total_tasks=33
-export taskspernode=33
+export total_tasks=66
+export taskspernode=66
 
 export envir=prod
 # CALL executable job script here

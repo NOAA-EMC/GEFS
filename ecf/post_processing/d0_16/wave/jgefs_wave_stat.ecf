@@ -4,7 +4,7 @@
 #PBS -q %QUEUE%
 #PBS -A %PROJ%-%PROJENVIR%
 #PBS -l walltime=1:00:00
-#PBS -l place=vscatter,select=1:ncpus=128:mem=500GB:mpiprocs=128:ompthreads=1
+#PBS -l place=vscatter,select=2:ncpus=128:mem=500GB:mpiprocs=128:ompthreads=1
 #PBS -l debug=true
 
 set -x
@@ -38,7 +38,7 @@ ulimit -a
 
 export cyc=%CYC%
 
-export total_tasks=128
+export total_tasks=256
 export taskspernode=128
 
 # CALL executable job script here

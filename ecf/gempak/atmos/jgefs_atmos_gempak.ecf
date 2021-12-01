@@ -4,7 +4,7 @@
 #PBS -q %QUEUE%
 #PBS -A %PROJ%-%PROJENVIR%
 #PBS -l walltime=4:30:00
-#PBS -l place=vscatter,select=1:ncpus=33:mem=6GB:mpiprocs=33
+#PBS -l place=vscatter,select=1:ncpus=66:mem=6GB:mpiprocs=66
 #PBS -l debug=true
 
 set -x
@@ -36,8 +36,8 @@ ulimit -a
 
 export cyc=%CYC%
 
-export total_tasks=33
-export taskspernode=33
+export total_tasks=66
+export taskspernode=66
 
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_ATMOS_GEMPAK
