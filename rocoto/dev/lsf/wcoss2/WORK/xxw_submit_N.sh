@@ -198,6 +198,8 @@ if [[ $DoLR == "yes" ]]; then
     done
 
 
-    atmos_ensstat_lr=$(qsub -v "PDY=${PDY},cyc=${cyc_lr},EXPID=${EXPID}" -N jatmos_ensstat_lr_${cyc_lr} -W depend=after${atmos_prdgen_lr_dep} ../post_processing/d16_35/atmos/jgefs_atmos_ensstat.ecf)
-    atmos_ens_lr=$(qsub -v "PDY=${PDY},cyc=${cyc_lr},EXPID=${EXPID}" -N jatmos_enspost_lr_${cyc_lr} -W depend=afterok${atmos_prdgen_lr_dep} ../post_processing/d16_35/atmos/jgefs_atmos_enspost.ecf)
+    if [[ $cyc == 18 ]]; then
+        atmos_ensstat_lr=$(qsub -v "PDY=${PDY},cyc=${cyc_lr},EXPID=${EXPID}" -N jatmos_ensstat_lr_${cyc_lr} -W depend=after${atmos_prdgen_lr_dep} ../post_processing/d16_35/atmos/jgefs_atmos_ensstat.ecf)
+        atmos_ens_lr=$(qsub -v "PDY=${PDY},cyc=${cyc_lr},EXPID=${EXPID}" -N jatmos_enspost_lr_${cyc_lr} -W depend=afterok${atmos_prdgen_lr_dep} ../post_processing/d16_35/atmos/jgefs_atmos_enspost.ecf)
+    fi
 fi

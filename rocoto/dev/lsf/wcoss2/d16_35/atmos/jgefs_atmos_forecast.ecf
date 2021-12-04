@@ -95,6 +95,8 @@ export total_tasks=320
 #export taskspernode=40
 export COREPERNODE=128
 export FORECAST_SEGMENT=lr
+export OMP_NUM_THREADS=1
+
 #export RERUN="YES"
 
 #export gefsmpexec="mpiexec -n $total_tasks" # -ppn 108"

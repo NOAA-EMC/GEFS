@@ -25,7 +25,6 @@ module load cray-mpich/$cray_mpich_ver
 module load cray-pals/$cray_pals_ver
 module load netcdf/$netcdf_ver
 module load hdf5/$hdf5_ver
-#module load lsf/$lsf_ver
 module load cfp/$cfp_ver
 export USE_CFP=YES
 
@@ -41,6 +40,7 @@ export RUNMEM=geaer
 export total_tasks=256
 export taskspernode=128
 export FORECAST_SEGMENT=hr
+export OMP_NUM_THREADS=1
 #export RERUN="YES"
 
 # CALL executable job script here

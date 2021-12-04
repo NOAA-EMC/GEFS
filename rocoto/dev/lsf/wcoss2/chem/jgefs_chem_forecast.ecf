@@ -92,6 +92,7 @@ export total_tasks=256
 #export taskspernode=128
 export COREPERNODE=128
 export FORECAST_SEGMENT=hr
+export OMP_NUM_THREADS=1
 #export RERUN="YES"
 
 #For Debug of the forecast

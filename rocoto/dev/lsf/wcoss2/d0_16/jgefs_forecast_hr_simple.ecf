@@ -100,6 +100,8 @@ export print_memory_usage=".true." #".false."
 export total_tasks=$((layout_x * layout_y * 6 + WRTTASK_PER_GROUP * WRITE_GROUP + npe_wav)) #384
 #export taskspernode=40
 export FORECAST_SEGMENT=hr
+export OMP_NUM_THREADS=1
+
 #export RERUN="YES"
 
 export gefsmpexec="mpiexec -n $total_tasks"

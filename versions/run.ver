@@ -34,3 +34,6 @@ export cfp_ver=2.0.4
 export USE_CFP=YES
 export PATH=$PATH:.
 
+### For canned data tests
+#export COMPATH=/lfs/h1/ops/canned/com/gfs:/lfs/h1/ops/canned/com/cfs:/lfs/h1/ops/canned/com/nawips:/lfs/h1/ops/canned/com/ecmwf:/lfs/h1/ops/canned/com/nam
+#export DCOMROOT=/lfs/h1/ops/canned/dcom

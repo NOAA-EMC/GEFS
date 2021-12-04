@@ -40,6 +40,7 @@ export cyc=%CYC%
 
 export total_tasks=256
 export taskspernode=128
+export OMP_NUM_THREADS=1
 
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_WAVE_STAT

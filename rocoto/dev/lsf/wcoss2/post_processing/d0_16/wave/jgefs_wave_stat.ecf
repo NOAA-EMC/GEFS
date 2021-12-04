@@ -79,6 +79,7 @@ fi
 # ---
 export total_tasks=256 #256 384
 export taskspernode=128
+export OMP_NUM_THREADS=1
 
 #export wavempexec=${wavempexec:-"mpiexec -np"}
 #export wave_mpmd=${wave_mpmd:-"--cpu-bind verbose,core cfp"}

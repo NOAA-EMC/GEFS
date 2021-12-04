@@ -34,6 +34,7 @@ export RUNMEM=ge%MEMBER%
 export total_tasks=1
 export taskspernode=1
 export FORECAST_SEGMENT=hr
+export OMP_NUM_THREADS=1
 
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_FCST_POST_MANAGER

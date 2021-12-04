@@ -74,6 +74,7 @@ fi
 # ---
 export total_tasks=66
 export taskspernode=66
+export OMP_NUM_THREADS=1
 
 export envir=prod
 # CALL executable job script here

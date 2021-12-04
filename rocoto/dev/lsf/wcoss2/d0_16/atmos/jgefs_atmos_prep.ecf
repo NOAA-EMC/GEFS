@@ -78,6 +78,7 @@ export RUNMEM=ge${MEMBER}
 
 export total_tasks=36
 export taskspernode=36
+export OMP_NUM_THREADS=1
 
 export envir=prod
 # CALL executable job script here

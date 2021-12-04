@@ -76,6 +76,7 @@ fi
 # ---
 export total_tasks=$npert #30
 export taskspernode=6
+export OMP_NUM_THREADS=1
 
 export envir=prod
 # CALL executable job script here
