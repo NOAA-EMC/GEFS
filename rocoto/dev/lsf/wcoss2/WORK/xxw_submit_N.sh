@@ -183,7 +183,7 @@ if [[ $DoLR == "yes" ]]; then
     do
         #sed -e "s/c00/$mem/g" ../d16_35/atmos/jgefs_atmos_forecast.ecf > jgefs_atmoslr_forecast.ecf_$mem
         #atmos_fcst_lr[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc_lr},EXPID=${EXPID}" -W depend=afterok:${fcst[$imem]} jgefs_atmoslr_forecast.ecf_$mem)
-        atmos_fcst_lr[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc_lr},EXPID=${EXPID},MEMBER=${mem}" -N jatmos_forecast_lr_${mem}_${cyc_lr} -W depend=afterok:${fcst[$imem]} ../d16_35/atmos/jgefs_atmos_forecast.ecf)
+        atmos_fcst_lr[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc_lr},EXPID=${EXPID},MEMBER=${mem}" -N jatmos_forecast_lr_${mem}_${cyc_lr} -W depend=afterok:${atmos_prdgen[$imem]} ../d16_35/atmos/jgefs_atmos_forecast.ecf)
 
         #sed -e "s/c00/$mem/g" ../d16_35/atmos/jgefs_atmos_post.ecf > jgefs_atmoslr_post.ecf_$mem
         #atmos_post_lr[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc_lr},EXPID=${EXPID}" -W depend=after:${atmos_fcst_lr[$imem]} jgefs_atmoslr_post.ecf_$mem)
