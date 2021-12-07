@@ -26,7 +26,7 @@ cd $DATA
 ######################################
 # Set up compute resources
 ######################################
-export NTASKS=${total_tasks:-400}
+export NTASKS=${total_tasks:-256}
 export wavempexec=${wavempexec:-"mpiexec -n"}
 export wave_mpmd=${wave_mpmd:-"cfp"}
 

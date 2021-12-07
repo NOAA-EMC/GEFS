@@ -28,7 +28,7 @@ cd $DATA
 ######################################
 export total_tasks=${total_tasks:-4}
 export OMP_NUM_THREADS=${OMP_NUM_THREADS:-2}
-export APRUN_MPMD=${gefsmpexec_mpmd:-"mpiexec --cpu-bind core --configfile mpmd_cmdfile"} #mpirun -n $total_tasks cfp mpmd_cmdfile"}
+export APRUN_MPMD=${gefsmpexec_mpmd:-"mpiexec -n $total_tasks cfp mpmd_cmdfile"}
 
 ####################################
 # Specify NET and RUN Name and model

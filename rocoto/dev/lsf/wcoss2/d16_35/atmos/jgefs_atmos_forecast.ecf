@@ -4,7 +4,7 @@
 #PBS -S /bin/bash
 #PBS -q dev
 #PBS -A GEFS-DEV
-#PBS -l walltime=3:30:00
+#PBS -l walltime=4:30:00
 #PBS -l place=vscatter,select=2:ncpus=128:mpiprocs=128:mem=500GB+1:ncpus=64:mpiprocs=64:mem=250GB
 #PBS -l debug=true
 
@@ -95,6 +95,8 @@ export total_tasks=320
 #export taskspernode=40
 export COREPERNODE=128
 export FORECAST_SEGMENT=lr
+export OMP_NUM_THREADS=1
+
 #export RERUN="YES"
 
 #export gefsmpexec="mpiexec -n $total_tasks" # -ppn 108"

@@ -20,8 +20,8 @@ export pgmerr=errfile
 # Set up compute resources
 ######################################
 export NTASKS=${total_tasks:-6}
-export wavempexec=${wavempexec:-"mpiexec -cpu-bind core"} # -n "}
-export wave_mpmd=${wave_mpmd:-"--configfile"} #cfp"}
+export wavempexec=${wavempexec:-"mpiexec -n"}
+export wave_mpmd=${wave_mpmd:-"cfp"}
 
 ####################################
 # Specify and create working directory
@@ -68,8 +68,6 @@ export FIXwave=${FIXwave:-$HOMEgefs/fix/fix_wave}
 ##############################################
 # Have to include $COMPONENT in COM paths for downstream scripts
 ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
-#export COMIN=$COMROOT/${NET}/${ver}/${RUN}.${PDY}/$cyc/wave
-#export COMOUT=$COMROOT/${NET}/${ver}/${RUN}.${PDY}/$cyc/wave
 export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/wave}
 export COMOUT=${COMOUT:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/wave}
 if [[ $SENDCOM = YES ]]; then

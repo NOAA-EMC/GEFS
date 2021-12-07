@@ -72,6 +72,7 @@ fi
 # ---
 export total_tasks=8
 export taskspernode=8
+export OMP_NUM_THREADS=1
 #export gefsmpexec_mpmd="mpiexec -np $total_tasks –cpu-bind core cfp mpmd_cmdfile"
 
 export envir=prod

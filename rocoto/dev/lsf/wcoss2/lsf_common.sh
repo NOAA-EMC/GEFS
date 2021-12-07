@@ -6,9 +6,9 @@ export cyc=${cyc:-00}
 #export PDY=20210731
 export PDY=${PDY:-20210824}
 
-export npert=30
-export navg_min=10
-export COREPERNODE=128
+export npert=${npert:-30}
+export navg_min=${navg_min:-10}
+export COREPERNODE=${COREPERNODE:-128}
 export fhmax=840
 export fhmaxh=384
 export fhmax_aer=120
@@ -24,7 +24,7 @@ export RUN=${RUN:-gefs}
 
 export EXPID=${EXPID:-gefs_wcoss2_canned_Nov16_2021}
 #export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gw/test_gw_wave/$EXPID}
-export HOMEgefs=/lfs/h2/emc/ens/noscrub/common/git/gefs/gefs_wcoss2_canned_Nov16_2021
+export HOMEgefs=/lfs/h2/emc/ens/noscrub/common/git/gefs/gefs_wcoss2_canned_Nov29_2021
 #export HOMEgfs=/lfs/h2/emc/ens/noscrub/common/git/sorc/gw/gw_port2wcoss2_common
 export WORKDIR=/lfs/h2/emc/ptmp/Xianwu.Xue/o/$EXPID
 

@@ -5,7 +5,7 @@
 #PBS -q dev
 #PBS -A GEFS-DEV
 #PBS -l walltime=1:00:00
-#PBS -l place=vscatter,select=1:ncpus=128:mem=500GB:mpiprocs=128:ompthreads=1
+#PBS -l place=vscatter,select=2:ncpus=128:mem=500GB:mpiprocs=128:ompthreads=1
 #PBS -l debug=true
 
 ##PBS -l place=vscatter,select=2:ncpus=128:mem=500GB:mpiprocs=128:ompthreads=1
@@ -77,8 +77,9 @@ elif [[ -f "../../../$f" ]]; then
 fi
 
 # ---
-export total_tasks=128 #256 384
-export taskspernode=128 
+export total_tasks=256 #256 384
+export taskspernode=128
+export OMP_NUM_THREADS=1
 
 #export wavempexec=${wavempexec:-"mpiexec -np"}
 #export wave_mpmd=${wave_mpmd:-"--cpu-bind verbose,core cfp"}

@@ -41,6 +41,7 @@ export RUNMEM=ge%MEMBER%
 export total_tasks=320
 export COREPERNODE=128
 export FORECAST_SEGMENT=hr
+export OMP_NUM_THREADS=1
 #export RERUN="YES"
 
 # CALL executable job script here

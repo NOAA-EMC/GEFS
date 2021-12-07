@@ -8,10 +8,18 @@ export PS4='$SECONDS + $(basename $(basename ${0}))[$LINENO] '
 export PDY=${PDY:-20210824}
 export cyc=${cyc:-00}
 export EXPID=${EXPID:-"gefs_wcoss2_canned_test"}
-DoLR=yes
+DoLR=${DoLR:-yes}
+DoLR_Sep=${DoLR_Sep:-yes} # Run lr like prod
+if [[ $DoLR_Sep == "no" ]]; then
+    if [[ $cyc == "00" ]]; then
+        DoLR=yes
+    else
+        DoLR=no
+    fi
+fi
 
-npert=30
-#mem_per_group=5
+npert=${npert:-30}
+
 DoAllMEMs=yes # "yes" means doing all members in one time
 if [[ $DoAllMEMs == no ]]; then
     mem_per_group=5
@@ -140,28 +148,58 @@ wave_stat=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -N jwave_stat_${cyc} 
 
 
 if [[ $DoLR == "yes" ]]; then
+
+    memberlist_lr=""
+    case $cyc in
+        00)
+          memberlist_lr="p01 p02 p03 p04 p05 p06 p07 p08"
+          ;;
+        06)
+          memberlist_lr="p09 p10 p11 p12 p13 p14 p15 p16"
+          ;;
+        12)
+          memberlist_lr="p17 p18 p19 p20 p21 p22 p23 p24"
+          ;;
+        18)
+          memberlist_lr="c00 p25 p26 p27 p28 p29 p30"
+          ;;
+        *)
+          echo "Invalid cyc: $cyc"
+          break
+          ;;
+    esac
+
+    if [[ $DoLR_Sep == "yes" ]]; then
+      cyc_lr=00
+    else
+      cyc_lr=$cyc
+      memberlist_lr=$memberlist
+    fi
+
     #--d
     atmos_prdgen_lr_dep=""
     imem=1
-    for mem in $memberlist
+    for mem in $memberlist_lr
     do
         #sed -e "s/c00/$mem/g" ../d16_35/atmos/jgefs_atmos_forecast.ecf > jgefs_atmoslr_forecast.ecf_$mem
-        #atmos_fcst_lr[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -W depend=afterok:${fcst[$imem]} jgefs_atmoslr_forecast.ecf_$mem)
-        atmos_fcst_lr[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID},MEMBER=${mem}" -N jatmos_forecast_lr_${mem}_${cyc} -W depend=afterok:${fcst[$imem]} ../d16_35/atmos/jgefs_atmos_forecast.ecf)
+        #atmos_fcst_lr[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc_lr},EXPID=${EXPID}" -W depend=afterok:${fcst[$imem]} jgefs_atmoslr_forecast.ecf_$mem)
+        atmos_fcst_lr[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc_lr},EXPID=${EXPID},MEMBER=${mem}" -N jatmos_forecast_lr_${mem}_${cyc_lr} -W depend=afterok:${atmos_prdgen[$imem]} ../d16_35/atmos/jgefs_atmos_forecast.ecf)
 
         #sed -e "s/c00/$mem/g" ../d16_35/atmos/jgefs_atmos_post.ecf > jgefs_atmoslr_post.ecf_$mem
-        #atmos_post_lr[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -W depend=after:${atmos_fcst_lr[$imem]} jgefs_atmoslr_post.ecf_$mem)
-        atmos_post_lr[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID},MEMBER=${mem}" -N jatmos_post_lr_${mem}_${cyc} -W depend=after:${atmos_fcst_lr[$imem]} ../d16_35/atmos/jgefs_atmos_post.ecf)
+        #atmos_post_lr[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc_lr},EXPID=${EXPID}" -W depend=after:${atmos_fcst_lr[$imem]} jgefs_atmoslr_post.ecf_$mem)
+        atmos_post_lr[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc_lr},EXPID=${EXPID},MEMBER=${mem}" -N jatmos_post_lr_${mem}_${cyc_lr} -W depend=after:${atmos_fcst_lr[$imem]} ../d16_35/atmos/jgefs_atmos_post.ecf)
 
         #sed -e "s/c00/$mem/g" ../d16_35/atmos/jgefs_atmos_prdgen.ecf > jgefs_atmoslr_prdgen.ecf_$mem
-        #atmos_prdgen_lr[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -W depend=after:${atmos_post_lr[$imem]} jgefs_atmoslr_prdgen.ecf_$mem)
-        atmos_prdgen_lr[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID},MEMBER=${mem}" -N jatmos_prdgen_lr_${mem}_${cyc} -W depend=after:${atmos_post_lr[$imem]} ../d16_35/atmos/jgefs_atmos_prdgen.ecf)
+        #atmos_prdgen_lr[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc_lr},EXPID=${EXPID}" -W depend=after:${atmos_post_lr[$imem]} jgefs_atmoslr_prdgen.ecf_$mem)
+        atmos_prdgen_lr[$imem]=$(qsub -v "PDY=${PDY},cyc=${cyc_lr},EXPID=${EXPID},MEMBER=${mem}" -N jatmos_prdgen_lr_${mem}_${cyc_lr} -W depend=after:${atmos_post_lr[$imem]} ../d16_35/atmos/jgefs_atmos_prdgen.ecf)
         atmos_prdgen_lr_dep="$atmos_prdgen_lr_dep:${atmos_prdgen_lr[$imem]}"
 
         (( imem++ ))
     done
 
 
-    atmos_ensstat_lr=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -N jatmos_ensstat_lr_${cyc} -W depend=after${atmos_prdgen_lr_dep} ../post_processing/d16_35/atmos/jgefs_atmos_ensstat.ecf)
-    atmos_ens_lr=$(qsub -v "PDY=${PDY},cyc=${cyc},EXPID=${EXPID}" -N jatmos_enspost_lr_${cyc} -W depend=afterok${atmos_prdgen_lr_dep} ../post_processing/d16_35/atmos/jgefs_atmos_enspost.ecf)
+    if [[ $cyc == 18 ]]; then
+        atmos_ensstat_lr=$(qsub -v "PDY=${PDY},cyc=${cyc_lr},EXPID=${EXPID}" -N jatmos_ensstat_lr_${cyc_lr} -W depend=after${atmos_prdgen_lr_dep} ../post_processing/d16_35/atmos/jgefs_atmos_ensstat.ecf)
+        atmos_ens_lr=$(qsub -v "PDY=${PDY},cyc=${cyc_lr},EXPID=${EXPID}" -N jatmos_enspost_lr_${cyc_lr} -W depend=afterok${atmos_prdgen_lr_dep} ../post_processing/d16_35/atmos/jgefs_atmos_enspost.ecf)
+    fi
 fi
