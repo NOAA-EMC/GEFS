@@ -104,6 +104,13 @@ elif [[ -d /lustre && -d /ncrc ]] ; then
     fi
     target=gaea
     module purge
+elif [[ -d /apps/prod ]]; then
+
+	target=wcoss2
+
+	module purge
+	module load envvar/${envvar_ver:-1.0}
+
 else
     echo WARNING: UNKNOWN PLATFORM 1>&2
 fi

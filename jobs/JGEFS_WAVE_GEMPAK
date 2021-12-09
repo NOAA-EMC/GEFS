@@ -12,8 +12,8 @@ export PS4='$SECONDS + $(basename $(basename $BASH_SOURCE))[$LINENO] '
 ####################################
 # Determine Job Output Name on System
 ####################################
-export jobid=${jobid:-"$job.$LSB_JOBID"}
-export pgmout="OUTPUT.${LSB_JOBID}"
+export jobid=${jobid:-"$job.$PBS_JOBID"}
+export pgmout="OUTPUT.${PBS_JOBID}"
 export pgmerr=errfile
 
 ####################################
@@ -27,7 +27,7 @@ cd $DATA
 # Set up compute resources
 ######################################
 export total_tasks=${total_tasks:-1}
-export APRUN_MPMD=${gefsmpexec_mpmd:-"mpirun -n $total_tasks cfp mpmd_cmdfile"}
+export APRUN_MPMD=${gefsmpexec_mpmd:-"mpiexec -n $total_tasks cfp mpmd_cmdfile"}
 
 ####################################
 # Specify NET and RUN Name and model
@@ -58,7 +58,7 @@ source PDY
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export HOMEgefs=${HOMEgefs:-${PACKAGEROOT}/gefs.${gefs_ver}}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 export GEMPAKgefs=${GEMPAKgefs:-$HOMEgefs/gempak}
 export FIXgempak=${FIXgempak:-$GEMPAKgefs/fix}
@@ -66,10 +66,11 @@ export FIXgempak=${FIXgempak:-$GEMPAKgefs/fix}
 ##############################################
 # Define COM directories
 ##############################################
+ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
 export COMPONENT=${COMPONENT:-wave}
 # Have to include $COMPONENT in COM paths for downstream scripts
-export COMIN=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/$COMPONENT}
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/$COMPONENT}
+export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/$COMPONENT}
+export COMOUT=${COMOUT:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/$COMPONENT}
 
 if [[ $SENDCOM == "YES" ]]; then
     mkdir -p $COMOUT/gridded
@@ -86,8 +87,8 @@ for config in $configs; do
     . $config_path/$config.parm
     export err=$?
     if [[ $err != 0 ]]; then
-    	echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file $config_path/$config.parm"
-    	exit $err
+        echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file $config_path/$config.parm"
+        exit $err
     fi
 done
 
@@ -97,14 +98,13 @@ if [[ $SENDCOM == "YES" ]]; then
 else
     export wavelog=${DATA}/wave.log
 fi
-export jlogfile=${jlogfile:-$DATA/jlogfile}
 
 echo "Environment before calling script"
 env | sort
 
 #############################################################
 # Execute the script
-source $HOMEgefs/scripts/exgefs_wave_gempak.sh
+$HOMEgefs/scripts/exgefs_wave_gempak.sh
 export err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"

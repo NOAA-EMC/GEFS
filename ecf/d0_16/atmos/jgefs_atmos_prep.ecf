@@ -1,0 +1,51 @@
+#PBS -N gefs_atmos_prep_%MEMBER%_%CYC%
+#PBS -j oe
+#PBS -S /bin/bash
+#PBS -q %QUEUE%
+#PBS -A %PROJ%-%PROJENVIR%
+#PBS -l walltime=0:30:00
+#PBS -l place=vscatter,select=1:ncpus=36:mem=108GB:mpiprocs=36
+#PBS -l debug=true
+
+set -x
+
+cd $PBS_O_WORKDIR
+
+module purge
+
+%include <head.h>
+%include <envir-p1.h>
+
+export model=gefs
+
+module load PrgEnv-intel/$PrgEnv_intel_ver
+module load craype/$craype_ver
+module load intel/$intel_ver
+module load cray-mpich/$cray_mpich_ver
+module load cray-pals/$cray_pals_ver
+module load hdf5/$hdf5_ver
+module load netcdf/$netcdf_ver
+module load cfp/$cfp_ver
+
+export USE_CFP=YES
+
+module list
+
+# EXPORT list here
+ulimit -s unlimited
+ulimit -a
+
+export cyc=%CYC%
+export RUNMEM=ge%MEMBER%
+
+export total_tasks=36
+export taskspernode=36
+export OMP_NUM_THREADS=1
+
+# CALL executable job script here
+${HOMEgefs}/jobs/JGEFS_ATMOS_PREP
+
+%include <tail.h>
+%manual
+# include manual page below
+%end

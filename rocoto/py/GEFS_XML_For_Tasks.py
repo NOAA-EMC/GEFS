@@ -387,6 +387,8 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         strings += ""
     elif WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
         strings += ""
+    elif WHERE_AM_I.upper() == "wcoss2".upper():
+        strings += ""
     else:
         strings += sPre_2 + '<native>-cwd &tmpnwprd;</native>\n'
 
@@ -411,6 +413,9 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
                 strings += ""
             else:
                 strings += sPre_2 + "<native>-R 'affinity[core(1)]'</native>\n"
+    elif WHERE_AM_I.upper() == "wcoss2".upper():
+        strings += ""  # \n
+
     else:
         strings += sPre_2 + '<native>-extsched "CRAYLINUX[]"</native>\n'
     # -------------------Native-------------------
@@ -458,7 +463,7 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
 
     # Add command
     sPRE = "&PRE; "
-    if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
+    if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper(), "WCOSS2"]:
         sPRE = ""
 
     if taskname in ['keep_init', 'copy_init', 'keep_data_atm', 'archive_atm', 'cleanup_atm', 'keep_data_wave', 'archive_wave', 'cleanup_wave', 'keep_data_chem', 'archive_chem', 'cleanup_chem']:

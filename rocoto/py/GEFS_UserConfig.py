@@ -147,11 +147,15 @@ def create_folders(dicBase):
 
     EXPID = dicBase['EXPID']
     WORKDIR = str(dicBase['WORKDIR']).replace("&EXPID;", EXPID)
+    WHERE_AM_I = dicBase["WHERE_AM_I".upper()]
 
     if not os.path.exists(WORKDIR):
         os.makedirs(WORKDIR)
 
-    sPath = WORKDIR + sSep + 'tmpnwprd'
+    if WHERE_AM_I.lower() == "wcoss2":
+        sPath = WORKDIR + sSep + 'tmp'
+    else:
+        sPath = WORKDIR + sSep + 'tmpnwprd'
     if not os.path.exists(sPath):
         os.makedirs(sPath)
 
@@ -192,6 +196,8 @@ def get_WHERE_AM_I(dicBase):
             dicBase[sVarName] = 'cray'
         elif os.path.lexists('/usrx') and os.path.realpath('/usrx').startswith('/gpfs/dell'):
             dicBase[sVarName] = 'wcoss_dell_p3'
+        elif os.path.exists('/apps/prod'):
+            dicBase[sVarName] = 'wcoss2'
         elif os.path.exists('c:'):
             dicBase[sVarName] = 'wins'
         else:

@@ -1,0 +1,84 @@
+#!/bin/sh
+#PBS -N jgefs_chem_prep_emissions_00
+#PBS -j oe
+#PBS -S /bin/bash
+#PBS -q dev
+#PBS -A GEFS-DEV
+#PBS -l walltime=0:45:00
+#PBS -l place=vscatter,select=1:ncpus=1:mem=3600MB
+#PBS -l debug=true
+
+set -x
+
+cd $PBS_O_WORKDIR
+
+#module purge
+
+export model=gefs
+
+# to get HOMEgefs
+f=lsf_common.sh
+if [[ -f "$f" ]]; then
+    echo "$f exists."
+    source $f
+elif [[ -f "../$f" ]]; then
+    echo "../$f exists."
+    source ../$f
+elif [[ -f "../../$f" ]]; then
+    echo "../../$f exists."
+    source ../../$f
+elif [[ -f "../../../$f" ]]; then
+    echo "../../../$f exists."
+    source ../../../$f
+fi
+. ${HOMEgefs}/versions/run.ver
+
+module purge
+module load envvar/$envvar_ver
+module load PrgEnv-intel/$PrgEnv_intel_ver
+module load craype/$craype_ver
+module load intel/$intel_ver
+
+module load prod_util/$prod_util_ver
+module load prod_envir/$prod_envir_ver
+
+module load netcdf/$netcdf_ver
+module load hdf5/$hdf5_ver
+#module load lsf/$lsf_ver
+
+module list
+
+# EXPORT list here
+ulimit -s unlimited
+ulimit -a
+
+#export fhmaxh="96"
+#export fhmax_aer="60"
+#export fhrestart="9999"
+
+f=lsf_common.sh
+if [[ -f "$f" ]]; then
+    echo "$f exists."
+    source $f
+elif [[ -f "../$f" ]]; then
+    echo "../$f exists."
+    source ../$f
+elif [[ -f "../../$f" ]]; then
+    echo "../../$f exists."
+    source ../../$f
+elif [[ -f "../../../$f" ]]; then
+    echo "../../../$f exists."
+    source ../../../$f
+fi
+
+# ---
+#HOMEdata=/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata
+#export DCOMROOT=${HOMEdata}/canned/dcom
+
+export total_tasks=1
+export OMP_NUM_THREADS=1
+export taskspernode=1
+
+export envir=prod
+# CALL executable job script here
+${HOMEgefs}/jobs/JGEFS_CHEM_PREP_EMISSIONS

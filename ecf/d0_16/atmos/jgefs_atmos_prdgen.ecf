@@ -1,0 +1,52 @@
+#PBS -N gefs_atmos_prdgen_0_16d_%MEMBER%_%CYC%
+#PBS -j oe
+#PBS -S /bin/bash
+#PBS -q %QUEUE%
+#PBS -A %PROJ%-%PROJENVIR%
+#PBS -l walltime=4:30:00
+#PBS -l place=vscatter,select=1:ncpus=4:mpiprocs=4:mem=4GB
+#PBS -l debug=true
+
+set -x
+
+cd $PBS_O_WORKDIR
+
+module purge
+
+%include <head.h>
+%include <envir-p1.h>
+
+export model=gefs
+
+module load PrgEnv-intel/$PrgEnv_intel_ver
+module load craype/$craype_ver
+module load intel/$intel_ver
+module load cray-pals/$cray_pals_ver
+module load cray-mpich/$cray_mpich_ver
+module load libjpeg/$libjpeg_ver
+module load grib_util/$grib_util_ver
+module load wgrib2/$wgrib2_ver
+module load cfp/$cfp_ver
+
+export USE_CFP=YES
+
+module list
+
+# EXPORT list here
+ulimit -s unlimited
+ulimit -a
+
+export cyc=%CYC%
+export RUNMEM=ge%MEMBER%
+
+export total_tasks=4
+export OMP_NUM_THREADS=1
+export FORECAST_SEGMENT=hr
+
+# CALL executable job script here
+${HOMEgefs}/jobs/JGEFS_ATMOS_PRDGEN
+
+%include <tail.h>
+%manual
+# include manual page below
+%end

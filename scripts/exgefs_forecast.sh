@@ -15,6 +15,7 @@ export machine="WCOSS_D35"
 # Additional paths needed by child scripts
 export HOMEgfs=${HOMEgfs:-$HOMEgefs}
 export PARMgfs=$HOMEgfs/parm
+export EXECgfs=$HOMEgfs/exec
 export FIXgfs=$HOMEgfs/fix
 export FIX_DIR=$FIXgfs
 export FIX_AM=$FIX_DIR/fix_am
@@ -78,7 +79,7 @@ case $FORECAST_SEGMENT in
 				export CDATE_RST=$($NDATE +$FHINI $PDY$cyc)
 			fi
 		else
-			echo "FATAL ERROR in ${.sh.file}: There is no $fRestart" 
+			echo "FATAL ERROR in ${.sh.file}: There is no $fRestart"
 			export err=101
 			exit $err
 		fi
@@ -223,7 +224,7 @@ fi
 #
 export fcstscript=${fcstscript:-$HOMEgfs/scripts/exglobal_fcst_nemsfv3gfs.sh}
 export FORECASTSH=$fcstscript
-export FCSTEXECDIR=${FCSTEXECDIR:-$EXECgefs}
+export FCSTEXECDIR=${FCSTEXECDIR:-$EXECgfs}
 export PARM_FV3DIAG=${PARM_FV3DIAG:-$PARMgfs/parm_fv3diag}
 export ROTDIR=${ROTDIR:-$DATA}
 
@@ -249,14 +250,8 @@ export rCDUMP=$RUNMEM
 export CDUMP=$RUNMEM
 
 if [[ $cplwav = ".true." ]]; then
-	# Set location of wave restart from last cycle
-	last_date=$($NDATE -$WAVHCYC $CDATE)
-	last_PDY=$(echo $last_date | cut -c1-8)
-	last_cyc=$(echo $last_date | cut -c9-10)
-	export WRDIR=$COMROOT/${NET}/${envir}/${RUN}.${last_PDY}/$last_cyc/wave/restart
-
 	# CPU partitioning
-	export npe_wav=${npe_wav:-120}
+	export npe_wav=${npe_wav:-88}
 	export npe_fcst_wav=$(( npe_fv3 + npe_wav ))
 	export atm_petlist_bounds=" 0 $((npe_fv3-1))"
 	export wav_petlist_bounds=" $((npe_fv3)) $((npe_fcst_wav-1))"
