@@ -18,7 +18,7 @@
 #   8) 2019-05-27       Bo Cui modify to generate GEFS BUFR sounding files
 #   9) 2019-06-05       Xianwu Xue reformatted it and add checked the errors        
 ################################################################
-echo "$(date -u) begin ${0}"
+echo "$(date -u) begin ${.sh.file}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -100,7 +100,7 @@ while [ $FSTART -lt $ENDHOUR ]; do
 
 		if [ $ic -ge $SLEEP_LOOP_MAX ]; then
 			echo <<- EOF
-				FATAL ERROR in ${0}: Unable to find forecast output $fcstchk at $(date -u) after waiting ${SLEEP_TIME}s!
+				FATAL ERROR in ${.sh.file}: Unable to find forecast output $fcstchk at $(date -u) after waiting ${SLEEP_TIME}s!
 				EOF
 			export err=5
 			err_chk
@@ -115,7 +115,7 @@ while [ $FSTART -lt $ENDHOUR ]; do
 	$USHgefs/gefs_bufr.sh
 	export err=$?
 	if [[ $err != 0 ]]; then
-		echo "FATAL ERROR in ${0}: gefs_bufr failed for f$FSTART!"
+		echo "FATAL ERROR in ${.sh.file}: gefs_bufr failed for f$FSTART!"
 		err_chk
 		exit $err
 	fi
@@ -166,12 +166,12 @@ $APRUN_MPMD
 export err=$?
 
 if [[ $err != 0 ]]; then
-	echo "FATAL ERROR in ${0}: One or more BUFR regions in $MP_CMDFILE failed!"
+	echo "FATAL ERROR in ${.sh.file}: One or more BUFR regions in $MP_CMDFILE failed!"
 	exit $err
 fi
 #############################################################
 
-echo "$(date -u) end ${0}"
+echo "$(date -u) end ${.sh.file}"
 
 exit $err
 

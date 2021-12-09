@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "$(date -u) begin $(basename ${0})"
+echo "$(date -u) begin $(basename $BASH_SOURCE)"
 export PS4="${PS4}${1}: "
 
 set -xa
@@ -29,7 +29,7 @@ if [[ $mem = c00 ]] ;then
 		$NCP $ATMFILE $INIDIR
 		export ATM_FILES_INPUT="gfs.t${cyc}z.atmanl.nc"
 	else
-		msg="FATAL ERROR in $(basename ${0}): GFS atmospheric analysis file $ATMFILE not found!"
+		msg="FATAL ERROR in $(basename $BASH_SOURCE): GFS atmospheric analysis file $ATMFILE not found!"
 		echo "$msg"
 		export err=101
 		err_chk || exit $err
@@ -60,7 +60,7 @@ else
 				(( cmem = cmem + ENKF_SEARCH_LEAP ))
 
 			else
-				msg="FATAL ERROR in $(basename ${0}): Unable to find EnKF atmospheric file after $MAX_ENKF_SEARCHES attempts"
+				msg="FATAL ERROR in $(basename $BASH_SOURCE): Unable to find EnKF atmospheric file after $MAX_ENKF_SEARCHES attempts"
 				echo $msg
 				export err=102
 				err_chk || exit $err
@@ -76,7 +76,7 @@ if [[ $CONVERT_SFC == ".true." ]]; then
 	if [[ -f $SFCFILE ]]; then
 		$NCP $SFCFILE $INIDIR
 	else
-		msg="FATAL ERROR in $(basename ${0}): GFS surfce analysis $SFCFILE not found!"
+		msg="FATAL ERROR in $(basename $BASH_SOURCE): GFS surfce analysis $SFCFILE not found!"
 		echo $msg
 		export err=100
 		err_chk || exit $err
@@ -93,7 +93,7 @@ export FIXsfc=$FIXfv3/fix_sfc
 $USHgfs/chgres_cube.sh
 export err=$?
 if [[ $err != 0 ]]; then
-	echo "FATAL ERROR in $(basename ${0}): chgres_cube failed!"
+	echo "FATAL ERROR in $(basename $BASH_SOURCE): chgres_cube failed!"
 	exit $err
 fi
 #############################################################
@@ -151,7 +151,7 @@ if [[ $SENDCOM == "YES" ]]; then
 	fi
 fi
 
-echo "$(date -u) end $(basename ${0})"
+echo "$(date -u) end $(basename $BASH_SOURCE)"
 
 exit $err
 

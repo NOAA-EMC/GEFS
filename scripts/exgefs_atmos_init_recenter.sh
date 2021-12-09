@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-echo "$(date -u) begin ${0}"
+echo "$(date -u) begin ${.sh.file}"
 
 if [[ ${STRICT:-NO} == "YES" ]]; then
 	# Turn on strict bash error checking
@@ -63,7 +63,7 @@ echo "DATA=$DATA"
 # Set environment.
 VERBOSE=${VERBOSE:-"YES"}
 if [ $VERBOSE = "YES" ]; then
-   echo "$(date) EXECUTING ${0} $*" >&2
+   echo "$(date) EXECUTING ${.sh.file} $*" >&2
    set -x
 fi
 
@@ -110,7 +110,7 @@ if [ $warm_start = ".false." ]; then
 				###############################
 				if [ $ic -eq $SLEEP_LOOP_MAX ]; then
 					echo <<- EOF
-							FATAL ERROR in ${0}: Forecast missing for one tile of ${sMem}
+							FATAL ERROR in ${.sh.file}: Forecast missing for one tile of ${sMem}
 							File $sInputFile still missing at $(date -u) after waiting ${SLEEP_TIME}s
 						EOF
 					export err=9
@@ -152,7 +152,7 @@ if [ $warm_start = ".false." ]; then
 
 		export err=$?
 		if [[ $err != 0 ]]; then
-			echo "FATAL ERROR in ${0}: One or more recenter jobs in $MP_CMDFILE failed!"
+			echo "FATAL ERROR in ${.sh.file}: One or more recenter jobs in $MP_CMDFILE failed!"
 			exit $err
 		fi
 	
@@ -174,7 +174,7 @@ if [ $warm_start = ".false." ]; then
 			###############################
 			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
 			echo <<- EOF
-				FATAL ERROR in ${0}: Forecast missing for one tile of c00
+				FATAL ERROR in ${.sh.file}: Forecast missing for one tile of c00
 				File $sInputFile still missing at $(date -u) after waiting ${SLEEP_TIME}s
 			EOF
 				export err=9
@@ -213,7 +213,7 @@ if [ $warm_start = ".false." ]; then
 
 		export err=$?
 		if [[ $err != 0 ]]; then
-			echo "FATAL ERROR in ${0}: One or more recenter jobs in $MP_CMDFILE failed!"
+			echo "FATAL ERROR in ${.sh.file}: One or more recenter jobs in $MP_CMDFILE failed!"
 			exit $err
 		fi
 	else # npert=0
@@ -221,7 +221,7 @@ if [ $warm_start = ".false." ]; then
 		$NCP $FILEINPATH/c00/${FILENAME}*  $FILEOUTPATH/c00/.
 	fi
 else
-	echo "FATAL ERROR in ${0}: init_recenter only works for cold start"
+	echo "FATAL ERROR in ${.sh.file}: init_recenter only works for cold start"
 	exit 1
 fi # $warm_start = ".false."
 
@@ -235,7 +235,7 @@ if [[ $SENDCOM == YES ]]; then
         $NCP $GESOUT/init/$smem/gfs* $COMOUT/init/$smem
         export err=$?
         if [[ $err != 0 ]]; then
-            echo "FATAL ERROR in ${0}: failed to copy data from GESOUT to COMOUT"
+            echo "FATAL ERROR in ${.sh.file}: failed to copy data from GESOUT to COMOUT"
             err_chk || exit $err
         fi
 	    if [[ $SENDDBN = YES ]];then
@@ -248,7 +248,7 @@ if [[ $SENDCOM == YES ]]; then
 fi
 
 rm -rf $GESOUT/enkf
-echo "$(date -u) end ${0}"
+echo "$(date -u) end ${.sh.file}"
 
 exit $err
 

@@ -26,7 +26,7 @@
 
 ### need pass the values of CYC, YMD, DATA, COMIN and COMOUT
 
-echo "$(date -u) begin ${0}"
+echo "$(date -u) begin ${.sh.file}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -65,7 +65,7 @@ case $FORECAST_SEGMENT in
 		export FHOUR=$fhmax
         ;;
     *)
-		echo "FATAL ERROR in ${0}: Unknown FORECAST_SEGMENT $FORECAST_SEGMENT!"
+		echo "FATAL ERROR in ${.sh.file}: Unknown FORECAST_SEGMENT $FORECAST_SEGMENT!"
 		exit 100
         ;;
 esac # $FORECAST_SEGMENT in
@@ -156,7 +156,7 @@ while [[ $fh -le $FHOUR ]]; do
 			set -A enspostlvt x $eplvtp5
 			set -A enspostlev x $eplevp5
 		else
-			echo "FATAL ERROR in ${0}: Unknown res $res!"
+			echo "FATAL ERROR in ${.sh.file}: Unknown res $res!"
 			exit 100
 		fi # [[ $res = lr ]]
 
@@ -239,7 +239,7 @@ while [[ $fh -le $FHOUR ]]; do
 
 				if (( nfiles < nfilesmin )); then
 					echo <<- EOF
-						FATAL ERROR in ${0}: Insufficient members found for f${fh} to calculate stats at $(date) after ${SLEEP_TIME}s!
+						FATAL ERROR in ${.sh.file}: Insufficient members found for f${fh} to calculate stats at $(date) after ${SLEEP_TIME}s!
 							Total members:         $nmem
 							Min members for stats: $nfilesmin
 							Members found:         $nfiles
@@ -249,7 +249,7 @@ while [[ $fh -le $FHOUR ]]; do
 				else
 					if (( nfiles < nmem )); then
 						echo <<- EOF
-							WARNING in ${0}: Some members still missing for f${fh} at $(date) after ${SLEEP_TIME}s
+							WARNING in ${.sh.file}: Some members still missing for f${fh} at $(date) after ${SLEEP_TIME}s
 								Will continue with $nfiles members, but products may be degraded.
 							EOF
 						msg="WARNING: ${job} did not find all ensemble member for f${fh}! Will continue with fewer members, but products may be degraded."
@@ -329,7 +329,7 @@ while [[ $fh -le $FHOUR ]]; do
 		export err=$?
 		if [[ $err != 0 ]]; then
 			echo <<- EOF
-				FATAL ERROR in ${0}: $ENSSTAT returned a non-zero error code for f${fh}!
+				FATAL ERROR in ${.sh.file}: $ENSSTAT returned a non-zero error code for f${fh}!
 					Namelist namin was used and had the following contents:
 						$(cat namin)
 				EOF
@@ -413,7 +413,7 @@ for file in $postvarlist; do
 	if [[ -s enspost_grb2${ext_h}.$cycle.${file} ]]; then
 		ls -al enspost_grb2${ext_h}.$cycle.${file}
 	else
-		echo "FATAL ERROR in ${0}: Output file enspost_grb2${ext_h}.$cycle.${file} is missing!"
+		echo "FATAL ERROR in ${.sh.file}: Output file enspost_grb2${ext_h}.$cycle.${file} is missing!"
 		export err=9
 		err_chk
 		exit $err
@@ -492,7 +492,7 @@ for file in $postvarlist; do
 	fi # [ "$SENDCOM" = "YES" ]
 done # for file in $postvarlist
 
-echo "$(date -u) end ${0}"
+echo "$(date -u) end ${.sh.file}"
 
 exit 0
 

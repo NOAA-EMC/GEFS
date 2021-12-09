@@ -12,7 +12,7 @@
 # -----------------------------------------------------
 #####################################################################
 
-echo "$(date -u) begin ${0}"
+echo "$(date -u) begin ${.sh.file}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -52,6 +52,6 @@ while [[ $fhr -le $FHOUR ]]; do
 	fi
 done # [[ $fhr -le $FHOUR ]]
 
-echo "$(date -u) end ${0}"
+echo "$(date -u) end ${.sh.file}"
 
 exit 0

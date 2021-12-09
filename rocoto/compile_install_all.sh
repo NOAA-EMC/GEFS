@@ -42,8 +42,8 @@ if [ $machine = "nomachine" ]; then
         machine=wcoss
     elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then # We are on NOAA Mars or Venus
         machine=wcoss_dell_p3
-	elif [[ -d /apps/prod ]]; then # WCOSS2
-		machine=wcoss2
+    elif [[ -d /apps/prod ]]; then # WCOSS2
+        machine=wcoss2
     else
         echo "This is not supported by this script!"
         exit 55
@@ -221,8 +221,8 @@ if [ $RunRocoto = "yes" ]; then
         module load craype/2.7.8
         module load intel/19.1.3.304
         module load cray-mpich/8.1.7
-	
-		module load python/3.8.6
+
+        module load python/3.8.6
 
     fi
     #./py/run_to_get_all.py  $userConfigFile

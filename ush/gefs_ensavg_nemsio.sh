@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-echo "$(date -u) begin ${0}"
+echo "$(date -u) begin ${.sh.file}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -12,7 +12,7 @@ echo DATA=$DATA
 
 VERBOSE=${VERBOSE:-"YES"}
 if [ $VERBOSE = "YES" ]; then
-   echo $(date) EXECUTING ${0} $* >&2
+   echo $(date) EXECUTING ${.sh.file} $* >&2
    set -x
 fi
 
@@ -103,7 +103,7 @@ while [[ $fhr -le $FHOUR ]]; do
 	done
 	if [ $nfile -le 1 ]; then
 		echo <<- EOF
-			FATAL ERROR in ${0}: Not enough forecast files available to create average at hour $fhr!
+			FATAL ERROR in ${.sh.file}: Not enough forecast files available to create average at hour $fhr!
 			EOF
 		export err=1
 		$ERRSCRIPT
@@ -118,7 +118,7 @@ while [[ $fhr -le $FHOUR ]]; do
 	export err=$?
 
 	if [[ $err != 0 ]]; then
-		echo "FATAL ERROR in ${0}: $(basename $GETATMENSMEANEXEC) failed for f${fhr}!"
+		echo "FATAL ERROR in ${.sh.file}: $(basename $GETATMENSMEANEXEC) failed for f${fhr}!"
 		$ERRSCRIPT
 		exit $err
 	fi
@@ -127,7 +127,7 @@ while [[ $fhr -le $FHOUR ]]; do
 	export err=$?
 
 	if [[ $err != 0 ]]; then
-		echo "FATAL ERROR in ${0}: $(basename $GETSFCENSMEANEXEC) failed for f${fhr}!"
+		echo "FATAL ERROR in ${.sh.file}: $(basename $GETSFCENSMEANEXEC) failed for f${fhr}!"
 		$ERRSCRIPT
 		exit $err
 	fi
@@ -145,6 +145,6 @@ while [[ $fhr -le $FHOUR ]]; do
 	(( fhr = fhr + FHINC ))
 done
 
-echo "$(date -u) end ${0}"
+echo "$(date -u) end ${.sh.file}"
 
 exit $err

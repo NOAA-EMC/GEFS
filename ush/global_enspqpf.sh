@@ -3,7 +3,7 @@
 # This script generates the 6-hourly pqpf pqif pqrf pqff pqsf grib files
 # 10/31/2014, script is adopted to process grib2 files
 ###############################################################
-echo "$(date -u) begin ${0}"
+echo "$(date -u) begin ${.sh.file}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -56,7 +56,7 @@ $enspqpf < inputpqpf
 export err=$?;
 if [[ $err != 0 ]]; then
 	echo <<- EOF
-		FATAL ERROR in ${0}: $enspqpf returned a non-zero error!"
+		FATAL ERROR in ${.sh.file}: $enspqpf returned a non-zero error!"
 		  Namelist file inputpqpf contained:
 		  	$(cat inputpqpf)
 		EOF
@@ -64,6 +64,6 @@ if [[ $err != 0 ]]; then
 	exit $err
 fi
 
-echo "$(date -u) end ${0}"
+echo "$(date -u) end ${.sh.file}"
 
 exit $err

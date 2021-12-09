@@ -1,13 +1,13 @@
 #!/bin/ksh
 
-echo "$(date -u) begin ${0}"
+echo "$(date -u) begin ${.sh.file}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
 	# Turn on strict bash error checking
 	set -eu
 fi
-export PS4='$SECONDS + ${0}[$LINENO] '
+export PS4='$SECONDS + $(basename ${.sh.file})[$LINENO] '
 
 ####################################
 # Determine Job Output Name on System
@@ -72,13 +72,13 @@ for config in $configs; do
     . $config_path/$config.parm
     export err=$?
     if [[ $err != 0 ]]; then
-        echo "FATAL ERROR in ${0}: Error while loading parm file $config_path/$config.parm"
+        echo "FATAL ERROR in ${.sh.file}: Error while loading parm file $config_path/$config.parm"
         exit $err
     fi
 done
 
-export COMINgfs=${COMINgfs:-$(compath.py prod/com/gfs/${ver_gfs})/gfs.${PDY}/$cyc/atmos}
-export COMINcfs=${COMINcfs:-$(compath.py prod/com/cfs/${ver_cfs})/cfs.}
+export COMINgfs=${COMINgfs:-$(compath.py prod/com/gfs/${gfs_ver})/gfs.${PDY}/$cyc/atmos}
+export COMINcfs=${COMINcfs:-$(compath.py prod/com/cfs/${cfs_ver})/cfs.}
 
 echo "Environment before calling script"
 env | sort
@@ -90,7 +90,7 @@ export err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"
 else
-    echo "FATAL ERROR in ${0}: $job failed!"
+    echo "FATAL ERROR in ${.sh.file}: $job failed!"
     exit $err
 fi
 #############################################################
@@ -101,6 +101,6 @@ fi
 cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-echo "$(date -u) end ${0}"
+echo "$(date -u) end ${.sh.file}"
 
 exit $err

@@ -22,7 +22,7 @@
 # -----------------------------------------------------
 #####################################################################
 
-echo "$(date -u) begin ${0}"
+echo "$(date -u) begin ${.sh.file}"
 
 set -x
 
@@ -212,7 +212,7 @@ if [ $DOANALYSIS = YES ]; then
 			###############################
 			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
 				echo <<- EOF
-					FATAL ERROR in ${0}: Forecast missing for anl of $RUNMEM
+					FATAL ERROR in ${.sh.file}: Forecast missing for anl of $RUNMEM
 					  File $mcfile still missing at $(date -u) after waiting ${SLEEP_TIME}s
 				EOF
 				export err=9
@@ -287,19 +287,19 @@ if [ $DOANALYSIS = YES ]; then
 			if (( err == 0 )); then
 				echo "$POSTGPSH completed successfully for anl"
 			else
-				echo "FATAL ERROR in ${0}: $POSTGPSH failed for member $RUNMEM hour anl"
+				echo "FATAL ERROR in ${.sh.file}: $POSTGPSH failed for member $RUNMEM hour anl"
 				err_chk || exit $err
 			fi # (( err == 0 ))
 
 			pgbfoutd=$(readlink -nf pgbfout)
 			if [[ ! -s $pgbfoutd ]]; then
-				echo "FATAL ERROR in ${0}: $pgbfoutd WAS NOT WRITTEN"
+				echo "FATAL ERROR in ${.sh.file}: $pgbfoutd WAS NOT WRITTEN"
 				err_chk || exit $err
 			fi # [[ ! -s $pgbfoutd ]];
 
 			pgbifoutd=$(readlink -nf pgbifout)
 			if [[ ! -s $pgbifoutd ]]; then
-				echo "FATAL ERROR in ${0}: $pgbifoutd WAS NOT WRITTEN"
+				echo "FATAL ERROR in ${.sh.file}: $pgbifoutd WAS NOT WRITTEN"
 				err_chk || exit $err
 			fi # [[ ! -s $pgbifoutd ]]
 
@@ -348,7 +348,7 @@ for fhr in ${RUN_HOURS[@]}; do
 			###############################
 			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
 				echo <<- EOF
-					FATAL ERROR in ${0}: Forecast missing for f${fhr} of $RUNMEM
+					FATAL ERROR in ${.sh.file}: Forecast missing for f${fhr} of $RUNMEM
 					  File $mcfile still missing as of $(date -u) after waiting ${SLEEP_TIME}s
 				EOF
 				export err=9
@@ -436,20 +436,20 @@ for fhr in ${RUN_HOURS[@]}; do
 		if (( err == 0 )); then
 			echo "$POSTGPSH completed successfully"
 		else
-			echo "FATAL ERROR in ${0}: $POSTGPSH failed for member $RUNMEM hour $fhr"
+			echo "FATAL ERROR in ${.sh.file}: $POSTGPSH failed for member $RUNMEM hour $fhr"
 			export err
 			err_chk || exit $err
 		fi # (( err == 0 ))
 
 		pgbfoutd=$(readlink -nf pgbfout)
 		if [[ ! -s $pgbfoutd ]]; then
-			msg="FATAL ERROR in ${0}: $pgbfoutd WAS NOT WRITTEN"
+			msg="FATAL ERROR in ${.sh.file}: $pgbfoutd WAS NOT WRITTEN"
 			export err=1
 			err_chk || exit $err
 		fi # [[ ! -s $pgbfoutd ]]
 		pgbifoutd=$(readlink -nf pgbifout)
 		if [[ ! -s $pgbifoutd ]]; then
-			msg="FATAL ERROR in ${0}: $pgbifoutd WAS NOT WRITTEN"
+			msg="FATAL ERROR in ${.sh.file}: $pgbifoutd WAS NOT WRITTEN"
 			export err=1
 			err_chk || exit $err
 		fi # [[ ! -s $pgbifoutd ]]
@@ -466,6 +466,6 @@ for fhr in ${RUN_HOURS[@]}; do
 	fi # [[ ! -s $mcfile ]]
 done # for fhr in ${RUN_HOURS[@]}
 
-echo "$(date -u) end ${0}"
+echo "$(date -u) end ${.sh.file}"
 
 exit 0
