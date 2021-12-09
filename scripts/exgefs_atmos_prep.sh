@@ -1,6 +1,6 @@
 #! /bin/bash
 
-echo "$(date -u) begin $(basename ${0})"
+echo "$(date -u) begin $(basename $BASH_SOURCE)"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -26,11 +26,11 @@ cd $DATA
 $USHgefs/gefs_atmos_prep.sh $mem
 export err=$?
 if [[ $err != 0 ]]; then
-	echo "FATAL ERROR in $(basename ${0}): atmos_prep failed for $RUNMEM!"
+	echo "FATAL ERROR in $(basename $BASH_SOURCE): atmos_prep failed for $RUNMEM!"
 	exit $err
 fi
 #############################################################
 
-echo "$(date -u) end $(basename ${0})"
+echo "$(date -u) end $(basename $BASH_SOURCE)"
 
 exit $err

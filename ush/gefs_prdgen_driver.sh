@@ -15,7 +15,7 @@
 # ----------------------------------------------------
 #####################################################################
 
-echo "$(date -u) begin ${0}"
+echo "$(date -u) begin ${.sh.file}"
 export PS4="${PS4}${1}: "
 
 set -xa
@@ -25,7 +25,7 @@ if [[ ${STRICT:-NO} == "YES" ]]; then
 fi
 
 export VERBOSE=yes
-sname=$(basename ${0})
+sname=$(basename ${.sh.file})
 
 export stream="${1}"
 export jobdir="${2}"                   # ${DATA}/${stream}
@@ -49,7 +49,7 @@ export infile="${3}"                   # ${DATA}/${stream}/${stream}.in
 # do_analysis=              # PRDGEN_DO_ANALYSIS[$stream]
 
 cat <<-EOF
-	Settings for $(basename ${0}) stream $stream:
+	Settings for $(basename ${.sh.file}) stream $stream:
 	  RUNMEM: $RUNMEM
 	  cyc: $cyc
 	  DATA: $DATA
@@ -171,7 +171,7 @@ for hour in $hours; do
 				fi
 				sDate=$(date)
 				cat <<-EOF
-					FATAL ERROR in ${0} ($stream): Post data still missing for analysis at $sDate after waiting ${SLEEP_TIME}s.
+					FATAL ERROR in ${.sh.file} ($stream): Post data still missing for analysis at $sDate after waiting ${SLEEP_TIME}s.
 						Looked for the following files:
 							$(set +x; if [[ $RUNMEM != "gegfs" ]]; then Control file: $mcfile $(if [[ -f $mcfile ]]; then echo "exists"; else; echo "doesn't exist"; fi); fi)
 							Grib file:    $mafile $(set +x; if [[ -f $mafile ]]; then echo "exists"; else; echo "doesn't exist"; fi)
@@ -216,7 +216,7 @@ for hour in $hours; do
 			# Check for error
 			export err=$?
 			if [[ $err != 0 ]]; then
-				echo "FATAL ERROR in ${0} ($stream): Creation of product failed for analysis!"
+				echo "FATAL ERROR in ${.sh.file} ($stream): Creation of product failed for analysis!"
 				err_chk
 				exit $err
 			fi
@@ -329,7 +329,7 @@ for hour in $hours; do
 			fi
 			sDate=$(date)
 			cat <<-EOF
-				FATAL ERROR in ${0} ($stream): Post data still missing for f$fhr at $sDate after waiting ${SLEEP_TIME}s.
+				FATAL ERROR in ${.sh.file} ($stream): Post data still missing for f$fhr at $sDate after waiting ${SLEEP_TIME}s.
 					Looked for the following files:
 						Control file: $mcfile $(set +x; if [[ -f $mcfile ]]; then echo "exists"; else; echo "doesn't exist"; fi)
 						Grib file:    $mafile $(set +x; if [[ -f $mafile ]]; then echo "exists"; else; echo "doesn't exist"; fi)
@@ -383,7 +383,7 @@ for hour in $hours; do
 			# Check for error
 			export err=$?
 			if [[ $err -ne 0 ]]; then
-				echo "FATAL ERROR in ${0} ($stream): Creation of product failed at f${fhr}!"
+				echo "FATAL ERROR in ${.sh.file} ($stream): Creation of product failed at f${fhr}!"
 				err_chk
 				exit $err
 			fi
@@ -399,6 +399,6 @@ for hour in $hours; do
 	fi # [[ $found = "yes" ]]
 done # for hour in $hours
 
-echo "$(date -u) end ${0}"
+echo "$(date -u) end ${.sh.file}"
 
 exit 0

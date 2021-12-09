@@ -7,7 +7,7 @@
 #            executable ensaddx.$xc
 #
 #######################################
-echo "$(date -u) begin ${0}"
+echo "$(date -u) begin ${.sh.file}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -18,7 +18,7 @@ fi
 cd $DATA
 
 if [[ $# != 3 ]]; then
-	echo "Usage: ${0} gribin gribout npert"
+	echo "Usage: ${.sh.file} gribin gribout npert"
 	exit 1
 fi
 
@@ -34,7 +34,7 @@ $EXECgefs/global_ensppf <<-EOF 2>/dev/null
 export err=$?;
 if [[ $err != 0 ]]; then
 	echo <<- EOF
-		FATAL ERROR in ${0}: $EXECgefs/global_ensppf returned a non-zero error!"
+		FATAL ERROR in ${.sh.file}: $EXECgefs/global_ensppf returned a non-zero error!"
 		  Namelist file was provided directly and contained:
 		  		&namin
 					cpgb='$1',cpge='$2',npert=$3 /
@@ -43,6 +43,6 @@ if [[ $err != 0 ]]; then
 	exit $err
 fi
 
-echo "$(date -u) end ${0}"
+echo "$(date -u) end ${.sh.file}"
 
 exit $err

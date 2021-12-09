@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-echo "$(date -u) begin ${0}"
+echo "$(date -u) begin ${.sh.file}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -48,7 +48,7 @@ if [[ $REMAP_GRID = latlon ]]; then
 			LEVS=$LEVSLR
 			;;
 		(*)
-			echo "FATAL ERROR in ${0}: FORECAST_SEGMENT $FORECAST_SEGMENT unsupported!"
+			echo "FATAL ERROR in ${.sh.file}: FORECAST_SEGMENT $FORECAST_SEGMENT unsupported!"
 			export err=100
 			exit $err
 			;;
@@ -128,7 +128,7 @@ postsh="$HOMEgefs/ush/gefs_atmos_post.sh $SHOUR $FHOUR $FHOUT_HF $FHOUT_LF $FHMA
 $postsh
 export err=$?
 if [ $err -ne 0 ]; then
-	echo "FATAL ERROR in ${0}: received a non-zero return code from $postsh"
+	echo "FATAL ERROR in ${.sh.file}: received a non-zero return code from $postsh"
 	exit $err
 fi
 
@@ -136,6 +136,6 @@ if [[ $SENDCOM == "YES" && -z $post_log ]]; then
 	mv $post_log $COMOUT/$COMPONENT/misc/post
 fi
 
-echo "$(date -u) end ${0}"
+echo "$(date -u) end ${.sh.file}"
 
 exit 0

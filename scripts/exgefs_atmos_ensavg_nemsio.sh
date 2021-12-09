@@ -1,6 +1,6 @@
 #! /bin/ksh
 
-echo "$(date -u) begin ${0}"
+echo "$(date -u) begin ${.sh.file}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
@@ -15,7 +15,7 @@ if [[ $FORECAST_SEGMENT = hr ]] ; then
 elif [[ $FORECAST_SEGMENT = lr ]]; then
     LEVS=$LEVSLR 
 else
-	echo "FATAL ERROR in ${0}: FORECAST_SEGMENT ${FORECAST_SEGMENT} is not supported!"
+	echo "FATAL ERROR in ${.sh.file}: FORECAST_SEGMENT ${FORECAST_SEGMENT} is not supported!"
 	export err=9
 	exit $err
 fi
@@ -38,7 +38,7 @@ export ensavg_nemsio_log=$DATA/ensavg_nemsio.$FORECAST_SEGMENT.log
 $HOMEgefs/ush/gefs_ensavg_nemsio.sh $DATA $SHOUR $FHOUT_HF $FHOUT_LF $FHMAXHF $FHOUR $ensavg_nemsio_log
 export err=$?
 if [[ $err != 0 ]]; then
-	echo "FATAL ERROR in ${0}: gefs_ensavg_nemsio.sh returned a non-zero value!"
+	echo "FATAL ERROR in ${.sh.file}: gefs_ensavg_nemsio.sh returned a non-zero value!"
 	exit $err
 fi
 
@@ -52,6 +52,6 @@ if [[ $SENDCOM == "YES" ]]; then
 fi
 #############################################################
 
-echo "$(date -u) end ${0}"
+echo "$(date -u) end ${.sh.file}"
 
 exit $err
