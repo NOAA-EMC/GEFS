@@ -105,7 +105,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         elif WHERE_AM_I.lower() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
             sVarValue = "/gpfs/HPS_PTMP/ptmp/First.Last/o/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss2':
-            sVarValue = "/lfs/HPS_PTMP/emc/ptmp/Xianwu.Xue/o/&EXPID;"
+            sVarValue = "/lfs/HPS_PTMP/emc/ptmp/First.Last/o/&EXPID;"
         else:
             sVarValue = "/gpfs/HPS_PTMP/ptmp/First.Last/o/&EXPID;"
 
