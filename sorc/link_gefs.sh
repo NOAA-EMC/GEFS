@@ -73,23 +73,9 @@ if [[ -d global-workflow.fd ]] ; then
     cd ${pwd}
 fi
 
-# global-workflow
-#cd $pwd
-#if [[ -d global-workflow.fd ]] ; then
-#    if [[ ! -L global-workflow.fd ]] ; then
-#        echo "not link"
-#        cd global-workflow.fd/sorc
-#        #./link_fv3gfs.sh $RUN_ENVIR $machine
-#        cd ../../
-#    fi
-#fi
-
 # copy/link exec files
 cd $pwd
 if [[ -d global-workflow.fd ]] ; then
-    #$LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/nemsio_read ../exec/
-    #$LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/nemsio_get ../exec/
-    #$LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/global_chgres ../exec/
 
     sPath=../sorc/global-workflow.fd/sorc/fv3gfs.fd/WW3/model/exe
     for sFile in ${sPath}/ww3_*
