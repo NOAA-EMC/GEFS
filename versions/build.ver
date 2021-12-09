@@ -26,7 +26,7 @@ export esmf_ver=8.0.1
 
 # -- For GSI
 export sfcio_ver=1.4.1
-export prod_util_ver=2.0.12
+export prod_util_ver=2.0.13
 export python_ver=3.8.6
 export curl_ver=7.72.0
 

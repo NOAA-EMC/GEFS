@@ -86,11 +86,11 @@ for config in $configs; do
     fi
 done
 
-export COMINsgfs=${COMINsgfs:-$(compath.py prod/com/gfs/${ver_gfs})}
-export COMINnawips=${COMINnawips:-$(compath.py prod/com/nawips/${ver_na})}
-export COMINecmwf=${COMINecmwf:-$(compath.py prod/com/ecmwf/${ver_ec})/ecmwf}
-export COMINukmet=${COMINukmet:-$(compath.py prod/com/nawips/${ver_na})/ukmet}
-export COMINnam=${COMINnam:-$(compath.py prod/com/nam/${ver_nam})}
+export COMINsgfs=${COMINsgfs:-$(compath.py prod/com/gfs/${gfs_ver})}
+export COMINnawips=${COMINnawips:-$(compath.py prod/com/nawips/${nawips_ver})}
+export COMINecmwf=${COMINecmwf:-$(compath.py prod/com/ecmwf/${ecmwf_ver})/ecmwf}
+export COMINukmet=${COMINukmet:-$(compath.py prod/com/nawips/${nawips_ver})/ukmet}
+export COMINnam=${COMINnam:-$(compath.py prod/com/nam/${nam_ver})}
 
 export COMPONENT=${COMPONENT:-atmos}
 if [[ ! -d $COMOUT/$COMPONENT/gempak/meta ]]; then mkdir -p -m 755 $COMOUT/$COMPONENT/gempak/meta; fi
