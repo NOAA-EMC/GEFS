@@ -1380,6 +1380,8 @@ def Get_NCORES_PER_NODE(dicBase):
         ncores_per_node = 28
     elif WHERE_AM_I == "wcoss_dell_p35".upper():
         ncores_per_node = 40
+    elif WHERE_AM_I == "wcoss2".upper():
+        ncores_per_node = 128
     else:
         ncores_per_node = 24
 

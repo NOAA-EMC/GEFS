@@ -5,7 +5,7 @@ ulimit -s unlimited
 ulimit -a
 
 # module_ver.h
-. $SOURCEDIR/versions/gefs_wcoss2.ver
+. $SOURCEDIR/versions/run.ver
 
 # Load modules
 . /usrx/local/prod/lmod/lmod/init/ksh
