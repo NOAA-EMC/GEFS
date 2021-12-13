@@ -355,6 +355,10 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
     if sWalltime != "":
         strings += sPre_2 + '<walltime>{0}</walltime>\n'.format(sWalltime)
 
+    if WHERE_AM_I.upper() == "wcoss2".upper():
+        ppn = dicBase["{0}_ppn".format(taskname).upper()]
+        strings += sPre_2 + '<nodesize>{0}</nodesize>\n'.format(ppn)
+
     if sQueue != "":
         strings += sPre_2 + '<queue>{0}</queue>\n'.format(sQueue)
     # strings += sPre + '\t\t' + '<queue>&CUE2RUN;</queue>\n'
