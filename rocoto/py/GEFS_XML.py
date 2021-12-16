@@ -135,7 +135,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         elif WHERE_AM_I.lower() == 'wcoss_dell_p35':
             sVarValue = "/gpfs/dell6/emc/modeling/noscrub/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss2':
-            sVarValue = "/lfs/h1/emc/ens/noscrub/First.Last/GEFS/&EXPID;"
+            sVarValue = "/lfs/h2/emc/ens/noscrub/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         else:
@@ -412,21 +412,6 @@ def NotUsed(dicBase, sRocoto_WS=""):
     sVarValue = "&GEFS_ROCOTO;/logs"
     if sVarName not in dicBase:
         dicBase[sVarName] = sVarValue
-    # ===
-    sVarName = "LOG_DIR".upper()
-    sVarValue = "&WORKDIR;/com/output/dev"
-    if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
-    # ===
-    sVarName = "tmpnwprd".upper()
-    sVarValue = "&WORKDIR;/tmpnwprd"
-    if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
-    # ===
-    sVarName = "DATA_DIR".upper()
-    sVarValue = "&WORKDIR;/com/gefs/dev"
-    if sVarName not in dicBase:
-        dicBase[sVarName] = sVarValue
 
     # -----------------------------------------------------------------------------------------------
     if WHERE_AM_I.lower() == "wcoss":
@@ -450,6 +435,21 @@ def NotUsed(dicBase, sRocoto_WS=""):
         if sVarName not in dicBase:
             dicBase[sVarName] = sVarValue
         # ===
+        sVarName = "LOG_DIR".upper()
+        sVarValue = "&WORKDIR;/com/output/dev"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "tmpnwprd".upper()
+        sVarValue = "&WORKDIR;/tmpnwprd"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "DATA_DIR".upper()
+        sVarValue = "&WORKDIR;/com/gefs/dev"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+
 
     elif WHERE_AM_I.lower() == "cray":
         sVarName = "ACCOUNT".upper()
@@ -471,6 +471,22 @@ def NotUsed(dicBase, sRocoto_WS=""):
         sVarValue = "lsfcray"
         if sVarName not in dicBase:
             dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "LOG_DIR".upper()
+        sVarValue = "&WORKDIR;/com/output/dev"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "tmpnwprd".upper()
+        sVarValue = "&WORKDIR;/tmpnwprd"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "DATA_DIR".upper()
+        sVarValue = "&WORKDIR;/com/gefs/dev"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+
 
     elif WHERE_AM_I.lower() == "wcoss_dell_p3":
         sVarName = "ACCOUNT".upper()
@@ -490,6 +506,21 @@ def NotUsed(dicBase, sRocoto_WS=""):
         # ===
         sVarName = "SCHEDULER".upper()
         sVarValue = "lsf"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "LOG_DIR".upper()
+        sVarValue = "&WORKDIR;/com/output/dev"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "tmpnwprd".upper()
+        sVarValue = "&WORKDIR;/tmpnwprd"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "DATA_DIR".upper()
+        sVarValue = "&WORKDIR;/com/gefs/dev"
         if sVarName not in dicBase:
             dicBase[sVarName] = sVarValue
 
@@ -513,15 +544,30 @@ def NotUsed(dicBase, sRocoto_WS=""):
         sVarValue = "lsf"
         if sVarName not in dicBase:
             dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "LOG_DIR".upper()
+        sVarValue = "&WORKDIR;/com/output/dev"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "tmpnwprd".upper()
+        sVarValue = "&WORKDIR;/tmpnwprd"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "DATA_DIR".upper()
+        sVarValue = "&WORKDIR;/com/gefs/dev"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
 
     elif WHERE_AM_I.lower() == "wcoss2":
         sVarName = "ACCOUNT".upper()
-        sVarValue = "GEN-T2O"
+        sVarValue = "GEFS-DEV"
         if sVarName not in dicBase:
             dicBase[sVarName] = sVarValue
         # ===
         sVarName = "CUE2RUN".upper()
-        sVarValue = "workq"
+        sVarValue = "dev"
         if sVarName not in dicBase:
             dicBase[sVarName] = sVarValue
         # ===
@@ -531,10 +577,24 @@ def NotUsed(dicBase, sRocoto_WS=""):
             dicBase[sVarName] = sVarValue
         # ===
         sVarName = "SCHEDULER".upper()
-        sVarValue = "lsf"
+        sVarValue = "pbspro"
         if sVarName not in dicBase:
             dicBase[sVarName] = sVarValue
-
+        # ===
+        sVarName = "LOG_DIR".upper()
+        sVarValue = "&WORKDIR;/com/output/dev"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "tmpnwprd".upper()
+        sVarValue = "&WORKDIR;/tmp"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "DATA_DIR".upper()
+        sVarValue = "&WORKDIR;/dev/com/gefs/v12.2"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
 
     else:
         sVarName = "ACCOUNT".upper()
