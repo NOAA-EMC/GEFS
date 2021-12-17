@@ -1333,7 +1333,9 @@ def get_param_of_task(dicBase, taskname):
 # =======================================================
 def calc_gempak_resources(dicBase):
     import math
+    taskname="gempak"
     ncores_per_node = Get_NCORES_PER_NODE(dicBase)
+    print(ncores_per_node)
     WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
     npert = int(dicBase["NPERT"])
     iTotal_Tasks = npert + 3
@@ -1365,7 +1367,9 @@ def calc_gempak_resources(dicBase):
         else:
             iPPN = ncores_per_node
             iNodes = math.ceil(iTotal_Tasks / (iPPN * 1.0))
-
+    elif WHERE_AM_I.upper() == "wcoss2".upper():
+        iPPN = iTotal_Tasks
+        iNodes = math.ceil(iTotal_Tasks / (iPPN * 1.0))
     else:
         if (npert + 1) <= ncores_per_node:
             iNodes = nGEMPAK_RES
@@ -1376,6 +1380,13 @@ def calc_gempak_resources(dicBase):
         else:
             iNodes = (npert + 1)
             iPPN = nGEMPAK_RES
+
+    sVarName_nodes = "{0}_nodes".format(taskname).upper()
+    dicBase[sVarName_nodes] = iNodes
+    sVarName_ppn = "{0}_ppn".format(taskname).upper()
+    dicBase[sVarName_ppn] = iPPN
+    sVarName_tpp = "{0}_tpp".format(taskname).upper()
+    dicBase[sVarName_tpp] = iTPP
 
     return iTotal_Tasks, iNodes, iPPN, iTPP
 
