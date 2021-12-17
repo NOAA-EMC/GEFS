@@ -14,9 +14,6 @@ export taskspernode=${GEFS_PPN}
 #(( NTASKS=$(echo $LSB_PJL_TASK_GEOMETRY | grep -Po "\d+" | sort -n | tail -1) + 1 ))
 #export NTASKS
 
-export HOMEdata=/lfs/h1/ops
-export COMPATH=$HOMEdata/canned/com/gfs:$HOMEdata/canned/com/cfs:$HOMEdata/canned/com/nawips:$HOMEdata/canned/com/ecmwf:$HOMEdata/canned/com/nam:${WORKDIR}/$envir/com/${NET}
-export DCOMROOT=${HOMEdata}/canned/dcom
 
 if [[ $RocotoGen == 0 ]]; then
     export gefsmpexec="mpiexec -n $total_tasks"
@@ -33,6 +30,10 @@ if [[ $RocotoGen == 0 ]]; then
     . $GEFS_ROCOTO/parm/setbase
     . $GEFS_ROCOTO/parm/gefs_config
     . $GEFS_ROCOTO/parm/gefs_dev.parm
+
+    export HOMEdata=/lfs/h1/ops
+    export COMPATH=$HOMEdata/canned/com/gfs:$HOMEdata/canned/com/cfs:$HOMEdata/canned/com/nawips:$HOMEdata/canned/com/ecmwf:$HOMEdata/canned/com/nam:${WORKDIR}/$envir/com/${NET}
+    export DCOMROOT=${HOMEdata}/canned/dcom
 
 elif [[ $RocotoGen == 1 ]]; then
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2

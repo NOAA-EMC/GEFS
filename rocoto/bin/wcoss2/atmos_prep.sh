@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/ksh -l
 
 set -x
 ulimit -s unlimited
@@ -34,5 +34,8 @@ module list
 # Export List
 (( OMP_NUM_THREADS_CH = 40 / GEFS_PPN ))
 export OMP_NUM_THREADS_CH
+
+export OMP_NUM_THREADS=1
+export envir=prod
 
 $SOURCEDIR/jobs/JGEFS_ATMOS_PREP
