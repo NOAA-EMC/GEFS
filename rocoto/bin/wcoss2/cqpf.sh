@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/ksh -l
 
 set -x
 ulimit -s unlimited
@@ -30,6 +30,8 @@ module list
 . $GEFS_ROCOTO/bin/wcoss2/common.sh
 
 # Export List
+export OMP_NUM_THREADS=1
+export envir=prod
 
 # CALL executable job script here
 $SOURCEDIR/rocoto/bin/sh/JGEFS_CQPF

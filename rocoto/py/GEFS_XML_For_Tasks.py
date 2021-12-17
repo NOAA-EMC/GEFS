@@ -814,6 +814,13 @@ def calc_fcst_resources(dicBase, taskname="forecast_hr"):
     iNodes = int(math.ceil(iTotal_Tasks * 1.0 / iPPN))
     iTPP = parallel_threads
 
+    sVarName_nodes = "{0}_nodes".format(taskname).upper()
+    dicBase[sVarName_nodes] = iNodes
+    sVarName_ppn = "{0}_ppn".format(taskname).upper()
+    dicBase[sVarName_ppn] = iPPN
+    sVarName_tpp = "{0}_tpp".format(taskname).upper()
+    dicBase[sVarName_tpp] = iTPP
+
     return iTotal_Tasks, iNodes, iPPN, iTPP
 
 
@@ -1309,14 +1316,12 @@ def get_param_of_task(dicBase, taskname):
     # Forecast can be derive from the parm items
     if taskname in ['forecast_hr', 'forecast_lr', 'chem_forecast']:
         iTotal_Tasks, iNodes, iPPN, iTPP = calc_fcst_resources(dicBase, taskname=taskname)
-
         WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
 
         if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
             sNodes = "{0}:ppn={1}".format(iNodes, iPPN)
         else:
             sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
-
     # For gempak
     if taskname == "gempak":
         iTotal_Tasks, iNodes, iPPN, iTPP = calc_gempak_resources(dicBase)

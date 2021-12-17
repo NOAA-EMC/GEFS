@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/ksh -l
 
 set -x
 ulimit -s unlimited
@@ -29,6 +29,8 @@ module list
 
 # Export List
 #export NTHREADS_SIGCHGRS=${GEFS_TPP:-6}
+export OMP_NUM_THREADS=1
+export envir=prod
 
 # CALL executable job script here
 $GEFS_ROCOTO/bin/py/archive_atm.py

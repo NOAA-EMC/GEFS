@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/ksh -l
 
 set -x
 ulimit -s unlimited
@@ -36,7 +36,7 @@ export OMP_NUM_THREADS=1
 
 #export RERUN="YES"
 
-#export envir=prod
+export envir=prod
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_FORECAST
 

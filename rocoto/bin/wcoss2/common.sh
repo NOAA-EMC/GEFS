@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/ksh -l
 
 RocotoGen=${RocotoGen:-0}
 

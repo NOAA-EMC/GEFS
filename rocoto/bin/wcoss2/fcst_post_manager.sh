@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/ksh -l
 
 set -x
 ulimit -s unlimited
@@ -22,5 +22,7 @@ module list
 # For Development
 . $GEFS_ROCOTO/bin/wcoss2/common.sh
 
+export OMP_NUM_THREADS=1
+export envir=prod
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_FCST_POST_MANAGER

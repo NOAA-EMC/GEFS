@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/ksh -l
 
 set -x
 ulimit -s unlimited
@@ -35,6 +35,9 @@ module list
 
 # Export List
 #export RERUN=NO
+
+export OMP_NUM_THREADS=1
+export envir=prod
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_ATMOS_PRDGEN
