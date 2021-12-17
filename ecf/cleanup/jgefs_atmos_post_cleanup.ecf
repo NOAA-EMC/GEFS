@@ -9,14 +9,10 @@
 
 set -x
 
-cd $PBS_O_WORKDIR
-
-module purge
+export model=gefs
 
 %include <head.h>
 %include <envir-p1.h>
-
-export model=gefs
 
 module load intel/$intel_ver
 
