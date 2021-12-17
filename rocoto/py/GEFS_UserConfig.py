@@ -163,7 +163,6 @@ def create_folders(dicBase):
         sPath = WORKDIR + '{0}dev{0}output{0}'.format(sSep)
     else:
         sPath = WORKDIR + '{0}com{0}output{0}dev{0}'.format(sSep)
-    fi
     if not os.path.exists(sPath):
         os.makedirs(sPath)
 
