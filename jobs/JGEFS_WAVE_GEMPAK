@@ -70,7 +70,7 @@ ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
 export COMPONENT=${COMPONENT:-wave}
 # Have to include $COMPONENT in COM paths for downstream scripts
 export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/$COMPONENT}
-export COMOUT=${COMOUT:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/$COMPONENT}
+export COMOUT=${COMOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc/$COMPONENT}
 
 if [[ $SENDCOM == "YES" ]]; then
     mkdir -p $COMOUT/gridded

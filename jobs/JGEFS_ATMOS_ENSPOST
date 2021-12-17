@@ -74,7 +74,7 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 ##############################################
 ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
 export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
-export COMOUT=${COMOUT:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
+export COMOUT=${COMOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc}
 
 #############################
 # Source relevant config files

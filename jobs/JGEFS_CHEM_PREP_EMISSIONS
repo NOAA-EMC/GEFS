@@ -59,7 +59,7 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 ##############################################
 ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
 export COMPONENT=chem
-export GESOUT=$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/nwges
+export GESOUT=$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc/nwges
 mkdir -p $GESOUT
 
 #############################

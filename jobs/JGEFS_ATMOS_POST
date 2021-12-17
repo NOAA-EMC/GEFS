@@ -73,7 +73,7 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 ##############################################
 ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
 export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
-export COMOUT=${COMOUT:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
+export COMOUT=${COMOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc}
 
 #############################
 # Source relevant config files
@@ -89,7 +89,7 @@ for config in $configs; do
     fi
 done
 
-export COMINgfs=${COMINgfs:-$(compath.py prod/com/gfs/${gfs_ver})/gfs.${PDY}/$cyc}
+export COMINgfs=${COMINgfs:-$(compath.py $envir/com/gfs/${gfs_ver})/gfs.${PDY}/$cyc}
 
 if [[ $cplchm = ".true." ]]; then
     COMPONENT="chem"
