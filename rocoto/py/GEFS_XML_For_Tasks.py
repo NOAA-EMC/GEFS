@@ -1590,7 +1590,7 @@ def get_ENV_VARS(sPre="\t\t"):
 
 
 # =======================================================
-def create_envar(name=None, value=None, sPre="\t\t"):
+def create_envar(name=None, value=None, sPre="\t\t", OneLine=True):
     '''
     create an Rocoto environment variable given name and value
     returns the environment variable as a string
@@ -1602,13 +1602,23 @@ def create_envar(name=None, value=None, sPre="\t\t"):
     :rtype: str
     '''
     string = ''
-    string += sPre + '<envar>\n'
-    string += sPre + '\t<name>{0}</name>\n'.format(name)
-    # if value.startswith("@"):
-    if "@" in value:
-        string += sPre + '\t<value><cyclestr>{0}</cyclestr></value>\n'.format(value)
+    if create_envar:
+        string += sPre + '<envar>'
+        string += '<name>{0}</name>'.format(name)
+        # if value.startswith("@"):
+        if "@" in value:
+            string += '<value><cyclestr>{0}</cyclestr></value>'.format(value)
+        else:
+            string += '<value>{0}</value>'.format(value)
+        string += '</envar>\n'
     else:
-        string += sPre + '\t<value>{0}</value>\n'.format(value)
-    string += sPre + '</envar>\n'
+        string += sPre + '<envar>\n'
+        string += sPre + '\t<name>{0}</name>\n'.format(name)
+        # if value.startswith("@"):
+        if "@" in value:
+            string += sPre + '\t<value><cyclestr>{0}</cyclestr></value>\n'.format(value)
+        else:
+            string += sPre + '\t<value>{0}</value>\n'.format(value)
+        string += sPre + '</envar>\n'
 
     return string
