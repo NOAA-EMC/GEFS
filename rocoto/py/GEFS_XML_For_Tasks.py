@@ -1602,7 +1602,7 @@ def create_envar(name=None, value=None, sPre="\t\t", OneLine=True):
     :rtype: str
     '''
     string = ''
-    if create_envar:
+    if OneLine:
         string += sPre + '<envar>'
         string += '<name>{0}</name>'.format(name)
         # if value.startswith("@"):
