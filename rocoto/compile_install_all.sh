@@ -225,7 +225,6 @@ if [ $RunRocoto = "yes" ]; then
         module load python/3.8.6
 
     fi
-    #./py/run_to_get_all.py  $userConfigFile
     ./py/run_pyGEFS.py -r yes -f $userConfigFile
     echo "Generated xml and/or ent and updated bin file!"
 fi # For RunRocoto
