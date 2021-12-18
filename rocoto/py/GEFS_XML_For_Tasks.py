@@ -421,7 +421,15 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
             else:
                 strings += sPre_2 + "<native>-R 'affinity[core(1)]'</native>\n"
     elif WHERE_AM_I.upper() == "wcoss2".upper():
-        strings += ""  # \n
+
+        if sMemory == "":  # if there is no memory in user configure, then add "excl" on wcoss2
+            strings += sPre_2 + '<native>-l place=vscatter:excl</native>\n'
+        else:
+            strings += sPre_2 + '<native>-l place=vscatter</native>\n'
+
+        sVarName_prepost = "{0}_prepost".format(taskname).upper()
+        if sVarName_prepost in dicBase:
+            strings += sPre_2 + f'<native>-l prepost={dicBase[sVarName_prepost]}</native>\n'
 
     else:
         strings += sPre_2 + '<native>-extsched "CRAYLINUX[]"</native>\n'
@@ -810,16 +818,27 @@ def calc_fcst_resources(dicBase, taskname="forecast_hr"):
             iWaveThreads = int(dicBase['NPE_WAV'])
             iTotal_Tasks = iTotal_Tasks + iWaveThreads
 
-    iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
-    iNodes = int(math.ceil(iTotal_Tasks * 1.0 / iPPN))
-    iTPP = parallel_threads
-
     sVarName_nodes = "{0}_nodes".format(taskname).upper()
-    dicBase[sVarName_nodes] = iNodes
+
     sVarName_ppn = "{0}_ppn".format(taskname).upper()
-    dicBase[sVarName_ppn] = iPPN
     sVarName_tpp = "{0}_tpp".format(taskname).upper()
-    dicBase[sVarName_tpp] = iTPP
+    if sVarName_nodes not in dicBase:
+        iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
+        dicBase[sVarName_ppn] = iPPN
+    else:
+        iPPN = dicBase[sVarName_ppn]
+
+    if sVarName_nodes not in dicBase:
+        iNodes = int(math.ceil(iTotal_Tasks * 1.0 / iPPN))
+        dicBase[sVarName_nodes] = iNodes
+    else:
+        iNodes = dicBase[sVarName_nodes]
+
+    if sVarName_nodes not in dicBase:
+        iTPP = parallel_threads
+        dicBase[sVarName_tpp] = iTPP
+    else:
+        iTPP = dicBase[sVarName_tpp]
 
     return iTotal_Tasks, iNodes, iPPN, iTPP
 
