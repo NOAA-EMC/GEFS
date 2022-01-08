@@ -62,13 +62,26 @@ else
     if [[ $GFSArchivedData == "yes" ]]; then
         # HOMEdata, COMINgfs_base, COMINenkf_base and COMINcfs_base are defined in setbase, pointing to the NCO  gfs.v15 parallel
         # However, if you use gfs/enkf data from archived data, you may speficfy them in this "if" block and make GFSArchivedData=yes
-        HOMEdata=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata/com
-        export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
-        export COMINgfs_base=$HOMEdata/fv3init/gfs.
-        export COMINcfs_base=$HOMEdata/cfs/cfs.
-        export COMIN_WAV_ICE=$HOMEdata/sea_ice
-        export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc}
-        export COMINenkf=${COMINenkf:-${COMINenkf_base}${pdyp}/$cycp}
+        UseHOMEdata=no
+        if [[ $UseHOMEdata == "yes" ]]; then
+            HOMEdata=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata/com
+            export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
+            export COMINgfs_base=$HOMEdata/fv3init/gfs.
+            export COMINcfs_base=$HOMEdata/cfs/cfs.
+            export COMIN_WAV_ICE=$HOMEdata/sea_ice
+            export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc}
+            export COMINenkf=${COMINenkf:-${COMINenkf_base}${pdyp}/$cycp}
+        else
+            HOMEdata=/gpfs/dell6/emc/modeling/noscrub/Xianwu.Xue/gw_for_acorn/HOMEdata
+            export COMPATH=$HOMEdata/com/gfs/prod
+            export COMINgfs_base=$(compath.py gfs/prod)/gfs.
+            export COMINenkf_base=$(compath.py gfs/prod)/enkfgdas.
+            export COMPATH=$HOMEdata/com/cfs/prod
+            export COMINcfs_base=$(compath.py cfs/prod)/cfs/cfs.
+            export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc/atmos}
+            export COMINenkf=${COMINenkf:-${COMINenkf_base}${pdyp}/$cycp/atmos}
+            export DCOMROOT=$HOMEdata/dcom
+        fi
     else
         export COMINgfs_base=/gpfs/dell3/ptmp/emc.glopara/ROTDIRS/v16rt2/gfs/para/gfs.
         #export COMINgfs_base=$(compath.py gfs/prod)/gfs.

@@ -5,7 +5,7 @@ ulimit -s unlimited
 ulimit -a
 
 # module_ver.h
-. $SOURCEDIR/versions/gefs_wcoss_dell_p35.ver
+. $GEFS_ROCOTO/dev/versions/gefs_wcoss_dell_p35.ver
 
 # Load modules
 . /usrx/local/prod/lmod/lmod/init/ksh
@@ -32,6 +32,10 @@ module list
 . $GEFS_ROCOTO/bin/wcoss_dell_p35/common.sh
 
 # Export List
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/chem}
+export GESIN=${GESIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/nwges}
+export GESOUT=${GESOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/nwges}
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_CHEM_INIT

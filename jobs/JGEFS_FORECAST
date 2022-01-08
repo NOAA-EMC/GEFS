@@ -74,8 +74,8 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
 export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
 export COMOUT=${COMOUT:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
-export GESIN=$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/nwges
-export GESOUT=$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/nwges
+export GESIN=${GESIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/nwges}
+export GESOUT=${GESOUT:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/nwges}
 
 #############################
 # Source relevant config files
@@ -99,7 +99,7 @@ if [[ $cplwav = ".true." ]]; then
     last_date=$($NDATE -$WAVHCYC $CDATE)
     last_PDY=$(echo $last_date | cut -c1-8)
     last_cyc=$(echo $last_date | cut -c9-10)
-    export WRDIR=$(compath.py $envir/com/$NET/${ver})/${RUN}.${last_PDY}/$last_cyc/wave/restart
+    export WRDIR=${WRDIR:-$(compath.py $envir/com/$NET/${ver})}/${RUN}.${last_PDY}/$last_cyc/wave/restart
 fi
 
 export COMPONENT=${COMPONENT:-atmos}

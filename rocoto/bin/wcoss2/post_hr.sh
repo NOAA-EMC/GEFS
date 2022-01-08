@@ -39,7 +39,7 @@ module list
 . $GEFS_ROCOTO/bin/wcoss2/common.sh
 
 # Export List
-#export POSTGRB2TBL=$G2TMPL_SRC/params_grib2_tbl_new
+#export POSTGRB2TBL=${g2tmpl_ROOT}/share/params_grib2_tbl_new
 export OMP_NUM_THREADS=1
 export envir=prod
 
