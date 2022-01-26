@@ -12,16 +12,16 @@ export PS4='$SECONDS + $(basename $BASH_SOURCE)[$LINENO] '
 ####################################
 # Determine Job Output Name on System
 ####################################
-export jobid=${jobid:-"$job.$LSB_JOBID"}
-export pgmout="OUTPUT.${LSB_JOBID}"
+export jobid=${jobid:-"$job.$PBS_JOBID"}
+export pgmout="OUTPUT.${PBS_JOBID}"
 export pgmerr=errfile
 
 ######################################
 # Set up compute resources
 ######################################
-export wavempexec=${wavempexec:-"mpirun -n"}
+export NTASKS=${total_tasks:-6}
+export wavempexec=${wavempexec:-"mpiexec -n"}
 export wave_mpmd=${wave_mpmd:-"cfp"}
-export NTASKS=${total_tasks:-24}
 
 ####################################
 # Specify and create working directory
@@ -58,7 +58,7 @@ source PDY
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export HOMEgefs=${HOMEgefs:-${PACKAGEROOT}/gefs.${gefs_ver}}
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 export FIXwave=${FIXwave:-$HOMEgefs/fix/fix_wave}
@@ -67,8 +67,9 @@ export FIXwave=${FIXwave:-$HOMEgefs/fix/fix_wave}
 # Define COM directories
 ##############################################
 # Have to include $COMPONENT in COM paths for downstream scripts
-export COMIN=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/wave
-export COMOUT=$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc/wave
+ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
+export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/wave}
+export COMOUT=${COMOUT:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/wave}
 if [[ $SENDCOM = YES ]]; then
   mkdir -p $COMOUT/rundata
 fi
@@ -82,8 +83,8 @@ for config in $configs; do
     . $config_path/$config.parm
     export err=$?
     if [[ $err != 0 ]]; then
-    	echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file $config_path/$config.parm"
-    	exit $err
+        echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file $config_path/$config.parm"
+        exit $err
     fi
 done
 
@@ -93,7 +94,6 @@ if [[ $SENDCOM == "YES" ]]; then
 else
     export wavelog=${DATA}/wave.log
 fi
-export jlogfile=${jlogfile:-$DATA/jlogfile}
 
 echo "Environment before calling script"
 env | sort

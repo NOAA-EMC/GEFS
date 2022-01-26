@@ -40,10 +40,10 @@ if [[ $FORECAST_SEGMENT = lr ]]; then
 else
     if [[ $cplchm = ".true." ]]; then
         export WRITE_GROUP=${WRITE_GROUP_chem:-1}
-        export WRTTASK_PER_GROUP=${WRTTASK_PER_GROUP_chem:-24}
+        export WRTTASK_PER_GROUP=${WRTTASK_PER_GROUP_chem:-40}
     else
         export WRITE_GROUP=${WRITE_GROUP:-1}
-        export WRTTASK_PER_GROUP=${WRTTASK_PER_GROUP:-24}
+        export WRTTASK_PER_GROUP=${WRTTASK_PER_GROUP:-16}
     fi
 fi
 export NUM_FILES=2
@@ -71,7 +71,7 @@ else
         export NTHREADS_FV3=${parallel_threads:-1}
     fi
 fi
-COREPERNODE=${COREPERNODE:-40}
+COREPERNODE=${COREPERNODE:-128}
 export cores_per_node=$COREPERNODE
 
 #FV dynamics parameters

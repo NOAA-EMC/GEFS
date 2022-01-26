@@ -1,0 +1,45 @@
+#PBS -N gefs_fcst_post_manager_%MEMBER%_%CYC%
+#PBS -j oe
+#PBS -S /bin/bash
+#PBS -q %QUEUE%
+#PBS -A %PROJ%-%PROJENVIR%
+#PBS -l walltime=3:30:00
+#PBS -l place=vscatter,select=1:ncpus=1:mem=100MB
+#PBS -l debug=true
+
+set -x
+
+cd $PBS_O_WORKDIR
+
+module purge
+
+%include <head.h>
+%include <envir-p1.h>
+
+export model=gefs
+
+module load PrgEnv-intel/$PrgEnv_intel_ver
+module load craype/$craype_ver
+module load intel/$intel_ver
+
+module list
+
+# EXPORT list here
+ulimit -s unlimited
+ulimit -a
+
+export cyc=%CYC%
+export RUNMEM=ge%MEMBER%
+
+export total_tasks=1
+export taskspernode=1
+export FORECAST_SEGMENT=hr
+export OMP_NUM_THREADS=1
+
+# CALL executable job script here
+${HOMEgefs}/jobs/JGEFS_FCST_POST_MANAGER
+
+%include <tail.h>
+%manual
+# include manual page below
+%end

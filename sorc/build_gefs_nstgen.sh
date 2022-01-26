@@ -8,6 +8,10 @@ progname=gefs_nstgen
 
 if [ -f ../modulefiles/gefs/gefs_$target.ver ]; then
     source ../modulefiles/gefs/gefs_$target.ver
+else
+    if [ -f ../versions/build.ver ]; then
+        source ../versions/build.ver
+    fi
 fi
 source ../modulefiles/gefs/${progname}.$target
 
@@ -27,9 +31,9 @@ export RECURS=
 export LDFLAGSM=${LDFLAGSM:-""}
 export OMPFLAGM=${OMPFLAGM:-""}
 
-export INCSM="-I ${SFCIO_INC4} -I ${NETCDF_INC}"
+export INCSM="-I ${NETCDF_INCLUDES}"
 
-export LIBSM="${NETCDF_LDFLAGS} ${BACIO_LIB4} ${SFCIO_LIB4} ${W3NCO_LIB4}"
+export LIBSM="${NETCDF_LDFLAGS} ${BACIO_LIB4} ${W3NCO_LIB4}"
 
 
 make -f Makefile clobber

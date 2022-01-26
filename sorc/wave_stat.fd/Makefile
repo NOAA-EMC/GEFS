@@ -12,8 +12,8 @@ OBJS=	 grbit2.o  wave_stat.o
 # PROFLIB	Library needed for profiling
 #
 #----- used with XLF on AIX  ---
-FC =            ifort
-FFLAGS =        -O -xHost -list -auto -I $(INC)
+FC      =$(FCMP)
+FFLAGS  =$(FFLAGSM)
 #----- used with G95 on Linux ---
 #FC =           g95
 #FFLAGS =        $(INC)
@@ -45,10 +45,10 @@ $(CMD):		$(OBJS)
 	$(FC) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
 
 wave_stat.o:	wave_stat.f90
-	$(FC) -c $(FFLAGS) wave_stat.f90
+	$(FC) -c $(FFLAGS) -I $(INC) wave_stat.f90
 
 grbit2.o:   grbit2.f90 
-	$(FC) -c $(FFLAGS) grbit2.f90
+	$(FC) -c $(FFLAGS) -I $(INC) grbit2.f90
 
 # Make the profiled version of the command and call it a.out.prof
 #

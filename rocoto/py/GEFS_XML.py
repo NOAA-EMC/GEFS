@@ -104,6 +104,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         elif WHERE_AM_I.lower() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
             sVarValue = "/gpfs/HPS_PTMP/ptmp/First.Last/o/&EXPID;"
+        elif WHERE_AM_I.lower() == 'wcoss2':
+            sVarValue = "/lfs/HPS_PTMP/emc/ptmp/First.Last/o/&EXPID;"
         else:
             sVarValue = "/gpfs/HPS_PTMP/ptmp/First.Last/o/&EXPID;"
 
@@ -132,6 +134,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             sVarValue = "/gpfs/dell2/emc/retros/noscrub/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p35':
             sVarValue = "/gpfs/dell6/emc/modeling/noscrub/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'wcoss2':
+            sVarValue = "/lfs/h1/emc/ens/noscrub/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         else:
@@ -163,6 +167,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         elif WHERE_AM_I.lower() == 'wcoss':
             sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() in ['wcoss_dell_p3', 'wcoss_dell_p35']:
+            sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'wcoss2':
             sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
@@ -199,6 +205,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
             sVarValue = "/gpfs/dell2/emc/retros/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p35':
             sVarValue = "/gpfs/dell6/emc/modeling/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
+        elif WHERE_AM_I.lower() == 'wcoss2':
+            sVarValue = "/lfs/h1/emc/ens/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         else:
@@ -234,6 +242,8 @@ def NotUsed(dicBase, sRocoto_WS=""):
             sVarValue = "/gpfs/dell2/emc/retros/noscrub/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p35':
             sVarValue = "/gpfs/dell6/emc/modeling/noscrub/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'wcoss2':
+            sVarValue = "/lfs/h1/emc/ens/noscrub/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         else:
@@ -265,6 +275,8 @@ def NotUsed(dicBase, sRocoto_WS=""):
         elif WHERE_AM_I.lower() == 'wcoss':
             sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() in ['wcoss_dell_p3', 'wcoss_dell_p35']:
+            sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
+        elif WHERE_AM_I.lower() == 'wcoss2':
             sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
@@ -334,6 +346,8 @@ def NotUsed(dicBase, sRocoto_WS=""):
             sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p35':
             sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
+        elif WHERE_AM_I.lower() == 'wcoss2':
+            sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
         else:
@@ -351,6 +365,8 @@ def NotUsed(dicBase, sRocoto_WS=""):
         elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
             sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
         elif WHERE_AM_I.lower() == 'wcoss_dell_p35':
+            sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
+        elif WHERE_AM_I.lower() == 'wcoss2':
             sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
         elif WHERE_AM_I.lower() == 'wins':
             sVarValue = "ensstat,pgrb22p5,pgrb2ap5,pgrb2sp25,tctrack"
@@ -497,6 +513,28 @@ def NotUsed(dicBase, sRocoto_WS=""):
         sVarValue = "lsf"
         if sVarName not in dicBase:
             dicBase[sVarName] = sVarValue
+
+    elif WHERE_AM_I.lower() == "wcoss2":
+        sVarName = "ACCOUNT".upper()
+        sVarValue = "GEN-T2O"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "CUE2RUN".upper()
+        sVarValue = "workq"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "TRANSFER_QUEUE".upper()
+        sVarValue = "dev_transfer"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+        # ===
+        sVarName = "SCHEDULER".upper()
+        sVarValue = "lsf"
+        if sVarName not in dicBase:
+            dicBase[sVarName] = sVarValue
+
 
     else:
         sVarName = "ACCOUNT".upper()
