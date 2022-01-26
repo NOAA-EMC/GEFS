@@ -14,7 +14,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     if sVarName not in dicBase:
         import os
         sVarValue = os.environ.get("USER")
-        if sVarValue in ['emc.enspara', 'emc.enspara1']:
+        if sVarValue in ['emc.enspara', 'emc.enspara1', 'emc.ens']:
             sVarValue = os.environ.get("SUDO_USER")
         if "." in sVarValue:
             sVarValue = sVarValue.split(".")[0]
@@ -25,7 +25,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     if sVarName not in dicBase:
         import os
         sVarValue = os.environ.get("USER")
-        if sVarValue in ['emc.enspara', 'emc.enspara1']:
+        if sVarValue in ['emc.enspara', 'emc.enspara1', 'emc.ens']:
             sVarValue = os.environ.get("SUDO_USER")
         if "." in sVarValue:
             sVarValue = sVarValue.split(".")[1]
@@ -225,7 +225,7 @@ def replace_First_Last(dicBase, sVarName):
     # Modified on 10/17/2018 to avoid the path has individual "First" or "Last" to be replaced by mistake. If just replace the "First.Last", it will be safer.
     import os
     sUSER = os.environ.get("USER")
-    GroupNames = ['emc.enspara', 'emc.enspara1']
+    GroupNames = ['emc.enspara', 'emc.enspara1', 'emc.ens']
     if sUSER in GroupNames:
         sVarValue = str(dicBase[sVarName]).replace("First.Last", sUSER + "/" + dicBase["FIRST"] + "." + dicBase["LAST"])
         sVarValue = sVarValue.replace("retros", "verification")  # temporary
