@@ -1,11 +1,11 @@
-#!/bin/ksh
+#!/bin/ksh -l
 
 set -x
 ulimit -s unlimited
 ulimit -a
 
 # module_ver.h
-. $SOURCEDIR/versions/gefs_wcoss2.ver
+. $SOURCEDIR/versions/run.ver
 
 # Load modules
 . /usrx/local/prod/lmod/lmod/init/ksh
@@ -32,7 +32,8 @@ module list
 . $GEFS_ROCOTO/bin/wcoss2/common.sh
 
 # Export List
-
+export OMP_NUM_THREADS=1
+export envir=prod
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_ATMOS_AVGSPR_GEMPAK
 

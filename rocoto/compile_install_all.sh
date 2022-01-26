@@ -219,14 +219,13 @@ if [ $RunRocoto = "yes" ]; then
         module load envvar/1.0
 
         module load PrgEnv-intel/8.1.0
-        module load craype/2.7.8
+        module load craype/2.7.10
         module load intel/19.1.3.304
-        module load cray-mpich/8.1.7
+        module load cray-mpich/8.1.9
 
         module load python/3.8.6
 
     fi
-    #./py/run_to_get_all.py  $userConfigFile
     ./py/run_pyGEFS.py -r yes -f $userConfigFile
     echo "Generated xml and/or ent and updated bin file!"
 fi # For RunRocoto
@@ -258,6 +257,19 @@ if [ $AddCrontabToMyCrontab = "yes" ]; then
         py/add_crontab.py
         crontab $HOME/cron/mycrontab
         echo "Added crontab to $HOME/cron/mycrontab!"
+
+    elif [ $machine = "wcoss2" ]; then
+        if [ -f $HOME/cron/mycrontab ]; then
+            echo "Adding crontab to $HOME/cron/mycrontab!"
+        else
+            mkdir $HOME/cron
+            touch $HOME/cron/mycrontab
+        fi
+
+        py/add_crontab.py
+        crontab $HOME/cron/mycrontab
+        echo "Added crontab to $HOME/cron/mycrontab!"
+
     elif [ $machine = "wcoss_dell_p3" ]; then
         py/add_crontab.py
         echo "Added crontab to $HOME/cron/mycrontab!"
