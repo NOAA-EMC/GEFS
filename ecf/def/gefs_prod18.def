@@ -1111,7 +1111,7 @@ suite para
             family d16_35
               family atmos
                 task jgefs_atmos_ensstat
-                  trigger ../../../members/d16_35 eq active or ../../../members/d16_35 eq complete
+                  trigger  ../../../members/d16_35 eq active or ../../../members/d16_35 eq complete
                 task jgefs_atmos_enspost
                   trigger ../../../members/d16_35 eq complete
               endfamily

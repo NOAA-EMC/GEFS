@@ -34,7 +34,7 @@ ulimit -a
 export cyc=%CYC%
 export RUNMEM=ge%MEMBER%
 
-export total_tasks=320
+export total_tasks=330
 export COREPERNODE=128
 export FORECAST_SEGMENT=hr
 export OMP_NUM_THREADS=1
