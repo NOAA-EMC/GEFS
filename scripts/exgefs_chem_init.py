@@ -153,7 +153,7 @@ def main() -> None:
 
             # Calculate increment
             success = calc_increment(calcinc_aprun=calcinc_aprun, calcinc_exec=calcinc_exec, analysis_filename=analysis_filename, forecast_filename=prev_fcst_file_nc, increment_filename=increment_filename, imp_physics=imp_physics)
-
+            print("end time of calc increment: {0}".format(datetime.now()))
             for file in sfc_files:
                 tile = re.search(r'tile(\d)', file).group(0)
                 basename = os.path.basename(time.strftime(restart_file_pattern.format(restart_base="", kind="sfcanl_data", tile=tile)))
@@ -161,6 +161,7 @@ def main() -> None:
                 with contextlib.suppress(FileNotFoundError):
                     os.unlink(link)
                 os.symlink(file, link)
+                print("end time of sfc_files: {0}".format(datetime.now()))
 
         if(not files_exist or not success):
             print("WARNING: Could not calculate increment (previous forecast may be missing), reverting to cold start")
@@ -181,9 +182,12 @@ def main() -> None:
 
     if(send_com):
         # Copy init files to COM
+        print("start time of send_com: {0}".format(datetime.now()))
         com_path = time.strftime(com_base_pattern.format(com_out=com_out, ver=ver, net=net, run=run, member="aer", component="chem"))
         shutil.rmtree(com_path, ignore_errors=True)
+        print("end time of shutil.rmtree during send_com: {0}".format(datetime.now()))
         safe_copytree(destination_path, com_path)  # Copy data to COM
+        print("end time of send_com: {0}".format(datetime.now()))
 
     return
 

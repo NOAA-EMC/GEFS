@@ -9,7 +9,7 @@
 # SLEEP_INT  - Amount of time to wait between
 #              checking for restart files
 ####################################
-export SLEEP_TIME=1800
+export SLEEP_TIME=3600
 export SLEEP_INT=5
 
 export lfmhr=66000

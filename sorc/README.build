@@ -1,4 +1,16 @@
-Instructions for building up the gefs system:
+Instructions for building up the gefs system on WCOSS2:
+
+cd sorc
+./nco_run.sh
+This script will do the following steps:
+  ./checkout.sh
+  ./build_all.sh
+  ./link_gefs.sh nco wcoss2
+
+
+
+
+Instructions for building up the gefs system on WCOSS1:
 
     1) "build" is done in the current directory (~gefs.v12/sorc)
 
