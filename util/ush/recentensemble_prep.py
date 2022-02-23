@@ -148,9 +148,9 @@ def getMems_mean(iTile, Npert, sInWS, sOutWS, sFileName, sVars):
 
         sInFile = sInWS + "/p{0:02}/{1}{2}.nc".format(iPert + 1, sFileName, iTile)
         sOutFile = sOutWS + "/p{0:02}/{1}{2}.nc".format(iPert + 1, sFileName, iTile)
-        if not os.path.exists(sOutFile):
-            shutil.copyfile(sInFile, sOutFile)
-            # print("Copying file from {0} to {1}".format(sInFile, sOutFile))
+
+        shutil.copyfile(sInFile, sOutFile)
+        print("Copying file from {0} to {1}".format(sInFile, sOutFile))
 
         nc_fid = Dataset(sInFile, 'r')
         # print(nc_fid.variables.keys())
