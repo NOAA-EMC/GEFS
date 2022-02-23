@@ -49,10 +49,10 @@ export DBNLOG=YES
 #export WRITE_GROUP_chem=1
 #export WRTTASK_PER_GROUP_chem=96
 # 330 cores
-export layout_x_chem=6
-export layout_y_chem=8
-export WRITE_GROUP_chem=1
-export WRTTASK_PER_GROUP_chem=42
+#export layout_x_chem=6
+#export layout_y_chem=8
+#export WRITE_GROUP_chem=1
+#export WRTTASK_PER_GROUP_chem=42
 
 # Move out com for rerun
 if [ $(echo $ECF_NAME | egrep "00.*getcfssst") ]; 
