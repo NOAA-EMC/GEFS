@@ -77,8 +77,8 @@ for config in $configs; do
     fi
 done
 
-export COMINgfs=${COMINgfs:-$(compath.py ${envir}/gfs/${gfs_ver})/gfs.${PDY}/$cyc/atmos}
-export COMINcfs=${COMINcfs:-$(compath.py ${envir}/cfs/${cfs_ver})/cfs.}
+export COMINgfs=${COMINgfs:-$(compath.py ${envir}/com/gfs/${gfs_ver})/gfs.${PDY}/$cyc/atmos}
+export COMINcfs=${COMINcfs:-$(compath.py ${envir}/com/cfs/${cfs_ver})/cfs.}
 
 echo "Environment before calling script"
 env | sort
