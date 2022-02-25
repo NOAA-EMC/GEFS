@@ -30,7 +30,8 @@ import shutil
 from functools import partial
 
 destination_pattern = "{keep_dir}/gefs.{pdy}/{cycle}/chem"
-output_pattern = "{work_dir}/com/gefs/dev/gefs.{pdy}/{cycle}/chem"
+#output_pattern = "{work_dir}/com/gefs/dev/gefs.{pdy}/{cycle}/chem"
+output_pattern = "{work_dir}/dev/com/gefs/v12.2/gefs.{pdy}/{cycle}/chem"
 
 clobber = True
 
