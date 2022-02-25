@@ -16,7 +16,7 @@ module load intel/$intel_ver
 
 module load cray-mpich/$cray_mpich_ver
 module load cray-pals/$cray_pals_ver
-
+module load libjpeg/$libjpeg_ver
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
 module load grib_util/$grib_util_ver
