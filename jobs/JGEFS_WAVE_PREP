@@ -90,7 +90,7 @@ for config in $configs; do
 done
 
 export COMINgfs=${COMINgfs:-$(compath.py ${envir}/com/gfs/${gfs_ver})/gfs.${PDY}/${cyc}/atmos}
-export COMIN_WAV_ICE=${COMINgfs:-$(compath.py ${envir}/com/gfs/${gfs_ver})/${WAVICEPRFX:-gfs}.${PDY}/${cyc}/atmos}
+export COMIN_WAV_ICE=${COMINice:-$(compath.py ${envir}/com/obsproc/${obsproc_ver})/${WAVICEPRFX:-gfs}.${PDY}/${cyc}/atmos}
 
 export errchk=${errchk:-err_chk}
 if [[ $SENDCOM == "YES" ]]; then
