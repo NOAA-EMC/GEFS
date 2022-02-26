@@ -21,7 +21,7 @@ if [[ $FORECAST_SEGMENT = lr ]]; then
 else
     if [[ $cplchm = ".true." ]]; then
         layout_x=${layout_x_chem:-6}
-        layout_y=${layout_y_chem:-6}
+        layout_y=${layout_y_chem:-8}
     else
         layout_x=${layout_x:-6}
         layout_y=${layout_y:-6}
@@ -40,7 +40,7 @@ if [[ $FORECAST_SEGMENT = lr ]]; then
 else
     if [[ $cplchm = ".true." ]]; then
         export WRITE_GROUP=${WRITE_GROUP_chem:-1}
-        export WRTTASK_PER_GROUP=${WRTTASK_PER_GROUP_chem:-40}
+        export WRTTASK_PER_GROUP=${WRTTASK_PER_GROUP_chem:-42}
     else
         export WRITE_GROUP=${WRITE_GROUP:-1}
         export WRTTASK_PER_GROUP=${WRTTASK_PER_GROUP:-16}
