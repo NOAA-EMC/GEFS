@@ -68,12 +68,12 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
 if [ $cyc = 00 ]; then
     export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDYm1}/$cyc}
-    export COMOUT=${COMOUT:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDYm1}/$cyc}
-    export GESOUT=$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDYm1}/$cyc/nwges
+    export COMOUT=${COMOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDYm1}/$cyc}
+    export GESOUT=$(compath.py -o $NET/${ver})/${RUN}.${PDYm1}/$cyc/nwges
 else
     export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
-    export COMOUT=${COMOUT:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
-    export GESOUT=$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/nwges
+    export COMOUT=${COMOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc}
+    export GESOUT=$(compath.py $NET/${ver})/${RUN}.${PDY}/$cyc/nwges
 fi
 
 ##############################################

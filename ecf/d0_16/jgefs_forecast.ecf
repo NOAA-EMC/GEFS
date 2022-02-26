@@ -4,19 +4,15 @@
 #PBS -q %QUEUE%
 #PBS -A %PROJ%-%PROJENVIR%
 #PBS -l walltime=4:30:00
-#PBS -l place=vscatter,select=2:ncpus=128:mpiprocs=128:mem=500GB+1:ncpus=64:mpiprocs=64:mem=250GB
+#PBS -l place=vscatter:excl,select=3:ncpus=110:mpiprocs=110
 #PBS -l debug=true
 
 set -x
 
-cd $PBS_O_WORKDIR
-
-module purge
+export model=gefs
 
 %include <head.h>
 %include <envir-p1.h>
-
-export model=gefs
 
 module load PrgEnv-intel/$PrgEnv_intel_ver
 module load craype/$craype_ver
@@ -38,7 +34,7 @@ ulimit -a
 export cyc=%CYC%
 export RUNMEM=ge%MEMBER%
 
-export total_tasks=320
+export total_tasks=330
 export COREPERNODE=128
 export FORECAST_SEGMENT=hr
 export OMP_NUM_THREADS=1

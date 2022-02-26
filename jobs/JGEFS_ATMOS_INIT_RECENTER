@@ -65,9 +65,9 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 ##############################################
 ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
 export COMPONENT=atmos
-export COMOUT=${COMOUT:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/$COMPONENT}
+export COMOUT=${COMOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc/$COMPONENT}
 export GESIN=$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/nwges
-export GESOUT=$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/nwges
+export GESOUT=$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc/nwges
 
 #############################
 # Source relevant config files
