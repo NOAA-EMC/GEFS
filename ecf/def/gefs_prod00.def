@@ -1097,7 +1097,7 @@ suite prod
           endfamily
           family cleanup
             task jgefs_atmos_post_cleanup
-             trigger ../post_processing/d0_16/atmos/jgefs_atmos_ensstat eq complete and ../post_processing/d0_16/atmos/jgefs_atmos_enspost eq complete and ../gempak/atmos/jgefs_atmos_gempak_meta eq complete and /prod/primary/18/gefs/v12.2/members/d16_35 == complete and /prod/primary/18/gefs/v12.2/post_processing/d16_35 == complete
+             trigger ../init eq complete and ../chem eq complete and ../members eq complete and ../post_processing eq complete and ../gempak eq complete and /prod/primary/18/gefs/v12.2/members/d16_35 == complete and /prod/primary/18/gefs/v12.2/post_processing/d16_35 == complete
           endfamily
         endfamily # v12.2
       endfamily # gefs
