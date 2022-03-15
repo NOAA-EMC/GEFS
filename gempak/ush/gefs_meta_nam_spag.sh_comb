@@ -126,8 +126,8 @@ for level in ${levels}; do
 
 		fn=ukmet
 		rm -rf ${fn}
-		if [ -r ${COMINukmet}.${ECM_PDY}/ukmet_hr_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ]; then
-			ln -s ${COMINukmet}.${ECM_PDY}/ukmet_hr_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ${fn}
+		if [ -r ${COMINukmet}.${ECM_PDY}/gempak/ukmet_hr_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ]; then
+			ln -s ${COMINukmet}.${ECM_PDY}/gempak/ukmet_hr_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ${fn}
 		fi
 
 		fn=dgex
