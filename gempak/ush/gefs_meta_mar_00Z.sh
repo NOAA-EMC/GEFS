@@ -91,8 +91,8 @@ for metaarea in pac atl; do
 
 			fn=ukmet
 			rm -rf ${fn}
-			if [ -r ${COMINukmet}.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ]; then
-				ln -s ${COMINukmet}.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ${fn}
+			if [ -r ${COMINukmet}.${PDY}/gempak/ukmet_hr_${PDY}${cyc}f${fcsthr} ]; then
+				ln -s ${COMINukmet}.${PDY}/gempak/ukmet_hr_${PDY}${cyc}f${fcsthr} ${fn}
 			fi
 
 
@@ -278,8 +278,8 @@ for metaarea in pac atl; do
 
 		fn=ukmet
 		rm -rf ${fn}
-		if [ -r $COMINukmet.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ]; then
-			ln -s $COMINukmet.${PDY}/ukmet_hr_${PDY}${cyc}f${fcsthr} ${fn}
+		if [ -r $COMINukmet.${PDY}/gempak/ukmet_hr_${PDY}${cyc}f${fcsthr} ]; then
+			ln -s $COMINukmet.${PDY}/gempak/ukmet_hr_${PDY}${cyc}f${fcsthr} ${fn}
 		fi
 
 		export pgm=gdplot2_nc;. prep_step; startmsg
