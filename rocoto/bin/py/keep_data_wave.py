@@ -31,7 +31,8 @@ from datetime import datetime
 from datetime import timedelta
 from functools import partial
 
-output_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/wave"
+#output_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/wave"
+output_pattern = "{work_dir}/dev/com/gefs/v12.2/gefs.%Y%m%d/%H/wave"
 destination_pattern = "{keep_dir}/gefs.%Y%m%d/%H/wave"
 
 clobber = True

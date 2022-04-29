@@ -14,8 +14,8 @@ do
 
 done
 
-RUN_ENVIR=${RUN_ENVIR:-emc}
-machine=${machine:-wcoss2} #dell
+RUN_ENVIR=${RUN_ENVIR:-nco}
+machine=${machine:-wcoss2}
 
 echo $RUN_ENVIR
 echo $machine

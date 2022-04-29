@@ -1,0 +1,1118 @@
+suite prod
+  family primary
+    family 18
+      family gefs
+        edit PROJ 'GEFS'
+        edit PACKAGEHOME '/lfs/h1/ops/%ENVIR%/packages/gefs.%gefs_ver%'
+        defstatus complete
+        family v12.2
+          family init
+            family atmos
+              task jgefs_atmos_getcfssst
+                trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+              task jgefs_atmos_init_recenter
+                trigger ( ../../members/d0_16/c00/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/c00/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p01/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p01/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p02/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p02/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p03/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p03/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p04/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p04/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p05/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p05/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p06/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p06/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p07/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p07/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p08/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p08/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p09/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p09/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p10/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p10/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p11/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p11/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p12/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p12/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p13/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p13/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p14/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p14/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p15/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p15/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p16/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p16/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p17/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p17/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p18/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p18/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p19/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p19/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p20/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p20/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p21/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p21/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p22/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p22/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p23/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p23/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p24/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p24/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p25/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p25/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p26/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p26/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p27/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p27/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p28/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p28/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p29/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p29/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p30/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p30/atmos/jgefs_atmos_prep eq complete )
+            endfamily
+            family wave
+              task jgefs_wave_init
+                trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+            endfamily
+          endfamily
+          family chem
+            task jgefs_chem_prep_emissions
+              trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+            task jgefs_chem_init
+              trigger jgefs_chem_prep_emissions eq complete and ../init/atmos/jgefs_atmos_init_recenter eq complete
+            task jgefs_chem_forecast
+              trigger ../init/atmos/jgefs_atmos_getcfssst eq complete and jgefs_chem_init eq complete
+            task jgefs_chem_post
+              trigger jgefs_chem_forecast eq active or jgefs_chem_forecast eq complete
+            task jgefs_chem_prdgen
+              trigger jgefs_chem_post eq active or jgefs_chem_post eq complete
+          endfamily
+          family members
+            family d0_16
+              edit ECF_FILES '%PACKAGEHOME%/ecf/d0_16'
+              family c00
+                edit MEMBER 'c00'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p01
+                edit MEMBER 'p01'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p02
+                edit MEMBER 'p02'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p03
+                edit MEMBER 'p03'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p04
+                edit MEMBER 'p04'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p05
+                edit MEMBER 'p05'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p06
+                edit MEMBER 'p06'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p07
+                edit MEMBER 'p07'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p08
+                edit MEMBER 'p08'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p09
+                edit MEMBER 'p09'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p10
+                edit MEMBER 'p10'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p11
+                edit MEMBER 'p11'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p12
+                edit MEMBER 'p12'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p13
+                edit MEMBER 'p13'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p14
+                edit MEMBER 'p14'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p15
+                edit MEMBER 'p15'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p16
+                edit MEMBER 'p16'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p17
+                edit MEMBER 'p17'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p18
+                edit MEMBER 'p18'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p19
+                edit MEMBER 'p19'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p20
+                edit MEMBER 'p20'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p21
+                edit MEMBER 'p21'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p22
+                edit MEMBER 'p22'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p23
+                edit MEMBER 'p23'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p24
+                edit MEMBER 'p24'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p25
+                edit MEMBER 'p25'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p26
+                edit MEMBER 'p26'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p27
+                edit MEMBER 'p27'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p28
+                edit MEMBER 'p28'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p29
+                edit MEMBER 'p29'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              family p30
+                edit MEMBER 'p30'
+                task jgefs_forecast
+                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                task jgefs_fcst_post_manager
+                  trigger jgefs_forecast eq active or jgefs_forecast eq complete
+                  event 1 release_post
+                  event 2 release_atmos_prdgen
+                  event 3 release_wave_gempak
+                  event 4 pgrb2abp5_f192_ready
+                  event 5 gefswave_f240_ready
+                family atmos
+                  task jgefs_atmos_prep
+                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                  task jgefs_atmos_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_atmos_prdgen
+                    trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
+                  task jgefs_atmos_postsnd
+                    trigger ../jgefs_fcst_post_manager:release_post
+                endfamily
+                family wave
+                  task jgefs_wave_prep
+                    trigger ../../../../init/wave/jgefs_wave_init eq complete
+                  task jgefs_wave_post
+                    trigger ../jgefs_fcst_post_manager:release_post
+                  task jgefs_wave_gempak
+                    trigger ../jgefs_fcst_post_manager:release_wave_gempak
+                endfamily
+              endfamily
+              task jgefs_pgrb2abp5_f192_done
+                complete ( c00/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p01/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p02/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p03/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p04/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p05/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p06/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p07/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p08/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p09/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p10/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p11/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p12/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p13/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p14/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p15/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p16/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p17/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p18/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p19/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p20/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p21/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p22/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p23/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p24/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p25/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p26/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p27/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p28/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p29/jgefs_fcst_post_manager:pgrb2abp5_f192_ready and p30/jgefs_fcst_post_manager:pgrb2abp5_f192_ready )
+                trigger c00 == complete and p01 == complete and p02 == complete and p03 == complete and p04 == complete and p05 == complete and p06 == complete and p07 == complete and p08 == complete and p09 == complete and p10 == complete and p11 == complete and p12 == complete and p13 == complete and p14 == complete and p15 == complete and p16 == complete and p17 == complete and p18 == complete and p19 == complete and p20 == complete and p21 == complete and p22 == complete and p23 == complete and p24 == complete and p25 == complete and p26 == complete and p27 == complete and p28 == complete and p29 == complete and p30 == complete
+              task jgefs_wave_f240_done
+                complete ( c00/jgefs_fcst_post_manager:gefswave_f240_ready and p01/jgefs_fcst_post_manager:gefswave_f240_ready and p02/jgefs_fcst_post_manager:gefswave_f240_ready and p03/jgefs_fcst_post_manager:gefswave_f240_ready and p04/jgefs_fcst_post_manager:gefswave_f240_ready and p05/jgefs_fcst_post_manager:gefswave_f240_ready and p06/jgefs_fcst_post_manager:gefswave_f240_ready and p07/jgefs_fcst_post_manager:gefswave_f240_ready and p08/jgefs_fcst_post_manager:gefswave_f240_ready and p09/jgefs_fcst_post_manager:gefswave_f240_ready and p10/jgefs_fcst_post_manager:gefswave_f240_ready and p11/jgefs_fcst_post_manager:gefswave_f240_ready and p12/jgefs_fcst_post_manager:gefswave_f240_ready and p13/jgefs_fcst_post_manager:gefswave_f240_ready and p14/jgefs_fcst_post_manager:gefswave_f240_ready and p15/jgefs_fcst_post_manager:gefswave_f240_ready and p16/jgefs_fcst_post_manager:gefswave_f240_ready and p17/jgefs_fcst_post_manager:gefswave_f240_ready and p18/jgefs_fcst_post_manager:gefswave_f240_ready and p19/jgefs_fcst_post_manager:gefswave_f240_ready and p20/jgefs_fcst_post_manager:gefswave_f240_ready and p21/jgefs_fcst_post_manager:gefswave_f240_ready and p22/jgefs_fcst_post_manager:gefswave_f240_ready and p23/jgefs_fcst_post_manager:gefswave_f240_ready and p24/jgefs_fcst_post_manager:gefswave_f240_ready and p25/jgefs_fcst_post_manager:gefswave_f240_ready and p26/jgefs_fcst_post_manager:gefswave_f240_ready and p27/jgefs_fcst_post_manager:gefswave_f240_ready and p28/jgefs_fcst_post_manager:gefswave_f240_ready and p29/jgefs_fcst_post_manager:gefswave_f240_ready and p30/jgefs_fcst_post_manager:gefswave_f240_ready )
+                trigger c00 == complete and p01 == complete and p02 == complete and p03 == complete and p04 == complete and p05 == complete and p06 == complete and p07 == complete and p08 == complete and p09 == complete and p10 == complete and p11 == complete and p12 == complete and p13 == complete and p14 == complete and p15 == complete and p16 == complete and p17 == complete and p18 == complete and p19 == complete and p20 == complete and p21 == complete and p22 == complete and p23 == complete and p24 == complete and p25 == complete and p26 == complete and p27 == complete and p28 == complete and p29 == complete and p30 == complete
+              task jgefs_prdgen_done
+                complete ( c00/atmos/jgefs_atmos_prdgen == complete and p01/atmos/jgefs_atmos_prdgen == complete and p02/atmos/jgefs_atmos_prdgen == complete and p03/atmos/jgefs_atmos_prdgen == complete and p04/atmos/jgefs_atmos_prdgen == complete and p05/atmos/jgefs_atmos_prdgen == complete and p06/atmos/jgefs_atmos_prdgen == complete and p07/atmos/jgefs_atmos_prdgen == complete and p08/atmos/jgefs_atmos_prdgen == complete and p09/atmos/jgefs_atmos_prdgen == complete and p10/atmos/jgefs_atmos_prdgen == complete and p11/atmos/jgefs_atmos_prdgen == complete and p12/atmos/jgefs_atmos_prdgen == complete and p13/atmos/jgefs_atmos_prdgen == complete and p14/atmos/jgefs_atmos_prdgen == complete and p15/atmos/jgefs_atmos_prdgen == complete and p16/atmos/jgefs_atmos_prdgen == complete and p17/atmos/jgefs_atmos_prdgen == complete and p18/atmos/jgefs_atmos_prdgen == complete and p19/atmos/jgefs_atmos_prdgen == complete and p20/atmos/jgefs_atmos_prdgen == complete and p21/atmos/jgefs_atmos_prdgen == complete and p22/atmos/jgefs_atmos_prdgen == complete and p23/atmos/jgefs_atmos_prdgen == complete and p24/atmos/jgefs_atmos_prdgen == complete and p25/atmos/jgefs_atmos_prdgen == complete and p26/atmos/jgefs_atmos_prdgen == complete and p27/atmos/jgefs_atmos_prdgen == complete and p28/atmos/jgefs_atmos_prdgen == complete and p29/atmos/jgefs_atmos_prdgen == complete and p30/atmos/jgefs_atmos_prdgen == complete )
+                trigger c00 == complete and p01 == complete and p02 == complete and p03 == complete and p04 == complete and p05 == complete and p06 == complete and p07 == complete and p08 == complete and p09 == complete and p10 == complete and p11 == complete and p12 == complete and p13 == complete and p14 == complete and p15 == complete and p16 == complete and p17 == complete and p18 == complete and p19 == complete and p20 == complete and p21 == complete and p22 == complete and p23 == complete and p24 == complete and p25 == complete and p26 == complete and p27 == complete and p28 == complete and p29 == complete and p30 == complete
+            endfamily
+            family d16_35
+              edit ECF_FILES '%PACKAGEHOME%/ecf/d16_35'
+              family c00
+                edit MEMBER 'c00'
+                family atmos
+                  task jgefs_atmos_forecast
+                    trigger ../../../d0_16/c00/jgefs_forecast eq complete
+                  task jgefs_atmos_post
+                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
+                  task jgefs_atmos_prdgen
+                    trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+                endfamily
+              endfamily
+              family p25
+                edit MEMBER 'p25'
+                family atmos
+                  task jgefs_atmos_forecast
+                    trigger ../../../d0_16/p25/jgefs_forecast eq complete
+                  task jgefs_atmos_post
+                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
+                  task jgefs_atmos_prdgen
+                    trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+                endfamily
+              endfamily
+              family p26
+                edit MEMBER 'p26'
+                family atmos
+                  task jgefs_atmos_forecast
+                    trigger ../../../d0_16/p26/jgefs_forecast eq complete
+                  task jgefs_atmos_post
+                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
+                  task jgefs_atmos_prdgen
+                    trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+                endfamily
+              endfamily
+              family p27
+                edit MEMBER 'p27'
+                family atmos
+                  task jgefs_atmos_forecast
+                    trigger ../../../d0_16/p27/jgefs_forecast eq complete
+                  task jgefs_atmos_post
+                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
+                  task jgefs_atmos_prdgen
+                    trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+                endfamily
+              endfamily
+              family p28
+                edit MEMBER 'p28'
+                family atmos
+                  task jgefs_atmos_forecast
+                    trigger ../../../d0_16/p28/jgefs_forecast eq complete
+                  task jgefs_atmos_post
+                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
+                  task jgefs_atmos_prdgen
+                    trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+                endfamily
+              endfamily
+              family p29
+                edit MEMBER 'p29'
+                family atmos
+                  task jgefs_atmos_forecast
+                    trigger ../../../d0_16/p29/jgefs_forecast eq complete
+                  task jgefs_atmos_post
+                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
+                  task jgefs_atmos_prdgen
+                    trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+                endfamily
+              endfamily
+              family p30
+                edit MEMBER 'p30'
+                family atmos
+                  task jgefs_atmos_forecast
+                    trigger ../../../d0_16/p30/jgefs_forecast eq complete
+                  task jgefs_atmos_post
+                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
+                  task jgefs_atmos_prdgen
+                    trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+                endfamily
+              endfamily
+            endfamily
+          endfamily
+          family post_processing
+            family d0_16
+              family atmos
+                task jgefs_atmos_prdgen_gfs
+                  trigger /prod/primary/18/gfs/v16.2/gfs/atmos/post/jgfs_atmos_post_manager:release_post000
+                task jgefs_atmos_ensstat
+                  trigger ( ../../../members/d0_16/c00/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/c00/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p01/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p01/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p02/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p02/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p03/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p03/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p04/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p04/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p05/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p05/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p06/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p06/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p07/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p07/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p08/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p08/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p09/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p09/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p10/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p10/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p11/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p11/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p12/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p12/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p13/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p13/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p14/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p14/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p15/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p15/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p16/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p16/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p17/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p17/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p18/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p18/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p19/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p19/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p20/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p20/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p21/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p21/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p22/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p22/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p23/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p23/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p24/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p24/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p25/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p25/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p26/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p26/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p27/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p27/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p28/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p28/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p29/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p29/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p30/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p30/atmos/jgefs_atmos_prdgen eq complete )
+                task jgefs_atmos_enspost
+                  trigger ../../../members/d0_16/c00/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p01/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p02/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p03/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p04/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p05/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p06/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p07/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p08/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p09/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p10/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p11/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p12/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p13/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p14/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p15/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p16/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p17/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p18/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p19/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p20/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p21/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p22/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p23/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p24/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p25/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p26/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p27/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p28/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p29/atmos/jgefs_atmos_prdgen eq complete and ../../../members/d0_16/p30/atmos/jgefs_atmos_prdgen eq complete and jgefs_atmos_prdgen_gfs eq complete
+                task jgefs_atmos_ensavg_nemsio
+                  trigger ../../../members/d0_16/c00/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p01/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p02/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p03/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p04/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p05/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p06/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p07/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p08/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p09/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p10/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p11/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p12/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p13/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p14/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p15/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p16/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p17/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p18/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p19/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p20/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p21/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p22/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p23/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p24/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p25/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p26/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p27/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p28/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p29/jgefs_fcst_post_manager:release_post and ../../../members/d0_16/p30/jgefs_fcst_post_manager:release_post
+                task jgefs_atmos_avg_postsnd
+                  trigger jgefs_atmos_ensavg_nemsio eq active or jgefs_atmos_ensavg_nemsio eq complete
+              endfamily
+              family wave
+                task jgefs_wave_stat
+                  trigger ../../../members/d0_16/c00/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p01/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p02/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p03/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p04/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p05/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p06/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p07/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p08/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p09/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p10/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p11/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p12/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p13/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p14/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p15/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p16/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p17/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p18/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p19/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p20/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p21/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p22/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p23/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p24/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p25/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p26/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p27/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p28/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p29/wave/jgefs_wave_post eq complete and ../../../members/d0_16/p30/wave/jgefs_wave_post eq complete
+              endfamily
+            endfamily
+            family d16_35
+              family atmos
+                task jgefs_atmos_ensstat
+                  trigger ../../../members/d16_35 eq active or ../../../members/d16_35 eq complete
+                task jgefs_atmos_enspost
+                  trigger ../../../members/d16_35 eq complete
+              endfamily
+            endfamily
+          endfamily
+          family gempak
+            family atmos
+              task jgefs_atmos_gempak
+                trigger ( ../../post_processing/d0_16/atmos/jgefs_atmos_ensstat eq active or ../../post_processing/d0_16/atmos/jgefs_atmos_ensstat eq complete ) and ( ../../members/d0_16/c00/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/c00/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p01/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p01/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p02/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p02/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p03/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p03/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p04/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p04/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p05/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p05/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p06/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p06/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p07/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p07/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p08/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p08/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p09/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p09/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p10/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p10/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p11/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p11/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p12/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p12/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p13/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p13/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p14/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p14/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p15/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p15/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p16/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p16/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p17/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p17/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p18/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p18/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p19/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p19/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p20/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p20/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p21/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p21/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p22/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p22/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p23/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p23/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p24/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p24/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p25/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p25/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p26/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p26/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p27/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p27/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p28/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p28/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p29/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p29/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../members/d0_16/p30/atmos/jgefs_atmos_prdgen eq active or ../../members/d0_16/p30/atmos/jgefs_atmos_prdgen eq complete )
+              task jgefs_atmos_gempak_meta
+                trigger jgefs_atmos_gempak eq complete
+              task jgefs_atmos_avgspr_gempak_meta
+                trigger jgefs_atmos_gempak eq complete
+            endfamily
+          endfamily
+          family cleanup
+            task jgefs_atmos_post_cleanup
+              trigger ../init eq complete and ../chem eq complete and ../members eq complete and ../post_processing eq complete and ../gempak eq complete
+          endfamily
+        endfamily # v12.2
+      endfamily # gefs
+      family gfs
+        family v16.2
+          family gfs
+            family atmos
+              family analysis
+                task jgfs_atmos_analysis
+              endfamily # analysis
+              family post
+                task jgfs_atmos_post_manager
+                  event release_post000
+              endfamily # post
+            endfamily # atmos
+          endfamily # gfs
+        endfamily # v16.2
+      endfamily # gfs
+    endfamily # 18
+  endfamily # primary
+endsuite # prod      

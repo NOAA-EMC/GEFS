@@ -3,20 +3,16 @@
 #PBS -S /bin/bash
 #PBS -q %QUEUE%
 #PBS -A %PROJ%-%PROJENVIR%
-#PBS -l walltime=2:30:00
-#PBS -l place=vscatter,select=1:prepost=true:ncpus=30:mpiprocs=30:mem=240GB
+#PBS -l walltime=2:00:00
+#PBS -l place=vscatter,select=1:prepost=false:ncpus=30:mpiprocs=30:mem=240GB
 #PBS -l debug=true
 
 set -x
 
-cd $PBS_O_WORKDIR
-
-module purge
+export model=gefs
 
 %include <head.h>
 %include <envir-p1.h>
-
-export model=gefs
 
 module load PrgEnv-intel/$PrgEnv_intel_ver
 module load craype/$craype_ver

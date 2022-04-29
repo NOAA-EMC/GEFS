@@ -32,7 +32,7 @@ export curl_ver=7.72.0
 
 # -- For UPP ncep_post
 export gfsio_ver=1.4.1
-export g2tmpl_ver=1.10.0
+export g2tmpl_ver=1.9.1
 export wrf_io_ver=1.2.0
 
 # -- For ufs_utils

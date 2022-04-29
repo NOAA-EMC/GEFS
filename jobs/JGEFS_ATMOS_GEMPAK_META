@@ -70,7 +70,7 @@ export FIXgempak=${FIXgempak:-$GEMPAKgefs/fix}
 ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
 export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
 export COMINs=${COMINs:-$(compath.py $envir/com/$NET/${ver})}
-export COMOUT=${COMOUT:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
+export COMOUT=${COMOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc}
 
 #############################
 # Source relevant config files
@@ -86,11 +86,12 @@ for config in $configs; do
     fi
 done
 
-export COMINsgfs=${COMINsgfs:-$(compath.py prod/com/gfs/${gfs_ver})}
-export COMINnawips=${COMINnawips:-$(compath.py prod/com/nawips/${nawips_ver})}
-export COMINecmwf=${COMINecmwf:-$(compath.py prod/com/ecmwf/${ecmwf_ver})/ecmwf}
-export COMINukmet=${COMINukmet:-$(compath.py prod/com/nawips/${nawips_ver})/ukmet}
-export COMINnam=${COMINnam:-$(compath.py prod/com/nam/${nam_ver})}
+export COMINsgfs=${COMINsgfs:-$(compath.py $envir/com/gfs/${gfs_ver})}
+export COMINnawips=${COMINnawips:-$(compath.py $envir/com/nawips/${nawips_ver})}
+export COMINecmwf=${COMINecmwf:-$(compath.py $envir/com/ecmwf/${ecmwf_ver})/ecmwf}
+#export COMINukmet=${COMINukmet:-$(compath.py $envir/com/nawips/${nawips_ver})/ukmet}
+export COMINukmet=${COMINukmet:-$(compath.py $envir/com/ukmet/${ukmet_ver})/ukmet}
+export COMINnam=${COMINnam:-$(compath.py $envir/com/nam/${nam_ver})}
 
 export COMPONENT=${COMPONENT:-atmos}
 if [[ ! -d $COMOUT/$COMPONENT/gempak/meta ]]; then mkdir -p -m 755 $COMOUT/$COMPONENT/gempak/meta; fi
