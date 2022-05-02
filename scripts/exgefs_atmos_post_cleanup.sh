@@ -111,7 +111,7 @@ if ((nmissing > 0)); then
 		If this is the first run or first 00z run after machine switch, then you can safely ignore it.
 		Otherwise please double check if the model missing any file.
 	EOF
-	cat msg |mail.py  -s "Skip $cycle GEFS cleanup." ncep.list.spa-helpdesk@noaa.gov
+	cat msg |mail.py  -s "Skip $cycle GEFS cleanup." nco.spa@noaa.gov
 	exit
 else # (( nmissing > 0 ))
 	echo "$(date) sfcsig sflux cleanup begin"

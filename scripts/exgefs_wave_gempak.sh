@@ -9,8 +9,6 @@ fi
 
 cd $DATA
 
-nfile=$LSB_DJOB_NUMPROC
-
 MODCOM=$(echo ${NET}_${COMPONENT} | tr '[a-z]' '[A-Z]')
 export DBN_ALERT_TYPE=${MODCOM}_GEMPAK
 export fstart=0

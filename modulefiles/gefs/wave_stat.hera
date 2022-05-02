@@ -19,5 +19,6 @@ module load g2/3.1.1
 
 ##
 export FCMP=ifort
+export FFLAGSM="-O -xHost -list -auto"
 export LDFLAGSM=
 export OMPFLAGM=

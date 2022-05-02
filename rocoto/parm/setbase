@@ -58,7 +58,7 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     echo "Using settings for WCOSS DELL Phase III"
     export machine='WCOSS_DELL_P3'
     export JOBPHASE=
-    export HOMEDIR=${HOMEDIR:-/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/global_workflow/gefs_v12.1.0}
+    export HOMEDIR=${HOMEDIR:-/gpfs/dell6/emc/modeling/noscrub/Xianwu.Xue/gw_for_acorn/gw_for_gefs_v12.2.0_dell_p35}
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
     export archsyndir=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/TCvitalData/syndat
     export HOMEdata=/gpfs/hps2/nco/storage/fv3gefs/Bing.Fu/common
@@ -69,6 +69,16 @@ elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
     # export COMINcfs_base=$HOMEdata/cfs_2_sst/cfs.
 
     # export COMROOThps=${HOMEdata}
+elif [[ -d /apps/prod ]]; then
+    # We are on NOAA WCOSS2
+    echo "Using settings for WCOSS2"
+    export machine='WCOSS2'
+    export JOBPHASE=
+    export HOMEDIR=${HOMEDIR:-/lfs/h2/emc/ens/noscrub/emc.ens/common/git/gfs/gw_gefs_v12.2_bafca3b_Dec09_2021}
+    export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
+    export archsyndir=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/TCvitalData/syndat
+    export HOMEdata=/gpfs/hps2/nco/storage/fv3gefs/Bing.Fu/common
+
 fi
 
 export basesource=$SOURCEDIR

@@ -1,0 +1,86 @@
+#!/bin/sh
+#PBS -N jgefs_atmos_init_recenter_00
+#PBS -j oe
+#PBS -S /bin/bash
+#PBS -q dev
+#PBS -A GEFS-DEV
+#PBS -l walltime=0:30:00
+#PBS -l place=vscatter,select=1:ncpus=6:mpiprocs=6:mem=12GB
+#PBS -l debug=true
+
+set -x
+
+cd $PBS_O_WORKDIR
+
+module purge
+
+export model=gefs
+#export HOMEgefs=${HOMEgefs:-/lfs/h2/emc/ens/noscrub/Xianwu.Xue/gefs/gefs_port2wcoss2}
+# to get HOMEgefs
+f=lsf_common.sh
+if [[ -f "$f" ]]; then
+    echo "$f exists."
+    source $f
+elif [[ -f "../$f" ]]; then
+    echo "../$f exists."
+    source ../$f
+elif [[ -f "../../$f" ]]; then
+    echo "../../$f exists."
+    source ../../$f
+elif [[ -f "../../../$f" ]]; then
+    echo "../../../$f exists."
+    source ../../../$f
+fi
+. ${HOMEgefs}/versions/run.ver
+
+module purge
+module load envvar/$envvar_ver
+module load PrgEnv-intel/$PrgEnv_intel_ver
+module load craype/$craype_ver
+module load intel/$intel_ver
+
+module load cray-mpich/$cray_mpich_ver
+module load cray-pals/$cray_pals_ver
+
+module load prod_util/$prod_util_ver
+module load prod_envir/$prod_envir_ver
+
+module load python/$python_ver
+module load cfp/$cfp_ver
+
+export USE_CFP=YES
+
+module list
+
+# EXPORT list here
+ulimit -s unlimited
+ulimit -a
+
+# to get HOMEgefs
+f=lsf_common.sh
+if [[ -f "$f" ]]; then
+    echo "$f exists."
+    source $f
+elif [[ -f "../$f" ]]; then
+    echo "../$f exists."
+    source ../$f
+elif [[ -f "../../$f" ]]; then
+    echo "../../$f exists."
+    source ../../$f
+elif [[ -f "../../../$f" ]]; then
+    echo "../../../$f exists."
+    source ../../../$f
+fi
+
+# ----
+export total_tasks=6
+export taskspernode=6
+
+export OMP_NUM_THREADS=1
+
+#export gefsmpexec_mpmd="mpiexec -n $total_tasks --ppn $taskspernode cfp mpmd_cmdfile"
+# "mpirun -n $total_tasks cfp mpmd_cmdfile"
+
+export envir=prod
+# CALL executable job script here
+${HOMEgefs}/jobs/JGEFS_ATMOS_INIT_RECENTER

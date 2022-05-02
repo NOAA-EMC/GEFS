@@ -8,6 +8,10 @@ progname=gefs_nemsio2nc
 
 if [ -f ../modulefiles/gefs/gefs_$target.ver ]; then
     source ../modulefiles/gefs/gefs_$target.ver
+else
+    if [ -f ../versions/build.ver ]; then
+        source ../versions/build.ver
+    fi
 fi
 source ../modulefiles/gefs/${progname}.$target
 
@@ -32,9 +36,9 @@ export RECURS=
 export LDFLAGSM=${LDFLAGSM:-"-lifport -lifcoremt -lpthread"}
 export OMPFLAGM=${OMPFLAGM:-""}
 
-export INCSM="-I ${NEMSIO_INC} -I ${NETCDF_INC} -I ${cwd}/${progname}.cd"
+export INCSM="-I ${NEMSIO_INC} -I ${NETCDF_INCLUDES} -I ${cwd}/${progname}.cd"
 
-export LIBSM="-Wl,-rpath,${NETCDF_LIB} ${NEMSIO_LIB} ${BACIO_LIB4} ${W3NCO_LIB4} ${NETCDF_LDFLAGS_C}"
+export LIBSM="-Wl,-rpath,${NETCDF_LIBRARIES} ${NEMSIO_LIB} ${BACIO_LIB4} ${W3NCO_LIB4} ${NETCDF_LDFLAGS_C}"
 
 make -f Makefile clobber
 make -f Makefile

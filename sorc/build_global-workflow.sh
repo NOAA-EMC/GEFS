@@ -5,6 +5,10 @@ cwd=`pwd`
 
 progname=global-workflow
 
+if [ -f ../versions/build.ver ]; then
+    source ../versions/build.ver
+fi
+
 #
 cd ${progname}.fd
 cd sorc

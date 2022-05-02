@@ -92,6 +92,9 @@ def create_crontab(dicBase, OnlyForTest=False, cronint=5):
         # crontab_string += ') 1>>{0} 2>&1'.format(sRocotoPath + "/logs/crontab.log")
         crontab_string += sBashFile
         crontab_string += ' 1>>{0} 2>&1'.format(sRocotoPath + "/logs/crontab.log")
+    elif system == 'wcoss2':
+        crontab_string += crontab_usage
+        crontab_string += crontab_time + rocotorun_args
     else:
         print("CRITICAL ERROR: auto-crontab file generation for %s still needs to be implemented" % system)
         sys.exit(-502)

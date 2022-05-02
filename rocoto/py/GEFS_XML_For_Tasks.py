@@ -355,6 +355,13 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
     if sWalltime != "":
         strings += sPre_2 + '<walltime>{0}</walltime>\n'.format(sWalltime)
 
+    if WHERE_AM_I.upper() == "wcoss2".upper():
+        ppn = dicBase["{0}_ppn".format(taskname).upper()]
+        strings += sPre_2 + '<nodesize>{0}</nodesize>\n'.format(ppn)
+        strings += sPre_2 + '<native>-l debug=true</native>\n'
+        strings += sPre_2 + '<native>-j oe</native>\n'
+        strings += sPre_2 + '<native>-S /bin/bash</native>\n'
+
     if sQueue != "":
         strings += sPre_2 + '<queue>{0}</queue>\n'.format(sQueue)
     # strings += sPre + '\t\t' + '<queue>&CUE2RUN;</queue>\n'
@@ -387,6 +394,8 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         strings += ""
     elif WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
         strings += ""
+    elif WHERE_AM_I.upper() == "wcoss2".upper():
+        strings += ""
     else:
         strings += sPre_2 + '<native>-cwd &tmpnwprd;</native>\n'
 
@@ -411,6 +420,17 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
                 strings += ""
             else:
                 strings += sPre_2 + "<native>-R 'affinity[core(1)]'</native>\n"
+    elif WHERE_AM_I.upper() == "wcoss2".upper():
+
+        if sMemory == "":  # if there is no memory in user configure, then add "excl" on wcoss2
+            strings += sPre_2 + '<native>-l place=vscatter:excl</native>\n'
+        else:
+            strings += sPre_2 + '<native>-l place=vscatter</native>\n'
+
+        #sVarName_prepost = "{0}_prepost".format(taskname).upper()
+        #if sVarName_prepost in dicBase:
+        #    strings += sPre_2 + f'<native>-l prepost={dicBase[sVarName_prepost]}</native>\n'
+
     else:
         strings += sPre_2 + '<native>-extsched "CRAYLINUX[]"</native>\n'
     # -------------------Native-------------------
@@ -458,30 +478,30 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
 
     # Add command
     sPRE = "&PRE; "
-    if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
+    if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper(), "WCOSS2".upper()]:
         sPRE = ""
 
     if taskname in ['keep_init', 'copy_init', 'keep_data_atm', 'archive_atm', 'cleanup_atm', 'keep_data_wave', 'archive_wave', 'cleanup_wave', 'keep_data_chem', 'archive_chem', 'cleanup_chem']:
-        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
+        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper(), "WCOSS2".upper()]:
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format(taskname, sPRE)
         else:
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/../py/{0}.py</cyclestr></command>\n'.format(taskname, sPRE)
     elif taskname in ['forecast_hr', 'forecast_lr', 'chem_forecast']:
         strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("forecast_hr", sPRE)
     elif taskname in ['prdgen_hr', 'prdgen_lr', 'prdgen_gfs', 'chem_prdgen']:
-        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
+        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper(), "WCOSS2".upper()]:
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("prdgen_hr", sPRE)
         else:
             strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("prdgen_hr", sPRE)
     elif taskname in ['post_hr', 'post_lr', 'chem_post']:
         strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("post_hr", sPRE)
     elif taskname in ['ensstat_hr', 'ensstat_lr']:
-        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
+        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper(), "WCOSS2".upper()]:
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("ensstat_hr", sPRE)
         else:
             strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("ensstat_hr", sPRE)
     elif taskname in ['enspost_hr', 'enspost_lr']:
-        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
+        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper(), "WCOSS2".upper()]:
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("enspost", sPRE)
         else:
             strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("enspost", sPRE)
@@ -798,9 +818,27 @@ def calc_fcst_resources(dicBase, taskname="forecast_hr"):
             iWaveThreads = int(dicBase['NPE_WAV'])
             iTotal_Tasks = iTotal_Tasks + iWaveThreads
 
-    iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
-    iNodes = int(math.ceil(iTotal_Tasks * 1.0 / iPPN))
-    iTPP = parallel_threads
+    sVarName_nodes = "{0}_nodes".format(taskname).upper()
+
+    sVarName_ppn = "{0}_ppn".format(taskname).upper()
+    sVarName_tpp = "{0}_tpp".format(taskname).upper()
+    if sVarName_ppn not in dicBase:
+        iPPN = int(math.ceil(ncores_per_node * 1.0 / parallel_threads))
+        dicBase[sVarName_ppn] = iPPN
+    else:
+        iPPN = int(dicBase[sVarName_ppn])
+
+    if sVarName_nodes not in dicBase:
+        iNodes = int(math.ceil(iTotal_Tasks * 1.0 / iPPN))
+        dicBase[sVarName_nodes] = iNodes
+    else:
+        iNodes = int(dicBase[sVarName_nodes])
+
+    if sVarName_tpp not in dicBase:
+        iTPP = parallel_threads
+        dicBase[sVarName_tpp] = iTPP
+    else:
+        iTPP = int(dicBase[sVarName_tpp])
 
     return iTotal_Tasks, iNodes, iPPN, iTPP
 
@@ -1297,14 +1335,12 @@ def get_param_of_task(dicBase, taskname):
     # Forecast can be derive from the parm items
     if taskname in ['forecast_hr', 'forecast_lr', 'chem_forecast']:
         iTotal_Tasks, iNodes, iPPN, iTPP = calc_fcst_resources(dicBase, taskname=taskname)
-
         WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
 
         if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
             sNodes = "{0}:ppn={1}".format(iNodes, iPPN)
         else:
             sNodes = "{0}:ppn={1}:tpp={2}".format(iNodes, iPPN, iTPP)
-
     # For gempak
     if taskname == "gempak":
         iTotal_Tasks, iNodes, iPPN, iTPP = calc_gempak_resources(dicBase)
@@ -1316,6 +1352,7 @@ def get_param_of_task(dicBase, taskname):
 # =======================================================
 def calc_gempak_resources(dicBase):
     import math
+    taskname="gempak"
     ncores_per_node = Get_NCORES_PER_NODE(dicBase)
     WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
     npert = int(dicBase["NPERT"])
@@ -1348,7 +1385,9 @@ def calc_gempak_resources(dicBase):
         else:
             iPPN = ncores_per_node
             iNodes = math.ceil(iTotal_Tasks / (iPPN * 1.0))
-
+    elif WHERE_AM_I.upper() == "wcoss2".upper():
+        iPPN = iTotal_Tasks
+        iNodes = math.ceil(iTotal_Tasks / (iPPN * 1.0))
     else:
         if (npert + 1) <= ncores_per_node:
             iNodes = nGEMPAK_RES
@@ -1359,6 +1398,13 @@ def calc_gempak_resources(dicBase):
         else:
             iNodes = (npert + 1)
             iPPN = nGEMPAK_RES
+
+    sVarName_nodes = "{0}_nodes".format(taskname).upper()
+    dicBase[sVarName_nodes] = iNodes
+    sVarName_ppn = "{0}_ppn".format(taskname).upper()
+    dicBase[sVarName_ppn] = iPPN
+    sVarName_tpp = "{0}_tpp".format(taskname).upper()
+    dicBase[sVarName_tpp] = iTPP
 
     return iTotal_Tasks, iNodes, iPPN, iTPP
 
@@ -1375,6 +1421,8 @@ def Get_NCORES_PER_NODE(dicBase):
         ncores_per_node = 28
     elif WHERE_AM_I == "wcoss_dell_p35".upper():
         ncores_per_node = 40
+    elif WHERE_AM_I == "wcoss2".upper():
+        ncores_per_node = 128
     else:
         ncores_per_node = 24
 
@@ -1542,7 +1590,7 @@ def get_ENV_VARS(sPre="\t\t"):
 
 
 # =======================================================
-def create_envar(name=None, value=None, sPre="\t\t"):
+def create_envar(name=None, value=None, sPre="\t\t", OneLine=True):
     '''
     create an Rocoto environment variable given name and value
     returns the environment variable as a string
@@ -1554,13 +1602,23 @@ def create_envar(name=None, value=None, sPre="\t\t"):
     :rtype: str
     '''
     string = ''
-    string += sPre + '<envar>\n'
-    string += sPre + '\t<name>{0}</name>\n'.format(name)
-    # if value.startswith("@"):
-    if "@" in value:
-        string += sPre + '\t<value><cyclestr>{0}</cyclestr></value>\n'.format(value)
+    if OneLine:
+        string += sPre + '<envar>'
+        string += '<name>{0}</name>'.format(name)
+        # if value.startswith("@"):
+        if "@" in value:
+            string += '<value><cyclestr>{0}</cyclestr></value>'.format(value)
+        else:
+            string += '<value>{0}</value>'.format(value)
+        string += '</envar>\n'
     else:
-        string += sPre + '\t<value>{0}</value>\n'.format(value)
-    string += sPre + '</envar>\n'
+        string += sPre + '<envar>\n'
+        string += sPre + '\t<name>{0}</name>\n'.format(name)
+        # if value.startswith("@"):
+        if "@" in value:
+            string += sPre + '\t<value><cyclestr>{0}</cyclestr></value>\n'.format(value)
+        else:
+            string += sPre + '\t<value>{0}</value>\n'.format(value)
+        string += sPre + '</envar>\n'
 
     return string

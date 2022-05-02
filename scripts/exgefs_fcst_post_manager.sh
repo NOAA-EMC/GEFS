@@ -143,10 +143,18 @@ do
             # Remove current fhr from list
             prdgenhr=`echo $prdgenhr | sed "s/${fhr}//"`
             if [ $fhr -eq 192 ]; then
-                ecflow_client --event pgrb2abp5_f192_ready
+                if [[ $SENDECF == "YES" ]]; then
+                    ecflow_client --event pgrb2abp5_f192_ready
+                else
+                    echo "pgrb2abp5_f192_ready"
+                fi
             fi
             if [ $fhr -eq 240 ]; then
-                ecflow_client --event gefswave_f240_ready
+                if [[ $SENDECF == "YES" ]]; then
+                    ecflow_client --event gefswave_f240_ready
+                else
+                    echo "gefswave_f240_ready"
+                fi
             fi
         fi
     done

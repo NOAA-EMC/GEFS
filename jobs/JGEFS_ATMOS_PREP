@@ -12,8 +12,8 @@ export PS4='$SECONDS + $(basename $(basename $BASH_SOURCE))[$LINENO] '
 ####################################
 # Determine Job Output Name on System
 ####################################
-export jobid=${jobid:-"$job.$LSB_JOBID"}
-export pgmout="OUTPUT.${LSB_JOBID}"
+export jobid=${jobid:-"$job.$PBS_JOBID"}
+export pgmout="OUTPUT.${PBS_JOBID}"
 export pgmerr=errfile
 
 ####################################
@@ -27,7 +27,7 @@ cd $DATA
 # Set up compute resources
 ######################################
 export total_tasks=${total_tasks:-36}  # Must be divisible number of tiles (6)
-export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
+export APRUN=${gefsmpexec:-"mpiexec -n $total_tasks"}
 
 ####################################
 # Specify NET and RUN Name and model
@@ -57,7 +57,7 @@ source PDY
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export HOMEgefs=${HOMEgefs:-${PACKAGEROOT}/gefs.${gefs_ver}}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 export USHgefs=${USHgefs:-$HOMEgefs/ush}
@@ -66,10 +66,10 @@ export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
 ##############################################
 # Define COM directories
 ##############################################
+ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
 export COMPONENT="atmos"
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/$COMPONENT}
-export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
-
+export COMOUT=${COMOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc/$COMPONENT}
+export GESOUT=${GESOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc/nwges}
 #############################
 # Source relevant config files
 #############################
@@ -79,16 +79,15 @@ for config in $configs; do
     . $config_path/$config.parm
     export err=$?
     if [[ $err != 0 ]]; then
-    	echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file $config_path/$config.parm"
-    	exit $err
+        echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file $config_path/$config.parm"
+        exit $err
     fi
 done
 
-export COMINgfs=${COMINgfs:-$(compath.py gfs/prod)/gfs.${PDY}/${cyc}/atmos}
-export COMINenkf=${COMINenkf:-$(compath.py gfs/prod)/enkfgdas.${pdyp}/${cycp}/atmos}
+export COMINgfs=${COMINgfs:-$(compath.py ${envir}/com/gfs/${gfs_ver})/gfs.${PDY}/${cyc}/atmos}
+export COMINenkf=${COMINenkf:-$(compath.py ${envir}/com/gfs/${gfs_ver})/enkfgdas.${pdyp}/${cycp}/atmos}
 
 NCP=${NCP:-"/bin/cp -p"}
-export jlogfile=${jlogfile:-$DATA/jlogfile}
 
 echo "Environment before calling script"
 env | sort

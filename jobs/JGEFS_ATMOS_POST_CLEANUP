@@ -20,8 +20,8 @@ export PS4='$SECONDS + $(basename ${.sh.file})[$LINENO] '
 ####################################
 # Determine Job Output Name on System
 ####################################
-export jobid=${jobid:-"$job.$LSB_JOBID"}
-export pgmout="OUTPUT.${LSB_JOBID}"
+export jobid=${jobid:-"$job.$PBS_JOBID"}
+export pgmout="OUTPUT.${PBS_JOBID}"
 export pgmerr=errfile
 
 ####################################
@@ -59,20 +59,21 @@ source PDY
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export HOMEgefs=${HOMEgefs:-${PACKAGEROOT}/gefs.${gefs_ver}}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 ##############################################
 # Define COM directories
 ##############################################
+ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
 if [ $cyc = 00 ]; then
-    export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDYm1}/${cyc}}
-    export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDYm1}/${cyc}}
-    export GESOUT=${GESOUT:-${GESROOT}/$envir/${RUN}.${PDYm1}/${cyc}}
+    export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDYm1}/$cyc}
+    export COMOUT=${COMOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDYm1}/$cyc}
+    export GESOUT=${GESOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDYm1}/$cyc/nwges}
 else
-    export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}}
-    export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/${cyc}}
-    export GESOUT=${GESOUT:-${GESROOT}/$envir/${RUN}.${PDY}/${cyc}}
+    export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
+    export COMOUT=${COMOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc}
+    export GESOUT=${GESOUT:-$(compath.py $NET/${ver})/${RUN}.${PDY}/$cyc/nwges}
 fi
 
 ##############################################
@@ -84,13 +85,11 @@ for config in $configs; do
     . $config_path/$config.parm
     export err=$?
     if [[ $err != 0 ]]; then
-    	echo "FATAL ERROR in ${.sh.file}: Error while loading parm file $config_path/$config.parm"
-    	exit $err
+        echo "FATAL ERROR in ${.sh.file}: Error while loading parm file $config_path/$config.parm"
+        exit $err
     fi
 done
 export COMPONENT="atmos"
-
-export jlogfile=${jlogfile:-$DATA/jlogfile}
 
 echo "Environment before calling script"
 env | sort

@@ -123,14 +123,14 @@ for level in ${levels}; do
 
 		fn=ecmwf
 		rm -rf ${fn}
-		if [ -r $COMINecmwf/ecmwf.${ECM_PDY}/gempak/ecmwf_hr_${ECM_PDY}${ECM_cyc}f${fcsthr} ]; then
-			 ln -s $COMINecmwf/ecmwf.${ECM_PDY}/gempak/ecmwf_hr_${ECM_PDY}${ECM_cyc}f${fcsthr} ${fn}
+		if [ -r $COMINecmwf.${ECM_PDY}/gempak/ecmwf_hr_${ECM_PDY}${ECM_cyc}f${fcsthr} ]; then
+			 ln -s $COMINecmwf.${ECM_PDY}/gempak/ecmwf_hr_${ECM_PDY}${ECM_cyc}f${fcsthr} ${fn}
 		fi
 
 		fn=ukmet
 		rm -rf ${fn}
-		if [ -r ${COMINecmwf}.${ECM_PDY}/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ]; then
-			 ln -s ${COMINecmwf}.${ECM_PDY}/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ${fn}
+		if [ -r ${COMINukmet}.${ECM_PDY}/gempak/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ]; then
+			 ln -s ${COMINukmet}.${ECM_PDY}/gempak/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ${fn}
 		fi
 
 		fn=dgex

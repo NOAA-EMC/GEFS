@@ -1,0 +1,37 @@
+#PBS -N gefs_atmos_post_cleanup_%CYC%
+#PBS -j oe
+#PBS -S /bin/bash
+#PBS -q %QUEUE%
+#PBS -A %PROJ%-%PROJENVIR%
+#PBS -l walltime=0:15:00
+#PBS -l place=vscatter,select=1:ncpus=1:mem=100MB
+#PBS -l debug=true
+
+set -x
+
+export model=gefs
+
+%include <head.h>
+%include <envir-p1.h>
+
+module load intel/$intel_ver
+
+module list
+
+# EXPORT list here
+ulimit -s unlimited
+ulimit -a
+
+export cyc=%CYC%
+
+export total_tasks=1
+export taskspernode=1
+export OMP_NUM_THREADS=1
+
+# CALL executable job script here
+${HOMEgefs}/jobs/JGEFS_ATMOS_POST_CLEANUP
+
+%include <tail.h>
+%manual
+# include manual page below
+%end

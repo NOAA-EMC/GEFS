@@ -5,7 +5,7 @@ ulimit -s unlimited
 ulimit -a
 
 # module_ver.h
-. $SOURCEDIR/versions/gefs_wcoss_dell_p35.ver
+. $GEFS_ROCOTO/dev/versions/gefs_wcoss_dell_p35.ver
 
 # Load modules
 . /usrx/local/prod/lmod/lmod/init/ksh

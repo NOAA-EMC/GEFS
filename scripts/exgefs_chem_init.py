@@ -21,7 +21,7 @@ init_file_pattern = "{path}/{kind}.{tile}.nc"
 increment_file_pattern = "{path}/fv3_increment.nc"
 restart_dest_pattern = "{path}/RESTART/{filename}"
 
-restart_base_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/{component}/restart"  # Time of previous run
+restart_base_pattern = "{com_in}/{run}.%Y%m%d/%H/{component}/restart"  # Time of previous run
 restart_file_pattern = "{restart_base}/%Y%m%d.%H0000.{kind}.{tile}.nc"                          # Time when restart is valid (current run)
 restart_core_res_file_pattern = "{restart_base}/%Y%m%d.%H0000.coupler.res"                      # Time when restart is valid (current run)
 restart_coupler_file_pattern = "{restart_base}/%Y%m%d.%H0000.fv_core.res.nc"                    # Time when restart is valid (current run)
@@ -31,7 +31,7 @@ n_tiles = 6
 
 analysis_file_pattern = "{com_gfs}/gfs.t%Hz.atmanl.nc"
 com_base_pattern = "{com_out}/init"
-fcst_file_pattern = "{com_root}/{net}/{envir}/{run}.%Y%m%d/%H/{component}/sfcsig/ge{member}.t%Hz.atmf{forecast_hour:03}.nemsio"
+fcst_file_pattern = "{com_in}/{run}.%Y%m%d/%H/{component}/sfcsig/ge{member}.t%Hz.atmf{forecast_hour:03}.nemsio"
 
 max_lookback = 1  # Maximum number of cycles backwards to search for files
 
@@ -81,10 +81,10 @@ def main() -> None:
     job = get_env_var('job')
     ges_in = get_env_var('GESIN')
     ges_out = get_env_var('GESOUT')
-    com_root = get_env_var('COMROOT')
+    com_in = get_env_var('COMIN')
     com_out = get_env_var('COMOUT')
     com_gfs = get_env_var('COMINgfs')
-    envir = get_env_var('envir')
+    ver = get_env_var('ver')
     data = get_env_var('DATA')
     ush_gfs = get_env_var('USHgfs')
     parm_gefs = get_env_var('PARMgefs')
@@ -110,8 +110,8 @@ def main() -> None:
 
     time = datetime.strptime(cdate, "%Y%m%d%H")
 
-    atm_source_path = time.strftime(init_path_pattern.format(ges_inout=ges_in, envir=envir, member="c00"))
-    destination_path = time.strftime(init_path_pattern.format(ges_inout=ges_out, envir=envir, member="aer"))
+    atm_source_path = time.strftime(init_path_pattern.format(ges_inout=ges_in, ver=ver, member="c00"))
+    destination_path = time.strftime(init_path_pattern.format(ges_inout=ges_out, ver=ver, member="aer"))
 
     # Even with exist_ok=True, makedirs sometimes throws a FileExistsError
     with contextlib.suppress(FileExistsError):
@@ -123,22 +123,23 @@ def main() -> None:
             shutil.copy(full_file_name, destination_path)
 
     if (init_type == "warm"):
-        prev_fcst_file = get_previous_forecast(time=time, incr=incr, max_lookback=max_lookback, com_root=com_root, net=net, envir=envir, run=run)
+        prev_fcst_file = get_previous_forecast(time=time, incr=incr, max_lookback=max_lookback, com_in=com_in, net=net, ver=ver, run=run)
         prev_fcst_file_nc = convert_nemsio_to_nc(infile=prev_fcst_file, nemsio2nc_exec=nemsio2nc_exec)
 
         analysis_filename = regrid_analysis(time=time, regrid_aprun=regrid_aprun, regrid_exec=regrid_exec,
-                                            com_root=com_root, com_gfs=com_gfs, net=net, envir=envir, run=run,
+                                            com_in=com_in, com_gfs=com_gfs, net=net, ver=ver, run=run,
                                             n_lat=n_lat, n_lon=n_lon, ref_file=prev_fcst_file_nc)
 
         increment_filename = increment_file_pattern.format(path=destination_path)
 
         sfc_files = get_init_files(path=destination_path, kind="sfc_data")
 
-        restart_files = get_all_restart_files(time=time, incr=incr, max_lookback=max_lookback, com_root=com_root, net=net, envir=envir, run=run)
+        restart_files = get_all_restart_files(time=time, incr=incr, max_lookback=max_lookback, com_in=com_in, net=net, ver=ver, run=run)
 
         files_exist = restart_files is not None and analysis_filename is not None and prev_fcst_file_nc is not None and sfc_files is not None
 
         if(files_exist):
+            print("Warm start for chem!")
             # Link restart files
             # Even with exist_ok=True, makedirs sometimes throws a FileExistsError
             with contextlib.suppress(FileExistsError):
@@ -152,7 +153,7 @@ def main() -> None:
 
             # Calculate increment
             success = calc_increment(calcinc_aprun=calcinc_aprun, calcinc_exec=calcinc_exec, analysis_filename=analysis_filename, forecast_filename=prev_fcst_file_nc, increment_filename=increment_filename, imp_physics=imp_physics)
-
+            print("end time of calc increment: {0}".format(datetime.now()))
             for file in sfc_files:
                 tile = re.search(r'tile(\d)', file).group(0)
                 basename = os.path.basename(time.strftime(restart_file_pattern.format(restart_base="", kind="sfcanl_data", tile=tile)))
@@ -160,6 +161,7 @@ def main() -> None:
                 with contextlib.suppress(FileNotFoundError):
                     os.unlink(link)
                 os.symlink(file, link)
+                print("end time of sfc_files: {0}".format(datetime.now()))
 
         if(not files_exist or not success):
             print("WARNING: Could not calculate increment (previous forecast may be missing), reverting to cold start")
@@ -173,16 +175,19 @@ def main() -> None:
         tracer_list_file = tracer_list_file_pattern.format(parm_gefs=parm_gefs)
 
         atm_filenames = get_init_files(path=destination_path, kind="gfs_data")
-        restart_files = get_tracer_restart_files(time=time, incr=incr, max_lookback=max_lookback, com_root=com_root, net=net, envir=envir, run=run)
+        restart_files = get_tracer_restart_files(time=time, incr=incr, max_lookback=max_lookback, com_in=com_in, net=net, ver=ver, run=run)
 
         if (restart_files is not None):
             merge_tracers(merge_script, atm_filenames, restart_files, tracer_list_file)
 
     if(send_com):
         # Copy init files to COM
-        com_path = time.strftime(com_base_pattern.format(com_out=com_out, envir=envir, net=net, run=run, member="aer", component="chem"))
+        print("start time of send_com: {0}".format(datetime.now()))
+        com_path = time.strftime(com_base_pattern.format(com_out=com_out, ver=ver, net=net, run=run, member="aer", component="chem"))
         shutil.rmtree(com_path, ignore_errors=True)
+        print("end time of shutil.rmtree during send_com: {0}".format(datetime.now()))
         safe_copytree(destination_path, com_path)  # Copy data to COM
+        print("end time of send_com: {0}".format(datetime.now()))
 
     return
 
@@ -228,10 +233,10 @@ def get_init_files(path: str, kind: str) -> typing.List[str]:
 
 
 # Find the most recent forecast available
-def get_previous_forecast(time: datetime, incr: int, max_lookback: int, com_root: str, net: str, envir: str, run: str) -> str:
+def get_previous_forecast(time: datetime, incr: int, max_lookback: int, com_in: str, net: str, ver: str, run: str) -> str:
     for lookback in map(lambda i: incr * (i + 1), range(max_lookback)):
         last_time = time - timedelta(hours=lookback)
-        prev_fcst_file = last_time.strftime(fcst_file_pattern.format(com_root=com_root, net=net, envir=envir, run=run, member="aer", component="chem", forecast_hour=lookback))
+        prev_fcst_file = last_time.strftime(fcst_file_pattern.format(com_in=com_in, net=net, ver=ver, run=run, member="aer", component="chem", forecast_hour=lookback))
         found = os.path.isfile(prev_fcst_file)
         if(found):
             return prev_fcst_file
@@ -265,10 +270,10 @@ def convert_nemsio_to_nc(infile: str, nemsio2nc_exec: str) -> str:
 
 
 # Find last cycle with tracer data available via restart files
-def get_tracer_restart_files(time: datetime, incr: int, max_lookback: int, com_root: str, net: str, envir: str, run: str) -> typing.List[str]:
+def get_tracer_restart_files(time: datetime, incr: int, max_lookback: int, com_in: str, net: str, ver: str, run: str) -> typing.List[str]:
     for lookback in map(lambda i: incr * (i + 1), range(max_lookback)):
         last_time = time - timedelta(hours=lookback)
-        restart_base = last_time.strftime(restart_base_pattern.format(com_root=com_root, net=net, envir=envir, run=run, member="aer", component="chem"))
+        restart_base = last_time.strftime(restart_base_pattern.format(com_in=com_in, net=net, ver=ver, run=run, member="aer", component="chem"))
         files = list(time.strftime(restart_file_pattern.format(restart_base=restart_base, lookback=lookback, tile=tile, kind="fv_tracer.res")) for tile in tiles)
         found = [file for file in files if os.path.isfile(file)]
         if(found):
@@ -282,10 +287,10 @@ def get_tracer_restart_files(time: datetime, incr: int, max_lookback: int, com_r
 
 
 # Find last cycle with all needed restart files and return a list of those files
-def get_all_restart_files(time: datetime, incr: int, max_lookback: int, com_root: str, net: str, envir: str, run: str) -> typing.List[str]:
+def get_all_restart_files(time: datetime, incr: int, max_lookback: int, com_in: str, net: str, ver: str, run: str) -> typing.List[str]:
     for lookback in map(lambda i: incr * (i + 1), range(max_lookback)):
         last_time = time - timedelta(hours=lookback)
-        restart_base = last_time.strftime(restart_base_pattern.format(com_root=com_root, net=net, envir=envir, run=run, member="aer", component="chem"))
+        restart_base = last_time.strftime(restart_base_pattern.format(com_in=com_in, net=net, ver=ver, run=run, member="aer", component="chem"))
         kinds = ["fv_tracer.res", "fv_core.res", "fv_srf_wnd.res", "phy_data"]
         files = list(time.strftime(restart_file_pattern.format(restart_base=restart_base, lookback=lookback, tile=tile, kind=kind)) for (tile, kind) in itertools.product(tiles, kinds))
         core_res_file = time.strftime(restart_core_res_file_pattern.format(restart_base=restart_base, lookback=lookback))
@@ -316,7 +321,7 @@ def merge_tracers(merge_script: str, atm_filenames: typing.List[str], restart_fi
 
 
 # Regrid analysis file to ensemble resolution to create warm-start increment
-def regrid_analysis(time: datetime, regrid_aprun: str, regrid_exec: str, com_root: str, com_gfs: str, net: str, envir: str, run: str, n_lat: int, n_lon: int, ref_file: str) -> str:
+def regrid_analysis(time: datetime, regrid_aprun: str, regrid_exec: str, com_in: str, com_gfs: str, net: str, ver: str, run: str, n_lat: int, n_lon: int, ref_file: str) -> str:
     analysis_file = time.strftime(analysis_file_pattern.format(com_gfs=com_gfs))
     output_file = "atmanl.nc"
 

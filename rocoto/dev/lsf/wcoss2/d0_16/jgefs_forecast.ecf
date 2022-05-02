@@ -1,0 +1,110 @@
+#!/bin/sh
+#PBS -N jgefs_forecast_0_16d_c00_00
+#PBS -j oe
+#PBS -S /bin/bash
+#PBS -q dev
+#PBS -A GEFS-DEV
+#PBS -l walltime=4:30:00
+#PBS -l place=vscatter,select=2:ncpus=128:mpiprocs=128:mem=500GB+1:ncpus=64:mpiprocs=64:mem=250GB
+#PBS -l debug=true
+
+##PBS -l place=vscatter,select=3:ncpus=128:mpiprocs=128:mem=500GB
+
+set -x
+
+cd $PBS_O_WORKDIR
+
+#module purge
+export MEMBER=${MEMBER:-c00}
+
+export model=gefs
+# to get HOMEgefs
+f=lsf_common.sh
+if [[ -f "$f" ]]; then
+    echo "$f exists."
+    source $f
+elif [[ -f "../$f" ]]; then
+    echo "../$f exists."
+    source ../$f
+elif [[ -f "../../$f" ]]; then
+    echo "../../$f exists."
+    source ../../$f
+elif [[ -f "../../../$f" ]]; then
+    echo "../../../$f exists."
+    source ../../../$f
+fi
+. ${HOMEgefs}/versions/run.ver
+
+module purge
+module load envvar/$envvar_ver
+module load PrgEnv-intel/$PrgEnv_intel_ver
+module load craype/$craype_ver
+module load intel/$intel_ver
+
+module load cray-mpich/$cray_mpich_ver
+module load cray-pals/$cray_pals_ver
+
+module load prod_util/$prod_util_ver
+module load prod_envir/$prod_envir_ver
+
+module load netcdf/$netcdf_ver
+module load hdf5/$hdf5_ver
+#module load lsf/$lsf_ver
+module load cfp/$cfp_ver
+export USE_CFP=YES
+
+module list
+
+# EXPORT list here
+ulimit -s unlimited
+ulimit -a
+
+f=lsf_common.sh
+if [[ -f "$f" ]]; then
+    echo "$f exists."
+    source $f
+elif [[ -f "../$f" ]]; then
+    echo "../$f exists."
+    source ../$f
+elif [[ -f "../../$f" ]]; then
+    echo "../../$f exists."
+    source ../../$f
+elif [[ -f "../../../$f" ]]; then
+    echo "../../../$f exists."
+    source ../../../$f
+fi
+
+#---
+export RUNMEM=ge${MEMBER}
+
+#----
+#export layout_x=6
+#export layout_y=6
+#export WRITE_GROUP=1
+#export WRTTASK_PER_GROUP=16
+#export parallel_threads=1
+
+#export npe_wav=88 #120
+#export coupling_interval_sec=3600
+
+#export cplwav=".true."
+
+#---For Debug
+#export ESMF_RUNTIME_PROFILE=ON
+#export ESMF_RUNTIME_PROFILE_OUTPUT=SUMMARY
+#export print_memory_usage=".true." #".false."
+
+#export total_tasks=$((layout_x * layout_y * 6 + WRTTASK_PER_GROUP * WRITE_GROUP + npe_wav)) #320
+export total_tasks=320
+#export taskspernode=40
+export COREPERNODE=128
+
+export FORECAST_SEGMENT=hr
+export OMP_NUM_THREADS=1
+#export RERUN="YES"
+
+#export gefsmpexec="mpiexec -n $total_tasks"
+
+export envir=prod
+# CALL executable job script here
+${HOMEgefs}/jobs/JGEFS_FORECAST

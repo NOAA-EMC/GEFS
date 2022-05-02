@@ -1,49 +1,12 @@
 #!/bin/ksh
 
-# ----------------------------------
-# options for NEMSIO
-# ----------------------------------
-export NEMSIO_IN=.true.
-export NEMSIO_OUT=.true.
-export nopdpvv=.true.
-
 export warm_start=".false."
 
 export pert_scaling=${pert_scaling:-0.8}
 
-# parameters for relocation, 1 for yes, 0 for no, cold_start or warm_start
-#relocflagana is added for relocation TC for analysis 
-export relocfact=0.05
-export relocflag=${relocflag:-0}
-export relocflagana=${relocflagana:-0} 
-#
-#control initial analysis and EnKF input type
-# inflag=0  FV3NEMSIO
-#       =1  GSM NEMSIO 
-#        2  GSM SIGIO
-export inflag=${inflag:-0}
-export outflag=6
-#export nmem_enkf=80    #number of ENKF members
-#(( num_pair_enkf = nmem_enkf / 2 ))
-#export num_pair_enkf=$num_pair_enkf
-#(( recentmem = npert ))
 (( recentmem = npert ))
 export recentmem=$recentmem
-#(( npair = num_pair_enkf / 4 ))
 export npert=$npert
-#export nhrpair=$((npert/2))
-
-
-# task and node assignments
-export initseparatetasks=40
-export initmasktasks=80
-#export initseparatenodes=1
-export initcombinetasks=40
-#export initcombinenodes=1
-
-# run parallel or serial et code
-export parallelinit=no
-export parallelinit=yes
 
 #cycles from fhrpstart back to fhrpend  (hr)
 export fhrpstart=$fhrp

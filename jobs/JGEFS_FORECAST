@@ -12,8 +12,8 @@ export PS4='$SECONDS + $(basename ${.sh.file})[$LINENO] '
 ####################################
 # Determine Job Output Name on System
 ####################################
-export jobid=${jobid:-"$job.$LSB_JOBID"}
-export pgmout="OUTPUT.${LSB_JOBID}"
+export jobid=${jobid:-"$job.$PBS_JOBID"}
+export pgmout="OUTPUT.${PBS_JOBID}"
 export pgmerr=errfile
 
 ####################################
@@ -26,8 +26,8 @@ cd $DATA
 ######################################
 # Set up compute resources
 ######################################
-export total_tasks=${total_tasks:-360}
-export APRUN=${gefsmpexec:-"mpirun -n $total_tasks"}
+export total_tasks=${total_tasks:-320}
+export APRUN=${gefsmpexec:-"mpiexec -n $total_tasks"}
 
 ####################################
 # Specify NET and RUN Name and model
@@ -62,7 +62,7 @@ fi
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export HOMEgefs=${HOMEgefs:-${PACKAGEROOT}/gefs.${gefs_ver}}
 export EXECgefs=${EXECgefs:-$HOMEgefs/exec}
 export USHgefs=${USHgefs:-$HOMEgefs/ush}
 export FIXgefs=${FIXgefs:-$HOMEgefs/fix/fix_gefs}
@@ -71,10 +71,11 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 ##############################################
 # Define COM directories
 ##############################################
-export COMIN=${COMIN:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}/$cyc}
-export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc}
-export GESIN=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
-export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
+ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
+export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
+export COMOUT=${COMOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc}
+export GESIN=${GESIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/nwges}
+export GESOUT=${GESOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc/nwges}
 
 #############################
 # Source relevant config files
@@ -93,9 +94,15 @@ done
 if [[ $cplchm = ".true." ]]; then
     COMPONENT="chem"
 fi
-export COMPONENT=${COMPONENT:-atmos}
+if [[ $cplwav = ".true." ]]; then
+    # Set location of wave restart from last cycle
+    last_date=$($NDATE -$WAVHCYC $CDATE)
+    last_PDY=$(echo $last_date | cut -c1-8)
+    last_cyc=$(echo $last_date | cut -c9-10)
+    export WRDIR=${WRDIR:-$(compath.py $envir/com/$NET/${ver})}/${RUN}.${last_PDY}/$last_cyc/wave/restart
+fi
 
-export jlogfile=${jlogfile:-$DATA/jlogfile}
+export COMPONENT=${COMPONENT:-atmos}
 
 echo "Environment before calling script"
 env | sort

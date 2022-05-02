@@ -42,6 +42,8 @@ if [ $machine = "nomachine" ]; then
         machine=wcoss
     elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then # We are on NOAA Mars or Venus
         machine=wcoss_dell_p3
+    elif [[ -d /apps/prod ]]; then # WCOSS2
+        machine=wcoss2
     else
         echo "This is not supported by this script!"
         exit 55
@@ -73,6 +75,8 @@ if [ $CompileCode = "yes" ]; then
             sHeader='/gpfs/hps'
         elif [[ $machine == "hera" ]]; then
             sHeader='/scratch2/NCEPDEV/ensemble'
+        elif [[ $machine == "wcoss2" ]]; then
+            sHeader='/lfs/h'
         fi
         sHOMEDIR=$(grep 'export HOMEDIR=${HOMEDIR:-'${sHeader} -r ${sWS}/parm/setbase | sed 's/export HOMEDIR=${HOMEDIR:-//g'| sed 's/}//g')
         echo $sHOMEDIR
@@ -107,6 +111,8 @@ if [ $Link = "yes" ]; then
         ./link_gefs.sh -e $RunEnvir -m cray
     elif [ $machine = "wcoss_dell_p3" ]; then
         ./link_gefs.sh -e $RunEnvir -m dell
+    elif [ $machine = "wcoss2" ]; then
+        ./link_gefs.sh -e $RunEnvir -m wcoss2
     fi
 fi
 
@@ -207,9 +213,18 @@ if [ $RunRocoto = "yes" ]; then
         module load lsf/10.1
         module load ruby/2.5.1
         module load rocoto/complete
-        module load python/3.6.3       
+        module load python/3.6.3
+    elif [ $machine = "wcoss2" ]; then
+        module load envvar/1.0
+
+        module load PrgEnv-intel/8.1.0
+        module load craype/2.7.10
+        module load intel/19.1.3.304
+        module load cray-mpich/8.1.9
+
+        module load python/3.8.6
+
     fi
-    #./py/run_to_get_all.py  $userConfigFile
     ./py/run_pyGEFS.py -r yes -f $userConfigFile
     echo "Generated xml and/or ent and updated bin file!"
 fi # For RunRocoto
@@ -241,6 +256,19 @@ if [ $AddCrontabToMyCrontab = "yes" ]; then
         py/add_crontab.py
         crontab $HOME/cron/mycrontab
         echo "Added crontab to $HOME/cron/mycrontab!"
+
+    elif [ $machine = "wcoss2" ]; then
+        if [ -f $HOME/cron/mycrontab ]; then
+            echo "Adding crontab to $HOME/cron/mycrontab!"
+        else
+            mkdir $HOME/cron
+            touch $HOME/cron/mycrontab
+        fi
+
+        py/add_crontab.py
+        crontab $HOME/cron/mycrontab
+        echo "Added crontab to $HOME/cron/mycrontab!"
+
     elif [ $machine = "wcoss_dell_p3" ]; then
         py/add_crontab.py
         echo "Added crontab to $HOME/cron/mycrontab!"

@@ -12,8 +12,8 @@ export PS4='$SECONDS + $(basename $BASH_SOURCE))[$LINENO] '
 ####################################
 # Determine Job Output Name on System
 ####################################
-export jobid=${jobid:-"$job.$LSB_JOBID"}
-export pgmout="OUTPUT.${LSB_JOBID}"
+export jobid=${jobid:-"$job.$PBS_JOBID"}
+export pgmout="OUTPUT.${PBS_JOBID}"
 export pgmerr=errfile
 
 ####################################
@@ -51,14 +51,15 @@ source PDY
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMEgefs=${HOMEgefs:-${NWROOT}/gefs.${gefs_ver}}
+export HOMEgefs=${HOMEgefs:-${PACKAGEROOT}/gefs.${gefs_ver}}
 export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 
 ##############################################
 # Define COM directories
 ##############################################
+ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
 export COMPONENT=chem
-export GESOUT=$GESROOT/${envir}/${RUN}.${PDY}/$cyc
+export GESOUT=${GESOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc/nwges}
 mkdir -p $GESOUT
 
 #############################
@@ -70,12 +71,17 @@ for config in $configs; do
     . $config_path/$config.parm
     export err=$?
     if [[ $err != 0 ]]; then
-    	echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file $config_path/$config.parm"
-    	exit $err
+        echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file $config_path/$config.parm"
+        exit $err
     fi
 done
 
-export jlogfile=${jlogfile:-$DATA/jlogfile}
+export GBBEPX_DATA_DIR_TODAY=${GBBEPX_DATA_DIR_TODAY:-$DCOMROOT/$PDY/firewx}
+export GBBEPX_DATA_DIR_YESTERDAY=${GBBEPX_DATA_DIR_YESTERDAY:-$DCOMROOT/$PDYm1/firewx}
+export BBEM_MODIS_DIR_TODAY=${BBEM_MODIS_DIR_TODAY:-$DCOMROOT/$PDY/modis_fire}
+export BBEM_MODIS_DIR_YESTERDAY=${BBEM_MODIS_DIR_YESTERDAY:-$DCOMROOT/$PDYm1/modis_fire}
+export BBEM_WFABBA_DIR_TODAY=${BBEM_WFABBA_DIR_TODAY:-$DCOMROOT/$PDY/wf_abba}
+export BBEM_WFABBA_DIR_YESTERDAY=${BBEM_WFABBA_DIR_YESTERDAY:-$DCOMROOT/$PDYm1/wf_abba}
 
 echo "Environment before calling script"
 env | sort

@@ -1,0 +1,45 @@
+#PBS -N gefs_atmos_ensavg_nemsio_%CYC%
+#PBS -j oe
+#PBS -S /bin/bash
+#PBS -q %QUEUE%
+#PBS -A %PROJ%-%PROJENVIR%
+#PBS -l walltime=2:00:00
+#PBS -l place=vscatter,select=1:prepost=false:ncpus=30:mpiprocs=30:mem=240GB
+#PBS -l debug=true
+
+set -x
+
+export model=gefs
+
+%include <head.h>
+%include <envir-p1.h>
+
+module load PrgEnv-intel/$PrgEnv_intel_ver
+module load craype/$craype_ver
+module load intel/$intel_ver
+module load cray-pals/$cray_pals_ver
+module load cray-mpich/$cray_mpich_ver
+module load netcdf/$netcdf_ver
+module load cfp/$cfp_ver
+
+export USE_CFP=YES
+
+module list
+
+# EXPORT list here
+ulimit -s unlimited
+ulimit -a
+
+export cyc=%CYC%
+
+export total_tasks=30
+export taskspernode=6
+export OMP_NUM_THREADS=1
+
+# CALL executable job script here
+${HOMEgefs}/jobs/JGEFS_ATMOS_ENSAVG_NEMSIO
+
+%include <tail.h>
+%manual
+# include manual page below
+%end

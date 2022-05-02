@@ -14,8 +14,8 @@ do
 
 done
 
-RUN_ENVIR=${RUN_ENVIR:-emc}
-machine=${machine:-dell}
+RUN_ENVIR=${RUN_ENVIR:-nco}
+machine=${machine:-wcoss2}
 
 echo $RUN_ENVIR
 echo $machine
@@ -37,6 +37,9 @@ elif [ $machine = "dell" ]; then
 elif [ $machine = "hera" ]; then
     FIX_DIR="/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix_20200927"
     FIX_DIR_FV3="/scratch1/NCEPDEV/global/glopara/fix"
+elif [ $machine == "wcoss2" ]; then
+    FIX_DIR="/lfs/h2/emc/ens/save/emc.ens/FIX/gefs/fix_nco_gefsv12"
+    FIX_DIR_FV3="/lfs/h2/emc/global/save/emc.global/FIX/fix_nco_gfsv15"
 fi
 
 # Delete Fix folder and relink/recopy it
@@ -70,23 +73,9 @@ if [[ -d global-workflow.fd ]] ; then
     cd ${pwd}
 fi
 
-# global-workflow
-#cd $pwd
-#if [[ -d global-workflow.fd ]] ; then
-#    if [[ ! -L global-workflow.fd ]] ; then
-#        echo "not link"
-#        cd global-workflow.fd/sorc
-#        #./link_fv3gfs.sh $RUN_ENVIR $machine
-#        cd ../../
-#    fi
-#fi
-
 # copy/link exec files
 cd $pwd
 if [[ -d global-workflow.fd ]] ; then
-    $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/nemsio_read ../exec/
-    $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/nemsio_get ../exec/
-    $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/exec/global_chgres ../exec/
 
     sPath=../sorc/global-workflow.fd/sorc/fv3gfs.fd/WW3/model/exe
     for sFile in ${sPath}/ww3_*
@@ -102,8 +91,8 @@ if [[ -d global-workflow.fd ]] ; then
     $LINK ${sPath}/ncep_post ../exec/gfs_ncep_post
 
     sPath=../sorc/global-workflow.fd/sorc/gsi.fd/exec
-    $LINK ${sPath}/getsigensmeanp_smooth.* ../exec/
-    $LINK ${sPath}/getsfcensmeanp.* ../exec/
+    $LINK ${sPath}/getsigensmeanp_smooth.x ../exec/
+    $LINK ${sPath}/getsfcensmeanp.x ../exec/
 
     sPath=../sorc/global-workflow.fd/exec
     $LINK ${sPath}/gfs_bufr ../exec/
@@ -137,8 +126,6 @@ fi
 # Copy/Link ush files
 cd $pwd
 if [[ -d global-workflow.fd ]] ; then
-    $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/ush/global_chgres_driver.sh ../ush/
-    $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/ush/global_chgres.sh ../ush/
     $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/ush/chgres_cube.sh ../ush/
 
     $LINK ../sorc/global-workflow.fd/sorc/gfs_post.fd/ush/gfs_nceppost.sh ../ush/
