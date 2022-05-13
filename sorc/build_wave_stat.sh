@@ -23,7 +23,13 @@ else
         source ../versions/build.ver
     fi
 fi
-source ../modulefiles/gefs/${progname}.$target
+
+if [[ $target == "wcoss2" ]]; then
+    module use ${cwd}/../modulefiles/gefs
+    module load ${progname}.${target}.lua
+else
+    source ../modulefiles/gefs/${progname}.$target
+fi
 
 # Check final exec folder exists
 if [ ! -d "../exec" ]; then
