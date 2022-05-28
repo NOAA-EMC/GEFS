@@ -422,8 +422,8 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
                 strings += sPre_2 + "<native>-R 'affinity[core(1)]'</native>\n"
     elif WHERE_AM_I.upper() == "wcoss2".upper():
 
-        if sMemory == "":  # if there is no memory in user configure, then add "excl" on wcoss2
-            strings += sPre_2 + '<native>-l place=vscatter:excl</native>\n'
+        if sMemory == "":  # if there is no memory in user configure, then add "exclhost" on wcoss2
+            strings += sPre_2 + '<native>-l place=vscatter:exclhost</native>\n'
         else:
             strings += sPre_2 + '<native>-l place=vscatter</native>\n'
 
