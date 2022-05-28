@@ -156,4 +156,4 @@ fi
 
 echo "$(date -u) end ${.sh.file}"
 
-exit $err
+#exit $err
