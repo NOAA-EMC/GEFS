@@ -20,7 +20,7 @@ if [[ -s poescript ]]; then rm poescript; fi
 ################################################################
 
 for script in $(cat $FIXgempak/gefs_meta_${cyc}); do
-    echo "$script" >> $DATA/poescript
+    eval echo "$script" >> $DATA/poescript
 done
 
 num=$(cat $DATA/poescript |wc -l) 
