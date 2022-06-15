@@ -947,9 +947,12 @@ def get_param_of_task(dicBase, taskname):
             # For 'chem_init' task
             if taskname.lower() == "chem_init":
                 sDep = "<and>"
-                for task in ["chem_prep_emissions", "init_recenter", "copy_init"]:
+                for task in ["chem_prep_emissions", "atmos_prep", "copy_init"]:
                     if DoesTaskExist(dicBase, task):
-                        sDep += "\n\t<taskdep task=\"{task}\"/>".format(task=task)
+                        if task == "atmos_prep":
+                            sDep += "\n\t<metataskdep metatask=\"{metatask}\"/>".format(metatask=task)
+                        else:
+                            sDep += "\n\t<taskdep task=\"{task}\"/>".format(task=task)
 
                 for task in ["chem_forecast"]:
                     if DoesTaskExist(dicBase, task):
