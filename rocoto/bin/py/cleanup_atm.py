@@ -57,7 +57,8 @@ output_dirs = ["f2d", "f3d", "cfssst", "ensstat", "init", "misc", "sflux", "gene
 				"pgrb2sp25", "pgrb2p25", "pgrb2ap5", "pgrb2bp5", "pgrb22p5", "sfcsig", 
                 "tctrack", "bufr", "wmo"]
 output_dirs_last_cyc = ["restart", "sfcsig_enkf", "track_enkf", "gempak"]
-output_dir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/atmos/{output_dir}"
+#output_dir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/atmos/{output_dir}"
+output_dir_pattern = "{work_dir}/dev/com/gefs/v12.2/gefs.%Y%m%d/%H/atmos/{output_dir}"
 
 # Read in environment variables and make sure they exist
 work_dir = os.environ.get("WORKDIR")
@@ -118,11 +119,14 @@ dirs_to_remove.append(time.strftime("{work_dir}/com/logs/jlogfiles/jlogfile.{exp
 
 for path in dirs_to_remove:
 	# print(path)
-	for f in glob.glob(path):
-		print("Removing " + f)
-		# Delete if it is a directory
-		with suppress(NotADirectoryError):
-			shutil.rmtree(f)
-		# Delete if it is a file
-		with suppress(FileNotFoundError):
-			os.remove(f)
+	if os.path.islink(path):
+		print("Skiping removing " + path)
+	else:
+		for f in glob.glob(path):
+			print("Removing " + f)
+			# Delete if it is a directory
+			with suppress(NotADirectoryError):
+				shutil.rmtree(f)
+			# Delete if it is a file
+			with suppress(FileNotFoundError):
+				os.remove(f)
