@@ -5,7 +5,7 @@ ulimit -s unlimited
 ulimit -a
 
 # module_ver.h
-. $SOURCEDIR/versions/gefs_wcoss_dell_p35.ver
+. $GEFS_ROCOTO/dev/versions/gefs_wcoss_dell_p35.ver
 
 # Load modules
 . /usrx/local/prod/lmod/lmod/init/ksh
@@ -34,6 +34,18 @@ module list
 #export KMP_STACKSIZE=2048M #Overrides common.sh
 #export KMP_AFFINITY=scatter
 #export RERUN="YES"
+
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc}
+export GESIN=${GESIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/nwges}
+export GESOUT=${GESOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc/nwges}
+
+if [[ $cplwav = ".true." ]]; then
+    # Set location of wave restart from last cycle
+    export WRDIR=${COMROOT}/${NET}/${envir}
+fi
+
+
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_FORECAST
 

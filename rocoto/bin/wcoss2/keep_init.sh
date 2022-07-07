@@ -1,11 +1,11 @@
-#!/bin/ksh
+#!/bin/ksh -l
 
 set -x
 ulimit -s unlimited
 ulimit -a
 
 # module_ver.h
-. $SOURCEDIR/versions/gefs_wcoss2.ver
+. $SOURCEDIR/versions/run.ver
 
 # Load modules
 . /usrx/local/prod/lmod/lmod/init/ksh
@@ -28,6 +28,8 @@ module list
 
 # Export List
 #export NTHREADS_SIGCHGRS=${GEFS_TPP:-6}
+export OMP_NUM_THREADS=1
+export envir=prod
 
 # CALL executable job script here
 $GEFS_ROCOTO/bin/py/keep_init.py

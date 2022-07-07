@@ -68,8 +68,8 @@ export COMPONENT=chem
 export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})}
 export COMOUT=${COMOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc/$COMPONENT}
 # Note: COMROOT is also used in child script to search for COMIN from previous cycles
-export GESIN=$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/atmos
-export GESOUT=$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc/nwges
+export GESIN=${GESIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/atmos}
+export GESOUT=${GESOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc/nwges}
 
 #############################
 # Source relevant config files

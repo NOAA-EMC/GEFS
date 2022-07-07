@@ -159,7 +159,10 @@ def create_folders(dicBase):
     if not os.path.exists(sPath):
         os.makedirs(sPath)
 
-    sPath = WORKDIR + '{0}com{0}output{0}dev{0}'.format(sSep)
+    if WHERE_AM_I.lower() == "wcoss2":
+        sPath = WORKDIR + '{0}dev{0}output{0}'.format(sSep)
+    else:
+        sPath = WORKDIR + '{0}com{0}output{0}dev{0}'.format(sSep)
     if not os.path.exists(sPath):
         os.makedirs(sPath)
 
@@ -171,6 +174,7 @@ def create_folders(dicBase):
     while date1 <= date2:
         sPath1 = sPath + date1.strftime('%Y%m%d')
         if not os.path.exists(sPath1):
+            #print(sPath1)
             os.makedirs(sPath1)
         date1 = date1 + day
 

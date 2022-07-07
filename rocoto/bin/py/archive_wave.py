@@ -32,7 +32,8 @@ from datetime import timedelta
 from functools import partial
 
 # File patterns
-workdir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/wave"
+#workdir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/wave"
+workdir_pattern = "{work_dir}/dev/com/gefs/v12.2/gefs.%Y%m%d/%H/wave"
 destination_pattern = "{hpss_path}/%Y/%Y%m/%Y%m%d"
 tarfile_pattern = "{destination_path}/gefs.%Y%m%d_%H.wave.{directory}.tar"
 tarfile_pattern_restart = "{destination_path}/gefs.%Y%m%d_%H+{interval:02d}.wave.{directory}.tar"

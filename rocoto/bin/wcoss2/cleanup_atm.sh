@@ -1,16 +1,17 @@
-#!/bin/ksh
+#!/bin/ksh -l
 
 set -x
 ulimit -s unlimited
 ulimit -a
 
 # module_ver.h
-. $SOURCEDIR/versions/gefs_wcoss2.ver
+. $SOURCEDIR/versions/run.ver
 
 # Load modules
-. /usrx/local/prod/lmod/lmod/init/ksh
-module list
 module purge
+module load envvar/$envvar_ver
+module load PrgEnv-intel/$PrgEnv_intel_ver
+module load intel/$intel_ver
 
 #module load EnvVars/$EnvVars_ver
 #module load ips/$ips_ver
@@ -28,6 +29,8 @@ module list
 
 # Export List
 #export NTHREADS_SIGCHGRS=${GEFS_TPP:-6}
+export OMP_NUM_THREADS=1
+export envir=prod
 
 # CALL executable job script here
 $GEFS_ROCOTO/bin/py/cleanup_atm.py

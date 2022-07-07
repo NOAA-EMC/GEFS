@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/ksh -l
 
 RocotoGen=${RocotoGen:-0}
 
@@ -13,21 +13,30 @@ export taskspernode=${GEFS_PPN}
 # Calculate the number of tasks based on the task geometry
 #(( NTASKS=$(echo $LSB_PJL_TASK_GEOMETRY | grep -Po "\d+" | sort -n | tail -1) + 1 ))
 #export NTASKS
+
+
 if [[ $RocotoGen == 0 ]]; then
-    export gefsmpexec="mpirun -n $total_tasks"
-    export gefsmpexec_mpmd="mpirun -n $total_tasks cfp mpmd_cmdfile"
-    export wavempexec="mpirun -n"
+    export gefsmpexec="mpiexec -n $total_tasks"
+    export gefsmpexec_mpmd="mpiexec -n $total_tasks cfp mpmd_cmdfile"
+    export wavempexec="mpiexec -n"
     export wave_mpmd="cfp"
 
     #export APRUNC="$gefsmpexec"
     #export APRUN_RECENT="$gefsmpexec"
-    export APRUN_CHGRES="mpirun -n 1"
+#    export APRUN_CHGRES="mpirun -n 1"
     #export aprun_gec00="mpirun -n 1"
-    export APRUN_CALCINC="mpirun -n 1"
+#    export APRUN_CALCINC="mpirun -n 1"
 
     . $GEFS_ROCOTO/parm/setbase
     . $GEFS_ROCOTO/parm/gefs_config
     . $GEFS_ROCOTO/parm/gefs_dev.parm
+
+    # For canned data
+    #export HOMEdata=/lfs/h1/ops
+    #export COMPATH=$HOMEdata/canned/com/gfs:$HOMEdata/canned/com/cfs:$HOMEdata/canned/com/nawips:$HOMEdata/canned/com/ecmwf:$HOMEdata/canned/com/nam:${WORKDIR}/$envir/com/${NET}
+    #export DCOMROOT=${HOMEdata}/canned/dcom
+    # For prod data
+    export COMPATH=${WORKDIR}/$envir/com/${NET}
 
 elif [[ $RocotoGen == 1 ]]; then
     export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
@@ -43,8 +52,6 @@ elif [[ $RocotoGen == 1 ]]; then
 
     # export DCOMROOT=${DCOMROOT:-/dcom} # CQPF
     # export PCOMROOT=$WORKDIR/pcom/$envir $For WAFS
-
-    export COMPATH=/gpfs/dell3/ptmp/emc.glopara/ROTDIRS/v16rt2/gfs/para
 
     ##export COMIN_WAV_ICE=/gpfs/dell1/nco/ops/com/omb/prod
 

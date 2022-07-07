@@ -5,7 +5,7 @@ ulimit -s unlimited
 ulimit -a
 
 # module_ver.h
-. $SOURCEDIR/versions/gefs_wcoss_dell_p35.ver
+. $GEFS_ROCOTO/dev/versions/gefs_wcoss_dell_p35.ver
 
 # Load modules
 . /usrx/local/prod/lmod/lmod/init/ksh
@@ -29,6 +29,8 @@ module list
 
 # Export List
 #export NTHREADS_SIGCHGRS=${GEFS_TPP:-6}
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc}
+export COMOUT=${COMOUT:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}/$cyc}
 
 # CALL executable job script here
 #$GEFS_ROCOTO/bin/py/archive_wave.py

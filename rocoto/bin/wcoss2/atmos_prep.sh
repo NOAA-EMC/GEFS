@@ -1,28 +1,29 @@
-#!/bin/bash
+#!/bin/ksh -l
 
 set -x
 ulimit -s unlimited
 ulimit -a
 
 # module_ver.h
-. $SOURCEDIR/versions/gefs_wcoss2.ver
+. $SOURCEDIR/versions/run.ver
 
 # Load modules
-. /usrx/local/prod/lmod/lmod/init/ksh
-module list
 module purge
+module load envvar/$envvar_ver
+module load PrgEnv-intel/$PrgEnv_intel_ver
+module load craype/$craype_ver
+module load intel/$intel_ver
 
-module load EnvVars/$EnvVars_ver
-module load ips/$ips_ver
-module load impi/$impi_ver
+module load cray-mpich/$cray_mpich_ver
+module load cray-pals/$cray_pals_ver
+
 module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
-module load HDF5-parallel/$HDF5_parallel_ver
-module load NetCDF-parallel/$NetCDF_parallel_ver
+module load hdf5/$hdf5_ver
+module load netcdf/$netcdf_ver
 
-module load lsf/$lsf_ver
+module load cfp/$cfp_ver
 
-module load CFP/$CFP_ver
 export USE_CFP=YES
 
 module list
@@ -33,5 +34,8 @@ module list
 # Export List
 (( OMP_NUM_THREADS_CH = 40 / GEFS_PPN ))
 export OMP_NUM_THREADS_CH
+
+export OMP_NUM_THREADS=1
+export envir=prod
 
 $SOURCEDIR/jobs/JGEFS_ATMOS_PREP

@@ -31,7 +31,8 @@ from datetime import datetime
 from functools import partial
 
 # File patterns
-workdir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/atmos"
+#workdir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/atmos"
+workdir_pattern = "{work_dir}/dev/com/gefs/v12.2/gefs.%Y%m%d/%H/atmos"
 destination_pattern = "{hpss_path}/%Y/%Y%m/%Y%m%d"
 tarfile_pattern = "{destination_path}/gefs.%Y%m%d_%H.atmos.{directory}.tar"
 
