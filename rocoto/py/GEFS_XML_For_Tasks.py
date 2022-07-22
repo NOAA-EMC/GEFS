@@ -185,6 +185,18 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "postsnd"
 
+         # #    <!-- makesbn jobs -->
+        if dicBase['RUN_MAKESBN'].upper()[0] == "Y":
+            # ---makesbn_hr
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "makesbn_hr"
+
+            # ---makesbn_lr
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "makesbn_lr"
+
         # #    <!-- track and gensis jobs -->
         if dicBase['RUN_TRACK'].upper()[0] == "Y":
             # ---enkf_track
@@ -462,10 +474,10 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
 
     # For FORECAST_SEGMENT
-    if (taskname in ['forecast_hr', 'prdgen_hr', 'post_hr', 'ensstat_hr', 'enspost_hr', 'chem_forecast', 'chem_post', 'chem_prdgen', 'fcst_post_manager']) \
+    if (taskname in ['forecast_hr', 'prdgen_hr', 'post_hr', 'ensstat_hr', 'enspost_hr', 'chem_forecast', 'chem_post', 'chem_prdgen', 'fcst_post_manager', 'makesbn_hr']) \
      or taskname.startswith("post_hr_") or taskname.startswith('chem_post_'):
         strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
-    elif taskname in ['forecast_lr', 'prdgen_lr', 'post_lr', 'ensstat_lr', 'enspost_lr']:
+    elif taskname in ['forecast_lr', 'prdgen_lr', 'post_lr', 'ensstat_lr', 'enspost_lr', 'makesbn_lr']:
         strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
 
     # For SUBJOB
@@ -505,6 +517,11 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("enspost", sPRE)
         else:
             strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("enspost", sPRE)
+    elif taskname in ['makesbn_hr', 'makesbn_lr']:
+        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper(), "WCOSS2".upper()]:
+            strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("makesbn", sPRE)
+        else:
+            strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("makesbn", sPRE)
     elif taskname.startswith("post_hr_"):
         strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("post_hr", sPRE)
     elif taskname.startswith("ensavg_nemsio_"):
@@ -1132,6 +1149,20 @@ def get_param_of_task(dicBase, taskname):
             if taskname.lower() == "enspost_lr":
                 if DoesTaskExist(dicBase, "prdgen_lr"):
                     sDep = '\n\t<metataskdep metatask="prdgen_lr"/>'
+                else:
+                    sDep = ''
+
+            # For 'makesbn_hr' task
+            if taskname.lower() == "makesbn_hr":
+                if DoesTaskExist(dicBase, "ensstat_hr"):
+                    sDep = '\n\t<taskdep task="ensstat_hr"/>'
+                else:
+                    sDep = ''
+
+            # For 'makesbn_lr' task
+            if taskname.lower() == "makesbn_lr":
+                if DoesTaskExist(dicBase, "ensstat_lr"):
+                    sDep = '\n\t<taskdep task="ensstat_lr"/>'
                 else:
                     sDep = ''
 
