@@ -422,8 +422,8 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
                 strings += sPre_2 + "<native>-R 'affinity[core(1)]'</native>\n"
     elif WHERE_AM_I.upper() == "wcoss2".upper():
 
-        if sMemory == "":  # if there is no memory in user configure, then add "excl" on wcoss2
-            strings += sPre_2 + '<native>-l place=vscatter:excl</native>\n'
+        if sMemory == "":  # if there is no memory in user configure, then add "exclhost" on wcoss2
+            strings += sPre_2 + '<native>-l place=vscatter:exclhost</native>\n'
         else:
             strings += sPre_2 + '<native>-l place=vscatter</native>\n'
 
@@ -947,9 +947,12 @@ def get_param_of_task(dicBase, taskname):
             # For 'chem_init' task
             if taskname.lower() == "chem_init":
                 sDep = "<and>"
-                for task in ["chem_prep_emissions", "init_recenter", "copy_init"]:
+                for task in ["chem_prep_emissions", "atmos_prep", "copy_init"]:
                     if DoesTaskExist(dicBase, task):
-                        sDep += "\n\t<taskdep task=\"{task}\"/>".format(task=task)
+                        if task == "atmos_prep":
+                            sDep += "\n\t<metataskdep metatask=\"{metatask}\"/>".format(metatask=task)
+                        else:
+                            sDep += "\n\t<taskdep task=\"{task}\"/>".format(task=task)
 
                 for task in ["chem_forecast"]:
                     if DoesTaskExist(dicBase, task):

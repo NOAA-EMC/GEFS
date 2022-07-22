@@ -57,7 +57,8 @@ output_dirs = ["f2d", "f3d", "cfssst", "ensstat", "init", "misc", "sflux", "gene
 				"pgrb2sp25", "pgrb2p25", "pgrb2ap5", "pgrb2bp5", "pgrb22p5", "sfcsig", 
                 "tctrack", "bufr", "wmo"]
 output_dirs_last_cyc = ["restart", "sfcsig_enkf", "track_enkf", "gempak"]
-output_dir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/atmos/{output_dir}"
+#output_dir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/atmos/{output_dir}"
+output_dir_pattern = "{work_dir}/dev/com/gefs/v12.2/gefs.%Y%m%d/%H/atmos/{output_dir}"
 
 # Read in environment variables and make sure they exist
 work_dir = os.environ.get("WORKDIR")
@@ -94,8 +95,8 @@ time_last_cyc = time + timedelta(hours=-6)
 dirs_to_remove = []
 
 # Working directories
-dirs_to_remove.append(time.strftime("{work_dir}/tmpnwprd/{exp_id}_%Y%m%d%H_*".format(work_dir=work_dir, exp_id=exp_id)))
-dirs_to_remove.append(time.strftime("{work_dir}/tmpnwprd/gefs_init_%Y%m%d%H.dev.save".format(work_dir=work_dir)))
+dirs_to_remove.append(time.strftime("{work_dir}/tmp/{exp_id}_%Y%m%d%H_*".format(work_dir=work_dir, exp_id=exp_id)))
+dirs_to_remove.append(time.strftime("{work_dir}/tmp/gefs_init_%Y%m%d%H.dev.save".format(work_dir=work_dir)))
 
 # Last cycle enkf directories
 for output_dir in output_dirs_last_cyc:
@@ -106,23 +107,28 @@ for output_dir in output_dirs:
 	dirs_to_remove.append(time.strftime(output_dir_pattern.format(work_dir=work_dir, output_dir=output_dir)))
 
 # Other init directories
-#dirs_to_remove.append(time.strftime("{work_dir}/nwges/dev/gefs.%Y%m%d/*.t%Hz.*".format(work_dir=work_dir)))
-dirs_to_remove.append(time.strftime("{work_dir}/nwges/dev/gefs.%Y%m%d/%H/c00".format(work_dir=work_dir)))
-dirs_to_remove.append(time.strftime("{work_dir}/nwges/dev/gefs.%Y%m%d/%H/p*".format(work_dir=work_dir)))
+#dirs_to_remove.append(time.strftime("{work_dir}/nwges/dev/gefs.%Y%m%d/%H/c00".format(work_dir=work_dir)))
+#dirs_to_remove.append(time.strftime("{work_dir}/nwges/dev/gefs.%Y%m%d/%H/p*".format(work_dir=work_dir)))
+dirs_to_remove.append(time.strftime(f"{work_dir}/dev/com/gefs/v12.2/gefs.%Y%m%d/%H/nwges/init/c00"))
+dirs_to_remove.append(time.strftime(f"{work_dir}/dev/com/gefs/v12.2/gefs.%Y%m%d/%H/nwges/init/p*"))
+dirs_to_remove.append(time.strftime(f"{work_dir}/dev/com/gefs/v12.2/gefs.%Y%m%d/%H/nwges/init/gfs_data*.nc"))
 
 # Log directory (probably want to keep these)
 # dirs_to_remove.append(work_dir + "/com/output/dev/" + pdy + "/*_" + cycle + ".*.bqs3")
 
 # jlog directory
-dirs_to_remove.append(time.strftime("{work_dir}/com/logs/jlogfiles/jlogfile.{exp_id}%Y%m%d%H*".format(work_dir=work_dir, exp_id=exp_id)))
-
+# dirs_to_remove.append(time.strftime("{work_dir}/com/logs/jlogfiles/jlogfile.{exp_id}%Y%m%d%H*".format(work_dir=work_dir, exp_id=exp_id)))
+print(dirs_to_remove)
 for path in dirs_to_remove:
 	# print(path)
-	for f in glob.glob(path):
-		print("Removing " + f)
-		# Delete if it is a directory
-		with suppress(NotADirectoryError):
-			shutil.rmtree(f)
-		# Delete if it is a file
-		with suppress(FileNotFoundError):
-			os.remove(f)
+	if os.path.islink(path):
+		print("Skiping removing " + path)
+	else:
+		for f in glob.glob(path):
+			print("Removing " + f)
+			# Delete if it is a directory
+			with suppress(NotADirectoryError):
+				shutil.rmtree(f)
+			# Delete if it is a file
+			with suppress(FileNotFoundError):
+				os.remove(f)

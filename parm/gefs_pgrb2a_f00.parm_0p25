@@ -18,6 +18,7 @@
 :CAPE:surface:
 :CIN:180-0 mb above ground:
 :CIN:surface:
+:CPOFP:surface:
 :HLCY:3000-0 m above ground:
 :TCDC:entire atmosphere:
 :WEASD:surface:
@@ -34,3 +35,5 @@
 :TSOIL:0-0.1
 :SOILW:0-0.1
 :MSLET:mean sea level:
+:VIS:surface:
+:HGT:cloud ceiling:
