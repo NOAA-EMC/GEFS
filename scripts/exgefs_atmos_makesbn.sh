@@ -23,8 +23,8 @@ echo "$(date -u) begin ${.sh.file}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
-        # Turn on strict bash error checking
-        set -eu
+    # Turn on strict bash error checking
+    set -eu
 fi
 
 ########################################
@@ -32,31 +32,32 @@ fi
 cd $DATA
 
 echo " ------------------------------------------"
-echo " BEGIN MAKING WMO-HEADED GEFS (MMEFS) GRIB2 PRODUCTS"
+echo " BEGIN MAKING WMO-HEADED GEFS GRIB2 PRODUCTS"
 echo " ------------------------------------------"
 
 gridp25="-170:441:0.25 75:241:-0.25"
 gridp5="-170:221:0.50 75:121:-0.50"
 
 if [ ${FORECAST_SEGMENT} = hr ]; then
-${USHgefs}/gefs_atmos_getsbn.sh avg apcp APCP pgrb2sp25 pgrb2s.0p25 0p25 003 240 3 "$gridp25"
-${USHgefs}/gefs_atmos_getsbn.sh avg tmax TMAX pgrb2sp25 pgrb2s.0p25 0p25 003 240 3 "$gridp25" 
-${USHgefs}/gefs_atmos_getsbn.sh avg tmin TMIN pgrb2sp25 pgrb2s.0p25 0p25 003 240 3 "$gridp25"
-${USHgefs}/gefs_atmos_getsbn.sh avg apcp APCP pgrb2ap5 pgrb2a.0p50 0p50 246 384 6 "$gridp5"
-${USHgefs}/gefs_atmos_getsbn.sh avg tmax TMAX pgrb2ap5 pgrb2a.0p50 0p50 246 384 6 "$gridp5"
-${USHgefs}/gefs_atmos_getsbn.sh avg tmin TMIN pgrb2ap5 pgrb2a.0p50 0p50 246 384 6 "$gridp5"
+    ${USHgefs}/gefs_atmos_getsbn.sh avg apcp APCP pgrb2sp25 pgrb2s.0p25 0p25 003 240 3 "$gridp25"
+    ${USHgefs}/gefs_atmos_getsbn.sh avg tmax TMAX pgrb2sp25 pgrb2s.0p25 0p25 003 240 3 "$gridp25"
+    ${USHgefs}/gefs_atmos_getsbn.sh avg tmin TMIN pgrb2sp25 pgrb2s.0p25 0p25 003 240 3 "$gridp25"
+    ${USHgefs}/gefs_atmos_getsbn.sh avg apcp APCP pgrb2ap5 pgrb2a.0p50 0p50 246 384 6 "$gridp5"
+    ${USHgefs}/gefs_atmos_getsbn.sh avg tmax TMAX pgrb2ap5 pgrb2a.0p50 0p50 246 384 6 "$gridp5"
+    ${USHgefs}/gefs_atmos_getsbn.sh avg tmin TMIN pgrb2ap5 pgrb2a.0p50 0p50 246 384 6 "$gridp5"
 else
-${USHgefs}/gefs_atmos_getsbn.sh avg apcp APCP pgrb2ap5 pgrb2a.0p50 0p50 390 840 6 "$gridp5"
-${USHgefs}/gefs_atmos_getsbn.sh avg tmax TMAX pgrb2ap5 pgrb2a.0p50 0p50 390 840 6 "$gridp5"
-${USHgefs}/gefs_atmos_getsbn.sh avg tmin TMIN pgrb2ap5 pgrb2a.0p50 0p50 390 840 6 "$gridp5"
+    ${USHgefs}/gefs_atmos_getsbn.sh avg apcp APCP pgrb2ap5 pgrb2a.0p50 0p50 390 840 6 "$gridp5"
+    ${USHgefs}/gefs_atmos_getsbn.sh avg tmax TMAX pgrb2ap5 pgrb2a.0p50 0p50 390 840 6 "$gridp5"
+    ${USHgefs}/gefs_atmos_getsbn.sh avg tmin TMIN pgrb2ap5 pgrb2a.0p50 0p50 390 840 6 "$gridp5"
 fi
 
 #####################################################################
 # GOOD RUN
 set +x
-echo "*********JOB JGEFS_ATMOS_MAKESBN HAS COMPLETED NORMALLY ON THE WCOSS******"
+echo "*********JOB ${.sh.file} HAS COMPLETED NORMALLY******"
 set -x
 #####################################################################
 
-exit
+echo "$(date -u) end ${.sh.file}"
+exit 0
 

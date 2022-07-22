@@ -11,20 +11,20 @@
 # History log:
 #   8/2015: Modified for WCOSS phase2
 #   4/2021: Dingchen Hou
-#	Substantial modified and coverted to a utility for colleting a variable,
+#	Substantial modified and converted to a utility for collecting a variable,
 #		Cutting to regional latlon grid abd adding WMO header
 #           (1) for a single variable (APCP, TMAX or TMIN)
 #           (2) for a single grid (and lead times) of GEFS v12, 0p25 (0-240h)  
 #		and 0p50 (246-384h and 390-840h)
 #           (3) for one ensemble member (ge*$mem, mem can be avg or spr) only
 #           (4) for a single output grid ($cutgrid) only
+#   07/22/2022: Xianwu Xue
+#               Port it to WCOSS2 and make some improvement
 ######################################################################
 
   msg="HAS BEGUN!"
-  postmsg "$jlogfile" "$msg"
+  echo "$msg"
 ########################################
-
-set -x 
 
 set +x
 echo " "
@@ -58,24 +58,23 @@ cd $DATA/$var
 id=ge$mem
 hr=$bhr
 while (( hr <= $ehr )); do
- 
-	hr3=`printf %03d $hr`
-	export pgm="postcheck"
-	set -x
-	ln -s ${COMIN}/atmos/${type}/${id}.t${cyc}z.${fntype}.f${hr3} ${id}.t${cyc}z.${type}f${hr3}
-	$WGRIB2 ${id}.t${cyc}z.${type}f${hr3} | grep "$nvar" | \
-		$WGRIB2 -i ${id}.t${cyc}z.${type}f${hr3} -grib ${id}.t${cyc}z.${type}f${hr3}_$var
-	cat  ${id}.t${cyc}z.${type}f${hr3}_$var >> ${id}.t${cyc}z.pgrb2.$gdtype.f${bhr}-${ehr}_$var
-	rm  ${id}.t${cyc}z.${type}f${hr3}*
-	(( hr = hr + $ihr ))
+    hr3=`printf %03d $hr`
+    export pgm="postcheck"
+    set -x
+    ln -s ${COMIN}/atmos/${type}/${id}.t${cyc}z.${fntype}.f${hr3} ${id}.t${cyc}z.${type}f${hr3}
+    $WGRIB2 ${id}.t${cyc}z.${type}f${hr3} | grep "$nvar" | \
+        $WGRIB2 -i ${id}.t${cyc}z.${type}f${hr3} -grib ${id}.t${cyc}z.${type}f${hr3}_$var
+    cat  ${id}.t${cyc}z.${type}f${hr3}_$var >> ${id}.t${cyc}z.pgrb2.$gdtype.f${bhr}-${ehr}_$var
+    rm  ${id}.t${cyc}z.${type}f${hr3}*
+    (( hr = hr + $ihr ))
 done
 
 #Cutting the files to latlon CONUS (170W-60W,75N-15N)
 file=ge${mem}.t${cyc}z.pgrb2.$gdtype.f${bhr}-${ehr}_$var
 $WGRIB2 $file $option1 $option21 $option22 $option23 $option24 \
-	$option25 $option26 $option27 $option28 \
-	-new_grid latlon $cutgrid \
-	$file\_conus
+	    $option25 $option26 $option27 $option28 \
+	    -new_grid latlon $cutgrid \
+	    $file\_conus
 
 ############################################
 # Processing GRIB2 GEFS grid 3 for MMEFS
@@ -95,7 +94,6 @@ echo " error from tocgrib2=",$err
 
 if [ $? -ne 0 ]; then
 	msg="WARNING: WMO header not added to $FORT11"
-	postmsg $jlogfile "$msg"
 	echo "$msg"
 fi 
 mv $FORT51 $DATA
@@ -107,23 +105,26 @@ cd $DATA
 fileout=${file}_TOC
 if [ -s $fileout ]; then
 	if [ "$SENDCOM" = YES ]; then
-            ##############################
-            # Post Files to PCOM
-            ##############################
-            cpfs $fileout $PCOM
+        ##############################
+        # Post Files to COMOUTwmo
+        ##############################
+        cpfs $fileout $COMOUTwmo
 
-            if [ "$SENDDBN_NTC" = YES ]; then
-               ##########################
-               # Distribute Data to NCF
-               #########################
-               $DBNROOT/bin/dbn_alert NTC_LOW $NET $job $PCOM/${fileout}
-            fi
+        if [ "$SENDDBN_NTC" = YES ]; then
+            ##########################
+            # Distribute Data to NCF
+            #########################
+            $DBNROOT/bin/dbn_alert NTC_LOW $NET $job $$COMOUTwmo/${fileout}
+        fi
 	fi
 else
 	err_exit "file $fileout was not generated"
 fi
 
 msg=" $var for $bhr to $ehr hours HAS COMPLETED NORMALLY!"
-postmsg "$jlogfile" "$msg"
+echo "$msg"
 
+echo "$(date -u) end ${.sh.file}"
+
+exit 0
 ############## END OF SCRIPT #######################
