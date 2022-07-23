@@ -299,7 +299,7 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
     # --------------------------
 
     cycledef = "gefs"
-    if taskname in ["forecast_lr", "post_lr", "prdgen_lr", "ensstat_lr", "enspost_lr", "cqpf"]:
+    if taskname in ["forecast_lr", "post_lr", "prdgen_lr", "ensstat_lr", "enspost_lr", "cqpf", "makesbn_lr"]:
         cycledef = "gefs_00z"
     elif taskname == "avg_gempak_vgf":
         cycledef = "gefs_00z,gefs_12z"
