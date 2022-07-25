@@ -105,7 +105,7 @@ fi
 
 #############################################################
 # Execute the script
-$HOMEgefs/scripts/exgefs_atmos_makesbn.sh
+$HOMEgefs/scripts/exgefs_atmos_awips.sh
 export err=?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"

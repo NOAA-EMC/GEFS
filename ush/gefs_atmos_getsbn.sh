@@ -56,6 +56,7 @@ mkdir $DATA/$var
 cd $DATA/$var
 #Selecting requested variable
 id=ge$mem
+file=grib2.gefs.t${cyc}z.${var}.f${bhr}_${ehr}
 hr=$bhr
 while (( hr <= $ehr )); do
     hr3=`printf %03d $hr`
@@ -64,17 +65,16 @@ while (( hr <= $ehr )); do
     ln -s ${COMIN}/atmos/${type}/${id}.t${cyc}z.${fntype}.f${hr3} ${id}.t${cyc}z.${type}f${hr3}
     $WGRIB2 ${id}.t${cyc}z.${type}f${hr3} | grep "$nvar" | \
         $WGRIB2 -i ${id}.t${cyc}z.${type}f${hr3} -grib ${id}.t${cyc}z.${type}f${hr3}_$var
-    cat  ${id}.t${cyc}z.${type}f${hr3}_$var >> ${id}.t${cyc}z.pgrb2.$gdtype.f${bhr}-${ehr}_$var
+    cat  ${id}.t${cyc}z.${type}f${hr3}_$var >> $file
     rm  ${id}.t${cyc}z.${type}f${hr3}*
     (( hr = hr + $ihr ))
 done
 
 #Cutting the files to latlon CONUS (170W-60W,75N-15N)
-file=ge${mem}.t${cyc}z.pgrb2.$gdtype.f${bhr}-${ehr}_$var
 $WGRIB2 $file $option1 $option21 $option22 $option23 $option24 \
 	    $option25 $option26 $option27 $option28 \
 	    -new_grid latlon $cutgrid \
-	    $file\_conus
+	    ${file}.conus_notoc
 
 ############################################
 # Processing GRIB2 GEFS grid 3 for MMEFS
@@ -85,10 +85,9 @@ pgm=tocgrib2
 startmsg
 
 # Processing GEFS (MMEFS) GRIB2 
-file=${file}_conus
-export FORT11=$file
-export FORT51=$FORT11\_TOC
-$TOCGRIB2 < $PARMgefs/gefs_sbn_grib2_${bhr}-${ehr}_$var >> $pgmout 2>errfile
+export FORT11=${file}.conus_notoc
+export FORT51=${file}.conus
+$TOCGRIB2 < $PARMgefs/wmo/grib2_awips_gefs_f${bhr}_${ehr}_${var}_conus >> $pgmout 2>errfile
 err=$?;export err ;err_chk
 echo " error from tocgrib2=",$err
 
@@ -101,8 +100,7 @@ mv $FORT51 $DATA
 cd $DATA
 
 # Sending files to COM area
-#fileout=ge${mem}.t${cyc}z.pgrb2.${gdtype}.f${bhr}-${ehr}_${var}_conus_TOC
-fileout=${file}_TOC
+fileout=${file}.conus
 if [ -s $fileout ]; then
 	if [ "$SENDCOM" = YES ]; then
         ##############################

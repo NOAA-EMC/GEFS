@@ -36,4 +36,4 @@ export OMP_NUM_THREADS=1
 export envir=prod
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_ATMOS_MAKESBN
+$SOURCEDIR/jobs/JGEFS_ATMOS_AWIPS
