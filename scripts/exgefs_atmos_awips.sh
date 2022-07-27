@@ -14,6 +14,8 @@
 #           Focus on grib2 files,using the gefs_mmefs_awips.sh ush scrip
 #           Including variable selctio, cutting to latlon regional grid,i
 #              and adding WMO headers
+#   07/2022: Xianwu Xue
+#           Improve, optimize and rename exgefs_atmos_awips.sh
 #
 ########################################
 
@@ -38,18 +40,20 @@ echo " ------------------------------------------"
 gridp25="-170:441:0.25 75:241:-0.25"
 gridp5="-170:221:0.50 75:121:-0.50"
 
-if [ ${FORECAST_SEGMENT} = hr ]; then
-    ${USHgefs}/gefs_atmos_getsbn.sh avg apcp APCP pgrb2sp25 pgrb2s.0p25 0p25 003 240 3 "$gridp25"
-    ${USHgefs}/gefs_atmos_getsbn.sh avg tmax TMAX pgrb2sp25 pgrb2s.0p25 0p25 003 240 3 "$gridp25"
-    ${USHgefs}/gefs_atmos_getsbn.sh avg tmin TMIN pgrb2sp25 pgrb2s.0p25 0p25 003 240 3 "$gridp25"
-    ${USHgefs}/gefs_atmos_getsbn.sh avg apcp APCP pgrb2ap5 pgrb2a.0p50 0p50 246 384 6 "$gridp5"
-    ${USHgefs}/gefs_atmos_getsbn.sh avg tmax TMAX pgrb2ap5 pgrb2a.0p50 0p50 246 384 6 "$gridp5"
-    ${USHgefs}/gefs_atmos_getsbn.sh avg tmin TMIN pgrb2ap5 pgrb2a.0p50 0p50 246 384 6 "$gridp5"
-else
-    ${USHgefs}/gefs_atmos_getsbn.sh avg apcp APCP pgrb2ap5 pgrb2a.0p50 0p50 390 840 6 "$gridp5"
-    ${USHgefs}/gefs_atmos_getsbn.sh avg tmax TMAX pgrb2ap5 pgrb2a.0p50 0p50 390 840 6 "$gridp5"
-    ${USHgefs}/gefs_atmos_getsbn.sh avg tmin TMIN pgrb2ap5 pgrb2a.0p50 0p50 390 840 6 "$gridp5"
-fi
+for var in apcp tmax tmin
+do
+    nvar=$(echo $var|tr '[a-z]' '[A-Z]')
+    if [ ${FORECAST_SEGMENT} = hr ]; then
+        ${USHgefs}/gefs_atmos_getsbn.sh avg ${var} ${nvar} pgrb2sp25 pgrb2s.0p25 0p25 003 240 3 "$gridp25"
+        export err=$?; if [[ $err != 0 ]]; then exit $err; fi
+        ${USHgefs}/gefs_atmos_getsbn.sh avg ${var} ${nvar} pgrb2ap5 pgrb2a.0p50 0p50 246 384 6 "$gridp5"
+        export err=$?; if [[ $err != 0 ]]; then exit $err; fi
+    else
+        ${USHgefs}/gefs_atmos_getsbn.sh avg ${var} ${nvar} pgrb2ap5 pgrb2a.0p50 0p50 390 840 6 "$gridp5"
+        export err=$?; if [[ $err != 0 ]]; then exit $err; fi
+    fi
+done
+
 
 #####################################################################
 # GOOD RUN

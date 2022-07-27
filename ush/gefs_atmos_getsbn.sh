@@ -54,19 +54,18 @@ cutgrid=${10}
 
 mkdir $DATA/$var
 cd $DATA/$var
-#Selecting requested variable
-id=ge$mem
+# Selecting requested variable
 file=grib2.gefs.t${cyc}z.${var}.f${bhr}_${ehr}
 hr=$bhr
 while (( hr <= $ehr )); do
     hr3=`printf %03d $hr`
     export pgm="postcheck"
     set -x
-    ln -s ${COMIN}/atmos/${type}/${id}.t${cyc}z.${fntype}.f${hr3} ${id}.t${cyc}z.${type}f${hr3}
-    $WGRIB2 ${id}.t${cyc}z.${type}f${hr3} | grep "$nvar" | \
-        $WGRIB2 -i ${id}.t${cyc}z.${type}f${hr3} -grib ${id}.t${cyc}z.${type}f${hr3}_$var
-    cat  ${id}.t${cyc}z.${type}f${hr3}_$var >> $file
-    rm  ${id}.t${cyc}z.${type}f${hr3}*
+    file_temp=ge${mem}.t${cyc}z.${type}f${hr3}
+    ln -s ${COMIN}/atmos/${type}/ge${mem}.t${cyc}z.${fntype}.f${hr3} ${file_temp}
+    $WGRIB2 ${file_temp} | grep "$nvar" | $WGRIB2 -i ${file_temp} -grib ${file_temp}_$var
+    cat  ${file_temp}_$var >> $file
+    rm  ${file_temp}*
     (( hr = hr + $ihr ))
 done
 
@@ -88,7 +87,7 @@ startmsg
 export FORT11=${file}.conus_notoc
 export FORT51=${file}.conus
 $TOCGRIB2 < $PARMgefs/wmo/grib2_awips_gefs_f${bhr}_${ehr}_${var}_conus >> $pgmout 2>errfile
-err=$?;export err ;err_chk
+err=$?; export err; err_chk
 echo " error from tocgrib2=",$err
 
 if [ $? -ne 0 ]; then
