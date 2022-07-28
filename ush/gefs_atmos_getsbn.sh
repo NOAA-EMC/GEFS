@@ -15,15 +15,15 @@
 #		Cutting to regional latlon grid abd adding WMO header
 #           (1) for a single variable (APCP, TMAX or TMIN)
 #           (2) for a single grid (and lead times) of GEFS v12, 0p25 (0-240h)  
-#		and 0p50 (246-384h and 390-840h)
+#		        and 0p50 (246-384h and 390-840h)
 #           (3) for one ensemble member (ge*$mem, mem can be avg or spr) only
 #           (4) for a single output grid ($cutgrid) only
 #   07/22/2022: Xianwu Xue
-#               Port it to WCOSS2 and make some improvement
+#               Port it to WCOSS2 and make some improvements
 ######################################################################
 
-  msg="HAS BEGUN!"
-  echo "$msg"
+msg="HAS BEGUN!"
+echo "$msg"
 ########################################
 
 set +x
@@ -36,10 +36,6 @@ echo "                                         "
 echo "#########################################"
 echo " "
 set -x
-
-export SLEEP_TIME=900
-export SLEEP_INT=5
-export SLEEP_LOOP_MAX=`expr $SLEEP_TIME / $SLEEP_INT`
 
 mem=$1
 var=$2
@@ -78,8 +74,7 @@ $WGRIB2 $file $option1 $option21 $option22 $option23 $option24 \
 ############################################
 # Processing GRIB2 GEFS grid 3 for MMEFS
 ############################################
-
-pgm=tocgrib2
+export pgm=${TOCGRIB2}
 . prep_step
 startmsg
 
@@ -87,11 +82,11 @@ startmsg
 export FORT11=${file}.conus_notoc
 export FORT51=${file}.conus
 $TOCGRIB2 < $PARMgefs/wmo/grib2_awips_gefs_f${bhr}_${ehr}_${var}_conus >> $pgmout 2>errfile
-err=$?; export err; err_chk
+export err=$?; err_chk
 echo " error from tocgrib2=",$err
 
-if [ $? -ne 0 ]; then
-	msg="WARNING: WMO header not added to $FORT11"
+if [ $err -ne 0 ]; then
+	msg="WARNING: WMO header is not added to $FORT11"
 	echo "$msg"
 fi 
 mv $FORT51 $DATA
