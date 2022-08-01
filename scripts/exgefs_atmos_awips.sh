@@ -44,7 +44,7 @@ for var in apcp tmax tmin
 do
     nvar=$(echo $var|tr '[a-z]' '[A-Z]')
     if [ ${FORECAST_SEGMENT} = hr ]; then
-        ${USHgefs}/gefs_atmos_getsbn.sh avg ${var} ${nvar} pgrb2sp25 pgrb2s.0p25 0p25 003 240 3 "$gridp25"
+        ${USHgefs}/gefs_atmos_getsbn.sh avg ${var} ${nvar} pgrb2sp25 pgrb2s.0p25 0p25 006 240 6 "$gridp25"
         export err=$?; if [[ $err != 0 ]]; then exit $err; fi
         ${USHgefs}/gefs_atmos_getsbn.sh avg ${var} ${nvar} pgrb2ap5 pgrb2a.0p50 0p50 246 384 6 "$gridp5"
         export err=$?; if [[ $err != 0 ]]; then exit $err; fi
