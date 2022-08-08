@@ -27,7 +27,7 @@ cd $DATA
 # Set up compute resources
 ######################################
 export total_tasks=${total_tasks:-1}
-export OMP_NUM_THREADS=${OMP_NUM_THREADS:-2}
+export OMP_NUM_THREADS=${OMP_NUM_THREADS:-1}
 export APRUN=${gefsmpexec:-"mpiexec -n $total_tasks"}
 
 ####################################
