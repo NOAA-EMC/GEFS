@@ -40,7 +40,7 @@ export PATH=$PATH:.
 
 
 # For test in para
-export COMPATH=/lfs/h1/ops/prod/com/gfs:/lfs/h1/ops/prod/com/cfs:/lfs/h1/ops/prod/com/nawips:/lfs/h1/ops/prod/com/ecmwf:/lfs/h1/ops/prod/com/nam:/lfs/h1/ops/prod/com/obsproc:/lfs/h1/ops/prod/com/ukmet
-export DCOMROOT=/lfs/h1/ops/prod/dcom
+#export COMPATH=/lfs/h1/ops/prod/com/gfs:/lfs/h1/ops/prod/com/cfs:/lfs/h1/ops/prod/com/nawips:/lfs/h1/ops/prod/com/ecmwf:/lfs/h1/ops/prod/com/nam:/lfs/h1/ops/prod/com/obsproc:/lfs/h1/ops/prod/com/ukmet
+#export DCOMROOT=/lfs/h1/ops/prod/dcom
 
-export DBNLOG=YES
+#export DBNLOG=YES
