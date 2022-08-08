@@ -72,10 +72,11 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 ##############################################
 # Define COM directories
 ##############################################
+export COMPONENT=${COMPONENT:-atmos}
 ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
 export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
 export COMOUT=${COMOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc}
-export COMOUTwmo=${COMOUTwmo:-${COMOUT}/atmos/wmo}
+export COMOUTwmo=${COMOUTwmo:-${COMOUT}/${COMPONENT}/wmo}
 
 #############################
 # Source relevant config files
@@ -99,7 +100,7 @@ env | sort
 #############################################################
 # Execute the script
 $HOMEgefs/scripts/exgefs_atmos_awips.sh
-export err=?
+export err=$?
 if [[ $err == 0 ]]; then
     echo "$job completed normally!"
 else
