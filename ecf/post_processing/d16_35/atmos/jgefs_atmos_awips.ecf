@@ -4,7 +4,7 @@
 #PBS -q %QUEUE%
 #PBS -A %PROJ%-%PROJENVIR%
 #PBS -l walltime=0:15:00
-#PBS -l place=vscatter,select=1:ncpus=1:mem=300MB
+#PBS -l place=vscatter,select=1:ncpus=1:mem=2GB
 #PBS -l debug=true
 
 set -x
@@ -32,7 +32,7 @@ export cyc=%CYC%
 export total_tasks=1
 export OMP_NUM_THREADS=1
 export taskspernode=1
-export FORECAST_SEGMENT=hr
+export FORECAST_SEGMENT=lr
 
 # CALL executable job script here
 ${HOMEgefs}/jobs/JGEFS_ATMOS_AWIPS
