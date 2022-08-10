@@ -106,7 +106,7 @@ if [ -s $fileout ]; then
             ##########################
             # Distribute Data to NCF
             #########################
-            $DBNROOT/bin/dbn_alert NTC_LOW $NET $job $$COMOUTwmo/${fileout}
+            $DBNROOT/bin/dbn_alert NTC_LOW $NET $job $COMOUTwmo/${fileout}
         fi
 	fi
 else
