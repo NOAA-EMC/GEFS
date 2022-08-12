@@ -185,6 +185,18 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "postsnd"
 
+         # #    <!-- atmos_awips jobs -->
+        if dicBase['RUN_MAKESBN'].upper()[0] == "Y":
+            # ---atmos_awips_hr
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "atmos_awips_hr"
+
+            # ---atmos_awips_lr
+            iTaskName_Num += 1
+            sTaskName = "taskname_{0}".format(iTaskName_Num)
+            dicBase[sTaskName.upper()] = "atmos_awips_lr"
+
         # #    <!-- track and gensis jobs -->
         if dicBase['RUN_TRACK'].upper()[0] == "Y":
             # ---enkf_track
@@ -284,7 +296,7 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
     # --------------------------
 
     cycledef = "gefs"
-    if taskname in ["forecast_lr", "post_lr", "prdgen_lr", "ensstat_lr", "enspost_lr"]:
+    if taskname in ["forecast_lr", "post_lr", "prdgen_lr", "ensstat_lr", "enspost_lr", "cqpf", "atmos_awips_lr"]:
         cycledef = "gefs_00z"
 
     maxtries = 1
@@ -417,8 +429,8 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
                 strings += sPre_2 + "<native>-R 'affinity[core(1)]'</native>\n"
     elif WHERE_AM_I.upper() == "wcoss2".upper():
 
-        if sMemory == "":  # if there is no memory in user configure, then add "excl" on wcoss2
-            strings += sPre_2 + '<native>-l place=vscatter:excl</native>\n'
+        if sMemory == "":  # if there is no memory in user configure, then add "exclhost" on wcoss2
+            strings += sPre_2 + '<native>-l place=vscatter:exclhost</native>\n'
         else:
             strings += sPre_2 + '<native>-l place=vscatter</native>\n'
 
@@ -457,10 +469,10 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
 
     # For FORECAST_SEGMENT
-    if (taskname in ['forecast_hr', 'prdgen_hr', 'post_hr', 'ensstat_hr', 'enspost_hr', 'chem_forecast', 'chem_post', 'chem_prdgen', 'fcst_post_manager']) \
+    if (taskname in ['forecast_hr', 'prdgen_hr', 'post_hr', 'ensstat_hr', 'enspost_hr', 'chem_forecast', 'chem_post', 'chem_prdgen', 'fcst_post_manager', 'atmos_awips_hr']) \
      or taskname.startswith("post_hr_") or taskname.startswith('chem_post_'):
         strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
-    elif taskname in ['forecast_lr', 'prdgen_lr', 'post_lr', 'ensstat_lr', 'enspost_lr']:
+    elif taskname in ['forecast_lr', 'prdgen_lr', 'post_lr', 'ensstat_lr', 'enspost_lr', 'atmos_awips_lr']:
         strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
 
     # For SUBJOB
@@ -500,6 +512,11 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("enspost", sPRE)
         else:
             strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("enspost", sPRE)
+    elif taskname in ['atmos_awips_hr', 'atmos_awips_lr']:
+        if WHERE_AM_I.upper() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper(), "WCOSS2".upper()]:
+            strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("atmos_awips", sPRE)
+        else:
+            strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("atmos_awips", sPRE)
     elif taskname.startswith("post_hr_"):
         strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("post_hr", sPRE)
     elif taskname.startswith("ensavg_nemsio_"):
@@ -942,9 +959,12 @@ def get_param_of_task(dicBase, taskname):
             # For 'chem_init' task
             if taskname.lower() == "chem_init":
                 sDep = "<and>"
-                for task in ["chem_prep_emissions", "init_recenter", "copy_init"]:
+                for task in ["chem_prep_emissions", "atmos_prep", "copy_init"]:
                     if DoesTaskExist(dicBase, task):
-                        sDep += "\n\t<taskdep task=\"{task}\"/>".format(task=task)
+                        if task == "atmos_prep":
+                            sDep += "\n\t<metataskdep metatask=\"{metatask}\"/>".format(metatask=task)
+                        else:
+                            sDep += "\n\t<taskdep task=\"{task}\"/>".format(task=task)
 
                 for task in ["chem_forecast"]:
                     if DoesTaskExist(dicBase, task):
@@ -1126,6 +1146,33 @@ def get_param_of_task(dicBase, taskname):
                     sDep = '\n\t<metataskdep metatask="prdgen_lr"/>'
                 else:
                     sDep = ''
+
+            # For 'atmos_awips_hr' task
+            if taskname.lower() == "atmos_awips_hr":
+                if DoesTaskExist(dicBase, "ensstat_hr"):
+                    sDep = '\n\t<taskdep task="ensstat_hr"/>'
+                else:
+                    sDep = ''
+
+            # For 'atmos_awips_lr' task
+            if taskname.lower() == "atmos_awips_lr":
+                if DoesTaskExist(dicBase, "ensstat_lr"):
+                    sDep = '\n\t<taskdep task="ensstat_lr"/>'
+                else:
+                    sDep = ''
+
+            # For "cqpf" task
+            if taskname.lower() == "cqpf":
+                sDep = '<and>'
+                if DoesTaskExist(dicBase, "enspost_hr"):
+                    sDep += '<taskdep task="enspost_hr"/>'
+                if DoesTaskExist(dicBase, "enspost_lr"):
+                    sDep += '<taskdep task="enspost_lr"/>'
+
+                if sDep == '<and>':
+                    sDep = ""
+                else:
+                    sDep += '\n</and>'
 
             # For 'keep_data_atm' and 'archive_atm' tasks
             if taskname_org.lower() in ["keep_data_atm", "archive_atm"]:

@@ -50,7 +50,8 @@ print = partial(print, flush=True)
 # Output directories that need to be removed
 output_dirs = ["gridded", "station", "stats", "rundata", "gempak"]
 output_dirs_last_cyc = ["restart"]
-output_dir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/wave/{output_dir}"
+#output_dir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/wave/{output_dir}"
+output_dir_pattern = "{work_dir}/dev/com/gefs/v12.2/gefs.%Y%m%d/%H/wave/{output_dir}"
 
 # Read in environment variables and make sure they exist
 work_dir = os.environ.get("WORKDIR")
@@ -110,11 +111,14 @@ for output_dir in output_dirs:
 
 for path in dirs_to_remove:
 	# print(path)
-	for f in glob.glob(path):
-		print("Removing " + f)
-		# Delete if it is a directory
-		with suppress(NotADirectoryError):
-			shutil.rmtree(f)
-		# Delete if it is a file
-		with suppress(FileNotFoundError):
-			os.remove(f)
+	if os.path.islink(path):
+		print("Skiping removing " + path)
+	else:
+		for f in glob.glob(path):
+			print("Removing " + f)
+			# Delete if it is a directory
+			with suppress(NotADirectoryError):
+				shutil.rmtree(f)
+			# Delete if it is a file
+			with suppress(FileNotFoundError):
+				os.remove(f)

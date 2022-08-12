@@ -216,6 +216,8 @@ if [ $RunRocoto = "yes" ]; then
         module load rocoto/complete
         module load python/3.6.3
     elif [ $machine = "wcoss2" ]; then
+
+        module purge
         module load envvar/1.0
 
         module load PrgEnv-intel/8.1.0
@@ -224,6 +226,9 @@ if [ $RunRocoto = "yes" ]; then
         module load cray-mpich/8.1.9
 
         module load python/3.8.6
+
+        module use /apps/ops/test/nco/modulefiles/
+        module load core/rocoto/1.3.4
 
     fi
     ./py/run_pyGEFS.py -r yes -f $userConfigFile

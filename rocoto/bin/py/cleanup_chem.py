@@ -52,9 +52,10 @@ from functools import partial
 print = partial(print, flush=True)
 
 # Output directories that need to be removed
-output_dirs = ["pgrb2ap25_aer", "pgrb2ap50_aer", "misc", "master", "init"]
+output_dirs = ["pgrb2ap25", "pgrb2ap5", "misc", "master", "init"]
 output_dirs_last_cyc = ["restart", "sfcsig"]
-output_dir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/chem/{output_dir}"
+#output_dir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/chem/{output_dir}"
+output_dir_pattern = "{work_dir}/dev/com/gefs/v12.2/gefs.%Y%m%d/%H/chem/{output_dir}"
 
 # Read in environment variables and make sure they exist
 work_dir = os.environ.get("WORKDIR")
@@ -104,21 +105,25 @@ for output_dir in output_dirs:
 
 # Other init directories
 #dirs_to_remove.append(time.strftime("{work_dir}/nwges/dev/gefs.%Y%m%d/*.t%Hz.*".format(work_dir=work_dir)))
-dirs_to_remove.append(time.strftime("{work_dir}/nwges/dev/gefs.%Y%m%d/%H/init/aer".format(work_dir=work_dir)))
+#dirs_to_remove.append(time.strftime("{work_dir}/nwges/dev/gefs.%Y%m%d/%H/init/aer".format(work_dir=work_dir)))
+dirs_to_remove.append(time.strftime(f"{work_dir}/dev/com/gefs/v12.2/gefs.%Y%m%d/%H/nwges/init/aer"))
 
 # Log directory (probably want to keep these)
 # dirs_to_remove.append(work_dir + "/com/output/dev/" + pdy + "/*_" + cycle + ".*.bqs3")
 
 # jlog directory
 #dirs_to_remove.append(time.strftime("{work_dir}/com/logs/jlogfiles/jlogfile.{exp_id}%Y%m%d%H*".format(work_dir=work_dir, exp_id=exp_id)))
-
+print(dirs_to_remove)
 for path in dirs_to_remove:
 	# print(path)
-	for f in glob.glob(path):
-		print("Removing " + f)
-		# Delete if it is a directory
-		with suppress(NotADirectoryError):
-			shutil.rmtree(f)
-		# Delete if it is a file
-		with suppress(FileNotFoundError):
-			os.remove(f)
+	if os.path.islink(path):
+		print("Skiping removing " + path)
+	else:
+		for f in glob.glob(path):
+			print("Removing " + f)
+			# Delete if it is a directory
+			with suppress(NotADirectoryError):
+				shutil.rmtree(f)
+			# Delete if it is a file
+			with suppress(FileNotFoundError):
+				os.remove(f)
