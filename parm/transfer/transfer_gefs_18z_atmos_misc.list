@@ -32,6 +32,8 @@ _COMROOT_/gefs/_SHORTVER_/gefs._PDY_/
 + /18/atmos/ensstat/***
 + /18/atmos/misc/
 + /18/atmos/misc/***
++ /18/atmos/wmo/
++ /18/atmos/wmo/***
 - *
 B 1220000
 
@@ -44,5 +46,7 @@ _COMROOT_/gefs/_SHORTVER_/gefs._PDYm1_/
 + /18/atmos/ensstat/***
 + /18/atmos/misc/
 + /18/atmos/misc/***
++ /18/atmos/wmo/
++ /18/atmos/wmo/***
 - *
 B 1220000
