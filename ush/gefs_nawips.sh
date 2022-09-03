@@ -131,6 +131,7 @@ while [ $fhcnt -le $fend ] ; do
 	esac
 
     if [[ -f ${gempak_log_out}/${GEMGRD}.log ]]; then
+        echo "Skip ${GEMGRD} because ${gempak_log_out}/${GEMGRD}.log exits!"
         fhcnt=$((fhcnt+finc1))
         continue
     fi
