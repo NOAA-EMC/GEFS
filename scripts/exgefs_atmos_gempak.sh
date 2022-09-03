@@ -22,7 +22,7 @@ else
 fi
 
 if [ ! -d "${gempak_log_out}" ]; then
-    mkdir -P ${gempak_log_out}
+    mkdir -p ${gempak_log_out}
 fi
 
 ########################################################
