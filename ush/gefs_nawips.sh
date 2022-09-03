@@ -32,6 +32,7 @@ FHMAXHF=${9:-${FHMAXHF}}
 FHOUTHF=${10:-${FHOUTHF}}
 FHOUTLF=${11:-${FHOUTLF}}
 pgrdbType=${12:-${pdgrbType}} #:-pgrb2a}
+gempak_log_out=${13:-${gempak_log_out}}
 
 DATA_member=$DATA/${member}/$resolution
 mkdir -p $DATA_member
@@ -117,7 +118,6 @@ while [ $fhcnt -le $fend ] ; do
 			# This is for gefs
 			GRIBIN=${gempak_in}/${RUNM}.${cycle}.${pgrdbType}.${resolution}.f${fhr}
 			if [ $resolution = "1p00" ]; then
-			#if [ $resolution = "0p50" ]; then
 				GEMGRD=${RUNM}_${PDY}${cyc}f${fhr}
 			else
 				GEMGRD=${RUNM}_${resolution}_${PDY}${cyc}f${fhr}
@@ -130,6 +130,10 @@ while [ $fhcnt -le $fend ] ; do
 		GEMGRD=${RUNM}_${PDY}${cyc}f${fhr3} 
 	esac
 
+    if [[ -f ${gempak_log_out}/${GEMGRD}.log ]]; then
+        fhcnt=$((fhcnt+finc1))
+        continue
+    fi
 	GRIBIN_chk=${GRIBIN}.idx
 
 	icnt=1
@@ -210,12 +214,17 @@ while [ $fhcnt -le $fend ] ; do
 	fi
 	if [ $SENDCOM = "YES" ]; then
 		cpfs $GEMGRD $gempak_out/$GEMGRD
-		if [ $SENDDBN = "YES" ]; then
-			$DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job \
-			$gempak_out/$GEMGRD
-		else
-			echo "##### DBN_ALERT_TYPE is: ${DBN_ALERT_TYPE} #####"
-		fi
+		export err=$?
+		if [[ $err == 0 ]]; then
+		    echo "$(date -u) done!" > ${gempak_log_out}/${GEMGRD}.log
+
+            if [ $SENDDBN = "YES" ]; then
+                $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job \
+                $gempak_out/$GEMGRD
+            else
+                echo "##### DBN_ALERT_TYPE is: ${DBN_ALERT_TYPE} #####"
+            fi
+        fi
 	fi
 
 	let fhcnt=fhcnt+finc1
