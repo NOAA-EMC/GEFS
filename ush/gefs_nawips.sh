@@ -215,17 +215,13 @@ while [ $fhcnt -le $fend ] ; do
 	fi
 	if [ $SENDCOM = "YES" ]; then
 		cpfs $GEMGRD $gempak_out/$GEMGRD
-		export err=$?
-		if [[ $err == 0 ]]; then
-		    echo "$(date -u) done!" > ${gempak_log_out}/${GEMGRD}.log
-
-            if [ $SENDDBN = "YES" ]; then
-                $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job \
-                $gempak_out/$GEMGRD
-            else
-                echo "##### DBN_ALERT_TYPE is: ${DBN_ALERT_TYPE} #####"
-            fi
+        if [ $SENDDBN = "YES" ]; then
+            $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job \
+            $gempak_out/$GEMGRD
+        else
+            echo "##### DBN_ALERT_TYPE is: ${DBN_ALERT_TYPE} #####"
         fi
+        echo "$(date -u) done!" > ${gempak_log_out}/${GEMGRD}.log
 	fi
 
 	let fhcnt=fhcnt+finc1
