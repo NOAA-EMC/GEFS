@@ -20,6 +20,12 @@ if [[ ${STRICT:-NO} == "YES" ]]; then
 	set -eu
 fi
 
+if [[ $member == "c00" ]]; then
+    if [[ $cycle == "t06z"]]; then
+        fhsave="${fhsave} f012"
+    fi
+fi
+
 export MP_LABELIO=YES
 
 fhr=$SHOUR
