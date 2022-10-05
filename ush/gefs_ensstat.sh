@@ -169,10 +169,8 @@ for hour in $hours; do
 
 			###############################
 			# MODIFY THIS STATEMENT TO
-			# ALLOW A DIFFERENT NUMBER OF
-			# MEMBERS TO BE MISSING
+			# USE ALL MEMBERS
 			#
-			# CURRENTLY ALLOWS ONE MISSING
 			###############################
 			(( nfilesmin = nmem ))
 
