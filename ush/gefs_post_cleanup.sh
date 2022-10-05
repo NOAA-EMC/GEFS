@@ -21,7 +21,7 @@ if [[ ${STRICT:-NO} == "YES" ]]; then
 fi
 
 if [[ $member == "c00" ]]; then
-    if [[ $cycle == "t06z"]]; then
+    if [[ $cycle == "t06z" ]]; then
         fhsave="${fhsave} f012"
     fi
 fi
@@ -43,8 +43,11 @@ while [[ $fhr -le $FHOUR ]]; do
 		####################################
 		# Remove nemsio fcst and sflux files
 		####################################
-                echo $fhsave |grep $ffhr
-                err=$?
+		if [[ "$fhsave" == *"$ffhr"* ]]; then
+			err=0
+		else
+			err=9
+		fi
 		if [[ $err -ne 0 ]]; then
 			rm $COMOUT/$COMPONENT/sfcsig/ge$member.$cycle.atm${ffhr}.nemsio
 			rm $COMOUT/$COMPONENT/sfcsig/ge$member.$cycle.sfc${ffhr}.nemsio
