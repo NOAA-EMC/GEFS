@@ -1,4 +1,4 @@
-export gefs_ver=v12.3.0
+export gefs_ver=v12.3.1
 
 export gfs_ver=v16.2
 export cfs_ver=v2.3
@@ -38,9 +38,5 @@ export cfp_ver=2.0.4
 export USE_CFP=YES
 export PATH=$PATH:.
 
+export MAIL_LIST="Bing.Fu@noaa.gov,Walter.Kolczynski@noaa.gov,Xianwu.Xue@noaa.gov,nco.spa@noaa.gov"
 
-# For test in para
-#export COMPATH=/lfs/h1/ops/prod/com/gfs:/lfs/h1/ops/prod/com/cfs:/lfs/h1/ops/prod/com/nawips:/lfs/h1/ops/prod/com/ecmwf:/lfs/h1/ops/prod/com/nam:/lfs/h1/ops/prod/com/obsproc:/lfs/h1/ops/prod/com/ukmet
-#export DCOMROOT=/lfs/h1/ops/prod/dcom
-
-#export DBNLOG=YES
