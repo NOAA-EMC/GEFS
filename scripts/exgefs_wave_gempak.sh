@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 echo "$(date -u) begin $(basename $BASH_SOURCE)"
 
 if [[ ${STRICT:-NO} == "YES" ]]; then

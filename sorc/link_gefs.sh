@@ -35,10 +35,10 @@ elif [ $machine = "dell" ]; then
     FIX_DIR="/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/fv3gefs/fix_20200927"
     FIX_DIR_FV3="/gpfs/dell2/emc/modeling/noscrub/emc.glopara/git/fv3gfs/fix"
 elif [ $machine = "hera" ]; then
-    FIX_DIR="/scratch2/NCEPDEV/ensemble/noscrub/common/git/fv3gefs/fix_20200927"
+    FIX_DIR="/scratch2/NCEPDEV/ensemble/noscrub/common/FIX/gefs/fix_nco_gefsv12.3"
     FIX_DIR_FV3="/scratch1/NCEPDEV/global/glopara/fix"
 elif [ $machine == "wcoss2" ]; then
-    FIX_DIR="/lfs/h2/emc/ens/save/emc.ens/FIX/gefs/fix_nco_gefsv12"
+    FIX_DIR="/lfs/h2/emc/ens/save/emc.ens/FIX/gefs/fix_nco_gefsv12.3"
     FIX_DIR_FV3="/lfs/h2/emc/global/save/emc.global/FIX/fix_nco_gfsv15"
 fi
 

@@ -20,6 +20,8 @@ module list
 # For Development
 . $GEFS_ROCOTO/bin/wcoss2/common.sh
 
+export total_tasks=1
+export taskspernode=1
 export OMP_NUM_THREADS=1
 export envir=prod
 
