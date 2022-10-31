@@ -227,7 +227,7 @@ if [ $RunRocoto = "yes" ]; then
         module load python/3.8.6
 
         module use /apps/ops/test/nco/modulefiles/
-        module load core/rocoto/1.3.4
+        module load core/rocoto/1.3.5
 
     fi
     ./py/run_pyGEFS.py -r yes -f $userConfigFile
