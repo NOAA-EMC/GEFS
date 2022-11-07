@@ -98,6 +98,11 @@ for hour in $hours; do
 	export pfhr=$(printf "%03.0f" $hour)       # Zero-pad to three places
 	export ffhr="f${pfhr}"
 
+	if [[ -f $COMOUT/$COMPONENT/$pgad/geavg.${cycle}.$pgapre${ffhr}.idx ]] && [[ -f $COMOUT/$COMPONENT/$pgad/gespr.${cycle}.$pgapre${ffhr}.idx ]]; then
+		echo "Skip geavg.${cycle}.$pgapre${ffhr} & gespr.${cycle}.$pgapre${ffhr}"
+		continue
+	fi
+
 	nenspost=0
 
 	# set +x
@@ -164,20 +169,21 @@ for hour in $hours; do
 
 			###############################
 			# MODIFY THIS STATEMENT TO
-			# ALLOW A DIFFERENT NUMBER OF
-			# MEMBERS TO BE MISSING
+			# USE ALL MEMBERS
 			#
-			# CURRENTLY ALLOWS ONE MISSING
 			###############################
-			(( nfilesmin = nmem - 1 ))
+			(( nfilesmin = nmem ))
 
 			if (( nfiles < nfilesmin )); then
 				echo <<- EOF
 					FATAL ERROR in ${.sh.file} ($stream): Insufficient members found for f${fhr} to calculate stats at $(date) after ${SLEEP_TIME}s!
+						Please rerun it after all members are ready!
 						Total members:         $nmem
 						Min members for stats: $nfilesmin
 						Members found:         $nfiles
 					EOF
+				msg="WARNING: ${job}, stream ${stream} did not find all ensemble member for f${fhr}! Please rerun it after all members are ready!"
+				echo "$msg" | mail.py -c $MAIL_LIST
 				export err=9
 				err_chk
 			else
