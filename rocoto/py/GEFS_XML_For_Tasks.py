@@ -107,6 +107,12 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "enspost_hr"
 
+            # ---atmos_awips_hr
+            if dicBase['RUN_MAKESBN'].upper()[0] == "Y":
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "atmos_awips_hr"
+
             if dicBase['cplwav'] == ".true.":
                 # ---wave_post
                 iTaskName_Num += 1
@@ -152,6 +158,12 @@ def config_tasknames(dicBase):
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "enspost_lr"
 
+            # -- atmos_awips_lr
+            if dicBase['RUN_MAKESBN'].upper()[0] == "Y":
+                iTaskName_Num += 1
+                sTaskName = "taskname_{0}".format(iTaskName_Num)
+                dicBase[sTaskName.upper()] = "atmos_awips_lr"
+
         # #    <!-- gempak jobs -->
         if dicBase['RUN_GEMPAK'].upper()[0] == "Y":
             # ---gempak
@@ -184,18 +196,6 @@ def config_tasknames(dicBase):
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "postsnd"
-
-         # #    <!-- atmos_awips jobs -->
-        if dicBase['RUN_MAKESBN'].upper()[0] == "Y":
-            # ---atmos_awips_hr
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "atmos_awips_hr"
-
-            # ---atmos_awips_lr
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "atmos_awips_lr"
 
         # #    <!-- track and gensis jobs -->
         if dicBase['RUN_TRACK'].upper()[0] == "Y":
@@ -368,8 +368,6 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         strings += sPre_2 + '<walltime>{0}</walltime>\n'.format(sWalltime)
 
     if WHERE_AM_I.upper() == "wcoss2".upper():
-        ppn = dicBase["{0}_ppn".format(taskname).upper()]
-        strings += sPre_2 + '<nodesize>{0}</nodesize>\n'.format(ppn)
         strings += sPre_2 + '<native>-l debug=true</native>\n'
         strings += sPre_2 + '<native>-j oe</native>\n'
         strings += sPre_2 + '<native>-S /bin/bash</native>\n'
