@@ -20,6 +20,12 @@ if [[ ${STRICT:-NO} == "YES" ]]; then
 	set -eu
 fi
 
+if [[ $member == "c00" ]]; then
+    if [[ $cycle == "t06z" ]]; then
+        fhsave="${fhsave} f012"
+    fi
+fi
+
 export MP_LABELIO=YES
 
 fhr=$SHOUR
@@ -37,12 +43,10 @@ while [[ $fhr -le $FHOUR ]]; do
 		####################################
 		# Remove nemsio fcst and sflux files
 		####################################
-                echo $fhsave |grep $ffhr
-                err=$?
-		if [[ $err -ne 0 ]]; then
+		if [[ "$fhsave" != *"$ffhr"* ]]; then
 			rm $COMOUT/$COMPONENT/sfcsig/ge$member.$cycle.atm${ffhr}.nemsio
 			rm $COMOUT/$COMPONENT/sfcsig/ge$member.$cycle.sfc${ffhr}.nemsio
-		fi # [[ $fhr -ne $hrsave ]]
+		fi
 	fi # [[ "$SENDCOM" = "YES" ]]
 
 	if (( fhr < FHMAXHF )); then

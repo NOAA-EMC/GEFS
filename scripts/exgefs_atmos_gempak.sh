@@ -15,10 +15,15 @@ done
 
 if [[ $SENDCOM == "YES" ]]; then
     gempak_out=${COMOUT}/$COMPONENT/gempak
+    gempak_log_out=${COMOUT}/$COMPONENT/misc/gempak
 else
     gempak_out=${DATA}/gempak_out
+    gempak_log_out=${DATA}/misc/gempak
 fi
 
+if [ ! -d "${gempak_log_out}" ]; then
+    mkdir -p ${gempak_log_out}
+fi
 
 ########################################################
 ## Get member list
@@ -55,7 +60,7 @@ for member in $memberlist; do
                 ;;
         esac
         
-        echo "$HOMEgefs/ush/gefs_nawips.sh $RUNM $member $resolution ${GEMPAKgefs} ${gempak_in} ${gempak_out} ${fstart} ${fend} ${FHMAXHF} ${FHOUTHF} ${FHOUTLF} ${pdgrbType}" >> poescript
+        echo "$HOMEgefs/ush/gefs_nawips.sh $RUNM $member $resolution ${GEMPAKgefs} ${gempak_in} ${gempak_out} ${fstart} ${fend} ${FHMAXHF} ${FHOUTHF} ${FHOUTLF} ${pdgrbType} ${gempak_log_out}" >> poescript
     done
 done
 
