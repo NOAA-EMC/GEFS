@@ -67,7 +67,7 @@ done
 
 #Cutting the files to latlon CONUS (170W-60W,75N-15N)
 $WGRIB2 $file $option1 $option21 $option22 $option23 $option24 \
-	    $option25 $option26 $option27 $option28 \
+	    $option25 $option26 \
 	    -new_grid latlon $cutgrid \
 	    ${file}.conus_notoc
 

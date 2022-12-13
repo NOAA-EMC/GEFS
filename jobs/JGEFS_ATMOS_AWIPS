@@ -81,7 +81,7 @@ export COMOUTwmo=${COMOUTwmo:-${COMOUT}/${COMPONENT}/wmo}
 #############################
 # Source relevant config files
 #############################
-configs="gefs gefs_prdgen"
+configs="gefs gefs_awips"
 config_path=$PARMgefs
 for config in $configs; do
     . $config_path/$config.parm

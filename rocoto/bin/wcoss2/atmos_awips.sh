@@ -30,10 +30,10 @@ if [[ 1 == 0 ]]; then # when tests atmos_awips tasks only, it needs add pgrb2ap5
         mkdir -p $COMOUT/atmos
     fi
     if [ ! -d $COMOUT/atmos/pgrb2sp25 ]; then
-        ln -s /lfs/h1/ops/prod/com/gefs/v12.2/gefs.${PDY}/$cyc/atmos/pgrb2sp25 $COMOUT/atmos/pgrb2sp25
+        ln -s /lfs/h1/ops/prod/com/gefs/v12.3/gefs.${PDY}/$cyc/atmos/pgrb2sp25 $COMOUT/atmos/pgrb2sp25
     fi
     if [ ! -d $COMOUT/atmos/pgrb2ap5 ]; then
-        ln -s /lfs/h1/ops/prod/com/gefs/v12.2/gefs.${PDY}/$cyc/atmos/pgrb2ap5 $COMOUT/atmos/pgrb2ap5
+        ln -s /lfs/h1/ops/prod/com/gefs/v12.3/gefs.${PDY}/$cyc/atmos/pgrb2ap5 $COMOUT/atmos/pgrb2ap5
     fi
 fi
 

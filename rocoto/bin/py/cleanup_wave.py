@@ -51,7 +51,7 @@ print = partial(print, flush=True)
 output_dirs = ["gridded", "station", "stats", "rundata", "gempak"]
 output_dirs_last_cyc = ["restart"]
 #output_dir_pattern = "{work_dir}/com/gefs/dev/gefs.%Y%m%d/%H/wave/{output_dir}"
-output_dir_pattern = "{work_dir}/dev/com/gefs/v12.2/gefs.%Y%m%d/%H/wave/{output_dir}"
+output_dir_pattern = "{work_dir}/dev/com/gefs/v12.3/gefs.%Y%m%d/%H/wave/{output_dir}"
 
 # Read in environment variables and make sure they exist
 work_dir = os.environ.get("WORKDIR")
