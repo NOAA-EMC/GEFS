@@ -44,31 +44,6 @@ if [ -d /scratch2/NCEPDEV ]; then
     export gbbepx_list="GBBEPx.bc GBBEPx.oc GBBEPx.so2 GBBEPx.pm25 meanFRP"
     export inout_list="BBURN3-bb,ebu_pm_10 SO4-bb,ebu_sulf plume,plumestuff GBBEPx.bc,ebu_bc GBBEPx.oc,ebu_oc GBBEPx.so2,ebu_so2 GBBEPx.pm25,ebu_pm_25 meanFRP,plumefrp"
 
-elif [[ -d /gpfs/hps && -e /etc/SuSE-release ]] ; then
-    echo "Using settings for WCOSS Cray"
-    export machine='WCOSS_C'
-    export JOBPHASE=
-    export HOMEDIR=${HOMEDIR:-/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/global_workflow/gefs_v12.1.0}
-    export HOMEtrak=/gpfs/hps3/emc/ensemble/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
-    export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
-    export archsyndir=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/TCvitalData/syndat
-    
-elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
-    # We are on NOAA Venus or Mars
-    echo "Using settings for WCOSS DELL Phase III"
-    export machine='WCOSS_DELL_P3'
-    export JOBPHASE=
-    export HOMEDIR=${HOMEDIR:-/gpfs/dell6/emc/modeling/noscrub/Xianwu.Xue/gw_for_acorn/gw_for_gefs_v12.2.0_dell_p35}
-    export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
-    export archsyndir=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/TCvitalData/syndat
-    export HOMEdata=/gpfs/hps2/nco/storage/fv3gefs/Bing.Fu/common
-    #export HOMEdata=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common
-    # export HOMEdata=/gpfs/dell2/emc/modeling/noscrub/Walter.Kolczynski/gefs_input
-    # export COMINenkf_base=$HOMEdata/gfs_15/enkfgdas.
-    # export COMINgfs_base=$HOMEdata/gfs_15/gfs.
-    # export COMINcfs_base=$HOMEdata/cfs_2_sst/cfs.
-
-    # export COMROOThps=${HOMEdata}
 elif [[ -d /apps/prod ]]; then
     # We are on NOAA WCOSS2
     echo "Using settings for WCOSS2"

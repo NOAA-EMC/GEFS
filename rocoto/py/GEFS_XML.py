@@ -4,8 +4,6 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     import os
 
     sSep = "/"
-    if sys.platform == 'win32':
-        sSep = r'\\'
     # ==
     get_MEMLIST(dicBase)
     # ==
@@ -14,7 +12,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     if sVarName not in dicBase:
         import os
         sVarValue = os.environ.get("USER")
-        if sVarValue in ['emc.enspara', 'emc.enspara1', 'emc.ens']:
+        if sVarValue in ['emc.ens']:
             sVarValue = os.environ.get("SUDO_USER")
         if "." in sVarValue:
             sVarValue = sVarValue.split(".")[0]
@@ -25,7 +23,7 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     if sVarName not in dicBase:
         import os
         sVarValue = os.environ.get("USER")
-        if sVarValue in ['emc.enspara', 'emc.enspara1', 'emc.ens']:
+        if sVarValue in ['emc.ens']:
             sVarValue = os.environ.get("SUDO_USER")
         if "." in sVarValue:
             sVarValue = sVarValue.split(".")[1]
@@ -94,16 +92,8 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarName = "WORKDIR".upper()
     if sVarName not in dicBase:
         sVarValue = ""
-        if WHERE_AM_I.lower() == "cray":
-            sVarValue = "/gpfs/HPS_PTMP/ptmp/First.Last/o/&EXPID;"
-        elif WHERE_AM_I.lower() == 'wcoss':
-            sVarValue = "/gpfs/HPS_PTMP/ptmp/First.Last/o/&EXPID;"
-        elif WHERE_AM_I.lower() == 'hera':
+        if WHERE_AM_I.lower() == 'hera':
             sVarValue = "/scratch2/NCEPDEV/stmp3/First.Last/o/&EXPID;"
-        elif WHERE_AM_I.lower() == 'wins':
-            sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
-        elif WHERE_AM_I.lower() in ["wcoss_dell_p3".upper(), "wcoss_dell_p35".upper()]:
-            sVarValue = "/gpfs/HPS_PTMP/ptmp/First.Last/o/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss2':
             sVarValue = "/lfs/HPS_PTMP/emc/ptmp/First.Last/o/&EXPID;"
         else:
@@ -124,20 +114,10 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarName = "KEEP_DIR".upper()
     sVarValue = ""
     if sVarName not in dicBase:
-        if WHERE_AM_I.lower() == "cray":
-            sVarValue = "/gpfs/hps3/emc/ensemble/noscrub/First.Last/GEFS/&EXPID;"
-        elif WHERE_AM_I.lower() == 'wcoss':
-            sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS/&EXPID;"
-        elif WHERE_AM_I.lower() == 'hera':
+        if WHERE_AM_I.lower() == 'hera':
             sVarValue = "/scratch2/NCEPDEV/stmp3/First.Last/GEFS/&EXPID;"
-        elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
-            sVarValue = "/gpfs/dell2/emc/retros/noscrub/First.Last/GEFS/&EXPID;"
-        elif WHERE_AM_I.lower() == 'wcoss_dell_p35':
-            sVarValue = "/gpfs/dell6/emc/modeling/noscrub/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss2':
             sVarValue = "/lfs/h2/emc/ens/noscrub/First.Last/GEFS/&EXPID;"
-        elif WHERE_AM_I.lower() == 'wins':
-            sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         else:
             sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS/&EXPID;"
 
@@ -162,16 +142,10 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarName = "HPSS_DIR".upper()
     if sVarName not in dicBase:
         sVarValue = ""
-        if WHERE_AM_I.lower() == "cray":
-            sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
-        elif WHERE_AM_I.lower() == 'wcoss':
-            sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
-        elif WHERE_AM_I.lower() in ['wcoss_dell_p3', 'wcoss_dell_p35']:
+        if WHERE_AM_I.lower() == 'hera':
             sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
         elif WHERE_AM_I.lower() == 'wcoss2':
             sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
-        elif WHERE_AM_I.lower() == 'wins':
-            sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         else:
             sVarValue = "/NCEPDEV/emc-ensemble/2year/First.Last/GEFS/&EXPID;"
 
@@ -195,20 +169,10 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarName = "INIT_DIR".upper()
     sVarValue = ""
     if sVarName not in dicBase:
-        if WHERE_AM_I.lower() == "cray":
-            sVarValue = "/gpfs/hps3/emc/ensemble/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
-        elif WHERE_AM_I.lower() == 'wcoss':
-            sVarValue = "/ensemble/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
-        elif WHERE_AM_I.lower() == 'hera':
+        if WHERE_AM_I.lower() == 'hera':
             sVarValue = "/scratch2/NCEPDEV/stmp3/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
-        elif WHERE_AM_I.lower() == 'wcoss_dell_p3':
-            sVarValue = "/gpfs/dell2/emc/retros/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
-        elif WHERE_AM_I.lower() == 'wcoss_dell_p35':
-            sVarValue = "/gpfs/dell6/emc/modeling/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
         elif WHERE_AM_I.lower() == 'wcoss2':
             sVarValue = "/lfs/h1/emc/ens/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
-        elif WHERE_AM_I.lower() == 'wins':
-            sVarValue = os.path.abspath(sRocoto_WS + sSep + "o")
         else:
             sVarValue = "/gpfs/HPS_PTMP/emc/ensemble/noscrub/First.Last/GEFS_INIT/" + dicBase['RUN_INIT'].lower() + "_init"
 
@@ -225,10 +189,9 @@ def replace_First_Last(dicBase, sVarName):
     # Modified on 10/17/2018 to avoid the path has individual "First" or "Last" to be replaced by mistake. If just replace the "First.Last", it will be safer.
     import os
     sUSER = os.environ.get("USER")
-    GroupNames = ['emc.enspara', 'emc.enspara1', 'emc.ens']
+    GroupNames = ['emc.ens']
     if sUSER in GroupNames:
         sVarValue = str(dicBase[sVarName]).replace("First.Last", sUSER + "/" + dicBase["FIRST"] + "." + dicBase["LAST"])
-        sVarValue = sVarValue.replace("retros", "verification")  # temporary
     else:
         sVarValue = str(dicBase[sVarName]).replace("First.Last", dicBase["FIRST"] + "." + dicBase["LAST"])
 
@@ -316,8 +279,6 @@ def get_definitions(dicBase):
     if GenTaskEnt:
         import sys
         sSep = "/"
-        if sys.platform == 'win32':
-            sSep = r'\\'
 
         # -----------------------------------------------------------------------------------------------
         strings.append('\t<!-- External entities -->\n')
