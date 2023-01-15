@@ -87,7 +87,6 @@ setpdy.sh
 export COMIN=${COMROOT}/${NET}/${envir}
 export COMOUT=$COMROOT/${NET}/${envir}/gefs.${PDY}/${cyc}/atmos/ensstat
 export COMINshef=${COMINshef:-${DCOMROOT}/prod/shef_pefiles}
-#export COMINshef=${COMINshef:-/gpfs/dell1/nco/ops/dcom/prod/shef_pefiles}
 export COMINstat=${COMINstat:-$COMIN}
 
 mkdir -m 775 -p $COMOUT

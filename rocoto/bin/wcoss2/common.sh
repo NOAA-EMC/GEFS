@@ -73,7 +73,7 @@ elif [[ $RocotoGen == 1 ]]; then
     #export restart_interval_aer=12
     ### For keep and arhive data
     #export KEEP_DIR="/gpfs/h2/emc/modeling/noscrub/emc.enspara/Xianwu.Xue/GEFS/GEFSv12_Test02"
-    #export HPSS_DIR="/NCEPDEV/emc-ensemble/2year/emc.enspara/Xianwu.Xue/GEFS_DELL35/GEFSv12_Test02"
+    #export HPSS_DIR="/NCEPDEV/emc-ensemble/2year/emc.enspara/Xianwu.Xue/GEFS_WCOSS2/GEFSv12_Test02"
     export DIRS_TO_KEEP="bufr,ensstat,pgrb2sp25,pgrb2ap5,pgrb22p5,pgrb2p25,pgrb2bp5,cfssst,gempak,init"
     export DIRS_TO_ARCHIVE="bufr,ensstat,pgrb2sp25,pgrb2ap5,pgrb22p5,pgrb2p25,pgrb2bp5,cfssst,gempak,init"
     export DIRS_TO_KEEP_WAVE="gridded, station, restart, gempak"

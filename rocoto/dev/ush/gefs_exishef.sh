@@ -8,7 +8,7 @@ echo "AUTHOR: Dingchen Hou (wx20dh)"
 
 #DATA=$(pwd)
 #UTILgefs=../..
-#INPUTshef=/gpfs/dell1/nco/ops/dcom/prod/shef_pefiles
+#INPUTshef=/gpfs/h1/nco/ops/dcom/prod/shef_pefiles
 #PDYshef=$1
 #cp -pr ${INPUTshef}/${PDYshef}.pe SHEFOUT1
 
