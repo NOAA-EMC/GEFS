@@ -64,7 +64,7 @@ else
         # However, if you use gfs/enkf data from archived data, you may speficfy them in this "if" block and make GFSArchivedData=yes
         UseHOMEdata=no
         if [[ $UseHOMEdata == "yes" ]]; then
-            HOMEdata=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata/com
+            HOMEdata=/lfs/h2/emc/ens/noscrub/xianwu.xue/GEFS/HOMEdata/canned/com
             export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
             export COMINgfs_base=$HOMEdata/fv3init/gfs.
             export COMINcfs_base=$HOMEdata/cfs/cfs.

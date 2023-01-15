@@ -39,10 +39,10 @@ if [[ $RocotoGen == 0 ]]; then
     export COMPATH=${WORKDIR}/$envir/com/${NET}
 
 elif [[ $RocotoGen == 1 ]]; then
-    export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
-    export archsyndir=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/TCvitalData/syndat
+    export HOMEtrak=/lfs/h2/emc/ens/noscrub/emc.ens/common/git/ens_tracker/ens_tracker.v2.1.2
+    export archsyndir=/lfs/h2/emc/ens/noscrub/emc.ens/common/git/ens_tracker/TCvitalData/syndat
 
-	export STRICT="YES"
+    export STRICT="YES"
 
     export HOMEgefs=$SOURCEDIR
 
@@ -53,7 +53,7 @@ elif [[ $RocotoGen == 1 ]]; then
     # export DCOMROOT=${DCOMROOT:-/dcom} # CQPF
     # export PCOMROOT=$WORKDIR/pcom/$envir $For WAFS
 
-    ##export COMIN_WAV_ICE=/gpfs/dell1/nco/ops/com/omb/prod
+    ##export COMIN_WAV_ICE=/gpfs/h2/nco/ops/com/omb/prod
 
     #export WRTTASK_PER_GROUP="36"
     #export parallel_threads="1"
@@ -72,7 +72,7 @@ elif [[ $RocotoGen == 1 ]]; then
     #export fhrestart=24
     #export restart_interval_aer=12
     ### For keep and arhive data
-    #export KEEP_DIR="/gpfs/dell6/emc/modeling/noscrub/emc.enspara/Xianwu.Xue/GEFS/GEFSv12_Test02"
+    #export KEEP_DIR="/gpfs/h2/emc/modeling/noscrub/emc.enspara/Xianwu.Xue/GEFS/GEFSv12_Test02"
     #export HPSS_DIR="/NCEPDEV/emc-ensemble/2year/emc.enspara/Xianwu.Xue/GEFS_DELL35/GEFSv12_Test02"
     export DIRS_TO_KEEP="bufr,ensstat,pgrb2sp25,pgrb2ap5,pgrb22p5,pgrb2p25,pgrb2bp5,cfssst,gempak,init"
     export DIRS_TO_ARCHIVE="bufr,ensstat,pgrb2sp25,pgrb2ap5,pgrb22p5,pgrb2p25,pgrb2bp5,cfssst,gempak,init"

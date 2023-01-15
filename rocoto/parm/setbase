@@ -50,9 +50,9 @@ elif [[ -d /apps/prod ]]; then
     export machine='WCOSS2'
     export JOBPHASE=
     export HOMEDIR=${HOMEDIR:-/lfs/h2/emc/ens/noscrub/emc.ens/common/git/gfs/gw_gefs_v12.3.3_1a7f074_Nov07_2022}
-    export HOMEtrak=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/ens_tracker.v2.1.2
-    export archsyndir=/gpfs/dell2/emc/verification/noscrub/emc.enspara/common/git/ens_tracker/TCvitalData/syndat
-    export HOMEdata=/gpfs/hps2/nco/storage/fv3gefs/Bing.Fu/common
+    export HOMEtrak=/lfs/h2/emc/ens/noscrub/emc.ens/common/git/ens_tracker/ens_tracker.v2.1.2
+    export archsyndir=/lfs/h2/emc/ens/noscrub/emc.ens/common/git/ens_tracker/TCvitalData/syndat
+    export HOMEdata=/lfs/h2/emc/ens/noscrub/emc.ens/common/canned_data
 
 fi
 
