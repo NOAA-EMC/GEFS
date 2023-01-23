@@ -2,8 +2,6 @@
 def get_and_merge_default_config(dicBase):
     import os, sys
     sSep = "/"
-    if sys.platform == 'win32':
-        sSep = r'\\'
 
     # To get the WHERE_AM_I from dicBase or identify it using default methode
     get_WHERE_AM_I(dicBase)
@@ -26,8 +24,6 @@ def get_config_file(OnlyForTest=False):
     import os, sys
 
     sSep = "/"
-    if sys.platform == 'win32':
-        sSep = r'\\'
 
     sRocoto_WS = os.getcwd()
     sConfig = ""  # "user_conf"
@@ -72,8 +68,6 @@ def get_config_file2(sConfigFile="user_full.conf"):
     import os, sys
 
     sSep = "/"
-    if sys.platform == 'win32':
-        sSep = r'\\'
 
     sRocoto_WS = os.getcwd()
     sConfig = sRocoto_WS + sSep + sConfigFile
@@ -142,8 +136,6 @@ def create_folders(dicBase):
     import os, sys
 
     sSep = "/"
-    if sys.platform == 'win32':
-        sSep = r'\\'
 
     EXPID = dicBase['EXPID']
     WORKDIR = str(dicBase['WORKDIR']).replace("&EXPID;", EXPID)
@@ -184,26 +176,13 @@ def get_WHERE_AM_I(dicBase):
     sVarName = 'WHERE_AM_I'
     import os
     
-    #sCPath = os.getcwd()
-    #if sCPath.startswith("/gpfs/dell6"):
-    #    dicBase[sVarName] = 'wcoss_dell_p35'
-    
     if sVarName not in dicBase:
         sCPath = os.getcwd()
-        if sCPath.startswith("/gpfs/dell6"):
-            dicBase[sVarName] = 'wcoss_dell_p35'
-            return
 
         if os.path.exists('/scratch1/NCEPDEV'):
             dicBase[sVarName] = 'hera'
-        elif os.path.exists('/gpfs') and os.path.exists('/etc/SuSE-release'):
-            dicBase[sVarName] = 'cray'
-        elif os.path.lexists('/usrx') and os.path.realpath('/usrx').startswith('/gpfs/dell'):
-            dicBase[sVarName] = 'wcoss_dell_p3'
         elif os.path.exists('/apps/prod'):
             dicBase[sVarName] = 'wcoss2'
-        elif os.path.exists('c:'):
-            dicBase[sVarName] = 'wins'
         else:
             print('workflow is currently only supported on: %s' % ' '.join('other'))
             raise NotImplementedError('Cannot auto-detect platform, ABORT!')

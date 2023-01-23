@@ -27,9 +27,10 @@ if [[ -d /lfs3 ]] ; then
     fi
     target=jet
     module purge
-     export NCEPLIBS=/mnt/lfs3/projects/hfv3gfs/gwv/ljtjet/lib
-     echo NCEPLIBS HARD SET to  $NCEPLIBS in `pwd`/module_setup.sh.inc
-     module use $NCEPLIBS/modulefiles
+    export NCEPLIBS=/mnt/lfs3/projects/hfv3gfs/gwv/ljtjet/lib
+    echo NCEPLIBS HARD SET to  $NCEPLIBS in `pwd`/module_setup.sh.inc
+    module use $NCEPLIBS/modulefiles
+
 elif [[ -d /scratch1/NCEPDEV ]] ; then
     # We are on NOAA Hera
     if ( ! eval module help > /dev/null 2>&1 ) ; then
@@ -39,49 +40,6 @@ elif [[ -d /scratch1/NCEPDEV ]] ; then
     target=hera
     module purge
     module use -a /scratch2/NCEPDEV/nwprod/NCEPLIBS/modulefiles
-elif [[ -d /gpfs/hps && -e /etc/SuSE-release ]] ; then
-    # We are on NOAA Luna or Surge
-    if ( ! eval module help > /dev/null 2>&1 ) ; then
-	echo load the module command 1>&2
-	source /opt/modules/default/init/$__ms_shell
-    fi
-    target=wcoss_cray
-
-    # Silence the "module purge" to avoid the expected error messages
-    # related to modules that load modules.
-    module purge > /dev/null 2>&1
-    module use /usrx/local/prod/modulefiles
-    module use /gpfs/hps/nco/ops/nwprod/lib/modulefiles
-    module use /gpfs/hps/nco/ops/nwprod/modulefiles
-    module use /opt/cray/alt-modulefiles
-    module use /opt/cray/craype/default/alt-modulefiles
-    module use /opt/cray/ari/modulefiles
-    module use /opt/modulefiles
-    module purge > /dev/null 2>&1
-
-    # Workaround until module issues are fixed:
-    #unset _LMFILES_
-    #unset LOADEDMODULES
-    echo y 2> /dev/null | module clear > /dev/null 2>&1
-
-    module use /usrx/local/prod/modulefiles
-    module use /gpfs/hps/nco/ops/nwprod/lib/modulefiles
-    module use /gpfs/hps/nco/ops/nwprod/modulefiles
-    module use /opt/cray/alt-modulefiles
-    module use /opt/cray/craype/default/alt-modulefiles
-    module use /opt/cray/ari/modulefiles
-    module use /opt/modulefiles
-    module load modules
-
-elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then
-    # We are on NOAA Venus or Mars
-    if ( ! eval module help > /dev/null 2>&1 ) ; then
-	echo load the module command 1>&2
-	source /usrx/local/prod/lmod/lmod/init/$__ms_shell
-    fi
-    target=wcoss_dell_p3
-    module purge 
-    #module use /usrx/local/dev/modulefiles
 
 elif [[ -d /glade ]] ; then
     # We are on NCAR Yellowstone
@@ -91,6 +49,7 @@ elif [[ -d /glade ]] ; then
     fi
     target=yellowstone
     module purge
+
 elif [[ -d /lustre && -d /ncrc ]] ; then
     # We are on GAEA. 
     if ( ! eval module help > /dev/null 2>&1 ) ; then
@@ -104,6 +63,7 @@ elif [[ -d /lustre && -d /ncrc ]] ; then
     fi
     target=gaea
     module purge
+
 elif [[ -d /apps/prod ]]; then
 
 	target=wcoss2

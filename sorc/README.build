@@ -1,54 +1,20 @@
 Instructions for building up the gefs system on WCOSS2:
 
-cd sorc
-./nco_run.sh
-This script will do the following steps:
-  ./checkout.sh
-  ./build_all.sh
-  ./link_gefs.sh nco wcoss2
 
+Implementation instructions
+    cd $PACKAGEROOT
+    git clone https://github.com/NOAA-EMC/GEFS.git gefs.v12.3.4
+    cd gefs.v12.3.4
+    git checkout gefs.v12.3.4-1
+    cd sorc
+    ./nco_run.sh
+    This script will do the following steps:
+    ./checkout.sh
+    ./build_all.sh
+    ./link_gefs.sh nco wcoss2
+    Please note for new user:
+        Before running the nco_run.sh script, a new user should make sure she/he has permission 
+        to access GSI-fix & GSI-libsrc in vlab, if not, new user should request to get the permission:
 
+        GSI: Michael.Lueken@noaa.gov
 
-
-Instructions for building up the gefs system on WCOSS1:
-
-    1) "build" is done in the current directory (~gefs.v12/sorc)
-
-    2) To build programs:
-        ./build_all.sh                 #this builds all programs
-        ./build_XXXXX.sh               #this builds the XXXXX program
-
-    3) To link or copy the fix files with options for environment and machine
-        ./link_gefs.sh [-e emc/nco ][ -m cray/dell/hera ]
-          emc and dell are used as default
-          ibm is for WCOSS P1/P2; dell is for WCOSS_DELL_P3
-
-    4) The following files are used before and saved here for reference
-        Module_gefs_vxx_XXXX     ( xx=11 or 12, XXXX=cray or hera, or wcoss_dell_p3)
-
-
-Instructions for building up the global_workflow
-
-    1) "build" is done in the ~gefs.v12/sorc
-
-    2) git clone gerrit:global-workflow fv3gfs
-
-    3) cd fv3gfs
-
-    4) git checkout branch_name #(such as lgan_fv3_ww3)
-
-    5) cd sorc
-
-    6) ./checkout.sh # if you need use different revision of UPP, FV3GFS or others, you can change the revision number in this file befire excute this file
-
-    7) ./build_all.sh
-
-    8) ./link_fv3gfs.sh [emc/nco] [dell/cray]
-
-    9) Connect to GEFS:
-        a) For developers, you should modify HOMEDIR in  [~gefs.v12]/rocoto/parm/setbase to HOMEDIR=[~gefs.v12]/sorc/fv3gfs
-        b) For NCO, to be determined
-
-
-
- 
