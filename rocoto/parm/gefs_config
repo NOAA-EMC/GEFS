@@ -64,7 +64,7 @@ else
         # However, if you use gfs/enkf data from archived data, you may speficfy them in this "if" block and make GFSArchivedData=yes
         UseHOMEdata=no
         if [[ $UseHOMEdata == "yes" ]]; then
-            HOMEdata=/lfs/h1/emc/ens/noscrub/Xianwu.Xue/gefs/HOMEdata/com
+            HOMEdata=/lfs/h2/emc/ens/noscrub/xianwu.xue/GEFS/HOMEdata/canned/com
             export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
             export COMINgfs_base=$HOMEdata/fv3init/gfs.
             export COMINcfs_base=$HOMEdata/cfs/cfs.
@@ -72,7 +72,7 @@ else
             export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc}
             export COMINenkf=${COMINenkf:-${COMINenkf_base}${pdyp}/$cycp}
         else
-            HOMEdata=/gpfs/dell6/emc/modeling/noscrub/Xianwu.Xue/gw_for_acorn/HOMEdata
+            HOMEdata=/gpfs/h2/emc/modeling/noscrub/Xianwu.Xue/gw_for_acorn/HOMEdata
             export COMPATH=$HOMEdata/com/gfs/prod
             export COMINgfs_base=$(compath.py gfs/prod)/gfs.
             export COMINenkf_base=$(compath.py gfs/prod)/enkfgdas.
@@ -83,9 +83,9 @@ else
             export DCOMROOT=$HOMEdata/dcom
         fi
     else
-        export COMINgfs_base=/gpfs/dell3/ptmp/emc.glopara/ROTDIRS/v16rt2/gfs/para/gfs.
+        export COMINgfs_base=/gpfs/h2/ptmp/emc.glopara/ROTDIRS/v16rt2/gfs/para/gfs.
         #export COMINgfs_base=$(compath.py gfs/prod)/gfs.
-        export COMINenkf_base=/gpfs/dell3/ptmp/emc.glopara/ROTDIRS/v16rt2/gfs/para/enkfgdas.
+        export COMINenkf_base=/gpfs/h2/ptmp/emc.glopara/ROTDIRS/v16rt2/gfs/para/enkfgdas.
         #export COMINenkf_base=$(compath.py gfs/prod)/enkfgdas.
         export COMINcfs_base=$(compath.py cfs/prod)/cfs/cfs.
         export COMIN_WAV_ICE=$(compath.py gfs/prod)/gfs.${PDY}/${cyc}/atmos
