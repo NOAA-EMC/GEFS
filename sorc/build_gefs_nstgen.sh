@@ -16,7 +16,7 @@ fi
 
 if [[ $target == "wcoss2" ]]; then
     module use ${cwd}/../modulefiles/gefs
-    module load ${progname}.${target}.lua
+    module load ${progname}.${target}
 else
     source ../modulefiles/gefs/${progname}.$target
 fi
