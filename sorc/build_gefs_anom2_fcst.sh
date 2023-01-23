@@ -14,7 +14,7 @@ else
     fi
 fi
 
-if [[ $target == "wcoss2" ]] || [[ $target == "wcoss_dell_p3" ]]; then
+if [[ $target == "wcoss2" ]]; then
 	module use ${cwd}/../modulefiles/gefs
 	module load ${progname}.${target}.lua
 else
