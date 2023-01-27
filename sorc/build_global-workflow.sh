@@ -6,7 +6,7 @@ cwd=`pwd`
 progname=global-workflow
 
 if [ -f ../versions/build.ver ]; then
-    source ../versions/build.ver
+  source ../versions/build.ver
 fi
 
 #
@@ -16,9 +16,9 @@ cd sorc
 ERR=$?
 
 if [ $ERR = 0 ]; then
-    msg="Built global-workflow normally"
+  msg="Built global-workflow normally"
 else
-    msg="Built global-workflow failed!"
+  msg="Built global-workflow failed!"
 fi
 
 exit $ERR

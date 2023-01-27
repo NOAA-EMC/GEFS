@@ -1,0 +1,46 @@
+export gefs_ver=v12.3.1
+
+export hpc_ver=1.2.0
+
+export intel_ver=2022.1.2
+export impi_ver=2022.1.2
+
+export prod_util_ver=1.2.2
+export grib_util_ver=1.2.4
+
+export netcdf_ver=4.7.0
+
+# -- For FV3
+
+# -- For GSI
+
+# -- For UPP ncep_post
+
+# -- For ufs_utils
+export wgrib2_ver=2.0.7
+#export EnvVars_ver=1.0.2
+#export ips_ver=18.0.5.274
+#export impi_ver=2018.0.4
+#export lsf_ver=10.1
+
+#export prod_envir_ver=1.1.0
+#export grib_util_ver=1.2.4
+#export prod_util_ver=1.2.2
+#export util_shared_ver=1.2.0
+#export g2tmpl_ver=1.5.1
+
+#export CFP_ver=2.0.2
+#export gempak_ver=7.4.2
+
+#export NetCDF_ver=4.7.0
+#export HDF5_serial_ver=1.10.5
+
+#export HDF5_parallel_ver=1.10.6
+#export NetCDF_parallel_ver=4.7.4
+
+#export NCO_ver=4.9.1
+#export python_ver=3.6.8
+#export HPSS_ver=
+
+#export USE_CFP=YES
+export PATH=$PATH:.
