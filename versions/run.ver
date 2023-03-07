@@ -1,4 +1,4 @@
-export gefs_ver=v12.3.4
+export gefs_ver=v12.3.6
 
 export gfs_ver=v16.3
 export cfs_ver=v2.3
