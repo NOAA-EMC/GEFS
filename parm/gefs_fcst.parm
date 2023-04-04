@@ -90,9 +90,6 @@ else
    export j_opt="-j 1"
 fi
 
-# add two tiered SST options
-export sst2tier=${sst2tier:-YES}
-
 export FCSTEXEC=${FCSTEXEC:-global_fv3gfs.x}
 
 export APRUN=${APRUN:-""}

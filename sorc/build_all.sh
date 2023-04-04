@@ -21,26 +21,10 @@ fi
 . ./partial_build.sh
 
 #------------------------------------
-# build gefs_anom2_fcst - 01/02 For SST
-#------------------------------------
-$Build_gefs_anom2_fcst && {
-echo " .... Building gefs_anom2_fcst - 01 .... "
-./build_gefs_anom2_fcst.sh > $logs_dir/build_gefs_anom2_fcst.log 2>&1
-}
-
-#------------------------------------
-# build gefs_nstgen     - 02/02 For SST      
-#------------------------------------
-$Build_gefs_nstgen && {
-echo " .... Building gefs_nstgen - 02.... "
-./build_gefs_nstgen.sh > $logs_dir/build_gefs_nstgen.log 2>&1
-}
-
-#------------------------------------
 # build global_ensadd
 #------------------------------------
 $Build_global_ensadd && {
-echo " .... Building global_ensadd - 03 .... "
+echo " .... Building global_ensadd - 01 .... "
 ./build_global_ensadd.sh > $logs_dir/build_global_ensadd.log 2>&1
 }
 
@@ -48,7 +32,7 @@ echo " .... Building global_ensadd - 03 .... "
 # build gefs_ensstat
 #------------------------------------
 $Build_gefs_ensstat && {
-echo " .... Building gefs_ensstat - 04 .... "
+echo " .... Building gefs_ensstat - 02 .... "
 ./build_gefs_ensstat.sh > $logs_dir/build_gefs_ensstat.log 2>&1
 }
 
@@ -56,7 +40,7 @@ echo " .... Building gefs_ensstat - 04 .... "
 # build global_ensppf
 #------------------------------------
 $Build_global_ensppf && {
-echo " .... Building global_ensppf - 05 .... "
+echo " .... Building global_ensppf - 03 .... "
 ./build_global_ensppf.sh > $logs_dir/build_global_ensppf.log 2>&1
 }
 
@@ -64,7 +48,7 @@ echo " .... Building global_ensppf - 05 .... "
 # build wave_stat
 #------------------------------------
 $Build_wave_stat && {
-echo " .... Building wave_stat - 06 .... "
+echo " .... Building wave_stat - 04 .... "
 ./build_wave_stat.sh > $logs_dir/build_wave_stat.log 2>&1
 }
 
@@ -72,7 +56,7 @@ echo " .... Building wave_stat - 06 .... "
 # build gefs_nemsio2nc
 #------------------------------------
 $Build_gefs_nemsio2nc && {
-echo " .... Building gefs_nemsio2nc - 07 .... "
+echo " .... Building gefs_nemsio2nc - 05 .... "
 ./build_gefs_nemsio2nc.sh > $logs_dir/build_gefs_nemsio2nc.log 2>&1
 }
 
