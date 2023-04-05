@@ -143,14 +143,6 @@ if [ $CleanAll = "yes" ]; then
             cd ../../../sorc
         fi
     done
-    for dir in gefs_anom2_fcst.fd gefs_nstgen.fd ; do
-        if [ -f $dir ]; then
-            cd $dir
-            make clean
-            cd ..
-        fi
-    done    
-
 
     cd ${sWS}/../sorc
     rm -rf ../exec
