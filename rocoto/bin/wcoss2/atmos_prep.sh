@@ -1,4 +1,4 @@
-#!/bin/ksh -l
+#! /usr/bin/env bash
 
 set -x
 ulimit -s unlimited
@@ -21,6 +21,7 @@ module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
 module load hdf5/$hdf5_ver
 module load netcdf/$netcdf_ver
+module load libjpeg/$libjpeg_ver
 
 module load cfp/$cfp_ver
 
