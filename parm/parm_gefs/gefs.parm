@@ -178,6 +178,10 @@ export SENDDBN=${SENDDBN:-"YES"}
 export DBNROOT=${DBNROOT:-${UTILROOT}/fakedbn}
 export VERBOSE=${VERBOSE:-YES}
 
+# Get all the COM path templates
+source "${PARMgefs}/config/config.com"
+
+
 # Microphysics Options: 99-ZhaoCarr, 8-Thompson; 6-WSM6, 10-MG, 11-GFDL
 export imp_physics=${imp_physics:-"8"}
 

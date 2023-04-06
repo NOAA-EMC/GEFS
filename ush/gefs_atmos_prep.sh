@@ -1,20 +1,24 @@
 #! /usr/bin/env bash
 
-echo "$(date -u) begin $(basename $BASH_SOURCE)"
-export PS4="${PS4}${1}: "
+source "${HOMEgfs:-${HOMEgefs}}/ush/preamble.sh"
 
-set -xa
-if [[ ${STRICT:-NO} == "YES" ]]; then
-  # Turn on strict bash error checking
-  set -eu
-fi
+#echo "$(date -u) begin $(basename $BASH_SOURCE)"
+#export PS4="${PS4}${1}: "
+
+#set -xa
+#if [[ ${STRICT:-NO} == "YES" ]]; then
+#  # Turn on strict bash error checking
+#  set -eu
+#fi
 
 export mem=$1
 export nmem=$(echo $mem|cut -c 2-)
 nmem=${nmem#0}
 
+YMD=${PDY} HH=${cyc} MEMDIR=${mem} generate_com -x COM_ATMOS_INPUT
+
 #export INIDIR=$DATA
-export OUTDIR=${COMOUT}/$mem/atmos/INPUT
+export OUTDIR=${COM_ATMOS_INPUT} # ${COMOUT}/$mem/atmos/INPUT
 
 mkdir -p $OUTDIR
 cd $DATA
@@ -114,8 +118,6 @@ export VCOORD_FILE=${VCOORD_FILE:-$FIXam/global_hyblev.l${LEVS}.txt}
 
 export TRACERS_INPUT="spfh","clwmr","o3mr","icmr","rwmr","snmr","grle"
 export TRACERS_TARGET="sphum","liq_wat","o3mr","ice_wat","rainwat","snowwat","graupel"
-#export TRACERS_TARGET='"sphum","liq_wat","o3mr","ice_wat","rainwat","snowwat","graupel"'
-#export TRACERS_INPUT='"sphum","liq_wat","o3mr","ice_wat","rainwat","snowwat","graupel"'
 
 OROG_FILES_TARGET_GRID=''
 for tile in {1..6}
@@ -158,7 +160,8 @@ if [[ $SENDCOM == "YES" ]]; then
 
   if [[ $CONVERT_SFC == ".true." ]]; then
     for mem2 in $memberlist; do
-      COMDIR2=$COMOUT/${mem2}/atmos/INPUT #init/$mem2
+      YMD=${PDY} HH=${cyc} MEMDIR=${mem2} generate_com -x COM_ATMOS_INPUT
+      COMDIR2=${COM_ATMOS_INPUT} #${echo "${!COM_ATMOS_INPUT_TMPL}"} # $(echo "${!COM_ATMOS_INPUT_TMPL}" | envsubst) #${COM_ATMOS_INPUT} #$COMOUT/${mem2}/atmos/INPUT #init/$mem2
       mkdir -p $COMDIR2
       for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
         $NCP ${DATA}/out.sfc.${tile}.nc $COMDIR2/sfc_data.${tile}.nc
