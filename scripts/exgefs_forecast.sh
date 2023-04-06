@@ -115,12 +115,6 @@ export FNALBC2=$FIX_AM/global_albedo4.1x1.grb
 export FNSMCC=$FIX_AM/global_soilmgldas.t$MTNRSL.grb
 export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 
-if [[ $sst2tier = YES ]]; then
-	export nstf_name="2,0,0,0,0"
-	export FTSFS=0
-	export FNTSFA=$SSTDIR/TMPsfc.$PDY$cyc.24hr.anom.grb
-fi
-
 export ENS_NUM=1
 
 #

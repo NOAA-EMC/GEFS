@@ -28,13 +28,6 @@ def config_tasknames(dicBase):
     if iTaskName_Num <= 0:
         iTaskName_Num = 0
 
-        # #    <!-- RUN_GETCFSSST jobs -->
-        if dicBase['RUN_GETCFSSST'].upper()[0] == "Y":
-            # ---sigchgres
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "getcfssst"
-
         if dicBase['RUN_WAVE_PREP'].upper()[0] == "Y":
             # ---wave init
             iTaskName_Num += 1
@@ -983,8 +976,6 @@ def get_param_of_task(dicBase, taskname):
             # For 'forecast_hr' task
             if taskname.lower() == "forecast_hr":
                 sDep = '<and>'
-                if DoesTaskExist(dicBase, "getcfssst"):
-                    sDep += '\n\t<taskdep task="getcfssst"/>'
                 if DoesTaskExist(dicBase, "init_recenter"):
                     if DoesTaskExist(dicBase, "atmos_prep"):  # Cold Restart
                         sDep += '\n\t<taskdep task="init_recenter"/>'
@@ -1010,27 +1001,15 @@ def get_param_of_task(dicBase, taskname):
                     sDep = '<taskdep task="forecast_hr_#member#"/>'
                 else:
                     if DoesTaskExist(dicBase, "atmos_prep"):
-                        if DoesTaskExist(dicBase, "getcfssst"):
-                            sDep = '<and>\n\t<metataskdep metatask="atmos_prep"/>\n\t<taskdep task="getcfssst"/>\n</and>'
-                        else:
-                            sDep = '<metataskdep metatask="atmos_prep"/>'
+                        sDep = '<metataskdep metatask="atmos_prep"/>'
                     elif DoesTaskExist(dicBase, "rf_prep"):
-                        if DoesTaskExist(dicBase, "getcfssst"):
-                            sDep = '<and>\n\t<taskdep task="rf_prep"/>\n\t<taskdep task="getcfssst"/>\n</and>'
-                        else:
-                            sDep = '<taskdep task="rf_prep"/>'
+                        sDep = '<taskdep task="rf_prep"/>'
                     else:  # For Warm Start
-                        if DoesTaskExist(dicBase, "getcfssst"):
-                            sDep = '<and>\n\t<taskdep task="getcfssst"/>\n</and>'
-                        else:
-                            sDep = ''
+                        sDep = ''
 
             # For 'chem_forecast' task
             if taskname.lower() == "chem_forecast":
                 sDep = '<and>'
-                if DoesTaskExist(dicBase, "getcfssst"):
-                    sDep += '\n\t<taskdep task="getcfssst"/>'
-
                 if DoesTaskExist(dicBase, "chem_init"):  # Cold Restart
                     sDep += '\n\t<taskdep task="chem_init"/>'
                 else:  # Warm Start  ???
@@ -1144,7 +1123,7 @@ def get_param_of_task(dicBase, taskname):
             if taskname_org.lower() in ["keep_data_atm", "archive_atm"]:
                 sDep = '<and>'
 
-                for s in ["prdgen_hr", "ensstat_hr", "enspost_hr", "post_track", "post_genesis", "extractvars", "postsnd", "getcfssst", "gempak", "gempak_meta", "avgspr_gempak_meta"]:
+                for s in ["prdgen_hr", "ensstat_hr", "enspost_hr", "post_track", "post_genesis", "extractvars", "postsnd", "gempak", "gempak_meta", "avgspr_gempak_meta"]:
                     if DoesTaskExist(dicBase, s):
                         if s in get_metatask_names():
                             sDep += '\n\t<metataskdep metatask="{0}"/>'.format(s)
@@ -1175,7 +1154,7 @@ def get_param_of_task(dicBase, taskname):
             if taskname.lower() == "atmos_post_cleanup":
                 sDep = '<and>'
 
-                for s in ["prdgen_hr", "ensstat_hr", "enspost_hr", "post_track", "post_genesis", "extractvars", "postsnd", "getcfssst", "gempak", "gempak_meta", "avgspr_gempak_meta"]:
+                for s in ["prdgen_hr", "ensstat_hr", "enspost_hr", "post_track", "post_genesis", "extractvars", "postsnd", "gempak", "gempak_meta", "avgspr_gempak_meta"]:
                     if DoesTaskExist(dicBase, s):
                         if s in get_metatask_names():
                             sDep += '\n\t<metataskdep metatask="{0}"/>'.format(s)

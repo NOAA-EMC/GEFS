@@ -8,8 +8,6 @@ suite prod
         family v12.2
           family init
             family atmos
-              task jgefs_atmos_getcfssst
-                trigger /prod/primary/12/gfs/v16.2/gfs/atmos/analysis == complete
               task jgefs_atmos_init_recenter
                 trigger ( ../../members/d0_16/c00/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/c00/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p01/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p01/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p02/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p02/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p03/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p03/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p04/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p04/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p05/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p05/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p06/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p06/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p07/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p07/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p08/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p08/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p09/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p09/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p10/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p10/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p11/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p11/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p12/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p12/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p13/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p13/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p14/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p14/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p15/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p15/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p16/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p16/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p17/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p17/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p18/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p18/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p19/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p19/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p20/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p20/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p21/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p21/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p22/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p22/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p23/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p23/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p24/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p24/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p25/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p25/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p26/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p26/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p27/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p27/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p28/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p28/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p29/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p29/atmos/jgefs_atmos_prep eq complete ) and ( ../../members/d0_16/p30/atmos/jgefs_atmos_prep eq active or ../../members/d0_16/p30/atmos/jgefs_atmos_prep eq complete )
             endfamily
@@ -24,7 +22,7 @@ suite prod
             task jgefs_chem_init
               trigger jgefs_chem_prep_emissions eq complete and ../init/atmos/jgefs_atmos_init_recenter eq complete
             task jgefs_chem_forecast
-              trigger ../init/atmos/jgefs_atmos_getcfssst eq complete and jgefs_chem_init eq complete
+              trigger jgefs_chem_init eq complete
             task jgefs_chem_post
               trigger jgefs_chem_forecast eq active or jgefs_chem_forecast eq complete
             task jgefs_chem_prdgen
@@ -36,7 +34,7 @@ suite prod
               family c00
                 edit MEMBER 'c00'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -66,7 +64,7 @@ suite prod
               family p01
                 edit MEMBER 'p01'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -96,7 +94,7 @@ suite prod
               family p02
                 edit MEMBER 'p02'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -126,7 +124,7 @@ suite prod
               family p03
                 edit MEMBER 'p03'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -156,7 +154,7 @@ suite prod
               family p04
                 edit MEMBER 'p04'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -186,7 +184,7 @@ suite prod
               family p05
                 edit MEMBER 'p05'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -216,7 +214,7 @@ suite prod
               family p06
                 edit MEMBER 'p06'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -246,7 +244,7 @@ suite prod
               family p07
                 edit MEMBER 'p07'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -276,7 +274,7 @@ suite prod
               family p08
                 edit MEMBER 'p08'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -306,7 +304,7 @@ suite prod
               family p09
                 edit MEMBER 'p09'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -336,7 +334,7 @@ suite prod
               family p10
                 edit MEMBER 'p10'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -366,7 +364,7 @@ suite prod
               family p11
                 edit MEMBER 'p11'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -396,7 +394,7 @@ suite prod
               family p12
                 edit MEMBER 'p12'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -426,7 +424,7 @@ suite prod
               family p13
                 edit MEMBER 'p13'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -456,7 +454,7 @@ suite prod
               family p14
                 edit MEMBER 'p14'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -486,7 +484,7 @@ suite prod
               family p15
                 edit MEMBER 'p15'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -516,7 +514,7 @@ suite prod
               family p16
                 edit MEMBER 'p16'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -546,7 +544,7 @@ suite prod
               family p17
                 edit MEMBER 'p17'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -576,7 +574,7 @@ suite prod
               family p18
                 edit MEMBER 'p18'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -606,7 +604,7 @@ suite prod
               family p19
                 edit MEMBER 'p19'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -636,7 +634,7 @@ suite prod
               family p20
                 edit MEMBER 'p20'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -666,7 +664,7 @@ suite prod
               family p21
                 edit MEMBER 'p21'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -696,7 +694,7 @@ suite prod
               family p22
                 edit MEMBER 'p22'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -726,7 +724,7 @@ suite prod
               family p23
                 edit MEMBER 'p23'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -756,7 +754,7 @@ suite prod
               family p24
                 edit MEMBER 'p24'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -786,7 +784,7 @@ suite prod
               family p25
                 edit MEMBER 'p25'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -816,7 +814,7 @@ suite prod
               family p26
                 edit MEMBER 'p26'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -846,7 +844,7 @@ suite prod
               family p27
                 edit MEMBER 'p27'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -876,7 +874,7 @@ suite prod
               family p28
                 edit MEMBER 'p28'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -906,7 +904,7 @@ suite prod
               family p29
                 edit MEMBER 'p29'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
@@ -936,7 +934,7 @@ suite prod
               family p30
                 edit MEMBER 'p30'
                 task jgefs_forecast
-                  trigger ../../../init/atmos/jgefs_atmos_getcfssst eq complete and ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
+                  trigger ../../../init/atmos/jgefs_atmos_init_recenter eq complete and ../c00/wave/jgefs_wave_prep eq complete and wave/jgefs_wave_prep eq complete
                 task jgefs_fcst_post_manager
                   trigger jgefs_forecast eq active or jgefs_forecast eq complete
                   event 1 release_post
