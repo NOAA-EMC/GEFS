@@ -117,7 +117,7 @@ if [[ -d global-workflow.fd ]] ; then
   fi
   $LINK ../sorc/global-workflow.fd/sorc/ufs_model.fd/FV3/upp/parm ../parm/post
 
-  for fn in parm_fv3diag product config; do
+  for fn in parm_fv3diag product; do
     echo ${fn}
     if [[ -d ../parm/${fn} ]]; then
       rm -rf ../parm/${fn}
