@@ -1,13 +1,6 @@
-#!/bin/bash
+#! /usr/bin/env bash
 
-echo "$(date -u) begin $(basename $BASH_SOURCE)"
-
-set -xa
-if [[ ${STRICT:-NO} == "YES" ]]; then
-  # Turn on strict bash error checking
-  set -eu
-fi
-export PS4='$SECONDS + $(basename $(basename $BASH_SOURCE))[$LINENO] '
+source "${HOMEgfs:-${HOMEgefs}}/ush/preamble.sh"
 
 ####################################
 # Determine Job Output Name on System
