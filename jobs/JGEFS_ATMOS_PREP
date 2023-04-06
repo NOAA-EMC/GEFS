@@ -73,7 +73,7 @@ export COMPONENT="atmos"
 # Source relevant config files
 #############################
 configs="gefs gefs_atmos_prep"
-config_path=$PARMgefs
+config_path=$PARMgefs/parm_gefs
 for config in $configs; do
   . $config_path/$config.parm
   export err=$?
