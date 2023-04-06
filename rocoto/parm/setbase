@@ -29,7 +29,7 @@ if [ -d /scratch2/NCEPDEV ]; then
     echo "Using settings for Hera"
     export machine='HERA'
     
-    export HOMEDIR=${HOMEDIR:-/scratch2/NCEPDEV/ensemble/noscrub/common/git/global_workflow/gefs_v12.1.0}
+    export HOMEDIR=${HOMEDIR:-/scratch2/NCEPDEV/ensemble/noscrub/Xianwu.Xue/GEFS_v13/gw_walter}
     export HOMERFC=/scratch2/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
     export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/common
 
