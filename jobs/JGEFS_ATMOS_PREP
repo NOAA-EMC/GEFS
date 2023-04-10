@@ -76,7 +76,7 @@ for config in $configs; do
   fi
 done
 
-export ROTDIR=${COMOUT:-$(compath.py -o $NET/${ver})}
+export ROTDIR=${ROTDIR:-$(compath.py -o $NET/${ver})}
 export COMOUT=${COMOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/${cyc}}
 
 export COMINgfs=${COMINgfs:-$(compath.py ${envir}/com/gfs/${gfs_ver})/gfs.${PDY}/${cyc}}
