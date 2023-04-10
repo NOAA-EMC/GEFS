@@ -31,17 +31,23 @@ export NTASKS=$SLURM_NTASKS
 export outid="LL$job"
 export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
+export LSB_JOBID=${pid}
 #/\ Only for Hera
 
-export gefsmpexec="srun -n $NTASKS"
-export gefsmpexec_mpmd="srun -n $NTASKS /scratch2/NCEPDEV/ensemble/noscrub/common/soft/mpiserial.cd/mpiserial"
+export gefsmpexec="srun -n $total_tasks"
+export gefsmpexec_mpmd="srun -n $total_tasks /scratch2/NCEPDEV/ensemble/noscrub/common/soft/mpiserial.cd/mpiserial"
 export wavempexec="srun -n" 
 export wave_mpmd="/scratch2/NCEPDEV/ensemble/noscrub/common/soft/mpiserial.cd/mpiserial" # -m"
 
 #export errchk="eval if [[ \$err != 0 ]]; then exit \$err; fi"
 
-export APRUNC="srun -n 1"
-export APRUN_RECENT="srun -n $NTASKS"
+#export APRUNC="srun -n 1"
+#export APRUN_RECENT="srun -n $NTASKS"
 export APRUN_CHGRES="srun -n 1"
-export aprun_gec00="srun -n 1"
+#export aprun_gec00="srun -n 1"
 export APRUN_CALCINC="srun -n 1"
+
+. $GEFS_ROCOTO/parm/setbase
+. $GEFS_ROCOTO/parm/gefs_config
+. $GEFS_ROCOTO/parm/gefs_dev.parm
+
