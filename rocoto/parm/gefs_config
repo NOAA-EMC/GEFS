@@ -21,13 +21,16 @@ if [[ $machine == "WCOSS2" ]]; then
     export COMROOT=${WORKDIR}/$envir/com
     export DATAROOT=$baseoutput/tmp
 else
-    export COMROOT=$baseoutput/com
+    export COMROOT=$baseoutput/dev/com
     export GESROOT=$baseoutput/nwges
-    export DATAROOT=$baseoutput/tmpnwprd
-    export DCOMROOT=${DCOMROOT:-/dcom}
-    export PCOMROOT=$baseoutput/pcom/$envir
+    export DATAROOT=$baseoutput/tmp
+    #export DCOMROOT=${DCOMROOT:-/dcom}
+    #export PCOMROOT=$baseoutput/pcom/$envir
 
-    export GESROOTp1=$GESROOTp1
+    #export GESROOTp1=$GESROOTp1
+
+    #export GESOUT=$baseoutput/com/
+    #export COMOUT=$baseoutput/com
 fi
 
 export archsyndir=${archsyndir:-$COMROOTp1/arch/prod/syndat}
@@ -49,6 +52,10 @@ fi
 
 GFSArchivedData=yes
 #GFSArchivedData=no
+if [[ $WHERE_AM_I == "hera" ]]; then
+    GFSArchivedData=yes
+    UseHOMEdata=yes
+fi
 
 #Please check with parm/gefs_init.parm to make sure the next line matching
 fhrp=6
@@ -62,15 +69,36 @@ else
     if [[ $GFSArchivedData == "yes" ]]; then
         # HOMEdata, COMINgfs_base, COMINenkf_base and COMINcfs_base are defined in setbase, pointing to the NCO  gfs.v15 parallel
         # However, if you use gfs/enkf data from archived data, you may speficfy them in this "if" block and make GFSArchivedData=yes
-        UseHOMEdata=no
+        UseHOMEdata=${UseHOMEdata:-no}
         if [[ $UseHOMEdata == "yes" ]]; then
-            HOMEdata=/lfs/h2/emc/ens/noscrub/xianwu.xue/GEFS/HOMEdata/canned/com
-            export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
-            export COMINgfs_base=$HOMEdata/fv3init/gfs.
-            export COMINcfs_base=$HOMEdata/cfs/cfs.
-            export COMIN_WAV_ICE=$HOMEdata/sea_ice
-            export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc}
-            export COMINenkf=${COMINenkf:-${COMINenkf_base}${pdyp}/$cycp}
+            if [[ $WHERE_AM_I == "hera" ]]; then
+                source dev/versions/run_hera.ver
+                export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/Xianwu.Xue/GEFS_v13/z_DATA/lfs_C96_C48_NOIAU_anal_20230114/h1/ops/prod/com
+                export COMINgfs_base=${HOMEdata}/gfs/${gfs_ver}
+                #export COMINenkf_base=${HOMEdata}/com/gfs/v16.2/enkfgdas.
+                export COMINgfs=${COMINgfs:-${COMINgfs_base}/gfs.${PDY}/${cyc}}
+                #export COMINenkf=${COMINenkf:-${COMINenkf_base}${pdyp}/$cycp/atmos}
+                export COMINenkfgfs=${COMINenkfgfs:-${COMINgfs_base}/enkfgfs.${PDY}/${cyc}}
+
+                export COMINcfs_base=${HOMEdata}/com/cfs/v2.3/cfs.
+                export DCOMROOT=$HOMEdata/dcom
+
+                # For gempak_meta
+                export COMINsgfs=${HOMEdata}/com/gfs/v16.2 #${COMINsgfs:-$(compath.py gfs/prod)}
+                export COMINnawips="NONE" #${COMINnawips:-$(compath.py nawips/prod)}
+                export COMINecmwf="NONE" #${COMINecmwf:-$(compath.py ecmwf/prod/ecmwf)}
+                export COMINukmet="NONE"  #${COMINukmet:-$(compath.py nawips/prod/ukmet)}
+                export COMINnam="NONE" #${COMINnam:-$(compath.py nam/prod)}
+
+            else
+                HOMEdata=/lfs/h2/emc/ens/noscrub/xianwu.xue/GEFS/HOMEdata/canned/com
+                export COMINenkf_base=$HOMEdata/fv3init/enkf.gdas.
+                export COMINgfs_base=$HOMEdata/fv3init/gfs.
+                export COMINcfs_base=$HOMEdata/cfs/cfs.
+                export COMIN_WAV_ICE=$HOMEdata/sea_ice
+                export COMINgfs=${COMINgfs:-${COMINgfs_base}${PDY}/$cyc}
+                export COMINenkf=${COMINenkf:-${COMINenkf_base}${pdyp}/$cycp}
+            fi
         else
             HOMEdata=/gpfs/h2/emc/modeling/noscrub/Xianwu.Xue/gw_for_acorn/HOMEdata
             export COMPATH=$HOMEdata/com/gfs/prod
