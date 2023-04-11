@@ -10,7 +10,7 @@ export impi_ver=2022.1.2
 export prod_util_ver=1.2.2
 export grib_util_ver=1.2.4
 
-export netcdf_ver=4.7.0
+export netcdf_ver=4.7.4
 
 # -- For FV3
 

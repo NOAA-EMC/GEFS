@@ -261,7 +261,7 @@ def get_definitions(dicBase):
     '''
 
     lstEntity = ["MEMLIST", "CYCLE_THROTTLE", "TASK_THROTTLE", "SDATE", "EDATE", \
-                 "INCYC", "WHERE_AM_I", "GEFS_ROCOTO", "BIN", "PRE", \
+                 "INCYC", "WHERE_AM_I", "GEFS_ROCOTO", "BIN", \
                  "WORKFLOW_LOG_DIR", "LOG_DIR", "tmpnwprd", "DATA_DIR", "EXPID", \
                  "PSLOT", "SOURCEDIR", "WORKDIR", "KEEP_DIR", "INIT_DIR", \
                  "HPSS_DIR", "DIRS_TO_KEEP", "DIRS_TO_ARCHIVE", "DIRS_TO_KEEP_WAVE", "DIRS_TO_ARCHIVE_WAVE", \

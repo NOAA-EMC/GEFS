@@ -11,17 +11,19 @@ ulimit -a
 . $GEFS_ROCOTO/dev/versions/run_hera.ver
 
 # Load modules
-. /apps/lmod/lmod/init/ksh
 module list
 module purge
 
-module load EnvVars/$EnvVars_ver
-module load intel/$ips_ver
-module load impi/$impi_ver
-module load prod_util/$prod_util_ver
-module load prod_envir/$prod_envir_ver
-module load hdf5_parallel/$HDF5_parallel_ver
-module load netcdf_parallel/$NetCDF_parallel_ver
+module use -a /scratch2/NCEPDEV/nwprod/hpc-stack/libs/hpc-stack/modulefiles/stack
+
+module load hpc/$hpc_ver
+
+module load hpc-intel/${intel_ver}
+module load hpc-impi/${impi_ver}
+module load grib_util/${grib_util_ver}
+module load prod_util/${prod_util_ver}
+
+module load netcdf/${netcdf_ver}
 
 module list
 
@@ -42,6 +44,10 @@ export MEMORY_AFFINITY=core:2
 # Export List
 (( OMP_NUM_THREADS_CH = 40 / GEFS_PPN ))
 export OMP_NUM_THREADS_CH
+
+ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
+export COMOUT=${COMOUT:-${COMROOT}/gefs/$ver/${RUN}.${PDY}/$cyc}
+export ROTDIR=${COMROOT}/gefs/${ver}
 
 # CALL executable job script here
 $SOURCEDIR/jobs/JGEFS_ATMOS_PREP

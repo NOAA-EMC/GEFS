@@ -28,10 +28,11 @@ export taskspernode=${GEFS_PPN}
 export NTASKS=$SLURM_NTASKS
 
 #\/ Only on Hera
+export pid=${pid:-${SLURM_JOBID}}
 export outid="LL$job"
 export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
-export LSB_JOBID=${pid}
+export PBS_JOBID=${pid}
 #/\ Only for Hera
 
 export gefsmpexec="srun -n $total_tasks"
@@ -46,6 +47,7 @@ export wave_mpmd="/scratch2/NCEPDEV/ensemble/noscrub/common/soft/mpiserial.cd/mp
 export APRUN_CHGRES="srun -n 1"
 #export aprun_gec00="srun -n 1"
 export APRUN_CALCINC="srun -n 1"
+
 
 . $GEFS_ROCOTO/parm/setbase
 . $GEFS_ROCOTO/parm/gefs_config

@@ -174,9 +174,9 @@ if [ $RunRocoto = "yes" ]; then
     cd $sWS
     if [ $machine = "hera" ]; then
         module load intel/18.0.5.274
-        module load rocoto/1.3.1
+        module load rocoto/1.3.3
         module load contrib
-        module load intelpython/3.6.8
+        module load anaconda/latest
  
     elif [ $machine = "wcoss2" ]; then
 
