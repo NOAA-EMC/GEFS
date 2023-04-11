@@ -675,17 +675,13 @@ def write_to_all_ent(GenTaskEnt, dicBase):
         import sys
         # sPath = dicBase["GEFS_ROCOTO"] + r"/tasks/" + dicBase["WHERE_AM_I"] + r"/"
 
-        sSep = "/"
-        if sys.platform == 'win32':
-            sSep = r'\\'
-
         sPath = dicBase["GEFS_ROCOTO"]
-        sPath += sSep + "tasks"
+        sPath = os.path.join(sPath, "tasks")
 
         if not os.path.exists(sPath):
             os.mkdir(sPath)
 
-        sAllEnt_File = sPath + sSep + "all.ent"
+        sAllEnt_File = os.path.join(sPath, "all.ent")
         fh = open(sAllEnt_File, 'w')
 
         fh.write('<!-- List of all GEFS tasks -->\n')
@@ -704,16 +700,16 @@ def write_to_all_ent(GenTaskEnt, dicBase):
         fh.close()
 
         # ----
-        sPath = dicBase["GEFS_ROCOTO"] + sSep + "tasks"
+        sPath = os.path.join(dicBase["GEFS_ROCOTO"], "tasks")
         # create  date_vars.ent
-        sFile = sPath + sSep + "date_vars.ent"
+        sFile = os.path.join(sPath, "date_vars.ent")
         fh = open(sFile, 'w')
         strings = get_DATE_VARS("")
         fh.write(strings)
         fh.flush()
         fh.close()
         # create env_vars.ent
-        sFile = sPath + sSep + "env_vars.ent"
+        sFile = os.path.join(sPath, "env_vars.ent")
         fh = open(sFile, 'w')
         strings = get_ENV_VARS("")
         fh.write(strings)
@@ -726,21 +722,16 @@ def write_to_ent(taskname, dicBase, GenTaskEnt=False):
     import sys
     import os
 
-    sSep = "/"
-    if sys.platform == 'win32':
-        sSep = r'\\'
-
     strings = create_metatask_task(dicBase, taskname=taskname, sPre="", GenTaskEnt=GenTaskEnt)
 
     strings = ''.join(strings)
 
     sPath = dicBase["GEFS_ROCOTO"]
-    sPath += sSep + "tasks"
-
+    sPath += os.path.join(sPath, "tasks")
     if not os.path.exists(sPath):
         os.mkdir(sPath)
 
-    sFile = sPath + sSep + "{0}.ent".format(taskname)
+    sFile = os.path.join(sPath, f"{taskname}.ent")
 
     fh = open(sFile, 'w')
 
@@ -1434,11 +1425,8 @@ def get_metatask_names(taskname=""):
 def get_jobname(taskname):
     import os
     import sys
-    sSep = "/"
-    if sys.platform == 'win32':
-        sSep = r'\\'
 
-    sDefaultJobID_File = sys.path[0] + sSep + "job_id.conf"
+    sDefaultJobID_File = os.path.join(sys.path[0], "job_id.conf")
     jobname_short = "--"
     if os.path.exists(sDefaultJobID_File):
         # print("---Default Job-ID Configure file was found! Reading ...")

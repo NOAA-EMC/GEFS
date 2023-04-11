@@ -14,9 +14,6 @@ import GEFS_Crontab as gefs_crontab
 
 def main():
     import os, sys
-    sSep = "/"
-    if sys.platform == 'win32':
-        sSep = r'\\'
 
     import argparse
     parser = argparse.ArgumentParser(description='pyGEFS: Python-Based Workflow Management of NCEP Global Ensemble Forecast System!')

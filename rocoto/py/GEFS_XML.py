@@ -3,7 +3,6 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     import sys
     import os
 
-    sSep = "/"
     # ==
     get_MEMLIST(dicBase)
     # ==
@@ -48,9 +47,9 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sRocoto_Path = dicBase[sVarName_2]
         sVarValue = os.path.basename(os.path.abspath(sRocoto_Path))
         if sVarValue.startswith("rocoto"):
-            sVarValue = os.path.basename(os.path.abspath(sRocoto_Path + sSep + ".."))
+            sVarValue = os.path.basename(os.path.abspath(os.path.join(sRocoto_Path, "..")))
             if sVarValue == "nwdev":
-                sVarValue = os.path.basename(os.path.abspath(sRocoto_Path + sSep + ".." + sSep + ".."))
+                sVarValue = os.path.basename(os.path.abspath(os.path.join(sRocoto_Path, "..", "..")))
 
         dicBase[sVarName] = sVarValue
     else:
@@ -62,28 +61,30 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarName = "SOURCEDIR".upper()
     sVarValue = ""
     if sVarName not in dicBase:
-        sVarValue = os.path.abspath(sRocoto_WS + sSep + "..")
-        if not (os.path.exists(sVarValue + sSep + "parm") and os.path.exists(sVarValue + sSep + "sorc")):
+        sVarValue = os.path.abspath(os.path.join(sRocoto_WS, ".."))
+        if not (os.path.exists(os.path.join(sVarValue, "parm")) and os.path.exists(os.path.join(sVarValue, "sorc"))):
             print('!!! It seems that your GEFS SOURE is not in the same path with ROCOTO, therefore, you must assign a avalue for "SOURCEDIR" in the user configure file!!!')
             exit(-5)
     else:
         sVarValue = replace_First_Last(dicBase, sVarName)
-        if not (os.path.exists(sVarValue + sSep + "parm") and os.path.exists(sVarValue + sSep + "sorc")):
-            sPathTem = sVarValue + sSep + dicBase["EXPID"]
+        if not (os.path.exists(os.path.join(sVarValue, "parm")) and os.path.exists(os.path.join(sVarValue, "sorc"))):
+            sPathTem = os.path.join(sVarValue, dicBase["EXPID"])
             if os.path.exists(sPathTem):
-                if os.path.exists(sPathTem + sSep + "parm") and os.path.exists(sPathTem + sSep + "sorc"):
+                if os.path.exists(os.path.join(sPathTem,"parm")) and os.path.exists(os.path.join(sPathTem, "sorc")):
                     sVarValue = sPathTem
                 else:
-                    sPathTem = sVarValue + sSep + dicBase["EXPID"] + sSep + "nwdev"
+                    sPathTem = os.path.join(sVarValue, dicBase["EXPID"], "nwdev")
                     if os.path.exists(sPathTem):
-                        if os.path.exists(sPathTem + sSep + "parm") and os.path.exists(sPathTem + sSep + "sorc"):
+                        if os.path.exists(os.path.join(sPathTem, "parm")) and os.path.exists(os.path.join(sPathTem, "sorc")):
                             sVarValue = sPathTem
                         else:
                             print("Please check your SOURCEDIR - {0}".format(sVarValue))
                             exit(-6)
             else:
-                sPathTem = sVarValue + sSep + "nwdev"
-                if os.path.exists(sPathTem) and os.path.exists(sPathTem + sSep + "parm") and os.path.exists(sPathTem + sSep + "sorc"):
+                sPathTem = os.path.join(sVarValue, "nwdev")
+                if os.path.exists(sPathTem) \
+                        and os.path.exists(os.path.join(sPathTem, "parm")) \
+                        and os.path.exists(os.path.join(sPathTem, "sorc")):
                     sVarValue = sPathTem
                     # sVarValue += "/&EXPID;/nwdev"
 
@@ -254,6 +255,7 @@ def get_preamble():
 
 # =======================================================
 def get_definitions(dicBase):
+    import os
     '''
         Create entities related to the experiment
     '''
@@ -277,18 +279,19 @@ def get_definitions(dicBase):
 
     GenTaskEnt = get_GenTaskEnt(dicBase)
     if GenTaskEnt:
-        import sys
-        sSep = "/"
-
+        sPath_task = os.path.join(dicBase['GEFS_ROCOTO'], "tasks")
         # -----------------------------------------------------------------------------------------------
         strings.append('\t<!-- External entities -->\n')
-        strings.append('\t<!ENTITY ENV_VARS   SYSTEM "{0}{1}tasks{1}env_vars.ent">\n'.format(dicBase['GEFS_ROCOTO'], sSep))
-        strings.append('\t<!ENTITY DATE_VARS   SYSTEM "{0}{1}tasks{1}date_vars.ent">\n'.format(dicBase['GEFS_ROCOTO'], sSep))
+        sFile = os.path.join(sPath_task, "env_vars.ent")
+        strings.append(f'\t<!ENTITY ENV_VARS   SYSTEM "{sFile}">\n')
+        sFile = os.path.join(sPath_task, "date_vars.ent")
+        strings.append(f'\t<!ENTITY DATE_VARS   SYSTEM "{sFile}">\n')
         strings.append('\n')
 
         # -----------------------------------------------------------------------------------------------
         strings.append('\t<!-- External parameter entities -->\n')
-        strings.append('\t<!ENTITY % TASKS    SYSTEM "{0}{1}tasks{1}all.ent">\n'.format(dicBase['GEFS_ROCOTO'], sSep))
+        sFile = os.path.join(sPath_task, "all.ent")
+        strings.append(f'\t<!ENTITY % TASKS    SYSTEM "{sFile}')
         strings.append('\t%TASKS;\n')
         strings.append('\n')
 

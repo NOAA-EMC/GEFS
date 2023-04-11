@@ -13,7 +13,7 @@ def main():
     # print(os.environ['HOME'])
     sHomeDIR = os.environ['HOME']
 
-    sMyCrontab = sHomeDIR + "/cron/mycrontab"
+    sMyCrontab = os.path.join(sHomeDIR, "cron", "mycrontab")
 
     ss = Add_Cron_To_myCrontab(sMyCrontab, sCronLine)
     # print(ss)
