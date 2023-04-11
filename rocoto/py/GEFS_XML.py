@@ -291,7 +291,7 @@ def get_definitions(dicBase):
         # -----------------------------------------------------------------------------------------------
         strings.append('\t<!-- External parameter entities -->\n')
         sFile = os.path.join(sPath_task, "all.ent")
-        strings.append(f'\t<!ENTITY % TASKS    SYSTEM "{sFile}')
+        strings.append(f'\t<!ENTITY % TASKS    SYSTEM "{sFile}">\n')
         strings.append('\t%TASKS;\n')
         strings.append('\n')
 

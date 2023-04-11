@@ -444,10 +444,7 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         strings += (create_envar(name="SUBJOB", value=taskname.replace("ensavg_nemsio_", ""), sPre=sPre_2))
 
     # Add command
-    sPRE = "&PRE; "
-    if WHERE_AM_I.upper() in ["WCOSS2".upper()]:
-        sPRE = ""
-
+    sPRE = ""
     if taskname in ['keep_init', 'copy_init', 'keep_data_atm', 'archive_atm', 'cleanup_atm', 'keep_data_wave', 'archive_wave', 'cleanup_wave', 'keep_data_chem', 'archive_chem', 'cleanup_chem']:
         if WHERE_AM_I.upper() in ["WCOSS2".upper()]:
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format(taskname, sPRE)
@@ -727,7 +724,7 @@ def write_to_ent(taskname, dicBase, GenTaskEnt=False):
     strings = ''.join(strings)
 
     sPath = dicBase["GEFS_ROCOTO"]
-    sPath += os.path.join(sPath, "tasks")
+    sPath = os.path.join(sPath, "tasks")
     if not os.path.exists(sPath):
         os.mkdir(sPath)
 
