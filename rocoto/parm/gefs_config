@@ -51,6 +51,7 @@ if [[ $WHERE_AM_I == "hera" ]]; then
   source dev/versions/run_hera.ver
   export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/Xianwu.Xue/GEFS_v13/z_DATA/lfs_C96_C48_NOIAU_anal_20230114/h1/ops/prod/com
   export COMINgfs_base=${HOMEdata}/gfs/${gfs_ver}
+  export COMINgfs=${COMINgfs:-${COMINgfs_base}/gfs.${PDY}/${cyc}}
   export COMINenkfgfs=${COMINenkfgfs:-${COMINgfs_base}/enkfgfs.${PDY}/${cyc}}
 
   export COMINcfs_base=${HOMEdata}/com/cfs/v2.3/cfs.
