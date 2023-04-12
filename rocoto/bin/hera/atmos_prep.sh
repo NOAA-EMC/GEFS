@@ -16,7 +16,7 @@ module purge
 
 module use -a /scratch2/NCEPDEV/nwprod/hpc-stack/libs/hpc-stack/modulefiles/stack
 
-module load hpc/$hpc_ver
+module load hpc/${hpc_ver}
 
 module load hpc-intel/${intel_ver}
 module load hpc-impi/${impi_ver}
@@ -50,4 +50,4 @@ export COMOUT=${COMOUT:-${COMROOT}/gefs/$ver/${RUN}.${PDY}/$cyc}
 export ROTDIR=${COMROOT}/gefs/${ver}
 
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_ATMOS_PREP
+${SOURCEDIR}/jobs/JGEFS_ATMOS_PREP

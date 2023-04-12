@@ -1,4 +1,4 @@
-#!/bin/ksh
+#! /usr/bin/env bash
 #
 # set up base variables
 # execute with dot
@@ -22,37 +22,36 @@ export STRICT="YES"
 
 # For virtical structure
 if [[ -d $SOURCEDIR/sorc/global-workflow.fd ]] ; then
-    export HOMEDIR=$SOURCEDIR
+  export HOMEDIR=$SOURCEDIR
 fi
 
 if [ -d /scratch2/NCEPDEV ]; then 
-    echo "Using settings for Hera"
-    export machine='HERA'
-    
-    export HOMEDIR=${HOMEDIR:-/scratch2/NCEPDEV/ensemble/noscrub/Xianwu.Xue/GEFS_v13/gw_walter}
-    export HOMERFC=/scratch2/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
-    export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/common
+  echo "Using settings for Hera"
+  export machine='HERA'
 
-    export COMROOThps=${HOMEdata}
-    export COMROOTp1=/scratch2/NCEPDEV/rstprod/com 
-    export PATH=$PATH:/scratch2/NCEPDEV/nwprod/NCEPLIBS/util/prod_util.v1.1.0/ush
+  export HOMEDIR=${HOMEDIR:-/scratch2/NCEPDEV/ensemble/noscrub/Xianwu.Xue/GEFS_v13/gw_walter}
+  export HOMERFC=/scratch2/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
+  export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/common
 
-    export GBBEPX_DATA_DIR_TODAY=$HOMEdata/GBBEPx
-    export GBBEPX_DATA_DIR_YESTERDAY=$HOMEdata/GBBEPx
-    export gbbepx_pattern='$GBBEPX_DATA_DIR/${local_name}.${day}.FV3.${CASE}Grid.${tiledir}.bin' # single-quotes required
-    export gbbepx_days='$PDYm1' # single-quotes required
-    export gbbepx_list="GBBEPx.bc GBBEPx.oc GBBEPx.so2 GBBEPx.pm25 meanFRP"
-    export inout_list="BBURN3-bb,ebu_pm_10 SO4-bb,ebu_sulf plume,plumestuff GBBEPx.bc,ebu_bc GBBEPx.oc,ebu_oc GBBEPx.so2,ebu_so2 GBBEPx.pm25,ebu_pm_25 meanFRP,plumefrp"
+  export COMROOThps=${HOMEdata}
+  export COMROOTp1=/scratch2/NCEPDEV/rstprod/com
+  export PATH=$PATH:/scratch2/NCEPDEV/nwprod/NCEPLIBS/util/prod_util.v1.1.0/ush
+
+  export GBBEPX_DATA_DIR_TODAY=$HOMEdata/GBBEPx
+  export GBBEPX_DATA_DIR_YESTERDAY=$HOMEdata/GBBEPx
+  export gbbepx_pattern='$GBBEPX_DATA_DIR/${local_name}.${day}.FV3.${CASE}Grid.${tiledir}.bin' # single-quotes required
+  export gbbepx_days='$PDYm1' # single-quotes required
+  export gbbepx_list="GBBEPx.bc GBBEPx.oc GBBEPx.so2 GBBEPx.pm25 meanFRP"
+  export inout_list="BBURN3-bb,ebu_pm_10 SO4-bb,ebu_sulf plume,plumestuff GBBEPx.bc,ebu_bc GBBEPx.oc,ebu_oc GBBEPx.so2,ebu_so2 GBBEPx.pm25,ebu_pm_25 meanFRP,plumefrp"
 
 elif [[ -d /apps/prod ]]; then
-    # We are on NOAA WCOSS2
-    echo "Using settings for WCOSS2"
-    export machine='WCOSS2'
-    export JOBPHASE=
-    export HOMEDIR=${HOMEDIR:-/lfs/h2/emc/ens/noscrub/xianwu.xue/GEFS_v13/gw_walter}
-    export HOMEtrak=/lfs/h2/emc/ens/noscrub/emc.ens/common/git/ens_tracker/ens_tracker.v2.1.2
-    export archsyndir=/lfs/h2/emc/ens/noscrub/emc.ens/common/git/ens_tracker/TCvitalData/syndat
-    export HOMEdata=/lfs/h2/emc/ens/noscrub/emc.ens/common/canned_data
+  # We are on NOAA WCOSS2
+  echo "Using settings for WCOSS2"
+  export machine='WCOSS2'
+  export HOMEDIR=${HOMEDIR:-/lfs/h2/emc/ens/noscrub/xianwu.xue/GEFS_v13/gw_walter}
+  export HOMEtrak=/lfs/h2/emc/ens/noscrub/emc.ens/common/git/ens_tracker/ens_tracker.v2.1.2
+  export archsyndir=/lfs/h2/emc/ens/noscrub/emc.ens/common/git/ens_tracker/TCvitalData/syndat
+  export HOMEdata=/lfs/h2/emc/ens/noscrub/emc.ens/common/canned_data
 
 fi
 

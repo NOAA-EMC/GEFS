@@ -163,6 +163,7 @@ export KEEPDATA=${KEEPDATA:-"NO"}
 ####################################
 export NET=${NET:-gefs}
 export envir=${envir:-prod}
+export RUN_ENVIR=${RUN_ENVIR:-nco}
 export RUN=${RUN:-gefs}
 
 ######################################
@@ -180,7 +181,6 @@ export VERBOSE=${VERBOSE:-YES}
 
 # Get all the COM path templates
 source "${PARMgefs}/config/config.com"
-
 
 # Microphysics Options: 99-ZhaoCarr, 8-Thompson; 6-WSM6, 10-MG, 11-GFDL
 export imp_physics=${imp_physics:-"8"}
