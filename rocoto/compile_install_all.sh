@@ -1,8 +1,8 @@
 #!/bin/bash
-set -eux
+set -eu #x
 
 sWS=$(pwd)
-echo $sWS
+echo ${sWS}
 
 while getopts c:a:r:m:f:b:e:s:l:o: option
 do
@@ -33,7 +33,7 @@ Structure=${Structure:-no} # dev (use HOMEDIR to link), prod (clone global-workf
 Link=${Link:-no}
 Operation=${Operation:-no} # ecflow, rocoto, lsf
 
-if [ $machine = "nomachine" ]; then
+if [ ${machine} = "nomachine" ]; then
   if [ -d /scratch1/NCEPDEV ]; then
     machine=hera
   elif [[ -d /apps/prod ]]; then # WCOSS2
@@ -44,41 +44,41 @@ if [ $machine = "nomachine" ]; then
   fi
 fi
 
-echo $CompileCode
-echo $CleanAll
-echo $RunRocoto
-echo $machine
-echo $userConfigFile
-echo $RunEnvir
+echo ${CompileCode}
+echo ${CleanAll}
+echo ${RunRocoto}
+echo ${machine}
+echo ${userConfigFile}
+echo ${RunEnvir}
 echo ${Structure}
 echo ${Link}
 
-if [ $CompileCode = "yes" ]; then
+if [ ${CompileCode} = "yes" ]; then
   Link=yes
 fi
 
 
-if [ $CompileCode = "yes" ]; then
-  cd $sWS/../sorc
+if [ ${CompileCode} = "yes" ]; then
+  cd ${sWS}/../sorc
 
-  if [[ $Structure == "dev" ]]; then
+  if [[ ${Structure} == "dev" ]]; then
     echo "...working on it ..."
-    if [[ $machine == "hera" ]]; then
+    if [[ ${machine} == "hera" ]]; then
       sHeader='/scratch2/NCEPDEV/ensemble'
-    elif [[ $machine == "wcoss2" ]]; then
+    elif [[ ${machine} == "wcoss2" ]]; then
       sHeader='/lfs/h'
     fi
     sHOMEDIR=$(grep 'export HOMEDIR=${HOMEDIR:-'${sHeader} -r ${sWS}/parm/setbase | sed 's/export HOMEDIR=${HOMEDIR:-//g'| sed 's/}//g')
-    echo $sHOMEDIR
+    echo ${sHOMEDIR}
 
     if [[ -L global-workflow.fd ]] ; then
       rm global-workflow.fd
     elif [[ -d global-workflow.fd ]] ; then
       rm -rf global-workflow.fd
     fi
-    ln -sf $sHOMEDIR global-workflow.fd
+    ln -sf ${sHOMEDIR} global-workflow.fd
 
-  elif [[ $Structure == "prod" ]]; then
+  elif [[ ${Structure} == "prod" ]]; then
     # Checkout the global-workflow if needed
     if [[ -d global-workflow.fd ]] ; then
       rm -rf global-workflow.fd
@@ -93,82 +93,89 @@ fi
 
 
 # for Link
-if [ $Link = "yes" ]; then
-  cd $sWS/../sorc
-  if [ $machine = "hera" ]; then
+if [ ${Link} = "yes" ]; then
+  cd ${sWS}/../sorc
+  if [ ${machine} = "hera" ]; then
     ./link_gefs.sh -e emc -m hera
-  elif [ $machine = "wcoss2" ]; then
-    ./link_gefs.sh -e $RunEnvir -m wcoss2
+  elif [ ${machine} = "wcoss2" ]; then
+    ./link_gefs.sh -e ${RunEnvir} -m wcoss2
   fi
 fi
 
+
 # for cleanning
-if [ $CleanAll = "yes" ]; then
+if [ ${CleanAll} = "yes" ]; then
   echo "Cleaning ..."
 
+  cd ${sWS}
+  rm -rf ../exec
+  rm -rf ../util/exec
+  rm -rf ../env
+
   rm -rf gefs.xml
+  rm -rf gefs*.db
   rm -rf cron_rocoto
   rm -rf tasks
-
-  cd $sWS/../sorc
-
   rm -rf logs
 
+  cd ${sWS}/../sorc
+  rm -rf logs
+  rm -rf ufs_model.fd
   if [[ -L global-workflow.fd ]] ; then
     rm global-workflow.fd
   elif [[ -d global-workflow.fd ]] ; then
     rm -rf global-workflow.fd
   fi
 
-  for dir in global_ensadd.fd  global_enspqpf.fd  gefs_ensstat.fd  global_ensppf.fd; do
-    if [ -f $dir ]; then
-      cd $dir
+  for sDir in global_ensadd \
+              gefs_ensstat \
+              global_ensppf \
+              wave_stat \
+              gefs_nemsio2nc \
+              global_enscqpf \
+              global_enscvprcp \
+              global_enssrbias \
+              global_enscvt24h \
+              global_enspqpf \
+              global_enspvrfy \
+              global_ensrfmat \
+              global_enssrbias; do
+    cd ${sWS}/../sorc
+    if [ -f ${sDir}.fd ]; then
+      cd ${sDir}.fd
       make clean
-      cd ${sWS}/../sorc
     fi
   done
 
-  for dir in global_enscvprcp.fd  global_enspvrfy.fd  global_enssrbias.fd global_enscqpf.fd  global_enscvt24h.fd  global_ensrfmat.fd; do
-    if [ -f $dir ]; then
-      cd $dir
+  cd ${sWS}/../util/sorc
+  for sDir in overenstr.grib.fd; do
+    if [ -f ${sDir} ]; then
+      cd ${sDir}
       make clean
-      cd ${sWS}/../sorc
-    fi
-  done
-
-  for dir in ../util/sorc/overenstr.grib.fd; do
-    if [ -f $dir ]; then
-      cd $dir
-      make clean
-      cd ${sWS}/../sorc
     fi
   done
 
   cd ${sWS}/../fix
-  for gw_dir in product fix_emission fix_gefs fix_wave am aer lut orog chem ugwd wave; do
-    rm -rf ${gw_dir}
+  for sDir in product \
+              fix_emission fix_gefs fix_wave \
+              am aer lut orog chem ugwd wave; do
+    rm -rf ${sDir}
   done
 
   cd ${sWS}/../parm
-  for dir in parm_fv3diag post product; do
-    rm -rf ${dir}
+  for sDir in parm_fv3diag post product; do
+    rm -rf ${sDir}
   done
 
   cd ${sWS}/../scripts
-  for file in `ls exgfs*` exglobal_forecast.sh; do
-    rm -rf ${file}
+  for sFile in `ls exgfs*` exglobal_forecast.sh; do
+    rm -rf ${sFile}
   done
 
   cd ${sWS}/../ush
-  for file in preamble.sh cplvalidate.sh `ls forecast_* ` `ls wave_*` merge_fv3_aerosol_tile.py chgres_cube.sh nems_configure.sh `ls parsing_*.sh`; do
-    rm -rf ${file}
+  for sFile in preamble.sh cplvalidate.sh `ls forecast_* ` `ls wave_*` merge_fv3_aerosol_tile.py chgres_cube.sh nems_configure.sh `ls parsing_*.sh`; do
+    rm -rf ${sFile}
   done
-
-  cd ${sWS}
-  rm -rf ../exec
-  rm -rf ../util/exec
-  rm -rf ../sorc/ufs_model.fd
-  rm -rf ../env
 
 fi # for CleanAll
 
@@ -186,8 +193,8 @@ if [ $RunRocoto = "yes" ]; then
     module purge
     module load envvar/1.0
 
-    module load PrgEnv-intel/8.1.0
-    module load craype/2.7.10
+    module load PrgEnv-intel/8.3.3
+    module load craype/2.7.17
     module load intel/19.1.3.304
     module load cray-mpich/8.1.9
 
@@ -197,23 +204,23 @@ if [ $RunRocoto = "yes" ]; then
     module load core/rocoto/1.3.5
 
   fi
-  ./py/run_pyGEFS.py -r yes -f $userConfigFile
+  ./py/run_pyGEFS.py -r yes -f ${userConfigFile}
   echo "Generated xml and/or ent and updated bin file!"
 fi # For RunRocoto
 
-#echo "crontab"
 # For Crontab
-if [ $AddCrontabToMyCrontab = "yes" ]; then
-  cd $sWS
-  if [ -f $HOME/cron/mycrontab ]; then
-    echo "Adding crontab to $HOME/cron/mycrontab!" 
-  else 
-    mkdir $HOME/cron
-    touch $HOME/cron/mycrontab
+if [ ${AddCrontabToMyCrontab} = "yes" ]; then
+  cd ${sWS}
+  sFile=${HOME}/cron/mycrontab
+  if [ -f ${sFile} ]; then
+    echo "Adding crontab to ${sFile}!"
+  else
+    mkdir ${HOME}/cron
+    touch ${sFile}
   fi
-    
+
   py/add_crontab.py
-  crontab $HOME/cron/mycrontab
-  echo "Added crontab to $HOME/cron/mycrontab!"
+  crontab ${sFile}
+  echo "Added crontab to ${sFile}!"
 
 fi
