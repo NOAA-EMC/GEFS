@@ -147,13 +147,16 @@ if [ ${CleanAll} = "yes" ]; then
     fi
   done
 
-  cd ${sWS}/../util/sorc
-  for sDir in overenstr.grib.fd; do
-    if [ -f ${sDir} ]; then
-      cd ${sDir}
-      make clean
-    fi
-  done
+  sPath=${sWS}/../util/sorc
+  if [[ -e ${sPath} ]]; then
+    cd ${sWS}/../util/sorc
+    for sDir in overenstr.grib.fd; do
+      if [ -f ${sDir} ]; then
+        cd ${sDir}
+        make clean
+      fi
+    done
+  fi
 
   cd ${sWS}/../fix
   for sDir in product \
