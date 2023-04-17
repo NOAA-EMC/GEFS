@@ -2,23 +2,11 @@
 
 source "${HOMEgfs:-${HOMEgefs}}/ush/preamble.sh"
 
-#echo "$(date -u) begin $(basename $BASH_SOURCE)"
-#export PS4="${PS4}${1}: "
-
-#set -xa
-#if [[ ${STRICT:-NO} == "YES" ]]; then
-#  # Turn on strict bash error checking
-#  set -eu
-#fi
-
 export mem=$1
 export nmem=$(echo $mem|cut -c 2-)
 nmem=${nmem#0}
 
-YMD=${PDY} HH=${cyc} MEMDIR=${mem} generate_com -x COM_ATMOS_INPUT
-
-#export INIDIR=$DATA
-export OUTDIR=${COM_ATMOS_INPUT} # ${COMOUT}/$mem/atmos/INPUT
+YMD=${PDY} HH=${cyc} MEMDIR=${memchar} generate_com -rx OUTDIR:COM_ATMOS_INPUT_TMPL
 
 mkdir -p $OUTDIR
 cd $DATA
@@ -48,11 +36,11 @@ fi
 
 if [[ $mem = c00 ]] ;then
   # Control intial conditions from current GFS cycle
-  export ATM_FILES_INPUT="gfs.t${cyc}z.atmanl.nc"
-  ATMFILE=${COMINgfs}/atmos/${ATM_FILES_INPUT} #gfs.t${cyc}z.atmanl.nc
+  export ATM_FILE_INPUT="gfs.t${cyc}z.atmanl.nc"
+  ATMFILE=${COMINgfs}/atmos/${ATM_FILE_INPUT} #gfs.t${cyc}z.atmanl.nc
   if [[ -f $ATMFILE ]]; then
     $NCP $ATMFILE $DATA
-    #export ATM_FILES_INPUT="gfs.t${cyc}z.atmanl.nc"
+    #export ATM_FILE_INPUT="gfs.t${cyc}z.atmanl.nc"
   else
     msg="FATAL ERROR in $(basename $BASH_SOURCE): GFS atmospheric analysis file $ATMFILE not found!"
     echo "$msg"
@@ -71,8 +59,10 @@ else
     fi
 
     memchar="mem"$(printf %03i $cmem)
-    export ATM_FILES_INPUT="enkfgfs.t${cyc}z.ratmanl.nc"
-    ATMFILE="${COMINenkfgfs}/$memchar/atmos/${ATM_FILES_INPUT}"  #gfs.t${cycp}z.atmanl.nc"
+    export ATM_FILE_INPUT="enkfgfs.t${cyc}z.ratmanl.nc"
+    ATMFILE="${COMINenkfgfs}/$memchar/atmos/${ATM_FILE_INPUT}"  #gfs.t${cycp}z.atmanl.nc"
+    ATMFILE=${COM_ATMOS_ANALYSIS_GFS}/${ATM_FILE_INPUT}
+
 
     if [[ -f $ATMFILE ]]; then
       $NCP $ATMFILE $DATA
@@ -97,7 +87,7 @@ fi
 
 if [[ $CONVERT_SFC == ".true." ]]; then
   export SFC_FILES_INPUT="gfs.t${cyc}z.sfcanl.nc"
-  SFCFILE="${COMINgfs}/atmos/${SFC_FILES_INPUT}"
+  SFCFILE="${COMINgfs}/atmos/${SFC_FILES_INPUT}" #change to the new COM
   if [[ -f $SFCFILE ]]; then
     $NCP ${SFCFILE} ${DATA}
   else
@@ -160,8 +150,7 @@ if [[ $SENDCOM == "YES" ]]; then
 
   if [[ $CONVERT_SFC == ".true." ]]; then
     for mem2 in $memberlist; do
-      YMD=${PDY} HH=${cyc} MEMDIR=${mem2} generate_com -x COM_ATMOS_INPUT
-      COMDIR2=${COM_ATMOS_INPUT} #${echo "${!COM_ATMOS_INPUT_TMPL}"} # $(echo "${!COM_ATMOS_INPUT_TMPL}" | envsubst) #${COM_ATMOS_INPUT} #$COMOUT/${mem2}/atmos/INPUT #init/$mem2
+      YMD=${PDY} HH=${cyc} MEMDIR=${mem2} generate_com COMDIR2:COM_ATMOS_INPUT_TMPL
       mkdir -p $COMDIR2
       for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
         $NCP ${DATA}/out.sfc.${tile}.nc $COMDIR2/sfc_data.${tile}.nc
