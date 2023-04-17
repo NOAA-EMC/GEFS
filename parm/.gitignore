@@ -2,3 +2,5 @@ parm_fv3diag
 post
 product
 prep_chem_sources.inp.IN
+
+config
