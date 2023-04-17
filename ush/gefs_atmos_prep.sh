@@ -16,23 +16,8 @@ cd $DATA
 # Set directory names and file names for orog data
 # The old and new (support fractional grid) orog data have different file names
 #---------------------------------------------------------------------------
-export FRAC_ORO="yes"
-if [ "${FRAC_ORO:-"no"}" = "yes" ]; then
-  if  [ ${CASE} == 'C48' ] ; then
-    OCNRES='500'
-  elif [ ${CASE} == 'C96' ] ; then
-    OCNRES='100'
-  elif [ ${CASE} == 'C192' ] ; then
-    OCNRES='050'
-  elif [ ${CASE} == 'C384' ] || [ ${CASE} == 'C768' ] || [ ${CASE} == 'C1152' ]; then
-    OCNRES='025'
-  fi
-  ORO_DIR="${CASE}.mx${OCNRES}_frac"
-  ORO_NAME="oro_${CASE}.mx${OCNRES}"
-else
-  ORO_DIR="${CASE}"
-  ORO_NAME="${CASE}_oro_data"
-fi
+ORO_DIR="${CASE}.mx${OCNRES}_frac"
+ORO_NAME="oro_${CASE}.mx${OCNRES}"
 
 if [[ $mem = c00 ]] ;then
   # Control intial conditions from current GFS cycle
