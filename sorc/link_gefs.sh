@@ -124,6 +124,14 @@ if [[ -d global-workflow.fd ]] ; then
     fi
     ${LINK} ../sorc/global-workflow.fd/parm/${fn} ../parm/
   done
+
+  if [[ ! -d ../parm/config ]]; then
+    mkdir -p ../parm/config
+  fi
+  for fn in config.com; do
+    echo ${fn}
+    ${LINK} ../sorc/global-workflow.fd/parm/config/${fn} ../parm/config/
+  done
 fi
 
 
