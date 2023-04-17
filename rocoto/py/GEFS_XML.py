@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import os
-from datetime import datetime
+import datetime as dt
 import GEFS_XML_For_Tasks as gefs_xml_for_tasks
 
 
@@ -247,7 +247,7 @@ def get_preamble():
     strings.append('\t\tXianwu.Xue@noaa.gov\n')
     strings.append('\n')
     strings.append('\tNOTES:\n')
-    strings.append('\t\tThis workflow was automatically generated at %s\n' % datetime.now())
+    strings.append('\t\tThis workflow was automatically generated at %s\n' % dt.datetime.now())
     strings.append('\t-->\n')
 
     return ''.join(strings)
