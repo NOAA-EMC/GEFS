@@ -180,7 +180,18 @@ export DBNROOT=${DBNROOT:-${UTILROOT}/fakedbn}
 export VERBOSE=${VERBOSE:-YES}
 
 # Get all the COM path templates
-source "${PARMgefs}/config/config.com"
+source "${PARMgefs:-${PARMgfs}}/config/config.com"
+
+# These are the currently available grid-combinations
+case "${CASE}" in
+  "C48") export OCNRES=500;;
+  "C96") export OCNRES=100;;
+  "C192") export OCNRES=050;;
+  "C384") export OCNRES=025;;
+  "C768") export OCNRES=025;;
+  *) export OCNRES=025;;
+esac
+export ICERES=${OCNRES}
 
 # Microphysics Options: 99-ZhaoCarr, 8-Thompson; 6-WSM6, 10-MG, 11-GFDL
 export imp_physics=${imp_physics:-"8"}
