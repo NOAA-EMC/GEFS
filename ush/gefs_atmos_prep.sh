@@ -88,7 +88,7 @@ fi
 
 if [[ $CONVERT_SFC == ".true." ]]; then
   export SFC_FILES_INPUT="gfs.t${cyc}z.sfcanl.nc"
-  SFCFILE="${COMINgfs}/atmos/${SFC_FILES_INPUT}" #change to the new COM
+  SFCFILE="${COM_ATMOS_ANALYSIS_GFS}/${SFC_FILES_INPUT}"
   if [[ -f $SFCFILE ]]; then
     $NCP ${SFCFILE} ${DATA}
   else
