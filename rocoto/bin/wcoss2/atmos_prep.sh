@@ -8,7 +8,7 @@ ulimit -a
 . $SOURCEDIR/versions/run.ver
 
 # Load modules
-module purge
+module reset
 module load envvar/$envvar_ver
 module load PrgEnv-intel/$PrgEnv_intel_ver
 module load craype/$craype_ver

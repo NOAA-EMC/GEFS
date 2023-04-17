@@ -13,7 +13,8 @@ import GEFS_Parm as gefs_parm
 import GEFS_Crontab as gefs_crontab
 
 def main():
-    import os, sys
+    import os
+    import sys
 
     import argparse
     parser = argparse.ArgumentParser(description='pyGEFS: Python-Based Workflow Management of NCEP Global Ensemble Forecast System!')

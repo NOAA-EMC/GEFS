@@ -1,6 +1,7 @@
 # =======================================================
 def get_and_merge_default_config(dicBase):
-    import os, sys
+    import os
+    import sys
 
     # To get the WHERE_AM_I from dicBase or identify it using default methode
     get_WHERE_AM_I(dicBase)
@@ -19,7 +20,8 @@ def get_and_merge_default_config(dicBase):
 
 # =======================================================
 def get_config_file2(sConfigFile="user_full.conf"):
-    import os, sys
+    import os
+    import sys
 
     sRocoto_WS = os.getcwd()
     sConfig = os.path.join(sRocoto_WS, sConfigFile)
@@ -84,7 +86,7 @@ def read_config(sConfig):
 
 # =======================================================
 def create_folders(dicBase):
-    import os, sys
+    import os
 
     EXPID = dicBase['EXPID']
     WORKDIR = str(dicBase['WORKDIR']).replace("&EXPID;", EXPID)

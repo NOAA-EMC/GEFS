@@ -69,7 +69,8 @@ def read_dicParm(sConfig):
 
 # =======================================================
 def get_and_merge_default_dicParm(dicParm, WHERE_AM_I):
-    import os, sys
+    import os
+    import sys
 
     # To get the WHERE_AM_I from dicParm or identify it using default methode
     sDefaultConfig_File = os.path.join(sys.path[0], f"user_{WHERE_AM_I}.conf")

@@ -20,7 +20,8 @@ def create_crontab(dicBase, OnlyForTest=False, cronint=5):
     ##########################################################
 
     # No point creating a crontab if rocotorun is not available.
-    import sys, os
+    import sys
+    import os
     from distutils.spawn import find_executable
 
     if OnlyForTest:

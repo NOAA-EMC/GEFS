@@ -2,14 +2,6 @@
 
 source "${HOMEgfs:-${HOMEgefs}}/ush/preamble.sh"
 
-#echo "$(date -u) begin $(basename $BASH_SOURCE)"
-
-#set -xa
-#if [[ ${STRICT:-NO} == "YES" ]]; then
-#  # Turn on strict bash error checking
-#  set -eu
-#fi
-
 export HOMEgfs=${HOMEgfs:-${HOMEgefs}}
 export HOMEufs=${HOMEufs:-${HOMEgfs}}
 export USHgfs=$HOMEgfs/ush

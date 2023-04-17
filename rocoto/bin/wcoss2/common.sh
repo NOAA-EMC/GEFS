@@ -36,16 +36,19 @@ if [[ $RocotoGen == 0 ]]; then
     #export COMPATH=$HOMEdata/canned/com/gfs:$HOMEdata/canned/com/cfs:$HOMEdata/canned/com/nawips:$HOMEdata/canned/com/ecmwf:$HOMEdata/canned/com/nam:${WORKDIR}/$envir/com/${NET}
     #export DCOMROOT=${HOMEdata}/canned/dcom
     # For prod data
-    if [[ $CASEHR == "C48" ]]; then
-      export COMPATH=${WORKDIR}/$envir/com/${NET}:/lfs/h2/emc/ens/noscrub/xianwu.xue/GEFS_v13/z_DATA/lfs_C96_C48_NOIAU_anal/h1/ops/prod/com/gfs
-      #export COMPATH=${WORKDIR}/$envir/com/${NET}:/lfs/h2/emc/ens/noscrub/xianwu.xue/GEFS_v13/z_DATA/lfs_C96_C48_NOIAU_anal_20230316/h1/ops/prod/com/gfs
-    elif [[ $CASEHR == "C384" ]]; then
-      export COMPATH=${WORKDIR}/$envir/com/${NET}:/lfs/h2/emc/ens/noscrub/xianwu.xue/GEFS_v13/z_DATA/lfs_C768_C384_NOIAU_anal/h1/ops/prod/com/gfs
-      #export COMPATH=${WORKDIR}/$envir/com/${NET}:/lfs/h2/emc/ens/noscrub/xianwu.xue/GEFS_v13/z_DATA/lfs_C768_C384_NOIAU_anal_20230223_updated_dev/h1/ops/prod/com/gfs
-    else
-      echo "Wrong CASEHR .."
-      exit -1
-    fi
+    case ${CASEHR} in
+      "C48")
+        export COMPATH=${WORKDIR}/$envir/com/${NET}:/lfs/h2/emc/ens/noscrub/xianwu.xue/GEFS_v13/z_DATA/lfs_C96_C48_NOIAU_anal/h1/ops/prod/com/gfs
+        #export COMPATH=${WORKDIR}/$envir/com/${NET}:/lfs/h2/emc/ens/noscrub/xianwu.xue/GEFS_v13/z_DATA/lfs_C96_C48_NOIAU_anal_20230316/h1/ops/prod/com/gfs
+        ;;
+      "C384")
+        export COMPATH=${WORKDIR}/$envir/com/${NET}:/lfs/h2/emc/ens/noscrub/xianwu.xue/GEFS_v13/z_DATA/lfs_C768_C384_NOIAU_anal/h1/ops/prod/com/gfs
+        #export COMPATH=${WORKDIR}/$envir/com/${NET}:/lfs/h2/emc/ens/noscrub/xianwu.xue/GEFS_v13/z_DATA/lfs_C768_C384_NOIAU_anal_20230223_updated_dev/h1/ops/prod/com/gfs
+        ;;
+      *)
+        echo "Wrong CASEHR .."
+        exit -1
+    esac
 
 elif [[ $RocotoGen == 1 ]]; then
     export HOMEtrak=/lfs/h2/emc/ens/noscrub/emc.ens/common/git/ens_tracker/ens_tracker.v2.1.2
