@@ -85,7 +85,7 @@ if [[ -d global-workflow.fd ]] ; then
   sPath=../sorc/global-workflow.fd/exec
   for sFile in ${sPath}/ww3_*
   do
-    echo $sFile
+    echo ${sFile}
   done
   $LINK ${sPath}/ww3_* ../exec/
 
@@ -152,13 +152,13 @@ if [[ -d global-workflow.fd ]] ; then
                 ush/parsing_namelists_CICE.sh \
                 sorc/ufs_model.fd
   do
-    if [[ -e ../$sFile ]]; then
-      if [[ -L ../$sFile ]]; then
-        rm ../$sFile
-        $LINK ../sorc/global-workflow.fd/$sFile ../$sFile
+    if [[ -e ../${sFile} ]]; then
+      if [[ -L ../${sFile} ]]; then
+        rm ../${sFile}
+        $LINK ../sorc/global-workflow.fd/${sFile} ../${sFile}
       fi
     else
-      $LINK ../sorc/global-workflow.fd/$sFile ../$sFile
+      $LINK ../sorc/global-workflow.fd/${sFile} ../${sFile}
     fi
   done
 fi
@@ -172,11 +172,10 @@ if [[ -d global-workflow.fd ]]; then
     $LINK ../sorc/global-workflow.fd/scripts/$sFile ../scripts/
   done
 
-  lUsh=`ls ../sorc/global-workflow.fd/ush/wave_*` #"wave_ens_bull.sh wave_ens_stat.sh wave_grib2_sbs.sh wave_grid_interp_sbs.sh wave_grid_moddef.sh wave_outp_spec.sh wave_prnc_cur.sh wave_prnc_ice.sh wave_tar.sh"
+  lUsh=`ls ../sorc/global-workflow.fd/ush/wave_*`
   for sFile in $lUsh; do
-    sFile=$(basename ${sFile})
     echo $sFile
-    $LINK ../sorc/global-workflow.fd/ush/$sFile ../ush/
+    $LINK $sFile ../ush/
   done
 
   if [[ -e ../env ]]; then
