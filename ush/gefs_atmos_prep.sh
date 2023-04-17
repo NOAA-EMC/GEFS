@@ -6,7 +6,7 @@ export mem=$1
 export nmem=$(echo $mem|cut -c 2-)
 nmem=${nmem#0}
 
-YMD=${PDY} HH=${cyc} MEMDIR=${memchar} generate_com -rx OUTDIR:COM_ATMOS_INPUT_TMPL
+YMD=${PDY} HH=${cyc} MEMDIR=${mem} generate_com -rx OUTDIR:COM_ATMOS_INPUT_TMPL
 
 mkdir -p $OUTDIR
 cd $DATA
@@ -36,8 +36,9 @@ fi
 
 if [[ $mem = c00 ]] ;then
   # Control intial conditions from current GFS cycle
-  export ATM_FILE_INPUT="gfs.t${cyc}z.atmanl.nc"
-  ATMFILE=${COMINgfs}/atmos/${ATM_FILE_INPUT} #gfs.t${cyc}z.atmanl.nc
+  export ATM_FILES_INPUT="gfs.t${cyc}z.atmanl.nc"
+  YMD=${PDY} HH=${cyc} RUN=gfs MEMDIR="" ROTDIR=${ROTDIR_IN} generate_com -rx COM_ATMOS_ANALYSIS_GFS:COM_ATMOS_ANALYSIS_TMPL
+  ATMFILE=${COM_ATMOS_ANALYSIS_GFS}/${ATM_FILES_INPUT}
   if [[ -f $ATMFILE ]]; then
     $NCP $ATMFILE $DATA
     #export ATM_FILE_INPUT="gfs.t${cyc}z.atmanl.nc"
@@ -59,9 +60,9 @@ else
     fi
 
     memchar="mem"$(printf %03i $cmem)
-    export ATM_FILE_INPUT="enkfgfs.t${cyc}z.ratmanl.nc"
-    ATMFILE="${COMINenkfgfs}/$memchar/atmos/${ATM_FILE_INPUT}"  #gfs.t${cycp}z.atmanl.nc"
-    ATMFILE=${COM_ATMOS_ANALYSIS_GFS}/${ATM_FILE_INPUT}
+    export ATM_FILES_INPUT="enkfgfs.t${cyc}z.ratmanl.nc"
+    YMD=${PDY} HH=${cyc} RUN=enkfgfs MEMDIR=${memchar} ROTDIR=${ROTDIR_IN} generate_com -rx COM_ATMOS_ANALYSIS_ENKFGFS:COM_ATMOS_ANALYSIS_TMPL
+    ATMFILE=${COM_ATMOS_ANALYSIS_ENKFGFS}/${ATM_FILES_INPUT}
 
 
     if [[ -f $ATMFILE ]]; then
@@ -134,7 +135,7 @@ touch ${OUTDIR}/chgres_atm.log  # recenter can start now
 if [[ $SENDCOM == "YES" ]]; then
   MODCOM=$(echo ${NET}_${COMPONENT} | tr '[a-z]' '[A-Z]')
   DBNTYP=${MODCOM}_INIT
-  COMDIR=${OUTDIR} #$COMOUT/$mem/atmos/INPUT #/init/$mem
+  COMDIR=${OUTDIR}
   mkdir -p $COMDIR
   $NCP ${DATA}/gfs_ctrl.nc $COMDIR
   if [[ $SENDDBN = YES ]];then
