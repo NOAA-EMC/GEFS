@@ -166,7 +166,7 @@ if [ ${CleanAll} = "yes" ]; then
   done
 
   cd ${sWS}/../parm
-  for sDir in parm_fv3diag post product; do
+  for sDir in parm_fv3diag post product config; do
     rm -rf ${sDir}
   done
 
