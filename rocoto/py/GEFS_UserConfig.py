@@ -1,8 +1,12 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import datetime
+from collections import OrderedDict
+
 # =======================================================
 def get_and_merge_default_config(dicBase):
-    import os
-    import sys
-
     # To get the WHERE_AM_I from dicBase or identify it using default methode
     get_WHERE_AM_I(dicBase)
     WHERE_AM_I = dicBase["WHERE_AM_I"]
@@ -20,9 +24,6 @@ def get_and_merge_default_config(dicBase):
 
 # =======================================================
 def get_config_file2(sConfigFile="user_full.conf"):
-    import os
-    import sys
-
     sRocoto_WS = os.getcwd()
     sConfig = os.path.join(sRocoto_WS, sConfigFile)
     if not os.path.exists(sConfig):
@@ -38,7 +39,6 @@ def get_config_file2(sConfigFile="user_full.conf"):
 # =======================================================
 def read_config(sConfig):
     # read config file
-    from collections import OrderedDict
     dicBase = OrderedDict()
     iTaskName_Num = 0
     with open(sConfig, "r") as f:
@@ -86,8 +86,6 @@ def read_config(sConfig):
 
 # =======================================================
 def create_folders(dicBase):
-    import os
-
     EXPID = dicBase['EXPID']
     WORKDIR = str(dicBase['WORKDIR']).replace("&EXPID;", EXPID)
     WHERE_AM_I = dicBase["WHERE_AM_I".upper()]
@@ -103,7 +101,6 @@ def create_folders(dicBase):
     if not os.path.exists(sPath):
         os.makedirs(sPath)
 
-    import datetime
     date1 = datetime.datetime.strptime(dicBase['SDATE'][0:8], "%Y%m%d")
     date2 = datetime.datetime.strptime(dicBase['EDATE'][0:8], "%Y%m%d")
     day = datetime.timedelta(days=1)
@@ -115,12 +112,9 @@ def create_folders(dicBase):
             os.makedirs(sPath1)
         date1 = date1 + day
 
-
 # =======================================================
 def get_WHERE_AM_I(dicBase):
     sVarName = 'WHERE_AM_I'
-    import os
-    
     if sVarName not in dicBase:
         if os.path.exists('/scratch1/NCEPDEV'):
             dicBase[sVarName] = 'hera'

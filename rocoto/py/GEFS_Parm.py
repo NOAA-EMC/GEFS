@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+from collections import OrderedDict
+import GEFS_XML_For_Tasks as gefs_xml_for_tasks
+
 # =======================================================
 def create_parm(sConfig, dicBase):
     # For gets_dev.parm
@@ -18,7 +25,6 @@ def get_lstParm(sConfig, dicBase):
 # =======================================================
 def read_dicParm(sConfig):
     # read config file
-    from collections import OrderedDict
     dicBaseParm = OrderedDict()
     IsParm = False
     StartParm = "# Start Parm"
@@ -69,9 +75,6 @@ def read_dicParm(sConfig):
 
 # =======================================================
 def get_and_merge_default_dicParm(dicParm, WHERE_AM_I):
-    import os
-    import sys
-
     # To get the WHERE_AM_I from dicParm or identify it using default methode
     sDefaultConfig_File = os.path.join(sys.path[0], f"user_{WHERE_AM_I}.conf")
 
@@ -88,8 +91,6 @@ def get_and_merge_default_dicParm(dicParm, WHERE_AM_I):
 
 # =======================================================
 def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
-    import GEFS_XML_For_Tasks as gefs_xml_for_tasks
-
     # ==
     sVarName = "First"
     if sVarName not in lstBaseParm:
@@ -163,9 +164,6 @@ def create_parm2(sConfig, dicBase):
 
 # =======================================================
 def create_gets_dev_parm(dicBase, listBaseParm):
-    import sys
-    import os
-
     strings = []
 
     strings.append('#!/bin/ksh\n')

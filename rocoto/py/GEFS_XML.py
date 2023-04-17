@@ -1,15 +1,18 @@
+#!/usr/bin/env python3
+
+import os
+from datetime import datetime
+import GEFS_XML_For_Tasks as gefs_xml_for_tasks
+
+
 # =======================================================
 def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
-    import sys
-    import os
-
     # ==
     get_MEMLIST(dicBase)
     # ==
     sVarName = "First".upper()
     sVarValue = 'Xianwu'
     if sVarName not in dicBase:
-        import os
         sVarValue = os.environ.get("USER")
         if sVarValue in ['emc.ens']:
             sVarValue = os.environ.get("SUDO_USER")
@@ -20,7 +23,6 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarName = "Last".upper()
     sVarValue = 'Xue'
     if sVarName not in dicBase:
-        import os
         sVarValue = os.environ.get("USER")
         if sVarValue in ['emc.ens']:
             sVarValue = os.environ.get("SUDO_USER")
@@ -188,7 +190,6 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
 def replace_First_Last(dicBase, sVarName):
     # to replace the first and last names in the strValue
     # Modified on 10/17/2018 to avoid the path has individual "First" or "Last" to be replaced by mistake. If just replace the "First.Last", it will be safer.
-    import os
     sUSER = os.environ.get("USER")
     GroupNames = ['emc.ens']
     if sUSER in GroupNames:
@@ -231,7 +232,6 @@ def get_preamble():
     '''
         Generate preamble for XML
     '''
-    from datetime import datetime
 
     strings = []
 
@@ -255,7 +255,6 @@ def get_preamble():
 
 # =======================================================
 def get_definitions(dicBase):
-    import os
     '''
         Create entities related to the experiment
     '''
@@ -307,11 +306,8 @@ def get_workflow_body(dicBase):
         Create the workflow body
     '''
 
-    import datetime as dt
     StartDate = dt.datetime.strptime(dicBase['SDATE'][0:10], "%Y%m%d%H")
     EndDate = dt.datetime.strptime(dicBase['EDATE'][0:10], "%Y%m%d%H")
-
-    import GEFS_XML_For_Tasks as gefs_xml_for_tasks
 
     GenTaskEnt = get_GenTaskEnt(dicBase)
 

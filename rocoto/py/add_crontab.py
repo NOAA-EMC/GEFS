@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+import os
+import sys
+
 # =======================================================
 def main():
     sInputCron = "cron_rocoto"
@@ -7,8 +10,6 @@ def main():
     sCronLine = Get_Cron_Line(sInputCron)
 
     # print(sCronLine)
-
-    import os
 
     # print(os.environ['HOME'])
     sHomeDIR = os.environ['HOME']
@@ -41,7 +42,6 @@ def Add_Cron_To_myCrontab(sMyCrontab, sCronLine):
     sFile = open(sMyCrontab, "r")
     for sLine in sFile:
         # print(sLine)
-        # import sys
         # sys.stdout.write(sLine)
 
         if sLine.strip() == sCronLine:
@@ -66,8 +66,6 @@ def Add_Cron_To_myCrontab(sMyCrontab, sCronLine):
 
 
 if __name__ == '__main__':
-    import sys
-
     main()
 
     sys.exit(0)

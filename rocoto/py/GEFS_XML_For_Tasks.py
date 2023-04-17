@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import math
+import textwrap
+
 # =======================================================
 def IsCoupleCHEM(dicBase):
     if dicBase['RUN_AEROSOL_MEMBER'].upper()[0] == "Y":
@@ -668,8 +675,6 @@ def Add_Subjobs_to_dicBase(dicBase, iTaskName_Num, taskname="post_hr", sNSubJobs
 # =======================================================
 def write_to_all_ent(GenTaskEnt, dicBase):
     if GenTaskEnt:
-        import os
-        import sys
         # sPath = dicBase["GEFS_ROCOTO"] + r"/tasks/" + dicBase["WHERE_AM_I"] + r"/"
 
         sPath = dicBase["GEFS_ROCOTO"]
@@ -716,9 +721,6 @@ def write_to_all_ent(GenTaskEnt, dicBase):
 
 # =======================================================
 def write_to_ent(taskname, dicBase, GenTaskEnt=False):
-    import sys
-    import os
-
     strings = create_metatask_task(dicBase, taskname=taskname, sPre="", GenTaskEnt=GenTaskEnt)
 
     strings = ''.join(strings)
@@ -740,8 +742,6 @@ def write_to_ent(taskname, dicBase, GenTaskEnt=False):
 
 # =======================================================
 def calc_fcst_resources(dicBase, taskname="forecast_hr"):
-    import math
-
     if taskname == "forecast_hr":
         layout_x = int(dicBase['layout_x'.upper()])
         layout_y = int(dicBase['layout_y'.upper()])
@@ -805,7 +805,6 @@ def calc_fcst_resources(dicBase, taskname="forecast_hr"):
 
 # =======================================================
 def get_param_of_task(dicBase, taskname):
-    import textwrap
     sWalltime = ""
     sNodes = ""
     sMemory = ""
@@ -1310,7 +1309,6 @@ def get_param_of_task(dicBase, taskname):
 
 # =======================================================
 def calc_gempak_resources(dicBase):
-    import math
     taskname="gempak"
     ncores_per_node = Get_NCORES_PER_NODE(dicBase)
     WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
@@ -1420,9 +1418,6 @@ def get_metatask_names(taskname=""):
 
 # =======================================================
 def get_jobname(taskname):
-    import os
-    import sys
-
     sDefaultJobID_File = os.path.join(sys.path[0], "job_id.conf")
     jobname_short = "--"
     if os.path.exists(sDefaultJobID_File):

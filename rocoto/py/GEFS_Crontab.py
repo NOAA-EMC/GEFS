@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+from distutils.spawn import find_executable
+
 def create_crontab(dicBase, OnlyForTest=False, cronint=5):
     '''
         Create crontab to execute rocotorun every cronint (5) minutes
@@ -20,9 +26,7 @@ def create_crontab(dicBase, OnlyForTest=False, cronint=5):
     ##########################################################
 
     # No point creating a crontab if rocotorun is not available.
-    import sys
-    import os
-    from distutils.spawn import find_executable
+
 
     if OnlyForTest:
         rocotoruncmd = "/opt/modules/3.2.10.3/init/sh"
