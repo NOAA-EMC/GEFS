@@ -1,18 +1,11 @@
-#!/bin/ksh
+#! /usr/bin/env bash
 
-echo "$(date -u) begin ${.sh.file}"
-
-set -xa
-if [[ ${STRICT:-NO} == "YES" ]]; then
-	# Turn on strict bash error checking
-	set -eu
-fi
-export PS4='$SECONDS + $(basename ${.sh.file})[$LINENO] '
+source "${HOMEgefs:-${HOMEgfs}}/ush/preamble.sh"
 
 ####################################
 # Determine Job Output Name on System
 ####################################
-export jobid=${jobid:-"$job.$PBS_JOBID"}
+export jobid=${jobid:-"${job}.${PBS_JOBID}"}
 export pgmout="OUTPUT.${PBS_JOBID}"
 export pgmerr=errfile
 
@@ -26,8 +19,9 @@ cd $DATA
 ######################################
 # Set up compute resources
 ######################################
-export total_tasks=${total_tasks:-320}
-export APRUN=${gefsmpexec:-"mpiexec -n $total_tasks"}
+#export total_tasks=${total_tasks:-320}
+#export APRUN=${gefsmpexec:-"mpiexec -n $total_tasks"}
+#export APRUN_FV3="mpiexec -n ${npe_fcst} -ppn ${npe_node_fcst} --cpu-bind depth --depth ${NTHREADS_FV3}"
 
 ####################################
 # Specify NET and RUN Name and model
@@ -55,8 +49,8 @@ setpdy.sh
 source PDY
 
 if [ ${FORECAST_SEGMENT} = lr ]; then
-    export cyc=00
-    export cycle=t${cyc}z
+  export cyc=00
+  export cycle=t${cyc}z
 fi
 
 ####################################
@@ -74,32 +68,34 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
 export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
 export COMOUT=${COMOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc}
-export GESIN=${GESIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/nwges}
-export GESOUT=${GESOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc/nwges}
+export ROTDIR=${ROTDIR:-$(compath.py $envir/com/$NET/${ver})}
 
 #############################
 # Source relevant config files
 #############################
-configs="gefs gefs_wave gefs_fcst"
+export CDATE=$PDY$cyc
+configs="gefs gefs_fcst" #gefs_ufs gefs_wave gefs_fcst"
 config_path=$PARMgefs
 for config in $configs; do
-    . $config_path/$config.parm
-    export err=$?
-    if [[ $err != 0 ]]; then
-    	echo "FATAL ERROR in ${.sh.file}: Error while loading parm file $config_path/$config.parm"
-    	exit $err
-    fi
+  . $config_path/$config.parm
+  export err=$?
+  if [[ $err != 0 ]]; then
+    echo "FATAL ERROR in ${BASH_SOURCE}: Error while loading parm file $config_path/$config.parm"
+    exit $err
+  fi
 done
 
+export APRUN_UFS=${APRUN_UFS:-"${launcher:-'mpiexec -l'} -n ${npe_fcst} -ppn ${npe_node_fcst} --cpu-bind depth --depth ${NTHREADS_FV3}"}
+
 if [[ $cplchm = ".true." ]]; then
-    COMPONENT="chem"
+  COMPONENT="chem"
 fi
 if [[ $cplwav = ".true." ]]; then
-    # Set location of wave restart from last cycle
-    last_date=$($NDATE -$WAVHCYC $CDATE)
-    last_PDY=$(echo $last_date | cut -c1-8)
-    last_cyc=$(echo $last_date | cut -c9-10)
-    export WRDIR=${WRDIR:-$(compath.py $envir/com/$NET/${ver})}/${RUN}.${last_PDY}/$last_cyc/wave/restart
+  # Set location of wave restart from last cycle
+  last_date=$($NDATE -$WAVHCYC $CDATE)
+  last_PDY=$(echo $last_date | cut -c1-8)
+  last_cyc=$(echo $last_date | cut -c9-10)
+  export WRDIR=${WRDIR:-$(compath.py $envir/com/$NET/${ver})}/${RUN}.${last_PDY}/$last_cyc/wave/restart
 fi
 
 export COMPONENT=${COMPONENT:-atmos}
@@ -112,10 +108,10 @@ env | sort
 $HOMEgefs/scripts/exgefs_forecast.sh
 export err=$?
 if [[ $err == 0 ]]; then
-    echo "$job completed normally!"
+  echo "$job completed normally!"
 else
-    echo "FATAL ERROR in ${.sh.file}: $job failed!"
-    exit $err
+  echo "FATAL ERROR in ${BASH_SOURCE}: $job failed!"
+  exit $err
 fi
 #############################################################
 
@@ -125,6 +121,6 @@ fi
 cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
 
-echo "$(date -u) end ${.sh.file}"
+echo "$(date -u) end ${BASH_SOURCE}"
 
 exit $err

@@ -16,7 +16,11 @@ export taskspernode=${GEFS_PPN}
 
 
 if [[ $RocotoGen == 0 ]]; then
+    export launcher="mpiexec -l"
     export gefsmpexec="mpiexec -n $total_tasks"
+    #export APRUN_FV3="${launcher} -n ${npe_fcst} -ppn ${npe_node_fcst} --cpu-bind depth --depth ${NTHREADS_FV3}"
+    #export gefsmpexec="mpiexec -l -n 100 -ppn 128 --cpu-bind depth --depth 1" #C48
+    #export gefsmpexec="mpiexec -l -n 416 -ppn 128 --cpu-bind depth --depth 1" #C384
     export gefsmpexec_mpmd="mpiexec -n $total_tasks cfp mpmd_cmdfile"
     export wavempexec="mpiexec -n"
     export wave_mpmd="cfp"
@@ -30,6 +34,8 @@ if [[ $RocotoGen == 0 ]]; then
     . $GEFS_ROCOTO/parm/setbase
     . $GEFS_ROCOTO/parm/gefs_config
     . $GEFS_ROCOTO/parm/gefs_dev.parm
+
+    #export APRUN_FV3="mpiexec -n ${npe_fcst} -ppn ${npe_node_fcst} --cpu-bind depth --depth ${NTHREADS_FV3}"
 
     # For canned data
     #export HOMEdata=/lfs/h1/ops
@@ -48,6 +54,7 @@ if [[ $RocotoGen == 0 ]]; then
       *)
         echo "Wrong CASEHR .."
         exit -1
+        ;;
     esac
 
 elif [[ $RocotoGen == 1 ]]; then
