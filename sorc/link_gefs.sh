@@ -55,7 +55,7 @@ cd ${pwd}
 if [[ -d global-workflow.fd ]] ; then
 
   # Source fix version file
-  source "${pwd}/../versions/fix.ver"
+  source "${pwd}/global-workflow.fd/versions/fix.ver"
 
   cd ${pwd}/../fix
 
