@@ -22,7 +22,7 @@ ORO_NAME="oro_${CASE}.mx${OCNRES}"
 if [[ $mem = c00 ]] ;then
   # Control intial conditions from current GFS cycle
   export ATM_FILES_INPUT="gfs.t${cyc}z.atmanl.nc"
-  YMD=${PDY} HH=${cyc} RUN=gfs MEMDIR="" ROTDIR=${ROTDIR_IN} generate_com -rx COM_ATMOS_ANALYSIS_GFS:COM_ATMOS_ANALYSIS_TMPL
+  YMD=${PDY} HH=${cyc} RUN=gfs MEMDIR="" ROTDIR=${ROTDIR_GFS} generate_com -rx COM_ATMOS_ANALYSIS_GFS:COM_ATMOS_ANALYSIS_TMPL
   ATMFILE=${COM_ATMOS_ANALYSIS_GFS}/${ATM_FILES_INPUT}
   if [[ -f $ATMFILE ]]; then
     $NCP $ATMFILE $DATA
@@ -46,7 +46,7 @@ else
 
     memchar="mem"$(printf %03i $cmem)
     export ATM_FILES_INPUT="enkfgfs.t${cyc}z.ratmanl.nc"
-    YMD=${PDY} HH=${cyc} RUN=enkfgfs MEMDIR=${memchar} ROTDIR=${ROTDIR_IN} generate_com -rx COM_ATMOS_ANALYSIS_ENKFGFS:COM_ATMOS_ANALYSIS_TMPL
+    YMD=${PDY} HH=${cyc} RUN=enkfgfs MEMDIR=${memchar} ROTDIR=${ROTDIR_GFS} generate_com -rx COM_ATMOS_ANALYSIS_ENKFGFS:COM_ATMOS_ANALYSIS_TMPL
     ATMFILE=${COM_ATMOS_ANALYSIS_ENKFGFS}/${ATM_FILES_INPUT}
 
 

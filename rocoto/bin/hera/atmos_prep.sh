@@ -41,7 +41,7 @@ export OMP_NUM_THREADS_CH
 ver=${gefs_ver:0:5}
 #ver=${ver%${ver##v+([0-9]).+([0-9])}}
 export ROTDIR=${COMROOT}/gefs/${ver}
-export ROTDIR_IN=${HOMEdata}/gfs/${gfs_ver}
+export ROTDIR_GFS=${HOMEdata}/gfs/${gfs_ver}
 
 # CALL executable job script here
 ${SOURCEDIR}/jobs/JGEFS_ATMOS_PREP
