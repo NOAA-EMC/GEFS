@@ -38,8 +38,10 @@ export MEMORY_AFFINITY=core:2
 (( OMP_NUM_THREADS_CH = 40 / GEFS_PPN ))
 export OMP_NUM_THREADS_CH
 
-ver=${gefs_ver:0:5}
-#ver=${ver%${ver##v+([0-9]).+([0-9])}}
+shopt -s extglob
+ver=${gefs_ver%${gefs_ver##v+([0-9]).+([0-9])}}
+shopt -u extglob
+
 export ROTDIR=${COMROOT}/gefs/${ver}
 export ROTDIR_GFS=${HOMEdata}/gfs/${gfs_ver}
 
