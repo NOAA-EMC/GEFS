@@ -5,20 +5,15 @@
 ##   03/19/2018 first released version by Xianwu Xue
 ##   03/22/2018 Revised to use the default config file based on WHERE_AM_ID by Xianwu Xue
 
+import sys
+import argparse
 import GEFS_UserConfig as gefs_config
 import GEFS_XML as gefs_xml
 import GEFS_XML_For_Tasks as gefs_xml_for_tasks
 import GEFS_Parm as gefs_parm
-#import GEFS_Bin as gefs_bin
 import GEFS_Crontab as gefs_crontab
 
 def main():
-    import os, sys
-    sSep = "/"
-    if sys.platform == 'win32':
-        sSep = r'\\'
-
-    import argparse
     parser = argparse.ArgumentParser(description='pyGEFS: Python-Based Workflow Management of NCEP Global Ensemble Forecast System!')
     parser.add_argument("-r", "--Rocoto", default="yes", type=str, help="Generate rocoto xml related files! [yes|no]")
     parser.add_argument("-o", "--Operation", default="no", type=str, help="Generate operation workflow related files! [rocoto|devecf|ecflow|no]")
@@ -76,8 +71,6 @@ def main():
     
 
 if __name__ == '__main__':
-    import sys
-
     main()
 
     print("--Done to generate all files!")

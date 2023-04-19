@@ -1,4 +1,4 @@
-#!/bin/ksh -l
+#! /usr/bin/env bash
 
 ###################################################################
 # This parm file defines the control variables for the GEFS model
@@ -31,20 +31,20 @@ export fhrp=${fhrp:-06}
 export gefs_cych=${gefs_cych:-6}
 
 case $cyc in
-	(00)
-		fhmax=$fhmax00 ;;
-	(06)
-		fhmax=$fhmax06 ;;
-	(12)
-		fhmax=$fhmax12 ;;
-	(18)
-		fhmax=$fhmax18 ;;
-	(*)
-		echo
-		echo UNDEFINED CYCLE cyc=$cyc
-		echo
-		echo unmodified fhmax=$fhmax
-		;;
+  00)
+    fhmax=$fhmax00;;
+  06)
+    fhmax=$fhmax06;;
+  12)
+    fhmax=$fhmax12;;
+  18)
+    fhmax=$fhmax18;;
+  *)
+    echo
+    echo UNDEFINED CYCLE cyc=$cyc
+    echo
+    echo unmodified fhmax=$fhmax
+    ;;
 esac
 
 memberlist="c00"
@@ -52,8 +52,8 @@ memberlist="c00"
 imem=1
 while [[ imem -le $npert ]];
 do
-    memberlist="$memberlist p$(printf %02i $imem)"
-    (( imem++ ))
+  memberlist="$memberlist p$(printf %02i $imem)"
+  (( imem++ ))
 done
 export memberlist
 
@@ -96,7 +96,7 @@ export FHOUT_HF_WAV=${FHOUTHF:-3}
 #######################################
 #For the half-month range part of FV3 based forecast
 export CASEHR=${CASEHR:-C384}
-export LEVSHR=${LEVSHR:-64}
+export LEVSHR=${LEVSHR:-127}
 export DELTIM=${DELTIM:-450}
 export JCAPFV=${JCAPFV:-766}
 export LATBFV=${LATBFV:-768}
@@ -105,7 +105,7 @@ export MTNRSLFV=${MTNRSLFV:-766.1536.768}
 
 #For the longer range part of FV3 based forecast
 export CASELR=${CASELR:-C384}
-export LEVSLR=${LEVSLR:-64}
+export LEVSLR=${LEVSLR:-127}
 export DELTIMLR=${DELTIMLR:-450}
 export JCAPLR=${JCAPLR:-766}
 export LATBLR=${LATBLR:-768}
@@ -113,24 +113,101 @@ export LONBLR=${LONBLR:-1536}
 export MTNRSLLR=${MTNRSLLR:-766.1536.768}
 export NTRACLR=${NTRACLR:-3}
 
+export FORECAST_SEGMENT=${FORECAST_SEGMENT:-"hr"}
+if [[ ${FORECAST_SEGMENT} == "hr" ]]; then
+  export LEVS=$((LEVSHR + 1))
+else
+  export LEVS=$((LEVSLR + 1))
+fi
+
+CASE=${CASEHR}
+if [[ ${FORECAST_SEGMENT} == "lr" ]]; then
+  CASE=$CASELR
+fi
+
 #for new vertical coordinate
 export IDVC=${IDVC:-2}
 #export IDVM=32
 
-export imp_physics=${imp_physics:-"11"}
+####################################
+# Directories relative to installation areas
+####################################
+export HOMEgefs=${HOMEgefs:-${PACKAGEROOT}/gefs.${gefs_ver}}
+export EXECgefs=${EXECgefs:-${HOMEgefs}/exec}
+export USHgefs=${USHgefs:-${HOMEgefs}/ush}
+#export FIXgefs=${FIXgefs:-${HOMEgefs}/fix/fix_gefs}
+export PARMgefs=${PARMgefs:-${HOMEgefs}/parm}
+
+export HOMEgfs=${HOMEgfs:-${HOMEgefs}}
+export PARMgfs=${HOMEgfs}/parm
+export EXPDIR=${PARMgfs}/config
+#export FIXgfs=${HOMEgfs}/fix
+#export USHgfs=${HOMEgfs}/ush
+#export UTILgfs=${HOMEgfs}/util
+#export EXECgfs=${HOMEgfs}/exec
+#export SCRgfs=${HOMEgfs}/scripts
+
+#export FIXcice=${HOMEgfs}/fix/cice
+#export FIXmom=${HOMEgfs}/fix/mom6
+#export FIXreg2grb2=${HOMEgfs}/fix/reg2grb2
+
+####################################
+# CONVENIENT utility scripts and other environment parameters
+export NCP="/bin/cp -p"
+export NMV="/bin/mv"
+export NLN="/bin/ln -sf"
+export KEEPDATA=${KEEPDATA:-"NO"}
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=${NET:-gefs}
+export envir=${envir:-prod}
+export RUN_ENVIR=${RUN_ENVIR:-nco}
+export RUN=${RUN:-gefs}
+
+######################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDDBN  - Issue DBNet Client Calls
+# SENDECF  - Flag Events on ECF
+# VERBOSE  - Specify Verbose Output
+######################################
+export SENDECF=${SENDECF:-"YES"}
+export SENDCOM=${SENDCOM:-"YES"}
+export SENDDBN_NTC=${SENDDBN_NTC:-"NO"}
+export SENDDBN=${SENDDBN:-"YES"}
+export DBNROOT=${DBNROOT:-${UTILROOT}/fakedbn}
+export VERBOSE=${VERBOSE:-YES}
+
+# Get all the COM path templates
+source "${PARMgefs:-${PARMgfs}}/config/config.com"
+
+# These are the currently available grid-combinations
+case "${CASE}" in
+  "C48") export OCNRES=500;;
+  "C96") export OCNRES=100;;
+  "C192") export OCNRES=050;;
+  "C384") export OCNRES=025;;
+  "C768") export OCNRES=025;;
+  *) export OCNRES=025;;
+esac
+export ICERES=${OCNRES}
+
+# Microphysics Options: 99-ZhaoCarr, 8-Thompson; 6-WSM6, 10-MG, 11-GFDL
+export imp_physics=${imp_physics:-"8"}
 
 ########################################
 # This section defines the output flags for ncep_post + prdgen
 ########################################
 export FV3OUT_GRID="gaussian_grid"
 export GRIBVERSION=grib2
-export REMAP_GRID=${REMAP_GRID:-latlon}  #gaussian or latlon for using regrid or regrid_nemsio for remapping
+export REMAP_GRID=${REMAP_GRID:-latlon} #gaussian or latlon for using regrid or regrid_nemsio for remapping
 
 export gfsfhmaxh=240
 export gfsfhoroglist=252
 
 # The following options are fore re-forecast
-export save_pgrb2_p5=${save_pgrb2_p5:-NO} 
+export save_pgrb2_p5=${save_pgrb2_p5:-NO}
 export save_pgrb2_p25=${save_pgrb2_p25:-NO}
 
 # List of contacts to mail when there is mail sent by mail.py for product degredation

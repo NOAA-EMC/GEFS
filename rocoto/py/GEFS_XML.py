@@ -1,16 +1,18 @@
+#!/usr/bin/env python3
+
+import os
+import datetime as dt
+import GEFS_XML_For_Tasks as gefs_xml_for_tasks
+
+
 # =======================================================
 def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
-    import sys
-    import os
-
-    sSep = "/"
     # ==
     get_MEMLIST(dicBase)
     # ==
     sVarName = "First".upper()
     sVarValue = 'Xianwu'
     if sVarName not in dicBase:
-        import os
         sVarValue = os.environ.get("USER")
         if sVarValue in ['emc.ens']:
             sVarValue = os.environ.get("SUDO_USER")
@@ -21,7 +23,6 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarName = "Last".upper()
     sVarValue = 'Xue'
     if sVarName not in dicBase:
-        import os
         sVarValue = os.environ.get("USER")
         if sVarValue in ['emc.ens']:
             sVarValue = os.environ.get("SUDO_USER")
@@ -48,9 +49,9 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
         sRocoto_Path = dicBase[sVarName_2]
         sVarValue = os.path.basename(os.path.abspath(sRocoto_Path))
         if sVarValue.startswith("rocoto"):
-            sVarValue = os.path.basename(os.path.abspath(sRocoto_Path + sSep + ".."))
+            sVarValue = os.path.basename(os.path.abspath(os.path.join(sRocoto_Path, "..")))
             if sVarValue == "nwdev":
-                sVarValue = os.path.basename(os.path.abspath(sRocoto_Path + sSep + ".." + sSep + ".."))
+                sVarValue = os.path.basename(os.path.abspath(os.path.join(sRocoto_Path, "..", "..")))
 
         dicBase[sVarName] = sVarValue
     else:
@@ -62,28 +63,30 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
     sVarName = "SOURCEDIR".upper()
     sVarValue = ""
     if sVarName not in dicBase:
-        sVarValue = os.path.abspath(sRocoto_WS + sSep + "..")
-        if not (os.path.exists(sVarValue + sSep + "parm") and os.path.exists(sVarValue + sSep + "sorc")):
+        sVarValue = os.path.abspath(os.path.join(sRocoto_WS, ".."))
+        if not (os.path.exists(os.path.join(sVarValue, "parm")) and os.path.exists(os.path.join(sVarValue, "sorc"))):
             print('!!! It seems that your GEFS SOURE is not in the same path with ROCOTO, therefore, you must assign a avalue for "SOURCEDIR" in the user configure file!!!')
             exit(-5)
     else:
         sVarValue = replace_First_Last(dicBase, sVarName)
-        if not (os.path.exists(sVarValue + sSep + "parm") and os.path.exists(sVarValue + sSep + "sorc")):
-            sPathTem = sVarValue + sSep + dicBase["EXPID"]
+        if not (os.path.exists(os.path.join(sVarValue, "parm")) and os.path.exists(os.path.join(sVarValue, "sorc"))):
+            sPathTem = os.path.join(sVarValue, dicBase["EXPID"])
             if os.path.exists(sPathTem):
-                if os.path.exists(sPathTem + sSep + "parm") and os.path.exists(sPathTem + sSep + "sorc"):
+                if os.path.exists(os.path.join(sPathTem,"parm")) and os.path.exists(os.path.join(sPathTem, "sorc")):
                     sVarValue = sPathTem
                 else:
-                    sPathTem = sVarValue + sSep + dicBase["EXPID"] + sSep + "nwdev"
+                    sPathTem = os.path.join(sVarValue, dicBase["EXPID"], "nwdev")
                     if os.path.exists(sPathTem):
-                        if os.path.exists(sPathTem + sSep + "parm") and os.path.exists(sPathTem + sSep + "sorc"):
+                        if os.path.exists(os.path.join(sPathTem, "parm")) and os.path.exists(os.path.join(sPathTem, "sorc")):
                             sVarValue = sPathTem
                         else:
                             print("Please check your SOURCEDIR - {0}".format(sVarValue))
                             exit(-6)
             else:
-                sPathTem = sVarValue + sSep + "nwdev"
-                if os.path.exists(sPathTem) and os.path.exists(sPathTem + sSep + "parm") and os.path.exists(sPathTem + sSep + "sorc"):
+                sPathTem = os.path.join(sVarValue, "nwdev")
+                if os.path.exists(sPathTem) \
+                        and os.path.exists(os.path.join(sPathTem, "parm")) \
+                        and os.path.exists(os.path.join(sPathTem, "sorc")):
                     sVarValue = sPathTem
                     # sVarValue += "/&EXPID;/nwdev"
 
@@ -187,7 +190,6 @@ def assign_default_for_xml_def(dicBase, sRocoto_WS=""):
 def replace_First_Last(dicBase, sVarName):
     # to replace the first and last names in the strValue
     # Modified on 10/17/2018 to avoid the path has individual "First" or "Last" to be replaced by mistake. If just replace the "First.Last", it will be safer.
-    import os
     sUSER = os.environ.get("USER")
     GroupNames = ['emc.ens']
     if sUSER in GroupNames:
@@ -230,7 +232,6 @@ def get_preamble():
     '''
         Generate preamble for XML
     '''
-    from datetime import datetime
 
     strings = []
 
@@ -246,7 +247,7 @@ def get_preamble():
     strings.append('\t\tXianwu.Xue@noaa.gov\n')
     strings.append('\n')
     strings.append('\tNOTES:\n')
-    strings.append('\t\tThis workflow was automatically generated at %s\n' % datetime.now())
+    strings.append('\t\tThis workflow was automatically generated at %s\n' % dt.datetime.now())
     strings.append('\t-->\n')
 
     return ''.join(strings)
@@ -259,7 +260,7 @@ def get_definitions(dicBase):
     '''
 
     lstEntity = ["MEMLIST", "CYCLE_THROTTLE", "TASK_THROTTLE", "SDATE", "EDATE", \
-                 "INCYC", "WHERE_AM_I", "GEFS_ROCOTO", "BIN", "PRE", \
+                 "INCYC", "WHERE_AM_I", "GEFS_ROCOTO", "BIN", \
                  "WORKFLOW_LOG_DIR", "LOG_DIR", "tmpnwprd", "DATA_DIR", "EXPID", \
                  "PSLOT", "SOURCEDIR", "WORKDIR", "KEEP_DIR", "INIT_DIR", \
                  "HPSS_DIR", "DIRS_TO_KEEP", "DIRS_TO_ARCHIVE", "DIRS_TO_KEEP_WAVE", "DIRS_TO_ARCHIVE_WAVE", \
@@ -277,18 +278,19 @@ def get_definitions(dicBase):
 
     GenTaskEnt = get_GenTaskEnt(dicBase)
     if GenTaskEnt:
-        import sys
-        sSep = "/"
-
+        sPath_task = os.path.join(dicBase['GEFS_ROCOTO'], "tasks")
         # -----------------------------------------------------------------------------------------------
         strings.append('\t<!-- External entities -->\n')
-        strings.append('\t<!ENTITY ENV_VARS   SYSTEM "{0}{1}tasks{1}env_vars.ent">\n'.format(dicBase['GEFS_ROCOTO'], sSep))
-        strings.append('\t<!ENTITY DATE_VARS   SYSTEM "{0}{1}tasks{1}date_vars.ent">\n'.format(dicBase['GEFS_ROCOTO'], sSep))
+        sFile = os.path.join(sPath_task, "env_vars.ent")
+        strings.append(f'\t<!ENTITY ENV_VARS   SYSTEM "{sFile}">\n')
+        sFile = os.path.join(sPath_task, "date_vars.ent")
+        strings.append(f'\t<!ENTITY DATE_VARS   SYSTEM "{sFile}">\n')
         strings.append('\n')
 
         # -----------------------------------------------------------------------------------------------
         strings.append('\t<!-- External parameter entities -->\n')
-        strings.append('\t<!ENTITY % TASKS    SYSTEM "{0}{1}tasks{1}all.ent">\n'.format(dicBase['GEFS_ROCOTO'], sSep))
+        sFile = os.path.join(sPath_task, "all.ent")
+        strings.append(f'\t<!ENTITY % TASKS    SYSTEM "{sFile}">\n')
         strings.append('\t%TASKS;\n')
         strings.append('\n')
 
@@ -304,11 +306,8 @@ def get_workflow_body(dicBase):
         Create the workflow body
     '''
 
-    import datetime as dt
     StartDate = dt.datetime.strptime(dicBase['SDATE'][0:10], "%Y%m%d%H")
     EndDate = dt.datetime.strptime(dicBase['EDATE'][0:10], "%Y%m%d%H")
-
-    import GEFS_XML_For_Tasks as gefs_xml_for_tasks
 
     GenTaskEnt = get_GenTaskEnt(dicBase)
 

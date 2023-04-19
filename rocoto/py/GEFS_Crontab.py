@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+from distutils.spawn import find_executable
+
 def create_crontab(dicBase, OnlyForTest=False, cronint=5):
     '''
         Create crontab to execute rocotorun every cronint (5) minutes
@@ -20,8 +26,7 @@ def create_crontab(dicBase, OnlyForTest=False, cronint=5):
     ##########################################################
 
     # No point creating a crontab if rocotorun is not available.
-    import sys
-    from distutils.spawn import find_executable
+
 
     if OnlyForTest:
         rocotoruncmd = "/opt/modules/3.2.10.3/init/sh"
@@ -47,20 +52,19 @@ def create_crontab(dicBase, OnlyForTest=False, cronint=5):
 
     system = dicBase["WHERE_AM_I"]
 
-    rocotorun_args = rocotoruncmd + ' -d ' + sRocotoPath + '/' + sDB_FileName \
-                     + ' -w ' + sRocotoPath + '/' + sXML_FileName
-    if system == 'wins' or system == 'hera':
-        crontab_string += crontab_usage
-        crontab_string += crontab_time + rocotorun_args
-    elif system == 'wcoss2':
+    sXML_File = os.path.join(sRocotoPath, sXML_FileName)
+    sDB_File = os.path.join(sRocotoPath, sDB_FileName)
+    rocotorun_args = f"{rocotoruncmd} -d f{sDB_File} -w f{sXML_File}"
+    if system in ['wcoss2', 'hera', 'wins']:
         crontab_string += crontab_usage
         crontab_string += crontab_time + rocotorun_args
     else:
-        print("CRITICAL ERROR: auto-crontab file generation for %s still needs to be implemented" % system)
+        print(f"CRITICAL ERROR: auto-crontab file generation for {system} still needs to be implemented")
         sys.exit(-502)
 
     crontab_string += "\n"
-    crontab_file = open(sRocotoPath + "/" + sCrontab_FileName, 'w')
+    sFile = os.path.join(sRocotoPath, sCrontab_FileName)
+    crontab_file = open(sFile, 'w')
     crontab_file.write(crontab_string)
     crontab_file.close()
 

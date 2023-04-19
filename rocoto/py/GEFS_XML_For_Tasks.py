@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import math
+import textwrap
+
 # =======================================================
 def IsCoupleCHEM(dicBase):
     if dicBase['RUN_AEROSOL_MEMBER'].upper()[0] == "Y":
@@ -47,9 +54,10 @@ def config_tasknames(dicBase):
             dicBase[sTaskName.upper()] = "atmos_prep"
 
             # ---init_recenter
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "init_recenter"
+            # Since maybe there is no need to use init_recenter, so comment these lines
+            # iTaskName_Num += 1
+            # sTaskName = "taskname_{0}".format(iTaskName_Num)
+            # dicBase[sTaskName.upper()] = "init_recenter"
 
         elif dicBase['RUN_INIT'] == "FV3_WARM":
             # ---init_recenter
@@ -443,10 +451,7 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         strings += (create_envar(name="SUBJOB", value=taskname.replace("ensavg_nemsio_", ""), sPre=sPre_2))
 
     # Add command
-    sPRE = "&PRE; "
-    if WHERE_AM_I.upper() in ["WCOSS2".upper()]:
-        sPRE = ""
-
+    sPRE = ""
     if taskname in ['keep_init', 'copy_init', 'keep_data_atm', 'archive_atm', 'cleanup_atm', 'keep_data_wave', 'archive_wave', 'cleanup_wave', 'keep_data_chem', 'archive_chem', 'cleanup_chem']:
         if WHERE_AM_I.upper() in ["WCOSS2".upper()]:
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format(taskname, sPRE)
@@ -670,21 +675,15 @@ def Add_Subjobs_to_dicBase(dicBase, iTaskName_Num, taskname="post_hr", sNSubJobs
 # =======================================================
 def write_to_all_ent(GenTaskEnt, dicBase):
     if GenTaskEnt:
-        import os
-        import sys
         # sPath = dicBase["GEFS_ROCOTO"] + r"/tasks/" + dicBase["WHERE_AM_I"] + r"/"
 
-        sSep = "/"
-        if sys.platform == 'win32':
-            sSep = r'\\'
-
         sPath = dicBase["GEFS_ROCOTO"]
-        sPath += sSep + "tasks"
+        sPath = os.path.join(sPath, "tasks")
 
         if not os.path.exists(sPath):
             os.mkdir(sPath)
 
-        sAllEnt_File = sPath + sSep + "all.ent"
+        sAllEnt_File = os.path.join(sPath, "all.ent")
         fh = open(sAllEnt_File, 'w')
 
         fh.write('<!-- List of all GEFS tasks -->\n')
@@ -703,16 +702,16 @@ def write_to_all_ent(GenTaskEnt, dicBase):
         fh.close()
 
         # ----
-        sPath = dicBase["GEFS_ROCOTO"] + sSep + "tasks"
+        sPath = os.path.join(dicBase["GEFS_ROCOTO"], "tasks")
         # create  date_vars.ent
-        sFile = sPath + sSep + "date_vars.ent"
+        sFile = os.path.join(sPath, "date_vars.ent")
         fh = open(sFile, 'w')
         strings = get_DATE_VARS("")
         fh.write(strings)
         fh.flush()
         fh.close()
         # create env_vars.ent
-        sFile = sPath + sSep + "env_vars.ent"
+        sFile = os.path.join(sPath, "env_vars.ent")
         fh = open(sFile, 'w')
         strings = get_ENV_VARS("")
         fh.write(strings)
@@ -722,24 +721,16 @@ def write_to_all_ent(GenTaskEnt, dicBase):
 
 # =======================================================
 def write_to_ent(taskname, dicBase, GenTaskEnt=False):
-    import sys
-    import os
-
-    sSep = "/"
-    if sys.platform == 'win32':
-        sSep = r'\\'
-
     strings = create_metatask_task(dicBase, taskname=taskname, sPre="", GenTaskEnt=GenTaskEnt)
 
     strings = ''.join(strings)
 
     sPath = dicBase["GEFS_ROCOTO"]
-    sPath += sSep + "tasks"
-
+    sPath = os.path.join(sPath, "tasks")
     if not os.path.exists(sPath):
         os.mkdir(sPath)
 
-    sFile = sPath + sSep + "{0}.ent".format(taskname)
+    sFile = os.path.join(sPath, f"{taskname}.ent")
 
     fh = open(sFile, 'w')
 
@@ -751,8 +742,6 @@ def write_to_ent(taskname, dicBase, GenTaskEnt=False):
 
 # =======================================================
 def calc_fcst_resources(dicBase, taskname="forecast_hr"):
-    import math
-
     if taskname == "forecast_hr":
         layout_x = int(dicBase['layout_x'.upper()])
         layout_y = int(dicBase['layout_y'.upper()])
@@ -816,7 +805,6 @@ def calc_fcst_resources(dicBase, taskname="forecast_hr"):
 
 # =======================================================
 def get_param_of_task(dicBase, taskname):
-    import textwrap
     sWalltime = ""
     sNodes = ""
     sMemory = ""
@@ -1321,7 +1309,6 @@ def get_param_of_task(dicBase, taskname):
 
 # =======================================================
 def calc_gempak_resources(dicBase):
-    import math
     taskname="gempak"
     ncores_per_node = Get_NCORES_PER_NODE(dicBase)
     WHERE_AM_I = dicBase['WHERE_AM_I'].upper()
@@ -1431,13 +1418,7 @@ def get_metatask_names(taskname=""):
 
 # =======================================================
 def get_jobname(taskname):
-    import os
-    import sys
-    sSep = "/"
-    if sys.platform == 'win32':
-        sSep = r'\\'
-
-    sDefaultJobID_File = sys.path[0] + sSep + "job_id.conf"
+    sDefaultJobID_File = os.path.join(sys.path[0], "job_id.conf")
     jobname_short = "--"
     if os.path.exists(sDefaultJobID_File):
         # print("---Default Job-ID Configure file was found! Reading ...")
@@ -1521,7 +1502,7 @@ def get_DATE_VARS(sPre="\t\t"):
 def get_ENV_VARS(sPre="\t\t"):
     dicENV_VARS = {}
     dicENV_VARS['envir'] = 'dev'
-    dicENV_VARS['RUN_ENVIR'] = 'dev'
+    dicENV_VARS['RUN_ENVIR'] = 'emc'
     dicENV_VARS['WHERE_AM_I'] = '&WHERE_AM_I;'
     dicENV_VARS['GEFS_ROCOTO'] = '&GEFS_ROCOTO;'
     dicENV_VARS['WORKDIR'] = '&WORKDIR;'

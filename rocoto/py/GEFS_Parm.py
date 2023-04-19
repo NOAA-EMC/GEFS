@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+from collections import OrderedDict
+import GEFS_XML_For_Tasks as gefs_xml_for_tasks
+
 # =======================================================
 def create_parm(sConfig, dicBase):
     # For gets_dev.parm
@@ -18,7 +25,6 @@ def get_lstParm(sConfig, dicBase):
 # =======================================================
 def read_dicParm(sConfig):
     # read config file
-    from collections import OrderedDict
     dicBaseParm = OrderedDict()
     IsParm = False
     StartParm = "# Start Parm"
@@ -69,13 +75,8 @@ def read_dicParm(sConfig):
 
 # =======================================================
 def get_and_merge_default_dicParm(dicParm, WHERE_AM_I):
-    import os, sys
-    sSep = "/"
-    if sys.platform == 'win32':
-        sSep = r'\\'
-
     # To get the WHERE_AM_I from dicParm or identify it using default methode
-    sDefaultConfig_File = sys.path[0] + sSep + "user_{0}.conf".format(WHERE_AM_I)
+    sDefaultConfig_File = os.path.join(sys.path[0], f"user_{WHERE_AM_I}.conf")
 
     if os.path.exists(sDefaultConfig_File):
         #print("----Getting default parameters' value ...")
@@ -90,8 +91,6 @@ def get_and_merge_default_dicParm(dicParm, WHERE_AM_I):
 
 # =======================================================
 def assign_default_for_gets_dev_parm(dicBase, lstBaseParm):
-    import GEFS_XML_For_Tasks as gefs_xml_for_tasks
-
     # ==
     sVarName = "First"
     if sVarName not in lstBaseParm:
@@ -165,13 +164,6 @@ def create_parm2(sConfig, dicBase):
 
 # =======================================================
 def create_gets_dev_parm(dicBase, listBaseParm):
-    import sys
-    import os
-
-    sSep = "/"
-    if sys.platform == 'win32':
-        sSep = r'\\'
-
     strings = []
 
     strings.append('#!/bin/ksh\n')
@@ -201,12 +193,12 @@ def create_gets_dev_parm(dicBase, listBaseParm):
 
     sPath = dicBase["GEFS_ROCOTO"]
 
-    sPath += sSep + "parm"
+    sPath = os.path.join(sPath, "parm")
 
     if not os.path.exists(sPath):
         os.mkdir(sPath)
 
-    sgefs_dev_parm_File = sPath + sSep + "gefs_dev.parm"
+    sgefs_dev_parm_File = os.path.join(sPath, "gefs_dev.parm")
     fh = open(sgefs_dev_parm_File, 'w')
 
     fh.write(strings)
@@ -217,8 +209,6 @@ def create_gets_dev_parm(dicBase, listBaseParm):
             fh.write('\n#define tmp time step\n')
         elif sVarName.upper() == 'layout_x'.upper():
             fh.write('\n# cpu geometry\n')
-        elif sVarName.upper() == 'gfssource'.upper():
-            fh.write('\n# for test, NOT USED FOR PRODUCTION gfssource = dev, para, prod\n')
         elif sVarName.upper() == 'gfssource'.upper():
             fh.write('\n# for test, NOT USED FOR PRODUCTION gfssource = dev, para, prod\n')
         elif sVarName.upper() == 'makepgrba'.upper():

@@ -1,4 +1,4 @@
 # Ignore logs directories
 logs/
 global-workflow.fd
-
+ufs_model.fd

@@ -1,15 +1,12 @@
-#!/bin/ksh
+#! /usr/bin/env bash
 
 case $cyc in
-    00) memshift=0;;
-    06) memshift=20;;
-    12) memshift=40;;
-    18) memshift=60;;
+  00) memshift=0;;
+  06) memshift=20;;
+  12) memshift=40;;
+  18) memshift=60;;
 esac
-
-export pdycycp=$($NDATE -$fhrp $PDY$cyc)
-export pdyp=$(echo $pdycycp|cut -c1-8)
-export cycp=$(echo $pdycycp|cut -c9-10)
+export memshift
 
 export CDATE=$PDY$cyc
 
