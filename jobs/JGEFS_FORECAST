@@ -103,6 +103,43 @@ export COMPONENT=${COMPONENT:-atmos}
 echo "Environment before calling script"
 env | sort
 
+
+# Construct COM variables from templates (see config.com)
+export memchar=$(echo $RUNMEM|cut -c3-5)
+
+MEMDIR="${memchar}" YMD=${PDY} HH=${cyc} generate_com -rx COM_ATMOS_RESTART COM_ATMOS_INPUT COM_ATMOS_ANALYSIS \
+  COM_ATMOS_HISTORY COM_ATMOS_MASTER
+
+echo "COM_ATMOS_RESTART: " ${COM_ATMOS_RESTART}
+echo "COM_ATMOS_INPUT: " ${COM_ATMOS_INPUT}
+echo "COM_ATMOS_ANALYSIS: " ${COM_ATMOS_ANALYSIS}
+echo "COM_ATMOS_HISTORY: " ${COM_ATMOS_HISTORY}
+echo "COM_ATMOS_MASTER: " ${COM_ATMOS_MASTER}
+
+RUN=${rCDUMP} MEMDIR="${memchar}" YMD="${gPDY}" HH="${gcyc}" generate_com -rx COM_ATMOS_RESTART_PREV:COM_ATMOS_RESTART_TMPL
+
+echo "COM_ATMOS_RESTART_PREV: " ${COM_ATMOS_RESTART_PREV}
+
+if [[ ${DO_WAVE} == "YES" ]]; then
+  MEMDIR="${memchar}" YMD=${PDY} HH=${cyc} generate_com -rx COM_WAVE_RESTART COM_WAVE_PREP COM_WAVE_HISTORY
+  RUN=${rCDUMP} MEMDIR="${memchar}" YMD="${gPDY}" HH="${gcyc}" generate_com -rx COM_WAVE_RESTART_PREV:COM_WAVE_RESTART_TMPL
+fi
+
+if [[ ${DO_OCN} == "YES" ]]; then
+  MEMDIR="${memchar}" YMD=${PDY} HH=${cyc} generate_com -rx COM_MED_RESTART COM_OCEAN_RESTART \
+    COM_OCEAN_INPUT COM_OCEAN_HISTORY COM_OCEAN_ANALYSIS
+  RUN=${rCDUMP} MEMDIR="${memchar}" YMD="${gPDY}" HH="${gcyc}" generate_com -rx COM_OCEAN_RESTART_PREV:COM_OCEAN_RESTART_TMPL
+fi
+
+if [[ ${DO_ICE} == "YES" ]]; then
+   MEMDIR="${memchar}" YMD=${PDY} HH=${cyc} generate_com -rx COM_ICE_HISTORY
+   RUN=${rCDUMP} MEMDIR="${memchar}" YMD="${gPDY}" HH="${gcyc}" generate_com -rx COM_ICE_RESTART_PREV:COM_ICE_RESTART_TMPL
+fi
+
+if [[ ${DO_AERO} == "YES" ]]; then
+  MEMDIR="${memchar}" YMD=${PDY} HH=${cyc} generate_com -rx COM_CHEM_HISTORY
+fi
+
 #############################################################
 # Execute the script
 $HOMEgefs/scripts/exgefs_forecast.sh

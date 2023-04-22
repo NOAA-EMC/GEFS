@@ -129,7 +129,7 @@ if [[ -d global-workflow.fd ]] ; then
     mkdir -p ../parm/config
   fi
   cd ../parm/config
-  for fn in config.com; do
+  for fn in config.com config.nsst; do
     echo ${fn}
     ${LINK} ../../sorc/global-workflow.fd/parm/config/${fn} ./
   done
