@@ -4,7 +4,7 @@ source "${HOMEgfs:-${HOMEgefs}}/ush/preamble.sh"
 
 export RUNMEM=$RUNMEM
 export mem=$(echo $RUNMEM|cut -c3-5)
-machine=${machine:-"WCOSS2"}
+#machine=${machine:-"WCOSS2"}
 
 # Additional paths needed by child scripts
 export HOMEgfs=${HOMEgfs:-$HOMEgefs}
@@ -24,21 +24,12 @@ export COMPONENTwave=${COMPONENTwave:-${RUN}.wave}
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
 
-#export memdir=${COMIN}/${mem}/${COMPONENT}
-#export gmemdir=${COMIN}/${mem}/${COMPONENT}
-export memdir=${COMIN}/${mem}/${COMPONENT}
-export gmemdir=${COMIN}/${mem}/${COMPONENT}
-export ICSDIR=${COMIN}/${mem}/${COMPONENT}/INPUT
-export RSTDIR=${COMIN}/${mem}/${COMPONENT}/RESTART
-
-export RSTDIR_ATM=$RSTDIR
-
-mkdir -m 755 -p ${RSTDIR}
+if [[ ! -d ${COM_ATMOS_RESTART} ]]; then mkdir -m 755 -p ${COM_ATMOS_RESTART}; fi
 
 case $FORECAST_SEGMENT in
   hr)
     echo "Integrate the model for the Half-Month range segment"
-    filecount=$(ls -l $RSTDIR/*coupler* | wc -l )
+    filecount=$(ls -l ${COM_ATMOS_RESTART}/*coupler* | wc -l )
     if (( filecount < 1 )); then
       export RERUN="NO"
     else
@@ -59,12 +50,12 @@ case $FORECAST_SEGMENT in
     echo "Integrate the model for the Longer Range segment"
     FHINI=${FHINI:-$fhmaxh}
     CDATE_1=$($NDATE +$FHINI $PDY$cyc)
-    fRestart=$RSTDIR/$(echo $CDATE_1 | cut -c1-8).$(echo $CDATE_1 | cut -c9-10)0000.coupler.res
+    fRestart=${COM_ATMOS_RESTART}/$(echo $CDATE_1 | cut -c1-8).$(echo $CDATE_1 | cut -c9-10)0000.coupler.res
     if [ -f $fRestart ]; then
       (( FHINI_2 = fhmaxh + restart_interval_gfs ))
       CDATE_2=$($NDATE +$FHINI_2 $PDY$cyc)
-      #fRestart=$RSTDIR/${CDATE_2}.${cyc}0000.coupler.res
-      fRestart=$RSTDIR/$(echo $CDATE_2 | cut -c1-8).$(echo $CDATE_2 | cut -c9-10)0000.coupler.res
+      #fRestart=${COM_ATMOS_RESTART}/${CDATE_2}.${cyc}0000.coupler.res
+      fRestart=${COM_ATMOS_RESTART}/$(echo $CDATE_2 | cut -c1-8).$(echo $CDATE_2 | cut -c9-10)0000.coupler.res
       if [ -f $fRestart ]; then
         export CDATE_RST=
       else
@@ -167,14 +158,14 @@ export KMP_AFFINITY=disabled
 export OMP_STACKSIZE=1024m
 export MP_LABELIO=yes
 
-if [[ $mem = c00 ]] ;then 
+if [[ ${mem} = c00 ]] ;then
   MEMBER=$((npert+1))
   WAV_MEMBER="00"
-elif [[ $mem = aer ]] ;then 
+elif [[ ${mem} = aer ]] ;then
   MEMBER="00"
   WAV_MEMBER="00"
 else
-  MEMBER=$(echo $mem|cut -c2-3)
+  MEMBER=$(echo ${mem}|cut -c2-3)
   WAV_MEMBER=$MEMBER
 fi
 export MEMBER=$MEMBER
@@ -288,13 +279,13 @@ if [[ $cplchm = ".true." ]]; then
     next_date=$($NDATE +$gefs_cych $CDATE)
     next_PDY=$(echo $next_date | cut -c1-8)
     next_cyc=$(echo $next_date | cut -c9-10)
-    COM_RSTDIR=$COMOUT/$COMPONENT/restart
-    if [[ ! -d $RSTDIR ]]; then mkdir -p $RSTDIR; fi
-    ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res $RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res
-    ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc $RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc
+    COM_RSTDIR=${COMOUT/$COMPONENT/restart}
+    if [[ ! -d ${COM_ATMOS_RESTART} ]]; then mkdir -p ${COM_ATMOS_RESTART}; fi
+    ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.coupler.res ${COM_ATMOS_RESTART}/${next_PDY}.${next_cyc}0000.coupler.res
+    ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.fv_core.res.nc ${COM_ATMOS_RESTART}/${next_PDY}.${next_cyc}0000.fv_core.res.nc
     for kind in fv_tracer.res fv_core.res fv_srf_wnd.res phy_data sfc_data; do
       for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
-        ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc $RSTDIR/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc
+        ln -sf $COM_RSTDIR/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc ${COM_ATMOS_RESTART}/${next_PDY}.${next_cyc}0000.${kind}.${tile}.nc
       done
     done
   fi
