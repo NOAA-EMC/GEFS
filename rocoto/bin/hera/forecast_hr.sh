@@ -24,10 +24,14 @@ module load prod_envir/${prod_envir_ver}
 module list
 
 # For Development
-. $G{EFS_ROCOTO}/bin/hera/common.sh
+. ${GEFS_ROCOTO}/bin/hera/common.sh
 
 # Export List
 export OMP_NUM_THREADS=1
+
+ntasks=${GEFS_NTASKS}
+export launcher="srun -l --export=ALL"
+export APRUN_UFS="${launcher} -n ${ntasks}"
 
 #export MP_SHARED_MEMORY=yes
 #export MEMORY_AFFINITY=core:2
