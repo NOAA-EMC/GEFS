@@ -185,7 +185,7 @@ source "${PARMgefs:-${PARMgfs}}/config/config.com"
 
 #------
 # APP settings
-export APP=${APP:-"S2SW"} # ATM
+export APP=${APP:-"ATM"} # ATM, S2SW
 
 # Defaults:
 export DO_ATM="YES"

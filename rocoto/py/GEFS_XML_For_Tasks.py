@@ -969,9 +969,9 @@ def get_param_of_task(dicBase, taskname):
                         sDep += '\n\t<taskdep task="init_recenter"/>'
                     else:  # Warm Start  ???
                         sDep += '\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
-
-                # elif DoesTaskExist(dicBase, "atmos_prep"):  # *_Reloc
-                #    sDep += '\n\t<taskdep task="atmos_prep"/>'
+                else:
+                    if DoesTaskExist(dicBase, "atmos_prep"):
+                        sDep += '\n\t<taskdep task="atmos_prep_#member#"/>\n\t<taskdep task="atmos_prep_c00"/>'
 
                 if DoesTaskExist(dicBase, "copy_init"):
                     sDep += '\n\t<taskdep task="copy_init_#member#"/>'

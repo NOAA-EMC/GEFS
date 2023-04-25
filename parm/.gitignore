@@ -4,3 +4,5 @@ product
 prep_chem_sources.inp.IN
 
 config/config.nsst
+config/config.com
+config/config.defaults.s2sw

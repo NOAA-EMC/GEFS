@@ -81,6 +81,7 @@ case $FORECAST_SEGMENT in
     ;;
 esac
 
+export CASE
 export FHMAX_GFS=$FHMAX
 
 
@@ -292,7 +293,7 @@ if [[ $cplchm = ".true." ]]; then
 
 fi # [[ $cplchm = ".true." ]]
 
-export increment_file=$ICSDIR/fv3_increment.nc
+#export increment_file=$ICSDIR/fv3_increment.nc
 
 export FIX_DIR=$FIXgfs
 export FIX_AM=$FIX_AM
