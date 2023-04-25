@@ -103,8 +103,6 @@ export COMPONENT=${COMPONENT:-atmos}
 echo "Environment before calling script"
 env | sort
 
-rCDUMP=gefs
-
 # Ignore possible spelling error (nothing is misspelled)
 # shellcheck disable=SC2153
 GDATE=$(${NDATE} -"${assim_freq}" "${PDY}${cyc}")

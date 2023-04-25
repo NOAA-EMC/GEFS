@@ -57,11 +57,12 @@ export APRUN=${APRUN:-""}
 # OTHER FV# FCST related environment
 export warm_start=${warm_start:-".false."}
 export read_increment=${read_increment:-".false."}
-REMAP_GRID=none     # temporay setting, to void the latlon default
-export REMAP_GRID=${REMAP_GRID:-latlon}
 
 MEMBER=$(echo $RUNMEM|cut -c4-5)
-CDATE=$PDY$cyc
+export CDATE=$PDY$cyc
+
+export rCDUMP=gefs
+export CDUMP=gefs
 
 #export EXPDIR=${HOMEgefs}/parm/config
 #
@@ -524,46 +525,46 @@ fi # [[ $RUNMEM = "gec00" || $RUNMEM = "geaer" ]]
 
 ## Stochastically Perturbed Physics Tendency
 if [[ $DO_SPPT = YES ]]; then
-  export SPPT_hr=${SPPT_hr:-"0.8,0.4,0.2,0.08,0.04"}                                 # Amplitude of SPPT patterns
-  export SPPT_LOGIT_hr=${SPPT_LOGIT_hr:-.TRUE.}                                      # Do a logit transform to bound values from -1.0 to 1.0
-  export SPPT_TAU_hr=${SPPT_TAU_hr:-"2.16E4,2.592E5,2.592E6,7.776E6,3.1536E7"}       # Time scale in seconds
-  export SPPT_LSCALE_hr=${SPPT_LSCALE_hr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
-  export sppt_sfclimit_hr=${sppt_sfclimit_hr:-.true.}                                # damp amplitude of SPPT at surface
-  export ISEED_SPPT_hr=${ISEED_SPPT_hr:-$((CDATE*1000 + ${MEMBER#0}*10 + 3)),$((CDATE*1000 + ${MEMBER#0}*10 + 4)),$((CDATE*1000 + ${MEMBER#0}*10 + 5)),$((CDATE*1000 + ${MEMBER#0}*10 + 6)),$((CDATE*1000 + ${MEMBER#0}*10 + 7))} # random seed for sppt pattern
-##  export sppt_sigtop1_hr=${sppt_sigtop1_hr:-0.1}                                     # taper SPPT pattern to zero between 0.1 and 0.025 sigma
-##  export sppt_sigtop2_hr=${sppt_sigtop2_hr:-0.025}
+  export SPPT=${SPPT:-"0.8,0.4,0.2,0.08,0.04"}                                 # Amplitude of SPPT patterns
+  export SPPT_LOGIT=${SPPT_LOGIT:-.TRUE.}                                      # Do a logit transform to bound values from -1.0 to 1.0
+  export SPPT_TAU=${SPPT_TAU:-"2.16E4,2.592E5,2.592E6,7.776E6,3.1536E7"}       # Time scale in seconds
+  export SPPT_LSCALE=${SPPT_LSCALE:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
+  export sppt_sfclimit=${sppt_sfclimit:-.true.}                                # damp amplitude of SPPT at surface
+  export ISEED_SPPT=${ISEED_SPPT:-$((CDATE*1000 + ${MEMBER#0}*10 + 3)),$((CDATE*1000 + ${MEMBER#0}*10 + 4)),$((CDATE*1000 + ${MEMBER#0}*10 + 5)),$((CDATE*1000 + ${MEMBER#0}*10 + 6)),$((CDATE*1000 + ${MEMBER#0}*10 + 7))} # random seed for sppt pattern
+##  export sppt_sigtop1=${sppt_sigtop1:-0.1}                                     # taper SPPT pattern to zero between 0.1 and 0.025 sigma
+##  export sppt_sigtop2=${sppt_sigtop2:-0.025}
 else
-  export SPPT_hr="-999.,-999.,-999,-999,-999"
+  export SPPT="-999.,-999.,-999,-999,-999"
 fi
 #
 ## Stochastic Humidity
 #
 if [[ $DO_SHUM = YES ]]; then
-  export SHUM_hr=${SHUM_hr:-"0.004,-999.,-999.,-999,-999"}                           # Amplitude of SHUM patterns
-  export SHUM_TAU_hr=${SHUM_TAU_hr:-"2.16E4,1.728E5,6.912E5,7.776E6,3.1536E7"}       # Time scale in seconds
-  export SHUM_LSCALE_hr=${SHUM_LSCALE_hr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
-  export ISEED_SHUM_hr=${ISEED_SHUM_hr:-$((CDATE*1000 + ${MEMBER#0}*10 + 2))}        # random seed for SHUM pattern
-  #export shum_sigefold_hr=${shum_sigefold_hr:-0.2}                                  # limit SHUM to the PBL (~bottom 200 mb)
+  export SHUM=${SHUM:-"0.004,-999.,-999.,-999,-999"}                           # Amplitude of SHUM patterns
+  export SHUM_TAU=${SHUM_TAU:-"2.16E4,1.728E5,6.912E5,7.776E6,3.1536E7"}       # Time scale in seconds
+  export SHUM_LSCALE=${SHUM_LSCALE:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
+  export ISEED_SHUM=${ISEED_SHUM:-$((CDATE*1000 + ${MEMBER#0}*10 + 2))}        # random seed for SHUM pattern
+  #export shum_sigefold=${shum_sigefold:-0.2}                                  # limit SHUM to the PBL (~bottom 200 mb)
 
 else
-  export SHUM_hr="-999.,-999.,-999,-999,-999"
+  export SHUM="-999.,-999.,-999,-999,-999"
 fi
 #
 ## Stochastic Kinetic Energy Backscatter
 #
 if [[ $DO_SKEB = YES ]]; then
-  export SKEB_hr=${SKEB_hr:-"0.6,-999,-999,-999,-999"}                               # Amplitude of SPPT patterns
-  export ISEED_SKEB_hr=${ISEED_SKEB_hr:-$((CDATE*1000 + ${MEMBER#0}*10 + 1))}        # Seed for SKEB pattern
-  export SKEB_TAU_hr=${SKEB_TAU_hr:-"2.16E4,1.728E5,2.592E6,7.776E6,3.1536E7"}       # Time scale in seconds
-  export SKEB_LSCALE_hr=${SKEB_LSCALE_hr:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
+  export SKEB=${SKEB:-"0.6,-999,-999,-999,-999"}                               # Amplitude of SPPT patterns
+  export ISEED_SKEB=${ISEED_SKEB:-$((CDATE*1000 + ${MEMBER#0}*10 + 1))}        # Seed for SKEB pattern
+  export SKEB_TAU=${SKEB_TAU:-"2.16E4,1.728E5,2.592E6,7.776E6,3.1536E7"}       # Time scale in seconds
+  export SKEB_LSCALE=${SKEB_LSCALE:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
   export SKEBNORM=${SKEBNORM:-1}
 
-  #export SKEB_VFILT_hr=${SKEB_VFILT_hr:-40}                                         # number of iterations of a 1-2-1 filter of the random pattern in the vertical
-  #export SKEB_DISS_SMOOTH_hr=${SKEB_DISS_SMOOTH_hr:-12}                             # number of iterations of smoothing the dissipation estimate in the horizontal
-  #export skeb_sigtop1_hr=${skeb_sigtop1_hr:-0.1}                                    # taper SKEB pattern to zero between 0.1 and 0.025 sigma
-  #export skeb_sigtop2_hr=${skeb_sigtop2_hr:-0.025}
+  #export SKEB_VFILT=${SKEB_VFILT:-40}                                         # number of iterations of a 1-2-1 filter of the random pattern in the vertical
+  #export SKEB_DISS_SMOOTH=${SKEB_DISS_SMOOTH:-12}                             # number of iterations of smoothing the dissipation estimate in the horizontal
+  #export skeb_sigtop1=${skeb_sigtop1:-0.1}                                    # taper SKEB pattern to zero between 0.1 and 0.025 sigma
+  #export skeb_sigtop2=${skeb_sigtop2:-0.025}
 else
-  export SKEB_hr="-999.,-999.,-999,-999,-999"
+  export SKEB="-999.,-999.,-999,-999,-999"
 fi
 
 ########################################

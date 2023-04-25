@@ -4,27 +4,22 @@ source "${HOMEgfs:-${HOMEgefs}}/ush/preamble.sh"
 
 export RUNMEM=$RUNMEM
 export mem=$(echo $RUNMEM|cut -c3-5)
-#machine=${machine:-"WCOSS2"}
 
 # Additional paths needed by child scripts
 export HOMEgfs=${HOMEgfs:-$HOMEgefs}
-export PARMgfs=$HOMEgfs/parm
-export EXECgfs=$HOMEgfs/exec
-export FIXgfs=$HOMEgfs/fix
-export FIX_DIR=$FIXgfs
-export FIX_AM=$FIX_DIR/am
-export FIXfv3=$FIX_DIR/orog
-#export FIXemi=${FIXemi:-$HOMEgefs/fix/fix_emission/emi_}
-#export SSTDIR=${SSTDIR:-$COMIN/atmos/cfssst}
-
-export COMINwave=${COMINwave:-${COMIN}/wave}
-export COMOUTwave=${COMOUTwave:-${COMIN}/wave}
-export COMPONENTwave=${COMPONENTwave:-${RUN}.wave}
+export PARMgfs=${HOMEgfs}/parm
+export EXECgfs=${HOMEgfs}/exec
+export FIXgfs=${HOMEgfs}/fix
+export FIX_DIR=${FIXgfs}
+export FIX_AM=${FIX_DIR}/am
+export FIXfv3=${FIX_DIR}/orog
 
 export ERRSCRIPT=err_chk
 export LOGSCRIPT=startmsg
 
-if [[ ! -d ${COM_ATMOS_RESTART} ]]; then mkdir -m 755 -p ${COM_ATMOS_RESTART}; fi
+if [[ ! -d ${COM_ATMOS_RESTART} ]]; then
+  mkdir -m 755 -p ${COM_ATMOS_RESTART}
+fi
 
 case $FORECAST_SEGMENT in
   hr)
@@ -36,25 +31,30 @@ case $FORECAST_SEGMENT in
       export RERUN="YES"
     fi
 
-    FHINI=${FHINI:-0}
-     if [[ $RERUN != "YES" ]] ; then
+    export FHINI=${FHINI:-0};
+    if [[ $RERUN != "YES" ]] ; then
       export CDATE_RST=$($NDATE +$FHINI $PDY$cyc)
     fi
-    CASE=$CASEHR; FHMAX=$((fhmaxh+1)); FHOUT=$FHOUTLF; FHZER=6;
-    MTNRSL=$MTNRSLFV; LONB=$LONBFV; LATB=$LATBFV;
-    FHMAX_HF=$FHMAXHF; FHOUT_HF=$FHOUTHF;
-    FHINI=$FHINI;
-    (( LEVS = LEVSHR + 1 ))
+    export CASE=$CASEHR
+    export FHMIN=${FHINI}
+    export FHMAX=$((fhmaxh+1+1))
+    export FHOUT=$FHOUTLF
+    export FHZER=6
+    export MTNRSL=$MTNRSLFV
+    export LONB=$LONBFV
+    export LATB=$LATBFV
+    export FHMAX_HF=$FHMAXHF
+    export FHOUT_HF=$FHOUTHF
+    export LEVS=$((LEVSHR+1))
     ;;
   lr)
     echo "Integrate the model for the Longer Range segment"
-    FHINI=${FHINI:-$fhmaxh}
+    export FHINI=${FHINI:-$fhmaxh}
     CDATE_1=$($NDATE +$FHINI $PDY$cyc)
     fRestart=${COM_ATMOS_RESTART}/$(echo $CDATE_1 | cut -c1-8).$(echo $CDATE_1 | cut -c9-10)0000.coupler.res
     if [ -f $fRestart ]; then
       (( FHINI_2 = fhmaxh + restart_interval_gfs ))
       CDATE_2=$($NDATE +$FHINI_2 $PDY$cyc)
-      #fRestart=${COM_ATMOS_RESTART}/${CDATE_2}.${cyc}0000.coupler.res
       fRestart=${COM_ATMOS_RESTART}/$(echo $CDATE_2 | cut -c1-8).$(echo $CDATE_2 | cut -c9-10)0000.coupler.res
       if [ -f $fRestart ]; then
         export CDATE_RST=
@@ -68,11 +68,17 @@ case $FORECAST_SEGMENT in
     fi
     export RERUN="YES"
     export cplwav=.false.
-    CASE=$CASELR; FHMAX=$((fhmax+1)); FHOUT=$FHOUTLF; FHZER=6;
-    MTNRSL=$MTNRSLLR; LONB=$LONBLR; LATB=$LATBLR;
-    FHMAX_HF=$FHMAXHF; FHOUT_HF=$FHOUTHF;
-    FHINI=$FHINI;
-    (( LEVS = LEVSLR + 1 ))
+    export CASE=$CASELR
+    export FHMIN=${FHINI}
+    export FHMAX=$((fhmax+1))
+    export FHOUT=$FHOUTLF
+    export FHZER=6
+    export MTNRSL=$MTNRSLLR
+    export LONB=$LONBLR
+    export LATB=$LATBLR
+    export FHMAX_HF=$FHMAXHF
+    export FHOUT_HF=$FHOUTHF
+    export LEVS=$((LEVSLR+1))
     ;;
   *)
     echo "FATAL ERROR in ${BASH_SOURCE}: Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
@@ -81,13 +87,9 @@ case $FORECAST_SEGMENT in
     ;;
 esac
 
-export CASE
 export FHMAX_GFS=$FHMAX
 
-
 export RERUN=${RERUN:-NO}
-
-export FHMIN=$FHINI
 
 #  The VEGTYPE fix file:
 export FNVETC=${FNVETC:-${FIX_AM}/global_vegtype.igbp.t$MTNRSL.rg.grb}
@@ -99,8 +101,9 @@ export FNALBC2=$FIX_AM/global_albedo4.1x1.grb
 export FNSMCC=$FIX_AM/global_soilmgldas.t$MTNRSL.grb
 export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 
-export ENS_NUM=1
-
+#
+# UPP parameters for GEFS
+#
 R2=$(echo $RUNMEM|cut -c4-5)
 case $RUNMEM in
   (gec00 | geaer)
@@ -137,10 +140,6 @@ export FLTFILEGFSF00=${DATA}/${fn_f00}
 #
 export fhstoch=$restart_interval
 
-if [[ $FORECAST_SEGMENT = hr ]] ; then
-	(( FHMAX = FHMAX + 1 ))
-fi
-
 if [[ $RERUN = "YES" ]] ; then
   export warm_start=.true.
   export restart_hour=$FHMIN
@@ -172,34 +171,6 @@ fi
 export MEMBER=$MEMBER
 
 export SET_STP_SEED=${SET_STP_SEED:-"YES"}
-
-if [[ $FORECAST_SEGMENT = hr || $FORECAST_SEGMENT = lr ]] ; then
-
-  if [[ $DO_SPPT = YES ]] ; then
-    export SPPT=$SPPT_hr
-    export ISEED_SPPT=$ISEED_SPPT_hr
-    export SPPT_LOGIT=$SPPT_LOGIT_hr
-    export SPPT_TAU=$SPPT_TAU_hr
-    export SPPT_LSCALE=$SPPT_LSCALE_hr
-    export sppt_sfclimit=$sppt_sfclimit_hr
-  fi
-
-  if [[ $DO_SHUM = YES ]] ; then
-    export SHUM=$SHUM_hr
-    export ISEED_SHUM=$ISEED_SHUM_hr
-    export SHUM_TAU=$SHUM_TAU_hr
-    export SHUM_LSCALE=$SHUM_LSCALE_hr
-  fi
-
-  if [[ $DO_SKEB = YES ]] ; then
-    export SKEB=$SKEB_hr
-    export ISEED_SKEB=$ISEED_SKEB_hr
-    export SKEB_TAU=$SKEB_TAU_hr
-    export SKEB_LSCALE=$SKEB_LSCALE_hr
-    export SKEBNORM=${SKEBNORM:-"1"}
-  fi
-fi
-
 #
 # Forecast Input Variables
 #
@@ -217,20 +188,13 @@ echo $FCSTEXEC
 echo $PARM_FV3DIAG
 echo $APRUN
 
-export NCP="/bin/cp -p"
-export NMV="/bin/mv"
-export NLN="/bin/ln -sf"
-
-export VERBOSE=YES
-
 #echo "-----end of CONFIG in ${BASH_SOURCE} --------"
 
 ################################################################################
-export CDATE=$PDY$cyc
-export rCDUMP=gefs
-export CDUMP=gefs
-
 if [[ $cplwav = ".true." ]]; then
+  export COMINwave=${COMINwave:-${COMIN}/wave}
+  export COMOUTwave=${COMOUTwave:-${COMIN}/wave}
+  export COMPONENTwave=${COMPONENTwave:-${RUN}.wave}
   # CPU partitioning
   export npe_wav=${npe_wav:-88}
   export npe_fcst_wav=$(( npe_fv3 + npe_wav ))
@@ -294,9 +258,6 @@ if [[ $cplchm = ".true." ]]; then
 fi # [[ $cplchm = ".true." ]]
 
 #export increment_file=$ICSDIR/fv3_increment.nc
-
-export FIX_DIR=$FIXgfs
-export FIX_AM=$FIX_AM
 
 # Increment is never used for a rerun
 if [[ $RERUN == "YES" ]]; then
