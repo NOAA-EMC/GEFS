@@ -1,19 +1,19 @@
-#!/bin/ksh
+#! /usr/bin/env bash
 
-echo "$(date -u) begin ${.sh.file}"
+echo "$(date -u) begin ${BASH_SOURCE}"
 
 set -xa
 if [[ ${STRICT:-NO} == "YES" ]]; then
-	# Turn on strict bash error checking
-	set -eu
+  # Turn on strict bash error checking
+  set -eu
 fi
 
 echo DATA=$DATA
 
 VERBOSE=${VERBOSE:-"YES"}
 if [ $VERBOSE = "YES" ]; then
-   echo $(date) EXECUTING ${.sh.file} $* >&2
-   set -x
+  echo $(date) EXECUTING ${BASH_SOURCE} $* >&2
+  set -x
 fi
 
 ############################################################
@@ -33,7 +33,7 @@ export FHOUTHF="${3}"
 export FHOUTLF="${4}"
 export FHMAXFH="${5}"
 export FHOUR="${6}"
-export ensavg_nemsio_log="${7}"
+export ensavg_netcdf_log="${7}"
 cd $jobdir
 
 export CASE=${CASE:-384}
@@ -43,7 +43,6 @@ ntiles=${ntiles:-6}
 NCP=${NCP:-"/bin/cp -p"}
 NLN=${NLN:-"/bin/ln -sf"}
 NMV=${NMV:-"/bin/mv -uv"}
-nemsioget=${nemsioget:-${NWPROD}/exec/nemsio_get}
 
 GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-$HOMEgsi/exec/getsigensmeanp_smooth.x}
 GETSFCENSMEANEXEC=${GETSFCENSMEANEXEC:-$HOMEgsi/exec/getsfcensmeanp.x}
@@ -59,92 +58,99 @@ echo "memberlist=$memberlist"
 $NCP $GETATMENSMEANEXEC $DATA
 $NCP $GETSFCENSMEANEXEC $DATA
 
+CDUMP_ENS=gefs
+OUTDIR=${COMOUT}/${COMPONENT}
+
 FHINC=$FHOUTHF
 fhr=$SHOUR
 while [[ $fhr -le $FHOUR ]]; do
-	fhr=$(printf %03i $fhr)
-	logfile="$COMOUT/$COMPONENT/sfcsig/geavg.${cycle}.logf${fhr}.nemsio"
-	if [[ -f $logfile ]]; then
-		echo "NEMSIO average file $logfile exists, skipping."
-		if [ $fhr -ge $FHMAXFH ]; then
-			FHINC=$FHOUTLF
-		fi
-		(( fhr = fhr + FHINC ))
-		continue
-	fi
+  fhr=$(printf %03i ${fhr})
+  #fhr0=$(printf %i 10#${fhr})
+  logfile="${OUTDIR}/${CDUMP_ENS}.${cycle}.logf${fhr}.txt"
+  if [[ -f $logfile ]]; then
+    echo "netcdf average file $logfile exists, skipping."
+    if [ $fhr -ge $FHMAXFH ]; then
+      FHINC=$FHOUTLF
+    fi
+    fhr=$( expr ${fhr} + ${FHINC} )
+    continue
+  fi
 
-	nfile=$npert
-	for mem in $memberlist; do
-		mem2=$(echo $mem | cut -c2-)
-		mem3=$(printf "%03.i" $mem2)
-		ic=0
-		while [ $ic -le $SLEEP_LOOP_MAX ]; do
-			if [ -f  $COMIN/$COMPONENT/sfcsig/ge${mem}.${cycle}.logf${fhr}.nemsio ]; then
-				$NLN $COMIN/$COMPONENT/sfcsig/ge${mem}.${cycle}.atmf${fhr}.nemsio ./atm_mem$mem3
-				$NLN $COMIN/$COMPONENT/sfcsig/ge${mem}.${cycle}.sfcf${fhr}.nemsio ./sfc_mem$mem3
-				break
-			else
-				ic=$(($ic + 1))
-				sleep $SLEEP_INT
-			fi
-			if [ $ic -eq $SLEEP_LOOP_MAX ]; then
-				(( nfile = nfile - 1 ))
-				echo <<- EOF
+  nfile=$npert
+  for mem in $memberlist; do
+    mem2=$(echo $mem | cut -c2-)
+    mem3=$(printf %03i ${mem2#0})
+    CDUMP="gefs"
+    INDIR=${COMIN}/${mem}/${COMPONENT}
+    ic=0
+    while [ $ic -le $SLEEP_LOOP_MAX ]; do
+      if [ -f  ${INDIR}/${CDUMP}.${cycle}.logf${fhr}.txt ]; then
+        $NLN ${INDIR}/${CDUMP}.${cycle}.atmf${fhr}.nc ./atm_mem${mem3}
+        $NLN ${INDIR}/${CDUMP}.${cycle}.sfcf${fhr}.nc ./sfc_mem${mem3}
+        break
+      else
+        ic=$(($ic + 1))
+        sleep $SLEEP_INT
+      fi
+      if [ $ic -eq $SLEEP_LOOP_MAX ]; then
+        (( nfile = nfile - 1 ))
+        echo <<- EOF
 					WARNING: ${job} could not find forecast $mem at $(date -u) after waiting ${SLEEP_TIME}s
 						Looked for the following files:
-							Log file: $COMIN/$COMPONENT/sfcsig/ge${mem}.${cycle}.logf${fhr}.nemsio
-							Atm file: $COMIN/$COMPONENT/sfcsig/ge${mem}.${cycle}.atmf${fhr}.nemsio
-							Sfc file: $COMIN/$COMPONENT/sfcsig/ge${mem}.${cycle}.sfcf${fhr}.nemsio
+							Log file: ${INDIR}/${CDUMP}.${cycle}.logf${fhr}.txt
+							Atm file: ${INDIR}/${CDUMP}.${cycle}.atmf${fhr}.nc
+							Sfc file: ${INDIR}/${CDUMP}.${cycle}.sfcf${fhr}.nc
 					EOF
 				msg="WARNING: ${job} was unable to find $mem; will continue but mean may be degraded!"
-				echo "$msg" | mail.py -c $MAIL_LIST
-			fi # [ $ic -eq $SLEEP_LOOP_MAX ]
-		done
-	done
-	if [ $nfile -le 1 ]; then
-		echo <<- EOF
-			FATAL ERROR in ${.sh.file}: Not enough forecast files available to create average at hour $fhr!
+        echo "$msg" | mail.py -c $MAIL_LIST
+      fi # [ $ic -eq $SLEEP_LOOP_MAX ]
+    done
+  done
+  if [ $nfile -le 1 ]; then
+    echo <<- EOF
+			FATAL ERROR in ${BASH_SOURCE}: Not enough forecast files available to create average at hour $fhr!
 			EOF
-		export err=1
-		$ERRSCRIPT
-		exit $err
-	fi # [ $ic
-	
-	if [[ $SENDCOM == "YES" ]]; then
-		$NLN $COMOUT/$COMPONENT/sfcsig/geavg.${cycle}.atmf${fhr}.nemsio ./atm_ensmean
-		$NLN $COMOUT/$COMPONENT/sfcsig/geavg.${cycle}.sfcf${fhr}.nemsio ./sfc_ensmean
-	fi
-	$APRUN ${DATA}/$(basename $GETATMENSMEANEXEC) ./ atm_ensmean atm $nfile
-	export err=$?
+    export err=1
+    $ERRSCRIPT
+    exit $err
+  fi # [ $ic
 
-	if [[ $err != 0 ]]; then
-		echo "FATAL ERROR in ${.sh.file}: $(basename $GETATMENSMEANEXEC) failed for f${fhr}!"
-		$ERRSCRIPT
-		exit $err
-	fi
 
-	$APRUN ${DATA}/$(basename $GETSFCENSMEANEXEC) ./ sfc_ensmean sfc $nfile
-	export err=$?
+  if [[ $SENDCOM == "YES" ]]; then
+    $NLN ${OUTDIR}/${CDUMP_ENS}.${cycle}.atmf${fhr}.nc ./atm_ensmean
+    $NLN ${OUTDIR}/${CDUMP_ENS}.${cycle}.sfcf${fhr}.nc ./sfc_ensmean
+  fi
+  $APRUN ${DATA}/$(basename $GETATMENSMEANEXEC) ./ atm_ensmean atm $nfile
+  export err=$?
 
-	if [[ $err != 0 ]]; then
-		echo "FATAL ERROR in ${.sh.file}: $(basename $GETSFCENSMEANEXEC) failed for f${fhr}!"
-		$ERRSCRIPT
-		exit $err
-	fi
+  if [[ $err != 0 ]]; then
+    echo "FATAL ERROR in ${BASH_SOURCE}: $(basename $GETATMENSMEANEXEC) failed for f${fhr}!"
+    $ERRSCRIPT
+    exit $err
+  fi
 
-	echo "f${fhr}_done --- $(date -u)" >> $ensavg_nemsio_log
-	
-	export err=$?
-	$ERRSCRIPT || exit $err
-	if [[ $SENDCOM == "YES" ]]; then
-		echo "completed fv3gfs average fhour= $fhr" > $logfile
-	fi
-	if [ $fhr -ge $FHMAXFH ]; then
-		FHINC=$FHOUTLF
-	fi
-	(( fhr = fhr + FHINC ))
+  $APRUN ${DATA}/$(basename $GETSFCENSMEANEXEC) ./ sfc_ensmean sfc $nfile
+  export err=$?
+
+  if [[ $err != 0 ]]; then
+    echo "FATAL ERROR in ${BASH_SOURCE}: $(basename $GETSFCENSMEANEXEC) failed for f${fhr}!"
+    $ERRSCRIPT
+    exit $err
+  fi
+
+  echo "f${fhr}_done --- $(date -u)" >> $ensavg_netcdf_log
+
+  export err=$?
+  $ERRSCRIPT || exit $err
+  if [[ $SENDCOM == "YES" ]]; then
+    echo "completed fv3gfs average fhour= $fhr" > $logfile
+  fi
+  if [ $fhr -ge $FHMAXFH ]; then
+    FHINC=$FHOUTLF
+  fi
+  fhr=$( expr ${fhr} + ${FHINC} )
 done
 
-echo "$(date -u) end ${.sh.file}"
+echo "$(date -u) end ${BASH_SOURCE}"
 
 exit $err
