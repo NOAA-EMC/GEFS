@@ -306,8 +306,8 @@ else
 fi
 
 # Stochastic physics
-export DO_SPPT=${DO_SPPT:-"YES"}
-export DO_SKEB=${DO_SKEB:-"YES"}
+export DO_SPPT=${DO_SPPT:-"NO"}
+export DO_SKEB=${DO_SKEB:-"NO"}
 export DO_SHUM=${DO_SHUM:-"NO"}
 export DO_LAND_PERT=${DO_LAND_PERT:-"NO"}
 export DO_CA=${DO_CA:-"YES"}
@@ -517,10 +517,10 @@ else
   export DO_SPPT=${DO_SPPT:-"YES"}
   export DO_SKEB=${DO_SKEB:-"YES"}
   export DO_SHUM=${DO_SHUM:-"NO"}
-  export DO_LAND_PERT=${DO_LAND_PERT:-"NO"}
+  export DO_LAND_PERT=${DO_LAND_PERT:-"YES"}
   export DO_CA=${DO_CA:-"YES"}
-  export DO_OCN_SPPT="YES"
-  export DO_OCN_PERT_EPBL="YES"
+  export DO_OCN_SPPT=${DO_OCN_SPPT:-"YES"}
+  export DO_OCN_PERT_EPBL=${DO_OCN_PERT_EPBL:-"YES"}
 fi # [[ $RUNMEM = "gec00" || $RUNMEM = "geaer" ]]
 
 ## Stochastically Perturbed Physics Tendency
