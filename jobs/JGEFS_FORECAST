@@ -72,13 +72,13 @@ export ROTDIR=${ROTDIR:-$(compath.py $envir/com/$NET/${ver})}
 # Source relevant config files
 #############################
 export CDATE=$PDY$cyc
-configs="gefs gefs_fcst" #gefs_ufs gefs_wave gefs_fcst"
-config_path=${PARMgefs}/parm_gefs
+configs="base fcst"
+config_path=${PARMgefs}/config
 for config in $configs; do
-  . $config_path/$config.parm
+  . ${config_path}/config.${config}
   export err=$?
   if [[ $err != 0 ]]; then
-    echo "FATAL ERROR in ${BASH_SOURCE}: Error while loading parm file $config_path/$config.parm"
+    echo "FATAL ERROR in ${BASH_SOURCE}: Error while loading parm file ${config_path}/config.${config}"
     exit $err
   fi
 done
