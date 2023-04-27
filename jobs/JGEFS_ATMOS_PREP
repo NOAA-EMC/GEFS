@@ -66,7 +66,7 @@ export COMPONENT="atmos"
 # Source relevant config files
 #############################
 configs="base prep"
-config_path=config.${config}
+config_path=${PARMgefs}/config
 for config in $configs; do
   . ${config_path}/config.${config}
   export err=$?
