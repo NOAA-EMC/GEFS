@@ -278,10 +278,8 @@ fi
 $FORECASTSH
 export err=$?
 if [[ $err != 0 ]]; then
-  echo "FATAL ERROR in ${BASH_SOURCE}: received a non-zero return code from $FORECASTSH"
+  echo "FATAL ERROR in ${BASH_SOURCE[0]}: received a non-zero return code from $FORECASTSH"
   exit $err
 fi
-
-echo "$(date -u) end ${BASH_SOURCE}"
 
 exit $err
