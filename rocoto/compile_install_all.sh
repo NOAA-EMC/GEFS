@@ -29,7 +29,7 @@ userConfigFile=${userConfigFile:-user_full.conf}
 AddCrontabToMyCrontab=${AddCrontabToMyCrontab:-no}
 DeleteCrontabFromMyCrontab=${DeleteCrontabFromMyCrontab:-no}
 RunEnvir=${RunEnvir:-emc}
-Structure=${Structure:-no} # dev (use HOMEDIR to link), prod (clone global-workflow from vlab), no (use the original structure)
+Structure=${Structure:-yes} # dev (use HOMEDIR to link), prod (clone global-workflow from vlab), no (use the original structure)
 Link=${Link:-no}
 Operation=${Operation:-no} # ecflow, rocoto, lsf
 
