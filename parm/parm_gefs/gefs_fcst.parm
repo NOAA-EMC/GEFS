@@ -95,7 +95,7 @@ for component in WAVE OCN ICE AERO; do
 done
 
 # Get task specific resources
-source ${HOMEgefs}/parm/parm_gefs/gefs_fcst_resources.parm
+source ${EXPDIR}/config.resources
 export domains_stack_size="16000000"
 
 
