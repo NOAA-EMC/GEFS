@@ -408,22 +408,7 @@ echo "END: config.fcst"
 
 
 #-----------------------For GEFS ----------\/\/-------------
-# set fixed k_split and n_split for dt=450s and 300s
-#if [[ $DELTIM = 450 ]]; then
-#  export k_split=2
-#  export n_split=6
-#elif [[ $DELTIM = 300 ]]; then
-#  export k_split=1
-#  export n_split=8
-#else
-#  export k_split=${k_split:-2}
-#  export n_split=${n_split:-6}
-#fi
-
 export assim_freq=$gefs_cych
-
-export TYPE=${TYPE:-"nh"}    # choices:  nh, hydro
-export MONO=${MONO:-"non-mono"}
 
 # Settings for coupling with Wavewatch III
 export cplwav=${cplwav:-.true.}
@@ -445,55 +430,8 @@ if [[ $cplchm = ".true." ]]; then
   export USE_COUPLER_RES="YES"
 fi
 
-##gfs_physics
-#export FHZERO=${FHZER:-6}
-#export idiag3d=
 export FHCYC=${FHCYC:-24}
-#export USE_UFO=.true.
-#export PRE_RAD=.false.
-#export ncld=${NCLD:-5}
-#export do_sat_adj=${DO_SAT_ADJ:-".true."}
-#export zhao_mic=${ZHAO_MIC:-".false."}
-#export PDFCLD=${PDFCLD:-".false."}
-#export FHLWR=3600.      # LW radiation calling interval (hrs)
-#export FHSWR=3600.      # SW radiation calling interval (hrs)
-#export ialb=1          # 0: climatology sw albedo based on surface veg types;
-#                       # 1: MODIS based land surface albedo
-#export IEMS=1          # 0-blackbody ground emission; 1-climatology on one-deg map
-#export IAER=111        # 111--with stratospheric aerosol, tropospheric aerosol LW, troposphere aerosol SW.
-#export ICO2=2          # 0--fixed CO2 constant; 1--time varying global mean CO2; 2--changing CO2
-#export ISUBC_LW=2
-#export ISUBC_SW=2
-#export ISOL=2          # 0--fixed solar constant; 1--changing solar constant
-#export lwhtr=${lwhtr:-".true."}
-#export swhtr=${swhtr:-".true."}
 #
-#export CNVGWD=.true.
-#export shal_cnv=.true.
-#export cal_pre=.false.
-#export REDRAG=.true.
-#export DSPHEAT=.true.
-#export HYBEDMF=.true.
-#export lheatstrg=.false.
-#
-#export random_clds=.false.
-#export trans_trac=.true.
-#
-##export cnvcld=.false.
-#export NVCLD=.false.
-#export imfshalcnv=2
-#export imfdeepcnv=2
-#export cdmbgwd=1.0,1.2
-#export prslrd0=
-#export ivegsrc=
-#export isot=
-#export debug=${gfs_phys_debug:-".false."}
-#export nst_anl=${nst_anl:-".true."}
-#export nstf_name=${nstf_name:-"2,0,0,0,0"}
-#export psautco=${psautco:-"0.0008,0.0005"}
-#export prautco=${prautco:-"0.00015,0.00015"}
-#export lgfdlmprad=.true.
-#export effr_in=.true.
 
 #-----------------------For GEFS ----------/\/\-------------
 export DO_OCN_SPPT=${DO_OCN_SPPT:-"NO"}
