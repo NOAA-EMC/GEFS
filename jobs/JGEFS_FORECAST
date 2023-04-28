@@ -66,21 +66,19 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 # Define COM directories
 ##############################################
 ver=${gefs_ver:0:5}
-export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
-export COMOUT=${COMOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc}
 export ROTDIR=${ROTDIR:-$(compath.py $envir/com/$NET/${ver})}
 
 #############################
 # Source relevant config files
 #############################
 export CDATE=$PDY$cyc
-configs="gefs gefs_fcst" #gefs_ufs gefs_wave gefs_fcst"
-config_path=${PARMgefs}/parm_gefs
+configs="base fcst"
+config_path=${PARMgefs}/config
 for config in $configs; do
-  . $config_path/$config.parm
+  . ${config_path}/config.${config}
   export err=$?
   if [[ $err != 0 ]]; then
-    echo "FATAL ERROR in ${BASH_SOURCE}: Error while loading parm file $config_path/$config.parm"
+    echo "FATAL ERROR in ${BASH_SOURCE}: Error while loading parm file ${config_path}/config.${config}"
     exit $err
   fi
 done
@@ -92,9 +90,9 @@ if [[ $cplchm = ".true." ]]; then
 fi
 if [[ $cplwav = ".true." ]]; then
   # Set location of wave restart from last cycle
-  last_date=$($NDATE -$WAVHCYC $CDATE)
-  last_PDY=$(echo $last_date | cut -c1-8)
-  last_cyc=$(echo $last_date | cut -c9-10)
+  last_date=$(${NDATE} -${WAVHCYC} "${PDY}${cyc}")
+  last_PDY=${last_date:0:8}
+  last_cyc=${last_date:8:2}
   export WRDIR=${WRDIR:-$(compath.py $envir/com/$NET/${ver})}/${RUN}.${last_PDY}/$last_cyc/wave/restart
 fi
 
@@ -111,20 +109,12 @@ declare -x gPDY="${GDATE:0:8}"
 declare -x gcyc="${GDATE:8:2}"
 
 # Construct COM variables from templates (see config.com)
-export memchar=$(echo $RUNMEM|cut -c3-5)
+declare -rx memchar=${RUNMEM:2:3}
 
 MEMDIR="${memchar}" YMD=${PDY} HH=${cyc} generate_com -rx COM_ATMOS_RESTART COM_ATMOS_INPUT COM_ATMOS_ANALYSIS \
   COM_ATMOS_HISTORY COM_ATMOS_MASTER
 
-echo "COM_ATMOS_RESTART: " ${COM_ATMOS_RESTART}
-echo "COM_ATMOS_INPUT: " ${COM_ATMOS_INPUT}
-echo "COM_ATMOS_ANALYSIS: " ${COM_ATMOS_ANALYSIS}
-echo "COM_ATMOS_HISTORY: " ${COM_ATMOS_HISTORY}
-echo "COM_ATMOS_MASTER: " ${COM_ATMOS_MASTER}
-
 RUN=${rCDUMP} MEMDIR="${memchar}" YMD="${gPDY}" HH="${gcyc}" generate_com -rx COM_ATMOS_RESTART_PREV:COM_ATMOS_RESTART_TMPL
-
-echo "COM_ATMOS_RESTART_PREV: " ${COM_ATMOS_RESTART_PREV}
 
 if [[ ${DO_WAVE} == "YES" ]]; then
   MEMDIR="${memchar}" YMD=${PDY} HH=${cyc} generate_com -rx COM_WAVE_RESTART COM_WAVE_PREP COM_WAVE_HISTORY
@@ -153,7 +143,7 @@ export err=$?
 if [[ $err == 0 ]]; then
   echo "$job completed normally!"
 else
-  echo "FATAL ERROR in ${BASH_SOURCE}: $job failed!"
+  echo "FATAL ERROR in ${BASH_SOURCE[0]}: $job failed!"
   exit $err
 fi
 #############################################################
@@ -163,7 +153,5 @@ fi
 ##############################
 cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
-
-echo "$(date -u) end ${BASH_SOURCE}"
 
 exit $err

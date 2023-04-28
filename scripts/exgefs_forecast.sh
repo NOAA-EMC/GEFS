@@ -92,15 +92,14 @@ export FHMAX_GFS=$FHMAX
 export RERUN=${RERUN:-NO}
 
 #  The VEGTYPE fix file:
-export FNVETC=${FNVETC:-${FIX_AM}/global_vegtype.igbp.t$MTNRSL.rg.grb}
-export FNTSFC=${FNTSFC:-${FIX_AM}/RTGSST.1982.2012.monthly.clim.grb}
-export FNAISC=${FNAISC:-${FIX_AM}/CFSR.SEAICE.1982.2012.monthly.clim.grb}
-export FNABSC=${FNABSC:-${FIX_AM}/global_mxsnoalb.uariz.t$MTNRSL.rg.grb}
-export FNALBC=$FIX_AM/global_snowfree_albedo.bosu.t$MTNRSL.rg.grb
-export FNALBC2=$FIX_AM/global_albedo4.1x1.grb
-export FNSMCC=$FIX_AM/global_soilmgldas.t$MTNRSL.grb
-export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
-
+ export FNVETC=${FNVETC:-${FIX_AM}/global_vegtype.igbp.t$MTNRSL.rg.grb}
+ export FNTSFC=${FNTSFC:-${FIX_AM}/RTGSST.1982.2012.monthly.clim.grb}
+ export FNAISC=${FNAISC:-${FIX_AM}/CFSR.SEAICE.1982.2012.monthly.clim.grb}
+ export FNABSC=${FNABSC:-${FIX_AM}/global_mxsnoalb.uariz.t$MTNRSL.rg.grb}
+ export FNALBC=$FIX_AM/global_snowfree_albedo.bosu.t$MTNRSL.rg.grb
+ export FNALBC2=$FIX_AM/global_albedo4.1x1.grb
+ export FNSMCC=$FIX_AM/global_soilmgldas.t$MTNRSL.grb
+ export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 #
 # UPP parameters for GEFS
 #
@@ -278,10 +277,8 @@ fi
 $FORECASTSH
 export err=$?
 if [[ $err != 0 ]]; then
-  echo "FATAL ERROR in ${BASH_SOURCE}: received a non-zero return code from $FORECASTSH"
+  echo "FATAL ERROR in ${BASH_SOURCE[0]}: received a non-zero return code from $FORECASTSH"
   exit $err
 fi
-
-echo "$(date -u) end ${BASH_SOURCE}"
 
 exit $err
