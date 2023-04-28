@@ -58,7 +58,7 @@ export APRUN=${APRUN:-""}
 export warm_start=${warm_start:-".false."}
 export read_increment=${read_increment:-".false."}
 
-MEMBER=$(echo $RUNMEM|cut -c4-5)
+MEMBER=${RUNMEM:3:3}
 export CDATE=$PDY$cyc
 
 export rCDUMP=gefs
@@ -443,7 +443,7 @@ export JCAP_STP=${JCAP_STP:-$JCAPFV}
 export LONB_STP=${LONB_STP:-$LONBFV}
 export LATB_STP=${LATB_STP:-$LATBFV}
 
-if [[ $RUNMEM = "gec00" || $RUNMEM = "geaer" ]]; then
+if [[ $RUNMEM = "mem000" || $RUNMEM = "memaer" ]]; then
   # Turn off stochastic physics for control member
   export DO_SPPT="NO"
   export DO_SHUM="NO"
@@ -460,7 +460,7 @@ else
   export DO_CA=${DO_CA:-"YES"}
   export DO_OCN_SPPT=${DO_OCN_SPPT:-"YES"}
   export DO_OCN_PERT_EPBL=${DO_OCN_PERT_EPBL:-"YES"}
-fi # [[ $RUNMEM = "gec00" || $RUNMEM = "geaer" ]]
+fi # [[ $RUNMEM = "mem000" || $RUNMEM = "memaer" ]]
 
 ## Stochastically Perturbed Physics Tendency
 if [[ $DO_SPPT = YES ]]; then

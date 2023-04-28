@@ -362,9 +362,9 @@ def get_workflow_body(dicBase):
 # =======================================================
 def get_MEMLIST(dicBase):
     ### npert
-    ### npert means Number of Perturbation, default value is 20
+    ### npert means Number of Perturbation, default value is 30
     ###
-    npert = 20
+    npert = 30
     # To Generate member list
     bltGenerateMEMLIST = False
     sVarName_Num = "npert".upper()
@@ -376,7 +376,7 @@ def get_MEMLIST(dicBase):
         if sVarName_List in dicBase:
             bltGenerateMEMLIST = False
         else:
-            npert = 20
+            npert = 30
             dicBase[sVarName_Num] = npert
             bltGenerateMEMLIST = True
 
@@ -387,9 +387,10 @@ def get_MEMLIST(dicBase):
 
     if bltGenerateMEMLIST:
         MEMLIST_Value = ""
-        for iNum in range(1, npert + 1):
-            MEMLIST_Value += "p{0:02d} ".format(iNum)
-        MEMLIST_Value += "c00"
+        for iNum in range(0, npert + 1):
+            MEMLIST_Value += f"{iNum:03d}"
+            if iNum != npert:
+                    MEMLIST_Value += " "
         # print(MEMLIST_Value)
         dicBase[sVarName_List] = MEMLIST_Value
 

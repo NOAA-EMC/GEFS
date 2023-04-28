@@ -103,13 +103,13 @@ export RERUN=${RERUN:-NO}
 #
 # UPP parameters for GEFS
 #
-R2=$(echo $RUNMEM|cut -c4-5)
+R2=${RUNMEM:3:3} #$(echo $RUNMEM|cut -c4-5)
 case $RUNMEM in
-  (gec00 | geaer)
+  (mem000 | memaer)
     ens_pert_type='unpert_lo_res_ctrl_fcst'
     e1=1
     ;;
-  (gep[0-9][0-9])
+  (mem[0-9][0-9][0-9])
     ens_pert_type='pos_pert_fcst'
     e1=3
     ;;
@@ -157,14 +157,14 @@ export KMP_AFFINITY=disabled
 export OMP_STACKSIZE=1024m
 export MP_LABELIO=yes
 
-if [[ ${mem} = c00 ]] ;then
+if [[ ${mem} = 000 ]] ;then
   MEMBER=$((npert+1))
   WAV_MEMBER="00"
 elif [[ ${mem} = aer ]] ;then
   MEMBER="00"
   WAV_MEMBER="00"
 else
-  MEMBER=$(echo ${mem}|cut -c2-3)
+  MEMBER=${mem} #$(echo ${mem}|cut -c2-3)
   WAV_MEMBER=$MEMBER
 fi
 export MEMBER=$MEMBER
