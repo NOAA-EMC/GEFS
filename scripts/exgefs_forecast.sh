@@ -2,85 +2,11 @@
 
 source "${HOMEgfs:-${HOMEgefs}}/ush/preamble.sh"
 
-export RUNMEM=$RUNMEM
-export mem=$(echo $RUNMEM|cut -c3-5)
-
 # Additional paths needed by child scripts
 
 if [[ ! -d ${COM_ATMOS_RESTART} ]]; then
   mkdir -m 755 -p ${COM_ATMOS_RESTART}
 fi
-
-
-#
-# UPP parameters for GEFS
-#
-R2=$(echo $RUNMEM|cut -c4-5)
-case $RUNMEM in
-  (gec00 | geaer)
-    ens_pert_type='unpert_lo_res_ctrl_fcst'
-    e1=1
-    ;;
-  (gep[0-9][0-9])
-    ens_pert_type='pos_pert_fcst'
-    e1=3
-    ;;
-  (*)
-    echo "FATAL: Unrecognized RUNMEM $RUNMEM, unable to determine pert type"
-    export err=200
-    err_chk; exit $err
-    ;;
-esac # $RUNMEM
-export ens_pert_type
-# e1,e2,e3 are used to set the grib ensemble information
-export e1=$e1
-export e2=$R2
-export e3=$npert
-
-fn=$(basename ${FLTFILEGFS})
-sed < ${FLTFILEGFS} -e "s#negatively_pert_fcst#${ens_pert_type}#" > ${DATA}/${fn}
-export FLTFILEGFS=${DATA}/${fn}
-
-fn_f00=$(basename ${FLTFILEGFSF00})
-sed <${FLTFILEGFSF00} -e "s#negatively_pert_fcst#${ens_pert_type}#" > ${DATA}/${fn_f00}
-export FLTFILEGFSF00=${DATA}/${fn_f00}
-
-
-#
-# Forecast Input Variables
-#
-
-if [[ $RERUN = "YES" ]] ; then
-  export warm_start=.true.
-  export restart_hour=$FHMIN
-  export restart_run=.true.
-  export output_1st_tstep=.true.
-  export stochini=${stochini:-".true."} #true=read in pattern, false=initialize from seed
-else
-  export stochini=${stochini:-".false."} #true=read in pattern, false=initialize from seed
-fi
-
-#
-# Forecast Input Variables
-#
-#--------------------------------------------
-if [[ ${mem} = c00 ]] ;then
-  MEMBER=$((npert+1))
-  WAV_MEMBER="00"
-elif [[ ${mem} = aer ]] ;then
-  MEMBER="00"
-  WAV_MEMBER="00"
-else
-  MEMBER=$(echo ${mem}|cut -c2-3)
-  WAV_MEMBER=$MEMBER
-fi
-export MEMBER=$MEMBER
-
-export SET_STP_SEED=${SET_STP_SEED:-"YES"}
-#
-# Forecast Input Variables
-#
-export SEND=NO
 
 #echo "-----end of CONFIG in ${BASH_SOURCE} --------"
 
