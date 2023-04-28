@@ -3,7 +3,7 @@
 source "${HOMEgfs:-${HOMEgefs}}/ush/preamble.sh"
 
 export mem=$1
-export nmem=$(echo $mem|cut -c 2-)
+export nmem=$(echo ${mem:3:3})
 nmem=${nmem#0}
 
 YMD=${PDY} HH=${cyc} MEMDIR=${mem} generate_com -rx OUTDIR:COM_ATMOS_INPUT_TMPL
@@ -19,7 +19,7 @@ cd $DATA
 ORO_DIR="${CASE}.mx${OCNRES}_frac"
 ORO_NAME="oro_${CASE}.mx${OCNRES}"
 
-if [[ $mem = c00 ]] ;then
+if [[ $mem = mem000 ]] ;then
   # Control intial conditions from current GFS cycle
   export ATM_FILES_INPUT="gfs.t${cyc}z.atmanl.nc"
   YMD=${PDY} HH=${cyc} RUN=gfs MEMDIR="" ROTDIR=${ROTDIR_GFS} generate_com -rx COM_ATMOS_ANALYSIS_GFS:COM_ATMOS_ANALYSIS_TMPL
@@ -136,7 +136,7 @@ if [[ $SENDCOM == "YES" ]]; then
 
   if [[ $CONVERT_SFC == ".true." ]]; then
     for mem2 in $memberlist; do
-      YMD=${PDY} HH=${cyc} MEMDIR=${mem2} generate_com COMDIR2:COM_ATMOS_INPUT_TMPL
+      YMD=${PDY} HH=${cyc} MEMDIR=mem${mem2} generate_com COMDIR2:COM_ATMOS_INPUT_TMPL
       mkdir -p $COMDIR2
       for tile in tile1 tile2 tile3 tile4 tile5 tile6; do
         $NCP ${DATA}/out.sfc.${tile}.nc $COMDIR2/sfc_data.${tile}.nc

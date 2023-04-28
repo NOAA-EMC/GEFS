@@ -418,12 +418,12 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
 
     # -------------------RUNMEM-------------------
     if taskname in metatask_names:
-        strings += (create_envar(name="RUNMEM", value="ge#member#", sPre=sPre_2))
+        strings += (create_envar(name="RUNMEM", value="mem#member#", sPre=sPre_2))
     elif taskname in ["chem_init", "chem_forecast", "chem_post", "chem_prdgen"]:
-        strings += (create_envar(name="RUNMEM", value="geaer", sPre=sPre_2))
+        strings += (create_envar(name="RUNMEM", value="memaer", sPre=sPre_2))
     else:
         if taskname in ["prdgen_gfs"]:
-            strings += (create_envar(name="RUNMEM", value="gegfs", sPre=sPre_2))
+            strings += (create_envar(name="RUNMEM", value="memgfs", sPre=sPre_2))
     # -------------------RUNMEM-------------------
 
     # \/ -------------------Add Source Vars----------
@@ -968,16 +968,16 @@ def get_param_of_task(dicBase, taskname):
                     if DoesTaskExist(dicBase, "atmos_prep"):  # Cold Restart
                         sDep += '\n\t<taskdep task="init_recenter"/>'
                     else:  # Warm Start  ???
-                        sDep += '\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
+                        sDep += '\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/mem000/fv3_increment.nc</cyclestr></datadep>'
                 else:
                     if DoesTaskExist(dicBase, "atmos_prep"):
-                        sDep += '\n\t<taskdep task="atmos_prep_#member#"/>\n\t<taskdep task="atmos_prep_c00"/>'
+                        sDep += '\n\t<taskdep task="atmos_prep_#member#"/>\n\t<taskdep task="atmos_prep_000"/>'
 
                 if DoesTaskExist(dicBase, "copy_init"):
                     sDep += '\n\t<taskdep task="copy_init_#member#"/>'
                 if DoesTaskExist(dicBase, "wave_prep"):  # Wave prep
                     sDep += '\n\t<taskdep task="wave_prep_#member#"/>'
-                    sDep += '\n\t<taskdep task="wave_prep_c00"/>'
+                    sDep += '\n\t<taskdep task="wave_prep_000"/>'
                 if sDep == '<and>':
                     sDep = ""
                 else:
@@ -1001,7 +1001,7 @@ def get_param_of_task(dicBase, taskname):
                 if DoesTaskExist(dicBase, "chem_init"):  # Cold Restart
                     sDep += '\n\t<taskdep task="chem_init"/>'
                 else:  # Warm Start  ???
-                    sDep += '\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/c00/fv3_increment.nc</cyclestr></datadep>'
+                    sDep += '\n\t<datadep><cyclestr>&WORKDIR;/nwges/dev/gefs.@Y@m@d/@H/mem000/fv3_increment.nc</cyclestr></datadep>'
 
                 if DoesTaskExist(dicBase, "chem_prep_emissions"):
                     sDep += '\n\t<taskdep task="chem_prep_emissions"/>'
@@ -1015,18 +1015,16 @@ def get_param_of_task(dicBase, taskname):
             if taskname.lower() == "ensavg_netcdf":
                 npert = int(dicBase["NPERT"])
                 sDep = '<and>'
-                for i in range(npert):
-                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/p{0:02}/atmos/gefs.t@Hz.logf000.txt</cyclestr></datadep>'.format(i + 1)
-                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/c00/atmos/gefs.t@Hz.logf000.txt</cyclestr></datadep>'
+                for i in range(npert+1):
+                    sDep += f'\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/sfcsig/mem{0:03}.t@Hz.logf000.nemsio</cyclestr></datadep>'
                 sDep += '\n</and>'
 
             # For ensstat_hr
             if taskname.lower() == "ensstat_hr":
                 npert = int(dicBase["NPERT"])
                 sDep = '<and>'
-                for i in range(npert):
-                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/misc/prd0p5/gep{0:02}.t@Hz.prdgen.control.f000</cyclestr></datadep>'.format(i + 1)
-                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/misc/prd0p5/gec00.t@Hz.prdgen.control.f000</cyclestr></datadep>'
+                for i in range(npert+1):
+                    sDep += f'\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/misc/prd0p5/mem{0:03}.t@Hz.prdgen.control.f000</cyclestr></datadep>'
                 sDep += '\n</and>'
 
             # For ensstat_lr
@@ -1038,9 +1036,8 @@ def get_param_of_task(dicBase, taskname):
 
                 iStartHourLF = ifhmaxh + iFHOUTLF
 
-                for i in range(npert):
-                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/misc/prd0p5/gep{0:02}.t@Hz.prdgen.control.f{1:03}</cyclestr></datadep>'.format(i + 1, iStartHourLF)
-                sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/misc/prd0p5/gec00.t@Hz.prdgen.control.f{0:03}</cyclestr></datadep>'.format(iStartHourLF)
+                for i in range(npert+1):
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/misc/prd0p5/mem{0:03}.t@Hz.prdgen.control.f{1:03}</cyclestr></datadep>'.format(i, iStartHourLF)
                 sDep += '\n</and>'
 
             # For extractvars
@@ -1249,14 +1246,13 @@ def get_param_of_task(dicBase, taskname):
                 if IsDataDep:
 
                     npert = int(dicBase["NPERT"])
-                    for i in range(npert):
-                        sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/misc/prd0p5/gep{0:02}.t@Hz.prdgen.control.f000</cyclestr></datadep>'.format(i + 1)
-                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/misc/prd0p5/gec00.t@Hz.prdgen.control.f000</cyclestr></datadep>'
-                    # sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/geavg.t@Hz.prdgen.control.f000</cyclestr></datadep>'
-                    # sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/gespr.t@Hz.prdgen.control.f000</cyclestr></datadep>'
+                    for i in range(npert+1):
+                        sDep += f'\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/misc/prd0p5/mem{i:02}.t@Hz.prdgen.control.f000</cyclestr></datadep>'
+                    # sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/memavg.t@Hz.prdgen.control.f000</cyclestr></datadep>'
+                    # sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/misc/prd0p5/memspr.t@Hz.prdgen.control.f000</cyclestr></datadep>'
 
-                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/pgrb2ap5/geavg.t@Hz.pgrb2a.0p50.f000</cyclestr></datadep>'
-                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/pgrb2ap5/gespr.t@Hz.pgrb2a.0p50.f000</cyclestr></datadep>'
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/pgrb2ap5/memavg.t@Hz.pgrb2a.0p50.f000</cyclestr></datadep>'
+                    sDep += '\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/pgrb2ap5/memspr.t@Hz.pgrb2a.0p50.f000</cyclestr></datadep>'
 
                 else:
                     if DoesTaskExist(dicBase, "prdgen_hr"):
