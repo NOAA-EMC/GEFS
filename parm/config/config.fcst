@@ -502,6 +502,7 @@ fi
 export FHCYC=${FHCYC:-24}
 
 #  The VEGTYPE fix file:
+export FIX_AM=${FIX_AM:-${FIXgfs}/am}
 export FNVETC=${FNVETC:-${FIX_AM}/global_vegtype.igbp.t$MTNRSL.rg.grb}
 export FNTSFC=${FNTSFC:-${FIX_AM}/RTGSST.1982.2012.monthly.clim.grb}
 export FNAISC=${FNAISC:-${FIX_AM}/CFSR.SEAICE.1982.2012.monthly.clim.grb}
