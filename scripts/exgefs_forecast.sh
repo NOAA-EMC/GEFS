@@ -187,6 +187,8 @@ echo $FCSTEXEC
 echo $PARM_FV3DIAG
 echo $APRUN
 
+export SEND=NO
+
 #echo "-----end of CONFIG in ${BASH_SOURCE} --------"
 
 ################################################################################
