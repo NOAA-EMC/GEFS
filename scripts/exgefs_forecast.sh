@@ -6,100 +6,12 @@ export RUNMEM=$RUNMEM
 export mem=$(echo $RUNMEM|cut -c3-5)
 
 # Additional paths needed by child scripts
-export HOMEgfs=${HOMEgfs:-$HOMEgefs}
-export PARMgfs=${HOMEgfs}/parm
-export EXECgfs=${HOMEgfs}/exec
-export FIXgfs=${HOMEgfs}/fix
-export FIX_DIR=${FIXgfs}
-export FIX_AM=${FIX_DIR}/am
-export FIXfv3=${FIX_DIR}/orog
-
-export ERRSCRIPT=err_chk
-export LOGSCRIPT=startmsg
 
 if [[ ! -d ${COM_ATMOS_RESTART} ]]; then
   mkdir -m 755 -p ${COM_ATMOS_RESTART}
 fi
 
-case $FORECAST_SEGMENT in
-  hr)
-    echo "Integrate the model for the Half-Month range segment"
-    filecount=$(ls -l ${COM_ATMOS_RESTART}/*coupler* | wc -l )
-    if (( filecount < 1 )); then
-      export RERUN="NO"
-    else
-      export RERUN="YES"
-    fi
 
-    export FHINI=${FHINI:-0};
-    if [[ $RERUN != "YES" ]] ; then
-      export CDATE_RST=$($NDATE +$FHINI $PDY$cyc)
-    fi
-    export CASE=$CASEHR
-    export FHMIN=${FHINI}
-    export FHMAX=$((fhmaxh+1+1))
-    export FHOUT=$FHOUTLF
-    export FHZER=6
-    export MTNRSL=$MTNRSLFV
-    export LONB=$LONBFV
-    export LATB=$LATBFV
-    export FHMAX_HF=$FHMAXHF
-    export FHOUT_HF=$FHOUTHF
-    export LEVS=$((LEVSHR+1))
-    ;;
-  lr)
-    echo "Integrate the model for the Longer Range segment"
-    export FHINI=${FHINI:-$fhmaxh}
-    CDATE_1=$($NDATE +$FHINI $PDY$cyc)
-    fRestart=${COM_ATMOS_RESTART}/$(echo $CDATE_1 | cut -c1-8).$(echo $CDATE_1 | cut -c9-10)0000.coupler.res
-    if [ -f $fRestart ]; then
-      (( FHINI_2 = fhmaxh + restart_interval_gfs ))
-      CDATE_2=$($NDATE +$FHINI_2 $PDY$cyc)
-      fRestart=${COM_ATMOS_RESTART}/$(echo $CDATE_2 | cut -c1-8).$(echo $CDATE_2 | cut -c9-10)0000.coupler.res
-      if [ -f $fRestart ]; then
-        export CDATE_RST=
-      else
-        export CDATE_RST=$($NDATE +$FHINI $PDY$cyc)
-      fi
-    else
-      echo "FATAL ERROR in ${BASH_SOURCE}: There is no $fRestart"
-      export err=101
-      exit $err
-    fi
-    export RERUN="YES"
-    export cplwav=.false.
-    export CASE=$CASELR
-    export FHMIN=${FHINI}
-    export FHMAX=$((fhmax+1))
-    export FHOUT=$FHOUTLF
-    export FHZER=6
-    export MTNRSL=$MTNRSLLR
-    export LONB=$LONBLR
-    export LATB=$LATBLR
-    export FHMAX_HF=$FHMAXHF
-    export FHOUT_HF=$FHOUTHF
-    export LEVS=$((LEVSLR+1))
-    ;;
-  *)
-    echo "FATAL ERROR in ${BASH_SOURCE}: Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
-    export err=100
-    exit $err
-    ;;
-esac
-
-export FHMAX_GFS=$FHMAX
-
-export RERUN=${RERUN:-NO}
-
-#  The VEGTYPE fix file:
- export FNVETC=${FNVETC:-${FIX_AM}/global_vegtype.igbp.t$MTNRSL.rg.grb}
- export FNTSFC=${FNTSFC:-${FIX_AM}/RTGSST.1982.2012.monthly.clim.grb}
- export FNAISC=${FNAISC:-${FIX_AM}/CFSR.SEAICE.1982.2012.monthly.clim.grb}
- export FNABSC=${FNABSC:-${FIX_AM}/global_mxsnoalb.uariz.t$MTNRSL.rg.grb}
- export FNALBC=$FIX_AM/global_snowfree_albedo.bosu.t$MTNRSL.rg.grb
- export FNALBC2=$FIX_AM/global_albedo4.1x1.grb
- export FNSMCC=$FIX_AM/global_soilmgldas.t$MTNRSL.grb
- export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 #
 # UPP parameters for GEFS
 #
@@ -137,7 +49,6 @@ export FLTFILEGFSF00=${DATA}/${fn_f00}
 #
 # Forecast Input Variables
 #
-export fhstoch=$restart_interval
 
 if [[ $RERUN = "YES" ]] ; then
   export warm_start=.true.
@@ -153,10 +64,6 @@ fi
 # Forecast Input Variables
 #
 #--------------------------------------------
-export KMP_AFFINITY=disabled
-export OMP_STACKSIZE=1024m
-export MP_LABELIO=yes
-
 if [[ ${mem} = c00 ]] ;then
   MEMBER=$((npert+1))
   WAV_MEMBER="00"
@@ -173,29 +80,15 @@ export SET_STP_SEED=${SET_STP_SEED:-"YES"}
 #
 # Forecast Input Variables
 #
-export fcstscript=${fcstscript:-$HOMEgfs/scripts/exglobal_forecast.sh}
-export FORECASTSH=$fcstscript
-export FCSTEXECDIR=${FCSTEXECDIR:-$EXECgfs}
-export PARM_FV3DIAG=${PARM_FV3DIAG:-$PARMgfs/parm_fv3diag}
-
-export APRUN=${APRUN:-""}
-
-echo $fcstscript
-echo $FORECASTSH
-echo $FCSTEXECDIR
-echo $FCSTEXEC
-echo $PARM_FV3DIAG
-echo $APRUN
-
 export SEND=NO
 
 #echo "-----end of CONFIG in ${BASH_SOURCE} --------"
 
 ################################################################################
 if [[ $cplwav = ".true." ]]; then
-  export COMINwave=${COMINwave:-${COMIN}/wave}
-  export COMOUTwave=${COMOUTwave:-${COMIN}/wave}
-  export COMPONENTwave=${COMPONENTwave:-${RUN}.wave}
+#  export COMINwave=${COMINwave:-${COMIN}/wave}
+#  export COMOUTwave=${COMOUTwave:-${COMIN}/wave}
+#  export COMPONENTwave=${COMPONENTwave:-${RUN}.wave}
   # CPU partitioning
   export npe_wav=${npe_wav:-88}
   export npe_fcst_wav=$(( npe_fv3 + npe_wav ))
