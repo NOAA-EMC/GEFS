@@ -1,4 +1,4 @@
-#!/bin/ksh
+#! /usr/bin/env bash
 
 export HOMEgfs=${HOMEgfs:-$HOMEgefs}
 export EXECgfs=$HOMEgfs/exec
