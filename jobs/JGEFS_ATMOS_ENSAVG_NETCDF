@@ -57,19 +57,20 @@ export PARMgefs=${PARMgefs:-${HOMEgefs}/parm}
 ##############################################
 # Define COM directories
 ##############################################
-ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
-export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
-export COMOUT=${COMOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc}
+ver=${gefs_ver:0:5}
+export ROTDIR=${ROTDIR:-$(compath.py $envir/com/$NET/${ver})}
+
 #############################
 # Source relevant config files
 #############################
-configs="gefs gefs_atmos_ensavg_netcdf"
-config_path=${PARMgefs}/parm_gefs
+export CDATE=${PDY}${cyc}
+configs="gefs ensavg_netcdf"
+config_path=${PARMgefs}/config
 for config in $configs; do
-  . $config_path/${config}.parm
+  . ${config_path}/config.${config}
   export err=$?
   if [[ $err != 0 ]]; then
-    echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file ${config_path}/${config}.parm"
+    echo "FATAL ERROR in ${BASH_SOURCE}: Error while loading parm file ${config_path}/config.${config}"
     exit $err
   fi
 done
@@ -88,8 +89,8 @@ export err=$?
 if [[ ${err} == 0 ]]; then
   echo "${job} completed normally!"
 else
-  echo "FATAL ERROR in $(basename $BASH_SOURCE): ${job} failed!"
-  exit $err
+  echo "FATAL ERROR in ${BASH_SOURCE[0]}: ${job} failed!"
+  exit ${err}
 fi
 #############################################################
 
@@ -98,7 +99,5 @@ fi
 ##############################
 cd ${DATAROOT}
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf ${DATA} ; fi
-
-echo "$(date -u) end $(basename $BASH_SOURCE)"
 
 exit $err

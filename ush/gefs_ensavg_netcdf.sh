@@ -1,20 +1,8 @@
 #! /usr/bin/env bash
 
-echo "$(date -u) begin ${BASH_SOURCE}"
-
-set -xa
-if [[ ${STRICT:-NO} == "YES" ]]; then
-  # Turn on strict bash error checking
-  set -eu
-fi
+source "${HOMEgfs:-${HOMEgefs}}/ush/preamble.sh"
 
 echo DATA=$DATA
-
-VERBOSE=${VERBOSE:-"YES"}
-if [ $VERBOSE = "YES" ]; then
-  echo $(date) EXECUTING ${BASH_SOURCE} $* >&2
-  set -x
-fi
 
 ############################################################
 #  Define Variables:
@@ -33,17 +21,12 @@ export FHOUTHF="${3}"
 export FHOUTLF="${4}"
 export FHMAXFH="${5}"
 export FHOUR="${6}"
-export ensavg_netcdf_log="${7}"
-cd $jobdir
+cd ${jobdir}
 
 export CASE=${CASE:-384}
 ntiles=${ntiles:-6}
 
 # Utilities
-NCP=${NCP:-"/bin/cp -p"}
-NLN=${NLN:-"/bin/ln -sf"}
-NMV=${NMV:-"/bin/mv -uv"}
-
 GETATMENSMEANEXEC=${GETATMENSMEANEXEC:-$HOMEgsi/exec/getsigensmeanp_smooth.x}
 GETSFCENSMEANEXEC=${GETSFCENSMEANEXEC:-$HOMEgsi/exec/getsfcensmeanp.x}
 
@@ -52,41 +35,35 @@ SLEEP_LOOP_MAX=$(($SLEEP_TIME / $SLEEP_INT))
 # Compute ensemble mean 
 
 # Remove control member from list
-memberlist=$(echo $memberlist | sed -e 's/c00//g')
-echo "memberlist=$memberlist"
+memberlist=$(echo ${memberlist} | sed -e 's/000//g')
+echo "memberlist=${memberlist}"
 
-$NCP $GETATMENSMEANEXEC $DATA
-$NCP $GETSFCENSMEANEXEC $DATA
+${NCP} ${GETATMENSMEANEXEC} ${DATA}
+${NCP} ${GETSFCENSMEANEXEC} ${DATA}
 
-CDUMP_ENS=gefs
-OUTDIR=${COMOUT}/${COMPONENT}
-
-FHINC=$FHOUTHF
-fhr=$SHOUR
-while [[ $fhr -le $FHOUR ]]; do
+FHINC=${FHOUTHF}
+fhr=${SHOUR}
+while [[ $fhr -le ${FHOUR} ]]; do
   fhr=$(printf %03i ${fhr})
   #fhr0=$(printf %i 10#${fhr})
-  logfile="${OUTDIR}/${CDUMP_ENS}.${cycle}.logf${fhr}.txt"
-  if [[ -f $logfile ]]; then
-    echo "netcdf average file $logfile exists, skipping."
-    if [ $fhr -ge $FHMAXFH ]; then
-      FHINC=$FHOUTLF
+  logfile="${COM_ATMOS_HISTORY_ENSAVG}/gefs.${cycle}.logf${fhr}.txt"
+  if [[ -f ${logfile} ]]; then
+    echo "netcdf average file ${logfile} exists, skipping."
+    if [ ${fhr} -ge ${FHMAXFH} ]; then
+      FHINC=${FHOUTLF}
     fi
     fhr=$( expr ${fhr} + ${FHINC} )
     continue
   fi
 
-  nfile=$npert
+  nfile=${npert}
   for mem in $memberlist; do
-    mem2=$(echo $mem | cut -c2-)
-    mem3=$(printf %03i ${mem2#0})
-    CDUMP="gefs"
-    INDIR=${COMIN}/${mem}/${COMPONENT}
+    MEMDIR="mem${mem}" YMD=${PDY} HH=${cyc} generate_com INDIR:COM_ATMOS_HISTORY_TMPL
     ic=0
     while [ $ic -le $SLEEP_LOOP_MAX ]; do
-      if [ -f  ${INDIR}/${CDUMP}.${cycle}.logf${fhr}.txt ]; then
-        $NLN ${INDIR}/${CDUMP}.${cycle}.atmf${fhr}.nc ./atm_mem${mem3}
-        $NLN ${INDIR}/${CDUMP}.${cycle}.sfcf${fhr}.nc ./sfc_mem${mem3}
+      if [ -f  ${INDIR}/gefs.${cycle}.logf${fhr}.txt ]; then
+        $NLN ${INDIR}/gefs.${cycle}.atmf${fhr}.nc ./atm_mem${mem}
+        $NLN ${INDIR}/gefs.${cycle}.sfcf${fhr}.nc ./sfc_mem${mem}
         break
       else
         ic=$(($ic + 1))
@@ -111,16 +88,16 @@ while [[ $fhr -le $FHOUR ]]; do
 			FATAL ERROR in ${BASH_SOURCE}: Not enough forecast files available to create average at hour $fhr!
 			EOF
     export err=1
-    $ERRSCRIPT
+    ${ERRSCRIPT}
     exit $err
   fi # [ $ic
 
 
   if [[ $SENDCOM == "YES" ]]; then
-    $NLN ${OUTDIR}/${CDUMP_ENS}.${cycle}.atmf${fhr}.nc ./atm_ensmean
-    $NLN ${OUTDIR}/${CDUMP_ENS}.${cycle}.sfcf${fhr}.nc ./sfc_ensmean
+    $NLN ${COM_ATMOS_HISTORY_ENSAVG}/${CDUMP_ENS}.${cycle}.atmf${fhr}.nc ./atm_ensmean
+    $NLN ${COM_ATMOS_HISTORY_ENSAVG}/${CDUMP_ENS}.${cycle}.sfcf${fhr}.nc ./sfc_ensmean
   fi
-  $APRUN ${DATA}/$(basename $GETATMENSMEANEXEC) ./ atm_ensmean atm $nfile
+  $APRUN ${DATA}/$(basename ${GETATMENSMEANEXEC}) ./ atm_ensmean atm ${nfile}
   export err=$?
 
   if [[ $err != 0 ]]; then
@@ -129,7 +106,7 @@ while [[ $fhr -le $FHOUR ]]; do
     exit $err
   fi
 
-  $APRUN ${DATA}/$(basename $GETSFCENSMEANEXEC) ./ sfc_ensmean sfc $nfile
+  $APRUN ${DATA}/$(basename ${GETSFCENSMEANEXEC}) ./ sfc_ensmean sfc ${nfile}
   export err=$?
 
   if [[ $err != 0 ]]; then
@@ -138,19 +115,15 @@ while [[ $fhr -le $FHOUR ]]; do
     exit $err
   fi
 
-  echo "f${fhr}_done --- $(date -u)" >> $ensavg_netcdf_log
-
   export err=$?
-  $ERRSCRIPT || exit $err
-  if [[ $SENDCOM == "YES" ]]; then
-    echo "completed fv3gfs average fhour= $fhr" > $logfile
+  ${ERRSCRIPT} || exit ${err}
+  if [[ ${SENDCOM} == "YES" ]]; then
+    echo "completed fv3gfs average fhour= ${fhr}" > ${logfile}
   fi
-  if [ $fhr -ge $FHMAXFH ]; then
-    FHINC=$FHOUTLF
+  if [ ${fhr} -ge ${FHMAXFH} ]; then
+    FHINC=${FHOUTLF}
   fi
   fhr=$( expr ${fhr} + ${FHINC} )
 done
-
-echo "$(date -u) end ${BASH_SOURCE}"
 
 exit $err
