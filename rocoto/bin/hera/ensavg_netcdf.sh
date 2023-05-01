@@ -38,6 +38,13 @@ export FORECAST_SEGMENT=hr
 
 export NTHREADS_SIGCHGRS=6
 
+shopt -s extglob
+ver=${gefs_ver%${gefs_ver##v+([0-9]).+([0-9])}}
+shopt -u extglob
+
+export ROTDIR=${COMROOT}/gefs/${ver}
+export ROTDIR_GFS=${HOMEdata}/gfs/${gfs_ver}
+
 # CALL executable job script here
 ${SOURCEDIR}/jobs/JGEFS_ATMOS_ENSAVG_NETCDF
 

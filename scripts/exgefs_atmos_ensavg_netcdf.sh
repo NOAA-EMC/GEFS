@@ -23,9 +23,6 @@ export FHOUT_HF=${FHOUTHF:-3}
 export FHOUT_LF=${FHOUTLF:-6}
 export FHMAX_HF=${FHMAXHF:-240}
 
-export mem_ens="avg"
-export COMOUT=${COMOUT}/${mem_ens}
-
 MEMDIR="ensstat" YMD=${PDY} HH=${cyc} generate_com -rx COM_ATMOS_HISTORY_ENSAVG:COM_ATMOS_HISTORY_TMPL
 
 mkdir -p ${COM_ATMOS_HISTORY_ENSAVG}

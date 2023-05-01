@@ -29,8 +29,8 @@ def config_tasknames(dicBase):
         if DoesTaskExist(dicBase, "chem_post"):
             Replace_task_UsingSubjobs(dicBase, "chem_post", sNSubJobs='N_SUBJOBS_CHEM_POST')
 
-        if DoesTaskExist(dicBase, "ensavg_nemsio"):
-            Replace_task_UsingSubjobs(dicBase, "ensavg_nemsio", sNSubJobs='N_SUBJOBS_ENSAVG_NEMSIO')
+        if DoesTaskExist(dicBase, "ensavg_netcdf"):
+            Replace_task_UsingSubjobs(dicBase, "ensavg_netcdf", sNSubJobs='N_SUBJOBS_ENSAVG_NETCDF')
 
     if iTaskName_Num <= 0:
         iTaskName_Num = 0
@@ -1015,8 +1015,8 @@ def get_param_of_task(dicBase, taskname):
             if taskname.lower() == "ensavg_netcdf":
                 npert = int(dicBase["NPERT"])
                 sDep = '<and>'
-                for i in range(npert+1):
-                    sDep += f'\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/sfcsig/mem{0:03}.t@Hz.logf000.nemsio</cyclestr></datadep>'
+                for i in range(1, npert+1):
+                    sDep += f'\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/mem{i:03}/model_data/atmos/history/gefs.t@Hz.logf000.txt</cyclestr></datadep>'
                 sDep += '\n</and>'
 
             # For ensstat_hr

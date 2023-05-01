@@ -94,8 +94,8 @@ while [[ $fhr -le ${FHOUR} ]]; do
 
 
   if [[ $SENDCOM == "YES" ]]; then
-    $NLN ${COM_ATMOS_HISTORY_ENSAVG}/${CDUMP_ENS}.${cycle}.atmf${fhr}.nc ./atm_ensmean
-    $NLN ${COM_ATMOS_HISTORY_ENSAVG}/${CDUMP_ENS}.${cycle}.sfcf${fhr}.nc ./sfc_ensmean
+    $NLN ${COM_ATMOS_HISTORY_ENSAVG}/gefs.${cycle}.atmf${fhr}.nc ./atm_ensmean
+    $NLN ${COM_ATMOS_HISTORY_ENSAVG}/gefs.${cycle}.sfcf${fhr}.nc ./sfc_ensmean
   fi
   $APRUN ${DATA}/$(basename ${GETATMENSMEANEXEC}) ./ atm_ensmean atm ${nfile}
   export err=$?
