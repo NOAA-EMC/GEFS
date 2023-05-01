@@ -15,11 +15,10 @@ module use -a /scratch2/NCEPDEV/nwprod/hpc-stack/libs/hpc-stack/modulefiles/stac
 module load hpc/${hpc_ver}
 module load hpc-intel/${intel_ver}
 module load hpc-impi/${impi_ver}
-module load grib_util/${grib_util_ver}
 module load prod_util/${prod_util_ver}
-module load netcdf/${netcdf_ver}
-
 module load prod_envir/${prod_envir_ver}
+
+module load netcdf/${netcdf_ver}
 
 module list
 
