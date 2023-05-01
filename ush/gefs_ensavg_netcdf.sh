@@ -46,7 +46,7 @@ fhr=${SHOUR}
 while [[ $fhr -le ${FHOUR} ]]; do
   fhr=$(printf %03i ${fhr})
   #fhr0=$(printf %i 10#${fhr})
-  logfile="${COM_ATMOS_HISTORY_ENSAVG}/gefs.${cycle}.logf${fhr}.txt"
+  logfile="${COM_ATMOS_HISTORY_ENSAVG}/gefs.${cycle}.atm.logf${fhr}.txt"
   if [[ -f ${logfile} ]]; then
     echo "netcdf average file ${logfile} exists, skipping."
     if [ ${fhr} -ge ${FHMAXFH} ]; then
@@ -61,7 +61,7 @@ while [[ $fhr -le ${FHOUR} ]]; do
     MEMDIR="mem${mem}" YMD=${PDY} HH=${cyc} generate_com INDIR:COM_ATMOS_HISTORY_TMPL
     ic=0
     while [ $ic -le $SLEEP_LOOP_MAX ]; do
-      if [ -f  ${INDIR}/gefs.${cycle}.logf${fhr}.txt ]; then
+      if [ -f  ${INDIR}/gefs.${cycle}.atm.logf${fhr}.txt ]; then
         $NLN ${INDIR}/gefs.${cycle}.atmf${fhr}.nc ./atm_mem${mem}
         $NLN ${INDIR}/gefs.${cycle}.sfcf${fhr}.nc ./sfc_mem${mem}
         break
@@ -74,7 +74,7 @@ while [[ $fhr -le ${FHOUR} ]]; do
         echo <<- EOF
 					WARNING: ${job} could not find forecast $mem at $(date -u) after waiting ${SLEEP_TIME}s
 						Looked for the following files:
-							Log file: ${INDIR}/${CDUMP}.${cycle}.logf${fhr}.txt
+							Log file: ${INDIR}/${CDUMP}.${cycle}.atm.logf${fhr}.txt
 							Atm file: ${INDIR}/${CDUMP}.${cycle}.atmf${fhr}.nc
 							Sfc file: ${INDIR}/${CDUMP}.${cycle}.sfcf${fhr}.nc
 					EOF

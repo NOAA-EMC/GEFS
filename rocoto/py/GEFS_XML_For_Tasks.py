@@ -1016,7 +1016,7 @@ def get_param_of_task(dicBase, taskname):
                 npert = int(dicBase["NPERT"])
                 sDep = '<and>'
                 for i in range(1, npert+1):
-                    sDep += f'\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/mem{i:03}/model_data/atmos/history/gefs.t@Hz.logf000.txt</cyclestr></datadep>'
+                    sDep += f'\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/mem{i:03}/model_data/atmos/history/gefs.t@Hz.atm.logf000.txt</cyclestr></datadep>'
                 sDep += '\n</and>'
 
             # For ensstat_hr
