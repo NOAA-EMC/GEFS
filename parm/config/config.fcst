@@ -30,10 +30,6 @@ export FLTFILEGFS=$PARM_POST/postxconfig-NT-GEFS.txt
 export FLTFILEGFSF00=$PARM_POST/postxconfig-NT-GEFS-F00.txt
 export POSTGRB2TBL=$PARM_POST/params_grib2_tbl_new
 
-# suffix options depending on file format
-#export SUFFIX=".nc"
-#export NEMSIO_IN=".false."
-#export NETCDF_IN=".true."
 #-----
 
 # CPU geopmetry
@@ -516,7 +512,7 @@ export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
 #
 # UPP parameters for GEFS
 #
-R2=$(echo $RUNMEM|cut -c4-5)
+R2=${RUNMEM:3:2}
 case $RUNMEM in
   (gec00 | geaer)
     ens_pert_type='unpert_lo_res_ctrl_fcst'

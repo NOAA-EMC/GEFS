@@ -134,26 +134,21 @@ export IDVC=${IDVC:-2}
 export HOMEgefs=${HOMEgefs:-${PACKAGEROOT}/gefs.${gefs_ver}}
 export EXECgefs=${EXECgefs:-${HOMEgefs}/exec}
 export USHgefs=${USHgefs:-${HOMEgefs}/ush}
-#export FIXgefs=${FIXgefs:-${HOMEgefs}/fix/fix_gefs}
 export PARMgefs=${PARMgefs:-${HOMEgefs}/parm}
 
 export HOMEgfs=${HOMEgfs:-${HOMEgefs}}
 export PARMgfs=${HOMEgfs}/parm
 export EXPDIR=${PARMgfs}/config
 export FIXgfs=${HOMEgfs}/fix
-#export USHgfs=${HOMEgfs}/ush
-#export UTILgfs=${HOMEgfs}/util
+export USHgfs=${HOMEgfs}/ush
+export UTILgfs=${HOMEgfs}/util
 export EXECgfs=${HOMEgfs}/exec
-#export SCRgfs=${HOMEgfs}/scripts
+export SCRgfs=${HOMEgfs}/scripts
 
-#export FIXcice=${HOMEgfs}/fix/cice
-#export FIXmom=${HOMEgfs}/fix/mom6
-#export FIXreg2grb2=${HOMEgfs}/fix/reg2grb2
-#export PARM_FV3DIAG=${PARM_FV3DIAG:-$PARMgfs/parm_fv3diag}
+export FIXcice=${HOMEgfs}/fix/cice
+export FIXmom=${HOMEgfs}/fix/mom6
+export FIXreg2grb2=${HOMEgfs}/fix/reg2grb2
 
-#export FIX_DIR=${FIXgfs}
-#export FIX_AM=${FIX_DIR}/am
-#export FIXfv3=${FIX_DIR}/orog
 
 export ERRSCRIPT=${ERRSCRIPT:-'eval [[ $err = 0 ]]'}
 export LOGSCRIPT=${LOGSCRIPT:-""} #=startmsg
@@ -260,7 +255,7 @@ case "${APP}" in
 
     ;;
   *)
-    echo "Unrecognized APP: ${1}"
+    echo "Unrecognized APP: ${APP}"
     exit 1
     ;;
 esac

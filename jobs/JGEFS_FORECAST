@@ -16,13 +16,6 @@ export DATA=${DATA:-${DATAROOT}/${jobid}}
 mkdir -p $DATA
 cd $DATA
 
-######################################
-# Set up compute resources
-######################################
-#export total_tasks=${total_tasks:-320}
-#export APRUN=${gefsmpexec:-"mpiexec -n $total_tasks"}
-#export APRUN_FV3="mpiexec -n ${npe_fcst} -ppn ${npe_node_fcst} --cpu-bind depth --depth ${NTHREADS_FV3}"
-
 ####################################
 # Specify NET and RUN Name and model
 ####################################
@@ -78,7 +71,7 @@ for config in $configs; do
   . ${config_path}/config.${config}
   export err=$?
   if [[ $err != 0 ]]; then
-    echo "FATAL ERROR in ${BASH_SOURCE}: Error while loading parm file ${config_path}/config.${config}"
+    echo "FATAL ERROR in ${BASH_SOURCE[0]}: Error while loading parm file ${config_path}/config.${config}"
     exit $err
   fi
 done
