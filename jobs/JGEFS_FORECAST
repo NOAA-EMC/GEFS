@@ -81,13 +81,6 @@ export APRUN_UFS=${APRUN_UFS:-"${launcher:-'mpiexec -l'} -n ${npe_fcst} -ppn ${n
 if [[ $cplchm = ".true." ]]; then
   COMPONENT="chem"
 fi
-if [[ $cplwav = ".true." ]]; then
-  # Set location of wave restart from last cycle
-  last_date=$(${NDATE} -${WAVHCYC} "${PDY}${cyc}")
-  last_PDY=${last_date:0:8}
-  last_cyc=${last_date:8:2}
-  export WRDIR=${WRDIR:-$(compath.py $envir/com/$NET/${ver})}/${RUN}.${last_PDY}/$last_cyc/wave/restart
-fi
 
 export COMPONENT=${COMPONENT:-atmos}
 
