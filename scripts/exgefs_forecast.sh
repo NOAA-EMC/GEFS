@@ -8,6 +8,46 @@ if [[ ! -d ${COM_ATMOS_RESTART} ]]; then
   mkdir -m 755 -p ${COM_ATMOS_RESTART}
 fi
 
+case $FORECAST_SEGMENT in
+  hr)
+    echo "Integrate the model for the Half-Month range segment"
+    filecount=$(ls -l ${COM_ATMOS_RESTART}/*coupler* | wc -l )
+    if (( filecount < 1 )); then
+      export RERUN="NO"
+    else
+      export RERUN="YES"
+    fi
+
+    if [[ $RERUN != "YES" ]] ; then
+      export CDATE_RST=$($NDATE +$FHINI $PDY$cyc)
+    fi
+    ;;
+  lr)
+    echo "Integrate the model for the Longer Range segment"
+    CDATE_1=$($NDATE +$FHINI $PDY$cyc)
+    fRestart=${COM_ATMOS_RESTART}/$(echo $CDATE_1 | cut -c1-8).$(echo $CDATE_1 | cut -c9-10)0000.coupler.res
+    if [ -f $fRestart ]; then
+      (( FHINI_2 = fhmaxh + restart_interval_gfs ))
+      CDATE_2=$($NDATE +$FHINI_2 $PDY$cyc)
+      fRestart=${COM_ATMOS_RESTART}/$(echo $CDATE_2 | cut -c1-8).$(echo $CDATE_2 | cut -c9-10)0000.coupler.res
+      if [ -f $fRestart ]; then
+        export CDATE_RST=
+      else
+        export CDATE_RST=$($NDATE +$FHINI $PDY$cyc)
+      fi
+    else
+      echo "FATAL ERROR in ${BASH_SOURCE}: There is no $fRestart"
+      export err=101
+      exit $err
+    fi
+    ;;
+  *)
+    echo "FATAL ERROR in ${BASH_SOURCE}: Incorrect value of FORECAST_SEGMENT=$FORECAST_SEGMENT"
+    export err=100
+    exit $err
+    ;;
+esac
+
 #echo "-----end of CONFIG in ${BASH_SOURCE} --------"
 
 ################################################################################
