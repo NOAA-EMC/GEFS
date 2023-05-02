@@ -1,0 +1,171 @@
+#! /usr/bin/env bash
+
+########## config.efcs ##########
+# Ensemble forecast specific, dependency: config.fcst
+
+echo "BEGIN: config.efcs"
+
+export assim_freq=${gefs_cych}
+
+# Settings for coupling with Wavewatch III
+export cplwav=${cplwav:-.true.}
+export WAV_MOD_ID=${WAV_MOD_ID:-gefs}
+export coupling_interval_sec=${coupling_interval_sec:-3600}
+
+if [[ $cplchm = ".true." ]]; then
+  export DELTIM=300 # Needed to match setting used by GSD
+
+  if [[ $AEROSOL_INIT_TYPE == "warm" ]]; then
+    export warm_start=".true."
+    export read_increment=".true."
+  fi
+
+  export DIAG_TABLE=${DIAG_TABLE:-$HOMEgfs/parm/parm_fv3diag/chm_diag_table}
+
+  export lgfdlmprad=".true."
+  export effr_in=".true."
+  export USE_COUPLER_RES="YES"
+fi
+
+export FHCYC=${FHCYC:-24}
+
+#
+# UPP parameters for GEFS
+#
+R2=${RUNMEM:3:2}
+case $RUNMEM in
+  (gec00 | geaer)
+    ens_pert_type='unpert_lo_res_ctrl_fcst'
+    e1=1
+    ;;
+  (gep[0-9][0-9])
+    ens_pert_type='pos_pert_fcst'
+    e1=3
+    ;;
+  (*)
+    echo "FATAL: Unrecognized RUNMEM $RUNMEM, unable to determine pert type"
+    export err=200
+    err_chk; exit $err
+    ;;
+esac # $RUNMEM
+export ens_pert_type
+# e1,e2,e3 are used to set the grib ensemble information
+export e1=$e1
+export e2=$R2
+export e3=$npert
+
+fn=$(basename ${FLTFILEGFS})
+sed < ${FLTFILEGFS} -e "s#negatively_pert_fcst#${ens_pert_type}#" > ${DATA}/${fn}
+export FLTFILEGFS=${DATA}/${fn}
+
+fn_f00=$(basename ${FLTFILEGFSF00})
+sed <${FLTFILEGFSF00} -e "s#negatively_pert_fcst#${ens_pert_type}#" > ${DATA}/${fn_f00}
+export FLTFILEGFSF00=${DATA}/${fn_f00}
+
+#
+# Forecast Input Variables
+#
+if [[ ${RUNMEM} = "YES" ]] ; then
+  export warm_start=.true.
+  export restart_hour=$FHMIN
+  export restart_run=.true.
+  export output_1st_tstep=.true.
+  export stochini=${stochini:-".true."} #true=read in pattern, false=initialize from seed
+else
+  export stochini=${stochini:-".false."} #true=read in pattern, false=initialize from seed
+fi
+
+#--------------------------------------------
+if [[ ${RUNMEM} = gec00 ]] ;then
+  MEMBER=$((npert+1))
+  WAV_MEMBER="00"
+elif [[ ${RUNMEM} = geaer ]] ;then
+  MEMBER="00"
+  WAV_MEMBER="00"
+else
+  MEMBER=$(echo ${RUNMEM}|cut -c4-6)
+  WAV_MEMBER=$MEMBER
+fi
+export MEMBER=$MEMBER
+#
+# Forecast Input Variables
+#
+export SEND=NO
+
+#-----------------------For GEFS ----------/\/\-------------
+export DO_OCN_SPPT=${DO_OCN_SPPT:-"NO"}
+export DO_OCN_PERT_EPBL=${DO_OCN_PERT_EPBL:-"NO"}
+
+export SET_STP_SEED=${SET_STP_SEED:-"NO"}
+export JCAP_STP=${JCAP_STP:-$JCAPFV}
+export LONB_STP=${LONB_STP:-$LONBFV}
+export LATB_STP=${LATB_STP:-$LATBFV}
+
+if [[ $RUNMEM = "gec00" || $RUNMEM = "geaer" ]]; then
+  # Turn off stochastic physics for control member
+  export DO_SPPT="NO"
+  export DO_SHUM="NO"
+  export DO_SKEB="NO"
+  export DO_LAND_PERT="NO"
+  export DO_CA="NO"
+  export DO_OCN_SPPT="NO"
+  export DO_OCN_PERT_EPBL="NO"
+else
+  export DO_SPPT=${DO_SPPT:-"YES"}
+  export DO_SKEB=${DO_SKEB:-"YES"}
+  export DO_SHUM=${DO_SHUM:-"NO"}
+  export DO_LAND_PERT=${DO_LAND_PERT:-"YES"}
+  export DO_CA=${DO_CA:-"YES"}
+  export DO_OCN_SPPT=${DO_OCN_SPPT:-"YES"}
+  export DO_OCN_PERT_EPBL=${DO_OCN_PERT_EPBL:-"YES"}
+fi # [[ $RUNMEM = "gec00" || $RUNMEM = "geaer" ]]
+
+## Stochastically Perturbed Physics Tendency
+if [[ $DO_SPPT = YES ]]; then
+  export SPPT=${SPPT:-"0.8,0.4,0.2,0.08,0.04"}                                 # Amplitude of SPPT patterns
+  export SPPT_LOGIT=${SPPT_LOGIT:-.TRUE.}                                      # Do a logit transform to bound values from -1.0 to 1.0
+  export SPPT_TAU=${SPPT_TAU:-"2.16E4,2.592E5,2.592E6,7.776E6,3.1536E7"}       # Time scale in seconds
+  export SPPT_LSCALE=${SPPT_LSCALE:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
+  export sppt_sfclimit=${sppt_sfclimit:-.true.}                                # damp amplitude of SPPT at surface
+  export ISEED_SPPT=${ISEED_SPPT:-$((CDATE*1000 + ${MEMBER#0}*10 + 3)),$((CDATE*1000 + ${MEMBER#0}*10 + 4)),$((CDATE*1000 + ${MEMBER#0}*10 + 5)),$((CDATE*1000 + ${MEMBER#0}*10 + 6)),$((CDATE*1000 + ${MEMBER#0}*10 + 7))} # random seed for sppt pattern
+##  export sppt_sigtop1=${sppt_sigtop1:-0.1}                                     # taper SPPT pattern to zero between 0.1 and 0.025 sigma
+##  export sppt_sigtop2=${sppt_sigtop2:-0.025}
+else
+  export SPPT="-999.,-999.,-999,-999,-999"
+fi
+#
+## Stochastic Humidity
+#
+if [[ $DO_SHUM = YES ]]; then
+  export SHUM=${SHUM:-"0.004,-999.,-999.,-999,-999"}                           # Amplitude of SHUM patterns
+  export SHUM_TAU=${SHUM_TAU:-"2.16E4,1.728E5,6.912E5,7.776E6,3.1536E7"}       # Time scale in seconds
+  export SHUM_LSCALE=${SHUM_LSCALE:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
+  export ISEED_SHUM=${ISEED_SHUM:-$((CDATE*1000 + ${MEMBER#0}*10 + 2))}        # random seed for SHUM pattern
+  #export shum_sigefold=${shum_sigefold:-0.2}                                  # limit SHUM to the PBL (~bottom 200 mb)
+
+else
+  export SHUM="-999.,-999.,-999,-999,-999"
+fi
+#
+## Stochastic Kinetic Energy Backscatter
+#
+if [[ $DO_SKEB = YES ]]; then
+  export SKEB=${SKEB:-"0.6,-999,-999,-999,-999"}                               # Amplitude of SPPT patterns
+  export ISEED_SKEB=${ISEED_SKEB:-$((CDATE*1000 + ${MEMBER#0}*10 + 1))}        # Seed for SKEB pattern
+  export SKEB_TAU=${SKEB_TAU:-"2.16E4,1.728E5,2.592E6,7.776E6,3.1536E7"}       # Time scale in seconds
+  export SKEB_LSCALE=${SKEB_LSCALE:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
+  export SKEBNORM=${SKEBNORM:-1}
+
+  #export SKEB_VFILT=${SKEB_VFILT:-40}                                         # number of iterations of a 1-2-1 filter of the random pattern in the vertical
+  #export SKEB_DISS_SMOOTH=${SKEB_DISS_SMOOTH:-12}                             # number of iterations of smoothing the dissipation estimate in the horizontal
+  #export skeb_sigtop1=${skeb_sigtop1:-0.1}                                    # taper SKEB pattern to zero between 0.1 and 0.025 sigma
+  #export skeb_sigtop2=${skeb_sigtop2:-0.025}
+else
+  export SKEB="-999.,-999.,-999,-999,-999"
+fi
+
+########################################
+# End stochastic physics parameters
+########################################
+
+echo "END: config.efcs"
