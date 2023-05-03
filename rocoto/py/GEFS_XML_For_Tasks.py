@@ -10,7 +10,7 @@ def IsCoupleCHEM(dicBase):
     if dicBase['RUN_AEROSOL_MEMBER'].upper()[0] == "Y":
         return True
 
-    for task in ['chem_prep_emissions', 'chem_init', 'chem_forecast', 'chem_post', 'chem_prdgen']:
+    for task in ['chem_prep_emissions', 'chem_init', 'chem_forecast', 'chem_prdgen']:
         if DoesTaskExist(dicBase, task):
             return True
 
@@ -23,12 +23,6 @@ def config_tasknames(dicBase):
     iTaskName_Num = int(dicBase[sVarName])
 
     if iTaskName_Num > 0:
-        if DoesTaskExist(dicBase, "post_hr"):
-            Replace_task_UsingSubjobs(dicBase, "post_hr", sNSubJobs='N_SUBJOBS_POST_HR')
-
-        if DoesTaskExist(dicBase, "chem_post"):
-            Replace_task_UsingSubjobs(dicBase, "chem_post", sNSubJobs='N_SUBJOBS_CHEM_POST')
-
         if DoesTaskExist(dicBase, "ensavg_netcdf"):
             Replace_task_UsingSubjobs(dicBase, "ensavg_netcdf", sNSubJobs='N_SUBJOBS_ENSAVG_NETCDF')
 
@@ -78,7 +72,7 @@ def config_tasknames(dicBase):
             dicBase[sTaskName.upper()] = "keep_init"
 
         if dicBase['RUN_AEROSOL_MEMBER'].upper()[0] == "Y":
-            for task in ['chem_prep_emissions', 'chem_init', 'chem_forecast', 'chem_post', 'chem_prdgen']:
+            for task in ['chem_prep_emissions', 'chem_init', 'chem_forecast', 'chem_prdgen']:
                 iTaskName_Num += 1
                 sTaskName = "taskname_{0}".format(iTaskName_Num)
                 dicBase[sTaskName.upper()] = task
@@ -89,9 +83,6 @@ def config_tasknames(dicBase):
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "forecast_hr"
-
-            # ---post_hr
-            iTaskName_Num = Add_Subjobs_to_dicBase(dicBase, iTaskName_Num, taskname="post_hr", sNSubJobs='N_SUBJOBS_POST_HR')
 
             # ---prdgen_hr
             iTaskName_Num += 1
@@ -138,11 +129,6 @@ def config_tasknames(dicBase):
             iTaskName_Num += 1
             sTaskName = "taskname_{0}".format(iTaskName_Num)
             dicBase[sTaskName.upper()] = "forecast_lr"
-
-            # ---post_lr
-            iTaskName_Num += 1
-            sTaskName = "taskname_{0}".format(iTaskName_Num)
-            dicBase[sTaskName.upper()] = "post_lr"
 
             # ---prdgen_lr
             iTaskName_Num += 1
@@ -300,7 +286,7 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
     # --------------------------
 
     cycledef = "gefs"
-    if taskname in ["forecast_lr", "post_lr", "prdgen_lr", "ensstat_lr", "enspost_lr", "cqpf", "atmos_awips_lr"]:
+    if taskname in ["forecast_lr", "prdgen_lr", "ensstat_lr", "enspost_lr", "cqpf", "atmos_awips_lr"]:
         cycledef = "gefs_00z"
     elif taskname == "avg_gempak_vgf":
         cycledef = "gefs_00z,gefs_12z"
@@ -419,7 +405,7 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
     # -------------------RUNMEM-------------------
     if taskname in metatask_names:
         strings += (create_envar(name="RUNMEM", value="mem#member#", sPre=sPre_2))
-    elif taskname in ["chem_init", "chem_forecast", "chem_post", "chem_prdgen"]:
+    elif taskname in ["chem_init", "chem_forecast", "chem_prdgen"]:
         strings += (create_envar(name="RUNMEM", value="memaer", sPre=sPre_2))
     else:
         if taskname in ["prdgen_gfs"]:
@@ -436,18 +422,13 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         strings += (create_envar(name="MEMBER", value="#member#", sPre=sPre_2))
 
     # For FORECAST_SEGMENT
-    if (taskname in ['forecast_hr', 'prdgen_hr', 'post_hr', 'ensstat_hr', 'enspost_hr', 'chem_forecast', 'chem_post', 'chem_prdgen', 'fcst_post_manager', 'atmos_awips_hr']) \
-     or taskname.startswith("post_hr_") or taskname.startswith('chem_post_'):
+    if (taskname in ['forecast_hr', 'prdgen_hr', 'ensstat_hr', 'enspost_hr', 'chem_forecast', 'chem_prdgen', 'fcst_post_manager', 'atmos_awips_hr']):
         strings += (create_envar(name="FORECAST_SEGMENT", value="hr", sPre=sPre_2))
-    elif taskname in ['forecast_lr', 'prdgen_lr', 'post_lr', 'ensstat_lr', 'enspost_lr', 'atmos_awips_lr']:
+    elif taskname in ['forecast_lr', 'prdgen_lr', 'ensstat_lr', 'enspost_lr', 'atmos_awips_lr']:
         strings += (create_envar(name="FORECAST_SEGMENT", value="lr", sPre=sPre_2))
 
     # For SUBJOB
-    if taskname.startswith("post_hr_"):
-        strings += (create_envar(name="SUBJOB", value=taskname.replace("post_hr_", ""), sPre=sPre_2))
-    elif taskname.startswith("chem_post_"):
-        strings += (create_envar(name="SUBJOB", value=taskname.replace("chem_post_", ""), sPre=sPre_2))
-    elif taskname.startswith("ensavg_netcdf_"):
+    if taskname.startswith("ensavg_netcdf_"):
         strings += (create_envar(name="SUBJOB", value=taskname.replace("ensavg_netcdf_", ""), sPre=sPre_2))
 
     # Add command
@@ -464,8 +445,6 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("prdgen_hr", sPRE)
         else:
             strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("prdgen_hr", sPRE)
-    elif taskname in ['post_hr', 'post_lr', 'chem_post']:
-        strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("post_hr", sPRE)
     elif taskname in ['ensstat_hr', 'ensstat_lr']:
         if WHERE_AM_I.upper() in ["WCOSS2".upper()]:
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("ensstat_hr", sPRE)
@@ -481,8 +460,6 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
             strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("atmos_awips", sPRE)
         else:
             strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("atmos_awips", sPRE)
-    elif taskname.startswith("post_hr_"):
-        strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("post_hr", sPRE)
     elif taskname.startswith("ensavg_netcdf_"):
         strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("ensavg_netcdf", sPRE)
     else:
@@ -579,7 +556,7 @@ def GetIndexOfTask(dicBase, taskname):
 
 
 # =======================================================
-def Replace_task_UsingSubjobs(dicBase, taskname="post_hr", sNSubJobs='N_SUBJOBS_POST_HR'):
+def Replace_task_UsingSubjobs(dicBase, taskname="ensavg_netcdf", sNSubJobs='N_SUBJOBS_ENSAVG_NETCDF'):
     IsDebug = False
 
     taskname_num = int(dicBase['taskname_num'.upper()])
@@ -595,7 +572,6 @@ def Replace_task_UsingSubjobs(dicBase, taskname="post_hr", sNSubJobs='N_SUBJOBS_
         N_SubJobs = int(dicBase[sNSubJobs])
     else:
         N_SubJobs = 0
-        # dicBase['N_SUBJOBS_POST_HR'] = 0
 
     if N_SubJobs <= 0:
         return
@@ -647,7 +623,7 @@ def Replace_task_UsingSubjobs(dicBase, taskname="post_hr", sNSubJobs='N_SUBJOBS_
 
 
 # =======================================================
-def Add_Subjobs_to_dicBase(dicBase, iTaskName_Num, taskname="post_hr", sNSubJobs='N_SUBJOBS_POST_HR'):
+def Add_Subjobs_to_dicBase(dicBase, iTaskName_Num, taskname="ensavg_netcdf", sNSubJobs='N_SUBJOBS_ENSAVG_NETCDF'):
     # taskname_num = int(dicBase['taskname_num'.upper()])
     # if taskname_num <= 0:
     #    return iTaskName_Num
@@ -814,9 +790,7 @@ def get_param_of_task(dicBase, taskname):
     sPartition = ""
 
     taskname_org = taskname
-    if taskname.startswith("post_hr_"):
-        taskname = "post_hr"
-    elif taskname.startswith("ensavg_netcdf_"):
+    if taskname.startswith("ensavg_netcdf_"):
         taskname = "ensavg_netcdf"
 
     sVarName = "{0}_walltime".format(taskname).upper()
@@ -878,9 +852,7 @@ def get_param_of_task(dicBase, taskname):
     sVarName = "{0}_join".format(taskname).upper()
     if sVarName in dicBase:
         sJoin = dicBase[sVarName.upper()]
-        if taskname_org.startswith("post_hr_"):
-            sJoin = sJoin.replace("post_hr", taskname_org)
-        elif taskname_org.startswith("ensavg_netcdf_"):
+        if taskname_org.startswith("ensavg_netcdf_"):
             sJoin = sJoin.replace("ensavg_netcdf", taskname_org)
 
     # for dependency
@@ -1050,7 +1022,7 @@ def get_param_of_task(dicBase, taskname):
                     sDep = ''
 
             # For Longer Range
-            if taskname.lower() == "post_lr" or taskname.lower() == "prdgen_lr":
+            if taskname.lower() == "prdgen_lr":
                 FHOUTLF = int(dicBase["FHOUTLF".upper()])
                 fhmaxh = int(dicBase["fhmaxh".upper()])
 
@@ -1154,7 +1126,7 @@ def get_param_of_task(dicBase, taskname):
             if taskname.lower() == "chem_post_cleanup":
                 sDep = '<and>'
 
-                for s in ["chem_forecast", "chem_post", "chem_prdgen"]:
+                for s in ["chem_forecast", "chem_prdgen"]:
                     sDep += '\n\t<taskdep task="{0}"/>'.format(s)
 
                 if sDep == '<and>':
@@ -1219,8 +1191,6 @@ def get_param_of_task(dicBase, taskname):
                 sDep = '<and>'
                 if DoesTaskExist(dicBase, "chem_prdgen"):
                     sDep += '\n\t<taskdep task="chem_prdgen"/>'
-                if DoesTaskExist(dicBase, "chem_post"):
-                    sDep += '\n\t<taskdep task="chem_post"/>'
 
                 if sDep == '<and>':
                     sDep = ""
@@ -1391,12 +1361,6 @@ def get_metatask_names(taskname=""):
     # forecast
     metatask_names.append('forecast_hr')
     metatask_names.append('forecast_lr')
-    # post
-    metatask_names.append('post_hr')
-    if taskname.startswith("post_hr_"):
-        metatask_names.append(taskname)
-
-    metatask_names.append('post_lr')
     # prdgen
     metatask_names.append('prdgen_hr')
     metatask_names.append('prdgen_lr')

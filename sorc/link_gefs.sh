@@ -140,7 +140,6 @@ fi
 cd $pwd
 if [[ -d global-workflow.fd ]] ; then
   $LINK ../sorc/global-workflow.fd/sorc/ufs_utils.fd/ush/chgres_cube.sh ../ush/
-  #$LINK ../sorc/global-workflow.fd/sorc/gfs_post.fd/ush/gfs_nceppost.sh ../ush/
 fi
 
 # For Forecast
