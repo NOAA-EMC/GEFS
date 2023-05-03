@@ -65,7 +65,7 @@ export FLTFILEGFSF00=${DATA}/${fn_f00}
 #
 # Forecast Input Variables
 #
-if [[ ${RUNMEM} = "YES" ]] ; then
+if [[ ${RERUN} = "YES" ]] ; then
   export warm_start=.true.
   export restart_hour=$FHMIN
   export restart_run=.true.
