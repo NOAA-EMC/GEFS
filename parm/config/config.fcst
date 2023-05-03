@@ -30,10 +30,6 @@ export FLTFILEGFS=$PARM_POST/postxconfig-NT-GEFS.txt
 export FLTFILEGFSF00=$PARM_POST/postxconfig-NT-GEFS-F00.txt
 export POSTGRB2TBL=$PARM_POST/params_grib2_tbl_new
 
-# suffix options depending on file format
-#export SUFFIX=".nc"
-#export NEMSIO_IN=".false."
-#export NETCDF_IN=".true."
 #-----
 
 # CPU geopmetry
@@ -67,17 +63,7 @@ export CDUMP=gefs
 case $FORECAST_SEGMENT in
   hr)
     echo "Integrate the model for the Half-Month range segment"
-    filecount=$(ls -l ${COM_ATMOS_RESTART}/*coupler* | wc -l )
-    if (( filecount < 1 )); then
-      export RERUN="NO"
-    else
-      export RERUN="YES"
-    fi
-
     export FHINI=${FHINI:-0};
-    if [[ $RERUN != "YES" ]] ; then
-      export CDATE_RST=$($NDATE +$FHINI $PDY$cyc)
-    fi
     export CASE=$CASEHR
     export FHMIN=${FHINI}
     export FHMAX=$((fhmaxh+1+1))
@@ -93,22 +79,6 @@ case $FORECAST_SEGMENT in
   lr)
     echo "Integrate the model for the Longer Range segment"
     export FHINI=${FHINI:-$fhmaxh}
-    CDATE_1=$($NDATE +$FHINI $PDY$cyc)
-    fRestart=${COM_ATMOS_RESTART}/$(echo $CDATE_1 | cut -c1-8).$(echo $CDATE_1 | cut -c9-10)0000.coupler.res
-    if [ -f $fRestart ]; then
-      (( FHINI_2 = fhmaxh + restart_interval_gfs ))
-      CDATE_2=$($NDATE +$FHINI_2 $PDY$cyc)
-      fRestart=${COM_ATMOS_RESTART}/$(echo $CDATE_2 | cut -c1-8).$(echo $CDATE_2 | cut -c9-10)0000.coupler.res
-      if [ -f $fRestart ]; then
-        export CDATE_RST=
-      else
-        export CDATE_RST=$($NDATE +$FHINI $PDY$cyc)
-      fi
-    else
-      echo "FATAL ERROR in ${BASH_SOURCE}: There is no $fRestart"
-      export err=101
-      exit $err
-    fi
     export RERUN="YES"
     export cplwav=.false.
     export CASE=$CASELR
@@ -131,10 +101,6 @@ case $FORECAST_SEGMENT in
 esac
 
 export FHMAX_GFS=$FHMAX
-
-#export EXPDIR=${HOMEgefs}/parm/config
-#
-#source ${EXPDIR}/config.fcst
 
 ########## config.fcst ##########
 # Forecast specific
@@ -474,181 +440,3 @@ fi
 # Otherwise, the ensemble forecast will inherit from config.fcst
 
 echo "END: config.fcst"
-
-
-#-----------------------For GEFS ----------\/\/-------------
-export assim_freq=$gefs_cych
-
-# Settings for coupling with Wavewatch III
-export cplwav=${cplwav:-.true.}
-export WAV_MOD_ID=${WAV_MOD_ID:-gefs}
-export coupling_interval_sec=${coupling_interval_sec:-3600}
-
-if [[ $cplchm = ".true." ]]; then
-  export DELTIM=300 # Needed to match setting used by GSD
-
-  if [[ $AEROSOL_INIT_TYPE == "warm" ]]; then
-    export warm_start=".true."
-    export read_increment=".true."
-  fi
-
-  export DIAG_TABLE=${DIAG_TABLE:-$HOMEgfs/parm/parm_fv3diag/chm_diag_table}
-
-  export lgfdlmprad=".true."
-  export effr_in=".true."
-  export USE_COUPLER_RES="YES"
-fi
-
-export FHCYC=${FHCYC:-24}
-
-#  The VEGTYPE fix file:
-export FIX_AM=${FIX_AM:-${FIXgfs}/am}
-export FNVETC=${FNVETC:-${FIX_AM}/global_vegtype.igbp.t$MTNRSL.rg.grb}
-export FNTSFC=${FNTSFC:-${FIX_AM}/RTGSST.1982.2012.monthly.clim.grb}
-export FNAISC=${FNAISC:-${FIX_AM}/CFSR.SEAICE.1982.2012.monthly.clim.grb}
-export FNABSC=${FNABSC:-${FIX_AM}/global_mxsnoalb.uariz.t$MTNRSL.rg.grb}
-export FNALBC=$FIX_AM/global_snowfree_albedo.bosu.t$MTNRSL.rg.grb
-export FNALBC2=$FIX_AM/global_albedo4.1x1.grb
-export FNSMCC=$FIX_AM/global_soilmgldas.t$MTNRSL.grb
-export FNSOTC=$FIX_AM/global_soiltype.statsgo.t$MTNRSL.rg.grb
-#
-
-#
-# UPP parameters for GEFS
-#
-R2=${RUNMEM:3:3}
-case ${RUNMEM} in
-  (mem000 | memaer)
-    ens_pert_type='unpert_lo_res_ctrl_fcst'
-    e1=1
-    ;;
-  (mem[0-9][0-9][0-9])
-    ens_pert_type='pos_pert_fcst'
-    e1=3
-    ;;
-  (*)
-    echo "FATAL: Unrecognized RUNMEM ${RUNMEM}, unable to determine pert type"
-    export err=200
-    err_chk; exit ${err}
-    ;;
-esac # $RUNMEM
-export ens_pert_type
-# e1,e2,e3 are used to set the grib ensemble information
-export e1=$e1
-export e2=$R2
-export e3=$npert
-
-fn=$(basename ${FLTFILEGFS})
-sed < ${FLTFILEGFS} -e "s#negatively_pert_fcst#${ens_pert_type}#" > ${DATA}/${fn}
-export FLTFILEGFS=${DATA}/${fn}
-
-fn_f00=$(basename ${FLTFILEGFSF00})
-sed <${FLTFILEGFSF00} -e "s#negatively_pert_fcst#${ens_pert_type}#" > ${DATA}/${fn_f00}
-export FLTFILEGFSF00=${DATA}/${fn_f00}
-
-#
-# Forecast Input Variables
-#
-
-if [[ ${RUNMEM} = "YES" ]] ; then
-  export warm_start=.true.
-  export restart_hour=$FHMIN
-  export restart_run=.true.
-  export output_1st_tstep=.true.
-  export stochini=${stochini:-".true."} #true=read in pattern, false=initialize from seed
-else
-  export stochini=${stochini:-".false."} #true=read in pattern, false=initialize from seed
-fi
-
-#--------------------------------------------
-if [[ ${RUNMEM} = mem000 ]] ;then
-  MEMBER=$((npert+1))
-  WAV_MEMBER="00"
-elif [[ ${RUNMEM} = memaer ]] ;then
-  MEMBER="00"
-  WAV_MEMBER="00"
-else
-  MEMBER=${RUNMEM:3:3}
-  WAV_MEMBER=${MEMBER}
-fi
-export MEMBER=${MEMBER}
-#
-# Forecast Input Variables
-#
-export SEND=NO
-
-#-----------------------For GEFS ----------/\/\-------------
-export DO_OCN_SPPT=${DO_OCN_SPPT:-"NO"}
-export DO_OCN_PERT_EPBL=${DO_OCN_PERT_EPBL:-"NO"}
-
-export SET_STP_SEED=${SET_STP_SEED:-"NO"}
-export JCAP_STP=${JCAP_STP:-$JCAPFV}
-export LONB_STP=${LONB_STP:-$LONBFV}
-export LATB_STP=${LATB_STP:-$LATBFV}
-
-if [[ $RUNMEM = "mem000" || $RUNMEM = "memaer" ]]; then
-  # Turn off stochastic physics for control member
-  export DO_SPPT="NO"
-  export DO_SHUM="NO"
-  export DO_SKEB="NO"
-  export DO_LAND_PERT="NO"
-  export DO_CA="NO"
-  export DO_OCN_SPPT="NO"
-  export DO_OCN_PERT_EPBL="NO"
-else
-  export DO_SPPT=${DO_SPPT:-"YES"}
-  export DO_SKEB=${DO_SKEB:-"YES"}
-  export DO_SHUM=${DO_SHUM:-"NO"}
-  export DO_LAND_PERT=${DO_LAND_PERT:-"YES"}
-  export DO_CA=${DO_CA:-"YES"}
-  export DO_OCN_SPPT=${DO_OCN_SPPT:-"YES"}
-  export DO_OCN_PERT_EPBL=${DO_OCN_PERT_EPBL:-"YES"}
-fi # [[ $RUNMEM = "mem000" || $RUNMEM = "memaer" ]]
-
-## Stochastically Perturbed Physics Tendency
-if [[ $DO_SPPT = YES ]]; then
-  export SPPT=${SPPT:-"0.8,0.4,0.2,0.08,0.04"}                                 # Amplitude of SPPT patterns
-  export SPPT_LOGIT=${SPPT_LOGIT:-.TRUE.}                                      # Do a logit transform to bound values from -1.0 to 1.0
-  export SPPT_TAU=${SPPT_TAU:-"2.16E4,2.592E5,2.592E6,7.776E6,3.1536E7"}       # Time scale in seconds
-  export SPPT_LSCALE=${SPPT_LSCALE:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
-  export sppt_sfclimit=${sppt_sfclimit:-.true.}                                # damp amplitude of SPPT at surface
-  export ISEED_SPPT=${ISEED_SPPT:-$((CDATE*1000 + ${MEMBER#0}*10 + 3)),$((CDATE*1000 + ${MEMBER#0}*10 + 4)),$((CDATE*1000 + ${MEMBER#0}*10 + 5)),$((CDATE*1000 + ${MEMBER#0}*10 + 6)),$((CDATE*1000 + ${MEMBER#0}*10 + 7))} # random seed for sppt pattern
-##  export sppt_sigtop1=${sppt_sigtop1:-0.1}                                     # taper SPPT pattern to zero between 0.1 and 0.025 sigma
-##  export sppt_sigtop2=${sppt_sigtop2:-0.025}
-else
-  export SPPT="-999.,-999.,-999,-999,-999"
-fi
-#
-## Stochastic Humidity
-#
-if [[ $DO_SHUM = YES ]]; then
-  export SHUM=${SHUM:-"0.004,-999.,-999.,-999,-999"}                           # Amplitude of SHUM patterns
-  export SHUM_TAU=${SHUM_TAU:-"2.16E4,1.728E5,6.912E5,7.776E6,3.1536E7"}       # Time scale in seconds
-  export SHUM_LSCALE=${SHUM_LSCALE:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
-  export ISEED_SHUM=${ISEED_SHUM:-$((CDATE*1000 + ${MEMBER#0}*10 + 2))}        # random seed for SHUM pattern
-  #export shum_sigefold=${shum_sigefold:-0.2}                                  # limit SHUM to the PBL (~bottom 200 mb)
-
-else
-  export SHUM="-999.,-999.,-999,-999,-999"
-fi
-#
-## Stochastic Kinetic Energy Backscatter
-#
-if [[ $DO_SKEB = YES ]]; then
-  export SKEB=${SKEB:-"0.6,-999,-999,-999,-999"}                               # Amplitude of SPPT patterns
-  export ISEED_SKEB=${ISEED_SKEB:-$((CDATE*1000 + ${MEMBER#0}*10 + 1))}        # Seed for SKEB pattern
-  export SKEB_TAU=${SKEB_TAU:-"2.16E4,1.728E5,2.592E6,7.776E6,3.1536E7"}       # Time scale in seconds
-  export SKEB_LSCALE=${SKEB_LSCALE:-"500.E3,1000.E3,2000.E3,2000.E3,2000.E3"}  # Length Scale in meters
-  export SKEBNORM=${SKEBNORM:-1}
-
-  #export SKEB_VFILT=${SKEB_VFILT:-40}                                         # number of iterations of a 1-2-1 filter of the random pattern in the vertical
-  #export SKEB_DISS_SMOOTH=${SKEB_DISS_SMOOTH:-12}                             # number of iterations of smoothing the dissipation estimate in the horizontal
-  #export skeb_sigtop1=${skeb_sigtop1:-0.1}                                    # taper SKEB pattern to zero between 0.1 and 0.025 sigma
-  #export skeb_sigtop2=${skeb_sigtop2:-0.025}
-else
-  export SKEB="-999.,-999.,-999,-999,-999"
-fi
-
-########################################
-# End stochastic physics parameters
-########################################
