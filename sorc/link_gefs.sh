@@ -187,15 +187,6 @@ if [[ -d global-workflow.fd ]]; then
     echo $sFile
     $LINK $sFile ../ush/
   done
-
-  if [[ -e ../env ]]; then
-    if [[ -L ../env ]]; then
-      rm ../env
-      $LINK ${pwd}/global-workflow.fd/env ../
-    fi
-  else
-    $LINK ${pwd}/global-workflow.fd/env ../
-  fi
 fi
 
 # for CHEM

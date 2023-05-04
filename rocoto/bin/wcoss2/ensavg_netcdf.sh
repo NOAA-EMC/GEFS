@@ -1,4 +1,4 @@
-#!/bin/ksh -l
+#! /usr/bin/env bash
 
 set -x
 ulimit -s unlimited
@@ -34,4 +34,4 @@ module list
 export OMP_NUM_THREADS=1
 export envir=prod
 # CALL executable job script here
-$SOURCEDIR/jobs/JGEFS_ATMOS_ENSAVG_NEMSIO
+$SOURCEDIR/jobs/JGEFS_ATMOS_ENSAVG_NETCDF

@@ -29,8 +29,8 @@ def config_tasknames(dicBase):
         if DoesTaskExist(dicBase, "chem_post"):
             Replace_task_UsingSubjobs(dicBase, "chem_post", sNSubJobs='N_SUBJOBS_CHEM_POST')
 
-        if DoesTaskExist(dicBase, "ensavg_nemsio"):
-            Replace_task_UsingSubjobs(dicBase, "ensavg_nemsio", sNSubJobs='N_SUBJOBS_ENSAVG_NEMSIO')
+        if DoesTaskExist(dicBase, "ensavg_netcdf"):
+            Replace_task_UsingSubjobs(dicBase, "ensavg_netcdf", sNSubJobs='N_SUBJOBS_ENSAVG_NETCDF')
 
     if iTaskName_Num <= 0:
         iTaskName_Num = 0
@@ -190,8 +190,8 @@ def config_tasknames(dicBase):
 
         # #    <!-- postsnd  Post Sound -->
         if dicBase['RUN_POSTSND'].upper()[0] == "Y":
-            # ---ensavg_nemsio
-            iTaskName_Num = Add_Subjobs_to_dicBase(dicBase, iTaskName_Num, taskname="ensavg_nemsio", sNSubJobs='N_SUBJOBS_ENSAVG_NEMSIO')
+            # ---ensavg_netcdf
+            iTaskName_Num = Add_Subjobs_to_dicBase(dicBase, iTaskName_Num, taskname="ensavg_netcdf", sNSubJobs='N_SUBJOBS_ENSAVG_NETCDF')
 
             # ---postsnd
             iTaskName_Num += 1
@@ -447,8 +447,8 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
         strings += (create_envar(name="SUBJOB", value=taskname.replace("post_hr_", ""), sPre=sPre_2))
     elif taskname.startswith("chem_post_"):
         strings += (create_envar(name="SUBJOB", value=taskname.replace("chem_post_", ""), sPre=sPre_2))
-    elif taskname.startswith("ensavg_nemsio_"):
-        strings += (create_envar(name="SUBJOB", value=taskname.replace("ensavg_nemsio_", ""), sPre=sPre_2))
+    elif taskname.startswith("ensavg_netcdf_"):
+        strings += (create_envar(name="SUBJOB", value=taskname.replace("ensavg_netcdf_", ""), sPre=sPre_2))
 
     # Add command
     sPRE = ""
@@ -483,8 +483,8 @@ def create_metatask_task(dicBase, taskname="atmos_prep", sPre="\t", GenTaskEnt=F
             strings += sPre_2 + '<command><cyclestr>{1}. &BIN;/{0}.sh</cyclestr></command>\n'.format("atmos_awips", sPRE)
     elif taskname.startswith("post_hr_"):
         strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("post_hr", sPRE)
-    elif taskname.startswith("ensavg_nemsio_"):
-        strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("ensavg_nemsio", sPRE)
+    elif taskname.startswith("ensavg_netcdf_"):
+        strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format("ensavg_netcdf", sPRE)
     else:
         strings += sPre_2 + '<command><cyclestr>{1}&BIN;/{0}.sh</cyclestr></command>\n'.format(taskname, sPRE)
     # -------------------Other envar and command-------------------
@@ -816,8 +816,8 @@ def get_param_of_task(dicBase, taskname):
     taskname_org = taskname
     if taskname.startswith("post_hr_"):
         taskname = "post_hr"
-    elif taskname.startswith("ensavg_nemsio_"):
-        taskname = "ensavg_nemsio"
+    elif taskname.startswith("ensavg_netcdf_"):
+        taskname = "ensavg_netcdf"
 
     sVarName = "{0}_walltime".format(taskname).upper()
     if sVarName in dicBase:
@@ -880,8 +880,8 @@ def get_param_of_task(dicBase, taskname):
         sJoin = dicBase[sVarName.upper()]
         if taskname_org.startswith("post_hr_"):
             sJoin = sJoin.replace("post_hr", taskname_org)
-        elif taskname_org.startswith("ensavg_nemsio_"):
-            sJoin = sJoin.replace("ensavg_nemsio", taskname_org)
+        elif taskname_org.startswith("ensavg_netcdf_"):
+            sJoin = sJoin.replace("ensavg_netcdf", taskname_org)
 
     # for dependency
     sVarName = "{0}_dep".format(taskname).upper()
@@ -1011,12 +1011,12 @@ def get_param_of_task(dicBase, taskname):
                 else:
                     sDep += '\n</and>'
 
-            # For ensavg_nemsio
-            if taskname.lower() == "ensavg_nemsio":
+            # For ensavg_netcdf
+            if taskname.lower() == "ensavg_netcdf":
                 npert = int(dicBase["NPERT"])
                 sDep = '<and>'
-                for i in range(npert+1):
-                    sDep += f'\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/atmos/sfcsig/mem{0:03}.t@Hz.logf000.nemsio</cyclestr></datadep>'
+                for i in range(1, npert+1):
+                    sDep += f'\n\t<datadep><cyclestr>&DATA_DIR;/gefs.@Y@m@d/@H/mem{i:03}/model_data/atmos/history/gefs.t@Hz.atm.logf000.txt</cyclestr></datadep>'
                 sDep += '\n</and>'
 
             # For ensstat_hr
