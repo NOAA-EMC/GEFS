@@ -29,7 +29,7 @@ if [ -d /scratch2/NCEPDEV ]; then
   echo "Using settings for Hera"
   export machine='HERA'
 
-  export HOMEDIR=${HOMEDIR:-/scratch2/NCEPDEV/ensemble/noscrub/Xianwu.Xue/GEFS_v13/gw_walter}
+  export HOMEDIR=${HOMEDIR:-/scratch2/NCEPDEV/ensemble/noscrub/Xianwu.Xue/GEFS_v13/gw_dev_new_COM}
   export HOMERFC=/scratch2/NCEPDEV/ensemble/save/Walter.Kolczynski/ens_tracker
   export HOMEdata=/scratch2/NCEPDEV/ensemble/noscrub/common
 
@@ -48,7 +48,7 @@ elif [[ -d /apps/prod ]]; then
   # We are on NOAA WCOSS2
   echo "Using settings for WCOSS2"
   export machine='WCOSS2'
-  export HOMEDIR=${HOMEDIR:-/lfs/h2/emc/ens/noscrub/xianwu.xue/GEFS_v13/gw_walter}
+  export HOMEDIR=${HOMEDIR:-/lfs/h2/emc/ens/noscrub/xianwu.xue/GEFS_v13/gw_dev_new_COM}
   export HOMEtrak=/lfs/h2/emc/ens/noscrub/emc.ens/common/git/ens_tracker/ens_tracker.v2.1.2
   export archsyndir=/lfs/h2/emc/ens/noscrub/emc.ens/common/git/ens_tracker/TCvitalData/syndat
   export HOMEdata=/lfs/h2/emc/ens/noscrub/emc.ens/common/canned_data

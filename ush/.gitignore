@@ -15,4 +15,4 @@ parsing_model_configure_FV3.sh
 parsing_model_configure_DATM.sh
 
 parsing_namelists_*
-
+*.IN

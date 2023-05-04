@@ -1,18 +1,11 @@
-#!/bin/ksh
+#! /usr/bin/env bash
 
-echo "$(date -u) begin ${.sh.file}"
-
-set -xa
-if [[ ${STRICT:-NO} == "YES" ]]; then
-	# Turn on strict bash error checking
-	set -eu
-fi
-export PS4='$SECONDS + $(basename ${.sh.file})[$LINENO] '
+source "${HOMEgefs:-${HOMEgfs}}/ush/preamble.sh"
 
 ####################################
 # Determine Job Output Name on System
 ####################################
-export jobid=${jobid:-"$job.$PBS_JOBID"}
+export jobid=${jobid:-"${job}.${PBS_JOBID}"}
 export pgmout="OUTPUT.${PBS_JOBID}"
 export pgmerr=errfile
 
@@ -22,12 +15,6 @@ export pgmerr=errfile
 export DATA=${DATA:-${DATAROOT}/${jobid}}
 mkdir -p $DATA
 cd $DATA
-
-######################################
-# Set up compute resources
-######################################
-export total_tasks=${total_tasks:-320}
-export APRUN=${gefsmpexec:-"mpiexec -n $total_tasks"}
 
 ####################################
 # Specify NET and RUN Name and model
@@ -55,8 +42,8 @@ setpdy.sh
 source PDY
 
 if [ ${FORECAST_SEGMENT} = lr ]; then
-    export cyc=00
-    export cycle=t${cyc}z
+  export cyc=00
+  export cycle=t${cyc}z
 fi
 
 ####################################
@@ -71,35 +58,28 @@ export PARMgefs=${PARMgefs:-$HOMEgefs/parm}
 ##############################################
 # Define COM directories
 ##############################################
-ver=${ver:-$(echo ${gefs_ver}|cut -c1-5)}
-export COMIN=${COMIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc}
-export COMOUT=${COMOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc}
-export GESIN=${GESIN:-$(compath.py $envir/com/$NET/${ver})/${RUN}.${PDY}/$cyc/nwges}
-export GESOUT=${GESOUT:-$(compath.py -o $NET/${ver})/${RUN}.${PDY}/$cyc/nwges}
+ver=${gefs_ver:0:5}
+export ROTDIR=${ROTDIR:-$(compath.py $envir/com/$NET/${ver})}
 
 #############################
 # Source relevant config files
 #############################
-configs="gefs gefs_wave gefs_fcst"
-config_path=$PARMgefs
+export CDATE=$PDY$cyc
+configs="base fcst efcs"
+config_path=${PARMgefs}/config
 for config in $configs; do
-    . $config_path/$config.parm
-    export err=$?
-    if [[ $err != 0 ]]; then
-    	echo "FATAL ERROR in ${.sh.file}: Error while loading parm file $config_path/$config.parm"
-    	exit $err
-    fi
+  . ${config_path}/config.${config}
+  export err=$?
+  if [[ $err != 0 ]]; then
+    echo "FATAL ERROR in ${BASH_SOURCE[0]}: Error while loading parm file ${config_path}/config.${config}"
+    exit $err
+  fi
 done
 
+export APRUN_UFS=${APRUN_UFS:-"${launcher:-'mpiexec -l'} -n ${npe_fcst} -ppn ${npe_node_fcst} --cpu-bind depth --depth ${NTHREADS_FV3}"}
+
 if [[ $cplchm = ".true." ]]; then
-    COMPONENT="chem"
-fi
-if [[ $cplwav = ".true." ]]; then
-    # Set location of wave restart from last cycle
-    last_date=$($NDATE -$WAVHCYC $CDATE)
-    last_PDY=$(echo $last_date | cut -c1-8)
-    last_cyc=$(echo $last_date | cut -c9-10)
-    export WRDIR=${WRDIR:-$(compath.py $envir/com/$NET/${ver})}/${RUN}.${last_PDY}/$last_cyc/wave/restart
+  COMPONENT="chem"
 fi
 
 export COMPONENT=${COMPONENT:-atmos}
@@ -107,15 +87,50 @@ export COMPONENT=${COMPONENT:-atmos}
 echo "Environment before calling script"
 env | sort
 
+# Ignore possible spelling error (nothing is misspelled)
+# shellcheck disable=SC2153
+GDATE=$(${NDATE} -"${assim_freq}" "${PDY}${cyc}")
+# shellcheck disable=
+declare -x gPDY="${GDATE:0:8}"
+declare -x gcyc="${GDATE:8:2}"
+
+# Construct COM variables from templates (see config.com)
+declare -rx memchar=${RUNMEM:2:3}
+
+MEMDIR="${memchar}" YMD=${PDY} HH=${cyc} generate_com -rx COM_ATMOS_RESTART COM_ATMOS_INPUT COM_ATMOS_ANALYSIS \
+  COM_ATMOS_HISTORY COM_ATMOS_MASTER
+
+RUN=${rCDUMP} MEMDIR="${memchar}" YMD="${gPDY}" HH="${gcyc}" generate_com -rx COM_ATMOS_RESTART_PREV:COM_ATMOS_RESTART_TMPL
+
+if [[ ${DO_WAVE} == "YES" ]]; then
+  MEMDIR="${memchar}" YMD=${PDY} HH=${cyc} generate_com -rx COM_WAVE_RESTART COM_WAVE_PREP COM_WAVE_HISTORY
+  RUN=${rCDUMP} MEMDIR="${memchar}" YMD="${gPDY}" HH="${gcyc}" generate_com -rx COM_WAVE_RESTART_PREV:COM_WAVE_RESTART_TMPL
+fi
+
+if [[ ${DO_OCN} == "YES" ]]; then
+  MEMDIR="${memchar}" YMD=${PDY} HH=${cyc} generate_com -rx COM_MED_RESTART COM_OCEAN_RESTART \
+    COM_OCEAN_INPUT COM_OCEAN_HISTORY COM_OCEAN_ANALYSIS
+  RUN=${rCDUMP} MEMDIR="${memchar}" YMD="${gPDY}" HH="${gcyc}" generate_com -rx COM_OCEAN_RESTART_PREV:COM_OCEAN_RESTART_TMPL
+fi
+
+if [[ ${DO_ICE} == "YES" ]]; then
+   MEMDIR="${memchar}" YMD=${PDY} HH=${cyc} generate_com -rx COM_ICE_HISTORY
+   RUN=${rCDUMP} MEMDIR="${memchar}" YMD="${gPDY}" HH="${gcyc}" generate_com -rx COM_ICE_RESTART_PREV:COM_ICE_RESTART_TMPL
+fi
+
+if [[ ${DO_AERO} == "YES" ]]; then
+  MEMDIR="${memchar}" YMD=${PDY} HH=${cyc} generate_com -rx COM_CHEM_HISTORY
+fi
+
 #############################################################
 # Execute the script
 $HOMEgefs/scripts/exgefs_forecast.sh
 export err=$?
 if [[ $err == 0 ]]; then
-    echo "$job completed normally!"
+  echo "$job completed normally!"
 else
-    echo "FATAL ERROR in ${.sh.file}: $job failed!"
-    exit $err
+  echo "FATAL ERROR in ${BASH_SOURCE[0]}: $job failed!"
+  exit $err
 fi
 #############################################################
 
@@ -124,7 +139,5 @@ fi
 ##############################
 cd $DATAROOT
 if [ ${KEEPDATA:-NO} = NO ] ; then rm -rf $DATA ; fi
-
-echo "$(date -u) end ${.sh.file}"
 
 exit $err

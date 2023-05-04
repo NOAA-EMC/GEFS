@@ -50,10 +50,9 @@ esac
 memberlist="c00"
 
 imem=1
-while [[ imem -le $npert ]];
-do
+while [[ imem -le $npert ]]; do
   memberlist="$memberlist p$(printf %02i $imem)"
-  (( imem++ ))
+  ((imem++))
 done
 export memberlist
 
@@ -62,26 +61,26 @@ if [[ ${RUNMEM:-none} = "geaer" ]]; then cplchm=".true."; fi
 export cplchm=${cplchm:-.false.}
 
 if [[ $cplchm = ".true." ]]; then
-	# Override forecast length
-	export fhmaxh=$fhmax_aer
-	export fhmax=$fhmax_aer
+  # Override forecast length
+  export fhmaxh=$fhmax_aer
+  export fhmax=$fhmax_aer
 
-	export AEROSOL_INIT_TYPE=${AEROSOL_INIT_TYPE:-"warm"}
+  export AEROSOL_INIT_TYPE=${AEROSOL_INIT_TYPE:-"warm"}
 
-	export cplwav=".false." # Running both chem and waves is not yet supported
+  export cplwav=".false." # Running both chem and waves is not yet supported
 fi
 
 export fhmax
-if (( fhmax <= fhmaxh )); then export fhmaxh=$fhmax; fi
-if (( FHMAXHF > fhmaxh )); then export FHMAXHF=$fhmaxh; fi
+if ((fhmax <= fhmaxh)); then export fhmaxh=$fhmax; fi
+if ((FHMAXHF > fhmaxh)); then export FHMAXHF=$fhmaxh; fi
 
-export restart_interval=${fhrestart:-12}
+export restart_interval_gfs=${fhrestart:-12}
 export restart_interval_aer=${restart_interval_aer:-12}
 export other_restart_time=${other_restart_time:-6}
 
 if [[ $cplchm = ".true." ]]; then
-	export restart_interval=$restart_interval_aer
-	export other_restart_time=${other_restart_time:-$gefs_cych}
+  export restart_interval_gfs=$restart_interval_aer
+  export other_restart_time=${other_restart_time:-$gefs_cych}
 fi
 
 #pass these variables to gefs_wave.parm
@@ -135,21 +134,24 @@ export IDVC=${IDVC:-2}
 export HOMEgefs=${HOMEgefs:-${PACKAGEROOT}/gefs.${gefs_ver}}
 export EXECgefs=${EXECgefs:-${HOMEgefs}/exec}
 export USHgefs=${USHgefs:-${HOMEgefs}/ush}
-#export FIXgefs=${FIXgefs:-${HOMEgefs}/fix/fix_gefs}
 export PARMgefs=${PARMgefs:-${HOMEgefs}/parm}
 
 export HOMEgfs=${HOMEgfs:-${HOMEgefs}}
 export PARMgfs=${HOMEgfs}/parm
 export EXPDIR=${PARMgfs}/config
-#export FIXgfs=${HOMEgfs}/fix
-#export USHgfs=${HOMEgfs}/ush
-#export UTILgfs=${HOMEgfs}/util
-#export EXECgfs=${HOMEgfs}/exec
-#export SCRgfs=${HOMEgfs}/scripts
+export FIXgfs=${HOMEgfs}/fix
+export USHgfs=${HOMEgfs}/ush
+export UTILgfs=${HOMEgfs}/util
+export EXECgfs=${HOMEgfs}/exec
+export SCRgfs=${HOMEgfs}/scripts
 
-#export FIXcice=${HOMEgfs}/fix/cice
-#export FIXmom=${HOMEgfs}/fix/mom6
-#export FIXreg2grb2=${HOMEgfs}/fix/reg2grb2
+export FIXcice=${HOMEgfs}/fix/cice
+export FIXmom=${HOMEgfs}/fix/mom6
+export FIXreg2grb2=${HOMEgfs}/fix/reg2grb2
+
+
+export ERRSCRIPT=${ERRSCRIPT:-'eval [[ $err = 0 ]]'}
+export LOGSCRIPT=${LOGSCRIPT:-""} #=startmsg
 
 ####################################
 # CONVENIENT utility scripts and other environment parameters
@@ -182,6 +184,23 @@ export VERBOSE=${VERBOSE:-YES}
 # Get all the COM path templates
 source "${PARMgefs:-${PARMgfs}}/config/config.com"
 
+#------
+# APP settings
+export APP=${APP:-"ATM"} # ATM, S2SW
+
+# Defaults:
+export DO_ATM="YES"
+export DO_COUPLED="NO"
+export DO_WAVE="NO"
+export DO_OCN="NO"
+export DO_ICE="NO"
+export DO_AERO="NO"
+export CCPP_SUITE=${CCPP_SUITE:-"FV3_GFS_v17_p8"} #FV3_GFS_v16"}
+export WAVE_CDUMP=""                           # When to include wave suite: gdas, gfs, or both
+export DOBNDPNT_WAVE="NO"
+export cplwav2atm=".false."
+export FRAC_GRID=".true."
+
 # These are the currently available grid-combinations
 case "${CASE}" in
   "C48") export OCNRES=500;;
@@ -192,6 +211,71 @@ case "${CASE}" in
   *) export OCNRES=025;;
 esac
 export ICERES=${OCNRES}
+export waveGRD='gnh_10m aoc_9km gsh_15m'
+
+case "${APP}" in
+  ATM)
+    export confignamevarfornems="atm"
+    ;;
+  ATMA)
+    export DO_AERO="YES"
+    export confignamevarfornems="atm_aero"
+    ;;
+  ATMW)
+    export DO_COUPLED="YES"
+    export DO_WAVE="YES"
+    export WAVE_CDUMP="both"
+    export confignamevarfornems="leapfrog_atm_wav"
+    ;;
+  NG-GODAS)
+    export DO_ATM="NO"
+    export DO_OCN="YES"
+    export DO_ICE="YES"
+    ;;
+  S2S*)
+    export DO_COUPLED="YES"
+    export DO_OCN="YES"
+    export DO_ICE="YES"
+    export CCPP_SUITE="FV3_GFS_v17_coupled_p8"
+    export confignamevarfornems="cpld"
+
+    if [[ "${APP}" =~ A$ ]]; then
+        export DO_AERO="YES"
+        export confignamevarfornems="${confignamevarfornems}_aero"
+    fi
+
+    if [[ "${APP}" =~ ^S2SW ]]; then
+        export DO_WAVE="YES"
+        export WAVE_CDUMP="both"
+        export cplwav2atm=".true."
+        export confignamevarfornems="${confignamevarfornems}_outerwave"
+    fi
+
+    source ${EXPDIR}/config.defaults.s2sw
+
+    ;;
+  *)
+    echo "Unrecognized APP: ${APP}"
+    exit 1
+    ;;
+esac
+
+# Surface cycle update frequency
+export FHCYC=24
+
+# IAU related parameters
+export DOIAU="NO" # Enable 4DIAU for control with 3 increments
+export IAU_OFFSET=0
+export IAU_DELTHRS=0
+export IAU_FHROT=0
+
+# turned on nsst in anal and/or fcst steps, and turn off rtgsst
+export DONST="YES"
+if [[ ${DONST} = "YES" ]]; then export FNTSFA="        "; fi
+
+# The switch to apply SST elevation correction or not
+export nst_anl=.true.
+#-----
 
 # Microphysics Options: 99-ZhaoCarr, 8-Thompson; 6-WSM6, 10-MG, 11-GFDL
 export imp_physics=${imp_physics:-"8"}

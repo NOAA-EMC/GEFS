@@ -29,7 +29,7 @@ userConfigFile=${userConfigFile:-user_full.conf}
 AddCrontabToMyCrontab=${AddCrontabToMyCrontab:-no}
 DeleteCrontabFromMyCrontab=${DeleteCrontabFromMyCrontab:-no}
 RunEnvir=${RunEnvir:-emc}
-Structure=${Structure:-no} # dev (use HOMEDIR to link), prod (clone global-workflow from vlab), no (use the original structure)
+Structure=${Structure:-dev} # dev (use HOMEDIR to link), prod (clone global-workflow from vlab), no (use the original structure)
 Link=${Link:-no}
 Operation=${Operation:-no} # ecflow, rocoto, lsf
 
@@ -61,7 +61,13 @@ fi
 if [ ${CompileCode} = "yes" ]; then
   cd ${sWS}/../sorc
 
-  if [[ ${Structure} == "dev" ]]; then
+  if [[ ${Structure} == "prod" ]]; then
+    # Checkout the global-workflow if needed
+    if [[ -d global-workflow.fd ]] ; then
+      rm -rf global-workflow.fd
+    fi
+    ./checkout.sh
+  else # [[ ${Structure} == "dev" ]]; then
     echo "...working on it ..."
     if [[ ${machine} == "hera" ]]; then
       sHeader='/scratch2/NCEPDEV/ensemble'
@@ -78,12 +84,6 @@ if [ ${CompileCode} = "yes" ]; then
     fi
     ln -sf ${sHOMEDIR} global-workflow.fd
 
-  elif [[ ${Structure} == "prod" ]]; then
-    # Checkout the global-workflow if needed
-    if [[ -d global-workflow.fd ]] ; then
-      rm -rf global-workflow.fd
-    fi
-    ./checkout.sh
   fi
 
   ## Build the code and install

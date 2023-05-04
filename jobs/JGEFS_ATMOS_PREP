@@ -65,13 +65,13 @@ export COMPONENT="atmos"
 #############################
 # Source relevant config files
 #############################
-configs="gefs gefs_atmos_prep"
-config_path=$PARMgefs/parm_gefs
+configs="base prep"
+config_path=${PARMgefs}/config
 for config in $configs; do
-  . ${config_path}/${config}.parm
+  . ${config_path}/config.${config}
   export err=$?
   if [[ $err != 0 ]]; then
-    echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file ${config_path}/${config}.parm"
+    echo "FATAL ERROR in $(basename $BASH_SOURCE): Error while loading parm file ${config_path}/config.${config}"
     exit ${err}
   fi
 done

@@ -129,7 +129,7 @@ if [[ -d global-workflow.fd ]] ; then
     mkdir -p ../parm/config
   fi
   cd ../parm/config
-  for fn in config.com; do
+  for fn in config.com config.nsst config.defaults.s2sw; do
     echo ${fn}
     ${LINK} ../../sorc/global-workflow.fd/parm/config/${fn} ./
   done
@@ -159,6 +159,7 @@ if [[ -d global-workflow.fd ]] ; then
                 ush/parsing_namelists_WW3.sh \
                 ush/parsing_namelists_MOM6.sh \
                 ush/parsing_namelists_CICE.sh \
+                ush/nems.configure.atm.IN \
                 sorc/ufs_model.fd
   do
     if [[ -e ../${sFile} ]]; then
