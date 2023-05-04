@@ -47,16 +47,16 @@ case $cyc in
     ;;
 esac
 
-memberlist="c00"
+#export FHMAX_GFS=$fhmax
 
-imem=1
-while [[ imem -le $npert ]]; do
-  memberlist="$memberlist p$(printf %02i $imem)"
-  ((imem++))
+memberlist=""
+imem=0
+for imem in $(seq 0 ${npert}); do
+  memberlist="$memberlist $(printf %03i $imem)"
 done
 export memberlist
 
-if [[ ${RUNMEM:-none} = "geaer" ]]; then cplchm=".true."; fi
+if [[ ${RUNMEM:-none} = "memaer" ]]; then cplchm=".true."; fi
 
 export cplchm=${cplchm:-.false.}
 

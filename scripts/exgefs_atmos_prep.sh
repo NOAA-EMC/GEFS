@@ -7,14 +7,13 @@ export HOMEufs=${HOMEufs:-${HOMEgfs}}
 export USHgfs=$HOMEgfs/ush
 export FIXgfs=$HOMEgfs/fix
 
-export CDUMP=$RUNMEM
-mem=$(echo $RUNMEM|cut -c3-5)
+export CDUMP=${RUNMEM}
 
 cd $DATA
 
 # Run scripts
 #############################################################
-$USHgefs/gefs_atmos_prep.sh $mem
+$USHgefs/gefs_atmos_prep.sh ${RUNMEM}
 export err=$?
 if [[ $err != 0 ]]; then
 	echo "FATAL ERROR in $(basename $BASH_SOURCE): atmos_prep failed for $RUNMEM!"

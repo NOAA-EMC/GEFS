@@ -54,7 +54,7 @@ export APRUN=${APRUN:-""}
 export warm_start=${warm_start:-".false."}
 export read_increment=${read_increment:-".false."}
 
-MEMBER=$(echo $RUNMEM|cut -c4-5)
+MEMBER=${RUNMEM:3:3}
 export CDATE=$PDY$cyc
 
 export rCDUMP=gefs

@@ -32,27 +32,27 @@ export FHCYC=${FHCYC:-24}
 #
 # UPP parameters for GEFS
 #
-R2=${RUNMEM:3:2}
+R2=${RUNMEM:3:3}
 case $RUNMEM in
-  (gec00 | geaer)
+  (mem000 | memaer)
     ens_pert_type='unpert_lo_res_ctrl_fcst'
     e1=1
     ;;
-  (gep[0-9][0-9])
+  (mem[0-9][0-9][0-9])
     ens_pert_type='pos_pert_fcst'
     e1=3
     ;;
   (*)
-    echo "FATAL: Unrecognized RUNMEM $RUNMEM, unable to determine pert type"
+    echo "FATAL: Unrecognized RUNMEM ${RUNMEM}, unable to determine pert type"
     export err=200
-    err_chk; exit $err
+    err_chk; exit ${err}
     ;;
 esac # $RUNMEM
 export ens_pert_type
 # e1,e2,e3 are used to set the grib ensemble information
-export e1=$e1
-export e2=$R2
-export e3=$npert
+export e1=${e1}
+export e2=${R2}
+export e3=${npert}
 
 fn=$(basename ${FLTFILEGFS})
 sed < ${FLTFILEGFS} -e "s#negatively_pert_fcst#${ens_pert_type}#" > ${DATA}/${fn}
@@ -76,14 +76,14 @@ else
 fi
 
 #--------------------------------------------
-if [[ ${RUNMEM} = gec00 ]] ;then
+if [[ ${RUNMEM} = mem000 ]] ;then
   MEMBER=$((npert+1))
   WAV_MEMBER="00"
-elif [[ ${RUNMEM} = geaer ]] ;then
+elif [[ ${RUNMEM} = memaer ]] ;then
   MEMBER="00"
   WAV_MEMBER="00"
 else
-  MEMBER=$(echo ${RUNMEM}|cut -c4-6)
+  MEMBER=${RUNMEM:3:3}
   WAV_MEMBER=$MEMBER
 fi
 export MEMBER=$MEMBER
@@ -101,7 +101,7 @@ export JCAP_STP=${JCAP_STP:-$JCAPFV}
 export LONB_STP=${LONB_STP:-$LONBFV}
 export LATB_STP=${LATB_STP:-$LATBFV}
 
-if [[ $RUNMEM = "gec00" || $RUNMEM = "geaer" ]]; then
+if [[ $RUNMEM = "mem000" || $RUNMEM = "memaer" ]]; then
   # Turn off stochastic physics for control member
   export DO_SPPT="NO"
   export DO_SHUM="NO"
@@ -118,7 +118,7 @@ else
   export DO_CA=${DO_CA:-"YES"}
   export DO_OCN_SPPT=${DO_OCN_SPPT:-"YES"}
   export DO_OCN_PERT_EPBL=${DO_OCN_PERT_EPBL:-"YES"}
-fi # [[ $RUNMEM = "gec00" || $RUNMEM = "geaer" ]]
+fi # [[ $RUNMEM = "mem000" || $RUNMEM = "memaer" ]]
 
 ## Stochastically Perturbed Physics Tendency
 if [[ $DO_SPPT = YES ]]; then
