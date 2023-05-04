@@ -5,7 +5,7 @@ suite prod
         edit PROJ 'GEFS'
         edit PACKAGEHOME '/lfs/h1/ops/%ENVIR%/packages/gefs.%gefs_ver%'
         defstatus complete
-        family v12.2
+        family v13.0
           family init
             family atmos
               task jgefs_atmos_init_recenter
@@ -13,20 +13,18 @@ suite prod
             endfamily
             family wave
               task jgefs_wave_init
-                trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+                trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
             endfamily
           endfamily
           family chem
             task jgefs_chem_prep_emissions
-              trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
+              trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
             task jgefs_chem_init
               trigger jgefs_chem_prep_emissions eq complete and ../init/atmos/jgefs_atmos_init_recenter eq complete
             task jgefs_chem_forecast
               trigger jgefs_chem_init eq complete
-            task jgefs_chem_post
-              trigger jgefs_chem_forecast eq active or jgefs_chem_forecast eq complete
             task jgefs_chem_prdgen
-              trigger jgefs_chem_post eq active or jgefs_chem_post eq complete
+              trigger jgefs_chem_forecast eq active or jgefs_chem_forecast eq complete
           endfamily
           family members
             family d0_16
@@ -44,9 +42,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -74,9 +70,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -104,9 +98,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -134,9 +126,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -164,9 +154,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -194,9 +182,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -224,9 +210,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -254,9 +238,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -284,9 +266,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -314,9 +294,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -344,9 +322,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -374,9 +350,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -404,9 +378,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -434,9 +406,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -464,9 +434,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -494,9 +462,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -524,9 +490,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -554,9 +518,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -584,9 +546,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -614,9 +574,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -644,9 +602,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -674,9 +630,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -704,9 +658,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -734,9 +686,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -764,9 +714,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -794,9 +742,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -824,9 +770,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -854,9 +798,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -884,9 +826,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -914,9 +854,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -944,9 +882,7 @@ suite prod
                   event 5 gefswave_f240_ready
                 family atmos
                   task jgefs_atmos_prep
-                    trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-                  task jgefs_atmos_post
-                    trigger ../jgefs_fcst_post_manager:release_post
+                    trigger /prod/primary/18/gfs/v17.0/gfs/atmos/analysis == complete
                   task jgefs_atmos_prdgen
                     trigger ../jgefs_fcst_post_manager:release_atmos_prdgen
                   task jgefs_atmos_postsnd
@@ -978,10 +914,8 @@ suite prod
                 family atmos
                   task jgefs_atmos_forecast
                     trigger ../../../d0_16/c00/jgefs_forecast eq complete
-                  task jgefs_atmos_post
-                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
                   task jgefs_atmos_prdgen
-                    trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
                 endfamily
               endfamily
               family p25
@@ -989,10 +923,8 @@ suite prod
                 family atmos
                   task jgefs_atmos_forecast
                     trigger ../../../d0_16/p25/jgefs_forecast eq complete
-                  task jgefs_atmos_post
-                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
                   task jgefs_atmos_prdgen
-                    trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
                 endfamily
               endfamily
               family p26
@@ -1000,10 +932,8 @@ suite prod
                 family atmos
                   task jgefs_atmos_forecast
                     trigger ../../../d0_16/p26/jgefs_forecast eq complete
-                  task jgefs_atmos_post
-                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
                   task jgefs_atmos_prdgen
-                    trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
                 endfamily
               endfamily
               family p27
@@ -1011,10 +941,8 @@ suite prod
                 family atmos
                   task jgefs_atmos_forecast
                     trigger ../../../d0_16/p27/jgefs_forecast eq complete
-                  task jgefs_atmos_post
-                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
                   task jgefs_atmos_prdgen
-                    trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
                 endfamily
               endfamily
               family p28
@@ -1022,10 +950,8 @@ suite prod
                 family atmos
                   task jgefs_atmos_forecast
                     trigger ../../../d0_16/p28/jgefs_forecast eq complete
-                  task jgefs_atmos_post
-                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
                   task jgefs_atmos_prdgen
-                    trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
                 endfamily
               endfamily
               family p29
@@ -1033,10 +959,8 @@ suite prod
                 family atmos
                   task jgefs_atmos_forecast
                     trigger ../../../d0_16/p29/jgefs_forecast eq complete
-                  task jgefs_atmos_post
-                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
                   task jgefs_atmos_prdgen
-                    trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
                 endfamily
               endfamily
               family p30
@@ -1044,10 +968,8 @@ suite prod
                 family atmos
                   task jgefs_atmos_forecast
                     trigger ../../../d0_16/p30/jgefs_forecast eq complete
-                  task jgefs_atmos_post
-                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
                   task jgefs_atmos_prdgen
-                    trigger jgefs_atmos_post eq active or jgefs_atmos_post eq complete
+                    trigger jgefs_atmos_forecast eq active or jgefs_atmos_forecast eq complete
                 endfamily
               endfamily
             endfamily
@@ -1056,7 +978,7 @@ suite prod
             family d0_16
               family atmos
                 task jgefs_atmos_prdgen_gfs
-                  trigger /prod/primary/18/gfs/v16.2/gfs/atmos/post/jgfs_atmos_post_manager:release_post000
+                  trigger /prod/primary/18/gfs/v17.0/gfs/atmos/post/jgfs_atmos_post_manager:release_post000
                 task jgefs_atmos_ensstat
                   trigger ( ../../../members/d0_16/c00/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/c00/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p01/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p01/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p02/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p02/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p03/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p03/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p04/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p04/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p05/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p05/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p06/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p06/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p07/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p07/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p08/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p08/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p09/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p09/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p10/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p10/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p11/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p11/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p12/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p12/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p13/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p13/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p14/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p14/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p15/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p15/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p16/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p16/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p17/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p17/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p18/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p18/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p19/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p19/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p20/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p20/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p21/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p21/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p22/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p22/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p23/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p23/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p24/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p24/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p25/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p25/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p26/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p26/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p27/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p27/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p28/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p28/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p29/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p29/atmos/jgefs_atmos_prdgen eq complete ) and ( ../../../members/d0_16/p30/atmos/jgefs_atmos_prdgen eq active or ../../../members/d0_16/p30/atmos/jgefs_atmos_prdgen eq complete )
                 task jgefs_atmos_enspost
@@ -1098,10 +1020,10 @@ suite prod
             task jgefs_atmos_post_cleanup
               trigger ../init eq complete and ../chem eq complete and ../members eq complete and ../post_processing eq complete and ../gempak eq complete
           endfamily
-        endfamily # v12.2
+        endfamily # v13.0
       endfamily # gefs
       family gfs
-        family v16.2
+        family v17.0
           family gfs
             family atmos
               family analysis
@@ -1113,7 +1035,7 @@ suite prod
               endfamily # post
             endfamily # atmos
           endfamily # gfs
-        endfamily # v16.2
+        endfamily # v17.0
       endfamily # gfs
     endfamily # 18
   endfamily # primary
