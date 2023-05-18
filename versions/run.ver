@@ -40,3 +40,8 @@ export PATH=$PATH:.
 
 export MAIL_LIST="Bing.Fu@noaa.gov,Walter.Kolczynski@noaa.gov,Xianwu.Xue@noaa.gov,nco.spa@noaa.gov"
 
+#export MAILTO="arash.bigdeli@noaa.gov"
+#export MAIL_LIST="arash.bigdeli@noaa.gov"
+#export COMPATH=/lfs/h1/ops/prod/com/gfs:/lfs/h1/ops/prod/com/cfs:/lfs/h1/ops/prod/com/nawips:/lfs/h1/ops/prod/com/ecmwf:/lfs/h1/ops/prod/com/nam:/lfs/h1/ops/prod/com/obsproc:/lfs/h1/ops/prod/com/ukmet
+#export DCOMROOT=/lfs/h1/ops/prod/dcom
+#export DBNLOG=YES

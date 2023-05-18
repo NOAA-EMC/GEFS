@@ -1,21 +1,15 @@
 #! /usr/bin/env bash
 set -eux
 
-source ./machine-setup.sh
+source ./machine-setup.sh > /dev/null 2>&1
 cwd=`pwd`
 
-progname=global_ensadd
+progname=global_enscqpf
 
-if [ -f ../rocoto/dev/versions/build_$target.ver ]; then
-  source ../rocoto/dev/versions/build_$target.ver
-else
-  if [ -f ../versions/build.ver ]; then
-    source ../versions/build.ver
-  fi
+if [ -f ../modulefiles/gefs/gefs_$target.ver ]; then
+    source ../modulefiles/gefs/gefs_$target.ver
 fi
-
-module use ${cwd}/../modulefiles/gefs
-module load ${progname}.${target}
+source ../modulefiles/gefs/${progname}.$target             > /dev/null 2>&1
 
 # Check final exec folder exists
 if [ ! -d "../exec" ]; then
@@ -23,12 +17,13 @@ if [ ! -d "../exec" ]; then
 fi
 
 #
+#
 cd ${progname}.fd
 
 export FCMP=${FCMP:-ifort}
 export FCMP95=$FCMP
 
-export FFLAGSM="-O3 -convert big_endian"
+export FFLAGSM="-O3 -g -convert big_endian"
 export RECURS=
 export LDFLAGSM=${LDFLAGSM:-""}
 export OMPFLAGM=${OMPFLAGM:-""}

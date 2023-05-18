@@ -36,12 +36,6 @@ Operation=${Operation:-no} # ecflow, rocoto, lsf
 if [ $machine = "nomachine" ]; then
     if [ -d /scratch1/NCEPDEV ]; then
         machine=hera
-    elif [[ -d /gpfs/hps3 && -e /etc/SuSE-release ]]; then # Luna or Surge
-        machine=cray
-    elif [[ -d /dcom && -d /hwrf ]] ; then # Tide or Gyre
-        machine=wcoss
-    elif [[ -L /usrx && "$( readlink /usrx 2> /dev/null )" =~ dell ]] ; then # We are on NOAA Mars or Venus
-        machine=wcoss_dell_p3
     elif [[ -d /apps/prod ]]; then # WCOSS2
         machine=wcoss2
     else
@@ -69,11 +63,7 @@ if [ $CompileCode = "yes" ]; then
 
     if [[ $Structure == "dev" ]]; then
         echo "...working on it ..."
-        if [[ $machine == "wcoss_dell_p3" ]]; then
-            sHeader='/gpfs/dell'
-        elif [[ $machine == "cray" ]]; then
-            sHeader='/gpfs/hps'
-        elif [[ $machine == "hera" ]]; then
+        if [[ $machine == "hera" ]]; then
             sHeader='/scratch2/NCEPDEV/ensemble'
         elif [[ $machine == "wcoss2" ]]; then
             sHeader='/lfs/h'
@@ -107,10 +97,6 @@ if [ $Link = "yes" ]; then
     cd $sWS/../sorc
     if [ $machine = "hera" ]; then
         ./link_gefs.sh -e emc -m hera
-    elif [ $machine = "cray" ]; then
-        ./link_gefs.sh -e $RunEnvir -m cray
-    elif [ $machine = "wcoss_dell_p3" ]; then
-        ./link_gefs.sh -e $RunEnvir -m dell
     elif [ $machine = "wcoss2" ]; then
         ./link_gefs.sh -e $RunEnvir -m wcoss2
     fi
@@ -200,20 +186,6 @@ if [ $RunRocoto = "yes" ]; then
         module load contrib
         module load intelpython/3.6.8
  
-    elif [ $machine = "cray" ]; then
-        . /opt/modules/3.2.10.3/init/sh
-        module use /usrx/local/emc_rocoto/modulefiles
-        module load xt-lsfhpc
-        module load rocoto
-        module load python/3.6.3
-    
-    elif [ $machine = "wcoss_dell_p3" ]; then
-        . /usrx/local/prod/lmod/lmod/init/sh
-        module use /gpfs/dell3/usrx/local/dev/emc_rocoto/modulefiles
-        module load lsf/10.1
-        module load ruby/2.5.1
-        module load rocoto/complete
-        module load python/3.6.3
     elif [ $machine = "wcoss2" ]; then
 
         module purge
@@ -250,18 +222,6 @@ if [ $AddCrontabToMyCrontab = "yes" ]; then
         crontab $HOME/cron/mycrontab
         echo "Added crontab to $HOME/cron/mycrontab!"
 
-    elif [ $machine = "cray" ]; then
-        if [ -f $HOME/cron/mycrontab ]; then
-            echo "Adding crontab to $HOME/cron/mycrontab!" 
-        else
-            mkdir $HOME/cron
-            touch $HOME/cron/mycrontab
-        fi
-
-        py/add_crontab.py
-        crontab $HOME/cron/mycrontab
-        echo "Added crontab to $HOME/cron/mycrontab!"
-
     elif [ $machine = "wcoss2" ]; then
         if [ -f $HOME/cron/mycrontab ]; then
             echo "Adding crontab to $HOME/cron/mycrontab!"
@@ -274,8 +234,5 @@ if [ $AddCrontabToMyCrontab = "yes" ]; then
         crontab $HOME/cron/mycrontab
         echo "Added crontab to $HOME/cron/mycrontab!"
 
-    elif [ $machine = "wcoss_dell_p3" ]; then
-        py/add_crontab.py
-        echo "Added crontab to $HOME/cron/mycrontab!"
     fi
 fi
