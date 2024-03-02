@@ -1,4 +1,4 @@
-export gefs_ver=v12.3.8
+export gefs_ver=v12.3.9
 
 export gfs_ver=v16.3
 export cfs_ver=v2.3
@@ -38,7 +38,7 @@ export cfp_ver=2.0.4
 export USE_CFP=YES
 export PATH=$PATH:.
 
-export MAIL_LIST="Bing.Fu@noaa.gov,Walter.Kolczynski@noaa.gov,Xianwu.Xue@noaa.gov,nco.spa@noaa.gov"
+export MAIL_LIST="Bing.Fu@noaa.gov,Walter.Kolczynski@noaa.gov,Eric.Sinsky@noaa.gov,nco.spa@noaa.gov"
 
 #export MAILTO="arash.bigdeli@noaa.gov"
 #export MAIL_LIST="arash.bigdeli@noaa.gov"
