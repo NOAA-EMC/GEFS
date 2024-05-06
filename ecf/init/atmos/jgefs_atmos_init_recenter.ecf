@@ -4,7 +4,7 @@
 #PBS -q %QUEUE%
 #PBS -A %PROJ%-%PROJENVIR%
 #PBS -l walltime=0:30:00
-#PBS -l place=vscatter,select=1:ncpus=6:mpiprocs=6:mem=12GB
+#PBS -l place=vscatter,select=1:ncpus=6:mpiprocs=6:mem=24GB
 #PBS -l debug=true
 
 set -x
