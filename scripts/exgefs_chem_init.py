@@ -195,7 +195,7 @@ def main() -> None:
 # Handle error for missing files due to possibility of dangling symlinks (ignore_dangling_symlinks doesn't work properly; Python Issue 38523)
 def safe_copytree(source: str, destination: str) -> None:
     try:
-        shutil.copytree(source, destination, ignore_dangling_symlinks=True)
+        shutil.copytree(source, destination, ignore_dangling_symlinks=True,copy_function=shutil.copy)
     except shutil.Error as err:
         # shutil.Error from copytree are tuples of src, dest, err
         tuples = [t for t in err.args[0]]
