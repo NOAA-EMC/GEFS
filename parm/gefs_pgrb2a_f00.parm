@@ -78,4 +78,5 @@
 :VIS:surface:
 :VVEL:850 mb:
 :WEASD:surface:
+:ICEG:10 m above mean sea level:
 ;############################ do not leave a blank line at the end
