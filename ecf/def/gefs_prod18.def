@@ -18,18 +18,6 @@ suite prod
                 trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
             endfamily
           endfamily
-          family chem
-            task jgefs_chem_prep_emissions
-              trigger /prod/primary/18/gfs/v16.2/gfs/atmos/analysis == complete
-            task jgefs_chem_init
-              trigger jgefs_chem_prep_emissions eq complete and ../init/atmos/jgefs_atmos_init_recenter eq complete
-            task jgefs_chem_forecast
-              trigger ../init/atmos/jgefs_atmos_getcfssst eq complete and jgefs_chem_init eq complete
-            task jgefs_chem_post
-              trigger jgefs_chem_forecast eq active or jgefs_chem_forecast eq complete
-            task jgefs_chem_prdgen
-              trigger jgefs_chem_post eq active or jgefs_chem_post eq complete
-          endfamily
           family members
             family d0_16
               edit ECF_FILES '%PACKAGEHOME%/ecf/d0_16'
@@ -1098,7 +1086,7 @@ suite prod
           endfamily
           family cleanup
             task jgefs_atmos_post_cleanup
-              trigger ../init eq complete and ../chem eq complete and ../members eq complete and ../post_processing eq complete and ../gempak eq complete
+              trigger ../init eq complete and ../members eq complete and ../post_processing eq complete and ../gempak eq complete
           endfamily
         endfamily # v12.2
       endfamily # gefs
