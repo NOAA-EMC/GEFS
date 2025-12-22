@@ -124,17 +124,6 @@ for level in ${levels}; do
 			ln -s $COMINecmwf.${ECM_PDY}/gempak/ecmwf_hr_${ECM_PDY}${ECM_cyc}f${fcsthr} ${fn}
 		fi
 
-		fn=ukmet
-		rm -rf ${fn}
-		if [ -r ${COMINukmet}.${ECM_PDY}/gempak/ukmet_hr_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ]; then
-			ln -s ${COMINukmet}.${ECM_PDY}/gempak/ukmet_hr_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ${fn}
-		fi
-
-		fn=dgex
-		rm -rf ${fn}
-		if [ -r $COMINnawips/dgex.${PDY}/dgex_${PDY}${cyc}f${fcsthr} ]; then
-			ln -s $COMINnawips/dgex.${PDY}/dgex_${PDY}${cyc}f${fcsthr} ${fn}
-		fi
 
 		cat > cmdfilenam  <<- EOF
 			GDATTIM	= F${fcsthr}
@@ -280,28 +269,6 @@ for level in ${levels}; do
 			#let color_number=$color_number+1
 		done
 
-		# ----- ukmet -----
-		gdfn=ukmet 
-		if [ -e ${gdfn} ]; then
-			cat >> cmdfilenam  <<- EOF
-				GDFILE  = ${gdfn}
-				LINE    = 7/2/2/0
-				GDATTIM = F${fcsthr_ecm}
-				TITLE   = 7/-4/~ ? UKMET ${ECM_cyc}Z (DASHED)|~${name} ${level} DM
-				run
-
-				EOF
-
-			if [ $WrottenZERO -eq 0 ]; then            
-				cat >> cmdfilenam  <<- EOF
-					MAP     = 0
-					LATLON  = 0
-					CLEAR   = no
-
-					EOF
-			fi
-			WrottenZERO=1
-		fi
 
 		# ----- ecmwf -----
 		gdfn=ecmwf 
@@ -367,19 +334,6 @@ for level in ${levels}; do
 					EOF
 			fi
 			WrottenZERO=1
-		fi
-
-		# ----- dgex -----
-		gdfn=dgex 
-		if [ -e ${gdfn} ]; then
-			cat >> cmdfilenam  <<- EOF
-				GDFILE  = ${gdfn} 
-				LINE    = 13/2/2/0
-				GDATTIM = F${fcsthr}
-				TITLE   = 13/-7/~ ? ${cyc}Z DGEX|~${name} ${level} DM
-				run
-
-				EOF
 		fi
 
 		cat cmdfilenam

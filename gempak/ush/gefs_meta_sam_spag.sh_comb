@@ -127,18 +127,6 @@ for level in ${levels}; do
 			 ln -s $COMINecmwf.${ECM_PDY}/gempak/ecmwf_hr_${ECM_PDY}${ECM_cyc}f${fcsthr} ${fn}
 		fi
 
-		fn=ukmet
-		rm -rf ${fn}
-		if [ -r ${COMINukmet}.${ECM_PDY}/gempak/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ]; then
-			 ln -s ${COMINukmet}.${ECM_PDY}/gempak/ukmet_${ECM_PDY}${ECM_cyc}f${fcsthr_ecm} ${fn}
-		fi
-
-		fn=dgex
-		rm -rf ${fn}
-		if [ -r $COMINnawips/dgex.${PDY}/dgex_${PDY}${cyc}f${fcsthr} ]; then
-			 ln -s $COMINnawips/dgex.${PDY}/dgex_${PDY}${cyc}f${fcsthr} ${fn}
-		fi
-
 		cat > cmdfilesam  <<- EOF
 			GDATTIM	= F${fcsthr}
 			DEVICE	= ${device}
@@ -279,27 +267,6 @@ for level in ${levels}; do
 			#let color_number=$color_number+1
 		done
 
-		# ----- ukmet -----
-		gdfn=ukmet # gd file name
-		if [ -e ${gdfn} ]; then
-			cat >> cmdfilesam  <<- EOF
-				GDFILE  = ${gdfn}
-				LINE    = 7/2/2/0
-				GDATTIM = F${fcsthr_ecm}
-				TITLE   = 7/-4/~ ? UKMET ${ECM_cyc}Z (DASHED)|~${name} ${level} DM
-				run
-
-				EOF
-			if [ $WrottenZERO -eq 0 ]; then            
-				cat >> cmdfilesam  <<- EOF
-					MAP     = 0
-					LATLON  = 0
-					CLEAR   = no
-
-					EOF
-			fi
-			WrottenZERO=1
-		fi
 
 		# ----- ecmwf -----
 		gdfn=ecmwf # gd file name
@@ -370,18 +337,6 @@ for level in ${levels}; do
 			WrottenZERO=1
 		fi
 
-		# ----- dgex -----
-		gdfn=dgex # gd file name
-		if [ -e ${gdfn} ]; then
-			cat >> cmdfilesam  <<- EOF
-				GDFILE  = ${gdfn} 
-				LINE    = 13/2/2/0
-				GDATTIM = F${fcsthr}
-				TITLE   = 13/-7/~ ? ${cyc}Z DGEX|~${name} ${level} DM
-				run
-
-			EOF
-		fi
 
 		cat cmdfilesam
 		gdplot2_nc < cmdfilesam
