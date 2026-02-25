@@ -46,8 +46,6 @@ gfscyc="12"
 gfscyc2="06"
 ecmwfcyc="12"
 ecmwfdate="${yesterday}"
-ukmetcyc="12"
-ukmetdate="${yesterday}"
 
 fcsthrs="000 012 024 036 048 060 072 084 096 108 120"
 levels="528 534 540 546 552 564 576"
@@ -88,13 +86,6 @@ for metaarea in pac atl; do
 			if [ -r $COMINecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ]; then
 				ln -s $COMINecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ${fn}
 			fi
-
-			fn=ukmet
-			rm -rf ${fn}
-			if [ -r ${COMINukmet}.${PDY}/gempak/ukmet_hr_${PDY}${cyc}f${fcsthr} ]; then
-				ln -s ${COMINukmet}.${PDY}/gempak/ukmet_hr_${PDY}${cyc}f${fcsthr} ${fn}
-			fi
-
 
 			export pgm=gdplot2_nc;. prep_step; startmsg
 
@@ -221,19 +212,6 @@ for metaarea in pac atl; do
 				WrottenZERO=1
 			fi
 
-			# ----- ukmet -----
-			gdfn=ukmet
-			if [ -e ${gdfn} ]; then
-				cat >> cmdfilemar  <<- EOF
-					GDFILE  = ${gdfn}
-					LINE    = 7/2/3/0
-					GDATTIM = F${fcsthr}
-					TITLE   = 7/-6/~ ? UKMET 00Z (DASHED)|~${metaarea} ${level} DM
-					run
-
-					EOF
-			fi
-
 			cat cmdfilemar
 			gdplot2_nc < cmdfilemar
 			err=$?
@@ -274,12 +252,6 @@ for metaarea in pac atl; do
 		rm -rf ${fn}
 		if [ -r $COMINecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ]; then
 			ln -s $COMINecmwf.${ecmwfdate}/gempak/ecmwf_hr_${ecmwfdate}${ecmwfcyc}f${fcsthr} ${fn}
-		fi
-
-		fn=ukmet
-		rm -rf ${fn}
-		if [ -r $COMINukmet.${PDY}/gempak/ukmet_hr_${PDY}${cyc}f${fcsthr} ]; then
-			ln -s $COMINukmet.${PDY}/gempak/ukmet_hr_${PDY}${cyc}f${fcsthr} ${fn}
 		fi
 
 		export pgm=gdplot2_nc;. prep_step; startmsg
@@ -405,19 +377,6 @@ for metaarea in pac atl; do
 			WrottenZERO=1
 		fi
 
-		# ----- ukmet -----
-		gdfn=ukmet
-		if [ -e ${gdfn} ]; then
-			cat >> cmdfilemar_low  <<- EOF
-				GDFILE  = ${gdfn}
-				HILO    = 26/L${num}/900-1016/5/50/y
-				TITLE   = 26/-6/~ ? ${gdfn} 00Z|~${metaarea} ${metashname}
-				GDATTIM = F${fcsthr}
-				run
-
-				EOF
-
-		fi
 
 		cat cmdfilemar_low
 		gdplot2_nc < cmdfilemar_low
