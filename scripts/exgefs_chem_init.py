@@ -29,7 +29,7 @@ tracer_list_file_pattern = "{parm_gefs}/gefs_aerosol_tracer_list.parm"
 merge_script_pattern = "{ush_gfs}/merge_fv3_chem_tile.py"
 n_tiles = 6
 
-analysis_file_pattern = "{com_gfs}/gfs.t%Hz.atmanl.nc"
+analysis_file_pattern = "{com_gfs}/gfs.t%Hz.analysis.atm.a006.nc"
 com_base_pattern = "{com_out}/init"
 fcst_file_pattern = "{com_in}/{run}.%Y%m%d/%H/{component}/sfcsig/ge{member}.t%Hz.atmf{forecast_hour:03}.nemsio"
 

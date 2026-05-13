@@ -21,7 +21,9 @@ module load prod_util/$prod_util_ver
 module load prod_envir/$prod_envir_ver
 module load hdf5/$hdf5_ver
 module load netcdf/$netcdf_ver
-
+module load gsl/$gsl_ver
+module load udunits/$udunits_ver
+module load nco/$nco_ver
 module load cfp/$cfp_ver
 
 export USE_CFP=YES
