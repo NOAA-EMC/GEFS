@@ -72,7 +72,7 @@ fi
 
 if [[ $CONVERT_SFC == ".true." ]]; then
 	export SFC_FILES_INPUT="gfs.t${cyc}z.analysis.sfc.a006.nc"
-	SFCFILE=$COMINgfs/analysis/atmos/$SFC_FILES_INPUT
+	SFCFILE="$COMINgfs/analysis/atmos/$SFC_FILES_INPUT"
 	if [[ -f $SFCFILE ]]; then
 		$NCP $SFCFILE $INIDIR/$SFC_FILES_INPUT.tmp
 		ncap2 -s 'where(land == 1) {soilw1=0.9*soilw1;soilw2=0.8*soilw2;soilw3=0.8*soilw3;soilw4=0.8*soilw4;}' $INIDIR/$SFC_FILES_INPUT.tmp $INIDIR/$SFC_FILES_INPUT
