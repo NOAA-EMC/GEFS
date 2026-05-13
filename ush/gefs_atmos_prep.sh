@@ -16,7 +16,6 @@ nmem=${nmem#0}
 export INIDIR=$DATA
 export OUTDIR=$GESOUT/enkf/$mem
 INITDIR=$GESOUT/init/$mem
-NCAP2=ncap2
 mkdir -p $INIDIR
 mkdir -p $OUTDIR
 mkdir -p $INITDIR
@@ -76,7 +75,7 @@ if [[ $CONVERT_SFC == ".true." ]]; then
 	SFCFILE=$COMINgfs/analysis/atmos/$SFC_FILES_INPUT
 	if [[ -f $SFCFILE ]]; then
 		$NCP $SFCFILE $INIDIR/$SFC_FILES_INPUT.tmp
-		$NCAP2 -s 'where(land == 1) {soilw1=0.9*soilw1;soilw2=0.8*soilw2;soilw3=0.8*soilw3;soilw4=0.8*soilw4;}' $INIDIR/$SFC_FILES_INPUT.tmp $INIDIR/$SFC_FILES_INPUT
+		ncap2 -s 'where(land == 1) {soilw1=0.9*soilw1;soilw2=0.8*soilw2;soilw3=0.8*soilw3;soilw4=0.8*soilw4;}' $INIDIR/$SFC_FILES_INPUT.tmp $INIDIR/$SFC_FILES_INPUT
 	else
 		msg="FATAL ERROR in $(basename $BASH_SOURCE): GFS surfce analysis $SFCFILE not found!"
 		echo $msg
