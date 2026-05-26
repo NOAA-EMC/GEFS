@@ -24,10 +24,10 @@ cd $INIDIR
 
 if [[ $mem = c00 ]] ;then
 	# Control intial conditions from current GFS cycle
-	ATMFILE=$COMINgfs/gfs.t${cyc}z.atmanl.nc
+	ATMFILE=$COMINgfs/analysis/atmos/gfs.t${cyc}z.analysis.atm.a006.nc
 	if [[ -f $ATMFILE ]]; then
 		$NCP $ATMFILE $INIDIR
-		export ATM_FILES_INPUT="gfs.t${cyc}z.atmanl.nc"
+		export ATM_FILES_INPUT="gfs.t${cyc}z.analysis.atm.a006.nc"
 	else
 		msg="FATAL ERROR in $(basename $BASH_SOURCE): GFS atmospheric analysis file $ATMFILE not found!"
 		echo "$msg"
@@ -46,11 +46,11 @@ else
 		fi
 
 		memchar="mem"$(printf %03i $cmem)
-		ATMFILE="$COMINenkf/$memchar/gdas.t${cycp}z.atmf006.nc"
+		ATMFILE="$COMINenkf/$memchar/model/atmos/history/enkfgdas.t${cycp}z.atm.f006.nc"
 
 		if [[ -f $ATMFILE ]]; then
 			$NCP $ATMFILE $INIDIR
-			export ATM_FILES_INPUT="gdas.t${cycp}z.atmf006.nc"
+			export ATM_FILES_INPUT="enkfgdas.t${cycp}z.atm.f006.nc"
 			success="YES"
 
 		else
@@ -71,10 +71,11 @@ else
 fi
 
 if [[ $CONVERT_SFC == ".true." ]]; then
-	export SFC_FILES_INPUT="gfs.t${cyc}z.sfcanl.nc"
-	SFCFILE="$COMINgfs/$SFC_FILES_INPUT"
+	export SFC_FILES_INPUT="gfs.t${cyc}z.analysis.sfc.a006.nc"
+	SFCFILE="$COMINgfs/analysis/atmos/$SFC_FILES_INPUT"
 	if [[ -f $SFCFILE ]]; then
-		$NCP $SFCFILE $INIDIR
+		$NCP $SFCFILE $INIDIR/$SFC_FILES_INPUT.tmp
+		ncap2 -s 'where(land == 1) {soilw1=0.9*soilw1;soilw2=0.8*soilw2;soilw3=0.8*soilw3;soilw4=0.8*soilw4;}' $INIDIR/$SFC_FILES_INPUT.tmp $INIDIR/$SFC_FILES_INPUT
 	else
 		msg="FATAL ERROR in $(basename $BASH_SOURCE): GFS surfce analysis $SFCFILE not found!"
 		echo $msg

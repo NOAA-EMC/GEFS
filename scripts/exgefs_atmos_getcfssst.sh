@@ -78,7 +78,7 @@ if [ $HFcfs -gt $HFcfsMax ];  then
 fi
 
 #Link Real-time nst file
-sFile=$COMINgfs/gfs.${cycle}.sfcanl.nc
+sFile=$COMINgfs/analysis/atmos/gfs.${cycle}.analysis.sfc.a006.nc
 if [[ -f $sFile ]]; then
     test_tref=$(ncdump -h $sFile | grep tref)
     if [ -z $test_tref ]; then
