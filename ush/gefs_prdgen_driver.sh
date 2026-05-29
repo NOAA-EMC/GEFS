@@ -102,8 +102,8 @@ for hour in $hours; do
 		export fhr=000
 
 		if [[ $RUNMEM = "gegfs" ]]; then
-			export mafile=$COMINgfs/gfs.$cycle.master.grb2anl
-			export mifile=$COMINgfs/gfs.$cycle.master.grb2ianl
+			export mafile=$COMINgfs/model/atmos/master/gfs.$cycle.master.analysis.grib2
+			export mifile=$COMINgfs/model/atmos/master/gfs.$cycle.master.analysis.grib2.idx
 			export mcfile=""
 			export makepgrb2b="no"
 		else
@@ -245,8 +245,8 @@ for hour in $hours; do
 	export pgm="postcheck"
 
 	if [[ $RUNMEM = "gegfs" ]]; then
-		export mafile=$COMINgfs/gfs.$cycle.master.grb2f$fhr
-		export mifile=$COMINgfs/gfs.$cycle.master.grb2if$fhr
+		export mafile=$COMINgfs/model/atmos/master/gfs.$cycle.master.f${fhr}.grib2
+		export mifile=$COMINgfs/model/atmos/master/gfs.$cycle.master.f${fhr}.grib2.idx
 		export mcfile=""
 		export makepgrb2b="no"
 	else 
