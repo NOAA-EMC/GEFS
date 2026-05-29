@@ -107,8 +107,8 @@ for pres in 200 250 300; do
 
 			fn=gfs_6
 			rm -rf ${fn}
-			if [ -r $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
-				ln -s $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
+			if [ -r $COMINsgfs/gfs.${PDY_6}/${cyc_6}/products/atmos/gempak/${sGrid}/gfs${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
+				ln -s $COMINsgfs/gfs.${PDY_6}/${cyc_6}/products/atmos/gempak/${sGrid}/gfs${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
 			fi
 
 			fn=ecmwf
