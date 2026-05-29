@@ -77,8 +77,8 @@ for metaarea in pac atl; do
 
 			fn=gfs
 			rm -rf ${fn}
-			if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/products/atmos/gempak/0p50/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
-				ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/products/atmos/gempak/0p50/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
+			if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/products/atmos/gempak/${sGrid}/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
+				ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/products/atmos/gempak/${sGrid}/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
 			fi
 
 			fn=ecmwf
@@ -244,8 +244,8 @@ for metaarea in pac atl; do
 
 		fn=gfs
 		rm -rf ${fn}
-		if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/products/atmos/gempak/0p50/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
-			ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/products/atmos/gempak/0p50/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
+		if [ -r $COMINsgfs/gfs.${yesterday}/${gfscyc}/products/atmos/gempak/${sGrid}/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ]; then
+			ln -s $COMINsgfs/gfs.${yesterday}/${gfscyc}/products/atmos/gempak/${sGrid}/gfs${sGrid}_${yesterday}${gfscyc}f${fcsthrsgfs} ${fn}
 		fi
 
 		fn=ecmwf
