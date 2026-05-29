@@ -70,8 +70,8 @@ for metaarea in pac atl; do
 
 			fn=gfs
 			rm -rf ${fn}
-			if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
-				ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ${fn}
+			if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/products/atmos/gempak/0p50/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
+				ln -s $COMINsgfs/gfs.${PDY}/${cyc}/products/atmos/gempak/0p50/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ${fn}
 			fi
 
 			fn=nam
@@ -216,8 +216,8 @@ for metaarea in pac atl; do
 
 		fn=gfs
 		rm -rf ${fn}
-		if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
-			ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ${fn}
+		if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/products/atmos/gempak/0p50/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
+			ln -s $COMINsgfs/gfs.${PDY}/${cyc}/products/atmos/gempak/0p50/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ${fn}
 		fi
 
 		fn=nam
