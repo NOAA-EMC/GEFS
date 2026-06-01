@@ -101,14 +101,14 @@ for pres in 200 250 300; do
 
 			fn=gfs
 			rm -rf ${fn}
-			if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
-				ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ${fn}
+			if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/products/atmos/gempak/${sGrid#_}/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
+				ln -s $COMINsgfs/gfs.${PDY}/${cyc}/products/atmos/gempak/${sGrid#_}/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ${fn}
 			fi
 
 			fn=gfs_6
 			rm -rf ${fn}
-			if [ -r $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
-				ln -s $COMINsgfs/gfs.${PDY_6}/${cyc_6}/gempak/gfs${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
+			if [ -r $COMINsgfs/gfs.${PDY_6}/${cyc_6}/products/atmos/gempak/${sGrid#_}/gfs${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ]; then
+				ln -s $COMINsgfs/gfs.${PDY_6}/${cyc_6}/products/atmos/gempak/${sGrid#_}/gfs${sGrid}_${PDY_6}${cyc_6}f${fcsthr_6} ${fn}
 			fi
 
 			fn=ecmwf

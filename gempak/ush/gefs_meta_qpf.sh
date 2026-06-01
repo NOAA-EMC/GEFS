@@ -59,8 +59,8 @@ for fcsthr in ${fcsthrs}; do
 
 	fn=gfs
 	rm -rf ${fn}
-	if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
-		ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ${fn}
+	if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/products/atmos/gempak/${sGrid#_}/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
+		ln -s $COMINsgfs/gfs.${PDY}/${cyc}/products/atmos/gempak/${sGrid#_}/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ${fn}
 	fi
 
 	if [ ${cyc} = "00" ]; then
@@ -284,7 +284,7 @@ for area in us sam us12 us24; do
 	fi
 	
 	ln -s $COMIN/ge*${sGrid}_${PDY}${cyc}f* ./
-	ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f* ./
+	ln -s $COMINsgfs/gfs.${PDY}/${cyc}/products/atmos/gempak/${sGrid#_}/gfs${sGrid}_${PDY}${cyc}f* ./
 	#ln -s $COMINecmwf.${PDYm1}/gempak/ecmwf_hr_${PDYm1}${cycm12}f* ./
 	#ln -s $COMINecmwf.${PDY}/gempak/ecmwf_hr_${PDY}${cycm12}f* ./
 	for grid in ${grids}; do
@@ -295,7 +295,6 @@ for area in us sam us12 us24; do
 		if [ ${grid} = "GFS" ]; then
 			GDFILE="F-GFS | ${ddate}/${cyc}00"
 			COMINtmp=$COMIN
-			# #export COMIN=$COMINsgfs/gfs.${PDY}/${cyc}/gempak
 			export COMIN=./
 		elif [ ${grid} = "ECMWF" ]; then
 			if [ $cyc = "12" ]; then
