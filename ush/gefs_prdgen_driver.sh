@@ -102,8 +102,8 @@ for hour in $hours; do
 		export fhr=000
 
 		if [[ $RUNMEM = "gegfs" ]]; then
-			export mafile=$COMINgfs/model/atmos/master/gfs.$cycle.master.analysis.grib2
-			export mifile=$COMINgfs/model/atmos/master/gfs.$cycle.master.analysis.grib2.idx
+			export mafile=$COMINgfs/analysis/atmos/gfs.$cycle.master.analysis.grib2
+			export mifile=$COMINgfs/analysis/atmos/gfs.$cycle.master.analysis.grib2.idx
 			export mcfile=""
 			export makepgrb2b="no"
 		else
