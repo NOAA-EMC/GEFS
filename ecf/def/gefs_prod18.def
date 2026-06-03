@@ -1105,15 +1105,12 @@ suite prod
       family gfs
         family v17.0
           family gfs
-            family atmos
-              family analysis
-                task jgfs_atmos_analysis
-              endfamily # analysis
-              family post
-                task jgfs_atmos_post_manager
-                  event release_post000
-              endfamily # post
-            endfamily # atmos
+            family analysis
+            endfamily # analysis
+            family forecast
+              task jgfs_atmos_post_manager
+                event release_gfs_atmos_product_f000
+            endfamily # forecast
           endfamily # gfs
         endfamily # v17.0
       endfamily # gfs
