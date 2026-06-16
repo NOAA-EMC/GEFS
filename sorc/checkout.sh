@@ -15,7 +15,11 @@ if [[ ! -d global-workflow.fd ]] ; then
     rm -f ${logs_dir}/checkout-global-workflow.log
     git clone https://github.com/NOAA-EMC/global-workflow.git global-workflow.fd >>  ${logs_dir}/checkout-global-workflow.log 2>&1
     cd global-workflow.fd
+<<<<<<< HEAD
     git checkout gefs_v12.3.14
+=======
+    git checkout gefs_v12.3.20-0
+>>>>>>> EMC/ops
     cd sorc
     ./checkout.sh
     ERR=$?
