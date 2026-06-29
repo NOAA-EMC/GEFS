@@ -74,12 +74,6 @@ for metaarea in pac atl; do
 				ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ${fn}
 			fi
 
-			fn=nam
-			rm -rf ${fn}
-			if [ -r $COMINnam/nam.${PDY}/gempak/nam_${PDY}${cyc}f${fcsthr} ]; then
-				ln -s $COMINnam/nam.${PDY}/gempak/nam_${PDY}${cyc}f${fcsthr} ${fn}
-			fi
-
 			cat > cmdfilemar  <<- EOF
 				DEVICE	= ${device}
 				PANEL	= 0
@@ -156,28 +150,6 @@ for metaarea in pac atl; do
 
 			done
 
-			# ----- nam -----
-			gdfn=nam
-			if [ -e ${gdfn} ]; then
-				cat >> cmdfilemar  <<- EOF
-					GDFILE  = ${gdfn}
-					LINE    = 31/2/3/0
-					TITLE   = 31/-3/~ ? ${gdfn} (DASHED) |~${level} DM - ${metaarea}
-					GDATTIM = F${fcsthr}
-					run
-
-					EOF
-				if [ $WrottenZERO -eq 0 ]; then            
-					cat >> cmdfilemar  <<- EOF
-						MAP     = 0
-						LATLON  = 0
-						CLEAR   = no
-
-						EOF
-				fi
-				WrottenZERO=1
-			fi
-
 			# ----- gfs -----
 			gdfn=gfs
 			if [ -e ${gdfn} ]; then
@@ -218,12 +190,6 @@ for metaarea in pac atl; do
 		rm -rf ${fn}
 		if [ -r $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ]; then
 			ln -s $COMINsgfs/gfs.${PDY}/${cyc}/gempak/gfs${sGrid}_${PDY}${cyc}f${fcsthr} ${fn}
-		fi
-
-		fn=nam
-		rm -rf ${fn}
-		if [ -r $COMINnam/nam.${PDY}/gempak/nam_${PDY}${cyc}f${fcsthr} ]; then
-			ln -s $COMINnam/nam.${PDY}/gempak/nam_${PDY}${cyc}f${fcsthr} ${fn}
 		fi
 
 		#export pgm=gdplot2_nc;. prep_step; startmsg
@@ -303,28 +269,6 @@ for metaarea in pac atl; do
 			fi
 
 		done
-
-		# ----- nam -----
-		gdfn=nam
-		if [ -e ${gdfn} ]; then
-			cat >> cmdfilemar_low  <<- EOF
-				GDFILE	= ${gdfn}
-				LINE    = 31/2/3/0
-				HILO    = 31/L#/900-1016/5/50/y
-				TITLE   = 31/-3/~ ? ${gdfn} |~${metaarea} ${metashname}
-				run
-
-				EOF
-			if [ $WrottenZERO -eq 0 ]; then            
-				cat >> cmdfilemar_low  <<- EOF
-					MAP     = 0
-					LATLON  = 0
-					CLEAR   = no
-
-					EOF
-			fi
-			WrottenZERO=1
-		fi
 
 		# ----- gfs -----
 		gdfn=gfs
