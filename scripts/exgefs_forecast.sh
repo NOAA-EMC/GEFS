@@ -137,7 +137,7 @@ if [[ $RERUN = "YES" ]] ; then
 	export restart_hour=$FHMIN
 	export restart_run=.true.    
 	export output_1st_tstep=.true.
-	export stochini=${stochini:-".true."} #true=read in pattern, false=initialize from seed
+	export stochini=${stochini:-".false."} #true=read in pattern, false=initialize from seed
 else
 	export stochini=${stochini:-".false."} #true=read in pattern, false=initialize from seed
 fi
