@@ -89,7 +89,6 @@ done
 
 export COMINsgfs=${COMINsgfs:-$(compath.py $envir/com/gfs/${gfs_ver})}
 export COMINecmwf=${COMINecmwf:-$(compath.py $envir/com/ecmwf/${ecmwf_ver})/ecmwf}
-export COMINnam=${COMINnam:-$(compath.py $envir/com/nam/${nam_ver})}
 
 export COMPONENT=${COMPONENT:-atmos}
 if [[ ! -d $COMOUT/$COMPONENT/gempak/meta ]]; then mkdir -p -m 755 $COMOUT/$COMPONENT/gempak/meta; fi
